@@ -1,453 +1,435 @@
-Return-Path: <linux-fsdevel+bounces-46144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59D5FA834F8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 02:12:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49651A8358F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 03:17:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B65C8467828
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 00:12:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89E41B6314E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 01:17:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2494A6A33B;
-	Thu, 10 Apr 2025 00:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB0C171E43;
+	Thu, 10 Apr 2025 01:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KF3nTh2P"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HqKi3Wn/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F8D2EAF7;
-	Thu, 10 Apr 2025 00:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3201959B71
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 01:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744243889; cv=none; b=tLWmEX94rmxeUxsNx+17USq/4s37SkpLdPffF1tvaQ+JvCoCsMWCvolVXzX70c9fGd8i2wvnwpbkb6/CSnQtA4m1peKX2qax457k5iK8RIJEslZEZbbgBwQeSBkNxTTWWz5vQFZdRmNj2EYkVmuuo2t1CracibgKfLijn0kDlvo=
+	t=1744247855; cv=none; b=eA9TXUsaJATv81OvhV8Jv9/KqxcKmJ8ZK2UfqbsTPs0qXPL4YxjwTINPPsCCzGsyFXVoJ3QhyCTUdTdobZPER7BJPDt660NpRp40XPotFN6K+962hqjWYnC+hE8sE4sv6HZuh+0h1cQFcEprPk/iMDkeyIOKOJaFJAWccIxY6pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744243889; c=relaxed/simple;
-	bh=Rgg5bpdxIO+BYS9u82ebgAKUejZ/QWm2LeNMH8pvgmE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OuOhUIISwkD9U1JWJfdTTxyH6dVPmnTip7X6n9NMUjqJ5ueknbD3eyMuNGVyyUZ46X0/ijctZBTNneVniTenTVCDvLmZ3r1s3LU0QzB5/U7A+Fi8aAmD3GhBb+IuT9mGu4s/xGBKiVQIoiqgo4E7HQB5lL7YwWRoVHqdvi4+WDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KF3nTh2P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6DBEC4CEEE;
-	Thu, 10 Apr 2025 00:11:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744243889;
-	bh=Rgg5bpdxIO+BYS9u82ebgAKUejZ/QWm2LeNMH8pvgmE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KF3nTh2PA78ZBLpHtjfW6V0CTvbETieFKZ0eJPn1+c5hc7ruw4koekY6t9TdQBBHg
-	 4+8H/unmzf65vkEENSiX87ikBxhPN5dbOz/Bt2pa91uVRwAEkVoEZPAd8R8tFTRm6o
-	 YsanVfempdYNVpyaylX13GyMiBbPMbd8prmKz8HF2MasGULKU1yZpG/NN3o0FhKbLW
-	 PwgTNxCwQDVpD82sB9JMf8EvLgbUH5boW8t1DQj9I6+K8dNunSiWWOp6gnFFaCmD9I
-	 Qss3snrLTmC0/bdSDoLGgr0iF10sZB2xGQVaGU0CFo07LfsPPWzFlZGf+UG32fsO5o
-	 nCKO85kOgDdbA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 04/10] tools headers: Update the VFS headers with the kernel sources
-Date: Wed,  9 Apr 2025 17:11:19 -0700
-Message-ID: <20250410001125.391820-5-namhyung@kernel.org>
-X-Mailer: git-send-email 2.49.0.504.g3bcea36a83-goog
-In-Reply-To: <20250410001125.391820-1-namhyung@kernel.org>
-References: <20250410001125.391820-1-namhyung@kernel.org>
+	s=arc-20240116; t=1744247855; c=relaxed/simple;
+	bh=M4iFrckRcXXL+edTeVe0caH6az2Ta8HC+CqJUEd80WE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KX/R44r+0x5Fr0Ci66fugnqNGK5RgJ4api608tZxDZULZv4L7Lcih5t6UmFoJ8a3eqU2QV7Lh99ctoSJV0BuYbO9RcnX0leP6QSyFcYAlwxsHY2Ur/lRyi2naZSaEJcpIrauy9xFi2+d9sffu0RV9PVAdEhBuO1e02RSivgHsHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HqKi3Wn/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744247851;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7xzS7XLZY2qdrM4JSVF6iQPAbqPC6buSHi7Kkm+Ts/w=;
+	b=HqKi3Wn//Y1Pouk/7vhjjCWz2oq7MM/KmzvSnZK1sHxHMLUDODSDSupgHT9srTvArRtxxI
+	XUPoSHwiFdxGVM0AAbb8RxN2sDW91UBb8CcdIF5AJjWD7qU/UfKGX8zU3/fYBtOYAZLwqs
+	oyM772Z0lnLkljVn5Gn6GLs72q+sVxc=
+Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
+ [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-245-RJ1nTatXNxCf7RhfBkFLHw-1; Wed, 09 Apr 2025 21:17:30 -0400
+X-MC-Unique: RJ1nTatXNxCf7RhfBkFLHw-1
+X-Mimecast-MFC-AGG-ID: RJ1nTatXNxCf7RhfBkFLHw_1744247849
+Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-af53a6bc0b6so128347a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Apr 2025 18:17:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744247849; x=1744852649;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7xzS7XLZY2qdrM4JSVF6iQPAbqPC6buSHi7Kkm+Ts/w=;
+        b=kxfZ72EI6isy2DQBg7ZEa5BMmbGuSz11eeFxFkw9rGC1jSnY3SQBDGzbrHCgZrsp3W
+         vgHX6Uu45QGb7mQtwTYwFTOVEmo0vlDMC8Vs1yMHPdXtBCUupRT/6/PIVRksfsR4XLSg
+         JJsQ1b05FC47TGoGudviDJdD+qig4MhOlR2nCbaFpHjg1ZQVWN2+DTd4U5IXIRb/dx3h
+         2lhACIzSXxhcRLRJbXuDZSjDuNBqROKdmC4EXqjF1BHfr8anz+yO70M18moP6sq8Drxb
+         NEZTBlwHPX7vyNvGHs73n06HVeTf16LK39DPtDI9mcpXURaOW9fw8p4sy/ed2aWSIZen
+         yCag==
+X-Forwarded-Encrypted: i=1; AJvYcCV4FhIU/Ey0YkAC6xIzij35T2Y9pnE4vFohXjAmnwXP+sTvLS2Tc9EBFedb0uwtuZERxwJkvpTxy3rtch8c@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRBLJ33mE7hvtPP38V3Ob9B+PX8e8tZ6ANxyprdwgQzB7vfyZ0
+	RErarChhsahE/QshfCkny5jnTpIjERcEIRsh0Ulnm13gsmpNsjbcB579jqi/poG8OP8t3krsvJi
+	5G5pAEte7HAGVYIOt6kCxWmCH5aXpAIK/P6Tv380eqDX+4E7togFaqSyca9yIzd4=
+X-Gm-Gg: ASbGncta8Imo5DvMq/ixSj04j6geSKD1nJsa5tsOVxc2vSvChZbG6gPbf3pFPkDk97D
+	cd1EF2WZ9i1ITzAovxZyFno1PEZsPyEwnDQtbDrrCAG5h29dKJFTQbUsZFdf64m+Mi9em36lMen
+	uqGT8GN5+YhD5zhFgZAIZyb0uYfy7pDMiJ/E8h6j8ev3walab4pEseQk7LuQKDajEtHxtxcaa0U
+	qmKTKhDcv//QRjhCdBRlIXQGtifVdE4kMj7op3GKniywJ2FLLGOa01EOMhRPUDWYuND49AaL+tG
+	m2nC3o/P9UrNRLWCsZfrXvZdtGj1HGK/RyT6RZMtV24DCDuLzxJQ5Q6f/XCdSujF
+X-Received: by 2002:a17:902:ce0a:b0:224:1d1c:8837 with SMTP id d9443c01a7336-22b2edcf2a7mr14689765ad.19.1744247849308;
+        Wed, 09 Apr 2025 18:17:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHbv/B25q/BG5rbos8mxYjUX40TLjvJ7m9oY6FlTJ/MEsfzB1q0qTMpChUkwgKeFWkzHCTyQ==
+X-Received: by 2002:a17:902:ce0a:b0:224:1d1c:8837 with SMTP id d9443c01a7336-22b2edcf2a7mr14689475ad.19.1744247848844;
+        Wed, 09 Apr 2025 18:17:28 -0700 (PDT)
+Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net. [159.196.82.144])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7cafdaasm18861255ad.165.2025.04.09.18.17.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 18:17:28 -0700 (PDT)
+Message-ID: <18e35aab-9cbc-4df0-b88f-34e390a21c8c@redhat.com>
+Date: Thu, 10 Apr 2025 09:17:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>,
+ Eric Chanudet <echanude@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, Alexander Larsson <alexl@redhat.com>,
+ Lucas Karpinski <lkarpins@redhat.com>
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <20250409-egalisieren-halbbitter-23bc252d3a38@brauner>
+Content-Language: en-US
+From: Ian Kent <ikent@redhat.com>
+Autocrypt: addr=ikent@redhat.com; keydata=
+ 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
+In-Reply-To: <20250409-egalisieren-halbbitter-23bc252d3a38@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-To pick up the changes in:
+On 9/4/25 18:37, Christian Brauner wrote:
+> On Tue, Apr 08, 2025 at 04:58:34PM -0400, Eric Chanudet wrote:
+>> Defer releasing the detached file-system when calling namespace_unlock()
+>> during a lazy umount to return faster.
+>>
+>> When requesting MNT_DETACH, the caller does not expect the file-system
+>> to be shut down upon returning from the syscall. Calling
+>> synchronize_rcu_expedited() has a significant cost on RT kernel that
+>> defaults to rcupdate.rcu_normal_after_boot=1. Queue the detached struct
+>> mount in a separate list and put it on a workqueue to run post RCU
+>> grace-period.
+>>
+>> w/o patch, 6.15-rc1 PREEMPT_RT:
+>> perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount mnt
+>>      0.02455 +- 0.00107 seconds time elapsed  ( +-  4.36% )
+>> perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount -l mnt
+>>      0.02555 +- 0.00114 seconds time elapsed  ( +-  4.46% )
+>>
+>> w/ patch, 6.15-rc1 PREEMPT_RT:
+>> perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount mnt
+>>      0.026311 +- 0.000869 seconds time elapsed  ( +-  3.30% )
+>> perf stat -r 10 --null --pre 'mount -t tmpfs tmpfs mnt' -- umount -l mnt
+>>      0.003194 +- 0.000160 seconds time elapsed  ( +-  5.01% )
+>>
+>> Signed-off-by: Alexander Larsson <alexl@redhat.com>
+>> Signed-off-by: Lucas Karpinski <lkarpins@redhat.com>
+>> Signed-off-by: Eric Chanudet <echanude@redhat.com>
+>> ---
+>>
+>> Attempt to re-spin this series based on the feedback received in v3 that
+>> pointed out the need to wait the grace-period in namespace_unlock()
+>> before calling the deferred mntput().
+> I still hate this with a passion because it adds another special-sauce
+> path into the unlock path. I've folded the following diff into it so it
+> at least doesn't start passing that pointless boolean and doesn't
+> introduce __namespace_unlock(). Just use a global variable and pick the
+> value off of it just as we do with the lists. Testing this now:
 
-  7ed6cbe0f8caa6ee fs: add STATX_DIO_READ_ALIGN
-  8fc7e23a9bd851e6 fs: reformat the statx definition
-  a5874fde3c0884a3 exec: Add a new AT_EXECVE_CHECK flag to execveat(2)
-  1ebd4a3c095cd538 blk-crypto: add ioctls to create and prepare hardware-wrapped keys
-  af6505e5745b9f3a fs: add RWF_DONTCACHE iocb and FOP_DONTCACHE file_operations flag
-  10783d0ba0d7731e fs, iov_iter: define meta io descriptor
-  8f6116b5b77b0536 statmount: add a new supported_mask field
-  37c4a9590e1efcae statmount: allow to retrieve idmappings
+Yeah, it's painful that's for sure.
 
-Addressing this perf tools build warning:
 
-  Warning: Kernel ABI header differences:
-    diff -u tools/include/uapi/linux/stat.h include/uapi/linux/stat.h
-    diff -u tools/perf/trace/beauty/include/uapi/linux/stat.h include/uapi/linux/stat.h
-    diff -u tools/perf/trace/beauty/include/uapi/linux/fcntl.h include/uapi/linux/fcntl.h
-    diff -u tools/perf/trace/beauty/include/uapi/linux/fs.h include/uapi/linux/fs.h
-    diff -u tools/perf/trace/beauty/include/uapi/linux/mount.h include/uapi/linux/mount.h
+I also agree with you about the parameter, changing the call signature
 
-Please see tools/include/uapi/README for further details.
+always rubbed me the wrong way but I didn't push back on it mostly because
 
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/include/uapi/linux/stat.h               | 99 ++++++++++++++-----
- .../trace/beauty/include/uapi/linux/fcntl.h   |  4 +
- .../perf/trace/beauty/include/uapi/linux/fs.h | 21 +++-
- .../trace/beauty/include/uapi/linux/mount.h   | 10 +-
- .../trace/beauty/include/uapi/linux/stat.h    | 99 ++++++++++++++-----
- 5 files changed, 179 insertions(+), 54 deletions(-)
+we needed to find a way to do it sensibly and it sounds like that's still
 
-diff --git a/tools/include/uapi/linux/stat.h b/tools/include/uapi/linux/stat.h
-index 887a2528644168a3..f78ee3670dd5d7c8 100644
---- a/tools/include/uapi/linux/stat.h
-+++ b/tools/include/uapi/linux/stat.h
-@@ -98,43 +98,93 @@ struct statx_timestamp {
-  */
- struct statx {
- 	/* 0x00 */
--	__u32	stx_mask;	/* What results were written [uncond] */
--	__u32	stx_blksize;	/* Preferred general I/O size [uncond] */
--	__u64	stx_attributes;	/* Flags conveying information about the file [uncond] */
-+	/* What results were written [uncond] */
-+	__u32	stx_mask;
-+
-+	/* Preferred general I/O size [uncond] */
-+	__u32	stx_blksize;
-+
-+	/* Flags conveying information about the file [uncond] */
-+	__u64	stx_attributes;
-+
- 	/* 0x10 */
--	__u32	stx_nlink;	/* Number of hard links */
--	__u32	stx_uid;	/* User ID of owner */
--	__u32	stx_gid;	/* Group ID of owner */
--	__u16	stx_mode;	/* File mode */
-+	/* Number of hard links */
-+	__u32	stx_nlink;
-+
-+	/* User ID of owner */
-+	__u32	stx_uid;
-+
-+	/* Group ID of owner */
-+	__u32	stx_gid;
-+
-+	/* File mode */
-+	__u16	stx_mode;
- 	__u16	__spare0[1];
-+
- 	/* 0x20 */
--	__u64	stx_ino;	/* Inode number */
--	__u64	stx_size;	/* File size */
--	__u64	stx_blocks;	/* Number of 512-byte blocks allocated */
--	__u64	stx_attributes_mask; /* Mask to show what's supported in stx_attributes */
-+	/* Inode number */
-+	__u64	stx_ino;
-+
-+	/* File size */
-+	__u64	stx_size;
-+
-+	/* Number of 512-byte blocks allocated */
-+	__u64	stx_blocks;
-+
-+	/* Mask to show what's supported in stx_attributes */
-+	__u64	stx_attributes_mask;
-+
- 	/* 0x40 */
--	struct statx_timestamp	stx_atime;	/* Last access time */
--	struct statx_timestamp	stx_btime;	/* File creation time */
--	struct statx_timestamp	stx_ctime;	/* Last attribute change time */
--	struct statx_timestamp	stx_mtime;	/* Last data modification time */
-+	/* Last access time */
-+	struct statx_timestamp	stx_atime;
-+
-+	/* File creation time */
-+	struct statx_timestamp	stx_btime;
-+
-+	/* Last attribute change time */
-+	struct statx_timestamp	stx_ctime;
-+
-+	/* Last data modification time */
-+	struct statx_timestamp	stx_mtime;
-+
- 	/* 0x80 */
--	__u32	stx_rdev_major;	/* Device ID of special file [if bdev/cdev] */
-+	/* Device ID of special file [if bdev/cdev] */
-+	__u32	stx_rdev_major;
- 	__u32	stx_rdev_minor;
--	__u32	stx_dev_major;	/* ID of device containing file [uncond] */
-+
-+	/* ID of device containing file [uncond] */
-+	__u32	stx_dev_major;
- 	__u32	stx_dev_minor;
-+
- 	/* 0x90 */
- 	__u64	stx_mnt_id;
--	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
--	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
-+
-+	/* Memory buffer alignment for direct I/O */
-+	__u32	stx_dio_mem_align;
-+
-+	/* File offset alignment for direct I/O */
-+	__u32	stx_dio_offset_align;
-+
- 	/* 0xa0 */
--	__u64	stx_subvol;	/* Subvolume identifier */
--	__u32	stx_atomic_write_unit_min;	/* Min atomic write unit in bytes */
--	__u32	stx_atomic_write_unit_max;	/* Max atomic write unit in bytes */
-+	/* Subvolume identifier */
-+	__u64	stx_subvol;
-+
-+	/* Min atomic write unit in bytes */
-+	__u32	stx_atomic_write_unit_min;
-+
-+	/* Max atomic write unit in bytes */
-+	__u32	stx_atomic_write_unit_max;
-+
- 	/* 0xb0 */
--	__u32   stx_atomic_write_segments_max;	/* Max atomic write segment count */
--	__u32   __spare1[1];
-+	/* Max atomic write segment count */
-+	__u32   stx_atomic_write_segments_max;
-+
-+	/* File offset alignment for direct I/O reads */
-+	__u32	stx_dio_read_offset_align;
-+
- 	/* 0xb8 */
- 	__u64	__spare3[9];	/* Spare space for future expansion */
-+
- 	/* 0x100 */
- };
- 
-@@ -164,6 +214,7 @@ struct statx {
- #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
- #define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
- #define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
-+#define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
-index 6e6907e63bfc2b4d..a15ac2fa4b202fa0 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/fcntl.h
-@@ -155,4 +155,8 @@
- #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
- #define AT_HANDLE_CONNECTABLE	0x002	/* Request a connectable file handle */
- 
-+/* Flags for execveat2(2). */
-+#define AT_EXECVE_CHECK		0x10000	/* Only perform a check if execution
-+					   would be allowed. */
-+
- #endif /* _UAPI_LINUX_FCNTL_H */
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/fs.h b/tools/perf/trace/beauty/include/uapi/linux/fs.h
-index 7539717707337a8c..e762e1af650c4bf0 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/fs.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/fs.h
-@@ -40,6 +40,15 @@
- #define BLOCK_SIZE_BITS 10
- #define BLOCK_SIZE (1<<BLOCK_SIZE_BITS)
- 
-+/* flags for integrity meta */
-+#define IO_INTEGRITY_CHK_GUARD		(1U << 0) /* enforce guard check */
-+#define IO_INTEGRITY_CHK_REFTAG		(1U << 1) /* enforce ref check */
-+#define IO_INTEGRITY_CHK_APPTAG		(1U << 2) /* enforce app check */
-+
-+#define IO_INTEGRITY_VALID_FLAGS (IO_INTEGRITY_CHK_GUARD | \
-+				  IO_INTEGRITY_CHK_REFTAG | \
-+				  IO_INTEGRITY_CHK_APPTAG)
-+
- #define SEEK_SET	0	/* seek relative to beginning of file */
- #define SEEK_CUR	1	/* seek relative to current file position */
- #define SEEK_END	2	/* seek relative to end of file */
-@@ -203,10 +212,8 @@ struct fsxattr {
- #define BLKROTATIONAL _IO(0x12,126)
- #define BLKZEROOUT _IO(0x12,127)
- #define BLKGETDISKSEQ _IOR(0x12,128,__u64)
--/*
-- * A jump here: 130-136 are reserved for zoned block devices
-- * (see uapi/linux/blkzoned.h)
-- */
-+/* 130-136 are used by zoned block device ioctls (uapi/linux/blkzoned.h) */
-+/* 137-141 are used by blk-crypto ioctls (uapi/linux/blk-crypto.h) */
- 
- #define BMAP_IOCTL 1		/* obsolete - kept for compatibility */
- #define FIBMAP	   _IO(0x00,1)	/* bmap access */
-@@ -332,9 +339,13 @@ typedef int __bitwise __kernel_rwf_t;
- /* Atomic Write */
- #define RWF_ATOMIC	((__force __kernel_rwf_t)0x00000040)
- 
-+/* buffered IO that drops the cache after reading or writing data */
-+#define RWF_DONTCACHE	((__force __kernel_rwf_t)0x00000080)
-+
- /* mask of flags supported by the kernel */
- #define RWF_SUPPORTED	(RWF_HIPRI | RWF_DSYNC | RWF_SYNC | RWF_NOWAIT |\
--			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC)
-+			 RWF_APPEND | RWF_NOAPPEND | RWF_ATOMIC |\
-+			 RWF_DONTCACHE)
- 
- #define PROCFS_IOCTL_MAGIC 'f'
- 
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/mount.h b/tools/perf/trace/beauty/include/uapi/linux/mount.h
-index c07008816acae89c..7fa67c2031a5db52 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/mount.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/mount.h
-@@ -179,7 +179,12 @@ struct statmount {
- 	__u32 opt_array;	/* [str] Array of nul terminated fs options */
- 	__u32 opt_sec_num;	/* Number of security options */
- 	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
--	__u64 __spare2[46];
-+	__u64 supported_mask;	/* Mask flags that this kernel supports */
-+	__u32 mnt_uidmap_num;	/* Number of uid mappings */
-+	__u32 mnt_uidmap;	/* [str] Array of uid mappings (as seen from callers namespace) */
-+	__u32 mnt_gidmap_num;	/* Number of gid mappings */
-+	__u32 mnt_gidmap;	/* [str] Array of gid mappings (as seen from callers namespace) */
-+	__u64 __spare2[43];
- 	char str[];		/* Variable size part containing strings */
- };
- 
-@@ -217,6 +222,9 @@ struct mnt_id_req {
- #define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
- #define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
- #define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
-+#define STATMOUNT_SUPPORTED_MASK	0x00001000U	/* Want/got supported mask flags */
-+#define STATMOUNT_MNT_UIDMAP		0x00002000U	/* Want/got uidmap... */
-+#define STATMOUNT_MNT_GIDMAP		0x00004000U	/* Want/got gidmap... */
- 
- /*
-  * Special @mnt_id values that can be passed to listmount
-diff --git a/tools/perf/trace/beauty/include/uapi/linux/stat.h b/tools/perf/trace/beauty/include/uapi/linux/stat.h
-index 887a2528644168a3..f78ee3670dd5d7c8 100644
---- a/tools/perf/trace/beauty/include/uapi/linux/stat.h
-+++ b/tools/perf/trace/beauty/include/uapi/linux/stat.h
-@@ -98,43 +98,93 @@ struct statx_timestamp {
-  */
- struct statx {
- 	/* 0x00 */
--	__u32	stx_mask;	/* What results were written [uncond] */
--	__u32	stx_blksize;	/* Preferred general I/O size [uncond] */
--	__u64	stx_attributes;	/* Flags conveying information about the file [uncond] */
-+	/* What results were written [uncond] */
-+	__u32	stx_mask;
-+
-+	/* Preferred general I/O size [uncond] */
-+	__u32	stx_blksize;
-+
-+	/* Flags conveying information about the file [uncond] */
-+	__u64	stx_attributes;
-+
- 	/* 0x10 */
--	__u32	stx_nlink;	/* Number of hard links */
--	__u32	stx_uid;	/* User ID of owner */
--	__u32	stx_gid;	/* Group ID of owner */
--	__u16	stx_mode;	/* File mode */
-+	/* Number of hard links */
-+	__u32	stx_nlink;
-+
-+	/* User ID of owner */
-+	__u32	stx_uid;
-+
-+	/* Group ID of owner */
-+	__u32	stx_gid;
-+
-+	/* File mode */
-+	__u16	stx_mode;
- 	__u16	__spare0[1];
-+
- 	/* 0x20 */
--	__u64	stx_ino;	/* Inode number */
--	__u64	stx_size;	/* File size */
--	__u64	stx_blocks;	/* Number of 512-byte blocks allocated */
--	__u64	stx_attributes_mask; /* Mask to show what's supported in stx_attributes */
-+	/* Inode number */
-+	__u64	stx_ino;
-+
-+	/* File size */
-+	__u64	stx_size;
-+
-+	/* Number of 512-byte blocks allocated */
-+	__u64	stx_blocks;
-+
-+	/* Mask to show what's supported in stx_attributes */
-+	__u64	stx_attributes_mask;
-+
- 	/* 0x40 */
--	struct statx_timestamp	stx_atime;	/* Last access time */
--	struct statx_timestamp	stx_btime;	/* File creation time */
--	struct statx_timestamp	stx_ctime;	/* Last attribute change time */
--	struct statx_timestamp	stx_mtime;	/* Last data modification time */
-+	/* Last access time */
-+	struct statx_timestamp	stx_atime;
-+
-+	/* File creation time */
-+	struct statx_timestamp	stx_btime;
-+
-+	/* Last attribute change time */
-+	struct statx_timestamp	stx_ctime;
-+
-+	/* Last data modification time */
-+	struct statx_timestamp	stx_mtime;
-+
- 	/* 0x80 */
--	__u32	stx_rdev_major;	/* Device ID of special file [if bdev/cdev] */
-+	/* Device ID of special file [if bdev/cdev] */
-+	__u32	stx_rdev_major;
- 	__u32	stx_rdev_minor;
--	__u32	stx_dev_major;	/* ID of device containing file [uncond] */
-+
-+	/* ID of device containing file [uncond] */
-+	__u32	stx_dev_major;
- 	__u32	stx_dev_minor;
-+
- 	/* 0x90 */
- 	__u64	stx_mnt_id;
--	__u32	stx_dio_mem_align;	/* Memory buffer alignment for direct I/O */
--	__u32	stx_dio_offset_align;	/* File offset alignment for direct I/O */
-+
-+	/* Memory buffer alignment for direct I/O */
-+	__u32	stx_dio_mem_align;
-+
-+	/* File offset alignment for direct I/O */
-+	__u32	stx_dio_offset_align;
-+
- 	/* 0xa0 */
--	__u64	stx_subvol;	/* Subvolume identifier */
--	__u32	stx_atomic_write_unit_min;	/* Min atomic write unit in bytes */
--	__u32	stx_atomic_write_unit_max;	/* Max atomic write unit in bytes */
-+	/* Subvolume identifier */
-+	__u64	stx_subvol;
-+
-+	/* Min atomic write unit in bytes */
-+	__u32	stx_atomic_write_unit_min;
-+
-+	/* Max atomic write unit in bytes */
-+	__u32	stx_atomic_write_unit_max;
-+
- 	/* 0xb0 */
--	__u32   stx_atomic_write_segments_max;	/* Max atomic write segment count */
--	__u32   __spare1[1];
-+	/* Max atomic write segment count */
-+	__u32   stx_atomic_write_segments_max;
-+
-+	/* File offset alignment for direct I/O reads */
-+	__u32	stx_dio_read_offset_align;
-+
- 	/* 0xb8 */
- 	__u64	__spare3[9];	/* Spare space for future expansion */
-+
- 	/* 0x100 */
- };
- 
-@@ -164,6 +214,7 @@ struct statx {
- #define STATX_MNT_ID_UNIQUE	0x00004000U	/* Want/got extended stx_mount_id */
- #define STATX_SUBVOL		0x00008000U	/* Want/got stx_subvol */
- #define STATX_WRITE_ATOMIC	0x00010000U	/* Want/got atomic_write_* fields */
-+#define STATX_DIO_READ_ALIGN	0x00020000U	/* Want/got dio read alignment info */
- 
- #define STATX__RESERVED		0x80000000U	/* Reserved for future struct statx expansion */
- 
--- 
-2.49.0.504.g3bcea36a83-goog
+the case.
+
+
+AFAICT what's needed is a way to synchronize umount with the lockless path
+
+walk. Now umount detaches the mounts concerned, calls the rcu synchronize
+
+(essentially sleeps) to ensure that any lockless path walks see the umount
+
+before completing. But that rcu sync. is, as we can see, really wasteful so
+
+we do need to find a viable way to synchronize this.
+
+
+Strictly speaking the synchronization problem exists for normal and detached
+
+umounts but if we can find a sound solution for detached mounts perhaps 
+we can
+
+extend later (but now that seems like a stretch) ...
+
+
+I'm not sure why, perhaps it's just me, I don't know, but with this we don't
+
+seem to be working well together to find a solution, I hope we can 
+change that
+
+this time around.
+
+
+I was thinking of using a completion for this synchronization but even that
+
+would be messy because of possible multiple processes doing walks at the 
+time
+
+which doesn't lend cleanly to using a completion.
+
+
+Do you have any ideas on how this could be done yourself?
+
+
+Ian
+
+>
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index e5b0b920dd97..25599428706c 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -82,8 +82,9 @@ static struct hlist_head *mount_hashtable __ro_after_init;
+>   static struct hlist_head *mountpoint_hashtable __ro_after_init;
+>   static struct kmem_cache *mnt_cache __ro_after_init;
+>   static DECLARE_RWSEM(namespace_sem);
+> -static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
+> -static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+> +static bool unmounted_lazily;          /* protected by namespace_sem */
+> +static HLIST_HEAD(unmounted);          /* protected by namespace_sem */
+> +static LIST_HEAD(ex_mountpoints);      /* protected by namespace_sem */
+>   static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+>
+>   #ifdef CONFIG_FSNOTIFY
+> @@ -1807,17 +1808,18 @@ static void free_mounts(struct hlist_head *mount_list)
+>
+>   static void defer_free_mounts(struct work_struct *work)
+>   {
+> -       struct deferred_free_mounts *d = container_of(
+> -               to_rcu_work(work), struct deferred_free_mounts, rwork);
+> +       struct deferred_free_mounts *d;
+>
+> +       d = container_of(to_rcu_work(work), struct deferred_free_mounts, rwork);
+>          free_mounts(&d->release_list);
+>          kfree(d);
+>   }
+>
+> -static void __namespace_unlock(bool lazy)
+> +static void namespace_unlock(void)
+>   {
+>          HLIST_HEAD(head);
+>          LIST_HEAD(list);
+> +       bool defer = unmounted_lazily;
+>
+>          hlist_move_list(&unmounted, &head);
+>          list_splice_init(&ex_mountpoints, &list);
+> @@ -1840,29 +1842,21 @@ static void __namespace_unlock(bool lazy)
+>          if (likely(hlist_empty(&head)))
+>                  return;
+>
+> -       if (lazy) {
+> -               struct deferred_free_mounts *d =
+> -                       kmalloc(sizeof(*d), GFP_KERNEL);
+> +       if (defer) {
+> +               struct deferred_free_mounts *d;
+>
+> -               if (unlikely(!d))
+> -                       goto out;
+> -
+> -               hlist_move_list(&head, &d->release_list);
+> -               INIT_RCU_WORK(&d->rwork, defer_free_mounts);
+> -               queue_rcu_work(system_wq, &d->rwork);
+> -               return;
+> +               d = kmalloc(sizeof(struct deferred_free_mounts), GFP_KERNEL);
+> +               if (d) {
+> +                       hlist_move_list(&head, &d->release_list);
+> +                       INIT_RCU_WORK(&d->rwork, defer_free_mounts);
+> +                       queue_rcu_work(system_wq, &d->rwork);
+> +                       return;
+> +               }
+>          }
+> -
+> -out:
+>          synchronize_rcu_expedited();
+>          free_mounts(&head);
+>   }
+>
+> -static inline void namespace_unlock(void)
+> -{
+> -       __namespace_unlock(false);
+> -}
+> -
+>   static inline void namespace_lock(void)
+>   {
+>          down_write(&namespace_sem);
+> @@ -2094,7 +2088,7 @@ static int do_umount(struct mount *mnt, int flags)
+>          }
+>   out:
+>          unlock_mount_hash();
+> -       __namespace_unlock(flags & MNT_DETACH);
+> +       namespace_unlock();
+>          return retval;
+>   }
+>
+>
+>> v4:
+>> - Use queue_rcu_work() to defer free_mounts() for lazy umounts
+>> - Drop lazy_unlock global and refactor using a helper
+>> v3: https://lore.kernel.org/all/20240626201129.272750-2-lkarpins@redhat.com/
+>> - Removed unneeded code for lazy umount case.
+>> - Don't block within interrupt context.
+>> v2: https://lore.kernel.org/all/20240426195429.28547-1-lkarpins@redhat.com/
+>> - Only defer releasing umount'ed filesystems for lazy umounts
+>> v1: https://lore.kernel.org/all/20230119205521.497401-1-echanude@redhat.com/
+>>
+>>   fs/namespace.c | 52 +++++++++++++++++++++++++++++++++++++++++++-------
+>>   1 file changed, 45 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/namespace.c b/fs/namespace.c
+>> index 14935a0500a2..e5b0b920dd97 100644
+>> --- a/fs/namespace.c
+>> +++ b/fs/namespace.c
+>> @@ -45,6 +45,11 @@ static unsigned int m_hash_shift __ro_after_init;
+>>   static unsigned int mp_hash_mask __ro_after_init;
+>>   static unsigned int mp_hash_shift __ro_after_init;
+>>   
+>> +struct deferred_free_mounts {
+>> +	struct rcu_work rwork;
+>> +	struct hlist_head release_list;
+>> +};
+>> +
+>>   static __initdata unsigned long mhash_entries;
+>>   static int __init set_mhash_entries(char *str)
+>>   {
+>> @@ -1789,11 +1794,29 @@ static bool need_notify_mnt_list(void)
+>>   }
+>>   #endif
+>>   
+>> -static void namespace_unlock(void)
+>> +static void free_mounts(struct hlist_head *mount_list)
+>>   {
+>> -	struct hlist_head head;
+>>   	struct hlist_node *p;
+>>   	struct mount *m;
+>> +
+>> +	hlist_for_each_entry_safe(m, p, mount_list, mnt_umount) {
+>> +		hlist_del(&m->mnt_umount);
+>> +		mntput(&m->mnt);
+>> +	}
+>> +}
+>> +
+>> +static void defer_free_mounts(struct work_struct *work)
+>> +{
+>> +	struct deferred_free_mounts *d = container_of(
+>> +		to_rcu_work(work), struct deferred_free_mounts, rwork);
+>> +
+>> +	free_mounts(&d->release_list);
+>> +	kfree(d);
+>> +}
+>> +
+>> +static void __namespace_unlock(bool lazy)
+>> +{
+>> +	HLIST_HEAD(head);
+>>   	LIST_HEAD(list);
+>>   
+>>   	hlist_move_list(&unmounted, &head);
+>> @@ -1817,12 +1840,27 @@ static void namespace_unlock(void)
+>>   	if (likely(hlist_empty(&head)))
+>>   		return;
+>>   
+>> -	synchronize_rcu_expedited();
+>> +	if (lazy) {
+>> +		struct deferred_free_mounts *d =
+>> +			kmalloc(sizeof(*d), GFP_KERNEL);
+>>   
+>> -	hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>> -		hlist_del(&m->mnt_umount);
+>> -		mntput(&m->mnt);
+>> +		if (unlikely(!d))
+>> +			goto out;
+>> +
+>> +		hlist_move_list(&head, &d->release_list);
+>> +		INIT_RCU_WORK(&d->rwork, defer_free_mounts);
+>> +		queue_rcu_work(system_wq, &d->rwork);
+>> +		return;
+>>   	}
+>> +
+>> +out:
+>> +	synchronize_rcu_expedited();
+>> +	free_mounts(&head);
+>> +}
+>> +
+>> +static inline void namespace_unlock(void)
+>> +{
+>> +	__namespace_unlock(false);
+>>   }
+>>   
+>>   static inline void namespace_lock(void)
+>> @@ -2056,7 +2094,7 @@ static int do_umount(struct mount *mnt, int flags)
+>>   	}
+>>   out:
+>>   	unlock_mount_hash();
+>> -	namespace_unlock();
+>> +	__namespace_unlock(flags & MNT_DETACH);
+>>   	return retval;
+>>   }
+>>   
+>> -- 
+>> 2.49.0
+>>
 
 
