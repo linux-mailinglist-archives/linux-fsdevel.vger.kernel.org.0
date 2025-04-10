@@ -1,78 +1,105 @@
-Return-Path: <linux-fsdevel+bounces-46203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E014A8447B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 15:18:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13F7CA8450E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 15:41:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 465DB4E24E0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 13:13:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5290B1890D1C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 13:37:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700552857E3;
-	Thu, 10 Apr 2025 13:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF4F28A41A;
+	Thu, 10 Apr 2025 13:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="X8K9YRJl"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lnFwWNrJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2543pVU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lnFwWNrJ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="m2543pVU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7A7528A3F9
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 13:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB9E28A3F2
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 13:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744290660; cv=none; b=mn5i4e8quW0wsKqZsQMbLd3VZnvXYY47x/09PBJUwMG0Qi2q1OaRrmHNiG2itqKrwkvdZN67JYhglQQzrZrxLj9PoH2+jRw2H9+ygGRFg8TEQI04ssJwbJa/mR9hZk3vSsf4+sVuYKHqcOuPLCnFdcAZSlfepW1IIWVgtCjGkWo=
+	t=1744292195; cv=none; b=UOoGJZoYmWXpO+sKlXjroe1MVGd2JZB68lK1QS4Zmb/k7rvVDOxdTu6is7cvny6XV1mNzQtQi0Cc7FSBEX7BlUgX9jjy2UmQcNwIjAYl2etZ7s4WO0mr8tkb9UzDgk3ehNAB69ZGzQxIVlqXyy2CT3vnfEomyn3sVWa2R0lvkSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744290660; c=relaxed/simple;
-	bh=8rU9DPY5jhcNoVSZ4KXashjSIT2CntjHbzeh8vcOQP0=;
+	s=arc-20240116; t=1744292195; c=relaxed/simple;
+	bh=G3JCsHTEIDMSrzwxuJNVbrGum619sm/V+oMoFrGL6q4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HbBlPB+XwIWwFkscUk+Ua4d+3V2zwETtEUxgZy1djgt7TGVn3DOQ33WCZmsoi/XzowR6ozgcAdxBXgQQ1OVfFbjvhOSybGjTocza8XpFVJ1FbiCumZoZUKcOeCD43yvHZ0PYaVOsV8DojGdwv1UnTi3sD4P5yxowGSsdtBERF+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=X8K9YRJl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744290657;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ABA2PhWP8M0Fi1ZJgXN0xWZdkHEUmH4kzeL6fYLfoOU=;
-	b=X8K9YRJlRi9gCd/bJLMef81mQpEzp1qkDu2SEZuiOb7cjlBk4s5XGglxd/voHxwaoJcMa/
-	Z/VgneBMzNV88NknHp5hwHCeci2dKqUcMQX5nS+8bEMhcUswxk5zzVsiY5k3DEYvgmEx6V
-	VaJS/OAdlbLPuBlW+iIxpSityhF7GLg=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-620-gOdnlTUuNkCU2g29Aj_LqA-1; Thu,
- 10 Apr 2025 09:10:53 -0400
-X-MC-Unique: gOdnlTUuNkCU2g29Aj_LqA-1
-X-Mimecast-MFC-AGG-ID: gOdnlTUuNkCU2g29Aj_LqA_1744290652
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	 Content-Type:Content-Disposition:In-Reply-To; b=VmIK4vnjJSm92gch68g9iRZoI1+krUR2GyrL4nBhy4XedbLbtR0G+7kOw3SAilSdLpr/rxQY0OQFg+ufTQvPowzDfcQ4jIK4lDRRg0Nf4sdpJzzK9YOJ/EFyDv6w2rZj2yQsTLREd5tVaYVqUCLbx4HpLmOqyMKb0Zg5aPTwP/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lnFwWNrJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2543pVU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lnFwWNrJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=m2543pVU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CE92C19030B5;
-	Thu, 10 Apr 2025 13:10:48 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.54])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8B84E1954B04;
-	Thu, 10 Apr 2025 13:10:45 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu, 10 Apr 2025 15:10:13 +0200 (CEST)
-Date: Thu, 10 Apr 2025 15:10:09 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org,
-	Peter Ziljstra <peterz@infradead.org>
-Subject: Re: [RFC PATCH] pidfs: ensure consistent ENOENT/ESRCH reporting
-Message-ID: <20250410131008.GB15280@redhat.com>
-References: <20250409-sesshaft-absurd-35d97607142c@brauner>
- <20250409-rohstoff-ungnade-d1afa571f32c@brauner>
- <20250409184040.GF32748@redhat.com>
- <20250410101801.GA15280@redhat.com>
- <20250410-barhocker-weinhandel-8ed2f619899b@brauner>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id BB3891F395;
+	Thu, 10 Apr 2025 13:36:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744292190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6X3ZizTCtne9HGkeErFZvJrpS/23t7UWALSWxnxHkPg=;
+	b=lnFwWNrJbWGFz+wygGgWYJe6+phUedIcMwJZN8NrkUzaOvYvwvOIX4eF8IqbUG2x5a6EdL
+	r15/fdvxBplYKXxhaxA388elj4zmLXci1rG6PcJHrtWvfxuY9y6dNAkT+ziJbHjkDCDjFQ
+	rwyBpSBZS1/a8Ne/6pug3GxqSIsC498=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744292190;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6X3ZizTCtne9HGkeErFZvJrpS/23t7UWALSWxnxHkPg=;
+	b=m2543pVUozaVCe53yZQh25q4eN+MyjMrKJyM2grOmtVY3XaoFEaaOtFXZJPQ/ZOuozIokD
+	flJc+v8dylpROsAQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744292190; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6X3ZizTCtne9HGkeErFZvJrpS/23t7UWALSWxnxHkPg=;
+	b=lnFwWNrJbWGFz+wygGgWYJe6+phUedIcMwJZN8NrkUzaOvYvwvOIX4eF8IqbUG2x5a6EdL
+	r15/fdvxBplYKXxhaxA388elj4zmLXci1rG6PcJHrtWvfxuY9y6dNAkT+ziJbHjkDCDjFQ
+	rwyBpSBZS1/a8Ne/6pug3GxqSIsC498=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744292190;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6X3ZizTCtne9HGkeErFZvJrpS/23t7UWALSWxnxHkPg=;
+	b=m2543pVUozaVCe53yZQh25q4eN+MyjMrKJyM2grOmtVY3XaoFEaaOtFXZJPQ/ZOuozIokD
+	flJc+v8dylpROsAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 974B8132D8;
+	Thu, 10 Apr 2025 13:36:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id U6fmJF7J92fkagAAD6G6ig
+	(envelope-from <jack@suse.cz>); Thu, 10 Apr 2025 13:36:30 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E23B9A0910; Thu, 10 Apr 2025 15:36:25 +0200 (CEST)
+Date: Thu, 10 Apr 2025 15:36:25 +0200
+From: Jan Kara <jack@suse.cz>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: brauner@kernel.org, jack@suse.cz, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, riel@surriel.com, dave@stgolabs.net, 
+	willy@infradead.org, hannes@cmpxchg.org, oliver.sang@intel.com, david@redhat.com, 
+	axboe@kernel.dk, hare@suse.de, david@fromorbit.com, djwong@kernel.org, 
+	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-mm@kvack.org, gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com
+Subject: Re: [PATCH v2 6/8] fs/ext4: use sleeping version of
+ __find_get_block()
+Message-ID: <g2xj2du3t226jve57mw4wiig4zpqqsvomtbzeu4wk37dfqbp47@3l66fjg736yy>
+References: <20250410014945.2140781-1-mcgrof@kernel.org>
+ <20250410014945.2140781-7-mcgrof@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,100 +108,104 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250410-barhocker-weinhandel-8ed2f619899b@brauner>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20250410014945.2140781-7-mcgrof@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TAGGED_RCPT(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,suse.cz,mit.edu,dilger.ca,vger.kernel.org,surriel.com,stgolabs.net,infradead.org,cmpxchg.org,intel.com,redhat.com,kernel.dk,suse.de,fromorbit.com,gmail.com,kvack.org,samsung.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
-On 04/10, Christian Brauner wrote:
->
-> On Thu, Apr 10, 2025 at 12:18:01PM +0200, Oleg Nesterov wrote:
-> > On 04/09, Oleg Nesterov wrote:
-> > >
-> > > On 04/09, Christian Brauner wrote:
-> > > >
-> > > > The seqcounter might be
-> > > > useful independent of pidfs.
-> > >
-> > > Are you sure? ;) to me the new pid->pid_seq needs more justification...
->
-> Yeah, pretty much. I'd make use of this in other cases where we need to
-> detect concurrent changes to struct pid without having to take any
-> locks. Multi-threaded exec in de_exec() comes to mind as well.
+On Wed 09-04-25 18:49:43, Luis Chamberlain wrote:
+> From: Davidlohr Bueso <dave@stgolabs.net>
+> 
+> Trivially introduce the wrapper and enable ext4_free_blocks() to use
+> it, which has a cond_resched to begin with. Convert to the new nonatomic
+> flavor to benefit from potential performance benefits and adapt in the
+> future vs migration such that semantics are kept.
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  fs/ext4/inode.c             | 2 ++
+>  fs/ext4/mballoc.c           | 3 ++-
+>  include/linux/buffer_head.h | 6 ++++++
+>  3 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 1dc09ed5d403..b7acb5d3adcb 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -860,6 +860,8 @@ struct buffer_head *ext4_getblk(handle_t *handle, struct inode *inode,
+>  		return sb_find_get_block(inode->i_sb, map.m_pblk);
+>  
+>  	/*
+> +	 * Potential TODO: use sb_find_get_block_nonatomic() instead.
+> +	 *
 
-Perhaps you are right, but so far I am still not sure it makes sense.
-And we can always add it later if we have another (more convincing)
-use-case.
+Yes, please. Since we are behind nowait check, we are fine with blocking...
 
-> > To remind, detach_pid(pid, PIDTYPE_PID) does wake_up_all(&pid->wait_pidfd) and
-> > takes pid->wait_pidfd->lock.
-> >
-> > So if pid_has_task(PIDTYPE_PID) succeeds, __unhash_process() -> detach_pid(TGID)
-> > is not possible until we drop pid->wait_pidfd->lock.
-> >
-> > If detach_pid(PIDTYPE_PID) was already called and have passed wake_up_all(),
-> > pid_has_task(PIDTYPE_PID) can't succeed.
->
-> I know. I was trying to avoid having to take the lock and just make this
-> lockless. But if you think we should use this lock here instead I'm
-> willing to do this. I just find the sequence counter more elegant than
-> the spin_lock_irq().
+								Honza
 
-This is subjective, and quite possibly I am wrong. But yes, I'd prefer
-to (ab)use pid->wait_pidfd->lock in pidfd_prepare() for now and not
-penalize __unhash_process(). Simply because this is simpler.
+>  	 * Since bh could introduce extra ref count such as referred by
+>  	 * journal_head etc. Try to avoid using __GFP_MOVABLE here
+>  	 * as it may fail the migration when journal_head remains.
+> diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> index 0d523e9fb3d5..6f4265b21e19 100644
+> --- a/fs/ext4/mballoc.c
+> +++ b/fs/ext4/mballoc.c
+> @@ -6644,7 +6644,8 @@ void ext4_free_blocks(handle_t *handle, struct inode *inode,
+>  		for (i = 0; i < count; i++) {
+>  			cond_resched();
+>  			if (is_metadata)
+> -				bh = sb_find_get_block(inode->i_sb, block + i);
+> +				bh = sb_find_get_block_nonatomic(inode->i_sb,
+> +								 block + i);
+>  			ext4_forget(handle, is_metadata, inode, bh, block + i);
+>  		}
+>  	}
+> diff --git a/include/linux/buffer_head.h b/include/linux/buffer_head.h
+> index 2b5458517def..8db10ca288fc 100644
+> --- a/include/linux/buffer_head.h
+> +++ b/include/linux/buffer_head.h
+> @@ -399,6 +399,12 @@ sb_find_get_block(struct super_block *sb, sector_t block)
+>  	return __find_get_block(sb->s_bdev, block, sb->s_blocksize);
+>  }
+>  
+> +static inline struct buffer_head *
+> +sb_find_get_block_nonatomic(struct super_block *sb, sector_t block)
+> +{
+> +	return __find_get_block_nonatomic(sb->s_bdev, block, sb->s_blocksize);
+> +}
+> +
 
-If you really dislike taking wait_pidfd->lock, we can add mb() into
-__unhash_process() or even smp_mb__after_spinlock() into __change_pid(),
-but this will need a lengthy comment...
+This hunk probably belongs to some introductory patch implementing
+nonatomic helpers.
 
-
-
-As for your patch... it doesn't apply on top of 3/4, but I guess it
-is clear what does it do, and (unfortunately ;) it looks correct, so
-I won't insist too much. See a couple of nits below.
-
-> this imho and it would give pidfds a reliable way to detect relevant
-> concurrent changes locklessly without penalizing other critical paths
-> (e.g., under tasklist_lock) in the kernel.
-
-Can't resist... Note that raw_seqcount_begin() in pidfd_prepare() will
-take/drop tasklist_lock if it races with __unhash_process() on PREEMPT_RT.
-Yes, this is unlikely case, but still...
-
-Now. Unless I misread your patch, pidfd_prepare() does "err = 0" only
-once before the main loop. And this is correct. But this means that
-we do not need the do/while loop.
-
-If read_seqcount_retry() returns true, we can safely return -ESRCH. So
-we can do
-
-	seq = raw_seqcount_begin(&pid->pid_seq);
-
-	if (!PIDFD_THREAD && !pid_has_task(PIDTYPE_TGID))
-		err = -ENOENT;
-
-	if (!pid_has_task(PIDTYPE_PID))
-		err = -ESRCH;
-
-	if (read_seqcount_retry(pid->pid_seq, seq))
-		err = -ESRCH;
-
-In fact we don't even need raw_seqcount_begin(), we could use
-raw_seqcount_try_begin().
-
-And why seqcount_rwlock_t? A plain seqcount_t can equally work.
-
-
-And, if we use seqcount_rwlock_t,
-
-	lockdep_assert_held_write(&tasklist_lock);
-	...
-	raw_write_seqcount_begin(pid->pid_seq);
-
-in __unhash_process() looks a bit strange. I'd suggest to use
-write_seqcount_begin() which does seqprop_assert() and kill
-lockdep_assert_held_write().
-
-Oleg.
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
