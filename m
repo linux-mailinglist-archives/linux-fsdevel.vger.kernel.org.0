@@ -1,46 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-46155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD81FA8363F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 04:12:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C268A83700
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 05:05:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1F4F7AA803
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 02:11:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0B718C193D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 03:04:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9C61C3F34;
-	Thu, 10 Apr 2025 02:12:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921B21EB5E6;
+	Thu, 10 Apr 2025 03:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="h/PVKnA/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jw7N23AW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41B9136327
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 02:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2050D1E47C5
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 03:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744251162; cv=none; b=XYAdrgrY6nqfDWWmrZ1DAokWHPyXaQb95YON4CyMBkpCvdQT2lHxcY5zC9Mutv0I6HawDxSzrR1jJrrb4z3yEkFlaY5yUAiPcEekxQdq3begVio7t5MKQdnNdGegCQ/Bp1GFl7zxSzw2VBn9xJ2ilaJ0l5n+7eC+3JKgEgJxg6w=
+	t=1744254283; cv=none; b=hFPUoOWFebhKl2l39dZkY+DrEaQrr6dYSXwpjrvvcJjZYyivM1Lomo1fZTrVlU7J2+yZsXyNnx/oJONLR1d4Mgpr1aEb6Kkdsam+qecdIDY0UqdoB+UfRmpglOXbqCjFdllhV1xCg+2zce3CTqIPDnmtYKs4hw66J3y8dso3xcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744251162; c=relaxed/simple;
-	bh=woxymu49L+x9hlr4JYz5b1TC7G3iW6Pg2Kx2bai92CE=;
+	s=arc-20240116; t=1744254283; c=relaxed/simple;
+	bh=8C/fkUqoj5eMgIps7HpuBxY5cbv9UADCdS5407/vG7o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PLzWOwcF0lTdmWanMAt2/mwpJ1vkpDw3Yy48F0UfbfHjqsOCwS2z2HJOyu6slpNkn/45ytMW5LdB5ECihUWmMCdVHBxu+tA1WBjKRSKcb4Qp5rouNUUmnbqDIK68DddIFdiLqBjoI+9cjlPxTN5VIgKAIUvDSZO1/dz0QeAOi1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=h/PVKnA/; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1744251155; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=R9121b9yjqO2sKle5RkcrFD3eZ/Qsdfxici1u6jpN8k=;
-	b=h/PVKnA/9uap2SKbGY3JE0tIksGJMBRXARVJm2F5tSekJ2q3jdOxQLXI8YCwQer3Umi/o39Y6m+TwNQ0+NjmM4nFax45xsuSSbmpWa9TGEphTaHhAC9fO8kN7kmlTtGVZjb3PE6kHb30UEDWbeT/VkdNKNnI6kGvyfuBDNMVtA4=
-Received: from 30.222.18.156(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WWMTlsK_1744251153 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Thu, 10 Apr 2025 10:12:33 +0800
-Message-ID: <7e9b1a40-4708-42a8-b8fc-44fa50227e5b@linux.alibaba.com>
-Date: Thu, 10 Apr 2025 10:12:32 +0800
+	 In-Reply-To:Content-Type; b=MXqTHDLsBytiQZeZa/fw/EdI4HNy9TwwOZ4CShBaob17ldXwZZHu+7pCcuz0fFaQEQRgbeZ0wjhFid0x2Ynd8BU1liVk1QaHMMmG2F4u+b7mAh3Ahl8FRSLaMPy2zSbiva5GG3Qp78pELZ0kbkXHvD86lwfEaMJz9DzEjsyiHI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jw7N23AW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744254280;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=8C/fkUqoj5eMgIps7HpuBxY5cbv9UADCdS5407/vG7o=;
+	b=Jw7N23AWeJPzISsdi0Me1lPQ8cqGwD8h+b8iz4tjN6R2TqZQQsSm2c2XtM7IwEGoRECzxx
+	9wyF2ik1OpVIi40BqMZpgoFbBPcWhNYtQGJOIC/yHVtbMUWFiCQ/UhxsEgI31694ffpvxC
+	ZVx9LFv+wsVDSTuvulF8pzhgVQiXEj8=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-263-gDeohNbkPVuFE02DKEYzQA-1; Wed, 09 Apr 2025 23:04:37 -0400
+X-MC-Unique: gDeohNbkPVuFE02DKEYzQA-1
+X-Mimecast-MFC-AGG-ID: gDeohNbkPVuFE02DKEYzQA_1744254274
+Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-739764217ecso353687b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Apr 2025 20:04:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744254274; x=1744859074;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8C/fkUqoj5eMgIps7HpuBxY5cbv9UADCdS5407/vG7o=;
+        b=BaDZxSvT6CmiuDlBbfjtoqma7rRRpdrAaBz26L/95cl5WTeg8uueGqhu2AdQ5tr+hf
+         8HJBeRejizdkk/diY54BrLBQSqbxuR+friZ6c/Fpvly0dpGPJI80+LFoPmVJNlW4aNDf
+         NdT3ezpnC7K9J7CyBnQP1XAeZM7AAMPe89mE3oSvtZt0NjeYbNEZfapKilXnhBthNUyB
+         dntpy9DOBJ3KCD2qtCq4/CFTtl0dpBvGg3w5/mIHShZG+MLZIYdIPIsxWf8n7v2r2WNA
+         769S3MzP4LbIwuz77+jIPeZTQfm10F63SyBE9Kk4gjxqNsKLjUemPjRXek7R+hceXRLi
+         wWYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjx2EcTVuRXqa72pkO5QeaIwFdGmYowC3qkJcymaKRs2QDtLy1Pecnk/lqop5epXI1RNuPEu4/zZTbXB05@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjTh1Y+RdIjUqfLBXByRN3Dbw50mzapLh8N3IeqZ7tuyD1qC0b
+	HHo6l1QELfBlVxXNn+XJa4Afs2D51XfRWF9C0kZcskk1DzpJ6UO+xprA3kUHCC4IiDUrOyb3adn
+	mZJJrUeCbewUPSbwY1Je64jvtP4787e/tXDuquvh42A+bFYVWyujCF+NWQlUMBsk=
+X-Gm-Gg: ASbGncvuISULL5+ZjFWNfDGw8UuEwx2r3pneIG4pLw3A6PKxXFVbICa2fMY+QDnJUip
+	mXsIJVXFI2pqVR53M20SlqXCISozrSBgBtv1lZun19i7usyfU2fiLhx4NrI5UZ04ONyOQz2Y9Ib
+	7yibWOKgQ+Sv5uCqfRuaqtXqWeiTJkZHdL7CQ1sCMmSQ+j2W1t2uXOBGrMgD5PwDqR3crwtD1tb
+	Jzq/m3C9hykzKOLn5KFFFTQYoVVY7GKSV5xQ0TVWTOElTc3Dabt+UYUgsixD83fOTDo8Jo+EeJL
+	tnUlPDsPNv1CpXDqUcWem2woR7Ps1UQ9GM8GjGcLGeqMS/rE2bgatIvmM8oUPRTc
+X-Received: by 2002:a05:6a00:114d:b0:736:b400:b58f with SMTP id d2e1a72fcca58-73bbf125a94mr2143159b3a.0.1744254273676;
+        Wed, 09 Apr 2025 20:04:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIcjMBnXB19y8IvPWaXHEllVckfxRhaGj1B5syeSVTKLPW/Vw1joOzg641RH+nPOj69ZXtNQ==
+X-Received: by 2002:a05:6a00:114d:b0:736:b400:b58f with SMTP id d2e1a72fcca58-73bbf125a94mr2143128b3a.0.1744254273301;
+        Wed, 09 Apr 2025 20:04:33 -0700 (PDT)
+Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net. [159.196.82.144])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bb1e38404sm2144369b3a.113.2025.04.09.20.04.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Apr 2025 20:04:32 -0700 (PDT)
+Message-ID: <82e20f9a-1193-44d8-8e7d-7fc7f450e5b1@redhat.com>
+Date: Thu, 10 Apr 2025 11:04:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,253 +89,145 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, akpm@linux-foundation.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, shakeel.butt@linux.dev,
- david@redhat.com, bernd.schubert@fastmail.fm, ziy@nvidia.com,
- jlayton@kernel.org, kernel-team@meta.com,
- Miklos Szeredi <mszeredi@redhat.com>
-References: <20250404181443.1363005-1-joannelkoong@gmail.com>
- <20250404181443.1363005-4-joannelkoong@gmail.com>
- <db4f1411-f6de-4206-a6a3-5c9cf6b6d59d@linux.alibaba.com>
- <CAJnrk1bTGFXy+ZTchC7p4OYUnbfKZ7TtVkCsrsv87Mg1r8KkGA@mail.gmail.com>
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Eric Chanudet <echanude@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, Alexander Larsson <alexl@redhat.com>,
+ Lucas Karpinski <lkarpins@redhat.com>
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <20250409-egalisieren-halbbitter-23bc252d3a38@brauner>
+ <20250409131444.9K2lwziT@linutronix.de>
+ <4qyflnhrml2gvnvtguj5ee7ewrz3ejhgdb2lfihifzjscc5orh@6ah6qxppgk5n>
+ <20250409142510.PIlMaZhX@linutronix.de>
+ <20250409-beulen-pumpwerk-43fd29a6801e@brauner>
 Content-Language: en-US
-From: Jingbo Xu <jefflexu@linux.alibaba.com>
-In-Reply-To: <CAJnrk1bTGFXy+ZTchC7p4OYUnbfKZ7TtVkCsrsv87Mg1r8KkGA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Ian Kent <ikent@redhat.com>
+Autocrypt: addr=ikent@redhat.com; keydata=
+ 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
+In-Reply-To: <20250409-beulen-pumpwerk-43fd29a6801e@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-
-On 4/10/25 7:47 AM, Joanne Koong wrote:
->   On Tue, Apr 8, 2025 at 7:43 PM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+On 10/4/25 00:04, Christian Brauner wrote:
+> On Wed, Apr 09, 2025 at 04:25:10PM +0200, Sebastian Andrzej Siewior wrote:
+>> On 2025-04-09 16:02:29 [+0200], Mateusz Guzik wrote:
+>>> On Wed, Apr 09, 2025 at 03:14:44PM +0200, Sebastian Andrzej Siewior wrote:
+>>>> One question: Do we need this lazy/ MNT_DETACH case? Couldn't we handle
+>>>> them all via queue_rcu_work()?
+>>>> If so, couldn't we have make deferred_free_mounts global and have two
+>>>> release_list, say release_list and release_list_next_gp? The first one
+>>>> will be used if queue_rcu_work() returns true, otherwise the second.
+>>>> Then once defer_free_mounts() is done and release_list_next_gp not
+>>>> empty, it would move release_list_next_gp -> release_list and invoke
+>>>> queue_rcu_work().
+>>>> This would avoid the kmalloc, synchronize_rcu_expedited() and the
+>>>> special-sauce.
+>>>>
+>>> To my understanding it was preferred for non-lazy unmount consumers to
+>>> wait until the mntput before returning.
+>>>
+>>> That aside if I understood your approach it would de facto serialize all
+>>> of these?
+>>>
+>>> As in with the posted patches you can have different worker threads
+>>> progress in parallel as they all get a private list to iterate.
+>>>
+>>> With your proposal only one can do any work.
+>>>
+>>> One has to assume with sufficient mount/unmount traffic this can
+>>> eventually get into trouble.
+>> Right, it would serialize them within the same worker thread. With one
+>> worker for each put you would schedule multiple worker from the RCU
+>> callback. Given the system_wq you will schedule them all on the CPU
+>> which invokes the RCU callback. This kind of serializes it, too.
 >>
->> Hi Joanne,
->>
->> On 4/5/25 2:14 AM, Joanne Koong wrote:
->>> In the current FUSE writeback design (see commit 3be5a52b30aa
->>> ("fuse: support writable mmap")), a temp page is allocated for every
->>> dirty page to be written back, the contents of the dirty page are copied over
->>> to the temp page, and the temp page gets handed to the server to write back.
->>>
->>> This is done so that writeback may be immediately cleared on the dirty page,
->>> and this in turn is done in order to mitigate the following deadlock scenario
->>> that may arise if reclaim waits on writeback on the dirty page to complete:
->>> * single-threaded FUSE server is in the middle of handling a request
->>>   that needs a memory allocation
->>> * memory allocation triggers direct reclaim
->>> * direct reclaim waits on a folio under writeback
->>> * the FUSE server can't write back the folio since it's stuck in
->>>   direct reclaim
->>>
->>> With a recent change that added AS_WRITEBACK_INDETERMINATE and mitigates
->>> the situations described above, FUSE writeback does not need to use
->>> temp pages if it sets AS_WRITEBACK_INDETERMINATE on its inode mappings.
->>>
->>> This commit sets AS_WRITEBACK_INDETERMINATE on the inode mappings
->>> and removes the temporary pages + extra copying and the internal rb
->>> tree.
->>>
->>> fio benchmarks --
->>> (using averages observed from 10 runs, throwing away outliers)
->>>
->>> Setup:
->>> sudo mount -t tmpfs -o size=30G tmpfs ~/tmp_mount
->>>  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=4 -o source=~/tmp_mount ~/fuse_mount
->>>
->>> fio --name=writeback --ioengine=sync --rw=write --bs={1k,4k,1M} --size=2G
->>> --numjobs=2 --ramp_time=30 --group_reporting=1 --directory=/root/fuse_mount
->>>
->>>         bs =  1k          4k            1M
->>> Before  351 MiB/s     1818 MiB/s     1851 MiB/s
->>> After   341 MiB/s     2246 MiB/s     2685 MiB/s
->>> % diff        -3%          23%         45%
->>>
->>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
->>> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
->>> Acked-by: Miklos Szeredi <mszeredi@redhat.com>
->>
-> 
-> Hi Jingbo,
-> 
-> Thanks for sharing your analysis for this.
-> 
->> Overall this patch LGTM.
->>
->> Apart from that, IMO the fi->writectr and fi->queued_writes mechanism is
->> also unneeded then, at least the DIRECT IO routine (i.e.
-> 
-> I took a look at fi->writectr and fi->queued_writes and my
-> understanding is that we do still need this. For example, for
-> truncates (I'm looking at fuse_do_setattr()), I think we still need to
-> prevent concurrent writeback or else the setattr request and the
-> writeback request could race which would result in a mismatch between
-> the file's reported size and the actual data written to disk.
+>> The mntput() callback uses spinlock_t for locking and then it frees
+>> resources. It does not look like it waits for something nor takes ages.
+>> So it might not be needed to split each put into its own worker on a
+>> different CPU… One busy bee might be enough ;)
+> Unmounting can trigger very large number of mounts to be unmounted. If
+> you're on a container heavy system or services that all propagate to
+> each other in different mount namespaces mount propagation will generate
+> a ton of umounts. So this cannot be underestimated.
 
-I haven't looked into the truncate routine yet.  I will see it later.
+Indeed yes, or shutting down autofs when it's using a direct mount map
 
-> 
->> fuse_direct_io()) doesn't need fuse_sync_writes() anymore.  That is
->> because after removing the temp page, the DIRECT IO routine has already
->> been waiting for all inflight WRITE requests, see
->>
->> # DIRECT read
->> generic_file_read_iter
->>   kiocb_write_and_wait
->>     filemap_write_and_wait_range
-> 
-> Where do you see generic_file_read_iter() getting called for direct io reads?
-
-# DIRECT read
-fuse_file_read_iter
-  fuse_cache_read_iter
-    generic_file_read_iter
-      kiocb_write_and_wait
-       filemap_write_and_wait_range
-      a_ops->direct_IO(),i.e. fuse_direct_IO()
+with a few hundred (or thousand) entries.
 
 
-> Similarly, where do you see generic_file_write_iter() getting called
-> for direct io writes?
+Foe my part it's things like the targeted mount information and mounted
 
-# DIRECT read
-fuse_file_write_iter
-  fuse_cache_write_iter
-    generic_file_write_iter
-      generic_file_direct_write
-        kiocb_invalidate_pages
-         filemap_invalidate_pages
-           filemap_write_and_wait_range
-      a_ops->direct_IO(),i.e. fuse_direct_IO()
+mounts listing system calls (done again recently by Miklos) and this slow
+
+umount that are, IMHO, really important.
 
 
-> Where do you see fi->writectr / fi->queued-writes preventing this
-> race?
+Ian
 
-IMO overall fi->writectr / fi->queued-writes are introduced to prevent
-DIRECT IO and writeback from sending duplicate (inflight) WRITE requests
-for the same page.
+>
+> If a mount tree is wasted without MNT_DETACH it will pass UMOUNT_SYNC to
+> umount_tree(). That'll cause MNT_SYNC_UMOUNT to be raised on all mounts
+> during the unmount.
+>
+> If a concurrent path lookup calls legitimize_mnt() on such a mount and
+> sees that MNT_SYNC_UMOUNT is set it will discount as it know that the
+> concurrent unmounter hold the last reference and it __legitimize_mnt()
+> can thus simply drop the reference count. The final mntput() will be
+> done by the umounter.
+>
+> The synchronize_rcu() call in namespace_unlock() takes care that the
+> last mntput() doesn't happen until path walking has dropped out of RCU
+> mode.
+>
+> Without it it's possible that a non-MNT_DETACH umounter gets a spurious
+> EBUSY error because a concurrent lazy path walk will suddenly put the
+> last reference via mntput().
+>
+> I'm unclear how that's handled in whatever it is you're proposing.
+>
 
-For the DIRECT write routine:
-
-# non-FOPEN_DIRECT_IO DIRECT write
-fuse_cache_write_iter
-  fuse_direct_IO
-    fuse_direct_io
-      fuse_sync_writes
-
-
-# FOPEN_DIRECT_IO DIRECT write
-fuse_direct_write_iter
-  fuse_direct_IO
-    fuse_direct_io
-      fuse_sync_writes
-
-
-For the writeback routine:
-fuse_writepages()
-  fuse_writepages_fill
-    fuse_writepages_send
-      # buffer the WRITE request in queued_writes list
-      fuse_flush_writepages
-	# flush WRITE only when fi->writectr >= 0
-	
-
-
-> It looks to me like in the existing code, this race condition
-> you described of direct write invalidating the page cache, then
-> another buffer write reads the page cache and dirties it, then
-> writeback is called on that, and the 2 write requests racing, could
-> still happen?
-> 
-> 
->> However it seems that the writeback
->> won't wait for previous inflight DIRECT WRITE requests, so I'm not much
->> sure about that.  Maybe other folks could offer more insights...
-> 
-> My understanding is that these lines
-> 
-> if (!cuse && filemap_range_has_writeback(...)) {
->    ...
->    fuse_sync_writes(inode);
->    ...
-> }
-> 
-> in fuse_direct_io() is what waits on previous inflight direct write
-> requests to complete before the direct io happens.
-
-Right.
-
-> 
-> 
->>
->> Also fuse_sync_writes() is not needed in fuse_flush() anymore, with
->> which I'm pretty sure.
-> 
-> Why don't we still need this for fuse_flush()?
-> 
-> If a caller calls close(), this will call
-> 
-> filp_close()
->   filp_flush()
->       filp->f_op->flush()
->           fuse_flush()
-> 
-> it seems like we should still be waiting for all writebacks to finish
-> before sending the fuse server the fuse_flush request, no?
-> 
-
-filp_close()
-   filp_flush()
-       filp->f_op->flush()
-           fuse_flush()
- 	     write_inode_now
-		writeback_single_inode(WB_SYNC_ALL)
-		  do_writepages
-		    # flush dirty page
-		  filemap_fdatawait
-		    # wait for WRITE completion
-
->>
->>> ---
->>>  fs/fuse/file.c   | 360 ++++-------------------------------------------
->>>  fs/fuse/fuse_i.h |   3 -
->>>  2 files changed, 28 insertions(+), 335 deletions(-)
->>>
->>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
->>> index 754378dd9f71..91ada0208863 100644
->>> --- a/fs/fuse/file.c
->>> +++ b/fs/fuse/file.c
->>> @@ -415,89 +415,11 @@ u64 fuse_lock_owner_id(struct fuse_conn *fc, fl_owner_t id)
->>>
->>>  struct fuse_writepage_args {
->>>       struct fuse_io_args ia;
->>> -     struct rb_node writepages_entry;
->>>       struct list_head queue_entry;
->>> -     struct fuse_writepage_args *next;
->>>       struct inode *inode;
->>>       struct fuse_sync_bucket *bucket;
->>>  };
->>>
->>> -static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
->>> -                                         pgoff_t idx_from, pgoff_t idx_to)
->>> -{
->>> -     struct rb_node *n;
->>> -
->>> -     n = fi->writepages.rb_node;
->>> -
->>> -     while (n) {
->>> -             struct fuse_writepage_args *wpa;
->>> -             pgoff_t curr_index;
->>> -
->>
->> --
->> Thanks,
->> Jingbo
-
--- 
-Thanks,
-Jingbo
 
