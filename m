@@ -1,86 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-46170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FA44A83B74
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 09:41:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D66A83CA8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 10:23:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C2A4406F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 07:40:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965E91B661F7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 08:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7C8204687;
-	Thu, 10 Apr 2025 07:40:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5817C20E022;
+	Thu, 10 Apr 2025 08:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Y2WCDTj6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RpWvJqaK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE021DDC15;
-	Thu, 10 Apr 2025 07:40:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5AA1E5B97;
+	Thu, 10 Apr 2025 08:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744270817; cv=none; b=BcVvmOK9HvQii8A5B2Si/kp0OmVNCYYDNOj0UpB9jQ1EHASli+EV2uGh4/7btmdAYrZzgxdq6MiVwOfebhgX3AbEGxypu6Tjy8vuLzVKEnL3aw2fnvc36tDXwqMsQ6VKIWgU5/qASdJ7acgKgHsWthuHz6HSWv8VzDARs40SMas=
+	t=1744273243; cv=none; b=e/30LSeMjdvHTOKpSuuuc7QKZXHqa4GsW33JleqNWYs12sz9IyTx1ghzVQxgK1Y3LFrG/DCrGERShr2Fb2aoyjMR+9m7/U88lsyTsnUvT39WtErjdRhz0sBlWal/jLFaxU6B4rDbvAH+ZoHk2H72y8bSnZh2N8f2HtXIVxhBal0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744270817; c=relaxed/simple;
-	bh=ztqsTTcHOGytcHIA2rtOvbbiMGZZBwiVn7qPcC3HuFo=;
+	s=arc-20240116; t=1744273243; c=relaxed/simple;
+	bh=YgQZI2+bS0r3KyGq34MBVFDhX4BUm2eJmrGkw/kgVT8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nnee0FJZsrqCbrz8Xkx2TbZcnBTUps1TxKv+MO6FFVDzmFs1+qOE8vHEn5vdgUSrOThuuGA0bPe3P4WJXxSJc771XejxsbP8UkQerfmtfWR8yy9VIf92S8APnUM/d14xxLvM3gc0HYocXXhFWlfOKPzZj4FQWHjBmlg9pAK4cNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Y2WCDTj6; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=SzrEiCnT63jVe3C2a/P8jyKS7uOpDFoAJei40tblVa4=; b=Y2WCDTj63XxxIDRN3r+YE6rJE0
-	f0EpnT9lKC4MbPOULgJOwkJHmLBfOx+VqyRYpo/pxc/HYd/jkpSv7HpbnxTkO8eciHJX5We4uXCrs
-	ce9tzWte+2TWYwqiHvSlDqTzWm2PbWv23iC2B1mKwkuKtXd6KohjCBOkLop1aw2j5RqEpq3DhjN9n
-	GSKACyHNI5tOaaITGqA7TK9pUnwT4HC0qnl528O1ny/4cGcrE25qvx4XP2Z1cgHh3NilpAN5gQgCs
-	5E8lQi81z+S/r3vjTrdmKpMJFMbWGlKR2gkqUVtEgdbZrb4w0RhXlToQph7xDrFSV7wVeL/gWmBVG
-	a46ZhgUA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2mWF-00000009bQm-1dGZ;
-	Thu, 10 Apr 2025 07:40:15 +0000
-Date: Thu, 10 Apr 2025 00:40:15 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-block <linux-block@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	xfs <linux-xfs@vger.kernel.org>
-Subject: Re: Weird blockdev crash in 6.15-rc1?
-Message-ID: <Z_d13yReJn2vqxCL@infradead.org>
-References: <20250408175125.GL6266@frogsfrogsfrogs>
- <20250409173015.GN6266@frogsfrogsfrogs>
- <20250409190907.GO6266@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVqO4kuXpWS9HOREq0Yi4BpSe0ESUxS9gwFG2aRHuBxIuZhuDuhADOB9JWtH8Rh20Db8w5YCaBU/qTPaSRM3Czj7gb7WSmFxyU/GDgl9k5EPNogeplLiBnrL5u6aMTkRKKusL34JWZ7S+afjDktDS1j7gMMG54bucsTyhpFaWL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RpWvJqaK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50ECCC4CEE3;
+	Thu, 10 Apr 2025 08:20:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744273243;
+	bh=YgQZI2+bS0r3KyGq34MBVFDhX4BUm2eJmrGkw/kgVT8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RpWvJqaKvTE/btMBJezY0+TzIVZFo6iMd3QE9E3IGJVCDFd2F76GVsz57hOknfpE5
+	 jZxllrJ3N3DbH3+uv9ZHHYrrfFgyRcK7QqSakVZiTg5lJs+o+nwwllB2G2g2ivYJ0f
+	 XZdHUzjN71la1YQ85wZ+ULJsoBZKXmxNkFFfI7zZILynyLL+8H34GHTgc8exE4YpLM
+	 Wv85WSPJn19pxfUXpjS18ukegqDYAleOgGZ/39ODRJvzIgCsFk2LqnmO6ok1NfZjTh
+	 p23jjdXQODTYtCQ9mESNPxKIFf4ZQAK9pzJunWbJgfcyy6XJVURM9aoh5Ev+5mz0DX
+	 Fm0HaSUcp0csw==
+Date: Thu, 10 Apr 2025 09:20:36 +0100
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu, djwong@kernel.org,
+	john.g.garry@oracle.com, bmarzins@redhat.com, chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [RFC PATCH -next v3 01/10] block: introduce
+ BLK_FEAT_WRITE_ZEROES_UNMAP to queue limits features
+Message-ID: <Z_d_VDvgBkgt4UhS@kbusch-mbp>
+References: <20250318073545.3518707-1-yi.zhang@huaweicloud.com>
+ <20250318073545.3518707-2-yi.zhang@huaweicloud.com>
+ <20250409103148.GA4950@lst.de>
+ <43a34aa8-3f2f-4d86-be53-8a832be8532f@huaweicloud.com>
+ <20250410071559.GA32420@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250409190907.GO6266@frogsfrogsfrogs>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250410071559.GA32420@lst.de>
 
-On Wed, Apr 09, 2025 at 12:09:07PM -0700, Darrick J. Wong wrote:
-> Subject: [PATCH] block: fix race between set_blocksize and IO paths
+On Thu, Apr 10, 2025 at 09:15:59AM +0200, Christoph Hellwig wrote:
+> On Thu, Apr 10, 2025 at 11:52:17AM +0800, Zhang Yi wrote:
+> > 
+> > Thank you for your review and comments. However, I'm not sure I fully
+> > understand your points. Could you please provide more details?
+> > 
+> > AFAIK, the NVMe protocol has the following description in the latest
+> > NVM Command Set Specification Figure 82 and Figure 114:
+> > 
+> > ===
+> > Deallocate (DEAC): If this bit is set to `1´, then the host is
+> > requesting that the controller deallocate the specified logical blocks.
+> > If this bit is cleared to `0´, then the host is not requesting that
+> > the controller deallocate the specified logical blocks...
+> > 
+> > DLFEAT:
+> > Write Zeroes Deallocation Support (WZDS): If this bit is set to `1´,
+> > then the controller supports the Deallocate bit in the Write Zeroes
+> > command for this namespace...
 > 
-> With the new large sector size support, it's now the case that
-> set_blocksize needs to change i_blksize and the folio order with no
-> folios in the pagecache because the geometry changes cause problems with
-> the bufferhead code.
+> Yes.  The host is requesting, not the controller shall.  It's not
+> guaranteed behavior and the controller might as well actually write
+> zeroes to the media.  That is rather stupid, but still.
 
-Urrg.  I wish we could just get out of the game of messing with
-block device inode settings from file systems.  I guess doing it when
-using buffer_heads is hard, but file systems without buffer heads
-should have a way out of even propagating their block size to the
-block device inode.  And file systems with buffer heads should probably
-not support large folios like this :P
-
+I guess some controllers _really_ want specific alignments to
+successfully do a proper discard. While still not guaranteed in spec, I
+think it is safe to assume a proper deallocation will occur if you align
+to NPDA and NPDG. Otherwise, the controller may do a read-modify-write
+to ensure zeroes are returned for the requested LBA range on anything
+that straddles an implementation specific boundary.
 
