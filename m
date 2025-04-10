@@ -1,132 +1,221 @@
-Return-Path: <linux-fsdevel+bounces-46227-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2611BA84CE9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 21:25:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B524A84DD3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 22:06:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C43B9A7540
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 19:23:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1756A1BA2A32
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 20:06:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04CA829344E;
-	Thu, 10 Apr 2025 19:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A8DE290098;
+	Thu, 10 Apr 2025 20:06:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AKl0sbvL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eNKYRqlD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAFF128FFD8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 19:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B276128F959;
+	Thu, 10 Apr 2025 20:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744312820; cv=none; b=jyzxiMiJ1iUcJrx4QD0XKZXqjo6J1uJmGnwJyB7doT8qieW/2AX4UIILak+O1l4kAW+RFa+dw4qqxDhWCaZ/5pPyuHHPn+hTT1S55E+pF9Oud9we5QHjSHzkziHox39l6IlxFj+SYEtAvHtP/DFJHNUUKuhTadUbY0C8DwT6nOA=
+	t=1744315563; cv=none; b=pA0/DJR5MQFURFs3j7ZTt9BOTC7zGymoS8ue/NHR4VPONO/AgLricp5PRMk/b25PbFkn+FO2unimf7B5epfn9g0sSWIP3HeDD5Biel4aJEUphHzhK1LeRp/45uR+qQK4/xW0oNH0KBoKE9Tl0R5JacmwgTnGtR3jCATNXe7VpN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744312820; c=relaxed/simple;
-	bh=BUp6dVA/9/DIHAm8btLSsebQGLRoM6QqRKm/vQlyaG8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FLyrJfad4iBruifm5RXvEZ/ApFh9t7DgBbGFXyK3rxocSW/Y1kLiSQtzaNnjCV5q4fQRCu9+N2LNzux9fd1yEE8tFCRlmHFo4xRcDhE6Kdcn/HdFjF0bPeYgdSpKcGvK4fd6CR1ydE5ieIKqXbJQbX3NwVB4fMG0fF+NoBxXYz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AKl0sbvL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744312817;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7qyuCy71sNM096ptCCI9TtV8xzN/TLmJLvM6k58//nE=;
-	b=AKl0sbvLTqSfaHiwBrGFiZXPzgz6TrDW4jFZVydZQfNXV2qFOwbnZnk3NqxSWL0QbzHzZ5
-	x2YKKyE1jQ2MFR1BQypEqMb08hseDTX/xilnT4vfaLbF5ZlLIpPXSTbcttGfr2tQ9EobS9
-	3Q8PYtYhSF5RtHgXByyTZ/l6n/6U0DU=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-86-zFvfDnIFPWOm868RaQD_hA-1; Thu, 10 Apr 2025 15:20:16 -0400
-X-MC-Unique: zFvfDnIFPWOm868RaQD_hA-1
-X-Mimecast-MFC-AGG-ID: zFvfDnIFPWOm868RaQD_hA_1744312815
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2242ce15cc3so9320015ad.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 12:20:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744312815; x=1744917615;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7qyuCy71sNM096ptCCI9TtV8xzN/TLmJLvM6k58//nE=;
-        b=kni97LJCxo7JcNo44VH4edhxHchIeazP8zLE9BCv2uujVeMXLq0LKQMzE9ZBsKm2hX
-         yZJQke5Rdg6cxhRIIrj9zW7n4sCH6GNncqXRclowkcU/Tjy+KiQB8McFnoZ1BjaefUyl
-         0CFBnQxW6+BDZHYZfKXmexo2WF1IbgFPbGHiMVgi3W5UTiqWm1rfsWTgNP6PT+RTB3FJ
-         wWjp4i2D6GMrFwWbzsADCZIlpE2zzYryvbvZUACxpsoWZ3S6HoLlBqumNNbvu7L/xylN
-         zv2A0btAhYV1CqUigBrJNT9XbeBGjb0U/pE4pNRgmT3yeEfVOSwTPB/SnLk1PQk0Rw8E
-         Lrhg==
-X-Forwarded-Encrypted: i=1; AJvYcCWHs7SYvIJ00Ug2XBqNyMxMScT/NQTLTpM6MbRgucOyr3WtcAvCzDfOTj6qeaFnkuqnJGWyxL2UsoB0zbnf@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJdtT/zuxpC6nN25xaDnXLQR58NVqIW72gkFYSUn6xgUzfv3Vt
-	lLGoeqbyeaSZIOsQYNZm1HyeRVlcgMC2zPtK2BA7yAUip9eHNbRzKUGHUEgnhvRTlWdA0k4KkJH
-	3KpCTVNDO+OVFFTMQzWmdHPvAZ6ppslXS9BPGnhY4YVfKXl2eHlYygU449AZw+LnnABWrupZkd5
-	ec+79GKXWH4NKa0ROvU3IDF2p6GEBQTVi4hAzE6Q==
-X-Gm-Gg: ASbGncsqxbqoMyH800Wii6yBdeh1LmyYV8PBpWEOGM5MTVbAGS/lOkgk4xhYboPcob8
-	KnlaR6Z1HSXqCKzKN2jfPAqfl4gtherr4XcMP/rBjh3hWP4BgDmNncYzNFT/ne7TiKo0=
-X-Received: by 2002:a17:902:e88f:b0:223:2aab:462c with SMTP id d9443c01a7336-22bea4ab85fmr71685ad.15.1744312815423;
-        Thu, 10 Apr 2025 12:20:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6DNynR3qAzVJ5oYYe87012HehD64MJOEbZmJ5Zs6nbMEMT14kmxUjgfXc/J/nlg5RXQ5jsTdGAdgJRpiy1tQ=
-X-Received: by 2002:a17:902:e88f:b0:223:2aab:462c with SMTP id
- d9443c01a7336-22bea4ab85fmr71525ad.15.1744312815145; Thu, 10 Apr 2025
- 12:20:15 -0700 (PDT)
+	s=arc-20240116; t=1744315563; c=relaxed/simple;
+	bh=GhVrty9HJfGQuDS5fHu0ISRwINFnzYA1bc6t08RhMyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J6ZHox5JjDuS/a4nvSsKu9dUSEhSW1L93hh398w/wWXl+wbHDDDHoCuoNlHuDo7ANd6mmIEAzbiAXMVE+vEXCTWyq9IQi5tjTWnjX2BQnHEvnCLeWKbMjxpu9CJi5it1HbtXW/nTY14TW0uW55sdynormLihASNh2yBkXsSL8hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eNKYRqlD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CFFFC4CEDD;
+	Thu, 10 Apr 2025 20:06:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744315563;
+	bh=GhVrty9HJfGQuDS5fHu0ISRwINFnzYA1bc6t08RhMyU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eNKYRqlDTAWKEHKtdq0pEqu38no2VewQOXZRNnql3Ss6qYIFdB6rOEXxGwUV8BpoA
+	 suTTXnChGt+8Or3OfDPjF3seQx2q/epTffhLeBH8JhwEdPOoh2j0rJbhT4ESytVaO9
+	 QrXHeBnHU71AvBmzR93JXveEqWAbrzkwNHnE02cX0od4Wyq9n9MFwoAGj3vZHJ0D6X
+	 DxJD9ErvumYOdiwsH+iKnRP37cUlAdx1o9ObYYEhT9NswR3DTz+2yrvuYlZtX0hV75
+	 V6+zOAiIGOMD8duJGjNmSwcaFWSpUek8Weobr6zAkhFiLhAY5+Q9cbLSPVLx9QJiko
+	 d07v03gCtDGwQ==
+Date: Thu, 10 Apr 2025 22:05:58 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>, 
+	Lennart Poettering <lennart@poettering.net>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org, 
+	Peter Ziljstra <peterz@infradead.org>
+Subject: Re: [RFC PATCH] pidfs: ensure consistent ENOENT/ESRCH reporting
+Message-ID: <20250410-inklusive-kehren-e817ba060a34@brauner>
+References: <20250409-sesshaft-absurd-35d97607142c@brauner>
+ <20250409-rohstoff-ungnade-d1afa571f32c@brauner>
+ <20250409184040.GF32748@redhat.com>
+ <20250410101801.GA15280@redhat.com>
+ <20250410-barhocker-weinhandel-8ed2f619899b@brauner>
+ <20250410131008.GB15280@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250407182104.716631-1-agruenba@redhat.com> <20250407182104.716631-2-agruenba@redhat.com>
- <Z_eGVWwQ0zCo2aSR@infradead.org>
-In-Reply-To: <Z_eGVWwQ0zCo2aSR@infradead.org>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Thu, 10 Apr 2025 21:20:03 +0200
-X-Gm-Features: ATxdqUHNINlL-pUTFVGgFjmH-0Yv2T34SdJ_H6wPly98qpm7VaT0OlGqfhHJNig
-Message-ID: <CAHc6FU4J6MsEaUFUfp_ZpuYKyXRpZ=FTJE9T=iRQgbByQWZOFA@mail.gmail.com>
-Subject: Re: [RFC 1/2] gfs2: replace sd_aspace with sd_inode
-To: Christoph Hellwig <hch@infradead.org>
-Cc: cgroups@vger.kernel.org, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, 
-	Jan Kara <jack@suse.cz>, Rafael Aquini <aquini@redhat.com>, gfs2@lists.linux.dev, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250410131008.GB15280@redhat.com>
 
-On Thu, Apr 10, 2025 at 11:01=E2=80=AFAM Christoph Hellwig <hch@infradead.o=
-rg> wrote:
-> On Mon, Apr 07, 2025 at 08:21:01PM +0200, Andreas Gruenbacher wrote:
-> > Use a dummy inode as mapping->host of the address spaces for global as
-> > well as per-inode metadata.  The global metadata address space is now
-> > accessed as gfs2_aspace(sdp) instead of sdp->sd_aspace.  The per-inode
-> > metadata address spaces are still accessed as
-> > gfs2_glock2aspace(GFS2_I(inode)->i_gl).
+On Thu, Apr 10, 2025 at 03:10:09PM +0200, Oleg Nesterov wrote:
+> On 04/10, Christian Brauner wrote:
 > >
-> > Based on a previous version from Bob Peterson from several years ago.
->
-> Please explain why you are doing this, not just what.
+> > On Thu, Apr 10, 2025 at 12:18:01PM +0200, Oleg Nesterov wrote:
+> > > On 04/09, Oleg Nesterov wrote:
+> > > >
+> > > > On 04/09, Christian Brauner wrote:
+> > > > >
+> > > > > The seqcounter might be
+> > > > > useful independent of pidfs.
+> > > >
+> > > > Are you sure? ;) to me the new pid->pid_seq needs more justification...
+> >
+> > Yeah, pretty much. I'd make use of this in other cases where we need to
+> > detect concurrent changes to struct pid without having to take any
+> > locks. Multi-threaded exec in de_exec() comes to mind as well.
+> 
+> Perhaps you are right, but so far I am still not sure it makes sense.
+> And we can always add it later if we have another (more convincing)
+> use-case.
+> 
+> > > To remind, detach_pid(pid, PIDTYPE_PID) does wake_up_all(&pid->wait_pidfd) and
+> > > takes pid->wait_pidfd->lock.
+> > >
+> > > So if pid_has_task(PIDTYPE_PID) succeeds, __unhash_process() -> detach_pid(TGID)
+> > > is not possible until we drop pid->wait_pidfd->lock.
+> > >
+> > > If detach_pid(PIDTYPE_PID) was already called and have passed wake_up_all(),
+> > > pid_has_task(PIDTYPE_PID) can't succeed.
+> >
+> > I know. I was trying to avoid having to take the lock and just make this
+> > lockless. But if you think we should use this lock here instead I'm
+> > willing to do this. I just find the sequence counter more elegant than
+> > the spin_lock_irq().
+> 
+> This is subjective, and quite possibly I am wrong. But yes, I'd prefer
+> to (ab)use pid->wait_pidfd->lock in pidfd_prepare() for now and not
+> penalize __unhash_process(). Simply because this is simpler.
+> 
+> If you really dislike taking wait_pidfd->lock, we can add mb() into
+> __unhash_process() or even smp_mb__after_spinlock() into __change_pid(),
+> but this will need a lengthy comment...
 
-Right, I have this description now:
+No, I don't think we should do that.
 
-    Currently, sdp->sd_aspace and the per-inode metadata address spaces use
-    sb->s_bdev->bd_mapping->host as their ->host.  Folios in those address
-    spaces will thus appear to be on "bdev" rather than on "gfs2"
-    filesystems.  Those "bdev" filesystems will have the SB_I_CGROUPWB flag
-    set to indicate cgroup writeback support.  In fact, gfs2 doesn't suppor=
-t
-    cgroup writeback, though.
+> As for your patch... it doesn't apply on top of 3/4, but I guess it
+> is clear what does it do, and (unfortunately ;) it looks correct, so
+> I won't insist too much. See a couple of nits below.
+> 
+> > this imho and it would give pidfds a reliable way to detect relevant
+> > concurrent changes locklessly without penalizing other critical paths
+> > (e.g., under tasklist_lock) in the kernel.
+> 
+> Can't resist... Note that raw_seqcount_begin() in pidfd_prepare() will
+> take/drop tasklist_lock if it races with __unhash_process() on PREEMPT_RT.
 
-    To fix that, use a "dummy" gfs2 inode as ->host of those address spaces
-    instead.  This will then allow functions like inode_to_wb() to determin=
-e
-    that the folio belongs to a a filesystem without cgroup writeback
-    support.
+Eeeeew,
 
+        if (!IS_ENABLED(CONFIG_PREEMPT_RT))                             \
+                return seq;                                             \
+                                                                        \
+        if (preemptible && unlikely(seq & 1)) {                         \
+                __SEQ_LOCK(lockbase##_lock(s->lock));                   \
+                __SEQ_LOCK(lockbase##_unlock(s->lock));                 \
 
-Thanks,
-Andreas
+priority inversion fix, I take it. That's equally ugly as what we had to
+do for mnt_get_write_access()...
 
+I actually think what you just pointed out is rather problematic. It's
+absolutely wild that raw_seqcount_begin() suddenly implies locking.
+
+How isn't that a huge landmine? On non-rt I can happily do:
+
+acquire_associated_lock()
+raw_seqcount_begin()
+drop_associated_lock()
+
+But this will immediately turn into a deadlock on preempt-rt, no?
+
+> Yes, this is unlikely case, but still...
+> 
+> Now. Unless I misread your patch, pidfd_prepare() does "err = 0" only
+> once before the main loop. And this is correct. But this means that
+> we do not need the do/while loop.
+
+Yes, I know. I simply used the common idiom.
+
+> 
+> If read_seqcount_retry() returns true, we can safely return -ESRCH. So
+> we can do
+> 
+> 	seq = raw_seqcount_begin(&pid->pid_seq);
+> 
+> 	if (!PIDFD_THREAD && !pid_has_task(PIDTYPE_TGID))
+> 		err = -ENOENT;
+> 
+> 	if (!pid_has_task(PIDTYPE_PID))
+> 		err = -ESRCH;
+> 
+> 	if (read_seqcount_retry(pid->pid_seq, seq))
+> 		err = -ESRCH;
+> 
+> In fact we don't even need raw_seqcount_begin(), we could use
+> raw_seqcount_try_begin().
+> 
+> And why seqcount_rwlock_t? A plain seqcount_t can equally work.
+
+Yes, but this way its dependence on tasklist_lock is natively integrated
+with lockdep afaict:
+
+ * typedef seqcount_LOCKNAME_t - sequence counter with LOCKNAME associated
+ * @seqcount:   The real sequence counter
+ * @lock:       Pointer to the associated lock
+ *
+ * A plain sequence counter with external writer synchronization by
+ * LOCKNAME @lock. The lock is associated to the sequence counter in the
+ * static initializer or init function. This enables lockdep to validate
+ * that the write side critical section is properly serialized.
+ *
+ * LOCKNAME:    raw_spinlock, spinlock, rwlock or mutex
+ */
+
+/*
+ * seqcount_LOCKNAME_init() - runtime initializer for seqcount_LOCKNAME_t
+ * @s:          Pointer to the seqcount_LOCKNAME_t instance
+ * @lock:       Pointer to the associated lock
+ */
+
+#define seqcount_LOCKNAME_init(s, _lock, lockname)                      \
+        do {                                                            \
+                seqcount_##lockname##_t *____s = (s);                   \
+                seqcount_init(&____s->seqcount);                        \
+                __SEQ_LOCK(____s->lock = (_lock));                      \
+        } while (0)
+
+#define seqcount_raw_spinlock_init(s, lock)     seqcount_LOCKNAME_init(s, lock, raw_spinlock)
+#define seqcount_spinlock_init(s, lock)         seqcount_LOCKNAME_init(s, lock, spinlock)
+#define seqcount_rwlock_init(s, lock)           seqcount_LOCKNAME_init(s, lock, rwlock)
+#define seqcount_mutex_init(s, lock)            seqcount_LOCKNAME_init(s, lock, mutex)
+
+> And, if we use seqcount_rwlock_t,
+> 
+> 	lockdep_assert_held_write(&tasklist_lock);
+> 	...
+> 	raw_write_seqcount_begin(pid->pid_seq);
+> 
+> in __unhash_process() looks a bit strange. I'd suggest to use
+> write_seqcount_begin() which does seqprop_assert() and kill
+> lockdep_assert_held_write().
+> 
+> Oleg.
+> 
 
