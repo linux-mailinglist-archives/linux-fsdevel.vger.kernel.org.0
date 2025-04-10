@@ -1,114 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-46201-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46200-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D104EA84265
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 14:04:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018D4A8422B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 13:57:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E19D07A736B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 12:03:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931A11B866EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 11:56:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3772283C9B;
-	Thu, 10 Apr 2025 12:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235C828EA66;
+	Thu, 10 Apr 2025 11:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="IBX6NJ3B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22EC21E25E3;
-	Thu, 10 Apr 2025 12:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C32F028CF7B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 11:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744286636; cv=none; b=mQXMDPQtdl6p9GbAqn/PB8x8Db7d6QDlPmnYIaTf/y28crANqAkwJ0fsQVZVe41Y3ELMzKImyXdm7EPRPD1JLdPtGWx0kl8IUaszR/3hb3m87/NLtAGpLsTAOY+ftNhWYypYcV/ZJXKbAG2bTf/iqa2X9P4F3UQwMi7hGbrfOmg=
+	t=1744286004; cv=none; b=S/nzYWOHSgAzR49retqqZe3Y+4a/VWzWHx89WTL2X7ljFjG4LApikAZIvnlcbYzLgNjZXPBeIWU+aI63ebV673nzprzqwiR+S4YfUX9MR4p33KNuY2jdYKdBoD5NkT0VIj7siT85efFJSaFzQuvpbXUSMjulCcCorCkVfvpk6Fw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744286636; c=relaxed/simple;
-	bh=6JRMMXKfVq+zPqoypSPNjKKxb+VJ2BadUFQRCRNAAIs=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=pFfgMQJ4FLrAUs+dw0VEUhqyNU1+pKDK8Fb5gp42MhSWfdg/ft4v5hxJu/cbfgUOMCvXaqzB5WwCy3Ru0fAr9sfv56Fsn0RvACwu3sFjEzxPsPxIKh1vJbd6CKt3JbXSNOcAt1X2NS3/flEFP28RDyLdkgbRDPHK24kSnfLM8k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZYJ2B5G8jzsRxd;
-	Thu, 10 Apr 2025 19:46:58 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.27])
-	by mail.maildlp.com (Postfix) with ESMTP id 8BDFF1402F5;
-	Thu, 10 Apr 2025 19:47:20 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP2 (Coremail) with SMTP id GxC2BwAXzd++r_dnszPFBQ--.30447S2;
-	Thu, 10 Apr 2025 12:47:20 +0100 (CET)
-Message-ID: <fb9f7900d411a3ab752759d818c3da78e2f8f0f1.camel@huaweicloud.com>
-Subject: Credentials not fully initialized before bprm_check LSM hook
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	 <brauner@kernel.org>, Kees Cook <kees@kernel.org>, Paul Moore
-	 <paul@paul-moore.com>, James Morris <jmorris@namei.org>, "Serge E. Hallyn"
-	 <serge@hallyn.com>, "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-integrity@vger.kernel.org, zohar@linux.ibm.com
-Date: Thu, 10 Apr 2025 13:47:07 +0200
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1744286004; c=relaxed/simple;
+	bh=xb4Djkq2XeMUN0/diW1Ny4gAAC+RdsV3KZBjNbiBEdA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=cbODSz57Edv1UA/2hpojS0r06Tv/JXzyuXh50mV26s4z6FJ/ZWLRcor6FzDr40faBadWBFS5Or3a4XBOhb8DOMds6474Xs8yysLi8yWNVlG66xOLv9Lv2O9hPMDi3Ff6aMYgEJDgAeAIDt58yr8iByKgHDdbFNQofV/ZK5ujHgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=IBX6NJ3B; arc=none smtp.client-ip=17.58.6.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=9CNRZFMb+ZGZSnN0e7O2pQJfHsHDLKAcSkkbVrvrqsU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
+	b=IBX6NJ3BmU4yOtxmKur4FfF87pPiiGgFcw1UW9sndFBPQm+8TLTZK8eRnYWIgBYtC
+	 /lOrOUbX+9uA4pYe4Re+VlkFPhQtbyuxw2XXhpOjETOdFf3H5OlNP2vgEH1a9rjblA
+	 2fBrTcmzBwC7RaJ0GYIxHDdFR0XHx8mClg/rR8Ex4615pUlZiemR6m9P4z+2khENml
+	 iqLZDvY7B/AY+Jq16DJ31pmFeg33dqvq7jHDSzZOm2HdP7QYafxKgwA23zSeDBE3rw
+	 X0ROEHZxOU2PttDJcBpREtu7xAqG7RZU/0rQccmN7Y04dBv8ASiWb7le9Rl5jRX35n
+	 /M7Jq9L8MoT4Q==
+Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
+	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPS id E70E53118A42;
+	Thu, 10 Apr 2025 11:53:19 +0000 (UTC)
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPSA id 78A433118934;
+	Thu, 10 Apr 2025 11:53:17 +0000 (UTC)
+From: Zijun Hu <zijun_hu@icloud.com>
+Date: Thu, 10 Apr 2025 19:53:03 +0800
+Subject: [PATCH RFC] fs/fs_context: Use KERN_INFO for
+ infof()|info_plog()|infofc()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:GxC2BwAXzd++r_dnszPFBQ--.30447S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Xw18ZFykZF18ZFW8XFWxCrg_yoWkAFg_CF
-	Z8GrWjkw1qqrZ3Jay5Ar1Yva9rXF40g3s8Za4Fqr9xW3y8Jws7Wa4qgryavry8Gr4kArnF
-	9Fnxta9xZw1fWjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbx8YFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26r4j6F4UM28EF7xvwVC2z280aVCY1x0267
-	AKxVW8JVW8Jr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kKe7AK
-	xVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFyl
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07UAwI
-	DUUUUU=
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgAOBGf3bdwDzAABsn
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250410-rfc_fix_fs-v1-1-406e13b3608e@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAB6x92cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDE0MD3aK05Pi0zIr4tGLd5LREYzNLS2ODxKRUJaCGgqJUoAzYsGilIDd
+ npdjaWgD3StL0YQAAAA==
+X-Change-ID: 20250410-rfc_fix_fs-cfa369930abe
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: Zijun Hu <zijun_hu@icloud.com>, linux-fsdevel@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Proofpoint-GUID: Sls4o2toiBGoOtiR6gG470J5PXjQqsMV
+X-Proofpoint-ORIG-GUID: Sls4o2toiBGoOtiR6gG470J5PXjQqsMV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-10_02,2025-04-08_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0
+ clxscore=1015 phishscore=0 spamscore=0 bulkscore=0 suspectscore=0
+ mlxscore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2504100087
+X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-Hi everyone
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-recently I discovered a problem in the implementation of our IMA
-bprm_check hook, in particular when the policy is matched against the
-bprm credentials (to be committed later during execve().
+Use KERN_INFO instead of default KERN_NOTICE for
+infof()|info_plog()|infofc() to printk informational messages.
 
-Before commit 56305aa9b6fab ("exec: Compute file based creds only
-once"), bprm_fill_uid() was called in prepare_binprm() and filled the
-euid/egid before calling security_bprm_check(), which in turns calls
-IMA.
+Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+---
+ fs/fs_context.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-After that commit, bprm_fill_uid() was moved to begin_new_exec(), which
-is when the last interpreter is found.
+diff --git a/fs/fs_context.c b/fs/fs_context.c
+index 582d33e8111739402d38dc9fc268e7d14ced3c49..2877d9dec0753a5f03e0a54fa7b8d25072ea7b4d 100644
+--- a/fs/fs_context.c
++++ b/fs/fs_context.c
+@@ -449,6 +449,10 @@ void logfc(struct fc_log *log, const char *prefix, char level, const char *fmt,
+ 			printk(KERN_ERR "%s%s%pV\n", prefix ? prefix : "",
+ 						prefix ? ": " : "", &vaf);
+ 			break;
++		case 'i':
++			printk(KERN_INFO "%s%s%pV\n", prefix ? prefix : "",
++						prefix ? ": " : "", &vaf);
++			break;
+ 		default:
+ 			printk(KERN_NOTICE "%s%s%pV\n", prefix ? prefix : "",
+ 						prefix ? ": " : "", &vaf);
 
-The consequence is that IMA still sees the not yet ready credentials
-and an IMA rule like:
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250410-rfc_fix_fs-cfa369930abe
 
-measure func=3DCREDS_CHECK euid=3D0
-
-will not be matched for sudo-like applications.
-
-It does work however with SELinux, because it computes the transition
-before IMA in the bprm_creds_for_exec hook.
-
-Since IMA needs to be involved for each execution in the chain of
-interpreters, we cannot move to the bprm_creds_from_file hook.
-
-How do we solve this problem? The commit mentioned that it is an
-optimization, so probably would not be too hard to partially revert it
-(and keeping what is good).
-
-Thanks
-
-Roberto
+Best regards,
+-- 
+Zijun Hu <quic_zijuhu@quicinc.com>
 
 
