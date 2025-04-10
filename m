@@ -1,377 +1,300 @@
-Return-Path: <linux-fsdevel+bounces-46153-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACC7DA83610
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 03:51:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD81FA8363F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 04:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6DD2465E59
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 01:50:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1F4F7AA803
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 02:11:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64B241E2843;
-	Thu, 10 Apr 2025 01:49:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9C61C3F34;
+	Thu, 10 Apr 2025 02:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ewoFzbvy"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="h/PVKnA/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C4C61991DB;
-	Thu, 10 Apr 2025 01:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B41B9136327
+	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 02:12:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744249793; cv=none; b=SlBwwovPcSs585OCLqXRHIOluBsAKgp3AE9TvrP8Gtq7Y1w+1zj5f4S2zTDDqXn/iR2k6XWuIe5zPOXuK0lA3aMTa7oYvm5zdXJYKw8haY7BcKBAndJF4sE1YADUkxm4YDEE8G5oNMc9h4q4RujzQ63Pzeja4Pp+abnxjTMcafc=
+	t=1744251162; cv=none; b=XYAdrgrY6nqfDWWmrZ1DAokWHPyXaQb95YON4CyMBkpCvdQT2lHxcY5zC9Mutv0I6HawDxSzrR1jJrrb4z3yEkFlaY5yUAiPcEekxQdq3begVio7t5MKQdnNdGegCQ/Bp1GFl7zxSzw2VBn9xJ2ilaJ0l5n+7eC+3JKgEgJxg6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744249793; c=relaxed/simple;
-	bh=WxZ1ENIkDUorMda0aZ6BTZiU7BtJJXWHNlFF1GnZUbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ori8X4Ci6EJqp+7T3CjURE4cBFhrCLsX//X1ERBfsnAblsw0iKuCXYjO06hjYckMtb0a/3DqW1zAq6RfB/Rd82mEVgI8UzBWLWunc0hWh3l1s6vubWn2Eczwci3AE8VoKuFEZSIxHPWhsxvlCzkjciZ8mU+OE4dA5b4UMpTbkE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ewoFzbvy; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:
-	Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=Lo+mNNCNF0Kcn2O97aAamvTUH5kTxQV3YmJyIlBZZYM=; b=ewoFzbvyobG0uDxAjVoFDwjHWk
-	WuZ/3S9yAjfKR2FmAUSEeXkkrkoEv+JUrk7lOQjdFVWExzB7lNCFT/WwVAeEYTqA/sy2xN3HQia6i
-	/ghOVN2nNtzpBl+oOAfTpEl6qx2iF9VVGH+99o+w8iKGr0xEC5ojaCJ2SSQGhESiqnCkB87He/3r8
-	G+O96d8oiH4BoJHjpRwltFGCAvF/VC5EJEDVr5tvE1SIwBCillDTlLlrPdDeGASJydAFVQnvBxvOZ
-	YZQBbE6LPTYlsCm4iSU/5Xr+xRWoVGrXbzvRonVbCbxo2U5PhfpawzAmeQ726cHZZIDKTeO97pgca
-	Rfa3HOOg==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2h36-00000008yvU-0WmT;
-	Thu, 10 Apr 2025 01:49:48 +0000
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: brauner@kernel.org,
-	jack@suse.cz,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	linux-ext4@vger.kernel.org,
-	riel@surriel.com
-Cc: dave@stgolabs.net,
-	willy@infradead.org,
-	hannes@cmpxchg.org,
-	oliver.sang@intel.com,
-	david@redhat.com,
-	axboe@kernel.dk,
-	hare@suse.de,
-	david@fromorbit.com,
-	djwong@kernel.org,
-	ritesh.list@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-mm@kvack.org,
-	gost.dev@samsung.com,
-	p.raghav@samsung.com,
-	da.gomez@samsung.com,
-	mcgrof@kernel.org
-Subject: [PATCH v2 8/8] mm: add migration buffer-head debugfs interface
-Date: Wed,  9 Apr 2025 18:49:45 -0700
-Message-ID: <20250410014945.2140781-9-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250410014945.2140781-1-mcgrof@kernel.org>
-References: <20250410014945.2140781-1-mcgrof@kernel.org>
+	s=arc-20240116; t=1744251162; c=relaxed/simple;
+	bh=woxymu49L+x9hlr4JYz5b1TC7G3iW6Pg2Kx2bai92CE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PLzWOwcF0lTdmWanMAt2/mwpJ1vkpDw3Yy48F0UfbfHjqsOCwS2z2HJOyu6slpNkn/45ytMW5LdB5ECihUWmMCdVHBxu+tA1WBjKRSKcb4Qp5rouNUUmnbqDIK68DddIFdiLqBjoI+9cjlPxTN5VIgKAIUvDSZO1/dz0QeAOi1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=h/PVKnA/; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1744251155; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=R9121b9yjqO2sKle5RkcrFD3eZ/Qsdfxici1u6jpN8k=;
+	b=h/PVKnA/9uap2SKbGY3JE0tIksGJMBRXARVJm2F5tSekJ2q3jdOxQLXI8YCwQer3Umi/o39Y6m+TwNQ0+NjmM4nFax45xsuSSbmpWa9TGEphTaHhAC9fO8kN7kmlTtGVZjb3PE6kHb30UEDWbeT/VkdNKNnI6kGvyfuBDNMVtA4=
+Received: from 30.222.18.156(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WWMTlsK_1744251153 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 10 Apr 2025 10:12:33 +0800
+Message-ID: <7e9b1a40-4708-42a8-b8fc-44fa50227e5b@linux.alibaba.com>
+Date: Thu, 10 Apr 2025 10:12:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/3] fuse: remove tmp folio for writebacks and internal
+ rb tree
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: miklos@szeredi.hu, akpm@linux-foundation.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, shakeel.butt@linux.dev,
+ david@redhat.com, bernd.schubert@fastmail.fm, ziy@nvidia.com,
+ jlayton@kernel.org, kernel-team@meta.com,
+ Miklos Szeredi <mszeredi@redhat.com>
+References: <20250404181443.1363005-1-joannelkoong@gmail.com>
+ <20250404181443.1363005-4-joannelkoong@gmail.com>
+ <db4f1411-f6de-4206-a6a3-5c9cf6b6d59d@linux.alibaba.com>
+ <CAJnrk1bTGFXy+ZTchC7p4OYUnbfKZ7TtVkCsrsv87Mg1r8KkGA@mail.gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <CAJnrk1bTGFXy+ZTchC7p4OYUnbfKZ7TtVkCsrsv87Mg1r8KkGA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
 
-If you are working on enhancing folio migration it is easy to not
-be certain on improvements. This debugfs interface enables you to
-evaluate gains on improvements on buffer-head folio migration.
 
-This can easily tell you *why* folio migration might fail, for example,
-here is the output of a generic/750 run for 18 hours:
 
-root@e3-ext4-2k ~ # cat /sys/kernel/debug/mm/migrate/bh/stats
+On 4/10/25 7:47 AM, Joanne Koong wrote:
+>   On Tue, Apr 8, 2025 at 7:43 PM Jingbo Xu <jefflexu@linux.alibaba.com> wrote:
+>>
+>> Hi Joanne,
+>>
+>> On 4/5/25 2:14 AM, Joanne Koong wrote:
+>>> In the current FUSE writeback design (see commit 3be5a52b30aa
+>>> ("fuse: support writable mmap")), a temp page is allocated for every
+>>> dirty page to be written back, the contents of the dirty page are copied over
+>>> to the temp page, and the temp page gets handed to the server to write back.
+>>>
+>>> This is done so that writeback may be immediately cleared on the dirty page,
+>>> and this in turn is done in order to mitigate the following deadlock scenario
+>>> that may arise if reclaim waits on writeback on the dirty page to complete:
+>>> * single-threaded FUSE server is in the middle of handling a request
+>>>   that needs a memory allocation
+>>> * memory allocation triggers direct reclaim
+>>> * direct reclaim waits on a folio under writeback
+>>> * the FUSE server can't write back the folio since it's stuck in
+>>>   direct reclaim
+>>>
+>>> With a recent change that added AS_WRITEBACK_INDETERMINATE and mitigates
+>>> the situations described above, FUSE writeback does not need to use
+>>> temp pages if it sets AS_WRITEBACK_INDETERMINATE on its inode mappings.
+>>>
+>>> This commit sets AS_WRITEBACK_INDETERMINATE on the inode mappings
+>>> and removes the temporary pages + extra copying and the internal rb
+>>> tree.
+>>>
+>>> fio benchmarks --
+>>> (using averages observed from 10 runs, throwing away outliers)
+>>>
+>>> Setup:
+>>> sudo mount -t tmpfs -o size=30G tmpfs ~/tmp_mount
+>>>  ./libfuse/build/example/passthrough_ll -o writeback -o max_threads=4 -o source=~/tmp_mount ~/fuse_mount
+>>>
+>>> fio --name=writeback --ioengine=sync --rw=write --bs={1k,4k,1M} --size=2G
+>>> --numjobs=2 --ramp_time=30 --group_reporting=1 --directory=/root/fuse_mount
+>>>
+>>>         bs =  1k          4k            1M
+>>> Before  351 MiB/s     1818 MiB/s     1851 MiB/s
+>>> After   341 MiB/s     2246 MiB/s     2685 MiB/s
+>>> % diff        -3%          23%         45%
+>>>
+>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+>>> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+>>> Acked-by: Miklos Szeredi <mszeredi@redhat.com>
+>>
+> 
+> Hi Jingbo,
+> 
+> Thanks for sharing your analysis for this.
+> 
+>> Overall this patch LGTM.
+>>
+>> Apart from that, IMO the fi->writectr and fi->queued_writes mechanism is
+>> also unneeded then, at least the DIRECT IO routine (i.e.
+> 
+> I took a look at fi->writectr and fi->queued_writes and my
+> understanding is that we do still need this. For example, for
+> truncates (I'm looking at fuse_do_setattr()), I think we still need to
+> prevent concurrent writeback or else the setattr request and the
+> writeback request could race which would result in a mismatch between
+> the file's reported size and the actual data written to disk.
 
-[buffer_migrate_folio]
-                    calls       50160811
-                  success       50047572
-                    fails       113239
+I haven't looked into the truncate routine yet.  I will see it later.
 
-[buffer_migrate_folio_norefs]
-                    calls       23577082468
-                  success       2939858
-                    fails       23574142610
-                 jbd-meta       23425956714
-          no-head-success       102
-            no-head-fails       0
-                  invalid       147919982
-                    valid       2939881
-            valid-success       2939756
-              valid-fails       125
+> 
+>> fuse_direct_io()) doesn't need fuse_sync_writes() anymore.  That is
+>> because after removing the temp page, the DIRECT IO routine has already
+>> been waiting for all inflight WRITE requests, see
+>>
+>> # DIRECT read
+>> generic_file_read_iter
+>>   kiocb_write_and_wait
+>>     filemap_write_and_wait_range
+> 
+> Where do you see generic_file_read_iter() getting called for direct io reads?
 
-Success ratios:
-buffer_migrate_folio: 99% success (50047572/50160811)
-buffer_migrate_folio_norefs: 0% success (2939858/23577082468)
+# DIRECT read
+fuse_file_read_iter
+  fuse_cache_read_iter
+    generic_file_read_iter
+      kiocb_write_and_wait
+       filemap_write_and_wait_range
+      a_ops->direct_IO(),i.e. fuse_direct_IO()
 
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- mm/migrate.c | 184 +++++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 178 insertions(+), 6 deletions(-)
 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 8fed2655f2e8..c478e8218cb0 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -44,6 +44,7 @@
- #include <linux/sched/sysctl.h>
- #include <linux/memory-tiers.h>
- #include <linux/pagewalk.h>
-+#include <linux/debugfs.h>
- 
- #include <asm/tlbflush.h>
- 
-@@ -791,6 +792,126 @@ int migrate_folio(struct address_space *mapping, struct folio *dst,
- EXPORT_SYMBOL(migrate_folio);
- 
- #ifdef CONFIG_BUFFER_HEAD
-+
-+static const char * const bh_routine_names[] = {
-+	"buffer_migrate_folio",
-+	"buffer_migrate_folio_norefs",
-+};
-+
-+#define BH_STATS(X)							       \
-+	X(bh_migrate_folio, 0, "calls")					       \
-+	X(bh_migrate_folio_success, 0, "success")			       \
-+	X(bh_migrate_folio_fails, 0, "fails")				       \
-+	X(bh_migrate_folio_norefs, 1, "calls")				       \
-+	X(bh_migrate_folio_norefs_success, 1, "success")		       \
-+	X(bh_migrate_folio_norefs_fails, 1, "fails")			       \
-+	X(bh_migrate_folio_norefs_meta, 1, "jbd-meta")			       \
-+	X(bh_migrate_folio_norefs_nohead_success, 1, "no-head-success")	       \
-+	X(bh_migrate_folio_norefs_nohead_fails, 1, "no-head-fails")	       \
-+	X(bh_migrate_folio_norefs_invalid, 1, "invalid")		       \
-+	X(bh_migrate_folio_norefs_valid, 1, "valid")			       \
-+	X(bh_migrate_folio_norefs_valid_success, 1, "valid-success")	       \
-+	X(bh_migrate_folio_norefs_valid_fails, 1, "valid-fails")
-+
-+
-+#define DECLARE_STAT(name, routine_idx, meaning) static atomic_long_t name;
-+BH_STATS(DECLARE_STAT)
-+
-+#define BH_STAT_PTR(name, routine_idx, meaning) &name,
-+static atomic_long_t * const bh_stat_array[] = {
-+	BH_STATS(BH_STAT_PTR)
-+};
-+
-+#define BH_STAT_ROUTINE_IDX(name, routine_idx, meaning) routine_idx,
-+static const int bh_stat_routine_index[] = {
-+	BH_STATS(BH_STAT_ROUTINE_IDX)
-+};
-+
-+#define BH_STAT_MEANING(name, routine_idx, meaning) meaning,
-+static const char * const bh_stat_meanings[] = {
-+	BH_STATS(BH_STAT_MEANING)
-+};
-+
-+#define NUM_BH_STATS ARRAY_SIZE(bh_stat_array)
-+
-+static ssize_t read_file_bh_migrate_stats(struct file *file,
-+					  char __user *user_buf,
-+					  size_t count, loff_t *ppos)
-+{
-+	char *buf;
-+	unsigned int i, len = 0, size = NUM_BH_STATS * 128;
-+	int ret, last_routine = -1;
-+	unsigned long total, success, rate;
-+
-+	BUILD_BUG_ON(ARRAY_SIZE(bh_stat_array) != ARRAY_SIZE(bh_stat_meanings));
-+
-+	buf = kzalloc(size, GFP_KERNEL);
-+	if (buf == NULL)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < NUM_BH_STATS; i++) {
-+		int routine_idx = bh_stat_routine_index[i];
-+
-+		if (routine_idx != last_routine) {
-+			len += scnprintf(buf + len, size - len, "\n[%s]\n",
-+					 bh_routine_names[routine_idx]);
-+			last_routine = routine_idx;
-+		}
-+
-+		len += scnprintf(buf + len, size - len, "%25s\t%lu\n",
-+				 bh_stat_meanings[i],
-+				 atomic_long_read(bh_stat_array[i]));
-+
-+	}
-+
-+	len += scnprintf(buf + len, size - len, "\nSuccess ratios:\n");
-+
-+	total = atomic_long_read(&bh_migrate_folio);
-+	success = atomic_long_read(&bh_migrate_folio_success);
-+	rate = total ? (success * 100) / total : 0;
-+	len += scnprintf(buf + len, size - len,
-+		"%s: %lu%% success (%lu/%lu)\n",
-+		"buffer_migrate_folio", rate, success, total);
-+
-+	total = atomic_long_read(&bh_migrate_folio_norefs);
-+	success = atomic_long_read(&bh_migrate_folio_norefs_success);
-+	rate = total ? (success * 100) / total : 0;
-+	len += scnprintf(buf + len, size - len,
-+		"%s: %lu%% success (%lu/%lu)\n",
-+		"buffer_migrate_folio_norefs", rate, success, total);
-+
-+	ret = simple_read_from_buffer(user_buf, count, ppos, buf, len);
-+	kfree(buf);
-+	return ret;
-+}
-+
-+static const struct file_operations fops_bh_migrate_stats = {
-+	.read = read_file_bh_migrate_stats,
-+	.open = simple_open,
-+	.owner = THIS_MODULE,
-+	.llseek = default_llseek,
-+};
-+
-+static void mm_migrate_bh_init(struct dentry *migrate_debug_root)
-+{
-+	struct dentry *parent_dirs[ARRAY_SIZE(bh_routine_names)] = { NULL };
-+	struct dentry *root = debugfs_create_dir("bh", migrate_debug_root);
-+	int i;
-+
-+	for (i = 0; i < ARRAY_SIZE(bh_routine_names); i++)
-+		parent_dirs[i] = debugfs_create_dir(bh_routine_names[i], root);
-+
-+	for (i = 0; i < NUM_BH_STATS; i++) {
-+		int routine = bh_stat_routine_index[i];
-+		debugfs_create_ulong(bh_stat_meanings[i], 0400,
-+		                     parent_dirs[routine],
-+		                     (unsigned long *)
-+				     &bh_stat_array[i]->counter);
-+	}
-+
-+	debugfs_create_file("stats", 0400, root, root, &fops_bh_migrate_stats);
-+}
-+
- /* Returns true if all buffers are successfully locked */
- static bool buffer_migrate_lock_buffers(struct buffer_head *head,
- 							enum migrate_mode mode)
-@@ -833,16 +954,26 @@ static int __buffer_migrate_folio(struct address_space *mapping,
- 	int expected_count;
- 
- 	head = folio_buffers(src);
--	if (!head)
--		return migrate_folio(mapping, dst, src, mode);
-+	if (!head) {
-+		rc = migrate_folio(mapping, dst, src, mode);
-+		if (check_refs) {
-+			if (rc == 0)
-+				atomic_long_inc(&bh_migrate_folio_norefs_nohead_success);
-+			else
-+				atomic_long_inc(&bh_migrate_folio_norefs_nohead_fails);
-+		}
-+		return rc;
-+	}
- 
- 	/* Check whether page does not have extra refs before we do more work */
- 	expected_count = folio_expected_refs(mapping, src);
- 	if (folio_ref_count(src) != expected_count)
- 		return -EAGAIN;
- 
--	if (buffer_meta(head))
-+	if (buffer_meta(head)) {
-+		atomic_long_inc(&bh_migrate_folio_norefs_meta);
- 		return -EAGAIN;
-+	}
- 
- 	if (!buffer_migrate_lock_buffers(head, mode))
- 		return -EAGAIN;
-@@ -868,17 +999,23 @@ static int __buffer_migrate_folio(struct address_space *mapping,
- 		if (busy) {
- 			if (invalidated) {
- 				rc = -EAGAIN;
-+				atomic_long_inc(&bh_migrate_folio_norefs_invalid);
- 				goto unlock_buffers;
- 			}
- 			invalidate_bh_lrus();
- 			invalidated = true;
- 			goto recheck_buffers;
- 		}
-+		atomic_long_inc(&bh_migrate_folio_norefs_valid);
- 	}
- 
- 	rc = filemap_migrate_folio(mapping, dst, src, mode);
--	if (rc != MIGRATEPAGE_SUCCESS)
-+	if (rc != MIGRATEPAGE_SUCCESS) {
-+		if (check_refs)
-+			atomic_long_inc(&bh_migrate_folio_norefs_valid_fails);
- 		goto unlock_buffers;
-+	} else if (check_refs)
-+		atomic_long_inc(&bh_migrate_folio_norefs_valid_success);
- 
- 	bh = head;
- 	do {
-@@ -915,7 +1052,16 @@ static int __buffer_migrate_folio(struct address_space *mapping,
- int buffer_migrate_folio(struct address_space *mapping,
- 		struct folio *dst, struct folio *src, enum migrate_mode mode)
- {
--	return __buffer_migrate_folio(mapping, dst, src, mode, false);
-+	int ret;
-+	atomic_long_inc(&bh_migrate_folio);
-+
-+	ret = __buffer_migrate_folio(mapping, dst, src, mode, false);
-+	if (ret == 0)
-+		atomic_long_inc(&bh_migrate_folio_success);
-+	else
-+		atomic_long_inc(&bh_migrate_folio_fails);
-+
-+	return ret;
- }
- EXPORT_SYMBOL(buffer_migrate_folio);
- 
-@@ -936,9 +1082,21 @@ EXPORT_SYMBOL(buffer_migrate_folio);
- int buffer_migrate_folio_norefs(struct address_space *mapping,
- 		struct folio *dst, struct folio *src, enum migrate_mode mode)
- {
--	return __buffer_migrate_folio(mapping, dst, src, mode, true);
-+	int ret;
-+
-+	atomic_long_inc(&bh_migrate_folio_norefs);
-+
-+	ret = __buffer_migrate_folio(mapping, dst, src, mode, true);
-+	if (ret == 0)
-+		atomic_long_inc(&bh_migrate_folio_norefs_success);
-+	else
-+		atomic_long_inc(&bh_migrate_folio_norefs_fails);
-+
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(buffer_migrate_folio_norefs);
-+#else
-+static inline void mm_migrate_bh_init(struct dentry *migrate_debug_root) { }
- #endif /* CONFIG_BUFFER_HEAD */
- 
- int filemap_migrate_folio(struct address_space *mapping,
-@@ -2737,3 +2895,17 @@ int migrate_misplaced_folio(struct folio *folio, int node)
- }
- #endif /* CONFIG_NUMA_BALANCING */
- #endif /* CONFIG_NUMA */
-+
-+static __init int mm_migrate_debugfs_init(void)
-+{
-+	struct dentry *mm_debug_root;
-+	struct dentry *migrate_debug_root;
-+
-+	mm_debug_root = debugfs_create_dir("mm", NULL);
-+	migrate_debug_root = debugfs_create_dir("migrate", mm_debug_root);
-+
-+	mm_migrate_bh_init(migrate_debug_root);
-+
-+	return 0;
-+}
-+fs_initcall(mm_migrate_debugfs_init);
+> Similarly, where do you see generic_file_write_iter() getting called
+> for direct io writes?
+
+# DIRECT read
+fuse_file_write_iter
+  fuse_cache_write_iter
+    generic_file_write_iter
+      generic_file_direct_write
+        kiocb_invalidate_pages
+         filemap_invalidate_pages
+           filemap_write_and_wait_range
+      a_ops->direct_IO(),i.e. fuse_direct_IO()
+
+
+> Where do you see fi->writectr / fi->queued-writes preventing this
+> race?
+
+IMO overall fi->writectr / fi->queued-writes are introduced to prevent
+DIRECT IO and writeback from sending duplicate (inflight) WRITE requests
+for the same page.
+
+For the DIRECT write routine:
+
+# non-FOPEN_DIRECT_IO DIRECT write
+fuse_cache_write_iter
+  fuse_direct_IO
+    fuse_direct_io
+      fuse_sync_writes
+
+
+# FOPEN_DIRECT_IO DIRECT write
+fuse_direct_write_iter
+  fuse_direct_IO
+    fuse_direct_io
+      fuse_sync_writes
+
+
+For the writeback routine:
+fuse_writepages()
+  fuse_writepages_fill
+    fuse_writepages_send
+      # buffer the WRITE request in queued_writes list
+      fuse_flush_writepages
+	# flush WRITE only when fi->writectr >= 0
+	
+
+
+> It looks to me like in the existing code, this race condition
+> you described of direct write invalidating the page cache, then
+> another buffer write reads the page cache and dirties it, then
+> writeback is called on that, and the 2 write requests racing, could
+> still happen?
+> 
+> 
+>> However it seems that the writeback
+>> won't wait for previous inflight DIRECT WRITE requests, so I'm not much
+>> sure about that.  Maybe other folks could offer more insights...
+> 
+> My understanding is that these lines
+> 
+> if (!cuse && filemap_range_has_writeback(...)) {
+>    ...
+>    fuse_sync_writes(inode);
+>    ...
+> }
+> 
+> in fuse_direct_io() is what waits on previous inflight direct write
+> requests to complete before the direct io happens.
+
+Right.
+
+> 
+> 
+>>
+>> Also fuse_sync_writes() is not needed in fuse_flush() anymore, with
+>> which I'm pretty sure.
+> 
+> Why don't we still need this for fuse_flush()?
+> 
+> If a caller calls close(), this will call
+> 
+> filp_close()
+>   filp_flush()
+>       filp->f_op->flush()
+>           fuse_flush()
+> 
+> it seems like we should still be waiting for all writebacks to finish
+> before sending the fuse server the fuse_flush request, no?
+> 
+
+filp_close()
+   filp_flush()
+       filp->f_op->flush()
+           fuse_flush()
+ 	     write_inode_now
+		writeback_single_inode(WB_SYNC_ALL)
+		  do_writepages
+		    # flush dirty page
+		  filemap_fdatawait
+		    # wait for WRITE completion
+
+>>
+>>> ---
+>>>  fs/fuse/file.c   | 360 ++++-------------------------------------------
+>>>  fs/fuse/fuse_i.h |   3 -
+>>>  2 files changed, 28 insertions(+), 335 deletions(-)
+>>>
+>>> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+>>> index 754378dd9f71..91ada0208863 100644
+>>> --- a/fs/fuse/file.c
+>>> +++ b/fs/fuse/file.c
+>>> @@ -415,89 +415,11 @@ u64 fuse_lock_owner_id(struct fuse_conn *fc, fl_owner_t id)
+>>>
+>>>  struct fuse_writepage_args {
+>>>       struct fuse_io_args ia;
+>>> -     struct rb_node writepages_entry;
+>>>       struct list_head queue_entry;
+>>> -     struct fuse_writepage_args *next;
+>>>       struct inode *inode;
+>>>       struct fuse_sync_bucket *bucket;
+>>>  };
+>>>
+>>> -static struct fuse_writepage_args *fuse_find_writeback(struct fuse_inode *fi,
+>>> -                                         pgoff_t idx_from, pgoff_t idx_to)
+>>> -{
+>>> -     struct rb_node *n;
+>>> -
+>>> -     n = fi->writepages.rb_node;
+>>> -
+>>> -     while (n) {
+>>> -             struct fuse_writepage_args *wpa;
+>>> -             pgoff_t curr_index;
+>>> -
+>>
+>> --
+>> Thanks,
+>> Jingbo
+
 -- 
-2.47.2
-
+Thanks,
+Jingbo
 
