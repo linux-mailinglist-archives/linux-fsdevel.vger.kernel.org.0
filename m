@@ -1,151 +1,197 @@
-Return-Path: <linux-fsdevel+bounces-46207-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46208-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B874A8456E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 15:55:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2CFA845A6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 16:06:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ACA027A898C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 13:52:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C041E189F69B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 14:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E522928C5AB;
-	Thu, 10 Apr 2025 13:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HDd0cqKH"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB732857FA;
+	Thu, 10 Apr 2025 14:05:06 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F602857C7
-	for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 13:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551E6284B21;
+	Thu, 10 Apr 2025 14:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744293199; cv=none; b=mJvw5P+gARdPDP8O4p1sD7lFnFtu6b5tOodN2IoJ36FzalqeeMrEITAs/RbBvcumkn16PASDkPFcAZvv8mAhbaTMT28hQy5f7TkQOadx1b7cP2gQlKgOXXMFJw0VhEqaehEBUCOrgUmZwTzkoW52SzlOze4/IkM3zpFRkJ2+Lio=
+	t=1744293906; cv=none; b=hi0o/wAD+KFYeWpunboys49Lx+imsx2PXWBQEOrfoMTXCoG65s/KSgFUHpXrtZ/GHsS9yrNHUCJKRPgSqpmgzpiEsB/aAvO7kuB04bKPiMG/mV9Dgy9c92HVQxM1nyJA/QVb8dQfb8qwvBzIGsaPonwm/jJAqvZjdnRVhfhE5Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744293199; c=relaxed/simple;
-	bh=6EzNCLAlf1iloxVtrXjGElQcW7269jazRrghVzl9gM8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=EsQEXUBhQR/AOFm9681j12kHWKAoV8y/2+FZqLb48PH6WcaBs0e15wayWRuR+5TmoT9EWTjEn0pT35+EOoQWjm2+R6hMKhACyH2zt7bpUuGQucaHkATGRidNF/rRUfJ+tb4jpsX33X85N0pP+txkWxLHTFcwYUvqb088VA7TtLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HDd0cqKH; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-3032f4ea8cfso908962a91.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Apr 2025 06:53:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1744293196; x=1744897996; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4wxcHUnCCezh6nWr6RFH2iv1Y8IeCzojzwMbdNb4Do=;
-        b=HDd0cqKHGtPrIPrD3zaBYMCfjaq0/jDRlkSiDB73JzjB0UBHODNk9a3ToIcIcWqe7W
-         fv0+pYJUjE9TAiXXhDVSySGegZUoKXhfjljrlVuSruuOJc0pq6kffB7El9RfXwtMDP7J
-         gf2MRN5X1xzPMUmrWBNH7tiTsdhbj7wIHRtFnLu9CInE5QZnyAh4z8INRoxpeG+tkMjV
-         QsrMN45AKpwqQazIHPuCshcCx4XBDQ/mmxOdtRRas9iE38FKpeRMGEXel6aFCd/91cMh
-         UU6Yz70trLPM9SMB/Tnr5+AyDoxot2o9cxPh9zdjUXBd5lyBi8XTScMlfCH24mC8ZLiu
-         Kv9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744293196; x=1744897996;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y4wxcHUnCCezh6nWr6RFH2iv1Y8IeCzojzwMbdNb4Do=;
-        b=lMSa+b0/+M/DLlhHHY4K7FLEuW6xjg51qrXg6mxd9nCpy7E6RWEts1S0WV2PbGXMem
-         pQsZgFVdiSkItr/R/MTYzKPU/whGMPIQv475Mbov4Und78XmbOBBoMMLm1ZKqc+/2HcL
-         fPgJtPuPCXSzVVvp2COEJexv7Q8mN5HzpySLgvdlRsMgrujzn3j770g4FXFpgsNxDg5L
-         ZF/AS2iAZqXJ1yWyXfMXZ5Dx/cAQHzrEL7Ml2bYBo8z3DyZDxrFE3JE1PGp8KzELUEuT
-         93ZtcvB3Y2ti1fUIEeMt1sJG/2I2liciNN7BzoZUF+0kLiRumYtY5llVDmZHK7Uc8O/g
-         VplA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNkHDS6gkCM93gf/ZIwg8E4fGxZ6wNsP5MKVZkt4qj2yAHZ/jr843YBGCFBV9J3PehRZPr4a5Jwn4Gr4Hg@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwFNhhrXREWGDw58PO/7q9nEXNnQRCrEu8YwE+wCwoO5SAljFu
-	zKLa5tUd+9r+5OPvnPi7Mh5X1aEpJYO7ux8Imoe/ElfP4UWNK6CCXKXS1BkGS1By138/VQRKtQy
-	EA8DKttg1PqVd5QF5AWuO+A==
-X-Google-Smtp-Source: AGHT+IGEOFVmeMKiNYyGdVgVnjUwRuQMOBh3p67Kck++ZyIayxkYnmKh+TTYDv35m8GZuGIZaSBy6hjI9GDfCfcztg==
-X-Received: from pjbtb11.prod.google.com ([2002:a17:90b:53cb:b0:301:1ea9:63b0])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:d2ce:b0:2ee:f440:53ed with SMTP id 98e67ed59e1d1-3072ba1f6e0mr4252531a91.31.1744293196650;
- Thu, 10 Apr 2025 06:53:16 -0700 (PDT)
-Date: Thu, 10 Apr 2025 06:53:15 -0700
-In-Reply-To: <Z_eEfjrkspAt4ACP@infradead.org>
+	s=arc-20240116; t=1744293906; c=relaxed/simple;
+	bh=/vVrlLgTBAnnRIWHpzc5T0Ee0v/HyVPxPh8/LZjzGis=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LWiEcBtgnMP3BuAq/Rz4BtC27ZpYjCPFH8EqCwXmjLFMiavcgFbsSLKvtIrmUlJLMouJn16uCrpqVuw2V5xHLTztaAza2qYIYzAMa3wbiLWK87dbIFPM5vJ7AvfwKaotvlIrIbxW0Wqo9UsTw2FbBr64BiicJOXoaFqERO+mQO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 2475410084D;
+	Thu, 10 Apr 2025 23:58:21 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id ye5TYnGA5GiS; Thu, 10 Apr 2025 23:58:21 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id 07C18100265; Thu, 10 Apr 2025 23:58:20 +1000 (AEST)
+X-Spam-Level: 
+Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id 84608100265;
+	Thu, 10 Apr 2025 23:58:17 +1000 (AEST)
+Message-ID: <64fb3c80-96f9-4156-a085-516cbaa28376@themaw.net>
+Date: Thu, 10 Apr 2025 21:58:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250408112402.181574-1-shivankg@amd.com> <20250408112402.181574-6-shivankg@amd.com>
- <Z_eEfjrkspAt4ACP@infradead.org>
-Message-ID: <diqz4iyw5dis.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [PATCH RFC v7 5/8] KVM: guest_memfd: Make guest mem use guest mem
- inodes instead of anonymous inodes
-From: Ackerley Tng <ackerleytng@google.com>
-To: Christoph Hellwig <hch@infradead.org>, Shivank Garg <shivankg@amd.com>
-Cc: seanjc@google.com, david@redhat.com, vbabka@suse.cz, willy@infradead.org, 
-	akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com, 
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz, 
-	bfoster@redhat.com, tabba@google.com, vannapurve@google.com, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, 
-	michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com, 
-	peterx@redhat.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-coco@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Eric Chanudet <echanude@redhat.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <20250409-egalisieren-halbbitter-23bc252d3a38@brauner>
+ <20250409131444.9K2lwziT@linutronix.de>
+ <4qyflnhrml2gvnvtguj5ee7ewrz3ejhgdb2lfihifzjscc5orh@6ah6qxppgk5n>
+ <20250409142510.PIlMaZhX@linutronix.de>
+ <20250409-beulen-pumpwerk-43fd29a6801e@brauner>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <20250409-beulen-pumpwerk-43fd29a6801e@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Christoph Hellwig <hch@infradead.org> writes:
 
-> On Tue, Apr 08, 2025 at 11:23:59AM +0000, Shivank Garg wrote:
->> From: Ackerley Tng <ackerleytng@google.com>
->> 
->> Using guest mem inodes allows us to store metadata for the backing
->> memory on the inode. Metadata will be added in a later patch to support
->> HugeTLB pages.
->> 
->> Metadata about backing memory should not be stored on the file, since
->> the file represents a guest_memfd's binding with a struct kvm, and
->> metadata about backing memory is not unique to a specific binding and
->> struct kvm.
->> 
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> Signed-off-by: Fuad Tabba <tabba@google.com>
->> Signed-off-by: Shivank Garg <shivankg@amd.com>
->> ---
->>  include/uapi/linux/magic.h |   1 +
->>  virt/kvm/guest_memfd.c     | 133 +++++++++++++++++++++++++++++++------
->>  2 files changed, 113 insertions(+), 21 deletions(-)
->> 
->> <snip>
->>  
->> +static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
->> +						      loff_t size, u64 flags)
->> +{
->> +	const struct qstr qname = QSTR_INIT(name, strlen(name));
->> +	struct inode *inode;
->> +	int err;
->> +
->> +	inode = alloc_anon_inode(kvm_gmem_mnt->mnt_sb);
->> +	if (IS_ERR(inode))
->> +		return inode;
->> +
->> +	err = security_inode_init_security_anon(inode, &qname, NULL);
->> +	if (err) {
->> +		iput(inode);
->> +		return ERR_PTR(err);
->> +	}
+On 10/4/25 00:04, Christian Brauner wrote:
+> On Wed, Apr 09, 2025 at 04:25:10PM +0200, Sebastian Andrzej Siewior wrote:
+>> On 2025-04-09 16:02:29 [+0200], Mateusz Guzik wrote:
+>>> On Wed, Apr 09, 2025 at 03:14:44PM +0200, Sebastian Andrzej Siewior wrote:
+>>>> One question: Do we need this lazy/ MNT_DETACH case? Couldn't we handle
+>>>> them all via queue_rcu_work()?
+>>>> If so, couldn't we have make deferred_free_mounts global and have two
+>>>> release_list, say release_list and release_list_next_gp? The first one
+>>>> will be used if queue_rcu_work() returns true, otherwise the second.
+>>>> Then once defer_free_mounts() is done and release_list_next_gp not
+>>>> empty, it would move release_list_next_gp -> release_list and invoke
+>>>> queue_rcu_work().
+>>>> This would avoid the kmalloc, synchronize_rcu_expedited() and the
+>>>> special-sauce.
+>>>>
+>>> To my understanding it was preferred for non-lazy unmount consumers to
+>>> wait until the mntput before returning.
+>>>
+>>> That aside if I understood your approach it would de facto serialize all
+>>> of these?
+>>>
+>>> As in with the posted patches you can have different worker threads
+>>> progress in parallel as they all get a private list to iterate.
+>>>
+>>> With your proposal only one can do any work.
+>>>
+>>> One has to assume with sufficient mount/unmount traffic this can
+>>> eventually get into trouble.
+>> Right, it would serialize them within the same worker thread. With one
+>> worker for each put you would schedule multiple worker from the RCU
+>> callback. Given the system_wq you will schedule them all on the CPU
+>> which invokes the RCU callback. This kind of serializes it, too.
+>>
+>> The mntput() callback uses spinlock_t for locking and then it frees
+>> resources. It does not look like it waits for something nor takes ages.
+>> So it might not be needed to split each put into its own worker on a
+>> different CPU… One busy bee might be enough ;)
+> Unmounting can trigger very large number of mounts to be unmounted. If
+> you're on a container heavy system or services that all propagate to
+> each other in different mount namespaces mount propagation will generate
+> a ton of umounts. So this cannot be underestimated.
 >
-> So why do other alloc_anon_inode callers not need
-> security_inode_init_security_anon?
+> If a mount tree is wasted without MNT_DETACH it will pass UMOUNT_SYNC to
+> umount_tree(). That'll cause MNT_SYNC_UMOUNT to be raised on all mounts
+> during the unmount.
+>
+> If a concurrent path lookup calls legitimize_mnt() on such a mount and
+> sees that MNT_SYNC_UMOUNT is set it will discount as it know that the
+> concurrent unmounter hold the last reference and it __legitimize_mnt()
+> can thus simply drop the reference count. The final mntput() will be
+> done by the umounter.
 
-Thanks for this tip!
+In umount_tree() it looks like the unmounted mount remains hashed (ie.
 
-When I did this refactoring, I was just refactoring
-anon_inode_create_getfile(), to set up the guest_memfd inode and file in
-separate stages, and anon_inode_create_getfile() was already using
-security_inode_init_security_anon().
+disconnect_mount() returns false) so can't it still race with an rcu-walk
 
-In the next revision I can remove this call.
+regardless of the sybcronsize_rcu().
 
-Is it too late to remove the call to security_inode_init_security_anon()
-though? IIUC it is used by LSMs, which means security modules may
-already be assuming this call?
+
+Surely I'm missing something ...
+
+
+Ian
+
+>
+> The synchronize_rcu() call in namespace_unlock() takes care that the
+> last mntput() doesn't happen until path walking has dropped out of RCU
+> mode.
+>
+> Without it it's possible that a non-MNT_DETACH umounter gets a spurious
+> EBUSY error because a concurrent lazy path walk will suddenly put the
+> last reference via mntput().
+>
+> I'm unclear how that's handled in whatever it is you're proposing.
+>
 
