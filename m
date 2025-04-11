@@ -1,171 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-46243-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46244-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F360A85834
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 11:41:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AE55A85A0E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 12:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66298C5967
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 09:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE281BA15B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 10:31:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18E71EE017;
-	Fri, 11 Apr 2025 09:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C1B204581;
+	Fri, 11 Apr 2025 10:31:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="nEJnnNQq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrbBPnG2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B882B290BC0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 09:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBE6278E5D;
+	Fri, 11 Apr 2025 10:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744364442; cv=none; b=Wxz/BwAU9WP9uvr7de0HwV+hCn5Iqqn84YkXLjcTJuENricC0OfxdG8GfnItrkoxZ3vaqxSR4sYb99cUUdskuR0WJNOd8+vYjkHo4cJvxDo2ORZLIc0mHoKqRu91bfJyhd/4/zXnbwdtNjmmAk/UfuXk/eakOo4S11JI2Hz/Fx0=
+	t=1744367490; cv=none; b=X0q3ef0Nmn8IP/Smz+krLcs4xafIgIxW3iosi3NAaoC5RxjZtrCAQl4Xa05zX3dejDpXZ1yk0PdOe4EUNaE52Vm8sgjdeZW7ZPPAEN+i4SdFYbJC294Qr3iXL22W+eaev5fcLxoOO56+7KL7B1dMo9ERxsDKTckyIpevQRTiE3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744364442; c=relaxed/simple;
-	bh=0TCPZ6U9nHyN4FMKSrPcFoAnI2xEIATR9nEgsM+Bnaw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=OdNeh7dkoL842s/10If59xNg0YCIRpVdxraLkCR2ZvFDTqJdojqu/v2fCOK19ShuYqbdqqBpkTYxaY86q/XS6KQHsUEqKMYnDzdSlFBdA2JjOecsZUMdYue2spntS6J3UTz9y/0nNYRYalZEY9dPR2ML7cWeGuPqqPE4Dg1Htz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=nEJnnNQq; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c560c55bc1so186823485a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 02:40:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1744364438; x=1744969238; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jGAaSe4lHBB/iLCfF9u1m5RobCTbqv8Peph80ehxIVo=;
-        b=nEJnnNQqRRciIImqOk02+tzy/AWd7Cz0iRgH0HkNw+PTr7YYmZKpM25s3JzehOIRe3
-         +MQJ4x4UMSXUa19IaoTd5cfdr/rktxHOqoAZnzIaGkGPTjf82P+Pbg+t9tDYKIYInNpG
-         9qd0Gq/tkLzLoy2xN/otcW04xkPfZAK3/hEl0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744364438; x=1744969238;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jGAaSe4lHBB/iLCfF9u1m5RobCTbqv8Peph80ehxIVo=;
-        b=QnvHiFglqLFyEX5jg1aRlrERXujiXjsLziqR3iTxfPQ0Xyuf4RqCzV10tN/wdEP7Ug
-         t78OWnw61m/hKwbpIp48kzy7qjPCSu/j6+y7oqUX0NPpUUNRdhhajiAtNbtmWa/iQVrE
-         AZGPp0YQmFaHsfnYBgLbj7fjDZ11ENULSvMmFcG8A+P6mlrUGfo9MxOpyPn25jE0Q8mM
-         xbNiGCW5BIWGRtqRfkBsydJHehMFroh6O/ns9wpmFXUle/pCWdUOkVO9zydOfDhPwbM1
-         C/ofiEExOSqITY/VNAoGQWbY/eunlrrTPEijF8LJPINxBy48A5hofr/rFWMGfPmuPR5T
-         coaA==
-X-Gm-Message-State: AOJu0Yy53WLO+Ge2x7fNK5al9gIm2tDvaAcbIXcB7bHneHs21ylrkNIk
-	JhBdeDjaUOJqw3eZNqGmKRhcMEXjqvaEBscax/XihLaHYUzGDu5hAFQAngJ4MIBjb39nXmcCoNC
-	2t3LH5cM1C4vb4ggH+NF05nDeVeVYlLt8FhNRvdvIvYnglT5mavY=
-X-Gm-Gg: ASbGncv6krYyb13c/NlhJz6bE9PVAb0K5hLPheSN17sWLGFeVGCMqPBFNCn0N1mB5Gp
-	HEjX/t5UbpCDZvDMsyfJHCRqDC9EkW0FjbdApeVfzPta7N9EEqbJIcjc6y+yWTYLbUxNG7vroMo
-	IgiUb6jpRY2s+e7g+/D5dSXQI=
-X-Google-Smtp-Source: AGHT+IE+B9WR69lygMZw04kd6bLY5/ckgzwhgUkfRUDKwzW2mwxCgB25kgNSXb626GGhU2SLpnOHndZvx02QHC/KTws=
-X-Received: by 2002:a05:620a:248c:b0:7c5:5d9b:b617 with SMTP id
- af79cd13be357-7c7af0d5da3mr277208585a.23.1744364438624; Fri, 11 Apr 2025
- 02:40:38 -0700 (PDT)
+	s=arc-20240116; t=1744367490; c=relaxed/simple;
+	bh=CBOZiEYXaUGZUmNXcnuDFchwctmohPkPCFnb85gsKB0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=arRCOp+ssGlYLsZnCboZd2nHH+SOUj3rLuE9NqSE3I3ZFpilThWDpGmj2cyF+SmBSQ3oPzz8380ozBNNTeVPX9IwTn2r1ndMc66/3qte+bnI4tfdcTF2Y3TuEFwL5Jdn8N2+y/rvbY8Fs+U5NFrzbto5he7wC9TEXqFzT7iizBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mrbBPnG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 926F9C4CEE2;
+	Fri, 11 Apr 2025 10:31:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744367490;
+	bh=CBOZiEYXaUGZUmNXcnuDFchwctmohPkPCFnb85gsKB0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mrbBPnG2JVzLo+RNNYgIeV1NjMbBZG93Rs6RrMqDJuP0KPSK3OnxlI2ynUIeWbAgD
+	 I6YGMxFDDZkADrhUrj48RmNezo+VvDRIio2aqlpLxW35XOSQWYUJoRJ4SQhocU+Nfb
+	 xaew95RAGXN+iOlS5jzrLyFCRBZ6IDAOIWNi/k6UtuZgijrBEm5CpXchcOUFyw7NME
+	 1Drr+rwGdeR1t7MRNnVtl7r4Ia9miN2dWj074DvDYpckzdwXvKX/3xJDsL4CKaFf3m
+	 TyL6e98Mh1Cq/c/6KrfTDFF72KuAO2HWJMEOp9LfKAAexlP9rd4XdYSdZG2+7pD0q5
+	 eB0rmpTyHFtYQ==
+Date: Fri, 11 Apr 2025 11:31:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Penglei Jiang <superman.xpt@gmail.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com,
+	stable@vger.kernel.org, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH 1/9] anon_inode: use a proper mode internally
+Message-ID: <7a1a7076-ff6b-4cb0-94e7-7218a0a44028@sirena.org.uk>
+References: <20250407-work-anon_inode-v1-0-53a44c20d44e@kernel.org>
+ <20250407-work-anon_inode-v1-1-53a44c20d44e@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 11 Apr 2025 11:40:28 +0200
-X-Gm-Features: ATxdqUGQzBvy7h8PeGceG6Z0_XKKalPOAMyxMGUMc-G1IHYqwVnm_DBOEo9LOdk
-Message-ID: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
-Subject: bad things when too many negative dentries in a directory
-To: linux-fsdevel@vger.kernel.org
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, Ian Kent <raven@themaw.net>
-Content-Type: text/plain; charset="UTF-8"
-
-There are reports of soflockups in fsnotify if there are large numbers
-of negative dentries (e.g. ~300M) in a directory.   This can happen if
-lots of temp files are created and removed and there's not enough
-memory pressure to trigger the lru shrinker.
-
-These are on old kernels and some of this is possibly due to missing
-172e422ffea2 ("fsnotify: clear PARENT_WATCHED flags lazily"), but I
-managed to reproduce the softlockup on a recent kernel in
-fsnotify_set_children_dentry_flags() (see end of mail).
-
-This was with ~1.2G negative dentries.  Doing "rmdir testdir"
-afterwards does not trigger the softlockup detector, due to the
-reschedules in shrink_dcache_parent() code, but it took 10 minutes(!)
-to finish removing that empty directory.
-
-So I wonder, do we really want negative dentries on ->d_children?
-Except for shrink_dcache_parent() I don't see any uses.  And it's also
-a question whether shrinking negative dentries is useful or not.  If
-they've been around for so long that hundreds of millions of them
-could accumulate and that memory wasn't needed by anybody, then it
-shouldn't make a big difference if they kept hanging around. On
-umount, at the latest, the lru list can be used to kill everything,
-AFAICT.
-
-I'm curious if this is the right path?  Any better ideas?
-
-Thanks,
-Miklos
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="KB8Y40lKK8UbHuHu"
+Content-Disposition: inline
+In-Reply-To: <20250407-work-anon_inode-v1-1-53a44c20d44e@kernel.org>
+X-Cookie: Entropy isn't what it used to be.
 
 
-[96789.366007] watchdog: BUG: soft lockup - CPU#79 stuck for 26s!
-[fanotify4:52805]
-[96789.373396] Modules linked in: rfkill mlx5_ib ib_uverbs macsec
-ib_core vfat fat mlx5_core acpi_ipmi ast ipmi_ssif arm_spe_pmu igb
-mlxfw psample i2c_algo_bit tls pci_hyperv_intf ipmi_devintf
-ipmi_msghandler arm_cmn arm_dmc620_pmu arm_dsu_pmu cppc_cpufreq loop
-fuse nfnetlink xfs nvme crct10dif_ce ghash_ce sha2_ce sha256_arm64
-nvme_core sha1_ce sbsa_gwdt nvme_auth i2c_designware_platform
-i2c_designware_core xgene_hwmon dm_mirror dm_region_hash dm_log dm_mod
-[96789.413624] CPU: 79 UID: 0 PID: 52805 Comm: fanotify4 Kdump: loaded
-Not tainted 6.12.0-55.9.1.el10_0.aarch64 #1
-[96789.423698] Hardware name: GIGABYTE R272-P30-JG/MP32-AR0-JG, BIOS
-F31n (SCP: 2.10.20220810) 09/30/2022
-[96789.432990] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[96789.439939] pc : fsnotify_set_children_dentry_flags+0x80/0xf0
-[96789.445675] lr : fsnotify_set_children_dentry_flags+0xa4/0xf0
-[96789.451408] sp : ffff8000cc77b8c0
-[96789.454710] x29: ffff8000cc77b8c0 x28: 0000000000000001 x27: 0000000000000000
-[96789.461833] x26: ffff07ff8463dc50 x25: ffff080e6e44dc50 x24: 0000000000000001
-[96789.468956] x23: ffff07ff9d94eec0 x22: ffff07fff2cf01b8 x21: ffff07ff9d94ee40
-[96789.476079] x20: ffff0800eb6dff40 x19: ffff0800eb6df2c0 x18: 0000000000000014
-[96789.483202] x17: 00000000cec6e315 x16: 00000000ed365140 x15: 00000000ae8684a4
-[96789.490325] x14: 000000000d831309 x13: 00000000387d7ee0 x12: 0000000000000000
-[96789.497448] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffc3bacc1864bc
-[96789.504570] x8 : 000000001007ffff x7 : ffffc3bace89a4c0 x6 : 0000000000000001
-[96789.511694] x5 : 0000000008000020 x4 : 0000000000000000 x3 : 0000000000000003
-[96789.518816] x2 : 0000000000000001 x1 : 0000000000000000 x0 : ffff0800eb6df358
-[96789.525939] Call trace:
-[96789.528373]  fsnotify_set_children_dentry_flags+0x80/0xf0
-[96789.533759]  fsnotify_recalc_mask.part.0+0x94/0xc8
-[96789.538538]  fsnotify_recalc_mask+0x1c/0x40
-[96789.542709]  fanotify_add_mark+0x15c/0x360
-[96789.546794]  do_fanotify_mark+0x3c0/0x7a0
-[96789.550791]  __arm64_sys_fanotify_mark+0x30/0x60
-[96789.555396]  invoke_syscall.constprop.0+0x74/0xd0
-[96789.560090]  do_el0_svc+0xb0/0xe8
-[96789.563393]  el0_svc+0x44/0x1d0
-[96789.566525]  el0t_64_sync_handler+0x120/0x130
-[96789.570870]  el0t_64_sync+0x1a4/0x1a8
-[151513.714945] INFO: task (ostnamed):77658 blocked for more than 122 seconds.
-[151513.721903]       Tainted: G             L    -------  ---
-6.12.0-55.9.1.el10_0.aarch64 #1
-[151513.730334] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
-disables this message.
-[151513.738241] task:(ostnamed)      state:D stack:0     pid:77658
-tgid:77658 ppid:1      flags:0x00000205
-[151513.747625] Call trace:
-[151513.750146]  __switch_to+0xec/0x148
-[151513.753712]  __schedule+0x234/0x738
-[151513.757278]  schedule+0x3c/0xe0
-[151513.760493]  schedule_preempt_disabled+0x2c/0x58
-[151513.765188]  rwsem_down_write_slowpath+0x1e4/0x720
-[151513.770054]  down_write+0xac/0xc0
-[151513.773444]  do_lock_mount+0x3c/0x220
-[151513.777185]  path_mount+0x378/0x810
-[151513.780748]  __arm64_sys_mount+0x158/0x2d8
-[151513.784921]  invoke_syscall.constprop.0+0x74/0xd0
-[151513.789702]  do_el0_svc+0xb0/0xe8
-[151513.793093]  el0_svc+0x44/0x1d0
-[151513.796312]  el0t_64_sync_handler+0x120/0x130
-[151513.800744]  el0t_64_sync+0x1a4/0x1a8
+--KB8Y40lKK8UbHuHu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Apr 07, 2025 at 11:54:15AM +0200, Christian Brauner wrote:
+> This allows the VFS to not trip over anonymous inodes and we can add
+> asserts based on the mode into the vfs. When we report it to userspace
+> we can simply hide the mode to avoid regressions. I've audited all
+> direct callers of alloc_anon_inode() and only secretmen overrides i_mode
+> and i_op inode operations but it already uses a regular file.
+
+We've been seeing failures in LTP's readadead01 in -next on arm64
+platforms:
+
+ 4601 07:43:36.192033  tst_test.c:1900: TINFO: LTP version: 20250130-1-g60f=
+e84aaf
+ 4602 07:43:36.201811  tst_test.c:1904: TINFO: Tested kernel: 6.15.0-rc1-ne=
+xt-20250410 #1 SMP PREEMPT Thu Apr 10 06:18:38 UTC 2025 aarch64
+ 4603 07:43:36.208400  tst_kconfig.c:88: TINFO: Parsing kernel config '/pro=
+c/config.gz'
+ 4604 07:43:36.218393  tst_test.c:1722: TINFO: Overall timeout per run is 0=
+h 01m 30s
+ 4605 07:43:36.223886  readahead01.c:36: TPASS: readahead() with fd =3D -1 =
+: EBADF (9)
+ 4606 07:43:36.229370  readahead01.c:43: TPASS: readahead() with invalid fd=
+ : EBADF (9)
+ 4607 07:43:36.234998  readahead01.c:64: TPASS: readahead() on O_PATH file =
+: EBADF (9)
+ 4608 07:43:36.240527  readahead01.c:64: TPASS: readahead() on directory : =
+EINVAL (22)
+ 4609 07:43:36.246118  readahead01.c:64: TPASS: readahead() on /dev/zero : =
+EINVAL (22)
+ 4610 07:43:36.251530  readahead01.c:64: TPASS: readahead() on pipe read en=
+d : EINVAL (22)
+ 4611 07:43:36.260007  readahead01.c:64: TPASS: readahead() on pipe write e=
+nd : EBADF (9)
+ 4612 07:43:36.265581  readahead01.c:64: TPASS: readahead() on unix socket =
+: EINVAL (22)
+ 4613 07:43:36.270928  readahead01.c:64: TPASS: readahead() on inet socket =
+: EINVAL (22)
+ 4614 07:43:36.276754  readahead01.c:64: TFAIL: readahead() on epoll succee=
+ded
+ 4615 07:43:36.279460  readahead01.c:64: TFAIL: readahead() on eventfd succ=
+eeded
+ 4616 07:43:36.285053  readahead01.c:64: TFAIL: readahead() on signalfd suc=
+ceeded
+ 4617 07:43:36.290504  readahead01.c:64: TFAIL: readahead() on timerfd succ=
+eeded
+ 4618 07:43:36.296220  readahead01.c:64: TFAIL: readahead() on fanotify suc=
+ceeded
+ 4619 07:43:36.301605  readahead01.c:64: TFAIL: readahead() on inotify succ=
+eeded
+ 4620 07:43:36.307327  tst_fd.c:170: TCONF: Skipping userfaultfd: ENOSYS (3=
+8)
+ 4621 07:43:36.312806  readahead01.c:64: TFAIL: readahead() on perf event s=
+ucceeded
+ 4622 07:43:36.318534  readahead01.c:64: TFAIL: readahead() on io uring suc=
+ceeded
+ 4623 07:43:36.321511  readahead01.c:64: TFAIL: readahead() on bpf map succ=
+eeded
+ 4624 07:43:36.325711  readahead01.c:64: TFAIL: readahead() on fsopen succe=
+eded
+ 4625 07:43:36.331073  readahead01.c:64: TFAIL: readahead() on fspick succe=
+eded
+ 4626 07:43:36.336608  readahead01.c:64: TPASS: readahead() on open_tree : =
+EBADF (9)
+ 4627 07:43:36.336903 =20
+ 4628 07:43:36.339354  Summary:
+ 4629 07:43:36.339641  passed   10
+ 4630 07:43:36.342132  failed   11
+ 4631 07:43:36.342420  broken   0
+ 4632 07:43:36.342648  skipped  1
+ 4633 07:43:36.344768  warnings 0
+
+which bisected down to this patch, which is cfd86ef7e8e7b9e01 in -next:
+
+git bisect start
+# status: waiting for both good and bad commits
+# bad: [29e7bf01ed8033c9a14ed0dc990dfe2736dbcd18] Add linux-next specific f=
+iles for 20250410
+git bisect bad 29e7bf01ed8033c9a14ed0dc990dfe2736dbcd18
+# status: waiting for good commit(s), bad commit known
+# good: [1785a3a7b96a52fae13880a5ba880a5f473eacb1] Merge branch 'for-linux-=
+next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+git bisect good 1785a3a7b96a52fae13880a5ba880a5f473eacb1
+# bad: [793874436825ebf3dfeeac34b75682c234cf61ef] Merge branch 'for-linux-n=
+ext' of https://gitlab.freedesktop.org/drm/misc/kernel.git
+git bisect bad 793874436825ebf3dfeeac34b75682c234cf61ef
+# bad: [f8b5c1664191e453611f77d36ba21b09bc468a2d] Merge branch 'next' of gi=
+t://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git
+git bisect bad f8b5c1664191e453611f77d36ba21b09bc468a2d
+# good: [100ac6e209fce471f3ff4d4e92f9d192fcfa7637] Merge branch 'for-next' =
+of git://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git
+git bisect good 100ac6e209fce471f3ff4d4e92f9d192fcfa7637
+# bad: [143ced925e31fe24e820866403276492f05efaa5] Merge branch 'vfs.all' of=
+ git://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+git bisect bad 143ced925e31fe24e820866403276492f05efaa5
+# good: [b087fb728fdda75e1d3e83aa542d3aa025ac6c4a] Merge branch 'nfsd-next'=
+ of git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux
+git bisect good b087fb728fdda75e1d3e83aa542d3aa025ac6c4a
+# good: [7ee85aeee98e85f72a663672267180218d1510db] Merge branch 'vfs-6.16.s=
+uper' into vfs.all
+git bisect good 7ee85aeee98e85f72a663672267180218d1510db
+# bad: [d57e6ea6671b1ef0fcb09ccc52952c8a6bfb83c8] Merge branch 'vfs-6.16.mi=
+sc' into vfs.all
+git bisect bad d57e6ea6671b1ef0fcb09ccc52952c8a6bfb83c8
+# bad: [25a6cc9a630b4b1b783903b23a3a97c5bf16bf41] selftests/filesystems: ad=
+d open() test for anonymous inodes
+git bisect bad 25a6cc9a630b4b1b783903b23a3a97c5bf16bf41
+# bad: [c83b9024966090fe0df92aab16975b8d00089e1f] pidfs: use anon_inode_set=
+attr()
+git bisect bad c83b9024966090fe0df92aab16975b8d00089e1f
+# bad: [cfd86ef7e8e7b9e015707e46479a6b1de141eed0] anon_inode: use a proper =
+mode internally
+git bisect bad cfd86ef7e8e7b9e015707e46479a6b1de141eed0
+# good: [418556fa576ebbd644c7258a97b33203956ea232] docs: initramfs: update =
+compression and mtime descriptions
+git bisect good 418556fa576ebbd644c7258a97b33203956ea232
+# first bad commit: [cfd86ef7e8e7b9e015707e46479a6b1de141eed0] anon_inode: =
+use a proper mode internally
+
+--KB8Y40lKK8UbHuHu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmf473wACgkQJNaLcl1U
+h9C0mwf/Z6VumgdQekkgPeD7AJwWUiJAB0jgYh9xQWY++SYlNvknam/nnhWZCS/l
+Oiszm6xnrjLIlgMjwdmURtNFhZS1Zq53TLiAgYdLzjIYLNZcLJWVUiPFjjREcErN
+FX2C6sIhO7SBFyJJWFJM+/BH6O7EayofwJtJ+mQHOSdiT7OzB+XMJsDQBo24n2Qp
+NpkfyucI891v8ZaW3pzTuN9QlcO5P/0BqxbCT2NBWzqJJE5SsQzKha+aDbdZZj9U
+1qF3GClKuh58jqOvq3RmU8yto1pLcA6yTQUAoZpD/yiJ4vTLiWZ6y5cVeLitCU/N
+qyjP53gugsYdaYIqeucK8EAh9QBbqQ==
+=p9J/
+-----END PGP SIGNATURE-----
+
+--KB8Y40lKK8UbHuHu--
 
