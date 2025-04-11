@@ -1,84 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-46306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F978A867DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 23:03:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C856DA8680A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 23:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C17B4C3C70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 21:03:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992CE9A17CC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 21:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BB1280A37;
-	Fri, 11 Apr 2025 21:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3323629615F;
+	Fri, 11 Apr 2025 21:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NAKuqloR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3cEqeT4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1449F23A9AE
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 21:02:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C0F29614A;
+	Fri, 11 Apr 2025 21:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744405377; cv=none; b=Wjhrpc7C82h43ChG7xHANrezoZL7nJMY9vU+r1BQvbm2joJ5GUr6CO8PjQ/BPv50OEmm8HcTQGZyBXMDKMdQUQ5Op7LzeaZLY3P4Zf2OUXssFxtUbPaVtV7YPHdSsSX4GJjYn+oL0cAsByigedzMPkWQsSj4qCmkjMwriSXQ/a0=
+	t=1744406124; cv=none; b=icFLBNSs9fPtrSIoU071R2mrXkvGaCDGDyhPuXxx96FgifomVeYjU5NMua2qPBo/Aw6dPg8o4C9ZS4OvnW885FcUszL+jBx9k/nc5J3SbreqM60hrf3mlPzIsolnfoDx81pJ9I6G7SBXz1tul7TzJlZIKt5jU+M3eVv1K1L2avs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744405377; c=relaxed/simple;
-	bh=vIH/f7PDE+RmYLbSA8keMAULZynyC90xcfuVIsM3NXw=;
+	s=arc-20240116; t=1744406124; c=relaxed/simple;
+	bh=zUAbfaDi+mFMIZ9/oYPb7idFOR0R4eD4ad4u+ZuUC9w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W4KMgdLZ/rEDzUPiGzUnASE+jzmKEb0yT3bpwO5L7Z13JlmjYQPEUV+MK7NeShrblEwuzZsKqe2INlUM7nt/XwDKu0+yQT+KPQ6GkEdcL4m8XrS3mUUfSuU6kLYkXrPN+TKgNnJ0Z6LTjY+sYy0jetzhLUPbwGeJEwDUECurC5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NAKuqloR; arc=none smtp.client-ip=209.85.221.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=gOkpXyK/BKgDDEd6b9cZKdXzxJLGJYiiO2T7406c/k7yu78MJS3FVOknw8++AxImnRr8+7hRbf2plHC0uUjgCS6tLA8kz2TUhN+hmnE425d6aJWa8T/6h8BCskkhePc/WjzuCSlQUpxHFdDFeYRxtx7DQtWKvEgECM+1J/4B+tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3cEqeT4; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so1512977f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 14:02:55 -0700 (PDT)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf848528aso19244535e9.2;
+        Fri, 11 Apr 2025 14:15:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744405374; x=1745010174; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744406121; x=1745010921; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zx/Ps81D1wUAxnvwxwG/eiimmAhng/9aeMmJYUs/3yg=;
-        b=NAKuqloRDd3YaEBo7L4SezVZ05KKPw9Mr32nEdLkIZHn9TwF/xYvcN5a5PhKhAP/uZ
-         +slxH+w6cPoGEs2T5aJ4Ev3xwOY0XV8L5971FT8z9VuecWNFZMfOiVq4C4BmCHGhn6xt
-         8lMPlE2Q1RvcoKg218s2GD6cmClSTfWgJI4fgr1798kl5IfOgQYD/diYXlMrdrGq3Skn
-         H61Lw5o/aG4ZxylVwuRPvhJZJ98mQGdADDhvjIMy++H7emdkbdJMTw7ti2z8J9VTPptV
-         LlXooarx2x4KiFjv5ktQkao0NeiA3gPpzOW9bMpeow3miknJzOiimD6FY//GTUTnu5BM
-         Ncmw==
+        bh=gPK+H6sOhTLm30dsqOJGvaQCZuKrA5gTcKcyNfzVAVg=;
+        b=E3cEqeT4gXKXaZjMbwDlPAGeTzICVOyGvCiqN0dzJWLFZ4goiEIf5vCqahBuL3EzXs
+         Z3pBIbD6M47jq4mhPlF+Q7gOWlF4y9PEzFBp2egR8QQKuEa0lY6Cy0D2gFVRX9cd9sDc
+         RAIsNQV6RiAatISbeU1CMjMdZcO6yTHJqDpQieVoz8Qx5/wX75v+9K7ya4c06Hhxb1uB
+         zzm5dIWZOMJxlzpCj8io4L1uPB5rWH/VudiWXxh40YGQLx2bKplr2HJCqMYhQwfRsfH+
+         VXAz4u1KlJsY3gPQE8zMWMuiyiyIeBAw9B5J/NqQo4k7btkFObDuVOfbGj3vFJtAlZcQ
+         SW+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744405374; x=1745010174;
+        d=1e100.net; s=20230601; t=1744406121; x=1745010921;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Zx/Ps81D1wUAxnvwxwG/eiimmAhng/9aeMmJYUs/3yg=;
-        b=Kf/Xd2+yNQcqCvx0sgK00Q9PrLpR/ZLKmYVTkObHRBqYgCfGwb/idTG1DXR+XRq1gZ
-         +aoObBRQM4OxQmj6nWs4+c2GXijHLwsKeTcUIKCXmec8eYbYn1GhzKGt+IuyURnAOoDg
-         UC4z4n27kiGehzNMsvuCnRMWJ/Dg9kqG9CEI3vFNbCJM5apD6aua2SOBYV6VPI498RRU
-         d6+DYmbg9PZJCA1Oyt4DBh9jGNK23X5hDGlyrtHpGJb7HQL4/qLFbYBDSESZrBEXZRCu
-         WfFOkgxOG9+HXRznJyRdrLDsZIKKzvEE4TMSZP/AiP6fZlguHGdoYjg5ZoG379ljFMhM
-         y5hA==
-X-Gm-Message-State: AOJu0Yx3yTjmEOHUWoBTTcuEXLqvYeN+F5M9GY2FWWmK8JP9fMUnAmah
-	CSx1y758j+FnHo/HslFqE0W2qXXNuXlhUagvv1zAaMX4urDa1lsp
-X-Gm-Gg: ASbGncs1QVC1u0uA1ZWdGqgcKdh/dEaUybeYAsD9guX59c8VhJNrbfe6yPnFbbVTk4A
-	asLMO9dFDwKeOTOlQPkR462M6wgFFk8GWniIAzgT9M9tWoC3yhfd6RXB4Kc0xaxBkbdvC2zH5bD
-	ny+H1EGE2/7AHMH8EgfdL1eQIAaFzFnZF8veqnxlC5UoayZKOn07an4w4hXYBfV4AnzPFdJ/JtW
-	WCC5ITna2N18auFc3OOoypll6l0L8Bdi4aepONfZDwQTn7U/HT++HCj/U4VbQFtr2MSwgYC+Iyp
-	rEB/j5XcvlzCpj83YWGxfUXPXD4K5U3dAVwuAdnYjNt2H4FrIMYh/w==
-X-Google-Smtp-Source: AGHT+IF4eaReYBsbwO38scH16SQd4RghP4gf4E1xTonHwhHWv/dvG/I2KU1KI10ULlMK/txmhSYgcA==
-X-Received: by 2002:a5d:6da4:0:b0:390:e8d4:6517 with SMTP id ffacd0b85a97d-39ea51f5dadmr3470469f8f.21.1744405373945;
-        Fri, 11 Apr 2025 14:02:53 -0700 (PDT)
+        bh=gPK+H6sOhTLm30dsqOJGvaQCZuKrA5gTcKcyNfzVAVg=;
+        b=jalcGZ+qmmM9nSqfKuVUoXaCu8vh8X03GX9Ea2KdSt6EZMbG1vhsuanonBn/NS9rFl
+         1Z1Y8hZlXysMZgqjSLARE0eZ5vhDSq8YsAmxFMbzb8YWtD8meETe1oFtO+Yb4d1+LoqG
+         8fUGfsUHKxhYIwQBLb1b6jAVa2jwc3CO6ws7pfXsmejdBTl3gbycwS7suJMZz4ullXcS
+         gPurfy7Ofk2ScNmMg0TVNFXUeEE39fC02739h1DaHhaZiK7C/eXepB1rv+MScqki4rxb
+         7XAmhJU77I/pTjXm0I35IVlS0cmLJYOnudKp7GKFg6WRLKSbd0xKXIh6f4YJlbMbp4sf
+         i26Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXC+l6I/AjMxsfWEC1owRy4DYWxvhJtwkhS4zP159hoA3ehh3offh8YZbz+z8jaw+9Bw9nUcooav7aWP1E@vger.kernel.org, AJvYcCXj215fnAo3IgOpQXeCjxySxeA8NLMtttvLk+/SgOJrZD/8MWPHnGK4AK60dhsWhKtdxWjTqNtsP5jIrHk3@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZApHzMcnyJDs1r9Nch3BtyizgDVE9Ocav3mBNvAxRONH3dJ73
+	sSlzKTenNJpdU7ponQbBQVMNYVKyEbI3rpAq2688fAaifEpVHATA
+X-Gm-Gg: ASbGncu8LaLhEWmQXeyAnq4dohPTFfAYoZLSOmAu0EWwtUGeIP1wMUy06IAe9BdwhEO
+	bqB5HDKpp2KFI8H8X4vfTTcsM5T33h+DD4ZAMbn3M24wQNez/Jc/Kk/MKo6fbTpWZiqCTe0xI/0
+	asb0FDLwLAtGbisdLhBd5FpEtEskYkHgTY07bdPF77HJ/Z0nmats/5JTl0gVkX+XyAPC4HMIoqb
+	zO8gxEDYi/hAKHXBxG4iWHPxBLtV6D15+W8LtqWacHz9jfIbS1j8PIEDWJ6zHgSlcDsiVbEjGw3
+	TOdalNx2T6m5LhJ692S9ddNEGUGtJZQR8K3kP7H1WameKPV4FXToIUshBJrFJlU5
+X-Google-Smtp-Source: AGHT+IEgeIHzXRmIqmpC5LyYH+Jtr/lT2cTeX/UOjaeIsufaoxo9zBEh6F6AvgV6eCmVOW+48CAP6Q==
+X-Received: by 2002:a05:600c:46d1:b0:43c:ec28:d310 with SMTP id 5b1f17b1804b1-43f3a93cc34mr43776805e9.10.1744406120863;
+        Fri, 11 Apr 2025 14:15:20 -0700 (PDT)
 Received: from f (cst-prg-90-20.cust.vodafone.cz. [46.135.90.20])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eae96c614sm3220589f8f.27.2025.04.11.14.02.50
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cd17sm3157603f8f.78.2025.04.11.14.15.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 14:02:53 -0700 (PDT)
-Date: Fri, 11 Apr 2025 23:02:43 +0200
+        Fri, 11 Apr 2025 14:15:20 -0700 (PDT)
+Date: Fri, 11 Apr 2025 23:15:12 +0200
 From: Mateusz Guzik <mjguzik@gmail.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>, 
-	Ian Kent <raven@themaw.net>
-Subject: Re: bad things when too many negative dentries in a directory
-Message-ID: <e34pa3nuduyjztrm6byky6sipi35ue5pyip3ro7labmb7rxl7w@skxqzxl23hw4>
-References: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: lirongqing <lirongqing@baidu.com>, viro@zeniv.linux.org.uk, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: Make file-nr output the total allocated file handles
+Message-ID: <p6rnvi5kvu7zwk6ypui2gwezvg3onqeqajwtw6uksv4jagannh@q2mx54icpmig>
+References: <20250410112117.2851-1-lirongqing@baidu.com>
+ <20250411-gejagt-gelistet-88c56be455d1@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,32 +88,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
+In-Reply-To: <20250411-gejagt-gelistet-88c56be455d1@brauner>
 
-On Fri, Apr 11, 2025 at 11:40:28AM +0200, Miklos Szeredi wrote:
-> There are reports of soflockups in fsnotify if there are large numbers
-> of negative dentries (e.g. ~300M) in a directory.   This can happen if
-> lots of temp files are created and removed and there's not enough
-> memory pressure to trigger the lru shrinker.
+On Fri, Apr 11, 2025 at 04:16:08PM +0200, Christian Brauner wrote:
+> On Thu, Apr 10, 2025 at 07:21:17PM +0800, lirongqing wrote:
+> > From: Li RongQing <lirongqing@baidu.com>
+> > 
+> > Make file-nr output the total allocated file handles, not per-cpu
+> > cache number, it's more precise, and not in hot path
+> > 
+> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> > ---
 > 
-> These are on old kernels and some of this is possibly due to missing
-> 172e422ffea2 ("fsnotify: clear PARENT_WATCHED flags lazily"), but I
-> managed to reproduce the softlockup on a recent kernel in
-> fsnotify_set_children_dentry_flags() (see end of mail).
-> 
-> This was with ~1.2G negative dentries.  Doing "rmdir testdir"
-> afterwards does not trigger the softlockup detector, due to the
-> reschedules in shrink_dcache_parent() code, but it took 10 minutes(!)
-> to finish removing that empty directory.
+> That means grabbing a lock suddenly. Is there an actual use-case
+> behind this?
 > 
 
-I wrote about this some time ago:
-https://lore.kernel.org/linux-fsdevel/f7bp3ggliqbb7adyysonxgvo6zn76mo4unroagfcuu3bfghynu@7wkgqkfb5c43/#t
+The centralized value can be really grossly inaccurate as CPU count increases.
 
-bottom line is only a small subset of negative entries is useful in the
-long run
+There is some talks about fixing that, see:
+https://lore.kernel.org/linux-mm/20250410175149.1206995-1-mathieu.desnoyers@efficios.com/
 
-while a great policy to tame the total count while not hindering
-performance is left as an exercise for the reader(tm), I outlined
-something which should be *tolerable*.
+In the meantime, given that this is only accessed when reading the /proc
+file, this should be fine?
+
+Note it still wont delay bumps/decs as long as they fit the batch (which
+is the common case).
 
