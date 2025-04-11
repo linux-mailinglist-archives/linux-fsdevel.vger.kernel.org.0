@@ -1,162 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-46257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4430EA85FCC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 15:58:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9FDDA85FD5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089278C36B7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 13:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C52B9A3134
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 13:57:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E4E1E51E7;
-	Fri, 11 Apr 2025 13:55:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2169F1F12FC;
+	Fri, 11 Apr 2025 13:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecovjPMD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SjGwgNWp"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F17F2367B7;
-	Fri, 11 Apr 2025 13:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749511DE3AD;
+	Fri, 11 Apr 2025 13:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379729; cv=none; b=OkvtVFtSH+z/MBmnjKNJxKmb51cniPISwtWACU8IK0CmdywM2OVlL24jgeuyGq8i+i+cQBSbbPSB/Kpz2ZBVFm+eFhp7mUqh2AmDbdpDifL0oKspNaSmabUBMuZsV0NBOibFmi36J3k35SrSTqb0JXSH0Fwj/BVSgVyqcQl5gtc=
+	t=1744379840; cv=none; b=chksWaUGaBR2gO0PvpnSrIAGkt7/e/4WDAmwH74WwB58tSCtsVF2QqdN7SsV0/tBskOjhA4kcF5y91ksA3uh3JuG1tRTK/4e6yIySddMl4EGifRqnHTgEsFTG+sFwwOo+1lg8ZqNJK4ZSOMSJVTLipQWXketZwMRS+DFn9q5ihM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379729; c=relaxed/simple;
-	bh=HQ2pZiqaXqjVl9Q7OM4VPu3+OAkJ/KMahrjpBIqunho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rACps1tHdOxOdIU40Kywky98NlD+KQBfD5XmAorJQGdQIgoG+MQx8KDFVg4hMO8kf4v+bvnKUQKXBTyzNnvR/VsF/r45zYOOao0Wg/wWvnDPp0IMm8xxuk3V4LccK7h+8dgHYvzSfuJ6p9evvjDGKkl1OsUQJgimcTn+2+jKgSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecovjPMD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A0FC4CEE2;
-	Fri, 11 Apr 2025 13:55:27 +0000 (UTC)
+	s=arc-20240116; t=1744379840; c=relaxed/simple;
+	bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O0JA+SouY+MaLBCnSotk8GoeExNzA63b0xB0lcO1quP063pV4fe+TTfITQJq9s76kOtSXam/eLTik3hBQ0Ev70MRscUxxZVwDJclSj7M/VA7Z7zUN7BWxJQWaISfHcSLZaJih4JoHWutVDG7L5QNkTzPhHEiQaoc6bpnasvI8YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SjGwgNWp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F932C4CEE2;
+	Fri, 11 Apr 2025 13:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744379728;
-	bh=HQ2pZiqaXqjVl9Q7OM4VPu3+OAkJ/KMahrjpBIqunho=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ecovjPMDFI+Oh8jApChmBjmZ6JgQPVn0axmwSKhrFlCkJDwAJNNO17YVaMmUZ8SAN
-	 iAuMm8HmFZbM90+7Vr2yxp7Nsu3AdNc6Ggx2bRWUtRmN0n72VEF7Ac/XVg+N1XMbSR
-	 WJ8r5QLL6gjlegItBl+L4n8R+1GNyNF3HTQzHQX+/PqLfS69Cb5XPvqAWfVwa9w9+q
-	 XI0HUcrE/sJMuvvIZGh8B4W1g2tYTE/Kp2/AnSc5zeKF9ZMyUsUbZ42PzdezRejxZq
-	 7VQ0KGwuLdsihsMs26+Eay6btzO7UG3aZ48bL8g0viJK+SLboU/aLOowDiVcyTQVN0
-	 cTGouWrw3y8Ag==
-Date: Fri, 11 Apr 2025 15:55:24 +0200
+	s=k20201202; t=1744379839;
+	bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=SjGwgNWpLqKXJ7hxrOOKyBiP4jfyg4aSH17c6SY7YXbTNsW3gck1hVnsYlbjf0s27
+	 96MrP2z/YMKmfbl2DmNlJ3RlfjnS9dIERZIho2fPOVfzo8sMW9aeLfApLcrQ7oCBY6
+	 SZ5dXY/jl5j+F3qdZFsGLxm0KnGiOvm2wyKXklzVTkcKxBBoBHuuyJaQgQUHjfrMzs
+	 DqmC6auq8y8QR8FuLBtHHry4OPPaLI0NsTwHGb2PTcCv/eXm5vTvvsV7OveYeyvgob
+	 Hj5wN0dcHqGbB5b+Mph0fSSC8OnuEfEtrvs9C1BPsPkfuPvDdxTR6mtQ+kDPa16acW
+	 QQOZrZ81yL1Nw==
 From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, 
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/5] io_uring: mark exit side kworkers as task_work
- capable
-Message-ID: <20250411-reinreden-nester-8cd21e845563@brauner>
-References: <20250409134057.198671-1-axboe@kernel.dk>
- <20250409134057.198671-3-axboe@kernel.dk>
+Subject: Re: [PATCH][V2] select: do_pollfd: add unlikely branch hint return path
+Date: Fri, 11 Apr 2025 15:57:08 +0200
+Message-ID: <20250411-lerngruppen-kojen-823467ef0e54@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250409155510.577490-1-colin.i.king@gmail.com>
+References: <20250409155510.577490-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250409134057.198671-3-axboe@kernel.dk>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=brauner@kernel.org; h=from:subject:message-id; bh=U3q0YH9UABshfZ8DUJHHyezmfDdHh8a15wvB6pQwvKY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/lN/Fu+z3D645ysvdW6ts3VtyDt8P6p2wXMctz/j4r g/tMVM2dJSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzkXi0jw5XlTA+e3dfY9zso MTow9pWR15UO213nNT7wTWI6srkjwIThf17nubXFHx8ouYacvm23Qm9feeDn6MhL5QtaFpRdWbW cmw8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 09, 2025 at 07:35:20AM -0600, Jens Axboe wrote:
-> There are two types of work here:
+On Wed, 09 Apr 2025 16:55:10 +0100, Colin Ian King wrote:
+> Adding an unlikely() hint on the fd < 0 comparison return path improves
+> run-time performance of the poll() system call. gcov based coverage
+> analysis based on running stress-ng and a kernel build shows that this
+> path return path is highly unlikely.
 > 
-> 1) Fallback work, if the task is exiting
-> 2) The exit side cancelations
+> Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
+> a 6.15-rc1 kernel and a poll of 1024 file descriptors with zero timeout
+> shows an call reduction from 32818 ns down to 32635 ns, which is a ~0.5%
+> performance improvement.
 > 
-> and both of them may do the final fput() of a file. When this happens,
-> fput() will schedule delayed work. This slows down exits when io_uring
+> [...]
 
-I was a bit surprised by this because it means that all those __fput()s
-are done with kthread credentials which is a bit surprising (but
-harmless afaict).
+Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.16.misc branch should appear in linux-next soon.
 
-> needs to wait for that work to finish. It is possible to flush this via
-> flush_delayed_fput(), but that's a big hammer as other unrelated files
-> could be involved, and from other tasks as well.
-> 
-> Add two io_uring helpers to temporarily clear PF_NO_TASKWORK for the
-> worker threads, and run any queued task_work before setting the flag
-> again. Then we can ensure we only flush related items that received
-> their final fput as part of work cancelation and flushing.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-Ok, so the only change is that this isn't offloaded to the global
-delayed fput workqueue but to the task work that you're running off of
-your kthread helpers.
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-> 
-> For now these are io_uring private, but could obviously be made
-> generically available, should there be a need to do so.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  io_uring/io_uring.c | 21 +++++++++++++++++++++
->  1 file changed, 21 insertions(+)
-> 
-> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
-> index c6209fe44cb1..bff99e185217 100644
-> --- a/io_uring/io_uring.c
-> +++ b/io_uring/io_uring.c
-> @@ -238,6 +238,20 @@ static inline void io_req_add_to_cache(struct io_kiocb *req, struct io_ring_ctx
->  	wq_stack_add_head(&req->comp_list, &ctx->submit_state.free_list);
->  }
->  
-> +static __cold void io_kworker_tw_start(void)
-> +{
-> +	if (WARN_ON_ONCE(!(current->flags & PF_NO_TASKWORK)))
-> +		return;
-> +	current->flags &= ~PF_NO_TASKWORK;
-> +}
-> +
-> +static __cold void io_kworker_tw_end(void)
-> +{
-> +	while (task_work_pending(current))
-> +		task_work_run();
-> +	current->flags |= PF_NO_TASKWORK;
-> +}
-> +
->  static __cold void io_ring_ctx_ref_free(struct percpu_ref *ref)
->  {
->  	struct io_ring_ctx *ctx = container_of(ref, struct io_ring_ctx, refs);
-> @@ -253,6 +267,8 @@ static __cold void io_fallback_req_func(struct work_struct *work)
->  	struct io_kiocb *req, *tmp;
->  	struct io_tw_state ts = {};
->  
-> +	io_kworker_tw_start();
-> +
->  	percpu_ref_get(&ctx->refs);
->  	mutex_lock(&ctx->uring_lock);
->  	llist_for_each_entry_safe(req, tmp, node, io_task_work.node)
-> @@ -260,6 +276,7 @@ static __cold void io_fallback_req_func(struct work_struct *work)
->  	io_submit_flush_completions(ctx);
->  	mutex_unlock(&ctx->uring_lock);
->  	percpu_ref_put(&ctx->refs);
-> +	io_kworker_tw_end();
->  }
->  
->  static int io_alloc_hash_table(struct io_hash_table *table, unsigned bits)
-> @@ -2876,6 +2893,8 @@ static __cold void io_ring_exit_work(struct work_struct *work)
->  	struct io_tctx_node *node;
->  	int ret;
->  
-> +	io_kworker_tw_start();
-> +
->  	/*
->  	 * If we're doing polled IO and end up having requests being
->  	 * submitted async (out-of-line), then completions can come in while
-> @@ -2932,6 +2951,8 @@ static __cold void io_ring_exit_work(struct work_struct *work)
->  		 */
->  	} while (!wait_for_completion_interruptible_timeout(&ctx->ref_comp, interval));
->  
-> +	io_kworker_tw_end();
-> +
->  	init_completion(&exit.completion);
->  	init_task_work(&exit.task_work, io_tctx_exit_cb);
->  	exit.ctx = ctx;
-> -- 
-> 2.49.0
-> 
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.16.misc
+
+[1/1] select: do_pollfd: add unlikely branch hint return path
+      https://git.kernel.org/vfs/vfs/c/5730609ffd7e
 
