@@ -1,98 +1,89 @@
-Return-Path: <linux-fsdevel+bounces-46262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25A08A85FE2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:03:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E93A85FF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E430178DD6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2AEC3B4A7E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D678E1F0E44;
-	Fri, 11 Apr 2025 14:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615301F3D50;
+	Fri, 11 Apr 2025 14:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pp7E9eCg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pilFz60U"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B2C1F0E32;
-	Fri, 11 Apr 2025 14:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8C791F0E32;
+	Fri, 11 Apr 2025 14:03:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380173; cv=none; b=mPTbc1sbM6ilDCqt0h0hMgMlg7vtBgRm6TaN8aB7D/Tuj3DaZfbwWSKF0ltFSsTC3zvvM6t+LiMQZ5omLFDw5VkfV3zQPdbQ/8ZDMF3hlW/B8vkfP+6x4sbU3LASP8lSkhK5CNNyuSOuK++9uEqnEVn5S0WJezRitMvdHy2BOw4=
+	t=1744380221; cv=none; b=K5PkueYYtcxCUlz8sgCUADpS9ZQxrkNi7Vc3trVL7fRxeDMpbyvo6IFXZhtgDOIC2jEiQQOpAFqVhJDHEojD9/eg+pXt3sD3ItXAc0ARaomXdXek5YoC6R1t8sCmqMn5jL8IVnDrumdcEGURQYLi76Vc952pU5tx5GV0BuUqMYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380173; c=relaxed/simple;
-	bh=L028CyjHdE2jxczbIM6pBy9pM8llSElkIkRS2OiXwDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Qpr08Ei8vSCPdgyIrX+37Zaf2VnfKDLAW6dArrQzHE7qte+XO9vs34egf6rTMpTTECbNIRPk51zveVjddqFzWFVbp2BxdBxFWVmF3Hcdb6PVzT18P1aRCzWwEwYCgHBXUvVnFJGzd2bytkunSz4QSxGNan2qglGs4ntcR6C7ebc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pp7E9eCg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 848DEC4CEE7;
-	Fri, 11 Apr 2025 14:02:50 +0000 (UTC)
+	s=arc-20240116; t=1744380221; c=relaxed/simple;
+	bh=A9uWHZeLASAeqV3pcSaRLVnFs8sczJhLPZO/60JuIrI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fFUufGyu2I4nz+3QXzorYg5QvSviI4UIjSSq68DE/UPXq2ClKwlx+IbchCQjdMiTtbTuFtB/sr5s8+UEB5qRjSFCn6VErdOhIj0KhmmGk5epxc5SABA9IIym7kqdVpCatKtZY5hd6sTlEic4lTezNd0sSl7FZZ8QW9qs8/2PFhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pilFz60U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CD64C4CEE2;
+	Fri, 11 Apr 2025 14:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744380172;
-	bh=L028CyjHdE2jxczbIM6pBy9pM8llSElkIkRS2OiXwDc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Pp7E9eCgI9DFYb5sLbeeMuVNF457lPAOtI0tZDKWJsevrSA/kg5avoarhIqKUl0or
-	 4EsbDFP1tEYXc8tRRzc6VkVOAxG53WXcfgunBVz9jOshAk8A8lZmz2dNp4Pfgtk7XQ
-	 PacQnSFcNwImN07bw4o5OubUTOLSR/oeEaoMwAGoOaboOB5K9M2cXPsxGUcnjE5dTJ
-	 Nn/JnId6zL717stJSLpO6xDKcflGYOljRDQcAMvyZ/CFqShK1JCTOTwQgseB2OQsoN
-	 Bvlz+Zpe23oJpTPS0hbXSFXOU0d+/EdakMbV5z69ltll3eXxeFr6nf+8K68xZP8ko2
-	 +saTpy3nZCgVQ==
+	s=k20201202; t=1744380221;
+	bh=A9uWHZeLASAeqV3pcSaRLVnFs8sczJhLPZO/60JuIrI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pilFz60UlyKzY1WZZ9dfMwWMkW+uicFjF2tMAeTdYrC0y/DBhCyS12drndRX8Ypnt
+	 htzM95GA7M+5XIXlyee3xXx/e43qK82np0I/bWLssRM0IORmnMZ0rwKb93jMcJWZmM
+	 /yxKYIe2JuARQCYCosK2zVhZajBH0K+VQM+w3lxIUz4djrkPyzUqOM3fXDMMm6RfDE
+	 8H1KKJH5Hhxk8DQWy1vGjI30yYSWPYdQui4eFwdnUjuDDBfVjc5nUoCwuPZEl+acdB
+	 M6QVof35nhfs3XgBbkwfvsvHb7mOgbe+OKdeEOznQ8er0iTQtvCDOMyVT5JcQQ2OYv
+	 HGhE+xMz/deZg==
+Date: Fri, 11 Apr 2025 16:03:29 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: djwong@kernel.org,
-	hch@infradead.org,
-	Gou Hao <gouhao@uniontech.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	gouhaojake@163.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	wangyuli@uniontech.com
-Subject: Re: [PATCH V3] iomap: skip unnecessary ifs_block_is_uptodate check
-Date: Fri, 11 Apr 2025 16:02:44 +0200
-Message-ID: <20250411-ermorden-sagenhaft-dea43a3c41f9@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250410071236.16017-1-gouhao@uniontech.com>
-References: <20250408172924.9349-1-gouhao@uniontech.com> <20250410071236.16017-1-gouhao@uniontech.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Alistair Popple <apopple@nvidia.com>, 
+	kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev, lkp@intel.com, 
+	linux-kernel@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Dan Williams <dan.j.williams@intel.com>, Alison Schofield <alison.schofield@intel.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Asahi Lina <lina@asahilina.net>, 
+	Balbir Singh <balbirs@nvidia.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Christoph Hellwig <hch@lst.de>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Dave Chinner <david@fromorbit.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	David Hildenbrand <david@redhat.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	Ira Weiny <ira.weiny@intel.com>, Jason Gunthorpe <jgg@nvidia.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	John Hubbard <jhubbard@nvidia.com>, linmiaohe <linmiaohe@huawei.com>, 
+	Logan Gunthorpe <logang@deltatee.com>, Matthew Wilcow <willy@infradead.org>, 
+	Michael Camp Drill Sergeant Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Peter Xu <peterx@redhat.com>, Sven Schnelle <svens@linux.ibm.com>, Ted Ts'o <tytso@mit.edu>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Vivek Goyal <vgoyal@redhat.com>, WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, nvdimm@lists.linux.dev, linux-xfs@vger.kernel.org
+Subject: Re: [linus:master] [fs/dax]  bde708f1a6:
+ WARNING:at_mm/truncate.c:#truncate_folio_batch_exceptionals
+Message-ID: <20250411-sehgewohnheiten-blicken-7830519934ab@brauner>
+References: <202504101036.390f29a5-lkp@intel.com>
+ <v66t3szdfsfwyl4lw6ns2ykmxrfqecba2nb5wa64l5qqq2kfpb@x7zxzuijty7d>
+ <uiu7rcmtooxgbscaiiim7czqsca52bgrt6aiszsafq7jj4n3e7@ge6mfzcmnorl>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1241; i=brauner@kernel.org; h=from:subject:message-id; bh=L028CyjHdE2jxczbIM6pBy9pM8llSElkIkRS2OiXwDc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/VGQ5d/6RNrMYY6o774XS86cvit0S+1v26chxL/8f+ +8Z1slwdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEup+RYckPh1zRewnhj9eK ypwJFSly43/zPf3SyyXlX3YZ+m8oKGZkOJHK+sfbpsZGd1J8j030rqK1H1rv3Vy6a6eZiqmrUog ZBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <uiu7rcmtooxgbscaiiim7czqsca52bgrt6aiszsafq7jj4n3e7@ge6mfzcmnorl>
 
-On Thu, 10 Apr 2025 15:12:36 +0800, Gou Hao wrote:
-> In iomap_adjust_read_range, i is either the first !uptodate block, or it
-> is past last for the second loop looking for trailing uptodate blocks.
-> Assuming there's no overflow (there's no combination of huge folios and
-> tiny blksize) then yeah, there is no point in retesting that the same
-> block pointed to by i is uptodate since we hold the folio lock so nobody
-> else could have set it uptodate.
-> 
-> [...]
+> didn't lift off and DAX ended up being kind of niche, I think the effort
+> to maintain DAX in ext2 is not justified and we should just drop it (and
+> direct existing users to use ext4 driver instead for the cases where they
+> need it). I'll have a look into it.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] iomap: skip unnecessary ifs_block_is_uptodate check
-      https://git.kernel.org/vfs/vfs/c/8e3c15ee0d29
++1
 
