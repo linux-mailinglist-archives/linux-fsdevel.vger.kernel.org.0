@@ -1,117 +1,162 @@
-Return-Path: <linux-fsdevel+bounces-46258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FEFA85FBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 15:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4430EA85FCC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 15:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9541B846C6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 13:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089278C36B7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 13:55:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD9B1F1921;
-	Fri, 11 Apr 2025 13:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E4E1E51E7;
+	Fri, 11 Apr 2025 13:55:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JC7tWH9N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecovjPMD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2BB1E7C0E
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 13:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F17F2367B7;
+	Fri, 11 Apr 2025 13:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379733; cv=none; b=kB+zYWd3A7XNsTqzugTT/LnEhqfoPcg5vHK90ACZ/7hB/iZekLzHD+cdzZVOcX12/EVxCcLxc0JEH7OEIj8XNgyFMyyLBexHAC9srVbEo3bUd6yNK626I+cZ9tdkEwspnleMgHa7qmXIr8SXmfReoB+1iKRnEn02hcOdr1F9toU=
+	t=1744379729; cv=none; b=OkvtVFtSH+z/MBmnjKNJxKmb51cniPISwtWACU8IK0CmdywM2OVlL24jgeuyGq8i+i+cQBSbbPSB/Kpz2ZBVFm+eFhp7mUqh2AmDbdpDifL0oKspNaSmabUBMuZsV0NBOibFmi36J3k35SrSTqb0JXSH0Fwj/BVSgVyqcQl5gtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379733; c=relaxed/simple;
-	bh=tvYsWN1Ccz9X5YB0seXvg96UOPF0B6mWBhsZMMZHyT4=;
+	s=arc-20240116; t=1744379729; c=relaxed/simple;
+	bh=HQ2pZiqaXqjVl9Q7OM4VPu3+OAkJ/KMahrjpBIqunho=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aBjO7JddxIZVdc4zC+LBClkZCT/n+3Uy1J6TqIlBbj7okRmpe2CYd88cpQmHQa2YXAcks/u2kVcpa3K0GRLlHjBWVK3JWw1uslHJDqoBdxvY0iiyam4fmU6q+6dFB8wau+6sO2Rt4ChHTddPGiktggrOWPVJkfoP1vRYpTNesOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JC7tWH9N; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744379731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KAQndSrC2ld3R5xSxtSooLszqBAKBxmB0lRGSpURGww=;
-	b=JC7tWH9NOiSgVThug7nrHS73JQmACaVAf/gy6XaUxZnkg34wnn2CWUbFVEON3sgakX0Otr
-	wS48ajv0H9jknFgWjBf2zYnqpF+75OZZLat1Dwokx0PUXtUVYbd59tt9gAtoOlUTaFgFFy
-	hc+TbBPzSPEA5Iv6yYEuwwUra6XzyaM=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-408-RULT92WCP5aUWSV-5m2ewg-1; Fri,
- 11 Apr 2025 09:55:27 -0400
-X-MC-Unique: RULT92WCP5aUWSV-5m2ewg-1
-X-Mimecast-MFC-AGG-ID: RULT92WCP5aUWSV-5m2ewg_1744379726
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A77CA19560B1;
-	Fri, 11 Apr 2025 13:55:25 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5E7B31828AAA;
-	Fri, 11 Apr 2025 13:55:22 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 11 Apr 2025 15:54:50 +0200 (CEST)
-Date: Fri, 11 Apr 2025 15:54:45 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org,
-	Peter Ziljstra <peterz@infradead.org>
-Subject: Re: [PATCH v2 2/2] pidfs: ensure consistent ENOENT/ESRCH reporting
-Message-ID: <20250411135445.GF5322@redhat.com>
-References: <20250411-work-pidfs-enoent-v2-0-60b2d3bb545f@kernel.org>
- <20250411-work-pidfs-enoent-v2-2-60b2d3bb545f@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rACps1tHdOxOdIU40Kywky98NlD+KQBfD5XmAorJQGdQIgoG+MQx8KDFVg4hMO8kf4v+bvnKUQKXBTyzNnvR/VsF/r45zYOOao0Wg/wWvnDPp0IMm8xxuk3V4LccK7h+8dgHYvzSfuJ6p9evvjDGKkl1OsUQJgimcTn+2+jKgSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ecovjPMD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A0FC4CEE2;
+	Fri, 11 Apr 2025 13:55:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744379728;
+	bh=HQ2pZiqaXqjVl9Q7OM4VPu3+OAkJ/KMahrjpBIqunho=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ecovjPMDFI+Oh8jApChmBjmZ6JgQPVn0axmwSKhrFlCkJDwAJNNO17YVaMmUZ8SAN
+	 iAuMm8HmFZbM90+7Vr2yxp7Nsu3AdNc6Ggx2bRWUtRmN0n72VEF7Ac/XVg+N1XMbSR
+	 WJ8r5QLL6gjlegItBl+L4n8R+1GNyNF3HTQzHQX+/PqLfS69Cb5XPvqAWfVwa9w9+q
+	 XI0HUcrE/sJMuvvIZGh8B4W1g2tYTE/Kp2/AnSc5zeKF9ZMyUsUbZ42PzdezRejxZq
+	 7VQ0KGwuLdsihsMs26+Eay6btzO7UG3aZ48bL8g0viJK+SLboU/aLOowDiVcyTQVN0
+	 cTGouWrw3y8Ag==
+Date: Fri, 11 Apr 2025 15:55:24 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/5] io_uring: mark exit side kworkers as task_work
+ capable
+Message-ID: <20250411-reinreden-nester-8cd21e845563@brauner>
+References: <20250409134057.198671-1-axboe@kernel.dk>
+ <20250409134057.198671-3-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250411-work-pidfs-enoent-v2-2-60b2d3bb545f@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+In-Reply-To: <20250409134057.198671-3-axboe@kernel.dk>
 
-For both patches:
+On Wed, Apr 09, 2025 at 07:35:20AM -0600, Jens Axboe wrote:
+> There are two types of work here:
+> 
+> 1) Fallback work, if the task is exiting
+> 2) The exit side cancelations
+> 
+> and both of them may do the final fput() of a file. When this happens,
+> fput() will schedule delayed work. This slows down exits when io_uring
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+I was a bit surprised by this because it means that all those __fput()s
+are done with kthread credentials which is a bit surprising (but
+harmless afaict).
 
-a minor nit below...
+> needs to wait for that work to finish. It is possible to flush this via
+> flush_delayed_fput(), but that's a big hammer as other unrelated files
+> could be involved, and from other tasks as well.
+> 
+> Add two io_uring helpers to temporarily clear PF_NO_TASKWORK for the
+> worker threads, and run any queued task_work before setting the flag
+> again. Then we can ensure we only flush related items that received
+> their final fput as part of work cancelation and flushing.
 
-On 04/11, Christian Brauner wrote:
->
->  int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
+Ok, so the only change is that this isn't offloaded to the global
+delayed fput workqueue but to the task work that you're running off of
+your kthread helpers.
+
+> 
+> For now these are io_uring private, but could obviously be made
+> generically available, should there be a need to do so.
+> 
+> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> ---
+>  io_uring/io_uring.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
+> 
+> diff --git a/io_uring/io_uring.c b/io_uring/io_uring.c
+> index c6209fe44cb1..bff99e185217 100644
+> --- a/io_uring/io_uring.c
+> +++ b/io_uring/io_uring.c
+> @@ -238,6 +238,20 @@ static inline void io_req_add_to_cache(struct io_kiocb *req, struct io_ring_ctx
+>  	wq_stack_add_head(&req->comp_list, &ctx->submit_state.free_list);
+>  }
+>  
+> +static __cold void io_kworker_tw_start(void)
+> +{
+> +	if (WARN_ON_ONCE(!(current->flags & PF_NO_TASKWORK)))
+> +		return;
+> +	current->flags &= ~PF_NO_TASKWORK;
+> +}
+> +
+> +static __cold void io_kworker_tw_end(void)
+> +{
+> +	while (task_work_pending(current))
+> +		task_work_run();
+> +	current->flags |= PF_NO_TASKWORK;
+> +}
+> +
+>  static __cold void io_ring_ctx_ref_free(struct percpu_ref *ref)
 >  {
-> -	int err = 0;
-> -
-> -	if (!(flags & PIDFD_THREAD)) {
-> +	scoped_guard(spinlock_irq, &pid->wait_pidfd.lock) {
-> +		/*
-> +		 * If this wasn't a thread-group leader struct pid or
-> +		 * the task already been reaped report ESRCH to
-> +		 * userspace.
-> +		 */
-> +		if (!pid_has_task(pid, PIDTYPE_PID))
-> +			return -ESRCH;
-
-The "If this wasn't a thread-group leader struct pid" part of the
-comment looks a bit confusing to me, as if pid_has_task(PIDTYPE_PID)
-should return false in this case.
-
-OTOH, perhaps it makes sense to explain scoped_guard(wait_pidfd.lock)?
-Something like "see unhash_process -> wake_up_all(), detach_pid(TGID)
-isn't possible if pid_has_task(PID) succeeds".
-
-Oleg.
-
+>  	struct io_ring_ctx *ctx = container_of(ref, struct io_ring_ctx, refs);
+> @@ -253,6 +267,8 @@ static __cold void io_fallback_req_func(struct work_struct *work)
+>  	struct io_kiocb *req, *tmp;
+>  	struct io_tw_state ts = {};
+>  
+> +	io_kworker_tw_start();
+> +
+>  	percpu_ref_get(&ctx->refs);
+>  	mutex_lock(&ctx->uring_lock);
+>  	llist_for_each_entry_safe(req, tmp, node, io_task_work.node)
+> @@ -260,6 +276,7 @@ static __cold void io_fallback_req_func(struct work_struct *work)
+>  	io_submit_flush_completions(ctx);
+>  	mutex_unlock(&ctx->uring_lock);
+>  	percpu_ref_put(&ctx->refs);
+> +	io_kworker_tw_end();
+>  }
+>  
+>  static int io_alloc_hash_table(struct io_hash_table *table, unsigned bits)
+> @@ -2876,6 +2893,8 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+>  	struct io_tctx_node *node;
+>  	int ret;
+>  
+> +	io_kworker_tw_start();
+> +
+>  	/*
+>  	 * If we're doing polled IO and end up having requests being
+>  	 * submitted async (out-of-line), then completions can come in while
+> @@ -2932,6 +2951,8 @@ static __cold void io_ring_exit_work(struct work_struct *work)
+>  		 */
+>  	} while (!wait_for_completion_interruptible_timeout(&ctx->ref_comp, interval));
+>  
+> +	io_kworker_tw_end();
+> +
+>  	init_completion(&exit.completion);
+>  	init_task_work(&exit.task_work, io_tctx_exit_cb);
+>  	exit.ctx = ctx;
+> -- 
+> 2.49.0
+> 
 
