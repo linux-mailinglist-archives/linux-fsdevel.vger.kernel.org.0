@@ -1,135 +1,337 @@
-Return-Path: <linux-fsdevel+bounces-46283-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74D06A86104
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:49:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963EDA8612B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 17:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37C5C1BA8610
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:49:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31B6B3B9254
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 15:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA051F7575;
-	Fri, 11 Apr 2025 14:48:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0F21FBEA6;
+	Fri, 11 Apr 2025 15:00:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="lkAjPoUz"
+	dkim=pass (2048-bit key) header.d=maxsi.org header.i=@maxsi.org header.b="YtgEwGQv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mr85p00im-hyfv06011401.me.com (mr85p00im-hyfv06011401.me.com [17.58.23.191])
+Received: from pub.sortix.org (pub.sortix.org [88.99.244.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DE41F4168
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 14:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A91D1F418D;
+	Fri, 11 Apr 2025 15:00:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.99.244.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744382929; cv=none; b=JzvgDCECsh/00ot+jnjzCRzNB+3Uxqk1KVQto3Ly0CUZut80gcXFY0ySmPqR3kU4v1tgf6iue+4XKG3aEmTUBsv0c8POVV8ED9mLbXBcd7R2A8+o0nB+lckkDrz+wjFQkwUWQhwYFWYMFDzi+fBwFQW+skY9I8Fghjx58GBg8yI=
+	t=1744383614; cv=none; b=MbymljBcbuCCo9BB2atkxlF/o5+WDcA4T4zOVSWMSe43aNHQTOvsm/1+ZfXsEfkdI/mgF1Y4GLxItx5Y12CvhiRfJJtLevDOiekfqaTm9LtV+Exz24qQwziFzdPP9IZJlq3GUaY7mWz9kfB7zvtGalurl//2uQ5IxrW9Um7Pw5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744382929; c=relaxed/simple;
-	bh=zzHzazriqKgtPFPYlBvq0tf2k7riQfwZaS1uIVL5icg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jgCh10sgTwiWL6OyBKCHh5iYZYtO+ZGOl8LQ+N4Cyp6IyLBc2DzFfUKjUDOWEcJT9NjuYBVMmfAnH5YOkDQknD41jU5x7XsSjVLT5oy4mjoT9Y+URh4tOc3mPJSYwJgBUtvd7PDCZBNkd7K5Rz96kLxkumnfdXnUM0iNaEZ8DDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=lkAjPoUz; arc=none smtp.client-ip=17.58.23.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=18Is6h9HNJ9vmFioSxZvkOl0vsi2ABC8O9wcMCqnzQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=lkAjPoUzgQr9wvQag4l4gxVD04EhP6VwNQ1dYYnTr2+KCcT5GhLKWORezGAiX980w
-	 89LfHN8yN3XWLNd60SO64C1UJYu24EeCJfx2UeJVq65eyExGS7ozY8cb6OjJTc4edZ
-	 eIgAB2jJDBUDqjLFz7Hh9pI4Z34+D1GLGtWQ201MPYGW5vCsAj/N1evqIpyyV/xVlr
-	 +bnlFyDJyVbLblcAydhdn/NXZ3mpyspIXWlHYdUviAX/8WsBwStAOxI0j6LM3kJulS
-	 sqIn8xwyZwJewv6GOAdwGwdRPQ0BzT43iplKlQboGJQpK9Aboa1HLkx1nhUoEjQJ1x
-	 Xr9tn6VRUnUOQ==
-Received: from mr85p00im-hyfv06011401.me.com (mr85p00im-hyfv06011401.me.com [17.58.23.191])
-	by mr85p00im-hyfv06011401.me.com (Postfix) with ESMTPS id 5EE83357B09F;
-	Fri, 11 Apr 2025 14:48:46 +0000 (UTC)
-Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
-	by mr85p00im-hyfv06011401.me.com (Postfix) with ESMTPSA id 1D6D5357AC5B;
-	Fri, 11 Apr 2025 14:48:43 +0000 (UTC)
-Message-ID: <1d59d38a-5674-4591-a866-27dfbc410b93@icloud.com>
-Date: Fri, 11 Apr 2025 22:48:40 +0800
+	s=arc-20240116; t=1744383614; c=relaxed/simple;
+	bh=VPNLtC2XszoizTSw8VO2x421UjLkb77QCBbGwfVDW/0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RbBd6c154eBPfYhJxp+izcW52A+lLDSEInxnD1kO+hpOTOFMaRLNQj/vXd3qRlte2t6XlCJWBaH9sxNzF9YtCqP+aM2GdCbcbU9eu9BXm/PQXZiinRkXrGsBAXovWV1fGS6sgXKv4jTR64uiD/ximxrlxQdHkc4/cSkyULSb4YI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxsi.org; spf=pass smtp.mailfrom=maxsi.org; dkim=pass (2048-bit key) header.d=maxsi.org header.i=@maxsi.org header.b=YtgEwGQv; arc=none smtp.client-ip=88.99.244.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=maxsi.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maxsi.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=maxsi.org; s=default;
+	t=1744383104; bh=VPNLtC2XszoizTSw8VO2x421UjLkb77QCBbGwfVDW/0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YtgEwGQvbFCF+jh19TvAqd8Wew+DsuWa+yj4DGLaRiGRpJ+d2iyd7UfOL/+tZntUF
+	 ilNzMs+opihf3eYzXjU8T2Vy3OWGdQO5WCMC3jueyJWytjwOJXxcVsToYuFKVGKb1w
+	 QWf8vvYmPuTKSUh9gIy2W7NaoOSeQ8jK94UrtASoKI08Yh97NIvvbabwA/dih4DHv0
+	 OyVs0yy+PYT12rq+S+WONLxar8PBy6eqzW+HBuF/ZznC7SIqk0i/920oghMx1wJtey
+	 AomGdvbfZ029pEa5hcM278RFl8ismfZ3O0EEhUfAoCQ/mVOyue9B4KR/ekanMw2i44
+	 J8IaXXhYjFq2w==
+Received: from sortie-pc1.bbsyd.net (unknown [85.203.218.26])
+	by pub.sortix.org (Postfix) with ESMTPSA id 10FB322610B4;
+	Fri, 11 Apr 2025 16:51:44 +0200 (CEST)
+From: Jonas 'Sortie' Termansen <sortie@maxsi.org>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Schmitt <scdbackup@gmx.net>,
+	Jonas 'Sortie' Termansen <sortie@maxsi.org>
+Subject: [PATCH] isofs: fix Y2038 and Y2156 issues in Rock Ridge TF entry
+Date: Fri, 11 Apr 2025 16:50:21 +0200
+Message-ID: <20250411145022.2292255-1-sortie@maxsi.org>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] fs/fs_parse: Fix 3 issues for
- validate_constant_table()
-To: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20250410-fix_fs-v1-0-7c14ccc8ebaa@quicinc.com>
- <20250410-fix_fs-v1-3-7c14ccc8ebaa@quicinc.com>
- <20250411-beteuern-fusionieren-2a3d24f055d0@brauner>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20250411-beteuern-fusionieren-2a3d24f055d0@brauner>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: P68mtjX63jAgQ060WWDBHM9gJhRLriVm
-X-Proofpoint-ORIG-GUID: P68mtjX63jAgQ060WWDBHM9gJhRLriVm
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-11_05,2025-04-10_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 clxscore=1015 suspectscore=0
- adultscore=0 phishscore=0 bulkscore=0 mlxlogscore=999 spamscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2504110093
+Content-Transfer-Encoding: 8bit
 
-On 2025/4/11 22:37, Christian Brauner wrote:
->> - Potential NULL pointer dereference.
-> I really dislike "potential NULL deref" without an explanation. Please
-> explain how this supposed NULL deref can happen.
-> 
+This change implements the Rock Ridge TF entry LONG_FORM bit, which uses
+the ISO 9660 17-byte date format (up to year 9999, with 10ms precision)
+instead of the 7-byte date format (up to year 2155, with 1s precision).
 
-okay.
+Previously the LONG_FORM bit was ignored; and isofs would entirely
+misinterpret the date as the wrong format, resulting in garbage
+timestamps on the filesystem.
 
->> Fixes: 31d921c7fb96 ("vfs: Add configuration parser helpers")
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  fs/fs_parser.c | 7 +++++--
->>  1 file changed, 5 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
->> index e635a81e17d965df78ffef27f6885cd70996c6dd..ef7876340a917876bc40df9cdde9232204125a75 100644
->> --- a/fs/fs_parser.c
->> +++ b/fs/fs_parser.c
->> @@ -399,6 +399,9 @@ bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
->>  	}
->>  
->>  	for (i = 0; i < tbl_size; i++) {
->> +		if (!tbl[i].name && (i + 1 == tbl_size))
->> +			break;
->> +
->>  		if (!tbl[i].name) {
->>  			pr_err("VALIDATE C-TBL[%zu]: Null\n", i);
->>  			good = false;
->> @@ -411,13 +414,13 @@ bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
->>  				good = false;
->>  			}
->>  			if (c > 0) {
->> -				pr_err("VALIDATE C-TBL[%zu]: Missorted %s>=%s\n",
->> +				pr_err("VALIDATE C-TBL[%zu]: Missorted %s>%s\n",
->>  				       i, tbl[i-1].name, tbl[i].name);
->>  				good = false;
->>  			}
->>  		}
->>  
->> -		if (tbl[i].value != special &&
->> +		if (tbl[i].name && tbl[i].value != special &&
->>  		    (tbl[i].value < low || tbl[i].value > high)) {
->>  			pr_err("VALIDATE C-TBL[%zu]: %s->%d const out of range (%d-%d)\n",
->>  			       i, tbl[i].name, tbl[i].value, low, high);
+The Y2038 issue in iso_date() is fixed by returning a struct timespec64
+instead of an int.
 
-for good constant table which ends with empty entry. for original logic,
-when loop reach the last empty entry.  above pr_err() may access NULL
-pointer tbl[i].name.
+parse_rock_ridge_inode_internal() is fixed so it does proper bounds
+checks of the TF entry timestamps.
 
+Signed-off-by: Jonas 'Sortie' Termansen <sortie@maxsi.org>
+---
+I tested this change by making two .isos:
 
-i find out this validate_constant_table() also has no callers.
-fix it or remove it ?
+* A normal .iso with Rock Ridge TF without LONG_FORM made with xorriso
+* A long-form .iso with Rock Ridge TF LONG_FORM made with a patched xorriso
+
+Each containing these test files:
+
+-rw-rw-r-- 1 root root       0 Apr 11 16:20 Y2025
+-rw-rw-r-- 1 root root       0 Jun  1  2038 Y2038
+-rw-rw-r-- 1 root root       0 Jun  1  2155 Y2155
+-rw-rw-r-- 1 root root       0 Jun  1  2156 Y2156
+
+The normal Rock Ridge .iso was made with xorriso, and a long form .iso was
+made with a custom xorriso patched to output Rock Ridge TF LONG_FORM.
+
+On Linux master mounting an iso without LONG_FORM:
+
+-r--r--r--  1 root root       0 Apr 11 16:20 Y2025
+-r--r--r--  1 root root       0 Apr 25  1902 Y2038
+-r--r--r--  1 root root       0 Apr 24  2019 Y2155
+-r--r--r--  1 root root       0 Nov 24  2019 Y2156
+
+(Y2025 is correct; Y2038, Y2155, and Y2156 are garbage)
+
+On Linux master mounting an iso with LONG_FORM:
+
+-r--r--r--  1 root root       0 Jan 25  1954 Y2025
+-r--r--r--  1 root root       0 Jan 26  1954 Y2038
+-r--r--r--  1 root root       0 Feb 28  1954 Y2155
+-r--r--r--  1 root root       0 Feb 28  1954 Y2156
+
+(All timestamps are garbage)
+
+With this patch, mounting an iso without LONG_FORM:
+
+-r--r--r--  1 root root       0 Apr 11 16:20 Y2025
+-r--r--r--  1 root root       0 Jun  1  2038 Y2038
+-r--r--r--  1 root root       0 Jun  1  2155 Y2155
+-r--r--r--  1 root root       0 Jan  1  2156 Y2156
+
+(Y2025, Y2038, and Y2155 are correct;
+ Y2156 was correctly truncated by xorriso)
+
+With this patch, mounting an iso with LONG_FORM:
+
+-r--r--r--  1 root root       0 Apr 11 16:20 Y2025
+-r--r--r--  1 root root       0 Jun  1  2038 Y2038
+-r--r--r--  1 root root       0 Jun  1  2155 Y2155
+-r--r--r--  1 root root       0 Jun  1  2156 Y2156
+
+(All timestamps are correct)
+---
+ fs/isofs/inode.c |  7 +++++--
+ fs/isofs/isofs.h |  4 +++-
+ fs/isofs/rock.c  | 40 ++++++++++++++++++++++-----------------
+ fs/isofs/rock.h  |  6 +-----
+ fs/isofs/util.c  | 49 +++++++++++++++++++++++++++++++-----------------
+ 5 files changed, 64 insertions(+), 42 deletions(-)
+
+diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
+index 47038e660812..d5da9817df9b 100644
+--- a/fs/isofs/inode.c
++++ b/fs/isofs/inode.c
+@@ -1275,6 +1275,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 	unsigned long offset;
+ 	struct iso_inode_info *ei = ISOFS_I(inode);
+ 	int ret = -EIO;
++	struct timespec64 ts;
+ 
+ 	block = ei->i_iget5_block;
+ 	bh = sb_bread(inode->i_sb, block);
+@@ -1387,8 +1388,10 @@ static int isofs_read_inode(struct inode *inode, int relocated)
+ 			inode->i_ino, de->flags[-high_sierra]);
+ 	}
+ #endif
+-	inode_set_mtime_to_ts(inode,
+-			      inode_set_atime_to_ts(inode, inode_set_ctime(inode, iso_date(de->date, high_sierra), 0)));
++	ts = iso_date(de->date, high_sierra ? ISO_DATE_HIGH_SIERRA : 0);
++	inode_set_ctime_to_ts(inode, ts);
++	inode_set_atime_to_ts(inode, ts);
++	inode_set_mtime_to_ts(inode, ts);
+ 
+ 	ei->i_first_extent = (isonum_733(de->extent) +
+ 			isonum_711(de->ext_attr_length));
+diff --git a/fs/isofs/isofs.h b/fs/isofs/isofs.h
+index 2d55207c9a99..506555837533 100644
+--- a/fs/isofs/isofs.h
++++ b/fs/isofs/isofs.h
+@@ -106,7 +106,9 @@ static inline unsigned int isonum_733(u8 *p)
+ 	/* Ignore bigendian datum due to broken mastering programs */
+ 	return get_unaligned_le32(p);
+ }
+-extern int iso_date(u8 *, int);
++#define ISO_DATE_HIGH_SIERRA (1 << 0)
++#define ISO_DATE_LONG_FORM (1 << 1)
++struct timespec64 iso_date(u8 *p, int flags);
+ 
+ struct inode;		/* To make gcc happy */
+ 
+diff --git a/fs/isofs/rock.c b/fs/isofs/rock.c
+index dbf911126e61..576498245b9d 100644
+--- a/fs/isofs/rock.c
++++ b/fs/isofs/rock.c
+@@ -412,7 +412,12 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
+ 				}
+ 			}
+ 			break;
+-		case SIG('T', 'F'):
++		case SIG('T', 'F'): {
++			int flags, size, slen;
++
++			flags = rr->u.TF.flags & TF_LONG_FORM ? ISO_DATE_LONG_FORM : 0;
++			size = rr->u.TF.flags & TF_LONG_FORM ? 17 : 7;
++			slen = rr->len - 5;
+ 			/*
+ 			 * Some RRIP writers incorrectly place ctime in the
+ 			 * TF_CREATE field. Try to handle this correctly for
+@@ -420,27 +425,28 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
+ 			 */
+ 			/* Rock ridge never appears on a High Sierra disk */
+ 			cnt = 0;
+-			if (rr->u.TF.flags & TF_CREATE) {
+-				inode_set_ctime(inode,
+-						iso_date(rr->u.TF.times[cnt++].time, 0),
+-						0);
++			if ((rr->u.TF.flags & TF_CREATE) && size <= slen) {
++				inode_set_ctime_to_ts(inode,
++						iso_date(rr->u.TF.data + size * cnt++, flags));
++				slen -= size;
+ 			}
+-			if (rr->u.TF.flags & TF_MODIFY) {
+-				inode_set_mtime(inode,
+-						iso_date(rr->u.TF.times[cnt++].time, 0),
+-						0);
++			if ((rr->u.TF.flags & TF_MODIFY) && size <= slen) {
++				inode_set_mtime_to_ts(inode,
++						iso_date(rr->u.TF.data + size * cnt++, flags));
++				slen -= size;
+ 			}
+-			if (rr->u.TF.flags & TF_ACCESS) {
+-				inode_set_atime(inode,
+-						iso_date(rr->u.TF.times[cnt++].time, 0),
+-						0);
++			if ((rr->u.TF.flags & TF_ACCESS) && size <= slen) {
++				inode_set_atime_to_ts(inode,
++						iso_date(rr->u.TF.data + size * cnt++, flags));
++				slen -= size;
+ 			}
+-			if (rr->u.TF.flags & TF_ATTRIBUTES) {
+-				inode_set_ctime(inode,
+-						iso_date(rr->u.TF.times[cnt++].time, 0),
+-						0);
++			if ((rr->u.TF.flags & TF_ATTRIBUTES) && size <= slen) {
++				inode_set_ctime_to_ts(inode,
++						iso_date(rr->u.TF.data + size * cnt++, flags));
++				slen -= size;
+ 			}
+ 			break;
++		}
+ 		case SIG('S', 'L'):
+ 			{
+ 				int slen;
+diff --git a/fs/isofs/rock.h b/fs/isofs/rock.h
+index 7755e587f778..c0856fa9bb6a 100644
+--- a/fs/isofs/rock.h
++++ b/fs/isofs/rock.h
+@@ -65,13 +65,9 @@ struct RR_PL_s {
+ 	__u8 location[8];
+ };
+ 
+-struct stamp {
+-	__u8 time[7];		/* actually 6 unsigned, 1 signed */
+-} __attribute__ ((packed));
+-
+ struct RR_TF_s {
+ 	__u8 flags;
+-	struct stamp times[];	/* Variable number of these beasts */
++	__u8 data[];
+ } __attribute__ ((packed));
+ 
+ /* Linux-specific extension for transparent decompression */
+diff --git a/fs/isofs/util.c b/fs/isofs/util.c
+index e88dba721661..42f479da0b28 100644
+--- a/fs/isofs/util.c
++++ b/fs/isofs/util.c
+@@ -16,29 +16,44 @@
+  * to GMT.  Thus  we should always be correct.
+  */
+ 
+-int iso_date(u8 *p, int flag)
++struct timespec64 iso_date(u8 *p, int flags)
+ {
+ 	int year, month, day, hour, minute, second, tz;
+-	int crtime;
++	struct timespec64 ts;
++
++	if (flags & ISO_DATE_LONG_FORM) {
++		year = (p[0] - '0') * 1000 +
++		       (p[1] - '0') * 100 +
++		       (p[2] - '0') * 10 +
++		       (p[3] - '0') - 1900;
++		month = ((p[4] - '0') * 10 + (p[5] - '0'));
++		day = ((p[6] - '0') * 10 + (p[7] - '0'));
++		hour = ((p[8] - '0') * 10 + (p[9] - '0'));
++		minute = ((p[10] - '0') * 10 + (p[11] - '0'));
++		second = ((p[12] - '0') * 10 + (p[13] - '0'));
++		ts.tv_nsec = ((p[14] - '0') * 10 + (p[15] - '0')) * 10000000;
++		tz = p[16];
++	} else {
++		year = p[0];
++		month = p[1];
++		day = p[2];
++		hour = p[3];
++		minute = p[4];
++		second = p[5];
++		ts.tv_nsec = 0;
++		/* High sierra has no time zone */
++		tz = flags & ISO_DATE_HIGH_SIERRA ? 0 : p[6];
++	}
+ 
+-	year = p[0];
+-	month = p[1];
+-	day = p[2];
+-	hour = p[3];
+-	minute = p[4];
+-	second = p[5];
+-	if (flag == 0) tz = p[6]; /* High sierra has no time zone */
+-	else tz = 0;
+-	
+ 	if (year < 0) {
+-		crtime = 0;
++		ts.tv_sec = 0;
+ 	} else {
+-		crtime = mktime64(year+1900, month, day, hour, minute, second);
++		ts.tv_sec = mktime64(year+1900, month, day, hour, minute, second);
+ 
+ 		/* sign extend */
+ 		if (tz & 0x80)
+ 			tz |= (-1 << 8);
+-		
++
+ 		/* 
+ 		 * The timezone offset is unreliable on some disks,
+ 		 * so we make a sanity check.  In no case is it ever
+@@ -65,7 +80,7 @@ int iso_date(u8 *p, int flag)
+ 		 * for pointing out the sign error.
+ 		 */
+ 		if (-52 <= tz && tz <= 52)
+-			crtime -= tz * 15 * 60;
++			ts.tv_sec -= tz * 15 * 60;
+ 	}
+-	return crtime;
+-}		
++	return ts;
++}
+-- 
+2.47.2
 
 
