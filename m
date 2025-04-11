@@ -1,140 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-46255-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83224A85F9A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 15:50:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B5AA85FA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 15:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92601BA2053
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 13:48:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6423B16CCA3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 13:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 314CB1E3762;
-	Fri, 11 Apr 2025 13:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38D41F193C;
+	Fri, 11 Apr 2025 13:48:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NWkeeyvq"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Buc3s8mA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7EF1DDC33;
-	Fri, 11 Apr 2025 13:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78921DE3AD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 13:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379300; cv=none; b=bqTaOoBSB1jJnnbmJk9V4dsYIjGrRbr5NUjcldwGb8UyC7HDxi5QlE3Lyci8ABmmN7ijHjOt2OE5yZSLXDVPPcrTOmIc8e2K4azSECMO2Yxt0Ti9Ww747uCEIClzBYV2L1vWtorxqkvSTOM2jEPaBgtn6TbdJ7KioqQs51N4Rp8=
+	t=1744379319; cv=none; b=qLFbHAaCCiwMGrcg2/hZlwEZhDgd0Vpjd6AhuddlBSpN5VA4qTue4ZIBC92k+b7eupKfkTc11g/FKwTjEAVlwC7nTo3aHjLAfzkHLpTTNHC77GTACLSpP2m+iA6n07O9IEqH1q04eYrluyQ7UOK4yIo8U8VMmP+tzyb/7sZcDRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379300; c=relaxed/simple;
-	bh=D2SQjbTT5a0oRdKpUHoRJNLR5tpYbUFIgjsEPcXTPyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RgVoTxgnmCaRSXtHExpIdUybILxf1uqGHFivyj7O6ZOuvOwkbmR2dxQxyr4ZRHsZ9vP0QUtwOFGOxpunqihU+N86G6h51TvAEp5fAMP0k1LzjugHvilqjFtniSHmMCsR1w+3mcwaGBSb6fHutw8osUjlO8Sik8XcFnXFybAbU9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NWkeeyvq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D19A0C4CEE2;
-	Fri, 11 Apr 2025 13:48:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744379300;
-	bh=D2SQjbTT5a0oRdKpUHoRJNLR5tpYbUFIgjsEPcXTPyc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NWkeeyvq4ZszPn1TerH3sLVZ9hsUPK2v0pKvE3WrrZ2b4n/EY6hU+H3HIJr/3pJAC
-	 ansFAO9ksKs/z0uvTx3fLmvpWcddIN7c+eYAzxxVIPEg1PS/EX8UavVJwRg8zBmtBj
-	 TSgpX9eTLpZ1cSl7wKt28xRdb6faeEK98Sz3yanig3GaVXnqKRsIsoBSdxMPdNJBkD
-	 2YabTgju0LYb6xcxIyC4bsHbiTxlhxG4XgHIPH7OIKqm0+JE4IR60gQr0Xac/u4d6k
-	 zqAfsFlBlHtEG+mih1frDPb47Llhf+uvVYuyhU1AGzfrbWN2yi2WylXov7r1s1vOYk
-	 iZKBABqkQITMA==
-Date: Fri, 11 Apr 2025 15:48:16 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/5] fs: gate final fput task_work on PF_NO_TASKWORK
-Message-ID: <20250411-teebeutel-begibt-7d9c0323954b@brauner>
-References: <20250409134057.198671-1-axboe@kernel.dk>
- <20250409134057.198671-2-axboe@kernel.dk>
+	s=arc-20240116; t=1744379319; c=relaxed/simple;
+	bh=FppYHN/qu2n9iiq/ee/to1M0y8WJPMP+sy5NMHu2ZbA=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=nn8HvUKujmNvI6PanytzOGjeuuw/mcSR/fiH0kr+IPaszvKTCiaIyaVe9JCSG5wzi/Wj2wKW5/lgNWOCF/qfhii8ZeO7X6FFG3TfSjZ+bNSz77jNWdzj9InTaX2g/3AmmwbEPyP6opoT3OUzgxD3XcDlC1yyMBFs3xbtWlrS/RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Buc3s8mA; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744379316;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ziVNbANRmyi0790QzmsXdsF0qsho9qMRA3TbDUmAaDs=;
+	b=Buc3s8mAmhVLSFE0SruRzfFAAPfGXiQXiKuIGr4Og90sY/7USuWEqIkw5SJhO6jR2dP/0X
+	lchwUwwmpDXN3vGAUeTR9gOPtq+3mndSYNyUZ8+qBMpwgQeX1o2tDm9/fXE263MWk/4sEE
+	OEmS2Zj+SFTgR5oAAlKTSo5fDYRsJ34=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-443-NhptXqgLMby4Ox9QW00kSA-1; Fri,
+ 11 Apr 2025 09:48:33 -0400
+X-MC-Unique: NhptXqgLMby4Ox9QW00kSA-1
+X-Mimecast-MFC-AGG-ID: NhptXqgLMby4Ox9QW00kSA_1744379312
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 836321956087;
+	Fri, 11 Apr 2025 13:48:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0297619560AD;
+	Fri, 11 Apr 2025 13:48:27 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <f2b15e2f951e249e98f33b07ee261b9898dd41d3.camel@ibm.com>
+References: <f2b15e2f951e249e98f33b07ee261b9898dd41d3.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-7-dhowells@redhat.com>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
+    "slava@dubeyko.com" <slava@dubeyko.com>,
+    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+    "idryomov@gmail.com" <idryomov@gmail.com>,
+    "jlayton@kernel.org" <jlayton@kernel.org>,
+    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
+    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH 06/35] rbd: Use ceph_databuf for rbd_obj_read_sync()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250409134057.198671-2-axboe@kernel.dk>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2370586.1744379306.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Fri, 11 Apr 2025 14:48:26 +0100
+Message-ID: <2370587.1744379306@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Wed, Apr 09, 2025 at 07:35:19AM -0600, Jens Axboe wrote:
-> fput currently gates whether or not a task can run task_work on the
-> PF_KTHREAD flag, which excludes kernel threads as they don't usually run
-> task_work as they never exit to userspace. This punts the final fput
-> done from a kthread to a delayed work item instead of using task_work.
-> 
-> It's perfectly viable to have the final fput done by the kthread itself,
-> as long as it will actually run the task_work. Add a PF_NO_TASKWORK flag
-> which is set by default by a kernel thread, and gate the task_work fput
-> on that instead. This enables a kernel thread to clear this flag
-> temporarily while putting files, as long as it runs its task_work
-> manually.
-> 
-> This enables users like io_uring to ensure that when the final fput of a
-> file is done as part of ring teardown to run the local task_work and
-> hence know that all files have been properly put, without needing to
-> resort to workqueue flushing tricks which can deadlock.
-> 
-> No functional changes in this patch.
-> 
-> Cc: Christian Brauner <brauner@kernel.org>
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
+Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
 
-Seems fine. Although it has some potential for abuse. So maybe a
-VFS_WARN_ON_ONCE() that PF_NO_TASKWORK is only used with PF_KTHREAD
-would make sense.
+> > +	dbuf =3D ceph_databuf_req_alloc(1, sizeof(*ondisk), GFP_KERNEL);
+> =
 
-Acked-by: Christian Brauner <brauner@kernel.org>
+> I am slightly worried about such using of ondisk variable. We have garba=
+ge as a
+> value of ondisk pointer on this step yet. And pointer dereferencing coul=
+d look
+> confusing here. Also, potentially, compiler and static analysis tools co=
+uld
+> complain. I don't see a problem here but anyway I am feeling worried. :)
 
->  fs/file_table.c       | 2 +-
->  include/linux/sched.h | 2 +-
->  kernel/fork.c         | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index c04ed94cdc4b..e3c3dd1b820d 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -521,7 +521,7 @@ static void __fput_deferred(struct file *file)
->  		return;
->  	}
->  
-> -	if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
-> +	if (likely(!in_interrupt() && !(task->flags & PF_NO_TASKWORK))) {
->  		init_task_work(&file->f_task_work, ____fput);
->  		if (!task_work_add(task, &file->f_task_work, TWA_RESUME))
->  			return;
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index f96ac1982893..349c993fc32b 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -1736,7 +1736,7 @@ extern struct pid *cad_pid;
->  						 * I am cleaning dirty pages from some other bdi. */
->  #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
->  #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
-> -#define PF__HOLE__00800000	0x00800000
-> +#define PF_NO_TASKWORK		0x00800000	/* task doesn't run task_work */
->  #define PF__HOLE__01000000	0x01000000
->  #define PF__HOLE__02000000	0x02000000
->  #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index c4b26cd8998b..8dd0b8a5348d 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -2261,7 +2261,7 @@ __latent_entropy struct task_struct *copy_process(
->  		goto fork_out;
->  	p->flags &= ~PF_KTHREAD;
->  	if (args->kthread)
-> -		p->flags |= PF_KTHREAD;
-> +		p->flags |= PF_KTHREAD | PF_NO_TASKWORK;
->  	if (args->user_worker) {
->  		/*
->  		 * Mark us a user worker, and block any signal that isn't
-> -- 
-> 2.49.0
-> 
+It's a sizeof() construction.  We do this all the time:
+
+	struct fred *p;
+
+	p =3D kmalloc(sizeof(*p), GFP_KERNEL);
+
+David
+
 
