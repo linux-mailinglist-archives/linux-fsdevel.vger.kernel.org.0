@@ -1,117 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-46307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C856DA8680A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 23:16:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27662A868D3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 00:14:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 992CE9A17CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 21:15:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DAF4A39A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 22:14:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3323629615F;
-	Fri, 11 Apr 2025 21:15:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61F729DB80;
+	Fri, 11 Apr 2025 22:14:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E3cEqeT4"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G/SPHAu0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C0F29614A;
-	Fri, 11 Apr 2025 21:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6672D29DB61
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 22:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744406124; cv=none; b=icFLBNSs9fPtrSIoU071R2mrXkvGaCDGDyhPuXxx96FgifomVeYjU5NMua2qPBo/Aw6dPg8o4C9ZS4OvnW885FcUszL+jBx9k/nc5J3SbreqM60hrf3mlPzIsolnfoDx81pJ9I6G7SBXz1tul7TzJlZIKt5jU+M3eVv1K1L2avs=
+	t=1744409662; cv=none; b=BgQsQfGUcSxRG7ftLP3LqGVrJNWwFFhRPtoSxQbnH1u5RGFh82YK3qO2BIxLtEkoAZJmupwIvAjvz28oW8FLI3gcNXPLDWobhRigM/Fhe8VT2lSzDt+wQpCADeHqi0xbtEAHdnJgAd4baXTr8T5BT2oTFuN+eATQjPelhyseRAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744406124; c=relaxed/simple;
-	bh=zUAbfaDi+mFMIZ9/oYPb7idFOR0R4eD4ad4u+ZuUC9w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gOkpXyK/BKgDDEd6b9cZKdXzxJLGJYiiO2T7406c/k7yu78MJS3FVOknw8++AxImnRr8+7hRbf2plHC0uUjgCS6tLA8kz2TUhN+hmnE425d6aJWa8T/6h8BCskkhePc/WjzuCSlQUpxHFdDFeYRxtx7DQtWKvEgECM+1J/4B+tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E3cEqeT4; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43cf848528aso19244535e9.2;
-        Fri, 11 Apr 2025 14:15:22 -0700 (PDT)
+	s=arc-20240116; t=1744409662; c=relaxed/simple;
+	bh=inbFC05GiKvTcdNo0+ZTfj3hju7i5EVggQMpuyhjTeI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XI79XsUiOIqlrbl39cyr/HVnbmooK4i9K2dE2whaByhg2pLhmf4Xw84o2yZFSx7R2d86R0/Jxb/X5dCuw3LZEERc/2/mzPQla+ngSkfMdHIRNRcnVhdMrogF0oRQaNjpAuhJEE/kBtUjc88+/JkG/PBIhQPgxAVljHxpwUVAzUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G/SPHAu0; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6f666c94285so28949727b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 15:14:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744406121; x=1745010921; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gPK+H6sOhTLm30dsqOJGvaQCZuKrA5gTcKcyNfzVAVg=;
-        b=E3cEqeT4gXKXaZjMbwDlPAGeTzICVOyGvCiqN0dzJWLFZ4goiEIf5vCqahBuL3EzXs
-         Z3pBIbD6M47jq4mhPlF+Q7gOWlF4y9PEzFBp2egR8QQKuEa0lY6Cy0D2gFVRX9cd9sDc
-         RAIsNQV6RiAatISbeU1CMjMdZcO6yTHJqDpQieVoz8Qx5/wX75v+9K7ya4c06Hhxb1uB
-         zzm5dIWZOMJxlzpCj8io4L1uPB5rWH/VudiWXxh40YGQLx2bKplr2HJCqMYhQwfRsfH+
-         VXAz4u1KlJsY3gPQE8zMWMuiyiyIeBAw9B5J/NqQo4k7btkFObDuVOfbGj3vFJtAlZcQ
-         SW+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744406121; x=1745010921;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1744409659; x=1745014459; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gPK+H6sOhTLm30dsqOJGvaQCZuKrA5gTcKcyNfzVAVg=;
-        b=jalcGZ+qmmM9nSqfKuVUoXaCu8vh8X03GX9Ea2KdSt6EZMbG1vhsuanonBn/NS9rFl
-         1Z1Y8hZlXysMZgqjSLARE0eZ5vhDSq8YsAmxFMbzb8YWtD8meETe1oFtO+Yb4d1+LoqG
-         8fUGfsUHKxhYIwQBLb1b6jAVa2jwc3CO6ws7pfXsmejdBTl3gbycwS7suJMZz4ullXcS
-         gPurfy7Ofk2ScNmMg0TVNFXUeEE39fC02739h1DaHhaZiK7C/eXepB1rv+MScqki4rxb
-         7XAmhJU77I/pTjXm0I35IVlS0cmLJYOnudKp7GKFg6WRLKSbd0xKXIh6f4YJlbMbp4sf
-         i26Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWXC+l6I/AjMxsfWEC1owRy4DYWxvhJtwkhS4zP159hoA3ehh3offh8YZbz+z8jaw+9Bw9nUcooav7aWP1E@vger.kernel.org, AJvYcCXj215fnAo3IgOpQXeCjxySxeA8NLMtttvLk+/SgOJrZD/8MWPHnGK4AK60dhsWhKtdxWjTqNtsP5jIrHk3@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZApHzMcnyJDs1r9Nch3BtyizgDVE9Ocav3mBNvAxRONH3dJ73
-	sSlzKTenNJpdU7ponQbBQVMNYVKyEbI3rpAq2688fAaifEpVHATA
-X-Gm-Gg: ASbGncu8LaLhEWmQXeyAnq4dohPTFfAYoZLSOmAu0EWwtUGeIP1wMUy06IAe9BdwhEO
-	bqB5HDKpp2KFI8H8X4vfTTcsM5T33h+DD4ZAMbn3M24wQNez/Jc/Kk/MKo6fbTpWZiqCTe0xI/0
-	asb0FDLwLAtGbisdLhBd5FpEtEskYkHgTY07bdPF77HJ/Z0nmats/5JTl0gVkX+XyAPC4HMIoqb
-	zO8gxEDYi/hAKHXBxG4iWHPxBLtV6D15+W8LtqWacHz9jfIbS1j8PIEDWJ6zHgSlcDsiVbEjGw3
-	TOdalNx2T6m5LhJ692S9ddNEGUGtJZQR8K3kP7H1WameKPV4FXToIUshBJrFJlU5
-X-Google-Smtp-Source: AGHT+IEgeIHzXRmIqmpC5LyYH+Jtr/lT2cTeX/UOjaeIsufaoxo9zBEh6F6AvgV6eCmVOW+48CAP6Q==
-X-Received: by 2002:a05:600c:46d1:b0:43c:ec28:d310 with SMTP id 5b1f17b1804b1-43f3a93cc34mr43776805e9.10.1744406120863;
-        Fri, 11 Apr 2025 14:15:20 -0700 (PDT)
-Received: from f (cst-prg-90-20.cust.vodafone.cz. [46.135.90.20])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39eaf43cd17sm3157603f8f.78.2025.04.11.14.15.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 14:15:20 -0700 (PDT)
-Date: Fri, 11 Apr 2025 23:15:12 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: lirongqing <lirongqing@baidu.com>, viro@zeniv.linux.org.uk, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: Make file-nr output the total allocated file handles
-Message-ID: <p6rnvi5kvu7zwk6ypui2gwezvg3onqeqajwtw6uksv4jagannh@q2mx54icpmig>
-References: <20250410112117.2851-1-lirongqing@baidu.com>
- <20250411-gejagt-gelistet-88c56be455d1@brauner>
+        bh=p+m7hz6r5/ApjZEveg5QQkULfTfewkyo7s8/B03DRoo=;
+        b=G/SPHAu01IjVZJIJXPOs3rz9w9xPbN1VLyJSwQ2znutM4zpt5X4IceNGFlSojMVAe3
+         6JjGxow84UH9sjx2v8jRIw4kBPGOt/FQy5PA3IHdKoN+TNePGtEkXdIDprZFSXw+L/1Z
+         llTiKxpgAdzD2fs2h05Wj4m+NbQC5d7WGN0CcijviBuQdoe+NYY9jAN0vQ0WTWaqlmT+
+         SUD8unXKHuTxLYoqjS3/LzA6wf+3m3OgOKW2qj+PHjbiRGFM3B2qQiXVKSLYtGYuZ/Dv
+         0LDnK6i78dIm6cccsOgKBrdYRCsnCeqeVey6J5RdSyUfydyzwMlNqS64x69GddcGn8l6
+         iFmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744409659; x=1745014459;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p+m7hz6r5/ApjZEveg5QQkULfTfewkyo7s8/B03DRoo=;
+        b=cdwB1JvDQGWiZ+MlrHoUYlP189CFNYnKlUxfGW8JuB9a7/O0r9enoQaTo+bepAOMqA
+         Y8z8RBE1sCe2y/TxqnBLlLhqLd2sxzAxklOpXlFZhI1mxezsuCpGkczTGcqWpZQua94b
+         RmSGLUgYO59t79fOk1257RRgFERJ/w5jz+ohUwYpZ3vCwQFnxSXAAhbDTr3Xe7kBIzcP
+         CVvWxHaB02m/9Lnjl352G4IIInunatC+j6YmkvMVoXKaQ88Al/250NRV2X+39lLjovSB
+         ptr35sPxHPiTI4Fk5pPS54dGR33T0HOO64yH/e2x4vfn++5/MWajB/WVx/j+CsHgnNPN
+         CYFA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJ79E8UR83gDP9a4S4eWGqLlDZmOXo0JoK7DXY1YFgMIfQZ/1LMSpSSRMAsJgpLku8G1/9fJs2nUWhN7pw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2fQGpghW6Cd9F5xuPiJj6M3JzNHTI1GyyuVb2M9vCJa3FUSOu
+	W0sxuPMxbUMOpw05lEMg0b9OFkOpdWUjRA+e6VT+5WRUCSa1c49nFbrD2GF7RAjkyqmwVlikOeN
+	nOT2oubohPX5w6UzKobW4LuO3Bcbzj88BfG0YrmibQ0zjKjE=
+X-Gm-Gg: ASbGncu1oqXp1HuvMbBkK8gI6VFp2UBKhqbCnOAmGcUFTRmFiYM1r7Jet88sShiAuEM
+	Uf9Jha17df6ZffMduOWG8Su/1QqQeJaA9Tkl+x1btfDh6I2v8ZK3s9cDnXpnV1Omc8gM1ArZpiL
+	UrqUctfzxZXNiH/cQlIIJwoQ==
+X-Google-Smtp-Source: AGHT+IEynk71rTo5QAU0nN+o2O+0yFjyQ113XZBjQvgh1uLkqf8zyYIq2nZaaxEVVWn37yekS9kI1R7YzDqNHi95Q40=
+X-Received: by 2002:a05:690c:7002:b0:6fd:6748:928a with SMTP id
+ 00721157ae682-70559a6a25fmr75224277b3.29.1744409659266; Fri, 11 Apr 2025
+ 15:14:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250411-gejagt-gelistet-88c56be455d1@brauner>
+References: <fb9f7900d411a3ab752759d818c3da78e2f8f0f1.camel@huaweicloud.com>
+ <Z_f-uBGhBq9CYmaw@lei> <bbc39aec812383f836ad51bc91b013fa8de8a410.camel@huaweicloud.com>
+In-Reply-To: <bbc39aec812383f836ad51bc91b013fa8de8a410.camel@huaweicloud.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 11 Apr 2025 18:14:08 -0400
+X-Gm-Features: ATxdqUHUqC_GnYV1ob9atu9iK3mHRkgbWg3uQONWT0Q0sNaX4f87ERAqln_Lkfg
+Message-ID: <CAHC9VhTaffwcGsmcix21ODAwMYxVDM+SH=By_oejxMZK8vSSUQ@mail.gmail.com>
+Subject: Re: Credentials not fully initialized before bprm_check LSM hook
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>
+Cc: sergeh@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, "Eric W. Biederman" <ebiederm@xmission.com>, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
+	zohar@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 11, 2025 at 04:16:08PM +0200, Christian Brauner wrote:
-> On Thu, Apr 10, 2025 at 07:21:17PM +0800, lirongqing wrote:
-> > From: Li RongQing <lirongqing@baidu.com>
-> > 
-> > Make file-nr output the total allocated file handles, not per-cpu
-> > cache number, it's more precise, and not in hot path
-> > 
-> > Signed-off-by: Li RongQing <lirongqing@baidu.com>
-> > ---
-> 
-> That means grabbing a lock suddenly. Is there an actual use-case
-> behind this?
-> 
+On Fri, Apr 11, 2025 at 5:07=E2=80=AFAM Roberto Sassu
+<roberto.sassu@huaweicloud.com> wrote:
+> On Thu, 2025-04-10 at 17:24 +0000, sergeh@kernel.org wrote:
+> > On Thu, Apr 10, 2025 at 01:47:07PM +0200, Roberto Sassu wrote:
+> > > Hi everyone
+> > >
+> > > recently I discovered a problem in the implementation of our IMA
+> > > bprm_check hook, in particular when the policy is matched against the
+> > > bprm credentials (to be committed later during execve().
+> > >
+> > > Before commit 56305aa9b6fab ("exec: Compute file based creds only
+> > > once"), bprm_fill_uid() was called in prepare_binprm() and filled the
+> > > euid/egid before calling security_bprm_check(), which in turns calls
+> > > IMA.
+> > >
+> > > After that commit, bprm_fill_uid() was moved to begin_new_exec(), whi=
+ch
+> > > is when the last interpreter is found.
+> > >
+> > > The consequence is that IMA still sees the not yet ready credentials
+> > > and an IMA rule like:
+> > >
+> > > measure func=3DCREDS_CHECK euid=3D0
+> >
+> > "IMA still sees" at which point exactly?
+>
+> IMA sees the credentials in bprm->cred prepared with
+> prepare_bprm_creds(), where the euid/egid are taken from the current
+> process.
+>
+> > Do I understand right that the problem is that ima's version of
+> > security_bprm_creds_for_exec() needs to run after
+> > bprm_creds_from_file()?
+>
+> IMA's version of security_bprm_check(). security_bprm_creds_for_exec()
+> is for checking scripts executed by the interpreters with execveat()
+> and the AT_EXECVE_CHECK flag.
+>
+> Uhm, it would not be technically a problem to move the IMA hook later,
+> but it would miss the intermediate binary search steps, which are
+> visible with security_bprm_check().
 
-The centralized value can be really grossly inaccurate as CPU count increases.
+I'm still trying to make sure I understand everything here, so I've
+got a few questions:
 
-There is some talks about fixing that, see:
-https://lore.kernel.org/linux-mm/20250410175149.1206995-1-mathieu.desnoyers@efficios.com/
+* How important is it for IMA to vet the intermediate binaries?  Those
+binaries don't actually do anything with the program/scripts, right?
 
-In the meantime, given that this is only accessed when reading the /proc
-file, this should be fine?
+* Based on the comment block at the top of begin_new_exec(), I'm
+assuming that using the security_bprm_creds_from_file() hook would be
+a problem due to challenges in returning an error code?  There might
+also be an issue for any LSMs that run *before* capabilities, but I
+think that would only be Lockdown in the default case so likely not a
+big problem.
 
-Note it still wont delay bumps/decs as long as they fit the batch (which
-is the common case).
+* This patch has been out for almost five years and presumably offers
+a performance bump when doing an exec; I'm skeptical that Eric, Linus,
+or anyone outside of security/ would be interested in doing a revert
+to better support the AT_EXECVE_CHECK for a LSM.  Yes, I might be
+wrong, but for a moment let's assume a revert is not an option, what
+would you propose to solve this?  If you can't think of a general
+solution, can you think of an IMA specific solution?
+
+--=20
+paul-moore.com
 
