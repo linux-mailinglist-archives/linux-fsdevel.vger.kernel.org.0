@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-46279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5FFA860C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:38:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F94DA860E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FD1B4A8B2C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:38:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7831BA47F0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E8671F4606;
-	Fri, 11 Apr 2025 14:37:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452ED1F8BD6;
+	Fri, 11 Apr 2025 14:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="CyHHiE6/"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="zqQ7ZR2H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C9E81F8BDD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 14:37:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43431F4CB3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 14:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744382276; cv=none; b=WPCNUkOuYfha0hMqHp+u/cU96SRNqGCkUEAlOmBRprSPO6GA4ZYqs2+Bviw7f+4VWwnZzyY/eqf/9WnPp7CKwEXgIKLumcUv2FsI+Pio8urX1bjdAZBnFeIu7F3sA/yeLDNJ7VoMkkc5hLaN2NOyDb84m7pl6UISg+xiZzE72hU=
+	t=1744382324; cv=none; b=ubQj749SuSBhG2DNmCFpZhzuZ1KXec3S6gPWp4zraxT1axL1NKAHnvlJVadsxYsPclQrMQRvZSS2LL7JNt4qoCq3pWZT+bczJqS1HM6X+Q8AYhlmU44MsBM+3oMVb5kK6/iK90n2O3PNx1TQpT4usnHYfEkpHPt+ANl79UUe4Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744382276; c=relaxed/simple;
-	bh=2LERUFr/wQhDkFwYICYrlJcPEQbXMIMG1NYz4MJH+zo=;
+	s=arc-20240116; t=1744382324; c=relaxed/simple;
+	bh=Py9b0n4Spd9shv3fai5ExlcWtULnhO4HY6RbmcW7zII=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=m4aBw/i5vbdcIe/m0LyHHpP5kczFCg71g3koZNVAepgh5Cniri8p3ylOzkbp/ARVZEoMOHj4tAuRldJOzWgSNgDqnzQ69HcriQ3dGVDkuZmvBkuz6GNyF3QdqbO/na/Ws0lcOeQwQ04wNaGrYR5eTmP2vn8HqK7PVJ0p+cvYqd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=CyHHiE6/; arc=none smtp.client-ip=209.85.166.51
+	 In-Reply-To:Content-Type; b=GMlc1++vQQwCEf+WlFyOdIHBuH2+7nqF9kj+riXHo8qT7YFtvhpywKWaFCTmNLiNdmgEGKkC2yxVcJk0x/+JNjHVfo5m4T3FtkQV+fm5B1OG0XWV0JsIpUmSElsKzipd8BiI8U14aXAfp80FakHPnTTE52D81TEZ6OOewUGNi94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=zqQ7ZR2H; arc=none smtp.client-ip=209.85.166.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85b4170f1f5so74494839f.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 07:37:53 -0700 (PDT)
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d46fddf43aso15395975ab.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 07:38:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744382273; x=1744987073; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744382322; x=1744987122; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=j1eWCMTidsdTrjz4Yo+Jb0xH3fGdUIK64yZp6T6k7Tw=;
-        b=CyHHiE6/TJyJZGmAZtseCOKNN3ypO2jx9TBUpiORWqVm1x2PgO8FaeLlFv2F7eGjAc
-         ICtm98Svsj1+bp3z1GZ9MEhE/bDq53agGompGhCGyqm1lFqYON1NAcP/SsTU05adqELT
-         onvJM5KMOduZDgPflZynQMtcbSzAEnHe76fqgi3Td5vONFyvOHfd1+7JcdeiiWD4a1Nd
-         0YE/RL/tzuUBCHqlppNFbxgZcy0z5QlRwSC8NStqakJweQ8NNXaaRAlT8i9lgFRivV5K
-         R3uLBfDksxA/MMaxv7vtCwz1ct84AqLXUoWhvUxwQFILc5ft0AI4y+SiokqzmudUOaWv
-         uUCg==
+        bh=KNF+SaysF6jNI8dZrqbzXabPIIgPY99/j3AARUIR4IE=;
+        b=zqQ7ZR2HnL5e5cpQSP44uaZZZhMfWv8FduSiO/mPZeumWOajPVa8CH3ifXV7shKXhC
+         qNOJAVwyyUuJGf1qm6MerXAkQsQzKRC1DMkV+z/e13qxP78aXLJO2+h2MXbFQn5dCDzX
+         +Irpdraxc9F35SwIOguSxfF+EonUAusaySoavB7n8wsA5I9blh3J2wVLw4ijaQkh81gK
+         KmLu4ZzpDAoACPZsT0/3S/YBEMAfAyS3u1FQ9OB62lsD5PxJePyl6WRj6dVwzUhUcv3/
+         AzMCD2guXTp7CY2KVIJTykDdVG6BsyW28gD41cHf0eJwLg/JpdPpIuKtvDvcPEHxNzYF
+         Imvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744382273; x=1744987073;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1744382322; x=1744987122;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=j1eWCMTidsdTrjz4Yo+Jb0xH3fGdUIK64yZp6T6k7Tw=;
-        b=OLibyxaL9VzhXU1/Jl85cRs6M7v+wFH2x40j1aBmaTE9dncIW3uUnYZuwl6Bev95Vl
-         eL/IeF67KaZKT4vGlvhP0YgJn3NEYNrbrKOhBWPpcWawCWThICdM03f/lgmrsrukBjjE
-         dFWyhgHXywAADvwIp8Hj6KVYS5r51mZI3CvJghZ39TbELahQ/UR7SOe+RLpkiz35MJ1B
-         RtewEul/WxdGmP0f+Y+xb1hPbs/fGBXRUCxUHzoQRtS+zc+1FqMb4d5E9RXBfMPt4/Z7
-         5+cU4V3em/z0865a0vijNcUXlEPE/KgzEr7Sd18vu+q8La+3P6Edi6ILVTYNVZARz03D
-         hGuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWKjI1XY+JZfCLcH3Qs6WT/gSI9o4ZUq6OwBNiaXIlP+cPtW4qKCIwOHv5iCn6/oi5kRjtq3KaMPaflO58@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6wVK4IUynmsPrBe6HjLivbmbWfkik5iMwi/obXK2yXaHKzbrq
-	wuEdG6DrZB4gMDbPMvvhgjqUOvCNTuqS59ZdIjP1dB0a+DQxt/VjHWYP0UVoam+aK68kZDrVH69
-	P
-X-Gm-Gg: ASbGncuxLzicFnKVUqBS+qunL2Sql6pFxQ+/m0d+Hwz2aTjCtP8M4DDKgS9Te0pJjpO
-	t+alNVV4DYFp5ESJdgf1Ux+R2TNXaACz211NW4meQhbDVPkAo5lka4EnQdVsKhFW2wSHthNaCgG
-	TnWpHL05e40SLVh20fh5GwII+HOGa152bFsCNlWZ0eL/2h2GrmRrdrFWf20tD8HQ6Rg/GyzqBsY
-	7DKYttiOZP/TRDSlwg66KxqDsneHIA8MRJtxOXprDy5ghN/VmRenAwQ6UTKLWObSL9tyqEItPwI
-	nRRaqzTGmPEPYKk3wKDNzd6NvidgH2WfZXqk
-X-Google-Smtp-Source: AGHT+IF95Fx+kdzXvOEQIuN4oN7RmOOKwm5acciBtYGnI/O5+u9w/LJUzrtkBGQao587PgFtViqHCg==
-X-Received: by 2002:a05:6e02:b2f:b0:3d5:d743:8089 with SMTP id e9e14a558f8ab-3d7ec1fd1fdmr31616045ab.7.1744382273155;
-        Fri, 11 Apr 2025 07:37:53 -0700 (PDT)
+        bh=KNF+SaysF6jNI8dZrqbzXabPIIgPY99/j3AARUIR4IE=;
+        b=I9Vgzd7354EIQHt5mhNEole1NlqvZVc8zn2L7ndm8xVGmV/wpjlJx/Tr8Xe4xlKdSj
+         RSdimjAiF0DKoXPJhz9IC3SFB4+4rU67pA9i9n6GFHRuHLTP8YMpB/v+HBhFCjfQB8oH
+         Eydj2H1Nk3b1aEqMHAGvOf3J5NNqQq4PpnSCK9Bmmk6bQqf80xVKXaiIs6jAgeHTEBjV
+         jwq3VFh4b5Or+ePXZzpFLiqsZ1vRhQTJRUPRRwz3CVCCKNNYzyjzCecXy6O7hAgv43iD
+         XGIqoXKPSAWhCEA6AWE2gxGhNGgQWVX8SdblCMHLqVjzgxEyfeOXJcTDvQOTizYPc71r
+         QIXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbFOk9pLVhwr905e4fi6IRBDFrmlrFkaTHBJDEkWHgF5yllGtovMQfQApfYeIo142Tnm++j+bkodMUMiGr@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4U35PMNfeLM6sYv4qMXW4Tnc/CaTfYlVwcAZRt5PA5zf4+cXC
+	MCOA6iVRylFa3DVaCsdyLlXT3x5AX0vlsD82wAmmfr4tpd7sHPsga/4ZA/Iy2aAFlPJZoKOUOie
+	w
+X-Gm-Gg: ASbGncv1zTxvjMmHRkg1eN/d4OcZzzs7On8SVT+UUDvRYpgCKjDSiujVT6ayTIGpi4s
+	KzCqC9nnhQmaep3pBqlslEkxDyzt9mb9ZZLora9dPcoL4+gJh3D7e+4b4Dn9ItxP8kfd/Z7ZbrH
+	8jsJaYWlU586SWK9UPXaa85LMSFenhVr0bvyMuA4NX0jRmpEMMjclTQAWhX3/umKU+tEztAETQx
+	2EQ+74M2ISygMJRliqfRu2vekNCXdBvNTdkDF/CqmgyxiVZserDwwz4Xj99AkOYln0E7GNyV613
+	6zj6l0r5QhrkAMLeP4JT0C+Vatpv+cUopLwz
+X-Google-Smtp-Source: AGHT+IHWG2XNU8wzo30/FH8LklgCUykZwxlTb/VPatdqzr91/hnlg09zYQXj0kiL2LwG+EuYKyU4Zw==
+X-Received: by 2002:a05:6e02:441b:20b0:3d6:d179:a182 with SMTP id e9e14a558f8ab-3d7ec26fbcdmr24090815ab.20.1744382321971;
+        Fri, 11 Apr 2025 07:38:41 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d7dc591b9bsm12948295ab.60.2025.04.11.07.37.52
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e2eaeesm1282118173.126.2025.04.11.07.38.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Apr 2025 07:37:52 -0700 (PDT)
-Message-ID: <87fcae79-674c-4eea-8e65-4763c6fced44@kernel.dk>
-Date: Fri, 11 Apr 2025 08:37:51 -0600
+        Fri, 11 Apr 2025 07:38:41 -0700 (PDT)
+Message-ID: <02f8fac0-1ddd-409e-a5f6-c7adf7d10a03@kernel.dk>
+Date: Fri, 11 Apr 2025 08:38:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,36 +82,53 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] fs: gate final fput task_work on PF_NO_TASKWORK
+Subject: Re: [PATCH 2/5] io_uring: mark exit side kworkers as task_work
+ capable
 To: Christian Brauner <brauner@kernel.org>
 Cc: io-uring@vger.kernel.org, asml.silence@gmail.com,
  linux-fsdevel@vger.kernel.org
 References: <20250409134057.198671-1-axboe@kernel.dk>
- <20250409134057.198671-2-axboe@kernel.dk>
- <20250411-teebeutel-begibt-7d9c0323954b@brauner>
-From: Jens Axboe <axboe@kernel.dk>
+ <20250409134057.198671-3-axboe@kernel.dk>
+ <20250411-reinreden-nester-8cd21e845563@brauner>
 Content-Language: en-US
-In-Reply-To: <20250411-teebeutel-begibt-7d9c0323954b@brauner>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250411-reinreden-nester-8cd21e845563@brauner>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 4/11/25 7:48 AM, Christian Brauner wrote:
-> Seems fine. Although it has some potential for abuse. So maybe a
-> VFS_WARN_ON_ONCE() that PF_NO_TASKWORK is only used with PF_KTHREAD
-> would make sense.
+On 4/11/25 7:55 AM, Christian Brauner wrote:
+> On Wed, Apr 09, 2025 at 07:35:20AM -0600, Jens Axboe wrote:
+>> There are two types of work here:
+>>
+>> 1) Fallback work, if the task is exiting
+>> 2) The exit side cancelations
+>>
+>> and both of them may do the final fput() of a file. When this happens,
+>> fput() will schedule delayed work. This slows down exits when io_uring
+> 
+> I was a bit surprised by this because it means that all those __fput()s
+> are done with kthread credentials which is a bit surprising (but
+> harmless afaict).
 
-Can certainly add that. You'd want that before the check for
-in_interrupt and PF_NO_TASKWORK? Something ala
+Sure hope it is, because that's already what happens off the delayed
+fput that it'd otherwise go through!
 
-	/* PF_NO_TASKWORK should only be used with PF_KTHREAD */
-	VFS_WARN_ON_ONCE((task->flags & PF_NO_TASKWORK) && !(task->flags & PF_KTHREAD));
+>> needs to wait for that work to finish. It is possible to flush this via
+>> flush_delayed_fput(), but that's a big hammer as other unrelated files
+>> could be involved, and from other tasks as well.
+>>
+>> Add two io_uring helpers to temporarily clear PF_NO_TASKWORK for the
+>> worker threads, and run any queued task_work before setting the flag
+>> again. Then we can ensure we only flush related items that received
+>> their final fput as part of work cancelation and flushing.
+> 
+> Ok, so the only change is that this isn't offloaded to the global
+> delayed fput workqueue but to the task work that you're running off of
+> your kthread helpers.
 
-?
-
-> Acked-by: Christian Brauner <brauner@kernel.org>
-
-Thanks!
+Exactly
 
 -- 
 Jens Axboe
+
 
