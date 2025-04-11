@@ -1,108 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-46268-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 360BFA86036
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:14:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BDFA86056
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:19:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8E01890A84
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:12:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E18FB9A42E4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1831F4CAE;
-	Fri, 11 Apr 2025 14:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75001F584C;
+	Fri, 11 Apr 2025 14:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="izRko/IA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqWrMieo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f48.google.com (mail-ot1-f48.google.com [209.85.210.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F1073176;
-	Fri, 11 Apr 2025 14:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10E032367B5;
+	Fri, 11 Apr 2025 14:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744380691; cv=none; b=u7FRqIMxkVXl5IZU08F5wE22yIind87dXvePBv1sXmSfJrxtROU0d5xzZ+vxqYey0dulUYJRbzaTHZMz5nrjUb0//wuEakvmqzzTgSf+31hb9027EPXdnl5lxWnkyJw1/NWrRSumH/zUx8vgf/9wQp7RenueePNLNQ8nQpckhYk=
+	t=1744380973; cv=none; b=nrYK5MFdAy8ZV9EvoCf0w/yc8l34delY3YV8xGcm2nCVo2bPf0I0YBzKih/yeflYqwbei0K41/h6wenle3GZ4uMDf+d1JE8us1S3kRB+uYneT7Cm0alBZG2OjVdqNSTcP6A3IfnBZUhbqmfLL+dEYtp5gZMere96QiD0s/Ip7tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744380691; c=relaxed/simple;
-	bh=vaJtVVwYezJNolvJSHZ/Z1JOjsT4CKEdBHtvqBdwU30=;
+	s=arc-20240116; t=1744380973; c=relaxed/simple;
+	bh=H8RzE3WJETWRwWdp+SHT2/+zpdflJRvn9iyvD2AGQKY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WmCfog8TAfMKkjJaQO0vYyvG+LN5098NGQDgXi6wUgspzHsWHl56CEddsGAREhA2o2ge4k9upBh/cT0YOdT0+ed/HeIciR3rndjvbjowJR3VCdBaL08lNM9VG9Vh5/4wozgnDkmfsgA56/rs2ma+4rzwb8lc6PjD3CNaFfLKqt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=izRko/IA; arc=none smtp.client-ip=209.85.210.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f48.google.com with SMTP id 46e09a7af769-72bb97260ceso702615a34.1;
-        Fri, 11 Apr 2025 07:11:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744380689; x=1744985489; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8EoyrupwTEtbZwQXlvvRXTwgUv8DtYsYUCtvWZBr1js=;
-        b=izRko/IAwfHU31TwR3Tx51ICKcqDAvO0vZ9uoieJt8zm0/3KZU+QeRhejG9FS5UUgd
-         D3O/byDBtVXeecOUdhEqJLhLEQ2quSRUcyLgdA4P+T4gPqEKR/SfjtkEVNB7db+BhCwI
-         rgAGQR5aENssOxcgHfuEDsED7kp+RRBsvbXqs1WHJeEvZy0yyqlmN1xogxVl5oOK5lnB
-         cYKZvwzfqxn9rSnOprT3ws6aIh23+vFcBLesVHW3z1nPX7CSB9FYQS4O6m2ipNrq13Gl
-         3/RQXJdcicoOgr01mLBtP8sv29I/v3Vkt3TgzNb9GYY+H/vOkG7heB4QkhV/iSbaMTnh
-         ESig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744380689; x=1744985489;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8EoyrupwTEtbZwQXlvvRXTwgUv8DtYsYUCtvWZBr1js=;
-        b=IoU8s8phNstybhcuBD6xN6bEo1IsBZ1gkw2cAX7ZDX1eZe1jIX3rCu0j+3dJ/kKGid
-         Q+RkZ7Bb8vReaC6Bx5XhShoEr1zFecZu1eIdH3iQj7jePasOlccTYt2e2SyHqGq9lAnB
-         yQ0+tAVhKJuzNNpCpHuukr3YNBzl6q/StwRm/uFgiMViHA91eX8fGCYBQ24XGxZw2VlP
-         BA7Awma475E2ghIL5/lt1KHrgAYgqLdEyTW3ugc+ZRVpMaOctFrrQq4WVCchQOtN/T+O
-         loqOrKMz7e/u1hIv60/f/KQVCzfh7G4AyDAqjjNfCuc4kwOLDXL25USlYTD+kycQz3OG
-         cC6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUKaM7Knq/CrRy40di07cAVNuvXgauqwkRY4FWsW8yI35ACc839SYrH+v7Ar7l1IR0haQROn4178JeMCefiCA==@vger.kernel.org, AJvYcCVH5h+XY+ramhBvDkRs7dT8OYVdJl0bmJt8NqCWHQMeLL+ZA16IkklOXmB9zLlGvoM/bN1rUZKqJws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOvsPjQs+3kjQaC/vavDRP/0gycUUAKmGhMBW0KQyxL/KxJRSB
-	K74FeusiZX4Sr02MP7l5L5x68m0o9VfOPlKj4I2mo4Jf+HHcJKpo
-X-Gm-Gg: ASbGncuWqTypeStTNin0ClGXw9kugSFtUck7sUQEOnHirt6xyZqrz7UwVIYFcIUpoLu
-	dTlnvAin33iJ3mR1XmQftBUufjwAUQUSyuwXyLE1sfE3ZA0idzajYtmb4Fh8p1Vtg5jkwb11vFY
-	KcK5r+f7aMetAN4eGs1/4O95wBjmk60TJsNect/k7s+ptcXBihikttdj+xycgE0wykGHPEBRDNv
-	h61Ht2mv/R36T8CSye+sNL4gH4NBIrnCmALuCIng+0Mh9etrorIG0P9YpOlitTvHT6Vze+Pv3XB
-	PsOrcr5TV/0vc+3gIlbtZ3+1MDkvt62THaE2hBLoMwT96w554bHHlFzrA9jS
-X-Google-Smtp-Source: AGHT+IFqFbmaASrYe/cW2MSIXxfRdZxjVbEapk+IVePLGdxBuY4A2iVMiWVW0k9HogsgNayf8P03/Q==
-X-Received: by 2002:a05:6830:6186:b0:72a:1dfc:c981 with SMTP id 46e09a7af769-72e8653a057mr1992876a34.25.1744380688825;
-        Fri, 11 Apr 2025 07:11:28 -0700 (PDT)
-Received: from Borg-550.local ([2603:8080:1500:3d89:ec04:946b:bd13:7e7e])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-72e73e4db34sm946969a34.49.2025.04.11.07.11.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 07:11:28 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Fri, 11 Apr 2025 09:11:26 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, 
-	Joanne Koong <joannelkoong@gmail.com>, John Groves <jgroves@micron.com>, linux-fsdevel@vger.kernel.org, 
-	linux-cxl@vger.kernel.org, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>, Eishan Mirakhur <emirakhur@micron.com>
-Subject: Re: famfs port to fuse - questions
-Message-ID: <yt5zatqobd5wa27l6nownqheqvqxfz2wkojqlbj5jsu2uz52am@fh7uud2u4v4b>
-References: <20250224152535.42380-1-john@groves.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DsTeDDwcK9v0NjiBW/dPeql8NiE7RlLtYJ1u8dAsXbkJJrG4GHxbuzBQJvS7OxJ4GISWVnB86Yrg2dNiLDzYYRrfac5bgnstUEQ6TFTRa0frUcyOFObeQfki/Fq8oYpPdFcO5weZJTTU9t963kQ6IlGUMrp1PTdfWvwiR92rFuk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqWrMieo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23C8AC4CEE2;
+	Fri, 11 Apr 2025 14:16:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744380972;
+	bh=H8RzE3WJETWRwWdp+SHT2/+zpdflJRvn9iyvD2AGQKY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tqWrMieo/FRdy8F2ZjgIjntNtmXjSvKkOFi1Lxghc6nQXbAslXGFXfYJjuZg7XQfU
+	 IRqbuTRGB9nNfDbiyFI+WfAKE1KBQzMnz2uR0q1hKV3P4joegHdoBmgLX7GWUcaMp2
+	 pZOl2BQQUWgJtY4UyBf9Tc4zwFYmi0cuYWHl2oGL4kZWaesZ50VARO3Mb56GFkE1eo
+	 hTOyBCjIx6dubtr/ut40Eeh+JYl2yuZpmo5UA2KTSJOq7Ce4z8LHIFTeLaxzre/1Do
+	 GwmsIv7hN293XFFvg3iS/cdNODWm1fvYKfkyffcuzEcNXBqZ2XOsAtgIPc04l670xH
+	 w9ZHKUxu6PwOw==
+Date: Fri, 11 Apr 2025 16:16:08 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: lirongqing <lirongqing@baidu.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: Make file-nr output the total allocated file handles
+Message-ID: <20250411-gejagt-gelistet-88c56be455d1@brauner>
+References: <20250410112117.2851-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250224152535.42380-1-john@groves.net>
+In-Reply-To: <20250410112117.2851-1-lirongqing@baidu.com>
 
+On Thu, Apr 10, 2025 at 07:21:17PM +0800, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
+> 
+> Make file-nr output the total allocated file handles, not per-cpu
+> cache number, it's more precise, and not in hot path
+> 
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
 
-OK, I'm on track to post the first famfs/fuse RFC patches next week. This 
-will be a kernel patch, a libfuse patch and a pointer to a compatible famfs 
-user space and instructions.
+That means grabbing a lock suddenly. Is there an actual use-case
+behind this?
 
-Dumb question: where do I post the libfuse patchs?
-
-Thanks,
-John
-
+>  fs/file_table.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/file_table.c b/fs/file_table.c
+> index c04ed94..138114d 100644
+> --- a/fs/file_table.c
+> +++ b/fs/file_table.c
+> @@ -102,7 +102,7 @@ EXPORT_SYMBOL_GPL(get_max_files);
+>  static int proc_nr_files(const struct ctl_table *table, int write, void *buffer,
+>  			 size_t *lenp, loff_t *ppos)
+>  {
+> -	files_stat.nr_files = get_nr_files();
+> +	files_stat.nr_files = percpu_counter_sum_positive(&nr_files);
+>  	return proc_doulongvec_minmax(table, write, buffer, lenp, ppos);
+>  }
+>  
+> -- 
+> 2.9.4
+> 
 
