@@ -1,107 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-46233-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46234-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C8EA84F4B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 23:54:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62A79A85138
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 03:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFCDD9A6A97
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Apr 2025 21:54:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57DBB4C03AB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 01:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5660205E0F;
-	Thu, 10 Apr 2025 21:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SaitTTQh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE215270EC7;
+	Fri, 11 Apr 2025 01:24:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 342E11922C0;
-	Thu, 10 Apr 2025 21:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7FC126FA4E;
+	Fri, 11 Apr 2025 01:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744322072; cv=none; b=fqtSNnum2shqcOJYljIppWso/1gqZ1fvdxR7XYmGBOmeKdtTYx/MIkya3fMemOFGlPLdME7/dVNMeiM82axOkYgtdhZz+IEsX1ChGgGJKq+CIX1BKUtZgbFuCPR/NfeC/5s9w98rGuuStAdz+gzJ7Dr5tj35311w6mV6aZ5wLes=
+	t=1744334696; cv=none; b=K8v819RSDT4buW+P7grGgFEdtvdEBkCaciup0t/jPbwq9bd2dX4rGOomv6tDxtPNBbK+syHXio2GM3wpQhVq5DYWMxVJqSG6nzq7ucCuCYr636hGF0tmBPKdROZzRjqkThLDzqvqBE7jWPiO/SSZC4OaMb0JNCE5kdUd9aIq0II=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744322072; c=relaxed/simple;
-	bh=ahu+sTxJTXiWKP8t7Gml2qUY2sR/8/zIRmlQd4hg6Ic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RapZkNZVctcPaBXsLCSEqPUucAfg6Fjr6w/JGwvi59ZB2v5ttRlt0kEUvy+3l7XsruLzRX2ON7q2nwpDPFqahfzyKxODPG2uisiBw8bqTH4/c9kKNcbXz2sRuoX9JwjMDl31Wl8IWbUx3MAGXWNduf2ro/cPm6Zhb9HyK7ozDNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SaitTTQh; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ptq3DX6oQJpzB4WzIaKVRnwccOIqrNxFcRm9sYgBPG0=; b=SaitTTQhNXMeax3PzYnh6YILfb
-	7nP2twZTWYxldHkWeB8Yl3vuroBauUQniNO5N02JPt10g00B1aUN4DnpDY1PuePFeYzCtGIm9MAnw
-	3dfH1i/br9eJFfjpdEGnOm6A/Onu/q1yfWhs8snf1aWYBAV6qCBWS/c9Hv+CMKGrYtxNePk7CfV+b
-	uqeiPD12YAmgPl3Oovg/Jlt4HBegJcwnyAUQkj/zAmKWiSOlQkH85CDfN2wEzjzLMKz77ocqDN3e/
-	P8dt6FIH3zqoIrqhNdWQ2Vd0AHQLXtUfebACcYt9rVGdpWsHm6Met6LMF/z/+UzMl+QBnEkkN+aqU
-	+aal1lSw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u2zqk-00000003QUG-2tUM;
-	Thu, 10 Apr 2025 21:54:19 +0000
-Date: Thu, 10 Apr 2025 22:54:18 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	Alison Schofield <alison.schofield@intel.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Alistair Popple <apopple@nvidia.com>,
-	Christoph Hellwig <hch@infradead.org>
-Subject: Re: [PATCH v1] fs/dax: fix folio splitting issue by resetting old
- folio order + _nr_pages
-Message-ID: <Z_g-Chjk12ijqf9O@casper.infradead.org>
-References: <20250410091020.119116-1-david@redhat.com>
- <67f826cbd874f_72052944e@dwillia2-xfh.jf.intel.com.notmuch>
- <Z_gotADO2ba-Qz9Z@casper.infradead.org>
- <67f82e0e234ea_720529471@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1744334696; c=relaxed/simple;
+	bh=dSSjUm1qkj9N0lBPFnjlZ3nQVsQFC/1C77m25QuWoKw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VlElrCyDKnlHmXvKDSoK5iDmS8CvKo8gT0URp0yMefbEupLUWGCPeMIMumbNHF7pQAtReohotT7gB7OIPP9BasHe6ptppyTl6mucbhf9w8ESQwyrnJeMksyCHwdJiCVTs8mqjqBy0vKYT2aQfZZX65InmL2m+yqrntfYM4vsqJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53ANm3aY017752;
+	Thu, 10 Apr 2025 18:24:32 -0700
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45tyt4ffp3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Thu, 10 Apr 2025 18:24:32 -0700 (PDT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Thu, 10 Apr 2025 18:24:31 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Thu, 10 Apr 2025 18:24:28 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com>
+CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
+        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ntfs3@lists.linux.dev>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: [PATCH] fs/ntfs3: Add missing direct_IO in ntfs_aops_cmpr
+Date: Fri, 11 Apr 2025 09:24:27 +0800
+Message-ID: <20250411012428.3473333-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <67f818d3.050a0220.355867.000d.GAE@google.com>
+References: <67f818d3.050a0220.355867.000d.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67f82e0e234ea_720529471@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: dDioEEsJy4xVUNQp_mgWi5Z4hGF7QV90
+X-Authority-Analysis: v=2.4 cv=RMSzH5i+ c=1 sm=1 tr=0 ts=67f86f50 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=XR8D0OoHHMoA:10 a=edf1wS77AAAA:8 a=hSkVLCK3AAAA:8 a=t7CeM3EgAAAA:8 a=4PoWjKlla1C8yqjNy9cA:9 a=DcSpbTIhAlouE1Uv7lRv:22
+ a=cQPPKAXgyycSBL8etih5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: dDioEEsJy4xVUNQp_mgWi5Z4hGF7QV90
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_01,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
+ lowpriorityscore=0 mlxscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=843 spamscore=0 priorityscore=1501 adultscore=0 clxscore=1011
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504110009
 
-On Thu, Apr 10, 2025 at 01:46:06PM -0700, Dan Williams wrote:
-> Matthew Wilcox wrote:
-> > On Thu, Apr 10, 2025 at 01:15:07PM -0700, Dan Williams wrote:
-> > > For consistency and clarity what about this incremental change, to make
-> > > the __split_folio_to_order() path reuse folio_reset_order(), and use
-> > > typical bitfield helpers for manipulating _flags_1?
-> > 
-> > I dislike this intensely.  It obfuscates rather than providing clarity.
-> 
-> I'm used to pushing folks to use bitfield.h in driver land, but will not
-> push it further here.
+The ntfs3 can use the page cache directly, so its address_space_operations
+need direct_IO.
 
-I think it can make sense in places.  Just not here.
+Fixes: b432163ebd15 ("fs/ntfs3: Update inode->i_mapping->a_ops on compression state")
+Reported-by: syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e36cc3297bd3afd25e19
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ fs/ntfs3/inode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> What about this hunk?
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 2a47682d1ab7..301ca9459122 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -3404,7 +3404,7 @@ static void __split_folio_to_order(struct folio *folio, int old_order,
->  	if (new_order)
->  		folio_set_order(folio, new_order);
->  	else
-> -		ClearPageCompound(&folio->page);
-> +		folio_reset_order(folio);
->  }
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 3e2957a1e360..50524f573d3a 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -2068,5 +2068,6 @@ const struct address_space_operations ntfs_aops_cmpr = {
+ 	.read_folio	= ntfs_read_folio,
+ 	.readahead	= ntfs_readahead,
+ 	.dirty_folio	= block_dirty_folio,
++	.direct_IO	= ntfs_direct_IO,
+ };
+ // clang-format on
+-- 
+2.43.0
 
-I think that's wrong.  We're splitting this folio into order-0 folios,
-but folio_reset_order() is going to modify folio->_flags_1 which is in
-the next page.
 
