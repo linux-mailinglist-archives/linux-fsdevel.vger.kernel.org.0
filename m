@@ -1,97 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-46273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7A9A86081
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:25:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D24A86084
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 16:26:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72FA916DEE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:25:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A58B16F572
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 14:26:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADADC1C3BEB;
-	Fri, 11 Apr 2025 14:24:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93A0C1F3BBE;
+	Fri, 11 Apr 2025 14:26:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMl3EnhZ"
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="KbV08rHa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mr85p00im-ztdg06021801.me.com (mr85p00im-ztdg06021801.me.com [17.58.23.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159CD17D2;
-	Fri, 11 Apr 2025 14:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53DB18B47E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 14:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.23.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744381494; cv=none; b=UkdnWgktxzwOQ6yuwmwOBb6C5lfSBk0HGYUIlcDxJgsgzrvkNyIgzK3naFhxt+IbJrDtrSCusi+D4X4nEssiFwD9gavkF+w+s/RWJej/NDsemV1U/etUSIYTkKPl3teOaiZa4p6cBxlceJ466U6xRN/CyyyJ2BkQ7ZB9G1cAw80=
+	t=1744381566; cv=none; b=ofixe5eW0pXKElgNa8ye/NyRNHHpjkVFjwzPP+gmgy3DZqXZhtKNFwBPJNs2fAJO1s3tyvbdQa5yft7umjL94YCK+w1mNmu2E/gXycJXb9p4db2beXRFbRLRd/wpyvAdWmeLohjKlM3o3il29XuSnU5N9z80ve5P8f1YcDx2Q3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744381494; c=relaxed/simple;
-	bh=nEXymR/eQt1PYODPFLho0tc0POeO7fQ2lEpt9xKM3MY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Vyk95lyJg330w6EWYYdZJz0KQmCrpJtso3+TCUbsD3Mhs8c01k9k1WZCWKaJQn/9F2PNLJcSdA3b/z3b28cmIsLsvR8y+GW4l6k5YOA03Z/zWzjskPu4vgGkRFJwJ8idxIMnImfkxnQTaU/VTFhP2oJAX7Orzg3W3dIDuaQ0708=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMl3EnhZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89C39C4CEE2;
-	Fri, 11 Apr 2025 14:24:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744381493;
-	bh=nEXymR/eQt1PYODPFLho0tc0POeO7fQ2lEpt9xKM3MY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TMl3EnhZ6i5vhk3qembdwSNpRWcJQ7qYiH5kLeVlhuIaB9qu7Iv5ABb+m3CLfAsJd
-	 ZLQ6H/LFadRoPDgIZ9PzS+UNHxxRgV5NGbb22tgD4yR+Ul5QpR7jqEm9oxhL+JXxvo
-	 lhSHf/VLT4m5b5dXQFr7EhPbW0wOdAXk3qjBJnfKK1SeSNv5A0/4eY6ULS/rP+JScx
-	 4JrjhCwzOOC/0DZ6L3WSsBYy7WTfCol6/uzY3QkaHzBIOqDvXi7yMBMfnwRDrtvzCN
-	 pqC/+0aW08feGvmpcZxuUKuMly3yF/vulK56gwDpEKsA5qkCixSKZAI0LSU0pwpwET
-	 Cplsiz2PA0ofw==
-From: Christian Brauner <brauner@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zijun Hu <quic_zijuhu@quicinc.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	David Howells <dhowells@redhat.com>
-Subject: Re: (subset) [PATCH 5/5] fs/fs_context: Mark an unlikely if condition with unlikely() in vfs_parse_monolithic_sep()
-Date: Fri, 11 Apr 2025 16:24:41 +0200
-Message-ID: <20250411-flechten-berglandschaft-88fd2b1a6c98@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250410-fix_fs-v1-5-7c14ccc8ebaa@quicinc.com>
-References: <20250410-fix_fs-v1-0-7c14ccc8ebaa@quicinc.com> <20250410-fix_fs-v1-5-7c14ccc8ebaa@quicinc.com>
+	s=arc-20240116; t=1744381566; c=relaxed/simple;
+	bh=py5nY1Mhc97RH09qk8e1ussZlC5PZ99XMBxs4NEvgXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H7U3foKQhKn62tnZEeHGzp389aVFp2wiRloBYO6W7xrIlfa79XibXqiL9MOXh84DpMS/WDHajRlJ5g/5mX+7gD8cN7Dkq8JbQ3OgWiTNYUQY7ehlTs9nvkSADg8v2vIceHsVgZCo1pu5KpOMJ2gM7hc0w6uojdaLgjPCkLUPp5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=KbV08rHa; arc=none smtp.client-ip=17.58.23.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; bh=CL+5TqY/OhkzQpgXfA4Y+dzWdR4qzfqIBAmqr6bDZao=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
+	b=KbV08rHaAqjd1qwQZNy3wxHZWWAq9iGm9on1KCkkxV70mIxakGExhMEIe89Y+yqw8
+	 gnELHg4077ULarr2+j0MfigCetPCPlfcr1r3VCMNXofnFrT8vJV1y+og+7AZraOPn2
+	 k3pRZdMVuH8Ml3c6zWxtUmVHpBKQkhp5T0RDZPAQGfOZLEmP/KzRhaOG1RLWN4Rj+r
+	 eA1gzILM/EAgR4rCrHsewuRyAyVAbtLx+10/FQY23SaCuN0mhhG+ilTEa2nW7m9Y9n
+	 sDzyrq8Sfa73gswMVhH5yl9NI7oPsk5WysqNH1g+e2A/M7grZi8i9e+4+4hEN4lJzz
+	 bXoR+TydpGTJA==
+Received: from mr85p00im-ztdg06021801.me.com (mr85p00im-ztdg06021801.me.com [17.58.23.195])
+	by mr85p00im-ztdg06021801.me.com (Postfix) with ESMTPS id 6DA4844268A;
+	Fri, 11 Apr 2025 14:26:03 +0000 (UTC)
+Received: from [192.168.1.26] (mr38p00im-dlb-asmtp-mailmevip.me.com [17.57.152.18])
+	by mr85p00im-ztdg06021801.me.com (Postfix) with ESMTPSA id BA913442662;
+	Fri, 11 Apr 2025 14:26:01 +0000 (UTC)
+Message-ID: <c67dfd96-ae7c-4c10-8e80-70b9df566ccf@icloud.com>
+Date: Fri, 11 Apr 2025 22:25:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1147; i=brauner@kernel.org; h=from:subject:message-id; bh=nEXymR/eQt1PYODPFLho0tc0POeO7fQ2lEpt9xKM3MY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/VNN/Nj/B9nDf6RdL5d9/1dc9ESeuusJGSm6vwI7aF Z2MEkWvOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZieYqR4bT7J/7rYavjKzYe 7DPb/mfK0S2s8syn9Z+8jb221f9xkQwjwy69FPfFt/ev/Hg6/HeRlXWQhHOLVHqBs12qs5aLBJ8 MPwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] fs/fs_parse: Fix macro fsparam_u32hex() definition
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ David Howells <dhowells@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20250410-fix_fs-v1-0-7c14ccc8ebaa@quicinc.com>
+ <20250410-fix_fs-v1-2-7c14ccc8ebaa@quicinc.com>
+ <20250411-kinokarten-umweltschutz-6167b202db91@brauner>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <20250411-kinokarten-umweltschutz-6167b202db91@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: x1U0BH9FYF8aofNNgP3bEkzhDHbFa-OU
+X-Proofpoint-GUID: x1U0BH9FYF8aofNNgP3bEkzhDHbFa-OU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-11_05,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=918 mlxscore=0 phishscore=0
+ bulkscore=0 spamscore=0 adultscore=0 suspectscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2504110091
 
-On Thu, 10 Apr 2025 19:45:31 +0800, Zijun Hu wrote:
-> There is no mount option with pattern "...,=key_or_value,...", so the if
-> condition '(value == key)' in while loop of vfs_parse_monolithic_sep() is
-> is unlikely true.
-> 
-> Mark the condition with unlikely() to improve both performance and
-> readability.
-> 
-> [...]
+On 2025/4/11 22:17, Christian Brauner wrote:
+>> diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+>> index 53e566efd5fd133d19e313e494b975612a227b77..ca76601d0bbdbaded76515cb6b2c06fa30127a06 100644
+>> --- a/include/linux/fs_parser.h
+>> +++ b/include/linux/fs_parser.h
+>> @@ -126,7 +126,7 @@ static inline bool fs_validate_description(const char *name,
+>>  #define fsparam_u32oct(NAME, OPT) \
+>>  			__fsparam(fs_param_is_u32, NAME, OPT, 0, (void *)8)
+>>  #define fsparam_u32hex(NAME, OPT) \
+>> -			__fsparam(fs_param_is_u32_hex, NAME, OPT, 0, (void *)16)
+>> +			__fsparam(fs_param_is_u32, NAME, OPT, 0, (void *)16)
+> Remove that define completely as it's unused. There's no point keeping
+> dead code around.
 
-Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.misc
-
-[5/5] fs/fs_context: Mark an unlikely if condition with unlikely() in vfs_parse_monolithic_sep()
-      https://git.kernel.org/vfs/vfs/c/95bfd4b5928f
+sure. will do it. (^^)
 
