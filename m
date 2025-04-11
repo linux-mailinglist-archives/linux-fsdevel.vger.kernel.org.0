@@ -1,112 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-46256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B5AA85FA9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 15:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10FEFA85FBB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 15:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6423B16CCA3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 13:48:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F9541B846C6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 13:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38D41F193C;
-	Fri, 11 Apr 2025 13:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD9B1F1921;
+	Fri, 11 Apr 2025 13:55:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Buc3s8mA"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JC7tWH9N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78921DE3AD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 13:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2BB1E7C0E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 13:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744379319; cv=none; b=qLFbHAaCCiwMGrcg2/hZlwEZhDgd0Vpjd6AhuddlBSpN5VA4qTue4ZIBC92k+b7eupKfkTc11g/FKwTjEAVlwC7nTo3aHjLAfzkHLpTTNHC77GTACLSpP2m+iA6n07O9IEqH1q04eYrluyQ7UOK4yIo8U8VMmP+tzyb/7sZcDRo=
+	t=1744379733; cv=none; b=kB+zYWd3A7XNsTqzugTT/LnEhqfoPcg5vHK90ACZ/7hB/iZekLzHD+cdzZVOcX12/EVxCcLxc0JEH7OEIj8XNgyFMyyLBexHAC9srVbEo3bUd6yNK626I+cZ9tdkEwspnleMgHa7qmXIr8SXmfReoB+1iKRnEn02hcOdr1F9toU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744379319; c=relaxed/simple;
-	bh=FppYHN/qu2n9iiq/ee/to1M0y8WJPMP+sy5NMHu2ZbA=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=nn8HvUKujmNvI6PanytzOGjeuuw/mcSR/fiH0kr+IPaszvKTCiaIyaVe9JCSG5wzi/Wj2wKW5/lgNWOCF/qfhii8ZeO7X6FFG3TfSjZ+bNSz77jNWdzj9InTaX2g/3AmmwbEPyP6opoT3OUzgxD3XcDlC1yyMBFs3xbtWlrS/RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Buc3s8mA; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1744379733; c=relaxed/simple;
+	bh=tvYsWN1Ccz9X5YB0seXvg96UOPF0B6mWBhsZMMZHyT4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aBjO7JddxIZVdc4zC+LBClkZCT/n+3Uy1J6TqIlBbj7okRmpe2CYd88cpQmHQa2YXAcks/u2kVcpa3K0GRLlHjBWVK3JWw1uslHJDqoBdxvY0iiyam4fmU6q+6dFB8wau+6sO2Rt4ChHTddPGiktggrOWPVJkfoP1vRYpTNesOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JC7tWH9N; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744379316;
+	s=mimecast20190719; t=1744379731;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ziVNbANRmyi0790QzmsXdsF0qsho9qMRA3TbDUmAaDs=;
-	b=Buc3s8mAmhVLSFE0SruRzfFAAPfGXiQXiKuIGr4Og90sY/7USuWEqIkw5SJhO6jR2dP/0X
-	lchwUwwmpDXN3vGAUeTR9gOPtq+3mndSYNyUZ8+qBMpwgQeX1o2tDm9/fXE263MWk/4sEE
-	OEmS2Zj+SFTgR5oAAlKTSo5fDYRsJ34=
+	bh=KAQndSrC2ld3R5xSxtSooLszqBAKBxmB0lRGSpURGww=;
+	b=JC7tWH9NOiSgVThug7nrHS73JQmACaVAf/gy6XaUxZnkg34wnn2CWUbFVEON3sgakX0Otr
+	wS48ajv0H9jknFgWjBf2zYnqpF+75OZZLat1Dwokx0PUXtUVYbd59tt9gAtoOlUTaFgFFy
+	hc+TbBPzSPEA5Iv6yYEuwwUra6XzyaM=
 Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-443-NhptXqgLMby4Ox9QW00kSA-1; Fri,
- 11 Apr 2025 09:48:33 -0400
-X-MC-Unique: NhptXqgLMby4Ox9QW00kSA-1
-X-Mimecast-MFC-AGG-ID: NhptXqgLMby4Ox9QW00kSA_1744379312
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-408-RULT92WCP5aUWSV-5m2ewg-1; Fri,
+ 11 Apr 2025 09:55:27 -0400
+X-MC-Unique: RULT92WCP5aUWSV-5m2ewg-1
+X-Mimecast-MFC-AGG-ID: RULT92WCP5aUWSV-5m2ewg_1744379726
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 836321956087;
-	Fri, 11 Apr 2025 13:48:31 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.40])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0297619560AD;
-	Fri, 11 Apr 2025 13:48:27 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <f2b15e2f951e249e98f33b07ee261b9898dd41d3.camel@ibm.com>
-References: <f2b15e2f951e249e98f33b07ee261b9898dd41d3.camel@ibm.com> <20250313233341.1675324-1-dhowells@redhat.com> <20250313233341.1675324-7-dhowells@redhat.com>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: dhowells@redhat.com, Alex Markuze <amarkuze@redhat.com>,
-    "slava@dubeyko.com" <slava@dubeyko.com>,
-    "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-    "idryomov@gmail.com" <idryomov@gmail.com>,
-    "jlayton@kernel.org" <jlayton@kernel.org>,
-    "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-    "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-    "dongsheng.yang@easystack.cn" <dongsheng.yang@easystack.cn>,
-    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 06/35] rbd: Use ceph_databuf for rbd_obj_read_sync()
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A77CA19560B1;
+	Fri, 11 Apr 2025 13:55:25 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.222])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 5E7B31828AAA;
+	Fri, 11 Apr 2025 13:55:22 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 11 Apr 2025 15:54:50 +0200 (CEST)
+Date: Fri, 11 Apr 2025 15:54:45 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>, linux-kernel@vger.kernel.org,
+	Peter Ziljstra <peterz@infradead.org>
+Subject: Re: [PATCH v2 2/2] pidfs: ensure consistent ENOENT/ESRCH reporting
+Message-ID: <20250411135445.GF5322@redhat.com>
+References: <20250411-work-pidfs-enoent-v2-0-60b2d3bb545f@kernel.org>
+ <20250411-work-pidfs-enoent-v2-2-60b2d3bb545f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2370586.1744379306.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Fri, 11 Apr 2025 14:48:26 +0100
-Message-ID: <2370587.1744379306@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250411-work-pidfs-enoent-v2-2-60b2d3bb545f@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Viacheslav Dubeyko <Slava.Dubeyko@ibm.com> wrote:
+For both patches:
 
-> > +	dbuf =3D ceph_databuf_req_alloc(1, sizeof(*ondisk), GFP_KERNEL);
-> =
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-> I am slightly worried about such using of ondisk variable. We have garba=
-ge as a
-> value of ondisk pointer on this step yet. And pointer dereferencing coul=
-d look
-> confusing here. Also, potentially, compiler and static analysis tools co=
-uld
-> complain. I don't see a problem here but anyway I am feeling worried. :)
+a minor nit below...
 
-It's a sizeof() construction.  We do this all the time:
+On 04/11, Christian Brauner wrote:
+>
+>  int pidfd_prepare(struct pid *pid, unsigned int flags, struct file **ret)
+>  {
+> -	int err = 0;
+> -
+> -	if (!(flags & PIDFD_THREAD)) {
+> +	scoped_guard(spinlock_irq, &pid->wait_pidfd.lock) {
+> +		/*
+> +		 * If this wasn't a thread-group leader struct pid or
+> +		 * the task already been reaped report ESRCH to
+> +		 * userspace.
+> +		 */
+> +		if (!pid_has_task(pid, PIDTYPE_PID))
+> +			return -ESRCH;
 
-	struct fred *p;
+The "If this wasn't a thread-group leader struct pid" part of the
+comment looks a bit confusing to me, as if pid_has_task(PIDTYPE_PID)
+should return false in this case.
 
-	p =3D kmalloc(sizeof(*p), GFP_KERNEL);
+OTOH, perhaps it makes sense to explain scoped_guard(wait_pidfd.lock)?
+Something like "see unhash_process -> wake_up_all(), detach_pid(TGID)
+isn't possible if pid_has_task(PID) succeeds".
 
-David
+Oleg.
 
 
