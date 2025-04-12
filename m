@@ -1,113 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-46322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE802A86E2D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 18:39:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C462A86F0E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 21:08:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E643A8DCC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 16:39:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7924819E10FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 19:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF3BE205AB8;
-	Sat, 12 Apr 2025 16:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E7921A42F;
+	Sat, 12 Apr 2025 19:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YBLJeNkw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqO05KlE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD4B1C5F18
-	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 16:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B2019415E
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 19:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744475972; cv=none; b=NzZvLaJ9NW/osjciVAjbhUpf57locxUlavtAjN0xDehdRtgieBesYV/s5pdz02PZaa6wjysQ5K94iijeXPJfSGxMgX6P3qXAbrAqmsNFZgaHSTHqSGy7+syFEaG6e06ATZLlmcclrowoey+QHk4BA799vRw9reUM309h1dOa0rw=
+	t=1744484873; cv=none; b=UBhItoVBguBiHdPEUz40fyNq34m9FyjKbf5BgH/m8ZQDO805kp0u+bwcLNLW1V34yb9pmcWlMvRSupUKBtK/TiwWLaQJkc1rRkLODbLt37+dPl0y5CzSRTwgAPr2UeN8rKazCX61kLdowyJqpJ1B/kJ4JKTyBOYZSBbvzM4rqJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744475972; c=relaxed/simple;
-	bh=KrifTKNbtTOpZjVsriJwHelBy/tOyNLz7rJCylrYNzo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lj17fFx5KVeOzTc95XOdazzp7jbJWXsnN90Z0dH20v3aYDZhKNlYMeGBDX4PdwWY398EiZYbK0Sl1DTo4wFCnm794qM6eVnHMBbJEZNpGXA24W8IFyswvgf2dwkYz/iLn4OYILeq3sbzuNX/8FJSEHGbmUAOb0T4bohs7kyTD8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YBLJeNkw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744475969;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=as4CGAakZQuKhDm6Y+wA6IfY1weX2O0DARSrhX57YeI=;
-	b=YBLJeNkwB+himribu+l/sVJyOhZz0Y+grHua4xPgaG6OlRtbLrqtqf7kFhbE3nFRj3Qm72
-	Twkum9ArTze/6Y5swXhHML/oi0niI0jqk4BIzJBtZlzBvm2RmdkrinjJB/tw1bBeYiWobH
-	yqvcQKHyfBWAJXnVebeJKhxaXiy7mS4=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-640-xbQKs-d4M3a2WxYTFrA6YA-1; Sat,
- 12 Apr 2025 12:39:28 -0400
-X-MC-Unique: xbQKs-d4M3a2WxYTFrA6YA-1
-X-Mimecast-MFC-AGG-ID: xbQKs-d4M3a2WxYTFrA6YA_1744475966
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D6A3180049D;
-	Sat, 12 Apr 2025 16:39:26 +0000 (UTC)
-Received: from pasta.fast.eng.rdu2.dc.redhat.com (unknown [10.45.224.37])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 69ACE180174E;
-	Sat, 12 Apr 2025 16:39:23 +0000 (UTC)
-From: Andreas Gruenbacher <agruenba@redhat.com>
-To: cgroups@vger.kernel.org
-Cc: Jan Kara <jack@suse.cz>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Rafael Aquini <aquini@redhat.com>,
-	gfs2@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andreas Gruenbacher <agruenba@redhat.com>
-Subject: [PATCH v3 2/2] writeback: Fix false warning in inode_to_wb()
-Date: Sat, 12 Apr 2025 18:39:12 +0200
-Message-ID: <20250412163914.3773459-3-agruenba@redhat.com>
-In-Reply-To: <20250412163914.3773459-1-agruenba@redhat.com>
-References: <20250412163914.3773459-1-agruenba@redhat.com>
+	s=arc-20240116; t=1744484873; c=relaxed/simple;
+	bh=LM4Y2I66wt8z3nQIZru/3jsXUlk20qXkrMEf05PQKFk=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Dmk6E7N6jHMZi0uT6LJlz22xDDdVHlQRwenipCWWXtXe/CzjPQU55Y0zzNTBDdYC3k5y7SwEeOX+lwaDUsN2olg2ivxQ76Hzbr7U5bONPta3IbCTltk0RpUCvpAKbYxobS/zOz3byrdWwY1ZV3YvifLmtlxoLCOL+SMw5sNhYdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqO05KlE; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86b9e93123aso210317241.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 12:07:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744484870; x=1745089670; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2uqS8Y0JeeNJp+EZoySeyRD8ao4RjMPXd9tkoghzbAA=;
+        b=FqO05KlEwXTBrWAaZszjZwxE4voq7bdqTDjhQ251ZM8ZKMyoaaniVKhmdvAVo0wLfD
+         Y3qZdkdst8AcECPvMe/YLTPX3ExxwjxLopBAb+o1CSUnMDMqqDXU2D8VwsX3lKMFZA74
+         X486ywGSspHBB2PueKenW+3wAFBoZStvk5Z2HHk1nCE0mbmuNjCTwIXZMm/L0rDMPy9I
+         4pXLAMOqI2G6xkF4Lrq+CJYyZLLFNOlQ2rypLsDPA661ohza4BhAiWFdyU5/w2tYjL4r
+         QKjvfke1GD10+kHHCM+/EpO7GpmcEeapCWpuf1+nSDglJMQfKfLyV6qf7gKK6CoETTi1
+         c03Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744484870; x=1745089670;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2uqS8Y0JeeNJp+EZoySeyRD8ao4RjMPXd9tkoghzbAA=;
+        b=HxbRO+G2ScjUUBr1uDwg30KVa0xIUhSe4FcInVt2CxPmNCLKDgS06SovrxU1DRhkq4
+         dI1CDKLTSX1pjhw2XJygIY7Df1Quh2O0mzBokYyAPAoVxtMrweFgPNO9r2OEqa3zz4op
+         rR0WCt6MpxdtnT9XpnZ5nekQE4ujjx70hKD9IT6uva6zoQxGRLPQWqxXmYjkU0ZCUA7l
+         VPpf+EU4jjIM6RWwFc05rQMLN/8rLeF9kMDruGBYHDnrRB8na2sWEyPKYszgvMFNTBqd
+         WE051OBYoRdyLrBn5ISy+asGT8Dct8wr15wKcBej5VkHYEj2O6AGM0pLvXAekWdEwNFO
+         C7OA==
+X-Forwarded-Encrypted: i=1; AJvYcCWAJBjB+gyzy/1EH8vIZZZO3FnL98Ck8UL1IGOoqcK2o4pV10wtEf5Un80e9unPjqVBcxf/nfD9158XJ2k2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqQv2fDOERhfztbUQI7A1MsRRJWanJ5SQcHmun0S/0vuNsejA0
+	qRMHBSFHw1D6sjDGS8qXy/4EhtuQ6hwqhXx+A6wJ5pmMpFPb/Dlr1Gc/R2dVkXPwmHKgPUWWXi3
+	e08tU0GMDKyH+8qiVMJc+uVV/UQ==
+X-Gm-Gg: ASbGncvwazD9Zp4uD1WVcuPMXK6cVxindT/fevgNLQJnXt0Ea4l70pjTgpyUTR0Buiz
+	VX3phXywNa0sIbBbG9Kq/ysy7894xketXvmQ89QYFFl/TTqovRtNYERqjXHBEIzsJeCZCgfSsvf
+	0/277lyAWebRWQ11su3fmebHw=
+X-Google-Smtp-Source: AGHT+IG0k+yhiUDsMVLkTuLC6kSDyeEJ84uZ4WA2XWYY1KbUy6V+3ZAbK1JX89b7gE6FzLIFEx93nYU8og6BgBz4HiI=
+X-Received: by 2002:a05:6102:3e28:b0:4b9:ba6d:86c1 with SMTP id
+ ada2fe7eead31-4c9e768918emr1550739137.1.1744484870238; Sat, 12 Apr 2025
+ 12:07:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+From: Chenyuan Yang <chenyuan0y@gmail.com>
+Date: Sat, 12 Apr 2025 14:07:39 -0500
+X-Gm-Features: ATxdqUEU84qA93WFjYZD-conKUCSsApMtwG5XxM0OfTP-Hfdm9RGr15WA6pQlZ0
+Message-ID: <CALGdzuomL+AACikTfBYBU4nCMXGU-eRvSYwdY-b_6n0mUekBOg@mail.gmail.com>
+Subject: Question Regarding Optional ->prepare_read Callback in NETFS
+To: dhowells@redhat.com, pc@manguebit.com
+Cc: netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jan Kara <jack@suse.cz>
+Dear NETFS Developers,
 
-inode_to_wb() is used also for filesystems that don't support cgroup
-writeback. For these filesystems inode->i_wb is stable during the
-lifetime of the inode (it points to bdi->wb) and there's no need to hold
-locks protecting the inode->i_wb dereference. Improve the warning in
-inode_to_wb() to not trigger for these filesystems.
+I am writing to clarify whether the ->prepare_read callback can be
+NULL for a backing filesystem that does not supply it. In particular,
+should we assume that the pointer may be NULL and thus require an
+explicit check before invoking it?
 
-Signed-off-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- include/linux/backing-dev.h | 1 +
- 1 file changed, 1 insertion(+)
+For context, commit 904abff4b1b9 ("netfs: Fix read-retry for fs with
+no ->prepare_read()") introduced a similar check in the read-retry
+path. I am proposing that we apply the same consideration to the code
+in netfs_single_cache_prepare_read. Here is the relevant patch snippet
+for reference:
 
-diff --git a/include/linux/backing-dev.h b/include/linux/backing-dev.h
-index 8e7af9a03b41..e721148c95d0 100644
---- a/include/linux/backing-dev.h
-+++ b/include/linux/backing-dev.h
-@@ -249,6 +249,7 @@ static inline struct bdi_writeback *inode_to_wb(const struct inode *inode)
+ fs/netfs/read_single.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
+index fea0ecdecc53..68a5ff1c3d06 100644
+--- a/fs/netfs/read_single.c
++++ b/fs/netfs/read_single.c
+@@ -63,7 +63,7 @@ static void netfs_single_cache_prepare_read(struct
+netfs_io_request *rreq,
  {
- #ifdef CONFIG_LOCKDEP
- 	WARN_ON_ONCE(debug_locks &&
-+		     (inode->i_sb->s_iflags & SB_I_CGROUPWB) &&
- 		     (!lockdep_is_held(&inode->i_lock) &&
- 		      !lockdep_is_held(&inode->i_mapping->i_pages.xa_lock) &&
- 		      !lockdep_is_held(&inode->i_wb->list_lock)));
--- 
-2.48.1
+  struct netfs_cache_resources *cres = &rreq->cache_resources;
 
+- if (!cres->ops) {
++ if (!cres->ops || !cres->ops->prepare_read) {
+  subreq->source = NETFS_DOWNLOAD_FROM_SERVER;
+  return;
+  }
+
+Could you please confirm if this is the intended design, or if any
+adjustments are needed?
+
+Thank you for your time and assistance.
+
+Best regards,
+Chenyuan
 
