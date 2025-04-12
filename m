@@ -1,160 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-46308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27662A868D3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 00:14:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F00DA86A23
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 03:48:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DAF4A39A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Apr 2025 22:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77C761B67D8D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 01:49:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D61F729DB80;
-	Fri, 11 Apr 2025 22:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="G/SPHAu0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D6A55897;
+	Sat, 12 Apr 2025 01:48:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6672D29DB61
-	for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 22:14:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6C32367D9
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 01:48:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744409662; cv=none; b=BgQsQfGUcSxRG7ftLP3LqGVrJNWwFFhRPtoSxQbnH1u5RGFh82YK3qO2BIxLtEkoAZJmupwIvAjvz28oW8FLI3gcNXPLDWobhRigM/Fhe8VT2lSzDt+wQpCADeHqi0xbtEAHdnJgAd4baXTr8T5BT2oTFuN+eATQjPelhyseRAE=
+	t=1744422524; cv=none; b=tw/erZ5qo8SWnuXAZDTzh5HY1PQY2Z0LUZsLRlFWiDtiSV7cuvrO9ZLF/B6c8QLriRKifa9pHyAgWxSnRph8HyyQozhJK9P+b9ZJaTmse17ElCYyiChR5eTEbejipQ4u6imiY+05QjRzX42F4bssoosliASozXw26sPBWmVDi+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744409662; c=relaxed/simple;
-	bh=inbFC05GiKvTcdNo0+ZTfj3hju7i5EVggQMpuyhjTeI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XI79XsUiOIqlrbl39cyr/HVnbmooK4i9K2dE2whaByhg2pLhmf4Xw84o2yZFSx7R2d86R0/Jxb/X5dCuw3LZEERc/2/mzPQla+ngSkfMdHIRNRcnVhdMrogF0oRQaNjpAuhJEE/kBtUjc88+/JkG/PBIhQPgxAVljHxpwUVAzUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=G/SPHAu0; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6f666c94285so28949727b3.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 15:14:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1744409659; x=1745014459; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p+m7hz6r5/ApjZEveg5QQkULfTfewkyo7s8/B03DRoo=;
-        b=G/SPHAu01IjVZJIJXPOs3rz9w9xPbN1VLyJSwQ2znutM4zpt5X4IceNGFlSojMVAe3
-         6JjGxow84UH9sjx2v8jRIw4kBPGOt/FQy5PA3IHdKoN+TNePGtEkXdIDprZFSXw+L/1Z
-         llTiKxpgAdzD2fs2h05Wj4m+NbQC5d7WGN0CcijviBuQdoe+NYY9jAN0vQ0WTWaqlmT+
-         SUD8unXKHuTxLYoqjS3/LzA6wf+3m3OgOKW2qj+PHjbiRGFM3B2qQiXVKSLYtGYuZ/Dv
-         0LDnK6i78dIm6cccsOgKBrdYRCsnCeqeVey6J5RdSyUfydyzwMlNqS64x69GddcGn8l6
-         iFmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744409659; x=1745014459;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p+m7hz6r5/ApjZEveg5QQkULfTfewkyo7s8/B03DRoo=;
-        b=cdwB1JvDQGWiZ+MlrHoUYlP189CFNYnKlUxfGW8JuB9a7/O0r9enoQaTo+bepAOMqA
-         Y8z8RBE1sCe2y/TxqnBLlLhqLd2sxzAxklOpXlFZhI1mxezsuCpGkczTGcqWpZQua94b
-         RmSGLUgYO59t79fOk1257RRgFERJ/w5jz+ohUwYpZ3vCwQFnxSXAAhbDTr3Xe7kBIzcP
-         CVvWxHaB02m/9Lnjl352G4IIInunatC+j6YmkvMVoXKaQ88Al/250NRV2X+39lLjovSB
-         ptr35sPxHPiTI4Fk5pPS54dGR33T0HOO64yH/e2x4vfn++5/MWajB/WVx/j+CsHgnNPN
-         CYFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ79E8UR83gDP9a4S4eWGqLlDZmOXo0JoK7DXY1YFgMIfQZ/1LMSpSSRMAsJgpLku8G1/9fJs2nUWhN7pw@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2fQGpghW6Cd9F5xuPiJj6M3JzNHTI1GyyuVb2M9vCJa3FUSOu
-	W0sxuPMxbUMOpw05lEMg0b9OFkOpdWUjRA+e6VT+5WRUCSa1c49nFbrD2GF7RAjkyqmwVlikOeN
-	nOT2oubohPX5w6UzKobW4LuO3Bcbzj88BfG0YrmibQ0zjKjE=
-X-Gm-Gg: ASbGncu1oqXp1HuvMbBkK8gI6VFp2UBKhqbCnOAmGcUFTRmFiYM1r7Jet88sShiAuEM
-	Uf9Jha17df6ZffMduOWG8Su/1QqQeJaA9Tkl+x1btfDh6I2v8ZK3s9cDnXpnV1Omc8gM1ArZpiL
-	UrqUctfzxZXNiH/cQlIIJwoQ==
-X-Google-Smtp-Source: AGHT+IEynk71rTo5QAU0nN+o2O+0yFjyQ113XZBjQvgh1uLkqf8zyYIq2nZaaxEVVWn37yekS9kI1R7YzDqNHi95Q40=
-X-Received: by 2002:a05:690c:7002:b0:6fd:6748:928a with SMTP id
- 00721157ae682-70559a6a25fmr75224277b3.29.1744409659266; Fri, 11 Apr 2025
- 15:14:19 -0700 (PDT)
+	s=arc-20240116; t=1744422524; c=relaxed/simple;
+	bh=5W4+1tVxQPo7ce5wBU6G4OTRGTrLzwThjjQFJnlD+wk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W4o/06xrcVF7i9cwrzvm1elrpyM6LAaZ4/DbYfR/Oq4my7YjtGmYWgdZ4NPX/183vA/CIpfO0v1jsb6gK9cn2elXlntEPaprXdUkvRYl2Ji4oQFLraPZGcHAC2YpZ5cvYGdBbN2RMNlwCLsYCMdXSe20wwQe1fkQAxpk2ch6ryQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 748D1100C33
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 11:48:34 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 5tcOh11ivJis for <linux-fsdevel@vger.kernel.org>;
+	Sat, 12 Apr 2025 11:48:34 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id 64EBE100C50; Sat, 12 Apr 2025 11:48:34 +1000 (AEST)
+X-Spam-Level: 
+Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id 67479100B3A;
+	Sat, 12 Apr 2025 11:48:26 +1000 (AEST)
+Message-ID: <3be4c502-8246-436e-a7cf-3eb4be6ff7d4@themaw.net>
+Date: Sat, 12 Apr 2025 09:48:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <fb9f7900d411a3ab752759d818c3da78e2f8f0f1.camel@huaweicloud.com>
- <Z_f-uBGhBq9CYmaw@lei> <bbc39aec812383f836ad51bc91b013fa8de8a410.camel@huaweicloud.com>
-In-Reply-To: <bbc39aec812383f836ad51bc91b013fa8de8a410.camel@huaweicloud.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Fri, 11 Apr 2025 18:14:08 -0400
-X-Gm-Features: ATxdqUHUqC_GnYV1ob9atu9iK3mHRkgbWg3uQONWT0Q0sNaX4f87ERAqln_Lkfg
-Message-ID: <CAHC9VhTaffwcGsmcix21ODAwMYxVDM+SH=By_oejxMZK8vSSUQ@mail.gmail.com>
-Subject: Re: Credentials not fully initialized before bprm_check LSM hook
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>
-Cc: sergeh@kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <kees@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, "Eric W. Biederman" <ebiederm@xmission.com>, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-integrity@vger.kernel.org, 
-	zohar@linux.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: bad things when too many negative dentries in a directory
+To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+References: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
+ <20250411-rennen-bleichen-894e4b8d86ac@brauner>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <20250411-rennen-bleichen-894e4b8d86ac@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Apr 11, 2025 at 5:07=E2=80=AFAM Roberto Sassu
-<roberto.sassu@huaweicloud.com> wrote:
-> On Thu, 2025-04-10 at 17:24 +0000, sergeh@kernel.org wrote:
-> > On Thu, Apr 10, 2025 at 01:47:07PM +0200, Roberto Sassu wrote:
-> > > Hi everyone
-> > >
-> > > recently I discovered a problem in the implementation of our IMA
-> > > bprm_check hook, in particular when the policy is matched against the
-> > > bprm credentials (to be committed later during execve().
-> > >
-> > > Before commit 56305aa9b6fab ("exec: Compute file based creds only
-> > > once"), bprm_fill_uid() was called in prepare_binprm() and filled the
-> > > euid/egid before calling security_bprm_check(), which in turns calls
-> > > IMA.
-> > >
-> > > After that commit, bprm_fill_uid() was moved to begin_new_exec(), whi=
-ch
-> > > is when the last interpreter is found.
-> > >
-> > > The consequence is that IMA still sees the not yet ready credentials
-> > > and an IMA rule like:
-> > >
-> > > measure func=3DCREDS_CHECK euid=3D0
-> >
-> > "IMA still sees" at which point exactly?
+
+On 11/4/25 22:47, Christian Brauner wrote:
+> On Fri, Apr 11, 2025 at 11:40:28AM +0200, Miklos Szeredi wrote:
+>> There are reports of soflockups in fsnotify if there are large numbers
+>> of negative dentries (e.g. ~300M) in a directory.   This can happen if
+>> lots of temp files are created and removed and there's not enough
+>> memory pressure to trigger the lru shrinker.
+>>
+>> These are on old kernels and some of this is possibly due to missing
+>> 172e422ffea2 ("fsnotify: clear PARENT_WATCHED flags lazily"), but I
+>> managed to reproduce the softlockup on a recent kernel in
+>> fsnotify_set_children_dentry_flags() (see end of mail).
+>>
+>> This was with ~1.2G negative dentries.  Doing "rmdir testdir"
+>> afterwards does not trigger the softlockup detector, due to the
+>> reschedules in shrink_dcache_parent() code, but it took 10 minutes(!)
+>> to finish removing that empty directory.
+>>
+>> So I wonder, do we really want negative dentries on ->d_children?
+>> Except for shrink_dcache_parent() I don't see any uses.  And it's also
+>> a question whether shrinking negative dentries is useful or not.  If
+>> they've been around for so long that hundreds of millions of them
+>> could accumulate and that memory wasn't needed by anybody, then it
+>> shouldn't make a big difference if they kept hanging around. On
+>> umount, at the latest, the lru list can be used to kill everything,
+>> AFAICT.
+>>
+>> I'm curious if this is the right path?  Any better ideas?
+> Note that we have a new sysctl:
 >
-> IMA sees the credentials in bprm->cred prepared with
-> prepare_bprm_creds(), where the euid/egid are taken from the current
-> process.
+> /proc/sys/fs/dentry-negative
 >
-> > Do I understand right that the problem is that ima's version of
-> > security_bprm_creds_for_exec() needs to run after
-> > bprm_creds_from_file()?
+> that can be used to control the negative dentry policy because any
+> generic change that we tried to make has always resulted in unacceptable
+> regressions for someone's workload. Currently we only allow it to be set
+> to 1 (default 0). If set to 1 it will not create negative dentries
+> during unlink. If that's sufficient than recommend this to users that
+> suffer from this problem if not consider adding another sensitive
+> policy.
+
+Interesting, I wasn't sure how the negative dentries were accumulating but
+
+I didn't actually look at the unlink code (I'll take a look). I thought the
+
+most likely cause was laziness not unlinking temporary files (the file names
+
+in question "looked" like temporary file names).
+
+
+When I do look at unlink I suspect I'll find the VFS is justified in caching
+
+these and the responsibility (or should) lies with the file system call back
+
+to unhash the dentry if it doesn't want this caching ... but the file system
+
+always doing this is not ideal either ... maybe we need a hint so that the
+
+relevant file system callbacks can make this decision for themselves.
+
+
+Ian
+
 >
-> IMA's version of security_bprm_check(). security_bprm_creds_for_exec()
-> is for checking scripts executed by the interpreters with execveat()
-> and the AT_EXECVE_CHECK flag.
->
-> Uhm, it would not be technically a problem to move the IMA hook later,
-> but it would miss the intermediate binary search steps, which are
-> visible with security_bprm_check().
-
-I'm still trying to make sure I understand everything here, so I've
-got a few questions:
-
-* How important is it for IMA to vet the intermediate binaries?  Those
-binaries don't actually do anything with the program/scripts, right?
-
-* Based on the comment block at the top of begin_new_exec(), I'm
-assuming that using the security_bprm_creds_from_file() hook would be
-a problem due to challenges in returning an error code?  There might
-also be an issue for any LSMs that run *before* capabilities, but I
-think that would only be Lockdown in the default case so likely not a
-big problem.
-
-* This patch has been out for almost five years and presumably offers
-a performance bump when doing an exec; I'm skeptical that Eric, Linus,
-or anyone outside of security/ would be interested in doing a revert
-to better support the AT_EXECVE_CHECK for a LSM.  Yes, I might be
-wrong, but for a moment let's assume a revert is not an option, what
-would you propose to solve this?  If you can't think of a general
-solution, can you think of an IMA specific solution?
-
---=20
-paul-moore.com
+>> Thanks,
+>> Miklos
+>>
+>>
+>> [96789.366007] watchdog: BUG: soft lockup - CPU#79 stuck for 26s!
+>> [fanotify4:52805]
+>> [96789.373396] Modules linked in: rfkill mlx5_ib ib_uverbs macsec
+>> ib_core vfat fat mlx5_core acpi_ipmi ast ipmi_ssif arm_spe_pmu igb
+>> mlxfw psample i2c_algo_bit tls pci_hyperv_intf ipmi_devintf
+>> ipmi_msghandler arm_cmn arm_dmc620_pmu arm_dsu_pmu cppc_cpufreq loop
+>> fuse nfnetlink xfs nvme crct10dif_ce ghash_ce sha2_ce sha256_arm64
+>> nvme_core sha1_ce sbsa_gwdt nvme_auth i2c_designware_platform
+>> i2c_designware_core xgene_hwmon dm_mirror dm_region_hash dm_log dm_mod
+>> [96789.413624] CPU: 79 UID: 0 PID: 52805 Comm: fanotify4 Kdump: loaded
+>> Not tainted 6.12.0-55.9.1.el10_0.aarch64 #1
+>> [96789.423698] Hardware name: GIGABYTE R272-P30-JG/MP32-AR0-JG, BIOS
+>> F31n (SCP: 2.10.20220810) 09/30/2022
+>> [96789.432990] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>> [96789.439939] pc : fsnotify_set_children_dentry_flags+0x80/0xf0
+>> [96789.445675] lr : fsnotify_set_children_dentry_flags+0xa4/0xf0
+>> [96789.451408] sp : ffff8000cc77b8c0
+>> [96789.454710] x29: ffff8000cc77b8c0 x28: 0000000000000001 x27: 0000000000000000
+>> [96789.461833] x26: ffff07ff8463dc50 x25: ffff080e6e44dc50 x24: 0000000000000001
+>> [96789.468956] x23: ffff07ff9d94eec0 x22: ffff07fff2cf01b8 x21: ffff07ff9d94ee40
+>> [96789.476079] x20: ffff0800eb6dff40 x19: ffff0800eb6df2c0 x18: 0000000000000014
+>> [96789.483202] x17: 00000000cec6e315 x16: 00000000ed365140 x15: 00000000ae8684a4
+>> [96789.490325] x14: 000000000d831309 x13: 00000000387d7ee0 x12: 0000000000000000
+>> [96789.497448] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffc3bacc1864bc
+>> [96789.504570] x8 : 000000001007ffff x7 : ffffc3bace89a4c0 x6 : 0000000000000001
+>> [96789.511694] x5 : 0000000008000020 x4 : 0000000000000000 x3 : 0000000000000003
+>> [96789.518816] x2 : 0000000000000001 x1 : 0000000000000000 x0 : ffff0800eb6df358
+>> [96789.525939] Call trace:
+>> [96789.528373]  fsnotify_set_children_dentry_flags+0x80/0xf0
+>> [96789.533759]  fsnotify_recalc_mask.part.0+0x94/0xc8
+>> [96789.538538]  fsnotify_recalc_mask+0x1c/0x40
+>> [96789.542709]  fanotify_add_mark+0x15c/0x360
+>> [96789.546794]  do_fanotify_mark+0x3c0/0x7a0
+>> [96789.550791]  __arm64_sys_fanotify_mark+0x30/0x60
+>> [96789.555396]  invoke_syscall.constprop.0+0x74/0xd0
+>> [96789.560090]  do_el0_svc+0xb0/0xe8
+>> [96789.563393]  el0_svc+0x44/0x1d0
+>> [96789.566525]  el0t_64_sync_handler+0x120/0x130
+>> [96789.570870]  el0t_64_sync+0x1a4/0x1a8
+>> [151513.714945] INFO: task (ostnamed):77658 blocked for more than 122 seconds.
+>> [151513.721903]       Tainted: G             L    -------  ---
+>> 6.12.0-55.9.1.el10_0.aarch64 #1
+>> [151513.730334] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>> disables this message.
+>> [151513.738241] task:(ostnamed)      state:D stack:0     pid:77658
+>> tgid:77658 ppid:1      flags:0x00000205
+>> [151513.747625] Call trace:
+>> [151513.750146]  __switch_to+0xec/0x148
+>> [151513.753712]  __schedule+0x234/0x738
+>> [151513.757278]  schedule+0x3c/0xe0
+>> [151513.760493]  schedule_preempt_disabled+0x2c/0x58
+>> [151513.765188]  rwsem_down_write_slowpath+0x1e4/0x720
+>> [151513.770054]  down_write+0xac/0xc0
+>> [151513.773444]  do_lock_mount+0x3c/0x220
+>> [151513.777185]  path_mount+0x378/0x810
+>> [151513.780748]  __arm64_sys_mount+0x158/0x2d8
+>> [151513.784921]  invoke_syscall.constprop.0+0x74/0xd0
+>> [151513.789702]  do_el0_svc+0xb0/0xe8
+>> [151513.793093]  el0_svc+0x44/0x1d0
+>> [151513.796312]  el0t_64_sync_handler+0x120/0x130
+>> [151513.800744]  el0t_64_sync+0x1a4/0x1a8
 
