@@ -1,188 +1,234 @@
-Return-Path: <linux-fsdevel+bounces-46312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0004A86AF2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 06:37:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4174A86B49
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 08:27:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD7217990B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 04:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43F2A8C8D45
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 06:26:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A103518A6A6;
-	Sat, 12 Apr 2025 04:36:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED82189BB1;
+	Sat, 12 Apr 2025 06:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bTOJgBIK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KX1enEG+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7E91891A9;
-	Sat, 12 Apr 2025 04:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF85C19007F
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 06:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744432611; cv=none; b=m1t70T3wc3aVkkefAxZYlzHLFvYJacu9JKuKtODAnpVtiDukT752jzIwy8zSHvweKW9LbRpvWXRI1zexoo06BQWbxICvs5cs+csM8dchcFMIrrt7KNdn5tHwE2f8plp+1ZpeTUTpUhBqzR0D2frLvg9kdSSTbcgJZ7f8JdJ4pBw=
+	t=1744439187; cv=none; b=RPSeuVemxR3B637T2hZOmPUW4iVOFj/O9V0kwu7LLZOdYcUWqBDucIZjbLkcbDYqfEe53irBCzV55YQGNXnpBZKM2i+eJHfVysTHqjfJ3HamgZl50bZ3GTOzw8lwiUfvEPROwKK2YT9rsZxe1MriSHebxWsQfBmBtvOlfPOY2vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744432611; c=relaxed/simple;
-	bh=QY1wKDOkQEl1CFDWXIAC6g+nrvMtAmRCujAFfyijgoo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y9Yv0Ou6qJOpCe94FqvnnM7qEEmVb1PMFp3N+1AsWaESQrNrYV43xO8ryLQ5e8oU4Vk2Sb4pYVt284saEZ9VXlhrjRa1Y0/JenH4rmhePuaAyQ/i2KMkOz+6G6S166uJOxCf0Pk+ggVqimQTkEkNNdQDEj59eACTckfWIwTRo2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bTOJgBIK; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-736dd9c4b40so3272786b3a.0;
-        Fri, 11 Apr 2025 21:36:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744432608; x=1745037408; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9kMrbL7tcvDz5lUAbPFrHkOsQ+u9gKHcRszVAuDybPY=;
-        b=bTOJgBIKfAVRj2bfOBGnn9M/x0Q4aG1Vm/+7NtR4e1TyfdUalgV92wa/YBBeZ47yNR
-         lf1VSyLbaeUWayRNz/dPW3Qn8fJl9wdc4n3eTNPtXBeByOtaZzqAb29fD/e1f0cU6hX7
-         S/iB5xHMsaDml6BslrzO39qSOtz5XpbhBIAuDudDfYkR61dr05/GoutYkANobQmh/44H
-         wDK9hzfGFSlD5NaQ00YKkvmv21gsqydmm4XJsjv/G5hrntg1SBnsAjIFLfmw2ZrS2FVa
-         ebka/lBc3gYldqWkYL4LBCWrnN3FEN520JJKNw/6CME1xgz1oyPaX86A5cI4SsIpJzCU
-         7GTg==
+	s=arc-20240116; t=1744439187; c=relaxed/simple;
+	bh=rDUctU+eo2yFrQzJGJ9WESLdOn2HFEikKze7FvMeujI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImdWeAvhgMc7EtHLvZFBL9J61OYtdh9lgr4EzA2DCPJlNvQk8sVmW6WjmYEEME+mgBa9nVWJaOiTslaIDpoSXs6w7d5FTsdHoLlk9V+MfslgcJZPmiCiKiRAY7A2BfLd3ihaW/6E7zAd1lt/AK7btCu0TSpMiev61AY5m/RWAWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KX1enEG+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744439184;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yhyCkAg3D5KBPITY+5+z3w4CInNBgsp1dI1Gv1I9h54=;
+	b=KX1enEG+kkEhzZdIVmV66jVDbOjJBDVFpD1TC3mhT1b6f9Em2tXJVmRygEmc4PGLUdudGI
+	gJtdC93KtQ73SRyrxmNq+3RX0hQNK2MAI3rD6MH9sADDhCSH3VwpnlJl2brEURTaR81gmE
+	g+IFBV+WVsBrfnAPAb/B7+jQJpdmJIs=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-32-0VylTKSWMpOzEMNOH-jZ-g-1; Sat, 12 Apr 2025 02:26:20 -0400
+X-MC-Unique: 0VylTKSWMpOzEMNOH-jZ-g-1
+X-Mimecast-MFC-AGG-ID: 0VylTKSWMpOzEMNOH-jZ-g_1744439180
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-224347aef79so35312615ad.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 23:26:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744432608; x=1745037408;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9kMrbL7tcvDz5lUAbPFrHkOsQ+u9gKHcRszVAuDybPY=;
-        b=Tx0oulUP3ERHW/niOriwj4J7qdfmYVDZhI0SR+JFhuWO14OQ/TlXYtNc9Jeh0aHSxW
-         aIyAAgHOHXN8Sdv7tLXr9iRO3kIKFrptcX/gPRkByIiT8TyckZti+ENnc9/6LgCaBzs2
-         irshGk/Mtiz1n/fzcxnW9f2DX+qkimMzxLiLXnxftLkd5NFhDaX8TPriY4f2jvCY2Tvu
-         gdABAZyTg/iQLGo6/jQM4jFaKEfa9MYHW3+n/CrnvEclryiVqpkPrFoethph00g2yUWX
-         snxNfAL/ECrQ92E7SEOgY2zBbuRC5PhhSAiT+b1NUa4gi1sc4Y4yK/2EnUaWpoRUTSdO
-         /r+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXjBfiCHFX/tqF8bmfIlEmOYHEGGybtyBEXmZsezSWn+mtPDga8TzttAUkpwC+1q7zEdmK5Fx9BDlpFo6Rn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4HaLjLySQfnASDT4BTHMyx3VNTPoByc86sUOwIvVmqcd1boHX
-	ODT8R6Iwv2FfF/mqjO0H5m1pjc1x42jpo5vO315O9VWkFSoHNNmZGkDCBQ==
-X-Gm-Gg: ASbGncsBqppo2iUeaAuDrplxmV6QtlfQvbfrGkbwrDvpqDhnEahoX72TaH9HTtOymm3
-	mwWGkkmapG6M21LGWqII+3OnkJz+mP01Y+ErvOio9MDgYBtGpW0NV2Pux2Niapuecu/S/Sv2V73
-	8KFj12wqis1Vth0xId5Sbny4uKP5pllvu3/L8FPeUS9W6OZ7YezjPN7Or9Z+ngk1apeIda0zJ57
-	R409Nw5feILG8cHhHdzi50v6wjoU9GD7tiUiUzKYcEUUSNnYd6OdS7jhVuils4DQu5su8Hl+s5I
-	fGfiSNplziRWycidJSsaaD5WnXeAMFX9Awq+Zh6oXC0tQJDZOXntWG2RCw==
-X-Google-Smtp-Source: AGHT+IEirL+fbFsivnxUVPQjJ/lWWd7BF9FTt+vFvXtvuJ6WLMEj7i9MdTqBq9lXrro98T6722jtFQ==
-X-Received: by 2002:a05:6a21:1507:b0:1f3:34a4:bf01 with SMTP id adf61e73a8af0-2016a283f28mr13103993637.17.1744432607571;
-        Fri, 11 Apr 2025 21:36:47 -0700 (PDT)
-Received: from dw-tp.ibmuc.com ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a0de8926sm4827993a12.30.2025.04.11.21.36.45
+        d=1e100.net; s=20230601; t=1744439179; x=1745043979;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yhyCkAg3D5KBPITY+5+z3w4CInNBgsp1dI1Gv1I9h54=;
+        b=gqYYGSgE+DKR5mUgGLFTE/3LWyQMl5kv69cAanp6RtQm1qmQT3pzPfMspJ+gEDw4Z9
+         jIZobCuhz0gAigiy5hluOywbahqXDzNi8ZkOj6PmOz69BKwVA1vds1VdrK5/YhQXsDbV
+         WSkBWi3fWMRWkEV4AiYEC/HsidVEJvfH2a66oegIjc7n3G0UrkPcvI1LRirirj/Si6uj
+         jIwhQxcM4KH9mFkwFw35ClQPZRbcCBLjATKKqjfJm8lrUiEJrNctGjlFaDHSf7eE/SI4
+         2ZQ/3t/QfliICH7ZawzRw10W5/JchEIsd3BtSEqNeiMz7jfkRd7VlwP637oVDIA06Xlk
+         N8EA==
+X-Forwarded-Encrypted: i=1; AJvYcCVXR/3JST8G0fx8wu3es0x0KaZ1jl6PaImZChwBMpTUL+bovJRMPBSFsUwButWd8B52xKxAEYExGFTU8B2E@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPWWBTUovaoBOY5aSrudcMiD02Zl6TLWnzkMLmIwVFYAPt9r2m
+	QO4+9++6nst3ByeQ+l5IRQ744C3ysanxxCusCWB/w8CzcGW9jRwtOTpDR7tlNL6bCxUN5Zc06zd
+	KBxIjHI8ys4jjME5Gyub/S5phSx5pHLQK0RA7vkMa4Eix30e4LHwo6I5nPdWuWConioVjFIehpQ
+	==
+X-Gm-Gg: ASbGncuGRvsI8rrjfOi0Pubre90Ho0V+2yLqqVOrxtv/fWAHCNszHX6QG4irI6ubr09
+	6OtVnXU91WqL9Xhs0yE3ncKCyn3v6YbUNYg9+MT3OsHz0Qn0KbmBkEa7LukPrhb6CeUX7R32hyK
+	w9V1gFIHwgQgLE0D0d886al0t4/k2v0P4Y9c6CtcHwmISEuKA5X+BVvXl4q+5dE8lge4s/W8CrZ
+	Q/e+etDwenFHtIhK7EBotKl4z16k6vDgJDklhozvWvEQozLxsljbYtWEAD1A9nih8bU3U2WhKPL
+	1DK7huUrQyxhkj4QSDJ8wVx6l5yrzXVa+MVxa9QDpaRsSpOc1wfl
+X-Received: by 2002:a17:903:2f82:b0:220:e896:54e1 with SMTP id d9443c01a7336-22bea4bd51fmr62788735ad.26.1744439179466;
+        Fri, 11 Apr 2025 23:26:19 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEwykgm1FHlVAYRYCNvtGCZ72xv/Yq/NfJh6r0aCsqgS4KLXIoLtijsNVpq3rMRkWF2I5R09w==
+X-Received: by 2002:a17:903:2f82:b0:220:e896:54e1 with SMTP id d9443c01a7336-22bea4bd51fmr62788555ad.26.1744439178916;
+        Fri, 11 Apr 2025 23:26:18 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccca88sm60972915ad.256.2025.04.11.23.26.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 21:36:47 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-xfs@vger.kernel.org
-Cc: John Garry <john.g.garry@oracle.com>,
-	djwong@kernel.org,
-	ojaswin@linux.ibm.com,
-	linux-fsdevel@vger.kernel.org,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v2 2/2] iomap: trace: Add missing flags to [IOMAP_|IOMAP_F_]FLAGS_STRINGS
-Date: Sat, 12 Apr 2025 10:06:35 +0530
-Message-ID: <dcaff476004805544b6ad6d54d0c4adee1f7184f.1744432270.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <8d8534a704c4f162f347a84830710db32a927b2e.1744432270.git.ritesh.list@gmail.com>
-References: <8d8534a704c4f162f347a84830710db32a927b2e.1744432270.git.ritesh.list@gmail.com>
+        Fri, 11 Apr 2025 23:26:18 -0700 (PDT)
+Date: Sat, 12 Apr 2025 14:26:14 +0800
+From: Zorro Lang <zlang@redhat.com>
+To: Zorro Lang <zlang@kernel.org>
+Cc: fstests@vger.kernel.org, David Sterba <dsterba@suse.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] README: add supported fs list
+Message-ID: <20250412062614.cvq4dqbcpkmwtzmh@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20250328164609.188062-1-zlang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250328164609.188062-1-zlang@kernel.org>
 
-This adds missing iomap flags to IOMAP_FLAGS_STRINGS &
-IOMAP_F_FLAGS_STRINGS for tracing. While we are at it, let's also print
-values of iomap->type & iomap->flags.
+On Sat, Mar 29, 2025 at 12:46:09AM +0800, Zorro Lang wrote:
+> To clarify the supported filesystems by fstests, add a fs list to
+> README file.
+> 
+> Signed-off-by: Zorro Lang <zlang@kernel.org>
+> Acked-by: "Darrick J. Wong" <djwong@kernel.org>
+> ---
+> 
+> The v1 patch and review points:
+> https://lore.kernel.org/fstests/20250227200514.4085734-1-zlang@kernel.org/
+> 
+> V2 did below things:
+> 1) Fix some wrong english sentences
+> 2) Explain the meaning of "+" and "-".
+> 3) Add a link to btrfs comment.
+> 4) Split ext2/3/4 to 3 lines.
+> 5) Reorder the fs list by "Level".
 
-e.g. trace for ATOMIC_BIO flag set
-xfs_io-1203    [000] .....   183.001559: iomap_iter_dstmap: dev 8:32 ino 0xc bdev 8:32 addr 0x84200000 offset 0x0 length 0x10000 type MAPPED (0x2) flags DIRTY|ATOMIC_BIO (0x102)
+Any more review points on this patch? If no more, I'll merge it as it got
+an ACK at least. We still can update it later if anyone need.
 
-e.g. trace with DONTCACHE flag set
-xfs_io-1110    [007] .....   238.780532: iomap_iter: dev 8:16 ino 0x83 pos 0x1000 length 0x1000 status 0 flags WRITE|DONTCACHE (0x401) ops xfs_buffered_write_iomap_ops caller iomap_file_buffered_write+0xab/0x0
+Thanks,
+Zorro
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- fs/iomap/trace.h | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
-
-diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-index 9eab2c8ac3c5..455cc6f90be0 100644
---- a/fs/iomap/trace.h
-+++ b/fs/iomap/trace.h
-@@ -99,7 +99,11 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
- 	{ IOMAP_FAULT,		"FAULT" }, \
- 	{ IOMAP_DIRECT,		"DIRECT" }, \
- 	{ IOMAP_NOWAIT,		"NOWAIT" }, \
--	{ IOMAP_ATOMIC,		"ATOMIC" }
-+	{ IOMAP_OVERWRITE_ONLY,	"OVERWRITE_ONLY" }, \
-+	{ IOMAP_UNSHARE,	"UNSHARE" }, \
-+	{ IOMAP_DAX,		"DAX" }, \
-+	{ IOMAP_ATOMIC,		"ATOMIC" }, \
-+	{ IOMAP_DONTCACHE,	"DONTCACHE" }
-
- #define IOMAP_F_FLAGS_STRINGS \
- 	{ IOMAP_F_NEW,		"NEW" }, \
-@@ -107,7 +111,14 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
- 	{ IOMAP_F_SHARED,	"SHARED" }, \
- 	{ IOMAP_F_MERGED,	"MERGED" }, \
- 	{ IOMAP_F_BUFFER_HEAD,	"BH" }, \
--	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }
-+	{ IOMAP_F_XATTR,	"XATTR" }, \
-+	{ IOMAP_F_BOUNDARY,	"BOUNDARY" }, \
-+	{ IOMAP_F_ANON_WRITE,	"ANON_WRITE" }, \
-+	{ IOMAP_F_ATOMIC_BIO,	"ATOMIC_BIO" }, \
-+	{ IOMAP_F_PRIVATE,	"PRIVATE" }, \
-+	{ IOMAP_F_SIZE_CHANGED,	"SIZE_CHANGED" }, \
-+	{ IOMAP_F_STALE,	"STALE" }
-+
-
- #define IOMAP_DIO_STRINGS \
- 	{IOMAP_DIO_FORCE_WAIT,	"DIO_FORCE_WAIT" }, \
-@@ -138,7 +149,7 @@ DECLARE_EVENT_CLASS(iomap_class,
- 		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
- 	),
- 	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d addr 0x%llx offset 0x%llx "
--		  "length 0x%llx type %s flags %s",
-+		  "length 0x%llx type %s (0x%x) flags %s (0x%x)",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  __entry->ino,
- 		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
-@@ -146,7 +157,9 @@ DECLARE_EVENT_CLASS(iomap_class,
- 		  __entry->offset,
- 		  __entry->length,
- 		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
--		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
-+		  __entry->type,
-+		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS),
-+		  __entry->flags)
- )
-
- #define DEFINE_IOMAP_EVENT(name)		\
-@@ -185,7 +198,7 @@ TRACE_EVENT(iomap_writepage_map,
- 		__entry->bdev = iomap->bdev ? iomap->bdev->bd_dev : 0;
- 	),
- 	TP_printk("dev %d:%d ino 0x%llx bdev %d:%d pos 0x%llx dirty len 0x%llx "
--		  "addr 0x%llx offset 0x%llx length 0x%llx type %s flags %s",
-+		  "addr 0x%llx offset 0x%llx length 0x%llx type %s (0x%x) flags %s (0x%x)",
- 		  MAJOR(__entry->dev), MINOR(__entry->dev),
- 		  __entry->ino,
- 		  MAJOR(__entry->bdev), MINOR(__entry->bdev),
-@@ -195,7 +208,9 @@ TRACE_EVENT(iomap_writepage_map,
- 		  __entry->offset,
- 		  __entry->length,
- 		  __print_symbolic(__entry->type, IOMAP_TYPE_STRINGS),
--		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS))
-+		  __entry->type,
-+		  __print_flags(__entry->flags, "|", IOMAP_F_FLAGS_STRINGS),
-+		  __entry->flags)
- );
-
- TRACE_EVENT(iomap_iter,
---
-2.48.1
+> 
+> Thanks,
+> Zorro
+> 
+>  README | 90 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+> 
+> diff --git a/README b/README
+> index 024d39531..5ceaa0c1e 100644
+> --- a/README
+> +++ b/README
+> @@ -1,3 +1,93 @@
+> +_______________________
+> +SUPPORTED FS LIST
+> +_______________________
+> +
+> +History
+> +-------
+> +
+> +Firstly, xfstests is the old name of this project, due to it was originally
+> +developed for testing the XFS file system on the SGI's Irix operating system.
+> +When xfs was ported to Linux, so was xfstests, now it only supports Linux.
+> +
+> +As xfstests has many test cases that can be run on some other filesystems,
+> +we call them "generic" (and "shared", but it has been removed) cases, you
+> +can find them in tests/generic/ directory. Then more and more filesystems
+> +started to use xfstests, and contribute patches. Today xfstests is used
+> +as a file system regression test suite for lots of Linux's major file systems.
+> +So it's not "xfs"tests only, we tend to call it "fstests" now.
+> +
+> +Supported fs
+> +------------
+> +
+> +Firstly, there's not hard restriction about which filesystem can use fstests.
+> +Any filesystem can give fstests a try.
+> +
+> +Although fstests supports many filesystems, they have different support level
+> +by fstests. So mark it with 4 levels as below:
+> +
+> +L1: Fstests can be run on the specified fs basically.
+> +L2: Rare support from the specified fs list to fix some generic test failures.
+> +L3: Normal support from the specified fs list, has some own cases.
+> +L4: Active support from the fs list, has lots of own cases.
+> +
+> +("+" means a slightly higher than the current level, but not reach to the next.
+> +"-" is opposite, means a little bit lower than the current level.)
+> +
+> ++------------+-------+---------------------------------------------------------+
+> +| Filesystem | Level |                       Comment                           |
+> ++------------+-------+---------------------------------------------------------+
+> +| XFS        |  L4+  | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| Btrfs      |  L4   | https://btrfs.readthedocs.io/en/latest/dev/Development-\|
+> +|            |       | notes.html#fstests-setup                                |
+> ++------------+-------+---------------------------------------------------------+
+> +| Ext4       |  L4   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| Ext2       |  L3   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| Ext3       |  L3   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| overlay    |  L3   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| f2fs       |  L3-  | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| tmpfs      |  L3-  | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| NFS        |  L2+  | https://linux-nfs.org/wiki/index.php/Xfstests           |
+> ++------------+-------+---------------------------------------------------------+
+> +| Ceph       |  L2   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| CIFS       |  L2-  | https://wiki.samba.org/index.php/Xfstesting-cifs        |
+> ++------------+-------+---------------------------------------------------------+
+> +| ocfs2      |  L2-  | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| Bcachefs   |  L1+  | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| Exfat      |  L1+  | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| AFS        |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| FUSE       |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| GFS2       |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| Glusterfs  |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| JFS        |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| pvfs2      |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| Reiser4    |  L1   | Reiserfs has been removed, only left reiser4            |
+> ++------------+-------+---------------------------------------------------------+
+> +| ubifs      |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| udf        |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| Virtiofs   |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +| 9p         |  L1   | N/A                                                     |
+> ++------------+-------+---------------------------------------------------------+
+> +
+>  _______________________
+>  BUILDING THE FSQA SUITE
+>  _______________________
+> -- 
+> 2.47.1
+> 
+> 
 
 
