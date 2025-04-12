@@ -1,234 +1,291 @@
-Return-Path: <linux-fsdevel+bounces-46313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4174A86B49
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 08:27:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21666A86B4E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 08:32:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43F2A8C8D45
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 06:26:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41CE41893B78
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 06:31:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED82189BB1;
-	Sat, 12 Apr 2025 06:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KX1enEG+"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8D615CD46;
+	Sat, 12 Apr 2025 06:31:25 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF85C19007F
-	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 06:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058758828
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 06:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744439187; cv=none; b=RPSeuVemxR3B637T2hZOmPUW4iVOFj/O9V0kwu7LLZOdYcUWqBDucIZjbLkcbDYqfEe53irBCzV55YQGNXnpBZKM2i+eJHfVysTHqjfJ3HamgZl50bZ3GTOzw8lwiUfvEPROwKK2YT9rsZxe1MriSHebxWsQfBmBtvOlfPOY2vQ=
+	t=1744439485; cv=none; b=Xfc2Eql75YgTCybp2uv3MvjYftYWjrRqpkfEjOjXIxnrhkj78ZlRRieOmes0f3AUB9w/yUT/yr/F8b+O+ApcqDS0/MDSqPUT1J7Nk/WkKAh4QCCdJ/Rd7f/brXqDHZxa/W1cGbu1y4QCQNZ43ipa+pxihWmTJgMFW973OelVxjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744439187; c=relaxed/simple;
-	bh=rDUctU+eo2yFrQzJGJ9WESLdOn2HFEikKze7FvMeujI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ImdWeAvhgMc7EtHLvZFBL9J61OYtdh9lgr4EzA2DCPJlNvQk8sVmW6WjmYEEME+mgBa9nVWJaOiTslaIDpoSXs6w7d5FTsdHoLlk9V+MfslgcJZPmiCiKiRAY7A2BfLd3ihaW/6E7zAd1lt/AK7btCu0TSpMiev61AY5m/RWAWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KX1enEG+; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744439184;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yhyCkAg3D5KBPITY+5+z3w4CInNBgsp1dI1Gv1I9h54=;
-	b=KX1enEG+kkEhzZdIVmV66jVDbOjJBDVFpD1TC3mhT1b6f9Em2tXJVmRygEmc4PGLUdudGI
-	gJtdC93KtQ73SRyrxmNq+3RX0hQNK2MAI3rD6MH9sADDhCSH3VwpnlJl2brEURTaR81gmE
-	g+IFBV+WVsBrfnAPAb/B7+jQJpdmJIs=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-32-0VylTKSWMpOzEMNOH-jZ-g-1; Sat, 12 Apr 2025 02:26:20 -0400
-X-MC-Unique: 0VylTKSWMpOzEMNOH-jZ-g-1
-X-Mimecast-MFC-AGG-ID: 0VylTKSWMpOzEMNOH-jZ-g_1744439180
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-224347aef79so35312615ad.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Apr 2025 23:26:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744439179; x=1745043979;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yhyCkAg3D5KBPITY+5+z3w4CInNBgsp1dI1Gv1I9h54=;
-        b=gqYYGSgE+DKR5mUgGLFTE/3LWyQMl5kv69cAanp6RtQm1qmQT3pzPfMspJ+gEDw4Z9
-         jIZobCuhz0gAigiy5hluOywbahqXDzNi8ZkOj6PmOz69BKwVA1vds1VdrK5/YhQXsDbV
-         WSkBWi3fWMRWkEV4AiYEC/HsidVEJvfH2a66oegIjc7n3G0UrkPcvI1LRirirj/Si6uj
-         jIwhQxcM4KH9mFkwFw35ClQPZRbcCBLjATKKqjfJm8lrUiEJrNctGjlFaDHSf7eE/SI4
-         2ZQ/3t/QfliICH7ZawzRw10W5/JchEIsd3BtSEqNeiMz7jfkRd7VlwP637oVDIA06Xlk
-         N8EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXR/3JST8G0fx8wu3es0x0KaZ1jl6PaImZChwBMpTUL+bovJRMPBSFsUwButWd8B52xKxAEYExGFTU8B2E@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPWWBTUovaoBOY5aSrudcMiD02Zl6TLWnzkMLmIwVFYAPt9r2m
-	QO4+9++6nst3ByeQ+l5IRQ744C3ysanxxCusCWB/w8CzcGW9jRwtOTpDR7tlNL6bCxUN5Zc06zd
-	KBxIjHI8ys4jjME5Gyub/S5phSx5pHLQK0RA7vkMa4Eix30e4LHwo6I5nPdWuWConioVjFIehpQ
-	==
-X-Gm-Gg: ASbGncuGRvsI8rrjfOi0Pubre90Ho0V+2yLqqVOrxtv/fWAHCNszHX6QG4irI6ubr09
-	6OtVnXU91WqL9Xhs0yE3ncKCyn3v6YbUNYg9+MT3OsHz0Qn0KbmBkEa7LukPrhb6CeUX7R32hyK
-	w9V1gFIHwgQgLE0D0d886al0t4/k2v0P4Y9c6CtcHwmISEuKA5X+BVvXl4q+5dE8lge4s/W8CrZ
-	Q/e+etDwenFHtIhK7EBotKl4z16k6vDgJDklhozvWvEQozLxsljbYtWEAD1A9nih8bU3U2WhKPL
-	1DK7huUrQyxhkj4QSDJ8wVx6l5yrzXVa+MVxa9QDpaRsSpOc1wfl
-X-Received: by 2002:a17:903:2f82:b0:220:e896:54e1 with SMTP id d9443c01a7336-22bea4bd51fmr62788735ad.26.1744439179466;
-        Fri, 11 Apr 2025 23:26:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEwykgm1FHlVAYRYCNvtGCZ72xv/Yq/NfJh6r0aCsqgS4KLXIoLtijsNVpq3rMRkWF2I5R09w==
-X-Received: by 2002:a17:903:2f82:b0:220:e896:54e1 with SMTP id d9443c01a7336-22bea4bd51fmr62788555ad.26.1744439178916;
-        Fri, 11 Apr 2025 23:26:18 -0700 (PDT)
-Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccca88sm60972915ad.256.2025.04.11.23.26.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Apr 2025 23:26:18 -0700 (PDT)
-Date: Sat, 12 Apr 2025 14:26:14 +0800
-From: Zorro Lang <zlang@redhat.com>
-To: Zorro Lang <zlang@kernel.org>
-Cc: fstests@vger.kernel.org, David Sterba <dsterba@suse.com>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2] README: add supported fs list
-Message-ID: <20250412062614.cvq4dqbcpkmwtzmh@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-References: <20250328164609.188062-1-zlang@kernel.org>
+	s=arc-20240116; t=1744439485; c=relaxed/simple;
+	bh=qhX5DdPH0WRD9vP4dPH8EmvuQuLA30Ic7tG/p9i0G5E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Idqav7T6lOwuEUrgq4SP888jMVf0LYONLc5q/1BEjRlohIh+E/etBr7ZvBNjvRS6TH7UgodjMJeAzMNVpJKFBl2A7KnZa8B7cK/A4buizSEJyGkPoRzwxuqhhZ16S4UsYPNdOwbC4CRl8EVhB+cLoiAWGcdmY9ffE/VtlWJhZeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 86BD9100D3A
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 16:31:19 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id OkcC5h6UCxTT for <linux-fsdevel@vger.kernel.org>;
+	Sat, 12 Apr 2025 16:31:19 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id 728C6100E3C; Sat, 12 Apr 2025 16:31:19 +1000 (AEST)
+X-Spam-Level: 
+Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id 6126C1008EA;
+	Sat, 12 Apr 2025 16:31:17 +1000 (AEST)
+Message-ID: <3060fc74-a8ed-4b98-a2fe-ff29cf057a35@themaw.net>
+Date: Sat, 12 Apr 2025 14:31:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250328164609.188062-1-zlang@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: bad things when too many negative dentries in a directory
+From: Ian Kent <raven@themaw.net>
+To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
+References: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
+ <20250411-rennen-bleichen-894e4b8d86ac@brauner>
+ <3be4c502-8246-436e-a7cf-3eb4be6ff7d4@themaw.net>
+Content-Language: en-US
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <3be4c502-8246-436e-a7cf-3eb4be6ff7d4@themaw.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Mar 29, 2025 at 12:46:09AM +0800, Zorro Lang wrote:
-> To clarify the supported filesystems by fstests, add a fs list to
-> README file.
-> 
-> Signed-off-by: Zorro Lang <zlang@kernel.org>
-> Acked-by: "Darrick J. Wong" <djwong@kernel.org>
-> ---
-> 
-> The v1 patch and review points:
-> https://lore.kernel.org/fstests/20250227200514.4085734-1-zlang@kernel.org/
-> 
-> V2 did below things:
-> 1) Fix some wrong english sentences
-> 2) Explain the meaning of "+" and "-".
-> 3) Add a link to btrfs comment.
-> 4) Split ext2/3/4 to 3 lines.
-> 5) Reorder the fs list by "Level".
 
-Any more review points on this patch? If no more, I'll merge it as it got
-an ACK at least. We still can update it later if anyone need.
+On 12/4/25 09:48, Ian Kent wrote:
+>
+> On 11/4/25 22:47, Christian Brauner wrote:
+>> On Fri, Apr 11, 2025 at 11:40:28AM +0200, Miklos Szeredi wrote:
+>>> There are reports of soflockups in fsnotify if there are large numbers
+>>> of negative dentries (e.g. ~300M) in a directory.   This can happen if
+>>> lots of temp files are created and removed and there's not enough
+>>> memory pressure to trigger the lru shrinker.
+>>>
+>>> These are on old kernels and some of this is possibly due to missing
+>>> 172e422ffea2 ("fsnotify: clear PARENT_WATCHED flags lazily"), but I
+>>> managed to reproduce the softlockup on a recent kernel in
+>>> fsnotify_set_children_dentry_flags() (see end of mail).
+>>>
+>>> This was with ~1.2G negative dentries.  Doing "rmdir testdir"
+>>> afterwards does not trigger the softlockup detector, due to the
+>>> reschedules in shrink_dcache_parent() code, but it took 10 minutes(!)
+>>> to finish removing that empty directory.
+>>>
+>>> So I wonder, do we really want negative dentries on ->d_children?
+>>> Except for shrink_dcache_parent() I don't see any uses.  And it's also
+>>> a question whether shrinking negative dentries is useful or not.  If
+>>> they've been around for so long that hundreds of millions of them
+>>> could accumulate and that memory wasn't needed by anybody, then it
+>>> shouldn't make a big difference if they kept hanging around. On
+>>> umount, at the latest, the lru list can be used to kill everything,
+>>> AFAICT.
+>>>
+>>> I'm curious if this is the right path?  Any better ideas?
+>> Note that we have a new sysctl:
+>>
+>> /proc/sys/fs/dentry-negative
+>>
+>> that can be used to control the negative dentry policy because any
+>> generic change that we tried to make has always resulted in unacceptable
+>> regressions for someone's workload. Currently we only allow it to be set
+>> to 1 (default 0). If set to 1 it will not create negative dentries
+>> during unlink. If that's sufficient than recommend this to users that
+>> suffer from this problem if not consider adding another sensitive
+>> policy.
+>
+> Interesting, I wasn't sure how the negative dentries were accumulating 
+> but
+>
+> I didn't actually look at the unlink code (I'll take a look). I 
+> thought the
+>
+> most likely cause was laziness not unlinking temporary files (the file 
+> names
+>
+> in question "looked" like temporary file names).
+>
+>
+> When I do look at unlink I suspect I'll find the VFS is justified in 
+> caching
+>
+> these and the responsibility (or should) lies with the file system 
+> call back
+>
+> to unhash the dentry if it doesn't want this caching ... but the file 
+> system
+>
+> always doing this is not ideal either ... maybe we need a hint so that 
+> the
+>
+> relevant file system callbacks can make this decision for themselves.
 
-Thanks,
-Zorro
+But I didn't find this to be the case at all.
 
-> 
-> Thanks,
-> Zorro
-> 
->  README | 90 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 90 insertions(+)
-> 
-> diff --git a/README b/README
-> index 024d39531..5ceaa0c1e 100644
-> --- a/README
-> +++ b/README
-> @@ -1,3 +1,93 @@
-> +_______________________
-> +SUPPORTED FS LIST
-> +_______________________
-> +
-> +History
-> +-------
-> +
-> +Firstly, xfstests is the old name of this project, due to it was originally
-> +developed for testing the XFS file system on the SGI's Irix operating system.
-> +When xfs was ported to Linux, so was xfstests, now it only supports Linux.
-> +
-> +As xfstests has many test cases that can be run on some other filesystems,
-> +we call them "generic" (and "shared", but it has been removed) cases, you
-> +can find them in tests/generic/ directory. Then more and more filesystems
-> +started to use xfstests, and contribute patches. Today xfstests is used
-> +as a file system regression test suite for lots of Linux's major file systems.
-> +So it's not "xfs"tests only, we tend to call it "fstests" now.
-> +
-> +Supported fs
-> +------------
-> +
-> +Firstly, there's not hard restriction about which filesystem can use fstests.
-> +Any filesystem can give fstests a try.
-> +
-> +Although fstests supports many filesystems, they have different support level
-> +by fstests. So mark it with 4 levels as below:
-> +
-> +L1: Fstests can be run on the specified fs basically.
-> +L2: Rare support from the specified fs list to fix some generic test failures.
-> +L3: Normal support from the specified fs list, has some own cases.
-> +L4: Active support from the fs list, has lots of own cases.
-> +
-> +("+" means a slightly higher than the current level, but not reach to the next.
-> +"-" is opposite, means a little bit lower than the current level.)
-> +
-> ++------------+-------+---------------------------------------------------------+
-> +| Filesystem | Level |                       Comment                           |
-> ++------------+-------+---------------------------------------------------------+
-> +| XFS        |  L4+  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Btrfs      |  L4   | https://btrfs.readthedocs.io/en/latest/dev/Development-\|
-> +|            |       | notes.html#fstests-setup                                |
-> ++------------+-------+---------------------------------------------------------+
-> +| Ext4       |  L4   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Ext2       |  L3   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Ext3       |  L3   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| overlay    |  L3   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| f2fs       |  L3-  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| tmpfs      |  L3-  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| NFS        |  L2+  | https://linux-nfs.org/wiki/index.php/Xfstests           |
-> ++------------+-------+---------------------------------------------------------+
-> +| Ceph       |  L2   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| CIFS       |  L2-  | https://wiki.samba.org/index.php/Xfstesting-cifs        |
-> ++------------+-------+---------------------------------------------------------+
-> +| ocfs2      |  L2-  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Bcachefs   |  L1+  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Exfat      |  L1+  | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| AFS        |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| FUSE       |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| GFS2       |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Glusterfs  |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| JFS        |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| pvfs2      |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Reiser4    |  L1   | Reiserfs has been removed, only left reiser4            |
-> ++------------+-------+---------------------------------------------------------+
-> +| ubifs      |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| udf        |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| Virtiofs   |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +| 9p         |  L1   | N/A                                                     |
-> ++------------+-------+---------------------------------------------------------+
-> +
->  _______________________
->  BUILDING THE FSQA SUITE
->  _______________________
-> -- 
-> 2.47.1
-> 
-> 
 
+Assuming the customer application is behaving sensibly and calling unlink()
+
+on the files are no longer needed (for temporary files that should be 
+the case)
+
+then unhasing the dentry before final dput() will indeed result in the 
+dentry
+
+being discarded.
+
+
+It looks like all we need is e6957c99dca5f ("vfs: Add a sysctl for automated
+
+deletion of dentry") and that looks like it will apply cleanly to the 
+kernel we
+
+are concerned with.
+
+
+It will be interesting to test this to see if the application is 
+actually behaving.
+
+
+>
+>
+> Ian
+>
+>>
+>>> Thanks,
+>>> Miklos
+>>>
+>>>
+>>> [96789.366007] watchdog: BUG: soft lockup - CPU#79 stuck for 26s!
+>>> [fanotify4:52805]
+>>> [96789.373396] Modules linked in: rfkill mlx5_ib ib_uverbs macsec
+>>> ib_core vfat fat mlx5_core acpi_ipmi ast ipmi_ssif arm_spe_pmu igb
+>>> mlxfw psample i2c_algo_bit tls pci_hyperv_intf ipmi_devintf
+>>> ipmi_msghandler arm_cmn arm_dmc620_pmu arm_dsu_pmu cppc_cpufreq loop
+>>> fuse nfnetlink xfs nvme crct10dif_ce ghash_ce sha2_ce sha256_arm64
+>>> nvme_core sha1_ce sbsa_gwdt nvme_auth i2c_designware_platform
+>>> i2c_designware_core xgene_hwmon dm_mirror dm_region_hash dm_log dm_mod
+>>> [96789.413624] CPU: 79 UID: 0 PID: 52805 Comm: fanotify4 Kdump: loaded
+>>> Not tainted 6.12.0-55.9.1.el10_0.aarch64 #1
+>>> [96789.423698] Hardware name: GIGABYTE R272-P30-JG/MP32-AR0-JG, BIOS
+>>> F31n (SCP: 2.10.20220810) 09/30/2022
+>>> [96789.432990] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS 
+>>> BTYPE=--)
+>>> [96789.439939] pc : fsnotify_set_children_dentry_flags+0x80/0xf0
+>>> [96789.445675] lr : fsnotify_set_children_dentry_flags+0xa4/0xf0
+>>> [96789.451408] sp : ffff8000cc77b8c0
+>>> [96789.454710] x29: ffff8000cc77b8c0 x28: 0000000000000001 x27: 
+>>> 0000000000000000
+>>> [96789.461833] x26: ffff07ff8463dc50 x25: ffff080e6e44dc50 x24: 
+>>> 0000000000000001
+>>> [96789.468956] x23: ffff07ff9d94eec0 x22: ffff07fff2cf01b8 x21: 
+>>> ffff07ff9d94ee40
+>>> [96789.476079] x20: ffff0800eb6dff40 x19: ffff0800eb6df2c0 x18: 
+>>> 0000000000000014
+>>> [96789.483202] x17: 00000000cec6e315 x16: 00000000ed365140 x15: 
+>>> 00000000ae8684a4
+>>> [96789.490325] x14: 000000000d831309 x13: 00000000387d7ee0 x12: 
+>>> 0000000000000000
+>>> [96789.497448] x11: 0000000000000001 x10: 0000000000000001 x9 : 
+>>> ffffc3bacc1864bc
+>>> [96789.504570] x8 : 000000001007ffff x7 : ffffc3bace89a4c0 x6 : 
+>>> 0000000000000001
+>>> [96789.511694] x5 : 0000000008000020 x4 : 0000000000000000 x3 : 
+>>> 0000000000000003
+>>> [96789.518816] x2 : 0000000000000001 x1 : 0000000000000000 x0 : 
+>>> ffff0800eb6df358
+>>> [96789.525939] Call trace:
+>>> [96789.528373]  fsnotify_set_children_dentry_flags+0x80/0xf0
+>>> [96789.533759]  fsnotify_recalc_mask.part.0+0x94/0xc8
+>>> [96789.538538]  fsnotify_recalc_mask+0x1c/0x40
+>>> [96789.542709]  fanotify_add_mark+0x15c/0x360
+>>> [96789.546794]  do_fanotify_mark+0x3c0/0x7a0
+>>> [96789.550791]  __arm64_sys_fanotify_mark+0x30/0x60
+>>> [96789.555396]  invoke_syscall.constprop.0+0x74/0xd0
+>>> [96789.560090]  do_el0_svc+0xb0/0xe8
+>>> [96789.563393]  el0_svc+0x44/0x1d0
+>>> [96789.566525]  el0t_64_sync_handler+0x120/0x130
+>>> [96789.570870]  el0t_64_sync+0x1a4/0x1a8
+>>> [151513.714945] INFO: task (ostnamed):77658 blocked for more than 
+>>> 122 seconds.
+>>> [151513.721903]       Tainted: G             L    -------  ---
+>>> 6.12.0-55.9.1.el10_0.aarch64 #1
+>>> [151513.730334] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
+>>> disables this message.
+>>> [151513.738241] task:(ostnamed)      state:D stack:0 pid:77658
+>>> tgid:77658 ppid:1      flags:0x00000205
+>>> [151513.747625] Call trace:
+>>> [151513.750146]  __switch_to+0xec/0x148
+>>> [151513.753712]  __schedule+0x234/0x738
+>>> [151513.757278]  schedule+0x3c/0xe0
+>>> [151513.760493]  schedule_preempt_disabled+0x2c/0x58
+>>> [151513.765188]  rwsem_down_write_slowpath+0x1e4/0x720
+>>> [151513.770054]  down_write+0xac/0xc0
+>>> [151513.773444]  do_lock_mount+0x3c/0x220
+>>> [151513.777185]  path_mount+0x378/0x810
+>>> [151513.780748]  __arm64_sys_mount+0x158/0x2d8
+>>> [151513.784921]  invoke_syscall.constprop.0+0x74/0xd0
+>>> [151513.789702]  do_el0_svc+0xb0/0xe8
+>>> [151513.793093]  el0_svc+0x44/0x1d0
+>>> [151513.796312]  el0t_64_sync_handler+0x120/0x130
+>>> [151513.800744]  el0t_64_sync+0x1a4/0x1a8
+>
 
