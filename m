@@ -1,121 +1,159 @@
-Return-Path: <linux-fsdevel+bounces-46323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46324-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C462A86F0E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 21:08:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C637A86F56
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 22:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7924819E10FF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 19:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EB7417F21B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 20:23:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E7921A42F;
-	Sat, 12 Apr 2025 19:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C56203716;
+	Sat, 12 Apr 2025 20:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqO05KlE"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ThxM3Rh9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B2019415E
-	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 19:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDB914F117
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 20:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744484873; cv=none; b=UBhItoVBguBiHdPEUz40fyNq34m9FyjKbf5BgH/m8ZQDO805kp0u+bwcLNLW1V34yb9pmcWlMvRSupUKBtK/TiwWLaQJkc1rRkLODbLt37+dPl0y5CzSRTwgAPr2UeN8rKazCX61kLdowyJqpJ1B/kJ4JKTyBOYZSBbvzM4rqJ4=
+	t=1744489381; cv=none; b=C49BN1syb2zPrDcGMj0+jlFWCaSnkh57RBghuH6qTNgFjw8bllMPL+qb5SQsBR8fa25Fg4FtFl+PykfCzhkMMSeQZMTzAG/d/nHDL2z0JrzVLaI4okgWeWH8T9LWXwdconYeWE16OQaX0djlNAMuycJjbTKUvz6kNoIWdj0u8R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744484873; c=relaxed/simple;
-	bh=LM4Y2I66wt8z3nQIZru/3jsXUlk20qXkrMEf05PQKFk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Dmk6E7N6jHMZi0uT6LJlz22xDDdVHlQRwenipCWWXtXe/CzjPQU55Y0zzNTBDdYC3k5y7SwEeOX+lwaDUsN2olg2ivxQ76Hzbr7U5bONPta3IbCTltk0RpUCvpAKbYxobS/zOz3byrdWwY1ZV3YvifLmtlxoLCOL+SMw5sNhYdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqO05KlE; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86b9e93123aso210317241.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 12:07:51 -0700 (PDT)
+	s=arc-20240116; t=1744489381; c=relaxed/simple;
+	bh=6Y5KdDVzjvazrOIApCipo1B6aUyEJJR4k42kybjK5BA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DcHz5YzWgXQ3ODIhGwU0QebfdS0Mk2XI7Pmt1qI9esMCBvoeeO/yXyx3cxlcTEG35xQ4ZJoj0tCV5mtBIOVb7UaAl+XD091emQfDtk001q3WMPJ5NaocBSuhv5sbwKgF7nVY9LiqLG919Yf63FtOU+mT+SlqL5WSbhhuytKBQNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ThxM3Rh9; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac34257295dso595986366b.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 13:22:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744484870; x=1745089670; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=2uqS8Y0JeeNJp+EZoySeyRD8ao4RjMPXd9tkoghzbAA=;
-        b=FqO05KlEwXTBrWAaZszjZwxE4voq7bdqTDjhQ251ZM8ZKMyoaaniVKhmdvAVo0wLfD
-         Y3qZdkdst8AcECPvMe/YLTPX3ExxwjxLopBAb+o1CSUnMDMqqDXU2D8VwsX3lKMFZA74
-         X486ywGSspHBB2PueKenW+3wAFBoZStvk5Z2HHk1nCE0mbmuNjCTwIXZMm/L0rDMPy9I
-         4pXLAMOqI2G6xkF4Lrq+CJYyZLLFNOlQ2rypLsDPA661ohza4BhAiWFdyU5/w2tYjL4r
-         QKjvfke1GD10+kHHCM+/EpO7GpmcEeapCWpuf1+nSDglJMQfKfLyV6qf7gKK6CoETTi1
-         c03Q==
+        d=linux-foundation.org; s=google; t=1744489376; x=1745094176; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=d/539aLu+mB+lczaep/CgFHmero7rpBQwrzIrFuK2HQ=;
+        b=ThxM3Rh92No5WgNJiWsBpnYE7VJo8TJNQWS948czd/HYxofWNuSQ5OveJ6TYve7kiZ
+         AH1r4IvAGrWQitiyjuFehAX/czAfQPhm5gt697vrbzdt33VtsJ8QsjLOxahtrLaUYX3a
+         H3pPu5vMAlihggzx6n68VrhHQdpQHRbcS52zc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744484870; x=1745089670;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2uqS8Y0JeeNJp+EZoySeyRD8ao4RjMPXd9tkoghzbAA=;
-        b=HxbRO+G2ScjUUBr1uDwg30KVa0xIUhSe4FcInVt2CxPmNCLKDgS06SovrxU1DRhkq4
-         dI1CDKLTSX1pjhw2XJygIY7Df1Quh2O0mzBokYyAPAoVxtMrweFgPNO9r2OEqa3zz4op
-         rR0WCt6MpxdtnT9XpnZ5nekQE4ujjx70hKD9IT6uva6zoQxGRLPQWqxXmYjkU0ZCUA7l
-         VPpf+EU4jjIM6RWwFc05rQMLN/8rLeF9kMDruGBYHDnrRB8na2sWEyPKYszgvMFNTBqd
-         WE051OBYoRdyLrBn5ISy+asGT8Dct8wr15wKcBej5VkHYEj2O6AGM0pLvXAekWdEwNFO
-         C7OA==
-X-Forwarded-Encrypted: i=1; AJvYcCWAJBjB+gyzy/1EH8vIZZZO3FnL98Ck8UL1IGOoqcK2o4pV10wtEf5Un80e9unPjqVBcxf/nfD9158XJ2k2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqQv2fDOERhfztbUQI7A1MsRRJWanJ5SQcHmun0S/0vuNsejA0
-	qRMHBSFHw1D6sjDGS8qXy/4EhtuQ6hwqhXx+A6wJ5pmMpFPb/Dlr1Gc/R2dVkXPwmHKgPUWWXi3
-	e08tU0GMDKyH+8qiVMJc+uVV/UQ==
-X-Gm-Gg: ASbGncvwazD9Zp4uD1WVcuPMXK6cVxindT/fevgNLQJnXt0Ea4l70pjTgpyUTR0Buiz
-	VX3phXywNa0sIbBbG9Kq/ysy7894xketXvmQ89QYFFl/TTqovRtNYERqjXHBEIzsJeCZCgfSsvf
-	0/277lyAWebRWQ11su3fmebHw=
-X-Google-Smtp-Source: AGHT+IG0k+yhiUDsMVLkTuLC6kSDyeEJ84uZ4WA2XWYY1KbUy6V+3ZAbK1JX89b7gE6FzLIFEx93nYU8og6BgBz4HiI=
-X-Received: by 2002:a05:6102:3e28:b0:4b9:ba6d:86c1 with SMTP id
- ada2fe7eead31-4c9e768918emr1550739137.1.1744484870238; Sat, 12 Apr 2025
- 12:07:50 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744489376; x=1745094176;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d/539aLu+mB+lczaep/CgFHmero7rpBQwrzIrFuK2HQ=;
+        b=a9JSUFeDxCQC7V9bBaap0KQqxRZSQ7ZP9mFn9IMHrSTIiq0Es8SY1KbnGDhHQ3pVKj
+         SyXKTwT4ybinQ3DiwHiIyQo7N9BQ0bAXdMoXztZkpKCvirCtJUChPOveiSqSrA606QV5
+         DJWRWtpNK6FmKqFJSs1l7aoBzEqsh9YfG9cIYykw0AzeWtzh9opHdcyEPAvVi/0RKlbK
+         FW4i1iZNBAUj8ZeLzwaU+X6yqU952vfZ3hc9yK7m9EJDNS2ZaDEE/QbfpO0/eK5Y0JJC
+         f4qPmXWvzzvDQ7fwKsJGejRZUKHXK4h93upoPQo4e7uvd9c1/awnUt4BJPTQA03t71KX
+         cIPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWjjcORiuUqRY+KnIo90UNzb/owkrhXPnCk0NYvDgGf4JmAcqXfBv173JdAH0OX95+MpWVReQOhMlNTF3pm@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ8v0t2/FpyFIhh5eKTeR09AgDed+CfuV1zP/KQ5kufAgJLsMD
+	jas3xjOUOURkOv/EiLR/5WjPw13h6Dg4XeHTuQvFJnfxi8nlQXjrxxA5qlAwN/cd4MpYv+UrFqG
+	da+4=
+X-Gm-Gg: ASbGncuPggYC9LBJO04D2YC34hhnHyAwRu4bb8ErqNSpXekJlFVO/vo2qB4BLCaeW2x
+	KivAQwbvuHie6LbK37nFh/5NFEiUHsof74mgPZc9WxVCNNrHf00pJnScAQ2G6qX2Tbh7E0lKNd1
+	iKYNPIXHTlaC+6yUar1zTRFmUkyfAuylWKSbL24jQTDqxuisHlwM9PnfNo1oSUVy+vuENVfT4hc
+	lSKj+1nVAi3gHV2QTSYf6NaKbGzNG3eQeIrm7n5654lBmHJ2Qty795/gYLBZJymRW4S29Co4q1S
+	8AcPF98ww8pTqierv+Tqf4g6+H7LWvyaPbkDOWZrSm1IWCdxGm3M8dCr0PHnXCSvtFA9gEAHc2E
+	mMc9iQnEFQwi5yaU=
+X-Google-Smtp-Source: AGHT+IHT55U/pRcO1PDGP0/bUvCvazdrocwLVzJRTt/Tt6KjvJbhaif8LxewhNQAldiM5Api/fLvBQ==
+X-Received: by 2002:a17:907:96a0:b0:ac3:d19b:e07f with SMTP id a640c23a62f3a-acad36a5b3fmr709244266b.41.1744489376145;
+        Sat, 12 Apr 2025 13:22:56 -0700 (PDT)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com. [209.85.218.52])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1bb359dsm649239866b.10.2025.04.12.13.22.55
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Apr 2025 13:22:55 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso633676866b.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 13:22:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVu+yrJ2XVT7yaqsBIf3vtwW/xkFn6/HNCWjBYytt8Mzzb32s3V+JgHBS8KvRL9sb/k+PHqlDD+OVyKzNUw@vger.kernel.org
+X-Received: by 2002:a17:907:f1e0:b0:aca:e220:8ebc with SMTP id
+ a640c23a62f3a-acae22090efmr370708266b.25.1744489375035; Sat, 12 Apr 2025
+ 13:22:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Chenyuan Yang <chenyuan0y@gmail.com>
-Date: Sat, 12 Apr 2025 14:07:39 -0500
-X-Gm-Features: ATxdqUEU84qA93WFjYZD-conKUCSsApMtwG5XxM0OfTP-Hfdm9RGr15WA6pQlZ0
-Message-ID: <CALGdzuomL+AACikTfBYBU4nCMXGU-eRvSYwdY-b_6n0mUekBOg@mail.gmail.com>
-Subject: Question Regarding Optional ->prepare_read Callback in NETFS
-To: dhowells@redhat.com, pc@manguebit.com
-Cc: netfs@lists.linux.dev, linux-fsdevel@vger.kernel.org
+References: <CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com>
+ <20241031-klaglos-geldmangel-c0e7775d42a7@brauner> <CAHk-=wjwNkQXLvAM_CKn2YwrCk8m4ScuuhDv2Jzr7YPmB8BOEA@mail.gmail.com>
+ <CAHk-=wiKyMzE26G7KMa_D1KXa6hCPu5+3ZEPUN0zB613kc5g4Q@mail.gmail.com>
+ <CAHk-=wiB6vJNexDzBhc3xEwPTJ8oYURvcRLsRKDNNDeFTSTORg@mail.gmail.com>
+ <CAHk-=whSzc75TLLPWskV0xuaHR4tpWBr=LduqhcCFr4kCmme_w@mail.gmail.com>
+ <a7gys7zvegqwj2box4cs56bvvgb5ft3o3kn4e7iz43hojd4c6g@d3hihtreqdoy>
+ <CAHk-=wgEvF3_+sa5BOuYG2J_hXv72iOiQ8kpmSzCpegUhqg4Zg@mail.gmail.com> <CAGudoHGxr5gYb0JqPqF_J0MoSAb_qqoF4gaJMEdOhp51yobbLw@mail.gmail.com>
+In-Reply-To: <CAGudoHGxr5gYb0JqPqF_J0MoSAb_qqoF4gaJMEdOhp51yobbLw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 12 Apr 2025 13:22:38 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh+pk72FM+a7PoW2s46aU9OQZrY-oApMZSUH0Urg9bsMA@mail.gmail.com>
+X-Gm-Features: ATxdqUFGJ-r2ok5MOh_Re055tlx2zhUC_4ZHvO5jGJV_FifGa7Yruu_r-HNtF4w
+Message-ID: <CAHk-=wh+pk72FM+a7PoW2s46aU9OQZrY-oApMZSUH0Urg9bsMA@mail.gmail.com>
+Subject: Re: generic_permission() optimization
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, 
+	Ext4 Developers List <linux-ext4@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 
-Dear NETFS Developers,
+On Sat, 12 Apr 2025 at 09:26, Mateusz Guzik <mjguzik@gmail.com> wrote:
+>
+> I plopped your snippet towards the end of __ext4_iget:
 
-I am writing to clarify whether the ->prepare_read callback can be
-NULL for a backing filesystem that does not supply it. In particular,
-should we assume that the pointer may be NULL and thus require an
-explicit check before invoking it?
+That's literally where I did the same thing, except I put it right after the
 
-For context, commit 904abff4b1b9 ("netfs: Fix read-retry for fs with
-no ->prepare_read()") introduced a similar check in the read-retry
-path. I am proposing that we apply the same consideration to the code
-in netfs_single_cache_prepare_read. Here is the relevant patch snippet
-for reference:
+          brelse(iloc.bh);
 
- fs/netfs/read_single.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+line, rather than before as you did.
 
-diff --git a/fs/netfs/read_single.c b/fs/netfs/read_single.c
-index fea0ecdecc53..68a5ff1c3d06 100644
---- a/fs/netfs/read_single.c
-+++ b/fs/netfs/read_single.c
-@@ -63,7 +63,7 @@ static void netfs_single_cache_prepare_read(struct
-netfs_io_request *rreq,
- {
-  struct netfs_cache_resources *cres = &rreq->cache_resources;
+And it made no difference for me, but I didn't try to figure out why.
+Maybe some environment differences? Or maybe I just screwed up my
+testing...
 
-- if (!cres->ops) {
-+ if (!cres->ops || !cres->ops->prepare_read) {
-  subreq->source = NETFS_DOWNLOAD_FROM_SERVER;
-  return;
-  }
+As mentioned earlier in the thread, I had this bi-modal distribution
+of results, because if I had a load where the *non*-owner of the inode
+looked up the pathnames, then the ACL information would get filled in
+when the VFS layer would do the lookup, and then once the ACLs were
+cached, everything worked beautifully.
 
-Could you please confirm if this is the intended design, or if any
-adjustments are needed?
+But if the only lookups of a path were done by the owner of the inodes
+(which is typical for at least my normal kernel build tree - nothing
+but my build will look at the files, and they are obviously always
+owned by me) then the ACL caches will never be filled because there
+will never be any real ACL lookups.
 
-Thank you for your time and assistance.
+And then rather than doing the nice efficient "no ACLs anywhere, no
+need to even look", it ends up having to actually do the vfsuid
+comparison for the UID equality check.
 
-Best regards,
-Chenyuan
+Which then does the extra accesses to look up the idmap etc, and is
+visible in the profiles due to that whole dance:
+
+        /* Are we the owner? If so, ACL's don't matter */
+        vfsuid = i_uid_into_vfsuid(idmap, inode);
+        if (likely(vfsuid_eq_kuid(vfsuid, current_fsuid()))) {
+
+even when idmap is 'nop_mnt_idmap' and it is reasonably cheap. Just
+because it ends up calling out to different functions and does extra
+D$ accesses to the inode and the suberblock (ie i_user_ns() is this
+
+        return inode->i_sb->s_user_ns;
+
+so just to *see* that it's nop_mnt_idmap takes effort.
+
+One improvement might be to cache that 'nop_mnt_idmap' thing in the
+inode as a flag.
+
+But it would be even better if the filesystem just initializes the
+inode at inode read time to say "I have no ACL's for this inode" and
+none of this code will even trigger.
+
+                  Linus
 
