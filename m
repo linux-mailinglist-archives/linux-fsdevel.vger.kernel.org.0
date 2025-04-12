@@ -1,175 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-46318-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA05BA86E23
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 18:26:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EF13A86E26
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 18:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9E7D19E3C66
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 16:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C5F317CF20
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 16:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0431FFC67;
-	Sat, 12 Apr 2025 16:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34361FF1B5;
+	Sat, 12 Apr 2025 16:37:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHx8h9Ce"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="abaBpV7J"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4011F8691;
-	Sat, 12 Apr 2025 16:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5985F5BAF0
+	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 16:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744475185; cv=none; b=j8nOFsnOjOqnkvu7k4xdsR5/2Hdkw214vTV2qimqTFD0UlYT9aIznEiMIK1zT7PTBrgKPFD9cgRdqUKaEbRlZUyNenstUwrRQ5XbFzW7jWjY9vcM9WEiOAbgQBcJH2s0E1D38Ggi3MiUL+B31aKBl2e+3uH6Yv/ShO7KwTqGwoQ=
+	t=1744475853; cv=none; b=GYhcQ7en6N8dDZmAlCHoL/AmGw4kP6hrdoOH4AC/K3Gf0olj3O6ENUbPblqQbDxqkp0LcCBkOD5B5KBkfP5T3lfVnYzcRM4fB+D7lXGSAW5IF39HIeOWkn3PcrQdMl3QHeb45E3AepHdSAv+emaJ7ph9jW7aGIFN5xBIjlUe3tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744475185; c=relaxed/simple;
-	bh=TgOepuTRab8lxv8vZ5W6tjHvakxfbUJ6Z3G1oGXFK8U=;
+	s=arc-20240116; t=1744475853; c=relaxed/simple;
+	bh=3nlQeqLpakx9VbjVGGaVN/AwOVYMXPCNfTYZtnneuv0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nfqrRttpkDnyhp+ttdJCNAvmXTrLxi694Y5Yrmp9moYOIVXUMtB0NvGP2nYe90murSw8I5/rdIdmphG57XogYRJC5QQDXXE9A/49Ni2F5ShrEnJqmEq+i9YvBJUDfLDd/hP72C+4lb6rSOL78BmZHxZ5wuUfOvj/fYsmf2GuVdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHx8h9Ce; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e686d39ba2so5406337a12.2;
-        Sat, 12 Apr 2025 09:26:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744475182; x=1745079982; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=szkj8CDkf0ug43a6Nf+d4w7o4nOixURK7uDCQKDdfkA=;
-        b=jHx8h9CegjyNq0fJ/Dasiv6cC3nB4Biz+ZlhocTjLZVhQlz8U9/iQJNhGungEgzq82
-         XJGhMFxjvF4f9IkaVZTnQz5KPId+LK6W8igCTKsr4rM4VAhv1Bay6srnXz5b/u/zLGKj
-         G/qe/P98ZjWrlqImvgeR5cfSyUVmtpHZosNfuw1Pp1DNxlnJVbaNjKXWIEHsSf//a9cS
-         wBZsD7uuE+854mKe2viiJJtslADWuW6uDWKKKWg1ngrkNbCmEstCBxLlCVJ/Pf5Y50u7
-         NSzbEoHtm0JOQyyUmkMji+BB57fsdAjWuW8DjTilnIlxo9AI5XyTrgWZ/+Uz4OnwruNs
-         /qlA==
+	 To:Cc:Content-Type; b=ohUqdSrUmtWi/gZIDyyEDjFBfDvlOL5Mm9DRGkFd1W2D1lF+ZXDgW3xUhoaViKsmjDIDFWJmwTiimyvo4kBKisQA215JJSLFR72yaqkdhdl4sLfWN2MecxTIciEk596rBLHMaK2kQ+aMErILFspw37bYQ4wkOkxQRv7Rc46X0Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=abaBpV7J; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744475850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=a3fiFsru6LnJQq9k1qZHmlYdUChXvApej+AwnAQ3uLE=;
+	b=abaBpV7JPRwVTf2QqGPNcLm1RtEi+ptRoy7trLUtn6jKP0Rrhq6Y2zq5g5hsX+ssvvesfD
+	ItG33TloUqJDTxK8UGjrdwums+O4ElaWp2MCkjBxYZZF1b4qHyNbxewaZE3dXpwNyTSWJr
+	eD46/ZjzlWzQs6abtDOnqoAksiDbmdw=
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com
+ [209.85.214.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-590-o2SM7aUFPI-83D2Gx8vugQ-1; Sat, 12 Apr 2025 12:37:28 -0400
+X-MC-Unique: o2SM7aUFPI-83D2Gx8vugQ-1
+X-Mimecast-MFC-AGG-ID: o2SM7aUFPI-83D2Gx8vugQ_1744475847
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-22650077995so42384285ad.3
+        for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 09:37:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744475182; x=1745079982;
+        d=1e100.net; s=20230601; t=1744475847; x=1745080647;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=szkj8CDkf0ug43a6Nf+d4w7o4nOixURK7uDCQKDdfkA=;
-        b=H/KxRsfvIYinE15QwjORtuAAGGWHU+Sd2NVyjnxdf5LTOB6/29z6k2VNQbHPmxX8AL
-         d+UNzXPlPGRTHWGiefA/9i3tT4rCwaRT/v3dea2bGJILccnLTXTsb42bZOvk52jecKaC
-         NI0x0LoWprb5Y/5ebfbOlGdmxGy5uxsmPuQUu9PcJqjKXNaCmDnUI6AUUQ5Si2CJ2yMH
-         P+1L6koIvjts2hUm2WoSDziOd742vVuKKmZ6RFN0+qN9VQnYZ/ZwK2kVnkl5Xf6zgWjX
-         VpFbrChnNNXsXvo2ufx7iJ9zWa4+yIxv00VykF9oeMB3MMqzPHU97xDlYqlv13iA0Jwd
-         oY8A==
-X-Forwarded-Encrypted: i=1; AJvYcCV55oTaUmWMT9B7hROWdUu+Qu37IFUbRAcOSSOmcbrawxGaOr4ZOd1v6q9h0BzPvNGbVxexAtxQZE0NkdddJw==@vger.kernel.org, AJvYcCViGCcidNCu4p8OBzrPZYZZ9dEH5lVJRT0N8jWEKiDr8jf2kHQg3Jn/gSNnQcsz9cartu5b24zvZaFb@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNBAxn/2PWyolvnAd8Ub/Hu9kClZFKcSkpKTifLVRz0iIV3+Ii
-	wdgsQt6nbHLyDpiMLP3m0Bk910UAsJFKDJYgWMpY1pPLblOP3DJ5gqV1dQBLUdLB8qXa5M/tEVS
-	MXijEjYWTPgZUS9MvEuEmLKIx/RU=
-X-Gm-Gg: ASbGncuxZfQQm6xF0AGnhR9ml5NJsu13nK5pSu6lYKnIMhuVd8P28IhLUqjjlPpG4F4
-	LqwzkPcAak5BZCAYt6fgmf26frIMU1UKeBJQ348Ljvflda6nEb/nvIFlITn/aZE8Eu7vKbMeQy9
-	FaYOrXRdNNXQATBS/Y2wjA
-X-Google-Smtp-Source: AGHT+IHp7OMLw6VbFGxBeYonrEdt5mPvROXjfDcy3Y9ZMwE7aT835X+3Gzyjbt+ICCHpIr6C54iZq2fon49//DxyCgs=
-X-Received: by 2002:a17:906:6a27:b0:ac8:1bb3:35b0 with SMTP id
- a640c23a62f3a-acad34a184dmr555126166b.20.1744475181825; Sat, 12 Apr 2025
- 09:26:21 -0700 (PDT)
+        bh=a3fiFsru6LnJQq9k1qZHmlYdUChXvApej+AwnAQ3uLE=;
+        b=VShIWOSJjY10cbUBSYAr2pgRR+MEc1eNXLACHr6rwedcTCULoTMMjd2t4Q+SJjQeH8
+         TzVGz+EwfP7sTptflqymRV8wSxw9gvER7Rbj0E9cmk3bj9CDC4kJUeqLPv+L2zkTEId9
+         t+xKwFqTh9qF719WgrFLSfbZO+OnobzvylRuXo5QoLbuqDNuhWb5jrnjmuTJbCwLhHYm
+         kEaWHu8mUR+GnHSqX0QJdsnDgFF8C34vsCemlIN3qIav1rbquzq3KbequSGDs9vakP5S
+         cjVAfbSLlOTFASPGBgjYcv6ph1cv/Z/ElhMhO2bjHBQCqBkFkLX3eyRUrR9qSCAK+iZr
+         eEdg==
+X-Forwarded-Encrypted: i=1; AJvYcCX4Du7UAOaeladfJpHNECUWdVPqoGj+pbi5v4IFtS5LhzoBunIiJngesfTMMxAFW/eTvR4iKVxDX4hVJqQ2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBxhNhgAfViNnoQSKM9/Vg0liHS7eKESonw2dtQAYPjSOsX7zt
+	YbZjf4LTlM4HOJ4DX6sWwpFCNzmQ4ZQ+97z95qB/jlSA8SD1fOyRjTtN3x1OUzMBFgupTMinncq
+	unJwdvx23rfQHiEC0AND6ruwNMlynoDuglvFnbkR5eagejN28x+XUYMIRfkbLsr0Le/tc6a+Skr
+	QIAw7HRD8qMXma3lz0u/ZFZfcxNOyhOK8vPMxvQA==
+X-Gm-Gg: ASbGncuIZdWKYT27OBrcQ/Qe8Z5yo4vUxqCZpF6IS1JmmsEP10VX44z9nWudAOKKnr+
+	QUQlJS4zpX2LGV6zTgXAq2wX39EC7w1FEmsvpCZOKi7/GaInkexuh5E8LCZksvJsHC6Y=
+X-Received: by 2002:a17:903:17c5:b0:223:5ca8:5ecb with SMTP id d9443c01a7336-22bea4efaaemr91129655ad.42.1744475846938;
+        Sat, 12 Apr 2025 09:37:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7sLLGDrtrxmDABKermY+/WFSctIXR5dmHRBwVPDD2cHAaEfr8X4dND2BPeABs3RlvZSRMNQ6ofK7p0cF8CSo=
+X-Received: by 2002:a17:903:17c5:b0:223:5ca8:5ecb with SMTP id
+ d9443c01a7336-22bea4efaaemr91129475ad.42.1744475846684; Sat, 12 Apr 2025
+ 09:37:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com>
- <20241031-klaglos-geldmangel-c0e7775d42a7@brauner> <CAHk-=wjwNkQXLvAM_CKn2YwrCk8m4ScuuhDv2Jzr7YPmB8BOEA@mail.gmail.com>
- <CAHk-=wiKyMzE26G7KMa_D1KXa6hCPu5+3ZEPUN0zB613kc5g4Q@mail.gmail.com>
- <CAHk-=wiB6vJNexDzBhc3xEwPTJ8oYURvcRLsRKDNNDeFTSTORg@mail.gmail.com>
- <CAHk-=whSzc75TLLPWskV0xuaHR4tpWBr=LduqhcCFr4kCmme_w@mail.gmail.com>
- <a7gys7zvegqwj2box4cs56bvvgb5ft3o3kn4e7iz43hojd4c6g@d3hihtreqdoy> <CAHk-=wgEvF3_+sa5BOuYG2J_hXv72iOiQ8kpmSzCpegUhqg4Zg@mail.gmail.com>
-In-Reply-To: <CAHk-=wgEvF3_+sa5BOuYG2J_hXv72iOiQ8kpmSzCpegUhqg4Zg@mail.gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Sat, 12 Apr 2025 18:26:09 +0200
-X-Gm-Features: ATxdqUH8rE9aqiS888HvXSF1A7JDSnPNjYFrY_Qx5nI-OCGKG1BW9PA6KLrusEQ
-Message-ID: <CAGudoHGxr5gYb0JqPqF_J0MoSAb_qqoF4gaJMEdOhp51yobbLw@mail.gmail.com>
-Subject: Re: generic_permission() optimization
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Jan Kara <jack@suse.cz>, 
-	Ext4 Developers List <linux-ext4@vger.kernel.org>
+References: <20250411173848.3755912-1-agruenba@redhat.com> <c9014d1e-c569-4a7a-aa68-d7c32e51d436@I-love.SAKURA.ne.jp>
+In-Reply-To: <c9014d1e-c569-4a7a-aa68-d7c32e51d436@I-love.SAKURA.ne.jp>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Sat, 12 Apr 2025 18:37:15 +0200
+X-Gm-Features: ATxdqUEc6bK4RDS8nTPgD4dEmZc4tgzp1L5AosoT3RAQjOcAirWwydpqqoRpyIw
+Message-ID: <CAHc6FU7XDXCE--4vtH+q94NBZK-ScYSLTmeY4+J9T9YH7BtR9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] Fix false warning in inode_to_wb
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: cgroups@vger.kernel.org, Jan Kara <jack@suse.cz>, 
+	Rafael Aquini <aquini@redhat.com>, gfs2@lists.linux.dev, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 7, 2024 at 11:49=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+On Sat, Apr 12, 2025 at 4:21=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+> Please add
 >
-> On Thu, 7 Nov 2024 at 12:22, Mateusz Guzik <mjguzik@gmail.com> wrote:
-> >
-> > How about filesystems maintaing a flag: IOP_EVERYONECANTRAREVERSE?
+>   Reported-by: syzbot+e14d6cd6ec241f507ba7@syzkaller.appspotmail.com
+>   Closes: https://syzkaller.appspot.com/bug?extid=3De14d6cd6ec241f507ba7
 >
-> It's actually just easier if a filesystem just does
+> to both patches.
+
+I'm quite reluctant to acknowledge syzbot for this. The bug has been
+reported several times by several people, long before syzbot.
+
+> Also,
 >
->         cache_no_acl(inode);
+>   -static inline struct bdi_writeback *inode_to_wb(const struct inode *in=
+ode)
+>   +static inline struct bdi_writeback *inode_to_wb(struct inode *inode)
 >
-> in its read-inode function if it knows it has no ACL's.
->
-> Some filesystems already do that, eg btrfs has
->
->         /*
->          * try to precache a NULL acl entry for files that don't have
->          * any xattrs or acls
->          */
->         ....
->         if (!maybe_acls)
->                 cache_no_acl(inode);
->
-> in btrfs_read_locked_inode(). If that 'maybe' is just reliable enough,
-> that's all it takes.
->
-> I tried to do the same thing for ext4, and failed miserably, but
-> that's probably because my logic for "maybe_acls" was broken since I'm
-> not familiar enough with ext4 at that level, and I made it do just
->
->         /* Initialize the "no ACL's" state for the simple cases */
->         if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) && !ei->i_fil=
-e_acl)
->                 cache_no_acl(inode);
->
-> which doesn't seem to be a strong enough text.
->
+> change is not needed.
 
-[ roping in ext4 people ]
+Ah, not anymore, indeed.
 
-I plopped your snippet towards the end of __ext4_iget:
+Thanks,
+Andreas
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 4008551bbb2d..34189d85e363 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5071,7 +5071,12 @@ struct inode *__ext4_iget(struct super_block
-*sb, unsigned long ino,
-                goto bad_inode;
-        }
-
-+       /* Initialize the "no ACL's" state for the simple cases */
-+       if (!ext4_test_inode_state(inode, EXT4_STATE_XATTR) && !ei->i_file_=
-acl)
-+               cache_no_acl(inode);
-+
-        brelse(iloc.bh);
-
-bpftrace over a kernel build shows almost everything is sorted out:
- bpftrace -e 'kprobe:security_inode_permission { @[((struct inode
-*)arg0)->i_acl] =3D count(); }'
-
-@[0xffffffffffffffff]: 23810
-@[0x0]: 65984202
-
-That's just shy of 66 mln calls where the acls were explicitly set to
-empty, compared to less than 24k where it was the default "uncached"
-state.
-
-So indeed *something* is missed, but the patch does cover almost everything=
-.
-
-Perhaps the ext4 guys would chime in and see it through? :)
-
-The context is speeding path lookup by avoiding some of the branches
-during permission checking.
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
