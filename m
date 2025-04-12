@@ -1,291 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-46314-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46315-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21666A86B4E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 08:32:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E1B5A86CB8
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 13:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41CE41893B78
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 06:31:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE6D8C2251
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 12 Apr 2025 11:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8D615CD46;
-	Sat, 12 Apr 2025 06:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1E21D9A5F;
+	Sat, 12 Apr 2025 11:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZjtZk5Ln"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058758828
-	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 06:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223D32B9BF;
+	Sat, 12 Apr 2025 11:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744439485; cv=none; b=Xfc2Eql75YgTCybp2uv3MvjYftYWjrRqpkfEjOjXIxnrhkj78ZlRRieOmes0f3AUB9w/yUT/yr/F8b+O+ApcqDS0/MDSqPUT1J7Nk/WkKAh4QCCdJ/Rd7f/brXqDHZxa/W1cGbu1y4QCQNZ43ipa+pxihWmTJgMFW973OelVxjg=
+	t=1744456187; cv=none; b=pIkflx/Yx4v+2vVoRjNhmN1IKVomiruRsw4Wms3QqQ17BwQe4hQy9aOXYSq/UzUtPzY++SlG6cYUukMm2c7IGO1hiO1H/p2CxNFscmQG9Ow7k7GfUduMiQ8RsMI+KKW8WUZrlu/zfbGhwZzby1Bdixsg1RyHlNvKUC/HmFqSVfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744439485; c=relaxed/simple;
-	bh=qhX5DdPH0WRD9vP4dPH8EmvuQuLA30Ic7tG/p9i0G5E=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Idqav7T6lOwuEUrgq4SP888jMVf0LYONLc5q/1BEjRlohIh+E/etBr7ZvBNjvRS6TH7UgodjMJeAzMNVpJKFBl2A7KnZa8B7cK/A4buizSEJyGkPoRzwxuqhhZ16S4UsYPNdOwbC4CRl8EVhB+cLoiAWGcdmY9ffE/VtlWJhZeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 86BD9100D3A
-	for <linux-fsdevel@vger.kernel.org>; Sat, 12 Apr 2025 16:31:19 +1000 (AEST)
-X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
-Received: from smtp01.aussiebb.com.au ([127.0.0.1])
-	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id OkcC5h6UCxTT for <linux-fsdevel@vger.kernel.org>;
-	Sat, 12 Apr 2025 16:31:19 +1000 (AEST)
-Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
-	id 728C6100E3C; Sat, 12 Apr 2025 16:31:19 +1000 (AEST)
-X-Spam-Level: 
-Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: ian146@aussiebb.com.au)
-	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id 6126C1008EA;
-	Sat, 12 Apr 2025 16:31:17 +1000 (AEST)
-Message-ID: <3060fc74-a8ed-4b98-a2fe-ff29cf057a35@themaw.net>
-Date: Sat, 12 Apr 2025 14:31:16 +0800
+	s=arc-20240116; t=1744456187; c=relaxed/simple;
+	bh=rWUN8Z1mCOTMaKbl6yIJVQWE6ZQaqOIt7ChjcxohXEc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=toDtE016sQ8pNHmfpxgIqeOj+anzwtd9I5st89BVKtpLHcw84k6ZsSthmv9+fvK1NHKRnL2re1TZW8HpAdlyEN7SYGa76I2UTD7NpBKxAoelO1qKw3Xu2YYAiuCtsl1B+5SiA6s7hbUD7tm8rFWNZFhq//648EG+DXyJIIXz3oY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZjtZk5Ln; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-39c30d9085aso1662590f8f.1;
+        Sat, 12 Apr 2025 04:09:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744456184; x=1745060984; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BfzidggO6FjeXS6iUbqAF7FeSHPmBoKvbbkf/LSnXH8=;
+        b=ZjtZk5LnQ6dLipQrds2KoyM/2yt8rBrkOyzjTyBY2M3GKvLhE3tMFP5Eoz0pKElWDU
+         ZGrjPq1RZ6dsLwyBJghUm3rD2UTcQgmNn/mcYqvse3vAm0XRXGKvkBilFzCzHz5CHkXu
+         ooUAkW9nmnA+m287tWvtTu9chwaC/J99lVfOsSSP7CsRO+Dh0L9Ul1mccYLKGP83hNBW
+         qJGXcmqNM/PL5nTXLxSVTHaQGNraBZjwgWgwUY23Em2fn8EU8YXLgTG9wYbFUVF4+c4y
+         pXal1bf2FjUUGoE68a/NrDDCQ/X/we00LNM3FrIVRGwkkdg/x6I0U45yNhpNEX6bm42h
+         f37A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744456184; x=1745060984;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BfzidggO6FjeXS6iUbqAF7FeSHPmBoKvbbkf/LSnXH8=;
+        b=ufEbL6CTBZCJKEy3x7AaQzwhsn3kycpuNINbCMhJ/yvA+W/XnhRN4c3qqBc7cVJ75P
+         jyYOCXoAG3C0QanJCK3yd8W28Qk8N1/B/JRbNQkQieZHoNx4/+18Du52VyQs8i0Jbj+H
+         2RiDZ2UZxwDEJThFMeqftZIlpeV5ca0LNbHl+LRkr4rObHSY+tGwaY+cmhtp/E7JULya
+         +sjA0N6aHR5SuxiS0W9mnRezXz55mUa9Bg6Hi3i6rqpmkryJG2Ko+r5dCW5HUojob9DL
+         ZRbuwF75Aj/6O8Q4vQvA6d6QDFnyxXoAra04H7Feam7o72zByHRiyfr1l+EfcE7/42WB
+         vJuw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxx12TR8Rpgb0cwrr3AnVOLJ7wp1K5bG/6bFKGVxPjKW//Zp5xrLrlDN/1SX+q4LxIZqnLL5rU1NvDaAnb@vger.kernel.org, AJvYcCWhAgSogvbpgGncL+wSwCpnOheEbpmpBiKziYc+diYSl+IWyM8yDkHC3gjqYngSE7X09M68IqDM9i4sYMV7@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjOTwPK7CB+0Nwd1zLDiB8SlijmsbCa8wv6MRDckdt5xLF86sK
+	F0dGERMBkVPG2WQCnbaDC7ofmQbcULSkUlQHe9wO9RRpyEZai7yP
+X-Gm-Gg: ASbGncvaaoQgzhnCBxq0FWRYxRRbDm8d51qD6b2+P3fBgY75K0E0AEB53EBn6Vm2VVR
+	9v891/+5JQZas2er1l/Y3CMKC0sFescX9RQh0ykkyUCdNrHTL0YYlDzj4JhBIVvas/WyQ6VkeEu
+	b15MmROTXpbyD/3HrQPl+f8arr1HHBqomGAvt+2MJ3+FCybcnFfMZeS+GGQLlG292J7L7ciVuW4
+	nHVhmOMdmqXkhLSZL1kc1FDojxJJE41IBeS3SyS1Vqv63+n0e2WPFychnGWvPbczFq0SbUsfZOo
+	RR79OsGTebWyDbOKdLJgtbzKhriDIF+qsGB5QG0xfXkmL/dyjrk1ZGBd
+X-Google-Smtp-Source: AGHT+IHzzBIrGdFrekn7hA9hmhYH+A3II1dtwo24jWsVLSLa1RdXcGYElBEIOmB08tXnbioaF6bSvQ==
+X-Received: by 2002:a5d:59ae:0:b0:391:2f15:c1f4 with SMTP id ffacd0b85a97d-39eaaecbe1fmr4718324f8f.55.1744456184042;
+        Sat, 12 Apr 2025 04:09:44 -0700 (PDT)
+Received: from f.. (cst-prg-90-20.cust.vodafone.cz. [46.135.90.20])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f207aeaccsm113509275e9.33.2025.04.12.04.09.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Apr 2025 04:09:43 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] fs: improve codegen in link_path_walk()
+Date: Sat, 12 Apr 2025 13:09:35 +0200
+Message-ID: <20250412110935.2267703-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: bad things when too many negative dentries in a directory
-From: Ian Kent <raven@themaw.net>
-To: Christian Brauner <brauner@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
- Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-References: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
- <20250411-rennen-bleichen-894e4b8d86ac@brauner>
- <3be4c502-8246-436e-a7cf-3eb4be6ff7d4@themaw.net>
-Content-Language: en-US
-Autocrypt: addr=raven@themaw.net; keydata=
- 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
-In-Reply-To: <3be4c502-8246-436e-a7cf-3eb4be6ff7d4@themaw.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Looking at the asm produced by gcc 13.3 for x86-64:
+1. may_lookup() usage was not optimized for succeeding, despite the
+   routine being inlined and rightfully starting with likely(!err)
+2. the compiler assumed the path will have an indefinite amount of
+   slashes to skip, after which the result will be an empty name
 
-On 12/4/25 09:48, Ian Kent wrote:
->
-> On 11/4/25 22:47, Christian Brauner wrote:
->> On Fri, Apr 11, 2025 at 11:40:28AM +0200, Miklos Szeredi wrote:
->>> There are reports of soflockups in fsnotify if there are large numbers
->>> of negative dentries (e.g. ~300M) in a directory.   This can happen if
->>> lots of temp files are created and removed and there's not enough
->>> memory pressure to trigger the lru shrinker.
->>>
->>> These are on old kernels and some of this is possibly due to missing
->>> 172e422ffea2 ("fsnotify: clear PARENT_WATCHED flags lazily"), but I
->>> managed to reproduce the softlockup on a recent kernel in
->>> fsnotify_set_children_dentry_flags() (see end of mail).
->>>
->>> This was with ~1.2G negative dentries.  Doing "rmdir testdir"
->>> afterwards does not trigger the softlockup detector, due to the
->>> reschedules in shrink_dcache_parent() code, but it took 10 minutes(!)
->>> to finish removing that empty directory.
->>>
->>> So I wonder, do we really want negative dentries on ->d_children?
->>> Except for shrink_dcache_parent() I don't see any uses.  And it's also
->>> a question whether shrinking negative dentries is useful or not.  If
->>> they've been around for so long that hundreds of millions of them
->>> could accumulate and that memory wasn't needed by anybody, then it
->>> shouldn't make a big difference if they kept hanging around. On
->>> umount, at the latest, the lru list can be used to kill everything,
->>> AFAICT.
->>>
->>> I'm curious if this is the right path?  Any better ideas?
->> Note that we have a new sysctl:
->>
->> /proc/sys/fs/dentry-negative
->>
->> that can be used to control the negative dentry policy because any
->> generic change that we tried to make has always resulted in unacceptable
->> regressions for someone's workload. Currently we only allow it to be set
->> to 1 (default 0). If set to 1 it will not create negative dentries
->> during unlink. If that's sufficient than recommend this to users that
->> suffer from this problem if not consider adding another sensitive
->> policy.
->
-> Interesting, I wasn't sure how the negative dentries were accumulating 
-> but
->
-> I didn't actually look at the unlink code (I'll take a look). I 
-> thought the
->
-> most likely cause was laziness not unlinking temporary files (the file 
-> names
->
-> in question "looked" like temporary file names).
->
->
-> When I do look at unlink I suspect I'll find the VFS is justified in 
-> caching
->
-> these and the responsibility (or should) lies with the file system 
-> call back
->
-> to unhash the dentry if it doesn't want this caching ... but the file 
-> system
->
-> always doing this is not ideal either ... maybe we need a hint so that 
-> the
->
-> relevant file system callbacks can make this decision for themselves.
+As such:
+1. predict may_lookup() succeeding
+2. check for one slash, no explicit predicts. do roll forward with
+   skipping more slashes while predicting there is only one
+3. predict the path to find was not a mere slash
 
-But I didn't find this to be the case at all.
+This also has a side effect of shrinking the file:
+add/remove: 1/1 grow/shrink: 0/3 up/down: 934/-1012 (-78)
+Function                                     old     new   delta
+link_path_walk                                 -     934    +934
+path_parentat                                138     112     -26
+path_openat                                 4864    4823     -41
+path_lookupat                                418     374     -44
+link_path_walk.part.constprop                901       -    -901
+Total: Before=46639, After=46561, chg -0.17%
 
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
 
-Assuming the customer application is behaving sensibly and calling unlink()
+I'm looking at skipping perm checks with an "everybody can MAY_EXEC and
+there are no acls" bit for opflags. This crapper is a side effect of
+straighetning out the code before I get there.
 
-on the files are no longer needed (for temporary files that should be 
-the case)
+ fs/namei.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-then unhasing the dentry before final dput() will indeed result in the 
-dentry
+diff --git a/fs/namei.c b/fs/namei.c
+index 360a86ca1f02..40a636bbfa0c 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2424,9 +2424,12 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ 	nd->flags |= LOOKUP_PARENT;
+ 	if (IS_ERR(name))
+ 		return PTR_ERR(name);
+-	while (*name=='/')
+-		name++;
+-	if (!*name) {
++	if (*name == '/') {
++		do {
++			name++;
++		} while (unlikely(*name == '/'));
++	}
++	if (unlikely(!*name)) {
+ 		nd->dir_mode = 0; // short-circuit the 'hardening' idiocy
+ 		return 0;
+ 	}
+@@ -2439,7 +2442,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ 
+ 		idmap = mnt_idmap(nd->path.mnt);
+ 		err = may_lookup(idmap, nd);
+-		if (err)
++		if (unlikely(err))
+ 			return err;
+ 
+ 		nd->last.name = name;
+-- 
+2.43.0
 
-being discarded.
-
-
-It looks like all we need is e6957c99dca5f ("vfs: Add a sysctl for automated
-
-deletion of dentry") and that looks like it will apply cleanly to the 
-kernel we
-
-are concerned with.
-
-
-It will be interesting to test this to see if the application is 
-actually behaving.
-
-
->
->
-> Ian
->
->>
->>> Thanks,
->>> Miklos
->>>
->>>
->>> [96789.366007] watchdog: BUG: soft lockup - CPU#79 stuck for 26s!
->>> [fanotify4:52805]
->>> [96789.373396] Modules linked in: rfkill mlx5_ib ib_uverbs macsec
->>> ib_core vfat fat mlx5_core acpi_ipmi ast ipmi_ssif arm_spe_pmu igb
->>> mlxfw psample i2c_algo_bit tls pci_hyperv_intf ipmi_devintf
->>> ipmi_msghandler arm_cmn arm_dmc620_pmu arm_dsu_pmu cppc_cpufreq loop
->>> fuse nfnetlink xfs nvme crct10dif_ce ghash_ce sha2_ce sha256_arm64
->>> nvme_core sha1_ce sbsa_gwdt nvme_auth i2c_designware_platform
->>> i2c_designware_core xgene_hwmon dm_mirror dm_region_hash dm_log dm_mod
->>> [96789.413624] CPU: 79 UID: 0 PID: 52805 Comm: fanotify4 Kdump: loaded
->>> Not tainted 6.12.0-55.9.1.el10_0.aarch64 #1
->>> [96789.423698] Hardware name: GIGABYTE R272-P30-JG/MP32-AR0-JG, BIOS
->>> F31n (SCP: 2.10.20220810) 09/30/2022
->>> [96789.432990] pstate: a0400009 (NzCv daif +PAN -UAO -TCO -DIT -SSBS 
->>> BTYPE=--)
->>> [96789.439939] pc : fsnotify_set_children_dentry_flags+0x80/0xf0
->>> [96789.445675] lr : fsnotify_set_children_dentry_flags+0xa4/0xf0
->>> [96789.451408] sp : ffff8000cc77b8c0
->>> [96789.454710] x29: ffff8000cc77b8c0 x28: 0000000000000001 x27: 
->>> 0000000000000000
->>> [96789.461833] x26: ffff07ff8463dc50 x25: ffff080e6e44dc50 x24: 
->>> 0000000000000001
->>> [96789.468956] x23: ffff07ff9d94eec0 x22: ffff07fff2cf01b8 x21: 
->>> ffff07ff9d94ee40
->>> [96789.476079] x20: ffff0800eb6dff40 x19: ffff0800eb6df2c0 x18: 
->>> 0000000000000014
->>> [96789.483202] x17: 00000000cec6e315 x16: 00000000ed365140 x15: 
->>> 00000000ae8684a4
->>> [96789.490325] x14: 000000000d831309 x13: 00000000387d7ee0 x12: 
->>> 0000000000000000
->>> [96789.497448] x11: 0000000000000001 x10: 0000000000000001 x9 : 
->>> ffffc3bacc1864bc
->>> [96789.504570] x8 : 000000001007ffff x7 : ffffc3bace89a4c0 x6 : 
->>> 0000000000000001
->>> [96789.511694] x5 : 0000000008000020 x4 : 0000000000000000 x3 : 
->>> 0000000000000003
->>> [96789.518816] x2 : 0000000000000001 x1 : 0000000000000000 x0 : 
->>> ffff0800eb6df358
->>> [96789.525939] Call trace:
->>> [96789.528373]  fsnotify_set_children_dentry_flags+0x80/0xf0
->>> [96789.533759]  fsnotify_recalc_mask.part.0+0x94/0xc8
->>> [96789.538538]  fsnotify_recalc_mask+0x1c/0x40
->>> [96789.542709]  fanotify_add_mark+0x15c/0x360
->>> [96789.546794]  do_fanotify_mark+0x3c0/0x7a0
->>> [96789.550791]  __arm64_sys_fanotify_mark+0x30/0x60
->>> [96789.555396]  invoke_syscall.constprop.0+0x74/0xd0
->>> [96789.560090]  do_el0_svc+0xb0/0xe8
->>> [96789.563393]  el0_svc+0x44/0x1d0
->>> [96789.566525]  el0t_64_sync_handler+0x120/0x130
->>> [96789.570870]  el0t_64_sync+0x1a4/0x1a8
->>> [151513.714945] INFO: task (ostnamed):77658 blocked for more than 
->>> 122 seconds.
->>> [151513.721903]       Tainted: G             L    -------  ---
->>> 6.12.0-55.9.1.el10_0.aarch64 #1
->>> [151513.730334] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs"
->>> disables this message.
->>> [151513.738241] task:(ostnamed)      state:D stack:0 pid:77658
->>> tgid:77658 ppid:1      flags:0x00000205
->>> [151513.747625] Call trace:
->>> [151513.750146]  __switch_to+0xec/0x148
->>> [151513.753712]  __schedule+0x234/0x738
->>> [151513.757278]  schedule+0x3c/0xe0
->>> [151513.760493]  schedule_preempt_disabled+0x2c/0x58
->>> [151513.765188]  rwsem_down_write_slowpath+0x1e4/0x720
->>> [151513.770054]  down_write+0xac/0xc0
->>> [151513.773444]  do_lock_mount+0x3c/0x220
->>> [151513.777185]  path_mount+0x378/0x810
->>> [151513.780748]  __arm64_sys_mount+0x158/0x2d8
->>> [151513.784921]  invoke_syscall.constprop.0+0x74/0xd0
->>> [151513.789702]  do_el0_svc+0xb0/0xe8
->>> [151513.793093]  el0_svc+0x44/0x1d0
->>> [151513.796312]  el0t_64_sync_handler+0x120/0x130
->>> [151513.800744]  el0t_64_sync+0x1a4/0x1a8
->
 
