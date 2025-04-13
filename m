@@ -1,235 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-46331-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B106A870D1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Apr 2025 07:18:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7713EA87164
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Apr 2025 11:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70AAE189CFF0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Apr 2025 05:18:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E93D16E9D0
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Apr 2025 09:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F0D8142E86;
-	Sun, 13 Apr 2025 05:18:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4653119D897;
+	Sun, 13 Apr 2025 09:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HB0Khink"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I9g3t6b/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EDC2F32
-	for <linux-fsdevel@vger.kernel.org>; Sun, 13 Apr 2025 05:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DF817B505;
+	Sun, 13 Apr 2025 09:42:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744521517; cv=none; b=dRYTAXqJ1X+wSqwRJRzlJU5OXLdwDS69G2m7Vn9cDL/FOqV3JTtdbcgc4cgIpRREnCNzl8DxXOiMZIKaVgtDU5MdWkeJYBn/of2opCKL9FjPjMFL1ENxIdhWckoa9beb0rcVTyam131b8oHuPtOYfkDzEnGNDP2Qs3Jg+uxx7VY=
+	t=1744537323; cv=none; b=t4Kt1KeVfhS5Qqw2lZ4/k5RJT7Qxe6wDwKKI1mgjWZDCxw/jWQZBGGhGpQONcCsz/gtnJLb+ZdnL8UZkKv9seQb91ewH/TwZXohhbPjkUXSQRpnEMyhDELbdH45bLS0VUaajUBLDI4oEHzt0eVp8SNHx4gBDQmeGFx8gBout3SQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744521517; c=relaxed/simple;
-	bh=ul0F+G0MZGXrh7V14/BS5xOsB5oE2rB7sZxEisfdO24=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=DTG4McZWhkX2vgU0cJ/DJKCocFQw2pbmke8T9vf/2Cg9r5QQM1Hy+6WVh1sgsk/vCAJMF25K3OojJloeFdhhYobvzby4RpBbvDihaOxXaGO2jvcYbSwnHDcToQNMJFrPZDx22EjaJ9P1Xzywg7PUZdMUSHejMVAxeXZ12WikeT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HB0Khink; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250413051826epoutp024fb7cdbf48e1d1d07f29aba4ea36939d~1yREsucUg2223122231epoutp02A
-	for <linux-fsdevel@vger.kernel.org>; Sun, 13 Apr 2025 05:18:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250413051826epoutp024fb7cdbf48e1d1d07f29aba4ea36939d~1yREsucUg2223122231epoutp02A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1744521506;
-	bh=jxxyLxSTLaDN/k8Gf2lku75F96gcuhKq04/TioKq650=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=HB0KhinkTNCynzeESUps/MWFFqJnhQqYh489a8KvJCsW5CwDn273Mom+FFzZ9WTD0
-	 /Rqnp7crHVDqSqNWQ+JI9drZIEKb2nc2RD5xTjfcz/dFs01WT1S9jYdIt7fb51kM21
-	 mQETxPn00w0gAbu+93HavdqvZuKiJFv9CPuSJplo=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPS id
-	20250413051825epcas1p4d6986037deefe4d4966020b3cd403cda~1yRELD4iG3093630936epcas1p4H;
-	Sun, 13 Apr 2025 05:18:25 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.240]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4ZZzGT2K0sz6B9m5; Sun, 13 Apr
-	2025 05:18:25 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-	27.88.10202.1294BF76; Sun, 13 Apr 2025 14:18:25 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250413051824epcas1p12aa5311d9439ba791f71cd602e11d1ca~1yRDcatw_2872628726epcas1p1s;
-	Sun, 13 Apr 2025 05:18:24 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250413051824epsmtrp1b71e365030b816c2bdd47ca72104cd16~1yRDbzfBp2024220242epsmtrp1z;
-	Sun, 13 Apr 2025 05:18:24 +0000 (GMT)
-X-AuditID: b6c32a37-f5feb700000027da-1d-67fb49218969
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	7A.FD.07818.0294BF76; Sun, 13 Apr 2025 14:18:24 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20250413051824epsmtip135ff1bd3acd1c4867bfd3386648d242b~1yRDORB9q3086930869epsmtip1S;
-	Sun, 13 Apr 2025 05:18:24 +0000 (GMT)
-From: "Sungjong Seo" <sj1557.seo@samsung.com>
-To: <Yuezhang.Mo@sony.com>, <linkinjeon@kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>, <sj1557.seo@samsung.com>,
-	<sjdev.seo@gmail.com>, <cpgs@samsung.com>
-In-Reply-To: <PUZPR04MB63168406D20B7CF3B287812281B72@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Subject: RE: [PATCH v1] exfat: do not clear volume dirty flag during sync
-Date: Sun, 13 Apr 2025 14:18:24 +0900
-Message-ID: <12bf001dbac33$7b378fb0$71a6af10$@samsung.com>
+	s=arc-20240116; t=1744537323; c=relaxed/simple;
+	bh=/e42NX17m2wurRo49aRPFCahZ9/j7RSM/fqwrkndzEU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T8fpKf17P8iexQylZXKyzy04eHdOflZ/taPqm8LvkvKAq/Qfk1M0l9zvzv1rssHd2pimPOlNY2QjNJ62jIzJ35Q6e61hsS7ktRjNX03sJqmruDHti8SqSlmdnEHV2Y1C1ivKCUJ6f7XGjQln3amz+UCAUVJmuBq5YupLDC0KI1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I9g3t6b/; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ac2bb7ca40bso643001766b.3;
+        Sun, 13 Apr 2025 02:42:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744537320; x=1745142120; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iXPdrjG0TFEMntEgUB7ySxBNxp4joMOMo46usv9N8tk=;
+        b=I9g3t6b/Xzy+h0ct9jZ4G8O0ayEOUqrHJUooVCazSTQIzNDxAES33C9lIMO+fJY4rU
+         xvv7Ia/GmoG3XhfJJLinvotF6byVTwLt7rWFKdwlq47FUPFBscKBGDURXn3tUZuG05vL
+         KXD3GfPwi/2E7m6CmlL7Yw3+WFjfAyYyTx4LYQbyA0OmBjz5R1SB4DwFxkOwIScVGvG2
+         gELyMUoYqKb6lyrDlIrU7zAR7tQ2boskaHzfdNr/67KXji1VPx5Jm7DOGCCLOvR9+AXH
+         CkjnbPzx+6hWblcUASbJMO66LclmhKZIWJCwSZbzJ9EmE0NDla+ZFhhbQ95KiN5ulj7L
+         QSFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744537320; x=1745142120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iXPdrjG0TFEMntEgUB7ySxBNxp4joMOMo46usv9N8tk=;
+        b=CK3W9iqlAiqntNi4HJ4QhLPxNwzQdlzgM4ZQlocdo7/e+0/s39FwhHGfqrZLCqcFnK
+         HZ7XXaB98qGb9Wx47ZBeP8woP+IQoMsicSPTExCancN5wMokklmUXvEZd8Ctbm/2EK7Q
+         U3551kay8E2D/okmTJ+f5y+nasYH9cWwx7SJ6ygq17OYFumHfoZLBK91f8dOWjImHIqS
+         z0+a8GN05N+c/7ZjC/FtODzSdTjPDONMu/0dvA58SgstHjB9Z4AC+uBqjkqX3ZYL6FqH
+         sUy48LIlhCuEaYex7wyk93imyo2SlDg5LjmU/jXSgvLn+Q+0YSu8Ojz2WMSIAscm536y
+         mHCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUHQbBmyyM/qVRwIeqz1AO91I5fT5LOSpnPBulGHKq9sfF3UT+BgZo1wdbf9dI4AYiUnvDnHdSVJ5OB36Vb8g==@vger.kernel.org, AJvYcCWmAMv7TuJlvMZnCHVS5luYt6HAiPLSILrFVY4c3g4NJvZ3+p0kXSOswUyVYF/Q6RVlrD38zZfV4kMd@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMC6XD53Moo03iPw53RERThxv5oC4Gh8EbPGGpYWZP/Pv2fdSQ
+	zbMKbU2AIClXmB1eawG19bib9qDhH20Dflc2GOdAdOk1NwPDGHfaRvij8Ro8/vkmzWdHJNIJ02L
+	vqrEA2btWKJbwanmdShGZWM6QJ+4=
+X-Gm-Gg: ASbGnct4oiRlzCQpgQ/D4kVPU2uzYJlbaR2h8XZhBc4kvam3q0PWf/zIRLUJGI9gF1u
+	+aq2rm2btFarYhjyRt0gnkQdOwAN4jRM04sD/Htoj4wswBUoe7pVHOoIFKn26CPfXR9jY7IZCLx
+	ClzXVt8Gkh+mxspwjdwJ0+QS0opBZ7pto=
+X-Google-Smtp-Source: AGHT+IEVmibuPI4M9twLmFOFhacU2kqWpn1MuC8yq7hJ5fqrULuMlidr7HrDOJZTNGpTfKFhb+l+LID/T2TCLj8I4pY=
+X-Received: by 2002:a17:907:7f0d:b0:ac3:bd68:24f0 with SMTP id
+ a640c23a62f3a-acad3457c9dmr873730266b.7.1744537319786; Sun, 13 Apr 2025
+ 02:41:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQMttRtk+TDXeSz+m0TFvc+bKFlw/QIyCKQCsOtrijA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrGJsWRmVeSWpSXmKPExsWy7bCmga6i5+90g/eHuC1eHtK0mDhtKbPF
-	nr0nWSy2/DvCavHiwwY2i+tvHrI6sHnsnHWX3WPTqk42j74tqxg92ifsZPb4vEkugDWqgdEm
-	sSg5I7MsVSE1Lzk/JTMv3VYpNMRN10JJISO/uMRWKdrQ0EjP0MBcz8jISM/UKNbKyFRJIS8x
-	N9VWqUIXqldJoSi5AKg2t7IYaEBOqh5UXK84NS/FISu/FORqveLE3OLSvHS95PxcJYWyxJxS
-	oBFK+gnfGDO+HUwomCpTMWPuZNYGxjNiXYycHBICJhKrdn5j6WLk4hAS2MEoMfPtQijnE6PE
-	tps3WCGcb4wSk55cY4NpWdf0EMwWEtjLKLFytyNE0UtGiS0tj5hAEmwCuhJPbvxkBrFFBIwl
-	+rfOYgWxmQWyJI7snMwIYnMKxEr8enMErF5YwFPi8PQnYENZBFQl1m9oYwexeQWsJN5Mn8QE
-	YQtKnJz5hAVijrzE9rdzmCEOUpDY/ekoK8QuK4m56+4wQtSISMzubGMGOU5CoJdDYtXF6awQ
-	DS4S7089gWoWlnh1fAs7hC0l8bIfZDFIQzejxPGP71ggEjMYJZZ0OEDY9hLNrc1Al3IAbdCU
-	WL9LH2IZn8S7rz1Q83klGjb+hpopKHH6WjczSDlIvKNNCCKsIvH9w06WCYzKs5C8NgvJa7OQ
-	vDALYdkCRpZVjGKpBcW56anFhgXGyPG9iRGcZLXMdzBOe/tB7xAjEwfjIUYJDmYlEV4u51/p
-	QrwpiZVVqUX58UWlOanFhxiTgYE9kVlKNDkfmObzSuINzcwsLSyNTAyNzQwNCQubWBqYmBmZ
-	WBhbGpspifPu+fg0XUggPbEkNTs1tSC1CGYLEwenVANTebuwsdfdeyknJybsLfM0nG5RmHDf
-	yejfircPguadOWzhdSWqcdGpA+UKWTuP5RhN4fv0WVtmv17VpEdZBatef7+5V0V0ztO10xMy
-	F7TOK1edMSNxGaPU0YtFp6btDDvAnX6NrXpSb3a+rM0X1WUKEm3Gs1m4/izcefzwvpmVfz2O
-	mLU5Ma+84HP6rHnEuRY51lNJt1U2phbaXeBcuifmiCajx+XZiieeOyzJUPFtc160gT316gcj
-	r6Mmrzt9M6Qaymz+vnnVXLV3Z+fix90N/L6+jM4ORyTy7IU9uPoeGvl1B+oWJr2Wj086JtC4
-	spKjY++2zq67mnY9In2Fzzo/nlEss4pMaRdp6lh94YUSS3FGoqEWc1FxIgBz5cEIaQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFLMWRmVeSWpSXmKPExsWy7bCSnK6C5+90g3+XDS1eHtK0mDhtKbPF
-	nr0nWSy2/DvCavHiwwY2i+tvHrI6sHnsnHWX3WPTqk42j74tqxg92ifsZPb4vEkugDWKyyYl
-	NSezLLVI3y6BK+PbwYSCqTIVM+ZOZm1gPCPWxcjJISFgIrGu6SFbFyMXh5DAbkaJvubNzF2M
-	HEAJKYmD+zQhTGGJw4eLQcqFBJ4zSlx8UA9iswnoSjy58ZMZxBYRMJX4cvkEG4jNLJAnMfvh
-	O3aIkesYJQ5Pnc4EkuAUiJX49eYImC0s4ClxePoTsAYWAVWJ9Rva2EFsXgEriTfTJzFB2IIS
-	J2c+YYEYqiexfv0cRghbXmL72znMEPcrSOz+dJQV4ggribnr7kDViEjM7mxjnsAoPAvJqFlI
-	Rs1CMmoWkpYFjCyrGCVTC4pz03OTDQsM81LL9YoTc4tL89L1kvNzNzGCo0dLYwfju29N+ocY
-	mTgYDzFKcDArifByOf9KF+JNSaysSi3Kjy8qzUktPsQozcGiJM670jAiXUggPbEkNTs1tSC1
-	CCbLxMEp1cDUO3X6mT0cWyvdf++3+FX0YOHls1kyK2WZSo5VbG23ZPL3fDNZ71by31k7Nr/Y
-	UvPFuWTdX9lDylPuz7qmFjLjq4aH5JU5ZzZ9e+ssuXzZxbcr+W43bTgg1/ZTxTjliaZBfLSZ
-	QECUxEXFW0Hqf5fxLLeOOFN46tQ2w8eGSgev/VT9aOH2dOGXkoCJ/UeU5Y/bxUy4fsJDWvV4
-	Ubxk0h6OGce8nwpPb5dQ+/tT9qpfcm5adNX/jkrDOj4JYd03R8TWmGe0veZoT6t61Mp8Zwbz
-	fOZZ3/32ajd2Po1LPNUbV38pt2ee8ZvwO9JTTOZeMpr6qe+k8JpG16sRX2fU8hpWz7OYbMoe
-	tqfKkW9qUamIEktxRqKhFnNRcSIAgjn8zQ0DAAA=
-X-CMS-MailID: 20250413051824epcas1p12aa5311d9439ba791f71cd602e11d1ca
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-CPGSPASS: Y
-X-ArchiveUser: EV
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250410094112epcas1p42245e765dbdc61c0c9da40884386bbf9
-References: <CGME20250410094112epcas1p42245e765dbdc61c0c9da40884386bbf9@epcas1p4.samsung.com>
-	<PUZPR04MB63168406D20B7CF3B287812281B72@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <20241031-klaglos-geldmangel-c0e7775d42a7@brauner>
+ <CAHk-=wjwNkQXLvAM_CKn2YwrCk8m4ScuuhDv2Jzr7YPmB8BOEA@mail.gmail.com>
+ <CAHk-=wiKyMzE26G7KMa_D1KXa6hCPu5+3ZEPUN0zB613kc5g4Q@mail.gmail.com>
+ <CAHk-=wiB6vJNexDzBhc3xEwPTJ8oYURvcRLsRKDNNDeFTSTORg@mail.gmail.com>
+ <CAHk-=whSzc75TLLPWskV0xuaHR4tpWBr=LduqhcCFr4kCmme_w@mail.gmail.com>
+ <a7gys7zvegqwj2box4cs56bvvgb5ft3o3kn4e7iz43hojd4c6g@d3hihtreqdoy>
+ <CAHk-=wgEvF3_+sa5BOuYG2J_hXv72iOiQ8kpmSzCpegUhqg4Zg@mail.gmail.com>
+ <CAGudoHGxr5gYb0JqPqF_J0MoSAb_qqoF4gaJMEdOhp51yobbLw@mail.gmail.com>
+ <20250412215257.GF13132@mit.edu> <CAHk-=wifig365Ej8JQrXBzK1_BzU9H9kqvvbBGuboF7CzR28VQ@mail.gmail.com>
+ <20250412235535.GH13132@mit.edu>
+In-Reply-To: <20250412235535.GH13132@mit.edu>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Sun, 13 Apr 2025 11:41:47 +0200
+X-Gm-Features: ATxdqUHDBKPot_g_4gFVHRat16xkomb0osOGfn8jGoXyK6THAXpO3hfZFWmybQU
+Message-ID: <CAGudoHEJZ32rDUt4+n2-L-RU=bpGgkYMroxtdMF6MQjKRsW24w@mail.gmail.com>
+Subject: Re: generic_permission() optimization
+To: "Theodore Ts'o" <tytso@mit.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Jan Kara <jack@suse.cz>, Ext4 Developers List <linux-ext4@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi, Yuezhang,
-> xfstests generic/482 tests the file system consistency after each
-> FUA operation. It fails when run on exfat.
-> 
-> exFAT clears the volume dirty flag with a FUA operation during sync.
-> Since s_lock is not held when data is being written to a file, sync
-> can be executed at the same time. When data is being written to a
-> file, the FAT chain is updated first, and then the file size is
-> updated. If sync is executed between updating them, the length of the
-> FAT chain may be inconsistent with the file size.
-> 
-> To avoid the situation where the file system is inconsistent but the
-> volume dirty flag is cleared, this commit moves the clearing of the
-> volume dirty flag from exfat_fs_sync() to exfat_put_super(), so that
-> the volume dirty flag is not cleared until unmounting. After the
-> move, there is no additional action during sync, so exfat_fs_sync()
-> can be deleted.
-
-It doesn't seem like FUA is the core issue. To set the volume to a clear
-state in sync_filesystem, it might be possible to block the writer_iter,
-mkwrite, and truncate operations.
-
-However, as of now, it seems that moving to put_super is the simplest
-and most reliable method, and FAT-fs is currently operating in that manner.
-
-However, it seems that a modification is also needed to keep the state
-dirty if it is already dirty at the time of mount, as in the FAT-fs below.
-commit b88a105802e9 ("fat: mark fs as dirty on mount and clean on umount")
-
-Could you send additional patches along with this patch as a series?
-
-> 
-> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-> ---
->  fs/exfat/super.c | 30 +++++++-----------------------
->  1 file changed, 7 insertions(+), 23 deletions(-)
-> 
-> diff --git a/fs/exfat/super.c b/fs/exfat/super.c
-> index 8465033a6cf0..7ed858937d45 100644
-> --- a/fs/exfat/super.c
-> +++ b/fs/exfat/super.c
-> @@ -36,31 +36,12 @@ static void exfat_put_super(struct super_block *sb)
->  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> 
->  	mutex_lock(&sbi->s_lock);
-> +	exfat_clear_volume_dirty(sb);
->  	exfat_free_bitmap(sbi);
->  	brelse(sbi->boot_bh);
->  	mutex_unlock(&sbi->s_lock);
->  }
-> 
-> -static int exfat_sync_fs(struct super_block *sb, int wait)
-> -{
-> -	struct exfat_sb_info *sbi = EXFAT_SB(sb);
-> -	int err = 0;
-> -
-> -	if (unlikely(exfat_forced_shutdown(sb)))
-> -		return 0;
-> -
-> -	if (!wait)
-> -		return 0;
-> -
-> -	/* If there are some dirty buffers in the bdev inode */
-> -	mutex_lock(&sbi->s_lock);
-> -	sync_blockdev(sb->s_bdev);
-> -	if (exfat_clear_volume_dirty(sb))
-> -		err = -EIO;
-> -	mutex_unlock(&sbi->s_lock);
-> -	return err;
-> -}
-> -
->  static int exfat_statfs(struct dentry *dentry, struct kstatfs *buf)
->  {
->  	struct super_block *sb = dentry->d_sb;
-> @@ -219,7 +200,6 @@ static const struct super_operations exfat_sops = {
->  	.write_inode	= exfat_write_inode,
->  	.evict_inode	= exfat_evict_inode,
->  	.put_super	= exfat_put_super,
-> -	.sync_fs	= exfat_sync_fs,
->  	.statfs		= exfat_statfs,
->  	.show_options	= exfat_show_options,
->  	.shutdown	= exfat_shutdown,
-> @@ -751,10 +731,14 @@ static void exfat_free(struct fs_context *fc)
-> 
->  static int exfat_reconfigure(struct fs_context *fc)
->  {
-> +	struct super_block *sb = fc->root->d_sb;
->  	fc->sb_flags |= SB_NODIRATIME;
-> 
-> -	/* volume flag will be updated in exfat_sync_fs */
-> -	sync_filesystem(fc->root->d_sb);
-> +	sync_filesystem(sb);
-> +	mutex_lock(&EXFAT_SB(sb)->s_lock);
-> +	exfat_clear_volume_dirty(sb);
-> +	mutex_unlock(&EXFAT_SB(sb)->s_lock);
+On Sun, Apr 13, 2025 at 1:55=E2=80=AFAM Theodore Ts'o <tytso@mit.edu> wrote=
+:
+>
+> On Sat, Apr 12, 2025 at 03:36:00PM -0700, Linus Torvalds wrote:
+> > Indeed. I sent a query to the ext4 list (and I think you) about
+> > whether my test was even the right one.
+>
+> Sorry, I must have not seen that message; at least, I don't have any
+> memory of it.
+>
+> > Also, while I did a "getfattr -dR" to see if there are any *existing*
+> > attributes (and couldn't find any), I also assume that if a file has
+> > ever *had* any attributes, the filesystem may have the attribute block
+> > allocated even if it's now empty.
+>
+> Well, getfattr will only show user xattrs.  It won't show security.*
+> xattr's that might have been set by SELinux, or a
+> system.posix_acl_access xattr.
+>
+> > I assume there's some trivial e2fstools thing to show things like
+> > that, but it needs more ext4 specific knowledge than I have.
+>
+> Yes, we can test for this using the debugfs command.  For exaple:
+>
+> root@kvm-xfstests:~# debugfs /dev/vdc
+> debugfs 1.47.2-rc1 (28-Nov-2024)
+> debugfs:  stat <13>
+> Inode: 13   Type: regular    Mode:  0644   Flags: 0x80000
+> Generation: 1672288850    Version: 0x00000000:00000003
+> User:     0   Group:     0   Project:     0   Size: 286
+> File ACL: 0
+> Links: 1   Blockcount: 8
+> Fragment:  Address: 0    Number: 0    Size: 0
+>  ctime: 0x67faf5d0:30d0b2e4 -- Sat Apr 12 19:22:56 2025
+>  atime: 0x67faf571:7064bd50 -- Sat Apr 12 19:21:21 2025
+>  mtime: 0x67faf571:71236aa8 -- Sat Apr 12 19:21:21 2025
+> crtime: 0x67faf571:7064bd50 -- Sat Apr 12 19:21:21 2025
+> Size of extra inode fields: 32
+> Extended attributes:
+>   system.posix_acl_access (28) =3D 01 00 00 00 01 00 06 00 02 00 04 00 b7=
+ 7a 00 00 04 00 04 00 10 00 04 00 20 00 04 00
+> Inode checksum: 0xc8f7f1a7
+> EXTENTS:
+> (0):33792
+>
+> (If you know the pathname instead of the inode number, you can also
+> give that to debugfs's stat command, e.g., "stat /lost+found")
+>
+> I tested it with a simple variant of your patch, and seems to do the righ=
+t
+> thing.  Mateusz, if you want, try the following patch, and then mount
+> your test file system with "mount -o debug".  (The test_opt is to
+> avoid a huge amount of noise on your root file system; you can skip it
+> if it's more trouble than it's worth.)  The patch has a reversed
+> seense of the test, so it will print a message for every one where
+> cache_no_acl *wouldn't* be called.  You casn then use debugfs's "stat
+> <ino#>" to verify whether it has some kind of extended attribute.
+>
+>                                       - Ted
+>
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index f386de8c12f6..3e0ba7c4723a 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -5109,6 +5109,11 @@ struct inode *__ext4_iget(struct super_block *sb, =
+unsigned long ino,
+>                 goto bad_inode;
+>         brelse(iloc.bh);
+>
+> +       if (test_opt(sb, DEBUG) &&
+> +           (ext4_test_inode_state(inode, EXT4_STATE_XATTR) ||
+> +            ei->i_file_acl))
+> +               ext4_msg(sb, KERN_DEBUG, "has xattr ino %lu", inode->i_in=
+o);
 > +
->  	return 0;
->  }
-> 
-> --
-> 2.43.0
+>         unlock_new_inode(inode);
+>         return inode;
+>
 
+This is the rootfs of the thing, so I tried it out with merely
+printing it. I got 70 entries at boot time. I don't think figuring out
+what this is specifically is warranted (it is on debian though).
+
+With a little bit of cumbersome bpf tracing I verified newly created
+dirs (as in mkdir) also have i_acl =3D=3D NULL, which is the bit important
+here (apart from dirs instantiated from storage which now also have
+it).
+
+So... I think this is good enough to commit? I had no part in writing
+the patch and I'm not an ext4 person, so I'm not submitting it myself.
+
+Ted, you seem fine with the patch, so perhaps you could do the needful(tm)?
+
+The patch is valuable in its own right and is a soft blocker for my
+own patch which adds IOP_FAST_MAY_EXEC to skip a bunch of crap work in
+inode_permission() which for MAY_EXEC wont be needed [I have not
+posted it yet].
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
