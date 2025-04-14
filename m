@@ -1,389 +1,273 @@
-Return-Path: <linux-fsdevel+bounces-46409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037DFA88CFB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 22:24:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84D6DA88D20
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 22:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38F261899B16
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 20:24:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468BE3B5EA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 20:29:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB931D86F6;
-	Mon, 14 Apr 2025 20:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFF31DFDAB;
+	Mon, 14 Apr 2025 20:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IAib6kkL"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iy3TFMLF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24C00155C82
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 20:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92711E0DD8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 20:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744662280; cv=none; b=bAjq5h6uFQpCpgyOR8Im88AV01rSjgW/ZTLee+3lHWEqvSleGMpzn+Bkgn4zHxy1A+ekB3+pPnnuYP3JFOswyXe3EvfYe/ma4ovV81iZYRKBVKukkFbZJwVcuAG3ARMy0lw2yUbZ8hs8slpV5VJ0UDjFywNyPGtLa16ycrlF/yg=
+	t=1744662541; cv=none; b=Jlj7KGjBEn17By/cncQx2TYzH9NuoLUCXzto0OEwnXdIPrd2CVR8FMwlzMNEHZ3DfR3rGnl7TK4D/97RIMzNxhPeQk4G0OcyTOcE6+5Enq7I1jZibey4i7zAlcXDsZ/zXPSeHNdABDkqcJmFzZ7urcDd7Keua/+sNNagfzjoUqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744662280; c=relaxed/simple;
-	bh=urqIU8FsLourZq44hxr00XlMkh+ZAfRM3g/ktx70tzs=;
+	s=arc-20240116; t=1744662541; c=relaxed/simple;
+	bh=WhnqGSVtwGcw2eNmjdqE77WUvfyLwjk2DzdlYBKh/pA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=unXbjMZ0aq6oPoD9CoS7X0MEhsRtzISJ8NUk1FoQa4xc1xODKx2s5wIINXMWpNJ1+Y+StRw4Xbz4kVBZsEqipmalY6EkYkSTy8zEeXrjkRQUZvyxhmuLeUeZs+B7uG2fvzq3xg5Xf99Ydvk5lWQpRJANDyA3pMWHyHZqYHexAAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IAib6kkL; arc=none smtp.client-ip=209.85.160.171
+	 To:Cc:Content-Type; b=NNVoDkuyE9JWKcVw90e3LfS0XU/wgzrUUTQ8y7MvtpN2r8aTa0tTLAmBm2/Uk1MsCUcX37gG4RqCvIKVQ7H8hqJULH3vYO4NgtcBPhgwDl0jk0ugPZ52QKC+s6FYbuwvuxdeAHep9iqyFS+Vsyxim43BDYIUb8wzVbeNA5ijqb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iy3TFMLF; arc=none smtp.client-ip=209.85.160.177
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4769bbc21b0so42261461cf.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 13:24:37 -0700 (PDT)
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-47692b9d059so61827131cf.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 13:28:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744662277; x=1745267077; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1744662539; x=1745267339; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hjalnf6NhmbK3zLnEA93KvQq39O1mk67mqpHcJeLGtY=;
-        b=IAib6kkLRevYL5xuqi7vKAnS6+D24kYGnC836IXJcMznXtmE9N1ksEHigN4pJ40PeA
-         w97G8PNWEb7alnNHG+7cImWpjWyOXvGYKEdsjP0Qu50kluKD3sWMrOUpzZxuh40wazXE
-         wQ2FKca08zuryvQY8QnB4To53aOLEaLfXppSwuCZ7TQcoNwJi7qSlH7L1P3LDC/vSmcA
-         G77rH41xI1bcKj4v1MhkRn+KRVnDbA/V+13dwC37/hDSeh/f4M8Nc1pmxD7CeZ6p5iuG
-         2OQSw4K+CIKMrPljTvO0Gi0ieA5sett0zNcocffxnA8hEvXEiwp7Di19pJ0QWfvjgMSo
-         HSeg==
+        bh=ttWdWafouB0HD66F1+3TDOUDb5fuNwcS4l2VvOPoK1Y=;
+        b=Iy3TFMLFhi3ng39PA8/g1OW/XxbPiQBZx9b21JQRpcS7imCaw3jO882Nw4c25xzkHE
+         3HC0UW54gVDn1wqt2a8mcwj4/ADFMId5Vz5ZgxHqxv8H441btV9B3jAfUPAfbY8NnfVZ
+         LQorFox7PY5MGSaUzbu6hMoebjLzrJCEEnXvexVSg0f3MLg1kI8s5wsJwDgODd7hDWFm
+         xtExPr3/tnu3cH6HN5wasIf1hUUMenn20YEzVTXiFLnN1xfkrfFPAx2btR/LC6cT+0DP
+         GMsvOfDbE9P+w3oUv6fEGLzCBQo8RzETnxyy3eUSMZn0HwlmQeLHuNVdwFOEK32r8zbD
+         ccrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744662277; x=1745267077;
+        d=1e100.net; s=20230601; t=1744662539; x=1745267339;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hjalnf6NhmbK3zLnEA93KvQq39O1mk67mqpHcJeLGtY=;
-        b=stUkY4SgfY7LGC58PMvPIXs0bP3oXUV6kwSgycq9uG9J5rvp2epYu4BM8CVlKq6mWs
-         gamo26Mt8C7AfLFc/trKDhmC//DdT1Q1KKV+xm0DwJg1jCJ7yHULzmv4Y2Vyo45dTGSp
-         XmDctmgs7eBA2rnE3GON3wNN/M3eZqVC2R7hjDTOqV4R/08RynuENhfNF+if4XaqIRj2
-         p27vDNkHefr8UsKBNH5Oeb/L75UImi4+TRwjzlFV0zIstNioYVGybkVtNs3m0H3IH9jE
-         L26PBSBtu8701yS8RgvOhztD1WgOpABaxrlbdl8iiqCLfCBhzdlIlUDXSJwec/G0dN3f
-         1Rrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXZvfmVg9pyRAieb/9A8z6j3JQlSsT83gIfGa3C4k9JO44QVyyjVJZ5PXqQv0u18J4aP6IMTRejRGJxxXuL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJd/vcrh9Ka10zUcFtStFf3XyDndaa0+xt2wOYbyQLi6vmzlN1
-	qLsK+JdZhRHpdwDWn2BY9jK5gJG8S1N+NYXvv7BuPv4BqZOT1NzymmymmeZccuE/ugiqEb7vSo1
-	xieGoYBwWeda6gVaj76gIjzKZ87o=
-X-Gm-Gg: ASbGncseJmfTRH8nAAdNT2J315NnkrT7spX+kNyqqHcNzBBS6aH16pNI6qvEXjzilyU
-	/Da1HjHZtMrRU5F8pOTBKIGorDduW9L2mN5LG2RasN1cxZW7Y8M+8Xm17voHLzWLuMwuHiZrSRH
-	34BwDrZJ8UOTVuJFsjHNwUT6ET7DBX+kbnNTIj+w==
-X-Google-Smtp-Source: AGHT+IH9XmMhDR49J4+TwAnE+Fg9oII6/lpKKBu8unyVgb6A/IHau/R3sHHWV7hbiTUZ0VEtUyCZHY3RYZ/nxv+DbDg=
-X-Received: by 2002:a05:622a:180d:b0:477:6ec9:1033 with SMTP id
- d75a77b69052e-479775261d0mr189130041cf.1.1744662276892; Mon, 14 Apr 2025
- 13:24:36 -0700 (PDT)
+        bh=ttWdWafouB0HD66F1+3TDOUDb5fuNwcS4l2VvOPoK1Y=;
+        b=ZPyTGTOwi/W/uBvZmsZ1ass7Egk+aKNKQXFTKOIcja8NGA+37omj1+Wcee71oHSRsJ
+         FPCVAadpsKqcIZzjQIsC6Hh9+gCSYqg2DLAfDML9gzm6sX275E7CBjwCHTRej62pDAF+
+         jIjtLjYmu8jWpDDfdrxkFvU9QtI89zh8L0BMv77dTw8ZJfOWSQSgAnkKtoxqtbKwgw8T
+         uKHVoN+v7GFTsa4CTYQJtVikOkusfPeJsmaMuncby2KynyatMhpE2/SHQM2Ibp/soe5Y
+         xfjybfjZX9/6VEzPA//oZnAy5PoOhUQCuyYW9kMpFn8MT/nrO87rDB1YqaqeJDqw0CS6
+         5aTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJhH6lpfnn1e8v967mOxDN4Jzw1Cj7iWO25OH0Dccj9lKpkaqIMaS5V+SdxjYMljmJXO67yNpQi1LNihB+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4sO0PbeyYR/QRqA0O0ncagKEwrioyEBFvmT/tYn5RuF55ytzY
+	+yCOqoK7Uz6eLdKwMPZnMut+fuJp0ta6piwct3Dys+4xIvU7OsHnXbVBOB1J2xbamH27UiZlLq+
+	JyHfwGs1R/N+5W5IEamKYVGroMH0=
+X-Gm-Gg: ASbGncsajGBHNJQF7cQ+ji2oy7dBi+Xs/sM0AVlG8f25xkqAwlh9NV1CPTjTCRaYBhs
+	CcrvfQszBee0GJVDSsLNmBLr49ooU88gSV3uL9fu66A/SL6R83uvTeKmUivRymrKIMEkVhhjAls
+	or+ET53s2Enyx7VoP88f0hZHtlbP08hdKK7L6hWQ==
+X-Google-Smtp-Source: AGHT+IHSrB0T2DSpx1i97VmlExtNn2cE0h2L2ynxckzNpsTKqgOJnQSvOClkgH89lh2tz57ZyQwh8KelEHDZaSixoAg=
+X-Received: by 2002:a05:622a:130b:b0:479:1a3d:25c2 with SMTP id
+ d75a77b69052e-479775e8daamr183165711cf.44.1744662538486; Mon, 14 Apr 2025
+ 13:28:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250404181443.1363005-1-joannelkoong@gmail.com>
- <20250404181443.1363005-4-joannelkoong@gmail.com> <db4f1411-f6de-4206-a6a3-5c9cf6b6d59d@linux.alibaba.com>
- <CAJnrk1bTGFXy+ZTchC7p4OYUnbfKZ7TtVkCsrsv87Mg1r8KkGA@mail.gmail.com>
- <7e9b1a40-4708-42a8-b8fc-44fa50227e5b@linux.alibaba.com> <CAJnrk1Z7Wi_KPe_TJckpYUVhv9mKX=-YTwaoQRgjT2z0fxD-7g@mail.gmail.com>
- <9a3cfb55-faae-4551-9bef-b9650432848a@linux.alibaba.com> <CAJnrk1a_YL-Dg4HeVWnmwUVH2tCN2MYu30kiV5KSv4mkezWOZg@mail.gmail.com>
-In-Reply-To: <CAJnrk1a_YL-Dg4HeVWnmwUVH2tCN2MYu30kiV5KSv4mkezWOZg@mail.gmail.com>
+References: <20250404181443.1363005-1-joannelkoong@gmail.com> <0e00e8b306620c781868f375a462127d72b26289.camel@kernel.org>
+In-Reply-To: <0e00e8b306620c781868f375a462127d72b26289.camel@kernel.org>
 From: Joanne Koong <joannelkoong@gmail.com>
-Date: Mon, 14 Apr 2025 13:24:24 -0700
-X-Gm-Features: ATxdqUGHOQAamSeYPCJOivk7Bm3Xf4bayW887pC1sF1cWjckxnHY4wsgvIq81Eg
-Message-ID: <CAJnrk1Y4TPoTrWPz-SDG9rFiH44w-uC_hfiENnVLFkDAeyctSA@mail.gmail.com>
-Subject: Re: [PATCH v7 3/3] fuse: remove tmp folio for writebacks and internal
- rb tree
-To: Jingbo Xu <jefflexu@linux.alibaba.com>
+Date: Mon, 14 Apr 2025 13:28:47 -0700
+X-Gm-Features: ATxdqUEkQqC5DZ8gLVnvizomRcaBVulIbgqiiVX2ATJ_Ss03yHY8PIOw2e2eH6I
+Message-ID: <CAJnrk1a6QoLWPOvoi4vakGOWTp9xDU=SCiPHx+cEg_Kdf6rYLA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] fuse: remove temp page copies in writeback
+To: Jeff Layton <jlayton@kernel.org>
 Cc: miklos@szeredi.hu, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, shakeel.butt@linux.dev, 
-	david@redhat.com, bernd.schubert@fastmail.fm, ziy@nvidia.com, 
-	jlayton@kernel.org, kernel-team@meta.com, 
-	Miklos Szeredi <mszeredi@redhat.com>
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, jefflexu@linux.alibaba.com, 
+	shakeel.butt@linux.dev, david@redhat.com, bernd.schubert@fastmail.fm, 
+	ziy@nvidia.com, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 10, 2025 at 9:11=E2=80=AFAM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
+On Mon, Apr 14, 2025 at 9:21=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
 >
-> On Thu, Apr 10, 2025 at 8:11=E2=80=AFAM Jingbo Xu <jefflexu@linux.alibaba=
-.com> wrote:
+> On Fri, 2025-04-04 at 11:14 -0700, Joanne Koong wrote:
+> > The purpose of this patchset is to help make writeback in FUSE filesyst=
+ems as
+> > fast as possible.
 > >
-> > On 4/10/25 11:07 PM, Joanne Koong wrote:
-> > > On Wed, Apr 9, 2025 at 7:12=E2=80=AFPM Jingbo Xu <jefflexu@linux.alib=
-aba.com> wrote:
-> > >>
-> > >>
-> > >>
-> > >> On 4/10/25 7:47 AM, Joanne Koong wrote:
-> > >>>   On Tue, Apr 8, 2025 at 7:43=E2=80=AFPM Jingbo Xu <jefflexu@linux.=
-alibaba.com> wrote:
-> > >>>>
-> > >>>> Hi Joanne,
-> > >>>>
-> > >>>> On 4/5/25 2:14 AM, Joanne Koong wrote:
-> > >>>>> In the current FUSE writeback design (see commit 3be5a52b30aa
-> > >>>>> ("fuse: support writable mmap")), a temp page is allocated for ev=
-ery
-> > >>>>> dirty page to be written back, the contents of the dirty page are=
- copied over
-> > >>>>> to the temp page, and the temp page gets handed to the server to =
-write back.
-> > >>>>>
-> > >>>>> This is done so that writeback may be immediately cleared on the =
-dirty page,
-> > >>>>> and this in turn is done in order to mitigate the following deadl=
-ock scenario
-> > >>>>> that may arise if reclaim waits on writeback on the dirty page to=
- complete:
-> > >>>>> * single-threaded FUSE server is in the middle of handling a requ=
-est
-> > >>>>>   that needs a memory allocation
-> > >>>>> * memory allocation triggers direct reclaim
-> > >>>>> * direct reclaim waits on a folio under writeback
-> > >>>>> * the FUSE server can't write back the folio since it's stuck in
-> > >>>>>   direct reclaim
-> > >>>>>
-> > >>>>> With a recent change that added AS_WRITEBACK_INDETERMINATE and mi=
-tigates
-> > >>>>> the situations described above, FUSE writeback does not need to u=
-se
-> > >>>>> temp pages if it sets AS_WRITEBACK_INDETERMINATE on its inode map=
-pings.
-> > >>>>>
-> > >>>>> This commit sets AS_WRITEBACK_INDETERMINATE on the inode mappings
-> > >>>>> and removes the temporary pages + extra copying and the internal =
-rb
-> > >>>>> tree.
-> > >>>>>
-> > >>>>> fio benchmarks --
-> > >>>>> (using averages observed from 10 runs, throwing away outliers)
-> > >>>>>
-> > >>>>> Setup:
-> > >>>>> sudo mount -t tmpfs -o size=3D30G tmpfs ~/tmp_mount
-> > >>>>>  ./libfuse/build/example/passthrough_ll -o writeback -o max_threa=
-ds=3D4 -o source=3D~/tmp_mount ~/fuse_mount
-> > >>>>>
-> > >>>>> fio --name=3Dwriteback --ioengine=3Dsync --rw=3Dwrite --bs=3D{1k,=
-4k,1M} --size=3D2G
-> > >>>>> --numjobs=3D2 --ramp_time=3D30 --group_reporting=3D1 --directory=
-=3D/root/fuse_mount
-> > >>>>>
-> > >>>>>         bs =3D  1k          4k            1M
-> > >>>>> Before  351 MiB/s     1818 MiB/s     1851 MiB/s
-> > >>>>> After   341 MiB/s     2246 MiB/s     2685 MiB/s
-> > >>>>> % diff        -3%          23%         45%
-> > >>>>>
-> > >>>>> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > >>>>> Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-> > >>>>> Acked-by: Miklos Szeredi <mszeredi@redhat.com>
-> > >>>>
-> > >>>
-> > >>> Hi Jingbo,
-> > >>>
-> > >>> Thanks for sharing your analysis for this.
-> > >>>
-> > >>>> Overall this patch LGTM.
-> > >>>>
-> > >>>> Apart from that, IMO the fi->writectr and fi->queued_writes mechan=
-ism is
-> > >>>> also unneeded then, at least the DIRECT IO routine (i.e.
-> > >>>
-> > >>> I took a look at fi->writectr and fi->queued_writes and my
-> > >>> understanding is that we do still need this. For example, for
-> > >>> truncates (I'm looking at fuse_do_setattr()), I think we still need=
- to
-> > >>> prevent concurrent writeback or else the setattr request and the
-> > >>> writeback request could race which would result in a mismatch betwe=
-en
-> > >>> the file's reported size and the actual data written to disk.
-> > >>
-> > >> I haven't looked into the truncate routine yet.  I will see it later=
-.
-> > >>
-> > >>>
-> > >>>> fuse_direct_io()) doesn't need fuse_sync_writes() anymore.  That i=
-s
-> > >>>> because after removing the temp page, the DIRECT IO routine has al=
-ready
-> > >>>> been waiting for all inflight WRITE requests, see
-> > >>>>
-> > >>>> # DIRECT read
-> > >>>> generic_file_read_iter
-> > >>>>   kiocb_write_and_wait
-> > >>>>     filemap_write_and_wait_range
-> > >>>
-> > >>> Where do you see generic_file_read_iter() getting called for direct=
- io reads?
-> > >>
-> > >> # DIRECT read
-> > >> fuse_file_read_iter
-> > >>   fuse_cache_read_iter
-> > >>     generic_file_read_iter
-> > >>       kiocb_write_and_wait
-> > >>        filemap_write_and_wait_range
-> > >>       a_ops->direct_IO(),i.e. fuse_direct_IO()
-> > >>
-> > >
-> > > Oh I see, I thought files opened with O_DIRECT automatically call the
-> > > .direct_IO handler for reads/writes but you're right, it first goes
-> > > through .read_iter / .write_iter handlers, and the .direct_IO handler
-> > > only gets invoked through generic_file_read_iter() /
-> > > generic_file_direct_write() in mm/filemap.c
-> > >
-> > > There's two paths for direct io in FUSE:
-> > > a) fuse server sets fi->direct_io =3D true when a file is opened, whi=
-ch
-> > > will set the FOPEN_DIRECT_IO bit in ff->open_flags on the kernel side
-> > > b) fuse server doesn't set fi->direct_io =3D true, but the client ope=
-ns
-> > > the file with O_DIRECT
-> > >
-> > > We only go through the stack trace you listed above for the b) case.
-> > > For the a) case, we'll hit
-> > >
-> > >         if (ff->open_flags & FOPEN_DIRECT_IO)
-> > >                 return fuse_direct_read_iter(iocb, to);
-> > >
-> > > and
-> > >
-> > >         if (ff->open_flags & FOPEN_DIRECT_IO)
-> > >                 return fuse_direct_write_iter(iocb, from);
-> > >
-> > > which will invoke fuse_direct_IO() / fuse_direct_io() without going
-> > > through the kiocb_write_and_wait() -> filemap_write_and_wait_range() =
-/
-> > > kiocb_invalidate_pages() -> filemap_write_and_wait_range() you listed
-> > > above.
-> > >
-> > > So for the a) case I think we'd still need the fuse_sync_writes() in
-> > > case there's still pending writeback.
-> > >
-> > > Do you agree with this analysis or am I missing something here?
+> > In the current FUSE writeback design (see commit 3be5a52b30aa
+> > ("fuse: support writable mmap"))), a temp page is allocated for every d=
+irty
+> > page to be written back, the contents of the dirty page are copied over=
+ to the
+> > temp page, and the temp page gets handed to the server to write back. T=
+his is
+> > done so that writeback may be immediately cleared on the dirty page, an=
+d this
+> > in turn is done in order to mitigate the following deadlock scenario th=
+at may
+> > arise if reclaim waits on writeback on the dirty page to complete (more=
+ details
+> > can be found in this thread [1]):
+> > * single-threaded FUSE server is in the middle of handling a request
+> >   that needs a memory allocation
+> > * memory allocation triggers direct reclaim
+> > * direct reclaim waits on a folio under writeback
+> > * the FUSE server can't write back the folio since it's stuck in
+> >   direct reclaim
 > >
-> > Yeah, that's true.  But instead of calling fuse_sync_writes(), we can
-> > call filemap_wait_range() or something similar here.
+> > Allocating and copying dirty pages to temp pages is the biggest perform=
+ance
+> > bottleneck for FUSE writeback. This patchset aims to get rid of the tem=
+p page
+> > altogether (which will also allow us to get rid of the internal FUSE rb=
+ tree
+> > that is needed to keep track of writeback status on the temp pages).
+> > Benchmarks show approximately a 20% improvement in throughput for 4k
+> > block-size writes and a 45% improvement for 1M block-size writes.
+> >
+> > In the current reclaim code, there is one scenario where writeback is w=
+aited
+> > on, which is the case where the system is running legacy cgroupv1 and r=
+eclaim
+> > encounters a folio that already has the reclaim flag set and the caller=
+ did
+> > not have __GFP_FS (or __GFP_IO if swap) set.
+> >
+> > This patchset adds a new mapping flag, AS_WRITEBACK_INDETERMINATE, whic=
+h
+> > filesystems may set on its inode mappings to indicate that writeback
+> > operations may take an indeterminate amount of time to complete. FUSE w=
+ill set
+> > this flag on its mappings. Reclaim for the legacy cgroup v1 case descri=
+bed
+> > above will skip reclaim of folios with that flag set.
+> >
+> > With this change, writeback state is now only cleared on the dirty page=
+ after
+> > the server has written it back to disk. If the server is deliberately
+> > malicious or well-intentioned but buggy, this may stall sync(2) and pag=
+e
+> > migration, but for sync(2), a malicious server may already stall this b=
+y not
+> > replying to the FUSE_SYNCFS request and for page migration, there are a=
+lready
+> > many easier ways to stall this by having FUSE permanently hold the foli=
+o lock.
+> > A fuller discussion on this can be found in [2]. Long-term, there needs=
+ to be
+> > a more comprehensive solution for addressing migration of FUSE pages th=
+at
+> > handles all scenarios where FUSE may permanently hold the lock, but tha=
+t is
+> > outside the scope of this patchset and will be done as future work. Ple=
+ase
+> > also note that this change also now ensures that when sync(2) returns, =
+FUSE
+> > filesystems will have persisted writeback changes.
+> >
+> > [1] https://lore.kernel.org/linux-kernel/495d2400-1d96-4924-99d3-8b2952=
+e05fc3@linux.alibaba.com/
+> > [2] https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joann=
+elkoong@gmail.com/
+> >
+> > Changelog
+> > ---------
+> > v6:
+> > https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelko=
+ong@gmail.com/
+> > Changes from v6 -> v7:
+> > * Drop migration and sync patches, as they are useless if a server is
+> >   determined to be malicious
+> >
+> > v5:
+> > https://lore.kernel.org/linux-fsdevel/20241115224459.427610-1-joannelko=
+ong@gmail.com/
+> > Changes from v5 -> v6:
+> > * Add Shakeel and Jingbo's reviewed-bys
+> > * Move folio_end_writeback() to fuse_writepage_finish() (Jingbo)
+> > * Embed fuse_writepage_finish_stat() logic inline (Jingbo)
+> > * Remove node_stat NR_WRITEBACK inc/sub (Jingbo)
+> >
+> > v4:
+> > https://lore.kernel.org/linux-fsdevel/20241107235614.3637221-1-joannelk=
+oong@gmail.com/
+> > Changes from v4 -> v5:
+> > * AS_WRITEBACK_MAY_BLOCK -> AS_WRITEBACK_INDETERMINATE (Shakeel)
+> > * Drop memory hotplug patch (David and Shakeel)
+> > * Remove some more kunnecessary writeback waits in fuse code (Jingbo)
+> > * Make commit message for reclaim patch more concise - drop part about
+> >   deadlock and just focus on how it may stall waits
+> >
+> > v3:
+> > https://lore.kernel.org/linux-fsdevel/20241107191618.2011146-1-joannelk=
+oong@gmail.com/
+> > Changes from v3 -> v4:
+> > * Use filemap_fdatawait_range() instead of filemap_range_has_writeback(=
+) in
+> >   readahead
+> >
+> > v2:
+> > https://lore.kernel.org/linux-fsdevel/20241014182228.1941246-1-joannelk=
+oong@gmail.com/
+> > Changes from v2 -> v3:
+> > * Account for sync and page migration cases as well (Miklos)
+> > * Change AS_NO_WRITEBACK_RECLAIM to the more generic AS_WRITEBACK_MAY_B=
+LOCK
+> > * For fuse inodes, set mapping_writeback_may_block only if fc->writebac=
+k_cache
+> >   is enabled
+> >
+> > v1:
+> > https://lore.kernel.org/linux-fsdevel/20241011223434.1307300-1-joannelk=
+oong@gmail.com/T/#t
+> > Changes from v1 -> v2:
+> > * Have flag in "enum mapping_flags" instead of creating asop_flags (Sha=
+keel)
+> > * Set fuse inodes to use AS_NO_WRITEBACK_RECLAIM (Shakeel)
+> >
+> > Joanne Koong (3):
+> >   mm: add AS_WRITEBACK_INDETERMINATE mapping flag
+> >   mm: skip reclaiming folios in legacy memcg writeback indeterminate
+> >     contexts
+> >   fuse: remove tmp folio for writebacks and internal rb tree
+> >
+> >  fs/fuse/file.c          | 360 ++++------------------------------------
+> >  fs/fuse/fuse_i.h        |   3 -
+> >  include/linux/pagemap.h |  11 ++
+> >  mm/vmscan.c             |  10 +-
+> >  4 files changed, 46 insertions(+), 338 deletions(-)
 > >
 >
-> Agreed. Actually, the more I look at this, the more I think we can
-> replace all fuse_sync_writes() and get rid of it entirely. Right now,
-> fuse_sync_writes() is called in:
+> This looks sane, and I love that diffstat.
+>
+> I also agree with David about changing the flag name to something more
+> specific. As a kernel engineer, anything with "INDETERMINATE" in the
+> name gives me the ick.
+>
+> Assuming that the only real change in v8 will be the flag name change,
+> you can add:
+>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+>
+> Assuming others are ok with this, how do you see this going in? Maybe
+> Andrew could pick up the mm bits and Miklos could take the FUSE patch?
 
-This is nontrivial so I'll leave this optimization to be done as a
-separate future patchset so as to not slow this one down.
+
+Thanks for the review. The only thing I plan to change for v8 is the
+flag name and removing the unneeded fuse_sync_writes() call in
+fuse_flush() that Jingbo pointed out.
+
+With v8, I'm hoping the mm bits (first 2 patches) could be picked up
+by Andrew and that the 3rd patch (the one with FUSE changes) could be
+taken by Miklos, as the FUSE large folios patchset [1] I will be
+resending will depend on patch 3.
 
 Thanks,
 Joanne
 
->
-> fuse_fsync():
->         /*
->          * Start writeback against all dirty pages of the inode, then
->          * wait for all outstanding writes, before sending the FSYNC
->          * request.
->          */
->         err =3D file_write_and_wait_range(file, start, end);
->         if (err)
->                 goto out;
->
->         fuse_sync_writes(inode);
->
->         /*
->          * Due to implementation of fuse writeback
->          * file_write_and_wait_range() does not catch errors.
->          * We have to do this directly after fuse_sync_writes()
->          */
->         err =3D file_check_and_advance_wb_err(file);
->         if (err)
->                 goto out;
->
->
->       We can get rid of the fuse_sync_writes() and
-> file_check_and_advance_wb_err() entirely since now without temp pages,
-> the file_write_and_wait_range() call actually ensures that writeback
-> is completed
->
->
->
-> fuse_writeback_range():
->         static int fuse_writeback_range(struct inode *inode, loff_t
-> start, loff_t end)
->         {
->                 int err =3D
-> filemap_write_and_wait_range(inode->i_mapping, start, LLONG_MAX);
->
->                 if (!err)
->                         fuse_sync_writes(inode);
->
->                 return err;
->         }
->
->
->       We can replace fuse_writeback_range() entirely with
-> filemap_write_and_wait_range().
->
->
->
-> fuse_direct_io():
->         if (fopen_direct_io && fc->direct_io_allow_mmap) {
->                 res =3D filemap_write_and_wait_range(mapping, pos, pos +
-> count - 1);
->                 if (res) {
->                         fuse_io_free(ia);
->                         return res;
->                 }
->         }
->         if (!cuse && filemap_range_has_writeback(mapping, pos, (pos +
-> count - 1))) {
->                 if (!write)
->                         inode_lock(inode);
->                 fuse_sync_writes(inode);
->                 if (!write)
->                         inode_unlock(inode);
->         }
->
->
->        I think this can just replaced with
->                 if (fopen_direct_io && (fc->direct_io_allow_mmap || !cuse=
-)) {
->                         res =3D filemap_write_and_wait_range(mapping,
-> pos, pos + count - 1);
->                         if (res) {
->                                 fuse_io_free(ia);
->                                 return res;
->                         }
->                 }
->        since for the !fopen_direct_io case, it will already go through
-> filemap_write_and_wait_range(), as you mentioned in your previous
-> message. I think this also fixes a bug (?) in the original code - in
-> the fopen_direct_io && !fc->direct_io_allow_mmap case, I think we
-> still need to write out dirty pages first, which we don't currently
-> do.
->
->
-> What do you think?
->
-> Thanks for all your careful review on this patchset throughout all of
-> its iterations.
->
-> >
-> >
-> > >> filp_close()
-> > >>    filp_flush()
-> > >>        filp->f_op->flush()
-> > >>            fuse_flush()
-> > >>              write_inode_now
-> > >>                 writeback_single_inode(WB_SYNC_ALL)
-> > >>                   do_writepages
-> > >>                     # flush dirty page
-> > >>                   filemap_fdatawait
-> > >>                     # wait for WRITE completion
-> > >
-> > > Nice. I missed that write_inode_now() will invoke filemap_fdatawait()=
-.
-> > > This seems pretty straightforward. I'll remove the fuse_sync_writes()
-> > > call in fuse_flush() when I send out v8.
-> > >
-> > > The direct io one above is less straight-forward. I won't add that to
-> > > v8 but that can be done in a separate future patch when we figure tha=
-t
-> > > out.
-> >
-> > Thanks for keep working on this. Appreciated.
-> >
-> > --
-> > Thanks,
-> > Jingbo
+ [1] https://lore.kernel.org/linux-fsdevel/20241213221818.322371-1-joannelk=
+oong@gmail.com/
 
