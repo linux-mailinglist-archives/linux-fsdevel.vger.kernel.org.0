@@ -1,76 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-46365-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46364-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2F1A88022
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C45F8A8801F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D58A61896557
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 12:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C613A9EEB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 12:12:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CB829DB7D;
-	Mon, 14 Apr 2025 12:12:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8342BD591;
+	Mon, 14 Apr 2025 12:12:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LbZorzUo"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1LN99dSc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CQ0hOObU";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="1LN99dSc";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CQ0hOObU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 232B228F948
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 12:12:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DE427EC83
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 12:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744632767; cv=none; b=al5rGcdaXuRVR95sCGYatb2+C/coG0Gqs219Wdxvr3h73R3/K+fpE/gCS0PwEErMCG1KpGEkpH4f6AKKYNGIWvRj35YlGuLGVZ3d9N2eGWmfQIbUtUI46MsvZa6TJJoJuTeSA/ZYJJPW48QXQ+U6L1CV1ShmW5uC4jKhp7qriag=
+	t=1744632767; cv=none; b=qVDb8YXAMyCi5ik3MzG1wLEYFyMiOXc5Hh11EQi0qYYQKHtA1ak70y7XAGypwBg0EyCS60V5QnyN/LiLydx2LQFA/WA9bTA+rT3iYeZWAIBQgW4Y1smoesU9doD9SUSOtHc1pirAtDFjWuHgDHmcG/2cd5QNjYQ06PWkYDDfCr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1744632767; c=relaxed/simple;
-	bh=1S+ITQydYbgE+uA/RIk7xnL9LLWkvENVbfnlHt0wCsQ=;
+	bh=ENCN5x3UqZoK3dspT54xE0g8QUhPGicQX5vBEoOvbtY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ND+3aHAhmb+rckwA0avnRRaUwfNQXgjU2/iR53c14Y1l2Wi1KD9qKjxbqWw8hSYk/7zTIrlXfbwnTCMv5zKET+VUiCWVaNocuGcnqwuGVTW/oG27VcC8opLsV3S6r26TxbMiOucYdfTl203XfBZOvlJmxEYlOzgT5+Tfbu3TVs0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LbZorzUo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1744632764;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xE6hbqCqCOzEbv4rU1vZXMJioz7aWAmnIdx1bIH/tng=;
-	b=LbZorzUoxfIbvugdyr0mpKKVEai+8B1D2eVVkeEi9hlosCJKB8xFRSYr5WJrHdfrAvCQku
-	ig3CzcxOo3NXKwAuJAutHgCFvsX8HJy0yGTiJ5tGI/IIVSwzwL0ynxq6sN1tKu0ezYL4uq
-	WnJtrdSW1OM9m73l+U6D4vuKeKZgG4E=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-94-NNlnUyEPPz-pBzCRNTXsmQ-1; Mon,
- 14 Apr 2025 08:12:38 -0400
-X-MC-Unique: NNlnUyEPPz-pBzCRNTXsmQ-1
-X-Mimecast-MFC-AGG-ID: NNlnUyEPPz-pBzCRNTXsmQ_1744632757
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	 Content-Type:Content-Disposition:In-Reply-To; b=AHVlnpG9PtB38mdrcG6w4TYs1l4WAHBnSM6hxSdqp4jDNJCxxkpiRVKKqHUSVUgE06aH4Sv44pWgaj7rcx+ToL1ajxFMke+O/t2QM+Jo54rioqNrv75p8eEOAOR88CdaEBBgOqo50N9wLXhgYtAv0hX2BQyQGfircf4wzqx128o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1LN99dSc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CQ0hOObU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=1LN99dSc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CQ0hOObU; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A3CCD195608B;
-	Mon, 14 Apr 2025 12:12:36 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.114])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 3DE761956094;
-	Mon, 14 Apr 2025 12:12:32 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Mon, 14 Apr 2025 14:12:00 +0200 (CEST)
-Date: Mon, 14 Apr 2025 14:11:56 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Luca Boccassi <luca.boccassi@gmail.com>,
-	Lennart Poettering <lennart@poettering.net>,
-	Daan De Meyer <daan.j.demeyer@gmail.com>,
-	Mike Yuan <me@yhndnzj.com>,
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] coredump: fix error handling for replace_fd()
-Message-ID: <20250414121156.GA28345@redhat.com>
-References: <20250414-work-coredump-v1-0-6caebc807ff4@kernel.org>
- <20250414-work-coredump-v1-2-6caebc807ff4@kernel.org>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D0BFE1F45F;
+	Mon, 14 Apr 2025 12:12:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744632762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rlkFtnpwAE5if8bFapspa1/JYvm/8UmbZU4eZJLXFyk=;
+	b=1LN99dScidLHokALd1dYOCoP6pg5+3SHk8UsZlQ6jVIOj/6MHHc98uNzfsoXDolATz7LLU
+	TmpC/ZAvOdBBb6T6oNVo9xepgvHHK5+A+aiJEA3WHpGHD0Vau9xzuSOspFECvUdgLuVJ+i
+	djXk1+EB3qU2IaoktpT0PJqsWYEh/aw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744632762;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rlkFtnpwAE5if8bFapspa1/JYvm/8UmbZU4eZJLXFyk=;
+	b=CQ0hOObUL2hJ7Snkhjc2uGrVq8/AekYCwp83R8mzgoz4s8vy/rzomKMErDu/vl7wAwTl9O
+	Q8sUErgWfN3IiIDQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=1LN99dSc;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=CQ0hOObU
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744632762; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rlkFtnpwAE5if8bFapspa1/JYvm/8UmbZU4eZJLXFyk=;
+	b=1LN99dScidLHokALd1dYOCoP6pg5+3SHk8UsZlQ6jVIOj/6MHHc98uNzfsoXDolATz7LLU
+	TmpC/ZAvOdBBb6T6oNVo9xepgvHHK5+A+aiJEA3WHpGHD0Vau9xzuSOspFECvUdgLuVJ+i
+	djXk1+EB3qU2IaoktpT0PJqsWYEh/aw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744632762;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rlkFtnpwAE5if8bFapspa1/JYvm/8UmbZU4eZJLXFyk=;
+	b=CQ0hOObUL2hJ7Snkhjc2uGrVq8/AekYCwp83R8mzgoz4s8vy/rzomKMErDu/vl7wAwTl9O
+	Q8sUErgWfN3IiIDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C0F59136A7;
+	Mon, 14 Apr 2025 12:12:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KsAYL7r7/GdlYwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Apr 2025 12:12:42 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 4B4CAA094B; Mon, 14 Apr 2025 14:12:42 +0200 (CEST)
+Date: Mon, 14 Apr 2025 14:12:42 +0200
+From: Jan Kara <jack@suse.cz>
+To: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Jan Kara <jack@suse.cz>, Luis Chamberlain <mcgrof@kernel.org>, 
+	brauner@kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	linux-ext4@vger.kernel.org, riel@surriel.com, willy@infradead.org, hannes@cmpxchg.org, 
+	oliver.sang@intel.com, david@redhat.com, axboe@kernel.dk, hare@suse.de, 
+	david@fromorbit.com, djwong@kernel.org, ritesh.list@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-mm@kvack.org, 
+	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com
+Subject: Re: [PATCH v2 7/8] mm/migrate: enable noref migration for jbd2
+Message-ID: <zbcvnyipzfzvcoaboldo6dbms3ppoi4mm65havqtknzi3iviwe@of5gwmgs6kpd>
+References: <20250410014945.2140781-1-mcgrof@kernel.org>
+ <20250410014945.2140781-8-mcgrof@kernel.org>
+ <rnhdk7ytdiiodckgc344novyknixn6jqeoy6bk4jjhtijjnc7z@qwofsm5ponwn>
+ <20250410173028.2ucbsnlut2bpupm3@offworld>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,41 +111,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250414-work-coredump-v1-2-6caebc807ff4@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+In-Reply-To: <20250410173028.2ucbsnlut2bpupm3@offworld>
+X-Rspamd-Queue-Id: D0BFE1F45F
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[23];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[suse.cz,kernel.org,mit.edu,dilger.ca,vger.kernel.org,surriel.com,infradead.org,cmpxchg.org,intel.com,redhat.com,kernel.dk,suse.de,fromorbit.com,gmail.com,kvack.org,samsung.com];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 04/14, Christian Brauner wrote:
->
-> The replace_fd() helper returns the file descriptor number on success
-> and a negative error code on failure. The current error handling in
-> umh_pipe_setup() only works because the file descriptor that is replaced
-> is zero but that's pretty volatile. Explicitly check for a negative
-> error code.
+On Thu 10-04-25 10:30:28, Davidlohr Bueso wrote:
+> On Thu, 10 Apr 2025, Jan Kara wrote:
+> 
+> > > @@ -851,6 +851,8 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+> > > 		bool busy;
+> > > 		bool invalidated = false;
+> > > 
+> > > +		VM_WARN_ON_ONCE(test_and_set_bit_lock(BH_Migrate,
+> > > +						      &head->b_state));
+> > 
+> > Careful here. This breaks the logic with !CONFIG_DEBUG_VM.
+> 
+> Ok, I guess just a WARN_ON_ONCE() here then.
 
-...
+Or just:
 
-> @@ -515,6 +517,9 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
->  
->  	err = replace_fd(0, files[0], 0);
->  	fput(files[0]);
-> +	if (err < 0)
-> +		return err;
-> +
->  	/* and disallow core files too */
->  	current->signal->rlim[RLIMIT_CORE] = (struct rlimit){1, 1};
+	bool migrating = test_and_set_bit_lock(BH_Migrate, &head->b_state);
 
-The patch looks trivial and correct, but if we do not want to rely on
-the fact that replace_fd(fd => 0) return 0 on sucess, then this patch
-should also do
+	VM_WARN_ON_ONCE(migrating);
 
-	-	return err;
-	+	return 0;
+Frankly, I find statements with side-effects in WARN_ON / BUG_ON statements
+rather confusing practice...
 
-?
-
-otherwise this cleanup looks "incomplete" to me.
-
-Oleg.
-
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
