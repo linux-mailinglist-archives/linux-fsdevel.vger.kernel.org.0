@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-46379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E883CA88488
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 16:21:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0842CA8844C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 16:17:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E96716B897
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:16:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47F927A334B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3361A2918CA;
-	Mon, 14 Apr 2025 13:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2B6B292925;
+	Mon, 14 Apr 2025 13:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SdaNTfp8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qn8fTQvT"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809F427A934;
-	Mon, 14 Apr 2025 13:55:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490C8292908;
+	Mon, 14 Apr 2025 13:55:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744638916; cv=none; b=LYyUw9sN7np4IN1dBcZ9kYm0qzrIsXvNSfIKXxjCf3a5rA3sawbBUse9dNRvyT98WLAN7qw8z3DN+vsxtF5LNEZlI6XD1eWW93gX3n7LH7v7PNsD+d1fk0PbP++i876K3dOoHjHL9GEj2OdFcFLMobSh1HQE0/0sm1gnRT8prWc=
+	t=1744638920; cv=none; b=EeujgIuuut51OicCrL/ejeGJnFs52mXrqVP/jU+SjJrWaIQJpe+C8Zmnvr4LGpgZaugxcZLq6BK+YbICDP/99f6pm+v44/QqkaVL24X6a0B1K6OkCrCdCspzvSqgT7kCTGVCKsl6NC/zwMwXBsM7un1wC+YXX0NiQV0yEibCiM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744638916; c=relaxed/simple;
-	bh=m9SucPDBiv57vDJTBiHL8Yu+1iS7jJDF3MNROUK+8qQ=;
+	s=arc-20240116; t=1744638920; c=relaxed/simple;
+	bh=t853+Rl8SnkvdNKiDLYL23jkVep5KqIlNkpAgl3fzGU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uPYD6Ag8M8pxdyy5vP+/x6UbYs/Fl+da5aVHVCbTaBBbQN45VBwLVQLmJ+ZSeTIkruGKvfjetso1RlPV5RCBkrP/g777fp6REZ0Wwk7YdbYfzjACo5+kenkV4FND4ePWQk/iXkavovi44HhCRixnA+LY0DoZjfhFQMdGqjJfGr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SdaNTfp8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F9C8C4CEE9;
-	Mon, 14 Apr 2025 13:55:14 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=hEMP1vCxwC9DClpQBg2hk3Q1MEHnZI2Pyg4ffRpMQeuGI1a3V+hAeV3kwmLN+m+gunWCWHbKR7dWtLmdE/zI6jAwL0RPSg6gWGn2VHQd0CnVnCxdoMch4oUWGXe/pgQE7ACVRUX2UFTg7r1cnGoKEF7l2ihMaXu+qGpDCytWtr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qn8fTQvT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F21C4CEE9;
+	Mon, 14 Apr 2025 13:55:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744638916;
-	bh=m9SucPDBiv57vDJTBiHL8Yu+1iS7jJDF3MNROUK+8qQ=;
+	s=k20201202; t=1744638918;
+	bh=t853+Rl8SnkvdNKiDLYL23jkVep5KqIlNkpAgl3fzGU=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=SdaNTfp8Er4D+Ef6aQpurGQ2VvjvPcRhLY1bMuXFARBdP8Rl7/oXWMkSjeW4b7/fU
-	 ZBsq8kAZF9QK3WAZgqzJmnMqMaTXmDkXsLUAQ5iv+m++Jjl8CA5G6WUyH0NFDEfPVe
-	 kWBR3C5dpdxH4VIilXR+Ya/J4wpl0AwyawY/xGKwSpI081AQthCqCv3mstuF7enPom
-	 x2ioWnfDVogI7yiyT3Qzjz3s3cp4c+Ee9FBoxahsC2U3u53jy/DYm2cdBwD1UxC5lp
-	 PCaOk908wCBVzmM2vZaxIhtEsKxcWpPrVhV9SZEUkOPbpl1nfgSNxYUj6OnauUC4Gz
-	 zddd7RBjrzbhA==
+	b=Qn8fTQvTceVOiAVrTp02akclWqABBbFlZG9y9krwl5yJA2CzuJTRBoGJWhSZm1ZU6
+	 tVsCVIXmYHJuy6VTgm03hEGdjgZVjHcxeIj+3hFiCYDUPz70hMOOz/hG4LdRy2sCuZ
+	 488LALPwrkDjxdh1pDhilLnCgzFCrc+tICU3f8CM9w7ITcEO7V6h0XYCsP7BXmyoI6
+	 7swZ1TPQAOB4+xLmfqx7cBxzvqHDbAW5c+7OGUpNvMuQbfufZcdeK3+GyrnKp1Hj2/
+	 c0/lCR6HSgWWnKUkJ0Kx+icwRZ5czq5IPLGnmaig86km+KlhHxhBM2JXeRK4L+xqOs
+	 w+zxd9cIqt/lA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 14 Apr 2025 15:55:05 +0200
-Subject: [PATCH v2 1/3] pidfs: move O_RDWR into pidfs_alloc_file()
+Date: Mon, 14 Apr 2025 15:55:06 +0200
+Subject: [PATCH v2 2/3] coredump: fix error handling for replace_fd()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250414-work-coredump-v2-1-685bf231f828@kernel.org>
+Message-Id: <20250414-work-coredump-v2-2-685bf231f828@kernel.org>
 References: <20250414-work-coredump-v2-0-685bf231f828@kernel.org>
 In-Reply-To: <20250414-work-coredump-v2-0-685bf231f828@kernel.org>
 To: linux-fsdevel@vger.kernel.org
@@ -63,50 +63,57 @@ Cc: Oleg Nesterov <oleg@redhat.com>,
  =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
  linux-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1239; i=brauner@kernel.org;
- h=from:subject:message-id; bh=m9SucPDBiv57vDJTBiHL8Yu+1iS7jJDF3MNROUK+8qQ=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/Fd7/bb2P99fAX+EfKhOauW6W5oczmi72yavXSV3k8
- yX7kOaNjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIn842f4p6T4cPuVP8duyApt
- nS3xVPjA3rWifx1NNn/P/rqQ07U9rYyR4eFUn8VnwjQ4hDZv3OVst97ZhysvR7P9Z/ZH4envnv5
- 7wQoA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1336; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=t853+Rl8SnkvdNKiDLYL23jkVep5KqIlNkpAgl3fzGU=;
+ b=kA0DAAoWkcYbwGV43KIByyZiAGf9E7+h7dWzk8nkJJD8Sy5bkQqcEy5DCwK/zVRzQSbmGksBN
+ 4h1BAAWCgAdFiEEQIc0Vx6nDHizMmkokcYbwGV43KIFAmf9E78ACgkQkcYbwGV43KLTTQD/WIKd
+ o7GNrheZQO8PFRMgTmSbF4eBndkxBDE12uSr6jABAMuhkPvXRsQhZZe5J1kRYWgsmeG+bWwTE+a
+ qMW91rvAG
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Since all pidfds must be O_RDWR currently enfore that directly in the
-file allocation function itself instead of letting callers specify it.
+The replace_fd() helper returns the file descriptor number on success
+and a negative error code on failure. The current error handling in
+umh_pipe_setup() only works because the file descriptor that is replaced
+is zero but that's pretty volatile. Explicitly check for a negative
+error code.
 
 Tested-by: Luca Boccassi <luca.boccassi@gmail.com>
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/pidfs.c    | 1 +
- kernel/fork.c | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ fs/coredump.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index d64a4cbeb0da..50e69a9e104a 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -888,6 +888,7 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
- 		return ERR_PTR(-ESRCH);
+diff --git a/fs/coredump.c b/fs/coredump.c
+index c33c177a701b..9da592aa8f16 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -507,7 +507,9 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
+ {
+ 	struct file *files[2];
+ 	struct coredump_params *cp = (struct coredump_params *)info->data;
+-	int err = create_pipe_files(files, 0);
++	int err;
++
++	err = create_pipe_files(files, 0);
+ 	if (err)
+ 		return err;
  
- 	flags &= ~PIDFD_CLONE;
-+	flags |= O_RDWR;
- 	pidfd_file = dentry_open(&path, flags, current_cred());
- 	/* Raise PIDFD_THREAD explicitly as do_dentry_open() strips it. */
- 	if (!IS_ERR(pidfd_file))
-diff --git a/kernel/fork.c b/kernel/fork.c
-index c4b26cd8998b..d184e51196a2 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -2071,7 +2071,7 @@ static int __pidfd_prepare(struct pid *pid, unsigned int flags, struct file **re
- 	if (pidfd < 0)
- 		return pidfd;
+@@ -515,10 +517,13 @@ static int umh_pipe_setup(struct subprocess_info *info, struct cred *new)
  
--	pidfd_file = pidfs_alloc_file(pid, flags | O_RDWR);
-+	pidfd_file = pidfs_alloc_file(pid, flags);
- 	if (IS_ERR(pidfd_file))
- 		return PTR_ERR(pidfd_file);
+ 	err = replace_fd(0, files[0], 0);
+ 	fput(files[0]);
++	if (err < 0)
++		return err;
++
+ 	/* and disallow core files too */
+ 	current->signal->rlim[RLIMIT_CORE] = (struct rlimit){1, 1};
  
+-	return err;
++	return 0;
+ }
+ 
+ void do_coredump(const kernel_siginfo_t *siginfo)
 
 -- 
 2.47.2
