@@ -1,117 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-46398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE6AA887B4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 17:48:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C151CA887D1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 17:54:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6703AAEA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 15:46:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCFAE17925C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 15:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092DF27B4F5;
-	Mon, 14 Apr 2025 15:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7EF27F744;
+	Mon, 14 Apr 2025 15:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FDKFgFIS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLYfVlrQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F6E18BC3B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 15:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6933F27F72B;
+	Mon, 14 Apr 2025 15:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744645581; cv=none; b=uRuH4mWmFdSpT5y7OGYTjr+XjjXUDwAJbWImjx2BaXTk1Zrt/P7Cf6XnvgQG7ILceWFY80f0Ak2oxxD7oGAmOfahOfSuefn3ToyjJLmB7tHTl+XIePZjSTnojmjipYN+IsMgviAkiX6AJtr4KOKLsPEv76WsQPz2eQrLGODPRzw=
+	t=1744646078; cv=none; b=uhIdAiEmb7pEd0Lw7xmDq15vR4qskJfa5TVX5XKCcKfxFIe5MiSiSCcEveR9KPFLZr7OaY/ClxmDHnqUWGyGDzqoC+mDlkVOXv+xKvx/bku4ZytvcIznwJBcaL5LcrikZ6EF96PEiEN+FKMG+hy1T4OgeqDgRK0htMjRDdRBFK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744645581; c=relaxed/simple;
-	bh=eYbIADCAabe7j+LtgMC8MoX3eskEhtClGsrJDvbhXVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K2dQLlAN9ipsSpIamLn1P4ERnqqyYvfNz4DuVy7eSc70ZjwwL+rvHNP7+O4VL/Ltc4WhkRSbUxTyOfJTnkmZvKNl0+FyqIfJf3jz7K8i7hLxWyaFSJ2Lbl99g7v9SGhXZHsjtFSJd0DREcB0fNzsTEnJdQLtfvOJkcTFJu6SjWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FDKFgFIS; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso8293738a12.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 08:46:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1744645576; x=1745250376; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NeOhHf5iGFXCR7KyyiaekGGStl7/ERESKKOdW516A3U=;
-        b=FDKFgFISJD79jq+mDNybSB2yZsynp/pIuWWKj0vPR9H0Op7NU9iET5FGrsVXStVv70
-         /u2yVtCLLXoHFfLMym4yeINnCzpL2PN+kAItbVxnhrRgg9A8RpIh4U+ysJrf2dMIeV85
-         uAQmPc1j6s9DW/5XxTp50vXVIzdAFtRyDQvNQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744645576; x=1745250376;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NeOhHf5iGFXCR7KyyiaekGGStl7/ERESKKOdW516A3U=;
-        b=pH8xf2P+9KrQE+NJawte1/TzDqdqqteQDfi18dPjimvIWkyIxiQC+5EPG54/7xtU0A
-         RcnXcFeTsqCrc1f/B0fUj8J8Ct62mbSYIo3qkINQYY1DKOGEfBZwpQ3Hf9ZQyxx+ZnkK
-         yIVF2CcuyC/IHLWL6pRniwgzKPEztiofDGq39gG/sdALciluag9H878emyCNgZBGHkR3
-         t6So4H8nF07VWwYeIZCOoUK2r38xubOWYTitewgjEFJm8J3KYCJl51zSXWCk3pwW0s0o
-         HZYESQel6erbg5NIFl90jPI4KbMP17tV8kR47u4QApbnNa7mYaNPewIOFYucX9KPXKwp
-         EBxw==
-X-Gm-Message-State: AOJu0YzWYx7EynENOAQFTDmKMVcUILjtKhGsXyzmsQO/YHTPsk0g5WrZ
-	wEJeyFPGPr+874Gw3qt/lSJuU0r4QPSqp/hqLo9rpa6yO5oZSTelQOVYundURBcU7N/LTObP458
-	/ZDo=
-X-Gm-Gg: ASbGnctXQHJ0NGYpUfwhTkE8AvQZ7UKWQcvLpXgGIGiSK3HmVwqiqJYswqdUeIWdZF2
-	zje5eBfwLkAgKx7wV76TjY56SwlRJRuLTwFt2nXWOAGpFdPZ7CEJQPgZ3F0IzLD6l2IxjbolUua
-	YzA9jsEF+HFzVPa7hIMOcRoRAe5KFx6LNsfaDSnPEi29hw/S8HJfifTtoMw1livifURRBpIybzD
-	nLw74DzyqXxxbQqHUy7wvE/q6s8zn+dXeWpvn/sKsjLp+Dm1EJbWSls42VGoi+d67dK1U3Yt/bQ
-	QqQ6RfXOE/kZ+XMahdOzQld3sLw7q5gdkEKm+ba50mdFhYNhWh+tanpLxAmW/7eaEMzJ/TJL30S
-	tAjmqNTw7ZGgeVx8Cz9Tl+x0jtA==
-X-Google-Smtp-Source: AGHT+IFkdOgNeeRjtqeXEodkmxBhs9BTkEYuZLp5yw2LdBT60Mw43Zqab8BM9UMQZXi+eG4pcjTrcg==
-X-Received: by 2002:a17:906:1413:b0:aca:a1e2:8abc with SMTP id a640c23a62f3a-acad344606cmr925321966b.12.1744645576288;
-        Mon, 14 Apr 2025 08:46:16 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36f505744sm5252662a12.57.2025.04.14.08.46.15
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Apr 2025 08:46:15 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso768213866b.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 08:46:15 -0700 (PDT)
-X-Received: by 2002:a17:907:97cd:b0:ac3:4227:139c with SMTP id
- a640c23a62f3a-acad34a1b8fmr1001357466b.24.1744645575182; Mon, 14 Apr 2025
- 08:46:15 -0700 (PDT)
+	s=arc-20240116; t=1744646078; c=relaxed/simple;
+	bh=o7Sn3LssoZFdLf/2WQFJxlbEOZh5vKlFF2621SYwp34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P1lEoNpsJH+gjo8AaHEecEPk8AWGTgkYEaDvUclCmX8fdHsjFVPPY7afyTZQtXPz5IwuCl9BNeUJI9F0CUkSJUj1tSi++maO5Py+udJMKHpsTUtxjk4RSktg/8dmb8TLhtBWwvIcXHmzDrM2csa+4onEjzLFLStkaowSIm+XGvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLYfVlrQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 427D7C4CEE2;
+	Mon, 14 Apr 2025 15:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744646077;
+	bh=o7Sn3LssoZFdLf/2WQFJxlbEOZh5vKlFF2621SYwp34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hLYfVlrQYepHQWesioVCpm42zHOJLSshh+LpFpzd2GUO5z1O33z14rPTbYsGJpLAp
+	 G2IF4aybBPOph7yY2k4uEUlzAvuAGg5lYGly2ZEMOD9HvYy0CEkRRzPe0+YLlGeZGp
+	 7h4iuqLOg+k5eP523aJlKDrs5Mz7Ay24OXkcNAgnod2BprHZ/2EPo2lWX5vnd0L7DI
+	 +NvIOlycB2jUYg17fsEtUtl4ck/ZbofxXVwIrZDiWW6LYis8B8aOH2iEEPjnd1XlPi
+	 e8Bxu73vwu3FxmpKutjvRbvR9o+s9imX00ps23+7ziXlxPv45jCYR2W2daOUwP7I2x
+	 Nfipbhz2YEAxQ==
+Date: Mon, 14 Apr 2025 17:54:33 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: NeilBrown <neilb@suse.de>
+Cc: Vlastimil Babka <vbabka@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 1/2] VFS: change kern_path_locked() and
+ user_path_locked_at() to never return negative dentry
+Message-ID: <20250414-unecht-geklagt-028caecfeb95@brauner>
+References: <20250217003020.3170652-1-neilb@suse.de>
+ <20250217003020.3170652-2-neilb@suse.de>
+ <20250414-wendung-halbe-e81e952285cc@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250414-gefangen-postkarten-3bb55ab4f76a@brauner>
-In-Reply-To: <20250414-gefangen-postkarten-3bb55ab4f76a@brauner>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 14 Apr 2025 08:45:56 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj+SJCYnBT-CZx0sCgWg1jovGZHb+OKs7kqN-enF-Gz8A@mail.gmail.com>
-X-Gm-Features: ATxdqUFcZRqjzxVskb_5zncAuac386QemHaQvCGNI8pZffnqZykRilBFVXJ90Gk
-Message-ID: <CAHk-=wj+SJCYnBT-CZx0sCgWg1jovGZHb+OKs7kqN-enF-Gz8A@mail.gmail.com>
-Subject: Re: Can we remove the sysfs() system call?
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250414-wendung-halbe-e81e952285cc@brauner>
 
-On Mon, 14 Apr 2025 at 06:35, Christian Brauner <brauner@kernel.org> wrote:
->
-> we've been carrying sysfs() around since forever and we marked the
-> sysfs() system call as deprecated in 2018 iiuc.
->
-> Should we try and get rid of this odd system call or at least flip the
-> config switch to default to N instead of Y?
+On Mon, Apr 14, 2025 at 01:01:53PM +0200, Christian Brauner wrote:
+> > diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
+> > index 7f358740e958..367eaf2c78b7 100644
+> > --- a/kernel/audit_watch.c
+> > +++ b/kernel/audit_watch.c
+> > @@ -350,11 +350,10 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
+> >  	struct dentry *d = kern_path_locked(watch->path, parent);
+> >  	if (IS_ERR(d))
+> >  		return PTR_ERR(d);
+> > -	if (d_is_positive(d)) {
+> > -		/* update watch filter fields */
+> > -		watch->dev = d->d_sb->s_dev;
+> > -		watch->ino = d_backing_inode(d)->i_ino;
+> > -	}
+> > +	/* update watch filter fields */
+> > +	watch->dev = d->d_sb->s_dev;
+> > +	watch->ino = d_backing_inode(d)->i_ino;
+> > +
+> >  	inode_unlock(d_backing_inode(parent->dentry));
+> >  	dput(d);
+> >  	return 0;
+> > @@ -419,10 +418,11 @@ int audit_add_watch(struct audit_krule *krule, struct list_head **list)
+> >  	/* caller expects mutex locked */
+> >  	mutex_lock(&audit_filter_mutex);
+> >  
+> > -	if (ret) {
+> > +	if (ret && ret != -ENOENT) {
+> >  		audit_put_watch(watch);
+> >  		return ret;
+> >  	}
+> > +	ret = 0;
+> 
+> So this is broken.
+> 
+> If kern_path_locked() fails due to a negative dentry and returns ENOENT
+> it will have already called path_put() and @parent_path is invalid.
+> 
+> But right after this audit does:
+> 
+> >  
+> >  	/* either find an old parent or attach a new one */
+> >  	parent = audit_find_parent(d_backing_inode(parent_path.dentry));
+> 
+> and then later on calls path_put() again. So this is a UAF. We need to
+> fix this.
+> 
+> This used to work before because kern_path_locked() return a path with a
+> negative dentry.
 
-We can certainly try. But I bet it's used somewhere. Deprecation
-warnings tend to mean nothing ;(
-
-> (Another candidate that comes to mind is uselib().)
-
-That one is already 'default n' since a few years ago, and only
-enabled on some legacy architectures that still use a.out:
-
-        default ALPHA || M68K || SPARC
-
-so ...
-
-          Linus
+*returned the parent path even if the looked up dentry was negative
 
