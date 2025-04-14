@@ -1,59 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-46351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B920CA87D0C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 12:09:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8348DA87D1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 12:10:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56875172D01
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 10:09:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84E7F188FF04
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 10:10:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91C33269D01;
-	Mon, 14 Apr 2025 10:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23F5269B0E;
+	Mon, 14 Apr 2025 10:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hBF44R4a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZV95Tyx"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7565257AC8;
-	Mon, 14 Apr 2025 10:07:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B0E2698BE;
+	Mon, 14 Apr 2025 10:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744625270; cv=none; b=CAzzdH/+kG3hnDiMZ0xNoa9derpCJ02wO4zJisD4Ac+AaCgYp8qEM/yvNspgoPe7Zlf5vnZPfqnrVUiwGAaTTVkdsD+Vy5S6TSyrUij8k8evPiPBA7vqTaspGftStIFTkgS0FjkHAnmOeB5FX+T05C2vNrBhyKzwXOQHW8rksoE=
+	t=1744625349; cv=none; b=TRH69vBlN5mVcMkbKnLuwGr0xi5bUZSy2bOo6wKNH6IZ66HG1jXYposcenlo/ah01SY9LGBMlditEftI4ndm5w+bAXcWfbsL6jqiQFeHO1kpsuSEHAPrcfJbAgX7+/vvJwE5lA+u/fu+Z9WR1pWj0V1Aau6XwSiFySnkd1ZY4oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744625270; c=relaxed/simple;
-	bh=VI4j0sXgmnuEw8vbl2viydu5eF3Lvl/q1kcrbNaE+ZM=;
+	s=arc-20240116; t=1744625349; c=relaxed/simple;
+	bh=iYgJGM+ELKUPOGb8b/QLqMww9EWRkl/iutAxpaWye3k=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oGubABmPMDlW6e/qTzrblyKp5l4wpW+XrQaSu9xhOdjaHpUrglsi8SEyPIiOg1b/6hYeVqYqwUAyvTv+rdZJ1fvPqxqy7X7SCahU+Jkj/46vwequJjoBF+/zWRY02Wni/Trafttgi4ReZjEVRk+ZGXfUj4HcxJGXW+S0U6mf/FA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hBF44R4a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0270C4CEE2;
-	Mon, 14 Apr 2025 10:07:47 +0000 (UTC)
+	 MIME-Version:Content-Type; b=fEANP23gW4/2bd2YX3f6vmXk3H4UdyBWgy3apz2J8pKNH6X9Kqc/XdxjGOHIL92NSOzyNYW4SnuSQd0/chS9MtH0wBTl4B6Px6kUAbUWkVyXpx61C4z/j+lMXg8giY86tS1vDSvcdn8Q7zN3hoNdfWoNeDwbB35J3YrMgChXSzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZV95Tyx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5644C4CEE2;
+	Mon, 14 Apr 2025 10:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744625269;
-	bh=VI4j0sXgmnuEw8vbl2viydu5eF3Lvl/q1kcrbNaE+ZM=;
+	s=k20201202; t=1744625348;
+	bh=iYgJGM+ELKUPOGb8b/QLqMww9EWRkl/iutAxpaWye3k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hBF44R4aYCzaeHVJSnPnFfmJ3aUEnLW7FUBwrz/F3xVp/nTp63RDGYi5CnlHPf68I
-	 WtTdzndSKupMu831w8mRUhfWx1rXXb8DrBdgQVfFhPBIUxr3sd1i7qEk4CAYRbBkdd
-	 0EjYg2wSMQxYfoP2gLYRMsNG0UECvZWWO/mKVft1zwzKQyS5uC4mgj1opvcYmWQVIZ
-	 xBhnKs30O9h+5WK6WmD5PQBwDukVbgtdoz4vNjfhf2FzLIvOP1mf+8HBXk32gGWFcd
-	 wJm2pHCTHq7glK2gE25LGTaRlWBDXozJBQhIvYpMmBwPLKIdE+9Ts2P01HSFQPaW5Z
-	 Os2+dDEc39bAg==
+	b=MZV95TyxUu7Qtbh9b/1T22ep35nRHWVScOeX6QfmgePQyCmWbkIKM62eiNhNOfNcK
+	 nIu1LU/7wyJwfuc21s7WpxIPGcf3uBsZtpbtlhKk+jBeHpZG4k2CyPk2GPObCfKNwB
+	 78F8D8fiQr5so+rhURnVrH9Pylo8WQbKTDaH1AkbzbfZlKVAQCGVGKVbwwodBOHRIb
+	 2jI8nEuBPs+to99k06hX12Ya5Art7PnAuBDNDPr7L9Z9euvHJBEvDmprlEnYkW2Z6l
+	 8pPKIxc3Gvzyq2MedTHYiGmm6nD213/nuMibPYfLJYEWaI13Ccu/uVuqo2uO83wY+p
+	 C4UOu4hY/66BQ==
 From: Christian Brauner <brauner@kernel.org>
-To: lirongqing <lirongqing@baidu.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
 Cc: Christian Brauner <brauner@kernel.org>,
 	viro@zeniv.linux.org.uk,
 	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH] fs: Make file-nr output the total allocated file handles
-Date: Mon, 14 Apr 2025 12:07:33 +0200
-Message-ID: <20250414-teuflisch-nahezu-396209d549ba@brauner>
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: improve codegen in link_path_walk()
+Date: Mon, 14 Apr 2025 12:09:02 +0200
+Message-ID: <20250414-gezollt-bareinlage-890370cd835b@brauner>
 X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250410112117.2851-1-lirongqing@baidu.com>
-References: <20250410112117.2851-1-lirongqing@baidu.com>
+In-Reply-To: <20250412110935.2267703-1-mjguzik@gmail.com>
+References: <20250412110935.2267703-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,15 +61,24 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=971; i=brauner@kernel.org; h=from:subject:message-id; bh=VI4j0sXgmnuEw8vbl2viydu5eF3Lvl/q1kcrbNaE+ZM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/uVdwjCeFy7gjvIxbQDrjnIwvq+murlcBj89GaTbPC XjEs5+ho5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCKHQhkZNlxP3W202OHyy7Q1 Vz5nr62/buz8vFV82y6ONT+3Rmr43Wb4X376vee9T1vtJzStMLZ+oWq36njGD7mV31qqY3bsL92 pyAQA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1410; i=brauner@kernel.org; h=from:subject:message-id; bh=iYgJGM+ELKUPOGb8b/QLqMww9EWRkl/iutAxpaWye3k=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/ubc/YNdU5nc1busF9xzwswhxDvn1X2r6wvtlZmfau NaKHwpY11HKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjARMVZGhl3c39LmO9TPMhE+ 8v3vzZd7fJ5OmpB6IjpW5qRh/t8jpa0M/91nVj68O239gsm76nz2xk3RZHqo8yF59wqJ6RaPRMo VVvAAAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Thu, 10 Apr 2025 19:21:17 +0800, lirongqing wrote:
-> Make file-nr output the total allocated file handles, not per-cpu
-> cache number, it's more precise, and not in hot path
+On Sat, 12 Apr 2025 13:09:35 +0200, Mateusz Guzik wrote:
+> Looking at the asm produced by gcc 13.3 for x86-64:
+> 1. may_lookup() usage was not optimized for succeeding, despite the
+>    routine being inlined and rightfully starting with likely(!err)
+> 2. the compiler assumed the path will have an indefinite amount of
+>    slashes to skip, after which the result will be an empty name
 > 
+> As such:
+> 1. predict may_lookup() succeeding
+> 2. check for one slash, no explicit predicts. do roll forward with
+>    skipping more slashes while predicting there is only one
+> 3. predict the path to find was not a mere slash
 > 
+> [...]
 
 Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
 Patches in the vfs-6.16.misc branch should appear in linux-next soon.
@@ -86,6 +95,6 @@ trailer updates or similar. If in doubt, please check the listed branch.
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
 branch: vfs-6.16.misc
 
-[1/1] fs: Make file-nr output the total allocated file handles
-      https://git.kernel.org/vfs/vfs/c/66319519f89d
+[1/1] fs: improve codegen in link_path_walk()
+      https://git.kernel.org/vfs/vfs/c/80cf41f567f5
 
