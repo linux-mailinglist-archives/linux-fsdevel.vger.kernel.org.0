@@ -1,116 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-46399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46400-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C151CA887D1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 17:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E04EA88842
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 18:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCFAE17925C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 15:54:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A93941647CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 16:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7EF27F744;
-	Mon, 14 Apr 2025 15:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FE027F73F;
+	Mon, 14 Apr 2025 16:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLYfVlrQ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="moGcroy4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6933F27F72B;
-	Mon, 14 Apr 2025 15:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0D21AAC9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 16:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744646078; cv=none; b=uhIdAiEmb7pEd0Lw7xmDq15vR4qskJfa5TVX5XKCcKfxFIe5MiSiSCcEveR9KPFLZr7OaY/ClxmDHnqUWGyGDzqoC+mDlkVOXv+xKvx/bku4ZytvcIznwJBcaL5LcrikZ6EF96PEiEN+FKMG+hy1T4OgeqDgRK0htMjRDdRBFK0=
+	t=1744647280; cv=none; b=KzKD/Zy5kdNlzo/WJwSEQehOE6xD536vU59Df8pxlkiFgyseUcO6J8nm60aAGu6SQji4TDg9P9zyMOJ6JVxGPwjK2gA/DjlOeWKKM3JJD+oDEoQi4PYELTrBGaEbiYhhT33HqS2Y/aCufSvKILyjm8D0+2hPdHGQ/nM5DI47nqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744646078; c=relaxed/simple;
-	bh=o7Sn3LssoZFdLf/2WQFJxlbEOZh5vKlFF2621SYwp34=;
+	s=arc-20240116; t=1744647280; c=relaxed/simple;
+	bh=HYX44cAlUGzz06XcvpeBhoArLNi5ITgcDrl75RRaVDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P1lEoNpsJH+gjo8AaHEecEPk8AWGTgkYEaDvUclCmX8fdHsjFVPPY7afyTZQtXPz5IwuCl9BNeUJI9F0CUkSJUj1tSi++maO5Py+udJMKHpsTUtxjk4RSktg/8dmb8TLhtBWwvIcXHmzDrM2csa+4onEjzLFLStkaowSIm+XGvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLYfVlrQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 427D7C4CEE2;
-	Mon, 14 Apr 2025 15:54:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744646077;
-	bh=o7Sn3LssoZFdLf/2WQFJxlbEOZh5vKlFF2621SYwp34=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hLYfVlrQYepHQWesioVCpm42zHOJLSshh+LpFpzd2GUO5z1O33z14rPTbYsGJpLAp
-	 G2IF4aybBPOph7yY2k4uEUlzAvuAGg5lYGly2ZEMOD9HvYy0CEkRRzPe0+YLlGeZGp
-	 7h4iuqLOg+k5eP523aJlKDrs5Mz7Ay24OXkcNAgnod2BprHZ/2EPo2lWX5vnd0L7DI
-	 +NvIOlycB2jUYg17fsEtUtl4ck/ZbofxXVwIrZDiWW6LYis8B8aOH2iEEPjnd1XlPi
-	 e8Bxu73vwu3FxmpKutjvRbvR9o+s9imX00ps23+7ziXlxPv45jCYR2W2daOUwP7I2x
-	 Nfipbhz2YEAxQ==
-Date: Mon, 14 Apr 2025 17:54:33 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/2] VFS: change kern_path_locked() and
- user_path_locked_at() to never return negative dentry
-Message-ID: <20250414-unecht-geklagt-028caecfeb95@brauner>
-References: <20250217003020.3170652-1-neilb@suse.de>
- <20250217003020.3170652-2-neilb@suse.de>
- <20250414-wendung-halbe-e81e952285cc@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eAvML/dJO8zT1YBKoqAXkZQ8uDIqvmG6ML7ColxttYqb5gOCNhSWrEHWyxUAHgN6ay0IM0rVbAMrA9zOSeSLJ+LMH20eXvjZx7Ok0T9JnwhoqBsx1j5FP+J4t5UNX6LSN2UxDWiIA4XQM6uxOQWj1HkkLV5v39Y2QVs2qaBdzPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=moGcroy4; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=l3fsDK/SgDcv/8e9T9UGtpM8KqCUafg3BsX/jJbq+Ro=; b=moGcroy4VlDdJnf4fJKzGuExKs
+	G/14o0wLh5/tpW/4RJHnU5Zw1lD0Kyl8tHUHVeOMJHVq69atSwMkHxXi6TmKogHUVvxlkalLNj6jT
+	QhgDdYlOE+MmIrLLoZSkhz4LnbUAEBJFfKngnldUChErdOugIkNLAJQ9lFFo8tNpzD7OvlaUBVIvX
+	hskvqt3t/MTbx1gzUDIX4pZYI6W+cPEDqWi9NyHtFMZhHOF3vfxe2vvVRTnGy2OobegkmISMTugYU
+	g6g+IxMx9EN2SQtvxV5ixzwGaClO+G3vnnqFAeQDEoY7ABec5tUoz2b7BLzw/w7Mp49Z7nwETTQor
+	aKp38cKw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u4MSA-000000092u9-16ic;
+	Mon, 14 Apr 2025 16:14:34 +0000
+Date: Mon, 14 Apr 2025 17:14:34 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+	Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>,
+	Ian Kent <raven@themaw.net>
+Subject: Re: bad things when too many negative dentries in a directory
+Message-ID: <Z_00ahyvcMpbKXoj@casper.infradead.org>
+References: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
+ <20250411-rennen-bleichen-894e4b8d86ac@brauner>
+ <CAJfpegvaoreOeAMeK=Q_E8+3WHra5G4s_BoZDCN1yCwdzkdyJw@mail.gmail.com>
+ <Z_k81Ujt3M-H7nqO@casper.infradead.org>
+ <2334928cfdb750fd71f04c884eeb9ae29a382500.camel@HansenPartnership.com>
+ <Z_0cDYDi4unWYveL@casper.infradead.org>
+ <f619119e8441ded9335b53a897b69a234f1f87b0.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250414-wendung-halbe-e81e952285cc@brauner>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f619119e8441ded9335b53a897b69a234f1f87b0.camel@HansenPartnership.com>
 
-On Mon, Apr 14, 2025 at 01:01:53PM +0200, Christian Brauner wrote:
-> > diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> > index 7f358740e958..367eaf2c78b7 100644
-> > --- a/kernel/audit_watch.c
-> > +++ b/kernel/audit_watch.c
-> > @@ -350,11 +350,10 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
-> >  	struct dentry *d = kern_path_locked(watch->path, parent);
-> >  	if (IS_ERR(d))
-> >  		return PTR_ERR(d);
-> > -	if (d_is_positive(d)) {
-> > -		/* update watch filter fields */
-> > -		watch->dev = d->d_sb->s_dev;
-> > -		watch->ino = d_backing_inode(d)->i_ino;
-> > -	}
-> > +	/* update watch filter fields */
-> > +	watch->dev = d->d_sb->s_dev;
-> > +	watch->ino = d_backing_inode(d)->i_ino;
-> > +
-> >  	inode_unlock(d_backing_inode(parent->dentry));
-> >  	dput(d);
-> >  	return 0;
-> > @@ -419,10 +418,11 @@ int audit_add_watch(struct audit_krule *krule, struct list_head **list)
-> >  	/* caller expects mutex locked */
-> >  	mutex_lock(&audit_filter_mutex);
-> >  
-> > -	if (ret) {
-> > +	if (ret && ret != -ENOENT) {
-> >  		audit_put_watch(watch);
-> >  		return ret;
-> >  	}
-> > +	ret = 0;
+On Mon, Apr 14, 2025 at 11:40:36AM -0400, James Bottomley wrote:
+> On Mon, 2025-04-14 at 15:30 +0100, Matthew Wilcox wrote:
+> > > If an application does an A:B:C directory search pattern it's
+> > > usually because it doesn't directly own the file location and hence
+> > > suggests that other applications would also be looking for it,
+> > > which would seem to indicate, if the search pattern gets repeated,
+> > > that the two negative dentries do serve a purpose.
+> > 
+> > Not in this case.  It's doing something like looking in /etc/app.d
+> > /usr/share/app/defaults/ and then /var/run/app/ .  Don't quote me on
+> > the exact paths, or suggest alternatives based on these names; it's
+> > been a few years since I last looked.  But I can assure you no other
+> > app is looking at these dentries; they're looked up exactly once.
 > 
-> So this is broken.
-> 
-> If kern_path_locked() fails due to a negative dentry and returns ENOENT
-> it will have already called path_put() and @parent_path is invalid.
-> 
-> But right after this audit does:
-> 
-> >  
-> >  	/* either find an old parent or attach a new one */
-> >  	parent = audit_find_parent(d_backing_inode(parent_path.dentry));
-> 
-> and then later on calls path_put() again. So this is a UAF. We need to
-> fix this.
-> 
-> This used to work before because kern_path_locked() return a path with a
-> negative dentry.
+> I got that's what it's doing, and why the negative dentries are useless
+> since the file name is app specific, I'm just curious why an app that
+> knows it's the only consumer of a file places it in the last place it
+> looks rather than the first ... it seems to be suboptimal and difficult
+> for us to detect heuristically.
 
-*returned the parent path even if the looked up dentry was negative
+The first two are read only.  One is where the package could have an
+override, the second is where the local sysadmin could have an override.
+The third is writable.  It's not entirely insane.
+
+Another way to solve this would be to notice "hey, this directory only has
+three entries and umpteen negative entries, let's do the thing that ramfs
+does to tell the dcache that it knows about all positive entries in this
+directory and delete all the negative ones".  I forget what flag that is.
 
