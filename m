@@ -1,107 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-46344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F589A8788C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 09:17:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 85042A87BCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 11:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7973D16F374
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 07:17:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D6B1172DB8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 09:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BDA2580CD;
-	Mon, 14 Apr 2025 07:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE38925F97A;
+	Mon, 14 Apr 2025 09:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="CEc1m6/1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WSOjll3b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68881257ADE
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 07:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0D8C13D;
+	Mon, 14 Apr 2025 09:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744615049; cv=none; b=EWg7eDOKjpLaZByqLd97a3TmzKARCFjJIuVbihkt+zP068/86dsnNXm16e56MO13DOLPv+zKkQYNKF38wE9QFtRz5ZFTAMONZyaB/g6yGkGkFyJ9UH2wowwl4R36vnt+QSZrajZblH2aYwUska2ebBva8KBZ0S485MXws3p4k2Q=
+	t=1744622675; cv=none; b=Qi3+XMKXt4q0FoPd572ehnZb+GiBP4OoCvihaY0/I73uPTTCwFP6LRih+h73uwp0VGGWEAcGN+I0PrzJNKk0RHxyC1HOrfeI19dUOYjBW7ucryQxhPV4BadvVJlax2S/jjX7f1Dm037pSVtcKTkGSGkft5po3haOnF0YFGezd3Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744615049; c=relaxed/simple;
-	bh=XmChRJDMubkkoWDIzCsxlWX9AHt7tVxGFICv9/k4TPw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lyw255SFLbiZcvr9jBPeitQXkQ7fjParO51XU21T1KKzR/KPFhotI2TjLYJLhGQHxWACtEZSRMXD1CFowzYu9UFyo+84sLtDOVin9Ioh3nU2Tsr499ompEv2n5+/oj/6dvY7BtswZJ5/quL9hj6OQhXB1NgQKqJAtZ45PJMdw5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=CEc1m6/1; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-477296dce8dso39532641cf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 00:17:25 -0700 (PDT)
+	s=arc-20240116; t=1744622675; c=relaxed/simple;
+	bh=agTCgMoSAjEhU2SJdZ9IyLmvMRHBWqSCUMYVX1x+tbY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Mhe0YpFHRupgwC1xRkI4YRJIbSWUmVZT+64d4nz5JEQCZqDK8+JmUhBkxAWZPYQTkgxu0edH6kFudmGa9Q4AVWY0Nq+B/I17i2N7FX45hQb0MqE8GFGQtv04DphVVunLgVvVjW+978donkuxLPn1q5LTnLrFAsxypAVKFoK9Ibk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WSOjll3b; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ed8d32a95so34355585e9.3;
+        Mon, 14 Apr 2025 02:24:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1744615045; x=1745219845; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=laLQMlge7YmD/1KwplVbwcYCiwtNenIJivO5aiKBI/A=;
-        b=CEc1m6/1zSz9oBcvK3XcGns+CifJD/McW4jhvsJrEF7gdpRjOOllSfrZI/w/A/uiGK
-         p4CcHUYc7BhRmT/St3AqVRSdwD6P3OPEXeuylqO3UcViEEauH47hWAXpLOchKXstKhig
-         /y+MY9dWYvLjxN904fTAOMR++FFOW0v0uarXE=
+        d=gmail.com; s=20230601; t=1744622672; x=1745227472; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xzue1Jqf/6PZMYk21IFwYXYNC/Y+Ds8648fAr55/H5I=;
+        b=WSOjll3bfqGOL/IjTDFaKJFg901NdMT5hQivaNKEqqQPc07u6Sj5/GWM29PKI92WUR
+         T8QJDW74rrtja9rQ7WDjzEoHOMFcXQnufsSBQjXP+9oxDcl1DppojYEK84GHWXM3aApk
+         6tMjyLscMu5Req2voS7+EscPuBSAg1Fk1jEieRpQztmgQNxvNcVI7ITWgrXXna22DOBB
+         SOYyPbN04sESDP/djRQcf2KQ+qek5pYAh43Lo0/8MwtEFS8hJjdFNjoXxllCR8bY3ZKS
+         yTgjWFD7vJou3COVixwXC/+WPp/czoeoHeOuMC3tV0vIx8yfxaGx8bHK3W0ct2ILTwgN
+         i3xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744615045; x=1745219845;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1744622672; x=1745227472;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=laLQMlge7YmD/1KwplVbwcYCiwtNenIJivO5aiKBI/A=;
-        b=TnahbAH79Nf0e9jTUz5/SCeIbqPNvT/hBSrTBFSQWaI2fiuj7d5chNE3Z2KZ9UMOnD
-         AOCcsfe2So+d/xCWjaH9qhIb9yb0taFUt9KGv0OCZrj2syozJ7L0G77WQPRnSEmwHA34
-         ml3SRQ6yP6cn25GPDjrZZmIbuUjBtpWzaXE8/EbZJuMPXr81QCc8iTyywR5QLLMtF9Ms
-         5+N0ykzbuA09PNyIdVqE3g0KotWN3E8qk/5/99MXcwiUDvu4ztcZi2gjuZPmgGLuWLQX
-         JsL/zc5UY2ayGpXnEA5F89GFlub4ynLKOPkIXghtMdsQuAeJXQ8Tu8/PodUk2rELLPSA
-         7DEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXW+Su4WUAmH78gbSV9ODA6laWn6dHW51zoSy+WdCVa3yHU0CdOU4NOfQOW7ZZI6Z03lu1akzcHrk8SrxGo@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP+phqYToreMTj1SzqUTYfXKHnyYilS9aDRXZJ7MlwOnZ3uv8p
-	V+Bu+Y+RyWRZHs3b5GOH8PVBVbLFclNGGCvsqw7xP94KssC3au1jESM/JmmCvuHNhkd5bhZDR1o
-	6Nczo+0FoDBrw4jyCVf8MeT2HSDQQLauwbLaznw==
-X-Gm-Gg: ASbGncsXRRwzvTWm13mJE7edzMgzM6UWex/0IZzlVhdKN4CuFHEwauxOQyzjIJeXR/C
-	RTk8gPXoNShc0zGHiwS8x0Mas4zAvXFriYpHIAbNCLyuMxmDXx1mvdW5H01veilUfOBCY5+Lwsn
-	9X+/Fso1z+nPFq5/889KA=
-X-Google-Smtp-Source: AGHT+IGj40oKFmX0FVAJYAnXgSDdt1/ZszjYBWhdfomUngwzxr7fmgEuZ1TvtogLkBYg4hohRgX1bFl5wJ6+hlxammA=
-X-Received: by 2002:ac8:5e0e:0:b0:476:7e6b:d2a2 with SMTP id
- d75a77b69052e-479775d5e40mr161977971cf.35.1744615044888; Mon, 14 Apr 2025
- 00:17:24 -0700 (PDT)
+        bh=Xzue1Jqf/6PZMYk21IFwYXYNC/Y+Ds8648fAr55/H5I=;
+        b=kiKxPrsd9wFnPj7F/ivFcb1IXC9jVfncrUkYjl/dWW9YEwrK2OXt1PA9KXGPRx3iKW
+         8dsBWFCTiJlD3D2AZvytuq4iVzp3xo12pG9qKF4bAO63oTwjp63sK0nvNqPmfxNtva/s
+         FGJc7+rIaw43YH1qjQiinPCoyXtoJ21sW+JFla7++o/bX7X40RJLUbWUTh/ExrsldmTv
+         DtqTh6No2PvUdjyLilV0wwaAMeF2r1pxSFHbCrc5i5NRU509DL+EiqLKmfUOdM6TRU0r
+         L978CZsqpoVsAc/QMAbINJpfx6MFHVdcTG3EPeisEy9KM1a+9TNRNz3enHlJAOIHEpU5
+         Z/hw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSJRjjKtmScc/MCeQtFM9AoMoyOXteu4OIXyIbNc8K1ilUFPVFcpabB6n+lFk5sT70cPjj0TLadTnrwi2u@vger.kernel.org, AJvYcCVZzMl1j09XT6lyJGn9ucx2qSolIR2pVNesWNZrYT+v/UMYYMWd9zmll7uJbo9kh0xNbgnn6sWGbITn0TLP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr/FwDToINVFzCXNhYiU3chRKl7OrWdxMozdmFLl74ZYxKGTNF
+	C36fvg+vU2m2Sp4AVrYfHTPrv/nZTRP36f96JQtPGKgUQLjSaeDv
+X-Gm-Gg: ASbGncvhDAFsYzK4AeDuX5npZvgt4r1OWJzM2s26+gXM8Psw5eQPWL34apJPXfOngwo
+	miGnyKWTGi6KCTIfeV+D2uje0azgDi7o1fghJ+42YDgmceaV55rSlzsOkpuLZ0/3LG1ai9P+MIh
+	WEdLL2V1M4dzoXwlN/ZiP59zxucWU5kXWsnGqx+GnaJYFzGgpPyvgO5ratjSLU8b0YoSsTPhhGf
+	9tz+LdqJj8GQh+cyfEWO7PFOgpYJoD9VUjUclghcWyNqifrZ4aBahXvY3DjN2c5NoLSu2Za2Wu9
+	bvbizVkH9me5cAYitdSzWtbMIkTr0aGadolmMltRAqMhclXgrHYT
+X-Google-Smtp-Source: AGHT+IHtWY6E+K4K+bXtvTUnA8A+xDFVvz/cd8uuterYyuoV91+43oLtXfRw8mAVEcC4tqjNcP+mAA==
+X-Received: by 2002:a05:600c:46d1:b0:43c:e9f7:d6a3 with SMTP id 5b1f17b1804b1-43f3a93d697mr94168135e9.13.1744622671428;
+        Mon, 14 Apr 2025 02:24:31 -0700 (PDT)
+Received: from localhost ([194.120.133.58])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43f23572c4esm172954905e9.26.2025.04.14.02.24.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Apr 2025 02:24:31 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] select: core_sys_select add unlikely branch hint on return path
+Date: Mon, 14 Apr 2025 10:24:26 +0100
+Message-ID: <20250414092426.53529-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
- <20250411-rennen-bleichen-894e4b8d86ac@brauner> <CAJfpegvaoreOeAMeK=Q_E8+3WHra5G4s_BoZDCN1yCwdzkdyJw@mail.gmail.com>
- <3c38cf85-d31d-4c46-b9f8-e801a39ca3ff@themaw.net>
-In-Reply-To: <3c38cf85-d31d-4c46-b9f8-e801a39ca3ff@themaw.net>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 14 Apr 2025 09:17:13 +0200
-X-Gm-Features: ATxdqUEw09RfcQECoQa9OfrkUH9DRuG4hXAwyfh4amFiIWbb6cDcqxkeq2O1hxc
-Message-ID: <CAJfpegsacTUd=_kXVbEZQ7vUmivPeZJFuS3C6akk7Zoomt_VYg@mail.gmail.com>
-Subject: Re: bad things when too many negative dentries in a directory
-To: Ian Kent <raven@themaw.net>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Apr 2025 at 08:28, Ian Kent <raven@themaw.net> wrote:
+Adding an unlikely() hint on the n < 0 comparison return path improves
+run-time performance of the select() system call, the negative
+value of n is very uncommon in normal select usage.
 
-> > 1) putting the dentry on d_children when it's turned into positive
-> > 2) getting the dentry off d_children when it's turned into negative.
->
-> That shouldn't be too difficult to do ... sounds like a good idea to me.
+Benchmarking on an Debian based Intel(R) Core(TM) Ultra 9 285K with
+a 6.15-rc1 kernel built with 14.2.0 using a select of 1000 file
+descriptors with zero timeout shows a consistent call reduction from
+258 ns down to 254 ns, which is a ~1.5% performance improvement.
 
-I hadn't counted with parent pointers.  While not actually
-dereferenced, they are compared on cache lookup.  So if the parent is
-removed and a directory dentry is recreated with the same pointer the
-cache becomes corrupted.
+Results based on running 25 tests with turbo disabled (to reduce clock
+freq turbo changes), with 30 second run per test and comparing the number
+of select() calls per second. The % standard deviation of the 25 tests
+was 0.24%, so results are reliable.
 
-Keeping the parent alive while any negative child dentries remain
-doesn't sound too difficult, e.g. an need an additional refcount that
-is incremented in parent on child unlink and decremented on child
-reclaim.  But that's more space in struct dentry and more
-complexity...
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ fs/select.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Miklos
+diff --git a/fs/select.c b/fs/select.c
+index 0eaf3522abe9..9fb650d03d52 100644
+--- a/fs/select.c
++++ b/fs/select.c
+@@ -630,7 +630,7 @@ int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
+ 	long stack_fds[SELECT_STACK_ALLOC/sizeof(long)];
+ 
+ 	ret = -EINVAL;
+-	if (n < 0)
++	if (unlikely(n < 0))
+ 		goto out_nofds;
+ 
+ 	/* max_fds can increase, so grab it once to avoid race */
+-- 
+2.49.0
+
 
