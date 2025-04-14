@@ -1,112 +1,91 @@
-Return-Path: <linux-fsdevel+bounces-46360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C03E5A87E55
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 13:02:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82064A87E68
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 13:06:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089363B494E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 11:01:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9143B62EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 11:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D025280A40;
-	Mon, 14 Apr 2025 11:01:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcRkUW8z"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0714B28A412;
+	Mon, 14 Apr 2025 11:06:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F6A27F4E1;
-	Mon, 14 Apr 2025 11:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0F3283697;
+	Mon, 14 Apr 2025 11:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744628517; cv=none; b=XHquZGtH4tWwg0Q0TnMUtU0bxn4F+/HYri36Tb7ahaNB4tnq5hweWQM5WyGg0pRlHW37h/iICUDrrTUkVvqtlT4eJJvVlxqF1NPwHWVVJX86FTY/9T22QI8FrApHuJmgEv0GGD8gviHTUEE+fPZfjWCU2TEyhHs0lMzk6KWuAsQ=
+	t=1744628783; cv=none; b=PpSP7f60gKOd8EuAeWHZXPtMAMdoBaW54zYV5WiXnVFD4ecTVOQKpMd4KSl7BxZDq5SRzQ7MgSPz68dL7fPwJuyHBUzp3k+Lh9ZDFPBz7LAUGQ8LPPZHp/kzD26kr7ia4auN7dJnWEh6C+KZFo5U0U/c7Jtu/zVNmanHyAnYD3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744628517; c=relaxed/simple;
-	bh=PD40PSaJAYqjNUiP+RE2xMWbWxPku5ePjySEbG2IERE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDfTrZ9tYHdR8/PaoSsIl4BH2UJDu9MT2OSZFjNRlCL3ZRMrsPftYT65JcMkClq14nS+JMCthZYuXgPrt6w4oN4D1KScKaQOGWel+DdTZLrtIsIW9EmEH5SbKk9ReW40Fl47FwyfUX6GmlZ7d2FzYkNdrB6eFgvEaQd59xIXcXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcRkUW8z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6E16C4CEEB;
-	Mon, 14 Apr 2025 11:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744628517;
-	bh=PD40PSaJAYqjNUiP+RE2xMWbWxPku5ePjySEbG2IERE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RcRkUW8z0baeASnP/wcCQVxdoeIxF6BWvyQ4eY19sh6TfdVY+5ePgk5LA78DfXB2B
-	 JNbJnMY2vhi9WkcKWLsvbNgEN6XlLw3FEJlePt+3R/eQsyr6FuZgttWgan919BNvsx
-	 57kqVLH5NLcDm5g8I0P3WCv6yNo8wwq0gJ7Z1iFbugAr9DmBiK0quniQBgyxIyTh0C
-	 EVejiUfNKMUVYOwdcVdWKggo8Z9XoebrGCt587v9q+hz6goqX+BXMBfHJ6ODRnTYV2
-	 eX1H4JgAu7jyD36IzUjLy/8jbn3JcegZru1elHwxb17Tyc+mxosw0lEn2bXJXz3mna
-	 oBGhPRtFNVHJA==
-Date: Mon, 14 Apr 2025 13:01:53 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Vlastimil Babka <vbabka@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 1/2] VFS: change kern_path_locked() and
- user_path_locked_at() to never return negative dentry
-Message-ID: <20250414-wendung-halbe-e81e952285cc@brauner>
-References: <20250217003020.3170652-1-neilb@suse.de>
- <20250217003020.3170652-2-neilb@suse.de>
+	s=arc-20240116; t=1744628783; c=relaxed/simple;
+	bh=KbKNHz0LKd92Dbpkf6xZRcLCDOWv0qrCpWFO+Js8TEs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=sX87wp3tGTZqdzXmSyTz0FiqxCsE1QkT758dwbKUZU6MDDGnis9pyGm6oWXfBlKkjYjnBakVdpCXDAEWo2TNl37SAP/ndOf5qzALYGnB74H0XKFMbJuJiKsvOwXhI96TF0Qf9eF1jCJLdbKEI5116oGLUuuQopHch29HJqXWLQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Christian Brauner <brauner@kernel.org>
+CC: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz"
+	<jack@suse.cz>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?utf-8?B?562U5aSNOiBb5aSW6YOo6YKu5Lu2XSBSZTogKHN1YnNldCkgW1BBVENIXSBm?=
+ =?utf-8?B?czogTWFrZSBmaWxlLW5yIG91dHB1dCB0aGUgdG90YWwgYWxsb2NhdGVkIGZp?=
+ =?utf-8?Q?le_handles?=
+Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IChzdWJzZXQpIFtQQVRDSF0gZnM6IE1ha2Ug?=
+ =?utf-8?Q?file-nr_output_the_total_allocated_file_handles?=
+Thread-Index: AQHbqgqx8U1ad3cqaEyfyidqvoy/O7Oib+KAgACVz6A=
+Date: Mon, 14 Apr 2025 11:05:48 +0000
+Message-ID: <0c3d84f1b91145ccba7d6d3222962be0@baidu.com>
+References: <20250410112117.2851-1-lirongqing@baidu.com>
+ <20250414-teuflisch-nahezu-396209d549ba@brauner>
+In-Reply-To: <20250414-teuflisch-nahezu-396209d549ba@brauner>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250217003020.3170652-2-neilb@suse.de>
+X-FEAS-Client-IP: 172.31.51.53
+X-FE-Last-Public-Client-IP: 100.100.100.38
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-> diff --git a/kernel/audit_watch.c b/kernel/audit_watch.c
-> index 7f358740e958..367eaf2c78b7 100644
-> --- a/kernel/audit_watch.c
-> +++ b/kernel/audit_watch.c
-> @@ -350,11 +350,10 @@ static int audit_get_nd(struct audit_watch *watch, struct path *parent)
->  	struct dentry *d = kern_path_locked(watch->path, parent);
->  	if (IS_ERR(d))
->  		return PTR_ERR(d);
-> -	if (d_is_positive(d)) {
-> -		/* update watch filter fields */
-> -		watch->dev = d->d_sb->s_dev;
-> -		watch->ino = d_backing_inode(d)->i_ino;
-> -	}
-> +	/* update watch filter fields */
-> +	watch->dev = d->d_sb->s_dev;
-> +	watch->ino = d_backing_inode(d)->i_ino;
-> +
->  	inode_unlock(d_backing_inode(parent->dentry));
->  	dput(d);
->  	return 0;
-> @@ -419,10 +418,11 @@ int audit_add_watch(struct audit_krule *krule, struct list_head **list)
->  	/* caller expects mutex locked */
->  	mutex_lock(&audit_filter_mutex);
->  
-> -	if (ret) {
-> +	if (ret && ret != -ENOENT) {
->  		audit_put_watch(watch);
->  		return ret;
->  	}
-> +	ret = 0;
-
-So this is broken.
-
-If kern_path_locked() fails due to a negative dentry and returns ENOENT
-it will have already called path_put() and @parent_path is invalid.
-
-But right after this audit does:
-
->  
->  	/* either find an old parent or attach a new one */
->  	parent = audit_find_parent(d_backing_inode(parent_path.dentry));
-
-and then later on calls path_put() again. So this is a UAF. We need to
-fix this.
-
-This used to work before because kern_path_locked() return a path with a
-negative dentry.
+DQo+IE9uIFRodSwgMTAgQXByIDIwMjUgMTk6MjE6MTcgKzA4MDAsIGxpcm9uZ3Fpbmcgd3JvdGU6
+DQo+ID4gTWFrZSBmaWxlLW5yIG91dHB1dCB0aGUgdG90YWwgYWxsb2NhdGVkIGZpbGUgaGFuZGxl
+cywgbm90IHBlci1jcHUNCj4gPiBjYWNoZSBudW1iZXIsIGl0J3MgbW9yZSBwcmVjaXNlLCBhbmQg
+bm90IGluIGhvdCBwYXRoDQo+ID4NCj4gPg0KPiANCg0KDQpIaSBDaHJpc3RpYW4gQnJhdW5lcjoN
+Cg0KQ291bGQgd2UgY2hhbmdlIHRoZSBjaGFuZ2Vsb2cgYXMgYmVsb3csIGl0IG1heWJlIG1vcmUg
+cmVhc29uYWJsZQ0KDQogICAgZnM6IFVzZSBwZXJjcHVfY291bnRlcl9zdW1fcG9zaXRpdmUgaW4g
+cHJvY19ucl9maWxlcw0KDQogICAgVGhlIGNlbnRyYWxpemVkIHZhbHVlIG9mIHBlcmNwdSBjb3Vu
+dGVyIGNhbiBiZSByZWFsbHkgZ3Jvc3NseSBpbmFjY3VyYXRlDQogICAgYXMgQ1BVIGNvdW50IGlu
+Y3JlYXNlcy4gYW5kIHByb2NfbnJfZmlsZXMgaXMgb25seSBhY2Nlc3NlZCB3aGVuIHJlYWRpbmcN
+CiAgICBwcm9jIGZpbGUsIG5vdCBhIGhvdCBwYXRoLCBzbyB1c2UgcGVyY3B1X2NvdW50ZXJfc3Vt
+X3Bvc2l0aXZlIGluIGl0LCB0byBtYWtlDQogICAgL3Byb2Mvc3lzL2ZzL2ZpbGUtbnIgbW9yZSBh
+Y2N1cmF0ZQ0KDQp0aGFua3MNCg0KDQotTGkNCg0KPiBBcHBsaWVkIHRvIHRoZSB2ZnMtNi4xNi5t
+aXNjIGJyYW5jaCBvZiB0aGUgdmZzL3Zmcy5naXQgdHJlZS4NCj4gUGF0Y2hlcyBpbiB0aGUgdmZz
+LTYuMTYubWlzYyBicmFuY2ggc2hvdWxkIGFwcGVhciBpbiBsaW51eC1uZXh0IHNvb24uDQo+IA0K
+PiBQbGVhc2UgcmVwb3J0IGFueSBvdXRzdGFuZGluZyBidWdzIHRoYXQgd2VyZSBtaXNzZWQgZHVy
+aW5nIHJldmlldyBpbiBhIG5ldw0KPiByZXZpZXcgdG8gdGhlIG9yaWdpbmFsIHBhdGNoIHNlcmll
+cyBhbGxvd2luZyB1cyB0byBkcm9wIGl0Lg0KPiANCj4gSXQncyBlbmNvdXJhZ2VkIHRvIHByb3Zp
+ZGUgQWNrZWQtYnlzIGFuZCBSZXZpZXdlZC1ieXMgZXZlbiB0aG91Z2ggdGhlIHBhdGNoDQo+IGhh
+cyBub3cgYmVlbiBhcHBsaWVkLiBJZiBwb3NzaWJsZSBwYXRjaCB0cmFpbGVycyB3aWxsIGJlIHVw
+ZGF0ZWQuDQo+IA0KPiBOb3RlIHRoYXQgY29tbWl0IGhhc2hlcyBzaG93biBiZWxvdyBhcmUgc3Vi
+amVjdCB0byBjaGFuZ2UgZHVlIHRvIHJlYmFzZSwNCj4gdHJhaWxlciB1cGRhdGVzIG9yIHNpbWls
+YXIuIElmIGluIGRvdWJ0LCBwbGVhc2UgY2hlY2sgdGhlIGxpc3RlZCBicmFuY2guDQo+IA0KPiB0
+cmVlOiAgIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3Zm
+cy92ZnMuZ2l0DQo+IGJyYW5jaDogdmZzLTYuMTYubWlzYw0KPiANCj4gWzEvMV0gZnM6IE1ha2Ug
+ZmlsZS1uciBvdXRwdXQgdGhlIHRvdGFsIGFsbG9jYXRlZCBmaWxlIGhhbmRsZXMNCj4gICAgICAg
+aHR0cHM6Ly9naXQua2VybmVsLm9yZy92ZnMvdmZzL2MvNjYzMTk1MTlmODlkDQo=
 
