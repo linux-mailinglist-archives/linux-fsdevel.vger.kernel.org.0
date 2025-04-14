@@ -1,179 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-46395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D67A88648
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 17:05:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64B4FA88799
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 17:43:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF08019037E9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:51:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4362C3A6168
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 15:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D46027465F;
-	Mon, 14 Apr 2025 14:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72622749D7;
+	Mon, 14 Apr 2025 15:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfRHhff0"
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="gC/WCbf/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D04827586B;
-	Mon, 14 Apr 2025 14:45:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B428C274659
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 15:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744641922; cv=none; b=t8oTFe01hxN1siQ1tM4bxXkdWXnrJf6L8HmHsVOD69rKuLOS9sLZlE6ZkxM1cRt6MGi5Ofjh8znR5Vuz4FmxhrhF+hqJHQ5fCuqzfKW5U7IACiTbd/ld/ZkIhqgy1Bg2KnQzwjBYw3nhyNxW5IO7Dxj892Grz148QbOcduo7v8M=
+	t=1744645241; cv=none; b=hwBzQH3GgG2SGbfKk+MMScJlq48weytO8iT8cxISZw6/88ylgU+wn09dr70kW47kHPPGgE1DBUUqfe5/Y1kacP5WfiJXyWPnkYdR6B8mRVkcTDWtgcbVo3wzCMLE5aR0FH0T2K6o7CMO29cXrZgY17nuXMG5LSggwn58WQ9AjSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744641922; c=relaxed/simple;
-	bh=2DpxWFB8GfjCpGlzdPOjDPzw7KOI6edLbKfo8ihKDf0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=r7PqG4hh4RZp3FGXKvrGlTz5g0p2gfDbEuzGdrlxOO5rk9ZESm1Kozf1GQbD2XHWLNDCaJes+rAwgt2JkHsgBlcx5Vk6yxoWJGDkRWOyB/GiydZpbjxw9geUgFOFm5hoNIyQs0jw+R/DD3swzWR9wXeCrZ/crZlUaYnzLPUBxRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfRHhff0; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-22423adf751so40269555ad.2;
-        Mon, 14 Apr 2025 07:45:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744641920; x=1745246720; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+orTHrsoG/ME8bhkDWeas24eb9SABWKneSlnhlLedmM=;
-        b=cfRHhff0nulDH7Yjz6p+6MGWtlH0WFjHM2n1kRqHCNRM/YWpOFf2zf1Fin4CqQ+vcl
-         n1oUf9jmHFoTQm4e9kSsyrmCZzN4ZyqD/IM1O379+wQlpmaxN/nZhgbw7SzAdRK9Ag6Y
-         Otg6fd6VIOs3wilaN5bwpX59JcUi7SywrjMd2R6dsluk2bP7/fQCjyjRlwpj3L+SlXHg
-         FYypjcKXepTryec5P3PFaYlpdR7cIqyc0vVEV9Ndge0TP5x+9+rEtrxCUl4adEuVdeYQ
-         1cM5SFGJx3zesTaGxuLE+K9+JdOYnjCswN+kwXG3IWdRYViwIJ/zAtSgahK3IYRcTbeC
-         9igQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744641920; x=1745246720;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+orTHrsoG/ME8bhkDWeas24eb9SABWKneSlnhlLedmM=;
-        b=PF67pctCINCZD2woSTGN8/e0cCDEAyzL9O5lF8gBG8SCO0pZD3suyBqwEnj4ei2CXw
-         QJaern3xIHCd7NOaiuiQNA+wUGwi2GLIXpVDecRHyV+lzV7joR2WQKGk2E4Nht9bOW+I
-         7Hs8T/cVRPkMmpOQZiIhjyAD7jvulhMfGb5yontBb4B3hRb/JO0MK21fW7uBMwe/415h
-         G0/z0id8Jv9r8JV0sjqlEr52ASE/k73BpVSBVOX6ghBPHRGw6yD4V/iT9dTFZqwkJKZ/
-         N/KvoC+ndx+pbHDoTOqiDW8yFoTEZI1smfHVwyB92pm67eqgOztgLv4Yv3TlhVR9+Vm3
-         QltA==
-X-Forwarded-Encrypted: i=1; AJvYcCW49CF3DYWiltOmIVo8uxHHGW0LmEDHJwmAm6vJUfKWDKiimTJtU7sko86sW8LiM70/+1SHJoy9I59s1q3J@vger.kernel.org, AJvYcCWsMPU/xoEn16DJZovm28dMGyVPJdCDchtx5q/On1wsVgRGtONvVjsu1Ep2BXNVkpzI9Ryw5qEZmRTfxO0o@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWKFrNLktN24c+OhNa3cQk3ZT93W2eauXpdn/wtw1c8xWBxgiI
-	+KESdcwHr2A92BGuxjVTuvuSudWX8vBNIJ7yZH16VfZqhU14calD
-X-Gm-Gg: ASbGncsLchpdj0B72X/UnrjYcGzGUEOWLTy8RcjTjI9uMHjMq2afEkJ0zKtY+MiU0Nf
-	TCszsitxCfLlDy9hZc3hcITgI2WChU6l21IJm2SHHCPE3I/iybsFGEmxsvAXvQw+Qd/IPDzHWJ5
-	PvFzZJm32nuow5/9GS1oLTKrYSWc7m3npVueuvtg4nmf4Oo2aZUC6St74UxOdb2cynr+MP34Ykn
-	VUMAWAbQwpxcsHGubmCy/EJNV2/s7iHUN8S/ccWxgIAZEeM8cf90rxCgbifqVe0ERrm3AOq+s9j
-	U1xO7qCRdnK+h5w3+Hxjp17WXO6fjHQYz2QQEdTxucacIec=
-X-Google-Smtp-Source: AGHT+IEMgRpQYfoBA1S0n/al1fUAyAoCcCwKAz83jLvqKd8Jlsw51W5KzaB+ji8UoJnK9Zaf7WJETQ==
-X-Received: by 2002:a17:902:cec9:b0:227:e980:9190 with SMTP id d9443c01a7336-22bea4fcad1mr187715005ad.44.1744641916935;
-        Mon, 14 Apr 2025 07:45:16 -0700 (PDT)
-Received: from noctura.suse.cz ([103.210.134.105])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-22ac7b8b2ccsm99959365ad.70.2025.04.14.07.45.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Apr 2025 07:45:16 -0700 (PDT)
-From: Brahmajit Das <brahmajit.xyz@gmail.com>
-X-Google-Original-From: Brahmajit Das <listout@listout.xyz>
-To: 
-Cc: jlayton@kernel.org,
-	David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	netfs@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 1/1] netfs: fix building with GCC 15
-Date: Mon, 14 Apr 2025 20:14:57 +0530
-Message-ID: <20250414144500.20934-1-listout@listout.xyz>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250414141945.11044-1-listout@listout.xyz>
-References: <20250414141945.11044-1-listout@listout.xyz>
+	s=arc-20240116; t=1744645241; c=relaxed/simple;
+	bh=N7n+MHKs6JAe1CpXsVMQ3NBeZA43ip/+wFJm44z7ppw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QMVQkBHX8Z10XLul/6pQ7pvjB87Wvx6lszr9+7U+8GifPAxbfiPY6iHtvARb0dEH/w2f9fxrYxG/2eUqdy6Nmg2+0BPHnVkkEqVxzgJnrOtUaI90LALSmuSeFRLJ9ddMt6RTxS7gkvnwA+3CWZ2fGkHAi0esRWKWU3Xp7/1KRQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=gC/WCbf/; arc=none smtp.client-ip=198.37.111.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1744645237;
+	bh=N7n+MHKs6JAe1CpXsVMQ3NBeZA43ip/+wFJm44z7ppw=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=gC/WCbf/ZNQWVcOQ7kqqcYswBngpNRVBzd8Sb3M9Q3a/MBQPnumqx64oB6yl1mt40
+	 AOPWgULvhfY39WZBXDMuGOUgHRts2DSyuRbAOpdjeJX8BllUq7Sqz+VMhllDOLqgzW
+	 AiHwMCFYoyzQjHyEBf2cPG2fg12l7c3xKTBPFXBM=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 3D5C31C00D0;
+	Mon, 14 Apr 2025 11:40:37 -0400 (EDT)
+Message-ID: <f619119e8441ded9335b53a897b69a234f1f87b0.camel@HansenPartnership.com>
+Subject: Re: bad things when too many negative dentries in a directory
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner
+ <brauner@kernel.org>,  linux-fsdevel@vger.kernel.org, Al Viro
+ <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, Jan Kara
+ <jack@suse.cz>, Ian Kent <raven@themaw.net>
+Date: Mon, 14 Apr 2025 11:40:36 -0400
+In-Reply-To: <Z_0cDYDi4unWYveL@casper.infradead.org>
+References: 
+	<CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
+	 <20250411-rennen-bleichen-894e4b8d86ac@brauner>
+	 <CAJfpegvaoreOeAMeK=Q_E8+3WHra5G4s_BoZDCN1yCwdzkdyJw@mail.gmail.com>
+	 <Z_k81Ujt3M-H7nqO@casper.infradead.org>
+	 <2334928cfdb750fd71f04c884eeb9ae29a382500.camel@HansenPartnership.com>
+	 <Z_0cDYDi4unWYveL@casper.infradead.org>
+Autocrypt: addr=James.Bottomley@HansenPartnership.com;
+ prefer-encrypt=mutual;
+ keydata=mQENBE58FlABCADPM714lRLxGmba4JFjkocqpj1/6/Cx+IXezcS22azZetzCXDpm2MfNElecY3qkFjfnoffQiw5rrOO0/oRSATOh8+2fmJ6el7naRbDuh+i8lVESfdlkoqX57H5R8h/UTIp6gn1mpNlxjQv6QSZbl551zQ1nmkSVRbA5TbEp4br5GZeJ58esmYDCBwxuFTsSsdzbOBNthLcudWpJZHURfMc0ew24By1nldL9F37AktNcCipKpC2U0NtGlJjYPNSVXrCd1izxKmO7te7BLP+7B4DNj1VRnaf8X9+VIApCi/l4Kdx+ZR3aLTqSuNsIMmXUJ3T8JRl+ag7kby/KBp+0OpotABEBAAG0N0phbWVzIEJvdHRvbWxleSA8SmFtZXMuQm90dG9tbGV5QEhhbnNlblBhcnRuZXJzaGlwLmNvbT6JAVgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAhkBFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmBLmY0FCRs1hL0ACgkQgUrkfCFIVNaEiQgAg18F4G7PGWQ68xqnIrccke7Reh5thjUz6kQIii6Dh64BDW6/UvXn20UxK2uSs/0TBLO81k1mV4c6rNE+H8b7IEjieGR9frBsp/+Q01JpToJfzzMUY7ZTDV1IXQZ+AY9L7vRzyimnJHx0Ba4JTlAyHB+Ly5i4Ab2+uZcnNfBXquWrG3oPWz+qPK88LJLya5Jxse1m1QT6R/isDuPivBzntLOooxPk+Cwf5sFAAJND+idTAzWzslexr9j7rtQ1UW6FjO4CvK9yVNz7dgG6FvEZl6J/HOr1rivtGgpCZTBzKNF8jg034n49zGfKkkzWLuXbPUOp3/oGfsKv8pnEu1c2GbQpSmFtZXMgQm90dG9tbGV5IDxqZWpiQGxpbnV4LnZuZXQuaWJtLmNvbT6JAVYEEwEIAEACGwMHCwkIBwMCAQYVC
+	AIJCgsEFgIDAQIeAQIXgBYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJgS5mXBQkbNYS9AAoJEIFK5HwhSFTWEYEH/1YZpV+1uCI2MVz0wTRlnO/3OW/xnyigrw+K4cuO7MToo0tHJb/qL9CBJ2ddG6q+GTnF5kqUe87t7M7rSrIcAkIZMbJmtIbKk0j5EstyYqlE1HzvpmssGpg/8uJBBuWbU35af1ubKCjUs1+974mYXkfLmS0a6h+cG7atVLmyClIc2frd3o0zHF9+E7BaB+HQzT4lheQAXv9KI+63ksnbBpcZnS44t6mi1lzUE65+Am1z+1KJurF2Qbj4AkICzJjJa0bXa9DmFunjPhLbCU160LppaG3OksxuNOTkGCo/tEotDOotZNBYejWaXN2nr9WrH5hDfQ5zLayfKMtLSd33T9u0IUphbWVzIEJvdHRvbWxleSA8amVqYkBrZXJuZWwub3JnPokBVQQTAQgAPwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmAUJGzWEvQAKCRCBSuR8IUhU1gacCAC+QZN+RQd+FOoh5g884HQm8S07ON0/2EMiaXBiL6KQb5yP3w2PKEhug3+uPzugftUfgPEw6emRucrFFpwguhriGhB3pgWJIrTD4JUevrBgjEGOztJpbD73bLLyitSiPQZ6OFVOqIGhdqlc3n0qoNQ45n/w3LMVj6yP43SfBQeQGEdq4yHQxXPs0XQCbmr6Nf2p8mNsIKRYf90fCDmABH1lfZxoGJH/frQOBCJ9bMRNCNy+aFtjd5m8ka5M7gcDvM7TAsKhD5O5qFs4aJHGajF4gCGoWmXZGrISQvrNl9kWUhgsvoPqb2OTTeAQVRuV8C4FQamxzE3MRNH25j6s/qujtCRKYW1lcyBCb3R0b21sZXkgPGplamJAbGludXguaWJtLmNvbT6JAVQEEwEIAD
+	4CGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AWIQTVYG5zyLRicb6tmt+BSuR8IUhU1gUCYEuZmQUJGzWEvQAKCRCBSuR8IUhU1kyHB/9VIOkf8RapONUdZ+7FgEpDgESE/y3coDeeb8jrtJyeefWCA0sWU8GSc9KMcMoSUetUreB+fukeVTe/f2NcJ87Bkq5jUEWff4qsbqf5PPM+wlD873StFc6mP8koy8bb7QcH3asH9fDFXUz7Oz5ubI0sE8+qD+Pdlk5qmLY5IiZ4D98V239nrKIhDymcuL7VztyWfdFSnbVXmumIpi79Ox536P2aMe3/v+1jAsFQOIjThMo/2xmLkQiyacB2veMcBzBkcair5WC7SBgrz2YsMCbC37X7crDWmCI3xEuwRAeDNpmxhVCb7jEvigNfRWQ4TYQADdC4KsilPfuW8Edk/8tPtCVKYW1lcyBCb3R0b21sZXkgPEpCb3R0b21sZXlAT2Rpbi5jb20+iQEfBDABAgAJBQJXI+B0Ah0gAAoJEIFK5HwhSFTWzkwH+gOg1UG/oB2lc0DF3lAJPloSIDBW38D3rezXTUiJtAhenWrH2Cl/ejznjdTukxOcuR1bV8zxR9Zs9jhUin2tgCCxIbrdvFIoYilMMRKcue1q0IYQHaqjd7ko8BHn9UysuX8qltJFar0BOClIlH95gdKWJbK46mw7bsXeD66N9IhAsOMJt6mSJmUdIOMuKy4dD4X3adegKMmoTRvHOndZQClTZHiYt5ECRPO534Lb/gyKAKQkFiwirsgx11ZSx3zGlw28brco6ohSLMBylna/Pbbn5hII86cjrCXWtQ4mE0Y6ofeFjpmMdfSRUxy6LHYd3fxVq9PoAJTv7vQ6bLTDFNa0KkphbWVzIEJvdHRvbWxleSA8SkJvdHRvbWxleUBQYXJhbGxlbHMuY29tPokBHwQwAQIACQUCVyPgjAIdIAAKCRCBSuR8IUhU1tXiB/9D9OOU8qB
+	CZPxkxB6ofp0j0pbZppRe6iCJ+btWBhSURz25DQzQNu5GVBRQt1Us6v3PPGU1cEWi5WL935nw+1hXPIVB3x8hElvdCO2aU61bMcpFd138AFHMHJ+emboKHblnhuY5+L1OlA1QmPw6wQooCor1h113lZiBZGrPFxjRYbWYVQmVaM6zhkiGgIkzQw/g9v57nAzYuBhFjnVHgmmu6/B0N8z6xD5sSPCZSjYSS38UG9w189S8HVr4eg54jReIEvLPRaxqVEnsoKmLisryyaw3EpqZcYAWoX0Am+58CXq3j5OvrCvbyqQIWFElba3Ka/oT7CnTdo/SUL/jPNobtCxKYW1lcyBCb3R0b21sZXkgPGplamJAaGFuc2VucGFydG5lcnNoaXAuY29tPokBVwQTAQgAQRYhBNVgbnPItGJxvq2a34FK5HwhSFTWBQJjg2eQAhsDBQkbNYS9BQsJCAcCAiICBhUKCQgLAgQWAgMBAh4HAheAAAoJEIFK5HwhSFTWbtAH/087y9vzXYAHMPbjd8etB/I3OEFKteFacXBRBRDKXI9ZqK5F/xvd1fuehwQWl2Y/sivD4cSAP0iM/rFOwv9GLyrr82pD/GV/+1iXt9kjlLY36/1U2qoyAczY+jsS72aZjWwcO7Og8IYTaRzlqif9Zpfj7Q0Q1e9SAefMlakI6dcZTSlZWaaXCefdPBCc7BZ0SFY4kIg0iqKaagdgQomwW61nJZ+woljMjgv3HKOkiJ+rcB/n+/moryd8RnDhNmvYASheazYvUwaF/aMj5rIb/0w5p6IbFax+wGF5RmH2U5NeUlhIkTodUF/P7g/cJf4HCL+RA1KU/xS9o8zrAOeut2+4UgRaZ7bmEwgqhkjOPQMBBwIDBH4GsIgL0yQij5S5ISDZmlR7qDQPcWUxMVx6zVPsAoITdjKFjaDmUATkS+l5zmiCrUBcJ6MBavPiYQ4kqn4/xwaJAbMEGAEIACYCGwIWIQTVYG5zyLRi
+	cb6tmt+BSuR8IUhU1gUCZag0LwUJDwLkSQCBdiAEGRMIAB0WIQTnYEDbdso9F2cI+arnQslM7pishQUCWme25gAKCRDnQslM7pishdi9AQDyOvLYOBkylBqiTlJrMnGCCsWgGZwPpKq3e3s7JQ/xBAEAlx29pPY5z0RLyIDUsjf9mtkSNTaeaQ6TIjDrFa+8XH8JEIFK5HwhSFTWkasH/j7LL9WH9dRfwfTwuMMj1/KGzjU/4KFIu4uKxDaevKpGS7sDx4F56mafCdGD8u4+ri6bJr/3mmuzIdyger0vJdRlTrnpX3ONXvR57p1JHgCljehE1ZB0RCzIk0vKhdt8+CDBQWfKbbKBTmzA7wR68raMQb2D7nQ9d0KXXbtr7Hag29yj92aUAZ/sFoe9RhDOcRUptdYyPKU1JHgJyc0Z7HwNjRSJ4lKJSKP+Px0/XxT3gV3LaDLtHuHa2IujLEAKcPzTr5DOV+xsgA3iSwTYI6H5aEe+ZRv/rA4sdjqRiVpo2d044aCUFUNQ3PiIHPAZR3KK5O64m6+BJMDXBvgSsMy4VgRaZ7clEggqhkjOPQMBBwIDBMfuMuE+PECbOoYjkD0Teno7TDbcgxJNgPV7Y2lQbNBnexMLOEY6/xJzRi1Xm/o9mOyZ+VIj8h4G5V/eWSntNkwDAQgHiQE8BBgBCAAmAhsMFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoNBwFCQ8C4/cACgkQgUrkfCFIVNZs4AgAnIjU1QEPLdpotiy3X01sKUO+hvcT3/Cd6g55sJyKJ5/U0o3f8fdSn6MWPhi1m62zbAxcLJFiTZ3OWNCZAMEvwHrXFb684Ey6yImQ9gm2dG2nVuCzr1+9gIaMSBeZ+4kUJqhdWSJjrNLQG38GbnBuYOJUD+x6oJ2AT10/mQfBVZ3qWDQXr/je2TSf0OIXaWyG6meG5yTqOEv0eaTH22yBb1nbodoZkmlMMb56jzRGZuorhFE06
+	N0Eb0kiGz5cCIrHZoH10dHWoa7/Z+AzfL0caOKjcmsnUPcmcrqmWzJTEibLA81z15GBCrldfQVt+dF7Us2kc0hKUgaWeI8Gv4CzwLkCDQRUdhaZARAApeF9gbNSBBudW8xeMQIiB/CZwK4VOEP7nGHZn3UsWemsvE9lvjbFzbqcIkbUp2V6ExM5tyEgzio2BavLe1ZJGHVaKkL3cKLABoYi/yBLEnogPFzzYfK2fdipm2G+GhLaqfDxtAQ7cqXeo1TCsZLSvjD+kLVV1TvKlaHS8tUCh2oUyR7fTbv6WHi5H8DLyR0Pnbt9E9/Gcs1j11JX+MWJ7jset2FVDsB5U1LM70AjhXiDiQCtNJzKaqKdMei8zazWS50iMKKeo4m/adWBjG/8ld3fQ7/Hcj6Opkh8xPaCnmgDZovYGavw4Am2tjRqE6G6rPQpS0we5I6lSsKNBP/2FhLmI9fnsBnZC1l1NrASRSX1BK0xf4LYB2Ww3fYQmbbApAUBbWZ/1aQoc2ECKbSK9iW0gfZ8rDggfMw8nzpmEEExl0hU6wtJLymyDV+QGoPx5KwYK/6qAUNJQInUYz8z2ERM/HOI09Zu3jiauFBDtouSIraX/2DDvTf7Lfe1+ihARFSlp64kEMAsjKutNBK2u5oj4H7hQ7zD+BvWLHxMgysOtYYtwggweOrM/k3RndsZ/z3nsGqF0ggct1VLuH2eznDksI+KkZ3Bg0WihQyJ7Z9omgaQAyRDFct+jnJsv2Iza+xIvPei+fpbGNAyFvj0e+TsZoQGcC34/ipGwze651UAEQEAAYkBHwQoAQIACQUCVT6BaAIdAwAKCRCBSuR8IUhU1p5QCAC7pgjOM17Hxwqz9mlGELilYqjzNPUoZt5xslcTFGxj/QWNzu0K8gEQPePnc5dTfumzWL077nxhdKYtoqwm2C6fOmXiJBZx6khBfRqctUvN2DlOB6dFf5I+1QT9TRBvceGzw01E4Gi0xjWKAB6OII
+	MAdnPcDVFzaXJdlAAJdjfg/lyJtAyxifflG8NnXJ3elwGqoBso84XBNWWzbc5VKmatzhYLOvXtfzDhu4mNPv/z7S1HTtRguI0NlH5RVBzSvfzybin9hysE3/+r3C0HJ2xiOHzucNAmG03aztzZYDMTbKQW4bQqeD5MJxT68vBYu8MtzfIe41lSLpb/qlwq1qg0iQElBBgBAgAPBQJUdhaZAhsMBQkA7U4AAAoJEIFK5HwhSFTW3YgH/AyJL2rlCvGrkLcas94ND9Pmn0cUlVrPl7wVGcIV+6I4nrw6u49TyqNMmsYam2YpjervJGgbvIbMzoHFCREi6R9XyUsw5w7GCRoWegw2blZYi5A52xe500+/RruG//MKfOtVUotu3N+u7FcXaYAg9gbYeGNZCV70vI+cnFgq0AEJRdjidzfCWVKPjafTo7jHeFxX7Q22kUfWOkMzzhoDbFg0jPhVYNiEXpNyXCwirzvKA7bvFwZPlRkbfihaiXDE7QKIUtQ10i5kw4C9rqDKwx8F0PaWDRF9gGaKd7/IJGHJaac/OcSJ36zxgkNgLsVX5GUroJ2GaZcR7W9Vppj5H+C4UgRkuRyTEwgqhkjOPQMBBwIDBOySomnsW2SkApXv1zUBaD38dFEj0LQeDEMdSE7bm1fnrdjAYt0f/CtbUUiDaPodQk2qeHzOP6wA/2K6rrjwNIWJAT0EGAEIACcDGyAEFiEE1WBuc8i0YnG+rZrfgUrkfCFIVNYFAmWoM/gFCQSxfmUACgkQgUrkfCFIVNZhTgf/VQxtQ5rgu2aoXh2KOH6naGzPKDkYDJ/K7XCJAq3nJYEpYN8G+F8mL/ql0hrihAsHfjmoDOlt+INa3AcG3v0jDZIMEzmcjAlu7g5NcXS3kntcMHgw3dCgE9eYDaKGipUCubdXvBaZWU6AUlTldaB8FE6u7It7+UO+IW4/L+KpLYKs8V5POInu2rqahlm7vgxY5iv4Txz4EvCW2e4dAlG
+	8mT2Eh9SkH+YVOmaKsajgZgrBxA7fWmGoxXswEVxJIFj3vW7yNc0C5HaUdYa5iGOMs4kg2ht4s7yy7NRQuh7BifWjo6BQ6k4S1H+6axZucxhSV1L6zN9d+lr3Xo/vy1unzA==
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 
-Since the Linux kernel initializes many non-C-string char arrays with
-literals. While it would be possible to convert initializers from:
-   { "BOOP", ... }
-to:
-   { { 'B', 'O', 'O', 'P' }, ... }
-that is annoying.
-Making -Wunterminated-string-initialization stay silent about char
-arrays marked with nonstring would be much better.
+On Mon, 2025-04-14 at 15:30 +0100, Matthew Wilcox wrote:
+> On Mon, Apr 14, 2025 at 10:07:09AM -0400, James Bottomley wrote:
+> > On Fri, 2025-04-11 at 17:01 +0100, Matthew Wilcox wrote:
+> > > On Fri, Apr 11, 2025 at 05:40:08PM +0200, Miklos Szeredi wrote:
+> > > > However, hundreds of millions of negative dentries can be
+> > > > created rather efficiently without unlink, though this one
+> > > > probably doesn't happen under normal circumstances.
+> > >=20
+> > > Depends on your userspace.=C2=A0 Since we don't have union
+> > > directories, consider the not uncommon case of having a search
+> > > path A:B:C.=C2=A0 Application looks for D in directory A, doesn't fin=
+d
+> > > it, creates a negative dentry. Application looks for D in
+> > > directory B, creates a negative dentry. Application looks for D
+> > > in directory C, doesn't find it, so it creates it. Now we have
+> > > two negative dentries and one positive dentry.
+> >=20
+> > If an application does an A:B:C directory search pattern it's
+> > usually because it doesn't directly own the file location and hence
+> > suggests that other applications would also be looking for it,
+> > which would seem to indicate, if the search pattern gets repeated,
+> > that the two negative dentries do serve a purpose.
+>=20
+> Not in this case.=C2=A0 It's doing something like looking in /etc/app.d
+> /usr/share/app/defaults/ and then /var/run/app/ .=C2=A0 Don't quote me on
+> the exact paths, or suggest alternatives based on these names; it's
+> been a few years since I last looked.=C2=A0 But I can assure you no other
+> app is looking at these dentries; they're looked up exactly once.
 
-Without the __attribute__((nonstring)) we would get the following build
-error:
-fs/netfs/fscache_cache.c:375:67: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
-  375 | static const char fscache_cache_states[NR__FSCACHE_CACHE_STATE] = "-PAEW";
-      |                                                                   ^~~~~~~
-...
-fs/netfs/fscache_cookie.c:32:69: error: initializer-string for array of ‘char’ is too long [-Werror=unterminated-string-initialization]
-   32 | static const char fscache_cookie_states[FSCACHE_COOKIE_STATE__NR] = "-LCAIFUWRD";
-      |                                                                     ^~~~~~~~~~~~
-cc1: all warnings being treated as errors
+I got that's what it's doing, and why the negative dentries are useless
+since the file name is app specific, I'm just curious why an app that
+knows it's the only consumer of a file places it in the last place it
+looks rather than the first ... it seems to be suboptimal and difficult
+for us to detect heuristically.
 
-Upstream GCC has added this commit
-622968990beee7499e951590258363545b4a3b57[0][1] which silences warning
-about truncating NUL char when initializing nonstring arrays.
+Regards,
 
-[0]: https://gcc.gnu.org/cgit/gcc/commit/?id=622968990beee7499e951590258363545b4a3b57
-[1]: https://gcc.gnu.org/cgit/gcc/commit/?id=afb46540d3921e96c4cd7ba8fa2c8b0901759455
-
-Thanks to Jakub Jelinek <jakub@gcc.gnu.org> for the gcc patch.
-
-Signed-off-by: Brahmajit Das <listout@listout.xyz>
----
- fs/cachefiles/key.c       | 2 +-
- fs/netfs/fscache_cache.c  | 3 ++-
- fs/netfs/fscache_cookie.c | 3 ++-
- 3 files changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/fs/cachefiles/key.c b/fs/cachefiles/key.c
-index bf935e25bdbe..1d5685edd1c9 100644
---- a/fs/cachefiles/key.c
-+++ b/fs/cachefiles/key.c
-@@ -8,7 +8,7 @@
- #include <linux/slab.h>
- #include "internal.h"
- 
--static const char cachefiles_charmap[64] =
-+static const char cachefiles_charmap[64] __attribute((nonstring)) =
- 	"0123456789"			/* 0 - 9 */
- 	"abcdefghijklmnopqrstuvwxyz"	/* 10 - 35 */
- 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ"	/* 36 - 61 */
-diff --git a/fs/netfs/fscache_cache.c b/fs/netfs/fscache_cache.c
-index 9397ed39b0b4..ccfe52056ed3 100644
---- a/fs/netfs/fscache_cache.c
-+++ b/fs/netfs/fscache_cache.c
-@@ -372,7 +372,8 @@ void fscache_withdraw_cache(struct fscache_cache *cache)
- EXPORT_SYMBOL(fscache_withdraw_cache);
- 
- #ifdef CONFIG_PROC_FS
--static const char fscache_cache_states[NR__FSCACHE_CACHE_STATE] = "-PAEW";
-+static const char fscache_cache_states[NR__FSCACHE_CACHE_STATE]
-+	__attribute__((nonstring)) = "-PAEW";
- 
- /*
-  * Generate a list of caches in /proc/fs/fscache/caches
-diff --git a/fs/netfs/fscache_cookie.c b/fs/netfs/fscache_cookie.c
-index d4d4b3a8b106..c455d1b0f440 100644
---- a/fs/netfs/fscache_cookie.c
-+++ b/fs/netfs/fscache_cookie.c
-@@ -29,7 +29,8 @@ static LIST_HEAD(fscache_cookie_lru);
- static DEFINE_SPINLOCK(fscache_cookie_lru_lock);
- DEFINE_TIMER(fscache_cookie_lru_timer, fscache_cookie_lru_timed_out);
- static DECLARE_WORK(fscache_cookie_lru_work, fscache_cookie_lru_worker);
--static const char fscache_cookie_states[FSCACHE_COOKIE_STATE__NR] = "-LCAIFUWRD";
-+static const char fscache_cookie_states[FSCACHE_COOKIE_STATE__NR]
-+	__attribute__((nonstring)) = "-LCAIFUWRD";
- static unsigned int fscache_lru_cookie_timeout = 10 * HZ;
- 
- void fscache_print_cookie(struct fscache_cookie *cookie, char prefix)
--- 
-2.49.0
+James
 
 
