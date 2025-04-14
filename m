@@ -1,104 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-46366-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36EFA8809A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:40:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A71A880CA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A12D118873B5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 12:40:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 956BC16907E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 12:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FBF2BEC28;
-	Mon, 14 Apr 2025 12:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2015B2BD5A0;
+	Mon, 14 Apr 2025 12:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RT5tVldp";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9HeqbEl5";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="LqAPkw6V";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="M3teTvff"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AfixvZG7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2990F2BE7DA
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 12:39:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E1E719E967
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 12:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744634392; cv=none; b=Cdh+VRi6IRn1IUrA/Sx5h4W9CiMz/84r54zkut0fLq77KhxxHyYjyPBBjfP3xJNpwK57KLTfNrHzkWftD8Ll3/F9iw9IpL4+/h0DBzgEGiBbNxsJ7ObgO0v+kAoi71WwQKIukXM4sRvUGEO0awxoN92Gwc24dvY1NE05naAoh7k=
+	t=1744634972; cv=none; b=HNcjsMBAXywJ/V+NfBEoVeT0XDXYpO/aRZDoIEHIFwWV5Gcu3mHftHch2J1TUvTxc8KGGwYpolZRqMZh7BkopHebNaK2QZfOvoSHzFNl7m7s3DFiQZ6sYZFSVt1dNFkGqCbEwzuFB34OmUZk+Jht0b8DSyMfqvsuxVdAe88utZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744634392; c=relaxed/simple;
-	bh=URM1whCJuuDnPfBfJn/gp6KeNswHCL1BeHbgPZyeJkU=;
+	s=arc-20240116; t=1744634972; c=relaxed/simple;
+	bh=lgSt8x0de9kAYoaRC+cxwWGGxm6vAlCqN5KNKarOOSg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NrTorzPv+GvZTeVZDxn8ZuRWfhCQ+KoXgwVIZyfkrm2+ZCTnci5pKksYdj/pFQuqrhbAbQ8VYfdaeMOk5tRjDo8g1ttOH/hWf2wDpJN54i5gjOSagDjS+Pe+fPvhNF/lE/ifi4pcaZI7Ub1Jg7zLOUn+bijotOF5YXM64v9SlBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RT5tVldp; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9HeqbEl5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=LqAPkw6V; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=M3teTvff; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	 Content-Type:Content-Disposition:In-Reply-To; b=HKgyEvo8FbLlCHn0Q5O+P9NxakblgnZBiSNR83fcY5sPLLsBdKmmORvgXGGNTRyKYlBcip0+Y6fAIij5z1WbBA8B/yoKsvtWqkz1wKj3li4CIGR5Sr5FRhkcfhJiaJ8ommvZvv/grFAUAXHbxKNXPCbxcmP3I90YzhT4KAhLA54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AfixvZG7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744634969;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vBOfitIJJpSh+LYLLT3w+jaL/RZlHujMls6QbDA3nQo=;
+	b=AfixvZG77rFP9rYNUqYIzYhKjGCSqset8HLOMShKcZ0Mk//DHyfZaueX3O1CdHKpRDad7h
+	H4uC/fIFU8eVoBxBZ74Lv6Gimm+IVPwstPD7RQSQxU72CtJ5WHdwX+VPQDB0v2TEzZEmGt
+	qEwmtIXJ1uGeb/ZZOOXtptM98f+/yqU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-76-EoyECqEzNdKkKp0aUGfaGw-1; Mon,
+ 14 Apr 2025 08:49:26 -0400
+X-MC-Unique: EoyECqEzNdKkKp0aUGfaGw-1
+X-Mimecast-MFC-AGG-ID: EoyECqEzNdKkKp0aUGfaGw_1744634964
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 21298216D6;
-	Mon, 14 Apr 2025 12:39:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744634389; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PcdBCEQQMqWmXCrE3X1+v5CesV3ebLFi5qE1dkoJW/w=;
-	b=RT5tVldpglVeKEzcAtOSHxsaut5VldfskZKUGlYVzKUMg4grNNk6455SoTyw0v4UzID1sx
-	B91WyxUjyEDbe3491BgwO20i5TiRV/DLHFlI/LPKkwXEKodAQp2QQtxsNBqcVqm7HHHxIv
-	g6of/TJ//RYprunKTK0zukjCE3fPfHQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744634389;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PcdBCEQQMqWmXCrE3X1+v5CesV3ebLFi5qE1dkoJW/w=;
-	b=9HeqbEl5yhtYna3ib2GC5YWbWQRT2daf+Aito/b0q8XNJ+jCpILlBBNJm8QCMTYzGRrDqi
-	n3xecjugJVWBXlDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744634388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PcdBCEQQMqWmXCrE3X1+v5CesV3ebLFi5qE1dkoJW/w=;
-	b=LqAPkw6VkKkH0B4PqLs+72/RR7wpTwkJx+A0RzvDth12y71C50YmGlWyIzWN+d6HISHTBb
-	hXJaV/3Yrrv4Wfm9XbNDUwNspVNJ46scnPw9PMCsiJ5PIrquapWUmKNsWhptbTegs2vqQ3
-	p+vXLNb5RbNB/qSYruCxrRz3s+dgI7Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744634388;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PcdBCEQQMqWmXCrE3X1+v5CesV3ebLFi5qE1dkoJW/w=;
-	b=M3teTvffwuXWwQZYHJ24kh6LMdE+I3K9a4ZTWiY2CnpCRY7yDWUOBBjqVAcxiLl10GtHyr
-	L94nImcc9YMhnyDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1523E1336F;
-	Mon, 14 Apr 2025 12:39:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id aO8jBRQC/WfPbAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 14 Apr 2025 12:39:48 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BC473A094B; Mon, 14 Apr 2025 14:39:47 +0200 (CEST)
-Date: Mon, 14 Apr 2025 14:39:47 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, David Howells <dhowells@redhat.com>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH 3/5] fs/fs_parse: Fix 3 issues for
- validate_constant_table()
-Message-ID: <nskvmomemvl47levkp4dmckwkyju7kjnn6wkp5go2igryfwzgv@pt2yuvjwrhoa>
-References: <20250410-fix_fs-v1-0-7c14ccc8ebaa@quicinc.com>
- <20250410-fix_fs-v1-3-7c14ccc8ebaa@quicinc.com>
- <20250411-beteuern-fusionieren-2a3d24f055d0@brauner>
- <1d59d38a-5674-4591-a866-27dfbc410b93@icloud.com>
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4DAAB1809CA6;
+	Mon, 14 Apr 2025 12:49:24 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.114])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E05C419560AD;
+	Mon, 14 Apr 2025 12:49:20 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon, 14 Apr 2025 14:48:48 +0200 (CEST)
+Date: Mon, 14 Apr 2025 14:48:44 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Luca Boccassi <luca.boccassi@gmail.com>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>,
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] coredump: hand a pidfd to the usermode coredump
+ helper
+Message-ID: <20250414124843.GB28345@redhat.com>
+References: <20250414-work-coredump-v1-0-6caebc807ff4@kernel.org>
+ <20250414-work-coredump-v1-3-6caebc807ff4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -107,92 +80,90 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1d59d38a-5674-4591-a866-27dfbc410b93@icloud.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-0.998];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_TO(0.00)[icloud.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[icloud.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[quicinc.com:email,suse.com:email]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+In-Reply-To: <20250414-work-coredump-v1-3-6caebc807ff4@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Fri 11-04-25 22:48:40, Zijun Hu wrote:
-> On 2025/4/11 22:37, Christian Brauner wrote:
-> >> - Potential NULL pointer dereference.
-> > I really dislike "potential NULL deref" without an explanation. Please
-> > explain how this supposed NULL deref can happen.
-> > 
-> 
-> okay.
-> 
-> >> Fixes: 31d921c7fb96 ("vfs: Add configuration parser helpers")
-> >> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> >> ---
-> >>  fs/fs_parser.c | 7 +++++--
-> >>  1 file changed, 5 insertions(+), 2 deletions(-)
-> >>
-> >> diff --git a/fs/fs_parser.c b/fs/fs_parser.c
-> >> index e635a81e17d965df78ffef27f6885cd70996c6dd..ef7876340a917876bc40df9cdde9232204125a75 100644
-> >> --- a/fs/fs_parser.c
-> >> +++ b/fs/fs_parser.c
-> >> @@ -399,6 +399,9 @@ bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
-> >>  	}
-> >>  
-> >>  	for (i = 0; i < tbl_size; i++) {
-> >> +		if (!tbl[i].name && (i + 1 == tbl_size))
-> >> +			break;
-> >> +
-> >>  		if (!tbl[i].name) {
-> >>  			pr_err("VALIDATE C-TBL[%zu]: Null\n", i);
-> >>  			good = false;
-> >> @@ -411,13 +414,13 @@ bool validate_constant_table(const struct constant_table *tbl, size_t tbl_size,
-> >>  				good = false;
-> >>  			}
-> >>  			if (c > 0) {
-> >> -				pr_err("VALIDATE C-TBL[%zu]: Missorted %s>=%s\n",
-> >> +				pr_err("VALIDATE C-TBL[%zu]: Missorted %s>%s\n",
-> >>  				       i, tbl[i-1].name, tbl[i].name);
-> >>  				good = false;
-> >>  			}
-> >>  		}
-> >>  
-> >> -		if (tbl[i].value != special &&
-> >> +		if (tbl[i].name && tbl[i].value != special &&
-> >>  		    (tbl[i].value < low || tbl[i].value > high)) {
-> >>  			pr_err("VALIDATE C-TBL[%zu]: %s->%d const out of range (%d-%d)\n",
-> >>  			       i, tbl[i].name, tbl[i].value, low, high);
-> 
-> for good constant table which ends with empty entry. for original logic,
-> when loop reach the last empty entry.  above pr_err() may access NULL
-> pointer tbl[i].name.
-> 
-> 
-> i find out this validate_constant_table() also has no callers.
-> fix it or remove it ?
+On 04/14, Christian Brauner wrote:
+>
+> +			case 'F': {
+> +				struct file *pidfs_file __free(fput) = NULL;
+> +
+> +				/*
+> +				 * Install a pidfd only makes sense if
+> +				 * we actually spawn a usermode helper.
+> +				 */
+> +				if (!ispipe)
+> +					break;
+> +
+> +				/*
+> +				 * We already created a pidfs_file but the user
+> +				 * specified F multiple times. Just print the
+> +				 * number multiple times.
+> +				 */
+> +				if (!cprm->pidfs_file) {
+> +					/*
+> +					 * Create a pidfs file for the
+> +					 * coredumping thread that we can
+> +					 * install into the usermode helper's
+> +					 * file descriptor table later.
+> +					 *
+> +					 * Note that we'll install a pidfd for
+> +					 * the thread-group leader. We know that
+> +					 * task linkage hasn't been removed yet
+> +					 * and even if this @current isn't the
+> +					 * actual thread-group leader we know
+> +					 * that the thread-group leader cannot
+> +					 * be reaped until @current has exited.
+> +					 */
+> +					pidfs_file = pidfs_alloc_file(task_tgid(current), 0);
+> +					if (IS_ERR(pidfs_file))
+> +						return PTR_ERR(pidfs_file);
+> +				}
+> +
+> +				 /*
+> +				 * Usermode helpers are childen of
+> +				 * either system_unbound_wq or of
+> +				 * kthreadd. So we know that we're
+> +				 * starting off with a clean file
+> +				 * descriptor table. Thus, we should
+> +				 * always be able to use file descriptor
+> +				 * number 3.
+> +				 */
+> +				err = cn_printf(cn, "%d", COREDUMP_PIDFD_NUMBER);
+> +				if (err)
+> +					return err;
+> +
+> +				cprm->pidfs_file = no_free_ptr(pidfs_file);
+> +				break;
+> +			}
 
-Yeah, just drop it. In the kernel we are pretty aggressive in dropping
-unused code :)
+So the new case 'F' differs from other case's in that it doesn't do
+"break" but returns the error... this is a bit inconsistent.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Note also that if you do cn_printf() before pidfs_alloc_file(), then you
+can avoid __free(fput) and no_free_ptr().
+
+But this is minor. Can't we simplify this patch?
+
+Rather than add the new pidfs_file member into coredump_params, we can
+add "struct pid *pid". format_corename() will simply do
+
+	case 'F':
+		if (ispipe) {
+			// no need to do get_pid()
+			cprm->pid = task_tgid(current);
+			err = cn_printf(...);
+		}
+		break;
+
+and umh_pipe_setup() can itself do pidfs_alloc_file(cp->pid) if it is
+not NULL.
+
+This way do_coredump() doesn't need any changes.
+
+No?
+
+Oleg.
+
 
