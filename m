@@ -1,123 +1,117 @@
-Return-Path: <linux-fsdevel+bounces-46397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64B4FA88799
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 17:43:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE6AA887B4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 17:48:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4362C3A6168
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 15:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6703AAEA6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 15:46:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B72622749D7;
-	Mon, 14 Apr 2025 15:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092DF27B4F5;
+	Mon, 14 Apr 2025 15:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="gC/WCbf/"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FDKFgFIS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B428C274659
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 15:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F6E18BC3B
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 15:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744645241; cv=none; b=hwBzQH3GgG2SGbfKk+MMScJlq48weytO8iT8cxISZw6/88ylgU+wn09dr70kW47kHPPGgE1DBUUqfe5/Y1kacP5WfiJXyWPnkYdR6B8mRVkcTDWtgcbVo3wzCMLE5aR0FH0T2K6o7CMO29cXrZgY17nuXMG5LSggwn58WQ9AjSg=
+	t=1744645581; cv=none; b=uRuH4mWmFdSpT5y7OGYTjr+XjjXUDwAJbWImjx2BaXTk1Zrt/P7Cf6XnvgQG7ILceWFY80f0Ak2oxxD7oGAmOfahOfSuefn3ToyjJLmB7tHTl+XIePZjSTnojmjipYN+IsMgviAkiX6AJtr4KOKLsPEv76WsQPz2eQrLGODPRzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744645241; c=relaxed/simple;
-	bh=N7n+MHKs6JAe1CpXsVMQ3NBeZA43ip/+wFJm44z7ppw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QMVQkBHX8Z10XLul/6pQ7pvjB87Wvx6lszr9+7U+8GifPAxbfiPY6iHtvARb0dEH/w2f9fxrYxG/2eUqdy6Nmg2+0BPHnVkkEqVxzgJnrOtUaI90LALSmuSeFRLJ9ddMt6RTxS7gkvnwA+3CWZ2fGkHAi0esRWKWU3Xp7/1KRQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=gC/WCbf/; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1744645237;
-	bh=N7n+MHKs6JAe1CpXsVMQ3NBeZA43ip/+wFJm44z7ppw=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=gC/WCbf/ZNQWVcOQ7kqqcYswBngpNRVBzd8Sb3M9Q3a/MBQPnumqx64oB6yl1mt40
-	 AOPWgULvhfY39WZBXDMuGOUgHRts2DSyuRbAOpdjeJX8BllUq7Sqz+VMhllDOLqgzW
-	 AiHwMCFYoyzQjHyEBf2cPG2fg12l7c3xKTBPFXBM=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 3D5C31C00D0;
-	Mon, 14 Apr 2025 11:40:37 -0400 (EDT)
-Message-ID: <f619119e8441ded9335b53a897b69a234f1f87b0.camel@HansenPartnership.com>
-Subject: Re: bad things when too many negative dentries in a directory
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner
- <brauner@kernel.org>,  linux-fsdevel@vger.kernel.org, Al Viro
- <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, Jan Kara
- <jack@suse.cz>, Ian Kent <raven@themaw.net>
-Date: Mon, 14 Apr 2025 11:40:36 -0400
-In-Reply-To: <Z_0cDYDi4unWYveL@casper.infradead.org>
-References: 
-	<CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
-	 <20250411-rennen-bleichen-894e4b8d86ac@brauner>
-	 <CAJfpegvaoreOeAMeK=Q_E8+3WHra5G4s_BoZDCN1yCwdzkdyJw@mail.gmail.com>
-	 <Z_k81Ujt3M-H7nqO@casper.infradead.org>
-	 <2334928cfdb750fd71f04c884eeb9ae29a382500.camel@HansenPartnership.com>
-	 <Z_0cDYDi4unWYveL@casper.infradead.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1744645581; c=relaxed/simple;
+	bh=eYbIADCAabe7j+LtgMC8MoX3eskEhtClGsrJDvbhXVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K2dQLlAN9ipsSpIamLn1P4ERnqqyYvfNz4DuVy7eSc70ZjwwL+rvHNP7+O4VL/Ltc4WhkRSbUxTyOfJTnkmZvKNl0+FyqIfJf3jz7K8i7hLxWyaFSJ2Lbl99g7v9SGhXZHsjtFSJd0DREcB0fNzsTEnJdQLtfvOJkcTFJu6SjWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FDKFgFIS; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e66407963fso8293738a12.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 08:46:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1744645576; x=1745250376; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NeOhHf5iGFXCR7KyyiaekGGStl7/ERESKKOdW516A3U=;
+        b=FDKFgFISJD79jq+mDNybSB2yZsynp/pIuWWKj0vPR9H0Op7NU9iET5FGrsVXStVv70
+         /u2yVtCLLXoHFfLMym4yeINnCzpL2PN+kAItbVxnhrRgg9A8RpIh4U+ysJrf2dMIeV85
+         uAQmPc1j6s9DW/5XxTp50vXVIzdAFtRyDQvNQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744645576; x=1745250376;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NeOhHf5iGFXCR7KyyiaekGGStl7/ERESKKOdW516A3U=;
+        b=pH8xf2P+9KrQE+NJawte1/TzDqdqqteQDfi18dPjimvIWkyIxiQC+5EPG54/7xtU0A
+         RcnXcFeTsqCrc1f/B0fUj8J8Ct62mbSYIo3qkINQYY1DKOGEfBZwpQ3Hf9ZQyxx+ZnkK
+         yIVF2CcuyC/IHLWL6pRniwgzKPEztiofDGq39gG/sdALciluag9H878emyCNgZBGHkR3
+         t6So4H8nF07VWwYeIZCOoUK2r38xubOWYTitewgjEFJm8J3KYCJl51zSXWCk3pwW0s0o
+         HZYESQel6erbg5NIFl90jPI4KbMP17tV8kR47u4QApbnNa7mYaNPewIOFYucX9KPXKwp
+         EBxw==
+X-Gm-Message-State: AOJu0YzWYx7EynENOAQFTDmKMVcUILjtKhGsXyzmsQO/YHTPsk0g5WrZ
+	wEJeyFPGPr+874Gw3qt/lSJuU0r4QPSqp/hqLo9rpa6yO5oZSTelQOVYundURBcU7N/LTObP458
+	/ZDo=
+X-Gm-Gg: ASbGnctXQHJ0NGYpUfwhTkE8AvQZ7UKWQcvLpXgGIGiSK3HmVwqiqJYswqdUeIWdZF2
+	zje5eBfwLkAgKx7wV76TjY56SwlRJRuLTwFt2nXWOAGpFdPZ7CEJQPgZ3F0IzLD6l2IxjbolUua
+	YzA9jsEF+HFzVPa7hIMOcRoRAe5KFx6LNsfaDSnPEi29hw/S8HJfifTtoMw1livifURRBpIybzD
+	nLw74DzyqXxxbQqHUy7wvE/q6s8zn+dXeWpvn/sKsjLp+Dm1EJbWSls42VGoi+d67dK1U3Yt/bQ
+	QqQ6RfXOE/kZ+XMahdOzQld3sLw7q5gdkEKm+ba50mdFhYNhWh+tanpLxAmW/7eaEMzJ/TJL30S
+	tAjmqNTw7ZGgeVx8Cz9Tl+x0jtA==
+X-Google-Smtp-Source: AGHT+IFkdOgNeeRjtqeXEodkmxBhs9BTkEYuZLp5yw2LdBT60Mw43Zqab8BM9UMQZXi+eG4pcjTrcg==
+X-Received: by 2002:a17:906:1413:b0:aca:a1e2:8abc with SMTP id a640c23a62f3a-acad344606cmr925321966b.12.1744645576288;
+        Mon, 14 Apr 2025 08:46:16 -0700 (PDT)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36f505744sm5252662a12.57.2025.04.14.08.46.15
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 08:46:15 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso768213866b.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 08:46:15 -0700 (PDT)
+X-Received: by 2002:a17:907:97cd:b0:ac3:4227:139c with SMTP id
+ a640c23a62f3a-acad34a1b8fmr1001357466b.24.1744645575182; Mon, 14 Apr 2025
+ 08:46:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250414-gefangen-postkarten-3bb55ab4f76a@brauner>
+In-Reply-To: <20250414-gefangen-postkarten-3bb55ab4f76a@brauner>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 14 Apr 2025 08:45:56 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj+SJCYnBT-CZx0sCgWg1jovGZHb+OKs7kqN-enF-Gz8A@mail.gmail.com>
+X-Gm-Features: ATxdqUFcZRqjzxVskb_5zncAuac386QemHaQvCGNI8pZffnqZykRilBFVXJ90Gk
+Message-ID: <CAHk-=wj+SJCYnBT-CZx0sCgWg1jovGZHb+OKs7kqN-enF-Gz8A@mail.gmail.com>
+Subject: Re: Can we remove the sysfs() system call?
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 2025-04-14 at 15:30 +0100, Matthew Wilcox wrote:
-> On Mon, Apr 14, 2025 at 10:07:09AM -0400, James Bottomley wrote:
-> > On Fri, 2025-04-11 at 17:01 +0100, Matthew Wilcox wrote:
-> > > On Fri, Apr 11, 2025 at 05:40:08PM +0200, Miklos Szeredi wrote:
-> > > > However, hundreds of millions of negative dentries can be
-> > > > created rather efficiently without unlink, though this one
-> > > > probably doesn't happen under normal circumstances.
-> > >=20
-> > > Depends on your userspace.=C2=A0 Since we don't have union
-> > > directories, consider the not uncommon case of having a search
-> > > path A:B:C.=C2=A0 Application looks for D in directory A, doesn't fin=
-d
-> > > it, creates a negative dentry. Application looks for D in
-> > > directory B, creates a negative dentry. Application looks for D
-> > > in directory C, doesn't find it, so it creates it. Now we have
-> > > two negative dentries and one positive dentry.
-> >=20
-> > If an application does an A:B:C directory search pattern it's
-> > usually because it doesn't directly own the file location and hence
-> > suggests that other applications would also be looking for it,
-> > which would seem to indicate, if the search pattern gets repeated,
-> > that the two negative dentries do serve a purpose.
->=20
-> Not in this case.=C2=A0 It's doing something like looking in /etc/app.d
-> /usr/share/app/defaults/ and then /var/run/app/ .=C2=A0 Don't quote me on
-> the exact paths, or suggest alternatives based on these names; it's
-> been a few years since I last looked.=C2=A0 But I can assure you no other
-> app is looking at these dentries; they're looked up exactly once.
+On Mon, 14 Apr 2025 at 06:35, Christian Brauner <brauner@kernel.org> wrote:
+>
+> we've been carrying sysfs() around since forever and we marked the
+> sysfs() system call as deprecated in 2018 iiuc.
+>
+> Should we try and get rid of this odd system call or at least flip the
+> config switch to default to N instead of Y?
 
-I got that's what it's doing, and why the negative dentries are useless
-since the file name is app specific, I'm just curious why an app that
-knows it's the only consumer of a file places it in the last place it
-looks rather than the first ... it seems to be suboptimal and difficult
-for us to detect heuristically.
+We can certainly try. But I bet it's used somewhere. Deprecation
+warnings tend to mean nothing ;(
 
-Regards,
+> (Another candidate that comes to mind is uselib().)
 
-James
+That one is already 'default n' since a few years ago, and only
+enabled on some legacy architectures that still use a.out:
 
+        default ALPHA || M68K || SPARC
+
+so ...
+
+          Linus
 
