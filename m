@@ -1,91 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-46361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82064A87E68
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 13:06:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF408A87E86
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 13:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE9143B62EA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 11:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93643B427B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 11:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0714B28A412;
-	Mon, 14 Apr 2025 11:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687DB290BC0;
+	Mon, 14 Apr 2025 11:09:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="uuqOhQnz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0F3283697;
-	Mon, 14 Apr 2025 11:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF5B269882
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 11:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744628783; cv=none; b=PpSP7f60gKOd8EuAeWHZXPtMAMdoBaW54zYV5WiXnVFD4ecTVOQKpMd4KSl7BxZDq5SRzQ7MgSPz68dL7fPwJuyHBUzp3k+Lh9ZDFPBz7LAUGQ8LPPZHp/kzD26kr7ia4auN7dJnWEh6C+KZFo5U0U/c7Jtu/zVNmanHyAnYD3Q=
+	t=1744628988; cv=none; b=QwlrHHMGEoPQEypPZNv7OnxaIC/M8fZYc868k0e841ckARnne/ciTG8THJAgh+wiU9iejjOyEGW/IAeDBzwBLpnZzgUoT5rRe89kfSasYWfBUZORZhqq56CHi0owGw/MvtG1NjGrVTWzumBNmBFmFOfVU14wGkt3J6uOWT0P3EI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744628783; c=relaxed/simple;
-	bh=KbKNHz0LKd92Dbpkf6xZRcLCDOWv0qrCpWFO+Js8TEs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sX87wp3tGTZqdzXmSyTz0FiqxCsE1QkT758dwbKUZU6MDDGnis9pyGm6oWXfBlKkjYjnBakVdpCXDAEWo2TNl37SAP/ndOf5qzALYGnB74H0XKFMbJuJiKsvOwXhI96TF0Qf9eF1jCJLdbKEI5116oGLUuuQopHch29HJqXWLQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
-From: "Li,Rongqing" <lirongqing@baidu.com>
-To: Christian Brauner <brauner@kernel.org>
-CC: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "jack@suse.cz"
-	<jack@suse.cz>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: =?utf-8?B?562U5aSNOiBb5aSW6YOo6YKu5Lu2XSBSZTogKHN1YnNldCkgW1BBVENIXSBm?=
- =?utf-8?B?czogTWFrZSBmaWxlLW5yIG91dHB1dCB0aGUgdG90YWwgYWxsb2NhdGVkIGZp?=
- =?utf-8?Q?le_handles?=
-Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IChzdWJzZXQpIFtQQVRDSF0gZnM6IE1ha2Ug?=
- =?utf-8?Q?file-nr_output_the_total_allocated_file_handles?=
-Thread-Index: AQHbqgqx8U1ad3cqaEyfyidqvoy/O7Oib+KAgACVz6A=
-Date: Mon, 14 Apr 2025 11:05:48 +0000
-Message-ID: <0c3d84f1b91145ccba7d6d3222962be0@baidu.com>
-References: <20250410112117.2851-1-lirongqing@baidu.com>
- <20250414-teuflisch-nahezu-396209d549ba@brauner>
-In-Reply-To: <20250414-teuflisch-nahezu-396209d549ba@brauner>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1744628988; c=relaxed/simple;
+	bh=q08922A4yKgEH82yvFth/K+0rlyEy0HZrUqvhFgN6pE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HoteuirvrmQYOurQ+eRry7Xv+c4d3TW4+UxlsLSAl67Uusnkyo5wF3IIjQR8b1o1LcLOocDPI7ZWdY6Zkc8sAJVcmc2cO1rVnu8SzJ6PMP6m/Nvk8CcRfFeGxbpMyQnjlYUBPEdSIKbICZeWiZ/u8BpxOkXG73l032TnV5Uceu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=uuqOhQnz; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 14 Apr 2025 07:09:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1744628983;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FQ3mkGGw8Px2MJlSAKgdSW9a06mMz6yRygMq5HG+vX8=;
+	b=uuqOhQnzDrweD6ONhFmlYBc8f2GebBEemmxwH6/rVmtv4I7ZHJaxuX05Yr8EQfK8wzogbG
+	8Tm9hF2Mop+rQfoWsoDwPZZ1f71Bj6lY59IMNQ8CptTB07b8DDQykSdBmZZ1zhUNOLTnMr
+	EjmY0Y+4nIOa5VhSjOQar4BGwI7+K5c=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Zorro Lang <zlang@redhat.com>
+Cc: Zorro Lang <zlang@kernel.org>, fstests@vger.kernel.org, 
+	David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] README: add supported fs list
+Message-ID: <rh6l7ugjga6xj22wipaxrpveyxthpgngntdhp3czgatccdkz7w@sqbph4huj7fr>
+References: <20250328164609.188062-1-zlang@kernel.org>
+ <u2pigq4tq5aj5qvjrf3idna7hfdl6b4ciko5jvorkyorg25dck@4ti6fjx55hda>
+ <20250414055857.w2zvapp3mjintgar@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-FEAS-Client-IP: 172.31.51.53
-X-FE-Last-Public-Client-IP: 100.100.100.38
-X-FE-Policy-ID: 52:10:53:SYSTEM
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250414055857.w2zvapp3mjintgar@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-DQo+IE9uIFRodSwgMTAgQXByIDIwMjUgMTk6MjE6MTcgKzA4MDAsIGxpcm9uZ3Fpbmcgd3JvdGU6
-DQo+ID4gTWFrZSBmaWxlLW5yIG91dHB1dCB0aGUgdG90YWwgYWxsb2NhdGVkIGZpbGUgaGFuZGxl
-cywgbm90IHBlci1jcHUNCj4gPiBjYWNoZSBudW1iZXIsIGl0J3MgbW9yZSBwcmVjaXNlLCBhbmQg
-bm90IGluIGhvdCBwYXRoDQo+ID4NCj4gPg0KPiANCg0KDQpIaSBDaHJpc3RpYW4gQnJhdW5lcjoN
-Cg0KQ291bGQgd2UgY2hhbmdlIHRoZSBjaGFuZ2Vsb2cgYXMgYmVsb3csIGl0IG1heWJlIG1vcmUg
-cmVhc29uYWJsZQ0KDQogICAgZnM6IFVzZSBwZXJjcHVfY291bnRlcl9zdW1fcG9zaXRpdmUgaW4g
-cHJvY19ucl9maWxlcw0KDQogICAgVGhlIGNlbnRyYWxpemVkIHZhbHVlIG9mIHBlcmNwdSBjb3Vu
-dGVyIGNhbiBiZSByZWFsbHkgZ3Jvc3NseSBpbmFjY3VyYXRlDQogICAgYXMgQ1BVIGNvdW50IGlu
-Y3JlYXNlcy4gYW5kIHByb2NfbnJfZmlsZXMgaXMgb25seSBhY2Nlc3NlZCB3aGVuIHJlYWRpbmcN
-CiAgICBwcm9jIGZpbGUsIG5vdCBhIGhvdCBwYXRoLCBzbyB1c2UgcGVyY3B1X2NvdW50ZXJfc3Vt
-X3Bvc2l0aXZlIGluIGl0LCB0byBtYWtlDQogICAgL3Byb2Mvc3lzL2ZzL2ZpbGUtbnIgbW9yZSBh
-Y2N1cmF0ZQ0KDQp0aGFua3MNCg0KDQotTGkNCg0KPiBBcHBsaWVkIHRvIHRoZSB2ZnMtNi4xNi5t
-aXNjIGJyYW5jaCBvZiB0aGUgdmZzL3Zmcy5naXQgdHJlZS4NCj4gUGF0Y2hlcyBpbiB0aGUgdmZz
-LTYuMTYubWlzYyBicmFuY2ggc2hvdWxkIGFwcGVhciBpbiBsaW51eC1uZXh0IHNvb24uDQo+IA0K
-PiBQbGVhc2UgcmVwb3J0IGFueSBvdXRzdGFuZGluZyBidWdzIHRoYXQgd2VyZSBtaXNzZWQgZHVy
-aW5nIHJldmlldyBpbiBhIG5ldw0KPiByZXZpZXcgdG8gdGhlIG9yaWdpbmFsIHBhdGNoIHNlcmll
-cyBhbGxvd2luZyB1cyB0byBkcm9wIGl0Lg0KPiANCj4gSXQncyBlbmNvdXJhZ2VkIHRvIHByb3Zp
-ZGUgQWNrZWQtYnlzIGFuZCBSZXZpZXdlZC1ieXMgZXZlbiB0aG91Z2ggdGhlIHBhdGNoDQo+IGhh
-cyBub3cgYmVlbiBhcHBsaWVkLiBJZiBwb3NzaWJsZSBwYXRjaCB0cmFpbGVycyB3aWxsIGJlIHVw
-ZGF0ZWQuDQo+IA0KPiBOb3RlIHRoYXQgY29tbWl0IGhhc2hlcyBzaG93biBiZWxvdyBhcmUgc3Vi
-amVjdCB0byBjaGFuZ2UgZHVlIHRvIHJlYmFzZSwNCj4gdHJhaWxlciB1cGRhdGVzIG9yIHNpbWls
-YXIuIElmIGluIGRvdWJ0LCBwbGVhc2UgY2hlY2sgdGhlIGxpc3RlZCBicmFuY2guDQo+IA0KPiB0
-cmVlOiAgIGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3Zm
-cy92ZnMuZ2l0DQo+IGJyYW5jaDogdmZzLTYuMTYubWlzYw0KPiANCj4gWzEvMV0gZnM6IE1ha2Ug
-ZmlsZS1uciBvdXRwdXQgdGhlIHRvdGFsIGFsbG9jYXRlZCBmaWxlIGhhbmRsZXMNCj4gICAgICAg
-aHR0cHM6Ly9naXQua2VybmVsLm9yZy92ZnMvdmZzL2MvNjYzMTk1MTlmODlkDQo=
+On Mon, Apr 14, 2025 at 01:58:57PM +0800, Zorro Lang wrote:
+> On Sun, Apr 13, 2025 at 05:56:08PM -0400, Kent Overstreet wrote:
+> > I heavily use xfstests and look at the test results every day - I
+> > believe that would indicate L3.
+> 
+> Glad to receive the response from bcachefs :) L3 means there're enough fs specific
+> test cases in tests/$FSTYP besides generic cases, e.g. tests/overlay, or f2fs (although
+> it only has a few currently, but it's increasing).
+
+Active support for existing tests, or writing new tests?
+
+To be blunt, fstests is not a great environment for writing tests, the
+'golden master' model of pass/failure means debugging test failures is
+archaic.
+
+But those tests do get run and used, with active support.
+
+> > bcachefs specific tests are not generally in fstests beacuse there's
+> > lots of things that ktest can do that fstests can't, and I find it a bit
+> > more modern (i.e. tests that names, not numbers)
+> 
+> ktest? linux/tools/testing/ktest/ ? I'm glad to learn about more test suites,
+> I run fstests and LTP and some others too, fstests can't cover everything :)
+> Hmm... about the names... fstests supports to append a name to the ID number,
+> but the developers (looks like) prefer using number only all the time, then
+> it become a "tradition" now.
+
+No, not that. Does anyone even use that thing?
+
+https://evilpiepirate.org/git/ktest.git/
+
+It's a full CI - https://evilpiepirate.org/~testdashboard/ci
+
+> 
+> > 
+> > Not all tests are passing (and won't be for awhile), but the remaining
+> > stuff is non critical (i.e. fsync() error behaviour when the filesystem
+> > has been shutdown, or certain device removal tests where the behaviour
+> > could probably use some discussion.
+> > 
+> > But if you find e.g. a configuration that produces a generic/388 pop,
+> > that would go to the top of the pile.
+> > 
+> > (I do have a few patches to the tests for bcachefs in my tree that I
+> > really ought to get upstream).
+> 
+> Sure, warm welcome your patches. And don't worry, you can send patch to
+> update the level part anytime when you think fstests supports becachefs
+> more :)
+> 
+> Thanks,
+> Zorro
+> 
+> > 
+> 
 
