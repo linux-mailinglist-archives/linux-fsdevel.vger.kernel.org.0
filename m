@@ -1,121 +1,360 @@
-Return-Path: <linux-fsdevel+bounces-46384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A35FFA88593
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 16:47:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF716A885AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 16:49:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5F13564220
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:30:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE39F562D6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 14:35:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96B2B2DFA43;
-	Mon, 14 Apr 2025 14:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72CB427B4FE;
+	Mon, 14 Apr 2025 14:12:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="bhxsjClC"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ggPfTPsk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2042.outbound.protection.outlook.com [40.107.95.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 240F12DFA36
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 14:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744639635; cv=none; b=NbOnReYKySqCaWek5S4tKVPJuDmgxcwmQcj9zjkJkabUbb0j+XTYy2W4x9gs/Ve07NEqB2YjFqT4x6Fj3px9M9u+uwH9fgbf86ynkwiYI8QvWO8bVXssrsZOaDAfQjAOXhgVQaDraKIeQF7m5d8M9WvDl3IDeKWSae4o7C++NFk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744639635; c=relaxed/simple;
-	bh=jOC8CP4xvq9q7udRJMmtpM6mY9/YmzJ1CRapWMBJnqM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MkkuEGeSm5CSqbdQGj9VSxNXSqmn1A7Fk9ULhm4n084NrW67yV6SldqNo+wo7H/nSOt1dSmS87/FVuBOlUXgO6JZ7zJmQShOv377XjRd/wecMPIFMCUBhAIEsMkoGhZPl6QjJYejoaJdTc3+fM0H5QWITPgKv63LoHLkdXV1pwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=bhxsjClC; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1744639630;
-	bh=jOC8CP4xvq9q7udRJMmtpM6mY9/YmzJ1CRapWMBJnqM=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=bhxsjClCirQzBJHicRIEUNaGIsBAF74FdjbTOZlB4XGW6Fs4Ft6vBgjYc+J8es/V5
-	 igCQglFfcfM/IXLb5OTOul2i9CqrdDEgyS6iZeGek13IcsoQ1dWwAYJwKQweuMnD9D
-	 IQ1+5oNSB5cyFVVUd85KXT0mvj4XE3NQSnjlSwbo=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 5AC541C0251;
-	Mon, 14 Apr 2025 10:07:10 -0400 (EDT)
-Message-ID: <2334928cfdb750fd71f04c884eeb9ae29a382500.camel@HansenPartnership.com>
-Subject: Re: bad things when too many negative dentries in a directory
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <miklos@szeredi.hu>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
- Al Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, Jan
- Kara <jack@suse.cz>,  Ian Kent <raven@themaw.net>
-Date: Mon, 14 Apr 2025 10:07:09 -0400
-In-Reply-To: <Z_k81Ujt3M-H7nqO@casper.infradead.org>
-References: 
-	<CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
-	 <20250411-rennen-bleichen-894e4b8d86ac@brauner>
-	 <CAJfpegvaoreOeAMeK=Q_E8+3WHra5G4s_BoZDCN1yCwdzkdyJw@mail.gmail.com>
-	 <Z_k81Ujt3M-H7nqO@casper.infradead.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB071E480;
+	Mon, 14 Apr 2025 14:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744639923; cv=fail; b=CkeIxXMto4b1kSB7gJ+7/vXcMd9+RXA40nn1z32/OuzNtd6UqwibBRrvf+VfEbcjgbWjcy/zqEzUL17p9TujX5yRVtgTe+iAp0+DEUOY5kU5/FjIOlmF9UC/Sf6q566QOKEYc+aIo12KGsZKnkdnXzqutfiQYRQr9lrLF50IZ5k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744639923; c=relaxed/simple;
+	bh=fTQL0U3n8qSdjvd30RBS6Eql0ONU9zQp0Rs8K4697GA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FtuTQziJALFbyNIwMhGklfWb8noAc3pau6AECFARymdA0kojJzVDlxTs2lvaiqrHIkrnd7KQ0BHPKZ5QjIogsCiRcfH/CoF96Zj2BN0ra/QmwUeb0gUPGftQX9guIgzcrXjeDjtvvRYLb/vh9xe8CSEZwhUTqYB+FsE0RpCEwPc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ggPfTPsk; arc=fail smtp.client-ip=40.107.95.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=SjI9rCdlgaEI0koPtI4EvE8I5TzfohkHDmKtGtJ41id19wmVurbpI1VyPOsccmT0bxhi87pKK+2ePVDBVUdqgDcqaWcq8fZl/YVoOClA7oTi7JQjgPVbtUX80GehB5huRlBCofIgc+rjANVzT32ny7eGpaYk19OUnfJ1HBQRg7h6GjvRhaInpQ9d4QDMsV8vilWy4WNv9l6GYH46J7mbNFZYVyTce9WwQ+xb5sG2r4VwcszvpgVp/Oc+K2loHekjF4g17vyrfa6Dv14dsI9AebILc2FDbtKEf9XlpmtoQlH6cahL08T4zlQKhyjIZNavL+WwNJYAtyxHHP+Dj/Uyrw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fdZFziW/cThW9lnMFe6yLhSW6KtjfcTyBBSE243tqQA=;
+ b=JJE8PIKbx2y2QwG0HvxQHZwctcFd9AN2A9/G3/7lWul74UM3dW9CG+3SJulO6SOdBwWx+Oea/RxmOCRd6j8O5Ktgz08YKoOu3kSrT3HGx/sK50VFPjCql8iFvipkT/bvkl4SjqAlGv6MHm1S0b4Tcy8cju5VQT5C5r1cMiRJRCLVcWQ5uLpXIiTjR0niGgOcb5XCElBmNfxidoJ1M14dabSytWCq95PDWiJSctX4QGAKJk2tHLb5dT7auaoKFWyaxtURZ+SHQrSQW9AtkF3/7cZY6dFcG6bATm96a845MggpxWhlCf3FB0RD4WAGs2Br+Ca11XRLgBIXTiFyxtuwAg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fdZFziW/cThW9lnMFe6yLhSW6KtjfcTyBBSE243tqQA=;
+ b=ggPfTPsknYfrRmLuzPYmDygceBvhY9oGL7DaKAO0Bl/TBp5dNKO99ZyFbpDBnu0O53uqOrtrOymUEZjir/+wMft43qKINcBGvUFAlldZMgv2OXwwmqZS/jREIqUkuzaaHwP+5DCYNHAqILZVVLq4Ck3JXrY5O91lNqaWL7Io3dA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
+ SN7PR12MB7156.namprd12.prod.outlook.com (2603:10b6:806:2a7::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.32; Mon, 14 Apr
+ 2025 14:11:59 +0000
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f%5]) with mapi id 15.20.8632.030; Mon, 14 Apr 2025
+ 14:11:59 +0000
+Message-ID: <9d6a394d-403a-45e0-9351-b9d90c019b9b@amd.com>
+Date: Mon, 14 Apr 2025 09:11:53 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 0/4] Add managed SOFT RESERVE resource handling
+To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
+ "dave@stgolabs.net" <dave@stgolabs.net>,
+ "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>,
+ "dave.jiang@intel.com" <dave.jiang@intel.com>,
+ "alison.schofield@intel.com" <alison.schofield@intel.com>,
+ "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
+ "ira.weiny@intel.com" <ira.weiny@intel.com>,
+ "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+ "willy@infradead.org" <willy@infradead.org>, "jack@suse.cz" <jack@suse.cz>,
+ "rafael@kernel.org" <rafael@kernel.org>,
+ "len.brown@intel.com" <len.brown@intel.com>, "pavel@ucw.cz" <pavel@ucw.cz>,
+ "ming.li@zohomail.com" <ming.li@zohomail.com>,
+ "nathan.fontenot@amd.com" <nathan.fontenot@amd.com>,
+ "Smita.KoralahalliChannabasappa@amd.com"
+ <Smita.KoralahalliChannabasappa@amd.com>,
+ "huang.ying.caritas@gmail.com" <huang.ying.caritas@gmail.com>,
+ "Xingtao Yao (Fujitsu)" <yaoxt.fnst@fujitsu.com>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "quic_jjohnson@quicinc.com" <quic_jjohnson@quicinc.com>,
+ "ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "andriy.shevchenko@linux.intel.com" <andriy.shevchenko@linux.intel.com>,
+ "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "gourry@gourry.net" <gourry@gourry.net>,
+ "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "rrichter@amd.com" <rrichter@amd.com>,
+ "benjamin.cheatham@amd.com" <benjamin.cheatham@amd.com>,
+ "PradeepVineshReddy.Kodamati@amd.com" <PradeepVineshReddy.Kodamati@amd.com>
+Cc: "Yasunori Gotou (Fujitsu)" <y-goto@fujitsu.com>
+References: <20250403183315.286710-1-terry.bowman@amd.com>
+ <00489171-8e9d-4c97-9538-c5a97d4bac97@fujitsu.com>
+Content-Language: en-US
+From: "Bowman, Terry" <terry.bowman@amd.com>
+In-Reply-To: <00489171-8e9d-4c97-9538-c5a97d4bac97@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SA0PR11CA0022.namprd11.prod.outlook.com
+ (2603:10b6:806:d3::27) To DS0PR12MB6390.namprd12.prod.outlook.com
+ (2603:10b6:8:ce::7)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|SN7PR12MB7156:EE_
+X-MS-Office365-Filtering-Correlation-Id: d17ab18b-8591-4891-5840-08dd7b5e51a8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?eEVhRGpKdXFnQnBPekMrQm9YYXcvVnViaGI0My9EZjVRMDdmTytxYW50R0x6?=
+ =?utf-8?B?alhXSk1Kdk03Zlc3ckVLOTd2cUI1V2lJRnQrd2t1Wm0wYjBOMFVIOThPRHI1?=
+ =?utf-8?B?UzRKdEN6WXd6cG84dHZKaFp3eUtDRTNzM255Rk80cTdHR3hWeGpkWG80VHV3?=
+ =?utf-8?B?dUZhUnlSZE1NajlTWndYVGFyaTRmQS8rWktZd2pFZVlScVAzbzBXS0JTUkZp?=
+ =?utf-8?B?b2VOYmE4R2t4cGx2QXJJUWN4WlZaVHVKZ2NvU3EzVHE3eFp1d0VHbkU0azZp?=
+ =?utf-8?B?T25SVDNNSXVZTUVRVmxhcXphdklYU1I4eG1MLzRUWmIwNGhiWXZNMmdZNzR5?=
+ =?utf-8?B?NkgwaElEM2szTHFCSGxCWEVUVjlLL3lERHFpUWFwcm9mWlUrNzFTR294TXpz?=
+ =?utf-8?B?Rmt4QUVYTU5SdW5rNmNUMC9TV3lpN1E2WndjRlpPQmhJSXRRTUUxODRFeUFU?=
+ =?utf-8?B?eE1qTVpmNjRYbVlYMW9nYjBQcVBMMWJkcklQRVdzT2dKSEpDYXBvNXFXbUR0?=
+ =?utf-8?B?SnZUREo4U1NLOUh3YTNVZGFkdTdmRGZ0ZGxxRlRzVXJNWUZHbHZwcnB1RzNN?=
+ =?utf-8?B?aDdYS25xanluanBHTGQ0UXlINHBJS05uYVVpNUF0aGQvUjRBR0Y2TEVKR0cy?=
+ =?utf-8?B?eWl5d3lJUmJrcTJVOW4xakF4bjdwYS92SDBuRER0VEZDSGdNdEpwRmZXbFR3?=
+ =?utf-8?B?a3hpcGxKdnRLSTA5TG9qZzY5bVFLRmJzazllMElFSkxtTDdxRXZWYnlnQmR0?=
+ =?utf-8?B?M011MkRaSG9sMGU4TUJtNldIMXNidUJ2RDZ0T1RXbElBMVlZYzE2TlJlcGJo?=
+ =?utf-8?B?aVptZHZXMFFIU1VmdDZVUzRZOHk5dllQbFZNenZXLzB6Rnp4RW1zM3JrU2lC?=
+ =?utf-8?B?TTdMNk80YWd3VE5ZcUI1TVVyMk1tRlYxQXZuaExXdjlSVUZzbW91WEIzNEJv?=
+ =?utf-8?B?TU9lVG9HMUJ2UkNOWGM3MktmeGpSSVY1a3NxUkF6VWs1TzkzZWNVMUk0VlFr?=
+ =?utf-8?B?S2M3bER3ZVVpYzBOSjdEclgrOFl0S0FZOUpQTHFUOEVSUzNuakl4ZnBMeUxK?=
+ =?utf-8?B?OGsxQUJRckhDcmFwNGFqVUZMNm1wOGxwSEl3SHRVWHI0eGpNN3poOWpGZ3ph?=
+ =?utf-8?B?SXVvVHAyd1VOdTFzd2dNejkwZmhBT29Gbk81TXJMR28vWVd6ZjJqN1BZanpp?=
+ =?utf-8?B?SU9TZGcxTTd4ZDhkMjlQOHpjcDlLbmdiK3YvSzZrWEEzdzBza1hqcXoySHE3?=
+ =?utf-8?B?VFNRdzMvbk1FbnF3d2FSZ2w1WU8rSlFyMmdnMXduSDdsUFZHZEt6em0xcGE3?=
+ =?utf-8?B?dmxweU4vL3BVaWJkNzROVlJMb0JlVnJEaHdMNTdLYUg4RENDOWJRZmdoNGs5?=
+ =?utf-8?B?WER3Q1lweTFPWjE4OGRYWk1KZFdqOU4vbzc4THNQeVJNcGpYQ2FFNUZxbUVY?=
+ =?utf-8?B?REZtdG5lNUQ0ZUcyRm4vUUttd2NQSEtaWjZ0TDgxakYrM3JTbmRVTk9vNzVG?=
+ =?utf-8?B?YngvbVBBNzZKM0o0Zm1FcWVvY0hZZlZjcUxaeEtMbmtkS3FYZHVKbDg4ZXVV?=
+ =?utf-8?B?MVRQeHpZMDU2ZFFHK2ZOdGVYUG1PcW9qbTJKVzRKWms0RUd6aitRaUJPdmVI?=
+ =?utf-8?B?UUtNOGpsaEROdkNQVlZRZmE2UGRqNHFiV1Y2Y2V2Ky9jZ2ZYTDAvQWhuRFg0?=
+ =?utf-8?B?K1RSMG45dXA2WXh4UHp6blNNZE9PR1c1L21hbDBBUm05N0VZZ0dCdW92aDdW?=
+ =?utf-8?B?bUVjY1VpRkwwdGJ4cTJXR1dzUFF3ZFZySncxQUxYcWZURjdiMHpmVHBKY05M?=
+ =?utf-8?B?ZGM5S2xtYkVQQlYyY0xtYlM1YWVoZWpyZ0xTd25rQzR2MlNwQWVSUW4ycDJj?=
+ =?utf-8?B?cVFCdUhRd1NiaE9KNkV3cmZMU3NVK21CejluVjdUTDBRK0ZDOFNkeXJMY1Bo?=
+ =?utf-8?B?Mk1lN2FESThDZCt4aUpod2dpS2xsaHp1em8xc0xrcUQ5b0E4aS9lSTg1Mk1R?=
+ =?utf-8?B?NEdEWkVkRFhnPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?akFoZi9vcEcxaUY3QThwRUx4U3lLSk4yZnhZcDJvSmdPN21NeGVCR2pwTzJp?=
+ =?utf-8?B?VXY4RnRwQUVaZlBDR3VEODIyRFhldnUxMEtKZGx2dXFxQjM3WGNKT3d2aVI3?=
+ =?utf-8?B?RUNvU3Y0YUFPcWxwWWRnNkJrZmdnemdZNldQVXFVTzJISXVUT2R3WDFCUVhC?=
+ =?utf-8?B?aXhEWHEvQm9YR1lsR1Z6M0tUK0xhN1kyVEJGc3FxNk9JR053ejB5d2hIYUs2?=
+ =?utf-8?B?TnRwM3g4eDcwb0ovekZCbS9Jb2lSRFVMRkkrakNiNUp4YWtCbGtyVE1jSHVQ?=
+ =?utf-8?B?d21nVktzRXgxS0x3UHR5cGFiaE83d1RybTMrcjRMYVBRSjZHT1V2RzNUWkhM?=
+ =?utf-8?B?NmNsTXVOVWkwcENUSkk4R2hNYS9rcTI2REo5U0JaYWlRNHhTZlo2UUJ5Ykha?=
+ =?utf-8?B?UWwvYTNYQ2dNL1VCUDV5T2NRdDdhOVF1VWY0R1o5dDlPR0c3dG1qejBTMnNR?=
+ =?utf-8?B?NDE0T091dVVTV3JzMFJqRm1HK08yOHAxSXBKd2w5cTl0dWpvUWQ5UDN1dzAr?=
+ =?utf-8?B?ck92d2dIN0tRODFIejA2ekZiTG0vWUFuMzljVEo2eUJnOEJGZW1DTW1nS0cr?=
+ =?utf-8?B?N2txNTN6QmMxaE5VS1BLTVNTNjg1S05od3dlNWZQNFRZZ2dCcWhCNXJLL05m?=
+ =?utf-8?B?b1NQZDZDWWJNcGpFdERxV3ZyRllsaWczMDZiMC9KcEx6c3ZTUEphZGEveG9j?=
+ =?utf-8?B?elJEN2k4alhJd2M0Tm5WVkJkaHJ5ajZkOCtWNUlYSlRDOW9vNVAwNFR3akNx?=
+ =?utf-8?B?RVUyNDA2Ukdnc2d2WFhNa1ZWWTYyVjJIOFhCQ2hnbnJFb1VZU2h2RWNRcWM1?=
+ =?utf-8?B?OFFHNjdJZEhnWGJOVG52L0RDcmZNYmcxejB4YnJ4cW1HNnZMRDllYmV3ZHh2?=
+ =?utf-8?B?MEZOV0UxajZvUmVNNXRlc0pGTTRoTnVFTEtLcE0xOFlibkp1ZTBtSlp2NWgw?=
+ =?utf-8?B?NHczeW0ybGFSd1E1cFYzQkNxN2s3UTMxcHlRekdMRjZKeFFYWXQvY2l2dmc3?=
+ =?utf-8?B?bjYrd2U3R0dJM09WdFdZTTNzWnV3dVV1ZEk3dFhhSU5zckljYk9TL0lzd0Qr?=
+ =?utf-8?B?ODRNZVgvbzdFMWZ6L0F0djgyR2Y5TVNma2JhRkluQU5ramJMK1lNd1pGRENX?=
+ =?utf-8?B?SFNGUmhzSEVkM3JneTV2TGk1TUJaZ0FOK2RSYnJwdFIrbFBoTVdvd2FnNDN2?=
+ =?utf-8?B?V0dtQWVwVW01c1p2cDJYZTJmU2twdDlQRGdTVElzdndkRFBFT2VjUHE3S3FO?=
+ =?utf-8?B?VmJxNjBEQ3NKbE5RNTBiR2JNSjRndEJ4NzgrSXgxem5RY3lPb1d5cTY3eWNY?=
+ =?utf-8?B?anQ5TURKU1NCci9BbFBCSVVFajV2d0RkNTlLVFB3em9yQXpBb09WcmlNaXlW?=
+ =?utf-8?B?T29GNEhkVjlhbTZJL3RjY3l0dDZsVUtiV2JhRnE0S3FCa1hpd2xDcUhmWEV4?=
+ =?utf-8?B?RTJhZHQ2T00wbTlWMWM4RE5iYXlDMHBHQ05MZGJhemJSemdqdnY4cWR4S3cw?=
+ =?utf-8?B?YktaNHpyQUduTm1rVFFDM1RhT2lUMjE3S01ZTTIydWVpbjZVVXJ4ZzBoUmRS?=
+ =?utf-8?B?aTdXWHZGOU8yQlBJR2tEdjBXcWs1UzJvd0lYcUZkQjFjRW1yekpFcGgvVVhE?=
+ =?utf-8?B?RTQzVS9PT0I4ZkE2aWpyNVM5RFdFZjA3Z0RzUzRUUDNZbVRuT1FWQi9Vd0RR?=
+ =?utf-8?B?QjFYNGZia3pTTXBMY3BRNUdLWUs2RDREMTBjUXNnREE3Um9QbkZycFR2VGk5?=
+ =?utf-8?B?c0x3dWZIcVE5L1d5TFFIakFJNVBlMDdURXpuSGpvRExFWUFkQzZlY3poaDR6?=
+ =?utf-8?B?RGJKaC9FRW9LajE2dlJSTVRwVE5YTE9kNDlQL2JnaSsxajZJYmZHTlpidHpa?=
+ =?utf-8?B?OUpYbUw1Z0lNMkxsNHFrOHJHeWE3UmFaWHo3ZDRDSkpkVnJRcHNaYUcyanRj?=
+ =?utf-8?B?eHcvc3ZZZ0ZTUStXUFpSVjBlT3NUOFo3WjhlZWlXdDFFb3YxaXRYc1NRRlVu?=
+ =?utf-8?B?R1RWMVZ0a3J2VVc3Sm1KQ3BsN2RpOWhPMUZNaUR2QzBHNUZHR01DRHZaSTQ4?=
+ =?utf-8?B?K1laYlpqY2FKRDdQVXZxV3lvZFl1MVBCM0FmaTg3NVBjU1JNZ1lIY3hlN1VT?=
+ =?utf-8?Q?ugtPzRBVtGUYg0wQk1xtfoBdW?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d17ab18b-8591-4891-5840-08dd7b5e51a8
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Apr 2025 14:11:58.8016
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: dZ+bOQZ8w/ix2p3/LbR8J55iJaRm4tToymscLanZVr0wXyfT+5sFqC2e2YTzuQs5w8Wz4Q5DQrKlCVwB60mjZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7156
 
-On Fri, 2025-04-11 at 17:01 +0100, Matthew Wilcox wrote:
-> On Fri, Apr 11, 2025 at 05:40:08PM +0200, Miklos Szeredi wrote:
-> > However, hundreds of millions of negative dentries can be created
-> > rather efficiently without unlink, though this one probably doesn't
-> > happen under normal circumstances.
->=20
-> Depends on your userspace.=C2=A0 Since we don't have union directories,
-> consider the not uncommon case of having a search path A:B:C.=C2=A0
-> Application looks for D in directory A, doesn't find it, creates a
-> negative dentry. Application looks for D in directory B, creates a
-> negative dentry. Application looks for D in directory C, doesn't find
-> it, so it creates it. Now we have two negative dentries and one
-> positive dentry.
+Hi Zhijian,
 
-If an application does an A:B:C directory search pattern it's usually
-because it doesn't directly own the file location and hence suggests
-that other applications would also be looking for it, which would seem
-to indicate, if the search pattern gets repeated, that the two negative
-dentries do serve a purpose.
-
-> And for some applications, the name "D" is going to be unique, so the
-> negative dentries have _no_ further use.=C2=A0 The application isn't even
-> going to open C/D again.=C2=A0 If there's no memory pressure, we can buil=
-d
-> up billions of dentries.=C2=A0 I believe the customer is currently echoin=
-g
-> 2 to /proc/sys/vm/drop-caches every hour.
-
-So this is an application that's the sole owner of D (i.e. sole
-controller of the entire path) yet it still does a search for it, why
-is that (if it's something like to update the location, it would be
-better served by first looking in the default location before searching
-others)?  The problem is the pattern exactly matches the shared file
-one above so there doesn't seem to be a heuristic way to distinguish
-them.
+We recreated the failure for the cases you mentioned below. We will be 
+adding the fix into v4 I am working on now.
 
 Regards,
+Terry
 
-James
+
+
+On 4/7/2025 2:31 AM, Zhijian Li (Fujitsu) wrote:
+> Hi Terry,
+>
+> If I understand correctly, this patch set has only considered the situation where the
+> soft reserved area and the region are exactly the same, as in pattern 1.
+>
+> However, I believe we also need to consider situations where these two are not equal,
+> which are outlined in pattern 2 and 3 below. Let me explain them:
+>
+> ===========================================
+> Pattern 1:
+> - region0 will be created during OS booting due to programed hdm decoder
+> - After OS booted, region0 can be re-created again after destroy it
+> ┌────────────────────┐
+> │       CFMW         │
+> └────────────────────┘
+> ┌────────────────────┐
+> │    reserved0       │
+> └────────────────────┘
+> ┌────────────────────┐
+> │       mem0         │
+> └────────────────────┘
+> ┌────────────────────┐
+> │      region0       │
+> └────────────────────┘
+>
+>
+> Pattern 2:
+> The HDM decoder is not in a committed state, so during the kernel boot process,
+> egion0 will not be created automatically. In this case, the soft reserved area will
+> not be removed from the iomem tree. After the OS starts,
+> users cannot create a region (cxl create-region) either, as there should
+> be an intersection between the soft reserved area and the region.
+>                               
+> ┌────────────────────┐
+> │       CFMW         │
+> └────────────────────┘
+> ┌────────────────────┐
+> │    reserved0       │
+> └────────────────────┘
+> ┌────────────────────┐
+> │       mem0*        │
+> └────────────────────┘
+> ┌────────────────────┐
+> │      N/A           │ region0
+> └────────────────────┘
+> *HDM decoder in mem0 is not committed.
+>                                        
+>                
+> Pattern 3:
+> Region0 is a child of the soft reserved area. In this case, the soft reserved area will
+> not be removed from the iomem tree, resulting in being unable to be recreated later after destroy.
+> ┌────────────────────┐
+> │       CFMW         │
+> └────────────────────┘
+> ┌────────────────────┐
+> │   reserved         │
+> └────────────────────┘
+> ┌────────────────────┐
+> │ mem0    | mem1*    │
+> └────────────────────┘
+> ┌────────────────────┐
+> │region0  |  N/A     │ region1
+> └────────────────────┘
+> *HDM decoder in mem1 is not committed.
+>
+>
+> Thanks
+> Zhijian
+>
+>
+>
+> On 04/04/2025 02:33, Terry Bowman wrote:
+>> Add the ability to manage SOFT RESERVE iomem resources prior to them being
+>> added to the iomem resource tree. This allows drivers, such as CXL, to
+>> remove any pieces of the SOFT RESERVE resource that intersect with created
+>> CXL regions.
+>>
+>> The current approach of leaving the SOFT RESERVE resources as is can cause
+>> failures during hotplug of devices, such as CXL, because the resource is
+>> not available for reuse after teardown of the device.
+>>
+>> The approach is to add SOFT RESERVE resources to a separate tree during
+>> boot. This allows any drivers to update the SOFT RESERVE resources before
+>> they are merged into the iomem resource tree. In addition a notifier chain
+>> is added so that drivers can be notified when these SOFT RESERVE resources
+>> are added to the ioeme resource tree.
+>>
+>> The CXL driver is modified to use a worker thread that waits for the CXL
+>> PCI and CXL mem drivers to be loaded and for their probe routine to
+>> complete. Then the driver walks through any created CXL regions to trim any
+>> intersections with SOFT RESERVE resources in the iomem tree.
+>>
+>> The dax driver uses the new soft reserve notifier chain so it can consume
+>> any remaining SOFT RESERVES once they're added to the iomem tree.
+>>
+>> V3 updates:
+>>   - Remove srmem resource tree from kernel/resource.c, this is no longer
+>>     needed in the current implementation. All SOFT RESERVE resources now
+>>     put on the iomem resource tree.
+>>   - Remove the no longer needed SOFT_RESERVED_MANAGED kernel config option.
+>>   - Add the 'nid' parameter back to hmem_register_resource();
+>>   - Remove the no longer used soft reserve notification chain (introduced
+>>     in v2). The dax driver is now notified of SOFT RESERVED resources by
+>>     the CXL driver.
+>>
+>> v2 updates:
+>>   - Add config option SOFT_RESERVE_MANAGED to control use of the
+>>     separate srmem resource tree at boot.
+>>   - Only add SOFT RESERVE resources to the soft reserve tree during
+>>     boot, they go to the iomem resource tree after boot.
+>>   - Remove the resource trimming code in the previous patch to re-use
+>>     the existing code in kernel/resource.c
+>>   - Add functionality for the cxl acpi driver to wait for the cxl PCI
+>>     and me drivers to load.
+>>
+>> Nathan Fontenot (4):
+>>    kernel/resource: Provide mem region release for SOFT RESERVES
+>>    cxl: Update Soft Reserved resources upon region creation
+>>    dax/mum: Save the dax mum platform device pointer
+>>    cxl/dax: Delay consumption of SOFT RESERVE resources
+>>
+>>   drivers/cxl/Kconfig        |  4 ---
+>>   drivers/cxl/acpi.c         | 28 +++++++++++++++++++
+>>   drivers/cxl/core/Makefile  |  2 +-
+>>   drivers/cxl/core/region.c  | 34 ++++++++++++++++++++++-
+>>   drivers/cxl/core/suspend.c | 41 ++++++++++++++++++++++++++++
+>>   drivers/cxl/cxl.h          |  3 +++
+>>   drivers/cxl/cxlmem.h       |  9 -------
+>>   drivers/cxl/cxlpci.h       |  1 +
+>>   drivers/cxl/pci.c          |  2 ++
+>>   drivers/dax/hmem/device.c  | 47 ++++++++++++++++----------------
+>>   drivers/dax/hmem/hmem.c    | 10 ++++---
+>>   include/linux/dax.h        | 11 +++++---
+>>   include/linux/ioport.h     |  3 +++
+>>   include/linux/pm.h         |  7 -----
+>>   kernel/resource.c          | 55 +++++++++++++++++++++++++++++++++++---
+>>   15 files changed, 202 insertions(+), 55 deletions(-)
+>>
+>>
+>> base-commit: aae0594a7053c60b82621136257c8b648c67b512
 
 
