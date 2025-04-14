@@ -1,121 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-46406-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21275A88A89
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 19:59:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE8B6A88C53
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 21:35:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE9D13A6CC1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 17:58:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EADAE189898D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Apr 2025 19:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4C2279904;
-	Mon, 14 Apr 2025 17:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0E71BC07B;
+	Mon, 14 Apr 2025 19:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="oAXbzXb5"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="I6sy5nJI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1547028468E
-	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 17:58:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451751AB6C8
+	for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 19:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744653541; cv=none; b=c+FsuU1Yb1HxWAhXDXzs8VNmWMbAzZLvRgPk2H9ampCP3lgDtzGAGU0g0C+spcK+4GxyweHzVVSU/9C4BUtMnl4QjN9Zvqw5ilUWS3w/Qqv++r6suPyEMNLOqOK7OQRa/t1tZsywPXnojsVumZycuZjwW4fE8+NpSBTNXqjv8j4=
+	t=1744659333; cv=none; b=TzlbjF/lJSdKVwiF1AIwCDpK9NOoVTSz3EtD9tAUsFayD6EOD8XrGceVa65MbjoEPIYlBbVkwKSkUMH0og73vYDbx1eJnhJuOR/yFxcz9Xw0immB1/RQUbct+1lYl+W2uMpYAGBfoJ+t+phmOLS2Gmk9mRhhjV0LYWrIz8sxrVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744653541; c=relaxed/simple;
-	bh=YAx/TsZCFGBjdFSHe5YDJNmJuEdmlbXvw7LiutviJhI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=PcwQ2Xk2MwrBzwaRBThofnItzhEzusBhnB76xJ6AJsr8zpM1/tRwlkCEcgKKn9kKUY2K5P/KND0xXlfNtFyZGmZGGwOdxNvZey+AT+9UVXFgZazRrWMzLSadRmk9YbghkBfnoZebkRy52T5N0dzvgiWiU+Vu13clvilsQrA4kLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=oAXbzXb5; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1744653537;
-	bh=YAx/TsZCFGBjdFSHe5YDJNmJuEdmlbXvw7LiutviJhI=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=oAXbzXb58Ee8v0rbBzUisUrkeqN2eF1477IiIywM85h+QQltOQHN++yc3rBSQtRP/
-	 wu8ima307gVoOIoZ8EdRB7Sj8NOthSUiWK8WuIx+kSuHDpUMTE5XmP8fGPMjiB2o1p
-	 7+rBznEyD1qTwF4PscwbOIH6eV6QxgjChdYJDp8w=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 7BE291C0172;
-	Mon, 14 Apr 2025 13:58:57 -0400 (EDT)
-Message-ID: <e01314df537bced144509a8f5e5d4fa7b6b39057.camel@HansenPartnership.com>
-Subject: Re: bad things when too many negative dentries in a directory
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner
- <brauner@kernel.org>,  linux-fsdevel@vger.kernel.org, Al Viro
- <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, Jan Kara
- <jack@suse.cz>, Ian Kent <raven@themaw.net>
-Date: Mon, 14 Apr 2025 13:58:56 -0400
-In-Reply-To: <Z_00ahyvcMpbKXoj@casper.infradead.org>
-References: 
-	<CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
-	 <20250411-rennen-bleichen-894e4b8d86ac@brauner>
-	 <CAJfpegvaoreOeAMeK=Q_E8+3WHra5G4s_BoZDCN1yCwdzkdyJw@mail.gmail.com>
-	 <Z_k81Ujt3M-H7nqO@casper.infradead.org>
-	 <2334928cfdb750fd71f04c884eeb9ae29a382500.camel@HansenPartnership.com>
-	 <Z_0cDYDi4unWYveL@casper.infradead.org>
-	 <f619119e8441ded9335b53a897b69a234f1f87b0.camel@HansenPartnership.com>
-	 <Z_00ahyvcMpbKXoj@casper.infradead.org>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1744659333; c=relaxed/simple;
+	bh=4DYoBFJNUP3UkiuUtc/FGAzvL3hBom3dR3htenqLAy8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Dj60ON3zJbnoHS6nV+41GIscOjRnUemSHTYToP1svfxeNa6ZhSTfgH8JQEGEURi6DDJeRMOOLY/VirztWy7kCUbMcaBlHesS5lyYYlFuGWPaLOmfrioH6UoVX92xwKi/W5nzOtJlPYJdrr1qOvTzeKAFG0kU9g5/e4gZn+PnQVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=I6sy5nJI; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-85de3e8d0adso85223139f.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Apr 2025 12:35:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1744659328; x=1745264128; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kQcWlSOKyFtlnxBLYEiwaL3kPiNi8IsyhCrMWx8B53M=;
+        b=I6sy5nJId6XtzmTrG0gu55ku0Vy8MpqDCMXiCgOI/MpRvpB6vMlvEZFRZRd14xMdJk
+         TeA2EKzWQxNyRlG+shG4qaTj83HCUHsEcq0s7IwrFGvlHCkTb6hqeJDehHiQUYes8vm3
+         1Bnak40dFmTOuBeNxHOQ4dJ8eEK+lcT/g1p4/9VvcbzFojfgIxOGguTFkyUf9+pt7Yrl
+         JFRxwrc/xAVocKM55V6z60zqg/vvSVr6nnyEzNJmDg33kfFwMF22FNwCaWXIgF+hrXs3
+         TyQo6DzD95Z95M4jQmubvmbobF2QH+TwJZNa0SynxwqK/P/BYOotz6tF7GlEJRfgaQdF
+         4B3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744659328; x=1745264128;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kQcWlSOKyFtlnxBLYEiwaL3kPiNi8IsyhCrMWx8B53M=;
+        b=Co5hC389l8yDIvWH3voigxXZ+N31WjOKOtGzfPi9NuBzlfXEjkn4Bq/VielukedxSv
+         623NOPl8aRrmMqAtiKNLKJKuFlUpbJZCJeHB1WY/nZ8owEqozMLx19/5cWHIPcnOjkD7
+         rqVNs9jrWWm+BZBmPSoksbxlsHcJEwRvcYwuz4vaLXZYTL38tlQC2SW29Clu0nPEfxFi
+         ai37ed+eMkKoCAs17SWaRDXfCF9pvX72cRD/dWhIGuSSk6MoOqmuF8FQ26umpB+UjUGd
+         bvRAhFH7vJyX5COQwM+xbF1IIRNYslEhxP7SGGsQ8qcoWPi4LHo1ZsPazyxJI4aHLZZo
+         jXXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrKPvhDT4x1ErP6mUdcdMYREof5Z8O/iahZttyBhTH8vHN93qfh2N2AioEgmLpNt9PawpIrSy9mwBdr7ip@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEQXZkkcFsB+E42uPjzK1om0JqqhEw4vP4S6rB0T25grltmeVo
+	yLgqu3tfoT1noPwcw5kgrjLv7csJJcQmqtC+XVsyj2Sb1gTAyft6qrFSdH2ZsDuerknv2QJRcSA
+	n
+X-Gm-Gg: ASbGncsQYNnDMvcKy+ptKClWzDVMpVXBVp1uxlEv3eyGLKP3gg2vizNxqQncfubAlCO
+	UdTAVvmTiB7yTgUjOT3rTFlVFpAtaRX+mEHHj65tHcnUxpXw6U7nlexjKG4U23PZYj/H+oI/PFC
+	6OOIaHKRZX+CxSJj6/Yf6UTsfSvn10TlIuM4jpMRMH0LHLQqiCO0o45gPUf1uOW0mSkfSmhNar/
+	RXIzoyWHivgko2ymDC4eiGEu9ewBPCPjcUp8EIiA1WASJjBkty0QLNmyTbWURFFlbPfqlXQfKjs
+	4ICJGyd4KkgtfxUCsv0Ws8mLyyXJepAyEGSH
+X-Google-Smtp-Source: AGHT+IFZFvf9s9O3yFwQDM03lsEZMLEJdiLpa/o6o5Qz1t59pba0q9aXsHOkfOYTUGsRk4DsYjI+3A==
+X-Received: by 2002:a05:6e02:3b89:b0:3d3:fdcc:8fb8 with SMTP id e9e14a558f8ab-3d7ec2035camr123753565ab.10.1744659328187;
+        Mon, 14 Apr 2025 12:35:28 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f505e7da54sm2703561173.140.2025.04.14.12.35.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Apr 2025 12:35:27 -0700 (PDT)
+Message-ID: <c83ab29b-48e5-44b1-8902-2711a806739f@kernel.dk>
+Date: Mon, 14 Apr 2025 13:35:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] fs: gate final fput task_work on PF_NO_TASKWORK
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: io-uring@vger.kernel.org, asml.silence@gmail.com, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org
+References: <20250409134057.198671-1-axboe@kernel.dk>
+ <20250409134057.198671-2-axboe@kernel.dk>
+ <gj6liprp6wtwgabimozkpaw6rv5xfotyi62zuegy5ffjxjdrrs@325g7wcnir6t>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <gj6liprp6wtwgabimozkpaw6rv5xfotyi62zuegy5ffjxjdrrs@325g7wcnir6t>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2025-04-14 at 17:14 +0100, Matthew Wilcox wrote:
-[...]
-> > I got that's what it's doing, and why the negative dentries are
-> > useless since the file name is app specific, I'm just curious why
-> > an app that knows it's the only consumer of a file places it in the
-> > last place it looks rather than the first ... it seems to be
-> > suboptimal and difficult for us to detect heuristically.
->=20
-> The first two are read only.=C2=A0 One is where the package could have an
-> override, the second is where the local sysadmin could have an
-> override. The third is writable.=C2=A0 It's not entirely insane.
->=20
-> Another way to solve this would be to notice "hey, this directory
-> only has three entries and umpteen negative entries, let's do the
-> thing that ramfs does to tell the dcache that it knows about all
-> positive entries in this directory and delete all the negative
-> ones".=C2=A0 I forget what flag that is.
+On 4/14/25 11:11 AM, Mateusz Guzik wrote:
+> On Wed, Apr 09, 2025 at 07:35:19AM -0600, Jens Axboe wrote:
+>> fput currently gates whether or not a task can run task_work on the
+>> PF_KTHREAD flag, which excludes kernel threads as they don't usually run
+>> task_work as they never exit to userspace. This punts the final fput
+>> done from a kthread to a delayed work item instead of using task_work.
+>>
+>> It's perfectly viable to have the final fput done by the kthread itself,
+>> as long as it will actually run the task_work. Add a PF_NO_TASKWORK flag
+>> which is set by default by a kernel thread, and gate the task_work fput
+>> on that instead. This enables a kernel thread to clear this flag
+>> temporarily while putting files, as long as it runs its task_work
+>> manually.
+>>
+>> This enables users like io_uring to ensure that when the final fput of a
+>> file is done as part of ring teardown to run the local task_work and
+>> hence know that all files have been properly put, without needing to
+>> resort to workqueue flushing tricks which can deadlock.
+>>
+>> No functional changes in this patch.
+>>
+>> Cc: Christian Brauner <brauner@kernel.org>
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+>> ---
+>>  fs/file_table.c       | 2 +-
+>>  include/linux/sched.h | 2 +-
+>>  kernel/fork.c         | 2 +-
+>>  3 files changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/fs/file_table.c b/fs/file_table.c
+>> index c04ed94cdc4b..e3c3dd1b820d 100644
+>> --- a/fs/file_table.c
+>> +++ b/fs/file_table.c
+>> @@ -521,7 +521,7 @@ static void __fput_deferred(struct file *file)
+>>  		return;
+>>  	}
+>>  
+>> -	if (likely(!in_interrupt() && !(task->flags & PF_KTHREAD))) {
+>> +	if (likely(!in_interrupt() && !(task->flags & PF_NO_TASKWORK))) {
+>>  		init_task_work(&file->f_task_work, ____fput);
+>>  		if (!task_work_add(task, &file->f_task_work, TWA_RESUME))
+>>  			return;
+>> diff --git a/include/linux/sched.h b/include/linux/sched.h
+>> index f96ac1982893..349c993fc32b 100644
+>> --- a/include/linux/sched.h
+>> +++ b/include/linux/sched.h
+>> @@ -1736,7 +1736,7 @@ extern struct pid *cad_pid;
+>>  						 * I am cleaning dirty pages from some other bdi. */
+>>  #define PF_KTHREAD		0x00200000	/* I am a kernel thread */
+>>  #define PF_RANDOMIZE		0x00400000	/* Randomize virtual address space */
+>> -#define PF__HOLE__00800000	0x00800000
+>> +#define PF_NO_TASKWORK		0x00800000	/* task doesn't run task_work */
+>>  #define PF__HOLE__01000000	0x01000000
+>>  #define PF__HOLE__02000000	0x02000000
+>>  #define PF_NO_SETAFFINITY	0x04000000	/* Userland is not allowed to meddle with cpus_mask */
+>> diff --git a/kernel/fork.c b/kernel/fork.c
+>> index c4b26cd8998b..8dd0b8a5348d 100644
+>> --- a/kernel/fork.c
+>> +++ b/kernel/fork.c
+>> @@ -2261,7 +2261,7 @@ __latent_entropy struct task_struct *copy_process(
+>>  		goto fork_out;
+>>  	p->flags &= ~PF_KTHREAD;
+>>  	if (args->kthread)
+>> -		p->flags |= PF_KTHREAD;
+>> +		p->flags |= PF_KTHREAD | PF_NO_TASKWORK;
+>>  	if (args->user_worker) {
+>>  		/*
+>>  		 * Mark us a user worker, and block any signal that isn't
+> 
+> I don't have comments on the semantics here, I do have comments on some
+> future-proofing.
+> 
+> To my reading kthreads on the stock kernel never execute task_work.
 
-It's not a flag, it's the dentry operations for pseudo filesystems
-(simple_lookup sets simple_dentry_operations which provides a d_delete
-that always says don't retain).  However, that's really because all
-pseudo filesystems have a complete dentry cache (all visible files have
-dentries), so there's no benefit caching negative lookups (and the
-d_delete trick only affects negative dentries because positive ones
-have a non zero refcount).
+Correct
 
-There is a DCACHE_DONTCACHE flag that dumps a dentry (regardless of
-positive or negative) on final dput  I suppose that could be set in
-lookup_open() on negative under some circumstances (open flag, sysctl,
-etc.).
+> This suggests it would be nice for task_work_add() to at least WARN_ON
+> when executing with a kthread. After all you don't want a task_work_add
+> consumer adding work which will never execute.
 
-Regards,
+I don't think there's much need for that, as I'm not aware of any kernel
+usage that had a bug due to that. And if you did, you'd find it pretty
+quick during testing as that work would just never execute.
 
-James
+> But then for your patch to not produce any splats there would have to be
+> a flag blessing select kthreads as legitimate task_work consumers.
 
+This patchset very much adds a specific flag for that, PF_NO_TASKWORK,
+and kernel threads have it set by default. It just separates the "do I
+run task_work" flag from PF_KTHREAD. So yes you could add:
+
+WARN_ON_ONCE(task->flags & PF_NO_TASKWORK);
+
+to task_work_add(), but I'm not really convinced it'd be super useful.
+
+-- 
+Jens Axboe
 
