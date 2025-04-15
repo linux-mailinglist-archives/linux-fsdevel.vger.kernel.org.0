@@ -1,108 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-46432-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A47B5A895AB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 09:52:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CBDBA895AD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 09:52:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF1EB1895B17
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 07:52:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3BC718979CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 07:53:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7D92798FA;
-	Tue, 15 Apr 2025 07:51:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94051274671;
+	Tue, 15 Apr 2025 07:52:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tDhncvfE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m3CdO1Oe"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B371FA85A;
-	Tue, 15 Apr 2025 07:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0E824C67A;
+	Tue, 15 Apr 2025 07:52:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744703518; cv=none; b=i8QRcaJfxlxUZF7NMv0ZcSKPhKXoYSyFdMLzqMygdnf+j+CFJwamqXGVfOqoH8PK6kGrSrwgUUfqhIC/zg6D5dm/fSp/BHd2TJt7xSdn1Msn0Md5m2/BQcwYdyb7vmh6CcQ0WUs6Yo457CNipOi8agx5CvE3w60GuJwzichtl8w=
+	t=1744703567; cv=none; b=Z+FGqcEPPcxGWH1vlDHw9pxmAf5t7Nzp5WzXbSTgCyeL3h8khyiPAm7pS7N6/n7gTggEOUa/ASJkqCwogN5Eep7JjW4yevKkZ/uiiX5wkG3ubm94DBbTvgV7ovT1Pyzwu0kpw2mn2GnBrEcrPPR8AD3+wQwl0GLg9yH2F5P0OWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744703518; c=relaxed/simple;
-	bh=Fno2NHX5KShUIfXw+iyuKE1mn5wmdQf+cfhOcyeOjlc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ifOi7wYUwNH4o7DfpMXIP0yL8iI8AbundXTIeqJLeEpz8903yAfDmVz8DkFw70rbtzMjDzOyzuDcg8zuvJNobctEs/s4YfIIzIQrtZoIiIvcAQNhDIW30jvG/G+NrdzzPvHGO9xP0+OCsE/Gw5fHNfH7x4SI734iLmTlHkKDFcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tDhncvfE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1165C4CEDD;
-	Tue, 15 Apr 2025 07:51:55 +0000 (UTC)
+	s=arc-20240116; t=1744703567; c=relaxed/simple;
+	bh=F1+z5QDEOA6VH1pZErpvrrad7ZYMutqq0ODAhFb3cXk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aa/i3kFugSCLZdjerlkKxMDtQx8MNH5wHdBvcyrls2+YtlYj6mZ8UuU6Yv/rfrixiiR7gVIOlYO+Nuh6n0+vyCo/0gaYuM8viw7jKID0itr9IpFYw5hdGf7PLuam3MBOK49vum8I69PCoP8BU3bw/2zIO4KWQ1FuG3T9rQ9qcmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m3CdO1Oe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A908DC4CEE9;
+	Tue, 15 Apr 2025 07:52:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744703518;
-	bh=Fno2NHX5KShUIfXw+iyuKE1mn5wmdQf+cfhOcyeOjlc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=tDhncvfEiXN8JFjpy8hkD0kP/9Ai38y/8aM8BiDwlBzhLm6s+Dztk/4U2/44FABf4
-	 tvNWXJk4RZoUy8mQFxLetYG9Mnh5oiNVRv4yr6H40ZFblj6cGKWNFj9fqISU6JejjZ
-	 ttrXGbw/QS7hhuF45AFtOjPpHXuAL/yRAinzCp8GnCmAKY79dKn/BMkPuXVCaSUNNQ
-	 YSD4ABf9BDuFuoNmvfCD+A6I1QG1wHnpzRJ5dEnpuiKmBEoMzPJPsjyp3M/mHbwzg1
-	 iFqTFchu7Vpz9lsiPOiaGWoUNX+NDbMZW7mfdA6N0mpDU+59KUwUB7c67jdT+paY2z
-	 ypErbadFPDnJQ==
+	s=k20201202; t=1744703566;
+	bh=F1+z5QDEOA6VH1pZErpvrrad7ZYMutqq0ODAhFb3cXk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m3CdO1OeyDYKhuD0nV5JR+nrAaBbxY5V0WnfqLLyG67QCBrDa6eiINNnQ5Bxi8nOS
+	 rcr6IDNjM04R14U3rP356s6GiTY/kfd/DLzrulyw5ZjBkR3z4TG+EgUzMcmIdXm3gn
+	 PUPxUiXGm1d7+LUcGiiN1ulOodFp5vsJ4RpkzH2/aHhimDWfEartUnQzNTVy+LXYEy
+	 hK/aNCvMYJoBuKuGZvbJK5WrdAnpe/vGVB1JJUBLWObYoACC6w/EYbX0kqXSZ3MmjC
+	 fIrCJq08lQImjtiJSNrBzkyv21VgEKfbRB+MaUtDwivBsrWTlG3PVQm2gusnmtv5c+
+	 RkLk+vl0niWSQ==
+Date: Tue, 15 Apr 2025 09:52:41 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	David Sterba <dsterba@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Jan Kara <jack@suse.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Sandeen <sandeen@redhat.com>,
+To: David Sterba <dsterba@suse.cz>, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Matthew Wilcox <willy@infradead.org>, 
+	now4yreal <now4yreal@foxmail.com>, Jan Kara <jack@suse.com>, Viro <viro@zeniv.linux.org.uk>, 
+	Bacik <josef@toxicpanda.com>, Stone <leocstone@gmail.com>, Sandeen <sandeen@redhat.com>, 
+	Johnson <jeff.johnson@oss.qualcomm.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
 	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: [PATCH] hfs{plus}: add deprecation warning
-Date: Tue, 15 Apr 2025 09:51:37 +0200
-Message-ID: <20250415-orchester-robben-2be52e119ee4@brauner>
-X-Mailer: git-send-email 2.47.2
+Subject: Re: [Bug Report] OOB-read BUG in HFS+ filesystem
+Message-ID: <20250415-wohin-anfragen-90b2df73295b@brauner>
+References: <tencent_B730B2241BE4152C9D6AA80789EEE1DEE30A@qq.com>
+ <20250414-behielt-erholen-e0cd10a4f7af@brauner>
+ <Z_0aBN-20w20-UiD@casper.infradead.org>
+ <20250414162328.GD16750@twin.jikos.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1301; i=brauner@kernel.org; h=from:subject:message-id; bh=Fno2NHX5KShUIfXw+iyuKE1mn5wmdQf+cfhOcyeOjlc=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/ExBwjBT6/K9nx9P4jMexSbNfC84v53d9kp3Ud3Gre Mc+piM3O0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyV43hr9QRleTtS+OefXru ozGr9x+vcxTXZOPqmuZKzuq/NyZ0PWL4nyfYOf+HVE/S/RD2ilvVT13WraiLlNR3ZJYVvKY7myO BGwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250414162328.GD16750@twin.jikos.cz>
 
-Both the hfs and hfsplus filesystem have been orphaned since at least
-2014, i.e., over 10 years. It's time to remove them from the kernel as
-they're exhibiting more and more issues and no one is stepping up to
-fixing them.
+On Mon, Apr 14, 2025 at 06:23:28PM +0200, David Sterba wrote:
+> On Mon, Apr 14, 2025 at 03:21:56PM +0100, Matthew Wilcox wrote:
+> > On Mon, Apr 14, 2025 at 04:18:27PM +0200, Christian Brauner wrote:
+> > > On Mon, Apr 14, 2025 at 09:45:25PM +0800, now4yreal wrote:
+> > > > Dear Linux Security Maintainers,
+> > > > I would like to report a OOB-read vulnerability in the HFS+ file
+> > > > system, which I discovered using our in-house developed kernel fuzzer,
+> > > > Symsyz.
+> > > 
+> > > Bug reports from non-official syzbot instances are generally not
+> > > accepted.
+> > > 
+> > > hfs and hfsplus are orphaned filesystems since at least 2014. Bug
+> > > reports for such filesystems won't receive much attention from the core
+> > > maintainers.
+> > > 
+> > > I'm very very close to putting them on the chopping block as they're
+> > > slowly turning into pointless burdens.
+> > 
+> > I've tried asking some people who are long term Apple & Linux people,
+> > but haven't been able to find anyone interested in becoming maintainer.
+> > Let's drop both hfs & hfsplus.  Ten years of being unmaintained is
+> > long enough.
+> 
+> Agreed. If needed there are FUSE implementations to access .dmg files
+> with HFS/HFS+ or other standalone tools.
+> 
+> https://github.com/0x09/hfsfuse
+> https://github.com/darlinghq/darling-dmg
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/hfs/super.c     | 2 ++
- fs/hfsplus/super.c | 2 ++
- 2 files changed, 4 insertions(+)
-
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index fe09c2093a93..4413cd8feb9e 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -404,6 +404,8 @@ static int hfs_init_fs_context(struct fs_context *fc)
- {
- 	struct hfs_sb_info *hsb;
- 
-+	pr_warn("The hfs filesystem is deprecated and scheduled to be removed from the kernel in 2025\n");
-+
- 	hsb = kzalloc(sizeof(struct hfs_sb_info), GFP_KERNEL);
- 	if (!hsb)
- 		return -ENOMEM;
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 948b8aaee33e..58cff4b2a3b4 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -656,6 +656,8 @@ static int hfsplus_init_fs_context(struct fs_context *fc)
- {
- 	struct hfsplus_sb_info *sbi;
- 
-+	pr_warn("The hfsplus filesystem is deprecated and scheduled to be removed from the kernel in 2025\n");
-+
- 	sbi = kzalloc(sizeof(struct hfsplus_sb_info), GFP_KERNEL);
- 	if (!sbi)
- 		return -ENOMEM;
--- 
-2.47.2
-
+Ok, I'm open to trying. I'm adding a deprecation message when initating
+a new hfs{plus} context logged to dmesg and then we can try and remove
+it by the end of the year.
 
