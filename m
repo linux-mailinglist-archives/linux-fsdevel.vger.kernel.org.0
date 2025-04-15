@@ -1,115 +1,190 @@
-Return-Path: <linux-fsdevel+bounces-46448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45358A89807
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 11:31:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E9DA89842
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 11:40:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563B916BDE3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 09:31:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8DF1896E6A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 09:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB6A28466C;
-	Tue, 15 Apr 2025 09:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B05828DEF0;
+	Tue, 15 Apr 2025 09:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8lhZkGj"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="q+RQZ2aP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71411AD41F;
-	Tue, 15 Apr 2025 09:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120C928A1E3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 09:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744709495; cv=none; b=XoldVrkrjRB7lBxQPocu68C1oV7G4uRZWbHngGXlbYIv0qahDVwsGGQoI3RYJCiCduGhTFDINojWGCGhccq6apinlLaVrpHtLiIhNUwx8enYqsFsa7NAUdgAgOotrSsdgh73wiSm0ZzJ0h1rBlTidI6ZY+N1ZhQPVYFwxGkXc/U=
+	t=1744709986; cv=none; b=YxvuAexh5JNBtBsUBznGNB7I/xKz+eo14lLFg7+Z+LMoV6DqsszvEAhUdf1zkCVnNlh40k7M9+5akvoRnFeKfygvxY1Kzseo2wewMPAjoJfBxK5H0gS9W89/0UWLUa7t6IPHcMUm7oKHXbJt/qzJGI1SNu5JVAyCChgclj6IZm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744709495; c=relaxed/simple;
-	bh=ZZjxea9kGTZqK61EKBJRyCtQhNZWLg61gtTvU9KDKwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D1IUIH29NZGXIUAJL/bJbjUj+tWuyy2rhUzC6Me1J3FLogMGbnswFEWXvc8NB2EpXHFBAKA/gw1k90sXPxbppBF+vQcUM2PBPFGzIXHPy3diQNCFc9ixKvgB7SxmGD4yZltUZlLRizBfj2vnlatCEIPO8AFKZNcCLhz90+p3/oM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8lhZkGj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29317C4CEDD;
-	Tue, 15 Apr 2025 09:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744709494;
-	bh=ZZjxea9kGTZqK61EKBJRyCtQhNZWLg61gtTvU9KDKwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h8lhZkGj9fCQBr7rddZ4KmxM/RYWn/0ac1xWgLWF975Cvt/MWwC6lEvlebj6hqqck
-	 oUzFa6wp6diN+ADYAzC7Yx684CA3qJTno2GbOb0ccnXDNAVKrOZa1cuWseLqWHEOZK
-	 Lii+SOcehYt5Ti/6Z6zQS5RQVaBjjqInZ9TmFwMIhbPjyj5bjSmkIj0xHCRfTtwE3P
-	 YvtR8kp5Go8Jkc7sWereeqM7UMqsJ4kg+4xneDVRYEcDlu8Sib1zUOFeyK7ebqIVWw
-	 4yNO3yPpRDp5A8tcdGSh6U64F5fal8/+JmqR0yIxkkZiKyjhiKjwpXM9eE2SPKdipd
-	 EaYjEdnx1PwpQ==
-Date: Tue, 15 Apr 2025 11:31:28 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc: David Sterba <dsterba@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>, 
-	now4yreal <now4yreal@foxmail.com>, Jan Kara <jack@suse.com>, Viro <viro@zeniv.linux.org.uk>, 
-	Bacik <josef@toxicpanda.com>, Stone <leocstone@gmail.com>, Sandeen <sandeen@redhat.com>, 
-	Johnson <jeff.johnson@oss.qualcomm.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [Bug Report] OOB-read BUG in HFS+ filesystem
-Message-ID: <20250415-razzia-umverteilen-4e8864b62583@brauner>
-References: <tencent_B730B2241BE4152C9D6AA80789EEE1DEE30A@qq.com>
- <20250414-behielt-erholen-e0cd10a4f7af@brauner>
- <Z_0aBN-20w20-UiD@casper.infradead.org>
- <20250414162328.GD16750@twin.jikos.cz>
- <20250415-wohin-anfragen-90b2df73295b@brauner>
- <786f0a0e-8cea-4007-bbae-2225fcca95b4@wdc.com>
+	s=arc-20240116; t=1744709986; c=relaxed/simple;
+	bh=+eLU52m0ORdIdJCapPT1WBaFvqjvCeD37wwm9qhfv7c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BLTw3LqtHMIY9SEQc7BUwNK6enrMF3HJWj9WOe4ROtO+yOhq5NZ70wrOD5VQ+WC5N7Yw11O5Xu7Chi8PS4LH+Iq+JxUxBhIDX7raFhqC8bhoylL8g9QKgEWV5nZe1bX7IRIIUK86BXA0MY581V7QV8qXpAEhIeIJBnrBQPu7yYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=q+RQZ2aP; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-477296dce76so45426001cf.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 02:39:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1744709983; x=1745314783; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rp5QhzXK0d3ipbL7De1Z7Dt2PtgQVBDiovxjTMuv9UE=;
+        b=q+RQZ2aP6N7OS7xlRi3J4F+VzBhsXV1hxTB2Lt0jwKXqahoAg5W64SgCncWenV+sB0
+         CjwTXNgC1EV4On/xfAdMdzxEMG5V1g0lzEuvZsGNpf1EKHT7KcUXUdsuhfJa0wnwglgq
+         yq6U5qftICTN+V0xK1cRhgv2yxrmGUZtw7dW0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744709983; x=1745314783;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Rp5QhzXK0d3ipbL7De1Z7Dt2PtgQVBDiovxjTMuv9UE=;
+        b=WFSLUSwnMW+KewgM3DwW2wvu3FjX9NlXoSqY8xTLuZ5QRL3Nw4vyNt31C+hHNDWpUq
+         9M2JSTmbTapKN8Oy/c+0F/F0PgTSxiZUShKNvw5V0rmiteJysJmqU7+Tayc2xj9VsnuT
+         fKSuPpi4V8DXLen8KS7FkGvFYNBHvNyP3CzXy/N/8D2Za0UZXzOXB4ALnXbRVg761E4N
+         KrFVZmfPBUZQOdbGUNKexn6+yWQENGGMNoFm4a0duCxcegzQkAKtnUpd6AkesWWEKH4R
+         FgFze3GiMI3+PcohXdAzkBucxxhQcwwGZdg0AdLUdrWJyXZft3r2/Yd2CwLaERfI+spv
+         fczw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8laAYi+maKMtvs7AbPvFyvruRuJLTdXs0jVDbAmjwV1Ggmoq8RlWYq5fU0WOGijErtgpqYL83xBOvZ4NR@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywj/Xrt6ii0mA8BD34MRSTWQjyeflblZ9w26vyDQtShgjhGIVIH
+	kHT4u2xLhR3AJKZh0nUKuaC1wIpmoybAPIvmQTZrbZ9orIyA7nlSnbcsbY/SEdE3qLiNMkCxPK2
+	6XgVJnNg5jJQVSl8VrSg/kazcvajjGbhAmLrkVw==
+X-Gm-Gg: ASbGncu62XiFxu65QBVDKH2BqXCQ3aYiDdlc9/L6FZh/LOD7OJRLZ6af3VAZeZlmOah
+	R68qcHN+iMq2byYZJlgS/2PuYjf14DDBahewk2UWROF0NsnsvCYzQglONLh3bHIyDFvBVfhk4/k
+	M3mbpszGgQCNXluncSIkc+
+X-Google-Smtp-Source: AGHT+IHAloQRbW9NojhcvEEtRbgJNH88Mbd8WiXMbNgiI5cPN7g+71vwOchhjGPft+4cYmSg7Sbt+jh1WcjqLl8RB54=
+X-Received: by 2002:a05:622a:28d:b0:476:ac03:3c2a with SMTP id
+ d75a77b69052e-479775e9723mr251931571cf.43.1744709982849; Tue, 15 Apr 2025
+ 02:39:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <786f0a0e-8cea-4007-bbae-2225fcca95b4@wdc.com>
+References: <20250203-fuse-sysfs-v2-1-b94d199435a7@kernel.org>
+In-Reply-To: <20250203-fuse-sysfs-v2-1-b94d199435a7@kernel.org>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 15 Apr 2025 11:39:31 +0200
+X-Gm-Features: ATxdqUFhPFymDj11-t61NAng2LH1InHt-a0YDOQdAb8tGbHo3D0mz7v0DZE-BT0
+Message-ID: <CAJfpegtLjFVRLxeUUGjT1V0iQ8+pwsFn0t2n2yOVfqSjn_7bPg@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: add a new "connections" file to show longest
+ waiting reqeust
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Joanne Koong <joannelkoong@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Apr 15, 2025 at 09:16:58AM +0000, Johannes Thumshirn wrote:
-> On 15.04.25 09:52, Christian Brauner wrote:
-> > On Mon, Apr 14, 2025 at 06:23:28PM +0200, David Sterba wrote:
-> >> On Mon, Apr 14, 2025 at 03:21:56PM +0100, Matthew Wilcox wrote:
-> >>> On Mon, Apr 14, 2025 at 04:18:27PM +0200, Christian Brauner wrote:
-> >>>> On Mon, Apr 14, 2025 at 09:45:25PM +0800, now4yreal wrote:
-> >>>>> Dear Linux Security Maintainers,
-> >>>>> I would like to report a OOB-read vulnerability in the HFS+ file
-> >>>>> system, which I discovered using our in-house developed kernel fuzzer,
-> >>>>> Symsyz.
-> >>>>
-> >>>> Bug reports from non-official syzbot instances are generally not
-> >>>> accepted.
-> >>>>
-> >>>> hfs and hfsplus are orphaned filesystems since at least 2014. Bug
-> >>>> reports for such filesystems won't receive much attention from the core
-> >>>> maintainers.
-> >>>>
-> >>>> I'm very very close to putting them on the chopping block as they're
-> >>>> slowly turning into pointless burdens.
-> >>>
-> >>> I've tried asking some people who are long term Apple & Linux people,
-> >>> but haven't been able to find anyone interested in becoming maintainer.
-> >>> Let's drop both hfs & hfsplus.  Ten years of being unmaintained is
-> >>> long enough.
-> >>
-> >> Agreed. If needed there are FUSE implementations to access .dmg files
-> >> with HFS/HFS+ or other standalone tools.
-> >>
-> >> https://github.com/0x09/hfsfuse
-> >> https://github.com/darlinghq/darling-dmg
-> > 
-> > Ok, I'm open to trying. I'm adding a deprecation message when initating
-> > a new hfs{plus} context logged to dmesg and then we can try and remove
-> > it by the end of the year.
-> > 
-> > 
-> 
-> Just a word of caution though, (at least Intel) Macs have their EFI ESP 
-> partition on HFS+ instead of FAT. I don't own an Apple Silicon Mac so I 
-> can't check if it's there as well.
+On Mon, 3 Feb 2025 at 20:57, Jeff Layton <jlayton@kernel.org> wrote:
+>
+> Add a new file to the "connections" directory that shows how long (in
+> seconds) the oldest fuse_req in the processing hash or pending queue has
+> been waiting.
+>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+> This is based on top of Joanne's timeout patches, as it requires the
+> "create_time" field in fuse_req.  We have some internal detection of
+> hung fuse server processes that relies on seeing elevated values in the
+> "waiting" sysfs file. The problem with that method is that it can't
+> detect when highly serialized workloads on a FUSE mount are hung. This
+> adds another metric that we can use to detect this situation.
+> ---
+> Changes in v2:
+> - use list_first_entry_or_null() when checking hash lists
+> - take fiq->lock when checking pending list
+> - ensure that if there are no waiting reqs, that the output will be 0
+> - use time_before() to compare jiffies values
+> - no need to hold fc->lock when walking pending queue
+> - Link to v1: https://lore.kernel.org/r/20250203-fuse-sysfs-v1-1-36faa01f2338@kernel.org
+> ---
+>  fs/fuse/control.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/fuse/fuse_i.h  |  2 +-
+>  2 files changed, 59 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+> index 2a730d88cc3bdb50ea1f8a3185faad5f05fc6e74..b27f2120499826040af77d7662d2dad0e9f37ee6 100644
+> --- a/fs/fuse/control.c
+> +++ b/fs/fuse/control.c
+> @@ -180,6 +180,57 @@ static ssize_t fuse_conn_congestion_threshold_write(struct file *file,
+>         return ret;
+>  }
+>
+> +/* Show how long (in s) the oldest request has been waiting */
+> +static ssize_t fuse_conn_oldest_read(struct file *file, char __user *buf,
+> +                                     size_t len, loff_t *ppos)
+> +{
+> +       char tmp[32];
+> +       size_t size;
+> +       unsigned long now = jiffies;
+> +       unsigned long oldest = now;
+> +
+> +       if (!*ppos) {
+> +               struct fuse_conn *fc = fuse_ctl_file_conn_get(file);
+> +               struct fuse_iqueue *fiq = &fc->iq;
+> +               struct fuse_dev *fud;
+> +               struct fuse_req *req;
+> +
+> +               if (!fc)
+> +                       return 0;
+> +
+> +               spin_lock(&fc->lock);
+> +               list_for_each_entry(fud, &fc->devices, entry) {
+> +                       struct fuse_pqueue *fpq = &fud->pq;
+> +                       int i;
+> +
+> +                       spin_lock(&fpq->lock);
+> +                       for (i = 0; i < FUSE_PQ_HASH_SIZE; i++) {
+> +                               /*
+> +                                * Only check the first request in the queue. The
+> +                                * assumption is that the one at the head of the list
+> +                                * will always be the oldest.
+> +                                */
+> +                               req = list_first_entry_or_null(&fpq->processing[i],
+> +                                                              struct fuse_req, list);
+> +                               if (req && time_before(req->create_time, oldest))
+> +                                       oldest = req->create_time;
 
-Yeah, someone mentioned that. Well, then we hopefully have someone
-stepping up to for maintainership.
+Couldn't this be merged with the timeout expiry code?  I.e. implement
+get_oldest_req_time() helper, the result of which could be compared
+against req_timeout.
+
+
+> +                       }
+> +                       spin_unlock(&fpq->lock);
+> +               }
+> +               spin_unlock(&fc->lock);
+> +
+> +               spin_lock(&fiq->lock);
+> +               req = list_first_entry_or_null(&fiq->pending, struct fuse_req, list);
+> +               if (req && time_before(req->create_time, oldest))
+> +                       oldest = req->create_time;
+> +               spin_unlock(&fiq->lock);
+> +
+> +               fuse_conn_put(fc);
+> +       }
+> +       size = sprintf(tmp, "%ld\n", (now - oldest)/HZ);
+
+now - oldest will always be zero if *ppos != 0.  It would be much more
+logical to return an error for *ppos != 0, then to return success with
+a nonsense value.
+
+use_conn_limit_write() already does so, and existing read callbacks
+could be changed to do the same with a very slight risk of a
+regression.  But for a new one, I don't think there's any worries.
+
+Thanks,
+Miklos
+
+
+Thanks,
+Miklos
 
