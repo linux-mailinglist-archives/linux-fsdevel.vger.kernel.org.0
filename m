@@ -1,172 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-46512-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46513-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6857A8A708
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 20:44:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3882DA8A759
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 20:59:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 052A4179F53
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 18:44:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DED71694DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 18:59:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5956022FF39;
-	Tue, 15 Apr 2025 18:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8812356BA;
+	Tue, 15 Apr 2025 18:59:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="gIOj1guQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAm6SqV9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5467D22B5A5
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 18:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE49235348;
+	Tue, 15 Apr 2025 18:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744742637; cv=none; b=Sd7QmcZ+mfv56LbXDntejApHb+u6biIjLYs2PhmS4gTk/hHmqxcX8mq/n+rbWgxbkc3R9RSikFUH79j9qUuEFPruH8wDcNrUa0Oki3cYWUZOH1U/OY34utP/UeiT0F5RfGE35aOoXACDOy2u8UaVphJQ1TCCSbJrdwKNEI1xIO0=
+	t=1744743565; cv=none; b=SNJ1zk6sxPMf3RQiqn1wUOiKvKOeNYt8zg6qTmwDkWmdZT8UO3KnZ9Vnl9fzeWZe0+YmnHDHQFtUBIcNbWIr7+OL+z3SzCRjKCYa6OIaqB+NwfHkz5W6xtDh+4g5rPDoGWmnFNSyRZu0DF98DtSf1ZURqQThBtJojDpzDKR+CeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744742637; c=relaxed/simple;
-	bh=FVYnVUDMduA4Y8+sKVZj3RGNbZ8ksVKV5ShMVrm8jcw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K+Z3yKTVY/XaYTbRxwdLjTMLvDJD67feOCrg7XoYBOm/596L/WYyWzlz3R3hTGE+AZGLIHN4h1OyLzr43IkbMOsqkLD0X291/VoiBvvf2f9gsjb+jftvf+lC3+2t7vbBtxzTCCrAFfP7QBoch+EKZxYEX/pq6uoOuYUW2400F0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=gIOj1guQ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2279915e06eso63889625ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 11:43:55 -0700 (PDT)
+	s=arc-20240116; t=1744743565; c=relaxed/simple;
+	bh=q70ctjrGqLmxVUHKXN5p9/vzscrDP14u951WDIoOWbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WhhobfJEibefFaQ0JTsYuK5380cDANeUzvLEvgyk5jsUlc1zCR/I/SKM/Y+dyjyLB6YZRodeW1bilg+tiivkZbtOaPQm3iYPXbyCP1VRGSdSPK5atfsGA4OMsiVnpvbcdEz/WfYVyRsWoGvXO5pQPaKZT/H/2CTssFADmCtG6BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAm6SqV9; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-acae7e7587dso521883066b.2;
+        Tue, 15 Apr 2025 11:59:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1744742634; x=1745347434; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7yEbMyZv/VL8HuDPq8WSsMMbhN4eHIf/sv4WTg+itVg=;
-        b=gIOj1guQSpWIw58v3LFxcj9Ut70ynZTuTs1kafGct+gd4/LMPiw8hEntbUnJdB5OGV
-         UNk7pwYpqD4hluRMfHOWWb4hbZ4cPQN56C6bHDSYwh9HsT7BvyYx4F894wP/cTId0xxa
-         KePfUlU4oEmq5hUW46bSLtD+TAjLinH8AIdFg=
+        d=gmail.com; s=20230601; t=1744743561; x=1745348361; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=hkp2i5c9bgqxiRKG/3h+HqHChQz8elSJkULnjDgaezo=;
+        b=AAm6SqV9K46+AYF9omCKS9PgDmqtxglc1hVXx8UUxDbiFBaXbl3iDSQShCztoLcSI4
+         M7J5n9hR1fJ/rPWCj/KvviUT/1PMbnCixa80scuMaZhM+GnE71Uk2RcVZr+Fvax0X6WN
+         b2KSUIGqX7snDdwzAPrPBcheS7hIWSgLWXj+OMaWLgFhbiEgPIbMSti0VWwP6EsYbje3
+         rbHP3jKKKHPQiInU7kBmQwL1XWlHjqnKvvg61vt+4WKZqVAl/6oNejx2UtE8tCzuK1bO
+         zePBA42lwRO6KcLy7e2r0EcspYGdCGeO6SrAC4dRRsc7FJRKLqsZGWE9+jLLPIWNbJu1
+         c9EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744742634; x=1745347434;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7yEbMyZv/VL8HuDPq8WSsMMbhN4eHIf/sv4WTg+itVg=;
-        b=Ulu4McEjhzMlQMHOHovBsbGii9nL5dqiEEJ6f+UUSHIU1AnZhR3N2zYi+tr+KFZjyX
-         DZHpWwK8iK6UT94Ofa9cBNlAAwXJEWGkc8q8gObSprUH19w+OyPVZKKFX5iGQ92V4rE9
-         Cx73NXn4AwiNM+1c3UkdDROxugJdCUKaymn6eMj2mZCqr+bpKwpZ7gKj36l2dokA9HYh
-         N6FzjGkfPlmhkFVPtYzwQhHdzO8G0x4/esirnaaflBPY40W8i9qsB3ZcsYXv0e9pw7/U
-         yOFSXrOuLsbarmqgwhuhP7sZcb33lTPOgyQyKZP+aaAfIRQDw/JGYnO845vvMMsMswIB
-         qCeg==
-X-Gm-Message-State: AOJu0YyS4MWJHwpCxfsxHlA5pLrTFw515n5zQJTbZtWmcqhCwXkDEYgE
-	3B6YjS1gJWHGZYZnp8tTNGyxCStHR64cDeFyRKOQdK7TSiygJWOhdXyTRDs1o2hUv04X2X4WeKK
-	hE2b9vHsDMgzeUGjeYyPaXwIOHTNHoitT7WZ+Y1uzpVdXvC4ZxsunfqgIQzyzpqY0NQ+wtn5/Ae
-	fQecTQu2Ei8pAxswcgnGVEgoTcSCxecpI+Bb7ni2pUgDGa
-X-Gm-Gg: ASbGncuOISWCQboaXW7fzG6gbvcOBbdC46/xiy2BlpujLhR2cvbjiKRNdd4dDb5Yuvr
-	f7WZUO+oyU83ykHzLfoMk1livMVhOCfF+qWbrji+LS2+FoRU4Wj6dU6SSfCthguJKvEjPrbNINg
-	YPotEv6akVPcnVn35hO50EqXUIcqpSlZqHiaO82OlMjtSTLGwJ1CyBb5A5hDkEg9yga+vcOV/rf
-	bsmnYhshkVyx8710iIt6QXr/4jjRHZsNHTPsCY7m8oNoar+zlM8vJDh1/EYxS33QRvSkHEFW+/Z
-	YGivW042pG5jY3AOspWFSHZRd5wx0lceMzedL6JP0rcc+0aj
-X-Google-Smtp-Source: AGHT+IFlyEEe10M3tiQQK/gnDe7kylydZtYnd+4UaSFlfTlsOBCdMQpC1N9f811S6WJxSBwGGBLNlg==
-X-Received: by 2002:a17:902:ec89:b0:224:1074:6393 with SMTP id d9443c01a7336-22c31ada368mr2900575ad.43.1744742633927;
-        Tue, 15 Apr 2025 11:43:53 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb7b5sm120514455ad.237.2025.04.15.11.43.53
+        d=1e100.net; s=20230601; t=1744743561; x=1745348361;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hkp2i5c9bgqxiRKG/3h+HqHChQz8elSJkULnjDgaezo=;
+        b=Le1YOfLR59qAh7TOjKtSt71IKB3IDOJOA5g41RstcbuDUlwwuBFMS5sHfncP/xkS6M
+         bH9mSP45NAERSQL0fLFCGHb085zdqJwXH8vCVqqjSf6Xk4HO/Q+oTopdCju7IYOhMNQn
+         g7SuhGIWjtwC3Glf0DRFeq9Q5TrQD5nnCEQfhRASzqDRBhze4ANnjkgr9REeSH6/aqlq
+         7jNpY+hHD963OX4bzln9Joe7hXPmlikIbHtIdYrPvTX89qhTi+xIgnJcAhnGnQVK86Nx
+         gv2AAU1LmBDJr7uQUqxstADJNZcKGfx4CecpMGFtd5h1XkGvbWzvngJ2FO7uVR0U5m96
+         tdag==
+X-Forwarded-Encrypted: i=1; AJvYcCU3tZxmtVDSld8moPSEhC57PN1vval355yqATP1xOwVPva6HXZL7/RGErw+meIdD3V+vKskuuA=@vger.kernel.org, AJvYcCWpx9lyvaMH2zIB/M159z/8uTY2yTAmc7SkJboSOaa4Xcv9GRMzmJo9JzTQw6RnnTgoo75uGgiKPTenIsAG@vger.kernel.org, AJvYcCX1/GJT5FsbI4UuKzuw9yAiG/OHsY755LOXwVntNr6CD7x2bMZl6LHd1RjPab35821eTrPhgV/IoNJxVw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBX5CbkMewnX7Tgu+dS3ANpZEJf5qp/6lgERygck3g/oen7Rp3
+	JQhR5nE0jp7rhu//cyDqngXO5t9zj7aWO9KkAoCPWjg5ktEaYeRD
+X-Gm-Gg: ASbGncuUd2pX5did0/eV/Uv50qaqKgjf3Zc94lcColtw71CyGudTPcxbxIsHgjiNpxM
+	EEdmllkq5echuQQXvE0J96mkhaSNMVPFAAi3/XuZsvKc9tT6IPVsf++NpZelNBfKoqg0JvjzNp3
+	CyQxroxOYwLxlANwZYWRREuYbEtCaxisOktLN0hoxfJLqxOZlIiRzGl3AxpshwH549roNl+tSbF
+	Naq2nGHRCsxzO6h+iYyWK63UW/p1NAE4k5PYGY+5yYtKxV9krgTfn/S0Lar5v41H59JhukC4jrp
+	7JfJomn7Gxs3qkAXYASgdCMWnXGY1Lr4dC/BK/BsNoAc/037Jn+7y1veB9czSPPkJv04O51oIQ=
+	=
+X-Google-Smtp-Source: AGHT+IGTCiRplDt7X2b9oOiIqzPnVtzAVrCP2VkK30vBE7aX2MZ8ZaJbKZHqziYeL/Ig1EMQ0/BoBQ==
+X-Received: by 2002:a17:907:720a:b0:abf:6cc9:7ef5 with SMTP id a640c23a62f3a-acb3850f00dmr12406966b.47.1744743560630;
+        Tue, 15 Apr 2025 11:59:20 -0700 (PDT)
+Received: from eldamar.lan (c-82-192-244-13.customer.ggaweb.ch. [82.192.244.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb20c03de9sm177102666b.71.2025.04.15.11.59.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 11:43:53 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: Joe Damato <jdamato@fastly.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
+        Tue, 15 Apr 2025 11:59:19 -0700 (PDT)
+Sender: Salvatore Bonaccorso <salvatore.bonaccorso@gmail.com>
+Received: by eldamar.lan (Postfix, from userid 1000)
+	id 25073BE2DE0; Tue, 15 Apr 2025 20:59:19 +0200 (CEST)
+Date: Tue, 15 Apr 2025 20:59:19 +0200
+From: Salvatore Bonaccorso <carnil@debian.org>
+To: David Howells <dhowells@redhat.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Hillf Danton <hdanton@sina.com>,
 	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC vfs/for-next 1/1] eventpoll: Set epoll timeout if it's in the future
-Date: Tue, 15 Apr 2025 18:43:46 +0000
-Message-ID: <20250415184346.39229-2-jdamato@fastly.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250415184346.39229-1-jdamato@fastly.com>
-References: <20250415184346.39229-1-jdamato@fastly.com>
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Sasha Levin <sashal@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	regressions@lists.linux.dev, table@vger.kernel.org,
+	Bernd Rinn <bb@rinn.ch>,
+	Karri =?iso-8859-1?Q?H=E4m=E4l=E4inen?= <kh.bugreport@outlook.com>,
+	Milan Broz <gmazyland@gmail.com>,
+	Cameron Davidson <bugs@davidsoncj.id.au>, Markus <markus@fritz.box>
+Subject: [regression 6.1.y] Regression from 476c1dfefab8 ("mm: Don't pin
+ ZERO_PAGE in pin_user_pages()") with pci-passthrough for both KVM VMs and
+ booting in xen DomU
+Message-ID: <Z_6sh7Byddqdk1Z-@eldamar.lan>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Avoid an edge case where epoll_wait arms a timer and calls schedule()
-even if the timer will expire immediately.
+Hi
 
-For example: if the user has specified an epoll busy poll usecs which is
-equal or larger than the epoll_wait/epoll_pwait2 timeout, it is
-unnecessary to call schedule_hrtimeout_range; the busy poll usecs have
-consumed the entire timeout duration so it is unnecessary to induce
-scheduling latency by calling schedule() (via schedule_hrtimeout_range).
+[Apologies if this has been reported already but I have not found an
+already filled corresponding report]
 
-This can be measured using a simple bpftrace script:
+After updating from the 6.1.129 based version to 6.1.133, various
+users have reported that their VMs do not boot anymore up (both KVM
+and under Xen) if pci-passthrough is involved. The reports are at:
 
-tracepoint:sched:sched_switch
-/ args->prev_pid == $1 /
-{
-  print(kstack());
-  print(ustack());
-}
+https://bugs.debian.org/1102889
+https://bugs.debian.org/1102914
+https://bugs.debian.org/1103153
 
-Before this patch is applied:
+Milan Broz bisected the issues and found that the commit introducing
+the problems can be tracked down to backport of c8070b787519 ("mm:
+Don't pin ZERO_PAGE in pin_user_pages()") from 6.5-rc1 which got
+backported as 476c1dfefab8 ("mm: Don't pin ZERO_PAGE in
+pin_user_pages()") in 6.1.130. See https://bugs.debian.org/1102914#60
 
-  Testing an epoll_wait app with busy poll usecs set to 1000, and
-  epoll_wait timeout set to 1ms using the script above shows:
+#regzbot introduced: 476c1dfefab8b98ae9c3e3ad283c2ac10d30c774
 
-     __traceiter_sched_switch+69
-     __schedule+1495
-     schedule+32
-     schedule_hrtimeout_range+159
-     do_epoll_wait+1424
-     __x64_sys_epoll_wait+97
-     do_syscall_64+95
-     entry_SYSCALL_64_after_hwframe+118
+476c1dfefab8b98ae9c3e3ad283c2ac10d30c774 is the first bad commit
+commit 476c1dfefab8b98ae9c3e3ad283c2ac10d30c774
+Author: David Howells <dhowells@redhat.com>
+Date:   Fri May 26 22:41:40 2023 +0100
 
-     epoll_wait+82
+    mm: Don't pin ZERO_PAGE in pin_user_pages()
 
-  Which is unexpected; the busy poll usecs should have consumed the
-  entire timeout and there should be no reason to arm a timer.
+    [ Upstream commit c8070b78751955e59b42457b974bea4a4fe00187 ]
 
-After this patch is applied: the same test scenario does not generate a
-call to schedule() in the above edge case. If the busy poll usecs are
-reduced (for example usecs: 100, epoll_wait timeout 1ms) the timer is
-armed as expected.
+    Make pin_user_pages*() leave a ZERO_PAGE unpinned if it extracts a pointer
+    to it from the page tables and make unpin_user_page*() correspondingly
+    ignore a ZERO_PAGE when unpinning.  We don't want to risk overrunning a
+    zero page's refcount as we're only allowed ~2 million pins on it -
+    something that userspace can conceivably trigger.
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- fs/eventpoll.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+    Add a pair of functions to test whether a page or a folio is a ZERO_PAGE.
 
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index f9898e60dd8b..ca0c7e843da7 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -1980,6 +1980,14 @@ static int ep_autoremove_wake_function(struct wait_queue_entry *wq_entry,
- 	return ret;
- }
- 
-+static int ep_schedule_timeout(ktime_t *to)
-+{
-+	if (to)
-+		return ktime_after(*to, ktime_get());
-+	else
-+		return 1;
-+}
-+
- /**
-  * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
-  *           event buffer.
-@@ -2095,7 +2103,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
- 
- 		write_unlock_irq(&ep->lock);
- 
--		if (!eavail)
-+		if (!eavail && ep_schedule_timeout(to))
- 			timed_out = !schedule_hrtimeout_range(to, slack,
- 							      HRTIMER_MODE_ABS);
- 		__set_current_state(TASK_RUNNING);
--- 
-2.43.0
+    Signed-off-by: David Howells <dhowells@redhat.com>
+    cc: Christoph Hellwig <hch@infradead.org>
+    cc: David Hildenbrand <david@redhat.com>
+    cc: Lorenzo Stoakes <lstoakes@gmail.com>
+    cc: Andrew Morton <akpm@linux-foundation.org>
+    cc: Jens Axboe <axboe@kernel.dk>
+    cc: Al Viro <viro@zeniv.linux.org.uk>
+    cc: Matthew Wilcox <willy@infradead.org>
+    cc: Jan Kara <jack@suse.cz>
+    cc: Jeff Layton <jlayton@kernel.org>
+    cc: Jason Gunthorpe <jgg@nvidia.com>
+    cc: Logan Gunthorpe <logang@deltatee.com>
+    cc: Hillf Danton <hdanton@sina.com>
+    cc: Christian Brauner <brauner@kernel.org>
+    cc: Linus Torvalds <torvalds@linux-foundation.org>
+    cc: linux-fsdevel@vger.kernel.org
+    cc: linux-block@vger.kernel.org
+    cc: linux-kernel@vger.kernel.org
+    cc: linux-mm@kvack.org
+    Reviewed-by: Lorenzo Stoakes <lstoakes@gmail.com>
+    Reviewed-by: Christoph Hellwig <hch@lst.de>
+    Acked-by: David Hildenbrand <david@redhat.com>
+    Link: https://lore.kernel.org/r/20230526214142.958751-2-dhowells@redhat.com
+    Signed-off-by: Jens Axboe <axboe@kernel.dk>
+    Stable-dep-of: bddf10d26e6e ("uprobes: Reject the shared zeropage in uprobe_write_opcode()")
+    Signed-off-by: Sasha Levin <sashal@kernel.org>
 
+ Documentation/core-api/pin_user_pages.rst |  6 ++++++
+ include/linux/mm.h                        | 26 ++++++++++++++++++++++++--
+ mm/gup.c                                  | 31 ++++++++++++++++++++++++++++++-
+ 3 files changed, 60 insertions(+), 3 deletions(-)
+
+Milan verified that the issue persists in 6.1.134 so far and the patch
+itself cannot be just reverted.
+
+The failures all have a similar pattern, when pci-passthrough is used
+for a pci devide, for instance under qemu the bootup will fail with:
+
+qemu-system-x86_64: -device {"driver":"vfio-pci","host":"0000:03:00.0","id":"hostdev0","bus":"pci.3","addr":"0x0"}: VFIO_MAP_DMA failed: Cannot allocate memory
+qemu-system-x86_64: -device {"driver":"vfio-pci","host":"0000:03:00.0","id":"hostdev0","bus":"pci.3","addr":"0x0"}: vfio 0000:03:00.0: failed to setup container
+
+(in the case as reported by Milan).
+
+Any ideas here?
+
+Regards,
+Salvatore
 
