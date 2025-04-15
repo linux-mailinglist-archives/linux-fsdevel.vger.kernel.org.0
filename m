@@ -1,183 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-46515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B0A5A8A789
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 21:11:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0A3A8A9DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 23:06:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C9AC189EA7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 19:11:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 752B31901D87
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 21:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 363CF23F418;
-	Tue, 15 Apr 2025 19:11:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70E0256C69;
+	Tue, 15 Apr 2025 21:06:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GWttMT4T"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="undf+jZc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104FB192D6B;
-	Tue, 15 Apr 2025 19:11:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17EE014F9D9;
+	Tue, 15 Apr 2025 21:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744744295; cv=none; b=SltSX/DUT41Cgex+mrOR979XDFwUWMY5JsYBDOmrNDf8vWYL7jFIOcqYgrRanIUI1tb5AFTKgepcZ2RyEq7cJuOWvJUqooRbT9GhqOVAqs2MyCRmjQU2VTRk9QTu9ZLYID9E5Pd8i2sRQtAthNluX9WnkN+a/ZB7H78/4mfNung=
+	t=1744751183; cv=none; b=NErzCqCKQy7+0F84qEWPSTFlLwWgUes5NuGVLKBnkqRbga5uKBMd5CDI1TCjOoZ5f5563X1Bs13ajFfzm3dVXgeJOHFXOJpcgkQRVGWyQJpXq6/kRhS7uw9gexTJyKziG9IsHHu1YD4ANFCIzlSfRsUTHfdE9clPteM3d/MjbBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744744295; c=relaxed/simple;
-	bh=n0o8aS3XH/mRkJO3jAxK7O0yOFg1iwJA/hvjR6P6bw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q4VhVIuUrtL/fwjjRqWHH6wUo+mY1tpKej74if9ATuNv8OyDYTVaoSJ9bnNWRP82y/Jp4WUh2Jc4b0/ierjkx6k/GVQdsXSpp1Y3R2Sj1/Uqi8UeVLUPObVNDmRmsNXkMR2lsZUDZPXPKsWVa3a4X/k/mE6lvu2QMFO2uqW4yTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GWttMT4T; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac2aeada833so1154895766b.0;
-        Tue, 15 Apr 2025 12:11:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744744292; x=1745349092; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zhFlUMtNiRCAq5DV9vIrNO9nfbesFvx4yBgb3QsDraI=;
-        b=GWttMT4TISeQKrFYF6NaWf7sKKpnDhCAsepUGVNZ+Ccu/CxfCtiABIB/ZjwUbCRooJ
-         JYuGzYZ2yepMM66DftyUnnxKP9x57guuStjCq/snkc7KHeci+ZU0d0WZVaHjrYTULmVI
-         h4n0dsn+RHSSOCklOm9ClhyqUGrsU2Jq1U39AxxgguqDWix3DY7/DaBZCD5v6r/18pAM
-         MSw2o8JLSK1VQbbfaGVcumNy3NZzCYpjyu8xTo+N+oyxzp5Zxde/AY7fkm+oRx+QTQLd
-         htl9ORD6g5Zfg2GxAp6HKZ0qkrEqEo0E46DddnqZCCR8VzyggWsQ+zHV5AajmF3/URwP
-         W6HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744744292; x=1745349092;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zhFlUMtNiRCAq5DV9vIrNO9nfbesFvx4yBgb3QsDraI=;
-        b=QWlDvTHCHBPhe9/Jl+Nudsgp0Y8LbiKOK3Rze3ellbkDEkTPYvQ2JbgshxeyZjnmq6
-         g2CWx4V7eTq/Y6OhGwySWTRE3O1Uirne+ODiASoUBiiamMhTyeAZ+vbsVQlQkBRIktWK
-         GTF2/zw2Ikhl4pKH8GC4XQhWHTqxKgTwl6JGOV0Pel5w3PTEm+GWUz3ouJuOzA7cjeqN
-         IdYrdCuYdeFyDVsb641OzkbTl/YBff06rB39x3RxPm8JwdBTsBbamF8P0DjuQxvuPOpg
-         TpImY6byHKMbJ5/fbITZL1GbvFwfMwtfFtbotRc4qPbI6/gcbU/FIiBEdLUN4D9YQHY1
-         QSSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi61XqfKIp1/XD6Ra9Er7LaoBjtl/9LEPwCD02/VoHNgqpbxjw18nPU7BbZIVHtLggZWLThry6MBJAFQ==@vger.kernel.org, AJvYcCV2kLYzvFzJv15z0+OzJRc7ks4XZ01SxtvBN1L/dNGD9BWdlBRdrF6KHJ7qo/krjsoBc0DOLaI=@vger.kernel.org, AJvYcCW1peTYjTHhxueU537Df4DGQwWVPaD0N+2yaytzYmUaN67jAWR9gdqpiR/fmUN9o0rWbchTpoT+BoQCX/xT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXDLT5mSj2uBXuJP7PdMZRm4k/YTyio0TN0iPD7qJr5j4Ch7+7
-	1BijgaOPY/s2/h1wJgQP7hBRL0IUgjFDdGoEXJhQFbshyl4MrXqC
-X-Gm-Gg: ASbGnctc3jJb70SdIIa3ZflvUYq2hum1oDgmG3SzfYe55gTMp9NapK3MB/SiSOQ6Bkj
-	baUYOUUiCF884fEABKZhY8kHNQY3iGVuPouUv7KmSRYJzSOGIQkUX6Rguk2m+m5zCM/LFZtcyiP
-	+AQ7AbOlPtPehaZ7S3riBfI2Iez/Vl+ng3Lr8D9pSt8DkiI1TEg1u4Dp53LY3R0OdnX01yHL3kc
-	+QVFKHn59sbiXW/u+GvhX6HP779SFf4UFmK0IFmN+83KTQYMvwXy5X2N+kbvUZzEd81GSR9lFfV
-	IlePET488DE9kiLXXkCRRBE/gOpYPTzS7bQEmrhx6wsG5GXitnj2FG2GyIaAaUd2hA==
-X-Google-Smtp-Source: AGHT+IGEFSrt2ZpOon+C2jav9XU7evOc0hH3tvZ42nnDp049L00AJY/eMoY7ecXbtHbFbFdCi8bRGg==
-X-Received: by 2002:a17:907:7211:b0:aca:d276:fa5 with SMTP id a640c23a62f3a-acb3558fc6bmr63346966b.0.1744744292063;
-        Tue, 15 Apr 2025 12:11:32 -0700 (PDT)
-Received: from [192.168.2.22] (85-70-151-113.rcd.o2.cz. [85.70.151.113])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acaa1ccc2b7sm1132351666b.155.2025.04.15.12.11.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 15 Apr 2025 12:11:31 -0700 (PDT)
-Message-ID: <b872cb3a-f91d-4169-a244-fbefbca5680a@gmail.com>
-Date: Tue, 15 Apr 2025 21:11:30 +0200
+	s=arc-20240116; t=1744751183; c=relaxed/simple;
+	bh=EU2IYnaeN39G2kJHqb87k5W39AXqIoNMyAG+a9aBwqU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hq4u/JAKrsixVrPuSeJNNohK3hDa6amALiPuQCS3IxF1BKA9rdHltjjsG+nFzVMZkQdsyVG952ZF4KkZhkBBCYlYXqXo1Cf8UjI6AJrEFSwFQ9Ml1fzC4yikRyAXDP6oW5VYeUaTeA7lq0hM77r5vjDYO4C6EkKbxrQdBd4irf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=undf+jZc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00061C4CEE7;
+	Tue, 15 Apr 2025 21:06:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744751182;
+	bh=EU2IYnaeN39G2kJHqb87k5W39AXqIoNMyAG+a9aBwqU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=undf+jZcbkPvPdy7FelgDomTaoGuUn9+aO7AkU64SM4MUXv3+KvcJ23nXjo7iVwsv
+	 YK9zuo9w5ak0x3THwRVWe1EgIngS171uV6lymMfSfvKKzrcp1uEs+7pxohJ3B02fUc
+	 AYBE6WIqc3nUeQD6pFrH/zalOBvGYXWpmQbFHWCgf3xsPzgT7lG3pb5T52WbLsw3OX
+	 Z08jG0z86D14wlPEN4KNfiP6CkRX637SmpF+09uqRZ+VECWzc2VhsrRMc9BGyj89AO
+	 4b2aMMx0lFXH2rdd4GItvYWV/QyvDM9JLKDXUoV1oN+mMvt+fC//Wrylk3ao3GB9io
+	 9lov5pXbdQNJw==
+Date: Tue, 15 Apr 2025 14:06:20 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
+	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+	riel@surriel.com, dave@stgolabs.net, willy@infradead.org,
+	hannes@cmpxchg.org, oliver.sang@intel.com, david@redhat.com,
+	axboe@kernel.dk, hare@suse.de, david@fromorbit.com,
+	djwong@kernel.org, ritesh.list@gmail.com,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-mm@kvack.org, gost.dev@samsung.com, p.raghav@samsung.com,
+	da.gomez@samsung.com,
+	syzbot+f3c6fda1297c748a7076@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2 1/8] migrate: fix skipping metadata buffer heads on
+ migration
+Message-ID: <Z_7KTEKEzC9Fh2rn@bombadil.infradead.org>
+References: <20250410014945.2140781-1-mcgrof@kernel.org>
+ <20250410014945.2140781-2-mcgrof@kernel.org>
+ <dpn6pb7hwpmajoh5k5zla6x7fsmh4rlttstj3hkuvunp6tok3j@ikz2fxpikfv4>
+ <Z_15mCAv6nsSgRTf@bombadil.infradead.org>
+ <Z_2J9bxCqAUPgq42@bombadil.infradead.org>
+ <20250415-freihalten-tausend-a9791b9c3a03@brauner>
+ <Z_5_p3t_fNUBoG7Y@bombadil.infradead.org>
+ <dkjq2c57du34wq7ocvtk37a5gkcondxfedgnbdxse55nhlfioy@v6tx45lkopfm>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [regression 6.1.y] Regression from 476c1dfefab8 ("mm: Don't pin
- ZERO_PAGE in pin_user_pages()") with pci-passthrough for both KVM VMs and
- booting in xen DomU
-To: Salvatore Bonaccorso <carnil@debian.org>,
- David Howells <dhowells@redhat.com>, Christoph Hellwig <hch@infradead.org>,
- David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lstoakes@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jens Axboe <axboe@kernel.dk>,
- Al Viro <viro@zeniv.linux.org.uk>, Matthew Wilcox <willy@infradead.org>,
- Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
- Jason Gunthorpe <jgg@nvidia.com>, Logan Gunthorpe <logang@deltatee.com>,
- Hillf Danton <hdanton@sina.com>, Christian Brauner <brauner@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Sasha Levin <sashal@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- regressions@lists.linux.dev, table@vger.kernel.org, Bernd Rinn <bb@rinn.ch>,
- =?UTF-8?B?S2FycmkgSMOkbcOkbMOkaW5lbg==?= <kh.bugreport@outlook.com>,
- Cameron Davidson <bugs@davidsoncj.id.au>, Markus <markus@fritz.box>
-References: <Z_6sh7Byddqdk1Z-@eldamar.lan>
-Content-Language: en-US
-From: Milan Broz <gmazyland@gmail.com>
-Autocrypt: addr=gmazyland@gmail.com; keydata=
- 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
-In-Reply-To: <Z_6sh7Byddqdk1Z-@eldamar.lan>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dkjq2c57du34wq7ocvtk37a5gkcondxfedgnbdxse55nhlfioy@v6tx45lkopfm>
 
-On 4/15/25 8:59 PM, Salvatore Bonaccorso wrote:
-> Milan verified that the issue persists in 6.1.134 so far and the patch
-> itself cannot be just reverted.
-
-Just an update:
-
-With 6.1.134 stable as a base, I reverted that commit (upstream c8070b78751955e59b42457b974bea4a4fe00187)
-+ applied upstream commit 873aefb376bbc0ed1dd2381ea1d6ec88106fdbd4 (vfio/type1: Unpin zero pages)
-+ reverted upstream bddf10d26e6e5114e7415a0e442ec6f51a559468 (uprobes: Reject the shared zeropage in uprobe_write_opcode())
-to be able compile code without errors.
-
-With these changes, kernel works with my NVMe passthrough test again. This confirms the issue.
-
-Milan
-
+On Tue, Apr 15, 2025 at 06:23:54PM +0200, Jan Kara wrote:
+> On Tue 15-04-25 08:47:51, Luis Chamberlain wrote:
+> > On Tue, Apr 15, 2025 at 11:05:38AM +0200, Christian Brauner wrote:
+> > > On Mon, Apr 14, 2025 at 03:19:33PM -0700, Luis Chamberlain wrote:
+> > > > On Mon, Apr 14, 2025 at 02:09:46PM -0700, Luis Chamberlain wrote:
+> > > > > On Thu, Apr 10, 2025 at 02:05:38PM +0200, Jan Kara wrote:
+> > > > > > > @@ -859,12 +862,12 @@ static int __buffer_migrate_folio(struct address_space *mapping,
+> > > > > > >  			}
+> > > > > > >  			bh = bh->b_this_page;
+> > > > > > >  		} while (bh != head);
+> > > > > > > +		spin_unlock(&mapping->i_private_lock);
+> > > > > > 
+> > > > > > No, you've just broken all simple filesystems (like ext2) with this patch.
+> > > > > > You can reduce the spinlock critical section only after providing
+> > > > > > alternative way to protect them from migration. So this should probably
+> > > > > > happen at the end of the series.
+> > > > > 
+> > > > > So you're OK with this spin lock move with the other series in place?
+> > > > > 
+> > > > > And so we punt the hard-to-reproduce corruption issue as future work
+> > > > > to do? Becuase the other alternative for now is to just disable
+> > > > > migration for jbd2:
+> > > > > 
+> > > > > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> > > > > index 1dc09ed5d403..ef1c3ef68877 100644
+> > > > > --- a/fs/ext4/inode.c
+> > > > > +++ b/fs/ext4/inode.c
+> > > > > @@ -3631,7 +3631,6 @@ static const struct address_space_operations ext4_journalled_aops = {
+> > > > >  	.bmap			= ext4_bmap,
+> > > > >  	.invalidate_folio	= ext4_journalled_invalidate_folio,
+> > > > >  	.release_folio		= ext4_release_folio,
+> > > > > -	.migrate_folio		= buffer_migrate_folio_norefs,
+> > > > >  	.is_partially_uptodate  = block_is_partially_uptodate,
+> > > > >  	.error_remove_folio	= generic_error_remove_folio,
+> > > > >  	.swap_activate		= ext4_iomap_swap_activate,
+> > > > 
+> > > > BTW I ask because.. are your expectations that the next v3 series also
+> > > > be a target for Linus tree as part of a fix for this spinlock
+> > > > replacement?
+> > > 
+> > > Since this is fixing potential filesystem corruption I will upstream
+> > > whatever we need to do to fix this. Ideally we have a minimal fix to
+> > > upstream now and a comprehensive fix and cleanup for v6.16.
+> > 
+> > Despite our efforts we don't yet have an agreement on how to fix the
+> > ext4 corruption, becuase Jan noted the buffer_meta() check in this patch
+> > is too broad and would affect other filesystems (I have yet to
+> > understand how, but will review).
+> > 
+> > And so while we have agreement we can remove the spin lock to fix the
+> > sleeping while atomic incurred by large folios for buffer heads by this
+> > patch series, the removal of the spin lock would happen at the end of
+> > this series.
+> > 
+> > And so the ext4 corruption is an existing issue as-is today, its
+> > separate from the spin lock removal goal to fix the sleeping while
+> > atomic..
 > 
-> The failures all have a similar pattern, when pci-passthrough is used
-> for a pci devide, for instance under qemu the bootup will fail with:
-> 
-> qemu-system-x86_64: -device {"driver":"vfio-pci","host":"0000:03:00.0","id":"hostdev0","bus":"pci.3","addr":"0x0"}: VFIO_MAP_DMA failed: Cannot allocate memory
-> qemu-system-x86_64: -device {"driver":"vfio-pci","host":"0000:03:00.0","id":"hostdev0","bus":"pci.3","addr":"0x0"}: vfio 0000:03:00.0: failed to setup container
-> 
-> (in the case as reported by Milan).
-> 
-> Any ideas here?
-> 
-> Regards,
-> Salvatore
+> I agree. Ext4 corruption problems are separate from sleeping in atomic
+> issues.
 
+Glad that's clear.
+
+> > However this series might be quite big for an rc2 or rc3 fix for that spin
+> > lock removal issue. It should bring in substantial performance benefits
+> > though, so it might be worthy to consider. We can re-run tests with the
+> > adjustment to remove the spin lock until the last patch in this series.
+> > 
+> > The alternative is to revert the spin lock addition commit for Linus'
+> > tree, ie commit ebdf4de5642fb6 ("mm: migrate: fix reference check race
+> > between __find_get_block() and migration") and note that it in fact does
+> > not fix the ext4 corruption as we've noted, and in fact causes an issue
+> > with sleeping while atomic with support for large folios for buffer
+> > heads. If we do that then we  punt this series for the next development
+> > window, and it would just not have the spin lock removal on the last
+> > patch.
+> 
+> Well, the commit ebdf4de5642fb6 is 6 years old. At that time there were no
+> large folios (in fact there were no folios at all ;)) in the page cache and
+> it does work quite well (I didn't see a corruption report from real users
+> since then).
+
+It is still a work around.
+
+> So I don't like removing that commit because it makes a
+> "reproducible with a heavy stress test" problem become a "reproduced by
+> real world workloads" problem.
+
+So how about just patch 2 and 8 in this series, with the spin lock
+removal happening on the last patch for Linus tree?
+
+  Luis
 
