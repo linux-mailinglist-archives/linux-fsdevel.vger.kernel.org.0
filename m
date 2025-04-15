@@ -1,214 +1,265 @@
-Return-Path: <linux-fsdevel+bounces-46504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FF13A8A54A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 19:23:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E14EA8A5AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 19:35:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54D4E442F51
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 17:23:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225A3172803
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 17:35:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D69C621C188;
-	Tue, 15 Apr 2025 17:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F4A14D8CE;
+	Tue, 15 Apr 2025 17:32:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b="pN8homO4"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VCkcVwf5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="w/30uPAb";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CCFgElI/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/pvoamBT"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CD12DFA41
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 17:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45878221552
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 17:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744737781; cv=none; b=L0IWW1Byie6/L1NRdd7gW4rx7EWoo/rmmfOIMRDvdHOqd+KgjTYy8UawkNCSOyGa2LaXMToQw3pgqQvb1Mpq0zhYqRjx+NWzkxsyzQnBQF0ZZz6UOTU2dDL/n+cxEMNTnG/h59JuUB25ApemFBdklHtUiiKzzXcQEOOcKiSi+jI=
+	t=1744738373; cv=none; b=llYfhBwimwHeYkQHs7FZs3yNoaOJ41Qk8Yhk84d2YdsgqFaFWS0B4MCgfHsi135LzTEPDuMsYCXmhlSPPP28gSun99Jv9T0MvEQhAbN51ftjZU83Jtso8F5YuwXhk5bjUpErgozGUqdyv3H5tpgBwhXjZ04gBAbipmFZJCKcDxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744737781; c=relaxed/simple;
-	bh=jGBSqGvM/WhlmhLlUU8M1QCfFHbdqZ1vURvunRbkv6s=;
-	h=From:Message-Id:Content-Type:Mime-Version:Subject:Date:
-	 In-Reply-To:Cc:To:References; b=dfOVM1w14b3J1Ejyjxzh8SjMTR0jC6DsowJ/uacwPTny8wGcEEIALwc+yIVvWwSvzRp54i40S2eHPkTWu8foGjArGopvpXNX0CwV8NW1LTCFgZEoEC1vfaa/VKolR3XdCoaQpqHrB0NUzQkkUYmSTCTLV1VbSXBjfAkFKTIpOEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca; spf=pass smtp.mailfrom=dilger.ca; dkim=pass (2048-bit key) header.d=dilger-ca.20230601.gappssmtp.com header.i=@dilger-ca.20230601.gappssmtp.com header.b=pN8homO4; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dilger.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dilger.ca
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-736c277331eso6317881b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 10:22:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dilger-ca.20230601.gappssmtp.com; s=20230601; t=1744737778; x=1745342578; darn=vger.kernel.org;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vUe5eCtJCpys3oXpeuk6TzOQskhu8bOjccmowo9E5rI=;
-        b=pN8homO4sKBoON1ewkvNFgBgvSH+rEEqtxIBk/1O1oAJp5EzZRXgDQAZioYX1HLbbx
-         PKoEYkakH05SJ9wZ2FF4ii/IU/bzbk1t7d82bkXLASndvNi8iqait2IyAnNAjwFTYb4v
-         IUDx21F7jxJaa2HZRZES5lWE8qO+eCDrKGg+8Lq9QhlRJZqBfwz0aKMyYT3qz59L9Lbm
-         WJueJhOhsTGx1vUrJIcVTQoz6FFpA/cCYIouzp5pMaK2Sc6/Gi4HVu1wcmI4cRKApbU1
-         CaDyf/rvvObUYKw23ZX+0ZHxxKIxGk7x/azsVJkcjeYPCv2Xbm64sjXYPwmPyAL2borO
-         tv/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744737778; x=1745342578;
-        h=references:to:cc:in-reply-to:date:subject:mime-version:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vUe5eCtJCpys3oXpeuk6TzOQskhu8bOjccmowo9E5rI=;
-        b=S0GySmF/zO6rc4UfvAXYPVb8wUb/9mD6DJfIyMsR/8y5/MK8i7YsQBY4AWGhgoB4k2
-         PFlI3t+yg7PkHBYJkAbGDadeNEGh9e6t836SJwmX5BtaStggzC30SH+CbeY/I3ODFGqc
-         1X3t7pJGUw6tDV+93YKvqkWllszIsnRiR6cDe0FmTC0x9YUQEetYQmQ1xWMsGeljjA7k
-         9jrOJm2D0vsM5WA6WCyidRmW4JmdyJVCzWpyGkJQfZWH14gTDU61IQLEY0PO4QlTMiHE
-         L/bzE+vuTP3tV4Y57H2Wc5Kk+uR8SgmStq9PA7HGLckHvUZrKCE1B7AIvhTd09EwvkCf
-         Z8dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVTUwuqyT6jxnzuvMhAgwA+rAVrGbs6lq5Ze8THNDPeBqRFRouN/5kWmQUEzpLxnrI3btkcnHd6PBo9PT3T@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxho9OZn6ZxxmVrv9ajNm5gucGxtxpQf1p3vM+5f8AtMYxYuTiR
-	7PkUvJPtzcp3GUGq3gk97WRjecSI4FtGHGavtYGgKhck90+w8aDWfmC7mu/rAic=
-X-Gm-Gg: ASbGncuTP6YbFeTllgm9Qj9TGvlek5zO6h58TwXf5p3K+HhxGR4FaVegMA2+BOxm5KE
-	bKty+Y40fZWKuHO6k1X84KS5USuLYyihCTeOye64iuzZDYeBCKMbTBw4Coodc4LHkKImcU/K3U+
-	fq9xQ3noHKkBaO0CMoE9vhkmQo1hyaI8qlt6bH/g+3OSuPDGeekjV8rZNn1EbDsQA0HFt1CH3Ey
-	xPk3mK2q8wHLjo7dI+4GD/VLYRJnjVQv4zW/+2WlcIcnNz/81tqCjyo8pCXexagteqhK8fCWzw9
-	/41/cfxfDDLZRCFBSbqcOGUuM34OGbadZSd2Zf0LAq6urAI1QrdMpeooc18dbbQ6iZdrCDbwk2E
-	yzXVTA39LotTICQ==
-X-Google-Smtp-Source: AGHT+IE4Rtxwvz78g+IBmnF0LE0xlBWKSOm2tYd4DqQsKk202P/mf05Q1LcOGzEaEl0WgRokyGaRJQ==
-X-Received: by 2002:a05:6a20:d705:b0:1f3:237b:5997 with SMTP id adf61e73a8af0-203acad47f1mr336617637.14.1744737778009;
-        Tue, 15 Apr 2025 10:22:58 -0700 (PDT)
-Received: from cabot.adilger.int (S01068c763f81ca4b.cg.shawcable.net. [70.77.200.158])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b02a322184fsm11432017a12.74.2025.04.15.10.22.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 15 Apr 2025 10:22:56 -0700 (PDT)
-From: Andreas Dilger <adilger@dilger.ca>
-Message-Id: <B95C0576-4215-48CF-A398-7B77552A7387@dilger.ca>
-Content-Type: multipart/signed;
- boundary="Apple-Mail=_E255BFD4-8AD2-46E6-A7FC-582314D06408";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+	s=arc-20240116; t=1744738373; c=relaxed/simple;
+	bh=2Otzs3DwCwNGfCJA4CnepeDGywULcmmWDqhlD3dwvUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GhO61zLJ2JnSBuupAOKL4rLDWNAV/ApA75OJQ6SSq44Kg3UP3eaNbBBTdjvwY60PE5FFnb1LpUDBJZI+YEtl7w2g504X8cg0R9MyTFFCd7qh150pyrRdFVnDDK/Itgw6caZl5FfYrZuXqHzEhxlhkKzEiV2o+PDBWY3GcFdivsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VCkcVwf5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=w/30uPAb; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CCFgElI/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/pvoamBT; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1FF1F1F749;
+	Tue, 15 Apr 2025 17:32:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744738369; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hus6ehOq6AF8o2QBOcdvDpNm19O1W9nkhOR+Of5UL7s=;
+	b=VCkcVwf5SYH9z0rvR6rGNqHOyAoS61oaJrsJLmCFU1zz97C0gtUE2tBDHiUsvFjE5Ml4dj
+	GIyOhFFh5Y+chUTd9Iq7sqWzx7weaVyMUBP64dYArdb4ZgqP6BoN1hsK23CamMo6fNcYnX
+	2j4kQqSFPCUSNkniAUbko4FQZfJOs60=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744738369;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hus6ehOq6AF8o2QBOcdvDpNm19O1W9nkhOR+Of5UL7s=;
+	b=w/30uPAbO5TK1OOmdsP6ud+mtoGQXKVa76r0TjuzsrogpIpRXOOqqG0cbrK/RB1wmWv/Wf
+	98nbNtVCDyS0gOCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744738368; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hus6ehOq6AF8o2QBOcdvDpNm19O1W9nkhOR+Of5UL7s=;
+	b=CCFgElI/KhgtgycgZze9Bc9Kn+Q4cKUBRnbgd4YpY2qXmOZSNDuTLT0FAUFd32suoYYVqQ
+	Y2tJONN2mqY8Ki2bI91Pq9sVxyvHOQfV+FiJTfXut+AYuYglKmY3r0qVz776bz2sv06ot/
+	bwvxMzS1ZozDJY8KfZ4MU4ely74Nl4g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744738368;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hus6ehOq6AF8o2QBOcdvDpNm19O1W9nkhOR+Of5UL7s=;
+	b=/pvoamBTd53lR1nXQIMIhJ4aqr6nyJPx0RR2lm2QjoMI7MeUal2tO9ymhiUse1TEJsbke2
+	OaE7Z/iZNtMkdmBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 13050137A5;
+	Tue, 15 Apr 2025 17:32:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id EvKdBECY/mftdAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 15 Apr 2025 17:32:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BFEECA0947; Tue, 15 Apr 2025 19:32:47 +0200 (CEST)
+Date: Tue, 15 Apr 2025 19:32:47 +0200
+From: Jan Kara <jack@suse.cz>
+To: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Cc: Theodore Ts'o <tytso@mit.edu>, 
+	Andreas Dilger <adilger.kernel@dilger.ca>, Tao Ma <boyu.mt@taobao.com>, Jan Kara <jack@suse.com>, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kernel-dev@igalia.com, syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] ext4: inline: fix len overflow in
+ ext4_prepare_inline_data
+Message-ID: <ddz2qz3vxsjlkgzdt2fxxss2yes77iglwiers7bjwf6xm3yqw5@ozr2jqs27utn>
+References: <20250415-ext4-prepare-inline-overflow-v1-1-f4c13d900967@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 10.3 \(3273\))
-Subject: Re: bad things when too many negative dentries in a directory
-Date: Tue, 15 Apr 2025 11:22:53 -0600
-In-Reply-To: <e01314df537bced144509a8f5e5d4fa7b6b39057.camel@HansenPartnership.com>
-Cc: Matthew Wilcox <willy@infradead.org>,
- Miklos Szeredi <miklos@szeredi.hu>,
- Christian Brauner <brauner@kernel.org>,
- linux-fsdevel@vger.kernel.org,
- Al Viro <viro@zeniv.linux.org.uk>,
- Amir Goldstein <amir73il@gmail.com>,
- Jan Kara <jack@suse.cz>,
- Ian Kent <raven@themaw.net>
-To: James Bottomley <James.Bottomley@HansenPartnership.com>
-References: <CAJfpegs+czRD1=s+o5yNoOp13xH+utQ8jQkJ9ec5283MNT_xmg@mail.gmail.com>
- <20250411-rennen-bleichen-894e4b8d86ac@brauner>
- <CAJfpegvaoreOeAMeK=Q_E8+3WHra5G4s_BoZDCN1yCwdzkdyJw@mail.gmail.com>
- <Z_k81Ujt3M-H7nqO@casper.infradead.org>
- <2334928cfdb750fd71f04c884eeb9ae29a382500.camel@HansenPartnership.com>
- <Z_0cDYDi4unWYveL@casper.infradead.org>
- <f619119e8441ded9335b53a897b69a234f1f87b0.camel@HansenPartnership.com>
- <Z_00ahyvcMpbKXoj@casper.infradead.org>
- <e01314df537bced144509a8f5e5d4fa7b6b39057.camel@HansenPartnership.com>
-X-Mailer: Apple Mail (2.3273)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415-ext4-prepare-inline-overflow-v1-1-f4c13d900967@igalia.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[fe2a25dae02a207717a0];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[syzkaller.appspot.com:url,suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo,igalia.com:email]
+X-Spam-Score: -2.30
+X-Spam-Flag: NO
 
+On Tue 15-04-25 11:53:04, Thadeu Lima de Souza Cascardo wrote:
+> When running the following code on an ext4 filesystem with inline_data
+> feature enabled, it will lead to the bug below.
+> 
+>         fd = open("file1", O_RDWR | O_CREAT | O_TRUNC, 0666);
+>         ftruncate(fd, 30);
+>         pwrite(fd, "a", 1, (1UL << 40) + 5UL);
+> 
+> That happens because write_begin will succeed as when
+> ext4_generic_write_inline_data calls ext4_prepare_inline_data, pos + len
+> will be truncated, leading to ext4_prepare_inline_data parameter to be 6
+> instead of 0x10000000006.
+> 
+> Then, later when write_end is called, we hit:
+> 
+>         BUG_ON(pos + len > EXT4_I(inode)->i_inline_size);
+> 
+> at ext4_write_inline_data.
+> 
+> Fix it by using a loff_t type for the len parameter in
+> ext4_prepare_inline_data instead of an unsigned int.
+> 
+> [   44.545164] ------------[ cut here ]------------
+> [   44.545530] kernel BUG at fs/ext4/inline.c:240!
+> [   44.545834] Oops: invalid opcode: 0000 [#1] SMP NOPTI
+> [   44.546172] CPU: 3 UID: 0 PID: 343 Comm: test Not tainted 6.15.0-rc2-00003-g9080916f4863 #45 PREEMPT(full)  112853fcebfdb93254270a7959841d2c6aa2c8bb
+> [   44.546523] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+> [   44.546523] RIP: 0010:ext4_write_inline_data+0xfe/0x100
+> [   44.546523] Code: 3c 0e 48 83 c7 48 48 89 de 5b 41 5c 41 5d 41 5e 41 5f 5d e9 e4 fa 43 01 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc 0f 0b <0f> 0b 0f 1f 44 00 00 55 41 57 41 56 41 55 41 54 53 48 83 ec 20 49
+> [   44.546523] RSP: 0018:ffffb342008b79a8 EFLAGS: 00010216
+> [   44.546523] RAX: 0000000000000001 RBX: ffff9329c579c000 RCX: 0000010000000006
+> [   44.546523] RDX: 000000000000003c RSI: ffffb342008b79f0 RDI: ffff9329c158e738
+> [   44.546523] RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+> [   44.546523] R10: 00007ffffffff000 R11: ffffffff9bd0d910 R12: 0000006210000000
+> [   44.546523] R13: fffffc7e4015e700 R14: 0000010000000005 R15: ffff9329c158e738
+> [   44.546523] FS:  00007f4299934740(0000) GS:ffff932a60179000(0000) knlGS:0000000000000000
+> [   44.546523] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   44.546523] CR2: 00007f4299a1ec90 CR3: 0000000002886002 CR4: 0000000000770eb0
+> [   44.546523] PKRU: 55555554
+> [   44.546523] Call Trace:
+> [   44.546523]  <TASK>
+> [   44.546523]  ext4_write_inline_data_end+0x126/0x2d0
+> [   44.546523]  generic_perform_write+0x17e/0x270
+> [   44.546523]  ext4_buffered_write_iter+0xc8/0x170
+> [   44.546523]  vfs_write+0x2be/0x3e0
+> [   44.546523]  __x64_sys_pwrite64+0x6d/0xc0
+> [   44.546523]  do_syscall_64+0x6a/0xf0
+> [   44.546523]  ? __wake_up+0x89/0xb0
+> [   44.546523]  ? xas_find+0x72/0x1c0
+> [   44.546523]  ? next_uptodate_folio+0x317/0x330
+> [   44.546523]  ? set_pte_range+0x1a6/0x270
+> [   44.546523]  ? filemap_map_pages+0x6ee/0x840
+> [   44.546523]  ? ext4_setattr+0x2fa/0x750
+> [   44.546523]  ? do_pte_missing+0x128/0xf70
+> [   44.546523]  ? security_inode_post_setattr+0x3e/0xd0
+> [   44.546523]  ? ___pte_offset_map+0x19/0x100
+> [   44.546523]  ? handle_mm_fault+0x721/0xa10
+> [   44.546523]  ? do_user_addr_fault+0x197/0x730
+> [   44.546523]  ? do_syscall_64+0x76/0xf0
+> [   44.546523]  ? arch_exit_to_user_mode_prepare+0x1e/0x60
+> [   44.546523]  ? irqentry_exit_to_user_mode+0x79/0x90
+> [   44.546523]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
+> [   44.546523] RIP: 0033:0x7f42999c6687
+> [   44.546523] Code: 48 89 fa 4c 89 df e8 58 b3 00 00 8b 93 08 03 00 00 59 5e 48 83 f8 fc 74 1a 5b c3 0f 1f 84 00 00 00 00 00 48 8b 44 24 10 0f 05 <5b> c3 0f 1f 80 00 00 00 00 83 e2 39 83 fa 08 75 de e8 23 ff ff ff
+> [   44.546523] RSP: 002b:00007ffeae4a7930 EFLAGS: 00000202 ORIG_RAX: 0000000000000012
+> [   44.546523] RAX: ffffffffffffffda RBX: 00007f4299934740 RCX: 00007f42999c6687
+> [   44.546523] RDX: 0000000000000001 RSI: 000055ea6149200f RDI: 0000000000000003
+> [   44.546523] RBP: 00007ffeae4a79a0 R08: 0000000000000000 R09: 0000000000000000
+> [   44.546523] R10: 0000010000000005 R11: 0000000000000202 R12: 0000000000000000
+> [   44.546523] R13: 00007ffeae4a7ac8 R14: 00007f4299b86000 R15: 000055ea61493dd8
+> [   44.546523]  </TASK>
+> [   44.546523] Modules linked in:
+> [   44.568501] ---[ end trace 0000000000000000 ]---
+> [   44.568889] RIP: 0010:ext4_write_inline_data+0xfe/0x100
+> [   44.569328] Code: 3c 0e 48 83 c7 48 48 89 de 5b 41 5c 41 5d 41 5e 41 5f 5d e9 e4 fa 43 01 5b 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc cc 0f 0b <0f> 0b 0f 1f 44 00 00 55 41 57 41 56 41 55 41 54 53 48 83 ec 20 49
+> [   44.570931] RSP: 0018:ffffb342008b79a8 EFLAGS: 00010216
+> [   44.571356] RAX: 0000000000000001 RBX: ffff9329c579c000 RCX: 0000010000000006
+> [   44.571959] RDX: 000000000000003c RSI: ffffb342008b79f0 RDI: ffff9329c158e738
+> [   44.572571] RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+> [   44.573148] R10: 00007ffffffff000 R11: ffffffff9bd0d910 R12: 0000006210000000
+> [   44.573748] R13: fffffc7e4015e700 R14: 0000010000000005 R15: ffff9329c158e738
+> [   44.574335] FS:  00007f4299934740(0000) GS:ffff932a60179000(0000) knlGS:0000000000000000
+> [   44.575027] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   44.575520] CR2: 00007f4299a1ec90 CR3: 0000000002886002 CR4: 0000000000770eb0
+> [   44.576112] PKRU: 55555554
+> [   44.576338] Kernel panic - not syncing: Fatal exception
+> [   44.576517] Kernel Offset: 0x1a600000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> 
+> Reported-by: syzbot+fe2a25dae02a207717a0@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=fe2a25dae02a207717a0
+> Fixes: f19d5870cbf7 ("ext4: add normal write support for inline data")
+> Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> Cc: stable@vger.kernel.org
 
---Apple-Mail=_E255BFD4-8AD2-46E6-A7FC-582314D06408
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=us-ascii
+Looks good. Feel free to add:
 
-On Apr 14, 2025, at 11:58 AM, James Bottomley =
-<James.Bottomley@HansenPartnership.com> wrote:
->=20
-> On Mon, 2025-04-14 at 17:14 +0100, Matthew Wilcox wrote:
-> [...]
->>> I got that's what it's doing, and why the negative dentries are
->>> useless since the file name is app specific, I'm just curious why
->>> an app that knows it's the only consumer of a file places it in the
->>> last place it looks rather than the first ... it seems to be
->>> suboptimal and difficult for us to detect heuristically.
->>=20
->> The first two are read only.  One is where the package could have an
->> override, the second is where the local sysadmin could have an
->> override. The third is writable.  It's not entirely insane.
->>=20
->> Another way to solve this would be to notice "hey, this directory
->> only has three entries and umpteen negative entries, let's do the
->> thing that ramfs does to tell the dcache that it knows about all
->> positive entries in this directory and delete all the negative
->> ones".  I forget what flag that is.
->=20
-> It's not a flag, it's the dentry operations for pseudo filesystems
-> (simple_lookup sets simple_dentry_operations which provides a d_delete
-> that always says don't retain).  However, that's really because all
-> pseudo filesystems have a complete dentry cache (all visible files =
-have
-> dentries), so there's no benefit caching negative lookups (and the
-> d_delete trick only affects negative dentries because positive ones
-> have a non zero refcount).
->=20
-> There is a DCACHE_DONTCACHE flag that dumps a dentry (regardless of
-> positive or negative) on final dput  I suppose that could be set in
-> lookup_open() on negative under some circumstances (open flag, sysctl,
-> etc.).
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Negative dentries are only useful if there are fewer than the number
-of entries in that directory.
+								Honza
 
-If the negative dentry count exceeds the actual entry count, it would
-be more efficient to just cache all of the positive dentries and mark
-the directory with a "full dentry list" flag that indicates all of the
-names are already present in dcache and any miss is authoritative.
-In essence that gives an "infinite" negative lookup cache instead of
-explicitly storing all of the possible negative entries.
-
-For directories like ~/bin, /usr/bin, /usr/lib64, etc. (or any =
-directory)
-where negative lookups are frequent, it should be possible to determine
-this threshold automatically.  Once the negative dentry count exceeds
-the size of the directory by some factor (e.g. directory size / 16,
-or the actual entry count if the filesystem knows this, it doesn't have
-to be exactly correct) then a readdir could load all of the names to
-fully populate the dcache and set the "full dentry list" flag on the
-directory would allow dropping all negative dentries in that directory.
-
-The VFS/VM should avoid dropping directories/dentries from cache in this
-case, since it is saving more memory (and avoiding filesystem IO) to =
-keep
-them pinned rather than dropping them from cache.  There might need to =
-be
-a matching "part of full dentry list" flag on the positive dentries to
-avoid dcache shrinking of those entries (which would invalidate the =
-premise
-that the parent holds all of the possible entries in that directory), if
-checking the parent's flag is too expensive.
-
-Cheers, Andreas
-
-
-
-
-
-
---Apple-Mail=_E255BFD4-8AD2-46E6-A7FC-582314D06408
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-Comment: GPGTools - http://gpgtools.org
-
-iQIzBAEBCAAdFiEEDb73u6ZejP5ZMprvcqXauRfMH+AFAmf+le4ACgkQcqXauRfM
-H+AbtBAAuQ8D9YcDDLTCgH58aiUiGE+ONQvUlJClq+Yf6eLRHESRyWTw3wTXPntC
-/9m2s4ENVw1XnFu05wQqCTnhkwrF9VxZemAE05PNQvaX92ujJ7aTGbl62PJaLeQU
-rczObufHVv8BAg7PFtt/Ue7bsZqMZYLOIk1ReohTU+CGFsvNqlX5XFNmm3KBmNog
-zimBm2zD2QxgseVNqM5hxbMzT0vV786DL+05GOruB3cWHMrdgy0554DUMIlebrk7
-GDxbHBk6uvKkuj0UBUoLimEfD4Kb6Fm9GvhBK798P3Hz6MIr/z1nxyHYqS1v3Zqy
-0zTpl2hQyDTqYEW9siFp+Ugn/DipZoDfXKCotYCT56YnKFLG7PTNF6/4BPqoaUtH
-AOpbPPDZ2GIj6CKC3k5/jfLW7rDizKfGPSEYaKzX7/XJ+HsiBe/KDSoZJnR+HNl9
-AAISea2w4kEJs6aEtCBfkliMP+nzVQ0vl2gTSngM4i1UqDzj3l3J47VaaoiAcG12
-bmu1fAvkK9XpXp1Z3CjcAp5rMEoJk5/10BPx/loOobAeeafdk4wu8HVwwBoZesTi
-Ls7dSfYC498CemLTHcHz1gwGe1Bf6x5UcOTB8Fs8OEbX0fjFjvd3OcT8thwTguAP
-hVHZFX3TfbQ0Kr0ke1P/sNtNdY+akJHD19JdzD3wSTJS5Xo796E=
-=iG3f
------END PGP SIGNATURE-----
-
---Apple-Mail=_E255BFD4-8AD2-46E6-A7FC-582314D06408--
+> ---
+>  fs/ext4/inline.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+> index 2c9b762925c72f2ff5a402b02500370bc1eb0eb1..e5e6bf0d338b965a885fb99581f9ed5e51c5257c 100644
+> --- a/fs/ext4/inline.c
+> +++ b/fs/ext4/inline.c
+> @@ -397,7 +397,7 @@ static int ext4_update_inline_data(handle_t *handle, struct inode *inode,
+>  }
+>  
+>  static int ext4_prepare_inline_data(handle_t *handle, struct inode *inode,
+> -				    unsigned int len)
+> +				    loff_t len)
+>  {
+>  	int ret, size, no_expand;
+>  	struct ext4_inode_info *ei = EXT4_I(inode);
+> 
+> ---
+> base-commit: 8ffd015db85fea3e15a77027fda6c02ced4d2444
+> change-id: 20250415-ext4-prepare-inline-overflow-8db0e747cb16
+> 
+> Best regards,
+> -- 
+> Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
