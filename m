@@ -1,152 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-46427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 988C0A890B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 02:33:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E10A890FC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 03:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A708017D42D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 00:33:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9451516DEB1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 01:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71269E552;
-	Tue, 15 Apr 2025 00:33:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZBq0Msh"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F3C13C8EA;
+	Tue, 15 Apr 2025 01:05:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4915182BD;
-	Tue, 15 Apr 2025 00:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD32BA927;
+	Tue, 15 Apr 2025 01:05:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744677189; cv=none; b=LnSES1UrZS90ZYBZlsZi5ngqNyDDWCeYSPv6DDeMQzmQ04becH5M9Hg1CLr+L7dNfDbid5X2GKBlAJV6Q6EPIgfInm06mvPdtO7fK7uVnYKW0yXAV4odemKV5Q8Qu5ITWy0wqHkJZhG3tpbw04JkFtd3ZUrY/dZ86bcQZirK5s8=
+	t=1744679151; cv=none; b=VLupAkXgW9zYSrwcXkfJrdifJtfzDyQzxvFmmAz8mgtTXtfeEdKFCbjMmWcdu61JfhzQAloMm7Q2zvA/RhEPVq5OQpLF10KztmkMifAmQXnhdr4tsgB9psvedGDAH+L3tjmUp7biNj34Wup+A1S4Ir+Of9kOiTV2c8mk18n5qQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744677189; c=relaxed/simple;
-	bh=5Pahrhy8qFJY6lzVfKp6QObVcVFpNTvrdsxGF+Dh6uQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cLePsp49h9bklfr2EXQG2TwZGMTTV0k7rgR6rLMPwE/xVUweSsBOQZ4ffDftYyCO0o6jf9Mquukdw6iLpjOKCC4wULs+HigHRH8Zz00KxWYI5/4nmCu/OfWVGldc3mmJaULCe1BO7i7MjVGxVt8mh57384kVTNNAsONfKUIYpdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZBq0Msh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7CF6C4CEEA;
-	Tue, 15 Apr 2025 00:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744677189;
-	bh=5Pahrhy8qFJY6lzVfKp6QObVcVFpNTvrdsxGF+Dh6uQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pZBq0MshnSFZNduirJiPwbcKTnE2HowWM/EX4hWHyY/BnVfdsHJ/faK2GsNKpW9cB
-	 0DIgxg7ge8DhIxRlfNMFF/o9Wv1MO3D+Nx3cA3kgaZiMyrF4zzCPUxH69leM9bHBDR
-	 a9j+tSuX0/k5egVi9qkmBVN/ozNUOEYubebDwtyGAiVMuFuG4l+10x7q4hSuuQllGD
-	 PIM4Rcx/1PJSjezUsLG+lNzfMJn2Kna7QUgiqRa6CCSYao7NE44nKChPIU9GBshz4s
-	 jiDRAWd8ilg6z7TDqPwhoB15HkLeuq8W6G18xgZGAAKEr1hqmcsO/3scUOB/CGoBs1
-	 JnznE0juwnKeA==
-Date: Mon, 14 Apr 2025 17:33:08 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Carlos Maiolino <cem@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, axboe@kernel.dk,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	linux-block <linux-block@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	xfs <linux-xfs@vger.kernel.org>, Jack Vogel <jack.vogel@oracle.com>
-Subject: [RF[CRAP] 2/2] xfs: stop using set_blocksize
-Message-ID: <20250415003308.GE25675@frogsfrogsfrogs>
-References: <20250415001405.GA25659@frogsfrogsfrogs>
+	s=arc-20240116; t=1744679151; c=relaxed/simple;
+	bh=3NDf5j7eWrHrW440/AaqxeY/A1RC9zY1VXbHkDEQ154=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lDeBWECGfrO9iRBuP12L8hUShwtkcWq9sVdarVwy8ZnVMIG5cn73CW601LoTTRvDwTXRXioewRzbsJhjW8SODmIR+hVydbbiWeNX8GZ3eNgW1oHxYujcyzFJcFI6vabRFVHkWld1YtvqiqcukZ7g/mgvu2xqDwinYBCVvZ9+4r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53F0oDJr007332;
+	Tue, 15 Apr 2025 01:05:23 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45ydd1js6q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Tue, 15 Apr 2025 01:05:23 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Mon, 14 Apr 2025 18:05:22 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Mon, 14 Apr 2025 18:05:19 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <hch@infradead.org>
+CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
+        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
+        <ntfs3@lists.linux.dev>,
+        <syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com>,
+        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH] fs/ntfs3: Add missing direct_IO in ntfs_aops_cmpr
+Date: Tue, 15 Apr 2025 09:05:18 +0800
+Message-ID: <20250415010518.2008216-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <Z_yiPk7AkwJo0c6n@infradead.org>
+References: <Z_yiPk7AkwJo0c6n@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250415001405.GA25659@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: ty7NNuGZDoar7YOn9Kc2ENxMCfgW6Xuv
+X-Proofpoint-GUID: ty7NNuGZDoar7YOn9Kc2ENxMCfgW6Xuv
+X-Authority-Analysis: v=2.4 cv=HecUTjE8 c=1 sm=1 tr=0 ts=67fdb0d3 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=XR8D0OoHHMoA:10 a=VwQbUJbxAAAA:8 a=ntnxu_dxGi-Q_OBSk1sA:9
+X-Sensitive_Customer_Information: Yes
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-14_08,2025-04-10_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ phishscore=0 malwarescore=0 priorityscore=1501 spamscore=0 bulkscore=0
+ adultscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0 clxscore=1011
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.21.0-2502280000
+ definitions=main-2504150003
 
-From: Darrick J. Wong <djwong@kernel.org>
+On Sun, 13 Apr 2025 22:50:54 -0700, Christoph Hellwig wrote:
+> On Fri, Apr 11, 2025 at 09:24:27AM +0800, Lizhi Xu wrote:
+> > The ntfs3 can use the page cache directly, so its address_space_operations
+> > need direct_IO.
+> 
+> I can't parse that sentence.  What are you trying to say with it?
+The comments [1] of generic_file_read_iter() clearly states "read_iter()
+for all filesystems that can use the page cache directly".
 
-XFS has its own buffer cache for metadata that uses submit_bio, which
-means that it no longer uses the block device pagecache for anything.
-Create a more lightweight helper that runs the blocksize checks and
-flushes dirty data and use that instead.  No more truncating the
-pagecache because why would XFS care? ;)
+In the calltrace of this example, it is clear that direct_IO is not set.
+In [3], it is also clear that the lack of direct_IO in ntfs_aops_cmpr
+caused this problem.
 
-Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
----
- include/linux/blkdev.h |    1 +
- block/bdev.c           |   23 +++++++++++++++++++++++
- fs/xfs/xfs_buf.c       |    9 ++++++---
- 3 files changed, 30 insertions(+), 3 deletions(-)
+In summary, direct_IO must be set in this issue.
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index f442639dfae224..ae83dd12351c2e 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1618,6 +1618,7 @@ static inline void bio_end_io_acct(struct bio *bio, unsigned long start_time)
- 	return bio_end_io_acct_remapped(bio, start_time, bio->bi_bdev);
- }
- 
-+int bdev_use_blocksize(struct file *file, int size);
- int set_blocksize(struct file *file, int size);
- 
- int lookup_bdev(const char *pathname, dev_t *dev);
-diff --git a/block/bdev.c b/block/bdev.c
-index 0cbdac46d98d86..201d61d743592e 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -152,6 +152,29 @@ static void set_init_blocksize(struct block_device *bdev)
- 				    get_order(bsize), get_order(bsize));
- }
- 
-+/*
-+ * For bdev filesystems that do not use buffer heads, check that this block
-+ * size is acceptable and flush dirty pagecache to disk.
-+ */
-+int bdev_use_blocksize(struct file *file, int size)
-+{
-+	struct inode *inode = file->f_mapping->host;
-+	struct block_device *bdev = I_BDEV(inode);
+[1]
+ * generic_file_read_iter - generic filesystem read routine
+ * @iocb:	kernel I/O control block
+ * @iter:	destination for the data read
+ *
+ * This is the "read_iter()" routine for all filesystems
+ * that can use the page cache directly.
+
+[2]
+generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+{
+	size_t count = iov_iter_count(iter);
+	ssize_t retval = 0;
+
+	if (!count)
+		return 0; /* skip atime */
+
+	if (iocb->ki_flags & IOCB_DIRECT) {
+		struct file *file = iocb->ki_filp;
+		struct address_space *mapping = file->f_mapping;
+		struct inode *inode = mapping->host;
+
+		retval = kiocb_write_and_wait(iocb, count);
+		if (retval < 0)
+			return retval;
+		file_accessed(file);
+
+		retval = mapping->a_ops->direct_IO(iocb, iter); 
+[3]
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b432163ebd15a0fb74051949cb61456d6c55ccbd
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 4d9d84cc3c6f55..9b6a3f8d2e7c5c 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -101,8 +101,26 @@ int ntfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	/* Allowed to change compression for empty files and for directories only. */
+ 	if (!is_dedup(ni) && !is_encrypted(ni) &&
+ 	    (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))) {
+-		/* Change compress state. */
+-		int err = ni_set_compress(inode, flags & FS_COMPR_FL);
++		int err = 0;
++		struct address_space *mapping = inode->i_mapping;
 +
-+	if (blk_validate_block_size(size))
-+		return -EINVAL;
++		/* write out all data and wait. */
++		filemap_invalidate_lock(mapping);
++		err = filemap_write_and_wait(mapping);
 +
-+	/* Size cannot be smaller than the size supported by the device */
-+	if (size < bdev_logical_block_size(bdev))
-+		return -EINVAL;
++		if (err >= 0) {
++			/* Change compress state. */
++			bool compr = flags & FS_COMPR_FL;
++			err = ni_set_compress(inode, compr);
 +
-+	if (!file->private_data)
-+		return -EINVAL;
-+
-+	return sync_blockdev(bdev);
-+}
-+EXPORT_SYMBOL_GPL(bdev_use_blocksize);
-+
- int set_blocksize(struct file *file, int size)
- {
- 	struct inode *inode = file->f_mapping->host;
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index 8e7f1b324b3bea..2c8531103c01bb 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1718,14 +1718,17 @@ xfs_setsize_buftarg(
- 	struct xfs_buftarg	*btp,
- 	unsigned int		sectorsize)
- {
-+	int			error;
-+
- 	/* Set up metadata sector size info */
- 	btp->bt_meta_sectorsize = sectorsize;
- 	btp->bt_meta_sectormask = sectorsize - 1;
- 
--	if (set_blocksize(btp->bt_bdev_file, sectorsize)) {
-+	error = bdev_use_blocksize(btp->bt_bdev_file, sectorsize);
-+	if (error) {
- 		xfs_warn(btp->bt_mount,
--			"Cannot set_blocksize to %u on device %pg",
--			sectorsize, btp->bt_bdev);
-+			"Cannot use blocksize %u on device %pg, err %d",
-+			sectorsize, btp->bt_bdev, error);
- 		return -EINVAL;
- 	}
- 
++			/* For files change a_ops too. */
++			if (!err)
++				mapping->a_ops = compr ? &ntfs_aops_cmpr :
++							 &ntfs_aops;
+
+BR,
+Lizhi
 
