@@ -1,97 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-46434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F58A895B9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 09:54:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1612A8960C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 10:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47CE17D5DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 07:54:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6FE17DCDF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 08:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB98A27990D;
-	Tue, 15 Apr 2025 07:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C967279907;
+	Tue, 15 Apr 2025 08:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEUvkOs/"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="UBvZB5ph"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57FEC2741D6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 07:54:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2627C194C86
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 08:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744703656; cv=none; b=VxJWR4GvC8Kb9tehSL7AtNR4572KleCfsoXMOWl6cpK5w3DKo6lJtps7+4eEARvV/5hAt4eXALcq/U+B7F6TJbQNiw9zIEW3x4vKJEd2ILFZsL9jcvMJd1JoEocH15zdWnrVGhdFMkUpy33TTzJNRZuFvcoEHvIZZzJPDIoUJwI=
+	t=1744704513; cv=none; b=L3H8jsjVNsX2nS+V77I6VQkyG+iu05APoc+jxDPx17d/xguO09y/t+rEnDR5AJpIYwq1IZMnFOuV0hm10kkDNyFhwwi7OpnKZbMdZGfz/fDy+Y/dEd9xOKz+dGOPg8+z380ghss8D/dKAfgiQ/d3A51MYF62FZayfWfCx03bVcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744703656; c=relaxed/simple;
-	bh=I8tBI8SXV3lnmciQ62zndKGnoSCxfB+WGdkZxfQYyNw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M46DDdyOXxag+vJRISwJaGeKb88vBWschEBa3fa+38ObLIBOsJZn9JvOCpABWD1b++BsYs8J93Kl6ZxrBtutOfgNyEZi6V/Nc6/jbbucG89g/in5hO5gFEqAy4SHJ8novPlev/X0MsbSSOlQ1mUVMKinys3e7u9/C5LCz3ydbds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEUvkOs/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD5D4C4CEE9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 07:54:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744703655;
-	bh=I8tBI8SXV3lnmciQ62zndKGnoSCxfB+WGdkZxfQYyNw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=HEUvkOs/UbDvicy6orX+63PruPf3iAPysH+y+1CqC5YqYOk8gp6+URAqbOTjqpS1E
-	 miAYNZCSllduo3MAUbVVljNKpd4oCMiVIL+5UBoed9rsRullRBPRqOHB3+hlRVX0eJ
-	 4gcVqGyK/sdJf2u94OPxlMB1uBACZh90N38q/Beq+nFp9gjnttf92icvvRmLAGql+4
-	 HIpGinW/a/kqayyTVv2IMHU3gv/xUIlxW9srnr4FYy8UAPzrJhOUMQvee6AeKAz0m7
-	 uVmfH72a2tmUX9jXaSSG4PcnRDF5/fIRW9YJ5Hicc0hlZlAjGtyF1nQZ1Z750dj1kp
-	 RcEB+hdAzI9aw==
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-72c0987bc4fso1712990a34.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 00:54:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWuUaZ9hFlVGcopN2wkns3zah0fP8EhUCqpWcaLBtLV/Gaziytqp31IolKMEjoeyApKcb7CwjK05+4q8QfL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqW1mFBvPMLO1HGRhqf+w+agHqAr3wBpVy4CPaAU5vEEk2vadk
-	oOfMjm8/dKksb2g3hIi0IFwsv4Ri4djUVVVm3Vwj992N5htY5grCr2CAvTUHV8f77jpX+dne2Jz
-	sYCLMcyXUxpQ/4+GD6auqwvvukGo=
-X-Google-Smtp-Source: AGHT+IFtS/qxi8AiBjAbu0ab+EqsrbMi+b9+WbKey9X4IRTa7KKhmQ5YdmNAVY/eSkodt09BD4mLOi2/T0CsRkGxNRY=
-X-Received: by 2002:a05:6830:700b:b0:72b:9e6c:9be6 with SMTP id
- 46e09a7af769-72e86307e13mr10527912a34.11.1744703655095; Tue, 15 Apr 2025
- 00:54:15 -0700 (PDT)
+	s=arc-20240116; t=1744704513; c=relaxed/simple;
+	bh=K0zuuUrP1GTMrfD0uK7cmrnkK2AaNl3C4GoifhMTB+M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HoxnLsgvX+K4sYmmQp1Uuax7uzxF4rtz3q80M/N+icIacfo3Pqyt3cZi3maZS6LcIpLmLoaQF9hM3fBrRYUTRfWodvJAEEa0+QLI76IpnKaRhE6zoN7drTgdeMHKOdnTzdnTcyOSsjaq6CgwvdSW+u7x1Pt1SNc30V8gMhU5+No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=UBvZB5ph; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1744704502; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=6uJ8JAW/CX0s14a5D8l/CfXdE901CGm9XOoEGCn47xE=;
+	b=UBvZB5phvbW3jWbiSS14J4CcLeUkeaAOqVNy6OuD1RJAcr0fvBwqXR3FYvAQU/f1Fe5kHvaduIT1QEG7dvgU1H7kTpfrg5SOlav0GxHdTxCskud1v4dCedjcgFj1hUP8OL5RdVAh5b8wS9kCWRvhfBF4poxrxamrw4sIiiympSw=
+Received: from 30.221.145.234(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0WX42Ebp_1744704500 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Apr 2025 16:08:20 +0800
+Message-ID: <d31b0b36-559f-4b09-a624-ed7c50a86b43@linux.alibaba.com>
+Date: Tue, 15 Apr 2025 16:08:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <PUZPR04MB63168406D20B7CF3B287812281B72@PUZPR04MB6316.apcprd04.prod.outlook.com>
-In-Reply-To: <PUZPR04MB63168406D20B7CF3B287812281B72@PUZPR04MB6316.apcprd04.prod.outlook.com>
-From: Namjae Jeon <linkinjeon@kernel.org>
-Date: Tue, 15 Apr 2025 16:54:04 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8VLzNZnL+TN7y1Kq54ZmN6qaJ_pL9ui_1e2epYwYccrQ@mail.gmail.com>
-X-Gm-Features: ATxdqUEwAbx3DMpNwLMQp77bMW5zbn0KQjjWJHDQPQsgQRo55u75CpfPNKgCAaY
-Message-ID: <CAKYAXd8VLzNZnL+TN7y1Kq54ZmN6qaJ_pL9ui_1e2epYwYccrQ@mail.gmail.com>
-Subject: Re: [PATCH v1] exfat: do not clear volume dirty flag during sync
-To: "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc: "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 0/2] fuse: remove temp page copies in writeback
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+ akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc: shakeel.butt@linux.dev, david@redhat.com, bernd.schubert@fastmail.fm,
+ ziy@nvidia.com, jlayton@kernel.org, kernel-team@meta.com
+References: <20250414222210.3995795-1-joannelkoong@gmail.com>
+Content-Language: en-US
+From: Jingbo Xu <jefflexu@linux.alibaba.com>
+In-Reply-To: <20250414222210.3995795-1-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Apr 10, 2025 at 6:41=E2=80=AFPM Yuezhang.Mo@sony.com
-<Yuezhang.Mo@sony.com> wrote:
->
-> xfstests generic/482 tests the file system consistency after each
-> FUA operation. It fails when run on exfat.
->
-> exFAT clears the volume dirty flag with a FUA operation during sync.
-> Since s_lock is not held when data is being written to a file, sync
-> can be executed at the same time. When data is being written to a
-> file, the FAT chain is updated first, and then the file size is
-> updated. If sync is executed between updating them, the length of the
-> FAT chain may be inconsistent with the file size.
->
-> To avoid the situation where the file system is inconsistent but the
-> volume dirty flag is cleared, this commit moves the clearing of the
-> volume dirty flag from exfat_fs_sync() to exfat_put_super(), so that
-> the volume dirty flag is not cleared until unmounting. After the
-> move, there is no additional action during sync, so exfat_fs_sync()
-> can be deleted.
->
-> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Applied it to #dev with Sunjong's reviewed-by tag.
-Thanks!
+
+
+On 4/15/25 6:22 AM, Joanne Koong wrote:
+> The purpose of this patchset is to help make writeback in FUSE filesystems as
+> fast as possible.
+> 
+> In the current FUSE writeback design (see commit 3be5a52b30aa
+> ("fuse: support writable mmap"))), a temp page is allocated for every dirty
+> page to be written back, the contents of the dirty page are copied over to the
+> temp page, and the temp page gets handed to the server to write back. This is
+> done so that writeback may be immediately cleared on the dirty page, and this 
+> in turn is done in order to mitigate the following deadlock scenario that may
+> arise if reclaim waits on writeback on the dirty page to complete (more
+> details
+> can be found in this thread [1]):
+> * single-threaded FUSE server is in the middle of handling a request
+>   that needs a memory allocation
+> * memory allocation triggers direct reclaim
+> * direct reclaim waits on a folio under writeback
+> * the FUSE server can't write back the folio since it's stuck in
+>   direct reclaim
+> 
+> Allocating and copying dirty pages to temp pages is the biggest performance
+> bottleneck for FUSE writeback. This patchset aims to get rid of the temp page
+> altogether (which will also allow us to get rid of the internal FUSE rb tree
+> that is needed to keep track of writeback status on the temp pages).
+> Benchmarks show approximately a 20% improvement in throughput for 4k
+> block-size writes and a 45% improvement for 1M block-size writes.
+> 
+> In the current reclaim code, there is one scenario where writeback is waited
+> on, which is the case where the system is running legacy cgroupv1 and reclaim
+> encounters a folio that already has the reclaim flag set and the caller did
+> not have __GFP_FS (or __GFP_IO if swap) set.
+> 
+> This patchset adds a new mapping flag, AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM,
+> which filesystems may set on its inode mappings to indicate that reclaim
+> should not wait on writeback. FUSE will set this flag on its mappings. Reclaim
+> for the legacy cgroup v1 case described above will skip reclaim of folios with
+> that flag set. With this flag set, now FUSE can remove temp pages altogether.
+> 
+> With this change, writeback state is now only cleared on the dirty page after
+> the server has written it back to disk. If the server is deliberately
+> malicious or well-intentioned but buggy, this may stall sync(2) and page
+> migration, but for sync(2), a malicious server may already stall this by not
+> replying to the FUSE_SYNCFS request and for page migration, there are already
+> many easier ways to stall this by having FUSE permanently hold the folio lock.
+> A fuller discussion on this can be found in [2]. Long-term, there needs to be
+> a more comprehensive solution for addressing migration of FUSE pages that
+> handles all scenarios where FUSE may permanently hold the lock, but that is
+> outside the scope of this patchset and will be done as future work. Please
+> also note that this change also now ensures that when sync(2) returns, FUSE
+> filesystems will have persisted writeback changes.
+> 
+> For this patchset, it would be ideal if the first patch could be taken by
+> Andrew to the mm tree and the second patch could be taken by Miklos into the
+> fuse tree, as the fuse large folios patchset [3] depends on the second patch.
+> 
+> Thanks,
+> Joanne
+> 
+> [1]
+> https://lore.kernel.org/linux-kernel/495d2400-1d96-4924-99d3-8b2952e05fc3@linux.alibaba.com/
+> [2]
+> https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelkoong@gmail.com/
+> [3] 
+> https://lore.kernel.org/linux-fsdevel/20241213221818.322371-1-joannelkoong@gmail.com/
+> 
+> Changelog
+> ---------
+> v7:
+> https://lore.kernel.org/linux-fsdevel/20250404181443.1363005-1-joannelkoong@gmail.com/
+> Changes from v7 -> v8:
+> * Rename from AS_WRITEBACK_INDETERMINATE to
+>   AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM (David) and merge patch 1 + 2
+> * Remove unnecessary fuse_sync_writes() call in fuse_flush() (Jingbo)
+> 
+> v6:
+> https://lore.kernel.org/linux-fsdevel/20241122232359.429647-1-joannelkoong@gmail.com/
+> Changes from v6 -> v7:
+> * Drop migration and sync patches, as they are useless if a server is
+>   determined to be malicious
+> 
+> v5:
+> https://lore.kernel.org/linux-fsdevel/20241115224459.427610-1-joannelkoong@gmail.com/
+> Changes from v5 -> v6:
+> * Add Shakeel and Jingbo's reviewed-bys 
+> * Move folio_end_writeback() to fuse_writepage_finish() (Jingbo)
+> * Embed fuse_writepage_finish_stat() logic inline (Jingbo)
+> * Remove node_stat NR_WRITEBACK inc/sub (Jingbo)
+> 
+> v4:
+> https://lore.kernel.org/linux-fsdevel/20241107235614.3637221-1-joannelkoong@gmail.com/
+> Changes from v4 -> v5:
+> * AS_WRITEBACK_MAY_BLOCK -> AS_WRITEBACK_INDETERMINATE (Shakeel)
+> * Drop memory hotplug patch (David and Shakeel)
+> * Remove some more kunnecessary writeback waits in fuse code (Jingbo)
+> * Make commit message for reclaim patch more concise - drop part about
+>   deadlock and just focus on how it may stall waits
+> 
+> v3:
+> https://lore.kernel.org/linux-fsdevel/20241107191618.2011146-1-joannelkoong@gmail.com/
+> Changes from v3 -> v4:
+> * Use filemap_fdatawait_range() instead of filemap_range_has_writeback() in
+>   readahead
+> 
+> v2:
+> https://lore.kernel.org/linux-fsdevel/20241014182228.1941246-1-joannelkoong@gmail.com/
+> Changes from v2 -> v3:
+> * Account for sync and page migration cases as well (Miklos)
+> * Change AS_NO_WRITEBACK_RECLAIM to the more generic AS_WRITEBACK_MAY_BLOCK
+> * For fuse inodes, set mapping_writeback_may_block only if fc->writeback_cache
+>   is enabled
+> 
+> v1:
+> https://lore.kernel.org/linux-fsdevel/20241011223434.1307300-1-joannelkoong@gmail.com/T/#t
+> Changes from v1 -> v2:
+> * Have flag in "enum mapping_flags" instead of creating asop_flags (Shakeel)
+> * Set fuse inodes to use AS_NO_WRITEBACK_RECLAIM (Shakeel)
+> 
+> Joanne Koong (2):
+>   mm: skip folio reclaim in legacy memcg contexts for deadlockable
+>     mappings
+>   fuse: remove tmp folio for writebacks and internal rb tree
+> 
+>  fs/fuse/file.c          | 364 ++++------------------------------------
+>  fs/fuse/fuse_i.h        |   3 -
+>  include/linux/pagemap.h |  11 ++
+>  mm/vmscan.c             |  12 +-
+>  4 files changed, 48 insertions(+), 342 deletions(-)
+> 
+
+
+LGTM.
+
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+
+-- 
+Thanks,
+Jingbo
 
