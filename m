@@ -1,135 +1,222 @@
-Return-Path: <linux-fsdevel+bounces-46443-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49335A89755
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 11:02:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A3AA8976B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 11:05:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9B323B9E37
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 09:02:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D451654D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 09:05:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ACCE27A913;
-	Tue, 15 Apr 2025 09:02:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C537527FD66;
+	Tue, 15 Apr 2025 09:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZZgU+Y4A"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rCb+dbdq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rMTgtWCS";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rCb+dbdq";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rMTgtWCS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867171D9A5D;
-	Tue, 15 Apr 2025 09:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7C4C1E3761
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 09:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744707758; cv=none; b=LG8eCGZga8UXrIQYQs57bTX2zSrunUJvQyKfx3Ipb3I21XtrjkjcHbs3jQ2sMPCCyWUREEVKiwhCSGX4TAOBQ/RRbQl2BvX9UPcC+CIYmOLgVkWf5A3Zc9n7Gu0RO56n3cJgFVcHSnlQwPmavKmX+AR6N4owufDvVi2sk0avgjs=
+	t=1744707931; cv=none; b=Umzq1emGdRf8uBet/qWqrBJ5Fy6u7W/ekKuDUd1r97Ps368Xn0J35GJNRlwWGgIy8zUTmPJqowYz4rjiRfsOYHdHKFJH79tyilqqqPZElVOijgc1iEPXQsCpFEURY24PNhIxSTdTYbWTfbLwe1jWQ37e/IM0slJx5QKiFzORmUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744707758; c=relaxed/simple;
-	bh=caGUz9Z8pMCIDjkF3v8pjmkkhq4UL43aYLIpbMAOENU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UAa4MYlXRZ13Jk6dg6dLcMxZot03beCVLfNUHUkWL9c/pNSDHzdvB2DaDBC8mcha7ThT3p3mdaXEOf0sgQv5Zwb/juKmwhBoOM9LCYcaN2hcTkBEiTAMtwjXP68YyoKb0CwQ6Mr5NdzixPUWaG8YuZsbRpmK0IWRla5u/eBRooo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZZgU+Y4A; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b074d908e56so1637169a12.2;
-        Tue, 15 Apr 2025 02:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744707756; x=1745312556; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dJDZbBMdv2ZAA+6dcm0km5N4IHnAcIL7BZj1NiKeJs8=;
-        b=ZZgU+Y4A9vhtEpgp1A6YxvRSCR6A8UeVQFtJbOpq+Gbz3zR0wI3zoq118/8gbL/+hX
-         AAroQb5uxKwswIh6aZU0fqLAGw+Rhi6zWF0d6vo4wHoif3Z95DnSRrt0ZbxpD9WvQimf
-         PHPlG2FyX/of35y/JXBIUi422DYYFSrqR+y9WEmEc7RrLCCw/PBQn+1vWRUpXGAD1NIY
-         FbhQclHUJjs1zy0PnTTdzaL61q96De7RJfgP29wPEyvdCB0r8Ls3Fw21yZyS1Ujl8jUj
-         0tSlUXNWe+dMkgOqG7zkBR6V7YxghUceFE/d7zbU9shz3lwY9BDo3GAa7UihEIyjd4ZR
-         DU+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744707756; x=1745312556;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dJDZbBMdv2ZAA+6dcm0km5N4IHnAcIL7BZj1NiKeJs8=;
-        b=hHwe6LMordJZHTyO+t7NiRagqwHdnFqNhGlx5lTsiEZ274IyWVwhNHUCV39YLJWL9J
-         aImAOMbsT7q1xBsSgJM6EhEvI8SDjWpzw2B7dOMwu0j0qefXTru6D9ECa/SzfNJyxxay
-         cPCJNcZ4mwoaFntEuoMxrFu2Ne/lpZDtZo0poXnUUDQHHsbFisQTIocsYPZGaIGOE0AH
-         ORS4v4oD76sslT7+kGasNzo0KQJf3cx3VCxrVVAriYq+oq8jPE3DoNJUR5vs0ABvs7SY
-         1g6JI54hE+7XBI3djM+gdRBP4b6wOAwZzJ42xL7Y65OlZJQj7fIMYHdxEsGC2rGEhpit
-         lZlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJAZ1w0CggwGMZyC+eFsn1we5O7Fie7ipukddwC17JL5+kI7Lmfd4eg1fpZABBEGy9Ptl1DL5D@vger.kernel.org, AJvYcCX18F/zSpR1MwzMGzooZ3/okU/y6PfkxWySRFaEC0qoi1S/2wiTYy7RzowQg0uxK0QOs+VAIa0ryWN3YGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsPCVF+HxmP1FtKFa/66nY+cD+6COeN/1SXLiZ2gSbosc2VZ9H
-	16an6ZU8eWy2BbUID3462YE5AUHIb4FZr5ONPzaRYE1Pi8lth+Vc
-X-Gm-Gg: ASbGnct9dspIeTcBPkbrJE5gu1TTa189swwHqbTFQe4fpyXz1eMTtgRok9vU9eOrKrR
-	XqfmRvv6F4CydpWEer765qBliLrmsaA0yWDXqxlsprJ8Mkl6Y/urGrldkiATsUeih6o2USZOmJ+
-	AeO1SQH+pdvPDrEYokG0va2eJQSVYxJaa75kHeV/dNhu2I+yrRcyPknXyiAvqQ4QRIGZfYDpk56
-	kfAd9gFsxd8Tqd/YoWDdoGtyXz4KXh/jnImzoMKRvjbEhbmpM5cd58L8GEL6eYLumvk0VvR1QAp
-	cH8oCpu/BMbQsQd79/JBlIcwrnq3Ud/ONeIA/6UjYV39Fa8W3e4=
-X-Google-Smtp-Source: AGHT+IEYjhNLxP37l8aYl1C4a7w6JsueacI5kZw35bhUqMjZzpBVZqyJDMJHUDXI3VVXAEqDHa7Rmg==
-X-Received: by 2002:a17:90b:5190:b0:2ee:f22a:61dd with SMTP id 98e67ed59e1d1-30823680c10mr18676118a91.32.1744707755652;
-        Tue, 15 Apr 2025 02:02:35 -0700 (PDT)
-Received: from VM-16-38-fedora.. ([43.135.149.86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccc98csm112424215ad.253.2025.04.15.02.02.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Apr 2025 02:02:35 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: willy@infradead.org,
-	akpm@linux-foundation.org,
-	andrea@betterlinux.com,
-	fengguang.wu@intel.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	mengensun@tencent.com,
-	Jinliang Zheng <alexjlzheng@tencent.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] mm: fix ratelimit_pages update error in dirty_ratio_handler()
-Date: Tue, 15 Apr 2025 17:02:32 +0800
-Message-ID: <20250415090232.7544-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1744707931; c=relaxed/simple;
+	bh=akoyEmg5FFAps9x3hqllg39y+pIZnWVgc6aRE+0dVJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z9W8otfVA/JJJOpK2Peiwj04Zkos5bufa4PIJHfc9ENL9Aivtet1GIhj/eo3OVyA+eARuLk6Nh0O0E4rVUZ/akufEJfH8/3NHDGIo1xS7ReHMEGPVshfXfStqBtIY9TlZrIKvQ/jmMOP7++PPN74sTzVJPPI22A7Bs/eCpgaklk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rCb+dbdq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rMTgtWCS; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rCb+dbdq; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rMTgtWCS; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D584021162;
+	Tue, 15 Apr 2025 09:05:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744707925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gt8X9OwuX4DE3dmRd6541p+mCcrnU8QiPB3p9GbZKFg=;
+	b=rCb+dbdq7YVfmZ+K7cSqijtOv4piofNRPNccHTjNTOxFA8mksU3+EdYR85sxmAqYjmWglx
+	JJ7hCgiJ30rQ9GLKycfnMOlOzdpxa7SKP3/UdKnTb3mzS6QDpWHN+//o/VYnvV934xxfmW
+	hsiFoAGsXTRW5rbADkSmT7Wa3eaLDi4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744707925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gt8X9OwuX4DE3dmRd6541p+mCcrnU8QiPB3p9GbZKFg=;
+	b=rMTgtWCSK5cTrOWfZj2MD94hDSUOuTqRkb+/iJDjbn5RS5v40Z6HYebeXtFq79BrfR1rZd
+	XcGo62e+hMjdD8DQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1744707925; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gt8X9OwuX4DE3dmRd6541p+mCcrnU8QiPB3p9GbZKFg=;
+	b=rCb+dbdq7YVfmZ+K7cSqijtOv4piofNRPNccHTjNTOxFA8mksU3+EdYR85sxmAqYjmWglx
+	JJ7hCgiJ30rQ9GLKycfnMOlOzdpxa7SKP3/UdKnTb3mzS6QDpWHN+//o/VYnvV934xxfmW
+	hsiFoAGsXTRW5rbADkSmT7Wa3eaLDi4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1744707925;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gt8X9OwuX4DE3dmRd6541p+mCcrnU8QiPB3p9GbZKFg=;
+	b=rMTgtWCSK5cTrOWfZj2MD94hDSUOuTqRkb+/iJDjbn5RS5v40Z6HYebeXtFq79BrfR1rZd
+	XcGo62e+hMjdD8DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CAEAA137A5;
+	Tue, 15 Apr 2025 09:05:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0zuCMVUh/meTUAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 15 Apr 2025 09:05:25 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3178DA0947; Tue, 15 Apr 2025 11:05:25 +0200 (CEST)
+Date: Tue, 15 Apr 2025 11:05:25 +0200
+From: Jan Kara <jack@suse.cz>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: hch@infradead.org, almaz.alexandrovich@paragon-software.com, 
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ntfs3@lists.linux.dev, 
+	syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [PATCH] fs/ntfs3: Add missing direct_IO in ntfs_aops_cmpr
+Message-ID: <q5zbucxhdxsso7r3ydtnsz7jjkohc2zevz5swfbzwjizceqicp@32vssyaakhqo>
+References: <Z_yiPk7AkwJo0c6n@infradead.org>
+ <20250415010518.2008216-1-lizhi.xu@windriver.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415010518.2008216-1-lizhi.xu@windriver.com>
+X-Spam-Score: -2.30
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[e36cc3297bd3afd25e19];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	RCVD_TLS_LAST(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+On Tue 15-04-25 09:05:18, Lizhi Xu wrote:
+> On Sun, 13 Apr 2025 22:50:54 -0700, Christoph Hellwig wrote:
+> > On Fri, Apr 11, 2025 at 09:24:27AM +0800, Lizhi Xu wrote:
+> > > The ntfs3 can use the page cache directly, so its address_space_operations
+> > > need direct_IO.
+> > 
+> > I can't parse that sentence.  What are you trying to say with it?
+> The comments [1] of generic_file_read_iter() clearly states "read_iter()
+> for all filesystems that can use the page cache directly".
+> 
+> In the calltrace of this example, it is clear that direct_IO is not set.
+> In [3], it is also clear that the lack of direct_IO in ntfs_aops_cmpr
+> caused this problem.
+> 
+> In summary, direct_IO must be set in this issue.
 
-In the dirty_ratio_handler() function, vm_dirty_bytes must be set to
-zero before calling writeback_set_ratelimit(), as global_dirty_limits()
-always prioritizes the value of vm_dirty_bytes.
+I agree that you need to set .direct_IO in ntfs_aops_cmpr but since
+compressed files do not *support* direct IO (at least I don't see any such
+support in ntfs_direct_IO()) you either need to also handle these files in
+ntfs_direct_IO() or you need to set special direct IO handler that will
+just return 0 and thus fall back to buffered IO. So I don't think your
+patch is correct as is.
 
-That causes ratelimit_pages to still use the value calculated based on
-vm_dirty_bytes, which is wrong now.
+									Honza
 
-Fixes: 9d823e8f6b1b ("writeback: per task dirty rate limit")
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
-Reviewed-by: MengEn Sun <mengensun@tencent.com>
-Cc: stable@vger.kernel.org
----
-Changelog:
-v2: A more detailed description
-v1: https://lore.kernel.org/linux-fsdevel/20250415083542.6946-1-alexjlzheng@tencent.com/T/#u
----
- mm/page-writeback.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index c81624bc3969..20e1d76f1eba 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -520,8 +520,8 @@ static int dirty_ratio_handler(const struct ctl_table *table, int write, void *b
- 
- 	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
- 	if (ret == 0 && write && vm_dirty_ratio != old_ratio) {
--		writeback_set_ratelimit();
- 		vm_dirty_bytes = 0;
-+		writeback_set_ratelimit();
- 	}
- 	return ret;
- }
+> [1]
+>  * generic_file_read_iter - generic filesystem read routine
+>  * @iocb:	kernel I/O control block
+>  * @iter:	destination for the data read
+>  *
+>  * This is the "read_iter()" routine for all filesystems
+>  * that can use the page cache directly.
+> 
+> [2]
+> generic_file_read_iter(struct kiocb *iocb, struct iov_iter *iter)
+> {
+> 	size_t count = iov_iter_count(iter);
+> 	ssize_t retval = 0;
+> 
+> 	if (!count)
+> 		return 0; /* skip atime */
+> 
+> 	if (iocb->ki_flags & IOCB_DIRECT) {
+> 		struct file *file = iocb->ki_filp;
+> 		struct address_space *mapping = file->f_mapping;
+> 		struct inode *inode = mapping->host;
+> 
+> 		retval = kiocb_write_and_wait(iocb, count);
+> 		if (retval < 0)
+> 			return retval;
+> 		file_accessed(file);
+> 
+> 		retval = mapping->a_ops->direct_IO(iocb, iter); 
+> [3]
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b432163ebd15a0fb74051949cb61456d6c55ccbd
+> diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+> index 4d9d84cc3c6f55..9b6a3f8d2e7c5c 100644
+> --- a/fs/ntfs3/file.c
+> +++ b/fs/ntfs3/file.c
+> @@ -101,8 +101,26 @@ int ntfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+>  	/* Allowed to change compression for empty files and for directories only. */
+>  	if (!is_dedup(ni) && !is_encrypted(ni) &&
+>  	    (S_ISREG(inode->i_mode) || S_ISDIR(inode->i_mode))) {
+> -		/* Change compress state. */
+> -		int err = ni_set_compress(inode, flags & FS_COMPR_FL);
+> +		int err = 0;
+> +		struct address_space *mapping = inode->i_mapping;
+> +
+> +		/* write out all data and wait. */
+> +		filemap_invalidate_lock(mapping);
+> +		err = filemap_write_and_wait(mapping);
+> +
+> +		if (err >= 0) {
+> +			/* Change compress state. */
+> +			bool compr = flags & FS_COMPR_FL;
+> +			err = ni_set_compress(inode, compr);
+> +
+> +			/* For files change a_ops too. */
+> +			if (!err)
+> +				mapping->a_ops = compr ? &ntfs_aops_cmpr :
+> +							 &ntfs_aops;
+> 
+> BR,
+> Lizhi
 -- 
-2.49.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
