@@ -1,101 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-46510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F54A8A6C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 20:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 657E9A8A701
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 20:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F0D91900935
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 18:28:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F391900F72
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 18:44:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CA622686F;
-	Tue, 15 Apr 2025 18:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4522192F3;
+	Tue, 15 Apr 2025 18:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="Vmm8yYma"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="NTvbSl/0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DE4F222565;
-	Tue, 15 Apr 2025 18:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.235.159.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5BBA221D8E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 18:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744741701; cv=none; b=f/e7aaVZe9ekfAQyoLMWiZbZxBE8nZYodMqlPqOUblHERFNz5POyH3RBKmsR9VDGg+8GBrEkP/zVIeSAYXHmQWofpjbY8MosWqANRUTKxlcba994yP9untTpnlW+aHP/fxS6iUKIQ96hoYIs3yQRJcAPB23WP+gp+GxB1Q09CMA=
+	t=1744742635; cv=none; b=AhYn5lJ+ipLWpeK+wC5hySMIfjZBKAwpZBLKxJCAyKQy5KqKgLY52g7GRL211Gj5IBe6a06+gfddNwVl0QJjxKtaVH2G/NxiW/jXmyOYW9s/M0JG2jezwkloBxfojyCBIRnO7G8whkCrVZImDApRMucvxdZ98R1HXmMCvVg5Kww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744741701; c=relaxed/simple;
-	bh=KBUcfOPfTWKlv1r0T05CNzWz2hKo8/DBtVqmvyTw5cU=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=tacFThewCqJt+gTBZoiA+7dNy/Ae8RoD2dd2ewL/LERmsY5hnFQ9nYs0Y3BjVK4sNvOVx5aakWUYZkn3miFm1dG4Cj1lBgJK72XnnvgPLvjjqd/d+YBIr03MM1kcTm4jKzeXw4+vtRHrGhcPGeMj3bmES+9bkrWgKUC9vDkRiZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=Vmm8yYma; arc=none smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
-Message-ID: <f12973bcf533a40ca7d7ed78846a0a10@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1744741698;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SQXRd0G+3P1w/z1AT2Nr8p00ZghYti5DoxzAHJ9JJCI=;
-	b=Vmm8yYmaY47rhsPNq32DNzSBuzYfYEzbi8LXZAXCGUdlLurpoOMqKbvxraJCCmWgi2SAYj
-	Y1Io5fZv8eoiIBKDIBBSMt3jm+zVVqHMYz+94GwCeffAcvQoks4U6ZCGnf5Isckgs/Goyp
-	REO7ni9vd5bdUsVPXMWyCizcSZFVcSulPf7MgaKcfXOzsjIGunKEMKOy+gJwlIyoMVj2io
-	9Nc4eAGnijmz6jrp/gXs7SGHWfsuFrE9PM1cNcEMKWLcYS0pfBkvJm514I1gdrwSr8nlih
-	LgfjNdJBEf2uzEYpaTtTPb4CqEEiL7gh/dNVmacqqinoLptfteLJQYxDK1B7hQ==
-From: Paulo Alcantara <pc@manguebit.com>
-To: Nicolas Baranger <nicolas.baranger@3xo.fr>
-Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de, David Howells
- <dhowells@redhat.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Steve French
- <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>, Christian Brauner
- <brauner@kernel.org>
-Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when
- files are on CIFS share
-In-Reply-To: <5087f9cb3dc1487423de34725352f57c@3xo.fr>
-References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
- <35940e6c0ed86fd94468e175061faeac@3xo.fr> <Z-Z95ePf3KQZ2MnB@infradead.org>
- <48685a06c2608b182df3b7a767520c1d@3xo.fr>
- <F89FD4A3-FE54-4DB2-BA08-3BCC8843C60E@manguebit.com>
- <5087f9cb3dc1487423de34725352f57c@3xo.fr>
-Date: Tue, 15 Apr 2025 15:28:14 -0300
+	s=arc-20240116; t=1744742635; c=relaxed/simple;
+	bh=uov5pf2FdkO2Gsa2n0Ob2obAF9nGPbtTncGp38+Ube8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sXwNCufw5hP1Up4FvULO9Way7fAVIYapXO3mrNgcf4kwRGHa8zbq/JItyDQp7hH8vtTqyqo6qeNHpdpQWQlEB/37t4rqrAPYgHGLJbk3bI7Aaw0CGk6hTvW/RnxgYJcTNv/8gTzOG7ev9AJRAHurjc3gS8BGvsJ3UkZRjFGQEb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=NTvbSl/0; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22548a28d0cso85715335ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 11:43:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1744742633; x=1745347433; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vsqX9FF/96tgvWv/MBEvfR9STkMTnr/F/tKaBfVEUTE=;
+        b=NTvbSl/0FCKvIYuFCSRMs9xpDRLnv5E6X3e6svvD5SvQdP4O6COvKcGFAXw3JMZQzF
+         EsGeMegPa3gU95hy05ZLen8D07n+cpxufvEg+NWA5loM2WCYWi4CQ2HSu1zhdrzJqYqc
+         rvUrgonDr5sAnSd00Rzi3EQFBKXDKerTbxEZ0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744742633; x=1745347433;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vsqX9FF/96tgvWv/MBEvfR9STkMTnr/F/tKaBfVEUTE=;
+        b=JvQ8T4cF3M96hm6f6Om8UtLKKIU/Tz12iqL6dh+CTZUDtVUOvSO8DlM47UFNVVmYQE
+         OzN56T6uspEaAWqWlI6FANxHpogomJ72cnaczgCNDuyIAVE0179aG5U1JSY3kgJmwZJJ
+         fZs5KzR6kNokSRYdn774ISiAezve3AKyMhkHcil9Q9+QJ8eGoL8ArSCXUm/I0F04VGCS
+         rFXR4/qo8eGJ6w55gfXEArw4SuE9ZGSDZB7htkpXXlY37MhKnnvHp7wYpqhPC7d31qSc
+         zjqSguwTEaTZhWyePfSQZlPhrD6KllhLPbLjJnb2TY0FvzXz5WKTH8mjNiypB+pS1hxQ
+         FYpA==
+X-Gm-Message-State: AOJu0YyTZm2PmUFssaK7trSit38eTfQ7gusKcjH/5CpR+X8sEcHZykeX
+	mTGCtwXfAeg92ql1EjnbX/GutHfuf/TTU5H4WAOnvbv5Oq5PSb2haWchR2eVcroLOhHIIHTO3aF
+	YhwNH2S+GH7B2sDV5YM8DYNN/0Hjp5yKqeRVh1HKEPVOTMBYMftA2rbM5H1G+gUwQBGECncByJ9
+	EIndLw+y+6o8Oj1n3n5+2KtPIR+51EUshKpFrDIgfNxnak
+X-Gm-Gg: ASbGncvGF6TXgfOra2Q+StZQoXVFsw4VtFB1Cl1FaaFgs4Vv3klaxw1MgxjyzAi58zY
+	A9/ObspJ2K86FoRC3aXF+QyjcFB8efVWedGHOw67rf7zJkewX0d1BDPoLdAHBTQm+30pBYJqbtB
+	ucwzFZS6lVu7oMX6kO2oV4GP+e9RPXMu4Gb8HKt3H/qrwfDHgnNFmCJwqnhr6B1DexS2poimPcK
+	RJ/uqhqX9/7TqAgRCm1EBJaHCHtR+NSsM9A5J6jQxGXFJIxgGy+XEo1VpAX/O8/MacpsAYIcjQn
+	mBTPLDDeStQTjqOXOu3deV3qx9gyum+JZhsJk2xttu50uF7f
+X-Google-Smtp-Source: AGHT+IEMF7kJ1BVNruMG1QJeIs+nIXZYq+KKJZbOCfzP18tQCrD9H3dYN/X4lmLNx7Ghzq3ksbhYzA==
+X-Received: by 2002:a17:902:d4cb:b0:223:5ace:eccf with SMTP id d9443c01a7336-22c319f64d0mr2924155ad.25.1744742632722;
+        Tue, 15 Apr 2025 11:43:52 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22ac7ccb7b5sm120514455ad.237.2025.04.15.11.43.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 11:43:52 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: Joe Damato <jdamato@fastly.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [RFC vfs/for-next 0/1] Only set epoll timeout if it's in the future
+Date: Tue, 15 Apr 2025 18:43:45 +0000
+Message-ID: <20250415184346.39229-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-Hi Nicolas,
+Greetings:
 
-Sorry for the delay as I've got busy with some downstream work.
+Sending as an RFC against vfs/for-next because I am not sure which
+branch to send this against.
 
-Nicolas Baranger <nicolas.baranger@3xo.fr> writes:
+It's possible this should be against vfs.fixes with a Fixes
+bf3b9f6372c4 ("epoll: Add busy poll support to epoll with socket
+fds."), but I am not sure.
 
->> I'll look into it as soon as I recover from my illness.
-> Hope you're doing better
+The commit message explains the issue in detail, please see the commit
+message for details.
 
-I'm fully recovered now, thanks :-)
+If this patch is appropriate, please let me know:
+  - which branch to generate the patch against (I suspect vfs/for-next
+    is wrong),
+  - whether to include the fixes tag mentioned above or if this is
+    considered "new code" instead of a bug fix and I'll omit the fixes.
 
-> I had to rollback to linux 6.13.8 to be able to use the SMB share and 
-> here is what I constat
-> (don't know if it's a normal behavior but if yes, SMB seems to be a very 
-> very unefficient protocol)
->
-> I think the issue can be buffer related:
-> On Linux 6.13.8 the copy and cat of the 5 bytes 'toto' file containing 
-> only ascii string 'toto' is working fine but here is what I capture with 
-> tcpdump during transfert of toto file:
-> https://xba.soartist.net/t6.pcap
-> 131 tcp packets to transfer a 5 byte file...
-> Isn't there a problem ?
-> Openning the pcap file with wireshark show a lot of lines:
-> 25	0.005576	10.0.10.100	10.0.10.25	SMB2	1071	Read Response, Error: 
-> STATUS_END_OF_FILE
-> It seems that those lines appears after the 5 bytes 'toto' file had been 
-> transferred, and it continue until the last ACK recieved
+I'll re-send as instructed (without this cover letter)... or not if this
+patch is incorrect/not desirable :)
 
-Thanks for the trace.  I was finally able to reproduce your issue and
-will provide you with a fix soon.
+Thanks,
+Joe
+
+Joe Damato (1):
+  eventpoll: Set epoll timeout if it's in the future
+
+ fs/eventpoll.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+
+base-commit: 2e72b1e0aac24a12f3bf3eec620efaca7ab7d4de
+-- 
+2.43.0
+
 
