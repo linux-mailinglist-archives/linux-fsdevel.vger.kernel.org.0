@@ -1,415 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-46451-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7BEA898FC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 11:58:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0867A8993D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 12:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D8FB189F196
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 09:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8187188E904
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 10:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3384A291176;
-	Tue, 15 Apr 2025 09:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2940328F513;
+	Tue, 15 Apr 2025 10:00:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NHNYQ+sc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/nkxICUK";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NHNYQ+sc";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/nkxICUK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="THRww4Nj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41A6D28DEE9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 09:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F48E28DEF7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 10:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744711007; cv=none; b=m2ZulpBErrU2S+PTKx4pjwUOvXHR71LOhPLtc1nY5w9Be0zLDx7/LXuSE9lqcHRmxoM7MljIwYfxwPHSCzW5A+kzHz6Xmj2dgt3iq6Nvwkyua+4gc9pqqnJYcDg3/neTdZ9bwc+n9eSBKmjHaArxF+qX2sFhLEyOCHrtbRLI7V8=
+	t=1744711242; cv=none; b=UUI6k3n4D+ZQDkxLkL5TDW/t5r2vlFbAOi+PgwHeWJfA4l0IO18V/Z4x2tY0dsMjCtkQlLh6147CK4LEUka7GYcpiYeCiY2dfNu/U2q6RAXA0MtVgmtI3dtX92fcHn9dCHe/ej0XVd2vq1vP0WS69e0vaCmLC8WqNKf8eAr7KIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744711007; c=relaxed/simple;
-	bh=iJrdd2TJ/6W/km2FzFrTj711KEd57PxMjh+mrH4/cRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ezfJtmz/aUXWy8/1G4Rh+5vl42A8uxgeZ/Zzv5ti9UVejJxblWKre+X5AaHNtJsMvMSMkHnZv2f3OdPXpSNIEcjdJCESJnwgi/BiAVVSUEO0+KhIOHsc88xkKBUEdgXO5iFLXVkV+1YMH+Tfl7dx8Ry9qAKZ6mCRRGzQGQaElv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NHNYQ+sc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/nkxICUK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NHNYQ+sc; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/nkxICUK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6BBB51F387;
-	Tue, 15 Apr 2025 09:56:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744711003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tfDoTRC4OdTGQZdjVtzbpXqCKPi/pE/pFvd4FbHisXU=;
-	b=NHNYQ+scq/kACJK0VR28ovSJkvEteb6lu2Nn/UKz941UZvFFx4SKa5frVqeAfiA64ZL9Yh
-	vRZZpDwLoy159V8a9JUaMCYPZGO80NO6gWvxgPr9QkV+jTN3LxT+lF7wNlGqsvNjGtoGk7
-	TbK/2BY7eJ0xrVTd5W0OKR3PA+cqtKY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744711003;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tfDoTRC4OdTGQZdjVtzbpXqCKPi/pE/pFvd4FbHisXU=;
-	b=/nkxICUKF7g8iV49kmFXjArOEqJj1A6N7vdJryIZsUm9kVC3FDp12cRHWAVorM1PqrQrKj
-	CUJ4JtgyqPNXC0Cg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1744711003; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tfDoTRC4OdTGQZdjVtzbpXqCKPi/pE/pFvd4FbHisXU=;
-	b=NHNYQ+scq/kACJK0VR28ovSJkvEteb6lu2Nn/UKz941UZvFFx4SKa5frVqeAfiA64ZL9Yh
-	vRZZpDwLoy159V8a9JUaMCYPZGO80NO6gWvxgPr9QkV+jTN3LxT+lF7wNlGqsvNjGtoGk7
-	TbK/2BY7eJ0xrVTd5W0OKR3PA+cqtKY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1744711003;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=tfDoTRC4OdTGQZdjVtzbpXqCKPi/pE/pFvd4FbHisXU=;
-	b=/nkxICUKF7g8iV49kmFXjArOEqJj1A6N7vdJryIZsUm9kVC3FDp12cRHWAVorM1PqrQrKj
-	CUJ4JtgyqPNXC0Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5FCE7139A1;
-	Tue, 15 Apr 2025 09:56:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id H7piF1st/meRYAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 15 Apr 2025 09:56:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1B132A0947; Tue, 15 Apr 2025 11:56:39 +0200 (CEST)
-Date: Tue, 15 Apr 2025 11:56:39 +0200
-From: Jan Kara <jack@suse.cz>
-To: Jonas 'Sortie' Termansen <sortie@maxsi.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Thomas Schmitt <scdbackup@gmx.net>
-Subject: Re: [PATCH] isofs: fix Y2038 and Y2156 issues in Rock Ridge TF entry
-Message-ID: <qlhmb24vynjnkpc2xckiq3oiqicwr7jhugv3j463shnupf4ha5@yf3dwauqh3mc>
-References: <20250411145022.2292255-1-sortie@maxsi.org>
+	s=arc-20240116; t=1744711242; c=relaxed/simple;
+	bh=Ih0rwTsgMwn2qHbqbjhFKJobk3RzLxITuqyzYdo1Mfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k7yCE6gnlNa+Jsv7SnmFf/n4DIIpl64zbWI3zhYRfvyi1YNfi/8Wj39NBMHvDX1xABwey1juGi5N5jOH5GP5P/ncM34B5mniYucMQx6UcukJdXfJSvUftTtDmqgiNcym7+RbWGelYSlsKECkwqNPpKumZYo+AYz2F/biujKvjF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=THRww4Nj; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744711239;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=7mAeOW/b2ubB4qNjTwwEbjGSRwZqSyZVqpozBB+ugwA=;
+	b=THRww4Nj4tv0fnOkPkVT0g0YWbeWYSOxCh/1Bp8ZWozycSAKYeyBg6jE/1PaSMqepgI1Z8
+	XW0PL/ffbaMyVQh4jUHr+C2dMEhHPO1h6ZxPpFQux8UCFqe3tHOEjeYBqAdpiyF49ILRxw
+	XGgrPb4UxAdUqHo3yJtPK/djKMJHSsU=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-518-9ESJ7FmaNmOFxcpGE7pI4w-1; Tue, 15 Apr 2025 06:00:38 -0400
+X-MC-Unique: 9ESJ7FmaNmOFxcpGE7pI4w-1
+X-Mimecast-MFC-AGG-ID: 9ESJ7FmaNmOFxcpGE7pI4w_1744711237
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d0830c3f7so40564795e9.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 03:00:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744711237; x=1745316037;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=7mAeOW/b2ubB4qNjTwwEbjGSRwZqSyZVqpozBB+ugwA=;
+        b=weTmk6YspCBWuXr7KX1o00phbpjfdvWhfsBWI8yF3sKhgIsu5A7KlrIBxDZPiun39W
+         Ba/JkwKK0eVtx2O2emeE2kTaOF4WPsuR1X0imodpUECIwsL3TrHZ87TGvqYkN3naPD8Y
+         LZuqCX1oEAhJru8XCx6Ffzh6OUqJ2lqAE//ZjRM1pLdjw96iwbQQr0C3qYIQj6hrwFKN
+         guIHdSnlKWWTW7upJ3A+oxrmp44xgYtWJbOxHftBeYfMu5lOnXUEaFUIN6V/66/yVPvY
+         8n4RfVI/kBMHpw+xvNU0v+ghg5BX3WK3U2SVaCimTJv1G4oK3hmPO92gPEyVJ/gu+Moa
+         TV2g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHE0JZmUwc+lD7sgRZgqCiNwbEQEVYQmebVd+XXoNqEArcH6ekliFK+5U+CetzaJekExLYXvTWxSQNlgxF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxo1BEHl1rGhUz0Di5YiV2pK85NEFN/2S6JLX3mSNZYTqXGInpA
+	JcBfAJcjwP4z9qcz0EqHMuZmSV8tecmvuLJ1KnhBuDnmx9jZRtwcB5VAU8U7AIiCi9kQ0P1f77v
+	tCYyrVOEdNfEK2QIIkbVn1puI5QswclPcKHb1hf/7twkHKIAQDRdj4yz8+9t7Xu0=
+X-Gm-Gg: ASbGncuKDhB/DfuoxYqTX5m321mluwhgdkj1ZP5yjnom7g7HSLK87+AMdBkmfV6JXLk
+	HM6vvxAzQ8j42zzaPHdz+sWcXLmvBJaZDME0PrWW7fzOHSGqa2q6aL6weEgXgV4kK8IO0Cyhqyf
+	oVeGHatKpufGp8IBnOWVCY/miT6Yp2n3w9sKDjbOscFR9dgLBIpmsIU0h/TCy41VJ2SmIMFxrrD
+	FBg2+8lFBpNHA1rMLjVaW6EI9NYC6C39rT4q/O6RlUx8BnRkz27Ypd7eB6dlpXGpGSQlfzIB6Oa
+	dZz/xG4LN4kiG8BPvWYCwj8qOV0nLPn307KBEhEOZdoMrjRvV2emEDCCZwdMUgkNMISct7H0ZKE
+	+DMxR6PXV/aBtpFWMK9ZD/pWZOCOsuthrEPYwSA==
+X-Received: by 2002:a05:600c:3113:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-43f3a9b5acdmr143132895e9.30.1744711236756;
+        Tue, 15 Apr 2025 03:00:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFua0RrMbLY9ixZJsGuyoUtI/FvxeaQUjCr3cFk2q+7C5IW0Bap/mKr+ZFuPq527qax9dAqAg==
+X-Received: by 2002:a05:600c:3113:b0:43c:fe5e:f03b with SMTP id 5b1f17b1804b1-43f3a9b5acdmr143132505e9.30.1744711236329;
+        Tue, 15 Apr 2025 03:00:36 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f02:2900:f54f:bad7:c5f4:9404? (p200300d82f022900f54fbad7c5f49404.dip0.t-ipconnect.de. [2003:d8:2f02:2900:f54f:bad7:c5f4:9404])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43f2075fc78sm207798535e9.27.2025.04.15.03.00.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 15 Apr 2025 03:00:35 -0700 (PDT)
+Message-ID: <7ef1f10e-b835-4cd6-be82-0c92412e2ecf@redhat.com>
+Date: Tue, 15 Apr 2025 12:00:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250411145022.2292255-1-sortie@maxsi.org>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmx.net];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,vger.kernel.org,gmx.net];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/2] mm: skip folio reclaim in legacy memcg contexts
+ for deadlockable mappings
+To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu,
+ akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc: jefflexu@linux.alibaba.com, shakeel.butt@linux.dev,
+ bernd.schubert@fastmail.fm, ziy@nvidia.com, jlayton@kernel.org,
+ kernel-team@meta.com, Miklos Szeredi <mszeredi@redhat.com>
+References: <20250414222210.3995795-1-joannelkoong@gmail.com>
+ <20250414222210.3995795-2-joannelkoong@gmail.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250414222210.3995795-2-joannelkoong@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri 11-04-25 16:50:21, Jonas 'Sortie' Termansen wrote:
-> This change implements the Rock Ridge TF entry LONG_FORM bit, which uses
-> the ISO 9660 17-byte date format (up to year 9999, with 10ms precision)
-> instead of the 7-byte date format (up to year 2155, with 1s precision).
-> 
-> Previously the LONG_FORM bit was ignored; and isofs would entirely
-> misinterpret the date as the wrong format, resulting in garbage
-> timestamps on the filesystem.
-> 
-> The Y2038 issue in iso_date() is fixed by returning a struct timespec64
-> instead of an int.
-> 
-> parse_rock_ridge_inode_internal() is fixed so it does proper bounds
-> checks of the TF entry timestamps.
-> 
-> Signed-off-by: Jonas 'Sortie' Termansen <sortie@maxsi.org>
+>   			/* Case 1 above */
+>   			if (current_is_kswapd() &&
+>   			    folio_test_reclaim(folio) &&
+> @@ -1201,7 +1205,9 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+>   			/* Case 2 above */
+>   			} else if (writeback_throttling_sane(sc) ||
+>   			    !folio_test_reclaim(folio) ||
+> -			    !may_enter_fs(folio, sc->gfp_mask)) {
+> +			    !may_enter_fs(folio, sc->gfp_mask) ||
+> +			    (mapping &&
+> +			     mapping_writeback_may_deadlock_on_reclaim(mapping))) {
 
-Thanks for the patch! It looks good. I'll merge it through my tree.
+Nit: Would have put that into a single line (we can exceed 80c where 
+reasonable)
 
-								Honza
+Thanks!
 
-> ---
-> I tested this change by making two .isos:
-> 
-> * A normal .iso with Rock Ridge TF without LONG_FORM made with xorriso
-> * A long-form .iso with Rock Ridge TF LONG_FORM made with a patched xorriso
-> 
-> Each containing these test files:
-> 
-> -rw-rw-r-- 1 root root       0 Apr 11 16:20 Y2025
-> -rw-rw-r-- 1 root root       0 Jun  1  2038 Y2038
-> -rw-rw-r-- 1 root root       0 Jun  1  2155 Y2155
-> -rw-rw-r-- 1 root root       0 Jun  1  2156 Y2156
-> 
-> The normal Rock Ridge .iso was made with xorriso, and a long form .iso was
-> made with a custom xorriso patched to output Rock Ridge TF LONG_FORM.
-> 
-> On Linux master mounting an iso without LONG_FORM:
-> 
-> -r--r--r--  1 root root       0 Apr 11 16:20 Y2025
-> -r--r--r--  1 root root       0 Apr 25  1902 Y2038
-> -r--r--r--  1 root root       0 Apr 24  2019 Y2155
-> -r--r--r--  1 root root       0 Nov 24  2019 Y2156
-> 
-> (Y2025 is correct; Y2038, Y2155, and Y2156 are garbage)
-> 
-> On Linux master mounting an iso with LONG_FORM:
-> 
-> -r--r--r--  1 root root       0 Jan 25  1954 Y2025
-> -r--r--r--  1 root root       0 Jan 26  1954 Y2038
-> -r--r--r--  1 root root       0 Feb 28  1954 Y2155
-> -r--r--r--  1 root root       0 Feb 28  1954 Y2156
-> 
-> (All timestamps are garbage)
-> 
-> With this patch, mounting an iso without LONG_FORM:
-> 
-> -r--r--r--  1 root root       0 Apr 11 16:20 Y2025
-> -r--r--r--  1 root root       0 Jun  1  2038 Y2038
-> -r--r--r--  1 root root       0 Jun  1  2155 Y2155
-> -r--r--r--  1 root root       0 Jan  1  2156 Y2156
-> 
-> (Y2025, Y2038, and Y2155 are correct;
->  Y2156 was correctly truncated by xorriso)
-> 
-> With this patch, mounting an iso with LONG_FORM:
-> 
-> -r--r--r--  1 root root       0 Apr 11 16:20 Y2025
-> -r--r--r--  1 root root       0 Jun  1  2038 Y2038
-> -r--r--r--  1 root root       0 Jun  1  2155 Y2155
-> -r--r--r--  1 root root       0 Jun  1  2156 Y2156
-> 
-> (All timestamps are correct)
-> ---
->  fs/isofs/inode.c |  7 +++++--
->  fs/isofs/isofs.h |  4 +++-
->  fs/isofs/rock.c  | 40 ++++++++++++++++++++++-----------------
->  fs/isofs/rock.h  |  6 +-----
->  fs/isofs/util.c  | 49 +++++++++++++++++++++++++++++++-----------------
->  5 files changed, 64 insertions(+), 42 deletions(-)
-> 
-> diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-> index 47038e660812..d5da9817df9b 100644
-> --- a/fs/isofs/inode.c
-> +++ b/fs/isofs/inode.c
-> @@ -1275,6 +1275,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
->  	unsigned long offset;
->  	struct iso_inode_info *ei = ISOFS_I(inode);
->  	int ret = -EIO;
-> +	struct timespec64 ts;
->  
->  	block = ei->i_iget5_block;
->  	bh = sb_bread(inode->i_sb, block);
-> @@ -1387,8 +1388,10 @@ static int isofs_read_inode(struct inode *inode, int relocated)
->  			inode->i_ino, de->flags[-high_sierra]);
->  	}
->  #endif
-> -	inode_set_mtime_to_ts(inode,
-> -			      inode_set_atime_to_ts(inode, inode_set_ctime(inode, iso_date(de->date, high_sierra), 0)));
-> +	ts = iso_date(de->date, high_sierra ? ISO_DATE_HIGH_SIERRA : 0);
-> +	inode_set_ctime_to_ts(inode, ts);
-> +	inode_set_atime_to_ts(inode, ts);
-> +	inode_set_mtime_to_ts(inode, ts);
->  
->  	ei->i_first_extent = (isonum_733(de->extent) +
->  			isonum_711(de->ext_attr_length));
-> diff --git a/fs/isofs/isofs.h b/fs/isofs/isofs.h
-> index 2d55207c9a99..506555837533 100644
-> --- a/fs/isofs/isofs.h
-> +++ b/fs/isofs/isofs.h
-> @@ -106,7 +106,9 @@ static inline unsigned int isonum_733(u8 *p)
->  	/* Ignore bigendian datum due to broken mastering programs */
->  	return get_unaligned_le32(p);
->  }
-> -extern int iso_date(u8 *, int);
-> +#define ISO_DATE_HIGH_SIERRA (1 << 0)
-> +#define ISO_DATE_LONG_FORM (1 << 1)
-> +struct timespec64 iso_date(u8 *p, int flags);
->  
->  struct inode;		/* To make gcc happy */
->  
-> diff --git a/fs/isofs/rock.c b/fs/isofs/rock.c
-> index dbf911126e61..576498245b9d 100644
-> --- a/fs/isofs/rock.c
-> +++ b/fs/isofs/rock.c
-> @@ -412,7 +412,12 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
->  				}
->  			}
->  			break;
-> -		case SIG('T', 'F'):
-> +		case SIG('T', 'F'): {
-> +			int flags, size, slen;
-> +
-> +			flags = rr->u.TF.flags & TF_LONG_FORM ? ISO_DATE_LONG_FORM : 0;
-> +			size = rr->u.TF.flags & TF_LONG_FORM ? 17 : 7;
-> +			slen = rr->len - 5;
->  			/*
->  			 * Some RRIP writers incorrectly place ctime in the
->  			 * TF_CREATE field. Try to handle this correctly for
-> @@ -420,27 +425,28 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
->  			 */
->  			/* Rock ridge never appears on a High Sierra disk */
->  			cnt = 0;
-> -			if (rr->u.TF.flags & TF_CREATE) {
-> -				inode_set_ctime(inode,
-> -						iso_date(rr->u.TF.times[cnt++].time, 0),
-> -						0);
-> +			if ((rr->u.TF.flags & TF_CREATE) && size <= slen) {
-> +				inode_set_ctime_to_ts(inode,
-> +						iso_date(rr->u.TF.data + size * cnt++, flags));
-> +				slen -= size;
->  			}
-> -			if (rr->u.TF.flags & TF_MODIFY) {
-> -				inode_set_mtime(inode,
-> -						iso_date(rr->u.TF.times[cnt++].time, 0),
-> -						0);
-> +			if ((rr->u.TF.flags & TF_MODIFY) && size <= slen) {
-> +				inode_set_mtime_to_ts(inode,
-> +						iso_date(rr->u.TF.data + size * cnt++, flags));
-> +				slen -= size;
->  			}
-> -			if (rr->u.TF.flags & TF_ACCESS) {
-> -				inode_set_atime(inode,
-> -						iso_date(rr->u.TF.times[cnt++].time, 0),
-> -						0);
-> +			if ((rr->u.TF.flags & TF_ACCESS) && size <= slen) {
-> +				inode_set_atime_to_ts(inode,
-> +						iso_date(rr->u.TF.data + size * cnt++, flags));
-> +				slen -= size;
->  			}
-> -			if (rr->u.TF.flags & TF_ATTRIBUTES) {
-> -				inode_set_ctime(inode,
-> -						iso_date(rr->u.TF.times[cnt++].time, 0),
-> -						0);
-> +			if ((rr->u.TF.flags & TF_ATTRIBUTES) && size <= slen) {
-> +				inode_set_ctime_to_ts(inode,
-> +						iso_date(rr->u.TF.data + size * cnt++, flags));
-> +				slen -= size;
->  			}
->  			break;
-> +		}
->  		case SIG('S', 'L'):
->  			{
->  				int slen;
-> diff --git a/fs/isofs/rock.h b/fs/isofs/rock.h
-> index 7755e587f778..c0856fa9bb6a 100644
-> --- a/fs/isofs/rock.h
-> +++ b/fs/isofs/rock.h
-> @@ -65,13 +65,9 @@ struct RR_PL_s {
->  	__u8 location[8];
->  };
->  
-> -struct stamp {
-> -	__u8 time[7];		/* actually 6 unsigned, 1 signed */
-> -} __attribute__ ((packed));
-> -
->  struct RR_TF_s {
->  	__u8 flags;
-> -	struct stamp times[];	/* Variable number of these beasts */
-> +	__u8 data[];
->  } __attribute__ ((packed));
->  
->  /* Linux-specific extension for transparent decompression */
-> diff --git a/fs/isofs/util.c b/fs/isofs/util.c
-> index e88dba721661..42f479da0b28 100644
-> --- a/fs/isofs/util.c
-> +++ b/fs/isofs/util.c
-> @@ -16,29 +16,44 @@
->   * to GMT.  Thus  we should always be correct.
->   */
->  
-> -int iso_date(u8 *p, int flag)
-> +struct timespec64 iso_date(u8 *p, int flags)
->  {
->  	int year, month, day, hour, minute, second, tz;
-> -	int crtime;
-> +	struct timespec64 ts;
-> +
-> +	if (flags & ISO_DATE_LONG_FORM) {
-> +		year = (p[0] - '0') * 1000 +
-> +		       (p[1] - '0') * 100 +
-> +		       (p[2] - '0') * 10 +
-> +		       (p[3] - '0') - 1900;
-> +		month = ((p[4] - '0') * 10 + (p[5] - '0'));
-> +		day = ((p[6] - '0') * 10 + (p[7] - '0'));
-> +		hour = ((p[8] - '0') * 10 + (p[9] - '0'));
-> +		minute = ((p[10] - '0') * 10 + (p[11] - '0'));
-> +		second = ((p[12] - '0') * 10 + (p[13] - '0'));
-> +		ts.tv_nsec = ((p[14] - '0') * 10 + (p[15] - '0')) * 10000000;
-> +		tz = p[16];
-> +	} else {
-> +		year = p[0];
-> +		month = p[1];
-> +		day = p[2];
-> +		hour = p[3];
-> +		minute = p[4];
-> +		second = p[5];
-> +		ts.tv_nsec = 0;
-> +		/* High sierra has no time zone */
-> +		tz = flags & ISO_DATE_HIGH_SIERRA ? 0 : p[6];
-> +	}
->  
-> -	year = p[0];
-> -	month = p[1];
-> -	day = p[2];
-> -	hour = p[3];
-> -	minute = p[4];
-> -	second = p[5];
-> -	if (flag == 0) tz = p[6]; /* High sierra has no time zone */
-> -	else tz = 0;
-> -	
->  	if (year < 0) {
-> -		crtime = 0;
-> +		ts.tv_sec = 0;
->  	} else {
-> -		crtime = mktime64(year+1900, month, day, hour, minute, second);
-> +		ts.tv_sec = mktime64(year+1900, month, day, hour, minute, second);
->  
->  		/* sign extend */
->  		if (tz & 0x80)
->  			tz |= (-1 << 8);
-> -		
-> +
->  		/* 
->  		 * The timezone offset is unreliable on some disks,
->  		 * so we make a sanity check.  In no case is it ever
-> @@ -65,7 +80,7 @@ int iso_date(u8 *p, int flag)
->  		 * for pointing out the sign error.
->  		 */
->  		if (-52 <= tz && tz <= 52)
-> -			crtime -= tz * 15 * 60;
-> +			ts.tv_sec -= tz * 15 * 60;
->  	}
-> -	return crtime;
-> -}		
-> +	return ts;
-> +}
-> -- 
-> 2.47.2
-> 
+Acked-by: David Hildenbrand <david@redhat.com>
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+
+David / dhildenb
+
 
