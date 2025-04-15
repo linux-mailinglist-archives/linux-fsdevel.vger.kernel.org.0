@@ -1,137 +1,252 @@
-Return-Path: <linux-fsdevel+bounces-46425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A6EBA89053
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 02:07:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3AB6A8905E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 02:14:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC5517AC99
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 00:07:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 083E41899495
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Apr 2025 00:14:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148984C83;
-	Tue, 15 Apr 2025 00:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2BF5695;
+	Tue, 15 Apr 2025 00:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LApGYkPW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsQ7eLj0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F80D1361
-	for <linux-fsdevel@vger.kernel.org>; Tue, 15 Apr 2025 00:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A323849C;
+	Tue, 15 Apr 2025 00:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744675627; cv=none; b=FQJgWZ75l1GZlleJR/Le4Buqv5Y2su9PoSW5EQQ3qg3pk2nC3rnKVVuA2gBzLZG/pM7zWhiV825yXpNHebKfJUQSM1+TJonNxPFwRQEyxp7JQ0yJnDqODb9W07VJNlmGX3BEVta1QDDKRCfObOY0TJIi5NjgwmitNXH4h8h/R+k=
+	t=1744676047; cv=none; b=DdB8zUOutpAvFSktiMNXqmmYji5FgHvp3WxmJtx28IM2Ggob+PCHZPJYYGcQ8WaJx/M2DH+2urf5SeD+2ptZn1ARuUFZrhJnecD7R+X3yUlOzoeSAHHzESqtMFZxEunvXOjB/t47FpMr41wLRFeMfv88kypWhvrStKoMiaWRVqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744675627; c=relaxed/simple;
-	bh=VTEwxIUMHpJnqVjOO2/2T1t5nsSTco3qclz9acxbapM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XnH9hvDVJvEP2/2iriSDb/s3NRCxfIJdhdrrDGVhyqD7PSwSqUky5N3q5/TQ5uCnM0c9FPrZt2OUm5LTfRefPalhclMnNLRTyz9I7ScVGR06Xnn54FIFIy8N1awRv1WehggiYXHjOwpQPzdPiwA4CmvONpZuT4/bsFWc2nhiT9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LApGYkPW; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Mon, 14 Apr 2025 17:06:57 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1744675621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vO1VVSpgnIbT9iiI1C/w6Oo36KjjAxjmpD4Oh0dGrtY=;
-	b=LApGYkPWsZgEIABfvcBx5pg3tMJ8FHyw63VxpzndBxxx6WOejSOrN+HdNlEOttQH92NoBo
-	J/RZjm36WmGRctMf4HJYmQ7+zYrS6KAUOYwPYJnauVty4jsv1eZcsIgqg/mTn2M56KpYjO
-	uc0dLvsPNWGh9jlFZwM2/Y58ds04tyk=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: miklos@szeredi.hu, akpm@linux-foundation.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, jefflexu@linux.alibaba.com, david@redhat.com, 
-	bernd.schubert@fastmail.fm, ziy@nvidia.com, jlayton@kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v8 0/2] fuse: remove temp page copies in writeback
-Message-ID: <57pojgb4bsesfvbbeit3ohjre5sorcafqs62zszrdgfeyp3qaz@k732xugk53lm>
-References: <20250414222210.3995795-1-joannelkoong@gmail.com>
- <cvrrumc6uduvg43gyx24bw2llre3ihdq7pjj24l6yeon7antni@7e2bmd2bya5c>
- <CAJnrk1bOJYFTAybYHL9HW=Ex7rs3DgYU10W=7wsuu8t1OoMx8Q@mail.gmail.com>
+	s=arc-20240116; t=1744676047; c=relaxed/simple;
+	bh=a6Lq/GiKmX1UHcnKSF/sNR0mGQolJhfULhsR14qULXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RIhklB7SJmhiCiafgfgSpG7Rslu1bBxODNtYNed1K26v9F9ZmdCfgDFsb51g84qXMUNl7g15PvTtVpqebqc7UZrFX97oCRxgpkK7OvhsTrIyq9QKxJk2DzRMZyORZr+k7i5zj2fIGo1KvMIZpeFx5p7Va1blrWJDWB6aZcEswTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsQ7eLj0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 743E2C4CEE2;
+	Tue, 15 Apr 2025 00:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744676046;
+	bh=a6Lq/GiKmX1UHcnKSF/sNR0mGQolJhfULhsR14qULXM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=AsQ7eLj0dGX4n529lXkXZUELeUdaJAAVnzNg2z9UUNhqbtjPwG176LPRevCPscRzl
+	 q60Uz7pVssMqlKBM/x6XHVZln3yRJK6BAx+PyW6MWI4TgAuSJ8/VTX5OLIZvyVDSjc
+	 1SM9RpvTSWPdhz2NesoW7BOWhmzFQz46uLIHTP58L3zlGRWEXra6rqeVUBI4aAKHK3
+	 df7tyUOJRo2XVBW0adl++2ndYTZlSKSs2M6f6aiaAZjDMYk4cc19Bj4Eaq5XSKqxub
+	 ALy1UdHQ5WvvQczH1tGp1hNhhEJ4v+0DMWD8Iq76jsoz0tHLNLR8uh3ZJTj+eWnr96
+	 eBYvmddPJ+5mg==
+Date: Mon, 14 Apr 2025 17:14:05 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: axboe@kernel.dk
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	linux-block <linux-block@vger.kernel.org>,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	xfs <linux-xfs@vger.kernel.org>, Jack Vogel <jack.vogel@oracle.com>
+Subject: [RFC[RAP] 1/2] block: fix race between set_blocksize and read paths
+Message-ID: <20250415001405.GA25659@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJnrk1bOJYFTAybYHL9HW=Ex7rs3DgYU10W=7wsuu8t1OoMx8Q@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
 
-On Mon, Apr 14, 2025 at 04:36:58PM -0700, Joanne Koong wrote:
-> On Mon, Apr 14, 2025 at 3:47 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Mon, Apr 14, 2025 at 03:22:08PM -0700, Joanne Koong wrote:
-> > > The purpose of this patchset is to help make writeback in FUSE filesystems as
-> > > fast as possible.
-> > >
-> > > In the current FUSE writeback design (see commit 3be5a52b30aa
-> > > ("fuse: support writable mmap"))), a temp page is allocated for every dirty
-> > > page to be written back, the contents of the dirty page are copied over to the
-> > > temp page, and the temp page gets handed to the server to write back. This is
-> > > done so that writeback may be immediately cleared on the dirty page, and this
-> > > in turn is done in order to mitigate the following deadlock scenario that may
-> > > arise if reclaim waits on writeback on the dirty page to complete (more
-> > > details
-> > > can be found in this thread [1]):
-> > > * single-threaded FUSE server is in the middle of handling a request
-> > >   that needs a memory allocation
-> > > * memory allocation triggers direct reclaim
-> > > * direct reclaim waits on a folio under writeback
-> > > * the FUSE server can't write back the folio since it's stuck in
-> > >   direct reclaim
-> > >
-> > > Allocating and copying dirty pages to temp pages is the biggest performance
-> > > bottleneck for FUSE writeback. This patchset aims to get rid of the temp page
-> > > altogether (which will also allow us to get rid of the internal FUSE rb tree
-> > > that is needed to keep track of writeback status on the temp pages).
-> > > Benchmarks show approximately a 20% improvement in throughput for 4k
-> > > block-size writes and a 45% improvement for 1M block-size writes.
-> > >
-> > > In the current reclaim code, there is one scenario where writeback is waited
-> > > on, which is the case where the system is running legacy cgroupv1 and reclaim
-> > > encounters a folio that already has the reclaim flag set and the caller did
-> > > not have __GFP_FS (or __GFP_IO if swap) set.
-> > >
-> > > This patchset adds a new mapping flag, AS_WRITEBACK_MAY_DEADLOCK_ON_RECLAIM,
-> > > which filesystems may set on its inode mappings to indicate that reclaim
-> > > should not wait on writeback. FUSE will set this flag on its mappings. Reclaim
-> > > for the legacy cgroup v1 case described above will skip reclaim of folios with
-> > > that flag set. With this flag set, now FUSE can remove temp pages altogether.
-> > >
-> > > With this change, writeback state is now only cleared on the dirty page after
-> > > the server has written it back to disk. If the server is deliberately
-> > > malicious or well-intentioned but buggy, this may stall sync(2) and page
-> > > migration, but for sync(2), a malicious server may already stall this by not
-> > > replying to the FUSE_SYNCFS request and for page migration, there are already
-> > > many easier ways to stall this by having FUSE permanently hold the folio lock.
-> > > A fuller discussion on this can be found in [2]. Long-term, there needs to be
-> > > a more comprehensive solution for addressing migration of FUSE pages that
-> > > handles all scenarios where FUSE may permanently hold the lock, but that is
-> > > outside the scope of this patchset and will be done as future work. Please
-> > > also note that this change also now ensures that when sync(2) returns, FUSE
-> > > filesystems will have persisted writeback changes.
-> > >
-> > > For this patchset, it would be ideal if the first patch could be taken by
-> > > Andrew to the mm tree and the second patch could be taken by Miklos into the
-> > > fuse tree, as the fuse large folios patchset [3] depends on the second patch.
-> >
-> > Why not take both patches through FUSE tree? Second patch has dependency
-> > on first patch, so there is no need to keep them separate.
-> 
-> If that's possible, that sounds great to me too. The patchset went
-> through Andrew's mm tree last time, so I'm not sure if the protocol is
-> that any/all mm changes need to go through Andrew's tree.
+From: Darrick J. Wong <djwong@kernel.org>
 
-This series can go through mm tree or fuse tree but it seems like you
-plan to do a followup fuse work which requires this series. I would
-suggest to go through fuse tree. Just let Andrew know and he is mostly
-fine with it.
+With the new large sector size support, it's now the case that
+set_blocksize can change i_blksize and the folio order in a manner that
+conflicts with a concurrent reader and causes a kernel crash.
+
+Specifically, let's say that udev-worker calls libblkid to detect the
+labels on a block device.  The read call can create an order-0 folio to
+read the first 4096 bytes from the disk.  But then udev is preempted.
+
+Next, someone tries to mount an 8k-sectorsize filesystem from the same
+block device.  The filesystem calls set_blksize, which sets i_blksize to
+8192 and the minimum folio order to 1.
+
+Now udev resumes, still holding the order-0 folio it allocated.  It then
+tries to schedule a read bio and do_mpage_readahead tries to create
+bufferheads for the folio.  Unfortunately, blocks_per_folio == 0 because
+the page size is 4096 but the blocksize is 8192 so no bufferheads are
+attached and the bh walk never sets bdev.  We then submit the bio with a
+NULL block device and crash.
+
+Therefore, truncate the page cache after flushing but before updating
+i_blksize.  However, that's not enough -- we also need to lock out file
+IO and page faults during the update.  Take both the i_rwsem and the
+invalidate_lock in exclusive mode for invalidations, and in shared mode
+for read/write operations.
+
+I don't know if this is the correct fix, but xfs/259 found it.
+
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+ block/bdev.c      |   12 ++++++++++++
+ block/blk-zoned.c |    5 ++++-
+ block/fops.c      |    7 +++++++
+ block/ioctl.c     |    6 ++++++
+ 4 files changed, 29 insertions(+), 1 deletion(-)
+
+diff --git a/block/bdev.c b/block/bdev.c
+index 7b4e35a661b0c9..0cbdac46d98d86 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -169,11 +169,23 @@ int set_blocksize(struct file *file, int size)
+ 
+ 	/* Don't change the size if it is same as current */
+ 	if (inode->i_blkbits != blksize_bits(size)) {
++		/* Prevent concurrent IO operations */
++		inode_lock(inode);
++		filemap_invalidate_lock(inode->i_mapping);
++
++		/*
++		 * Flush and truncate the pagecache before we reconfigure the
++		 * mapping geometry because folio sizes are variable now.
++		 */
+ 		sync_blockdev(bdev);
++		kill_bdev(bdev);
++
+ 		inode->i_blkbits = blksize_bits(size);
+ 		mapping_set_folio_order_range(inode->i_mapping,
+ 				get_order(size), get_order(size));
+ 		kill_bdev(bdev);
++		filemap_invalidate_unlock(inode->i_mapping);
++		inode_unlock(inode);
+ 	}
+ 	return 0;
+ }
+diff --git a/block/blk-zoned.c b/block/blk-zoned.c
+index 0c77244a35c92e..8f15d1aa6eb89a 100644
+--- a/block/blk-zoned.c
++++ b/block/blk-zoned.c
+@@ -343,6 +343,7 @@ int blkdev_zone_mgmt_ioctl(struct block_device *bdev, blk_mode_t mode,
+ 		op = REQ_OP_ZONE_RESET;
+ 
+ 		/* Invalidate the page cache, including dirty pages. */
++		inode_lock(bdev->bd_mapping->host);
+ 		filemap_invalidate_lock(bdev->bd_mapping);
+ 		ret = blkdev_truncate_zone_range(bdev, mode, &zrange);
+ 		if (ret)
+@@ -364,8 +365,10 @@ int blkdev_zone_mgmt_ioctl(struct block_device *bdev, blk_mode_t mode,
+ 	ret = blkdev_zone_mgmt(bdev, op, zrange.sector, zrange.nr_sectors);
+ 
+ fail:
+-	if (cmd == BLKRESETZONE)
++	if (cmd == BLKRESETZONE) {
+ 		filemap_invalidate_unlock(bdev->bd_mapping);
++		inode_unlock(bdev->bd_mapping->host);
++	}
+ 
+ 	return ret;
+ }
+diff --git a/block/fops.c b/block/fops.c
+index be9f1dbea9ce0a..f46ae08fac33dd 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -746,7 +746,9 @@ static ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 			ret = direct_write_fallback(iocb, from, ret,
+ 					blkdev_buffered_write(iocb, from));
+ 	} else {
++		inode_lock_shared(bd_inode);
+ 		ret = blkdev_buffered_write(iocb, from);
++		inode_unlock_shared(bd_inode);
+ 	}
+ 
+ 	if (ret > 0)
+@@ -757,6 +759,7 @@ static ssize_t blkdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 
+ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ {
++	struct inode *bd_inode = bdev_file_inode(iocb->ki_filp);
+ 	struct block_device *bdev = I_BDEV(iocb->ki_filp->f_mapping->host);
+ 	loff_t size = bdev_nr_bytes(bdev);
+ 	loff_t pos = iocb->ki_pos;
+@@ -793,7 +796,9 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 			goto reexpand;
+ 	}
+ 
++	inode_lock_shared(bd_inode);
+ 	ret = filemap_read(iocb, to, ret);
++	inode_unlock_shared(bd_inode);
+ 
+ reexpand:
+ 	if (unlikely(shorted))
+@@ -836,6 +841,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 	if ((start | len) & (bdev_logical_block_size(bdev) - 1))
+ 		return -EINVAL;
+ 
++	inode_lock(inode);
+ 	filemap_invalidate_lock(inode->i_mapping);
+ 
+ 	/*
+@@ -868,6 +874,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 
+  fail:
+ 	filemap_invalidate_unlock(inode->i_mapping);
++	inode_unlock(inode);
+ 	return error;
+ }
+ 
+diff --git a/block/ioctl.c b/block/ioctl.c
+index faa40f383e2736..e472cc1030c60c 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -142,6 +142,7 @@ static int blk_ioctl_discard(struct block_device *bdev, blk_mode_t mode,
+ 	if (err)
+ 		return err;
+ 
++	inode_lock(bdev->bd_mapping->host);
+ 	filemap_invalidate_lock(bdev->bd_mapping);
+ 	err = truncate_bdev_range(bdev, mode, start, start + len - 1);
+ 	if (err)
+@@ -174,6 +175,7 @@ static int blk_ioctl_discard(struct block_device *bdev, blk_mode_t mode,
+ 	blk_finish_plug(&plug);
+ fail:
+ 	filemap_invalidate_unlock(bdev->bd_mapping);
++	inode_unlock(bdev->bd_mapping->host);
+ 	return err;
+ }
+ 
+@@ -199,12 +201,14 @@ static int blk_ioctl_secure_erase(struct block_device *bdev, blk_mode_t mode,
+ 	    end > bdev_nr_bytes(bdev))
+ 		return -EINVAL;
+ 
++	inode_lock(bdev->bd_mapping->host);
+ 	filemap_invalidate_lock(bdev->bd_mapping);
+ 	err = truncate_bdev_range(bdev, mode, start, end - 1);
+ 	if (!err)
+ 		err = blkdev_issue_secure_erase(bdev, start >> 9, len >> 9,
+ 						GFP_KERNEL);
+ 	filemap_invalidate_unlock(bdev->bd_mapping);
++	inode_unlock(bdev->bd_mapping->host);
+ 	return err;
+ }
+ 
+@@ -236,6 +240,7 @@ static int blk_ioctl_zeroout(struct block_device *bdev, blk_mode_t mode,
+ 		return -EINVAL;
+ 
+ 	/* Invalidate the page cache, including dirty pages */
++	inode_lock(bdev->bd_mapping->host);
+ 	filemap_invalidate_lock(bdev->bd_mapping);
+ 	err = truncate_bdev_range(bdev, mode, start, end);
+ 	if (err)
+@@ -246,6 +251,7 @@ static int blk_ioctl_zeroout(struct block_device *bdev, blk_mode_t mode,
+ 
+ fail:
+ 	filemap_invalidate_unlock(bdev->bd_mapping);
++	inode_unlock(bdev->bd_mapping->host);
+ 	return err;
+ }
+ 
 
