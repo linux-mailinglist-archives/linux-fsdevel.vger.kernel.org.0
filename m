@@ -1,434 +1,226 @@
-Return-Path: <linux-fsdevel+bounces-46560-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46561-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2467A9043F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 15:21:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8444CA9054A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 16:02:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E54218A2F65
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 13:19:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32D6D7AECDC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 14:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F111BD9D0;
-	Wed, 16 Apr 2025 13:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3922054E5;
+	Wed, 16 Apr 2025 13:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jtu0KuJy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1UdN079"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A703E1DED76
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 13:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB2AE204F88
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 13:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744809468; cv=none; b=OiQY5xUnqNzzpKgZ1Yq1Doy1yIhEURSIprk+PxWQEOylK/HcpsHIU3xsdfFvw8nCrCCxmezu8jakxnht+c6R618oEh5+j/s6bgD3lAMG4uB1V+styqRGmOYTSdTmuQWcTLLDnW58xhMEtPZAposNNGQNBnH5Iys9FdMxiBOlk4Y=
+	t=1744811399; cv=none; b=C/Hxii8y92GNPd5+/3twdvwCTRXIjFVU0RAwxzLrQDHhP68KX4pw7SVLW3NV56Lz1Wa4lp7qOpnsO9zsXVzF4nSH8+yQ3hN84jLEqouqRmCrUzo0drz+Tykimxx4vMfQsC1FPR419WCsmVciGRrKHawX+SJ3VEDkjW2j8UgHPt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744809468; c=relaxed/simple;
-	bh=ZpcBoDRaLJjfUNCD42ZoutluKwLn0eAAED/EEx7Y08g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c2i/eI+KwiMsdNp743Y4Zf6ZvRryMOOGukijQYGDWbSdSMWniGXu53BSoNPFgR9apTLHdIIynFOlyGHzvdafSygQ3WRc9GvXQ95cpVdO0DNy3BGiYaYx+oy1xvfeklv6W98R0bkOJi4hOc+mlPcGtIOXko3u4issJLVj9Y6Go88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jtu0KuJy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F684C4CEE2;
-	Wed, 16 Apr 2025 13:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744809468;
-	bh=ZpcBoDRaLJjfUNCD42ZoutluKwLn0eAAED/EEx7Y08g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Jtu0KuJy14v81mVGZ7bwQBsw32DhRDh3ItXaLS4dDeu+hUZLvc/m10rxu8H1lLmr+
-	 Ff+R34c3IHLEgeQ2Q21+E3t5QfVcgW+oirS7eeGb7cJRJwv54Oq+XAX/CBoyNesgkW
-	 x6/esFJQrkhZIN02zjwLzGDm3qmYd2EvqDWf4ZF3E9oQJ6M4acs3bJMF5pxzCHMBCt
-	 0XX9bjqnYwrw840Vxom+Vjj+j/+JtSLmvScgE2Gf+iUT8a9BGe5h8W9p8jYnlnnUj9
-	 Gv7ei5LcW0KubDLUv9wkrXO5w+hVG1f8Ciycr6VywWNh3wZwH2gpsRzzH0E1IECjId
-	 XLY2NxOmVJWQA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Jeff Layton <jlayton@kernel.org>,
-	Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH RFC 3/3] mnt_idmapping: inline all low-level helpers
-Date: Wed, 16 Apr 2025 15:17:24 +0200
-Message-ID: <20250416-work-mnt_idmap-s_user_ns-v1-3-273bef3a61ec@kernel.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org>
-References: <20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org>
+	s=arc-20240116; t=1744811399; c=relaxed/simple;
+	bh=U2lYcjN4DcyhBeyPUHglEcT34gWDq8xG2RVXreDkj7Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EI9Fn+XgQlfaTTHYTgFU/pFhe9+H2Mln6QjPK6e8xKu6jlOrrWAxJOvgiRDfcgPQOHI0kggtMMnAj0Blkf7Nz9i0LMoAi9Qjc7RieYO/bdLnMqqEeKdwjYZv67Ijb2bQIbnlif8/oMEotrk6MGuEwDPYjzauyBee4Rzo7DOvEJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1UdN079; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso10604634a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 06:49:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744811396; x=1745416196; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KU4UQDxvbw9wsUZMGMkx2xCKrWwv8r5dO5qGBh3pIFw=;
+        b=L1UdN079CF1VMMIuy7yZluk1ca2Pua7ZeJOL3VVMBbUKOmJQgBJDquDLI+xqnqWg0c
+         RQ/Zikg9Iy43KQdyXb10sVCM7T+6hpXDg6eSVdiny+xU+ytVoGXOqtqamzMzIfOG2zvL
+         Er0hv6uKI8WNL7Jeamsz+dKd9MHzFcngIDxTGNjT9flV0cLnLRaEMx+Q78dqfWnrGNL1
+         dhavj9Twg/3q6410LCABE7uq/oETGlVN/BIsECLTpIwcEXEYhpJ2T6OwG6bImpoxfJ4u
+         leawPhllVt93OXrnHGSN9KYR/XjG+Pmpud1EWrU9sy+PahuExECPSKNrNWRnh1QyuF6M
+         j/Ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744811396; x=1745416196;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KU4UQDxvbw9wsUZMGMkx2xCKrWwv8r5dO5qGBh3pIFw=;
+        b=QYzfxjopdp1To4438yxmkOI8QinGxBJw26Dx+SJnjidv/thRrb7e/XkaBUXRorV+7L
+         X16+iLdxKlr9Qbq5bhp0QEk5+89BO6NQx84FNBNXhK9kAqswYMmT8qqAyfLUv3maE225
+         /LjI9AInGSMqTEgXRahtT9nHsQFJJVx2r/riphnvBg6qagpFxXx0mwD+NQXRFp9HTC4w
+         g0OL7QuY0iq+l2dy3hqtzokPjOto0Lu3r+zkilQpJDNLgshVw88RPEIIZADh6bhRVyJ7
+         6NXmCYr/XPm3Ivo+7oRmYPQvUTd7vYsZfgais0yrR4z/tpP1RAYTCg8H7BGlEn1AsMtZ
+         7+tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUyHnSI3z7Z/hgqs9LcsHrSHJm0Gyr2PXcTIoaUlZmvdJGfmjjkUxaXwCKffA3bYVrHopeKtnUh0+RpvGjp@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI5/jQ9L0t+quGw4txa2sER6Et/7BlD8t/KzhU9XFzfDea1gTw
+	a8LRuIcvUxBc4SiX9o1ZZmBHigzGR0c6XaxkhtYjPlQnKjgBW/Zb+298Dg3Tj+/aHR/LHzPZms0
+	wTRTZC5tat7GwvStPRy6R6TTohAw=
+X-Gm-Gg: ASbGnct8oOtKBHNUyDxWaWweug8W0jjwyKsEuWiozF2+38ZFPGGczPRGKskrDN7Zx2G
+	WwUoAmTcvqqHNlWMzftLyfR0J4sMaBI68Liyuxd+9G3SIAcSOk8soTO26a+85vlA1yrLlrfTwGH
+	vmSmmEI5sutM63Tw8Mc2pn+g==
+X-Google-Smtp-Source: AGHT+IHOgcWeybRzWTGJ6NzFuhrpaoal06R6BRx3IJyJ8jWq3lbax5jRbEc+bRuSEYYflongomtbsuzWfL2BlyZ1mTA=
+X-Received: by 2002:a17:907:7246:b0:acb:3a0d:852c with SMTP id
+ a640c23a62f3a-acb42aee723mr150472666b.38.1744811395686; Wed, 16 Apr 2025
+ 06:49:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=12181; i=brauner@kernel.org; h=from:subject:message-id; bh=ZpcBoDRaLJjfUNCD42ZoutluKwLn0eAAED/EEx7Y08g=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/X/uk8mhfsqbf9OTfyyy+12quiZi8a4r5on/2tWZpS mf6LzDu6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIAwvDP5Wo4hB7JWbHTxv1 q7wPVR2fOPG+Z8yvncmhJz9XPv/3dA8jw4LDWyW9W40uG8vK2FVs9t+iJq5lXf7a9nLf55Wb7va dYwYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org> <20250416-work-mnt_idmap-s_user_ns-v1-1-273bef3a61ec@kernel.org>
+In-Reply-To: <20250416-work-mnt_idmap-s_user_ns-v1-1-273bef3a61ec@kernel.org>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 16 Apr 2025 15:49:43 +0200
+X-Gm-Features: ATxdqUEprhJGtBdWtRRQ6kvIhIY_yDBAQLrtQCD8bPmhLECaw_cuwFCnZJBhQgY
+Message-ID: <CAGudoHGQ=2B8F84YOzR1Xse3XjheYbWZnCfpLjfxYKabvceTtQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/3] inode: add fastpath for filesystem user namespace retrieval
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Let's inline all low-level helpers and use likely()/unlikely() to help
-the compiler along.
+On Wed, Apr 16, 2025 at 3:17=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> We currently always chase a pointer inode->i_sb->s_user_ns whenever we
+> need to map a uid/gid which is noticeable during path lookup as noticed
+> by Linus in [1]. In the majority of cases we don't need to bother with
+> that pointer chase because the inode won't be located on a filesystem
+> that's mounted in a user namespace. The user namespace of the superblock
+> cannot ever change once it's mounted. So introduce and raise IOP_USERNS
+> on all inodes and check for that flag in i_user_ns() when we retrieve
+> the user namespace.
+>
+> Link: https://lore.kernel.org/CAHk-=3DwhJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_P=
+rPqPB6_KEQ@mail.gmail.com [1]
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/inode.c                    |  6 ++++++
+>  fs/mnt_idmapping.c            | 14 --------------
+>  include/linux/fs.h            |  5 ++++-
+>  include/linux/mnt_idmapping.h | 14 ++++++++++++++
+>  4 files changed, 24 insertions(+), 15 deletions(-)
+>
+> diff --git a/fs/inode.c b/fs/inode.c
+> index 99318b157a9a..7335d05dd7d5 100644
+> --- a/fs/inode.c
+> +++ b/fs/inode.c
+> @@ -245,6 +245,8 @@ int inode_init_always_gfp(struct super_block *sb, str=
+uct inode *inode, gfp_t gfp
+>                 inode->i_opflags |=3D IOP_XATTR;
+>         if (sb->s_type->fs_flags & FS_MGTIME)
+>                 inode->i_opflags |=3D IOP_MGTIME;
+> +       if (unlikely(!initial_idmapping(i_user_ns(inode))))
+> +               inode->i_opflags |=3D IOP_USERNS;
+>         i_uid_write(inode, 0);
+>         i_gid_write(inode, 0);
+>         atomic_set(&inode->i_writecount, 0);
+> @@ -1864,6 +1866,10 @@ static void iput_final(struct inode *inode)
+>
+>         WARN_ON(inode->i_state & I_NEW);
+>
+> +       /* This is security sensitive so catch missing IOP_USERNS. */
+> +       VFS_WARN_ON_ONCE(!initial_idmapping(i_user_ns(inode)) &&
+> +                        !(inode->i_opflags & IOP_USERNS));
+> +
+>         if (op->drop_inode)
+>                 drop =3D op->drop_inode(inode);
+>         else
+> diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
+> index a37991fdb194..8f7ae908ea16 100644
+> --- a/fs/mnt_idmapping.c
+> +++ b/fs/mnt_idmapping.c
+> @@ -42,20 +42,6 @@ struct mnt_idmap invalid_mnt_idmap =3D {
+>  };
+>  EXPORT_SYMBOL_GPL(invalid_mnt_idmap);
+>
+> -/**
+> - * initial_idmapping - check whether this is the initial mapping
+> - * @ns: idmapping to check
+> - *
+> - * Check whether this is the initial mapping, mapping 0 to 0, 1 to 1,
+> - * [...], 1000 to 1000 [...].
+> - *
+> - * Return: true if this is the initial mapping, false if not.
+> - */
+> -static inline bool initial_idmapping(const struct user_namespace *ns)
+> -{
+> -       return ns =3D=3D &init_user_ns;
+> -}
+> -
+>  /**
+>   * make_vfsuid - map a filesystem kuid according to an idmapping
+>   * @idmap: the mount's idmapping
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 016b0fe1536e..d28384d5b752 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -663,6 +663,7 @@ is_uncached_acl(struct posix_acl *acl)
+>  #define IOP_DEFAULT_READLINK   0x0010
+>  #define IOP_MGTIME     0x0020
+>  #define IOP_CACHED_LINK        0x0040
+> +#define IOP_USERNS     0x0080
+>
+>  /*
+>   * Keep mostly read-only and often accessed (especially for
+> @@ -1454,7 +1455,9 @@ struct super_block {
+>
+>  static inline struct user_namespace *i_user_ns(const struct inode *inode=
+)
+>  {
+> -       return inode->i_sb->s_user_ns;
+> +       if (unlikely(inode->i_opflags & IOP_USERNS))
+> +               return inode->i_sb->s_user_ns;
+> +       return &init_user_ns;
+>  }
+>
+>  /* Helper functions so that in most cases filesystems will
+> diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.=
+h
+> index e71a6070a8f8..85553b3a7904 100644
+> --- a/include/linux/mnt_idmapping.h
+> +++ b/include/linux/mnt_idmapping.h
+> @@ -25,6 +25,20 @@ static_assert(sizeof(vfsgid_t) =3D=3D sizeof(kgid_t));
+>  static_assert(offsetof(vfsuid_t, val) =3D=3D offsetof(kuid_t, val));
+>  static_assert(offsetof(vfsgid_t, val) =3D=3D offsetof(kgid_t, val));
+>
+> +/**
+> + * initial_idmapping - check whether this is the initial mapping
+> + * @ns: idmapping to check
+> + *
+> + * Check whether this is the initial mapping, mapping 0 to 0, 1 to 1,
+> + * [...], 1000 to 1000 [...].
+> + *
+> + * Return: true if this is the initial mapping, false if not.
+> + */
+> +static inline bool initial_idmapping(const struct user_namespace *ns)
+> +{
+> +       return ns =3D=3D &init_user_ns;
+> +}
+> +
+>  static inline bool is_valid_mnt_idmap(const struct mnt_idmap *idmap)
+>  {
+>         return idmap !=3D &nop_mnt_idmap && idmap !=3D &invalid_mnt_idmap=
+;
+>
+> --
+> 2.47.2
+>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/mnt_idmapping.c            | 145 -----------------------------------------
- include/linux/mnt_idmapping.h | 147 +++++++++++++++++++++++++++++++++++++++---
- kernel/user_namespace.c       |   2 +
- 3 files changed, 141 insertions(+), 153 deletions(-)
+I don't have an opinion.
 
-diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-index 5c7e1db8fef8..ba1f752b6fa7 100644
---- a/fs/mnt_idmapping.c
-+++ b/fs/mnt_idmapping.c
-@@ -10,13 +10,6 @@
- 
- #include "internal.h"
- 
--/*
-- * Outside of this file vfs{g,u}id_t are always created from k{g,u}id_t,
-- * never from raw values. These are just internal helpers.
-- */
--#define VFSUIDT_INIT_RAW(val) (vfsuid_t){ val }
--#define VFSGIDT_INIT_RAW(val) (vfsgid_t){ val }
--
- /*
-  * Carries the initial idmapping of 0:0:4294967295 which is an identity
-  * mapping. This means that {g,u}id 0 is mapped to {g,u}id 0, {g,u}id 1 is
-@@ -36,144 +29,6 @@ struct mnt_idmap invalid_mnt_idmap = {
- };
- EXPORT_SYMBOL_GPL(invalid_mnt_idmap);
- 
--/**
-- * make_vfsuid - map a filesystem kuid according to an idmapping
-- * @idmap: the mount's idmapping
-- * @fs_userns: the filesystem's idmapping
-- * @kuid : kuid to be mapped
-- *
-- * Take a @kuid and remap it from @fs_userns into @idmap. Use this
-- * function when preparing a @kuid to be reported to userspace.
-- *
-- * If initial_idmapping() determines that this is not an idmapped mount
-- * we can simply return @kuid unchanged.
-- * If initial_idmapping() tells us that the filesystem is not mounted with an
-- * idmapping we know the value of @kuid won't change when calling
-- * from_kuid() so we can simply retrieve the value via __kuid_val()
-- * directly.
-- *
-- * Return: @kuid mapped according to @idmap.
-- * If @kuid has no mapping in either @idmap or @fs_userns INVALID_UID is
-- * returned.
-- */
--
--vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
--		     struct user_namespace *fs_userns,
--		     kuid_t kuid)
--{
--	uid_t uid;
--
--	if (idmap == &nop_mnt_idmap)
--		return VFSUIDT_INIT(kuid);
--	if (idmap == &invalid_mnt_idmap)
--		return INVALID_VFSUID;
--	if (initial_idmapping(fs_userns))
--		uid = __kuid_val(kuid);
--	else
--		uid = from_kuid(fs_userns, kuid);
--	if (uid == (uid_t)-1)
--		return INVALID_VFSUID;
--	return VFSUIDT_INIT_RAW(map_id_down(&idmap->uid_map, uid));
--}
--EXPORT_SYMBOL_GPL(make_vfsuid);
--
--/**
-- * make_vfsgid - map a filesystem kgid according to an idmapping
-- * @idmap: the mount's idmapping
-- * @fs_userns: the filesystem's idmapping
-- * @kgid : kgid to be mapped
-- *
-- * Take a @kgid and remap it from @fs_userns into @idmap. Use this
-- * function when preparing a @kgid to be reported to userspace.
-- *
-- * If initial_idmapping() determines that this is not an idmapped mount
-- * we can simply return @kgid unchanged.
-- * If initial_idmapping() tells us that the filesystem is not mounted with an
-- * idmapping we know the value of @kgid won't change when calling
-- * from_kgid() so we can simply retrieve the value via __kgid_val()
-- * directly.
-- *
-- * Return: @kgid mapped according to @idmap.
-- * If @kgid has no mapping in either @idmap or @fs_userns INVALID_GID is
-- * returned.
-- */
--vfsgid_t make_vfsgid(struct mnt_idmap *idmap,
--		     struct user_namespace *fs_userns, kgid_t kgid)
--{
--	gid_t gid;
--
--	if (idmap == &nop_mnt_idmap)
--		return VFSGIDT_INIT(kgid);
--	if (idmap == &invalid_mnt_idmap)
--		return INVALID_VFSGID;
--	if (initial_idmapping(fs_userns))
--		gid = __kgid_val(kgid);
--	else
--		gid = from_kgid(fs_userns, kgid);
--	if (gid == (gid_t)-1)
--		return INVALID_VFSGID;
--	return VFSGIDT_INIT_RAW(map_id_down(&idmap->gid_map, gid));
--}
--EXPORT_SYMBOL_GPL(make_vfsgid);
--
--/**
-- * from_vfsuid - map a vfsuid into the filesystem idmapping
-- * @idmap: the mount's idmapping
-- * @fs_userns: the filesystem's idmapping
-- * @vfsuid : vfsuid to be mapped
-- *
-- * Map @vfsuid into the filesystem idmapping. This function has to be used in
-- * order to e.g. write @vfsuid to inode->i_uid.
-- *
-- * Return: @vfsuid mapped into the filesystem idmapping
-- */
--kuid_t from_vfsuid(struct mnt_idmap *idmap,
--		   struct user_namespace *fs_userns, vfsuid_t vfsuid)
--{
--	uid_t uid;
--
--	if (idmap == &nop_mnt_idmap)
--		return AS_KUIDT(vfsuid);
--	if (idmap == &invalid_mnt_idmap)
--		return INVALID_UID;
--	uid = map_id_up(&idmap->uid_map, __vfsuid_val(vfsuid));
--	if (uid == (uid_t)-1)
--		return INVALID_UID;
--	if (initial_idmapping(fs_userns))
--		return KUIDT_INIT(uid);
--	return make_kuid(fs_userns, uid);
--}
--EXPORT_SYMBOL_GPL(from_vfsuid);
--
--/**
-- * from_vfsgid - map a vfsgid into the filesystem idmapping
-- * @idmap: the mount's idmapping
-- * @fs_userns: the filesystem's idmapping
-- * @vfsgid : vfsgid to be mapped
-- *
-- * Map @vfsgid into the filesystem idmapping. This function has to be used in
-- * order to e.g. write @vfsgid to inode->i_gid.
-- *
-- * Return: @vfsgid mapped into the filesystem idmapping
-- */
--kgid_t from_vfsgid(struct mnt_idmap *idmap,
--		   struct user_namespace *fs_userns, vfsgid_t vfsgid)
--{
--	gid_t gid;
--
--	if (idmap == &nop_mnt_idmap)
--		return AS_KGIDT(vfsgid);
--	if (idmap == &invalid_mnt_idmap)
--		return INVALID_GID;
--	gid = map_id_up(&idmap->gid_map, __vfsgid_val(vfsgid));
--	if (gid == (gid_t)-1)
--		return INVALID_GID;
--	if (initial_idmapping(fs_userns))
--		return KGIDT_INIT(gid);
--	return make_kgid(fs_userns, gid);
--}
--EXPORT_SYMBOL_GPL(from_vfsgid);
--
- #ifdef CONFIG_MULTIUSER
- /**
-  * vfsgid_in_group_p() - check whether a vfsuid matches the caller's groups
-diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-index 4410672c2828..e6fb905c39bd 100644
---- a/include/linux/mnt_idmapping.h
-+++ b/include/linux/mnt_idmapping.h
-@@ -140,22 +140,153 @@ static inline bool vfsgid_eq_kgid(vfsgid_t vfsgid, kgid_t kgid)
- #define AS_KUIDT(val) (kuid_t){ __vfsuid_val(val) }
- #define AS_KGIDT(val) (kgid_t){ __vfsgid_val(val) }
- 
-+/*
-+ * Outside of this file vfs{g,u}id_t are always created from k{g,u}id_t,
-+ * never from raw values. These are just internal helpers.
-+ */
-+#define VFSUIDT_INIT_RAW(val) (vfsuid_t){ val }
-+#define VFSGIDT_INIT_RAW(val) (vfsgid_t){ val }
-+
- int vfsgid_in_group_p(vfsgid_t vfsgid);
- 
- struct mnt_idmap *mnt_idmap_get(struct mnt_idmap *idmap);
- void mnt_idmap_put(struct mnt_idmap *idmap);
- 
--vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
--		     struct user_namespace *fs_userns, kuid_t kuid);
-+/**
-+ * make_vfsuid - map a filesystem kuid according to an idmapping
-+ * @idmap: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ * @kuid : kuid to be mapped
-+ *
-+ * Take a @kuid and remap it from @fs_userns into @idmap. Use this
-+ * function when preparing a @kuid to be reported to userspace.
-+ *
-+ * If initial_idmapping() determines that this is not an idmapped mount
-+ * we can simply return @kuid unchanged.
-+ * If initial_idmapping() tells us that the filesystem is not mounted with an
-+ * idmapping we know the value of @kuid won't change when calling
-+ * from_kuid() so we can simply retrieve the value via __kuid_val()
-+ * directly.
-+ *
-+ * Return: @kuid mapped according to @idmap.
-+ * If @kuid has no mapping in either @idmap or @fs_userns INVALID_UID is
-+ * returned.
-+ */
-+static inline vfsuid_t make_vfsuid(struct mnt_idmap *idmap,
-+				   struct user_namespace *fs_userns,
-+				   kuid_t kuid)
-+{
-+	uid_t uid;
-+
-+	if (likely(idmap == &nop_mnt_idmap))
-+		return VFSUIDT_INIT(kuid);
-+	if (unlikely(idmap == &invalid_mnt_idmap))
-+		return INVALID_VFSUID;
-+	if (likely(initial_idmapping(fs_userns)))
-+		uid = __kuid_val(kuid);
-+	else
-+		uid = from_kuid(fs_userns, kuid);
-+	if (unlikely(uid == (uid_t)-1))
-+		return INVALID_VFSUID;
-+	return VFSUIDT_INIT_RAW(map_id_down(&idmap->uid_map, uid));
-+}
- 
--vfsgid_t make_vfsgid(struct mnt_idmap *idmap,
--		     struct user_namespace *fs_userns, kgid_t kgid);
-+/**
-+ * make_vfsgid - map a filesystem kgid according to an idmapping
-+ * @idmap: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ * @kgid : kgid to be mapped
-+ *
-+ * Take a @kgid and remap it from @fs_userns into @idmap. Use this
-+ * function when preparing a @kgid to be reported to userspace.
-+ *
-+ * If initial_idmapping() determines that this is not an idmapped mount
-+ * we can simply return @kgid unchanged.
-+ * If initial_idmapping() tells us that the filesystem is not mounted with an
-+ * idmapping we know the value of @kgid won't change when calling
-+ * from_kgid() so we can simply retrieve the value via __kgid_val()
-+ * directly.
-+ *
-+ * Return: @kgid mapped according to @idmap.
-+ * If @kgid has no mapping in either @idmap or @fs_userns INVALID_GID is
-+ * returned.
-+ */
-+static inline vfsgid_t make_vfsgid(struct mnt_idmap *idmap,
-+				   struct user_namespace *fs_userns,
-+				   kgid_t kgid)
-+{
-+	gid_t gid;
-+
-+	if (likely(idmap == &nop_mnt_idmap))
-+		return VFSGIDT_INIT(kgid);
-+	if (unlikely(idmap == &invalid_mnt_idmap))
-+		return INVALID_VFSGID;
-+	if (likely(initial_idmapping(fs_userns)))
-+		gid = __kgid_val(kgid);
-+	else
-+		gid = from_kgid(fs_userns, kgid);
-+	if (unlikely(gid == (gid_t)-1))
-+		return INVALID_VFSGID;
-+	return VFSGIDT_INIT_RAW(map_id_down(&idmap->gid_map, gid));
-+}
- 
--kuid_t from_vfsuid(struct mnt_idmap *idmap,
--		   struct user_namespace *fs_userns, vfsuid_t vfsuid);
-+/**
-+ * from_vfsuid - map a vfsuid into the filesystem idmapping
-+ * @idmap: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ * @vfsuid : vfsuid to be mapped
-+ *
-+ * Map @vfsuid into the filesystem idmapping. This function has to be used in
-+ * order to e.g. write @vfsuid to inode->i_uid.
-+ *
-+ * Return: @vfsuid mapped into the filesystem idmapping
-+ */
-+static inline kuid_t from_vfsuid(struct mnt_idmap *idmap,
-+				 struct user_namespace *fs_userns,
-+				 vfsuid_t vfsuid)
-+{
-+	uid_t uid;
-+
-+	if (likely(idmap == &nop_mnt_idmap))
-+		return AS_KUIDT(vfsuid);
-+	if (unlikely(idmap == &invalid_mnt_idmap))
-+		return INVALID_UID;
-+	uid = map_id_up(&idmap->uid_map, __vfsuid_val(vfsuid));
-+	if (unlikely(uid == (uid_t)-1))
-+		return INVALID_UID;
-+	if (likely(initial_idmapping(fs_userns)))
-+		return KUIDT_INIT(uid);
-+	return make_kuid(fs_userns, uid);
-+}
- 
--kgid_t from_vfsgid(struct mnt_idmap *idmap,
--		   struct user_namespace *fs_userns, vfsgid_t vfsgid);
-+/**
-+ * from_vfsgid - map a vfsgid into the filesystem idmapping
-+ * @idmap: the mount's idmapping
-+ * @fs_userns: the filesystem's idmapping
-+ * @vfsgid : vfsgid to be mapped
-+ *
-+ * Map @vfsgid into the filesystem idmapping. This function has to be used in
-+ * order to e.g. write @vfsgid to inode->i_gid.
-+ *
-+ * Return: @vfsgid mapped into the filesystem idmapping
-+ */
-+static inline kgid_t from_vfsgid(struct mnt_idmap *idmap,
-+				 struct user_namespace *fs_userns,
-+				 vfsgid_t vfsgid)
-+{
-+	gid_t gid;
-+
-+	if (likely(idmap == &nop_mnt_idmap))
-+		return AS_KGIDT(vfsgid);
-+	if (unlikely(idmap == &invalid_mnt_idmap))
-+		return INVALID_GID;
-+	gid = map_id_up(&idmap->gid_map, __vfsgid_val(vfsgid));
-+	if (unlikely(gid == (gid_t)-1))
-+		return INVALID_GID;
-+	if (likely(initial_idmapping(fs_userns)))
-+		return KGIDT_INIT(gid);
-+	return make_kgid(fs_userns, gid);
-+}
- 
- /**
-  * vfsuid_has_fsmapping - check whether a vfsuid maps into the filesystem
-diff --git a/kernel/user_namespace.c b/kernel/user_namespace.c
-index 682f40d5632d..693c62587571 100644
---- a/kernel/user_namespace.c
-+++ b/kernel/user_namespace.c
-@@ -336,6 +336,7 @@ u32 map_id_down(struct uid_gid_map *map, u32 id)
- {
- 	return map_id_range_down(map, id, 1);
- }
-+EXPORT_SYMBOL_GPL(map_id_down);
- 
- /*
-  * map_id_up_base - Find idmap via binary search in static extent array.
-@@ -402,6 +403,7 @@ u32 map_id_up(struct uid_gid_map *map, u32 id)
- {
- 	return map_id_range_up(map, id, 1);
- }
-+EXPORT_SYMBOL_GPL(map_id_up);
- 
- /**
-  *	make_kuid - Map a user-namespace uid pair into a kuid.
+But if going this way, i think you want the assert for correctly
+applied flag when fetching the ns, not just iput_final.
 
--- 
-2.47.2
-
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
