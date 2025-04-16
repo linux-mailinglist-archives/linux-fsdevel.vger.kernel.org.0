@@ -1,73 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-46600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2FCA90EA9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 00:35:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1277A90EBD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 00:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E39B67AE337
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 22:34:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A601903BE2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 22:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B7423DE85;
-	Wed, 16 Apr 2025 22:35:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8188123ED63;
+	Wed, 16 Apr 2025 22:39:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N14pDKXT"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="atVMYsgB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E9C9478;
-	Wed, 16 Apr 2025 22:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D7523A98C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 22:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744842935; cv=none; b=XfvGR+JR80NFmwJpIk6QVxBK2211gJhr6F9rIafeodr3BKYp71buA5DcSCNNdOvbbP5lKPI9QKGXnXuGDDQImpznQMXVxMmirGogxYpFjGlzA/TkzTQ4ymNskEusaDZorubSnRQ/PmZyKt3UO+ChqO2jzvRhGM0hnUwQ4hhbx4g=
+	t=1744843197; cv=none; b=Wf3AICfp1YD4d9z1scGtGcTDSi3suNcHX8djY+IBvp/BswE7wR8q8VxW3C68do+G26RZK3lUDtkRg90IP0SS5BfTlVWSDJ4z+B/nc+pJtR2zxBAfx+VsAn+ax07v6Jvu5fA1GSI1kPepeZDqDhwLUJqOrLs0e1OXrN+uNrakLnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744842935; c=relaxed/simple;
-	bh=DnS8hkh/l+LdGfRFkl4ncWXFdlpFJ1XmLKJGC/9pGoU=;
+	s=arc-20240116; t=1744843197; c=relaxed/simple;
+	bh=kd8CIoyZU9z+s6yhVJAsL20bAYQiydUjPDvjdWdTYQw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tA6jk/Tf/qHsSdMvWIK33opYz44KXgTP+0LWVip6mYaZB7M8ano4ZCk0QZOtyE0C4BLQvvD2fH3580q5jU0jbSjTwPpbHixAG2uhGQjGSkVwZM0dVkWNxrsHB9pm/mni/I7lgNl80DfR4E0nBfYeXghStXPBRXnpNFEj+/Hbl0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N14pDKXT; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5cded3e2eso289704a12.0;
-        Wed, 16 Apr 2025 15:35:32 -0700 (PDT)
+	 To:Cc:Content-Type; b=XRhcyc3y8cI2q8F4DWgru+dK9+01HtgDxy9J2SRvZVSH1eMklP2nMFc0sCK7ejA6dD4yEar0NyaVx09b8k4Fotn+k8kqj2eU06Q5kGybgPpbkeO8LWdStPWlVkJPrfXDlYgg/YkqAfhJa8mPKD7bsSHUkKdsvK/x+2VrfP3ifIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=atVMYsgB; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5f4b7211badso274954a12.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 15:39:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744842931; x=1745447731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UHMWX+QHo6ciYAdyO1pkCtQ+YG4avnICwwmT4XL0M3s=;
-        b=N14pDKXTa3qhcR6icouKFur6yscAMfzFZv9APq3bmcVE4N1KlFfTZIa72fXOZfM8wn
-         mwO3ui4U0J8QrqLnCbf4N4iDLbgaEAcpJ56LscIz9QNlcsgqzMD9qzZgEyPtAuoObxF4
-         uP2GgCV1f8SlCQtsos+8txF6nBQKWMUNpS6DLtYYL5vayXyB8Po4GrNyaIoxweRSN2wO
-         VqJVDxk3biKiy6/U+Wu/cvT/BW7TT77CpojdbGZN/pbp2GUuFbmT/oxSu8szcao2V8rb
-         0ELoQe1Li6nx286s1jVvcLgrpsBO74lIrnowMvOkRNgRNmhDKPivfqoD/OCeR1xHM18U
-         5B/g==
+        d=linux-foundation.org; s=google; t=1744843193; x=1745447993; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jm44dwmZcQ04sKyHxrckFG06FkU/O4r8HH0/pnpLZx0=;
+        b=atVMYsgBJedqVBa3muizlrVb1k5F4IJGcIdbNH70eOi9Vzfeo0V4xWsPv3QRAMyOmQ
+         +F/zCInH10/kPMtE4onWNa2TmUCqFuZ6Hl+SplUS1R7yo4xqNQkXXouf0U7LQ7cAvTdi
+         iZmzM85Oi4eZdMAsVZJ+mZermcM579t4Vrc2g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744842931; x=1745447731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UHMWX+QHo6ciYAdyO1pkCtQ+YG4avnICwwmT4XL0M3s=;
-        b=VcD+jbqXa5F8SeivEJVgPmpty+uLm0l9Lgec8M6gsC2Nn7C8V5NLHZH4rMiVrPXTiL
-         Qzi8lksa2hJ4Krc8oWT2Xl6pvdyxUR3y9P0KScCUAjHl9SooWniaYGNDk5LQbbZKUHH8
-         ONtWN6zfChch3/ZtMuBZHvZH9WCrv9WHR6hQZGKlnjkIUE+ng5L5Y6R3skEu/rRRqeCh
-         dMxI5+RoO7lDcCmh2bQVy4roQ7t7BuoNYOXhzISVlZySCuTfRhbHM2/Bib7Zqch+KnKm
-         CNnoYodua2ZCSXucDWQlyEpt5rLn4L3ohFF0d1qU/CwMedAnOye9bbz2kPSUOcV17nA+
-         chmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbpWhcxB0HAGnq0WD6TVA9ap2fcxcVWcpAZjGisOWtsSdHVpK9gQR5e/Tt0PGGRLgyKmhcC2hbeY9tixoq@vger.kernel.org, AJvYcCWdVpjrZ2/9f+bLN4uhWyLgHiR1URDy6YFS/B3gyOFSBVrGsSUGfWUfCiRqWf8f12S+hvUj9Lkpkbcnj40u@vger.kernel.org
-X-Gm-Message-State: AOJu0YxliKy2Nq2f+H7mFXPhCxlGPLIose+yASjINbJKPQhO8nNJSL0t
-	PAIKLSf0eMuFWnMB3Fx9RPy6ORTWE7fOR/rjfVLIZ+WKQrSkCi9S4jaYVXji+uDGc6C36sRCgGm
-	8QVWdrrbNqTi7cHS2dP0OEQq/0AI=
-X-Gm-Gg: ASbGncul+phrxg+g2EMqXiisc8X/1f2Ixer1KYoNP1U7lzYPCpGjBrhy5HxZodNrE/K
-	N/OBqkaeG6Y5YzQfH6LuJagQpMsqkLIrq1ppdPrZ43Xi7WkitwtmZrO+voYzyCA0MpyfLYWNxyM
-	lWsNmITHiB5DkruqlkJm+x+w==
-X-Google-Smtp-Source: AGHT+IE1Bfo7WyDOccmF83+xyv53AP7U9h0WMDQNDUnhrEmgrKtybRdPq1K/Jb81XbGXlEBBS3MMCWzNs5S1RpI316w=
-X-Received: by 2002:a17:906:f5a3:b0:ac2:c1e:dff0 with SMTP id
- a640c23a62f3a-acb428fd690mr383501166b.19.1744842931426; Wed, 16 Apr 2025
- 15:35:31 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1744843193; x=1745447993;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jm44dwmZcQ04sKyHxrckFG06FkU/O4r8HH0/pnpLZx0=;
+        b=UiFgrt+7W4UCpjaU7UuWrWxx5uVs+jjXIyb3XlLe1hZOTB+nTBAUhBGPrygYBhdmLd
+         D77g6qTZNx3supPv27GF+LAxQwtiPa2ekqOt1D5+rI5L1jDPeJgYIq0HKVcbloXJCipF
+         Xd3IudZrUrI41BI1ZLjLA4ShsNmGRWbv0DeBMR1MB2/Olf4ZrEPk1+FQcsUo2qaZYzHc
+         JLTrHwqyWXwIWBWX/RYDwkaFEEgsSe1IONVDHIRwfMl1qwPa3macPUkpjzaqJY1C8DBa
+         lL4oPFCkTn6BykEJ50YnNTJVxiGC//wJEeZD+9QK6IYTxapTX1sEgf1rck7MtUxz26f7
+         V3Gw==
+X-Forwarded-Encrypted: i=1; AJvYcCXy4gILd9MefsKfYS5ePI02eMu53dQiQYivfSGjNY83rTR3Z0SCW5ghcwL19jwkB4gPj0xJ0wwQIVYym0+n@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxiy6fiS8YC49LEQ8SBDABEUeDgxU6md7dgMrqtqPmgrTkTMxt0
+	FKUmKPrlWzNTUMfBe/a5slkCOYAJohngXQxXb6cqWElGgIIUdWS/t5eo7ItAfLDWSZvmAJs634Q
+	1y0LMjg==
+X-Gm-Gg: ASbGncv4SEuC+mPMHkHcTGHWFtzSMMndrdPMqyAPIGgnBQVJIw9booZWIsMxW6//wHq
+	xVg/8Fp1IAAxV1y+ptcbTilzBcH3FK+9HD73s/sl/AxAQZvgQEAJC74MVms292nsGa+8XG0Nicw
+	0wEy6WjBDdKKxrmwXg5N5pqFWsinmW+MArzp60OgTG/XcSiFQ73rZ0v/p4dZHZTxri8xLdo1ONk
+	Y+th8O01RnpbM5jQ+J5foC+frE78TVF73/1IrayCQcGoscutZjXwApt5dSubjLr3Hf6R9xM63px
+	j7cXDvWYEfmHJp0rmPs4Rp7XUtwGtbJ8xxbb75TvveLA+knfeRNg4KSz5AF4J+OZ/62PF2D6Ek3
+	xWaZrkrwhxSLMD4fhC/rRVO1XKw==
+X-Google-Smtp-Source: AGHT+IHtjp5s+ZIA0bb8H3sgddKczUY1LGr8B2LEo+h9bFa1e2eT268QXcV1knZ0f5w54t29vpQkgg==
+X-Received: by 2002:a05:6402:520d:b0:5f4:35c4:a935 with SMTP id 4fb4d7f45d1cf-5f4b75deb6amr2892213a12.21.1744843193695;
+        Wed, 16 Apr 2025 15:39:53 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36ee54d8fsm9206021a12.12.2025.04.16.15.39.52
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Apr 2025 15:39:52 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso261282a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 15:39:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUxuMWNUsgs08qUKm1/lmC3YXu/hmkA3G4eQynxnBjuRLKkvlaKIl6jwbedly3A4E6py/4OE0p+VxJFygKI@vger.kernel.org
+X-Received: by 2002:a17:907:7f0d:b0:aca:d52d:b59b with SMTP id
+ a640c23a62f3a-acb42af00f9mr291976266b.47.1744843192133; Wed, 16 Apr 2025
+ 15:39:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -76,67 +85,22 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250416221626.2710239-1-mjguzik@gmail.com>
 In-Reply-To: <20250416221626.2710239-1-mjguzik@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Thu, 17 Apr 2025 00:35:19 +0200
-X-Gm-Features: ATxdqUHaWK7LrU-Ix-EwBvKdwuCJm2IaWGaAi6CLVWc7N55ks48dPRslDisMI4A
-Message-ID: <CAGudoHE4NuTugEmbG4iMCr5Mh7Qs2zTMNpcKR+nfxdTiRQiRkg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 16 Apr 2025 15:39:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgUYJ1XbnMnKzv1coxX=WhH1g-ufMGxz7anf-Tw6M3+Bw@mail.gmail.com>
+X-Gm-Features: ATxdqUFLEOCfS07bzwWoyJm7dcPWUV3_QMm7wan5599m25oiRJfIRXjqUJ1YLl0
+Message-ID: <CAHk-=wgUYJ1XbnMnKzv1coxX=WhH1g-ufMGxz7anf-Tw6M3+Bw@mail.gmail.com>
 Subject: Re: [PATCH 0/2] two nits for path lookup
-To: brauner@kernel.org
-Cc: torvalds@linux-foundation.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 17, 2025 at 12:16=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com> =
-wrote:
+On Wed, 16 Apr 2025 at 15:16, Mateusz Guzik <mjguzik@gmail.com> wrote:
 >
 > since path looku is being looked at, two extra nits from me:
->
-> 1. some trivial jump avoidance in inode_permission()
->
-> 2. but more importantly avoiding a memory access which is most likely a
-> cache miss when descending into devcgroup_inode_permission()
->
-> the file seems to have no maintainer fwiw
->
-> anyhow I'm confident the way forward is to add IOP_FAST_MAY_EXEC (or
-> similar) to elide inode_permission() in the common case to begin with.
-> There are quite a few branches which straight up don't need execute.
 
-.. the bit would be set if everyone has the x perm on the inode, there
-are no acls and the thing is a directory
+Ack, both look sane to me.
 
-The perm to check being MAY_EXEC elides the MAY_WRITE check in sb_permissio=
-n().
-The bit only showing up on directories means this is not a device,
-eliding  devcgroup_inode_permission()
-The bit being set means there is no need to separately check for the
-mode and acls.
-
-I have hooks in the same spot as security_* callbacks for setattr and
-setacl + a CONFIG_DEBUG_VFS-guarded runtime check that the bit is only
-set if there are indeed no acls and the mode grants x for everyone. It
-also handles races against setattr/getacl. I just need to clean this
-up + do more testing.
-
-> On top of that btrfs has a permission hook only to check for MAY_WRITE,
-> which in case of path lookup is not set. With the above flag the call
-> will be avoided.
->
-> Mateusz Guzik (2):
->   fs: touch up predicts in inode_permission()
->   device_cgroup: avoid access to ->i_rdev in the common case in
->     devcgroup_inode_permission()
->
->  fs/namei.c                    | 10 +++++-----
->  include/linux/device_cgroup.h |  7 ++++---
->  2 files changed, 9 insertions(+), 8 deletions(-)
->
-> --
-> 2.48.1
->
-
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
+             Linus
 
