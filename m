@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-46558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E42EA90431
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 15:19:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8FAA9043E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 15:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4655E170D09
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 13:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6201D3AB491
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 13:19:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FEAA1367;
-	Wed, 16 Apr 2025 13:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF771DE4CA;
+	Wed, 16 Apr 2025 13:17:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMlJ2neS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UUqaS0B6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E72261B4145
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 13:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E04F1BC07A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 13:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744809464; cv=none; b=ncl7FP1mX3cO8v8PITIC45OjwAOVc/eby7RF/UiCPA8eGBcIhrj78oG3RDg3R6aDUoGhc1P05ddCDotRxCNJpLY1AxLbmzI7qQEQr8pbHMbfbNv0a+KReQZtzCrBSw+vn2nC+hypPezQH1fL6IIyjkFna3rFRCVsTczaWm/Fyxs=
+	t=1744809466; cv=none; b=Tr8HG6skFwRS8gNkxvU1o7Y92RjipYaVLrm0tzk2fODFH+jB/Rip/LvDIiu88sIPJhcJERbpKG9I1RQDVFPwSHkiGYlua85HYd9S7KwtQKbNnflt9Pp1sLITIYMyuE6+WfNA7MClm/u9COhtgVyt+zOozI+OoWg80qKH6Ibq0xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744809464; c=relaxed/simple;
-	bh=OPm5dygkmkdUOizG0aT5ZDKHH597gfUqDT+Lhg8F8kQ=;
+	s=arc-20240116; t=1744809466; c=relaxed/simple;
+	bh=we5F9y+12G5ioorWPSE8WE8Y3WemBLh+b3ZiiWrpCxI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=H3Rzn9lTwyx9lzvRTuNg4zITGoetVzDMFFsofV3OMWQaIiuA1KOCHFuLMso3SgWRjiA1sK1Wh0O8PH3A+HsnTFCY9GUubCFRAwNEjdGYZtXnoPv4ag3Q4zQXhsWUJdlHmDOxvmmGv0APpUooFWNdDN7VZMkBNNHFU5T2YiLA0a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMlJ2neS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59699C4CEEA;
-	Wed, 16 Apr 2025 13:17:41 +0000 (UTC)
+	 MIME-Version:Content-Type; b=hvePvNIm4dAu1lBnAZXBqamUAKdnTFgGLlSP3UFpVaPyBV23hraJDyuZZCqW5bfD+ZmeWBhA+8y7fN0Eh9bKTBkqB+HXCcp6veytu6oa2oyR8NQARcg9OYlnKCEakDkNZY/o+lm29uTXFdNlIJI8BYr9ZQfQpN1pxNgUQScZal0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UUqaS0B6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECAABC113CF;
+	Wed, 16 Apr 2025 13:17:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744809463;
-	bh=OPm5dygkmkdUOizG0aT5ZDKHH597gfUqDT+Lhg8F8kQ=;
+	s=k20201202; t=1744809466;
+	bh=we5F9y+12G5ioorWPSE8WE8Y3WemBLh+b3ZiiWrpCxI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IMlJ2neSTDVBNkIKaeLbFx7X3i9UtB6Hk3NIuO2puchuQuwXXPBsNU63q2P7V+WBL
-	 M/pGeS+9GGaZ/LMS6PZezWUOjGn4h8P9rI0WMfwrURtKe1Xn0qcCAHikLe+dB3RJ+w
-	 JhnDSCwPrpTKA7+aWOj8LRjvyV3rENG6FY0KwSTNYJCu4grZ6FynCSG+/4/chdunL0
-	 BvFTBsGkHMcnkOvuO5JmTNQ22+R+23jrw33Th52jL8V8DhguKtWJ/imwGQ2/1ywAuQ
-	 A4tPt4s2O5Wib1xhNpit0QgXM1BA4Sv6X0pQ+A5Q56nJTmzOP6OppSROcqf0PVuyTd
-	 k8FVh2retQjPw==
+	b=UUqaS0B6BJdcsxjqHX7g/hyBKuFf/SYtMyHNWonEb68qkA9v81pLHsqE1sEinqKLp
+	 B58R0nvRpwqiATOjhLV2eoJB70a8Pp21AhcvZvauc3cTOBZYZi/IQqrPr6hV5cy2Vk
+	 /D3PuilPIh1d32yN9yRpRxXnPeMW4FOiP1zRM3Av1a4eT0KQOK8lpVHBA5Seb5KHJ9
+	 PPPDs+dX3YOBjmDFkRXpByj77emN86OoqomBwt1BxO19L1W54WIBphTJXOeuoJnhm4
+	 57f6ycEDbfnY5INZj0GSxMNp0JtXorCxTGX0E9WuZFV2kXDTXLsbaLFiiO51J9iwS+
+	 w2y7YWkEAMBmA==
 From: Christian Brauner <brauner@kernel.org>
 To: Linus Torvalds <torvalds@linux-foundation.org>,
 	linux-fsdevel <linux-fsdevel@vger.kernel.org>
@@ -50,9 +50,9 @@ Cc: Christian Brauner <brauner@kernel.org>,
 	Jan Kara <jack@suse.cz>,
 	Jeff Layton <jlayton@kernel.org>,
 	Josef Bacik <josef@toxicpanda.com>
-Subject: [PATCH RFC 1/3] inode: add fastpath for filesystem user namespace retrieval
-Date: Wed, 16 Apr 2025 15:17:22 +0200
-Message-ID: <20250416-work-mnt_idmap-s_user_ns-v1-1-273bef3a61ec@kernel.org>
+Subject: [PATCH RFC 2/3] mnt_idmapping: add struct mnt_idmap to header
+Date: Wed, 16 Apr 2025 15:17:23 +0200
+Message-ID: <20250416-work-mnt_idmap-s_user_ns-v1-2-273bef3a61ec@kernel.org>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org>
 References: <20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org>
@@ -64,125 +64,125 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4251; i=brauner@kernel.org; h=from:subject:message-id; bh=OPm5dygkmkdUOizG0aT5ZDKHH597gfUqDT+Lhg8F8kQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/X/v41vytObLCB9ctib3nXWNy4nU238fTp9qnX4/5q PumIMQqoKOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiTf4M/703xm3KepXf2CSx aPOMtE/9Eh5Kj3r7CqO7DphOqOdPSGD4w5vfd37SLakNt1r3pJ47F1y1dgebhVLvD9YtJn4BGyZ y8AAA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3213; i=brauner@kernel.org; h=from:subject:message-id; bh=we5F9y+12G5ioorWPSE8WE8Y3WemBLh+b3ZiiWrpCxI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaT/X/tkw5k167x2Fx5ua1rP/Msg2Caj7tShDz6ZQUcj4 muKfDbs7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIHDVGhhWBTwoSJc57yB4P Wshi1mf9vWv/dzUrpfeZD6fE/NjHbMzI8Dhlwvvfd+tqF25+6Cu7avLEvgquZzOX2C6skJDaF73 ZhQ0A
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-We currently always chase a pointer inode->i_sb->s_user_ns whenever we
-need to map a uid/gid which is noticeable during path lookup as noticed
-by Linus in [1]. In the majority of cases we don't need to bother with
-that pointer chase because the inode won't be located on a filesystem
-that's mounted in a user namespace. The user namespace of the superblock
-cannot ever change once it's mounted. So introduce and raise IOP_USERNS
-on all inodes and check for that flag in i_user_ns() when we retrieve
-the user namespace.
+The next patch will inline all current helpers for that we need access
+to struct mnt_idmap internals from the header. Not my favorite but
+whatever.
 
-Link: https://lore.kernel.org/CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com [1]
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/inode.c                    |  6 ++++++
- fs/mnt_idmapping.c            | 14 --------------
- include/linux/fs.h            |  5 ++++-
- include/linux/mnt_idmapping.h | 14 ++++++++++++++
- 4 files changed, 24 insertions(+), 15 deletions(-)
+ fs/mnt_idmapping.c             |  6 ------
+ include/linux/mnt_idmapping.h  |  7 +++++++
+ include/linux/uidgid.h         | 23 ++++++++++++++++++++++-
+ include/linux/user_namespace.h | 23 +----------------------
+ 4 files changed, 30 insertions(+), 29 deletions(-)
 
-diff --git a/fs/inode.c b/fs/inode.c
-index 99318b157a9a..7335d05dd7d5 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -245,6 +245,8 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
- 		inode->i_opflags |= IOP_XATTR;
- 	if (sb->s_type->fs_flags & FS_MGTIME)
- 		inode->i_opflags |= IOP_MGTIME;
-+	if (unlikely(!initial_idmapping(i_user_ns(inode))))
-+		inode->i_opflags |= IOP_USERNS;
- 	i_uid_write(inode, 0);
- 	i_gid_write(inode, 0);
- 	atomic_set(&inode->i_writecount, 0);
-@@ -1864,6 +1866,10 @@ static void iput_final(struct inode *inode)
- 
- 	WARN_ON(inode->i_state & I_NEW);
- 
-+	/* This is security sensitive so catch missing IOP_USERNS. */
-+	VFS_WARN_ON_ONCE(!initial_idmapping(i_user_ns(inode)) &&
-+			 !(inode->i_opflags & IOP_USERNS));
-+
- 	if (op->drop_inode)
- 		drop = op->drop_inode(inode);
- 	else
 diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-index a37991fdb194..8f7ae908ea16 100644
+index 8f7ae908ea16..5c7e1db8fef8 100644
 --- a/fs/mnt_idmapping.c
 +++ b/fs/mnt_idmapping.c
-@@ -42,20 +42,6 @@ struct mnt_idmap invalid_mnt_idmap = {
- };
- EXPORT_SYMBOL_GPL(invalid_mnt_idmap);
+@@ -17,12 +17,6 @@
+ #define VFSUIDT_INIT_RAW(val) (vfsuid_t){ val }
+ #define VFSGIDT_INIT_RAW(val) (vfsgid_t){ val }
  
--/**
-- * initial_idmapping - check whether this is the initial mapping
-- * @ns: idmapping to check
-- *
-- * Check whether this is the initial mapping, mapping 0 to 0, 1 to 1,
-- * [...], 1000 to 1000 [...].
-- *
-- * Return: true if this is the initial mapping, false if not.
-- */
--static inline bool initial_idmapping(const struct user_namespace *ns)
--{
--	return ns == &init_user_ns;
--}
+-struct mnt_idmap {
+-	struct uid_gid_map uid_map;
+-	struct uid_gid_map gid_map;
+-	refcount_t count;
+-};
 -
- /**
-  * make_vfsuid - map a filesystem kuid according to an idmapping
-  * @idmap: the mount's idmapping
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e..d28384d5b752 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -663,6 +663,7 @@ is_uncached_acl(struct posix_acl *acl)
- #define IOP_DEFAULT_READLINK	0x0010
- #define IOP_MGTIME	0x0020
- #define IOP_CACHED_LINK	0x0040
-+#define IOP_USERNS	0x0080
- 
  /*
-  * Keep mostly read-only and often accessed (especially for
-@@ -1454,7 +1455,9 @@ struct super_block {
- 
- static inline struct user_namespace *i_user_ns(const struct inode *inode)
- {
--	return inode->i_sb->s_user_ns;
-+	if (unlikely(inode->i_opflags & IOP_USERNS))
-+		return inode->i_sb->s_user_ns;
-+	return &init_user_ns;
- }
- 
- /* Helper functions so that in most cases filesystems will
+  * Carries the initial idmapping of 0:0:4294967295 which is an identity
+  * mapping. This means that {g,u}id 0 is mapped to {g,u}id 0, {g,u}id 1 is
 diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-index e71a6070a8f8..85553b3a7904 100644
+index 85553b3a7904..4410672c2828 100644
 --- a/include/linux/mnt_idmapping.h
 +++ b/include/linux/mnt_idmapping.h
-@@ -25,6 +25,20 @@ static_assert(sizeof(vfsgid_t) == sizeof(kgid_t));
- static_assert(offsetof(vfsuid_t, val) == offsetof(kuid_t, val));
- static_assert(offsetof(vfsgid_t, val) == offsetof(kgid_t, val));
+@@ -8,6 +8,13 @@
+ struct mnt_idmap;
+ struct user_namespace;
  
-+/**
-+ * initial_idmapping - check whether this is the initial mapping
-+ * @ns: idmapping to check
-+ *
-+ * Check whether this is the initial mapping, mapping 0 to 0, 1 to 1,
-+ * [...], 1000 to 1000 [...].
-+ *
-+ * Return: true if this is the initial mapping, false if not.
-+ */
-+static inline bool initial_idmapping(const struct user_namespace *ns)
-+{
-+	return ns == &init_user_ns;
-+}
++/* Don't touch directly! All fields private. */
++struct mnt_idmap {
++	struct uid_gid_map uid_map;
++	struct uid_gid_map gid_map;
++	refcount_t count;
++};
 +
- static inline bool is_valid_mnt_idmap(const struct mnt_idmap *idmap)
- {
- 	return idmap != &nop_mnt_idmap && idmap != &invalid_mnt_idmap;
+ extern struct mnt_idmap nop_mnt_idmap;
+ extern struct mnt_idmap invalid_mnt_idmap;
+ extern struct user_namespace init_user_ns;
+diff --git a/include/linux/uidgid.h b/include/linux/uidgid.h
+index 2dc767e08f54..5696c870fd0b 100644
+--- a/include/linux/uidgid.h
++++ b/include/linux/uidgid.h
+@@ -17,7 +17,28 @@
+ 
+ struct user_namespace;
+ extern struct user_namespace init_user_ns;
+-struct uid_gid_map;
++
++#define UID_GID_MAP_MAX_BASE_EXTENTS 5
++#define UID_GID_MAP_MAX_EXTENTS 340
++
++struct uid_gid_extent {
++	u32 first;
++	u32 lower_first;
++	u32 count;
++};
++
++struct uid_gid_map { /* 64 bytes -- 1 cache line */
++	union {
++		struct {
++			struct uid_gid_extent extent[UID_GID_MAP_MAX_BASE_EXTENTS];
++			u32 nr_extents;
++		};
++		struct {
++			struct uid_gid_extent *forward;
++			struct uid_gid_extent *reverse;
++		};
++	};
++};
+ 
+ #define KUIDT_INIT(value) (kuid_t){ value }
+ #define KGIDT_INIT(value) (kgid_t){ value }
+diff --git a/include/linux/user_namespace.h b/include/linux/user_namespace.h
+index a0bb6d012137..6feae94c3661 100644
+--- a/include/linux/user_namespace.h
++++ b/include/linux/user_namespace.h
+@@ -12,28 +12,7 @@
+ #include <linux/rwsem.h>
+ #include <linux/sysctl.h>
+ #include <linux/err.h>
+-
+-#define UID_GID_MAP_MAX_BASE_EXTENTS 5
+-#define UID_GID_MAP_MAX_EXTENTS 340
+-
+-struct uid_gid_extent {
+-	u32 first;
+-	u32 lower_first;
+-	u32 count;
+-};
+-
+-struct uid_gid_map { /* 64 bytes -- 1 cache line */
+-	union {
+-		struct {
+-			struct uid_gid_extent extent[UID_GID_MAP_MAX_BASE_EXTENTS];
+-			u32 nr_extents;
+-		};
+-		struct {
+-			struct uid_gid_extent *forward;
+-			struct uid_gid_extent *reverse;
+-		};
+-	};
+-};
++#include <linux/uidgid.h>
+ 
+ #define USERNS_SETGROUPS_ALLOWED 1UL
+ 
 
 -- 
 2.47.2
