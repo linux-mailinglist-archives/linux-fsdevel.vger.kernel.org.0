@@ -1,243 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-46589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D74EA90D05
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 22:22:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BEEF6A90D1F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 22:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789391887DD9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 20:22:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AE03188F03C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 20:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FCD229B35;
-	Wed, 16 Apr 2025 20:22:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBA0C22D4E9;
+	Wed, 16 Apr 2025 20:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+iCqnju"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LTuMOFXV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B327206F37;
-	Wed, 16 Apr 2025 20:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A62F22ACEF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 20:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744834927; cv=none; b=jtzDazgJ36M4ZIVXnCW8tFxxnLWN9Oog4RGzZ3bNDyD/7F0bHuns+n8g95DzuhCRnPic12GNrGc44TpI6h7X6QpMq2Rq8cVaZktY1gN1kTxx1YjzqPDvvBjf/95hiSG+fGlg6swgHJSApD/G43Nuumkx4jC0lg3upDN7gQev0Jo=
+	t=1744835215; cv=none; b=PmPVNZTerJwMbUc18xKFYoUGOFMgWXtoe7Tm+eu2yu3O8o/obhKjFpFUSGqLaQJh/UxwA4LAbXt7FkL1tRMHZpAGlbyomVV8cflpe0XiOO6c2Fy5ZwSffZQfIsB7AAkddSJVAHlPebMSY0e00wD/3VMFDdOtSdwJyHtz+CsEJUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744834927; c=relaxed/simple;
-	bh=MyXEPU5aauDbge2EPjOklgh/uE/SeNRgZek57izFX9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YbmYGJ9yW8fwjbfHHn7gHoHKHNG039zjrXmTdG2EtwkMG7IcSTx+hbuShaUQKCrlcuuhP70RSevLji/J2MQDTxGRN5Kz3vbq47tX+qINoaY/OMfWlZcTPOPiEnI33jK1C4M3p4OI9KcIVRSzLiHHrsktqCitol9voe981UFIIsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+iCqnju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D070C4CEE4;
-	Wed, 16 Apr 2025 20:22:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744834927;
-	bh=MyXEPU5aauDbge2EPjOklgh/uE/SeNRgZek57izFX9Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y+iCqnjuAtgoc5WfsiFfZx5oSaOFsCNPsYfwoWR5mfhAJB7e7Dy8ZYRm6l0wTq6Ai
-	 Wc0CEvD71QUOx/Z9PcPHX9sEsNko0w4jsTHkKB4XPPVMZwicRmBSq4C2vn0xHXLAwy
-	 kKIuWV2cQeHUF7cYTdRJ3GAFlXefcbdI9X+6ehPxjRh5MOWRNFtNqWTbnO/S+12Sls
-	 e6BD3F9SJmrsj72HjIOxEWtEqRwP/N1dHphINX6MnUH4OwltrqROMO0YuNEr9o5lEG
-	 O5wp4/Y2zsWto+u4RMXEde0CFW/oUNWwhszGd0NLUrxu4I8BqcbovgWeNAlYwdOYpW
-	 4C7VH8wl7uFtQ==
-Date: Wed, 16 Apr 2025 13:22:06 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: linux-xfs@vger.kernel.org
-Subject: Re: [6.15-rc2 regression] xfs: null pointer in the dax fault code
-Message-ID: <20250416202206.GE25659@frogsfrogsfrogs>
-References: <20250416174358.GM25675@frogsfrogsfrogs>
+	s=arc-20240116; t=1744835215; c=relaxed/simple;
+	bh=+NVEIDajjOa6S0mwO8uDhLAW9+C2KQqJgF0nDKTn3hM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mr0SR+aXfffpfcUhbS89+/wyWXyIgMjmV30duvOkRDntvhbzsmUYaGdao4Ozl0K99PMO80EmlB0YKT5aeCPqGXi6guNkHEuYBD8VWJ/brJMfROntyoVbYdIY874hRTSIBAFHygzyt0XM1Uj3l4dYYkBWXp1cSDnVCGAGU4kjxDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LTuMOFXV; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1744835212;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=d6AVDplNPTi289CSbOZ9ARQJAN0z0vy8/1A9VIws9D4=;
+	b=LTuMOFXVp2y/fyLkhE5C/W7nV3vj0wgfRBr1Q6DnkM/0L6r6Jzu3fTw0ICCfWXB9DziUpY
+	dAdbJhmAnqIrL+OqoFHRR92+nBQtwvemwkuE7iNXodZFL+ynZBLj8EELn/C553c0jKl9IO
+	UBYLzlDshiTI1xfnf1VeDxNJdeGrSlE=
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com
+ [209.85.166.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-142-Osg3EeknNQqVty3taWib7A-1; Wed, 16 Apr 2025 16:26:50 -0400
+X-MC-Unique: Osg3EeknNQqVty3taWib7A-1
+X-Mimecast-MFC-AGG-ID: Osg3EeknNQqVty3taWib7A_1744835210
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-85b4d893399so685039f.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 13:26:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744835210; x=1745440010;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d6AVDplNPTi289CSbOZ9ARQJAN0z0vy8/1A9VIws9D4=;
+        b=ImNH306vnUV25o8Ofc/Dz2xxfqCmAtSBrH+AFZ4bsrLjGxiPMB6PTWQxN3S+NchIm4
+         EeBFafxx4VF0AxRhCsm0njBEoIcVnJHW4xCNl3eTlmN0YtwnwITA0pVkhQnIkidHW64R
+         7++ih5ac+WzIIJxkoHsB1rP7NeLzCdn46+c4+feIK7PPSho++8TFd3SJuzEY3mtmtSGp
+         FSkeZ8FgNVkslTqNfDwLLVaIy8zCwz13H/f83k0FHCQg4Ini/gMpLYkE8TtR8Mly2G7Y
+         QBM4LyemgKaOQMbO8dofy5tZea5VjuACE9/W1C5yZNiiGwZBNR2PngpGH/roE/pw1U3L
+         Wzfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiTV1KZjkSkFRM5IXKLjQVr8s6lppvI+MEWsMAhJB+v/vj1CYHN2v6WU5JaSpMxY/onCH/ZArTbsHj/pnn@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsgoBPYfwH2hOz/QaV4MPKvbo9/NH03myMTDTg4OPgL9Uxm7bK
+	eSTOPVcOx3xRWiBBI4BpPtVb3/Uc5Y8zsDEu83mgeg0zsYRXt4UgHQ664sqlnRtFrs9Z5XX8BR2
+	Q1UIu96AKUjZnz4Bfo07hY6yueF7Kc7Y9ZRb64DDC065DnkNZoRwLqiW+sr/EVGI=
+X-Gm-Gg: ASbGnctoq91MZQvSzlrWRqCErSWAYx+Fbbu26ZtLDUgcpb15pLudO6T4niy7NwvePuz
+	CmuUfglvR++Ewoqmy5t3dSsEP9zj774Zc038QKQ4RaWCl9hi+lPenAOZuFsWCOGgDEXSbihuvTw
+	U9oN1SiyWxXx+vY2cvbO0QLGRYvSxeN6uCxUafP3QMHcgzlwxyySa107IBqRksdkzokdmTfgq1i
+	EEWdxm8Alwm16ge7Nt4w3lxJ8c3FK3C6ibUNfyov/9FookkQ7g0VrspYpC+2QBXqrt7TgnYWqhe
+	GlGigikN7CqNNgs=
+X-Received: by 2002:a05:6602:1583:b0:856:2a52:ea02 with SMTP id ca18e2360f4ac-861cc5cfb48mr34533439f.5.1744835209675;
+        Wed, 16 Apr 2025 13:26:49 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHdbc3yXRCu1SxHof01X2wIaipkMkSkrZJncD3XrTLmdj2ulJ1ktFsxzmI+33GyeGFuM7i9VQ==
+X-Received: by 2002:a05:6602:1583:b0:856:2a52:ea02 with SMTP id ca18e2360f4ac-861cc5cfb48mr34532239f.5.1744835209342;
+        Wed, 16 Apr 2025 13:26:49 -0700 (PDT)
+Received: from redhat.com ([38.15.36.11])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8616522d048sm306863539f.1.2025.04.16.13.26.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 13:26:48 -0700 (PDT)
+Date: Wed, 16 Apr 2025 14:26:45 -0600
+From: Alex Williamson <alex.williamson@redhat.com>
+To: Salvatore Bonaccorso <carnil@debian.org>
+Cc: David Howells <dhowells@redhat.com>, Christoph Hellwig
+ <hch@infradead.org>, David Hildenbrand <david@redhat.com>, Lorenzo Stoakes
+ <lstoakes@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Jens Axboe
+ <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>, Matthew Wilcox
+ <willy@infradead.org>, Jan Kara <jack@suse.cz>, Jeff Layton
+ <jlayton@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>, Logan Gunthorpe
+ <logang@deltatee.com>, Hillf Danton <hdanton@sina.com>, Christian Brauner
+ <brauner@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, Sasha
+ Levin <sashal@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ regressions@lists.linux.dev, table@vger.kernel.org, Bernd Rinn
+ <bb@rinn.ch>, Karri =?UTF-8?B?SMOkbcOkbMOkaW5lbg==?=
+ <kh.bugreport@outlook.com>, Milan Broz <gmazyland@gmail.com>, Cameron
+ Davidson <bugs@davidsoncj.id.au>, Markus <markus@fritz.box>
+Subject: Re: [regression 6.1.y] Regression from 476c1dfefab8 ("mm: Don't pin
+ ZERO_PAGE in pin_user_pages()") with pci-passthrough for both KVM VMs and
+ booting in xen DomU
+Message-ID: <20250416142645.4392a644.alex.williamson@redhat.com>
+In-Reply-To: <Z_6sh7Byddqdk1Z-@eldamar.lan>
+References: <Z_6sh7Byddqdk1Z-@eldamar.lan>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416174358.GM25675@frogsfrogsfrogs>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 16, 2025 at 10:43:58AM -0700, Darrick J. Wong wrote:
-> Hi folks,
-> 
-> After upgrading to 6.15-rc2, I see the following crash in (I think?) the
-> DAX code on xfs/593 (which is a fairly boring fsck test).
-> 
-> MKFS_OPTIONS=" -m metadir=1,autofsck=1,uquota,gquota,pquota, -d daxinherit=1,"
-> MOUNT_OPTIONS=""
-> 
-> Any ideas?  Does this stack trace ring a bell for anyone?
-> 
-> --D
-On Wed, Apr 16, 2025 at 07:38:36PM +0100, Matthew Wilcox wrote:
-> On Wed, Apr 16, 2025 at 11:08:37AM -0700, Darrick J. Wong wrote:
-> > Hi folks,
-> > 
-> > I upgraded my arm64 kernel to 6.15-rc2, and I also see this splat in
-> > generic/363.  The fstets config is as follows:
-> > 
-> > MKFS_OPTIONS="-m metadir=1,autofsck=1,uquota,gquota,pquota, -b size=65536,"
-> > MOUNT_OPTIONS=""
-> > 
-> > The VM is arm64 with 64k base pages.  I've disabled LBS to work around
-> > a fair number of other strange bugs.  Does this ring a bell for anyone?
-> > 
-> > --D
-> > 
-> > list_add double add: new=ffffffff40538c88, prev=fffffc03febf8148, next=ffffffff40538c88.
-> 
-> Not a bell, but it's weird.  We're trying to add ffffffff40538c88 to
-> the list, but next already has that value.  So this is a double-free of
-> the folio?  Do you have VM_BUG_ON_FOLIO enabled with CONFIG_VM_DEBUG?
+On Tue, 15 Apr 2025 20:59:19 +0200
+Salvatore Bonaccorso <carnil@debian.org> wrote:
 
-Note that xfs/593 on x86_64 (same config but no pmem) seems to have
-stalled with:
+> Hi
+> 
+> [Apologies if this has been reported already but I have not found an
+> already filled corresponding report]
+> 
+> After updating from the 6.1.129 based version to 6.1.133, various
+> users have reported that their VMs do not boot anymore up (both KVM
+> and under Xen) if pci-passthrough is involved. The reports are at:
+> 
+> https://bugs.debian.org/1102889
+> https://bugs.debian.org/1102914
+> https://bugs.debian.org/1103153
+> 
+> Milan Broz bisected the issues and found that the commit introducing
+> the problems can be tracked down to backport of c8070b787519 ("mm:
+> Don't pin ZERO_PAGE in pin_user_pages()") from 6.5-rc1 which got
+> backported as 476c1dfefab8 ("mm: Don't pin ZERO_PAGE in
+> pin_user_pages()") in 6.1.130. See https://bugs.debian.org/1102914#60
+> 
+> #regzbot introduced: 476c1dfefab8b98ae9c3e3ad283c2ac10d30c774
+> 
+> 476c1dfefab8b98ae9c3e3ad283c2ac10d30c774 is the first bad commit
+> commit 476c1dfefab8b98ae9c3e3ad283c2ac10d30c774
+> Author: David Howells <dhowells@redhat.com>
+> Date:   Fri May 26 22:41:40 2023 +0100
+> 
+>     mm: Don't pin ZERO_PAGE in pin_user_pages()
+> 
+>     [ Upstream commit c8070b78751955e59b42457b974bea4a4fe00187 ]
 
-run fstests xfs/593 at 2025-04-16 03:33:38
-XFS (sda3): EXPERIMENTAL metadata directory tree feature enabled.  Use at your own risk!
-XFS (sda3): EXPERIMENTAL exchange range feature enabled.  Use at your own risk!
-XFS (sda3): EXPERIMENTAL parent pointer feature enabled.  Use at your own risk!
-XFS (sda3): Mounting V5 Filesystem c261642e-620a-4382-88f7-648a25d82213
-XFS (sda3): Ending clean mount
-XFS (sda3): EXPERIMENTAL online scrub feature enabled.  Use at your own risk!
-XFS (sda4): EXPERIMENTAL metadata directory tree feature enabled.  Use at your own risk!
-XFS (sda4): EXPERIMENTAL exchange range feature enabled.  Use at your own risk!
-XFS (sda4): EXPERIMENTAL parent pointer feature enabled.  Use at your own risk!
-XFS (sda4): Mounting V5 Filesystem 8db5080b-35d5-4308-90bf-cab53746ab63
-XFS (sda4): Ending clean mount
-XFS (sda4): Quotacheck needed: Please wait.
-XFS (sda4): Quotacheck: Done.
-XFS (sda4): EXPERIMENTAL online scrub feature enabled.  Use at your own risk!
-INFO: task u16:4:277318 blocked for more than 61 seconds.
-      Not tainted 6.15.0-rc2-xfsx #rc2
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:u16:4           state:D stack:10728 pid:277318 tgid:277318 ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: writeback wb_workfn (flush-8:0)
-Call Trace:
- <TASK>
- __schedule+0x458/0x14c0
- ? folio_wait_bit_common+0x118/0x330
- schedule+0x2a/0xe0
- io_schedule+0x4c/0x70
- folio_wait_bit_common+0x144/0x330
- ? filemap_get_read_batch+0x330/0x330
- writeback_iter+0x305/0x340
- iomap_writepages+0x6f/0xb60
- xfs_vm_writepages+0x7c/0xf0 [xfs 05d1f477986dfc3e3925c4fd18979e6f6f9a9e35]
- do_writepages+0x82/0x280
- ? sched_balance_find_src_group+0x4d/0x500
- __writeback_single_inode+0x3d/0x330
- ? do_raw_spin_unlock+0x49/0xb0
- writeback_sb_inodes+0x21c/0x4e0
- wb_writeback+0x99/0x320
- wb_workfn+0xc0/0x410
- process_one_work+0x195/0x3d0
- worker_thread+0x264/0x380
- ? _raw_spin_unlock_irqrestore+0x1e/0x40
- ? rescuer_thread+0x4f0/0x4f0
- kthread+0x117/0x270
- ? kthread_complete_and_exit+0x20/0x20
- ret_from_fork+0x2d/0x50
- ? kthread_complete_and_exit+0x20/0x20
- ret_from_fork_asm+0x11/0x20
- </TASK>
-INFO: task fsstress:503330 blocked for more than 61 seconds.
-      Not tainted 6.15.0-rc2-xfsx #rc2
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:fsstress        state:D stack:10872 pid:503330 tgid:503330 ppid:503327 task_flags:0x400140 flags:0x00000000
-Call Trace:
- <TASK>
- __schedule+0x458/0x14c0
- ? wb_queue_work+0x8e/0x100
- schedule+0x2a/0xe0
- wb_wait_for_completion+0x8d/0xc0
- ? cpuacct_css_alloc+0xa0/0xa0
- __writeback_inodes_sb_nr+0x9f/0xc0
- sync_filesystem+0x29/0x90
- __x64_sys_syncfs+0x40/0xa0
- do_syscall_64+0x37/0xf0
- entry_SYSCALL_64_after_hwframe+0x4b/0x53
-RIP: 0033:0x7f0a3b837d17
-RSP: 002b:00007ffd2eea1988 EFLAGS: 00000206 ORIG_RAX: 0000000000000132
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f0a3b837d17
-RDX: 0000000000000000 RSI: 00005603860ff430 RDI: 0000000000000005
-RBP: 000000000000eb44 R08: 000000000000005b R09: 00007f0a3b92f000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000001
-R13: 8f5c28f5c28f5c29 R14: 00007ffd2eea19d0 R15: 0000560348867790
- </TASK>
-INFO: task fsstress:503331 blocked for more than 61 seconds.
-      Not tainted 6.15.0-rc2-xfsx #rc2
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:fsstress        state:D stack:10872 pid:503331 tgid:503331 ppid:503327 task_flags:0x400140 flags:0x00000000
-Call Trace:
- <TASK>
- __schedule+0x458/0x14c0
- ? wb_queue_work+0x8e/0x100
- schedule+0x2a/0xe0
- wb_wait_for_completion+0x8d/0xc0
- ? cpuacct_css_alloc+0xa0/0xa0
- __writeback_inodes_sb_nr+0x9f/0xc0
- sync_filesystem+0x29/0x90
- __x64_sys_syncfs+0x40/0xa0
- do_syscall_64+0x37/0xf0
- entry_SYSCALL_64_after_hwframe+0x4b/0x53
-RIP: 0033:0x7f0a3b837d17
-RSP: 002b:00007ffd2eea1988 EFLAGS: 00000206 ORIG_RAX: 0000000000000132
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f0a3b837d17
-RDX: 0000000000000000 RSI: 00005603860ff430 RDI: 0000000000000005
-RBP: 000000000000cc4e R08: 0000000000000036 R09: 00007f0a3b92f000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000001
-R13: 8f5c28f5c28f5c29 R14: 00007ffd2eea19d0 R15: 0000560348867790
- </TASK>
-INFO: task fsstress:503332 blocked for more than 61 seconds.
-      Not tainted 6.15.0-rc2-xfsx #rc2
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:fsstress        state:D stack:10872 pid:503332 tgid:503332 ppid:503327 task_flags:0x400140 flags:0x00000000
-Call Trace:
- <TASK>
- __schedule+0x458/0x14c0
- ? wb_queue_work+0x8e/0x100
- schedule+0x2a/0xe0
- wb_wait_for_completion+0x8d/0xc0
- ? cpuacct_css_alloc+0xa0/0xa0
- __writeback_inodes_sb_nr+0x9f/0xc0
- sync_filesystem+0x29/0x90
- __x64_sys_syncfs+0x40/0xa0
- do_syscall_64+0x37/0xf0
- entry_SYSCALL_64_after_hwframe+0x4b/0x53
-RIP: 0033:0x7f0a3b837d17
-RSP: 002b:00007ffd2eea1988 EFLAGS: 00000206 ORIG_RAX: 0000000000000132
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f0a3b837d17
-RDX: 0000000000000000 RSI: 00005603860ff430 RDI: 0000000000000005
-RBP: 000000000000ecb4 R08: 0000000000000039 R09: 00007f0a3b92f000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000001
-R13: 8f5c28f5c28f5c29 R14: 00007ffd2eea19d0 R15: 0000560348867790
- </TASK>
-INFO: task fsstress:503333 blocked for more than 61 seconds.
-      Not tainted 6.15.0-rc2-xfsx #rc2
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:fsstress        state:D stack:10872 pid:503333 tgid:503333 ppid:503327 task_flags:0x400140 flags:0x00000000
-Call Trace:
- <TASK>
- __schedule+0x458/0x14c0
- ? wb_queue_work+0x8e/0x100
- schedule+0x2a/0xe0
- wb_wait_for_completion+0x8d/0xc0
- ? cpuacct_css_alloc+0xa0/0xa0
- __writeback_inodes_sb_nr+0x9f/0xc0
- sync_filesystem+0x29/0x90
- __x64_sys_syncfs+0x40/0xa0
- do_syscall_64+0x37/0xf0
- entry_SYSCALL_64_after_hwframe+0x4b/0x53
-RIP: 0033:0x7f0a3b837d17
-RSP: 002b:00007ffd2eea1988 EFLAGS: 00000206 ORIG_RAX: 0000000000000132
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007f0a3b837d17
-RDX: 0000000000000000 RSI: 00005603860ff430 RDI: 0000000000000005
-RBP: 000000000000df01 R08: 000000000000006d R09: 00007f0a3b92f000
-R10: 0000000000000000 R11: 0000000000000206 R12: 0000000000000001
-R13: 8f5c28f5c28f5c29 R14: 00007ffd2eea19d0 R15: 0000560348867790
- </TASK>
+It's a bad backport, I've debugged and posted the fix for stable here:
 
---D
+https://lore.kernel.org/all/20250416202441.3911142-1-alex.williamson@redhat.com/
+
+Thanks,
+Alex
+
 
