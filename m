@@ -1,156 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-46529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79176A8ADD3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 04:07:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC598A8AF0D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 06:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D90C44133E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 02:07:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D634D7A3C02
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 04:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF0911FECBF;
-	Wed, 16 Apr 2025 02:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B29229B1C;
+	Wed, 16 Apr 2025 04:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="CQPJelMk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y5nvrMgx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dog.birch.relay.mailchannels.net (dog.birch.relay.mailchannels.net [23.83.209.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A4915E96;
-	Wed, 16 Apr 2025 02:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.209.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744769250; cv=pass; b=XPDNvT86IlV2mZ6aVxWaNpkeodTP2cLKZEio7E2eyYkOVhFdT1JrQrhZoo+0yv76CkfPdIXejsQbyUFMTGHimzEtRIZq9rMKNfsvvMJRY5K0HKSc8Nqhm3q1PD4YOg5r57qD1eTCwdeYrLDHSKsleQsmL5tdLyZD0d0XxSFAXyA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744769250; c=relaxed/simple;
-	bh=EgFwQezJYypIPTLjbAO7+wgBDKuxG1DACqpgT5oKBE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ufEc2l+bQpWXKT5I+oDN8u7vVrRkpSYMUteAFH9ibaloWavTmpFAs9OhHsJUJC66oRzEmd8vUloGeGFnNcy2cfkZnpKePXQWj22VPpnuoBOYeE++ye4n6xso2OZa4k1IbfK4LK5f0rXc+QT56XmKILzCNKPPAbCaNSJJI4MsR8s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=CQPJelMk; arc=pass smtp.client-ip=23.83.209.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 8FCA8458B5;
-	Wed, 16 Apr 2025 02:02:13 +0000 (UTC)
-Received: from pdx1-sub0-mail-a270.dreamhost.com (trex-6.trex.outbound.svc.cluster.local [100.110.51.53])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id E44A645942;
-	Wed, 16 Apr 2025 02:02:12 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1744768933; a=rsa-sha256;
-	cv=none;
-	b=ShPKZgvbJsioWDJ6zr+jN3RuXQx3pXzihIoxXcdZaSyjN9R5n1ACCkvuyN7X1ynEKwIIGY
-	R8GLEc4WHPGi2YxHjgspbU56rRPhzKKeMOhaS3HOIxlSSTIWWXJmDKgW6g8jueiTB+5MOS
-	0b5be/c6VN4uAVl8LeDqWz9iTfaOK8HP39Wn4J0ZhH10leg8DbSoew4l5g5Xxgfe9b1hhv
-	w+nIn0fb8z9cV6LnelyJ2Sr1Q4CAaxrL7Qn4i3hjNw/0+AmXAnmCZ7M7t6UAp7HmTrGpma
-	ogtNCT/bxQXwq+HYkQZ0VY8t4ro3prNAHPfWKpOvwLo+hIyWNNiXI/xr87ARPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1744768933;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=EgFwQezJYypIPTLjbAO7+wgBDKuxG1DACqpgT5oKBE4=;
-	b=w1Vi/dc5LKt/pF3kalouhzHVe1gKlaQAefi7r4+A6nPgdr/Vcv+OEFNcFeVZprLl10Ehmk
-	xxG41EPehHgismJsEC2a4EyNj8TaSN46COqL6jgv4uvnxKkTxn3mN4z/Pgb41dnmq19u5E
-	hv1PDrdutvORtuSdzhIxjeXkCivOD17/tQd0BWsgk73Ys9RBPaX+74hfz0bj0RvO93ZwW7
-	0Fpzja0Vz8YGHS4C8xHLWbJ+IEsUl/7njEELgFasx0YpUETwi63Fk2RDr1I5cvMtmJbA1n
-	v5+O4LWQ3bE8rHAcSqL1Fm/W5NVFSDPCri4/wcG66b68BWgtjhaA8jvKAk+tgQ==
-ARC-Authentication-Results: i=1;
-	rspamd-5dd7f8b4cd-2pb8p;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Spot-Thread: 23261b3b7b19990f_1744768933328_4128009771
-X-MC-Loop-Signature: 1744768933328:3434343757
-X-MC-Ingress-Time: 1744768933328
-Received: from pdx1-sub0-mail-a270.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.110.51.53 (trex/7.0.3);
-	Wed, 16 Apr 2025 02:02:13 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a270.dreamhost.com (Postfix) with ESMTPSA id 4Zckmg3Gr7z2c;
-	Tue, 15 Apr 2025 19:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1744768932;
-	bh=EgFwQezJYypIPTLjbAO7+wgBDKuxG1DACqpgT5oKBE4=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=CQPJelMkHR9c9PwOQz1qB9oLMoQ0ijerkO/7sTliU3wShQdMiumwtZeUz8qKG4hQH
-	 P/+Ba9DrECHulLQADswnJQAn7N7p6JgJOjhObbZsvwzjl1ctJj9h4ZCrzAkqDRFUXu
-	 p0S045L32lw1PwuZUJqHayjEwt1ltr9Rp+CEuY1ayAOdHWv190+04JcmqhwNHhuIhK
-	 0/2MpjusbdsgGViBxeOeRKPuszsMvIgUOy21txdcZrW66eV/RDnRe9TOYDbaf6ZziO
-	 fxFGoIfQeyeU/EDzaCZ+mmP69qqdonxNJRnFc4V8OBjj/3+x97Y7HdQmSxM8hXxUi1
-	 VFDZD9KTPnAzw==
-Date: Tue, 15 Apr 2025 19:02:07 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	riel@surriel.com, willy@infradead.org, hannes@cmpxchg.org,
-	oliver.sang@intel.com, david@redhat.com, axboe@kernel.dk,
-	hare@suse.de, david@fromorbit.com, djwong@kernel.org,
-	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-mm@kvack.org,
-	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com,
-	syzbot+f3c6fda1297c748a7076@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/8] migrate: fix skipping metadata buffer heads on
- migration
-Message-ID: <20250415232501.iypezdhizhttidpc@offworld>
-Mail-Followup-To: Luis Chamberlain <mcgrof@kernel.org>,
-	Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
-	tytso@mit.edu, adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	riel@surriel.com, willy@infradead.org, hannes@cmpxchg.org,
-	oliver.sang@intel.com, david@redhat.com, axboe@kernel.dk,
-	hare@suse.de, david@fromorbit.com, djwong@kernel.org,
-	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-mm@kvack.org,
-	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com,
-	syzbot+f3c6fda1297c748a7076@syzkaller.appspotmail.com
-References: <20250410014945.2140781-1-mcgrof@kernel.org>
- <20250410014945.2140781-2-mcgrof@kernel.org>
- <dpn6pb7hwpmajoh5k5zla6x7fsmh4rlttstj3hkuvunp6tok3j@ikz2fxpikfv4>
- <Z_15mCAv6nsSgRTf@bombadil.infradead.org>
- <Z_2J9bxCqAUPgq42@bombadil.infradead.org>
- <20250415-freihalten-tausend-a9791b9c3a03@brauner>
- <Z_5_p3t_fNUBoG7Y@bombadil.infradead.org>
- <dkjq2c57du34wq7ocvtk37a5gkcondxfedgnbdxse55nhlfioy@v6tx45lkopfm>
- <Z_7KTEKEzC9Fh2rn@bombadil.infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2A34A1A;
+	Wed, 16 Apr 2025 04:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744777912; cv=none; b=bMZAC5xkUGe9YFZcFBiBJ1ftCXb3whS8VOAY+aS3w/JkCGldRXg1T5iBDpcofyiokV9klxbxxGBAzolQggyz+mwDKO6atG5r35j6fZpkdTAkxQDEKm2O5QpumYqLCvd7DqLu+a1jbX+U45vMWiqeQ7+dXix+enPoHgJBBbxdKLc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744777912; c=relaxed/simple;
+	bh=ID3mgG/yq3/csCj1uKnjg/LaU6bBse9jTIXuE9Q5spk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Gn18l6V5mUDarXmwPpuPfVpNj7li+8M3TR+UfCZsq73stG2+5elCeoCY+Nyw/b4HBVKVsgROToNTAGGdKqlprJU84drVWC0Go4xx7M/K4pcTnhCd8lHTrEWdEB9uADD1PMTxXpSoL0rwgCUWfhYdkj+iuTtw+/RoWMQc8YgI3Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y5nvrMgx; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-736b98acaadso5780065b3a.1;
+        Tue, 15 Apr 2025 21:31:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1744777909; x=1745382709; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=URvhPy/oV2vL/75NuZBpcrmjoqkq3rW0UHgJpR5E4JE=;
+        b=Y5nvrMgx99J07RrP9Gs3rxrMEKMim6ywTAfoAI4iNV8xnhLDMwFZ94R5EY4j6p7Par
+         r/FXTJXeMPKj0WfEonZp8Mah/wPT2s5vpzM4mqyUC6QgfkugHfrb3M9aEpPpxw68bLN1
+         JMAVWIZxNBZq67nzcVBvEnad2dwIEEoeKEqRxCMiqyj6H+3i0KChagDaosiD4tz5AhTf
+         ByFhlPb5wfXMaQHplneesbQkml3hZUGleDLBUCqECc6i47t5ka7yMgF51ifDdY2WGHK2
+         jmQfOWQfJzLdN0pAtUiUl1ruKRJ1ZdNmBzS8IJfHl0A+iLayuroZg7nPoUeIXKdVJxxK
+         v4fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744777909; x=1745382709;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=URvhPy/oV2vL/75NuZBpcrmjoqkq3rW0UHgJpR5E4JE=;
+        b=VECizaGHiion6hnnl6lTEqK6dduWpkBouIgO2XJln+elnyFrGOTRnH0+AFUVLGTVpN
+         +TMsyWGJU3FiWSW+igwNfxE6LJp7M5TBHTRD7HTJ+01Sm5LalwX/uo0kZayCE+JjqcqW
+         3ss/b0nN2Z1aSRgIiQ1+OLLsOhxGztPTPYGPT/YEe/q4dTasVcblG9FnR0hgbSwlRPCi
+         GdRad7TjVIqB3BmpVWMxBurlrB2obv8RlJ3iQUeaKafZvqpjfI3fGvd8Ku/vV5TlAwtt
+         xLOrz76uqFxm8PH6TcvJiU+gE9bq1HxW/C61AFRSRR7ENrjX/Pk6/NS8agCSWLdhrWiZ
+         4DVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVz26c1mrzzY2gfh++kfcBZkuPAJDc8mOTbCq/XJG5pyZw4jea2PzlMPISv8CYo+4iS0ry1IZOt@vger.kernel.org, AJvYcCXmuEDzSwiJMjXxJ3pkOwt3cJixTdEvnHQ3T+WvIpGnXRoPHFYWg5V0yqS+rqO5OWoVOVmiFcUntjTogKPU@vger.kernel.org, AJvYcCXs8yJcqVN7loUm5tgduUYFVnKRUgrORTVvxDBYXhrQtazehNCb9oa05mS5aaXaGjkbkOubquyXM8jNFqdR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDDE0mDlmacKGrKs56357A1K6dZs17JN/0dljbvZ5mlFgqvhkD
+	aaNpshmuT+ZDr3UYofa6OSyX0mZPzMObUEJaBiGVYRa75jpaASrqQnOUtkHQ
+X-Gm-Gg: ASbGncvwvMgyv8x7YVUo95aVIkBxQ632kVpmeIITt9BreEF8jxeC2rVn4S04TDuFWGU
+	aNXBCtLlTEUKmddcHbNEhTNR/VuXat+/qPsFQDDVt06xgeO4iKigUvIeaTPOxDMrG04kui94kwA
+	cFufMJcKB+dAz7usb1vd6Q0UC8U/jvVmsu9gYcw6iAyBqXzrSYsUPSEk1VGvV43U1o0slqK8UyJ
+	gZc+SZHudAsyG8Ar1uzrV+JkKxqxGX7QSx13zW5BLeYjhcIXdGxW++Vbdgm30JEpHbd27ud4vZa
+	COatst7cvHtRp48nZaHa1Mswe0KIVno6KkVm9geyEeR1OWtWTWCxe/ntBJAweQ==
+X-Google-Smtp-Source: AGHT+IHFgMxReC+YG32Dd+BwllhMqIBI2ZO2sqm0vk18CB7ElHOpAOiE8Lq9VRJv61eZzLm7um2j+Q==
+X-Received: by 2002:a05:6a21:789d:b0:1f3:345e:4054 with SMTP id adf61e73a8af0-203b3ea0252mr318052637.14.1744777909525;
+        Tue, 15 Apr 2025 21:31:49 -0700 (PDT)
+Received: from VM-16-38-fedora.. ([43.135.149.86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd230d697sm9396676b3a.123.2025.04.15.21.31.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Apr 2025 21:31:49 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: akpm@linux-foundation.org
+Cc: alexjlzheng@gmail.com,
+	alexjlzheng@tencent.com,
+	andrea@betterlinux.com,
+	fengguang.wu@intel.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	mengensun@tencent.com,
+	stable@vger.kernel.org,
+	willy@infradead.org
+Subject: Re: [PATCH v2] mm: fix ratelimit_pages update error in dirty_ratio_handler()
+Date: Wed, 16 Apr 2025 12:31:47 +0800
+Message-ID: <20250416043147.31208-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250415185851.e8d632f60ec5049f734ac2a8@linux-foundation.org>
+References: <20250415185851.e8d632f60ec5049f734ac2a8@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Z_7KTEKEzC9Fh2rn@bombadil.infradead.org>
-User-Agent: NeoMutt/20220429
+Content-Transfer-Encoding: 8bit
 
-On Tue, 15 Apr 2025, Luis Chamberlain wrote:
+On Tue, 15 Apr 2025 18:58:51 -0700, akpm@linux-foundation.org wrote:
+> On Tue, 15 Apr 2025 17:02:32 +0800 alexjlzheng@gmail.com wrote:
+> 
+> > From: Jinliang Zheng <alexjlzheng@tencent.com>
+> > 
+> > In the dirty_ratio_handler() function, vm_dirty_bytes must be set to
+> > zero before calling writeback_set_ratelimit(), as global_dirty_limits()
+> > always prioritizes the value of vm_dirty_bytes.
+> 
+> Can you please tell us precisely where global_dirty_limits()
+> prioritizes vm_dirty_bytes?  I spent a while chasing code and didn't
+> see how global_dirty_limits() gets to node_dirty_ok()(?).
 
->On Tue, Apr 15, 2025 at 06:23:54PM +0200, Jan Kara wrote:
->> So I don't like removing that commit because it makes a
->> "reproducible with a heavy stress test" problem become a "reproduced by
->> real world workloads" problem.
->
->So how about just patch 2 and 8 in this series, with the spin lock
->removal happening on the last patch for Linus tree?
+Thank you for your reply.
 
-fyi I sent out a new series (trimmed some recipients), addressing the concerns
-laid out in this approach.
+It's domain_dirty_limits() that's relevant here, not node_dirty_ok:
 
-https://lore.kernel.org/all/20250415231635.83960-1-dave@stgolabs.net/
+  dirty_ratio_handler
+    writeback_set_ratelimit
+      global_dirty_limits(&dirty_thresh)           <- ratelimit_pages based on dirty_thresh
+        domain_dirty_limits
+          if (bytes)                               <- bytes = vm_dirty_bytes <--------+
+            thresh = f1(bytes)                     <- prioritizes vm_dirty_bytes      |
+          else                                                                        |
+            thresh = f2(ratio)                                                        |
+      ratelimit_pages = f3(dirty_thresh)                                              |
+    vm_dirty_bytes = 0                             <- it's late! ---------------------+
 
-Similar to adding artificial delays to a vanilla kernel, the only behavior
-these modifications cause is a quicker triggering of the aforementioned
-(yet independent) ext4 warning splat/corruption.
+> 
+> > That causes ratelimit_pages to still use the value calculated based on
+> > vm_dirty_bytes, which is wrong now.
+> > 
+> > Fixes: 9d823e8f6b1b ("writeback: per task dirty rate limit")
+> > Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
+> > Reviewed-by: MengEn Sun <mengensun@tencent.com>
+> > Cc: stable@vger.kernel.org
+> 
+> Please, as always, provide a description of the userspace-visible
+> effects of this bug?
+
+The impact visible to userspace is difficult to capture directly because there is no
+procfs/sysfs interface exported to user space. However, it will have a real impact
+on the balance of dirty pages.
+
+For example:
+1. On default, we have vm_dirty_ratio=40, vm_dirty_bytes=0
+2. echo 8192 > dirty_bytes, then vm_dirty_bytes=8192, vm_dirty_ratio=0, and ratelimit_pages
+   is calculated based on vm_dirty_bytes now.
+3. echo 20 > dirty_ratio, then since vm_dirty_bytes is not reset to zero when
+   writeback_set_ratelimit() -> global_dirty_limits() -> domain_dirty_limits() is called,
+   reallimit_pages is still calculated based on vm_dirty_bytes instead of vm_dirty_ratio.
+   This does not conform to the actual intention of the user.
+
+thanks,
+Jinliang Zheng :)
 
