@@ -1,186 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-46568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859D5A90750
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 17:05:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256BDA90755
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 17:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5215444C29
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 15:05:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F233189B452
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 15:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 538A71FC7D2;
-	Wed, 16 Apr 2025 15:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6430A1FF60E;
+	Wed, 16 Apr 2025 15:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="PPoEO2aE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f6APyql2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319851FCF78
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 15:04:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1BD735962;
+	Wed, 16 Apr 2025 15:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744815890; cv=none; b=BhB+cL/Hkrxh33Y6eiaZHBsOFF2fFu8PwulOu5rulMTr2MSsRDlZjJJ1C8/WtzJwZlwNUyxoCft8IgLQQ2tD0CLN5AeNIv7vBkbvi0i12ofGHnk4SKxNEAYMT1dWZI8TOY7AM0x+oYneIK+4Rdl8pz0xz21iXfu8LdKjz7UDP/8=
+	t=1744815966; cv=none; b=ID3D2hNwEqMyd8Xc1QBkAinmLx3eEsuSn6HdCMOWF6iekryrTjkrEInojImOKulaTDbPykzu/D6Dz3nti21XEAFDwB8VzY5zCI8y/Yuw4yBQ9+OjM7d4j3PhrZyI5MI7HIFONxMu3HMr72lSqpR0ciQxul5Gip2IaJOddADL75Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744815890; c=relaxed/simple;
-	bh=l/wU5LlCNeXKb1bR4CJxudZaj0MK9M+rTjIXHj/uHHE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KJBXwaC7ZuguwFGaw8kFjQ0/ZtUfELNJWE7dAi269hM8eTp5DRyl7IsUCf8F6rGV+/gaovpiO1rjXnjbMR4MaY/O8W7Zuk6khvQsBfnE6QbKjJdaFuxsjzdMCsfc5ZoQRmW0zDX767130iRFN6vaN3NdLEzFx2qBBQbfXfeUFY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=PPoEO2aE; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e61d91a087so10177981a12.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 08:04:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1744815886; x=1745420686; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mALff3rdEiTI8CPpBrO1EEpr4Q3mHrpmiRhWlQ+Az+4=;
-        b=PPoEO2aE7jqMnrE+MufL8FUwB5F2cXsR7jifU2EN13MuZrKC14ru5gyQ43bIDQjmFQ
-         qqh5mr98Lq5YVsWQQ66XJSfXAii1zhw9s2fiY72PrN/npI6KQ7Vtwu1C35vTGwgPuRfp
-         LTDFXcVN2IO23+7JWcXkNgf92XoAFeNdTm7Z8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744815886; x=1745420686;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mALff3rdEiTI8CPpBrO1EEpr4Q3mHrpmiRhWlQ+Az+4=;
-        b=WQzu+nTfoyvCFc9Lm2r500pe3JUBEV1K0gRpWZg1jJTMD/98XK4rw6ZQahw6/0+3cy
-         OwnAyVWMz463AR2klCpkV/Fk+eTYvPx/4JT8DHIeTjmOhzHFG0KYCP4TmXiiH1nhzn0E
-         LLdjw8JlCJWckODMxOYaKAPqX5Tz5aJ9aHmU/3IKvvGP0o9QvTgzQwLVZJ/tp/pvURGq
-         8DfATLW8X+P/+/5NDdwrEWO6jhw5PNtvT/G3QvoeB1HZ8Mb9cWZsdWyhWrKrNrg4OXAg
-         U6VUGiodpb4aizMeIOaXKQV0wFgk++U3HHPNoK+tnhgFVn8cPaAMhcMSHVxsh3HWtvYP
-         jI/A==
-X-Gm-Message-State: AOJu0Yz/s21yQZ26/ji82P2FacZTG7RPc6NIR5yJ+qsmsk296sV0o8As
-	SNNUnKi6Ie0oJo6HXt5P+UKeFWqhXmDpnFZ3zEkgslwhNeHQy0wZr8tIHdw1IgFTZCednF/vpk4
-	XZ9A=
-X-Gm-Gg: ASbGncuz1RpiSuqksndalf9GHPSiKj6oJFfdfofSM/trfmrGa35xy/65bSpB3Ccsin/
-	GkZ+EQRzRi2SPGFsrAY8fm6f5CXVmSrvH3jPma/MrVC2v3dj4AeerzS/hFGRfs+Lb9HHw37qzPR
-	4FPcyWpUE4Cw70SvuRBFB8m+bLvv++phpbHRxix02gj4Jb40xqct23UgJYd6xDsLBvqjz423j+z
-	iD4bvYwKnEOI4VWYDtzf7OLsg0nxMoojR+YufprVp/nC0L79geH5lSZRgeTwV/ytPsqYJFQjPR9
-	hNaD8FhzuSxrA91rONfxTwvOAIR7ZcMz3ojshZYJlvU37I4bu9LWH2HL0Bo34r1+bQeYlVIL/hS
-	PQ7xOn9wCcZgNEUM=
-X-Google-Smtp-Source: AGHT+IHSKhryNtreiAhXB6H2/j8pmGs20P9FUOc6YhCSLXmOi5KwgnpnJ2sIkT5lOSOpOI3v6mEiRw==
-X-Received: by 2002:a05:6402:350f:b0:5df:6a:54ea with SMTP id 4fb4d7f45d1cf-5f4b731cda6mr2271720a12.11.1744815885569;
-        Wed, 16 Apr 2025 08:04:45 -0700 (PDT)
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com. [209.85.221.47])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36f068a5asm8565955a12.34.2025.04.16.08.04.44
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 08:04:44 -0700 (PDT)
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-391342fc0b5so5181634f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 08:04:44 -0700 (PDT)
-X-Received: by 2002:a05:6000:4310:b0:39e:e438:8e32 with SMTP id
- ffacd0b85a97d-39ee5bada8dmr1866584f8f.55.1744815883835; Wed, 16 Apr 2025
- 08:04:43 -0700 (PDT)
+	s=arc-20240116; t=1744815966; c=relaxed/simple;
+	bh=l2u5/AR5KohY2Ne0q9kFZHfh95fUmdMdWQxvvpvtISs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oJTToTUTVAmaeCOr0FhxYd8l/YVaawvsxMUHt6XyS3W69RdwIfFdPg/6H2Hnm3AasfJvKaaGhxYdKcN60Uvmf8zpyPfqAOwrQ9p0ONJK5XQSHVW2jPmED9eba7UmGdnhFZJnLKb15PjHF3DrslE86dPYnGg0AWXUD8a6wBNX7KM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f6APyql2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44C20C4CEE2;
+	Wed, 16 Apr 2025 15:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744815965;
+	bh=l2u5/AR5KohY2Ne0q9kFZHfh95fUmdMdWQxvvpvtISs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f6APyql2LPE1KPUscXGJVcbv+8XglRtjpu12Za7zt5fVUWvF1TjCOCySAEKX1HmNZ
+	 HEpPDBw37fWjoQEc5J2jV4ydAonr9VKSvm3fcvczL+Qr4s9ipbFupyJaUvBTrmqTda
+	 e8XuKDH0nh6PMPI83QuI8H7vydAThj1U6XbIlaccfZ5SF3LzHDAgScQhVP601ufyTu
+	 pt2Nr2ZdOnRImv3W5SeJq8Jygepdnqh272RdUAN3KP90P6fgD+d7DnsoAGBl3gRGkk
+	 ccdGwrf9FpnKwMbOGPGxtuc/pXIBpUt/itkljlNG2OBVYdrel+t3GBB5hCpgCW1pO0
+	 8Esiltxwt5Pwg==
+Date: Wed, 16 Apr 2025 08:06:04 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	David Sterba <dsterba@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Josef Bacik <josef@toxicpanda.com>, Sandeen <sandeen@redhat.com>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] hfs{plus}: add deprecation warning
+Message-ID: <20250416150604.GB25700@frogsfrogsfrogs>
+References: <20250415-orchester-robben-2be52e119ee4@brauner>
+ <20250415144907.GB25659@frogsfrogsfrogs>
+ <20250416-willen-wachhalten-55a798e41fd2@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org> <20250416-work-mnt_idmap-s_user_ns-v1-3-273bef3a61ec@kernel.org>
-In-Reply-To: <20250416-work-mnt_idmap-s_user_ns-v1-3-273bef3a61ec@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 16 Apr 2025 08:04:26 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgt5Lw7q_VAHgEC+HT4d5iJos6_shnyOnNBQeT0qrJSXw@mail.gmail.com>
-X-Gm-Features: ATxdqUE5Ea_O70qWm1hojvGX4BwnFV_hF6IiKNOOQmXbk3HBLCQRu-d7_qVWAXg
-Message-ID: <CAHk-=wgt5Lw7q_VAHgEC+HT4d5iJos6_shnyOnNBQeT0qrJSXw@mail.gmail.com>
-Subject: Re: [PATCH RFC 3/3] mnt_idmapping: inline all low-level helpers
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250416-willen-wachhalten-55a798e41fd2@brauner>
 
-On Wed, 16 Apr 2025 at 06:17, Christian Brauner <brauner@kernel.org> wrote:
->
-> Let's inline all low-level helpers and use likely()/unlikely() to help
-> the compiler along.
+On Wed, Apr 16, 2025 at 08:27:19AM +0200, Christian Brauner wrote:
+> On Tue, Apr 15, 2025 at 07:49:07AM -0700, Darrick J. Wong wrote:
+> > On Tue, Apr 15, 2025 at 09:51:37AM +0200, Christian Brauner wrote:
+> > > Both the hfs and hfsplus filesystem have been orphaned since at least
+> > > 2014, i.e., over 10 years. It's time to remove them from the kernel as
+> > > they're exhibiting more and more issues and no one is stepping up to
+> > > fixing them.
+> > > 
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > > ---
+> > >  fs/hfs/super.c     | 2 ++
+> > >  fs/hfsplus/super.c | 2 ++
+> > >  2 files changed, 4 insertions(+)
+> > > 
+> > > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> > > index fe09c2093a93..4413cd8feb9e 100644
+> > > --- a/fs/hfs/super.c
+> > > +++ b/fs/hfs/super.c
+> > > @@ -404,6 +404,8 @@ static int hfs_init_fs_context(struct fs_context *fc)
+> > >  {
+> > >  	struct hfs_sb_info *hsb;
+> > >  
+> > > +	pr_warn("The hfs filesystem is deprecated and scheduled to be removed from the kernel in 2025\n");
+> > 
+> > Does this mean before or after the 2025 LTS kernel is released?  I would
+> 
+> I would've tried before the LTS release...
 
-Hmm. This looks like it might be a mistake - code generation will
-probably not be great, because you still end up calling a real
-function for some of the cases (ie from_kuid() in the actual real
-translation case), so all the register allocation etc issues with
-having a function call largely do remain.
+Well you still could.  No better way to get an oft-ignored filesystem
+back into maintenance by throwing down a deprecation notice. :)
 
-Yes, it inlines things into generic_permission(), and that will avoid
-the function call overhead for the common case (good), but it also
-does make for bigger code generation. And it doesn't actually *change*
-the code - it ends up doing all the same accesses, just the
-instruction flow is slightly different.
+> > say that we ought to let this circulate more widely among users, but
+> 
+> which is a valid point. The removal of reiserfs and sysv has been pretty
+> surgically clean. So at least from my POV it should be simple enough to
+> revert the removal. But I'm not dealing with stable kernels so I have no
+> intuition about the pain involved.
 
-So I think you'd actually be better off with *just* the IOP_USERNS
-patch, and only inlining *that* fast-path case, and keep the other
-cases out-of-line.
+It'll probably cause a lot of pain for the distributions that support
+PPC Macs because that's the only fs that the OF knows how to read for
+bootfiles.  For dual-boot Intel Macs, their EFI partition is usually
+HFS+ and contains various system files (+ grub), but their EFI actually
+can read FAT.  I have an old 2012 Mac Mini that runs exclusively Debian,
+and a FAT32 ESP works just fine.
 
-IOW - instead of only checking IOP_USERNS only in i_user_ns() and
-making it return 'init_user_ns' without doing the pointer following, I
-think you should make just our *existing* inlined i_uid_into_vfsuid()
-helper be the minimal inlined wrapper around just the IOP_USERNS
-logic.
+> > OTOH I guess no maintainer for a decade is really bad.
 
-Because right now the problem with i_uid_into_vfsuid() is two-fold
+On those grounds,
+Acked-by: "Darrick J. Wong" <djwong@kernel.org>
 
- - it does that pointer chasing by calling i_user_ns(inode)
+--D
 
- - it then calls make_vfsuid() which does lots of pointless extra work
-in the common case
-
-and I think both should be fixed.
-
-Btw, make_vfsuid() itself is kind of odd. It does:
-
-        if (idmap == &nop_mnt_idmap)
-                return VFSUIDT_INIT(kuid);
-        if (idmap == &invalid_mnt_idmap)
-                return INVALID_VFSUID;
-        if (initial_idmapping(fs_userns))
-                uid = __kuid_val(kuid);
-        else
-                uid = from_kuid(fs_userns, kuid);
-        if (uid == (uid_t)-1)
-                return INVALID_VFSUID;
-        return VFSUIDT_INIT_RAW(map_id_down(&idmap->uid_map, uid));
-
-and honestly, that looks just horrendous for the actual simple cases.
-I think it's a historical accident, but the
-
-                return VFSUIDT_INIT(kuid);
-
-and the
-
-                uid = __kuid_val(kuid);
-        ....
-        return VFSUIDT_INIT_RAW(map_id_down(&idmap->uid_map, uid));
-
-things are actually the same exact "no mapping" code for the case we
-care about most. We shouldn't even do that
-
-        if (uid == (uid_t)-1)
-                return INVALID_VFSUID;
-
-case at all for that case, because the no-mapping situation is that
-INVALID_VFSUID *is* (uid_t)-1, so all of this is entirely pointless.
-
-So I think the inlined fast-case should be that
-
-        if (idmap == &nop_mnt_idmap || initial_idmapping(fs_userns))
-                return VFSUIDT_INIT(kuid);
-
-code, and then the 'initial_idmapping()' thing should check the
-IOP_USERNS bit explicitly, and never use the i_user_ns() helper at all
-etc.
-
-That case should then be "likely()", and the rest can remain out-of-line.
-
-IOW: instead of inlining all the helpers, just make the *one* helper
-that we already have (and is already a trivial inline function) be
-much more targeted, and make that fast-case much more explicit.
-
-Hmm?
-
-                   Linus
+> > 
+> > --D
+> > 
+> > > +
+> > >  	hsb = kzalloc(sizeof(struct hfs_sb_info), GFP_KERNEL);
+> > >  	if (!hsb)
+> > >  		return -ENOMEM;
+> > > diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+> > > index 948b8aaee33e..58cff4b2a3b4 100644
+> > > --- a/fs/hfsplus/super.c
+> > > +++ b/fs/hfsplus/super.c
+> > > @@ -656,6 +656,8 @@ static int hfsplus_init_fs_context(struct fs_context *fc)
+> > >  {
+> > >  	struct hfsplus_sb_info *sbi;
+> > >  
+> > > +	pr_warn("The hfsplus filesystem is deprecated and scheduled to be removed from the kernel in 2025\n");
+> > > +
+> > >  	sbi = kzalloc(sizeof(struct hfsplus_sb_info), GFP_KERNEL);
+> > >  	if (!sbi)
+> > >  		return -ENOMEM;
+> > > -- 
+> > > 2.47.2
+> > > 
+> > > 
 
