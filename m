@@ -1,158 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-46583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51032A90B6C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 20:39:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 018DFA90BCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 20:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 949051774D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 18:38:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01C3244123A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 18:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F656224259;
-	Wed, 16 Apr 2025 18:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F59224220;
+	Wed, 16 Apr 2025 18:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tztLz82X"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="vs2cjXa8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D0E224227;
-	Wed, 16 Apr 2025 18:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E7D223710
+	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 18:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744828720; cv=none; b=gkFlsxlMZWCcrzAKKQZM4OzkYLQwP2RTX9D+oeqE9UNvUF9HFxixcS0DiBbo6qEVqol8aHV6MWXFXmjRJuhK0sai7709D450HYTzpcDwWWp+5NSUjmcNKlA72wBBErbE9vJutNffDQbjsCs9TEso2NYWfrgCk+QbTSy+EIKOoQQ=
+	t=1744829925; cv=none; b=N8naXefkdpDlNCfInwGsUT9WZbA2X6F/tP8q8kv1odd+WFsO/KuSZbbOQ1Pt7aKRVZ8pEYFbvY4r62Nc7eYkfv6Er+RRKomSK06CfGJ/K30AUjrKqfLYk2m+ZbQsyF4yNLerXsun+qcAbqYatEl33qqvElSyQV42hxKk+A7REUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744828720; c=relaxed/simple;
-	bh=nVMqA/Qlk1IH4Z6r4PoitFLc0yd/4vubnMeZeTd635I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ijfF9k1kF1Y0MWwQ0Kpr2H9FwdnTLIzgVbNTCfDLTBYLkKEioclAZIVYnDA/fD2diYVxatIcLIr+j2zDQzCgXUIyZBMWJ6HOOgX8GjHlVoNsh+mVUUne/ejkKAc81MBvRCMnGPlw6jMS4r6MaVpf5YA6NrBdBQHsjzZTmgbmDX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tztLz82X; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=u0W4fVf5J1wIDIFv2MqEHTC0oXA5XqadkRfhKcpZmg0=; b=tztLz82XrJRBwUSIShQYcuYFwx
-	PV7dzSaMgtp+N6NLk1LZmpJUy2DUhX8OUfj7qvZaDZwdfN2m6YDIjOwMLCZiZeYzUjfv3AwHP8GJO
-	eIT+tTIlrCNMgPTdWmyvF97Dgz8p+Gv+Vj75CHLsUGJs6ZvIyLWQ6zJ43yfdNZK0RzsMDUrQw4lH3
-	KkyKXPzS+0Gh6zwd3jhK34cD/nDnsMOQELFOHMDxpLWomC3VMdBWE0PFC4mkcZdI4cyykwmFuTs5O
-	3rzTiEJH0aUOv3VRwx8JAB3Rrsw58uPgtB0HFYDbLHNU33QBVzSGOn2K5uExi4zCdDL8rhD+TkEW0
-	2cdEhvpQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u57ee-0000000AQft-43mx;
-	Wed, 16 Apr 2025 18:38:36 +0000
-Date: Wed, 16 Apr 2025 19:38:36 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-	linux-xfs@vger.kernel.org
-Subject: Re: [6.15-rc2 regression] iomap: null pointer in a bio completion
-Message-ID: <Z__5LOpee2-5rIaE@casper.infradead.org>
-References: <20250416180837.GN25675@frogsfrogsfrogs>
+	s=arc-20240116; t=1744829925; c=relaxed/simple;
+	bh=NV2T/d30uMUYCMSEQrN+qGxUfWVBYywQA3pZxGO0KM8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GfcO9feTALqdkDsAI5MoUS/EswzoOxpldjoTfxD9t+gpDglkvGtxyQf7BiY9bDaQtW9H3kGaKZCHujO4s9DBMGyG/udClWrp0W5xdqe/8DR5ONl2VUjiO824HVK25zLGtHbH7smSXfN379YDP+nz0ubfYR54h5L5rj9QuF8K96w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=vs2cjXa8; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2240b4de12bso236795ad.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 11:58:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1744829923; x=1745434723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MX73opmKqNRlFQa1u/fhWDcEoVHRwt6HMlJzJmD+odo=;
+        b=vs2cjXa8xn4cjaZGH576ef8jpDwJAhcYDq/wc7ncBhW0h+oXMvsyfC9WsxCDvdPm+s
+         x6dxyQChtzbfu6JQoIm2YatPZ80KQ6UMUHf76DwjblUK6KRgcowqEIDP3JgYjiqDCRDN
+         o97STGofmC1QUk0ber/CV0hEDOdOVCGWJJd+8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744829923; x=1745434723;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MX73opmKqNRlFQa1u/fhWDcEoVHRwt6HMlJzJmD+odo=;
+        b=ZnnqBOF1VTnUu4x09akAeJ2D4DVOpe+RHbSsdqE47cJtN6C9xwiuMSwjWOk6OR1hh3
+         OtUkDSgrrhjqeXAnejktmuquQmsqa7IVkZEb+ojADHUToQ8RhV8cyDJZtWAG8w1TrVJl
+         mW3ty0maZMgXnOJN6yB8/odiGmC293ywPfBtxJAp8PoKXFvMWYyULzXcy7lrByerxj4Z
+         TkHxiF0Qxfi/b7CeKznVAzcKeZurXBH5iwY5EmaErj3c2v97CfOBxwaX44THLCdPHAhr
+         4PKrP9ImavpUa7wFtjSkK7XA5CW3MAWKB35pqNBr6RCowbS9VLVuHhAdrNVli63R/2a2
+         zLeg==
+X-Gm-Message-State: AOJu0YxKyQ/Swh15/IxcRFClKDh+aynroe+tCgOgYgVzfd8hAaDxfuBB
+	nOAYFzNuS7uiYHLTUIcsx/GIqVcKPtY+L0kbPwAi55Uhw4PwIRcMz+QCAD1kS2/M5cgd2PI4ne/
+	psCDpdJ40W2hZE/onVHx2vrL/ATwX/3EPpG0QBmC6LDYLAw/i1j8qoNpySJ64vb270CvmVtHEeo
+	meT1Z+hxI0wr5UE258FoQcwfR8Apvp5+0rxCp2kQUtBivr
+X-Gm-Gg: ASbGncuQSuRGBVSSKuLBwNl2Sn/D1eoITEzbENoERDivjBVm/X4EQtPHeksGQccYAQ7
+	jDnOiQCvCgEJRV5Vbs4yvuB0cWRNVFv7N0DEgkCG1ylKFmp3wK8Vf0ccAA+wDiDHIo8+cbNJhdA
+	mZVkR7sv4cjlsuMmk2J5qYefi6l1NSPVs+8aMRB4LXXqE4B7+hu/sS3TkmDu+f24/ObCtM7uBjH
+	MUhJCHSGOGobjqeGC2iPGku6z0gWHMyJpcuQLK3hA15itUPN93zwqJgAvhKbKmtsGb8WTmmn/zQ
+	dkVRt7C/KeaHBylI585N6dYUQ3RTcY9PdjhN9d16BoUcM77y
+X-Google-Smtp-Source: AGHT+IF+JrK09M013V8S/Bwyq8dJiFjoIV5fFBaSZEN4bgsctgbYf5KCkq1hNreYBTGPUyYHjWyOww==
+X-Received: by 2002:a17:902:e94f:b0:220:cb6c:2e30 with SMTP id d9443c01a7336-22c359a39ccmr48032375ad.49.1744829922962;
+        Wed, 16 Apr 2025 11:58:42 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73bd2334468sm10746797b3a.169.2025.04.16.11.58.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Apr 2025 11:58:42 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: jack@suse.cz,
+	brauner@kernel.org,
+	Joe Damato <jdamato@fastly.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Sridhar Samudrala <sridhar.samudrala@intel.com>,
+	Alexander Duyck <alexander.h.duyck@intel.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH vfs/vfs.fixes v2] eventpoll: Set epoll timeout if it's in the future
+Date: Wed, 16 Apr 2025 18:58:25 +0000
+Message-ID: <20250416185826.26375-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416180837.GN25675@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Apr 16, 2025 at 11:08:37AM -0700, Darrick J. Wong wrote:
-> Hi folks,
-> 
-> I upgraded my arm64 kernel to 6.15-rc2, and I also see this splat in
-> generic/363.  The fstets config is as follows:
-> 
-> MKFS_OPTIONS="-m metadir=1,autofsck=1,uquota,gquota,pquota, -b size=65536,"
-> MOUNT_OPTIONS=""
-> 
-> The VM is arm64 with 64k base pages.  I've disabled LBS to work around
-> a fair number of other strange bugs.  Does this ring a bell for anyone?
-> 
-> --D
-> 
-> list_add double add: new=ffffffff40538c88, prev=fffffc03febf8148, next=ffffffff40538c88.
+Avoid an edge case where epoll_wait arms a timer and calls schedule()
+even if the timer will expire immediately.
 
-Not a bell, but it's weird.  We're trying to add ffffffff40538c88 to
-the list, but next already has that value.  So this is a double-free of
-the folio?  Do you have VM_BUG_ON_FOLIO enabled with CONFIG_VM_DEBUG?
+For example: if the user has specified an epoll busy poll usecs which is
+equal or larger than the epoll_wait/epoll_pwait2 timeout, it is
+unnecessary to call schedule_hrtimeout_range; the busy poll usecs have
+consumed the entire timeout duration so it is unnecessary to induce
+scheduling latency by calling schedule() (via schedule_hrtimeout_range).
 
-> ------------[ cut here ]------------
-> kernel BUG at lib/list_debug.c:35!
-> Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Modules linked in: dm_delay dm_snapshot dm_thin_pool dm_persistent_data dm_bio_prison dm
-> _flakey xfs rpcsec_gss_krb5 auth_rpcgss nft_chain_nat xt_REDIRECT nf_nat nf_conntrack nf
-> xt_set nft_compat ip_set_hash_mac nf_tables sha2_ce sha256_arm64 bfq sch_fq_codel fuse l
-> CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Tainted: G        W           6.15.0-rc2-xfsa #rc2 
-> Tainted: [W]=WARN
-> Hardware name: QEMU KVM Virtual Machine, BIOS 1.6.6 08/22/2023
-> pstate: 604010c5 (nZCv daIF +PAN -UAO -TCO -DIT +SSBS BTYPE=--)
-> pc : __list_add_valid_or_report+0xd4/0xd8
-> lr : __list_add_valid_or_report+0xd4/0xd8
-> sp : fffffe008180fa70
-> x29: fffffe008180fa70 x28: ffffffff40538c80 x27: 0000000000000000
-> x26: ffffffff40538c88 x25: ffffffff40538c88 x24: fffffc03febf8148
-> x23: fffffc03ffdfdd80 x22: 0000000000000001 x21: fffffc03febf8148
-> x20: 0000000000000000 x19: ffffffff40538c88 x18: 0000000000000010
-> x17: 3834313866626566 x16: 3330636666666666 x15: 3d76657270202c38
-> x14: 3863383335303466 x13: 2e38386338333530 x12: fffffe0081304268
-> x11: 00000000008c8bc0 x10: 00000000008c8b68 x9 : fffffe00800e2940
-> x8 : c00000010001db68 x7 : fffffe00812f9068 x6 : 0000000005000000
-> x5 : 0000000000000000 x4 : 0000000000000000 x3 : 0000000000000000
-> x2 : 0000000000000000 x1 : fffffc00e06f3200 x0 : 0000000000000058
-> Call trace:
->  __list_add_valid_or_report+0xd4/0xd8 (P)
->  free_frozen_page_commit+0x98/0x398
->  __free_frozen_pages+0x32c/0x5e8
->  free_frozen_pages+0x1c/0x30
->  __folio_put+0xc0/0x138
->  folio_end_writeback+0xf0/0x1e8
->  iomap_finish_ioend_buffered+0x134/0x3b8
->  iomap_writepage_end_bio+0x34/0x50
->  bio_endio+0x178/0x228
->  blk_update_request+0x188/0x4b8
->  scsi_end_request+0x38/0x278
->  scsi_io_completion+0x64/0x660
->  scsi_finish_command+0xdc/0x120
->  scsi_complete+0x88/0x198
->  blk_mq_complete_request+0x3c/0x58
->  scsi_done_internal+0xcc/0x150
->  scsi_done+0x1c/0x30
->  virtscsi_complete_cmd+0xa4/0x160
->  virtscsi_req_done+0x7c/0xe8
->  vring_interrupt+0x70/0xb8
->  __handle_irq_event_percpu+0x58/0x228
->  handle_irq_event+0x54/0xb8
->  handle_fasteoi_irq+0xc8/0x268
->  handle_irq_desc+0x48/0x68
->  generic_handle_domain_irq+0x24/0x38
->  gic_handle_irq+0x54/0x124
->  call_on_irq_stack+0x24/0x58
->  do_interrupt_handler+0xdc/0xf0
->  el1_interrupt+0x34/0x68
->  el1h_64_irq_handler+0x18/0x28
->  el1h_64_irq+0x6c/0x70
->  default_idle_call+0x38/0x148 (P)
->  do_idle+0x20c/0x270
->  cpu_startup_entry+0x3c/0x50
->  secondary_start_kernel+0x12c/0x158
->  __secondary_switched+0xc0/0xc8
-> Code: aa1503e2 f0003ca0 91156000 97ee8906 (d4210000) 
-> ---[ end trace 0000000000000000 ]---
-> Kernel panic - not syncing: Oops - BUG: Fatal exception in interrupt
-> SMP: stopping secondary CPUs
-> Dumping ftrace buffer:
->    (ftrace buffer empty)
-> Kernel Offset: disabled
-> CPU features: 0x0800,000000e0,01000650,8241700b
-> Memory Limit: none
-> ---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception in interrupt ]---
-> 
+This can be measured using a simple bpftrace script:
+
+tracepoint:sched:sched_switch
+/ args->prev_pid == $1 /
+{
+  print(kstack());
+  print(ustack());
+}
+
+Before this patch is applied:
+
+  Testing an epoll_wait app with busy poll usecs set to 1000, and
+  epoll_wait timeout set to 1ms using the script above shows:
+
+     __traceiter_sched_switch+69
+     __schedule+1495
+     schedule+32
+     schedule_hrtimeout_range+159
+     do_epoll_wait+1424
+     __x64_sys_epoll_wait+97
+     do_syscall_64+95
+     entry_SYSCALL_64_after_hwframe+118
+
+     epoll_wait+82
+
+  Which is unexpected; the busy poll usecs should have consumed the
+  entire timeout and there should be no reason to arm a timer.
+
+After this patch is applied: the same test scenario does not generate a
+call to schedule() in the above edge case. If the busy poll usecs are
+reduced (for example usecs: 100, epoll_wait timeout 1ms) the timer is
+armed as expected.
+
+Fixes: bf3b9f6372c4 ("epoll: Add busy poll support to epoll with socket fds.")
+Signed-off-by: Joe Damato <jdamato@fastly.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+---
+ v2: 
+   - No longer an RFC and rebased on vfs/vfs.fixes
+   - Added Jan's Reviewed-by
+   - Added Fixes tag
+   - No functional changes from the RFC
+
+ rfcv1: https://lore.kernel.org/linux-fsdevel/20250415184346.39229-1-jdamato@fastly.com/
+
+ fs/eventpoll.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 100376863a44..4bc264b854c4 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1996,6 +1996,14 @@ static int ep_try_send_events(struct eventpoll *ep,
+ 	return res;
+ }
+ 
++static int ep_schedule_timeout(ktime_t *to)
++{
++	if (to)
++		return ktime_after(*to, ktime_get());
++	else
++		return 1;
++}
++
+ /**
+  * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
+  *           event buffer.
+@@ -2103,7 +2111,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 
+ 		write_unlock_irq(&ep->lock);
+ 
+-		if (!eavail)
++		if (!eavail && ep_schedule_timeout(to))
+ 			timed_out = !schedule_hrtimeout_range(to, slack,
+ 							      HRTIMER_MODE_ABS);
+ 		__set_current_state(TASK_RUNNING);
+
+base-commit: a681b7c17dd21d5aa0da391ceb27a2007ba970a4
+-- 
+2.43.0
+
 
