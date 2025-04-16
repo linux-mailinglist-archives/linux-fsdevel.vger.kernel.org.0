@@ -1,94 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-46541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EF77A8B01E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 08:19:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BD6A8B042
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 08:27:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7810D1902520
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 06:19:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9411F7ADF92
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 06:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51F5E21E0AF;
-	Wed, 16 Apr 2025 06:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE8C22B8AF;
+	Wed, 16 Apr 2025 06:27:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFhYlhKM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4DA219A81;
-	Wed, 16 Apr 2025 06:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37C022206B3;
+	Wed, 16 Apr 2025 06:27:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744784331; cv=none; b=KzVr3YnyADvvFxL88zy57OnkM32QS5iiCy7k6lPBP2Zmaw8DFwdWHwq37617jYZpRUtzuqROidcm2DGfAiAm7sTaZwqFoUDGuce6DBoXRxZ7qMdG7gz2aKOT94yncSZog+79mFqWoHkZmoZ+y612aOetz4DO1g0soKzIuAu9r9k=
+	t=1744784845; cv=none; b=IZ7sEogDi+4oPltwFuZQy7wCmGS6ckDWNMYeJuIqYrFgd4c/+91x5ZePyA7vMZ3TBTbN7PFuE+a2V+ODPY7arbMkDz1s6tMHo/xdPtg1cMJcwlYoGj4RlU046qxTDPEzPCUBdIuX2Utzk24XO3yS3NlNfQBguzWO0yoFYRbfEs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744784331; c=relaxed/simple;
-	bh=suSMq9iVHxQM5u7UB4YBN9mUydNJQLH2Jg1AhbkJWHs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TfQCnJLdhcQCp7nYdMDJvgeTrTLj8YXrpWhEOyYuiT0n0S2MVeiPglkJbE8HOAWH5AJKrZlecUI7e+EWAjkCEl1GLfiG8e1lpErP7fmVkfW7Fi8xGdd7zkwFTBRgkSssa7jEZpE4wnZ41/zwDrEWzFIaVEIo7reAh1dUgsHdUis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53G5thZ9013510;
-	Tue, 15 Apr 2025 23:18:32 -0700
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 45yqpkm3dd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Tue, 15 Apr 2025 23:18:32 -0700 (PDT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Tue, 15 Apr 2025 23:18:31 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Tue, 15 Apr 2025 23:18:28 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <hch@infradead.org>
-CC: <almaz.alexandrovich@paragon-software.com>, <brauner@kernel.org>,
-        <jack@suse.cz>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lizhi.xu@windriver.com>,
-        <ntfs3@lists.linux.dev>,
-        <syzbot+e36cc3297bd3afd25e19@syzkaller.appspotmail.com>,
-        <syzkaller-bugs@googlegroups.com>, <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH V2] fs/ntfs3: Add missing direct_IO in ntfs_aops_cmpr
-Date: Wed, 16 Apr 2025 14:18:27 +0800
-Message-ID: <20250416061827.2995095-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <Z_9IxOypdO5Ks44N@infradead.org>
-References: <Z_9IxOypdO5Ks44N@infradead.org>
+	s=arc-20240116; t=1744784845; c=relaxed/simple;
+	bh=5/dvJapbezp2DjC3tieCg8oZ706CUrQvPxNTcrPLcgA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KjC/GPhECArsVy69gvWuECtxEeWsF3xrGr7bC8K8RgJJ+t88gGWrzfKAwU8VqwBnx4+/OYQ7Oxg6FsNHyy6DluxsrTamaJrKcLRuqLj3sRPqaYT8BZftYSuKDJaNGfMwLkt0cV8R6m9y/CZw04bmwjTgg6aap0S2EMQSSUPY3po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFhYlhKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55696C4CEEC;
+	Wed, 16 Apr 2025 06:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744784844;
+	bh=5/dvJapbezp2DjC3tieCg8oZ706CUrQvPxNTcrPLcgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QFhYlhKMq1V/g8Z0/ZIyhDnRdwM/jMiduzSS/kd6O/3DoBXKnPM27yH8PmGkld49I
+	 zeMvdHYqpb4EtvTIYW9r939l0wPpnYEoJ5n61qSL/7VPEXUrrIi/ssP7JNnY1OzK/t
+	 mj5SQuO+kEVR/pP3vXstM23M68NQwFiVmiXs0hGmbSqmz5qyCwPKXjcVaoxMKXTaSf
+	 Lk2XsbzpVPPehusvezbLvW/Wdf9xBahSC72plemcFbr6hN+l8oMQKOVm06YQqjwZJq
+	 hNmTOXqSUzM0/F2NOvN6erTTR89JUVVWI7cUB1ubDIlLzymw2g23e41G4hRCkDVrcL
+	 9PtVObNnKMKqQ==
+Date: Wed, 16 Apr 2025 08:27:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	David Sterba <dsterba@suse.cz>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Josef Bacik <josef@toxicpanda.com>, Sandeen <sandeen@redhat.com>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] hfs{plus}: add deprecation warning
+Message-ID: <20250416-willen-wachhalten-55a798e41fd2@brauner>
+References: <20250415-orchester-robben-2be52e119ee4@brauner>
+ <20250415144907.GB25659@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: BnqVxG8VK0WFqjPmkANnMIqWHjR1nEQU
-X-Proofpoint-GUID: BnqVxG8VK0WFqjPmkANnMIqWHjR1nEQU
-X-Authority-Analysis: v=2.4 cv=UZBRSLSN c=1 sm=1 tr=0 ts=67ff4bb8 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=XR8D0OoHHMoA:10 a=Lu9379bB4VU3hevTGzEA:9
-X-Sensitive_Customer_Information: Yes
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-16_02,2025-04-15_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
- priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0 malwarescore=0
- spamscore=0 adultscore=0 mlxlogscore=736 lowpriorityscore=0 bulkscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.21.0-2502280000
- definitions=main-2504160050
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250415144907.GB25659@frogsfrogsfrogs>
 
-On Tue, 15 Apr 2025 23:05:56 -0700, Christoph Hellwig wrote:
-> > In the reproducer, the second file passed in by the system call sendfile()
-> > sets the file flag O_DIRECT when opening the file, which bypasses the page
-> > cache and accesses the direct io interface of the ntfs3 file system.
-> > However, ntfs3 does not set direct_IO for compressed files in ntfs_aops_cmpr.
+On Tue, Apr 15, 2025 at 07:49:07AM -0700, Darrick J. Wong wrote:
+> On Tue, Apr 15, 2025 at 09:51:37AM +0200, Christian Brauner wrote:
+> > Both the hfs and hfsplus filesystem have been orphaned since at least
+> > 2014, i.e., over 10 years. It's time to remove them from the kernel as
+> > they're exhibiting more and more issues and no one is stepping up to
+> > fixing them.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/hfs/super.c     | 2 ++
+> >  fs/hfsplus/super.c | 2 ++
+> >  2 files changed, 4 insertions(+)
+> > 
+> > diff --git a/fs/hfs/super.c b/fs/hfs/super.c
+> > index fe09c2093a93..4413cd8feb9e 100644
+> > --- a/fs/hfs/super.c
+> > +++ b/fs/hfs/super.c
+> > @@ -404,6 +404,8 @@ static int hfs_init_fs_context(struct fs_context *fc)
+> >  {
+> >  	struct hfs_sb_info *hsb;
+> >  
+> > +	pr_warn("The hfs filesystem is deprecated and scheduled to be removed from the kernel in 2025\n");
 > 
-> Not allowing direct I/O is perfectly fine.  If you think you need to
-> support direct I/O for this case it is also fine.  But none of this
-> has anything to do with 'can use the page cache' and there are also
-The "The ntfs3 can use the page cache directly" I mentioned in the patch
-is to explain that the calltrace is the direct I/O of ntfs3 called from
-generic_file_read_iter().
+> Does this mean before or after the 2025 LTS kernel is released?  I would
+
+I would've tried before the LTS release...
+
+> say that we ought to let this circulate more widely among users, but
+
+which is a valid point. The removal of reiserfs and sysv has been pretty
+surgically clean. So at least from my POV it should be simple enough to
+revert the removal. But I'm not dealing with stable kernels so I have no
+intuition about the pain involved.
+
+> OTOH I guess no maintainer for a decade is really bad.
+> 
+> --D
+> 
+> > +
+> >  	hsb = kzalloc(sizeof(struct hfs_sb_info), GFP_KERNEL);
+> >  	if (!hsb)
+> >  		return -ENOMEM;
+> > diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+> > index 948b8aaee33e..58cff4b2a3b4 100644
+> > --- a/fs/hfsplus/super.c
+> > +++ b/fs/hfsplus/super.c
+> > @@ -656,6 +656,8 @@ static int hfsplus_init_fs_context(struct fs_context *fc)
+> >  {
+> >  	struct hfsplus_sb_info *sbi;
+> >  
+> > +	pr_warn("The hfsplus filesystem is deprecated and scheduled to be removed from the kernel in 2025\n");
+> > +
+> >  	sbi = kzalloc(sizeof(struct hfsplus_sb_info), GFP_KERNEL);
+> >  	if (!sbi)
+> >  		return -ENOMEM;
+> > -- 
+> > 2.47.2
+> > 
+> > 
 
