@@ -1,87 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-46625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46626-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18EFEA91910
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 12:18:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB805A91AF5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 13:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C2A8188B516
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 10:18:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAE3417F4A5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 11:31:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3503A226D09;
-	Thu, 17 Apr 2025 10:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80DC23ED72;
+	Thu, 17 Apr 2025 11:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KW9Y9RFY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3WNnHf0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AEC1D5CF9;
-	Thu, 17 Apr 2025 10:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B57922B8A0;
+	Thu, 17 Apr 2025 11:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744885086; cv=none; b=A7oHoTLQRttIKCdpSd8hrSGUumeM+R3xY2T19dY8meStiIQgDs/HDm7o0qzh1QbEtzFzc+tJGklQCTe/ENiG8bt9bcgpq7F/Qe7NJRYq7rbMGmkkRa1ebrMxjKcvnJ+Q+vn0rVpKZVVvn8T3CczHl/vWEsTQ5U4PSevJc5xNQgc=
+	t=1744889506; cv=none; b=QseI0mkm8RvpLiLGGdZ6qJT7CtEZ6SGcvVOAfGOwiHjRy4Zr+Beeu8JB/ccMOnrCM8n7cc9duO8/5oNQoTYct1RW6LW5W6RsKjpLSXiqGzcNVYYp+hS25NACOu9vw7GhD5AOHlxC4xeeZlnA8eQTqfyOk8qC87wdRvfQV3RDS1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744885086; c=relaxed/simple;
-	bh=rF92U0urWt6p/1AbiPtAf80xk17/Dsl9xvRoza9f7OA=;
+	s=arc-20240116; t=1744889506; c=relaxed/simple;
+	bh=JlRulFzNFZtoQaYZU/WuQDk588L61tWLNXlAY7Ox9wo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksopEjWu7ZExGMgyYslu2aW2EjPboocAV6CGS7CEtR/UmzIBU33yuWfKbTP0NyfFEXLcWHpfxitJtGyt4v6zOtgRge8MxN5iJExG5Ut4dPik2/IXP3t4G/Xbspgp2n4XrWuKwa9ABKGBP3qYHke0xSF1NjT5Fe7gZgBK5Gy9Suw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KW9Y9RFY; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-acb415dd8faso87506866b.2;
-        Thu, 17 Apr 2025 03:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744885083; x=1745489883; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9skOushEggbMsJxKcF45wWS3+ATrrzyuUsGqv0t7ro=;
-        b=KW9Y9RFYJ+JmFVoFfdNqPbmy8RtLoU2U6U83zeWveBRyowNCLr/C17aeEoj7xZYGFS
-         cOGMw9YxwvQZ0ewVTq7PlRaviBe98pI4VXrRwipmETSlvA9u2P4u9Sz67xIQoyn3u2EK
-         AN5jCMEwCdXaTLDCQJx1dsJLQnl0AixndtUG7lzheuQPS5TnWnYsgFXQFVJRy19lBke4
-         UupHNkDGaB9IF9zUxROdw2lq5JA5fc6vbAIB2Mu9l05hOKVGZjNCZaJYAbCltF1gDXne
-         G/ILcEKfrdxuBsOraRSeVP/Obh6H8uEWnnq0fACUHojkPAhEkfVmIj7aBfRIMkZlQUV0
-         B6+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744885083; x=1745489883;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=l9skOushEggbMsJxKcF45wWS3+ATrrzyuUsGqv0t7ro=;
-        b=sNLuHazBMbdKN8KFqMBnNtc9nEJ7jBR/VCsJBXjuY9SFwacSaJ5sYO+rtC5kBiPBtM
-         wt0Lg5XVhrJ9viOSjUHNdZTw99Exxggqj/d7pVigfC8fb/a+4gqoJy9E468+NH5V2UCJ
-         pu7ygfIUza+/e689HwzkA9hAZUnQm8q9wkTFdw2o/TZUx4nkULa0CBx8nFL1AUdxrtSN
-         N+o2moRmSJ/4Rn1uPnPqTs1WzDmgAXCGR9b/BhzN/h9Z+SQ2Wx+2ztbvQzKNP+3FrTru
-         N9aitKCjfhoKph/EFPpD8s5yDLCxOrkrtqODkUre2X1wewWwkbt8MWM2VVKRjUtaLwVY
-         aXlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9sNasO8KTQvNKB/+w7Lry8oiehCz9YAWtM83WP0tBD7WstJUZsD48c5tBTIPk+b6pZir9m+f1sTnQrBQZ@vger.kernel.org, AJvYcCWmetGlicj1SmIt2RjO2e2CQHL7wJfX6rxWVoQqrGbViaUrMuoCj8xrPEdNkpspatYxXLDend0Y2LNWI7u/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIJm2un5sE1jF3Q8qqCrSc24QT+yHAxSRpV9soWN3MUg93a6j9
-	cg1c8hg5LOiyHOwW2o+TqNu/ASVHObG6cfGNVPrB/pBjswbqtx1o
-X-Gm-Gg: ASbGncsz7ubkQaAThjPs4+THWiVSgQED8lDa45CD+4drPSZ+U/jlV5gGNjcWrrT6l2r
-	dhyfBWTcGuKB/+xXZxE2SPNIWGWVc04sgfzWsF0np1j6fU7eiRqwNc3thmVx7FZlxZ3mHjohaAK
-	kSl4Wvq1X6tRCS38JQ0jRlG1UXqVyds5C8p2YdryU2KXuhHtMCOp1GllMNOhHXiow91kn+4dNJk
-	UbQA+XY5Lunk18dHbvSlm/zhMI0jmUUkqQQpXQfK83plItxk5/k+rIFnrsjbOzZ0B+UrUbeIoyS
-	sk0QCwhA3ZRLJvAgpXimFZW3Bj3cbkbtcnKm0ZTkQQIjPu6KsDGKrd2l
-X-Google-Smtp-Source: AGHT+IFlFTz1i8hkW1ayUI43fP0HBbOeOnZrYXBdNwyKbNNyaLitmXK/BtM5DVGKI9LSAZcCdlpucw==
-X-Received: by 2002:a17:907:7fa7:b0:ac7:95b3:fbe2 with SMTP id a640c23a62f3a-acb42c5a12fmr400036666b.56.1744885083009;
-        Thu, 17 Apr 2025 03:18:03 -0700 (PDT)
-Received: from f (cst-prg-69-142.cust.vodafone.cz. [46.135.69.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb3d32ecbesm269586266b.161.2025.04.17.03.18.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 17 Apr 2025 03:18:02 -0700 (PDT)
-Date: Thu, 17 Apr 2025 12:17:54 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: kernel test robot <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [linus:master] [fs] a914bd93f3:
- stress-ng.close.close_calls_per_sec 52.2% regression
-Message-ID: <hupjeobnfvo7y3jyvomjuqxtdl2df2myqxwr3bktmxabsrbid4@erg2ghyfkuj5>
-References: <202504171513.6d6f8a16-lkp@intel.com>
- <CAGudoHGcQspttcaZ6nYfwBkXiJEC-XKuprxnmXRjjufz2vPRhw@mail.gmail.com>
- <CAGudoHHMvREPjWNvmAa_qQovK-9S1zvCAGh=K6U21oyr4pTtzg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=g3q4k5tIPtSHib/qYXFgodPZ2BB8MvTzxNF5te2HNfGjKxGy4T6r5AQ5Yy8NioUhgIyGo3T/9OqkPy7VB2qArqEcq54Zx6mHLsR+ISzloijPUwvnVTf5fXjKvLaHOYHL9FFUvDJ5Ic733GT/ARbgsVwJ6Df6SpT5/X8PRaTZfj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3WNnHf0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98141C4CEEB;
+	Thu, 17 Apr 2025 11:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744889506;
+	bh=JlRulFzNFZtoQaYZU/WuQDk588L61tWLNXlAY7Ox9wo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T3WNnHf0xvRbrBaSFtv3tjay2+MZVXycQPXt4mcXCst5UGPueBDlD/K+rU5w3tXu3
+	 R5v/ODDvUNtbnhlKYQtzilhW7LY0Ci00gMfBvaBKM3nVxsJcFFJcx9N/sbd+rzzH/8
+	 W0Qtw0aKJOBgoTHtcD3djZjDfCZtgYIQ3/qHTa5DyA45Z8MDUZkdByv6eSXdKFxfjJ
+	 Q8cti5FB33kq0gpdTM2nJQDluXi+Xf55lEt4ue6MZnh5blFaCwv9HYaYBcuQhEPMV/
+	 DRZeLzYpnwuGh5d0YgxmPAAQ6g6KbE+dVTU2AhpcW1EEn7mIOHU9VBzUD0deeviChk
+	 AeIE6uhKOx8vA==
+Date: Thu, 17 Apr 2025 13:31:40 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <raven@themaw.net>
+Cc: Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+Message-ID: <20250417-abartig-abfuhr-40e558b85f97@brauner>
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
+ <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
+ <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,65 +64,93 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGudoHHMvREPjWNvmAa_qQovK-9S1zvCAGh=K6U21oyr4pTtzg@mail.gmail.com>
+In-Reply-To: <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
 
-On Thu, Apr 17, 2025 at 12:02:55PM +0200, Mateusz Guzik wrote:
-> bottom line though is there is a known tradeoff there and stress-ng
-> manufactures a case where it is always the wrong one.
+On Thu, Apr 17, 2025 at 06:17:01PM +0800, Ian Kent wrote:
 > 
-> fd 2 at hand is inherited (it's the tty) and shared between *all*
-> workers on all CPUs.
+> On 17/4/25 17:01, Christian Brauner wrote:
+> > On Wed, Apr 16, 2025 at 11:11:51PM +0100, Mark Brown wrote:
+> > > On Tue, Apr 08, 2025 at 04:58:34PM -0400, Eric Chanudet wrote:
+> > > > Defer releasing the detached file-system when calling namespace_unlock()
+> > > > during a lazy umount to return faster.
+> > > > 
+> > > > When requesting MNT_DETACH, the caller does not expect the file-system
+> > > > to be shut down upon returning from the syscall. Calling
+> > > > synchronize_rcu_expedited() has a significant cost on RT kernel that
+> > > > defaults to rcupdate.rcu_normal_after_boot=1. Queue the detached struct
+> > > > mount in a separate list and put it on a workqueue to run post RCU
+> > > > grace-period.
+> > > For the past couple of days we've been seeing failures in a bunch of LTP
+> > > filesystem related tests on various arm64 systems.  The failures are
+> > > mostly (I think all) in the form:
+> > > 
+> > > 20101 10:12:40.378045  tst_test.c:1833: TINFO: === Testing on vfat ===
+> > > 20102 10:12:40.385091  tst_test.c:1170: TINFO: Formatting /dev/loop0 with vfat opts='' extra opts=''
+> > > 20103 10:12:40.391032  mkfs.vfat: unable to open /dev/loop0: Device or resource busy
+> > > 20104 10:12:40.395953  tst_test.c:1170: TBROK: mkfs.vfat failed with exit code 1
+> > > 
+> > > ie, a failure to stand up the test environment on the loopback device
+> > > all happening immediately after some other filesystem related test which
+> > > also used the loop device.  A bisect points to commit a6c7a78f1b6b97
+> > > which is this, which does look rather relevant.  LTP is obviously being
+> > > very much an edge case here.
+> > Hah, here's something I didn't consider and that I should've caught.
+> > 
+> > Look, on current mainline no matter if MNT_DETACH/UMOUNT_SYNC or
+> > non-MNT_DETACH/UMOUNT_SYNC. The mntput() calls after the
+> > synchronize_rcu_expedited() calls will end up in task_work():
+> > 
+> >          if (likely(!(mnt->mnt.mnt_flags & MNT_INTERNAL))) {
+> >                  struct task_struct *task = current;
+> >                  if (likely(!(task->flags & PF_KTHREAD))) {
+> >                          init_task_work(&mnt->mnt_rcu, __cleanup_mnt);
+> >                          if (!task_work_add(task, &mnt->mnt_rcu, TWA_RESUME))
+> >                                  return;
+> >                  }
+> >                  if (llist_add(&mnt->mnt_llist, &delayed_mntput_list))
+> >                          schedule_delayed_work(&delayed_mntput_work, 1);
+> >                  return;
+> >          }
+> > 
+> > because all of those mntput()s are done from the task's contect.
+> > 
+> > IOW, if userspace does umount(MNT_DETACH) and the task has returned to
+> > userspace it is guaranteed that all calls to cleanup_mnt() are done.
+> > 
+> > With your change that simply isn't true anymore. The call to
+> > queue_rcu_work() will offload those mntput() to be done from a kthread.
+> > That in turn means all those mntputs end up on the delayed_mntput_work()
+> > queue. So the mounts aren't cleaned up by the time the task returns to
+> > userspace.
+> > 
+> > And that's likely problematic even for the explicit MNT_DETACH use-case
+> > because it means EBUSY errors are a lot more likely to be seen by
+> > concurrent mounters especially for loop devices.
+> > 
+> > And fwiw, this is exactly what I pointed out in a prior posting to this
+> > patch series.
 > 
-> Ignoring some fluff, it's this in a loop:
-> dup2(2, 1024)                           = 1024
-> dup2(2, 1025)                           = 1025
-> dup2(2, 1026)                           = 1026
-> dup2(2, 1027)                           = 1027
-> dup2(2, 1028)                           = 1028
-> dup2(2, 1029)                           = 1029
-> dup2(2, 1030)                           = 1030
-> dup2(2, 1031)                           = 1031
-> [..]
-> close_range(1024, 1032, 0)              = 0
+> And I didn't understand what you said then but this problem is more
 > 
-> where fd 2 is the same file object in all 192 workers doing this.
+> understandable to me now.
 > 
+> 
+> > 
+> > But we've also worsened that situation by doing the deferred thing for
+> > any non-UMOUNT_SYNC. That which includes namespace exit. IOW, if the
+> > last task in a new mount namespace exits it will drop_collected_mounts()
+> > without UMOUNT_SYNC because we know that they aren't reachable anymore,
+> > after all the mount namespace is dead.
+> > 
+> > But now we defer all cleanup to the kthread which means when the task
+> > returns to userspace there's still mounts to be cleaned up.
+> 
+> Correct me if I'm wrong but the actual problem is that the mechanism used
+> 
+> to wait until there are no processes doing an rcu-walk on mounts in the
+> 
+> discard list is unnecessarily long according to what Eric has seen. So a
 
-the following will still have *some* impact, but the drop should be much
-lower
-
-it also has a side effect of further helping the single-threaded case by
-shortening the code when it works
-
-diff --git a/include/linux/file_ref.h b/include/linux/file_ref.h
-index 7db62fbc0500..c73865ed4251 100644
---- a/include/linux/file_ref.h
-+++ b/include/linux/file_ref.h
-@@ -181,17 +181,15 @@ static __always_inline __must_check bool file_ref_put_close(file_ref_t *ref)
- 	long old, new;
- 
- 	old = atomic_long_read(&ref->refcnt);
--	do {
--		if (unlikely(old < 0))
--			return __file_ref_put_badval(ref, old);
--
--		if (old == FILE_REF_ONEREF)
--			new = FILE_REF_DEAD;
--		else
--			new = old - 1;
--	} while (!atomic_long_try_cmpxchg(&ref->refcnt, &old, new));
--
--	return new == FILE_REF_DEAD;
-+	if (likely(old == FILE_REF_ONEREF)) {
-+		new = FILE_REF_DEAD;
-+		if (likely(atomic_long_try_cmpxchg(&ref->refcnt, &old, new)))
-+			return true;
-+		/*
-+		 * The ref has changed from under us, don't play any games.
-+		 */
-+	}
-+	return file_ref_put(ref);
- }
- 
- /**
+I think that the current approach is still salvagable but I need to test
+this and currently LTP doesn't really compile for me.
 
