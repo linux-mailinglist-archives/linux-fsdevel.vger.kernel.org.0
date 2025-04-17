@@ -1,126 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-46604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46605-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CEDA91212
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 05:46:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEA4A91253
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 06:45:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D84FC7A4E34
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 03:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FBE189CB7D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 04:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B4F1D5159;
-	Thu, 17 Apr 2025 03:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162181DD526;
+	Thu, 17 Apr 2025 04:45:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bgn0YJH0"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UblB/rj2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCDE2F24;
-	Thu, 17 Apr 2025 03:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6DC7E1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 17 Apr 2025 04:45:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744861600; cv=none; b=h22Jh1CvGaDqeff5D0AtaZSe78oAPgMO6rqzxG32h8cOO2+kjXKnPUG55xDD7PesdmCvByZmNfFBbjDS0xFKkxoXnjuy6h4MhOkEk5fV/ZIr/jHXoEnpkn866m46G7hE38QpeLHY4QFgTl/hVZSjmWdsYf4s2+bRymQSWg5fLAY=
+	t=1744865137; cv=none; b=Gf9IiDTvru/ycM0wW10nK9zUk3aYFYBSzlsImYELaqy7V24mwNnhr7ad4abl6qy3XdByiNvKI6MFydOkXqCheobJRTKIZ9YIhnEQlP2yjuAIsKFogSsOH2nCkNacZ8p4t13h15JuSLvd74ucm5jsJQjThewcjmh5dJyXi0nxO2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744861600; c=relaxed/simple;
-	bh=6rtFVtP/vo/ZSPjjRyGPHE4hahprHMPM4xOkYRxZ1sM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=fFovaSzw0M1cYFV5vL0Pd9cIxQuXllcviTCq1Kcwp7i0bcUFAjpu/Ijw2d0TlA5sGxYVUXKKWXr32MSWt5O3LlGW1YgxaCOYyy9qfSQMN4BBnWc6OJTpv7f5CceOLaB3FvMJCsuwIDTfe8pW/vVe7qavP9rEoSqG/r5sComVeyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bgn0YJH0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C40C1C4CEE7;
-	Thu, 17 Apr 2025 03:46:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744861599;
-	bh=6rtFVtP/vo/ZSPjjRyGPHE4hahprHMPM4xOkYRxZ1sM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bgn0YJH0Cmw8Vc2zCHtAC6dnb5uG0euvYiDwxEnHsJgWvrkomK+WP3uyyf6hfApYu
-	 wFybW0kdVRhmrONtoq7id9WxZrYfBdYv0ZmstwyzedAUmzJPslIFd1tMNe1ibQ+3ei
-	 NS6lafiy7e7Ao08IwEjfg8WsTj8AzAXWYK9BypsTk3dYmFZOeiCioNgJGq6ey8CZpn
-	 9Sly87Kwl1cgUKkoKLh/TI7UTal+Mbn5VPPK5N6bwdh7DzljmI+c8VJ5YJEcvlR5kB
-	 9o2E/X/UI9Y++/bKLs2EsxCQ8WSYgEGmlJ9pKPZGsNX+sGxo3hw5kFigKTyI50vZvy
-	 tDYAm0z/xnpvg==
-Date: Wed, 16 Apr 2025 20:46:39 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Christoph Hellwig <hch@lst.de>, linux-block@vger.kernel.org,
-	ming.lei@redhat.com, linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH] loop: fix min directio size detection for nested loop devices
-Message-ID: <20250417034639.GG25659@frogsfrogsfrogs>
+	s=arc-20240116; t=1744865137; c=relaxed/simple;
+	bh=xyTfxJPjT/FT2RxrfLY+7Sni/T27OxSE8JwnzRMqPaY=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=rH/Rwpf2b+wkr2AsoaQfzPE588UHOE80UaIrZrcZbQoIDenSt4Z2OOgEW/u4Vb9BO1Z2reBU7djk/JvAgP3KkPl0wvN4CoFDiz0UYgwImomcVEP9d+ilCmURZfDhLCGTFzy8mFrMHIPdpmuTsK9ySTK66CHnsoxIGumgNOWcQG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UblB/rj2; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ff37565232so2867147b3.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 21:45:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1744865133; x=1745469933; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hK+UoriaNocNLwlVFNPRQ7NggNZSSb8YUIYC9+NMLvA=;
+        b=UblB/rj2tw34xOjF2DI30ieD+dTEck5Vfg8o3QzI/75XZKyxJw+PId05lk6xGWK8qS
+         Aersdh4D9dpG7nZkKoiLZrtl7Mr7NBQ2F4EjyDwnVuIgqhvfhmsQkP4Mi+LIIGb2XP20
+         FHNElK2q7ptSQchblP74gB+tYF5xjG4HZcfgWkkMBKBrzlaJrgl/e+X/tqKEz46BGoEK
+         wRbkH7I+HSwvKi2zKcnHkQjCul2Hft+vdsNNmmcg11DaUznMugpabtDBDerP7pRW7TP6
+         0MW9X92Ic5eyp2ozuiP0sV6RaV9z8+91JAt0JP//fcBxVCYJ31N2ata4D0a1xzI8tCgg
+         OQ+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744865133; x=1745469933;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hK+UoriaNocNLwlVFNPRQ7NggNZSSb8YUIYC9+NMLvA=;
+        b=MaD0kblKKrFyGnfU9lV4qTopW9FzWgUDspp/3SNCncD0XfOxgFykZLjtuR0Z/oTuSA
+         7FExR89q4/f+wVDkxihIyYS/l4rNNbuify7B7Um57hHzIDEGd6rTGrcMCE8YWdAATrRy
+         bFjyqs26syfE1LJKNOaNtWBmt/dvbgmstAe8pNfETGtP9uhdqgROX6isz6jZQkXoYQkH
+         V9QlT76ZSwOowPpKwQQvKqBvz3fEx4agJQJrFMwtXqWcBNV1Gn/TOWYlQT3qEMqg2M2K
+         QcaGfZfldwG5MZEOh7wlUvVMuz8DPfSPSU78T3tFZvU/kgKGh5RXfDtSEIhWjnazcItd
+         jZvQ==
+X-Gm-Message-State: AOJu0YwLCu1HjY/A343RdPVAEif1hsX0YJmA0n3VoWkPGj55VCHBlOKR
+	20dyf11DT0ilmpCiJzinkniirVFSfATemXZO0HNTOoSGt2fOfIimhOK1AiF48f9uFr5W+9LjzU3
+	7NQPlWsaik/7bCuknUjXeBuRxhA4TKPWyuTCG+CUjGLw1AbUcVw==
+X-Gm-Gg: ASbGnctyb71Ewa0dPSTl5uRusKlouvAXyRzALV4KDrdH8WCJZCSjZroJOMvIZQHGE/h
+	0z5nBYODrWULhYSnDzMgV3xHpkywEshbXgP6QxYCS0fzDicRo7Ly6wNyQgGpn+/Ku3WLvq2p+Ty
+	tU6O6Hb086/iZOkzMph3k=
+X-Google-Smtp-Source: AGHT+IHaaTXDxyzkI34Ogx4z396Q8pYsyPH6u8aitww6kJRPq2b5qvbBdxSj7005/QZyo9PV84jhijIDVkGDz1DLYvU=
+X-Received: by 2002:a05:690c:45c4:b0:6fd:33a5:59a with SMTP id
+ 00721157ae682-706b32d5540mr65290467b3.18.1744865133397; Wed, 16 Apr 2025
+ 21:45:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 17 Apr 2025 00:45:22 -0400
+X-Gm-Features: ATxdqUFLjA9f3XxN-vWqT9Z0Rh5C33tqTW6J2RDudx4va0RmWzgc58zP-cWSx6E
+Message-ID: <CAHC9VhT=reDcOFbESm+A4iePM3MBm6BkMxneTf2ND=-63-Qm-g@mail.gmail.com>
+Subject: Regarding patch "fs: add kern_path_locked_negative()"
+To: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Cc: audit@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Darrick J. Wong <djwong@kernel.org>
+Christian and VFS folks, when touching audit code in a patch,
+especially one that is going to be merged into a linux-next tree,
+please remember to CC the audit mailing list.
 
-fstest generic/563 sets up a loop device in front of the SCRATCH_DEV
-block device to test cgroup I/O accounting, because SCRATCH_DEV could be
-a partition and cgroup accounting apparently only works on full block
-devices (e.g. sda, not sda1).
+https://lore.kernel.org/all/20250414-rennt-wimmeln-f186c3a780f1@brauner/
 
-If however SCRATCH_DEV is itself a loop device that we've used to
-simulate 4k LBA block devices, the minimum directio size discovery
-introduced in commit f4774e92aab85d is wrong -- we should query the
-logical block size of the underlying block device because file->f_path
-points whatever filesystem /dev is.
-
-Otherwise, you get a weird losetup config:
-
-$ losetup -f /dev/sda
-$ losetup --sector-size 4096 /dev/loop0
-$ losetup -f /dev/loop0
-$ losetup --raw
-NAME SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE DIO LOG-SEC
-/dev/loop0 0 0 0 0 /dev/sda 1 4096
-/dev/loop1 0 0 0 0 /dev/loop0 1 512
-
-(Note loop1 can try to send 512b writes to loop0 which has a sector size
-of 4k)
-
-and mkfs failures like this:
-
-error reading existing superblock: Invalid argument
-mkfs.xfs: pwrite failed: Invalid argument
-libxfs_bwrite: write failed on (unknown) bno 0x42a3ef8/0x100, err=22
-mkfs.xfs: Releasing dirty buffer to free list!
-found dirty buffer (bulk) on free list!
-mkfs.xfs: pwrite failed: Invalid argument
-libxfs_bwrite: write failed on (unknown) bno 0x0/0x100, err=22
-
-Cc: <stable@vger.kernel.org> # v6.15-rc1
-Fixes: f4774e92aab85d ("loop: take the file system minimum dio alignment into account")
-Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
----
- drivers/block/loop.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index 174e67ac729f3d..59d3e713c574b0 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -443,9 +443,17 @@ static void loop_reread_partitions(struct loop_device *lo)
- static unsigned int loop_query_min_dio_size(struct loop_device *lo)
- {
- 	struct file *file = lo->lo_backing_file;
--	struct block_device *sb_bdev = file->f_mapping->host->i_sb->s_bdev;
-+	struct inode *inode = file->f_mapping->host;
-+	struct block_device *sb_bdev = inode->i_sb->s_bdev;
- 	struct kstat st;
- 
-+	/*
-+	 * If the backing device is a block device, don't send directios
-+	 * smaller than its LBA size.
-+	 */
-+	if (S_ISBLK(inode->i_mode))
-+		return bdev_logical_block_size(I_BDEV(inode));
-+
- 	/*
- 	 * Use the minimal dio alignment of the file system if provided.
- 	 */
+-- 
+paul-moore.com
 
