@@ -1,106 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-46601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1277A90EBD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 00:40:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4959FA911D1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 05:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A601903BE2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Apr 2025 22:40:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAA697AE2FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 03:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8188123ED63;
-	Wed, 16 Apr 2025 22:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2739C1B393D;
+	Thu, 17 Apr 2025 03:01:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="atVMYsgB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mbz6xsi3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D7523A98C
-	for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 22:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F589EAE7;
+	Thu, 17 Apr 2025 03:01:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744843197; cv=none; b=Wf3AICfp1YD4d9z1scGtGcTDSi3suNcHX8djY+IBvp/BswE7wR8q8VxW3C68do+G26RZK3lUDtkRg90IP0SS5BfTlVWSDJ4z+B/nc+pJtR2zxBAfx+VsAn+ax07v6Jvu5fA1GSI1kPepeZDqDhwLUJqOrLs0e1OXrN+uNrakLnY=
+	t=1744858904; cv=none; b=dWKKMAlGZN9ekrcvPrk8e3L9f95wJkBX4Ydw4AJ5jsNBMFKs0u6XNuGiZrhYiEUxck852DPvCxd1cgdZkL9j4eioJULR4sL4/eIJZBq1bwofEOJT6Rj4XdqbyF+6K19a+uhsCtFMCRaf4jbyhbES/d0CdUmXeZO5/4gGZBlvvdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744843197; c=relaxed/simple;
-	bh=kd8CIoyZU9z+s6yhVJAsL20bAYQiydUjPDvjdWdTYQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XRhcyc3y8cI2q8F4DWgru+dK9+01HtgDxy9J2SRvZVSH1eMklP2nMFc0sCK7ejA6dD4yEar0NyaVx09b8k4Fotn+k8kqj2eU06Q5kGybgPpbkeO8LWdStPWlVkJPrfXDlYgg/YkqAfhJa8mPKD7bsSHUkKdsvK/x+2VrfP3ifIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=atVMYsgB; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5f4b7211badso274954a12.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 15:39:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1744843193; x=1745447993; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jm44dwmZcQ04sKyHxrckFG06FkU/O4r8HH0/pnpLZx0=;
-        b=atVMYsgBJedqVBa3muizlrVb1k5F4IJGcIdbNH70eOi9Vzfeo0V4xWsPv3QRAMyOmQ
-         +F/zCInH10/kPMtE4onWNa2TmUCqFuZ6Hl+SplUS1R7yo4xqNQkXXouf0U7LQ7cAvTdi
-         iZmzM85Oi4eZdMAsVZJ+mZermcM579t4Vrc2g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744843193; x=1745447993;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jm44dwmZcQ04sKyHxrckFG06FkU/O4r8HH0/pnpLZx0=;
-        b=UiFgrt+7W4UCpjaU7UuWrWxx5uVs+jjXIyb3XlLe1hZOTB+nTBAUhBGPrygYBhdmLd
-         D77g6qTZNx3supPv27GF+LAxQwtiPa2ekqOt1D5+rI5L1jDPeJgYIq0HKVcbloXJCipF
-         Xd3IudZrUrI41BI1ZLjLA4ShsNmGRWbv0DeBMR1MB2/Olf4ZrEPk1+FQcsUo2qaZYzHc
-         JLTrHwqyWXwIWBWX/RYDwkaFEEgsSe1IONVDHIRwfMl1qwPa3macPUkpjzaqJY1C8DBa
-         lL4oPFCkTn6BykEJ50YnNTJVxiGC//wJEeZD+9QK6IYTxapTX1sEgf1rck7MtUxz26f7
-         V3Gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXy4gILd9MefsKfYS5ePI02eMu53dQiQYivfSGjNY83rTR3Z0SCW5ghcwL19jwkB4gPj0xJ0wwQIVYym0+n@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxiy6fiS8YC49LEQ8SBDABEUeDgxU6md7dgMrqtqPmgrTkTMxt0
-	FKUmKPrlWzNTUMfBe/a5slkCOYAJohngXQxXb6cqWElGgIIUdWS/t5eo7ItAfLDWSZvmAJs634Q
-	1y0LMjg==
-X-Gm-Gg: ASbGncv4SEuC+mPMHkHcTGHWFtzSMMndrdPMqyAPIGgnBQVJIw9booZWIsMxW6//wHq
-	xVg/8Fp1IAAxV1y+ptcbTilzBcH3FK+9HD73s/sl/AxAQZvgQEAJC74MVms292nsGa+8XG0Nicw
-	0wEy6WjBDdKKxrmwXg5N5pqFWsinmW+MArzp60OgTG/XcSiFQ73rZ0v/p4dZHZTxri8xLdo1ONk
-	Y+th8O01RnpbM5jQ+J5foC+frE78TVF73/1IrayCQcGoscutZjXwApt5dSubjLr3Hf6R9xM63px
-	j7cXDvWYEfmHJp0rmPs4Rp7XUtwGtbJ8xxbb75TvveLA+knfeRNg4KSz5AF4J+OZ/62PF2D6Ek3
-	xWaZrkrwhxSLMD4fhC/rRVO1XKw==
-X-Google-Smtp-Source: AGHT+IHtjp5s+ZIA0bb8H3sgddKczUY1LGr8B2LEo+h9bFa1e2eT268QXcV1knZ0f5w54t29vpQkgg==
-X-Received: by 2002:a05:6402:520d:b0:5f4:35c4:a935 with SMTP id 4fb4d7f45d1cf-5f4b75deb6amr2892213a12.21.1744843193695;
-        Wed, 16 Apr 2025 15:39:53 -0700 (PDT)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f36ee54d8fsm9206021a12.12.2025.04.16.15.39.52
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Apr 2025 15:39:52 -0700 (PDT)
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5f3f04b5dbcso261282a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Apr 2025 15:39:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxuMWNUsgs08qUKm1/lmC3YXu/hmkA3G4eQynxnBjuRLKkvlaKIl6jwbedly3A4E6py/4OE0p+VxJFygKI@vger.kernel.org
-X-Received: by 2002:a17:907:7f0d:b0:aca:d52d:b59b with SMTP id
- a640c23a62f3a-acb42af00f9mr291976266b.47.1744843192133; Wed, 16 Apr 2025
- 15:39:52 -0700 (PDT)
+	s=arc-20240116; t=1744858904; c=relaxed/simple;
+	bh=YQ3n6r+nEiZ2nPmGKrTfCE32r2QocRbAL/UULZP0GUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mPLEj2J9qnSb9lk81petzjUqoSVHCGwla5u5kLRzM89sjnXI1+9EvkpiytbeMEi0kJeeIG2dPey0boTdCGxv/DG8F6ou1oDCnokm/VSEKVXkmZ7/o4qjQhnOJJn15DA85OAyRAIDk8GAePYA4sedMz6jj4inFI/jT+bmhZrFiZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mbz6xsi3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54942C4CEE2;
+	Thu, 17 Apr 2025 03:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1744858904;
+	bh=YQ3n6r+nEiZ2nPmGKrTfCE32r2QocRbAL/UULZP0GUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Mbz6xsi3MB9Npu5oHVSzi5bd/Rw59mk1gAxsA6LXZv7s+UzZI1b43NheMod/exF/E
+	 p0G99l6XKS5QIPrs4SNl0ULGT5n+53zkA2dxI3yyfEiBRWgYbPEwRvoE0Cftxo9fVj
+	 sg0H5/ha3Aw2aybHnOV24+Vvy3Zlmpt/BQcs8nPsn5q/hQp451IwX9O117Mpn2qHgq
+	 9YZO2zu58UM5WRog5JSj7TSFx4YHgLVdaQ5fTShDLMN7TVrBVXSLXalasVD8CPq2TB
+	 sk7yU5MiE1LRTeCcEt1cziHyJXLioiwTH9gZF/oCxoGkQWjjxAGubvfYB+KCSxkkE8
+	 kaKKIBpoAR54g==
+Date: Wed, 16 Apr 2025 20:01:43 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+	linux-xfs@vger.kernel.org
+Subject: Re: [6.15-rc2 regression] xfs: null pointer in the dax fault code
+Message-ID: <20250417030143.GO25675@frogsfrogsfrogs>
+References: <20250416174358.GM25675@frogsfrogsfrogs>
+ <aAAYK_Fl2U5CJBGB@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250416221626.2710239-1-mjguzik@gmail.com>
-In-Reply-To: <20250416221626.2710239-1-mjguzik@gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 16 Apr 2025 15:39:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgUYJ1XbnMnKzv1coxX=WhH1g-ufMGxz7anf-Tw6M3+Bw@mail.gmail.com>
-X-Gm-Features: ATxdqUFLEOCfS07bzwWoyJm7dcPWUV3_QMm7wan5599m25oiRJfIRXjqUJ1YLl0
-Message-ID: <CAHk-=wgUYJ1XbnMnKzv1coxX=WhH1g-ufMGxz7anf-Tw6M3+Bw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] two nits for path lookup
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAAYK_Fl2U5CJBGB@dread.disaster.area>
 
-On Wed, 16 Apr 2025 at 15:16, Mateusz Guzik <mjguzik@gmail.com> wrote:
->
-> since path looku is being looked at, two extra nits from me:
+On Thu, Apr 17, 2025 at 06:50:51AM +1000, Dave Chinner wrote:
+> On Wed, Apr 16, 2025 at 10:43:58AM -0700, Darrick J. Wong wrote:
+> > Hi folks,
+> > 
+> > After upgrading to 6.15-rc2, I see the following crash in (I think?) the
+> > DAX code on xfs/593 (which is a fairly boring fsck test).
+> > 
+> > MKFS_OPTIONS=" -m metadir=1,autofsck=1,uquota,gquota,pquota, -d daxinherit=1,"
+> > MOUNT_OPTIONS=""
+> > 
+> > Any ideas?  Does this stack trace ring a bell for anyone?
+> 
+> That looks like the stack trace in this patch posted to -fsdevel a
+> week ago:
+> 
+> https://lore.kernel.org/linux-fsdevel/20250410091020.119116-1-david@redhat.com/
 
-Ack, both look sane to me.
+Ah, thanks.  Will try that patch out.
+--D
 
-             Linus
+> -Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
