@@ -1,151 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-46623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D7AEA918D3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 12:10:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4599A9190B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 12:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 968A24481CB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 10:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 373AC5A3232
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 10:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1950422ACF7;
-	Thu, 17 Apr 2025 10:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="0fdtNDFs"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5790322576A;
+	Thu, 17 Apr 2025 10:17:26 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D3222A1D5;
-	Thu, 17 Apr 2025 10:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71576282F1;
+	Thu, 17 Apr 2025 10:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744884633; cv=none; b=HFcvwHvyTBK3kLmptryc1mZqzkD7o9PkRW2Fr+bjdDTSSTwi/nx4N72yxTdTTnXruArzcOodT+yW0S2RPdhDi0hghwBvFaH1gVZqSuEzBvjq9lvyefb79tQKxzHqYtaH9ogA9ciwHc2ccE+MBFmtLyTUTcZTQFzPmdBKLVJ7KYs=
+	t=1744885046; cv=none; b=Dvo8zIDSzcFkoEQWv2AEF3zugTdFh8MFL/ViYHeI2BI3eNTElOQoBh42LVPUffhYx8TyPNZFHqsV0R9sP/yue+M9MdhCkq571/09ONb5xMXplI+hGD4r0Bq1FHWzJpef0UAblENA3EaC6pIfIwyYBpKq+9fMATrrPYNwV6Q5HSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744884633; c=relaxed/simple;
-	bh=EsRsSj5ZTvOM1KJnm90ywQ0x9hB4YFNumvk55p/KIbc=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=MHoLcjh/Dt3HgNoboxpTPuAtU5O+B5ogZQDuz3IGZEeThTfMbfYX/XQ5ChJvwl4ad0kmbMQtOX4ad74fbWvYLPmwqW0YnlPUavXSQ8sL+88LKE3c1KemYfbiQIxMTFzRSFzYVcPe4CRBV6l0PSBa9Ywe019ynJTt2VkxcOcEkD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=0fdtNDFs; arc=none smtp.client-ip=212.129.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
-Received: from localhost (mail.3xo.fr [212.129.21.66])
-	by mail.3xo.fr (Postfix) with ESMTP id 55498CB;
-	Thu, 17 Apr 2025 12:10:23 +0200 (CEST)
-X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
-Received: from mail.3xo.fr ([212.129.21.66])
- by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
- id VFVFhVEXUlTK; Thu, 17 Apr 2025 12:10:21 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr DF2908D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
-	t=1744884621; bh=cEovSie5bPZsVx3CnJ0Skbpj6zHabO1hydZaJkwFs24=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=0fdtNDFsENFoaAUJ1xp+B2t6xldOSGZCp/9jU3VMorwZR/NMZmgoBIRIT8zhqtx8U
-	 EBk4DCw5ETeFbBjJdR5w2avtzTOKQe3VoQ/HRpTT7i63LKsWRNykBga6gTBb3nzgAJ
-	 QG9k6ELrX9gesnEBfutnItM7aYs1IlM/0Uj/Q+3O1ve0ndMVBXOchwgAK5VSV26xHu
-	 wbmp+ib7sPZxAdZK/LkdctofD+y79KN0Kn6Ed37CErv//eqw8b0yT/HlhAGy5c3FgV
-	 qPPYF3MqJLQtl9j0AKVWvq4WzYhzyVA/yqNrHy99FEcYDWivXv+xAyN1xVDAYYjbkp
-	 tGelecKgztLIQ==
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	s=arc-20240116; t=1744885046; c=relaxed/simple;
+	bh=AqX8HaBkhX9xGDH3YKFQNEKSEUlkIV9DvJ5twuJWzak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nWSVSIPtbv1pKqTmPpJwl9DnixJHQLF0VdY2qgE03Q66B6BLYoX3tuauP9FdKp+F/euqeWcpsEhIqcN8REgvFyyk8IJs8mNSiVOeaZIVtOOdpFhZ61Wmnv1jEPcETj1IabFtBjhucODA7JboZ4ArHrSiv5QXsZZ2VzcmG05UxaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id C0EAE1003E0;
+	Thu, 17 Apr 2025 20:17:05 +1000 (AEST)
+X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
+Received: from smtp01.aussiebb.com.au ([127.0.0.1])
+	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id V2XTr_C5aTGV; Thu, 17 Apr 2025 20:17:05 +1000 (AEST)
+Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
+	id A69C810115B; Thu, 17 Apr 2025 20:17:05 +1000 (AEST)
+X-Spam-Level: 
+Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.3xo.fr (Postfix) with ESMTPSA id DF2908D;
-	Thu, 17 Apr 2025 12:10:20 +0200 (CEST)
+	(Authenticated sender: ian146@aussiebb.com.au)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id B9642100664;
+	Thu, 17 Apr 2025 20:17:02 +1000 (AEST)
+Message-ID: <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
+Date: Thu, 17 Apr 2025 18:17:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 17 Apr 2025 12:10:20 +0200
-From: Nicolas Baranger <nicolas.baranger@3xo.fr>
-To: Paulo Alcantara <pc@manguebit.com>
-Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de, David Howells
- <dhowells@redhat.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Steve French
- <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>, Christian Brauner
- <brauner@kernel.org>
-Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when files
- are on CIFS share
-In-Reply-To: <f12973bcf533a40ca7d7ed78846a0a10@manguebit.com>
-References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
- <35940e6c0ed86fd94468e175061faeac@3xo.fr> <Z-Z95ePf3KQZ2MnB@infradead.org>
- <48685a06c2608b182df3b7a767520c1d@3xo.fr>
- <F89FD4A3-FE54-4DB2-BA08-3BCC8843C60E@manguebit.com>
- <5087f9cb3dc1487423de34725352f57c@3xo.fr>
- <f12973bcf533a40ca7d7ed78846a0a10@manguebit.com>
-Message-ID: <e63e7c7ec32e3014eb758fd6f8679f93@3xo.fr>
-X-Sender: nicolas.baranger@3xo.fr
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+To: Christian Brauner <brauner@kernel.org>, Mark Brown <broonie@kernel.org>,
+ Eric Chanudet <echanude@redhat.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+ Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>,
+ Aishwarya.TCV@arm.com
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
+ <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
+Content-Language: en-US
+From: Ian Kent <raven@themaw.net>
+Autocrypt: addr=raven@themaw.net; keydata=
+ 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
+In-Reply-To: <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Paulo
 
-Resending this mail with content-type: text, sorry !
+On 17/4/25 17:01, Christian Brauner wrote:
+> On Wed, Apr 16, 2025 at 11:11:51PM +0100, Mark Brown wrote:
+>> On Tue, Apr 08, 2025 at 04:58:34PM -0400, Eric Chanudet wrote:
+>>> Defer releasing the detached file-system when calling namespace_unlock()
+>>> during a lazy umount to return faster.
+>>>
+>>> When requesting MNT_DETACH, the caller does not expect the file-system
+>>> to be shut down upon returning from the syscall. Calling
+>>> synchronize_rcu_expedited() has a significant cost on RT kernel that
+>>> defaults to rcupdate.rcu_normal_after_boot=1. Queue the detached struct
+>>> mount in a separate list and put it on a workqueue to run post RCU
+>>> grace-period.
+>> For the past couple of days we've been seeing failures in a bunch of LTP
+>> filesystem related tests on various arm64 systems.  The failures are
+>> mostly (I think all) in the form:
+>>
+>> 20101 10:12:40.378045  tst_test.c:1833: TINFO: === Testing on vfat ===
+>> 20102 10:12:40.385091  tst_test.c:1170: TINFO: Formatting /dev/loop0 with vfat opts='' extra opts=''
+>> 20103 10:12:40.391032  mkfs.vfat: unable to open /dev/loop0: Device or resource busy
+>> 20104 10:12:40.395953  tst_test.c:1170: TBROK: mkfs.vfat failed with exit code 1
+>>
+>> ie, a failure to stand up the test environment on the loopback device
+>> all happening immediately after some other filesystem related test which
+>> also used the loop device.  A bisect points to commit a6c7a78f1b6b97
+>> which is this, which does look rather relevant.  LTP is obviously being
+>> very much an edge case here.
+> Hah, here's something I didn't consider and that I should've caught.
+>
+> Look, on current mainline no matter if MNT_DETACH/UMOUNT_SYNC or
+> non-MNT_DETACH/UMOUNT_SYNC. The mntput() calls after the
+> synchronize_rcu_expedited() calls will end up in task_work():
+>
+>          if (likely(!(mnt->mnt.mnt_flags & MNT_INTERNAL))) {
+>                  struct task_struct *task = current;
+>                  if (likely(!(task->flags & PF_KTHREAD))) {
+>                          init_task_work(&mnt->mnt_rcu, __cleanup_mnt);
+>                          if (!task_work_add(task, &mnt->mnt_rcu, TWA_RESUME))
+>                                  return;
+>                  }
+>                  if (llist_add(&mnt->mnt_llist, &delayed_mntput_list))
+>                          schedule_delayed_work(&delayed_mntput_work, 1);
+>                  return;
+>          }
+>
+> because all of those mntput()s are done from the task's contect.
+>
+> IOW, if userspace does umount(MNT_DETACH) and the task has returned to
+> userspace it is guaranteed that all calls to cleanup_mnt() are done.
+>
+> With your change that simply isn't true anymore. The call to
+> queue_rcu_work() will offload those mntput() to be done from a kthread.
+> That in turn means all those mntputs end up on the delayed_mntput_work()
+> queue. So the mounts aren't cleaned up by the time the task returns to
+> userspace.
+>
+> And that's likely problematic even for the explicit MNT_DETACH use-case
+> because it means EBUSY errors are a lot more likely to be seen by
+> concurrent mounters especially for loop devices.
+>
+> And fwiw, this is exactly what I pointed out in a prior posting to this
+> patch series.
 
-Thanks again for answer and help, it's good to hear you're back to 
-health.
+And I didn't understand what you said then but this problem is more
 
-> Thanks for the trace.  I was finally able to reproduce your issue and 
-> will provide you with a fix soon.
-
-Perfect... And thanks !
-
-If you need more traces or details on (both?) issues :
-
-- 1) infinite loop issue during 'cat' or 'copy' since Linux 6.14.0
-
-- 2) (don't know if it's related) the very high number of several bytes 
-TCP packets transmitted in SMB transaction (more than a hundred) for a 5 
-bytes file transfert under Linux 6.13.8
-
-Do not hesitate to ask, I would be happy to help.
-
-Kind regards
-Nicolas
+understandable to me now.
 
 
+>
+> But we've also worsened that situation by doing the deferred thing for
+> any non-UMOUNT_SYNC. That which includes namespace exit. IOW, if the
+> last task in a new mount namespace exits it will drop_collected_mounts()
+> without UMOUNT_SYNC because we know that they aren't reachable anymore,
+> after all the mount namespace is dead.
+>
+> But now we defer all cleanup to the kthread which means when the task
+> returns to userspace there's still mounts to be cleaned up.
+
+Correct me if I'm wrong but the actual problem is that the mechanism used
+
+to wait until there are no processes doing an rcu-walk on mounts in the
+
+discard list is unnecessarily long according to what Eric has seen. So a
+
+different was to know there are no processes doing an rcu-walk for one of
+
+these mounts is needed.
 
 
-Le 2025-04-15 20:28, Paulo Alcantara a écrit :
+There must be a better way to do this than the current rcu wait method ...
 
-> Hi Nicolas,
-> 
-> Sorry for the delay as I've got busy with some downstream work.
-> 
-> Nicolas Baranger <nicolas.baranger@3xo.fr> writes:
-> 
-> I'll look into it as soon as I recover from my illness. Hope you're 
-> doing better
 
-I'm fully recovered now, thanks :-)
+Ian
 
-> I had to rollback to linux 6.13.8 to be able to use the SMB share and
-> here is what I constat
-> (don't know if it's a normal behavior but if yes, SMB seems to be a 
-> very
-> very unefficient protocol)
-> 
-> I think the issue can be buffer related:
-> On Linux 6.13.8 the copy and cat of the 5 bytes 'toto' file containing
-> only ascii string 'toto' is working fine but here is what I capture 
-> with
-> tcpdump during transfert of toto file:
-> https://xba.soartist.net/t6.pcap
-> 131 tcp packets to transfer a 5 byte file...
-> Isn't there a problem ?
-> Openning the pcap file with wireshark show a lot of lines:
-> 25    0.005576    10.0.10.100    10.0.10.25    SMB2    1071    Read 
-> Response, Error:
-> STATUS_END_OF_FILE
-> It seems that those lines appears after the 5 bytes 'toto' file had 
-> been
-> transferred, and it continue until the last ACK recieved
-
-Thanks for the trace.  I was finally able to reproduce your issue and
-will provide you with a fix soon.
 
