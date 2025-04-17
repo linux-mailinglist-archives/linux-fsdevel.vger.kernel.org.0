@@ -1,98 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-46617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8B2A91739
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 11:04:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C5AA917D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 11:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21ACB3A791D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 09:04:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30DA71908051
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Apr 2025 09:29:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67343225A34;
-	Thu, 17 Apr 2025 09:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A70225A59;
+	Thu, 17 Apr 2025 09:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/H/kuP1"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="VoAMAcYm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF39420FA90;
-	Thu, 17 Apr 2025 09:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AF4A224AED;
+	Thu, 17 Apr 2025 09:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744880662; cv=none; b=JhIUN9yztG+8TVLmBtQ2pfStN1CUuTd5l2qpWfUChPgAOBF6/kvvZvnC26MfRBPzaTHEwbrocSRy2AvwbvucWzGezLkCbm/YgLV61knjfYo/dZRYnY+rRpAt+KM/J4OVOA866i14vg+4ogxVoTLRO4vhfk0SMoWbLJs+cMFYa7k=
+	t=1744882154; cv=none; b=ZZ+WU4kfAO+zZPc9L03munp5QYjr8ZOOSzKrA7HaoxNnI6v6HfyQEAFg/vK+B0CqCpM+THv4Higd/oHV0INex+Hy2KMunLqZNHKya8WkjW9BocX8ydOgonBp9IZQulWzkDnsQ0L+AYIZMtX7Ycxu2K7wRzrdslChHFi01Zj6E9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744880662; c=relaxed/simple;
-	bh=2d1CtXoRQjhLWrKktJwI2PFys4x7qOwzgU4UBISZYFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bqXFkY4rLnXCJR8Q06dYmzVonC11EYo/JEdore7deyyg6xdm2sedePa9vQWnvRLx83wreQZmZHlfgoq6CMxlqrO8gkfEeZ5q7cl6vITd3DEtXv+YfjOhM3+2Ac8oz0qG9ZGp5jcMz30V36riXAh08pH0r1QLu1u4C9l3f6FXvLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/H/kuP1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B106C4CEE4;
-	Thu, 17 Apr 2025 09:04:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1744880662;
-	bh=2d1CtXoRQjhLWrKktJwI2PFys4x7qOwzgU4UBISZYFs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B/H/kuP1Cc75TGFRAdd/uUZAh3bMzG1zwQBs3UKPbFCAMCZpO88REKAZktfKbspez
-	 Vhojw7Ho95tC1yzOhb6nu2v2XiPCXhWEH3okWfBHiU6+w2smkG5skNY7JOhsxaNBSi
-	 mWzYM2azdTHybLCYumueGJ6ydKzgvKILSU9G9yoV2741DiKUkz/DY2TgUl60SBLMBD
-	 HRlkaF3XGq0UJvvkVpuikvms3GBDqD1Keqt5zhrten1jj0FZOaWsfEll7znWfjrk+f
-	 c0GCkvCBrk0zDMJpyFSvmLTQbmqkdE5ykrb/EG5+rHfixdLZeRoHLZQFbXi0DKNmo3
-	 oHNdduCbkPkkQ==
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/2] two nits for path lookup
-Date: Thu, 17 Apr 2025 11:04:15 +0200
-Message-ID: <20250417-biomedizin-fragen-19b1c3871f13@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250416221626.2710239-1-mjguzik@gmail.com>
-References: <20250416221626.2710239-1-mjguzik@gmail.com>
+	s=arc-20240116; t=1744882154; c=relaxed/simple;
+	bh=2DFcsFNzl2S6Me64gYjtZHI/GwLINDHoZ8edIdvtmyk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RM9BQi7IoZHOUeTxZ1zH2IwanDelRQ4MAqyyaUfToA/4hVF6ylxQUnnUqR/XeP6yaLlqtTlHMVnWQ6WtFBAiFdO5i9gMFyQ9KGcoC3gneS81pC6l1V/naCHUSxJKGgUR1wVlSxXzUwg8oXxZVSQJRaAaxElPdSH+xPwW2OcQ5Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=VoAMAcYm; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=SvUVX909fJIOTLyMUYrznFRGmURRPlli4sRzVXUeF4s=; t=1744882152; x=1745486952; 
+	b=VoAMAcYmV0TOOW3hCUafU/ztiyWmghU9eb8NrVcuql/ywW2nX+K2RhILvCAXNb7mLZbxMhwyRyi
+	a5In3XzEY+YWudFwzU5p2i6CEfNEYeNRpgoTnDaEJ8GjB1MC1tnuBdYytYVKLQF/5cLTU5xLKjyvQ
+	OHySk5f1JcnXaLd9e8vl7TcAXPyP0O0r7EEhCJ/TsR+3ANsXlt4qviJGEGkTk1Fj0cbvWpgAf4aF7
+	kQ2PC5Y9xvt2numLOpvnA2PwjgqsMnULOwtR0AYUjACTRWFYvXnrkRvwgVG+pCv7wFfkjd6q2GnQE
+	Nn7BBByduqgo4x+jdPQBrBtR3spbSTeZVfgA==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1u5LYR-00000002p89-2PZK; Thu, 17 Apr 2025 11:29:07 +0200
+Received: from ip1f11bac0.dynamic.kabel-deutschland.de ([31.17.186.192] helo=[192.168.178.82])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1u5LYR-00000001BXm-1Uhh; Thu, 17 Apr 2025 11:29:07 +0200
+Message-ID: <0e27414d94d981d4eee45b09caf329fa66084cd3.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH] hfs{plus}: add deprecation warning
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "djwong@kernel.org"
+	 <djwong@kernel.org>, "brauner@kernel.org" <brauner@kernel.org>
+Cc: "jack@suse.com" <jack@suse.com>, "linux-fsdevel@vger.kernel.org"
+	 <linux-fsdevel@vger.kernel.org>, "dsterba@suse.cz" <dsterba@suse.cz>, 
+ "sandeen@redhat.com"
+	 <sandeen@redhat.com>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "torvalds@linux-foundation.org"
+	 <torvalds@linux-foundation.org>, "viro@zeniv.linux.org.uk"
+	 <viro@zeniv.linux.org.uk>, "willy@infradead.org" <willy@infradead.org>, 
+ "josef@toxicpanda.com"
+	 <josef@toxicpanda.com>
+Date: Thu, 17 Apr 2025 11:29:06 +0200
+In-Reply-To: <4ecc225c641c0fee9725861670668352d305ad29.camel@ibm.com>
+References: <20250415-orchester-robben-2be52e119ee4@brauner>
+		 <20250415144907.GB25659@frogsfrogsfrogs>
+		 <20250416-willen-wachhalten-55a798e41fd2@brauner>
+		 <20250416150604.GB25700@frogsfrogsfrogs>
+	 <4ecc225c641c0fee9725861670668352d305ad29.camel@ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.0 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1259; i=brauner@kernel.org; h=from:subject:message-id; bh=2d1CtXoRQjhLWrKktJwI2PFys4x7qOwzgU4UBISZYFs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQwHBG4bpqVc3KXu37jHeNjxktvGu3xfr/E+Jf79bslC 17xh32N6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZhIsiYjw1SZmgan3V5Xiz7M fffZ9KLQ+g9BJ4QXF+ZqNeveajB2e8vIMFvtthLL20ebuBlbvGYuPcmS3KLyUFmhzsapU/P22p9 RfAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Thu, 17 Apr 2025 00:16:24 +0200, Mateusz Guzik wrote:
-> since path looku is being looked at, two extra nits from me:
-> 
-> 1. some trivial jump avoidance in inode_permission()
-> 
-> 2. but more importantly avoiding a memory access which is most likely a
-> cache miss when descending into devcgroup_inode_permission()
-> 
-> [...]
+Hello Viacheslav,
 
-Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.misc branch should appear in linux-next soon.
+On Wed, 2025-04-16 at 17:56 +0000, Viacheslav Dubeyko wrote:
+> I contributed to HFS+ file system driver more than 10 years ago. And I wa=
+s
+> completely discouraged because nobody maintained the HFS+ code base. But =
+I would
+> prefer to see the HFS+ in kernel tree instead of complete removal. As far=
+ as I
+> can see, we are still receiving some patches for HFS/HFS+ code base. Nowa=
+days, I
+> am mostly busy with CephFS and SSDFS file systems. But if we need more
+> systematic activity on HFS/HFS+, then I can find some time for HFS/HFS+ t=
+esting,
+> bug fix, and pathes review. I am not sure that I would have enough time f=
+or HFS+
+> active development. But is it really that nobody would like to be the mai=
+ntainer
+> of HFS/HFS+? Have we asked the contributors and reviewers of HFS/HFS+?
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+If you're willing to step up as a maintainer, I would be happy to assist yo=
+u by
+testing and reviewing patches. I have PowerMacs available for testing and i=
+t's
+also possible to just install Debian's 32-bit and 64-bit PowerPC on an emul=
+ated
+PowerMac on QEMU using the "mac99" machine types to test booting from an HF=
+S/HFS+
+partition [1].
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+I am Debian's primary maintainer of these PowerPC ports in Debian (not to b=
+e confused
+with the little-endian PowerPC port) and I can also easily build various te=
+st images
+if needed.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Please let me know if you're interested in working together on the HFS/HFS+=
+ driver.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.misc
+Adrian
 
-[1/2] fs: touch up predicts in inode_permission()
-      https://git.kernel.org/vfs/vfs/c/305a4329d07c
-[2/2] device_cgroup: avoid access to ->i_rdev in the common case in devcgroup_inode_permission()
-      https://git.kernel.org/vfs/vfs/c/328ba0291442
+> [1] https://cdimage.debian.org/cdimage/ports/snapshots/2025-04-01/
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
