@@ -1,320 +1,316 @@
-Return-Path: <linux-fsdevel+bounces-46699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46700-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF17BA93E75
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 21:59:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E51DA93EA1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 22:03:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79F7467049
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 19:59:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64E7E46816D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 20:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1B422D7AB;
-	Fri, 18 Apr 2025 19:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE882248A8;
+	Fri, 18 Apr 2025 20:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iytmxcsy"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="j6J+k3TH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7C56DCE1;
-	Fri, 18 Apr 2025 19:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFB8CA5E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Apr 2025 20:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745006370; cv=none; b=BDhu5/130bzOnpYVOgrZI0aU1cYL64rNojs+gh08gR/0KzpcLGXUIiCX0RQbhLe6dOsPBb7eqohGCJuHetBvODoPyxC2gFl0GgfHAeuM13JSypwwckFPcLkQhH88rUg7TQnNOj61Ujq6RGdIp0vgf/kneHGvhxB6Fz4NqQTZhBI=
+	t=1745006608; cv=none; b=qb+y5AlwTQ12fOTQyEDxjKQUPrCPl/7RBHUK4CkxAQbhcZYwdIY0rV+h0YreoIfqKI88mpiATLYq0anhLPK0grpi8dGQ0bGD/spJAD5qKk/oSLWqJOhIWgfvkw3J5DFPLfkat3TEJN6W3/FC2VyXMv3uUf+rprDw+5+qQoavQwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745006370; c=relaxed/simple;
-	bh=gyBw2DM+jIc/hhY3YexqUJogoosVscXTFjVJLt9Ef30=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=llo5ICodRuAHoaw9eEbqc59DfGRY7VTzZVf7ZUh6rJsb1kT8RgqLu1BjDXWxtTmLFXcHXsJ7eo2NwOuAUeiLzcsThCypboa7I03erUJH8zw9Qep6DR/AGfnhplQ8MMYroGQfahR8uGyecWkkWGrtNdX2MjVB61hqXIkmgDAqePE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iytmxcsy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51051C4CEE2;
-	Fri, 18 Apr 2025 19:59:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745006369;
-	bh=gyBw2DM+jIc/hhY3YexqUJogoosVscXTFjVJLt9Ef30=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iytmxcsyDe4jUx0gkedpiUtXOUpHB9SO/UiRwbo0c+v78CKAIazj89BlCMaO0X0Df
-	 CJ7koj2bke+s/btBuPmO3gdkLNZ/OsvcKXcZJVxpYSqPPxkOwuS/mfRvaZ4u/PG3jZ
-	 MPo7Xi71Q0eR4rKzLPqe2I7hUjusCSQW0oQWdmuEB6LQCGuYduG1Uavj3e+aYMquae
-	 g6o0HJTOugTN1kODHkuS0dayczZJfrdxtlxXyQofAvYPW63tzbOpxvyn5nrqn7mg3G
-	 6j2kPTlaIAmUlGs/2SZdIUXfxX2oaTq4e/n09Rht9Sf+lxVn1tabvgE+mwOuiS7FN5
-	 xAV2AW88lSnrw==
-Date: Fri, 18 Apr 2025 21:59:23 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
-Message-ID: <20250418-armselig-kabel-4710dc466170@brauner>
-References: <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
- <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
- <20250417-abartig-abfuhr-40e558b85f97@brauner>
- <20250417-outen-dreihundert-7a772f78f685@brauner>
- <20250417-zappeln-angesagt-f172a71839d3@brauner>
- <20250417153126.QrVXSjt-@linutronix.de>
- <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
- <39c36187-615e-4f83-b05e-419015d885e6@themaw.net>
- <125df195-5cac-4a65-b8bb-8b1146132667@themaw.net>
- <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
+	s=arc-20240116; t=1745006608; c=relaxed/simple;
+	bh=yA/T7O4DUU89cahtyYsKA6d+y8ammt9lMcd1G0ztWT8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GpyVmmBY7hm2fBcuJJjF0r87jpzs31uCljomniDAgmaCpaCGE462p18QuwA4tcpJOr7dRQiWfcFxBUxUZsko9gH+Wt+LsQ7fTR1uICmoh+suPlS7K3THcr1Xf/eAWHxMSl7R6rbwiPu9BlhXvk4EwtwsBTXO2nEkGjWV4fXZ9nU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=j6J+k3TH; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4769e30af66so513621cf.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Apr 2025 13:03:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745006606; x=1745611406; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C+oOpqVmU39D7pSdmadeSMDPqu3kAnHCqdURVPU0NY8=;
+        b=j6J+k3THLPTYaB5oHWEZ49Yz961fki+268FnpW28n+qUt8b6xySUHxOO0ATBSr2c5Z
+         f5Wij4zjZhI2OWTcZPQZsCT1Fu0sFR0Uh2lfhBINvrB8KydNbZGUWgEIWDU6gn3BwLmu
+         K+90uwI+xGxaEEfNnTHKDVofjNzE8Bwd3LAFGwwGuSoRK9JopSDX4CmB5x3GbysXcPQe
+         VBW4Df3E2kKP2kQSqV1g31rjs5DXj05HIjJ16G6Vv4E8DtsdRbf9bepWs3a4tggzf7Su
+         KuHk3yUQWeRcEiGZz6T8Lqurnza+eExd6luZ197I7wGNAMClGYS2qtzIqRKjZRQFHQXp
+         sDcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745006606; x=1745611406;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C+oOpqVmU39D7pSdmadeSMDPqu3kAnHCqdURVPU0NY8=;
+        b=Fa8mdOj1ZWaV8dLoHNpS4oTn/OLseI5kBAd1yCMwvcgGVRtFT+s2RCnpx7Bb2s0H8T
+         TSwU1rBBo7htwfngnJHi7rl89YWWiQXeEvP9FWXC2mXLG//3om07oU3NHg6qS18Y/lMN
+         vNtaEb68CIhNs2xtc6FQMbErApVrRDNYvrw8F8g829FK34fGiOQuoY4XrDLtDNHifBCk
+         S7LZ30m212aPng+wFArWdPd3OiKNcvEXhUeIxYEYtheZamerYvuV3jgn8XXiz7eGB1Dl
+         vELjEEAb4JmwtWqesvdQx6O51koSxHZCjGza2k06lf6IRrrzcSc0sy6Zbl4nXfcOB4j9
+         VMuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFP1ychx+D1isKt35e3yFkBrCPthg74iDVhYUwF1fL9NKuFGmP6IlP5Uu4GZPQXvJd4w+n9JvIH1u6wF5Y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4cNW36PfQFrxCycQQ1hMytKR06fUjlqRv3j+Pup3RYtYKT0+H
+	g8xNPo0vYLcTwrheNkUujGLdzs15TeC2eoKr04lbYgnk/SQtaTf96CiTBFPMyBdF+5fCBIunntF
+	wvlTv1hMdAa/Z/3wytWD6E2hF+t56V7bYY7bq
+X-Gm-Gg: ASbGncvojvOTmY+fy4UR060cf14nJjraYrQR57sM+N2BgQORRMHadDeB1HKxjPZJW8n
+	MiZUYvJ6LO7Ytt29jlZCCwrKmC9Y25A9sWlumAMqAuhnlL/CT3zUOfF7Zr/vwyAlzCBXF26L2zl
+	s9tpHdzHHUYmntLNFnDeW+
+X-Google-Smtp-Source: AGHT+IEp1qePU0PupxqAwvljmN3koti1+LUS4DXKxAoFbiSXRYU93X8EtDbhsmQD9vTQaLe5ynHWCwoNQz4TkmLkIk8=
+X-Received: by 2002:a05:622a:491:b0:476:f4e9:314e with SMTP id
+ d75a77b69052e-47aecc92a27mr4420151cf.25.1745006605364; Fri, 18 Apr 2025
+ 13:03:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="wlvjtn7bxagetzkl"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
+References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-4-surenb@google.com>
+ <5958fb2d-a2ac-4a24-8595-222d7e298951@lucifer.local> <CAJuCfpEwnbKA1y-iMs+ky465-Ok5j_f4ojaZV60yap2QGbfpmQ@mail.gmail.com>
+ <361e32be-7faa-41e5-a64f-fa95317abdb8@lucifer.local>
+In-Reply-To: <361e32be-7faa-41e5-a64f-fa95317abdb8@lucifer.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 18 Apr 2025 13:03:14 -0700
+X-Gm-Features: ATxdqUEenzbjQtOpE6Q6rVXg11gqNC0rtlK0DuSQk3YtHt5FbZ3QGSYLe-E2TGU
+Message-ID: <CAJuCfpHLMErQTwfZyLRVn+Rg5zYEHQK34dbX-QxavqUJYek=OQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/8] selftests/proc: extend /proc/pid/maps tearing test
+ to include vma remapping
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Apr 18, 2025 at 12:56=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> On Fri, Apr 18, 2025 at 12:31:29PM -0700, Suren Baghdasaryan wrote:
+> > On Fri, Apr 18, 2025 at 11:30=E2=80=AFAM Lorenzo Stoakes
+> > <lorenzo.stoakes@oracle.com> wrote:
+> > >
+> > > On Fri, Apr 18, 2025 at 10:49:54AM -0700, Suren Baghdasaryan wrote:
+> > > > Test that /proc/pid/maps does not report unexpected holes in the ad=
+dress
+> > > > space when we concurrently remap a part of a vma into the middle of
+> > > > another vma. This remapping results in the destination vma being sp=
+lit
+> > > > into three parts and the part in the middle being patched back from=
+,
+> > > > all done concurrently from under the reader. We should always see e=
+ither
+> > > > original vma or the split one with no holes.
+> > > >
+> > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > >
+> > > Umm, but we haven't fixed this in the mremap code right? :) So isn't =
+this test
+> > > failing right now? :P
+> > >
+> > > My understanding from meeting was you'd drop this commit/mark it skip=
+ped
+> > > for now or something like this?
+> >
+> > After you pointed out the issue in mremap_to() I spent some time
+> > investigating that code. IIUC the fact that mremap_to() does
+> > do_munmap() and move_vma() as two separate operations should not
+> > affect lockless reading because both those operations are done under
+> > mmap_write_lock() without dropping it in between. Since my lockless
+> > mechanism uses mmap_lock_speculate_xxx API to detect address space
+> > modifications and retry if concurrent update happen, it should be able
+> > to handle this case. The vma it reports should be either the version
+> > before mmap_write_lock was taken (before the mremap()) or after it got
+> > dropped (after mremap() is complete). Did I miss something more
+> > subtle?
+>
+> Speaking to Liam, seems perhaps the implementation has changed since we f=
+irst
+> started looking at this?
+>
+> I guess it's this speculation stuff that keeps you safe then, yeah we hol=
+d the
+> write lock over both.
+>
+> So actually ideal if we can avoid having to fix up the mremap implementat=
+ion!
+>
+> If you're sure that the speculation combined with mmap write lock keeps u=
+s safe
+> then we should be ok I'd say.
 
---wlvjtn7bxagetzkl
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Yeah, I tested that quite rigorously and confirmed (using the
+mm->mm_lock_seq) that mmap_write_lock is not dropped somewhere in the
+middle of those operations. I think we should be safe.
 
-On Fri, Apr 18, 2025 at 10:47:10AM +0200, Christian Brauner wrote:
-> On Fri, Apr 18, 2025 at 09:20:52AM +0800, Ian Kent wrote:
-> > On 18/4/25 09:13, Ian Kent wrote:
-> > > 
-> > > On 18/4/25 00:28, Christian Brauner wrote:
-> > > > On Thu, Apr 17, 2025 at 05:31:26PM +0200, Sebastian Andrzej Siewior
-> > > > wrote:
-> > > > > On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
-> > > > > > >      So if there's some userspace process with a broken
-> > > > > > > NFS server and it
-> > > > > > >      does umount(MNT_DETACH) it will end up hanging every other
-> > > > > > >      umount(MNT_DETACH) on the system because the dealyed_mntput_work
-> > > > > > >      workqueue (to my understanding) cannot make progress.
-> > > > > > Ok, "to my understanding" has been updated after going back
-> > > > > > and reading
-> > > > > > the delayed work code. Luckily it's not as bad as I thought it is
-> > > > > > because it's queued on system_wq which is multi-threaded so it's at
-> > > > > > least not causing everyone with MNT_DETACH to get stuck. I'm still
-> > > > > > skeptical how safe this all is.
-> > > > > I would (again) throw system_unbound_wq into the game because
-> > > > > the former
-> > > > > will remain on the CPU on which has been enqueued (if speaking about
-> > > > > multi threading).
-> > > > Yes, good point.
-> > > > 
-> > > > However, what about using polled grace periods?
-> > > > 
-> > > > A first simple-minded thing to do would be to record the grace period
-> > > > after umount_tree() has finished and the check it in namespace_unlock():
-> > > > 
-> > > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > > index d9ca80dcc544..1e7ebcdd1ebc 100644
-> > > > --- a/fs/namespace.c
-> > > > +++ b/fs/namespace.c
-> > > > @@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable
-> > > > __ro_after_init;
-> > > >   static struct hlist_head *mountpoint_hashtable __ro_after_init;
-> > > >   static struct kmem_cache *mnt_cache __ro_after_init;
-> > > >   static DECLARE_RWSEM(namespace_sem);
-> > > > +static unsigned long rcu_unmount_seq; /* protected by namespace_sem */
-> > > >   static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
-> > > >   static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
-> > > >   static DEFINE_SEQLOCK(mnt_ns_tree_lock);
-> > > > @@ -1794,6 +1795,7 @@ static void namespace_unlock(void)
-> > > >          struct hlist_head head;
-> > > >          struct hlist_node *p;
-> > > >          struct mount *m;
-> > > > +       unsigned long unmount_seq = rcu_unmount_seq;
-> > > >          LIST_HEAD(list);
-> > > > 
-> > > >          hlist_move_list(&unmounted, &head);
-> > > > @@ -1817,7 +1819,7 @@ static void namespace_unlock(void)
-> > > >          if (likely(hlist_empty(&head)))
-> > > >                  return;
-> > > > 
-> > > > -       synchronize_rcu_expedited();
-> > > > +       cond_synchronize_rcu_expedited(unmount_seq);
-> > > > 
-> > > >          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
-> > > >                  hlist_del(&m->mnt_umount);
-> > > > @@ -1939,6 +1941,8 @@ static void umount_tree(struct mount *mnt,
-> > > > enum umount_tree_flags how)
-> > > >                   */
-> > > >                  mnt_notify_add(p);
-> > > >          }
+>
+> >
+> > >
+> > > > ---
+> > > >  tools/testing/selftests/proc/proc-pid-vm.c | 92 ++++++++++++++++++=
+++++
+> > > >  1 file changed, 92 insertions(+)
+> > > >
+> > > > diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/tes=
+ting/selftests/proc/proc-pid-vm.c
+> > > > index 39842e4ec45f..1aef2db7e893 100644
+> > > > --- a/tools/testing/selftests/proc/proc-pid-vm.c
+> > > > +++ b/tools/testing/selftests/proc/proc-pid-vm.c
+> > > > @@ -663,6 +663,95 @@ static void test_maps_tearing_from_resize(int =
+maps_fd,
+> > > >       signal_state(mod_info, TEST_DONE);
+> > > >  }
+> > > >
+> > > > +static inline void remap_vma(const struct vma_modifier_info *mod_i=
+nfo)
+> > > > +{
+> > > > +     /*
+> > > > +      * Remap the last page of the next vma into the middle of the=
+ vma.
+> > > > +      * This splits the current vma and the first and middle parts=
+ (the
+> > > > +      * parts at lower addresses) become the last vma objserved in=
+ the
+> > > > +      * first page and the first vma observed in the last page.
+> > > > +      */
+> > > > +     assert(mremap(mod_info->next_addr + page_size * 2, page_size,
+> > > > +                   page_size, MREMAP_FIXED | MREMAP_MAYMOVE | MREM=
+AP_DONTUNMAP,
+> > > > +                   mod_info->addr + page_size) !=3D MAP_FAILED);
+> > > > +}
 > > > > +
-> > > > +       rcu_unmount_seq = get_state_synchronize_rcu();
-> > > >   }
-> > > > 
-> > > >   static void shrink_submounts(struct mount *mnt);
-> > > > 
-> > > > 
-> > > > I'm not sure how much that would buy us. If it doesn't then it should be
-> > > > possible to play with the following possibly strange idea:
-> > > > 
-> > > > diff --git a/fs/mount.h b/fs/mount.h
-> > > > index 7aecf2a60472..51b86300dc50 100644
-> > > > --- a/fs/mount.h
-> > > > +++ b/fs/mount.h
-> > > > @@ -61,6 +61,7 @@ struct mount {
-> > > >                  struct rb_node mnt_node; /* node in the ns->mounts
-> > > > rbtree */
-> > > >                  struct rcu_head mnt_rcu;
-> > > >                  struct llist_node mnt_llist;
-> > > > +               unsigned long mnt_rcu_unmount_seq;
-> > > >          };
-> > > >   #ifdef CONFIG_SMP
-> > > >          struct mnt_pcp __percpu *mnt_pcp;
-> > > > diff --git a/fs/namespace.c b/fs/namespace.c
-> > > > index d9ca80dcc544..aae9df75beed 100644
-> > > > --- a/fs/namespace.c
-> > > > +++ b/fs/namespace.c
-> > > > @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
-> > > >          struct hlist_head head;
-> > > >          struct hlist_node *p;
-> > > >          struct mount *m;
-> > > > +       bool needs_synchronize_rcu = false;
-> > > >          LIST_HEAD(list);
-> > > > 
-> > > >          hlist_move_list(&unmounted, &head);
-> > > > @@ -1817,7 +1818,16 @@ static void namespace_unlock(void)
-> > > >          if (likely(hlist_empty(&head)))
-> > > >                  return;
-> > > > 
-> > > > -       synchronize_rcu_expedited();
-> > > > +       hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
-> > > > +               if (!poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
-> > > > +                       continue;
-> 
-> This has a bug. This needs to be:
-> 
-> 	/* A grace period has already elapsed. */
-> 	if (poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
-> 		continue;
-> 
-> 	/* Oh oh, we have to pay up. */
-> 	needs_synchronize_rcu = true;
-> 	break;
-> 
-> which I'm pretty sure will eradicate most of the performance gain you've
-> seen because fundamentally the two version shouldn't be different (Note,
-> I drafted this while on my way out the door. r.
-> 
-> I would test the following version where we pay the cost of the
-> smb_mb() from poll_state_synchronize_rcu() exactly one time:
-> 
-> diff --git a/fs/mount.h b/fs/mount.h
-> index 7aecf2a60472..51b86300dc50 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -61,6 +61,7 @@ struct mount {
->                 struct rb_node mnt_node; /* node in the ns->mounts rbtree */
->                 struct rcu_head mnt_rcu;
->                 struct llist_node mnt_llist;
-> +               unsigned long mnt_rcu_unmount_seq;
->         };
->  #ifdef CONFIG_SMP
->         struct mnt_pcp __percpu *mnt_pcp;
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index d9ca80dcc544..dd367c54bc29 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
->         struct hlist_head head;
->         struct hlist_node *p;
->         struct mount *m;
-> +       unsigned long mnt_rcu_unmount_seq = 0;
->         LIST_HEAD(list);
-> 
->         hlist_move_list(&unmounted, &head);
-> @@ -1817,7 +1818,10 @@ static void namespace_unlock(void)
->         if (likely(hlist_empty(&head)))
->                 return;
-> 
-> -       synchronize_rcu_expedited();
-> +       hlist_for_each_entry_safe(m, p, &head, mnt_umount)
-> +               mnt_rcu_unmount_seq = max(m->mnt_rcu_unmount_seq, mnt_rcu_unmount_seq);
-> +
-> +       cond_synchronize_rcu_expedited(mnt_rcu_unmount_seq);
-> 
->         hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
->                 hlist_del(&m->mnt_umount);
-> @@ -1923,8 +1927,10 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
->                         }
->                 }
->                 change_mnt_propagation(p, MS_PRIVATE);
-> -               if (disconnect)
-> +               if (disconnect) {
-> +                       p->mnt_rcu_unmount_seq = get_state_synchronize_rcu();
->                         hlist_add_head(&p->mnt_umount, &unmounted);
-> +               }
-> 
->                 /*
->                  * At this point p->mnt_ns is NULL, notification will be queued
-
-I'm appending a patch that improves on the first version of this patch.
-Instead of simply sampling the current rcu state and hoping that the rcu
-grace period has elapsed by the time we get to put the mounts we sample
-the rcu state and kick off a new grace period at the end of
-umount_tree(). That could even get us some performance improvement by on
-non-RT kernels. I have no clue how well this will fare on RT though.
-
---wlvjtn7bxagetzkl
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-UNTESTED-mount-sample-and-kick-of-grace-period-durin.patch"
-
-From 660bddec1241c46a7722f5c9b66a2450b5f85751 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 18 Apr 2025 13:33:43 +0200
-Subject: [PATCH] [UNTESTED]: mount: sample and kick of grace period during
- umount
-
-Sample the current rcu state and kick off a new grace period after we're
-done with umount_tree() and make namespace_unlock() take the previous
-state into account before invoking synchronize_rcu_expedited().
-
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/namespace.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/namespace.c b/fs/namespace.c
-index d9ca80dcc544..287189e85af5 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable __ro_after_init;
- static struct hlist_head *mountpoint_hashtable __ro_after_init;
- static struct kmem_cache *mnt_cache __ro_after_init;
- static DECLARE_RWSEM(namespace_sem);
-+static struct rcu_gp_oldstate rcu_unmount_gp;
- static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
- static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
- static DEFINE_SEQLOCK(mnt_ns_tree_lock);
-@@ -1817,7 +1818,7 @@ static void namespace_unlock(void)
- 	if (likely(hlist_empty(&head)))
- 		return;
- 
--	synchronize_rcu_expedited();
-+	cond_synchronize_rcu_expedited_full(&rcu_unmount_gp);
- 
- 	hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
- 		hlist_del(&m->mnt_umount);
-@@ -1939,6 +1940,9 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
- 		 */
- 		mnt_notify_add(p);
- 	}
-+
-+	/* Record current grace period state and kick of new grace period. */
-+	start_poll_synchronize_rcu_expedited_full(&rcu_unmount_gp);
- }
- 
- static void shrink_submounts(struct mount *mnt);
--- 
-2.47.2
-
-
---wlvjtn7bxagetzkl--
+> > > > +static inline void patch_vma(const struct vma_modifier_info *mod_i=
+nfo)
+> > > > +{
+> > > > +     assert(!mprotect(mod_info->addr + page_size, page_size,
+> > > > +                      mod_info->prot));
+> > > > +}
+> > > > +
+> > > > +static inline void check_remap_result(struct line_content *mod_las=
+t_line,
+> > > > +                                   struct line_content *mod_first_=
+line,
+> > > > +                                   struct line_content *restored_l=
+ast_line,
+> > > > +                                   struct line_content *restored_f=
+irst_line)
+> > > > +{
+> > > > +     /* Make sure vmas at the boundaries are changing */
+> > > > +     assert(strcmp(mod_last_line->text, restored_last_line->text) =
+!=3D 0);
+> > > > +     assert(strcmp(mod_first_line->text, restored_first_line->text=
+) !=3D 0);
+> > > > +}
+> > > > +
+> > > > +static void test_maps_tearing_from_remap(int maps_fd,
+> > > > +                             struct vma_modifier_info *mod_info,
+> > > > +                             struct page_content *page1,
+> > > > +                             struct page_content *page2,
+> > > > +                             struct line_content *last_line,
+> > > > +                             struct line_content *first_line)
+> > > > +{
+> > > > +     struct line_content remapped_last_line;
+> > > > +     struct line_content remapped_first_line;
+> > > > +     struct line_content restored_last_line;
+> > > > +     struct line_content restored_first_line;
+> > > > +
+> > > > +     wait_for_state(mod_info, SETUP_READY);
+> > > > +
+> > > > +     /* re-read the file to avoid using stale data from previous t=
+est */
+> > > > +     read_boundary_lines(maps_fd, page1, page2, last_line, first_l=
+ine);
+> > > > +
+> > > > +     mod_info->vma_modify =3D remap_vma;
+> > > > +     mod_info->vma_restore =3D patch_vma;
+> > > > +     mod_info->vma_mod_check =3D check_remap_result;
+> > > > +
+> > > > +     capture_mod_pattern(maps_fd, mod_info, page1, page2, last_lin=
+e, first_line,
+> > > > +                         &remapped_last_line, &remapped_first_line=
+,
+> > > > +                         &restored_last_line, &restored_first_line=
+);
+> > > > +
+> > > > +     /* Now start concurrent modifications for test_duration_sec *=
+/
+> > > > +     signal_state(mod_info, TEST_READY);
+> > > > +
+> > > > +     struct line_content new_last_line;
+> > > > +     struct line_content new_first_line;
+> > > > +     struct timespec start_ts, end_ts;
+> > > > +
+> > > > +     clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
+> > > > +     do {
+> > > > +             read_boundary_lines(maps_fd, page1, page2, &new_last_=
+line, &new_first_line);
+> > > > +
+> > > > +             /* Check if we read vmas after remapping it */
+> > > > +             if (!strcmp(new_last_line.text, remapped_last_line.te=
+xt)) {
+> > > > +                     /*
+> > > > +                      * The vmas should be consistent with remap r=
+esults,
+> > > > +                      * however if the vma was concurrently restor=
+ed, it
+> > > > +                      * can be reported twice (first as split one,=
+ then
+> > > > +                      * as restored one) because we found it as th=
+e next vma
+> > > > +                      * again. In that case new first line will be=
+ the same
+> > > > +                      * as the last restored line.
+> > > > +                      */
+> > > > +                     assert(!strcmp(new_first_line.text, remapped_=
+first_line.text) ||
+> > > > +                            !strcmp(new_first_line.text, restored_=
+last_line.text));
+> > > > +             } else {
+> > > > +                     /* The vmas should be consistent with the ori=
+ginal/resored state */
+> > > > +                     assert(!strcmp(new_last_line.text, restored_l=
+ast_line.text) &&
+> > > > +                            !strcmp(new_first_line.text, restored_=
+first_line.text));
+> > > > +             }
+> > > > +             clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
+> > > > +     } while (end_ts.tv_sec - start_ts.tv_sec < test_duration_sec)=
+;
+> > > > +
+> > > > +     /* Signal the modifyer thread to stop and wait until it exits=
+ */
+> > > > +     signal_state(mod_info, TEST_DONE);
+> > > > +}
+> > > > +
+> > > >  static int test_maps_tearing(void)
+> > > >  {
+> > > >       struct vma_modifier_info *mod_info;
+> > > > @@ -757,6 +846,9 @@ static int test_maps_tearing(void)
+> > > >       test_maps_tearing_from_resize(maps_fd, mod_info, &page1, &pag=
+e2,
+> > > >                                     &last_line, &first_line);
+> > > >
+> > > > +     test_maps_tearing_from_remap(maps_fd, mod_info, &page1, &page=
+2,
+> > > > +                                  &last_line, &first_line);
+> > > > +
+> > > >       stop_vma_modifier(mod_info);
+> > > >
+> > > >       free(page2.data);
+> > > > --
+> > > > 2.49.0.805.g082f7c87e0-goog
+> > > >
 
