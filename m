@@ -1,163 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-46673-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46674-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166ABA93786
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 14:58:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF40A938F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 16:56:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A5604646A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 12:58:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B02119E7F94
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 14:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A74276038;
-	Fri, 18 Apr 2025 12:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E0F21D63E8;
+	Fri, 18 Apr 2025 14:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GLfHIj8a"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=gus@collabora.com header.b="eO5PJr1C"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F08274FFD;
-	Fri, 18 Apr 2025 12:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744981088; cv=none; b=Mft5/BLQqxFjge1E+QI7mkc84sP3MiX9xfKuVTab35q9JDLP7O7APYhClwXlHXHTV5/d1zVS574WMxyuxwzkysep6GsIf7xI3RYfsEXfYSN1haYvIxQjWv+gAVPsQaPcaFnB800fBp7LLUW97sC59ry28lMF6WKKu94/LUTMJJk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744981088; c=relaxed/simple;
-	bh=RMr4/qc9ZC4vHI96fVk2zVl6UzkjUHlIjncACCdOGYM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b8nC9LBIXkywKbvDigZkk/4SieqN6wrGYQMuJSdpMj1bYvarGvYfFqbCc0uXjo8XH+ysh32oYLCaMHpzGVlM9YxZBA+rOuNP413+BaGaiE8jmqVCfJ0kxkUquVfQO5Qo9tppvDtEo70LBWcyA+BX9J8M8xK02Ulme4EqT0eBri8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GLfHIj8a; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac3b12e8518so345797166b.0;
-        Fri, 18 Apr 2025 05:58:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1744981085; x=1745585885; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dTb4MLq6+pa8qb6DAMK0iOj4FeXvmY3R1z3r2UP1bBs=;
-        b=GLfHIj8a4RTWTisCBBShWGOhmHp/8mIHOAmWyOuH56wx2Ac2tTR+h387AQtF0X+pGG
-         IokNclxfggFQmRUPUfoFympW4x1mDdjblEDFPh9tqfpaqKJ1o3Wbc1NRUe66ofOp5JBE
-         Z5SGA0gOt2j4zV/rmAeJFH8Ja+91eYCri3XfjrtmaVnQTAEWuYigH8uC0Al5Dms4JObY
-         QFNv2YwjyhX0zwNUULaoOXkMMkenCpuiUwOG349plqMdBRdr1IAEvQvT0ynVPw9lAbRu
-         PJtrVwob7Pxvn6fja28pgqlQ5uEn8pHBcH8mRX1HXzq1A4EZaNz1bJHjX2Xxn+XgHz5s
-         OLxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1744981085; x=1745585885;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dTb4MLq6+pa8qb6DAMK0iOj4FeXvmY3R1z3r2UP1bBs=;
-        b=rdLMdRyDodo7uqOVwRNymOE5AAfi8G2OepF+MAsgKb9G2kFjrGrRHIYW1pu0zlMp/6
-         uaiuW1RaWiN5LHyOX6D3IUxcOS/mjLSIuYeQ2rUiC7JD9+EqZmYEbPpryGnTgYtgMog1
-         7L+hax29cbqHrwAmHNzAttU36xjxuOUK5mHsbk3uKgCS+YhhLQ31fEwNBxMoc3T8UlVR
-         PCnSxb5YHJj27oerDOGJ2IvWk4ms62SeC+ogmQjzwyfWqtWDc9/MasAYsLd8lmXOOMjr
-         9qvI/jWtMk8hOf2YZRx77VIdqhwx5ximzlPCt1iP6Evd0RDTgei9OrzdcCEJUis6oaV3
-         3BCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtm77TgvxVm3Vkgva8VAnje/vgq20INJ0WMi9EOLfBfcbSV+hK4McZoCgMNBri1As4Zoq5ajby1tsDYnnl@vger.kernel.org, AJvYcCVDKFJIEUR1TMTjgFE1QRUwaVzxQ064soJ9+Uwqg+qlS0aMIOOEdtCNZynMXxYIIOqtaFn108kWP8XQzQeJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX/eyeX+8cURpeMClyrSN2NUpW7jf/hEBLtQsIF4Rgm1umlW2e
-	RDB/pDQIzHXStIU7zhsN6zD9rnada4bFxpfAkE6vtGsXNoKgl0Dc
-X-Gm-Gg: ASbGncsHW7sYEKYQ+I4El5vIj+rtLrRx+HRjZcv8Kpt3UrD+0oH8uYzlheY/XmwYh+u
-	xxcf0mq0ZUl8r6Nhc9Cb8rHQ9M+BTk+oqfbobxXZi0CSJ4THoOrwhnOPMmBSmE26rOft4M9tNlN
-	I6E/Ax46X6fiPbO9XGuf9fdYc/uCfGpBsYse+myLP9Fr1Kt8wcBsBNscxEFN4tM3SB8hnXz4tvV
-	KeIbFsUYSIHgRG30qJvhjsger/iUjV5YK+3nRsqFwqxYixdVsqeiHZv4pqcOE53aVFrHt9b/gYH
-	oX2cxwApgw2KpYElkb/Ja2sxpNoOrVHZnvDL/cQ4QQx6T2S2FtCbyypLots=
-X-Google-Smtp-Source: AGHT+IHzmymjmKFjk5NExrhzRwKzydlaLRI3tQshEKDEtZOjVCYCMdJEuLoxCGdDqFd7uIfpUhwEgQ==
-X-Received: by 2002:a17:907:1c1d:b0:ac8:1efc:bf61 with SMTP id a640c23a62f3a-acb74765f86mr302902866b.0.1744981084720;
-        Fri, 18 Apr 2025 05:58:04 -0700 (PDT)
-Received: from f.. (cst-prg-69-142.cust.vodafone.cz. [46.135.69.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6efadd16sm117764166b.172.2025.04.18.05.58.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Apr 2025 05:58:03 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	kernel test robot <oliver.sang@intel.com>
-Subject: [PATCH v2] fs: fall back to file_ref_put() for non-last reference
-Date: Fri, 18 Apr 2025 14:57:56 +0200
-Message-ID: <20250418125756.59677-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4ACEEC8;
+	Fri, 18 Apr 2025 14:54:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1744988079; cv=pass; b=SZIuGNYIzlCzN+tFUlNWq7zVIw8+UtS9Jrojf3AV9MGcY5JyAPTy/snyb48Q+Xc66AjEOaslg2chXTJSmu+Gh+5H7IF5x5IsMwgfG7TnwAbXtNWNp+VNImFi64h8UUlk3hbFHDNspFbUXldVTPcdhjRv5ZvIgJFvltCCsQU+ZEk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1744988079; c=relaxed/simple;
+	bh=WggftEIK2mvt4u75qp2O03tHBXothXB+itpeElo6ZYs=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=puZe5tNSLCEoNpSD103yZ2+b8umHwWftSJBX5KCpyJSA9bihk95XTEFGyF7xZEIkct1ZVvt1J8xJBnAyl2b+hcTvjYv3f+v2Xq9LCJXLy3nvBhWb/rqmDAWQfXqjuKn/MpE1cIYJByTPWqKGkVLSh9Q8ZK8S67g5nuJbbYcJl40=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=gus@collabora.com header.b=eO5PJr1C; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1744988069; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=nGiifR6RnL7JVLdQrl4WbShTC6W/w1YaBpJQVmovhKNOUyw2SxNAlYRauud1S8YzylvC1HpUgkKkI+ubqFrp1IQVj2JPWsoQ3ZMX7COHLACqAjbW1PRw95Suw1DJ9+WfpdwDhcezXC/Hg8+ldeUtW8+CXoUkx5JzygF8Qy4vdwk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1744988069; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=BSd3sz8Qz860VcIh/f0YXhtMUJ/XA/IsbbFc//H4pQA=; 
+	b=Tbvbd4rPctmwQz3yn0s8Qr1rn+VYk27F0jJeL+4+RV5L6DgmxdAQcNAfnsyLEXGofYq9aYQK/KP0W8SoetfnP4yqOJswuE0U/Uik+6E1K9P2ResZIVppQ2ZEyeqmbuQcCeuShFghc9msrrGxYV4Rg5vRsnWs1jmqhPUOkbOxmWI=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=gus@collabora.com;
+	dmarc=pass header.from=<gus@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1744988069;
+	s=zohomail; d=collabora.com; i=gus@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=BSd3sz8Qz860VcIh/f0YXhtMUJ/XA/IsbbFc//H4pQA=;
+	b=eO5PJr1C64JuEDfPqoFinkyRjDPX8yQnqZ7sD0npe3iv5xgc3lMRghKsasNQXQtx
+	6Q0xWNoPWEvMjp2/z6XF0OygWjYp3nK1bprblJHiuBVvUlsDB7+87Q2GyRnhasw1ezB
+	9e7Qg7bIKBI0P7LmOXQ9+dsJrtVAN7qBT5L/IpgE=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1744988066829910.0793453823826; Fri, 18 Apr 2025 07:54:26 -0700 (PDT)
+Date: Fri, 18 Apr 2025 11:54:26 -0300
+From: Gustavo Padovan <gus@collabora.com>
+To: "Luis Chamberlain" <mcgrof@kernel.org>
+Cc: "Linux FS Devel" <linux-fsdevel@vger.kernel.org>,
+	"Tso Ted" <tytso@mit.edu>, "kdevops" <kdevops@lists.linux.dev>,
+	"fstests" <fstests@vger.kernel.org>,
+	"kernelci lists.linux.dev" <kernelci@lists.linux.dev>
+Message-ID: <1964964d3f7.10a86724c62742.5510698901836310404@collabora.com>
+In-Reply-To: <aAEyNxkMyJEVHRhR@bombadil.infradead.org>
+References: <aAEp8Z6VIXBluMbB@bombadil.infradead.org> <aAEyNxkMyJEVHRhR@bombadil.infradead.org>
+Subject: Re: Automation of parsing of fstests xunit xml to kicdb kernel-ci
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-This reduces the slowdown in face of multiple callers issuing close on
-what turns out to not be the last reference.
 
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202504171513.6d6f8a16-lkp@intel.com
----
 
-v2:
-- fix a copy pasto with bad conditional
+---- On Thu, 17 Apr 2025 13:54:15 -0300 Luis Chamberlain <mcgrof@kernel.org> wrote ---
 
- fs/file.c                |  2 +-
- include/linux/file_ref.h | 19 ++++++-------------
- 2 files changed, 7 insertions(+), 14 deletions(-)
+ > On Thu, Apr 17, 2025 at 09:18:57AM -0700, Luis Chamberlain wrote: 
+ > > We're at the point that we're going to start enablish automatic push 
+ > > of tests for a few filesystems with kdevops. We now have automatic 
+ > > collection of results, parsing of them, etc. And so the last step 
+ > > really, is to just send results out to kicdb [0]. 
+ > > 
+ > > Since we have the xml file, I figured I'd ask if anyone has already 
+ > > done the processing of this file to kicdb, because it would be easier 
+ > > to share the same code rather than re-invent. We then just need to 
+ > > describe the source, kdevops, version, etc. 
+ > > 
+ > > If no one has done this yet, we can give it a shot and we can post 
+ > > here the code once ready. 
+ > > 
+ > > [0] https://docs.kernelci.org/kcidb/submitter_guide/ 
+ 
+From KernelCI side, we are not aware of anyone who created that xml->kcidb
+processing.
 
-diff --git a/fs/file.c b/fs/file.c
-index dc3f7e120e3e..3a3146664cf3 100644
---- a/fs/file.c
-+++ b/fs/file.c
-@@ -26,7 +26,7 @@
- 
- #include "internal.h"
- 
--bool __file_ref_put_badval(file_ref_t *ref, unsigned long cnt)
-+static noinline bool __file_ref_put_badval(file_ref_t *ref, unsigned long cnt)
- {
- 	/*
- 	 * If the reference count was already in the dead zone, then this
-diff --git a/include/linux/file_ref.h b/include/linux/file_ref.h
-index 7db62fbc0500..31551e4cb8f3 100644
---- a/include/linux/file_ref.h
-+++ b/include/linux/file_ref.h
-@@ -61,7 +61,6 @@ static inline void file_ref_init(file_ref_t *ref, unsigned long cnt)
- 	atomic_long_set(&ref->refcnt, cnt - 1);
- }
- 
--bool __file_ref_put_badval(file_ref_t *ref, unsigned long cnt);
- bool __file_ref_put(file_ref_t *ref, unsigned long cnt);
- 
- /**
-@@ -178,20 +177,14 @@ static __always_inline __must_check bool file_ref_put(file_ref_t *ref)
-  */
- static __always_inline __must_check bool file_ref_put_close(file_ref_t *ref)
- {
--	long old, new;
-+	long old;
- 
- 	old = atomic_long_read(&ref->refcnt);
--	do {
--		if (unlikely(old < 0))
--			return __file_ref_put_badval(ref, old);
--
--		if (old == FILE_REF_ONEREF)
--			new = FILE_REF_DEAD;
--		else
--			new = old - 1;
--	} while (!atomic_long_try_cmpxchg(&ref->refcnt, &old, new));
--
--	return new == FILE_REF_DEAD;
-+	if (likely(old == FILE_REF_ONEREF)) {
-+		if (likely(atomic_long_try_cmpxchg(&ref->refcnt, &old, FILE_REF_DEAD)))
-+			return true;
-+	}
-+	return file_ref_put(ref);
- }
- 
- /**
--- 
-2.48.1
+It is a good time to discuss that though as we are making some fundamental
+changes in KCIDB to improve performance and  allow it to be more agile in
+how we deal with the various needs we are seeing from the community.
+
+In a nutshell, we are creating a new interface to publish the data to KCIDB and
+also allow easier local dev env for people to try it out. Thinking about your
+need here, maybe we could go as far as having an endpoint in the new KCIDB api
+that consumes the xml directly and do the translation internally. We should 
+also look if the schema is enough for you or new additions may be needed.
+
+For context, for those not aware with the new KernelCI infra. KCIDB data
+is the backend of our https://dashboard.kernelci.org/ and https://kci.dev/ cmdline.
+Mind you that both project are quite new and will grow more and more functionality
+over the years. We'd be happy to collect your usecases and see how we can evolve
+our infra, dashboard, etc.
+
+Best,
+
+- Gus
+
 
 
