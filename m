@@ -1,219 +1,8840 @@
-Return-Path: <linux-fsdevel+bounces-46704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B747A93FEC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 00:39:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A742A94080
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 01:58:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 696F48A377E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 22:38:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A69E7A5A4F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 23:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266291E49F;
-	Fri, 18 Apr 2025 22:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F9A254B17;
+	Fri, 18 Apr 2025 23:58:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C9Re2D3m"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OnDK+vl8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B7824EA87
-	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Apr 2025 22:37:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FD943AA9;
+	Fri, 18 Apr 2025 23:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745015880; cv=none; b=HAGRksk7TOBZdcIvhkKqhmF9PiVFEAY3NcsLZ42yHoIFbj2hRXN3Up+2MvwojjQWt4TKZsoEM+kio79afTLljB1GpAHmf2KtTVEEqTsqkwdbDSv/s6HM6lL4our8meGMz+kg9tk1ME+bJ4GbMo1MCy5FR3bYKBPG4UGvh6smV7I=
+	t=1745020703; cv=none; b=OZfBV5KbrU4SjXx63LZlrrLOZmIB0QTFjLmVXm6iQbHF8Lve4Am6N6+QEB7sp2UhimEJ9SpX4lsooEO99MCQ2EJIlYC1YoBlfKVXLCD09vwLniu6rj7mbYF/KMIsetgE3NY3GJf78wEN/h9RX9Z1fmSfFOBRrhjyYbRCpLdLxTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745015880; c=relaxed/simple;
-	bh=jhlVIX3kVkp0e8b8M1KKUzJQCkrzQ5wwin9Rpr4WNZI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rxIwO29M5oFO+HhlIrvhMJqaUUxheNHZT2K/ynbLqDE9TBBihbb4q+p1ZDx5FICO+oDlySVlB8ftIP8Rle4WPs5EZkyRo6+LemVY8mHTVnnNmj5Ee+KO5rf2RP93c74GKEkqkpy/vHVlxywpyoTvYB1ZawrN5JMjK4s7JNj9C40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C9Re2D3m; arc=none smtp.client-ip=209.85.218.42
+	s=arc-20240116; t=1745020703; c=relaxed/simple;
+	bh=W1X8/UKpjArifyLGfzCUFUNQNj78LX8kT+Zg/xq6NMA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=IvoZr9XuldtTW36oN1tUAA9jqEOVxEsZws16rnrdeSRO9TSG+mAn8Pjb8cYupedUkNBEicLm0Vt0rGmhz4P48ZVscFCXptswpJtwAZnMI5VycAPwQoNm+O93axHqpvle329Awn3bQYQAkFpWh1gQjhKCFmcgtmoWkAJ0zes7z3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OnDK+vl8; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-acb415dd8faso365848466b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Apr 2025 15:37:57 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-73c17c770a7so3069908b3a.2;
+        Fri, 18 Apr 2025 16:58:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745015876; x=1745620676; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+dxsBkFJqqqJVl5emxTP1cW4ht/4IQNzzj8ot/QCAZE=;
-        b=C9Re2D3ma76Qz4VtT1XpumlfVQFVew/u7LXEE1yjc0UZm2LdURvtbuAOOfj8sqa8BU
-         jqKgLtzLSc6phxa2cIvxxukFArgy8pkGOkSY6MGf/qYnUzjMvvXe/UgfrV/pRMdyqgAa
-         5K8UbCYOrSByucpjKe/I4SHYzZqO37hB4diK2yLkkKInP0WiibpE0J6o4Kq74FImF4aL
-         H05H8KmViy4xDf5jnNQ5w0MGDfNVrO3AjxaSBeGkL1bcrxBzoOubHbRmDZYm+l/LFR5V
-         4XbfK+gNq7ECEEVGpS1g3JwNq6A5t1EnHvHYda9sIUUsGucdDiStnHxFrJpLDFhIshpj
-         2RUA==
+        d=gmail.com; s=20230601; t=1745020688; x=1745625488; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xBRtH1wpJMmW5wrLF0iIf5ywWYEIPhs76zY8iu6cuaQ=;
+        b=OnDK+vl8X02AjH5GbqHLr990ETPmQdcC0vKtDu1DhTiEWbXfkz7XbDyKu+JDzD9n9M
+         sYWRuWAJvRmyFvqJFnJfagOLnZhW7RYkKqtRKQEbwizmGUHkoXRivLKTSexzJwfk1wD9
+         x1YCQOVAjZEjJfGU4XifYq4zGmYYqi5SXamGTHt78unlTw4U99Ga3swnsKc6JhMgfCn2
+         rg9zYVdm4dp01aYZwiIzIFgsak/3+UDl3cgq64SFnKoKZ60H09ZIRoIbDVB0MhTMh+XC
+         LG1TJ/Ovld5Wz3XCNLXif3ZD4QbeQg9sAszE2CyAquBD+DrYuNpqM5VzAWZ8NGc14Jzk
+         aQPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745015876; x=1745620676;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+dxsBkFJqqqJVl5emxTP1cW4ht/4IQNzzj8ot/QCAZE=;
-        b=t68cZLtDjz5y1k+P53ugXIc854vSPCGDywhjcQDYPP3oJJcWgXXt0bLjW+of4GOkP7
-         3HSCFzC1FUjzVZKVu/PmUIdr39+TeuuqDPzgWEAkV/ROGnISC8t8W9ZMYBkah/HYCvAb
-         acO3ApfmlCbNjoM/EiIFP9kTyiph6QyfrSVXd+IxHe2OC6JfKN6fwnMzBGerzm21AK7G
-         0CqzCi2NA4Gud98BDb6jHu/wHirGfpa/VvIyfHVNcyxGMTei7MNU41Ru5lCcZWMGRb7I
-         S4Lx3up/XdY+aBmm1tncdJOgB1/un3ui1JrVVQ0ylt7BXo7hESxb8yIhomtflcU1BKMP
-         o7Bw==
-X-Forwarded-Encrypted: i=1; AJvYcCXHlZWjvceSblm9i9hYC/cNMBPaIqehgnkR1MQy8yVSBvmNpb7H9ijfvBCoCXz6Ugw2jDCAGsE0dIKU0PY8@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2R5tydV91wyBt4E4ET8wA8YQsQeXlSwnbaYbcSdS4mtgaDAuN
-	k8UyMF5XXV1EKnu5pvOW2HhEPD9lUG3V8CbYkTJioYWWhMW8uQceq0BiZ8MZyNAYG2KJCWQiwfh
-	4hvrYGQQ6iUOMPDyIE/oWaYKu4dD4hkvOJJE=
-X-Gm-Gg: ASbGncue8kBWQPx4xOqrF/JGrPjdNJr+lsBX4OfXAkQphyXTvP40xyuCprqR/YIhMd1
-	xIMr2rDOuyYdpFYKH1VQ9Pw7o9yyHHLxyVdKnAIsIEIwZE6pPi0BkZGmNkwIhZ2PUiy45TBbc3h
-	4i4IXiaewJEPyC7NOQn9SUlQ==
-X-Google-Smtp-Source: AGHT+IH+vbnQyh+VKLt9CCnZcAzZNdYhIS6Xv9XbeB15opzzvtZu1Jco5rPeEwowYwfmEQoKUBj5X6X6XuTakyArjhk=
-X-Received: by 2002:a17:906:d54e:b0:ac6:d9fa:46c8 with SMTP id
- a640c23a62f3a-acb74d65aeamr360227666b.39.1745015875420; Fri, 18 Apr 2025
- 15:37:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745020688; x=1745625488;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xBRtH1wpJMmW5wrLF0iIf5ywWYEIPhs76zY8iu6cuaQ=;
+        b=UuQVp3XGe56J1VK8mmxRsfqzX/FjLNPRQzcDEGQZ8wYoTTGBvMsIU/aFH0Drsmofmm
+         PLqvDeu02u0+MTN9rD+upj++A+etOQ/cAmwX/yiLEskgRnofWxMriFqFqaD4wrxj9Aeq
+         n6l0QWFVrz6H6aI53BPOeGykkHIyNKfpEcJ37IIIZc3qHkGCn40n6Gm2CahTVnaWdls1
+         EpiM4qQohju5Frox0cPgb8eQzB8tlZHUKnD+j7qkbVyeENAvQsaVkb74JpzMQt3+4/1I
+         Xnq1BcuCKCySn5NcAWh9Z3agbLU+gR8epQlayqzAOVKuARz5sg9Ynq/UrACQvDSLc+aT
+         veBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjjjRu2P1n5nVvEFsbkzPT3fN+5cUH3DdEkIuYFXK4ISNHoMkA25x/gOzCtzjgv4gAKGtR/pY0kIxxopSt5A==@vger.kernel.org, AJvYcCVpY2WeVgiKZ0EOjFfU5jOl496+WCYv7vylVwF55vLyROvh63EHyr4Bmf7IHwgRSMi0mMVpEgSLPKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUxO0WvD2v0P3LmaFBLoyb4gwLGqJf3+GbQEY0yTRBqUmBoRdp
+	6+pxBs/DyViOVIl8/IB6sI3mVkCxhp60VWmkPbl9kWrpe0BPONcG
+X-Gm-Gg: ASbGncugpSQs1iijkzlEDl/oVGkDoXV1ennKTbPG4N09rpI5CzVZptP8u8nRltbRXOF
+	YX5S1//K9CdyYeOT+BP+dNaDSN9cs3NHVCWNbFDXBKKXNt3KJ77mtE87WD44DGBQkkWKoWtQQsd
+	Kh98v0GPfoY8zYEsMw2Pgfa49WvuDSYXcIO0xPdEw4loQUp4jKt5aQvupDvZN5QIc6OyZw4iaj9
+	fJYHgPC5G18S/p2z2nMnAYyYVHRo8oy7gugfbWuNyT/Vk69dDXD8Ow9k8Ax5oct5Zxt3X0ZMJkx
+	+oEtEUNTB3OES9AkWxBptpKHnP+1ZxyAmgXmFZU7BMo02TAeO17k+w/sAUcNe9Li9EWB/YA=
+X-Google-Smtp-Source: AGHT+IFnXSyayMswElZmFHgjSCLcrxkyUwOf0tEzQJSfuqLmZccNQOoVNA0bAbnyJxVzNjnA5VPoKA==
+X-Received: by 2002:a05:6a00:8083:b0:736:592e:795f with SMTP id d2e1a72fcca58-73dc14a0d13mr5579816b3a.9.1745020686203;
+        Fri, 18 Apr 2025 16:58:06 -0700 (PDT)
+Received: from localhost.localdomain ([2405:201:c408:a0b5:82a7:fae4:9cf0:3b75])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbfae97dasm2149731b3a.162.2025.04.18.16.57.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Apr 2025 16:58:05 -0700 (PDT)
+From: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+To: anton@tuxera.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-ntfs-dev@lists.sourceforge.net,
+	linux-doc@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	jcorbet@lwn.net,
+	alexander.viro@ruthless.com,
+	kevinpaul468@gmail.com
+Subject: [PATCH] fs: Backport - remove NTFS classic
+Date: Sat, 19 Apr 2025 05:27:40 +0530
+Message-Id: <20250418235740.80375-1-kevinpaul468@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxgXO0XJzYmijXu=3yDF_hq3E1yPUxHqhwka19-_jeaNFA@mail.gmail.com>
- <20250408185506.3692124-1-ibrahimjirdeh@meta.com> <CAOQ4uxjnjSeDpzk9j6QBQzhiSwwmOAejefxNL3Ar49BuCzBsKg@mail.gmail.com>
- <d2n57euuuy2gd63gweovkyvcya3igjttdabgpz4txxtf4v2pou@3eb7slijnhcl>
-In-Reply-To: <d2n57euuuy2gd63gweovkyvcya3igjttdabgpz4txxtf4v2pou@3eb7slijnhcl>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 19 Apr 2025 00:37:44 +0200
-X-Gm-Features: ATxdqUF4kim6US0m3ZJt7k-kcO8qia40Eqmdnwcsr3cphNURWilMjfTPVgk11fU
-Message-ID: <CAOQ4uxgBqR0hC2v2AbktjiWqfeEiJHsZq00Uhpg2PY3HyjGkpg@mail.gmail.com>
-Subject: Re: Reseting pending fanotify events
-To: Jan Kara <jack@suse.cz>
-Cc: Ibrahim Jirdeh <ibrahimjirdeh@meta.com>, josef@toxicpanda.com, lesha@meta.com, 
-	linux-fsdevel@vger.kernel.org, sargun@meta.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 15, 2025 at 5:51=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 09-04-25 14:36:16, Amir Goldstein wrote:
-> > On Tue, Apr 8, 2025 at 8:55=E2=80=AFPM Ibrahim Jirdeh <ibrahimjirdeh@me=
-ta.com> wrote:
-> > >
-> > > > 1. Start a new server instance
-> > > > 2. Set default response in case of new instance crash
-> > > > 3. Hand over a ref of the existing group fd to the new instance if =
-the
-> > > > old instance is running
-> > > > 4. Start handling events in new instance (*)
-> > > > 5. Stop handling new events in old instance, but complete pending e=
-vents
-> > > > 6. Shutdown old instance
-> > >
-> > > I think this should work for our case, we will only need to reconstru=
-ct
-> > > the group/interested mask in case of crash. I can help add the featur=
-e for
-> > > setting different default responses.
-> > >
-> >
-> > Please go ahead.
-> >
-> > We did not yet get any feedback from Jan on this idea,
-> > but ain't nothing like a patch to solicit feedback.
->
-> I'm sorry for the delay but I wanted to find time to give a deeper though=
-t
-> to this.
->
+commit 7ffa8f3d3023 ("fs: Remove NTFS classic")
 
-Same here. I had to think hard.
+The replacement, NTFS3, was merged over two years ago.  It is now time to
+remove the original from the tree as it is the last user of several APIs,
+and it is not worth changing.
 
-> > > > I might have had some patches similar to this floating around.
-> > > > If you are interested in this feature, I could write and test a pro=
-per patch.
-> > >
-> > > That would be appreciated if its not too much trouble, the approach o=
-utlined
-> > > in sketch should be enough for our use-case (pending the sb vs mount =
-monitoring
-> > > point you've raised).
-> > >
-> >
-> > Well, the only problem is when I can get to it, which does not appear t=
-o be
-> > anytime soon. If this is an urgent issue for you I could give you more =
-pointers
-> > to  try and do it yourself.
-> >
-> > There is one design decision that we would need to make before
-> > getting to the implementation.
-> > Assuming that this API is acceptable:
-> >
-> > fanotify_mark(fd, FAN_MARK_ADD | FAN_MARK_FILESYSTEM | FAN_MARK_DEFAULT=
-, ...
-> >
-> > What happens when fd is closed?
-> > Can the sbinfo->default_mask out live the group fd?
->
-> So I think there are two options how to consistently handle this and we
-> need to decide which one to pick. Do we want to:
->
-> a) tie the concept to a particular notification group - i.e., if a partic=
-ular
-> notification group is not existing anymore, we want events on particular
-> object(s) auto-rejected.
->
-> or
->
-> b) tie the concept to the object itself - i.e., if there's no notificatio=
-n
-> group handling events for the object, auto-reject the events.
->
-> Both has its advantages and disadvantages. With a) we can easily have
-> multiple handlers cooperate on one filesystem (e.g. an HSM and antivirus
-> solution), the notification group can just register itself as mandatory f=
-or
-> all events on the superblock object and we don't have to care about detai=
-ls
-> how the notification group watches for events or so. But what gets comple=
-x
-> with this variant is how to hand over control from the old to the new
-> version of the service or even worse how to recover from crashed service =
+compile tested
+
+Signed-off-by: Kevin Paul Reddy Janagari <kevinpaul468@gmail.com>
+---
+ CREDITS                            |    5 +
+ Documentation/filesystems/ntfs.rst |  466 ------
+ MAINTAINERS                        |    9 -
+ fs/Kconfig                         |    1 -
+ fs/Makefile                        |    1 -
+ fs/ntfs/Makefile                   |   15 -
+ fs/ntfs/attrib.h                   |  102 --
+ fs/ntfs/bitmap.c                   |  179 --
+ fs/ntfs/bitmap.h                   |  104 --
+ fs/ntfs/collate.c                  |  110 --
+ fs/ntfs/collate.h                  |   36 -
+ fs/ntfs/debug.c                    |  159 --
+ fs/ntfs/debug.h                    |   57 -
+ fs/ntfs/dir.h                      |   34 -
+ fs/ntfs/endian.h                   |   79 -
+ fs/ntfs/index.c                    |  440 -----
+ fs/ntfs/index.h                    |  134 --
+ fs/ntfs/layout.h                   | 2421 ----------------------------
+ fs/ntfs/lcnalloc.c                 | 1000 ------------
+ fs/ntfs/lcnalloc.h                 |  131 --
+ fs/ntfs/logfile.c                  |  849 ----------
+ fs/ntfs/logfile.h                  |  295 ----
+ fs/ntfs/malloc.h                   |   77 -
+ fs/ntfs/mft.h                      |  110 --
+ fs/ntfs/mst.c                      |  189 ---
+ fs/ntfs/ntfs.h                     |  150 --
+ fs/ntfs/quota.c                    |  103 --
+ fs/ntfs/quota.h                    |   21 -
+ fs/ntfs/runlist.h                  |   88 -
+ fs/ntfs/sysctl.h                   |   27 -
+ fs/ntfs/time.h                     |   89 -
+ fs/ntfs/types.h                    |   55 -
+ fs/ntfs/unistr.c                   |  384 -----
+ fs/ntfs/upcase.c                   |   73 -
+ fs/ntfs/usnjrnl.c                  |   70 -
+ fs/ntfs/usnjrnl.h                  |  191 ---
+ fs/ntfs/volume.h                   |  164 --
+ 37 files changed, 5 insertions(+), 8413 deletions(-)
+ delete mode 100644 Documentation/filesystems/ntfs.rst
+ delete mode 100644 fs/ntfs/Makefile
+ delete mode 100644 fs/ntfs/attrib.h
+ delete mode 100644 fs/ntfs/bitmap.c
+ delete mode 100644 fs/ntfs/bitmap.h
+ delete mode 100644 fs/ntfs/collate.c
+ delete mode 100644 fs/ntfs/collate.h
+ delete mode 100644 fs/ntfs/debug.c
+ delete mode 100644 fs/ntfs/debug.h
+ delete mode 100644 fs/ntfs/dir.h
+ delete mode 100644 fs/ntfs/endian.h
+ delete mode 100644 fs/ntfs/index.c
+ delete mode 100644 fs/ntfs/index.h
+ delete mode 100644 fs/ntfs/layout.h
+ delete mode 100644 fs/ntfs/lcnalloc.c
+ delete mode 100644 fs/ntfs/lcnalloc.h
+ delete mode 100644 fs/ntfs/logfile.c
+ delete mode 100644 fs/ntfs/logfile.h
+ delete mode 100644 fs/ntfs/malloc.h
+ delete mode 100644 fs/ntfs/mft.h
+ delete mode 100644 fs/ntfs/mst.c
+ delete mode 100644 fs/ntfs/ntfs.h
+ delete mode 100644 fs/ntfs/quota.c
+ delete mode 100644 fs/ntfs/quota.h
+ delete mode 100644 fs/ntfs/runlist.h
+ delete mode 100644 fs/ntfs/sysctl.h
+ delete mode 100644 fs/ntfs/time.h
+ delete mode 100644 fs/ntfs/types.h
+ delete mode 100644 fs/ntfs/unistr.c
+ delete mode 100644 fs/ntfs/upcase.c
+ delete mode 100644 fs/ntfs/usnjrnl.c
+ delete mode 100644 fs/ntfs/usnjrnl.h
+ delete mode 100644 fs/ntfs/volume.h
+
+diff --git a/CREDITS b/CREDITS
+index 198f675c419e..f6c04d03c145 100644
+--- a/CREDITS
++++ b/CREDITS
+@@ -67,6 +67,11 @@ D: dosfs, LILO, some fd features, ATM, various other hacks here and there
+ S: Buenos Aires
+ S: Argentina
+ 
++NTFS FILESYSTEM
++N: Anton Altaparmakov
++E: anton@tuxera.com
++D: NTFS filesystem
++
+ N: Tim Alpaerts
+ E: tim_alpaerts@toyota-motor-europe.com
+ D: 802.2 class II logical link control layer,
+diff --git a/Documentation/filesystems/ntfs.rst b/Documentation/filesystems/ntfs.rst
+deleted file mode 100644
+index 5bb093a26485..000000000000
+--- a/Documentation/filesystems/ntfs.rst
++++ /dev/null
+@@ -1,466 +0,0 @@
+-.. SPDX-License-Identifier: GPL-2.0
 -
-> you need to register the new group as mandatory and somehow "unregister"
-> the crashed one.
->
+-================================
+-The Linux NTFS filesystem driver
+-================================
+-
+-
+-.. Table of contents
+-
+-   - Overview
+-   - Web site
+-   - Features
+-   - Supported mount options
+-   - Known bugs and (mis-)features
+-   - Using NTFS volume and stripe sets
+-     - The Device-Mapper driver
+-     - The Software RAID / MD driver
+-     - Limitations when using the MD driver
+-
+-
+-Overview
+-========
+-
+-Linux-NTFS comes with a number of user-space programs known as ntfsprogs.
+-These include mkntfs, a full-featured ntfs filesystem format utility,
+-ntfsundelete used for recovering files that were unintentionally deleted
+-from an NTFS volume and ntfsresize which is used to resize an NTFS partition.
+-See the web site for more information.
+-
+-To mount an NTFS 1.2/3.x (Windows NT4/2000/XP/2003) volume, use the file
+-system type 'ntfs'.  The driver currently supports read-only mode (with no
+-fault-tolerance, encryption or journalling) and very limited, but safe, write
+-support.
+-
+-For fault tolerance and raid support (i.e. volume and stripe sets), you can
+-use the kernel's Software RAID / MD driver.  See section "Using Software RAID
+-with NTFS" for details.
+-
+-
+-Web site
+-========
+-
+-There is plenty of additional information on the linux-ntfs web site
+-at http://www.linux-ntfs.org/
+-
+-The web site has a lot of additional information, such as a comprehensive
+-FAQ, documentation on the NTFS on-disk format, information on the Linux-NTFS
+-userspace utilities, etc.
+-
+-
+-Features
+-========
+-
+-- This is a complete rewrite of the NTFS driver that used to be in the 2.4 and
+-  earlier kernels.  This new driver implements NTFS read support and is
+-  functionally equivalent to the old ntfs driver and it also implements limited
+-  write support.  The biggest limitation at present is that files/directories
+-  cannot be created or deleted.  See below for the list of write features that
+-  are so far supported.  Another limitation is that writing to compressed files
+-  is not implemented at all.  Also, neither read nor write access to encrypted
+-  files is so far implemented.
+-- The new driver has full support for sparse files on NTFS 3.x volumes which
+-  the old driver isn't happy with.
+-- The new driver supports execution of binaries due to mmap() now being
+-  supported.
+-- The new driver supports loopback mounting of files on NTFS which is used by
+-  some Linux distributions to enable the user to run Linux from an NTFS
+-  partition by creating a large file while in Windows and then loopback
+-  mounting the file while in Linux and creating a Linux filesystem on it that
+-  is used to install Linux on it.
+-- A comparison of the two drivers using::
+-
+-	time find . -type f -exec md5sum "{}" \;
+-
+-  run three times in sequence with each driver (after a reboot) on a 1.4GiB
+-  NTFS partition, showed the new driver to be 20% faster in total time elapsed
+-  (from 9:43 minutes on average down to 7:53).  The time spent in user space
+-  was unchanged but the time spent in the kernel was decreased by a factor of
+-  2.5 (from 85 CPU seconds down to 33).
+-- The driver does not support short file names in general.  For backwards
+-  compatibility, we implement access to files using their short file names if
+-  they exist.  The driver will not create short file names however, and a
+-  rename will discard any existing short file name.
+-- The new driver supports exporting of mounted NTFS volumes via NFS.
+-- The new driver supports async io (aio).
+-- The new driver supports fsync(2), fdatasync(2), and msync(2).
+-- The new driver supports readv(2) and writev(2).
+-- The new driver supports access time updates (including mtime and ctime).
+-- The new driver supports truncate(2) and open(2) with O_TRUNC.  But at present
+-  only very limited support for highly fragmented files, i.e. ones which have
+-  their data attribute split across multiple extents, is included.  Another
+-  limitation is that at present truncate(2) will never create sparse files,
+-  since to mark a file sparse we need to modify the directory entry for the
+-  file and we do not implement directory modifications yet.
+-- The new driver supports write(2) which can both overwrite existing data and
+-  extend the file size so that you can write beyond the existing data.  Also,
+-  writing into sparse regions is supported and the holes are filled in with
+-  clusters.  But at present only limited support for highly fragmented files,
+-  i.e. ones which have their data attribute split across multiple extents, is
+-  included.  Another limitation is that write(2) will never create sparse
+-  files, since to mark a file sparse we need to modify the directory entry for
+-  the file and we do not implement directory modifications yet.
+-
+-Supported mount options
+-=======================
+-
+-In addition to the generic mount options described by the manual page for the
+-mount command (man 8 mount, also see man 5 fstab), the NTFS driver supports the
+-following mount options:
+-
+-======================= =======================================================
+-iocharset=name		Deprecated option.  Still supported but please use
+-			nls=name in the future.  See description for nls=name.
+-
+-nls=name		Character set to use when returning file names.
+-			Unlike VFAT, NTFS suppresses names that contain
+-			unconvertible characters.  Note that most character
+-			sets contain insufficient characters to represent all
+-			possible Unicode characters that can exist on NTFS.
+-			To be sure you are not missing any files, you are
+-			advised to use nls=utf8 which is capable of
+-			representing all Unicode characters.
+-
+-utf8=<bool>		Option no longer supported.  Currently mapped to
+-			nls=utf8 but please use nls=utf8 in the future and
+-			make sure utf8 is compiled either as module or into
+-			the kernel.  See description for nls=name.
+-
+-uid=
+-gid=
+-umask=			Provide default owner, group, and access mode mask.
+-			These options work as documented in mount(8).  By
+-			default, the files/directories are owned by root and
+-			he/she has read and write permissions, as well as
+-			browse permission for directories.  No one else has any
+-			access permissions.  I.e. the mode on all files is by
+-			default rw------- and for directories rwx------, a
+-			consequence of the default fmask=0177 and dmask=0077.
+-			Using a umask of zero will grant all permissions to
+-			everyone, i.e. all files and directories will have mode
+-			rwxrwxrwx.
+-
+-fmask=
+-dmask=			Instead of specifying umask which applies both to
+-			files and directories, fmask applies only to files and
+-			dmask only to directories.
+-
+-sloppy=<BOOL>		If sloppy is specified, ignore unknown mount options.
+-			Otherwise the default behaviour is to abort mount if
+-			any unknown options are found.
+-
+-show_sys_files=<BOOL>	If show_sys_files is specified, show the system files
+-			in directory listings.  Otherwise the default behaviour
+-			is to hide the system files.
+-			Note that even when show_sys_files is specified, "$MFT"
+-			will not be visible due to bugs/mis-features in glibc.
+-			Further, note that irrespective of show_sys_files, all
+-			files are accessible by name, i.e. you can always do
+-			"ls -l \$UpCase" for example to specifically show the
+-			system file containing the Unicode upcase table.
+-
+-case_sensitive=<BOOL>	If case_sensitive is specified, treat all file names as
+-			case sensitive and create file names in the POSIX
+-			namespace.  Otherwise the default behaviour is to treat
+-			file names as case insensitive and to create file names
+-			in the WIN32/LONG name space.  Note, the Linux NTFS
+-			driver will never create short file names and will
+-			remove them on rename/delete of the corresponding long
+-			file name.
+-			Note that files remain accessible via their short file
+-			name, if it exists.  If case_sensitive, you will need
+-			to provide the correct case of the short file name.
+-
+-disable_sparse=<BOOL>	If disable_sparse is specified, creation of sparse
+-			regions, i.e. holes, inside files is disabled for the
+-			volume (for the duration of this mount only).  By
+-			default, creation of sparse regions is enabled, which
+-			is consistent with the behaviour of traditional Unix
+-			filesystems.
+-
+-errors=opt		What to do when critical filesystem errors are found.
+-			Following values can be used for "opt":
+-
+-			  ========  =========================================
+-			  continue  DEFAULT, try to clean-up as much as
+-				    possible, e.g. marking a corrupt inode as
+-				    bad so it is no longer accessed, and then
+-				    continue.
+-			  recover   At present only supported is recovery of
+-				    the boot sector from the backup copy.
+-				    If read-only mount, the recovery is done
+-				    in memory only and not written to disk.
+-			  ========  =========================================
+-
+-			Note that the options are additive, i.e. specifying::
+-
+-			   errors=continue,errors=recover
+-
+-			means the driver will attempt to recover and if that
+-			fails it will clean-up as much as possible and
+-			continue.
+-
+-mft_zone_multiplier=	Set the MFT zone multiplier for the volume (this
+-			setting is not persistent across mounts and can be
+-			changed from mount to mount but cannot be changed on
+-			remount).  Values of 1 to 4 are allowed, 1 being the
+-			default.  The MFT zone multiplier determines how much
+-			space is reserved for the MFT on the volume.  If all
+-			other space is used up, then the MFT zone will be
+-			shrunk dynamically, so this has no impact on the
+-			amount of free space.  However, it can have an impact
+-			on performance by affecting fragmentation of the MFT.
+-			In general use the default.  If you have a lot of small
+-			files then use a higher value.  The values have the
+-			following meaning:
+-
+-			      =====	    =================================
+-			      Value	     MFT zone size (% of volume size)
+-			      =====	    =================================
+-				1		12.5%
+-				2		25%
+-				3		37.5%
+-				4		50%
+-			      =====	    =================================
+-
+-			Note this option is irrelevant for read-only mounts.
+-======================= =======================================================
+-
+-
+-Known bugs and (mis-)features
+-=============================
+-
+-- The link count on each directory inode entry is set to 1, due to Linux not
+-  supporting directory hard links.  This may well confuse some user space
+-  applications, since the directory names will have the same inode numbers.
+-  This also speeds up ntfs_read_inode() immensely.  And we haven't found any
+-  problems with this approach so far.  If you find a problem with this, please
+-  let us know.
+-
+-
+-Please send bug reports/comments/feedback/abuse to the Linux-NTFS development
+-list at sourceforge: linux-ntfs-dev@lists.sourceforge.net
+-
+-
+-Using NTFS volume and stripe sets
+-=================================
+-
+-For support of volume and stripe sets, you can either use the kernel's
+-Device-Mapper driver or the kernel's Software RAID / MD driver.  The former is
+-the recommended one to use for linear raid.  But the latter is required for
+-raid level 5.  For striping and mirroring, either driver should work fine.
+-
+-
+-The Device-Mapper driver
+-------------------------
+-
+-You will need to create a table of the components of the volume/stripe set and
+-how they fit together and load this into the kernel using the dmsetup utility
+-(see man 8 dmsetup).
+-
+-Linear volume sets, i.e. linear raid, has been tested and works fine.  Even
+-though untested, there is no reason why stripe sets, i.e. raid level 0, and
+-mirrors, i.e. raid level 1 should not work, too.  Stripes with parity, i.e.
+-raid level 5, unfortunately cannot work yet because the current version of the
+-Device-Mapper driver does not support raid level 5.  You may be able to use the
+-Software RAID / MD driver for raid level 5, see the next section for details.
+-
+-To create the table describing your volume you will need to know each of its
+-components and their sizes in sectors, i.e. multiples of 512-byte blocks.
+-
+-For NT4 fault tolerant volumes you can obtain the sizes using fdisk.  So for
+-example if one of your partitions is /dev/hda2 you would do::
+-
+-    $ fdisk -ul /dev/hda
+-
+-    Disk /dev/hda: 81.9 GB, 81964302336 bytes
+-    255 heads, 63 sectors/track, 9964 cylinders, total 160086528 sectors
+-    Units = sectors of 1 * 512 = 512 bytes
+-
+-	Device Boot      Start         End      Blocks   Id  System
+-	/dev/hda1   *          63     4209029     2104483+  83  Linux
+-	/dev/hda2         4209030    37768814    16779892+  86  NTFS
+-	/dev/hda3        37768815    46170809     4200997+  83  Linux
+-
+-And you would know that /dev/hda2 has a size of 37768814 - 4209030 + 1 =
+-33559785 sectors.
+-
+-For Win2k and later dynamic disks, you can for example use the ldminfo utility
+-which is part of the Linux LDM tools (the latest version at the time of
+-writing is linux-ldm-0.0.8.tar.bz2).  You can download it from:
+-
+-	http://www.linux-ntfs.org/
+-
+-Simply extract the downloaded archive (tar xvjf linux-ldm-0.0.8.tar.bz2), go
+-into it (cd linux-ldm-0.0.8) and change to the test directory (cd test).  You
+-will find the precompiled (i386) ldminfo utility there.  NOTE: You will not be
+-able to compile this yourself easily so use the binary version!
+-
+-Then you would use ldminfo in dump mode to obtain the necessary information::
+-
+-    $ ./ldminfo --dump /dev/hda
+-
+-This would dump the LDM database found on /dev/hda which describes all of your
+-dynamic disks and all the volumes on them.  At the bottom you will see the
+-VOLUME DEFINITIONS section which is all you really need.  You may need to look
+-further above to determine which of the disks in the volume definitions is
+-which device in Linux.  Hint: Run ldminfo on each of your dynamic disks and
+-look at the Disk Id close to the top of the output for each (the PRIVATE HEADER
+-section).  You can then find these Disk Ids in the VBLK DATABASE section in the
+-<Disk> components where you will get the LDM Name for the disk that is found in
+-the VOLUME DEFINITIONS section.
+-
+-Note you will also need to enable the LDM driver in the Linux kernel.  If your
+-distribution did not enable it, you will need to recompile the kernel with it
+-enabled.  This will create the LDM partitions on each device at boot time.  You
+-would then use those devices (for /dev/hda they would be /dev/hda1, 2, 3, etc)
+-in the Device-Mapper table.
+-
+-You can also bypass using the LDM driver by using the main device (e.g.
+-/dev/hda) and then using the offsets of the LDM partitions into this device as
+-the "Start sector of device" when creating the table.  Once again ldminfo would
+-give you the correct information to do this.
+-
+-Assuming you know all your devices and their sizes things are easy.
+-
+-For a linear raid the table would look like this (note all values are in
+-512-byte sectors)::
+-
+-    # Offset into	Size of this	Raid type	Device		Start sector
+-    # volume	device						of device
+-    0		1028161		linear		/dev/hda1	0
+-    1028161		3903762		linear		/dev/hdb2	0
+-    4931923		2103211		linear		/dev/hdc1	0
+-
+-For a striped volume, i.e. raid level 0, you will need to know the chunk size
+-you used when creating the volume.  Windows uses 64kiB as the default, so it
+-will probably be this unless you changes the defaults when creating the array.
+-
+-For a raid level 0 the table would look like this (note all values are in
+-512-byte sectors)::
+-
+-    # Offset   Size	    Raid     Number   Chunk  1st        Start	2nd	  Start
+-    # into     of the   type     of	      size   Device	in	Device	  in
+-    # volume   volume	     stripes			device		  device
+-    0	   2056320  striped  2	      128    /dev/hda1	0	/dev/hdb1 0
+-
+-If there are more than two devices, just add each of them to the end of the
+-line.
+-
+-Finally, for a mirrored volume, i.e. raid level 1, the table would look like
+-this (note all values are in 512-byte sectors)::
+-
+-    # Ofs Size   Raid   Log  Number Region Should Number Source  Start Target Start
+-    # in  of the type   type of log size   sync?  of     Device  in    Device in
+-    # vol volume		 params		     mirrors	     Device	  Device
+-    0    2056320 mirror core 2	16     nosync 2	   /dev/hda1 0   /dev/hdb1 0
+-
+-If you are mirroring to multiple devices you can specify further targets at the
+-end of the line.
+-
+-Note the "Should sync?" parameter "nosync" means that the two mirrors are
+-already in sync which will be the case on a clean shutdown of Windows.  If the
+-mirrors are not clean, you can specify the "sync" option instead of "nosync"
+-and the Device-Mapper driver will then copy the entirety of the "Source Device"
+-to the "Target Device" or if you specified multiple target devices to all of
+-them.
+-
+-Once you have your table, save it in a file somewhere (e.g. /etc/ntfsvolume1),
+-and hand it over to dmsetup to work with, like so::
+-
+-    $ dmsetup create myvolume1 /etc/ntfsvolume1
+-
+-You can obviously replace "myvolume1" with whatever name you like.
+-
+-If it all worked, you will now have the device /dev/device-mapper/myvolume1
+-which you can then just use as an argument to the mount command as usual to
+-mount the ntfs volume.  For example::
+-
+-    $ mount -t ntfs -o ro /dev/device-mapper/myvolume1 /mnt/myvol1
+-
+-(You need to create the directory /mnt/myvol1 first and of course you can use
+-anything you like instead of /mnt/myvol1 as long as it is an existing
+-directory.)
+-
+-It is advisable to do the mount read-only to see if the volume has been setup
+-correctly to avoid the possibility of causing damage to the data on the ntfs
+-volume.
+-
+-
+-The Software RAID / MD driver
+------------------------------
+-
+-An alternative to using the Device-Mapper driver is to use the kernel's
+-Software RAID / MD driver.  For which you need to set up your /etc/raidtab
+-appropriately (see man 5 raidtab).
+-
+-Linear volume sets, i.e. linear raid, as well as stripe sets, i.e. raid level
+-0, have been tested and work fine (though see section "Limitations when using
+-the MD driver with NTFS volumes" especially if you want to use linear raid).
+-Even though untested, there is no reason why mirrors, i.e. raid level 1, and
+-stripes with parity, i.e. raid level 5, should not work, too.
+-
+-You have to use the "persistent-superblock 0" option for each raid-disk in the
+-NTFS volume/stripe you are configuring in /etc/raidtab as the persistent
+-superblock used by the MD driver would damage the NTFS volume.
+-
+-Windows by default uses a stripe chunk size of 64k, so you probably want the
+-"chunk-size 64k" option for each raid-disk, too.
+-
+-For example, if you have a stripe set consisting of two partitions /dev/hda5
+-and /dev/hdb1 your /etc/raidtab would look like this::
+-
+-    raiddev /dev/md0
+-	    raid-level	0
+-	    nr-raid-disks	2
+-	    nr-spare-disks	0
+-	    persistent-superblock	0
+-	    chunk-size	64k
+-	    device		/dev/hda5
+-	    raid-disk	0
+-	    device		/dev/hdb1
+-	    raid-disk	1
+-
+-For linear raid, just change the raid-level above to "raid-level linear", for
+-mirrors, change it to "raid-level 1", and for stripe sets with parity, change
+-it to "raid-level 5".
+-
+-Note for stripe sets with parity you will also need to tell the MD driver
+-which parity algorithm to use by specifying the option "parity-algorithm
+-which", where you need to replace "which" with the name of the algorithm to
+-use (see man 5 raidtab for available algorithms) and you will have to try the
+-different available algorithms until you find one that works.  Make sure you
+-are working read-only when playing with this as you may damage your data
+-otherwise.  If you find which algorithm works please let us know (email the
+-linux-ntfs developers list linux-ntfs-dev@lists.sourceforge.net or drop in on
+-IRC in channel #ntfs on the irc.freenode.net network) so we can update this
+-documentation.
+-
+-Once the raidtab is setup, run for example raid0run -a to start all devices or
+-raid0run /dev/md0 to start a particular md device, in this case /dev/md0.
+-
+-Then just use the mount command as usual to mount the ntfs volume using for
+-example::
+-
+-    mount -t ntfs -o ro /dev/md0 /mnt/myntfsvolume
+-
+-It is advisable to do the mount read-only to see if the md volume has been
+-setup correctly to avoid the possibility of causing damage to the data on the
+-ntfs volume.
+-
+-
+-Limitations when using the Software RAID / MD driver
+------------------------------------------------------
+-
+-Using the md driver will not work properly if any of your NTFS partitions have
+-an odd number of sectors.  This is especially important for linear raid as all
+-data after the first partition with an odd number of sectors will be offset by
+-one or more sectors so if you mount such a partition with write support you
+-will cause massive damage to the data on the volume which will only become
+-apparent when you try to use the volume again under Windows.
+-
+-So when using linear raid, make sure that all your partitions have an even
+-number of sectors BEFORE attempting to use it.  You have been warned!
+-
+-Even better is to simply use the Device-Mapper for linear raid and then you do
+-not have this problem with odd numbers of sectors.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 4b19dfb5d2fd..f23131e69b41 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14667,15 +14667,6 @@ W:	https://github.com/davejiang/linux/wiki
+ T:	git https://github.com/davejiang/linux.git
+ F:	drivers/ntb/hw/intel/
+ 
+-NTFS FILESYSTEM
+-M:	Anton Altaparmakov <anton@tuxera.com>
+-L:	linux-ntfs-dev@lists.sourceforge.net
+-S:	Supported
+-W:	http://www.tuxera.com/
+-T:	git git://git.kernel.org/pub/scm/linux/kernel/git/aia21/ntfs.git
+-F:	Documentation/filesystems/ntfs.rst
+-F:	fs/ntfs/
+-
+ NTFS3 FILESYSTEM
+ M:	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+ L:	ntfs3@lists.linux.dev
+diff --git a/fs/Kconfig b/fs/Kconfig
+index 703a1cea0fc0..06f632b65b3d 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -150,7 +150,6 @@ menu "DOS/FAT/EXFAT/NT Filesystems"
+ 
+ source "fs/fat/Kconfig"
+ source "fs/exfat/Kconfig"
+-source "fs/ntfs/Kconfig"
+ source "fs/ntfs3/Kconfig"
+ 
+ endmenu
+diff --git a/fs/Makefile b/fs/Makefile
+index 9b7bcf6e54cd..59c6aab0d52a 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -96,7 +96,6 @@ obj-y				+= unicode/
+ obj-$(CONFIG_SYSV_FS)		+= sysv/
+ obj-$(CONFIG_SMBFS)		+= smb/
+ obj-$(CONFIG_HPFS_FS)		+= hpfs/
+-obj-$(CONFIG_NTFS_FS)		+= ntfs/
+ obj-$(CONFIG_NTFS3_FS)		+= ntfs3/
+ obj-$(CONFIG_UFS_FS)		+= ufs/
+ obj-$(CONFIG_EFS_FS)		+= efs/
+diff --git a/fs/ntfs/Makefile b/fs/ntfs/Makefile
+deleted file mode 100644
+index 3e736572ed00..000000000000
+--- a/fs/ntfs/Makefile
++++ /dev/null
+@@ -1,15 +0,0 @@
+-# SPDX-License-Identifier: GPL-2.0
+-# Rules for making the NTFS driver.
+-
+-obj-$(CONFIG_NTFS_FS) += ntfs.o
+-
+-ntfs-y := aops.o attrib.o collate.o compress.o debug.o dir.o file.o \
+-	  index.o inode.o mft.o mst.o namei.o runlist.o super.o sysctl.o \
+-	  unistr.o upcase.o
+-
+-ntfs-$(CONFIG_NTFS_RW) += bitmap.o lcnalloc.o logfile.o quota.o usnjrnl.o
+-
+-ccflags-y := -DNTFS_VERSION=\"2.1.32\"
+-ccflags-$(CONFIG_NTFS_DEBUG)	+= -DDEBUG
+-ccflags-$(CONFIG_NTFS_RW)	+= -DNTFS_RW
+-
+diff --git a/fs/ntfs/attrib.h b/fs/ntfs/attrib.h
+deleted file mode 100644
+index fe0890d3d072..000000000000
+--- a/fs/ntfs/attrib.h
++++ /dev/null
+@@ -1,102 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * attrib.h - Defines for attribute handling in NTFS Linux kernel driver.
+- *	      Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2005 Anton Altaparmakov
+- * Copyright (c) 2002 Richard Russon
+- */
+-
+-#ifndef _LINUX_NTFS_ATTRIB_H
+-#define _LINUX_NTFS_ATTRIB_H
+-
+-#include "endian.h"
+-#include "types.h"
+-#include "layout.h"
+-#include "inode.h"
+-#include "runlist.h"
+-#include "volume.h"
+-
+-/**
+- * ntfs_attr_search_ctx - used in attribute search functions
+- * @mrec:	buffer containing mft record to search
+- * @attr:	attribute record in @mrec where to begin/continue search
+- * @is_first:	if true ntfs_attr_lookup() begins search with @attr, else after
+- *
+- * Structure must be initialized to zero before the first call to one of the
+- * attribute search functions. Initialize @mrec to point to the mft record to
+- * search, and @attr to point to the first attribute within @mrec (not necessary
+- * if calling the _first() functions), and set @is_first to 'true' (not necessary
+- * if calling the _first() functions).
+- *
+- * If @is_first is 'true', the search begins with @attr. If @is_first is 'false',
+- * the search begins after @attr. This is so that, after the first call to one
+- * of the search attribute functions, we can call the function again, without
+- * any modification of the search context, to automagically get the next
+- * matching attribute.
+- */
+-typedef struct {
+-	MFT_RECORD *mrec;
+-	ATTR_RECORD *attr;
+-	bool is_first;
+-	ntfs_inode *ntfs_ino;
+-	ATTR_LIST_ENTRY *al_entry;
+-	ntfs_inode *base_ntfs_ino;
+-	MFT_RECORD *base_mrec;
+-	ATTR_RECORD *base_attr;
+-} ntfs_attr_search_ctx;
+-
+-extern int ntfs_map_runlist_nolock(ntfs_inode *ni, VCN vcn,
+-		ntfs_attr_search_ctx *ctx);
+-extern int ntfs_map_runlist(ntfs_inode *ni, VCN vcn);
+-
+-extern LCN ntfs_attr_vcn_to_lcn_nolock(ntfs_inode *ni, const VCN vcn,
+-		const bool write_locked);
+-
+-extern runlist_element *ntfs_attr_find_vcn_nolock(ntfs_inode *ni,
+-		const VCN vcn, ntfs_attr_search_ctx *ctx);
+-
+-int ntfs_attr_lookup(const ATTR_TYPE type, const ntfschar *name,
+-		const u32 name_len, const IGNORE_CASE_BOOL ic,
+-		const VCN lowest_vcn, const u8 *val, const u32 val_len,
+-		ntfs_attr_search_ctx *ctx);
+-
+-extern int load_attribute_list(ntfs_volume *vol, runlist *rl, u8 *al_start,
+-		const s64 size, const s64 initialized_size);
+-
+-static inline s64 ntfs_attr_size(const ATTR_RECORD *a)
+-{
+-	if (!a->non_resident)
+-		return (s64)le32_to_cpu(a->data.resident.value_length);
+-	return sle64_to_cpu(a->data.non_resident.data_size);
+-}
+-
+-extern void ntfs_attr_reinit_search_ctx(ntfs_attr_search_ctx *ctx);
+-extern ntfs_attr_search_ctx *ntfs_attr_get_search_ctx(ntfs_inode *ni,
+-		MFT_RECORD *mrec);
+-extern void ntfs_attr_put_search_ctx(ntfs_attr_search_ctx *ctx);
+-
+-#ifdef NTFS_RW
+-
+-extern int ntfs_attr_size_bounds_check(const ntfs_volume *vol,
+-		const ATTR_TYPE type, const s64 size);
+-extern int ntfs_attr_can_be_non_resident(const ntfs_volume *vol,
+-		const ATTR_TYPE type);
+-extern int ntfs_attr_can_be_resident(const ntfs_volume *vol,
+-		const ATTR_TYPE type);
+-
+-extern int ntfs_attr_record_resize(MFT_RECORD *m, ATTR_RECORD *a, u32 new_size);
+-extern int ntfs_resident_attr_value_resize(MFT_RECORD *m, ATTR_RECORD *a,
+-		const u32 new_size);
+-
+-extern int ntfs_attr_make_non_resident(ntfs_inode *ni, const u32 data_size);
+-
+-extern s64 ntfs_attr_extend_allocation(ntfs_inode *ni, s64 new_alloc_size,
+-		const s64 new_data_size, const s64 data_start);
+-
+-extern int ntfs_attr_set(ntfs_inode *ni, const s64 ofs, const s64 cnt,
+-		const u8 val);
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* _LINUX_NTFS_ATTRIB_H */
+diff --git a/fs/ntfs/bitmap.c b/fs/ntfs/bitmap.c
+deleted file mode 100644
+index 0675b2400873..000000000000
+--- a/fs/ntfs/bitmap.c
++++ /dev/null
+@@ -1,179 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * bitmap.c - NTFS kernel bitmap handling.  Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2004-2005 Anton Altaparmakov
+- */
+-
+-#ifdef NTFS_RW
+-
+-#include <linux/pagemap.h>
+-
+-#include "bitmap.h"
+-#include "debug.h"
+-#include "aops.h"
+-#include "ntfs.h"
+-
+-/**
+- * __ntfs_bitmap_set_bits_in_run - set a run of bits in a bitmap to a value
+- * @vi:			vfs inode describing the bitmap
+- * @start_bit:		first bit to set
+- * @count:		number of bits to set
+- * @value:		value to set the bits to (i.e. 0 or 1)
+- * @is_rollback:	if 'true' this is a rollback operation
+- *
+- * Set @count bits starting at bit @start_bit in the bitmap described by the
+- * vfs inode @vi to @value, where @value is either 0 or 1.
+- *
+- * @is_rollback should always be 'false', it is for internal use to rollback
+- * errors.  You probably want to use ntfs_bitmap_set_bits_in_run() instead.
+- *
+- * Return 0 on success and -errno on error.
+- */
+-int __ntfs_bitmap_set_bits_in_run(struct inode *vi, const s64 start_bit,
+-		const s64 count, const u8 value, const bool is_rollback)
+-{
+-	s64 cnt = count;
+-	pgoff_t index, end_index;
+-	struct address_space *mapping;
+-	struct page *page;
+-	u8 *kaddr;
+-	int pos, len;
+-	u8 bit;
+-
+-	BUG_ON(!vi);
+-	ntfs_debug("Entering for i_ino 0x%lx, start_bit 0x%llx, count 0x%llx, "
+-			"value %u.%s", vi->i_ino, (unsigned long long)start_bit,
+-			(unsigned long long)cnt, (unsigned int)value,
+-			is_rollback ? " (rollback)" : "");
+-	BUG_ON(start_bit < 0);
+-	BUG_ON(cnt < 0);
+-	BUG_ON(value > 1);
+-	/*
+-	 * Calculate the indices for the pages containing the first and last
+-	 * bits, i.e. @start_bit and @start_bit + @cnt - 1, respectively.
+-	 */
+-	index = start_bit >> (3 + PAGE_SHIFT);
+-	end_index = (start_bit + cnt - 1) >> (3 + PAGE_SHIFT);
+-
+-	/* Get the page containing the first bit (@start_bit). */
+-	mapping = vi->i_mapping;
+-	page = ntfs_map_page(mapping, index);
+-	if (IS_ERR(page)) {
+-		if (!is_rollback)
+-			ntfs_error(vi->i_sb, "Failed to map first page (error "
+-					"%li), aborting.", PTR_ERR(page));
+-		return PTR_ERR(page);
+-	}
+-	kaddr = page_address(page);
+-
+-	/* Set @pos to the position of the byte containing @start_bit. */
+-	pos = (start_bit >> 3) & ~PAGE_MASK;
+-
+-	/* Calculate the position of @start_bit in the first byte. */
+-	bit = start_bit & 7;
+-
+-	/* If the first byte is partial, modify the appropriate bits in it. */
+-	if (bit) {
+-		u8 *byte = kaddr + pos;
+-		while ((bit & 7) && cnt) {
+-			cnt--;
+-			if (value)
+-				*byte |= 1 << bit++;
+-			else
+-				*byte &= ~(1 << bit++);
+-		}
+-		/* If we are done, unmap the page and return success. */
+-		if (!cnt)
+-			goto done;
+-
+-		/* Update @pos to the new position. */
+-		pos++;
+-	}
+-	/*
+-	 * Depending on @value, modify all remaining whole bytes in the page up
+-	 * to @cnt.
+-	 */
+-	len = min_t(s64, cnt >> 3, PAGE_SIZE - pos);
+-	memset(kaddr + pos, value ? 0xff : 0, len);
+-	cnt -= len << 3;
+-
+-	/* Update @len to point to the first not-done byte in the page. */
+-	if (cnt < 8)
+-		len += pos;
+-
+-	/* If we are not in the last page, deal with all subsequent pages. */
+-	while (index < end_index) {
+-		BUG_ON(cnt <= 0);
+-
+-		/* Update @index and get the next page. */
+-		flush_dcache_page(page);
+-		set_page_dirty(page);
+-		ntfs_unmap_page(page);
+-		page = ntfs_map_page(mapping, ++index);
+-		if (IS_ERR(page))
+-			goto rollback;
+-		kaddr = page_address(page);
+-		/*
+-		 * Depending on @value, modify all remaining whole bytes in the
+-		 * page up to @cnt.
+-		 */
+-		len = min_t(s64, cnt >> 3, PAGE_SIZE);
+-		memset(kaddr, value ? 0xff : 0, len);
+-		cnt -= len << 3;
+-	}
+-	/*
+-	 * The currently mapped page is the last one.  If the last byte is
+-	 * partial, modify the appropriate bits in it.  Note, @len is the
+-	 * position of the last byte inside the page.
+-	 */
+-	if (cnt) {
+-		u8 *byte;
+-
+-		BUG_ON(cnt > 7);
+-
+-		bit = cnt;
+-		byte = kaddr + len;
+-		while (bit--) {
+-			if (value)
+-				*byte |= 1 << bit;
+-			else
+-				*byte &= ~(1 << bit);
+-		}
+-	}
+-done:
+-	/* We are done.  Unmap the page and return success. */
+-	flush_dcache_page(page);
+-	set_page_dirty(page);
+-	ntfs_unmap_page(page);
+-	ntfs_debug("Done.");
+-	return 0;
+-rollback:
+-	/*
+-	 * Current state:
+-	 *	- no pages are mapped
+-	 *	- @count - @cnt is the number of bits that have been modified
+-	 */
+-	if (is_rollback)
+-		return PTR_ERR(page);
+-	if (count != cnt)
+-		pos = __ntfs_bitmap_set_bits_in_run(vi, start_bit, count - cnt,
+-				value ? 0 : 1, true);
+-	else
+-		pos = 0;
+-	if (!pos) {
+-		/* Rollback was successful. */
+-		ntfs_error(vi->i_sb, "Failed to map subsequent page (error "
+-				"%li), aborting.", PTR_ERR(page));
+-	} else {
+-		/* Rollback failed. */
+-		ntfs_error(vi->i_sb, "Failed to map subsequent page (error "
+-				"%li) and rollback failed (error %i).  "
+-				"Aborting and leaving inconsistent metadata.  "
+-				"Unmount and run chkdsk.", PTR_ERR(page), pos);
+-		NVolSetErrors(NTFS_SB(vi->i_sb));
+-	}
+-	return PTR_ERR(page);
+-}
+-
+-#endif /* NTFS_RW */
+diff --git a/fs/ntfs/bitmap.h b/fs/ntfs/bitmap.h
+deleted file mode 100644
+index 9dd2224ca9c4..000000000000
+--- a/fs/ntfs/bitmap.h
++++ /dev/null
+@@ -1,104 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * bitmap.h - Defines for NTFS kernel bitmap handling.  Part of the Linux-NTFS
+- *	      project.
+- *
+- * Copyright (c) 2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_BITMAP_H
+-#define _LINUX_NTFS_BITMAP_H
+-
+-#ifdef NTFS_RW
+-
+-#include <linux/fs.h>
+-
+-#include "types.h"
+-
+-extern int __ntfs_bitmap_set_bits_in_run(struct inode *vi, const s64 start_bit,
+-		const s64 count, const u8 value, const bool is_rollback);
+-
+-/**
+- * ntfs_bitmap_set_bits_in_run - set a run of bits in a bitmap to a value
+- * @vi:			vfs inode describing the bitmap
+- * @start_bit:		first bit to set
+- * @count:		number of bits to set
+- * @value:		value to set the bits to (i.e. 0 or 1)
+- *
+- * Set @count bits starting at bit @start_bit in the bitmap described by the
+- * vfs inode @vi to @value, where @value is either 0 or 1.
+- *
+- * Return 0 on success and -errno on error.
+- */
+-static inline int ntfs_bitmap_set_bits_in_run(struct inode *vi,
+-		const s64 start_bit, const s64 count, const u8 value)
+-{
+-	return __ntfs_bitmap_set_bits_in_run(vi, start_bit, count, value,
+-			false);
+-}
+-
+-/**
+- * ntfs_bitmap_set_run - set a run of bits in a bitmap
+- * @vi:		vfs inode describing the bitmap
+- * @start_bit:	first bit to set
+- * @count:	number of bits to set
+- *
+- * Set @count bits starting at bit @start_bit in the bitmap described by the
+- * vfs inode @vi.
+- *
+- * Return 0 on success and -errno on error.
+- */
+-static inline int ntfs_bitmap_set_run(struct inode *vi, const s64 start_bit,
+-		const s64 count)
+-{
+-	return ntfs_bitmap_set_bits_in_run(vi, start_bit, count, 1);
+-}
+-
+-/**
+- * ntfs_bitmap_clear_run - clear a run of bits in a bitmap
+- * @vi:		vfs inode describing the bitmap
+- * @start_bit:	first bit to clear
+- * @count:	number of bits to clear
+- *
+- * Clear @count bits starting at bit @start_bit in the bitmap described by the
+- * vfs inode @vi.
+- *
+- * Return 0 on success and -errno on error.
+- */
+-static inline int ntfs_bitmap_clear_run(struct inode *vi, const s64 start_bit,
+-		const s64 count)
+-{
+-	return ntfs_bitmap_set_bits_in_run(vi, start_bit, count, 0);
+-}
+-
+-/**
+- * ntfs_bitmap_set_bit - set a bit in a bitmap
+- * @vi:		vfs inode describing the bitmap
+- * @bit:	bit to set
+- *
+- * Set bit @bit in the bitmap described by the vfs inode @vi.
+- *
+- * Return 0 on success and -errno on error.
+- */
+-static inline int ntfs_bitmap_set_bit(struct inode *vi, const s64 bit)
+-{
+-	return ntfs_bitmap_set_run(vi, bit, 1);
+-}
+-
+-/**
+- * ntfs_bitmap_clear_bit - clear a bit in a bitmap
+- * @vi:		vfs inode describing the bitmap
+- * @bit:	bit to clear
+- *
+- * Clear bit @bit in the bitmap described by the vfs inode @vi.
+- *
+- * Return 0 on success and -errno on error.
+- */
+-static inline int ntfs_bitmap_clear_bit(struct inode *vi, const s64 bit)
+-{
+-	return ntfs_bitmap_clear_run(vi, bit, 1);
+-}
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* defined _LINUX_NTFS_BITMAP_H */
+diff --git a/fs/ntfs/collate.c b/fs/ntfs/collate.c
+deleted file mode 100644
+index 3ab6ec96abfe..000000000000
+--- a/fs/ntfs/collate.c
++++ /dev/null
+@@ -1,110 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * collate.c - NTFS kernel collation handling.  Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2004 Anton Altaparmakov
+- */
+-
+-#include "collate.h"
+-#include "debug.h"
+-#include "ntfs.h"
+-
+-static int ntfs_collate_binary(ntfs_volume *vol,
+-		const void *data1, const int data1_len,
+-		const void *data2, const int data2_len)
+-{
+-	int rc;
+-
+-	ntfs_debug("Entering.");
+-	rc = memcmp(data1, data2, min(data1_len, data2_len));
+-	if (!rc && (data1_len != data2_len)) {
+-		if (data1_len < data2_len)
+-			rc = -1;
+-		else
+-			rc = 1;
+-	}
+-	ntfs_debug("Done, returning %i", rc);
+-	return rc;
+-}
+-
+-static int ntfs_collate_ntofs_ulong(ntfs_volume *vol,
+-		const void *data1, const int data1_len,
+-		const void *data2, const int data2_len)
+-{
+-	int rc;
+-	u32 d1, d2;
+-
+-	ntfs_debug("Entering.");
+-	// FIXME:  We don't really want to bug here.
+-	BUG_ON(data1_len != data2_len);
+-	BUG_ON(data1_len != 4);
+-	d1 = le32_to_cpup(data1);
+-	d2 = le32_to_cpup(data2);
+-	if (d1 < d2)
+-		rc = -1;
+-	else {
+-		if (d1 == d2)
+-			rc = 0;
+-		else
+-			rc = 1;
+-	}
+-	ntfs_debug("Done, returning %i", rc);
+-	return rc;
+-}
+-
+-typedef int (*ntfs_collate_func_t)(ntfs_volume *, const void *, const int,
+-		const void *, const int);
+-
+-static ntfs_collate_func_t ntfs_do_collate0x0[3] = {
+-	ntfs_collate_binary,
+-	NULL/*ntfs_collate_file_name*/,
+-	NULL/*ntfs_collate_unicode_string*/,
+-};
+-
+-static ntfs_collate_func_t ntfs_do_collate0x1[4] = {
+-	ntfs_collate_ntofs_ulong,
+-	NULL/*ntfs_collate_ntofs_sid*/,
+-	NULL/*ntfs_collate_ntofs_security_hash*/,
+-	NULL/*ntfs_collate_ntofs_ulongs*/,
+-};
+-
+-/**
+- * ntfs_collate - collate two data items using a specified collation rule
+- * @vol:	ntfs volume to which the data items belong
+- * @cr:		collation rule to use when comparing the items
+- * @data1:	first data item to collate
+- * @data1_len:	length in bytes of @data1
+- * @data2:	second data item to collate
+- * @data2_len:	length in bytes of @data2
+- *
+- * Collate the two data items @data1 and @data2 using the collation rule @cr
+- * and return -1, 0, ir 1 if @data1 is found, respectively, to collate before,
+- * to match, or to collate after @data2.
+- *
+- * For speed we use the collation rule @cr as an index into two tables of
+- * function pointers to call the appropriate collation function.
+- */
+-int ntfs_collate(ntfs_volume *vol, COLLATION_RULE cr,
+-		const void *data1, const int data1_len,
+-		const void *data2, const int data2_len) {
+-	int i;
+-
+-	ntfs_debug("Entering.");
+-	/*
+-	 * FIXME:  At the moment we only support COLLATION_BINARY and
+-	 * COLLATION_NTOFS_ULONG, so we BUG() for everything else for now.
+-	 */
+-	BUG_ON(cr != COLLATION_BINARY && cr != COLLATION_NTOFS_ULONG);
+-	i = le32_to_cpu(cr);
+-	BUG_ON(i < 0);
+-	if (i <= 0x02)
+-		return ntfs_do_collate0x0[i](vol, data1, data1_len,
+-				data2, data2_len);
+-	BUG_ON(i < 0x10);
+-	i -= 0x10;
+-	if (likely(i <= 3))
+-		return ntfs_do_collate0x1[i](vol, data1, data1_len,
+-				data2, data2_len);
+-	BUG();
+-	return 0;
+-}
+diff --git a/fs/ntfs/collate.h b/fs/ntfs/collate.h
+deleted file mode 100644
+index f2255619b4f4..000000000000
+--- a/fs/ntfs/collate.h
++++ /dev/null
+@@ -1,36 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * collate.h - Defines for NTFS kernel collation handling.  Part of the
+- *	       Linux-NTFS project.
+- *
+- * Copyright (c) 2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_COLLATE_H
+-#define _LINUX_NTFS_COLLATE_H
+-
+-#include "types.h"
+-#include "volume.h"
+-
+-static inline bool ntfs_is_collation_rule_supported(COLLATION_RULE cr) {
+-	int i;
+-
+-	/*
+-	 * FIXME:  At the moment we only support COLLATION_BINARY and
+-	 * COLLATION_NTOFS_ULONG, so we return false for everything else for
+-	 * now.
+-	 */
+-	if (unlikely(cr != COLLATION_BINARY && cr != COLLATION_NTOFS_ULONG))
+-		return false;
+-	i = le32_to_cpu(cr);
+-	if (likely(((i >= 0) && (i <= 0x02)) ||
+-			((i >= 0x10) && (i <= 0x13))))
+-		return true;
+-	return false;
+-}
+-
+-extern int ntfs_collate(ntfs_volume *vol, COLLATION_RULE cr,
+-		const void *data1, const int data1_len,
+-		const void *data2, const int data2_len);
+-
+-#endif /* _LINUX_NTFS_COLLATE_H */
+diff --git a/fs/ntfs/debug.c b/fs/ntfs/debug.c
+deleted file mode 100644
+index a3c1c5656f8f..000000000000
+--- a/fs/ntfs/debug.c
++++ /dev/null
+@@ -1,159 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * debug.c - NTFS kernel debug support. Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2004 Anton Altaparmakov
+- */
+-#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+-#include "debug.h"
+-
+-/**
+- * __ntfs_warning - output a warning to the syslog
+- * @function:	name of function outputting the warning
+- * @sb:		super block of mounted ntfs filesystem
+- * @fmt:	warning string containing format specifications
+- * @...:	a variable number of arguments specified in @fmt
+- *
+- * Outputs a warning to the syslog for the mounted ntfs filesystem described
+- * by @sb.
+- *
+- * @fmt and the corresponding @... is printf style format string containing
+- * the warning string and the corresponding format arguments, respectively.
+- *
+- * @function is the name of the function from which __ntfs_warning is being
+- * called.
+- *
+- * Note, you should be using debug.h::ntfs_warning(@sb, @fmt, @...) instead
+- * as this provides the @function parameter automatically.
+- */
+-void __ntfs_warning(const char *function, const struct super_block *sb,
+-		const char *fmt, ...)
+-{
+-	struct va_format vaf;
+-	va_list args;
+-	int flen = 0;
+-
+-#ifndef DEBUG
+-	if (!printk_ratelimit())
+-		return;
+-#endif
+-	if (function)
+-		flen = strlen(function);
+-	va_start(args, fmt);
+-	vaf.fmt = fmt;
+-	vaf.va = &args;
+-	if (sb)
+-		pr_warn("(device %s): %s(): %pV\n",
+-			sb->s_id, flen ? function : "", &vaf);
+-	else
+-		pr_warn("%s(): %pV\n", flen ? function : "", &vaf);
+-	va_end(args);
+-}
+-
+-/**
+- * __ntfs_error - output an error to the syslog
+- * @function:	name of function outputting the error
+- * @sb:		super block of mounted ntfs filesystem
+- * @fmt:	error string containing format specifications
+- * @...:	a variable number of arguments specified in @fmt
+- *
+- * Outputs an error to the syslog for the mounted ntfs filesystem described
+- * by @sb.
+- *
+- * @fmt and the corresponding @... is printf style format string containing
+- * the error string and the corresponding format arguments, respectively.
+- *
+- * @function is the name of the function from which __ntfs_error is being
+- * called.
+- *
+- * Note, you should be using debug.h::ntfs_error(@sb, @fmt, @...) instead
+- * as this provides the @function parameter automatically.
+- */
+-void __ntfs_error(const char *function, const struct super_block *sb,
+-		const char *fmt, ...)
+-{
+-	struct va_format vaf;
+-	va_list args;
+-	int flen = 0;
+-
+-#ifndef DEBUG
+-	if (!printk_ratelimit())
+-		return;
+-#endif
+-	if (function)
+-		flen = strlen(function);
+-	va_start(args, fmt);
+-	vaf.fmt = fmt;
+-	vaf.va = &args;
+-	if (sb)
+-		pr_err("(device %s): %s(): %pV\n",
+-		       sb->s_id, flen ? function : "", &vaf);
+-	else
+-		pr_err("%s(): %pV\n", flen ? function : "", &vaf);
+-	va_end(args);
+-}
+-
+-#ifdef DEBUG
+-
+-/* If 1, output debug messages, and if 0, don't. */
+-int debug_msgs = 0;
+-
+-void __ntfs_debug(const char *file, int line, const char *function,
+-		const char *fmt, ...)
+-{
+-	struct va_format vaf;
+-	va_list args;
+-	int flen = 0;
+-
+-	if (!debug_msgs)
+-		return;
+-	if (function)
+-		flen = strlen(function);
+-	va_start(args, fmt);
+-	vaf.fmt = fmt;
+-	vaf.va = &args;
+-	pr_debug("(%s, %d): %s(): %pV", file, line, flen ? function : "", &vaf);
+-	va_end(args);
+-}
+-
+-/* Dump a runlist. Caller has to provide synchronisation for @rl. */
+-void ntfs_debug_dump_runlist(const runlist_element *rl)
+-{
+-	int i;
+-	const char *lcn_str[5] = { "LCN_HOLE         ", "LCN_RL_NOT_MAPPED",
+-				   "LCN_ENOENT       ", "LCN_unknown      " };
+-
+-	if (!debug_msgs)
+-		return;
+-	pr_debug("Dumping runlist (values in hex):\n");
+-	if (!rl) {
+-		pr_debug("Run list not present.\n");
+-		return;
+-	}
+-	pr_debug("VCN              LCN               Run length\n");
+-	for (i = 0; ; i++) {
+-		LCN lcn = (rl + i)->lcn;
+-
+-		if (lcn < (LCN)0) {
+-			int index = -lcn - 1;
+-
+-			if (index > -LCN_ENOENT - 1)
+-				index = 3;
+-			pr_debug("%-16Lx %s %-16Lx%s\n",
+-					(long long)(rl + i)->vcn, lcn_str[index],
+-					(long long)(rl + i)->length,
+-					(rl + i)->length ? "" :
+-						" (runlist end)");
+-		} else
+-			pr_debug("%-16Lx %-16Lx  %-16Lx%s\n",
+-					(long long)(rl + i)->vcn,
+-					(long long)(rl + i)->lcn,
+-					(long long)(rl + i)->length,
+-					(rl + i)->length ? "" :
+-						" (runlist end)");
+-		if (!(rl + i)->length)
+-			break;
+-	}
+-}
+-
+-#endif
+diff --git a/fs/ntfs/debug.h b/fs/ntfs/debug.h
+deleted file mode 100644
+index 6fdef388f129..000000000000
+--- a/fs/ntfs/debug.h
++++ /dev/null
+@@ -1,57 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * debug.h - NTFS kernel debug support. Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_DEBUG_H
+-#define _LINUX_NTFS_DEBUG_H
+-
+-#include <linux/fs.h>
+-
+-#include "runlist.h"
+-
+-#ifdef DEBUG
+-
+-extern int debug_msgs;
+-
+-extern __printf(4, 5)
+-void __ntfs_debug(const char *file, int line, const char *function,
+-		  const char *format, ...);
+-/**
+- * ntfs_debug - write a debug level message to syslog
+- * @f:		a printf format string containing the message
+- * @...:	the variables to substitute into @f
+- *
+- * ntfs_debug() writes a DEBUG level message to the syslog but only if the
+- * driver was compiled with -DDEBUG. Otherwise, the call turns into a NOP.
+- */
+-#define ntfs_debug(f, a...)						\
+-	__ntfs_debug(__FILE__, __LINE__, __func__, f, ##a)
+-
+-extern void ntfs_debug_dump_runlist(const runlist_element *rl);
+-
+-#else	/* !DEBUG */
+-
+-#define ntfs_debug(fmt, ...)						\
+-do {									\
+-	if (0)								\
+-		no_printk(fmt, ##__VA_ARGS__);				\
+-} while (0)
+-
+-#define ntfs_debug_dump_runlist(rl)	do {} while (0)
+-
+-#endif	/* !DEBUG */
+-
+-extern  __printf(3, 4)
+-void __ntfs_warning(const char *function, const struct super_block *sb,
+-		    const char *fmt, ...);
+-#define ntfs_warning(sb, f, a...)	__ntfs_warning(__func__, sb, f, ##a)
+-
+-extern  __printf(3, 4)
+-void __ntfs_error(const char *function, const struct super_block *sb,
+-		  const char *fmt, ...);
+-#define ntfs_error(sb, f, a...)		__ntfs_error(__func__, sb, f, ##a)
+-
+-#endif /* _LINUX_NTFS_DEBUG_H */
+diff --git a/fs/ntfs/dir.h b/fs/ntfs/dir.h
+deleted file mode 100644
+index 0e326753df40..000000000000
+--- a/fs/ntfs/dir.h
++++ /dev/null
+@@ -1,34 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * dir.h - Defines for directory handling in NTFS Linux kernel driver. Part of
+- *	   the Linux-NTFS project.
+- *
+- * Copyright (c) 2002-2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_DIR_H
+-#define _LINUX_NTFS_DIR_H
+-
+-#include "layout.h"
+-#include "inode.h"
+-#include "types.h"
+-
+-/*
+- * ntfs_name is used to return the file name to the caller of
+- * ntfs_lookup_inode_by_name() in order for the caller (namei.c::ntfs_lookup())
+- * to be able to deal with dcache aliasing issues.
+- */
+-typedef struct {
+-	MFT_REF mref;
+-	FILE_NAME_TYPE_FLAGS type;
+-	u8 len;
+-	ntfschar name[0];
+-} __attribute__ ((__packed__)) ntfs_name;
+-
+-/* The little endian Unicode string $I30 as a global constant. */
+-extern ntfschar I30[5];
+-
+-extern MFT_REF ntfs_lookup_inode_by_name(ntfs_inode *dir_ni,
+-		const ntfschar *uname, const int uname_len, ntfs_name **res);
+-
+-#endif /* _LINUX_NTFS_FS_DIR_H */
+diff --git a/fs/ntfs/endian.h b/fs/ntfs/endian.h
+deleted file mode 100644
+index f30c139bf9ae..000000000000
+--- a/fs/ntfs/endian.h
++++ /dev/null
+@@ -1,79 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * endian.h - Defines for endianness handling in NTFS Linux kernel driver.
+- *	      Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_ENDIAN_H
+-#define _LINUX_NTFS_ENDIAN_H
+-
+-#include <asm/byteorder.h>
+-#include "types.h"
+-
+-/*
+- * Signed endianness conversion functions.
+- */
+-
+-static inline s16 sle16_to_cpu(sle16 x)
+-{
+-	return le16_to_cpu((__force le16)x);
+-}
+-
+-static inline s32 sle32_to_cpu(sle32 x)
+-{
+-	return le32_to_cpu((__force le32)x);
+-}
+-
+-static inline s64 sle64_to_cpu(sle64 x)
+-{
+-	return le64_to_cpu((__force le64)x);
+-}
+-
+-static inline s16 sle16_to_cpup(sle16 *x)
+-{
+-	return le16_to_cpu(*(__force le16*)x);
+-}
+-
+-static inline s32 sle32_to_cpup(sle32 *x)
+-{
+-	return le32_to_cpu(*(__force le32*)x);
+-}
+-
+-static inline s64 sle64_to_cpup(sle64 *x)
+-{
+-	return le64_to_cpu(*(__force le64*)x);
+-}
+-
+-static inline sle16 cpu_to_sle16(s16 x)
+-{
+-	return (__force sle16)cpu_to_le16(x);
+-}
+-
+-static inline sle32 cpu_to_sle32(s32 x)
+-{
+-	return (__force sle32)cpu_to_le32(x);
+-}
+-
+-static inline sle64 cpu_to_sle64(s64 x)
+-{
+-	return (__force sle64)cpu_to_le64(x);
+-}
+-
+-static inline sle16 cpu_to_sle16p(s16 *x)
+-{
+-	return (__force sle16)cpu_to_le16(*x);
+-}
+-
+-static inline sle32 cpu_to_sle32p(s32 *x)
+-{
+-	return (__force sle32)cpu_to_le32(*x);
+-}
+-
+-static inline sle64 cpu_to_sle64p(s64 *x)
+-{
+-	return (__force sle64)cpu_to_le64(*x);
+-}
+-
+-#endif /* _LINUX_NTFS_ENDIAN_H */
+diff --git a/fs/ntfs/index.c b/fs/ntfs/index.c
+deleted file mode 100644
+index d46c2c03a032..000000000000
+--- a/fs/ntfs/index.c
++++ /dev/null
+@@ -1,440 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * index.c - NTFS kernel index handling.  Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2004-2005 Anton Altaparmakov
+- */
+-
+-#include <linux/slab.h>
+-
+-#include "aops.h"
+-#include "collate.h"
+-#include "debug.h"
+-#include "index.h"
+-#include "ntfs.h"
+-
+-/**
+- * ntfs_index_ctx_get - allocate and initialize a new index context
+- * @idx_ni:	ntfs index inode with which to initialize the context
+- *
+- * Allocate a new index context, initialize it with @idx_ni and return it.
+- * Return NULL if allocation failed.
+- *
+- * Locking:  Caller must hold i_mutex on the index inode.
+- */
+-ntfs_index_context *ntfs_index_ctx_get(ntfs_inode *idx_ni)
+-{
+-	ntfs_index_context *ictx;
+-
+-	ictx = kmem_cache_alloc(ntfs_index_ctx_cache, GFP_NOFS);
+-	if (ictx)
+-		*ictx = (ntfs_index_context){ .idx_ni = idx_ni };
+-	return ictx;
+-}
+-
+-/**
+- * ntfs_index_ctx_put - release an index context
+- * @ictx:	index context to free
+- *
+- * Release the index context @ictx, releasing all associated resources.
+- *
+- * Locking:  Caller must hold i_mutex on the index inode.
+- */
+-void ntfs_index_ctx_put(ntfs_index_context *ictx)
+-{
+-	if (ictx->entry) {
+-		if (ictx->is_in_root) {
+-			if (ictx->actx)
+-				ntfs_attr_put_search_ctx(ictx->actx);
+-			if (ictx->base_ni)
+-				unmap_mft_record(ictx->base_ni);
+-		} else {
+-			struct page *page = ictx->page;
+-			if (page) {
+-				BUG_ON(!PageLocked(page));
+-				unlock_page(page);
+-				ntfs_unmap_page(page);
+-			}
+-		}
+-	}
+-	kmem_cache_free(ntfs_index_ctx_cache, ictx);
+-	return;
+-}
+-
+-/**
+- * ntfs_index_lookup - find a key in an index and return its index entry
+- * @key:	[IN] key for which to search in the index
+- * @key_len:	[IN] length of @key in bytes
+- * @ictx:	[IN/OUT] context describing the index and the returned entry
+- *
+- * Before calling ntfs_index_lookup(), @ictx must have been obtained from a
+- * call to ntfs_index_ctx_get().
+- *
+- * Look for the @key in the index specified by the index lookup context @ictx.
+- * ntfs_index_lookup() walks the contents of the index looking for the @key.
+- *
+- * If the @key is found in the index, 0 is returned and @ictx is setup to
+- * describe the index entry containing the matching @key.  @ictx->entry is the
+- * index entry and @ictx->data and @ictx->data_len are the index entry data and
+- * its length in bytes, respectively.
+- *
+- * If the @key is not found in the index, -ENOENT is returned and @ictx is
+- * setup to describe the index entry whose key collates immediately after the
+- * search @key, i.e. this is the position in the index at which an index entry
+- * with a key of @key would need to be inserted.
+- *
+- * If an error occurs return the negative error code and @ictx is left
+- * untouched.
+- *
+- * When finished with the entry and its data, call ntfs_index_ctx_put() to free
+- * the context and other associated resources.
+- *
+- * If the index entry was modified, call flush_dcache_index_entry_page()
+- * immediately after the modification and either ntfs_index_entry_mark_dirty()
+- * or ntfs_index_entry_write() before the call to ntfs_index_ctx_put() to
+- * ensure that the changes are written to disk.
+- *
+- * Locking:  - Caller must hold i_mutex on the index inode.
+- *	     - Each page cache page in the index allocation mapping must be
+- *	       locked whilst being accessed otherwise we may find a corrupt
+- *	       page due to it being under ->writepage at the moment which
+- *	       applies the mst protection fixups before writing out and then
+- *	       removes them again after the write is complete after which it 
+- *	       unlocks the page.
+- */
+-int ntfs_index_lookup(const void *key, const int key_len,
+-		ntfs_index_context *ictx)
+-{
+-	VCN vcn, old_vcn;
+-	ntfs_inode *idx_ni = ictx->idx_ni;
+-	ntfs_volume *vol = idx_ni->vol;
+-	struct super_block *sb = vol->sb;
+-	ntfs_inode *base_ni = idx_ni->ext.base_ntfs_ino;
+-	MFT_RECORD *m;
+-	INDEX_ROOT *ir;
+-	INDEX_ENTRY *ie;
+-	INDEX_ALLOCATION *ia;
+-	u8 *index_end, *kaddr;
+-	ntfs_attr_search_ctx *actx;
+-	struct address_space *ia_mapping;
+-	struct page *page;
+-	int rc, err = 0;
+-
+-	ntfs_debug("Entering.");
+-	BUG_ON(!NInoAttr(idx_ni));
+-	BUG_ON(idx_ni->type != AT_INDEX_ALLOCATION);
+-	BUG_ON(idx_ni->nr_extents != -1);
+-	BUG_ON(!base_ni);
+-	BUG_ON(!key);
+-	BUG_ON(key_len <= 0);
+-	if (!ntfs_is_collation_rule_supported(
+-			idx_ni->itype.index.collation_rule)) {
+-		ntfs_error(sb, "Index uses unsupported collation rule 0x%x.  "
+-				"Aborting lookup.", le32_to_cpu(
+-				idx_ni->itype.index.collation_rule));
+-		return -EOPNOTSUPP;
+-	}
+-	/* Get hold of the mft record for the index inode. */
+-	m = map_mft_record(base_ni);
+-	if (IS_ERR(m)) {
+-		ntfs_error(sb, "map_mft_record() failed with error code %ld.",
+-				-PTR_ERR(m));
+-		return PTR_ERR(m);
+-	}
+-	actx = ntfs_attr_get_search_ctx(base_ni, m);
+-	if (unlikely(!actx)) {
+-		err = -ENOMEM;
+-		goto err_out;
+-	}
+-	/* Find the index root attribute in the mft record. */
+-	err = ntfs_attr_lookup(AT_INDEX_ROOT, idx_ni->name, idx_ni->name_len,
+-			CASE_SENSITIVE, 0, NULL, 0, actx);
+-	if (unlikely(err)) {
+-		if (err == -ENOENT) {
+-			ntfs_error(sb, "Index root attribute missing in inode "
+-					"0x%lx.", idx_ni->mft_no);
+-			err = -EIO;
+-		}
+-		goto err_out;
+-	}
+-	/* Get to the index root value (it has been verified in read_inode). */
+-	ir = (INDEX_ROOT*)((u8*)actx->attr +
+-			le16_to_cpu(actx->attr->data.resident.value_offset));
+-	index_end = (u8*)&ir->index + le32_to_cpu(ir->index.index_length);
+-	/* The first index entry. */
+-	ie = (INDEX_ENTRY*)((u8*)&ir->index +
+-			le32_to_cpu(ir->index.entries_offset));
+-	/*
+-	 * Loop until we exceed valid memory (corruption case) or until we
+-	 * reach the last entry.
+-	 */
+-	for (;; ie = (INDEX_ENTRY*)((u8*)ie + le16_to_cpu(ie->length))) {
+-		/* Bounds checks. */
+-		if ((u8*)ie < (u8*)actx->mrec || (u8*)ie +
+-				sizeof(INDEX_ENTRY_HEADER) > index_end ||
+-				(u8*)ie + le16_to_cpu(ie->length) > index_end)
+-			goto idx_err_out;
+-		/*
+-		 * The last entry cannot contain a key.  It can however contain
+-		 * a pointer to a child node in the B+tree so we just break out.
+-		 */
+-		if (ie->flags & INDEX_ENTRY_END)
+-			break;
+-		/* Further bounds checks. */
+-		if ((u32)sizeof(INDEX_ENTRY_HEADER) +
+-				le16_to_cpu(ie->key_length) >
+-				le16_to_cpu(ie->data.vi.data_offset) ||
+-				(u32)le16_to_cpu(ie->data.vi.data_offset) +
+-				le16_to_cpu(ie->data.vi.data_length) >
+-				le16_to_cpu(ie->length))
+-			goto idx_err_out;
+-		/* If the keys match perfectly, we setup @ictx and return 0. */
+-		if ((key_len == le16_to_cpu(ie->key_length)) && !memcmp(key,
+-				&ie->key, key_len)) {
+-ir_done:
+-			ictx->is_in_root = true;
+-			ictx->ir = ir;
+-			ictx->actx = actx;
+-			ictx->base_ni = base_ni;
+-			ictx->ia = NULL;
+-			ictx->page = NULL;
+-done:
+-			ictx->entry = ie;
+-			ictx->data = (u8*)ie +
+-					le16_to_cpu(ie->data.vi.data_offset);
+-			ictx->data_len = le16_to_cpu(ie->data.vi.data_length);
+-			ntfs_debug("Done.");
+-			return err;
+-		}
+-		/*
+-		 * Not a perfect match, need to do full blown collation so we
+-		 * know which way in the B+tree we have to go.
+-		 */
+-		rc = ntfs_collate(vol, idx_ni->itype.index.collation_rule, key,
+-				key_len, &ie->key, le16_to_cpu(ie->key_length));
+-		/*
+-		 * If @key collates before the key of the current entry, there
+-		 * is definitely no such key in this index but we might need to
+-		 * descend into the B+tree so we just break out of the loop.
+-		 */
+-		if (rc == -1)
+-			break;
+-		/*
+-		 * A match should never happen as the memcmp() call should have
+-		 * cought it, but we still treat it correctly.
+-		 */
+-		if (!rc)
+-			goto ir_done;
+-		/* The keys are not equal, continue the search. */
+-	}
+-	/*
+-	 * We have finished with this index without success.  Check for the
+-	 * presence of a child node and if not present setup @ictx and return
+-	 * -ENOENT.
+-	 */
+-	if (!(ie->flags & INDEX_ENTRY_NODE)) {
+-		ntfs_debug("Entry not found.");
+-		err = -ENOENT;
+-		goto ir_done;
+-	} /* Child node present, descend into it. */
+-	/* Consistency check: Verify that an index allocation exists. */
+-	if (!NInoIndexAllocPresent(idx_ni)) {
+-		ntfs_error(sb, "No index allocation attribute but index entry "
+-				"requires one.  Inode 0x%lx is corrupt or "
+-				"driver bug.", idx_ni->mft_no);
+-		goto err_out;
+-	}
+-	/* Get the starting vcn of the index_block holding the child node. */
+-	vcn = sle64_to_cpup((sle64*)((u8*)ie + le16_to_cpu(ie->length) - 8));
+-	ia_mapping = VFS_I(idx_ni)->i_mapping;
+-	/*
+-	 * We are done with the index root and the mft record.  Release them,
+-	 * otherwise we deadlock with ntfs_map_page().
+-	 */
+-	ntfs_attr_put_search_ctx(actx);
+-	unmap_mft_record(base_ni);
+-	m = NULL;
+-	actx = NULL;
+-descend_into_child_node:
+-	/*
+-	 * Convert vcn to index into the index allocation attribute in units
+-	 * of PAGE_SIZE and map the page cache page, reading it from
+-	 * disk if necessary.
+-	 */
+-	page = ntfs_map_page(ia_mapping, vcn <<
+-			idx_ni->itype.index.vcn_size_bits >> PAGE_SHIFT);
+-	if (IS_ERR(page)) {
+-		ntfs_error(sb, "Failed to map index page, error %ld.",
+-				-PTR_ERR(page));
+-		err = PTR_ERR(page);
+-		goto err_out;
+-	}
+-	lock_page(page);
+-	kaddr = (u8*)page_address(page);
+-fast_descend_into_child_node:
+-	/* Get to the index allocation block. */
+-	ia = (INDEX_ALLOCATION*)(kaddr + ((vcn <<
+-			idx_ni->itype.index.vcn_size_bits) & ~PAGE_MASK));
+-	/* Bounds checks. */
+-	if ((u8*)ia < kaddr || (u8*)ia > kaddr + PAGE_SIZE) {
+-		ntfs_error(sb, "Out of bounds check failed.  Corrupt inode "
+-				"0x%lx or driver bug.", idx_ni->mft_no);
+-		goto unm_err_out;
+-	}
+-	/* Catch multi sector transfer fixup errors. */
+-	if (unlikely(!ntfs_is_indx_record(ia->magic))) {
+-		ntfs_error(sb, "Index record with vcn 0x%llx is corrupt.  "
+-				"Corrupt inode 0x%lx.  Run chkdsk.",
+-				(long long)vcn, idx_ni->mft_no);
+-		goto unm_err_out;
+-	}
+-	if (sle64_to_cpu(ia->index_block_vcn) != vcn) {
+-		ntfs_error(sb, "Actual VCN (0x%llx) of index buffer is "
+-				"different from expected VCN (0x%llx).  Inode "
+-				"0x%lx is corrupt or driver bug.",
+-				(unsigned long long)
+-				sle64_to_cpu(ia->index_block_vcn),
+-				(unsigned long long)vcn, idx_ni->mft_no);
+-		goto unm_err_out;
+-	}
+-	if (le32_to_cpu(ia->index.allocated_size) + 0x18 !=
+-			idx_ni->itype.index.block_size) {
+-		ntfs_error(sb, "Index buffer (VCN 0x%llx) of inode 0x%lx has "
+-				"a size (%u) differing from the index "
+-				"specified size (%u).  Inode is corrupt or "
+-				"driver bug.", (unsigned long long)vcn,
+-				idx_ni->mft_no,
+-				le32_to_cpu(ia->index.allocated_size) + 0x18,
+-				idx_ni->itype.index.block_size);
+-		goto unm_err_out;
+-	}
+-	index_end = (u8*)ia + idx_ni->itype.index.block_size;
+-	if (index_end > kaddr + PAGE_SIZE) {
+-		ntfs_error(sb, "Index buffer (VCN 0x%llx) of inode 0x%lx "
+-				"crosses page boundary.  Impossible!  Cannot "
+-				"access!  This is probably a bug in the "
+-				"driver.", (unsigned long long)vcn,
+-				idx_ni->mft_no);
+-		goto unm_err_out;
+-	}
+-	index_end = (u8*)&ia->index + le32_to_cpu(ia->index.index_length);
+-	if (index_end > (u8*)ia + idx_ni->itype.index.block_size) {
+-		ntfs_error(sb, "Size of index buffer (VCN 0x%llx) of inode "
+-				"0x%lx exceeds maximum size.",
+-				(unsigned long long)vcn, idx_ni->mft_no);
+-		goto unm_err_out;
+-	}
+-	/* The first index entry. */
+-	ie = (INDEX_ENTRY*)((u8*)&ia->index +
+-			le32_to_cpu(ia->index.entries_offset));
+-	/*
+-	 * Iterate similar to above big loop but applied to index buffer, thus
+-	 * loop until we exceed valid memory (corruption case) or until we
+-	 * reach the last entry.
+-	 */
+-	for (;; ie = (INDEX_ENTRY*)((u8*)ie + le16_to_cpu(ie->length))) {
+-		/* Bounds checks. */
+-		if ((u8*)ie < (u8*)ia || (u8*)ie +
+-				sizeof(INDEX_ENTRY_HEADER) > index_end ||
+-				(u8*)ie + le16_to_cpu(ie->length) > index_end) {
+-			ntfs_error(sb, "Index entry out of bounds in inode "
+-					"0x%lx.", idx_ni->mft_no);
+-			goto unm_err_out;
+-		}
+-		/*
+-		 * The last entry cannot contain a key.  It can however contain
+-		 * a pointer to a child node in the B+tree so we just break out.
+-		 */
+-		if (ie->flags & INDEX_ENTRY_END)
+-			break;
+-		/* Further bounds checks. */
+-		if ((u32)sizeof(INDEX_ENTRY_HEADER) +
+-				le16_to_cpu(ie->key_length) >
+-				le16_to_cpu(ie->data.vi.data_offset) ||
+-				(u32)le16_to_cpu(ie->data.vi.data_offset) +
+-				le16_to_cpu(ie->data.vi.data_length) >
+-				le16_to_cpu(ie->length)) {
+-			ntfs_error(sb, "Index entry out of bounds in inode "
+-					"0x%lx.", idx_ni->mft_no);
+-			goto unm_err_out;
+-		}
+-		/* If the keys match perfectly, we setup @ictx and return 0. */
+-		if ((key_len == le16_to_cpu(ie->key_length)) && !memcmp(key,
+-				&ie->key, key_len)) {
+-ia_done:
+-			ictx->is_in_root = false;
+-			ictx->actx = NULL;
+-			ictx->base_ni = NULL;
+-			ictx->ia = ia;
+-			ictx->page = page;
+-			goto done;
+-		}
+-		/*
+-		 * Not a perfect match, need to do full blown collation so we
+-		 * know which way in the B+tree we have to go.
+-		 */
+-		rc = ntfs_collate(vol, idx_ni->itype.index.collation_rule, key,
+-				key_len, &ie->key, le16_to_cpu(ie->key_length));
+-		/*
+-		 * If @key collates before the key of the current entry, there
+-		 * is definitely no such key in this index but we might need to
+-		 * descend into the B+tree so we just break out of the loop.
+-		 */
+-		if (rc == -1)
+-			break;
+-		/*
+-		 * A match should never happen as the memcmp() call should have
+-		 * cought it, but we still treat it correctly.
+-		 */
+-		if (!rc)
+-			goto ia_done;
+-		/* The keys are not equal, continue the search. */
+-	}
+-	/*
+-	 * We have finished with this index buffer without success.  Check for
+-	 * the presence of a child node and if not present return -ENOENT.
+-	 */
+-	if (!(ie->flags & INDEX_ENTRY_NODE)) {
+-		ntfs_debug("Entry not found.");
+-		err = -ENOENT;
+-		goto ia_done;
+-	}
+-	if ((ia->index.flags & NODE_MASK) == LEAF_NODE) {
+-		ntfs_error(sb, "Index entry with child node found in a leaf "
+-				"node in inode 0x%lx.", idx_ni->mft_no);
+-		goto unm_err_out;
+-	}
+-	/* Child node present, descend into it. */
+-	old_vcn = vcn;
+-	vcn = sle64_to_cpup((sle64*)((u8*)ie + le16_to_cpu(ie->length) - 8));
+-	if (vcn >= 0) {
+-		/*
+-		 * If vcn is in the same page cache page as old_vcn we recycle
+-		 * the mapped page.
+-		 */
+-		if (old_vcn << vol->cluster_size_bits >>
+-				PAGE_SHIFT == vcn <<
+-				vol->cluster_size_bits >>
+-				PAGE_SHIFT)
+-			goto fast_descend_into_child_node;
+-		unlock_page(page);
+-		ntfs_unmap_page(page);
+-		goto descend_into_child_node;
+-	}
+-	ntfs_error(sb, "Negative child node vcn in inode 0x%lx.",
+-			idx_ni->mft_no);
+-unm_err_out:
+-	unlock_page(page);
+-	ntfs_unmap_page(page);
+-err_out:
+-	if (!err)
+-		err = -EIO;
+-	if (actx)
+-		ntfs_attr_put_search_ctx(actx);
+-	if (m)
+-		unmap_mft_record(base_ni);
+-	return err;
+-idx_err_out:
+-	ntfs_error(sb, "Corrupt index.  Aborting lookup.");
+-	goto err_out;
+-}
+diff --git a/fs/ntfs/index.h b/fs/ntfs/index.h
+deleted file mode 100644
+index bb3c3ae55138..000000000000
+--- a/fs/ntfs/index.h
++++ /dev/null
+@@ -1,134 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * index.h - Defines for NTFS kernel index handling.  Part of the Linux-NTFS
+- *	     project.
+- *
+- * Copyright (c) 2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_INDEX_H
+-#define _LINUX_NTFS_INDEX_H
+-
+-#include <linux/fs.h>
+-
+-#include "types.h"
+-#include "layout.h"
+-#include "inode.h"
+-#include "attrib.h"
+-#include "mft.h"
+-#include "aops.h"
+-
+-/**
+- * @idx_ni:	index inode containing the @entry described by this context
+- * @entry:	index entry (points into @ir or @ia)
+- * @data:	index entry data (points into @entry)
+- * @data_len:	length in bytes of @data
+- * @is_in_root:	'true' if @entry is in @ir and 'false' if it is in @ia
+- * @ir:		index root if @is_in_root and NULL otherwise
+- * @actx:	attribute search context if @is_in_root and NULL otherwise
+- * @base_ni:	base inode if @is_in_root and NULL otherwise
+- * @ia:		index block if @is_in_root is 'false' and NULL otherwise
+- * @page:	page if @is_in_root is 'false' and NULL otherwise
+- *
+- * @idx_ni is the index inode this context belongs to.
+- *
+- * @entry is the index entry described by this context.  @data and @data_len
+- * are the index entry data and its length in bytes, respectively.  @data
+- * simply points into @entry.  This is probably what the user is interested in.
+- *
+- * If @is_in_root is 'true', @entry is in the index root attribute @ir described
+- * by the attribute search context @actx and the base inode @base_ni.  @ia and
+- * @page are NULL in this case.
+- *
+- * If @is_in_root is 'false', @entry is in the index allocation attribute and @ia
+- * and @page point to the index allocation block and the mapped, locked page it
+- * is in, respectively.  @ir, @actx and @base_ni are NULL in this case.
+- *
+- * To obtain a context call ntfs_index_ctx_get().
+- *
+- * We use this context to allow ntfs_index_lookup() to return the found index
+- * @entry and its @data without having to allocate a buffer and copy the @entry
+- * and/or its @data into it.
+- *
+- * When finished with the @entry and its @data, call ntfs_index_ctx_put() to
+- * free the context and other associated resources.
+- *
+- * If the index entry was modified, call flush_dcache_index_entry_page()
+- * immediately after the modification and either ntfs_index_entry_mark_dirty()
+- * or ntfs_index_entry_write() before the call to ntfs_index_ctx_put() to
+- * ensure that the changes are written to disk.
+- */
+-typedef struct {
+-	ntfs_inode *idx_ni;
+-	INDEX_ENTRY *entry;
+-	void *data;
+-	u16 data_len;
+-	bool is_in_root;
+-	INDEX_ROOT *ir;
+-	ntfs_attr_search_ctx *actx;
+-	ntfs_inode *base_ni;
+-	INDEX_ALLOCATION *ia;
+-	struct page *page;
+-} ntfs_index_context;
+-
+-extern ntfs_index_context *ntfs_index_ctx_get(ntfs_inode *idx_ni);
+-extern void ntfs_index_ctx_put(ntfs_index_context *ictx);
+-
+-extern int ntfs_index_lookup(const void *key, const int key_len,
+-		ntfs_index_context *ictx);
+-
+-#ifdef NTFS_RW
+-
+-/**
+- * ntfs_index_entry_flush_dcache_page - flush_dcache_page() for index entries
+- * @ictx:	ntfs index context describing the index entry
+- *
+- * Call flush_dcache_page() for the page in which an index entry resides.
+- *
+- * This must be called every time an index entry is modified, just after the
+- * modification.
+- *
+- * If the index entry is in the index root attribute, simply flush the page
+- * containing the mft record containing the index root attribute.
+- *
+- * If the index entry is in an index block belonging to the index allocation
+- * attribute, simply flush the page cache page containing the index block.
+- */
+-static inline void ntfs_index_entry_flush_dcache_page(ntfs_index_context *ictx)
+-{
+-	if (ictx->is_in_root)
+-		flush_dcache_mft_record_page(ictx->actx->ntfs_ino);
+-	else
+-		flush_dcache_page(ictx->page);
+-}
+-
+-/**
+- * ntfs_index_entry_mark_dirty - mark an index entry dirty
+- * @ictx:	ntfs index context describing the index entry
+- *
+- * Mark the index entry described by the index entry context @ictx dirty.
+- *
+- * If the index entry is in the index root attribute, simply mark the mft
+- * record containing the index root attribute dirty.  This ensures the mft
+- * record, and hence the index root attribute, will be written out to disk
+- * later.
+- *
+- * If the index entry is in an index block belonging to the index allocation
+- * attribute, mark the buffers belonging to the index record as well as the
+- * page cache page the index block is in dirty.  This automatically marks the
+- * VFS inode of the ntfs index inode to which the index entry belongs dirty,
+- * too (I_DIRTY_PAGES) and this in turn ensures the page buffers, and hence the
+- * dirty index block, will be written out to disk later.
+- */
+-static inline void ntfs_index_entry_mark_dirty(ntfs_index_context *ictx)
+-{
+-	if (ictx->is_in_root)
+-		mark_mft_record_dirty(ictx->actx->ntfs_ino);
+-	else
+-		mark_ntfs_record_dirty(ictx->page,
+-				(u8*)ictx->ia - (u8*)page_address(ictx->page));
+-}
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* _LINUX_NTFS_INDEX_H */
+diff --git a/fs/ntfs/layout.h b/fs/ntfs/layout.h
+deleted file mode 100644
+index 5d4bf7a3259f..000000000000
+--- a/fs/ntfs/layout.h
++++ /dev/null
+@@ -1,2421 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * layout.h - All NTFS associated on-disk structures. Part of the Linux-NTFS
+- *	      project.
+- *
+- * Copyright (c) 2001-2005 Anton Altaparmakov
+- * Copyright (c) 2002 Richard Russon
+- */
+-
+-#ifndef _LINUX_NTFS_LAYOUT_H
+-#define _LINUX_NTFS_LAYOUT_H
+-
+-#include <linux/types.h>
+-#include <linux/bitops.h>
+-#include <linux/list.h>
+-#include <asm/byteorder.h>
+-
+-#include "types.h"
+-
+-/* The NTFS oem_id "NTFS    " */
+-#define magicNTFS	cpu_to_le64(0x202020205346544eULL)
+-
+-/*
+- * Location of bootsector on partition:
+- *	The standard NTFS_BOOT_SECTOR is on sector 0 of the partition.
+- *	On NT4 and above there is one backup copy of the boot sector to
+- *	be found on the last sector of the partition (not normally accessible
+- *	from within Windows as the bootsector contained number of sectors
+- *	value is one less than the actual value!).
+- *	On versions of NT 3.51 and earlier, the backup copy was located at
+- *	number of sectors/2 (integer divide), i.e. in the middle of the volume.
+- */
+-
+-/*
+- * BIOS parameter block (bpb) structure.
+- */
+-typedef struct {
+-	le16 bytes_per_sector;		/* Size of a sector in bytes. */
+-	u8  sectors_per_cluster;	/* Size of a cluster in sectors. */
+-	le16 reserved_sectors;		/* zero */
+-	u8  fats;			/* zero */
+-	le16 root_entries;		/* zero */
+-	le16 sectors;			/* zero */
+-	u8  media_type;			/* 0xf8 = hard disk */
+-	le16 sectors_per_fat;		/* zero */
+-	le16 sectors_per_track;		/* irrelevant */
+-	le16 heads;			/* irrelevant */
+-	le32 hidden_sectors;		/* zero */
+-	le32 large_sectors;		/* zero */
+-} __attribute__ ((__packed__)) BIOS_PARAMETER_BLOCK;
+-
+-/*
+- * NTFS boot sector structure.
+- */
+-typedef struct {
+-	u8  jump[3];			/* Irrelevant (jump to boot up code).*/
+-	le64 oem_id;			/* Magic "NTFS    ". */
+-	BIOS_PARAMETER_BLOCK bpb;	/* See BIOS_PARAMETER_BLOCK. */
+-	u8  unused[4];			/* zero, NTFS diskedit.exe states that
+-					   this is actually:
+-						__u8 physical_drive;	// 0x80
+-						__u8 current_head;	// zero
+-						__u8 extended_boot_signature;
+-									// 0x80
+-						__u8 unused;		// zero
+-					 */
+-/*0x28*/sle64 number_of_sectors;	/* Number of sectors in volume. Gives
+-					   maximum volume size of 2^63 sectors.
+-					   Assuming standard sector size of 512
+-					   bytes, the maximum byte size is
+-					   approx. 4.7x10^21 bytes. (-; */
+-	sle64 mft_lcn;			/* Cluster location of mft data. */
+-	sle64 mftmirr_lcn;		/* Cluster location of copy of mft. */
+-	s8  clusters_per_mft_record;	/* Mft record size in clusters. */
+-	u8  reserved0[3];		/* zero */
+-	s8  clusters_per_index_record;	/* Index block size in clusters. */
+-	u8  reserved1[3];		/* zero */
+-	le64 volume_serial_number;	/* Irrelevant (serial number). */
+-	le32 checksum;			/* Boot sector checksum. */
+-/*0x54*/u8  bootstrap[426];		/* Irrelevant (boot up code). */
+-	le16 end_of_sector_marker;	/* End of bootsector magic. Always is
+-					   0xaa55 in little endian. */
+-/* sizeof() = 512 (0x200) bytes */
+-} __attribute__ ((__packed__)) NTFS_BOOT_SECTOR;
+-
+-/*
+- * Magic identifiers present at the beginning of all ntfs record containing
+- * records (like mft records for example).
+- */
+-enum {
+-	/* Found in $MFT/$DATA. */
+-	magic_FILE = cpu_to_le32(0x454c4946), /* Mft entry. */
+-	magic_INDX = cpu_to_le32(0x58444e49), /* Index buffer. */
+-	magic_HOLE = cpu_to_le32(0x454c4f48), /* ? (NTFS 3.0+?) */
+-
+-	/* Found in $LogFile/$DATA. */
+-	magic_RSTR = cpu_to_le32(0x52545352), /* Restart page. */
+-	magic_RCRD = cpu_to_le32(0x44524352), /* Log record page. */
+-
+-	/* Found in $LogFile/$DATA.  (May be found in $MFT/$DATA, also?) */
+-	magic_CHKD = cpu_to_le32(0x444b4843), /* Modified by chkdsk. */
+-
+-	/* Found in all ntfs record containing records. */
+-	magic_BAAD = cpu_to_le32(0x44414142), /* Failed multi sector
+-						       transfer was detected. */
+-	/*
+-	 * Found in $LogFile/$DATA when a page is full of 0xff bytes and is
+-	 * thus not initialized.  Page must be initialized before using it.
+-	 */
+-	magic_empty = cpu_to_le32(0xffffffff) /* Record is empty. */
+-};
+-
+-typedef le32 NTFS_RECORD_TYPE;
+-
+-/*
+- * Generic magic comparison macros. Finally found a use for the ## preprocessor
+- * operator! (-8
+- */
+-
+-static inline bool __ntfs_is_magic(le32 x, NTFS_RECORD_TYPE r)
+-{
+-	return (x == r);
+-}
+-#define ntfs_is_magic(x, m)	__ntfs_is_magic(x, magic_##m)
+-
+-static inline bool __ntfs_is_magicp(le32 *p, NTFS_RECORD_TYPE r)
+-{
+-	return (*p == r);
+-}
+-#define ntfs_is_magicp(p, m)	__ntfs_is_magicp(p, magic_##m)
+-
+-/*
+- * Specialised magic comparison macros for the NTFS_RECORD_TYPEs defined above.
+- */
+-#define ntfs_is_file_record(x)		( ntfs_is_magic (x, FILE) )
+-#define ntfs_is_file_recordp(p)		( ntfs_is_magicp(p, FILE) )
+-#define ntfs_is_mft_record(x)		( ntfs_is_file_record (x) )
+-#define ntfs_is_mft_recordp(p)		( ntfs_is_file_recordp(p) )
+-#define ntfs_is_indx_record(x)		( ntfs_is_magic (x, INDX) )
+-#define ntfs_is_indx_recordp(p)		( ntfs_is_magicp(p, INDX) )
+-#define ntfs_is_hole_record(x)		( ntfs_is_magic (x, HOLE) )
+-#define ntfs_is_hole_recordp(p)		( ntfs_is_magicp(p, HOLE) )
+-
+-#define ntfs_is_rstr_record(x)		( ntfs_is_magic (x, RSTR) )
+-#define ntfs_is_rstr_recordp(p)		( ntfs_is_magicp(p, RSTR) )
+-#define ntfs_is_rcrd_record(x)		( ntfs_is_magic (x, RCRD) )
+-#define ntfs_is_rcrd_recordp(p)		( ntfs_is_magicp(p, RCRD) )
+-
+-#define ntfs_is_chkd_record(x)		( ntfs_is_magic (x, CHKD) )
+-#define ntfs_is_chkd_recordp(p)		( ntfs_is_magicp(p, CHKD) )
+-
+-#define ntfs_is_baad_record(x)		( ntfs_is_magic (x, BAAD) )
+-#define ntfs_is_baad_recordp(p)		( ntfs_is_magicp(p, BAAD) )
+-
+-#define ntfs_is_empty_record(x)		( ntfs_is_magic (x, empty) )
+-#define ntfs_is_empty_recordp(p)	( ntfs_is_magicp(p, empty) )
+-
+-/*
+- * The Update Sequence Array (usa) is an array of the le16 values which belong
+- * to the end of each sector protected by the update sequence record in which
+- * this array is contained. Note that the first entry is the Update Sequence
+- * Number (usn), a cyclic counter of how many times the protected record has
+- * been written to disk. The values 0 and -1 (ie. 0xffff) are not used. All
+- * last le16's of each sector have to be equal to the usn (during reading) or
+- * are set to it (during writing). If they are not, an incomplete multi sector
+- * transfer has occurred when the data was written.
+- * The maximum size for the update sequence array is fixed to:
+- *	maximum size = usa_ofs + (usa_count * 2) = 510 bytes
+- * The 510 bytes comes from the fact that the last le16 in the array has to
+- * (obviously) finish before the last le16 of the first 512-byte sector.
+- * This formula can be used as a consistency check in that usa_ofs +
+- * (usa_count * 2) has to be less than or equal to 510.
+- */
+-typedef struct {
+-	NTFS_RECORD_TYPE magic;	/* A four-byte magic identifying the record
+-				   type and/or status. */
+-	le16 usa_ofs;		/* Offset to the Update Sequence Array (usa)
+-				   from the start of the ntfs record. */
+-	le16 usa_count;		/* Number of le16 sized entries in the usa
+-				   including the Update Sequence Number (usn),
+-				   thus the number of fixups is the usa_count
+-				   minus 1. */
+-} __attribute__ ((__packed__)) NTFS_RECORD;
+-
+-/*
+- * System files mft record numbers. All these files are always marked as used
+- * in the bitmap attribute of the mft; presumably in order to avoid accidental
+- * allocation for random other mft records. Also, the sequence number for each
+- * of the system files is always equal to their mft record number and it is
+- * never modified.
+- */
+-typedef enum {
+-	FILE_MFT       = 0,	/* Master file table (mft). Data attribute
+-				   contains the entries and bitmap attribute
+-				   records which ones are in use (bit==1). */
+-	FILE_MFTMirr   = 1,	/* Mft mirror: copy of first four mft records
+-				   in data attribute. If cluster size > 4kiB,
+-				   copy of first N mft records, with
+-					N = cluster_size / mft_record_size. */
+-	FILE_LogFile   = 2,	/* Journalling log in data attribute. */
+-	FILE_Volume    = 3,	/* Volume name attribute and volume information
+-				   attribute (flags and ntfs version). Windows
+-				   refers to this file as volume DASD (Direct
+-				   Access Storage Device). */
+-	FILE_AttrDef   = 4,	/* Array of attribute definitions in data
+-				   attribute. */
+-	FILE_root      = 5,	/* Root directory. */
+-	FILE_Bitmap    = 6,	/* Allocation bitmap of all clusters (lcns) in
+-				   data attribute. */
+-	FILE_Boot      = 7,	/* Boot sector (always at cluster 0) in data
+-				   attribute. */
+-	FILE_BadClus   = 8,	/* Contains all bad clusters in the non-resident
+-				   data attribute. */
+-	FILE_Secure    = 9,	/* Shared security descriptors in data attribute
+-				   and two indexes into the descriptors.
+-				   Appeared in Windows 2000. Before that, this
+-				   file was named $Quota but was unused. */
+-	FILE_UpCase    = 10,	/* Uppercase equivalents of all 65536 Unicode
+-				   characters in data attribute. */
+-	FILE_Extend    = 11,	/* Directory containing other system files (eg.
+-				   $ObjId, $Quota, $Reparse and $UsnJrnl). This
+-				   is new to NTFS3.0. */
+-	FILE_reserved12 = 12,	/* Reserved for future use (records 12-15). */
+-	FILE_reserved13 = 13,
+-	FILE_reserved14 = 14,
+-	FILE_reserved15 = 15,
+-	FILE_first_user = 16,	/* First user file, used as test limit for
+-				   whether to allow opening a file or not. */
+-} NTFS_SYSTEM_FILES;
+-
+-/*
+- * These are the so far known MFT_RECORD_* flags (16-bit) which contain
+- * information about the mft record in which they are present.
+- */
+-enum {
+-	MFT_RECORD_IN_USE	= cpu_to_le16(0x0001),
+-	MFT_RECORD_IS_DIRECTORY = cpu_to_le16(0x0002),
+-} __attribute__ ((__packed__));
+-
+-typedef le16 MFT_RECORD_FLAGS;
+-
+-/*
+- * mft references (aka file references or file record segment references) are
+- * used whenever a structure needs to refer to a record in the mft.
+- *
+- * A reference consists of a 48-bit index into the mft and a 16-bit sequence
+- * number used to detect stale references.
+- *
+- * For error reporting purposes we treat the 48-bit index as a signed quantity.
+- *
+- * The sequence number is a circular counter (skipping 0) describing how many
+- * times the referenced mft record has been (re)used. This has to match the
+- * sequence number of the mft record being referenced, otherwise the reference
+- * is considered stale and removed (FIXME: only ntfsck or the driver itself?).
+- *
+- * If the sequence number is zero it is assumed that no sequence number
+- * consistency checking should be performed.
+- *
+- * FIXME: Since inodes are 32-bit as of now, the driver needs to always check
+- * for high_part being 0 and if not either BUG(), cause a panic() or handle
+- * the situation in some other way. This shouldn't be a problem as a volume has
+- * to become HUGE in order to need more than 32-bits worth of mft records.
+- * Assuming the standard mft record size of 1kb only the records (never mind
+- * the non-resident attributes, etc.) would require 4Tb of space on their own
+- * for the first 32 bits worth of records. This is only if some strange person
+- * doesn't decide to foul play and make the mft sparse which would be a really
+- * horrible thing to do as it would trash our current driver implementation. )-:
+- * Do I hear screams "we want 64-bit inodes!" ?!? (-;
+- *
+- * FIXME: The mft zone is defined as the first 12% of the volume. This space is
+- * reserved so that the mft can grow contiguously and hence doesn't become
+- * fragmented. Volume free space includes the empty part of the mft zone and
+- * when the volume's free 88% are used up, the mft zone is shrunk by a factor
+- * of 2, thus making more space available for more files/data. This process is
+- * repeated every time there is no more free space except for the mft zone until
+- * there really is no more free space.
+- */
+-
+-/*
+- * Typedef the MFT_REF as a 64-bit value for easier handling.
+- * Also define two unpacking macros to get to the reference (MREF) and
+- * sequence number (MSEQNO) respectively.
+- * The _LE versions are to be applied on little endian MFT_REFs.
+- * Note: The _LE versions will return a CPU endian formatted value!
+- */
+-#define MFT_REF_MASK_CPU 0x0000ffffffffffffULL
+-#define MFT_REF_MASK_LE cpu_to_le64(MFT_REF_MASK_CPU)
+-
+-typedef u64 MFT_REF;
+-typedef le64 leMFT_REF;
+-
+-#define MK_MREF(m, s)	((MFT_REF)(((MFT_REF)(s) << 48) |		\
+-					((MFT_REF)(m) & MFT_REF_MASK_CPU)))
+-#define MK_LE_MREF(m, s) cpu_to_le64(MK_MREF(m, s))
+-
+-#define MREF(x)		((unsigned long)((x) & MFT_REF_MASK_CPU))
+-#define MSEQNO(x)	((u16)(((x) >> 48) & 0xffff))
+-#define MREF_LE(x)	((unsigned long)(le64_to_cpu(x) & MFT_REF_MASK_CPU))
+-#define MSEQNO_LE(x)	((u16)((le64_to_cpu(x) >> 48) & 0xffff))
+-
+-#define IS_ERR_MREF(x)	(((x) & 0x0000800000000000ULL) ? true : false)
+-#define ERR_MREF(x)	((u64)((s64)(x)))
+-#define MREF_ERR(x)	((int)((s64)(x)))
+-
+-/*
+- * The mft record header present at the beginning of every record in the mft.
+- * This is followed by a sequence of variable length attribute records which
+- * is terminated by an attribute of type AT_END which is a truncated attribute
+- * in that it only consists of the attribute type code AT_END and none of the
+- * other members of the attribute structure are present.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0	NTFS_RECORD; -- Unfolded here as gcc doesn't like unnamed structs. */
+-	NTFS_RECORD_TYPE magic;	/* Usually the magic is "FILE". */
+-	le16 usa_ofs;		/* See NTFS_RECORD definition above. */
+-	le16 usa_count;		/* See NTFS_RECORD definition above. */
+-
+-/*  8*/	le64 lsn;		/* $LogFile sequence number for this record.
+-				   Changed every time the record is modified. */
+-/* 16*/	le16 sequence_number;	/* Number of times this mft record has been
+-				   reused. (See description for MFT_REF
+-				   above.) NOTE: The increment (skipping zero)
+-				   is done when the file is deleted. NOTE: If
+-				   this is zero it is left zero. */
+-/* 18*/	le16 link_count;	/* Number of hard links, i.e. the number of
+-				   directory entries referencing this record.
+-				   NOTE: Only used in mft base records.
+-				   NOTE: When deleting a directory entry we
+-				   check the link_count and if it is 1 we
+-				   delete the file. Otherwise we delete the
+-				   FILE_NAME_ATTR being referenced by the
+-				   directory entry from the mft record and
+-				   decrement the link_count.
+-				   FIXME: Careful with Win32 + DOS names! */
+-/* 20*/	le16 attrs_offset;	/* Byte offset to the first attribute in this
+-				   mft record from the start of the mft record.
+-				   NOTE: Must be aligned to 8-byte boundary. */
+-/* 22*/	MFT_RECORD_FLAGS flags;	/* Bit array of MFT_RECORD_FLAGS. When a file
+-				   is deleted, the MFT_RECORD_IN_USE flag is
+-				   set to zero. */
+-/* 24*/	le32 bytes_in_use;	/* Number of bytes used in this mft record.
+-				   NOTE: Must be aligned to 8-byte boundary. */
+-/* 28*/	le32 bytes_allocated;	/* Number of bytes allocated for this mft
+-				   record. This should be equal to the mft
+-				   record size. */
+-/* 32*/	leMFT_REF base_mft_record;/* This is zero for base mft records.
+-				   When it is not zero it is a mft reference
+-				   pointing to the base mft record to which
+-				   this record belongs (this is then used to
+-				   locate the attribute list attribute present
+-				   in the base record which describes this
+-				   extension record and hence might need
+-				   modification when the extension record
+-				   itself is modified, also locating the
+-				   attribute list also means finding the other
+-				   potential extents, belonging to the non-base
+-				   mft record). */
+-/* 40*/	le16 next_attr_instance;/* The instance number that will be assigned to
+-				   the next attribute added to this mft record.
+-				   NOTE: Incremented each time after it is used.
+-				   NOTE: Every time the mft record is reused
+-				   this number is set to zero.  NOTE: The first
+-				   instance number is always 0. */
+-/* The below fields are specific to NTFS 3.1+ (Windows XP and above): */
+-/* 42*/ le16 reserved;		/* Reserved/alignment. */
+-/* 44*/ le32 mft_record_number;	/* Number of this mft record. */
+-/* sizeof() = 48 bytes */
+-/*
+- * When (re)using the mft record, we place the update sequence array at this
+- * offset, i.e. before we start with the attributes.  This also makes sense,
+- * otherwise we could run into problems with the update sequence array
+- * containing in itself the last two bytes of a sector which would mean that
+- * multi sector transfer protection wouldn't work.  As you can't protect data
+- * by overwriting it since you then can't get it back...
+- * When reading we obviously use the data from the ntfs record header.
+- */
+-} __attribute__ ((__packed__)) MFT_RECORD;
+-
+-/* This is the version without the NTFS 3.1+ specific fields. */
+-typedef struct {
+-/*Ofs*/
+-/*  0	NTFS_RECORD; -- Unfolded here as gcc doesn't like unnamed structs. */
+-	NTFS_RECORD_TYPE magic;	/* Usually the magic is "FILE". */
+-	le16 usa_ofs;		/* See NTFS_RECORD definition above. */
+-	le16 usa_count;		/* See NTFS_RECORD definition above. */
+-
+-/*  8*/	le64 lsn;		/* $LogFile sequence number for this record.
+-				   Changed every time the record is modified. */
+-/* 16*/	le16 sequence_number;	/* Number of times this mft record has been
+-				   reused. (See description for MFT_REF
+-				   above.) NOTE: The increment (skipping zero)
+-				   is done when the file is deleted. NOTE: If
+-				   this is zero it is left zero. */
+-/* 18*/	le16 link_count;	/* Number of hard links, i.e. the number of
+-				   directory entries referencing this record.
+-				   NOTE: Only used in mft base records.
+-				   NOTE: When deleting a directory entry we
+-				   check the link_count and if it is 1 we
+-				   delete the file. Otherwise we delete the
+-				   FILE_NAME_ATTR being referenced by the
+-				   directory entry from the mft record and
+-				   decrement the link_count.
+-				   FIXME: Careful with Win32 + DOS names! */
+-/* 20*/	le16 attrs_offset;	/* Byte offset to the first attribute in this
+-				   mft record from the start of the mft record.
+-				   NOTE: Must be aligned to 8-byte boundary. */
+-/* 22*/	MFT_RECORD_FLAGS flags;	/* Bit array of MFT_RECORD_FLAGS. When a file
+-				   is deleted, the MFT_RECORD_IN_USE flag is
+-				   set to zero. */
+-/* 24*/	le32 bytes_in_use;	/* Number of bytes used in this mft record.
+-				   NOTE: Must be aligned to 8-byte boundary. */
+-/* 28*/	le32 bytes_allocated;	/* Number of bytes allocated for this mft
+-				   record. This should be equal to the mft
+-				   record size. */
+-/* 32*/	leMFT_REF base_mft_record;/* This is zero for base mft records.
+-				   When it is not zero it is a mft reference
+-				   pointing to the base mft record to which
+-				   this record belongs (this is then used to
+-				   locate the attribute list attribute present
+-				   in the base record which describes this
+-				   extension record and hence might need
+-				   modification when the extension record
+-				   itself is modified, also locating the
+-				   attribute list also means finding the other
+-				   potential extents, belonging to the non-base
+-				   mft record). */
+-/* 40*/	le16 next_attr_instance;/* The instance number that will be assigned to
+-				   the next attribute added to this mft record.
+-				   NOTE: Incremented each time after it is used.
+-				   NOTE: Every time the mft record is reused
+-				   this number is set to zero.  NOTE: The first
+-				   instance number is always 0. */
+-/* sizeof() = 42 bytes */
+-/*
+- * When (re)using the mft record, we place the update sequence array at this
+- * offset, i.e. before we start with the attributes.  This also makes sense,
+- * otherwise we could run into problems with the update sequence array
+- * containing in itself the last two bytes of a sector which would mean that
+- * multi sector transfer protection wouldn't work.  As you can't protect data
+- * by overwriting it since you then can't get it back...
+- * When reading we obviously use the data from the ntfs record header.
+- */
+-} __attribute__ ((__packed__)) MFT_RECORD_OLD;
+-
+-/*
+- * System defined attributes (32-bit).  Each attribute type has a corresponding
+- * attribute name (Unicode string of maximum 64 character length) as described
+- * by the attribute definitions present in the data attribute of the $AttrDef
+- * system file.  On NTFS 3.0 volumes the names are just as the types are named
+- * in the below defines exchanging AT_ for the dollar sign ($).  If that is not
+- * a revealing choice of symbol I do not know what is... (-;
+- */
+-enum {
+-	AT_UNUSED			= cpu_to_le32(         0),
+-	AT_STANDARD_INFORMATION		= cpu_to_le32(      0x10),
+-	AT_ATTRIBUTE_LIST		= cpu_to_le32(      0x20),
+-	AT_FILE_NAME			= cpu_to_le32(      0x30),
+-	AT_OBJECT_ID			= cpu_to_le32(      0x40),
+-	AT_SECURITY_DESCRIPTOR		= cpu_to_le32(      0x50),
+-	AT_VOLUME_NAME			= cpu_to_le32(      0x60),
+-	AT_VOLUME_INFORMATION		= cpu_to_le32(      0x70),
+-	AT_DATA				= cpu_to_le32(      0x80),
+-	AT_INDEX_ROOT			= cpu_to_le32(      0x90),
+-	AT_INDEX_ALLOCATION		= cpu_to_le32(      0xa0),
+-	AT_BITMAP			= cpu_to_le32(      0xb0),
+-	AT_REPARSE_POINT		= cpu_to_le32(      0xc0),
+-	AT_EA_INFORMATION		= cpu_to_le32(      0xd0),
+-	AT_EA				= cpu_to_le32(      0xe0),
+-	AT_PROPERTY_SET			= cpu_to_le32(      0xf0),
+-	AT_LOGGED_UTILITY_STREAM	= cpu_to_le32(     0x100),
+-	AT_FIRST_USER_DEFINED_ATTRIBUTE	= cpu_to_le32(    0x1000),
+-	AT_END				= cpu_to_le32(0xffffffff)
+-};
+-
+-typedef le32 ATTR_TYPE;
+-
+-/*
+- * The collation rules for sorting views/indexes/etc (32-bit).
+- *
+- * COLLATION_BINARY - Collate by binary compare where the first byte is most
+- *	significant.
+- * COLLATION_UNICODE_STRING - Collate Unicode strings by comparing their binary
+- *	Unicode values, except that when a character can be uppercased, the
+- *	upper case value collates before the lower case one.
+- * COLLATION_FILE_NAME - Collate file names as Unicode strings. The collation
+- *	is done very much like COLLATION_UNICODE_STRING. In fact I have no idea
+- *	what the difference is. Perhaps the difference is that file names
+- *	would treat some special characters in an odd way (see
+- *	unistr.c::ntfs_collate_names() and unistr.c::legal_ansi_char_array[]
+- *	for what I mean but COLLATION_UNICODE_STRING would not give any special
+- *	treatment to any characters at all, but this is speculation.
+- * COLLATION_NTOFS_ULONG - Sorting is done according to ascending le32 key
+- *	values. E.g. used for $SII index in FILE_Secure, which sorts by
+- *	security_id (le32).
+- * COLLATION_NTOFS_SID - Sorting is done according to ascending SID values.
+- *	E.g. used for $O index in FILE_Extend/$Quota.
+- * COLLATION_NTOFS_SECURITY_HASH - Sorting is done first by ascending hash
+- *	values and second by ascending security_id values. E.g. used for $SDH
+- *	index in FILE_Secure.
+- * COLLATION_NTOFS_ULONGS - Sorting is done according to a sequence of ascending
+- *	le32 key values. E.g. used for $O index in FILE_Extend/$ObjId, which
+- *	sorts by object_id (16-byte), by splitting up the object_id in four
+- *	le32 values and using them as individual keys. E.g. take the following
+- *	two security_ids, stored as follows on disk:
+- *		1st: a1 61 65 b7 65 7b d4 11 9e 3d 00 e0 81 10 42 59
+- *		2nd: 38 14 37 d2 d2 f3 d4 11 a5 21 c8 6b 79 b1 97 45
+- *	To compare them, they are split into four le32 values each, like so:
+- *		1st: 0xb76561a1 0x11d47b65 0xe0003d9e 0x59421081
+- *		2nd: 0xd2371438 0x11d4f3d2 0x6bc821a5 0x4597b179
+- *	Now, it is apparent why the 2nd object_id collates after the 1st: the
+- *	first le32 value of the 1st object_id is less than the first le32 of
+- *	the 2nd object_id. If the first le32 values of both object_ids were
+- *	equal then the second le32 values would be compared, etc.
+- */
+-enum {
+-	COLLATION_BINARY		= cpu_to_le32(0x00),
+-	COLLATION_FILE_NAME		= cpu_to_le32(0x01),
+-	COLLATION_UNICODE_STRING	= cpu_to_le32(0x02),
+-	COLLATION_NTOFS_ULONG		= cpu_to_le32(0x10),
+-	COLLATION_NTOFS_SID		= cpu_to_le32(0x11),
+-	COLLATION_NTOFS_SECURITY_HASH	= cpu_to_le32(0x12),
+-	COLLATION_NTOFS_ULONGS		= cpu_to_le32(0x13),
+-};
+-
+-typedef le32 COLLATION_RULE;
+-
+-/*
+- * The flags (32-bit) describing attribute properties in the attribute
+- * definition structure.  FIXME: This information is based on Regis's
+- * information and, according to him, it is not certain and probably
+- * incomplete.  The INDEXABLE flag is fairly certainly correct as only the file
+- * name attribute has this flag set and this is the only attribute indexed in
+- * NT4.
+- */
+-enum {
+-	ATTR_DEF_INDEXABLE	= cpu_to_le32(0x02), /* Attribute can be
+-					indexed. */
+-	ATTR_DEF_MULTIPLE	= cpu_to_le32(0x04), /* Attribute type
+-					can be present multiple times in the
+-					mft records of an inode. */
+-	ATTR_DEF_NOT_ZERO	= cpu_to_le32(0x08), /* Attribute value
+-					must contain at least one non-zero
+-					byte. */
+-	ATTR_DEF_INDEXED_UNIQUE	= cpu_to_le32(0x10), /* Attribute must be
+-					indexed and the attribute value must be
+-					unique for the attribute type in all of
+-					the mft records of an inode. */
+-	ATTR_DEF_NAMED_UNIQUE	= cpu_to_le32(0x20), /* Attribute must be
+-					named and the name must be unique for
+-					the attribute type in all of the mft
+-					records of an inode. */
+-	ATTR_DEF_RESIDENT	= cpu_to_le32(0x40), /* Attribute must be
+-					resident. */
+-	ATTR_DEF_ALWAYS_LOG	= cpu_to_le32(0x80), /* Always log
+-					modifications to this attribute,
+-					regardless of whether it is resident or
+-					non-resident.  Without this, only log
+-					modifications if the attribute is
+-					resident. */
+-};
+-
+-typedef le32 ATTR_DEF_FLAGS;
+-
+-/*
+- * The data attribute of FILE_AttrDef contains a sequence of attribute
+- * definitions for the NTFS volume. With this, it is supposed to be safe for an
+- * older NTFS driver to mount a volume containing a newer NTFS version without
+- * damaging it (that's the theory. In practice it's: not damaging it too much).
+- * Entries are sorted by attribute type. The flags describe whether the
+- * attribute can be resident/non-resident and possibly other things, but the
+- * actual bits are unknown.
+- */
+-typedef struct {
+-/*hex ofs*/
+-/*  0*/	ntfschar name[0x40];		/* Unicode name of the attribute. Zero
+-					   terminated. */
+-/* 80*/	ATTR_TYPE type;			/* Type of the attribute. */
+-/* 84*/	le32 display_rule;		/* Default display rule.
+-					   FIXME: What does it mean? (AIA) */
+-/* 88*/ COLLATION_RULE collation_rule;	/* Default collation rule. */
+-/* 8c*/	ATTR_DEF_FLAGS flags;		/* Flags describing the attribute. */
+-/* 90*/	sle64 min_size;			/* Optional minimum attribute size. */
+-/* 98*/	sle64 max_size;			/* Maximum size of attribute. */
+-/* sizeof() = 0xa0 or 160 bytes */
+-} __attribute__ ((__packed__)) ATTR_DEF;
+-
+-/*
+- * Attribute flags (16-bit).
+- */
+-enum {
+-	ATTR_IS_COMPRESSED    = cpu_to_le16(0x0001),
+-	ATTR_COMPRESSION_MASK = cpu_to_le16(0x00ff), /* Compression method
+-							      mask.  Also, first
+-							      illegal value. */
+-	ATTR_IS_ENCRYPTED     = cpu_to_le16(0x4000),
+-	ATTR_IS_SPARSE	      = cpu_to_le16(0x8000),
+-} __attribute__ ((__packed__));
+-
+-typedef le16 ATTR_FLAGS;
+-
+-/*
+- * Attribute compression.
+- *
+- * Only the data attribute is ever compressed in the current ntfs driver in
+- * Windows. Further, compression is only applied when the data attribute is
+- * non-resident. Finally, to use compression, the maximum allowed cluster size
+- * on a volume is 4kib.
+- *
+- * The compression method is based on independently compressing blocks of X
+- * clusters, where X is determined from the compression_unit value found in the
+- * non-resident attribute record header (more precisely: X = 2^compression_unit
+- * clusters). On Windows NT/2k, X always is 16 clusters (compression_unit = 4).
+- *
+- * There are three different cases of how a compression block of X clusters
+- * can be stored:
+- *
+- *   1) The data in the block is all zero (a sparse block):
+- *	  This is stored as a sparse block in the runlist, i.e. the runlist
+- *	  entry has length = X and lcn = -1. The mapping pairs array actually
+- *	  uses a delta_lcn value length of 0, i.e. delta_lcn is not present at
+- *	  all, which is then interpreted by the driver as lcn = -1.
+- *	  NOTE: Even uncompressed files can be sparse on NTFS 3.0 volumes, then
+- *	  the same principles apply as above, except that the length is not
+- *	  restricted to being any particular value.
+- *
+- *   2) The data in the block is not compressed:
+- *	  This happens when compression doesn't reduce the size of the block
+- *	  in clusters. I.e. if compression has a small effect so that the
+- *	  compressed data still occupies X clusters, then the uncompressed data
+- *	  is stored in the block.
+- *	  This case is recognised by the fact that the runlist entry has
+- *	  length = X and lcn >= 0. The mapping pairs array stores this as
+- *	  normal with a run length of X and some specific delta_lcn, i.e.
+- *	  delta_lcn has to be present.
+- *
+- *   3) The data in the block is compressed:
+- *	  The common case. This case is recognised by the fact that the run
+- *	  list entry has length L < X and lcn >= 0. The mapping pairs array
+- *	  stores this as normal with a run length of X and some specific
+- *	  delta_lcn, i.e. delta_lcn has to be present. This runlist entry is
+- *	  immediately followed by a sparse entry with length = X - L and
+- *	  lcn = -1. The latter entry is to make up the vcn counting to the
+- *	  full compression block size X.
+- *
+- * In fact, life is more complicated because adjacent entries of the same type
+- * can be coalesced. This means that one has to keep track of the number of
+- * clusters handled and work on a basis of X clusters at a time being one
+- * block. An example: if length L > X this means that this particular runlist
+- * entry contains a block of length X and part of one or more blocks of length
+- * L - X. Another example: if length L < X, this does not necessarily mean that
+- * the block is compressed as it might be that the lcn changes inside the block
+- * and hence the following runlist entry describes the continuation of the
+- * potentially compressed block. The block would be compressed if the
+- * following runlist entry describes at least X - L sparse clusters, thus
+- * making up the compression block length as described in point 3 above. (Of
+- * course, there can be several runlist entries with small lengths so that the
+- * sparse entry does not follow the first data containing entry with
+- * length < X.)
+- *
+- * NOTE: At the end of the compressed attribute value, there most likely is not
+- * just the right amount of data to make up a compression block, thus this data
+- * is not even attempted to be compressed. It is just stored as is, unless
+- * the number of clusters it occupies is reduced when compressed in which case
+- * it is stored as a compressed compression block, complete with sparse
+- * clusters at the end.
+- */
+-
+-/*
+- * Flags of resident attributes (8-bit).
+- */
+-enum {
+-	RESIDENT_ATTR_IS_INDEXED = 0x01, /* Attribute is referenced in an index
+-					    (has implications for deleting and
+-					    modifying the attribute). */
+-} __attribute__ ((__packed__));
+-
+-typedef u8 RESIDENT_ATTR_FLAGS;
+-
+-/*
+- * Attribute record header. Always aligned to 8-byte boundary.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0*/	ATTR_TYPE type;		/* The (32-bit) type of the attribute. */
+-/*  4*/	le32 length;		/* Byte size of the resident part of the
+-				   attribute (aligned to 8-byte boundary).
+-				   Used to get to the next attribute. */
+-/*  8*/	u8 non_resident;	/* If 0, attribute is resident.
+-				   If 1, attribute is non-resident. */
+-/*  9*/	u8 name_length;		/* Unicode character size of name of attribute.
+-				   0 if unnamed. */
+-/* 10*/	le16 name_offset;	/* If name_length != 0, the byte offset to the
+-				   beginning of the name from the attribute
+-				   record. Note that the name is stored as a
+-				   Unicode string. When creating, place offset
+-				   just at the end of the record header. Then,
+-				   follow with attribute value or mapping pairs
+-				   array, resident and non-resident attributes
+-				   respectively, aligning to an 8-byte
+-				   boundary. */
+-/* 12*/	ATTR_FLAGS flags;	/* Flags describing the attribute. */
+-/* 14*/	le16 instance;		/* The instance of this attribute record. This
+-				   number is unique within this mft record (see
+-				   MFT_RECORD/next_attribute_instance notes in
+-				   mft.h for more details). */
+-/* 16*/	union {
+-		/* Resident attributes. */
+-		struct {
+-/* 16 */		le32 value_length;/* Byte size of attribute value. */
+-/* 20 */		le16 value_offset;/* Byte offset of the attribute
+-					     value from the start of the
+-					     attribute record. When creating,
+-					     align to 8-byte boundary if we
+-					     have a name present as this might
+-					     not have a length of a multiple
+-					     of 8-bytes. */
+-/* 22 */		RESIDENT_ATTR_FLAGS flags; /* See above. */
+-/* 23 */		s8 reserved;	  /* Reserved/alignment to 8-byte
+-					     boundary. */
+-		} __attribute__ ((__packed__)) resident;
+-		/* Non-resident attributes. */
+-		struct {
+-/* 16*/			leVCN lowest_vcn;/* Lowest valid virtual cluster number
+-				for this portion of the attribute value or
+-				0 if this is the only extent (usually the
+-				case). - Only when an attribute list is used
+-				does lowest_vcn != 0 ever occur. */
+-/* 24*/			leVCN highest_vcn;/* Highest valid vcn of this extent of
+-				the attribute value. - Usually there is only one
+-				portion, so this usually equals the attribute
+-				value size in clusters minus 1. Can be -1 for
+-				zero length files. Can be 0 for "single extent"
+-				attributes. */
+-/* 32*/			le16 mapping_pairs_offset; /* Byte offset from the
+-				beginning of the structure to the mapping pairs
+-				array which contains the mappings between the
+-				vcns and the logical cluster numbers (lcns).
+-				When creating, place this at the end of this
+-				record header aligned to 8-byte boundary. */
+-/* 34*/			u8 compression_unit; /* The compression unit expressed
+-				as the log to the base 2 of the number of
+-				clusters in a compression unit.  0 means not
+-				compressed.  (This effectively limits the
+-				compression unit size to be a power of two
+-				clusters.)  WinNT4 only uses a value of 4.
+-				Sparse files have this set to 0 on XPSP2. */
+-/* 35*/			u8 reserved[5];		/* Align to 8-byte boundary. */
+-/* The sizes below are only used when lowest_vcn is zero, as otherwise it would
+-   be difficult to keep them up-to-date.*/
+-/* 40*/			sle64 allocated_size;	/* Byte size of disk space
+-				allocated to hold the attribute value. Always
+-				is a multiple of the cluster size. When a file
+-				is compressed, this field is a multiple of the
+-				compression block size (2^compression_unit) and
+-				it represents the logically allocated space
+-				rather than the actual on disk usage. For this
+-				use the compressed_size (see below). */
+-/* 48*/			sle64 data_size;	/* Byte size of the attribute
+-				value. Can be larger than allocated_size if
+-				attribute value is compressed or sparse. */
+-/* 56*/			sle64 initialized_size;	/* Byte size of initialized
+-				portion of the attribute value. Usually equals
+-				data_size. */
+-/* sizeof(uncompressed attr) = 64*/
+-/* 64*/			sle64 compressed_size;	/* Byte size of the attribute
+-				value after compression.  Only present when
+-				compressed or sparse.  Always is a multiple of
+-				the cluster size.  Represents the actual amount
+-				of disk space being used on the disk. */
+-/* sizeof(compressed attr) = 72*/
+-		} __attribute__ ((__packed__)) non_resident;
+-	} __attribute__ ((__packed__)) data;
+-} __attribute__ ((__packed__)) ATTR_RECORD;
+-
+-typedef ATTR_RECORD ATTR_REC;
+-
+-/*
+- * File attribute flags (32-bit) appearing in the file_attributes fields of the
+- * STANDARD_INFORMATION attribute of MFT_RECORDs and the FILENAME_ATTR
+- * attributes of MFT_RECORDs and directory index entries.
+- *
+- * All of the below flags appear in the directory index entries but only some
+- * appear in the STANDARD_INFORMATION attribute whilst only some others appear
+- * in the FILENAME_ATTR attribute of MFT_RECORDs.  Unless otherwise stated the
+- * flags appear in all of the above.
+- */
+-enum {
+-	FILE_ATTR_READONLY		= cpu_to_le32(0x00000001),
+-	FILE_ATTR_HIDDEN		= cpu_to_le32(0x00000002),
+-	FILE_ATTR_SYSTEM		= cpu_to_le32(0x00000004),
+-	/* Old DOS volid. Unused in NT.	= cpu_to_le32(0x00000008), */
+-
+-	FILE_ATTR_DIRECTORY		= cpu_to_le32(0x00000010),
+-	/* Note, FILE_ATTR_DIRECTORY is not considered valid in NT.  It is
+-	   reserved for the DOS SUBDIRECTORY flag. */
+-	FILE_ATTR_ARCHIVE		= cpu_to_le32(0x00000020),
+-	FILE_ATTR_DEVICE		= cpu_to_le32(0x00000040),
+-	FILE_ATTR_NORMAL		= cpu_to_le32(0x00000080),
+-
+-	FILE_ATTR_TEMPORARY		= cpu_to_le32(0x00000100),
+-	FILE_ATTR_SPARSE_FILE		= cpu_to_le32(0x00000200),
+-	FILE_ATTR_REPARSE_POINT		= cpu_to_le32(0x00000400),
+-	FILE_ATTR_COMPRESSED		= cpu_to_le32(0x00000800),
+-
+-	FILE_ATTR_OFFLINE		= cpu_to_le32(0x00001000),
+-	FILE_ATTR_NOT_CONTENT_INDEXED	= cpu_to_le32(0x00002000),
+-	FILE_ATTR_ENCRYPTED		= cpu_to_le32(0x00004000),
+-
+-	FILE_ATTR_VALID_FLAGS		= cpu_to_le32(0x00007fb7),
+-	/* Note, FILE_ATTR_VALID_FLAGS masks out the old DOS VolId and the
+-	   FILE_ATTR_DEVICE and preserves everything else.  This mask is used
+-	   to obtain all flags that are valid for reading. */
+-	FILE_ATTR_VALID_SET_FLAGS	= cpu_to_le32(0x000031a7),
+-	/* Note, FILE_ATTR_VALID_SET_FLAGS masks out the old DOS VolId, the
+-	   F_A_DEVICE, F_A_DIRECTORY, F_A_SPARSE_FILE, F_A_REPARSE_POINT,
+-	   F_A_COMPRESSED, and F_A_ENCRYPTED and preserves the rest.  This mask
+-	   is used to obtain all flags that are valid for setting. */
+-	/*
+-	 * The flag FILE_ATTR_DUP_FILENAME_INDEX_PRESENT is present in all
+-	 * FILENAME_ATTR attributes but not in the STANDARD_INFORMATION
+-	 * attribute of an mft record.
+-	 */
+-	FILE_ATTR_DUP_FILE_NAME_INDEX_PRESENT	= cpu_to_le32(0x10000000),
+-	/* Note, this is a copy of the corresponding bit from the mft record,
+-	   telling us whether this is a directory or not, i.e. whether it has
+-	   an index root attribute or not. */
+-	FILE_ATTR_DUP_VIEW_INDEX_PRESENT	= cpu_to_le32(0x20000000),
+-	/* Note, this is a copy of the corresponding bit from the mft record,
+-	   telling us whether this file has a view index present (eg. object id
+-	   index, quota index, one of the security indexes or the encrypting
+-	   filesystem related indexes). */
+-};
+-
+-typedef le32 FILE_ATTR_FLAGS;
+-
+-/*
+- * NOTE on times in NTFS: All times are in MS standard time format, i.e. they
+- * are the number of 100-nanosecond intervals since 1st January 1601, 00:00:00
+- * universal coordinated time (UTC). (In Linux time starts 1st January 1970,
+- * 00:00:00 UTC and is stored as the number of 1-second intervals since then.)
+- */
+-
+-/*
+- * Attribute: Standard information (0x10).
+- *
+- * NOTE: Always resident.
+- * NOTE: Present in all base file records on a volume.
+- * NOTE: There is conflicting information about the meaning of each of the time
+- *	 fields but the meaning as defined below has been verified to be
+- *	 correct by practical experimentation on Windows NT4 SP6a and is hence
+- *	 assumed to be the one and only correct interpretation.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0*/	sle64 creation_time;		/* Time file was created. Updated when
+-					   a filename is changed(?). */
+-/*  8*/	sle64 last_data_change_time;	/* Time the data attribute was last
+-					   modified. */
+-/* 16*/	sle64 last_mft_change_time;	/* Time this mft record was last
+-					   modified. */
+-/* 24*/	sle64 last_access_time;		/* Approximate time when the file was
+-					   last accessed (obviously this is not
+-					   updated on read-only volumes). In
+-					   Windows this is only updated when
+-					   accessed if some time delta has
+-					   passed since the last update. Also,
+-					   last access time updates can be
+-					   disabled altogether for speed. */
+-/* 32*/	FILE_ATTR_FLAGS file_attributes; /* Flags describing the file. */
+-/* 36*/	union {
+-	/* NTFS 1.2 */
+-		struct {
+-		/* 36*/	u8 reserved12[12];	/* Reserved/alignment to 8-byte
+-						   boundary. */
+-		} __attribute__ ((__packed__)) v1;
+-	/* sizeof() = 48 bytes */
+-	/* NTFS 3.x */
+-		struct {
+-/*
+- * If a volume has been upgraded from a previous NTFS version, then these
+- * fields are present only if the file has been accessed since the upgrade.
+- * Recognize the difference by comparing the length of the resident attribute
+- * value. If it is 48, then the following fields are missing. If it is 72 then
+- * the fields are present. Maybe just check like this:
+- *	if (resident.ValueLength < sizeof(STANDARD_INFORMATION)) {
+- *		Assume NTFS 1.2- format.
+- *		If (volume version is 3.x)
+- *			Upgrade attribute to NTFS 3.x format.
+- *		else
+- *			Use NTFS 1.2- format for access.
+- *	} else
+- *		Use NTFS 3.x format for access.
+- * Only problem is that it might be legal to set the length of the value to
+- * arbitrarily large values thus spoiling this check. - But chkdsk probably
+- * views that as a corruption, assuming that it behaves like this for all
+- * attributes.
+- */
+-		/* 36*/	le32 maximum_versions;	/* Maximum allowed versions for
+-				file. Zero if version numbering is disabled. */
+-		/* 40*/	le32 version_number;	/* This file's version (if any).
+-				Set to zero if maximum_versions is zero. */
+-		/* 44*/	le32 class_id;		/* Class id from bidirectional
+-				class id index (?). */
+-		/* 48*/	le32 owner_id;		/* Owner_id of the user owning
+-				the file. Translate via $Q index in FILE_Extend
+-				/$Quota to the quota control entry for the user
+-				owning the file. Zero if quotas are disabled. */
+-		/* 52*/	le32 security_id;	/* Security_id for the file.
+-				Translate via $SII index and $SDS data stream
+-				in FILE_Secure to the security descriptor. */
+-		/* 56*/	le64 quota_charged;	/* Byte size of the charge to
+-				the quota for all streams of the file. Note: Is
+-				zero if quotas are disabled. */
+-		/* 64*/	leUSN usn;		/* Last update sequence number
+-				of the file.  This is a direct index into the
+-				transaction log file ($UsnJrnl).  It is zero if
+-				the usn journal is disabled or this file has
+-				not been subject to logging yet.  See usnjrnl.h
+-				for details. */
+-		} __attribute__ ((__packed__)) v3;
+-	/* sizeof() = 72 bytes (NTFS 3.x) */
+-	} __attribute__ ((__packed__)) ver;
+-} __attribute__ ((__packed__)) STANDARD_INFORMATION;
+-
+-/*
+- * Attribute: Attribute list (0x20).
+- *
+- * - Can be either resident or non-resident.
+- * - Value consists of a sequence of variable length, 8-byte aligned,
+- * ATTR_LIST_ENTRY records.
+- * - The list is not terminated by anything at all! The only way to know when
+- * the end is reached is to keep track of the current offset and compare it to
+- * the attribute value size.
+- * - The attribute list attribute contains one entry for each attribute of
+- * the file in which the list is located, except for the list attribute
+- * itself. The list is sorted: first by attribute type, second by attribute
+- * name (if present), third by instance number. The extents of one
+- * non-resident attribute (if present) immediately follow after the initial
+- * extent. They are ordered by lowest_vcn and have their instace set to zero.
+- * It is not allowed to have two attributes with all sorting keys equal.
+- * - Further restrictions:
+- *	- If not resident, the vcn to lcn mapping array has to fit inside the
+- *	  base mft record.
+- *	- The attribute list attribute value has a maximum size of 256kb. This
+- *	  is imposed by the Windows cache manager.
+- * - Attribute lists are only used when the attributes of mft record do not
+- * fit inside the mft record despite all attributes (that can be made
+- * non-resident) having been made non-resident. This can happen e.g. when:
+- *	- File has a large number of hard links (lots of file name
+- *	  attributes present).
+- *	- The mapping pairs array of some non-resident attribute becomes so
+- *	  large due to fragmentation that it overflows the mft record.
+- *	- The security descriptor is very complex (not applicable to
+- *	  NTFS 3.0 volumes).
+- *	- There are many named streams.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0*/	ATTR_TYPE type;		/* Type of referenced attribute. */
+-/*  4*/	le16 length;		/* Byte size of this entry (8-byte aligned). */
+-/*  6*/	u8 name_length;		/* Size in Unicode chars of the name of the
+-				   attribute or 0 if unnamed. */
+-/*  7*/	u8 name_offset;		/* Byte offset to beginning of attribute name
+-				   (always set this to where the name would
+-				   start even if unnamed). */
+-/*  8*/	leVCN lowest_vcn;	/* Lowest virtual cluster number of this portion
+-				   of the attribute value. This is usually 0. It
+-				   is non-zero for the case where one attribute
+-				   does not fit into one mft record and thus
+-				   several mft records are allocated to hold
+-				   this attribute. In the latter case, each mft
+-				   record holds one extent of the attribute and
+-				   there is one attribute list entry for each
+-				   extent. NOTE: This is DEFINITELY a signed
+-				   value! The windows driver uses cmp, followed
+-				   by jg when comparing this, thus it treats it
+-				   as signed. */
+-/* 16*/	leMFT_REF mft_reference;/* The reference of the mft record holding
+-				   the ATTR_RECORD for this portion of the
+-				   attribute value. */
+-/* 24*/	le16 instance;		/* If lowest_vcn = 0, the instance of the
+-				   attribute being referenced; otherwise 0. */
+-/* 26*/	ntfschar name[0];	/* Use when creating only. When reading use
+-				   name_offset to determine the location of the
+-				   name. */
+-/* sizeof() = 26 + (attribute_name_length * 2) bytes */
+-} __attribute__ ((__packed__)) ATTR_LIST_ENTRY;
+-
+-/*
+- * The maximum allowed length for a file name.
+- */
+-#define MAXIMUM_FILE_NAME_LENGTH	255
+-
+-/*
+- * Possible namespaces for filenames in ntfs (8-bit).
+- */
+-enum {
+-	FILE_NAME_POSIX		= 0x00,
+-	/* This is the largest namespace. It is case sensitive and allows all
+-	   Unicode characters except for: '\0' and '/'.  Beware that in
+-	   WinNT/2k/2003 by default files which eg have the same name except
+-	   for their case will not be distinguished by the standard utilities
+-	   and thus a "del filename" will delete both "filename" and "fileName"
+-	   without warning.  However if for example Services For Unix (SFU) are
+-	   installed and the case sensitive option was enabled at installation
+-	   time, then you can create/access/delete such files.
+-	   Note that even SFU places restrictions on the filenames beyond the
+-	   '\0' and '/' and in particular the following set of characters is
+-	   not allowed: '"', '/', '<', '>', '\'.  All other characters,
+-	   including the ones no allowed in WIN32 namespace are allowed.
+-	   Tested with SFU 3.5 (this is now free) running on Windows XP. */
+-	FILE_NAME_WIN32		= 0x01,
+-	/* The standard WinNT/2k NTFS long filenames. Case insensitive.  All
+-	   Unicode chars except: '\0', '"', '*', '/', ':', '<', '>', '?', '\',
+-	   and '|'.  Further, names cannot end with a '.' or a space. */
+-	FILE_NAME_DOS		= 0x02,
+-	/* The standard DOS filenames (8.3 format). Uppercase only.  All 8-bit
+-	   characters greater space, except: '"', '*', '+', ',', '/', ':', ';',
+-	   '<', '=', '>', '?', and '\'. */
+-	FILE_NAME_WIN32_AND_DOS	= 0x03,
+-	/* 3 means that both the Win32 and the DOS filenames are identical and
+-	   hence have been saved in this single filename record. */
+-} __attribute__ ((__packed__));
+-
+-typedef u8 FILE_NAME_TYPE_FLAGS;
+-
+-/*
+- * Attribute: Filename (0x30).
+- *
+- * NOTE: Always resident.
+- * NOTE: All fields, except the parent_directory, are only updated when the
+- *	 filename is changed. Until then, they just become out of sync with
+- *	 reality and the more up to date values are present in the standard
+- *	 information attribute.
+- * NOTE: There is conflicting information about the meaning of each of the time
+- *	 fields but the meaning as defined below has been verified to be
+- *	 correct by practical experimentation on Windows NT4 SP6a and is hence
+- *	 assumed to be the one and only correct interpretation.
+- */
+-typedef struct {
+-/*hex ofs*/
+-/*  0*/	leMFT_REF parent_directory;	/* Directory this filename is
+-					   referenced from. */
+-/*  8*/	sle64 creation_time;		/* Time file was created. */
+-/* 10*/	sle64 last_data_change_time;	/* Time the data attribute was last
+-					   modified. */
+-/* 18*/	sle64 last_mft_change_time;	/* Time this mft record was last
+-					   modified. */
+-/* 20*/	sle64 last_access_time;		/* Time this mft record was last
+-					   accessed. */
+-/* 28*/	sle64 allocated_size;		/* Byte size of on-disk allocated space
+-					   for the unnamed data attribute.  So
+-					   for normal $DATA, this is the
+-					   allocated_size from the unnamed
+-					   $DATA attribute and for compressed
+-					   and/or sparse $DATA, this is the
+-					   compressed_size from the unnamed
+-					   $DATA attribute.  For a directory or
+-					   other inode without an unnamed $DATA
+-					   attribute, this is always 0.  NOTE:
+-					   This is a multiple of the cluster
+-					   size. */
+-/* 30*/	sle64 data_size;		/* Byte size of actual data in unnamed
+-					   data attribute.  For a directory or
+-					   other inode without an unnamed $DATA
+-					   attribute, this is always 0. */
+-/* 38*/	FILE_ATTR_FLAGS file_attributes;	/* Flags describing the file. */
+-/* 3c*/	union {
+-	/* 3c*/	struct {
+-		/* 3c*/	le16 packed_ea_size;	/* Size of the buffer needed to
+-						   pack the extended attributes
+-						   (EAs), if such are present.*/
+-		/* 3e*/	le16 reserved;		/* Reserved for alignment. */
+-		} __attribute__ ((__packed__)) ea;
+-	/* 3c*/	struct {
+-		/* 3c*/	le32 reparse_point_tag;	/* Type of reparse point,
+-						   present only in reparse
+-						   points and only if there are
+-						   no EAs. */
+-		} __attribute__ ((__packed__)) rp;
+-	} __attribute__ ((__packed__)) type;
+-/* 40*/	u8 file_name_length;			/* Length of file name in
+-						   (Unicode) characters. */
+-/* 41*/	FILE_NAME_TYPE_FLAGS file_name_type;	/* Namespace of the file name.*/
+-/* 42*/	ntfschar file_name[0];			/* File name in Unicode. */
+-} __attribute__ ((__packed__)) FILE_NAME_ATTR;
+-
+-/*
+- * GUID structures store globally unique identifiers (GUID). A GUID is a
+- * 128-bit value consisting of one group of eight hexadecimal digits, followed
+- * by three groups of four hexadecimal digits each, followed by one group of
+- * twelve hexadecimal digits. GUIDs are Microsoft's implementation of the
+- * distributed computing environment (DCE) universally unique identifier (UUID).
+- * Example of a GUID:
+- *	1F010768-5A73-BC91-0010A52216A7
+- */
+-typedef struct {
+-	le32 data1;	/* The first eight hexadecimal digits of the GUID. */
+-	le16 data2;	/* The first group of four hexadecimal digits. */
+-	le16 data3;	/* The second group of four hexadecimal digits. */
+-	u8 data4[8];	/* The first two bytes are the third group of four
+-			   hexadecimal digits. The remaining six bytes are the
+-			   final 12 hexadecimal digits. */
+-} __attribute__ ((__packed__)) GUID;
+-
+-/*
+- * FILE_Extend/$ObjId contains an index named $O. This index contains all
+- * object_ids present on the volume as the index keys and the corresponding
+- * mft_record numbers as the index entry data parts. The data part (defined
+- * below) also contains three other object_ids:
+- *	birth_volume_id - object_id of FILE_Volume on which the file was first
+- *			  created. Optional (i.e. can be zero).
+- *	birth_object_id - object_id of file when it was first created. Usually
+- *			  equals the object_id. Optional (i.e. can be zero).
+- *	domain_id	- Reserved (always zero).
+- */
+-typedef struct {
+-	leMFT_REF mft_reference;/* Mft record containing the object_id in
+-				   the index entry key. */
+-	union {
+-		struct {
+-			GUID birth_volume_id;
+-			GUID birth_object_id;
+-			GUID domain_id;
+-		} __attribute__ ((__packed__)) origin;
+-		u8 extended_info[48];
+-	} __attribute__ ((__packed__)) opt;
+-} __attribute__ ((__packed__)) OBJ_ID_INDEX_DATA;
+-
+-/*
+- * Attribute: Object id (NTFS 3.0+) (0x40).
+- *
+- * NOTE: Always resident.
+- */
+-typedef struct {
+-	GUID object_id;				/* Unique id assigned to the
+-						   file.*/
+-	/* The following fields are optional. The attribute value size is 16
+-	   bytes, i.e. sizeof(GUID), if these are not present at all. Note,
+-	   the entries can be present but one or more (or all) can be zero
+-	   meaning that that particular value(s) is(are) not defined. */
+-	union {
+-		struct {
+-			GUID birth_volume_id;	/* Unique id of volume on which
+-						   the file was first created.*/
+-			GUID birth_object_id;	/* Unique id of file when it was
+-						   first created. */
+-			GUID domain_id;		/* Reserved, zero. */
+-		} __attribute__ ((__packed__)) origin;
+-		u8 extended_info[48];
+-	} __attribute__ ((__packed__)) opt;
+-} __attribute__ ((__packed__)) OBJECT_ID_ATTR;
+-
+-/*
+- * The pre-defined IDENTIFIER_AUTHORITIES used as SID_IDENTIFIER_AUTHORITY in
+- * the SID structure (see below).
+- */
+-//typedef enum {					/* SID string prefix. */
+-//	SECURITY_NULL_SID_AUTHORITY	= {0, 0, 0, 0, 0, 0},	/* S-1-0 */
+-//	SECURITY_WORLD_SID_AUTHORITY	= {0, 0, 0, 0, 0, 1},	/* S-1-1 */
+-//	SECURITY_LOCAL_SID_AUTHORITY	= {0, 0, 0, 0, 0, 2},	/* S-1-2 */
+-//	SECURITY_CREATOR_SID_AUTHORITY	= {0, 0, 0, 0, 0, 3},	/* S-1-3 */
+-//	SECURITY_NON_UNIQUE_AUTHORITY	= {0, 0, 0, 0, 0, 4},	/* S-1-4 */
+-//	SECURITY_NT_SID_AUTHORITY	= {0, 0, 0, 0, 0, 5},	/* S-1-5 */
+-//} IDENTIFIER_AUTHORITIES;
+-
+-/*
+- * These relative identifiers (RIDs) are used with the above identifier
+- * authorities to make up universal well-known SIDs.
+- *
+- * Note: The relative identifier (RID) refers to the portion of a SID, which
+- * identifies a user or group in relation to the authority that issued the SID.
+- * For example, the universal well-known SID Creator Owner ID (S-1-3-0) is
+- * made up of the identifier authority SECURITY_CREATOR_SID_AUTHORITY (3) and
+- * the relative identifier SECURITY_CREATOR_OWNER_RID (0).
+- */
+-typedef enum {					/* Identifier authority. */
+-	SECURITY_NULL_RID		  = 0,	/* S-1-0 */
+-	SECURITY_WORLD_RID		  = 0,	/* S-1-1 */
+-	SECURITY_LOCAL_RID		  = 0,	/* S-1-2 */
+-
+-	SECURITY_CREATOR_OWNER_RID	  = 0,	/* S-1-3 */
+-	SECURITY_CREATOR_GROUP_RID	  = 1,	/* S-1-3 */
+-
+-	SECURITY_CREATOR_OWNER_SERVER_RID = 2,	/* S-1-3 */
+-	SECURITY_CREATOR_GROUP_SERVER_RID = 3,	/* S-1-3 */
+-
+-	SECURITY_DIALUP_RID		  = 1,
+-	SECURITY_NETWORK_RID		  = 2,
+-	SECURITY_BATCH_RID		  = 3,
+-	SECURITY_INTERACTIVE_RID	  = 4,
+-	SECURITY_SERVICE_RID		  = 6,
+-	SECURITY_ANONYMOUS_LOGON_RID	  = 7,
+-	SECURITY_PROXY_RID		  = 8,
+-	SECURITY_ENTERPRISE_CONTROLLERS_RID=9,
+-	SECURITY_SERVER_LOGON_RID	  = 9,
+-	SECURITY_PRINCIPAL_SELF_RID	  = 0xa,
+-	SECURITY_AUTHENTICATED_USER_RID	  = 0xb,
+-	SECURITY_RESTRICTED_CODE_RID	  = 0xc,
+-	SECURITY_TERMINAL_SERVER_RID	  = 0xd,
+-
+-	SECURITY_LOGON_IDS_RID		  = 5,
+-	SECURITY_LOGON_IDS_RID_COUNT	  = 3,
+-
+-	SECURITY_LOCAL_SYSTEM_RID	  = 0x12,
+-
+-	SECURITY_NT_NON_UNIQUE		  = 0x15,
+-
+-	SECURITY_BUILTIN_DOMAIN_RID	  = 0x20,
+-
+-	/*
+-	 * Well-known domain relative sub-authority values (RIDs).
+-	 */
+-
+-	/* Users. */
+-	DOMAIN_USER_RID_ADMIN		  = 0x1f4,
+-	DOMAIN_USER_RID_GUEST		  = 0x1f5,
+-	DOMAIN_USER_RID_KRBTGT		  = 0x1f6,
+-
+-	/* Groups. */
+-	DOMAIN_GROUP_RID_ADMINS		  = 0x200,
+-	DOMAIN_GROUP_RID_USERS		  = 0x201,
+-	DOMAIN_GROUP_RID_GUESTS		  = 0x202,
+-	DOMAIN_GROUP_RID_COMPUTERS	  = 0x203,
+-	DOMAIN_GROUP_RID_CONTROLLERS	  = 0x204,
+-	DOMAIN_GROUP_RID_CERT_ADMINS	  = 0x205,
+-	DOMAIN_GROUP_RID_SCHEMA_ADMINS	  = 0x206,
+-	DOMAIN_GROUP_RID_ENTERPRISE_ADMINS= 0x207,
+-	DOMAIN_GROUP_RID_POLICY_ADMINS	  = 0x208,
+-
+-	/* Aliases. */
+-	DOMAIN_ALIAS_RID_ADMINS		  = 0x220,
+-	DOMAIN_ALIAS_RID_USERS		  = 0x221,
+-	DOMAIN_ALIAS_RID_GUESTS		  = 0x222,
+-	DOMAIN_ALIAS_RID_POWER_USERS	  = 0x223,
+-
+-	DOMAIN_ALIAS_RID_ACCOUNT_OPS	  = 0x224,
+-	DOMAIN_ALIAS_RID_SYSTEM_OPS	  = 0x225,
+-	DOMAIN_ALIAS_RID_PRINT_OPS	  = 0x226,
+-	DOMAIN_ALIAS_RID_BACKUP_OPS	  = 0x227,
+-
+-	DOMAIN_ALIAS_RID_REPLICATOR	  = 0x228,
+-	DOMAIN_ALIAS_RID_RAS_SERVERS	  = 0x229,
+-	DOMAIN_ALIAS_RID_PREW2KCOMPACCESS = 0x22a,
+-} RELATIVE_IDENTIFIERS;
+-
+-/*
+- * The universal well-known SIDs:
+- *
+- *	NULL_SID			S-1-0-0
+- *	WORLD_SID			S-1-1-0
+- *	LOCAL_SID			S-1-2-0
+- *	CREATOR_OWNER_SID		S-1-3-0
+- *	CREATOR_GROUP_SID		S-1-3-1
+- *	CREATOR_OWNER_SERVER_SID	S-1-3-2
+- *	CREATOR_GROUP_SERVER_SID	S-1-3-3
+- *
+- *	(Non-unique IDs)		S-1-4
+- *
+- * NT well-known SIDs:
+- *
+- *	NT_AUTHORITY_SID	S-1-5
+- *	DIALUP_SID		S-1-5-1
+- *
+- *	NETWORD_SID		S-1-5-2
+- *	BATCH_SID		S-1-5-3
+- *	INTERACTIVE_SID		S-1-5-4
+- *	SERVICE_SID		S-1-5-6
+- *	ANONYMOUS_LOGON_SID	S-1-5-7		(aka null logon session)
+- *	PROXY_SID		S-1-5-8
+- *	SERVER_LOGON_SID	S-1-5-9		(aka domain controller account)
+- *	SELF_SID		S-1-5-10	(self RID)
+- *	AUTHENTICATED_USER_SID	S-1-5-11
+- *	RESTRICTED_CODE_SID	S-1-5-12	(running restricted code)
+- *	TERMINAL_SERVER_SID	S-1-5-13	(running on terminal server)
+- *
+- *	(Logon IDs)		S-1-5-5-X-Y
+- *
+- *	(NT non-unique IDs)	S-1-5-0x15-...
+- *
+- *	(Built-in domain)	S-1-5-0x20
+- */
+-
+-/*
+- * The SID_IDENTIFIER_AUTHORITY is a 48-bit value used in the SID structure.
+- *
+- * NOTE: This is stored as a big endian number, hence the high_part comes
+- * before the low_part.
+- */
+-typedef union {
+-	struct {
+-		u16 high_part;	/* High 16-bits. */
+-		u32 low_part;	/* Low 32-bits. */
+-	} __attribute__ ((__packed__)) parts;
+-	u8 value[6];		/* Value as individual bytes. */
+-} __attribute__ ((__packed__)) SID_IDENTIFIER_AUTHORITY;
+-
+-/*
+- * The SID structure is a variable-length structure used to uniquely identify
+- * users or groups. SID stands for security identifier.
+- *
+- * The standard textual representation of the SID is of the form:
+- *	S-R-I-S-S...
+- * Where:
+- *    - The first "S" is the literal character 'S' identifying the following
+- *	digits as a SID.
+- *    - R is the revision level of the SID expressed as a sequence of digits
+- *	either in decimal or hexadecimal (if the later, prefixed by "0x").
+- *    - I is the 48-bit identifier_authority, expressed as digits as R above.
+- *    - S... is one or more sub_authority values, expressed as digits as above.
+- *
+- * Example SID; the domain-relative SID of the local Administrators group on
+- * Windows NT/2k:
+- *	S-1-5-32-544
+- * This translates to a SID with:
+- *	revision = 1,
+- *	sub_authority_count = 2,
+- *	identifier_authority = {0,0,0,0,0,5},	// SECURITY_NT_AUTHORITY
+- *	sub_authority[0] = 32,			// SECURITY_BUILTIN_DOMAIN_RID
+- *	sub_authority[1] = 544			// DOMAIN_ALIAS_RID_ADMINS
+- */
+-typedef struct {
+-	u8 revision;
+-	u8 sub_authority_count;
+-	SID_IDENTIFIER_AUTHORITY identifier_authority;
+-	le32 sub_authority[1];		/* At least one sub_authority. */
+-} __attribute__ ((__packed__)) SID;
+-
+-/*
+- * Current constants for SIDs.
+- */
+-typedef enum {
+-	SID_REVISION			=  1,	/* Current revision level. */
+-	SID_MAX_SUB_AUTHORITIES		= 15,	/* Maximum number of those. */
+-	SID_RECOMMENDED_SUB_AUTHORITIES	=  1,	/* Will change to around 6 in
+-						   a future revision. */
+-} SID_CONSTANTS;
+-
+-/*
+- * The predefined ACE types (8-bit, see below).
+- */
+-enum {
+-	ACCESS_MIN_MS_ACE_TYPE		= 0,
+-	ACCESS_ALLOWED_ACE_TYPE		= 0,
+-	ACCESS_DENIED_ACE_TYPE		= 1,
+-	SYSTEM_AUDIT_ACE_TYPE		= 2,
+-	SYSTEM_ALARM_ACE_TYPE		= 3, /* Not implemented as of Win2k. */
+-	ACCESS_MAX_MS_V2_ACE_TYPE	= 3,
+-
+-	ACCESS_ALLOWED_COMPOUND_ACE_TYPE= 4,
+-	ACCESS_MAX_MS_V3_ACE_TYPE	= 4,
+-
+-	/* The following are Win2k only. */
+-	ACCESS_MIN_MS_OBJECT_ACE_TYPE	= 5,
+-	ACCESS_ALLOWED_OBJECT_ACE_TYPE	= 5,
+-	ACCESS_DENIED_OBJECT_ACE_TYPE	= 6,
+-	SYSTEM_AUDIT_OBJECT_ACE_TYPE	= 7,
+-	SYSTEM_ALARM_OBJECT_ACE_TYPE	= 8,
+-	ACCESS_MAX_MS_OBJECT_ACE_TYPE	= 8,
+-
+-	ACCESS_MAX_MS_V4_ACE_TYPE	= 8,
+-
+-	/* This one is for WinNT/2k. */
+-	ACCESS_MAX_MS_ACE_TYPE		= 8,
+-} __attribute__ ((__packed__));
+-
+-typedef u8 ACE_TYPES;
+-
+-/*
+- * The ACE flags (8-bit) for audit and inheritance (see below).
+- *
+- * SUCCESSFUL_ACCESS_ACE_FLAG is only used with system audit and alarm ACE
+- * types to indicate that a message is generated (in Windows!) for successful
+- * accesses.
+- *
+- * FAILED_ACCESS_ACE_FLAG is only used with system audit and alarm ACE types
+- * to indicate that a message is generated (in Windows!) for failed accesses.
+- */
+-enum {
+-	/* The inheritance flags. */
+-	OBJECT_INHERIT_ACE		= 0x01,
+-	CONTAINER_INHERIT_ACE		= 0x02,
+-	NO_PROPAGATE_INHERIT_ACE	= 0x04,
+-	INHERIT_ONLY_ACE		= 0x08,
+-	INHERITED_ACE			= 0x10,	/* Win2k only. */
+-	VALID_INHERIT_FLAGS		= 0x1f,
+-
+-	/* The audit flags. */
+-	SUCCESSFUL_ACCESS_ACE_FLAG	= 0x40,
+-	FAILED_ACCESS_ACE_FLAG		= 0x80,
+-} __attribute__ ((__packed__));
+-
+-typedef u8 ACE_FLAGS;
+-
+-/*
+- * An ACE is an access-control entry in an access-control list (ACL).
+- * An ACE defines access to an object for a specific user or group or defines
+- * the types of access that generate system-administration messages or alarms
+- * for a specific user or group. The user or group is identified by a security
+- * identifier (SID).
+- *
+- * Each ACE starts with an ACE_HEADER structure (aligned on 4-byte boundary),
+- * which specifies the type and size of the ACE. The format of the subsequent
+- * data depends on the ACE type.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0*/	ACE_TYPES type;		/* Type of the ACE. */
+-/*  1*/	ACE_FLAGS flags;	/* Flags describing the ACE. */
+-/*  2*/	le16 size;		/* Size in bytes of the ACE. */
+-} __attribute__ ((__packed__)) ACE_HEADER;
+-
+-/*
+- * The access mask (32-bit). Defines the access rights.
+- *
+- * The specific rights (bits 0 to 15).  These depend on the type of the object
+- * being secured by the ACE.
+- */
+-enum {
+-	/* Specific rights for files and directories are as follows: */
+-
+-	/* Right to read data from the file. (FILE) */
+-	FILE_READ_DATA			= cpu_to_le32(0x00000001),
+-	/* Right to list contents of a directory. (DIRECTORY) */
+-	FILE_LIST_DIRECTORY		= cpu_to_le32(0x00000001),
+-
+-	/* Right to write data to the file. (FILE) */
+-	FILE_WRITE_DATA			= cpu_to_le32(0x00000002),
+-	/* Right to create a file in the directory. (DIRECTORY) */
+-	FILE_ADD_FILE			= cpu_to_le32(0x00000002),
+-
+-	/* Right to append data to the file. (FILE) */
+-	FILE_APPEND_DATA		= cpu_to_le32(0x00000004),
+-	/* Right to create a subdirectory. (DIRECTORY) */
+-	FILE_ADD_SUBDIRECTORY		= cpu_to_le32(0x00000004),
+-
+-	/* Right to read extended attributes. (FILE/DIRECTORY) */
+-	FILE_READ_EA			= cpu_to_le32(0x00000008),
+-
+-	/* Right to write extended attributes. (FILE/DIRECTORY) */
+-	FILE_WRITE_EA			= cpu_to_le32(0x00000010),
+-
+-	/* Right to execute a file. (FILE) */
+-	FILE_EXECUTE			= cpu_to_le32(0x00000020),
+-	/* Right to traverse the directory. (DIRECTORY) */
+-	FILE_TRAVERSE			= cpu_to_le32(0x00000020),
+-
+-	/*
+-	 * Right to delete a directory and all the files it contains (its
+-	 * children), even if the files are read-only. (DIRECTORY)
+-	 */
+-	FILE_DELETE_CHILD		= cpu_to_le32(0x00000040),
+-
+-	/* Right to read file attributes. (FILE/DIRECTORY) */
+-	FILE_READ_ATTRIBUTES		= cpu_to_le32(0x00000080),
+-
+-	/* Right to change file attributes. (FILE/DIRECTORY) */
+-	FILE_WRITE_ATTRIBUTES		= cpu_to_le32(0x00000100),
+-
+-	/*
+-	 * The standard rights (bits 16 to 23).  These are independent of the
+-	 * type of object being secured.
+-	 */
+-
+-	/* Right to delete the object. */
+-	DELETE				= cpu_to_le32(0x00010000),
+-
+-	/*
+-	 * Right to read the information in the object's security descriptor,
+-	 * not including the information in the SACL, i.e. right to read the
+-	 * security descriptor and owner.
+-	 */
+-	READ_CONTROL			= cpu_to_le32(0x00020000),
+-
+-	/* Right to modify the DACL in the object's security descriptor. */
+-	WRITE_DAC			= cpu_to_le32(0x00040000),
+-
+-	/* Right to change the owner in the object's security descriptor. */
+-	WRITE_OWNER			= cpu_to_le32(0x00080000),
+-
+-	/*
+-	 * Right to use the object for synchronization.  Enables a process to
+-	 * wait until the object is in the signalled state.  Some object types
+-	 * do not support this access right.
+-	 */
+-	SYNCHRONIZE			= cpu_to_le32(0x00100000),
+-
+-	/*
+-	 * The following STANDARD_RIGHTS_* are combinations of the above for
+-	 * convenience and are defined by the Win32 API.
+-	 */
+-
+-	/* These are currently defined to READ_CONTROL. */
+-	STANDARD_RIGHTS_READ		= cpu_to_le32(0x00020000),
+-	STANDARD_RIGHTS_WRITE		= cpu_to_le32(0x00020000),
+-	STANDARD_RIGHTS_EXECUTE		= cpu_to_le32(0x00020000),
+-
+-	/* Combines DELETE, READ_CONTROL, WRITE_DAC, and WRITE_OWNER access. */
+-	STANDARD_RIGHTS_REQUIRED	= cpu_to_le32(0x000f0000),
+-
+-	/*
+-	 * Combines DELETE, READ_CONTROL, WRITE_DAC, WRITE_OWNER, and
+-	 * SYNCHRONIZE access.
+-	 */
+-	STANDARD_RIGHTS_ALL		= cpu_to_le32(0x001f0000),
+-
+-	/*
+-	 * The access system ACL and maximum allowed access types (bits 24 to
+-	 * 25, bits 26 to 27 are reserved).
+-	 */
+-	ACCESS_SYSTEM_SECURITY		= cpu_to_le32(0x01000000),
+-	MAXIMUM_ALLOWED			= cpu_to_le32(0x02000000),
+-
+-	/*
+-	 * The generic rights (bits 28 to 31).  These map onto the standard and
+-	 * specific rights.
+-	 */
+-
+-	/* Read, write, and execute access. */
+-	GENERIC_ALL			= cpu_to_le32(0x10000000),
+-
+-	/* Execute access. */
+-	GENERIC_EXECUTE			= cpu_to_le32(0x20000000),
+-
+-	/*
+-	 * Write access.  For files, this maps onto:
+-	 *	FILE_APPEND_DATA | FILE_WRITE_ATTRIBUTES | FILE_WRITE_DATA |
+-	 *	FILE_WRITE_EA | STANDARD_RIGHTS_WRITE | SYNCHRONIZE
+-	 * For directories, the mapping has the same numerical value.  See
+-	 * above for the descriptions of the rights granted.
+-	 */
+-	GENERIC_WRITE			= cpu_to_le32(0x40000000),
+-
+-	/*
+-	 * Read access.  For files, this maps onto:
+-	 *	FILE_READ_ATTRIBUTES | FILE_READ_DATA | FILE_READ_EA |
+-	 *	STANDARD_RIGHTS_READ | SYNCHRONIZE
+-	 * For directories, the mapping has the same numberical value.  See
+-	 * above for the descriptions of the rights granted.
+-	 */
+-	GENERIC_READ			= cpu_to_le32(0x80000000),
+-};
+-
+-typedef le32 ACCESS_MASK;
+-
+-/*
+- * The generic mapping array. Used to denote the mapping of each generic
+- * access right to a specific access mask.
+- *
+- * FIXME: What exactly is this and what is it for? (AIA)
+- */
+-typedef struct {
+-	ACCESS_MASK generic_read;
+-	ACCESS_MASK generic_write;
+-	ACCESS_MASK generic_execute;
+-	ACCESS_MASK generic_all;
+-} __attribute__ ((__packed__)) GENERIC_MAPPING;
+-
+-/*
+- * The predefined ACE type structures are as defined below.
+- */
+-
+-/*
+- * ACCESS_ALLOWED_ACE, ACCESS_DENIED_ACE, SYSTEM_AUDIT_ACE, SYSTEM_ALARM_ACE
+- */
+-typedef struct {
+-/*  0	ACE_HEADER; -- Unfolded here as gcc doesn't like unnamed structs. */
+-	ACE_TYPES type;		/* Type of the ACE. */
+-	ACE_FLAGS flags;	/* Flags describing the ACE. */
+-	le16 size;		/* Size in bytes of the ACE. */
+-/*  4*/	ACCESS_MASK mask;	/* Access mask associated with the ACE. */
+-
+-/*  8*/	SID sid;		/* The SID associated with the ACE. */
+-} __attribute__ ((__packed__)) ACCESS_ALLOWED_ACE, ACCESS_DENIED_ACE,
+-			       SYSTEM_AUDIT_ACE, SYSTEM_ALARM_ACE;
+-
+-/*
+- * The object ACE flags (32-bit).
+- */
+-enum {
+-	ACE_OBJECT_TYPE_PRESENT			= cpu_to_le32(1),
+-	ACE_INHERITED_OBJECT_TYPE_PRESENT	= cpu_to_le32(2),
+-};
+-
+-typedef le32 OBJECT_ACE_FLAGS;
+-
+-typedef struct {
+-/*  0	ACE_HEADER; -- Unfolded here as gcc doesn't like unnamed structs. */
+-	ACE_TYPES type;		/* Type of the ACE. */
+-	ACE_FLAGS flags;	/* Flags describing the ACE. */
+-	le16 size;		/* Size in bytes of the ACE. */
+-/*  4*/	ACCESS_MASK mask;	/* Access mask associated with the ACE. */
+-
+-/*  8*/	OBJECT_ACE_FLAGS object_flags;	/* Flags describing the object ACE. */
+-/* 12*/	GUID object_type;
+-/* 28*/	GUID inherited_object_type;
+-
+-/* 44*/	SID sid;		/* The SID associated with the ACE. */
+-} __attribute__ ((__packed__)) ACCESS_ALLOWED_OBJECT_ACE,
+-			       ACCESS_DENIED_OBJECT_ACE,
+-			       SYSTEM_AUDIT_OBJECT_ACE,
+-			       SYSTEM_ALARM_OBJECT_ACE;
+-
+-/*
+- * An ACL is an access-control list (ACL).
+- * An ACL starts with an ACL header structure, which specifies the size of
+- * the ACL and the number of ACEs it contains. The ACL header is followed by
+- * zero or more access control entries (ACEs). The ACL as well as each ACE
+- * are aligned on 4-byte boundaries.
+- */
+-typedef struct {
+-	u8 revision;	/* Revision of this ACL. */
+-	u8 alignment1;
+-	le16 size;	/* Allocated space in bytes for ACL. Includes this
+-			   header, the ACEs and the remaining free space. */
+-	le16 ace_count;	/* Number of ACEs in the ACL. */
+-	le16 alignment2;
+-/* sizeof() = 8 bytes */
+-} __attribute__ ((__packed__)) ACL;
+-
+-/*
+- * Current constants for ACLs.
+- */
+-typedef enum {
+-	/* Current revision. */
+-	ACL_REVISION		= 2,
+-	ACL_REVISION_DS		= 4,
+-
+-	/* History of revisions. */
+-	ACL_REVISION1		= 1,
+-	MIN_ACL_REVISION	= 2,
+-	ACL_REVISION2		= 2,
+-	ACL_REVISION3		= 3,
+-	ACL_REVISION4		= 4,
+-	MAX_ACL_REVISION	= 4,
+-} ACL_CONSTANTS;
+-
+-/*
+- * The security descriptor control flags (16-bit).
+- *
+- * SE_OWNER_DEFAULTED - This boolean flag, when set, indicates that the SID
+- *	pointed to by the Owner field was provided by a defaulting mechanism
+- *	rather than explicitly provided by the original provider of the
+- *	security descriptor.  This may affect the treatment of the SID with
+- *	respect to inheritance of an owner.
+- *
+- * SE_GROUP_DEFAULTED - This boolean flag, when set, indicates that the SID in
+- *	the Group field was provided by a defaulting mechanism rather than
+- *	explicitly provided by the original provider of the security
+- *	descriptor.  This may affect the treatment of the SID with respect to
+- *	inheritance of a primary group.
+- *
+- * SE_DACL_PRESENT - This boolean flag, when set, indicates that the security
+- *	descriptor contains a discretionary ACL.  If this flag is set and the
+- *	Dacl field of the SECURITY_DESCRIPTOR is null, then a null ACL is
+- *	explicitly being specified.
+- *
+- * SE_DACL_DEFAULTED - This boolean flag, when set, indicates that the ACL
+- *	pointed to by the Dacl field was provided by a defaulting mechanism
+- *	rather than explicitly provided by the original provider of the
+- *	security descriptor.  This may affect the treatment of the ACL with
+- *	respect to inheritance of an ACL.  This flag is ignored if the
+- *	DaclPresent flag is not set.
+- *
+- * SE_SACL_PRESENT - This boolean flag, when set,  indicates that the security
+- *	descriptor contains a system ACL pointed to by the Sacl field.  If this
+- *	flag is set and the Sacl field of the SECURITY_DESCRIPTOR is null, then
+- *	an empty (but present) ACL is being specified.
+- *
+- * SE_SACL_DEFAULTED - This boolean flag, when set, indicates that the ACL
+- *	pointed to by the Sacl field was provided by a defaulting mechanism
+- *	rather than explicitly provided by the original provider of the
+- *	security descriptor.  This may affect the treatment of the ACL with
+- *	respect to inheritance of an ACL.  This flag is ignored if the
+- *	SaclPresent flag is not set.
+- *
+- * SE_SELF_RELATIVE - This boolean flag, when set, indicates that the security
+- *	descriptor is in self-relative form.  In this form, all fields of the
+- *	security descriptor are contiguous in memory and all pointer fields are
+- *	expressed as offsets from the beginning of the security descriptor.
+- */
+-enum {
+-	SE_OWNER_DEFAULTED		= cpu_to_le16(0x0001),
+-	SE_GROUP_DEFAULTED		= cpu_to_le16(0x0002),
+-	SE_DACL_PRESENT			= cpu_to_le16(0x0004),
+-	SE_DACL_DEFAULTED		= cpu_to_le16(0x0008),
+-
+-	SE_SACL_PRESENT			= cpu_to_le16(0x0010),
+-	SE_SACL_DEFAULTED		= cpu_to_le16(0x0020),
+-
+-	SE_DACL_AUTO_INHERIT_REQ	= cpu_to_le16(0x0100),
+-	SE_SACL_AUTO_INHERIT_REQ	= cpu_to_le16(0x0200),
+-	SE_DACL_AUTO_INHERITED		= cpu_to_le16(0x0400),
+-	SE_SACL_AUTO_INHERITED		= cpu_to_le16(0x0800),
+-
+-	SE_DACL_PROTECTED		= cpu_to_le16(0x1000),
+-	SE_SACL_PROTECTED		= cpu_to_le16(0x2000),
+-	SE_RM_CONTROL_VALID		= cpu_to_le16(0x4000),
+-	SE_SELF_RELATIVE		= cpu_to_le16(0x8000)
+-} __attribute__ ((__packed__));
+-
+-typedef le16 SECURITY_DESCRIPTOR_CONTROL;
+-
+-/*
+- * Self-relative security descriptor. Contains the owner and group SIDs as well
+- * as the sacl and dacl ACLs inside the security descriptor itself.
+- */
+-typedef struct {
+-	u8 revision;	/* Revision level of the security descriptor. */
+-	u8 alignment;
+-	SECURITY_DESCRIPTOR_CONTROL control; /* Flags qualifying the type of
+-			   the descriptor as well as the following fields. */
+-	le32 owner;	/* Byte offset to a SID representing an object's
+-			   owner. If this is NULL, no owner SID is present in
+-			   the descriptor. */
+-	le32 group;	/* Byte offset to a SID representing an object's
+-			   primary group. If this is NULL, no primary group
+-			   SID is present in the descriptor. */
+-	le32 sacl;	/* Byte offset to a system ACL. Only valid, if
+-			   SE_SACL_PRESENT is set in the control field. If
+-			   SE_SACL_PRESENT is set but sacl is NULL, a NULL ACL
+-			   is specified. */
+-	le32 dacl;	/* Byte offset to a discretionary ACL. Only valid, if
+-			   SE_DACL_PRESENT is set in the control field. If
+-			   SE_DACL_PRESENT is set but dacl is NULL, a NULL ACL
+-			   (unconditionally granting access) is specified. */
+-/* sizeof() = 0x14 bytes */
+-} __attribute__ ((__packed__)) SECURITY_DESCRIPTOR_RELATIVE;
+-
+-/*
+- * Absolute security descriptor. Does not contain the owner and group SIDs, nor
+- * the sacl and dacl ACLs inside the security descriptor. Instead, it contains
+- * pointers to these structures in memory. Obviously, absolute security
+- * descriptors are only useful for in memory representations of security
+- * descriptors. On disk, a self-relative security descriptor is used.
+- */
+-typedef struct {
+-	u8 revision;	/* Revision level of the security descriptor. */
+-	u8 alignment;
+-	SECURITY_DESCRIPTOR_CONTROL control;	/* Flags qualifying the type of
+-			   the descriptor as well as the following fields. */
+-	SID *owner;	/* Points to a SID representing an object's owner. If
+-			   this is NULL, no owner SID is present in the
+-			   descriptor. */
+-	SID *group;	/* Points to a SID representing an object's primary
+-			   group. If this is NULL, no primary group SID is
+-			   present in the descriptor. */
+-	ACL *sacl;	/* Points to a system ACL. Only valid, if
+-			   SE_SACL_PRESENT is set in the control field. If
+-			   SE_SACL_PRESENT is set but sacl is NULL, a NULL ACL
+-			   is specified. */
+-	ACL *dacl;	/* Points to a discretionary ACL. Only valid, if
+-			   SE_DACL_PRESENT is set in the control field. If
+-			   SE_DACL_PRESENT is set but dacl is NULL, a NULL ACL
+-			   (unconditionally granting access) is specified. */
+-} __attribute__ ((__packed__)) SECURITY_DESCRIPTOR;
+-
+-/*
+- * Current constants for security descriptors.
+- */
+-typedef enum {
+-	/* Current revision. */
+-	SECURITY_DESCRIPTOR_REVISION	= 1,
+-	SECURITY_DESCRIPTOR_REVISION1	= 1,
+-
+-	/* The sizes of both the absolute and relative security descriptors is
+-	   the same as pointers, at least on ia32 architecture are 32-bit. */
+-	SECURITY_DESCRIPTOR_MIN_LENGTH	= sizeof(SECURITY_DESCRIPTOR),
+-} SECURITY_DESCRIPTOR_CONSTANTS;
+-
+-/*
+- * Attribute: Security descriptor (0x50). A standard self-relative security
+- * descriptor.
+- *
+- * NOTE: Can be resident or non-resident.
+- * NOTE: Not used in NTFS 3.0+, as security descriptors are stored centrally
+- * in FILE_Secure and the correct descriptor is found using the security_id
+- * from the standard information attribute.
+- */
+-typedef SECURITY_DESCRIPTOR_RELATIVE SECURITY_DESCRIPTOR_ATTR;
+-
+-/*
+- * On NTFS 3.0+, all security descriptors are stored in FILE_Secure. Only one
+- * referenced instance of each unique security descriptor is stored.
+- *
+- * FILE_Secure contains no unnamed data attribute, i.e. it has zero length. It
+- * does, however, contain two indexes ($SDH and $SII) as well as a named data
+- * stream ($SDS).
+- *
+- * Every unique security descriptor is assigned a unique security identifier
+- * (security_id, not to be confused with a SID). The security_id is unique for
+- * the NTFS volume and is used as an index into the $SII index, which maps
+- * security_ids to the security descriptor's storage location within the $SDS
+- * data attribute. The $SII index is sorted by ascending security_id.
+- *
+- * A simple hash is computed from each security descriptor. This hash is used
+- * as an index into the $SDH index, which maps security descriptor hashes to
+- * the security descriptor's storage location within the $SDS data attribute.
+- * The $SDH index is sorted by security descriptor hash and is stored in a B+
+- * tree. When searching $SDH (with the intent of determining whether or not a
+- * new security descriptor is already present in the $SDS data stream), if a
+- * matching hash is found, but the security descriptors do not match, the
+- * search in the $SDH index is continued, searching for a next matching hash.
+- *
+- * When a precise match is found, the security_id coresponding to the security
+- * descriptor in the $SDS attribute is read from the found $SDH index entry and
+- * is stored in the $STANDARD_INFORMATION attribute of the file/directory to
+- * which the security descriptor is being applied. The $STANDARD_INFORMATION
+- * attribute is present in all base mft records (i.e. in all files and
+- * directories).
+- *
+- * If a match is not found, the security descriptor is assigned a new unique
+- * security_id and is added to the $SDS data attribute. Then, entries
+- * referencing the this security descriptor in the $SDS data attribute are
+- * added to the $SDH and $SII indexes.
+- *
+- * Note: Entries are never deleted from FILE_Secure, even if nothing
+- * references an entry any more.
+- */
+-
+-/*
+- * This header precedes each security descriptor in the $SDS data stream.
+- * This is also the index entry data part of both the $SII and $SDH indexes.
+- */
+-typedef struct {
+-	le32 hash;	  /* Hash of the security descriptor. */
+-	le32 security_id; /* The security_id assigned to the descriptor. */
+-	le64 offset;	  /* Byte offset of this entry in the $SDS stream. */
+-	le32 length;	  /* Size in bytes of this entry in $SDS stream. */
+-} __attribute__ ((__packed__)) SECURITY_DESCRIPTOR_HEADER;
+-
+-/*
+- * The $SDS data stream contains the security descriptors, aligned on 16-byte
+- * boundaries, sorted by security_id in a B+ tree. Security descriptors cannot
+- * cross 256kib boundaries (this restriction is imposed by the Windows cache
+- * manager). Each security descriptor is contained in a SDS_ENTRY structure.
+- * Also, each security descriptor is stored twice in the $SDS stream with a
+- * fixed offset of 0x40000 bytes (256kib, the Windows cache manager's max size)
+- * between them; i.e. if a SDS_ENTRY specifies an offset of 0x51d0, then the
+- * first copy of the security descriptor will be at offset 0x51d0 in the
+- * $SDS data stream and the second copy will be at offset 0x451d0.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0	SECURITY_DESCRIPTOR_HEADER; -- Unfolded here as gcc doesn't like
+-				       unnamed structs. */
+-	le32 hash;	  /* Hash of the security descriptor. */
+-	le32 security_id; /* The security_id assigned to the descriptor. */
+-	le64 offset;	  /* Byte offset of this entry in the $SDS stream. */
+-	le32 length;	  /* Size in bytes of this entry in $SDS stream. */
+-/* 20*/	SECURITY_DESCRIPTOR_RELATIVE sid; /* The self-relative security
+-					     descriptor. */
+-} __attribute__ ((__packed__)) SDS_ENTRY;
+-
+-/*
+- * The index entry key used in the $SII index. The collation type is
+- * COLLATION_NTOFS_ULONG.
+- */
+-typedef struct {
+-	le32 security_id; /* The security_id assigned to the descriptor. */
+-} __attribute__ ((__packed__)) SII_INDEX_KEY;
+-
+-/*
+- * The index entry key used in the $SDH index. The keys are sorted first by
+- * hash and then by security_id. The collation rule is
+- * COLLATION_NTOFS_SECURITY_HASH.
+- */
+-typedef struct {
+-	le32 hash;	  /* Hash of the security descriptor. */
+-	le32 security_id; /* The security_id assigned to the descriptor. */
+-} __attribute__ ((__packed__)) SDH_INDEX_KEY;
+-
+-/*
+- * Attribute: Volume name (0x60).
+- *
+- * NOTE: Always resident.
+- * NOTE: Present only in FILE_Volume.
+- */
+-typedef struct {
+-	ntfschar name[0];	/* The name of the volume in Unicode. */
+-} __attribute__ ((__packed__)) VOLUME_NAME;
+-
+-/*
+- * Possible flags for the volume (16-bit).
+- */
+-enum {
+-	VOLUME_IS_DIRTY			= cpu_to_le16(0x0001),
+-	VOLUME_RESIZE_LOG_FILE		= cpu_to_le16(0x0002),
+-	VOLUME_UPGRADE_ON_MOUNT		= cpu_to_le16(0x0004),
+-	VOLUME_MOUNTED_ON_NT4		= cpu_to_le16(0x0008),
+-
+-	VOLUME_DELETE_USN_UNDERWAY	= cpu_to_le16(0x0010),
+-	VOLUME_REPAIR_OBJECT_ID		= cpu_to_le16(0x0020),
+-
+-	VOLUME_CHKDSK_UNDERWAY		= cpu_to_le16(0x4000),
+-	VOLUME_MODIFIED_BY_CHKDSK	= cpu_to_le16(0x8000),
+-
+-	VOLUME_FLAGS_MASK		= cpu_to_le16(0xc03f),
+-
+-	/* To make our life easier when checking if we must mount read-only. */
+-	VOLUME_MUST_MOUNT_RO_MASK	= cpu_to_le16(0xc027),
+-} __attribute__ ((__packed__));
+-
+-typedef le16 VOLUME_FLAGS;
+-
+-/*
+- * Attribute: Volume information (0x70).
+- *
+- * NOTE: Always resident.
+- * NOTE: Present only in FILE_Volume.
+- * NOTE: Windows 2000 uses NTFS 3.0 while Windows NT4 service pack 6a uses
+- *	 NTFS 1.2. I haven't personally seen other values yet.
+- */
+-typedef struct {
+-	le64 reserved;		/* Not used (yet?). */
+-	u8 major_ver;		/* Major version of the ntfs format. */
+-	u8 minor_ver;		/* Minor version of the ntfs format. */
+-	VOLUME_FLAGS flags;	/* Bit array of VOLUME_* flags. */
+-} __attribute__ ((__packed__)) VOLUME_INFORMATION;
+-
+-/*
+- * Attribute: Data attribute (0x80).
+- *
+- * NOTE: Can be resident or non-resident.
+- *
+- * Data contents of a file (i.e. the unnamed stream) or of a named stream.
+- */
+-typedef struct {
+-	u8 data[0];		/* The file's data contents. */
+-} __attribute__ ((__packed__)) DATA_ATTR;
+-
+-/*
+- * Index header flags (8-bit).
+- */
+-enum {
+-	/*
+-	 * When index header is in an index root attribute:
+-	 */
+-	SMALL_INDEX = 0, /* The index is small enough to fit inside the index
+-			    root attribute and there is no index allocation
+-			    attribute present. */
+-	LARGE_INDEX = 1, /* The index is too large to fit in the index root
+-			    attribute and/or an index allocation attribute is
+-			    present. */
+-	/*
+-	 * When index header is in an index block, i.e. is part of index
+-	 * allocation attribute:
+-	 */
+-	LEAF_NODE  = 0, /* This is a leaf node, i.e. there are no more nodes
+-			   branching off it. */
+-	INDEX_NODE = 1, /* This node indexes other nodes, i.e. it is not a leaf
+-			   node. */
+-	NODE_MASK  = 1, /* Mask for accessing the *_NODE bits. */
+-} __attribute__ ((__packed__));
+-
+-typedef u8 INDEX_HEADER_FLAGS;
+-
+-/*
+- * This is the header for indexes, describing the INDEX_ENTRY records, which
+- * follow the INDEX_HEADER. Together the index header and the index entries
+- * make up a complete index.
+- *
+- * IMPORTANT NOTE: The offset, length and size structure members are counted
+- * relative to the start of the index header structure and not relative to the
+- * start of the index root or index allocation structures themselves.
+- */
+-typedef struct {
+-	le32 entries_offset;		/* Byte offset to first INDEX_ENTRY
+-					   aligned to 8-byte boundary. */
+-	le32 index_length;		/* Data size of the index in bytes,
+-					   i.e. bytes used from allocated
+-					   size, aligned to 8-byte boundary. */
+-	le32 allocated_size;		/* Byte size of this index (block),
+-					   multiple of 8 bytes. */
+-	/* NOTE: For the index root attribute, the above two numbers are always
+-	   equal, as the attribute is resident and it is resized as needed. In
+-	   the case of the index allocation attribute the attribute is not
+-	   resident and hence the allocated_size is a fixed value and must
+-	   equal the index_block_size specified by the INDEX_ROOT attribute
+-	   corresponding to the INDEX_ALLOCATION attribute this INDEX_BLOCK
+-	   belongs to. */
+-	INDEX_HEADER_FLAGS flags;	/* Bit field of INDEX_HEADER_FLAGS. */
+-	u8 reserved[3];			/* Reserved/align to 8-byte boundary. */
+-} __attribute__ ((__packed__)) INDEX_HEADER;
+-
+-/*
+- * Attribute: Index root (0x90).
+- *
+- * NOTE: Always resident.
+- *
+- * This is followed by a sequence of index entries (INDEX_ENTRY structures)
+- * as described by the index header.
+- *
+- * When a directory is small enough to fit inside the index root then this
+- * is the only attribute describing the directory. When the directory is too
+- * large to fit in the index root, on the other hand, two additional attributes
+- * are present: an index allocation attribute, containing sub-nodes of the B+
+- * directory tree (see below), and a bitmap attribute, describing which virtual
+- * cluster numbers (vcns) in the index allocation attribute are in use by an
+- * index block.
+- *
+- * NOTE: The root directory (FILE_root) contains an entry for itself. Other
+- * directories do not contain entries for themselves, though.
+- */
+-typedef struct {
+-	ATTR_TYPE type;			/* Type of the indexed attribute. Is
+-					   $FILE_NAME for directories, zero
+-					   for view indexes. No other values
+-					   allowed. */
+-	COLLATION_RULE collation_rule;	/* Collation rule used to sort the
+-					   index entries. If type is $FILE_NAME,
+-					   this must be COLLATION_FILE_NAME. */
+-	le32 index_block_size;		/* Size of each index block in bytes (in
+-					   the index allocation attribute). */
+-	u8 clusters_per_index_block;	/* Cluster size of each index block (in
+-					   the index allocation attribute), when
+-					   an index block is >= than a cluster,
+-					   otherwise this will be the log of
+-					   the size (like how the encoding of
+-					   the mft record size and the index
+-					   record size found in the boot sector
+-					   work). Has to be a power of 2. */
+-	u8 reserved[3];			/* Reserved/align to 8-byte boundary. */
+-	INDEX_HEADER index;		/* Index header describing the
+-					   following index entries. */
+-} __attribute__ ((__packed__)) INDEX_ROOT;
+-
+-/*
+- * Attribute: Index allocation (0xa0).
+- *
+- * NOTE: Always non-resident (doesn't make sense to be resident anyway!).
+- *
+- * This is an array of index blocks. Each index block starts with an
+- * INDEX_BLOCK structure containing an index header, followed by a sequence of
+- * index entries (INDEX_ENTRY structures), as described by the INDEX_HEADER.
+- */
+-typedef struct {
+-/*  0	NTFS_RECORD; -- Unfolded here as gcc doesn't like unnamed structs. */
+-	NTFS_RECORD_TYPE magic;	/* Magic is "INDX". */
+-	le16 usa_ofs;		/* See NTFS_RECORD definition. */
+-	le16 usa_count;		/* See NTFS_RECORD definition. */
+-
+-/*  8*/	sle64 lsn;		/* $LogFile sequence number of the last
+-				   modification of this index block. */
+-/* 16*/	leVCN index_block_vcn;	/* Virtual cluster number of the index block.
+-				   If the cluster_size on the volume is <= the
+-				   index_block_size of the directory,
+-				   index_block_vcn counts in units of clusters,
+-				   and in units of sectors otherwise. */
+-/* 24*/	INDEX_HEADER index;	/* Describes the following index entries. */
+-/* sizeof()= 40 (0x28) bytes */
+-/*
+- * When creating the index block, we place the update sequence array at this
+- * offset, i.e. before we start with the index entries. This also makes sense,
+- * otherwise we could run into problems with the update sequence array
+- * containing in itself the last two bytes of a sector which would mean that
+- * multi sector transfer protection wouldn't work. As you can't protect data
+- * by overwriting it since you then can't get it back...
+- * When reading use the data from the ntfs record header.
+- */
+-} __attribute__ ((__packed__)) INDEX_BLOCK;
+-
+-typedef INDEX_BLOCK INDEX_ALLOCATION;
+-
+-/*
+- * The system file FILE_Extend/$Reparse contains an index named $R listing
+- * all reparse points on the volume. The index entry keys are as defined
+- * below. Note, that there is no index data associated with the index entries.
+- *
+- * The index entries are sorted by the index key file_id. The collation rule is
+- * COLLATION_NTOFS_ULONGS. FIXME: Verify whether the reparse_tag is not the
+- * primary key / is not a key at all. (AIA)
+- */
+-typedef struct {
+-	le32 reparse_tag;	/* Reparse point type (inc. flags). */
+-	leMFT_REF file_id;	/* Mft record of the file containing the
+-				   reparse point attribute. */
+-} __attribute__ ((__packed__)) REPARSE_INDEX_KEY;
+-
+-/*
+- * Quota flags (32-bit).
+- *
+- * The user quota flags.  Names explain meaning.
+- */
+-enum {
+-	QUOTA_FLAG_DEFAULT_LIMITS	= cpu_to_le32(0x00000001),
+-	QUOTA_FLAG_LIMIT_REACHED	= cpu_to_le32(0x00000002),
+-	QUOTA_FLAG_ID_DELETED		= cpu_to_le32(0x00000004),
+-
+-	QUOTA_FLAG_USER_MASK		= cpu_to_le32(0x00000007),
+-	/* This is a bit mask for the user quota flags. */
+-
+-	/*
+-	 * These flags are only present in the quota defaults index entry, i.e.
+-	 * in the entry where owner_id = QUOTA_DEFAULTS_ID.
+-	 */
+-	QUOTA_FLAG_TRACKING_ENABLED	= cpu_to_le32(0x00000010),
+-	QUOTA_FLAG_ENFORCEMENT_ENABLED	= cpu_to_le32(0x00000020),
+-	QUOTA_FLAG_TRACKING_REQUESTED	= cpu_to_le32(0x00000040),
+-	QUOTA_FLAG_LOG_THRESHOLD	= cpu_to_le32(0x00000080),
+-
+-	QUOTA_FLAG_LOG_LIMIT		= cpu_to_le32(0x00000100),
+-	QUOTA_FLAG_OUT_OF_DATE		= cpu_to_le32(0x00000200),
+-	QUOTA_FLAG_CORRUPT		= cpu_to_le32(0x00000400),
+-	QUOTA_FLAG_PENDING_DELETES	= cpu_to_le32(0x00000800),
+-};
+-
+-typedef le32 QUOTA_FLAGS;
+-
+-/*
+- * The system file FILE_Extend/$Quota contains two indexes $O and $Q. Quotas
+- * are on a per volume and per user basis.
+- *
+- * The $Q index contains one entry for each existing user_id on the volume. The
+- * index key is the user_id of the user/group owning this quota control entry,
+- * i.e. the key is the owner_id. The user_id of the owner of a file, i.e. the
+- * owner_id, is found in the standard information attribute. The collation rule
+- * for $Q is COLLATION_NTOFS_ULONG.
+- *
+- * The $O index contains one entry for each user/group who has been assigned
+- * a quota on that volume. The index key holds the SID of the user_id the
+- * entry belongs to, i.e. the owner_id. The collation rule for $O is
+- * COLLATION_NTOFS_SID.
+- *
+- * The $O index entry data is the user_id of the user corresponding to the SID.
+- * This user_id is used as an index into $Q to find the quota control entry
+- * associated with the SID.
+- *
+- * The $Q index entry data is the quota control entry and is defined below.
+- */
+-typedef struct {
+-	le32 version;		/* Currently equals 2. */
+-	QUOTA_FLAGS flags;	/* Flags describing this quota entry. */
+-	le64 bytes_used;	/* How many bytes of the quota are in use. */
+-	sle64 change_time;	/* Last time this quota entry was changed. */
+-	sle64 threshold;	/* Soft quota (-1 if not limited). */
+-	sle64 limit;		/* Hard quota (-1 if not limited). */
+-	sle64 exceeded_time;	/* How long the soft quota has been exceeded. */
+-	SID sid;		/* The SID of the user/object associated with
+-				   this quota entry.  Equals zero for the quota
+-				   defaults entry (and in fact on a WinXP
+-				   volume, it is not present at all). */
+-} __attribute__ ((__packed__)) QUOTA_CONTROL_ENTRY;
+-
+-/*
+- * Predefined owner_id values (32-bit).
+- */
+-enum {
+-	QUOTA_INVALID_ID	= cpu_to_le32(0x00000000),
+-	QUOTA_DEFAULTS_ID	= cpu_to_le32(0x00000001),
+-	QUOTA_FIRST_USER_ID	= cpu_to_le32(0x00000100),
+-};
+-
+-/*
+- * Current constants for quota control entries.
+- */
+-typedef enum {
+-	/* Current version. */
+-	QUOTA_VERSION	= 2,
+-} QUOTA_CONTROL_ENTRY_CONSTANTS;
+-
+-/*
+- * Index entry flags (16-bit).
+- */
+-enum {
+-	INDEX_ENTRY_NODE = cpu_to_le16(1), /* This entry contains a
+-			sub-node, i.e. a reference to an index block in form of
+-			a virtual cluster number (see below). */
+-	INDEX_ENTRY_END  = cpu_to_le16(2), /* This signifies the last
+-			entry in an index block.  The index entry does not
+-			represent a file but it can point to a sub-node. */
+-
+-	INDEX_ENTRY_SPACE_FILLER = cpu_to_le16(0xffff), /* gcc: Force
+-			enum bit width to 16-bit. */
+-} __attribute__ ((__packed__));
+-
+-typedef le16 INDEX_ENTRY_FLAGS;
+-
+-/*
+- * This the index entry header (see below).
+- */
+-typedef struct {
+-/*  0*/	union {
+-		struct { /* Only valid when INDEX_ENTRY_END is not set. */
+-			leMFT_REF indexed_file;	/* The mft reference of the file
+-						   described by this index
+-						   entry. Used for directory
+-						   indexes. */
+-		} __attribute__ ((__packed__)) dir;
+-		struct { /* Used for views/indexes to find the entry's data. */
+-			le16 data_offset;	/* Data byte offset from this
+-						   INDEX_ENTRY. Follows the
+-						   index key. */
+-			le16 data_length;	/* Data length in bytes. */
+-			le32 reservedV;		/* Reserved (zero). */
+-		} __attribute__ ((__packed__)) vi;
+-	} __attribute__ ((__packed__)) data;
+-/*  8*/	le16 length;		 /* Byte size of this index entry, multiple of
+-				    8-bytes. */
+-/* 10*/	le16 key_length;	 /* Byte size of the key value, which is in the
+-				    index entry. It follows field reserved. Not
+-				    multiple of 8-bytes. */
+-/* 12*/	INDEX_ENTRY_FLAGS flags; /* Bit field of INDEX_ENTRY_* flags. */
+-/* 14*/	le16 reserved;		 /* Reserved/align to 8-byte boundary. */
+-/* sizeof() = 16 bytes */
+-} __attribute__ ((__packed__)) INDEX_ENTRY_HEADER;
+-
+-/*
+- * This is an index entry. A sequence of such entries follows each INDEX_HEADER
+- * structure. Together they make up a complete index. The index follows either
+- * an index root attribute or an index allocation attribute.
+- *
+- * NOTE: Before NTFS 3.0 only filename attributes were indexed.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0	INDEX_ENTRY_HEADER; -- Unfolded here as gcc dislikes unnamed structs. */
+-	union {
+-		struct { /* Only valid when INDEX_ENTRY_END is not set. */
+-			leMFT_REF indexed_file;	/* The mft reference of the file
+-						   described by this index
+-						   entry. Used for directory
+-						   indexes. */
+-		} __attribute__ ((__packed__)) dir;
+-		struct { /* Used for views/indexes to find the entry's data. */
+-			le16 data_offset;	/* Data byte offset from this
+-						   INDEX_ENTRY. Follows the
+-						   index key. */
+-			le16 data_length;	/* Data length in bytes. */
+-			le32 reservedV;		/* Reserved (zero). */
+-		} __attribute__ ((__packed__)) vi;
+-	} __attribute__ ((__packed__)) data;
+-	le16 length;		 /* Byte size of this index entry, multiple of
+-				    8-bytes. */
+-	le16 key_length;	 /* Byte size of the key value, which is in the
+-				    index entry. It follows field reserved. Not
+-				    multiple of 8-bytes. */
+-	INDEX_ENTRY_FLAGS flags; /* Bit field of INDEX_ENTRY_* flags. */
+-	le16 reserved;		 /* Reserved/align to 8-byte boundary. */
+-
+-/* 16*/	union {		/* The key of the indexed attribute. NOTE: Only present
+-			   if INDEX_ENTRY_END bit in flags is not set. NOTE: On
+-			   NTFS versions before 3.0 the only valid key is the
+-			   FILE_NAME_ATTR. On NTFS 3.0+ the following
+-			   additional index keys are defined: */
+-		FILE_NAME_ATTR file_name;/* $I30 index in directories. */
+-		SII_INDEX_KEY sii;	/* $SII index in $Secure. */
+-		SDH_INDEX_KEY sdh;	/* $SDH index in $Secure. */
+-		GUID object_id;		/* $O index in FILE_Extend/$ObjId: The
+-					   object_id of the mft record found in
+-					   the data part of the index. */
+-		REPARSE_INDEX_KEY reparse;	/* $R index in
+-						   FILE_Extend/$Reparse. */
+-		SID sid;		/* $O index in FILE_Extend/$Quota:
+-					   SID of the owner of the user_id. */
+-		le32 owner_id;		/* $Q index in FILE_Extend/$Quota:
+-					   user_id of the owner of the quota
+-					   control entry in the data part of
+-					   the index. */
+-	} __attribute__ ((__packed__)) key;
+-	/* The (optional) index data is inserted here when creating. */
+-	// leVCN vcn;	/* If INDEX_ENTRY_NODE bit in flags is set, the last
+-	//		   eight bytes of this index entry contain the virtual
+-	//		   cluster number of the index block that holds the
+-	//		   entries immediately preceding the current entry (the
+-	//		   vcn references the corresponding cluster in the data
+-	//		   of the non-resident index allocation attribute). If
+-	//		   the key_length is zero, then the vcn immediately
+-	//		   follows the INDEX_ENTRY_HEADER. Regardless of
+-	//		   key_length, the address of the 8-byte boundary
+-	//		   aligned vcn of INDEX_ENTRY{_HEADER} *ie is given by
+-	//		   (char*)ie + le16_to_cpu(ie*)->length) - sizeof(VCN),
+-	//		   where sizeof(VCN) can be hardcoded as 8 if wanted. */
+-} __attribute__ ((__packed__)) INDEX_ENTRY;
+-
+-/*
+- * Attribute: Bitmap (0xb0).
+- *
+- * Contains an array of bits (aka a bitfield).
+- *
+- * When used in conjunction with the index allocation attribute, each bit
+- * corresponds to one index block within the index allocation attribute. Thus
+- * the number of bits in the bitmap * index block size / cluster size is the
+- * number of clusters in the index allocation attribute.
+- */
+-typedef struct {
+-	u8 bitmap[0];			/* Array of bits. */
+-} __attribute__ ((__packed__)) BITMAP_ATTR;
+-
+-/*
+- * The reparse point tag defines the type of the reparse point. It also
+- * includes several flags, which further describe the reparse point.
+- *
+- * The reparse point tag is an unsigned 32-bit value divided in three parts:
+- *
+- * 1. The least significant 16 bits (i.e. bits 0 to 15) specifiy the type of
+- *    the reparse point.
+- * 2. The 13 bits after this (i.e. bits 16 to 28) are reserved for future use.
+- * 3. The most significant three bits are flags describing the reparse point.
+- *    They are defined as follows:
+- *	bit 29: Name surrogate bit. If set, the filename is an alias for
+- *		another object in the system.
+- *	bit 30: High-latency bit. If set, accessing the first byte of data will
+- *		be slow. (E.g. the data is stored on a tape drive.)
+- *	bit 31: Microsoft bit. If set, the tag is owned by Microsoft. User
+- *		defined tags have to use zero here.
+- *
+- * These are the predefined reparse point tags:
+- */
+-enum {
+-	IO_REPARSE_TAG_IS_ALIAS		= cpu_to_le32(0x20000000),
+-	IO_REPARSE_TAG_IS_HIGH_LATENCY	= cpu_to_le32(0x40000000),
+-	IO_REPARSE_TAG_IS_MICROSOFT	= cpu_to_le32(0x80000000),
+-
+-	IO_REPARSE_TAG_RESERVED_ZERO	= cpu_to_le32(0x00000000),
+-	IO_REPARSE_TAG_RESERVED_ONE	= cpu_to_le32(0x00000001),
+-	IO_REPARSE_TAG_RESERVED_RANGE	= cpu_to_le32(0x00000001),
+-
+-	IO_REPARSE_TAG_NSS		= cpu_to_le32(0x68000005),
+-	IO_REPARSE_TAG_NSS_RECOVER	= cpu_to_le32(0x68000006),
+-	IO_REPARSE_TAG_SIS		= cpu_to_le32(0x68000007),
+-	IO_REPARSE_TAG_DFS		= cpu_to_le32(0x68000008),
+-
+-	IO_REPARSE_TAG_MOUNT_POINT	= cpu_to_le32(0x88000003),
+-
+-	IO_REPARSE_TAG_HSM		= cpu_to_le32(0xa8000004),
+-
+-	IO_REPARSE_TAG_SYMBOLIC_LINK	= cpu_to_le32(0xe8000000),
+-
+-	IO_REPARSE_TAG_VALID_VALUES	= cpu_to_le32(0xe000ffff),
+-};
+-
+-/*
+- * Attribute: Reparse point (0xc0).
+- *
+- * NOTE: Can be resident or non-resident.
+- */
+-typedef struct {
+-	le32 reparse_tag;		/* Reparse point type (inc. flags). */
+-	le16 reparse_data_length;	/* Byte size of reparse data. */
+-	le16 reserved;			/* Align to 8-byte boundary. */
+-	u8 reparse_data[0];		/* Meaning depends on reparse_tag. */
+-} __attribute__ ((__packed__)) REPARSE_POINT;
+-
+-/*
+- * Attribute: Extended attribute (EA) information (0xd0).
+- *
+- * NOTE: Always resident. (Is this true???)
+- */
+-typedef struct {
+-	le16 ea_length;		/* Byte size of the packed extended
+-				   attributes. */
+-	le16 need_ea_count;	/* The number of extended attributes which have
+-				   the NEED_EA bit set. */
+-	le32 ea_query_length;	/* Byte size of the buffer required to query
+-				   the extended attributes when calling
+-				   ZwQueryEaFile() in Windows NT/2k. I.e. the
+-				   byte size of the unpacked extended
+-				   attributes. */
+-} __attribute__ ((__packed__)) EA_INFORMATION;
+-
+-/*
+- * Extended attribute flags (8-bit).
+- */
+-enum {
+-	NEED_EA	= 0x80		/* If set the file to which the EA belongs
+-				   cannot be interpreted without understanding
+-				   the associates extended attributes. */
+-} __attribute__ ((__packed__));
+-
+-typedef u8 EA_FLAGS;
+-
+-/*
+- * Attribute: Extended attribute (EA) (0xe0).
+- *
+- * NOTE: Can be resident or non-resident.
+- *
+- * Like the attribute list and the index buffer list, the EA attribute value is
+- * a sequence of EA_ATTR variable length records.
+- */
+-typedef struct {
+-	le32 next_entry_offset;	/* Offset to the next EA_ATTR. */
+-	EA_FLAGS flags;		/* Flags describing the EA. */
+-	u8 ea_name_length;	/* Length of the name of the EA in bytes
+-				   excluding the '\0' byte terminator. */
+-	le16 ea_value_length;	/* Byte size of the EA's value. */
+-	u8 ea_name[0];		/* Name of the EA.  Note this is ASCII, not
+-				   Unicode and it is zero terminated. */
+-	u8 ea_value[0];		/* The value of the EA.  Immediately follows
+-				   the name. */
+-} __attribute__ ((__packed__)) EA_ATTR;
+-
+-/*
+- * Attribute: Property set (0xf0).
+- *
+- * Intended to support Native Structure Storage (NSS) - a feature removed from
+- * NTFS 3.0 during beta testing.
+- */
+-typedef struct {
+-	/* Irrelevant as feature unused. */
+-} __attribute__ ((__packed__)) PROPERTY_SET;
+-
+-/*
+- * Attribute: Logged utility stream (0x100).
+- *
+- * NOTE: Can be resident or non-resident.
+- *
+- * Operations on this attribute are logged to the journal ($LogFile) like
+- * normal metadata changes.
+- *
+- * Used by the Encrypting File System (EFS). All encrypted files have this
+- * attribute with the name $EFS.
+- */
+-typedef struct {
+-	/* Can be anything the creator chooses. */
+-	/* EFS uses it as follows: */
+-	// FIXME: Type this info, verifying it along the way. (AIA)
+-} __attribute__ ((__packed__)) LOGGED_UTILITY_STREAM, EFS_ATTR;
+-
+-#endif /* _LINUX_NTFS_LAYOUT_H */
+diff --git a/fs/ntfs/lcnalloc.c b/fs/ntfs/lcnalloc.c
+deleted file mode 100644
+index eda9972e6159..000000000000
+--- a/fs/ntfs/lcnalloc.c
++++ /dev/null
+@@ -1,1000 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * lcnalloc.c - Cluster (de)allocation code.  Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2004-2005 Anton Altaparmakov
+- */
+-
+-#ifdef NTFS_RW
+-
+-#include <linux/pagemap.h>
+-
+-#include "lcnalloc.h"
+-#include "debug.h"
+-#include "bitmap.h"
+-#include "inode.h"
+-#include "volume.h"
+-#include "attrib.h"
+-#include "malloc.h"
+-#include "aops.h"
+-#include "ntfs.h"
+-
+-/**
+- * ntfs_cluster_free_from_rl_nolock - free clusters from runlist
+- * @vol:	mounted ntfs volume on which to free the clusters
+- * @rl:		runlist describing the clusters to free
+- *
+- * Free all the clusters described by the runlist @rl on the volume @vol.  In
+- * the case of an error being returned, at least some of the clusters were not
+- * freed.
+- *
+- * Return 0 on success and -errno on error.
+- *
+- * Locking: - The volume lcn bitmap must be locked for writing on entry and is
+- *	      left locked on return.
+- */
+-int ntfs_cluster_free_from_rl_nolock(ntfs_volume *vol,
+-		const runlist_element *rl)
+-{
+-	struct inode *lcnbmp_vi = vol->lcnbmp_ino;
+-	int ret = 0;
+-
+-	ntfs_debug("Entering.");
+-	if (!rl)
+-		return 0;
+-	for (; rl->length; rl++) {
+-		int err;
+-
+-		if (rl->lcn < 0)
+-			continue;
+-		err = ntfs_bitmap_clear_run(lcnbmp_vi, rl->lcn, rl->length);
+-		if (unlikely(err && (!ret || ret == -ENOMEM) && ret != err))
+-			ret = err;
+-	}
+-	ntfs_debug("Done.");
+-	return ret;
+-}
+-
+-/**
+- * ntfs_cluster_alloc - allocate clusters on an ntfs volume
+- * @vol:	mounted ntfs volume on which to allocate the clusters
+- * @start_vcn:	vcn to use for the first allocated cluster
+- * @count:	number of clusters to allocate
+- * @start_lcn:	starting lcn at which to allocate the clusters (or -1 if none)
+- * @zone:	zone from which to allocate the clusters
+- * @is_extension:	if 'true', this is an attribute extension
+- *
+- * Allocate @count clusters preferably starting at cluster @start_lcn or at the
+- * current allocator position if @start_lcn is -1, on the mounted ntfs volume
+- * @vol. @zone is either DATA_ZONE for allocation of normal clusters or
+- * MFT_ZONE for allocation of clusters for the master file table, i.e. the
+- * $MFT/$DATA attribute.
+- *
+- * @start_vcn specifies the vcn of the first allocated cluster.  This makes
+- * merging the resulting runlist with the old runlist easier.
+- *
+- * If @is_extension is 'true', the caller is allocating clusters to extend an
+- * attribute and if it is 'false', the caller is allocating clusters to fill a
+- * hole in an attribute.  Practically the difference is that if @is_extension
+- * is 'true' the returned runlist will be terminated with LCN_ENOENT and if
+- * @is_extension is 'false' the runlist will be terminated with
+- * LCN_RL_NOT_MAPPED.
+- *
+- * You need to check the return value with IS_ERR().  If this is false, the
+- * function was successful and the return value is a runlist describing the
+- * allocated cluster(s).  If IS_ERR() is true, the function failed and
+- * PTR_ERR() gives you the error code.
+- *
+- * Notes on the allocation algorithm
+- * =================================
+- *
+- * There are two data zones.  First is the area between the end of the mft zone
+- * and the end of the volume, and second is the area between the start of the
+- * volume and the start of the mft zone.  On unmodified/standard NTFS 1.x
+- * volumes, the second data zone does not exist due to the mft zone being
+- * expanded to cover the start of the volume in order to reserve space for the
+- * mft bitmap attribute.
+- *
+- * This is not the prettiest function but the complexity stems from the need of
+- * implementing the mft vs data zoned approach and from the fact that we have
+- * access to the lcn bitmap in portions of up to 8192 bytes at a time, so we
+- * need to cope with crossing over boundaries of two buffers.  Further, the
+- * fact that the allocator allows for caller supplied hints as to the location
+- * of where allocation should begin and the fact that the allocator keeps track
+- * of where in the data zones the next natural allocation should occur,
+- * contribute to the complexity of the function.  But it should all be
+- * worthwhile, because this allocator should: 1) be a full implementation of
+- * the MFT zone approach used by Windows NT, 2) cause reduction in
+- * fragmentation, and 3) be speedy in allocations (the code is not optimized
+- * for speed, but the algorithm is, so further speed improvements are probably
+- * possible).
+- *
+- * FIXME: We should be monitoring cluster allocation and increment the MFT zone
+- * size dynamically but this is something for the future.  We will just cause
+- * heavier fragmentation by not doing it and I am not even sure Windows would
+- * grow the MFT zone dynamically, so it might even be correct not to do this.
+- * The overhead in doing dynamic MFT zone expansion would be very large and
+- * unlikely worth the effort. (AIA)
+- *
+- * TODO: I have added in double the required zone position pointer wrap around
+- * logic which can be optimized to having only one of the two logic sets.
+- * However, having the double logic will work fine, but if we have only one of
+- * the sets and we get it wrong somewhere, then we get into trouble, so
+- * removing the duplicate logic requires _very_ careful consideration of _all_
+- * possible code paths.  So at least for now, I am leaving the double logic -
+- * better safe than sorry... (AIA)
+- *
+- * Locking: - The volume lcn bitmap must be unlocked on entry and is unlocked
+- *	      on return.
+- *	    - This function takes the volume lcn bitmap lock for writing and
+- *	      modifies the bitmap contents.
+- */
+-runlist_element *ntfs_cluster_alloc(ntfs_volume *vol, const VCN start_vcn,
+-		const s64 count, const LCN start_lcn,
+-		const NTFS_CLUSTER_ALLOCATION_ZONES zone,
+-		const bool is_extension)
+-{
+-	LCN zone_start, zone_end, bmp_pos, bmp_initial_pos, last_read_pos, lcn;
+-	LCN prev_lcn = 0, prev_run_len = 0, mft_zone_size;
+-	s64 clusters;
+-	loff_t i_size;
+-	struct inode *lcnbmp_vi;
+-	runlist_element *rl = NULL;
+-	struct address_space *mapping;
+-	struct page *page = NULL;
+-	u8 *buf, *byte;
+-	int err = 0, rlpos, rlsize, buf_size;
+-	u8 pass, done_zones, search_zone, need_writeback = 0, bit;
+-
+-	ntfs_debug("Entering for start_vcn 0x%llx, count 0x%llx, start_lcn "
+-			"0x%llx, zone %s_ZONE.", (unsigned long long)start_vcn,
+-			(unsigned long long)count,
+-			(unsigned long long)start_lcn,
+-			zone == MFT_ZONE ? "MFT" : "DATA");
+-	BUG_ON(!vol);
+-	lcnbmp_vi = vol->lcnbmp_ino;
+-	BUG_ON(!lcnbmp_vi);
+-	BUG_ON(start_vcn < 0);
+-	BUG_ON(count < 0);
+-	BUG_ON(start_lcn < -1);
+-	BUG_ON(zone < FIRST_ZONE);
+-	BUG_ON(zone > LAST_ZONE);
+-
+-	/* Return NULL if @count is zero. */
+-	if (!count)
+-		return NULL;
+-	/* Take the lcnbmp lock for writing. */
+-	down_write(&vol->lcnbmp_lock);
+-	/*
+-	 * If no specific @start_lcn was requested, use the current data zone
+-	 * position, otherwise use the requested @start_lcn but make sure it
+-	 * lies outside the mft zone.  Also set done_zones to 0 (no zones done)
+-	 * and pass depending on whether we are starting inside a zone (1) or
+-	 * at the beginning of a zone (2).  If requesting from the MFT_ZONE,
+-	 * we either start at the current position within the mft zone or at
+-	 * the specified position.  If the latter is out of bounds then we start
+-	 * at the beginning of the MFT_ZONE.
+-	 */
+-	done_zones = 0;
+-	pass = 1;
+-	/*
+-	 * zone_start and zone_end are the current search range.  search_zone
+-	 * is 1 for mft zone, 2 for data zone 1 (end of mft zone till end of
+-	 * volume) and 4 for data zone 2 (start of volume till start of mft
+-	 * zone).
+-	 */
+-	zone_start = start_lcn;
+-	if (zone_start < 0) {
+-		if (zone == DATA_ZONE)
+-			zone_start = vol->data1_zone_pos;
+-		else
+-			zone_start = vol->mft_zone_pos;
+-		if (!zone_start) {
+-			/*
+-			 * Zone starts at beginning of volume which means a
+-			 * single pass is sufficient.
+-			 */
+-			pass = 2;
+-		}
+-	} else if (zone == DATA_ZONE && zone_start >= vol->mft_zone_start &&
+-			zone_start < vol->mft_zone_end) {
+-		zone_start = vol->mft_zone_end;
+-		/*
+-		 * Starting at beginning of data1_zone which means a single
+-		 * pass in this zone is sufficient.
+-		 */
+-		pass = 2;
+-	} else if (zone == MFT_ZONE && (zone_start < vol->mft_zone_start ||
+-			zone_start >= vol->mft_zone_end)) {
+-		zone_start = vol->mft_lcn;
+-		if (!vol->mft_zone_end)
+-			zone_start = 0;
+-		/*
+-		 * Starting at beginning of volume which means a single pass
+-		 * is sufficient.
+-		 */
+-		pass = 2;
+-	}
+-	if (zone == MFT_ZONE) {
+-		zone_end = vol->mft_zone_end;
+-		search_zone = 1;
+-	} else /* if (zone == DATA_ZONE) */ {
+-		/* Skip searching the mft zone. */
+-		done_zones |= 1;
+-		if (zone_start >= vol->mft_zone_end) {
+-			zone_end = vol->nr_clusters;
+-			search_zone = 2;
+-		} else {
+-			zone_end = vol->mft_zone_start;
+-			search_zone = 4;
+-		}
+-	}
+-	/*
+-	 * bmp_pos is the current bit position inside the bitmap.  We use
+-	 * bmp_initial_pos to determine whether or not to do a zone switch.
+-	 */
+-	bmp_pos = bmp_initial_pos = zone_start;
+-
+-	/* Loop until all clusters are allocated, i.e. clusters == 0. */
+-	clusters = count;
+-	rlpos = rlsize = 0;
+-	mapping = lcnbmp_vi->i_mapping;
+-	i_size = i_size_read(lcnbmp_vi);
+-	while (1) {
+-		ntfs_debug("Start of outer while loop: done_zones 0x%x, "
+-				"search_zone %i, pass %i, zone_start 0x%llx, "
+-				"zone_end 0x%llx, bmp_initial_pos 0x%llx, "
+-				"bmp_pos 0x%llx, rlpos %i, rlsize %i.",
+-				done_zones, search_zone, pass,
+-				(unsigned long long)zone_start,
+-				(unsigned long long)zone_end,
+-				(unsigned long long)bmp_initial_pos,
+-				(unsigned long long)bmp_pos, rlpos, rlsize);
+-		/* Loop until we run out of free clusters. */
+-		last_read_pos = bmp_pos >> 3;
+-		ntfs_debug("last_read_pos 0x%llx.",
+-				(unsigned long long)last_read_pos);
+-		if (last_read_pos > i_size) {
+-			ntfs_debug("End of attribute reached.  "
+-					"Skipping to zone_pass_done.");
+-			goto zone_pass_done;
+-		}
+-		if (likely(page)) {
+-			if (need_writeback) {
+-				ntfs_debug("Marking page dirty.");
+-				flush_dcache_page(page);
+-				set_page_dirty(page);
+-				need_writeback = 0;
+-			}
+-			ntfs_unmap_page(page);
+-		}
+-		page = ntfs_map_page(mapping, last_read_pos >>
+-				PAGE_SHIFT);
+-		if (IS_ERR(page)) {
+-			err = PTR_ERR(page);
+-			ntfs_error(vol->sb, "Failed to map page.");
+-			goto out;
+-		}
+-		buf_size = last_read_pos & ~PAGE_MASK;
+-		buf = page_address(page) + buf_size;
+-		buf_size = PAGE_SIZE - buf_size;
+-		if (unlikely(last_read_pos + buf_size > i_size))
+-			buf_size = i_size - last_read_pos;
+-		buf_size <<= 3;
+-		lcn = bmp_pos & 7;
+-		bmp_pos &= ~(LCN)7;
+-		ntfs_debug("Before inner while loop: buf_size %i, lcn 0x%llx, "
+-				"bmp_pos 0x%llx, need_writeback %i.", buf_size,
+-				(unsigned long long)lcn,
+-				(unsigned long long)bmp_pos, need_writeback);
+-		while (lcn < buf_size && lcn + bmp_pos < zone_end) {
+-			byte = buf + (lcn >> 3);
+-			ntfs_debug("In inner while loop: buf_size %i, "
+-					"lcn 0x%llx, bmp_pos 0x%llx, "
+-					"need_writeback %i, byte ofs 0x%x, "
+-					"*byte 0x%x.", buf_size,
+-					(unsigned long long)lcn,
+-					(unsigned long long)bmp_pos,
+-					need_writeback,
+-					(unsigned int)(lcn >> 3),
+-					(unsigned int)*byte);
+-			/* Skip full bytes. */
+-			if (*byte == 0xff) {
+-				lcn = (lcn + 8) & ~(LCN)7;
+-				ntfs_debug("Continuing while loop 1.");
+-				continue;
+-			}
+-			bit = 1 << (lcn & 7);
+-			ntfs_debug("bit 0x%x.", bit);
+-			/* If the bit is already set, go onto the next one. */
+-			if (*byte & bit) {
+-				lcn++;
+-				ntfs_debug("Continuing while loop 2.");
+-				continue;
+-			}
+-			/*
+-			 * Allocate more memory if needed, including space for
+-			 * the terminator element.
+-			 * ntfs_malloc_nofs() operates on whole pages only.
+-			 */
+-			if ((rlpos + 2) * sizeof(*rl) > rlsize) {
+-				runlist_element *rl2;
+-
+-				ntfs_debug("Reallocating memory.");
+-				if (!rl)
+-					ntfs_debug("First free bit is at LCN "
+-							"0x%llx.",
+-							(unsigned long long)
+-							(lcn + bmp_pos));
+-				rl2 = ntfs_malloc_nofs(rlsize + (int)PAGE_SIZE);
+-				if (unlikely(!rl2)) {
+-					err = -ENOMEM;
+-					ntfs_error(vol->sb, "Failed to "
+-							"allocate memory.");
+-					goto out;
+-				}
+-				memcpy(rl2, rl, rlsize);
+-				ntfs_free(rl);
+-				rl = rl2;
+-				rlsize += PAGE_SIZE;
+-				ntfs_debug("Reallocated memory, rlsize 0x%x.",
+-						rlsize);
+-			}
+-			/* Allocate the bitmap bit. */
+-			*byte |= bit;
+-			/* We need to write this bitmap page to disk. */
+-			need_writeback = 1;
+-			ntfs_debug("*byte 0x%x, need_writeback is set.",
+-					(unsigned int)*byte);
+-			/*
+-			 * Coalesce with previous run if adjacent LCNs.
+-			 * Otherwise, append a new run.
+-			 */
+-			ntfs_debug("Adding run (lcn 0x%llx, len 0x%llx), "
+-					"prev_lcn 0x%llx, lcn 0x%llx, "
+-					"bmp_pos 0x%llx, prev_run_len 0x%llx, "
+-					"rlpos %i.",
+-					(unsigned long long)(lcn + bmp_pos),
+-					1ULL, (unsigned long long)prev_lcn,
+-					(unsigned long long)lcn,
+-					(unsigned long long)bmp_pos,
+-					(unsigned long long)prev_run_len,
+-					rlpos);
+-			if (prev_lcn == lcn + bmp_pos - prev_run_len && rlpos) {
+-				ntfs_debug("Coalescing to run (lcn 0x%llx, "
+-						"len 0x%llx).",
+-						(unsigned long long)
+-						rl[rlpos - 1].lcn,
+-						(unsigned long long)
+-						rl[rlpos - 1].length);
+-				rl[rlpos - 1].length = ++prev_run_len;
+-				ntfs_debug("Run now (lcn 0x%llx, len 0x%llx), "
+-						"prev_run_len 0x%llx.",
+-						(unsigned long long)
+-						rl[rlpos - 1].lcn,
+-						(unsigned long long)
+-						rl[rlpos - 1].length,
+-						(unsigned long long)
+-						prev_run_len);
+-			} else {
+-				if (likely(rlpos)) {
+-					ntfs_debug("Adding new run, (previous "
+-							"run lcn 0x%llx, "
+-							"len 0x%llx).",
+-							(unsigned long long)
+-							rl[rlpos - 1].lcn,
+-							(unsigned long long)
+-							rl[rlpos - 1].length);
+-					rl[rlpos].vcn = rl[rlpos - 1].vcn +
+-							prev_run_len;
+-				} else {
+-					ntfs_debug("Adding new run, is first "
+-							"run.");
+-					rl[rlpos].vcn = start_vcn;
+-				}
+-				rl[rlpos].lcn = prev_lcn = lcn + bmp_pos;
+-				rl[rlpos].length = prev_run_len = 1;
+-				rlpos++;
+-			}
+-			/* Done? */
+-			if (!--clusters) {
+-				LCN tc;
+-				/*
+-				 * Update the current zone position.  Positions
+-				 * of already scanned zones have been updated
+-				 * during the respective zone switches.
+-				 */
+-				tc = lcn + bmp_pos + 1;
+-				ntfs_debug("Done. Updating current zone "
+-						"position, tc 0x%llx, "
+-						"search_zone %i.",
+-						(unsigned long long)tc,
+-						search_zone);
+-				switch (search_zone) {
+-				case 1:
+-					ntfs_debug("Before checks, "
+-							"vol->mft_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->mft_zone_pos);
+-					if (tc >= vol->mft_zone_end) {
+-						vol->mft_zone_pos =
+-								vol->mft_lcn;
+-						if (!vol->mft_zone_end)
+-							vol->mft_zone_pos = 0;
+-					} else if ((bmp_initial_pos >=
+-							vol->mft_zone_pos ||
+-							tc > vol->mft_zone_pos)
+-							&& tc >= vol->mft_lcn)
+-						vol->mft_zone_pos = tc;
+-					ntfs_debug("After checks, "
+-							"vol->mft_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->mft_zone_pos);
+-					break;
+-				case 2:
+-					ntfs_debug("Before checks, "
+-							"vol->data1_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->data1_zone_pos);
+-					if (tc >= vol->nr_clusters)
+-						vol->data1_zone_pos =
+-							     vol->mft_zone_end;
+-					else if ((bmp_initial_pos >=
+-						    vol->data1_zone_pos ||
+-						    tc > vol->data1_zone_pos)
+-						    && tc >= vol->mft_zone_end)
+-						vol->data1_zone_pos = tc;
+-					ntfs_debug("After checks, "
+-							"vol->data1_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->data1_zone_pos);
+-					break;
+-				case 4:
+-					ntfs_debug("Before checks, "
+-							"vol->data2_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->data2_zone_pos);
+-					if (tc >= vol->mft_zone_start)
+-						vol->data2_zone_pos = 0;
+-					else if (bmp_initial_pos >=
+-						      vol->data2_zone_pos ||
+-						      tc > vol->data2_zone_pos)
+-						vol->data2_zone_pos = tc;
+-					ntfs_debug("After checks, "
+-							"vol->data2_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->data2_zone_pos);
+-					break;
+-				default:
+-					BUG();
+-				}
+-				ntfs_debug("Finished.  Going to out.");
+-				goto out;
+-			}
+-			lcn++;
+-		}
+-		bmp_pos += buf_size;
+-		ntfs_debug("After inner while loop: buf_size 0x%x, lcn "
+-				"0x%llx, bmp_pos 0x%llx, need_writeback %i.",
+-				buf_size, (unsigned long long)lcn,
+-				(unsigned long long)bmp_pos, need_writeback);
+-		if (bmp_pos < zone_end) {
+-			ntfs_debug("Continuing outer while loop, "
+-					"bmp_pos 0x%llx, zone_end 0x%llx.",
+-					(unsigned long long)bmp_pos,
+-					(unsigned long long)zone_end);
+-			continue;
+-		}
+-zone_pass_done:	/* Finished with the current zone pass. */
+-		ntfs_debug("At zone_pass_done, pass %i.", pass);
+-		if (pass == 1) {
+-			/*
+-			 * Now do pass 2, scanning the first part of the zone
+-			 * we omitted in pass 1.
+-			 */
+-			pass = 2;
+-			zone_end = zone_start;
+-			switch (search_zone) {
+-			case 1: /* mft_zone */
+-				zone_start = vol->mft_zone_start;
+-				break;
+-			case 2: /* data1_zone */
+-				zone_start = vol->mft_zone_end;
+-				break;
+-			case 4: /* data2_zone */
+-				zone_start = 0;
+-				break;
+-			default:
+-				BUG();
+-			}
+-			/* Sanity check. */
+-			if (zone_end < zone_start)
+-				zone_end = zone_start;
+-			bmp_pos = zone_start;
+-			ntfs_debug("Continuing outer while loop, pass 2, "
+-					"zone_start 0x%llx, zone_end 0x%llx, "
+-					"bmp_pos 0x%llx.",
+-					(unsigned long long)zone_start,
+-					(unsigned long long)zone_end,
+-					(unsigned long long)bmp_pos);
+-			continue;
+-		} /* pass == 2 */
+-done_zones_check:
+-		ntfs_debug("At done_zones_check, search_zone %i, done_zones "
+-				"before 0x%x, done_zones after 0x%x.",
+-				search_zone, done_zones,
+-				done_zones | search_zone);
+-		done_zones |= search_zone;
+-		if (done_zones < 7) {
+-			ntfs_debug("Switching zone.");
+-			/* Now switch to the next zone we haven't done yet. */
+-			pass = 1;
+-			switch (search_zone) {
+-			case 1:
+-				ntfs_debug("Switching from mft zone to data1 "
+-						"zone.");
+-				/* Update mft zone position. */
+-				if (rlpos) {
+-					LCN tc;
+-
+-					ntfs_debug("Before checks, "
+-							"vol->mft_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->mft_zone_pos);
+-					tc = rl[rlpos - 1].lcn +
+-							rl[rlpos - 1].length;
+-					if (tc >= vol->mft_zone_end) {
+-						vol->mft_zone_pos =
+-								vol->mft_lcn;
+-						if (!vol->mft_zone_end)
+-							vol->mft_zone_pos = 0;
+-					} else if ((bmp_initial_pos >=
+-							vol->mft_zone_pos ||
+-							tc > vol->mft_zone_pos)
+-							&& tc >= vol->mft_lcn)
+-						vol->mft_zone_pos = tc;
+-					ntfs_debug("After checks, "
+-							"vol->mft_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->mft_zone_pos);
+-				}
+-				/* Switch from mft zone to data1 zone. */
+-switch_to_data1_zone:		search_zone = 2;
+-				zone_start = bmp_initial_pos =
+-						vol->data1_zone_pos;
+-				zone_end = vol->nr_clusters;
+-				if (zone_start == vol->mft_zone_end)
+-					pass = 2;
+-				if (zone_start >= zone_end) {
+-					vol->data1_zone_pos = zone_start =
+-							vol->mft_zone_end;
+-					pass = 2;
+-				}
+-				break;
+-			case 2:
+-				ntfs_debug("Switching from data1 zone to "
+-						"data2 zone.");
+-				/* Update data1 zone position. */
+-				if (rlpos) {
+-					LCN tc;
+-
+-					ntfs_debug("Before checks, "
+-							"vol->data1_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->data1_zone_pos);
+-					tc = rl[rlpos - 1].lcn +
+-							rl[rlpos - 1].length;
+-					if (tc >= vol->nr_clusters)
+-						vol->data1_zone_pos =
+-							     vol->mft_zone_end;
+-					else if ((bmp_initial_pos >=
+-						    vol->data1_zone_pos ||
+-						    tc > vol->data1_zone_pos)
+-						    && tc >= vol->mft_zone_end)
+-						vol->data1_zone_pos = tc;
+-					ntfs_debug("After checks, "
+-							"vol->data1_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->data1_zone_pos);
+-				}
+-				/* Switch from data1 zone to data2 zone. */
+-				search_zone = 4;
+-				zone_start = bmp_initial_pos =
+-						vol->data2_zone_pos;
+-				zone_end = vol->mft_zone_start;
+-				if (!zone_start)
+-					pass = 2;
+-				if (zone_start >= zone_end) {
+-					vol->data2_zone_pos = zone_start =
+-							bmp_initial_pos = 0;
+-					pass = 2;
+-				}
+-				break;
+-			case 4:
+-				ntfs_debug("Switching from data2 zone to "
+-						"data1 zone.");
+-				/* Update data2 zone position. */
+-				if (rlpos) {
+-					LCN tc;
+-
+-					ntfs_debug("Before checks, "
+-							"vol->data2_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->data2_zone_pos);
+-					tc = rl[rlpos - 1].lcn +
+-							rl[rlpos - 1].length;
+-					if (tc >= vol->mft_zone_start)
+-						vol->data2_zone_pos = 0;
+-					else if (bmp_initial_pos >=
+-						      vol->data2_zone_pos ||
+-						      tc > vol->data2_zone_pos)
+-						vol->data2_zone_pos = tc;
+-					ntfs_debug("After checks, "
+-							"vol->data2_zone_pos "
+-							"0x%llx.",
+-							(unsigned long long)
+-							vol->data2_zone_pos);
+-				}
+-				/* Switch from data2 zone to data1 zone. */
+-				goto switch_to_data1_zone;
+-			default:
+-				BUG();
+-			}
+-			ntfs_debug("After zone switch, search_zone %i, "
+-					"pass %i, bmp_initial_pos 0x%llx, "
+-					"zone_start 0x%llx, zone_end 0x%llx.",
+-					search_zone, pass,
+-					(unsigned long long)bmp_initial_pos,
+-					(unsigned long long)zone_start,
+-					(unsigned long long)zone_end);
+-			bmp_pos = zone_start;
+-			if (zone_start == zone_end) {
+-				ntfs_debug("Empty zone, going to "
+-						"done_zones_check.");
+-				/* Empty zone. Don't bother searching it. */
+-				goto done_zones_check;
+-			}
+-			ntfs_debug("Continuing outer while loop.");
+-			continue;
+-		} /* done_zones == 7 */
+-		ntfs_debug("All zones are finished.");
+-		/*
+-		 * All zones are finished!  If DATA_ZONE, shrink mft zone.  If
+-		 * MFT_ZONE, we have really run out of space.
+-		 */
+-		mft_zone_size = vol->mft_zone_end - vol->mft_zone_start;
+-		ntfs_debug("vol->mft_zone_start 0x%llx, vol->mft_zone_end "
+-				"0x%llx, mft_zone_size 0x%llx.",
+-				(unsigned long long)vol->mft_zone_start,
+-				(unsigned long long)vol->mft_zone_end,
+-				(unsigned long long)mft_zone_size);
+-		if (zone == MFT_ZONE || mft_zone_size <= 0) {
+-			ntfs_debug("No free clusters left, going to out.");
+-			/* Really no more space left on device. */
+-			err = -ENOSPC;
+-			goto out;
+-		} /* zone == DATA_ZONE && mft_zone_size > 0 */
+-		ntfs_debug("Shrinking mft zone.");
+-		zone_end = vol->mft_zone_end;
+-		mft_zone_size >>= 1;
+-		if (mft_zone_size > 0)
+-			vol->mft_zone_end = vol->mft_zone_start + mft_zone_size;
+-		else /* mft zone and data2 zone no longer exist. */
+-			vol->data2_zone_pos = vol->mft_zone_start =
+-					vol->mft_zone_end = 0;
+-		if (vol->mft_zone_pos >= vol->mft_zone_end) {
+-			vol->mft_zone_pos = vol->mft_lcn;
+-			if (!vol->mft_zone_end)
+-				vol->mft_zone_pos = 0;
+-		}
+-		bmp_pos = zone_start = bmp_initial_pos =
+-				vol->data1_zone_pos = vol->mft_zone_end;
+-		search_zone = 2;
+-		pass = 2;
+-		done_zones &= ~2;
+-		ntfs_debug("After shrinking mft zone, mft_zone_size 0x%llx, "
+-				"vol->mft_zone_start 0x%llx, "
+-				"vol->mft_zone_end 0x%llx, "
+-				"vol->mft_zone_pos 0x%llx, search_zone 2, "
+-				"pass 2, dones_zones 0x%x, zone_start 0x%llx, "
+-				"zone_end 0x%llx, vol->data1_zone_pos 0x%llx, "
+-				"continuing outer while loop.",
+-				(unsigned long long)mft_zone_size,
+-				(unsigned long long)vol->mft_zone_start,
+-				(unsigned long long)vol->mft_zone_end,
+-				(unsigned long long)vol->mft_zone_pos,
+-				done_zones, (unsigned long long)zone_start,
+-				(unsigned long long)zone_end,
+-				(unsigned long long)vol->data1_zone_pos);
+-	}
+-	ntfs_debug("After outer while loop.");
+-out:
+-	ntfs_debug("At out.");
+-	/* Add runlist terminator element. */
+-	if (likely(rl)) {
+-		rl[rlpos].vcn = rl[rlpos - 1].vcn + rl[rlpos - 1].length;
+-		rl[rlpos].lcn = is_extension ? LCN_ENOENT : LCN_RL_NOT_MAPPED;
+-		rl[rlpos].length = 0;
+-	}
+-	if (likely(page && !IS_ERR(page))) {
+-		if (need_writeback) {
+-			ntfs_debug("Marking page dirty.");
+-			flush_dcache_page(page);
+-			set_page_dirty(page);
+-			need_writeback = 0;
+-		}
+-		ntfs_unmap_page(page);
+-	}
+-	if (likely(!err)) {
+-		up_write(&vol->lcnbmp_lock);
+-		ntfs_debug("Done.");
+-		return rl;
+-	}
+-	ntfs_error(vol->sb, "Failed to allocate clusters, aborting "
+-			"(error %i).", err);
+-	if (rl) {
+-		int err2;
+-
+-		if (err == -ENOSPC)
+-			ntfs_debug("Not enough space to complete allocation, "
+-					"err -ENOSPC, first free lcn 0x%llx, "
+-					"could allocate up to 0x%llx "
+-					"clusters.",
+-					(unsigned long long)rl[0].lcn,
+-					(unsigned long long)(count - clusters));
+-		/* Deallocate all allocated clusters. */
+-		ntfs_debug("Attempting rollback...");
+-		err2 = ntfs_cluster_free_from_rl_nolock(vol, rl);
+-		if (err2) {
+-			ntfs_error(vol->sb, "Failed to rollback (error %i).  "
+-					"Leaving inconsistent metadata!  "
+-					"Unmount and run chkdsk.", err2);
+-			NVolSetErrors(vol);
+-		}
+-		/* Free the runlist. */
+-		ntfs_free(rl);
+-	} else if (err == -ENOSPC)
+-		ntfs_debug("No space left at all, err = -ENOSPC, first free "
+-				"lcn = 0x%llx.",
+-				(long long)vol->data1_zone_pos);
+-	up_write(&vol->lcnbmp_lock);
+-	return ERR_PTR(err);
+-}
+-
+-/**
+- * __ntfs_cluster_free - free clusters on an ntfs volume
+- * @ni:		ntfs inode whose runlist describes the clusters to free
+- * @start_vcn:	vcn in the runlist of @ni at which to start freeing clusters
+- * @count:	number of clusters to free or -1 for all clusters
+- * @ctx:	active attribute search context if present or NULL if not
+- * @is_rollback:	true if this is a rollback operation
+- *
+- * Free @count clusters starting at the cluster @start_vcn in the runlist
+- * described by the vfs inode @ni.
+- *
+- * If @count is -1, all clusters from @start_vcn to the end of the runlist are
+- * deallocated.  Thus, to completely free all clusters in a runlist, use
+- * @start_vcn = 0 and @count = -1.
+- *
+- * If @ctx is specified, it is an active search context of @ni and its base mft
+- * record.  This is needed when __ntfs_cluster_free() encounters unmapped
+- * runlist fragments and allows their mapping.  If you do not have the mft
+- * record mapped, you can specify @ctx as NULL and __ntfs_cluster_free() will
+- * perform the necessary mapping and unmapping.
+- *
+- * Note, __ntfs_cluster_free() saves the state of @ctx on entry and restores it
+- * before returning.  Thus, @ctx will be left pointing to the same attribute on
+- * return as on entry.  However, the actual pointers in @ctx may point to
+- * different memory locations on return, so you must remember to reset any
+- * cached pointers from the @ctx, i.e. after the call to __ntfs_cluster_free(),
+- * you will probably want to do:
+- *	m = ctx->mrec;
+- *	a = ctx->attr;
+- * Assuming you cache ctx->attr in a variable @a of type ATTR_RECORD * and that
+- * you cache ctx->mrec in a variable @m of type MFT_RECORD *.
+- *
+- * @is_rollback should always be 'false', it is for internal use to rollback
+- * errors.  You probably want to use ntfs_cluster_free() instead.
+- *
+- * Note, __ntfs_cluster_free() does not modify the runlist, so you have to
+- * remove from the runlist or mark sparse the freed runs later.
+- *
+- * Return the number of deallocated clusters (not counting sparse ones) on
+- * success and -errno on error.
+- *
+- * WARNING: If @ctx is supplied, regardless of whether success or failure is
+- *	    returned, you need to check IS_ERR(@ctx->mrec) and if 'true' the @ctx
+- *	    is no longer valid, i.e. you need to either call
+- *	    ntfs_attr_reinit_search_ctx() or ntfs_attr_put_search_ctx() on it.
+- *	    In that case PTR_ERR(@ctx->mrec) will give you the error code for
+- *	    why the mapping of the old inode failed.
+- *
+- * Locking: - The runlist described by @ni must be locked for writing on entry
+- *	      and is locked on return.  Note the runlist may be modified when
+- *	      needed runlist fragments need to be mapped.
+- *	    - The volume lcn bitmap must be unlocked on entry and is unlocked
+- *	      on return.
+- *	    - This function takes the volume lcn bitmap lock for writing and
+- *	      modifies the bitmap contents.
+- *	    - If @ctx is NULL, the base mft record of @ni must not be mapped on
+- *	      entry and it will be left unmapped on return.
+- *	    - If @ctx is not NULL, the base mft record must be mapped on entry
+- *	      and it will be left mapped on return.
+- */
+-s64 __ntfs_cluster_free(ntfs_inode *ni, const VCN start_vcn, s64 count,
+-		ntfs_attr_search_ctx *ctx, const bool is_rollback)
+-{
+-	s64 delta, to_free, total_freed, real_freed;
+-	ntfs_volume *vol;
+-	struct inode *lcnbmp_vi;
+-	runlist_element *rl;
+-	int err;
+-
+-	BUG_ON(!ni);
+-	ntfs_debug("Entering for i_ino 0x%lx, start_vcn 0x%llx, count "
+-			"0x%llx.%s", ni->mft_no, (unsigned long long)start_vcn,
+-			(unsigned long long)count,
+-			is_rollback ? " (rollback)" : "");
+-	vol = ni->vol;
+-	lcnbmp_vi = vol->lcnbmp_ino;
+-	BUG_ON(!lcnbmp_vi);
+-	BUG_ON(start_vcn < 0);
+-	BUG_ON(count < -1);
+-	/*
+-	 * Lock the lcn bitmap for writing but only if not rolling back.  We
+-	 * must hold the lock all the way including through rollback otherwise
+-	 * rollback is not possible because once we have cleared a bit and
+-	 * dropped the lock, anyone could have set the bit again, thus
+-	 * allocating the cluster for another use.
+-	 */
+-	if (likely(!is_rollback))
+-		down_write(&vol->lcnbmp_lock);
+-
+-	total_freed = real_freed = 0;
+-
+-	rl = ntfs_attr_find_vcn_nolock(ni, start_vcn, ctx);
+-	if (IS_ERR(rl)) {
+-		if (!is_rollback)
+-			ntfs_error(vol->sb, "Failed to find first runlist "
+-					"element (error %li), aborting.",
+-					PTR_ERR(rl));
+-		err = PTR_ERR(rl);
+-		goto err_out;
+-	}
+-	if (unlikely(rl->lcn < LCN_HOLE)) {
+-		if (!is_rollback)
+-			ntfs_error(vol->sb, "First runlist element has "
+-					"invalid lcn, aborting.");
+-		err = -EIO;
+-		goto err_out;
+-	}
+-	/* Find the starting cluster inside the run that needs freeing. */
+-	delta = start_vcn - rl->vcn;
+-
+-	/* The number of clusters in this run that need freeing. */
+-	to_free = rl->length - delta;
+-	if (count >= 0 && to_free > count)
+-		to_free = count;
+-
+-	if (likely(rl->lcn >= 0)) {
+-		/* Do the actual freeing of the clusters in this run. */
+-		err = ntfs_bitmap_set_bits_in_run(lcnbmp_vi, rl->lcn + delta,
+-				to_free, likely(!is_rollback) ? 0 : 1);
+-		if (unlikely(err)) {
+-			if (!is_rollback)
+-				ntfs_error(vol->sb, "Failed to clear first run "
+-						"(error %i), aborting.", err);
+-			goto err_out;
+-		}
+-		/* We have freed @to_free real clusters. */
+-		real_freed = to_free;
+-	};
+-	/* Go to the next run and adjust the number of clusters left to free. */
+-	++rl;
+-	if (count >= 0)
+-		count -= to_free;
+-
+-	/* Keep track of the total "freed" clusters, including sparse ones. */
+-	total_freed = to_free;
+-	/*
+-	 * Loop over the remaining runs, using @count as a capping value, and
+-	 * free them.
+-	 */
+-	for (; rl->length && count != 0; ++rl) {
+-		if (unlikely(rl->lcn < LCN_HOLE)) {
+-			VCN vcn;
+-
+-			/* Attempt to map runlist. */
+-			vcn = rl->vcn;
+-			rl = ntfs_attr_find_vcn_nolock(ni, vcn, ctx);
+-			if (IS_ERR(rl)) {
+-				err = PTR_ERR(rl);
+-				if (!is_rollback)
+-					ntfs_error(vol->sb, "Failed to map "
+-							"runlist fragment or "
+-							"failed to find "
+-							"subsequent runlist "
+-							"element.");
+-				goto err_out;
+-			}
+-			if (unlikely(rl->lcn < LCN_HOLE)) {
+-				if (!is_rollback)
+-					ntfs_error(vol->sb, "Runlist element "
+-							"has invalid lcn "
+-							"(0x%llx).",
+-							(unsigned long long)
+-							rl->lcn);
+-				err = -EIO;
+-				goto err_out;
+-			}
+-		}
+-		/* The number of clusters in this run that need freeing. */
+-		to_free = rl->length;
+-		if (count >= 0 && to_free > count)
+-			to_free = count;
+-
+-		if (likely(rl->lcn >= 0)) {
+-			/* Do the actual freeing of the clusters in the run. */
+-			err = ntfs_bitmap_set_bits_in_run(lcnbmp_vi, rl->lcn,
+-					to_free, likely(!is_rollback) ? 0 : 1);
+-			if (unlikely(err)) {
+-				if (!is_rollback)
+-					ntfs_error(vol->sb, "Failed to clear "
+-							"subsequent run.");
+-				goto err_out;
+-			}
+-			/* We have freed @to_free real clusters. */
+-			real_freed += to_free;
+-		}
+-		/* Adjust the number of clusters left to free. */
+-		if (count >= 0)
+-			count -= to_free;
+-	
+-		/* Update the total done clusters. */
+-		total_freed += to_free;
+-	}
+-	if (likely(!is_rollback))
+-		up_write(&vol->lcnbmp_lock);
+-
+-	BUG_ON(count > 0);
+-
+-	/* We are done.  Return the number of actually freed clusters. */
+-	ntfs_debug("Done.");
+-	return real_freed;
+-err_out:
+-	if (is_rollback)
+-		return err;
+-	/* If no real clusters were freed, no need to rollback. */
+-	if (!real_freed) {
+-		up_write(&vol->lcnbmp_lock);
+-		return err;
+-	}
+-	/*
+-	 * Attempt to rollback and if that succeeds just return the error code.
+-	 * If rollback fails, set the volume errors flag, emit an error
+-	 * message, and return the error code.
+-	 */
+-	delta = __ntfs_cluster_free(ni, start_vcn, total_freed, ctx, true);
+-	if (delta < 0) {
+-		ntfs_error(vol->sb, "Failed to rollback (error %i).  Leaving "
+-				"inconsistent metadata!  Unmount and run "
+-				"chkdsk.", (int)delta);
+-		NVolSetErrors(vol);
+-	}
+-	up_write(&vol->lcnbmp_lock);
+-	ntfs_error(vol->sb, "Aborting (error %i).", err);
+-	return err;
+-}
+-
+-#endif /* NTFS_RW */
+diff --git a/fs/ntfs/lcnalloc.h b/fs/ntfs/lcnalloc.h
+deleted file mode 100644
+index 1589a6d8434b..000000000000
+--- a/fs/ntfs/lcnalloc.h
++++ /dev/null
+@@ -1,131 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * lcnalloc.h - Exports for NTFS kernel cluster (de)allocation.  Part of the
+- *		Linux-NTFS project.
+- *
+- * Copyright (c) 2004-2005 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_LCNALLOC_H
+-#define _LINUX_NTFS_LCNALLOC_H
+-
+-#ifdef NTFS_RW
+-
+-#include <linux/fs.h>
+-
+-#include "attrib.h"
+-#include "types.h"
+-#include "inode.h"
+-#include "runlist.h"
+-#include "volume.h"
+-
+-typedef enum {
+-	FIRST_ZONE	= 0,	/* For sanity checking. */
+-	MFT_ZONE	= 0,	/* Allocate from $MFT zone. */
+-	DATA_ZONE	= 1,	/* Allocate from $DATA zone. */
+-	LAST_ZONE	= 1,	/* For sanity checking. */
+-} NTFS_CLUSTER_ALLOCATION_ZONES;
+-
+-extern runlist_element *ntfs_cluster_alloc(ntfs_volume *vol,
+-		const VCN start_vcn, const s64 count, const LCN start_lcn,
+-		const NTFS_CLUSTER_ALLOCATION_ZONES zone,
+-		const bool is_extension);
+-
+-extern s64 __ntfs_cluster_free(ntfs_inode *ni, const VCN start_vcn,
+-		s64 count, ntfs_attr_search_ctx *ctx, const bool is_rollback);
+-
+-/**
+- * ntfs_cluster_free - free clusters on an ntfs volume
+- * @ni:		ntfs inode whose runlist describes the clusters to free
+- * @start_vcn:	vcn in the runlist of @ni at which to start freeing clusters
+- * @count:	number of clusters to free or -1 for all clusters
+- * @ctx:	active attribute search context if present or NULL if not
+- *
+- * Free @count clusters starting at the cluster @start_vcn in the runlist
+- * described by the ntfs inode @ni.
+- *
+- * If @count is -1, all clusters from @start_vcn to the end of the runlist are
+- * deallocated.  Thus, to completely free all clusters in a runlist, use
+- * @start_vcn = 0 and @count = -1.
+- *
+- * If @ctx is specified, it is an active search context of @ni and its base mft
+- * record.  This is needed when ntfs_cluster_free() encounters unmapped runlist
+- * fragments and allows their mapping.  If you do not have the mft record
+- * mapped, you can specify @ctx as NULL and ntfs_cluster_free() will perform
+- * the necessary mapping and unmapping.
+- *
+- * Note, ntfs_cluster_free() saves the state of @ctx on entry and restores it
+- * before returning.  Thus, @ctx will be left pointing to the same attribute on
+- * return as on entry.  However, the actual pointers in @ctx may point to
+- * different memory locations on return, so you must remember to reset any
+- * cached pointers from the @ctx, i.e. after the call to ntfs_cluster_free(),
+- * you will probably want to do:
+- *	m = ctx->mrec;
+- *	a = ctx->attr;
+- * Assuming you cache ctx->attr in a variable @a of type ATTR_RECORD * and that
+- * you cache ctx->mrec in a variable @m of type MFT_RECORD *.
+- *
+- * Note, ntfs_cluster_free() does not modify the runlist, so you have to remove
+- * from the runlist or mark sparse the freed runs later.
+- *
+- * Return the number of deallocated clusters (not counting sparse ones) on
+- * success and -errno on error.
+- *
+- * WARNING: If @ctx is supplied, regardless of whether success or failure is
+- *	    returned, you need to check IS_ERR(@ctx->mrec) and if 'true' the @ctx
+- *	    is no longer valid, i.e. you need to either call
+- *	    ntfs_attr_reinit_search_ctx() or ntfs_attr_put_search_ctx() on it.
+- *	    In that case PTR_ERR(@ctx->mrec) will give you the error code for
+- *	    why the mapping of the old inode failed.
+- *
+- * Locking: - The runlist described by @ni must be locked for writing on entry
+- *	      and is locked on return.  Note the runlist may be modified when
+- *	      needed runlist fragments need to be mapped.
+- *	    - The volume lcn bitmap must be unlocked on entry and is unlocked
+- *	      on return.
+- *	    - This function takes the volume lcn bitmap lock for writing and
+- *	      modifies the bitmap contents.
+- *	    - If @ctx is NULL, the base mft record of @ni must not be mapped on
+- *	      entry and it will be left unmapped on return.
+- *	    - If @ctx is not NULL, the base mft record must be mapped on entry
+- *	      and it will be left mapped on return.
+- */
+-static inline s64 ntfs_cluster_free(ntfs_inode *ni, const VCN start_vcn,
+-		s64 count, ntfs_attr_search_ctx *ctx)
+-{
+-	return __ntfs_cluster_free(ni, start_vcn, count, ctx, false);
+-}
+-
+-extern int ntfs_cluster_free_from_rl_nolock(ntfs_volume *vol,
+-		const runlist_element *rl);
+-
+-/**
+- * ntfs_cluster_free_from_rl - free clusters from runlist
+- * @vol:	mounted ntfs volume on which to free the clusters
+- * @rl:		runlist describing the clusters to free
+- *
+- * Free all the clusters described by the runlist @rl on the volume @vol.  In
+- * the case of an error being returned, at least some of the clusters were not
+- * freed.
+- *
+- * Return 0 on success and -errno on error.
+- *
+- * Locking: - This function takes the volume lcn bitmap lock for writing and
+- *	      modifies the bitmap contents.
+- *	    - The caller must have locked the runlist @rl for reading or
+- *	      writing.
+- */
+-static inline int ntfs_cluster_free_from_rl(ntfs_volume *vol,
+-		const runlist_element *rl)
+-{
+-	int ret;
+-
+-	down_write(&vol->lcnbmp_lock);
+-	ret = ntfs_cluster_free_from_rl_nolock(vol, rl);
+-	up_write(&vol->lcnbmp_lock);
+-	return ret;
+-}
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* defined _LINUX_NTFS_LCNALLOC_H */
+diff --git a/fs/ntfs/logfile.c b/fs/ntfs/logfile.c
+deleted file mode 100644
+index 6ce60ffc6ac0..000000000000
+--- a/fs/ntfs/logfile.c
++++ /dev/null
+@@ -1,849 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * logfile.c - NTFS kernel journal handling. Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2002-2007 Anton Altaparmakov
+- */
+-
+-#ifdef NTFS_RW
+-
+-#include <linux/types.h>
+-#include <linux/fs.h>
+-#include <linux/highmem.h>
+-#include <linux/buffer_head.h>
+-#include <linux/bitops.h>
+-#include <linux/log2.h>
+-#include <linux/bio.h>
+-
+-#include "attrib.h"
+-#include "aops.h"
+-#include "debug.h"
+-#include "logfile.h"
+-#include "malloc.h"
+-#include "volume.h"
+-#include "ntfs.h"
+-
+-/**
+- * ntfs_check_restart_page_header - check the page header for consistency
+- * @vi:		$LogFile inode to which the restart page header belongs
+- * @rp:		restart page header to check
+- * @pos:	position in @vi at which the restart page header resides
+- *
+- * Check the restart page header @rp for consistency and return 'true' if it is
+- * consistent and 'false' otherwise.
+- *
+- * This function only needs NTFS_BLOCK_SIZE bytes in @rp, i.e. it does not
+- * require the full restart page.
+- */
+-static bool ntfs_check_restart_page_header(struct inode *vi,
+-		RESTART_PAGE_HEADER *rp, s64 pos)
+-{
+-	u32 logfile_system_page_size, logfile_log_page_size;
+-	u16 ra_ofs, usa_count, usa_ofs, usa_end = 0;
+-	bool have_usa = true;
+-
+-	ntfs_debug("Entering.");
+-	/*
+-	 * If the system or log page sizes are smaller than the ntfs block size
+-	 * or either is not a power of 2 we cannot handle this log file.
+-	 */
+-	logfile_system_page_size = le32_to_cpu(rp->system_page_size);
+-	logfile_log_page_size = le32_to_cpu(rp->log_page_size);
+-	if (logfile_system_page_size < NTFS_BLOCK_SIZE ||
+-			logfile_log_page_size < NTFS_BLOCK_SIZE ||
+-			logfile_system_page_size &
+-			(logfile_system_page_size - 1) ||
+-			!is_power_of_2(logfile_log_page_size)) {
+-		ntfs_error(vi->i_sb, "$LogFile uses unsupported page size.");
+-		return false;
+-	}
+-	/*
+-	 * We must be either at !pos (1st restart page) or at pos = system page
+-	 * size (2nd restart page).
+-	 */
+-	if (pos && pos != logfile_system_page_size) {
+-		ntfs_error(vi->i_sb, "Found restart area in incorrect "
+-				"position in $LogFile.");
+-		return false;
+-	}
+-	/* We only know how to handle version 1.1. */
+-	if (sle16_to_cpu(rp->major_ver) != 1 ||
+-			sle16_to_cpu(rp->minor_ver) != 1) {
+-		ntfs_error(vi->i_sb, "$LogFile version %i.%i is not "
+-				"supported.  (This driver supports version "
+-				"1.1 only.)", (int)sle16_to_cpu(rp->major_ver),
+-				(int)sle16_to_cpu(rp->minor_ver));
+-		return false;
+-	}
+-	/*
+-	 * If chkdsk has been run the restart page may not be protected by an
+-	 * update sequence array.
+-	 */
+-	if (ntfs_is_chkd_record(rp->magic) && !le16_to_cpu(rp->usa_count)) {
+-		have_usa = false;
+-		goto skip_usa_checks;
+-	}
+-	/* Verify the size of the update sequence array. */
+-	usa_count = 1 + (logfile_system_page_size >> NTFS_BLOCK_SIZE_BITS);
+-	if (usa_count != le16_to_cpu(rp->usa_count)) {
+-		ntfs_error(vi->i_sb, "$LogFile restart page specifies "
+-				"inconsistent update sequence array count.");
+-		return false;
+-	}
+-	/* Verify the position of the update sequence array. */
+-	usa_ofs = le16_to_cpu(rp->usa_ofs);
+-	usa_end = usa_ofs + usa_count * sizeof(u16);
+-	if (usa_ofs < sizeof(RESTART_PAGE_HEADER) ||
+-			usa_end > NTFS_BLOCK_SIZE - sizeof(u16)) {
+-		ntfs_error(vi->i_sb, "$LogFile restart page specifies "
+-				"inconsistent update sequence array offset.");
+-		return false;
+-	}
+-skip_usa_checks:
+-	/*
+-	 * Verify the position of the restart area.  It must be:
+-	 *	- aligned to 8-byte boundary,
+-	 *	- after the update sequence array, and
+-	 *	- within the system page size.
+-	 */
+-	ra_ofs = le16_to_cpu(rp->restart_area_offset);
+-	if (ra_ofs & 7 || (have_usa ? ra_ofs < usa_end :
+-			ra_ofs < sizeof(RESTART_PAGE_HEADER)) ||
+-			ra_ofs > logfile_system_page_size) {
+-		ntfs_error(vi->i_sb, "$LogFile restart page specifies "
+-				"inconsistent restart area offset.");
+-		return false;
+-	}
+-	/*
+-	 * Only restart pages modified by chkdsk are allowed to have chkdsk_lsn
+-	 * set.
+-	 */
+-	if (!ntfs_is_chkd_record(rp->magic) && sle64_to_cpu(rp->chkdsk_lsn)) {
+-		ntfs_error(vi->i_sb, "$LogFile restart page is not modified "
+-				"by chkdsk but a chkdsk LSN is specified.");
+-		return false;
+-	}
+-	ntfs_debug("Done.");
+-	return true;
+-}
+-
+-/**
+- * ntfs_check_restart_area - check the restart area for consistency
+- * @vi:		$LogFile inode to which the restart page belongs
+- * @rp:		restart page whose restart area to check
+- *
+- * Check the restart area of the restart page @rp for consistency and return
+- * 'true' if it is consistent and 'false' otherwise.
+- *
+- * This function assumes that the restart page header has already been
+- * consistency checked.
+- *
+- * This function only needs NTFS_BLOCK_SIZE bytes in @rp, i.e. it does not
+- * require the full restart page.
+- */
+-static bool ntfs_check_restart_area(struct inode *vi, RESTART_PAGE_HEADER *rp)
+-{
+-	u64 file_size;
+-	RESTART_AREA *ra;
+-	u16 ra_ofs, ra_len, ca_ofs;
+-	u8 fs_bits;
+-
+-	ntfs_debug("Entering.");
+-	ra_ofs = le16_to_cpu(rp->restart_area_offset);
+-	ra = (RESTART_AREA*)((u8*)rp + ra_ofs);
+-	/*
+-	 * Everything before ra->file_size must be before the first word
+-	 * protected by an update sequence number.  This ensures that it is
+-	 * safe to access ra->client_array_offset.
+-	 */
+-	if (ra_ofs + offsetof(RESTART_AREA, file_size) >
+-			NTFS_BLOCK_SIZE - sizeof(u16)) {
+-		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
+-				"inconsistent file offset.");
+-		return false;
+-	}
+-	/*
+-	 * Now that we can access ra->client_array_offset, make sure everything
+-	 * up to the log client array is before the first word protected by an
+-	 * update sequence number.  This ensures we can access all of the
+-	 * restart area elements safely.  Also, the client array offset must be
+-	 * aligned to an 8-byte boundary.
+-	 */
+-	ca_ofs = le16_to_cpu(ra->client_array_offset);
+-	if (((ca_ofs + 7) & ~7) != ca_ofs ||
+-			ra_ofs + ca_ofs > NTFS_BLOCK_SIZE - sizeof(u16)) {
+-		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
+-				"inconsistent client array offset.");
+-		return false;
+-	}
+-	/*
+-	 * The restart area must end within the system page size both when
+-	 * calculated manually and as specified by ra->restart_area_length.
+-	 * Also, the calculated length must not exceed the specified length.
+-	 */
+-	ra_len = ca_ofs + le16_to_cpu(ra->log_clients) *
+-			sizeof(LOG_CLIENT_RECORD);
+-	if (ra_ofs + ra_len > le32_to_cpu(rp->system_page_size) ||
+-			ra_ofs + le16_to_cpu(ra->restart_area_length) >
+-			le32_to_cpu(rp->system_page_size) ||
+-			ra_len > le16_to_cpu(ra->restart_area_length)) {
+-		ntfs_error(vi->i_sb, "$LogFile restart area is out of bounds "
+-				"of the system page size specified by the "
+-				"restart page header and/or the specified "
+-				"restart area length is inconsistent.");
+-		return false;
+-	}
+-	/*
+-	 * The ra->client_free_list and ra->client_in_use_list must be either
+-	 * LOGFILE_NO_CLIENT or less than ra->log_clients or they are
+-	 * overflowing the client array.
+-	 */
+-	if ((ra->client_free_list != LOGFILE_NO_CLIENT &&
+-			le16_to_cpu(ra->client_free_list) >=
+-			le16_to_cpu(ra->log_clients)) ||
+-			(ra->client_in_use_list != LOGFILE_NO_CLIENT &&
+-			le16_to_cpu(ra->client_in_use_list) >=
+-			le16_to_cpu(ra->log_clients))) {
+-		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
+-				"overflowing client free and/or in use lists.");
+-		return false;
+-	}
+-	/*
+-	 * Check ra->seq_number_bits against ra->file_size for consistency.
+-	 * We cannot just use ffs() because the file size is not a power of 2.
+-	 */
+-	file_size = (u64)sle64_to_cpu(ra->file_size);
+-	fs_bits = 0;
+-	while (file_size) {
+-		file_size >>= 1;
+-		fs_bits++;
+-	}
+-	if (le32_to_cpu(ra->seq_number_bits) != 67 - fs_bits) {
+-		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
+-				"inconsistent sequence number bits.");
+-		return false;
+-	}
+-	/* The log record header length must be a multiple of 8. */
+-	if (((le16_to_cpu(ra->log_record_header_length) + 7) & ~7) !=
+-			le16_to_cpu(ra->log_record_header_length)) {
+-		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
+-				"inconsistent log record header length.");
+-		return false;
+-	}
+-	/* Dito for the log page data offset. */
+-	if (((le16_to_cpu(ra->log_page_data_offset) + 7) & ~7) !=
+-			le16_to_cpu(ra->log_page_data_offset)) {
+-		ntfs_error(vi->i_sb, "$LogFile restart area specifies "
+-				"inconsistent log page data offset.");
+-		return false;
+-	}
+-	ntfs_debug("Done.");
+-	return true;
+-}
+-
+-/**
+- * ntfs_check_log_client_array - check the log client array for consistency
+- * @vi:		$LogFile inode to which the restart page belongs
+- * @rp:		restart page whose log client array to check
+- *
+- * Check the log client array of the restart page @rp for consistency and
+- * return 'true' if it is consistent and 'false' otherwise.
+- *
+- * This function assumes that the restart page header and the restart area have
+- * already been consistency checked.
+- *
+- * Unlike ntfs_check_restart_page_header() and ntfs_check_restart_area(), this
+- * function needs @rp->system_page_size bytes in @rp, i.e. it requires the full
+- * restart page and the page must be multi sector transfer deprotected.
+- */
+-static bool ntfs_check_log_client_array(struct inode *vi,
+-		RESTART_PAGE_HEADER *rp)
+-{
+-	RESTART_AREA *ra;
+-	LOG_CLIENT_RECORD *ca, *cr;
+-	u16 nr_clients, idx;
+-	bool in_free_list, idx_is_first;
+-
+-	ntfs_debug("Entering.");
+-	ra = (RESTART_AREA*)((u8*)rp + le16_to_cpu(rp->restart_area_offset));
+-	ca = (LOG_CLIENT_RECORD*)((u8*)ra +
+-			le16_to_cpu(ra->client_array_offset));
+-	/*
+-	 * Check the ra->client_free_list first and then check the
+-	 * ra->client_in_use_list.  Check each of the log client records in
+-	 * each of the lists and check that the array does not overflow the
+-	 * ra->log_clients value.  Also keep track of the number of records
+-	 * visited as there cannot be more than ra->log_clients records and
+-	 * that way we detect eventual loops in within a list.
+-	 */
+-	nr_clients = le16_to_cpu(ra->log_clients);
+-	idx = le16_to_cpu(ra->client_free_list);
+-	in_free_list = true;
+-check_list:
+-	for (idx_is_first = true; idx != LOGFILE_NO_CLIENT_CPU; nr_clients--,
+-			idx = le16_to_cpu(cr->next_client)) {
+-		if (!nr_clients || idx >= le16_to_cpu(ra->log_clients))
+-			goto err_out;
+-		/* Set @cr to the current log client record. */
+-		cr = ca + idx;
+-		/* The first log client record must not have a prev_client. */
+-		if (idx_is_first) {
+-			if (cr->prev_client != LOGFILE_NO_CLIENT)
+-				goto err_out;
+-			idx_is_first = false;
+-		}
+-	}
+-	/* Switch to and check the in use list if we just did the free list. */
+-	if (in_free_list) {
+-		in_free_list = false;
+-		idx = le16_to_cpu(ra->client_in_use_list);
+-		goto check_list;
+-	}
+-	ntfs_debug("Done.");
+-	return true;
+-err_out:
+-	ntfs_error(vi->i_sb, "$LogFile log client array is corrupt.");
+-	return false;
+-}
+-
+-/**
+- * ntfs_check_and_load_restart_page - check the restart page for consistency
+- * @vi:		$LogFile inode to which the restart page belongs
+- * @rp:		restart page to check
+- * @pos:	position in @vi at which the restart page resides
+- * @wrp:	[OUT] copy of the multi sector transfer deprotected restart page
+- * @lsn:	[OUT] set to the current logfile lsn on success
+- *
+- * Check the restart page @rp for consistency and return 0 if it is consistent
+- * and -errno otherwise.  The restart page may have been modified by chkdsk in
+- * which case its magic is CHKD instead of RSTR.
+- *
+- * This function only needs NTFS_BLOCK_SIZE bytes in @rp, i.e. it does not
+- * require the full restart page.
+- *
+- * If @wrp is not NULL, on success, *@wrp will point to a buffer containing a
+- * copy of the complete multi sector transfer deprotected page.  On failure,
+- * *@wrp is undefined.
+- *
+- * Simillarly, if @lsn is not NULL, on success *@lsn will be set to the current
+- * logfile lsn according to this restart page.  On failure, *@lsn is undefined.
+- *
+- * The following error codes are defined:
+- *	-EINVAL	- The restart page is inconsistent.
+- *	-ENOMEM	- Not enough memory to load the restart page.
+- *	-EIO	- Failed to reading from $LogFile.
+- */
+-static int ntfs_check_and_load_restart_page(struct inode *vi,
+-		RESTART_PAGE_HEADER *rp, s64 pos, RESTART_PAGE_HEADER **wrp,
+-		LSN *lsn)
+-{
+-	RESTART_AREA *ra;
+-	RESTART_PAGE_HEADER *trp;
+-	int size, err;
+-
+-	ntfs_debug("Entering.");
+-	/* Check the restart page header for consistency. */
+-	if (!ntfs_check_restart_page_header(vi, rp, pos)) {
+-		/* Error output already done inside the function. */
+-		return -EINVAL;
+-	}
+-	/* Check the restart area for consistency. */
+-	if (!ntfs_check_restart_area(vi, rp)) {
+-		/* Error output already done inside the function. */
+-		return -EINVAL;
+-	}
+-	ra = (RESTART_AREA*)((u8*)rp + le16_to_cpu(rp->restart_area_offset));
+-	/*
+-	 * Allocate a buffer to store the whole restart page so we can multi
+-	 * sector transfer deprotect it.
+-	 */
+-	trp = ntfs_malloc_nofs(le32_to_cpu(rp->system_page_size));
+-	if (!trp) {
+-		ntfs_error(vi->i_sb, "Failed to allocate memory for $LogFile "
+-				"restart page buffer.");
+-		return -ENOMEM;
+-	}
+-	/*
+-	 * Read the whole of the restart page into the buffer.  If it fits
+-	 * completely inside @rp, just copy it from there.  Otherwise map all
+-	 * the required pages and copy the data from them.
+-	 */
+-	size = PAGE_SIZE - (pos & ~PAGE_MASK);
+-	if (size >= le32_to_cpu(rp->system_page_size)) {
+-		memcpy(trp, rp, le32_to_cpu(rp->system_page_size));
+-	} else {
+-		pgoff_t idx;
+-		struct page *page;
+-		int have_read, to_read;
+-
+-		/* First copy what we already have in @rp. */
+-		memcpy(trp, rp, size);
+-		/* Copy the remaining data one page at a time. */
+-		have_read = size;
+-		to_read = le32_to_cpu(rp->system_page_size) - size;
+-		idx = (pos + size) >> PAGE_SHIFT;
+-		BUG_ON((pos + size) & ~PAGE_MASK);
+-		do {
+-			page = ntfs_map_page(vi->i_mapping, idx);
+-			if (IS_ERR(page)) {
+-				ntfs_error(vi->i_sb, "Error mapping $LogFile "
+-						"page (index %lu).", idx);
+-				err = PTR_ERR(page);
+-				if (err != -EIO && err != -ENOMEM)
+-					err = -EIO;
+-				goto err_out;
+-			}
+-			size = min_t(int, to_read, PAGE_SIZE);
+-			memcpy((u8*)trp + have_read, page_address(page), size);
+-			ntfs_unmap_page(page);
+-			have_read += size;
+-			to_read -= size;
+-			idx++;
+-		} while (to_read > 0);
+-	}
+-	/*
+-	 * Perform the multi sector transfer deprotection on the buffer if the
+-	 * restart page is protected.
+-	 */
+-	if ((!ntfs_is_chkd_record(trp->magic) || le16_to_cpu(trp->usa_count))
+-			&& post_read_mst_fixup((NTFS_RECORD*)trp,
+-			le32_to_cpu(rp->system_page_size))) {
+-		/*
+-		 * A multi sector tranfer error was detected.  We only need to
+-		 * abort if the restart page contents exceed the multi sector
+-		 * transfer fixup of the first sector.
+-		 */
+-		if (le16_to_cpu(rp->restart_area_offset) +
+-				le16_to_cpu(ra->restart_area_length) >
+-				NTFS_BLOCK_SIZE - sizeof(u16)) {
+-			ntfs_error(vi->i_sb, "Multi sector transfer error "
+-					"detected in $LogFile restart page.");
+-			err = -EINVAL;
+-			goto err_out;
+-		}
+-	}
+-	/*
+-	 * If the restart page is modified by chkdsk or there are no active
+-	 * logfile clients, the logfile is consistent.  Otherwise, need to
+-	 * check the log client records for consistency, too.
+-	 */
+-	err = 0;
+-	if (ntfs_is_rstr_record(rp->magic) &&
+-			ra->client_in_use_list != LOGFILE_NO_CLIENT) {
+-		if (!ntfs_check_log_client_array(vi, trp)) {
+-			err = -EINVAL;
+-			goto err_out;
+-		}
+-	}
+-	if (lsn) {
+-		if (ntfs_is_rstr_record(rp->magic))
+-			*lsn = sle64_to_cpu(ra->current_lsn);
+-		else /* if (ntfs_is_chkd_record(rp->magic)) */
+-			*lsn = sle64_to_cpu(rp->chkdsk_lsn);
+-	}
+-	ntfs_debug("Done.");
+-	if (wrp)
+-		*wrp = trp;
+-	else {
+-err_out:
+-		ntfs_free(trp);
+-	}
+-	return err;
+-}
+-
+-/**
+- * ntfs_check_logfile - check the journal for consistency
+- * @log_vi:	struct inode of loaded journal $LogFile to check
+- * @rp:		[OUT] on success this is a copy of the current restart page
+- *
+- * Check the $LogFile journal for consistency and return 'true' if it is
+- * consistent and 'false' if not.  On success, the current restart page is
+- * returned in *@rp.  Caller must call ntfs_free(*@rp) when finished with it.
+- *
+- * At present we only check the two restart pages and ignore the log record
+- * pages.
+- *
+- * Note that the MstProtected flag is not set on the $LogFile inode and hence
+- * when reading pages they are not deprotected.  This is because we do not know
+- * if the $LogFile was created on a system with a different page size to ours
+- * yet and mst deprotection would fail if our page size is smaller.
+- */
+-bool ntfs_check_logfile(struct inode *log_vi, RESTART_PAGE_HEADER **rp)
+-{
+-	s64 size, pos;
+-	LSN rstr1_lsn, rstr2_lsn;
+-	ntfs_volume *vol = NTFS_SB(log_vi->i_sb);
+-	struct address_space *mapping = log_vi->i_mapping;
+-	struct page *page = NULL;
+-	u8 *kaddr = NULL;
+-	RESTART_PAGE_HEADER *rstr1_ph = NULL;
+-	RESTART_PAGE_HEADER *rstr2_ph = NULL;
+-	int log_page_size, err;
+-	bool logfile_is_empty = true;
+-	u8 log_page_bits;
+-
+-	ntfs_debug("Entering.");
+-	/* An empty $LogFile must have been clean before it got emptied. */
+-	if (NVolLogFileEmpty(vol))
+-		goto is_empty;
+-	size = i_size_read(log_vi);
+-	/* Make sure the file doesn't exceed the maximum allowed size. */
+-	if (size > MaxLogFileSize)
+-		size = MaxLogFileSize;
+-	/*
+-	 * Truncate size to a multiple of the page cache size or the default
+-	 * log page size if the page cache size is between the default log page
+-	 * log page size if the page cache size is between the default log page
+-	 * size and twice that.
+-	 */
+-	if (PAGE_SIZE >= DefaultLogPageSize && PAGE_SIZE <=
+-			DefaultLogPageSize * 2)
+-		log_page_size = DefaultLogPageSize;
+-	else
+-		log_page_size = PAGE_SIZE;
+-	/*
+-	 * Use ntfs_ffs() instead of ffs() to enable the compiler to
+-	 * optimize log_page_size and log_page_bits into constants.
+-	 */
+-	log_page_bits = ntfs_ffs(log_page_size) - 1;
+-	size &= ~(s64)(log_page_size - 1);
+-	/*
+-	 * Ensure the log file is big enough to store at least the two restart
+-	 * pages and the minimum number of log record pages.
+-	 */
+-	if (size < log_page_size * 2 || (size - log_page_size * 2) >>
+-			log_page_bits < MinLogRecordPages) {
+-		ntfs_error(vol->sb, "$LogFile is too small.");
+-		return false;
+-	}
+-	/*
+-	 * Read through the file looking for a restart page.  Since the restart
+-	 * page header is at the beginning of a page we only need to search at
+-	 * what could be the beginning of a page (for each page size) rather
+-	 * than scanning the whole file byte by byte.  If all potential places
+-	 * contain empty and uninitialzed records, the log file can be assumed
+-	 * to be empty.
+-	 */
+-	for (pos = 0; pos < size; pos <<= 1) {
+-		pgoff_t idx = pos >> PAGE_SHIFT;
+-		if (!page || page->index != idx) {
+-			if (page)
+-				ntfs_unmap_page(page);
+-			page = ntfs_map_page(mapping, idx);
+-			if (IS_ERR(page)) {
+-				ntfs_error(vol->sb, "Error mapping $LogFile "
+-						"page (index %lu).", idx);
+-				goto err_out;
+-			}
+-		}
+-		kaddr = (u8*)page_address(page) + (pos & ~PAGE_MASK);
+-		/*
+-		 * A non-empty block means the logfile is not empty while an
+-		 * empty block after a non-empty block has been encountered
+-		 * means we are done.
+-		 */
+-		if (!ntfs_is_empty_recordp((le32*)kaddr))
+-			logfile_is_empty = false;
+-		else if (!logfile_is_empty)
+-			break;
+-		/*
+-		 * A log record page means there cannot be a restart page after
+-		 * this so no need to continue searching.
+-		 */
+-		if (ntfs_is_rcrd_recordp((le32*)kaddr))
+-			break;
+-		/* If not a (modified by chkdsk) restart page, continue. */
+-		if (!ntfs_is_rstr_recordp((le32*)kaddr) &&
+-				!ntfs_is_chkd_recordp((le32*)kaddr)) {
+-			if (!pos)
+-				pos = NTFS_BLOCK_SIZE >> 1;
+-			continue;
+-		}
+-		/*
+-		 * Check the (modified by chkdsk) restart page for consistency
+-		 * and get a copy of the complete multi sector transfer
+-		 * deprotected restart page.
+-		 */
+-		err = ntfs_check_and_load_restart_page(log_vi,
+-				(RESTART_PAGE_HEADER*)kaddr, pos,
+-				!rstr1_ph ? &rstr1_ph : &rstr2_ph,
+-				!rstr1_ph ? &rstr1_lsn : &rstr2_lsn);
+-		if (!err) {
+-			/*
+-			 * If we have now found the first (modified by chkdsk)
+-			 * restart page, continue looking for the second one.
+-			 */
+-			if (!pos) {
+-				pos = NTFS_BLOCK_SIZE >> 1;
+-				continue;
+-			}
+-			/*
+-			 * We have now found the second (modified by chkdsk)
+-			 * restart page, so we can stop looking.
+-			 */
+-			break;
+-		}
+-		/*
+-		 * Error output already done inside the function.  Note, we do
+-		 * not abort if the restart page was invalid as we might still
+-		 * find a valid one further in the file.
+-		 */
+-		if (err != -EINVAL) {
+-			ntfs_unmap_page(page);
+-			goto err_out;
+-		}
+-		/* Continue looking. */
+-		if (!pos)
+-			pos = NTFS_BLOCK_SIZE >> 1;
+-	}
+-	if (page)
+-		ntfs_unmap_page(page);
+-	if (logfile_is_empty) {
+-		NVolSetLogFileEmpty(vol);
+-is_empty:
+-		ntfs_debug("Done.  ($LogFile is empty.)");
+-		return true;
+-	}
+-	if (!rstr1_ph) {
+-		BUG_ON(rstr2_ph);
+-		ntfs_error(vol->sb, "Did not find any restart pages in "
+-				"$LogFile and it was not empty.");
+-		return false;
+-	}
+-	/* If both restart pages were found, use the more recent one. */
+-	if (rstr2_ph) {
+-		/*
+-		 * If the second restart area is more recent, switch to it.
+-		 * Otherwise just throw it away.
+-		 */
+-		if (rstr2_lsn > rstr1_lsn) {
+-			ntfs_debug("Using second restart page as it is more "
+-					"recent.");
+-			ntfs_free(rstr1_ph);
+-			rstr1_ph = rstr2_ph;
+-			/* rstr1_lsn = rstr2_lsn; */
+-		} else {
+-			ntfs_debug("Using first restart page as it is more "
+-					"recent.");
+-			ntfs_free(rstr2_ph);
+-		}
+-		rstr2_ph = NULL;
+-	}
+-	/* All consistency checks passed. */
+-	if (rp)
+-		*rp = rstr1_ph;
+-	else
+-		ntfs_free(rstr1_ph);
+-	ntfs_debug("Done.");
+-	return true;
+-err_out:
+-	if (rstr1_ph)
+-		ntfs_free(rstr1_ph);
+-	return false;
+-}
+-
+-/**
+- * ntfs_is_logfile_clean - check in the journal if the volume is clean
+- * @log_vi:	struct inode of loaded journal $LogFile to check
+- * @rp:		copy of the current restart page
+- *
+- * Analyze the $LogFile journal and return 'true' if it indicates the volume was
+- * shutdown cleanly and 'false' if not.
+- *
+- * At present we only look at the two restart pages and ignore the log record
+- * pages.  This is a little bit crude in that there will be a very small number
+- * of cases where we think that a volume is dirty when in fact it is clean.
+- * This should only affect volumes that have not been shutdown cleanly but did
+- * not have any pending, non-check-pointed i/o, i.e. they were completely idle
+- * at least for the five seconds preceding the unclean shutdown.
+- *
+- * This function assumes that the $LogFile journal has already been consistency
+- * checked by a call to ntfs_check_logfile() and in particular if the $LogFile
+- * is empty this function requires that NVolLogFileEmpty() is true otherwise an
+- * empty volume will be reported as dirty.
+- */
+-bool ntfs_is_logfile_clean(struct inode *log_vi, const RESTART_PAGE_HEADER *rp)
+-{
+-	ntfs_volume *vol = NTFS_SB(log_vi->i_sb);
+-	RESTART_AREA *ra;
+-
+-	ntfs_debug("Entering.");
+-	/* An empty $LogFile must have been clean before it got emptied. */
+-	if (NVolLogFileEmpty(vol)) {
+-		ntfs_debug("Done.  ($LogFile is empty.)");
+-		return true;
+-	}
+-	BUG_ON(!rp);
+-	if (!ntfs_is_rstr_record(rp->magic) &&
+-			!ntfs_is_chkd_record(rp->magic)) {
+-		ntfs_error(vol->sb, "Restart page buffer is invalid.  This is "
+-				"probably a bug in that the $LogFile should "
+-				"have been consistency checked before calling "
+-				"this function.");
+-		return false;
+-	}
+-	ra = (RESTART_AREA*)((u8*)rp + le16_to_cpu(rp->restart_area_offset));
+-	/*
+-	 * If the $LogFile has active clients, i.e. it is open, and we do not
+-	 * have the RESTART_VOLUME_IS_CLEAN bit set in the restart area flags,
+-	 * we assume there was an unclean shutdown.
+-	 */
+-	if (ra->client_in_use_list != LOGFILE_NO_CLIENT &&
+-			!(ra->flags & RESTART_VOLUME_IS_CLEAN)) {
+-		ntfs_debug("Done.  $LogFile indicates a dirty shutdown.");
+-		return false;
+-	}
+-	/* $LogFile indicates a clean shutdown. */
+-	ntfs_debug("Done.  $LogFile indicates a clean shutdown.");
+-	return true;
+-}
+-
+-/**
+- * ntfs_empty_logfile - empty the contents of the $LogFile journal
+- * @log_vi:	struct inode of loaded journal $LogFile to empty
+- *
+- * Empty the contents of the $LogFile journal @log_vi and return 'true' on
+- * success and 'false' on error.
+- *
+- * This function assumes that the $LogFile journal has already been consistency
+- * checked by a call to ntfs_check_logfile() and that ntfs_is_logfile_clean()
+- * has been used to ensure that the $LogFile is clean.
+- */
+-bool ntfs_empty_logfile(struct inode *log_vi)
+-{
+-	VCN vcn, end_vcn;
+-	ntfs_inode *log_ni = NTFS_I(log_vi);
+-	ntfs_volume *vol = log_ni->vol;
+-	struct super_block *sb = vol->sb;
+-	runlist_element *rl;
+-	unsigned long flags;
+-	unsigned block_size, block_size_bits;
+-	int err;
+-	bool should_wait = true;
+-
+-	ntfs_debug("Entering.");
+-	if (NVolLogFileEmpty(vol)) {
+-		ntfs_debug("Done.");
+-		return true;
+-	}
+-	/*
+-	 * We cannot use ntfs_attr_set() because we may be still in the middle
+-	 * of a mount operation.  Thus we do the emptying by hand by first
+-	 * zapping the page cache pages for the $LogFile/$DATA attribute and
+-	 * then emptying each of the buffers in each of the clusters specified
+-	 * by the runlist by hand.
+-	 */
+-	block_size = sb->s_blocksize;
+-	block_size_bits = sb->s_blocksize_bits;
+-	vcn = 0;
+-	read_lock_irqsave(&log_ni->size_lock, flags);
+-	end_vcn = (log_ni->initialized_size + vol->cluster_size_mask) >>
+-			vol->cluster_size_bits;
+-	read_unlock_irqrestore(&log_ni->size_lock, flags);
+-	truncate_inode_pages(log_vi->i_mapping, 0);
+-	down_write(&log_ni->runlist.lock);
+-	rl = log_ni->runlist.rl;
+-	if (unlikely(!rl || vcn < rl->vcn || !rl->length)) {
+-map_vcn:
+-		err = ntfs_map_runlist_nolock(log_ni, vcn, NULL);
+-		if (err) {
+-			ntfs_error(sb, "Failed to map runlist fragment (error "
+-					"%d).", -err);
+-			goto err;
+-		}
+-		rl = log_ni->runlist.rl;
+-		BUG_ON(!rl || vcn < rl->vcn || !rl->length);
+-	}
+-	/* Seek to the runlist element containing @vcn. */
+-	while (rl->length && vcn >= rl[1].vcn)
+-		rl++;
+-	do {
+-		LCN lcn;
+-		sector_t block, end_block;
+-		s64 len;
+-
+-		/*
+-		 * If this run is not mapped map it now and start again as the
+-		 * runlist will have been updated.
+-		 */
+-		lcn = rl->lcn;
+-		if (unlikely(lcn == LCN_RL_NOT_MAPPED)) {
+-			vcn = rl->vcn;
+-			goto map_vcn;
+-		}
+-		/* If this run is not valid abort with an error. */
+-		if (unlikely(!rl->length || lcn < LCN_HOLE))
+-			goto rl_err;
+-		/* Skip holes. */
+-		if (lcn == LCN_HOLE)
+-			continue;
+-		block = lcn << vol->cluster_size_bits >> block_size_bits;
+-		len = rl->length;
+-		if (rl[1].vcn > end_vcn)
+-			len = end_vcn - rl->vcn;
+-		end_block = (lcn + len) << vol->cluster_size_bits >>
+-				block_size_bits;
+-		/* Iterate over the blocks in the run and empty them. */
+-		do {
+-			struct buffer_head *bh;
+-
+-			/* Obtain the buffer, possibly not uptodate. */
+-			bh = sb_getblk(sb, block);
+-			BUG_ON(!bh);
+-			/* Setup buffer i/o submission. */
+-			lock_buffer(bh);
+-			bh->b_end_io = end_buffer_write_sync;
+-			get_bh(bh);
+-			/* Set the entire contents of the buffer to 0xff. */
+-			memset(bh->b_data, -1, block_size);
+-			if (!buffer_uptodate(bh))
+-				set_buffer_uptodate(bh);
+-			if (buffer_dirty(bh))
+-				clear_buffer_dirty(bh);
+-			/*
+-			 * Submit the buffer and wait for i/o to complete but
+-			 * only for the first buffer so we do not miss really
+-			 * serious i/o errors.  Once the first buffer has
+-			 * completed ignore errors afterwards as we can assume
+-			 * that if one buffer worked all of them will work.
+-			 */
+-			submit_bh(REQ_OP_WRITE, bh);
+-			if (should_wait) {
+-				should_wait = false;
+-				wait_on_buffer(bh);
+-				if (unlikely(!buffer_uptodate(bh)))
+-					goto io_err;
+-			}
+-			brelse(bh);
+-		} while (++block < end_block);
+-	} while ((++rl)->vcn < end_vcn);
+-	up_write(&log_ni->runlist.lock);
+-	/*
+-	 * Zap the pages again just in case any got instantiated whilst we were
+-	 * emptying the blocks by hand.  FIXME: We may not have completed
+-	 * writing to all the buffer heads yet so this may happen too early.
+-	 * We really should use a kernel thread to do the emptying
+-	 * asynchronously and then we can also set the volume dirty and output
+-	 * an error message if emptying should fail.
+-	 */
+-	truncate_inode_pages(log_vi->i_mapping, 0);
+-	/* Set the flag so we do not have to do it again on remount. */
+-	NVolSetLogFileEmpty(vol);
+-	ntfs_debug("Done.");
+-	return true;
+-io_err:
+-	ntfs_error(sb, "Failed to write buffer.  Unmount and run chkdsk.");
+-	goto dirty_err;
+-rl_err:
+-	ntfs_error(sb, "Runlist is corrupt.  Unmount and run chkdsk.");
+-dirty_err:
+-	NVolSetErrors(vol);
+-	err = -EIO;
+-err:
+-	up_write(&log_ni->runlist.lock);
+-	ntfs_error(sb, "Failed to fill $LogFile with 0xff bytes (error %d).",
+-			-err);
+-	return false;
+-}
+-
+-#endif /* NTFS_RW */
+diff --git a/fs/ntfs/logfile.h b/fs/ntfs/logfile.h
+deleted file mode 100644
+index 429d4909cc72..000000000000
+--- a/fs/ntfs/logfile.h
++++ /dev/null
+@@ -1,295 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * logfile.h - Defines for NTFS kernel journal ($LogFile) handling.  Part of
+- *	       the Linux-NTFS project.
+- *
+- * Copyright (c) 2000-2005 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_LOGFILE_H
+-#define _LINUX_NTFS_LOGFILE_H
+-
+-#ifdef NTFS_RW
+-
+-#include <linux/fs.h>
+-
+-#include "types.h"
+-#include "endian.h"
+-#include "layout.h"
+-
+-/*
+- * Journal ($LogFile) organization:
+- *
+- * Two restart areas present in the first two pages (restart pages, one restart
+- * area in each page).  When the volume is dismounted they should be identical,
+- * except for the update sequence array which usually has a different update
+- * sequence number.
+- *
+- * These are followed by log records organized in pages headed by a log record
+- * header going up to log file size.  Not all pages contain log records when a
+- * volume is first formatted, but as the volume ages, all records will be used.
+- * When the log file fills up, the records at the beginning are purged (by
+- * modifying the oldest_lsn to a higher value presumably) and writing begins
+- * at the beginning of the file.  Effectively, the log file is viewed as a
+- * circular entity.
+- *
+- * NOTE: Windows NT, 2000, and XP all use log file version 1.1 but they accept
+- * versions <= 1.x, including 0.-1.  (Yes, that is a minus one in there!)  We
+- * probably only want to support 1.1 as this seems to be the current version
+- * and we don't know how that differs from the older versions.  The only
+- * exception is if the journal is clean as marked by the two restart pages
+- * then it doesn't matter whether we are on an earlier version.  We can just
+- * reinitialize the logfile and start again with version 1.1.
+- */
+-
+-/* Some $LogFile related constants. */
+-#define MaxLogFileSize		0x100000000ULL
+-#define DefaultLogPageSize	4096
+-#define MinLogRecordPages	48
+-
+-/*
+- * Log file restart page header (begins the restart area).
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0	NTFS_RECORD; -- Unfolded here as gcc doesn't like unnamed structs. */
+-/*  0*/	NTFS_RECORD_TYPE magic;	/* The magic is "RSTR". */
+-/*  4*/	le16 usa_ofs;		/* See NTFS_RECORD definition in layout.h.
+-				   When creating, set this to be immediately
+-				   after this header structure (without any
+-				   alignment). */
+-/*  6*/	le16 usa_count;		/* See NTFS_RECORD definition in layout.h. */
+-
+-/*  8*/	leLSN chkdsk_lsn;	/* The last log file sequence number found by
+-				   chkdsk.  Only used when the magic is changed
+-				   to "CHKD".  Otherwise this is zero. */
+-/* 16*/	le32 system_page_size;	/* Byte size of system pages when the log file
+-				   was created, has to be >= 512 and a power of
+-				   2.  Use this to calculate the required size
+-				   of the usa (usa_count) and add it to usa_ofs.
+-				   Then verify that the result is less than the
+-				   value of the restart_area_offset. */
+-/* 20*/	le32 log_page_size;	/* Byte size of log file pages, has to be >=
+-				   512 and a power of 2.  The default is 4096
+-				   and is used when the system page size is
+-				   between 4096 and 8192.  Otherwise this is
+-				   set to the system page size instead. */
+-/* 24*/	le16 restart_area_offset;/* Byte offset from the start of this header to
+-				   the RESTART_AREA.  Value has to be aligned
+-				   to 8-byte boundary.  When creating, set this
+-				   to be after the usa. */
+-/* 26*/	sle16 minor_ver;	/* Log file minor version.  Only check if major
+-				   version is 1. */
+-/* 28*/	sle16 major_ver;	/* Log file major version.  We only support
+-				   version 1.1. */
+-/* sizeof() = 30 (0x1e) bytes */
+-} __attribute__ ((__packed__)) RESTART_PAGE_HEADER;
+-
+-/*
+- * Constant for the log client indices meaning that there are no client records
+- * in this particular client array.  Also inside the client records themselves,
+- * this means that there are no client records preceding or following this one.
+- */
+-#define LOGFILE_NO_CLIENT	cpu_to_le16(0xffff)
+-#define LOGFILE_NO_CLIENT_CPU	0xffff
+-
+-/*
+- * These are the so far known RESTART_AREA_* flags (16-bit) which contain
+- * information about the log file in which they are present.
+- */
+-enum {
+-	RESTART_VOLUME_IS_CLEAN	= cpu_to_le16(0x0002),
+-	RESTART_SPACE_FILLER	= cpu_to_le16(0xffff), /* gcc: Force enum bit width to 16. */
+-} __attribute__ ((__packed__));
+-
+-typedef le16 RESTART_AREA_FLAGS;
+-
+-/*
+- * Log file restart area record.  The offset of this record is found by adding
+- * the offset of the RESTART_PAGE_HEADER to the restart_area_offset value found
+- * in it.  See notes at restart_area_offset above.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0*/	leLSN current_lsn;	/* The current, i.e. last LSN inside the log
+-				   when the restart area was last written.
+-				   This happens often but what is the interval?
+-				   Is it just fixed time or is it every time a
+-				   check point is written or somethine else?
+-				   On create set to 0. */
+-/*  8*/	le16 log_clients;	/* Number of log client records in the array of
+-				   log client records which follows this
+-				   restart area.  Must be 1.  */
+-/* 10*/	le16 client_free_list;	/* The index of the first free log client record
+-				   in the array of log client records.
+-				   LOGFILE_NO_CLIENT means that there are no
+-				   free log client records in the array.
+-				   If != LOGFILE_NO_CLIENT, check that
+-				   log_clients > client_free_list.  On Win2k
+-				   and presumably earlier, on a clean volume
+-				   this is != LOGFILE_NO_CLIENT, and it should
+-				   be 0, i.e. the first (and only) client
+-				   record is free and thus the logfile is
+-				   closed and hence clean.  A dirty volume
+-				   would have left the logfile open and hence
+-				   this would be LOGFILE_NO_CLIENT.  On WinXP
+-				   and presumably later, the logfile is always
+-				   open, even on clean shutdown so this should
+-				   always be LOGFILE_NO_CLIENT. */
+-/* 12*/	le16 client_in_use_list;/* The index of the first in-use log client
+-				   record in the array of log client records.
+-				   LOGFILE_NO_CLIENT means that there are no
+-				   in-use log client records in the array.  If
+-				   != LOGFILE_NO_CLIENT check that log_clients
+-				   > client_in_use_list.  On Win2k and
+-				   presumably earlier, on a clean volume this
+-				   is LOGFILE_NO_CLIENT, i.e. there are no
+-				   client records in use and thus the logfile
+-				   is closed and hence clean.  A dirty volume
+-				   would have left the logfile open and hence
+-				   this would be != LOGFILE_NO_CLIENT, and it
+-				   should be 0, i.e. the first (and only)
+-				   client record is in use.  On WinXP and
+-				   presumably later, the logfile is always
+-				   open, even on clean shutdown so this should
+-				   always be 0. */
+-/* 14*/	RESTART_AREA_FLAGS flags;/* Flags modifying LFS behaviour.  On Win2k
+-				   and presumably earlier this is always 0.  On
+-				   WinXP and presumably later, if the logfile
+-				   was shutdown cleanly, the second bit,
+-				   RESTART_VOLUME_IS_CLEAN, is set.  This bit
+-				   is cleared when the volume is mounted by
+-				   WinXP and set when the volume is dismounted,
+-				   thus if the logfile is dirty, this bit is
+-				   clear.  Thus we don't need to check the
+-				   Windows version to determine if the logfile
+-				   is clean.  Instead if the logfile is closed,
+-				   we know it must be clean.  If it is open and
+-				   this bit is set, we also know it must be
+-				   clean.  If on the other hand the logfile is
+-				   open and this bit is clear, we can be almost
+-				   certain that the logfile is dirty. */
+-/* 16*/	le32 seq_number_bits;	/* How many bits to use for the sequence
+-				   number.  This is calculated as 67 - the
+-				   number of bits required to store the logfile
+-				   size in bytes and this can be used in with
+-				   the specified file_size as a consistency
+-				   check. */
+-/* 20*/	le16 restart_area_length;/* Length of the restart area including the
+-				   client array.  Following checks required if
+-				   version matches.  Otherwise, skip them.
+-				   restart_area_offset + restart_area_length
+-				   has to be <= system_page_size.  Also,
+-				   restart_area_length has to be >=
+-				   client_array_offset + (log_clients *
+-				   sizeof(log client record)). */
+-/* 22*/	le16 client_array_offset;/* Offset from the start of this record to
+-				   the first log client record if versions are
+-				   matched.  When creating, set this to be
+-				   after this restart area structure, aligned
+-				   to 8-bytes boundary.  If the versions do not
+-				   match, this is ignored and the offset is
+-				   assumed to be (sizeof(RESTART_AREA) + 7) &
+-				   ~7, i.e. rounded up to first 8-byte
+-				   boundary.  Either way, client_array_offset
+-				   has to be aligned to an 8-byte boundary.
+-				   Also, restart_area_offset +
+-				   client_array_offset has to be <= 510.
+-				   Finally, client_array_offset + (log_clients
+-				   * sizeof(log client record)) has to be <=
+-				   system_page_size.  On Win2k and presumably
+-				   earlier, this is 0x30, i.e. immediately
+-				   following this record.  On WinXP and
+-				   presumably later, this is 0x40, i.e. there
+-				   are 16 extra bytes between this record and
+-				   the client array.  This probably means that
+-				   the RESTART_AREA record is actually bigger
+-				   in WinXP and later. */
+-/* 24*/	sle64 file_size;	/* Usable byte size of the log file.  If the
+-				   restart_area_offset + the offset of the
+-				   file_size are > 510 then corruption has
+-				   occurred.  This is the very first check when
+-				   starting with the restart_area as if it
+-				   fails it means that some of the above values
+-				   will be corrupted by the multi sector
+-				   transfer protection.  The file_size has to
+-				   be rounded down to be a multiple of the
+-				   log_page_size in the RESTART_PAGE_HEADER and
+-				   then it has to be at least big enough to
+-				   store the two restart pages and 48 (0x30)
+-				   log record pages. */
+-/* 32*/	le32 last_lsn_data_length;/* Length of data of last LSN, not including
+-				   the log record header.  On create set to
+-				   0. */
+-/* 36*/	le16 log_record_header_length;/* Byte size of the log record header.
+-				   If the version matches then check that the
+-				   value of log_record_header_length is a
+-				   multiple of 8, i.e.
+-				   (log_record_header_length + 7) & ~7 ==
+-				   log_record_header_length.  When creating set
+-				   it to sizeof(LOG_RECORD_HEADER), aligned to
+-				   8 bytes. */
+-/* 38*/	le16 log_page_data_offset;/* Offset to the start of data in a log record
+-				   page.  Must be a multiple of 8.  On create
+-				   set it to immediately after the update
+-				   sequence array of the log record page. */
+-/* 40*/	le32 restart_log_open_count;/* A counter that gets incremented every
+-				   time the logfile is restarted which happens
+-				   at mount time when the logfile is opened.
+-				   When creating set to a random value.  Win2k
+-				   sets it to the low 32 bits of the current
+-				   system time in NTFS format (see time.h). */
+-/* 44*/	le32 reserved;		/* Reserved/alignment to 8-byte boundary. */
+-/* sizeof() = 48 (0x30) bytes */
+-} __attribute__ ((__packed__)) RESTART_AREA;
+-
+-/*
+- * Log client record.  The offset of this record is found by adding the offset
+- * of the RESTART_AREA to the client_array_offset value found in it.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*  0*/	leLSN oldest_lsn;	/* Oldest LSN needed by this client.  On create
+-				   set to 0. */
+-/*  8*/	leLSN client_restart_lsn;/* LSN at which this client needs to restart
+-				   the volume, i.e. the current position within
+-				   the log file.  At present, if clean this
+-				   should = current_lsn in restart area but it
+-				   probably also = current_lsn when dirty most
+-				   of the time.  At create set to 0. */
+-/* 16*/	le16 prev_client;	/* The offset to the previous log client record
+-				   in the array of log client records.
+-				   LOGFILE_NO_CLIENT means there is no previous
+-				   client record, i.e. this is the first one.
+-				   This is always LOGFILE_NO_CLIENT. */
+-/* 18*/	le16 next_client;	/* The offset to the next log client record in
+-				   the array of log client records.
+-				   LOGFILE_NO_CLIENT means there are no next
+-				   client records, i.e. this is the last one.
+-				   This is always LOGFILE_NO_CLIENT. */
+-/* 20*/	le16 seq_number;	/* On Win2k and presumably earlier, this is set
+-				   to zero every time the logfile is restarted
+-				   and it is incremented when the logfile is
+-				   closed at dismount time.  Thus it is 0 when
+-				   dirty and 1 when clean.  On WinXP and
+-				   presumably later, this is always 0. */
+-/* 22*/	u8 reserved[6];		/* Reserved/alignment. */
+-/* 28*/	le32 client_name_length;/* Length of client name in bytes.  Should
+-				   always be 8. */
+-/* 32*/	ntfschar client_name[64];/* Name of the client in Unicode.  Should
+-				   always be "NTFS" with the remaining bytes
+-				   set to 0. */
+-/* sizeof() = 160 (0xa0) bytes */
+-} __attribute__ ((__packed__)) LOG_CLIENT_RECORD;
+-
+-extern bool ntfs_check_logfile(struct inode *log_vi,
+-		RESTART_PAGE_HEADER **rp);
+-
+-extern bool ntfs_is_logfile_clean(struct inode *log_vi,
+-		const RESTART_PAGE_HEADER *rp);
+-
+-extern bool ntfs_empty_logfile(struct inode *log_vi);
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* _LINUX_NTFS_LOGFILE_H */
+diff --git a/fs/ntfs/malloc.h b/fs/ntfs/malloc.h
+deleted file mode 100644
+index 7068425735f1..000000000000
+--- a/fs/ntfs/malloc.h
++++ /dev/null
+@@ -1,77 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * malloc.h - NTFS kernel memory handling. Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2005 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_MALLOC_H
+-#define _LINUX_NTFS_MALLOC_H
+-
+-#include <linux/vmalloc.h>
+-#include <linux/slab.h>
+-#include <linux/highmem.h>
+-
+-/**
+- * __ntfs_malloc - allocate memory in multiples of pages
+- * @size:	number of bytes to allocate
+- * @gfp_mask:	extra flags for the allocator
+- *
+- * Internal function.  You probably want ntfs_malloc_nofs()...
+- *
+- * Allocates @size bytes of memory, rounded up to multiples of PAGE_SIZE and
+- * returns a pointer to the allocated memory.
+- *
+- * If there was insufficient memory to complete the request, return NULL.
+- * Depending on @gfp_mask the allocation may be guaranteed to succeed.
+- */
+-static inline void *__ntfs_malloc(unsigned long size, gfp_t gfp_mask)
+-{
+-	if (likely(size <= PAGE_SIZE)) {
+-		BUG_ON(!size);
+-		/* kmalloc() has per-CPU caches so is faster for now. */
+-		return kmalloc(PAGE_SIZE, gfp_mask & ~__GFP_HIGHMEM);
+-		/* return (void *)__get_free_page(gfp_mask); */
+-	}
+-	if (likely((size >> PAGE_SHIFT) < totalram_pages()))
+-		return __vmalloc(size, gfp_mask);
+-	return NULL;
+-}
+-
+-/**
+- * ntfs_malloc_nofs - allocate memory in multiples of pages
+- * @size:	number of bytes to allocate
+- *
+- * Allocates @size bytes of memory, rounded up to multiples of PAGE_SIZE and
+- * returns a pointer to the allocated memory.
+- *
+- * If there was insufficient memory to complete the request, return NULL.
+- */
+-static inline void *ntfs_malloc_nofs(unsigned long size)
+-{
+-	return __ntfs_malloc(size, GFP_NOFS | __GFP_HIGHMEM);
+-}
+-
+-/**
+- * ntfs_malloc_nofs_nofail - allocate memory in multiples of pages
+- * @size:	number of bytes to allocate
+- *
+- * Allocates @size bytes of memory, rounded up to multiples of PAGE_SIZE and
+- * returns a pointer to the allocated memory.
+- *
+- * This function guarantees that the allocation will succeed.  It will sleep
+- * for as long as it takes to complete the allocation.
+- *
+- * If there was insufficient memory to complete the request, return NULL.
+- */
+-static inline void *ntfs_malloc_nofs_nofail(unsigned long size)
+-{
+-	return __ntfs_malloc(size, GFP_NOFS | __GFP_HIGHMEM | __GFP_NOFAIL);
+-}
+-
+-static inline void ntfs_free(void *addr)
+-{
+-	kvfree(addr);
+-}
+-
+-#endif /* _LINUX_NTFS_MALLOC_H */
+diff --git a/fs/ntfs/mft.h b/fs/ntfs/mft.h
+deleted file mode 100644
+index 49c001af16ed..000000000000
+--- a/fs/ntfs/mft.h
++++ /dev/null
+@@ -1,110 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * mft.h - Defines for mft record handling in NTFS Linux kernel driver.
+- *	   Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_MFT_H
+-#define _LINUX_NTFS_MFT_H
+-
+-#include <linux/fs.h>
+-#include <linux/highmem.h>
+-#include <linux/pagemap.h>
+-
+-#include "inode.h"
+-
+-extern MFT_RECORD *map_mft_record(ntfs_inode *ni);
+-extern void unmap_mft_record(ntfs_inode *ni);
+-
+-extern MFT_RECORD *map_extent_mft_record(ntfs_inode *base_ni, MFT_REF mref,
+-		ntfs_inode **ntfs_ino);
+-
+-static inline void unmap_extent_mft_record(ntfs_inode *ni)
+-{
+-	unmap_mft_record(ni);
+-	return;
+-}
+-
+-#ifdef NTFS_RW
+-
+-/**
+- * flush_dcache_mft_record_page - flush_dcache_page() for mft records
+- * @ni:		ntfs inode structure of mft record
+- *
+- * Call flush_dcache_page() for the page in which an mft record resides.
+- *
+- * This must be called every time an mft record is modified, just after the
+- * modification.
+- */
+-static inline void flush_dcache_mft_record_page(ntfs_inode *ni)
+-{
+-	flush_dcache_page(ni->page);
+-}
+-
+-extern void __mark_mft_record_dirty(ntfs_inode *ni);
+-
+-/**
+- * mark_mft_record_dirty - set the mft record and the page containing it dirty
+- * @ni:		ntfs inode describing the mapped mft record
+- *
+- * Set the mapped (extent) mft record of the (base or extent) ntfs inode @ni,
+- * as well as the page containing the mft record, dirty.  Also, mark the base
+- * vfs inode dirty.  This ensures that any changes to the mft record are
+- * written out to disk.
+- *
+- * NOTE:  Do not do anything if the mft record is already marked dirty.
+- */
+-static inline void mark_mft_record_dirty(ntfs_inode *ni)
+-{
+-	if (!NInoTestSetDirty(ni))
+-		__mark_mft_record_dirty(ni);
+-}
+-
+-extern int ntfs_sync_mft_mirror(ntfs_volume *vol, const unsigned long mft_no,
+-		MFT_RECORD *m, int sync);
+-
+-extern int write_mft_record_nolock(ntfs_inode *ni, MFT_RECORD *m, int sync);
+-
+-/**
+- * write_mft_record - write out a mapped (extent) mft record
+- * @ni:		ntfs inode describing the mapped (extent) mft record
+- * @m:		mapped (extent) mft record to write
+- * @sync:	if true, wait for i/o completion
+- *
+- * This is just a wrapper for write_mft_record_nolock() (see mft.c), which
+- * locks the page for the duration of the write.  This ensures that there are
+- * no race conditions between writing the mft record via the dirty inode code
+- * paths and via the page cache write back code paths or between writing
+- * neighbouring mft records residing in the same page.
+- *
+- * Locking the page also serializes us against ->read_folio() if the page is not
+- * uptodate.
+- *
+- * On success, clean the mft record and return 0.  On error, leave the mft
+- * record dirty and return -errno.
+- */
+-static inline int write_mft_record(ntfs_inode *ni, MFT_RECORD *m, int sync)
+-{
+-	struct page *page = ni->page;
+-	int err;
+-
+-	BUG_ON(!page);
+-	lock_page(page);
+-	err = write_mft_record_nolock(ni, m, sync);
+-	unlock_page(page);
+-	return err;
+-}
+-
+-extern bool ntfs_may_write_mft_record(ntfs_volume *vol,
+-		const unsigned long mft_no, const MFT_RECORD *m,
+-		ntfs_inode **locked_ni);
+-
+-extern ntfs_inode *ntfs_mft_record_alloc(ntfs_volume *vol, const int mode,
+-		ntfs_inode *base_ni, MFT_RECORD **mrec);
+-extern int ntfs_extent_mft_record_free(ntfs_inode *ni, MFT_RECORD *m);
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* _LINUX_NTFS_MFT_H */
+diff --git a/fs/ntfs/mst.c b/fs/ntfs/mst.c
+deleted file mode 100644
+index 16b3c884abfc..000000000000
+--- a/fs/ntfs/mst.c
++++ /dev/null
+@@ -1,189 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * mst.c - NTFS multi sector transfer protection handling code. Part of the
+- *	   Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2004 Anton Altaparmakov
+- */
+-
+-#include "ntfs.h"
+-
+-/**
+- * post_read_mst_fixup - deprotect multi sector transfer protected data
+- * @b:		pointer to the data to deprotect
+- * @size:	size in bytes of @b
+- *
+- * Perform the necessary post read multi sector transfer fixup and detect the
+- * presence of incomplete multi sector transfers. - In that case, overwrite the
+- * magic of the ntfs record header being processed with "BAAD" (in memory only!)
+- * and abort processing.
+- *
+- * Return 0 on success and -EINVAL on error ("BAAD" magic will be present).
+- *
+- * NOTE: We consider the absence / invalidity of an update sequence array to
+- * mean that the structure is not protected at all and hence doesn't need to
+- * be fixed up. Thus, we return success and not failure in this case. This is
+- * in contrast to pre_write_mst_fixup(), see below.
+- */
+-int post_read_mst_fixup(NTFS_RECORD *b, const u32 size)
+-{
+-	u16 usa_ofs, usa_count, usn;
+-	u16 *usa_pos, *data_pos;
+-
+-	/* Setup the variables. */
+-	usa_ofs = le16_to_cpu(b->usa_ofs);
+-	/* Decrement usa_count to get number of fixups. */
+-	usa_count = le16_to_cpu(b->usa_count) - 1;
+-	/* Size and alignment checks. */
+-	if ( size & (NTFS_BLOCK_SIZE - 1)	||
+-	     usa_ofs & 1			||
+-	     usa_ofs + (usa_count * 2) > size	||
+-	     (size >> NTFS_BLOCK_SIZE_BITS) != usa_count)
+-		return 0;
+-	/* Position of usn in update sequence array. */
+-	usa_pos = (u16*)b + usa_ofs/sizeof(u16);
+-	/*
+-	 * The update sequence number which has to be equal to each of the
+-	 * u16 values before they are fixed up. Note no need to care for
+-	 * endianness since we are comparing and moving data for on disk
+-	 * structures which means the data is consistent. - If it is
+-	 * consistenty the wrong endianness it doesn't make any difference.
+-	 */
+-	usn = *usa_pos;
+-	/*
+-	 * Position in protected data of first u16 that needs fixing up.
+-	 */
+-	data_pos = (u16*)b + NTFS_BLOCK_SIZE/sizeof(u16) - 1;
+-	/*
+-	 * Check for incomplete multi sector transfer(s).
+-	 */
+-	while (usa_count--) {
+-		if (*data_pos != usn) {
+-			/*
+-			 * Incomplete multi sector transfer detected! )-:
+-			 * Set the magic to "BAAD" and return failure.
+-			 * Note that magic_BAAD is already converted to le32.
+-			 */
+-			b->magic = magic_BAAD;
+-			return -EINVAL;
+-		}
+-		data_pos += NTFS_BLOCK_SIZE/sizeof(u16);
+-	}
+-	/* Re-setup the variables. */
+-	usa_count = le16_to_cpu(b->usa_count) - 1;
+-	data_pos = (u16*)b + NTFS_BLOCK_SIZE/sizeof(u16) - 1;
+-	/* Fixup all sectors. */
+-	while (usa_count--) {
+-		/*
+-		 * Increment position in usa and restore original data from
+-		 * the usa into the data buffer.
+-		 */
+-		*data_pos = *(++usa_pos);
+-		/* Increment position in data as well. */
+-		data_pos += NTFS_BLOCK_SIZE/sizeof(u16);
+-	}
+-	return 0;
+-}
+-
+-/**
+- * pre_write_mst_fixup - apply multi sector transfer protection
+- * @b:		pointer to the data to protect
+- * @size:	size in bytes of @b
+- *
+- * Perform the necessary pre write multi sector transfer fixup on the data
+- * pointer to by @b of @size.
+- *
+- * Return 0 if fixup applied (success) or -EINVAL if no fixup was performed
+- * (assumed not needed). This is in contrast to post_read_mst_fixup() above.
+- *
+- * NOTE: We consider the absence / invalidity of an update sequence array to
+- * mean that the structure is not subject to protection and hence doesn't need
+- * to be fixed up. This means that you have to create a valid update sequence
+- * array header in the ntfs record before calling this function, otherwise it
+- * will fail (the header needs to contain the position of the update sequence
+- * array together with the number of elements in the array). You also need to
+- * initialise the update sequence number before calling this function
+- * otherwise a random word will be used (whatever was in the record at that
+- * position at that time).
+- */
+-int pre_write_mst_fixup(NTFS_RECORD *b, const u32 size)
+-{
+-	le16 *usa_pos, *data_pos;
+-	u16 usa_ofs, usa_count, usn;
+-	le16 le_usn;
+-
+-	/* Sanity check + only fixup if it makes sense. */
+-	if (!b || ntfs_is_baad_record(b->magic) ||
+-			ntfs_is_hole_record(b->magic))
+-		return -EINVAL;
+-	/* Setup the variables. */
+-	usa_ofs = le16_to_cpu(b->usa_ofs);
+-	/* Decrement usa_count to get number of fixups. */
+-	usa_count = le16_to_cpu(b->usa_count) - 1;
+-	/* Size and alignment checks. */
+-	if ( size & (NTFS_BLOCK_SIZE - 1)	||
+-	     usa_ofs & 1			||
+-	     usa_ofs + (usa_count * 2) > size	||
+-	     (size >> NTFS_BLOCK_SIZE_BITS) != usa_count)
+-		return -EINVAL;
+-	/* Position of usn in update sequence array. */
+-	usa_pos = (le16*)((u8*)b + usa_ofs);
+-	/*
+-	 * Cyclically increment the update sequence number
+-	 * (skipping 0 and -1, i.e. 0xffff).
+-	 */
+-	usn = le16_to_cpup(usa_pos) + 1;
+-	if (usn == 0xffff || !usn)
+-		usn = 1;
+-	le_usn = cpu_to_le16(usn);
+-	*usa_pos = le_usn;
+-	/* Position in data of first u16 that needs fixing up. */
+-	data_pos = (le16*)b + NTFS_BLOCK_SIZE/sizeof(le16) - 1;
+-	/* Fixup all sectors. */
+-	while (usa_count--) {
+-		/*
+-		 * Increment the position in the usa and save the
+-		 * original data from the data buffer into the usa.
+-		 */
+-		*(++usa_pos) = *data_pos;
+-		/* Apply fixup to data. */
+-		*data_pos = le_usn;
+-		/* Increment position in data as well. */
+-		data_pos += NTFS_BLOCK_SIZE/sizeof(le16);
+-	}
+-	return 0;
+-}
+-
+-/**
+- * post_write_mst_fixup - fast deprotect multi sector transfer protected data
+- * @b:		pointer to the data to deprotect
+- *
+- * Perform the necessary post write multi sector transfer fixup, not checking
+- * for any errors, because we assume we have just used pre_write_mst_fixup(),
+- * thus the data will be fine or we would never have gotten here.
+- */
+-void post_write_mst_fixup(NTFS_RECORD *b)
+-{
+-	le16 *usa_pos, *data_pos;
+-
+-	u16 usa_ofs = le16_to_cpu(b->usa_ofs);
+-	u16 usa_count = le16_to_cpu(b->usa_count) - 1;
+-
+-	/* Position of usn in update sequence array. */
+-	usa_pos = (le16*)b + usa_ofs/sizeof(le16);
+-
+-	/* Position in protected data of first u16 that needs fixing up. */
+-	data_pos = (le16*)b + NTFS_BLOCK_SIZE/sizeof(le16) - 1;
+-
+-	/* Fixup all sectors. */
+-	while (usa_count--) {
+-		/*
+-		 * Increment position in usa and restore original data from
+-		 * the usa into the data buffer.
+-		 */
+-		*data_pos = *(++usa_pos);
+-
+-		/* Increment position in data as well. */
+-		data_pos += NTFS_BLOCK_SIZE/sizeof(le16);
+-	}
+-}
+diff --git a/fs/ntfs/ntfs.h b/fs/ntfs/ntfs.h
+deleted file mode 100644
+index e81376ea9152..000000000000
+--- a/fs/ntfs/ntfs.h
++++ /dev/null
+@@ -1,150 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * ntfs.h - Defines for NTFS Linux kernel driver.
+- *
+- * Copyright (c) 2001-2014 Anton Altaparmakov and Tuxera Inc.
+- * Copyright (C) 2002 Richard Russon
+- */
+-
+-#ifndef _LINUX_NTFS_H
+-#define _LINUX_NTFS_H
+-
+-#include <linux/stddef.h>
+-#include <linux/kernel.h>
+-#include <linux/module.h>
+-#include <linux/compiler.h>
+-#include <linux/fs.h>
+-#include <linux/nls.h>
+-#include <linux/smp.h>
+-#include <linux/pagemap.h>
+-
+-#include "types.h"
+-#include "volume.h"
+-#include "layout.h"
+-
+-typedef enum {
+-	NTFS_BLOCK_SIZE		= 512,
+-	NTFS_BLOCK_SIZE_BITS	= 9,
+-	NTFS_SB_MAGIC		= 0x5346544e,	/* 'NTFS' */
+-	NTFS_MAX_NAME_LEN	= 255,
+-	NTFS_MAX_ATTR_NAME_LEN	= 255,
+-	NTFS_MAX_CLUSTER_SIZE	= 64 * 1024,	/* 64kiB */
+-	NTFS_MAX_PAGES_PER_CLUSTER = NTFS_MAX_CLUSTER_SIZE / PAGE_SIZE,
+-} NTFS_CONSTANTS;
+-
+-/* Global variables. */
+-
+-/* Slab caches (from super.c). */
+-extern struct kmem_cache *ntfs_name_cache;
+-extern struct kmem_cache *ntfs_inode_cache;
+-extern struct kmem_cache *ntfs_big_inode_cache;
+-extern struct kmem_cache *ntfs_attr_ctx_cache;
+-extern struct kmem_cache *ntfs_index_ctx_cache;
+-
+-/* The various operations structs defined throughout the driver files. */
+-extern const struct address_space_operations ntfs_normal_aops;
+-extern const struct address_space_operations ntfs_compressed_aops;
+-extern const struct address_space_operations ntfs_mst_aops;
+-
+-extern const struct  file_operations ntfs_file_ops;
+-extern const struct inode_operations ntfs_file_inode_ops;
+-
+-extern const struct  file_operations ntfs_dir_ops;
+-extern const struct inode_operations ntfs_dir_inode_ops;
+-
+-extern const struct  file_operations ntfs_empty_file_ops;
+-extern const struct inode_operations ntfs_empty_inode_ops;
+-
+-extern const struct export_operations ntfs_export_ops;
+-
+-/**
+- * NTFS_SB - return the ntfs volume given a vfs super block
+- * @sb:		VFS super block
+- *
+- * NTFS_SB() returns the ntfs volume associated with the VFS super block @sb.
+- */
+-static inline ntfs_volume *NTFS_SB(struct super_block *sb)
+-{
+-	return sb->s_fs_info;
+-}
+-
+-/* Declarations of functions and global variables. */
+-
+-/* From fs/ntfs/compress.c */
+-extern int ntfs_read_compressed_block(struct page *page);
+-extern int allocate_compression_buffers(void);
+-extern void free_compression_buffers(void);
+-
+-/* From fs/ntfs/super.c */
+-#define default_upcase_len 0x10000
+-extern struct mutex ntfs_lock;
+-
+-typedef struct {
+-	int val;
+-	char *str;
+-} option_t;
+-extern const option_t on_errors_arr[];
+-
+-/* From fs/ntfs/mst.c */
+-extern int post_read_mst_fixup(NTFS_RECORD *b, const u32 size);
+-extern int pre_write_mst_fixup(NTFS_RECORD *b, const u32 size);
+-extern void post_write_mst_fixup(NTFS_RECORD *b);
+-
+-/* From fs/ntfs/unistr.c */
+-extern bool ntfs_are_names_equal(const ntfschar *s1, size_t s1_len,
+-		const ntfschar *s2, size_t s2_len,
+-		const IGNORE_CASE_BOOL ic,
+-		const ntfschar *upcase, const u32 upcase_size);
+-extern int ntfs_collate_names(const ntfschar *name1, const u32 name1_len,
+-		const ntfschar *name2, const u32 name2_len,
+-		const int err_val, const IGNORE_CASE_BOOL ic,
+-		const ntfschar *upcase, const u32 upcase_len);
+-extern int ntfs_ucsncmp(const ntfschar *s1, const ntfschar *s2, size_t n);
+-extern int ntfs_ucsncasecmp(const ntfschar *s1, const ntfschar *s2, size_t n,
+-		const ntfschar *upcase, const u32 upcase_size);
+-extern void ntfs_upcase_name(ntfschar *name, u32 name_len,
+-		const ntfschar *upcase, const u32 upcase_len);
+-extern void ntfs_file_upcase_value(FILE_NAME_ATTR *file_name_attr,
+-		const ntfschar *upcase, const u32 upcase_len);
+-extern int ntfs_file_compare_values(FILE_NAME_ATTR *file_name_attr1,
+-		FILE_NAME_ATTR *file_name_attr2,
+-		const int err_val, const IGNORE_CASE_BOOL ic,
+-		const ntfschar *upcase, const u32 upcase_len);
+-extern int ntfs_nlstoucs(const ntfs_volume *vol, const char *ins,
+-		const int ins_len, ntfschar **outs);
+-extern int ntfs_ucstonls(const ntfs_volume *vol, const ntfschar *ins,
+-		const int ins_len, unsigned char **outs, int outs_len);
+-
+-/* From fs/ntfs/upcase.c */
+-extern ntfschar *generate_default_upcase(void);
+-
+-static inline int ntfs_ffs(int x)
+-{
+-	int r = 1;
+-
+-	if (!x)
+-		return 0;
+-	if (!(x & 0xffff)) {
+-		x >>= 16;
+-		r += 16;
+-	}
+-	if (!(x & 0xff)) {
+-		x >>= 8;
+-		r += 8;
+-	}
+-	if (!(x & 0xf)) {
+-		x >>= 4;
+-		r += 4;
+-	}
+-	if (!(x & 3)) {
+-		x >>= 2;
+-		r += 2;
+-	}
+-	if (!(x & 1)) {
+-		x >>= 1;
+-		r += 1;
+-	}
+-	return r;
+-}
+-
+-#endif /* _LINUX_NTFS_H */
+diff --git a/fs/ntfs/quota.c b/fs/ntfs/quota.c
+deleted file mode 100644
+index 9160480222fd..000000000000
+--- a/fs/ntfs/quota.c
++++ /dev/null
+@@ -1,103 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * quota.c - NTFS kernel quota ($Quota) handling.  Part of the Linux-NTFS
+- *	     project.
+- *
+- * Copyright (c) 2004 Anton Altaparmakov
+- */
+-
+-#ifdef NTFS_RW
+-
+-#include "index.h"
+-#include "quota.h"
+-#include "debug.h"
+-#include "ntfs.h"
+-
+-/**
+- * ntfs_mark_quotas_out_of_date - mark the quotas out of date on an ntfs volume
+- * @vol:	ntfs volume on which to mark the quotas out of date
+- *
+- * Mark the quotas out of date on the ntfs volume @vol and return 'true' on
+- * success and 'false' on error.
+- */
+-bool ntfs_mark_quotas_out_of_date(ntfs_volume *vol)
+-{
+-	ntfs_index_context *ictx;
+-	QUOTA_CONTROL_ENTRY *qce;
+-	const le32 qid = QUOTA_DEFAULTS_ID;
+-	int err;
+-
+-	ntfs_debug("Entering.");
+-	if (NVolQuotaOutOfDate(vol))
+-		goto done;
+-	if (!vol->quota_ino || !vol->quota_q_ino) {
+-		ntfs_error(vol->sb, "Quota inodes are not open.");
+-		return false;
+-	}
+-	inode_lock(vol->quota_q_ino);
+-	ictx = ntfs_index_ctx_get(NTFS_I(vol->quota_q_ino));
+-	if (!ictx) {
+-		ntfs_error(vol->sb, "Failed to get index context.");
+-		goto err_out;
+-	}
+-	err = ntfs_index_lookup(&qid, sizeof(qid), ictx);
+-	if (err) {
+-		if (err == -ENOENT)
+-			ntfs_error(vol->sb, "Quota defaults entry is not "
+-					"present.");
+-		else
+-			ntfs_error(vol->sb, "Lookup of quota defaults entry "
+-					"failed.");
+-		goto err_out;
+-	}
+-	if (ictx->data_len < offsetof(QUOTA_CONTROL_ENTRY, sid)) {
+-		ntfs_error(vol->sb, "Quota defaults entry size is invalid.  "
+-				"Run chkdsk.");
+-		goto err_out;
+-	}
+-	qce = (QUOTA_CONTROL_ENTRY*)ictx->data;
+-	if (le32_to_cpu(qce->version) != QUOTA_VERSION) {
+-		ntfs_error(vol->sb, "Quota defaults entry version 0x%x is not "
+-				"supported.", le32_to_cpu(qce->version));
+-		goto err_out;
+-	}
+-	ntfs_debug("Quota defaults flags = 0x%x.", le32_to_cpu(qce->flags));
+-	/* If quotas are already marked out of date, no need to do anything. */
+-	if (qce->flags & QUOTA_FLAG_OUT_OF_DATE)
+-		goto set_done;
+-	/*
+-	 * If quota tracking is neither requested, nor enabled and there are no
+-	 * pending deletes, no need to mark the quotas out of date.
+-	 */
+-	if (!(qce->flags & (QUOTA_FLAG_TRACKING_ENABLED |
+-			QUOTA_FLAG_TRACKING_REQUESTED |
+-			QUOTA_FLAG_PENDING_DELETES)))
+-		goto set_done;
+-	/*
+-	 * Set the QUOTA_FLAG_OUT_OF_DATE bit thus marking quotas out of date.
+-	 * This is verified on WinXP to be sufficient to cause windows to
+-	 * rescan the volume on boot and update all quota entries.
+-	 */
+-	qce->flags |= QUOTA_FLAG_OUT_OF_DATE;
+-	/* Ensure the modified flags are written to disk. */
+-	ntfs_index_entry_flush_dcache_page(ictx);
+-	ntfs_index_entry_mark_dirty(ictx);
+-set_done:
+-	ntfs_index_ctx_put(ictx);
+-	inode_unlock(vol->quota_q_ino);
+-	/*
+-	 * We set the flag so we do not try to mark the quotas out of date
+-	 * again on remount.
+-	 */
+-	NVolSetQuotaOutOfDate(vol);
+-done:
+-	ntfs_debug("Done.");
+-	return true;
+-err_out:
+-	if (ictx)
+-		ntfs_index_ctx_put(ictx);
+-	inode_unlock(vol->quota_q_ino);
+-	return false;
+-}
+-
+-#endif /* NTFS_RW */
+diff --git a/fs/ntfs/quota.h b/fs/ntfs/quota.h
+deleted file mode 100644
+index fe3132a3d6d2..000000000000
+--- a/fs/ntfs/quota.h
++++ /dev/null
+@@ -1,21 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * quota.h - Defines for NTFS kernel quota ($Quota) handling.  Part of the
+- *	     Linux-NTFS project.
+- *
+- * Copyright (c) 2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_QUOTA_H
+-#define _LINUX_NTFS_QUOTA_H
+-
+-#ifdef NTFS_RW
+-
+-#include "types.h"
+-#include "volume.h"
+-
+-extern bool ntfs_mark_quotas_out_of_date(ntfs_volume *vol);
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* _LINUX_NTFS_QUOTA_H */
+diff --git a/fs/ntfs/runlist.h b/fs/ntfs/runlist.h
+deleted file mode 100644
+index 38de0a375f59..000000000000
+--- a/fs/ntfs/runlist.h
++++ /dev/null
+@@ -1,88 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * runlist.h - Defines for runlist handling in NTFS Linux kernel driver.
+- *	       Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2005 Anton Altaparmakov
+- * Copyright (c) 2002 Richard Russon
+- */
+-
+-#ifndef _LINUX_NTFS_RUNLIST_H
+-#define _LINUX_NTFS_RUNLIST_H
+-
+-#include "types.h"
+-#include "layout.h"
+-#include "volume.h"
+-
+-/**
+- * runlist_element - in memory vcn to lcn mapping array element
+- * @vcn:	starting vcn of the current array element
+- * @lcn:	starting lcn of the current array element
+- * @length:	length in clusters of the current array element
+- *
+- * The last vcn (in fact the last vcn + 1) is reached when length == 0.
+- *
+- * When lcn == -1 this means that the count vcns starting at vcn are not
+- * physically allocated (i.e. this is a hole / data is sparse).
+- */
+-typedef struct {	/* In memory vcn to lcn mapping structure element. */
+-	VCN vcn;	/* vcn = Starting virtual cluster number. */
+-	LCN lcn;	/* lcn = Starting logical cluster number. */
+-	s64 length;	/* Run length in clusters. */
+-} runlist_element;
+-
+-/**
+- * runlist - in memory vcn to lcn mapping array including a read/write lock
+- * @rl:		pointer to an array of runlist elements
+- * @lock:	read/write spinlock for serializing access to @rl
+- *
+- */
+-typedef struct {
+-	runlist_element *rl;
+-	struct rw_semaphore lock;
+-} runlist;
+-
+-static inline void ntfs_init_runlist(runlist *rl)
+-{
+-	rl->rl = NULL;
+-	init_rwsem(&rl->lock);
+-}
+-
+-typedef enum {
+-	LCN_HOLE		= -1,	/* Keep this as highest value or die! */
+-	LCN_RL_NOT_MAPPED	= -2,
+-	LCN_ENOENT		= -3,
+-	LCN_ENOMEM		= -4,
+-	LCN_EIO			= -5,
+-} LCN_SPECIAL_VALUES;
+-
+-extern runlist_element *ntfs_runlists_merge(runlist_element *drl,
+-		runlist_element *srl);
+-
+-extern runlist_element *ntfs_mapping_pairs_decompress(const ntfs_volume *vol,
+-		const ATTR_RECORD *attr, runlist_element *old_rl);
+-
+-extern LCN ntfs_rl_vcn_to_lcn(const runlist_element *rl, const VCN vcn);
+-
+-#ifdef NTFS_RW
+-
+-extern runlist_element *ntfs_rl_find_vcn_nolock(runlist_element *rl,
+-		const VCN vcn);
+-
+-extern int ntfs_get_size_for_mapping_pairs(const ntfs_volume *vol,
+-		const runlist_element *rl, const VCN first_vcn,
+-		const VCN last_vcn);
+-
+-extern int ntfs_mapping_pairs_build(const ntfs_volume *vol, s8 *dst,
+-		const int dst_len, const runlist_element *rl,
+-		const VCN first_vcn, const VCN last_vcn, VCN *const stop_vcn);
+-
+-extern int ntfs_rl_truncate_nolock(const ntfs_volume *vol,
+-		runlist *const runlist, const s64 new_length);
+-
+-int ntfs_rl_punch_nolock(const ntfs_volume *vol, runlist *const runlist,
+-		const VCN start, const s64 length);
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* _LINUX_NTFS_RUNLIST_H */
+diff --git a/fs/ntfs/sysctl.h b/fs/ntfs/sysctl.h
+deleted file mode 100644
+index 96bb2299d2d5..000000000000
+--- a/fs/ntfs/sysctl.h
++++ /dev/null
+@@ -1,27 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * sysctl.h - Defines for sysctl handling in NTFS Linux kernel driver. Part of
+- *	      the Linux-NTFS project. Adapted from the old NTFS driver,
+- *	      Copyright (C) 1997 Martin von Löwis, Régis Duchesne
+- *
+- * Copyright (c) 2002-2004 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_SYSCTL_H
+-#define _LINUX_NTFS_SYSCTL_H
+-
+-
+-#if defined(DEBUG) && defined(CONFIG_SYSCTL)
+-
+-extern int ntfs_sysctl(int add);
+-
+-#else
+-
+-/* Just return success. */
+-static inline int ntfs_sysctl(int add)
+-{
+-	return 0;
+-}
+-
+-#endif /* DEBUG && CONFIG_SYSCTL */
+-#endif /* _LINUX_NTFS_SYSCTL_H */
+diff --git a/fs/ntfs/time.h b/fs/ntfs/time.h
+deleted file mode 100644
+index 6b63261300cc..000000000000
+--- a/fs/ntfs/time.h
++++ /dev/null
+@@ -1,89 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * time.h - NTFS time conversion functions.  Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2005 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_TIME_H
+-#define _LINUX_NTFS_TIME_H
+-
+-#include <linux/time.h>		/* For current_kernel_time(). */
+-#include <asm/div64.h>		/* For do_div(). */
+-
+-#include "endian.h"
+-
+-#define NTFS_TIME_OFFSET ((s64)(369 * 365 + 89) * 24 * 3600 * 10000000)
+-
+-/**
+- * utc2ntfs - convert Linux UTC time to NTFS time
+- * @ts:		Linux UTC time to convert to NTFS time
+- *
+- * Convert the Linux UTC time @ts to its corresponding NTFS time and return
+- * that in little endian format.
+- *
+- * Linux stores time in a struct timespec64 consisting of a time64_t tv_sec
+- * and a long tv_nsec where tv_sec is the number of 1-second intervals since
+- * 1st January 1970, 00:00:00 UTC and tv_nsec is the number of 1-nano-second
+- * intervals since the value of tv_sec.
+- *
+- * NTFS uses Microsoft's standard time format which is stored in a s64 and is
+- * measured as the number of 100-nano-second intervals since 1st January 1601,
+- * 00:00:00 UTC.
+- */
+-static inline sle64 utc2ntfs(const struct timespec64 ts)
+-{
+-	/*
+-	 * Convert the seconds to 100ns intervals, add the nano-seconds
+-	 * converted to 100ns intervals, and then add the NTFS time offset.
+-	 */
+-	return cpu_to_sle64((s64)ts.tv_sec * 10000000 + ts.tv_nsec / 100 +
+-			NTFS_TIME_OFFSET);
+-}
+-
+-/**
+- * get_current_ntfs_time - get the current time in little endian NTFS format
+- *
+- * Get the current time from the Linux kernel, convert it to its corresponding
+- * NTFS time and return that in little endian format.
+- */
+-static inline sle64 get_current_ntfs_time(void)
+-{
+-	struct timespec64 ts;
+-
+-	ktime_get_coarse_real_ts64(&ts);
+-	return utc2ntfs(ts);
+-}
+-
+-/**
+- * ntfs2utc - convert NTFS time to Linux time
+- * @time:	NTFS time (little endian) to convert to Linux UTC
+- *
+- * Convert the little endian NTFS time @time to its corresponding Linux UTC
+- * time and return that in cpu format.
+- *
+- * Linux stores time in a struct timespec64 consisting of a time64_t tv_sec
+- * and a long tv_nsec where tv_sec is the number of 1-second intervals since
+- * 1st January 1970, 00:00:00 UTC and tv_nsec is the number of 1-nano-second
+- * intervals since the value of tv_sec.
+- *
+- * NTFS uses Microsoft's standard time format which is stored in a s64 and is
+- * measured as the number of 100 nano-second intervals since 1st January 1601,
+- * 00:00:00 UTC.
+- */
+-static inline struct timespec64 ntfs2utc(const sle64 time)
+-{
+-	struct timespec64 ts;
+-
+-	/* Subtract the NTFS time offset. */
+-	u64 t = (u64)(sle64_to_cpu(time) - NTFS_TIME_OFFSET);
+-	/*
+-	 * Convert the time to 1-second intervals and the remainder to
+-	 * 1-nano-second intervals.
+-	 */
+-	ts.tv_nsec = do_div(t, 10000000) * 100;
+-	ts.tv_sec = t;
+-	return ts;
+-}
+-
+-#endif /* _LINUX_NTFS_TIME_H */
+diff --git a/fs/ntfs/types.h b/fs/ntfs/types.h
+deleted file mode 100644
+index 9a47859e7a06..000000000000
+--- a/fs/ntfs/types.h
++++ /dev/null
+@@ -1,55 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * types.h - Defines for NTFS Linux kernel driver specific types.
+- *	     Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2005 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_TYPES_H
+-#define _LINUX_NTFS_TYPES_H
+-
+-#include <linux/types.h>
+-
+-typedef __le16 le16;
+-typedef __le32 le32;
+-typedef __le64 le64;
+-typedef __u16 __bitwise sle16;
+-typedef __u32 __bitwise sle32;
+-typedef __u64 __bitwise sle64;
+-
+-/* 2-byte Unicode character type. */
+-typedef le16 ntfschar;
+-#define UCHAR_T_SIZE_BITS 1
+-
+-/*
+- * Clusters are signed 64-bit values on NTFS volumes. We define two types, LCN
+- * and VCN, to allow for type checking and better code readability.
+- */
+-typedef s64 VCN;
+-typedef sle64 leVCN;
+-typedef s64 LCN;
+-typedef sle64 leLCN;
+-
+-/*
+- * The NTFS journal $LogFile uses log sequence numbers which are signed 64-bit
+- * values.  We define our own type LSN, to allow for type checking and better
+- * code readability.
+- */
+-typedef s64 LSN;
+-typedef sle64 leLSN;
+-
+-/*
+- * The NTFS transaction log $UsnJrnl uses usn which are signed 64-bit values.
+- * We define our own type USN, to allow for type checking and better code
+- * readability.
+- */
+-typedef s64 USN;
+-typedef sle64 leUSN;
+-
+-typedef enum {
+-	CASE_SENSITIVE = 0,
+-	IGNORE_CASE = 1,
+-} IGNORE_CASE_BOOL;
+-
+-#endif /* _LINUX_NTFS_TYPES_H */
+diff --git a/fs/ntfs/unistr.c b/fs/ntfs/unistr.c
+deleted file mode 100644
+index a6b6c64f14a9..000000000000
+--- a/fs/ntfs/unistr.c
++++ /dev/null
+@@ -1,384 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * unistr.c - NTFS Unicode string handling. Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2006 Anton Altaparmakov
+- */
+-
+-#include <linux/slab.h>
+-
+-#include "types.h"
+-#include "debug.h"
+-#include "ntfs.h"
+-
+-/*
+- * IMPORTANT
+- * =========
+- *
+- * All these routines assume that the Unicode characters are in little endian
+- * encoding inside the strings!!!
+- */
+-
+-/*
+- * This is used by the name collation functions to quickly determine what
+- * characters are (in)valid.
+- */
+-static const u8 legal_ansi_char_array[0x40] = {
+-	0x00, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
+-	0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
+-
+-	0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
+-	0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10,
+-
+-	0x17, 0x07, 0x18, 0x17, 0x17, 0x17, 0x17, 0x17,
+-	0x17, 0x17, 0x18, 0x16, 0x16, 0x17, 0x07, 0x00,
+-
+-	0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17, 0x17,
+-	0x17, 0x17, 0x04, 0x16, 0x18, 0x16, 0x18, 0x18,
+-};
+-
+-/**
+- * ntfs_are_names_equal - compare two Unicode names for equality
+- * @s1:			name to compare to @s2
+- * @s1_len:		length in Unicode characters of @s1
+- * @s2:			name to compare to @s1
+- * @s2_len:		length in Unicode characters of @s2
+- * @ic:			ignore case bool
+- * @upcase:		upcase table (only if @ic == IGNORE_CASE)
+- * @upcase_size:	length in Unicode characters of @upcase (if present)
+- *
+- * Compare the names @s1 and @s2 and return 'true' (1) if the names are
+- * identical, or 'false' (0) if they are not identical. If @ic is IGNORE_CASE,
+- * the @upcase table is used to performa a case insensitive comparison.
+- */
+-bool ntfs_are_names_equal(const ntfschar *s1, size_t s1_len,
+-		const ntfschar *s2, size_t s2_len, const IGNORE_CASE_BOOL ic,
+-		const ntfschar *upcase, const u32 upcase_size)
+-{
+-	if (s1_len != s2_len)
+-		return false;
+-	if (ic == CASE_SENSITIVE)
+-		return !ntfs_ucsncmp(s1, s2, s1_len);
+-	return !ntfs_ucsncasecmp(s1, s2, s1_len, upcase, upcase_size);
+-}
+-
+-/**
+- * ntfs_collate_names - collate two Unicode names
+- * @name1:	first Unicode name to compare
+- * @name2:	second Unicode name to compare
+- * @err_val:	if @name1 contains an invalid character return this value
+- * @ic:		either CASE_SENSITIVE or IGNORE_CASE
+- * @upcase:	upcase table (ignored if @ic is CASE_SENSITIVE)
+- * @upcase_len:	upcase table size (ignored if @ic is CASE_SENSITIVE)
+- *
+- * ntfs_collate_names collates two Unicode names and returns:
+- *
+- *  -1 if the first name collates before the second one,
+- *   0 if the names match,
+- *   1 if the second name collates before the first one, or
+- * @err_val if an invalid character is found in @name1 during the comparison.
+- *
+- * The following characters are considered invalid: '"', '*', '<', '>' and '?'.
+- */
+-int ntfs_collate_names(const ntfschar *name1, const u32 name1_len,
+-		const ntfschar *name2, const u32 name2_len,
+-		const int err_val, const IGNORE_CASE_BOOL ic,
+-		const ntfschar *upcase, const u32 upcase_len)
+-{
+-	u32 cnt, min_len;
+-	u16 c1, c2;
+-
+-	min_len = name1_len;
+-	if (name1_len > name2_len)
+-		min_len = name2_len;
+-	for (cnt = 0; cnt < min_len; ++cnt) {
+-		c1 = le16_to_cpu(*name1++);
+-		c2 = le16_to_cpu(*name2++);
+-		if (ic) {
+-			if (c1 < upcase_len)
+-				c1 = le16_to_cpu(upcase[c1]);
+-			if (c2 < upcase_len)
+-				c2 = le16_to_cpu(upcase[c2]);
+-		}
+-		if (c1 < 64 && legal_ansi_char_array[c1] & 8)
+-			return err_val;
+-		if (c1 < c2)
+-			return -1;
+-		if (c1 > c2)
+-			return 1;
+-	}
+-	if (name1_len < name2_len)
+-		return -1;
+-	if (name1_len == name2_len)
+-		return 0;
+-	/* name1_len > name2_len */
+-	c1 = le16_to_cpu(*name1);
+-	if (c1 < 64 && legal_ansi_char_array[c1] & 8)
+-		return err_val;
+-	return 1;
+-}
+-
+-/**
+- * ntfs_ucsncmp - compare two little endian Unicode strings
+- * @s1:		first string
+- * @s2:		second string
+- * @n:		maximum unicode characters to compare
+- *
+- * Compare the first @n characters of the Unicode strings @s1 and @s2,
+- * The strings in little endian format and appropriate le16_to_cpu()
+- * conversion is performed on non-little endian machines.
+- *
+- * The function returns an integer less than, equal to, or greater than zero
+- * if @s1 (or the first @n Unicode characters thereof) is found, respectively,
+- * to be less than, to match, or be greater than @s2.
+- */
+-int ntfs_ucsncmp(const ntfschar *s1, const ntfschar *s2, size_t n)
+-{
+-	u16 c1, c2;
+-	size_t i;
+-
+-	for (i = 0; i < n; ++i) {
+-		c1 = le16_to_cpu(s1[i]);
+-		c2 = le16_to_cpu(s2[i]);
+-		if (c1 < c2)
+-			return -1;
+-		if (c1 > c2)
+-			return 1;
+-		if (!c1)
+-			break;
+-	}
+-	return 0;
+-}
+-
+-/**
+- * ntfs_ucsncasecmp - compare two little endian Unicode strings, ignoring case
+- * @s1:			first string
+- * @s2:			second string
+- * @n:			maximum unicode characters to compare
+- * @upcase:		upcase table
+- * @upcase_size:	upcase table size in Unicode characters
+- *
+- * Compare the first @n characters of the Unicode strings @s1 and @s2,
+- * ignoring case. The strings in little endian format and appropriate
+- * le16_to_cpu() conversion is performed on non-little endian machines.
+- *
+- * Each character is uppercased using the @upcase table before the comparison.
+- *
+- * The function returns an integer less than, equal to, or greater than zero
+- * if @s1 (or the first @n Unicode characters thereof) is found, respectively,
+- * to be less than, to match, or be greater than @s2.
+- */
+-int ntfs_ucsncasecmp(const ntfschar *s1, const ntfschar *s2, size_t n,
+-		const ntfschar *upcase, const u32 upcase_size)
+-{
+-	size_t i;
+-	u16 c1, c2;
+-
+-	for (i = 0; i < n; ++i) {
+-		if ((c1 = le16_to_cpu(s1[i])) < upcase_size)
+-			c1 = le16_to_cpu(upcase[c1]);
+-		if ((c2 = le16_to_cpu(s2[i])) < upcase_size)
+-			c2 = le16_to_cpu(upcase[c2]);
+-		if (c1 < c2)
+-			return -1;
+-		if (c1 > c2)
+-			return 1;
+-		if (!c1)
+-			break;
+-	}
+-	return 0;
+-}
+-
+-void ntfs_upcase_name(ntfschar *name, u32 name_len, const ntfschar *upcase,
+-		const u32 upcase_len)
+-{
+-	u32 i;
+-	u16 u;
+-
+-	for (i = 0; i < name_len; i++)
+-		if ((u = le16_to_cpu(name[i])) < upcase_len)
+-			name[i] = upcase[u];
+-}
+-
+-void ntfs_file_upcase_value(FILE_NAME_ATTR *file_name_attr,
+-		const ntfschar *upcase, const u32 upcase_len)
+-{
+-	ntfs_upcase_name((ntfschar*)&file_name_attr->file_name,
+-			file_name_attr->file_name_length, upcase, upcase_len);
+-}
+-
+-int ntfs_file_compare_values(FILE_NAME_ATTR *file_name_attr1,
+-		FILE_NAME_ATTR *file_name_attr2,
+-		const int err_val, const IGNORE_CASE_BOOL ic,
+-		const ntfschar *upcase, const u32 upcase_len)
+-{
+-	return ntfs_collate_names((ntfschar*)&file_name_attr1->file_name,
+-			file_name_attr1->file_name_length,
+-			(ntfschar*)&file_name_attr2->file_name,
+-			file_name_attr2->file_name_length,
+-			err_val, ic, upcase, upcase_len);
+-}
+-
+-/**
+- * ntfs_nlstoucs - convert NLS string to little endian Unicode string
+- * @vol:	ntfs volume which we are working with
+- * @ins:	input NLS string buffer
+- * @ins_len:	length of input string in bytes
+- * @outs:	on return contains the allocated output Unicode string buffer
+- *
+- * Convert the input string @ins, which is in whatever format the loaded NLS
+- * map dictates, into a little endian, 2-byte Unicode string.
+- *
+- * This function allocates the string and the caller is responsible for
+- * calling kmem_cache_free(ntfs_name_cache, *@outs); when finished with it.
+- *
+- * On success the function returns the number of Unicode characters written to
+- * the output string *@outs (>= 0), not counting the terminating Unicode NULL
+- * character. *@outs is set to the allocated output string buffer.
+- *
+- * On error, a negative number corresponding to the error code is returned. In
+- * that case the output string is not allocated. Both *@outs and *@outs_len
+- * are then undefined.
+- *
+- * This might look a bit odd due to fast path optimization...
+- */
+-int ntfs_nlstoucs(const ntfs_volume *vol, const char *ins,
+-		const int ins_len, ntfschar **outs)
+-{
+-	struct nls_table *nls = vol->nls_map;
+-	ntfschar *ucs;
+-	wchar_t wc;
+-	int i, o, wc_len;
+-
+-	/* We do not trust outside sources. */
+-	if (likely(ins)) {
+-		ucs = kmem_cache_alloc(ntfs_name_cache, GFP_NOFS);
+-		if (likely(ucs)) {
+-			for (i = o = 0; i < ins_len; i += wc_len) {
+-				wc_len = nls->char2uni(ins + i, ins_len - i,
+-						&wc);
+-				if (likely(wc_len >= 0 &&
+-						o < NTFS_MAX_NAME_LEN)) {
+-					if (likely(wc)) {
+-						ucs[o++] = cpu_to_le16(wc);
+-						continue;
+-					} /* else if (!wc) */
+-					break;
+-				} /* else if (wc_len < 0 ||
+-						o >= NTFS_MAX_NAME_LEN) */
+-				goto name_err;
+-			}
+-			ucs[o] = 0;
+-			*outs = ucs;
+-			return o;
+-		} /* else if (!ucs) */
+-		ntfs_error(vol->sb, "Failed to allocate buffer for converted "
+-				"name from ntfs_name_cache.");
+-		return -ENOMEM;
+-	} /* else if (!ins) */
+-	ntfs_error(vol->sb, "Received NULL pointer.");
+-	return -EINVAL;
+-name_err:
+-	kmem_cache_free(ntfs_name_cache, ucs);
+-	if (wc_len < 0) {
+-		ntfs_error(vol->sb, "Name using character set %s contains "
+-				"characters that cannot be converted to "
+-				"Unicode.", nls->charset);
+-		i = -EILSEQ;
+-	} else /* if (o >= NTFS_MAX_NAME_LEN) */ {
+-		ntfs_error(vol->sb, "Name is too long (maximum length for a "
+-				"name on NTFS is %d Unicode characters.",
+-				NTFS_MAX_NAME_LEN);
+-		i = -ENAMETOOLONG;
+-	}
+-	return i;
+-}
+-
+-/**
+- * ntfs_ucstonls - convert little endian Unicode string to NLS string
+- * @vol:	ntfs volume which we are working with
+- * @ins:	input Unicode string buffer
+- * @ins_len:	length of input string in Unicode characters
+- * @outs:	on return contains the (allocated) output NLS string buffer
+- * @outs_len:	length of output string buffer in bytes
+- *
+- * Convert the input little endian, 2-byte Unicode string @ins, of length
+- * @ins_len into the string format dictated by the loaded NLS.
+- *
+- * If *@outs is NULL, this function allocates the string and the caller is
+- * responsible for calling kfree(*@outs); when finished with it. In this case
+- * @outs_len is ignored and can be 0.
+- *
+- * On success the function returns the number of bytes written to the output
+- * string *@outs (>= 0), not counting the terminating NULL byte. If the output
+- * string buffer was allocated, *@outs is set to it.
+- *
+- * On error, a negative number corresponding to the error code is returned. In
+- * that case the output string is not allocated. The contents of *@outs are
+- * then undefined.
+- *
+- * This might look a bit odd due to fast path optimization...
+- */
+-int ntfs_ucstonls(const ntfs_volume *vol, const ntfschar *ins,
+-		const int ins_len, unsigned char **outs, int outs_len)
+-{
+-	struct nls_table *nls = vol->nls_map;
+-	unsigned char *ns;
+-	int i, o, ns_len, wc;
+-
+-	/* We don't trust outside sources. */
+-	if (ins) {
+-		ns = *outs;
+-		ns_len = outs_len;
+-		if (ns && !ns_len) {
+-			wc = -ENAMETOOLONG;
+-			goto conversion_err;
+-		}
+-		if (!ns) {
+-			ns_len = ins_len * NLS_MAX_CHARSET_SIZE;
+-			ns = kmalloc(ns_len + 1, GFP_NOFS);
+-			if (!ns)
+-				goto mem_err_out;
+-		}
+-		for (i = o = 0; i < ins_len; i++) {
+-retry:			wc = nls->uni2char(le16_to_cpu(ins[i]), ns + o,
+-					ns_len - o);
+-			if (wc > 0) {
+-				o += wc;
+-				continue;
+-			} else if (!wc)
+-				break;
+-			else if (wc == -ENAMETOOLONG && ns != *outs) {
+-				unsigned char *tc;
+-				/* Grow in multiples of 64 bytes. */
+-				tc = kmalloc((ns_len + 64) &
+-						~63, GFP_NOFS);
+-				if (tc) {
+-					memcpy(tc, ns, ns_len);
+-					ns_len = ((ns_len + 64) & ~63) - 1;
+-					kfree(ns);
+-					ns = tc;
+-					goto retry;
+-				} /* No memory so goto conversion_error; */
+-			} /* wc < 0, real error. */
+-			goto conversion_err;
+-		}
+-		ns[o] = 0;
+-		*outs = ns;
+-		return o;
+-	} /* else (!ins) */
+-	ntfs_error(vol->sb, "Received NULL pointer.");
+-	return -EINVAL;
+-conversion_err:
+-	ntfs_error(vol->sb, "Unicode name contains characters that cannot be "
+-			"converted to character set %s.  You might want to "
+-			"try to use the mount option nls=utf8.", nls->charset);
+-	if (ns != *outs)
+-		kfree(ns);
+-	if (wc != -ENAMETOOLONG)
+-		wc = -EILSEQ;
+-	return wc;
+-mem_err_out:
+-	ntfs_error(vol->sb, "Failed to allocate name!");
+-	return -ENOMEM;
+-}
+diff --git a/fs/ntfs/upcase.c b/fs/ntfs/upcase.c
+deleted file mode 100644
+index 4ebe84a78dea..000000000000
+--- a/fs/ntfs/upcase.c
++++ /dev/null
+@@ -1,73 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * upcase.c - Generate the full NTFS Unicode upcase table in little endian.
+- *	      Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001 Richard Russon <ntfs@flatcap.org>
+- * Copyright (c) 2001-2006 Anton Altaparmakov
+- */
+-
+-#include "malloc.h"
+-#include "ntfs.h"
+-
+-ntfschar *generate_default_upcase(void)
+-{
+-	static const int uc_run_table[][3] = { /* Start, End, Add */
+-	{0x0061, 0x007B,  -32}, {0x0451, 0x045D, -80}, {0x1F70, 0x1F72,  74},
+-	{0x00E0, 0x00F7,  -32}, {0x045E, 0x0460, -80}, {0x1F72, 0x1F76,  86},
+-	{0x00F8, 0x00FF,  -32}, {0x0561, 0x0587, -48}, {0x1F76, 0x1F78, 100},
+-	{0x0256, 0x0258, -205}, {0x1F00, 0x1F08,   8}, {0x1F78, 0x1F7A, 128},
+-	{0x028A, 0x028C, -217}, {0x1F10, 0x1F16,   8}, {0x1F7A, 0x1F7C, 112},
+-	{0x03AC, 0x03AD,  -38}, {0x1F20, 0x1F28,   8}, {0x1F7C, 0x1F7E, 126},
+-	{0x03AD, 0x03B0,  -37}, {0x1F30, 0x1F38,   8}, {0x1FB0, 0x1FB2,   8},
+-	{0x03B1, 0x03C2,  -32}, {0x1F40, 0x1F46,   8}, {0x1FD0, 0x1FD2,   8},
+-	{0x03C2, 0x03C3,  -31}, {0x1F51, 0x1F52,   8}, {0x1FE0, 0x1FE2,   8},
+-	{0x03C3, 0x03CC,  -32}, {0x1F53, 0x1F54,   8}, {0x1FE5, 0x1FE6,   7},
+-	{0x03CC, 0x03CD,  -64}, {0x1F55, 0x1F56,   8}, {0x2170, 0x2180, -16},
+-	{0x03CD, 0x03CF,  -63}, {0x1F57, 0x1F58,   8}, {0x24D0, 0x24EA, -26},
+-	{0x0430, 0x0450,  -32}, {0x1F60, 0x1F68,   8}, {0xFF41, 0xFF5B, -32},
+-	{0}
+-	};
+-
+-	static const int uc_dup_table[][2] = { /* Start, End */
+-	{0x0100, 0x012F}, {0x01A0, 0x01A6}, {0x03E2, 0x03EF}, {0x04CB, 0x04CC},
+-	{0x0132, 0x0137}, {0x01B3, 0x01B7}, {0x0460, 0x0481}, {0x04D0, 0x04EB},
+-	{0x0139, 0x0149}, {0x01CD, 0x01DD}, {0x0490, 0x04BF}, {0x04EE, 0x04F5},
+-	{0x014A, 0x0178}, {0x01DE, 0x01EF}, {0x04BF, 0x04BF}, {0x04F8, 0x04F9},
+-	{0x0179, 0x017E}, {0x01F4, 0x01F5}, {0x04C1, 0x04C4}, {0x1E00, 0x1E95},
+-	{0x018B, 0x018B}, {0x01FA, 0x0218}, {0x04C7, 0x04C8}, {0x1EA0, 0x1EF9},
+-	{0}
+-	};
+-
+-	static const int uc_word_table[][2] = { /* Offset, Value */
+-	{0x00FF, 0x0178}, {0x01AD, 0x01AC}, {0x01F3, 0x01F1}, {0x0269, 0x0196},
+-	{0x0183, 0x0182}, {0x01B0, 0x01AF}, {0x0253, 0x0181}, {0x026F, 0x019C},
+-	{0x0185, 0x0184}, {0x01B9, 0x01B8}, {0x0254, 0x0186}, {0x0272, 0x019D},
+-	{0x0188, 0x0187}, {0x01BD, 0x01BC}, {0x0259, 0x018F}, {0x0275, 0x019F},
+-	{0x018C, 0x018B}, {0x01C6, 0x01C4}, {0x025B, 0x0190}, {0x0283, 0x01A9},
+-	{0x0192, 0x0191}, {0x01C9, 0x01C7}, {0x0260, 0x0193}, {0x0288, 0x01AE},
+-	{0x0199, 0x0198}, {0x01CC, 0x01CA}, {0x0263, 0x0194}, {0x0292, 0x01B7},
+-	{0x01A8, 0x01A7}, {0x01DD, 0x018E}, {0x0268, 0x0197},
+-	{0}
+-	};
+-
+-	int i, r;
+-	ntfschar *uc;
+-
+-	uc = ntfs_malloc_nofs(default_upcase_len * sizeof(ntfschar));
+-	if (!uc)
+-		return uc;
+-	memset(uc, 0, default_upcase_len * sizeof(ntfschar));
+-	/* Generate the little endian Unicode upcase table used by ntfs. */
+-	for (i = 0; i < default_upcase_len; i++)
+-		uc[i] = cpu_to_le16(i);
+-	for (r = 0; uc_run_table[r][0]; r++)
+-		for (i = uc_run_table[r][0]; i < uc_run_table[r][1]; i++)
+-			le16_add_cpu(&uc[i], uc_run_table[r][2]);
+-	for (r = 0; uc_dup_table[r][0]; r++)
+-		for (i = uc_dup_table[r][0]; i < uc_dup_table[r][1]; i += 2)
+-			le16_add_cpu(&uc[i + 1], -1);
+-	for (r = 0; uc_word_table[r][0]; r++)
+-		uc[uc_word_table[r][0]] = cpu_to_le16(uc_word_table[r][1]);
+-	return uc;
+-}
+diff --git a/fs/ntfs/usnjrnl.c b/fs/ntfs/usnjrnl.c
+deleted file mode 100644
+index 9097a0b4ef25..000000000000
+--- a/fs/ntfs/usnjrnl.c
++++ /dev/null
+@@ -1,70 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-or-later
+-/*
+- * usnjrnl.h - NTFS kernel transaction log ($UsnJrnl) handling.  Part of the
+- *	       Linux-NTFS project.
+- *
+- * Copyright (c) 2005 Anton Altaparmakov
+- */
+-
+-#ifdef NTFS_RW
+-
+-#include <linux/fs.h>
+-#include <linux/highmem.h>
+-#include <linux/mm.h>
+-
+-#include "aops.h"
+-#include "debug.h"
+-#include "endian.h"
+-#include "time.h"
+-#include "types.h"
+-#include "usnjrnl.h"
+-#include "volume.h"
+-
+-/**
+- * ntfs_stamp_usnjrnl - stamp the transaction log ($UsnJrnl) on an ntfs volume
+- * @vol:	ntfs volume on which to stamp the transaction log
+- *
+- * Stamp the transaction log ($UsnJrnl) on the ntfs volume @vol and return
+- * 'true' on success and 'false' on error.
+- *
+- * This function assumes that the transaction log has already been loaded and
+- * consistency checked by a call to fs/ntfs/super.c::load_and_init_usnjrnl().
+- */
+-bool ntfs_stamp_usnjrnl(ntfs_volume *vol)
+-{
+-	ntfs_debug("Entering.");
+-	if (likely(!NVolUsnJrnlStamped(vol))) {
+-		sle64 stamp;
+-		struct page *page;
+-		USN_HEADER *uh;
+-
+-		page = ntfs_map_page(vol->usnjrnl_max_ino->i_mapping, 0);
+-		if (IS_ERR(page)) {
+-			ntfs_error(vol->sb, "Failed to read from "
+-					"$UsnJrnl/$DATA/$Max attribute.");
+-			return false;
+-		}
+-		uh = (USN_HEADER*)page_address(page);
+-		stamp = get_current_ntfs_time();
+-		ntfs_debug("Stamping transaction log ($UsnJrnl): old "
+-				"journal_id 0x%llx, old lowest_valid_usn "
+-				"0x%llx, new journal_id 0x%llx, new "
+-				"lowest_valid_usn 0x%llx.",
+-				(long long)sle64_to_cpu(uh->journal_id),
+-				(long long)sle64_to_cpu(uh->lowest_valid_usn),
+-				(long long)sle64_to_cpu(stamp),
+-				i_size_read(vol->usnjrnl_j_ino));
+-		uh->lowest_valid_usn =
+-				cpu_to_sle64(i_size_read(vol->usnjrnl_j_ino));
+-		uh->journal_id = stamp;
+-		flush_dcache_page(page);
+-		set_page_dirty(page);
+-		ntfs_unmap_page(page);
+-		/* Set the flag so we do not have to do it again on remount. */
+-		NVolSetUsnJrnlStamped(vol);
+-	}
+-	ntfs_debug("Done.");
+-	return true;
+-}
+-
+-#endif /* NTFS_RW */
+diff --git a/fs/ntfs/usnjrnl.h b/fs/ntfs/usnjrnl.h
+deleted file mode 100644
+index 85f531b59395..000000000000
+--- a/fs/ntfs/usnjrnl.h
++++ /dev/null
+@@ -1,191 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * usnjrnl.h - Defines for NTFS kernel transaction log ($UsnJrnl) handling.
+- *	       Part of the Linux-NTFS project.
+- *
+- * Copyright (c) 2005 Anton Altaparmakov
+- */
+-
+-#ifndef _LINUX_NTFS_USNJRNL_H
+-#define _LINUX_NTFS_USNJRNL_H
+-
+-#ifdef NTFS_RW
+-
+-#include "types.h"
+-#include "endian.h"
+-#include "layout.h"
+-#include "volume.h"
+-
+-/*
+- * Transaction log ($UsnJrnl) organization:
+- *
+- * The transaction log records whenever a file is modified in any way.  So for
+- * example it will record that file "blah" was written to at a particular time
+- * but not what was written.  If will record that a file was deleted or
+- * created, that a file was truncated, etc.  See below for all the reason
+- * codes used.
+- *
+- * The transaction log is in the $Extend directory which is in the root
+- * directory of each volume.  If it is not present it means transaction
+- * logging is disabled.  If it is present it means transaction logging is
+- * either enabled or in the process of being disabled in which case we can
+- * ignore it as it will go away as soon as Windows gets its hands on it.
+- *
+- * To determine whether the transaction logging is enabled or in the process
+- * of being disabled, need to check the volume flags in the
+- * $VOLUME_INFORMATION attribute in the $Volume system file (which is present
+- * in the root directory and has a fixed mft record number, see layout.h).
+- * If the flag VOLUME_DELETE_USN_UNDERWAY is set it means the transaction log
+- * is in the process of being disabled and if this flag is clear it means the
+- * transaction log is enabled.
+- *
+- * The transaction log consists of two parts; the $DATA/$Max attribute as well
+- * as the $DATA/$J attribute.  $Max is a header describing the transaction
+- * log whilst $J is the transaction log data itself as a sequence of variable
+- * sized USN_RECORDs (see below for all the structures).
+- *
+- * We do not care about transaction logging at this point in time but we still
+- * need to let windows know that the transaction log is out of date.  To do
+- * this we need to stamp the transaction log.  This involves setting the
+- * lowest_valid_usn field in the $DATA/$Max attribute to the usn to be used
+- * for the next added USN_RECORD to the $DATA/$J attribute as well as
+- * generating a new journal_id in $DATA/$Max.
+- *
+- * The journal_id is as of the current version (2.0) of the transaction log
+- * simply the 64-bit timestamp of when the journal was either created or last
+- * stamped.
+- *
+- * To determine the next usn there are two ways.  The first is to parse
+- * $DATA/$J and to find the last USN_RECORD in it and to add its record_length
+- * to its usn (which is the byte offset in the $DATA/$J attribute).  The
+- * second is simply to take the data size of the attribute.  Since the usns
+- * are simply byte offsets into $DATA/$J, this is exactly the next usn.  For
+- * obvious reasons we use the second method as it is much simpler and faster.
+- *
+- * As an aside, note that to actually disable the transaction log, one would
+- * need to set the VOLUME_DELETE_USN_UNDERWAY flag (see above), then go
+- * through all the mft records on the volume and set the usn field in their
+- * $STANDARD_INFORMATION attribute to zero.  Once that is done, one would need
+- * to delete the transaction log file, i.e. \$Extent\$UsnJrnl, and finally,
+- * one would need to clear the VOLUME_DELETE_USN_UNDERWAY flag.
+- *
+- * Note that if a volume is unmounted whilst the transaction log is being
+- * disabled, the process will continue the next time the volume is mounted.
+- * This is why we can safely mount read-write when we see a transaction log
+- * in the process of being deleted.
+- */
+-
+-/* Some $UsnJrnl related constants. */
+-#define UsnJrnlMajorVer		2
+-#define UsnJrnlMinorVer		0
+-
+-/*
+- * $DATA/$Max attribute.  This is (always?) resident and has a fixed size of
+- * 32 bytes.  It contains the header describing the transaction log.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*   0*/sle64 maximum_size;	/* The maximum on-disk size of the $DATA/$J
+-				   attribute. */
+-/*   8*/sle64 allocation_delta;	/* Number of bytes by which to increase the
+-				   size of the $DATA/$J attribute. */
+-/*0x10*/sle64 journal_id;	/* Current id of the transaction log. */
+-/*0x18*/leUSN lowest_valid_usn;	/* Lowest valid usn in $DATA/$J for the
+-				   current journal_id. */
+-/* sizeof() = 32 (0x20) bytes */
+-} __attribute__ ((__packed__)) USN_HEADER;
+-
+-/*
+- * Reason flags (32-bit).  Cumulative flags describing the change(s) to the
+- * file since it was last opened.  I think the names speak for themselves but
+- * if you disagree check out the descriptions in the Linux NTFS project NTFS
+- * documentation: http://www.linux-ntfs.org/
+- */
+-enum {
+-	USN_REASON_DATA_OVERWRITE	= cpu_to_le32(0x00000001),
+-	USN_REASON_DATA_EXTEND		= cpu_to_le32(0x00000002),
+-	USN_REASON_DATA_TRUNCATION	= cpu_to_le32(0x00000004),
+-	USN_REASON_NAMED_DATA_OVERWRITE	= cpu_to_le32(0x00000010),
+-	USN_REASON_NAMED_DATA_EXTEND	= cpu_to_le32(0x00000020),
+-	USN_REASON_NAMED_DATA_TRUNCATION= cpu_to_le32(0x00000040),
+-	USN_REASON_FILE_CREATE		= cpu_to_le32(0x00000100),
+-	USN_REASON_FILE_DELETE		= cpu_to_le32(0x00000200),
+-	USN_REASON_EA_CHANGE		= cpu_to_le32(0x00000400),
+-	USN_REASON_SECURITY_CHANGE	= cpu_to_le32(0x00000800),
+-	USN_REASON_RENAME_OLD_NAME	= cpu_to_le32(0x00001000),
+-	USN_REASON_RENAME_NEW_NAME	= cpu_to_le32(0x00002000),
+-	USN_REASON_INDEXABLE_CHANGE	= cpu_to_le32(0x00004000),
+-	USN_REASON_BASIC_INFO_CHANGE	= cpu_to_le32(0x00008000),
+-	USN_REASON_HARD_LINK_CHANGE	= cpu_to_le32(0x00010000),
+-	USN_REASON_COMPRESSION_CHANGE	= cpu_to_le32(0x00020000),
+-	USN_REASON_ENCRYPTION_CHANGE	= cpu_to_le32(0x00040000),
+-	USN_REASON_OBJECT_ID_CHANGE	= cpu_to_le32(0x00080000),
+-	USN_REASON_REPARSE_POINT_CHANGE	= cpu_to_le32(0x00100000),
+-	USN_REASON_STREAM_CHANGE	= cpu_to_le32(0x00200000),
+-	USN_REASON_CLOSE		= cpu_to_le32(0x80000000),
+-};
+-
+-typedef le32 USN_REASON_FLAGS;
+-
+-/*
+- * Source info flags (32-bit).  Information about the source of the change(s)
+- * to the file.  For detailed descriptions of what these mean, see the Linux
+- * NTFS project NTFS documentation:
+- *	http://www.linux-ntfs.org/
+- */
+-enum {
+-	USN_SOURCE_DATA_MANAGEMENT	  = cpu_to_le32(0x00000001),
+-	USN_SOURCE_AUXILIARY_DATA	  = cpu_to_le32(0x00000002),
+-	USN_SOURCE_REPLICATION_MANAGEMENT = cpu_to_le32(0x00000004),
+-};
+-
+-typedef le32 USN_SOURCE_INFO_FLAGS;
+-
+-/*
+- * $DATA/$J attribute.  This is always non-resident, is marked as sparse, and
+- * is of variabled size.  It consists of a sequence of variable size
+- * USN_RECORDS.  The minimum allocated_size is allocation_delta as
+- * specified in $DATA/$Max.  When the maximum_size specified in $DATA/$Max is
+- * exceeded by more than allocation_delta bytes, allocation_delta bytes are
+- * allocated and appended to the $DATA/$J attribute and an equal number of
+- * bytes at the beginning of the attribute are freed and made sparse.  Note the
+- * making sparse only happens at volume checkpoints and hence the actual
+- * $DATA/$J size can exceed maximum_size + allocation_delta temporarily.
+- */
+-typedef struct {
+-/*Ofs*/
+-/*   0*/le32 length;		/* Byte size of this record (8-byte
+-				   aligned). */
+-/*   4*/le16 major_ver;		/* Major version of the transaction log used
+-				   for this record. */
+-/*   6*/le16 minor_ver;		/* Minor version of the transaction log used
+-				   for this record. */
+-/*   8*/leMFT_REF mft_reference;/* The mft reference of the file (or
+-				   directory) described by this record. */
+-/*0x10*/leMFT_REF parent_directory;/* The mft reference of the parent
+-				   directory of the file described by this
+-				   record. */
+-/*0x18*/leUSN usn;		/* The usn of this record.  Equals the offset
+-				   within the $DATA/$J attribute. */
+-/*0x20*/sle64 time;		/* Time when this record was created. */
+-/*0x28*/USN_REASON_FLAGS reason;/* Reason flags (see above). */
+-/*0x2c*/USN_SOURCE_INFO_FLAGS source_info;/* Source info flags (see above). */
+-/*0x30*/le32 security_id;	/* File security_id copied from
+-				   $STANDARD_INFORMATION. */
+-/*0x34*/FILE_ATTR_FLAGS file_attributes;	/* File attributes copied from
+-				   $STANDARD_INFORMATION or $FILE_NAME (not
+-				   sure which). */
+-/*0x38*/le16 file_name_size;	/* Size of the file name in bytes. */
+-/*0x3a*/le16 file_name_offset;	/* Offset to the file name in bytes from the
+-				   start of this record. */
+-/*0x3c*/ntfschar file_name[0];	/* Use when creating only.  When reading use
+-				   file_name_offset to determine the location
+-				   of the name. */
+-/* sizeof() = 60 (0x3c) bytes */
+-} __attribute__ ((__packed__)) USN_RECORD;
+-
+-extern bool ntfs_stamp_usnjrnl(ntfs_volume *vol);
+-
+-#endif /* NTFS_RW */
+-
+-#endif /* _LINUX_NTFS_USNJRNL_H */
+diff --git a/fs/ntfs/volume.h b/fs/ntfs/volume.h
+deleted file mode 100644
+index 930a9ae8a053..000000000000
+--- a/fs/ntfs/volume.h
++++ /dev/null
+@@ -1,164 +0,0 @@
+-/* SPDX-License-Identifier: GPL-2.0-or-later */
+-/*
+- * volume.h - Defines for volume structures in NTFS Linux kernel driver. Part
+- *	      of the Linux-NTFS project.
+- *
+- * Copyright (c) 2001-2006 Anton Altaparmakov
+- * Copyright (c) 2002 Richard Russon
+- */
+-
+-#ifndef _LINUX_NTFS_VOLUME_H
+-#define _LINUX_NTFS_VOLUME_H
+-
+-#include <linux/rwsem.h>
+-#include <linux/uidgid.h>
+-
+-#include "types.h"
+-#include "layout.h"
+-
+-/*
+- * The NTFS in memory super block structure.
+- */
+-typedef struct {
+-	/*
+-	 * FIXME: Reorder to have commonly used together element within the
+-	 * same cache line, aiming at a cache line size of 32 bytes. Aim for
+-	 * 64 bytes for less commonly used together elements. Put most commonly
+-	 * used elements to front of structure. Obviously do this only when the
+-	 * structure has stabilized... (AIA)
+-	 */
+-	/* Device specifics. */
+-	struct super_block *sb;		/* Pointer back to the super_block. */
+-	LCN nr_blocks;			/* Number of sb->s_blocksize bytes
+-					   sized blocks on the device. */
+-	/* Configuration provided by user at mount time. */
+-	unsigned long flags;		/* Miscellaneous flags, see below. */
+-	kuid_t uid;			/* uid that files will be mounted as. */
+-	kgid_t gid;			/* gid that files will be mounted as. */
+-	umode_t fmask;			/* The mask for file permissions. */
+-	umode_t dmask;			/* The mask for directory
+-					   permissions. */
+-	u8 mft_zone_multiplier;		/* Initial mft zone multiplier. */
+-	u8 on_errors;			/* What to do on filesystem errors. */
+-	/* NTFS bootsector provided information. */
+-	u16 sector_size;		/* in bytes */
+-	u8 sector_size_bits;		/* log2(sector_size) */
+-	u32 cluster_size;		/* in bytes */
+-	u32 cluster_size_mask;		/* cluster_size - 1 */
+-	u8 cluster_size_bits;		/* log2(cluster_size) */
+-	u32 mft_record_size;		/* in bytes */
+-	u32 mft_record_size_mask;	/* mft_record_size - 1 */
+-	u8 mft_record_size_bits;	/* log2(mft_record_size) */
+-	u32 index_record_size;		/* in bytes */
+-	u32 index_record_size_mask;	/* index_record_size - 1 */
+-	u8 index_record_size_bits;	/* log2(index_record_size) */
+-	LCN nr_clusters;		/* Volume size in clusters == number of
+-					   bits in lcn bitmap. */
+-	LCN mft_lcn;			/* Cluster location of mft data. */
+-	LCN mftmirr_lcn;		/* Cluster location of copy of mft. */
+-	u64 serial_no;			/* The volume serial number. */
+-	/* Mount specific NTFS information. */
+-	u32 upcase_len;			/* Number of entries in upcase[]. */
+-	ntfschar *upcase;		/* The upcase table. */
+-
+-	s32 attrdef_size;		/* Size of the attribute definition
+-					   table in bytes. */
+-	ATTR_DEF *attrdef;		/* Table of attribute definitions.
+-					   Obtained from FILE_AttrDef. */
+-
+-#ifdef NTFS_RW
+-	/* Variables used by the cluster and mft allocators. */
+-	s64 mft_data_pos;		/* Mft record number at which to
+-					   allocate the next mft record. */
+-	LCN mft_zone_start;		/* First cluster of the mft zone. */
+-	LCN mft_zone_end;		/* First cluster beyond the mft zone. */
+-	LCN mft_zone_pos;		/* Current position in the mft zone. */
+-	LCN data1_zone_pos;		/* Current position in the first data
+-					   zone. */
+-	LCN data2_zone_pos;		/* Current position in the second data
+-					   zone. */
+-#endif /* NTFS_RW */
+-
+-	struct inode *mft_ino;		/* The VFS inode of $MFT. */
+-
+-	struct inode *mftbmp_ino;	/* Attribute inode for $MFT/$BITMAP. */
+-	struct rw_semaphore mftbmp_lock; /* Lock for serializing accesses to the
+-					    mft record bitmap ($MFT/$BITMAP). */
+-#ifdef NTFS_RW
+-	struct inode *mftmirr_ino;	/* The VFS inode of $MFTMirr. */
+-	int mftmirr_size;		/* Size of mft mirror in mft records. */
+-
+-	struct inode *logfile_ino;	/* The VFS inode of $LogFile. */
+-#endif /* NTFS_RW */
+-
+-	struct inode *lcnbmp_ino;	/* The VFS inode of $Bitmap. */
+-	struct rw_semaphore lcnbmp_lock; /* Lock for serializing accesses to the
+-					    cluster bitmap ($Bitmap/$DATA). */
+-
+-	struct inode *vol_ino;		/* The VFS inode of $Volume. */
+-	VOLUME_FLAGS vol_flags;		/* Volume flags. */
+-	u8 major_ver;			/* Ntfs major version of volume. */
+-	u8 minor_ver;			/* Ntfs minor version of volume. */
+-
+-	struct inode *root_ino;		/* The VFS inode of the root
+-					   directory. */
+-	struct inode *secure_ino;	/* The VFS inode of $Secure (NTFS3.0+
+-					   only, otherwise NULL). */
+-	struct inode *extend_ino;	/* The VFS inode of $Extend (NTFS3.0+
+-					   only, otherwise NULL). */
+-#ifdef NTFS_RW
+-	/* $Quota stuff is NTFS3.0+ specific.  Unused/NULL otherwise. */
+-	struct inode *quota_ino;	/* The VFS inode of $Quota. */
+-	struct inode *quota_q_ino;	/* Attribute inode for $Quota/$Q. */
+-	/* $UsnJrnl stuff is NTFS3.0+ specific.  Unused/NULL otherwise. */
+-	struct inode *usnjrnl_ino;	/* The VFS inode of $UsnJrnl. */
+-	struct inode *usnjrnl_max_ino;	/* Attribute inode for $UsnJrnl/$Max. */
+-	struct inode *usnjrnl_j_ino;	/* Attribute inode for $UsnJrnl/$J. */
+-#endif /* NTFS_RW */
+-	struct nls_table *nls_map;
+-} ntfs_volume;
+-
+-/*
+- * Defined bits for the flags field in the ntfs_volume structure.
+- */
+-typedef enum {
+-	NV_Errors,		/* 1: Volume has errors, prevent remount rw. */
+-	NV_ShowSystemFiles,	/* 1: Return system files in ntfs_readdir(). */
+-	NV_CaseSensitive,	/* 1: Treat file names as case sensitive and
+-				      create filenames in the POSIX namespace.
+-				      Otherwise be case insensitive but still
+-				      create file names in POSIX namespace. */
+-	NV_LogFileEmpty,	/* 1: $LogFile journal is empty. */
+-	NV_QuotaOutOfDate,	/* 1: $Quota is out of date. */
+-	NV_UsnJrnlStamped,	/* 1: $UsnJrnl has been stamped. */
+-	NV_SparseEnabled,	/* 1: May create sparse files. */
+-} ntfs_volume_flags;
+-
+-/*
+- * Macro tricks to expand the NVolFoo(), NVolSetFoo(), and NVolClearFoo()
+- * functions.
+- */
+-#define DEFINE_NVOL_BIT_OPS(flag)					\
+-static inline int NVol##flag(ntfs_volume *vol)		\
+-{							\
+-	return test_bit(NV_##flag, &(vol)->flags);	\
+-}							\
+-static inline void NVolSet##flag(ntfs_volume *vol)	\
+-{							\
+-	set_bit(NV_##flag, &(vol)->flags);		\
+-}							\
+-static inline void NVolClear##flag(ntfs_volume *vol)	\
+-{							\
+-	clear_bit(NV_##flag, &(vol)->flags);		\
+-}
+-
+-/* Emit the ntfs volume bitops functions. */
+-DEFINE_NVOL_BIT_OPS(Errors)
+-DEFINE_NVOL_BIT_OPS(ShowSystemFiles)
+-DEFINE_NVOL_BIT_OPS(CaseSensitive)
+-DEFINE_NVOL_BIT_OPS(LogFileEmpty)
+-DEFINE_NVOL_BIT_OPS(QuotaOutOfDate)
+-DEFINE_NVOL_BIT_OPS(UsnJrnlStamped)
+-DEFINE_NVOL_BIT_OPS(SparseEnabled)
+-
+-#endif /* _LINUX_NTFS_VOLUME_H */
+-- 
+2.39.5
 
-I prefer this option, but with a variant -
-The group has two fds:
-one control-only fd (RDONLY) to keep it alive and add marks
-and one queue-fd (RDWR) to handle events.
-
-The control fd can be placed in the fd store.
-When service crashes, the queue fd is closed so the group
-cannot handle events and default response is returned.
-
-When the service starts it finds the control fd in the fd store and
-issues an ioctl or something to get the queue fd.
-
-> For b) hand-over or crash recovery is simple. As soon as someone places a
-> mark over given object, it is implicitly the new handler for the object a=
-nd
-> auto-reject does not trigger. But if you set that e.g. all events on the
-> superblock need to be handled, then you really have to setup watches so
-> that notification system understands each event really got handled (which
-> potentially conflicts with the effort to avoid handling uninteresting
-> events). Also any coexistence of two services using this facility is goin=
-g
-> to be "interesting".
->
-> > I think that closing this group should remove the default mask
-> > and then the default mask is at least visible at fdinfo of this fd.
->
-> Once we decide the above dilema, we can decide on what's the best way to
-> set these and also about visibility (I agree that is very important as
-> well).
-
-With the control fd design, this problem is also solved - the marks
-are still visible on the control fd, and so will be the default response
-and the state of the queue fd.
-
-Thanks,
-Amir.
 
