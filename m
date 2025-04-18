@@ -1,104 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-46679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872F5A93B7D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 18:57:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3ECA93C3C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 19:50:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 507FA1B63317
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 16:58:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDF58189A444
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 17:50:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34BF5218AC7;
-	Fri, 18 Apr 2025 16:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDF921CC4E;
+	Fri, 18 Apr 2025 17:50:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="cIVL3/qM"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rzJe3yX0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oa1-f73.google.com (mail-oa1-f73.google.com [209.85.160.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5AED1A8F68;
-	Fri, 18 Apr 2025 16:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFC918952C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 18 Apr 2025 17:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1744995460; cv=none; b=ueQUV6z3+av6EqYl3iSYS1LrooE7AR+uR46csU3qsng4Z7qsVCPzwAfz+hj6j4EWrLWa2G7FBAgv+NUlF7TwwqKWeATPLcz0d5bhxkRaS4XYImADFHFQhq8nPTpt88b1ezSMX0sNJaOez3H+LtSFeDFmaNTQfWnNvdlH8cQ3tzM=
+	t=1744998606; cv=none; b=dFuIcOJVQSEPI54aoVG4B+Qy0AqqZJURtCkk0NkINv9KuGfZCYZdLuTGp9rZx4XOrK8tBBdiRDfxNmOOWY7meNl5eebFoq6IGWc2YWQq6Ds8ic5VNhkAKQTA7jelIpAKYGgGgc5wGXzbPfXlwqaW41AT5U1fRrXFKo3IcC5si3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1744995460; c=relaxed/simple;
-	bh=oMUnQpA3i8Z6l1WvnRE2YkrR/PCt4Rv+k/8Npl7LEHI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Soys9FCxodHoYuAOeYXe7BhRMqnOP20bQY3TwPPoDQFNcBRmyuzHW4sTCuEcqOd84duLKaq6FhU/VlvQshVZN+LbNqZ6pLSBUzewBB0pqHW2ZIuTCvbmj/uL7jWAkl3ekbDsIgTDooUcBQVJNeKdAscIOkRhOHpvglXNTeZWHZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=cIVL3/qM; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id A40091C00B2; Fri, 18 Apr 2025 18:51:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1744995098;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PSbe1n/k0ulYtGbIXI96CO1VrCv/UaM1rOskyi49O2s=;
-	b=cIVL3/qMttdCGnkI3NL7gUW1Aii+xIXKQlu+Jek5MvBLY6ydcrFrlqT4Ue5CCsoac2cCnB
-	iHtXGV20tgwSl5izXQJp+I4Ti6t+1MlUjbiBbAd5F+pfSwQ9osFGUkhwKEjmxk/imNvPg4
-	Xel9S8KHEQU4/S5N/eYEo/2ihftbRpQ=
-Date: Fri, 18 Apr 2025 18:51:38 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	"Eric W. Biederman" <ebiederm@xmission.com>,
-	Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.10] umount: Allow superblock owners to force
- umount
-Message-ID: <aAKDGmxq/snqaYhQ@duo.ucw.cz>
-References: <20250331143234.1667913-1-sashal@kernel.org>
+	s=arc-20240116; t=1744998606; c=relaxed/simple;
+	bh=J2Lz0EDBuhAnvIhVI7WuWBYiMB01TvLRzTph4cwRKFQ=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=XSQPp+QrHwLyIjzacYbi6lUKsgy5QF7rQ7HwfScptuFNZY7rPxdVErAsDef84sw4OfgcROfN9pl+llyBZK+Ywm9v69LVJ9psA6jLUpyRRiu5EB0RVdHcka2jGMFad1WqprGJglw/K95mOq6nkW0t1wEJYmIddeACTDrY2F9rrcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rzJe3yX0; arc=none smtp.client-ip=209.85.160.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-oa1-f73.google.com with SMTP id 586e51a60fabf-2c22c1d5d09so1367195fac.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Apr 2025 10:50:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1744998603; x=1745603403; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NChENxjYlbY+fearBpat5nnFIT5zlqPLQI15hZf3lPM=;
+        b=rzJe3yX0C7w6K9BnrlPj3zwCRnc1vtNfFMpapaxLX0kcyRu21vrQZTZTaskoD58wQc
+         7CxiZJcfyOqBfsWX3lQ+JdoYGe3e0pMb/oeYcyoUDRinG0V7Q2RTrwE8LFHJ72gTGcHJ
+         pvnuGNxbzcyqrCZtCww2kIFdTBNksQb/T5uokamoU6Svr1LNnpEvTqPYrYCt1VJeBmSt
+         vHh4bROW9JUOhmwpm7xs1CgzSmFrUq0j7Emy2IdycdG1P9i/omuA0MRObveQOIneObfC
+         9LIvSt99GUg65BLGuP/6KcYJThrewC3t6OnwvZ00JzaTWL1rrpwZENryww7rMIxViMK2
+         T28g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1744998603; x=1745603403;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NChENxjYlbY+fearBpat5nnFIT5zlqPLQI15hZf3lPM=;
+        b=pEQEnxa6JZzCqpeiCudCgXN5fYc8JitYhyssKQzzQ4j+iGSUpFn0JffLVlnJi+vCJJ
+         5x7tf5rq1JocO4NEyECB+NOhwV7QIwU9pWV/JpRHrKC1cCY2bd2oLEfde1ltgzc/Appq
+         XDZ2EEmRuqadQK4ICmDqBbp3aCEc0It5eNautk1iyXlrx6ClZqk/BlZDzqtUst5XMeaB
+         l7anSEJVVjURnW49Bwe4yHstphI6p/fwb/J0RBg0PWE8/BqQgSY2OErn5e+fFC7JYHqc
+         nrsN3CGSje1um+TOlrvgg2sWzi/zKiTLM5WkjG2uVxROLOLvius9ow5K3Zdk6oyyVP/i
+         YqVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlpafc2aj7/bhIRcRsjvtyrwZIypGMHRHTgqLwx+4hxJhdVj3WoQMjeg0/50O5Iof+zGqChT6i8VotD8MF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/5dU2JJZpFsVa2NEbGDIt2aTYciKHon3gyBrmTHEoUKPZ95JF
+	lAAeISBFa2O58ISXGQ3uCBjGvHUmxYvgaYhf3pbfSejxKnWpgM1eh666yz3yAaZ7um0hjrqTg5d
+	KCw==
+X-Google-Smtp-Source: AGHT+IE3aftsn9hfNjPsF8qSwC5r3XHYkK9rjlStJcjhr+jAxmTp8vjQYXiW/ySOAL58Q0hdZgfr9P9bsm4=
+X-Received: from oabuz10.prod.google.com ([2002:a05:6870:af8a:b0:29f:d208:6db])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6870:ef83:b0:2d5:4f4:e24d
+ with SMTP id 586e51a60fabf-2d5269799d4mr2188610fac.6.1744998603619; Fri, 18
+ Apr 2025 10:50:03 -0700 (PDT)
+Date: Fri, 18 Apr 2025 10:49:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="hXfHA1BSXmrE6BXK"
-Content-Disposition: inline
-In-Reply-To: <20250331143234.1667913-1-sashal@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.805.g082f7c87e0-goog
+Message-ID: <20250418174959.1431962-1-surenb@google.com>
+Subject: [PATCH v3 0/8] perform /proc/pid/maps read and PROCMAP_QUERY under RCU
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
+Content-Type: text/plain; charset="UTF-8"
+
+After a long delay I'm posting next iteration of lockless /proc/pid/maps
+reading patchset. Differences from v2 [1]:
+- Add a set of tests concurrently modifying address space and checking for
+correct reading results;
+- Use new mmap_lock_speculate_xxx APIs for concurrent change detection and
+retries;
+- Add lockless PROCMAP_QUERY execution support;
+
+The new tests are designed to check for any unexpected data tearing while
+performing some common address space modifications (vma split, resize and
+remap). Even before these changes, reading /proc/pid/maps might have
+inconsistent data because the file is read page-by-page with mmap_lock
+being dropped between the pages. Such tearing is expected and userspace
+is supposed to deal with that possibility. An example of user-visible
+inconsistency can be that the same vma is printed twice: once before
+it was modified and then after the modifications. For example if vma was
+extended, it might be found and reported twice. Whan is not expected is
+to see a gap where there should have been a vma both before and after
+modification. This patchset increases the chances of such tearing,
+therefore it's event more important now to test for unexpected
+inconsistencies.
+
+Thanks to Paul McKenney who developed a benchmark to test performance
+of concurrent reads and updates, we also have data on performance
+benefits:
+
+The test has a pair of processes scanning /proc/PID/maps, and another
+process unmapping and remapping 4K pages from a 128MB range of anonymous
+memory.  At the end of each 10-second run, the latency of each mmap()
+or munmap() operation is measured, and for each run the maximum and mean
+latency is printed.  (Yes, the map/unmap process is started first, its
+PID is passed to the scanners, and then the map/unmap process waits until
+both scanners are running before starting its timed test.  The scanners
+keep scanning until the specified /proc/PID/maps file disappears.)
+In summary, with stock mm, 78% of the runs had maximum latencies in
+excess of 0.5 milliseconds, and with more then half of the runs' latencies
+exceeding a full millisecond.  In contrast, 98% of the runs with Suren's
+patch series applied had maximum latencies of less than 0.5 milliseconds.
+From a median-performance viewpoint, Suren's series also looks good,
+with stock mm weighing in at 13 microseconds and Suren's series at 10
+microseconds, better than a 20% improvement.
+
+[1] https://lore.kernel.org/all/20240123231014.3801041-1-surenb@google.com/
+
+Suren Baghdasaryan (8):
+  selftests/proc: add /proc/pid/maps tearing from vma split test
+  selftests/proc: extend /proc/pid/maps tearing test to include vma
+    resizing
+  selftests/proc: extend /proc/pid/maps tearing test to include vma
+    remapping
+  selftests/proc: test PROCMAP_QUERY ioctl while vma is concurrently
+    modified
+  selftests/proc: add verbose more for tests to facilitate debugging
+  mm: make vm_area_struct anon_name field RCU-safe
+  mm/maps: read proc/pid/maps under RCU
+  mm/maps: execute PROCMAP_QUERY ioctl under RCU
+
+ fs/proc/internal.h                         |   6 +
+ fs/proc/task_mmu.c                         | 233 +++++-
+ include/linux/mm_inline.h                  |  28 +-
+ include/linux/mm_types.h                   |   3 +-
+ mm/madvise.c                               |  30 +-
+ tools/testing/selftests/proc/proc-pid-vm.c | 793 ++++++++++++++++++++-
+ 6 files changed, 1061 insertions(+), 32 deletions(-)
 
 
---hXfHA1BSXmrE6BXK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+base-commit: 79f35c4125a9a3fd98efeed4cce1cd7ce5311a44
+-- 
+2.49.0.805.g082f7c87e0-goog
 
-Hi!
-
-> From: Trond Myklebust <trond.myklebust@hammerspace.com>
->=20
-> [ Upstream commit e1ff7aa34dec7e650159fd7ca8ec6af7cc428d9f ]
->=20
-> Loosen the permission check on forced umount to allow users holding
-> CAP_SYS_ADMIN privileges in namespaces that are privileged with respect
-> to the userns that originally mounted the filesystem.
-
-Should we be tweaking permissions in -stable?
-
-Best regards,
-								Pavel
-
---=20
-I don't work for Nazis and criminals, and neither should you.
-Boycott Putin, Trump, and Musk!
-
---hXfHA1BSXmrE6BXK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCaAKDGgAKCRAw5/Bqldv6
-8hXYAJ0VzMdgdBf7hf3v5zp6JfimQyBy2QCdGT8OJNHhSAJADySZcsjEl500YVc=
-=DNza
------END PGP SIGNATURE-----
-
---hXfHA1BSXmrE6BXK--
 
