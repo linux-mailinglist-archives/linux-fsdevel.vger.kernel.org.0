@@ -1,383 +1,320 @@
-Return-Path: <linux-fsdevel+bounces-46698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46699-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0E3DA93E72
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 21:56:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF17BA93E75
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 21:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1810D7B1EEA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 19:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D79F7467049
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Apr 2025 19:59:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D63522D7A4;
-	Fri, 18 Apr 2025 19:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1B422D7AB;
+	Fri, 18 Apr 2025 19:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QYKgI04v";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Y3coih3G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iytmxcsy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146F021B9CA;
-	Fri, 18 Apr 2025 19:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745006191; cv=fail; b=TySsG+Sotq38r3c8FlbSjA0xoOwl99jMxTaYlb2bS9Ss7PtjAVbvwcBp/RlzEvIr9b2360eRLOKpoKHgn2Z7CKFOyYq1p6GedlWAGvMd42LH88AvHWqkf+dURg4knaxEJ4KiAEIzgzDRAaJRElX/l1JRErwicNAHTEnlIOPHzKM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745006191; c=relaxed/simple;
-	bh=QPLSEIyXPyQ6urxAdTzRBC3d1CChh2oE1nFPANjeoE4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CXYJ4kWuvi7Y+qY6+gDaDGHVXLEah5/ucYnBRHUWZAqS6/SgBQtjTof6eFaQkPu943yaYqbHqQ3zs6dEqT/KBiGrsnzGpiTzjywJiajfpX44/+XpAtbS8RE0Wp0r8Gxp/ivzI2xuJrQHf+bHWwGcDQHpLyuoYvTee0+3qikHl/8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QYKgI04v; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Y3coih3G; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53IJfqMU006433;
-	Fri, 18 Apr 2025 19:55:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=v0EJhlQUhe1pVDPjbAsrew11MmUpuPyXmYY8LxE9Ugs=; b=
-	QYKgI04v9MF/s1AuQ7Z5ZD0+1Yq3r2RV5gyKUPxT3u+rSi/exN81eEhsRzXUUA3y
-	RMLEU7ZmPpAOSKID1P9ZzK16wOnr6l4NnMNyV41/ZWkhKtrS2OoEgZm3vFfbxKo3
-	Z756dX5D2Ek2Jo1aWD1LjtP6kLx+h2oaNn6AptRw4IZpljoVm+4cVNizEmTegu+1
-	kiPz278Bu6nyeWxz2SRaV7Y2Rr9F7ZJMVow8lb+DoVRqXK9zrrtscoEEuTb0pUYo
-	Wc8SaRarzXaOD+tBNtJrKVrHBGone8JQ1PJ1UbMNYHx8r/Y0rU+/Kyaooej3BJW2
-	50UgOIPnPMXwa6lyP+P6Ww==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46187y0tmt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Apr 2025 19:55:57 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53IJNRpO009207;
-	Fri, 18 Apr 2025 19:55:56 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2172.outbound.protection.outlook.com [104.47.56.172])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 460d3q051h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 18 Apr 2025 19:55:56 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YjAFH236Q5WElCdM6XRsx+0Tt9r6xA9WY0bBCFxNEHwcUJBW3SZdfv/f+juGMULfy9bJdsVg9DAUzkwXYuuE6tGJ/JHvygFlDoK8CwHcSGLGTS9+inGgaOv2YoIq8yuOafLzFAuFZhtnstJX1oaE+aAjUZrS1iID3spm9zUWkQjIp4GUxfD6CetgU96hAiXpP0xOh9qYpfC+bwZxhRTySeZgoLWOCYWLZLO0cjec8y0VSa5Dw1yXzmgnqx8X/N+MMGr6vT70g4poGd9mBbWCBYiYxN382vAFYdWdSyoMfS827pYjylOKkUGmwwnh2rjLKHpc3zPFvuzzUYHNrVc4xA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=v0EJhlQUhe1pVDPjbAsrew11MmUpuPyXmYY8LxE9Ugs=;
- b=Hj0oGOb4ORUpsCRupupEBx3DiPwcE5cDyAxLWNlaZDkuT4b7PQuVl/UVNoO/8XPkIT34W8MUmexkkgN6veJ3ZxwHKdlFjg65hTi1N5b50CWy+xiXvvMdKwmmUpTVimsLdAjk5yMf3FaFGvbzhvW7fqD0d4LBxrT/9hX243AL/k+wPzrBOS1UxG+MHcMvp33nkbMxrx7iBg2Z+Q2EEc3ODpZZQLrVC5ulHPgtIqSstI6CzxvXSl2scfBhcXgvKDgPYU0YyoHZqyg6eOCHXvkh5YsnO0auzuZEAnagXxR1ImKGmm88YZ/73oG3cwsbXhJ1Cx9NC9sxCsS6A1ZaDUtBvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=v0EJhlQUhe1pVDPjbAsrew11MmUpuPyXmYY8LxE9Ugs=;
- b=Y3coih3G8LFKqPbnQufWrLn7oliU89pi6UVIMfIiiJTswmo+ksioPV8ciCKXrlPHOwcqZkHa579Q1TtjWKDuIEJoLJ5A1XAyfYV5l2mACsgrHkw2FBL++wm9Bf4kUpXoHkMOaq+jzVRYBNVIixd7MimICIFm0nhVAMBdkCfI+1s=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by DM3PPF4A29B3BB2.namprd10.prod.outlook.com (2603:10b6:f:fc00::c25) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.33; Fri, 18 Apr
- 2025 19:55:54 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8655.029; Fri, 18 Apr 2025
- 19:55:53 +0000
-Date: Fri, 18 Apr 2025 20:55:50 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, david@redhat.com,
-        vbabka@suse.cz, peterx@redhat.com, jannh@google.com,
-        hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org,
-        shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org,
-        josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net,
-        willy@infradead.org, osalvador@suse.de, andrii@kernel.org,
-        ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 3/8] selftests/proc: extend /proc/pid/maps tearing
- test to include vma remapping
-Message-ID: <361e32be-7faa-41e5-a64f-fa95317abdb8@lucifer.local>
-References: <20250418174959.1431962-1-surenb@google.com>
- <20250418174959.1431962-4-surenb@google.com>
- <5958fb2d-a2ac-4a24-8595-222d7e298951@lucifer.local>
- <CAJuCfpEwnbKA1y-iMs+ky465-Ok5j_f4ojaZV60yap2QGbfpmQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpEwnbKA1y-iMs+ky465-Ok5j_f4ojaZV60yap2QGbfpmQ@mail.gmail.com>
-X-ClientProxiedBy: LO4P123CA0493.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1ab::12) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7C56DCE1;
+	Fri, 18 Apr 2025 19:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745006370; cv=none; b=BDhu5/130bzOnpYVOgrZI0aU1cYL64rNojs+gh08gR/0KzpcLGXUIiCX0RQbhLe6dOsPBb7eqohGCJuHetBvODoPyxC2gFl0GgfHAeuM13JSypwwckFPcLkQhH88rUg7TQnNOj61Ujq6RGdIp0vgf/kneHGvhxB6Fz4NqQTZhBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745006370; c=relaxed/simple;
+	bh=gyBw2DM+jIc/hhY3YexqUJogoosVscXTFjVJLt9Ef30=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=llo5ICodRuAHoaw9eEbqc59DfGRY7VTzZVf7ZUh6rJsb1kT8RgqLu1BjDXWxtTmLFXcHXsJ7eo2NwOuAUeiLzcsThCypboa7I03erUJH8zw9Qep6DR/AGfnhplQ8MMYroGQfahR8uGyecWkkWGrtNdX2MjVB61hqXIkmgDAqePE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iytmxcsy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51051C4CEE2;
+	Fri, 18 Apr 2025 19:59:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745006369;
+	bh=gyBw2DM+jIc/hhY3YexqUJogoosVscXTFjVJLt9Ef30=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iytmxcsyDe4jUx0gkedpiUtXOUpHB9SO/UiRwbo0c+v78CKAIazj89BlCMaO0X0Df
+	 CJ7koj2bke+s/btBuPmO3gdkLNZ/OsvcKXcZJVxpYSqPPxkOwuS/mfRvaZ4u/PG3jZ
+	 MPo7Xi71Q0eR4rKzLPqe2I7hUjusCSQW0oQWdmuEB6LQCGuYduG1Uavj3e+aYMquae
+	 g6o0HJTOugTN1kODHkuS0dayczZJfrdxtlxXyQofAvYPW63tzbOpxvyn5nrqn7mg3G
+	 6j2kPTlaIAmUlGs/2SZdIUXfxX2oaTq4e/n09Rht9Sf+lxVn1tabvgE+mwOuiS7FN5
+	 xAV2AW88lSnrw==
+Date: Fri, 18 Apr 2025 21:59:23 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <raven@themaw.net>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+Message-ID: <20250418-armselig-kabel-4710dc466170@brauner>
+References: <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
+ <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
+ <20250417-abartig-abfuhr-40e558b85f97@brauner>
+ <20250417-outen-dreihundert-7a772f78f685@brauner>
+ <20250417-zappeln-angesagt-f172a71839d3@brauner>
+ <20250417153126.QrVXSjt-@linutronix.de>
+ <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
+ <39c36187-615e-4f83-b05e-419015d885e6@themaw.net>
+ <125df195-5cac-4a65-b8bb-8b1146132667@themaw.net>
+ <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|DM3PPF4A29B3BB2:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84691df6-502f-4daf-0242-08dd7eb306ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZFpJejlSTWxENmZlS0x3RnVPd0FpZU5SOWZYYVVsQUpoQ2YrVGt4UW1VQzd6?=
- =?utf-8?B?VVdETWEwVFFTMHpPQzRrMEk5YmJVWkhnVFQxaWpuNUwrdjRwL2VKYW1hOTVr?=
- =?utf-8?B?VisyM3VZVHdEMGRicFlZdjU1YS9FRFd2TUE2eldnSFhrS04xK3dlMXB1ZGV6?=
- =?utf-8?B?K08zTDl1RDJtMWpaZXdmRm5ScTVDSGY5YkFqTVNxN3RscFhXdHM0RkhqN1FH?=
- =?utf-8?B?UVBUaXR5dCtTY1ZXRXVCdlhJakpwQVVvdVNiYUZ6ak9SMi9qa3lvQzZPWjYv?=
- =?utf-8?B?RVFKQXcyc1ZzZnQwcHNiZEluelROYTlPVS9Ud3craHNSRDRJVllva09TQWUy?=
- =?utf-8?B?VkI1SjBuWDM4SU14VHIwaUZUdkpobUdoMTF6YWJUYnRYSXh0aUhwaTRvMVJV?=
- =?utf-8?B?b2JIUUNIRHdaRExtNGVQcDBYdkU5T3hPWTRIK1gxVml1UHBacFJpNWtEU0tv?=
- =?utf-8?B?U2ZybHA2RTNXM09wZWMrR0VIdVlEWk9pb3hHMW5KSnc0Z21vNHk3UmpTS0FE?=
- =?utf-8?B?cStNT0xGN1ZUY0FjeEhwcWJtT05ZRFIyYXgyUmNQelBZb2hkK1Q3N0xHSlEx?=
- =?utf-8?B?SzE4VnlOSll3aTRNQmpHeVJoaVpnUjk0Znh4QS9jZmR6dVdrVFlLbURGWXlp?=
- =?utf-8?B?NzRGQkM3YzR1N2NjZ2VoYmxLUzRMTUVRZjRSeUVtU2hENVpjYlBPZ2h5UGF2?=
- =?utf-8?B?YVRXcitLNUxqbklJUlZxbytzcEJuTVdtZXVWaGVjK1RFZ0EyRXh0dXlSZUp3?=
- =?utf-8?B?TWxveUR6cEJqZEoxWkNsOTBMd3pqcG1HZGlFVzdxTWVSM0RpTDYyV21LWXVB?=
- =?utf-8?B?b1hKUnhrWkNEM2tSQUJ5TlArU1Ivd1lCaXR4RWZsUUk2eGpWOFh3MFp2M0ZT?=
- =?utf-8?B?V0o3b0pkTldyeXhnOTNmdG9LU2RQU1VmZEtETjBYcFRIR1kzK1EwQ0ZKcHMw?=
- =?utf-8?B?aXpnNGZSQWd5WnBEbDMwTXVpbkdmUzM4dkpyQnJwaUdzaE8rczhJN3FQQzBX?=
- =?utf-8?B?aTZvOFRYL0JzQjRzdFlVaTNoL2IvU3hmaFJrdlMvZGs1TkNScHE4eTVqRHp3?=
- =?utf-8?B?Slg3MXZORTFaeVFoZU1DNkNjL3RIRGZGQXZtS2lDR2Y5aGdlMnBFOG53aU9K?=
- =?utf-8?B?Y01kQzlIQml6eDl1bGJTVlg5UVNPTGxSQUNHOE4yTGNuWXQvdXhBWHpOa0ZE?=
- =?utf-8?B?VjVkU1V4T0NSL2lLRUpLNVZtbi9ISFRVZkZRSC95a0N4dHluOU1DTUJmendJ?=
- =?utf-8?B?Y1hDaVBNMFYzc0NrbmdXT0RYR3VhMjQ5VnlKNDczTWJnV3hZZkNrd2pXS0NY?=
- =?utf-8?B?b1V4bER1Y2JSdXpFUXoxVm84ZWtaWThxWCsxTXBHRk0zeS90K2xETzNhaGEr?=
- =?utf-8?B?N09URE4yT0RHQVBiMitIME82S0ZLL0ZHVUtDdHU2U2xmd3JQOWVFV0tvb0x4?=
- =?utf-8?B?YnkxQ00raHdRZDhBSmhjdTJ4UmdxQ05DbDdUVENxaVdnZ0lVdHlaWWprYjV5?=
- =?utf-8?B?c0QvVGNGVFNoNkhRd0dDcGR0TDVWdk5rRk54SXBlV0hNMlBjMGRPL2tnSVc5?=
- =?utf-8?B?UnRvOFpuUE5MUHRSZFFMOVVLOExxYTltTjRiODFpWHFaYmRJSEhYY0hDenN5?=
- =?utf-8?B?Y2w0cnR4RkFQYmM3UDloVm5aYWFvY2hWWjBIaWx5amhla3FxUlg1bHJyRDRP?=
- =?utf-8?B?OVJHUjVLQ1ZNZ05zU3pMZXFmUHJ1aXBmL1paYU9tKzJlMTErcUxiVzdVNis1?=
- =?utf-8?B?WkdUNVNzN0pFbFRHWVNKYlFMNFljNUxOOWd4bTFoMlJ5bVZiamE5UFRnM3Vm?=
- =?utf-8?B?UENSWG53c0RKVjJaYldZYXpnKytiTWpZWTdLV2ZnaUNUWG9hdGZ6ajVsOXBj?=
- =?utf-8?B?MElEU1QvdzBlRTdUM29QTERWR2l5Vjd1MFE0TkhvMGVmZnpYN0ZQQzFUNXlI?=
- =?utf-8?Q?0FnjIqUd2y8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RVdVMHB1cUJObG92NVBRbnJWNUpBbWlRTnNSZGJwVjFUK3gyTUNYc2VocmpV?=
- =?utf-8?B?QTE1Wm1neUovVTRSUEhVT2FSSVNjRzg1NTI5OGVtdlh1eDdVblJKYnJMc0VM?=
- =?utf-8?B?c05TcjU1VHRnSEc3cS9oOTJUS3dnOHBCU1laMWlycGRYbHp5NGdJYVlSUDlJ?=
- =?utf-8?B?Y1ZtYkJuZk9tK004NlZjM1JzSW1nSGRYUW0xanFpTElWM3gyV3FNWGdiR3Yr?=
- =?utf-8?B?YnYrMFVTckVLL251eElsaFpucTdpVjdzT0tQS2JINnNjSWZqd1pPVEx3WWU2?=
- =?utf-8?B?c2hYeVN2VzNTN0l4OFhGYzB5cUtHMDdLT25xWnRkalBNYjNDbW81QjVQR3Z3?=
- =?utf-8?B?bkxpaG9YNDBKZktZVmx6L25SRVNMaEk4a1FCcHZFekJVN0pkdVlWTjlma2R0?=
- =?utf-8?B?eXFxSVRkYTE2TFZIclRYajFrTXM3clZOZ21aNjY2ZFV3STduRDNRRlZpYzZp?=
- =?utf-8?B?enpSNk9wTzRITitxZHd2bWtxTExQS2VBS0cva1d6MjAzR1A3Z0xFYjJyNnp2?=
- =?utf-8?B?VnN1RU5zUHdYOUs4WUc4NXk0bXl4dHRRTFhaRytoa2t1WVlIN25VM3lJdFVu?=
- =?utf-8?B?aGRZNWQxSkRqc3Q2L05NMHliOEVKS3pJR1ZBa1ZJQVJaRnRLMy9UbTRMcHFr?=
- =?utf-8?B?Qk1vOUNaUmFLS0xIS1BqN0xwbGI4LytRZm40NTJMUmF6Mis4TVJGSHhBQWE2?=
- =?utf-8?B?RitZWUU0MUxpcTBvUGtaQmUwL0RFTlZ6UlluQ1Jud3FoR0ZIYm9NN0lxMUs5?=
- =?utf-8?B?SElSNmZ0bGZiWHk0UVZKSTVBMGJvdGo4Zkc5YVJHRE9mYk40NlpZckozckhu?=
- =?utf-8?B?bkkrT1psWG1FRHJLamdNVTdnalNaVjMrOUV1di9Cc2hNZnE3elZPcTlUZmp6?=
- =?utf-8?B?bjFJZjNXcmtzSmFUdFVocTZiTGs3M09VRDV3MkNIeU56dHVpcWVJQmIwRGNU?=
- =?utf-8?B?UWFtSXh4dTVJWTZuYXhmdEZmSGQxbGV6VEE4NytHYXJrdFh3c0VuajE1Sng4?=
- =?utf-8?B?WHZzbVl5VHdTKzRXeU1vV09XQlU0Rk1jTTdBNUNidUFQb0xMaDRORlQ2QWg5?=
- =?utf-8?B?RDhCdzRVTEhSc2lGeWZTTVVLNjEyRnBxYnV3c1pJeFdGK1lSN2R3SWdaRnBE?=
- =?utf-8?B?bVd5WTFvczVBdmtqeGZVNWxlUURJSXlDaThOeE13bnlvVEhzNjJMbnpDd1F1?=
- =?utf-8?B?WDhuODg4dzI5QjlWR1doYkpzL05Ua3hvYXo0S25KZGR5d21zM2lRcFlYTWMv?=
- =?utf-8?B?QXhjWEtPM0lLWlRhQlBERXQ4cW9pUE9RUFpOTkxraHppeUk2L1ZWS1c4SkI5?=
- =?utf-8?B?RVQzejZKUjVpSlR3bWp3MEtZRHlsQUVNRmwrVGpUVUFHS3lvUld1SThaVHdR?=
- =?utf-8?B?RTF2VE9xUEtUeDkyK05ZTythUC9keFZZRGhmZTdmQUpvMlluWEV2dUJyZkpB?=
- =?utf-8?B?QVlUTzY3Q2JKNWpwbnYvNTlmbFV2UEZsMlhlWVYwci9QeFlZaXZmSDdoNUIv?=
- =?utf-8?B?VVhONVo1ZGVDLzR3REFBcjBaRFFSY1QyU00zSjB5UFozdmFJdk9XQ01ta1k0?=
- =?utf-8?B?T3hUY0dkU1RpUzNTZ2dnTWhBQjhYKzU5WFJwU2k4cndzYzR3cmdpaXJGaVVo?=
- =?utf-8?B?dHVaWkhiemtRcndDbnpBZ1VzL1VSS1F4cnFVdVZ6TXFSSzV2MFI3STg5Wi9N?=
- =?utf-8?B?QW9oTDF1S0p4VlpuKy9qTnBmVVE4WWV4MFpKaW5pdEVUSkxPNFB6K25ObE13?=
- =?utf-8?B?a1hwMEd1MmRGWUdzSUVwOENMK2xQQ29jK1h5K0p3R1BkZVo0bEdKa2U4bnVl?=
- =?utf-8?B?aEUya01sWDhjbkxqRjRpbGxEVXovZE5tUXhNTlY0K0treUpHaDlTQklINmNy?=
- =?utf-8?B?Wnc0Y1NreDhXNk54WFIwZTVoRWRHcDBGVTJ4OW5zbmtqYWpkbFRzRkJTbVd4?=
- =?utf-8?B?OHpHV3ZsUDE1dlh0UkxSNXYwc3NxNVpWRkdpNzNmcDlOclEvTkg1M1FWNnB4?=
- =?utf-8?B?dVIwcDlxTk04Y01tazFWblVsRDN6Sml3RWJtclJtZzNHWVNON0tPczlzdzUw?=
- =?utf-8?B?Q3YvVDAvK1U4ZFZIZWF5NVYwWWdNenRaK1ZPNVJvRW4vKzA2Qk5qRUVPWnhz?=
- =?utf-8?B?c1RzdVBlYUlHd2h3dGh6elFiN3c5dkZnUHBOdUlOMzR3SW9zd0J0UDhwaDZF?=
- =?utf-8?B?UVE9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	C7qs6cSOeosFAzBs2anvjdmiDLgO9RWYVOfjQ9AtlZYJ4Fs+CFUzqk2Fje7OwfBqWfYhHhQMZJkqb4uIV8DvyVFt4SuzeBzDS/OYaSqMGytt3Y9+enOM5bJi6V4v70Tr84V6F41TrpJ0RJqC3j37g3pYPoQBET35z+WUcYgnz5niKHvfxPxHDUlAY9lmLtr4smTT4RePtUxa0njM0FBs1WInGYbjWyjk+vswKXEhIwv0f4Si8Im6jA9Wka34leJfswysBOnybWVUBIg963901kidZgAWJoCSHrJfq9zVybcFcBOnTSrK44pPb4o7jZQvCniSGsRd0a+46zcTBVnc3koaXKf4qtF+ZICc3pt+9M9J/LVz8VUFIh0ZOR1KXsmXr4R5CEfMZU+FW9fJ7/MQFQLfy36QnSKOL+YlX8lYHj+dRLfGbXsKlhop7MCOnQd7JsGovtQyPDLnMz9hESN5oB61eGyWiJ1B42C0CdjMjtNQxGlZy55tLJBQC96RexPo8OUFOLh++3vdSWSnoIePSiG+1F+7DCI6ujvHkC1iaeRjQR/XqdMYDVH/jL3wbcqZmfvptr6841zAxf0aziIzh72wQQQZ/Cu3w8+mhv2mG/w=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84691df6-502f-4daf-0242-08dd7eb306ee
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Apr 2025 19:55:53.8520
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TdT2vZNjJdfXkANOIAya1Ac9eSwOIWRjyqLJLDf2BWuOWtUdLnbiSE6gjEew8a7jyqNKoREFvt/PRQsrvW/ny4zS5RQ7KB6ona88BsUOppU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PPF4A29B3BB2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-04-18_07,2025-04-17_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 malwarescore=0
- mlxlogscore=999 phishscore=0 suspectscore=0 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502280000
- definitions=main-2504180150
-X-Proofpoint-GUID: IYCK1rEJFvLBMZ1cNz6PwF3isma23vXp
-X-Proofpoint-ORIG-GUID: IYCK1rEJFvLBMZ1cNz6PwF3isma23vXp
+Content-Type: multipart/mixed; boundary="wlvjtn7bxagetzkl"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
 
-On Fri, Apr 18, 2025 at 12:31:29PM -0700, Suren Baghdasaryan wrote:
-> On Fri, Apr 18, 2025 at 11:30 AM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> >
-> > On Fri, Apr 18, 2025 at 10:49:54AM -0700, Suren Baghdasaryan wrote:
-> > > Test that /proc/pid/maps does not report unexpected holes in the address
-> > > space when we concurrently remap a part of a vma into the middle of
-> > > another vma. This remapping results in the destination vma being split
-> > > into three parts and the part in the middle being patched back from,
-> > > all done concurrently from under the reader. We should always see either
-> > > original vma or the split one with no holes.
-> > >
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> >
-> > Umm, but we haven't fixed this in the mremap code right? :) So isn't this test
-> > failing right now? :P
-> >
-> > My understanding from meeting was you'd drop this commit/mark it skipped
-> > for now or something like this?
->
-> After you pointed out the issue in mremap_to() I spent some time
-> investigating that code. IIUC the fact that mremap_to() does
-> do_munmap() and move_vma() as two separate operations should not
-> affect lockless reading because both those operations are done under
-> mmap_write_lock() without dropping it in between. Since my lockless
-> mechanism uses mmap_lock_speculate_xxx API to detect address space
-> modifications and retry if concurrent update happen, it should be able
-> to handle this case. The vma it reports should be either the version
-> before mmap_write_lock was taken (before the mremap()) or after it got
-> dropped (after mremap() is complete). Did I miss something more
-> subtle?
 
-Speaking to Liam, seems perhaps the implementation has changed since we first
-started looking at this?
+--wlvjtn7bxagetzkl
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-I guess it's this speculation stuff that keeps you safe then, yeah we hold the
-write lock over both.
+On Fri, Apr 18, 2025 at 10:47:10AM +0200, Christian Brauner wrote:
+> On Fri, Apr 18, 2025 at 09:20:52AM +0800, Ian Kent wrote:
+> > On 18/4/25 09:13, Ian Kent wrote:
+> > > 
+> > > On 18/4/25 00:28, Christian Brauner wrote:
+> > > > On Thu, Apr 17, 2025 at 05:31:26PM +0200, Sebastian Andrzej Siewior
+> > > > wrote:
+> > > > > On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
+> > > > > > >      So if there's some userspace process with a broken
+> > > > > > > NFS server and it
+> > > > > > >      does umount(MNT_DETACH) it will end up hanging every other
+> > > > > > >      umount(MNT_DETACH) on the system because the dealyed_mntput_work
+> > > > > > >      workqueue (to my understanding) cannot make progress.
+> > > > > > Ok, "to my understanding" has been updated after going back
+> > > > > > and reading
+> > > > > > the delayed work code. Luckily it's not as bad as I thought it is
+> > > > > > because it's queued on system_wq which is multi-threaded so it's at
+> > > > > > least not causing everyone with MNT_DETACH to get stuck. I'm still
+> > > > > > skeptical how safe this all is.
+> > > > > I would (again) throw system_unbound_wq into the game because
+> > > > > the former
+> > > > > will remain on the CPU on which has been enqueued (if speaking about
+> > > > > multi threading).
+> > > > Yes, good point.
+> > > > 
+> > > > However, what about using polled grace periods?
+> > > > 
+> > > > A first simple-minded thing to do would be to record the grace period
+> > > > after umount_tree() has finished and the check it in namespace_unlock():
+> > > > 
+> > > > diff --git a/fs/namespace.c b/fs/namespace.c
+> > > > index d9ca80dcc544..1e7ebcdd1ebc 100644
+> > > > --- a/fs/namespace.c
+> > > > +++ b/fs/namespace.c
+> > > > @@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable
+> > > > __ro_after_init;
+> > > >   static struct hlist_head *mountpoint_hashtable __ro_after_init;
+> > > >   static struct kmem_cache *mnt_cache __ro_after_init;
+> > > >   static DECLARE_RWSEM(namespace_sem);
+> > > > +static unsigned long rcu_unmount_seq; /* protected by namespace_sem */
+> > > >   static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
+> > > >   static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+> > > >   static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+> > > > @@ -1794,6 +1795,7 @@ static void namespace_unlock(void)
+> > > >          struct hlist_head head;
+> > > >          struct hlist_node *p;
+> > > >          struct mount *m;
+> > > > +       unsigned long unmount_seq = rcu_unmount_seq;
+> > > >          LIST_HEAD(list);
+> > > > 
+> > > >          hlist_move_list(&unmounted, &head);
+> > > > @@ -1817,7 +1819,7 @@ static void namespace_unlock(void)
+> > > >          if (likely(hlist_empty(&head)))
+> > > >                  return;
+> > > > 
+> > > > -       synchronize_rcu_expedited();
+> > > > +       cond_synchronize_rcu_expedited(unmount_seq);
+> > > > 
+> > > >          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+> > > >                  hlist_del(&m->mnt_umount);
+> > > > @@ -1939,6 +1941,8 @@ static void umount_tree(struct mount *mnt,
+> > > > enum umount_tree_flags how)
+> > > >                   */
+> > > >                  mnt_notify_add(p);
+> > > >          }
+> > > > +
+> > > > +       rcu_unmount_seq = get_state_synchronize_rcu();
+> > > >   }
+> > > > 
+> > > >   static void shrink_submounts(struct mount *mnt);
+> > > > 
+> > > > 
+> > > > I'm not sure how much that would buy us. If it doesn't then it should be
+> > > > possible to play with the following possibly strange idea:
+> > > > 
+> > > > diff --git a/fs/mount.h b/fs/mount.h
+> > > > index 7aecf2a60472..51b86300dc50 100644
+> > > > --- a/fs/mount.h
+> > > > +++ b/fs/mount.h
+> > > > @@ -61,6 +61,7 @@ struct mount {
+> > > >                  struct rb_node mnt_node; /* node in the ns->mounts
+> > > > rbtree */
+> > > >                  struct rcu_head mnt_rcu;
+> > > >                  struct llist_node mnt_llist;
+> > > > +               unsigned long mnt_rcu_unmount_seq;
+> > > >          };
+> > > >   #ifdef CONFIG_SMP
+> > > >          struct mnt_pcp __percpu *mnt_pcp;
+> > > > diff --git a/fs/namespace.c b/fs/namespace.c
+> > > > index d9ca80dcc544..aae9df75beed 100644
+> > > > --- a/fs/namespace.c
+> > > > +++ b/fs/namespace.c
+> > > > @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+> > > >          struct hlist_head head;
+> > > >          struct hlist_node *p;
+> > > >          struct mount *m;
+> > > > +       bool needs_synchronize_rcu = false;
+> > > >          LIST_HEAD(list);
+> > > > 
+> > > >          hlist_move_list(&unmounted, &head);
+> > > > @@ -1817,7 +1818,16 @@ static void namespace_unlock(void)
+> > > >          if (likely(hlist_empty(&head)))
+> > > >                  return;
+> > > > 
+> > > > -       synchronize_rcu_expedited();
+> > > > +       hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+> > > > +               if (!poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+> > > > +                       continue;
+> 
+> This has a bug. This needs to be:
+> 
+> 	/* A grace period has already elapsed. */
+> 	if (poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+> 		continue;
+> 
+> 	/* Oh oh, we have to pay up. */
+> 	needs_synchronize_rcu = true;
+> 	break;
+> 
+> which I'm pretty sure will eradicate most of the performance gain you've
+> seen because fundamentally the two version shouldn't be different (Note,
+> I drafted this while on my way out the door. r.
+> 
+> I would test the following version where we pay the cost of the
+> smb_mb() from poll_state_synchronize_rcu() exactly one time:
+> 
+> diff --git a/fs/mount.h b/fs/mount.h
+> index 7aecf2a60472..51b86300dc50 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -61,6 +61,7 @@ struct mount {
+>                 struct rb_node mnt_node; /* node in the ns->mounts rbtree */
+>                 struct rcu_head mnt_rcu;
+>                 struct llist_node mnt_llist;
+> +               unsigned long mnt_rcu_unmount_seq;
+>         };
+>  #ifdef CONFIG_SMP
+>         struct mnt_pcp __percpu *mnt_pcp;
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d9ca80dcc544..dd367c54bc29 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+>         struct hlist_head head;
+>         struct hlist_node *p;
+>         struct mount *m;
+> +       unsigned long mnt_rcu_unmount_seq = 0;
+>         LIST_HEAD(list);
+> 
+>         hlist_move_list(&unmounted, &head);
+> @@ -1817,7 +1818,10 @@ static void namespace_unlock(void)
+>         if (likely(hlist_empty(&head)))
+>                 return;
+> 
+> -       synchronize_rcu_expedited();
+> +       hlist_for_each_entry_safe(m, p, &head, mnt_umount)
+> +               mnt_rcu_unmount_seq = max(m->mnt_rcu_unmount_seq, mnt_rcu_unmount_seq);
+> +
+> +       cond_synchronize_rcu_expedited(mnt_rcu_unmount_seq);
+> 
+>         hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>                 hlist_del(&m->mnt_umount);
+> @@ -1923,8 +1927,10 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+>                         }
+>                 }
+>                 change_mnt_propagation(p, MS_PRIVATE);
+> -               if (disconnect)
+> +               if (disconnect) {
+> +                       p->mnt_rcu_unmount_seq = get_state_synchronize_rcu();
+>                         hlist_add_head(&p->mnt_umount, &unmounted);
+> +               }
+> 
+>                 /*
+>                  * At this point p->mnt_ns is NULL, notification will be queued
 
-So actually ideal if we can avoid having to fix up the mremap implementation!
+I'm appending a patch that improves on the first version of this patch.
+Instead of simply sampling the current rcu state and hoping that the rcu
+grace period has elapsed by the time we get to put the mounts we sample
+the rcu state and kick off a new grace period at the end of
+umount_tree(). That could even get us some performance improvement by on
+non-RT kernels. I have no clue how well this will fare on RT though.
 
-If you're sure that the speculation combined with mmap write lock keeps us safe
-then we should be ok I'd say.
+--wlvjtn7bxagetzkl
+Content-Type: text/x-diff; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-UNTESTED-mount-sample-and-kick-of-grace-period-durin.patch"
 
->
-> >
-> > > ---
-> > >  tools/testing/selftests/proc/proc-pid-vm.c | 92 ++++++++++++++++++++++
-> > >  1 file changed, 92 insertions(+)
-> > >
-> > > diff --git a/tools/testing/selftests/proc/proc-pid-vm.c b/tools/testing/selftests/proc/proc-pid-vm.c
-> > > index 39842e4ec45f..1aef2db7e893 100644
-> > > --- a/tools/testing/selftests/proc/proc-pid-vm.c
-> > > +++ b/tools/testing/selftests/proc/proc-pid-vm.c
-> > > @@ -663,6 +663,95 @@ static void test_maps_tearing_from_resize(int maps_fd,
-> > >       signal_state(mod_info, TEST_DONE);
-> > >  }
-> > >
-> > > +static inline void remap_vma(const struct vma_modifier_info *mod_info)
-> > > +{
-> > > +     /*
-> > > +      * Remap the last page of the next vma into the middle of the vma.
-> > > +      * This splits the current vma and the first and middle parts (the
-> > > +      * parts at lower addresses) become the last vma objserved in the
-> > > +      * first page and the first vma observed in the last page.
-> > > +      */
-> > > +     assert(mremap(mod_info->next_addr + page_size * 2, page_size,
-> > > +                   page_size, MREMAP_FIXED | MREMAP_MAYMOVE | MREMAP_DONTUNMAP,
-> > > +                   mod_info->addr + page_size) != MAP_FAILED);
-> > > +}
-> > > +
-> > > +static inline void patch_vma(const struct vma_modifier_info *mod_info)
-> > > +{
-> > > +     assert(!mprotect(mod_info->addr + page_size, page_size,
-> > > +                      mod_info->prot));
-> > > +}
-> > > +
-> > > +static inline void check_remap_result(struct line_content *mod_last_line,
-> > > +                                   struct line_content *mod_first_line,
-> > > +                                   struct line_content *restored_last_line,
-> > > +                                   struct line_content *restored_first_line)
-> > > +{
-> > > +     /* Make sure vmas at the boundaries are changing */
-> > > +     assert(strcmp(mod_last_line->text, restored_last_line->text) != 0);
-> > > +     assert(strcmp(mod_first_line->text, restored_first_line->text) != 0);
-> > > +}
-> > > +
-> > > +static void test_maps_tearing_from_remap(int maps_fd,
-> > > +                             struct vma_modifier_info *mod_info,
-> > > +                             struct page_content *page1,
-> > > +                             struct page_content *page2,
-> > > +                             struct line_content *last_line,
-> > > +                             struct line_content *first_line)
-> > > +{
-> > > +     struct line_content remapped_last_line;
-> > > +     struct line_content remapped_first_line;
-> > > +     struct line_content restored_last_line;
-> > > +     struct line_content restored_first_line;
-> > > +
-> > > +     wait_for_state(mod_info, SETUP_READY);
-> > > +
-> > > +     /* re-read the file to avoid using stale data from previous test */
-> > > +     read_boundary_lines(maps_fd, page1, page2, last_line, first_line);
-> > > +
-> > > +     mod_info->vma_modify = remap_vma;
-> > > +     mod_info->vma_restore = patch_vma;
-> > > +     mod_info->vma_mod_check = check_remap_result;
-> > > +
-> > > +     capture_mod_pattern(maps_fd, mod_info, page1, page2, last_line, first_line,
-> > > +                         &remapped_last_line, &remapped_first_line,
-> > > +                         &restored_last_line, &restored_first_line);
-> > > +
-> > > +     /* Now start concurrent modifications for test_duration_sec */
-> > > +     signal_state(mod_info, TEST_READY);
-> > > +
-> > > +     struct line_content new_last_line;
-> > > +     struct line_content new_first_line;
-> > > +     struct timespec start_ts, end_ts;
-> > > +
-> > > +     clock_gettime(CLOCK_MONOTONIC_COARSE, &start_ts);
-> > > +     do {
-> > > +             read_boundary_lines(maps_fd, page1, page2, &new_last_line, &new_first_line);
-> > > +
-> > > +             /* Check if we read vmas after remapping it */
-> > > +             if (!strcmp(new_last_line.text, remapped_last_line.text)) {
-> > > +                     /*
-> > > +                      * The vmas should be consistent with remap results,
-> > > +                      * however if the vma was concurrently restored, it
-> > > +                      * can be reported twice (first as split one, then
-> > > +                      * as restored one) because we found it as the next vma
-> > > +                      * again. In that case new first line will be the same
-> > > +                      * as the last restored line.
-> > > +                      */
-> > > +                     assert(!strcmp(new_first_line.text, remapped_first_line.text) ||
-> > > +                            !strcmp(new_first_line.text, restored_last_line.text));
-> > > +             } else {
-> > > +                     /* The vmas should be consistent with the original/resored state */
-> > > +                     assert(!strcmp(new_last_line.text, restored_last_line.text) &&
-> > > +                            !strcmp(new_first_line.text, restored_first_line.text));
-> > > +             }
-> > > +             clock_gettime(CLOCK_MONOTONIC_COARSE, &end_ts);
-> > > +     } while (end_ts.tv_sec - start_ts.tv_sec < test_duration_sec);
-> > > +
-> > > +     /* Signal the modifyer thread to stop and wait until it exits */
-> > > +     signal_state(mod_info, TEST_DONE);
-> > > +}
-> > > +
-> > >  static int test_maps_tearing(void)
-> > >  {
-> > >       struct vma_modifier_info *mod_info;
-> > > @@ -757,6 +846,9 @@ static int test_maps_tearing(void)
-> > >       test_maps_tearing_from_resize(maps_fd, mod_info, &page1, &page2,
-> > >                                     &last_line, &first_line);
-> > >
-> > > +     test_maps_tearing_from_remap(maps_fd, mod_info, &page1, &page2,
-> > > +                                  &last_line, &first_line);
-> > > +
-> > >       stop_vma_modifier(mod_info);
-> > >
-> > >       free(page2.data);
-> > > --
-> > > 2.49.0.805.g082f7c87e0-goog
-> > >
+From 660bddec1241c46a7722f5c9b66a2450b5f85751 Mon Sep 17 00:00:00 2001
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 18 Apr 2025 13:33:43 +0200
+Subject: [PATCH] [UNTESTED]: mount: sample and kick of grace period during
+ umount
+
+Sample the current rcu state and kick off a new grace period after we're
+done with umount_tree() and make namespace_unlock() take the previous
+state into account before invoking synchronize_rcu_expedited().
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+ fs/namespace.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index d9ca80dcc544..287189e85af5 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable __ro_after_init;
+ static struct hlist_head *mountpoint_hashtable __ro_after_init;
+ static struct kmem_cache *mnt_cache __ro_after_init;
+ static DECLARE_RWSEM(namespace_sem);
++static struct rcu_gp_oldstate rcu_unmount_gp;
+ static HLIST_HEAD(unmounted);	/* protected by namespace_sem */
+ static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+ static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+@@ -1817,7 +1818,7 @@ static void namespace_unlock(void)
+ 	if (likely(hlist_empty(&head)))
+ 		return;
+ 
+-	synchronize_rcu_expedited();
++	cond_synchronize_rcu_expedited_full(&rcu_unmount_gp);
+ 
+ 	hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+ 		hlist_del(&m->mnt_umount);
+@@ -1939,6 +1940,9 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+ 		 */
+ 		mnt_notify_add(p);
+ 	}
++
++	/* Record current grace period state and kick of new grace period. */
++	start_poll_synchronize_rcu_expedited_full(&rcu_unmount_gp);
+ }
+ 
+ static void shrink_submounts(struct mount *mnt);
+-- 
+2.47.2
+
+
+--wlvjtn7bxagetzkl--
 
