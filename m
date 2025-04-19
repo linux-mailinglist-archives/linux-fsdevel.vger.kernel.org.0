@@ -1,159 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-46727-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46728-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9C04A94572
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 23:04:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A281AA9457F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 23:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3201894190
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 21:04:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D70FF7A3D3E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 21:36:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF7A91DF98E;
-	Sat, 19 Apr 2025 21:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C3D1E833F;
+	Sat, 19 Apr 2025 21:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CD9+tV+6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O0SvN7kq"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2438A1A2860;
-	Sat, 19 Apr 2025 21:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D821E5B9D;
+	Sat, 19 Apr 2025 21:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745096661; cv=none; b=nDyZII7GR4GOjNcjSZMEl/mWcOvn5Lym7ZuEpJD1Q8HNYhJi73d9wurQp9hgzhIfM9nPSECGB7ck7FONfUIpVcO1br5CG/9tLu7SHPqkO/AhzOJc6yZyIcjxGVvAjVZkXsjinFQEP0zARjc+poL1egfrKPCYRDWZlr7+fb6ruRk=
+	t=1745098669; cv=none; b=O+SPDLCg6MOWZ1oE8H860cS7skYaldpqtIGFTylZ8bwAbHbXNgsA6Xbv45i5KKHgQrbjbQUZuLCEe6KGnCw7sU3xnlo5ylV04rizXGRqj/7B1AiLI1Zg5qkLybjQeA7k43VdD/QEF/Qsv0tazTLK93mkQoUL9KuEVmRI372hiJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745096661; c=relaxed/simple;
-	bh=SnW8ZvvztGN2rE+JhiTwhq8fakQpkcH3dL2/xVS0Phw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Qemgf8klO/cBGBB2gGk6+49ArioWYW8ukVmQZT0atreUW+C/Awpv5nJ1Z0iuzHzCNT93e0v/lO4Bs6PTKsTiHSDHCGN2WlO620S1koZy/QdUGeDj16jrvFhf1HGrpNvIjBopfTsPxv173QqiRSGzxkott52mcBHPXxWdyridBYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CD9+tV+6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 547DCC4CEE7;
-	Sat, 19 Apr 2025 21:04:19 +0000 (UTC)
+	s=arc-20240116; t=1745098669; c=relaxed/simple;
+	bh=tbe5UjY1sv1PmjOryIY/S23wDrGxf9Y9s0mMexo1/Tk=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=cuYV/t0tr2JXAJpI34GuJflv2ZFCTSHbDcBm+lhCiExft0hsNV68b1L8rKVFN+zbRcW+fH1D0VNg6Mw9a+DRLLtJAY1ifFUkZnc7W6vFHtrJ2PphqNeSB3HZDnACwMusRiYHHTRCH6M8mcTNH2rQIaPc9a69jfpYyyOwlNUopiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O0SvN7kq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 369EEC4CEEA;
+	Sat, 19 Apr 2025 21:37:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745096660;
-	bh=SnW8ZvvztGN2rE+JhiTwhq8fakQpkcH3dL2/xVS0Phw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=CD9+tV+63FLsS6cX0Cae/YYN9y5hJ5s0d8ptlLID5wDU9gyhhDpGbL7+JQUviq2AG
-	 xltonH5gBeP8+q9mzgO44HU3zqgv9At+mojx5wyZ+1NIrPez+VLuOGvU6OiPE05Psh
-	 +xWwis2uCVATtn7vQZteYMkpiHfc13NFXxeEo5Gz5N02IDE9F6rVzl6PQ+7dnun6Mh
-	 uQQLIkF+ol5LsBrwZBWqcZmI0NuJ1Q8VIO6M0acwvQ1oJ/H8ZHz7CCE49on2nbD8pn
-	 EhCfRFI138vpntLjgOHy62dH53+HhNUQGMfpECWCfuEvTxWL4FhLmw+e0L6vHDznb1
-	 jdSP4yM1hHuMw==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Sat, 19 Apr 2025 23:04:04 +0200
-Message-ID: <20250419-vfs-fixes-627259052c9a@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1745098669;
+	bh=tbe5UjY1sv1PmjOryIY/S23wDrGxf9Y9s0mMexo1/Tk=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=O0SvN7kq5AxQOmgOPp/hNIS7JK5e2fLBZYjY/R32c/vOaDOAvkhy3kvPo7/ESLL1h
+	 l+TAqw26L2nJ3oPXsONegLTVNu3mSJl+Dni/jBWDV5k8wl+vFLCEeXbMpPG6HdZDhk
+	 WuOq5Ss5PVpZeU9419Xlg6a3STmw43/cr78tUDqcVgIpnsmz89uGPNNmkelPRCUYGa
+	 gm6PzWfyJaM2mYYFxWwxZ9JMEiREnf9OXsQ06Mb9cDmQNOn0gFYe07dw2ctibDRhH8
+	 KDBgQB8XhMjdLUD2/STlT7Opm5ZJyYWYJPapuTaZ8B12OEhxl07nupOT/9xqHFQKd+
+	 3EYdAZUksU1sA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD243806642;
+	Sat, 19 Apr 2025 21:38:28 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250419-vfs-fixes-627259052c9a@brauner>
+References: <20250419-vfs-fixes-627259052c9a@brauner>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250419-vfs-fixes-627259052c9a@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc3.fixes.2
+X-PR-Tracked-Commit-Id: 408e4504f97c0aa510330f0a04b7ed028fdf3154
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 119009db267415049182774196e3cce9e13b52ef
+Message-Id: <174509870728.540479.15996369817632938600.pr-tracker-bot@kernel.org>
+Date: Sat, 19 Apr 2025 21:38:27 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3155; i=brauner@kernel.org; h=from:subject:message-id; bh=SnW8ZvvztGN2rE+JhiTwhq8fakQpkcH3dL2/xVS0Phw=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSw8J/xanHdPmm9osbbqtONFbsl8llmBcVtneUUvP2JY qZGyIP6jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlkZjD8lfe8YXT+8mYVq7iz K5b9/ve6o4pn3xdGK05NHrHTC37OVmX4H/DL8PyeOZ/uWAiu4F2wvTfbx3/akvZF09bJ7X7fKOz vywgA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
 
-Hey Linus,
+The pull request you sent on Sat, 19 Apr 2025 23:04:04 +0200:
 
-/* Summary */
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc3.fixes.2
 
-This contains various fixes for this cycle:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/119009db267415049182774196e3cce9e13b52ef
 
-* Revert the hfs{plus} deprecation warning that's also included in this
-  pull request. The commit introducing the deprecation warning resides
-  rather early in this branch. So simply dropping it would've rebased
-  all other commits which I decided to avoid. Hence the revert in the
-  same branch.
+Thank you!
 
-* Switch CONFIG_SYSFS_SYCALL default to n and decouple from CONFIG_EXPERT.
-
-* Fix an audit bug caused by changes to our kernel path lookup
-  helpers this cycle. Audit needs the parent path even if the dentry it
-  tried to look up is negative.
-
-* Ensure that the kernel path lookup helpers leave the passed in path
-  argument clean when they return an error. This is consistent with all
-  our other helpers.
-
-* Ensure that vfs_getattr_nosec() calls bdev_statx() so the relevant
-  information is available to kernel consumers as well.
-
-* Don't set a timer and call schedule() if the timer will expire
-  immediately in epoll.
-
-* Make netfs lookup tables with __nonstring.
-
-/* Testing */
-
-gcc (Debian 14.2.0-19) 14.2.0
-Debian clang version 19.1.7 (3)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 834a4a689699090a406d1662b03affa8b155d025:
-
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2025-04-14 10:24:04 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc3.fixes.2
-
-for you to fetch changes up to 408e4504f97c0aa510330f0a04b7ed028fdf3154:
-
-  Revert "hfs{plus}: add deprecation warning" (2025-04-19 22:48:59 +0200)
-
-Please consider pulling these changes from the signed vfs-6.15-rc3.fixes.2 tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.15-rc3.fixes.2
-
-----------------------------------------------------------------
-Christian Brauner (5):
-      Kconfig: switch CONFIG_SYSFS_SYCALL default to n
-      hfs{plus}: add deprecation warning
-      fs: add kern_path_locked_negative()
-      fs: ensure that *path_locked*() helpers leave passed path pristine
-      Revert "hfs{plus}: add deprecation warning"
-
-Christoph Hellwig (1):
-      fs: move the bdex_statx call to vfs_getattr_nosec
-
-Joe Damato (1):
-      eventpoll: Set epoll timeout if it's in the future
-
-Kees Cook (1):
-      netfs: Mark __nonstring lookup tables
-
- block/bdev.c              |  3 +-
- fs/eventpoll.c            | 10 +++++-
- fs/namei.c                | 81 +++++++++++++++++++++++++++++++++--------------
- fs/netfs/fscache_cache.c  |  2 +-
- fs/netfs/fscache_cookie.c |  2 +-
- fs/stat.c                 | 32 +++++++++++--------
- include/linux/blkdev.h    |  6 ++--
- include/linux/namei.h     |  1 +
- init/Kconfig              | 20 ++++++------
- kernel/audit_watch.c      | 16 ++++++----
- 10 files changed, 112 insertions(+), 61 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
