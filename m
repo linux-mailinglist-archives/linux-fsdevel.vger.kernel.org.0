@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-46707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56727A940C3
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 03:14:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2899AA940D5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 03:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C501F1B61682
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 01:14:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 527B28A5722
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 01:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4151577102;
-	Sat, 19 Apr 2025 01:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B79B156677;
+	Sat, 19 Apr 2025 01:24:42 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp01.aussiebb.com.au (smtp01.aussiebb.com.au [121.200.0.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BD2944F;
-	Sat, 19 Apr 2025 01:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7E41448F2;
+	Sat, 19 Apr 2025 01:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.200.0.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745025261; cv=none; b=bO0z/ADk1+ibpgftdVUqO64/3xjs5WYCRSycbHnOGerXSF3X1SBv3dtC7Qiv9Gf+nQ249k8oDDNz0AGIpNhQf5sxYWjXEb2fcQVRiljaqkz0xJfOanUxQo7Xd471uifLNepLZXOerVgJKhADvMX4YzAhUdF/i8W7mtx1/lssuyQ=
+	t=1745025882; cv=none; b=D3OggGmHx2o+EvpGaatJaROTNrvn/XLEYso54avbsgiKB696E1NnhMJQDC/T89A4SNzXNdDyp+6gZdJ/xRVUfKrmeJWeEFofwe47+akEf9bGU4J67H798h/D4YjJc11RQhTmfJAKIWlngUQeDm+QbWGgUXOLnFqfq/LATkQtPyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745025261; c=relaxed/simple;
-	bh=sWdM+T3rOkkP+yaS0doaDa67ymsymtWqfImCD2HOA1A=;
+	s=arc-20240116; t=1745025882; c=relaxed/simple;
+	bh=v9SMrehymawYp0ubOq9iqBH0rzCv62uomeBcGhwrVQs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aKb2ziXphr2ISoZVVQb5zRvipVdOKHu4IvOuwSTIo3kubfaBlhz5tr9CKHCorMINLLFTJOgmc6r7YVfVi8ZD2nndUhV2TANwAxSvR/hThfS0s2+gErUNrz7e8ImUr7aPtf7WP5PZ72f+aQlqkWOrMX6UU7DjztxOWmDq+fx2PxI=
+	 In-Reply-To:Content-Type; b=VhfHtBHq//CSGRbz6Q3uPdBo/tfMSEXngpYd+IvAm1tFtvj3mInG7HbuUKZs/UywlcsG/9HkPSjaaRcq8vin0SCqtyMwUDBbf7ri44u5kMWW+U3NP0dDNWq9Z1zDwXYl8f3TvRrJHsLA3TPqT8Vz3jsw3SmbaBJQAfD6qM2D7DA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net; spf=fail smtp.mailfrom=themaw.net; arc=none smtp.client-ip=121.200.0.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=themaw.net
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=themaw.net
 Received: from localhost (localhost.localdomain [127.0.0.1])
-	by smtp01.aussiebb.com.au (Postfix) with ESMTP id F2D34100724;
-	Sat, 19 Apr 2025 11:14:09 +1000 (AEST)
+	by smtp01.aussiebb.com.au (Postfix) with ESMTP id 65687100767;
+	Sat, 19 Apr 2025 11:24:37 +1000 (AEST)
 X-Virus-Scanned: Debian amavisd-new at smtp01.aussiebb.com.au
 Received: from smtp01.aussiebb.com.au ([127.0.0.1])
 	by localhost (smtp01.aussiebb.com.au [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id LlThB9oCYBYS; Sat, 19 Apr 2025 11:14:09 +1000 (AEST)
+	with ESMTP id sEONb8hvuJih; Sat, 19 Apr 2025 11:24:37 +1000 (AEST)
 Received: by smtp01.aussiebb.com.au (Postfix, from userid 116)
-	id F15BB100767; Sat, 19 Apr 2025 11:14:07 +1000 (AEST)
+	id 60CEE10070C; Sat, 19 Apr 2025 11:24:35 +1000 (AEST)
 X-Spam-Level: 
 Received: from [192.168.0.229] (159-196-82-144.9fc452.per.static.aussiebb.net [159.196.82.144])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: ian146@aussiebb.com.au)
-	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id 51D8D1003AF;
-	Sat, 19 Apr 2025 11:14:03 +1000 (AEST)
-Message-ID: <709ac1f0-b3da-4813-ad88-78944d5a8e2d@themaw.net>
-Date: Sat, 19 Apr 2025 09:14:02 +0800
+	by smtp01.aussiebb.com.au (Postfix) with ESMTPSA id B4B3B10070C;
+	Sat, 19 Apr 2025 11:24:32 +1000 (AEST)
+Message-ID: <834853f4-10ca-4585-84b2-425c4e9f7d2b@themaw.net>
+Date: Sat, 19 Apr 2025 09:24:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -57,22 +57,25 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
 To: Christian Brauner <brauner@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>,
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>,
  Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
  Clark Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
  Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org,
  linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
  Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>,
  Aishwarya.TCV@arm.com
-References: <20250408210350.749901-12-echanude@redhat.com>
- <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
+References: <fbbafa84-f86c-4ea4-8f41-e5ebb51173ed@sirena.org.uk>
  <20250417-wolfsrudel-zubewegt-10514f07d837@brauner>
  <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
  <20250417-abartig-abfuhr-40e558b85f97@brauner>
  <20250417-outen-dreihundert-7a772f78f685@brauner>
- <7980515f-2c5f-4279-bb41-7a3b336a4e26@themaw.net>
- <20250418-bekunden-virusinfektion-3ec992b21bfb@brauner>
+ <20250417-zappeln-angesagt-f172a71839d3@brauner>
+ <20250417153126.QrVXSjt-@linutronix.de>
+ <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
+ <39c36187-615e-4f83-b05e-419015d885e6@themaw.net>
+ <125df195-5cac-4a65-b8bb-8b1146132667@themaw.net>
+ <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
 Content-Language: en-US
 From: Ian Kent <raven@themaw.net>
 Autocrypt: addr=raven@themaw.net; keydata=
@@ -117,145 +120,223 @@ Autocrypt: addr=raven@themaw.net; keydata=
  +coCSBkOU1xMiW5Td7QwkNmtXKHyEF6dxCAMK1KHIqxrBaZO27PEDSHaIPHePi7y4KKq9C9U
  8k5V5dFA0mqH/st9Sw6tFbqPkqjvvMLETDPVxOzinpU2VBGhce4wufSIoVLOjQnbIo1FIqWg
  Dx24eHv235mnNuGHrG+EapIh7g/67K0uAzwp17eyUYlE5BMcwRlaHMuKTil6
-In-Reply-To: <20250418-bekunden-virusinfektion-3ec992b21bfb@brauner>
+In-Reply-To: <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 18/4/25 16:59, Christian Brauner wrote:
-> On Fri, Apr 18, 2025 at 08:31:03AM +0800, Ian Kent wrote:
->> On 17/4/25 23:12, Christian Brauner wrote:
->>> On Thu, Apr 17, 2025 at 01:31:40PM +0200, Christian Brauner wrote:
->>>> On Thu, Apr 17, 2025 at 06:17:01PM +0800, Ian Kent wrote:
->>>>> On 17/4/25 17:01, Christian Brauner wrote:
->>>>>> On Wed, Apr 16, 2025 at 11:11:51PM +0100, Mark Brown wrote:
->>>>>>> On Tue, Apr 08, 2025 at 04:58:34PM -0400, Eric Chanudet wrote:
->>>>>>>> Defer releasing the detached file-system when calling namespace_unlock()
->>>>>>>> during a lazy umount to return faster.
->>>>>>>>
->>>>>>>> When requesting MNT_DETACH, the caller does not expect the file-system
->>>>>>>> to be shut down upon returning from the syscall. Calling
->>>>>>>> synchronize_rcu_expedited() has a significant cost on RT kernel that
->>>>>>>> defaults to rcupdate.rcu_normal_after_boot=1. Queue the detached struct
->>>>>>>> mount in a separate list and put it on a workqueue to run post RCU
->>>>>>>> grace-period.
->>>>>>> For the past couple of days we've been seeing failures in a bunch of LTP
->>>>>>> filesystem related tests on various arm64 systems.  The failures are
->>>>>>> mostly (I think all) in the form:
->>>>>>>
->>>>>>> 20101 10:12:40.378045  tst_test.c:1833: TINFO: === Testing on vfat ===
->>>>>>> 20102 10:12:40.385091  tst_test.c:1170: TINFO: Formatting /dev/loop0 with vfat opts='' extra opts=''
->>>>>>> 20103 10:12:40.391032  mkfs.vfat: unable to open /dev/loop0: Device or resource busy
->>>>>>> 20104 10:12:40.395953  tst_test.c:1170: TBROK: mkfs.vfat failed with exit code 1
->>>>>>>
->>>>>>> ie, a failure to stand up the test environment on the loopback device
->>>>>>> all happening immediately after some other filesystem related test which
->>>>>>> also used the loop device.  A bisect points to commit a6c7a78f1b6b97
->>>>>>> which is this, which does look rather relevant.  LTP is obviously being
->>>>>>> very much an edge case here.
->>>>>> Hah, here's something I didn't consider and that I should've caught.
->>>>>>
->>>>>> Look, on current mainline no matter if MNT_DETACH/UMOUNT_SYNC or
->>>>>> non-MNT_DETACH/UMOUNT_SYNC. The mntput() calls after the
->>>>>> synchronize_rcu_expedited() calls will end up in task_work():
->>>>>>
->>>>>>            if (likely(!(mnt->mnt.mnt_flags & MNT_INTERNAL))) {
->>>>>>                    struct task_struct *task = current;
->>>>>>                    if (likely(!(task->flags & PF_KTHREAD))) {
->>>>>>                            init_task_work(&mnt->mnt_rcu, __cleanup_mnt);
->>>>>>                            if (!task_work_add(task, &mnt->mnt_rcu, TWA_RESUME))
->>>>>>                                    return;
->>>>>>                    }
->>>>>>                    if (llist_add(&mnt->mnt_llist, &delayed_mntput_list))
->>>>>>                            schedule_delayed_work(&delayed_mntput_work, 1);
->>>>>>                    return;
->>>>>>            }
->>>>>>
->>>>>> because all of those mntput()s are done from the task's contect.
->>>>>>
->>>>>> IOW, if userspace does umount(MNT_DETACH) and the task has returned to
->>>>>> userspace it is guaranteed that all calls to cleanup_mnt() are done.
->>>>>>
->>>>>> With your change that simply isn't true anymore. The call to
->>>>>> queue_rcu_work() will offload those mntput() to be done from a kthread.
->>>>>> That in turn means all those mntputs end up on the delayed_mntput_work()
->>>>>> queue. So the mounts aren't cleaned up by the time the task returns to
->>>>>> userspace.
->>>>>>
->>>>>> And that's likely problematic even for the explicit MNT_DETACH use-case
->>>>>> because it means EBUSY errors are a lot more likely to be seen by
->>>>>> concurrent mounters especially for loop devices.
->>>>>>
->>>>>> And fwiw, this is exactly what I pointed out in a prior posting to this
->>>>>> patch series.
->>>>> And I didn't understand what you said then but this problem is more
->>>>>
->>>>> understandable to me now.
->>> I mean I'm saying it could be problematic for the MNT_DETACH case. I'm
->>> not sure how likely it is. If some process P1 does MNT_DETACH on a loop
->>> device and then another process P2 wants to use that loop device and
->>> sess EBUSY then we don't care. That can already happen. But even in this
->>> case I'm not sure if there aren't subtle ways where this will bite us.
->>>
->>> But there's two other problems:
->>>
->>> (1) The real issue is with the same process P1 doing stupid stuff that
->>>       just happened to work. For example if there's code out there that
->>>       does a MNT_DETACH on a filesystem that uses a loop device
->>>       immediately followed by the desire to reuse the loop device:
->>>
->>>       It doesn't matter whether such code must in theory already be
->>>       prepared to handle the case of seeing EBUSY after the MNT_DETACH. If
->>>       this currently just happens to work because we guarantee that the
->>>       last mntput() and cleanup_mnt() will have been done when the caller
->>>       returns to userspace it's a uapi break plain and simple.
->>>
->>>       This implicit guarantee isn't there anymore after your patch because
->>>       the final mntput() from is done from the system_unbound_wq which has
->>>       the consequence that the cleanup_mnt() is done from the
->>>       delayed_mntput_work workqeueue. And that leads to problem number
->>>       (2).
->> This is a bit puzzling to me.
->>
->>
->> All the mounts in the tree should be unhashed before any of these mntput()
->>
->> calls so I didn't think it would be found. I'll need to look at the loop
->>
->> device case to work out how it's finding (or holing onto) the stale mount
->>
->> and concluding it's busy.
-> Say you do:
->
-> mount(/dev/loop0 /mnt);
->
-> Unmounting that thing with or without MNT_DETACH will have the following
-> effect (if no path lookup happens and it isn't kept busy otherwise):
->
-> After the task returns the loop device will be free again because
-> deactivate_super() will have been called and the loop device is
-> release when the relevant filesystems release the claim on the block
-> device.
->
-> IOW, if the task that just returned wanted to reuse the same loop device
-> right after the umount() returned for another image file it could. It
-> would succeed with or without MNT_DETACH. Because the task_work means
-> that cleanup_mnt() will have been called when the task returns to
-> userspace.
->
-> But when we start offloading this to a workqueue that "guarantee" isn't
-> there anymore specifically for MNT_DETACH. If the system is mighty busy
-> the system_unbound_wq that does the mntput() and the delayed_mntput_work
-> workqueue that would ultimately do the cleanup_mnt() and thus
-> deactivate_super() to release the loop device could be run way way after
-> the task has returned to userspace. Thus, the task could prepare a new
-> image file and whatever and then try to use the same loop device and it
-> would fail because the workqueue hasn't gotten around to the item yet.
-> And it would be pretty opaque to the caller. I have no idea how likely
-> that is to become a problem. I'm just saying that is a not so subtle
-> change in behavior that might be noticable.
 
-Right, thanks for the effort to clear that up for me.
+On 18/4/25 16:47, Christian Brauner wrote:
+> On Fri, Apr 18, 2025 at 09:20:52AM +0800, Ian Kent wrote:
+>> On 18/4/25 09:13, Ian Kent wrote:
+>>> On 18/4/25 00:28, Christian Brauner wrote:
+>>>> On Thu, Apr 17, 2025 at 05:31:26PM +0200, Sebastian Andrzej Siewior
+>>>> wrote:
+>>>>> On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
+>>>>>>>       So if there's some userspace process with a broken
+>>>>>>> NFS server and it
+>>>>>>>       does umount(MNT_DETACH) it will end up hanging every other
+>>>>>>>       umount(MNT_DETACH) on the system because the dealyed_mntput_work
+>>>>>>>       workqueue (to my understanding) cannot make progress.
+>>>>>> Ok, "to my understanding" has been updated after going back
+>>>>>> and reading
+>>>>>> the delayed work code. Luckily it's not as bad as I thought it is
+>>>>>> because it's queued on system_wq which is multi-threaded so it's at
+>>>>>> least not causing everyone with MNT_DETACH to get stuck. I'm still
+>>>>>> skeptical how safe this all is.
+>>>>> I would (again) throw system_unbound_wq into the game because
+>>>>> the former
+>>>>> will remain on the CPU on which has been enqueued (if speaking about
+>>>>> multi threading).
+>>>> Yes, good point.
+>>>>
+>>>> However, what about using polled grace periods?
+>>>>
+>>>> A first simple-minded thing to do would be to record the grace period
+>>>> after umount_tree() has finished and the check it in namespace_unlock():
+>>>>
+>>>> diff --git a/fs/namespace.c b/fs/namespace.c
+>>>> index d9ca80dcc544..1e7ebcdd1ebc 100644
+>>>> --- a/fs/namespace.c
+>>>> +++ b/fs/namespace.c
+>>>> @@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable
+>>>> __ro_after_init;
+>>>>    static struct hlist_head *mountpoint_hashtable __ro_after_init;
+>>>>    static struct kmem_cache *mnt_cache __ro_after_init;
+>>>>    static DECLARE_RWSEM(namespace_sem);
+>>>> +static unsigned long rcu_unmount_seq; /* protected by namespace_sem */
+>>>>    static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
+>>>>    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+>>>>    static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+>>>> @@ -1794,6 +1795,7 @@ static void namespace_unlock(void)
+>>>>           struct hlist_head head;
+>>>>           struct hlist_node *p;
+>>>>           struct mount *m;
+>>>> +       unsigned long unmount_seq = rcu_unmount_seq;
+>>>>           LIST_HEAD(list);
+>>>>
+>>>>           hlist_move_list(&unmounted, &head);
+>>>> @@ -1817,7 +1819,7 @@ static void namespace_unlock(void)
+>>>>           if (likely(hlist_empty(&head)))
+>>>>                   return;
+>>>>
+>>>> -       synchronize_rcu_expedited();
+>>>> +       cond_synchronize_rcu_expedited(unmount_seq);
+>>>>
+>>>>           hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>>>>                   hlist_del(&m->mnt_umount);
+>>>> @@ -1939,6 +1941,8 @@ static void umount_tree(struct mount *mnt,
+>>>> enum umount_tree_flags how)
+>>>>                    */
+>>>>                   mnt_notify_add(p);
+>>>>           }
+>>>> +
+>>>> +       rcu_unmount_seq = get_state_synchronize_rcu();
+>>>>    }
+>>>>
+>>>>    static void shrink_submounts(struct mount *mnt);
+>>>>
+>>>>
+>>>> I'm not sure how much that would buy us. If it doesn't then it should be
+>>>> possible to play with the following possibly strange idea:
+>>>>
+>>>> diff --git a/fs/mount.h b/fs/mount.h
+>>>> index 7aecf2a60472..51b86300dc50 100644
+>>>> --- a/fs/mount.h
+>>>> +++ b/fs/mount.h
+>>>> @@ -61,6 +61,7 @@ struct mount {
+>>>>                   struct rb_node mnt_node; /* node in the ns->mounts
+>>>> rbtree */
+>>>>                   struct rcu_head mnt_rcu;
+>>>>                   struct llist_node mnt_llist;
+>>>> +               unsigned long mnt_rcu_unmount_seq;
+>>>>           };
+>>>>    #ifdef CONFIG_SMP
+>>>>           struct mnt_pcp __percpu *mnt_pcp;
+>>>> diff --git a/fs/namespace.c b/fs/namespace.c
+>>>> index d9ca80dcc544..aae9df75beed 100644
+>>>> --- a/fs/namespace.c
+>>>> +++ b/fs/namespace.c
+>>>> @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+>>>>           struct hlist_head head;
+>>>>           struct hlist_node *p;
+>>>>           struct mount *m;
+>>>> +       bool needs_synchronize_rcu = false;
+>>>>           LIST_HEAD(list);
+>>>>
+>>>>           hlist_move_list(&unmounted, &head);
+>>>> @@ -1817,7 +1818,16 @@ static void namespace_unlock(void)
+>>>>           if (likely(hlist_empty(&head)))
+>>>>                   return;
+>>>>
+>>>> -       synchronize_rcu_expedited();
+>>>> +       hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>>>> +               if (!poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+>>>> +                       continue;
+> This has a bug. This needs to be:
+>
+> 	/* A grace period has already elapsed. */
+> 	if (poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+> 		continue;
+>
+> 	/* Oh oh, we have to pay up. */
+> 	needs_synchronize_rcu = true;
+> 	break;
+>
+> which I'm pretty sure will eradicate most of the performance gain you've
+> seen because fundamentally the two version shouldn't be different (Note,
+> I drafted this while on my way out the door. r.
+>
+> I would test the following version where we pay the cost of the
+> smb_mb() from poll_state_synchronize_rcu() exactly one time:
+>
+> diff --git a/fs/mount.h b/fs/mount.h
+> index 7aecf2a60472..51b86300dc50 100644
+> --- a/fs/mount.h
+> +++ b/fs/mount.h
+> @@ -61,6 +61,7 @@ struct mount {
+>                  struct rb_node mnt_node; /* node in the ns->mounts rbtree */
+>                  struct rcu_head mnt_rcu;
+>                  struct llist_node mnt_llist;
+> +               unsigned long mnt_rcu_unmount_seq;
+>          };
+>   #ifdef CONFIG_SMP
+>          struct mnt_pcp __percpu *mnt_pcp;
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index d9ca80dcc544..dd367c54bc29 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+>          struct hlist_head head;
+>          struct hlist_node *p;
+>          struct mount *m;
+> +       unsigned long mnt_rcu_unmount_seq = 0;
+>          LIST_HEAD(list);
+>
+>          hlist_move_list(&unmounted, &head);
+> @@ -1817,7 +1818,10 @@ static void namespace_unlock(void)
+>          if (likely(hlist_empty(&head)))
+>                  return;
+>
+> -       synchronize_rcu_expedited();
+> +       hlist_for_each_entry_safe(m, p, &head, mnt_umount)
+> +               mnt_rcu_unmount_seq = max(m->mnt_rcu_unmount_seq, mnt_rcu_unmount_seq);
+> +
+> +       cond_synchronize_rcu_expedited(mnt_rcu_unmount_seq);
+>
+>          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+>                  hlist_del(&m->mnt_umount);
+> @@ -1923,8 +1927,10 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+>                          }
+>                  }
+>                  change_mnt_propagation(p, MS_PRIVATE);
+> -               if (disconnect)
+> +               if (disconnect) {
+> +                       p->mnt_rcu_unmount_seq = get_state_synchronize_rcu();
+>                          hlist_add_head(&p->mnt_umount, &unmounted);
+> +               }
+>
+>                  /*
+>                   * At this point p->mnt_ns is NULL, notification will be queued
+>
+> If this doesn't help I had considered recording the rcu sequence number
+> during __legitimize_mnt() in the mounts. But we likely can't do that
+> because get_state_synchronize_rcu() is expensive because it inserts a
+> smb_mb() and that would likely be noticable during path lookup. This
+> would also hinge on the notion that the last store of the rcu sequence
+> number is guaranteed to be seen when we check them in namespace_unlock().
+>
+> Another possibly insane idea (haven't fully thought it out but throwing
+> it out there to test): allocate a percpu counter for each mount and
+> increment it each time we enter __legitimize_mnt() and decrement it when
+> we leave __legitimize_mnt(). During umount_tree() check the percpu sum
+> for each mount after it's been added to the @unmounted list.
+
+I had been thinking that a completion in the mount with a counter (say
+
+walker_cnt) could be used. Because the mounts are unhashed there won't
+
+be new walks so if/once the count is 0 the walker could call complete()
+
+and wait_for_completion() replaces the rcu sync completely. The catch is
+
+managing walker_cnt correctly could be racy or expensive.
+
+
+I thought this would not be received to well dew to the additional fields
+
+and it could be a little messy but the suggestion above is a bit similar.
+
 
 Ian
 
+>
+> If we see any mount that has a non-zero count we set a global
+> @needs_synchronize_rcu to true and stop counting for the other mounts
+> (saving percpu summing cycles). Then call or elide
+> synchronize_rcu_expedited() based on the @needs_synchronize_rcu boolean
+> in namespace_unlock().
+>
+> The percpu might make this cheap enough for __legitimize_mnt() to be
+> workable (ignoring any other pitfalls I've currently not had time to
+> warp my head around).
 
