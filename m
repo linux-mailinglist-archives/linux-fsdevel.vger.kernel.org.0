@@ -1,262 +1,283 @@
-Return-Path: <linux-fsdevel+bounces-46714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2F8AA942BE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 12:07:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04155A942EA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 12:44:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089EE8A4FDE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 10:07:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FDCB17C089
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Apr 2025 10:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC2F1CCEE7;
-	Sat, 19 Apr 2025 10:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D891D54CF;
+	Sat, 19 Apr 2025 10:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VLJue/2e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l5KyJ3l+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 174121A239B
-	for <linux-fsdevel@vger.kernel.org>; Sat, 19 Apr 2025 10:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFC721C5F25;
+	Sat, 19 Apr 2025 10:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745057229; cv=none; b=V7gfdoKloFNFlSbICUtgYcW1LEoc1nR/u5e7EwOfu1ZlHFbPEWehRH6xSiVBkAc++kx2V+hpWFQ2RFx+tvfv3yPCFQSCeah82tCuNBoHAJYOKCUrJhSDttJC5ylaOHWXzA++80sEf10JuzDRKWysygYSyTDuLt/1WAGf+1D3ibw=
+	t=1745059464; cv=none; b=H2DgVrlKtNkmkJyQc5d4PP+WFhJm+rorf6gkw/lfddqyS4rI66Jf08ngZyRvwxI6Jc/L48e8zrNzPUjcA/+GWDSdkAArdWijMR3LeaE8RuLaRyv1PAGakh49tWrIzE/eDEmm+jO5GuvNJFfl4/haUZq1nl1juljW6ycHBm6xG5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745057229; c=relaxed/simple;
-	bh=VNyZT9dqF5nsNJ1QbhJahEzHvjloPIdUZbv3v7muAZg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=n1d/5+xfQFxC0vbeAMe/+GfaCoPB71mAUVXmX2xsGG+Md1pu/T0scbnGdc3n0btwyNA7y/6US7rQg6Wr9zg9jzw06C7NI575e1PZ2CzpBbNofN4CVkuhOhMLLJLBAPv/Kawvagr/XCwDo3Ntw85TT0nvXEyVxXe2jkGuCJvn1Uk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VLJue/2e; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2a81e41e3so455826366b.1
-        for <linux-fsdevel@vger.kernel.org>; Sat, 19 Apr 2025 03:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745057226; x=1745662026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5t3oxZJtPTZrV6Q4+o+es58yZtyFt6AFjF1+fCggpP0=;
-        b=VLJue/2eGs7KTKwHxLITuN1c329E5LVk0rt1QiAdPRy6dLSplwyaE5ceRJnrBIp9mW
-         MvgbWTj/odKvozJHLlw5ObhJQhax2tG8RxwuU+gNspUXjsCDeJM/WbR92mV1Yr7k52iL
-         yiOpTsYSnHZ2CYjTe/VWqSHD6CIIwn8Wf8rZfQGSzdYeQb5eoIyk4jNZd5E89Tpn40YU
-         vw86OLm4DnXGA65DQqcadfTWMqU0ApmkdWJvzfTRUR8g2ppw39GbQZGGVNv/WyyeUrnI
-         gAqu9NReMW5W6oABjrxSwIC26mhypsiGGqk04+ii10NMPhJyncIltqm94ie5ZhQQOijI
-         L3vA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745057226; x=1745662026;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5t3oxZJtPTZrV6Q4+o+es58yZtyFt6AFjF1+fCggpP0=;
-        b=si18lTOgvL/EtlDR/ExIdJqwmncnRAYa9clVI+A9AQT7h3P5IbIbt3zDDtq38tBrh3
-         FLWrDMMgyfiNkH4iYjrlLINL810NQTutYaxtBe+KP7ZvxNuAKX9aNeXUgORQc8Im/I3i
-         +i4gj4mE0g657hHrcgHoGYjdAlFtKsY7CPvbholWBOEfEM62Of6ICaTb4OAoJZ8w5ob3
-         KnjPaQ/Ah50TVQEyeAVJKQmyaNTtB3G9nK64uSZvPwsPWsQAn3rVl8pmLNJDvqF/Onk9
-         82Ko/8mJs859ao/9WIGgx6kpQ+59ry6ZCm0pnqCSZ2dEibo7Zmn8S0NC/TErRHjjAa6/
-         bUMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVPCUvcJ5tr1yskEU0UvCA/CKhAshx9n0FMnDIYubvUzLQ2gj8OmteiN9K2eve1C9hpZVR7eo+G2czxXyQA@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHXCY6I286h9cre+37V9pvDEDYDWwwR1fWLJYr/n9TMFjEDGc7
-	+WTNlatpMfb1bD+ZvfL6yvMnm95PUmVpp9kzdZ48hjBhfGZT3C2f
-X-Gm-Gg: ASbGnctu/Q7PDAwhm9OgSrkPyjl0NLZWWZn6kTcjnj6z70jKHoCB494sfUVy+T0seDi
-	35HDYxHw7ks0wjUWdjZtO5gzgD7f3TgUz6D4g3GlbPLLkcELTd3hHV8trXKnOe7eWrB8tP5uid/
-	0l1gHgJlJTh7PrUdx7AcIiK9COIPQiub8zYutqg2mGkDaPT0wnj3W9Aul8PSucqHaX6OYDYZ5Du
-	MKAbkQW9JUukeL7TIpnQ5qH6GuF3gbae4giLdIZgS/SPqQ8ncWbJFxA4E8GRfEQjAqXxIpOYTXH
-	JAJgQJLuPqcTNJk2Ptrn1uAwq/blk+CLP2PrZxGVddTEoeqcUkDtL4dbvWCKJ4Zn1FISxc+JmKx
-	1gqLaUrrgL/sy2TTknnsZuqmsqMOArOOpcyGlGpmkOHMQZFDE
-X-Google-Smtp-Source: AGHT+IFOKYPbVSF+lG+T+4Fxj4LOR/cylr/UFz8h1SnuwH97l4C9+1KS0KZpy4DRS91erjSkkIcErg==
-X-Received: by 2002:a17:907:2da5:b0:ac3:8626:615 with SMTP id a640c23a62f3a-acb74df2c05mr521462866b.49.1745057225809;
-        Sat, 19 Apr 2025 03:07:05 -0700 (PDT)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-acb6ec507c9sm245894866b.69.2025.04.19.03.07.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 19 Apr 2025 03:07:05 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 2/2] fanotify: support watching filesystems and mounts inside userns
-Date: Sat, 19 Apr 2025 12:06:57 +0200
-Message-Id: <20250419100657.2654744-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250419100657.2654744-1-amir73il@gmail.com>
-References: <20250419100657.2654744-1-amir73il@gmail.com>
+	s=arc-20240116; t=1745059464; c=relaxed/simple;
+	bh=S9KlOH8rDp+j+/7xf8DAp2wHlmtCAhLwt2dJqV1Z6gU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSINp5wNdkh31JqmSUN/wj+Owc+cQvhbih1XKEjARG2kCUKmc72if77OzWuWIZQACfeS3X8rYpDTaLyqAQ2EfJs021UVMSoGFvcO84WHEKq0LzKpEIvRga4I2udv801I6ReoREFlHWliVNpcOOxgKroyfheR/raGAsTU5cR6hMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l5KyJ3l+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD09C4CEE7;
+	Sat, 19 Apr 2025 10:44:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745059464;
+	bh=S9KlOH8rDp+j+/7xf8DAp2wHlmtCAhLwt2dJqV1Z6gU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l5KyJ3l+I1euoYltIvSpZvWy7DdYaUkJWPUK6E5Pa1LYsiK2QAehSbDAZVJNUT7bS
+	 5w/SOkpwaRAaQNp6PQok6VHAWb71wFKsBac+PQY5t+xWaj/MA/PJCphhiTdrVAoAM2
+	 tEuKrO0xLJvtpVKuJnZ7MXRWp+pPoLJmHK0YnAeu52kbehq/ieI1jy136pWPSLPcta
+	 B9BUXgSEaoVYf+5A5sV/IoUA8CMTBLxn+/wAfRvU1n16dS9IbsbCXdV5+DnWNaZUJy
+	 jiuw43hGudJJY/YI+fdKVRO2H/5UOH0ufwUvbA+PvxAMhDdbCmdaS4MkXvzvfGpJ98
+	 u4zh07lcE4gVg==
+Date: Sat, 19 Apr 2025 12:44:18 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Ian Kent <raven@themaw.net>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
+	Mark Brown <broonie@kernel.org>, Eric Chanudet <echanude@redhat.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+Message-ID: <20250419-auftrag-knipsen-6e56b0ccd267@brauner>
+References: <fb566638-a739-41dc-bafc-aa8c74496fa4@themaw.net>
+ <20250417-abartig-abfuhr-40e558b85f97@brauner>
+ <20250417-outen-dreihundert-7a772f78f685@brauner>
+ <20250417-zappeln-angesagt-f172a71839d3@brauner>
+ <20250417153126.QrVXSjt-@linutronix.de>
+ <20250417-pyrotechnik-neigung-f4a727a5c76b@brauner>
+ <39c36187-615e-4f83-b05e-419015d885e6@themaw.net>
+ <125df195-5cac-4a65-b8bb-8b1146132667@themaw.net>
+ <20250418-razzia-fixkosten-0569cf9f7b9d@brauner>
+ <834853f4-10ca-4585-84b2-425c4e9f7d2b@themaw.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <834853f4-10ca-4585-84b2-425c4e9f7d2b@themaw.net>
 
-An unprivileged user is allowed to create an fanotify group and add
-inode marks, but not filesystem, mntns and mount marks.
+On Sat, Apr 19, 2025 at 09:24:31AM +0800, Ian Kent wrote:
+> 
+> On 18/4/25 16:47, Christian Brauner wrote:
+> > On Fri, Apr 18, 2025 at 09:20:52AM +0800, Ian Kent wrote:
+> > > On 18/4/25 09:13, Ian Kent wrote:
+> > > > On 18/4/25 00:28, Christian Brauner wrote:
+> > > > > On Thu, Apr 17, 2025 at 05:31:26PM +0200, Sebastian Andrzej Siewior
+> > > > > wrote:
+> > > > > > On 2025-04-17 17:28:20 [+0200], Christian Brauner wrote:
+> > > > > > > >       So if there's some userspace process with a broken
+> > > > > > > > NFS server and it
+> > > > > > > >       does umount(MNT_DETACH) it will end up hanging every other
+> > > > > > > >       umount(MNT_DETACH) on the system because the dealyed_mntput_work
+> > > > > > > >       workqueue (to my understanding) cannot make progress.
+> > > > > > > Ok, "to my understanding" has been updated after going back
+> > > > > > > and reading
+> > > > > > > the delayed work code. Luckily it's not as bad as I thought it is
+> > > > > > > because it's queued on system_wq which is multi-threaded so it's at
+> > > > > > > least not causing everyone with MNT_DETACH to get stuck. I'm still
+> > > > > > > skeptical how safe this all is.
+> > > > > > I would (again) throw system_unbound_wq into the game because
+> > > > > > the former
+> > > > > > will remain on the CPU on which has been enqueued (if speaking about
+> > > > > > multi threading).
+> > > > > Yes, good point.
+> > > > > 
+> > > > > However, what about using polled grace periods?
+> > > > > 
+> > > > > A first simple-minded thing to do would be to record the grace period
+> > > > > after umount_tree() has finished and the check it in namespace_unlock():
+> > > > > 
+> > > > > diff --git a/fs/namespace.c b/fs/namespace.c
+> > > > > index d9ca80dcc544..1e7ebcdd1ebc 100644
+> > > > > --- a/fs/namespace.c
+> > > > > +++ b/fs/namespace.c
+> > > > > @@ -77,6 +77,7 @@ static struct hlist_head *mount_hashtable
+> > > > > __ro_after_init;
+> > > > >    static struct hlist_head *mountpoint_hashtable __ro_after_init;
+> > > > >    static struct kmem_cache *mnt_cache __ro_after_init;
+> > > > >    static DECLARE_RWSEM(namespace_sem);
+> > > > > +static unsigned long rcu_unmount_seq; /* protected by namespace_sem */
+> > > > >    static HLIST_HEAD(unmounted);  /* protected by namespace_sem */
+> > > > >    static LIST_HEAD(ex_mountpoints); /* protected by namespace_sem */
+> > > > >    static DEFINE_SEQLOCK(mnt_ns_tree_lock);
+> > > > > @@ -1794,6 +1795,7 @@ static void namespace_unlock(void)
+> > > > >           struct hlist_head head;
+> > > > >           struct hlist_node *p;
+> > > > >           struct mount *m;
+> > > > > +       unsigned long unmount_seq = rcu_unmount_seq;
+> > > > >           LIST_HEAD(list);
+> > > > > 
+> > > > >           hlist_move_list(&unmounted, &head);
+> > > > > @@ -1817,7 +1819,7 @@ static void namespace_unlock(void)
+> > > > >           if (likely(hlist_empty(&head)))
+> > > > >                   return;
+> > > > > 
+> > > > > -       synchronize_rcu_expedited();
+> > > > > +       cond_synchronize_rcu_expedited(unmount_seq);
+> > > > > 
+> > > > >           hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+> > > > >                   hlist_del(&m->mnt_umount);
+> > > > > @@ -1939,6 +1941,8 @@ static void umount_tree(struct mount *mnt,
+> > > > > enum umount_tree_flags how)
+> > > > >                    */
+> > > > >                   mnt_notify_add(p);
+> > > > >           }
+> > > > > +
+> > > > > +       rcu_unmount_seq = get_state_synchronize_rcu();
+> > > > >    }
+> > > > > 
+> > > > >    static void shrink_submounts(struct mount *mnt);
+> > > > > 
+> > > > > 
+> > > > > I'm not sure how much that would buy us. If it doesn't then it should be
+> > > > > possible to play with the following possibly strange idea:
+> > > > > 
+> > > > > diff --git a/fs/mount.h b/fs/mount.h
+> > > > > index 7aecf2a60472..51b86300dc50 100644
+> > > > > --- a/fs/mount.h
+> > > > > +++ b/fs/mount.h
+> > > > > @@ -61,6 +61,7 @@ struct mount {
+> > > > >                   struct rb_node mnt_node; /* node in the ns->mounts
+> > > > > rbtree */
+> > > > >                   struct rcu_head mnt_rcu;
+> > > > >                   struct llist_node mnt_llist;
+> > > > > +               unsigned long mnt_rcu_unmount_seq;
+> > > > >           };
+> > > > >    #ifdef CONFIG_SMP
+> > > > >           struct mnt_pcp __percpu *mnt_pcp;
+> > > > > diff --git a/fs/namespace.c b/fs/namespace.c
+> > > > > index d9ca80dcc544..aae9df75beed 100644
+> > > > > --- a/fs/namespace.c
+> > > > > +++ b/fs/namespace.c
+> > > > > @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+> > > > >           struct hlist_head head;
+> > > > >           struct hlist_node *p;
+> > > > >           struct mount *m;
+> > > > > +       bool needs_synchronize_rcu = false;
+> > > > >           LIST_HEAD(list);
+> > > > > 
+> > > > >           hlist_move_list(&unmounted, &head);
+> > > > > @@ -1817,7 +1818,16 @@ static void namespace_unlock(void)
+> > > > >           if (likely(hlist_empty(&head)))
+> > > > >                   return;
+> > > > > 
+> > > > > -       synchronize_rcu_expedited();
+> > > > > +       hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+> > > > > +               if (!poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+> > > > > +                       continue;
+> > This has a bug. This needs to be:
+> > 
+> > 	/* A grace period has already elapsed. */
+> > 	if (poll_state_synchronize_rcu(m->mnt_rcu_unmount_seq))
+> > 		continue;
+> > 
+> > 	/* Oh oh, we have to pay up. */
+> > 	needs_synchronize_rcu = true;
+> > 	break;
+> > 
+> > which I'm pretty sure will eradicate most of the performance gain you've
+> > seen because fundamentally the two version shouldn't be different (Note,
+> > I drafted this while on my way out the door. r.
+> > 
+> > I would test the following version where we pay the cost of the
+> > smb_mb() from poll_state_synchronize_rcu() exactly one time:
+> > 
+> > diff --git a/fs/mount.h b/fs/mount.h
+> > index 7aecf2a60472..51b86300dc50 100644
+> > --- a/fs/mount.h
+> > +++ b/fs/mount.h
+> > @@ -61,6 +61,7 @@ struct mount {
+> >                  struct rb_node mnt_node; /* node in the ns->mounts rbtree */
+> >                  struct rcu_head mnt_rcu;
+> >                  struct llist_node mnt_llist;
+> > +               unsigned long mnt_rcu_unmount_seq;
+> >          };
+> >   #ifdef CONFIG_SMP
+> >          struct mnt_pcp __percpu *mnt_pcp;
+> > diff --git a/fs/namespace.c b/fs/namespace.c
+> > index d9ca80dcc544..dd367c54bc29 100644
+> > --- a/fs/namespace.c
+> > +++ b/fs/namespace.c
+> > @@ -1794,6 +1794,7 @@ static void namespace_unlock(void)
+> >          struct hlist_head head;
+> >          struct hlist_node *p;
+> >          struct mount *m;
+> > +       unsigned long mnt_rcu_unmount_seq = 0;
+> >          LIST_HEAD(list);
+> > 
+> >          hlist_move_list(&unmounted, &head);
+> > @@ -1817,7 +1818,10 @@ static void namespace_unlock(void)
+> >          if (likely(hlist_empty(&head)))
+> >                  return;
+> > 
+> > -       synchronize_rcu_expedited();
+> > +       hlist_for_each_entry_safe(m, p, &head, mnt_umount)
+> > +               mnt_rcu_unmount_seq = max(m->mnt_rcu_unmount_seq, mnt_rcu_unmount_seq);
+> > +
+> > +       cond_synchronize_rcu_expedited(mnt_rcu_unmount_seq);
+> > 
+> >          hlist_for_each_entry_safe(m, p, &head, mnt_umount) {
+> >                  hlist_del(&m->mnt_umount);
+> > @@ -1923,8 +1927,10 @@ static void umount_tree(struct mount *mnt, enum umount_tree_flags how)
+> >                          }
+> >                  }
+> >                  change_mnt_propagation(p, MS_PRIVATE);
+> > -               if (disconnect)
+> > +               if (disconnect) {
+> > +                       p->mnt_rcu_unmount_seq = get_state_synchronize_rcu();
+> >                          hlist_add_head(&p->mnt_umount, &unmounted);
+> > +               }
+> > 
+> >                  /*
+> >                   * At this point p->mnt_ns is NULL, notification will be queued
+> > 
+> > If this doesn't help I had considered recording the rcu sequence number
+> > during __legitimize_mnt() in the mounts. But we likely can't do that
+> > because get_state_synchronize_rcu() is expensive because it inserts a
+> > smb_mb() and that would likely be noticable during path lookup. This
+> > would also hinge on the notion that the last store of the rcu sequence
+> > number is guaranteed to be seen when we check them in namespace_unlock().
+> > 
+> > Another possibly insane idea (haven't fully thought it out but throwing
+> > it out there to test): allocate a percpu counter for each mount and
+> > increment it each time we enter __legitimize_mnt() and decrement it when
+> > we leave __legitimize_mnt(). During umount_tree() check the percpu sum
+> > for each mount after it's been added to the @unmounted list.
+> 
+> I had been thinking that a completion in the mount with a counter (say
+> 
+> walker_cnt) could be used. Because the mounts are unhashed there won't
+> 
+> be new walks so if/once the count is 0 the walker could call complete()
+> 
+> and wait_for_completion() replaces the rcu sync completely. The catch is
+> 
+> managing walker_cnt correctly could be racy or expensive.
+> 
+> 
+> I thought this would not be received to well dew to the additional fields
 
-Add limited support for setting up filesystem, mntns and mount marks by
-an unprivileged user under the following conditions:
-
-1.   User has CAP_SYS_ADMIN in the user ns where the group was created
-2.a. User has CAP_SYS_ADMIN in the user ns where the filesystem was
-     mounted (implies FS_USERNS_MOUNT)
-  OR (in case setting up a mntns or mount mark)
-2.b. User has CAP_SYS_ADMIN in the user ns associated with the mntns
-
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/notify/fanotify/fanotify.c      |  1 +
- fs/notify/fanotify/fanotify_user.c | 36 +++++++++++++++++++++---------
- include/linux/fanotify.h           |  5 ++---
- include/linux/fsnotify_backend.h   |  1 +
- 4 files changed, 30 insertions(+), 13 deletions(-)
-
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 6d386080faf2..060d9bee34bd 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -1009,6 +1009,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
- 
- static void fanotify_free_group_priv(struct fsnotify_group *group)
- {
-+	put_user_ns(group->user_ns);
- 	kfree(group->fanotify_data.merge_hash);
- 	if (group->fanotify_data.ucounts)
- 		dec_ucount(group->fanotify_data.ucounts,
-diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 471c57832357..b4255b661bda 100644
---- a/fs/notify/fanotify/fanotify_user.c
-+++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1499,6 +1499,7 @@ static struct hlist_head *fanotify_alloc_merge_hash(void)
- /* fanotify syscalls */
- SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- {
-+	struct user_namespace *user_ns = current_user_ns();
- 	struct fsnotify_group *group;
- 	int f_flags, fd;
- 	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
-@@ -1513,10 +1514,11 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 		/*
- 		 * An unprivileged user can setup an fanotify group with
- 		 * limited functionality - an unprivileged group is limited to
--		 * notification events with file handles and it cannot use
--		 * unlimited queue/marks.
-+		 * notification events with file handles or mount ids and it
-+		 * cannot use unlimited queue/marks.
- 		 */
--		if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) || !fid_mode)
-+		if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) ||
-+		    !(flags & (FANOTIFY_FID_BITS | FAN_REPORT_MNT)))
- 			return -EPERM;
- 
- 		/*
-@@ -1595,8 +1597,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 	}
- 
- 	/* Enforce groups limits per user in all containing user ns */
--	group->fanotify_data.ucounts = inc_ucount(current_user_ns(),
--						  current_euid(),
-+	group->fanotify_data.ucounts = inc_ucount(user_ns, current_euid(),
- 						  UCOUNT_FANOTIFY_GROUPS);
- 	if (!group->fanotify_data.ucounts) {
- 		fd = -EMFILE;
-@@ -1605,6 +1606,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 
- 	group->fanotify_data.flags = flags | internal_flags;
- 	group->memcg = get_mem_cgroup_from_mm(current->mm);
-+	group->user_ns = get_user_ns(user_ns);
- 
- 	group->fanotify_data.merge_hash = fanotify_alloc_merge_hash();
- 	if (!group->fanotify_data.merge_hash) {
-@@ -1804,6 +1806,7 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	struct fsnotify_group *group;
- 	struct path path;
- 	struct fan_fsid __fsid, *fsid = NULL;
-+	struct user_namespace *user_ns = NULL;
- 	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
- 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
- 	unsigned int mark_cmd = flags & FANOTIFY_MARK_CMD_BITS;
-@@ -1897,12 +1900,10 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	}
- 
- 	/*
--	 * An unprivileged user is not allowed to setup mount nor filesystem
--	 * marks.  This also includes setting up such marks by a group that
--	 * was initialized by an unprivileged user.
-+	 * A user is allowed to setup sb/mount/mntns marks only if it is
-+	 * capable in the user ns where the group was created.
- 	 */
--	if ((!capable(CAP_SYS_ADMIN) ||
--	     FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
-+	if (!ns_capable(group->user_ns, CAP_SYS_ADMIN) &&
- 	    mark_type != FAN_MARK_INODE)
- 		return -EPERM;
- 
-@@ -1987,12 +1988,27 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 		obj = inode;
- 	} else if (obj_type == FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
- 		obj = path.mnt;
-+		user_ns = real_mount(obj)->mnt_ns->user_ns;
- 	} else if (obj_type == FSNOTIFY_OBJ_TYPE_SB) {
- 		obj = path.mnt->mnt_sb;
-+		user_ns = path.mnt->mnt_sb->s_user_ns;
- 	} else if (obj_type == FSNOTIFY_OBJ_TYPE_MNTNS) {
- 		obj = mnt_ns_from_dentry(path.dentry);
-+		user_ns = ((struct mnt_namespace *)obj)->user_ns;
- 	}
- 
-+	/*
-+	 * In addition to being capable in the user ns where group was created,
-+	 * the user also needs to be capable in the user ns associated with
-+	 * the marked filesystem (for FS_USERNS_MOUNT filesystems) or in the
-+	 * user ns associated with the mntns (when marking a mount or mntns).
-+	 * This is aligned with the required permissions to open_by_handle_at()
-+	 * a directory fid provided with the events.
-+	 */
-+	ret = -EPERM;
-+	if (user_ns && !ns_capable(user_ns, CAP_SYS_ADMIN))
-+		goto path_put_and_out;
-+
- 	ret = -EINVAL;
- 	if (!obj)
- 		goto path_put_and_out;
-diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
-index 3c817dc6292e..879cff5eccd4 100644
---- a/include/linux/fanotify.h
-+++ b/include/linux/fanotify.h
-@@ -38,8 +38,7 @@
- 					 FAN_REPORT_PIDFD | \
- 					 FAN_REPORT_FD_ERROR | \
- 					 FAN_UNLIMITED_QUEUE | \
--					 FAN_UNLIMITED_MARKS | \
--					 FAN_REPORT_MNT)
-+					 FAN_UNLIMITED_MARKS)
- 
- /*
-  * fanotify_init() flags that are allowed for user without CAP_SYS_ADMIN.
-@@ -48,7 +47,7 @@
-  * so one of the flags for reporting file handles is required.
-  */
- #define FANOTIFY_USER_INIT_FLAGS	(FAN_CLASS_NOTIF | \
--					 FANOTIFY_FID_BITS | \
-+					 FANOTIFY_FID_BITS | FAN_REPORT_MNT | \
- 					 FAN_CLOEXEC | FAN_NONBLOCK)
- 
- #define FANOTIFY_INIT_FLAGS	(FANOTIFY_ADMIN_INIT_FLAGS | \
-diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
-index fc27b53c58c2..d4034ddaf392 100644
---- a/include/linux/fsnotify_backend.h
-+++ b/include/linux/fsnotify_backend.h
-@@ -250,6 +250,7 @@ struct fsnotify_group {
- 						 * full */
- 
- 	struct mem_cgroup *memcg;	/* memcg to charge allocations */
-+	struct user_namespace *user_ns;	/* user ns where group was created */
- 
- 	/* groups can define private fields here or use the void *private */
- 	union {
--- 
-2.34.1
-
+Path walking absolutely has to be as fast as possible, unmounting
+doesn't. Anything that writes to a shared field from e.g.,
+__legitimize_mnt() will cause cacheline pingpong and will very likely be
+noticable. And people care about even slight decreases in performances
+there. That's why we have the percpu counter and why I didn't even
+consider something like the completion stuff.
 
