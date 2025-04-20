@@ -1,54 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-46735-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46736-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF1AA94838
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Apr 2025 17:59:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273EFA94839
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Apr 2025 17:59:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DCBA7A535E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Apr 2025 15:58:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4824516BFE8
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Apr 2025 15:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43BB020B80C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF6A20C028;
 	Sun, 20 Apr 2025 15:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ruoCUaXP"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="kUIZORBi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DDF91426C
-	for <linux-fsdevel@vger.kernel.org>; Sun, 20 Apr 2025 15:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923C91EB1BC;
+	Sun, 20 Apr 2025 15:59:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745164769; cv=none; b=WPszVWbCu2umeGueKkjOkNLz6IfawWgL7AVm4c+vBrzpacfVI+DSNppTdyRM7PMCKLifQt5GJqEhQwZZ09WVNb42vpgBYCFIOkZUXelyXz+yHVs463KgVWkQcu2aZieLoHO8sLn+0enu1j5puA4ZcsCr7DYocc7AVHl5OCR830U=
+	t=1745164770; cv=none; b=nB5/J+LCIOL1s1hVVQAezENYwv7EmMKx4h6PtJFvprPV61E6oiPOkDNPEQ9klZDu14cZV+tU/LoizOhcN6sGKsZBjSqcqT05zQhnxdMYUfgCU0D8pTbusjGU8uyJEB7nul3eKT9UX+IZeJyjSE4EgEsyNJmoaFWdFuUaTtn0428=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745164769; c=relaxed/simple;
-	bh=wKlUb1F8NTcC7/zZh1idQgWvP2YToURObhBspAhowbc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CFBHxX5+aY8FiO3wknHW0sXC1oJUlLzk85lOFNvPpTdJi+lfORV2ixCGj4hbd/uIaBiCOAriNBs2Iu715oxKSlga+GmP0s0g1sxfg8ZSDQptuuIh0SFMJokvnWP4YWuVrH1T+wplEuA+4nPs9N5c/8OxSx7k9X5fmuaI3QOrp7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ruoCUaXP; arc=none smtp.client-ip=95.215.58.170
+	s=arc-20240116; t=1745164770; c=relaxed/simple;
+	bh=93kECPvpfHLvi3qDs25Onj8GT4ggPIYfsb3O6TfKzmA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RXXSUGBr1zrAyPWi0x0jm1MyAd9RDq01F+IEm+eNcdeyL5EZllXSx3aul0q+Yg24WSXG9xYDHR/DAzSO6X2EhSq9TkHaa0Y8KAE/1MXUWVyrYmb6PCIBA2apNmmye7RvZqkp52oHWNg4b51V31a8HN3xiHiNF5AzyHsnzLmVDmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=kUIZORBi; arc=none smtp.client-ip=95.215.58.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745164764;
+	t=1745164765;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Gm2QNh0cFY4yFUAfxAONi9VjLhZasge2TNMhuJFHdOo=;
-	b=ruoCUaXPTeEdySePBFvBGtxHFKlosxmXn/9XRmnQyj5O5/xHzOORJ/WtQkKqS2SeF/in4H
-	Vf3DWi8sMI9rHuOtq6d0NoeC8qLSN9vlcNQBLDYeBBHrkFtIc/vz7V2HdkjRiDGGuio/5+
-	qDgu/rD1J+B8yLuWICByISY3A0kA0lE=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l0cdqSd9eqgxjb0DRh6oAeCxxzKsmrIexabjD/n3lQo=;
+	b=kUIZORBiJnEt2TOQoAnwsjOq5Q+olLJUhaeywBijv98iOmQRgBiOgNO9kMa6Kzmx4oW7+C
+	t05IJILh8t9qiiaG9MNza1cLGXQf8Ou3vL8YXEaeBry6HACjkwAQw9D/kxoygb2D1npktU
+	KRew8Hnvo9P9k8r3CecDDkwIbBRbNSA=
 From: Kent Overstreet <kent.overstreet@linux.dev>
 To: linux-bcachefs@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-hardening@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 0/3] enumarated refcounts, for debugging refcount issues
-Date: Sun, 20 Apr 2025 11:59:13 -0400
-Message-ID: <20250420155918.749455-1-kent.overstreet@linux.dev>
+Subject: [PATCH 1/3] bcachefs: enumerated_ref.c
+Date: Sun, 20 Apr 2025 11:59:14 -0400
+Message-ID: <20250420155918.749455-2-kent.overstreet@linux.dev>
+In-Reply-To: <20250420155918.749455-1-kent.overstreet@linux.dev>
+References: <20250420155918.749455-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,63 +62,277 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Not sure we have a list for library code, but this might be of interest
-to anyone who's had to debug refcount issues on refs with lots of users
-(filesystem people), and I know the hardening folks deal with refcounts
-a lot.
+Factor out the debug code for rw filesystem refs into a small library.
 
-In release mode, this is just a wrapper around percpu refcounts.
+In release mode an enumerated ref is a normal percpu refcount, but in
+debug mode all enumerated users of the ref get their own atomic_long_t
+ref - making it much easier to chase down refcount usage bugs for when a
+refcount has many users.
 
-In debug mode, this provides separate sub-refcounts for each enumerated
-user, and provides facilities for printing them.
+For debugging, we have enumerated_ref_to_text(), which prints the
+current value of each different user.
 
-Meaning, if you're debugging a refcount issue, you no longer have to go
-searching through the entire codebase - it'll tell you the exact
-codepath.
+Additionally, in debug mode enumerated_ref_stop() has a 10 second
+timeout, after which it will dump outstanding refcounts.
 
-bcachefs patches are provided as example usage, for other subsystems.
-
-Kent Overstreet (3):
-  bcachefs: enumerated_ref.c
-  bcachefs: bch_fs.writes -> enumerated_refs
-  bcachefs: bch_dev.io_ref -> enumerated_ref
-
- fs/bcachefs/Makefile                |   1 +
- fs/bcachefs/alloc_background.c      |  41 ++++----
- fs/bcachefs/backpointers.c          |   6 +-
- fs/bcachefs/bcachefs.h              | 105 ++++++++++----------
- fs/bcachefs/btree_gc.c              |   7 +-
- fs/bcachefs/btree_io.c              |  29 +++---
- fs/bcachefs/btree_node_scan.c       |  10 +-
- fs/bcachefs/btree_trans_commit.c    |   5 +-
- fs/bcachefs/btree_update_interior.c |   7 +-
- fs/bcachefs/btree_write_buffer.c    |  11 ++-
- fs/bcachefs/buckets.c               |   4 +-
- fs/bcachefs/debug.c                 |  12 ++-
- fs/bcachefs/ec.c                    |  32 ++++---
- fs/bcachefs/enumerated_ref.c        | 144 ++++++++++++++++++++++++++++
- fs/bcachefs/enumerated_ref.h        |  66 +++++++++++++
- fs/bcachefs/enumerated_ref_types.h  |  19 ++++
- fs/bcachefs/fs-io-direct.c          |   7 +-
- fs/bcachefs/fs-io.c                 |  15 +--
- fs/bcachefs/io_read.c               |  17 ++--
- fs/bcachefs/io_write.c              |  20 ++--
- fs/bcachefs/journal.c               |  10 +-
- fs/bcachefs/journal_io.c            |  15 +--
- fs/bcachefs/journal_reclaim.c       |   2 +-
- fs/bcachefs/reflink.c               |   5 +-
- fs/bcachefs/sb-members.h            |  32 ++++---
- fs/bcachefs/snapshot.c              |   7 +-
- fs/bcachefs/subvolume.c             |   7 +-
- fs/bcachefs/super-io.c              |  18 ++--
- fs/bcachefs/super.c                 | 125 +++++++++++-------------
- fs/bcachefs/super.h                 |   3 +
- fs/bcachefs/sysfs.c                 |  46 ++++-----
- 31 files changed, 540 insertions(+), 288 deletions(-)
+Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+---
+ fs/bcachefs/Makefile               |   1 +
+ fs/bcachefs/enumerated_ref.c       | 144 +++++++++++++++++++++++++++++
+ fs/bcachefs/enumerated_ref.h       |  54 +++++++++++
+ fs/bcachefs/enumerated_ref_types.h |  19 ++++
+ 4 files changed, 218 insertions(+)
  create mode 100644 fs/bcachefs/enumerated_ref.c
  create mode 100644 fs/bcachefs/enumerated_ref.h
  create mode 100644 fs/bcachefs/enumerated_ref_types.h
 
+diff --git a/fs/bcachefs/Makefile b/fs/bcachefs/Makefile
+index baf859bf83bb..3be39845e4f6 100644
+--- a/fs/bcachefs/Makefile
++++ b/fs/bcachefs/Makefile
+@@ -35,6 +35,7 @@ bcachefs-y		:=	\
+ 	disk_accounting.o	\
+ 	disk_groups.o		\
+ 	ec.o			\
++	enumerated_ref.o	\
+ 	errcode.o		\
+ 	error.o			\
+ 	extents.o		\
+diff --git a/fs/bcachefs/enumerated_ref.c b/fs/bcachefs/enumerated_ref.c
+new file mode 100644
+index 000000000000..56ab430f209f
+--- /dev/null
++++ b/fs/bcachefs/enumerated_ref.c
+@@ -0,0 +1,144 @@
++// SPDX-License-Identifier: GPL-2.0
++
++#include "bcachefs.h"
++#include "enumerated_ref.h"
++#include "util.h"
++
++#include <linux/completion.h>
++
++#ifdef ENUMERATED_REF_DEBUG
++void enumerated_ref_get(struct enumerated_ref *ref, unsigned idx)
++{
++	BUG_ON(idx >= ref->nr);
++	atomic_long_inc(&ref->refs[idx]);
++}
++
++bool __enumerated_ref_tryget(struct enumerated_ref *ref, unsigned idx)
++{
++	BUG_ON(idx >= ref->nr);
++	return atomic_long_inc_not_zero(&ref->refs[idx]);
++}
++
++bool enumerated_ref_tryget(struct enumerated_ref *ref, unsigned idx)
++{
++	BUG_ON(idx >= ref->nr);
++	return !ref->dying &&
++		atomic_long_inc_not_zero(&ref->refs[idx]);
++}
++
++void enumerated_ref_put(struct enumerated_ref *ref, unsigned idx)
++{
++	BUG_ON(idx >= ref->nr);
++	long v = atomic_long_dec_return(&ref->refs[idx]);
++
++	BUG_ON(v < 0);
++	if (v)
++		return;
++
++	for (unsigned i = 0; i < ref->nr; i++)
++		if (atomic_long_read(&ref->refs[i]))
++			return;
++
++	if (ref->stop_fn)
++		ref->stop_fn(ref);
++	complete(&ref->stop_complete);
++}
++#endif
++
++#ifndef ENUMERATED_REF_DEBUG
++static void enumerated_ref_kill_cb(struct percpu_ref *percpu_ref)
++{
++	struct enumerated_ref *ref =
++		container_of(percpu_ref, struct enumerated_ref, ref);
++
++	if (ref->stop_fn)
++		ref->stop_fn(ref);
++	complete(&ref->stop_complete);
++}
++#endif
++
++void enumerated_ref_stop_async(struct enumerated_ref *ref)
++{
++	reinit_completion(&ref->stop_complete);
++
++#ifndef ENUMERATED_REF_DEBUG
++	percpu_ref_kill(&ref->ref);
++#else
++	ref->dying = true;
++	for (unsigned i = 0; i < ref->nr; i++)
++		enumerated_ref_put(ref, i);
++#endif
++}
++
++void enumerated_ref_stop(struct enumerated_ref *ref,
++			 const char * const names[])
++{
++	enumerated_ref_stop_async(ref);
++	while (!wait_for_completion_timeout(&ref->stop_complete, HZ * 10)) {
++		struct printbuf buf = PRINTBUF;
++
++		prt_str(&buf, "Waited for 10 seconds to shutdown enumerated ref\n");
++		prt_str(&buf, "Outstanding refs:\n");
++		enumerated_ref_to_text(&buf, ref, names);
++		printk(KERN_ERR "%s", buf.buf);
++		printbuf_exit(&buf);
++	}
++}
++
++void enumerated_ref_start(struct enumerated_ref *ref)
++{
++#ifndef ENUMERATED_REF_DEBUG
++	percpu_ref_reinit(&ref->ref);
++#else
++	ref->dying = false;
++	for (unsigned i = 0; i < ref->nr; i++) {
++		BUG_ON(atomic_long_read(&ref->refs[i]));
++		atomic_long_inc(&ref->refs[i]);
++	}
++#endif
++}
++
++void enumerated_ref_exit(struct enumerated_ref *ref)
++{
++#ifndef ENUMERATED_REF_DEBUG
++	percpu_ref_exit(&ref->ref);
++#else
++	kfree(ref->refs);
++	ref->refs = NULL;
++	ref->nr = 0;
++#endif
++}
++
++int enumerated_ref_init(struct enumerated_ref *ref, unsigned nr,
++			void (*stop_fn)(struct enumerated_ref *))
++{
++	init_completion(&ref->stop_complete);
++	ref->stop_fn = stop_fn;
++
++#ifndef ENUMERATED_REF_DEBUG
++	return percpu_ref_init(&ref->ref, enumerated_ref_kill_cb,
++			    PERCPU_REF_INIT_DEAD, GFP_KERNEL);
++#else
++	ref->refs = kzalloc(sizeof(ref->refs[0]) * nr, GFP_KERNEL);
++	if (!ref->refs)
++		return -ENOMEM;
++
++	ref->nr = nr;
++	return 0;
++#endif
++}
++
++void enumerated_ref_to_text(struct printbuf *out,
++			    struct enumerated_ref *ref,
++			    const char * const names[])
++{
++#ifdef ENUMERATED_REF_DEBUG
++	bch2_printbuf_tabstop_push(out, 32);
++
++	for (unsigned i = 0; i < ref->nr; i++)
++		prt_printf(out, "%s\t%li\n", names[i],
++			   atomic_long_read(&ref->refs[i]));
++#else
++	prt_str(out, "(not in debug mode)\n");
++#endif
++}
+diff --git a/fs/bcachefs/enumerated_ref.h b/fs/bcachefs/enumerated_ref.h
+new file mode 100644
+index 000000000000..6d2283cf298d
+--- /dev/null
++++ b/fs/bcachefs/enumerated_ref.h
+@@ -0,0 +1,54 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _BCACHEFS_ENUMERATED_REF_H
++#define _BCACHEFS_ENUMERATED_REF_H
++
++#include "enumerated_ref_types.h"
++
++/*
++ * A refcount where the users are enumerated: in debug mode, we create sepate
++ * refcounts for each user, to make leaks and refcount errors easy to track
++ * down:
++ */
++
++#ifdef ENUMERATED_REF_DEBUG
++void enumerated_ref_get(struct enumerated_ref *, unsigned);
++bool __enumerated_ref_tryget(struct enumerated_ref *, unsigned);
++bool enumerated_ref_tryget(struct enumerated_ref *, unsigned);
++void enumerated_ref_put(struct enumerated_ref *, unsigned);
++#else
++
++static inline void enumerated_ref_get(struct enumerated_ref *ref, unsigned idx)
++{
++	percpu_ref_get(&ref->ref);
++}
++
++static inline bool __enumerated_ref_tryget(struct enumerated_ref *ref, unsigned idx)
++{
++	return percpu_ref_tryget(&ref->ref);
++}
++
++static inline bool enumerated_ref_tryget(struct enumerated_ref *ref, unsigned idx)
++{
++	return percpu_ref_tryget_live(&ref->ref);
++}
++
++static inline void enumerated_ref_put(struct enumerated_ref *ref, unsigned idx)
++{
++	percpu_ref_put(&ref->ref);
++}
++#endif
++
++void enumerated_ref_stop_async(struct enumerated_ref *);
++void enumerated_ref_stop(struct enumerated_ref *, const char * const[]);
++void enumerated_ref_start(struct enumerated_ref *);
++
++void enumerated_ref_exit(struct enumerated_ref *);
++int enumerated_ref_init(struct enumerated_ref *, unsigned,
++			void (*stop_fn)(struct enumerated_ref *));
++
++struct printbuf;
++void enumerated_ref_to_text(struct printbuf *,
++			    struct enumerated_ref *,
++			    const char * const[]);
++
++#endif /* _BCACHEFS_ENUMERATED_REF_H */
+diff --git a/fs/bcachefs/enumerated_ref_types.h b/fs/bcachefs/enumerated_ref_types.h
+new file mode 100644
+index 000000000000..0e6076f466d3
+--- /dev/null
++++ b/fs/bcachefs/enumerated_ref_types.h
+@@ -0,0 +1,19 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _BCACHEFS_ENUMERATED_REF_TYPES_H
++#define _BCACHEFS_ENUMERATED_REF_TYPES_H
++
++#include <linux/percpu-refcount.h>
++
++struct enumerated_ref {
++#ifdef ENUMERATED_REF_DEBUG
++	unsigned		nr;
++	bool			dying;
++	atomic_long_t		*refs;
++#else
++	struct percpu_ref	ref;
++#endif
++	void			(*stop_fn)(struct enumerated_ref *);
++	struct completion	stop_complete;
++};
++
++#endif /* _BCACHEFS_ENUMERATED_REF_TYPES_H */
 -- 
 2.49.0
 
