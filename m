@@ -1,57 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-46732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AEBBA9477C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Apr 2025 12:53:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0C43A94781
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Apr 2025 12:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53723B0C64
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Apr 2025 10:53:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DB047AA131
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Apr 2025 10:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 003A51E98FE;
-	Sun, 20 Apr 2025 10:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767691E377F;
+	Sun, 20 Apr 2025 10:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UhO/wmmZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b5b04CS3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2E11BF37;
-	Sun, 20 Apr 2025 10:53:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59B11BF37;
+	Sun, 20 Apr 2025 10:54:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745146400; cv=none; b=Z5gihdFnNLygXqPr5ckL9w6C0jM0ve0TXn/57+KUkr7BAWx9c0xJRLbAgzRYhdukQoyPfcoJloeOOqYCw0BEK7wdqjtzes9wYFALy2onaV3uFmvmjfbGKOlbEzoLMCdiuCf2BZ8xKaDmvWxbIzzBMkD/WIPVvXaEsiQhVHnDEwk=
+	t=1745146475; cv=none; b=dI4uoI3G+kl2KudokmZ1sYnym7NVMw1YW4LjZkN4Xcb0QrMHwnvqq0BL4crqeZp8QFgkvA2CCtOzq99EMKb6BiEtYp9uXVHD4TxH/yA05xIB1z6E78CVq8eys8KhwRfYPawx9cdVX2MOonPldf8OQlEkNdhFq9AkvnV6caSR1WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745146400; c=relaxed/simple;
-	bh=2JtSp0HfCxJNDl+86dI0/8lLHBCORCFKkM6Oyfjb3pk=;
+	s=arc-20240116; t=1745146475; c=relaxed/simple;
+	bh=GfoUC43NxD1UrkTX6844T1vxoeCI3mhF5KNPYYZXzVI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TRaMMpNWtnD58KzhO0j/K41Ys9Qfaf/vaD6p29jmBLdTgj9q2GKPzb9IQ+UCmhCu3vKplJZw3te7MXV+xxxGmjE89i468wtC+GnNMIXrUsyogyWlTj1eFjlLZHwCjNEeenQHnwT2Dj0lIDCYAr1aJz71zDLS5V56dPB2spPJkCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UhO/wmmZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA008C4CEE2;
-	Sun, 20 Apr 2025 10:53:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qj8CjdBtn68AFq2VFavne552F1fMivRXFa1E1ZIYlOqdtYYQ/eyuxkdAdZ/SiKWRx/aok1KG0ks1QT6xzsRloQHsa8oMsLgW2p6z1KrhdXjl7b6Krh7Q8LSkvE4AqjvFz6kw1sgtjnKBKnDW2u5jPD/d303VYtESJXWWMNGgDus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b5b04CS3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0312C4CEE2;
+	Sun, 20 Apr 2025 10:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745146399;
-	bh=2JtSp0HfCxJNDl+86dI0/8lLHBCORCFKkM6Oyfjb3pk=;
+	s=k20201202; t=1745146475;
+	bh=GfoUC43NxD1UrkTX6844T1vxoeCI3mhF5KNPYYZXzVI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UhO/wmmZO8s3upAMPcSH/5YVtWifC6PIrSSqxSixq+c+Pka5u+ulRf2hMbLZNtrjz
-	 ncf/nbIyctgxueO9xK9TQqUHi85znWQMknPexM1e14DJqYfv77WxaOrN3t+jha2+CN
-	 0/gI/yfDMD8+GEaNszC93oTFXk7EAyYGkQYVbndTh72G7FlRZawk8dY6iGeKf3kcfH
-	 z1q1eYUM2hqkGxdN/9Zwg0EOsIb4b/pY2eZ377e7YhcGTN+LLUOIeAiE3UyrkulgOf
-	 Cwu23VCtuSZZkB7QvBc43ombsjQkQ1jEIUwZ2GzDAwc+mcz0UpykmVZTf4DztzPPF7
-	 6qHt0QPqqSVAA==
-Date: Sun, 20 Apr 2025 12:53:14 +0200
+	b=b5b04CS3TMJBuUpm7jbi4ZiXZPpuJvkvo6mlTgXL6D1YkwcUvz00SKAVjYV27139J
+	 09JGjAxtNw2mSGzLRwrSwqBR/BncVo6RrTM8U5Kq2ymNxE+xY1ISt3zrWV+QCcc1Vg
+	 Py0jznYAGVldaydeJfG22ycrLpsU6AZRGA008IzD4mDqpk1CdqBvvfwhOhOg7mQ+JZ
+	 NPYpdBnGP1UareWUASe72he8SdDWYW5T12Yc/QZ3JhDb/I6ka2X24F5uA4scQWwE+U
+	 vs8oKOq0iIu1h/8dCDX0ZQ1vB6s9BnOxBY/ZD+pSa3BXLa8gc1Dc9VU8dfeBoka2lW
+	 s1dvq5hnCpOuQ==
+Date: Sun, 20 Apr 2025 12:54:29 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org, Trond Myklebust <trond.myklebust@hammerspace.com>, 
-	"Eric W. Biederman" <ebiederm@xmission.com>, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.10] umount: Allow superblock owners to force
- umount
-Message-ID: <20250420-sticken-seehund-9614ddbcad43@brauner>
-References: <20250331143234.1667913-1-sashal@kernel.org>
- <aAKDGmxq/snqaYhQ@duo.ucw.cz>
+To: Xilin Wu <sophon@radxa.com>
+Cc: linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@infradead.org>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Penglei Jiang <superman.xpt@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>, syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/9] anon_inode: use a proper mode internally
+Message-ID: <20250420-monument-zeitschrift-6e8126bf53c9@brauner>
+References: <20250407-work-anon_inode-v1-0-53a44c20d44e@kernel.org>
+ <20250407-work-anon_inode-v1-1-53a44c20d44e@kernel.org>
+ <3A9139D5CD543962+89831381-31b9-4392-87ec-a84a5b3507d8@radxa.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,20 +62,65 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aAKDGmxq/snqaYhQ@duo.ucw.cz>
+In-Reply-To: <3A9139D5CD543962+89831381-31b9-4392-87ec-a84a5b3507d8@radxa.com>
 
-On Fri, Apr 18, 2025 at 06:51:38PM +0200, Pavel Machek wrote:
-> Hi!
-> 
-> > From: Trond Myklebust <trond.myklebust@hammerspace.com>
+On Fri, Apr 18, 2025 at 10:15:01AM +0800, Xilin Wu wrote:
+> On 2025/4/7 17:54:15, Christian Brauner wrote:
+> > This allows the VFS to not trip over anonymous inodes and we can add
+> > asserts based on the mode into the vfs. When we report it to userspace
+> > we can simply hide the mode to avoid regressions. I've audited all
+> > direct callers of alloc_anon_inode() and only secretmen overrides i_mode
+> > and i_op inode operations but it already uses a regular file.
 > > 
-> > [ Upstream commit e1ff7aa34dec7e650159fd7ca8ec6af7cc428d9f ]
-> > 
-> > Loosen the permission check on forced umount to allow users holding
-> > CAP_SYS_ADMIN privileges in namespaces that are privileged with respect
-> > to the userns that originally mounted the filesystem.
+> > Fixes: af153bb63a336 ("vfs: catch invalid modes in may_open()")
+> > Cc: <stable@vger.kernel.org> # all LTS kernels
+> > Reported-by: syzbot+5d8e79d323a13aa0b248@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/all/67ed3fb3.050a0220.14623d.0009.GAE@google.com
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > 
-> Should we be tweaking permissions in -stable?
+> Hi Christian and FSdevel list,
+> 
+> I'm reporting a regression introduced in the linux-next tree, which I've
+> tracked down using `git bisect` to this commit.
+> 
+> Starting with `linux-next` tag `next-20250408` (up to the latest
+> `next-20250417` I tested), attempting to start an SDDM Wayland session
+> (using KDE Plasma's KWin) results in a black screen. The `kwin_wayland` and
+> `sddm-helper-start-wayland` processes both enter a state consuming 100% CPU
+> on a single core indefinitely, preventing the login screen from appearing.
+> The last known good kernel is `next-20250407`.
+> 
+> Using `strace` on the `kwin_wayland` process revealed it's stuck in a tight
+> loop involving `ppoll` and `ioctl`:
+> 
+> ```
+> ioctl(29, FIONREAD, [0])                = 0
+> ppoll([{fd=10, events=POLLIN}, {fd=37, events=POLLIN}, {fd=9,
+> events=POLLIN}, {fd=5, events=POLLIN}, {fd=29, events=POLLIN}, {fd=17,
+> events=POLLIN}, {fd=3, events=POLLIN}], 7, NULL, NULL, 8) = 1 ([{fd=29,
+> revents=POLLIN}])
+> ioctl(29, FIONREAD, [0])                = 0
+> ppoll([{fd=10, events=POLLIN}, {fd=37, events=POLLIN}, {fd=9,
+> events=POLLIN}, {fd=5, events=POLLIN}, {fd=29, events=POLLIN}, {fd=17,
+> events=POLLIN}, {fd=3, events=POLLIN}], 7, NULL, NULL, 8) = 1 ([{fd=29,
+> revents=POLLIN}])
+> # ... this repeats indefinitely at high frequency
+> ```
+> 
+> Initially, I suspected a DRM issue, but checking the file descriptor
+> confirmed it's an `inotify` instance:
+> 
+> ```
+> $ sudo ls -l /proc/<kwin_pid>/fd/29
+> lr-x------ 1 sddm sddm 64 Apr 17 14:03 /proc/<kwin_pid>/fd/29 ->
+> anon_inode:inotify
+> ```
+> 
+> Reverting this commit resolves the issue, allowing SDDM and KWin Wayland to
+> start normally.
+> 
+> Could you please take a look at this? Let me know if you need any further
+> information or testing from my side.
 
-Seems fine to me if you'd backport it.
+I'll take a look latest Tuesday.
 
