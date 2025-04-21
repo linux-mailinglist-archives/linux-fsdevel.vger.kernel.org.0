@@ -1,96 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-46776-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46778-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 248E0A94B04
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 04:31:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E36BA94B6B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 05:10:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA3B7188EDF1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 02:31:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30E0D189140F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 03:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BDC2566EC;
-	Mon, 21 Apr 2025 02:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3874257424;
+	Mon, 21 Apr 2025 03:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dXZTgKZs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKw6y3hr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D30D2905;
-	Mon, 21 Apr 2025 02:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3F572571CC;
+	Mon, 21 Apr 2025 03:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745202684; cv=none; b=mqy5tlsSXgf+jJkb6OF64m6e8N1Nn40TDjCP5T7/LGlMmeFv3DVjxs4R0+8A/7cWTYNdgUnLSMrwe9NvZGSooXUnC+qhKrgRnoY11DG0eqafSMSTWDgMRcb1IREoGD44Eu/tLUvWVL6d1YC2sq4rMDvO7J8QA3yeUOIYPHxkngI=
+	t=1745204994; cv=none; b=l93ag/xLSJQBQkG4/SQ/jseFL+/DjLcupLf/uPQkMQwN4xF8th50TFDsKS0SYHaJ2ej4Cm5kAGIzmAqMrXCbBGRbxJzWuUcB3CdUlQ8HqZKR2/HTSRL1Gqi3kfbMK+RHK2j0kIj2zDKB0kxDkrDsQEgrwcwGfnXQTVH/PZNKSCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745202684; c=relaxed/simple;
-	bh=tEaK+Oom7ijrJ8AxlZ52ZDEbivL7nUBLG7vUvGwGyjw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d5GlXBg9bxqNuJN9+0HiQzdSH7rbFaKRRdMW6zg3/S4G+kBhYcbZeD2snzIpUB5+++MwB/6SwVnuSMuM7yfoISkwTaTOm1xcQh9cnsdkMMK2C3ATtJ+kCv4HbD09lYdHp/J9oyB2Whe3ZQ1DJ9NgJFJePLXD6wKxSnl0zCQJ12k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dXZTgKZs; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ac3eb3fdd2eso640408666b.0;
-        Sun, 20 Apr 2025 19:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745202681; x=1745807481; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tEaK+Oom7ijrJ8AxlZ52ZDEbivL7nUBLG7vUvGwGyjw=;
-        b=dXZTgKZs49Y2tbmlIBZO/yr6xlWZJJwKV6BecM/Jmtj4Aveeum+S6YlGCPa+IESgbA
-         8k1r/XjyyHQ00mzT+fSczBL6PT4VJBkLAiq1VOkZCLE3HI7mM5i+i+V8ztBJdpgBWUz2
-         0HUDBSJ870iYm9JbMJIqNlw786HJW/SneM6N2W7CoD6Ferp3S1B6uTKL5lQEmIcUaFq5
-         rOkZCWz5RDJttxsYFgKHQ/FCB6YB/vF37xfcIoQis3ZaptQrpL2lXZTQ+A8XYqFoP1z5
-         Vj4ngX32xTcaPzZpSV6MwBDjbLy05BP/FFLrxXW+u6Fl7mBquS1chjotdnuwjVBhQg+f
-         7Aug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745202681; x=1745807481;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tEaK+Oom7ijrJ8AxlZ52ZDEbivL7nUBLG7vUvGwGyjw=;
-        b=suHEpXBwLogv5YHH3SWqDmqz5MyEhWZgb9glXJVW3kB0JGV6Ba0DZr/8N9fFQyskjc
-         PdD/XPE/x8vtkD5GkEgdtt1m4XsPovhEaiA0KAbMAJaEKsuajgjn64CubYyofdLIGvrG
-         iMwbIl2Oeqyt5kzVOCzJM4/Vsz/yyAeO4ciF++yq6//fiTc+dH1XBB8348V1T5y46rt5
-         BBVs5VBiMD59spY06dj8OoHlrDSQduK8ogjIL2aeAiuGbLhFBrDMRs1J671rRI9BdIB9
-         nHGR9KXd3PBAIm5SD7aNID4ynljCZhrHajRkPWDOPBnvJOh5054TTV6wY+buuoqpr+Vy
-         byzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZSK8NtYUMhVBpYmi0fCtpio+UJvye6Dr+rO0sqWUc6qE0lLD6mIELVS/pAXWUQezL3JHJzjNo2A6eTg==@vger.kernel.org, AJvYcCXWHbQUIC1aOQUcFtNSf2E5rjK8ac9amPpsyEGsghgGEygluDi5HUA0I4fnEY0ctlS5gJXdOBYtBv3p@vger.kernel.org, AJvYcCXtpO1Dpzx7mP1IdkHWIqdP8T1zjZLJQNP3VqOJNyfdmG0bGzk4kgRVztE5QGOx1KWfuY2gB9XyRb1jQxrBpg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSxZ2jUA3oSMRyoRh8qGS6GjzsK/2uQLrfc4D9Dx8XmZsZ/20z
-	GWqEeLTD1ZploxJIBJXBcvC39QwO5q2UVxetN1Z8+CkGyliSPWysKhUSzB7dB52ikSmq0YnNLpi
-	cB+pKOA300vFmKurAaSWdu95kzQ==
-X-Gm-Gg: ASbGncsw1PH8j+w6wdaBuCleVl71XFRUIRIVMHfv+npN0oRJLH7znQbXXtiQbXqaIrV
-	KmtxeOtEeLFbOGGSpJ5m1XcXVCPGxcxm5uRMg/Tfn9khjwliPXAUP0+WYHbUWWT7j+EjQxmGHd7
-	qJcv3dOio+NI/hsJWPOAuo0jB2D9AV85HIwGBYVVrs/WEbTFTAeapA
-X-Google-Smtp-Source: AGHT+IFvk3OKeedfObHR+haZPpeL8y9MDwyTIqTlWTgGbpVt44OarajVHfHqt0LQycSpL/yiyPZAhmpl2XzURePHNaU=
-X-Received: by 2002:a17:907:da3:b0:ac1:dd6f:f26c with SMTP id
- a640c23a62f3a-acb74db8e8cmr899622366b.46.1745202681153; Sun, 20 Apr 2025
- 19:31:21 -0700 (PDT)
+	s=arc-20240116; t=1745204994; c=relaxed/simple;
+	bh=utlV7YV5L4zVTAuFRwKh50s3JF93WI0+AxKIZ+qDB0M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i3yluE9ppo/ytfww+STerTn7IqW+zGKOTlSTHGbdARldrl3KhOpzo9SrvWCNi5n0JcYJDDOrwN38OkjjLLONTP+MdHM7/IkSj0ADHyorWkMw863AzJf8uINSXr32xnNzQf1LUgys+CxiW08lxmLjZdnIuZTr6setaxJFD5TgGOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKw6y3hr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D8C5C4CEE2;
+	Mon, 21 Apr 2025 03:09:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745204993;
+	bh=utlV7YV5L4zVTAuFRwKh50s3JF93WI0+AxKIZ+qDB0M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FKw6y3hrVj02EZe0H2U3x0U1HOqhtt62f9Euh3YcPKMcQW3D2ip0fMoj6AltHEqlk
+	 8pxyxuUflGB4pxWmJibBGoz9T1ha/KEV6q9alpDtVfDH2jwfmXGje/2/UjeISWMAMa
+	 hLiguzAYUhrwHzfgI6f5/f71WNX8FQGw/cWAk4ooBN+MZBml22F+aV1OtwK+fqNxwd
+	 sdgUFmZ2DSVWf1ZIkHjF+e2vNAfm9k4j0eE/Em0scJtexJBec5MxSKWzU9f/abDBuO
+	 szWVZAg6Qlpyzgflbu/f/sIunfw/B+JEeGkh2E1lcF+hiHmKLy3HbjmGXR3bjxp0NX
+	 TvpiIpKPKcXtg==
+Date: Sun, 20 Apr 2025 20:09:50 -0700
+From: Kees Cook <kees@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] enumarated refcounts, for debugging refcount issues
+Message-ID: <202504202008.533326EF4@keescook>
+References: <20250420155918.749455-1-kent.overstreet@linux.dev>
+ <202504201808.3064FFB55E@keescook>
+ <yd3f6ie56x2dbagqycwluxtz7inrmbub5fg7omp226vrdvxtb2@sjn23uj3r6t7>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250203094322.1809766-1-hch@lst.de> <20250203094322.1809766-2-hch@lst.de>
-In-Reply-To: <20250203094322.1809766-2-hch@lst.de>
-From: Anuj gupta <anuj1072538@gmail.com>
-Date: Mon, 21 Apr 2025 08:00:43 +0530
-X-Gm-Features: ATxdqUGhqh8b93TrZx53x60-M6ftN16MSQWs4BvCu2RxwTrDV5bCDV50pF-D4-g
-Message-ID: <CACzX3AtXC0rvjjjbpTwwuNM0nqRz4UpmsL5F11S8oFzS5Le5RA@mail.gmail.com>
-Subject: Re: [PATCH 1/7] block: support integrity generation and verification
- from file systems
-To: Christoph Hellwig <hch@lst.de>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
-	Johannes Thumshirn <Johannes.Thumshirn@wdc.com>, Qu Wenruo <wqu@suse.com>, 
-	Goldwyn Rodrigues <rgoldwyn@suse.com>, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yd3f6ie56x2dbagqycwluxtz7inrmbub5fg7omp226vrdvxtb2@sjn23uj3r6t7>
 
-> +EXPORT_SYMBOL_GPL(blk_integrity_generate);
+On Sun, Apr 20, 2025 at 09:27:26PM -0400, Kent Overstreet wrote:
+> On Sun, Apr 20, 2025 at 06:08:41PM -0700, Kees Cook wrote:
+> > On Sun, Apr 20, 2025 at 11:59:13AM -0400, Kent Overstreet wrote:
+> > > Not sure we have a list for library code, but this might be of interest
+> > > to anyone who's had to debug refcount issues on refs with lots of users
+> > > (filesystem people), and I know the hardening folks deal with refcounts
+> > > a lot.
+> > 
+> > Why not use refcount_t instead of atomic_t?
+> 
+> It's rather pointless here since percpu refcounts don't (and can't)
+> support saturation, and atomic_long_t should always suffice - you'd have
+> to be doing something particularly bizarre for it not to, since
+> refcounts generally count things in memory.
 
-Since this is now exported, it should have a kernel-doc style comment.
-Otherwise looks good to me:
-Reviewed-by: Anuj Gupta <anuj20.g@samsung.com>
+Ah yes, my eyes skipped over the "long" part when I was reading the
+patches. There's currently no sane reason to use refcount_t when
+already using atomic_long_t. Sorry for the noise!
+
+> Out of curiousity, has overflow of an atomic_long_t refcount ever been
+> observed?
+
+Not to my knowledge. :)
+
+-- 
+Kees Cook
 
