@@ -1,55 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-46831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F41A95520
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 19:19:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685AFA95523
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 19:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00EC83B0FEC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 17:19:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AFD5168432
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 17:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A9691E3774;
-	Mon, 21 Apr 2025 17:19:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2080A1E32B9;
+	Mon, 21 Apr 2025 17:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g2tlHUyR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJCuQvip"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD7042A9E;
-	Mon, 21 Apr 2025 17:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D04171CD;
+	Mon, 21 Apr 2025 17:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745255949; cv=none; b=jKNiBNiTMQ8Juiopd0BfBdT2h9oZtKpFq5msDUcDx7rXl/wyTQulrUaIKEIwnsbOqxwfufJl/Qa1t6Z0YsOmylToP1Hfw8dZO1dFvbK16SbIHlyOJK20kFixGCcOBeGCZnXI1cJXa5H/iJ3Kj7e4rgPOCsh6EPDO2dRh8V++CDE=
+	t=1745255964; cv=none; b=eTXWQdV6wADVegft4gPhL3d98w9qdraNVR6IecNkPG078hsj4VC7UPwMrFLwikSylBoY9XJiG+vTzr9oN6rSdX8UzjztPRSUaKX2Hqum4EX5gisWZCW7x66TyxXVmJr29rbF9pJ3B0ABg+PWBidd6EQCTFDDcjyw3V6bVA+KLkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745255949; c=relaxed/simple;
-	bh=+H6fFWWt2/LM4OHZdgzZEKwmbr40JTh8CZAIUJwoGKc=;
+	s=arc-20240116; t=1745255964; c=relaxed/simple;
+	bh=ZOmyRXmRoEyIIWzuCFtXPMy0+SkSJbikUvZaUoGvQcU=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nS8kQkNyUuOIlcdqpjm3ondhZtg+tSqYpvIvYd/v1otE0+QUcOfjv9Ye7JLLf2Q3opo/YmjYQXbgmGqm5U7pWswMWYn7S0TOEwBQD9bkUOlCmScw9XWp1dM4lgK/Rze5iLQ+Z8AdLr7GvxTtAMH8DzwLJXw3+52GGW03yugyXr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g2tlHUyR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4382CC4CEE4;
-	Mon, 21 Apr 2025 17:19:08 +0000 (UTC)
+	 MIME-Version:Content-Type; b=rEcG4t5bBZmDGeJnDL4fUBlLGzdKN0MVHde61WAlCu5A/kRbOBwH/JNW18PvdQ4yw20i6EsBSdY1olkxRwhZkJF4006MA/TIKfX2n44LciOnTqS1W9mHInYMhFc1mHE+Vzd9/wHpJkZu7wBnLtC9e1ZWjyCQ2g92py3urM8/6s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJCuQvip; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D66CBC4CEE4;
+	Mon, 21 Apr 2025 17:19:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745255948;
-	bh=+H6fFWWt2/LM4OHZdgzZEKwmbr40JTh8CZAIUJwoGKc=;
+	s=k20201202; t=1745255963;
+	bh=ZOmyRXmRoEyIIWzuCFtXPMy0+SkSJbikUvZaUoGvQcU=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=g2tlHUyR4qqHxf3rfBK4X1nWoAmfqe//dTOepUmG+ci1hw8WBAJEFnYoCMC016PgB
-	 ICE1S6CPyJjhtZIECCBXFTRvQKYw1WpHYDSPDgkFAUtOLvmBcR0HswJVnpnlemmHr1
-	 c8TmIs9gzZdvESeq3+ElFoe4Rsu/uY/vyt+l/2PffGdzEWJeVx5SRpaO84u+zBY43F
-	 sycqG5Og9fzsfXArQWKGq4+3lKJJaeTfI9bcOXraVmGE76c1vCs3/iJYX8ABe3phBZ
-	 JEqcmfcm+29KjXpnAkXK2ZZzZA/ivGaOXOrNBfJ2QP7PAZ+XpmPOVdtj4Th1eNpWJH
-	 m7ixgbDDO1dPg==
-Date: Mon, 21 Apr 2025 10:19:07 -0700
-Subject: [PATCH 2/3] block: hoist block size validation code to a separate
- function
+	b=EJCuQvipDVnY7id7jE4MK9n5lGKrbLeIYtiuKJhYyaNmqemhOz6tlamK0cMp+JFWd
+	 u4g9WYtQuzsn9aKVlpaJ+hLd0p/wNI4WpN4G5PM1LHLFGRa25fS8DxRQLq7j0Tmdon
+	 CFY/79wHx6dwdhFy7JTMJqR9JNhr+jExU2myFOGjNla1a/GwAroSQ2umF/HqG2G0nQ
+	 M3TO99CfyD/dwtkLArTLIaNZd+98UnM9uW0d2QM7vr0pxgp1POL/lz3iHkbhozv0sH
+	 qi5Ic/SkR237M0LkTpuy/Lg7WPopws1Jh8xOK7EZV6dtMFqGas/GhAQ+PfCAy4f4Bn
+	 J57HQMt14lvIw==
+Date: Mon, 21 Apr 2025 10:19:23 -0700
+Subject: [PATCH 3/3] xfs: stop using set_blocksize
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org, cem@kernel.org, axboe@kernel.dk
 Cc: shinichiro.kawasaki@wdc.com, linux-mm@kvack.org, mcgrof@kernel.org,
  linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
  willy@infradead.org, hch@infradead.org, linux-block@vger.kernel.org
-Message-ID: <174525589069.2138337.10477679176303850629.stgit@frogsfrogsfrogs>
+Message-ID: <174525589090.2138337.6822381628832847466.stgit@frogsfrogsfrogs>
 In-Reply-To: <174525589013.2138337.16473045486118778580.stgit@frogsfrogsfrogs>
 References: <174525589013.2138337.16473045486118778580.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -63,77 +62,51 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Hoist the block size validation code to bdev_validate_blocksize so that
-we can call it from filesystems that don't care about the bdev pagecache
-manipulations of set_blocksize.
+XFS has its own buffer cache for metadata that uses submit_bio, which
+means that it no longer uses the block device pagecache for anything.
+Create a more lightweight helper that runs the blocksize checks and
+flushes dirty data and use that instead.  No more truncating the
+pagecache because XFS does not use it or care about it.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/linux/blkdev.h |    1 +
- block/bdev.c           |   33 +++++++++++++++++++++++++++------
- 2 files changed, 28 insertions(+), 6 deletions(-)
+ fs/xfs/xfs_buf.c |   15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
 
 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 294bbae415aa09..462e23a1e8b261 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -1618,6 +1618,7 @@ static inline void bio_end_io_acct(struct bio *bio, unsigned long start_time)
- 	return bio_end_io_acct_remapped(bio, start_time, bio->bi_bdev);
- }
- 
-+int bdev_validate_blocksize(struct block_device *bdev, int block_size);
- int set_blocksize(struct file *file, int size);
- 
- int lookup_bdev(const char *pathname, dev_t *dev);
-diff --git a/block/bdev.c b/block/bdev.c
-index 24984ec13e7cb2..1588f96e4f0a35 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -152,17 +152,38 @@ static void set_init_blocksize(struct block_device *bdev)
- 				    get_order(bsize), get_order(bsize));
- }
- 
-+/**
-+ * bdev_validate_blocksize - check that this block size is acceptable
-+ * @bdev:	blockdevice to check
-+ * @block_size:	block size to check
-+ *
-+ * For block device users that do not use buffer heads or the block device
-+ * page cache, make sure that this block size can be used with the device.
-+ *
-+ * Return: On success zero is returned, negative error code on failure.
-+ */
-+int bdev_validate_blocksize(struct block_device *bdev, int block_size)
-+{
-+	if (blk_validate_block_size(block_size))
-+		return -EINVAL;
-+
-+	/* Size cannot be smaller than the size supported by the device */
-+	if (block_size < bdev_logical_block_size(bdev))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(bdev_validate_blocksize);
-+
- int set_blocksize(struct file *file, int size)
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index 1a2b3f06fa717e..5ae77ffdc947b1 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -1719,18 +1719,25 @@ xfs_setsize_buftarg(
+ 	struct xfs_buftarg	*btp,
+ 	unsigned int		sectorsize)
  {
- 	struct inode *inode = file->f_mapping->host;
- 	struct block_device *bdev = I_BDEV(inode);
-+	int ret;
++	int			error;
++
+ 	/* Set up metadata sector size info */
+ 	btp->bt_meta_sectorsize = sectorsize;
+ 	btp->bt_meta_sectormask = sectorsize - 1;
  
--	if (blk_validate_block_size(size))
--		return -EINVAL;
--
--	/* Size cannot be smaller than the size supported by the device */
--	if (size < bdev_logical_block_size(bdev))
--		return -EINVAL;
-+	ret = bdev_validate_blocksize(bdev, size);
-+	if (ret)
-+		return ret;
- 
- 	if (!file->private_data)
+-	if (set_blocksize(btp->bt_bdev_file, sectorsize)) {
++	error = bdev_validate_blocksize(btp->bt_bdev, sectorsize);
++	if (error) {
+ 		xfs_warn(btp->bt_mount,
+-			"Cannot set_blocksize to %u on device %pg",
+-			sectorsize, btp->bt_bdev);
++			"Cannot use blocksize %u on device %pg, err %d",
++			sectorsize, btp->bt_bdev, error);
  		return -EINVAL;
+ 	}
+ 
+-	return 0;
++	/*
++	 * Flush the block device pagecache so our bios see anything dirtied
++	 * before mount.
++	 */
++	return sync_blockdev(btp->bt_bdev);
+ }
+ 
+ int
 
 
