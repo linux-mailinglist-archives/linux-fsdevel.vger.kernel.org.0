@@ -1,448 +1,391 @@
-Return-Path: <linux-fsdevel+bounces-46805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2698A9524B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 16:00:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93796A9510D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 14:35:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9788C18946C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 14:01:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5490D18943A5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 12:36:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5089334545;
-	Mon, 21 Apr 2025 14:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345FB265602;
+	Mon, 21 Apr 2025 12:35:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jSiYO3xK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JgV5BUSD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F2F6F30F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 14:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95131264FB3
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 12:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745244031; cv=none; b=WN4i1FMTw5a7VJ/Bz/ifbfJVurVEPTN/H7ZfJyBetHVC2gqPF/7LIwpJASK0Gt8iuO59C6GJ5AcCCPTLaRSd13uRwxRABQEQV7ZN8zC7UkYmAWw8s/ynyJyjnfu12hNMBBukoFYWuNhK5C8n5hhwjB/esB9tpgnVRBqXKHldawI=
+	t=1745238938; cv=none; b=ZZj+ygUjUs+wETBeiq6UHqSqtcIT991GRpXt3jdI/pGGi/pCXSGxNPm/4KG0q61bT+UH8wlr5pnRe0oo9MoKWiU4s/MLK/HA1UWkiXD5IgEzecxZWfY7OzxUNvL6bv40I0rZZN+lNpuL+S73epnQWhOM08S76W1Kpp0YnIbNZww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745244031; c=relaxed/simple;
-	bh=ejyjEhZnw7R/A6UpispbNNW6e1M7gSRpMO+K2rLIiqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sorkDzav8ibU+yAQs0zUPUGxptReK/GhQMSjIwQrWtgKk6287aoow9/Fwg78zAarH89d7YFRg/s31jYKuckkKV1Pl4sV2HDiHeW48dc9zxiGfPpPOBh1oNNuM355SfVPcWCqpoNedhpB4UIEaO/UJNj/UQXS9qcCWwY796foo0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jSiYO3xK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745244028;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=J6q1XqAhJKR2J7yq4FGfxf88PoC9IKoSTJKFzw/a7/M=;
-	b=jSiYO3xKPq67yTTFvSLotRnTnLgWpJSd+JguyJWkqUmaTqKgpTH3Lj18crkscqXmVL2pu5
-	N+10v6Uo+CpDizLbPExlfEnf3+7O3TgZETZm80wQ0CRgF/GNjHyBtEqoUk8CW9T9g/cnC2
-	VGTE6Wyb0DERgXr77ckkD2be31Rg+Bc=
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
- [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-591-MKF6O43oMkOuWOBsx6hpCw-1; Mon, 21 Apr 2025 10:00:25 -0400
-X-MC-Unique: MKF6O43oMkOuWOBsx6hpCw-1
-X-Mimecast-MFC-AGG-ID: MKF6O43oMkOuWOBsx6hpCw_1745244025
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d438be189bso34769545ab.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 07:00:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745244024; x=1745848824;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J6q1XqAhJKR2J7yq4FGfxf88PoC9IKoSTJKFzw/a7/M=;
-        b=rQ2uLlQp4XK/GWu50k6Oi/pVjvZ4MeSpc7uOpL1JiBNPmTaPfHwiZkKDP5DQey2ScK
-         XR/Ohq2tbUXj0kYcvf+E81y/6GaoDWxzlMw+UccwSoqY0M6LL7ZBWr59QTkkBOzIRXFq
-         BF1TPaXlOw9yjZ/Rp+7dCfYYh+uOaqBTDu6SRnw8k93SLmLPMKOeguIJ53qKdg1MfABf
-         IC/TT80xFEAP5Fx8nuJdoGWolXchZOzLPuTGO7chPyuCKeoICc8/IvQI1IcBOwdHr/hM
-         CZWN/T5ikqo0CWEJc+CwH7xHHHqTZyVH9Q+sTlPnDv+U4mvQY5WS0mAlhCi4w+zFGumo
-         emxA==
-X-Gm-Message-State: AOJu0Yx07LMZiYkUvAtIIASWP9AB3E9zkfD4ZMkclTYDjJZMcNZCTdBc
-	t7cJQcgI3IDESH9gh3f3JUcnKHGz1lQfqrbzSXMv7Vw6xOh5gD31vdIivnI/s93GjAcDF/qN/ee
-	pYGX4ySaj4anB0/TQoaqXOk/DsrNUtXKivJTtKwsv5hXMK0KkCQYSl1868VRzg3UQDj95qNU=
-X-Gm-Gg: ASbGnctFdHu80lnR3Q8+qXVywzMIOFBv39/SuzSomwlir8JrfTPjrA+aX/viDigfGL0
-	a9Z1IcJOdJANDJcVtrLvVrbMowa5IEMxmRCrcAshd7BjPfYPgBjsbZ3y9H6+f8yPTw9DHWhDP3U
-	6HPC/+me/OTeNn0tStLXPlTcsLGwoWrrqs/T3v+T2UgpK1VYl53MQ4w0Ua/SD8/M+nquiuQb1C3
-	+L5/KLlcJCt9yNaPE/PG2rvvy+7dK1XGb25DGu8wqO8HUWdqrOmJRcczLgOJrQI18JaGw14yne4
-	4BDj6ol24PZS+0E=
-X-Received: by 2002:a05:6e02:1c24:b0:3d6:cbed:330c with SMTP id e9e14a558f8ab-3d88edc110fmr97168265ab.11.1745244024072;
-        Mon, 21 Apr 2025 07:00:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHvGeyzxJ+2kAfsYcAx4DViifQ5j+ZnTwB+Ke1Y+GtrJQVFufrBQWEo8m1qEDC/MNdsFu9cyA==
-X-Received: by 2002:a05:6e02:1c24:b0:3d6:cbed:330c with SMTP id e9e14a558f8ab-3d88edc110fmr97167895ab.11.1745244023655;
-        Mon, 21 Apr 2025 07:00:23 -0700 (PDT)
-Received: from fedora.. ([65.128.104.55])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a3839336sm1788866173.73.2025.04.21.07.00.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Apr 2025 07:00:23 -0700 (PDT)
-From: Eric Sandeen <sandeen@redhat.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org,
-	jaegeuk@kernel.org,
-	chao@kernel.org,
-	lihongbo22@huawei.com,
-	Eric Sandeen <sandeen@redhat.com>
-Subject: [PATCH 7/7] f2fs: switch to the new mount api
-Date: Sun, 20 Apr 2025 10:25:06 -0500
-Message-ID: <20250420154647.1233033-8-sandeen@redhat.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250420154647.1233033-1-sandeen@redhat.com>
-References: <20250420154647.1233033-1-sandeen@redhat.com>
+	s=arc-20240116; t=1745238938; c=relaxed/simple;
+	bh=gQLAmin1ouGVrnpgy4NEe0FeF7nzEclzlFqxJubCnO4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YK0nuxS7xGX/ZPk2at4kjV1cmm/7p9siUyVFAb9R7knx897DReqhIsEa1McR3H6qr+JKgAtSsZIw+h4knLOz6oqL0hVCuz/z19E9jjO3FO96jJoTPxni5lZV/Q6LyCYLq5EbrlsLtLhWtMsoVGB9cNTqrMQhajIpsjmy+FhhsYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JgV5BUSD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A640C4CEEA;
+	Mon, 21 Apr 2025 12:35:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745238938;
+	bh=gQLAmin1ouGVrnpgy4NEe0FeF7nzEclzlFqxJubCnO4=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=JgV5BUSD8KAWyCarO7NUbvBDqjB8bJXY4QLFAkl4+mifYQl7uRxiuBQicAZZTVOd2
+	 7AwR5bEHxijJYYiKhyD2r9UW15mRcge0AoTYqhg6Kv7ge4Z9e9u3GqlFbbhDXt54PD
+	 vlgrFPv/9eFQp4wZRUsgTkI3RhBsv/eK9r2FMDO2Sq1GoeuCcMvnsnDjZMapHQX2+g
+	 f0GwUikICupaY39ZVI5cZQRZKJ053n4wEd0gkzYrytkLQRhyOW6WfiZL6mRYi1csQg
+	 qrXlXFdEyW1yWcZPoGvJpp14XHzkqLRKpBmaPph7Ov6iJCCAnGIa7hY/BjO1kDR3+Z
+	 PWS4IoK1oSoCg==
+Message-ID: <26673a5077b148e98a3957532f0cb445aa7ed3c7.camel@kernel.org>
+Subject: Re: [PATCH v1] fuse: use splice for reading user pages on servers
+ that enable it
+From: Jeff Layton <jlayton@kernel.org>
+To: Bernd Schubert <bernd.schubert@fastmail.fm>, Joanne Koong
+	 <joannelkoong@gmail.com>, miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Date: Mon, 21 Apr 2025 08:35:36 -0400
+In-Reply-To: <5332002a-e444-4f62-8217-8d124182290d@fastmail.fm>
+References: <20250419000614.3795331-1-joannelkoong@gmail.com>
+	 <5332002a-e444-4f62-8217-8d124182290d@fastmail.fm>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
+ n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
+ egyjnSsFt7EGoDjdKqr1TS9syJYFjagYtvWk/UfHlW09X+jOh4vYtfX7iYSx/NfqV3W1D7EDi0PqV
+ T2h6v8i8YqsATFPwO4nuiTmL6I40ZofxVd+9wdRI4Db8yUNA4ZSP2nqLcLtFjClYRBoJvRWvsv4lm
+ 0OX6MYPtv76hka8lW4mnRmZqqx3UtfHX/hF/zH24Gj7A6sYKYLCU3YrI2Ogiu7/ksKcl7goQjpvtV
+ YrOOI5VGLHge0awt7bhMCTM9KAfPc+xL/ZxAMVWd3NCk5SamL2cE99UWgtvNOIYU8m6EjTLhsj8sn
+ VluJH0/RcxEeFbnSaswVChNSGa7mXJrTR22lRL6ZPjdMgS2Km90haWPRc8Wolcz07Y2se0xpGVLEQ
+ cDEsvv5IMmeMe1/qLZ6NaVkNuL3WOXvxaVT9USW1+/SGipO2IpKJjeDZfehlB/kpfF24+RrK+seQf
+ CBYyUE8QJpvTZyfUHNYldXlrjO6n5MdOempLqWpfOmcGkwnyNRBR46g/jf8KnPRwXs509yAqDB6sE
+ LZH+yWr9LQZEwARAQABtCVKZWZmIExheXRvbiA8amxheXRvbkBwb29jaGllcmVkcy5uZXQ+iQI7BB
+ MBAgAlAhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAUCTpXWPAIZAQAKCRAADmhBGVaCFc65D/4
+ gBLNMHopQYgG/9RIM3kgFCCQV0pLv0hcg1cjr+bPI5f1PzJoOVi9s0wBDHwp8+vtHgYhM54yt43uI
+ 7Htij0RHFL5eFqoVT4TSfAg2qlvNemJEOY0e4daljjmZM7UtmpGs9NN0r9r50W82eb5Kw5bc/r0km
+ R/arUS2st+ecRsCnwAOj6HiURwIgfDMHGPtSkoPpu3DDp/cjcYUg3HaOJuTjtGHFH963B+f+hyQ2B
+ rQZBBE76ErgTDJ2Db9Ey0kw7VEZ4I2nnVUY9B5dE2pJFVO5HJBMp30fUGKvwaKqYCU2iAKxdmJXRI
+ ONb7dSde8LqZahuunPDMZyMA5+mkQl7kpIpR6kVDIiqmxzRuPeiMP7O2FCUlS2DnJnRVrHmCljLkZ
+ Wf7ZUA22wJpepBligemtSRSbqCyZ3B48zJ8g5B8xLEntPo/NknSJaYRvfEQqGxgk5kkNWMIMDkfQO
+ lDSXZvoxqU9wFH/9jTv1/6p8dHeGM0BsbBLMqQaqnWiVt5mG92E1zkOW69LnoozE6Le+12DsNW7Rj
+ iR5K+27MObjXEYIW7FIvNN/TQ6U1EOsdxwB8o//Yfc3p2QqPr5uS93SDDan5ehH59BnHpguTc27Xi
+ QQZ9EGiieCUx6Zh2ze3X2UW9YNzE15uKwkkuEIj60NvQRmEDfweYfOfPVOueC+iFifbQgSmVmZiBM
+ YXl0b24gPGpsYXl0b25AcmVkaGF0LmNvbT6JAjgEEwECACIFAk6V0q0CGwMGCwkIBwMCBhUIAgkKC
+ wQWAgMBAh4BAheAAAoJEAAOaEEZVoIViKUQALpvsacTMWWOd7SlPFzIYy2/fjvKlfB/Xs4YdNcf9q
+ LqF+lk2RBUHdR/dGwZpvw/OLmnZ8TryDo2zXVJNWEEUFNc7wQpl3i78r6UU/GUY/RQmOgPhs3epQC
+ 3PMJj4xFx+VuVcf/MXgDDdBUHaCTT793hyBeDbQuciARDJAW24Q1RCmjcwWIV/pgrlFa4lAXsmhoa
+ c8UPc82Ijrs6ivlTweFf16VBc4nSLX5FB3ls7S5noRhm5/Zsd4PGPgIHgCZcPgkAnU1S/A/rSqf3F
+ LpU+CbVBDvlVAnOq9gfNF+QiTlOHdZVIe4gEYAU3CUjbleywQqV02BKxPVM0C5/oVjMVx3bri75n1
+ TkBYGmqAXy9usCkHIsG5CBHmphv9MHmqMZQVsxvCzfnI5IO1+7MoloeeW/lxuyd0pU88dZsV/riHw
+ 87i2GJUJtVlMl5IGBNFpqoNUoqmvRfEMeXhy/kUX4Xc03I1coZIgmwLmCSXwx9MaCPFzV/dOOrju2
+ xjO+2sYyB5BNtxRqUEyXglpujFZqJxxau7E0eXoYgoY9gtFGsspzFkVNntamVXEWVVgzJJr/EWW0y
+ +jNd54MfPRqH+eCGuqlnNLktSAVz1MvVRY1dxUltSlDZT7P2bUoMorIPu8p7ZCg9dyX1+9T6Muc5d
+ Hxf/BBP/ir+3e8JTFQBFOiLNdFtB9KZWZmIExheXRvbiA8amxheXRvbkBzYW1iYS5vcmc+iQI4BBM
+ BAgAiBQJOldK9AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRAADmhBGVaCFWgWD/0ZRi4h
+ N9FK2BdQs9RwNnFZUr7JidAWfCrs37XrA/56olQl3ojn0fQtrP4DbTmCuh0SfMijB24psy1GnkPep
+ naQ6VRf7Dxg/Y8muZELSOtsv2CKt3/02J1BBitrkkqmHyni5fLLYYg6fub0T/8Kwo1qGPdu1hx2BQ
+ RERYtQ/S5d/T0cACdlzi6w8rs5f09hU9Tu4qV1JLKmBTgUWKN969HPRkxiojLQziHVyM/weR5Reu6
+ FZVNuVBGqBD+sfk/c98VJHjsQhYJijcsmgMb1NohAzwrBKcSGKOWJToGEO/1RkIN8tqGnYNp2G+aR
+ 685D0chgTl1WzPRM6mFG1+n2b2RR95DxumKVpwBwdLPoCkI24JkeDJ7lXSe3uFWISstFGt0HL8Eew
+ P8RuGC8s5h7Ct91HMNQTbjgA+Vi1foWUVXpEintAKgoywaIDlJfTZIl6Ew8ETN/7DLy8bXYgq0Xzh
+ aKg3CnOUuGQV5/nl4OAX/3jocT5Cz/OtAiNYj5mLPeL5z2ZszjoCAH6caqsF2oLyAnLqRgDgR+wTQ
+ T6gMhr2IRsl+cp8gPHBwQ4uZMb+X00c/Amm9VfviT+BI7B66cnC7Zv6Gvmtu2rEjWDGWPqUgccB7h
+ dMKnKDthkA227/82tYoFiFMb/NwtgGrn5n2vwJyKN6SEoygGrNt0SI84y6hEVbQlSmVmZiBMYXl0b
+ 24gPGpsYXl0b25AcHJpbWFyeWRhdGEuY29tPokCOQQTAQIAIwUCU4xmKQIbAwcLCQgHAwIBBhUIAg
+ kKCwQWAgMBAh4BAheAAAoJEAAOaEEZVoIV1H0P/j4OUTwFd7BBbpoSp695qb6HqCzWMuExsp8nZjr
+ uymMaeZbGr3OWMNEXRI1FWNHMtcMHWLP/RaDqCJil28proO+PQ/yPhsr2QqJcW4nr91tBrv/MqItu
+ AXLYlsgXqp4BxLP67bzRJ1Bd2x0bWXurpEXY//VBOLnODqThGEcL7jouwjmnRh9FTKZfBDpFRaEfD
+ FOXIfAkMKBa/c9TQwRpx2DPsl3eFWVCNuNGKeGsirLqCxUg5kWTxEorROppz9oU4HPicL6rRH22Ce
+ 6nOAON2vHvhkUuO3GbffhrcsPD4DaYup4ic+DxWm+DaSSRJ+e1yJvwi6NmQ9P9UAuLG93S2MdNNbo
+ sZ9P8k2mTOVKMc+GooI9Ve/vH8unwitwo7ORMVXhJeU6Q0X7zf3SjwDq2lBhn1DSuTsn2DbsNTiDv
+ qrAaCvbsTsw+SZRwF85eG67eAwouYk+dnKmp1q57LDKMyzysij2oDKbcBlwB/TeX16p8+LxECv51a
+ sjS9TInnipssssUDrHIvoTTXWcz7Y5wIngxDFwT8rPY3EggzLGfK5Zx2Q5S/N0FfmADmKknG/D8qG
+ IcJE574D956tiUDKN4I+/g125ORR1v7bP+OIaayAvq17RP+qcAqkxc0x8iCYVCYDouDyNvWPGRhbL
+ UO7mlBpjW9jK9e2fvZY9iw3QzIPGKtClKZWZmIExheXRvbiA8amVmZi5sYXl0b25AcHJpbWFyeWRh
+ dGEuY29tPokCOQQTAQIAIwUCU4xmUAIbAwcLCQgHAwIBBhUIAgkKCwQWAgMBAh4BAheAAAoJEAAOa
+ EEZVoIVzJoQALFCS6n/FHQS+hIzHIb56JbokhK0AFqoLVzLKzrnaeXhE5isWcVg0eoV2oTScIwUSU
+ apy94if69tnUo4Q7YNt8/6yFM6hwZAxFjOXR0ciGE3Q+Z1zi49Ox51yjGMQGxlakV9ep4sV/d5a50
+ M+LFTmYSAFp6HY23JN9PkjVJC4PUv5DYRbOZ6Y1+TfXKBAewMVqtwT1Y+LPlfmI8dbbbuUX/kKZ5d
+ dhV2736fgyfpslvJKYl0YifUOVy4D1G/oSycyHkJG78OvX4JKcf2kKzVvg7/Rnv+AueCfFQ6nGwPn
+ 0P91I7TEOC4XfZ6a1K3uTp4fPPs1Wn75X7K8lzJP/p8lme40uqwAyBjk+IA5VGd+CVRiyJTpGZwA0
+ jwSYLyXboX+Dqm9pSYzmC9+/AE7lIgpWj+3iNisp1SWtHc4pdtQ5EU2SEz8yKvDbD0lNDbv4ljI7e
+ flPsvN6vOrxz24mCliEco5DwhpaaSnzWnbAPXhQDWb/lUgs/JNk8dtwmvWnqCwRqElMLVisAbJmC0
+ BhZ/Ab4sph3EaiZfdXKhiQqSGdK4La3OTJOJYZphPdGgnkvDV9Pl1QZ0ijXQrVIy3zd6VCNaKYq7B
+ AKidn5g/2Q8oio9Tf4XfdZ9dtwcB+bwDJFgvvDYaZ5bI3ln4V3EyW5i2NfXazz/GA/I/ZtbsigCFc
+ 8ftCBKZWZmIExheXRvbiA8amxheXRvbkBrZXJuZWwub3JnPokCOAQTAQIAIgUCWe8u6AIbAwYLCQg
+ HAwIGFQgCCQoLBBYCAwECHgECF4AACgkQAA5oQRlWghUuCg/+Lb/xGxZD2Q1oJVAE37uW308UpVSD
+ 2tAMJUvFTdDbfe3zKlPDTuVsyNsALBGclPLagJ5ZTP+Vp2irAN9uwBuacBOTtmOdz4ZN2tdvNgozz
+ uxp4CHBDVzAslUi2idy+xpsp47DWPxYFIRP3M8QG/aNW052LaPc0cedYxp8+9eiVUNpxF4SiU4i9J
+ DfX/sn9XcfoVZIxMpCRE750zvJvcCUz9HojsrMQ1NFc7MFT1z3MOW2/RlzPcog7xvR5ENPH19ojRD
+ CHqumUHRry+RF0lH00clzX/W8OrQJZtoBPXv9ahka/Vp7kEulcBJr1cH5Wz/WprhsIM7U9pse1f1g
+ Yy9YbXtWctUz8uvDR7shsQxAhX3qO7DilMtuGo1v97I/Kx4gXQ52syh/w6EBny71CZrOgD6kJwPVV
+ AaM1LRC28muq91WCFhs/nzHozpbzcheyGtMUI2Ao4K6mnY+3zIuXPygZMFr9KXE6fF7HzKxKuZMJO
+ aEZCiDOq0anx6FmOzs5E6Jqdpo/mtI8beK+BE7Va6ni7YrQlnT0i3vaTVMTiCThbqsB20VrbMjlhp
+ f8lfK1XVNbRq/R7GZ9zHESlsa35ha60yd/j3pu5hT2xyy8krV8vGhHvnJ1XRMJBAB/UYb6FyC7S+m
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Hongbo Li <lihongbo22@huawei.com>
+On Mon, 2025-04-21 at 13:49 +0200, Bernd Schubert wrote:
+>=20
+> On 4/19/25 02:06, Joanne Koong wrote:
+> > For direct io writes, splice is disabled when forwarding pages from the
+> > client to the server. This is because the pages in the pipe buffer are
+> > user pages, which is controlled by the client. Thus if a server replies
+> > to the request and then keeps accessing the pages afterwards, there is
+> > the possibility that the client may have modified the contents of the
+> > pages in the meantime. More context on this can be found in commit
+> > 0c4bcfdecb1a ("fuse: fix pipe buffer lifetime for direct_io").
+> >=20
+> > For servers that do not need to access pages after answering the
+> > request, splice gives a non-trivial improvement in performance.
+> > Benchmarks show roughly a 40% speedup.
+> >=20
+> > Allow servers to enable zero-copy splice for servicing client direct io
+> > writes. By enabling this, the server understands that they should not
+> > continue accessing the pipe buffer after completing the request or may
+> > face incorrect data if they do so.
+> >=20
+> > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > ---
+> >  fs/fuse/dev.c             | 18 ++++++++++--------
+> >  fs/fuse/dev_uring.c       |  4 ++--
+> >  fs/fuse/fuse_dev_i.h      |  5 +++--
+> >  fs/fuse/fuse_i.h          |  3 +++
+> >  fs/fuse/inode.c           |  5 ++++-
+> >  include/uapi/linux/fuse.h |  8 ++++++++
+> >  6 files changed, 30 insertions(+), 13 deletions(-)
+> >=20
+> > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > index 67d07b4c778a..1b0ea8593f74 100644
+> > --- a/fs/fuse/dev.c
+> > +++ b/fs/fuse/dev.c
+> > @@ -816,12 +816,13 @@ static int unlock_request(struct fuse_req *req)
+> >  	return err;
+> >  }
+> > =20
+> > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
+> > -		    struct iov_iter *iter)
+> > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn *fc,
+> > +		    bool write, struct iov_iter *iter)
+> >  {
+> >  	memset(cs, 0, sizeof(*cs));
+> >  	cs->write =3D write;
+> >  	cs->iter =3D iter;
+> > +	cs->splice_read_user_pages =3D fc->splice_read_user_pages;
+> >  }
+> > =20
+> >  /* Unmap and put previous page of userspace buffer */
+> > @@ -1105,9 +1106,10 @@ static int fuse_copy_page(struct fuse_copy_state=
+ *cs, struct page **pagep,
+> >  		if (cs->write && cs->pipebufs && page) {
+> >  			/*
+> >  			 * Can't control lifetime of pipe buffers, so always
+> > -			 * copy user pages.
+> > +			 * copy user pages if server does not support splice
+> > +			 * for reading user pages.
+> >  			 */
+> > -			if (cs->req->args->user_pages) {
+> > +			if (cs->req->args->user_pages && !cs->splice_read_user_pages) {
+> >  				err =3D fuse_copy_fill(cs);
+> >  				if (err)
+> >  					return err;
+> > @@ -1538,7 +1540,7 @@ static ssize_t fuse_dev_read(struct kiocb *iocb, =
+struct iov_iter *to)
+> >  	if (!user_backed_iter(to))
+> >  		return -EINVAL;
+> > =20
+> > -	fuse_copy_init(&cs, true, to);
+> > +	fuse_copy_init(&cs, fud->fc, true, to);
+> > =20
+> >  	return fuse_dev_do_read(fud, file, &cs, iov_iter_count(to));
+> >  }
+> > @@ -1561,7 +1563,7 @@ static ssize_t fuse_dev_splice_read(struct file *=
+in, loff_t *ppos,
+> >  	if (!bufs)
+> >  		return -ENOMEM;
+> > =20
+> > -	fuse_copy_init(&cs, true, NULL);
+> > +	fuse_copy_init(&cs, fud->fc, true, NULL);
+> >  	cs.pipebufs =3D bufs;
+> >  	cs.pipe =3D pipe;
+> >  	ret =3D fuse_dev_do_read(fud, in, &cs, len);
+> > @@ -2227,7 +2229,7 @@ static ssize_t fuse_dev_write(struct kiocb *iocb,=
+ struct iov_iter *from)
+> >  	if (!user_backed_iter(from))
+> >  		return -EINVAL;
+> > =20
+> > -	fuse_copy_init(&cs, false, from);
+> > +	fuse_copy_init(&cs, fud->fc, false, from);
+> > =20
+> >  	return fuse_dev_do_write(fud, &cs, iov_iter_count(from));
+> >  }
+> > @@ -2301,7 +2303,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_=
+inode_info *pipe,
+> >  	}
+> >  	pipe_unlock(pipe);
+> > =20
+> > -	fuse_copy_init(&cs, false, NULL);
+> > +	fuse_copy_init(&cs, fud->fc, false, NULL);
+> >  	cs.pipebufs =3D bufs;
+> >  	cs.nr_segs =3D nbuf;
+> >  	cs.pipe =3D pipe;
+> > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > index ef470c4a9261..52b883a6a79d 100644
+> > --- a/fs/fuse/dev_uring.c
+> > +++ b/fs/fuse/dev_uring.c
+> > @@ -593,7 +593,7 @@ static int fuse_uring_copy_from_ring(struct fuse_ri=
+ng *ring,
+> >  	if (err)
+> >  		return err;
+> > =20
+> > -	fuse_copy_init(&cs, false, &iter);
+> > +	fuse_copy_init(&cs, ring->fc, false, &iter);
+> >  	cs.is_uring =3D true;
+> >  	cs.req =3D req;
+> > =20
+> > @@ -623,7 +623,7 @@ static int fuse_uring_args_to_ring(struct fuse_ring=
+ *ring, struct fuse_req *req,
+> >  		return err;
+> >  	}
+> > =20
+> > -	fuse_copy_init(&cs, true, &iter);
+> > +	fuse_copy_init(&cs, ring->fc, true, &iter);
+> >  	cs.is_uring =3D true;
+> >  	cs.req =3D req;
+> > =20
+> > diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> > index db136e045925..25e593e64c67 100644
+> > --- a/fs/fuse/fuse_dev_i.h
+> > +++ b/fs/fuse/fuse_dev_i.h
+> > @@ -32,6 +32,7 @@ struct fuse_copy_state {
+> >  	bool write:1;
+> >  	bool move_pages:1;
+> >  	bool is_uring:1;
+> > +	bool splice_read_user_pages:1;
+> >  	struct {
+> >  		unsigned int copied_sz; /* copied size into the user buffer */
+> >  	} ring;
+> > @@ -51,8 +52,8 @@ struct fuse_req *fuse_request_find(struct fuse_pqueue=
+ *fpq, u64 unique);
+> > =20
+> >  void fuse_dev_end_requests(struct list_head *head);
+> > =20
+> > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
+> > -			   struct iov_iter *iter);
+> > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn *conn=
+,
+> > +		    bool write, struct iov_iter *iter);
+> >  int fuse_copy_args(struct fuse_copy_state *cs, unsigned int numargs,
+> >  		   unsigned int argpages, struct fuse_arg *args,
+> >  		   int zeroing);
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 3d5289cb82a5..e21875f16220 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -898,6 +898,9 @@ struct fuse_conn {
+> >  	/* Use io_uring for communication */
+> >  	bool io_uring:1;
+> > =20
+> > +	/* Allow splice for reading user pages */
+> > +	bool splice_read_user_pages:1;
+> > +
+> >  	/** Maximum stack depth for passthrough backing files */
+> >  	int max_stack_depth;
+> > =20
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 43b6643635ee..e82e96800fde 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -1439,6 +1439,9 @@ static void process_init_reply(struct fuse_mount =
+*fm, struct fuse_args *args,
+> > =20
+> >  			if (flags & FUSE_REQUEST_TIMEOUT)
+> >  				timeout =3D arg->request_timeout;
+> > +
+> > +			if (flags & FUSE_SPLICE_READ_USER_PAGES)
+> > +				fc->splice_read_user_pages =3D true;
+>=20
+>=20
+> Shouldn't that check for capable(CAP_SYS_ADMIN)? Isn't the issue
+> that one can access file content although the write is already
+> marked as completed? I.e. a fuse file system might get data
+> it was never exposed to and possibly secret data?
+> A more complex version version could check for CAP_SYS_ADMIN, but
+> also allow later on read/write to files that have the same uid as
+> the fuser-server process?
+>=20
 
-The new mount api will execute .parse_param, .init_fs_context, .get_tree
-and will call .remount if remount happened. So we add the necessary
-functions for the fs_context_operations. If .init_fs_context is added,
-the old .mount should remove.
+IDGI. I don't see how this allows the server access to something it
+didn't have access to before.
 
-See Documentation/filesystems/mount_api.rst for more information.
+This patchset seems to be about a "contract" between the kernel and the
+userland server. The server is agreeing to be very careful about not
+touching pages after a write request completes, and the kernel allows
+splicing the pages if that's the case.
 
-Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-[sandeen: forward port]
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
----
- fs/f2fs/super.c | 156 +++++++++++++++++++-----------------------------
- 1 file changed, 62 insertions(+), 94 deletions(-)
+Can you explain the potential attack vector?
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 21042a02459f..28a7aa01d009 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1139,47 +1139,6 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
- 	return 0;
- }
- 
--static int parse_options(struct fs_context *fc, char *options)
--{
--	struct fs_parameter param;
--	char *key;
--	int ret;
--
--	if (!options)
--		return 0;
--
--	while ((key = strsep(&options, ",")) != NULL) {
--		if (*key) {
--			size_t v_len = 0;
--			char *value = strchr(key, '=');
--
--			param.type = fs_value_is_flag;
--			param.string = NULL;
--
--			if (value) {
--				if (value == key)
--					continue;
--
--				*value++ = 0;
--				v_len = strlen(value);
--				param.string = kmemdup_nul(value, v_len, GFP_KERNEL);
--				if (!param.string)
--					return -ENOMEM;
--				param.type = fs_value_is_string;
--			}
--
--			param.key = key;
--			param.size = v_len;
--
--			ret = f2fs_parse_param(fc, &param);
--			kfree(param.string);
--			if (ret < 0)
--				return ret;
--		}
--	}
--	return 0;
--}
--
- /*
-  * Check quota settings consistency.
-  */
-@@ -2579,13 +2538,12 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
- 	f2fs_flush_ckpt_thread(sbi);
- }
- 
--static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-+static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
- {
- 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
- 	struct f2fs_mount_info org_mount_opt;
--	struct f2fs_fs_context ctx;
--	struct fs_context fc;
- 	unsigned long old_sb_flags;
-+	unsigned int flags = fc->sb_flags;
- 	int err;
- 	bool need_restart_gc = false, need_stop_gc = false;
- 	bool need_restart_flush = false, need_stop_flush = false;
-@@ -2631,7 +2589,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- #endif
- 
- 	/* recover superblocks we couldn't write due to previous RO mount */
--	if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
-+	if (!(flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
- 		err = f2fs_commit_super(sbi, false);
- 		f2fs_info(sbi, "Try to recover all the superblocks, ret: %d",
- 			  err);
-@@ -2641,21 +2599,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 
- 	default_options(sbi, true);
- 
--	memset(&fc, 0, sizeof(fc));
--	memset(&ctx, 0, sizeof(ctx));
--	fc.fs_private = &ctx;
--	fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
--
--	/* parse mount options */
--	err = parse_options(&fc, data);
--	if (err)
--		goto restore_opts;
--
--	err = f2fs_check_opt_consistency(&fc, sb);
-+	err = f2fs_check_opt_consistency(fc, sb);
- 	if (err < 0)
- 		goto restore_opts;
- 
--	f2fs_apply_options(&fc, sb);
-+	f2fs_apply_options(fc, sb);
- 
- #ifdef CONFIG_BLK_DEV_ZONED
- 	if (f2fs_sb_has_blkzoned(sbi) &&
-@@ -2674,20 +2622,20 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	 * Previous and new state of filesystem is RO,
- 	 * so skip checking GC and FLUSH_MERGE conditions.
- 	 */
--	if (f2fs_readonly(sb) && (*flags & SB_RDONLY))
-+	if (f2fs_readonly(sb) && (flags & SB_RDONLY))
- 		goto skip;
- 
--	if (f2fs_dev_is_readonly(sbi) && !(*flags & SB_RDONLY)) {
-+	if (f2fs_dev_is_readonly(sbi) && !(flags & SB_RDONLY)) {
- 		err = -EROFS;
- 		goto restore_opts;
- 	}
- 
- #ifdef CONFIG_QUOTA
--	if (!f2fs_readonly(sb) && (*flags & SB_RDONLY)) {
-+	if (!f2fs_readonly(sb) && (flags & SB_RDONLY)) {
- 		err = dquot_suspend(sb, -1);
- 		if (err < 0)
- 			goto restore_opts;
--	} else if (f2fs_readonly(sb) && !(*flags & SB_RDONLY)) {
-+	} else if (f2fs_readonly(sb) && !(flags & SB_RDONLY)) {
- 		/* dquot_resume needs RW */
- 		sb->s_flags &= ~SB_RDONLY;
- 		if (sb_any_quota_suspended(sb)) {
-@@ -2743,7 +2691,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		goto restore_opts;
- 	}
- 
--	if ((*flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
-+	if ((flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
- 		err = -EINVAL;
- 		f2fs_warn(sbi, "disabling checkpoint not compatible with read-only");
- 		goto restore_opts;
-@@ -2754,7 +2702,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	 * or if background_gc = off is passed in mount
- 	 * option. Also sync the filesystem.
- 	 */
--	if ((*flags & SB_RDONLY) ||
-+	if ((flags & SB_RDONLY) ||
- 			(F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_OFF &&
- 			!test_opt(sbi, GC_MERGE))) {
- 		if (sbi->gc_thread) {
-@@ -2768,7 +2716,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		need_stop_gc = true;
- 	}
- 
--	if (*flags & SB_RDONLY) {
-+	if (flags & SB_RDONLY) {
- 		sync_inodes_sb(sb);
- 
- 		set_sbi_flag(sbi, SBI_IS_DIRTY);
-@@ -2781,7 +2729,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	 * We stop issue flush thread if FS is mounted as RO
- 	 * or if flush_merge is not passed in mount option.
- 	 */
--	if ((*flags & SB_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
-+	if ((flags & SB_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
- 		clear_opt(sbi, FLUSH_MERGE);
- 		f2fs_destroy_flush_cmd_control(sbi, false);
- 		need_restart_flush = true;
-@@ -2823,7 +2771,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 	 * triggered while remount and we need to take care of it before
- 	 * returning from remount.
- 	 */
--	if ((*flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
-+	if ((flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
- 			!test_opt(sbi, MERGE_CHECKPOINT)) {
- 		f2fs_stop_ckpt_thread(sbi);
- 	} else {
-@@ -2850,7 +2798,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
- 		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
- 
- 	limit_reserve_root(sbi);
--	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
-+	fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
- 
- 	sbi->umount_lock_holder = NULL;
- 	return 0;
-@@ -3519,7 +3467,6 @@ static const struct super_operations f2fs_sops = {
- 	.freeze_fs	= f2fs_freeze,
- 	.unfreeze_fs	= f2fs_unfreeze,
- 	.statfs		= f2fs_statfs,
--	.remount_fs	= f2fs_remount,
- 	.shutdown	= f2fs_shutdown,
- };
- 
-@@ -4741,16 +4688,13 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
- 	sbi->readdir_ra = true;
- }
- 
--static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-+static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- {
- 	struct f2fs_sb_info *sbi;
- 	struct f2fs_super_block *raw_super;
--	struct f2fs_fs_context ctx;
--	struct fs_context fc;
- 	struct inode *root;
- 	int err;
- 	bool skip_recovery = false, need_fsck = false;
--	char *options = NULL;
- 	int recovery, i, valid_super_block;
- 	struct curseg_info *seg_i;
- 	int retry_cnt = 1;
-@@ -4763,9 +4707,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	raw_super = NULL;
- 	valid_super_block = -1;
- 	recovery = 0;
--	memset(&fc, 0, sizeof(fc));
--	memset(&ctx, 0, sizeof(ctx));
--	fc.fs_private = &ctx;
- 
- 	/* allocate memory for f2fs-specific super block info */
- 	sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
-@@ -4816,22 +4757,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 						sizeof(raw_super->uuid));
- 
- 	default_options(sbi, false);
--	/* parse mount options */
--	options = kstrdup((const char *)data, GFP_KERNEL);
--	if (data && !options) {
--		err = -ENOMEM;
--		goto free_sb_buf;
--	}
--
--	err = parse_options(&fc, options);
--	if (err)
--		goto free_options;
- 
--	err = f2fs_check_opt_consistency(&fc, sb);
-+	err = f2fs_check_opt_consistency(fc, sb);
- 	if (err < 0)
--		goto free_options;
-+		goto free_sb_buf;
- 
--	f2fs_apply_options(&fc, sb);
-+	f2fs_apply_options(fc, sb);
- 
- 	sb->s_maxbytes = max_file_blocks(NULL) <<
- 				le32_to_cpu(raw_super->log_blocksize);
-@@ -5156,7 +5087,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		if (err)
- 			goto sync_free_meta;
- 	}
--	kvfree(options);
- 
- 	/* recover broken superblock */
- 	if (recovery) {
-@@ -5251,7 +5181,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
- #endif
- 	fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
--	kvfree(options);
- free_sb_buf:
- 	kfree(raw_super);
- free_sbi:
-@@ -5267,14 +5196,39 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
- 	return err;
- }
- 
--static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
--			const char *dev_name, void *data)
-+static int f2fs_get_tree(struct fs_context *fc)
- {
--	return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
-+	return get_tree_bdev(fc, f2fs_fill_super);
-+}
-+
-+static int f2fs_reconfigure(struct fs_context *fc)
-+{
-+	struct super_block *sb = fc->root->d_sb;
-+
-+	return __f2fs_remount(fc, sb);
-+}
-+
-+static void f2fs_fc_free(struct fs_context *fc)
-+{
-+	struct f2fs_fs_context *ctx = fc->fs_private;
-+	int i;
-+
-+	if (!ctx)
-+		return;
-+
-+#ifdef CONFIG_QUOTA
-+	for (i = 0; i < MAXQUOTAS; i++)
-+		kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
-+#endif
-+	fscrypt_free_dummy_policy(&F2FS_CTX_INFO(ctx).dummy_enc_policy);
-+	kfree(ctx);
- }
- 
- static const struct fs_context_operations f2fs_context_ops = {
- 	.parse_param	= f2fs_parse_param,
-+	.get_tree	= f2fs_get_tree,
-+	.reconfigure = f2fs_reconfigure,
-+	.free	= f2fs_fc_free,
- };
- 
- static void kill_f2fs_super(struct super_block *sb)
-@@ -5318,10 +5272,24 @@ static void kill_f2fs_super(struct super_block *sb)
- 	}
- }
- 
-+static int f2fs_init_fs_context(struct fs_context *fc)
-+{
-+	struct f2fs_fs_context *ctx;
-+
-+	ctx = kzalloc(sizeof(struct f2fs_fs_context), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	fc->fs_private = ctx;
-+	fc->ops = &f2fs_context_ops;
-+
-+	return 0;
-+}
-+
- static struct file_system_type f2fs_fs_type = {
- 	.owner		= THIS_MODULE,
- 	.name		= "f2fs",
--	.mount		= f2fs_mount,
-+	.init_fs_context = f2fs_init_fs_context,
- 	.kill_sb	= kill_f2fs_super,
- 	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
--- 
-2.47.0
 
+>=20
+> >  		} else {
+> >  			ra_pages =3D fc->max_read / PAGE_SIZE;
+> >  			fc->no_lock =3D true;
+> > @@ -1489,7 +1492,7 @@ void fuse_send_init(struct fuse_mount *fm)
+> >  		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
+> >  		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
+> >  		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_ALLOW_IDMAP |
+> > -		FUSE_REQUEST_TIMEOUT;
+> > +		FUSE_REQUEST_TIMEOUT | FUSE_SPLICE_READ_USER_PAGES;
+> >  #ifdef CONFIG_FUSE_DAX
+> >  	if (fm->fc->dax)
+> >  		flags |=3D FUSE_MAP_ALIGNMENT;
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index 122d6586e8d4..b35f6bbcb322 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -235,6 +235,9 @@
+> >   *
+> >   *  7.44
+> >   *  - add FUSE_NOTIFY_INC_EPOCH
+> > + *
+> > + *  7.45
+> > + *  - add FUSE_SPLICE_READ_USER_PAGES
+> >   */
+> > =20
+> >  #ifndef _LINUX_FUSE_H
+> > @@ -443,6 +446,10 @@ struct fuse_file_lock {
+> >   * FUSE_OVER_IO_URING: Indicate that client supports io-uring
+> >   * FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.
+> >   *			 init_out.request_timeout contains the timeout (in secs)
+> > + * FUSE_SPLICE_READ_USER_PAGES: kernel supports splice on the device f=
+or reading
+> > + *				user pages. If the server enables this, then the
+> > + *				server should not access the pipe buffer after
+> > + *				completing the request.
+> >   */
+> >  #define FUSE_ASYNC_READ		(1 << 0)
+> >  #define FUSE_POSIX_LOCKS	(1 << 1)
+> > @@ -490,6 +497,7 @@ struct fuse_file_lock {
+> >  #define FUSE_ALLOW_IDMAP	(1ULL << 40)
+> >  #define FUSE_OVER_IO_URING	(1ULL << 41)
+> >  #define FUSE_REQUEST_TIMEOUT	(1ULL << 42)
+> > +#define FUSE_SPLICE_READ_USER_PAGES (1ULL << 43)
+> > =20
+> >  /**
+> >   * CUSE INIT request/reply flags
+>=20
+
+--=20
+Jeff Layton <jlayton@kernel.org>
 
