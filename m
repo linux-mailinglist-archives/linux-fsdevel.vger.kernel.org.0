@@ -1,57 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-46811-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46812-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2143CA95409
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 18:30:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76ED3A95465
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 18:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CB33B5793
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 16:29:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74FD51895653
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 16:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AC51E1E1F;
-	Mon, 21 Apr 2025 16:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23BA1EB5CD;
+	Mon, 21 Apr 2025 16:35:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="I5P+5qQV"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X52SlFLw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACD071A08AF
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 16:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2B71E32D9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 16:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745252991; cv=none; b=U4ZEnWrjerMF3JU17P3M78OfBLmVmJq34rNh7H6dJ0/DTxek3s3LIWXpmu8UhOMjY4G3zzccxpDeKLOnKiwYz1w1lOHz5VD9lkZGx3bj6IKSD3IC7Z2Kk8T9nEHZ3ApSf0qIWyjhb4bSxGSK2RxmPbqQvZ5EUe6fhTGs7MT6bZs=
+	t=1745253346; cv=none; b=Z0/gCtO9mA1hdTci5JDVjZOdYa8Dku4ZCGv82+q4huNGgiFNUWkGZu/Ur6spbkvlTAEf07kHKCUeI2j/ATenUtrwU7uD1PuhS8n59eOhlFA2kn8HON3Rz2OoXzJEjkTKnQW5H4TQwbrLq6ltrnky6XHwQYNjSny9iJ1buYbPUMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745252991; c=relaxed/simple;
-	bh=t5k/dXIfF8FEAFzU9LHDP2NNobtP59Adc0NFRUQ4c90=;
+	s=arc-20240116; t=1745253346; c=relaxed/simple;
+	bh=BIzR/H1F8de4lehses21qFDRgo7tYE5kewNC7o51Z8s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=toccdMfjWLIIOCh2vBLFk6ytwScX8vj1AcBoHN41A3t16zS1Zb6DLlNbU8TG/Rw+BPPB1Dfdl6OQevVxXv5dI6ldwq0UlEU6uZg33sD/QmwnT8kGRsWWpwKuv+ohM6HEkjJZppKRtdfwqzN6ERTuP8lYbPn9K0toEjZ1W4MiOT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=I5P+5qQV; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=PrKq4n+WtySnNcmWr3N7jVY05dOVMtHUQJoVkE2geoQ=; b=I5P+5qQVXVypWz0l8e9ekI6tkN
-	HiN5z81fWhjeZzJav6XVC68+TGHD3uqwUlELCHlA5r4Qn+j3nH2kupcIvBCHk7Kc2fOw6oxucgi39
-	Eshskfp6jae23D5gUbpcZ7FjSJQDajVr3cdjBtLBMoNfH6h5+fkgf4NY0eG+ZWzKMp0gigby9GrOn
-	mNKMLaVSWEA3qcH/loMR94+/0LfHY+AqEgglTimWfrRwWa9vzZfLpnAVVNJYso7SbblaLMbtLtXXs
-	krMmtQhOwP8vnHdpND2nSphMu8rcmhrSTEkyy6G9gJfnh3XfGs2vh83i1ZCFeGkXoH/jYKlM4+W2v
-	gwInFolA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u6u1j-00000002JGh-0WdH;
-	Mon, 21 Apr 2025 16:29:47 +0000
-Date: Mon, 21 Apr 2025 17:29:47 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH][RFC] ->mnt_devname is never NULL
-Message-ID: <20250421162947.GW2023217@ZenIV>
-References: <20250421033509.GV2023217@ZenIV>
- <20250421-annehmbar-fotoband-eb32f31f6124@brauner>
+	 Content-Type:Content-Disposition:In-Reply-To; b=phbqNwlTgOmtiIL67hwfZxxfPfmOaLrg6bOZ/IJTV+NZ2cCRsn0jOoGal2uMsuFunrg6ZzjSHaFUxxp/Rvz3Vw7voAerOg1i1syvrezArDrk4sAJ9SFwVhyWS4TLS5SvJbpm6rtkyXVB7Yt7oCegOuutKehCU0gUNS0nQDqxMHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X52SlFLw; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745253345; x=1776789345;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BIzR/H1F8de4lehses21qFDRgo7tYE5kewNC7o51Z8s=;
+  b=X52SlFLwD1hLRJS1smY85Gj3ga0YREWNEUKRR/utFGj5JviXD6+t9v5y
+   yRzTnuxwU32p6FO3bo/4lDv1RnZVuzdw4ujUXlAnhDyUcdS0IRtIzEvsV
+   yKP2hDoCG0O/Zzo7QOitzLnRlGGcErUFUDUSAaojxFCkf0LlO0Dc9+o6A
+   /kIhHCEEfnShEmKXt0UgmqsFcw17tIrMMF7O+ZJDRFR3chyR9N0IA/vyO
+   IbFX2DSPBh2qgj+GpEIi2ABr8KzF862XcLLZPaDyREGNkcKDLVOUXpQ9D
+   Ci6jiWenl33NLyn+5rXQT4VG6hMx8M81bFNmbs4bjqjeam4jICxtZ+opW
+   Q==;
+X-CSE-ConnectionGUID: WuGN6gS1SL2F73EhItugzA==
+X-CSE-MsgGUID: WhqpG+Q4SL+GZB3xKrgf0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11410"; a="72183697"
+X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; 
+   d="scan'208";a="72183697"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Apr 2025 09:35:44 -0700
+X-CSE-ConnectionGUID: Wh3D6qZUReScpja4mF35IQ==
+X-CSE-MsgGUID: 7PHXhzACSmiMwrQIePfuug==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,228,1739865600"; 
+   d="scan'208";a="132726322"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 21 Apr 2025 09:35:41 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u6u7P-0000El-1V;
+	Mon, 21 Apr 2025 16:35:39 +0000
+Date: Tue, 22 Apr 2025 00:34:53 +0800
+From: kernel test robot <lkp@intel.com>
+To: Eric Sandeen <sandeen@redhat.com>,
+	linux-f2fs-devel@lists.sourceforge.net
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	jaegeuk@kernel.org, chao@kernel.org, lihongbo22@huawei.com,
+	Eric Sandeen <sandeen@redhat.com>
+Subject: Re: [PATCH 5/7] f2fs: separate the options parsing and options
+ checking
+Message-ID: <202504220033.8EDCfvWU-lkp@intel.com>
+References: <20250420154647.1233033-6-sandeen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,47 +81,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250421-annehmbar-fotoband-eb32f31f6124@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250420154647.1233033-6-sandeen@redhat.com>
 
-On Mon, Apr 21, 2025 at 09:56:20AM +0200, Christian Brauner wrote:
-> On Mon, Apr 21, 2025 at 04:35:09AM +0100, Al Viro wrote:
-> > Not since 8f2918898eb5 "new helpers: vfs_create_mount(), fc_mount()"
-> > back in 2018.  Get rid of the dead checks...
-> >     
-> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> > ---
-> 
-> Good idea. Fwiw, I've put this into vfs-6.16.mount with some other minor
-> stuff. If you're keeping it yourself let me know.
+Hi Eric,
 
-Not sure...  I'm going through documenting the struct mount lifecycle/locking/etc.
-and it already looks like there will be more patches, but then some are going
-to be #fixes fodder.
+kernel test robot noticed the following build warnings:
 
-Example caught just a couple of minutes ago: do_lock_mount()
-                if (beneath) {
-                        m = real_mount(mnt);
-                        read_seqlock_excl(&mount_lock);
-                        dentry = dget(m->mnt_mountpoint);
-                        read_sequnlock_excl(&mount_lock);
-                } else {
-                        dentry = path->dentry;
-                }
+[auto build test WARNING on v6.15-rc3]
+[also build test WARNING on linus/master]
+[cannot apply to jaegeuk-f2fs/dev-test jaegeuk-f2fs/dev next-20250417]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-                inode_lock(dentry->d_inode);
-What's to prevent the 'beneath' case from getting mnt mount --move'd
-away *AND* the ex-parent from getting unmounted while we are blocked
-in inode_lock?  At this point we are not holding any locks whatsoever
-(and all mount-related locks nest inside inode_lock(), so we couldn't
-hold them there anyway).
+url:    https://github.com/intel-lab-lkp/linux/commits/Eric-Sandeen/f2fs-Add-fs-parameter-specifications-for-mount-options/20250421-220156
+base:   v6.15-rc3
+patch link:    https://lore.kernel.org/r/20250420154647.1233033-6-sandeen%40redhat.com
+patch subject: [PATCH 5/7] f2fs: separate the options parsing and options checking
+config: arc-randconfig-001-20250421 (https://download.01.org/0day-ci/archive/20250422/202504220033.8EDCfvWU-lkp@intel.com/config)
+compiler: arc-linux-gcc (GCC) 11.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250422/202504220033.8EDCfvWU-lkp@intel.com/reproduce)
 
-Hit that race and watch a very unhappy umount...
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504220033.8EDCfvWU-lkp@intel.com/
 
-BTW, a stylistic note: 'beneath' and '!beneath' cases have very little
-in common; I'm pretty sure it would be cleaner to split this function
-in two, putting the '!beneath' case back into lock_mount() and calling
-the rest lock_mount_beneath()...  This kind of boolean arguments is
-a bad idea, IME - especially when they affect locking or lifetimes
-in any way.
+All warnings (new ones prefixed by >>):
+
+   In file included from include/linux/printk.h:7,
+                    from include/asm-generic/bug.h:22,
+                    from arch/arc/include/asm/bug.h:30,
+                    from include/linux/bug.h:5,
+                    from include/linux/thread_info.h:13,
+                    from include/asm-generic/preempt.h:5,
+                    from ./arch/arc/include/generated/asm/preempt.h:1,
+                    from include/linux/preempt.h:79,
+                    from include/linux/spinlock.h:56,
+                    from include/linux/mmzone.h:8,
+                    from include/linux/gfp.h:7,
+                    from include/linux/umh.h:4,
+                    from include/linux/kmod.h:9,
+                    from include/linux/module.h:17,
+                    from fs/f2fs/super.c:8:
+   fs/f2fs/super.c: In function 'handle_mount_opt':
+>> include/linux/kern_levels.h:5:25: warning: format '%lu' expects argument of type 'long unsigned int', but argument 4 has type 'unsigned int' [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/kern_levels.h:11:25: note: in expansion of macro 'KERN_SOH'
+      11 | #define KERN_ERR        KERN_SOH "3"    /* error conditions */
+         |                         ^~~~~~~~
+   fs/f2fs/f2fs.h:1871:33: note: in expansion of macro 'KERN_ERR'
+    1871 |         f2fs_printk(sbi, false, KERN_ERR fmt, ##__VA_ARGS__)
+         |                                 ^~~~~~~~
+   fs/f2fs/super.c:763:25: note: in expansion of macro 'f2fs_err'
+     763 |                         f2fs_err(NULL, "inline xattr size is out of range: %lu ~ %lu",
+         |                         ^~~~~~~~
+   fs/f2fs/super.c:718:15: warning: unused variable 'name' [-Wunused-variable]
+     718 |         char *name;
+         |               ^~~~
+
+
+vim +5 include/linux/kern_levels.h
+
+314ba3520e513a7 Joe Perches 2012-07-30  4  
+04d2c8c83d0e3ac Joe Perches 2012-07-30 @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
+04d2c8c83d0e3ac Joe Perches 2012-07-30  6  #define KERN_SOH_ASCII	'\001'
+04d2c8c83d0e3ac Joe Perches 2012-07-30  7  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
