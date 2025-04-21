@@ -1,168 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-46828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7356CA95512
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 19:16:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB65A9551A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 19:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9FBC16CC4C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 17:16:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 603251893714
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 17:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335B01E1A08;
-	Mon, 21 Apr 2025 17:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304D41E3774;
+	Mon, 21 Apr 2025 17:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="25UioA/J"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FKAtipBQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17CBE12F399
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 17:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 878D012F399;
+	Mon, 21 Apr 2025 17:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745255800; cv=none; b=MPrV5ja0pB6U4FQ+XrABQTwZ0VT/nnELy/21XP0f9GMcUjVJ9KEZhSDyHVUnsnal5Fr07OiaILF5lL2YwpkGi5Bk9fjUtMqQj3tFwFwn8qU3igNjuo8DX71XmFzmXm3c/8GWS5CWc6zmQgCHOgTlvPrEF4dSTPq76ODnrrFID/8=
+	t=1745255926; cv=none; b=IEmYIO+vU5wYfzjYi7wMRYhBftMGq3Pk4lmz1kxW4Zjryb0QjlSvEdyZCE2Vx79H3VqVRAi+wp99gzeynNH2RIAR7gjUwn7mLhEtpszDb5SqUrErnykSG2E4AjQqHWsvbNHFdy7qW3v4ciCujKuojU3vuyMtllHeZ+VY0sZpAt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745255800; c=relaxed/simple;
-	bh=ZFCSLHiDysg927Y/Nr3V/lVaKcJ7uAxp7qwb1bHSUZA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MmttbnkdAKhfpzRKSMmXLUdJyXLnh4UYDlGuFmE47tLI40++36slFqaN7tKNevk9Z/xt/iShbN/rLRWXBs+KUuoGg8uJIWbWTHgFiCubPaiQUqgQUSPgxJmIp+D217HoMkgywZMl2G70K0nYOQSgFn56LCuqkCsKjwaslxXmDOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=25UioA/J; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4769e30af66so1294361cf.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 10:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745255798; x=1745860598; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RuURjUDWNXAz9lMXw8+fH47R9FvQohgPWajg37i/laE=;
-        b=25UioA/JF//XcrrCf2YEFIbTMNAOw2KZwYl2luCH5vkxjKxcHR5Jm/9gdcE4nI1p68
-         0+E3WoCZf7BH8kbW+AaFM2kdfiF6+vlxDVi69voKguVa4TVs9CVLcjadXmZSx2MvaHt5
-         weLVhD9tV7SQ7LHKthoscEIAZC4a/6iR54PHmiMaexmhRJXOki5FgjcIsVamA65czAbT
-         J/yV/Xpj4m2CckscQU2ExVE4OPfC7jH+oMGEPDRDY7Ov0p/QMVtHC1bLvFwCIuLbcrya
-         2V71Sy3P5bBgUKTpZeCIV8FdfYAkZX64BHhUH9gaGkWXUqvHqV9GXywArBtOU68YWCno
-         whgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745255798; x=1745860598;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RuURjUDWNXAz9lMXw8+fH47R9FvQohgPWajg37i/laE=;
-        b=jSdu8V6BI2i20qwZ0plONsjuy/NLEWth7ACGdmAhDUNTXJTNBseNC/pwjhQ5xwhr5K
-         atlHUjkfU93cIby0fbu2BlAYZ6LS74GNuAL7jNCcpTa3QD54x0l5iEqGAOIs+RzmpPZe
-         V8GEG4Y/GJnAtoJDIeWZUCx7ySUMBHRjq+cd+qbjq5ODygeo6nyEKCW5NtmMk9hCF2Kq
-         CFVQo1Ilx0dGnjdneyTl0GYB1k1pLmUEa8miC1pliZ8j4c87A9uP6vy8nFtQ+rQu9IJx
-         6WKlG8nbqraf/0Y8hC3rdwGnvmM73zFgC6V5mL4ZBLWs31DUl6VDNmzp6MMAmXsPNSTK
-         htxA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfSPMHMB5EqdMxAKpbx+xEwVLXUwAoYd1+o+dUtjYbfOadQFTizt3ebJdjeaEIq9KI0pXOzqcDiqk7k9Ri@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT6HK2Y8ti22CmMi8iAHFYPGGN3jM0twru2IZ0ONDbxrWdVkC8
-	beBAd17pwcksaXM/OEZh4weIyAnG4GAeiN2cgPjSq2jeqn6HjY4oOw44Q2XAJazKXVaCFUB+Tbq
-	6kjSOsAbj6aNQ4aShS61wsjKB0nIc6IaAPmqN
-X-Gm-Gg: ASbGnctzmiyFXSi0tG7vMfcRQB3yXkE2Lx/0DJ5uQ77cSJP0cvJaS15znCmGZcuQ0gf
-	NAGfQbodWJWtJado68wgoc0JoXJRJbYhOidA3B2uyKSry4li/72N/tBH4YVZflv0AmgYQ3514+1
-	rIEzjoRNaRa46KAOR5hBe3
-X-Google-Smtp-Source: AGHT+IEe07pf382BuG5t+h0cxkhNonB9S2hb+4NBUwiHHOIgvisi/X1Rvk0m70CnMe3Yxh9IFdbEwfSfBL+DkDE8WEU=
-X-Received: by 2002:ac8:5901:0:b0:467:84a1:df08 with SMTP id
- d75a77b69052e-47aecc928f3mr9502881cf.23.1745255797522; Mon, 21 Apr 2025
- 10:16:37 -0700 (PDT)
+	s=arc-20240116; t=1745255926; c=relaxed/simple;
+	bh=KBpqboJ8Gn+3zVUiSvsVyY5nAHzGZOsNjfQ2V9DsXwo=;
+	h=Date:Subject:From:To:Cc:Message-ID:MIME-Version:Content-Type; b=Dd+G3LXXkdepTgxZg8AIwTGxyx17tABqAKGiJbRwEJXl1bUmNhE9PoWYwaxmPzM0aRW/JWiNkkM411FdFSsCl9wMLU93ZA3k0f1Ws250loZBDiUnEpGkHGC59DwdpijNIqBURjIOKpovbWU+MtGi7uaetfMy5YV0xBzwkm8ssN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FKAtipBQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9A0FC4CEE4;
+	Mon, 21 Apr 2025 17:18:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745255925;
+	bh=KBpqboJ8Gn+3zVUiSvsVyY5nAHzGZOsNjfQ2V9DsXwo=;
+	h=Date:Subject:From:To:Cc:From;
+	b=FKAtipBQTdNOrpbB/vbqQyPW0DLJjpH/uqXFC591R4ODN9VNm+BWQOKN54t9vbf8C
+	 gz7yegAo66p3+MOcOYGEov4qRe57UnoOi0rvUa2wN26h9AAep2CIFSDLlehYXjWpXe
+	 3GLLqJXaX0a8ttxH6oPVpm2tsxllkB2ThPhZTkSvMr0wkCjwjKHfUugLaLQoZlNgva
+	 9kqba3yPuVGAsM9BUKIv0wp3YA1PU7p2sblSl+MfquOlwz0UPo+Yq3Lluq7nqrKFaT
+	 bXNsiBI9YXUgRTdi3A5T7vZsAyJ92QU0Q3z0PkslI8XnI7gFV2yiuSvPygqrTYZP8+
+	 1jZZEFytxZr9g==
+Date: Mon, 21 Apr 2025 10:18:45 -0700
+Subject: [PATCHSET V2] block/xfs: bdev page cache bug fixes for 6.15
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: djwong@kernel.org, cem@kernel.org, axboe@kernel.dk
+Cc: hch@lst.de, shinichiro.kawasaki@wdc.com, linux-mm@kvack.org,
+ mcgrof@kernel.org, linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+ willy@infradead.org, hch@infradead.org, linux-block@vger.kernel.org
+Message-ID: <174525589013.2138337.16473045486118778580.stgit@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20231206103702.3873743-1-surenb@google.com> <20231206103702.3873743-3-surenb@google.com>
- <8bcb7e5f-3c05-4d92-98f7-b62afa17e2fb@lucifer.local> <rns3bplwlxhdkueowpehtrej6avjbmh6mauwl33pfvr4qptmlg@swctg52xpyya>
-In-Reply-To: <rns3bplwlxhdkueowpehtrej6avjbmh6mauwl33pfvr4qptmlg@swctg52xpyya>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 21 Apr 2025 10:16:26 -0700
-X-Gm-Features: ATxdqUH-V1xozHecneL38ihhUBup30dXmnQSZc7psqoLu7St8-YIj64ka4pAWwg
-Message-ID: <CAJuCfpFjx2NB8X8zVSGyrcaOfwMApZRfGfuia3ERBKj0XaPgaw@mail.gmail.com>
-Subject: Re: [PATCH v6 2/5] userfaultfd: UFFDIO_MOVE uABI
-To: Alejandro Colomar <alx@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, aarcange@redhat.com, 
-	linux-man@vger.kernel.org, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, shuah@kernel.org, lokeshgidra@google.com, 
-	peterx@redhat.com, david@redhat.com, ryan.roberts@arm.com, hughd@google.com, 
-	mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, 
-	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com, 
-	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com, 
-	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Sat, Apr 19, 2025 at 12:26=E2=80=AFPM Alejandro Colomar <alx@kernel.org>=
- wrote:
->
-> Hi Lorenzo, Suren, Andrea,
->
-> On Sat, Apr 19, 2025 at 07:57:36PM +0100, Lorenzo Stoakes wrote:
-> > +cc Alejandro
->
-> Thanks!
->
-> > On Wed, Dec 06, 2023 at 02:36:56AM -0800, Suren Baghdasaryan wrote:
-> > > From: Andrea Arcangeli <aarcange@redhat.com>
-> > >
-> > > Implement the uABI of UFFDIO_MOVE ioctl.
->
-> [...]
->
-> > >
-> > > [1] https://lore.kernel.org/all/1425575884-2574-1-git-send-email-aarc=
-ange@redhat.com/
-> > > [2] https://lore.kernel.org/linux-mm/CA+EESO4uO84SSnBhArH4HvLNhaUQ5nZ=
-KNKXqxRCyjniNVjp0Aw@mail.gmail.com/
-> > >
-> > > Update for the ioctl_userfaultfd(2)  manpage:
-> >
-> > Sorry to resurrect an old thread but... I don't think this update was e=
-ver
-> > propagated anywhere?
-> >
-> > If you did send separately to man-pages list or whatnot maybe worth nud=
-ging
-> > again?
-> >
-> > I don't see anything at [0].
+Hi all,
 
-Thanks for bringing it up! This must have slipped from my attention.
+Here are a handful of bugfixes for 6.15.  The first patch fixes a race
+between set_blocksize and block device pagecache manipulation; the rest
+removes XFS' usage of set_blocksize since it's unnecessary.
 
-> >
-> > [0]: https://man7.org/linux/man-pages/man2/ioctl_userfaultfd.2.html
-> >
-> > Thanks!
-> >
-> > >
-> > >    UFFDIO_MOVE
-> > >        (Since Linux xxx)  Move a continuous memory chunk into the
->
-> Nope, it seems this was never sent to linux-man@.
-> <https://lore.kernel.org/linux-man/?q=3DUFFDIO_MOVE>:
+If you're going to start using this code, I strongly recommend pulling
+from my git trees, which are linked below.
 
-Sorry for missing that part.
+With a bit of luck, this should all go splendidly.
+Comments and questions are, as always, welcome.
 
->
->         [No results found]
->
-> Please re-send including linux-man@ in CC, as specified in
-> <https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/CONTRIB=
-UTING>
+--D
 
-Thanks for the reference. Will post the documentation update later today.
-Thanks,
-Suren.
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=bdev-fixes-6.15
+---
+Commits in this patchset:
+ * block: fix race between set_blocksize and read paths
+ * block: hoist block size validation code to a separate function
+ * xfs: stop using set_blocksize
+---
+ include/linux/blkdev.h |    1 +
+ block/bdev.c           |   50 ++++++++++++++++++++++++++++++++++++++++++------
+ block/blk-zoned.c      |    5 ++++-
+ block/fops.c           |   16 +++++++++++++++
+ block/ioctl.c          |    6 ++++++
+ fs/xfs/xfs_buf.c       |   15 +++++++++++---
+ 6 files changed, 82 insertions(+), 11 deletions(-)
 
->
->
-> Have a lovely night!
-> Alex
->
-> --
-> <https://www.alejandro-colomar.es/>
 
