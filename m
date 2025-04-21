@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-46794-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46795-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8C2A9503D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 13:33:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528A0A95041
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 13:36:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B98DB7A63E0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 11:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D689A188CCB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 11:36:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47182641E6;
-	Mon, 21 Apr 2025 11:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7292A2641D5;
+	Mon, 21 Apr 2025 11:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="mkt3Vpo1";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RhfXmEPY"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="as5js2vb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PDOxijTn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614CC35961
-	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 11:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F418262D0C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 11:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745235214; cv=none; b=D3HHd1EwcxKaVKZsKW6JVMwO+6YgUsrHhXfk4x15DXGcTMBEolcHEi53inkKHO42G0l5c2Z1HEzTbQ/THSMyLfF68GNFDGBw2iSoiWayZP0uSCLzhG8dsQcY4ZvK8/vTk2UPEohSxX2Ye6HN0jZimhwpjvWyKqke88RVs+x62a0=
+	t=1745235388; cv=none; b=Ic17+y+M0rNRL4gPy94I5R/VN801ylzqmrBrOq+7+2e8tuhM6NIvjqEtxWoqySh1tUl+PfU5M2P1R6aqxw9bHIgNasSjaN3h4g9g54uZuhV4+E3AsYAY42BbB2iw37pa/zelBeccF7tU3o2flAU2chlVZ7h9Ye/3KSPhYQZCqdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745235214; c=relaxed/simple;
-	bh=miCbCaA1b+eXGBuW6yWNtG2XjfgKBwx1cXM8/g0d0ow=;
+	s=arc-20240116; t=1745235388; c=relaxed/simple;
+	bh=QXmidJR8t/yrgAAV5z+Sz/0JgStQbyN1a8EK94y0QHU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iMhXM80yg5HDqGDykrq7KqXZLbSDzXm+OAhRrpcFpATSHE2ZhW3MWUVyqkoeHosjsZnhw/cxtbmagzxMVczyb68S+DMZq63qYvK642WxTiPGDhwukpN9aF6Jx1NRJJuYEVsVLvXWWVhGg+Gvqh1b2bENfkoU4O/TSRWms0QmfZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=mkt3Vpo1; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RhfXmEPY; arc=none smtp.client-ip=103.168.172.148
+	 In-Reply-To:Content-Type; b=adLb0lGhmq202PlNGmEPq1gR3r1kC11qResqelirJdZ8CXKZFnaVbfdX88nc3OF/JnosV2qZrWdXu/SgSgmDF6pkV4XVU3e9MhkwO+77X2OeNKyAAkC80WPBpRGTaMKcep9K1YG8codqy5X0i0H+xWJgdScTS2k2C0NTYXF9bYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=as5js2vb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PDOxijTn; arc=none smtp.client-ip=103.168.172.159
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 21031138008D;
-	Mon, 21 Apr 2025 07:33:30 -0400 (EDT)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3D2AD1140251;
+	Mon, 21 Apr 2025 07:36:24 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Mon, 21 Apr 2025 07:33:30 -0400
+  by phl-compute-05.internal (MEProxy); Mon, 21 Apr 2025 07:36:24 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1745235210;
-	 x=1745321610; bh=hfrTE0U4FvOXra7sJrb7PfYUgy6f7wjVO8H31gl2i9s=; b=
-	mkt3Vpo1th12Z2yaMUELXoCAzUuo7HDqIpnp0568HA4926TNCMz6UaCVz9npXxbo
-	5QYSbROXSHwgUhtoUEPgKFyPf1n5yzI1EvPFsuLBlXMaXHiFzQrZTQibdnyp+MGU
-	0o3DVDmKeISAXmRaQpP8x9vkvEdy3vU62swBNEL2M/gMJF7w+I8Eg1rmgCV+HhLu
-	u54XG5hJ27KjNStLxA0oIBYuB9crjZUWzwgxEdWvIa3gRi/sEQn53YiRVH1LpBQa
-	5GTDsxe6xV3oqZvD71d82lgAELc3ij+DE40HNRvVyZ1lcwIKamw968Vpt4txgWgJ
-	ye+M7WFkxrhksDbBwtH87g==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1745235384;
+	 x=1745321784; bh=eRu7ck6nmM6cR/Tsy/YimJdovOjBh1qoDKDzx9IwuDM=; b=
+	as5js2vbfEGZUHYPH8oETbc3+YZxF0s9upmOZn9kt8SzA8GKETbUH1jCF5NhkJ8y
+	mgzJnNsUhdh3qGYuVwV3MbArpvMhDKb0a2DRqG3LeEy7dtM5dr35gfwIFfr3VbCs
+	ckIY2dNW/vY5usKAJLSy7/Slijq2fDmb5t4Vut3MejTyBsMRz29VODEBZmI3mHZH
+	SJl+THxQ+PWpiMrCkM/GYoI+7QMkkMLq3yR7mFEa7FgyGsK849GCCnMpzoI6cnmC
+	9x5kTRTSSmsxlPY9kPtGhiOXtYj1zkKk4Jgd4bWRt6RHe0IPgZVOcJh3gYzVQgAl
+	6c1hrOYLfM2SAh1dKvXAsw==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1745235210; x=
-	1745321610; bh=hfrTE0U4FvOXra7sJrb7PfYUgy6f7wjVO8H31gl2i9s=; b=R
-	hfXmEPY2Pj4YuIr3NPfGjiTwTsWGgSxD3njmwpnza3dc0OeX5BwqR+FcSAggqXhJ
-	Bb8gvPqPrce67g4buP9CIQSmDH6iRIkCo6/Q+Sxp3F7OUrnNn0YylBu3ver2VAQv
-	vl6jQR4IH+MrXAPD4NLCHa2LnKlFhKd0N1Ioj38tDOjR2opHyc7WDvJdT/toyhwc
-	MGmsplxCj+XSnwYQ3ImpoXy+y4Zh/AqcyP3Bxx1T1j+6jNFgMj4FZlB59JpeTTOr
-	RKM/Z1YVhvR7qZfMMMbHAUVQigTrWSVGx0B+6B3k65HfUWmJyHn7MrtbAddYng4z
-	WboIc88xOseh6FYJtULdA==
-X-ME-Sender: <xms:CS0GaBGm-g0QiJdTw6MvdoLUg1F8UoTBxDykenxJ2Ycq7tIJlmC9EA>
-    <xme:CS0GaGUXjkKNY-drhw2ujrs6cQ07H2u071KKfg_9rR64iLWhTuJzcvq5ccCMO8ITp
-    9ngMVkgkzJwWFhT>
-X-ME-Received: <xmr:CS0GaDIMAR4Vboahb3zHbJFtHsQcA_vfFMOWXVwCmF4IubA9TNkDhNpceiiq6vBF0aR8uC3WKR_VaLXAsF0ijVCxLA_DJLqxyPzsvSX19UNdPOh7sgOM>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1745235384; x=
+	1745321784; bh=eRu7ck6nmM6cR/Tsy/YimJdovOjBh1qoDKDzx9IwuDM=; b=P
+	DOxijTnUQn44PaEr9n2/KRHVEnOOwu4oy2pYrX3QgniFQzCe644QPYz2qhorPqJ/
+	Qv+jyX4B4y80hBMp070yXtdMSBlRAsHW6CFt2ogfBoGverYeUD5j2XlxnqSDJT7H
+	mLNu4dJI139m/QISMd4prFCJDNvosDIRxkT/Fp5nuDb6Cd0numuosllyArBtC8kJ
+	w1dghgpQTxNqbZE1qGMgzyieNBSj4ukDQvTIU3tgeddH00nOt7p8IG5fT7F/xnZg
+	5NiRjisJZKEvQmOOQf7SkAlAZ4jmj4bEGJ4N0Z9UwTjiLzOxTOlJKFpEkzgCQrnu
+	UcpFoyPp7YLSs2OAQpkzw==
+X-ME-Sender: <xms:uC0GaMbp1BXWnTAkEgeF0HMWVIhmG9D0nlQ7t41svaMRmdatr57ZyA>
+    <xme:uC0GaHaJLRRLRbiFy5FWoGczoIc-ye6Cfw6hqPqLm2yhE-t6xVk_egxQDBtNlEkOc
+    pbqTwYzEtu3WNXU>
+X-ME-Received: <xmr:uC0GaG_jC4Um4_CZUtqvnkSbYttM0wRgLVhE0fMBWDy2rBkmYCUdXKu2HGteAPObZnbQkwCblmiROHz3W8rG_JWILUJVBzAv8-8UkOcROH0aD5j7selR>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgedtjeegucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
@@ -78,16 +78,16 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgedtjeegucetufdote
     rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinh
     hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehk
     vghrnhgvlhdqthgvrghmsehmvghtrgdrtghomh
-X-ME-Proxy: <xmx:CS0GaHGJYpYZOZzuqEbJnV_5gDJfQJxTN1xBUTyZ8zxu8H_mNG_S_w>
-    <xmx:CS0GaHXP330tTP2B8y39mNfq1uVW_TlGHkVV-8yuwlxnXvGxoqqZJQ>
-    <xmx:CS0GaCMPceNLWzKajVtDIjs0iuLpFdNhAWPj5UEIvGUAyIy-qZ_EBA>
-    <xmx:CS0GaG11nit0tvh6WDe2vaZEiXIgKjYmWAsZcA4zU2u54tICiHawSQ>
-    <xmx:Ci0GaLDPqoYUxMrxqunr4qbefdX9ZEAHuAQTDrSFeTXB-82-0hPmrmUf>
+X-ME-Proxy: <xmx:uC0GaGr8nIU7ZpTtcrNm9UVWEdgux1S3rUbAFeU4fedtqCViupbmbg>
+    <xmx:uC0GaHp5mshr-iydfci-FsVPJzpMBFwJoneyvUwyX9tAohibK7T0_Q>
+    <xmx:uC0GaETxR3xkE6tbfCQG0bvsVzmfSCkGSxuogggJQropNkwt9nA27Q>
+    <xmx:uC0GaHpjsmIvv8I863ng8RxQh7EAKFpibZndnPmvmAOrlwVVFG3D5Q>
+    <xmx:uC0GaI27kEBYha8eOUqZpF1lLkHKBHZBkqU0uJOITAjE1TRhCovuWGSW>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 21 Apr 2025 07:33:28 -0400 (EDT)
-Message-ID: <4db92307-4e56-4b61-944a-80272119f11f@fastmail.fm>
-Date: Mon, 21 Apr 2025 13:33:26 +0200
+ 21 Apr 2025 07:36:23 -0400 (EDT)
+Message-ID: <c5599259-d868-429e-9522-24b792c4a269@fastmail.fm>
+Date: Mon, 21 Apr 2025 13:36:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -95,84 +95,787 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] fuse: optimize struct fuse_conn fields
+Subject: Re: [PATCH 2/2] fuse: clean up struct fuse_conn bitfields
 To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu
 Cc: linux-fsdevel@vger.kernel.org, kernel-team@meta.com
 References: <20250418210617.734152-1-joannelkoong@gmail.com>
+ <20250418210617.734152-2-joannelkoong@gmail.com>
 From: Bernd Schubert <bernd.schubert@fastmail.fm>
 Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250418210617.734152-1-joannelkoong@gmail.com>
+In-Reply-To: <20250418210617.734152-2-joannelkoong@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 4/18/25 23:06, Joanne Koong wrote:
-> Use a bitfield for tracking initialized, blocked, aborted, and io_uring
-> state of the fuse connection. Track connected state using a bool instead
-> of an unsigned.
-> 
-> On a 64-bit system, this shaves off 16 bytes from the size of struct
-> fuse_conn.
+> Use boolean bitfields to improve clarity/readability and to be
+> consistent with bitfields in other fuse structs (eg fuse_fs_context,
+> fuse_args). Set bitfield values with true/false to improve readability.
 > 
 > No functional changes.
 > 
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> ---
->  fs/fuse/fuse_i.h | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index b54f4f57789f..6aecada8aadd 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -690,24 +690,24 @@ struct fuse_conn {
->  	 * active_background, bg_queue, blocked */
->  	spinlock_t bg_lock;
->  
-> -	/** Flag indicating that INIT reply has been received. Allocating
-> -	 * any fuse request will be suspended until the flag is set */
-> -	int initialized;
-> -
-> -	/** Flag indicating if connection is blocked.  This will be
-> -	    the case before the INIT reply is received, and if there
-> -	    are too many outstading backgrounds requests */
-> -	int blocked;
-> -
->  	/** waitq for blocked connection */
->  	wait_queue_head_t blocked_waitq;
->  
->  	/** Connection established, cleared on umount, connection
->  	    abort and device release */
-> -	unsigned connected;
-> +	bool connected;
-> +
-> +	/** Flag indicating that INIT reply has been received. Allocating
-> +	 * any fuse request will be suspended until the flag is set */
-> +	int initialized:1;
-> +
-> +	/** Flag indicating if connection is blocked.  This will be
-> +	    the case before the INIT reply is received, and if there
-> +	    are too many outstanding backgrounds requests */
-> +	int blocked:1;
->  
->  	/** Connection aborted via sysfs */
-> -	bool aborted;
-> +	bool aborted:1;
->  
->  	/** Connection failed (version mismatch).  Cannot race with
->  	    setting other bitfields since it is only set once in INIT
-> @@ -896,7 +896,7 @@ struct fuse_conn {
->  	unsigned int no_link:1;
->  
->  	/* Use io_uring for communication */
-> -	unsigned int io_uring;
-> +	unsigned int io_uring:1;
-
-Ah yes, I forgotten to change it. There had been io-uring patch versions
-that were using READ_ONCE and then I forgot to update it.
-
 
 
 Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+
+> ---
+>  fs/fuse/cuse.c      |   2 +-
+>  fs/fuse/dev.c       |  10 ++--
+>  fs/fuse/dev_uring.c |   4 +-
+>  fs/fuse/dir.c       |  16 +++---
+>  fs/fuse/file.c      |  18 +++----
+>  fs/fuse/fuse_i.h    | 122 ++++++++++++++++++++++----------------------
+>  fs/fuse/inode.c     |  76 +++++++++++++--------------
+>  fs/fuse/virtio_fs.c |   4 +-
+>  fs/fuse/xattr.c     |   8 +--
+>  9 files changed, 130 insertions(+), 130 deletions(-)
+> 
+> diff --git a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+> index b39844d75a80..d5f926b4547c 100644
+> --- a/fs/fuse/cuse.c
+> +++ b/fs/fuse/cuse.c
+> @@ -523,7 +523,7 @@ static int cuse_channel_open(struct inode *inode, struct file *file)
+>  
+>  	INIT_LIST_HEAD(&cc->list);
+>  
+> -	cc->fc.initialized = 1;
+> +	cc->fc.initialized = true;
+>  	rc = cuse_send_init(cc);
+>  	if (rc) {
+>  		fuse_dev_free(fud);
+> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> index 155bb6aeaef5..67d07b4c778a 100644
+> --- a/fs/fuse/dev.c
+> +++ b/fs/fuse/dev.c
+> @@ -166,7 +166,7 @@ void fuse_set_initialized(struct fuse_conn *fc)
+>  {
+>  	/* Make sure stores before this are seen on another CPU */
+>  	smp_wmb();
+> -	fc->initialized = 1;
+> +	fc->initialized = true;
+>  }
+>  
+>  static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
+> @@ -460,7 +460,7 @@ void fuse_request_end(struct fuse_req *req)
+>  		spin_lock(&fc->bg_lock);
+>  		clear_bit(FR_BACKGROUND, &req->flags);
+>  		if (fc->num_background == fc->max_background) {
+> -			fc->blocked = 0;
+> +			fc->blocked = false;
+>  			wake_up(&fc->blocked_waitq);
+>  		} else if (!fc->blocked) {
+>  			/*
+> @@ -720,7 +720,7 @@ static int fuse_request_queue_background(struct fuse_req *req)
+>  	if (likely(fc->connected)) {
+>  		fc->num_background++;
+>  		if (fc->num_background == fc->max_background)
+> -			fc->blocked = 1;
+> +			fc->blocked = true;
+>  		list_add_tail(&req->list, &fc->bg_queue);
+>  		flush_bg_queue(fc);
+>  		queued = true;
+> @@ -2173,7 +2173,7 @@ static ssize_t fuse_dev_do_write(struct fuse_dev *fud,
+>  		if (nbytes != sizeof(struct fuse_out_header))
+>  			err = -EINVAL;
+>  		else if (oh.error == -ENOSYS)
+> -			fc->no_interrupt = 1;
+> +			fc->no_interrupt = true;
+>  		else if (oh.error == -EAGAIN)
+>  			err = queue_interrupt(req);
+>  
+> @@ -2435,7 +2435,7 @@ void fuse_abort_conn(struct fuse_conn *fc)
+>  			spin_unlock(&fpq->lock);
+>  		}
+>  		spin_lock(&fc->bg_lock);
+> -		fc->blocked = 0;
+> +		fc->blocked = false;
+>  		fc->max_background = UINT_MAX;
+>  		flush_bg_queue(fc);
+>  		spin_unlock(&fc->bg_lock);
+> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> index 249b210becb1..ef470c4a9261 100644
+> --- a/fs/fuse/dev_uring.c
+> +++ b/fs/fuse/dev_uring.c
+> @@ -1169,7 +1169,7 @@ int fuse_uring_cmd(struct io_uring_cmd *cmd, unsigned int issue_flags)
+>  		if (err) {
+>  			pr_info_once("FUSE_IO_URING_CMD_REGISTER failed err=%d\n",
+>  				     err);
+> -			fc->io_uring = 0;
+> +			fc->io_uring = false;
+>  			wake_up_all(&fc->blocked_waitq);
+>  			return err;
+>  		}
+> @@ -1325,7 +1325,7 @@ bool fuse_uring_queue_bq_req(struct fuse_req *req)
+>  	spin_lock(&fc->bg_lock);
+>  	fc->num_background++;
+>  	if (fc->num_background == fc->max_background)
+> -		fc->blocked = 1;
+> +		fc->blocked = true;
+>  	fuse_uring_flush_bg(queue);
+>  	spin_unlock(&fc->bg_lock);
+>  
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 1fb0b15a6088..25e06c73f83b 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -774,7 +774,7 @@ static int fuse_atomic_open(struct inode *dir, struct dentry *entry,
+>  
+>  	err = fuse_create_open(idmap, dir, entry, file, flags, mode, FUSE_CREATE);
+>  	if (err == -ENOSYS) {
+> -		fc->no_create = 1;
+> +		fc->no_create = true;
+>  		goto mknod;
+>  	} else if (err == -EEXIST)
+>  		fuse_invalidate_entry(entry);
+> @@ -923,7 +923,7 @@ static int fuse_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+>  	err = fuse_create_open(idmap, dir, file->f_path.dentry, file,
+>  			       file->f_flags, mode, FUSE_TMPFILE);
+>  	if (err == -ENOSYS) {
+> -		fc->no_tmpfile = 1;
+> +		fc->no_tmpfile = true;
+>  		err = -EOPNOTSUPP;
+>  	}
+>  	return err;
+> @@ -1133,7 +1133,7 @@ static int fuse_rename2(struct mnt_idmap *idmap, struct inode *olddir,
+>  					 FUSE_RENAME2,
+>  					 sizeof(struct fuse_rename2_in));
+>  		if (err == -ENOSYS) {
+> -			fc->no_rename2 = 1;
+> +			fc->no_rename2 = true;
+>  			err = -EINVAL;
+>  		}
+>  	} else {
+> @@ -1172,7 +1172,7 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
+>  		fuse_invalidate_attr(inode);
+>  
+>  	if (err == -ENOSYS)
+> -		fm->fc->no_link = 1;
+> +		fm->fc->no_link = true;
+>  out:
+>  	if (fm->fc->no_link)
+>  		return -EPERM;
+> @@ -1376,7 +1376,7 @@ static int fuse_update_get_attr(struct mnt_idmap *idmap, struct inode *inode,
+>  		if (!fc->no_statx && (request_mask & ~STATX_BASIC_STATS)) {
+>  			err = fuse_do_statx(idmap, inode, file, stat);
+>  			if (err == -ENOSYS) {
+> -				fc->no_statx = 1;
+> +				fc->no_statx = true;
+>  				err = 0;
+>  				goto retry;
+>  			}
+> @@ -1521,7 +1521,7 @@ static int fuse_access(struct inode *inode, int mask)
+>  	/*
+>  	 * We should not send FUSE_ACCESS to the userspace
+>  	 * when idmapped mounts are enabled as for this case
+> -	 * we have fc->default_permissions = 1 and access
+> +	 * we have fc->default_permissions = true and access
+>  	 * permission checks are done on the kernel side.
+>  	 */
+>  	WARN_ON_ONCE(!(fm->sb->s_iflags & SB_I_NOIDMAP));
+> @@ -1538,7 +1538,7 @@ static int fuse_access(struct inode *inode, int mask)
+>  	args.in_args[0].value = &inarg;
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err == -ENOSYS) {
+> -		fm->fc->no_access = 1;
+> +		fm->fc->no_access = true;
+>  		err = 0;
+>  	}
+>  	return err;
+> @@ -1754,7 +1754,7 @@ static int fuse_dir_fsync(struct file *file, loff_t start, loff_t end,
+>  	inode_lock(inode);
+>  	err = fuse_fsync_common(file, start, end, datasync, FUSE_FSYNCDIR);
+>  	if (err == -ENOSYS) {
+> -		fc->no_fsyncdir = 1;
+> +		fc->no_fsyncdir = true;
+>  		err = 0;
+>  	}
+>  	inode_unlock(inode);
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index e203dd4fcc0f..f8ca57cebc3b 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -155,9 +155,9 @@ struct fuse_file *fuse_file_open(struct fuse_mount *fm, u64 nodeid,
+>  			kfree(ff->args);
+>  			ff->args = NULL;
+>  			if (isdir)
+> -				fc->no_opendir = 1;
+> +				fc->no_opendir = true;
+>  			else
+> -				fc->no_open = 1;
+> +				fc->no_open = true;
+>  		}
+>  	}
+>  
+> @@ -474,7 +474,7 @@ static int fuse_flush(struct file *file, fl_owner_t id)
+>  
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err == -ENOSYS) {
+> -		fm->fc->no_flush = 1;
+> +		fm->fc->no_flush = true;
+>  		err = 0;
+>  	}
+>  
+> @@ -549,7 +549,7 @@ static int fuse_fsync(struct file *file, loff_t start, loff_t end,
+>  
+>  	err = fuse_fsync_common(file, start, end, datasync, FUSE_FSYNC);
+>  	if (err == -ENOSYS) {
+> -		fc->no_fsync = 1;
+> +		fc->no_fsync = true;
+>  		err = 0;
+>  	}
+>  out:
+> @@ -2548,7 +2548,7 @@ static sector_t fuse_bmap(struct address_space *mapping, sector_t block)
+>  	args.out_args[0].value = &outarg;
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err == -ENOSYS)
+> -		fm->fc->no_bmap = 1;
+> +		fm->fc->no_bmap = true;
+>  
+>  	return err ? 0 : outarg.block;
+>  }
+> @@ -2581,7 +2581,7 @@ static loff_t fuse_lseek(struct file *file, loff_t offset, int whence)
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err) {
+>  		if (err == -ENOSYS) {
+> -			fm->fc->no_lseek = 1;
+> +			fm->fc->no_lseek = true;
+>  			goto fallback;
+>  		}
+>  		return err;
+> @@ -2716,7 +2716,7 @@ __poll_t fuse_file_poll(struct file *file, poll_table *wait)
+>  	if (!err)
+>  		return demangle_poll(outarg.revents);
+>  	if (err == -ENOSYS) {
+> -		fm->fc->no_poll = 1;
+> +		fm->fc->no_poll = true;
+>  		return DEFAULT_POLLMASK;
+>  	}
+>  	return EPOLLERR;
+> @@ -2935,7 +2935,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
+>  	args.in_args[0].value = &inarg;
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err == -ENOSYS) {
+> -		fm->fc->no_fallocate = 1;
+> +		fm->fc->no_fallocate = true;
+>  		err = -EOPNOTSUPP;
+>  	}
+>  	if (err)
+> @@ -3047,7 +3047,7 @@ static ssize_t __fuse_copy_file_range(struct file *file_in, loff_t pos_in,
+>  	args.out_args[0].value = &outarg;
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err == -ENOSYS) {
+> -		fc->no_copy_file_range = 1;
+> +		fc->no_copy_file_range = true;
+>  		err = -EOPNOTSUPP;
+>  	}
+>  	if (err)
+> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> index 6aecada8aadd..3d5289cb82a5 100644
+> --- a/fs/fuse/fuse_i.h
+> +++ b/fs/fuse/fuse_i.h
+> @@ -699,12 +699,12 @@ struct fuse_conn {
+>  
+>  	/** Flag indicating that INIT reply has been received. Allocating
+>  	 * any fuse request will be suspended until the flag is set */
+> -	int initialized:1;
+> +	bool initialized:1;
+>  
+>  	/** Flag indicating if connection is blocked.  This will be
+>  	    the case before the INIT reply is received, and if there
+>  	    are too many outstanding backgrounds requests */
+> -	int blocked:1;
+> +	bool blocked:1;
+>  
+>  	/** Connection aborted via sysfs */
+>  	bool aborted:1;
+> @@ -712,37 +712,37 @@ struct fuse_conn {
+>  	/** Connection failed (version mismatch).  Cannot race with
+>  	    setting other bitfields since it is only set once in INIT
+>  	    reply, before any other request, and never cleared */
+> -	unsigned conn_error:1;
+> +	bool conn_error:1;
+>  
+>  	/** Connection successful.  Only set in INIT */
+> -	unsigned conn_init:1;
+> +	bool conn_init:1;
+>  
+>  	/** Do readahead asynchronously?  Only set in INIT */
+> -	unsigned async_read:1;
+> +	bool async_read:1;
+>  
+>  	/** Return an unique read error after abort.  Only set in INIT */
+> -	unsigned abort_err:1;
+> +	bool abort_err:1;
+>  
+>  	/** Do not send separate SETATTR request before open(O_TRUNC)  */
+> -	unsigned atomic_o_trunc:1;
+> +	bool atomic_o_trunc:1;
+>  
+>  	/** Filesystem supports NFS exporting.  Only set in INIT */
+> -	unsigned export_support:1;
+> +	bool export_support:1;
+>  
+>  	/** write-back cache policy (default is write-through) */
+> -	unsigned writeback_cache:1;
+> +	bool writeback_cache:1;
+>  
+>  	/** allow parallel lookups and readdir (default is serialized) */
+> -	unsigned parallel_dirops:1;
+> +	bool parallel_dirops:1;
+>  
+>  	/** handle fs handles killing suid/sgid/cap on write/chown/trunc */
+> -	unsigned handle_killpriv:1;
+> +	bool handle_killpriv:1;
+>  
+>  	/** cache READLINK responses in page cache */
+> -	unsigned cache_symlinks:1;
+> +	bool cache_symlinks:1;
+>  
+>  	/* show legacy mount options */
+> -	unsigned int legacy_opts_show:1;
+> +	bool legacy_opts_show:1;
+>  
+>  	/*
+>  	 * fs kills suid/sgid/cap on write/chown/trunc. suid is killed on
+> @@ -750,7 +750,7 @@ struct fuse_conn {
+>  	 * on write/truncate only if caller did not have CAP_FSETID as well as
+>  	 * file has group execute permission.
+>  	 */
+> -	unsigned handle_killpriv_v2:1;
+> +	bool handle_killpriv_v2:1;
+>  
+>  	/*
+>  	 * The following bitfields are only for optimization purposes
+> @@ -758,145 +758,145 @@ struct fuse_conn {
+>  	 */
+>  
+>  	/** Is open/release not implemented by fs? */
+> -	unsigned no_open:1;
+> +	bool no_open:1;
+>  
+>  	/** Is opendir/releasedir not implemented by fs? */
+> -	unsigned no_opendir:1;
+> +	bool no_opendir:1;
+>  
+>  	/** Is fsync not implemented by fs? */
+> -	unsigned no_fsync:1;
+> +	bool no_fsync:1;
+>  
+>  	/** Is fsyncdir not implemented by fs? */
+> -	unsigned no_fsyncdir:1;
+> +	bool no_fsyncdir:1;
+>  
+>  	/** Is flush not implemented by fs? */
+> -	unsigned no_flush:1;
+> +	bool no_flush:1;
+>  
+>  	/** Is setxattr not implemented by fs? */
+> -	unsigned no_setxattr:1;
+> +	bool no_setxattr:1;
+>  
+>  	/** Does file server support extended setxattr */
+> -	unsigned setxattr_ext:1;
+> +	bool setxattr_ext:1;
+>  
+>  	/** Is getxattr not implemented by fs? */
+> -	unsigned no_getxattr:1;
+> +	bool no_getxattr:1;
+>  
+>  	/** Is listxattr not implemented by fs? */
+> -	unsigned no_listxattr:1;
+> +	bool no_listxattr:1;
+>  
+>  	/** Is removexattr not implemented by fs? */
+> -	unsigned no_removexattr:1;
+> +	bool no_removexattr:1;
+>  
+>  	/** Are posix file locking primitives not implemented by fs? */
+> -	unsigned no_lock:1;
+> +	bool no_lock:1;
+>  
+>  	/** Is access not implemented by fs? */
+> -	unsigned no_access:1;
+> +	bool no_access:1;
+>  
+>  	/** Is create not implemented by fs? */
+> -	unsigned no_create:1;
+> +	bool no_create:1;
+>  
+>  	/** Is interrupt not implemented by fs? */
+> -	unsigned no_interrupt:1;
+> +	bool no_interrupt:1;
+>  
+>  	/** Is bmap not implemented by fs? */
+> -	unsigned no_bmap:1;
+> +	bool no_bmap:1;
+>  
+>  	/** Is poll not implemented by fs? */
+> -	unsigned no_poll:1;
+> +	bool no_poll:1;
+>  
+>  	/** Do multi-page cached writes */
+> -	unsigned big_writes:1;
+> +	bool big_writes:1;
+>  
+>  	/** Don't apply umask to creation modes */
+> -	unsigned dont_mask:1;
+> +	bool dont_mask:1;
+>  
+>  	/** Are BSD file locking primitives not implemented by fs? */
+> -	unsigned no_flock:1;
+> +	bool no_flock:1;
+>  
+>  	/** Is fallocate not implemented by fs? */
+> -	unsigned no_fallocate:1;
+> +	bool no_fallocate:1;
+>  
+>  	/** Is rename with flags implemented by fs? */
+> -	unsigned no_rename2:1;
+> +	bool no_rename2:1;
+>  
+>  	/** Use enhanced/automatic page cache invalidation. */
+> -	unsigned auto_inval_data:1;
+> +	bool auto_inval_data:1;
+>  
+>  	/** Filesystem is fully responsible for page cache invalidation. */
+> -	unsigned explicit_inval_data:1;
+> +	bool explicit_inval_data:1;
+>  
+>  	/** Does the filesystem support readdirplus? */
+> -	unsigned do_readdirplus:1;
+> +	bool do_readdirplus:1;
+>  
+>  	/** Does the filesystem want adaptive readdirplus? */
+> -	unsigned readdirplus_auto:1;
+> +	bool readdirplus_auto:1;
+>  
+>  	/** Does the filesystem support asynchronous direct-IO submission? */
+> -	unsigned async_dio:1;
+> +	bool async_dio:1;
+>  
+>  	/** Is lseek not implemented by fs? */
+> -	unsigned no_lseek:1;
+> +	bool no_lseek:1;
+>  
+>  	/** Does the filesystem support posix acls? */
+> -	unsigned posix_acl:1;
+> +	bool posix_acl:1;
+>  
+>  	/** Check permissions based on the file mode or not? */
+> -	unsigned default_permissions:1;
+> +	bool default_permissions:1;
+>  
+>  	/** Allow other than the mounter user to access the filesystem ? */
+> -	unsigned allow_other:1;
+> +	bool allow_other:1;
+>  
+>  	/** Does the filesystem support copy_file_range? */
+> -	unsigned no_copy_file_range:1;
+> +	bool no_copy_file_range:1;
+>  
+>  	/* Send DESTROY request */
+> -	unsigned int destroy:1;
+> +	bool destroy:1;
+>  
+>  	/* Delete dentries that have gone stale */
+> -	unsigned int delete_stale:1;
+> +	bool delete_stale:1;
+>  
+>  	/** Do not create entry in fusectl fs */
+> -	unsigned int no_control:1;
+> +	bool no_control:1;
+>  
+>  	/** Do not allow MNT_FORCE umount */
+> -	unsigned int no_force_umount:1;
+> +	bool no_force_umount:1;
+>  
+>  	/* Auto-mount submounts announced by the server */
+> -	unsigned int auto_submounts:1;
+> +	bool auto_submounts:1;
+>  
+>  	/* Propagate syncfs() to server */
+> -	unsigned int sync_fs:1;
+> +	bool sync_fs:1;
+>  
+>  	/* Initialize security xattrs when creating a new inode */
+> -	unsigned int init_security:1;
+> +	bool init_security:1;
+>  
+>  	/* Add supplementary group info when creating a new inode */
+> -	unsigned int create_supp_group:1;
+> +	bool create_supp_group:1;
+>  
+>  	/* Does the filesystem support per inode DAX? */
+> -	unsigned int inode_dax:1;
+> +	bool inode_dax:1;
+>  
+>  	/* Is tmpfile not implemented by fs? */
+> -	unsigned int no_tmpfile:1;
+> +	bool no_tmpfile:1;
+>  
+>  	/* Relax restrictions to allow shared mmap in FOPEN_DIRECT_IO mode */
+> -	unsigned int direct_io_allow_mmap:1;
+> +	bool direct_io_allow_mmap:1;
+>  
+>  	/* Is statx not implemented by fs? */
+> -	unsigned int no_statx:1;
+> +	bool no_statx:1;
+>  
+>  	/** Passthrough support for read/write IO */
+> -	unsigned int passthrough:1;
+> +	bool passthrough:1;
+>  
+>  	/* Use pages instead of pointer for kernel I/O */
+> -	unsigned int use_pages_for_kvec_io:1;
+> +	bool use_pages_for_kvec_io:1;
+>  
+>  	/* Is link not implemented by fs? */
+> -	unsigned int no_link:1;
+> +	bool no_link:1;
+>  
+>  	/* Use io_uring for communication */
+> -	unsigned int io_uring:1;
+> +	bool io_uring:1;
+>  
+>  	/** Maximum stack depth for passthrough backing files */
+>  	int max_stack_depth;
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index bfe8d8af46f3..43b6643635ee 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -751,7 +751,7 @@ static int fuse_sync_fs(struct super_block *sb, int wait)
+>  
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err == -ENOSYS) {
+> -		fc->sync_fs = 0;
+> +		fc->sync_fs = false;
+>  		err = 0;
+>  	}
+>  
+> @@ -973,9 +973,9 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+>  	fc->congestion_threshold = FUSE_DEFAULT_CONGESTION_THRESHOLD;
+>  	atomic64_set(&fc->khctr, 0);
+>  	fc->polled_files = RB_ROOT;
+> -	fc->blocked = 0;
+> -	fc->initialized = 0;
+> -	fc->connected = 1;
+> +	fc->blocked = false;
+> +	fc->initialized = false;
+> +	fc->connected = true;
+>  	atomic64_set(&fc->attr_version, 1);
+>  	atomic64_set(&fc->evict_ctr, 1);
+>  	get_random_bytes(&fc->scramble_key, sizeof(fc->scramble_key));
+> @@ -1323,54 +1323,54 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  
+>  			ra_pages = arg->max_readahead / PAGE_SIZE;
+>  			if (flags & FUSE_ASYNC_READ)
+> -				fc->async_read = 1;
+> +				fc->async_read = true;
+>  			if (!(flags & FUSE_POSIX_LOCKS))
+> -				fc->no_lock = 1;
+> +				fc->no_lock = true;
+>  			if (arg->minor >= 17) {
+>  				if (!(flags & FUSE_FLOCK_LOCKS))
+> -					fc->no_flock = 1;
+> +					fc->no_flock = true;
+>  			} else {
+>  				if (!(flags & FUSE_POSIX_LOCKS))
+> -					fc->no_flock = 1;
+> +					fc->no_flock = true;
+>  			}
+>  			if (flags & FUSE_ATOMIC_O_TRUNC)
+> -				fc->atomic_o_trunc = 1;
+> +				fc->atomic_o_trunc = true;
+>  			if (arg->minor >= 9) {
+>  				/* LOOKUP has dependency on proto version */
+>  				if (flags & FUSE_EXPORT_SUPPORT)
+> -					fc->export_support = 1;
+> +					fc->export_support = true;
+>  			}
+>  			if (flags & FUSE_BIG_WRITES)
+> -				fc->big_writes = 1;
+> +				fc->big_writes = true;
+>  			if (flags & FUSE_DONT_MASK)
+> -				fc->dont_mask = 1;
+> +				fc->dont_mask = true;
+>  			if (flags & FUSE_AUTO_INVAL_DATA)
+> -				fc->auto_inval_data = 1;
+> +				fc->auto_inval_data = true;
+>  			else if (flags & FUSE_EXPLICIT_INVAL_DATA)
+> -				fc->explicit_inval_data = 1;
+> +				fc->explicit_inval_data = true;
+>  			if (flags & FUSE_DO_READDIRPLUS) {
+> -				fc->do_readdirplus = 1;
+> +				fc->do_readdirplus = true;
+>  				if (flags & FUSE_READDIRPLUS_AUTO)
+> -					fc->readdirplus_auto = 1;
+> +					fc->readdirplus_auto = true;
+>  			}
+>  			if (flags & FUSE_ASYNC_DIO)
+> -				fc->async_dio = 1;
+> +				fc->async_dio = true;
+>  			if (flags & FUSE_WRITEBACK_CACHE)
+> -				fc->writeback_cache = 1;
+> +				fc->writeback_cache = true;
+>  			if (flags & FUSE_PARALLEL_DIROPS)
+> -				fc->parallel_dirops = 1;
+> +				fc->parallel_dirops = true;
+>  			if (flags & FUSE_HANDLE_KILLPRIV)
+> -				fc->handle_killpriv = 1;
+> +				fc->handle_killpriv = true;
+>  			if (arg->time_gran && arg->time_gran <= 1000000000)
+>  				fm->sb->s_time_gran = arg->time_gran;
+>  			if ((flags & FUSE_POSIX_ACL)) {
+> -				fc->default_permissions = 1;
+> -				fc->posix_acl = 1;
+> +				fc->default_permissions = true;
+> +				fc->posix_acl = true;
+>  			}
+>  			if (flags & FUSE_CACHE_SYMLINKS)
+> -				fc->cache_symlinks = 1;
+> +				fc->cache_symlinks = true;
+>  			if (flags & FUSE_ABORT_ERROR)
+> -				fc->abort_err = 1;
+> +				fc->abort_err = true;
+>  			if (flags & FUSE_MAX_PAGES) {
+>  				fc->max_pages =
+>  					min_t(unsigned int, fc->max_pages_limit,
+> @@ -1389,20 +1389,20 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  					ok = false;
+>  				}
+>  				if (flags & FUSE_HAS_INODE_DAX)
+> -					fc->inode_dax = 1;
+> +					fc->inode_dax = true;
+>  			}
+>  			if (flags & FUSE_HANDLE_KILLPRIV_V2) {
+> -				fc->handle_killpriv_v2 = 1;
+> +				fc->handle_killpriv_v2 = true;
+>  				fm->sb->s_flags |= SB_NOSEC;
+>  			}
+>  			if (flags & FUSE_SETXATTR_EXT)
+> -				fc->setxattr_ext = 1;
+> +				fc->setxattr_ext = true;
+>  			if (flags & FUSE_SECURITY_CTX)
+> -				fc->init_security = 1;
+> +				fc->init_security = true;
+>  			if (flags & FUSE_CREATE_SUPP_GROUP)
+> -				fc->create_supp_group = 1;
+> +				fc->create_supp_group = true;
+>  			if (flags & FUSE_DIRECT_IO_ALLOW_MMAP)
+> -				fc->direct_io_allow_mmap = 1;
+> +				fc->direct_io_allow_mmap = true;
+>  			/*
+>  			 * max_stack_depth is the max stack depth of FUSE fs,
+>  			 * so it has to be at least 1 to support passthrough
+> @@ -1422,7 +1422,7 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  			    arg->max_stack_depth > 0 &&
+>  			    arg->max_stack_depth <= FILESYSTEM_MAX_STACK_DEPTH &&
+>  			    !(flags & FUSE_WRITEBACK_CACHE))  {
+> -				fc->passthrough = 1;
+> +				fc->passthrough = true;
+>  				fc->max_stack_depth = arg->max_stack_depth;
+>  				fm->sb->s_stack_depth = arg->max_stack_depth;
+>  			}
+> @@ -1435,14 +1435,14 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  					ok = false;
+>  			}
+>  			if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
+> -				fc->io_uring = 1;
+> +				fc->io_uring = true;
+>  
+>  			if (flags & FUSE_REQUEST_TIMEOUT)
+>  				timeout = arg->request_timeout;
+>  		} else {
+>  			ra_pages = fc->max_read / PAGE_SIZE;
+> -			fc->no_lock = 1;
+> -			fc->no_flock = 1;
+> +			fc->no_lock = true;
+> +			fc->no_flock = true;
+>  		}
+>  
+>  		init_server_timeout(fc, timeout);
+> @@ -1452,13 +1452,13 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+>  		fc->minor = arg->minor;
+>  		fc->max_write = arg->minor < 5 ? 4096 : arg->max_write;
+>  		fc->max_write = max_t(unsigned, 4096, fc->max_write);
+> -		fc->conn_init = 1;
+> +		fc->conn_init = true;
+>  	}
+>  	kfree(ia);
+>  
+>  	if (!ok) {
+> -		fc->conn_init = 0;
+> -		fc->conn_error = 1;
+> +		fc->conn_init = false;
+> +		fc->conn_error = true;
+>  	}
+>  
+>  	fuse_set_initialized(fc);
+> @@ -1835,7 +1835,7 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+>  
+>  	/* Handle umasking inside the fuse code */
+>  	if (sb->s_flags & SB_POSIXACL)
+> -		fc->dont_mask = 1;
+> +		fc->dont_mask = true;
+>  	sb->s_flags |= SB_POSIXACL;
+>  
+>  	fc->default_permissions = ctx->default_permissions;
+> diff --git a/fs/fuse/virtio_fs.c b/fs/fuse/virtio_fs.c
+> index 2c7b24cb67ad..d7b0f7f288e3 100644
+> --- a/fs/fuse/virtio_fs.c
+> +++ b/fs/fuse/virtio_fs.c
+> @@ -1531,8 +1531,8 @@ static const struct fuse_iqueue_ops virtio_fs_fiq_ops = {
+>  static inline void virtio_fs_ctx_set_defaults(struct fuse_fs_context *ctx)
+>  {
+>  	ctx->rootmode = S_IFDIR;
+> -	ctx->default_permissions = 1;
+> -	ctx->allow_other = 1;
+> +	ctx->default_permissions = true;
+> +	ctx->allow_other = true;
+>  	ctx->max_read = UINT_MAX;
+>  	ctx->blksize = 512;
+>  	ctx->destroy = true;
+> diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
+> index 93dfb06b6cea..73100df1b24b 100644
+> --- a/fs/fuse/xattr.c
+> +++ b/fs/fuse/xattr.c
+> @@ -39,7 +39,7 @@ int fuse_setxattr(struct inode *inode, const char *name, const void *value,
+>  	args.in_args[2].value = value;
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err == -ENOSYS) {
+> -		fm->fc->no_setxattr = 1;
+> +		fm->fc->no_setxattr = true;
+>  		err = -EOPNOTSUPP;
+>  	}
+>  	if (!err)
+> @@ -83,7 +83,7 @@ ssize_t fuse_getxattr(struct inode *inode, const char *name, void *value,
+>  	if (!ret && !size)
+>  		ret = min_t(size_t, outarg.size, XATTR_SIZE_MAX);
+>  	if (ret == -ENOSYS) {
+> -		fm->fc->no_getxattr = 1;
+> +		fm->fc->no_getxattr = true;
+>  		ret = -EOPNOTSUPP;
+>  	}
+>  	return ret;
+> @@ -147,7 +147,7 @@ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size)
+>  	if (ret > 0 && size)
+>  		ret = fuse_verify_xattr_list(list, ret);
+>  	if (ret == -ENOSYS) {
+> -		fm->fc->no_listxattr = 1;
+> +		fm->fc->no_listxattr = true;
+>  		ret = -EOPNOTSUPP;
+>  	}
+>  	return ret;
+> @@ -170,7 +170,7 @@ int fuse_removexattr(struct inode *inode, const char *name)
+>  	args.in_args[1].value = name;
+>  	err = fuse_simple_request(fm, &args);
+>  	if (err == -ENOSYS) {
+> -		fm->fc->no_removexattr = 1;
+> +		fm->fc->no_removexattr = true;
+>  		err = -EOPNOTSUPP;
+>  	}
+>  	if (!err)
+
 
