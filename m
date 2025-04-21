@@ -1,112 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-46832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 685AFA95523
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 19:19:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC94FA9553A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 19:26:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AFD5168432
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 17:19:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90FAF3B1FE9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 17:26:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2080A1E32B9;
-	Mon, 21 Apr 2025 17:19:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B871E5B62;
+	Mon, 21 Apr 2025 17:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJCuQvip"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q9XnrfQX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78D04171CD;
-	Mon, 21 Apr 2025 17:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16A91DF757
+	for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 17:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745255964; cv=none; b=eTXWQdV6wADVegft4gPhL3d98w9qdraNVR6IecNkPG078hsj4VC7UPwMrFLwikSylBoY9XJiG+vTzr9oN6rSdX8UzjztPRSUaKX2Hqum4EX5gisWZCW7x66TyxXVmJr29rbF9pJ3B0ABg+PWBidd6EQCTFDDcjyw3V6bVA+KLkc=
+	t=1745256375; cv=none; b=ofP/shM4wa8GQyuE8JTdRKvLA8zsjQoVeseLNLHPv4Ve0fF/juavoJO8xw+ptM+n7i/itik4U4uY0mkzVATfC2Xkq5cC4bw11Xnq1smzEQWXuIRktjjP6IGG2P6LICs0cXmLnpZg2Ofq04/qlRtU9xqbSjuj5Xwk+NHoEqyB6p4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745255964; c=relaxed/simple;
-	bh=ZOmyRXmRoEyIIWzuCFtXPMy0+SkSJbikUvZaUoGvQcU=;
-	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rEcG4t5bBZmDGeJnDL4fUBlLGzdKN0MVHde61WAlCu5A/kRbOBwH/JNW18PvdQ4yw20i6EsBSdY1olkxRwhZkJF4006MA/TIKfX2n44LciOnTqS1W9mHInYMhFc1mHE+Vzd9/wHpJkZu7wBnLtC9e1ZWjyCQ2g92py3urM8/6s0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJCuQvip; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D66CBC4CEE4;
-	Mon, 21 Apr 2025 17:19:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745255963;
-	bh=ZOmyRXmRoEyIIWzuCFtXPMy0+SkSJbikUvZaUoGvQcU=;
-	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=EJCuQvipDVnY7id7jE4MK9n5lGKrbLeIYtiuKJhYyaNmqemhOz6tlamK0cMp+JFWd
-	 u4g9WYtQuzsn9aKVlpaJ+hLd0p/wNI4WpN4G5PM1LHLFGRa25fS8DxRQLq7j0Tmdon
-	 CFY/79wHx6dwdhFy7JTMJqR9JNhr+jExU2myFOGjNla1a/GwAroSQ2umF/HqG2G0nQ
-	 M3TO99CfyD/dwtkLArTLIaNZd+98UnM9uW0d2QM7vr0pxgp1POL/lz3iHkbhozv0sH
-	 qi5Ic/SkR237M0LkTpuy/Lg7WPopws1Jh8xOK7EZV6dtMFqGas/GhAQ+PfCAy4f4Bn
-	 J57HQMt14lvIw==
-Date: Mon, 21 Apr 2025 10:19:23 -0700
-Subject: [PATCH 3/3] xfs: stop using set_blocksize
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org, cem@kernel.org, axboe@kernel.dk
-Cc: shinichiro.kawasaki@wdc.com, linux-mm@kvack.org, mcgrof@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
- willy@infradead.org, hch@infradead.org, linux-block@vger.kernel.org
-Message-ID: <174525589090.2138337.6822381628832847466.stgit@frogsfrogsfrogs>
-In-Reply-To: <174525589013.2138337.16473045486118778580.stgit@frogsfrogsfrogs>
-References: <174525589013.2138337.16473045486118778580.stgit@frogsfrogsfrogs>
+	s=arc-20240116; t=1745256375; c=relaxed/simple;
+	bh=b73IQeqVSXeEuCteEboOl8z9yQadjr4QrRIFp8EIWaY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W3ZR9GQkzLwEAbD4jPjeJLDrzasNVVTmuOYd8kXe/1CDi91lHsOVGxZemFNTHx9ucGqz7cglfc48FXRnuR2A4tZqHDmOCB2CG9Da1x6bKHn3kORZcAGZOlqXrBCXBUTUpvL9Y32N9OZ+3xlVIYwushwnMFNBGS44nfhIk2OoyJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q9XnrfQX; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745256371;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=UWY/5x4OXNc5RfOjLxARF1zs/ala7v6pVKi6wbtQN6U=;
+	b=q9XnrfQXIPOjgRID3AfOELNKRugGnLy0HATwRdCVBP8SKV6CdRMSm0IiX4ShrXc+nOMXmB
+	MlP/Wqm/Fs/hhosTRyYYOyIHyL8glIHgyB6Nj5vi9dIFxSZMN0pdZLDkawSh8mJH1dN2XI
+	Atqi4ExwS6W6rG9609gQRqJJ8NSfIL4=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-bcachefs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Subject: [PATCH 0/5] bcachefs async object debugging
+Date: Mon, 21 Apr 2025 13:26:00 -0400
+Message-ID: <20250421172607.1781982-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Darrick J. Wong <djwong@kernel.org>
+More debugging infrastructure that might perhaps be of wider interest.
 
-XFS has its own buffer cache for metadata that uses submit_bio, which
-means that it no longer uses the block device pagecache for anything.
-Create a more lightweight helper that runs the blocksize checks and
-flushes dirty data and use that instead.  No more truncating the
-pagecache because XFS does not use it or care about it.
+Currently, when an asynchronous op gets stuck and never completes, it's
+a real problem to debug: all our normal introspection (e.g.
+/proc/pid/stack) doesn't work.
 
-Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
----
- fs/xfs/xfs_buf.c |   15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+e.g. if a bio doesn't (seem to) complete - what happened to it?
+Difficult question to answer. We have giant state machines, and
+debugging issues where we stop making forward progress requires
+visibility into the whole thing.
 
+(basic question: did the bio complete and the endio not funtion not flip
+the correct state bit, or did it get lost?)
 
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index 1a2b3f06fa717e..5ae77ffdc947b1 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -1719,18 +1719,25 @@ xfs_setsize_buftarg(
- 	struct xfs_buftarg	*btp,
- 	unsigned int		sectorsize)
- {
-+	int			error;
-+
- 	/* Set up metadata sector size info */
- 	btp->bt_meta_sectorsize = sectorsize;
- 	btp->bt_meta_sectormask = sectorsize - 1;
- 
--	if (set_blocksize(btp->bt_bdev_file, sectorsize)) {
-+	error = bdev_validate_blocksize(btp->bt_bdev, sectorsize);
-+	if (error) {
- 		xfs_warn(btp->bt_mount,
--			"Cannot set_blocksize to %u on device %pg",
--			sectorsize, btp->bt_bdev);
-+			"Cannot use blocksize %u on device %pg, err %d",
-+			sectorsize, btp->bt_bdev, error);
- 		return -EINVAL;
- 	}
- 
--	return 0;
-+	/*
-+	 * Flush the block device pagecache so our bios see anything dirtied
-+	 * before mount.
-+	 */
-+	return sync_blockdev(btp->bt_bdev);
- }
- 
- int
+In the reports/test failures I look at, I've been seeing these the most
+in or at the boundary of mm - compaction/migration, writeback...
+
+This series introduces infrastructure that'll allow us to debug these
+kinds of issues in production:
+
+- fast_list, which is a high-enough performance "list" to track these
+  kinds of objects (radix tree + percpu buffer)
+
+- infrastructure for making them visible in debugfs, hooking them up to
+  pretty printers
+
+- and the last patch hooks into just some of the bcachefs paths where
+  we we need this
+
+Kent Overstreet (5):
+  bcachefs: bch2_bio_to_text()
+  bcachefs: bch2_read_bio_to_text
+  bcachefs: fast_list
+  bcachefs: Async object debugging
+  bcachefs: Make various async objs visible in debugfs
+
+ fs/bcachefs/Kconfig            |   5 ++
+ fs/bcachefs/Makefile           |   3 +
+ fs/bcachefs/async_objs.c       | 126 +++++++++++++++++++++++++++++
+ fs/bcachefs/async_objs.h       |  39 +++++++++
+ fs/bcachefs/async_objs_types.h |  24 ++++++
+ fs/bcachefs/bcachefs.h         |   7 ++
+ fs/bcachefs/btree_io.c         |  12 +++
+ fs/bcachefs/btree_io.h         |   8 ++
+ fs/bcachefs/data_update.c      |  18 ++++-
+ fs/bcachefs/data_update.h      |  15 ++++
+ fs/bcachefs/debug.c            |  52 +++++-------
+ fs/bcachefs/debug.h            |  18 +++++
+ fs/bcachefs/errcode.h          |   1 +
+ fs/bcachefs/fast_list.c        | 140 +++++++++++++++++++++++++++++++++
+ fs/bcachefs/fast_list.h        |  41 ++++++++++
+ fs/bcachefs/io_read.c          |  76 +++++++++++++++---
+ fs/bcachefs/io_read.h          |  14 ++++
+ fs/bcachefs/super.c            |   3 +
+ fs/bcachefs/util.c             |  10 +++
+ fs/bcachefs/util.h             |   2 +
+ 20 files changed, 566 insertions(+), 48 deletions(-)
+ create mode 100644 fs/bcachefs/async_objs.c
+ create mode 100644 fs/bcachefs/async_objs.h
+ create mode 100644 fs/bcachefs/async_objs_types.h
+ create mode 100644 fs/bcachefs/fast_list.c
+ create mode 100644 fs/bcachefs/fast_list.h
+
+-- 
+2.49.0
 
 
