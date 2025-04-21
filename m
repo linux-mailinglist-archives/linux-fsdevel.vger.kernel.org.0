@@ -1,174 +1,401 @@
-Return-Path: <linux-fsdevel+bounces-46809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621EEA953DB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 18:13:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B44A95401
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 18:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BBD0189517A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 16:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 133653B4E73
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 16:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5141E1022;
-	Mon, 21 Apr 2025 16:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0011E0E1A;
+	Mon, 21 Apr 2025 16:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvFwV9Hl"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mfktyoxR"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD38E33EC;
-	Mon, 21 Apr 2025 16:13:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C5D2F3E;
+	Mon, 21 Apr 2025 16:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745252000; cv=none; b=Ftag3eupT/LGdgiPURlsa/riiYP5o02CkwL5PGFyJYy+rmZZNF69wDYapNgeghgDWgLbBSjDp97N14mym3YcJ8lb/F4E2qN1Q4ELqHlAU1IYNebQkkVm6l37LaxPC5cH3il+0LBZ48eTZC3dftPCTRl6Da+vHWSX3ZWIASLdL20=
+	t=1745252860; cv=none; b=AotM3KF3ZNiHwAbOS6xiEpbhCnx7HW3lVbwbf0KgnuKJLENzStupEoSVvRhVbHpXczZPQqNppfeILYTIT6lwytO1v+Wg/S4e/EYEzUix9CqICsLPVRgi1S83k42P4eAK3znpqmuWP/wKeInV7A3Pe4KPggoLDXIDKE+X7PAkQWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745252000; c=relaxed/simple;
-	bh=fjHyYEUz8mq+kd32kuPuYxYj0H98bcmAhUeHAtoZ0Kg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rNruy1hwv/xDa9iZ78mmdMr/V1YQqXXfHX8627FJIgum6zLrRFpLw/3a7cuiUt+o8s8XujmqjRy3ZsqwIByWKgfTsdZQNxFuqYEMhYYU1AGVXYSyr92bs8XZ6FOUGTVy59x9Cbs47my0+RsBpkSru+oWsoOWeKRvAwq6/TV7tHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvFwV9Hl; arc=none smtp.client-ip=209.85.221.53
+	s=arc-20240116; t=1745252860; c=relaxed/simple;
+	bh=d29f1CbXH/K+cVH+CEkYm8rZ6C6Sgeo7I7Z1B49VYSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LBKZvHAlgJEB+BZTSSi7zjPYLECKk+Xy7x2hDNuIcI0oEkrTC13Gi8L/SEh6ks3kbok4U2hJsDTHFWYbxpJ0bs+KHwd/PQ2tEBan+7slQAuYB+2UCvHZZWqGelz9qjcOA0Z3pDjwQHXJcCtcTwS2HM92YqZAhSWB1TW1FFAbKqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mfktyoxR; arc=none smtp.client-ip=209.85.222.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39c1ef4acf2so2480557f8f.0;
-        Mon, 21 Apr 2025 09:13:17 -0700 (PDT)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7c5568355ffso334962385a.0;
+        Mon, 21 Apr 2025 09:27:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745251996; x=1745856796; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1745252857; x=1745857657; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=2zLX7K/cYY3IleSeSkksUZh8idp3aJvGLpMSPQRzdiw=;
-        b=YvFwV9Hl0bw4MjxtQPjEQl8W7GfA8Hvn5lfHfw2inVxZ/TlMWBuLxziiAzGP7OU+Vm
-         KpzGaoGIhPS5jUlEI4LMKrUtIBQGCUd0P/oF/t4g5Yif4fyJVeLKtMhviusWSd+C4Eez
-         rvKRsBVza2yHaOmqDD1U4oLMQwuZmR1Ej2d+fA9mf9QH4XyOeUpTVcm2s2+sR/nVGN6Q
-         Ttr6BDnT/E5ArOhcnOypWPRRkc2Cy7CEnfeDah3JoW4uYqgkQSUwNhu+jkHTo7Q+6iHX
-         GZ7kTzZZT/5FsTh7+YqzmpBNXJ7Rv1kR/45CqMmZX2KmSbPM9O4ZtvUmD67qJm/ia9QC
-         m58g==
+        bh=oLHYuRchr7pwRfQW4u682e1RScHliKjKzEJvvrT1wG0=;
+        b=mfktyoxRgLaOqRHlq2BACASEJ1xUe5ywvqnPYzuFFn1FnMHEjOqD5/YvfIhhSfdQgh
+         EH6J8Q6kUGua8Yi0umt3U9od2eq2Toly8z9aMfH0hkLPgQ5xX9tZpSTR5fARxWc/OodB
+         UfmTVCld07DUaHww36g1RxSCjrdj1zsVHhfUnMIj3LUaKNvyIOkiMbQMvRpemnmizQp+
+         z7d+PwQ8TvueikFfT8suy3YPIuCeCGccZ7gq+zOkPHrAsnOM7K5Ynp7Isj//q9wLnoYp
+         4flwYCAoxtJkbRrKcQzmoKL+ldGnDVkPkduUamFft7H0kLWXhdyxiKlX4N+q6BmfcBsC
+         QJ0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745251996; x=1745856796;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1745252857; x=1745857657;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2zLX7K/cYY3IleSeSkksUZh8idp3aJvGLpMSPQRzdiw=;
-        b=oikGSrQyCU1U5R5ghXtteIGEBvJbzHTFzCITbCcGBmiahkzxTC6//IXc9EoPfO8w/f
-         ZAo0uoMnJ8QIN4mlEpqT3bs6DLASkpvDejACZ26WFhYOh+hnVTT7AV3J+FrIC1Zp0aFc
-         EfiKlYd0v5OBbpbsqEIJUYDoKvP3L5ILJi82eIhs8H3ohyk4DJDluplqR6KStgHroZEu
-         5bJA3XuZk+qZv4b9fmrPhK1rX9N1/RE+PI0nPf+7EE8Sx6vsr54AjXISDbOkU0j4RF0y
-         Tlc5NcRogj94zHYCX8G/O7XEftUKWl3hoPjN/AQzFS3QVZbiy7gR1bG/fSw4FMnBR5mz
-         83CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUTbQ4aQ2n75Qeh+xdoNZhhHxnpryXTnA2kNhInbG+73Mtj6idfCZzON0C3CulwyioL4c=@vger.kernel.org, AJvYcCUbR/9hfBiMtTYBCl8j6hPBS1vnjCj35JE9ZbZ3Yb4IUen/hCXZCA8mXzbn38Iu2xtxXzHQNzmXgTciKSPrdfT8yw==@vger.kernel.org, AJvYcCUoJhnMYSH6I4MdtF3s4Uez3qAkDqWFNhD4mES/gJwcDVzIsoFaiuVHGyrO2bUFEKM3rJfIItsmuOrqV3w=@vger.kernel.org, AJvYcCVBglNtso3nTc8twJBFzZWRUDuhT7L/72MlLpCvXwVYLA2af+QaMvvAib4bZATEOWv+cnucDShazxpAAtsUfrKP@vger.kernel.org, AJvYcCVDBuWk5c+wscaV4sQa98Ma9Z1a1vj/qUOuvVMS5V1SWagxwiPZ3nwoiwIrAONuafZtGQ8t5SD1+zZfqx3I@vger.kernel.org, AJvYcCW/VXntTVvtnAIrPhQcMW7JebXnYMh3L1TMjY9PHkYJZhXeEGuta6yp6CF+ANd/1Wr+cMkgP75y@vger.kernel.org, AJvYcCWce9Dy1PT9NLBTyzS5fpLDAKUZi+9UJRt4cRzgUF4JBq1MLrxLkGqXZ/yzMCKXCAHFvIYPRr9b44pfbPHV2uwOXJvA@vger.kernel.org, AJvYcCWta6dCYDpgn02Rqnk87qhRToqCUEDF0/Fz9Qpw2YxMsCW01eVT7QzVwxurxbhoZP1lSbbKkXur2Vc+4YWvuQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9PUFfHR2o/xBQoq8j4rjjEveMu94gRG8EwwCTj7WSUiIy/j77
-	Nf6F4HOk5PpQalefbFTKROlZxw7moxaRpnA4NlQiQmzV75jEIO0zhGE5Aw+F/pzFgNaSYT+ayZr
-	doMt2R/QcsZQSCXGO1J3iIpFG1SM=
-X-Gm-Gg: ASbGncvqMLhxcrRnvUeGjcWzx5XvV2zWKlRntGLFRxf55bfyLqGY7ZLKXgd/CaPs14d
-	eipqtmQYnE2qPJDOS660LFkB0HE2D+5C4WliL4FlHMX7BcR2UH/NGIcW1U+rCPVIx8wy/fEaMsz
-	1N/cOEwFkcq/qrMMGrRfeZfAR2tc9yUsa+mJFwjw==
-X-Google-Smtp-Source: AGHT+IERc9SbXqHoD9IEJg7efyEpkbehIMV7qdPZVeaGZ/dKsZqt8X+kv+83Lua/+4bYS6g8aPAmuT20YbQK/7LgbuE=
-X-Received: by 2002:a05:6000:188b:b0:38f:503a:d93f with SMTP id
- ffacd0b85a97d-39efbacdc16mr9730639f8f.40.1745251995604; Mon, 21 Apr 2025
- 09:13:15 -0700 (PDT)
+        bh=oLHYuRchr7pwRfQW4u682e1RScHliKjKzEJvvrT1wG0=;
+        b=VMQmRFvn4ukhAasUd6m79vDPmAUfAyDwGUGqdVSkIUccLrEX5uTkNjeGZK3aFgoEF6
+         Cycp7SwmrasxgSd9S669tLp4qB2368E7HS1WPNYXnfQYiLT4uVvDogbU7B2RphX/Ff0G
+         8bNv25wBLInX+nWcvQG0YFIlPosI8NuBgXdP0RBl4OT32kzU8qZP0r7ARDpMDGZOHaDk
+         E/goNdEF67U3NQaoK9TXMrgmqYzITk4VFJYP18cGY0qadJPzJUVStRigwgWs1e/b4sJR
+         yQAmIHX2+eYjt2BjYMTgro8OJLeXq5J3vJDn6RFFbKddQsXBMc/hJYVQt2dYjMKWNLNR
+         aZZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU51y/5Kyivb5xmMIwnJ3soN2dyzlh3gZptber4B5OpzrnQfb6yU65RJWrpJa41mZiilWRatwMKPYLSrOeaRw==@vger.kernel.org, AJvYcCUU7s9w28bJHkOe6F0jGHihOzuqQWpHRH45wUfBvlw54um4AB1VoYmFvvKf0DAVuYAefS3avJb/1H96MSag@vger.kernel.org, AJvYcCUxQ4Gdc1PN3G3blMTMAY9wICRUSppfL2oTCdCbwcSiVS3obnySeoblTOoNETXKR+sBMrnprdNEwhNH@vger.kernel.org, AJvYcCXsNy0w9JeS1I2HuJlbOsBKZKfAbCwN+oQ5vjTAdLgH+LO3a5H/4z1VENNYLjGCfetWIhRB@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUnwJA1kHioFcoc/5gtLEwNBVqa97Y+D5jdAHmZMWz8rE8vaZQ
+	FrecFTryUCSDraFFM5WTB3A9h9RWO5+UjFLnUoyiYFF+wzBhLTbB
+X-Gm-Gg: ASbGncvzJzxMHrS4fwgtZGxEcoVgL2ZLfalG9KcMu4nHBZqlX1DH92M7o3jbTQSoA+I
+	mscHqmXqYvnfLoRx4/bvqFV+DtuD3BiegD48A6orpt0vZXy/K/U4vwbgaeHJcCd5iJgEfECPvrJ
+	krsJGzMZO/tgvtLL8cNucO6qIPomrcvJyhYWdGZOySqmvCvinrX+xoAgctoxvcyXfp+Tb+pMvel
+	ZamuMMCcAAHhb0eNyrGINS+hjyP5IikTDihUbieiZkONcIbnmZGMNfl5jYQR+E9tvN91dFmaMNI
+	p4B4qVoqbkJHsMnEcR+INowfJzlDqEKrDDJo67MRXCWUpQQBZ03Zmzr+I46TQN1M2WzQKnMWEu5
+	0ETCz6hhywpW3dmHqdd2kgGMZ5RMkIAo=
+X-Google-Smtp-Source: AGHT+IHKXIDlBPVp3gyYgxOjFyUzKte/+Px4RacQpXr3c5UOtQ5sJmTvggKv28JeiPdTZfVVuzZ2eg==
+X-Received: by 2002:a05:620a:17aa:b0:7c5:a41a:b1a with SMTP id af79cd13be357-7c927f6b4e5mr1830134985a.10.1745252857057;
+        Mon, 21 Apr 2025 09:27:37 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c925a6eb31sm438947785a.3.2025.04.21.09.27.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Apr 2025 09:27:36 -0700 (PDT)
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfauth.phl.internal (Postfix) with ESMTP id D68B31200043;
+	Mon, 21 Apr 2025 12:27:35 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-08.internal (MEProxy); Mon, 21 Apr 2025 12:27:35 -0400
+X-ME-Sender: <xms:93EGaPl6BmgDg5HRVTlKEySE3NnVGFFCOwIj3_v1rNJpu3CQJ6K5Eg>
+    <xme:93EGaC0uwLD5t9mIRSOE_S8HjDz1DQV3c15V-1MFrJQr4xI9-HF4I6GI5qPDpUoMO
+    juS44Uj89gQYEOh-A>
+X-ME-Received: <xmr:93EGaFpvLHpOndPFbORX2EV6IMd2U1UEDKtmyhUzyLci7s2P5hHfAqbqSDWQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvgedufedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    vdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeffvdehfeejjeeliefgtdduuddtjeejveeu
+    veeugeefleefkeekuefgudeuhfefgeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpd
+    hlfihnrdhnvghtpdhgihhthhhusgdrtghomhenucevlhhushhtvghrufhiiigvpedtnecu
+    rfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrsh
+    honhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghn
+    gheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohephe
+    ekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgughhofiesghhoohhg
+    lhgvrdgtohhmpdhrtghpthhtoheprhhushhtqdhfohhrqdhlihhnuhigsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgtuhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdroh
+    hrghdprhgtphhtthhopehlihhnuhigqdgrrhgthhesvhhgvghrrdhkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehllhhvmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtth
+    hopehlkhhmmheslhhishhtshdrlhhinhhugidruggvvhdprhgtphhtthhopehojhgvuggr
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlhgvgidrghgrhihnohhrsehgmhgrih
+    hlrdgtohhm
+X-ME-Proxy: <xmx:93EGaHmx0ei2frON30pFqG29hH6FxIISfKFIz4y0bydjQ2hjEbYuGg>
+    <xmx:93EGaN0Ki0yvaurBA4rYcYRpOq27QuhicUvHpsftxbYlhIZ31G0jnw>
+    <xmx:93EGaGvKmK1ylW0v-5qMLRuZMoRSF1lzFGDRVkp7ot-zrvvXP9n7FA>
+    <xmx:93EGaBXjKwcfkYmoa2p6XPyJyMmxu_7rONV9PmDsnLPfsWF3VpWZbA>
+    <xmx:93EGaM1awRHGn3vR7mMNQRnUEgoIxz259bYnVfYkzH9QAtkYQ1rePPx1>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 21 Apr 2025 12:27:34 -0400 (EDT)
+Date: Mon, 21 Apr 2025 09:27:28 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: David Gow <davidgow@google.com>
+Cc: rust-for-linux@vger.kernel.org, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	llvm@lists.linux.dev, lkmm@lists.linux.dev,
+	Miguel Ojeda <ojeda@kernel.org>,	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Andrea Parri <parri.andrea@gmail.com>,	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Nicholas Piggin <npiggin@gmail.com>,	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,	Luc Maranget <luc.maranget@inria.fr>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Akira Yokosawa <akiyks@gmail.com>,	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,	kent.overstreet@gmail.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, elver@google.com,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,	Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,	torvalds@linux-foundation.org,
+ linux-arm-kernel@lists.infradead.org,	linux-fsdevel@vger.kernel.org,
+ Trevor Gross <tmgross@umich.edu>,	dakr@redhat.com,
+ Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,	Albert Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org
+Subject: Re: [RFC v2 00/13] LKMM *generic* atomics in Rust
+Message-ID: <aAZx8GARiCW-pq9_@boqun-archlinux>
+References: <20241101060237.1185533-1-boqun.feng@gmail.com>
+ <CABVgOSm1cDcrsgYutooRG-ZLuzMypAO+ndNFyPy2w3_5B84TSQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1744169424.git.dxu@dxuuu.xyz> <5b3433d942eaecdbcc92876c9ed8b7d17f7e1086.1744169424.git.dxu@dxuuu.xyz>
-In-Reply-To: <5b3433d942eaecdbcc92876c9ed8b7d17f7e1086.1744169424.git.dxu@dxuuu.xyz>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 21 Apr 2025 09:13:03 -0700
-X-Gm-Features: ATxdqUH2LI9xx7Ht6ga__5IFi0RUqBTSDZrwpNL136ky8WsOy4vl2AEULf1HMhQ
-Message-ID: <CAADnVQK111J3b-4gauYkptFf51fhYQn2J78dH8QiwdSigiRuJw@mail.gmail.com>
-Subject: Re: [RFC bpf-next 11/13] treewide: bpf: Export symbols used by verifier
-To: Daniel Xu <dxu@dxuuu.xyz>
-Cc: Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	David Ahern <dsahern@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Quentin Monnet <qmo@kernel.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Jakub Kicinski <kuba@kernel.org>, 
-	Jozsef Kadlecsik <kadlec@netfilter.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Namhyung Kim <namhyung@kernel.org>, Eric Dumazet <edumazet@google.com>, Sean Young <sean@mess.org>, 
-	X86 ML <x86@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Song Liu <song@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Pablo Neira Ayuso <pablo@netfilter.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	"H. Peter Anvin" <hpa@zytor.com>, Jan Kara <jack@suse.cz>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Simon Horman <horms@kernel.org>, 
-	Network Development <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-media@vger.kernel.org, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	"linux-perf-use." <linux-perf-users@vger.kernel.org>, 
-	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, 
-	netfilter-devel <netfilter-devel@vger.kernel.org>, coreteam@netfilter.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABVgOSm1cDcrsgYutooRG-ZLuzMypAO+ndNFyPy2w3_5B84TSQ@mail.gmail.com>
 
-On Tue, Apr 8, 2025 at 8:35=E2=80=AFPM Daniel Xu <dxu@dxuuu.xyz> wrote:
->
-> This commit EXPORT_SYMBOL_GPL()'s all the unresolved symbols from verifie=
-r.o.
-> This is necessary to support loads and reloads of the verifier at
-> runtime.
->
-> The list of symbols was generated using:
->
->     nm -u kernel/bpf/verifier.o | grep -ve "__asan\|__ubsan\|__kasan" | a=
-wk '{print $2}'
->
-> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+On Sat, Nov 02, 2024 at 03:35:36PM +0800, David Gow wrote:
+> On Fri, 1 Nov 2024 at 14:04, Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Hi,
+> >
+> > This is another RFC version of LKMM atomics in Rust, you can find the
+> > previous versions:
+> >
+> > v1: https://lore.kernel.org/rust-for-linux/20240612223025.1158537-1-boqun.feng@gmail.com/
+> > wip: https://lore.kernel.org/rust-for-linux/20240322233838.868874-1-boqun.feng@gmail.com/
+> >
+> > I add a few more people Cced this time, so if you're curious about why
+> > we choose to implement LKMM atomics instead of using the Rust ones, you
+> > can find some explanation:
+> >
+> > * In my Kangrejos talk: https://lwn.net/Articles/993785/
+> > * In Linus' email: https://lore.kernel.org/rust-for-linux/CAHk-=whkQk=zq5XiMcaU3xj4v69+jyoP-y6Sywhq-TvxSSvfEA@mail.gmail.com/
+> >
+> > This time, I try implementing a generic atomic type `Atomic<T>`, since
+> > Benno and Gary suggested last time, and also Rust standard library is
+> > also going to that direction [1].
+> >
+> > Honestly, a generic atomic type is still not quite necessary for myself,
+> > but here are a few reasons that it's useful:
+> >
+> > *       It's useful for type alias, for example, if you have:
+> >
+> >         type c_long = isize;
+> >
+> >         Then `Atomic<c_clong>` and `Atomic<isize>` is the same type,
+> >         this may make FFI code (mapping a C type to a Rust type or vice
+> >         versa) more readable.
+> >
+> > *       In kernel, we sometimes switch atomic to percpu for better
+> >         scalabity, percpu is naturally a generic type, because it can
+> >         have data that is larger than machine word size. Making atomic
+> >         generic ease the potential switching/refactoring.
+> >
+> > *       Generic atomics provide all the functionalities that non-generic
+> >         atomics could have.
+> >
+> > That said, currently "generic" is limited to a few types: the type must
+> > be the same size as atomic_t or atomic64_t, other than basic types, only
+> > #[repr(<basic types>)] struct can be used in a `Atomic<T>`.
+> >
+> > Also this is not a full feature set patchset, things like different
+> > arithmetic operations and bit operations are still missing, they can be
+> > either future work or for future versions.
+> >
+> > I included an RCU pointer implementation as one example of the usage, so
+> > a patch from Danilo is added, but I will drop it once his patch merged.
+> >
+> > This is based on today's rust-next, and I've run all kunit tests from
+> > the doc test on x86, arm64 and riscv.
+> >
+> > Feedbacks and comments are welcome! Thanks.
+> >
+> > Regards,
+> > Boqun
+> >
+> > [1]: https://github.com/rust-lang/rust/issues/130539
+> >
+> 
+> Thanks, Boqun.
+> 
+
+Hi David,
+
+> I played around a bit with porting the blk-mq atomic code to this. As
+> neither an expert in Rust nor an expert in atomics, this is probably
+> both non-idiomatic and wrong, but unlike the `core` atomics, it
+> provides an Atomic::<u64> on 32-bit systems, which gets UML's 32-bit
+> build working again.
+> 
+> Diff below -- I'm not likely to have much time to work on this again
+> soon, so feel free to pick it up/fix it if it suits.
+> 
+
+Thanks. These look good to me, however, I think I prefer Gary's patch
+for this:
+
+	https://lore.kernel.org/lkml/20250219201602.1898383-4-gary@garyguo.net/
+
+therefore, I won't take this into the next version. But thank you for
+taking a look!
+
+Regards,
+Boqun
+
+> Thanks,
+> -- David
+> 
 > ---
->  arch/x86/net/bpf_jit_comp.c |  2 ++
->  drivers/media/rc/bpf-lirc.c |  1 +
->  fs/bpf_fs_kfuncs.c          |  4 ++++
->  kernel/bpf/bpf_iter.c       |  1 +
->  kernel/bpf/bpf_lsm.c        |  5 +++++
->  kernel/bpf/bpf_struct_ops.c |  2 ++
->  kernel/bpf/btf.c            | 40 +++++++++++++++++++++++++++++++++++++
->  kernel/bpf/cgroup.c         |  4 ++++
->  kernel/bpf/core.c           | 29 +++++++++++++++++++++++++++
->  kernel/bpf/disasm.c         |  4 ++++
->  kernel/bpf/helpers.c        |  2 ++
->  kernel/bpf/local_storage.c  |  2 ++
->  kernel/bpf/log.c            | 12 +++++++++++
->  kernel/bpf/map_iter.c       |  1 +
->  kernel/bpf/memalloc.c       |  3 +++
->  kernel/bpf/offload.c        | 10 ++++++++++
->  kernel/bpf/syscall.c        |  7 +++++++
->  kernel/bpf/tnum.c           | 20 +++++++++++++++++++
->  kernel/bpf/token.c          |  1 +
->  kernel/bpf/trampoline.c     |  5 +++++
->  kernel/events/callchain.c   |  3 +++
->  kernel/trace/bpf_trace.c    |  9 +++++++++
->  lib/error-inject.c          |  2 ++
->  net/core/filter.c           | 26 ++++++++++++++++++++++++
->  net/core/xdp.c              |  2 ++
->  net/netfilter/nf_bpf_link.c |  1 +
->  26 files changed, 198 insertions(+)
+> diff --git a/rust/kernel/block/mq/operations.rs
+> b/rust/kernel/block/mq/operations.rs
+> index 9ba7fdfeb4b2..822d64230e11 100644
+> --- a/rust/kernel/block/mq/operations.rs
+> +++ b/rust/kernel/block/mq/operations.rs
+> @@ -11,7 +11,8 @@
+>      error::{from_result, Result},
+>      types::ARef,
+>  };
+> -use core::{marker::PhantomData, sync::atomic::AtomicU64,
+> sync::atomic::Ordering};
+> +use core::marker::PhantomData;
+> +use kernel::sync::atomic::{Atomic, Relaxed};
+> 
+>  /// Implement this trait to interface blk-mq as block devices.
+>  ///
+> @@ -77,7 +78,7 @@ impl<T: Operations> OperationsVTable<T> {
+>          let request = unsafe { &*(*bd).rq.cast::<Request<T>>() };
+> 
+>          // One refcount for the ARef, one for being in flight
+> -        request.wrapper_ref().refcount().store(2, Ordering::Relaxed);
+> +        request.wrapper_ref().refcount().store(2, Relaxed);
+> 
+>          // SAFETY:
+>          //  - We own a refcount that we took above. We pass that to `ARef`.
+> @@ -186,7 +187,7 @@ impl<T: Operations> OperationsVTable<T> {
+> 
+>              // SAFETY: The refcount field is allocated but not initialized, so
+>              // it is valid for writes.
+> -            unsafe {
+> RequestDataWrapper::refcount_ptr(pdu.as_ptr()).write(AtomicU64::new(0))
+> };
+> +            unsafe {
+> RequestDataWrapper::refcount_ptr(pdu.as_ptr()).write(Atomic::<u64>::new(0))
+> };
+> 
+>              Ok(0)
+>          })
+> diff --git a/rust/kernel/block/mq/request.rs b/rust/kernel/block/mq/request.rs
+> index 7943f43b9575..8d4060d65159 100644
+> --- a/rust/kernel/block/mq/request.rs
+> +++ b/rust/kernel/block/mq/request.rs
+> @@ -13,8 +13,8 @@
+>  use core::{
+>      marker::PhantomData,
+>      ptr::{addr_of_mut, NonNull},
+> -    sync::atomic::{AtomicU64, Ordering},
+>  };
+> +use kernel::sync::atomic::{Atomic, Relaxed};
+> 
+>  /// A wrapper around a blk-mq [`struct request`]. This represents an
+> IO request.
+>  ///
+> @@ -102,8 +102,7 @@ fn try_set_end(this: ARef<Self>) -> Result<*mut
+> bindings::request, ARef<Self>> {
+>          if let Err(_old) = this.wrapper_ref().refcount().compare_exchange(
+>              2,
+>              0,
+> -            Ordering::Relaxed,
+> -            Ordering::Relaxed,
+> +            Relaxed
+>          ) {
+>              return Err(this);
+>          }
+> @@ -168,13 +167,13 @@ pub(crate) struct RequestDataWrapper {
+>      /// - 0: The request is owned by C block layer.
+>      /// - 1: The request is owned by Rust abstractions but there are
+> no [`ARef`] references to it.
+>      /// - 2+: There are [`ARef`] references to the request.
+> -    refcount: AtomicU64,
+> +    refcount: Atomic::<u64>,
+>  }
+> 
+>  impl RequestDataWrapper {
+>      /// Return a reference to the refcount of the request that is embedding
+>      /// `self`.
+> -    pub(crate) fn refcount(&self) -> &AtomicU64 {
+> +    pub(crate) fn refcount(&self) -> &Atomic::<u64> {
+>          &self.refcount
+>      }
+> 
+> @@ -184,7 +183,7 @@ pub(crate) fn refcount(&self) -> &AtomicU64 {
+>      /// # Safety
+>      ///
+>      /// - `this` must point to a live allocation of at least the size
+> of `Self`.
+> -    pub(crate) unsafe fn refcount_ptr(this: *mut Self) -> *mut AtomicU64 {
+> +    pub(crate) unsafe fn refcount_ptr(this: *mut Self) -> *mut Atomic::<u64> {
+>          // SAFETY: Because of the safety requirements of this function, the
+>          // field projection is safe.
+>          unsafe { addr_of_mut!((*this).refcount) }
+> @@ -202,28 +201,22 @@ unsafe impl<T: Operations> Sync for Request<T> {}
+> 
+>  /// Store the result of `op(target.load())` in target, returning new value of
+>  /// target.
+> -fn atomic_relaxed_op_return(target: &AtomicU64, op: impl Fn(u64) ->
+> u64) -> u64 {
+> -    let old = target.fetch_update(Ordering::Relaxed,
+> Ordering::Relaxed, |x| Some(op(x)));
+> -
+> -    // SAFETY: Because the operation passed to `fetch_update` above always
+> -    // return `Some`, `old` will always be `Ok`.
+> -    let old = unsafe { old.unwrap_unchecked() };
+> -
+> -    op(old)
+> +fn atomic_relaxed_op_return(target: &Atomic::<u64>, op: impl Fn(u64)
+> -> u64) -> u64 {
+> +    let old = target.load(Relaxed);
+> +    let new_val = op(old);
+> +    target.compare_exchange(old, new_val, Relaxed);
+> +    old
+>  }
+> 
+>  /// Store the result of `op(target.load)` in `target` if `target.load() !=
+>  /// pred`, returning [`true`] if the target was updated.
+> -fn atomic_relaxed_op_unless(target: &AtomicU64, op: impl Fn(u64) ->
+> u64, pred: u64) -> bool {
+> -    target
+> -        .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |x| {
+> -            if x == pred {
+> -                None
+> -            } else {
+> -                Some(op(x))
+> -            }
+> -        })
+> -        .is_ok()
+> +fn atomic_relaxed_op_unless(target: &Atomic::<u64>, op: impl Fn(u64)
+> -> u64, pred: u64) -> bool {
+> +    let old = target.load(Relaxed);
+> +    if old == pred {
+> +        false
+> +    } else {
+> +        target.compare_exchange(old, op(old), Relaxed).is_ok()
+> +    }
+>  }
+> 
+>  // SAFETY: All instances of `Request<T>` are reference counted. This
 
-Patches 1-10 look ok. Moving the code around and few targeted
-exports are fine,
-but this patch goes too far.
-At least btf.c, log.c, tnum.c and may be others should be a part
-of the module.
-Then check_sock_access() can be refactored into callbacks
-to avoid exports in filter.c
-We can approach it from the pov of minimizing exports,
-but such steps won't give us clarity on how portable such
-modular verifier will be.
-Other questions to answer is whether maps should be in the module too.
-Modules can provide their kfuncs already, so existing kfuncs
-can stay where they are.
 
-Namespacing into "bpf_internal" as Stanislav suggested is
-a good thing too with a warning somewhere in Documentation/bpf/
-that these must only be used by the verifier.
 
