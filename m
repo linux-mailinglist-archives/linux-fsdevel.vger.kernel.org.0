@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-46753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0747A94A50
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 03:36:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC65A94A54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 03:36:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE9D3B1AE5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 01:36:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E7D47A7B6D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Apr 2025 01:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A61A01F5EA;
-	Mon, 21 Apr 2025 01:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A4E1A254E;
+	Mon, 21 Apr 2025 01:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyfLxza2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLR0akHF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61DE519AD90;
-	Mon, 21 Apr 2025 01:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 572B819F116;
+	Mon, 21 Apr 2025 01:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745199265; cv=none; b=Zx+cHl8v1KaFVsvKG1W1Itb0lSgyBATdh73W2mlONmojt9WmMkMBwWLkLsoKmRiqlJh/XbD/Pr/HDdG65D+sDhIT9P8kxE0q1jYht6v0MlsygGdUFuOyO78xmWyKE+aUvsf7QUZSqQuCxLuEJx6lzuCbX6zWo1uJD/9xLZyYxd0=
+	t=1745199267; cv=none; b=rya9oprqGFSSgE3Wd6NUunNu76LFT/TXak5iKxXbNnnsiLZ8JH4C6SBSDJDQQdq2wGpJzGFfLb1E6FNCGZbS13ATRSMYyiatNsO7i32KaC6gvdUhdMqPSOJQlopnHmYodH+WHETzNy6BktUmcP/J8jpt+JNWbhd4jfYcWSCe7wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745199265; c=relaxed/simple;
-	bh=NBFBCMmJVtINYLC+p85CstqmUXiKs92cuvnznL6fml0=;
+	s=arc-20240116; t=1745199267; c=relaxed/simple;
+	bh=oeJWVqoXTfM85DPBtFlVkuLxvj/f4i/x+rX/RZYjhZ8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GIzCvC2TUc3MY+vz4y4Cg/TfGSiENhiZtfPSWhlwvLehqfJWwyrFmHAE4XnpFdNksY9Mxjd0DQZVpolH5XBSV60X7BUf9dimuaWWGFJrJo6SAZurVTpLT98+266L3gaLmaV4IMrFAi25599V4TgqngTMk3PY/e569h6+JSurRzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyfLxza2; arc=none smtp.client-ip=209.85.160.45
+	 MIME-Version; b=m1FD6gETJqGiwoLqu3D654YXW3QVAHGk44kasHvE+cJBZuUlxhhPaI9C5Vc20YqGNZmjhwxrT/f9FYBvKXH9w5kLDLyALtR68cHEwCM+iqEAY0Kym7JGBWcZstu3qs0iHBfV1o7kGeEmEIc+7WBnOuvTepf/QWLomAYucmtW8GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLR0akHF; arc=none smtp.client-ip=209.85.210.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=Groves.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2c12b7af278so2616115fac.0;
-        Sun, 20 Apr 2025 18:34:23 -0700 (PDT)
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-72ec58e45baso2259251a34.2;
+        Sun, 20 Apr 2025 18:34:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745199262; x=1745804062; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745199265; x=1745804065; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=S4l0xj8nWHJ4Rf/x2g8EIw8lI123T+hiPwW7l4PX87U=;
-        b=gyfLxza227j4z+2ihhUTJfzSZt4LEMGx1Sk+kuVLKpXnePC8uIx3jKoNszlLtV2Eut
-         /CljHDSKYgOnvaR+WFsVSwNF0EB+KiPD/yvmCTDsTNziaasHWhfq+FRlMU4A+0hiYZHH
-         YyHohiGl1irnpDtPtlxg/CwnCyC2JoYpkbZLLYoV3lXCo7OXJoimakCxLs5ixE58DFj5
-         nNCnjOjlo0BIK8Kb/bz/ELeN2mudSmoSoPocCLOVIm1D++7b9TDlJCiWRRbVxA/jTr2S
-         tRQNfg3Io5SRdAUjFZGzMppwZ5vNm26MPCcaVWO2RSNb7sGN5WRSwS6O2GRkoSlGDzkL
-         wXSg==
+        bh=zJTUPxCr5iXCtHx04L7AsNg2Bv7yPa69NQGQVSsPk1Y=;
+        b=kLR0akHFQ0+52RWtD4lRShBqEAribyBdAVWv9fQh8vE8WLC3g8vyBWpHt/Gwgvow0M
+         JXCQ0IAplJDmHQsxk4CViP7Nxu7GnaQnd7SPcrksJ1lEwlCmmF3y79RaZMc1BDeEKbPl
+         8gM4pFIXZjnraJ7DzswdoOOF9KiCclYAv12hUbiRw7jgLZ3ErgVDuhlpVT8izq5XnKhU
+         Nv6fcMV3F/cdGWuv8a2s4+7WlR22vX5YAm4cdLB0ejmhczagnAuZZ0eFvhg8IuSW3tHk
+         5wdTJZb3vIB60R3jh8Y5/bDiRhRddQY6wh6tK30gWa8aNb/RXe0NnZTyvsEbqL5zOott
+         gZOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745199262; x=1745804062;
+        d=1e100.net; s=20230601; t=1745199265; x=1745804065;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:sender:x-gm-message-state:from
          :to:cc:subject:date:message-id:reply-to;
-        bh=S4l0xj8nWHJ4Rf/x2g8EIw8lI123T+hiPwW7l4PX87U=;
-        b=i2j1vCe0xh2BuG+XyzTbKHJ3x8mQXYgGybQoqBRh3zXxf/qdy7yIYhY6fxI7rCGofU
-         VKLBDgOl8ow/GP8cJzZwwV9WANftzcXrr3UZxi84IlFQVb3XwCp3gWdF2UnJxBIskuY+
-         X0zP35uv7esSA1hG+0on1Y34o/ZD/3VPlOyWs7I0XGxaPoEq46AkYLUys8TFQ8fv+YuW
-         B8iZMXlkT7DoEcUhPEezgQUQOsQW5t6wU/QYHCoParxiFQVV/627FZIB9qBgHHF1e/5Q
-         TdTIRwmib2jqX4kILMJ9j+jciny4U8jtLhB7lDq/FWO6rW/wOK3DKZey3FXYgmt0P5Xa
-         fGnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVrRJymvnrol8OPvoRYsD1mmazSFGyg8U1EkiuuipdVoPmXz0IeeQmPAPy+M+gcgwMn4tHr/vyg20g=@vger.kernel.org, AJvYcCVyUSAN8BYdxGF+tClIZtJjr5Iez0TJb3+eXU6saEeA5Y7L9x1F5ABY7295SqJmLnzfYSco7Wj8iv+z@vger.kernel.org, AJvYcCWhwMbf1Sx3Xa2KfA7O2sSNxSSRQHt0m+y7tTFeX0UDXbaE+CnGY1Q1sBCAAVqdBsnxH43j6jJcPsL9T4j8GQ==@vger.kernel.org, AJvYcCWlWzbPCcAGIFl+N1X2SkHbpzeyHzR8xq5eIDnErgMfHc2FyMV81D5aXYi6If51kZbP/6ENeAFMpeV5Elv2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6MFF79+8FdRk9OT7q0QINUgmyZENnNaN3SmPAUSGjRc9e/hDM
-	v7BPWlzNWTNk2Iz0Md9jkTk6SSarREHCMD5ETIPPJAgjfBBpIoFL
-X-Gm-Gg: ASbGncu1iJt5FL91IPrCDmhX7alxLQKIqw+G/x3wYy0I0kbVuvXwPS2R/VNJKrmjYWG
-	5lkxqMN3Fj5f9useVfVIbrG7sTppECFwTXwmuhziLrshUbr0TAyS+ZA/hZ9FMEhUl10qQXJtc7i
-	dVL9bjwkO+3OEQNVqlc2/15JukGOABFuKeuQ1kx561tht2uj3pTkmceVRC5LBLd015R6g0CeK+f
-	5hxGy3KuDWTC4Ljcpczqf1NtP+oAv8nfI0Zmri3TDAXw5ajC3ivLupQcdLzvPI7P3ZvGs4s2Ko9
-	2/dCuCs5gBok1sbw6oXHf9Cp2FN44ts3/zfY9nDDOwutRXbNLAVS2yw49jjRQ4zC/d8Ltw==
-X-Google-Smtp-Source: AGHT+IH+F+vidrl3lXbIj79JZOASg2RETw/fdPHhelmpnW9w5aZoCaDED62KrXIK7M8C0GadLQoEYw==
-X-Received: by 2002:a05:6871:551e:b0:2c1:2262:7941 with SMTP id 586e51a60fabf-2d5288102f8mr5483185fac.16.1745199262491;
-        Sun, 20 Apr 2025 18:34:22 -0700 (PDT)
+        bh=zJTUPxCr5iXCtHx04L7AsNg2Bv7yPa69NQGQVSsPk1Y=;
+        b=BIaKNY3XZkyUNh03DkddMDPSsOsZdY2Lz4ga7TU8NJGGseP+wUWNxwyPp0ps1kpQ7l
+         3UQ2hHaL6I/F9v+VSkKt/n4GWagGKJ4zrzgC15LH7BDVtgfzkH05NAohSPJyXyh3LtUo
+         rrsHZXURfD17EJw295fVIuF8k+g+upRNfN7yNuATQAT/jRi0oNo6/wy2pV0eJqy+h5ok
+         rYAS1g8DUpL1CB6fPKiG/dfGzhTYRTSB+pGqtApaUYX7UhegTPkEk5z02188xCtjbpWz
+         neaq9p0aoxC9pIe1p/Q6zlTO/ig+9ewheMioZyuctkauzT1QZVkS2ovdSgHIU9lzutXV
+         4UYw==
+X-Forwarded-Encrypted: i=1; AJvYcCUaDypVcEPor3eaiXKin36XuB7YpQu3mk6P0/NbxesnG/jvJGkxoISdC+z7Rw2JiYftRUVgAYll8egE@vger.kernel.org, AJvYcCVhz3ltE3McIFcdtpaPSVTT2F5q3iDMg0YYgbLY58TSx3A7NhKpncmcYm+cpxgRacmCEFe0uJOyaNs=@vger.kernel.org, AJvYcCW1cjoH0dafsGopPfW/2ei4Iu13OZiV1gSFR1bRO385K85uLy5rNHYmOU5c/okAV/EjHYnGZBkzDa6xrFwLtQ==@vger.kernel.org, AJvYcCWeOOBYyNLY09Q61Mi8Gui+PG68MiyiogWva3npDsbg0TzepGe/aIovNJmI8L8Sua1u9v1bbA+s70w3v2u9@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBnlCudrXOZcKVG2UIkM6r/IOdCRW74245EBeEfcNALz+P5mQs
+	onnJD/AxBbz7W4N9TEEReKM8+RNkSL7FyLOtoOGuTC15TCidjFZK
+X-Gm-Gg: ASbGncvCOGML/ZECNPXmTh/jx9sSlAnbPTNH8uwg8Y2vNonlebGwsTthW863gcOjtPt
+	g0TgP1NK1deVtdJEsAnZR2Ks3NldzG9h/TLyNjmgd5QbmhrCPgRZe4FS3JxKXnVs9toAh7BTl+5
+	toxbFtScIWF/CApHs0hlrRHjzMFAKJdME5iBaOTYDaQB1bd4XDoKydWd0yFmCPTdftSL0yCjOrc
+	6nkylPIdeQh7xcet5US+RHcqF3kWQwkL4EoQKQoVhD6iMCaba6GSEeg8kSs2hKwbnK0udtrKu1K
+	LylOvldc6u5gge+ADBeSFKFOPFCuPl2l6Dju6jOjXrF/HFBU6PCaITihuFId1uj7TYIRbw==
+X-Google-Smtp-Source: AGHT+IEeWI/ZWY1Oz4SEkKzVLnxG9+3nSwWecNs4VxQIfI4WYWMi4G/PZMw2CRTN5C5Uzp8choe8BQ==
+X-Received: by 2002:a05:6830:3902:b0:727:3e60:b44b with SMTP id 46e09a7af769-7300622c63dmr5997735a34.14.1745199265163;
+        Sun, 20 Apr 2025 18:34:25 -0700 (PDT)
 Received: from localhost.localdomain ([2603:8080:1500:3d89:a8f7:1b36:93ce:8dbf])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7300489cd44sm1267588a34.66.2025.04.20.18.34.20
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7300489cd44sm1267588a34.66.2025.04.20.18.34.23
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 20 Apr 2025 18:34:22 -0700 (PDT)
+        Sun, 20 Apr 2025 18:34:24 -0700 (PDT)
 Sender: John Groves <grovesaustin@gmail.com>
 From: John Groves <John@Groves.net>
 X-Google-Original-From: John Groves <john@groves.net>
@@ -107,9 +107,9 @@ Cc: John Groves <jgroves@micron.com>,
 	Aravind Ramesh <arramesh@micron.com>,
 	Ajay Joshi <ajayjoshi@micron.com>,
 	John Groves <john@groves.net>
-Subject: [RFC PATCH 09/19] famfs_fuse: Update macro s/FUSE_IS_DAX/FUSE_IS_VIRTIO_DAX/
-Date: Sun, 20 Apr 2025 20:33:36 -0500
-Message-Id: <20250421013346.32530-10-john@groves.net>
+Subject: [RFC PATCH 10/19] famfs_fuse: Basic fuse kernel ABI enablement for famfs
+Date: Sun, 20 Apr 2025 20:33:37 -0500
+Message-Id: <20250421013346.32530-11-john@groves.net>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <20250421013346.32530-1-john@groves.net>
 References: <20250421013346.32530-1-john@groves.net>
@@ -121,136 +121,75 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Virtio_fs now needs to determine if an inode is DAX && not famfs.
+* FUSE_DAX_FMAP flag in INIT request/reply
+
+* fuse_conn->famfs_iomap (enable famfs-mapped files) to denote a
+  famfs-enabled connection
 
 Signed-off-by: John Groves <john@groves.net>
 ---
- fs/fuse/dir.c    |  2 +-
- fs/fuse/file.c   | 13 ++++++++-----
- fs/fuse/fuse_i.h |  6 +++++-
- fs/fuse/inode.c  |  2 +-
- fs/fuse/iomode.c |  2 +-
- 5 files changed, 16 insertions(+), 9 deletions(-)
+ fs/fuse/fuse_i.h          | 3 +++
+ fs/fuse/inode.c           | 5 +++++
+ include/uapi/linux/fuse.h | 2 ++
+ 3 files changed, 10 insertions(+)
 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 3805f9b06c9d..bc29db0117f4 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1937,7 +1937,7 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 		is_truncate = true;
- 	}
- 
--	if (FUSE_IS_DAX(inode) && is_truncate) {
-+	if (FUSE_IS_VIRTIO_DAX(fi) && is_truncate) {
- 		filemap_invalidate_lock(mapping);
- 		fault_blocked = true;
- 		err = fuse_dax_break_layouts(inode, 0, 0);
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index d63e56fd3dd2..6f10ae54e710 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -239,7 +239,7 @@ static int fuse_open(struct inode *inode, struct file *file)
- 	int err;
- 	bool is_truncate = (file->f_flags & O_TRUNC) && fc->atomic_o_trunc;
- 	bool is_wb_truncate = is_truncate && fc->writeback_cache;
--	bool dax_truncate = is_truncate && FUSE_IS_DAX(inode);
-+	bool dax_truncate = is_truncate && FUSE_IS_VIRTIO_DAX(fi);
- 
- 	if (fuse_is_bad(inode))
- 		return -EIO;
-@@ -1770,11 +1770,12 @@ static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	struct file *file = iocb->ki_filp;
- 	struct fuse_file *ff = file->private_data;
- 	struct inode *inode = file_inode(file);
-+	struct fuse_inode *fi = get_fuse_inode(inode);
- 
- 	if (fuse_is_bad(inode))
- 		return -EIO;
- 
--	if (FUSE_IS_DAX(inode))
-+	if (FUSE_IS_VIRTIO_DAX(fi))
- 		return fuse_dax_read_iter(iocb, to);
- 
- 	/* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
-@@ -1791,11 +1792,12 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	struct file *file = iocb->ki_filp;
- 	struct fuse_file *ff = file->private_data;
- 	struct inode *inode = file_inode(file);
-+	struct fuse_inode *fi = get_fuse_inode(inode);
- 
- 	if (fuse_is_bad(inode))
- 		return -EIO;
- 
--	if (FUSE_IS_DAX(inode))
-+	if (FUSE_IS_VIRTIO_DAX(fi))
- 		return fuse_dax_write_iter(iocb, from);
- 
- 	/* FOPEN_DIRECT_IO overrides FOPEN_PASSTHROUGH */
-@@ -2627,10 +2629,11 @@ static int fuse_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	struct fuse_file *ff = file->private_data;
- 	struct fuse_conn *fc = ff->fm->fc;
- 	struct inode *inode = file_inode(file);
-+	struct fuse_inode *fi = get_fuse_inode(inode);
- 	int rc;
- 
- 	/* DAX mmap is superior to direct_io mmap */
--	if (FUSE_IS_DAX(inode))
-+	if (FUSE_IS_VIRTIO_DAX(fi))
- 		return fuse_dax_mmap(file, vma);
- 
- 	/*
-@@ -3191,7 +3194,7 @@ static long fuse_file_fallocate(struct file *file, int mode, loff_t offset,
- 		.mode = mode
- 	};
- 	int err;
--	bool block_faults = FUSE_IS_DAX(inode) &&
-+	bool block_faults = FUSE_IS_VIRTIO_DAX(fi) &&
- 		(!(mode & FALLOC_FL_KEEP_SIZE) ||
- 		 (mode & (FALLOC_FL_PUNCH_HOLE | FALLOC_FL_ZERO_RANGE)));
- 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index fee96fe7887b..e04d160fa995 100644
+index e04d160fa995..b2c563b1a1c8 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1423,7 +1423,11 @@ void fuse_free_conn(struct fuse_conn *fc);
+@@ -870,6 +870,9 @@ struct fuse_conn {
+ 	/* Use io_uring for communication */
+ 	unsigned int io_uring;
  
- /* dax.c */
++	/* dev_dax_iomap support for famfs */
++	unsigned int famfs_iomap:1;
++
+ 	/** Maximum stack depth for passthrough backing files */
+ 	int max_stack_depth;
  
--#define FUSE_IS_DAX(inode) (IS_ENABLED(CONFIG_FUSE_DAX) && IS_DAX(inode))
-+/* This macro is used by virtio_fs, but now it also needs to filter for
-+ * "not famfs"
-+ */
-+#define FUSE_IS_VIRTIO_DAX(fuse_inode) (IS_ENABLED(CONFIG_FUSE_DAX)	\
-+					&& IS_DAX(&fuse_inode->inode))
- 
- ssize_t fuse_dax_read_iter(struct kiocb *iocb, struct iov_iter *to);
- ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from);
 diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index e9db2cb8c150..29147657a99f 100644
+index 29147657a99f..5c6947b12503 100644
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -164,7 +164,7 @@ static void fuse_evict_inode(struct inode *inode)
- 	if (inode->i_sb->s_flags & SB_ACTIVE) {
- 		struct fuse_conn *fc = get_fuse_conn(inode);
- 
--		if (FUSE_IS_DAX(inode))
-+		if (FUSE_IS_VIRTIO_DAX(fi))
- 			fuse_dax_inode_cleanup(inode);
- 		if (fi->nlookup) {
- 			fuse_queue_forget(fc, fi->forget, fi->nodeid,
-diff --git a/fs/fuse/iomode.c b/fs/fuse/iomode.c
-index c99e285f3183..aec4aecb5d79 100644
---- a/fs/fuse/iomode.c
-+++ b/fs/fuse/iomode.c
-@@ -204,7 +204,7 @@ int fuse_file_io_open(struct file *file, struct inode *inode)
- 	 * io modes are not relevant with DAX and with server that does not
- 	 * implement open.
- 	 */
--	if (FUSE_IS_DAX(inode) || !ff->args)
-+	if (FUSE_IS_VIRTIO_DAX(fi) || !ff->args)
- 		return 0;
+@@ -1392,6 +1392,9 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 			}
+ 			if (flags & FUSE_OVER_IO_URING && fuse_uring_enabled())
+ 				fc->io_uring = 1;
++			if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX) &&
++				       flags & FUSE_DAX_FMAP)
++				fc->famfs_iomap = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1450,6 +1453,8 @@ void fuse_send_init(struct fuse_mount *fm)
+ 		flags |= FUSE_SUBMOUNTS;
+ 	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+ 		flags |= FUSE_PASSTHROUGH;
++	if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
++		flags |= FUSE_DAX_FMAP;
  
  	/*
+ 	 * This is just an information flag for fuse server. No need to check
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 5e0eb41d967e..f9e14180367a 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -435,6 +435,7 @@ struct fuse_file_lock {
+  *		    of the request ID indicates resend requests
+  * FUSE_ALLOW_IDMAP: allow creation of idmapped mounts
+  * FUSE_OVER_IO_URING: Indicate that client supports io-uring
++ * FUSE_DAX_FMAP: kernel supports dev_dax_iomap (aka famfs) fmaps
+  */
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -482,6 +483,7 @@ struct fuse_file_lock {
+ #define FUSE_DIRECT_IO_RELAX	FUSE_DIRECT_IO_ALLOW_MMAP
+ #define FUSE_ALLOW_IDMAP	(1ULL << 40)
+ #define FUSE_OVER_IO_URING	(1ULL << 41)
++#define FUSE_DAX_FMAP		(1ULL << 42)
+ 
+ /**
+  * CUSE INIT request/reply flags
 -- 
 2.49.0
 
