@@ -1,357 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-46998-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46999-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E641BA973F1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 19:50:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21F93A97542
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 21:17:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6EA3AAD97
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 17:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD2FD3B59F2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 19:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0491D1E9B20;
-	Tue, 22 Apr 2025 17:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ecdb4/cM"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362872980D5;
+	Tue, 22 Apr 2025 19:17:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B64414C5B0
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 17:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C0D1DDA1E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 19:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745344207; cv=none; b=B1+98Fh+TMiuV2/MI31jKqk+S38iF1+DuX8BJSMHzQn+f6uNnEXGGQYxDrk1kDIZKP6B/1P2BCk+9cg7cAAKcL3yvrX1x4Jx4DczCyiRBicBTWOTyIk2O4KH2An5ah3k9uscp6xblRwp1CypXXbPOcXMjNF6cSkZFffBD1D7pbY=
+	t=1745349453; cv=none; b=uQIQ3XjzVs9wcloU/N5N14WqKtWVzyKvdMT1SGw1C8XeyogdZU+EPU7qDYJ1JYJftQZ2VHoLZvSjF5L8WaNmjx7Cdlb7T7CcOr7Ne+34HofnoXA4bQ/oCbkntYFW4hvPRoA1lAJsWLSJSIC0UNU+H7LeV6X8ybQiqdreXXNyrjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745344207; c=relaxed/simple;
-	bh=8Q5YT+74oHnKSpcWkXQvk0c5jRrbtINfggx/DpMVxNM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fd1xSI1fg+fqNrCAaFUzjo/i62QmQL6Fih/liTUwxIGulKXpImo3ghGhJdMIgNpKlbLkt3RnmrzKrZF6z1AnNUOIHll2Y/B6Zt/HJVs69A+7gnJaTdRevfFHHuavdZZdM/yNgyAdhSwZHKZnG41MvCgXyiYk9tCbyff6RuLPBd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ecdb4/cM; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4774193fdffso76399781cf.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 10:50:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745344204; x=1745949004; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uxbOxQqiRUIR2/B4IPV9XvlfZWvD7USTlMOwJjny8AM=;
-        b=ecdb4/cModioxbCO7aizhk/Js9YPSNpXFL3ZFajY88CiIT9DEB7R2xt3gYrb221rWf
-         +sZVEG2pFCEB1jLikoxex8YZMWrI0EiHCP3HJb6cwUiOz+3HPdpIswgT2k/lJyeBCzMn
-         KzGNdTuzjO618aQ+2WRxQiqIBLuW1nM4fC2CZmamxZAQ1stqTGMu21VZ0V0UHBikKdTJ
-         F9SYYknXPRr0NmEaqKzdj4NGIk/AV28NwWCdTKWiwNf1oBcrqJx8OqakkO0+DGkAr01g
-         5hgm72tC+XTzWsQPVbt7+ioIu1RIpVut9oTGBMFO02oJYinNwR4c2IZIGJNc8at/9HvZ
-         msqg==
+	s=arc-20240116; t=1745349453; c=relaxed/simple;
+	bh=pnHd2Ycif+rX3H6FenVUfl3wWZDJjQd9f8Z2kbG9kdw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=oXX24f3b+bCGkXThac9lbkAOGJN0m5JVX4FmSeo2wkCZsywpp6WAaK32ARlpCsA2bCiuTN4J1fZRf9KbzpVtc7VkGiBgEV5dc695QKfW/eWI9lXOHRzhl9tr1EdiMCJT10rn05FDo9OiLXrHfOQ1fNsvzX3N1kGkgggFOWYttPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d8fc035433so72309375ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 12:17:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745344204; x=1745949004;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uxbOxQqiRUIR2/B4IPV9XvlfZWvD7USTlMOwJjny8AM=;
-        b=TiF5Wygk3kZCRhQRr8hQQSLjsFGdqsdzaEUd8Zx60+MZQ2wUGw4kg9iMBbtkvZkmU+
-         YXESuNOY7IdlbsHyJOE4k6PeimEuO3dw/kpayUREiNeCVMWztU/z7jhsJIiq42oNek3K
-         rV4xbhdJNFvDGuk4NygjuyFnykJ8vMfW8hAg3tLJvJLyii6hDF96rnFIPCZeWwU57C3E
-         Y5XvPHskACUR5/MMvoNrjBgUDOzy7QlJeRpriYinb7/sJVcZoSCjs2VRV3kn+y+diOCL
-         6VEEi+XyHk7yIh0h1Agef3bSG7vfFekHEH5v4Wse+ekm9JmkwzL3b56Wc9t18HCUFSMH
-         XaLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUcvsgFr79Q8NDXv3VSwAxUrdXUuk0cSRZoNI8Vk3MH8FFOH4g553fBOB18O7D9rRM93an7Dk23CGJQZ0mY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNnbPx8ReBk7oMoOHnij/b6J1zXaED8ArZ4ExxaoTlJzDRA91c
-	bmqj3ZpPXmq3qcj/SYlcrSABRDzRwn5/ZX5sOt7y9YFjoUzbw5yubFUMKGbbsE6ef1FQENn1XSJ
-	DmgVSfaxZLU5WxC+cd0gmDTCCYQw=
-X-Gm-Gg: ASbGnctDjvw9lXMY0gkryGeRZwxupxJmWSQGnF9fDNaFHEJPnn8+xgmkXaUHyKPnKju
-	7ay8N9doqk5YZz7OY/RSIp9ByHVsgJPuRO9HYTcXaHhKv7gwd5Ncn72EKoV61MduzEtmCmOD2Zx
-	9tg6EDW+fGHWCCGwBd17Sl8Aolc5YBbEVbionupg==
-X-Google-Smtp-Source: AGHT+IFL6p2N6fYPUyvq9kWwvItvVDacbBr9HojOwerUH1jcge7Aadh9C/mghC0CEFzaYQ49A26c+UVAO/bMjmISN4A=
-X-Received: by 2002:ac8:7d03:0:b0:476:739a:5cf3 with SMTP id
- d75a77b69052e-47aec365d2cmr297582101cf.1.1745344204217; Tue, 22 Apr 2025
- 10:50:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745349451; x=1745954251;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=cyBDm2ZYj7cLn5Omsf047ecfidS0I0AxTIw8zpsgTPg=;
+        b=DvMbdY6zYxtlzkygNXbwI7us3+DB9WOAAYUX9COoltNeIjygtV261152zlaQxKniQI
+         XVjmp1DvTlEbPkIj3AxZ8VkHP2vSfmBhB4sC0bhAk1iAIH5dHVpDNZDmGTu9n0ILkcmI
+         CnMomxXkSR7QG477lipXvmJidHo/YW2ssQsyIEphJO5kXxSSTIZnrBKhy5lQGKyRy1w7
+         0p1CI+D4iiDo1kw8lEsJAa8kzA9sePCYBGwc44VU2LnCXFLomNF4PYj5IRq/mmxQ+1sB
+         4parIa9G2tLLueITx6RLje8DtbLY2rURaaYgd4fIkSXbZp2thOL/ngKbS5c4EysTtpQ7
+         Tagg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZU+X1td9y42os33JgxrzG/pLKkHkVu3lPzGzx7LYDGJivJ7ycfxGHdO/YK/GHY6wH+iPOpmr96Gyx502h@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo2aIG7Zy2D5nhX4N7PfF+cArjjjFRr3lkZdY7rTBSO45GuAzD
+	mHO9SYlGs0WqGU4EeNBVQ5qe4/bAIq4cqubEuC2q+u3kQWBxZBzuMF2paaopWqN3/Uzs8iQZ52Z
+	bgyCWjL5ZhWTsaw+a18Yo3FpU4sJmw42lBCMQNnJLkHPxmZAFxseQUdA=
+X-Google-Smtp-Source: AGHT+IHC1m62G5guSqyDDO0R9CXlhrXtqBEjq7z/HZTO5pgxQKAgDn5jhDJDMLKUWRQQ8rdAk2H7HuEK0FyOsX2khGMYyNeUpJvA
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250419000614.3795331-1-joannelkoong@gmail.com>
- <5332002a-e444-4f62-8217-8d124182290d@fastmail.fm> <26673a5077b148e98a3957532f0cb445aa7ed3c7.camel@kernel.org>
- <a65b5034-2bae-4eec-92e2-3a9ad003b0bb@fastmail.fm> <f83896afdad94014fbf0a4207e6caeb1d8e41cce.camel@kernel.org>
-In-Reply-To: <f83896afdad94014fbf0a4207e6caeb1d8e41cce.camel@kernel.org>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Tue, 22 Apr 2025 10:49:52 -0700
-X-Gm-Features: ATxdqUE_RoM68dY2cMi2LhKtLi3zmvLyB3bk00EKpPSzRFmmGboVwc2fgHqyTPc
-Message-ID: <CAJnrk1YKZihzTuh0EpG12PaZ8swrRN1RGOUCKL_LR6Xpv0HbGg@mail.gmail.com>
-Subject: Re: [PATCH v1] fuse: use splice for reading user pages on servers
- that enable it
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, miklos@szeredi.hu, 
-	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+X-Received: by 2002:a05:6e02:240a:b0:3d3:d00c:3602 with SMTP id
+ e9e14a558f8ab-3d88edfb6e6mr180204625ab.10.1745349450982; Tue, 22 Apr 2025
+ 12:17:30 -0700 (PDT)
+Date: Tue, 22 Apr 2025 12:17:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6807eb4a.050a0220.36a438.0000.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] INFO: task hung in page_cache_ra_order
+From: syzbot <syzbot+f719dec20853d1563edc@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, arnd@arndb.de, hch@lst.de, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, thuth@redhat.com, 
+	willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 22, 2025 at 4:33=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
-ote:
->
-> On Mon, 2025-04-21 at 23:38 +0200, Bernd Schubert wrote:
-> >
-> > On 4/21/25 14:35, Jeff Layton wrote:
-> > > On Mon, 2025-04-21 at 13:49 +0200, Bernd Schubert wrote:
-> > > >
-> > > > On 4/19/25 02:06, Joanne Koong wrote:
-> > > > > For direct io writes, splice is disabled when forwarding pages fr=
-om the
-> > > > > client to the server. This is because the pages in the pipe buffe=
-r are
-> > > > > user pages, which is controlled by the client. Thus if a server r=
-eplies
-> > > > > to the request and then keeps accessing the pages afterwards, the=
-re is
-> > > > > the possibility that the client may have modified the contents of=
- the
-> > > > > pages in the meantime. More context on this can be found in commi=
-t
-> > > > > 0c4bcfdecb1a ("fuse: fix pipe buffer lifetime for direct_io").
-> > > > >
-> > > > > For servers that do not need to access pages after answering the
-> > > > > request, splice gives a non-trivial improvement in performance.
-> > > > > Benchmarks show roughly a 40% speedup.
-> > > > >
-> > > > > Allow servers to enable zero-copy splice for servicing client dir=
-ect io
-> > > > > writes. By enabling this, the server understands that they should=
- not
-> > > > > continue accessing the pipe buffer after completing the request o=
-r may
-> > > > > face incorrect data if they do so.
-> > > > >
-> > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > > ---
-> > > > >  fs/fuse/dev.c             | 18 ++++++++++--------
-> > > > >  fs/fuse/dev_uring.c       |  4 ++--
-> > > > >  fs/fuse/fuse_dev_i.h      |  5 +++--
-> > > > >  fs/fuse/fuse_i.h          |  3 +++
-> > > > >  fs/fuse/inode.c           |  5 ++++-
-> > > > >  include/uapi/linux/fuse.h |  8 ++++++++
-> > > > >  6 files changed, 30 insertions(+), 13 deletions(-)
-> > > > >
-> > > > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > > > > index 67d07b4c778a..1b0ea8593f74 100644
-> > > > > --- a/fs/fuse/dev.c
-> > > > > +++ b/fs/fuse/dev.c
-> > > > > @@ -816,12 +816,13 @@ static int unlock_request(struct fuse_req *=
-req)
-> > > > >         return err;
-> > > > >  }
-> > > > >
-> > > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
-> > > > > -                   struct iov_iter *iter)
-> > > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn=
- *fc,
-> > > > > +                   bool write, struct iov_iter *iter)
-> > > > >  {
-> > > > >         memset(cs, 0, sizeof(*cs));
-> > > > >         cs->write =3D write;
-> > > > >         cs->iter =3D iter;
-> > > > > +       cs->splice_read_user_pages =3D fc->splice_read_user_pages=
-;
-> > > > >  }
-> > > > >
-> > > > >  /* Unmap and put previous page of userspace buffer */
-> > > > > @@ -1105,9 +1106,10 @@ static int fuse_copy_page(struct fuse_copy=
-_state *cs, struct page **pagep,
-> > > > >                 if (cs->write && cs->pipebufs && page) {
-> > > > >                         /*
-> > > > >                          * Can't control lifetime of pipe buffers=
-, so always
-> > > > > -                        * copy user pages.
-> > > > > +                        * copy user pages if server does not sup=
-port splice
-> > > > > +                        * for reading user pages.
-> > > > >                          */
-> > > > > -                       if (cs->req->args->user_pages) {
-> > > > > +                       if (cs->req->args->user_pages && !cs->spl=
-ice_read_user_pages) {
-> > > > >                                 err =3D fuse_copy_fill(cs);
-> > > > >                                 if (err)
-> > > > >                                         return err;
-> > > > > @@ -1538,7 +1540,7 @@ static ssize_t fuse_dev_read(struct kiocb *=
-iocb, struct iov_iter *to)
-> > > > >         if (!user_backed_iter(to))
-> > > > >                 return -EINVAL;
-> > > > >
-> > > > > -       fuse_copy_init(&cs, true, to);
-> > > > > +       fuse_copy_init(&cs, fud->fc, true, to);
-> > > > >
-> > > > >         return fuse_dev_do_read(fud, file, &cs, iov_iter_count(to=
-));
-> > > > >  }
-> > > > > @@ -1561,7 +1563,7 @@ static ssize_t fuse_dev_splice_read(struct =
-file *in, loff_t *ppos,
-> > > > >         if (!bufs)
-> > > > >                 return -ENOMEM;
-> > > > >
-> > > > > -       fuse_copy_init(&cs, true, NULL);
-> > > > > +       fuse_copy_init(&cs, fud->fc, true, NULL);
-> > > > >         cs.pipebufs =3D bufs;
-> > > > >         cs.pipe =3D pipe;
-> > > > >         ret =3D fuse_dev_do_read(fud, in, &cs, len);
-> > > > > @@ -2227,7 +2229,7 @@ static ssize_t fuse_dev_write(struct kiocb =
-*iocb, struct iov_iter *from)
-> > > > >         if (!user_backed_iter(from))
-> > > > >                 return -EINVAL;
-> > > > >
-> > > > > -       fuse_copy_init(&cs, false, from);
-> > > > > +       fuse_copy_init(&cs, fud->fc, false, from);
-> > > > >
-> > > > >         return fuse_dev_do_write(fud, &cs, iov_iter_count(from));
-> > > > >  }
-> > > > > @@ -2301,7 +2303,7 @@ static ssize_t fuse_dev_splice_write(struct=
- pipe_inode_info *pipe,
-> > > > >         }
-> > > > >         pipe_unlock(pipe);
-> > > > >
-> > > > > -       fuse_copy_init(&cs, false, NULL);
-> > > > > +       fuse_copy_init(&cs, fud->fc, false, NULL);
-> > > > >         cs.pipebufs =3D bufs;
-> > > > >         cs.nr_segs =3D nbuf;
-> > > > >         cs.pipe =3D pipe;
-> > > > > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> > > > > index ef470c4a9261..52b883a6a79d 100644
-> > > > > --- a/fs/fuse/dev_uring.c
-> > > > > +++ b/fs/fuse/dev_uring.c
-> > > > > @@ -593,7 +593,7 @@ static int fuse_uring_copy_from_ring(struct f=
-use_ring *ring,
-> > > > >         if (err)
-> > > > >                 return err;
-> > > > >
-> > > > > -       fuse_copy_init(&cs, false, &iter);
-> > > > > +       fuse_copy_init(&cs, ring->fc, false, &iter);
-> > > > >         cs.is_uring =3D true;
-> > > > >         cs.req =3D req;
-> > > > >
-> > > > > @@ -623,7 +623,7 @@ static int fuse_uring_args_to_ring(struct fus=
-e_ring *ring, struct fuse_req *req,
-> > > > >                 return err;
-> > > > >         }
-> > > > >
-> > > > > -       fuse_copy_init(&cs, true, &iter);
-> > > > > +       fuse_copy_init(&cs, ring->fc, true, &iter);
-> > > > >         cs.is_uring =3D true;
-> > > > >         cs.req =3D req;
-> > > > >
-> > > > > diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-> > > > > index db136e045925..25e593e64c67 100644
-> > > > > --- a/fs/fuse/fuse_dev_i.h
-> > > > > +++ b/fs/fuse/fuse_dev_i.h
-> > > > > @@ -32,6 +32,7 @@ struct fuse_copy_state {
-> > > > >         bool write:1;
-> > > > >         bool move_pages:1;
-> > > > >         bool is_uring:1;
-> > > > > +       bool splice_read_user_pages:1;
-> > > > >         struct {
-> > > > >                 unsigned int copied_sz; /* copied size into the u=
-ser buffer */
-> > > > >         } ring;
-> > > > > @@ -51,8 +52,8 @@ struct fuse_req *fuse_request_find(struct fuse_=
-pqueue *fpq, u64 unique);
-> > > > >
-> > > > >  void fuse_dev_end_requests(struct list_head *head);
-> > > > >
-> > > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
-> > > > > -                          struct iov_iter *iter);
-> > > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn=
- *conn,
-> > > > > +                   bool write, struct iov_iter *iter);
-> > > > >  int fuse_copy_args(struct fuse_copy_state *cs, unsigned int numa=
-rgs,
-> > > > >                    unsigned int argpages, struct fuse_arg *args,
-> > > > >                    int zeroing);
-> > > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > > > > index 3d5289cb82a5..e21875f16220 100644
-> > > > > --- a/fs/fuse/fuse_i.h
-> > > > > +++ b/fs/fuse/fuse_i.h
-> > > > > @@ -898,6 +898,9 @@ struct fuse_conn {
-> > > > >         /* Use io_uring for communication */
-> > > > >         bool io_uring:1;
-> > > > >
-> > > > > +       /* Allow splice for reading user pages */
-> > > > > +       bool splice_read_user_pages:1;
-> > > > > +
-> > > > >         /** Maximum stack depth for passthrough backing files */
-> > > > >         int max_stack_depth;
-> > > > >
-> > > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > > > > index 43b6643635ee..e82e96800fde 100644
-> > > > > --- a/fs/fuse/inode.c
-> > > > > +++ b/fs/fuse/inode.c
-> > > > > @@ -1439,6 +1439,9 @@ static void process_init_reply(struct fuse_=
-mount *fm, struct fuse_args *args,
-> > > > >
-> > > > >                         if (flags & FUSE_REQUEST_TIMEOUT)
-> > > > >                                 timeout =3D arg->request_timeout;
-> > > > > +
-> > > > > +                       if (flags & FUSE_SPLICE_READ_USER_PAGES)
-> > > > > +                               fc->splice_read_user_pages =3D tr=
-ue;
-> > > >
-> > > >
-> > > > Shouldn't that check for capable(CAP_SYS_ADMIN)? Isn't the issue
-> > > > that one can access file content although the write is already
-> > > > marked as completed? I.e. a fuse file system might get data
-> > > > it was never exposed to and possibly secret data?
-> > > > A more complex version version could check for CAP_SYS_ADMIN, but
-> > > > also allow later on read/write to files that have the same uid as
-> > > > the fuser-server process?
-> > > >
-> > >
-> > > IDGI. I don't see how this allows the server access to something it
-> > > didn't have access to before.
-> > >
-> > > This patchset seems to be about a "contract" between the kernel and t=
-he
-> > > userland server. The server is agreeing to be very careful about not
-> > > touching pages after a write request completes, and the kernel allows
-> > > splicing the pages if that's the case.
-> > >
-> > > Can you explain the potential attack vector?
-> >
-> > Let's the server claim it does FUSE_SPLICE_READ_USER_PAGES, i.e. claims
-> > it stops using splice buffers before completing write requests. But the=
-n
-> > it actually first replies to the write and after an arbitrary amount
-> > of time writes out the splice buffer. User application might be using
-> > the buffer it send for write for other things and might not want to
-> > expose that. I.e. application expects that after write(, buf,)
-> > it can use 'buf' for other purposes and that the file system does not
-> > access it anymore once write() is complete. I.e. it can put sensitive
-> > data into the buffer, which it might not want to expose.
-> > From my point of the issue is mainly with allow_other in combination
-> > with "user_allow_other" in libfuse, as root has better ways to access d=
-ata.
-> >
->
-> That would definitely break the contract. The question is whether
-> that's a security issue. I'm not convinced that it is, given all of the
-> other ways you can do nefarious stuff with an unprivileged server.
->
-> That said, if there is any question, gating this behind CAP_SYS_ADMIN
-> seems like a reasonable thing to do. We could always relax that later
-> if we decide that it's a non-issue.
+Hello,
 
-I'm not convinced it is either, especially with allow_other +
-user_allow_other needing root privilege to opt into it,  but I also
-don't feel strongly enough about it to insist on it and I think it's
-better to be safe than sorry. That's a great point about being able to
-relax this in the future.
+syzbot found the following issue on:
 
-I'll add CAP_SYS_ADMIN gating in v2.
+HEAD commit:    fc96b232f8e7 Merge tag 'pci-v6.15-fixes-2' of git://git.ke..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=146337cf980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2a31f7155996562
+dashboard link: https://syzkaller.appspot.com/bug?extid=f719dec20853d1563edc
+compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10f9d470580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17125fe4580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c90d59ce6487/disk-fc96b232.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/78fd0e48c804/vmlinux-fc96b232.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/58353c4d5ca1/bzImage-fc96b232.xz
+
+The issue was bisected to:
+
+commit 3e25d5a49f99b75be2c6cfb165e4f77dc6d739a2
+Author: Christoph Hellwig <hch@lst.de>
+Date:   Wed Oct 23 05:36:37 2024 +0000
+
+    asm-generic: add an optional pfn_valid check to page_to_phys
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=166cb4cc580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=156cb4cc580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=116cb4cc580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f719dec20853d1563edc@syzkaller.appspotmail.com
+Fixes: 3e25d5a49f99 ("asm-generic: add an optional pfn_valid check to page_to_phys")
+
+INFO: task syz-executor690:5861 blocked for more than 143 seconds.
+      Not tainted 6.15.0-rc2-syzkaller-00278-gfc96b232f8e7 #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz-executor690 state:D stack:23400 pid:5861  tgid:5860  ppid:5859   task_flags:0x440040 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5382 [inline]
+ __schedule+0x1b88/0x5240 kernel/sched/core.c:6767
+ __schedule_loop kernel/sched/core.c:6845 [inline]
+ schedule+0x163/0x360 kernel/sched/core.c:6860
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6917
+ rwsem_down_read_slowpath kernel/locking/rwsem.c:1084 [inline]
+ __down_read_common kernel/locking/rwsem.c:1248 [inline]
+ __down_read kernel/locking/rwsem.c:1261 [inline]
+ down_read+0x6ff/0xa50 kernel/locking/rwsem.c:1526
+ filemap_invalidate_lock_shared include/linux/fs.h:922 [inline]
+ page_cache_ra_order+0x45e/0xca0 mm/readahead.c:491
+ filemap_readahead mm/filemap.c:2560 [inline]
+ filemap_get_pages+0x9ec/0x1fc0 mm/filemap.c:2605
+ filemap_splice_read+0x690/0xef0 mm/filemap.c:2981
+ do_splice_read fs/splice.c:979 [inline]
+ splice_direct_to_actor+0x4af/0xc90 fs/splice.c:1083
+ do_splice_direct_actor fs/splice.c:1201 [inline]
+ do_splice_direct+0x281/0x3d0 fs/splice.c:1227
+ do_sendfile+0x582/0x8c0 fs/read_write.c:1368
+ __do_sys_sendfile64 fs/read_write.c:1429 [inline]
+ __se_sys_sendfile64+0x17e/0x1e0 fs/read_write.c:1415
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8463035369
+RSP: 002b:00007f8462fee228 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f84630bf328 RCX: 00007f8463035369
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: 0000000000000003
+RBP: 00007f84630bf320 R08: 00007f8462fee6c0 R09: 00007f8462fee6c0
+R10: 000400000000003f R11: 0000000000000246 R12: 00007f84630bf32c
+R13: 0000200000001000 R14: 6c756e2f7665642f R15: 00007ffd91caffd8
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/31:
+ #0: ffffffff8ed3df20 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8ed3df20 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8ed3df20 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x30/0x180 kernel/locking/lockdep.c:6764
+1 lock held by klogd/5202:
+2 locks held by getty/5601:
+ #0: ffff8880346d00a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc9000332e2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x5bb/0x1700 drivers/tty/n_tty.c:2222
+1 lock held by syz-executor690/5861:
+ #0: ffff88802395b740 (mapping.invalidate_lock#2){++++}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:922 [inline]
+ #0: ffff88802395b740 (mapping.invalidate_lock#2){++++}-{4:4}, at: page_cache_ra_order+0x45e/0xca0 mm/readahead.c:491
+3 locks held by syz-executor690/5862:
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.15.0-rc2-syzkaller-00278-gfc96b232f8e7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x4ab/0x4e0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:274 [inline]
+ watchdog+0x1058/0x10a0 kernel/hung_task.c:437
+ kthread+0x7b7/0x940 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 5862 Comm: syz-executor690 Not tainted 6.15.0-rc2-syzkaller-00278-gfc96b232f8e7 #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+RIP: 0010:lockdep_enabled kernel/locking/lockdep.c:124 [inline]
+RIP: 0010:lock_acquire+0xae/0x2f0 kernel/locking/lockdep.c:5842
+Code: e8 97 67 8e 00 83 3d f0 ae c1 0e 00 0f 84 ef 00 00 00 65 8b 05 c3 35 ca 11 85 c0 0f 85 e0 00 00 00 65 48 8b 04 25 08 60 68 93 <83> b8 ec 0a 00 00 00 0f 85 ca 00 00 00 48 c7 44 24 10 00 00 00 00
+RSP: 0018:ffffc9000408ee68 EFLAGS: 00000246
+RAX: ffff8880782ada00 RBX: ffffffff8ed3df20 RCX: 0000000000000002
+RDX: 0000000000000000 RSI: ffffffff816d9be5 RDI: 1ffffffff1da7be4
+RBP: ffffffff93686020 R08: 0000000000000000 R09: 0000000000000000
+R10: ffffc9000408f020 R11: fffff52000811e10 R12: 0000000000000000
+R13: 0000000000000002 R14: ffffffff816dc508 R15: 0000000000000000
+FS:  00007f8462fcd6c0(0000) GS:ffff88812509a000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005606e6d75600 CR3: 000000002f6f0000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ class_rcu_constructor include/linux/rcupdate.h:1155 [inline]
+ unwind_next_frame+0xd5/0x23b0 arch/x86/kernel/unwind_orc.c:479
+ __unwind_start+0x59a/0x740 arch/x86/kernel/unwind_orc.c:758
+ unwind_start arch/x86/include/asm/unwind.h:64 [inline]
+ arch_stack_walk+0xe7/0x150 arch/x86/kernel/stacktrace.c:24
+ stack_trace_save+0x11a/0x1d0 kernel/stacktrace.c:122
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4161 [inline]
+ slab_alloc_node mm/slub.c:4210 [inline]
+ kmem_cache_alloc_noprof+0x1e1/0x390 mm/slub.c:4217
+ mempool_alloc_noprof+0x199/0x5a0 mm/mempool.c:402
+ bio_alloc_bioset+0x26f/0x1130 block/bio.c:554
+ bio_alloc_clone block/bio.c:864 [inline]
+ bio_split+0x107/0x490 block/bio.c:1587
+ bio_submit_split+0x98/0x600 block/blk-merge.c:116
+ __bio_split_to_limits block/blk.h:390 [inline]
+ blk_mq_submit_bio+0x18a6/0x25e0 block/blk-mq.c:3110
+ __submit_bio+0x1d2/0x6d0 block/blk-core.c:635
+ __submit_bio_noacct_mq block/blk-core.c:722 [inline]
+ submit_bio_noacct_nocheck+0x57b/0xe30 block/blk-core.c:751
+ bio_chain_and_submit+0xed/0x130 block/bio.c:361
+ __blkdev_issue_zero_pages+0x218/0x290 block/blk-lib.c:222
+ blkdev_issue_zero_pages block/blk-lib.c:238 [inline]
+ blkdev_issue_zeroout+0x651/0x880 block/blk-lib.c:325
+ blkdev_fallocate+0x3dd/0x490 block/fops.c:-1
+ vfs_fallocate+0x627/0x7a0 fs/open.c:338
+ ksys_fallocate fs/open.c:362 [inline]
+ __do_sys_fallocate fs/open.c:367 [inline]
+ __se_sys_fallocate fs/open.c:365 [inline]
+ __x64_sys_fallocate+0xbc/0x110 fs/open.c:365
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf3/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8463035369
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8462fcd228 EFLAGS: 00000246 ORIG_RAX: 000000000000011d
+RAX: ffffffffffffffda RBX: 00007f84630bf338 RCX: 00007f8463035369
+RDX: 0000000008000000 RSI: 0000000000000011 RDI: 0000000000000004
+RBP: 00007f84630bf330 R08: 00007f8462fcd6c0 R09: 00007f8462fcd6c0
+R10: 0008004000000200 R11: 0000000000000246 R12: 00007f84630bf33c
+R13: 0000200000001000 R14: 6c756e2f7665642f R15: 00007ffd91caffd8
+ </TASK>
+INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 1.578 msecs
 
 
-Thanks,
-Joanne
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
->
-> --
-> Jeff Layton <jlayton@kernel.org>
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
