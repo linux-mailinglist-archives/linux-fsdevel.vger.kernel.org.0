@@ -1,90 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-46941-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46940-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34179A96B06
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:54:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24135A96A34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 643223B3F0C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 12:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67A443A9623
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 12:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B56CF27D763;
-	Tue, 22 Apr 2025 12:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D4A27CCDF;
+	Tue, 22 Apr 2025 12:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sernet.de header.i=@sernet.de header.b="AAbVG9Jb"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="l9gUgxJS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.sernet.de (mail.sernet.de [185.199.217.2])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98CF227CCE3
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 12:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.199.217.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BFB278F52
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 12:35:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745326455; cv=none; b=C/1/RGUyWodOxl905E6x1X+V1yLEmVbbTCiELb034oSokx9WNxiWeHZ9tvn3SahkPiuT15uyXcGUvtAptPD0E/mYkkjPlgWBT22uRVhF78Gm3XlO9qc0vzHmLD5OV8peh0jVzglUoK6z+tykgsVqY/gArcaR0jWWQIeYqAE9ZAo=
+	t=1745325310; cv=none; b=doHsjPrexMizvecHJ5PJxF0yCcbsITOjP9C/M3XVzsLmKLfXoWBaOKkSal60BBHMhSwIiTdERu7VAUHCL3mtOjgzkAaOVkl+qvGyFIAs1BIzfb/zTksqko4Iy+jk8H2Ebu2ZRrHdWN4VZQYuQZHHtwBJddgWPk4h9Mjc66bPKas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745326455; c=relaxed/simple;
-	bh=pizC1B93f/gGXsIN9BGuDQKRw7/VQSwJnVbmPYvS1z8=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uok3bIVIgQPGCWrKkRYGOUcTN/O4YjnEM05cKGbq7J/0DPUvR+Q7AV9N38bOnAr4weikffNj4dW6ZohDD6IjtACtWT7xdITGG3jjCJJftijlJ0f+3JevQ/Y1vc0jDVS4mN94OU9gj0H52EK0sFXq7KDmszPYKsLxYndcNaPKQnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=SerNet.DE; spf=pass smtp.mailfrom=sernet.de; dkim=pass (2048-bit key) header.d=sernet.de header.i=@sernet.de header.b=AAbVG9Jb; arc=none smtp.client-ip=185.199.217.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=SerNet.DE
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sernet.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sernet.de;
-	s=20210621-rsa; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=pizC1B93f/gGXsIN9BGuDQKRw7/VQSwJnVbmPYvS1z8=; b=AAbVG9JbP9oOZ7gXjmek18XlPD
-	u4neu+/j9oHXtihSOYFxB2U24acHTRbHDlTrHT4XaypvA9I3Y4Cu3bLoc5kZ/uq42mxwftmbwaABH
-	XPNPDi1AsiWl6bRJrVMY/mP8Ku1kgeLpFWlp96AJTFk+qPI2X+UhCKTRIjp+LapBxGyPkqCH25Q0K
-	7P7JYtjYA3NfaK3pgguCMVUB9lKsBcgUHGcNFZvMdJvosd1KcLF7jNSyx87RD/MD08J34tsVei6Ai
-	hKyro9V1dnLcyOs+7McchoNpZQBojTVZKriNKEHbxB+RCHzQ4+nJQ0J4scxg/4fbLT0N04iD8oAhQ
-	9O5mZ9zw==;
-Date: Tue, 22 Apr 2025 14:31:41 +0200
-From: =?iso-8859-1?Q?Bj=F6rn?= JACKE <bjacke@SerNet.DE>
-To: linux-fsdevel@vger.kernel.org
-Subject: casefold is using unsuitable case mapping table
-Message-ID: <20250422123141.GD855798@sernet.de>
+	s=arc-20240116; t=1745325310; c=relaxed/simple;
+	bh=lER80+Pt+CzU7mQdcrKHzgvHgnRzuEHRpOLYXLE7KuA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lRjsOaRQIA2tESLB/sUnJ4EZdeTPaKt1eDNdbmyaAsvFXXKjyFUBmnp/w5tWFfkiKibgCUq4A8qiC2n8CFD8iAXBPCXSGX53VOBVTimBLloK1390W2EC7rKfHLD93pEdUWZI/jAOHC9FSYLyCW5WoWJKdaQ/6SAPh7Kv9iU28eM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=l9gUgxJS; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=k8rl5/6cYD+b4RybVpJb5JzRtiVY3NiFB4fyP2cin3Q=; t=1745325307; x=1745930107; 
+	b=l9gUgxJSpTzQKKl6vSg+n9Iw4dEsV2LIYEPDWaQKoTZkACrshxhrbaKiy5Y81LWOkv+KCQamWwx
+	mF0+FnwElc4OaTeh9DOqI6lLQxhzvHS5VPVAZDIyXPP2JIu9mxKjEoBZhoPb0aKUekozB2iV9UcN5
+	1XlEpPL0hJ2R4CMVUy8+rqpvI405NLy9DiRFijBMzRnu89BcjxayCSJ77BGdbt/M43KNI/+TzxJtx
+	OPI5ycXqsZpTr3RQoPKuR0OarcesSts5hhLAv9f/R7U+opAGlbmjKw8Gl7CcvUIp4nl0+V0UFYKIC
+	jxHkaUe6O36J5KK1IHk94NrsvDB80Rpc1CBg==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1u7Cq8-00000001tJt-3yQB; Tue, 22 Apr 2025 14:35:04 +0200
+Received: from p5dc5515a.dip0.t-ipconnect.de ([93.197.81.90] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1u7Cq8-00000003Ex8-2yOx; Tue, 22 Apr 2025 14:35:04 +0200
+Message-ID: <2a7218cdc136359c5315342cef5e3fa2a9bf0e69.camel@physik.fu-berlin.de>
+Subject: Re: HFS/HFS+ maintainership action items
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+ "brauner@kernel.org"
+	 <brauner@kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>
+Date: Tue, 22 Apr 2025 14:35:03 +0200
+In-Reply-To: <f06f324d5e91eb25b42aea188d60def17093c2c7.camel@ibm.com>
+References: <f06f324d5e91eb25b42aea188d60def17093c2c7.camel@ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Q: Die Schriftsteller koennen nicht so schnell schreiben, wie die
- Regierungen Kriege machen; denn das Schreiben verlangt Denkarbeit. - Brecht
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-Hi,
+Hi Slava,
 
-I started to experiment with the casefold feature of ext4 and some other
-filesystems. I was hoping to get some significant performance gains for Samba
-server with large directories.
+On Mon, 2025-04-21 at 21:52 +0000, Viacheslav Dubeyko wrote:
+> I am trying to elaborate the HFS/HFS+ maintainership action items:
+> (1) We need to prepare a Linux kernel tree fork to collect patches.
 
-It turns out though that the case insensitive feature is not usable because it
-does not match the case mapping tables that other operating systems use. More
-specifically, the german letter "ß" is treated as a case equivanten of "ss".
+Yes. I suggest creating a tree on git.kernel.org.
 
-There is an equivalent of "ß" and "ss in some other scopes, also AD LDAP treats
-them as an equivante. For systems that requires "lossless" case conversion
-however should not treat ß and ss as equivalent. This is also why a filesystem
-should never ever do that
+> (2) I think it needs to prepare the list of current known issues (TODO li=
+st).
 
-Since 2017 there is a well-defined uppercase version of the codepoint (U+00DF)
-of the "ß" letter in Unicode: U+1E9E, this could eventually be used but I
-haven't seen any filesystem using that so far. This would be a possible and
-lossless case equivalent, but well, that's actually another thing to discuss.
+Shall we use the kernel wiki for that? I suggest starting with the collecti=
+on
+of known CVEs as well as possible patches. I know of at least one CVE that
+Ubuntu has fixed locally.
 
-The important point is to _not_ use the ß/ss case equicalent. The casefold
-feature is mainly useless otherwise.
+I can send an email to the author of that patch and ask them to send their
+patch upstream.
 
-Can this be changed without causing too much hassle?
+From my memory, there are some occasional filesystem corruptions reported
+on HFS partitions which might be a result of a bug in the kernel driver.
 
-Cheers
-Björn
+They can be easily fixed with fsck_hfs from hfsprogs though.
+
+> (3) Let me prepare environment and start to run xfstests for HFS/HFS+ (to=
+ check
+> the current status).
+
+I suggest a Debian VM for that as it has hfsprogs which allows creating bot=
+h
+HFS and HFS+ filesystems. It's also easily possible to test on PowerPC insi=
+de
+QEMU if necessary.
+
+> (4) Which use-cases do we need to consider for regular testing?
+
+Definitely testing both legacy HFS and HFS+ with creating new filesystems, =
+writing
+and reading random files from it as well as running fsck on these.
+
+I'm not a Linux kernel filesystem expert, so I don't know what the recommen=
+d tests
+for CI are, but I suggest everything that is commonly used, both with HFS a=
+nd HFS+.
+
+> Anything else? What am I missing?
+
+No, I think that should get us going for the time being.
+
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
