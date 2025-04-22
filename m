@@ -1,205 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-46950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3916EA96DDE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:05:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6600BA96DE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:05:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87DEF1898392
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:03:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E39A7A7DC4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A631A283CAC;
-	Tue, 22 Apr 2025 14:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3414C28150B;
+	Tue, 22 Apr 2025 14:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmsaNYAy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEYns9o3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144A427C158
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 14:02:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 967EC1632E6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 14:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745330568; cv=none; b=jwEpLZ6/UIhbhmXBgEXVz0WpW7Kgks2eHRUHyMOxCRSbHJ0SJklY8PYxXScGZlFA2UMcjI4A6liD0wXvkDlAGZWn2JY6lfj6B8k3jWGGy6q3DpuSocEcJzhdz/FMtFqdRzdRoEC31TCEoYF2joAzO2M1iKRxQ3KmtUOGvE4R5y8=
+	t=1745330745; cv=none; b=d51kMv0S/7x7OcIuRkx13k2rfiHK5PvXT9ZZuuOdYQulZ9oUOdu1SOgcxvBEpnNmpeVrtVL2DXj5PgCodptUvATQ+d3CLHsErQAAhks1SJxYT7MdFuryXUso9ibf221Z75Uyiz3t8WcdOQWypZOYAqd0loiGEq/h+TAyLMRrhgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745330568; c=relaxed/simple;
-	bh=ULMuanv1mOQ+KgavRDkmnIW9XETVlZYpexhA0ZUTTeg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RIJa0RAwIF81MfDF8AiAVTntk2So4TvUP4xGVnXjlYO9h7BHqhFhX65mbQxpxxhVxdpmt+gN8JtlK2HR5MGX+ngUbwANqQsj22YsTCfopiIhA8ULxbEsHlD74/je3bHvKc8/taOe2FShZCes5W0QjjaZKIc3iK/x+4iTcxfLxCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmsaNYAy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA311C4CEEE;
-	Tue, 22 Apr 2025 14:02:45 +0000 (UTC)
+	s=arc-20240116; t=1745330745; c=relaxed/simple;
+	bh=5hFhbUROWG7JCH/PHzH+RYt66Zv9btiPZFfRXm8C3UU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T8AqTQ/LDYVXKPqUZR8yrIHjuX/eevi/nn8OA2KVc/3FJhg80PJ7Coz6emXtk8IOIsANoVmIH6vr7S7GDy5pUjfivdErOdghG/Ho/FO4zLcUYDZbN0JaEvkA6XH7izKYWt0d15FDqSGaqSTWCEsBCqMDbfKRjgOSWmqm2+noz2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEYns9o3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F4EBC4CEEA;
+	Tue, 22 Apr 2025 14:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745330567;
-	bh=ULMuanv1mOQ+KgavRDkmnIW9XETVlZYpexhA0ZUTTeg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=tmsaNYAyaFTCkkZlz+eMeCZ50rsMNl9JF851A2EhGmUNemhLgUiVa6urIJecvO3Dt
-	 t2AKQxVQ+2Wlf+bU899MCzmXOQ7WtEmaR6zOFCJBot+sHXDeQxczqvnuC6/NJdd5Tx
-	 ce625h5PMJvstG5iHz6cpF7EEiH70wDwQTNHAQI3A9jWNYUNFyAC/PoLtxwFReYSCD
-	 qRDL8IXLsvjiYnurXNDbGf96VpfXXmLfLPmGvveC+Yt9GFLzZpyR3yN4SfDdmJd99n
-	 U22cqUo//rcmq/1aM86kSI8FFuzQbAGnjGi7cStMc5WT1QblO60QJji+AzuZVACNM7
-	 JUgorDci4m+Kg==
+	s=k20201202; t=1745330745;
+	bh=5hFhbUROWG7JCH/PHzH+RYt66Zv9btiPZFfRXm8C3UU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nEYns9o3daLvzg2AIerc4SCEWONJjPWyTKhhg1YVFfNydMNLYy/mpOxLOYCb7K0cG
+	 wf8SJt5LSjRj5/+XYU6/JRIPxtZsaF6H1p//SyzmZQLdCL49reacdOwb8dgqOrhkAk
+	 WkFMcpV9T+yhyKl0yBixk3+NmUBtjCyvQmcLU5kij8bRyqhF8cq5y4Ss8dX//NUrom
+	 v8IIunHQ3+XqHQzIR9rwSsdgV/lyN3bk1PX9Ygt22scGUuGEmACgQXF+c5x63uzrw2
+	 ule3TCy/bUjStHehRffpJ6w5kIfYXdorMY5Yb52j/azi47ah6po1TjvRGbM5QTICxE
+	 dhTezMV1ZT5Aw==
+Date: Tue, 22 Apr 2025 16:05:40 +0200
 From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 22 Apr 2025 16:02:33 +0200
-Subject: [PATCH v2 2/2] inode: add fastpath for filesystem user namespace
- retrieval
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jeff Layton <jlayton@kernel.org>, 
+	Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH RFC 1/3] inode: add fastpath for filesystem user
+ namespace retrieval
+Message-ID: <20250422-flexibel-notfall-342ac4891b1a@brauner>
+References: <20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org>
+ <20250416-work-mnt_idmap-s_user_ns-v1-1-273bef3a61ec@kernel.org>
+ <mzryrjmph2ws7kprtnxj34xqp4cyhfdwpfnltkx4ziugwdqmu7@f4myyqyrmta3>
+ <CAGudoHFv6u5DrWbXt6C_LPmzzQ1Gmia6-h1QZ=RDWzct63N_mA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250422-work-mnt_idmap-s_user_ns-v2-2-34ce4a82f931@kernel.org>
-References: <20250422-work-mnt_idmap-s_user_ns-v2-0-34ce4a82f931@kernel.org>
-In-Reply-To: <20250422-work-mnt_idmap-s_user_ns-v2-0-34ce4a82f931@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>, 
- linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
- Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
- Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4888; i=brauner@kernel.org;
- h=from:subject:message-id; bh=ULMuanv1mOQ+KgavRDkmnIW9XETVlZYpexhA0ZUTTeg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSwL2zw+Cp+ta7Z6qnw+0rXhe3ykjWbpVpzl8pF6kUpr
- TU1y5LtKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmEjwCYb/XtHry1r+Jn8r6VjA
- H/DbZ6eNbdmcux3vLT9obvVjeszoysgwJTJGw29euEP+uYfappbrradEVi5fu/2BfolK2hVZ1nZ
- uAA==
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGudoHFv6u5DrWbXt6C_LPmzzQ1Gmia6-h1QZ=RDWzct63N_mA@mail.gmail.com>
 
-We currently always chase a pointer inode->i_sb->s_user_ns whenever we
-need to map a uid/gid which is noticeable during path lookup as noticed
-by Linus in [1]. In the majority of cases we don't need to bother with
-that pointer chase because the inode won't be located on a filesystem
-that's mounted in a user namespace. The user namespace of the superblock
-cannot ever change once it's mounted. So introduce and raise IOP_USERNS
-on all inodes and check for that flag.
+On Tue, Apr 22, 2025 at 03:33:03PM +0200, Mateusz Guzik wrote:
+> On Tue, Apr 22, 2025 at 12:37 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Wed 16-04-25 15:17:22, Christian Brauner wrote:
+> > > We currently always chase a pointer inode->i_sb->s_user_ns whenever we
+> > > need to map a uid/gid which is noticeable during path lookup as noticed
+> > > by Linus in [1]. In the majority of cases we don't need to bother with
+> > > that pointer chase because the inode won't be located on a filesystem
+> > > that's mounted in a user namespace. The user namespace of the superblock
+> > > cannot ever change once it's mounted. So introduce and raise IOP_USERNS
+> > > on all inodes and check for that flag in i_user_ns() when we retrieve
+> > > the user namespace.
+> > >
+> > > Link: https://lore.kernel.org/CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com [1]
+> > > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> >
+> > Some performance numbers would be in place here I guess - in particular
+> > whether this change indeed improved the speed of path lookup or whether the
+> > cost just moved elsewhere.
+> 
+> Note that right now path lookup is a raging branchfest, with some
+> avoidable memory references to boot.
+> 
+> I have a WIP patch to bypass inode permission checks with an
+> ->i_opflag and get over 5% speed up when stating stuff in
+> /usr/include/linux/. This might be slightly more now.
+> 
+> Anyhow, this bit here probably does not help that much in isolation
+> and I would not worry about that fact given the overall state.
+> Demonstrating that this indeed avoids some work in the common case
+> would be sufficient for me.
+> 
+> To give you a taste: stat(2) specifically around 4.28 mln ops/s on my
+> box. Based on perf top I estimate sorting out the avoidable
+> single-threaded slowdowns will bring it above 5 mln.
+> 
+> The slowdowns notably include the dog slow memory allocation (likely
+> to be sorted out with sheaves), the smp_mb fence in legitimize_mnt and
+> more.
+> 
+> Part of the problem is LOOKUP_RCU checks all over the place. I presume
+> the intent was to keep this and refwalk closely tied to reduce code
+> duplication and make sure all parties get updated as needed. I know
+> the code would be faster (and I *suspect* cleaner) if this got
+> refactored into dedicated routines instead. Something to ponder after
+> the bigger fish is fried.
 
-Link: https://lore.kernel.org/CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com [1]
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- fs/inode.c                    |  8 ++++++++
- include/linux/fs.h            | 23 ++++++++++++++++++++---
- include/linux/mnt_idmapping.h |  5 +++++
- 3 files changed, 33 insertions(+), 3 deletions(-)
-
-diff --git a/fs/inode.c b/fs/inode.c
-index 99318b157a9a..8824e462800b 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -245,6 +245,8 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
- 		inode->i_opflags |= IOP_XATTR;
- 	if (sb->s_type->fs_flags & FS_MGTIME)
- 		inode->i_opflags |= IOP_MGTIME;
-+	if (unlikely(sb->s_user_ns != &init_user_ns))
-+		inode->i_opflags |= IOP_USERNS;
- 	i_uid_write(inode, 0);
- 	i_gid_write(inode, 0);
- 	atomic_set(&inode->i_writecount, 0);
-@@ -1864,6 +1866,12 @@ static void iput_final(struct inode *inode)
- 
- 	WARN_ON(inode->i_state & I_NEW);
- 
-+	/* This is security sensitive so catch missing IOP_USERNS. */
-+	VFS_WARN_ON_ONCE(!(inode->i_opflags & IOP_USERNS) &&
-+			 (inode->i_sb->s_user_ns != &init_user_ns));
-+	VFS_WARN_ON_ONCE((inode->i_opflags & IOP_USERNS) &&
-+			 (inode->i_sb->s_user_ns == &init_user_ns));
-+
- 	if (op->drop_inode)
- 		drop = op->drop_inode(inode);
- 	else
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e..eae1b992aef5 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -663,6 +663,7 @@ is_uncached_acl(struct posix_acl *acl)
- #define IOP_DEFAULT_READLINK	0x0010
- #define IOP_MGTIME	0x0020
- #define IOP_CACHED_LINK	0x0040
-+#define IOP_USERNS	0x0080
- 
- /*
-  * Keep mostly read-only and often accessed (especially for
-@@ -1454,7 +1455,13 @@ struct super_block {
- 
- static inline struct user_namespace *i_user_ns(const struct inode *inode)
- {
--	return inode->i_sb->s_user_ns;
-+	VFS_WARN_ON_ONCE(!(inode->i_opflags & IOP_USERNS) &&
-+			 (inode->i_sb->s_user_ns != &init_user_ns));
-+	VFS_WARN_ON_ONCE((inode->i_opflags & IOP_USERNS) &&
-+			 (inode->i_sb->s_user_ns == &init_user_ns));
-+	if (unlikely(inode->i_opflags & IOP_USERNS))
-+		return inode->i_sb->s_user_ns;
-+	return &init_user_ns;
- }
- 
- /* Helper functions so that in most cases filesystems will
-@@ -1493,6 +1500,8 @@ static inline void i_gid_write(struct inode *inode, gid_t gid)
- static inline vfsuid_t i_uid_into_vfsuid(struct mnt_idmap *idmap,
- 					 const struct inode *inode)
- {
-+	if (likely(is_nop_mnt_idmap(idmap)))
-+		return VFSUIDT_INIT(inode->i_uid);
- 	return make_vfsuid(idmap, i_user_ns(inode), inode->i_uid);
- }
- 
-@@ -1545,6 +1554,8 @@ static inline void i_uid_update(struct mnt_idmap *idmap,
- static inline vfsgid_t i_gid_into_vfsgid(struct mnt_idmap *idmap,
- 					 const struct inode *inode)
- {
-+	if (likely(is_nop_mnt_idmap(idmap)))
-+		return VFSGIDT_INIT(inode->i_gid);
- 	return make_vfsgid(idmap, i_user_ns(inode), inode->i_gid);
- }
- 
-@@ -1597,7 +1608,10 @@ static inline void i_gid_update(struct mnt_idmap *idmap,
- static inline void inode_fsuid_set(struct inode *inode,
- 				   struct mnt_idmap *idmap)
- {
--	inode->i_uid = mapped_fsuid(idmap, i_user_ns(inode));
-+	if (likely(is_nop_mnt_idmap(idmap)))
-+		inode->i_uid = current_fsuid();
-+	else
-+		inode->i_uid = mapped_fsuid(idmap, i_user_ns(inode));
- }
- 
- /**
-@@ -1611,7 +1625,10 @@ static inline void inode_fsuid_set(struct inode *inode,
- static inline void inode_fsgid_set(struct inode *inode,
- 				   struct mnt_idmap *idmap)
- {
--	inode->i_gid = mapped_fsgid(idmap, i_user_ns(inode));
-+	if (likely(is_nop_mnt_idmap(idmap)))
-+		inode->i_gid = current_fsgid();
-+	else
-+		inode->i_gid = mapped_fsgid(idmap, i_user_ns(inode));
- }
- 
- /**
-diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-index e71a6070a8f8..22e6e2f08d77 100644
---- a/include/linux/mnt_idmapping.h
-+++ b/include/linux/mnt_idmapping.h
-@@ -25,6 +25,11 @@ static_assert(sizeof(vfsgid_t) == sizeof(kgid_t));
- static_assert(offsetof(vfsuid_t, val) == offsetof(kuid_t, val));
- static_assert(offsetof(vfsgid_t, val) == offsetof(kgid_t, val));
- 
-+static __always_inline bool is_nop_mnt_idmap(const struct mnt_idmap *idmap)
-+{
-+	return idmap == &nop_mnt_idmap;
-+}
-+
- static inline bool is_valid_mnt_idmap(const struct mnt_idmap *idmap)
- {
- 	return idmap != &nop_mnt_idmap && idmap != &invalid_mnt_idmap;
-
--- 
-2.47.2
-
+I think the cleanup itself the right thing to do because it makes it
+obvious that we're not doing any work when no idmapped mounts are
+involved. v2 is a lot cleaner and simpler as well.
 
