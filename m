@@ -1,270 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-46907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53CB3A96612
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 12:38:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C31A96640
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 12:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 814FA16BAE8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 10:38:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46832189BF01
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 10:46:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474F91E9B39;
-	Tue, 22 Apr 2025 10:37:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E93F20C023;
+	Tue, 22 Apr 2025 10:46:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rJXfKhvt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i09YnLef";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rJXfKhvt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="i09YnLef"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BRG7NHA5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123411172A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 10:37:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212E01E231E;
+	Tue, 22 Apr 2025 10:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745318274; cv=none; b=DxbQKFaK5dtAKxm5QPLjVkR032Wx1KireR9aZap+ulSgKLziSpjxOXt0ABT8ZKmNNPSbLrR9YgtVcFJ2MAK5WDO/rphsJrJg8XaXO1qLTiTyHfps/8Ao+EqHSraW+6/6j6J7a0ftaiX7LKDlNq4tXTAmSqxLm+9t+6ihuUl/1ok=
+	t=1745318760; cv=none; b=mHWks+kTAJ6m8x/UVrcqy9Mg8Qaghvny6mRlybTYejIdiWDU8/mcZ3vQHdSpzeXs4+2rjAPAUXhj0eGzDdfF9VY412HswGrnJR/3cjpr3sWYERBMYND8U77a1eH62Kx8upbPZdQN5CiuqTRgjvmwniXHUlHwLphuJPEL4cNPUUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745318274; c=relaxed/simple;
-	bh=M+T9apoq9N3VhxknGag/mGF0MrKZ0BbmEgpqvDAT8Eo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X6ACh2PfL1Cu3pThQZDJXoTBBZJLQVYglHfzeTY7r7rWJheFloeiH3FgQmUgnECbxBD7mOAvMS1rjH7M4qrJFosQ+N0wBTllpiDi0pPrqdr+jM/KTvMfWJoCKBcK1j37c1sa6zmtWyf+Vzi+J2jWBj9psEod6cHC3U2ax3Y6FuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rJXfKhvt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i09YnLef; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rJXfKhvt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=i09YnLef; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0F14921172;
-	Tue, 22 Apr 2025 10:37:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745318271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7P5wCM1Fp58MkZOF0RAaVMOBLThDapBzVTf+10Iljpc=;
-	b=rJXfKhvtFKZs1dsbconzRZi1uO8TTuMDslPmewEaOaLdxfLApx3jQbx5oGM6Xnbiy6+dk8
-	BaT0q34zG2pzFE3cDPRrbXP8Jz+o3+mKPxf/WKOAB7564Nb154O604W7INZiYfnBVMd41o
-	QadGhlx+GElx7/6hOECZ3XMrr31phQY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745318271;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7P5wCM1Fp58MkZOF0RAaVMOBLThDapBzVTf+10Iljpc=;
-	b=i09YnLefAJ01lQmaV05+D3o7Lce+WOP8iQMOuJwyf0RSCFlMzbY7d/XZ6Rw1Ky3LuM6HAL
-	pa3dOSPOwTrkZnAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745318271; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7P5wCM1Fp58MkZOF0RAaVMOBLThDapBzVTf+10Iljpc=;
-	b=rJXfKhvtFKZs1dsbconzRZi1uO8TTuMDslPmewEaOaLdxfLApx3jQbx5oGM6Xnbiy6+dk8
-	BaT0q34zG2pzFE3cDPRrbXP8Jz+o3+mKPxf/WKOAB7564Nb154O604W7INZiYfnBVMd41o
-	QadGhlx+GElx7/6hOECZ3XMrr31phQY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745318271;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7P5wCM1Fp58MkZOF0RAaVMOBLThDapBzVTf+10Iljpc=;
-	b=i09YnLefAJ01lQmaV05+D3o7Lce+WOP8iQMOuJwyf0RSCFlMzbY7d/XZ6Rw1Ky3LuM6HAL
-	pa3dOSPOwTrkZnAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 01C73137CF;
-	Tue, 22 Apr 2025 10:37:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bnNqAH9xB2i7egAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 22 Apr 2025 10:37:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AAECCA0A56; Tue, 22 Apr 2025 12:37:50 +0200 (CEST)
-Date: Tue, 22 Apr 2025 12:37:50 +0200
-From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, Mateusz Guzik <mjguzik@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
-	Josef Bacik <josef@toxicpanda.com>
-Subject: Re: [PATCH RFC 1/3] inode: add fastpath for filesystem user
- namespace retrieval
-Message-ID: <mzryrjmph2ws7kprtnxj34xqp4cyhfdwpfnltkx4ziugwdqmu7@f4myyqyrmta3>
-References: <20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org>
- <20250416-work-mnt_idmap-s_user_ns-v1-1-273bef3a61ec@kernel.org>
+	s=arc-20240116; t=1745318760; c=relaxed/simple;
+	bh=Ek5IBzxkpX634z6QTNzqEVMVth1EXW0Rz7zi0ayFyuk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FuNlmwJeIO3PTWncwoCcaXRgllp+Y4/IzKvRlpl/WGK8Z2k1qMTD2jMMo2xhAjnzRLRUa4qPuJ+O/86MsgDzKKWpPeGva5Nefp8cRxP2oj1fY4j0ZzbxF5wdJ6X4Rtgx3v+4kzXHLUyeK5CzC81i4ceVjb5VZy/J7UA8HsRqYSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BRG7NHA5; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff6e91cff5so4680582a91.2;
+        Tue, 22 Apr 2025 03:45:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745318758; x=1745923558; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oAk3LSdkuszAv8KpcrFbr7se8m7uepNgIQTOnUvP5nA=;
+        b=BRG7NHA5XZAPxMjOyOqaabGo/XnAfeLzi4ofbLAO5w4HEFeSBl1xF8TliRWdj0KyNv
+         iDKBnNtrIbHd6A6lGdo59yGC0z8DZXynKtR7YfMTwEm//DyPfZDl1KS2xQBE2xgOuEow
+         Yu1RbI2IPHxv2duksyjprtsJZmX1p9JfpLBcnsWleWhKn912pnUANyUZNrcxVaDG3JF8
+         dyOTWQzGexBDTY4eTXVJW7heW5JtUn0/Y3UegBqTeICJ4CfRp/D/tyqXOK42HlQGxEY7
+         dVLk5wK2VELto3dpTiehzM3XrGeMUQGXxJehppwk5fPnDXl3GOoHlOLBgIqCQxKNSH8g
+         +Z1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745318758; x=1745923558;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oAk3LSdkuszAv8KpcrFbr7se8m7uepNgIQTOnUvP5nA=;
+        b=YLrVlFQq8qWv37krV8S/NI9aPokS+Dt6w8by4VELtvEBgHDFlI8fH8ifJsR/3+CSWD
+         dhSAv4AL4QxYVtjYh63JLEtiM5LT8WKfr9dQSdYfXikFsXZ1rPpndoN//mmvD+07tpTf
+         qTz1J9aFQ9U5zguKHNqkbgPSanR5dRI5nWtx7HG1ZU88pohbxUbVOAi41RPncg61kYD7
+         NaaZ1DJSKXtcnSD9sJJ0GAZ2WLBv/zcj/0+fUUc9QJiiTLZrnybOwH+Z7Ia8ppHXNMq/
+         eZGVeYCEiqDPCPR12dHigfA6SoG8kk4KrprsVWMrcyovwzCAwlrTP5BDaA63ooCZ7wW1
+         OiUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAyp6j7kX8+mMU0sEmeYWjCihd1g9zdzJ1lQ5U3xvhqZbjgLfyxw0S6vvN9j3J4WWqKcQ3PSyOIT/8Du/SuQ==@vger.kernel.org, AJvYcCVVdAvpgSPk9BmVPloVJ+UXfswciuvVqYPf5hdXPm1j/9fudBNLSSeBXj87ChUtczBgkfahAd0WVQ==@vger.kernel.org, AJvYcCWAahnWW41pwZlKuiWdOIGgvwlZBoeG1z9v1WgOdkw4GzYgaVCQCcZjZrKFpweK+35qkP2kAJc1SdOZr3qr@vger.kernel.org
+X-Gm-Message-State: AOJu0YziPf3O50cvTg385vvSRTh8dOXCBP84NgDha4OcLscX0FrdfRd0
+	RXwsOiYks40XHqkc3lIdH05PR5Ecba+kV85jwNkblQyjIgiXaXBI
+X-Gm-Gg: ASbGncv3fNfG8XwyV1t41+X1JEj0IHRBCY+zw4ppykySeFw9HeUokCgUEqTVD/tZyTO
+	P50JK6QorI5Z0tEfa0EBOXN4nUSp0DpX3nJ0Lav8trk5H9LBFJ5SxttrA1J8Z6HeAQBsVZriu7L
+	Xg0Gf/bDdoESRog2vpwNBEtV9gJC16hCpwEdVZdCPna/Eve+9jIjoXLoL5QqcGA+/QG/CYiNmMQ
+	ASolZgzrHRbMl9quIHOze2Rwz1rV2oAkDwrt5u6+kzGE/n64KvZ5sdcPYS+f8K+qWZphUs7zJCX
+	z13EEquogaXXrGDpm8nL8wRdCWW1wnp6pjXRSejuGfTfcQMf2/FwfZcgqt2vrDbHOTtS7o9XpoE
+	nnzmTmhsF/EVLMRiCzPh7ekE60TucDVC0CB8FXYP4Bxrb20JVIn6lC4nC684VTf+FuXT7aA+5eX
+	dRObvM
+X-Google-Smtp-Source: AGHT+IHYsEH7ZWnfGGAiKUP5TBoIGiQKr5vc56YtEizByy5efF79/BYuvg4SY9GW30gzJXTY6WVbhg==
+X-Received: by 2002:a17:90b:3a0c:b0:2ef:31a9:95c6 with SMTP id 98e67ed59e1d1-3087bb56439mr24551509a91.14.1745318758002;
+        Tue, 22 Apr 2025 03:45:58 -0700 (PDT)
+Received: from linux-devops-jiangzhiwei-1.asia-southeast1-a.c.monica-ops.internal (92.206.124.34.bc.googleusercontent.com. [34.124.206.92])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087e05e90bsm8276853a91.45.2025.04.22.03.45.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 03:45:57 -0700 (PDT)
+From: Zhiwei Jiang <qq282012236@gmail.com>
+To: viro@zeniv.linux.org.uk
+Cc: brauner@kernel.org,
+	jack@suse.cz,
+	akpm@linux-foundation.org,
+	peterx@redhat.com,
+	axboe@kernel.dk,
+	asml.silence@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	Zhiwei Jiang <qq282012236@gmail.com>
+Subject: [PATCH 0/2] Fix 100% CPU usage issue in IOU worker threads
+Date: Tue, 22 Apr 2025 10:45:43 +0000
+Message-Id: <20250422104545.1199433-1-qq282012236@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250416-work-mnt_idmap-s_user_ns-v1-1-273bef3a61ec@kernel.org>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux-foundation.org,vger.kernel.org,gmail.com,zeniv.linux.org.uk,suse.cz,kernel.org,toxicpanda.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Wed 16-04-25 15:17:22, Christian Brauner wrote:
-> We currently always chase a pointer inode->i_sb->s_user_ns whenever we
-> need to map a uid/gid which is noticeable during path lookup as noticed
-> by Linus in [1]. In the majority of cases we don't need to bother with
-> that pointer chase because the inode won't be located on a filesystem
-> that's mounted in a user namespace. The user namespace of the superblock
-> cannot ever change once it's mounted. So introduce and raise IOP_USERNS
-> on all inodes and check for that flag in i_user_ns() when we retrieve
-> the user namespace.
-> 
-> Link: https://lore.kernel.org/CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com [1]
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+In the Firecracker VM scenario, sporadically encountered threads with
+the UN state in the following call stack:
+[<0>] io_wq_put_and_exit+0xa1/0x210
+[<0>] io_uring_clean_tctx+0x8e/0xd0
+[<0>] io_uring_cancel_generic+0x19f/0x370
+[<0>] __io_uring_cancel+0x14/0x20
+[<0>] do_exit+0x17f/0x510
+[<0>] do_group_exit+0x35/0x90
+[<0>] get_signal+0x963/0x970
+[<0>] arch_do_signal_or_restart+0x39/0x120
+[<0>] syscall_exit_to_user_mode+0x206/0x260
+[<0>] do_syscall_64+0x8d/0x170
+[<0>] entry_SYSCALL_64_after_hwframe+0x78/0x80
+The cause is a large number of IOU kernel threads saturating the CPU
+and not exiting. When the issue occurs, CPU usage 100% and can only
+be resolved by rebooting. Each thread's appears as follows:
+iou-wrk-44588  [kernel.kallsyms]  [k] ret_from_fork_asm
+iou-wrk-44588  [kernel.kallsyms]  [k] ret_from_fork
+iou-wrk-44588  [kernel.kallsyms]  [k] io_wq_worker
+iou-wrk-44588  [kernel.kallsyms]  [k] io_worker_handle_work
+iou-wrk-44588  [kernel.kallsyms]  [k] io_wq_submit_work
+iou-wrk-44588  [kernel.kallsyms]  [k] io_issue_sqe
+iou-wrk-44588  [kernel.kallsyms]  [k] io_write
+iou-wrk-44588  [kernel.kallsyms]  [k] blkdev_write_iter
+iou-wrk-44588  [kernel.kallsyms]  [k] iomap_file_buffered_write
+iou-wrk-44588  [kernel.kallsyms]  [k] iomap_write_iter
+iou-wrk-44588  [kernel.kallsyms]  [k] fault_in_iov_iter_readable
+iou-wrk-44588  [kernel.kallsyms]  [k] fault_in_readable
+iou-wrk-44588  [kernel.kallsyms]  [k] asm_exc_page_fault
+iou-wrk-44588  [kernel.kallsyms]  [k] exc_page_fault
+iou-wrk-44588  [kernel.kallsyms]  [k] do_user_addr_fault
+iou-wrk-44588  [kernel.kallsyms]  [k] handle_mm_fault
+iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_fault
+iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_no_page
+iou-wrk-44588  [kernel.kallsyms]  [k] hugetlb_handle_userfault
+iou-wrk-44588  [kernel.kallsyms]  [k] handle_userfault
+iou-wrk-44588  [kernel.kallsyms]  [k] schedule
+iou-wrk-44588  [kernel.kallsyms]  [k] __schedule
+iou-wrk-44588  [kernel.kallsyms]  [k] __raw_spin_unlock_irq
+iou-wrk-44588  [kernel.kallsyms]  [k] io_wq_worker_sleeping
 
-Some performance numbers would be in place here I guess - in particular
-whether this change indeed improved the speed of path lookup or whether the
-cost just moved elsewhere. Otherwise the patch looks good so feel free to
-add:
+I tracked the address that triggered the fault and the related function
+graph, as well as the wake-up side of the user fault, and discovered this
+: In the IOU worker, when fault in a user space page, this space is
+associated with a userfault but does not sleep. This is because during
+scheduling, the judgment in the IOU worker context leads to early return.
+Meanwhile, the listener on the userfaultfd user side never performs a COPY
+to respond, causing the page table entry to remain empty. However, due to
+the early return, it does not sleep and wait to be awakened as in a normal
+user fault, thus continuously faulting at the same address,so CPU loop.
+Therefore, I believe it is necessary to specifically handle user faults by
+setting a new flag to allow schedule function to continue in such cases,
+make sure the thread to sleep.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Patch 1  io_uring: Add new functions to handle user fault scenarios
+Patch 2  userfaultfd: Set the corresponding flag in IOU worker context
 
-								Honza
+ fs/userfaultfd.c |  7 ++++++
+ io_uring/io-wq.c | 57 +++++++++++++++---------------------------------
+ io_uring/io-wq.h | 45 ++++++++++++++++++++++++++++++++++++--
+ 3 files changed, 68 insertions(+), 41 deletions(-)
 
-
-> ---
->  fs/inode.c                    |  6 ++++++
->  fs/mnt_idmapping.c            | 14 --------------
->  include/linux/fs.h            |  5 ++++-
->  include/linux/mnt_idmapping.h | 14 ++++++++++++++
->  4 files changed, 24 insertions(+), 15 deletions(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 99318b157a9a..7335d05dd7d5 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -245,6 +245,8 @@ int inode_init_always_gfp(struct super_block *sb, struct inode *inode, gfp_t gfp
->  		inode->i_opflags |= IOP_XATTR;
->  	if (sb->s_type->fs_flags & FS_MGTIME)
->  		inode->i_opflags |= IOP_MGTIME;
-> +	if (unlikely(!initial_idmapping(i_user_ns(inode))))
-> +		inode->i_opflags |= IOP_USERNS;
->  	i_uid_write(inode, 0);
->  	i_gid_write(inode, 0);
->  	atomic_set(&inode->i_writecount, 0);
-> @@ -1864,6 +1866,10 @@ static void iput_final(struct inode *inode)
->  
->  	WARN_ON(inode->i_state & I_NEW);
->  
-> +	/* This is security sensitive so catch missing IOP_USERNS. */
-> +	VFS_WARN_ON_ONCE(!initial_idmapping(i_user_ns(inode)) &&
-> +			 !(inode->i_opflags & IOP_USERNS));
-> +
->  	if (op->drop_inode)
->  		drop = op->drop_inode(inode);
->  	else
-> diff --git a/fs/mnt_idmapping.c b/fs/mnt_idmapping.c
-> index a37991fdb194..8f7ae908ea16 100644
-> --- a/fs/mnt_idmapping.c
-> +++ b/fs/mnt_idmapping.c
-> @@ -42,20 +42,6 @@ struct mnt_idmap invalid_mnt_idmap = {
->  };
->  EXPORT_SYMBOL_GPL(invalid_mnt_idmap);
->  
-> -/**
-> - * initial_idmapping - check whether this is the initial mapping
-> - * @ns: idmapping to check
-> - *
-> - * Check whether this is the initial mapping, mapping 0 to 0, 1 to 1,
-> - * [...], 1000 to 1000 [...].
-> - *
-> - * Return: true if this is the initial mapping, false if not.
-> - */
-> -static inline bool initial_idmapping(const struct user_namespace *ns)
-> -{
-> -	return ns == &init_user_ns;
-> -}
-> -
->  /**
->   * make_vfsuid - map a filesystem kuid according to an idmapping
->   * @idmap: the mount's idmapping
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 016b0fe1536e..d28384d5b752 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -663,6 +663,7 @@ is_uncached_acl(struct posix_acl *acl)
->  #define IOP_DEFAULT_READLINK	0x0010
->  #define IOP_MGTIME	0x0020
->  #define IOP_CACHED_LINK	0x0040
-> +#define IOP_USERNS	0x0080
->  
->  /*
->   * Keep mostly read-only and often accessed (especially for
-> @@ -1454,7 +1455,9 @@ struct super_block {
->  
->  static inline struct user_namespace *i_user_ns(const struct inode *inode)
->  {
-> -	return inode->i_sb->s_user_ns;
-> +	if (unlikely(inode->i_opflags & IOP_USERNS))
-> +		return inode->i_sb->s_user_ns;
-> +	return &init_user_ns;
->  }
->  
->  /* Helper functions so that in most cases filesystems will
-> diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-> index e71a6070a8f8..85553b3a7904 100644
-> --- a/include/linux/mnt_idmapping.h
-> +++ b/include/linux/mnt_idmapping.h
-> @@ -25,6 +25,20 @@ static_assert(sizeof(vfsgid_t) == sizeof(kgid_t));
->  static_assert(offsetof(vfsuid_t, val) == offsetof(kuid_t, val));
->  static_assert(offsetof(vfsgid_t, val) == offsetof(kgid_t, val));
->  
-> +/**
-> + * initial_idmapping - check whether this is the initial mapping
-> + * @ns: idmapping to check
-> + *
-> + * Check whether this is the initial mapping, mapping 0 to 0, 1 to 1,
-> + * [...], 1000 to 1000 [...].
-> + *
-> + * Return: true if this is the initial mapping, false if not.
-> + */
-> +static inline bool initial_idmapping(const struct user_namespace *ns)
-> +{
-> +	return ns == &init_user_ns;
-> +}
-> +
->  static inline bool is_valid_mnt_idmap(const struct mnt_idmap *idmap)
->  {
->  	return idmap != &nop_mnt_idmap && idmap != &invalid_mnt_idmap;
-> 
-> -- 
-> 2.47.2
-> 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
