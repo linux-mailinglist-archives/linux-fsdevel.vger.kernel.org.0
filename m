@@ -1,406 +1,324 @@
-Return-Path: <linux-fsdevel+bounces-46920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D835FA967D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:39:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70FCEA9682C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:50:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3908188BD41
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 11:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D98D17BE84
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 11:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C4F27CB15;
-	Tue, 22 Apr 2025 11:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0420727CB0D;
+	Tue, 22 Apr 2025 11:50:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ujimyuba"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m9lpDUvO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB0627CB30
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 11:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DF627C167;
+	Tue, 22 Apr 2025 11:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745321857; cv=none; b=KCQ07AGHqWTAWwygJLqAbESxuT6L4P7HVPwR/tT4s23bKGfaWEbuhn9ry5wA4Rb/jF486oIDjmKSy72VAfb2yps38rweDhng+L5zFkRKASAVGRHRDdqIbHbv4GPFMiPpqAw+f00qi61DP1M8Hb5a6Zi2dBI5MHqm1Md9b7x3RI8=
+	t=1745322633; cv=none; b=uMKZQrqzV0y9JjJashVw1KGFGdFKyFNEz8BskqzqASlxsQhL+SgWqV08zIiyQAPU40fdWKbJ4RVVTnLaVL/JXF9CvHb5YDCUr/sAdzIV6NC4zP1pYV4NOmEkGd+X2DkLIGtIUzJHOJwFa9H/Jr9cLhPgYtM8NKCIvMpmJjgAlkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745321857; c=relaxed/simple;
-	bh=MKcpHV1BthvfXXZ5ZgZUCjy/9Z5ykvflKJedRygyhl0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=NPGdP2H8J5yRKgW/1hhLF4nEKOT5hMMenZutQG0DZPgofBRzwMzss5r/plWaLe7kfxrE3ZvpWNZ2v9f3IyRvccmZcdNm28qBuVe1m1Sse3dM+t9ddOwt2nlDoSS14RzMs8VSIm+XNsSr4nNNoqOMwLq1R8tF2VDLEYLC5L9ygVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ujimyuba; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A47C4CEEE;
-	Tue, 22 Apr 2025 11:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745321856;
-	bh=MKcpHV1BthvfXXZ5ZgZUCjy/9Z5ykvflKJedRygyhl0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=UjimyubageCsvC0sfbIc10rShbZeMxhG/i3hqCi7Ig9JRPJ1qHudbZ39lHXCqMXMS
-	 eVg2cgDqZ+lTzuSdo8mERgARG9srBwfbHpZ8vXSudGsbuBtGRhEygTrR1Xkh2QyLjS
-	 uBZ0bhYB3hBqWlrLFkWcVZdZuEABht8gDl5A8N/MMJJvoVnkcJ0WewR4pxWRJJYRAr
-	 rDmGs6vFdEEUBJju3loi61Hdi4exuTebyB0BqbBN5dA6YuvepXerQJBQhZJ1rBQGb8
-	 hRQQ041cfBpOr8IEFcePmwgs3KncalSDGey5N8Zvm6UbMaM4L8hqqV80p2tjrle7rO
-	 SAutN1cET3VoQ==
-Message-ID: <b7034a2d7443c76e1efc90fae9d7b81c80a5c03f.camel@kernel.org>
-Subject: Re: [PATCH v1] fuse: use splice for reading user pages on servers
- that enable it
-From: Jeff Layton <jlayton@kernel.org>
-To: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert
-	 <bernd.schubert@fastmail.fm>
-Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Date: Tue, 22 Apr 2025 07:37:35 -0400
-In-Reply-To: <CAJnrk1bGxhuQRCB_biX52J_rbq8S5tvPQyK-Lf+-nsMRK5OtOg@mail.gmail.com>
-References: <20250419000614.3795331-1-joannelkoong@gmail.com>
-	 <5332002a-e444-4f62-8217-8d124182290d@fastmail.fm>
-	 <26673a5077b148e98a3957532f0cb445aa7ed3c7.camel@kernel.org>
-	 <a65b5034-2bae-4eec-92e2-3a9ad003b0bb@fastmail.fm>
-	 <CAJnrk1bGxhuQRCB_biX52J_rbq8S5tvPQyK-Lf+-nsMRK5OtOg@mail.gmail.com>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1745322633; c=relaxed/simple;
+	bh=L9KcjqYpqFrKqGLfHIsOLmEwyyROjgNyJNvc1KDgWoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMtmlZL22uoijVskL8loEVAMVBwO6d5gKOZK9Hfn1c01Do5gPGNzD76oQtEj8ySV4lyARwHlJ/PMcZu/hxKImqx2wjabxUFSyissIfDt6hM4OdGM1MXzb36ef5BPj9mxO4LArOuYj5DL41QJKyqu/aXL8zps0kLdxmRqfARS8Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m9lpDUvO; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72b7a53ceb6so2926854a34.0;
+        Tue, 22 Apr 2025 04:50:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745322630; x=1745927430; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vfjQMOd5B2EGMHryhC7I69Mb6uAlBkfxyYbc6+DsyU8=;
+        b=m9lpDUvOpvQnq35VH/ZiWxAgJ+PhtZ/BZWuvdFe22m1pjlBVT3ALLbMWx+tAQ96bst
+         m0yJ3rZluv4OrFoYHQsvrUXrynABzqm7r7+PHHwGgPAIUiZcCfbtcpjyB3c+xr+x1Tn+
+         IsXUNl5roSUdumpbP7naodZD7rLpyL085pes6tn9OCulwj5Q82MgkF28R1aqRC+2J4Am
+         D0GuJKEirh5dXJtYs7skJcLu5Trvv2AS/w5o4LOhwZhJIC9HNb5s/ms9oTI6xBBLpHCv
+         k/Bt7E8buEI8PisiaBHlVQg4We9LvqB0oj9NjCuSTE44y6kPAriH0cw5I/kGmIuf0hHe
+         I7wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745322630; x=1745927430;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vfjQMOd5B2EGMHryhC7I69Mb6uAlBkfxyYbc6+DsyU8=;
+        b=kn8fOjgrjKg8WDKsqW5s5NaHM74DzeoIIH8mPGlKy6+yNc4sgo3QFdbiYGKFxXgXS8
+         LQ0R4JYriS8r664a/t3T9J0ypfqqlINwHpQtEGySDdp58bJi6BuUxd5UsTZ69n/U9Tqb
+         dEmqBnq5ZiGlaHXKfztfM78tvvlIGtZ5WvXuaDt1VQu1p0Qqu3ea3LEP+wji/9DJxPPp
+         VUjBd2CIxIHNiS3X4eMfnunMEB/+KyFTzZgNcjXnF4n0vfHRUXzuxPI4HAkUZKvFkY7M
+         kQC02aSbfoRdhz6apL5DGhC2p7ALDHnLhfIZB6dgY6zNN2OMzGSLbYHBOGHkhYrtnewc
+         Cl9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVCpp+28qAAA5btxyPOizn9Pm8xCS+ss5nzw0RrN6kpP0zzXCqdG5Oo8WbEjeOTR6Z2BIqKfgHdweXO4XIg@vger.kernel.org, AJvYcCVQw3suP4x5rdIrE6u9XxU4HDreLGF+7yqIiAnwkOn9olRkBYI9gQb22y/dLfuIiiYukXFrP8+VhNs=@vger.kernel.org, AJvYcCWaiCRo+/IuIuBWlO7sTYXWEZm8BXmJxcfqlES5xx7iRfJQe1FI4dxlllMblGDZRjaxUo0g/1bzLE2u@vger.kernel.org, AJvYcCX+Cwh4hBHx0Msut9DVQfNhuqfDhSaLEcCod9dTX5sG5f2lPHJx1FvptBbdXNtDHJyogqia+mRZ27AWrGYyTA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxW0FtNC0/r3A0C6DFhx5DvqLNEN+iK+niwVSGLi3VlAWyUa48x
+	MXQ88wL97xmG6Fte0emBEiAVf0p58mole9khwEbHEj4U2DPG1q6k
+X-Gm-Gg: ASbGncsJKHGi0Z64KFz79L6mSrjoxNWi9D0hEppVN+lu2qeH9CX3Uk0SkCnOHw8YhsQ
+	6b8DyJNDbLK+x0Ag2LV8zEXqoqacQDwgeqg/1cG8nQczrr8L5z85M0V17ItV4FViaoomM/W4xkY
+	hzCt8Ksmfx8jJwc40xahcVi8u1f8oU5T8hSHQGzqsusfHS3Q8rVH8v9VfMZNjiZk1rP0jeHThKY
+	20DSY0vzpWofyfWoTEDvvW4wzIawhGph9umICGac3TJDyXhQks+9s42FWQo7dWG67DKI3HVUPMA
+	qmsgW67Br7uXYt6ab44XVXmi5gb9AJkzqNRaehgFMtZBzx9xMlzGHl9bs5HTHEueDLdyDRQ=
+X-Google-Smtp-Source: AGHT+IGaRC6YinLI3INlucgK1D0PGH1/ym+KQ0qnBo+zKkV3J0xgvvFRuT5IfjwCxO5kE0Wba05nHA==
+X-Received: by 2002:a05:6830:6686:b0:727:20db:dd5b with SMTP id 46e09a7af769-730034df443mr11234456a34.2.1745322629959;
+        Tue, 22 Apr 2025 04:50:29 -0700 (PDT)
+Received: from Borg-550.local ([2603:8080:1500:3d89:4c95:a1e3:9428:5d89])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73004884780sm1905980a34.53.2025.04.22.04.50.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Apr 2025 04:50:29 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Tue, 22 Apr 2025 06:50:25 -0500
+From: John Groves <John@groves.net>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Luis Henriques <luis@igalia.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC PATCH 00/19] famfs: port into fuse
+Message-ID: <r4njpmpw4mnkzt6msn6k523dcagoi7gulhbvanpht26b3lpvtm@7oroy3y2dr2c>
+References: <20250421013346.32530-1-john@groves.net>
+ <20250421182758.GJ25659@frogsfrogsfrogs>
+ <37ss7esexgblholq5wc5caeizhcjpjhjxsghqjtkxjqri4uxjp@gixtdlggap5i>
+ <20250422012537.GL25659@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422012537.GL25659@frogsfrogsfrogs>
 
-On Mon, 2025-04-21 at 17:49 -0700, Joanne Koong wrote:
-> On Mon, Apr 21, 2025 at 2:38=E2=80=AFPM Bernd Schubert
-> <bernd.schubert@fastmail.fm> wrote:
-> >=20
-> > On 4/21/25 14:35, Jeff Layton wrote:
-> > > On Mon, 2025-04-21 at 13:49 +0200, Bernd Schubert wrote:
-> > > >=20
-> > > > On 4/19/25 02:06, Joanne Koong wrote:
-> > > > > For direct io writes, splice is disabled when forwarding pages fr=
-om the
-> > > > > client to the server. This is because the pages in the pipe buffe=
-r are
-> > > > > user pages, which is controlled by the client. Thus if a server r=
-eplies
-> > > > > to the request and then keeps accessing the pages afterwards, the=
-re is
-> > > > > the possibility that the client may have modified the contents of=
- the
-> > > > > pages in the meantime. More context on this can be found in commi=
-t
-> > > > > 0c4bcfdecb1a ("fuse: fix pipe buffer lifetime for direct_io").
-> > > > >=20
-> > > > > For servers that do not need to access pages after answering the
-> > > > > request, splice gives a non-trivial improvement in performance.
-> > > > > Benchmarks show roughly a 40% speedup.
-> > > > >=20
-> > > > > Allow servers to enable zero-copy splice for servicing client dir=
-ect io
-> > > > > writes. By enabling this, the server understands that they should=
- not
-> > > > > continue accessing the pipe buffer after completing the request o=
-r may
-> > > > > face incorrect data if they do so.
-> > > > >=20
-> > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > > ---
-> > > > >  fs/fuse/dev.c             | 18 ++++++++++--------
-> > > > >  fs/fuse/dev_uring.c       |  4 ++--
-> > > > >  fs/fuse/fuse_dev_i.h      |  5 +++--
-> > > > >  fs/fuse/fuse_i.h          |  3 +++
-> > > > >  fs/fuse/inode.c           |  5 ++++-
-> > > > >  include/uapi/linux/fuse.h |  8 ++++++++
-> > > > >  6 files changed, 30 insertions(+), 13 deletions(-)
-> > > > >=20
-> > > > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > > > > index 67d07b4c778a..1b0ea8593f74 100644
-> > > > > --- a/fs/fuse/dev.c
-> > > > > +++ b/fs/fuse/dev.c
-> > > > > @@ -816,12 +816,13 @@ static int unlock_request(struct fuse_req *=
-req)
-> > > > >     return err;
-> > > > >  }
-> > > > >=20
-> > > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
-> > > > > -               struct iov_iter *iter)
-> > > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn=
- *fc,
-> > > > > +               bool write, struct iov_iter *iter)
-> > > > >  {
-> > > > >     memset(cs, 0, sizeof(*cs));
-> > > > >     cs->write =3D write;
-> > > > >     cs->iter =3D iter;
-> > > > > +   cs->splice_read_user_pages =3D fc->splice_read_user_pages;
-> > > > >  }
-> > > > >=20
-> > > > >  /* Unmap and put previous page of userspace buffer */
-> > > > > @@ -1105,9 +1106,10 @@ static int fuse_copy_page(struct fuse_copy=
-_state *cs, struct page **pagep,
-> > > > >             if (cs->write && cs->pipebufs && page) {
-> > > > >                     /*
-> > > > >                      * Can't control lifetime of pipe buffers, so=
- always
-> > > > > -                    * copy user pages.
-> > > > > +                    * copy user pages if server does not support=
- splice
-> > > > > +                    * for reading user pages.
-> > > > >                      */
-> > > > > -                   if (cs->req->args->user_pages) {
-> > > > > +                   if (cs->req->args->user_pages && !cs->splice_=
-read_user_pages) {
-> > > > >                             err =3D fuse_copy_fill(cs);
-> > > > >                             if (err)
-> > > > >                                     return err;
-> > > > > @@ -1538,7 +1540,7 @@ static ssize_t fuse_dev_read(struct kiocb *=
-iocb, struct iov_iter *to)
-> > > > >     if (!user_backed_iter(to))
-> > > > >             return -EINVAL;
-> > > > >=20
-> > > > > -   fuse_copy_init(&cs, true, to);
-> > > > > +   fuse_copy_init(&cs, fud->fc, true, to);
-> > > > >=20
-> > > > >     return fuse_dev_do_read(fud, file, &cs, iov_iter_count(to));
-> > > > >  }
-> > > > > @@ -1561,7 +1563,7 @@ static ssize_t fuse_dev_splice_read(struct =
-file *in, loff_t *ppos,
-> > > > >     if (!bufs)
-> > > > >             return -ENOMEM;
-> > > > >=20
-> > > > > -   fuse_copy_init(&cs, true, NULL);
-> > > > > +   fuse_copy_init(&cs, fud->fc, true, NULL);
-> > > > >     cs.pipebufs =3D bufs;
-> > > > >     cs.pipe =3D pipe;
-> > > > >     ret =3D fuse_dev_do_read(fud, in, &cs, len);
-> > > > > @@ -2227,7 +2229,7 @@ static ssize_t fuse_dev_write(struct kiocb =
-*iocb, struct iov_iter *from)
-> > > > >     if (!user_backed_iter(from))
-> > > > >             return -EINVAL;
-> > > > >=20
-> > > > > -   fuse_copy_init(&cs, false, from);
-> > > > > +   fuse_copy_init(&cs, fud->fc, false, from);
-> > > > >=20
-> > > > >     return fuse_dev_do_write(fud, &cs, iov_iter_count(from));
-> > > > >  }
-> > > > > @@ -2301,7 +2303,7 @@ static ssize_t fuse_dev_splice_write(struct=
- pipe_inode_info *pipe,
-> > > > >     }
-> > > > >     pipe_unlock(pipe);
-> > > > >=20
-> > > > > -   fuse_copy_init(&cs, false, NULL);
-> > > > > +   fuse_copy_init(&cs, fud->fc, false, NULL);
-> > > > >     cs.pipebufs =3D bufs;
-> > > > >     cs.nr_segs =3D nbuf;
-> > > > >     cs.pipe =3D pipe;
-> > > > > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> > > > > index ef470c4a9261..52b883a6a79d 100644
-> > > > > --- a/fs/fuse/dev_uring.c
-> > > > > +++ b/fs/fuse/dev_uring.c
-> > > > > @@ -593,7 +593,7 @@ static int fuse_uring_copy_from_ring(struct f=
-use_ring *ring,
-> > > > >     if (err)
-> > > > >             return err;
-> > > > >=20
-> > > > > -   fuse_copy_init(&cs, false, &iter);
-> > > > > +   fuse_copy_init(&cs, ring->fc, false, &iter);
-> > > > >     cs.is_uring =3D true;
-> > > > >     cs.req =3D req;
-> > > > >=20
-> > > > > @@ -623,7 +623,7 @@ static int fuse_uring_args_to_ring(struct fus=
-e_ring *ring, struct fuse_req *req,
-> > > > >             return err;
-> > > > >     }
-> > > > >=20
-> > > > > -   fuse_copy_init(&cs, true, &iter);
-> > > > > +   fuse_copy_init(&cs, ring->fc, true, &iter);
-> > > > >     cs.is_uring =3D true;
-> > > > >     cs.req =3D req;
-> > > > >=20
-> > > > > diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-> > > > > index db136e045925..25e593e64c67 100644
-> > > > > --- a/fs/fuse/fuse_dev_i.h
-> > > > > +++ b/fs/fuse/fuse_dev_i.h
-> > > > > @@ -32,6 +32,7 @@ struct fuse_copy_state {
-> > > > >     bool write:1;
-> > > > >     bool move_pages:1;
-> > > > >     bool is_uring:1;
-> > > > > +   bool splice_read_user_pages:1;
-> > > > >     struct {
-> > > > >             unsigned int copied_sz; /* copied size into the user =
-buffer */
-> > > > >     } ring;
-> > > > > @@ -51,8 +52,8 @@ struct fuse_req *fuse_request_find(struct fuse_=
-pqueue *fpq, u64 unique);
-> > > > >=20
-> > > > >  void fuse_dev_end_requests(struct list_head *head);
-> > > > >=20
-> > > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
-> > > > > -                      struct iov_iter *iter);
-> > > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn=
- *conn,
-> > > > > +               bool write, struct iov_iter *iter);
-> > > > >  int fuse_copy_args(struct fuse_copy_state *cs, unsigned int numa=
-rgs,
-> > > > >                unsigned int argpages, struct fuse_arg *args,
-> > > > >                int zeroing);
-> > > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > > > > index 3d5289cb82a5..e21875f16220 100644
-> > > > > --- a/fs/fuse/fuse_i.h
-> > > > > +++ b/fs/fuse/fuse_i.h
-> > > > > @@ -898,6 +898,9 @@ struct fuse_conn {
-> > > > >     /* Use io_uring for communication */
-> > > > >     bool io_uring:1;
-> > > > >=20
-> > > > > +   /* Allow splice for reading user pages */
-> > > > > +   bool splice_read_user_pages:1;
-> > > > > +
-> > > > >     /** Maximum stack depth for passthrough backing files */
-> > > > >     int max_stack_depth;
-> > > > >=20
-> > > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > > > > index 43b6643635ee..e82e96800fde 100644
-> > > > > --- a/fs/fuse/inode.c
-> > > > > +++ b/fs/fuse/inode.c
-> > > > > @@ -1439,6 +1439,9 @@ static void process_init_reply(struct fuse_=
-mount *fm, struct fuse_args *args,
-> > > > >=20
-> > > > >                     if (flags & FUSE_REQUEST_TIMEOUT)
-> > > > >                             timeout =3D arg->request_timeout;
-> > > > > +
-> > > > > +                   if (flags & FUSE_SPLICE_READ_USER_PAGES)
-> > > > > +                           fc->splice_read_user_pages =3D true;
-> > > >=20
-> > > >=20
-> > > > Shouldn't that check for capable(CAP_SYS_ADMIN)? Isn't the issue
-> > > > that one can access file content although the write is already
-> > > > marked as completed? I.e. a fuse file system might get data
-> > > > it was never exposed to and possibly secret data?
-> > > > A more complex version version could check for CAP_SYS_ADMIN, but
-> > > > also allow later on read/write to files that have the same uid as
-> > > > the fuser-server process?
-> > > >=20
-> > >=20
-> > > IDGI. I don't see how this allows the server access to something it
-> > > didn't have access to before.
-> > >=20
-> > > This patchset seems to be about a "contract" between the kernel and t=
-he
-> > > userland server. The server is agreeing to be very careful about not
-> > > touching pages after a write request completes, and the kernel allows
-> > > splicing the pages if that's the case.
-> > >=20
-> > > Can you explain the potential attack vector?
-> >=20
-> > Let's the server claim it does FUSE_SPLICE_READ_USER_PAGES, i.e. claims
-> > it stops using splice buffers before completing write requests. But the=
-n
-> > it actually first replies to the write and after an arbitrary amount
-> > of time writes out the splice buffer. User application might be using
-> > the buffer it send for write for other things and might not want to
-> > expose that. I.e. application expects that after write(, buf,)
-> > it can use 'buf' for other purposes and that the file system does not
-> > access it anymore once write() is complete. I.e. it can put sensitive
-> > data into the buffer, which it might not want to expose.
-> > From my point of the issue is mainly with allow_other in combination
-> > with "user_allow_other" in libfuse, as root has better ways to access d=
-ata.
-> >=20
->=20
-> As I understand it, user_allow_other is disabled by default and is
-> only enabled if explicitly opted into by root.
->=20
-> It seems to me, philosophically, that if a client chooses to interact
-> with / use a specific fuse mount then it chooses to place its trust in
-> that fuse server and accepts the possible repercussions from any
-> malicious actions the server may take. For example, currently any fuse
-> server right now could choose to deadlock or hang a request which
-> would stall the client indefinitely.
->=20
-> Curious to hear if you and Jeff agree or disagree with this.
->=20
->=20
+On 25/04/21 06:25PM, Darrick J. Wong wrote:
+> On Mon, Apr 21, 2025 at 05:00:35PM -0500, John Groves wrote:
+> > On 25/04/21 11:27AM, Darrick J. Wong wrote:
+> > > On Sun, Apr 20, 2025 at 08:33:27PM -0500, John Groves wrote:
+> > > > Subject: famfs: port into fuse
+> > > > 
+> > > > This is the initial RFC for the fabric-attached memory file system (famfs)
+> > > > integration into fuse. In order to function, this requires a related patch
+> > > > to libfuse [1] and the famfs user space [2]. 
+> > > > 
+> > > > This RFC is mainly intended to socialize the approach and get feedback from
+> > > > the fuse developers and maintainers. There is some dax work that needs to
+> > > > be done before this should be merged (see the "poisoned page|folio problem"
+> > > > below).
+> > > 
+> > > Note that I'm only looking at the fuse and iomap aspects of this
+> > > patchset.  I don't know the devdax code at all.
+> > > 
+> > > > This patch set fully works with Linux 6.14 -- passing all existing famfs
+> > > > smoke and unit tests -- and I encourage existing famfs users to test it.
+> > > > 
+> > > > This is really two patch sets mashed up:
+> > > > 
+> > > > * The patches with the dev_dax_iomap: prefix fill in missing functionality for
+> > > >   devdax to host an fs-dax file system.
+> > > > * The famfs_fuse: patches add famfs into fs/fuse/. These are effectively
+> > > >   unchanged since last year.
+> > > > 
+> > > > Because this is not ready to merge yet, I have felt free to leave some debug
+> > > > prints in place because we still find them useful; those will be cleaned up
+> > > > in a subsequent revision.
+> > > > 
+> > > > Famfs Overview
+> > > > 
+> > > > Famfs exposes shared memory as a file system. Famfs consumes shared memory
+> > > > from dax devices, and provides memory-mappable files that map directly to
+> > > > the memory - no page cache involvement. Famfs differs from conventional
+> > > > file systems in fs-dax mode, in that it handles in-memory metadata in a
+> > > > sharable way (which begins with never caching dirty shared metadata).
+> > > > 
+> > > > Famfs started as a standalone file system [3,4], but the consensus at LSFMM
+> > > > 2024 [5] was that it should be ported into fuse - and this RFC is the first
+> > > > public evidence that I've been working on that.
+> > > 
+> > > This is very timely, as I just started looking into how I might connect
+> > > iomap to fuse so that most of the hot IO path continues to run in the
+> > > kernel, and userspace block device filesystem drivers merely supply the
+> > > file mappings to the kernel.  In other words, we kick the metadata
+> > > parsing craziness out of the kernel.
+> > 
+> > Coool!
+> > 
+> > > 
+> > > > The key performance requirement is that famfs must resolve mapping faults
+> > > > without upcalls. This is achieved by fully caching the file-to-devdax
+> > > > metadata for all active files. This is done via two fuse client/server
+> > > > message/response pairs: GET_FMAP and GET_DAXDEV.
+> > > 
+> > > Heh, just last week I finally got around to laying out how I think I'd
+> > > want to expose iomap through fuse to allow ->iomap_begin/->iomap_end
+> > > upcalls to a fuse server.  Note that I've done zero prototyping but
+> > > "upload all the mappings at open time" seems like a reasonable place for
+> > > me to start looking, especially for a filesystem with static mappings.
+> > > 
+> > > I think what I want to try to build is an in-kernel mapping cache (sort
+> > > of like the one you built), only with upcalls to the fuse server when
+> > > there is no mapping information for a given IO.  I'd probably want to
+> > > have a means for the fuse server to put new mappings into the cache, or
+> > > invalidate existing mappings.
+> > > 
+> > > (famfs obviously is a simple corner-case of that grandiose vision, but I
+> > > still have a long way to get to my larger vision so don't take my words
+> > > as any kind of requirement.)
+> > > 
+> > > > Famfs remains the first fs-dax file system that is backed by devdax rather
+> > > > than pmem in fs-dax mode (hence the need for the dev_dax_iomap fixups).
+> > > > 
+> > > > Notes
+> > > > 
+> > > > * Once the dev_dax_iomap patches land, I suspect it may make sense for
+> > > >   virtiofs to update to use the improved interface.
+> > > > 
+> > > > * I'm currently maintaining compatibility between the famfs user space and
+> > > >   both the standalone famfs kernel file system and this new fuse
+> > > >   implementation. In the near future I'll be running performance comparisons
+> > > >   and sharing them - but there is no reason to expect significant degradation
+> > > >   with fuse, since famfs caches entire "fmaps" in the kernel to resolve
+> > > 
+> > > I'm curious to hear what you find, performance-wise. :)
+> > > 
+> > > >   faults with no upcalls. This patch has a bit too much debug turned on to
+> > > >   to that testing quite yet. A branch 
+> > > 
+> > > A branch ... what?
+> > 
+> > I trail off sometimes... ;)
+> > 
+> > > 
+> > > > * Two new fuse messages / responses are added: GET_FMAP and GET_DAXDEV.
+> > > > 
+> > > > * When a file is looked up in a famfs mount, the LOOKUP is followed by a
+> > > >   GET_FMAP message and response. The "fmap" is the full file-to-dax mapping,
+> > > >   allowing the fuse/famfs kernel code to handle read/write/fault without any
+> > > >   upcalls.
+> > > 
+> > > Huh, I'd have thought you'd wait until FUSE_OPEN to start preloading
+> > > mappings into the kernel.
+> > 
+> > That may be a better approach. Miklos and I discussed it during LPC last year, 
+> > and thought both were options. Having implemented it at LOOKUP time, I think
+> > moving it to open might avoid my READDIRPLUS problem (which is that RDP is a
+> > mashup of READDIR and LOOKUP), therefore might need to add the GET_FMAP
+> > payload. Moving GET_FMAP to open time, would break that connection in a good
+> > way, I think.
+> 
+> I wonder if we could just add a couple new "notification" types so that
+> the fuse server can initiate uploads of mappings whenever it feels like
+> it.  For your usage model I don't think it'll make much difference since
+> they seem pretty static, but the ability to do that would open up some
+> flexibility for famfs.  The more general filesystems will need it
+> anyway, and someone's going to want to truncate a famfs file.  They
+> always do. ;)
+> 
+> > > 
+> > > > * After each GET_FMAP, the fmap is checked for extents that reference
+> > > >   previously-unknown daxdevs. Each such occurence is handled with a
+> > > >   GET_DAXDEV message and response.
+> > > 
+> > > I hadn't figured out how this part would work for my silly prototype.
+> > > Just out of curiosity, does the famfs fuse server hold an open fd to the
+> > > storage, in which case the fmap(ping) could just contain the open fd?
+> > > 
+> > > Where are the mappings that are sent from the fuse server?  Is that
+> > > struct fuse_famfs_simple_ext?
+> > 
+> > See patch 17 or fs/fuse/famfs_kfmap.h for the fmap metadata explanation. 
+> > Famfs currently supports either simple extents (daxdev, offset, length) or 
+> > interleaved ones (which describe each "strip" as a simple extent). I think 
+> > the explanation in famfs_kfmap.h is pretty clear.
+> > 
+> > A key question is whether any additional basic metadata abstractions would
+> > be needed - because the kernel needs to understand the full scheme.
+> > 
+> > With disaggregated memory, the interleave approach is nice because it gets
+> > aggregated performance and resolving a file offset to daxdev offset is order
+> > 1.
+> > 
+> > Oh, and there are two fmap formats (ok, more, but the others are legacy ;).
+> > The fmaps-in-messages structs are currently in the famfs section of
+> > include/uapi/linux/fuse.h. And the in-memory version is in 
+> > fs/fuse/famfs_kfmap.h. The former will need to be a versioned interface.
+> > (ugh...)
+> 
+> Ok, will take a look tomorrow morning.
+> 
+> > > 
+> > > > * Daxdevs are stored in a table (which might become an xarray at some point).
+> > > >   When entries are added to the table, we acquire exclusive access to the
+> > > >   daxdev via the fs_dax_get() call (modeled after how fs-dax handles this
+> > > >   with pmem devices). famfs provides holder_operations to devdax, providing
+> > > >   a notification path in the event of memory errors.
+> > > > 
+> > > > * If devdax notifies famfs of memory errors on a dax device, famfs currently
+> > > >   bocks all subsequent accesses to data on that device. The recovery is to
+> > > >   re-initialize the memory and file system. Famfs is memory, not storage...
+> > > 
+> > > Ouch. :)
+> > 
+> > Cautious initial approach (i.e. I'm trying not to scare people too much ;) 
+> > 
+> > > 
+> > > > * Because famfs uses backing (devdax) devices, only privileged mounts are
+> > > >   supported.
+> > > > 
+> > > > * The famfs kernel code never accesses the memory directly - it only
+> > > >   facilitates read, write and mmap on behalf of user processes. As such,
+> > > >   the RAS of the shared memory affects applications, but not the kernel.
+> > > > 
+> > > > * Famfs has backing device(s), but they are devdax (char) rather than
+> > > >   block. Right now there is no way to tell the vfs layer that famfs has a
+> > > >   char backing device (unless we say it's block, but it's not). Currently
+> > > >   we use the standard anonymous fuse fs_type - but I'm not sure that's
+> > > >   ultimately optimal (thoughts?)
+> > > 
+> > > Does it work if the fusefs server adds "-o fsname=<devdax cdev>" to the
+> > > fuse_args object?  fuse2fs does that, though I don't recall if that's a
+> > > reasonable thing to do.
+> > 
+> > The kernel needs to "own" the dax devices. fs-dax on pmem/block calls
+> > fs_dax_get_by_bdev() and passes in holder_operations - which are used for
+> > error upcalls, but also effect exclusive ownership. 
+> > 
+> > I added fs_dax_get() since the bdev version wasn't really right or char
+> > devdax. But same holder_operations.
+> > 
+> > I had originally intended to pass in "-o daxdev=<cdev>", but famfs needs to
+> > span multiple daxdevs, in order to interleave for performance. The approach
+> > of retrieving them with GET_DAXDEV handles the generalized case, so "-o"
+> > just amounts to a second way to do the same thing.
+> 
+> Oh, hah, it's a multi-device filesystem.  Hee hee hee...
 
-I'm not sure here -- again FUSE isn't my area of expertise, but
-disclosing potentially private info is generally considered worse than
-a denial of service attack.
+Hee hee indeed. The thing about memory, and dax devices, is that there
+isn't anything like device mapper that can make compound or interleaved
+devices. There's not a "stop while dma happens" point for swizzling 
+addresses. I'm down for a discussion about whether there is a viable way 
+to have a mapper layer, but I also think constructing interleaved objects 
+as files is quite good - and might be the best solution.
 
-I wonder whether we could check if there are extra folio refs
-outstanding after the I/O is done?
+Interleaving is essential to memory performance in general. System-ram is
+pretty much never not interleaved. And there are some reasons why programming
+the hardware to do the interleaving is gonna be problem for non-static 
+setups. I'll save going down that rathole for a different time...
 
-IOW, get the refcount on the folios you're splicing before you send
-them to userland. After the I/O is done, get their refcounts again and
-see if they have been elevated? If so, then something is probably
-misusing those buffers?
---=20
-Jeff Layton <jlayton@kernel.org>
+John
 
