@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-46959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8870FA96E7A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:28:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CCDA96E89
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:29:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5FE31B60FAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:27:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B44189DFF6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1142628C5BA;
-	Tue, 22 Apr 2025 14:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D957428CF62;
+	Tue, 22 Apr 2025 14:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I/sov1lh"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vdeo0FpR"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCE03D81;
-	Tue, 22 Apr 2025 14:26:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EF5C28C5D3;
+	Tue, 22 Apr 2025 14:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745332002; cv=none; b=jp2a+GHFo4WOuwVG9t7bnhdSDwBK9u8j45oI9t4nAI/5ywZZK0/vvZUSkdhCYnp7h9Gw+m6XctWzdr1w0XR2OnN9TxmeRBf2MasO9Idmfphn4mnIoHn5I1pT1mIFMffWNoksLsAQQqwtTFm9Ly0u7f6dfmWH3duK9FyJj/j577c=
+	t=1745332006; cv=none; b=ZtDwqWlVVB5oZd8ysmN63HXp4TDqnuan4A+hTfggXSpdbaqiUpmtUlqOciKOYHPrPHY2mZD/k3t/5qtX36eFnmTgouMRBkFpELo4aJFmuUNP3OVxC+QR0MTsr9i8R1tdN/EXGSNd8wJo4Zn1GVasW8s8i1sIoDM0acbVIDVIEyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745332002; c=relaxed/simple;
-	bh=7gjKDQra0/a1K6wXlepV/Hux76JTfChjmqLmj3gljo0=;
+	s=arc-20240116; t=1745332006; c=relaxed/simple;
+	bh=2Q39959RjbcmzYtyEixpXqA4yI8Y7gpYS452QNfg3XA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IiKuliPjBJ2FhFNRfiZ1qHDrxYI2uJwvtCrYxFW/cY2XxEsd5TWNQ/FwxUCeJiY1NJr/wjd1UT23sKlx2lyDouCDUXOQKnuqJUYMxdLueDTJSTbIg+v1RwlkG/5ql5fUunkm6575oeJfv24kH0slDUAt8GXFtZPjVRytuPDszcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I/sov1lh; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=f1BZcgXCtHYyvG0UvFfny0q9I9rulaokuHJicA0BlPmV0ViaUQ7JeC1Y3PdRGz4TsjJEJwnrfYmr6u0ffmpzKvLR5eMDHB1laIpCntZzdVmFyoj9T5jniqnSTVjHdNP3/RKI7f/oVDywxstBVNtfVg3xV0gKacoC6wFoBAl3eQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vdeo0FpR; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=CTeLL40eGQ7T9KguW6upUiD6nOZLQMEr9DC+Z4EB+rg=; b=I/sov1lhyqUcOA/Njt6zmLVTX2
-	oVvWPxO2VTUDrZdYaom6b9K3jsHcu6TGGD8t1J5aZSCC6KJtNPvWm7wVWz5BObW6u5nAoTdnX4Frj
-	/4SWk0nu7lwwJJ+8JK+Ncndg2gIogyeV1MzxK+a5nPPh89rGgOZk/XTyYM/Vr92B7hR9Fiq11bdc8
-	W5wveR0ohHPQRS1dQx6gxnoPDkYMIwxRs6QC28CJkVCkcHcZAr8XAD6tSH4RGwzjGRpoxx5kzMB/G
-	pZz5vPI9omvkJzmuL1DQX3CTksaL/l0QRMLojV1at98idfhVxreRV8/HQehyt/AW6OlbSyaWw6Yec
-	iD/ixNEA==;
+	bh=XsbZTjK8GF3y+2hiJG9TenFomiQFHwiGy10mmBTw+s0=; b=vdeo0FpREuTb3vVm1I/FMXS4au
+	jrGceoYi4XL1DoWCGKmNcz5qkY7x0buYx4ALS3/bzY3mBnNPkCxx2ZyBqtKvbHYTLWl4wbbTt7RdY
+	A3q7QF4nQ8Jhah8+FpjHHsLADOyPeyu2pPtrolS3/r5gapr8uI5vyIM2azFa5goQbZuHPeNkgSeao
+	3VES8ummteH4peHGJXnogsGeCC8luEz0wqAn4RXlZkLfy4W4e37sDYspKDisxNeuK9J1eM288AMiT
+	oYwHgWCoYVVr1KAaArwdCg0qJeDej9WXO2KXUD3ijscg5UGmJ5sOgInSlrAsvS66AoHifIwVuwGT1
+	idD84OcQ==;
 Received: from [2001:4bb8:2fc:38c3:78fb:84a5:c78c:68b6] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7Ea7-00000007UAJ-1Suf;
-	Tue, 22 Apr 2025 14:26:40 +0000
+	id 1u7EaB-00000007UBi-18Vz;
+	Tue, 22 Apr 2025 14:26:44 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
@@ -71,9 +71,9 @@ Cc: linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH 02/17] block: add a bdev_rw_virt helper
-Date: Tue, 22 Apr 2025 16:26:03 +0200
-Message-ID: <20250422142628.1553523-3-hch@lst.de>
+Subject: [PATCH 03/17] block: add a bio_add_vmalloc helper
+Date: Tue, 22 Apr 2025 16:26:04 +0200
+Message-ID: <20250422142628.1553523-4-hch@lst.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250422142628.1553523-1-hch@lst.de>
 References: <20250422142628.1553523-1-hch@lst.de>
@@ -86,80 +86,82 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add a helper to perform synchronous I/O on a kernel direct map range.
-Currently this is implemented in various places in usually not very
-efficient ways, so provide a generic helper instead.
+Add a helper to add a vmalloc region to a bio, abstracting away the
+vmalloc addresses from the underlying pages.  Also add a helper to
+calculate how many segments need to be allocated for a vmalloc region.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- block/bio.c         | 30 ++++++++++++++++++++++++++++++
- include/linux/bio.h |  5 ++++-
- 2 files changed, 34 insertions(+), 1 deletion(-)
+ block/bio.c         | 27 +++++++++++++++++++++++++++
+ include/linux/bio.h | 17 +++++++++++++++++
+ 2 files changed, 44 insertions(+)
 
 diff --git a/block/bio.c b/block/bio.c
-index 4e6c85a33d74..a6a867a432cf 100644
+index a6a867a432cf..3cc93bbdeeb9 100644
 --- a/block/bio.c
 +++ b/block/bio.c
-@@ -1301,6 +1301,36 @@ int submit_bio_wait(struct bio *bio)
+@@ -1058,6 +1058,33 @@ bool bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
  }
- EXPORT_SYMBOL(submit_bio_wait);
+ EXPORT_SYMBOL(bio_add_folio);
  
 +/**
-+ * bdev_rw_virt - synchronously read into / write from kernel mapping
-+ * @bdev:	block device to access
-+ * @sector:	sector to accasse
-+ * @data:	data to read/write
-+ * @len:	length to read/write
-+ * @op:		operation (e.g. REQ_OP_READ/REQ_OP_WRITE)
++ * bio_add_vmalloc - add a vmalloc region to a bio
++ * @bio: destination bio
++ * @vaddr: virtual address to add
++ * @len: total length of the data to add
 + *
-+ * Performs synchronous I/O to @bdev for @data/@len.  @data must be in
-+ * the kernel direct mapping and not a vmalloc address.
++ * Add the data at @vaddr to @bio and return how much was added.  This can an
++ * usually is less than the amount originally asked.  Returns 0 if no data could
++ * be added to the bio.
++ *
++ * This helper calls flush_kernel_vmap_range() for the range added.  For reads,
++ * the caller still needs to manually call invalidate_kernel_vmap_range() in
++ * the completion handler.
 + */
-+int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
-+		size_t len, enum req_op op)
++unsigned int bio_add_vmalloc(struct bio *bio, void *vaddr, unsigned len)
 +{
-+	struct bio_vec bv;
-+	struct bio bio;
-+	int error;
++	unsigned int offset = offset_in_page(vaddr);
 +
-+	if (WARN_ON_ONCE(is_vmalloc_addr(data)))
-+		return -EIO;
-+
-+	bio_init(&bio, bdev, &bv, 1, op);
-+	bio.bi_iter.bi_sector = sector;
-+	bio_add_virt_nofail(&bio, data, len);
-+	error = submit_bio_wait(&bio);
-+	bio_uninit(&bio);
-+	return error;
++	len = min(len, PAGE_SIZE - offset);
++	if (bio_add_page(bio, vmalloc_to_page(vaddr), len, offset) < len)
++		return 0;
++	if (op_is_write(bio_op(bio)))
++		flush_kernel_vmap_range(vaddr, len);
++	return len;
 +}
-+EXPORT_SYMBOL_GPL(bdev_rw_virt);
++EXPORT_SYMBOL_GPL(bio_add_vmalloc);
 +
- static void bio_wait_end_io(struct bio *bio)
+ void __bio_release_pages(struct bio *bio, bool mark_dirty)
  {
- 	complete(bio->bi_private);
+ 	struct folio_iter fi;
 diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 0678b67162ee..17a10220c57d 100644
+index 17a10220c57d..c4069422fd0a 100644
 --- a/include/linux/bio.h
 +++ b/include/linux/bio.h
-@@ -402,7 +402,6 @@ static inline int bio_iov_vecs_to_alloc(struct iov_iter *iter, int max_segs)
- 
- struct request_queue;
- 
--extern int submit_bio_wait(struct bio *bio);
- void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
- 	      unsigned short max_vecs, blk_opf_t opf);
- extern void bio_uninit(struct bio *);
-@@ -434,6 +433,10 @@ static inline void bio_add_virt_nofail(struct bio *bio, void *vaddr,
+@@ -433,6 +433,23 @@ static inline void bio_add_virt_nofail(struct bio *bio, void *vaddr,
  	__bio_add_page(bio, virt_to_page(vaddr), len, offset_in_page(vaddr));
  }
  
-+int submit_bio_wait(struct bio *bio);
-+int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
-+		size_t len, enum req_op op);
++/**
++ * bio_vmalloc_max_vecs - number of segments needed to map vmalloc data
++ * @vaddr: address to map
++ * @len: length to map
++ *
++ * Calculate how many bio segments need to be allocated to map the vmalloc/vmap
++ * range in [@addr:@len].  This could be an overestimation if the vmalloc area
++ * is backed by large folios.
++ */
++static inline unsigned int bio_vmalloc_max_vecs(void *vaddr, unsigned int len)
++{
++	return DIV_ROUND_UP(offset_in_page(vaddr) + len, PAGE_SIZE);
++}
 +
- int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
- void bio_iov_bvec_set(struct bio *bio, const struct iov_iter *iter);
- void __bio_release_pages(struct bio *bio, bool mark_dirty);
++unsigned int __must_check bio_add_vmalloc(struct bio *bio, void *vaddr,
++		unsigned len);
++
+ int submit_bio_wait(struct bio *bio);
+ int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
+ 		size_t len, enum req_op op);
 -- 
 2.47.2
 
