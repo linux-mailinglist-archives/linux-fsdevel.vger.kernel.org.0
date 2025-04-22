@@ -1,63 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-46981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46982-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD16A97127
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 17:37:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 503CFA9716B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 17:43:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B486188A216
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 15:36:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C39377A521A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 15:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2507628F51D;
-	Tue, 22 Apr 2025 15:36:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B263028FFE8;
+	Tue, 22 Apr 2025 15:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNCi+Qtl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QWaxg8Dy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E8B1494A8;
-	Tue, 22 Apr 2025 15:36:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1942154673;
+	Tue, 22 Apr 2025 15:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745336162; cv=none; b=oxd6bAZJrxfR/Gv/J3omjr+4S7UHjz/beGx3pdkhZPEU/Ddp5ol8PPuy9NELQIl7/YDPQw1Xe5ZzjvvgcKchKT664VKLg/osVolQ7ilJCL5Ft5YLnTkroWhmu8HM2O1KnelcGLrnjgLtyEmQKSyrzDqtjQ+Lyf7ZJYpNr3KxmZA=
+	t=1745336611; cv=none; b=UA3AJXRoxGky24ra7KLK2n6akJxzp7mbmeLOuPyob2B7qg/kVyCVwfy/t07cHrGR68Ksm5GJViYdF0w2aNGFc0s15i8yrC6gQ5WgPMpLk6d1V3jV2DcE0gboux0hPIMSMyl/rmy3pS2okCtx0mtsH9XjMkHiIG2sedMVSfAmI94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745336162; c=relaxed/simple;
-	bh=mPUjzTsoFC/NJnHC63CpAKhwboTnx8d1kgG3aqCLZmI=;
+	s=arc-20240116; t=1745336611; c=relaxed/simple;
+	bh=r/B6J2mgkDa8SrCHLnMoTjcw/Sjl9UjHWq1AQia5Whk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpVLF4Q6S/dhdJlWihPC25jbbrow0mBmpldfNq5T2EftZMOwvhAfeDav3qmEsVr+Z/9poM+cERWlTq3sH/LATmjaPnUzJk2WhDIDEJUZroiAwFle9AcM4F6jcxxsr/TkpDIXWQHTLzD0rYJfa5/zin8qB9kzdkRp1jabWm9Cemg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNCi+Qtl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB819C4CEE9;
-	Tue, 22 Apr 2025 15:35:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=r3DeFAdN1iRsDGSZ2M80Lf9LkxEvNdNY/QUScL8AVYQmjeej6hQ23TKmEvlLVfFkVSOqgHg5QG9wQA8SEE2ICdW74uZVqtXn/0QtBpXucBJikTP65XAB6khbUJwlmuGowChCbknVWJDZHTlnW10s+8UkLel9cBRdgFSZ+FDc9Eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QWaxg8Dy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCF93C4CEE9;
+	Tue, 22 Apr 2025 15:43:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745336161;
-	bh=mPUjzTsoFC/NJnHC63CpAKhwboTnx8d1kgG3aqCLZmI=;
+	s=k20201202; t=1745336610;
+	bh=r/B6J2mgkDa8SrCHLnMoTjcw/Sjl9UjHWq1AQia5Whk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qNCi+QtlmV3zMddqk2AxBkg13aO6TKuCcLsUovdpOGQPNpLStJPME4FMt8ji8KSNQ
-	 07/3fLS3oUys8Af/ghB5nx/U28u7S3ucANeLNt1b3Ndf26wdnmkCBDYXAQOAQdOlSq
-	 Mcy/vKD6HO8+1d/N62//eUDtkx6Dlh2GUmlKqqaESrH3uaJLytH+ljiUcaEEiv8puj
-	 CsjQ14zFex5k0ClOBTlxYym9hNAh/WRpWBkPMHchg8TLysprWkZxRkr4pe21pPXsOw
-	 5TifmZAZG5rTMRGFQwiZDC/sHvA0F+gRi3rHU0WHpc2GXeq0vIMuXds4+cLYQDyInx
-	 /7nFYP0/IrrCQ==
-Date: Tue, 22 Apr 2025 17:35:56 +0200
+	b=QWaxg8DycJ7wZfAiyHZ3+VV+gKLolRB2aj85WbYo9skIgxfTv4A6fWbVGMDkTc/dT
+	 3j5Bsj0jgvizejE5KexMlONHTZxC4ST8vqNYrDmV1Ly1i1ZjnlREH2R31sEJC7Qpzl
+	 /MTdp4k9vGinuO9qOuzOpNKqdYTv5gjSO1U78DJmKtXqAFf0b+KEXp56vLIRkMEKnw
+	 0vrN9Npm8TxBaFRQd6nKdEGxdDbduKA35otzMK3SGARDDFL8dGoApcYSgSi+nPTZFV
+	 RAkPC6F+X26y+srhktu3gN5Ao1BIqMmFpXQaYSi9vgH2uMsFBq+k2lFGshHyjPgWt3
+	 Xbtgo3QvJ8qkQ==
+Date: Tue, 22 Apr 2025 17:43:25 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: hch <hch@lst.de>
-Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "axboe@kernel.dk" <axboe@kernel.dk>, 
-	"djwong@kernel.org" <djwong@kernel.org>, "ebiggers@google.com" <ebiggers@google.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
-	Xiao Ni <xni@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Subject: Re: [PATCH] fs: move the bdex_statx call to vfs_getattr_nosec
-Message-ID: <20250422-goldkette-hitzig-95ddd8f86168@brauner>
-References: <20250417064042.712140-1-hch@lst.de>
- <xrvvwm7irr6dldsbfka3c4qjzyc4zizf3duqaroubd2msrbjf5@aiexg44ofiq3>
- <20250422055149.GB29356@lst.de>
- <20250422-angepackt-reisen-bc24fbec2702@brauner>
- <20250422081736.GA674@lst.de>
- <20250422141505.GA25426@lst.de>
+To: Marco Elver <elver@google.com>
+Cc: syzbot <syzbot+81fdaf0f522d5c5e41fb@syzkaller.appspotmail.com>, 
+	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Subject: Re: [syzbot] [fs?] KCSAN: data-race in choose_mountpoint_rcu /
+ umount_tree
+Message-ID: <20250422-spurlos-energetisch-f7899b955c83@brauner>
+References: <6807876f.050a0220.8500a.000f.GAE@google.com>
+ <20250422-flogen-firmieren-105a92fbd796@brauner>
+ <CANpmjNPbVDaw8hzYRRe2_uZ45Dkc-rwqg9oUhoiMo2zg6D0XKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,91 +61,71 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250422141505.GA25426@lst.de>
+In-Reply-To: <CANpmjNPbVDaw8hzYRRe2_uZ45Dkc-rwqg9oUhoiMo2zg6D0XKw@mail.gmail.com>
 
-On Tue, Apr 22, 2025 at 04:15:05PM +0200, hch wrote:
-> Turns out this doesn't work.  We used to have the request_mask, but it
-> got removed in 25fbcd62d2e1 ("bdev: use bdev_io_min() for statx block
-> size") so that stat can expose the block device min I/O size in
-> st_blkdev, and as the blksize doesn't have it's own request_mask flag
-> is hard to special case.
+On Tue, Apr 22, 2025 at 04:42:52PM +0200, Marco Elver wrote:
+> On Tue, 22 Apr 2025 at 15:43, 'Christian Brauner' via syzkaller-bugs
+> <syzkaller-bugs@googlegroups.com> wrote:
+> >
+> > On Tue, Apr 22, 2025 at 05:11:27AM -0700, syzbot wrote:
+> > > Hello,
+> > >
+> > > syzbot found the following issue on:
+> > >
+> > > HEAD commit:    a33b5a08cbbd Merge tag 'sched_ext-for-6.15-rc3-fixes' of g..
+> > > git tree:       upstream
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=1058f26f980000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=85dd0f8b81b9d41f
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=81fdaf0f522d5c5e41fb
+> > > compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+> > >
+> > > Unfortunately, I don't have any reproducer for this issue yet.
+> > >
+> > > Downloadable assets:
+> > > disk image: https://storage.googleapis.com/syzbot-assets/718e6f7bde0a/disk-a33b5a08.raw.xz
+> > > vmlinux: https://storage.googleapis.com/syzbot-assets/20f5e402fb15/vmlinux-a33b5a08.xz
+> > > kernel image: https://storage.googleapis.com/syzbot-assets/2dd06e277fc7/bzImage-a33b5a08.xz
+> > >
+> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > Reported-by: syzbot+81fdaf0f522d5c5e41fb@syzkaller.appspotmail.com
+> > >
+> > > ==================================================================
+> > > BUG: KCSAN: data-race in choose_mountpoint_rcu / umount_tree
+> >
+> > Benign, as this would be detected by the changed sequence count of
+> > @mount_lock. I hope we won't end up with endless reports about:w
+> > anything that we protect with a seqlock. That'll be very annoying.
 > 
-> So maybe the better question is why devtmpfs even calls into
-> vfs_getattr?  As far as I can tell handle_remove is only ever called on
-> the actual devtmpfs file system, so we don't need to go through the
-> VFS to query i_mode.  i.e. the patch should also fix the issue.  The
-
-Hm, yes. Just looked at the history and it dates back to Kay's original
-devtmpfs patch.
-
-> modify_change is probably not needed either, but for now I'm aiming
-> for the minimal fix.
+> Seqlocks are generally supported, but have caused headaches in the
+> past, esp. if the reader-side seqlock critical section does not follow
+> the typical do-seqbegin-while-retry pattern, or the critical section
+> is too large. If I read this right, the
 > 
-> diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-> index 6dd1a8860f1c..53fb0829eb7b 100644
-> --- a/drivers/base/devtmpfs.c
-> +++ b/drivers/base/devtmpfs.c
-> @@ -296,7 +296,7 @@ static int delete_path(const char *nodepath)
->  	return err;
->  }
->  
-> -static int dev_mynode(struct device *dev, struct inode *inode, struct kstat *stat)
-> +static int dev_mynode(struct device *dev, struct inode *inode)
->  {
->  	/* did we create it */
->  	if (inode->i_private != &thread)
+>   struct dentry *mountpoint = m->mnt_mountpoint;
+> 
+> is before the seqlock-reader beginning with "*seqp =
+> read_seqcount_begin(&mountpoint->d_seq);" ?
 
-It seems off that there are deletion requests coming in for a files that
-weren't created by devtmpfsd. But maybe that can somehow happen.
+choose_mountpoint_rcu() is always called within a context where the
+seqcount of the mount_lock is taken before it is called. IOW, there's
+the secount stored in a dentry like mountpoint->d_seq and then there's
+the seqcount of the mount_lock itself. For one callsite in
+choose_mountpoint() it's obvious:
 
-> @@ -304,13 +304,13 @@ static int dev_mynode(struct device *dev, struct inode *inode, struct kstat *sta
->  
->  	/* does the dev_t match */
->  	if (is_blockdev(dev)) {
-> -		if (!S_ISBLK(stat->mode))
-> +		if (!S_ISBLK(inode->i_mode))
->  			return 0;
->  	} else {
-> -		if (!S_ISCHR(stat->mode))
-> +		if (!S_ISCHR(inode->i_mode))
->  			return 0;
->  	}
-> -	if (stat->rdev != dev->devt)
-> +	if (inode->i_rdev != dev->devt)
->  		return 0;
->  
->  	/* ours */
-> @@ -321,8 +321,7 @@ static int handle_remove(const char *nodename, struct device *dev)
->  {
->  	struct path parent;
->  	struct dentry *dentry;
-> -	struct kstat stat;
-> -	struct path p;
-> +	struct inode *inode;
->  	int deleted = 0;
->  	int err;
->  
-> @@ -330,11 +329,8 @@ static int handle_remove(const char *nodename, struct device *dev)
->  	if (IS_ERR(dentry))
->  		return PTR_ERR(dentry);
->  
-> -	p.mnt = parent.mnt;
-> -	p.dentry = dentry;
-> -	err = vfs_getattr(&p, &stat, STATX_TYPE | STATX_MODE,
-> -			  AT_STATX_SYNC_AS_STAT);
-> -	if (!err && dev_mynode(dev, d_inode(dentry), &stat)) {
-> +	inode = d_inode(dentry);
-> +	if (dev_mynode(dev, inode)) {
->  		struct iattr newattrs;
->  		/*
->  		 * before unlinking this node, reset permissions
-> @@ -342,7 +338,7 @@ static int handle_remove(const char *nodename, struct device *dev)
->  		 */
->  		newattrs.ia_uid = GLOBAL_ROOT_UID;
->  		newattrs.ia_gid = GLOBAL_ROOT_GID;
-> -		newattrs.ia_mode = stat.mode & ~0777;
-> +		newattrs.ia_mode = inode->i_mode & ~0777;
->  		newattrs.ia_valid =
->  			ATTR_UID|ATTR_GID|ATTR_MODE;
->  		inode_lock(d_inode(dentry));
+                unsigned seq, mseq = read_seqbegin(&mount_lock);
+
+                found = choose_mountpoint_rcu(m, root, path, &seq);
+		if (unlikely(!found)) {
+                        if (!read_seqretry(&mount_lock, mseq))
+                                break;
+
+but for follow_dotdot_rcu()
+
+                if (!choose_mountpoint_rcu(real_mount(nd->path.mnt),
+                                           &nd->root, &path, &seq))
+                if (read_seqretry(&mount_lock, nd->m_seq))
+                        return ERR_PTR(-ECHILD);
+
+nd->m_seq is setup in path_init() or in __legitimize_path() or
+__legitimize_mnt(). IOW, it can be a rather complex callchain.
 
