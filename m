@@ -1,53 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-46954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46955-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8B85A96E1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:15:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05628A96E2C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 349AC16B8CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:15:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE7CC188C102
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BEC2857E4;
-	Tue, 22 Apr 2025 14:15:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3062284B51;
+	Tue, 22 Apr 2025 14:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="NjfaHC82"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 147AE2857D8;
-	Tue, 22 Apr 2025 14:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83732147F9;
+	Tue, 22 Apr 2025 14:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745331315; cv=none; b=ba0TW63LmTTC3pn6dA7oJGXSmqzVaYebBtaiYKdUKYEnCP2o4T0L43ek3MQx9ipaIwFvqoVVTTX8rmCTLhlRTTV3BZNVBWRZsBefHwcldTjeZdGKZ5vCJ7lJGv0OBKBu/6rV0PsPESy8AhYOSLqGbonRv6drxgDACEsWP6RY4Uc=
+	t=1745331494; cv=none; b=kNYNjEV326dRwtCHOJRDpuG2l4jxzx2+SH2Lum8aVvF9BFulf6bnqPvokgIGYrDnC9R6LUPyAqhItEdHmPo+YJISuB6lRFb7SVsvLkuJsJqQLs7olUB9ZypbdPA9trT2RjWINc7TwzAbrhKNmSvGDYbO/RmDIs2qB2QLkQfR7hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745331315; c=relaxed/simple;
-	bh=zlzyIV4mQM+zlKA4To9wK7eL4/X4xwlhgB5ljo/agLw=;
+	s=arc-20240116; t=1745331494; c=relaxed/simple;
+	bh=gzHXyyvPdqokUSWEtJaxbHF/Iqlrfyd6Ei4drrmlu4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XswfdTThgLGEg10X9npC00uyLuH1LoGsxPiFfopK23qUF5eOfZIn/YDnVCgUWdIXxfEqgIiwsG6Ca/JpMw3m0DLjYONw9EZHL6pQNfE9GFg4p0FmuBCzLGUIbb2VtitXLwHsTXcOoLcQgF2BytFgdoWRk7hWUgBPo3re40eeyM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id AF3C668C4E; Tue, 22 Apr 2025 16:15:06 +0200 (CEST)
-Date: Tue, 22 Apr 2025 16:15:05 +0200
-From: hch <hch@lst.de>
-To: Christian Brauner <brauner@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=t3CoPKHyUUfzsJkuZCeAhHChI7CfhT61Vzj1pDi3aPhWto8ADZOaI1yws4M2RRYhAPLkzlUgfETUyKZoD5UlsDXW/yMHMrwwSbfR+iNT4Fii5rbWFhd/4FJAqKmGKRsjVyys90N25n3pZe+GwVw8V6VGT3hIe421dSYeRYuAqiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=NjfaHC82; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53MAbWRa020829;
+	Tue, 22 Apr 2025 14:18:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=BTEoSrOv+Dgz6HNRfznfZ5u9n3jpL/
+	TFFdeLmZLnQ/I=; b=NjfaHC82CjOJjhl4b7mKbnUc4xFd9b9d+JKwzGBzqGKGCp
+	Fo5Dg+PV40YNfs3gUo5GM4vh2+5XlwKhHSSn/AXQC3af0MtK8EmUyynCVDBotQwi
+	Te5Dh3Ppx1pKLXGwV7GPwQcjA3/0LM0pEA84NGUruxZYRbywWJB7wSAhF0ySiI82
+	iEKSk8m+1hUZeBwQJQcfDsrOfpQ6MOuHlMSzIMIANLv3M48md6xUjbj0vls6UoZM
+	mKQG/okOLvQcSC+kI5CKPb3iV5bMaTF0maoY3fvX+REoVj4IKUggK2jJ5sv06Ygo
+	uoMIJ3S8HdjpgMcAxsosIPIj0I8+7YO3LKvt5UnA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4669h1h2y9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 14:18:05 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 53MDusdw020425;
+	Tue, 22 Apr 2025 14:18:05 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4669h1h2y6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 14:18:05 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 53MAJ1Ow032544;
+	Tue, 22 Apr 2025 14:18:04 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 464phykbnf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 22 Apr 2025 14:18:03 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 53MEI2q257016620
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 22 Apr 2025 14:18:02 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E9EDF2004B;
+	Tue, 22 Apr 2025 14:18:01 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 86D9920043;
+	Tue, 22 Apr 2025 14:18:01 +0000 (GMT)
+Received: from osiris (unknown [9.87.146.239])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 22 Apr 2025 14:18:01 +0000 (GMT)
+Date: Tue, 22 Apr 2025 16:18:00 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: hch <hch@lst.de>
 Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-	"axboe@kernel.dk" <axboe@kernel.dk>,
-	"djwong@kernel.org" <djwong@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-	Xiao Ni <xni@redhat.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
 Subject: Re: [PATCH] fs: move the bdex_statx call to vfs_getattr_nosec
-Message-ID: <20250422141505.GA25426@lst.de>
-References: <20250417064042.712140-1-hch@lst.de> <xrvvwm7irr6dldsbfka3c4qjzyc4zizf3duqaroubd2msrbjf5@aiexg44ofiq3> <20250422055149.GB29356@lst.de> <20250422-angepackt-reisen-bc24fbec2702@brauner> <20250422081736.GA674@lst.de>
+Message-ID: <20250422141800.40615A23-hca@linux.ibm.com>
+References: <20250417064042.712140-1-hch@lst.de>
+ <xrvvwm7irr6dldsbfka3c4qjzyc4zizf3duqaroubd2msrbjf5@aiexg44ofiq3>
+ <20250422055149.GB29356@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,83 +98,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250422081736.GA674@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250422055149.GB29356@lst.de>
+X-TM-AS-GCONF: 00
+X-Authority-Analysis: v=2.4 cv=XvP6OUF9 c=1 sm=1 tr=0 ts=6807a51d cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=XR8D0OoHHMoA:10 a=VnNF1IyMAAAA:8 a=lvXfNf97AKID-M7_zB8A:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: aRWJbqBrJB_sokzVdD5EBI-UFkJfW5A9
+X-Proofpoint-ORIG-GUID: B5dYCGBhRGQwF8cLu-gb1eNcl1lnURSa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1095,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-04-22_07,2025-04-22_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1011 suspectscore=0 spamscore=0
+ malwarescore=0 impostorscore=0 adultscore=0 mlxlogscore=654 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502280000
+ definitions=main-2504220106
 
-Turns out this doesn't work.  We used to have the request_mask, but it
-got removed in 25fbcd62d2e1 ("bdev: use bdev_io_min() for statx block
-size") so that stat can expose the block device min I/O size in
-st_blkdev, and as the blksize doesn't have it's own request_mask flag
-is hard to special case.
+On Tue, Apr 22, 2025 at 07:51:49AM +0200, hch wrote:
+> On Tue, Apr 22, 2025 at 05:03:19AM +0000, Shinichiro Kawasaki wrote:
+> > I ran blktests with the kernel v6.15-rc3, and found the test case md/001 hangs.
+> > The hang is recreated in stable manner. I bisected and found this patch as the
+> > commit 777d0961ff95 is the trigger. When I revert the commit from v6.15-rc3
+> > kernel, the hang disappeared.
+> > 
+> > Actions for fix will be appreciated.
+> > 
+> > FYI, the kernel INFO messages recorded functions relevant to the trigger commit,
+> > such as bdev_statx or vfs_getattr_nosec [1].
+> 
+> This should fix it:
 
-So maybe the better question is why devtmpfs even calls into
-vfs_getattr?  As far as I can tell handle_remove is only ever called on
-the actual devtmpfs file system, so we don't need to go through the
-VFS to query i_mode.  i.e. the patch should also fix the issue.  The
-modify_change is probably not needed either, but for now I'm aiming
-for the minimal fix.
+FWIW, I was also about to report the same problem. Any reboot with dm
+targets hangs. Your patch fixes it also for me.
 
-diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
-index 6dd1a8860f1c..53fb0829eb7b 100644
---- a/drivers/base/devtmpfs.c
-+++ b/drivers/base/devtmpfs.c
-@@ -296,7 +296,7 @@ static int delete_path(const char *nodepath)
- 	return err;
- }
- 
--static int dev_mynode(struct device *dev, struct inode *inode, struct kstat *stat)
-+static int dev_mynode(struct device *dev, struct inode *inode)
- {
- 	/* did we create it */
- 	if (inode->i_private != &thread)
-@@ -304,13 +304,13 @@ static int dev_mynode(struct device *dev, struct inode *inode, struct kstat *sta
- 
- 	/* does the dev_t match */
- 	if (is_blockdev(dev)) {
--		if (!S_ISBLK(stat->mode))
-+		if (!S_ISBLK(inode->i_mode))
- 			return 0;
- 	} else {
--		if (!S_ISCHR(stat->mode))
-+		if (!S_ISCHR(inode->i_mode))
- 			return 0;
- 	}
--	if (stat->rdev != dev->devt)
-+	if (inode->i_rdev != dev->devt)
- 		return 0;
- 
- 	/* ours */
-@@ -321,8 +321,7 @@ static int handle_remove(const char *nodename, struct device *dev)
- {
- 	struct path parent;
- 	struct dentry *dentry;
--	struct kstat stat;
--	struct path p;
-+	struct inode *inode;
- 	int deleted = 0;
- 	int err;
- 
-@@ -330,11 +329,8 @@ static int handle_remove(const char *nodename, struct device *dev)
- 	if (IS_ERR(dentry))
- 		return PTR_ERR(dentry);
- 
--	p.mnt = parent.mnt;
--	p.dentry = dentry;
--	err = vfs_getattr(&p, &stat, STATX_TYPE | STATX_MODE,
--			  AT_STATX_SYNC_AS_STAT);
--	if (!err && dev_mynode(dev, d_inode(dentry), &stat)) {
-+	inode = d_inode(dentry);
-+	if (dev_mynode(dev, inode)) {
- 		struct iattr newattrs;
- 		/*
- 		 * before unlinking this node, reset permissions
-@@ -342,7 +338,7 @@ static int handle_remove(const char *nodename, struct device *dev)
- 		 */
- 		newattrs.ia_uid = GLOBAL_ROOT_UID;
- 		newattrs.ia_gid = GLOBAL_ROOT_GID;
--		newattrs.ia_mode = stat.mode & ~0777;
-+		newattrs.ia_mode = inode->i_mode & ~0777;
- 		newattrs.ia_valid =
- 			ATTR_UID|ATTR_GID|ATTR_MODE;
- 		inode_lock(d_inode(dentry));
+Tested-by: Heiko Carstens <hca@linux.ibm.com>
 
