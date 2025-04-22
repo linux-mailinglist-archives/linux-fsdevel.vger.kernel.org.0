@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-46915-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46916-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D08A9672D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:22:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1364CA9672F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:22:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EDE87A9C9D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 11:21:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FFAE17CD5E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 11:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4588F27C150;
-	Tue, 22 Apr 2025 11:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C99227BF76;
+	Tue, 22 Apr 2025 11:22:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3s4GwlH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ax4LKyBU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAD4278155;
-	Tue, 22 Apr 2025 11:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFF4205AB9;
+	Tue, 22 Apr 2025 11:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745320917; cv=none; b=OsuptOec+JdqrvYO1zFa+rOiEnKTVAlGS6c3W5X4MWhC5dTsiRl/02ZPnxVlhF84TWeoITv0Kx/GJkDhFGNMtstfLVRt3WiQ/G038K8aHC99IAP1mgJuw1crut+HgEHLuFlfgUAj16cWuYA9jT6FnwdvSqaB2RcziYaM24o+BMk=
+	t=1745320939; cv=none; b=ZoA0A28mWaSthwle/u0Lk/lMau4zOL+JWKRVaKmxX3xe9/fkJqBf3C59iwX3Jq35+9GVbOwqdpIvixpV6e0TwusGbAPmSN3t8XPqL1o5HJilEM35jAdNUQLpdKUedMyXtJ6Ncq6Jq2sG0rvGUOuCznqswehpFxM4kDGdgehmqPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745320917; c=relaxed/simple;
-	bh=TNRSUrc5TE9XXI3xP8fPvpIyV+t/AfWY9OXp4kzcbJM=;
+	s=arc-20240116; t=1745320939; c=relaxed/simple;
+	bh=SndDk9lFilyFEwknU6l1kVt5eBocGlhdR/QDHNaeOc0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UtegIhsn2QjoYQH8E8ChW06m8sP3u5q1JcnziRyJFH0La3rGQ0xEigQiY/hKB/7qAZ0E8Wh23l0vbLWnplQE/TQnzgcTxUh9uvgdlLjqpAVF2WIi+Ec7FP79tpg1kbzm3lkMx5Q9TNug0NNjVokSmrbl4oncsiiiqb5CQlEjWpc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y3s4GwlH; arc=none smtp.client-ip=209.85.210.193
+	 MIME-Version; b=de4cHqOJfhtpyJG0I0wr3q51eTNOwL+OHFZznWwut8xq2PkHrawae3VEIc3hq1GWjxTOyeYr2nbmRdiDuF6N2bhwTTa2UHJtBKoMmKC5j/w2sTw/ecqNJ+kDDg0NT27TS477YG+E1bmKQwhvBb5ExqGDDZ0+QUA8jlfQYBJeIMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ax4LKyBU; arc=none smtp.client-ip=209.85.214.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-7399838db7fso4735947b3a.0;
-        Tue, 22 Apr 2025 04:21:55 -0700 (PDT)
+Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-225df540edcso60129715ad.0;
+        Tue, 22 Apr 2025 04:22:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745320915; x=1745925715; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1745320937; x=1745925737; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ay6j05mfURnqC8saoeMr6ogRVsWqq76E2aDXfyh7ZmE=;
-        b=Y3s4GwlH4S3rl4+Vet1dT0ofu3r46W0/rhdxISXj1Myut9LxV0cdrKqmy3XtQZLH+m
-         un4NBVyvGkz4ffPdK0IkdHP1UozODMz1pmry5ziMesFHrKSlI6Kn3WyBKRaPskQFw3ti
-         w/AqdpRiuI1AVniI6ijkLZMclHz7gY6GnvxZrq8xjXTSThQ7iBXxcTASC5UXnn3fkW//
-         EHhEzXYPXu8GeHG8LSgUwL2YPVTKvL4FTlvEn7Th4Zgue5B/DlnYschcT3TRGxSjwJjS
-         0b3Qqxq3HlOHuhSVu7dixFzq8DVWm4TrKU5UinVv2pevqc3BbBv22wKIpZQ1cK53vSdH
-         oZvw==
+        bh=2tsGpJe+O9OqTQTb4juPo3OSnKvTqZ5uffJhyh+PLhk=;
+        b=Ax4LKyBUPSizR2xSLB5AGeRviAf0RAEfWon9w3KYMlqcMEo6u7XCiCD6c4B1wwdll5
+         B0lsii7kvpmQm9cjIdtF+BbIzuSaDD06HYd2V0QL8C/r+q6bzU597+vZTx0HK4T15KjS
+         5BqeL4MKDEi7ViZ67xKpgH7dhVxIAunHVKtfvGRYpaLvDC1nFJJ2uO4FrFoP8w0yfqjX
+         w4zbijMFTWGIDZ5euUMiR8PTgqQBkIfzlCJooGNyH16T6xR+MHVzSnCUnVinLtyth6Zm
+         X3zRK5Pv/xd3rMnUlS9suPu+r8nXT9hP7WcRBD6ztdtaSp/C/Yao4W3myRO2jRjsF6rc
+         EjRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745320915; x=1745925715;
+        d=1e100.net; s=20230601; t=1745320937; x=1745925737;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ay6j05mfURnqC8saoeMr6ogRVsWqq76E2aDXfyh7ZmE=;
-        b=OEE8eDdBMVc32/RASuRG0ErL7B4q4N+4i95tB8YNA0hRbA0pANBgcKZgFWG7+mzuUi
-         9H+xGZHvPWw6V6t6nryWHZ63vsIkq3qdQrNfkaShabblR2gVUPDQHSJdm+JBq4gMqrQ8
-         FTelQpu5rO5c26MdCDfe5fqpaIAawCJDPHUSfta5Mo0yw0UEQvcdftsSpxbdwQoi0V95
-         lTTqEr9obkzsrv1ODlnEzzbR2h8zn6DlYiR8oisSCZw+w3OTAchN1VUsRVrA9cwYiWMQ
-         0zwkVDxPaOL3MnvwaEG+x6xNnQS4l8Sac+hQ/2yvnA5L/ktDMrQLTrOVkw3Y2qt3qXFT
-         NeiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVV/oGORL56HULADHySaBmGlwanTky5QnK7t5UvHrDQ964vwKfcvoa+PxoMJLbBGiEweBvgJ4DVEWLo63jE@vger.kernel.org, AJvYcCWazQmigkX4Y9iQSY2O5c7X3zAfBW3YQwf8tu3uIx/a474v/KXPVWRL9wHsRjO+LD9F1Vv9tKARWnb8Skhc@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJukqRR53UZ9BeMNXb7V8hrf2iWUe6miMd9QtVZyMQIkmi0Hzl
-	mKYIvU8kSy2SYPpQhk+SuNO1jl3XfvdF/wMxiCvpPwmmEG3yIcof
-X-Gm-Gg: ASbGncurn+zon+LGcOq1p5a5I5XS9wrUdkWReTm5hvVgZwEYaKZt5IAFRcftlhWdbWL
-	3D3y21+Bcrj60iejJNL/hxeVBK5y1bsVvwmyuYDaIqrcZVXb3s9ypnMWpKaubjkEs42Y8/1IdoK
-	a/SmlqAHrGiSr40xDej5eIdcFuHMtXxygvVvDTxxyYhQ2fJqOQvQurd8E9r+AFtEqwtC3W7xHcw
-	m3QR6TqlNA64/hsahq0M9+TXg5tgR2K8MjK4wC7yeboCNPCYh9zhC44CMXJTwtm9rAmDPUveqPJ
-	trsEDWXhuaj3P/zS7if7saKHdxBQAqvXxXu3lKo7BsPoIDo9arSF9A==
-X-Google-Smtp-Source: AGHT+IElSNYl0pqZodwt89usz0QznAvphdRaPmB4R7NXi4Ccq2spidwCw2TN/zF+md2MEsHlG+yqBA==
-X-Received: by 2002:a05:6a00:6c92:b0:732:56a7:a935 with SMTP id d2e1a72fcca58-73dbe638b2bmr25405958b3a.12.1745320914872;
-        Tue, 22 Apr 2025 04:21:54 -0700 (PDT)
+        bh=2tsGpJe+O9OqTQTb4juPo3OSnKvTqZ5uffJhyh+PLhk=;
+        b=xGMeAwg9APrIG2YpZQR3a5E7JCKzZsHe5ZmC+iZeTqKnsBTYwmPy48j582ZWRrHUKk
+         z8/n17Gy9HAlBGVYZmyPpuPYm9XUdBZS0F657mO/tEzvOH5n1XcP6DMq2qzprpYsQlEI
+         ovEpO2T2bpByAH1bCLIt9A9oxnsTz9/V/DSk0AgUGgbNbFx5oM3lRsbrRk7JgQe3/GZ9
+         1d6jTgyh9UVGEQzdrkzUTLyLGIPYqEoGKeQ30Cw/BlcJdXd8zPluSuko/+a2KxPyY5DH
+         5UsHZR2cQRpODPT+fGXkJdgz+1Q0VZLl+KC8kj5hPme1AzgnRSjHXtl346diNDqgGwWl
+         ZmDw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjNOIS4ffp/b5FtDMSyLaK95LM3Bu78uthgMTWiXxPhwBkVT/Gk2IkdDM7kQXlidu7pdyWvJ1ARlZdX7iB@vger.kernel.org, AJvYcCXrNiVkj7ftXf87d5qlvQsDwOTWtEqHpPmuZKIo32qgQe0bhwuCZ8RNZAklg0b9yr78/1PMyc2zg2MuW2hK@vger.kernel.org
+X-Gm-Message-State: AOJu0YzASaUxNo0L2IWlD1yd4cHFMbR/CkD7V6oyZyUQp2VXp0sToBMz
+	RlICc6oln2YweXXOD90rXxAcfMnMKEYMFSATzwFmrwTYOZc8YJIk
+X-Gm-Gg: ASbGncsBM/z91HVjai+MwoliqrY7uAzt5mJOEuhMz2p5ij/QFs73NKmYxE7e0okKfWh
+	VMv/BJgn5zH6haHttsj8oQQL7dGQZ2vK1iVtolaAVNefn2C8XI9/qdjywabctgARMm0hxDYSZZ8
+	Mj9KiP9mFT6UFk992uAGnOAIhw1hzG/ync6ledws9w6vXhO2f8KgB8xX2aOSatPr5Z/s4KG3nsp
+	RBZtDxsx4Xpm6MhHYyd/w0jJPySQwPrchTYZvf7DlMoc7P93JDgves/cWaKnLoaIoXO1G2QnGZe
+	grNW+3b4COZw8G7Uz8VFBFKyA9BPcQccSQm2nwqsTZUFqNIPhXt1pg==
+X-Google-Smtp-Source: AGHT+IHy23t8AgZCMB1Zqlq4/iHMXi+C3dmbU8ydNHYxbJB1789omuobWf3648UiCWa0uyaOf1mJmg==
+X-Received: by 2002:a17:90b:5608:b0:2fa:1c09:3cee with SMTP id 98e67ed59e1d1-30879bc43b7mr22723221a91.9.1745320937116;
+        Tue, 22 Apr 2025 04:22:17 -0700 (PDT)
 Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b0db145a6e5sm7117508a12.57.2025.04.22.04.21.53
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3087dee8956sm9504847a91.8.2025.04.22.04.22.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:21:54 -0700 (PDT)
+        Tue, 22 Apr 2025 04:22:16 -0700 (PDT)
 From: xu xin <xu.xin.sc@gmail.com>
 X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
 To: xu.xin16@zte.com.cn
@@ -82,9 +82,9 @@ Cc: akpm@linux-foundation.org,
 	linux-mm@kvack.org,
 	wang.yaxin@zte.com.cn,
 	yang.yang29@zte.com.cn
-Subject: [PATCH RESEND 4/6] memcontrol-v1: add ksm_zero_pages in cgroup/memory.ksm_stat
-Date: Tue, 22 Apr 2025 11:21:49 +0000
-Message-Id: <20250422112149.3231488-1-xu.xin16@zte.com.cn>
+Subject: [PATCH RESEND 5/6] memcontrol-v1: add ksm_merging_pages in cgroup/memory.ksm_stat
+Date: Tue, 22 Apr 2025 11:22:12 +0000
+Message-Id: <20250422112212.3231548-1-xu.xin16@zte.com.cn>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20250422191407770210-193JBD0Fgeu5zqE2K@zte.com.cn>
 References: <20250422191407770210-193JBD0Fgeu5zqE2K@zte.com.cn>
@@ -96,59 +96,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Users can obtain ksm_zero_pages of a cgroup just by:
+Users can obtain ksm_merging_pages of a cgroup just by:
 
 / # cat /sys/fs/cgroup/memory.ksm_stat
 ksm_rmap_items 76800
 ksm_zero_pages 0
+ksm_merging_pages 1092
 
 Current implementation supports cgroup v1 temporarily; cgroup v2
 compatibility is planned for future versions.
 
 Signed-off-by: xu xin <xu.xin16@zte.com.cn>
 ---
- mm/memcontrol-v1.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ mm/memcontrol-v1.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index fa57a5deb28c..9680749f4eef 100644
+index 9680749f4eef..7ee38d633d85 100644
 --- a/mm/memcontrol-v1.c
 +++ b/mm/memcontrol-v1.c
-@@ -11,6 +11,7 @@
- #include <linux/sort.h>
- #include <linux/file.h>
- #include <linux/seq_buf.h>
-+#include <linux/ksm.h>
- 
- #include "internal.h"
- #include "swap.h"
-@@ -1824,6 +1825,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
- #ifdef CONFIG_KSM
+@@ -1826,6 +1826,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
  struct memcg_ksm_stat {
  	unsigned long ksm_rmap_items;
-+	long ksm_zero_pages;
+ 	long ksm_zero_pages;
++	unsigned long ksm_merging_pages;
  };
  
  static int evaluate_memcg_ksm_stat(struct task_struct *task, void *arg)
-@@ -1834,6 +1836,7 @@ static int evaluate_memcg_ksm_stat(struct task_struct *task, void *arg)
- 	mm = get_task_mm(task);
+@@ -1837,6 +1838,7 @@ static int evaluate_memcg_ksm_stat(struct task_struct *task, void *arg)
  	if (mm) {
  		ksm_stat->ksm_rmap_items += mm->ksm_rmap_items;
-+		ksm_stat->ksm_zero_pages += mm_ksm_zero_pages(mm);
+ 		ksm_stat->ksm_zero_pages += mm_ksm_zero_pages(mm);
++		ksm_stat->ksm_merging_pages += mm->ksm_merging_pages;
  		mmput(mm);
  	}
  
-@@ -1847,9 +1850,13 @@ static int memcg_ksm_stat_show(struct seq_file *m, void *v)
- 
+@@ -1851,12 +1853,14 @@ static int memcg_ksm_stat_show(struct seq_file *m, void *v)
  	/* Initialization */
  	ksm_stat.ksm_rmap_items = 0;
-+	ksm_stat.ksm_zero_pages = 0;
-+
+ 	ksm_stat.ksm_zero_pages = 0;
++	ksm_stat.ksm_merging_pages = 0;
+ 
  	/* summing all processes'ksm statistic items of this cgroup hierarchy */
  	mem_cgroup_scan_tasks(memcg, evaluate_memcg_ksm_stat, &ksm_stat);
-+
+ 
  	seq_printf(m, "ksm_rmap_items %lu\n", ksm_stat.ksm_rmap_items);
-+	seq_printf(m, "ksm_zero_pages %ld\n", ksm_stat.ksm_zero_pages);
+ 	seq_printf(m, "ksm_zero_pages %ld\n", ksm_stat.ksm_zero_pages);
++	seq_printf(m, "ksm_merging_pages %ld\n", ksm_stat.ksm_merging_pages);
  
  	return 0;
  }
