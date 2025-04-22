@@ -1,59 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-46919-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C0EA967A7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:36:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D835FA967D9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:39:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936A23BEEB4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 11:35:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3908188BD41
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 11:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AABC20B801;
-	Tue, 22 Apr 2025 11:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C4F27CB15;
+	Tue, 22 Apr 2025 11:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qF5RLjvy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ujimyuba"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72FB027510B
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 11:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB0627CB30
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 11:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745321592; cv=none; b=tmeNvMVmDsSDUAvf236Ie1XOitkNqEXGuK1vbhGjRpfwMvV8Z/lB9i4XOwKjoKIpktan+73W90r2ttith51agxjsov6gdyZO05iW0BMqK0oEn+Py3ewWyGDpU3Akjl/T5sRfwoX/xU1QISHtRQDQzIui+caSpejbEp9UPoRAHvE=
+	t=1745321857; cv=none; b=KCQ07AGHqWTAWwygJLqAbESxuT6L4P7HVPwR/tT4s23bKGfaWEbuhn9ry5wA4Rb/jF486oIDjmKSy72VAfb2yps38rweDhng+L5zFkRKASAVGRHRDdqIbHbv4GPFMiPpqAw+f00qi61DP1M8Hb5a6Zi2dBI5MHqm1Md9b7x3RI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745321592; c=relaxed/simple;
-	bh=WWMpDqigqrIVD8mouh/ymqpfUqOuRx9/akPPSuPHQ3I=;
+	s=arc-20240116; t=1745321857; c=relaxed/simple;
+	bh=MKcpHV1BthvfXXZ5ZgZUCjy/9Z5ykvflKJedRygyhl0=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SeL11o9+8k3VcrDQ/jNeBg3pP8F1vrZi8rkM7IWgqTSu93PvOQNUnT5tFHbbW1r8NDlqw4/k8Sdv0YpobASXqYpSzbtHnUQKH32FneYdhqJCrTEfuAfelBFaaxYIWW+TLso52+MV+Qkaw2qLL5u7tPjdJ5ot+7LoeQK/hLdva+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qF5RLjvy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CCC9C4CEE9;
-	Tue, 22 Apr 2025 11:33:10 +0000 (UTC)
+	 Content-Type:MIME-Version; b=NPGdP2H8J5yRKgW/1hhLF4nEKOT5hMMenZutQG0DZPgofBRzwMzss5r/plWaLe7kfxrE3ZvpWNZ2v9f3IyRvccmZcdNm28qBuVe1m1Sse3dM+t9ddOwt2nlDoSS14RzMs8VSIm+XNsSr4nNNoqOMwLq1R8tF2VDLEYLC5L9ygVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ujimyuba; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29A47C4CEEE;
+	Tue, 22 Apr 2025 11:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745321590;
-	bh=WWMpDqigqrIVD8mouh/ymqpfUqOuRx9/akPPSuPHQ3I=;
+	s=k20201202; t=1745321856;
+	bh=MKcpHV1BthvfXXZ5ZgZUCjy/9Z5ykvflKJedRygyhl0=;
 	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=qF5RLjvy/cOEbpN0k7LFTz7clLnCfGQnqqKm9DB43Vxmxu1yWRfjD0L8Vhe0M0/cc
-	 SDsdESgvZIPqHn95IhDu/QhvL+pI/1/e/nTpzddNYiv1hkvEqPtO9SZkSqLgIWw9rv
-	 c+nu/R/xBF3W4KHbPjnkVXrP6skNM6AIX5N+8MXRIoy8s+PNlKUo+PVCvjvr94slnj
-	 2l3PgOG70M7Du3IGk1or0RsiHIgpjtVo+W0CguzQmeiwuJ59m1f3TUIqIPCNLuGSsG
-	 lVwSux8TFIDS8gFEwcXe2K4izmAwqcku02/XuuhAf7o9gZtwF6nBsIrCsV4Q1r9+F1
-	 VHW2P5JgeofSQ==
-Message-ID: <f83896afdad94014fbf0a4207e6caeb1d8e41cce.camel@kernel.org>
+	b=UjimyubageCsvC0sfbIc10rShbZeMxhG/i3hqCi7Ig9JRPJ1qHudbZ39lHXCqMXMS
+	 eVg2cgDqZ+lTzuSdo8mERgARG9srBwfbHpZ8vXSudGsbuBtGRhEygTrR1Xkh2QyLjS
+	 uBZ0bhYB3hBqWlrLFkWcVZdZuEABht8gDl5A8N/MMJJvoVnkcJ0WewR4pxWRJJYRAr
+	 rDmGs6vFdEEUBJju3loi61Hdi4exuTebyB0BqbBN5dA6YuvepXerQJBQhZJ1rBQGb8
+	 hRQQ041cfBpOr8IEFcePmwgs3KncalSDGey5N8Zvm6UbMaM4L8hqqV80p2tjrle7rO
+	 SAutN1cET3VoQ==
+Message-ID: <b7034a2d7443c76e1efc90fae9d7b81c80a5c03f.camel@kernel.org>
 Subject: Re: [PATCH v1] fuse: use splice for reading user pages on servers
  that enable it
 From: Jeff Layton <jlayton@kernel.org>
-To: Bernd Schubert <bernd.schubert@fastmail.fm>, Joanne Koong
-	 <joannelkoong@gmail.com>, miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, kernel-team@meta.com
-Date: Tue, 22 Apr 2025 07:33:09 -0400
-In-Reply-To: <a65b5034-2bae-4eec-92e2-3a9ad003b0bb@fastmail.fm>
+To: Joanne Koong <joannelkoong@gmail.com>, Bernd Schubert
+	 <bernd.schubert@fastmail.fm>
+Cc: miklos@szeredi.hu, linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Date: Tue, 22 Apr 2025 07:37:35 -0400
+In-Reply-To: <CAJnrk1bGxhuQRCB_biX52J_rbq8S5tvPQyK-Lf+-nsMRK5OtOg@mail.gmail.com>
 References: <20250419000614.3795331-1-joannelkoong@gmail.com>
 	 <5332002a-e444-4f62-8217-8d124182290d@fastmail.fm>
 	 <26673a5077b148e98a3957532f0cb445aa7ed3c7.camel@kernel.org>
 	 <a65b5034-2bae-4eec-92e2-3a9ad003b0bb@fastmail.fm>
+	 <CAJnrk1bGxhuQRCB_biX52J_rbq8S5tvPQyK-Lf+-nsMRK5OtOg@mail.gmail.com>
 Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
  keydata=mQINBE6V0TwBEADXhJg7s8wFDwBMEvn0qyhAnzFLTOCHooMZyx7XO7dAiIhDSi7G1NPxw
  n8jdFUQMCR/GlpozMFlSFiZXiObE7sef9rTtM68ukUyZM4pJ9l0KjQNgDJ6Fr342Htkjxu/kFV1Wv
@@ -138,242 +139,268 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-On Mon, 2025-04-21 at 23:38 +0200, Bernd Schubert wrote:
->=20
-> On 4/21/25 14:35, Jeff Layton wrote:
-> > On Mon, 2025-04-21 at 13:49 +0200, Bernd Schubert wrote:
-> > >=20
-> > > On 4/19/25 02:06, Joanne Koong wrote:
-> > > > For direct io writes, splice is disabled when forwarding pages from=
+On Mon, 2025-04-21 at 17:49 -0700, Joanne Koong wrote:
+> On Mon, Apr 21, 2025 at 2:38=E2=80=AFPM Bernd Schubert
+> <bernd.schubert@fastmail.fm> wrote:
+> >=20
+> > On 4/21/25 14:35, Jeff Layton wrote:
+> > > On Mon, 2025-04-21 at 13:49 +0200, Bernd Schubert wrote:
+> > > >=20
+> > > > On 4/19/25 02:06, Joanne Koong wrote:
+> > > > > For direct io writes, splice is disabled when forwarding pages fr=
+om the
+> > > > > client to the server. This is because the pages in the pipe buffe=
+r are
+> > > > > user pages, which is controlled by the client. Thus if a server r=
+eplies
+> > > > > to the request and then keeps accessing the pages afterwards, the=
+re is
+> > > > > the possibility that the client may have modified the contents of=
  the
-> > > > client to the server. This is because the pages in the pipe buffer =
-are
-> > > > user pages, which is controlled by the client. Thus if a server rep=
-lies
-> > > > to the request and then keeps accessing the pages afterwards, there=
- is
-> > > > the possibility that the client may have modified the contents of t=
+> > > > > pages in the meantime. More context on this can be found in commi=
+t
+> > > > > 0c4bcfdecb1a ("fuse: fix pipe buffer lifetime for direct_io").
+> > > > >=20
+> > > > > For servers that do not need to access pages after answering the
+> > > > > request, splice gives a non-trivial improvement in performance.
+> > > > > Benchmarks show roughly a 40% speedup.
+> > > > >=20
+> > > > > Allow servers to enable zero-copy splice for servicing client dir=
+ect io
+> > > > > writes. By enabling this, the server understands that they should=
+ not
+> > > > > continue accessing the pipe buffer after completing the request o=
+r may
+> > > > > face incorrect data if they do so.
+> > > > >=20
+> > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > ---
+> > > > >  fs/fuse/dev.c             | 18 ++++++++++--------
+> > > > >  fs/fuse/dev_uring.c       |  4 ++--
+> > > > >  fs/fuse/fuse_dev_i.h      |  5 +++--
+> > > > >  fs/fuse/fuse_i.h          |  3 +++
+> > > > >  fs/fuse/inode.c           |  5 ++++-
+> > > > >  include/uapi/linux/fuse.h |  8 ++++++++
+> > > > >  6 files changed, 30 insertions(+), 13 deletions(-)
+> > > > >=20
+> > > > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > > > > index 67d07b4c778a..1b0ea8593f74 100644
+> > > > > --- a/fs/fuse/dev.c
+> > > > > +++ b/fs/fuse/dev.c
+> > > > > @@ -816,12 +816,13 @@ static int unlock_request(struct fuse_req *=
+req)
+> > > > >     return err;
+> > > > >  }
+> > > > >=20
+> > > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
+> > > > > -               struct iov_iter *iter)
+> > > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn=
+ *fc,
+> > > > > +               bool write, struct iov_iter *iter)
+> > > > >  {
+> > > > >     memset(cs, 0, sizeof(*cs));
+> > > > >     cs->write =3D write;
+> > > > >     cs->iter =3D iter;
+> > > > > +   cs->splice_read_user_pages =3D fc->splice_read_user_pages;
+> > > > >  }
+> > > > >=20
+> > > > >  /* Unmap and put previous page of userspace buffer */
+> > > > > @@ -1105,9 +1106,10 @@ static int fuse_copy_page(struct fuse_copy=
+_state *cs, struct page **pagep,
+> > > > >             if (cs->write && cs->pipebufs && page) {
+> > > > >                     /*
+> > > > >                      * Can't control lifetime of pipe buffers, so=
+ always
+> > > > > -                    * copy user pages.
+> > > > > +                    * copy user pages if server does not support=
+ splice
+> > > > > +                    * for reading user pages.
+> > > > >                      */
+> > > > > -                   if (cs->req->args->user_pages) {
+> > > > > +                   if (cs->req->args->user_pages && !cs->splice_=
+read_user_pages) {
+> > > > >                             err =3D fuse_copy_fill(cs);
+> > > > >                             if (err)
+> > > > >                                     return err;
+> > > > > @@ -1538,7 +1540,7 @@ static ssize_t fuse_dev_read(struct kiocb *=
+iocb, struct iov_iter *to)
+> > > > >     if (!user_backed_iter(to))
+> > > > >             return -EINVAL;
+> > > > >=20
+> > > > > -   fuse_copy_init(&cs, true, to);
+> > > > > +   fuse_copy_init(&cs, fud->fc, true, to);
+> > > > >=20
+> > > > >     return fuse_dev_do_read(fud, file, &cs, iov_iter_count(to));
+> > > > >  }
+> > > > > @@ -1561,7 +1563,7 @@ static ssize_t fuse_dev_splice_read(struct =
+file *in, loff_t *ppos,
+> > > > >     if (!bufs)
+> > > > >             return -ENOMEM;
+> > > > >=20
+> > > > > -   fuse_copy_init(&cs, true, NULL);
+> > > > > +   fuse_copy_init(&cs, fud->fc, true, NULL);
+> > > > >     cs.pipebufs =3D bufs;
+> > > > >     cs.pipe =3D pipe;
+> > > > >     ret =3D fuse_dev_do_read(fud, in, &cs, len);
+> > > > > @@ -2227,7 +2229,7 @@ static ssize_t fuse_dev_write(struct kiocb =
+*iocb, struct iov_iter *from)
+> > > > >     if (!user_backed_iter(from))
+> > > > >             return -EINVAL;
+> > > > >=20
+> > > > > -   fuse_copy_init(&cs, false, from);
+> > > > > +   fuse_copy_init(&cs, fud->fc, false, from);
+> > > > >=20
+> > > > >     return fuse_dev_do_write(fud, &cs, iov_iter_count(from));
+> > > > >  }
+> > > > > @@ -2301,7 +2303,7 @@ static ssize_t fuse_dev_splice_write(struct=
+ pipe_inode_info *pipe,
+> > > > >     }
+> > > > >     pipe_unlock(pipe);
+> > > > >=20
+> > > > > -   fuse_copy_init(&cs, false, NULL);
+> > > > > +   fuse_copy_init(&cs, fud->fc, false, NULL);
+> > > > >     cs.pipebufs =3D bufs;
+> > > > >     cs.nr_segs =3D nbuf;
+> > > > >     cs.pipe =3D pipe;
+> > > > > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > > > > index ef470c4a9261..52b883a6a79d 100644
+> > > > > --- a/fs/fuse/dev_uring.c
+> > > > > +++ b/fs/fuse/dev_uring.c
+> > > > > @@ -593,7 +593,7 @@ static int fuse_uring_copy_from_ring(struct f=
+use_ring *ring,
+> > > > >     if (err)
+> > > > >             return err;
+> > > > >=20
+> > > > > -   fuse_copy_init(&cs, false, &iter);
+> > > > > +   fuse_copy_init(&cs, ring->fc, false, &iter);
+> > > > >     cs.is_uring =3D true;
+> > > > >     cs.req =3D req;
+> > > > >=20
+> > > > > @@ -623,7 +623,7 @@ static int fuse_uring_args_to_ring(struct fus=
+e_ring *ring, struct fuse_req *req,
+> > > > >             return err;
+> > > > >     }
+> > > > >=20
+> > > > > -   fuse_copy_init(&cs, true, &iter);
+> > > > > +   fuse_copy_init(&cs, ring->fc, true, &iter);
+> > > > >     cs.is_uring =3D true;
+> > > > >     cs.req =3D req;
+> > > > >=20
+> > > > > diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> > > > > index db136e045925..25e593e64c67 100644
+> > > > > --- a/fs/fuse/fuse_dev_i.h
+> > > > > +++ b/fs/fuse/fuse_dev_i.h
+> > > > > @@ -32,6 +32,7 @@ struct fuse_copy_state {
+> > > > >     bool write:1;
+> > > > >     bool move_pages:1;
+> > > > >     bool is_uring:1;
+> > > > > +   bool splice_read_user_pages:1;
+> > > > >     struct {
+> > > > >             unsigned int copied_sz; /* copied size into the user =
+buffer */
+> > > > >     } ring;
+> > > > > @@ -51,8 +52,8 @@ struct fuse_req *fuse_request_find(struct fuse_=
+pqueue *fpq, u64 unique);
+> > > > >=20
+> > > > >  void fuse_dev_end_requests(struct list_head *head);
+> > > > >=20
+> > > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
+> > > > > -                      struct iov_iter *iter);
+> > > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn=
+ *conn,
+> > > > > +               bool write, struct iov_iter *iter);
+> > > > >  int fuse_copy_args(struct fuse_copy_state *cs, unsigned int numa=
+rgs,
+> > > > >                unsigned int argpages, struct fuse_arg *args,
+> > > > >                int zeroing);
+> > > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > > > index 3d5289cb82a5..e21875f16220 100644
+> > > > > --- a/fs/fuse/fuse_i.h
+> > > > > +++ b/fs/fuse/fuse_i.h
+> > > > > @@ -898,6 +898,9 @@ struct fuse_conn {
+> > > > >     /* Use io_uring for communication */
+> > > > >     bool io_uring:1;
+> > > > >=20
+> > > > > +   /* Allow splice for reading user pages */
+> > > > > +   bool splice_read_user_pages:1;
+> > > > > +
+> > > > >     /** Maximum stack depth for passthrough backing files */
+> > > > >     int max_stack_depth;
+> > > > >=20
+> > > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > > > index 43b6643635ee..e82e96800fde 100644
+> > > > > --- a/fs/fuse/inode.c
+> > > > > +++ b/fs/fuse/inode.c
+> > > > > @@ -1439,6 +1439,9 @@ static void process_init_reply(struct fuse_=
+mount *fm, struct fuse_args *args,
+> > > > >=20
+> > > > >                     if (flags & FUSE_REQUEST_TIMEOUT)
+> > > > >                             timeout =3D arg->request_timeout;
+> > > > > +
+> > > > > +                   if (flags & FUSE_SPLICE_READ_USER_PAGES)
+> > > > > +                           fc->splice_read_user_pages =3D true;
+> > > >=20
+> > > >=20
+> > > > Shouldn't that check for capable(CAP_SYS_ADMIN)? Isn't the issue
+> > > > that one can access file content although the write is already
+> > > > marked as completed? I.e. a fuse file system might get data
+> > > > it was never exposed to and possibly secret data?
+> > > > A more complex version version could check for CAP_SYS_ADMIN, but
+> > > > also allow later on read/write to files that have the same uid as
+> > > > the fuser-server process?
+> > > >=20
+> > >=20
+> > > IDGI. I don't see how this allows the server access to something it
+> > > didn't have access to before.
+> > >=20
+> > > This patchset seems to be about a "contract" between the kernel and t=
 he
-> > > > pages in the meantime. More context on this can be found in commit
-> > > > 0c4bcfdecb1a ("fuse: fix pipe buffer lifetime for direct_io").
-> > > >=20
-> > > > For servers that do not need to access pages after answering the
-> > > > request, splice gives a non-trivial improvement in performance.
-> > > > Benchmarks show roughly a 40% speedup.
-> > > >=20
-> > > > Allow servers to enable zero-copy splice for servicing client direc=
-t io
-> > > > writes. By enabling this, the server understands that they should n=
-ot
-> > > > continue accessing the pipe buffer after completing the request or =
-may
-> > > > face incorrect data if they do so.
-> > > >=20
-> > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> > > > ---
-> > > >  fs/fuse/dev.c             | 18 ++++++++++--------
-> > > >  fs/fuse/dev_uring.c       |  4 ++--
-> > > >  fs/fuse/fuse_dev_i.h      |  5 +++--
-> > > >  fs/fuse/fuse_i.h          |  3 +++
-> > > >  fs/fuse/inode.c           |  5 ++++-
-> > > >  include/uapi/linux/fuse.h |  8 ++++++++
-> > > >  6 files changed, 30 insertions(+), 13 deletions(-)
-> > > >=20
-> > > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> > > > index 67d07b4c778a..1b0ea8593f74 100644
-> > > > --- a/fs/fuse/dev.c
-> > > > +++ b/fs/fuse/dev.c
-> > > > @@ -816,12 +816,13 @@ static int unlock_request(struct fuse_req *re=
-q)
-> > > >  	return err;
-> > > >  }
-> > > > =20
-> > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
-> > > > -		    struct iov_iter *iter)
-> > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn *=
-fc,
-> > > > +		    bool write, struct iov_iter *iter)
-> > > >  {
-> > > >  	memset(cs, 0, sizeof(*cs));
-> > > >  	cs->write =3D write;
-> > > >  	cs->iter =3D iter;
-> > > > +	cs->splice_read_user_pages =3D fc->splice_read_user_pages;
-> > > >  }
-> > > > =20
-> > > >  /* Unmap and put previous page of userspace buffer */
-> > > > @@ -1105,9 +1106,10 @@ static int fuse_copy_page(struct fuse_copy_s=
-tate *cs, struct page **pagep,
-> > > >  		if (cs->write && cs->pipebufs && page) {
-> > > >  			/*
-> > > >  			 * Can't control lifetime of pipe buffers, so always
-> > > > -			 * copy user pages.
-> > > > +			 * copy user pages if server does not support splice
-> > > > +			 * for reading user pages.
-> > > >  			 */
-> > > > -			if (cs->req->args->user_pages) {
-> > > > +			if (cs->req->args->user_pages && !cs->splice_read_user_pages) {
-> > > >  				err =3D fuse_copy_fill(cs);
-> > > >  				if (err)
-> > > >  					return err;
-> > > > @@ -1538,7 +1540,7 @@ static ssize_t fuse_dev_read(struct kiocb *io=
-cb, struct iov_iter *to)
-> > > >  	if (!user_backed_iter(to))
-> > > >  		return -EINVAL;
-> > > > =20
-> > > > -	fuse_copy_init(&cs, true, to);
-> > > > +	fuse_copy_init(&cs, fud->fc, true, to);
-> > > > =20
-> > > >  	return fuse_dev_do_read(fud, file, &cs, iov_iter_count(to));
-> > > >  }
-> > > > @@ -1561,7 +1563,7 @@ static ssize_t fuse_dev_splice_read(struct fi=
-le *in, loff_t *ppos,
-> > > >  	if (!bufs)
-> > > >  		return -ENOMEM;
-> > > > =20
-> > > > -	fuse_copy_init(&cs, true, NULL);
-> > > > +	fuse_copy_init(&cs, fud->fc, true, NULL);
-> > > >  	cs.pipebufs =3D bufs;
-> > > >  	cs.pipe =3D pipe;
-> > > >  	ret =3D fuse_dev_do_read(fud, in, &cs, len);
-> > > > @@ -2227,7 +2229,7 @@ static ssize_t fuse_dev_write(struct kiocb *i=
-ocb, struct iov_iter *from)
-> > > >  	if (!user_backed_iter(from))
-> > > >  		return -EINVAL;
-> > > > =20
-> > > > -	fuse_copy_init(&cs, false, from);
-> > > > +	fuse_copy_init(&cs, fud->fc, false, from);
-> > > > =20
-> > > >  	return fuse_dev_do_write(fud, &cs, iov_iter_count(from));
-> > > >  }
-> > > > @@ -2301,7 +2303,7 @@ static ssize_t fuse_dev_splice_write(struct p=
-ipe_inode_info *pipe,
-> > > >  	}
-> > > >  	pipe_unlock(pipe);
-> > > > =20
-> > > > -	fuse_copy_init(&cs, false, NULL);
-> > > > +	fuse_copy_init(&cs, fud->fc, false, NULL);
-> > > >  	cs.pipebufs =3D bufs;
-> > > >  	cs.nr_segs =3D nbuf;
-> > > >  	cs.pipe =3D pipe;
-> > > > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> > > > index ef470c4a9261..52b883a6a79d 100644
-> > > > --- a/fs/fuse/dev_uring.c
-> > > > +++ b/fs/fuse/dev_uring.c
-> > > > @@ -593,7 +593,7 @@ static int fuse_uring_copy_from_ring(struct fus=
-e_ring *ring,
-> > > >  	if (err)
-> > > >  		return err;
-> > > > =20
-> > > > -	fuse_copy_init(&cs, false, &iter);
-> > > > +	fuse_copy_init(&cs, ring->fc, false, &iter);
-> > > >  	cs.is_uring =3D true;
-> > > >  	cs.req =3D req;
-> > > > =20
-> > > > @@ -623,7 +623,7 @@ static int fuse_uring_args_to_ring(struct fuse_=
-ring *ring, struct fuse_req *req,
-> > > >  		return err;
-> > > >  	}
-> > > > =20
-> > > > -	fuse_copy_init(&cs, true, &iter);
-> > > > +	fuse_copy_init(&cs, ring->fc, true, &iter);
-> > > >  	cs.is_uring =3D true;
-> > > >  	cs.req =3D req;
-> > > > =20
-> > > > diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-> > > > index db136e045925..25e593e64c67 100644
-> > > > --- a/fs/fuse/fuse_dev_i.h
-> > > > +++ b/fs/fuse/fuse_dev_i.h
-> > > > @@ -32,6 +32,7 @@ struct fuse_copy_state {
-> > > >  	bool write:1;
-> > > >  	bool move_pages:1;
-> > > >  	bool is_uring:1;
-> > > > +	bool splice_read_user_pages:1;
-> > > >  	struct {
-> > > >  		unsigned int copied_sz; /* copied size into the user buffer */
-> > > >  	} ring;
-> > > > @@ -51,8 +52,8 @@ struct fuse_req *fuse_request_find(struct fuse_pq=
-ueue *fpq, u64 unique);
-> > > > =20
-> > > >  void fuse_dev_end_requests(struct list_head *head);
-> > > > =20
-> > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
-> > > > -			   struct iov_iter *iter);
-> > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn *=
-conn,
-> > > > +		    bool write, struct iov_iter *iter);
-> > > >  int fuse_copy_args(struct fuse_copy_state *cs, unsigned int numarg=
-s,
-> > > >  		   unsigned int argpages, struct fuse_arg *args,
-> > > >  		   int zeroing);
-> > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > > > index 3d5289cb82a5..e21875f16220 100644
-> > > > --- a/fs/fuse/fuse_i.h
-> > > > +++ b/fs/fuse/fuse_i.h
-> > > > @@ -898,6 +898,9 @@ struct fuse_conn {
-> > > >  	/* Use io_uring for communication */
-> > > >  	bool io_uring:1;
-> > > > =20
-> > > > +	/* Allow splice for reading user pages */
-> > > > +	bool splice_read_user_pages:1;
-> > > > +
-> > > >  	/** Maximum stack depth for passthrough backing files */
-> > > >  	int max_stack_depth;
-> > > > =20
-> > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > > > index 43b6643635ee..e82e96800fde 100644
-> > > > --- a/fs/fuse/inode.c
-> > > > +++ b/fs/fuse/inode.c
-> > > > @@ -1439,6 +1439,9 @@ static void process_init_reply(struct fuse_mo=
-unt *fm, struct fuse_args *args,
-> > > > =20
-> > > >  			if (flags & FUSE_REQUEST_TIMEOUT)
-> > > >  				timeout =3D arg->request_timeout;
-> > > > +
-> > > > +			if (flags & FUSE_SPLICE_READ_USER_PAGES)
-> > > > +				fc->splice_read_user_pages =3D true;
+> > > userland server. The server is agreeing to be very careful about not
+> > > touching pages after a write request completes, and the kernel allows
+> > > splicing the pages if that's the case.
 > > >=20
-> > >=20
-> > > Shouldn't that check for capable(CAP_SYS_ADMIN)? Isn't the issue
-> > > that one can access file content although the write is already
-> > > marked as completed? I.e. a fuse file system might get data
-> > > it was never exposed to and possibly secret data?
-> > > A more complex version version could check for CAP_SYS_ADMIN, but
-> > > also allow later on read/write to files that have the same uid as
-> > > the fuser-server process?
-> > >=20
+> > > Can you explain the potential attack vector?
 > >=20
-> > IDGI. I don't see how this allows the server access to something it
-> > didn't have access to before.
+> > Let's the server claim it does FUSE_SPLICE_READ_USER_PAGES, i.e. claims
+> > it stops using splice buffers before completing write requests. But the=
+n
+> > it actually first replies to the write and after an arbitrary amount
+> > of time writes out the splice buffer. User application might be using
+> > the buffer it send for write for other things and might not want to
+> > expose that. I.e. application expects that after write(, buf,)
+> > it can use 'buf' for other purposes and that the file system does not
+> > access it anymore once write() is complete. I.e. it can put sensitive
+> > data into the buffer, which it might not want to expose.
+> > From my point of the issue is mainly with allow_other in combination
+> > with "user_allow_other" in libfuse, as root has better ways to access d=
+ata.
 > >=20
-> > This patchset seems to be about a "contract" between the kernel and the
-> > userland server. The server is agreeing to be very careful about not
-> > touching pages after a write request completes, and the kernel allows
-> > splicing the pages if that's the case.
-> >=20
-> > Can you explain the potential attack vector?
 >=20
-> Let's the server claim it does FUSE_SPLICE_READ_USER_PAGES, i.e. claims
-> it stops using splice buffers before completing write requests. But then
-> it actually first replies to the write and after an arbitrary amount
-> of time writes out the splice buffer. User application might be using
-> the buffer it send for write for other things and might not want to
-> expose that. I.e. application expects that after write(, buf,)
-> it can use 'buf' for other purposes and that the file system does not
-> access it anymore once write() is complete. I.e. it can put sensitive
-> data into the buffer, which it might not want to expose.
-> From my point of the issue is mainly with allow_other in combination
-> with "user_allow_other" in libfuse, as root has better ways to access dat=
-a.
+> As I understand it, user_allow_other is disabled by default and is
+> only enabled if explicitly opted into by root.
+>=20
+> It seems to me, philosophically, that if a client chooses to interact
+> with / use a specific fuse mount then it chooses to place its trust in
+> that fuse server and accepts the possible repercussions from any
+> malicious actions the server may take. For example, currently any fuse
+> server right now could choose to deadlock or hang a request which
+> would stall the client indefinitely.
+>=20
+> Curious to hear if you and Jeff agree or disagree with this.
+>=20
 >=20
 
-That would definitely break the contract. The question is whether
-that's a security issue. I'm not convinced that it is, given all of the
-other ways you can do nefarious stuff with an unprivileged server.
+I'm not sure here -- again FUSE isn't my area of expertise, but
+disclosing potentially private info is generally considered worse than
+a denial of service attack.
 
-That said, if there is any question, gating this behind CAP_SYS_ADMIN
-seems like a reasonable thing to do. We could always relax that later
-if we decide that it's a non-issue.
+I wonder whether we could check if there are extra folio refs
+outstanding after the I/O is done?
 
+IOW, get the refcount on the folios you're splicing before you send
+them to userland. After the I/O is done, get their refcounts again and
+see if they have been elevated? If so, then something is probably
+misusing those buffers?
 --=20
 Jeff Layton <jlayton@kernel.org>
 
