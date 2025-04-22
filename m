@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-46958-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13F55A96E66
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8870FA96E7A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E39B4407D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:27:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5FE31B60FAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC1D28A3F8;
-	Tue, 22 Apr 2025 14:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1142628C5BA;
+	Tue, 22 Apr 2025 14:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mW2jCIel"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="I/sov1lh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6CB2857EA;
-	Tue, 22 Apr 2025 14:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCE03D81;
+	Tue, 22 Apr 2025 14:26:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745331998; cv=none; b=VcU9R/1iOdrx+VWSJSGGZqhm5agGyRwkr0qsz2Gj7hFzRTldg41dVglw5j7u93HW3I6cSe51gd84p8owwvrsWp1ytny/uyQCr+bYegNUXZ0chwMi/jXLr+P6hwZGzxcKU0Q/xUxv5V8MEoe8S+Otzyz/+mwFGdDxvwYnFliQ25M=
+	t=1745332002; cv=none; b=jp2a+GHFo4WOuwVG9t7bnhdSDwBK9u8j45oI9t4nAI/5ywZZK0/vvZUSkdhCYnp7h9Gw+m6XctWzdr1w0XR2OnN9TxmeRBf2MasO9Idmfphn4mnIoHn5I1pT1mIFMffWNoksLsAQQqwtTFm9Ly0u7f6dfmWH3duK9FyJj/j577c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745331998; c=relaxed/simple;
-	bh=HWK/Svwe9kRih2a7pRghHBSIUN3wwU8r4xV0EcIgci8=;
+	s=arc-20240116; t=1745332002; c=relaxed/simple;
+	bh=7gjKDQra0/a1K6wXlepV/Hux76JTfChjmqLmj3gljo0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X/58X9XlaqGkMH9xhWPgx3pm+Tqns3QaDJ1OztzcmfPDCrBX2cVLraBmk8ygEpNJFHJMTlQlv0VzXBOTYnOkINSntIYUWdNycaCK9eEPz32O6zv00QRcaXVznTnwP6NNz12fjtE/iunSGpEf+kytJQDdBbx3tpSCpMtIveJmSy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mW2jCIel; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=IiKuliPjBJ2FhFNRfiZ1qHDrxYI2uJwvtCrYxFW/cY2XxEsd5TWNQ/FwxUCeJiY1NJr/wjd1UT23sKlx2lyDouCDUXOQKnuqJUYMxdLueDTJSTbIg+v1RwlkG/5ql5fUunkm6575oeJfv24kH0slDUAt8GXFtZPjVRytuPDszcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=I/sov1lh; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=l/F4z/tDIO8fCjZT51bLPvoe5UaAe6WQER3MP3GDa3c=; b=mW2jCIelm5DcNyEWyn/zpgTPNV
-	mdfKMHSzjicLqj4akBGNgyo0rc4DaNcpA/T1zRk+c8NPsdG72Yg+YapJIU2mW/H9oIkRV2ll4QjQx
-	oSsZolpbKIdZcxWeGbFpBqaMbU0C3HEoOc0HV+yqCwNk5WL23lRer+WNyrAHnxelBS2f+B4QcylOI
-	9QVK6U7KpOUS5T3dLmnLgcG1wSwKuYA4a34TCdPVn/ePR643/TBu/Jlruv0OSwbjUzk4iAdmEvb32
-	G1LB+wXMfcdZNkvrSBhu8uSIGqAKloU4YQRCbx21kPo+UaMwmRTB1ySkrL3ErQu22Nij5ik+UyMdd
-	VlEVOjgg==;
+	bh=CTeLL40eGQ7T9KguW6upUiD6nOZLQMEr9DC+Z4EB+rg=; b=I/sov1lhyqUcOA/Njt6zmLVTX2
+	oVvWPxO2VTUDrZdYaom6b9K3jsHcu6TGGD8t1J5aZSCC6KJtNPvWm7wVWz5BObW6u5nAoTdnX4Frj
+	/4SWk0nu7lwwJJ+8JK+Ncndg2gIogyeV1MzxK+a5nPPh89rGgOZk/XTyYM/Vr92B7hR9Fiq11bdc8
+	W5wveR0ohHPQRS1dQx6gxnoPDkYMIwxRs6QC28CJkVCkcHcZAr8XAD6tSH4RGwzjGRpoxx5kzMB/G
+	pZz5vPI9omvkJzmuL1DQX3CTksaL/l0QRMLojV1at98idfhVxreRV8/HQehyt/AW6OlbSyaWw6Yec
+	iD/ixNEA==;
 Received: from [2001:4bb8:2fc:38c3:78fb:84a5:c78c:68b6] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u7Ea3-00000007U9a-1NrP;
-	Tue, 22 Apr 2025 14:26:36 +0000
+	id 1u7Ea7-00000007UAJ-1Suf;
+	Tue, 22 Apr 2025 14:26:40 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
@@ -71,9 +71,9 @@ Cc: linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-pm@vger.kernel.org
-Subject: [PATCH 01/17] block: add a bio_add_virt_nofail helper
-Date: Tue, 22 Apr 2025 16:26:02 +0200
-Message-ID: <20250422142628.1553523-2-hch@lst.de>
+Subject: [PATCH 02/17] block: add a bdev_rw_virt helper
+Date: Tue, 22 Apr 2025 16:26:03 +0200
+Message-ID: <20250422142628.1553523-3-hch@lst.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250422142628.1553523-1-hch@lst.de>
 References: <20250422142628.1553523-1-hch@lst.de>
@@ -86,41 +86,76 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add a helper to add a directly mapped kernel virtual address to a
-bio so that callers don't have to convert to pages or folios.
-
-For now only the _nofail variant is provided as that is what all the
-obvious callers want.
+Add a helper to perform synchronous I/O on a kernel direct map range.
+Currently this is implemented in various places in usually not very
+efficient ways, so provide a generic helper instead.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- include/linux/bio.h | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ block/bio.c         | 30 ++++++++++++++++++++++++++++++
+ include/linux/bio.h |  5 ++++-
+ 2 files changed, 34 insertions(+), 1 deletion(-)
 
+diff --git a/block/bio.c b/block/bio.c
+index 4e6c85a33d74..a6a867a432cf 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1301,6 +1301,36 @@ int submit_bio_wait(struct bio *bio)
+ }
+ EXPORT_SYMBOL(submit_bio_wait);
+ 
++/**
++ * bdev_rw_virt - synchronously read into / write from kernel mapping
++ * @bdev:	block device to access
++ * @sector:	sector to accasse
++ * @data:	data to read/write
++ * @len:	length to read/write
++ * @op:		operation (e.g. REQ_OP_READ/REQ_OP_WRITE)
++ *
++ * Performs synchronous I/O to @bdev for @data/@len.  @data must be in
++ * the kernel direct mapping and not a vmalloc address.
++ */
++int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
++		size_t len, enum req_op op)
++{
++	struct bio_vec bv;
++	struct bio bio;
++	int error;
++
++	if (WARN_ON_ONCE(is_vmalloc_addr(data)))
++		return -EIO;
++
++	bio_init(&bio, bdev, &bv, 1, op);
++	bio.bi_iter.bi_sector = sector;
++	bio_add_virt_nofail(&bio, data, len);
++	error = submit_bio_wait(&bio);
++	bio_uninit(&bio);
++	return error;
++}
++EXPORT_SYMBOL_GPL(bdev_rw_virt);
++
+ static void bio_wait_end_io(struct bio *bio)
+ {
+ 	complete(bio->bi_private);
 diff --git a/include/linux/bio.h b/include/linux/bio.h
-index cafc7c215de8..0678b67162ee 100644
+index 0678b67162ee..17a10220c57d 100644
 --- a/include/linux/bio.h
 +++ b/include/linux/bio.h
-@@ -417,6 +417,23 @@ void __bio_add_page(struct bio *bio, struct page *page,
- 		unsigned int len, unsigned int off);
- void bio_add_folio_nofail(struct bio *bio, struct folio *folio, size_t len,
- 			  size_t off);
-+
-+/**
-+ * bio_add_virt_nofail - add data in the diret kernel mapping to a bio
-+ * @bio: destination bio
-+ * @vaddr: data to add
-+ * @len: length of the data to add, may cross pages
-+ *
-+ * Add the data at @vaddr to @bio.  The caller must have ensure a segment
-+ * is available for the added data.  No merging into an existing segment
-+ * will be performed.
-+ */
-+static inline void bio_add_virt_nofail(struct bio *bio, void *vaddr,
-+		unsigned len)
-+{
-+	__bio_add_page(bio, virt_to_page(vaddr), len, offset_in_page(vaddr));
-+}
+@@ -402,7 +402,6 @@ static inline int bio_iov_vecs_to_alloc(struct iov_iter *iter, int max_segs)
+ 
+ struct request_queue;
+ 
+-extern int submit_bio_wait(struct bio *bio);
+ void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
+ 	      unsigned short max_vecs, blk_opf_t opf);
+ extern void bio_uninit(struct bio *);
+@@ -434,6 +433,10 @@ static inline void bio_add_virt_nofail(struct bio *bio, void *vaddr,
+ 	__bio_add_page(bio, virt_to_page(vaddr), len, offset_in_page(vaddr));
+ }
+ 
++int submit_bio_wait(struct bio *bio);
++int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
++		size_t len, enum req_op op);
 +
  int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
  void bio_iov_bvec_set(struct bio *bio, const struct iov_iter *iter);
