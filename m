@@ -1,154 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-46922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1641FA968A1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:11:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA770A96940
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:25:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F250189C265
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 12:11:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 957E93BB804
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 12:25:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB06227CCCF;
-	Tue, 22 Apr 2025 12:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5761FDA94;
+	Tue, 22 Apr 2025 12:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="A3buqNfp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BDF27CB10
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 12:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B461F09B3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 12:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745323890; cv=none; b=lqRCfeXu1OwsGjA1gZqkXrOZRCUHNpIEgx4d4XEFYgd9EcqCA9oR8PM96xOw0GIK8IN+zEAkLtEv5fLPPbth+R/uQrZOmL1bOgxbUOdBAPJEmUUgk0L/dlAdAY8WHNDvLFWw55iK9d9K9Jk2XIeDH0Sqk8d25/4DcefXTf0uhxk=
+	t=1745324718; cv=none; b=pj9Hu/5LQuvmzeQcU9OGwhYBMhbYyDM5WVzxB+iqWg40v96HTMiVAfU+VwBsOZ6uu+0DSJZZ5a4j82o92/FxgwrTPm9dKlz0uffLOa9OWrkSagbJHrq+sBp/WzuuLz+hC9pmXcNVLOWfWVOkPJKWY5F8ZqtYLLuzskDwrDVTN/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745323890; c=relaxed/simple;
-	bh=v+QGk9aZpsAsGScTaJ03a6+SiReqDBbzR8DgGCECRiM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DXt4t4S8h1hiVEawBQvrPgBK+tLTZZ1tX+doLY5fqOhBJseQv9B1IYd/6SSjJmdAajE9R0TGQOp+02FeShmYEKZnAEBU3CWedgWg7761N1PIAxsHcmowEGzivQ2nU59fJeGIkSuw0PpwgO1B/My9goviKutUwcJCbF+9ABaH/ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-85b5a7981ccso504494639f.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 05:11:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745323888; x=1745928688;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=msWtidcZBgXXJ+183U0Y5v1GiY5Yg9JwQ4JAAakzZbI=;
-        b=QqM+UfOnA+Ppmq4JHAOUwRpsl5deguJpkgbcVP582Thx0pHY9jDCK1hgBAe/PkEurn
-         VAVA/Knt8xWQfWYv345YCPAXgO27GnwXor3nUNBGjHGz7N4ZaxZ1HJdKc+lUI8F2slDw
-         8evB5sQwPsvtPw09gfA7auYzxqmEFMxtf8HYSq7/JZi7cQMefwkxh26lcsO37cQHXpL8
-         D6rcgc5X0h43tYffz0fxNslt4DLAwgLR/Rl52k8dHDuRf8JW/yQvvvZ03vz29SjiHUYX
-         3F1ofyePLKi/b8addzH2KKdWWecuZNfKnwJ9sPYySW8bMg+vjro6UM4v/Iyx8FbULQOl
-         sGuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWr7PpV/SM8DY+RaPy+6DcakiN6QX8AymCB7paApW4fQDZwyGoJqnclztNFRvOS6Mejxvbyvm3EuJSiB5dq@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhP5KVhWuqdmwpZQL0lsff24f2Cc+ZNgKUNZF6xBvU/l52Fu8b
-	UoGPtg6wZRFv6AFHb/M+QJlYTp600IqhuhW8UTZwtM1vvNOB7Dj+HsENn2zHjgiOKv3UWlsIvzK
-	y7sG81SsaQKq+Wg3Yue8mgENV5W3hvrvPYmxHn+dmz5H4H23IPn419qo=
-X-Google-Smtp-Source: AGHT+IEMFb8JU/M7kVuJoJS8TIxiLrbjAhQDbP3f3uGhmZLC41LA0ZmwIkm5GudqZ0a7Imt9SF7LapTDu37yzsZXoBtStblPMwSL
+	s=arc-20240116; t=1745324718; c=relaxed/simple;
+	bh=CWoyTh+Q/6W8Nv8gddun+uEr0UT8coD1FmH1Wj/0rko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UOEGSlTTwN925eYNDbmR9V850fGNvqyirbgBachraz8Vn/w2hatgGEk1Sn7dzg3TCJe96pXpBbNjuFabRX6UXVBEdmQPR7Fx8Da1PICl+sH2U1JIL6E3PUzIykIHxlbLBoygis+YRbwOvnW7b6ALIsk6fW3UMrqvdLUgVx+NdRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=A3buqNfp; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YtHQfcU0ujBCHdSccsLsNycAHDtNC5m4+Ufos9psphw=; b=A3buqNfpqr91yH4pCEoe04vU7q
+	uu79vgiWtkqRMYnzOj+3uFz/HQZUAm/CN/WQvuFrrR8q410PjCq3VnOUol8pNOvwOEDp1nCjdRzsk
+	H1Je5VIBELlbWxcWSCdQuVTK8Ay+Ee/E5lPhPp4dHUhLlXz1M32/7D4LP0OrEVlPXaOIcTSQBQ3u9
+	MXBY8zFHQOjWRMtbap3PPSPX7M6hdESi/bxcjzttcscneyt4hibK4V2Rjh0Fhf43N1c0sod6StQCc
+	Iiej39MQfsgUzA4bAc51HCyJAg9zRm0IX0IHclObpbXVRwZ+qQsQCsCgbzVxFAPY9YVM80g13up3N
+	vPj5ZNGQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u7Cgc-00000005tqA-141B;
+	Tue, 22 Apr 2025 12:25:14 +0000
+Date: Tue, 22 Apr 2025 13:25:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH][RFC] ->mnt_devname is never NULL
+Message-ID: <20250422122514.GZ2023217@ZenIV>
+References: <20250421033509.GV2023217@ZenIV>
+ <20250421-annehmbar-fotoband-eb32f31f6124@brauner>
+ <20250421162947.GW2023217@ZenIV>
+ <20250422-erbeten-ambiente-f6b13eab8a29@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:4417:10b0:3d9:24d8:8d4f with SMTP id
- e9e14a558f8ab-3d924d88fb1mr4028095ab.16.1745323887958; Tue, 22 Apr 2025
- 05:11:27 -0700 (PDT)
-Date: Tue, 22 Apr 2025 05:11:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6807876f.050a0220.8500a.000f.GAE@google.com>
-Subject: [syzbot] [fs?] KCSAN: data-race in choose_mountpoint_rcu / umount_tree
-From: syzbot <syzbot+81fdaf0f522d5c5e41fb@syzkaller.appspotmail.com>
-To: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250422-erbeten-ambiente-f6b13eab8a29@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Hello,
+On Tue, Apr 22, 2025 at 09:31:14AM +0200, Christian Brauner wrote:
+> On Mon, Apr 21, 2025 at 05:29:47PM +0100, Al Viro wrote:
+> > On Mon, Apr 21, 2025 at 09:56:20AM +0200, Christian Brauner wrote:
+> > > On Mon, Apr 21, 2025 at 04:35:09AM +0100, Al Viro wrote:
+> > > > Not since 8f2918898eb5 "new helpers: vfs_create_mount(), fc_mount()"
+> > > > back in 2018.  Get rid of the dead checks...
+> > > >     
+> > > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > > ---
+> > > 
+> > > Good idea. Fwiw, I've put this into vfs-6.16.mount with some other minor
+> > > stuff. If you're keeping it yourself let me know.
+> > 
+> > Not sure...  I'm going through documenting the struct mount lifecycle/locking/etc.
+> > and it already looks like there will be more patches, but then some are going
+> > to be #fixes fodder.
+> > 
+> > Example caught just a couple of minutes ago: do_lock_mount()
+> >                 if (beneath) {
+> >                         m = real_mount(mnt);
+> >                         read_seqlock_excl(&mount_lock);
+> >                         dentry = dget(m->mnt_mountpoint);
+> >                         read_sequnlock_excl(&mount_lock);
+> >                 } else {
+> >                         dentry = path->dentry;
+> >                 }
+> > 
+> >                 inode_lock(dentry->d_inode);
+> > What's to prevent the 'beneath' case from getting mnt mount --move'd
+> > away *AND* the ex-parent from getting unmounted while we are blocked
+> > in inode_lock?  At this point we are not holding any locks whatsoever
+> > (and all mount-related locks nest inside inode_lock(), so we couldn't
+> > hold them there anyway).
+> > 
+> > Hit that race and watch a very unhappy umount...
+> 
+> If it gets unmounted or moved we immediately detect this in the next line:
+> 
+> if (beneath && (!is_mounted(mnt) || m->mnt_mountpoint != dentry)) {
 
-syzbot found the following issue on:
+Sure, we would - *AFTER* we get through that inode_lock().
 
-HEAD commit:    a33b5a08cbbd Merge tag 'sched_ext-for-6.15-rc3-fixes' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1058f26f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=85dd0f8b81b9d41f
-dashboard link: https://syzkaller.appspot.com/bug?extid=81fdaf0f522d5c5e41fb
-compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+Consider the following setup:
 
-Unfortunately, I don't have any reproducer for this issue yet.
+mkdir foo
+mkdir bar
+mkdir splat
+mount -t tmpfs none foo		# mount 1
+mount -t tmpfs none bar		# mount 2
+mkdir bar/baz
+mount -t tmpfs none bar/baz	# mount 3
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/718e6f7bde0a/disk-a33b5a08.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/20f5e402fb15/vmlinux-a33b5a08.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2dd06e277fc7/bzImage-a33b5a08.xz
+then
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+81fdaf0f522d5c5e41fb@syzkaller.appspotmail.com
+A: move_mount(AT_FDCWD, "foo", AT_FDCWD, "bar/baz", MOVE_MOUNT_BENEATH)
+gets to do_move_mount() and into do_lock_mount() called by it.
 
-==================================================================
-BUG: KCSAN: data-race in choose_mountpoint_rcu / umount_tree
+path->mnt points to mount 3, path->dentry - to its root.  Both are pinned.
+do_lock_mount() goes into the first iteration of loop.  beneath is true,
+so it picks dentry - that of #3 mountpoint, i.e. "/baz" on #2 tmpfs instance.
 
-write to 0xffff888108512d98 of 8 bytes by task 21705 on cpu 1:
- unhash_mnt fs/namespace.c:1050 [inline]
- umount_mnt fs/namespace.c:1064 [inline]
- umount_tree+0x6f0/0xb10 fs/namespace.c:1922
- do_umount fs/namespace.c:-1 [inline]
- path_umount+0x9c1/0xa40 fs/namespace.c:2144
- ksys_umount fs/namespace.c:2167 [inline]
- __do_sys_umount fs/namespace.c:2172 [inline]
- __se_sys_umount fs/namespace.c:2170 [inline]
- __x64_sys_umount+0xb7/0xe0 fs/namespace.c:2170
- x64_sys_call+0x2883/0x2e10 arch/x86/include/generated/asm/syscalls_64.h:167
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xc9/0x1a0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+At that point refcount of that dentry is 3 - one from being a positive on
+tmpfs, one from being a mountpoint and one more just grabbed by do_lock_mount().
 
-read to 0xffff888108512d98 of 8 bytes by task 21704 on cpu 0:
- choose_mountpoint_rcu+0x3d/0x130 fs/namei.c:1386
- follow_dotdot_rcu fs/namei.c:2020 [inline]
- handle_dots+0x559/0x790 fs/namei.c:2095
- walk_component fs/namei.c:2132 [inline]
- link_path_walk+0x5f6/0x840 fs/namei.c:2503
- path_lookupat+0x6c/0x2a0 fs/namei.c:2659
- filename_lookup+0x14b/0x340 fs/namei.c:2689
- filename_setxattr+0x59/0x2b0 fs/xattr.c:660
- path_setxattrat+0x28a/0x320 fs/xattr.c:713
- __do_sys_setxattr fs/xattr.c:747 [inline]
- __se_sys_setxattr fs/xattr.c:743 [inline]
- __x64_sys_setxattr+0x6e/0x90 fs/xattr.c:743
- x64_sys_call+0x28e7/0x2e10 arch/x86/include/generated/asm/syscalls_64.h:189
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xc9/0x1a0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Now we enter inode_lock(dentry->d_inode).  Note that at that point A is not
+holding any locks.  Suppose it gets preempted at this moment for whatever reason.
 
-value changed: 0xffff888116147cc0 -> 0xffff8881065c23c0
+B: mount --move bar/baz splat
+Proceeds without any problems, mount #3 gets moved to "splat".  Now refcount
+of mount #2 is not pinned by anything and refcount of "/baz" on it is 2, since
+it's no longer a mountpoint.
 
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 21704 Comm: syz.6.5865 Not tainted 6.15.0-rc3-syzkaller-00008-ga33b5a08cbbd #0 PREEMPT(voluntary) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-==================================================================
+B: umount bar
+... and now it hits the fan, since the refcount of mount #2 is not elevated by
+anything, so we do not hit -EBUSY and proceed through umount(2) all the way to
+kill_litter_super(), which drops the refcount of "/baz" to 1 and calls kill_anon_super().
+Which gets to shrink_dcache_for_umount() and from there - to umount_check() on
+that dentry.  You get yelled at, then you get yelled at again for busy inodes
+after umount (that dentry is pinning the inode down), etc.  Superblock of #2
+is freed.
 
+A: regains CPU.  is_mounted() is true (now at splat instead of bar/baz, but still
+mounted), ->mnt_mountpoint does not match.
+All right, inode_unlock(dentry->d_inode), then dput(dentry) and now the refcount
+of that dentry finally hits zero.  We get iput() on its inode, followed by
+shmem_evict_inode() which is where we finally oops.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+As for the second issue...  Normal callers of unlock_mount() do have a struct path
+somewhere that pins the location we are dealing with.  However, 'beneath' case
+of do_move_mount() does not - it relies upon the sucker being a mountpoint all
+along.  Which is fine until you drop namespace_sem.  As soon as namespace_unlock()
+has been called, there's no warranty that it will _stay_ a mountpoint.  Moving
+that inode_unlock() before the namespace_unlock() avoids that scenario.
 
