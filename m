@@ -1,155 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-46917-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46918-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 017B1A9673A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:23:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DB60A9674D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 812487A59ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 11:22:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC10A3ADFE9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 11:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BB627C863;
-	Tue, 22 Apr 2025 11:23:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB9B27BF87;
+	Tue, 22 Apr 2025 11:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJeGi9p4"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EEUSmd9Z";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IBdSlQ01";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EEUSmd9Z";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="IBdSlQ01"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f195.google.com (mail-pf1-f195.google.com [209.85.210.195])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C337B278167;
-	Tue, 22 Apr 2025 11:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A178F27BF74
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 11:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745320979; cv=none; b=s1fmy80UEbXq3FUffIG8bfuT9/z8PZtYAyM9DJB2vTKzuZ/lBKs4KR5qdG/NQtVgEa7jKsLruTh3tRMjH34qCjcq/hyUUta0YFMsuIO0VYJ7yCRhjXCX4/5iguqe2aoZR4CWVGIPCfPJ0GWFxuaL0FZkYx8CB3bw7jKZMPjU4ZM=
+	t=1745321159; cv=none; b=NPlU+/Sa3s764jm7a1cQKwj9Sm5bwc63C/+/AwqiI0Qi0csVFFrIWbULvNAd6FlEqBJcSB632wWzaMkoi2f7F6yoUyK5qamvw2R5Uyh99QxGrTVTpf62hszcrhHORBO71ZT8CyicOe69u0Xc2PG9NV4T4sorQwh5MTf6NUpFJ1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745320979; c=relaxed/simple;
-	bh=pzRMD7fDKf99WmyFQqJWme1aUHdFSU9HM/xTQzrFw7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=u+1/dWweA0g28AAH8VuYtgXV1ZoS853ds9st8or7Wsfq/xnyk2OyFIvoELc/ydlnVl4sdP4FXkcwFOZpANPcUtyjIGwgREDu2BWoXRQtPNxCDANEnYbpnT31aHRb9s0fs/NTwxaquGVaIyY42GV5fWI3feHPowylIQ5jtpysqX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJeGi9p4; arc=none smtp.client-ip=209.85.210.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f195.google.com with SMTP id d2e1a72fcca58-7399838db7fso4736823b3a.0;
-        Tue, 22 Apr 2025 04:22:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745320977; x=1745925777; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aiGSkrm3DgewfYaP+Izlu7kFJeequ2GOc9ocYH0CLkc=;
-        b=SJeGi9p4HqbQfsXOKRGSPp1jio1xxpXvcvcr59dNEMjJo+ireVqYGcwdGoE/O0Bxl/
-         +IWjLDMxtPn+LCQYkxTC+LyyddLxrCFT4pHQSLdGzRLEWWjJtdb6nPK5XqSxXP2rCo9t
-         HLillhaajUuJrENz32Yl0LNKTjfVKoBouEmr/PSOSYsjNOvKy3kArcXLiifF73PuqHkx
-         EOarv7v9dLKtC3kInf+Us/1smD/uYrOJlRBNAvtmXUvxBz/NWqvhuz63NTZzxxT5p5xu
-         SGT6EKQEnwiQiyLnF9ZXrpHW6wKbBaL/JGJboKaT8Y2dQMpTmhWbEiqg/Xnn4tsTLL1l
-         wJlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745320977; x=1745925777;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aiGSkrm3DgewfYaP+Izlu7kFJeequ2GOc9ocYH0CLkc=;
-        b=h5T0ySxHdJt0fOxpeWbBeqmV+L+ddtBwpHW3n/OPdRqkX7oGTL4bGOPe7fESIcKpK3
-         Foc29OF5J0dbveoN4KCe2N+YRfKbsZPbwIYNOSMZR+tNq7IdCx+75N5DlLUHtcl9dTrZ
-         bJNMZ7qtPXy5lCUWUTaw9scclQF3C82dcfeauJeCrd/MjL4+0MFlcQ1soXfefcsd4neI
-         MaxpQQrPpAggHapsCY7mH9/DjxXh4VKUam4JuIYqmli9C3x/rHVwGuk5VtU1Tk18n6N6
-         Y6oky5vZzoEfLSdN1pGvXD/3QUfl2aKCIOE4DxPRbDZ441Bzld+oXZyAp/XECJ2T99v3
-         DDEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXCl7Uvl5YvYOEnxhorZXCbodpm88gBOTW2hcSRvzkxX1o5AtInWSM5eMd9Hfh5Asqzo3XBdRUrWa7OGEnR@vger.kernel.org, AJvYcCXQBJDiKikQpdfPhYkLAAIbMzESXZE1VG3FPggFbSvNo3O9CNYIF69ePMfn1fgi4ZRJJi8SldCWjEgMMaQi@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFdDGXzO3mr5AFeMo/cDu9vU5QjZk+bm69HDumUiXWQ3BiA7Em
-	fJ12UKG21CVvwy/nnUUl05wOKLXFgCNWMa8HXVQmCsgazVjolc2P
-X-Gm-Gg: ASbGncteMKK6xvfSIN2jaCvQYmNmdehUNp87GHoTwIh497K7VEuH+AmnSS3/CPv9D4/
-	VefNiuSPY/OZBYTk0h2jak+r94gdREBzHWk4LAnZgnGkfi3vjvx3aDJbEjLXZTOhtm1WCEb4+Tq
-	aSHca85DXpDcdzWbL0Tis28M1R6wJ3kIeyJ8O0ar2hgmbW6F9M7eUYfyGyRZUa4WVQY1sjGatxY
-	nYA0Ukgkwf4RJWzb1Uog4i0qwLmQL4ouhvPiZmUGLFrZZgR7Kmo+GITnZYe1elaUU8aB0B+Fm1U
-	C5cKTs5/XPiA0BoRIwhGPF9Y0RgwnJDV5wpL18YkHL1QpcMeOlhtLQ==
-X-Google-Smtp-Source: AGHT+IGjecXBs7xBC0/rqoGxfRjHsEUBjW1ci/D+q51pdPyQkmzahn2l0dZlrCg3rUyHbG4WAEIaXA==
-X-Received: by 2002:a05:6a00:2c86:b0:736:4e14:8ec5 with SMTP id d2e1a72fcca58-73dc1b78556mr21412590b3a.11.1745320976914;
-        Tue, 22 Apr 2025 04:22:56 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73dbf901143sm8318136b3a.73.2025.04.22.04.22.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Apr 2025 04:22:56 -0700 (PDT)
-From: xu xin <xu.xin.sc@gmail.com>
-X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
-To: xu.xin16@zte.com.cn
-Cc: akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wang.yaxin@zte.com.cn,
-	yang.yang29@zte.com.cn
-Subject: [PATCH RESEND 6/6] memcontrol-v1: add ksm_profit in cgroup/memory.ksm_stat
-Date: Tue, 22 Apr 2025 11:22:51 +0000
-Message-Id: <20250422112251.3231599-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250422191407770210-193JBD0Fgeu5zqE2K@zte.com.cn>
-References: <20250422191407770210-193JBD0Fgeu5zqE2K@zte.com.cn>
+	s=arc-20240116; t=1745321159; c=relaxed/simple;
+	bh=xMwBI9JrSwhqTpbGiRz6Y57HnmM05ftBgV6XDhxHO3w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=adY0G/u6dzA0vkWGTKGmie9/WNcz581kJsQXba0fBKhnWSl80g9wrzFz9ate1yB+GiI6fQvbdQgXHVkZPRxobGE0OSVORogAPIEotF4dJ+6qMZ6lc7zsgrbwgjTmdLY4resfof/qIHLza9ug45YgFFMk6RSsohMlZJT0L9N0TaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EEUSmd9Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IBdSlQ01; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EEUSmd9Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=IBdSlQ01; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C78A321187;
+	Tue, 22 Apr 2025 11:25:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745321155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iO6vzueM4CxUgcbkft4Y4vPzSVxQmwKdoliK2EKUjiQ=;
+	b=EEUSmd9ZXncONRT13T3UzRXYGC+hvbX92t9/Fgj7M9Eev+PbyfHP6gkcRi6F3lgDHDsiYc
+	ODuzVnK5e3aEBzJvu/lfzlqb04F/JjEfg9QOkuv5BtJeUH2jjg19381+zCYhjHkoXQR4Nn
+	CKrFj6Imtf0pZtFO1lUZ7V8mdYy1Kzs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745321155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iO6vzueM4CxUgcbkft4Y4vPzSVxQmwKdoliK2EKUjiQ=;
+	b=IBdSlQ01m3XklXTdLALO8NRVSSvfWU13y2aoIbwF4rCkgrojv/0oDSCw/7wpjAoYbwSB7/
+	9n2gvnKpezPsdeCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745321155; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iO6vzueM4CxUgcbkft4Y4vPzSVxQmwKdoliK2EKUjiQ=;
+	b=EEUSmd9ZXncONRT13T3UzRXYGC+hvbX92t9/Fgj7M9Eev+PbyfHP6gkcRi6F3lgDHDsiYc
+	ODuzVnK5e3aEBzJvu/lfzlqb04F/JjEfg9QOkuv5BtJeUH2jjg19381+zCYhjHkoXQR4Nn
+	CKrFj6Imtf0pZtFO1lUZ7V8mdYy1Kzs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745321155;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iO6vzueM4CxUgcbkft4Y4vPzSVxQmwKdoliK2EKUjiQ=;
+	b=IBdSlQ01m3XklXTdLALO8NRVSSvfWU13y2aoIbwF4rCkgrojv/0oDSCw/7wpjAoYbwSB7/
+	9n2gvnKpezPsdeCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B7EE2139D5;
+	Tue, 22 Apr 2025 11:25:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id bcDjLMN8B2hsCwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 22 Apr 2025 11:25:55 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 66ABEA0A56; Tue, 22 Apr 2025 13:25:55 +0200 (CEST)
+Date: Tue, 22 Apr 2025 13:25:55 +0200
+From: Jan Kara <jack@suse.cz>
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, jack@suse.cz, tytso@mit.edu, adilger.kernel@dilger.ca, 
+	brauner@kernel.org, willy@infradead.org, hare@suse.de, djwong@kernel.org, 
+	linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH -next 0/7] fs/buffer: split pagecache lookups into atomic
+ or blocking
+Message-ID: <defginw6pm72k5obplzmgzjo2bw4yonaahpbnockb2akqv4qbr@f7egm23q5ozi>
+References: <20250415231635.83960-1-dave@stgolabs.net>
+ <aAAEvcrmREWa1SKF@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aAAEvcrmREWa1SKF@bombadil.infradead.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-Users can obtain ksm_profit of a cgroup just by:
+On Wed 16-04-25 12:27:57, Luis Chamberlain wrote:
+> On Tue, Apr 15, 2025 at 04:16:28PM -0700, Davidlohr Bueso wrote:
+> > Hello,
+> > 
+> > This is a respin of the series[0] to address the sleep in atomic scenarios for
+> > noref migration with large folios, introduced in:
+> > 
+> >       3c20917120ce61 ("block/bdev: enable large folio support for large logical block sizes")
+> > 
+> > The main difference is that it removes the first patch and moves the fix (reducing
+> > the i_private_lock critical region in the migration path) to the final patch, which
+> > also introduces the new BH_Migrate flag. It also simplifies the locking scheme in
+> > patch 1 to avoid folio trylocking in the atomic lookup cases. So essentially blocking
+> > users will take the folio lock and hence wait for migration, and otherwise nonblocking
+> > callers will bail the lookup if a noref migration is on-going. Blocking callers
+> > will also benefit from potential performance gains by reducing contention on the
+> > spinlock for bdev mappings.
+> > 
+> > It is noteworthy that this series is probably too big for Linus' tree, so there are
+> > two options:
+> > 
+> >  1. Revert 3c20917120ce61, add this series + 3c20917120ce61 for next. Or,
+> 
+> Reverting due to a fix series is odd, I'd advocate this series as a set
+> of fixes to Linus' tree because clearly folio migration was not complete
+> for buffer_migrate_folio_norefs() and this is part of the loose bits to help
+> it for large folios. This issue was just hard to reproduce. The enabler
+> of large folios on the block device cache is actually commit
+> 47dd67532303 ("block/bdev: lift block size restrictions to 64k") which
+> goes later after 3c20917120ce61.
 
-/ # cat /sys/fs/cgroup/memory.ksm_stat
-ksm_rmap_items 76800
-ksm_zero_pages 0
-ksm_merging_pages 76800
-ksm_profit 309657600
-
-Current implementation supports cgroup v1 temporarily; cgroup v2
-compatibility is planned for future versions.
-
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
----
- mm/memcontrol-v1.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
-index 7ee38d633d85..2cf2823c5514 100644
---- a/mm/memcontrol-v1.c
-+++ b/mm/memcontrol-v1.c
-@@ -1827,6 +1827,7 @@ struct memcg_ksm_stat {
- 	unsigned long ksm_rmap_items;
- 	long ksm_zero_pages;
- 	unsigned long ksm_merging_pages;
-+	long ksm_profit;
- };
+I fully agree reverting anything upstream when there's fix series available
+is just pointless.
  
- static int evaluate_memcg_ksm_stat(struct task_struct *task, void *arg)
-@@ -1839,6 +1840,7 @@ static int evaluate_memcg_ksm_stat(struct task_struct *task, void *arg)
- 		ksm_stat->ksm_rmap_items += mm->ksm_rmap_items;
- 		ksm_stat->ksm_zero_pages += mm_ksm_zero_pages(mm);
- 		ksm_stat->ksm_merging_pages += mm->ksm_merging_pages;
-+		ksm_stat->ksm_profit += ksm_process_profit(mm);
- 		mmput(mm);
- 	}
- 
-@@ -1854,6 +1856,7 @@ static int memcg_ksm_stat_show(struct seq_file *m, void *v)
- 	ksm_stat.ksm_rmap_items = 0;
- 	ksm_stat.ksm_zero_pages = 0;
- 	ksm_stat.ksm_merging_pages = 0;
-+	ksm_stat.ksm_profit = 0;
- 
- 	/* summing all processes'ksm statistic items of this cgroup hierarchy */
- 	mem_cgroup_scan_tasks(memcg, evaluate_memcg_ksm_stat, &ksm_stat);
-@@ -1861,6 +1864,7 @@ static int memcg_ksm_stat_show(struct seq_file *m, void *v)
- 	seq_printf(m, "ksm_rmap_items %lu\n", ksm_stat.ksm_rmap_items);
- 	seq_printf(m, "ksm_zero_pages %ld\n", ksm_stat.ksm_zero_pages);
- 	seq_printf(m, "ksm_merging_pages %ld\n", ksm_stat.ksm_merging_pages);
-+	seq_printf(m, "ksm_profit %ld\n", ksm_stat.ksm_profit);
- 
- 	return 0;
- }
+> Jan Kara, since you've already added your Reviewed-by for all patches
+> do you have any preference how this trickles to Linus?
+
+I think pushing it normally through VFS tree is fine.
+
+> >  2. Cherry pick patch 7 as a fix for Linus' tree, and leave the rest for next.
+> >     But that could break lookup callers that have been deemed unfit to bail.
+> > 
+> > Patch 1: carves a path for callers that can block to take the folio lock.
+> > Patch 2: adds sleeping flavors to pagecache lookups, no users.
+> > Patches 3-6: converts to the new call, where possible.
+> > Patch 7: does the actual sleep in atomic fix.
+> > 
+> > Thanks!
+> 
+> kdevops has tested this patch series and compared it to the baseline [0]
+> and has found no regressions on ext4.
+> 
+> Tested-by: kdevops@lists.linux.dev
+
+Cool, thanks for testing.
+
+								Honza
 -- 
-2.39.3
-
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
