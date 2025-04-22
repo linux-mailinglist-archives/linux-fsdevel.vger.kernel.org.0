@@ -1,85 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-46980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16508A97035
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 17:14:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD16A97127
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 17:37:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB1463B0DD5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 15:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B486188A216
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 15:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D082428153C;
-	Tue, 22 Apr 2025 15:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2507628F51D;
+	Tue, 22 Apr 2025 15:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="beZ7LsdS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qNCi+Qtl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004FC284B42;
-	Tue, 22 Apr 2025 15:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E8B1494A8;
+	Tue, 22 Apr 2025 15:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745334866; cv=none; b=SzLH+KK1jPHGwwGt1kihinHXgBHfPvsQWHA7VVrJUcujoAuuHjHTg7l6TxawSGYvq+ZTzy1Snm+r6rK1HovBizxInXDtg0Vxv9KvnKVGiqJWKl7rt4lHSkRb3ppZI3hAVFSfRcuUn8uoV2Qg+M8+T+dmPUo7cbIIrHHqt3C9iDk=
+	t=1745336162; cv=none; b=oxd6bAZJrxfR/Gv/J3omjr+4S7UHjz/beGx3pdkhZPEU/Ddp5ol8PPuy9NELQIl7/YDPQw1Xe5ZzjvvgcKchKT664VKLg/osVolQ7ilJCL5Ft5YLnTkroWhmu8HM2O1KnelcGLrnjgLtyEmQKSyrzDqtjQ+Lyf7ZJYpNr3KxmZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745334866; c=relaxed/simple;
-	bh=lSbO7DQOl7qwT5MJRJMvfW/c1+fnMb2KJJ+xVIINpPo=;
+	s=arc-20240116; t=1745336162; c=relaxed/simple;
+	bh=mPUjzTsoFC/NJnHC63CpAKhwboTnx8d1kgG3aqCLZmI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z8xYTx4tN5Fl/ZbfKw9iZbL4hXCeCFmlqKNV0bvEIg2vM7SxQaWQc5KheOaV9M05h83gvw2+6q2x9jsEACiZUDWS7V28auKOjsHfkUPemHWRPpBEoff6zjyUa8OSv/qfMFXYXA17ZEYGrjts18N27QQKhyzLVfUMXIT/SJGbFZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=beZ7LsdS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08793C4CEE9;
-	Tue, 22 Apr 2025 15:14:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpVLF4Q6S/dhdJlWihPC25jbbrow0mBmpldfNq5T2EftZMOwvhAfeDav3qmEsVr+Z/9poM+cERWlTq3sH/LATmjaPnUzJk2WhDIDEJUZroiAwFle9AcM4F6jcxxsr/TkpDIXWQHTLzD0rYJfa5/zin8qB9kzdkRp1jabWm9Cemg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qNCi+Qtl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB819C4CEE9;
+	Tue, 22 Apr 2025 15:35:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745334865;
-	bh=lSbO7DQOl7qwT5MJRJMvfW/c1+fnMb2KJJ+xVIINpPo=;
+	s=k20201202; t=1745336161;
+	bh=mPUjzTsoFC/NJnHC63CpAKhwboTnx8d1kgG3aqCLZmI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=beZ7LsdSi9ogRm6COvjTgxTx5DUokGe1NIskhD1Sd/cUrpINh5Hi7ZbRSC4/d84j3
-	 Ti74rBHoDCX2uKhMLA8RFoi78F7zLpulfvYbxiyuPWCTHUpt91JmFCCnNIFMiC63ZJ
-	 fyxIf7YwMCDjLqs9yBdshcKBulenxdLGzicBlGS67FqAeCgpdPVW3CnOPj8McMU0xZ
-	 /UoW6DW244fMiDspWdMKq+cgwRtWXK/9CerZk9TzlxdZvhc1TFxwQh4aqam93ykR8i
-	 kvlXyyWfPalvpguNSnuCK53W3jm5GQYs/SST8d1Bw9P7SIMsJ4KVF3iaBJBWxd9cuE
-	 HiB5wuAvJto0g==
-Date: Tue, 22 Apr 2025 17:14:10 +0200
+	b=qNCi+QtlmV3zMddqk2AxBkg13aO6TKuCcLsUovdpOGQPNpLStJPME4FMt8ji8KSNQ
+	 07/3fLS3oUys8Af/ghB5nx/U28u7S3ucANeLNt1b3Ndf26wdnmkCBDYXAQOAQdOlSq
+	 Mcy/vKD6HO8+1d/N62//eUDtkx6Dlh2GUmlKqqaESrH3uaJLytH+ljiUcaEEiv8puj
+	 CsjQ14zFex5k0ClOBTlxYym9hNAh/WRpWBkPMHchg8TLysprWkZxRkr4pe21pPXsOw
+	 5TifmZAZG5rTMRGFQwiZDC/sHvA0F+gRi3rHU0WHpc2GXeq0vIMuXds4+cLYQDyInx
+	 /7nFYP0/IrrCQ==
+Date: Tue, 22 Apr 2025 17:35:56 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
- syscalls
-Message-ID: <20250422-gefressen-faucht-8ded2c9a5375@brauner>
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
- <CAOQ4uxj2Fqmc_pSD4bqqoQu7QjmgSVp2V15FbmBdTNqQ03aPGQ@mail.gmail.com>
- <faqun3wrpvwrhwukql3niqvvauy5ngrpytx5bxbrv5xkounez3@m7j2znjuzapu>
- <CAOQ4uxjs=Gg-ocwx_fkzc0gxQ_dHx-P9EAgz5ZwbdbrxV0T_EA@mail.gmail.com>
- <20250422-suchen-filmpreis-3573a913457c@brauner>
+To: hch <hch@lst.de>
+Cc: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "axboe@kernel.dk" <axboe@kernel.dk>, 
+	"djwong@kernel.org" <djwong@kernel.org>, "ebiggers@google.com" <ebiggers@google.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, 
+	Xiao Ni <xni@redhat.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
+Subject: Re: [PATCH] fs: move the bdex_statx call to vfs_getattr_nosec
+Message-ID: <20250422-goldkette-hitzig-95ddd8f86168@brauner>
+References: <20250417064042.712140-1-hch@lst.de>
+ <xrvvwm7irr6dldsbfka3c4qjzyc4zizf3duqaroubd2msrbjf5@aiexg44ofiq3>
+ <20250422055149.GB29356@lst.de>
+ <20250422-angepackt-reisen-bc24fbec2702@brauner>
+ <20250422081736.GA674@lst.de>
+ <20250422141505.GA25426@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,159 +66,91 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250422-suchen-filmpreis-3573a913457c@brauner>
+In-Reply-To: <20250422141505.GA25426@lst.de>
 
-On Tue, Apr 22, 2025 at 04:31:29PM +0200, Christian Brauner wrote:
-> On Thu, Mar 27, 2025 at 12:39:28PM +0100, Amir Goldstein wrote:
-> > On Thu, Mar 27, 2025 at 10:33 AM Andrey Albershteyn <aalbersh@redhat.com> wrote:
-> > >
-> > > On 2025-03-23 09:56:25, Amir Goldstein wrote:
-> > > > On Fri, Mar 21, 2025 at 8:49 PM Andrey Albershteyn <aalbersh@redhat.com> wrote:
-> > > > >
-> > > > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > >
-> > > > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > > > > extended attributes/flags. The syscalls take parent directory fd and
-> > > > > path to the child together with struct fsxattr.
-> > > > >
-> > > > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > > > > that file don't need to be open as we can reference it with a path
-> > > > > instead of fd. By having this we can manipulated inode extended
-> > > > > attributes not only on regular files but also on special ones. This
-> > > > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > > > > we can not call ioctl() directly on the filesystem inode using fd.
-> > > > >
-> > > > > This patch adds two new syscalls which allows userspace to get/set
-> > > > > extended inode attributes on special files by using parent directory
-> > > > > and a path - *at() like syscall.
-> > > > >
-> > > > > CC: linux-api@vger.kernel.org
-> > > > > CC: linux-fsdevel@vger.kernel.org
-> > > > > CC: linux-xfs@vger.kernel.org
-> > > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > > > > ---
-> > > > ...
-> > > > > +SYSCALL_DEFINE5(setfsxattrat, int, dfd, const char __user *, filename,
-> > > > > +               struct fsxattr __user *, ufsx, size_t, usize,
-> > > > > +               unsigned int, at_flags)
-> > > > > +{
-> > > > > +       struct fileattr fa;
-> > > > > +       struct path filepath;
-> > > > > +       int error;
-> > > > > +       unsigned int lookup_flags = 0;
-> > > > > +       struct filename *name;
-> > > > > +       struct mnt_idmap *idmap;.
-> > > >
-> > > > > +       struct dentry *dentry;
-> > > > > +       struct vfsmount *mnt;
-> > > > > +       struct fsxattr fsx = {};
-> > > > > +
-> > > > > +       BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
-> > > > > +       BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
-> > > > > +
-> > > > > +       if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-> > > > > +               return -EINVAL;
-> > > > > +
-> > > > > +       if (!(at_flags & AT_SYMLINK_NOFOLLOW))
-> > > > > +               lookup_flags |= LOOKUP_FOLLOW;
-> > > > > +
-> > > > > +       if (at_flags & AT_EMPTY_PATH)
-> > > > > +               lookup_flags |= LOOKUP_EMPTY;
-> > > > > +
-> > > > > +       if (usize > PAGE_SIZE)
-> > > > > +               return -E2BIG;
-> > > > > +
-> > > > > +       if (usize < FSXATTR_SIZE_VER0)
-> > > > > +               return -EINVAL;
-> > > > > +
-> > > > > +       error = copy_struct_from_user(&fsx, sizeof(struct fsxattr), ufsx, usize);
-> > > > > +       if (error)
-> > > > > +               return error;
-> > > > > +
-> > > > > +       fsxattr_to_fileattr(&fsx, &fa);
-> > > > > +
-> > > > > +       name = getname_maybe_null(filename, at_flags);
-> > > > > +       if (!name) {
-> > > > > +               CLASS(fd, f)(dfd);
-> > > > > +
-> > > > > +               if (fd_empty(f))
-> > > > > +                       return -EBADF;
-> > > > > +
-> > > > > +               idmap = file_mnt_idmap(fd_file(f));
-> > > > > +               dentry = file_dentry(fd_file(f));
-> > > > > +               mnt = fd_file(f)->f_path.mnt;
-> > > > > +       } else {
-> > > > > +               error = filename_lookup(dfd, name, lookup_flags, &filepath,
-> > > > > +                                       NULL);
-> > > > > +               if (error)
-> > > > > +                       return error;
-> > > > > +
-> > > > > +               idmap = mnt_idmap(filepath.mnt);
-> > > > > +               dentry = filepath.dentry;
-> > > > > +               mnt = filepath.mnt;
-> > > > > +       }
-> > > > > +
-> > > > > +       error = mnt_want_write(mnt);
-> > > > > +       if (!error) {
-> > > > > +               error = vfs_fileattr_set(idmap, dentry, &fa);
-> > > > > +               if (error == -ENOIOCTLCMD)
-> > > > > +                       error = -EOPNOTSUPP;
-> > > >
-> > > > This is awkward.
-> > > > vfs_fileattr_set() should return -EOPNOTSUPP.
-> > > > ioctl_setflags() could maybe convert it to -ENOIOCTLCMD,
-> > > > but looking at similar cases ioctl_fiemap(), ioctl_fsfreeze() the
-> > > > ioctl returns -EOPNOTSUPP.
-> > > >
-> > > > I don't think it is necessarily a bad idea to start returning
-> > > >  -EOPNOTSUPP instead of -ENOIOCTLCMD for the ioctl
-> > > > because that really reflects the fact that the ioctl is now implemented
-> > > > in vfs and not in the specific fs.
-> > > >
-> > > > and I think it would not be a bad idea at all to make that change
-> > > > together with the merge of the syscalls as a sort of hint to userspace
-> > > > that uses the ioctl, that the sycalls API exists.
-> > > >
-> > > > Thanks,
-> > > > Amir.
-> > > >
-> > >
-> > > Hmm, not sure what you're suggesting here. I see it as:
-> > > - get/setfsxattrat should return EOPNOTSUPP as it make more sense
-> > >   than ENOIOCTLCMD
-> > > - ioctl_setflags returns ENOIOCTLCMD which also expected
-> > >
-> > > Don't really see a reason to change what vfs_fileattr_set() returns
-> > > and then copying this if() to other places or start returning
-> > > EOPNOTSUPP.
-> > 
-> > ENOIOCTLCMD conceptually means that the ioctl command is unknown
-> > This is not the case since ->fileattr_[gs]et() became a vfs API
+On Tue, Apr 22, 2025 at 04:15:05PM +0200, hch wrote:
+> Turns out this doesn't work.  We used to have the request_mask, but it
+> got removed in 25fbcd62d2e1 ("bdev: use bdev_io_min() for statx block
+> size") so that stat can expose the block device min I/O size in
+> st_blkdev, and as the blksize doesn't have it's own request_mask flag
+> is hard to special case.
 > 
-> vfs_fileattr_{g,s}et() should not return ENOIOCTLCMD. Change the return
-> code to EOPNOTSUPP and then make EOPNOTSUPP be translated to ENOTTY on
-> on overlayfs and to ENOIOCTLCMD in ecryptfs and in fs/ioctl.c. This way
-> we get a clean VFS api while retaining current behavior. Amir can do his
-> cleanup based on that.
+> So maybe the better question is why devtmpfs even calls into
+> vfs_getattr?  As far as I can tell handle_remove is only ever called on
+> the actual devtmpfs file system, so we don't need to go through the
+> VFS to query i_mode.  i.e. the patch should also fix the issue.  The
 
-Also this get/set dance is not something new apis should do. It should
-be handled like setattr_prepare() or generic_fillattr() where the
-filesystem calls a VFS helper and that does all of this based on the
-current state of the inode instead of calling into the filesystem twice:
+Hm, yes. Just looked at the history and it dates back to Kay's original
+devtmpfs patch.
 
-int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
-		     struct fileattr *fa)
-{
-<snip>
-	inode_lock(inode);
-	err = vfs_fileattr_get(dentry, &old_ma);
-	if (!err) {
-		/* initialize missing bits from old_ma */
-		if (fa->flags_valid) {
-<snip>
-		err = fileattr_set_prepare(inode, &old_ma, fa);
-		if (!err && !security_inode_setfsxattr(inode, fa))
-			err = inode->i_op->fileattr_set(idmap, dentry, fa);
+> modify_change is probably not needed either, but for now I'm aiming
+> for the minimal fix.
+> 
+> diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+> index 6dd1a8860f1c..53fb0829eb7b 100644
+> --- a/drivers/base/devtmpfs.c
+> +++ b/drivers/base/devtmpfs.c
+> @@ -296,7 +296,7 @@ static int delete_path(const char *nodepath)
+>  	return err;
+>  }
+>  
+> -static int dev_mynode(struct device *dev, struct inode *inode, struct kstat *stat)
+> +static int dev_mynode(struct device *dev, struct inode *inode)
+>  {
+>  	/* did we create it */
+>  	if (inode->i_private != &thread)
+
+It seems off that there are deletion requests coming in for a files that
+weren't created by devtmpfsd. But maybe that can somehow happen.
+
+> @@ -304,13 +304,13 @@ static int dev_mynode(struct device *dev, struct inode *inode, struct kstat *sta
+>  
+>  	/* does the dev_t match */
+>  	if (is_blockdev(dev)) {
+> -		if (!S_ISBLK(stat->mode))
+> +		if (!S_ISBLK(inode->i_mode))
+>  			return 0;
+>  	} else {
+> -		if (!S_ISCHR(stat->mode))
+> +		if (!S_ISCHR(inode->i_mode))
+>  			return 0;
+>  	}
+> -	if (stat->rdev != dev->devt)
+> +	if (inode->i_rdev != dev->devt)
+>  		return 0;
+>  
+>  	/* ours */
+> @@ -321,8 +321,7 @@ static int handle_remove(const char *nodename, struct device *dev)
+>  {
+>  	struct path parent;
+>  	struct dentry *dentry;
+> -	struct kstat stat;
+> -	struct path p;
+> +	struct inode *inode;
+>  	int deleted = 0;
+>  	int err;
+>  
+> @@ -330,11 +329,8 @@ static int handle_remove(const char *nodename, struct device *dev)
+>  	if (IS_ERR(dentry))
+>  		return PTR_ERR(dentry);
+>  
+> -	p.mnt = parent.mnt;
+> -	p.dentry = dentry;
+> -	err = vfs_getattr(&p, &stat, STATX_TYPE | STATX_MODE,
+> -			  AT_STATX_SYNC_AS_STAT);
+> -	if (!err && dev_mynode(dev, d_inode(dentry), &stat)) {
+> +	inode = d_inode(dentry);
+> +	if (dev_mynode(dev, inode)) {
+>  		struct iattr newattrs;
+>  		/*
+>  		 * before unlinking this node, reset permissions
+> @@ -342,7 +338,7 @@ static int handle_remove(const char *nodename, struct device *dev)
+>  		 */
+>  		newattrs.ia_uid = GLOBAL_ROOT_UID;
+>  		newattrs.ia_gid = GLOBAL_ROOT_GID;
+> -		newattrs.ia_mode = stat.mode & ~0777;
+> +		newattrs.ia_mode = inode->i_mode & ~0777;
+>  		newattrs.ia_valid =
+>  			ATTR_UID|ATTR_GID|ATTR_MODE;
+>  		inode_lock(d_inode(dentry));
 
