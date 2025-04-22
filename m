@@ -1,208 +1,384 @@
-Return-Path: <linux-fsdevel+bounces-46996-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46997-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BCDCA973A4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 19:33:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBF5A973CB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 19:41:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCE43400F69
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 17:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D20B1896246
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 17:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 096A91B3950;
-	Tue, 22 Apr 2025 17:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891D61DB154;
+	Tue, 22 Apr 2025 17:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="a0HK+wnK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SCWmW/8H"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F86E1AF4C1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 17:33:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E928C1D5CEA
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 17:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745343227; cv=none; b=encDsQmuV3wgvmLDdyY1jumXTC6cAH7TOumSrThCH8LRzTu63b4C+vCbgT2j3js7OwoapYjP6Qq08O6vyj1G+d6Hrklf9yrttSwUPDYGyfyjFQWiuLYkHUKONreNoRZ+5q/WZxExIwDYhzsQ2hPnvIMbXB/qnnCmaFBq9TRGyDU=
+	t=1745343697; cv=none; b=ixQk3gAeJqDnrWFKS+XYZGPL3BYhwf7xaeIVFTneVgSygfUYLTlT5SLzGrkmQXfy4DOWUt0ojn7uuLZGxW5LDn7Z0pHu0cvfwOBm0W+zkp++NOoQ30Bn8GbWjz5W6fPjlHBz1QeZXFdHze8dmbWWsDl6SJt8QXBrmBzS8ySWAEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745343227; c=relaxed/simple;
-	bh=dSAcZbTWg2mRj31XtfxzRba5O5nw0iZOo2bmf99Ch34=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VOiQIYBo70b4u69taDpOHTON9GI2Lna3mUgnQJtp0kZeX0wQsOzPhH3O57nRmg1ImYrX70f8kqI6fN/NWa/gYjtoXSRQH5NAahaS1LkHKFI/zbxVUyGwIHv5Lg6ewdhF9AqzBq0StXBfiqnLl3XnzKVNorNGqvKL5OlWtc+azpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=a0HK+wnK; arc=none smtp.client-ip=209.85.166.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-85de3e8d0adso80820639f.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 10:33:44 -0700 (PDT)
+	s=arc-20240116; t=1745343697; c=relaxed/simple;
+	bh=J1XACVnx9RJl/TD9TooSLNThGkr7HrPiDUwdN9JodyI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g6zwn8bU1P38/Eoy/2FHCJZ8LnvyseaMhqjo1euGYaaHfosU6tD4QRz7eGEarJpoPqk9v7RZ5H/4oZ+uBI6bySGw2JgZcuis/4w/yVd8oEQLdYsJJNBnMyHISApacl/Ini+dQhNWMYiy0J1UBS+la187eIRO4qI0B+BwQ4qvl84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SCWmW/8H; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4769aef457bso65576121cf.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 10:41:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745343223; x=1745948023; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9ScI1SXFOzSb57R/DfhDhjRTVd9dkpAdipPrsoDQFnA=;
-        b=a0HK+wnKDsWgUSGS5EgSMmrqpWhtllbXKV/XcpXEnajR68ndtFhDYP/whp/4Fz3cz+
-         ZB0mqhA5pMWjDo6L3wzcdIkIGq92zsIx4HpSa4BRGJoN/z9BiMfWc+LgmxQfoWhCy4Al
-         ffsP2l3J1YJNSScXt5C3WdP/z7Az2GYaJd3fzbx5ubxjcalj6KSUmluvpokXzNZKEUTN
-         lLDLI78GXrvZ+1pzLuhlWe5VQJyWjbAhuYwkz5TEEzlcCCkAWGYgplAom0C0Uk1K7CxG
-         DkVPYNk7PDVA/OgMUji+ljSPMBRsAbnBbcZJJXByfGMk/xujsUZbSE9SRqLw/cuhrhEj
-         mxwQ==
+        d=gmail.com; s=20230601; t=1745343694; x=1745948494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LCNe8i0BAgJWtaMr5ewXgev5akdheG+RiY5FcYx6mUI=;
+        b=SCWmW/8HVsojOkr4uMD1aKWU0o82QZqxMKkHdq9SBa57SyPZm42uyTZXRo94nthWB1
+         nP/QJJKVi5iarRLWWdVeAERdcx5VdBpqbgptLuaIlTzxf7Ovqs+Nh4gR65voACElL2ro
+         tahckQpsrA5elrOqD/4pds1EAsNICai9Jrd+BB2Op1M1OyY5EMq744KeoaYh2nCV7thc
+         LGSVgCxbo98GZsgd3bR5azhKX+kflxwNsek5mEmreYv72McRQGJpqo800N4fXKUJPXOc
+         W2J0GLLloYXl4F7+T3L2+0cKfTWDNOcEG8huEVuCLFljTWajjnTkjxInUsv7Xj6E7KpG
+         0h1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745343223; x=1745948023;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ScI1SXFOzSb57R/DfhDhjRTVd9dkpAdipPrsoDQFnA=;
-        b=iGLg4x+QvnLmGKZIyECXkPH7nE2bAyOHkUnGFvervXlTcQok/2A9i54f8tTYS4DA4o
-         58vhdQmM97IwsmkCzSPXzW+9SUqZipQhJp2Q2Jev+gkewatBvFc2a/qWC6Cj7S0MDFHd
-         yETfEQp7IFBsvDiatUiL5XkJm+SXRIq492JOAnsd5gHFNjRKIoVytqNu28/A9ZQkdIJR
-         DwLb4sTqhKpLejTt5OeT8FsKSERRJVScqpFEfToZcSXr/6iL2FUklm0S/T/U6UWaiSuI
-         K+mUxvWeQBtwBN90y5GK1oqIs7/5gKyFjFDBMSUefhevM6+E//aVsmEONZkFL3mdnHt8
-         GcgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWipfp/N+geBtuAmLwE3I7KKLBUfYHvAani4xmdNiA69b8GosSzRbuW11sHhipGfpe2Yly06jBDhWn0Mfyg@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLkw0zAr/EY8ol783mS+PNU0bblxcOr5GH6lBgNXmCINj2UESa
-	a96Lm8Zjuj4CLjkeezRpPE7cDFgB41ohZgqAKrOLociMk+YbYU2+LGtEXDnQb80=
-X-Gm-Gg: ASbGnctgSADtSh9zoDm8Qd/pTKBwIiOslgQdbaAI1qxtPCnzQYRUji4YGjw79SQAqf5
-	yCrW3Msq4hXAbdQb5CKReobhcM4rqXxW9b9YGxXETTjhx3SQ1MXzocUR6NauTCJvoY9K+iy9B4f
-	oQfxueiIR+4m8dHK11canK+mrLu0xTSlFc5Cw6JqjnmcE3N5iEpOIGfhbA/p3ZOBtnBzg/Cf4Qi
-	hd224Gk0CneSALnwSuJIHGaXhKGbJHNuQ3ei4AyVG1QMjocauY/hZeieR+0j5oGS/Qsy5CtepMZ
-	JC16upyELIUrx0kh8XEdwSmIBJ9C1ec9LI0i3A==
-X-Google-Smtp-Source: AGHT+IG8uGVTpBjrvsiqLLauHBgN8q79Pyq/8FjC5UurY/AC+NdKVjMzlDN4p2eRnVLt9F3CH6lp+g==
-X-Received: by 2002:a05:6602:3789:b0:85b:3885:159e with SMTP id ca18e2360f4ac-861dbdc71e1mr1900443339f.3.1745343223260;
-        Tue, 22 Apr 2025 10:33:43 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a380664dsm2413104173.47.2025.04.22.10.33.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 10:33:42 -0700 (PDT)
-Message-ID: <b61ac651-fafe-449a-82ed-7239123844e1@kernel.dk>
-Date: Tue, 22 Apr 2025 11:33:41 -0600
+        d=1e100.net; s=20230601; t=1745343694; x=1745948494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LCNe8i0BAgJWtaMr5ewXgev5akdheG+RiY5FcYx6mUI=;
+        b=LbS5Z0/EJZJgb4Op1XfuwZIipqUnXAJJY6Vc2OCNmrWqX7wuNfe52VWQJ683Qrb1bZ
+         t1AVhhmKDd3eBBEskFHNxsALVRB8ktM78hxytI5e3N+tWOWnxXmNngjutYe9k8c0F1bF
+         Xkq0s7OGHYGCkbuaOLmzhr+LZAlffGt+vkvs7QFsOY3ai4c9S6JRKB/SfNbbNQ/ckpOZ
+         PjLCvS3WOKs/scYEAbqyE8AH0WHfNEAKlNII+aBcs/ac/cnwEeYaCUfFtS5EMDPezWGt
+         MxpDYSAnwsm8Y/rwBr05UKX9AT4oK8H35mFwneNRlAYH6rWZSlMYpLTX+t5rtX+KVTWb
+         6Fhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXj9e3CE3wsMpnYn08jfvNweup3eYo7muB7pMYRxAntwObwWPBc2Grafm7ECET+JLCh1PPH0Gbugp7+FwED@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyos/0XP4ZkCjF5oDx9zEYz0YeQEWswwkqMc24nOLwfUnIc/Tgo
+	4K+BPzuwmOPZzlccW+ElJqT8DWAnrmqlK+kIu8t9PjVWQmnylkde3OdduPRicIXA234rN76hGBk
+	VsFrCDS8SceKIcgmk1PrgmISZQgEPi9Ux
+X-Gm-Gg: ASbGncvPweWLXLemudYcE2X3/d9YVgDRLhiGw/DRqozCrxHiE/DQe7yaezZgess7o+X
+	/8eGk2S2xK+ZHyKgXNoXfbUcqnrFj5W9yMYvSOtpxDCB202B+yQdPQEcAHvAMmbT2fHGJixDE/+
+	46BxxjFdJJwZ9p8hXkLYET/lF8JrYar1x9vzj03g==
+X-Google-Smtp-Source: AGHT+IF4bqaOLkc80S0+mxFnpzANXCFDrF4tpfc/EGZHQ/JDMTt2BFYqAQ5OvXpB/hZfCdD666ydq7sV326G+pjSqVA=
+X-Received: by 2002:a05:622a:148d:b0:476:aa36:d67c with SMTP id
+ d75a77b69052e-47aec4c568emr317614661cf.49.1745343693600; Tue, 22 Apr 2025
+ 10:41:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault
- scenarios
-To: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- akpm@linux-foundation.org, peterx@redhat.com, asml.silence@gmail.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20250422162913.1242057-1-qq282012236@gmail.com>
- <20250422162913.1242057-2-qq282012236@gmail.com>
- <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
- <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250419000614.3795331-1-joannelkoong@gmail.com>
+ <5332002a-e444-4f62-8217-8d124182290d@fastmail.fm> <26673a5077b148e98a3957532f0cb445aa7ed3c7.camel@kernel.org>
+ <a65b5034-2bae-4eec-92e2-3a9ad003b0bb@fastmail.fm> <CAJnrk1bGxhuQRCB_biX52J_rbq8S5tvPQyK-Lf+-nsMRK5OtOg@mail.gmail.com>
+ <b7034a2d7443c76e1efc90fae9d7b81c80a5c03f.camel@kernel.org>
+In-Reply-To: <b7034a2d7443c76e1efc90fae9d7b81c80a5c03f.camel@kernel.org>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Tue, 22 Apr 2025 10:41:22 -0700
+X-Gm-Features: ATxdqUGKJ9k36f_NxxvegNl9iOEYCOZZabRbmwp5V0C1ZVWSQuidBi4yCl7G96E
+Message-ID: <CAJnrk1Yp1Qex7RQxsn8qD-O+YGMc-p06atFCez=B8=2kVNagLw@mail.gmail.com>
+Subject: Re: [PATCH v1] fuse: use splice for reading user pages on servers
+ that enable it
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Bernd Schubert <bernd.schubert@fastmail.fm>, miklos@szeredi.hu, 
+	linux-fsdevel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 4/22/25 11:04 AM, ??? wrote:
-> On Wed, Apr 23, 2025 at 12:32?AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 4/22/25 10:29 AM, Zhiwei Jiang wrote:
->>> diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
->>> index d4fb2940e435..8567a9c819db 100644
->>> --- a/io_uring/io-wq.h
->>> +++ b/io_uring/io-wq.h
->>> @@ -70,8 +70,10 @@ enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
->>>                                       void *data, bool cancel_all);
->>>
->>>  #if defined(CONFIG_IO_WQ)
->>> -extern void io_wq_worker_sleeping(struct task_struct *);
->>> -extern void io_wq_worker_running(struct task_struct *);
->>> +extern void io_wq_worker_sleeping(struct task_struct *tsk);
->>> +extern void io_wq_worker_running(struct task_struct *tsk);
->>> +extern void set_userfault_flag_for_ioworker(void);
->>> +extern void clear_userfault_flag_for_ioworker(void);
->>>  #else
->>>  static inline void io_wq_worker_sleeping(struct task_struct *tsk)
->>>  {
->>> @@ -79,6 +81,12 @@ static inline void io_wq_worker_sleeping(struct task_struct *tsk)
->>>  static inline void io_wq_worker_running(struct task_struct *tsk)
->>>  {
->>>  }
->>> +static inline void set_userfault_flag_for_ioworker(void)
->>> +{
->>> +}
->>> +static inline void clear_userfault_flag_for_ioworker(void)
->>> +{
->>> +}
->>>  #endif
->>>
->>>  static inline bool io_wq_current_is_worker(void)
->>
->> This should go in include/linux/io_uring.h and then userfaultfd would
->> not have to include io_uring private headers.
->>
->> But that's beside the point, like I said we still need to get to the
->> bottom of what is going on here first, rather than try and paper around
->> it. So please don't post more versions of this before we have that
->> understanding.
->>
->> See previous emails on 6.8 and other kernel versions.
->>
->> --
->> Jens Axboe
-> The issue did not involve creating new worker processes. Instead, the
-> existing IOU worker kernel threads (about a dozen) associated with the VM
-> process were fully utilizing CPU without writing data, caused by a fault
-> while reading user data pages in the fault_in_iov_iter_readable function
-> when pulling user memory into kernel space.
+On Tue, Apr 22, 2025 at 4:37=E2=80=AFAM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+>
+> On Mon, 2025-04-21 at 17:49 -0700, Joanne Koong wrote:
+> > On Mon, Apr 21, 2025 at 2:38=E2=80=AFPM Bernd Schubert
+> > <bernd.schubert@fastmail.fm> wrote:
+> > >
+> > > On 4/21/25 14:35, Jeff Layton wrote:
+> > > > On Mon, 2025-04-21 at 13:49 +0200, Bernd Schubert wrote:
+> > > > >
+> > > > > On 4/19/25 02:06, Joanne Koong wrote:
+> > > > > > For direct io writes, splice is disabled when forwarding pages =
+from the
+> > > > > > client to the server. This is because the pages in the pipe buf=
+fer are
+> > > > > > user pages, which is controlled by the client. Thus if a server=
+ replies
+> > > > > > to the request and then keeps accessing the pages afterwards, t=
+here is
+> > > > > > the possibility that the client may have modified the contents =
+of the
+> > > > > > pages in the meantime. More context on this can be found in com=
+mit
+> > > > > > 0c4bcfdecb1a ("fuse: fix pipe buffer lifetime for direct_io").
+> > > > > >
+> > > > > > For servers that do not need to access pages after answering th=
+e
+> > > > > > request, splice gives a non-trivial improvement in performance.
+> > > > > > Benchmarks show roughly a 40% speedup.
+> > > > > >
+> > > > > > Allow servers to enable zero-copy splice for servicing client d=
+irect io
+> > > > > > writes. By enabling this, the server understands that they shou=
+ld not
+> > > > > > continue accessing the pipe buffer after completing the request=
+ or may
+> > > > > > face incorrect data if they do so.
+> > > > > >
+> > > > > > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> > > > > > ---
+> > > > > >  fs/fuse/dev.c             | 18 ++++++++++--------
+> > > > > >  fs/fuse/dev_uring.c       |  4 ++--
+> > > > > >  fs/fuse/fuse_dev_i.h      |  5 +++--
+> > > > > >  fs/fuse/fuse_i.h          |  3 +++
+> > > > > >  fs/fuse/inode.c           |  5 ++++-
+> > > > > >  include/uapi/linux/fuse.h |  8 ++++++++
+> > > > > >  6 files changed, 30 insertions(+), 13 deletions(-)
+> > > > > >
+> > > > > > diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+> > > > > > index 67d07b4c778a..1b0ea8593f74 100644
+> > > > > > --- a/fs/fuse/dev.c
+> > > > > > +++ b/fs/fuse/dev.c
+> > > > > > @@ -816,12 +816,13 @@ static int unlock_request(struct fuse_req=
+ *req)
+> > > > > >     return err;
+> > > > > >  }
+> > > > > >
+> > > > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
+> > > > > > -               struct iov_iter *iter)
+> > > > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_co=
+nn *fc,
+> > > > > > +               bool write, struct iov_iter *iter)
+> > > > > >  {
+> > > > > >     memset(cs, 0, sizeof(*cs));
+> > > > > >     cs->write =3D write;
+> > > > > >     cs->iter =3D iter;
+> > > > > > +   cs->splice_read_user_pages =3D fc->splice_read_user_pages;
+> > > > > >  }
+> > > > > >
+> > > > > >  /* Unmap and put previous page of userspace buffer */
+> > > > > > @@ -1105,9 +1106,10 @@ static int fuse_copy_page(struct fuse_co=
+py_state *cs, struct page **pagep,
+> > > > > >             if (cs->write && cs->pipebufs && page) {
+> > > > > >                     /*
+> > > > > >                      * Can't control lifetime of pipe buffers, =
+so always
+> > > > > > -                    * copy user pages.
+> > > > > > +                    * copy user pages if server does not suppo=
+rt splice
+> > > > > > +                    * for reading user pages.
+> > > > > >                      */
+> > > > > > -                   if (cs->req->args->user_pages) {
+> > > > > > +                   if (cs->req->args->user_pages && !cs->splic=
+e_read_user_pages) {
+> > > > > >                             err =3D fuse_copy_fill(cs);
+> > > > > >                             if (err)
+> > > > > >                                     return err;
+> > > > > > @@ -1538,7 +1540,7 @@ static ssize_t fuse_dev_read(struct kiocb=
+ *iocb, struct iov_iter *to)
+> > > > > >     if (!user_backed_iter(to))
+> > > > > >             return -EINVAL;
+> > > > > >
+> > > > > > -   fuse_copy_init(&cs, true, to);
+> > > > > > +   fuse_copy_init(&cs, fud->fc, true, to);
+> > > > > >
+> > > > > >     return fuse_dev_do_read(fud, file, &cs, iov_iter_count(to))=
+;
+> > > > > >  }
+> > > > > > @@ -1561,7 +1563,7 @@ static ssize_t fuse_dev_splice_read(struc=
+t file *in, loff_t *ppos,
+> > > > > >     if (!bufs)
+> > > > > >             return -ENOMEM;
+> > > > > >
+> > > > > > -   fuse_copy_init(&cs, true, NULL);
+> > > > > > +   fuse_copy_init(&cs, fud->fc, true, NULL);
+> > > > > >     cs.pipebufs =3D bufs;
+> > > > > >     cs.pipe =3D pipe;
+> > > > > >     ret =3D fuse_dev_do_read(fud, in, &cs, len);
+> > > > > > @@ -2227,7 +2229,7 @@ static ssize_t fuse_dev_write(struct kioc=
+b *iocb, struct iov_iter *from)
+> > > > > >     if (!user_backed_iter(from))
+> > > > > >             return -EINVAL;
+> > > > > >
+> > > > > > -   fuse_copy_init(&cs, false, from);
+> > > > > > +   fuse_copy_init(&cs, fud->fc, false, from);
+> > > > > >
+> > > > > >     return fuse_dev_do_write(fud, &cs, iov_iter_count(from));
+> > > > > >  }
+> > > > > > @@ -2301,7 +2303,7 @@ static ssize_t fuse_dev_splice_write(stru=
+ct pipe_inode_info *pipe,
+> > > > > >     }
+> > > > > >     pipe_unlock(pipe);
+> > > > > >
+> > > > > > -   fuse_copy_init(&cs, false, NULL);
+> > > > > > +   fuse_copy_init(&cs, fud->fc, false, NULL);
+> > > > > >     cs.pipebufs =3D bufs;
+> > > > > >     cs.nr_segs =3D nbuf;
+> > > > > >     cs.pipe =3D pipe;
+> > > > > > diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
+> > > > > > index ef470c4a9261..52b883a6a79d 100644
+> > > > > > --- a/fs/fuse/dev_uring.c
+> > > > > > +++ b/fs/fuse/dev_uring.c
+> > > > > > @@ -593,7 +593,7 @@ static int fuse_uring_copy_from_ring(struct=
+ fuse_ring *ring,
+> > > > > >     if (err)
+> > > > > >             return err;
+> > > > > >
+> > > > > > -   fuse_copy_init(&cs, false, &iter);
+> > > > > > +   fuse_copy_init(&cs, ring->fc, false, &iter);
+> > > > > >     cs.is_uring =3D true;
+> > > > > >     cs.req =3D req;
+> > > > > >
+> > > > > > @@ -623,7 +623,7 @@ static int fuse_uring_args_to_ring(struct f=
+use_ring *ring, struct fuse_req *req,
+> > > > > >             return err;
+> > > > > >     }
+> > > > > >
+> > > > > > -   fuse_copy_init(&cs, true, &iter);
+> > > > > > +   fuse_copy_init(&cs, ring->fc, true, &iter);
+> > > > > >     cs.is_uring =3D true;
+> > > > > >     cs.req =3D req;
+> > > > > >
+> > > > > > diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
+> > > > > > index db136e045925..25e593e64c67 100644
+> > > > > > --- a/fs/fuse/fuse_dev_i.h
+> > > > > > +++ b/fs/fuse/fuse_dev_i.h
+> > > > > > @@ -32,6 +32,7 @@ struct fuse_copy_state {
+> > > > > >     bool write:1;
+> > > > > >     bool move_pages:1;
+> > > > > >     bool is_uring:1;
+> > > > > > +   bool splice_read_user_pages:1;
+> > > > > >     struct {
+> > > > > >             unsigned int copied_sz; /* copied size into the use=
+r buffer */
+> > > > > >     } ring;
+> > > > > > @@ -51,8 +52,8 @@ struct fuse_req *fuse_request_find(struct fus=
+e_pqueue *fpq, u64 unique);
+> > > > > >
+> > > > > >  void fuse_dev_end_requests(struct list_head *head);
+> > > > > >
+> > > > > > -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
+> > > > > > -                      struct iov_iter *iter);
+> > > > > > +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_co=
+nn *conn,
+> > > > > > +               bool write, struct iov_iter *iter);
+> > > > > >  int fuse_copy_args(struct fuse_copy_state *cs, unsigned int nu=
+margs,
+> > > > > >                unsigned int argpages, struct fuse_arg *args,
+> > > > > >                int zeroing);
+> > > > > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > > > > index 3d5289cb82a5..e21875f16220 100644
+> > > > > > --- a/fs/fuse/fuse_i.h
+> > > > > > +++ b/fs/fuse/fuse_i.h
+> > > > > > @@ -898,6 +898,9 @@ struct fuse_conn {
+> > > > > >     /* Use io_uring for communication */
+> > > > > >     bool io_uring:1;
+> > > > > >
+> > > > > > +   /* Allow splice for reading user pages */
+> > > > > > +   bool splice_read_user_pages:1;
+> > > > > > +
+> > > > > >     /** Maximum stack depth for passthrough backing files */
+> > > > > >     int max_stack_depth;
+> > > > > >
+> > > > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > > > > index 43b6643635ee..e82e96800fde 100644
+> > > > > > --- a/fs/fuse/inode.c
+> > > > > > +++ b/fs/fuse/inode.c
+> > > > > > @@ -1439,6 +1439,9 @@ static void process_init_reply(struct fus=
+e_mount *fm, struct fuse_args *args,
+> > > > > >
+> > > > > >                     if (flags & FUSE_REQUEST_TIMEOUT)
+> > > > > >                             timeout =3D arg->request_timeout;
+> > > > > > +
+> > > > > > +                   if (flags & FUSE_SPLICE_READ_USER_PAGES)
+> > > > > > +                           fc->splice_read_user_pages =3D true=
+;
+> > > > >
+> > > > >
+> > > > > Shouldn't that check for capable(CAP_SYS_ADMIN)? Isn't the issue
+> > > > > that one can access file content although the write is already
+> > > > > marked as completed? I.e. a fuse file system might get data
+> > > > > it was never exposed to and possibly secret data?
+> > > > > A more complex version version could check for CAP_SYS_ADMIN, but
+> > > > > also allow later on read/write to files that have the same uid as
+> > > > > the fuser-server process?
+> > > > >
+> > > >
+> > > > IDGI. I don't see how this allows the server access to something it
+> > > > didn't have access to before.
+> > > >
+> > > > This patchset seems to be about a "contract" between the kernel and=
+ the
+> > > > userland server. The server is agreeing to be very careful about no=
+t
+> > > > touching pages after a write request completes, and the kernel allo=
+ws
+> > > > splicing the pages if that's the case.
+> > > >
+> > > > Can you explain the potential attack vector?
+> > >
+> > > Let's the server claim it does FUSE_SPLICE_READ_USER_PAGES, i.e. clai=
+ms
+> > > it stops using splice buffers before completing write requests. But t=
+hen
+> > > it actually first replies to the write and after an arbitrary amount
+> > > of time writes out the splice buffer. User application might be using
+> > > the buffer it send for write for other things and might not want to
+> > > expose that. I.e. application expects that after write(, buf,)
+> > > it can use 'buf' for other purposes and that the file system does not
+> > > access it anymore once write() is complete. I.e. it can put sensitive
+> > > data into the buffer, which it might not want to expose.
+> > > From my point of the issue is mainly with allow_other in combination
+> > > with "user_allow_other" in libfuse, as root has better ways to access=
+ data.
+> > >
+> >
+> > As I understand it, user_allow_other is disabled by default and is
+> > only enabled if explicitly opted into by root.
+> >
+> > It seems to me, philosophically, that if a client chooses to interact
+> > with / use a specific fuse mount then it chooses to place its trust in
+> > that fuse server and accepts the possible repercussions from any
+> > malicious actions the server may take. For example, currently any fuse
+> > server right now could choose to deadlock or hang a request which
+> > would stall the client indefinitely.
+> >
+> > Curious to hear if you and Jeff agree or disagree with this.
+> >
+> >
+>
+> I'm not sure here -- again FUSE isn't my area of expertise, but
+> disclosing potentially private info is generally considered worse than
+> a denial of service attack.
 
-OK that makes more sense, I can certainly reproduce a loop in this path:
+In that case then, we should probably just add the CAP_SYS_ADMIN gating.
 
-iou-wrk-726     729    36.910071:       9737 cycles:P: 
-        ffff800080456c44 handle_userfault+0x47c
-        ffff800080381fc0 hugetlb_fault+0xb68
-        ffff80008031fee4 handle_mm_fault+0x2fc
-        ffff8000812ada6c do_page_fault+0x1e4
-        ffff8000812ae024 do_translation_fault+0x9c
-        ffff800080049a9c do_mem_abort+0x44
-        ffff80008129bd78 el1_abort+0x38
-        ffff80008129ceb4 el1h_64_sync_handler+0xd4
-        ffff8000800112b4 el1h_64_sync+0x6c
-        ffff80008030984c fault_in_readable+0x74
-        ffff800080476f3c iomap_file_buffered_write+0x14c
-        ffff8000809b1230 blkdev_write_iter+0x1a8
-        ffff800080a1f378 io_write+0x188
-        ffff800080a14f30 io_issue_sqe+0x68
-        ffff800080a155d0 io_wq_submit_work+0xa8
-        ffff800080a32afc io_worker_handle_work+0x1f4
-        ffff800080a332b8 io_wq_worker+0x110
-        ffff80008002dd38 ret_from_fork+0x10
+>
+> I wonder whether we could check if there are extra folio refs
+> outstanding after the I/O is done?
+>
+> IOW, get the refcount on the folios you're splicing before you send
+> them to userland. After the I/O is done, get their refcounts again and
+> see if they have been elevated? If so, then something is probably
+> misusing those buffers?
 
-which seems to be expected, we'd continually try and fault in the
-ranges, if the userfaultfd handler isn't filling them.
+The pages are routed to the server through the pipebuffer, so I don't
+think looking at the refcount on those folios gets us anything here.
+The only solution here I see is invalidating the page in the pipe
+buffer after the server completes the request, so that any subsequent
+read attempts on that fd by the server will fail, but I think that
+gets ugly with then having to associate pipe buffers with fuse
+requests.
 
-I guess this is where I'm still confused, because I don't see how this
-is different from if you have a normal write(2) syscall doing the same
-thing - you'd get the same looping.
+For now I'll gate this behind CAP_SYS_ADMIN and in the future if this
+needs to be relaxed, we could add that in.
 
-??
-
-> This issue occurs like during VM snapshot loading (which uses
-> userfaultfd for on-demand memory loading), while the task in the guest is
-> writing data to disk.
-> 
-> Normally, the VM first triggers a user fault to fill the page table.
-> So in the IOU worker thread, the page tables are already filled,
-> fault no chance happens when faulting in memory pages
-> in fault_in_iov_iter_readable.
-> 
-> I suspect that during snapshot loading, a memory access in the
-> VM triggers an async page fault handled by the kernel thread,
-> while the IOU worker's async kernel thread is also running.
-> Maybe If the IOU worker's thread is scheduled first.
-> I?m going to bed now.
-
-Ah ok, so what you're saying is that because we end up not sleeping
-(because a signal is pending, it seems), then the fault will never get
-filled and hence progress not made? And the signal is pending because
-someone tried to create a net worker, and this work is not getting
-processed.
-
--- 
-Jens Axboe
+Thanks,
+Joanne
+> --
+> Jeff Layton <jlayton@kernel.org>
 
