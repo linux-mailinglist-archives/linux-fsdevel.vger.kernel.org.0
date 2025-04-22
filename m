@@ -1,110 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-46875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46876-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D36DAA95B9F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 04:29:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B6B7A95C39
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 04:41:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FC58173AC8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 02:29:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21E00178C5F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 02:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE332641CA;
-	Tue, 22 Apr 2025 02:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597BB17B50A;
+	Tue, 22 Apr 2025 02:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I7NlhajG"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="guijnS35"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55671F3D21;
-	Tue, 22 Apr 2025 02:18:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B55196
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 02:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745288289; cv=none; b=fOf5NzNYtmemGzM/42JdlKoDrzPS1Ny0eSw+h2ru0UWMb0u43HUs/zamO0PgxgBIPDn/Gko+tu2r5LAAVr58YMpq+TnJf3lTl856Jgc4oSbc2YG/vXHZR6ZYMdiBhq5BYeu8xc/vJUZxchGMpLGexYv9d56iGGIUsvCjtAcABEk=
+	t=1745289593; cv=none; b=poebtAVSjuHF9spD+lnmOi6cnmqvVHQ6JjKIvv9Vdzr/+YP01YVC5TyGH1F8lo09OGr950r9RfvUxdj0H5ASXDf0rbggHSZ4SHirCHSxDxT37c8MiwIUwREaMe4b+6ZTAIx7gAe+g+IPHZZ+o8q5p+DalYYwqYcIjvjfq/YFCkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745288289; c=relaxed/simple;
-	bh=olKNm6l2mt1yuke8IEo25bsaZ6K7UUmzwNfiKP4qxSE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=a+1ijwiRiybsPFJLX6+iP9l9cEQOVuF8osUq67Uh9kC6nVLLjwkTVy6noHGhw9kw9F/uty4syCrJIqqFFwdG2sJLxsxqMwLBCthdl5OHRRdZWa2OYcKfQd5TnX+UjKBUJvtxEI2ymCIx7nSl16SjjNP3ShnDllmuhK6DDK3RKUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I7NlhajG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB855C4CEEF;
-	Tue, 22 Apr 2025 02:18:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745288289;
-	bh=olKNm6l2mt1yuke8IEo25bsaZ6K7UUmzwNfiKP4qxSE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I7NlhajGgycaaQ1zyztIy3YzQSi2vImcq285LCeISBxxKVdrKGqb/bbTtviXt5RVO
-	 S/pU+PVriQ3eSawnYIbGQs6uP67p5XzbX6d3tIHj/I0v/SB9SfslTfacXt+Cc6powX
-	 yF2nY36ZxiKZV0HTETB08gwi/iriRWMDr1aMSgXYgfHzYEf9j0QV9Xa9G8w1cZeAWn
-	 TDz3j8o5HxlTUu3HXybUzU60PEa5h5SYJJ2dGRYMcCBppKSstp48dqjuQar0C3jmBN
-	 8I+UnpcgNZDVuz2BkkiHz532gvXpCNdVUhgzS6J5QbGfxHzsJ2826bInWHA6GQcFLc
-	 oykxmzvzgD2ZA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Gou Hao <gouhao@uniontech.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.6 05/15] iomap: skip unnecessary ifs_block_is_uptodate check
-Date: Mon, 21 Apr 2025 22:17:49 -0400
-Message-Id: <20250422021759.1941570-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250422021759.1941570-1-sashal@kernel.org>
-References: <20250422021759.1941570-1-sashal@kernel.org>
+	s=arc-20240116; t=1745289593; c=relaxed/simple;
+	bh=cwtMZfBdpFbRa3t3ORIYA8mpsHP3u8bjDKE5daXQS70=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BYVi6f9/zLBkh06M9Kr5COqnESfY4/n5bu/UASqt5Ms6w8hUn5Q4bJrBtpXcls7/nSpC4PQ0kDyo81ojI4EZxB5zWikNoObcBrJ86j2+LRwG1/FOH4vCu5ZqfXLtgSrGpxx5tx/NCm7MNk3cpAqft57b2X0e7XXZUJ2SoYVGPsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=guijnS35; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745289590;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pyDcFYqaztjW8wqaOBmIzVgkhhvkajnReTQLh/Jex40=;
+	b=guijnS35msq7d5w9cqv+gWUAvT+gyevdnJ1fdIIp0dI6KT8XXYjbUEeLB8kKQRe1/Ksj3M
+	NtklqaSEOv5pAXGQesQNZBo+tiYbSU12Mok1M+FNMZC7AXGsrDVYypIjlbq8Tklv94NjYb
+	17sAH9ljNurmyZA2mV8ihk0KYWEsHpw=
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com
+ [209.85.166.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-472-8PzEjgoSORGSajBwFJFaNg-1; Mon, 21 Apr 2025 22:39:48 -0400
+X-MC-Unique: 8PzEjgoSORGSajBwFJFaNg-1
+X-Mimecast-MFC-AGG-ID: 8PzEjgoSORGSajBwFJFaNg_1745289588
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d8fc035433so58205165ab.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Apr 2025 19:39:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745289588; x=1745894388;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pyDcFYqaztjW8wqaOBmIzVgkhhvkajnReTQLh/Jex40=;
+        b=ovPcY2/OmFrkfZY5bA03MYJ3oW9CU91x8+G112AQyg9WU8yOdL8eNc8iRiCHkpvEeX
+         dbndXTZ9J1WFh8yplajJuZTDk40XLHAQ5skk+KWowP/5ZWxE8v1Nonm2cxu0F/wxQb1C
+         1wlKPcycOQctkhKNpbJ5Em8M/3/mlcrgXbNdTTM2vh56haImy3ek4XnDI9UeOgEqu2wG
+         Diiw6caIKGxKX3+8zuK3hcJWY4hbCTYti6o+iA0qBQqFJJ3pTAfRViz8yZL+aR5SM+b7
+         CWy3WXwdzdUEWDyBu8badXqBNL2k6qzYnRaUVQ8RlngqUdDfWYKsOnF5R+FKiNEEuELi
+         wT1g==
+X-Gm-Message-State: AOJu0YwZflAOOCFw53QuWAINoud1+SriOA+AEmD65URNdORFvfwqrAMv
+	PMdpXhH6P5di5OX6ffGHedDknnl8obcPbd43FZnRGb5IM2HYBHMda0YUc163LJG5Fn6YqOv3gs6
+	TiHlT4M4m2G/Pge+3jR6qLCKmJgVF4d2VzZ+T6+4KrH1ocvkQKn/DiFfeVIjGax4=
+X-Gm-Gg: ASbGncsLm0M1MqpCSiE2dLBp4dZJ9RnqCGh93Lwzn3b5HA1OgX38kxME6PHpY9QweN3
+	NGAKNB0SeWZsUlLRYbRJ/ZKMVGcGTR/+nPKeyl2BkBhaABZS1y9WhCz1gfPUpC4M/HcEIpoxyUk
+	gPVzliUb0ctFyWkl+TDl4g5voX5sT+WBQ7jDG6STlevyWHO+obAKhOydJfx1/avHbSm519fZMZi
+	wtyrLFs96xrhO5a+0qzj950dbBbUZZpkTdeZ2GYXH7smPVRvZ8oli+Pu1k/B0zOJ6hNFOyeNnRw
+	EHY2C/oo/2dgVjND3t8=
+X-Received: by 2002:a05:6e02:144b:b0:3d0:4bce:cfa8 with SMTP id e9e14a558f8ab-3d88eda86a7mr127056815ab.3.1745289587851;
+        Mon, 21 Apr 2025 19:39:47 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG+PgMGlCD9AkAJAGaMvk/H7oo78RUGqiGCD+M4Q/Y7QmJRC4KUtzJGwo9PdoGdwt1N6Wwfxw==
+X-Received: by 2002:a05:6e02:144b:b0:3d0:4bce:cfa8 with SMTP id e9e14a558f8ab-3d88eda86a7mr127056665ab.3.1745289587583;
+        Mon, 21 Apr 2025 19:39:47 -0700 (PDT)
+Received: from [10.0.0.82] ([65.128.104.55])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a37cbb4fsm2100574173.16.2025.04.21.19.39.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 21 Apr 2025 19:39:47 -0700 (PDT)
+Message-ID: <5225e8d5-8807-4e33-8e23-a6d19c7b9f77@redhat.com>
+Date: Mon, 21 Apr 2025 21:39:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.87
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/7 V2] f2fs: new mount API conversion
+From: Eric Sandeen <sandeen@redhat.com>
+To: linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, chao@kernel.org,
+ lihongbo22@huawei.com
+References: <20250420154647.1233033-1-sandeen@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20250420154647.1233033-1-sandeen@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Gou Hao <gouhao@uniontech.com>
+On 4/20/25 10:24 AM, Eric Sandeen wrote:
+> This is a forward-port of Hongbo's original f2fs mount API conversion,
+> posted last August at 
+> https://lore.kernel.org/linux-f2fs-devel/20240814023912.3959299-1-lihongbo22@huawei.com/
 
-[ Upstream commit 8e3c15ee0d292c413c66fe10201d1b035a0bea72 ]
+I'll rebase this onto jaegeuk's dev tree and send a V3.
 
-In iomap_adjust_read_range, i is either the first !uptodate block, or it
-is past last for the second loop looking for trailing uptodate blocks.
-Assuming there's no overflow (there's no combination of huge folios and
-tiny blksize) then yeah, there is no point in retesting that the same
-block pointed to by i is uptodate since we hold the folio lock so nobody
-else could have set it uptodate.
-
-Signed-off-by: Gou Hao <gouhao@uniontech.com>
-Link: https://lore.kernel.org/20250410071236.16017-1-gouhao@uniontech.com
-Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Suggested-by: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/iomap/buffered-io.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index e7e6701806ad2..7ffdf0d037fae 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -224,7 +224,7 @@ static void iomap_adjust_read_range(struct inode *inode, struct folio *folio,
- 		}
- 
- 		/* truncate len if we find any trailing uptodate block(s) */
--		for ( ; i <= last; i++) {
-+		while (++i <= last) {
- 			if (ifs_block_is_uptodate(ifs, i)) {
- 				plen -= (last - i + 1) * block_size;
- 				last = i - 1;
--- 
-2.39.5
+-Eric
 
 
