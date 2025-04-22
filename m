@@ -1,79 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-46991-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46992-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80E9EA972D0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 18:32:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7052A9730A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 18:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF3C617B08E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E224403C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BF12918FF;
-	Tue, 22 Apr 2025 16:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4859C296D3E;
+	Tue, 22 Apr 2025 16:49:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="JJ+ErcEa"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WmOnqjPG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2F219F471
-	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 16:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE7927C875
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 16:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745339558; cv=none; b=LB/W6GKtXcdVoF95DSES9oHpydLOUkJcdvpkZrmQK3xry60Iy2LOCXkHOyU/32X6upFQBCMnKtODwoit8fVFak7uoEeUVssS5XUcY8XIV5O8r12Pmij933y2oKh1iIP3XDcmX97QW14zk50784pDpWf9GPDJhD82v53vHviDBG0=
+	t=1745340562; cv=none; b=KKv/VWXzYdco1j+CUa9K7A4AAj1gDa2epuz8yo7OE1jnLdnPYG5kkf4BVd3HxXbj7R0MUrpSD3uNEUZwRAfjRy0ewlzWjbS/+0BmjjNoCtCC7n3PngFfmEfUe4tnOtOsLhpWVXeX3LJoeQ1xH5WOPxe5pv2rxAzeRqFqpkpZMOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745339558; c=relaxed/simple;
-	bh=Hc/a/N/czd1QJv27rjO3dbrnoqAvSzODqlF6TDvG0Ho=;
+	s=arc-20240116; t=1745340562; c=relaxed/simple;
+	bh=1zm/ifLFoyueirmbO4F+dQ+4rpCflNI54FJ6BvufTFg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YtDJZub0RPrnzaZsvRO/qD6Dt5CO5VNPByLUJ3X7BtPrIr1ZlJ75ZtXzo5fGmVyl6A3nn/XVbJQXMZ7DQfXeacvXZqshpAvnzbvXbSKIFHKTVs7ae+OzIgWzsBjUGWBDwy8txMNg8+GD320YPXTKJxFlsq8vlSTZxz6OdzPKNPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=JJ+ErcEa; arc=none smtp.client-ip=209.85.166.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-85dac9728cdso105829239f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 09:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745339556; x=1745944356; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BI9KG26m9xjN9k6dbGw+O0NB/svh8sdwPuBKvebFKKY=;
-        b=JJ+ErcEacJcnmCKKdBqYjTgPYOlb3oEIuQYoXzfTrgWjxvznzuKQcZUY89gbNVAV0X
-         UStMCUWyEW3CEgXcAkoqxSmOpCO+7JeaSdxMSGFsQpYZwov2gzFuKcBN/IL1yDQQ02ve
-         IZSOE+/ssGWpFUhAXojMGNsNpQJUSt8Nlnh2uWOP8fpMFG393SnFoT6N4RmTMPqCJohJ
-         oVyIwc7LB1DBrmKXcVY9LR4YJhiNDTkbYBiVwCUaSTXlQ4gqZAdABvedekgKpx5D3PgX
-         bWyBKrXzloQQ6379aFoDGBNoDkAaKDRKyVYR+Zm3mSPOlfMaKyBghGOGS3SZoCFGfHzs
-         TRhg==
+	 In-Reply-To:Content-Type; b=MRKM4K9wlM8ia7UKTbyTLhwdxV5rc74ZCifNcebJn4QqVycClSgciQCsFOSkSIar5nDIKxW93OzsUyuyv1O54mNecmmBCApaaPt3RJ+J/hCXL+bWgBabRi4KA4jGvX9Fg0NADSZ5ipQOBVJ4/8Wx2080NgfkNxqm5xhHX341tog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WmOnqjPG; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745340560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lHSkROXmhzxaxiTJB2Sts+hoXg6Enh4N97MVVPj8jow=;
+	b=WmOnqjPGVzWbnJPowlkSPUgG6iyBsT77pl4jPU9QSdEHvrX2wSmvfejG11qdxsMvzm9tRL
+	1mSmTcECkPRpQc+nt+84YfnGem+Gdy7KcqR+sDvVZ97mmF8LvzpPhEjQmLrNdg/vkbJmoC
+	FpWbORfBy2vku7/bYfcj5/pnPqyMR0A=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-402-LljaVU0xN7CdqBkXjdM4MQ-1; Tue, 22 Apr 2025 12:49:18 -0400
+X-MC-Unique: LljaVU0xN7CdqBkXjdM4MQ-1
+X-Mimecast-MFC-AGG-ID: LljaVU0xN7CdqBkXjdM4MQ_1745340557
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3912b54611dso2710248f8f.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 09:49:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745339556; x=1745944356;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BI9KG26m9xjN9k6dbGw+O0NB/svh8sdwPuBKvebFKKY=;
-        b=BeU2IaECDJK5lWqty3/+E4eiDddEakGZBGuPMXRf4LHnRiT+zK/gGfhGa5aXk7JfWB
-         1YX8W6GJQ3xKj0G+HQ0Q5HmNce4MHR2pLbsf5sB/CVuP+qyIqppsU6CiHcsTFWgqwvsI
-         6q8ywArdlY0mmhJFit95MFDqg0Rm5APf9PU2z4wdu12JpgGb1wENZlNk31kIZ/EYhTsA
-         9n9jttYg+mjwqZd53gyZnLswJK2B2Q4WvCVkr2Aw189HPV/5aUZq4cwH0Q7asnIWA22p
-         BGXyz57c1pT9gySCNK+ofa0S4XhnWxQC22302GFZ+EhZ8XohhPB/rRIPLRO1wzEOVTag
-         7i5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUSqBd/AWiM3RBOoTkWeL32yoZjZenn+A9UaEQiOq5DLECU5hAtTGgWALR7Tg9Ct/CSrovuwnviRA5D1QdL@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJ+M85RXD0HJyxK/H/l6qdYme77M3eQuSEYlQBrJSPOh3gUpY7
-	eDnJ6wopYtfdXd2zmMItY5Jzt5jn2wB05Lq9FrURb+iYe3EUw3XfHz9lSQ8JekU=
-X-Gm-Gg: ASbGnctH8qw7T4e9t5FNxkybHWBXH/DIGyDOVzebX5BpU3mLo+kSlrBkiagIia6kJtl
-	VPpfjtS9Ie/HTTbDf7/VRCYrB7I3Y3B7SXTjrrdexl/jmbYgGUxqgiPFxPL1oCjFoIf0wIBGvik
-	EVv0FaiSfRXhk9b0Db28W4k0pOxcVkYIcKKjWEmvGgniRwWy6brRSSSJXSCK0XQGVM8Kxn3TjcF
-	/ddpTEH/kP0odinHLehCdvuxKmBODhOWAy2A+37Wv3k5xJGV79PcJy/QMF7+GbNGx3KoiuYobHB
-	JU+eXtFyxQO/626S6C8GcezqFhFzmHkvaQ2p6g==
-X-Google-Smtp-Source: AGHT+IGFUtqoZyoWSfs3yKraYI/uOz+4B4kDE1UUkceCkMGC1DfmqmAIi/faS6XWXrDcN0tXD6ot6Q==
-X-Received: by 2002:a92:cda5:0:b0:3d8:1d7c:e190 with SMTP id e9e14a558f8ab-3d88ed79da8mr170240475ab.7.1745339556060;
-        Tue, 22 Apr 2025 09:32:36 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d821d1d7casm23248195ab.10.2025.04.22.09.32.34
+        d=1e100.net; s=20230601; t=1745340557; x=1745945357;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lHSkROXmhzxaxiTJB2Sts+hoXg6Enh4N97MVVPj8jow=;
+        b=UNHAGV1DYc/SVqGtRyx9B3BoFArlGChEOil9yGsRhMspmBCe2jUg/pFwKQqChIJgbG
+         RTsY9H/LXNWMMJRSmGDdYH2My40VNUXYnI8U8GDo2w6QxK+/XW5VPPLLph1Rm38ZtG6u
+         tbUN8oTNVjCeBhdzr2B6J2iPCR69EKvCwnebhRG81BpGS0iM46VwDSJwnXy+NCYDl4SZ
+         2zpebnBq5qzW/4dT9pP8rhGYoSdjtkPXgcsee6Sm4GKrgrvg4ikHYjPbAQBWjCF7oFhc
+         +GDf1iKYAiSt719YHAZCE+vWZlW3nH7hBu2/VUY1sNR10abg6prpiDnxeL/d97v0oJNj
+         FezQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkI2iq5YBJ+w8tKMkOS5kf1pA0CDUQhlHLwe8068bm8MpQpjeYq1Oqh106pwdAv0Urya6f5s69CFOT5fAM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzex+KQjpAOilcB6CP2OVx4YBvRYrOSbg7JV06N+Nyq2r6rDeIW
+	HjWywnkaG9GO9Hsn7hTZz3246UWDKOxXDJJ0Xs++0Zjt89/ZA8Ky70VzVL57z8mS+jLAvfNm1go
+	zwBaIpo7ymJWW3xvcWE187EBaCq4b8BkL7WGN8nsc7WF1TSdzpetLJGrlYuIoWKk=
+X-Gm-Gg: ASbGnctxbX0Xe/BVP8+OUnkk8oBzOAsEo7aS6hsikqyuz924BSmDfNXUeVrwHsOR1TB
+	EQ0e7cmiGgmlpOw7xopOJ37F923UwQWgTsKAFtt0BCyGoMkc86PILEjwhv+S9tdrgbD3FIaJ7Wk
+	y7uqQL/Uo06IS+IjPSUThWUHpJyxnfs32Uf5EnKViOtu0QzwXSXfjqYk//NIITpFlKz3xocsFV8
+	OsNhzKpnxR40EiknWBsLthSYao/Icx217SskyjSJ4wUkUf2LSRROYZ1gGCUbjxwCc7zaTXzKfuT
+	UmSo1l6GVlfKmwoL/Ok328kjv71G0ehrn1EMoIkq
+X-Received: by 2002:a05:6000:381:b0:38f:2413:2622 with SMTP id ffacd0b85a97d-39efbad7f42mr14397247f8f.47.1745340557513;
+        Tue, 22 Apr 2025 09:49:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGDoEgp+mnqvCe0AHRP0Rn4FhZOt0+ug+zdFUDxNDueLDOx4k3ra4nj9Co+7VRKKBDx5ofTWw==
+X-Received: by 2002:a05:6000:381:b0:38f:2413:2622 with SMTP id ffacd0b85a97d-39efbad7f42mr14397208f8f.47.1745340557066;
+        Tue, 22 Apr 2025 09:49:17 -0700 (PDT)
+Received: from [192.168.3.141] (p5b0c62cd.dip0.t-ipconnect.de. [91.12.98.205])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-39efa4330bfsm15769041f8f.23.2025.04.22.09.49.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Apr 2025 09:32:35 -0700 (PDT)
-Message-ID: <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
-Date: Tue, 22 Apr 2025 10:32:34 -0600
+        Tue, 22 Apr 2025 09:49:16 -0700 (PDT)
+Message-ID: <1bee5078-5cc4-43b7-993c-f1e57a9bf534@redhat.com>
+Date: Tue, 22 Apr 2025 18:49:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,62 +89,108 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault
- scenarios
-To: Zhiwei Jiang <qq282012236@gmail.com>, viro@zeniv.linux.org.uk
-Cc: brauner@kernel.org, jack@suse.cz, akpm@linux-foundation.org,
- peterx@redhat.com, asml.silence@gmail.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20250422162913.1242057-1-qq282012236@gmail.com>
- <20250422162913.1242057-2-qq282012236@gmail.com>
+Subject: Re: [PATCH RFC v7 3/8] security: Export
+ security_inode_init_security_anon for KVM guest_memfd
+To: Shivank Garg <shivankg@amd.com>, Paul Moore <paul@paul-moore.com>
+Cc: seanjc@google.com, vbabka@suse.cz, willy@infradead.org,
+ akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
+ ackerleytng@google.com, jmorris@namei.org, serge@hallyn.com, pvorel@suse.cz,
+ bfoster@redhat.com, tabba@google.com, vannapurve@google.com,
+ chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com,
+ yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com,
+ michael.roth@amd.com, aik@amd.com, jgg@nvidia.com, kalyazin@amazon.com,
+ peterx@redhat.com, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kvm@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-coco@lists.linux.dev
+References: <20250408112402.181574-1-shivankg@amd.com>
+ <20250408112402.181574-4-shivankg@amd.com>
+ <CAHC9VhRFBOC=cZB+Dm00cshwBSBaK6amv+=XFLPF0Bub0gHN+Q@mail.gmail.com>
+ <b98f7b78-1834-4fa0-b79c-d5ac562e4809@amd.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250422162913.1242057-2-qq282012236@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <b98f7b78-1834-4fa0-b79c-d5ac562e4809@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 4/22/25 10:29 AM, Zhiwei Jiang wrote:
-> diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
-> index d4fb2940e435..8567a9c819db 100644
-> --- a/io_uring/io-wq.h
-> +++ b/io_uring/io-wq.h
-> @@ -70,8 +70,10 @@ enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
->  					void *data, bool cancel_all);
->  
->  #if defined(CONFIG_IO_WQ)
-> -extern void io_wq_worker_sleeping(struct task_struct *);
-> -extern void io_wq_worker_running(struct task_struct *);
-> +extern void io_wq_worker_sleeping(struct task_struct *tsk);
-> +extern void io_wq_worker_running(struct task_struct *tsk);
-> +extern void set_userfault_flag_for_ioworker(void);
-> +extern void clear_userfault_flag_for_ioworker(void);
->  #else
->  static inline void io_wq_worker_sleeping(struct task_struct *tsk)
->  {
-> @@ -79,6 +81,12 @@ static inline void io_wq_worker_sleeping(struct task_struct *tsk)
->  static inline void io_wq_worker_running(struct task_struct *tsk)
->  {
->  }
-> +static inline void set_userfault_flag_for_ioworker(void)
-> +{
-> +}
-> +static inline void clear_userfault_flag_for_ioworker(void)
-> +{
-> +}
->  #endif
->  
->  static inline bool io_wq_current_is_worker(void)
+On 11.04.25 08:07, Shivank Garg wrote:
+> Hi Paul,
+> 
+> On 4/10/2025 1:49 AM, Paul Moore wrote:
+>> On Tue, Apr 8, 2025 at 7:25 AM Shivank Garg <shivankg@amd.com> wrote:
+>>>
+>>> KVM guest_memfd is implementing its own inodes to store metadata for
+>>> backing memory using a custom filesystem. This requires the ability to
+>>> initialize anonymous inode using security_inode_init_security_anon().
+>>>
+>>> As guest_memfd currently resides in the KVM module, we need to export this
+>>> symbol for use outside the core kernel. In the future, guest_memfd might be
+>>> moved to core-mm, at which point the symbols no longer would have to be
+>>> exported. When/if that happens is still unclear.
+>>
+>> Can you help me understand the timing just a bit more ... do you
+>> expect the move to the core MM code to happen during the lifetime of
+>> this patchset, or is it just some hand-wavy "future date"?  No worries
+>> either way, just trying to understand things a bit better.
+> 
+> I am not sure about it, any ideas David?
 
-This should go in include/linux/io_uring.h and then userfaultfd would
-not have to include io_uring private headers.
+Sorry for the late reply.
 
-But that's beside the point, like I said we still need to get to the
-bottom of what is going on here first, rather than try and paper around
-it. So please don't post more versions of this before we have that
-understanding.
+Hand-wavy future date after this series. Elliot was working on this, but 
+IIRC he now has a new job and might no longer be able to work on this.
 
-See previous emails on 6.8 and other kernel versions.
+Ackerley+Patrick started looking into this, and will likely require it 
+for other guest_memfd features (hugetlb support, directmap removal).
 
 -- 
-Jens Axboe
+Cheers,
+
+David / dhildenb
+
 
