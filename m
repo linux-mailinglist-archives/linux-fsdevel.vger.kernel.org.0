@@ -1,91 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-46947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-46948-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31032A96D3B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 15:43:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3E1A96DCA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 16:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CB001702FB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 13:43:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFC264405E5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Apr 2025 14:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E6728151D;
-	Tue, 22 Apr 2025 13:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6C4281537;
+	Tue, 22 Apr 2025 14:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJ5qC8hY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ns8AXJSw"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9463620E703;
-	Tue, 22 Apr 2025 13:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D65828135E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 14:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745329406; cv=none; b=W0HbOi49nLL0M4i0lNRPll3V3g045PoM4fbtLtiH6bN89x1VI5hwhQ3qtQ/SAjNmysvO1hbO69isxxxpcTsEvc/dZhcLUS7Zjn5AvNZHqDoBDINTc950aKsqN4zAshHpFZ/ceA6V7Cu71HilmPw5E7I1NaqIQ0Z7uS2Ijr/kemI=
+	t=1745330563; cv=none; b=fOCA8eTp3U4o7Zo3lCUHBEFcNA5Se4wCVUKNtW/W+r8ZpbfUWubrh0beQ+7gHcxnrXirD99rOR379JHqc9upWiekr1mX7id8fgDbAVaUj2UTCEpWrAcg4Bl14tNS7RH0/h2jV1suNoaKCe1eFwXBoQ1t4l4Nhk5hudKOAlI31JU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745329406; c=relaxed/simple;
-	bh=hKcxeqKWyeTCuzTpSV6W+TujKp1txyIh90uOBj/0X2Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsv1u1MKc0bSEkmOcr7D2eBtllqRy/FngKDUGz4clEoNqu+kNVCugUVuWC5AfGF+ybbNA8VeHuBpsKfdwnr6Y0qPc28LLsCVZWt/gMZry8akjfKZA/9wDRzjgpnKTgJkMXgav+CqR3vdsBYaNYwTdY8OPcC5DGW7oWKejv7Wkhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJ5qC8hY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD99DC4CEE9;
-	Tue, 22 Apr 2025 13:43:23 +0000 (UTC)
+	s=arc-20240116; t=1745330563; c=relaxed/simple;
+	bh=hLpdSw/EYgXBoB7UV2j+kQUWRtXkN0Lq8MEmCkTwXxk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kRWy/HKpiQrrl1ZPsvhdDptWEf7sdFVavcityJ0h8AOpW4NS0fyPP+JDIzFmx+xrWy38rjF7b2TrrNcV1RUzY2DPn2x7BGm9FMkirbB5jmxReWCMln40cKS/+P5pD/SsniIfD3Uq0+L/RNXFOJSfawfjf3dk33L4lv8sswKr7Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ns8AXJSw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54DA1C4CEE9;
+	Tue, 22 Apr 2025 14:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745329406;
-	bh=hKcxeqKWyeTCuzTpSV6W+TujKp1txyIh90uOBj/0X2Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uJ5qC8hYUjPN43zLgUGZ5XClaaVcm8Q/98qY5BTGWezjg3dGuQ8tnEFbw73f8tUym
-	 k45c5Wn66BN5JUMOIR+RhHId6sYP+RrQ/oqg8FDCTzNHD1kfLhTcE2x1FlARHwfdXE
-	 EqhrRwPgTgGK2NLo96duzn+Hl4R0BUIbXFpjqiIIR+dIkEPDv+7FwklxW3IGQAQ1zM
-	 jOS84gZVH9Ch3Mh59V0Vw0mVUvlfqEbcR8JaEyxCNlyMp8bu2FjlCyhlBRDYCPcQvI
-	 hDm0G7Oncmw8QT7JyJbJjHS6zTSYNFUPcC3DvTa596lgF0MKanJHJQprPqwZEIc2Ca
-	 qXzT9ATmy7Ozg==
-Date: Tue, 22 Apr 2025 15:43:21 +0200
+	s=k20201202; t=1745330563;
+	bh=hLpdSw/EYgXBoB7UV2j+kQUWRtXkN0Lq8MEmCkTwXxk=;
+	h=From:Subject:Date:To:Cc:From;
+	b=ns8AXJSweJy16iwG/JRoM/z7Eooh9ots7jTyvdmnZfnYH8AeBGwhpIN2sUEViu8cb
+	 si1WDhJ1FbBayF3owg/FsumBZ0GIwfI9oWA+Tf4IMqMSfHf7mNUcwbfELi6GVhvNPd
+	 y4X6xavenHjWsI4zuX8QCD0fBSWTeJ6IVu4MThW2/DSjmm3OSutjwAyAU7Mym2E+g/
+	 Xb8SBW25cpDQA09kS8Gk5pe79vuOjBim86hGq0y3I9NDHCJyizhQEdpMh1tP6If0AC
+	 RVQjyLc7LBfQxa/o3jGUjBRMBR5W+cUwGP6Q1Mhl2hzmL8tOTsHIaz1XDKwKyOizxN
+	 D3QH7QapH8A6w==
 From: Christian Brauner <brauner@kernel.org>
-To: syzbot <syzbot+81fdaf0f522d5c5e41fb@syzkaller.appspotmail.com>
-Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] [fs?] KCSAN: data-race in choose_mountpoint_rcu /
- umount_tree
-Message-ID: <20250422-flogen-firmieren-105a92fbd796@brauner>
-References: <6807876f.050a0220.8500a.000f.GAE@google.com>
+Subject: [PATCH v2 0/2] mnt_idmapping: improve fastpaths
+Date: Tue, 22 Apr 2025 16:02:31 +0200
+Message-Id: <20250422-work-mnt_idmap-s_user_ns-v2-0-34ce4a82f931@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <6807876f.050a0220.8500a.000f.GAE@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHehB2gC/42OQQ6CMBBFr2K6dggtUowr72EIacsADdKSKVYN4
+ e4WTuDyLd77f2UByWJgt9PKCKMN1rsE4nxiZlCuR7BtYiZyUeYXLuHtaYTJLY1tJzVDaF6p0Lg
+ AqMsK8VogbyVL+kzY2c+RftSJtQoImpQzwx6cVFiQsigzXgIZviuDDYun73Em8l38YzdyyEFUh
+ cauUJKjuY9IDp+Zp57V27b9AA+Ev2XkAAAA
+X-Change-ID: 20250416-work-mnt_idmap-s_user_ns-eb57ee83e1d6
+To: Linus Torvalds <torvalds@linux-foundation.org>, 
+ linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+ Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>, 
+ Josef Bacik <josef@toxicpanda.com>, Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1407; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=hLpdSw/EYgXBoB7UV2j+kQUWRtXkN0Lq8MEmCkTwXxk=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSwL2zQmhf2yzXp4nJtlvZqDeMPR+U3Nn41rs1RnMwmn
+ DbxzmnhjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIlMnc7IcD3/W+1i7gPy0h+c
+ b2rt8+IRCXxYevYyT6XcLZ9bS05nszL8M5ZcEyvPrbS68cYj52229azhX/UVF1dq7Hx9tivvSa8
+ aGwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Tue, Apr 22, 2025 at 05:11:27AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    a33b5a08cbbd Merge tag 'sched_ext-for-6.15-rc3-fixes' of g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1058f26f980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=85dd0f8b81b9d41f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=81fdaf0f522d5c5e41fb
-> compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/718e6f7bde0a/disk-a33b5a08.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/20f5e402fb15/vmlinux-a33b5a08.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/2dd06e277fc7/bzImage-a33b5a08.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+81fdaf0f522d5c5e41fb@syzkaller.appspotmail.com
-> 
-> ==================================================================
-> BUG: KCSAN: data-race in choose_mountpoint_rcu / umount_tree
+We currently always chase a pointer inode->i_sb->s_user_ns whenever we
+need to map a uid/gid. Linus reported in [1] that this is noticable
+during path lookup.
 
-Benign, as this would be detected by the changed sequence count of
-@mount_lock. I hope we won't end up with endless reports about:w
-anything that we protect with a seqlock. That'll be very annoying.
+In the majority of cases we don't need to bother with that pointer chase
+because the inode won't be located on a filesystem that's mounted in a
+user namespace. The user namespace of the superblock cannot ever change
+once it's mounted. So introduce and raise IOP_USERNS on all inodes and
+check for that flag in relevant helpers.
+
+[1]: https://lore.kernel.org/CAHk-=whJgRDtxTudTQ9HV8BFw5-bBsu+c8Ouwd_PrPqPB6_KEQ@mail.gmail.com
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v2:
+- Don't fully inline low-level helpers.
+- Link to v1: https://lore.kernel.org/20250416-work-mnt_idmap-s_user_ns-v1-0-273bef3a61ec@kernel.org
+
+---
+Christian Brauner (2):
+      mnt_idmapping: don't bother with initial_idmapping() in {from,make}_vfs{g,u}id()
+      inode: add fastpath for filesystem user namespace retrieval
+
+ fs/inode.c                    |  8 ++++++++
+ fs/mnt_idmapping.c            | 46 ++-----------------------------------------
+ include/linux/fs.h            | 23 +++++++++++++++++++---
+ include/linux/mnt_idmapping.h |  5 +++++
+ 4 files changed, 35 insertions(+), 47 deletions(-)
+---
+base-commit: 0af2f6be1b4281385b618cb86ad946eded089ac8
+change-id: 20250416-work-mnt_idmap-s_user_ns-eb57ee83e1d6
+
 
