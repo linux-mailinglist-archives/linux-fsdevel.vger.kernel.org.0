@@ -1,50 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-47060-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47062-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9034A98353
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 10:29:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD4BA98376
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 10:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E40B01B64CDB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 08:30:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C54D77A4B1A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 08:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1746827BF9E;
-	Wed, 23 Apr 2025 08:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28FF284B4E;
+	Wed, 23 Apr 2025 08:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CDF2gUzC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B17E27935D;
-	Wed, 23 Apr 2025 08:19:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FF3527466A;
+	Wed, 23 Apr 2025 08:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745396350; cv=none; b=AaKx4xsFHY67R5bzkzvHEteSX5Hfe+9PlKa100POk4dpM9wSKfmukZwK0qpbc812xDa0rit/jI/NGG25KLc6H9BdGe3LiIv310dzi6hQH6YQCJbeMh+PRiIgwPy4IwL5iYokx5GtqGbOwbUvWUs9N78JDW7Cjfe5168BH5Yx3Qs=
+	t=1745396617; cv=none; b=DMPPlqtcSqmZDMqDwNl6hryMt64Bd/X0Dt9xSuvOzJUirdFWASbtq8yZLqzt4MuMb/OGrAtPQ3R5Vtzm+u37mulkvolmbOMutWnTnWFlENz/xozUol3P3ckpmVaLroigZQKAWgm4Si3ipulP1sjGglSwGQtTZuO4n8tKsMFULeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745396350; c=relaxed/simple;
-	bh=lgSGQleS8nlGKrOWWS9LmY+nF3u22Ri85AHSqBlXTyI=;
+	s=arc-20240116; t=1745396617; c=relaxed/simple;
+	bh=+k9yqO/s4OaNqrko4uLFiQ6t4We61L1bjrE/LVw5Jcg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elxLpuQ9Q0f/ba4Mi3O3gxjPLu0TNeEvB/hRBG8qY2dkV1EqjTloKBxBBHEvTs+nN8DOmsnFYHNXKSO5B4hnhamY1NnNkhh7a2rQDIdCBpIhBy9S3T+kdUlMOEoTy/+cT6Nl/yJ+em2OLN6SFVxwVjk68Ejikn4OllmhcgfQK6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 15CED68C4E; Wed, 23 Apr 2025 10:19:03 +0200 (CEST)
-Date: Wed, 23 Apr 2025 10:19:02 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org, hch@lst.de,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH v7 11/14] xfs: add xfs_file_dio_write_atomic()
-Message-ID: <20250423081902.GD28307@lst.de>
-References: <20250415121425.4146847-1-john.g.garry@oracle.com> <20250415121425.4146847-12-john.g.garry@oracle.com> <20250421040002.GU25675@frogsfrogsfrogs> <2467484b-382b-47c2-ae70-4a41d63cf4fc@oracle.com> <20250421164241.GD25700@frogsfrogsfrogs> <20250423054251.GA23087@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QR2soVJS6LUlRuvFrUyHaB85oi8SE3d2cleQITx6zK3uHuCRyCCvyqo6M770rJU+DVR7ijgJ1mbzLIHv9WTkPTNj6Yp5mmpDTf9q9w8JMOoI9FDaZQfrdCpvUlhoX0Oh07sadODjX8bZ1yb6XrKRecUcoKlor9d3mz3RME64cKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CDF2gUzC; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1745396615; x=1776932615;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+k9yqO/s4OaNqrko4uLFiQ6t4We61L1bjrE/LVw5Jcg=;
+  b=CDF2gUzCXstymEhEI/jUMZQ9tFpPdLZTm5Eu9vVAFCUbjDY2If1xOIAB
+   4vV7QXtw7FGRW/9zm0w6KViA60/T1go1r34fQcPk/oXLq/JOofA8O6eUg
+   1VOqRKRCRxLZlXfe39EYuqVa+H52DzCv/zdt/KCC0Fy5tlTh82dFy4gWY
+   qe55LeDS5KWxf9FBG75zDxB+RFFHtdqn5EvkTAMRyZ75VlIbFhVgJvg5/
+   gQgQK9D15yQkJjkfphRAtTfEZqqU05K8Wy0H1+dtJa64Sv4RavZbYUOJK
+   VvgiojJJZD0fZAL/FpQsWmfZ8JraZnGW6yaRoLUaSw7hvc+OZVzYwmGEa
+   A==;
+X-CSE-ConnectionGUID: Zo21e1MQQKuDIPAb/nrgMg==
+X-CSE-MsgGUID: BCgFH1cMSI2UwkPgzfkrNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11411"; a="50809243"
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="50809243"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Apr 2025 01:22:04 -0700
+X-CSE-ConnectionGUID: /3T1SlrDSG+PlKYOBY46FQ==
+X-CSE-MsgGUID: mcZ7cnjoRSuOafvzc1VPVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,233,1739865600"; 
+   d="scan'208";a="137114903"
+Received: from lkp-server01.sh.intel.com (HELO 050dd05385d1) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 23 Apr 2025 01:22:01 -0700
+Received: from kbuild by 050dd05385d1 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1u7VMl-0001jd-0G;
+	Wed, 23 Apr 2025 08:21:59 +0000
+Date: Wed, 23 Apr 2025 16:21:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: xu xin <xu.xin.sc@gmail.com>, xu.xin16@zte.com.cn
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	akpm@linux-foundation.org, david@redhat.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, wang.yaxin@zte.com.cn, yang.yang29@zte.com.cn
+Subject: Re: [PATCH RESEND 6/6] memcontrol-v1: add ksm_profit in
+ cgroup/memory.ksm_stat
+Message-ID: <202504231523.owjrO2Yy-lkp@intel.com>
+References: <20250422112251.3231599-1-xu.xin16@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,22 +81,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250423054251.GA23087@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250422112251.3231599-1-xu.xin16@zte.com.cn>
 
-On Wed, Apr 23, 2025 at 07:42:51AM +0200, Christoph Hellwig wrote:
-> On Mon, Apr 21, 2025 at 09:42:41AM -0700, Darrick J. Wong wrote:
-> > Well it turns out that was a stupid question -- zoned=1 can't be enabled
-> > with reflink, which means there's no cow fallback so atomic writes just
-> > plain don't work:
-> 
-> Exactly.  It is still on my todo list to support it, but there are a
-> few higher priority items on it as well, in addition to constant
-> interruptions for patch reviews :)
+Hi xu,
 
-Actually, for zoned we don't need reflink support - as we always write
-out place only the stuffing of multiple remaps into a single transaction
-is needed.  Still no need to force John to do this work, I can look into
-this (probably fairly trivial) work once we have good enough test cases
-in xfstests that I can trust them to verify I got things right.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on akpm-mm/mm-everything]
+[also build test ERROR on linus/master v6.15-rc3 next-20250422]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/xu-xin/memcontrol-rename-mem_cgroup_scan_tasks/20250422-231623
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
+patch link:    https://lore.kernel.org/r/20250422112251.3231599-1-xu.xin16%40zte.com.cn
+patch subject: [PATCH RESEND 6/6] memcontrol-v1: add ksm_profit in cgroup/memory.ksm_stat
+config: i386-buildonly-randconfig-006-20250423 (https://download.01.org/0day-ci/archive/20250423/202504231523.owjrO2Yy-lkp@intel.com/config)
+compiler: clang version 20.1.2 (https://github.com/llvm/llvm-project 58df0ef89dd64126512e4ee27b4ac3fd8ddf6247)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250423/202504231523.owjrO2Yy-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202504231523.owjrO2Yy-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: undefined symbol: ksm_process_profit
+   >>> referenced by memcontrol-v1.c:1843 (mm/memcontrol-v1.c:1843)
+   >>>               mm/memcontrol-v1.o:(evaluate_memcg_ksm_stat) in archive vmlinux.a
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
