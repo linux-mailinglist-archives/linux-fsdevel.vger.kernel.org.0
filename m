@@ -1,127 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-47082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB6DEA98687
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 11:54:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DD33A986F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 12:15:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E854C3B72F3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 09:53:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5240C3B063D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 10:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FD9268FC2;
-	Wed, 23 Apr 2025 09:53:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 265E226D4F2;
+	Wed, 23 Apr 2025 10:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MkBnnBgU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JV9vpkpW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MkBnnBgU";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JV9vpkpW"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Y2hEvVj4";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Vs5Q0MW2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="xax/DTfg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="swnaPlWm"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F487269880
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 09:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A1126C3A5
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 10:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745402010; cv=none; b=GKBGI569WbB9AaT4OOUuiXlXzZYCg1iZAKlIhichzJzVSqYFNGMUQt7RTnjI/eIWDKgJVsRkdwBxWBB2myhYmtiWcsGDjjIRY5/i1crLvf7QHv2G9auUX4CIiGtxHjQTPLapEijoveECr5oCGKgqqAlJlbAD9GJv/CGLMwDtt3I=
+	t=1745403213; cv=none; b=bjH0xmCnazwudck5gKtOHxiCwr4zsCY9284UOzgf4MAkJ+iDc7B6/VOjMwW2dRPB+6IKg4+D3Y6KU77Lt+Pk8WEHYtBph7J6G0va0N4SMKnPxjtnvNRM5qngi+NswvCnh2s3RdiZbkbaMJXUhKGsjRQg772Okh0oLCb9Nqh5dWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745402010; c=relaxed/simple;
-	bh=EUt9Pc3d/cQ830Ysfg1KDOqUA0z0jpWmWw3HLSWOSdQ=;
+	s=arc-20240116; t=1745403213; c=relaxed/simple;
+	bh=EY1Mr4B96gj5KSTR7is5KoHCMgY8GoGZWEnrIBr9rSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZQ2gL7VTH1eXhmlIAj9UwV2OJxqXW0qFUAwpOTU6954mGQaQOHT5Z8IDTSuplm3VBGaZA8BNCg9txnYSzlyml6cPrG37IomiA7eYQNlaRI+W1Gkj9CQHQRhG+pu3e0zFKvJM9XUnBG+J26BZbsFrHvCZrBO5E2QbHqIqgQ+H/Bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MkBnnBgU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JV9vpkpW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MkBnnBgU; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JV9vpkpW; arc=none smtp.client-ip=195.135.223.130
+	 Content-Type:Content-Disposition:In-Reply-To; b=LIbOmnwT96dm14CQVteJLn+BdQ1+RUElXC+DsQHTpKiad1zLwkO6yD5+nRxzLN3Vv9Aj4LwFPG9ff+56Wc9agAfTf+7ciyJ3FdyVbRzQpzcyhLsGcKhumphbE88p6UYHrmJS8ddyufI6ccD/d247MD5Sh9A+r9CDnnuzg8nO7P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Y2hEvVj4; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Vs5Q0MW2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=xax/DTfg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=swnaPlWm; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 53EC121192;
-	Wed, 23 Apr 2025 09:53:26 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D94AD211AA;
+	Wed, 23 Apr 2025 10:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745402006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1745403210; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bAMJg+22aX8wNXOVQU/q0Slu5K2ETQkFa+MaYS1q1Aw=;
-	b=MkBnnBgUY4DejLxyqWELETbhQDSZbHRBCNcJ2SL2jANKjsmepr5ez71Lc+6XleLSZfpZrU
-	TZVIrwAG2mGYIiL+u5itSCcJjvabGWmDlypht/2m5b4xnKMjA73DuYr+ZRRUAYxQRyrlLB
-	7MnS/Z/KvF6Q+pV3yLCv4FTBynvtKsg=
+	bh=scvC0nxHQsvb9LvLM+uRWu+/QPrlkFfGmi7eUya2g+g=;
+	b=Y2hEvVj42VjicWlUgFh98GXAAJsnxiM2snQGVgvz7sf7Otq2HbXhjH4DGW0N92oHbArHZs
+	bdL00+oxOlRlLxmd2P92+4Me5X/FmPVkrTY2QJ4APxlxsMBhpZv/kzGP5VfVJSSAi7YdvM
+	x65BtD5SJlWLa7N4Cd4+HhOSbqzgJQo=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745402006;
+	s=susede2_ed25519; t=1745403210;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bAMJg+22aX8wNXOVQU/q0Slu5K2ETQkFa+MaYS1q1Aw=;
-	b=JV9vpkpWivR2j2l2iOWTdS74vSAmYn3ZCfrfQCySD6Ap21BM7ulYL6yd2KEBTFx0uVIzmS
-	IUaaLaSNx/k8B8DQ==
+	bh=scvC0nxHQsvb9LvLM+uRWu+/QPrlkFfGmi7eUya2g+g=;
+	b=Vs5Q0MW24G6eSoJcE2y8nAT7lkgpCsCQnGJsIR0Pkk5Y6CsIEAh/bbieG7+njCjxLfVscW
+	sbJv9rps3DIO6KAg==
 Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745402006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1745403209; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bAMJg+22aX8wNXOVQU/q0Slu5K2ETQkFa+MaYS1q1Aw=;
-	b=MkBnnBgUY4DejLxyqWELETbhQDSZbHRBCNcJ2SL2jANKjsmepr5ez71Lc+6XleLSZfpZrU
-	TZVIrwAG2mGYIiL+u5itSCcJjvabGWmDlypht/2m5b4xnKMjA73DuYr+ZRRUAYxQRyrlLB
-	7MnS/Z/KvF6Q+pV3yLCv4FTBynvtKsg=
+	bh=scvC0nxHQsvb9LvLM+uRWu+/QPrlkFfGmi7eUya2g+g=;
+	b=xax/DTfgSPtKw5GBvjVrkgg4ci0UyH1hHpAR9g27efwzTAqGIWLlgerra/YQERQ60CI7UF
+	Min8JAtK6iFCJnBP1m6OrUNTvdv7Mi4aEPCGvqa3w+7jgRsJuiEjuk8fn9+d+LieI6xY+t
+	qCu15PXn7ZwL6E/d4SGDlQg1PTopXH4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745402006;
+	s=susede2_ed25519; t=1745403209;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=bAMJg+22aX8wNXOVQU/q0Slu5K2ETQkFa+MaYS1q1Aw=;
-	b=JV9vpkpWivR2j2l2iOWTdS74vSAmYn3ZCfrfQCySD6Ap21BM7ulYL6yd2KEBTFx0uVIzmS
-	IUaaLaSNx/k8B8DQ==
+	bh=scvC0nxHQsvb9LvLM+uRWu+/QPrlkFfGmi7eUya2g+g=;
+	b=swnaPlWmLUUTEvpw1Ky8mjNvt1hx0ltWKiP7zXNI1rYUmaftkIrB6swzp/NjCpehMH8ZTF
+	qZB7b8nVReRkI7Ag==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3548813A6A;
-	Wed, 23 Apr 2025 09:53:26 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C65AE13691;
+	Wed, 23 Apr 2025 10:13:29 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pUq5DJa4CGhWFQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 23 Apr 2025 09:53:26 +0000
+	id 2fAmMEm9CGgWGwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 23 Apr 2025 10:13:29 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id BEC8BA07A7; Wed, 23 Apr 2025 11:53:25 +0200 (CEST)
-Date: Wed, 23 Apr 2025 11:53:25 +0200
+	id 863C6A07A7; Wed, 23 Apr 2025 12:13:29 +0200 (CEST)
+Date: Wed, 23 Apr 2025 12:13:29 +0200
 From: Jan Kara <jack@suse.cz>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Andrey Albershteyn <aalbersh@redhat.com>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
- syscalls
-Message-ID: <rbzlwvecvrp4xawwp5nywdq6wp5hgjhrtrabpszv74xmfqbj4f@x7v6eqfc5gcd>
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
- <20250422-abbekommen-begierde-bcf48dd74a2e@brauner>
+To: I Hsin Cheng <richard120310@gmail.com>
+Cc: syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, jfs-discussion@lists.sourceforge.net, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [RFC PATCH] fs/buffer: Handle non folio buffer case for
+ drop_buffer()
+Message-ID: <nfnwvcefhvm5sfrvlqqf4zcdq2iyzk4f2n366ux3bjatj7o4vl@5hq5evovwsxp>
+References: <66fcb7f9.050a0220.f28ec.04e8.GAE@google.com>
+ <20250423023703.632613-1-richard120310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -130,106 +106,149 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250422-abbekommen-begierde-bcf48dd74a2e@brauner>
+In-Reply-To: <20250423023703.632613-1-richard120310@gmail.com>
 X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
+X-Spamd-Result: default: False [-2.30 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.996];
 	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[redhat.com,linaro.org,gmail.com,armlinux.org.uk,arm.com,kernel.org,linux-m68k.org,monstr.eu,alpha.franken.de,hansenpartnership.com,gmx.de,linux.ibm.com,ellerman.id.au,csgroup.eu,users.sourceforge.jp,libc.org,physik.fu-berlin.de,davemloft.net,gaisler.com,linutronix.de,alien8.de,linux.intel.com,zytor.com,zankel.net,zeniv.linux.org.uk,suse.cz,digikod.net,google.com,arndb.de,paul-moore.com,namei.org,hallyn.com,vger.kernel.org,lists.infradead.org,lists.linux-m68k.org,lists.ozlabs.org];
-	R_RATELIMIT(0.00)[to_ip_from(RLyerg7kx5bdf6cnfzf33td54o)];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
 	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCPT_COUNT_GT_50(0.00)[60];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Score: -3.80
+	TAGGED_RCPT(0.00)[de1498ff3a934ac5e8b4];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[bootlin.com:url,suse.com:email]
+X-Spam-Score: -2.30
 X-Spam-Flag: NO
 
-On Tue 22-04-25 16:59:02, Christian Brauner wrote:
-> On Fri, Mar 21, 2025 at 08:48:42PM +0100, Andrey Albershteyn wrote:
-> > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > 
-> > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > extended attributes/flags. The syscalls take parent directory fd and
-> > path to the child together with struct fsxattr.
-> > 
-> > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > that file don't need to be open as we can reference it with a path
-> > instead of fd. By having this we can manipulated inode extended
-> > attributes not only on regular files but also on special ones. This
-> > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > we can not call ioctl() directly on the filesystem inode using fd.
-> > 
-> > This patch adds two new syscalls which allows userspace to get/set
-> > extended inode attributes on special files by using parent directory
-> > and a path - *at() like syscall.
-> > 
-> > CC: linux-api@vger.kernel.org
-> > CC: linux-fsdevel@vger.kernel.org
-> > CC: linux-xfs@vger.kernel.org
-> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > Acked-by: Arnd Bergmann <arnd@arndb.de>
-...
-> > +		struct fsxattr __user *, ufsx, size_t, usize,
-> > +		unsigned int, at_flags)
-> > +{
-> > +	struct fileattr fa = {};
-> > +	struct path filepath;
-> > +	int error;
-> > +	unsigned int lookup_flags = 0;
-> > +	struct filename *name;
-> > +	struct fsxattr fsx = {};
-> > +
-> > +	BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
-> > +	BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
-> > +
-> > +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-> > +		return -EINVAL;
-> > +
-> > +	if (!(at_flags & AT_SYMLINK_NOFOLLOW))
-> > +		lookup_flags |= LOOKUP_FOLLOW;
-> > +
-> > +	if (at_flags & AT_EMPTY_PATH)
-> > +		lookup_flags |= LOOKUP_EMPTY;
-> > +
-> > +	if (usize > PAGE_SIZE)
-> > +		return -E2BIG;
-> > +
-> > +	if (usize < FSXATTR_SIZE_VER0)
-> > +		return -EINVAL;
-> > +
-> > +	name = getname_maybe_null(filename, at_flags);
-> > +	if (!name) {
+On Wed 23-04-25 10:37:03, I Hsin Cheng wrote:
+> When the folio doesn't have any buffers, "folio_buffers(folio)" will
+> return NULL, causing "buffer_busy(bh)" to dereference a null pointer.
+> Handle the case and jump to detach the folio if there's no buffer within
+> it.
 > 
-> This is broken as it doesn't handle AT_FDCWD correctly. You need:
+> Reported-by: syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=de1498ff3a934ac5e8b4
+> Fixes: 6439476311a64 ("fs: Convert drop_buffers() to use a folio")
+> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+> ---
+> syzbot reported a null pointer dereference issue. [1]
 > 
->         name = getname_maybe_null(filename, at_flags);
->         if (IS_ERR(name))
->                 return PTR_ERR(name);
+> If the folio be sent into "drop_buffer()" doesn't have any buffers,
+> assigning "bh = head" will make "bh" to NULL, and the following
+> operation of cleaning the buffer will encounter null pointer
+> dereference.
 > 
->         if (!name && dfd >= 0) {
-> 		CLASS(fd, f)(dfd);
+> I checked other use cases of "folio_buffers()", e.g. the one used in
+> "buffer_check_dirty_writeback()" [2]. They generally use the same
+> approach to check whether a folio_buffers() return NULL.
+> 
+> I'm not sure whether it's normal for a non-buffer folio to reach inside
+> "drop_buffers()", if it's not maybe we have to dig more into the problem
+> and find out where did the buffers of folio get freed or corrupted, let
+> me know if that's needed and what can I test to help. I'm new to fs
+> correct me if I'm wrong I'll be happy to learn, and know more about
+> what's the expected behavior or correct behavior for a folio, thanks !
 
-Ah, you're indeed right that if dfd == AT_FDCWD and filename == NULL, the
-we should operate on cwd but we'd bail with error here. I've missed that
-during my review. But as far as I've checked the same bug is there in
-path_setxattrat() and path_getxattrat() so we should fix this there as
-well?
+Thanks for the patch but try_to_free_buffers() is not expected to be called
+when there are no buffers. Seeing the stacktrace below, it is unexpected it
+got called because filemap_release_folio() calls folio_needs_release()
+which should make sure there are indeed buffers attached.
+
+Can you print more about the folio where this happened? In particular it
+would be interesting what's in folio->flags, folio->mapping->flags and
+folio->mapping->aops (resolved to a symbol). Because either the mapping has
+AS_RELEASE_ALWAYS set but then we should have ->releasepage handler, or
+have PG_Private bit set without buffers attached to a page but then again
+either ->releasepage should be set or there's some bug in fs/buffer.c which
+can set PG_Private without attaching buffers (I don't see where that could
+be).
 
 								Honza
+
+> 
+> [1]:
+> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+> BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+> BUG: KASAN: null-ptr-deref in buffer_busy fs/buffer.c:2881 [inline]
+> BUG: KASAN: null-ptr-deref in drop_buffers+0x6f/0x710 fs/buffer.c:2893
+> Read of size 4 at addr 0000000000000060 by task kswapd0/74
+> 
+> CPU: 0 UID: 0 PID: 74 Comm: kswapd0 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  print_report+0xe8/0x550 mm/kasan/report.c:491
+>  kasan_report+0x143/0x180 mm/kasan/report.c:601
+>  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>  instrument_atomic_read include/linux/instrumented.h:68 [inline]
+>  atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+>  buffer_busy fs/buffer.c:2881 [inline]
+>  drop_buffers+0x6f/0x710 fs/buffer.c:2893
+>  try_to_free_buffers+0x295/0x5f0 fs/buffer.c:2947
+>  shrink_folio_list+0x240c/0x8cc0 mm/vmscan.c:1432
+>  evict_folios+0x549b/0x7b50 mm/vmscan.c:4583
+>  try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4778
+>  shrink_one+0x3b9/0x850 mm/vmscan.c:4816
+>  shrink_many mm/vmscan.c:4879 [inline]
+>  lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+>  shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+>  kswapd_shrink_node mm/vmscan.c:6765 [inline]
+>  balance_pgdat mm/vmscan.c:6957 [inline]
+>  kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+>  kthread+0x2f0/0x390 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>  </TASK>
+> 
+> [2]:https://elixir.bootlin.com/linux/v6.14.3/source/fs/buffer.c#L97
+> 
+> Best regards,
+> I Hsin Cheng
+> ---
+>  fs/buffer.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index cc8452f60251..29fd17f78265 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2883,6 +2883,8 @@ drop_buffers(struct folio *folio, struct buffer_head **buffers_to_free)
+>  	struct buffer_head *head = folio_buffers(folio);
+>  	struct buffer_head *bh;
+>  
+> +	if (!head)
+> +		goto detach_folio;
+>  	bh = head;
+>  	do {
+>  		if (buffer_busy(bh))
+> @@ -2897,6 +2899,7 @@ drop_buffers(struct folio *folio, struct buffer_head **buffers_to_free)
+>  			__remove_assoc_queue(bh);
+>  		bh = next;
+>  	} while (bh != head);
+> +detach_folio:
+>  	*buffers_to_free = head;
+>  	folio_detach_private(folio);
+>  	return true;
+> -- 
+> 2.43.0
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
