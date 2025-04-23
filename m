@@ -1,173 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-47028-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47029-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C869FA97DE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 06:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F774A97DF4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 07:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 268997ACA2A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 04:42:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9EA57AA297
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 04:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC358266572;
-	Wed, 23 Apr 2025 04:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2B72265CAE;
+	Wed, 23 Apr 2025 04:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zn8hPlvj"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RdmSyIhN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3801826656A;
-	Wed, 23 Apr 2025 04:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8938E1FDD;
+	Wed, 23 Apr 2025 04:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745383372; cv=none; b=MxBRaCVNVJp5HAoh88A2CJ5e+kmKc4L5pSst5ca7Ufhed8ZuUbNJRc+2AT02a1NTybT89tJeweroTmpoegOKmkwchD9BGL2KAK0VPPu2/aTOn879x6IsJkyMnMh9YWg/jY7QToDz/INRAtgfGR+FmrDIzxXLCZBQFATFmg/QOkQ=
+	t=1745384392; cv=none; b=LJgtz4dXkuz3VI7FAnxbcI/uDsrIsHWXpt226BlhiPld3dWCGTAbvhszxvZUlq7751B4m8EORlkCOYb81LAXi+WvrIiQnyy2VtQnrgdPJ88LX6Wc7At4ExiwFVQRJCReBoEYC5qz/58HHTqjpGk7EHWLRJEVqMeWWCxohqkxFNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745383372; c=relaxed/simple;
-	bh=eB2CZHb0WVwwcVIXuRgXRUHtxGtgdPPys00kumbdgQk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EM6kLKODxzdfgFbW9WdCeL0Y8Em642J97G5l990n9eO9ybLvjPnjE202Dl/AJ08C9Rb/Ih1Tev0O737MUPiGFkW6SspkRj8moQlXJhZnzBWnImUy//anJ2RqZi9a4SEdHO8esK3MN48fgDAzNAfwUiJMA3U+Np9N33bNTCUgDPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zn8hPlvj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E0C3C4CEF2;
-	Wed, 23 Apr 2025 04:42:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745383371;
-	bh=eB2CZHb0WVwwcVIXuRgXRUHtxGtgdPPys00kumbdgQk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Zn8hPlvjTxZEUGF3r3dC0uCY4x7lwS+UhKUPwnLXyJBVzxbGIF+WsRykUyeojNRTt
-	 zq0nKwFcb6b6Ra8vRnBNvtVLl/V2GtWMelQSNR5jXSmXBqlja/+H3phgSJ2UZ4b5Y5
-	 NW9NiawDYGuGtu/DhO8k2mA7/vjimhk3rpWLUGlamke7VVPulHSMnWoyBqxkssFE4q
-	 gsCageUyYr98BPSjPjhqGlgeS8wOZl3S0IvrVR1tRqgqeQltMNZIaA1R90/q+6ex1n
-	 mU8K4EYc3/nfAas8L4MQLBJLAJQe7Eel6wv5iEYVXil6jhewwKD8W8Ak3vdpJFrogu
-	 7XHbEP2zaSZeQ==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac25520a289so778385866b.3;
-        Tue, 22 Apr 2025 21:42:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXDpRKKUHGFIxErIJ9ZZaOuOee0YHMoCwqAo4k9gdzsAt78obQVPaFsqqYxxByDkyA6AX9Gte3b8Gw2O8w7@vger.kernel.org, AJvYcCXdmUn1+lBKTgPxdQBAGPOrUyTGbj5QUe11MZxxv5J7egWAjvN5KjyYfrHfQftQ0lVYJIi6bIlT/HVFe1dh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzv8EV3prlAekijeyJobLWA3xyY6rGcaUv5M+u36z/p+ft3LHnS
-	RVXyIcg3EcmsFdVNyXGQoB8nds4ucWdTSGUr1cW6ANc8QqSFp+bf5bJRF3IJJiPzIdVvzp9ZQSD
-	yc4abxaMe3iDF9rZJvSNPet9QSF4=
-X-Google-Smtp-Source: AGHT+IElbU/Xu8BCdaTD32626AOwRjpxyqNecTmdVoitv1WKpBCsyDEmPUgUkY0l5x0O+/tZzfrkNkmBIThiisAkkug=
-X-Received: by 2002:a17:907:7288:b0:aca:a383:b0c9 with SMTP id
- a640c23a62f3a-acb74afba44mr1582732666b.13.1745383370146; Tue, 22 Apr 2025
- 21:42:50 -0700 (PDT)
+	s=arc-20240116; t=1745384392; c=relaxed/simple;
+	bh=ds41BEqIqYatZI1fMW/ECTKN+xA4yPzvIDtAXJpLEQQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u5nq5fYTGVWf/Vbr6ie08sagc9XxUxzUsV/T7iLq9HjjVgG7oFoBdl/JMwCvgoF0VFh8t29ghE79HAhfLX5O0esx9S6ZhcmXWjoreR8u+DTqsrelMOvVDp/28Xd4RCMPwJsFjsN/PLvzF5ENqe1gecaoVzBE7/IMMbFyYFPHdnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=RdmSyIhN; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=S6N01TOC5Iv6YGNQJlPO5UCkZ9t4v2DJaJMeccs0Ldo=; b=RdmSyIhNucAgHTJvdQyy1L/oaf
+	UACsANSe2aJmVYAZBaQTEALupgOQIDKPMsiXE8lLFkflq1QHabXvbJgCiVN3r0mpbAg4b0zaEGMFv
+	a73v27GHOge28JuNTtK2iHv3i/U7A4Qan223v+QNI5ImhnNqHEedYlA4vJNvqYdx7aalxqmKt8nzb
+	TvXZ0EFILzs8EtIivhRNuAP3P72Z2RwNppZ2S2B6DTcBZUx9taQG+bNaZJK1vTsnn21TYFY1kburM
+	e2PFdhW+EgW6fT6WH53TDAFU1bFAXF39QKB1fLW7K9l+qX9aBNS0r7+k8+mCWN8DsCRVTSNOfh6R9
+	FBWUyhOQ==;
+Received: from 2a02-8389-2341-5b80-c0c9-6b8d-e783-b2cd.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:c0c9:6b8d:e783:b2cd] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u7SD3-00000009DS4-2BFL;
+	Wed, 23 Apr 2025 04:59:46 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	brauner@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	hca@linux.ibm.com,
+	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+	Xiao Ni <xni@redhat.com>
+Subject: [PATCH] devtmpfs: don't use vfs_getattr_nosec to query i_mode
+Date: Wed, 23 Apr 2025 06:59:41 +0200
+Message-ID: <20250423045941.1667425-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250423010359.2030576-1-wangming01@loongson.cn>
-In-Reply-To: <20250423010359.2030576-1-wangming01@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 23 Apr 2025 12:42:39 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5gVvJhHHU_7XGGry7GJmKmzf_PNiCEdv16BiEZv2rhww@mail.gmail.com>
-X-Gm-Features: ATxdqUE-Z4nHGbctDyJOb3PVxOkgCXoATsuuX1DqcXM7KICHGeIn0TMw-Au_Kkg
-Message-ID: <CAAhV-H5gVvJhHHU_7XGGry7GJmKmzf_PNiCEdv16BiEZv2rhww@mail.gmail.com>
-Subject: Re: [PATCH] smaps: Fix crash in smaps_hugetlb_range for non-present
- hugetlb entries
-To: Ming Wang <wangming01@loongson.cn>
-Cc: Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>, 
-	Andrii Nakryiko <andrii@kernel.org>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naoya Horiguchi <nao.horiguchi@gmail.com>, 
-	Michal Hocko <mhocko@suse.cz>, David Rientjes <rientjes@google.com>, Joern Engel <joern@logfs.org>, 
-	Hugh Dickins <hughd@google.com>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, lixuefeng@loongson.cn, 
-	Hongchen Zhang <zhanghongchen@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi, Wangming,
+The recent move of the bdev_statx call to the low-level vfs_getattr_nosec
+helper caused it being used by devtmpfs, which leads to deadlocks in
+md teardown due to the block device lookup and put interfering with the
+unusual lifetime rules in md.
 
-On Wed, Apr 23, 2025 at 9:04=E2=80=AFAM Ming Wang <wangming01@loongson.cn> =
-wrote:
->
-> When reading /proc/pid/smaps for a process that has mapped a hugetlbfs
-> file with MAP_PRIVATE, the kernel might crash inside pfn_swap_entry_to_pa=
-ge.
-> This occurs on LoongArch under specific conditions.
->
-> The root cause involves several steps:
-> 1. When the hugetlbfs file is mapped (MAP_PRIVATE), the initial PMD
->    (or relevant level) entry is often populated by the kernel during mmap=
-()
->    with a non-present entry pointing to the architecture's invalid_pte_ta=
-ble
->    On the affected LoongArch system, this address was observed to
->    be 0x90000000031e4000.
-> 2. The smaps walker (walk_hugetlb_range -> smaps_hugetlb_range) reads
->    this entry.
-> 3. The generic is_swap_pte() macro checks `!pte_present() && !pte_none()`=
-.
->    The entry (invalid_pte_table address) is not present. Crucially,
->    the generic pte_none() check (`!(pte_val(pte) & ~_PAGE_GLOBAL)`)
->    returns false because the invalid_pte_table address is non-zero.
->    Therefore, is_swap_pte() incorrectly returns true.
-> 4. The code enters the `else if (is_swap_pte(...))` block.
-> 5. Inside this block, it checks `is_pfn_swap_entry()`. Due to a bit
->    pattern coincidence in the invalid_pte_table address on LoongArch,
->    the embedded generic `is_migration_entry()` check happens to return
->    true (misinterpreting parts of the address as a migration type).
-> 6. This leads to a call to pfn_swap_entry_to_page() with the bogus
->    swap entry derived from the invalid table address.
-> 7. pfn_swap_entry_to_page() extracts a meaningless PFN, finds an
->    unrelated struct page, checks its lock status (unlocked), and hits
->    the `BUG_ON(is_migration_entry(entry) && !PageLocked(p))` assertion.
->
-> The original code's intent in the `else if` block seems aimed at handling
-> potential migration entries, as indicated by the inner `is_pfn_swap_entry=
-()`
-> check. The issue arises because the outer `is_swap_pte()` check incorrect=
-ly
-> includes the invalid table pointer case on LoongArch.
->
-> This patch fixes the issue by changing the condition in
-> smaps_hugetlb_range() from the broad `is_swap_pte()` to the specific
-> `is_hugetlb_entry_migration()`.
->
-> The `is_hugetlb_entry_migration()` helper function correctly handles this
-> by first checking `huge_pte_none()`. Architectures like LoongArch can
-> provide an override for `huge_pte_none()` that specifically recognizes
-> the `invalid_pte_table` address as a "none" state for HugeTLB entries.
-> This ensures `is_hugetlb_entry_migration()` returns false for the invalid
-> entry, preventing the code from entering the faulty block.
->
-> This change makes the code reflect the likely original intent (handling
-> migration) more accurately and leverages architecture-specific helpers
-> (`huge_pte_none`) to correctly interpret special PTE/PMD values in the
-> HugeTLB context, fixing the crash on LoongArch without altering the
-> generic is_swap_pte() behavior.
->
-> Fixes: 25ee01a2fca0 ("mm: hugetlb: proc: add hugetlb-related fields to /p=
-roc/PID/smaps")
-> Co-developed-by: Hongchen Zhang <zhanghongchen@loongson.cn>
-> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
-> Signed-off-by: Ming Wang <wangming01@loongson.cn>
-> ---
->  fs/proc/task_mmu.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index 994cde10e3f4..95a0093ae87c 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -1027,7 +1027,7 @@ static int smaps_hugetlb_range(pte_t *pte, unsigned=
- long hmask,
->         if (pte_present(ptent)) {
->                 folio =3D page_folio(pte_page(ptent));
->                 present =3D true;
-> -       } else if (is_swap_pte(ptent)) {
-> +       } else if (is_hugetlb_entry_migration(ptent)) {
-Other functions in this file, such as pagemap_hugetlb_category(), may
-need similar modifications.
+But as handle_remove only works on inodes created and owned by devtmpfs
+itself there is no need to use vfs_getattr_nosec vs simply reading the
+mode from the inode directly.  Switch to that to avoid the bdev lookup
+or any other unintentional side effect.
 
-Huacai
+Reported-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Reported-by: Xiao Ni <xni@redhat.com>
+Fixes: 777d0961ff95 ("fs: move the bdex_statx call to vfs_getattr_nosec")
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Tested-by: Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>
+Tested-by: Xiao Ni <xni@redhat.com>
+---
+ drivers/base/devtmpfs.c | 20 ++++++++------------
+ 1 file changed, 8 insertions(+), 12 deletions(-)
 
->                 swp_entry_t swpent =3D pte_to_swp_entry(ptent);
->
->                 if (is_pfn_swap_entry(swpent))
-> --
-> 2.43.0
->
+diff --git a/drivers/base/devtmpfs.c b/drivers/base/devtmpfs.c
+index 6dd1a8860f1c..53fb0829eb7b 100644
+--- a/drivers/base/devtmpfs.c
++++ b/drivers/base/devtmpfs.c
+@@ -296,7 +296,7 @@ static int delete_path(const char *nodepath)
+ 	return err;
+ }
+ 
+-static int dev_mynode(struct device *dev, struct inode *inode, struct kstat *stat)
++static int dev_mynode(struct device *dev, struct inode *inode)
+ {
+ 	/* did we create it */
+ 	if (inode->i_private != &thread)
+@@ -304,13 +304,13 @@ static int dev_mynode(struct device *dev, struct inode *inode, struct kstat *sta
+ 
+ 	/* does the dev_t match */
+ 	if (is_blockdev(dev)) {
+-		if (!S_ISBLK(stat->mode))
++		if (!S_ISBLK(inode->i_mode))
+ 			return 0;
+ 	} else {
+-		if (!S_ISCHR(stat->mode))
++		if (!S_ISCHR(inode->i_mode))
+ 			return 0;
+ 	}
+-	if (stat->rdev != dev->devt)
++	if (inode->i_rdev != dev->devt)
+ 		return 0;
+ 
+ 	/* ours */
+@@ -321,8 +321,7 @@ static int handle_remove(const char *nodename, struct device *dev)
+ {
+ 	struct path parent;
+ 	struct dentry *dentry;
+-	struct kstat stat;
+-	struct path p;
++	struct inode *inode;
+ 	int deleted = 0;
+ 	int err;
+ 
+@@ -330,11 +329,8 @@ static int handle_remove(const char *nodename, struct device *dev)
+ 	if (IS_ERR(dentry))
+ 		return PTR_ERR(dentry);
+ 
+-	p.mnt = parent.mnt;
+-	p.dentry = dentry;
+-	err = vfs_getattr(&p, &stat, STATX_TYPE | STATX_MODE,
+-			  AT_STATX_SYNC_AS_STAT);
+-	if (!err && dev_mynode(dev, d_inode(dentry), &stat)) {
++	inode = d_inode(dentry);
++	if (dev_mynode(dev, inode)) {
+ 		struct iattr newattrs;
+ 		/*
+ 		 * before unlinking this node, reset permissions
+@@ -342,7 +338,7 @@ static int handle_remove(const char *nodename, struct device *dev)
+ 		 */
+ 		newattrs.ia_uid = GLOBAL_ROOT_UID;
+ 		newattrs.ia_gid = GLOBAL_ROOT_GID;
+-		newattrs.ia_mode = stat.mode & ~0777;
++		newattrs.ia_mode = inode->i_mode & ~0777;
+ 		newattrs.ia_valid =
+ 			ATTR_UID|ATTR_GID|ATTR_MODE;
+ 		inode_lock(d_inode(dentry));
+-- 
+2.47.2
+
 
