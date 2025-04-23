@@ -1,112 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-47054-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2328FA9819F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 09:52:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1BAA98264
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 10:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CD7E17C759
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 07:52:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C8318962C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 08:11:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B748270ED4;
-	Wed, 23 Apr 2025 07:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6123F26B0A5;
+	Wed, 23 Apr 2025 08:11:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F06F26FA60
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 07:50:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFAA1F470E;
+	Wed, 23 Apr 2025 08:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745394642; cv=none; b=l3zt37zRCWSbMDbf7sHUtVyoD8Yr/UqG0ju6l+K8DbsTE7TXnano+1bcOC1mW0THR53wBiOHkGGkC2D7RQRIXrfTCi0DheBsk2xKxFEjxAJYsotOciZiIkg/3D+6X5d0cFO0Yomvr/JRMttfA48YLSt8T7mfnu5wPyfbewY8vzY=
+	t=1745395869; cv=none; b=XkiGPr/z3y29FyiXOewWdlnox9dPyxlcJ1TO1YizOCSpHB83REGHFZilxqoRNEgySU0ZeGu6ZqRT+f6m+G9n/mpy1b87REG/kOiWZ1NbttRCNp2WpBFilXUafbIoOKjtzUcCnrJUuucZXF0u7R1emltvMEK0Vzp1txt/FnK0b9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745394642; c=relaxed/simple;
-	bh=al+frGc8+s1dm76ODqj2Z8/1RnDsvo23VzeIBR3RsDQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=uDQlWKDuXNRbvhX0IHN3FACrafshJlSqkInSHO4TTsjfhDwaVytzd0y2gL6d0/ZNFVCxO9eqcYjdncub9kX+3ozI0U8tosqgFh3+35gxLX9yTrx0rJWJ2Jsq+CAmNL/zG0fFoXXODpvOahb/MkfXkmF5LVjZ2LLy8NfzR1laJmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3d8a9b1c84eso70994935ab.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 00:50:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745394639; x=1745999439;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=nuThavoLQFnNNllqB36w9iF3pcSUNQsBnPw1UbIkX/0=;
-        b=SgyYTNbTLWword9JrPo4y14i+129926ts4rLZYueIIXj3Rxws1czErsEikbJVZ8fdJ
-         hjPmDG+dBEVlpcrL7xl/JTnJiJxrBgZpDPAz8VwKZrB9g7qvBINoNynnP+jIB/LAO2er
-         TS8tHGyLxP+y0SqRFn47sgKaTkBjY9se+5lpfcJB+Cygvlx4PX7n+6+OXyuwzjUGxk6d
-         J120OF4pabZmuEHs022QTouKMmzLurx8cazWAZkheLSq9sqQaYasBSdbXYMtVjQHJ9WL
-         FG2uYSU+8JzkDEkeRSMZY+EJDHzxUQYqdaxRT7Mh+nQdHdmm1ZNecLzjKFTDjeBplqjb
-         aytQ==
-X-Gm-Message-State: AOJu0YzKdHA+7C0YWejwsCiBP9YCykTC93cdt6srwgTOURqtzwABI3xe
-	4Q95sNxPL/yBlPB0o13tOzHIKH043DoTrUwsv2GCwRnCkjX1KgjkBQwCjjIc4KufXaLEu/JoFhC
-	I3fbbm5OVBHGrJxSKLXD6uQtd/ZVKiG3Hn5t109wc/9XavtH0QTu4xfw=
-X-Google-Smtp-Source: AGHT+IEONT04EfO3W2Xdd6K5CAX2eA5M72ZERzdf9qHibbRkS+VeKdqg5K5btTHGxTAtSvaoucaL48YKipCxDBTpxYEEPDetZRf2
+	s=arc-20240116; t=1745395869; c=relaxed/simple;
+	bh=AcZL+tgJx6ZeqYbFnXapzYJ9r1oRCnCzprxsrk7VnzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5yAdF1cAVAJAfgLV8AnZI4foZXjSOOlgR5QZb4ZfMgNxuDHNX6fbBjwujefEn5sMV7iesh0XAIKqLC0i1MjakX2zSKpO1BcV9IlbNKmpLgng8wC1v5OHpbVfs7m9WtXWb3/SJeDfq6CHqBfFLg8E+p5bo/JqvZpoeVQWJRIdck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id B376468AFE; Wed, 23 Apr 2025 10:10:55 +0200 (CEST)
+Date: Wed, 23 Apr 2025 10:10:55 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, brauner@kernel.org, hch@lst.de,
+	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v8 05/15] xfs: ignore HW which cannot atomic write a
+ single block
+Message-ID: <20250423081055.GA28307@lst.de>
+References: <20250422122739.2230121-1-john.g.garry@oracle.com> <20250422122739.2230121-6-john.g.garry@oracle.com> <20250423003823.GW25675@frogsfrogsfrogs> <f467a921-e7dd-4f5b-ac9f-c6e8c043143c@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1526:b0:3d8:18d4:7bce with SMTP id
- e9e14a558f8ab-3d88ed65543mr189879555ab.2.1745394639409; Wed, 23 Apr 2025
- 00:50:39 -0700 (PDT)
-Date: Wed, 23 Apr 2025 00:50:39 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68089bcf.050a0220.36a438.000c.GAE@google.com>
-Subject: [syzbot] Monthly hfs report (Apr 2025)
-From: syzbot <syzbot+list4354a0e836e319a1f6c0@syzkaller.appspotmail.com>
-To: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f467a921-e7dd-4f5b-ac9f-c6e8c043143c@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hello hfs maintainers/developers,
+On Wed, Apr 23, 2025 at 08:15:43AM +0100, John Garry wrote:
+> Ideally we could have not set them in the first place, but need to know the 
+> blocksize when xfs_alloc_buftarg() is called, but it is not yet set for 
+> mp/sb. Is there any neat way to know the blocksize when xfs_alloc_buftarg() 
+> is called?
 
-This is a 31-day syzbot report for the hfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/hfs
+The buftarg is needed to read the superblock, which is used to determine
+the block size, so no.
 
-During the period, 3 new issues were detected and 0 were fixed.
-In total, 44 issues are still open and 23 have already been fixed.
+But maybe we should just delay setting the atomic values until later so
+that it can be done in a single pass?  E.g. into xfs_setsize_buftarg
+which then should probably be rename to something like
+xfs_buftarg_setup.
 
-Some of the still happening issues:
-
-Ref  Crashes Repro Title
-<1>  74123   Yes   kernel BUG in hfs_write_inode
-                   https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-<2>  15640   Yes   kernel BUG in __hfsplus_setxattr
-                   https://syzkaller.appspot.com/bug?extid=1107451c16b9eb9d29e6
-<3>  12534   Yes   possible deadlock in hfsplus_get_block
-                   https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
-<4>  6506    Yes   KMSAN: uninit-value in hfsplus_cat_case_cmp_key
-                   https://syzkaller.appspot.com/bug?extid=50d8672fea106e5387bb
-<5>  3643    Yes   KMSAN: uninit-value in hfsplus_delete_cat
-                   https://syzkaller.appspot.com/bug?extid=fdedff847a0e5e84c39f
-<6>  3561    Yes   KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
-                   https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
-<7>  3427    Yes   possible deadlock in hfs_find_init (2)
-                   https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
-<8>  3321    Yes   KMSAN: uninit-value in hfs_find_set_zero_bits
-                   https://syzkaller.appspot.com/bug?extid=773fa9d79b29bd8b6831
-<9>  2867    Yes   KASAN: slab-out-of-bounds Read in hfsplus_uni2asc
-                   https://syzkaller.appspot.com/bug?extid=076d963e115823c4b9be
-<10> 2701    Yes   KMSAN: uninit-value in hfsplus_lookup
-                   https://syzkaller.appspot.com/bug?extid=91db973302e7b18c7653
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
 
