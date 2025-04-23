@@ -1,125 +1,112 @@
-Return-Path: <linux-fsdevel+bounces-47128-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47129-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68854A9990A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 21:58:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E732CA99936
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 22:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 947117A4E27
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 19:57:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343BE4614DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 20:10:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E427D257AD4;
-	Wed, 23 Apr 2025 19:58:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75852741A1;
+	Wed, 23 Apr 2025 20:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Ts2gYgC7"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MiSEKTvM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 488BD1FC10E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 19:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FC052F88
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 20:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745438307; cv=none; b=JNK5hpcqSFN6ggDkZfwiWf49tahHWPdqqtAFs0bLjajF+YIj6PylX2y0b6yHueTz3EGoDQ+Zi5qvVkAeJLz0cCsg6GG+qwb7f5oW0+1hbvBs09igyNAbnAk5DlNMAo7RzRSOl0dMN2ADfQSmTd8de2G0eQkxUj5aIYU+ChVPGZk=
+	t=1745439043; cv=none; b=KVbMy8JH0WfH1tW0MetK+WVxdQo/o2K9qvQg/l9qTMTThza2IPDt8X80JDaiNb9c/ouZ4MaMx/rzqyWPYZfOEuPWQmjiqC8Rhc3fl1eLv5GcqppUDhBfC0SKjlXP/DFcjKYlWkxnMofXjuDgCpXOjcyJcWs+JaMlXw/wcLw+rYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745438307; c=relaxed/simple;
-	bh=sABJ0zDjI+HdAYjK6q+W6i4zhTPiFN5NjWMMBT+eTh4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mF7t6IB+0Q9Qx2PaH96/31yGdSTMuHawkqjjl5x4yALEVGV588Q8zzCsoK5vDkiMRMAbjXRFB+clpFrJfMwT9MjxXs3SZkCkIcGIA1QLnIWUsHSSZ3cYoe7GuxFad+M4cCBGjo4p/Lm/kt2XIeIrqh1mryCulBKvuj4O6gVsbZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Ts2gYgC7; arc=none smtp.client-ip=209.85.166.178
+	s=arc-20240116; t=1745439043; c=relaxed/simple;
+	bh=HqIXcWpEBWid+l2OiDQI7nWiV0QSluTCCJghdbBX6dQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eiJpVfJnWAFDOgUKNqtQp7BcH3aVUSy6Dv6tt2sQic8X9huucmMOqoFTpNZmgIaoE6+knfir7X3CGo4s1e0Mad3nDBx+XMyX1weav20WtNOA1KNE7gS9EipA77yUr/4PvZK93yNhOHijOgesvUhS6e73EF/TI+sw8fuVj5QxSM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MiSEKTvM; arc=none smtp.client-ip=209.85.166.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d5e68418b5so2156185ab.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 12:58:25 -0700 (PDT)
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-8613f456960so10702739f.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 13:10:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745438304; x=1746043104; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9j5LjmU56b5qAgJCmFZDj31NsIm7pWmTfna1PU4IFm8=;
-        b=Ts2gYgC7nfnC0WsxXQFgF6BZ9YN9hd1ccmdVEi6RTerUyu8PFoWyG7nhKy7a9AsYNp
-         6bf1rHf8xvdODrEoF/3aJiUzgficfHfx9sUGCkOhXlPoFmRk2BFG1Er3fzERcJ2CuaAc
-         hJePFjC9sqTqLcOU8xGH6ZZ6X0EPUXxIpn17FwPdolr/bqu+prehcfn5iEUquq0HW/Ou
-         9pU3hcG1oX85Agg6VoU1+Xh3cAtjmRE0z2aK/+2Zu3Fp3sgbNh7rTSoCCmfpxuLvKwCf
-         f4WcVmbeV8cgiImtCWFvQGn1pmAfKvOujlInYK5+Lf0XDA4AiW5JQ17UqJSFASXYUh2U
-         g/ng==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745439040; x=1746043840; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=L4aZh75tam4hiDyoi4zEtwQZvmp/wQknrw8epVfbLHc=;
+        b=MiSEKTvMIqJvuLqLM8ajCEgcpuFblwLhddbGYTD+0ZyEwTtdzaM4wOxWnJJGTdStVa
+         be44CH4kCK0LAiNcnuHrpfOFre4rrr/6a3IiEZ82IsLrPuv0xoDBGCIIZVFPOtIsXce/
+         59gTEwf3UwF3BL0tud6bVFy3B34ri9TFotChK5qS/zzxaOZo/m7oIFhnjN8+uIz2NyRL
+         OI+QHF+VzjneNrt3MRHizQgE1+eu7BdablOCF3awH69JvweN0nMIUVKZIojo7sDao8VK
+         hs/VopUE7XnSmod6rEMN+Hhx5QDs0E7pIOYfWerTVXYjU+e+xgZ4EB2NCp8bRP4vrOeq
+         eVcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745438304; x=1746043104;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9j5LjmU56b5qAgJCmFZDj31NsIm7pWmTfna1PU4IFm8=;
-        b=o90oyZmpxyk3OXGtO+hYxft5eLWMaFHMl7pfGkhczNrH/nAyD0pE85C9jCGmNFKyxw
-         MMQgY+WsUoUFPMqVHj5TEJbtCKabag2ae+jp6OfqwZljviN2kIvx4oImwt7O47DBLV64
-         xQr/L5HNptMLJ59KAAfcKByx8TFOyOM50YEZe1Z4GCOr6b6TgO50aO+IoRt1LWdAWzbL
-         DOjsxlPXlXe3hJcc4IduZf/msjWadMZDbWxeAHr5815FKeN7gsdYeBJQu2v61i/hcGYz
-         wOPSX1XbQkx4n+8xIB7XzbMsAUwOeUIXr4Hs6X+FKFkwovoVe69gHb0fPSEA+dvXab0Z
-         Vc5g==
-X-Forwarded-Encrypted: i=1; AJvYcCW9k35zf82XRvQ91zCEL9sUAW4z6EOriJrMuEUWv+r85NoSo6CySb4QiX1Fz6S9/UCnRQZmYBqmRFsbgR2S@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW0SNYU0X251xmcZT9tvX4VQs+TDABaZsJKw7kRR8ttxj5TWMe
-	Zr0UfLmvqMyPNTE24NqptovUhRKvDLTEjJPLS2cl7xXc79GVXvCNx3SmUQzPZm10f6gDjVkcQxF
-	W
-X-Gm-Gg: ASbGnctcgYEfvoCiBD5itoEzVlEEENErjlxERyhvcgqGik2Gs7kQjIpZiDaK9BWwb8j
-	1l0202FFyq2e7GKzPvBiGe0QDxr8ziUhfUAPP6O9lWdfSxJvdPFZtHGJmtvtnSTOeWlJ8lxzUsA
-	Q+ARMEO4jGc2RqCJxXgbahWGK2weIislo1jsl86kndTUKwy05loVQQFmp2bl7O/3mDxs/Wh5FuM
-	lke75eb3W0Edx41WcmpsKZA96dj89vhnWFhCg3iePb/x8VllVxAN556ddO475Y2+4/9azHGlJ2/
-	6HaqHVeq3duiWpq8RI5F7JAQQUAVdtE=
-X-Google-Smtp-Source: AGHT+IEMJ0bRGRXiRlKdRhkAgWX19pwillKCdqIlVb4cy4gK+d8U2A8s+2kwKh/p2ao3kPhQzF0MkQ==
-X-Received: by 2002:a05:6e02:b21:b0:3d3:d823:5402 with SMTP id e9e14a558f8ab-3d92ea8af22mr11668365ab.7.1745438304290;
-        Wed, 23 Apr 2025 12:58:24 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a39335casm2960256173.84.2025.04.23.12.58.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 12:58:23 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: cem@kernel.org, "Darrick J. Wong" <djwong@kernel.org>
-Cc: hch@lst.de, mcgrof@kernel.org, shinichiro.kawasaki@wdc.com, 
- hch@infradead.org, willy@infradead.org, linux-xfs@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, shinichiro.kawasaki@wdc.com, 
- linux-block@vger.kernel.org, mcgrof@kernel.org
-In-Reply-To: <174543795664.4139148.8846677768151191269.stgit@frogsfrogsfrogs>
-References: <174543795664.4139148.8846677768151191269.stgit@frogsfrogsfrogs>
-Subject: Re: (subset) [PATCHSET V4] block/xfs: bdev page cache bug fixes
- for 6.15
-Message-Id: <174543830334.539678.13336981984894472656.b4-ty@kernel.dk>
-Date: Wed, 23 Apr 2025 13:58:23 -0600
+        d=1e100.net; s=20230601; t=1745439040; x=1746043840;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L4aZh75tam4hiDyoi4zEtwQZvmp/wQknrw8epVfbLHc=;
+        b=ZKefCjqU5ZUPgefvVc50PkOqwELhCyYxDSPmTR/2hznljgk05gzmmurNGoPjR82Aej
+         Oj2RzJc6n+f4wsQOwX4LZ8ct3i3pADJOjeTWfYmJVIKn3xj3oHviFnaiBMpz9jc8Fv7x
+         oG/iAvyon+rMOwTw8psAZ7kY75sM3LFFP7hqbPclG3WiGcpb/AXWmDCFTQxuQ9dEINye
+         djCmQoaLfoL2SdkDsOxZC+zb3/EYd20WhtPVXbgwBS9hdLO94KK3d4C4TrRzdem5+xD7
+         49111l7OJ7amphLP63seHyO6vlIsALYNsfqCCTzvDa4Lt1GSXYjc+i2m0X/1Pdogo+9z
+         TH2w==
+X-Gm-Message-State: AOJu0Yx6smq/FvAlgsOVOe4Jk87elQ3BLYNHQCSGZeFXy3ShCxV96/mK
+	MeKUVvsU/5QxunRJWYAdJxn79MhcxjDkJIog00RaiCex8FJaDysYcd1e9iypf3BPAdY+cAv5pyB
+	4
+X-Gm-Gg: ASbGncsMVPfx6tw7fyHBX9VWrfkgXKXDOIxmHKPKGOt3TpBZLxuUr/HkQ25jkpD1C7U
+	2fxSL6uJOKZsWhdrwPi1IP7hcTUaQYQ+bMvkpKviPl8y6B59+/qp/0N6TaL+4nB7keAuNJWzqH6
+	1IrJS+rsax3gVoyAVk2O12njxKQB2KRhTdNU1xGe5bJyM9WsEjmVA8j/JXkIXTooMAdAVs7tVcp
+	7/szggo87EJG73SDWNkvMEpyhvtJoxLPFvWzmhAeK9A7zKu2iWmxh5d48RoALIvf52boFFdUxS2
+	o7nbuLKNo8fO34i9oVYSQFnnH2sZBbSN54aD
+X-Google-Smtp-Source: AGHT+IHUo12s5KpqBhFFTUaVnPuLGTIq+azon1loYWCZ4jeC2mqhJUfYZKyFttdMlmM23xuFgMyaVw==
+X-Received: by 2002:a05:6602:4a08:b0:861:d71f:33e3 with SMTP id ca18e2360f4ac-8644f9b422amr34522539f.5.1745439040629;
+        Wed, 23 Apr 2025 13:10:40 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a38383dfsm2918100173.70.2025.04.23.13.10.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 13:10:39 -0700 (PDT)
+Message-ID: <c3880483-7cd6-4151-9af8-f6a1be9977c9@kernel.dk>
+Date: Wed, 23 Apr 2025 14:10:39 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] splice: remove duplicate noinline from pipe_clear_nowait
+To: "T.J. Mercier" <tjmercier@google.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250423180025.2627670-1-tjmercier@google.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250423180025.2627670-1-tjmercier@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-7b9b9
 
-
-On Wed, 23 Apr 2025 12:53:36 -0700, Darrick J. Wong wrote:
-> Here are a handful of bugfixes for 6.15.  The first patch fixes a race
-> between set_blocksize and block device pagecache manipulation; the rest
-> removes XFS' usage of set_blocksize since it's unnecessary.  I think this
-> is ready for merging now.
+On 4/23/25 12:00 PM, T.J. Mercier wrote:
+> pipe_clear_nowait has two noinline macros, but we only need one.
 > 
-> v1: clean up into something reviewable
-> v2: split block and xfs patches, add reviews
-> v3: rebase to 6.15-rc3, no other dependencies
-> v4: add more tags
+> I checked the whole tree, and this is the only occurrence:
 > 
-> [...]
+> $ grep -r "noinline .* noinline"
+> fs/splice.c:static noinline void noinline pipe_clear_nowait(struct file *file)
+> $
 
-Applied, thanks!
+Funky! Obivously looks fine:
 
-[1/3] block: fix race between set_blocksize and read paths
-      commit: c0e473a0d226479e8e925d5ba93f751d8df628e9
-[2/3] block: hoist block size validation code to a separate function
-      commit: e03463d247ddac66e71143468373df3d74a3a6bd
+Reviewed-by: Jens Axboe <axboe@kernel.dk>
 
-Best regards,
 -- 
 Jens Axboe
-
-
 
 
