@@ -1,143 +1,374 @@
-Return-Path: <linux-fsdevel+bounces-47095-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47096-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DADFA98C03
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:56:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A079A98D1C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 16:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D12E5A2299
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 13:55:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 914453A76F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 14:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17FF1E1E06;
-	Wed, 23 Apr 2025 13:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169AC27EC6C;
+	Wed, 23 Apr 2025 14:29:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bsj9dmlI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6Ivnf/p"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB8C31AF0B5;
-	Wed, 23 Apr 2025 13:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E0817555;
+	Wed, 23 Apr 2025 14:29:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745416489; cv=none; b=fHKA60g0ae7evhRatWgg3pCXYqm2PUJkn5GFw1urT2TrrmRSWUKMvQYRgY3qgQWHGsy0dHbSnW2qgb2ChAoD/Ii1ahE/ge8BlpcDU4tcBfl+BdOAb8fPLAK8YUtd4lE1ZzjAaeajQPp39do4r+2T0Tj8Rjs1jRdL4Kyx0xszLrU=
+	t=1745418596; cv=none; b=c91dsHs1IlQ/aXD8HHxXs8DfBI/T7VA46RhFo4wN0jXsIeobORC8pkXF0OqcNiz8xDurMzRo7rujMe8ECKiy3jql+IAue4ArO/CFDjAqnpsivaXDU+25adR8wMHaLeqQZ1QwVzpnbZ2z6DFL5C4WRrB+NjRUlY+BE9BDnsL00qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745416489; c=relaxed/simple;
-	bh=OTgMdZaw+c5NGr/9Til4thtTT36TGX8yCwq4TYTPiks=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xx67uYPsVtoFsqfbEpb+jml3yik7IRaowWDycgXr5ltAeqryMhIEYypr0O3Y7CotgSZGJuyfPiXlwhXLw2FqFhxaH/b5ZCo/wDrl1Dg54avPiid6gNeEafT52qji86IHUux2ecWW8XeyrgmzZ58wBtOgrLSqy0wdAk+JGqfQYkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bsj9dmlI; arc=none smtp.client-ip=209.85.160.169
+	s=arc-20240116; t=1745418596; c=relaxed/simple;
+	bh=r8jAqmLZbNO01NxVCNrFgFdl7VRLWQxQUMhZ7S/MX0M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OSJSYDHRM6Kc90MXv+5JIhEBEuCR9Gi8z0/3ZuLD9qxPLEElFw6b2bl3/IjG9XcmZWm13XOEiXWJ7dfwfmeQYjA42HWbvK7QIW9JTHt8jWZz0RiPBU+kFLloM4sBjSh1SyOiPq36dm77e4gsPhcpm3CAitnX9FcolRyVvJrlsNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B6Ivnf/p; arc=none smtp.client-ip=209.85.160.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-476977848c4so72577681cf.1;
-        Wed, 23 Apr 2025 06:54:47 -0700 (PDT)
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2d0e86cd5b1so3639286fac.3;
+        Wed, 23 Apr 2025 07:29:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745416486; x=1746021286; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CuqgNpQtYEXMZS1DrSHgUIFvXUKBF5Ic3ONpr4JBBA0=;
-        b=bsj9dmlI/y+qVwuPI8z5UWasVIqaUpV5q2DST2q7hyvF4+w8TRgf1FlNq6YddEkW3N
-         5/LrQdeCNE0p3ElzNCBf3HzI9ixCZW29Nj05MT7KhBeAcAgMr1YHivhaFwwf3h81vfIx
-         bYS+kMIGxrxrqxs4xlT2AS5HLoI/F6B7g/VJ6C/CShJ5Aazf2jMyF0POrxDF3htPWawu
-         zoA40ZWInPIfe7Hg3N64Lo19P1pNC/ZqyFDGtkbrgek6d7Nbmx2o1OAx/QATc2Fgiaaf
-         d2zjw5o45RgHe/W66l5QbO82HG8QMuwUv/NrBjkzDkEtlbD+yuyYcuAEivOohJnL7rib
-         5LAQ==
+        d=gmail.com; s=20230601; t=1745418594; x=1746023394; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vAmiNRPfDylXI4p2I89n/el3RsJ4kbOsDdMQamDJ/lU=;
+        b=B6Ivnf/pisUqm/TkWt8aIRDvYnRwFl3bup5yNk+/x595+hj+3ukkTpC1JUAcBAMpyf
+         11Wl7XOabk/30Kq4sQemCywaI2BZl2fCKm/1mIGEoiNyfqH10IEAQMoz07uuQJEiERfp
+         hilQ/MfxVBDBP+wzt79HUL4d4vjH81g8XFuwHgE2/f975hJdlSqXUeD+7fGrEHPUcZyS
+         SjFt4G7h1ceWP82AGdKpCyyJrT0pLLAzqzYXszPGxri372skk+wkzKdOz9AIUDg0FCU2
+         gBU6YgaSKmmJ8dSkY4OETObDJ4SZSVaauchU9vSLTKKuTq+6jC1r3tK9xvjWRbyPuDDO
+         Sj5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745416486; x=1746021286;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1745418594; x=1746023394;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CuqgNpQtYEXMZS1DrSHgUIFvXUKBF5Ic3ONpr4JBBA0=;
-        b=WkeF8EmP46PtUhHi+0nykwtH7B1oP18MKy1dEYaCynXW8bjQxxx+BbSm5eoPxFpQJ6
-         ToFm/yE1pPHd8rC91eZDjoWebqo9mTJWr2S/dt3f2ZQ3w/3Aj8Uc20fCoaFmBrANkNtF
-         lxXLhhElzjg71GyxCQpVBlRGwm55OT6a+2puJkivKps8x2NNdmCwxvb4Ry4YnKBsKs32
-         LXYKAiOwwHIyVyANVMA8rZX452ia/LYxKxDeRRbQeY1N1bj+Fh332PKYKAZmpOHQZDbQ
-         MBk8K3KFyM6d4/nv2lUPWdlJPSTE7LBSu5WC45a5nOrySmfpxw5C1ve34MaluHLckLbC
-         LS0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUFdOSgHAjBXjjbyy/0EqFJ09XHGC244viMaaOg+5p6XgnuhsW1pLawnKu4eUDLNJHtyYLrZN/guIbs28CU@vger.kernel.org, AJvYcCUZYderfpL79wXZeaQqfhd7ZOJ4X2n1gantCzRQJ8tcb0+GNSaJeSyDrSUZzHLeWrWe6d7/i1d35OdJAnyr@vger.kernel.org, AJvYcCWO1L9JPp75OVmy/Ljm5qJLLdE7uvVlydwPVtHBkTl8idQbtLSChi7oGMxJXjptdcN3KVB1Al4k3d1O@vger.kernel.org, AJvYcCWXwhC/d5VFvQeCc7q0Qx3+KXaxxHbAu2VMZlBivfSUT1VNCF1wvo7uXuDibrpQDJVqWZtCHjaBzZlfthObzwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgW1uuisN84477ie/eBYrm3URdIcAtm/6lNOOd0evyMTVzZkw1
-	bzOAFitybbCbkRFbiSfYOoMtB+2mClsya1HoyPAGlJ6ZJHOJ4nSw
-X-Gm-Gg: ASbGncuFp4O1qhuaWyX2oTgFFA907CBHvGycdecpfF1eAzVwy+xR2RCj6Im8lrWjoxQ
-	6t1J7tfp4G/VLSbc6RFOc6EJx3jiXmAEe0mfjjL0E8pcmCN9zg1hHbBE05bLjZZIsTXG/EEcUOx
-	ddKdG3bJwCb2rYnusd7eWP9sNjLvLP8hLC5OB5LYyDwReiJ2QWFLNxrf+RhHVKqAY7FC2JXACFc
-	ri35CwisfJz/bLhiRWqAK93SP09uz2iP+bljIAWXRrFCkdmt/ELNFc4LGVfCdJBGNEVoQNep78h
-	sdOu5SislPEf0dSi+g6M8jKwp5LB4ySE2RkE648D/1uXv731ILOoSjC/aFfds+q/2xc0ykzEicZ
-	1ioFYJ39PtCAWhvtY7Vr4/ydZaMUiWsmqPiH6INRe6sm+x5MrAvjEghr8UUnn
-X-Google-Smtp-Source: AGHT+IGeEjYsFDhltXcZCq9irwEbKANOyTBHg4Za/JkGXn9YfvMrHB2vnBRdejBXniq5yhRW3lC/Ww==
-X-Received: by 2002:a05:622a:28d:b0:478:f03c:b3dc with SMTP id d75a77b69052e-47aec491329mr332173931cf.41.1745416486510;
-        Wed, 23 Apr 2025 06:54:46 -0700 (PDT)
-Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:e2b6])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47ae9cf9f7dsm68135461cf.74.2025.04.23.06.54.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 06:54:46 -0700 (PDT)
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 23 Apr 2025 09:54:39 -0400
-Subject: [PATCH v19 3/3] MAINTAINERS: add entry for Rust XArray API
+        bh=vAmiNRPfDylXI4p2I89n/el3RsJ4kbOsDdMQamDJ/lU=;
+        b=g7595jDhQ1BJbYHjL6CVEqG7Fse95PdHpayqov7cpJyPwCow8CBg+xjhTUA/Ah563u
+         imNrnJmfTWv+l7gaeW83yy5AXuAx8laFgpOB7ZF6Fxg2IhxUmqqQp4unKwx+EyLT2EpY
+         /wrUOltJe1bWifwcLg9WpxKf9qltN+3Mj8fCTyXJYELXXxuapIyJjWb9+nDiWGX1fNzC
+         1KI5FV5n+TldaAokwLzulSMeEx2Bfurlojrf1cGLhKKRcD2aOjk9SPva+QcfaBiuAcwi
+         2uSwlAkrnicaz0DBYUljkvdXUPsuJfiOLHWasQixanxbWTFf79wQP9M+PhC2PtzCQFBw
+         1Dzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjvuoc2GIMCT97nvl1uRWlsmZiLImd5Ofm1YQV1PUyV9bYqkhQmZ6AXMncigGQgvKmgH0q4ueNrjmqUdQYXw==@vger.kernel.org, AJvYcCXTZ4+l7GHaBZh+V8hAjqUgAKIbOBuNoN62PvYqn870m9IZr9jRxRU0HhQilvEhW/AqlKnMIZcYwg==@vger.kernel.org, AJvYcCXkexdDUcIPZ6K+3Ns/NPZxluL9gCvgkLlXCgpms1mkpbtRzooBU8b7esWuaBG2hwkqYAVYj8h5sgIycehD@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcVzdVIMFz5NpjrQRtifAbvVBVCDTFzUf8FZAaFIbj1oBU0L/d
+	voNXWCaDMizQBfgqg2WB97Npn7E7KVpdP4yCY3BsbQ7pVmLi3yJIF0mRwABSjhk96/+58Kkgxmz
+	38eQR2sB9b7mJXRnLBj46qAItu38=
+X-Gm-Gg: ASbGncssZ5qotGKvHeWsYnqbXPfQwjcLJB9Ab/Yy9Nn8/an6NGLqKga0ZyIgi9xQi84
+	rE5olfWMgBNWFQ0MAOzNTkc2G6Gsz0IrYV7oLmnJu/KxIDV6y5YNs1LRsfbtNo+T5CdQ2BszLua
+	YD7cKiJ2wffMj0fg1pSsnkiJk=
+X-Google-Smtp-Source: AGHT+IG/83Vm9P2qTMF2EymMFKDXet9s/AZitDACbuc3Nu8TMbhGwbGeWoz11uK69jP/+KGgtXg1R2c2Y0EWUlyBaZc=
+X-Received: by 2002:a05:6871:400b:b0:2d4:d9d6:c8cf with SMTP id
+ 586e51a60fabf-2d526973ecamr11685729fac.5.1745418593659; Wed, 23 Apr 2025
+ 07:29:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250423-rust-xarray-bindings-v19-3-83cdcf11c114@gmail.com>
-References: <20250423-rust-xarray-bindings-v19-0-83cdcf11c114@gmail.com>
-In-Reply-To: <20250423-rust-xarray-bindings-v19-0-83cdcf11c114@gmail.com>
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, 
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Matthew Wilcox <willy@infradead.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Tamir Duberstein <tamird@gmail.com>, 
- FUJITA Tomonori <fujita.tomonori@gmail.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
- Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-pci@vger.kernel.org
-X-Mailer: b4 0.15-dev
+References: <20250422162913.1242057-1-qq282012236@gmail.com>
+ <20250422162913.1242057-2-qq282012236@gmail.com> <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
+ <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
+ <b61ac651-fafe-449a-82ed-7239123844e1@kernel.dk> <CANHzP_tLV29_uk2gcRAjT9sJNVPH3rMyVuQP07q+c_TWWgsfDg@mail.gmail.com>
+ <7bea9c74-7551-4312-bece-86c4ad5c982f@kernel.dk>
+In-Reply-To: <7bea9c74-7551-4312-bece-86c4ad5c982f@kernel.dk>
+From: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
+Date: Wed, 23 Apr 2025 22:29:39 +0800
+X-Gm-Features: ATxdqUEhnCv--36VUKzk9XOpQWOK0vKQGChSsvOwX9Wb21JeSMSuWP0HeyDRE1U
+Message-ID: <CANHzP_ui_TEPvr6wkWr42j46Sk5qHzZ+p0oo06BrNny52dPK9Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault scenarios
+To: Jens Axboe <axboe@kernel.dk>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	akpm@linux-foundation.org, peterx@redhat.com, asml.silence@gmail.com, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add an entry for the Rust xarray abstractions.
+Jens Axboe <axboe@kernel.dk> =E4=BA=8E2025=E5=B9=B44=E6=9C=8823=E6=97=A5=E5=
+=91=A8=E4=B8=89 21:34=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 4/22/25 8:49 PM, ??? wrote:
+> > On Wed, Apr 23, 2025 at 1:33?AM Jens Axboe <axboe@kernel.dk> wrote:
+> >>
+> >> On 4/22/25 11:04 AM, ??? wrote:
+> >>> On Wed, Apr 23, 2025 at 12:32?AM Jens Axboe <axboe@kernel.dk> wrote:
+> >>>>
+> >>>> On 4/22/25 10:29 AM, Zhiwei Jiang wrote:
+> >>>>> diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
+> >>>>> index d4fb2940e435..8567a9c819db 100644
+> >>>>> --- a/io_uring/io-wq.h
+> >>>>> +++ b/io_uring/io-wq.h
+> >>>>> @@ -70,8 +70,10 @@ enum io_wq_cancel io_wq_cancel_cb(struct io_wq *=
+wq, work_cancel_fn *cancel,
+> >>>>>                                       void *data, bool cancel_all);
+> >>>>>
+> >>>>>  #if defined(CONFIG_IO_WQ)
+> >>>>> -extern void io_wq_worker_sleeping(struct task_struct *);
+> >>>>> -extern void io_wq_worker_running(struct task_struct *);
+> >>>>> +extern void io_wq_worker_sleeping(struct task_struct *tsk);
+> >>>>> +extern void io_wq_worker_running(struct task_struct *tsk);
+> >>>>> +extern void set_userfault_flag_for_ioworker(void);
+> >>>>> +extern void clear_userfault_flag_for_ioworker(void);
+> >>>>>  #else
+> >>>>>  static inline void io_wq_worker_sleeping(struct task_struct *tsk)
+> >>>>>  {
+> >>>>> @@ -79,6 +81,12 @@ static inline void io_wq_worker_sleeping(struct =
+task_struct *tsk)
+> >>>>>  static inline void io_wq_worker_running(struct task_struct *tsk)
+> >>>>>  {
+> >>>>>  }
+> >>>>> +static inline void set_userfault_flag_for_ioworker(void)
+> >>>>> +{
+> >>>>> +}
+> >>>>> +static inline void clear_userfault_flag_for_ioworker(void)
+> >>>>> +{
+> >>>>> +}
+> >>>>>  #endif
+> >>>>>
+> >>>>>  static inline bool io_wq_current_is_worker(void)
+> >>>>
+> >>>> This should go in include/linux/io_uring.h and then userfaultfd woul=
+d
+> >>>> not have to include io_uring private headers.
+> >>>>
+> >>>> But that's beside the point, like I said we still need to get to the
+> >>>> bottom of what is going on here first, rather than try and paper aro=
+und
+> >>>> it. So please don't post more versions of this before we have that
+> >>>> understanding.
+> >>>>
+> >>>> See previous emails on 6.8 and other kernel versions.
+> >>>>
+> >>>> --
+> >>>> Jens Axboe
+> >>> The issue did not involve creating new worker processes. Instead, the
+> >>> existing IOU worker kernel threads (about a dozen) associated with th=
+e VM
+> >>> process were fully utilizing CPU without writing data, caused by a fa=
+ult
+> >>> while reading user data pages in the fault_in_iov_iter_readable funct=
+ion
+> >>> when pulling user memory into kernel space.
+> >>
+> >> OK that makes more sense, I can certainly reproduce a loop in this pat=
+h:
+> >>
+> >> iou-wrk-726     729    36.910071:       9737 cycles:P:
+> >>         ffff800080456c44 handle_userfault+0x47c
+> >>         ffff800080381fc0 hugetlb_fault+0xb68
+> >>         ffff80008031fee4 handle_mm_fault+0x2fc
+> >>         ffff8000812ada6c do_page_fault+0x1e4
+> >>         ffff8000812ae024 do_translation_fault+0x9c
+> >>         ffff800080049a9c do_mem_abort+0x44
+> >>         ffff80008129bd78 el1_abort+0x38
+> >>         ffff80008129ceb4 el1h_64_sync_handler+0xd4
+> >>         ffff8000800112b4 el1h_64_sync+0x6c
+> >>         ffff80008030984c fault_in_readable+0x74
+> >>         ffff800080476f3c iomap_file_buffered_write+0x14c
+> >>         ffff8000809b1230 blkdev_write_iter+0x1a8
+> >>         ffff800080a1f378 io_write+0x188
+> >>         ffff800080a14f30 io_issue_sqe+0x68
+> >>         ffff800080a155d0 io_wq_submit_work+0xa8
+> >>         ffff800080a32afc io_worker_handle_work+0x1f4
+> >>         ffff800080a332b8 io_wq_worker+0x110
+> >>         ffff80008002dd38 ret_from_fork+0x10
+> >>
+> >> which seems to be expected, we'd continually try and fault in the
+> >> ranges, if the userfaultfd handler isn't filling them.
+> >>
+> >> I guess this is where I'm still confused, because I don't see how this
+> >> is different from if you have a normal write(2) syscall doing the same
+> >> thing - you'd get the same looping.
+> >>
+> >> ??
+> >>
+> >>> This issue occurs like during VM snapshot loading (which uses
+> >>> userfaultfd for on-demand memory loading), while the task in the gues=
+t is
+> >>> writing data to disk.
+> >>>
+> >>> Normally, the VM first triggers a user fault to fill the page table.
+> >>> So in the IOU worker thread, the page tables are already filled,
+> >>> fault no chance happens when faulting in memory pages
+> >>> in fault_in_iov_iter_readable.
+> >>>
+> >>> I suspect that during snapshot loading, a memory access in the
+> >>> VM triggers an async page fault handled by the kernel thread,
+> >>> while the IOU worker's async kernel thread is also running.
+> >>> Maybe If the IOU worker's thread is scheduled first.
+> >>> I?m going to bed now.
+> >>
+> >> Ah ok, so what you're saying is that because we end up not sleeping
+> >> (because a signal is pending, it seems), then the fault will never get
+> >> filled and hence progress not made? And the signal is pending because
+> >> someone tried to create a net worker, and this work is not getting
+> >> processed.
+> >>
+> >> --
+> >> Jens Axboe
+> >         handle_userfault() {
+> >           hugetlb_vma_lock_read();
+> >           _raw_spin_lock_irq() {
+> >             __pv_queued_spin_lock_slowpath();
+> >           }
+> >           vma_mmu_pagesize() {
+> >             hugetlb_vm_op_pagesize();
+> >           }
+> >           huge_pte_offset();
+> >           hugetlb_vma_unlock_read();
+> >           up_read();
+> >           __wake_up() {
+> >             _raw_spin_lock_irqsave() {
+> >               __pv_queued_spin_lock_slowpath();
+> >             }
+> >             __wake_up_common();
+> >             _raw_spin_unlock_irqrestore();
+> >           }
+> >           schedule() {
+> >             io_wq_worker_sleeping() {
+> >               io_wq_dec_running();
+> >             }
+> >             rcu_note_context_switch();
+> >             raw_spin_rq_lock_nested() {
+> >               _raw_spin_lock();
+> >             }
+> >             update_rq_clock();
+> >             pick_next_task() {
+> >               pick_next_task_fair() {
+> >                 update_curr() {
+> >                   update_curr_se();
+> >                   __calc_delta.constprop.0();
+> >                   update_min_vruntime();
+> >                 }
+> >                 check_cfs_rq_runtime();
+> >                 pick_next_entity() {
+> >                   pick_eevdf();
+> >                 }
+> >                 update_curr() {
+> >                   update_curr_se();
+> >                   __calc_delta.constprop.0();
+> >                   update_min_vruntime();
+> >                 }
+> >                 check_cfs_rq_runtime();
+> >                 pick_next_entity() {
+> >                   pick_eevdf();
+> >                 }
+> >                 update_curr() {
+> >                   update_curr_se();
+> >                   update_min_vruntime();
+> >                   cpuacct_charge();
+> >                   __cgroup_account_cputime() {
+> >                     cgroup_rstat_updated();
+> >                   }
+> >                 }
+> >                 check_cfs_rq_runtime();
+> >                 pick_next_entity() {
+> >                   pick_eevdf();
+> >                 }
+> >               }
+> >             }
+> >             raw_spin_rq_unlock();
+> >             io_wq_worker_running();
+> >           }
+> >           _raw_spin_lock_irq() {
+> >             __pv_queued_spin_lock_slowpath();
+> >           }
+> >           userfaultfd_ctx_put();
+> >         }
+> >       }
+> > The execution flow above is the one that kept faulting
+> > repeatedly in the IOU worker during the issue. The entire fault path,
+> > including this final userfault handling code you're seeing, would be
+> > triggered in an infinite loop. That's why I traced and found that the
+> > io_wq_worker_running() function returns early, causing the flow to
+> > differ from a normal user fault, where it should be sleeping.
+>
+> io_wq_worker_running() is called when the task is scheduled back in.
+> There's no "returning early" here, it simply updates the accounting.
+> Which is part of why your patch makes very little sense to me, we
+> would've called both io_wq_worker_sleeping() and _running() from the
+> userfaultfd path. The latter doesn't really do much, it simply just
+> increments the running worker count, if the worker was previously marked
+> as sleeping.
+>
+> And I strongly suspect that the latter is the issue, not the marking of
+> running. The above loop is fine if we do go to sleep in schedule.
+> However, if there's task_work (either TWA_SIGNAL or TWA_NOTIFY_SIGNAL
+> based) pending, then schedule() will be a no-op and we're going to
+> repeatedly go through that loop. This is because the expectation here is
+> that the loop will be aborted if either of those is true, so that
+> task_work can get run (or a signal handled, whatever), and then the
+> operation retried.
+>
+> > However, your call stack appears to behave normally,
+> > which makes me curious about what's different about execution flow.
+> > Would you be able to share your test case code so I can study it
+> > and try to reproduce the behavior on my side?
+>
+> It behaves normally for the initial attempt - we end up sleeping in
+> schedule(). However, then a new worker gets created, or the ring
+> shutdown, in which case schedule() ends up being a no-op because
+> TWA_NOTIFY_SIGNAL is set, and then we just sit there in a loop running
+> the same code again and again to no avail. So I do think my test case
+> and your issue is the same, I just reproduce it by calling
+> io_uring_queue_exit(), but the exact same thing would happen if worker
+> creation is attempted while an io-wq worker is blocked
+> handle_userfault().
+>
+> This is why I want to fully understand the issue rather than paper
+> around it, as I don't think the fix is correct as-is. We really want to
+> abort the loop and allow the task to handle whatever signaling is
+> currently preventing proper sleeps.
+>
+> I'll dabble a bit more and send out the test case too, in case it'll
+> help on your end.
+>
+> --
+> Jens Axboe
+I=E2=80=99m really looking forward to your test case. Also, I=E2=80=99d lik=
+e to emphasize one
+more point: the handle_userfault graph path I sent you, including the sched=
+ule
+function, is complete and unmodified. You can see that the schedule functio=
+n
+is very, very short. I understand your point about signal handling, but in =
+this
+very brief function graph, I haven=E2=80=99t yet seen any functions related=
+ to signal
+handling. Additionally, there is no context switch here, nor is it the situ=
+ation
+where the thread is being scheduled back in. Perhaps the scenario you=E2=80=
+=99ve
+reproduced is still different from the one I=E2=80=99ve encountered in some=
+ subtle way?
 
-Acked-by: Andreas Hindborg <a.hindborg@kernel.org>
-Signed-off-by: Tamir Duberstein <tamird@gmail.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+void io_wq_worker_running(struct task_struct *tsk)
+{
+struct io_worker *worker =3D tsk->worker_private;
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fa1e04e87d1d..925d64be9dd6 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -26310,6 +26310,17 @@ F:	lib/test_xarray.c
- F:	lib/xarray.c
- F:	tools/testing/radix-tree
- 
-+XARRAY API [RUST]
-+M:	Tamir Duberstein <tamird@gmail.com>
-+M:	Andreas Hindborg <a.hindborg@kernel.org>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://rust-for-linux.com
-+B:	https://github.com/Rust-for-Linux/linux/issues
-+C:	https://rust-for-linux.zulipchat.com
-+T:	git https://github.com/Rust-for-Linux/linux.git rust-next
-+F:	rust/kernel/xarray.rs
-+
- XBOX DVD IR REMOTE
- M:	Benjamin Valentin <benpicco@googlemail.com>
- S:	Maintained
-
--- 
-2.49.0
-
+if (!worker)
+return;
+if (!test_bit(IO_WORKER_F_FAULT, &worker->flags)) {
+if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+return;
+if (test_bit(IO_WORKER_F_RUNNING, &worker->flags))
+return;
+set_bit(IO_WORKER_F_RUNNING, &worker->flags);
+io_wq_inc_running(worker);
+}
+}
+However, from my observation during the crash live memory analysis,
+when this happens in the IOU worker thread, the
+IO_WORKER_F_RUNNING flag is set. This is what I said "early return",
+rather than just a simple accounting function.I look forward to your
+deeper analysis and any corrections you may have.
 
