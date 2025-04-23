@@ -1,159 +1,163 @@
-Return-Path: <linux-fsdevel+bounces-47010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0463A97BF7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 03:04:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7016EA97C0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 03:16:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD3497A6AC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 01:03:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D22BF3BF8E5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 01:15:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFB8257AE8;
-	Wed, 23 Apr 2025 01:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1ED257ACF;
+	Wed, 23 Apr 2025 01:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KBhF7lv6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB75C4086A;
-	Wed, 23 Apr 2025 01:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1454125743A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 01:16:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745370256; cv=none; b=Yk1MMOUJQd1nARZWoAhawTxlo2iCXGcQxkQf4TTCfhUR6zsOAXYx3FuF+XmMIDgT9ZlDl1q0TorqZq9Y6OLisWhOusCcNr4BijEAze8G4MYZ7fWpWAec9+km/iCdbewHli+cStzMifzBmlnEwu1dgonTpIabTgpQ/zRLujwMmOA=
+	t=1745370965; cv=none; b=pvP1eUa8XOcntFI9gFiwJpSBf7joGsyRR/k8w3PE9hI0nsUrX3c8sfkOWbSZD7lkfKWThjhBvda8JOEvkmtwT4GI9xvDhW4XQFpov+Yj9iXjdOIpo2BIs6HPxHqjus0E6Mm7Ept3IrAvX0M8qwAdVTC2AzVwEqcvIsRzkG8wjJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745370256; c=relaxed/simple;
-	bh=W3DxN2VaTw1K8QlTyBS2uB6WKXda3G3BaJSemLmTAy8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Cli3WUPMvI2y5TK2wF716zRSPvpRw1S66Lu1qJQrtxD/9ItzjqW7tfHKX1+DzSU+JFqAh75Z999FUuzAZ4cB3cggjVvHPCvR6XESbSpE7IO45MCVwstwBzlA2ZdO59eqZTp7yglz4EDbtRVwiOo5U71i2FNmeFSHQWULHX9W02Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [111.207.111.194])
-	by gateway (Coremail) with SMTP id _____8Axz3OHPAhoI1nEAA--.62416S3;
-	Wed, 23 Apr 2025 09:04:07 +0800 (CST)
-Received: from ubuntu.. (unknown [111.207.111.194])
-	by front1 (Coremail) with SMTP id qMiowMDxvhuCPAhoP92QAA--.46847S2;
-	Wed, 23 Apr 2025 09:04:02 +0800 (CST)
-From: Ming Wang <wangming01@loongson.cn>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naoya Horiguchi <nao.horiguchi@gmail.com>,
-	Michal Hocko <mhocko@suse.cz>,
-	David Rientjes <rientjes@google.com>,
-	Joern Engel <joern@logfs.org>,
-	Hugh Dickins <hughd@google.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Cc: Huacai Chen <chenhuacai@kernel.org>,
-	lixuefeng@loongson.cn,
-	Hongchen Zhang <zhanghongchen@loongson.cn>
-Subject: [PATCH] smaps: Fix crash in smaps_hugetlb_range for non-present hugetlb entries
-Date: Wed, 23 Apr 2025 09:03:59 +0800
-Message-ID: <20250423010359.2030576-1-wangming01@loongson.cn>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1745370965; c=relaxed/simple;
+	bh=BXEvwpncN5O7EkLN13AdUk98rvfh4Ju4eZYY2vVAM1I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=koOcSz8jU6jzvMOFB8lZj5avJtecDGBYbpLBAuOq3wgoHgWzAWtmDBF+VsC1NtX/ObUiGGPT98qteFk+t4Be2boMZc72ySAcW4N5Pi6nbNMNfiT1XRvzRr1aWF5Y2ENJKVqMYBSAggfbP6QSGopCHzAdOPnJRXlH5gdY+7W78HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KBhF7lv6; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4769e30af66so114491cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Apr 2025 18:16:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745370963; x=1745975763; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zhRaiFa49yEjS7XMAEA0pqmJ6/VdWziZXZon8TG+B0I=;
+        b=KBhF7lv6PcVEJJE25TaDKoXU5nvQYnMgaWVOFsmGIj08jJiXsxN4gw1ITY2Uc3oNle
+         XriSIWM8lfnUInhOZgegHdrAhEQzVzroNB3IhvnOERy+pznEegsOYf/0dhnDdXXNTn0l
+         e9hBqNvJH5FcAf9tilSr555Go0J5zqBgz73qtwkS332++H9ya5ij+f6WcvJf8vAldg4R
+         11j5UzKMfiFAXMepwCW0qKHRbywt0MgJYwpsMMCLrBZ97Hvr1375zkRkblUPadfMCzNJ
+         8mCoRIepu8dKFiHaUTwqzsMe2inRjjEIdp334NRLWoYvuArvPLIWRPWSuYnNoV7aPaau
+         h0JQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745370963; x=1745975763;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zhRaiFa49yEjS7XMAEA0pqmJ6/VdWziZXZon8TG+B0I=;
+        b=tcD/x7cwqDwKiecsxxrys84RLVXglQDQfZ9GKLwZYYNkYr6ZCK4K3ub/Len9uHb+B1
+         D44l98QVdM7JpcNUPY1ryjM5oKs4sM1D09FVVbJMgNsYnS9dfngqZfoKoCdlTLIkqJPt
+         QpoJv7NL3E1FPsThIAAPjLSfehEHl3qjQDCh/InN/Wp2biEhBhPtIsEDN+PFRNDQqIhG
+         p/d+bdzDlDYjT6ENPIC5lX6qwCs0jus5CsSw8D7sTEDDhCL5vadETTpC/Kf4fE+utIf6
+         fDuN/Nf2BZ7cICZ192PQEAQzs3c6/Ch+R8F/72JGZDeszDb47Xva692AoRoaG8ku1vHR
+         JGrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtlcZ1ZjzV2fAgV3+J/oXJ1zH+8IDHTSONQ9ARoGBaSy6TDAndIPhhiunkpHbNUHKiWj3noLm4Fq96V+5f@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuHqLwj8CElZkl0kRc3Nco82CN2UfRjt5ta1AWhP+Gvva9zO1q
+	GE5HqQddN1f8hkf5V2nb6hSul5+9WVxHLZQDIsRCwubcU0mKf7k/mYR9RYYRki5DMFfdMTjbmhQ
+	4w4InQ+tVPKFKud09w0kp2T/vaT8AssoFdJ38
+X-Gm-Gg: ASbGncuDl52z/qAaAiOaXcqspK3Uxvw4tU7EqRqjLxy29pHxe3wXZO8pt+qOO5ZrK7l
+	ucijv5WnpWLdXSwLVR6vpifBc5/VCbjIB+wePV14AsCUUbaU8AoKWnVfk0R2gzc8glJUKKNnfge
+	tgo09mNezk2wPy/pwr/jy57Mxbmrm5tR0CX3j5bWm8JGAkwm8omopzySMKWk7L5DU=
+X-Google-Smtp-Source: AGHT+IEUXBruOYK9xJLY5TxjTNRmIkg5ccc2dUsC7FO2joRBTQXoTvy35paTIjKrhKWBSAk6EgOGJ3DQQXksC84x6AE=
+X-Received: by 2002:a05:622a:2290:b0:476:d668:fd1c with SMTP id
+ d75a77b69052e-47d11ce1d9bmr2253491cf.2.1745370962631; Tue, 22 Apr 2025
+ 18:16:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxvhuCPAhoP92QAA--.46847S2
-X-CM-SenderInfo: 5zdqwzxlqjiio6or00hjvr0hdfq/1tbiAQEBEmgIG+UBeQAAs1
-X-Coremail-Antispam: 1Uk129KBj93XoWxCw4fCF48tF1kAF18Xr4kZrc_yoWrGrW3pF
-	9akw4rXr18G34kGws7Jw4jq345Zws3WFW8GFs8Gr4Fk3sxJr9F9FyFgw4aqFy8A3s5G3y2
-	9F4jq3sFk3WYy3gCm3ZEXasCq-sJn29KB7ZKAUJUUUUP529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUPIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6F4UJVW0owAaw2AFwI0_Jw0_GFylnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij2
-	8IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4xG64xvF2IEw4CE5I8CrVC2j2Wl
-	Yx0E2Ix0cI8IcVAFwI0_Jw0_WrylYx0Ex4A2jsIE14v26r4j6F4UMcvjeVCFs4IE7xkEbV
-	WUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxG
-	rwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C267AKxVWUtVW8ZwC20s026c02F40E14
-	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkG
-	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVW8JVW5JwCI42IY6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r4j6F4U
-	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jfTmhUUU
-	UU=
+References: <20231206103702.3873743-1-surenb@google.com> <20231206103702.3873743-3-surenb@google.com>
+ <8bcb7e5f-3c05-4d92-98f7-b62afa17e2fb@lucifer.local> <rns3bplwlxhdkueowpehtrej6avjbmh6mauwl33pfvr4qptmlg@swctg52xpyya>
+ <CAJuCfpFjx2NB8X8zVSGyrcaOfwMApZRfGfuia3ERBKj0XaPgaw@mail.gmail.com>
+ <CAJuCfpHpdAn6yNVq1HXqO0qspj6DLb4qa_QufT+Z9RLTTa-N9Q@mail.gmail.com> <cbppxyb7pe3yhmru226db5zt3v67sxsvfzjvg4jn62gzltutbl@vipuebrhjgpj>
+In-Reply-To: <cbppxyb7pe3yhmru226db5zt3v67sxsvfzjvg4jn62gzltutbl@vipuebrhjgpj>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 22 Apr 2025 18:15:51 -0700
+X-Gm-Features: ATxdqUF4NmV98WtGDJWZ4I3RN7_zTDrRsHxHJXV0LiqF1O2h8MZ7XjyQt8_P6zE
+Message-ID: <CAJuCfpHD1N+xn6ZMnvLM5g7NLBd6AHSDhnrDqdR+ceZRM+=qUg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/5] userfaultfd: UFFDIO_MOVE uABI
+To: Alejandro Colomar <alx@kernel.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, aarcange@redhat.com, 
+	linux-man@vger.kernel.org, akpm@linux-foundation.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, shuah@kernel.org, lokeshgidra@google.com, 
+	peterx@redhat.com, david@redhat.com, ryan.roberts@arm.com, hughd@google.com, 
+	mhocko@suse.com, axelrasmussen@google.com, rppt@kernel.org, 
+	willy@infradead.org, Liam.Howlett@oracle.com, jannh@google.com, 
+	zhangpeng362@huawei.com, bgeffon@google.com, kaleshsingh@google.com, 
+	ngeoffray@google.com, jdduke@google.com, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When reading /proc/pid/smaps for a process that has mapped a hugetlbfs
-file with MAP_PRIVATE, the kernel might crash inside pfn_swap_entry_to_page.
-This occurs on LoongArch under specific conditions.
+On Tue, Apr 22, 2025 at 12:20=E2=80=AFAM Alejandro Colomar <alx@kernel.org>=
+ wrote:
+>
+> Hi Suren,
+>
+> On Mon, Apr 21, 2025 at 08:58:22PM -0700, Suren Baghdasaryan wrote:
+> > > > Please re-send including linux-man@ in CC, as specified in
+> > > > <https://git.kernel.org/pub/scm/docs/man-pages/man-pages.git/tree/C=
+ONTRIBUTING>
+> > >
+> > > Thanks for the reference. Will post the documentation update later to=
+day.
+> >
+> > Was planning to post today but I'm a bit rusty with the syntax.
+> > Will try to send it out tomorrow
+>
+> No problem.
+>
+> > after verifying the results.
+>
+> For verifying, you might want to try diffman-git(1).  It's provided in
+> the man-pages repo.  If the version of the man-pages package provided by
+> your distro is >=3D6.10, you may already have it in your system, and if
+> not, you can find it as <src/bin/diffman-git> in the repo.
+> It's documented in a manual page in the same repo, of course.
+>
+> I don't know if you know about the build system, which also checks a few
+> common issues in the pages.  You can check <CONTRIBUTING.d/lint>.
+> TL;DR:
+>
+>         $ make -R -j8 -k lint-man build-all check;
+>
+> (You can ignore anything that's not about the page you're modifying.  At
+>  the moment, I see a few issues that I'll need to investigate in a few
+>  pages.  For seeing a clean list of what's failing, you can ignore
+>  stderr; see below.)
+>
+>         $ make -R -j24 -k lint-man build-all check 2>/dev/null
+>         TROFF           .tmp/man/man2/statx.2.cat.set
+>         TROFF           .tmp/man/man2const/KEYCTL_SETPERM.2const.html.set
+>         TROFF           .tmp/man/man2const/KEYCTL_SETPERM.2const.pdf.set
+>         TROFF           .tmp/man/man2const/KEYCTL_SETPERM.2const.ps.set
+>         GREP            .tmp/man/man2/pipe.2.check-catman.touch
+>         GREP            .tmp/man/man3/ctime.3.check-catman.touch
+>         GREP            .tmp/man/man7/landlock.7.check-catman.touch
+>         GREP            .tmp/man/man7/rtnetlink.7.check-catman.touch
+>
 
-The root cause involves several steps:
-1. When the hugetlbfs file is mapped (MAP_PRIVATE), the initial PMD
-   (or relevant level) entry is often populated by the kernel during mmap()
-   with a non-present entry pointing to the architecture's invalid_pte_table
-   On the affected LoongArch system, this address was observed to
-   be 0x90000000031e4000.
-2. The smaps walker (walk_hugetlb_range -> smaps_hugetlb_range) reads
-   this entry.
-3. The generic is_swap_pte() macro checks `!pte_present() && !pte_none()`.
-   The entry (invalid_pte_table address) is not present. Crucially,
-   the generic pte_none() check (`!(pte_val(pte) & ~_PAGE_GLOBAL)`)
-   returns false because the invalid_pte_table address is non-zero.
-   Therefore, is_swap_pte() incorrectly returns true.
-4. The code enters the `else if (is_swap_pte(...))` block.
-5. Inside this block, it checks `is_pfn_swap_entry()`. Due to a bit
-   pattern coincidence in the invalid_pte_table address on LoongArch,
-   the embedded generic `is_migration_entry()` check happens to return
-   true (misinterpreting parts of the address as a migration type).
-6. This leads to a call to pfn_swap_entry_to_page() with the bogus
-   swap entry derived from the invalid table address.
-7. pfn_swap_entry_to_page() extracts a meaningless PFN, finds an
-   unrelated struct page, checks its lock status (unlocked), and hits
-   the `BUG_ON(is_migration_entry(entry) && !PageLocked(p))` assertion.
+Thanks for the detailed instructions, Alex!
+Posted the patch at
+https://lore.kernel.org/all/20250423011203.2559210-1-surenb@google.com/
+and hopefully I did not miss something important.
+Cheers,
+Suren.
 
-The original code's intent in the `else if` block seems aimed at handling
-potential migration entries, as indicated by the inner `is_pfn_swap_entry()`
-check. The issue arises because the outer `is_swap_pte()` check incorrectly
-includes the invalid table pointer case on LoongArch.
 
-This patch fixes the issue by changing the condition in
-smaps_hugetlb_range() from the broad `is_swap_pte()` to the specific
-`is_hugetlb_entry_migration()`.
-
-The `is_hugetlb_entry_migration()` helper function correctly handles this
-by first checking `huge_pte_none()`. Architectures like LoongArch can
-provide an override for `huge_pte_none()` that specifically recognizes
-the `invalid_pte_table` address as a "none" state for HugeTLB entries.
-This ensures `is_hugetlb_entry_migration()` returns false for the invalid
-entry, preventing the code from entering the faulty block.
-
-This change makes the code reflect the likely original intent (handling
-migration) more accurately and leverages architecture-specific helpers
-(`huge_pte_none`) to correctly interpret special PTE/PMD values in the
-HugeTLB context, fixing the crash on LoongArch without altering the
-generic is_swap_pte() behavior.
-
-Fixes: 25ee01a2fca0 ("mm: hugetlb: proc: add hugetlb-related fields to /proc/PID/smaps")
-Co-developed-by: Hongchen Zhang <zhanghongchen@loongson.cn>
-Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
-Signed-off-by: Ming Wang <wangming01@loongson.cn>
----
- fs/proc/task_mmu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 994cde10e3f4..95a0093ae87c 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -1027,7 +1027,7 @@ static int smaps_hugetlb_range(pte_t *pte, unsigned long hmask,
- 	if (pte_present(ptent)) {
- 		folio = page_folio(pte_page(ptent));
- 		present = true;
--	} else if (is_swap_pte(ptent)) {
-+	} else if (is_hugetlb_entry_migration(ptent)) {
- 		swp_entry_t swpent = pte_to_swp_entry(ptent);
- 
- 		if (is_pfn_swap_entry(swpent))
--- 
-2.43.0
-
+>
+> Have a lovely day!
+> Alex
+>
+> --
+> <https://www.alejandro-colomar.es/>
 
