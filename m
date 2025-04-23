@@ -1,95 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-47037-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47038-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2DB9A97EB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 08:07:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51190A97ECB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 08:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A6E67AE125
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 06:06:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1824B440242
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 06:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087091B4247;
-	Wed, 23 Apr 2025 06:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F40266595;
+	Wed, 23 Apr 2025 06:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zU/1xQ0s";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ArKjOUS9";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="zU/1xQ0s";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ArKjOUS9"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VUX8Jx4L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4X3aOQhd";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VUX8Jx4L";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="4X3aOQhd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F6A1D5CEA
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 06:07:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DCE82566DF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 06:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745388444; cv=none; b=JVqxhFAzXHeZBGtfLdEU1KASeWLEJRCEiwu3Ke0I7hZq/urhCxzAmo4DjsDW3B4ictd6j3BoMC8RavEVA2fPTNLrjB7jSKzkmoW0jy/wBX6GpNaa1SA4seCE5hNymek2/eZCen0z4ZmBII/pqnyClahWZ7Cbz/xK418BaItodGk=
+	t=1745388588; cv=none; b=mBbRg7pEt8mgKzy/72jZkPesVxx1TRrUoECNAFsUXkdaaaUrX96JwJyeFhYTxGx2WamF6sYsWeTFRmrO3rTbD1Jjok0Hbgh7u7ZBtRBdlPWo2C02sgBRY5xqmr9Tpu4/E2bJt2doB0UQmImJc5Ks1CwpIPT986wSCvk+2emV08Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745388444; c=relaxed/simple;
-	bh=y8dtzYTvAXWQ/yTHzlAHfQgDYKClcG6hA3zwC0LDrI8=;
+	s=arc-20240116; t=1745388588; c=relaxed/simple;
+	bh=98G8cthcVqB96KBXSxfWVVeVI3nMqSHxjhMh6pVHuqM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S/pi0oYQMjiBVA12KGtgNmWvUmxugBN8I6faixzPmaHhT4be2O9tw3sTp35UpKqYCAqeIFzbVhd6neQEyc11hLXg5kBcgpIDucmluS8Q1dOqfyiXDBjZZ2zrBYZDkAaiCSS7lL9h3HsoVwf9Oxd2b1zHo7JulTTfAPaiWE7oe4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zU/1xQ0s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ArKjOUS9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=zU/1xQ0s; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ArKjOUS9; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=RM/DvoFHxyK8mFGT0wAh00wiGwzb0Jv22HFh1jllQjeLB1/kBFJwee5/aZwOPkWjTel3nYkVzjAvvCAfhmfV0A7QWAcWGGMs26df9ztHTl2N4l2QobzJMuN+/q5U0WWFCJl5XT3Pfce7WaxKLYRxo526OZi4MiWjyn462d4BRrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VUX8Jx4L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4X3aOQhd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VUX8Jx4L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=4X3aOQhd; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 725DB1F38E;
-	Wed, 23 Apr 2025 06:07:20 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 40F29211A1;
+	Wed, 23 Apr 2025 06:09:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745388440; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1745388584; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=958amM+66Hhr9wKtvA4VcJgVSaxlEUvwp0G0OyP7nVg=;
-	b=zU/1xQ0sy/I44pP6hDXIMKcg6XXeNbgnk65a9Gsqpe2d+rUxZdY1ar1yrBsGigp2eJBdz7
-	Caz/IQrznnskHMKQIS1blFSDPBkeoHxOM+r+dTMIqs69tnyepPet/fl7oT6yO53CwlVzNq
-	xmDZMPPA3KHZJDxXhq89F4yXfKsCVLQ=
+	bh=8cYBWEiLQzaufA3S6O7pC+MKl8PAErNuwkkjhdxNGjs=;
+	b=VUX8Jx4Ltj41ATT1yxYovlkQrGKBkx1+8eMVNUUQNAYXoH96TmEcPNblOTwYqrgYzjTAPC
+	ugLrxBcLs7HhQInkX54aFOEwn21hPmSqKIpQzChWt/iKb6pN3K5b0SG7+/vSBMK9H5FKl6
+	eMpvg/3b72G3iGECMGOmTSIRhB+xuk4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745388440;
+	s=susede2_ed25519; t=1745388584;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=958amM+66Hhr9wKtvA4VcJgVSaxlEUvwp0G0OyP7nVg=;
-	b=ArKjOUS9F7deR985t2VffPTtWO4RM0X4OqufkG9EJFvej9GaZ815hPt5Jc9LSA73hWyMUD
-	/6zjMTaEpc4HrJAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=8cYBWEiLQzaufA3S6O7pC+MKl8PAErNuwkkjhdxNGjs=;
+	b=4X3aOQhdLVzDaM5VMm9NOr8C1kfpqFd++TRBqcHQUCEOyEEpblq3IecReRQrtGtpfs1Qtm
+	YQWGITmaFwu5VODg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=VUX8Jx4L;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=4X3aOQhd
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745388440; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1745388584; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=958amM+66Hhr9wKtvA4VcJgVSaxlEUvwp0G0OyP7nVg=;
-	b=zU/1xQ0sy/I44pP6hDXIMKcg6XXeNbgnk65a9Gsqpe2d+rUxZdY1ar1yrBsGigp2eJBdz7
-	Caz/IQrznnskHMKQIS1blFSDPBkeoHxOM+r+dTMIqs69tnyepPet/fl7oT6yO53CwlVzNq
-	xmDZMPPA3KHZJDxXhq89F4yXfKsCVLQ=
+	bh=8cYBWEiLQzaufA3S6O7pC+MKl8PAErNuwkkjhdxNGjs=;
+	b=VUX8Jx4Ltj41ATT1yxYovlkQrGKBkx1+8eMVNUUQNAYXoH96TmEcPNblOTwYqrgYzjTAPC
+	ugLrxBcLs7HhQInkX54aFOEwn21hPmSqKIpQzChWt/iKb6pN3K5b0SG7+/vSBMK9H5FKl6
+	eMpvg/3b72G3iGECMGOmTSIRhB+xuk4=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745388440;
+	s=susede2_ed25519; t=1745388584;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=958amM+66Hhr9wKtvA4VcJgVSaxlEUvwp0G0OyP7nVg=;
-	b=ArKjOUS9F7deR985t2VffPTtWO4RM0X4OqufkG9EJFvej9GaZ815hPt5Jc9LSA73hWyMUD
-	/6zjMTaEpc4HrJAg==
+	bh=8cYBWEiLQzaufA3S6O7pC+MKl8PAErNuwkkjhdxNGjs=;
+	b=4X3aOQhdLVzDaM5VMm9NOr8C1kfpqFd++TRBqcHQUCEOyEEpblq3IecReRQrtGtpfs1Qtm
+	YQWGITmaFwu5VODg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D5A213691;
-	Wed, 23 Apr 2025 06:07:19 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2CD6913691;
+	Wed, 23 Apr 2025 06:09:43 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id gd76IJeDCGgYTAAAD6G6ig
-	(envelope-from <hare@suse.de>); Wed, 23 Apr 2025 06:07:19 +0000
-Message-ID: <af8353ec-3648-457c-aa68-99af6392a74c@suse.de>
-Date: Wed, 23 Apr 2025 08:07:19 +0200
+	id XZs7CCeECGi7TAAAD6G6ig
+	(envelope-from <hare@suse.de>); Wed, 23 Apr 2025 06:09:43 +0000
+Message-ID: <d79a34e8-3d63-49d8-aba4-167d5b4223d4@suse.de>
+Date: Wed, 23 Apr 2025 08:09:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,7 +98,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/17] block: add a bdev_rw_virt helper
+Subject: Re: [PATCH 03/17] block: add a bio_add_vmalloc helper
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
  Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
@@ -113,116 +114,55 @@ Cc: linux-block@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
  linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
  linux-pm@vger.kernel.org
 References: <20250422142628.1553523-1-hch@lst.de>
- <20250422142628.1553523-3-hch@lst.de>
+ <20250422142628.1553523-4-hch@lst.de>
 Content-Language: en-US
 From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20250422142628.1553523-3-hch@lst.de>
+In-Reply-To: <20250422142628.1553523-4-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 40F29211A1
 X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
+X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	ARC_NA(0.00)[];
 	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[26];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[26];
 	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	R_RATELIMIT(0.00)[to_ip_from(RL94xbwdgyorksiizmbcmor9ro)];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL4dj9zzjoqkf1d3y4dfoejhya)];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid,lst.de:email]
-X-Spam-Score: -4.30
+	DBL_BLOCKED_OPENRESOLVER(0.00)[lst.de:email,suse.de:email,suse.de:dkim,suse.de:mid];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 X-Spam-Flag: NO
 
 On 4/22/25 16:26, Christoph Hellwig wrote:
-> Add a helper to perform synchronous I/O on a kernel direct map range.
-> Currently this is implemented in various places in usually not very
-> efficient ways, so provide a generic helper instead.
+> Add a helper to add a vmalloc region to a bio, abstracting away the
+> vmalloc addresses from the underlying pages.  Also add a helper to
+> calculate how many segments need to be allocated for a vmalloc region.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 > ---
->   block/bio.c         | 30 ++++++++++++++++++++++++++++++
->   include/linux/bio.h |  5 ++++-
->   2 files changed, 34 insertions(+), 1 deletion(-)
+>   block/bio.c         | 27 +++++++++++++++++++++++++++
+>   include/linux/bio.h | 17 +++++++++++++++++
+>   2 files changed, 44 insertions(+)
 > 
-> diff --git a/block/bio.c b/block/bio.c
-> index 4e6c85a33d74..a6a867a432cf 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1301,6 +1301,36 @@ int submit_bio_wait(struct bio *bio)
->   }
->   EXPORT_SYMBOL(submit_bio_wait);
->   
-> +/**
-> + * bdev_rw_virt - synchronously read into / write from kernel mapping
-> + * @bdev:	block device to access
-> + * @sector:	sector to accasse
-> + * @data:	data to read/write
-> + * @len:	length to read/write
-> + * @op:		operation (e.g. REQ_OP_READ/REQ_OP_WRITE)
-> + *
-> + * Performs synchronous I/O to @bdev for @data/@len.  @data must be in
-> + * the kernel direct mapping and not a vmalloc address.
-> + */
-> +int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
-> +		size_t len, enum req_op op)
-> +{
-> +	struct bio_vec bv;
-> +	struct bio bio;
-> +	int error;
-> +
-> +	if (WARN_ON_ONCE(is_vmalloc_addr(data)))
-> +		return -EIO;
-> +
-> +	bio_init(&bio, bdev, &bv, 1, op);
-> +	bio.bi_iter.bi_sector = sector;
-> +	bio_add_virt_nofail(&bio, data, len);
-> +	error = submit_bio_wait(&bio);
-> +	bio_uninit(&bio);
-> +	return error;
-> +}
-> +EXPORT_SYMBOL_GPL(bdev_rw_virt);
-> +
->   static void bio_wait_end_io(struct bio *bio)
->   {
->   	complete(bio->bi_private);
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 0678b67162ee..17a10220c57d 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -402,7 +402,6 @@ static inline int bio_iov_vecs_to_alloc(struct iov_iter *iter, int max_segs)
->   
->   struct request_queue;
->   
-> -extern int submit_bio_wait(struct bio *bio);
->   void bio_init(struct bio *bio, struct block_device *bdev, struct bio_vec *table,
->   	      unsigned short max_vecs, blk_opf_t opf);
->   extern void bio_uninit(struct bio *);
-> @@ -434,6 +433,10 @@ static inline void bio_add_virt_nofail(struct bio *bio, void *vaddr,
->   	__bio_add_page(bio, virt_to_page(vaddr), len, offset_in_page(vaddr));
->   }
->   
-> +int submit_bio_wait(struct bio *bio);
-> +int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
-> +		size_t len, enum req_op op);
-> +
->   int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
->   void bio_iov_bvec_set(struct bio *bio, const struct iov_iter *iter);
->   void __bio_release_pages(struct bio *bio, bool mark_dirty);
-
-Any specific reason why the declaration of 'submit_bio_wait()' is moved?
-
-Other than that:
-
 Reviewed-by: Hannes Reinecke <hare@suse.de>
 
 Cheers,
