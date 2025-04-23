@@ -1,63 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-47102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAA84A98F74
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 17:09:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF049A99019
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 17:16:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41AC189E10B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:02:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028B01B877D0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6773B2820D7;
-	Wed, 23 Apr 2025 15:01:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EAB28C5BF;
+	Wed, 23 Apr 2025 15:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OecdS9Du"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XlcdM8UU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76A6280CE0;
-	Wed, 23 Apr 2025 15:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6062028B518
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 15:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420472; cv=none; b=jjOtHp0HDsx+Rt6fT1AyivsWOi56D84elNrcv3pvjcKYqRlrCKnJ3pMK+qp0d08wgP6ymXZr5piBsc6KcAIlqUiBdqOx2MmehLbuE1gfw/QOxlmTOYkh2YAGQkKdrtw3swGb9iKQZBCogrom9EV9QhKviW+Rm/mTxrYlpFsnOC4=
+	t=1745420696; cv=none; b=AV9LaOD5p+9ZUCdKNhAgN+blgyjSPxs6FqSInUN+F8TVgit6FY6cPbL7QcwmmJ3yKxaovSuMTjY8Miw592rBtJ58zz9BlLmu6QsYZFCk+9Z6IPgWn0DCPTVqRQIJ+T4Yc2dUzPbh/S060COfszX6/nXv6LpC4bvEXf9ELDS+cDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420472; c=relaxed/simple;
-	bh=EejihSG4dhJo9Xlvr1jU9YQU1gFxoDhpb+JD6EWedwY=;
+	s=arc-20240116; t=1745420696; c=relaxed/simple;
+	bh=4R6lj0hZ4/p7O8oGQyGh1YZI8vXp8HHuwSAXkKuPK68=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPX9vxC3TFfHt4Z3T+qOt3G/1pZPN5Dy87rkcoAGsOMk0AxQ6Zm1QghqXLtsGqZDCAizWLnzSgjduxjcmntpDKx9n9fiyveCOFlDTZxtzzKX7/J4Y2Ds1Dxs0Y2TX86WFSHk1tREyOT93mA9Tq9WH1UwJitBGgkyz7kcsisc/WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OecdS9Du; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58FF5C4CEE2;
-	Wed, 23 Apr 2025 15:01:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745420472;
-	bh=EejihSG4dhJo9Xlvr1jU9YQU1gFxoDhpb+JD6EWedwY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OecdS9Du5yMgDqzO08LwDx/95Z5FyyQeV6qvL/kkV6wLUfAUebaWOjcGjxeG32a3W
-	 LJ4UznS7wIceKrF1H1VJMNm1KqqG3wPA5g7wh0jTVAHWkyTEMLQAq2DcSzpYBTOoZz
-	 GyRGiiJbwwgeon5fdP2SFuTQQFsD8POlDu9o86Bg3xagxNe8OiZu0WTywuPylKBqsF
-	 YbnZ/g7yVxoUn9dLwKd3AKRkxo5pxgsH7OXFzPMefD2/LLnUOFColh8p82FQnvBPGC
-	 AfAPpzsP1/MXDLd0WeFyPrkZGfVbQMUhr/CE80l3CvNtc/Xh86jWzn6p11ASbNzUF7
-	 Ne/Ynlr4L+1mg==
-Date: Wed, 23 Apr 2025 08:01:10 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 15/15] xfs: allow sysadmins to specify a maximum
- atomic write limit at mount time
-Message-ID: <20250423150110.GB25675@frogsfrogsfrogs>
-References: <20250422122739.2230121-1-john.g.garry@oracle.com>
- <20250422122739.2230121-16-john.g.garry@oracle.com>
- <20250423083209.GA30432@lst.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=loCDWSmYoXan6tq7vjWGIpm8CgvrFYSHFvVwJJr86qaI1IpHXqjiDvl6DzZZI7EwNcg42MDKvs6p6H73nxG1VZE+isdqFWv0Kr4jL8r5zdWXA0QVorI0bksy71ym3YT0BII5ie8A2p1TT9TRzE3NHNd8N+0danbnerRQ/WfSmfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XlcdM8UU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745420693;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=y/XwtWlQK2gWEuKfXA1Y/H+Qql53usM87hFbg/riAys=;
+	b=XlcdM8UUw0WsbsvlYUlnlAdPFpGgeXGj5rZXOKezteHaA1hzGKAso7RqK9xpMpTBRZsFTP
+	BW/XSfjsOJWL+nHboG3umf1qL1IHAiC/g1E9G4qAGfS9aCm45CCc1UN+EdTXXSF7ArH3Bw
+	zSLoxRetjmp7CPwMmDG5BeOEMvAzdjw=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-193-oTHycUEbPA20G050xehx8A-1; Wed, 23 Apr 2025 11:04:52 -0400
+X-MC-Unique: oTHycUEbPA20G050xehx8A-1
+X-Mimecast-MFC-AGG-ID: oTHycUEbPA20G050xehx8A_1745420691
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e913e1cf4aso174183666d6.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 08:04:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745420691; x=1746025491;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y/XwtWlQK2gWEuKfXA1Y/H+Qql53usM87hFbg/riAys=;
+        b=W5AKXEHJ8KvaePU3N1yPBabUH+TlnBCRGs0SDtbgHN40ID77Y/fmlFzzce+Y5zk4sY
+         f2GogdpRLZSqfcCmuhFEzZPOXXaa9vf2KkIwDOKZUuWQ/2ife1Whl5MEVbAhuHqU4ARR
+         5cG7KmLhxCQIrf+FR6QAAx+/AGpiila70daNir8hdt+twzZhwclpdJ6b3z1l4LOaWfV5
+         UxMqU+dkRu5T7bBnqDVFFb2VZOdSt3bGSpaFF2IkiDswrWx2JkxR5mG5nI03hFmDKvRb
+         4HiHLz4GWyl7b3X7ZattMoRvfHcX7xeYNtQJUue+hI3y4G5U2xX/GtEriWXMO8ATS2T4
+         blhA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJS2qsfKdxlxz6tuXFr4Qe2VaHrLLQ2eq/jln0XZ6SLxlUdZZyG6vv8EaiZ3zgC9H0eW9s97S1ZqyL5+Vl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1FrbV5TomE0xBP22wCAlxwjEuklomUbgGvz8GzZtkg4HUDvqT
+	JUEf56H91aOOqxa/hmH+9OJguZNJ6zh3Et9Ou0JFecxyOFyvCTmQgg8LzKK4sLi8/Fu8LOM4HC3
+	Eh9ViigQet5d5kv+sBlIEu+pqnm31+YsA4Mq5jX0ERLt+7G1hIBayClM09ovyGP8=
+X-Gm-Gg: ASbGncvyQ8Pv4u48DDyCVyWkiq1CSF+gE7QS6brSfMR+Qmo/+GcIajQEkrR6riVOAmB
+	uXtqArqN00sNsOY0UEYErTd3MCzwWvZPuPPZhDN73qNTPYeIlAn0LNlLu3GNkAGRifxFpvuKVAk
+	UXQDJTOAHr4abRaUuSYBd+WUHPPA+Sk4JzZsWZnjHfm0+8UTClLzlR4Xa7bILEv7PI5tj8e4jjH
+	1qZ4jCfG3XANB5SByRZ9ZGZMpAnULhcb/IPiyqes9kb+gKtWpONRlZjsk6Hnl5XIZFKLWOsyjv3
+	XpUQmyIiRdTgPRMN56ZtaH60kRh81YXEfAPnlXPVvVsuNSW8BFzy8es=
+X-Received: by 2002:a05:6214:5085:b0:6eb:28e4:8519 with SMTP id 6a1803df08f44-6f2c4562ff4mr349522286d6.21.1745420691108;
+        Wed, 23 Apr 2025 08:04:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIAe6YgRzYFI//AuYLkGgT9bMQm2RTQxu8bUNb2e6etKdith1hNCEE0IZQWqDOiU1oDePTvw==
+X-Received: by 2002:a05:6214:5085:b0:6eb:28e4:8519 with SMTP id 6a1803df08f44-6f2c4562ff4mr349521466d6.21.1745420690350;
+        Wed, 23 Apr 2025 08:04:50 -0700 (PDT)
+Received: from localhost (pool-100-17-21-114.bstnma.fios.verizon.net. [100.17.21.114])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f2c2af5b28sm71585546d6.10.2025.04.23.08.04.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 08:04:49 -0700 (PDT)
+Date: Wed, 23 Apr 2025 11:04:48 -0400
+From: Eric Chanudet <echanude@redhat.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
+	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>
+Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
+Message-ID: <ubimdwyutm47mlmtn43mbobtnwaxkmuse3vpgosbsh4yd7f73t@bbt7az62ybbb>
+References: <20250408210350.749901-12-echanude@redhat.com>
+ <20250420055406.GS2023217@ZenIV>
+ <fzqxqmlhild55m7lfrcdjikkuapi3hzulyt66d6xqdfhz3gjft@cimjdcqdc62n>
+ <20250423021547.GD2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,34 +100,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250423083209.GA30432@lst.de>
+In-Reply-To: <20250423021547.GD2023217@ZenIV>
 
-On Wed, Apr 23, 2025 at 10:32:09AM +0200, Christoph Hellwig wrote:
-> On Tue, Apr 22, 2025 at 12:27:39PM +0000, John Garry wrote:
-> > From: "Darrick J. Wong" <djwong@kernel.org>
-> > 
-> > Introduce a mount option to allow sysadmins to specify the maximum size
-> > of an atomic write.  If the filesystem can work with the supplied value,
-> > that becomes the new guaranteed maximum.
-> > 
-> > The value mustn't be too big for the existing filesystem geometry (max
-> > write size, max AG/rtgroup size).  We dynamically recompute the
-> > tr_atomic_write transaction reservation based on the given block size,
-> > check that the current log size isn't less than the new minimum log size
-> > constraints, and set a new maximum.
-> > 
-> > The actual software atomic write max is still computed based off of
-> > tr_atomic_ioend the same way it has for the past few commits.
+On Wed, Apr 23, 2025 at 03:15:47AM +0100, Al Viro wrote:
+> On Tue, Apr 22, 2025 at 03:53:43PM -0400, Eric Chanudet wrote:
 > 
-> The cap is a good idea, but a mount option for something that has
-> strong effects for persistent application formats is a little suboptimal.
-> But adding a sb field and an incompat bit wouldn't be great either.
+> > I'm not quite following. With umount -l, I thought there is no guaranty
+> > that the file-system is shutdown. Doesn't "shutdown -r now" already
+> > risks loses without any of these changes today?
 > 
-> Maybe this another use case for a trusted xattr on the root inode like
-> the autofsck flag?
+> Busy filesystems might stay around after umount -l, for as long as they
+> are busy.  I.e. if there's a process with cwd on one of the affected
+> filesystems, it will remain active until that process chdirs away or
+> gets killed, etc.  Assuming that your userland kills all processes before
+> rebooting the kernel, everything ought to be shut down, TYVM...
+> 
+> If not for that, the damn thing would be impossible to use safely...
+> 
 
-That would be even better, since you could set it at mkfs time and it
-would persist until the next xfs_property set call.
+Right, that ties up with Christian's earlier reply and was also stated
+in 9ea459e110df ("delayed mntput") description.
 
---D
+Thanks for your patience and explanations.
+
+-- 
+Eric Chanudet
+
 
