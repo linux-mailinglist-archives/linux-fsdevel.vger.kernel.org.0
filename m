@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-47077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0131A984B8
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD4AA984B7
 	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 11:06:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCEB5A438D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 09:05:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC8EC443DF1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 09:05:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52C9267F4D;
-	Wed, 23 Apr 2025 09:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CEEA269817;
+	Wed, 23 Apr 2025 09:03:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EF6242D80;
-	Wed, 23 Apr 2025 09:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780DF244680;
+	Wed, 23 Apr 2025 09:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745399015; cv=none; b=coDnePtzWyuQ9E6zDdZuUUZsmbV3K3v5n0dwdZsGD+fu8t0VaKnNMEVsd89PuztN3MXDBlCIWwOk0I3/Ks8ir9JocVk2HLLpgusrBWsihx37yoog+ZInqBL94uN6rakE3BSZotpxPzFOYgBRHn6F3w7REmLUqbXH3IVeQ4wAFYM=
+	t=1745399015; cv=none; b=lPbzKcTHqJFIC6zDTIbe4BNq/fc0632EemtE/tH5R2GGh2S+vn0mzjd2IfeZJ0k6r/UmA+eB6NCmoUPh7CYp/f9mZgHalwvTExEVtLkP9k2wpR5wmUOubZgt3uMipP3eHWQyuiHO4yLQBGUjvPkEHLCgeZxoeh7tKeTaVkKqlbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1745399015; c=relaxed/simple;
-	bh=WKTlVWm2pLhYKYsfki9QxTLxFfgKRro3jYHwiIaL/e0=;
+	bh=5qonOrAsfTrMiV50stYsopM8z5sSlvXvSkRIkGbDMIg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YWbDEid2F+YukSP0Z1YZkguaszwnY29gkyMTUYiCSxDpfdTnm1rRnsV6IiFEJ/us6corTwdCL1M+L0yfZBPVVdWP+Lq/sYlXDwv5UE4flQ7M4Ll7Cjh4PokoONbp7DiarV0TUTWsrdDerKba9JwQVznMKW2CkdM+s7UWlHXrS0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+	 MIME-Version; b=Rvz8AXIJp5CshxP9LIlXWT+9CzktbbD9yn7lp09JMiH/dHJPncITzxESjk92ISaIcM2PFcbay/HHc3jAVJh+mw+vFRSBizl391swmXzzBLNvVwb3fXkhWvpPp4JXrYkqluhSbheTZtNT5xysgxdw5epeeq5UiANlGnf2KBC0tjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
 Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZjCmy1syNz4f3lDq;
-	Wed, 23 Apr 2025 17:02:58 +0800 (CST)
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZjCn01nxKz4f3jdH;
+	Wed, 23 Apr 2025 17:03:00 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id B76DB1A1D33;
-	Wed, 23 Apr 2025 17:03:23 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 356981A1D38;
+	Wed, 23 Apr 2025 17:03:24 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP3 (Coremail) with SMTP id _Ch0CgAXacPQrAhoJkGrKA--.8976S11;
-	Wed, 23 Apr 2025 17:03:23 +0800 (CST)
+	by APP3 (Coremail) with SMTP id _Ch0CgAXacPQrAhoJkGrKA--.8976S12;
+	Wed, 23 Apr 2025 17:03:24 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -50,9 +50,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	libaokun1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 7/9] ext4: introduce ext4_check_map_extents_env() debug helper
-Date: Wed, 23 Apr 2025 16:52:55 +0800
-Message-ID: <20250423085257.122685-8-yi.zhang@huaweicloud.com>
+Subject: [PATCH 8/9] ext4: check env when mapping and modifying extents
+Date: Wed, 23 Apr 2025 16:52:56 +0800
+Message-ID: <20250423085257.122685-9-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250423085257.122685-1-yi.zhang@huaweicloud.com>
 References: <20250423085257.122685-1-yi.zhang@huaweicloud.com>
@@ -63,10 +63,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAXacPQrAhoJkGrKA--.8976S11
-X-Coremail-Antispam: 1UD129KBjvJXoW7Aw1kGw1UKrykXF1DWF4DArb_yoW5JFW8pr
-	98KFy5Gw1DX3s29w4xtw4UXr15ta48Kr4UCF9akr15tF95J34IgF15tF1ayF15trWrXw4a
-	vF4Ykr17uw4jkrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:_Ch0CgAXacPQrAhoJkGrKA--.8976S12
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw43CF1fJF4kZF1fur4rXwb_yoW5Kr15p3
+	sxAr1rWw4rW34v9392qF1DZr1rKa18KrW7Ga4xur4qqa4UJr1fKF15tFyIvF1FgrW8Ar4Y
+	vF4Fkry7Xw4fG37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -85,67 +85,99 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Loading and modifying the extents tree and extent status tree without
-holding the inode's i_rwsem or the mapping's invalidate_lock is not
-permitted, except during the I/O writeback. Add a new debug helper
-ext4_check_map_extents_env(), it will verify whether the extent
-loading/modifying context is safe.
+Add ext4_check_map_extents_env() to the places where loading extents,
+mapping blocks, removing blocks, and modifying extents, excluding the
+I/O writeback context. This function will verify whether the locking
+mechanisms in place are adequate.
 
+Suggested-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
- fs/ext4/ext4.h  |  1 +
- fs/ext4/inode.c | 26 ++++++++++++++++++++++++++
- 2 files changed, 27 insertions(+)
+ fs/ext4/extents.c |  6 ++++++
+ fs/ext4/inode.c   | 14 +++++++++++---
+ 2 files changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index ccc1de1e23a9..3b1bf52737e3 100644
---- a/fs/ext4/ext4.h
-+++ b/fs/ext4/ext4.h
-@@ -2977,6 +2977,7 @@ static inline bool ext4_mb_cr_expensive(enum criteria cr)
- void ext4_inode_csum_set(struct inode *inode, struct ext4_inode *raw,
- 			 struct ext4_inode_info *ei);
- int ext4_inode_is_fast_symlink(struct inode *inode);
-+void ext4_check_map_extents_env(struct inode *inode);
- struct buffer_head *ext4_getblk(handle_t *, struct inode *, ext4_lblk_t, int);
- struct buffer_head *ext4_bread(handle_t *, struct inode *, ext4_lblk_t, int);
- int ext4_bread_batch(struct inode *inode, ext4_lblk_t block, int bh_count,
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index b5eb89ef7ae2..52bfc042bf4e 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -611,6 +611,8 @@ int ext4_ext_precache(struct inode *inode)
+ 	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+ 		return 0;	/* not an extent-mapped inode */
+ 
++	ext4_check_map_extents_env(inode);
++
+ 	down_read(&ei->i_data_sem);
+ 	depth = ext_depth(inode);
+ 
+@@ -5342,6 +5344,8 @@ static int ext4_collapse_range(struct file *file, loff_t offset, loff_t len)
+ 	start_lblk = offset >> inode->i_blkbits;
+ 	end_lblk = (offset + len) >> inode->i_blkbits;
+ 
++	ext4_check_map_extents_env(inode);
++
+ 	down_write(&EXT4_I(inode)->i_data_sem);
+ 	ext4_discard_preallocations(inode);
+ 	ext4_es_remove_extent(inode, start_lblk, EXT_MAX_BLOCKS - start_lblk);
+@@ -5443,6 +5447,8 @@ static int ext4_insert_range(struct file *file, loff_t offset, loff_t len)
+ 	start_lblk = offset >> inode->i_blkbits;
+ 	len_lblk = len >> inode->i_blkbits;
+ 
++	ext4_check_map_extents_env(inode);
++
+ 	down_write(&EXT4_I(inode)->i_data_sem);
+ 	ext4_discard_preallocations(inode);
+ 
 diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 51801f6d23ef..74c7a902a41d 100644
+index 74c7a902a41d..1211ad7fa98d 100644
 --- a/fs/ext4/inode.c
 +++ b/fs/ext4/inode.c
-@@ -416,6 +416,32 @@ int ext4_issue_zeroout(struct inode *inode, ext4_lblk_t lblk, ext4_fsblk_t pblk,
- 	return ret;
- }
+@@ -650,11 +650,14 @@ int ext4_map_blocks(handle_t *handle, struct inode *inode,
+ 		return -EFSCORRUPTED;
  
-+/*
-+ * For generic regular files, when updating the extent tree, Ext4 should
-+ * hold the i_rwsem and invalidate_lock exclusively. This ensures
-+ * exclusion against concurrent page faults, as well as reads and writes.
-+ */
-+#ifdef CONFIG_EXT4_DEBUG
-+void ext4_check_map_extents_env(struct inode *inode)
-+{
-+	if (EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY)
-+		return;
-+
-+	if (!S_ISREG(inode->i_mode) ||
-+	    IS_NOQUOTA(inode) || IS_VERITY(inode) ||
-+	    is_special_ino(inode->i_sb, inode->i_ino) ||
-+	    (inode->i_state & (I_FREEING | I_WILL_FREE | I_NEW)) ||
-+	    ext4_test_inode_flag(inode, EXT4_INODE_EA_INODE) ||
-+	    ext4_verity_in_progress(inode))
-+		return;
-+
-+	WARN_ON_ONCE(!inode_is_locked(inode) &&
-+		     !rwsem_is_locked(&inode->i_mapping->invalidate_lock));
-+}
-+#else
-+void ext4_check_map_extents_env(struct inode *inode) {}
-+#endif
-+
- #define check_block_validity(inode, map)	\
- 	__check_block_validity((inode), __func__, __LINE__, (map))
+ 	/*
+-	 * Do not allow caching of unrelated ranges of extents during I/O
+-	 * submission.
++	 * Callers from the context of data submission are the only exceptions
++	 * for regular files that do not hold the i_rwsem or invalidate_lock.
++	 * However, caching unrelated ranges is not permitted.
+ 	 */
+ 	if (flags & EXT4_GET_BLOCKS_IO_SUBMIT)
+ 		WARN_ON_ONCE(!(flags & EXT4_EX_NOCACHE));
++	else
++		ext4_check_map_extents_env(inode);
  
+ 	/* Lookup extent status tree firstly */
+ 	if (!(EXT4_SB(inode->i_sb)->s_mount_state & EXT4_FC_REPLAY) &&
+@@ -1799,6 +1802,8 @@ static int ext4_da_map_blocks(struct inode *inode, struct ext4_map_blocks *map)
+ 	ext_debug(inode, "max_blocks %u, logical block %lu\n", map->m_len,
+ 		  (unsigned long) map->m_lblk);
+ 
++	ext4_check_map_extents_env(inode);
++
+ 	/* Lookup extent status tree firstly */
+ 	if (ext4_es_lookup_extent(inode, map->m_lblk, NULL, &es)) {
+ 		map->m_len = min_t(unsigned int, map->m_len,
+@@ -4110,6 +4115,8 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+ 	if (end_lblk > start_lblk) {
+ 		ext4_lblk_t hole_len = end_lblk - start_lblk;
+ 
++		ext4_check_map_extents_env(inode);
++
+ 		down_write(&EXT4_I(inode)->i_data_sem);
+ 		ext4_discard_preallocations(inode);
+ 
+@@ -4262,8 +4269,9 @@ int ext4_truncate(struct inode *inode)
+ 	if (err)
+ 		goto out_stop;
+ 
+-	down_write(&EXT4_I(inode)->i_data_sem);
++	ext4_check_map_extents_env(inode);
+ 
++	down_write(&EXT4_I(inode)->i_data_sem);
+ 	ext4_discard_preallocations(inode);
+ 
+ 	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
 -- 
 2.46.1
 
