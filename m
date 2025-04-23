@@ -1,129 +1,403 @@
-Return-Path: <linux-fsdevel+bounces-47103-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF049A99019
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 17:16:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2297EA990B8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 17:22:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 028B01B877D0
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:10:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 148251BA23D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8EAB28C5BF;
-	Wed, 23 Apr 2025 15:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0415628FFE0;
+	Wed, 23 Apr 2025 15:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XlcdM8UU"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ohM/sxOH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6062028B518
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 15:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D78F28C5B8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 15:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420696; cv=none; b=AV9LaOD5p+9ZUCdKNhAgN+blgyjSPxs6FqSInUN+F8TVgit6FY6cPbL7QcwmmJ3yKxaovSuMTjY8Miw592rBtJ58zz9BlLmu6QsYZFCk+9Z6IPgWn0DCPTVqRQIJ+T4Yc2dUzPbh/S060COfszX6/nXv6LpC4bvEXf9ELDS+cDU=
+	t=1745421012; cv=none; b=Qdl8nqvPydtzgrpHx7bc/nR2QpxdWXmJtBih+h57+bVJCS7D8C9/CbmzLbA3jlliZ5c2e0BTgvlHZnFnVPKeiXjVbVQfsQQS3rC0y1Sa59MADMUhaW3GXUfqrq10lHVV3RDUmaX8sxlEPcfyhhuVToyF6M8DGaPpz0bC09tS8Ok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420696; c=relaxed/simple;
-	bh=4R6lj0hZ4/p7O8oGQyGh1YZI8vXp8HHuwSAXkKuPK68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=loCDWSmYoXan6tq7vjWGIpm8CgvrFYSHFvVwJJr86qaI1IpHXqjiDvl6DzZZI7EwNcg42MDKvs6p6H73nxG1VZE+isdqFWv0Kr4jL8r5zdWXA0QVorI0bksy71ym3YT0BII5ie8A2p1TT9TRzE3NHNd8N+0danbnerRQ/WfSmfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XlcdM8UU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745420693;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=y/XwtWlQK2gWEuKfXA1Y/H+Qql53usM87hFbg/riAys=;
-	b=XlcdM8UUw0WsbsvlYUlnlAdPFpGgeXGj5rZXOKezteHaA1hzGKAso7RqK9xpMpTBRZsFTP
-	BW/XSfjsOJWL+nHboG3umf1qL1IHAiC/g1E9G4qAGfS9aCm45CCc1UN+EdTXXSF7ArH3Bw
-	zSLoxRetjmp7CPwMmDG5BeOEMvAzdjw=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-193-oTHycUEbPA20G050xehx8A-1; Wed, 23 Apr 2025 11:04:52 -0400
-X-MC-Unique: oTHycUEbPA20G050xehx8A-1
-X-Mimecast-MFC-AGG-ID: oTHycUEbPA20G050xehx8A_1745420691
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e913e1cf4aso174183666d6.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 08:04:51 -0700 (PDT)
+	s=arc-20240116; t=1745421012; c=relaxed/simple;
+	bh=LC7JCUJS4QWeyXOsFACD1wBTkRXB0lqS4pQzhiqSD5o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RaBMqbgSxPRFh6z+ogBrBB5Zm3GvNDUVUGfMvRQTd8pQrsRsujXO6V0xFcZd36gvPOZIde14pj4Fc/rFoPkCQN1d2WWn8xlWcmtLKKaSh4/uh/MSoRa6+JXquFAvOeQZ9QylaI9H3pZLyskblAKmufLsliMVcqfwiznMmD2Xays=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ohM/sxOH; arc=none smtp.client-ip=209.85.166.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3cda56e1dffso20145ab.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 08:10:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745421008; x=1746025808; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JVtzp5jBz46gSgrSLkFhZmCpyerpZC6S/sX37NoDzKo=;
+        b=ohM/sxOH9lC4J12RrIfbHrCkZiSzfVV3kdIFTjNUi+QpXQY0JyJJfPQj9NoLPp9QyU
+         74wbCXePWWVNoWhNtL9blInQfmlFvmuHeKZaKQuhuYD4xzisMFmQwSYASkdpSkwSjCr1
+         5ZrntPp6DaS4zgP3lLN+aCjzNWHHAVBCI0JbjLy3iILVrixsCx66R1RM7SEAA10GIneH
+         ojuQuw+KYADS2SzTJUyWPFEbBa0ktfsu8YH6wmxc6CXPve/rrSeYTQ2g10sLfnE2cu3Y
+         RcVpmGW0hBk0jyj36AG8315T09yqAx7yEtlzEV6yuFB3aNFz5h9/PRYNjFbLdJmeS0sx
+         wClQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745420691; x=1746025491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y/XwtWlQK2gWEuKfXA1Y/H+Qql53usM87hFbg/riAys=;
-        b=W5AKXEHJ8KvaePU3N1yPBabUH+TlnBCRGs0SDtbgHN40ID77Y/fmlFzzce+Y5zk4sY
-         f2GogdpRLZSqfcCmuhFEzZPOXXaa9vf2KkIwDOKZUuWQ/2ife1Whl5MEVbAhuHqU4ARR
-         5cG7KmLhxCQIrf+FR6QAAx+/AGpiila70daNir8hdt+twzZhwclpdJ6b3z1l4LOaWfV5
-         UxMqU+dkRu5T7bBnqDVFFb2VZOdSt3bGSpaFF2IkiDswrWx2JkxR5mG5nI03hFmDKvRb
-         4HiHLz4GWyl7b3X7ZattMoRvfHcX7xeYNtQJUue+hI3y4G5U2xX/GtEriWXMO8ATS2T4
-         blhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJS2qsfKdxlxz6tuXFr4Qe2VaHrLLQ2eq/jln0XZ6SLxlUdZZyG6vv8EaiZ3zgC9H0eW9s97S1ZqyL5+Vl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw1FrbV5TomE0xBP22wCAlxwjEuklomUbgGvz8GzZtkg4HUDvqT
-	JUEf56H91aOOqxa/hmH+9OJguZNJ6zh3Et9Ou0JFecxyOFyvCTmQgg8LzKK4sLi8/Fu8LOM4HC3
-	Eh9ViigQet5d5kv+sBlIEu+pqnm31+YsA4Mq5jX0ERLt+7G1hIBayClM09ovyGP8=
-X-Gm-Gg: ASbGncvyQ8Pv4u48DDyCVyWkiq1CSF+gE7QS6brSfMR+Qmo/+GcIajQEkrR6riVOAmB
-	uXtqArqN00sNsOY0UEYErTd3MCzwWvZPuPPZhDN73qNTPYeIlAn0LNlLu3GNkAGRifxFpvuKVAk
-	UXQDJTOAHr4abRaUuSYBd+WUHPPA+Sk4JzZsWZnjHfm0+8UTClLzlR4Xa7bILEv7PI5tj8e4jjH
-	1qZ4jCfG3XANB5SByRZ9ZGZMpAnULhcb/IPiyqes9kb+gKtWpONRlZjsk6Hnl5XIZFKLWOsyjv3
-	XpUQmyIiRdTgPRMN56ZtaH60kRh81YXEfAPnlXPVvVsuNSW8BFzy8es=
-X-Received: by 2002:a05:6214:5085:b0:6eb:28e4:8519 with SMTP id 6a1803df08f44-6f2c4562ff4mr349522286d6.21.1745420691108;
-        Wed, 23 Apr 2025 08:04:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIAe6YgRzYFI//AuYLkGgT9bMQm2RTQxu8bUNb2e6etKdith1hNCEE0IZQWqDOiU1oDePTvw==
-X-Received: by 2002:a05:6214:5085:b0:6eb:28e4:8519 with SMTP id 6a1803df08f44-6f2c4562ff4mr349521466d6.21.1745420690350;
-        Wed, 23 Apr 2025 08:04:50 -0700 (PDT)
-Received: from localhost (pool-100-17-21-114.bstnma.fios.verizon.net. [100.17.21.114])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f2c2af5b28sm71585546d6.10.2025.04.23.08.04.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Apr 2025 08:04:49 -0700 (PDT)
-Date: Wed, 23 Apr 2025 11:04:48 -0400
-From: Eric Chanudet <echanude@redhat.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ian Kent <ikent@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev, 
-	Alexander Larsson <alexl@redhat.com>, Lucas Karpinski <lkarpins@redhat.com>
-Subject: Re: [PATCH v4] fs/namespace: defer RCU sync for MNT_DETACH umount
-Message-ID: <ubimdwyutm47mlmtn43mbobtnwaxkmuse3vpgosbsh4yd7f73t@bbt7az62ybbb>
-References: <20250408210350.749901-12-echanude@redhat.com>
- <20250420055406.GS2023217@ZenIV>
- <fzqxqmlhild55m7lfrcdjikkuapi3hzulyt66d6xqdfhz3gjft@cimjdcqdc62n>
- <20250423021547.GD2023217@ZenIV>
+        d=1e100.net; s=20230601; t=1745421008; x=1746025808;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JVtzp5jBz46gSgrSLkFhZmCpyerpZC6S/sX37NoDzKo=;
+        b=wUGdIkGiOnASWmplF3tMXGHF9qcGtgVLQEs5bp3KN0hZmHsCW6RE1OZxoGHP707+CL
+         GyrFguUbNFtAqDohUTBeNwX8pbYEe6/OwNxwJe2xQIfMUcIa2w8AF48YeahJ3egI2TPr
+         5pV9h8C5uvIJAnIQvrEX3H5NwlizqW7Lo96l6zp8MgcUMdUEE6CcIUXtJOqjSHmvBS8w
+         YA2cI3DxWXU5t7QYTU6Ujl86e2rMtTrcI4QB2+Aqcabhac+lLO+az9kWNLANl4LoBnXY
+         PjatyvrHxl9E1szsmazkIYBK+PByFmLEjilrbr0jXrNbSVxDThDP02rNKiWiStRzjA/3
+         u9pA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5/YjH3qKYypHJnkK6TZ6CygtBfZH1xOplbayCnYDe7zQYKJ2B+aGz+NzFwXHeLi3XRhRdWXbYWK9TbUZS@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH1LHWldE6am2Pq4ywqohsYrN/d+7c8YQhqru82Rm+YF8rbjHl
+	rDImLmiJR9UXLOqaocXTSuyBF1oZsD73BzQIxQ+MBAjzFijq1RfDHh+28lKlZK0=
+X-Gm-Gg: ASbGncsnSVLok9zd47AdCG4depLCL+w4bFNOfAJkVVEcJSQx1pSrkh5oCZSmxEdDzYn
+	I/HYqkN2M0BW3ZxYifVTVzNWfemkuN+Of2PBRniw3TvDgdS25xUWW+MiLE222aolNIqcW+KCgEp
+	sn2TWCJimHFN0JrF9o0Nh31+hSIHT/Z32/JXbBmgPslvF8N/zjRHfR9wv/qX4hQhai3e6sQUoFG
+	mtLzpu1VPWrnrAHzXLL1/xx1MRkzShH1WgcytLLz2r+/gzZ6p2jfgo+2h2rvOKeyGAzKyMAn3Q2
+	EJ9QdIunV1pTSlhNAejL5cQcuCvQG4TU6K2v
+X-Google-Smtp-Source: AGHT+IGWaqgergSUU7j5ZyOFziO8hOuodpV1IkCU8Rw87NpM9HTKa+sr8m8c+IGcGxytCncSHwPs8w==
+X-Received: by 2002:a05:6e02:3bc7:b0:3a7:820c:180a with SMTP id e9e14a558f8ab-3d894286289mr185799635ab.19.1745421008003;
+        Wed, 23 Apr 2025 08:10:08 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f6a399b34csm2778615173.142.2025.04.23.08.10.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Apr 2025 08:10:07 -0700 (PDT)
+Message-ID: <bc80036e-2bca-481a-9901-c570d65ad960@kernel.dk>
+Date: Wed, 23 Apr 2025 09:10:06 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250423021547.GD2023217@ZenIV>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault
+ scenarios
+To: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ akpm@linux-foundation.org, peterx@redhat.com, asml.silence@gmail.com,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20250422162913.1242057-1-qq282012236@gmail.com>
+ <20250422162913.1242057-2-qq282012236@gmail.com>
+ <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
+ <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
+ <b61ac651-fafe-449a-82ed-7239123844e1@kernel.dk>
+ <CANHzP_tLV29_uk2gcRAjT9sJNVPH3rMyVuQP07q+c_TWWgsfDg@mail.gmail.com>
+ <7bea9c74-7551-4312-bece-86c4ad5c982f@kernel.dk>
+ <CANHzP_ui_TEPvr6wkWr42j46Sk5qHzZ+p0oo06BrNny52dPK9Q@mail.gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CANHzP_ui_TEPvr6wkWr42j46Sk5qHzZ+p0oo06BrNny52dPK9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Apr 23, 2025 at 03:15:47AM +0100, Al Viro wrote:
-> On Tue, Apr 22, 2025 at 03:53:43PM -0400, Eric Chanudet wrote:
-> 
-> > I'm not quite following. With umount -l, I thought there is no guaranty
-> > that the file-system is shutdown. Doesn't "shutdown -r now" already
-> > risks loses without any of these changes today?
-> 
-> Busy filesystems might stay around after umount -l, for as long as they
-> are busy.  I.e. if there's a process with cwd on one of the affected
-> filesystems, it will remain active until that process chdirs away or
-> gets killed, etc.  Assuming that your userland kills all processes before
-> rebooting the kernel, everything ought to be shut down, TYVM...
-> 
-> If not for that, the damn thing would be impossible to use safely...
-> 
+On 4/23/25 8:29 AM, ??? wrote:
+> Jens Axboe <axboe@kernel.dk> ?2025?4?23??? 21:34???
+>>
+>> On 4/22/25 8:49 PM, ??? wrote:
+>>> On Wed, Apr 23, 2025 at 1:33?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> On 4/22/25 11:04 AM, ??? wrote:
+>>>>> On Wed, Apr 23, 2025 at 12:32?AM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>>>
+>>>>>> On 4/22/25 10:29 AM, Zhiwei Jiang wrote:
+>>>>>>> diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
+>>>>>>> index d4fb2940e435..8567a9c819db 100644
+>>>>>>> --- a/io_uring/io-wq.h
+>>>>>>> +++ b/io_uring/io-wq.h
+>>>>>>> @@ -70,8 +70,10 @@ enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
+>>>>>>>                                       void *data, bool cancel_all);
+>>>>>>>
+>>>>>>>  #if defined(CONFIG_IO_WQ)
+>>>>>>> -extern void io_wq_worker_sleeping(struct task_struct *);
+>>>>>>> -extern void io_wq_worker_running(struct task_struct *);
+>>>>>>> +extern void io_wq_worker_sleeping(struct task_struct *tsk);
+>>>>>>> +extern void io_wq_worker_running(struct task_struct *tsk);
+>>>>>>> +extern void set_userfault_flag_for_ioworker(void);
+>>>>>>> +extern void clear_userfault_flag_for_ioworker(void);
+>>>>>>>  #else
+>>>>>>>  static inline void io_wq_worker_sleeping(struct task_struct *tsk)
+>>>>>>>  {
+>>>>>>> @@ -79,6 +81,12 @@ static inline void io_wq_worker_sleeping(struct task_struct *tsk)
+>>>>>>>  static inline void io_wq_worker_running(struct task_struct *tsk)
+>>>>>>>  {
+>>>>>>>  }
+>>>>>>> +static inline void set_userfault_flag_for_ioworker(void)
+>>>>>>> +{
+>>>>>>> +}
+>>>>>>> +static inline void clear_userfault_flag_for_ioworker(void)
+>>>>>>> +{
+>>>>>>> +}
+>>>>>>>  #endif
+>>>>>>>
+>>>>>>>  static inline bool io_wq_current_is_worker(void)
+>>>>>>
+>>>>>> This should go in include/linux/io_uring.h and then userfaultfd would
+>>>>>> not have to include io_uring private headers.
+>>>>>>
+>>>>>> But that's beside the point, like I said we still need to get to the
+>>>>>> bottom of what is going on here first, rather than try and paper around
+>>>>>> it. So please don't post more versions of this before we have that
+>>>>>> understanding.
+>>>>>>
+>>>>>> See previous emails on 6.8 and other kernel versions.
+>>>>>>
+>>>>>> --
+>>>>>> Jens Axboe
+>>>>> The issue did not involve creating new worker processes. Instead, the
+>>>>> existing IOU worker kernel threads (about a dozen) associated with the VM
+>>>>> process were fully utilizing CPU without writing data, caused by a fault
+>>>>> while reading user data pages in the fault_in_iov_iter_readable function
+>>>>> when pulling user memory into kernel space.
+>>>>
+>>>> OK that makes more sense, I can certainly reproduce a loop in this path:
+>>>>
+>>>> iou-wrk-726     729    36.910071:       9737 cycles:P:
+>>>>         ffff800080456c44 handle_userfault+0x47c
+>>>>         ffff800080381fc0 hugetlb_fault+0xb68
+>>>>         ffff80008031fee4 handle_mm_fault+0x2fc
+>>>>         ffff8000812ada6c do_page_fault+0x1e4
+>>>>         ffff8000812ae024 do_translation_fault+0x9c
+>>>>         ffff800080049a9c do_mem_abort+0x44
+>>>>         ffff80008129bd78 el1_abort+0x38
+>>>>         ffff80008129ceb4 el1h_64_sync_handler+0xd4
+>>>>         ffff8000800112b4 el1h_64_sync+0x6c
+>>>>         ffff80008030984c fault_in_readable+0x74
+>>>>         ffff800080476f3c iomap_file_buffered_write+0x14c
+>>>>         ffff8000809b1230 blkdev_write_iter+0x1a8
+>>>>         ffff800080a1f378 io_write+0x188
+>>>>         ffff800080a14f30 io_issue_sqe+0x68
+>>>>         ffff800080a155d0 io_wq_submit_work+0xa8
+>>>>         ffff800080a32afc io_worker_handle_work+0x1f4
+>>>>         ffff800080a332b8 io_wq_worker+0x110
+>>>>         ffff80008002dd38 ret_from_fork+0x10
+>>>>
+>>>> which seems to be expected, we'd continually try and fault in the
+>>>> ranges, if the userfaultfd handler isn't filling them.
+>>>>
+>>>> I guess this is where I'm still confused, because I don't see how this
+>>>> is different from if you have a normal write(2) syscall doing the same
+>>>> thing - you'd get the same looping.
+>>>>
+>>>> ??
+>>>>
+>>>>> This issue occurs like during VM snapshot loading (which uses
+>>>>> userfaultfd for on-demand memory loading), while the task in the guest is
+>>>>> writing data to disk.
+>>>>>
+>>>>> Normally, the VM first triggers a user fault to fill the page table.
+>>>>> So in the IOU worker thread, the page tables are already filled,
+>>>>> fault no chance happens when faulting in memory pages
+>>>>> in fault_in_iov_iter_readable.
+>>>>>
+>>>>> I suspect that during snapshot loading, a memory access in the
+>>>>> VM triggers an async page fault handled by the kernel thread,
+>>>>> while the IOU worker's async kernel thread is also running.
+>>>>> Maybe If the IOU worker's thread is scheduled first.
+>>>>> I?m going to bed now.
+>>>>
+>>>> Ah ok, so what you're saying is that because we end up not sleeping
+>>>> (because a signal is pending, it seems), then the fault will never get
+>>>> filled and hence progress not made? And the signal is pending because
+>>>> someone tried to create a net worker, and this work is not getting
+>>>> processed.
+>>>>
+>>>> --
+>>>> Jens Axboe
+>>>         handle_userfault() {
+>>>           hugetlb_vma_lock_read();
+>>>           _raw_spin_lock_irq() {
+>>>             __pv_queued_spin_lock_slowpath();
+>>>           }
+>>>           vma_mmu_pagesize() {
+>>>             hugetlb_vm_op_pagesize();
+>>>           }
+>>>           huge_pte_offset();
+>>>           hugetlb_vma_unlock_read();
+>>>           up_read();
+>>>           __wake_up() {
+>>>             _raw_spin_lock_irqsave() {
+>>>               __pv_queued_spin_lock_slowpath();
+>>>             }
+>>>             __wake_up_common();
+>>>             _raw_spin_unlock_irqrestore();
+>>>           }
+>>>           schedule() {
+>>>             io_wq_worker_sleeping() {
+>>>               io_wq_dec_running();
+>>>             }
+>>>             rcu_note_context_switch();
+>>>             raw_spin_rq_lock_nested() {
+>>>               _raw_spin_lock();
+>>>             }
+>>>             update_rq_clock();
+>>>             pick_next_task() {
+>>>               pick_next_task_fair() {
+>>>                 update_curr() {
+>>>                   update_curr_se();
+>>>                   __calc_delta.constprop.0();
+>>>                   update_min_vruntime();
+>>>                 }
+>>>                 check_cfs_rq_runtime();
+>>>                 pick_next_entity() {
+>>>                   pick_eevdf();
+>>>                 }
+>>>                 update_curr() {
+>>>                   update_curr_se();
+>>>                   __calc_delta.constprop.0();
+>>>                   update_min_vruntime();
+>>>                 }
+>>>                 check_cfs_rq_runtime();
+>>>                 pick_next_entity() {
+>>>                   pick_eevdf();
+>>>                 }
+>>>                 update_curr() {
+>>>                   update_curr_se();
+>>>                   update_min_vruntime();
+>>>                   cpuacct_charge();
+>>>                   __cgroup_account_cputime() {
+>>>                     cgroup_rstat_updated();
+>>>                   }
+>>>                 }
+>>>                 check_cfs_rq_runtime();
+>>>                 pick_next_entity() {
+>>>                   pick_eevdf();
+>>>                 }
+>>>               }
+>>>             }
+>>>             raw_spin_rq_unlock();
+>>>             io_wq_worker_running();
+>>>           }
+>>>           _raw_spin_lock_irq() {
+>>>             __pv_queued_spin_lock_slowpath();
+>>>           }
+>>>           userfaultfd_ctx_put();
+>>>         }
+>>>       }
+>>> The execution flow above is the one that kept faulting
+>>> repeatedly in the IOU worker during the issue. The entire fault path,
+>>> including this final userfault handling code you're seeing, would be
+>>> triggered in an infinite loop. That's why I traced and found that the
+>>> io_wq_worker_running() function returns early, causing the flow to
+>>> differ from a normal user fault, where it should be sleeping.
+>>
+>> io_wq_worker_running() is called when the task is scheduled back in.
+>> There's no "returning early" here, it simply updates the accounting.
+>> Which is part of why your patch makes very little sense to me, we
+>> would've called both io_wq_worker_sleeping() and _running() from the
+>> userfaultfd path. The latter doesn't really do much, it simply just
+>> increments the running worker count, if the worker was previously marked
+>> as sleeping.
+>>
+>> And I strongly suspect that the latter is the issue, not the marking of
+>> running. The above loop is fine if we do go to sleep in schedule.
+>> However, if there's task_work (either TWA_SIGNAL or TWA_NOTIFY_SIGNAL
+>> based) pending, then schedule() will be a no-op and we're going to
+>> repeatedly go through that loop. This is because the expectation here is
+>> that the loop will be aborted if either of those is true, so that
+>> task_work can get run (or a signal handled, whatever), and then the
+>> operation retried.
+>>
+>>> However, your call stack appears to behave normally,
+>>> which makes me curious about what's different about execution flow.
+>>> Would you be able to share your test case code so I can study it
+>>> and try to reproduce the behavior on my side?
+>>
+>> It behaves normally for the initial attempt - we end up sleeping in
+>> schedule(). However, then a new worker gets created, or the ring
+>> shutdown, in which case schedule() ends up being a no-op because
+>> TWA_NOTIFY_SIGNAL is set, and then we just sit there in a loop running
+>> the same code again and again to no avail. So I do think my test case
+>> and your issue is the same, I just reproduce it by calling
+>> io_uring_queue_exit(), but the exact same thing would happen if worker
+>> creation is attempted while an io-wq worker is blocked
+>> handle_userfault().
+>>
+>> This is why I want to fully understand the issue rather than paper
+>> around it, as I don't think the fix is correct as-is. We really want to
+>> abort the loop and allow the task to handle whatever signaling is
+>> currently preventing proper sleeps.
+>>
+>> I'll dabble a bit more and send out the test case too, in case it'll
+>> help on your end.
+>>
+>> --
+>> Jens Axboe
+> I?m really looking forward to your test case. Also, I?d like to
+> emphasize one more point: the handle_userfault graph path I sent you,
+> including the schedule function, is complete and unmodified. You can
+> see that the schedule function is very, very short. I understand your
+> point about signal handling, but in this very brief function graph, I
+> haven?t yet seen any functions related to signal handling.
+> Additionally, there is no context switch here, nor is it the situation
+> where the thread is being scheduled back in. Perhaps the scenario
+> you?ve reproduced is still different from the one I?ve encountered in
+> some subtle way?
 
-Right, that ties up with Christian's earlier reply and was also stated
-in 9ea459e110df ("delayed mntput") description.
+Ask yourself, why would schedule() return immediately rather than
+actually block? There's a few cases here:
 
-Thanks for your patience and explanations.
+1) The task state is set to TASK_RUNNING - either because it was never
+   set to TASK_INTERRUPTIBLE/TASK_UNINTERRUPTIBLE, or because someone
+   raced and woke up the task after the initial check on whether it
+   should be sleeping or not.
+
+2) Some kind of notification or signal is pending. This is usually when
+   task_sigpending() returns true, or if TIF_NOTIFY_SIGNAL is set. Those
+   need clearing, and that's generally done on return to userspace.
+
+#1 isn't the case here, but #2 looks highly plausible. The io-wq workers
+rely on running this kind of work manually, and retrying. If we loop
+further down with these conditions being true, then we're just busy
+looping at that point and will NEVER sleep. You don't see any functions
+related to signal handling etc EXACTLY because of that, there's nowhere
+it gets run.
+
+> void io_wq_worker_running(struct task_struct *tsk)
+> {
+> struct io_worker *worker = tsk->worker_private;
+> 
+> if (!worker)
+> return;
+> if (!test_bit(IO_WORKER_F_FAULT, &worker->flags)) {
+> if (!test_bit(IO_WORKER_F_UP, &worker->flags))
+> return;
+> if (test_bit(IO_WORKER_F_RUNNING, &worker->flags))
+> return;
+> set_bit(IO_WORKER_F_RUNNING, &worker->flags);
+> io_wq_inc_running(worker);
+> }
+> }
+> However, from my observation during the crash live memory analysis,
+> when this happens in the IOU worker thread, the
+> IO_WORKER_F_RUNNING flag is set. This is what I said "early return",
+> rather than just a simple accounting function.I look forward to your
+> deeper analysis and any corrections you may have.
+
+It's set becase of what I outlined above. If schedule() would actually
+sleep, then io_wq_worker_sleeping() would've been called. The fact that
+you're getting io_wq_worker_running() called without WORKER_F_RUNNING
+cleared is because of that.
+
+But you're too focused on the symptom here, not the underlying issue. It
+doesn't matter at all that io_wq_worker_running() is called when the
+task is already running, it'll just ignore that. It's explicitly tested.
+Your patch won't make a single difference for this case because of that,
+you're just wrapping what's esssentially a no-op call with another no-op
+call, as you've now nested RUNNING inside the FAULT flag. It won't
+change your outcome at all.
 
 -- 
-Eric Chanudet
-
+Jens Axboe
 
