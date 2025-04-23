@@ -1,67 +1,73 @@
-Return-Path: <linux-fsdevel+bounces-47051-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41F2AA9812A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 09:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE216A98154
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 09:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E80188506E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 07:36:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D4C3A98AF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 07:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9733F268FF9;
-	Wed, 23 Apr 2025 07:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D84C266F0A;
+	Wed, 23 Apr 2025 07:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lKhitSoH"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="rWPYlumt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61F61DE3C3;
-	Wed, 23 Apr 2025 07:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAB1223DC8
+	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 07:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745393785; cv=none; b=KnUHCyd6tojac7WAqSlVgv026O4dHGhtgI+6S2sLt3IMHPcAbxNynlU5AAISporav95QeQuMcOoHjHUMrFNoYhsxajqxLSglBHifHa5Ggbl6Q0IeE7aBuBtu7Dtk/8AR3HynZuU3Y4ETYYTd99mp3YxikWcn2E29ILqZ6Us8X2s=
+	t=1745394055; cv=none; b=QVDCG0Ve1P5EygnbnW3E0DDvELWGg9Vfu4guvGvn2+LKbBwKNlbg9n84vhdb7h/AdG2FORtowYYD9vcMp/+zA72rl2OYN1znxlA4/2fs6JN3PePQQE6QyBIGtvMrM4UtR7wu1gINJ8geKOD8WmYMfM4+oQ8Hb+cxw19cdzC9Dp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745393785; c=relaxed/simple;
-	bh=Yzkq2uyGzZyQgkKjl3TYYD6a4FU8WuLLe5IWzRRT544=;
+	s=arc-20240116; t=1745394055; c=relaxed/simple;
+	bh=EfBoZXjXTtDKEalbqy9SvEPvJ54c1ATM6Bo5yO9zALA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c/8X6bt/RMkKFC0idR4H4Bxl35QV4hFtk08fbnbAi1htCbwjk5ngLIiEjhM4tnO7Eg07YxXiNu437Uw5+UEQqY7WJf08EnCrfwgmltg/E6BOCCv/7XLCqTXrh9X/qpDK9x9rqmp7v0Fmi7tsES2a1bx9fg97X1DBVrGVg6lLwSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lKhitSoH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE123C4CEE2;
-	Wed, 23 Apr 2025 07:36:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745393784;
-	bh=Yzkq2uyGzZyQgkKjl3TYYD6a4FU8WuLLe5IWzRRT544=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lKhitSoHmtRl00kFHQbdZToHWxFgJZviiv1jLaoUumjtoCmrRZb8OLIM3P+9JBle7
-	 ULIO61Kz5qTBaMybVUk0DChx2QD5XHo1Z1HHbtuKOWvHuh4mE4/sTxU7RNKcAMbEiw
-	 n4kjGNC04SRADc7uIrljY/txywHNGwxT+FZ/StWaA+ivxvCObvj/dLG7LGp87dH7co
-	 wXxZQnwXoqhs1/dHARfvIChX5dg+vk3bfyAQB52tPM2Qzw8l/N0uKG3vhZL+UMrsfE
-	 FrgErfvgjN3bjj1QDSklh6f27NyNJBXISa4GYz9mF/jGWoNWJl6O21pDTrJQWUObsj
-	 we+7zQ72ggQug==
-Date: Wed, 23 Apr 2025 00:36:22 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	brauner@kernel.org, djwong@kernel.org, hch@lst.de,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>,
-	Daniel Gomez <da.gomez@samsung.com>
-Subject: Re: [PATCH v7 11/14] xfs: add xfs_file_dio_write_atomic()
-Message-ID: <aAiYdoZsnUTUntnm@bombadil.infradead.org>
-References: <20250415121425.4146847-1-john.g.garry@oracle.com>
- <20250415121425.4146847-12-john.g.garry@oracle.com>
- <aAa2HMvKcIGdbJlF@bombadil.infradead.org>
- <69302bf1-78b4-4b95-8e9b-df56dd1091c0@oracle.com>
- <aAh4L9crlnEf3uuJ@bombadil.infradead.org>
- <cf67f166-4c65-4d76-a3a2-1ad2614e89b7@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fiQlu2hVfDQ2LbrNOosDCQUoukbSNpTEmcFTj0g/aMAhrVUr5p0p97RJ4C8S7UkvqLOaUXmknYt+hQ7UJ5roD8ZE0s6mvT93o/LcQW7b6XsSy4kn5HnYv5ZITGiXuGdtY+2Onxt1m4TfKllzcpCO9rzBrBh6geWu560sh86gY6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=rWPYlumt; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=tZ9GDyJ+omWmtLR6nVAZpdYReReTCnKrzNWIFZor5Fo=; b=rWPYlumtzGwCZ8eW4KoUSDVgvK
+	FQVjzgZWyJrN3XyFbcaeN9vqvTj7Gj5Uy+zpdOSc532fC6hJVF8m0BA2Zh4sef8Q5+qc2+fjOKRzy
+	htIV+5KewjwKvXVjACET/UQ8742y7lEz3zJes1kZwSt2DWV0EmHWWDf5DSyTJUgUEdRfCp2h1FoG6
+	YvYx8UgCaGRv3tcSZ/gU/ojhxP/D0iALVqH3B9rMsC5QY/OEgXoQc+21lt2xeWL/tYVFGLEdl97HF
+	fMOeqhRoRckr5y+UUdTi6iEU8yRKJl9uaZENmdAX8qNZIy1Yq+a9yvhKFChxgjRHPl7BUoM4T8GKu
+	XC6fC6Qg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u7Uil-00000009Dg0-2pCZ;
+	Wed, 23 Apr 2025 07:40:39 +0000
+Date: Wed, 23 Apr 2025 08:40:39 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Dave Chinner <david@fromorbit.com>, Christoph Lameter <cl@linux.com>,
+	David Rientjes <rientjes@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	"Tobin C. Harding" <tobin@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Rik van Riel <riel@surriel.com>,
+	Andrea Arcangeli <aarcange@redhat.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+	David Hildenbrand <david@redhat.com>,
+	Oscar Salvador <osalvador@suse.de>,
+	Michal Hocko <mhocko@kernel.org>, Byungchul Park <byungchul@sk.com>,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [DISCUSSION] Revisiting Slab Movable Objects
+Message-ID: <20250423074039.GE2023217@ZenIV>
+References: <aAZMe21Ic2sDIAtY@harry>
+ <aAa-gCSHDFcNS3HS@dread.disaster.area>
+ <20250423014732.GC2023217@ZenIV>
+ <aAiUtCKJOdWjYxDZ@harry>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -70,19 +76,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cf67f166-4c65-4d76-a3a2-1ad2614e89b7@oracle.com>
+In-Reply-To: <aAiUtCKJOdWjYxDZ@harry>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Wed, Apr 23, 2025 at 08:08:40AM +0100, John Garry wrote:
-> On 23/04/2025 06:18, Luis Chamberlain wrote:
-> > On Tue, Apr 22, 2025 at 07:08:32AM +0100, John Garry wrote:
-> > > On 21/04/2025 22:18, Luis Chamberlain wrote:
-> > 
-> > Sounds like a terrible predicant for those that want hw atomics and
-> > reliability for it.
+On Wed, Apr 23, 2025 at 04:20:20PM +0900, Harry Yoo wrote:
+
+> If we can't migrate or reclaim dentries with a nonzero refcount,
+> can we at least prevent slab pages from containing a mix of dentries
+> with zero and nonzero refcounts?
 > 
-> Well from our MySQL testing performance is good.
+> An idea: "Migrate a dentry (and inode?) _before_ it becomes unrelocatable"
+> This is somewhat similar to "Migrate a page out of the movable area before
+> pinning it" in MM.
+> 
+> For example, suppose we have two slab caches for dentry:
+> dentry_cache_unref and dentry_cache_ref.
+> 
+> When a dentry with a zero refcount is about to have its refcount
+> incremented, the VFS allocates a new object from dentry_cache_ref, copies
+> the dentry into it, frees the original dentry back to
+> dentry_cache_unref, and returns the newly allocated object.
+> 
+> Similarly when a dentry with a nonzero refcount drops to zero,
+> it is migrated to dentry_cache_unref. This should be handled on the VFS
+> side rather than by the slab allocator.
+> 
+> This approach could, at least, help reduce fragmentation.
 
-Good to hear, thanks!
-
-  Luis
+No.  This is utterly insane - you'd need to insert RCU delay on each
+of those transitions and that is not to mention the frequency with
+which those will happen on a lot of loads (any kind of builds included).
+Not a chance.
 
