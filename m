@@ -1,64 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-47106-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47107-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4458DA991F4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 17:37:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3149A99219
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 17:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D053463CA3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:31:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8049F1768AC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC8E2BD598;
-	Wed, 23 Apr 2025 15:21:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86D12951A1;
+	Wed, 23 Apr 2025 15:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dDOfynEO"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="nSeo62+2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A80328EA56;
-	Wed, 23 Apr 2025 15:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79647294A11;
+	Wed, 23 Apr 2025 15:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745421664; cv=none; b=CzoaN6kSjcusaXMZ4Ryfpu6yP0vXKr4MFMX33jmBKZkJDxMeMzTz89V9KSsUr6JgMlnj6l3uk1k4LlzlRHcPDTnEDHYAPboI8LU3CvUZz06ukHqIXNZ+PtTknLXWWErtvnggzp8Fzcuq1UxNbHvJ7f1r0YTNXl6Jf7VwCG6TyT4=
+	t=1745421746; cv=none; b=WMolbx/n0nCvXj91gHcCVYE7jxc/yoJ+AdKgXLJdhK97E1tv6u3kxtp35TBsSFTBKqUTXYkRdldCxQdtTymincMVvSlw7Ju0+MLdVwggEB8aEWbJLrETHk6yLZ93o0PB3P2lATW6Drkyv6cCHjBHmDsrOv8AbQRYcCISj0Kmnfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745421664; c=relaxed/simple;
-	bh=gzxfMjmVDcE5HTN533uohFiedZVmeDQ1cuY6pDnPCmw=;
+	s=arc-20240116; t=1745421746; c=relaxed/simple;
+	bh=jAfJr2XQWsTd7yRq7KWP63S4YmwQunNDIphELRFESnQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EaWkc1oAQEdvIOweInP4s/ShATUMBBc3pJpH8NXwg4DBJyx4odNzPvW1uCmg+r0TFMUBFKaXPCohfVDL8or0clzGv5E/P02u4GjD5RNvuxIZ5x575jkMHthujX2SN3ntUA+a/9R6AoVRoLgXhcm+3SdMQ9NZY9mWhxWstS8UGCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dDOfynEO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 946BAC4CEE2;
-	Wed, 23 Apr 2025 15:21:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745421663;
-	bh=gzxfMjmVDcE5HTN533uohFiedZVmeDQ1cuY6pDnPCmw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dDOfynEOoA4vbAHa9Hman68CVhYpB5f2QQxguP0d/0HUXVHH8mcFm0u4O+hUriE8c
-	 fqI/5nMKaytYWRHaHISUkcdsLgxWZbSkB6xcuN2bJwmAXz0G/5yzOIVAZpGMIzPdmn
-	 0rOUuqxc+KYeREy2cG9Xn8c+22AcHQRPqN7EpWDMWvA2t97//qi1ZupV0hiLw8lC02
-	 OBWRswrTEyhGusOH1d+hGuIp6+HrcjXvV2psOfPGtHgg9Ao+MMnVBiPqwEozxfXtBB
-	 K4rcNs4CTyjq70cp7FN9TxW/+fXmZyF740JCMINBW3fdddcwTWb/rTYO/y+91tI2tt
-	 74nZhaf7VhYsg==
-Date: Wed, 23 Apr 2025 08:21:03 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH v8 15/15] xfs: allow sysadmins to specify a maximum
- atomic write limit at mount time
-Message-ID: <20250423152103.GD25675@frogsfrogsfrogs>
-References: <20250422122739.2230121-1-john.g.garry@oracle.com>
- <20250422122739.2230121-16-john.g.garry@oracle.com>
- <20250423083209.GA30432@lst.de>
- <20250423150110.GB25675@frogsfrogsfrogs>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oxT3plLO66IhYkvdsbmpvESVlPYvMLmCqAgFOXiw2VL8jqCpZO/+jgsVxjWtjmQp8U+EWzb5TE3GRHJBzaHAQtqF+WLHTUe5Xnfw6XJwST3QEFtjai3Zf5xQD7x7FDmK/561zUdhExTp0UQW1KD1/0k3F+CirfDrJOnWCTortlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=nSeo62+2; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YoQyjWRH9eXTiQRhc7wzvbUlYYQ5kxVn10ITUVJfxVA=; b=nSeo62+2iEJWLdPbfSzRAj630A
+	vc46VIYo8JO6jguCJvkZjSPRIQJWOeHOUEo8dDzOv11DXHKLct/WjEbfkHy+J6UVEfxeDe4FufJS4
+	mOBl3ORlESe46TgCZGwtqTObif0KHDrQiut8vUmdOSw1rsqVNJXtt7iaSf+jkAJVeItbYhO5QRBc+
+	+zWueHtk4ROnwp4Ckp2zdCcwSYvWcEs7ojJMUeGohOVXSyBwxRV9lLSXFT9AiaET/X2hH/urDyFzW
+	o07rR4ZYzzDPB57RKTsidANeA1LnFTjaxBiNbw2eOgSQL3bndMKeKo77WeuYxGDJxcG4CzMH6dtlS
+	cBioKC7Q==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u7bva-00000009U9R-0oVY;
+	Wed, 23 Apr 2025 15:22:22 +0000
+Date: Wed, 23 Apr 2025 16:22:22 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Chuck Lever <chuck.lever@oracle.com>
+Cc: trondmy@kernel.org, linux-nfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] Initial NFS client support for RWF_DONTCACHE
+Message-ID: <aAkFrow1KTUmA_cH@casper.infradead.org>
+References: <cover.1745381692.git.trond.myklebust@hammerspace.com>
+ <c608d941-c34d-4cf9-b635-7f327f0fd8f4@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,44 +61,30 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250423150110.GB25675@frogsfrogsfrogs>
+In-Reply-To: <c608d941-c34d-4cf9-b635-7f327f0fd8f4@oracle.com>
 
-On Wed, Apr 23, 2025 at 08:01:10AM -0700, Darrick J. Wong wrote:
-> On Wed, Apr 23, 2025 at 10:32:09AM +0200, Christoph Hellwig wrote:
-> > On Tue, Apr 22, 2025 at 12:27:39PM +0000, John Garry wrote:
-> > > From: "Darrick J. Wong" <djwong@kernel.org>
-> > > 
-> > > Introduce a mount option to allow sysadmins to specify the maximum size
-> > > of an atomic write.  If the filesystem can work with the supplied value,
-> > > that becomes the new guaranteed maximum.
-> > > 
-> > > The value mustn't be too big for the existing filesystem geometry (max
-> > > write size, max AG/rtgroup size).  We dynamically recompute the
-> > > tr_atomic_write transaction reservation based on the given block size,
-> > > check that the current log size isn't less than the new minimum log size
-> > > constraints, and set a new maximum.
-> > > 
-> > > The actual software atomic write max is still computed based off of
-> > > tr_atomic_ioend the same way it has for the past few commits.
+On Wed, Apr 23, 2025 at 10:38:37AM -0400, Chuck Lever wrote:
+> On 4/23/25 12:25 AM, trondmy@kernel.org wrote:
+> > From: Trond Myklebust <trond.myklebust@hammerspace.com>
 > > 
-> > The cap is a good idea, but a mount option for something that has
-> > strong effects for persistent application formats is a little suboptimal.
-> > But adding a sb field and an incompat bit wouldn't be great either.
-> > 
-> > Maybe this another use case for a trusted xattr on the root inode like
-> > the autofsck flag?
+> > The following patch set attempts to add support for the RWF_DONTCACHE
+> > flag in preadv2() and pwritev2() on NFS filesystems.
 > 
-> That would be even better, since you could set it at mkfs time and it
-> would persist until the next xfs_property set call.
-
-[/me hands himself another coffee]
-
-The only problem is, setting the property while the fs is mounted does
-not change the actual fs capability until the next mount since
-properties are regular (and not magic) xattrs.
-
---D
-
-> --D
+> Hi Trond-
 > 
+> "RFC" in the subject field noted.
+> 
+> The cover letter does not explain why one would want this facility, nor
+> does it quantify the performance implications.
+> 
+> I can understand not wanting to cache on an NFS server, but don't you
+> want to maintain a data cache as close to applications as possible?
+
+If you look at the original work for RWF_DONTCACHE, you'll see this is
+the application providing the hint that it's doing a streaming access.
+It's only applied to folios which are created as a result of this
+access, and other accesses to these folios while the folios are in use
+clear the flag.  So it's kind of like O_DIRECT access, except that it
+does go through the page cache so there's none of this funky alignment
+requirement on the userspace buffers.
 
