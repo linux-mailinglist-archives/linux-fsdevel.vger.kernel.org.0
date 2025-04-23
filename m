@@ -1,332 +1,216 @@
-Return-Path: <linux-fsdevel+bounces-47091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B38A98B3D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:34:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C880FA98BFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 15:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91EF1884EC4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 13:34:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02E651B681F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 13:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75941189F57;
-	Wed, 23 Apr 2025 13:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807AE1A9B3D;
+	Wed, 23 Apr 2025 13:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="SADLnwDU"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M6bhpHGW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9410E944E
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 13:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB9D74040;
+	Wed, 23 Apr 2025 13:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745415259; cv=none; b=tGpNkeBBAzX0HYQTs2dZgXMkDeoQHPR1yGlW9JC7102amxP8OjyxIkVc3YNHzpVWpByHXAaHXSYLCf19s6KQGdrMqy9SryHSufLY0GKe4b/8zmzyREXT6S79KiLhqO6u0J3Qtgzuav2h8PWv51lO2lyHAByi0vgLeu9ROZjeinQ=
+	t=1745416482; cv=none; b=KFgJW11+EJYheD+jrq4YwvIeKHAL2OxLDIEWmMz5KH3jLoBe+TE4dwfhHICUBfKy2VrYxWem4raYzxre/fpwYk07o4rqundnooFzfXS4T8A1kozUffoBaMqulqbjKWSNbI25Ey93bTzVf1eRtjbGiMJS/Wq4EvwQTQ02NzPH6OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745415259; c=relaxed/simple;
-	bh=Q+flqgkYNlcNRDvmXwGxS3OaHichax9aAp9QrVfeqwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b/KhtDr1AFcUghy3DMuNz5CqVmJjBF5EtF3X7EfZ8dWynapUOzFk017w6V9mm7mI8bgrowVdK186tEt2PL2D9e6QjOwzx0a3oRzuJK4dSOTj/q2XEdq6LDxFgyjk1SPnzDgqhXZ+6aiIvMNG0XNV61jimEE4SItOdg6nk/Azb5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=SADLnwDU; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d7f11295f6so22912885ab.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 06:34:16 -0700 (PDT)
+	s=arc-20240116; t=1745416482; c=relaxed/simple;
+	bh=XoBOMesWgUXT+lk88oveJberGTagV7NIVBewsaFDlvY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=oC5QdI9Ti+6XxgGjNEVCijtVa8X6s/S1uSHqQen6CAx2GESWhODvCcqhKA0abwA+dIZtl5Ugbaj68YmrSWGba8rmGR6j99trfTmYdZBY3LgVzBlBzBVhXULKZ3fNkgXCPjCRsJnoDQdwT3VLCLZHVsceSY/UBzTexjviP/RN1V8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M6bhpHGW; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-47677b77725so71392171cf.3;
+        Wed, 23 Apr 2025 06:54:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745415255; x=1746020055; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9hpLU4OQ+Jg67sHk70mEz0LoA7hW+cX35ATTpV22znY=;
-        b=SADLnwDULznl469tAs0u101iZfaKmLejKyzlqJ3aWNZaUKfpMuqG7Hn2aGzpkOu6dK
-         qujc51FAwH1V3S4J1NuhsknklJaIAJYc5qOza5f0dvAx97NIjtktMyBfrrgVbb1ekHv6
-         g/Kz8aL02gWArMryL3XqoHCBAGj3TnOZK4v4e/GKeP2rtuiQbYfBEgSlKNRbXFmpdris
-         WZkCeZ5lyDlfOelCIFuj+j2XoYGrN7WLi3HzjIMAVYI84XFX++bSUbRl7fQcHWeoGwEJ
-         DuyipP/EVtdGK0c8N5CvENpgZViQYWn8Ap6Vrbpao7MBuu4pluwUzlB1EIHNPwe30aL+
-         6IPQ==
+        d=gmail.com; s=20230601; t=1745416480; x=1746021280; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TSo0kVaG4qlwv2htSq5AzmCujd9KDIILJgYGjLhd/jM=;
+        b=M6bhpHGWW/KJS021/LJPCVKiY8Srl4G9PxTmJEYfmFDRiI8s4fyVXM/qBKF5bh7+Gr
+         /HC+eEvjKAhR5Q3B4JdhjkoF0Yd0YUv7lWCxa2Lw33suGsqW+s6ryHk8m8NLuJrMRbtV
+         piicuQEixN2KN7V2oBQtX8l5PnXHVw8MLXGqvqGkTkAxjldXFbaiBW+LZSJt1JOROtNn
+         SEKqa4mPbSV9grg8uj6xd9wsLIuQ2ycFe4EcMVo2/rwpxu1Gh9h2o4BOppoEf8aJs02V
+         IuOvfADzlh6T/7J9idzsUxTCX35K069PmkrQDERocNqS6fyO6WokB82Os18cXWE3VWyU
+         KORQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745415255; x=1746020055;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9hpLU4OQ+Jg67sHk70mEz0LoA7hW+cX35ATTpV22znY=;
-        b=E2MxUHsMSjr4hL0XFGkq2sy5GXPW+lIkC11/Ee8jACsz8gd2ReENeZ90VEw+xsBsM8
-         e3d1u6ZKxFOxzdDqTRYJBc6BuK0WcTlxs0kp1M/GpUSvY7BAiAwH1zXphjDkHjn2FnA2
-         hSW+FUk/HRIowsUlHl3jM7BLNuiSGdF/tmVtUZ0Gauedj+W2hTg3FlKjyeiCEV74dJXL
-         bSXjPv1Ag0xkv8STz7jFJ9L3ZART2IUyKXOIC1qSdr1rDE/tzrUD+lbW76GIKnCvtS4H
-         +oZCamCiNceIYfFxdI29zoyda9QZvPivq6I6dCvqcHxN7eXxqJf55Y3Q7OmgQIjWzA3Q
-         0Hrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVc6RvkeS4VcLJN6D3MMZq0+XXccGPHTrmZEE1Y2sb1F6bE5UbPf1Jd7S2E4pRI9hmxYkTE/q59UIvQihyW@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzMdIvfE6VtQD+ZSYaHBvj7KxYPTpfY956G/bJAOT3nm1HDnrJ
-	R55LjYBZl0hIf2xBbWYqpBdo2LfLtmdFDHowIGrasNLfe6uzW74zbPwFUflbxg4=
-X-Gm-Gg: ASbGncspxvTCCZgP0R02mp4PLE8NlhjgsOwW6w/vi7hvkstOXK7FtNPUa3G3ueSaFfK
-	XuWo7TnTPAUTR+nfSfOaw0d042Z+YndzTJYng/6d9ws00tO0Sk4dSHYqAcnOtE0f4UlIbf59CvW
-	EeXucURVUxcaoMM9tPgqm/ZmfZuChJnPjVrTh1ktjDb7WNrgMgmyJ+R6ac6LFwnC4GwdnOKIl8h
-	EOXwuTokH2GufxZGnip8/eWFjJFnLymBghRAhbMPf1phOOLkpNI4KsN2lbFsRhsbfdS+lIu26YX
-	HELVVr+DAYHEtrPY/yJOQ0+SbeOxDcbDrUVYhg==
-X-Google-Smtp-Source: AGHT+IHThlBHn7rxme4VnCSAQGP0a8Yy93Q156ueMnuo4/505ZcOiwjgN1jA+02krKqEZpf9wNrKiw==
-X-Received: by 2002:a05:6e02:3809:b0:3d8:2197:1aa0 with SMTP id e9e14a558f8ab-3d88ed8d68bmr171312825ab.11.1745415255534;
-        Wed, 23 Apr 2025 06:34:15 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d9276aca79sm3805765ab.67.2025.04.23.06.34.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 06:34:14 -0700 (PDT)
-Message-ID: <7bea9c74-7551-4312-bece-86c4ad5c982f@kernel.dk>
-Date: Wed, 23 Apr 2025 07:34:13 -0600
+        d=1e100.net; s=20230601; t=1745416480; x=1746021280;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TSo0kVaG4qlwv2htSq5AzmCujd9KDIILJgYGjLhd/jM=;
+        b=pTQy6QfWUX2z7cnrLvfJTdTciQooIMwI8Ohjp5wVE1i5t1puLyVcDQ26igq9RnFTz2
+         jvKHpL9E0dSPkroU3D/x1BTR+zObObuhgeB/i3h4K4X0yeB0N6ZSL7IKJArvImTqKMoO
+         z6Jiv8HoGVjkPWIwFZmGfAc4cDUHoUn8CEHn9hbvGYiJ9ojYv/hTyOjCe72w9F9ztQ6X
+         YxJKAccNGs47AfTCRlofFQlOYfVknbNR/nmVAwefewTSnceC8a8azqQRdANl24SV3Xtq
+         Rv7t6TZBluY+73UPb32fCy62ax2mM7+mD6Ub7AwrMA1CPEoZgYq1Rx4cPwuv2dEMQXqU
+         GKtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVI5CGtiz2wGJ23yNeWWj93szKkYSVAR/8Yj4ECqOa/Dg2tBel0iXI1IZuwbFQUJP+EZd7qoS8Ufy/z@vger.kernel.org, AJvYcCVtCs7wL9SChUijYjruRemb8WnoZEeVQqN9sX16fQC2q3+Ykpq7sFQbPFkP0ceC8WL4bemkFbnaqJnbZJyHSDg=@vger.kernel.org, AJvYcCXGX08AQCWTHx5mCohhjJh1yh6S6DanI4IfdYaJGoMzsKUAA6796pNxk/a4F3g1qhJzkiqiQ98883GbvfjK@vger.kernel.org, AJvYcCXuN9M/+5UKPHZZDJsSBqi5yEkpXfW1lrMWGM2wPR7W7/SssY5dhMueyKYjbHZ3dvmCLoeRgO7lnGjoKLkV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzheLLw2SJTHAWhJsR2IGCv4jEyACFYKXtdMyuF/Rs46LWMu/+c
+	WWalFLGoi5CKMRpF//ChHtnAgfCOebEu7uGe+AGObZtf/JGryV+8
+X-Gm-Gg: ASbGncundXzlMrBmJaurGAsNRyC92pMeGGv8R5L21vVyQ2VTGhS4d4Qcrnpw+XESLL7
+	6PLlDvLrCIcqANa2K6NavQ24aDZ3Je7VAgv7RHYdPJ9EuVPDtUYv9uE6yDoQ2VLQgD1eYdduLOh
+	hbslyk/S+uObj2cEfRout3MG4mnqPXLKQy4SVvXy512Z8XeX2DPwPaQEQBzdk4qFEVUCHV/IBpr
+	d3TbwG9bM52DA9MMtCdIuIpvi5miCgMzZ+sT4qVeok8Wv5PyMwdotCpWUiwMgz5fy9GFvJPylRF
+	51kJnfGml1U5tqDtczI5vv67xPQs0TV7aJ32ASOdYOipG6rrizX84B6BV3X6F/VTqX4xsthB/Wl
+	YtWarUJ5mvYFqXM049YUf4FjYBxCYV/zPbByhBRdno0WtYQ9a7w==
+X-Google-Smtp-Source: AGHT+IFTWCPiBOoKOSKSIX68I4H2kT7mfY6TzI+IL0WM9cWQNYz9zfcZdIgiXlUm+rBI/51oqr2/cA==
+X-Received: by 2002:a05:622a:e:b0:476:8296:17e5 with SMTP id d75a77b69052e-47aec392209mr284737881cf.17.1745416479732;
+        Wed, 23 Apr 2025 06:54:39 -0700 (PDT)
+Received: from 1.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.ip6.arpa ([2620:10d:c091:600::1:e2b6])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47ae9cf9f7dsm68135461cf.74.2025.04.23.06.54.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 06:54:39 -0700 (PDT)
+From: Tamir Duberstein <tamird@gmail.com>
+Subject: [PATCH v19 0/3] rust: xarray: Add a minimal abstraction for XArray
+Date: Wed, 23 Apr 2025 09:54:36 -0400
+Message-Id: <20250423-rust-xarray-bindings-v19-0-83cdcf11c114@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault
- scenarios
-To: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- akpm@linux-foundation.org, peterx@redhat.com, asml.silence@gmail.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20250422162913.1242057-1-qq282012236@gmail.com>
- <20250422162913.1242057-2-qq282012236@gmail.com>
- <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
- <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
- <b61ac651-fafe-449a-82ed-7239123844e1@kernel.dk>
- <CANHzP_tLV29_uk2gcRAjT9sJNVPH3rMyVuQP07q+c_TWWgsfDg@mail.gmail.com>
-From: Jens Axboe <axboe@kernel.dk>
-Content-Language: en-US
-In-Reply-To: <CANHzP_tLV29_uk2gcRAjT9sJNVPH3rMyVuQP07q+c_TWWgsfDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABzxCGgC/3XS224CIRAG4Fdp9roYZmAQeuV7NL3gqCS627JqN
+ MZ3L9qD22y5nAl8/ANcujGWHMfu5enSlXjMYx76WoB5fur8xvbryHKojQ45SuDIWTmMe3aypdg
+ zc7kPuV+PzMVEIEGiUbqrW99LTPl0d1/fap3KsGP7TYn2F+OCGxRkcLkApQ0QQ7bztrfbVV7bb
+ bYLP+y+rRI/DjXa/gFu8rgfyvme+2hu3a+EAPr/hEfDOBMIxgdHQmlarXc2b++H3MAj8InSmrO
+ uqoxFcui4S6RxxsCDQS5aDFSGtDUUQCyjnzM4YQBbDN4YY51xkGTAOGPElGmmEZXRigiUjAplm
+ jFyyixbjKyMSTEJH5N3EmYM/TBUf5JqMXS/YnQUvPXWiRmjpkwzjaoMknLcJyOUCzNmOWGa36Z
+ Oy1kS1hgwKpLQM0ZPGIQWoyvjnXWRQkhe/Hnw6/X6CaoQ6vOJAwAA
+X-Change-ID: 20241020-rust-xarray-bindings-bef514142968
+To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Matthew Wilcox <willy@infradead.org>, 
+ Bjorn Helgaas <bhelgaas@google.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Tamir Duberstein <tamird@gmail.com>, 
+ FUJITA Tomonori <fujita.tomonori@gmail.com>, 
+ "Rob Herring (Arm)" <robh@kernel.org>
+Cc: =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, 
+ Asahi Lina <lina@asahilina.net>, rust-for-linux@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org
+X-Mailer: b4 0.15-dev
 
-On 4/22/25 8:49 PM, ??? wrote:
-> On Wed, Apr 23, 2025 at 1:33?AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> On 4/22/25 11:04 AM, ??? wrote:
->>> On Wed, Apr 23, 2025 at 12:32?AM Jens Axboe <axboe@kernel.dk> wrote:
->>>>
->>>> On 4/22/25 10:29 AM, Zhiwei Jiang wrote:
->>>>> diff --git a/io_uring/io-wq.h b/io_uring/io-wq.h
->>>>> index d4fb2940e435..8567a9c819db 100644
->>>>> --- a/io_uring/io-wq.h
->>>>> +++ b/io_uring/io-wq.h
->>>>> @@ -70,8 +70,10 @@ enum io_wq_cancel io_wq_cancel_cb(struct io_wq *wq, work_cancel_fn *cancel,
->>>>>                                       void *data, bool cancel_all);
->>>>>
->>>>>  #if defined(CONFIG_IO_WQ)
->>>>> -extern void io_wq_worker_sleeping(struct task_struct *);
->>>>> -extern void io_wq_worker_running(struct task_struct *);
->>>>> +extern void io_wq_worker_sleeping(struct task_struct *tsk);
->>>>> +extern void io_wq_worker_running(struct task_struct *tsk);
->>>>> +extern void set_userfault_flag_for_ioworker(void);
->>>>> +extern void clear_userfault_flag_for_ioworker(void);
->>>>>  #else
->>>>>  static inline void io_wq_worker_sleeping(struct task_struct *tsk)
->>>>>  {
->>>>> @@ -79,6 +81,12 @@ static inline void io_wq_worker_sleeping(struct task_struct *tsk)
->>>>>  static inline void io_wq_worker_running(struct task_struct *tsk)
->>>>>  {
->>>>>  }
->>>>> +static inline void set_userfault_flag_for_ioworker(void)
->>>>> +{
->>>>> +}
->>>>> +static inline void clear_userfault_flag_for_ioworker(void)
->>>>> +{
->>>>> +}
->>>>>  #endif
->>>>>
->>>>>  static inline bool io_wq_current_is_worker(void)
->>>>
->>>> This should go in include/linux/io_uring.h and then userfaultfd would
->>>> not have to include io_uring private headers.
->>>>
->>>> But that's beside the point, like I said we still need to get to the
->>>> bottom of what is going on here first, rather than try and paper around
->>>> it. So please don't post more versions of this before we have that
->>>> understanding.
->>>>
->>>> See previous emails on 6.8 and other kernel versions.
->>>>
->>>> --
->>>> Jens Axboe
->>> The issue did not involve creating new worker processes. Instead, the
->>> existing IOU worker kernel threads (about a dozen) associated with the VM
->>> process were fully utilizing CPU without writing data, caused by a fault
->>> while reading user data pages in the fault_in_iov_iter_readable function
->>> when pulling user memory into kernel space.
->>
->> OK that makes more sense, I can certainly reproduce a loop in this path:
->>
->> iou-wrk-726     729    36.910071:       9737 cycles:P:
->>         ffff800080456c44 handle_userfault+0x47c
->>         ffff800080381fc0 hugetlb_fault+0xb68
->>         ffff80008031fee4 handle_mm_fault+0x2fc
->>         ffff8000812ada6c do_page_fault+0x1e4
->>         ffff8000812ae024 do_translation_fault+0x9c
->>         ffff800080049a9c do_mem_abort+0x44
->>         ffff80008129bd78 el1_abort+0x38
->>         ffff80008129ceb4 el1h_64_sync_handler+0xd4
->>         ffff8000800112b4 el1h_64_sync+0x6c
->>         ffff80008030984c fault_in_readable+0x74
->>         ffff800080476f3c iomap_file_buffered_write+0x14c
->>         ffff8000809b1230 blkdev_write_iter+0x1a8
->>         ffff800080a1f378 io_write+0x188
->>         ffff800080a14f30 io_issue_sqe+0x68
->>         ffff800080a155d0 io_wq_submit_work+0xa8
->>         ffff800080a32afc io_worker_handle_work+0x1f4
->>         ffff800080a332b8 io_wq_worker+0x110
->>         ffff80008002dd38 ret_from_fork+0x10
->>
->> which seems to be expected, we'd continually try and fault in the
->> ranges, if the userfaultfd handler isn't filling them.
->>
->> I guess this is where I'm still confused, because I don't see how this
->> is different from if you have a normal write(2) syscall doing the same
->> thing - you'd get the same looping.
->>
->> ??
->>
->>> This issue occurs like during VM snapshot loading (which uses
->>> userfaultfd for on-demand memory loading), while the task in the guest is
->>> writing data to disk.
->>>
->>> Normally, the VM first triggers a user fault to fill the page table.
->>> So in the IOU worker thread, the page tables are already filled,
->>> fault no chance happens when faulting in memory pages
->>> in fault_in_iov_iter_readable.
->>>
->>> I suspect that during snapshot loading, a memory access in the
->>> VM triggers an async page fault handled by the kernel thread,
->>> while the IOU worker's async kernel thread is also running.
->>> Maybe If the IOU worker's thread is scheduled first.
->>> I?m going to bed now.
->>
->> Ah ok, so what you're saying is that because we end up not sleeping
->> (because a signal is pending, it seems), then the fault will never get
->> filled and hence progress not made? And the signal is pending because
->> someone tried to create a net worker, and this work is not getting
->> processed.
->>
->> --
->> Jens Axboe
->         handle_userfault() {
->           hugetlb_vma_lock_read();
->           _raw_spin_lock_irq() {
->             __pv_queued_spin_lock_slowpath();
->           }
->           vma_mmu_pagesize() {
->             hugetlb_vm_op_pagesize();
->           }
->           huge_pte_offset();
->           hugetlb_vma_unlock_read();
->           up_read();
->           __wake_up() {
->             _raw_spin_lock_irqsave() {
->               __pv_queued_spin_lock_slowpath();
->             }
->             __wake_up_common();
->             _raw_spin_unlock_irqrestore();
->           }
->           schedule() {
->             io_wq_worker_sleeping() {
->               io_wq_dec_running();
->             }
->             rcu_note_context_switch();
->             raw_spin_rq_lock_nested() {
->               _raw_spin_lock();
->             }
->             update_rq_clock();
->             pick_next_task() {
->               pick_next_task_fair() {
->                 update_curr() {
->                   update_curr_se();
->                   __calc_delta.constprop.0();
->                   update_min_vruntime();
->                 }
->                 check_cfs_rq_runtime();
->                 pick_next_entity() {
->                   pick_eevdf();
->                 }
->                 update_curr() {
->                   update_curr_se();
->                   __calc_delta.constprop.0();
->                   update_min_vruntime();
->                 }
->                 check_cfs_rq_runtime();
->                 pick_next_entity() {
->                   pick_eevdf();
->                 }
->                 update_curr() {
->                   update_curr_se();
->                   update_min_vruntime();
->                   cpuacct_charge();
->                   __cgroup_account_cputime() {
->                     cgroup_rstat_updated();
->                   }
->                 }
->                 check_cfs_rq_runtime();
->                 pick_next_entity() {
->                   pick_eevdf();
->                 }
->               }
->             }
->             raw_spin_rq_unlock();
->             io_wq_worker_running();
->           }
->           _raw_spin_lock_irq() {
->             __pv_queued_spin_lock_slowpath();
->           }
->           userfaultfd_ctx_put();
->         }
->       }
-> The execution flow above is the one that kept faulting
-> repeatedly in the IOU worker during the issue. The entire fault path,
-> including this final userfault handling code you're seeing, would be
-> triggered in an infinite loop. That's why I traced and found that the
-> io_wq_worker_running() function returns early, causing the flow to
-> differ from a normal user fault, where it should be sleeping.
+This is a reimagining relative to earlier versions[0] by Asahi Lina and
+Maíra Canal.
 
-io_wq_worker_running() is called when the task is scheduled back in.
-There's no "returning early" here, it simply updates the accounting.
-Which is part of why your patch makes very little sense to me, we
-would've called both io_wq_worker_sleeping() and _running() from the
-userfaultfd path. The latter doesn't really do much, it simply just
-increments the running worker count, if the worker was previously marked
-as sleeping.
+It is needed to support rust-binder, though this version only provides
+enough machinery to support rnull.
 
-And I strongly suspect that the latter is the issue, not the marking of
-running. The above loop is fine if we do go to sleep in schedule.
-However, if there's task_work (either TWA_SIGNAL or TWA_NOTIFY_SIGNAL
-based) pending, then schedule() will be a no-op and we're going to
-repeatedly go through that loop. This is because the expectation here is
-that the loop will be aborted if either of those is true, so that
-task_work can get run (or a signal handled, whatever), and then the
-operation retried.
+Link: https://lore.kernel.org/rust-for-linux/20240309235927.168915-2-mcanal@igalia.com/ [0]
+---
+Changes in v19:
+- Rebase on v6.15-rc2.
+- Link to v18: https://lore.kernel.org/r/20250221-rust-xarray-bindings-v18-0-cbabe5ddfc32@gmail.com
 
-> However, your call stack appears to behave normally,
-> which makes me curious about what's different about execution flow.
-> Would you be able to share your test case code so I can study it
-> and try to reproduce the behavior on my side?
+Changes in v18:
+- Add INVARIANT comment in `XArray::new`. (Danilo Krummrich)
+- Replace destructuring with field access in
+  `impl<T> From<StoreError<T>> for Error`. (Danilo Krummrich)
+- Use enumerations in SAFETY comments (3x). (Danilo Krummrich)
+- Link to v17: https://lore.kernel.org/r/20250218-rust-xarray-bindings-v17-0-f3a99196e538@gmail.com
 
-It behaves normally for the initial attempt - we end up sleeping in
-schedule(). However, then a new worker gets created, or the ring
-shutdown, in which case schedule() ends up being a no-op because
-TWA_NOTIFY_SIGNAL is set, and then we just sit there in a loop running
-the same code again and again to no avail. So I do think my test case
-and your issue is the same, I just reproduce it by calling
-io_uring_queue_exit(), but the exact same thing would happen if worker
-creation is attempted while an io-wq worker is blocked
-handle_userfault().
+Changes in v17:
+- Drop patch "rust: remove redundant `as _` casts". (Danilo Krummrich)
+- Drop trailers for shared commit from configfs series[0]. (Danilo
+  Krummrich)
+- Avoid shadowing expressions with .cast() calls. (Danilo Krummrich)
+- Link to v16: https://lore.kernel.org/r/20250207-rust-xarray-bindings-v16-0-256b0cf936bd@gmail.com
 
-This is why I want to fully understand the issue rather than paper
-around it, as I don't think the fix is correct as-is. We really want to
-abort the loop and allow the task to handle whatever signaling is
-currently preventing proper sleeps.
+Changes in v16:
+- Extract prequel patch for `as _` casts. (Danilo Krummrich)
+- Improve doc and safety comments. (Boqun Feng)
+- Pull trailers for shared commit from configfs series[0]. (Andreas Hindborg, Alice Ryhl, Fiona Behrens)
+- Link to configfs series: https://lore.kernel.org/rust-for-linux/20250131-configfs-v1-1-87947611401c@kernel.org/
+- Link to v15: https://lore.kernel.org/r/20250206-rust-xarray-bindings-v15-0-a22b5dcacab3@gmail.com
 
-I'll dabble a bit more and send out the test case too, in case it'll
-help on your end.
+Changes in v15:
+- Rebase on v6.14-rc1.
+- Add MAINTAINERS entry.
+- Link to v14: https://lore.kernel.org/r/20241217-rust-xarray-bindings-v14-0-9fef3cefcb41@gmail.com
 
+Changes in v14:
+- Remove TODO made stale by Gary Guo's FFI type series.
+- Link: https://lore.kernel.org/all/20240913213041.395655-5-gary@garyguo.net/
+- Link to v13: https://lore.kernel.org/r/20241213-rust-xarray-bindings-v13-0-8655164e624f@gmail.com
+
+Changes in v13:
+- Replace `bool::then` with `if`. (Miguel Ojeda)
+- Replace `match` with `let` + `if`. (Miguel Ojeda)
+- Link to v12: https://lore.kernel.org/r/20241212-rust-xarray-bindings-v12-0-59ab9b1f4d2e@gmail.com
+
+Changes in v12:
+- Import `core::ptr::NonNull`. (Alice Ryhl)
+- Introduce `StoreError` to allow `?` to be used with `Guard::store`.
+  (Alice Ryhl)
+- Replace `{crate,core}::ffi::c_ulong` and clarify TODO with respect to
+  `usize`. (Alice Ryhl)
+- Drop `T: Sync` bound on `impl Sync for XArray<T>`. (Alice Ryhl)
+- Reword `Send` and `Sync` safety comments to match the style used in
+  `lock.rs`. (Alice Ryhl and Andreas
+  Hindborg)
+- Link to v11: https://lore.kernel.org/r/20241203-rust-xarray-bindings-v11-0-58a95d137ec2@gmail.com
+
+Changes in v11:
+- Consolidate imports. (Alice Ryhl)
+- Use literal `0` rather than `MIN`. (Alice Ryhl)
+- Use bulleted list in SAFETY comment. (Alice Ryhl)
+- Document (un)locking behavior of `Guard::store`. (Alice Ryhl)
+- Document Normal API behavior WRT `XA_ZERO_ENTRY`. (Alice Ryhl)
+- Rewrite `unsafe impl Sync` SAFETY comment. (Andreas Hindborg)
+- Link to v10: https://lore.kernel.org/r/20241120-rust-xarray-bindings-v10-0-a25b2b0bf582@gmail.com
+
+Changes in v10:
+- Guard::get takes &self instead of &mut self. (Andreas Hindborg)
+- Guard is !Send. (Boqun Feng)
+- Add Inspired-by tags. (Maíra Canal and Asahi Lina)
+- Rebase on linux-next, use NotThreadSafe. (Alice Ryhl)
+- Link to v9: https://lore.kernel.org/r/20241118-rust-xarray-bindings-v9-0-3219cdb53685@gmail.com
+
+---
+Tamir Duberstein (3):
+      rust: types: add `ForeignOwnable::PointedTo`
+      rust: xarray: Add an abstraction for XArray
+      MAINTAINERS: add entry for Rust XArray API
+
+ MAINTAINERS                     |  11 ++
+ rust/bindings/bindings_helper.h |   6 +
+ rust/helpers/helpers.c          |   1 +
+ rust/helpers/xarray.c           |  28 ++++
+ rust/kernel/alloc/kbox.rs       |  38 +++---
+ rust/kernel/lib.rs              |   1 +
+ rust/kernel/miscdevice.rs       |  10 +-
+ rust/kernel/pci.rs              |   2 +-
+ rust/kernel/platform.rs         |   2 +-
+ rust/kernel/sync/arc.rs         |  21 +--
+ rust/kernel/types.rs            |  46 ++++---
+ rust/kernel/xarray.rs           | 275 ++++++++++++++++++++++++++++++++++++++++
+ 12 files changed, 392 insertions(+), 49 deletions(-)
+---
+base-commit: 9d7a0577c9db35c4cc52db90bc415ea248446472
+change-id: 20241020-rust-xarray-bindings-bef514142968
+
+Best regards,
 -- 
-Jens Axboe
+Tamir Duberstein <tamird@gmail.com>
+
 
