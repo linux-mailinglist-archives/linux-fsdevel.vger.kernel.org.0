@@ -1,259 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-47100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47098-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D87A98EAE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 16:58:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D91A5A98E3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 16:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786603A997C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 14:55:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE109189B1F7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 14:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A092280A4D;
-	Wed, 23 Apr 2025 14:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3D62820A8;
+	Wed, 23 Apr 2025 14:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YlL3R/nl"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qKrkXWJU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E78118DB17;
-	Wed, 23 Apr 2025 14:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A1B1A0711;
+	Wed, 23 Apr 2025 14:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745420118; cv=none; b=Gg6oyCnaUZ79UsHF8SmLl17V2BafBHjCx1M4pettoIUWv8oqdmhqrQV59Cv1dzbpQnm+TDzBThj3YCGbnTs8IEqlv+BfSFscvMYjy0GOkYggYw1vG2cDfF692yqhXAFcuXh9VFEH9LEziHazad1Xgm0BhkWRC+bsIpBUilxhzbs=
+	t=1745419878; cv=none; b=ajEXkFM9vZESJvdRvpciX96shCtM/hqVJpmduh4f3Sf2I5on7aJ/QKoO/oQeNdSl94/cRR9hyjwWia+dA71AhD7vP3RBVDMK5FImfpiMgM47PfHYfUF8zqFfPcDBRxbDvvnfT2ClQ6Y1kENmH6jOQqE1fm1muBLiUkNgmAwMLa0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745420118; c=relaxed/simple;
-	bh=Seq9Tn6zd7GgXSLQkR4PQvzHVtjjrW7lTAbTOJcwPCA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Y/0ILhut/jH/O7281AHpxYEn1swFbqbBnl0nAg/N/1fpOFIS5/cr0OEvgwVg9p9O3qVLTTtHwkWOJbSoMu8Bctzn+KmampwH94ziZ3YT21mOeOWzeoDnxAt2daId88AhLVPLSww4XcB1JK64H2Qw7qL3eoScq3WOUHPy38Jq334=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YlL3R/nl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE3EC4CEE2;
-	Wed, 23 Apr 2025 14:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1745420118;
-	bh=Seq9Tn6zd7GgXSLQkR4PQvzHVtjjrW7lTAbTOJcwPCA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YlL3R/nlhGHSxt/xfdwatbNgTu6fzQaThnxvRVn7DWQtMs/QJsAveVdHcxl5ONZNf
-	 zltt3IAAbwjivvNpXq/xnOm9foA5TshdlJtXYElGdP+0I6BQ733mG0zuSoeGc4g3G1
-	 7YiAdqVBXDL8g7Okg//3oAich1GIDNNJGLDxOkN4=
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: stable@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	patches@lists.linux.dev,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Tyler Hicks <code@tyhicks.com>,
-	ecryptfs@vger.kernel.org,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Amir Goldstein <amir73il@gmail.com>,
-	linux-unionfs@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.12 101/223] fs: Simplify getattr interface function checking AT_GETATTR_NOSEC flag
-Date: Wed, 23 Apr 2025 16:42:53 +0200
-Message-ID: <20250423142621.227689976@linuxfoundation.org>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250423142617.120834124@linuxfoundation.org>
-References: <20250423142617.120834124@linuxfoundation.org>
-User-Agent: quilt/0.68
-X-stable: review
-X-Patchwork-Hint: ignore
+	s=arc-20240116; t=1745419878; c=relaxed/simple;
+	bh=hAjNAGLE2JHJoSv/yP/EQBtFAc8W1Wwcb53racrQZ4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lP4BkbBTwHl2y8MFWX19lLz96gvxc4qbCCLujgYm/X8JLDT5np+3mE/alXInsinEwIWTrXIJUPUkNfh89mDPPWGZ0+8aKTG3rHjZf1MQ3frzE1Vq5t0pw/o/yo+31MTvPPYs0+BmvTr2hk7DhW8gTdy6w/oqiy6BW3rrrqTqPKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qKrkXWJU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D04C4CEE3;
+	Wed, 23 Apr 2025 14:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745419876;
+	bh=hAjNAGLE2JHJoSv/yP/EQBtFAc8W1Wwcb53racrQZ4Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qKrkXWJUBMpJ3Rlb1ky7vb/LcIxhy7RONl35uZKc7Tix0uDV2Nz99NL6QZ7vBJk4q
+	 i4py3zMjNQcHs8+3vZDZg+7r21c1j4edOlgg936KFFLCGLWrdjr2HPdt9rYhTqOKfc
+	 O67DXhq/WiLAmRzaxKWFxvS5s1l1B5hx+6xqMSNVOiOMvq8kJTqZCEHV2MZ3napJpg
+	 oxAQDqvOJf/iTbXO5C/nO3n8Z+/VXb58+IwQMLZitD06sXlN4luH5dwfG/D8pt3otc
+	 n8PmFPNZjCphJISW6lk1MRgYcXzHLevmfCEXKL90v6mKP8wiXfz5omLIYAZg1ziu6N
+	 8hhCOkTANqJVQ==
+Date: Wed, 23 Apr 2025 07:51:16 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
+	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v7 11/14] xfs: add xfs_file_dio_write_atomic()
+Message-ID: <20250423145116.GY25675@frogsfrogsfrogs>
+References: <20250415121425.4146847-1-john.g.garry@oracle.com>
+ <20250415121425.4146847-12-john.g.garry@oracle.com>
+ <20250421040002.GU25675@frogsfrogsfrogs>
+ <2467484b-382b-47c2-ae70-4a41d63cf4fc@oracle.com>
+ <20250421164241.GD25700@frogsfrogsfrogs>
+ <20250423054251.GA23087@lst.de>
+ <20250423081902.GD28307@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423081902.GD28307@lst.de>
 
-6.12-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Apr 23, 2025 at 10:19:02AM +0200, Christoph Hellwig wrote:
+> On Wed, Apr 23, 2025 at 07:42:51AM +0200, Christoph Hellwig wrote:
+> > On Mon, Apr 21, 2025 at 09:42:41AM -0700, Darrick J. Wong wrote:
+> > > Well it turns out that was a stupid question -- zoned=1 can't be enabled
+> > > with reflink, which means there's no cow fallback so atomic writes just
+> > > plain don't work:
+> > 
+> > Exactly.  It is still on my todo list to support it, but there are a
+> > few higher priority items on it as well, in addition to constant
+> > interruptions for patch reviews :)
+> 
+> Actually, for zoned we don't need reflink support - as we always write
+> out place only the stuffing of multiple remaps into a single transaction
+> is needed.  Still no need to force John to do this work, I can look into
+> this (probably fairly trivial) work once we have good enough test cases
+> in xfstests that I can trust them to verify I got things right.
 
-------------------
+<nod> I think we'll need a new fstest to set an error trap on a step
+midway through a multi-extent ioend completion to make sure that's
+actually working properly.  And probably new write commands for fsx and
+fsstress to exercise RWF_ATOMIC.
 
-From: Stefan Berger <stefanb@linux.ibm.com>
+(Catherine: please send the accumulated atomic writes fstests)
 
-[ Upstream commit 95f567f81e43a1bcb5fbf0559e55b7505707300d ]
-
-Commit 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface
-function")' introduced the AT_GETATTR_NOSEC flag to ensure that the
-call paths only call vfs_getattr_nosec if it is set instead of vfs_getattr.
-Now, simplify the getattr interface functions of filesystems where the flag
-AT_GETATTR_NOSEC is checked.
-
-There is only a single caller of inode_operations getattr function and it
-is located in fs/stat.c in vfs_getattr_nosec. The caller there is the only
-one from which the AT_GETATTR_NOSEC flag is passed from.
-
-Two filesystems are checking this flag in .getattr and the flag is always
-passed to them unconditionally from only vfs_getattr_nosec:
-
-- ecryptfs:  Simplify by always calling vfs_getattr_nosec in
-             ecryptfs_getattr. From there the flag is passed to no other
-             function and this function is not called otherwise.
-
-- overlayfs: Simplify by always calling vfs_getattr_nosec in
-             ovl_getattr. From there the flag is passed to no other
-             function and this function is not called otherwise.
-
-The query_flags in vfs_getattr_nosec will mask-out AT_GETATTR_NOSEC from
-any caller using AT_STATX_SYNC_TYPE as mask so that the flag is not
-important inside this function. Also, since no filesystem is checking the
-flag anymore, remove the flag entirely now, including the BUG_ON check that
-never triggered.
-
-The net change of the changes here combined with the original commit is
-that ecryptfs and overlayfs do not call vfs_getattr but only
-vfs_getattr_nosec.
-
-Fixes: 8a924db2d7b5 ("fs: Pass AT_GETATTR_NOSEC flag to getattr interface function")
-Reported-by: Al Viro <viro@zeniv.linux.org.uk>
-Closes: https://lore.kernel.org/linux-fsdevel/20241101011724.GN1350452@ZenIV/T/#u
-Cc: Tyler Hicks <code@tyhicks.com>
-Cc: ecryptfs@vger.kernel.org
-Cc: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-unionfs@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Reviewed-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-Stable-dep-of: 777d0961ff95 ("fs: move the bdex_statx call to vfs_getattr_nosec")
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ecryptfs/inode.c        | 12 ++----------
- fs/overlayfs/inode.c       | 10 +++++-----
- fs/overlayfs/overlayfs.h   |  8 --------
- fs/stat.c                  |  5 +----
- include/uapi/linux/fcntl.h |  4 ----
- 5 files changed, 8 insertions(+), 31 deletions(-)
-
-diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
-index cbdf82f0183f3..a9819ddb1ab85 100644
---- a/fs/ecryptfs/inode.c
-+++ b/fs/ecryptfs/inode.c
-@@ -1008,14 +1008,6 @@ static int ecryptfs_getattr_link(struct mnt_idmap *idmap,
- 	return rc;
- }
- 
--static int ecryptfs_do_getattr(const struct path *path, struct kstat *stat,
--			       u32 request_mask, unsigned int flags)
--{
--	if (flags & AT_GETATTR_NOSEC)
--		return vfs_getattr_nosec(path, stat, request_mask, flags);
--	return vfs_getattr(path, stat, request_mask, flags);
--}
--
- static int ecryptfs_getattr(struct mnt_idmap *idmap,
- 			    const struct path *path, struct kstat *stat,
- 			    u32 request_mask, unsigned int flags)
-@@ -1024,8 +1016,8 @@ static int ecryptfs_getattr(struct mnt_idmap *idmap,
- 	struct kstat lower_stat;
- 	int rc;
- 
--	rc = ecryptfs_do_getattr(ecryptfs_dentry_to_lower_path(dentry),
--				 &lower_stat, request_mask, flags);
-+	rc = vfs_getattr_nosec(ecryptfs_dentry_to_lower_path(dentry),
-+			       &lower_stat, request_mask, flags);
- 	if (!rc) {
- 		fsstack_copy_attr_all(d_inode(dentry),
- 				      ecryptfs_inode_to_lower(d_inode(dentry)));
-diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
-index baa54c718bd72..97dd70d631446 100644
---- a/fs/overlayfs/inode.c
-+++ b/fs/overlayfs/inode.c
-@@ -170,7 +170,7 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 
- 	type = ovl_path_real(dentry, &realpath);
- 	old_cred = ovl_override_creds(dentry->d_sb);
--	err = ovl_do_getattr(&realpath, stat, request_mask, flags);
-+	err = vfs_getattr_nosec(&realpath, stat, request_mask, flags);
- 	if (err)
- 		goto out;
- 
-@@ -195,8 +195,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 					(!is_dir ? STATX_NLINK : 0);
- 
- 			ovl_path_lower(dentry, &realpath);
--			err = ovl_do_getattr(&realpath, &lowerstat, lowermask,
--					     flags);
-+			err = vfs_getattr_nosec(&realpath, &lowerstat, lowermask,
-+						flags);
- 			if (err)
- 				goto out;
- 
-@@ -248,8 +248,8 @@ int ovl_getattr(struct mnt_idmap *idmap, const struct path *path,
- 
- 			ovl_path_lowerdata(dentry, &realpath);
- 			if (realpath.dentry) {
--				err = ovl_do_getattr(&realpath, &lowerdatastat,
--						     lowermask, flags);
-+				err = vfs_getattr_nosec(&realpath, &lowerdatastat,
-+							lowermask, flags);
- 				if (err)
- 					goto out;
- 			} else {
-diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
-index 500a9634ad533..63ad4511c1208 100644
---- a/fs/overlayfs/overlayfs.h
-+++ b/fs/overlayfs/overlayfs.h
-@@ -412,14 +412,6 @@ static inline bool ovl_open_flags_need_copy_up(int flags)
- 	return ((OPEN_FMODE(flags) & FMODE_WRITE) || (flags & O_TRUNC));
- }
- 
--static inline int ovl_do_getattr(const struct path *path, struct kstat *stat,
--				 u32 request_mask, unsigned int flags)
--{
--	if (flags & AT_GETATTR_NOSEC)
--		return vfs_getattr_nosec(path, stat, request_mask, flags);
--	return vfs_getattr(path, stat, request_mask, flags);
--}
--
- /* util.c */
- int ovl_get_write_access(struct dentry *dentry);
- void ovl_put_write_access(struct dentry *dentry);
-diff --git a/fs/stat.c b/fs/stat.c
-index 41e598376d7e3..cbc0fcd4fba39 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -165,7 +165,7 @@ int vfs_getattr_nosec(const struct path *path, struct kstat *stat,
- 	if (inode->i_op->getattr)
- 		return inode->i_op->getattr(idmap, path, stat,
- 					    request_mask,
--					    query_flags | AT_GETATTR_NOSEC);
-+					    query_flags);
- 
- 	generic_fillattr(idmap, request_mask, inode, stat);
- 	return 0;
-@@ -198,9 +198,6 @@ int vfs_getattr(const struct path *path, struct kstat *stat,
- {
- 	int retval;
- 
--	if (WARN_ON_ONCE(query_flags & AT_GETATTR_NOSEC))
--		return -EPERM;
--
- 	retval = security_inode_getattr(path);
- 	if (retval)
- 		return retval;
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index 87e2dec79fea4..a40833bf2855e 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -154,8 +154,4 @@
- 					   usable with open_by_handle_at(2). */
- #define AT_HANDLE_MNT_ID_UNIQUE	0x001	/* Return the u64 unique mount ID. */
- 
--#if defined(__KERNEL__)
--#define AT_GETATTR_NOSEC	0x80000000
--#endif
--
- #endif /* _UAPI_LINUX_FCNTL_H */
--- 
-2.39.5
-
-
-
+--D
 
