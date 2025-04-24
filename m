@@ -1,212 +1,251 @@
-Return-Path: <linux-fsdevel+bounces-47284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA15A9B5A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 19:45:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBE43A9B5D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 19:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E1EA5A7F27
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 17:45:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02ED31BA6BE0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 17:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A726F28E612;
-	Thu, 24 Apr 2025 17:45:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529E728E607;
+	Thu, 24 Apr 2025 17:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="an/xVS7j"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="HBBpqt9K"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53AEA28E607
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 17:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB37280CCE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 17:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745516716; cv=none; b=IXtPsOtSOX6HysVIzuadDl4fkQXNJ/s7xM2iTsnSBs0Cv4PSyyrMkaMlzSC+KxAmR4a/FkF0PO8OaT0bkHTmFoRjbklklUE2E8BUaj+tdvC3cDxpcS+BUHeL2qyyUJ69ok++P0sw0CXKpPLy07dR78/08wkxL7mDpCvnuGsRLu4=
+	t=1745517404; cv=none; b=T0QUUTLxWM37wAePMJSUqW1wrXHNxmxRYV7pxL3TRqTlBMHTyRC71cnY/v/7k2GxsBZ0Q992isllpeATr3hvjUv/27zp5RVD2mkYeMul9VoaEHBNMvxsMYgxMyKthBTA0yTtjLm7+Pb9Kk3cr2sBZcQhC8qTlGb8pBlyNth8x2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745516716; c=relaxed/simple;
-	bh=nuhY4mNQtbqLil9CN9WkICD/oYDC6db0CLuLTFGNXWw=;
+	s=arc-20240116; t=1745517404; c=relaxed/simple;
+	bh=H+WVN8dXMu4VVGlDt8K/6nV5Fu+NlPxMpEedLUpBf70=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q17eJpBuaC6Wq0wlsEtCPu6r+9MUfAEWtkKUHmDxmrUl+EMyh0m5VKZXeRb4GZN36oq7H1M9h/3WTInxg6d5WL0z1d3j54IMvErhIio/rYu529S2T9ojgs9CdVCG3+Izv8a61KubdqhIg6gvvN3bAL63SC0Q30NMOFbcfoIZuOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=an/xVS7j; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1745516711;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JSMzO6fx79vdlfqdO8dlMyzHm6+/LG9Oml+3X61fg04=;
-	b=an/xVS7j6EwyHG3LmIL6j2+DtJAsAThNylH1GGZj6KjbGaII7K38BOBooxJjXnXZzAGMGU
-	dPXg1uYZ7HZFAwmRaV9SruWMQlv2mniP2hwHwjTJaUPYtfEOu2QFRoVD4LCjLQw4b6l9br
-	8+uRDxoAuUQIJ79T7ajAWIaaxhl8Xy0=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-526-k5uoFlRrMYm6YgBCluT0uQ-1; Thu, 24 Apr 2025 13:45:10 -0400
-X-MC-Unique: k5uoFlRrMYm6YgBCluT0uQ-1
-X-Mimecast-MFC-AGG-ID: k5uoFlRrMYm6YgBCluT0uQ_1745516709
-Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-5f628f5f9e3so1217949a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 10:45:09 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=IPSvPscUcet7QdK9VYef3idWjL7Y1IGUdeBi6pQPfKs1Pr4ZjwFnTAe2px+p1XcTU6VTRygaAcD0e0TvsRbnxwznEbsgy3smD6FXqchzUCNTrCm0jreOgwOglFhGpgMuaRL9i8cMaA61jNajikdC+WR88D/GESPsUgPNNw1L3wI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=HBBpqt9K; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-736b34a71a1so1566282b3a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 10:56:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745517398; x=1746122198; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=KOLy/80XFfLxXJDNfbBZwCZ4HqYR8Mbf5OU8mj5q3uc=;
+        b=HBBpqt9KIGTf8v2jOqTTdlAfcz9kwaqf7mHomP6hOLCcRR+I0n097mmb1YKNakIQuq
+         oOcwwBNZ0MTG28FUnEgX0VCbDAGGKbyyES4CDzuRecLikf8Jyr+4puwFYpaBt3iLSMjt
+         n05XoaDgzqjvldrrcuKVPTYsnoIGaGyXh+Gx6A4j5E3FABylK4dv8PwhtNWpIaTeyz3k
+         Wz8iat9Z8M4S1wFKPNnXW9gTYnCcev5DNO7f4lOFR7gBR++EoS76otidVRlqUIPBYmd+
+         +C8q8MPSYL9xDEbraGgXX8v7w1y7RiGq6uWO7P1dDBYbWGGZJgOBcs0xWwQ7AAuJZ3gI
+         zjwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745516709; x=1746121509;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JSMzO6fx79vdlfqdO8dlMyzHm6+/LG9Oml+3X61fg04=;
-        b=Yi+EXtp6EW1pW5TSHczCGM10iURmRv1ppLVlqaOyJaiSEVg5wHXrOqi1IR0ncNfwkf
-         gweOJNaUPvQlFuRf+EkpU2zXsWPAzjzk8jWMes8OCCm4BPLddB0ocYFsvpkZAf8IZORr
-         PshNrgex5EsVdBSYPxo2Zl/vqhn4Gz3Dlb0PmNsgkbuhnESBmxYWWAk2mJZ0d6ZVyEuR
-         GnqusmJljEAwHIBQx24IOXLB5oVNAsoGpAl26R38AMMCDsvdCQlQBCt2PcLL4pYkIIQo
-         WNE+0kW4HZ34sIQfRMpVRigpLwfhdAQh4sAzCb8A4C2yLQiH/akQGUn0UyyFLoutnyng
-         cOBw==
-X-Forwarded-Encrypted: i=1; AJvYcCXW3TBMmg+T0hz8hfgtfZD5dCZc35K3IOFXkO5H9Z4/AYa+gJKGOCmBIQhof9FoxuvPBfrvAZ+Uj25Nl+mU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxtwgZm1MUk6klBEfS02EmJy/k/rJfzTPVrdkrSITcOP5dVZLrA
-	prHDFbHT2kg+6ugrAHByYKpSJzRCznDTy73HrnQKdlzQfVFkM4pciY3toW2tlkByU7qfs4tYVnS
-	h9I4pPjnNI6eieAk9b+urmz+WJ7GUH83IQGM/kLkz+uUuoZuru91RUzGFJ3wIJg==
-X-Gm-Gg: ASbGnct7zNYByuaINBDZyP7U2Y78S1G63K5qxRSbYpLuGNT2gP7TWJSDCu7WospUaFc
-	EEjOXOm6yupvWDoEGWmtc+EIBtjGGQpqqI+IYqnGehjfIEKtTRA2PmLcwzsL12ScbQSvnqugc0c
-	vcYHkF6Oi1DF1ZhohNOAHe86vA/cUgp/vnv9W9MmT6NoJkQZXcbURd5vcwND6WgX6DjL1sDKZ+5
-	s26kW1A/oT+VGCFatBlydefd+EnE2w05BrWPjBLcn6Se2cKpg7TScAkfeYDn//eaMlwAfNUFELk
-	P2MkmQPZefoke84o9+4g2sYydozGPag=
-X-Received: by 2002:a17:907:9412:b0:acb:3a0d:8a82 with SMTP id a640c23a62f3a-ace6b450a49mr51594466b.32.1745516708749;
-        Thu, 24 Apr 2025 10:45:08 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFTh+3uHoEBQ4GmOFk2Iro9cQNDST88N03Da5siOmOBhQ6S/NryZGUQ9nV3zdizG2WhZyWkCg==
-X-Received: by 2002:a17:907:9412:b0:acb:3a0d:8a82 with SMTP id a640c23a62f3a-ace6b450a49mr51586866b.32.1745516708167;
-        Thu, 24 Apr 2025 10:45:08 -0700 (PDT)
-Received: from thinky (ip-217-030-074-039.aim-net.cz. [217.30.74.39])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace5989b173sm140418466b.59.2025.04.24.10.45.06
+        d=1e100.net; s=20230601; t=1745517398; x=1746122198;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KOLy/80XFfLxXJDNfbBZwCZ4HqYR8Mbf5OU8mj5q3uc=;
+        b=BP+62Ym/CPwzyZDbaEZYNn3TKW/zxfMqpdVNbIY2fZRMTRg211+iVaVqy45yCo2Fll
+         0f+TEShJHfU+Uh5n3J9FUImy8pr41leyZtMcg+qIiZGCgIOx0dp8VmltkZ714tN4dMGV
+         SG3YTY0wS9WGFzujr2npPk+dAYSbPmr5FZpf6LzCtQppb+dNI+tsHAaqLo64JkrqAfVx
+         qEr2EHR9qljOXilRC35+zPBW+ubgz7b3GpXP8dFwQG9QhZX5Wl+06L6+EHYvAlTsQSam
+         TFsWNWUobn0tkimjOjt90XAJLVWCi6rOWKAObKc4i+fkx3vcXlLm7Gq9zwrRNHgegNh0
+         /J+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDR8/cvJ+QTN1mS6K0tPQSJ5SpdIfb1nJAqcpKRkYy0Zh+XgAHvDP+hNMmAAUqjHjcPgzEAEw1feBGGi/2@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqlNAjMd26oAWjdw5+Q9srUmtCr2Aa/shUe3PiLcMbeeXSSvfu
+	FUiUvDQjKZ04zKKgobrJzHvv6gPGyXPk7vxR3VQ4JR6bvI72e+LqG89Rtpu8Q7k=
+X-Gm-Gg: ASbGncsy+Bm8brchK/ZVfea1web9tubIeJMbymch1geA3gl/qlG3eKrazqv+eojm7Z+
+	GKKP32vQa1W4zt3aNJ5T/7G9UN873gjAmUq1FDO7t0oF5IEcs8hjAgyeQ+zfFlSUk3ZBrJ+yQgE
+	3eJN1jzl4M5nV4N7hChCghiNkjUoE6+GUuthx3qMyunByaU4/T5sDICv+etxvem6Q2vqs0VN+QT
+	ELw+5ZPA38Ke3+o8SSOxA58VA8VAW8wbItZpwbMkafFufGb83EiNJREd2dEAEcqVHx4epkVg1F/
+	3Bd9CpbGLCAxjNygOygOYFUqSUxkkAFTA6e0/EjAP6vz5vxBbwY=
+X-Google-Smtp-Source: AGHT+IEvwKAWcL1BB3CDYo6zsE5OWQQndt5nVMjDwtZXDpnZ2rdOW1imvzSm4O5fk1CTzTK9UpqvkQ==
+X-Received: by 2002:a05:6a00:1744:b0:735:d89c:4b8e with SMTP id d2e1a72fcca58-73e32fbafeemr709517b3a.5.1745517398496;
+        Thu, 24 Apr 2025 10:56:38 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a9940esm1697082b3a.129.2025.04.24.10.56.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 10:45:07 -0700 (PDT)
-Date: Thu, 24 Apr 2025 19:45:06 +0200
-From: Andrey Albershteyn <aalbersh@redhat.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, 
-	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
-	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
-	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
-	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
-	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
- syscalls
-Message-ID: <oprhbm2vcqpveaf6smetfl2zacntntzqlakysys73zx3gnougi@zy7bo43bh5ef>
-References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
- <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
- <20250422-abbekommen-begierde-bcf48dd74a2e@brauner>
- <rbzlwvecvrp4xawwp5nywdq6wp5hgjhrtrabpszv74xmfqbj4f@x7v6eqfc5gcd>
- <20250424-zuspielen-luxus-3d49b600c3bf@brauner>
+        Thu, 24 Apr 2025 10:56:38 -0700 (PDT)
+Date: Thu, 24 Apr 2025 10:56:34 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, broonie@kernel.org, rick.p.edgecombe@intel.com,
+	Zong Li <zong.li@sifive.com>,
+	linux-riscv <linux-riscv-bounces@lists.infradead.org>
+Subject: Re: [PATCH v12 05/28] riscv: usercfi state for task and save/restore
+ of CSR_SSP on trap entry/exit
+Message-ID: <aAp7Un415hNqtshd@debug.ba.rivosinc.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-5-e51202b53138@rivosinc.com>
+ <D92WQWAUQYY4.2ED8JAFBDHGRN@ventanamicro.com>
+ <aAl_HRk49lnseiio@debug.ba.rivosinc.com>
+ <D9EUJBQ5OHN0.2KUJHGXK262TR@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20250424-zuspielen-luxus-3d49b600c3bf@brauner>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D9EUJBQ5OHN0.2KUJHGXK262TR@ventanamicro.com>
 
-On 2025-04-24 11:06:07, Christian Brauner wrote:
-> On Wed, Apr 23, 2025 at 11:53:25AM +0200, Jan Kara wrote:
-> > On Tue 22-04-25 16:59:02, Christian Brauner wrote:
-> > > On Fri, Mar 21, 2025 at 08:48:42PM +0100, Andrey Albershteyn wrote:
-> > > > From: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > 
-> > > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
-> > > > extended attributes/flags. The syscalls take parent directory fd and
-> > > > path to the child together with struct fsxattr.
-> > > > 
-> > > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
-> > > > that file don't need to be open as we can reference it with a path
-> > > > instead of fd. By having this we can manipulated inode extended
-> > > > attributes not only on regular files but also on special ones. This
-> > > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
-> > > > we can not call ioctl() directly on the filesystem inode using fd.
-> > > > 
-> > > > This patch adds two new syscalls which allows userspace to get/set
-> > > > extended inode attributes on special files by using parent directory
-> > > > and a path - *at() like syscall.
-> > > > 
-> > > > CC: linux-api@vger.kernel.org
-> > > > CC: linux-fsdevel@vger.kernel.org
-> > > > CC: linux-xfs@vger.kernel.org
-> > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
-> > ...
-> > > > +		struct fsxattr __user *, ufsx, size_t, usize,
-> > > > +		unsigned int, at_flags)
-> > > > +{
-> > > > +	struct fileattr fa = {};
-> > > > +	struct path filepath;
-> > > > +	int error;
-> > > > +	unsigned int lookup_flags = 0;
-> > > > +	struct filename *name;
-> > > > +	struct fsxattr fsx = {};
-> > > > +
-> > > > +	BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
-> > > > +	BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
-> > > > +
-> > > > +	if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	if (!(at_flags & AT_SYMLINK_NOFOLLOW))
-> > > > +		lookup_flags |= LOOKUP_FOLLOW;
-> > > > +
-> > > > +	if (at_flags & AT_EMPTY_PATH)
-> > > > +		lookup_flags |= LOOKUP_EMPTY;
-> > > > +
-> > > > +	if (usize > PAGE_SIZE)
-> > > > +		return -E2BIG;
-> > > > +
-> > > > +	if (usize < FSXATTR_SIZE_VER0)
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	name = getname_maybe_null(filename, at_flags);
-> > > > +	if (!name) {
-> > > 
-> > > This is broken as it doesn't handle AT_FDCWD correctly. You need:
-> > > 
-> > >         name = getname_maybe_null(filename, at_flags);
-> > >         if (IS_ERR(name))
-> > >                 return PTR_ERR(name);
-> > > 
-> > >         if (!name && dfd >= 0) {
-> > > 		CLASS(fd, f)(dfd);
-> > 
-> > Ah, you're indeed right that if dfd == AT_FDCWD and filename == NULL, the
-> > we should operate on cwd but we'd bail with error here. I've missed that
-> > during my review. But as far as I've checked the same bug is there in
-> > path_setxattrat() and path_getxattrat() so we should fix this there as
-> > well?
-> 
-> Yes, please!
-> 
+On Thu, Apr 24, 2025 at 01:52:43PM +0200, Radim Krčmář wrote:
+>2025-04-23T17:00:29-07:00, Deepak Gupta <debug@rivosinc.com>:
+>> On Thu, Apr 10, 2025 at 01:04:39PM +0200, Radim Krčmář wrote:
+>>>2025-03-14T14:39:24-07:00, Deepak Gupta <debug@rivosinc.com>:
+>>>> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+>>>> @@ -62,6 +62,9 @@ struct thread_info {
+>>>>  	long			user_sp;	/* User stack pointer */
+>>>>  	int			cpu;
+>>>>  	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
+>>>> +#ifdef CONFIG_RISCV_USER_CFI
+>>>> +	struct cfi_status	user_cfi_state;
+>>>> +#endif
+>>>
+>>>I don't think it makes sense to put all the data in thread_info.
+>>>kernel_ssp and user_ssp is more than enough and the rest can comfortably
+>>>live elsewhere in task_struct.
+>>>
+>>>thread_info is supposed to be as small as possible -- just spanning
+>>>multiple cache-lines could be noticeable.
+>>
+>> I can change it to only include only `user_ssp`, base and size.
+>
+>No need for base and size either -- we don't touch that in the common
+>exception code.
 
-Thanks for the review, Christian. I will fix issues you noticed as
-suggested. I see that Jan already sent fix for path_[s|g]etxattrat()
-so won't do anything here.
+got it.
 
--- 
-- Andrey
+>
+>> But before we go there, see below:
+>>
+>> $ pahole -C thread_info kbuild/vmlinux
+>> struct thread_info {
+>>          long unsigned int          flags;                /*     0     8 */
+>>          int                        preempt_count;        /*     8     4 */
+>>
+>>          /* XXX 4 bytes hole, try to pack */
+>>
+>>          long int                   kernel_sp;            /*    16     8 */
+>>          long int                   user_sp;              /*    24     8 */
+>>          int                        cpu;                  /*    32     4 */
+>>
+>>          /* XXX 4 bytes hole, try to pack */
+>>
+>>          long unsigned int          syscall_work;         /*    40     8 */
+>>          struct cfi_status          user_cfi_state;       /*    48    32 */
+>>          /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
+>>          long unsigned int          a0;                   /*    80     8 */
+>>          long unsigned int          a1;                   /*    88     8 */
+>>          long unsigned int          a2;                   /*    96     8 */
+>>
+>>          /* size: 104, cachelines: 2, members: 10 */
+>>          /* sum members: 96, holes: 2, sum holes: 8 */
+>>          /* last cacheline: 40 bytes */
+>> };
+>>
+>> If we were to remove entire `cfi_status`, it would still be 72 bytes (88 bytes
+>> if shadow call stack were enabled) and already spans across two cachelines.
+>
+>It has only 64 bytes of data without shadow call stack, but it wasted 8
+>bytes on the holes.
+>a2 is somewhat an outlier that is not used most exception paths and
+>excluding it makes everything fit nicely even now.
 
+But we can't exclude shadow call stack. It'll lead to increased size if that
+config is selected. A solution has to work for all the cases and not half
+hearted effort.
+
+>
+>> if shadow call stack were enabled) and already spans across two cachelines. I
+>> did see the comment above that it should fit inside a cacheline. Although I
+>> assumed its stale comment given that it already spans across cacheline and I
+>> didn't see any special mention in commit messages of changes which grew this
+>> structure above one cacheline. So I assumed this was a stale comment.
+>>
+>> On the other hand, whenever enable/lock bits are checked, there is a high
+>> likelyhood that user_ssp and other fields are going to be accessed and
+>> thus it actually might be helpful to have it all in one cacheline during
+>> runtime.
+>
+>Yes, although accessing enable/lock bits will be relatively rare.
+>It seems better to have the overhead during thread setup, rather than on
+>every trap.
+>
+>> So I am not sure if its helpful sticking to the comment which already is stale.
+>
+>We could fix the holes and also use sp instead of a0 in the
+>new_vmalloc_check, so everything would fit better.
+>
+>We are really close to fitting into a single cache-line, so I'd prefer
+>if shadow stack only filled thread_info with data that is used very
+>often in the exception handling code.
+
+I don't get what's the big deal if it results in two cachelines. We can
+(re)organize data structure in a way the most frequently accessed members are
+together in a single cacheline. We just need to find those members.
+
+In the hot path of exception handling, I see accesses to pt_regs on stack as
+well. These are definitley different cacheline than thread_info.
+
+I understand the argument of one member field crossing into two cachelines can
+have undesired perf effects. I do not understand reasoning that thread_info
+exactly has to fit inside one cacheline.
+
+If this was always supposed to fit in a single cacheline, clearly this
+invariant isn't/wasn't maintained as changes trickled in. I would like to see
+what maintainers have to say or someone who did data analysis on this.
+
+
+>
+>I think we could do without user_sp in thread_info as well, so there are
+>other packing options.
+
+Sure, probably somewhere in task_struct. But fact of the matter is that it has
+to be saved/restore during exception entry/exit. But then load/store to
+task_struct is essentially a different cachline. Not sure what we will achieve
+here?
+
+>
+>Btw. could ssp be added to pt_regs?
+
+I had that earlier. It breaks user abi. And it was a no go.
+
+>
+>Thanks.
 
