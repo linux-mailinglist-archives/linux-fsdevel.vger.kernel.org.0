@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-47156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD8FA9A105
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 08:09:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F82A9A110
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 08:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59DB55A25F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 06:09:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECA1F447024
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 06:11:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259F01DE2CB;
-	Thu, 24 Apr 2025 06:09:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866451DF970;
+	Thu, 24 Apr 2025 06:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMHxCcfw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oxz40yjz"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A933198A11;
-	Thu, 24 Apr 2025 06:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD8531B424A;
+	Thu, 24 Apr 2025 06:11:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745474951; cv=none; b=aARwI3VAtm3ADO6OAU00utPn9Tf2KLykvfajlRM2JassP2Sn94FEcQcgkuvxFInLueyljhtG66Eli3fbpmVsT3i6iuhurzot+CiopT66Q51FgFlNfKD3ee3ynvHmcqwcnl10RnpqVz7hgDdjH5w2NyhtPkoVXuUUqF2gBLKoAWE=
+	t=1745475087; cv=none; b=tRQwCFMIflQKqz9hV9tDcEzJcowI7ivW1nQkX1rVQoCF6YYT5FCdtWXPLNGUiGhpax1H2XLhiywura7wPfWaz/JaMZYsXro3a5WiidAISBEVLjNdvyxpkLHiQCoJi6RR3GtsKVPejGH29AsViF2MV8FIFNTOmi9dEluOJK5WTGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745474951; c=relaxed/simple;
-	bh=BVSDkYQ8LVV8v1ugx4BRXNcVyN6sGUsK5pW+EQhOZWQ=;
+	s=arc-20240116; t=1745475087; c=relaxed/simple;
+	bh=+hHw7tHt2mmmNlIXAwAZyVXsarEgwDoDZ3+bfL3vS78=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DODZewcgCipCeCqcaQOTbfHoxM/aA0vGagPd4CNFLJl4I0oWwdKWZHQbmXEpea5FBHYljPL2AAO/Ejg41nuAJpPvVtpoX1cobB6mUF0qVmesKVcnTPKLXtlAkT8oppvFjnnAYuJ2aUZx3//QnfOlBf/lPWv9WbHhnzPNpBk+34Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMHxCcfw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0B8AC4CEE3;
-	Thu, 24 Apr 2025 06:09:07 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nm+LltjYIpuNLK3uESztkqgfZnhumgxeQx3bqI38UYKlVE2Vlz9gw5rafecWW8apDy/l1IDHMAeY87pT0iN9QSL1s0F59Q5xtynIlUNlnfIxVsphz2pwM2jGGJ1JG6Yn1fwBeCbc7piw9wsonA4cETEx6ijnP3jf3bVz9s6ild4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oxz40yjz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF4DC4CEE3;
+	Thu, 24 Apr 2025 06:11:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745474950;
-	bh=BVSDkYQ8LVV8v1ugx4BRXNcVyN6sGUsK5pW+EQhOZWQ=;
+	s=k20201202; t=1745475087;
+	bh=+hHw7tHt2mmmNlIXAwAZyVXsarEgwDoDZ3+bfL3vS78=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tMHxCcfwGUElwKdVK9BNrBksnQ686Yz9pwgkuWQPytujvQEVhW4kJnPFlsn46/sQD
-	 DFIdOpftAC+w5d1JGqVsf5HwbbQujiKFokXecKwtH9NTtR80hUgXbMU4uvl9ZbA7by
-	 dfGAcOp0hUx+HUjB3x1qa86YcEhDJGdE8e1wv5hghfJ7o0yL/WUVQ6cliv4FLugKz1
-	 PjuynclPQLjRkeub+Jo/WN/B+/O9qgngBcIqgJeCpgV4+oYSME2cJlupCVreZeXHAc
-	 4M9P/yB4ZxcdT+IeSnA7Pf6eVonx4GANnsdmAfLm2v3+i/Y4F6+LCBYlPNDj1X2tIn
-	 qL4y8fEh5J33A==
-Message-ID: <7a56f76c-7916-42ac-ae5c-6e30c3dbd643@kernel.org>
-Date: Thu, 24 Apr 2025 15:09:06 +0900
+	b=oxz40yjzre5wW/ZS61dZYXX97WLflGTERc43YEwvdiFvXsmGi2FNNbIWcSWqEhFK3
+	 2squ5i6tKXnCvJFfp44fIG5PJrP3AceHuSwz3GQyfgpWfxuvy1Ha6VvzZmSqKeApq5
+	 /Ib95TXVuQYBSqv3ZI9ZEw1c10zkL+x9v3WdS1T1WsD99sAqXoCks/DpRy0UKqDS3x
+	 k4KrdU48fKFz0xnMqV7i2zrCt51AJvKLiLojplGQWDLLwl4nZN4uxy5cRsmPEkNk9F
+	 FTUq712k5RZ3o/Lm6iJ3D4f1VgEA6U5TC+J7CysxVAQwplb6UhirrInCnjBYSO2R4U
+	 zw/S9q9lC3+MQ==
+Message-ID: <3f9d3577-1040-4298-acd4-340934326d25@kernel.org>
+Date: Thu, 24 Apr 2025 15:11:23 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -50,7 +50,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/17] block: remove the q argument from blk_rq_map_kern
+Subject: Re: [PATCH 05/17] block: pass the operation to bio_{map,copy}_kern
 To: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
  Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
@@ -66,17 +66,17 @@ Cc: linux-block@vger.kernel.org, "Md. Haris Iqbal" <haris.iqbal@ionos.com>,
  linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
  linux-pm@vger.kernel.org
 References: <20250422142628.1553523-1-hch@lst.de>
- <20250422142628.1553523-5-hch@lst.de>
+ <20250422142628.1553523-6-hch@lst.de>
 Content-Language: en-US
 From: Damien Le Moal <dlemoal@kernel.org>
 Organization: Western Digital Research
-In-Reply-To: <20250422142628.1553523-5-hch@lst.de>
+In-Reply-To: <20250422142628.1553523-6-hch@lst.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 4/22/25 23:26, Christoph Hellwig wrote:
-> Remove the q argument from blk_rq_map_kern and the internal helpers
-> called by it as the queue can trivially be derived from the request.
+> That way the bio can be allocated with the right operation already
+> set and there is no need to pass the separated 'reading' argument.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
