@@ -1,156 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-47270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47271-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9539CA9B210
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 17:22:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE886A9B237
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 17:28:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC46F9A1F34
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 15:22:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C76541B8569B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 15:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63BAD1DDC1E;
-	Thu, 24 Apr 2025 15:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE3731DF97C;
+	Thu, 24 Apr 2025 15:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ICqPP8ay"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UZa6MpPp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C541DACB8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 15:22:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11F54315C;
+	Thu, 24 Apr 2025 15:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745508153; cv=none; b=W8jeSERACf1hTknrwuftUe7XSIghd6BQp7uF7gRNKsGVT9uYynKLw8eBDq0lm1sdkPigA0hxiX/tf0kdW7896wGuZuy1+FySSDS+DcX3Lr5j7JME4k+FwfovuvJKmVg5bQU1SoQVVGxgZs5Bdw6XsJf+NmTNZGEXzSdHinumOmk=
+	t=1745508519; cv=none; b=a1clfs6i6WCOzZCpWHo12ewEQwukM6aX10HkzOHpYa3fUZoaCGTu5lo8sJzA6/IuRdpXjOfcwFqtF4n+mGkicvAnQC5KeXuRau5x/ncN2gRBhSLkyHdp9+omt9kzHYBO1nv7zqs/pq7GS+fqPGl3tlpoeWeM/2GJ0TELryfqJjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745508153; c=relaxed/simple;
-	bh=RWljwkvFpoc6EAiHefhey+4fy6z+A4N3IJcyKZ9CQ8U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o56L/qV6p1oceb9rdPe3AKEPihJQIeZQ7u1gJCmxSyK03JkjRLjSzMpdKdhtMyjg6SEJXCZaItgr3QlzWz/ytJQ/wryXqLkchiqEHv8zbPtCzzoDeFKT2p2CY6cLnWHHzozEO/Y4upZLXJu50gj84x9BJL+WtRbO3dXgkPzxGrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ICqPP8ay; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3d91db4f0c3so5794475ab.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 08:22:31 -0700 (PDT)
+	s=arc-20240116; t=1745508519; c=relaxed/simple;
+	bh=7i67DHTTp0mD9qhweNExe/vd7EB2jhk7sH0q8SWYgGQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EBcRSsMTyZByVnKMzHlx3nQHEeY5mR5Zyh01FU/NR4ZdBvyeVAWcn7YgQEPAxJGGrySVePs85/mDkUt75zyKBTEYbA/9mjxIUz70G5O5FPnsCR7jyWU96VgeA3UcS7z46aLBQeQ2EhtznUWWEfztFvzVflKvOTR+gT5IRnc/vgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UZa6MpPp; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7c55500d08cso123660785a.0;
+        Thu, 24 Apr 2025 08:28:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745508150; x=1746112950; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fmCX/oOcvrNdDEnAxMn0eyeoPuQt/o60LQX66Sq9Cq4=;
-        b=ICqPP8ayllFDpZRNSbbwvPlZ2AUDjhVdzdzHLhMn/v4mJftGW4qrMpMZUWF3BDHpMV
-         /o5AO3yKbApQuVaHzHIvkH2CGzT4YZp7CJDY7wsRpyueHpURSK/U+0bJ9spxlLHY/Ny3
-         2l+UQZtonSE/POn12p83NR9h4r6A97fJ2zTEvsk+3T+xM84fQfTvuiG3g+dVesrWUU/c
-         KIFgL94Bd6juwP5kM/xLnukXVybnBLmzCsCvIaFExtPLWdPBmYRXccqHphuyzVpplXVN
-         Viacif6VkFCxIm22NfbuimWI8kd9cAzZ5lXkBUHKIxACFk3DIJr3S2paWid34cBdTJRV
-         OEvw==
+        d=gmail.com; s=20230601; t=1745508516; x=1746113316; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hxUaLc+eAAOlr10PhVJK/e76IalwRfvS586Oa3BeZcE=;
+        b=UZa6MpPpUUf6CIAP4OUYJFTU/f15c4LyeVd2hqjsLeh32z9mLIXFOa2PoFsDS837I+
+         8z+/ST40n7WO4+JupU3tPVcjStWzrqOtX5xbzFQ3KAnHXKJYgzDVLU9cnNBvrYsoTtsB
+         +dkxNVx3QNZPK35FGvMFbl2JA+iit2SpRPkxRimQevq8BYQMss7mnRf9VjlZnsNcEoG/
+         krPcUNJRX6JIJKbKiQliKg+3WDVXFLQcoYNIyO3fgzOd58KE07IQWWVoJw8OQz5//dN6
+         bbSczN6whInWa4KX4okQgG5llhXnSQM7Lfascwa1ddcgcIl8vPanI8rPAx/zQ8GIFPUl
+         QQTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745508150; x=1746112950;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fmCX/oOcvrNdDEnAxMn0eyeoPuQt/o60LQX66Sq9Cq4=;
-        b=ByU7XjoszBlYt7bUVwSUlnjln6Hq1PDvXr7uwcXXMKVQe3uGoNGyk3KvxED1cL3WgI
-         2JLypagFj0XnR8lCLFMZOAWiknCb0uhsD+3l+y+T1w2gmlqXfjf4jxEWJa2PV8kBINA/
-         gIH6YOT8u4Ty5hiVvKUsZh1Fn9C4C50oj19R19sJ/TBK2rOiyPSR94Dgu2KYjecUzlhi
-         VqohQ/kEAF4d3Rbm1IozZoEnm0zHTeCGj/tIcAg5BvpthS+slYxtWBDTZ7lko9Mlr5nx
-         zsjBc7Ajv7TgKz+5Fa9dlhQL8GlELQtJWkMXRmuqiy0CPLSg+AhV1qM2PVvr0mUcXCsZ
-         haWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ5tambLH15vY79O0O2AMfq4C4SeFuFojkEBPL2kdc6oyul7p4LY+Q9DJrdhtrNodSGdNVZtaPO1YKR7VO@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmFuU14enHmjuNJ8sZ/oUGHPmOwy8dHdEmJyUUFcAgAZXcRKb+
-	gV5dUTK0XZrs5Q75DeMUxXDn1KbcqFe12H82o9yd3odl0/Gcj4MtZIbb6V3Hpmopz3XUdrx1o3W
-	l
-X-Gm-Gg: ASbGncv7jCU3+jdRjl/2WlyKU1EfDPzOVsLOjhadYZBwrfGQSW86vRSK3ihLo8NdCy6
-	+ge6NVijCaGape/zcRIdLIsyz71/WhcA2J5uMZat8BKpMvmkbQHM90454mB6uZr/MbM2zJyndnH
-	LgPXUI5H3bje2F6gTVJzOHyIVcfenPqTq8BzrdkiyU3rOg7c7HlDKBm9R6xC5S6MIPcvraX7Oh8
-	mIAXVE9jCxcTYK+Mcuke1Btjs0X+oiPF54f1PBlxFP0ARNJn/s0PKzdcmZiIxblwuAb12nI5q/g
-	nYm3BZsoVfp/MlAM7owe1b0pcNgV5ooZEuZnbuDkeuZb31k=
-X-Google-Smtp-Source: AGHT+IEMJLQ6alo/SeAQVIhLk2MPC52fNge1ln6vSauIlwzfyiVyMfKC2I2QO6XMfahKn9L+ZuL2Sg==
-X-Received: by 2002:a05:6e02:1a25:b0:3d8:975:b825 with SMTP id e9e14a558f8ab-3d93038f94bmr35105055ab.5.1745508150445;
-        Thu, 24 Apr 2025 08:22:30 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d9314f5fabsm2937385ab.36.2025.04.24.08.22.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 08:22:29 -0700 (PDT)
-Message-ID: <26fa8c43-7e7c-4610-bbf5-031f3e07eb74@kernel.dk>
-Date: Thu, 24 Apr 2025 09:22:29 -0600
+        d=1e100.net; s=20230601; t=1745508516; x=1746113316;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hxUaLc+eAAOlr10PhVJK/e76IalwRfvS586Oa3BeZcE=;
+        b=gjPeW38+gNkwqOUvAN15hUG3MS4mvVNBHorpEXXLj2P3L4qbm3CnXnXt4ATkAHjrHQ
+         RcC5k8zYdL2q8A4eXAKLbbBNG6RyppXBeYsboI+wpI+BGZJZiCIPTQNSwM2t4SyErtrX
+         HXkff+Ngd55oF4O8W8bNKyZwdF7CznmK6c3EMGnZk/RaHlICdKM9oijVwNiqek710JP/
+         e4FeLYGlQbO25APVfoq8c4tEvSzC3zC6AB1TAeQWufDlG6PMvsnAOqdYWUSoxpLW5I7u
+         XTNYtZlZZsjiuPiHUTKoD9OnBuMVpDVcHzKWPzev1d5/sQJ5DxhiRcQjYHdgsIq1iGoa
+         ktHw==
+X-Forwarded-Encrypted: i=1; AJvYcCU/uPFP2jF2RunWORcbSnoS4KIvS49qQJ3Z92eG5r2RmNlrpavZmY8x3kDDyURRU+zNT7GpXYR33lDh4fY2@vger.kernel.org, AJvYcCUVRVuLYOPGmk1fjrdboznUSYsLx0z7RY8rv2e7MIM6GBT86rUgKlFxQddEu7Jl07wyqfqCvLrVOeKRBdT2@vger.kernel.org, AJvYcCX7K1AqMOnDaE/OBJLd7nyIrNnAoukq2xOBCJyKrNYjiRRbXWrwWD6kYJf4u9mss50sdSItbs+t2A==@vger.kernel.org, AJvYcCXUZqhgWaThiDghSHjo2w+UxRCK+bGv+nCCoy7AZZG8LNPNQze62aDdRbzDm3wQ70KS0Bm70aN2C9K7y5KmhTAIXgculxa1@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPHlBb/OMzWHXRoqgUN3OeHOCiCDF5LAtKmCgu79jcD1PwZCDw
+	V0wajeP8HGDuteiWtV1rLVl6FXuyeluA3dBnX14jdme8erjwB+5OhVow02Q+
+X-Gm-Gg: ASbGncuXhfFqvSKIniVs4W4fLw5mslHRaNaukx3t935ZBgboiv1dhTZRSH6gs+/+VJp
+	DDb0MWAu6s3O9epxWUt/qZ0mfxAq2DQ4xucsFuHU4Ws9ADzNDg9/mK+xZNKsP2fu86/4kR1AuHd
+	MKw6AKlIGAv5Z99dAWi2rtpYdJ5Voo/SMW5dXIFuMtIpkeD7CiAgDCgss31SgkHOJmi9/aHtijv
+	eBAFz29P8sn30HKzHxrctogLA3AgYV4Izf5x2OxWtN1ptZmTmRFa3nXHMO1XlwEyuMqqRFJlJh6
+	YBT3kpV+w7JgkdGMt1lPBOnBoSLAJ7Zci7ToPiGs+h0wAxlqdtzXR72K6xIIRKCqDWiFhtwOHOA
+	VAi1g+5G/3/d5FUq7eNHRSK8gBy52rmLzMJxHX4um15768hTNjJ4HTUJEQiEwvz5WyzhI
+X-Google-Smtp-Source: AGHT+IHuVep7wcdvkBt64FmXooKgNcSCpYuvYwk+/ttIsu2FF0Lr5ouXgL7PRcjfHKFl1Bw+Ee36aA==
+X-Received: by 2002:a05:620a:4382:b0:7c9:50a6:8595 with SMTP id af79cd13be357-7c956f0026fmr485281385a.28.1745508516460;
+        Thu, 24 Apr 2025 08:28:36 -0700 (PDT)
+Received: from fuse-fed34-svr.evoforge.org (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c958c948a6sm99295085a.18.2025.04.24.08.28.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 08:28:36 -0700 (PDT)
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+To: 
+Cc: paul@paul-moore.com,
+	omosnace@redhat.com,
+	selinux@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] fs/xattr.c: fix simple_xattr_list to always include security.* xattrs
+Date: Thu, 24 Apr 2025 11:28:20 -0400
+Message-ID: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/userfaultfd: prevent busy looping for tasks with
- signals pending
-To: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Linux-MM <linux-mm@kvack.org>
-References: <27c3a7f5-aad8-4f2a-a66e-ff5ae98f31eb@kernel.dk>
- <20250424140344.GA840@cmpxchg.org>
- <c68882dd-067b-4d16-8fb8-28bfdd51e627@kernel.dk>
- <20250424151113.GB840@cmpxchg.org>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250424151113.GB840@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 4/24/25 9:11 AM, Johannes Weiner wrote:
-> On Thu, Apr 24, 2025 at 08:54:40AM -0600, Jens Axboe wrote:
->> On 4/24/25 8:03 AM, Johannes Weiner wrote:
->>> On Wed, Apr 23, 2025 at 05:37:06PM -0600, Jens Axboe wrote:
->>>> userfaultfd may use interruptible sleeps to wait on userspace filling
->>>> a page fault, which works fine if the task can be reliably put to
->>>> sleeping waiting for that. However, if the task has a normal (ie
->>>> non-fatal) signal pending, then TASK_INTERRUPTIBLE sleep will simply
->>>> cause schedule() to be a no-op.
->>>>
->>>> For a task that registers a page with userfaultfd and then proceeds
->>>> to do a write from it, if that task also has a signal pending then
->>>> it'll essentially busy loop from do_page_fault() -> handle_userfault()
->>>> until that fault has been filled. Normally it'd be expected that the
->>>> task would sleep until that happens. Here's a trace from an application
->>>> doing just that:
->>>>
->>>> handle_userfault+0x4b8/0xa00 (P)
->>>> hugetlb_fault+0xe24/0x1060
->>>> handle_mm_fault+0x2bc/0x318
->>>> do_page_fault+0x1e8/0x6f0
->>>
->>> Makes sense. There is a fault_signal_pending() check before retrying:
->>>
->>> static inline bool fault_signal_pending(vm_fault_t fault_flags,
->>>                                         struct pt_regs *regs)
->>> {
->>>         return unlikely((fault_flags & VM_FAULT_RETRY) &&
->>>                         (fatal_signal_pending(current) ||
->>>                          (user_mode(regs) && signal_pending(current))));
->>> }
->>>
->>> Since it's an in-kernel fault, and the signal is non-fatal, it won't
->>> stop looping until the fault is handled.
->>>
->>> This in itself seems a bit sketchy. You have to hope there is no
->>> dependency between handling the signal -> handling the fault inside
->>> the userspace components.
->>
->> Indeed... But that's generic userfaultfd sketchiness, not really related
->> to this patch.
-> 
-> Definitely, it wasn't meant as an objection to the patch. The bug just
-> highlights a fairly subtle dependency chain between signals and
-> userfault handling that users of the feature might not be aware of.
-> Sorry if I was being unclear.
+The vfs has long had a fallback to obtain the security.* xattrs from the
+LSM when the filesystem does not implement its own listxattr, but
+shmem/tmpfs and kernfs later gained their own xattr handlers to support
+other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
+filesystems like sysfs no longer return the synthetic security.* xattr
+names via listxattr unless they are explicitly set by userspace or
+initially set upon inode creation after policy load. coreutils has
+recently switched from unconditionally invoking getxattr for security.*
+for ls -Z via libselinux to only doing so if listxattr returns the xattr
+name, breaking ls -Z of such inodes.
 
-It was more for the clarification for others, I know that you're well
-aware of that!
+Before:
+$ getfattr -m.* /run/initramfs
+<no output>
+$ getfattr -m.* /sys/kernel/fscaps
+<no output>
+$ setfattr -n user.foo /run/initramfs
+$ getfattr -m.* /run/initramfs
+user.foo
 
-All good, I'll send out a v2 with the Fixes tag adjusted, just to make
-it easier on everyone.
+After:
+$ getfattr -m.* /run/initramfs
+security.selinux
+$ getfattr -m.* /sys/kernel/fscaps
+security.selinux
+$ setfattr -n user.foo /run/initramfs
+$ getfattr -m.* /run/initramfs
+security.selinux
+user.foo
 
+Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=iOawX4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
+Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.smalley.work@gmail.com/
+Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+---
+ fs/xattr.c | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 02bee149ad96..2fc314b27120 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -1428,6 +1428,15 @@ static bool xattr_is_trusted(const char *name)
+ 	return !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN);
+ }
+ 
++static bool xattr_is_maclabel(const char *name)
++{
++	const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
++
++	return !strncmp(name, XATTR_SECURITY_PREFIX,
++			XATTR_SECURITY_PREFIX_LEN) &&
++		security_ismaclabel(suffix);
++}
++
+ /**
+  * simple_xattr_list - list all xattr objects
+  * @inode: inode from which to get the xattrs
+@@ -1460,6 +1469,17 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 	if (err)
+ 		return err;
+ 
++	err = security_inode_listsecurity(inode, buffer, remaining_size);
++	if (err < 0)
++		return err;
++
++	if (buffer) {
++		if (remaining_size < err)
++			return -ERANGE;
++		buffer += err;
++	}
++	remaining_size -= err;
++
+ 	read_lock(&xattrs->lock);
+ 	for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
+ 		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+@@ -1468,6 +1488,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 		if (!trusted && xattr_is_trusted(xattr->name))
+ 			continue;
+ 
++		/* skip MAC labels; these are provided by LSM above */
++		if (xattr_is_maclabel(xattr->name))
++			continue;
++
+ 		err = xattr_list_one(&buffer, &remaining_size, xattr->name);
+ 		if (err)
+ 			break;
 -- 
-Jens Axboe
+2.49.0
+
 
