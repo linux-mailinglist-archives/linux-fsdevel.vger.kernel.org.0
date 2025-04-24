@@ -1,102 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-47210-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E39A9A685
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 10:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96564A9A72F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 10:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4C3D3A161D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 08:42:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DCD7921DBB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 08:57:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B2821CC51;
-	Thu, 24 Apr 2025 08:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4B120102B;
+	Thu, 24 Apr 2025 08:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g4vRp6vh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e2Vp0YuS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A21020C02A;
-	Thu, 24 Apr 2025 08:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56BE820A5C4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 08:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745484081; cv=none; b=mMYzWf6w52FSowTyQQsMXIYm/D+PRxMnj/mc7Y81nl4a93EqN9KPpGfAv570q0YFBOI/LE4c4fZoP/+J31CkOLp69+j8P1xXrpx926MlJqtlrFaR8rKxdG3tYZNOwGPih4vgsfC1dXdRqVD6NoYkHwcuJ3GPC36PkbPt2/MsPaE=
+	t=1745485007; cv=none; b=d01VtapiUZSnZ3TQmzX62kOnQhk1tmxR3MLp1iB6KQKckVk4Xcu2x1BafDHP1H7jURjRh6y3ceeNEAWrkdjPtodR7VXO7x/vA8LT8jY8Y1RT/y41r8DP2irDki3eAIdhTCLBdYYQ3Rk+BIczioz3qapiXVKxP9hXEXvZurNgLoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745484081; c=relaxed/simple;
-	bh=jSnn/s4sYv8vw3efN+JBVKJekwgJ5vx3xBIVhhRudj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bKwTf5aFMBnyvbFzVWhvmnCCzTRZzRae0YfXI8ar/p92eVmIqoKTMAamENjyxdlNtji4UW3Wi7E5Bk1h2B7bTi1mMv/q96biilqnkJ7OldgCp7ELmS6EgzU1dTwYFDzsZl/6YrWQtzb1hmj/XONovkgdORuyGWGFmXNQ9q+Ajyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g4vRp6vh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14740C4CEE3;
-	Thu, 24 Apr 2025 08:41:18 +0000 (UTC)
+	s=arc-20240116; t=1745485007; c=relaxed/simple;
+	bh=RiscfL7W8wGdv2JeNkZYvlk90g6Q2YY47fwYc+lnxWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QU2Yj+pAxgGyE928VaEZ+rVb3GwZQs3SENCXUOVfeB6QjKOo3pmQlM+97MsHC6Qpe+Qr8i7yrwWOFTC3LnrNfsn10IS+NJKpM2HnWME0Hm5sYS/cJCNjmuWqCT1qOU/CbMD6/JRoNw2edQDTN7dI4Aw1WDtZo6UC5K7Qx98gIcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e2Vp0YuS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDC5BC4CEEB;
+	Thu, 24 Apr 2025 08:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745484081;
-	bh=jSnn/s4sYv8vw3efN+JBVKJekwgJ5vx3xBIVhhRudj4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=g4vRp6vhIVJKmwi7BmxKTkn70yuYaU39WvjJnmPuEUabx5YYE7OxaQ6ksIEh425eT
-	 jwxW2WGtOR+Gsb1p3o6x1b1jzkntg2GikiZYxdeILf9fXFw/pZ8JCNejgP/7S0ZiPq
-	 PjHaroqwxc03GrblWyPDLE61vmIbrr3DvPJpIR51f5eF42n5QsTAZAQF5j8ldwPnYS
-	 OfTMpMzOsrSDFDZxjyBaC7oDvhp0hZ26V4umLetd6IW0Vl9jNJbExz2+w4K6JHCjD5
-	 CRc+ISF9LQOeEUvLquIaCGNShqER0bojNsxKK0MUcKgZNID4yAK3ZTzQyDUXrvfyD5
-	 n60GbvLOWKUMg==
+	s=k20201202; t=1745485006;
+	bh=RiscfL7W8wGdv2JeNkZYvlk90g6Q2YY47fwYc+lnxWQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e2Vp0YuSiXcJF0ki+0NBG5PkQDanIrQhp1ueh2hbHXlEw7/QGuUznaWUlxtBrfZ0h
+	 HXoDXXBbVOdy3SyqoTZDv2wcmjysZ6QELddut7Yfhsjh2G/LjNfS96cNvJmTVDQpP+
+	 q39oMr7xMHvg4CTv8Sm0DuXZeSSpOR5Hec4DLmQT411x8KykOjIPOWnwYgto84jKJE
+	 DSQySwf+VG+jEkllI5FSpTFRS2Ds6raCwMnOt+7+FwGl991A2xnLuANncaMXoNkQY3
+	 ev9Hr09ytGvdSF0pV1G9e4+l7zpgRDDOhnz2B/uKVd5bmO4r/+5wtHJU36EF0pd52N
+	 qKOZ3qsD9+mfg==
+Date: Thu, 24 Apr 2025 10:56:43 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	dakr@kernel.org,
-	Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	hca@linux.ibm.com,
-	Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-	Xiao Ni <xni@redhat.com>
-Subject: Re: [PATCH] devtmpfs: don't use vfs_getattr_nosec to query i_mode
-Date: Thu, 24 Apr 2025 10:41:12 +0200
-Message-ID: <20250424-auszahlen-nanotechnologie-f68d656fa52c@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250423045941.1667425-1-hch@lst.de>
-References: <20250423045941.1667425-1-hch@lst.de>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH][RFC] ->mnt_devname is never NULL
+Message-ID: <20250424-poren-lauffeuer-93a7ef365f47@brauner>
+References: <20250421033509.GV2023217@ZenIV>
+ <20250421-annehmbar-fotoband-eb32f31f6124@brauner>
+ <20250421162947.GW2023217@ZenIV>
+ <20250423222045.GF2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1370; i=brauner@kernel.org; h=from:subject:message-id; bh=jSnn/s4sYv8vw3efN+JBVKJekwgJ5vx3xBIVhhRudj4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRw/tTuyl5hnxgwgzus9+mMI1FTp/xW+nB/dkLSiv+3W Q/X7r6m2VHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjAR5hkM/ywr0xIZnS+fFKpq 7D7BeJ1vQvKTBf3H7j2Zodtb/DoqbSIjwyfm3vRjru8TV0x+Gz779a3b39cUXExafEnhoYiNpsi pLRwA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250423222045.GF2023217@ZenIV>
 
-On Wed, 23 Apr 2025 06:59:41 +0200, Christoph Hellwig wrote:
-> The recent move of the bdev_statx call to the low-level vfs_getattr_nosec
-> helper caused it being used by devtmpfs, which leads to deadlocks in
-> md teardown due to the block device lookup and put interfering with the
-> unusual lifetime rules in md.
+On Wed, Apr 23, 2025 at 11:20:45PM +0100, Al Viro wrote:
+> On Mon, Apr 21, 2025 at 05:29:47PM +0100, Al Viro wrote:
+> > On Mon, Apr 21, 2025 at 09:56:20AM +0200, Christian Brauner wrote:
+> > > On Mon, Apr 21, 2025 at 04:35:09AM +0100, Al Viro wrote:
+> > > > Not since 8f2918898eb5 "new helpers: vfs_create_mount(), fc_mount()"
+> > > > back in 2018.  Get rid of the dead checks...
+> > > >     
+> > > > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > > > ---
+> > > 
+> > > Good idea. Fwiw, I've put this into vfs-6.16.mount with some other minor
+> > > stuff. If you're keeping it yourself let me know.
+> > 
+> > Not sure...  I'm going through documenting the struct mount lifecycle/locking/etc.
+> > and it already looks like there will be more patches, but then some are going
+> > to be #fixes fodder.
 > 
-> But as handle_remove only works on inodes created and owned by devtmpfs
-> itself there is no need to use vfs_getattr_nosec vs simply reading the
-> mode from the inode directly.  Switch to that to avoid the bdev lookup
-> or any other unintentional side effect.
+> BTW, could you explain what this is about?
+>         /*
+>          * If this is an attached mount make sure it's located in the callers
+>          * mount namespace. If it's not don't let the caller interact with it.
+>          *
+>          * If this mount doesn't have a parent it's most often simply a
+>          * detached mount with an anonymous mount namespace. IOW, something
+>          * that's simply not attached yet. But there are apparently also users
+>          * that do change mount properties on the rootfs itself. That obviously
+>          * neither has a parent nor is it a detached mount so we cannot
+>          * unconditionally check for detached mounts.
+>          */
+>         if ((mnt_has_parent(mnt) || !is_anon_ns(mnt->mnt_ns)) && !check_mnt(mnt))
+>                 goto out;
 > 
-> [...]
+> Why do you care about mnt_has_parent() here?  mnt is the root of subtree you
+> are operating on, so that condition means
+> 	* any subtree (including the entire tree) of caller's mount tree is OK
+> (fair enough)
+> 	* full mount tree of anon namespace is OK
+> 	* nothing else is acceptable
+> What about partial subtrees of anon namespaces?  Restriction looks odd...
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] devtmpfs: don't use vfs_getattr_nosec to query i_mode
-      https://git.kernel.org/vfs/vfs/c/5a876a5097fe
+No one has ever cared about that ever so far so I specifically only
+allowed the root of an anonymous mount namespace and this also keeps it
+in line with other calls. I'm not against opening that up if this is a
+use-case but so far we haven't had anyone care about mount properties in
+detached mount subtrees.
 
