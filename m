@@ -1,82 +1,229 @@
-Return-Path: <linux-fsdevel+bounces-47292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE062A9B867
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 21:42:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01016A9B883
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 21:53:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B97165A5290
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 19:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7091E3B8C0A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 19:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31943292935;
-	Thu, 24 Apr 2025 19:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D702291165;
+	Thu, 24 Apr 2025 19:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Tmzqyhip"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t/UivPLR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yBZV8ILw";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="t/UivPLR";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yBZV8ILw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36212918CF
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 19:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F76228B4F4
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 19:53:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745523725; cv=none; b=Dg2S0yFhDuSdgRc79pGJKqkxin3IuhiMN3DUo7KCliL/qrGzCxtEA5yxAV3U44tGS1pDoQMhRlRV+RPhdnHDUTMSy+WLGoQWqQ/ZQY+gGipVWSblUwbvib613VuB3Uw9J5F9emevsbv7QJixnc/5guEOnOHIo2QQaZDtoZAy5F0=
+	t=1745524409; cv=none; b=jXNn7dT2rfzzq6IE+QNoxtLIOo0f4h9Ci9GaGotIoVSZB56UbKSkKQLDIJcUfNbldQe9+T0lVEXoyDNiHf5BHlIcquB4qf2La+Pwc+poq+MitdjBJqHni91fXGEXA//B+HWk6GafYFGBLxVqZBT1odbqdRwKIs7+/ygpPdtAbEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745523725; c=relaxed/simple;
-	bh=oFeUC1CZiNf3SABzetVlqz9xP2VpwIpTn66Drtl9gWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fx+QMrh98QmsP2XxUwltZ8wppMDTC5QVz1n0UTbkrk++Wy+a8LXeGMjfmXQ93kuv1VI2OEmB2lMzwzL0qEDrgMTUwq8PMNc3F4psCn9bdi5m2aBFeWFqHbA5o7XLyiVjHss3fTsRCF55ljojJLabZ06/BFVgwq17WURIFP5CsDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Tmzqyhip; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rz7e/5Ervl1fpk82A/cIlpJuDHJpWv9gwT/6zSqHPHM=; b=Tmzqyhipcwr48ipqQrscLCVRFO
-	vrXLLwEDJf1kddCVck5JgVOaDh/1cnXpA8ChqnSLaV2mO8lRMhUMGztOJMmNk8LSFyqit5DghmohM
-	dZJGsf9zukd8fKnVffAHdQfOR1BTAIcnVEcVC7ifovn5YMpbVU2zDPqzup43UTq85n8eZF4g1d+dQ
-	32c3heBZ1lt49DzDdN1jJN224N4r/Kz0GzOdDnPsopsKr2atukw46e0j6+s+NMvs32KbGhVV0KQrS
-	b7nag1tW3z7lkDFu8v4OCtKs+zdrLLN8Wdfmlei0qAM7w02qQUqdEGz6WGwqNZt+m8auBUvj6x/qq
-	Fiw+OGdw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u82SO-0000000D5lv-1gF8;
-	Thu, 24 Apr 2025 19:42:00 +0000
-Date: Thu, 24 Apr 2025 20:42:00 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Peter Xu <peterx@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Jens Axboe <axboe@kernel.dk>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH] mm/userfaultfd: prevent busy looping for tasks with
- signals pending
-Message-ID: <aAqUCK6V1I08cPpj@casper.infradead.org>
-References: <27c3a7f5-aad8-4f2a-a66e-ff5ae98f31eb@kernel.dk>
- <20250424140344.GA840@cmpxchg.org>
- <aAqCXfPirHqWMlb4@x1.local>
+	s=arc-20240116; t=1745524409; c=relaxed/simple;
+	bh=vN7jOL/9Mni3AGaohHIz4KkE5stCRQhlbZwzpe414oI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=oywP4zIz1XFBq8PW+myyHFyUbQSdCS1D0ZGMxaU5BQ4mR70RJsQE0SaDHjgKUajJRhENOf3aFKSIdi5qSqYblDKod6JOedKOfx7Jkb4GRPKsF6ei0azYkB9Xa26uLGjRfrg/Wt/TfKvqpTH2B55sxhPxIQhv6A8Xs3Fx0mwOJJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t/UivPLR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yBZV8ILw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=t/UivPLR; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yBZV8ILw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 55A881F44E;
+	Thu, 24 Apr 2025 19:53:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745524405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qxfhp6h9zyJV/ulAoeZ/6yTqZYk3vUJC0jHt1Bt5Dho=;
+	b=t/UivPLRUNEyeQE1SQMvlAOohxigmFMhXObN/VDvryKYUbDLtSva/Yg5O3UvaRkqy0NhwK
+	AqIu4Gl/F1NMkTV/0SvQ/pvHS4KCZeSeMhq+PmU64I5TfcQRp1sR4oJ7Yy8wxEDMcRFmPw
+	6i6p9j3Mnsv7DIOZjgbvwlJB8d+f3RQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745524405;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qxfhp6h9zyJV/ulAoeZ/6yTqZYk3vUJC0jHt1Bt5Dho=;
+	b=yBZV8ILw9w2lRHmEQ9EZC3nvJcqx/cSY1MP5wDBkSvtg7l/oxj1Exja64TVZkYU7BZFdqi
+	nMjiuZDB7LuPVGBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="t/UivPLR";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=yBZV8ILw
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1745524405; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qxfhp6h9zyJV/ulAoeZ/6yTqZYk3vUJC0jHt1Bt5Dho=;
+	b=t/UivPLRUNEyeQE1SQMvlAOohxigmFMhXObN/VDvryKYUbDLtSva/Yg5O3UvaRkqy0NhwK
+	AqIu4Gl/F1NMkTV/0SvQ/pvHS4KCZeSeMhq+PmU64I5TfcQRp1sR4oJ7Yy8wxEDMcRFmPw
+	6i6p9j3Mnsv7DIOZjgbvwlJB8d+f3RQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1745524405;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qxfhp6h9zyJV/ulAoeZ/6yTqZYk3vUJC0jHt1Bt5Dho=;
+	b=yBZV8ILw9w2lRHmEQ9EZC3nvJcqx/cSY1MP5wDBkSvtg7l/oxj1Exja64TVZkYU7BZFdqi
+	nMjiuZDB7LuPVGBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1E2BA1393C;
+	Thu, 24 Apr 2025 19:53:25 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LMB0AbWWCmjoTAAAD6G6ig
+	(envelope-from <krisman@suse.de>); Thu, 24 Apr 2025 19:53:25 +0000
+From: Gabriel Krisman Bertazi <krisman@suse.de>
+To: =?utf-8?Q?Bj=C3=B6rn?= JACKE <bjacke@SerNet.DE>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: casefold is using unsuitable case mapping table
+In-Reply-To: <20250422123141.GD855798@sernet.de> (=?utf-8?Q?=22Bj=C3=B6rn?=
+ JACKE"'s message of
+	"Tue, 22 Apr 2025 14:31:41 +0200")
+References: <20250422123141.GD855798@sernet.de>
+Date: Thu, 24 Apr 2025 15:53:23 -0400
+Message-ID: <87h62dtjyk.fsf@mailhost.krisman.be>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAqCXfPirHqWMlb4@x1.local>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 55A881F44E
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWO(0.00)[2];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Apr 24, 2025 at 02:26:37PM -0400, Peter Xu wrote:
-> Secondly, userfaultfd is indeed the only consumer of
-> FAULT_FLAG_INTERRUPTIBLE but not necessary always in the future.  While
-> this patch resolves it for userfaultfd, it might get caught again later if
-> something else in the kernel starts to respects the _INTERRUPTIBLE flag
-> request.  For example, __folio_lock_or_retry() ignores that flag so far,
-> but logically it should obey too (with a folio_wait_locked_interruptible)..
+Bj=C3=B6rn JACKE <bjacke@SerNet.DE> writes:
 
-No.  Hell, no.  We don't want non-fatal signals being able to interrupt
-that.  There's a reason we introduced killable as a concept in the first
-place.
+> It turns out though that the case insensitive feature is not usable becau=
+se it
+> does not match the case mapping tables that other operating systems use. =
+More
+> specifically, the german letter "=C3=9F" is treated as a case equivanten =
+of "ss".
+>
+> There is an equivalent of "=C3=9F" and "ss in some other scopes, also AD =
+LDAP treats
+> them as an equivante. For systems that requires "lossless" case conversion
+> however should not treat =C3=9F and ss as equivalent. This is also why a =
+filesystem
+> should never ever do that
 
+Well, filesystems should never ever have filename encoding.  Once
+they do, we have to make semantics decisions and they are all apparently
+stupid to someone.  And any kind of Casefolding is an inherently lossy
+operation in this sense, as multiple byte sequences will map to the
+same file.
+
+The big problem is that each of the big OS vendors chose specific
+semantics of what to casefold.  APFS does NFD + full casefolding[1],
+right?  except for "some code-points". I'm not sure what they do with =C3=
+=9F,
+tbh. I could never find any documentation on the specific code-points
+they add/ignore.
+
+In ext4, we decided to have no exceptions. Just do plain NFD + CF.  That
+means we do C+F from the table below:
+
+  https://www.unicode.org/Public/12.1.0/ucd/CaseFolding.txt
+
+Which includes =C3=9F->SS.  We could argue forever whether that doesn't make
+sense for language X, such as German.  I'm not a German speaker but
+friends said it would be common to see stra=C3=9Fe uppercased to STRASSE th=
+ere,
+even though the 2017 agreement abolished it in favor of =E1=BA=9E.  So what=
+ is
+the right way?
+
+My point is we can't rely fully on languages to argue the right
+semantics.  There are no right semantics.  And Languages are also alive
+and changing. There are many other examples where full casefold will
+look stupid; for instance, one would argue we should also translate the
+T column (i.e non-Turkish languages).  We can produce all sorts of
+stupid examples with combining characters in Portuguese/Spanish too.
+Linux is not broken beyond the fact the whole idea is broken.  These are
+just the semantics we agreed were slightly less insane back in 2017
+(considering we don't want to have locales).  And, apart from the
+ignorable code points issue, I still think our implementation is
+relatively sane.
+
+> Since 2017 there is a well-defined uppercase version of the codepoint (U+=
+00DF)
+> of the "=C3=9F" letter in Unicode: U+1E9E, this could eventually be used =
+but I
+> haven't seen any filesystem using that so far. This would be a possible a=
+nd
+> lossless case equivalent, but well, that's actually another thing to
+> discuss.
+>
+> The important point is to _not_ use the =C3=9F/ss case equicalent. The ca=
+sefold
+> feature is mainly useless otherwise.
+
+It is not useless.  Android and Wine emulators have been using it just
+fine for years.  We also cannot break compatibility for them.
+
+> Can this be changed without causing too much hassle?
+
+We attempted to do a much smaller change recently in commit
+5c26d2f1d3f5, because we assumed no one would be trying to create files
+with silly stuff like ZWSP (U+200B). Turns out there is a reasonable
+use-case for that with Variation Selectors, and we had to revert it.  So
+we need to be very careful with any changes here, so people don't lose
+access to their files on a kernel update.  Even with that, more
+casefolding flavor will cause all sorts of compatibility issues when
+moving data across volumes, so I'd be very wary of having more than one
+flavor.
+
+What are the exact requirements for samba?  Do you only fold the C
+column? Do you need stuff like compatibility normalization?
+
+ [1] https://developer.apple.com/support/downloads/Apple-File-System-Refere=
+nce.pdf
+
+--=20
+Gabriel Krisman Bertazi
 
