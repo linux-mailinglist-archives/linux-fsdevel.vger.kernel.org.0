@@ -1,86 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-47216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CE7A9A79A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 11:22:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F83A9A8F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 11:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E7B83BCCCF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 09:22:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6E93BDDE5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 09:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A89421FF3A;
-	Thu, 24 Apr 2025 09:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B6D2356A3;
+	Thu, 24 Apr 2025 09:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xh07Matf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdRFK1PL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 092941E7C12
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 09:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0F8522128F;
+	Thu, 24 Apr 2025 09:44:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745486564; cv=none; b=YIU7cBvqWr5UtHHaimnQvvOJ71Sp2mbkOfVQGLsgudfi1vTkSVGeivraSe9s1mj9V5rDQKIv3c7WlJqobfKwOJZQMojXcXiMOiJHVAUIvko1Jiac12WXBGlbADse9WKSzf91k2arSEt6DInwGwuRGSJSetj2B9XxgtTxtq3AWEo=
+	t=1745487887; cv=none; b=QfdX5u9Zro4mShnORvHFcXGQokQgKQZXpX8JBzGQVLJUiPNftnxHqTtdR7h+gBeW7L9zITEJiw7Q409NLGDlaLx8YP5aXV+zPrIasKtOiSw2CUKOyFzo/zTdDU1atYnvFAitaEsZSTx0wK+UQg91ZGLYPh7fC/7STy1L/iGp0IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745486564; c=relaxed/simple;
-	bh=rRfT3KkaK7lPudDrJg4iPSOijskuE157fIEcYxnRdeQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q+W6Le7vj4+HcSDaTg5+51rGX5jH5F11ys07mLNcg318PYGWjqQ3pvKOZAmKC9cUxUb/PvWHpZ9h/4FWBwz/Gp9rR0ucBtKfg+W559QVHSFxApfV74FQWu5BY0WUITQmJ5wt2Pwr8ftOF3hkJA2KLa+g94wdzALYw7mhzyk/Cm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xh07Matf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97371C4CEEB;
-	Thu, 24 Apr 2025 09:22:42 +0000 (UTC)
+	s=arc-20240116; t=1745487887; c=relaxed/simple;
+	bh=8jRSZqjbmdE01PoeHQIXSWpg7bgymSnumnNJpHBOUIs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S3V6baktYSgyXDa+HGPAGjnsA3L9kbVTOkKbF9q5N5X9F7B6SxEQi5/iPLJvvkeK9qOkuLLRFl5gYwZlFE8tXo+DGislvAtut+ItxSVxJ8EL1PBmxg8LEiCGxeyXWZwRyAow40O+n+i6KIGcC3o5Ftby0eOJ3I2+BrbF419eywM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdRFK1PL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84FBC4CEEA;
+	Thu, 24 Apr 2025 09:44:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745486563;
-	bh=rRfT3KkaK7lPudDrJg4iPSOijskuE157fIEcYxnRdeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Xh07MatfjhRJFfZSUxWbzkHHn7vG8Sg3QWP/4nwuePvuKCKSzdV8YausVL8fP5PaA
-	 RF/qhkp7j0pTVwoZ/iXnKfqy/Ar7oNTgsJYrICKUY3eLSeQg3rVyoBudfHYOf2smeb
-	 qD6CI0/8aNreil/0PyM2utMoHNQjQW2nkm7J6Xqw1IxrSmzjOw1lbrfBhoneKl8g0D
-	 FZUzT4XqRorgUfINXe/5fgTdB0eT+0G8l1kfeC0VGiHy6Nwy5sJp+jE3lUAAg2a37Y
-	 fOeouihAAb8J5PD9ZNeLskFAmUv4iaMQbWX+iDo9X9UQCDBlOkSnDBS81tbNqLiZ7v
-	 JJZa/VzHtfhmg==
-Date: Thu, 24 Apr 2025 11:22:40 +0200
+	s=k20201202; t=1745487887;
+	bh=8jRSZqjbmdE01PoeHQIXSWpg7bgymSnumnNJpHBOUIs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PdRFK1PLQ/xltWSF3DL6KnH5r0JiK646v1c6sLpqqic0B5Iz0fyJf6y6rjbJMRRzb
+	 qzX5Uysj9YUm1w1vMXPQbVBlP5aNHi/7dlP8+n/YQkQNqP6yiR1iu4LYuFpUo4yV3h
+	 Ptr2f3H7Ot3C2IfHtiIWn6D79HOM+m64+ZIXRsu4aSJ3uzur6ALgpKVzl82ewZ6zle
+	 gZdJzgHLGm3el4tdMYr6AH2r3Jn3nfUjrvzk2JjvMF0XSslvoTwdwsFOJb+MypCafP
+	 7CMVdanV7izDj1+hs3pThFlX2DVD7s8Lvy0L7BFScHzgco6wFw4Qvsz1rWVQg7tK/1
+	 Yi+xRkfsouqVg==
 From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] Revert "fs: move the bdex_statx call to
- vfs_getattr_nosec"
-Message-ID: <20250424-liefen-abprallen-c698e7d7eb26@brauner>
-References: <20250424-patient-abgeebbt-a0a7001f040b@brauner>
- <20250424090444.GA27439@lst.de>
+To: slava@dubeyko.com,
+	Slava.Dubeyko@ibm.com,
+	glaubitz@physik.fu-berlin.de,
+	linux-fsdevel@vger.kernel.org,
+	Yangtao Li <frank.li@vivo.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	dsterba@suse.cz,
+	torvalds@linux-foundation.org,
+	willy@infradead.org,
+	jack@suse.com,
+	viro@zeniv.linux.org.uk,
+	josef@toxicpanda.com,
+	sandeen@redhat.com,
+	linux-kernel@vger.kernel.org,
+	djwong@kernel.org
+Subject: Re: [PATCH] MAINTAINERS: hfs/hfsplus: add myself as maintainer
+Date: Thu, 24 Apr 2025 11:44:38 +0200
+Message-ID: <20250424-identisch-artig-756caa667a9e@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250423123423.2062619-1-frank.li@vivo.com>
+References: <20250423123423.2062619-1-frank.li@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250424090444.GA27439@lst.de>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1024; i=brauner@kernel.org; h=from:subject:message-id; bh=8jRSZqjbmdE01PoeHQIXSWpg7bgymSnumnNJpHBOUIs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRwcXCcvOyy/HBit8F2BqetjeuPesqelHxs4+p2iX//N RV9qbjPHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPJ+MjwT+n2vSJh63+aAur3 HtT937zOXPPzmpYrzIv7lyRV9VrPZmBkuLxjVWfB1AbbW2H6jtuP/NrwqMiqZIrv37kPX/A9ijs cwwIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 24, 2025 at 11:04:44AM +0200, Christoph Hellwig wrote:
-> On Thu, Apr 24, 2025 at 10:59:44AM +0200, Christian Brauner wrote:
-> > This reverts commit 777d0961ff95b26d5887fdae69900374364976f3.
-> > 
-> > Now that we have fixed the original issue in devtmpfs we can revert this
-> > commit because the bdev_statx() call in vfs_getattr_nosec() causes
-> > issues with the lifetime logic of dm devices.
+On Wed, 23 Apr 2025 06:34:22 -0600, Yangtao Li wrote:
+> I used to maintain Allwinner SoC cpufreq and thermal drivers and
+> have some work experience in the F2FS file system.
 > 
-> Umm, no.  We need this patch.  And the devtmpfs fixes the issue that
-> it caused for devtmpfs.
+> I volunteered to maintain the code together with Slava and Adrian.
+> 
+> 
 
-For loop devices only afaict. The bdev_statx() implementation is
-absolutely terrifying because it triggers all that block module
-autoloading stuff and quite a few kernels still have that turned on. By
-adding that to vfs_getattr_nosec() suddenly all kernel consumers are
-able to do the same thing by accident. This already crapped devtmpfs. We
-have no idea what else it will start breaking unless you audit every
-single caller.
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-If this stays in then please figure out how to skip a call into
-blkdev_get_no_open() unless it's explicitly requested. I don't care if
-we have to add an in-kernel only request flag. We have one already
-anyway.
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] MAINTAINERS: hfs/hfsplus: add myself as maintainer
+      https://git.kernel.org/vfs/vfs/c/ed11344c2b80
 
