@@ -1,167 +1,189 @@
-Return-Path: <linux-fsdevel+bounces-47258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95FB5A9B0F0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 16:32:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F524A9B132
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 16:39:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BD53B4CA2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 14:30:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB6E16C834
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 14:39:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E09F283C86;
-	Thu, 24 Apr 2025 14:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A955F190067;
+	Thu, 24 Apr 2025 14:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b="LAVTvL+j"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJVGWmn4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx.manguebit.com (mx.manguebit.com [167.235.159.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E05F2820B9;
-	Thu, 24 Apr 2025 14:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.235.159.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F214E2DF68;
+	Thu, 24 Apr 2025 14:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745504735; cv=none; b=DrZdIcsLCYms9UnKnftUJiA4YT17g6Ei+8DxQY/3Lmv58cfC2HqDLivkjCH7BK1GEEdPkf5k10LYYs6443lJq6AT5NZRDBM7GgXZlGqSDdtrU+OFQmraSTaZEg8JW33adH/pu336iYuZDcnyXNZ5JNinNbuS5b0eIVnbZ54N6KI=
+	t=1745505530; cv=none; b=Biqrj9yPGpAE5XL+wIhARnXj3GDWbaAVQmNcgLBs4nnVKZD4WdHQXmziI81TkWByTUaLCYbAeR+fyXJ7RLEzIfMqYqgvY0PlLwkseqnHZAYIIkxnH0jXwV5jY/zZxaofTbRFkPd2U59+MDvMUeLchFDQ8spvMSsAvE/wlyPduis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745504735; c=relaxed/simple;
-	bh=ctJUQqsDIJ4N/zUvhphAU/Viu/T5q5vuPpSV4mT1pBU=;
-	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Date:
-	 MIME-Version:Content-Type; b=tlPSqi/szTJmuwLyRFFDIxG6NHdRrouoeCcW3jWGCyJKyFebaySGJMT6GvvSZwM/HlGwIX/biO+MN0xMTlKZ7XHjMz9a5EUvdYULowzUusc+um1NyZHP7fPWuLB9BRYES7lF5Z7jZKD9uIJfUTxsJHRvZcBcNQzhHaxqm1xxsaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com; spf=pass smtp.mailfrom=manguebit.com; dkim=pass (2048-bit key) header.d=manguebit.com header.i=@manguebit.com header.b=LAVTvL+j; arc=none smtp.client-ip=167.235.159.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manguebit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manguebit.com
-Message-ID: <e0b7f4902af6c758b5cdb7c2b7892b43@manguebit.com>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manguebit.com;
-	s=dkim; t=1745504731;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qihysb7F6c8dcZhnGNX5LEKZVBHLri51T3P5qA9Nth0=;
-	b=LAVTvL+jyTLTPukfCmxmlAI8/KfahgZ8acBCNWtG4W4vhzl2tzxe960o92gZA+UHXfG/yM
-	PkJNUvgy2LKhSb9Mn2TBhJUNMp7yWXAkI4NBsnNRwtp2Ru+QsiP01TkmRMcbpnxOtdyHJG
-	n4b5xfKG+d1ZSrA9y8gcZUvXsQ1pTPrb2ntNQu4gEafcbYq8wb/wVYTuO6STUgsGpKkjgK
-	A92DW93VNKQxlFlJxkjpULpOcGAkJwDpgmr9wohl+/3FpDNzMczteV2y421ThuyuGr7uLx
-	0EpX3r2ojdnXvtdtjezNeTd73Qv3IgQ7G3Nw9wgUUH1zESStEXu4G2nCWYqRkw==
-From: Paulo Alcantara <pc@manguebit.com>
-To: Nicolas Baranger <nicolas.baranger@3xo.fr>
-Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de, David Howells
- <dhowells@redhat.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Steve French
- <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>, Christian Brauner
- <brauner@kernel.org>
-Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when
- files are on CIFS share
-In-Reply-To: <a25811b8d4f245173f672bdfa8f81506@3xo.fr>
-References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
- <35940e6c0ed86fd94468e175061faeac@3xo.fr> <Z-Z95ePf3KQZ2MnB@infradead.org>
- <48685a06c2608b182df3b7a767520c1d@3xo.fr>
- <F89FD4A3-FE54-4DB2-BA08-3BCC8843C60E@manguebit.com>
- <5087f9cb3dc1487423de34725352f57c@3xo.fr>
- <f12973bcf533a40ca7d7ed78846a0a10@manguebit.com>
- <e63e7c7ec32e3014eb758fd6f8679f93@3xo.fr>
- <53697288e2891aea51061c54a2e42595@manguebit.com>
- <bb5f1ed84df1686aebdba5d60ab0e162@3xo.fr>
- <af401afc7e32d9c0eeb6b36da70d2488@3xo.fr>
- <a25811b8d4f245173f672bdfa8f81506@3xo.fr>
-Date: Thu, 24 Apr 2025 11:25:26 -0300
+	s=arc-20240116; t=1745505530; c=relaxed/simple;
+	bh=WM7zfm0bT2ItDzzbHgZkWzBdQu/I59c8crE3d85m7Sg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hs2jKbQjazKSkqt0BDPOLrrrJe66VYXTPgRRonxxb00gLtX8ct51Bgn2O6zNSimYOBJt5/CeuGgIx2D+vPtk6+WIBw5A14Jb7shCAanAc6NPmKzA5tVJ6pDW3oApXlu4stWrryYYloLVju932m8Ixo6+Rhf+S3qPArc5gNn2YFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJVGWmn4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60655C4CEE3;
+	Thu, 24 Apr 2025 14:38:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745505529;
+	bh=WM7zfm0bT2ItDzzbHgZkWzBdQu/I59c8crE3d85m7Sg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fJVGWmn4v45l8WbiQwosdrijUHNMc637MOvicJxYlgxabqPeQTrlGaPCp6FRNvW4t
+	 5VwyC/mU9NdVJtmH4Vuf7Qr6pY9v29qFYa12FPzKlM2an91t1wSg4+H2+klzjQzwT9
+	 hS2beHMQTDgyeic7qRYktPe1ypBYTEDPD9xfrtzMP0npkfbxngnLfDFm9ECrIqu4Ar
+	 8mxrgHrltGVe6EBrkAUzvgBR4795/tVd/is3RuDRvIRc1TrnZVIS+Z8txKTNTwoyDE
+	 H6IoCmJavtTmgwwoqwG7fl56NAwc7SG0TwW9KSoyArW/nDLh8QQHxm++8njNhHX5/h
+	 rJ23St7P5TFlA==
+Date: Thu, 24 Apr 2025 07:38:48 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Groves <John@groves.net>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Miklos Szeredi <miklos@szeredb.hu>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Luis Henriques <luis@igalia.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC PATCH 13/19] famfs_fuse: Create files with famfs fmaps
+Message-ID: <20250424143848.GN25700@frogsfrogsfrogs>
+References: <20250421013346.32530-1-john@groves.net>
+ <20250421013346.32530-14-john@groves.net>
+ <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
 
-Hi Nicolas,
+On Thu, Apr 24, 2025 at 08:43:33AM -0500, John Groves wrote:
+> On 25/04/20 08:33PM, John Groves wrote:
+> > On completion of GET_FMAP message/response, setup the full famfs
+> > metadata such that it's possible to handle read/write/mmap directly to
+> > dax. Note that the devdax_iomap plumbing is not in yet...
+> > 
+> > Update MAINTAINERS for the new files.
+> > 
+> > Signed-off-by: John Groves <john@groves.net>
+> > ---
+> >  MAINTAINERS               |   9 +
+> >  fs/fuse/Makefile          |   2 +-
+> >  fs/fuse/dir.c             |   3 +
+> >  fs/fuse/famfs.c           | 344 ++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/famfs_kfmap.h     |  63 +++++++
+> >  fs/fuse/fuse_i.h          |  16 +-
+> >  fs/fuse/inode.c           |   2 +-
+> >  include/uapi/linux/fuse.h |  42 +++++
+> >  8 files changed, 477 insertions(+), 4 deletions(-)
+> >  create mode 100644 fs/fuse/famfs.c
+> >  create mode 100644 fs/fuse/famfs_kfmap.h
+> > 
 
-Thanks for the very detailed information and testing.
+<snip>
 
-Nicolas Baranger <nicolas.baranger@3xo.fr> writes:
+> > diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+> > index d85fb692cf3b..0f6ff1ffb23d 100644
+> > --- a/include/uapi/linux/fuse.h
+> > +++ b/include/uapi/linux/fuse.h
+> > @@ -1286,4 +1286,46 @@ struct fuse_uring_cmd_req {
+> >  	uint8_t padding[6];
+> >  };
+> >  
+> > +/* Famfs fmap message components */
+> > +
+> > +#define FAMFS_FMAP_VERSION 1
+> > +
+> > +#define FUSE_FAMFS_MAX_EXTENTS 2
+> > +#define FUSE_FAMFS_MAX_STRIPS 16
+> 
+> FYI, after thinking through the conversation with Darrick,  I'm planning 
+> to drop FUSE_FAMFS_MAX_(EXTENTS|STRIPS) in the next version.  In the 
+> response to GET_FMAP, it's the structures below serialized into a message 
+> buffer. If it fits, it's good - and if not it's invalid. When the
+> in-memory metadata (defined in famfs_kfmap.h) gets assembled, if there is
+> a reason to apply limits it can be done - but I don't currently see a reason
+> do to that (so if I'm currently enforcing limits there, I'll probably drop
+> that.
 
-> In fact, I think there is somethings wrong:
->
-> After a remount, I sucessfully get the good buffers size values in 
-> /proc/mounts (those defined in /etc/fstab).
->
-> grep cifs /proc/mounts
-> //10.0.10.100/FBX24T /mnt/fbx/FBX-24T cifs 
-> rw,nosuid,nodev,noexec,relatime,vers=3.1.1,cache=none,upcall_target=app,username=*****,domain=*****,uid=0,noforceuid,gid=0,noforcegid,addr=10.0.10.100,file_mode=0666,dir_mode=0755,iocharset=utf8,soft,nounix,serverino,mapposix,mfsymlinks,reparse=nfs,rsize=4194304,wsize=4194304,bsize=16777216,retrans=1,echo_interval=60,actimeo=1,closetimeo=1 
-> 0 0
+You could also define GET_FMAP to have an offset in the request buffer,
+and have the famfs daemon send back the next offset at the end of its
+reply (or -1ULL to stop).  Then the kernel can call GET_FMAP again with
+that new offset to get more mappings.
 
-Interesting.  When you do 'mount -o remount ...' but don't pass rsize=
-and wsize=, the client is suppposed to reuse the existing values of
-rsize and wsize set in the current superblock.  The above values of
-rsize, wsize and bsize are also the default ones in case you don't pass
-them at all.
+Though at this point maybe it should go the /other/ way, where the fuse
+server can sends a "notification" to the kernel to populate its mapping
+data?  fuse already defines a handful of notifications for invalidating
+pagecache and directory links.
 
-I'll look into that when time allows it.
+(Ugly wart: notifications aren't yet implemented for the iouring channel)
 
-> But here is what I constat: a 'dd' with a block size smaller than 65536 
-> is working fine:
-> LANG=en_US.UTF-8
->
-> dd if=/dev/urandom of=/mnt/fbx/FBX-24T/dd.test3 bs=65536 status=progress 
-> conv=notrunc oflag=direct count=128
-> 128+0 records in
-> 128+0 records out
-> 8388608 bytes (8.4 MB, 8.0 MiB) copied, 0.100398 s, 83.6 MB/s
->
->
->
-> But a 'dd' with a block size bigger than 65536 is not working:
-> LANG=en_US.UTF-8
->
-> dd if=/dev/urandom of=/mnt/fbx/FBX-24T/dd.test3 bs=65537 status=progress 
-> conv=notrunc oflag=direct count=128
-> dd: error writing '/mnt/fbx/FBX-24T/dd.test3'
-> dd: closing output file '/mnt/fbx/FBX-24T/dd.test3': Invalid argument
->
-> And kernel report:
-> Apr 24 10:01:37 14RV-SERVER.14rv.lan kernel: CIFS: VFS: \\10.0.10.100 
-> Error -32 sending data on socket to server
+--D
 
-This seems related to unaligned DIO reads and writes.  With O_DIRECT,
-the client will set FILE_NO_INTERMEDIATE_BUFFERING when opening the
-file, telling the server to not do any buffering when reading from or
-writing to the file.  Some servers will fail the read or write request
-if the file offset or length isn't a multiple of block size, where the
-block size is >= 512 && <= PAGE_SIZE, as specified in MS-FSA 2.1.5.[34].
-
-Since you're passing bs= with a value that is not multiple of block
-size, then the server is failing the request with
-STATUS_INVALID_PARAMETER as specified in MS-FSA.
-
-I've tested it against Windows Server 2022 and it seems to enforce the
-alignment only for DIO reads.  While samba doesn't enforce it at all.
-
-win2k22:
-
-$ dd if=/mnt/1/foo of=/dev/null status=none iflag=direct count=128 bs=65536
-$ dd if=/mnt/1/foo of=/dev/null status=none iflag=direct count=128 bs=65537
-dd: error reading '/mnt/1/foo': Invalid argument
-$ dd if=/mnt/1/foo of=/dev/null status=none iflag=direct count=128 bs=$((65536+512))
-
-$ xfs_io -d -f -c "pread 0 4096" /mnt/1/foo
-read 4096/4096 bytes at offset 0
-4 KiB, 1 ops; 0.0009 sec (4.260 MiB/sec and 1090.5125 ops/sec)
-$ xfs_io -d -f -c "pread 1 4096" /mnt/1/foo
-pread: Invalid argument
-
-samba:
-
-$ dd if=/mnt/1/foo of=/dev/null status=none iflag=direct count=128 bs=65536
-$ dd if=/mnt/1/foo of=/dev/null status=none iflag=direct count=128 bs=65537
-$ dd if=/mnt/1/foo of=/dev/null status=none iflag=direct count=128 bs=$((65536+512))
-
-$ xfs_io -d -f -c "pread 0 4096" /mnt/1/foo
-read 4096/4096 bytes at offset 0
-4 KiB, 1 ops; 0.0071 sec (557.880 KiB/sec and 139.4700 ops/sec)
-$ xfs_io -d -f -c "pread 1 4096" /mnt/1/foo
-read 4096/4096 bytes at offset 1
-4 KiB, 1 ops; 0.0010 sec (3.864 MiB/sec and 989.1197 ops/sec)
-
-Note that the netfslib fix is for short DIO reads, so this bug is
-related to unaligned DIO reads and writes and need to be fixed in the
-client.  I'll let you know when I have patches for that.
+> 
+> > +
+> > +enum fuse_famfs_file_type {
+> > +	FUSE_FAMFS_FILE_REG,
+> > +	FUSE_FAMFS_FILE_SUPERBLOCK,
+> > +	FUSE_FAMFS_FILE_LOG,
+> > +};
+> > +
+> > +enum famfs_ext_type {
+> > +	FUSE_FAMFS_EXT_SIMPLE = 0,
+> > +	FUSE_FAMFS_EXT_INTERLEAVE = 1,
+> > +};
+> > +
+> > +struct fuse_famfs_simple_ext {
+> > +	uint32_t se_devindex;
+> > +	uint32_t reserved;
+> > +	uint64_t se_offset;
+> > +	uint64_t se_len;
+> > +};
+> > +
+> > +struct fuse_famfs_iext { /* Interleaved extent */
+> > +	uint32_t ie_nstrips;
+> > +	uint32_t ie_chunk_size;
+> > +	uint64_t ie_nbytes; /* Total bytes for this interleaved_ext; sum of strips may be more */
+> > +	uint64_t reserved;
+> > +};
+> > +
+> > +struct fuse_famfs_fmap_header {
+> > +	uint8_t file_type; /* enum famfs_file_type */
+> > +	uint8_t reserved;
+> > +	uint16_t fmap_version;
+> > +	uint32_t ext_type; /* enum famfs_log_ext_type */
+> > +	uint32_t nextents;
+> > +	uint32_t reserved0;
+> > +	uint64_t file_size;
+> > +	uint64_t reserved1;
+> > +};
+> >  #endif /* _LINUX_FUSE_H */
+> > -- 
+> > 2.49.0
+> > 
 
