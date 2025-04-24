@@ -1,295 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-47203-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68B07A9A411
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 09:34:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E281EA9A482
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 09:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38FBB9221CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 07:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5850546184D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 07:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A711F4190;
-	Thu, 24 Apr 2025 07:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7A1F790F;
+	Thu, 24 Apr 2025 07:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="c5oHOKiO"
+	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="o88nyfQg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842972153E1
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 07:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919491F1927;
+	Thu, 24 Apr 2025 07:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745479541; cv=none; b=oaRLHd9O1i/KG6QuWV7QzgxmJvfaW4VFJNjPpRMYqrpVKKKzc/Lbvg0N8TqBJHOCorVNinFU98utIp2/zsSLN72NvRKP6R8CvaDdZrtFCzZMj+yvb89bV8qaikQec//mhoSAdXPk0AD5HWTLtGTXP823LcTnFOculV3n39f4SGk=
+	t=1745480426; cv=none; b=JA5yENP9+RZrMYgEOrCBJXODRkolFQkelRoVo/IMqh/TdbWsE7+H4/j+TLZu4qID2beblU0ih0TiEBdsJZVHD6aZN1Dkl6l7LkKcAA+DYhG2MrR56FZBBC5JVye6kZe77Nq/A16zE0iAQ12m3tYPudeXUa2QWi6EBIz86/4oWM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745479541; c=relaxed/simple;
-	bh=sdM7Lfbt0ugbQKamZrvJVP35QAMpRJf64N3YU80rJrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hQJEQIJCcwHUJVmeaRTLB9Ut2yHN3cIgVK0cJYXLQa1vKsmoq//5FpxOttDW/qlkgRnOoh+r5XmVcm1/exStxKuB2ZJ9OROa9kBrPn5Hr6maPQhQbWgyN0I8pzC5s5OSxBGR2rAfNnrNVWVwI75+kou5wHs0pDQRMLTFq+Gg5cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=c5oHOKiO; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22401f4d35aso7922675ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 00:25:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745479539; x=1746084339; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZraI9Ovv6gpYhi0G8W3Cw0oZRXxTTj3IaFkdasgPTa8=;
-        b=c5oHOKiO2JcHXg01FrqxIOSkwypRDgq10RcjXPmL6sJW5SZtaRXVhcokdFdqPLgvWa
-         CFnMlSemcRQmSFNbyouosHBBR+0I9QmkaP/TVMGiQKYOdouJaxKMUoLYeeLy5gCl9dmr
-         yTpR6e9J7S63w34hdN9uhuoWxUFG7FV+pkKcJQQWANDCbldrG94GvnoFGTA56VpGHrwq
-         CmK//jjXKoPCHRkdoHugMu9ls02etO3jkiVbrTN67/E7FyIGS7279M8MTLCs3LNBbCwP
-         h8GSeQHhRPxvKeFdGpS/ccO2QaU8VCn3v+f+w3dTNKTlyPkmotruMpFlK6K83SVfrawf
-         X8hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745479539; x=1746084339;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZraI9Ovv6gpYhi0G8W3Cw0oZRXxTTj3IaFkdasgPTa8=;
-        b=GklYtDMqIMBHsKAHpsb1PGNVa0noBXJZb9Q2w7vamNbVUpF/VbPLN6qvShylv7wAQY
-         fP8wrS+FRvP0NCVxYFWtAkx9/d6Yq7toXNaOZ+DzjMCp5mjVqHJZO0sj3/6KiaehLvT9
-         28NiPSDNLGZachrRCOxvz/hMp0uoGwoAGMWdXrq8mReRk7AuTvBNWvTJetoa5G9mZb5S
-         NabIN+kyZUjpGuvHMTl0UEYF5tQun0gyZ6oDggtMovBTgyYstLJX1st8PsY2M998smTq
-         OYhmEeE5pft05o9W0MFUti/qZRy5M7cC5WiIDh3T5oTqtnH3Mc013No16JUUYHNjUElL
-         nK+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVpsLxHCmh5/Fo+d5Dc2308s+U/cjsGDoxfwnUxzzbHq1geQySzExiFZaf6ywMWtC1Z/6JhRCYwIf4+CTtX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB3UeZdsQe7Wpx++dXTCksMF8ox7SCVRslX6EMuOSluehE89US
-	ndGH80HGSSq4b+402Uz8qTKFhkHFmMrIPo5vhH8WllKva2ZslLrZvvs31DHdWkk=
-X-Gm-Gg: ASbGnctnbFoJxsu5OcIOAqcMy5xasAoWqyPZW9fhilhySqsrHLh5wsHh0cKP7eyNOWn
-	mgmkxkgbw0nhxOR1YAHcJzzZ5LUUw9Ik9oW0GeJ562qPr+DRETBdoHkObxmIB1TM3vKVYGnMCmO
-	rFPQseYVRCAfY/fpftAe77ILzBJwkieMSVXBFcPZZo3SgdA3z44JmbmTBTGwJp6+GzwE++PSSwk
-	Y5yCjEgktihdQ9+RlbzF+nizmBnNDxwkekNoWvgZdTncr8jlSVXLf5U6fmBKHQnpFB9lDJj1XU2
-	ZN2yXFFtd157T3fQTMECa3RtgNqT4azsRedTfA1XaB5H9VrqoFe8MF2Kf1q7ew==
-X-Google-Smtp-Source: AGHT+IH7Pn7YrwNkVIPl7Y7iC7lJ60MGgO6KIgekfFqy8hhbQAHwjVQ+88ZLIatTihzxRFG2BgkJcw==
-X-Received: by 2002:a17:902:e5c8:b0:220:c813:dfd1 with SMTP id d9443c01a7336-22db3d777c4mr23449115ad.36.1745479538561;
-        Thu, 24 Apr 2025 00:25:38 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db50ea91fsm6333385ad.126.2025.04.24.00.25.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 00:25:38 -0700 (PDT)
-Date: Thu, 24 Apr 2025 00:25:34 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, broonie@kernel.org,
-	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
-	Zong Li <zong.li@sifive.com>
-Subject: Re: [PATCH v13 05/28] riscv: usercfi state for task and save/restore
- of CSR_SSP on trap entry/exit
-Message-ID: <aAnnbtABLTL81uEY@debug.ba.rivosinc.com>
-References: <20250424-v5_user_cfi_series-v13-0-971437de586a@rivosinc.com>
- <20250424-v5_user_cfi_series-v13-5-971437de586a@rivosinc.com>
+	s=arc-20240116; t=1745480426; c=relaxed/simple;
+	bh=wJzBuNv3LpnWTInF73DPDdf568PiX49EKsvdzlN+VNM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=hTQwLLKCBthzbjAq4tcso/6l3WzfYrz2tyaiDMnarx8ZxlOOEqgBBp87G8BfTw6kMVkhIc4Xl28Qzo9UYM0YgsUY6m+1qAJIhu9fQg5+c1E0iQDP3rZKKD3SK1KLQ8tVAu2UY0T/T2Pr7+Tlpj32n5ux0un/qtNpzeE9WjPGF6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=o88nyfQg; arc=none smtp.client-ip=212.129.21.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
+Received: from localhost (mail.3xo.fr [212.129.21.66])
+	by mail.3xo.fr (Postfix) with ESMTP id 4616ECB;
+	Thu, 24 Apr 2025 09:40:21 +0200 (CEST)
+X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
+Received: from mail.3xo.fr ([212.129.21.66])
+ by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
+ id H1RaQ-c1-sZu; Thu, 24 Apr 2025 09:40:18 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr B33EA8D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
+	t=1745480418; bh=tkMxtFneChkyh6FH2tvBrsB//VGTblVVYgMkNJr9ZRg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o88nyfQgvhZspqftbeutotYHg7ag/f98EgtlBX4u5ywFKamoDhhB2xAe8/pOJC40Y
+	 ghJpjAiFBUQkHUtiILfM/4WQc16ky+ePbgr/s0VSRbkGbKGyRa6YrdCgU3t33brc+Y
+	 4v0B95j6b44kNRBTBtvddbUK9vFLLwgTwJ6QjhU3HnrzAe7vj2dOoyd9G0LTD8qNC3
+	 dh+e8aGQ95LP0eGCZ4FMdOEBx58CvTwfDObEsRmEWnIgTCsodkw2cWGrD61P5/q1NJ
+	 kGVS8Vg9YRtIzyWeXT2ymX2dtPmZqRa+9KdJTfat6CCgETkKPNVMc9B2wrS8v6olY+
+	 0+VdMLzZblIeg==
+Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3xo.fr (Postfix) with ESMTPSA id B33EA8D;
+	Thu, 24 Apr 2025 09:40:18 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250424-v5_user_cfi_series-v13-5-971437de586a@rivosinc.com>
+Date: Thu, 24 Apr 2025 09:40:18 +0200
+From: Nicolas Baranger <nicolas.baranger@3xo.fr>
+To: Paulo Alcantara <pc@manguebit.com>
+Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de, David Howells
+ <dhowells@redhat.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Steve French
+ <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>, Christian Brauner
+ <brauner@kernel.org>
+Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when files
+ are on CIFS share
+In-Reply-To: <bb5f1ed84df1686aebdba5d60ab0e162@3xo.fr>
+References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
+ <35940e6c0ed86fd94468e175061faeac@3xo.fr> <Z-Z95ePf3KQZ2MnB@infradead.org>
+ <48685a06c2608b182df3b7a767520c1d@3xo.fr>
+ <F89FD4A3-FE54-4DB2-BA08-3BCC8843C60E@manguebit.com>
+ <5087f9cb3dc1487423de34725352f57c@3xo.fr>
+ <f12973bcf533a40ca7d7ed78846a0a10@manguebit.com>
+ <e63e7c7ec32e3014eb758fd6f8679f93@3xo.fr>
+ <53697288e2891aea51061c54a2e42595@manguebit.com>
+ <bb5f1ed84df1686aebdba5d60ab0e162@3xo.fr>
+Message-ID: <af401afc7e32d9c0eeb6b36da70d2488@3xo.fr>
+X-Sender: nicolas.baranger@3xo.fr
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Apr 24, 2025 at 12:20:20AM -0700, Deepak Gupta wrote:
->Carves out space in arch specific thread struct for cfi status and shadow
->stack in usermode on riscv.
->
->This patch does following
->- defines a new structure cfi_status with status bit for cfi feature
->- defines shadow stack pointer, base and size in cfi_status structure
->- defines offsets to new member fields in thread in asm-offsets.c
->- Saves and restore shadow stack pointer on trap entry (U --> S) and exit
->  (S --> U)
->
->Shadow stack save/restore is gated on feature availiblity and implemented
->using alternative. CSR can be context switched in `switch_to` as well but
->soon as kernel shadow stack support gets rolled in, shadow stack pointer
->will need to be switched at trap entry/exit point (much like `sp`). It can
->be argued that kernel using shadow stack deployment scenario may not be as
->prevalant as user mode using this feature. But even if there is some
->minimal deployment of kernel shadow stack, that means that it needs to be
->supported. And thus save/restore of shadow stack pointer in entry.S instead
->of in `switch_to.h`.
->
->Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
->Reviewed-by: Zong Li <zong.li@sifive.com>
->Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
->Signed-off-by: Deepak Gupta <debug@rivosinc.com>
->---
-> arch/riscv/include/asm/processor.h   |  1 +
-> arch/riscv/include/asm/thread_info.h |  3 +++
-> arch/riscv/include/asm/usercfi.h     | 24 ++++++++++++++++++++++++
-> arch/riscv/kernel/asm-offsets.c      |  4 ++++
-> arch/riscv/kernel/entry.S            | 23 +++++++++++++++++++++++
-> 5 files changed, 55 insertions(+)
->
->diff --git a/arch/riscv/include/asm/processor.h b/arch/riscv/include/asm/processor.h
->index e3aba3336e63..d851bb5c6da0 100644
->--- a/arch/riscv/include/asm/processor.h
->+++ b/arch/riscv/include/asm/processor.h
->@@ -14,6 +14,7 @@
->
-> #include <asm/ptrace.h>
-> #include <asm/hwcap.h>
->+#include <asm/usercfi.h>
->
-> #define arch_get_mmap_end(addr, len, flags)			\
-> ({								\
->diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
->index f5916a70879a..a0cfe00c2ca6 100644
->--- a/arch/riscv/include/asm/thread_info.h
->+++ b/arch/riscv/include/asm/thread_info.h
->@@ -62,6 +62,9 @@ struct thread_info {
-> 	long			user_sp;	/* User stack pointer */
-> 	int			cpu;
-> 	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
->+#ifdef CONFIG_RISCV_USER_CFI
->+	struct cfi_status	user_cfi_state;
->+#endif
-> #ifdef CONFIG_SHADOW_CALL_STACK
-> 	void			*scs_base;
-> 	void			*scs_sp;
->diff --git a/arch/riscv/include/asm/usercfi.h b/arch/riscv/include/asm/usercfi.h
->new file mode 100644
->index 000000000000..5f2027c51917
->--- /dev/null
->+++ b/arch/riscv/include/asm/usercfi.h
->@@ -0,0 +1,24 @@
->+/* SPDX-License-Identifier: GPL-2.0
->+ * Copyright (C) 2024 Rivos, Inc.
->+ * Deepak Gupta <debug@rivosinc.com>
->+ */
->+#ifndef _ASM_RISCV_USERCFI_H
->+#define _ASM_RISCV_USERCFI_H
->+
->+#ifndef __ASSEMBLY__
->+#include <linux/types.h>
->+
->+#ifdef CONFIG_RISCV_USER_CFI
->+struct cfi_status {
->+	unsigned long ubcfi_en : 1; /* Enable for backward cfi. */
->+	unsigned long rsvd : ((sizeof(unsigned long) * 8) - 1);
->+	unsigned long user_shdw_stk; /* Current user shadow stack pointer */
->+	unsigned long shdw_stk_base; /* Base address of shadow stack */
->+	unsigned long shdw_stk_size; /* size of shadow stack */
->+};
+Hi Paolo
 
-I didn't change this part yet. There are two comments from Radim here
+Thanks again for help.
 
-1) Separate state of enabling/lock status from shadow stack pointer.
-    Same goes for landing pad in later patches. I am arguing that since
-    thread_info is already occupies two cachelines and there isn't any
-    effort to manage it within single cacheline, I am not sure if it's worth
-    the effort. Most likely comment is stale or doesn't have backed up data
-    behind it. Furthermore whenever state of enabling is accessed, most likely
-    shadow stack pointer, base pointer or size of shaodw stack will likely to
-    be accessed as well. Thus having all that in colocated cacheline would
-    actually be useful.
+I'm sorry, I made a mistake in my answer yesterday:
 
-2) Convert enabling/lock status from bitfield to bool or accessed via bitmasks.
-    I am agreeing to feedback here and will do that once we converge on point 1.
+> After a lot of testing, the mounts buffers values: rsize=65536, 
+> wsize=65536, bsize=16777216,...
+
+The actual values in /etc/fstab are:
+rsize=4194304,wsize=4194304,bsize=16777216
+
+But negociated values in /proc/mounts are:
+rsize=65536,wsize=65536,bsize=16777216
+
+And don't know if it's related but I have:
+grep -i maxbuf /proc/fs/cifs/DebugData
+CIFSMaxBufSize: 16384
+
+I've just force a manual 'mount -o remount' and now I have in 
+/proc/mounts the good values (SMB version is 3.1.1).
+Where does this behavior comes from ?
+
+After some search, it appears that when the CIFS share is mounted by 
+systemd option x-systemd.automount (for example doing 'ls' in the mount 
+point directory), negociated values are:
+rsize=65536,wsize=65536,bsize=16777216
+If I umount / remount manually, the negociated values are those defined 
+in /etc/fstab !
+
+Don't know if it's a normal behavior but it is a source of errors / 
+mistake and makes troubleshooting performance issues harder
+
+Kind regards
+Nicolas
 
 
->+
->+#endif /* CONFIG_RISCV_USER_CFI */
->+
->+#endif /* __ASSEMBLY__ */
->+
->+#endif /* _ASM_RISCV_USERCFI_H */
->diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
->index e89455a6a0e5..0c188aaf3925 100644
->--- a/arch/riscv/kernel/asm-offsets.c
->+++ b/arch/riscv/kernel/asm-offsets.c
->@@ -50,6 +50,10 @@ void asm_offsets(void)
-> #endif
->
-> 	OFFSET(TASK_TI_CPU_NUM, task_struct, thread_info.cpu);
->+#ifdef CONFIG_RISCV_USER_CFI
->+	OFFSET(TASK_TI_CFI_STATUS, task_struct, thread_info.user_cfi_state);
->+	OFFSET(TASK_TI_USER_SSP, task_struct, thread_info.user_cfi_state.user_shdw_stk);
->+#endif
-> 	OFFSET(TASK_THREAD_F0,  task_struct, thread.fstate.f[0]);
-> 	OFFSET(TASK_THREAD_F1,  task_struct, thread.fstate.f[1]);
-> 	OFFSET(TASK_THREAD_F2,  task_struct, thread.fstate.f[2]);
->diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
->index 33a5a9f2a0d4..f5531d82f7e7 100644
->--- a/arch/riscv/kernel/entry.S
->+++ b/arch/riscv/kernel/entry.S
->@@ -147,6 +147,20 @@ SYM_CODE_START(handle_exception)
->
-> 	REG_L s0, TASK_TI_USER_SP(tp)
-> 	csrrc s1, CSR_STATUS, t0
->+	/*
->+	 * If previous mode was U, capture shadow stack pointer and save it away
->+	 * Zero CSR_SSP at the same time for sanitization.
->+	 */
->+	ALTERNATIVE("nops(4)",
->+				__stringify(			\
->+				andi s2, s1, SR_SPP;		\
->+				bnez s2, skip_ssp_save;		\
->+				csrrw s2, CSR_SSP, x0;		\
->+				REG_S s2, TASK_TI_USER_SSP(tp); \
->+				skip_ssp_save:),
->+				0,
->+				RISCV_ISA_EXT_ZICFISS,
->+				CONFIG_RISCV_USER_CFI)
-> 	csrr s2, CSR_EPC
-> 	csrr s3, CSR_TVAL
-> 	csrr s4, CSR_CAUSE
->@@ -236,6 +250,15 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
-> 	 * structures again.
-> 	 */
-> 	csrw CSR_SCRATCH, tp
->+
->+	ALTERNATIVE("nops(2)",
->+				__stringify(			\
->+				REG_L s3, TASK_TI_USER_SSP(tp); \
->+				csrw CSR_SSP, s3),
->+				0,
->+				RISCV_ISA_EXT_ZICFISS,
->+				CONFIG_RISCV_USER_CFI)
->+
-> 1:
-> #ifdef CONFIG_RISCV_ISA_V_PREEMPTIVE
-> 	move a0, sp
->
->-- 
->2.43.0
->
+
+Le 2025-04-23 18:28, Nicolas Baranger a écrit :
+
+> Hi Paolo
+> 
+> Thanks for answer, all explanations and help
+> 
+> I'm happy you found those 2 bugs and starting to patch them.
+> Reading your answer, I want to remember that I already found a bug in 
+> cifs DIO starting from Linux 6.10 (when cifs statring to use netfs to 
+> do its IO) and it was fixed by David and Christoph
+> full story here: 
+> https://lore.kernel.org/all/14271ed82a5be7fcc5ceea5f68a10bbd@manguebit.com/T/
+> 
+>> I've noticed that you disabled caching with 'cache=none', is there any
+>> particular reason for that?
+> 
+> Yes, it's related with the precedent use case describes in the other 
+> bug:
+> For backuping servers, I've got some KSMBD cifs share on which there 
+> are some 4TB+ sparses files (back-files) which are LUKS + BTRFS 
+> formatted.
+> The cifs share is mounted on servers and each server mount its own 
+> back-file as a block device and make its backup inside this crypted 
+> disk file
+> Due to performance issues, it is required that the disk files are using 
+> 4KB block and are mounted in servers using losetup DIO option (+ 4K 
+> block size options)
+> When I use something else than 'cache=none', sometimes the BTRFS 
+> filesystem on the back file get corrupted and I also need to mount the 
+> BTRFS filesystem with 'space_cache=v2' to avoid filesystem corruption
+> 
+>> Have you also set rsize, wsize and bsize mount options?  If so, why?
+> 
+> After a lot of testing, the mounts buffers values: rsize=65536, 
+> wsize=65536, bsize=16777216, are the one which provide the best 
+> performances with no corruptions on the back-file filesystem and with 
+> these options a ~2TB backup is possible in few hours during  timeframe 
+> ~1 -> ~5 AM each night
+> 
+> For me it's important that kernel async DIO on netfs continue to work 
+> as it's used by all my production backup system (transfer speed ratio 
+> compared with and without DIO is between 10 to 25)
+> 
+> I will try the patch "[PATCH] netfs: Fix setting of transferred bytes 
+> with short DIO reads", thanks
+> 
+> Let me know if you need further explanations,
+> 
+> Kind regards
+> Nicolas Baranger
+> 
+> Le 2025-04-22 01:45, Paulo Alcantara a écrit :
+> 
+> Nicolas Baranger <nicolas.baranger@3xo.fr> writes:
+> 
+> If you need more traces or details on (both?) issues :
+> 
+> - 1) infinite loop issue during 'cat' or 'copy' since Linux 6.14.0
+> 
+> - 2) (don't know if it's related) the very high number of several bytes
+> TCP packets transmitted in SMB transaction (more than a hundred) for a 
+> 5
+> bytes file transfert under Linux 6.13.8
+> According to your mount options and network traces, cat(1) is 
+> attempting
+> to read 16M from 'toto' file, in which case netfslib will create 256
+> subrequests to handle 64K (rsize=65536) reads from 'toto' file.
+> 
+> The first 64K read at offset 0 succeeds and server returns 5 bytes, the
+> client then sets NETFS_SREQ_HIT_EOF to indicate that this subrequest 
+> hit
+> the EOF.  The next subrequests will still be processed by netfslib and
+> sent to the server, but they all fail with STATUS_END_OF_FILE.
+> 
+> So, the problem is with short DIO reads in netfslib that are not being
+> handled correctly.  It is returning a fixed number of bytes read to
+> every read(2) call in your cat command, 16711680 bytes which is the
+> offset of last subrequest.  This will make cat(1) retry forever as
+> netfslib is failing to return the correct number of bytes read,
+> including EOF.
+> 
+> While testing a potential fix, I also found other problems with DIO in
+> cifs.ko, so I'm working with Dave to get the proper fixes for both
+> netfslib and cifs.ko.
+> 
+> I've noticed that you disabled caching with 'cache=none', is there any
+> particular reason for that?
+> 
+> Have you also set rsize, wsize and bsize mount options?  If so, why?
+> 
+> If you want to keep 'cache=none', then a possible workaround for you
+> would be making rsize and wsize always greater than bsize.  The default
+> values (rsize=4194304,wsize=4194304,bsize=1048576) would do it.
 
