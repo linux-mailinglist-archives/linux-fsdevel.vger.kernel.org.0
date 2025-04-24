@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-47229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0F31A9AD50
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 14:26:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9227FA9AD55
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 14:26:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90FBF462F38
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 12:25:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C71FA179E9E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 12:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E723225DAFC;
-	Thu, 24 Apr 2025 12:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C07525DCF2;
+	Thu, 24 Apr 2025 12:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsdinZro"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XvB/hpcv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 424602580E7;
-	Thu, 24 Apr 2025 12:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83CCB25DCE4;
+	Thu, 24 Apr 2025 12:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745497518; cv=none; b=M4MPcn35J+EVonSp/mZKU7MvXThxu6rPdDSzrzvsirVqb8shDNVBYRcTbB9Uki9evS+OwS+pZNBGP38eDBOJzphTCc9Sw6+ceqyY/hketzFH00aqj601yaucTaMSXnPIvm5aoJwDCgOAFv1l3eA57Q9nZhMDFEa1o8MzwbDk93Y=
+	t=1745497522; cv=none; b=b4D0BaWj4ERkukoutW7imnMrfTUTLkUMqPGuUmRohhsd1HTYvWdzkhoU6yqt+JmDXM1VW5kGnKkr6N6jiIp7BknEoBZUK/PnYeuJn5mD3+BnExbTUG+YN4MD6wMGRJJ8eiEycjuI7CeJZez+RR0NUi6yJj6Uo1OyN7baBNgrOZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745497518; c=relaxed/simple;
-	bh=uwdHfF0zuWFaUykwHH51UXZIlsTqiDAedbt9br9ZKbo=;
+	s=arc-20240116; t=1745497522; c=relaxed/simple;
+	bh=BAR2mPEdQmLCpUNaicjcrIVZW8pnh6HvsXslZl4NsA4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tj/lT3I1GJxY9PQuDg0RCHlWdEKD9LlHxPRgHYQCDDeqhneOQQ80r0uWLavsyT5ezrwqiZlKafEnDI3dDxelGhDjk6QXiPj9zaRcEBnmIiAsgFeCVigzpy13oMSxoDHLXICoTWvnYAplVOd8EQI/IZAkSP72JAw/uvf4OZ20R5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DsdinZro; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01DD8C4CEE8;
-	Thu, 24 Apr 2025 12:25:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=LGcBrs0zjxf8x5O1V8XeAOQ7PDxUnwERh2P5Wt7gdhDx/bfNg0K7Xsl11s4RGiJhCou8NjgdEeWYvPgicjFjaBENSz8Su2MQeQL63RauzHo+n3t/UyCLi825qOxI43JQHWPWeQeaUatRFwr2c1w3GemACIt2ql5PY60vi/olPc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XvB/hpcv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4186AC4CEE3;
+	Thu, 24 Apr 2025 12:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745497517;
-	bh=uwdHfF0zuWFaUykwHH51UXZIlsTqiDAedbt9br9ZKbo=;
+	s=k20201202; t=1745497522;
+	bh=BAR2mPEdQmLCpUNaicjcrIVZW8pnh6HvsXslZl4NsA4=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DsdinZroUGNomIbZ9rloX3tK/a+iW5QE8pZptL4/Xw1oNwApIwh1dmgna91hDSkMy
-	 7DyccZquXYhG3g4mBJbXTs8CAxzp03r5FjgRunsZDovk2X9ZV7oiFrL0CN95WYCh8A
-	 gSm8Oe3uXl0KzIk3F5cT9UBz2jhj2ZMAeEaBpui3qb1A0I7GM1NteaW/oVLz8Qg2aw
-	 FR0aLbnU5Clm9Oz1pQD0c63GNdPMAHQ3Q0NbU08mvZjavw/aUYFKDFJHO1/W96AbHS
-	 qT6RbEkWPeWRtKo1SFmFyr8z8xC+xQPdA1Wp0wfa7RMkUO24en8seVw0WZZHdNEC8D
-	 d2aboEc9HV4mA==
+	b=XvB/hpcvs4PfU9v42lLjOJdW3kpZK1j1TMROnLbJq64GRoLVUpaRLm5VHGmvCzc70
+	 lAbEx5+G3Abvc81v2gPDoPTOtcuZxeNQR/jVfU9fr9KIAFTsbd+WLl/Ba81FRmHl40
+	 9yTYxeDkAabxaCwMLlwnWa14pKuRB7I2f/seiuEjUj2HZLzx+G5A3+N1x0WTa1EsTe
+	 6ucCtdd0G8s82ZF8f3wlS0KPvnhh/OCyEOjYSOhrTUDGiXMNYeWzoDDWmsUdoKlo6c
+	 7CwQmDxZfW71xucG6W5Zw9TpWbWFUHsiZDdR7jZORuL897CT11ANTKHRr6h7LoI7zV
+	 LEP80n+bdHReA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 24 Apr 2025 14:24:34 +0200
-Subject: [PATCH RFC 1/4] pidfs: register pid in pidfs
+Date: Thu, 24 Apr 2025 14:24:35 +0200
+Subject: [PATCH RFC 2/4] net, pidfs: prepare for handing out pidfds for
+ reaped sk->sk_peer_pid
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250424-work-pidfs-net-v1-1-0dc97227d854@kernel.org>
+Message-Id: <20250424-work-pidfs-net-v1-2-0dc97227d854@kernel.org>
 References: <20250424-work-pidfs-net-v1-0-0dc97227d854@kernel.org>
 In-Reply-To: <20250424-work-pidfs-net-v1-0-0dc97227d854@kernel.org>
 To: Oleg Nesterov <oleg@redhat.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
@@ -67,113 +68,281 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
  Christian Brauner <brauner@kernel.org>
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2885; i=brauner@kernel.org;
- h=from:subject:message-id; bh=uwdHfF0zuWFaUykwHH51UXZIlsTqiDAedbt9br9ZKbo=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRw6S49vdXRXiXs7J+6w2lZj4su3D35KYB7f0j3/H0Od
- gfFBG6pdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzk8ySGf4Z9oSterlQMbX7/
- jr/Q5t9lQ6Zbupts18a+OHZ/rZThh28M/+s6XZqVmyyk9gu8aBNrfdSQy7hxxvEJ3y9cttVjCaz
- w4QMA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=9059; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=BAR2mPEdQmLCpUNaicjcrIVZW8pnh6HvsXslZl4NsA4=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRw6S7lXeDqu/WB+cyNTxbvWt9y/Mzf/1v+p35wmGj3I
+ r+54O/rOR2lLAxiXAyyYoosDu0m4XLLeSo2G2VqwMxhZQIZwsDFKQATcX3K8N/1ZsBOpddXQtfL
+ uEpvlNxWHvf0ge2tT7EyehcTUtPeTuBhZDixZCljUEXQxOc8xV++qm7rWv9W6cps1eyr/AmSp3a
+ 85uYGAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-Add simple helpers that allow a struct pid to be pinned via a pidfs
-dentry/inode. If no pidfs dentry exists a new one will be allocated for
-it. A reference is taken by pidfs on @pid. The reference must be
-released via pidfs_put_pid().
+SO_PEERPIDFD currently doesn't support handing out pidfds if the
+sk->sk_peer_pid thread-group leader has already been reaped. In this
+case it currently returns EINVAL. Userspace still wants to get a pidfd
+for a reaped process to have a stable handle it can pass on.
+This is especially useful now that it is possible to retrieve exit
+information through a pidfd via the PIDFD_GET_INFO ioctl()'s
+PIDFD_INFO_EXIT flag.
 
-This will allow AF_UNIX sockets to allocate a dentry for the peer
-credentials pid at the time they are recorded where we know the task is
-still alive. When the task gets reaped its exit status is guaranteed to
-be recorded and a pidfd can be handed for the reaped task.
+Another summary has been provided by David in [1]:
 
+> A pidfd can outlive the task it refers to, and thus user-space must
+> already be prepared that the task underlying a pidfd is gone at the time
+> they get their hands on the pidfd. For instance, resolving the pidfd to
+> a PID via the fdinfo must be prepared to read `-1`.
+>
+> Despite user-space knowing that a pidfd might be stale, several kernel
+> APIs currently add another layer that checks for this. In particular,
+> SO_PEERPIDFD returns `EINVAL` if the peer-task was already reaped,
+> but returns a stale pidfd if the task is reaped immediately after the
+> respective alive-check.
+>
+> This has the unfortunate effect that user-space now has two ways to
+> check for the exact same scenario: A syscall might return
+> EINVAL/ESRCH/... *or* the pidfd might be stale, even though there is no
+> particular reason to distinguish both cases. This also propagates
+> through user-space APIs, which pass on pidfds. They must be prepared to
+> pass on `-1` *or* the pidfd, because there is no guaranteed way to get a
+> stale pidfd from the kernel.
+> Userspace must already deal with a pidfd referring to a reaped task as
+> the task may exit and get reaped at any time will there are still many
+> pidfds referring to it.
+
+In order to allow handing out reaped pidfd SO_PEERPIDFD needs to ensure
+that PIDFD_INFO_EXIT information is available whenever a pidfd for a
+reaped task is created by PIDFD_INFO_EXIT. The uapi promises that reaped
+pidfds are only handed out if it is guaranteed that the caller sees the
+exit information:
+
+TEST_F(pidfd_info, success_reaped)
+{
+        struct pidfd_info info = {
+                .mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT,
+        };
+
+        /*
+         * Process has already been reaped and PIDFD_INFO_EXIT been set.
+         * Verify that we can retrieve the exit status of the process.
+         */
+        ASSERT_EQ(ioctl(self->child_pidfd4, PIDFD_GET_INFO, &info), 0);
+        ASSERT_FALSE(!!(info.mask & PIDFD_INFO_CREDS));
+        ASSERT_TRUE(!!(info.mask & PIDFD_INFO_EXIT));
+        ASSERT_TRUE(WIFEXITED(info.exit_code));
+        ASSERT_EQ(WEXITSTATUS(info.exit_code), 0);
+}
+
+To hand out pidfds for reaped processes we thus allocate a pidfs entry
+for the relevant sk->sk_peer_pid at the time the sk->sk_peer_pid is
+stashed and drop it when the socket is destroyed. This guarantees that
+exit information will always be recorded for the sk->sk_peer_pid task
+and we can hand out pidfds for reaped processes.
+
+Link: https://lore.kernel.org/lkml/20230807085203.819772-1-david@readahead.eu [1]
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/pidfs.c            | 58 +++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/pidfs.h |  3 +++
- 2 files changed, 61 insertions(+)
+ net/unix/af_unix.c | 90 +++++++++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 79 insertions(+), 11 deletions(-)
 
-diff --git a/fs/pidfs.c b/fs/pidfs.c
-index d64a4cbeb0da..8e6c11774c60 100644
---- a/fs/pidfs.c
-+++ b/fs/pidfs.c
-@@ -896,6 +896,64 @@ struct file *pidfs_alloc_file(struct pid *pid, unsigned int flags)
- 	return pidfd_file;
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index f78a2492826f..83b5aebf499e 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -100,6 +100,7 @@
+ #include <linux/splice.h>
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
++#include <linux/pidfs.h>
+ #include <net/af_unix.h>
+ #include <net/net_namespace.h>
+ #include <net/scm.h>
+@@ -643,6 +644,14 @@ static void unix_sock_destructor(struct sock *sk)
+ 		return;
+ 	}
+ 
++	if (sock_flag(sk, SOCK_RCU_FREE)) {
++		pr_info("Attempting to release RCU protected socket with sleeping locks: %p\n", sk);
++		return;
++	}
++
++	if (sk->sk_peer_pid)
++		pidfs_put_pid(sk->sk_peer_pid);
++
+ 	if (u->addr)
+ 		unix_release_addr(u->addr);
+ 
+@@ -734,13 +743,48 @@ static void unix_release_sock(struct sock *sk, int embrion)
+ 		unix_gc();		/* Garbage collect fds */
  }
  
-+/**
-+ * pidfs_register_pid - pin a struct pid through pidfs
-+ * @pid: pid to pin
-+ *
-+ * Pin a struct pid through pidfs. Needs to be paired with
-+ * pidfds_put_put() to not risk leaking the pidfs dentry and inode.
-+ *
-+ * Return: On success zero, on error a negative error code is returned.
-+ */
-+int pidfs_register_pid(struct pid *pid)
+-static void init_peercred(struct sock *sk)
++struct af_unix_peercred {
++	struct pid *peer_pid;
++	const struct cred *peer_cred;
++};
++
++static inline int prepare_peercred(struct af_unix_peercred *peercred)
 +{
-+	struct path path __free(path_put) = {};
-+	int ret;
++	struct pid *pid;
++	int err;
++
++	pid = task_tgid(current);
++	err = pidfs_register_pid(pid);
++	if (likely(!err)) {
++		peercred->peer_pid = get_pid(pid);
++		peercred->peer_cred = get_current_cred();
++	}
++	return err;
++}
++
++static void drop_peercred(struct af_unix_peercred *peercred)
++{
++	struct pid *pid = NULL;
++	const struct cred *cred = NULL;
 +
 +	might_sleep();
 +
-+	if (!pid)
-+		return 0;
++	swap(peercred->peer_pid, pid);
++	swap(peercred->peer_cred, cred);
 +
-+	ret = path_from_stashed(&pid->stashed, pidfs_mnt, get_pid(pid), &path);
-+	if (unlikely(ret))
-+		return ret;
-+	path.dentry = NULL;
-+	return 0;
++	pidfs_put_pid(pid);
++	put_pid(pid);
++	put_cred(cred);
 +}
 +
-+/**
-+ * pidfs_get_pid - pin a struct pid through pidfs
-+ * @pid: pid to pin
-+ *
-+ * Similar to pidfs_register_pid() but only valid if the caller knows
-+ * there's a reference to the @pid through its dentry already.
-+ */
-+void pidfs_get_pid(struct pid *pid)
-+{
-+	if (!pid)
-+		return;
-+
-+	WARN_ON_ONCE(stashed_dentry_get(&pid->stashed) == NULL);
-+}
-+
-+/**
-+ * pidfs_put_pid - drop a pidfs reference
-+ * @pid: pid to drop
-+ *
-+ * Drop a reference to @pid via pidfs. This is only safe if the
-+ * reference has been taken via pidfs_get_pid().
-+ */
-+void pidfs_put_pid(struct pid *pid)
-+{
-+	might_sleep();
-+
-+	if (!pid)
-+		return;
-+
-+	dput(pid->stashed);
-+}
-+
- static void pidfs_inode_init_once(void *data)
++static inline void init_peercred(struct sock *sk,
++				 const struct af_unix_peercred *peercred)
  {
- 	struct pidfs_inode *pi = data;
-diff --git a/include/linux/pidfs.h b/include/linux/pidfs.h
-index 05e6f8f4a026..2676890c4d0d 100644
---- a/include/linux/pidfs.h
-+++ b/include/linux/pidfs.h
-@@ -8,5 +8,8 @@ void pidfs_add_pid(struct pid *pid);
- void pidfs_remove_pid(struct pid *pid);
- void pidfs_exit(struct task_struct *tsk);
- extern const struct dentry_operations pidfs_dentry_operations;
-+int pidfs_register_pid(struct pid *pid);
-+void pidfs_get_pid(struct pid *pid);
-+void pidfs_put_pid(struct pid *pid);
+-	sk->sk_peer_pid = get_pid(task_tgid(current));
+-	sk->sk_peer_cred = get_current_cred();
++	sk->sk_peer_pid = peercred->peer_pid;
++	sk->sk_peer_cred = peercred->peer_cred;
+ }
  
- #endif /* _LINUX_PID_FS_H */
+-static void update_peercred(struct sock *sk)
++static void update_peercred(struct sock *sk, struct af_unix_peercred *peercred)
+ {
+ 	const struct cred *old_cred;
+ 	struct pid *old_pid;
+@@ -748,11 +792,11 @@ static void update_peercred(struct sock *sk)
+ 	spin_lock(&sk->sk_peer_lock);
+ 	old_pid = sk->sk_peer_pid;
+ 	old_cred = sk->sk_peer_cred;
+-	init_peercred(sk);
++	init_peercred(sk, peercred);
+ 	spin_unlock(&sk->sk_peer_lock);
+ 
+-	put_pid(old_pid);
+-	put_cred(old_cred);
++	peercred->peer_pid = old_pid;
++	peercred->peer_cred = old_cred;
+ }
+ 
+ static void copy_peercred(struct sock *sk, struct sock *peersk)
+@@ -761,6 +805,7 @@ static void copy_peercred(struct sock *sk, struct sock *peersk)
+ 
+ 	spin_lock(&sk->sk_peer_lock);
+ 	sk->sk_peer_pid = get_pid(peersk->sk_peer_pid);
++	pidfs_get_pid(sk->sk_peer_pid);
+ 	sk->sk_peer_cred = get_cred(peersk->sk_peer_cred);
+ 	spin_unlock(&sk->sk_peer_lock);
+ }
+@@ -770,6 +815,7 @@ static int unix_listen(struct socket *sock, int backlog)
+ 	int err;
+ 	struct sock *sk = sock->sk;
+ 	struct unix_sock *u = unix_sk(sk);
++	struct af_unix_peercred peercred = {};
+ 
+ 	err = -EOPNOTSUPP;
+ 	if (sock->type != SOCK_STREAM && sock->type != SOCK_SEQPACKET)
+@@ -777,6 +823,9 @@ static int unix_listen(struct socket *sock, int backlog)
+ 	err = -EINVAL;
+ 	if (!READ_ONCE(u->addr))
+ 		goto out;	/* No listens on an unbound socket */
++	err = prepare_peercred(&peercred);
++	if (err)
++		goto out;
+ 	unix_state_lock(sk);
+ 	if (sk->sk_state != TCP_CLOSE && sk->sk_state != TCP_LISTEN)
+ 		goto out_unlock;
+@@ -786,11 +835,12 @@ static int unix_listen(struct socket *sock, int backlog)
+ 	WRITE_ONCE(sk->sk_state, TCP_LISTEN);
+ 
+ 	/* set credentials so connect can copy them */
+-	update_peercred(sk);
++	update_peercred(sk, &peercred);
+ 	err = 0;
+ 
+ out_unlock:
+ 	unix_state_unlock(sk);
++	drop_peercred(&peercred);
+ out:
+ 	return err;
+ }
+@@ -1525,6 +1575,7 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+ 	struct sockaddr_un *sunaddr = (struct sockaddr_un *)uaddr;
+ 	struct sock *sk = sock->sk, *newsk = NULL, *other = NULL;
+ 	struct unix_sock *u = unix_sk(sk), *newu, *otheru;
++	struct af_unix_peercred peercred = {};
+ 	struct net *net = sock_net(sk);
+ 	struct sk_buff *skb = NULL;
+ 	unsigned char state;
+@@ -1561,6 +1612,10 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+ 		goto out;
+ 	}
+ 
++	err = prepare_peercred(&peercred);
++	if (err)
++		goto out;
++
+ 	/* Allocate skb for sending to listening sock */
+ 	skb = sock_wmalloc(newsk, 1, 0, GFP_KERNEL);
+ 	if (!skb) {
+@@ -1636,7 +1691,7 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+ 	unix_peer(newsk)	= sk;
+ 	newsk->sk_state		= TCP_ESTABLISHED;
+ 	newsk->sk_type		= sk->sk_type;
+-	init_peercred(newsk);
++	init_peercred(newsk, &peercred);
+ 	newu = unix_sk(newsk);
+ 	newu->listener = other;
+ 	RCU_INIT_POINTER(newsk->sk_wq, &newu->peer_wq);
+@@ -1695,20 +1750,33 @@ static int unix_stream_connect(struct socket *sock, struct sockaddr *uaddr,
+ out_free_sk:
+ 	unix_release_sock(newsk, 0);
+ out:
++	drop_peercred(&peercred);
+ 	return err;
+ }
+ 
+ static int unix_socketpair(struct socket *socka, struct socket *sockb)
+ {
++	struct af_unix_peercred ska_peercred = {}, skb_peercred = {};
+ 	struct sock *ska = socka->sk, *skb = sockb->sk;
++	int err;
++
++	err = prepare_peercred(&ska_peercred);
++	if (err)
++		return err;
++
++	err = prepare_peercred(&skb_peercred);
++	if (err) {
++		drop_peercred(&ska_peercred);
++		return err;
++	}
+ 
+ 	/* Join our sockets back to back */
+ 	sock_hold(ska);
+ 	sock_hold(skb);
+ 	unix_peer(ska) = skb;
+ 	unix_peer(skb) = ska;
+-	init_peercred(ska);
+-	init_peercred(skb);
++	init_peercred(ska, &ska_peercred);
++	init_peercred(skb, &skb_peercred);
+ 
+ 	ska->sk_state = TCP_ESTABLISHED;
+ 	skb->sk_state = TCP_ESTABLISHED;
 
 -- 
 2.47.2
