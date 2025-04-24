@@ -1,223 +1,235 @@
-Return-Path: <linux-fsdevel+bounces-47144-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47145-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0886BA99C1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 01:37:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE062A99C6D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 02:00:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3776217E114
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Apr 2025 23:37:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 104E3460025
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 00:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D82FC22AE48;
-	Wed, 23 Apr 2025 23:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C090242D8E;
+	Thu, 24 Apr 2025 00:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="vFEtul2V"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="tTIEJaVz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238671DD539
-	for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 23:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963431F4CAB
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 00:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745451433; cv=none; b=G6J90UzzpsGL8bi55T06BjE5sTdT/6RAd+HfNdfp8MV8yWhDxhMPSAOoLrEZs8M2fVytFqxkPU2KDuZvAevNqJqgdidPzAdhHCuoufqn+TIur58WcfMnhhDg4u0Nxyrprwu7Jr5qtKYSRLJ30w1KctDwHF7y/eC4uy9AZD4ksqI=
+	t=1745452836; cv=none; b=NQyRN55qfA2Lo8x8Ft+Mi6gyHNaM2Ryr0ZCbw+rXasOURdF5R0AamYYMc2wgMNoU4y0WmyxEeJhuqJyNlimIbTy7YGZu4/6BhlxEP9FSGwqOdQAuNygl2BPo3j0L48n6NlTw5vFOpqZZ84tFCNJkCGRVNbORo0STt5v7tlIp3hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745451433; c=relaxed/simple;
-	bh=OCZXg1CW3TAVFpbvKOZRzwLidKkrxUp3L4tUyscnjrQ=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=cz07sWU5UG7hI8DlS2V7mEtBjRx6rPchjkucJeR6qYo+bdM4ZLaNw6XDl3ZueXilIMrX+coV52FnWjvtjG3JBhXOvkuIgAhc/Eq4E9Ng5BTq7pWGy3zv2tbjWSdmNlZvVXejug/mjsouZqUXCzdWHWJ0v+eAXTVCEf+NQ0j8Zxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=vFEtul2V; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-86135ae2a29so37787639f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 16:37:08 -0700 (PDT)
+	s=arc-20240116; t=1745452836; c=relaxed/simple;
+	bh=nHkKH6IFU8IHjkmLz+q5PPY9nOouTcwBKlF/qNIPRk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IAOm66vrDUnTwHIP+R0up/Yv/75rLM5Kr+SqtZ9XSFGSa8akY//3JYuDwHMyODhTYpVdjKGWVvq7qqWCiIecJCXSXRzh5jS5JlNOvXitQt0LXGbHQ2214WFKbpr5nDUlU+lEVdJOZ72KR1LEa6tV9F2UFDnsRWBzNBR3cVdYWxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=tTIEJaVz; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-7398d65476eso337987b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Apr 2025 17:00:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745451428; x=1746056228; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KFKOnGdjBqau8OmYx/BNPb2ao+RmVqkaUpGcFvuPwg8=;
-        b=vFEtul2VwIWAeTcRKTR/C1j+CzYU/BvF3VnusUyGc+n2AF/CeXvboAm2hdEQz66Dgu
-         aljOuhZKAtkCqI4yG0yjqhBo2mS1+PLdoacjJjBy+Yz1TeKHWZhqdgSDG6ruy1/jE/3c
-         72A3QwxjJx6QXAREYZjWwG/ZRprQlq1io5apsELHmn/H8xefG1LWnLEQxSxn/Q6vC1W0
-         N8ceY5a1GKmwBuUOzRz514HtDJ50K4LxqFcfC/h1l3HEfb2MbZn4w8fV5NMHqR5fLakD
-         8Plz8CbeTFqqNPYFOG4TDYVHKcyM9oHui1G2TcIKPTfad4LclKROtrGix4RZA/jQvHjn
-         n6ew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745451428; x=1746056228;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745452834; x=1746057634; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=KFKOnGdjBqau8OmYx/BNPb2ao+RmVqkaUpGcFvuPwg8=;
-        b=dKVp5dKV1JuQSEwRmRaGFK/FSN/eA+VW371i6b20Klz5IK/JxJ0EmwFzcoWuODN6ck
-         nfbpLs14GnaARKSJZS8tfGAqMjTdS1i6dszmqv42tPw8nrjQ+zPdVCEJVfghHKDvm/PA
-         vHB93mcxcJnRDjl1CeM1PXKeQtemz6pknLgE5Q2ok8w/4bIYEV3ATH7Na4c0LObhlkHX
-         VPlBDBinl8x2GO2bpn3UOZUr3u2kCTbLhBajPVlVrQAqIYRxX+ICHiDFQI5iGf5BnfxK
-         ADLQ75wJEkFxdg+icMJZX1RYvxptzE/piBl/vxTWCG3fccX+ud/nkuEexEY16pmV36Zs
-         09ZA==
-X-Gm-Message-State: AOJu0YzbQH6QIxRoPgB55KTy/VILHa9y8xpmi/xyP8/C4fBDo69ztbKM
-	5BneXmfvmMV6S3FVt8vtbmDH7ie+kScg29IoR9K9y/DYxY9gC+wTa9zgT4RzAMg=
-X-Gm-Gg: ASbGncsvv8dJpjho5geRi/viKXHsT9xLp3O0tFbZ6/2WOhgEYGogfp8H+DSq3OcMjyr
-	LN0WN6UF2yG4Oiqr2vPpHfwA+RCPggK5g/HUfTCawHgeWrmoW+1jLcTXC72o/+eu6oO7gItvE3X
-	2K6QVZBN3xdt3N5s1I+j7BKLm9yc8GQ70528YKg6d+kYKg9GRfSbZhYvovg+WvVZ7Ok7OmlHDst
-	ij3hLyMMFBp7Uw03pHt/BM2hqGrOSQd3XOhwUkjHEx223mZXVO+w9klTmU5kDYM7O0JzjWbAxY9
-	771Uy1gHojFsa1ONdrf3J51khnPxErrOmTXqXA==
-X-Google-Smtp-Source: AGHT+IGXZyUahui3XSgoqPBy1noMGucKZpOXTwqslsPuoScRJsBmFS0fk7QC4nn06z2EmRRinXRvww==
-X-Received: by 2002:a05:6602:7517:b0:85b:35b1:53b4 with SMTP id ca18e2360f4ac-8644fa93533mr97241839f.12.1745451428150;
-        Wed, 23 Apr 2025 16:37:08 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f824a3d50esm22133173.37.2025.04.23.16.37.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Apr 2025 16:37:07 -0700 (PDT)
-Message-ID: <27c3a7f5-aad8-4f2a-a66e-ff5ae98f31eb@kernel.dk>
-Date: Wed, 23 Apr 2025 17:37:06 -0600
+        bh=S5OcT62i+cl9aw1kw4Ux6AcGa3HwoUmmaKY882iOUVM=;
+        b=tTIEJaVzjdJp9ipZ75NTtSCuUP5FsTJpAIsQmTmhOb6nBoHSoE5NBs7/7Zqox3GfAv
+         Om+ipg+KXnoJc+chlDhK7drmiFi1AM37larOxNRnRMSnrGTgPR3WeDLsInfTNdcctaKY
+         d2VzyhhoOY5PxGInEkU80Me/u4KskAzdeS9kEcaBEvJ6NyKNqee9wzzHk7LLgaXWEe4r
+         BmkNosNd/QNHS7M+7G+Pup6JiYEN42XaGnxdW50H868rZoclbPLXvRgqA0GP+mmAKw4/
+         Gju8xVYa49svVB17sIDqD/0VAFm1fmVBx1VylxvtQTR9JqSKxhZ9vtnB0Cxrwn3yCSTD
+         jVKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745452834; x=1746057634;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S5OcT62i+cl9aw1kw4Ux6AcGa3HwoUmmaKY882iOUVM=;
+        b=BW4RuJ6MFORlrZ/ReOdWzM22PizjMfmZjJSQ2VHunFSgm4Mjbm/z4iTvpxenoemnbv
+         3EQE+j4Lhf2qCSYCY3A7M0M5WeR/oJWq7dvyJM6RdG4lxTeAW9L+pI41YqOobwPb0OBc
+         jxzxCoKDVlNJAsF89ZQXrWDbtIAHz9E2ng05kQPFl36JYmuyuN7V0L0YHwHbpSe26cHE
+         j8h5xqiPQSYMYT+VuRLxylkC1oNH7pBVBdmipEorYeEH/h8ZIklMcjUGWxR7xdMk/NOV
+         0SIRBpH3clC6Ti8qfQz2HpplIedM9f0B1dtcFdd34fGe3Tq5b7aocIZEO0BXG1WSY3qB
+         XR8A==
+X-Forwarded-Encrypted: i=1; AJvYcCXdi8GJ95j4ficY/NJmwl/9KwpZENeMIyC6GG8gQ5i73sXfPYbrJzB3zSpUHfeB+AV4bE5bMe3bnYwFgbg/@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvHy3nFwUwggivGg3k0MZDRtcyQ2OIb7PwD+2VkameyZNTnnoX
+	sFqq0Cb/kbFNzHAUKHVxG6b7hYpLPbRY+jjNzxza2B5YWaXX2vphpKcWIKwRpv0=
+X-Gm-Gg: ASbGncuLjnQtuSVwmUWyNRVrzzI/i7J0efZi/iwGTFpr+5x6doApJkyzszYt6BqP6Fx
+	ppsmusxQ0xZSAMi1E+ygHOMslGVEm529D0i1Sx4iS8nyylE/gWqRU9GWoVgAnNNTH6SbqMbrFtD
+	PXQIswAFoUlJRFIqRr0BY+Du2K+RO3Y8z5Nz0+JgdYDnH6lgcrSU3ksGxIpgD7MQ/sKWZfBxAY0
+	qzSHmC8HFA4Eg5sQY3oOrX18siSRjHe8QsU70RqaHDRUKsJbRuJ1pIOk5Tq0nH4LxbiYFoKDvbf
+	5ybNgNR87GDlTv4rpG6SHfjTeZ+SFtvh3ExnBB9KW/HMcPx8xEs=
+X-Google-Smtp-Source: AGHT+IH4j35h3jLwkaElmed40lsuZThIxCdtbM8R+7icxou6aZCYqN/7j54Ho7tdgxWbsJBSD2dEvQ==
+X-Received: by 2002:a05:6a00:3a1d:b0:73c:3f2e:5df5 with SMTP id d2e1a72fcca58-73e2680c3aemr381304b3a.9.1745452833588;
+        Wed, 23 Apr 2025 17:00:33 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25941cc1sm177897b3a.60.2025.04.23.17.00.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Apr 2025 17:00:33 -0700 (PDT)
+Date: Wed, 23 Apr 2025 17:00:29 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, broonie@kernel.org, rick.p.edgecombe@intel.com,
+	Zong Li <zong.li@sifive.com>,
+	linux-riscv <linux-riscv-bounces@lists.infradead.org>
+Subject: Re: [PATCH v12 05/28] riscv: usercfi state for task and save/restore
+ of CSR_SSP on trap entry/exit
+Message-ID: <aAl_HRk49lnseiio@debug.ba.rivosinc.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-5-e51202b53138@rivosinc.com>
+ <D92WQWAUQYY4.2ED8JAFBDHGRN@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- Linux-MM <linux-mm@kvack.org>, Johannes Weiner <hannes@cmpxchg.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] mm/userfaultfd: prevent busy looping for tasks with signals
- pending
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D92WQWAUQYY4.2ED8JAFBDHGRN@ventanamicro.com>
 
-userfaultfd may use interruptible sleeps to wait on userspace filling
-a page fault, which works fine if the task can be reliably put to
-sleeping waiting for that. However, if the task has a normal (ie
-non-fatal) signal pending, then TASK_INTERRUPTIBLE sleep will simply
-cause schedule() to be a no-op.
+On Thu, Apr 10, 2025 at 01:04:39PM +0200, Radim Krčmář wrote:
+>2025-03-14T14:39:24-07:00, Deepak Gupta <debug@rivosinc.com>:
+>> diff --git a/arch/riscv/include/asm/thread_info.h b/arch/riscv/include/asm/thread_info.h
+>> @@ -62,6 +62,9 @@ struct thread_info {
+>>  	long			user_sp;	/* User stack pointer */
+>>  	int			cpu;
+>>  	unsigned long		syscall_work;	/* SYSCALL_WORK_ flags */
+>> +#ifdef CONFIG_RISCV_USER_CFI
+>> +	struct cfi_status	user_cfi_state;
+>> +#endif
+>
+>I don't think it makes sense to put all the data in thread_info.
+>kernel_ssp and user_ssp is more than enough and the rest can comfortably
+>live elsewhere in task_struct.
+>
+>thread_info is supposed to be as small as possible -- just spanning
+>multiple cache-lines could be noticeable.
 
-For a task that registers a page with userfaultfd and then proceeds
-to do a write from it, if that task also has a signal pending then
-it'll essentially busy loop from do_page_fault() -> handle_userfault()
-until that fault has been filled. Normally it'd be expected that the
-task would sleep until that happens. Here's a trace from an application
-doing just that:
+I can change it to only include only `user_ssp`, base and size.
 
-handle_userfault+0x4b8/0xa00 (P)
-hugetlb_fault+0xe24/0x1060
-handle_mm_fault+0x2bc/0x318
-do_page_fault+0x1e8/0x6f0
-do_translation_fault+0x9c/0xd0
-do_mem_abort+0x44/0xa0
-el1_abort+0x3c/0x68
-el1h_64_sync_handler+0xd4/0x100
-el1h_64_sync+0x6c/0x70
-fault_in_readable+0x74/0x108 (P)
-iomap_file_buffered_write+0x14c/0x438
-blkdev_write_iter+0x1a8/0x340
-vfs_write+0x20c/0x348
-ksys_write+0x64/0x108
-__arm64_sys_write+0x1c/0x38
+But before we go there, see below:
 
-where the task is looping with 100% CPU time in the above mentioned
-fault path.
+$ pahole -C thread_info kbuild/vmlinux
+struct thread_info {
+         long unsigned int          flags;                /*     0     8 */
+         int                        preempt_count;        /*     8     4 */
 
-Since it's impossible to handle signals, or other conditions like
-TIF_NOTIFY_SIGNAL that also prevents interruptible sleeping, from the
-fault path, use TASK_UNINTERRUPTIBLE with a short timeout even for vmf
-modes that would normally ask for INTERRUPTIBLE or KILLABLE sleep. Fatal
-signals will still be handled by the caller, and the timeout is short
-enough to hopefully not cause any issues. If this is the first invocation
-of this fault, eg FAULT_FLAG_TRIED isn't set, then the normal sleep mode
-is used.
+         /* XXX 4 bytes hole, try to pack */
 
-Cc: stable@vger.kernel.org
-Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
-Reported-by: Zhiwei Jiang <qq282012236@gmail.com>
-Link: https://lore.kernel.org/io-uring/20250422162913.1242057-1-qq282012236@gmail.com/
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+         long int                   kernel_sp;            /*    16     8 */
+         long int                   user_sp;              /*    24     8 */
+         int                        cpu;                  /*    32     4 */
 
----
+         /* XXX 4 bytes hole, try to pack */
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index d80f94346199..1016268c7b51 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -334,15 +334,29 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
- 	return ret;
- }
- 
--static inline unsigned int userfaultfd_get_blocking_state(unsigned int flags)
-+struct userfault_wait {
-+	unsigned int task_state;
-+	bool timeout;
-+};
-+
-+static struct userfault_wait userfaultfd_get_blocking_state(unsigned int flags)
- {
-+	/*
-+	 * If the fault has already been tried AND there's a signal pending
-+	 * for this task, use TASK_UNINTERRUPTIBLE with a small timeout.
-+	 * This prevents busy looping where schedule() otherwise does nothing
-+	 * for TASK_INTERRUPTIBLE when the task has a signal pending.
-+	 */
-+	if ((flags & FAULT_FLAG_TRIED) && signal_pending(current))
-+		return (struct userfault_wait) { TASK_UNINTERRUPTIBLE, true };
-+
- 	if (flags & FAULT_FLAG_INTERRUPTIBLE)
--		return TASK_INTERRUPTIBLE;
-+		return (struct userfault_wait) { TASK_INTERRUPTIBLE, false };
- 
- 	if (flags & FAULT_FLAG_KILLABLE)
--		return TASK_KILLABLE;
-+		return (struct userfault_wait) { TASK_KILLABLE, false };
- 
--	return TASK_UNINTERRUPTIBLE;
-+	return (struct userfault_wait) { TASK_UNINTERRUPTIBLE, false };
- }
- 
- /*
-@@ -368,7 +382,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	struct userfaultfd_wait_queue uwq;
- 	vm_fault_t ret = VM_FAULT_SIGBUS;
- 	bool must_wait;
--	unsigned int blocking_state;
-+	struct userfault_wait wait_mode;
- 
- 	/*
- 	 * We don't do userfault handling for the final child pid update
-@@ -466,7 +480,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	uwq.ctx = ctx;
- 	uwq.waken = false;
- 
--	blocking_state = userfaultfd_get_blocking_state(vmf->flags);
-+	wait_mode = userfaultfd_get_blocking_state(vmf->flags);
- 
-         /*
-          * Take the vma lock now, in order to safely call
-@@ -488,7 +502,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 	 * following the spin_unlock to happen before the list_add in
- 	 * __add_wait_queue.
- 	 */
--	set_current_state(blocking_state);
-+	set_current_state(wait_mode.task_state);
- 	spin_unlock_irq(&ctx->fault_pending_wqh.lock);
- 
- 	if (!is_vm_hugetlb_page(vma))
-@@ -501,7 +515,11 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
- 
- 	if (likely(must_wait && !READ_ONCE(ctx->released))) {
- 		wake_up_poll(&ctx->fd_wqh, EPOLLIN);
--		schedule();
-+		/* See comment in userfaultfd_get_blocking_state() */
-+		if (!wait_mode.timeout)
-+			schedule();
-+		else
-+			schedule_timeout(HZ / 10);
- 	}
- 
- 	__set_current_state(TASK_RUNNING);
+         long unsigned int          syscall_work;         /*    40     8 */
+         struct cfi_status          user_cfi_state;       /*    48    32 */
+         /* --- cacheline 1 boundary (64 bytes) was 16 bytes ago --- */
+         long unsigned int          a0;                   /*    80     8 */
+         long unsigned int          a1;                   /*    88     8 */
+         long unsigned int          a2;                   /*    96     8 */
 
--- 
-Jens Axboe
+         /* size: 104, cachelines: 2, members: 10 */
+         /* sum members: 96, holes: 2, sum holes: 8 */
+         /* last cacheline: 40 bytes */
+};
 
+If we were to remove entire `cfi_status`, it would still be 72 bytes (88 bytes
+if shadow call stack were enabled) and already spans across two cachelines. I
+did see the comment above that it should fit inside a cacheline. Although I
+assumed its stale comment given that it already spans across cacheline and I
+didn't see any special mention in commit messages of changes which grew this
+structure above one cacheline. So I assumed this was a stale comment.
+
+On the other hand, whenever enable/lock bits are checked, there is a high
+likelyhood that user_ssp and other fields are going to be accessed and
+thus it actually might be helpful to have it all in one cacheline during
+runtime.
+
+So I am not sure if its helpful sticking to the comment which already is stale.
+
+>
+>> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+>> @@ -147,6 +147,20 @@ SYM_CODE_START(handle_exception)
+>>
+>>  	REG_L s0, TASK_TI_USER_SP(tp)
+>>  	csrrc s1, CSR_STATUS, t0
+>> +	/*
+>> +	 * If previous mode was U, capture shadow stack pointer and save it away
+>> +	 * Zero CSR_SSP at the same time for sanitization.
+>> +	 */
+>> +	ALTERNATIVE("nop; nop; nop; nop",
+>> +				__stringify(			\
+>> +				andi s2, s1, SR_SPP;	\
+>> +				bnez s2, skip_ssp_save;	\
+>> +				csrrw s2, CSR_SSP, x0;	\
+>> +				REG_S s2, TASK_TI_USER_SSP(tp); \
+>> +				skip_ssp_save:),
+>> +				0,
+>> +				RISCV_ISA_EXT_ZICFISS,
+>> +				CONFIG_RISCV_USER_CFI)
+>
+>(I'd prefer this closer to the user_sp and kernel_sp swap, it's breaking
+> the flow here.  We also already know if we've returned from userspace
+> or not even without SR_SPP, but reusing the information might tangle
+> the logic.)
+>
+>>  	csrr s2, CSR_EPC
+>>  	csrr s3, CSR_TVAL
+>>  	csrr s4, CSR_CAUSE
+>> @@ -236,6 +250,18 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
+>>  	csrw CSR_SCRATCH, tp
+>> +
+>> +	/*
+>> +	 * Going back to U mode, restore shadow stack pointer
+>> +	 */
+>
+>Are we?  I think we can be just as well returning back to kernel-space.
+>Similar to how we can enter the exception handler from kernel-space.
+>
+>> +	ALTERNATIVE("nop; nop",
+>> +				__stringify(					\
+>> +				REG_L s3, TASK_TI_USER_SSP(tp); \
+>> +				csrw CSR_SSP, s3),
+>> +				0,
+>> +				RISCV_ISA_EXT_ZICFISS,
+>> +				CONFIG_RISCV_USER_CFI)
+>> +
+>
+>Thanks.
 
