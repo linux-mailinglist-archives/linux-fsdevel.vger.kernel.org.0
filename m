@@ -1,212 +1,256 @@
-Return-Path: <linux-fsdevel+bounces-47238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47239-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80A4EA9ADD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 14:47:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7D53A9AE00
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 14:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD5E43B97B0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 12:46:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191781B655C9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 12:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC9227B4FE;
-	Thu, 24 Apr 2025 12:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E53C27CB18;
+	Thu, 24 Apr 2025 12:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y/MZsjis"
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="AYhgthY5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC1B2224D7;
-	Thu, 24 Apr 2025 12:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB4427CB1F
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 12:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745498817; cv=none; b=l7WZyVW0HfSeoS1twTq9ZSpEVW87Nj/QKVjLc1vP6AwyuZW2fnddbBwTK8RgD/+e6aVvYWQJRUNrBIAbrLO8udg647aYnHrXz5rwUd5uGfnuUY3+SGJ6A+yvn1tEOaqhqBy9qzmZDp5TUWQkELiQQ01/cHNmLP/A5Wyxy5HZ3FU=
+	t=1745499104; cv=none; b=PULpSTYmvvzIpFV7bPTpCX3HM8U/HABwZ6dj9wV0k34kgJiD8axOdLnVKps409ULOM1hp78Q6zIqjyhZ2qtmbsVuQ67sdOtIcPTuvEFJ0TA4jNoW8ADTKt8zwIY5o9gpg5pxj5WDW0xQksPaN/+/bYO41/zeSM3GbZheK8q5zIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745498817; c=relaxed/simple;
-	bh=UvcvRWYN3RuJk5MuwIcps2gtfN6XtnWVNcGrJqAeEpI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pJiMy6xmmf9Dp0BkajVDEyA/mBkkb27qCECcsGduTXO0y1vhtW2PcKDuxbE+crcS8sBxoWirLtMR38RMcBhOl1ekk+sFThU5E+CkZyrfQmM/WIm72LXzNhShDC6nYYkl6+Sx8Hc0LBMy0vn5PHl87djRAIm9BWCoSWr/+LtxLMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y/MZsjis; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-47690a4ec97so11190081cf.2;
-        Thu, 24 Apr 2025 05:46:55 -0700 (PDT)
+	s=arc-20240116; t=1745499104; c=relaxed/simple;
+	bh=YasCWAy3v55s89pMoa3ranL51jlpEy9fj4l4xNuEECQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=VCA1z3M1ip5BCKfekV2KshcPBtYfJittvN+q32zTRilKXkyY53+p3PluaejcmnbGxIyFqNLpAUweni7Yc/wO+xkuJ8TalOqB5HJ00y03xt/r9Sxy1k/kEw8t9YsGKA+fwMXM5n7PoRV6ZjFkkSRPuUUiCTasOhW25/U7AG0SKS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=AYhgthY5; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43d4ff56136so1387495e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 05:51:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745498814; x=1746103614; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fYM/9Ory8tzfg3Kpjz+Y35nva+i71yk+zvmGNY+Byso=;
-        b=Y/MZsjisF573GbRsUn/93ik3KmGCPyrGk2wxSsC3NJNyiSVUAjuESL588/TtAvpPbk
-         hP/RoK5xV/M/BBp9P6BWB39ZdTwNU3ZFDb4sog3VHCkLbIGQwtf/Nd6pekpc52F5Qxt1
-         j+z9GUzKx1TbKvhZfudXs1r/tAfcdVnBJhH/IQQJOzzbkdkiPitgu4VtBzkTcxyku329
-         FxmXJXAO9/HRD4bjHcRxgwgOid3yaahiwkc40o9ru0UlmLFqYN/eLhr8vH86twUBZVCZ
-         3IeFlSuOUXn8TJCqtymkgE/mdsCFmv60zyM1MFeTEr2k3ZBVc/RuObZwdlVXRogkV2fY
-         SJQQ==
+        d=ventanamicro.com; s=google; t=1745499101; x=1746103901; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MLukpWT5NNOxSvsbTFh0JQPpU9SQzhdcC+2BWmCpzxc=;
+        b=AYhgthY5jad5RAK6lPwJjWxOTuABxtdCTU5adNG80frqMjhaPv++bPYW+Mo5dBlYty
+         rHWLQ7xmIaj/k/bMYj4dq1x0FlrNLSRD7dp3X0abKHAM/ut1XHJCuQfZjXPHDa7D2/uu
+         V0tBbW+2d/ScTBdSoNtId0mOGRP5x9P1dFS82PqPfOcjxLkylsWNUS+uzs452nsJpxYz
+         8ZlTU0TJpF/DD1/rw5e61zruX41sRlxN+FXwWxCPdFmGgo1b0LHVfpIai7bLJK+g1NNo
+         +R7xaWa9FyNJRli7ZnMHMKZzHLN4nWLY/9I7W81tGZk7uAZP09UWQiu7RcZ8z6zHlieo
+         4kUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745498814; x=1746103614;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fYM/9Ory8tzfg3Kpjz+Y35nva+i71yk+zvmGNY+Byso=;
-        b=VBrcZ5FJl3fSPvEfsHeYXX1RS4BzjfIa7fLsl/JwZ1x1k7YiC5FOM6s4xRcpAgtqpd
-         ThlSVuQKax3P42LpwYwEBJKKKzem4LeI8KQSY8/x54fdzFG1rPZ17UfMO+bgy0Bmh2f7
-         s6gpufEAn81LGzu0nSs3CVCpXA+yo0sVi1UrgQHWJQ2TTXl7b+9sFOoA/tKvIk/+fXZf
-         uO/xCzKnbnlcpy9tGWBajeVLMn17ehuXRp7mHRVoOpm0UbQnx2WyIH5Eh8j9dEFSeGAu
-         uLawNpajuwWKEsll20eh2lEJzLo4qL+0zbLiukiXqbv02RphUfFnlbHHs0B8XQLPMznB
-         uYWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYuSnbuzoLyshiRICgeCq4Mqj+A5Guf1EI9yKhH4Ya2JH32lIHIwNlfaghvxONylWOVe/TYgrmNA==@vger.kernel.org, AJvYcCUkpBdUZoNaxfppZsG+SbJ5PBczdtKKYgF02jhUDZGzwiG2bOv1OBpU3aXlthShbOSlFW7/6Pnj/xeCIUz4dLYJMhcJV3JQ@vger.kernel.org, AJvYcCWzcsiyS4wgcDA1uP4TJWG9/uQLKkrOmTykVwqBsxXyYsanKkApMieJPeOKGlAL9qr9si18fQdickuK+mu+@vger.kernel.org, AJvYcCXKFTctUgFpcSEXd8g9MvBizlC2Os+dBJyBB4ZLObOUO6R+yRSjwM2cEApSgm76H7wyeYFaFyRj1Etn21Ef@vger.kernel.org
-X-Gm-Message-State: AOJu0YwotrSb5N3qPTSOFaiN5nrYPUrYmKkdthkRvRV0AaGn8DY3MPa4
-	32IjzwUWY7TjKrDMrJEisf7za8GDvI4Eg5uWzhjHPf544T2zVjl6
-X-Gm-Gg: ASbGncuEPIWP6eW23nSFqrhaKDhaTLOUL0To1iLHIXRLh9kZCjmLIQ2NFlbyXEjAxow
-	hte75KcSoCXsUevc4AAXkYcfWzjTvtN7ROoYMX7IPGjMA0NbJafzkXChWrLiFcToPgJ1RSFKtOW
-	jf60kmF10VtcX/5pcrtSw6GB4Zgw1LfKk/K3Y1C+nodGHQJMBihQPp4so7xFr+6UAyC7tjUAbA0
-	nLlX/U8M2+jtMsO7EWAMy9dckg289X6LCPb9n6uXdLyWD+e2l9mSR0a1XjDGT55iafs4ChKWlE5
-	I17kbDSg6H6D0wdOPcw7vwrzok42MOlNIRNRW1VHdIBmxVcE9zYx7+lHVf1Vkk/rpc6A0mbZ+7E
-	Q2O9Fy72FzcDsbT6S8fOYRteQtAmYXkH5Zw2eMQaat68OViF97YcQkDSE5R2EBtxo0Wa2
-X-Google-Smtp-Source: AGHT+IGPS/dXTlSAUgqMyWGzy05kAtY0v8SaSKHbVmoNWKqJ530g0u4yrhTVutuLdWk4A0POPvlmzw==
-X-Received: by 2002:a05:6214:21ef:b0:6e8:97f6:3229 with SMTP id 6a1803df08f44-6f4bfbd59b7mr44609636d6.16.1745498814256;
-        Thu, 24 Apr 2025 05:46:54 -0700 (PDT)
-Received: from fuse-fed34-svr.evoforge.org (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4c08ef1a6sm8960636d6.7.2025.04.24.05.46.53
+        d=1e100.net; s=20230601; t=1745499101; x=1746103901;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MLukpWT5NNOxSvsbTFh0JQPpU9SQzhdcC+2BWmCpzxc=;
+        b=XD2LGQ6e/tMnnQ4MfnxJycfpmxvGGaQpNvLwqTJZ1FBncWNMMptPt45Zt84d9zo9S6
+         JkQSCZROM8hIAGdx2Bkiqe+9IsteLhqVP4vdS3NRaE5gw7DMxJhoo0AP8nDNqYsSyJTn
+         s80rvoJ+BNsOIslqAom8jYv/DU85qinC0jAQ7ZQDOL8RmWrLLvfZrT1VUPSElnWSjerC
+         29TYsFMkxXMRSMKMe/YqlSWrx61jG4DmZJR2SMlKzxRi8ggwJxgHoLcRRooTEFCtl5D+
+         xisluuF5o+I2JBx9ZlhltgHi0rN34FMIlT4IkQ/5xmZ9+Gng8p+YHjm3/ayeuGin3vCV
+         E8wg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3EfdgS7vtKXetl9TC7cOtIRHUh7FLKhtIvgRR7LFhwrijRNcjH1L7CtdGiFk51iWcvvkknIsd0YawefKv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxu/mpvpVZBaweV/WT822PzwhIWl0oSEfP1WzkJgq8VcNZj+iC
+	zljwFrPCqiBBiR93jK7aLmda3pcMM0RS/pf179GG4PCJYscBfMVzeDTCmZTlskU=
+X-Gm-Gg: ASbGncsbtEBmC0ewX140Hto2Us3i9J8BbqzeLp149ubbcLblq7bGvaw3UxZAIp8O8ZM
+	KMTUvPKmt1Xr3PiTS+jOZwEOgsXP3j63xRIqv2nQl9iPXT8aYn8Vbdys+SzucN52CNyrZTrz97w
+	rQ/R6ZU4mnRnpgdRF3lCacUX7hm+772IbYDFHJAlYBjbzammKcDTGAel9HPLb+HDeEsQj+yuoNT
+	klHtxoK2D6OxNw2N4dyrSHgTCxDO7PcunwmkK58l/vrdHLO8y6Z4O5ZNXMXTunhP6AM1TOIa4md
+	Qp6TmMoPuEXjBPZ7ZJEoPBKYTwPGIKm73Eqm9rgjlXHSE5rQ
+X-Google-Smtp-Source: AGHT+IEM7f4Ug05qJLQixhJCwrNUQhZVnfUcKsq0i+OggaoW7x6aAvFNMmOAKB/VOVrygSxaqnTFQw==
+X-Received: by 2002:a05:600c:3d89:b0:439:8c80:6aee with SMTP id 5b1f17b1804b1-4409bd8d808mr9055605e9.4.1745499100564;
+        Thu, 24 Apr 2025 05:51:40 -0700 (PDT)
+Received: from localhost ([2a02:8308:a00c:e200:b30c:ee4d:9e10:6a46])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d29b8efsm20710185e9.6.2025.04.24.05.51.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Apr 2025 05:46:53 -0700 (PDT)
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-To: paul@paul-moore.com
-Cc: omosnace@redhat.com,
-	linux-security-module@vger.kernel.org,
-	selinux@vger.kernel.org,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Tejun Heo <tj@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Hugh Dickins <hughd@google.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH] vfs,shmem,kernfs: fix listxattr to include security.* xattrs
-Date: Thu, 24 Apr 2025 08:46:43 -0400
-Message-ID: <20250424124644.4413-1-stephen.smalley.work@gmail.com>
-X-Mailer: git-send-email 2.49.0
+        Thu, 24 Apr 2025 05:51:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 24 Apr 2025 14:51:39 +0200
+Message-Id: <D9EVSGGM0XDE.25R31NY7EQTJX@ventanamicro.com>
+Subject: Re: [PATCH v12 10/28] riscv/mm: Implement map_shadow_stack()
+ syscall
+Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar"
+ <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
+ <dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
+ <hpa@zytor.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Liam R.
+ Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>,
+ "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Paul Walmsley"
+ <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
+ Ou" <aou@eecs.berkeley.edu>, "Conor Dooley" <conor@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Arnd Bergmann" <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>,
+ "Eric Biederman" <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>,
+ "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann
+ Horn" <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+ <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
+ <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
+ <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+ <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
+ <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
+ <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
+ <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
+ <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "Zong Li"
+ <zong.li@sifive.com>, "linux-riscv"
+ <linux-riscv-bounces@lists.infradead.org>
+To: "Deepak Gupta" <debug@rivosinc.com>
+From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
+References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
+ <20250314-v5_user_cfi_series-v12-10-e51202b53138@rivosinc.com>
+ <D92VAWLM8AGD.3CF1VH6NYHCYV@ventanamicro.com>
+ <aAmtKhlwKV7oz7RF@debug.ba.rivosinc.com>
+In-Reply-To: <aAmtKhlwKV7oz7RF@debug.ba.rivosinc.com>
 
-The vfs has long had a fallback to obtain the security.* xattrs from the
-LSM when the filesystem does not implement its own listxattr, but
-shmem/tmpfs and kernfs later gained their own xattr handlers to support
-other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
-filesystems like sysfs no longer return the synthetic security.* xattr
-names via listxattr unless they are explicitly set by userspace or
-initially set upon inode creation after policy load. coreutils has
-recently switched from unconditionally invoking getxattr for security.*
-for ls -Z via libselinux to only doing so if listxattr returns the xattr
-name, breaking ls -Z of such inodes.
+2025-04-23T20:16:58-07:00, Deepak Gupta <debug@rivosinc.com>:
+> On Thu, Apr 10, 2025 at 11:56:44AM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99 wro=
+te:
+>>2025-03-14T14:39:29-07:00, Deepak Gupta <debug@rivosinc.com>:
+>>> As discussed extensively in the changelog for the addition of this
+>>> syscall on x86 ("x86/shstk: Introduce map_shadow_stack syscall") the
+>>> existing mmap() and madvise() syscalls do not map entirely well onto th=
+e
+>>> security requirements for shadow stack memory since they lead to window=
+s
+>>> where memory is allocated but not yet protected or stacks which are not
+>>> properly and safely initialised. Instead a new syscall map_shadow_stack=
+()
+>>> has been defined which allocates and initialises a shadow stack page.
+>>>
+>>> This patch implements this syscall for riscv. riscv doesn't require tok=
+en
+>>> to be setup by kernel because user mode can do that by itself. However =
+to
+>>> provide compatibility and portability with other architectues, user mod=
+e
+>>> can specify token set flag.
+>>
+>>RISC-V shadow stack could use mmap() and madvise() perfectly well.
+>
+> Deviating from what other arches are doing will create more thrash. I exp=
+ect
+> there will be merging of common logic between x86, arm64 and riscv. Infac=
+t I
+> did post one such RFC patch set last year (didn't follow up on it). Using
+> `mmap/madvise` defeats that purpose of creating common logic between arch=
+es.
+>
+> There are pitfalls as mentioned with respect to mmap/madivse because of
+> unique nature of shadow stack. And thus it was accepted to create a new s=
+yscall
+> to create such mappings. RISC-V will stick to that.
 
-Before:
-$ getfattr -m.* /run/initramfs
-<no output>
-$ getfattr -m.* /sys/kernel/fscaps
-<no output>
+Ok.
 
-After:
-$ getfattr -m.* /run/initramfs
-security.selinux
-$ getfattr -m.* /sys/kernel/fscaps
-security.selinux
+>>> diff --git a/arch/riscv/kernel/usercfi.c b/arch/riscv/kernel/usercfi.c
+>>> +static noinline unsigned long amo_user_shstk(unsigned long *addr, unsi=
+gned long val)
+>>> +{
+>>> +	/*
+>>> +	 * Never expect -1 on shadow stack. Expect return addresses and zero
+>>> +	 */
+>>> +	unsigned long swap =3D -1;
+>>> +	__enable_user_access();
+>>> +	asm goto(
+>>> +		".option push\n"
+>>> +		".option arch, +zicfiss\n"
+>>
+>>Shouldn't compiler accept ssamoswap.d opcode even without zicfiss arch?
+>
+> Its illegal instruction if shadow stack aren't available. Current toolcha=
+in
+> emits it only if zicfiss is specified in march.
 
-Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=iOawX4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
-Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.smalley.work@gmail.com/
-Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
----
- fs/kernfs/inode.c |  8 +++++++-
- fs/xattr.c        | 13 +++++++++++++
- mm/shmem.c        |  8 +++++++-
- 3 files changed, 27 insertions(+), 2 deletions(-)
+Oof, I'll look why arch is being used like that, thanks.
 
-diff --git a/fs/kernfs/inode.c b/fs/kernfs/inode.c
-index b83054da68b3..8fd69e48d32d 100644
---- a/fs/kernfs/inode.c
-+++ b/fs/kernfs/inode.c
-@@ -140,12 +140,18 @@ ssize_t kernfs_iop_listxattr(struct dentry *dentry, char *buf, size_t size)
- {
- 	struct kernfs_node *kn = kernfs_dentry_node(dentry);
- 	struct kernfs_iattrs *attrs;
-+	ssize_t sz;
- 
- 	attrs = kernfs_iattrs(kn);
- 	if (!attrs)
- 		return -ENOMEM;
- 
--	return simple_xattr_list(d_inode(dentry), &attrs->xattrs, buf, size);
-+	sz = simple_xattr_list(d_inode(dentry), &attrs->xattrs, buf, size);
-+	if (sz >= 0 && sz <= size)
-+		sz += security_inode_listsecurity(d_inode(dentry),
-+						buf ? buf + sz : NULL,
-+						size - sz);
-+	return sz;
- }
- 
- static inline void set_default_inode_attr(struct inode *inode, umode_t mode)
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 02bee149ad96..68ac91d0dbc3 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -1428,6 +1428,15 @@ static bool xattr_is_trusted(const char *name)
- 	return !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN);
- }
- 
-+static bool xattr_is_maclabel(const char *name)
-+{
-+	const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
-+
-+	return !strncmp(name, XATTR_SECURITY_PREFIX,
-+			XATTR_SECURITY_PREFIX_LEN) &&
-+		security_ismaclabel(suffix);
-+}
-+
- /**
-  * simple_xattr_list - list all xattr objects
-  * @inode: inode from which to get the xattrs
-@@ -1468,6 +1477,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
- 		if (!trusted && xattr_is_trusted(xattr->name))
- 			continue;
- 
-+		/* skip MAC labels; these are provided by LSM separately */
-+		if (xattr_is_maclabel(xattr->name))
-+			continue;
-+
- 		err = xattr_list_one(&buffer, &remaining_size, xattr->name);
- 		if (err)
- 			break;
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 99327c30507c..69f664668a3a 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -4372,7 +4372,13 @@ static const struct xattr_handler * const shmem_xattr_handlers[] = {
- static ssize_t shmem_listxattr(struct dentry *dentry, char *buffer, size_t size)
- {
- 	struct shmem_inode_info *info = SHMEM_I(d_inode(dentry));
--	return simple_xattr_list(d_inode(dentry), &info->xattrs, buffer, size);
-+	ssize_t sz = simple_xattr_list(d_inode(dentry), &info->xattrs, buffer,
-+				size);
-+	if (sz >= 0 && sz <= size)
-+		sz += security_inode_listsecurity(d_inode(dentry),
-+						buffer ? buffer + sz : NULL,
-+						size - sz);
-+	return sz;
- }
- #endif /* CONFIG_TMPFS_XATTR */
- 
--- 
-2.49.0
+(I thought arch is only for compiler generated code, so assembly
+ mnemonics would always be defined if the compiler knows them.)
 
+>>
+>>> +		".option pop\n"
+>>> +		: [swap] "=3Dr" (swap), [addr] "+A" (*addr)
+>>> +		: [val] "r" (val)
+>>> +		: "memory"
+>>> +		: fault
+>>> +		);
+>>> +	__disable_user_access();
+>>> +	return swap;
+>>> +fault:
+>>> +	__disable_user_access();
+>>> +	return -1;
+>>
+>>I think we should return 0 and -EFAULT.
+>>We can ignore the swapped value, or return it through a pointer.
+>
+> Consumer of this detects -1 and then return -EFAULT.
+> We would eventually need this when creating shadow stack tokens for
+> kernel shadow stack. I believe `-1` is safe return value which can't
+> be construed as negative kernel address (-EFAULT will be)
+
+I believe it as well, but I don't see a reason why we need to risk it
+when we can return the stack value though a pointer and have simple
+success/failure return value.
+
+>>> +}
+>>> +
+>>> +static unsigned long allocate_shadow_stack(unsigned long addr, unsigne=
+d long size,
+>>> +					   unsigned long token_offset, bool set_tok)
+>>> +{
+>>> +	int flags =3D MAP_ANONYMOUS | MAP_PRIVATE;
+>>
+>>Is MAP_GROWSDOWN pointless?
+>
+> Not sure. Didn't see that in x86 or arm64 shadow stack creation.
+> Let me know if its useful.
+
+It is for automated growing of the stack.  I think that the default
+stack is pointlessly large already, and if other arches don't do it, so
+we can probably follow their design here as well...
+
+>>> +	struct mm_struct *mm =3D current->mm;
+>>> +	unsigned long populate, tok_loc =3D 0;
+>>> +
+>>> +	if (addr)
+>>> +		flags |=3D MAP_FIXED_NOREPLACE;
+>>> +
+>>> +	mmap_write_lock(mm);
+>>> +	addr =3D do_mmap(NULL, addr, size, PROT_READ, flags,
+>>
+>>PROT_READ implies VM_READ, so won't this select PAGE_COPY in the
+>>protection_map instead of PAGE_SHADOWSTACK?
+>
+> PROT_READ is pointless here and redundant. I haven't checked if I remove =
+it
+> what happens.
+>
+> `VM_SHADOW_STACK` takes precedence (take a look at pte_mkwrite and pmd_mk=
+write.
+> Only way `VM_SHADOW_STACK` is possible in vmflags is via `map_shadow_stac=
+k` or
+> `fork/clone` on existing task with shadow stack enabled.
+>
+> In a nutshell user can't specify `VM_SHADOW_STACK` directly (indirectly v=
+ia
+> map_shadow_stack syscall or fork/clone) . But if set in vmaflags then it'=
+ll
+> take precedence.
+
+Yeah, I don't like that ugly special case at all, so I was hoping we
+could somehow avoid it. :)
 
