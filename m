@@ -1,158 +1,186 @@
-Return-Path: <linux-fsdevel+bounces-47273-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47274-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2723AA9B2C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 17:45:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9B0A9B2CB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 17:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04F11775BE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 15:44:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68B14A0C8F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 15:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04A4627F4CB;
-	Thu, 24 Apr 2025 15:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC18F27F724;
+	Thu, 24 Apr 2025 15:45:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTerlyrt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f1w73h/i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBF91552FD;
-	Thu, 24 Apr 2025 15:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288B027F756
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 15:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745509450; cv=none; b=a5pZPRTwBzplhYc4u4HeGs4gga5Ly6GZt/34JgdkBVR6+b+Rp6hzkIi6TbmTCnzInDChInJpWsJt+vESip1iknpHf688mUQ0DFiQNcr0y/AYYvIcoDkFDd9s2Hszm0dlNONgi2wlp7I9a0AsrhRFfgaCc+6+xkOdgBTwlvlZqQc=
+	t=1745509544; cv=none; b=C95rRfMQBRgF+hRCyJNDuQNIAsjNygtBFuyzDNHBNeVBHy/A2zQYwY9AfLHL/j2KuIUO7qHiFVsbxI22xgvg9GIPzK10oHlWWyRV5EltpMRWms4kSPkMaAAVovRQnJ8jboVmnjGGHq4dY9OrTZHvnnfLYrJlZ81xMJzLEw+YX+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745509450; c=relaxed/simple;
-	bh=NKYBJGRW3NLditWJHCd6B3AWhUotnr3wjlWIP9wQJYg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NFu9XKtvUykS2uPnr920C7Lr6NtHv53hvC7NzlURoOx0pz58z93K9GeAXuHf9X+mN8XkYNALO3whOHeYllAmiR/G1+DHDgJeQ5Mqj9/I11zTqxxYfuIGgV/lQNwnWAV16vMQeeHpJqU6c/XLRGD/OGGJjjV//ssms7fkew09HBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTerlyrt; arc=none smtp.client-ip=209.85.216.50
+	s=arc-20240116; t=1745509544; c=relaxed/simple;
+	bh=k+XX2RQzFhhP48T1kEKcxNjZJBlGkKR0LBn+21Aa6/0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITqD+2Rml6ycHEIWfnIgD2YBSVV9uhQzLkGnXVHJWtQ8JCtikQCMiCOnLJ28lhsdAgC/w/LlyQ+Vty44F0LX9kNdOpLujWnqirMWh5VJaLAJytQCbKIitt65cJYVXlUycTQfGP7+6qB74RudjuErMPS2eXSdabcjyqPbGz4YagM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f1w73h/i; arc=none smtp.client-ip=209.85.128.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-3015001f862so1070224a91.3;
-        Thu, 24 Apr 2025 08:44:08 -0700 (PDT)
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43cebe06e9eso8769375e9.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 08:45:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745509448; x=1746114248; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NKYBJGRW3NLditWJHCd6B3AWhUotnr3wjlWIP9wQJYg=;
-        b=DTerlyrtWRQ5hYGtlySTEqR9HwevJDDbtp3vKshLcJT8wdp1i88GMQUQVTz4+lpoxR
-         nMvJQJhQu9lxgXizHjc3fzE5oGJG7jsUkiA3R5StaKQS3nVn51ahxldwRdyEyW/5HiYg
-         VF4k0F5aWpv1pyjMAAuvRxHUhF5xzs0EuwzbJCj8twsWoKzbqce5a57tndR/Pim7lAmy
-         IVQH6k4GbLXYXH5grjKysgR2TwZCQb2a4PDqcXub9KLe5Iemh9Dd7BsstSmko74oPZTH
-         EkmY9KnCUd0Jk/bmcaNJzS8XbZ7fOn3dinvQ3ZUxnu88YvCbTrJbAIDsROz4TPYS4Gwr
-         AjjQ==
+        d=gmail.com; s=20230601; t=1745509534; x=1746114334; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vKFeOnPWWTdWi8+45XXBWcaMUmFnsQrwBiKxLeR5lyM=;
+        b=f1w73h/iZaT9myxSSHVB8gt025X50H+MoP89kBWfAzTu4EW2yobUBZVeUOMQ/iFgmW
+         pX8iht9oVqZCV5XRllhBLqpb58kWyZq7jTWL94Xd3TzwZIeSS9Ie28MmKdmTcGJqnsX8
+         AFL27W9ivl9May9jUh5EKNJSb7FSNvnieT9PT/eG8GuA+M6fL1PtKw2BsUtwIRgwZ2to
+         BTghAgK9Nrd66c/NdXa+mPeonJr92Iqkwc6xoxyIE5QbPAocFy7eN4W/936xZtVyBceC
+         LZ2ay8cmple/Rk1Cf8G39or75sMPwpG3vc5gUu8H4e63vhZ3XxZJK8ywSKXVcdpIX1Mo
+         pgOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745509448; x=1746114248;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NKYBJGRW3NLditWJHCd6B3AWhUotnr3wjlWIP9wQJYg=;
-        b=v9q+nde9IUa6+WrA5cT2RmsxtTA3ylBTn1qDEsPJZC8B35QtlvzpHRPmqVURlar+gr
-         HWbJV2Ibu2RAsZpGjmVo44LJX12Tv4Xr41CTARTstAXAqbS6UsTp8ZnD6cPfxGIknXXI
-         aZRfPlGAV9ILoJX+eTg+9LjE3uB1koPcedgxMvikbGf4O56anJUoLbs75i3oWJFzWJn5
-         WxrsCpd2EjHZUjAj6ZXXlwzhGNsupt3NU1JqkW3ht6ulSuIIhuP8s5UuSK66Z8MgtXL4
-         Iskv07yjjVHOkaW8Ka2qInaI41kBhV5Mc8MiiTFe+sLPscJzCYq37L5lhrFDgueYzstY
-         Y2NA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXgAHQad9PtPqZaMg7MR9iecQB9Qb+AsA4wFzM1aAFsZJsZGBoQSyfATz+yO0KHQDvwXTaLMibBsTXYm/p@vger.kernel.org, AJvYcCUa356jozzhqTwrcJrreYeu0Ot0Awygdr7Dsl+h60nVTTk23W/7dcXxbl0y67WqC6sZ1HWmdJWdjw==@vger.kernel.org, AJvYcCUfOnLd/4BUtI5jjgqMtnsQSY2pFRQNAFLjQho77+5bz8rjrZOFYxix4798dBx2mw//TXTC7ElLrHWZQWVI@vger.kernel.org, AJvYcCVoh51co39Vr0S78Q3+uUkoxynHkewFMOIuOArVOW14ITNpZfrBOmJY9t8lkZIV54B1AaYXGw1M0FMIK5wnpU96H+fyxPRx@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0+42pRZBY6AEX2pvcpF8sDhy4TvUewxi2H9nx9kJKwGBKltu+
-	mDaKDk5gYzFzUDJYh4P4FsRha8s/2+Iwl+CHbvPwB482eq8mzhimlZBVwq8V/bFEgOoWi7DmISN
-	lhjgnnlHVgWtjN5gPYJd1JJLj0c0rVawj2Qo=
-X-Gm-Gg: ASbGncucVVDLhuIpRxIk4XjOrIqtkep+DNayIQTMdhAoG0C7g2SP5SvmucLjX/SeR8D
-	cIN+bpQ+qjHCIUTyRM1d4iDekD2B5Tewmo/L51ITvCyCA7NhXMwCJXcpRI3r2c0qi8A9ptitnvn
-	3VW0hxE2HBPLuVZZhLSmI4p+xv0SaQ36Zy
-X-Google-Smtp-Source: AGHT+IExkOfI5k5BNcG7WP0dv3ff3ZjZnNG+ANJn4rp1JjEbkTgLNnWinqdWCZ12YxP21dwWCmISmEhEEildeIz1PSs=
-X-Received: by 2002:a17:90b:1f90:b0:2ee:aed2:c15c with SMTP id
- 98e67ed59e1d1-309ed3521b0mr4687662a91.28.1745509448048; Thu, 24 Apr 2025
- 08:44:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745509534; x=1746114334;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vKFeOnPWWTdWi8+45XXBWcaMUmFnsQrwBiKxLeR5lyM=;
+        b=Cb2SbMbbld1IY4l0J7Pr2yi8uVmC+XRG3hO03geUflAy+RMDKpV1JhnlQ/+7BO7a3h
+         m3zNOQzUUSUX5v8n5jdUSNhW2/YUZWB8GxvRUFMgD/4KczKSlks4rHORHw2zatYnuRwF
+         5Y4gTMiW71NAQhukeE5mBNu9k6b/XIii0Z2QvchKLWmifz5JhUvDd1P8Q1Y4Fn/ci3O6
+         9nf1NQYfvfsZgco8hiqgouUZEr14shPtb3coL0JFIoJ4RY8xvU0e/8HMNkUB8x/oUr5l
+         EqhvtwFUJerBEDZ4VAFPHId/Wur/4qYTHG5NJwwh5Z8Wjd//nwwQar6i273zisrbx0MW
+         FAwg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiLIzuqs8PjWT1WS2hW6ol6VZkE9kdqsstpXWBo7AzEJo2qSRmGwW8OsUebEJPgyvwiKmdowY+uBIh2zb/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPVwUo8lcHpbesVhgkPfs8uv325qG3/UUMJx90Z/b7jiZ9WkCo
+	w8fy63HQB8jlMTRAtGGwXIPgrdoo2gTqDNVTIpnT2Y/yxA+9WVDj
+X-Gm-Gg: ASbGncs0Iio1fNEjf5C9Vb/i0alE+igJcdpgaAKy0szAAE/B9hqIgDgZpxvY2FMGaho
+	98YRT26qbxuZjTiRgim8cuUlCR2l2bO+gxYICU6rZdYtHxQWeIsBD824wXMbxCOuaLQof+DdR3c
+	lTje5Vg/KUz72vCQ0Mrzc8nVnaNWV30IHDwNrQMl4uY+0RPP9hXGQyrCcoYY6hAtwJJ+cX3Nky7
+	ZI8UCH7rDly9p2GVd+wikWigSt8c7nAxk9irpVHtv3LR64Yr9Xcy/4kRqsy31ky4qeWEiyjzDit
+	YDgfFnK+imNh9br7bZKOyTtunUL+3a3CTNI2Zfn3ykjv2NFLFD07vQ==
+X-Google-Smtp-Source: AGHT+IEakt/kUoJk6ddNhg1AfBVUZ4Iv1mcahmZi2whJeAaEbm2513Vxf0qmyThlWtkMtg/RObk4bg==
+X-Received: by 2002:a05:600c:1f0d:b0:43c:f513:9591 with SMTP id 5b1f17b1804b1-4409bd23afcmr28292595e9.14.1745509533528;
+        Thu, 24 Apr 2025 08:45:33 -0700 (PDT)
+Received: from f (cst-prg-30-64.cust.vodafone.cz. [46.135.30.64])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4409d2e0241sm26052375e9.37.2025.04.24.08.45.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Apr 2025 08:45:32 -0700 (PDT)
+Date: Thu, 24 Apr 2025 17:45:17 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/xattr: Fix handling of AT_FDCWD in setxattrat(2) and
+ getxattrat(2)
+Message-ID: <uz6xvk77mvfsq6hkeclq3yksbalcvjvaqgdi4a5ai6kwydx2os@sbklkpv4wgah>
+References: <20250424132246.16822-2-jack@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424124644.4413-1-stephen.smalley.work@gmail.com>
- <2025042427-hardship-captive-4d7b@gregkh> <CAEjxPJ5LGH_Vyf2KCL0HNwa-U70GVAOVvyFMnhpnzi-CEKvC5w@mail.gmail.com>
- <CAEjxPJ4C7ritSqF0mE+2rczKJHdUTNGs5_RDx3PHKcg_rQQV4w@mail.gmail.com>
-In-Reply-To: <CAEjxPJ4C7ritSqF0mE+2rczKJHdUTNGs5_RDx3PHKcg_rQQV4w@mail.gmail.com>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Thu, 24 Apr 2025 11:43:57 -0400
-X-Gm-Features: ATxdqUFYwUVwbOLgKuPMj0VkvJRIPCYIatOOHAVWcZMu6tTjFJjA7nGJQgros6k
-Message-ID: <CAEjxPJ4i3fN8qtuY2TRiWRqy+sY3-nV_FYc4uzD-h2ZxAF-M2A@mail.gmail.com>
-Subject: Re: [PATCH] vfs,shmem,kernfs: fix listxattr to include security.* xattrs
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: paul@paul-moore.com, omosnace@redhat.com, 
-	linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	Tejun Heo <tj@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Hugh Dickins <hughd@google.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250424132246.16822-2-jack@suse.cz>
 
-On Thu, Apr 24, 2025 at 10:55=E2=80=AFAM Stephen Smalley
-<stephen.smalley.work@gmail.com> wrote:
->
-> On Thu, Apr 24, 2025 at 9:53=E2=80=AFAM Stephen Smalley
-> <stephen.smalley.work@gmail.com> wrote:
-> >
-> > On Thu, Apr 24, 2025 at 9:12=E2=80=AFAM Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> > >
-> > > On Thu, Apr 24, 2025 at 08:46:43AM -0400, Stephen Smalley wrote:
-> > > > The vfs has long had a fallback to obtain the security.* xattrs fro=
-m the
-> > > > LSM when the filesystem does not implement its own listxattr, but
-> > > > shmem/tmpfs and kernfs later gained their own xattr handlers to sup=
-port
-> > > > other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-bas=
-ed
-> > > > filesystems like sysfs no longer return the synthetic security.* xa=
-ttr
-> > > > names via listxattr unless they are explicitly set by userspace or
-> > > > initially set upon inode creation after policy load. coreutils has
-> > > > recently switched from unconditionally invoking getxattr for securi=
-ty.*
-> > > > for ls -Z via libselinux to only doing so if listxattr returns the =
-xattr
-> > > > name, breaking ls -Z of such inodes.
-> > > >
-> > > > Before:
-> > > > $ getfattr -m.* /run/initramfs
-> > > > <no output>
-> > > > $ getfattr -m.* /sys/kernel/fscaps
-> > > > <no output>
-> > > >
-> > > > After:
-> > > > $ getfattr -m.* /run/initramfs
-> > > > security.selinux
-> > > > $ getfattr -m.* /sys/kernel/fscaps
-> > > > security.selinux
-> > > >
-> > > > Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=3DiOawX=
-4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
-> > > > Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen=
-.smalley.work@gmail.com/
-> > > > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > >
-> > > As this "changed" in the past, shouldn't it have a "Fixes:" tag?
-> >
-> > Yes, I'll add that on v2. Also appears that it doesn't quite correctly
-> > handle the case where listxattr() is called with size =3D=3D 0 to probe
-> > for the required size.
->
-> And doesn't correctly handle the case where the list size exceeds the
-> original buffer size. On second look, this can be done more simply and
-> safely in simple_xattr_list() itself, avoiding the need to modify
-> shmem/tmpfs and kernfs. I'll submit an updated patch.
+On Thu, Apr 24, 2025 at 03:22:47PM +0200, Jan Kara wrote:
+> Currently, setxattrat(2) and getxattrat(2) are wrongly handling the
+> calls of the from setxattrat(AF_FDCWD, NULL, AT_EMPTY_PATH, ...) and
+> fail with -EBADF error instead of operating on CWD. Fix it.
+> 
+> Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
+>  fs/xattr.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 02bee149ad96..fabb2a04501e 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -703,7 +703,7 @@ static int path_setxattrat(int dfd, const char __user *pathname,
+>  		return error;
+>  
+>  	filename = getname_maybe_null(pathname, at_flags);
+> -	if (!filename) {
+> +	if (!filename && dfd >= 0) {
+>  		CLASS(fd, f)(dfd);
+>  		if (fd_empty(f))
+>  			error = -EBADF;
+> @@ -847,7 +847,7 @@ static ssize_t path_getxattrat(int dfd, const char __user *pathname,
+>  		return error;
+>  
+>  	filename = getname_maybe_null(pathname, at_flags);
+> -	if (!filename) {
+> +	if (!filename && dfd >= 0) {
+>  		CLASS(fd, f)(dfd);
+>  		if (fd_empty(f))
+>  			return -EBADF;
 
-Submitted here,
-https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@=
-gmail.com/
+Is there any code which legitimately does not follow this pattern?
 
-Sorry I forgot the Fixes tag again but added it in a reply.
+With some refactoring getname_maybe_null() could handle the fd thing,
+notably return the NULL pointer if the name is empty. This could bring
+back the invariant that the path argument is not NULL.
+
+Something like this:
+static inline struct filename *getname_maybe_null(int fd, const char __user *name, int flags)
+{
+        if (!(flags & AT_EMPTY_PATH))
+                return getname(name);
+
+        if (!name && fd >= 0)
+                return NULL;
+        return __getname_maybe_null(fd, name);
+}
+
+struct filename *__getname_maybe_null(int fd, const char __user *pathname)
+{
+        char c;
+
+        if (fd >= 0) {
+                /* try to save on allocations; loss on um, though */
+                if (get_user(c, pathname))
+                        return ERR_PTR(-EFAULT);
+                if (!c)
+                        return NULL;
+        }
+
+	/* we alloc suffer the allocation of the buffer. worst case, if
+	 * the name turned empty in the meantime, we return it and
+	 * handle it the old-fashioned way.
+	 /
+        return getname_flags(pathname, LOOKUP_EMPTY);
+}
+
+Then callers would look like this:
+filename = getname_maybe_null(dfd, pathname, at_flags);
+if (!filename) {
+	/* fd handling goes here */
+	CLASS(fd, f)(dfd);
+	....
+
+} else {
+	/* regular path handling goes here */
+}
+
+
+set_nameidata() would lose this branch:
+p->pathname = likely(name) ? name->name : "";
+
+and putname would convert IS_ERR_OR_NULL (which is 2 branches) into one,
+maybe like so:
+-       if (IS_ERR_OR_NULL(name))
++       VFS_BUG_ON(!name);
++
++       if (IS_ERR(name))
+                return;
+
+i think this would be an ok cleanup
 
