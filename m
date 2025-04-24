@@ -1,220 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-47204-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E281EA9A482
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 09:45:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D4FAA9A550
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 10:09:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5850546184D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 07:44:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C559F3B7D74
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 08:09:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB7A1F790F;
-	Thu, 24 Apr 2025 07:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3F720B811;
+	Thu, 24 Apr 2025 08:08:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b="o88nyfQg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aR7isCav"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919491F1927;
-	Thu, 24 Apr 2025 07:40:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.129.21.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7747D205AB6
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 08:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745480426; cv=none; b=JA5yENP9+RZrMYgEOrCBJXODRkolFQkelRoVo/IMqh/TdbWsE7+H4/j+TLZu4qID2beblU0ih0TiEBdsJZVHD6aZN1Dkl6l7LkKcAA+DYhG2MrR56FZBBC5JVye6kZe77Nq/A16zE0iAQ12m3tYPudeXUa2QWi6EBIz86/4oWM0=
+	t=1745482119; cv=none; b=od4wrDAG5DRFHekLfxD7Cq2pxwV/P7LKgG4lbn7TDUf5DoE+5fsGvrAVUQJm69KeEGXXpEKE7Ma57EAC6bz9Jbmj4wiS7wOEqmYGz6LBHDmE4JGucO7crJi3nv2m5OgR8UGuc4lS+BaprihnqvX2oEubBEsg42qUBM6OpNO0EEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745480426; c=relaxed/simple;
-	bh=wJzBuNv3LpnWTInF73DPDdf568PiX49EKsvdzlN+VNM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=hTQwLLKCBthzbjAq4tcso/6l3WzfYrz2tyaiDMnarx8ZxlOOEqgBBp87G8BfTw6kMVkhIc4Xl28Qzo9UYM0YgsUY6m+1qAJIhu9fQg5+c1E0iQDP3rZKKD3SK1KLQ8tVAu2UY0T/T2Pr7+Tlpj32n5ux0un/qtNpzeE9WjPGF6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr; spf=pass smtp.mailfrom=3xo.fr; dkim=pass (2048-bit key) header.d=3xo.fr header.i=@3xo.fr header.b=o88nyfQg; arc=none smtp.client-ip=212.129.21.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=3xo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=3xo.fr
-Received: from localhost (mail.3xo.fr [212.129.21.66])
-	by mail.3xo.fr (Postfix) with ESMTP id 4616ECB;
-	Thu, 24 Apr 2025 09:40:21 +0200 (CEST)
-X-Virus-Scanned: Debian amavis at nxo2.3xo.fr
-Received: from mail.3xo.fr ([212.129.21.66])
- by localhost (mail.3xo.fr [212.129.21.66]) (amavis, port 10024) with ESMTP
- id H1RaQ-c1-sZu; Thu, 24 Apr 2025 09:40:18 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.3xo.fr B33EA8D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=3xo.fr; s=3xo;
-	t=1745480418; bh=tkMxtFneChkyh6FH2tvBrsB//VGTblVVYgMkNJr9ZRg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=o88nyfQgvhZspqftbeutotYHg7ag/f98EgtlBX4u5ywFKamoDhhB2xAe8/pOJC40Y
-	 ghJpjAiFBUQkHUtiILfM/4WQc16ky+ePbgr/s0VSRbkGbKGyRa6YrdCgU3t33brc+Y
-	 4v0B95j6b44kNRBTBtvddbUK9vFLLwgTwJ6QjhU3HnrzAe7vj2dOoyd9G0LTD8qNC3
-	 dh+e8aGQ95LP0eGCZ4FMdOEBx58CvTwfDObEsRmEWnIgTCsodkw2cWGrD61P5/q1NJ
-	 kGVS8Vg9YRtIzyWeXT2ymX2dtPmZqRa+9KdJTfat6CCgETkKPNVMc9B2wrS8v6olY+
-	 0+VdMLzZblIeg==
-Received: from mail.3xo.fr (mail.3xo.fr [212.129.21.66])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	by mail.3xo.fr (Postfix) with ESMTPSA id B33EA8D;
-	Thu, 24 Apr 2025 09:40:18 +0200 (CEST)
+	s=arc-20240116; t=1745482119; c=relaxed/simple;
+	bh=7LSwA9/RC1GNwfG+lCcud3yw0cCVDeqP5nGelatoTRg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jXxMyM0bdCyitGd1Ljde4AyHXrofSCNZI+GNqstaeYPIl9IU25ZvYrnXz4ZWEVvXvU3mO9cqyEClRi3EK1++NlcSVNfYQzf8nkaPxqpiViky1Qd/jameb6O/IWig/3o4y01MYA3dv68Qvb0/IkbvzIQF1TKFcwYtQ2GHamsfAtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aR7isCav; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745482116;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SIBcAPIsvRbbtPBYFtUV3aaspfe/f5XOnaHKo0o0ZIA=;
+	b=aR7isCavswchNYFgl2NYf2HbK3GmLFWGoaNh/3qFuZrqstuKz5prQXUP2Tk0oCjIEW3Nr8
+	WjvenkO3CGq4p6RdToby9tKutSw367JYhbLtZxpDTpvlZptCeyku05kezmpWyjdIq2Mg/8
+	kg8K2a1B8OV6AZVAgabjJ5WeYhHcBvg=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-93-72CnI0KUONKDMgSkUso4mA-1; Thu, 24 Apr 2025 04:08:32 -0400
+X-MC-Unique: 72CnI0KUONKDMgSkUso4mA-1
+X-Mimecast-MFC-AGG-ID: 72CnI0KUONKDMgSkUso4mA_1745482112
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-225ab228a37so6629315ad.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 01:08:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745482112; x=1746086912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SIBcAPIsvRbbtPBYFtUV3aaspfe/f5XOnaHKo0o0ZIA=;
+        b=bp3f3GwJDxDhydVr5DE1Qq647v03tKnYsunxSYXXmyVtvrBMiXOEjobr8o/3IPH+Iu
+         oO154TLuhagCNWtpO5U3kOVvLanEhGOrgUe3AJ1oYn40EGiwzw46alTzQ9crXboErpdv
+         mmVyNMiWPRfcKdlVcmkwc5v+4e6RSyYZzKeJJ3638XzGQb8uPxI9T2em3epUVpZXayHT
+         nzkCN43WZeaW6HU93pe3RPemVbEyd3MA1pWDhSoVNm7V/hiYNAV2Dwm0HRbP7pYre+5V
+         2BBDpISTz6lM5bZWTb6NeBhJnCj08rz3C95YCd15kfKXg0pbzSLXjzHl3N5aHnXG+Thb
+         dm4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWiYNM7FfGqqaGN8uz6UFvu71lKB027Qn/qwBVXzpXEEY94vM1l1grrOpE9uHawO8lckn898QO3idTcD/xy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy06D5S6XXwTWGM8mX8keu6VdJT6gRnBydw76LG1xgIDsM+AxHC
+	hVpE0kr8BtcmMZoCQ+0w3CIdcfcR5FcH+S7e0e+AOUkp6J89w5k0Ff73Js8dps1xPoeRUfut+Ci
+	0JuZmpHMpHg0ufaoX7NDYHAWWWc3vfl9NBSGT+QYJTXYs5khKCKjuFj93as2Z83GVTJBZkhz0Iw
+	y4eH5A3OdbT6oKF3/4VJwSeRuKKRFcjk5T0/G2BA==
+X-Gm-Gg: ASbGncvY0pEV387aD2ebcZJOEmrxuIAKJFH9/UF5jG2+2VvWKgven5nkCtr1g6eQs+B
+	/iA253NzWwxXijuNq12gOl8Taq922wV4FvOdiGcOnOKOlP9lcEexdwbN5STT0xRFeNIo=
+X-Received: by 2002:a17:903:238e:b0:224:1c1:4aba with SMTP id d9443c01a7336-22db3db0f63mr20382305ad.50.1745482111805;
+        Thu, 24 Apr 2025 01:08:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG9QCt1+uWV0hbcvfKshe4MEvAT+8cYmunuoojCcFbrOrf3foAV6szwZqkcwyD4r4JChprCKBZyHc1ES6rtmRM=
+X-Received: by 2002:a17:903:238e:b0:224:1c1:4aba with SMTP id
+ d9443c01a7336-22db3db0f63mr20382045ad.50.1745482111469; Thu, 24 Apr 2025
+ 01:08:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 24 Apr 2025 09:40:18 +0200
-From: Nicolas Baranger <nicolas.baranger@3xo.fr>
-To: Paulo Alcantara <pc@manguebit.com>
-Cc: Christoph Hellwig <hch@infradead.org>, hch@lst.de, David Howells
- <dhowells@redhat.com>, netfs@lists.linux.dev, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Steve French
- <smfrench@gmail.com>, Jeff Layton <jlayton@kernel.org>, Christian Brauner
- <brauner@kernel.org>
-Subject: Re: [netfs/cifs - Linux 6.14] loop on file cat + file copy when files
- are on CIFS share
-In-Reply-To: <bb5f1ed84df1686aebdba5d60ab0e162@3xo.fr>
-References: <10bec2430ed4df68bde10ed95295d093@3xo.fr>
- <35940e6c0ed86fd94468e175061faeac@3xo.fr> <Z-Z95ePf3KQZ2MnB@infradead.org>
- <48685a06c2608b182df3b7a767520c1d@3xo.fr>
- <F89FD4A3-FE54-4DB2-BA08-3BCC8843C60E@manguebit.com>
- <5087f9cb3dc1487423de34725352f57c@3xo.fr>
- <f12973bcf533a40ca7d7ed78846a0a10@manguebit.com>
- <e63e7c7ec32e3014eb758fd6f8679f93@3xo.fr>
- <53697288e2891aea51061c54a2e42595@manguebit.com>
- <bb5f1ed84df1686aebdba5d60ab0e162@3xo.fr>
-Message-ID: <af401afc7e32d9c0eeb6b36da70d2488@3xo.fr>
-X-Sender: nicolas.baranger@3xo.fr
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250422142628.1553523-1-hch@lst.de> <20250422142628.1553523-16-hch@lst.de>
+ <11b02dfa-9f71-48ac-9d20-ba5a6e44f289@kernel.org>
+In-Reply-To: <11b02dfa-9f71-48ac-9d20-ba5a6e44f289@kernel.org>
+From: Andreas Gruenbacher <agruenba@redhat.com>
+Date: Thu, 24 Apr 2025 10:08:19 +0200
+X-Gm-Features: ATxdqUFTuhjv2n6cEKl2JrhrhPyh6bRjf4GKJQJ_KzadIMn25rxqpw5We26zq08
+Message-ID: <CAHc6FU7Y5QKGB1pFL8A0-3VOX2i5LY92d9AYhWqgHMzxL30m4A@mail.gmail.com>
+Subject: Re: [PATCH 15/17] gfs2: use bdev_rw_virt in gfs2_read_super
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	"Md. Haris Iqbal" <haris.iqbal@ionos.com>, Jack Wang <jinpu.wang@ionos.com>, 
+	Coly Li <colyli@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Mike Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
+	Carlos Maiolino <cem@kernel.org>, Naohiro Aota <naohiro.aota@wdc.com>, 
+	Johannes Thumshirn <jth@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, 
+	linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev, 
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Paolo
+On Thu, Apr 24, 2025 at 8:23=E2=80=AFAM Damien Le Moal <dlemoal@kernel.org>=
+ wrote:
+> On 4/22/25 23:26, Christoph Hellwig wrote:
+> > Switch gfs2_read_super to allocate the superblock buffer using kmalloc
+> > which falls back to the page allocator for PAGE_SIZE allocation but
+> > gives us a kernel virtual address and then use bdev_rw_virt to perform
+> > the synchronous read into it.
+> >
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+>
+> One nit below.
+>
+> > ---
+> >  fs/gfs2/ops_fstype.c | 24 +++++++++---------------
+> >  1 file changed, 9 insertions(+), 15 deletions(-)
+> >
+> > diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+> > index e83d293c3614..7c1014ba7ac7 100644
+> > --- a/fs/gfs2/ops_fstype.c
+> > +++ b/fs/gfs2/ops_fstype.c
+> > @@ -226,28 +226,22 @@ static void gfs2_sb_in(struct gfs2_sbd *sdp, cons=
+t struct gfs2_sb *str)
+> >
+> >  static int gfs2_read_super(struct gfs2_sbd *sdp, sector_t sector, int =
+silent)
+> >  {
+> > -     struct super_block *sb =3D sdp->sd_vfs;
+> > -     struct page *page;
+> > -     struct bio_vec bvec;
+> > -     struct bio bio;
+> > +     struct gfs2_sb *sb;
+> >       int err;
+> >
+> > -     page =3D alloc_page(GFP_KERNEL);
+> > -     if (unlikely(!page))
+> > +     sb =3D kmalloc(PAGE_SIZE, GFP_KERNEL);
+> > +     if (unlikely(!sb))
+> >               return -ENOMEM;
+> > -
+> > -     bio_init(&bio, sb->s_bdev, &bvec, 1, REQ_OP_READ | REQ_META);
+> > -     bio.bi_iter.bi_sector =3D sector * (sb->s_blocksize >> 9);
+> > -     __bio_add_page(&bio, page, PAGE_SIZE, 0);
+> > -
+> > -     err =3D submit_bio_wait(&bio);
+> > +     err =3D bdev_rw_virt(sdp->sd_vfs->s_bdev,
+> > +                     sector * (sdp->sd_vfs->s_blocksize >> 9), sb, PAG=
+E_SIZE,
+>
+> While at it, use SECTOR_SHIFT here ?
 
-Thanks again for help.
+This is hardcoded in several places; I can clean it up separately.
 
-I'm sorry, I made a mistake in my answer yesterday:
+> > +                     REQ_OP_READ | REQ_META);
+> >       if (err) {
+> >               pr_warn("error %d reading superblock\n", err);
+> > -             __free_page(page);
+> > +             kfree(sb);
+> >               return err;
+> >       }
+> > -     gfs2_sb_in(sdp, page_address(page));
+> > -     __free_page(page);
+> > +     gfs2_sb_in(sdp, sb);
+> > +     kfree(sb);
+> >       return gfs2_check_sb(sdp, silent);
+> >  }
+> >
 
-> After a lot of testing, the mounts buffers values: rsize=65536, 
-> wsize=65536, bsize=16777216,...
+Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-The actual values in /etc/fstab are:
-rsize=4194304,wsize=4194304,bsize=16777216
+Thanks,
+Andreas
 
-But negociated values in /proc/mounts are:
-rsize=65536,wsize=65536,bsize=16777216
-
-And don't know if it's related but I have:
-grep -i maxbuf /proc/fs/cifs/DebugData
-CIFSMaxBufSize: 16384
-
-I've just force a manual 'mount -o remount' and now I have in 
-/proc/mounts the good values (SMB version is 3.1.1).
-Where does this behavior comes from ?
-
-After some search, it appears that when the CIFS share is mounted by 
-systemd option x-systemd.automount (for example doing 'ls' in the mount 
-point directory), negociated values are:
-rsize=65536,wsize=65536,bsize=16777216
-If I umount / remount manually, the negociated values are those defined 
-in /etc/fstab !
-
-Don't know if it's a normal behavior but it is a source of errors / 
-mistake and makes troubleshooting performance issues harder
-
-Kind regards
-Nicolas
-
-
-
-Le 2025-04-23 18:28, Nicolas Baranger a écrit :
-
-> Hi Paolo
-> 
-> Thanks for answer, all explanations and help
-> 
-> I'm happy you found those 2 bugs and starting to patch them.
-> Reading your answer, I want to remember that I already found a bug in 
-> cifs DIO starting from Linux 6.10 (when cifs statring to use netfs to 
-> do its IO) and it was fixed by David and Christoph
-> full story here: 
-> https://lore.kernel.org/all/14271ed82a5be7fcc5ceea5f68a10bbd@manguebit.com/T/
-> 
->> I've noticed that you disabled caching with 'cache=none', is there any
->> particular reason for that?
-> 
-> Yes, it's related with the precedent use case describes in the other 
-> bug:
-> For backuping servers, I've got some KSMBD cifs share on which there 
-> are some 4TB+ sparses files (back-files) which are LUKS + BTRFS 
-> formatted.
-> The cifs share is mounted on servers and each server mount its own 
-> back-file as a block device and make its backup inside this crypted 
-> disk file
-> Due to performance issues, it is required that the disk files are using 
-> 4KB block and are mounted in servers using losetup DIO option (+ 4K 
-> block size options)
-> When I use something else than 'cache=none', sometimes the BTRFS 
-> filesystem on the back file get corrupted and I also need to mount the 
-> BTRFS filesystem with 'space_cache=v2' to avoid filesystem corruption
-> 
->> Have you also set rsize, wsize and bsize mount options?  If so, why?
-> 
-> After a lot of testing, the mounts buffers values: rsize=65536, 
-> wsize=65536, bsize=16777216, are the one which provide the best 
-> performances with no corruptions on the back-file filesystem and with 
-> these options a ~2TB backup is possible in few hours during  timeframe 
-> ~1 -> ~5 AM each night
-> 
-> For me it's important that kernel async DIO on netfs continue to work 
-> as it's used by all my production backup system (transfer speed ratio 
-> compared with and without DIO is between 10 to 25)
-> 
-> I will try the patch "[PATCH] netfs: Fix setting of transferred bytes 
-> with short DIO reads", thanks
-> 
-> Let me know if you need further explanations,
-> 
-> Kind regards
-> Nicolas Baranger
-> 
-> Le 2025-04-22 01:45, Paulo Alcantara a écrit :
-> 
-> Nicolas Baranger <nicolas.baranger@3xo.fr> writes:
-> 
-> If you need more traces or details on (both?) issues :
-> 
-> - 1) infinite loop issue during 'cat' or 'copy' since Linux 6.14.0
-> 
-> - 2) (don't know if it's related) the very high number of several bytes
-> TCP packets transmitted in SMB transaction (more than a hundred) for a 
-> 5
-> bytes file transfert under Linux 6.13.8
-> According to your mount options and network traces, cat(1) is 
-> attempting
-> to read 16M from 'toto' file, in which case netfslib will create 256
-> subrequests to handle 64K (rsize=65536) reads from 'toto' file.
-> 
-> The first 64K read at offset 0 succeeds and server returns 5 bytes, the
-> client then sets NETFS_SREQ_HIT_EOF to indicate that this subrequest 
-> hit
-> the EOF.  The next subrequests will still be processed by netfslib and
-> sent to the server, but they all fail with STATUS_END_OF_FILE.
-> 
-> So, the problem is with short DIO reads in netfslib that are not being
-> handled correctly.  It is returning a fixed number of bytes read to
-> every read(2) call in your cat command, 16711680 bytes which is the
-> offset of last subrequest.  This will make cat(1) retry forever as
-> netfslib is failing to return the correct number of bytes read,
-> including EOF.
-> 
-> While testing a potential fix, I also found other problems with DIO in
-> cifs.ko, so I'm working with Dave to get the proper fixes for both
-> netfslib and cifs.ko.
-> 
-> I've noticed that you disabled caching with 'cache=none', is there any
-> particular reason for that?
-> 
-> Have you also set rsize, wsize and bsize mount options?  If so, why?
-> 
-> If you want to keep 'cache=none', then a possible workaround for you
-> would be making rsize and wsize always greater than bsize.  The default
-> values (rsize=4194304,wsize=4194304,bsize=1048576) would do it.
 
