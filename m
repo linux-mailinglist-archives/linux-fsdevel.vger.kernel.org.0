@@ -1,80 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-47261-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5A4A9B18D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 16:53:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5949AA9B18E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 16:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD49F17E6EE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 14:53:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4E489252FA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 14:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862011A3056;
-	Thu, 24 Apr 2025 14:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC6519F11E;
+	Thu, 24 Apr 2025 14:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="I39m9HlF"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="W7BeCbY3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D04127456
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 14:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EC5127456
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 14:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745506384; cv=none; b=fnyc3qjTvzsFglYCg+jVaKz7/ABOGF0QlQROsjq5QLhgA62/1GC6f3X/+VDnu+LZq0g3fKFIlPx5hL065SzlwZuj0Ijs/rfMgAHlLeyiDE28hmop2fuw9Ybx+1wrzvaQZny5xnCiYDipNwNLMVnuy58gXxnjB9CCUdK4AUsATcg=
+	t=1745506484; cv=none; b=ujYLAE4VgIMclhghoh+0tUkP0Dn75gdB962mc35FAiwW+3Gab54Ka4M7cbE7ALk6FD9b0Nq4m4c/HrojVGrR6Upb7ot3gjUkAquZ39g8O588Ahxamr6J9NFxk85hBYkqaNqQN6rig+x40mXEZpl/oeDJ5Wi/xqLBZPcoEKDGFjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745506384; c=relaxed/simple;
-	bh=s3A657NCobqmPaYShcnXS41Dp2qgYq8SlulUzcZXQCA=;
+	s=arc-20240116; t=1745506484; c=relaxed/simple;
+	bh=RRBSX0BimGnYGO22iZoYihaeeEackA3lfVwNIFPCGl0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=loqB88iN0esh3JSUzB11O+Orf3lgnQmhnDNyD/8zwrqZW8hENC2juLl+76bASf9a2AoPFYCTe2lIoG7BhL8lebsGYrqpqfAHf3ILP5ztRJieRDeBDAIuRBdkULnLdbBvfU61OmZM35xPkcocYhsbMw9gsvqkmA8oywzzl8JEmKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=I39m9HlF; arc=none smtp.client-ip=209.85.166.52
+	 In-Reply-To:Content-Type; b=mr1GWx1NVWa2TLNtZW5bE3xCfutVj2LYFn5pwuF2AwnFl0W9bpM5eOSFa34xyKIj0UAWYPIkyRg+lNZaLCUVcaxTayq01MRq3frQeOYEboGA6BB2sfkmnBss1LdDQOZG6vT/Qe8oN0P2XG9B5nQAPKpPK00X6JIGCkF5Tvzm3GU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=W7BeCbY3; arc=none smtp.client-ip=209.85.166.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-861d7a09c88so33799839f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 07:53:00 -0700 (PDT)
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85ea482e3adso66740039f.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 07:54:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745506379; x=1746111179; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745506481; x=1746111281; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=3yE0uV5DbxwJ1m2x+ijJ+zl26X5qcx9ZqXHltCrR4LE=;
-        b=I39m9HlF9hZ0VirXR4DjbfINEqUYIFPWEm0yXq1DBEk5SqT2XnVuym1qNoFNomOgy6
-         RCgCLtCzAsSKc45Ppvgu/ZBcRhRnf5s3kkEnI3dP5JVz9eC2qWpeC7fkzRZgWB9sWySC
-         9U/Ogco0ybjd+DsPg/A0XOX4PyZjW9WsNQXNlD0xsbXNzMgOfs/A2i7cQRveC6nWPWzr
-         Sx2ZH05Uw7ytqhWXtjReSbGvvk8eSFlbeq8KHOjTp9545H7RpoxA4o8NBl46j7owDVKb
-         kAl2+EDE0hJ4aIQLNCOusBnpQWBQlQgO7eQJViB88zdXsQtQZ88nBFkenHxY98BvsD8w
-         du/A==
+        bh=mtwm22V0E9YgKk14Iu2N3ZRqCyrswQ3Mf9l5CjPwuFo=;
+        b=W7BeCbY3K2hrFmMZQM3KpK5VZsAO1AS4uOI0H/MXyUKysxie2Pzul8uBHCYZzuCDxG
+         zfb6Cl2a8OXizffnPrmdquYTpwgDCgVrlm0SdffOhX31YO3PBEG3Suww1NOvU1IIf2CL
+         isvniW6bKCm6IoQgynllvQpCDuUZQvLmwfH1+iXNsiVV6lJM2pfIrG0Lqm9BS3yqZ1jd
+         1BJn//S8AjQSvjUF/o596cPgq0xQtLW5sfsfMv0HkQJfDFyI9wAYK6pPuf5raVkYq/dA
+         hqaQLMoqWwGHeYinmSwk9q96cHn+f8iWS1rWAI01oGMm+ojgCkNLMrebM6hsdDKi/rAF
+         ji5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745506379; x=1746111179;
+        d=1e100.net; s=20230601; t=1745506481; x=1746111281;
         h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3yE0uV5DbxwJ1m2x+ijJ+zl26X5qcx9ZqXHltCrR4LE=;
-        b=nkv4q9Arc7/IM4uxnVaUZC/G/7L6aDmoiNeNDpqHoNmEQGRJZ3foSHePdoHMPBorLR
-         GMOXxlboMSuTebmN9iuriPguhr/6WR5fA4x5tOk/DI7XqXf+KbmfX0NkbkgOAGcsu/lW
-         MJnCK9UeBfZOkZmgyd6Nb6UvXG96bIAoUt0400G9cvWB5E17vHfvUttBb7ELdr9KBf3V
-         WLbX3Eeb4Rcpc9T2WhhaTSdWT+vRBb1Q8ewrA9CX+1zfHreXDFUE8jpZhqLbRpGKUxmX
-         lH3T9wpggJxtB3RDuRUrFv6PHhZMLMqb2FO6yCPsM1YD1ru2dDHkZo5sTSC2KJ5c3HA4
-         FhsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIqayVowcer/GhoZMHOxEZHMEFZmjqYywpNMjUwRVIjMwnWl+CPD12WElnKzcnvr8/WpVE7Ieh2LBBoBbI@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV9IsJIJHdhJDtmOG0qG97rCo9V6HDfax9CGBjThFxUL1p25oW
-	x5/mbveRn9cg4Djjvvk6MfuhByhq3oRzYfPBZLhoZdAMURkVpzuqY89TudeWSvou/qLwMLuZUJY
-	m
-X-Gm-Gg: ASbGnctKszqKPUkJ4Q1YZmZ/l0nUSXWVmjhVyvpBLJf+TcyYlT++HJWgHqItPCrKQRJ
-	YeeVS7SjOJcUA1MMxq8hJGVElXA+MbRvvVwb+PemxTzEFoZeYGqzqcaRkNtzka0H5fWhzxyokdi
-	ZBtS3TFFoH/ca+ZuYV6BQ3sMlLVsDITYIcoVyCRHLK3ocGFvlQsZ55hpAiAsOgj0lEMBSDY8qId
-	CQhAfiQ4qZqbgkpOY4aJKpPQOOvHQx7QH+XJqYIa0DLpRFmVA5Wlt8MW2tDYHW+d1eQsUtjQvY4
-	VYqvS6nz7qZZBcRQYyMkXxR/kzaK1o9u/lzD
-X-Google-Smtp-Source: AGHT+IHmib9ahOC1dv2zniq5nwg6FnMJtZiIc3s8imDTqkDCv/YYE4iVYUjfL3mDW5W99/bqB+ghoQ==
-X-Received: by 2002:a05:6602:7517:b0:85b:423a:1c20 with SMTP id ca18e2360f4ac-8644fa7e980mr381604139f.13.1745506379519;
-        Thu, 24 Apr 2025 07:52:59 -0700 (PDT)
+        bh=mtwm22V0E9YgKk14Iu2N3ZRqCyrswQ3Mf9l5CjPwuFo=;
+        b=PMHpKKqaezNtuOsRzCjtvZ4QNx1I2NAmYMscbzOKbh+LOXs17UfJRnF6q0SV+MYrjK
+         jhmsNeK10xiyuJMu8Hi1yhvybU6GWs5/YdX7KIpVpME68gX7RT1f9CKptCAbwCqOXvBn
+         6PQKB4DAi7LUmB8WoCwQ4BD0eZJbJLnTjJm3TTpbSYs+fb8mhpW9TcEmj2fjsEwyfhZk
+         yCOu3FgTNeiYO1jUJenOcQG4Ce+98e64yV1cccLymXEIhUrxAY0CUI2tWuKp0Eyj7lQR
+         5qCWLC184DE/36aBPXWaKCIUSQbxrEZv4wWrNdblVNbAvktH+XqNRpNLde3RBu3f4uj5
+         YX3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX9YLEmocVtGXwkq0qq52I6YmoBoHVf4cIk28K4uq/sPqKRiozaD0uD00JfhElZaOoMgmUG36yHajYBsw9O@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9pthtaTk8bftV2YofhjwTbR3J45WATxIT4JFuez6PKs9rQGsm
+	MMfX1guwqRyUilYQqzyZ2GKUxhWCX/LY+S40bMjTMjKKedmum59anyGjHhsPx4w=
+X-Gm-Gg: ASbGncsyovsoBSmHkuwvJxzTQeYTUJCeEYs2dp/9gy0N5PfUVLsW/qw3EDCSLFkhPyF
+	agqh7j+0VZp18cYdMcPttMQgTLTJQ05/zGdcqY+zVpLqdOOZcRc5vBMiXI4bNeaJ290VOOug0Ha
+	4z0bCPaDFm2Cav7LY0aTSgkKt0reMWeZEZv4ipKNxW4izJgy5BLQ/aQeDFpfQkUDjw3c9VJx+Qu
+	JqcYJx26Aibj92kMwvHccR1gJrgJIjYUsEEGW/z74Mhe5Z30JmsPFUtOMSc9RIRZnGvqAqFmYBz
+	h5dGGuRHWY8ieZcxIO9fXC8a32lSYNuoM2ev
+X-Google-Smtp-Source: AGHT+IFlY6RNDCjYHuqZzxsvpc7at9t7XjV3+z6ZydlrNnyfCHFkRzw3zaVy0fy7L9HyCTpuDTpaxw==
+X-Received: by 2002:a05:6e02:3a06:b0:3d3:de5f:af25 with SMTP id e9e14a558f8ab-3d93135f15emr30993625ab.0.1745506481269;
+        Thu, 24 Apr 2025 07:54:41 -0700 (PDT)
 Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-864519ca71dsm21162439f.32.2025.04.24.07.52.58
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f824ba0ec4sm305526173.113.2025.04.24.07.54.40
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Apr 2025 07:52:58 -0700 (PDT)
-Message-ID: <1ed67bb5-5d3d-4af8-b5a7-4f644186708b@kernel.dk>
-Date: Thu, 24 Apr 2025 08:52:57 -0600
+        Thu, 24 Apr 2025 07:54:40 -0700 (PDT)
+Message-ID: <c68882dd-067b-4d16-8fb8-28bfdd51e627@kernel.dk>
+Date: Thu, 24 Apr 2025 08:54:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -82,189 +81,112 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] io_uring: Add new functions to handle user fault
- scenarios
-To: =?UTF-8?B?5aec5pm65Lyf?= <qq282012236@gmail.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- akpm@linux-foundation.org, peterx@redhat.com, asml.silence@gmail.com,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20250422162913.1242057-1-qq282012236@gmail.com>
- <20250422162913.1242057-2-qq282012236@gmail.com>
- <14195206-47b1-4483-996d-3315aa7c33aa@kernel.dk>
- <CANHzP_uW4+-M1yTg-GPdPzYWAmvqP5vh6+s1uBhrMZ3eBusLug@mail.gmail.com>
- <b61ac651-fafe-449a-82ed-7239123844e1@kernel.dk>
- <CANHzP_tLV29_uk2gcRAjT9sJNVPH3rMyVuQP07q+c_TWWgsfDg@mail.gmail.com>
- <7bea9c74-7551-4312-bece-86c4ad5c982f@kernel.dk>
- <52d55891-36e3-43e7-9726-a2cd113f5327@kernel.dk>
- <cac3a5c9-e798-47f2-81ff-3c6003c6d8bb@kernel.dk>
- <CANHzP_uJft1FPJ0W++0Zp5rUjayaULEdpAQRn1VuuqDVq3DmJA@mail.gmail.com>
- <5c20b5ca-ce41-43c4-870a-c50206ab058d@kernel.dk>
- <CANHzP_u2SA3uSoG-4LQ-e9BvW6t-Zo1wn8qnKM0xYGoekL74bA@mail.gmail.com>
+Subject: Re: [PATCH] mm/userfaultfd: prevent busy looping for tasks with
+ signals pending
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
+ "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+ Linux-MM <linux-mm@kvack.org>
+References: <27c3a7f5-aad8-4f2a-a66e-ff5ae98f31eb@kernel.dk>
+ <20250424140344.GA840@cmpxchg.org>
 From: Jens Axboe <axboe@kernel.dk>
 Content-Language: en-US
-In-Reply-To: <CANHzP_u2SA3uSoG-4LQ-e9BvW6t-Zo1wn8qnKM0xYGoekL74bA@mail.gmail.com>
+In-Reply-To: <20250424140344.GA840@cmpxchg.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 4/24/25 8:45 AM, ??? wrote:
-> Jens Axboe <axboe@kernel.dk> ?2025?4?24??? 22:13???
+On 4/24/25 8:03 AM, Johannes Weiner wrote:
+> On Wed, Apr 23, 2025 at 05:37:06PM -0600, Jens Axboe wrote:
+>> userfaultfd may use interruptible sleeps to wait on userspace filling
+>> a page fault, which works fine if the task can be reliably put to
+>> sleeping waiting for that. However, if the task has a normal (ie
+>> non-fatal) signal pending, then TASK_INTERRUPTIBLE sleep will simply
+>> cause schedule() to be a no-op.
 >>
->> On 4/24/25 8:08 AM, ??? wrote:
->>> Jens Axboe <axboe@kernel.dk> ?2025?4?24??? 06:58???
->>>>
->>>> On 4/23/25 9:55 AM, Jens Axboe wrote:
->>>>> Something like this, perhaps - it'll ensure that io-wq workers get a
->>>>> chance to flush out pending work, which should prevent the looping. I've
->>>>> attached a basic test case. It'll issue a write that will fault, and
->>>>> then try and cancel that as a way to trigger the TIF_NOTIFY_SIGNAL based
->>>>> looping.
->>>>
->>>> Something that may actually work - use TASK_UNINTERRUPTIBLE IFF
->>>> signal_pending() is true AND the fault has already been tried once
->>>> before. If that's the case, rather than just call schedule() with
->>>> TASK_INTERRUPTIBLE, use TASK_UNINTERRUPTIBLE and schedule_timeout() with
->>>> a suitable timeout length that prevents the annoying parts busy looping.
->>>> I used HZ / 10.
->>>>
->>>> I don't see how to fix userfaultfd for this case, either using io_uring
->>>> or normal write(2). Normal syscalls can pass back -ERESTARTSYS and get
->>>> it retried, but there's no way to do that from inside fault handling. So
->>>> I think we just have to be nicer about it.
->>>>
->>>> Andrew, as the userfaultfd maintainer, what do you think?
->>>>
->>>> diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
->>>> index d80f94346199..1016268c7b51 100644
->>>> --- a/fs/userfaultfd.c
->>>> +++ b/fs/userfaultfd.c
->>>> @@ -334,15 +334,29 @@ static inline bool userfaultfd_must_wait(struct userfaultfd_ctx *ctx,
->>>>         return ret;
->>>>  }
->>>>
->>>> -static inline unsigned int userfaultfd_get_blocking_state(unsigned int flags)
->>>> +struct userfault_wait {
->>>> +       unsigned int task_state;
->>>> +       bool timeout;
->>>> +};
->>>> +
->>>> +static struct userfault_wait userfaultfd_get_blocking_state(unsigned int flags)
->>>>  {
->>>> +       /*
->>>> +        * If the fault has already been tried AND there's a signal pending
->>>> +        * for this task, use TASK_UNINTERRUPTIBLE with a small timeout.
->>>> +        * This prevents busy looping where schedule() otherwise does nothing
->>>> +        * for TASK_INTERRUPTIBLE when the task has a signal pending.
->>>> +        */
->>>> +       if ((flags & FAULT_FLAG_TRIED) && signal_pending(current))
->>>> +               return (struct userfault_wait) { TASK_UNINTERRUPTIBLE, true };
->>>> +
->>>>         if (flags & FAULT_FLAG_INTERRUPTIBLE)
->>>> -               return TASK_INTERRUPTIBLE;
->>>> +               return (struct userfault_wait) { TASK_INTERRUPTIBLE, false };
->>>>
->>>>         if (flags & FAULT_FLAG_KILLABLE)
->>>> -               return TASK_KILLABLE;
->>>> +               return (struct userfault_wait) { TASK_KILLABLE, false };
->>>>
->>>> -       return TASK_UNINTERRUPTIBLE;
->>>> +       return (struct userfault_wait) { TASK_UNINTERRUPTIBLE, false };
->>>>  }
->>>>
->>>>  /*
->>>> @@ -368,7 +382,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
->>>>         struct userfaultfd_wait_queue uwq;
->>>>         vm_fault_t ret = VM_FAULT_SIGBUS;
->>>>         bool must_wait;
->>>> -       unsigned int blocking_state;
->>>> +       struct userfault_wait wait_mode;
->>>>
->>>>         /*
->>>>          * We don't do userfault handling for the final child pid update
->>>> @@ -466,7 +480,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
->>>>         uwq.ctx = ctx;
->>>>         uwq.waken = false;
->>>>
->>>> -       blocking_state = userfaultfd_get_blocking_state(vmf->flags);
->>>> +       wait_mode = userfaultfd_get_blocking_state(vmf->flags);
->>>>
->>>>          /*
->>>>           * Take the vma lock now, in order to safely call
->>>> @@ -488,7 +502,7 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
->>>>          * following the spin_unlock to happen before the list_add in
->>>>          * __add_wait_queue.
->>>>          */
->>>> -       set_current_state(blocking_state);
->>>> +       set_current_state(wait_mode.task_state);
->>>>         spin_unlock_irq(&ctx->fault_pending_wqh.lock);
->>>>
->>>>         if (!is_vm_hugetlb_page(vma))
->>>> @@ -501,7 +515,11 @@ vm_fault_t handle_userfault(struct vm_fault *vmf, unsigned long reason)
->>>>
->>>>         if (likely(must_wait && !READ_ONCE(ctx->released))) {
->>>>                 wake_up_poll(&ctx->fd_wqh, EPOLLIN);
->>>> -               schedule();
->>>> +               /* See comment in userfaultfd_get_blocking_state() */
->>>> +               if (!wait_mode.timeout)
->>>> +                       schedule();
->>>> +               else
->>>> +                       schedule_timeout(HZ / 10);
->>>>         }
->>>>
->>>>         __set_current_state(TASK_RUNNING);
->>>>
->>>> --
->>>> Jens Axboe
->>> I guess the previous io_work_fault patch might have already addressed
->>> the issue sufficiently. The later patch that adds a timeout for
->>> userfaultfd might
+>> For a task that registers a page with userfaultfd and then proceeds
+>> to do a write from it, if that task also has a signal pending then
+>> it'll essentially busy loop from do_page_fault() -> handle_userfault()
+>> until that fault has been filled. Normally it'd be expected that the
+>> task would sleep until that happens. Here's a trace from an application
+>> doing just that:
 >>
->> That one isn't guaranteed to be safe, as it's not necessarily a safe
->> context to prune the conditions that lead to a busy loop rather than the
->> normal "schedule until the condition is resolved". Running task_work
->> should only be done at the outermost point in the kernel, where the task
->> state is known sane in terms of what locks etc are being held. For some
->> conditions the patch will work just fine, but it's not guaranteed to be
->> the case.
->>
->>> not be necessary  wouldn?t returning after a timeout just cause the
->>> same fault to repeat indefinitely again? Regardless of whether the
->>> thread is in UN or IN state, the expected behavior should be to wait
->>> until the page is filled or the uffd resource is released to be woken
->>> up, which seems like the correct logic.
->>
->> Right, it'll just sleep timeout for a bit as not to be a 100% busy loop.
->> That's unfortunately the best we can do for this case... The expected
->> behavior is indeed to schedule until we get woken, however that just
->> doesn't work if there are signals pending, or other conditions that lead
->> to TASK_INTERRUPTIBLE + schedule() being a no-op.
->>
->> --
->> Jens Axboe
-> In my testing, clearing the NOTIFY flag in the original io_work_fault
-> ensures that the next schedule correctly waits. However, adding a
+>> handle_userfault+0x4b8/0xa00 (P)
+>> hugetlb_fault+0xe24/0x1060
+>> handle_mm_fault+0x2bc/0x318
+>> do_page_fault+0x1e8/0x6f0
+> 
+> Makes sense. There is a fault_signal_pending() check before retrying:
+> 
+> static inline bool fault_signal_pending(vm_fault_t fault_flags,
+>                                         struct pt_regs *regs)
+> {
+>         return unlikely((fault_flags & VM_FAULT_RETRY) &&
+>                         (fatal_signal_pending(current) ||
+>                          (user_mode(regs) && signal_pending(current))));
+> }
+> 
+> Since it's an in-kernel fault, and the signal is non-fatal, it won't
+> stop looping until the fault is handled.
+> 
+> This in itself seems a bit sketchy. You have to hope there is no
+> dependency between handling the signal -> handling the fault inside
+> the userspace components.
 
-That's symptom fixing again - the NOTIFY flag is the thing that triggers
-for io_uring, but any legitimate signal (or task_work added with
-signaling) will cause the same issue.
+Indeed... But that's generic userfaultfd sketchiness, not really related
+to this patch.
 
-> timeout causes the issue to return to multiple faults again.
-> Also, after clearing the NOTIFY flag in handle_userfault,
-> it?s possible that some task work hasn?t been executed.
-> But if task_work_run isn?t added back, tasks might get lost?
-> It seems like there isn?t an appropriate place to add it back.
-> So, do you suggest adjusting the fault frequency in userfaultfd
-> to make it more rhythmic to alleviate the issue?
+> 
+>> do_translation_fault+0x9c/0xd0
+>> do_mem_abort+0x44/0xa0
+>> el1_abort+0x3c/0x68
+>> el1h_64_sync_handler+0xd4/0x100
+>> el1h_64_sync+0x6c/0x70
+>> fault_in_readable+0x74/0x108 (P)
+>> iomap_file_buffered_write+0x14c/0x438
+>> blkdev_write_iter+0x1a8/0x340
+>> vfs_write+0x20c/0x348
+>> ksys_write+0x64/0x108
+>> __arm64_sys_write+0x1c/0x38
+>>
+>> where the task is looping with 100% CPU time in the above mentioned
+>> fault path.
+>>
+>> Since it's impossible to handle signals, or other conditions like
+>> TIF_NOTIFY_SIGNAL that also prevents interruptible sleeping, from the
+>> fault path, use TASK_UNINTERRUPTIBLE with a short timeout even for vmf
+>> modes that would normally ask for INTERRUPTIBLE or KILLABLE sleep. Fatal
+>> signals will still be handled by the caller, and the timeout is short
+>> enough to hopefully not cause any issues. If this is the first invocation
+>> of this fault, eg FAULT_FLAG_TRIED isn't set, then the normal sleep mode
+>> is used.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+> 
+> When this patch was first introduced, VM_FAULT_RETRY would work only
+> once. The second try would have FAULT_FLAG_ALLOW_RETRY cleared,
+> causing handle_userfault() to return VM_SIGBUS, which would bubble
+> through the fixup table (kernel fault), -EFAULT from
+> iomap_file_buffered_write() and unwind the kernel stack this way.
+> 
+> So I'm thinking this is the more likely commit for Fixes: and stable:
+> 
+> commit 4064b982706375025628094e51d11cf1a958a5d3
+> Author: Peter Xu <peterx@redhat.com>
+> Date:   Wed Apr 1 21:08:45 2020 -0700
+> 
+>     mm: allow VM_FAULT_RETRY for multiple times
 
-The task_work is still there, you just removed the notification
-mechanism that tells the kernel that there's task_work there. For this
-particular case, you could re-set TIF_NOTIFY_SIGNAL at the end after
-schedule(), but again it'd only fix that specific one case, not the
-generic issue.
+Thanks for checking that - yep that sounds fine to me, we can adjust the
+fixes tag appropriately.
 
-What's the objection to the sleep approach? If the task is woken by the
-fault being filled, it'll still wake on time, no delay. If not, then it
-prevents a busy loop, which is counterproductive.
+>> Reported-by: Zhiwei Jiang <qq282012236@gmail.com>
+>> Link: https://lore.kernel.org/io-uring/20250422162913.1242057-1-qq282012236@gmail.com/
+>> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> 
+> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+
+Thanks!
 
 -- 
 Jens Axboe
