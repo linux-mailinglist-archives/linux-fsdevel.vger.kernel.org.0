@@ -1,171 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-47241-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47242-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFFFCA9AEE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 15:23:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAEE6A9AEE8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 15:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16AE3444641
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 13:23:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154DD1B65DA0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Apr 2025 13:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1E527C17F;
-	Thu, 24 Apr 2025 13:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8075C27C862;
+	Thu, 24 Apr 2025 13:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RkwNrRBz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p3pXyl5J";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="RkwNrRBz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p3pXyl5J"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NNvbGOek"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36CB3253951
-	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 13:23:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C019221FAA
+	for <linux-fsdevel@vger.kernel.org>; Thu, 24 Apr 2025 13:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745500989; cv=none; b=F5pNQv3dHqI2uLSft9PXvLNKQGBRK0/QjgrTKKLkEGPP5GoKEze26Tgy/rc2ndXWg29xxl2rTwRe5s0SAXQ+SvhuQpvLJiRofRwr5WLvIuA/ajdEQClDsbBdaW4PElxFiYqxskv3pK53xQASv9WnEQqUMsdtWF+UhULK6oUFMq8=
+	t=1745501134; cv=none; b=mFrh/n0b9hm1pIdKLAVMF3OF4a9g4q7mdL7+8vns2Fq6dqFzkVGjMqqPTzHp4Cz7uXVNWGCybyP6bbQ7qOlieLW2Cdz5n4ek5gYTg1FoxZLtR6Qs2aXeA2Q21NSRo+uPZx4ORacBD+rgiZMYW1cTZwCXJMy+zzjjKENq0mNjMpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745500989; c=relaxed/simple;
-	bh=Q4C0nklljmfff9/O/8ahYFLmFMpMGaA5LMuM0i+Vjt4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=by2knuGE9/yeXY3RBZuuw+/i4o+1+hdNkiCmCdL39eMDULreCLkOBdqdIGBiGwsVtJnWNhKCu6YhWEYZHt3/EoGWjJF2Yo2IKGqbeYqOiC2Lb6TGNQx47dw9vQiYmQkTIhGa523rRbb+3YF2j5OZZwOqmTXXCNWpr2hJE4l3xTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RkwNrRBz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p3pXyl5J; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=RkwNrRBz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p3pXyl5J; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1745501134; c=relaxed/simple;
+	bh=QR6Lgp6g8I4WxSKtSuW9v27j0eErgzOd2nwqrk0jWcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Snp/haWsL1j9gsipZeCXgjlmTml2YsdmpxSiUdKWEM24htGI+qV7TlVPKf0CaG76p0VYnU8nUnG3Fgm/3GNK96EhCJPXrEnQshoqpT7CfoJ68ubJaX79wD6nV4aiT62MZ7sNtgaexZbAN+JSP/hHeh7GNmsNhgC4IGz7cf8972o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NNvbGOek; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745501132;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T8CoeYLwXY5xNUurE4zhol3ZeibZlpZ2K7VrxvLFf+I=;
+	b=NNvbGOekNukz1xVGI/SSVAk59bkv8ZGahOVl9VPKaNmEeNQ80Zkmb+lHHhSH2UNo8b7u57
+	S2K4N0WPCb26DHA5GjPH/MRq06ESsmLeO8Z7J0UGz7RNrvpFy300LdrUeY4gw+nN5fyKwj
+	3ez6AFRIs70bWmc29fxrk2o/LN8g84E=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-547-_al3xsiHP3ekhfK1BIj1Gw-1; Thu,
+ 24 Apr 2025 09:25:26 -0400
+X-MC-Unique: _al3xsiHP3ekhfK1BIj1Gw-1
+X-Mimecast-MFC-AGG-ID: _al3xsiHP3ekhfK1BIj1Gw_1745501124
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 248F51F445;
-	Thu, 24 Apr 2025 13:23:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745500986; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=+ZNaGPKekffWz15E9n8rjartlWAV6WOm68U86VGHHqk=;
-	b=RkwNrRBzuAqj9MpIayc2OmLsLSIDGLMy1nJO/+EO8B4f+LLDCNZJF+Ej1qusL2LrfOscXE
-	1umvOWI2bxeYgVLmQqCzRGRiGJMs8xwsVvqLXACfEYBQphadC+s4ixTTY1zP9zxrERhRrv
-	0ZX9JlKhLfI8w8BhllHGpDFfH7qrayE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745500986;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=+ZNaGPKekffWz15E9n8rjartlWAV6WOm68U86VGHHqk=;
-	b=p3pXyl5JFpEY7Wi1jUlFcJqFH9WHj0ImSN7urp/ehbTU5w5PnPniIqDyQ25LsKnDl93L5l
-	xek6bmAHNjw4BpDA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=RkwNrRBz;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=p3pXyl5J
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745500986; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=+ZNaGPKekffWz15E9n8rjartlWAV6WOm68U86VGHHqk=;
-	b=RkwNrRBzuAqj9MpIayc2OmLsLSIDGLMy1nJO/+EO8B4f+LLDCNZJF+Ej1qusL2LrfOscXE
-	1umvOWI2bxeYgVLmQqCzRGRiGJMs8xwsVvqLXACfEYBQphadC+s4ixTTY1zP9zxrERhRrv
-	0ZX9JlKhLfI8w8BhllHGpDFfH7qrayE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745500986;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=+ZNaGPKekffWz15E9n8rjartlWAV6WOm68U86VGHHqk=;
-	b=p3pXyl5JFpEY7Wi1jUlFcJqFH9WHj0ImSN7urp/ehbTU5w5PnPniIqDyQ25LsKnDl93L5l
-	xek6bmAHNjw4BpDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 19A911393C;
-	Thu, 24 Apr 2025 13:23:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rP8+Bjo7CmiLXQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 24 Apr 2025 13:23:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id AE7E2A0921; Thu, 24 Apr 2025 15:23:01 +0200 (CEST)
-From: Jan Kara <jack@suse.cz>
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8FDFD1956094;
+	Thu, 24 Apr 2025 13:25:23 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.93])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 68C7B1956095;
+	Thu, 24 Apr 2025 13:25:17 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu, 24 Apr 2025 15:24:45 +0200 (CEST)
+Date: Thu, 24 Apr 2025 15:24:38 +0200
+From: Oleg Nesterov <oleg@redhat.com>
 To: Christian Brauner <brauner@kernel.org>
-Cc: <linux-fsdevel@vger.kernel.org>,
-	Jan Kara <jack@suse.cz>
-Subject: [PATCH] fs/xattr: Fix handling of AT_FDCWD in setxattrat(2) and getxattrat(2)
-Date: Thu, 24 Apr 2025 15:22:47 +0200
-Message-ID: <20250424132246.16822-2-jack@suse.cz>
-X-Mailer: git-send-email 2.43.0
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, netdev@vger.kernel.org,
+	David Rheinsberg <david@readahead.eu>, Jan Kara <jack@suse.cz>,
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>,
+	Luca Boccassi <bluca@debian.org>,
+	Lennart Poettering <lennart@poettering.net>,
+	Daan De Meyer <daan.j.demeyer@gmail.com>,
+	Mike Yuan <me@yhndnzj.com>
+Subject: Re: [PATCH RFC 1/4] pidfs: register pid in pidfs
+Message-ID: <20250424132437.GA15583@redhat.com>
+References: <20250424-work-pidfs-net-v1-0-0dc97227d854@kernel.org>
+ <20250424-work-pidfs-net-v1-1-0dc97227d854@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1067; i=jack@suse.cz; h=from:subject; bh=Q4C0nklljmfff9/O/8ahYFLmFMpMGaA5LMuM0i+Vjt4=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBoCjsmRRQYHvXApqzyrAvyYX58+Fk95ryBF6Sf77mE vOmpekWJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaAo7JgAKCRCcnaoHP2RA2SmfCA C6HbDwjJaUdnO7hzo1L6uAvyDuhh5qhbNjtLPh474UnB6fwAwy8BhtZDe7yFLVAihLUdP0VasfNoUL hHP8nBUGfh/g6MUf2SyvOQLgM+6NX3YVWbAnNzhLdQDJsrpVG5wYubXYw9NAZ39pHIZ01WwsO9OyrN pUcSwncXA+SKFFhcx/P7Sv8nYiZHlvCCvFk6sfKzBIxq3QcPtCBQeCd7jeQVs8qfmebs0VZJ76XqZd wV3oWLmHjexwQ0vIcpnALl7S2Uju2cY4Y/JGgUMH2IchraRnANnZZvWqvvu8pPoIu5GBj0QQIQyyBb AFuDpIgWbbCsOT/dqmeCGFNI5xsc+k
-X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 248F51F445
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_SOME(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -3.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250424-work-pidfs-net-v1-1-0dc97227d854@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-Currently, setxattrat(2) and getxattrat(2) are wrongly handling the
-calls of the from setxattrat(AF_FDCWD, NULL, AT_EMPTY_PATH, ...) and
-fail with -EBADF error instead of operating on CWD. Fix it.
+On 04/24, Christian Brauner wrote:
+>
+> + * pidfs_register_pid - pin a struct pid through pidfs
+> + * @pid: pid to pin
+> + *
+> + * Pin a struct pid through pidfs. Needs to be paired with
+> + * pidfds_put_put() to not risk leaking the pidfs dentry and inode.
+      ^^^^^^^^^^^^^^
 
-Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/xattr.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+pidfs_put_pid ;)
 
-diff --git a/fs/xattr.c b/fs/xattr.c
-index 02bee149ad96..fabb2a04501e 100644
---- a/fs/xattr.c
-+++ b/fs/xattr.c
-@@ -703,7 +703,7 @@ static int path_setxattrat(int dfd, const char __user *pathname,
- 		return error;
- 
- 	filename = getname_maybe_null(pathname, at_flags);
--	if (!filename) {
-+	if (!filename && dfd >= 0) {
- 		CLASS(fd, f)(dfd);
- 		if (fd_empty(f))
- 			error = -EBADF;
-@@ -847,7 +847,7 @@ static ssize_t path_getxattrat(int dfd, const char __user *pathname,
- 		return error;
- 
- 	filename = getname_maybe_null(pathname, at_flags);
--	if (!filename) {
-+	if (!filename && dfd >= 0) {
- 		CLASS(fd, f)(dfd);
- 		if (fd_empty(f))
- 			return -EBADF;
--- 
-2.43.0
+Can't review 2/4, for other patches in series
+
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
 
