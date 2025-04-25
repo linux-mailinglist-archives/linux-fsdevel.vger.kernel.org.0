@@ -1,191 +1,232 @@
-Return-Path: <linux-fsdevel+bounces-47396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47397-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F82A9CEFD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 18:56:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614C4A9CF04
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 18:56:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C2BF1C02E17
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 16:53:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3ABF29C7470
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 16:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF611F8ADD;
-	Fri, 25 Apr 2025 16:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFBC1CEAD6;
+	Fri, 25 Apr 2025 16:52:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Llnyj+X+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIz6x0Bh"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AB21DB127;
-	Fri, 25 Apr 2025 16:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D801C5D5A;
+	Fri, 25 Apr 2025 16:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745599764; cv=none; b=AlKFz+tGidT/vy+XqKW2VW+tSrPHdaxZAYmES60k4jq/AGe5P8jz7qp/XTpPyXvBBTLfJG3ioZ6aSmsOLa/b64ajUQQ8Z2i/IhcNycv5SC/2rTJfklNcsNstEAwJQcDtRFrtVl6iKJBkXYHYF58S00rRSv2AB7NI3wBjGKaqoV4=
+	t=1745599970; cv=none; b=Vo/aMLZ+jMRRqwy09Esq8PK6oI6A+DJ8EzqDc+UlBXvKqFLg5aGtL146UAvKbN6GnlPnZmcfeLdmjEq8J85tfB7UMADmjW/KNsJ8rWyLrzYJLEOiJ/MIA/JFRjL7ObgQwOXhtJgF/Vw7WO52eUIAY4G/XnMgo34uNc1OpzYUVyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745599764; c=relaxed/simple;
-	bh=461+pUfno2hTIbCXCu9nP1x7M0HrZserREq+i6zkxp0=;
+	s=arc-20240116; t=1745599970; c=relaxed/simple;
+	bh=b7xROfOzVGEJ+F8+IU2YtVbSzBcJ5YtgexLbCieurdI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hqh4Hvcu8R10qquQf/DMRMz7zq/9AOTgF5hdbCv4fhdgmwUYW8T6LgShCUGDLRjuVq6P99KzHSBD+rCfVgvzuzh4CYmsrXhntpzhCwkdXn96fEf0u3u740IXnyDcmXVrqvsiK7bpqU6rxgX+fh0l57aHCdoFkXs6eGfFAz4okPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Llnyj+X+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6723C4CEE4;
-	Fri, 25 Apr 2025 16:49:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745599764;
-	bh=461+pUfno2hTIbCXCu9nP1x7M0HrZserREq+i6zkxp0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Llnyj+X+6CK/sPAqAggsHaHa7jXYnwl6GrRnj7DKn1eo6DxL2rPpiNAw5W/JIsoXw
-	 K1oCVDwtv+O6b9bb5MfIsgFIfk1L9EeQJyKInb/mD9NseF+7wZehkCBUtK7BzmdwKF
-	 Q+m4q4eZwYBTxzvUkak7j2Dm7w9tySNB4yjGw1ugumu/OXOoZcmnUIlzt4bkoBDsOz
-	 T5E7KhY1fzSE7i5rE063TkQ/+dqYJtMNIA8AYj82TF3R5sI/z0CXtcEz7Ebk/eKfqH
-	 Mo5x9g84BoTaKtlXvhCxBRycD246nllcg5U+BeU9aqVZIFIJfdm/WjkllLjHzqpsHQ
-	 0n2BzQvHnhJFQ==
-Date: Fri, 25 Apr 2025 18:49:19 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Benjamin Drung <benjamin.drung@canonical.com>
-Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
-	Luca Boccassi <luca.boccassi@gmail.com>, Lennart Poettering <lennart@poettering.net>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] coredump: hand a pidfd to the usermode coredump
- helper
-Message-ID: <20250425-erbschaft-nummer-8ddbe420ae22@brauner>
-References: <20250414-work-coredump-v2-0-685bf231f828@kernel.org>
- <20250414-work-coredump-v2-3-685bf231f828@kernel.org>
- <ee1263a1bcb7510f2ec7a4c34e5c64b3a1d21d7a.camel@canonical.com>
- <20250425-eskapaden-regnen-4534af2aef11@brauner>
- <e1ee6aba07c367b9518fe3fab1dd71c418e3446a.camel@canonical.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P417MBdth86NNc7rJ3b7YOcnx2aQEeC8VTyyBDjzPWflKLCmZt/y9Ko3B+ptSLJNM8U8xrqp+GCzLack92J4OJbstzt+/7DONiVMMaIfVSDQ5obsLvEqqAZD7knNkF52Fn4CTWeKJdvqTwYP6iuxRk2eGVS92qgnDpHetNos8vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIz6x0Bh; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-af6a315b491so2431636a12.1;
+        Fri, 25 Apr 2025 09:52:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1745599968; x=1746204768; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xUo8ldcQnt9oMg4WgBNcdcluURoGZZ9nuZ9OpdGRZpI=;
+        b=gIz6x0BhI4EX2pwLdijptx94vt96kgMUzvnMhUBr7TGNyYlGC25IcBjVLhNo18PiAj
+         cngpA8C41GVpXyCWQJzMQMvR6WjScCb6xyalHtaIBL0JLoSMkV9IjMLPs4z+uVvk6nMf
+         yzHmTf8qco18mJKnOWr6EM32cn0jre3CBy5z91erUqMIXGTBEE3ZWDt6Ur9SL8XUUKbp
+         xFS/Ow1A02h7W9ZfMMqFMB2umjOn/PnoVK9s5xcnZnWRq2HkN//OF+mx0iqsgqkT1roS
+         ufBRABWLYScCyU32vw/k7rZ5tLGm2uycnCvAmREpYf/TKB+XBz/Ef49ErnEQPFCPPRPF
+         jDig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745599968; x=1746204768;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xUo8ldcQnt9oMg4WgBNcdcluURoGZZ9nuZ9OpdGRZpI=;
+        b=t4E2PxjlbAx1dQmrpyNmNuePOV+PRT9EB9mPLQS9PfvVIW3fRUsXMQhWaVyzL4BI++
+         HoSSP23p7meKOj2GjllV5ZMTBYLnMoncSt7ZUft+RQtOISbPO3gJVl6EHiH7dFKjBqew
+         UXCwe6/GAgoQGp2+8wgz7fZfsiZtqIEQdOz+hPkw8pIyxnIOQcfP2s2MWNm9hnFsjV+9
+         UGaTXXLKwy4qwJfmQWll3WZm/r58DdrlEHQNbDp9URz2MDVOINJk4VHic7WofRDMC8Vc
+         faAWvuyQfdafvZPUUOy2DnXyl4WDI2Fcj0y2eRFdVIWwkG8P2GU/EIgVlRdAXvbRQBmD
+         CsNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPGHyJtv8zoZkoqDJvxnAWprd2GZoNTeXJ+h8iOP5iDHIHOjc6BrgUartMOceV5ZTEArQ5OPukL5TNlxFX@vger.kernel.org, AJvYcCXWqHvqZf5N0+73JCHV7F/1qBD0RwlsmLtbkF9W/1OPY/hJJ3FLvaihf8Bz0FedTAjeiRj4VwP3xa0Tfr+a@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRpMBj00FEismFKcHYtrfWQaQCq5Gbmmrhxvj6gUESIwlp3Irs
+	ZWDnt1tfeSgpDbjOGcx0TiID+nWCDRrzfLdWnD/eBLWDCTXHAayB
+X-Gm-Gg: ASbGncv6axsU0qj8IyB+29vgbw3whcX2ZA1tTuxOP+uBMrLGZwlRocYbUPdvKvQs5gu
+	9AJteImqOaTdA3zaZ8wYokEsG2uR2//Ke/9MNVcgmKClYj/nBfwrkr3nW7MN4enMh6+FJfraZ12
+	S8uFnNkrTtFPTfIC6sGNOPWyZ+cyrdUbvUtWDnWeXUPfZ2b0lKLTana9tm+7HdbMXtIdNC1I7Lr
+	hvgwmmT9fjUR1/Kr2WMCVxn5/qx04/Aj7E7K8ikfMvCViQtsujuqP+USxz8KEktWH78R4/c9GH8
+	929Dtngemc1ZpW6NGoWhxhbowNFazGq4TjyStVu0mpkComC4sT05KANFpjBvgs+yZAbG
+X-Google-Smtp-Source: AGHT+IFojj7f+se3pSr/WR6LUWCeOvjNpR7dRU6l5UkaIDRsEoeOc1uUIphwPcBM8pHGM0feoLQTuw==
+X-Received: by 2002:a05:6a20:6f0a:b0:1fe:90c5:7cee with SMTP id adf61e73a8af0-2045b98fd7emr4718790637.28.1745599968077;
+        Fri, 25 Apr 2025 09:52:48 -0700 (PDT)
+Received: from vaxr-BM6660-BM6360 ([2001:288:7001:2703:f97d:cfa2:241e:84aa])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25a6a30csm3387276b3a.88.2025.04.25.09.52.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 09:52:47 -0700 (PDT)
+Date: Sat, 26 Apr 2025 00:52:42 +0800
+From: I Hsin Cheng <richard120310@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com,
+	viro@zeniv.linux.org.uk, brauner@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jfs-discussion@lists.sourceforge.net, shaggy@kernel.org,
+	syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev
+Subject: Re: [RFC PATCH] fs/buffer: Handle non folio buffer case for
+ drop_buffer()
+Message-ID: <aAu92k-iPbnWBKGz@vaxr-BM6660-BM6360>
+References: <66fcb7f9.050a0220.f28ec.04e8.GAE@google.com>
+ <20250423023703.632613-1-richard120310@gmail.com>
+ <nfnwvcefhvm5sfrvlqqf4zcdq2iyzk4f2n366ux3bjatj7o4vl@5hq5evovwsxp>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e1ee6aba07c367b9518fe3fab1dd71c418e3446a.camel@canonical.com>
+In-Reply-To: <nfnwvcefhvm5sfrvlqqf4zcdq2iyzk4f2n366ux3bjatj7o4vl@5hq5evovwsxp>
 
-On Fri, Apr 25, 2025 at 02:03:34PM +0200, Benjamin Drung wrote:
-> On Fri, 2025-04-25 at 13:57 +0200, Christian Brauner wrote:
-> > On Fri, Apr 25, 2025 at 01:31:56PM +0200, Benjamin Drung wrote:
-> > > Hi,
-> > > 
-> > > On Mon, 2025-04-14 at 15:55 +0200, Christian Brauner wrote:
-> > > > Give userspace a way to instruct the kernel to install a pidfd into the
-> > > > usermode helper process. This makes coredump handling a lot more
-> > > > reliable for userspace. In parallel with this commit we already have
-> > > > systemd adding support for this in [1].
-> > > > 
-> > > > We create a pidfs file for the coredumping process when we process the
-> > > > corename pattern. When the usermode helper process is forked we then
-> > > > install the pidfs file as file descriptor three into the usermode
-> > > > helpers file descriptor table so it's available to the exec'd program.
-> > > > 
-> > > > Since usermode helpers are either children of the system_unbound_wq
-> > > > workqueue or kthreadd we know that the file descriptor table is empty
-> > > > and can thus always use three as the file descriptor number.
-> > > > 
-> > > > Note, that we'll install a pidfd for the thread-group leader even if a
-> > > > subthread is calling do_coredump(). We know that task linkage hasn't
-> > > > been removed due to delay_group_leader() and even if this @current isn't
-> > > > the actual thread-group leader we know that the thread-group leader
-> > > > cannot be reaped until @current has exited.
-> > > > 
-> > > > Link: https://github.com/systemd/systemd/pull/37125 [1]
-> > > > Tested-by: Luca Boccassi <luca.boccassi@gmail.com>
-> > > > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > > > ---
-> > > >  fs/coredump.c            | 59 ++++++++++++++++++++++++++++++++++++++++++++----
-> > > >  include/linux/coredump.h |  1 +
-> > > >  2 files changed, 56 insertions(+), 4 deletions(-)
-> > > > 
-> > > > diff --git a/fs/coredump.c b/fs/coredump.c
-> > > > index 9da592aa8f16..403be0ff780e 100644
-> > > > --- a/fs/coredump.c
-> > > > +++ b/fs/coredump.c
-> > > > @@ -43,6 +43,9 @@
-> > > >  #include <linux/timekeeping.h>
-> > > >  #include <linux/sysctl.h>
-> > > >  #include <linux/elf.h>
-> > > > +#include <linux/pidfs.h>
-> > > > +#include <uapi/linux/pidfd.h>
-> > > > +#include <linux/vfsdebug.h>
-> > > >  
-> > > >  #include <linux/uaccess.h>
-> > > >  #include <asm/mmu_context.h>
-> > > > @@ -60,6 +63,12 @@ static void free_vma_snapshot(struct coredump_params *cprm);
-> > > >  #define CORE_FILE_NOTE_SIZE_DEFAULT (4*1024*1024)
-> > > >  /* Define a reasonable max cap */
-> > > >  #define CORE_FILE_NOTE_SIZE_MAX (16*1024*1024)
-> > > > +/*
-> > > > + * File descriptor number for the pidfd for the thread-group leader of
-> > > > + * the coredumping task installed into the usermode helper's file
-> > > > + * descriptor table.
-> > > > + */
-> > > > +#define COREDUMP_PIDFD_NUMBER 3
-> > > >  
-> > > >  static int core_uses_pid;
-> > > >  static unsigned int core_pipe_limit;
-> > > > @@ -339,6 +348,27 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
-> > > >  			case 'C':
-> > > >  				err = cn_printf(cn, "%d", cprm->cpu);
-> > > >  				break;
-> > > > +			/* pidfd number */
-> > > > +			case 'F': {
-> > > > +				/*
-> > > > +				 * Installing a pidfd only makes sense if
-> > > > +				 * we actually spawn a usermode helper.
-> > > > +				 */
-> > > > +				if (!ispipe)
-> > > > +					break;
-> > > > +
-> > > > +				/*
-> > > > +				 * Note that we'll install a pidfd for the
-> > > > +				 * thread-group leader. We know that task
-> > > > +				 * linkage hasn't been removed yet and even if
-> > > > +				 * this @current isn't the actual thread-group
-> > > > +				 * leader we know that the thread-group leader
-> > > > +				 * cannot be reaped until @current has exited.
-> > > > +				 */
-> > > > +				cprm->pid = task_tgid(current);
-> > > > +				err = cn_printf(cn, "%d", COREDUMP_PIDFD_NUMBER);
-> > > > +				break;
-> > > > +			}
-> > > >  			default:
-> > > >  				break;
-> > > >  			}
-> > > > 
-> > > 
-> > > I tried this change with Apport: I took the Ubuntu mainline kernel build
-> > > https://kernel.ubuntu.com/mainline/daily/2025-04-24/ (that refers to
-> > > mainline commit e54f9b0410347c49b7ffdd495578811e70d7a407) and applied
-> > > these three patches on top. Then I modified Apport to take the
-> > > additional `-F%F` and tested that on Ubuntu 25.04 (plucky). The result
-> > > is the coredump failed as long as there was `-F%F` on
+On Wed, Apr 23, 2025 at 12:13:29PM +0200, Jan Kara wrote:
+> On Wed 23-04-25 10:37:03, I Hsin Cheng wrote:
+> > When the folio doesn't have any buffers, "folio_buffers(folio)" will
+> > return NULL, causing "buffer_busy(bh)" to dereference a null pointer.
+> > Handle the case and jump to detach the folio if there's no buffer within
+> > it.
 > > 
-> > I have no clue what -F%F is and whether that leading -F is something
-> > specific to Apport but the specifier is %F not -F%F. For example:
+> > Reported-by: syzbot+de1498ff3a934ac5e8b4@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=de1498ff3a934ac5e8b4
+> > Fixes: 6439476311a64 ("fs: Convert drop_buffers() to use a folio")
+> > Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
+> > ---
+> > syzbot reported a null pointer dereference issue. [1]
 > > 
-> >         > cat /proc/sys/kernel/core_pattern
-> >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h %F
+> > If the folio be sent into "drop_buffer()" doesn't have any buffers,
+> > assigning "bh = head" will make "bh" to NULL, and the following
+> > operation of cleaning the buffer will encounter null pointer
+> > dereference.
 > > 
-> > And note that this requires the pipe logic to be used, aka "|" needs to
-> > be specified. Without it this doesn't make sense.
+> > I checked other use cases of "folio_buffers()", e.g. the one used in
+> > "buffer_check_dirty_writeback()" [2]. They generally use the same
+> > approach to check whether a folio_buffers() return NULL.
+> > 
+> > I'm not sure whether it's normal for a non-buffer folio to reach inside
+> > "drop_buffers()", if it's not maybe we have to dig more into the problem
+> > and find out where did the buffers of folio get freed or corrupted, let
+> > me know if that's needed and what can I test to help. I'm new to fs
+> > correct me if I'm wrong I'll be happy to learn, and know more about
+> > what's the expected behavior or correct behavior for a folio, thanks !
 > 
-> Apport takes short option parameters. They match the kernel template
-> specifiers. The failing pattern:
-> 
-> $ cat /proc/sys/kernel/core_pattern 
-> |/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E
-> 
-> Once I drop %F Apport is called without issues:
-> 
-> $ cat /proc/sys/kernel/core_pattern 
-> |/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -- %E
+> Thanks for the patch but try_to_free_buffers() is not expected to be called
+> when there are no buffers. Seeing the stacktrace below, it is unexpected it
+> got called because filemap_release_folio() calls folio_needs_release()
+> which should make sure there are indeed buffers attached.
+>
 
-Youm must have CONFIG_DEBUG_VFS=y enabled where we trample the pidfs
-file we just allocated. It's a debug only assert. I've removed it now
-and pushed it to vfs-6.16.coredump. Can you either try with that or
-simply unset CONFIG_DEBUG_VFS and retest.
+I see, it doesn't make sense to have no buffers inside
+try_to_free_buffers() then, I'll dig into it more and send v2.
+
+> Can you print more about the folio where this happened? In particular it
+> would be interesting what's in folio->flags, folio->mapping->flags and
+> folio->mapping->aops (resolved to a symbol). Because either the mapping has
+> AS_RELEASE_ALWAYS set but then we should have ->releasepage handler, or
+> have PG_Private bit set without buffers attached to a page but then again
+> either ->releasepage should be set or there's some bug in fs/buffer.c which
+> can set PG_Private without attaching buffers (I don't see where that could
+> be).
+> 
+
+Hmm so I suppose when there're buffers attached, the PG_Private bit
+should always be set in folio->flags or folio->mapping->flags or
+folio->mapping->aops ?
+
+Thanks for your patience and detailed reviewed again, I'll refer back to
+you ASAP.
+
+Best regards,
+I Hsin Cheng
+
+> 								Honza
+> 
+> > 
+> > [1]:
+> > BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+> > BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+> > BUG: KASAN: null-ptr-deref in buffer_busy fs/buffer.c:2881 [inline]
+> > BUG: KASAN: null-ptr-deref in drop_buffers+0x6f/0x710 fs/buffer.c:2893
+> > Read of size 4 at addr 0000000000000060 by task kswapd0/74
+> > 
+> > CPU: 0 UID: 0 PID: 74 Comm: kswapd0 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
+> > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> > Call Trace:
+> >  <TASK>
+> >  __dump_stack lib/dump_stack.c:94 [inline]
+> >  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+> >  print_report+0xe8/0x550 mm/kasan/report.c:491
+> >  kasan_report+0x143/0x180 mm/kasan/report.c:601
+> >  kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+> >  instrument_atomic_read include/linux/instrumented.h:68 [inline]
+> >  atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+> >  buffer_busy fs/buffer.c:2881 [inline]
+> >  drop_buffers+0x6f/0x710 fs/buffer.c:2893
+> >  try_to_free_buffers+0x295/0x5f0 fs/buffer.c:2947
+> >  shrink_folio_list+0x240c/0x8cc0 mm/vmscan.c:1432
+> >  evict_folios+0x549b/0x7b50 mm/vmscan.c:4583
+> >  try_to_shrink_lruvec+0x9ab/0xbb0 mm/vmscan.c:4778
+> >  shrink_one+0x3b9/0x850 mm/vmscan.c:4816
+> >  shrink_many mm/vmscan.c:4879 [inline]
+> >  lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+> >  shrink_node+0x3799/0x3de0 mm/vmscan.c:5937
+> >  kswapd_shrink_node mm/vmscan.c:6765 [inline]
+> >  balance_pgdat mm/vmscan.c:6957 [inline]
+> >  kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+> >  kthread+0x2f0/0x390 kernel/kthread.c:389
+> >  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> >  </TASK>
+> > 
+> > [2]:https://elixir.bootlin.com/linux/v6.14.3/source/fs/buffer.c#L97
+> > 
+> > Best regards,
+> > I Hsin Cheng
+> > ---
+> >  fs/buffer.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> > 
+> > diff --git a/fs/buffer.c b/fs/buffer.c
+> > index cc8452f60251..29fd17f78265 100644
+> > --- a/fs/buffer.c
+> > +++ b/fs/buffer.c
+> > @@ -2883,6 +2883,8 @@ drop_buffers(struct folio *folio, struct buffer_head **buffers_to_free)
+> >  	struct buffer_head *head = folio_buffers(folio);
+> >  	struct buffer_head *bh;
+> >  
+> > +	if (!head)
+> > +		goto detach_folio;
+> >  	bh = head;
+> >  	do {
+> >  		if (buffer_busy(bh))
+> > @@ -2897,6 +2899,7 @@ drop_buffers(struct folio *folio, struct buffer_head **buffers_to_free)
+> >  			__remove_assoc_queue(bh);
+> >  		bh = next;
+> >  	} while (bh != head);
+> > +detach_folio:
+> >  	*buffers_to_free = head;
+> >  	folio_detach_private(folio);
+> >  	return true;
+> > -- 
+> > 2.43.0
+> > 
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
