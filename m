@@ -1,198 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-47358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13817A9C7D4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 13:40:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E10CEA9C7DB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 13:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 069D1462485
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 11:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E61491BC4A33
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 11:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B44E24466D;
-	Fri, 25 Apr 2025 11:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C04D1C7019;
+	Fri, 25 Apr 2025 11:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="abeKt7Dv"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sernet.de header.i=@sernet.de header.b="sm0aI01L"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11012045.outbound.protection.outlook.com [40.107.75.45])
+Received: from mail.sernet.de (mail.sernet.de [185.199.217.2])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA89824337D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 11:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745581203; cv=fail; b=MjZrMdQvMSguW/ybzsUqaxJAKRUfjz78VlRPQV6scOMKjH+a8uatMl2UIaoUsObk3FAKeCW1NGUM6hJ0GSufCS4Y3r2gAj/vap5FtVNXadmjL+NJLwDGPFosRO9ZmVTd2jZ/yFrdGHrh4eDSg5JTdlJE2ghx4+6hzl3T1bbm5nY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745581203; c=relaxed/simple;
-	bh=ni2i7n5PTvA8QeLScfW4nBUqcO4pamB6Mkz2/OyQ7YE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=SCjD8Woh6UwSUSMQYG1j9rdjySGSaEwgTG5nHEHrK1+rO9hVD86YywwB6DFDqrdcHdTo914/E/TyEKWS0eKHPDpmXyY2q50XiFw4ItMnMcfJxETlNyx+mzdcK2jonSmqm6Rr/ahEQuza1vKh3/bzAlbaz7C4fHXzxx6ukTIMG4k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=abeKt7Dv; arc=fail smtp.client-ip=40.107.75.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=efO/NasRP3Rfximmp7jWKWZiudMKlsEl8oyZFGFX+1UOrr/TlunVNtYgEWFNeVNMRbBJ0FlYsvSe/ynTT4Lf/qxIXuP0UoYg3oEJLfgBMrsvGN64WESTa8/lQzG/eIF8ZAh6T2XoIL6b9ere3mBdJvIw1p/QHjtDlRoWZxOOd9aeb8n2u5ASc8LZ5Hh/uPN9Ec7c9vKdIVgo/uHPgQ56H45Y9W6KdyD1Ac0egbo4ZeXd2xnYxVtN698inZ5Lk5QA0ykwTdzw5T/DlrsDksyATrOzNQe+M5kdfc5lWH/rc0GjJbS82X5huf+f/kiXKEuC2SX3W/XJp0fWr4STtBDXDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ni2i7n5PTvA8QeLScfW4nBUqcO4pamB6Mkz2/OyQ7YE=;
- b=lz6zxUwQ8CDCGRfwJSKOxEFEbqDybgTHKx0jEefHCAMbLcQpYOYZp4m6+LWSoO1g27Trhhg9fdACI96HlhM/8Z74EJYTPbSvvKQsk+VS5TFuDtZvGQG3Nd6Ukb9Ryu9JhPwbRpSlivOhPLFF57YxIUc2KLWtlee+pod0NoF1a6nyhChjVbc7t5vmN6NdnU0o9dRB9QJN/jOWnpxz5JQo0dP4VeAZkRD18AOpWXdoyWZo5kUZJpBLhU394STYujExx8WzUwT8pydYOlgeI0t2GEzTg1Fju5p+FWJYtyfdk/B9S+cX8WDognLnxU7nKhLl7XqRvYJbTErjrD2coWhRQw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ni2i7n5PTvA8QeLScfW4nBUqcO4pamB6Mkz2/OyQ7YE=;
- b=abeKt7DvzJ9X/xq3BVhmaWrNikkzt6NAFN772L2WRV3VEBSNsGybfdp5OsqBF9lIgwxv4Ty5nb2Qlfv6BeHZHRvIXODgU2oR0BxSXmP6yqn5AOpDDvE45KB7Ht6BaOr6+x2nQDQW0lOUEEJ8WOsCKkmlW+2W0Y01YCxcsjT+12QtTD4x965WAAvi9BHiPFJqUT15wM1SUtUy9CYfvKhBJ+Uh8SuFpudzxIRRTmtvaDTD3fHz1xQnhBsMh6g5R1T6FEUr8q1PVV90wpt36IHPBw+Z/iw1jhDc5r6hMdjp7dYM0n3f5tNxz+q7cgcJvhb1uVLnq4n+6/9khwwKLyt3Wg==
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by KL1PR06MB6020.apcprd06.prod.outlook.com (2603:1096:820:d8::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.26; Fri, 25 Apr
- 2025 11:39:54 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
- 11:39:53 +0000
-From: =?utf-8?B?5p2O5oms6Z+s?= <frank.li@vivo.com>
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Viacheslav
- Dubeyko <Slava.Dubeyko@ibm.com>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"brauner@kernel.org" <brauner@kernel.org>, "slava@dubeyko.com"
-	<slava@dubeyko.com>
-Subject:
- =?utf-8?B?5Zue5aSNOiDlm57lpI06IEhGUy9IRlMrIG1haW50YWluZXJzaGlwIGFjdGlv?=
- =?utf-8?Q?n_items?=
-Thread-Topic:
- =?utf-8?B?5Zue5aSNOiBIRlMvSEZTKyBtYWludGFpbmVyc2hpcCBhY3Rpb24gaXRlbXM=?=
-Thread-Index:
- AQHbswekna2OCwxWoE2e/XeZ/ACbe7Ovn+GAgACQiQCAAAnhgIAAAEsAgANb3oCAAJkF0IAAFf8AgAAA2+A=
-Date: Fri, 25 Apr 2025 11:39:53 +0000
-Message-ID:
- <SEZPR06MB5269CBE385E73704B368001AE8842@SEZPR06MB5269.apcprd06.prod.outlook.com>
-References: <f06f324d5e91eb25b42aea188d60def17093c2c7.camel@ibm.com>
-					 <2a7218cdc136359c5315342cef5e3fa2a9bf0e69.camel@physik.fu-berlin.de>
-				 <1d543ef5e5d925484179aca7a5aa1ebe2ff66b3e.camel@ibm.com>
-			 <d4e0f37aa8d4daf83aa2eb352415cf110c846101.camel@physik.fu-berlin.de>
-		 <7f81ec6af1c0f89596713e144abd89d486d9d986.camel@physik.fu-berlin.de>
-	 <787a6449b3ba3dce8c163b6e5b9c3d1ec1b302e4.camel@ibm.com>
-	 <TYZPR06MB527574C2A8265BF6912994E6E8842@TYZPR06MB5275.apcprd06.prod.outlook.com>
- <84ebd3fb27957d926fc145a28b38c1ac737c5953.camel@physik.fu-berlin.de>
-In-Reply-To:
- <84ebd3fb27957d926fc145a28b38c1ac737c5953.camel@physik.fu-berlin.de>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEZPR06MB5269:EE_|KL1PR06MB6020:EE_
-x-ms-office365-filtering-correlation-id: 919e1208-e3a1-40d1-871f-08dd83ede545
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?S3lIN2RHYWUwcDUyU01wYm9sTndRREt0ZG01dWoyczYrUnloazVxMzczbGFz?=
- =?utf-8?B?bjZhd3FtZWFHNDJTczl2ZVgrV2ovZUpoZVhCaEVuRGFVK1dGVkhUUEFrUHFT?=
- =?utf-8?B?blIyQ1B1dXRrS0hBUUhhd1FSMEVZK1ppbHB1NWx4WkVEV2ZRWWpHVmZGLytM?=
- =?utf-8?B?Tk5qVzIwNmhmaWxzT2IyVkhzZ3BsbVlsS1liR2ZOU3hheDJOYkxaaXpBejJY?=
- =?utf-8?B?WWlNZERIOGRPLy9jZFVyK2c3bkdJSkZVcVpiMDhLU0VaOUdxODAvTlJOVG02?=
- =?utf-8?B?T3FyREsxYXlWenV0KzRHK0pJdlI4MkJMbDRvdTNHWDhJcjA5K0VXUllPREh3?=
- =?utf-8?B?SE43TFRmRlorekZvd21zQXhwbklpd3R1aHJ2dUk1SHFUcndQSzZZNlMrNnNK?=
- =?utf-8?B?bkFxZUxRWWp1ZjE2bEZ3aVZNcEs1RDhlYmw5ZTBaWmF3YjRMTmdtU2ZXS2Mw?=
- =?utf-8?B?aEJuWXF1ZklreGsxanozYUVPdjVOODhVbU9LamVTQ0RIZmVHVXpvaVZLMGNB?=
- =?utf-8?B?ckRiUmlDVU1jejlQUG8zMncvS1NLUVl1VTZJbTVGemNoZ2l4ZjVRNjVPdG5t?=
- =?utf-8?B?cEJxbExmRnBFRjZaQjMvcnBEZEsyOWd5MlVlMjE3R1V0SGlneXpGQW9WMmRs?=
- =?utf-8?B?K0ZXcTJoNDRTSmUvbHJXU2YvazlQY0F5ZXVBVUNPS0xLcTlMUUVUOHRNLzNa?=
- =?utf-8?B?M2ZHSlFmdHBjTzBPdVFzTXMrYkhPTFQ4LzVRSmkxYXVGS1laZEpybStsNTJS?=
- =?utf-8?B?Nktoc0dXTEwvWVNHbS95OWtwY1doYVRHMEt1TERFR040eUZTeGM0S0FYRGtF?=
- =?utf-8?B?YVRFSFF4K2x6TXk4MEFrbFJIZUh5aEFIcTN2bnVRcmdsZlNoQW1uNmdISEdh?=
- =?utf-8?B?QnJNTTJ2aTBRQllzdkpZbHQ0TjJ6UDJjeVpGT1BqYzMvcS9DdXRleDJJL2lO?=
- =?utf-8?B?TTZPL3F3MmdUZExHa2dkRDJJM2NCazg0WkdwWlprbEVndysrT2o5WHB4OVZW?=
- =?utf-8?B?UEVWTExkQldsU2RwN1VwajdGV1FPemNBaGlOUWFtcVN1dFExRHNKUE1qZ0xa?=
- =?utf-8?B?NWhjNkZFWkV6SktoUU9WdmVKalZQVXllMzZRbnlVbDNaMmdNdklONmNXZGov?=
- =?utf-8?B?Zlh1RTM4THhSV1hEMUc0aDlXZGhZb2s4b1FDcFdZNXE1Mi85ZFcxUHBuY0NY?=
- =?utf-8?B?SjREQzlTNG4xTlVmSEJWUmM4dmN1dXp1dmMya1IyOUYrNzFQdU1QTWVRcldX?=
- =?utf-8?B?QisrZHp6T0QvaHdEVGtlbDcxektLTk90R0R3Q3lRSWFFc0RhcHlHakY0N0Ur?=
- =?utf-8?B?Y0FqNTBDbjlpRXFDeVZwRVo1di9PQ3ozZ3JhVlpLK2VUTTdEYVNkWXFLWDVL?=
- =?utf-8?B?b2RIaTlKRnoxTUVvQnRPcnFoYUYwdXpHUFBDOVgvTXp3elBKTTFTME8weWxT?=
- =?utf-8?B?cjNNc1NYVWRVWW4rUnd2eGpQNTNoSXhKK0NuaUlwV0Q4S1g5dGNBSmZDS2xJ?=
- =?utf-8?B?V3g5ekFITGU0WThncHlBZ3JKZWkrUXNoMlpjQmx3OFdCNlNPWDhDRlRUUFho?=
- =?utf-8?B?ZGdWc0FRUGVmaHloc0hZRDQ5dEpaMmpxdmpxOTVZek1ab0NRVVNKbHV5c2Nv?=
- =?utf-8?B?VFpzaU9waG5NMlh0SVR3b2pyU1VNZy9OVUhYbStRaHRiK2Z4UGNyWEVoTnMw?=
- =?utf-8?B?TUZ3UE1FdHlrWnp5TFN0Nk9oZDR3WFUvVUdkSFNtNmhUSjRJYjFsMmk2WXI5?=
- =?utf-8?B?cXM1aTZQSTBGcURsODA4NE44Z3BMbFdxb1E5ZUw2NldZZkZKOFpPOUYzYTVK?=
- =?utf-8?B?bDF6Z2wxMlQyZ2VFbjIxcjdQSGg4ZjhLK0g4OEw2eW1mcHNPNWdId24yWHo3?=
- =?utf-8?B?NGxyOUFFc215eWhHZTc5MjJkNjZwNEdrWWxVeUtaN0ZMQkZ0MnhNSkI0eGNp?=
- =?utf-8?B?SC9nZ3lYZWZUWHUrK2lBZEE1YmlXMFhPYkUyOGpKQWlkQWFwMEVxb2VoZGxx?=
- =?utf-8?Q?ztHQfSS5SWcTP/YrlDgzSAHkr3WprI=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?aVBkdVRmVEl5SkFrUDJZaHdKK1RURGJPZGNJMWNCM0lxTHB2M2MxR2JiMnRO?=
- =?utf-8?B?bnhKQUIyaUtuelNmcVJ5eGlQZXk5R1JFWmtHT0F1ZEpXQlBoZlo2WGg1ZHJR?=
- =?utf-8?B?Mi9keU5PUUVRaHVpK0FZcitJUUJKaGlXWEJWSXc4ZW1zV1Z1aS90ay9nWXYv?=
- =?utf-8?B?RW5SZkw3Z0ROTU03TkRKNzRrZldzTitOZUg2M0kzY0Y1N2VkL09BQnVwUDQv?=
- =?utf-8?B?T3NveUlBa2Q2NzZvWFhyOHFUakpGSnJXeDdBOERSb1ZmZFNqcm4zbHh2eVlr?=
- =?utf-8?B?Q3l4NnBxeXhBKzJDL3hSTVlhMFpteTYxSUx4Z1BPTEc5bG92djYybEhjUHFz?=
- =?utf-8?B?UU44OU9WVTd4bWliWC92TFlETG5UMFhJcCtlVVFKRWRIUDRteVhrUXBjek93?=
- =?utf-8?B?VDBUVWNrSGZoSlNuOXd0dzBJWVFnOERpNGtOeG12SmRpTGUxMkIyUkVXeWhY?=
- =?utf-8?B?ckVwendmdWJkZlk0UXVlVjY3U0VNbVhjQzdjMmFlR3EycEwvRFBSQ2RuZXAr?=
- =?utf-8?B?THJwVlJuY2J5T1QreUxpUzhnN3dFUzkyeU91aWlEbzgzczlGTkg4L0FPamYr?=
- =?utf-8?B?QzVTU25VcXhwbi9iUjdTbldYbEpXRjRDQlR6bUY0RFJ4OG5XbExVeDhRaHRC?=
- =?utf-8?B?QVY3UDF5ZzBxUnhYZjVCRm1oN2ZSRktUQ21xV0VKT0R0UlBiRHRtY0ptcklm?=
- =?utf-8?B?alZXM1R1TDhDZGs4VlExU1gyQWVQcDB0Z09CbWlmUS9kYWlvL3o3czhuYnlV?=
- =?utf-8?B?Q0R5Z1lMUEQxamc1UHBOeGMyVndrYUdUYzc3aTN2L1A2b3JQVnQ4MVlyTmRq?=
- =?utf-8?B?bkREaHBzQ0h2NU4xVGd5OS9SU21NRmRLQlBUaVdab3R3RkxxeWVvekJmb01O?=
- =?utf-8?B?U1MzQUZRaGVDekdUVis4OWEvUEg4TkIzVE5GbmpRUGxha0lGZEdrT1VaRUxW?=
- =?utf-8?B?SUU4SjdaUUs2TXRKYjdaVHpOK2Z4MDVidTRGUzNHMzUwTUpKbVp4UHJQYnc4?=
- =?utf-8?B?OU1FbW1Jb0s5bjkyVXk4Y3Jqby9UWENmTVk2Y1luWmRRTzFwQ2w1TlE4Ukov?=
- =?utf-8?B?c0lwZytXS2hHU0VmL0VsT3k5N1dDT2RIaU13V016L01QeExadGUwYXV1QkRl?=
- =?utf-8?B?bkVxK2Y2V3pOQ2srTjFNbmo5aFZVWTNOTW1US2tIcVdiaHpmNWRpQ0JoZFBL?=
- =?utf-8?B?MXd1YmpmQjZMakRiK2wrTWhNcjFSRG10dzAwQzByQ2s1QWdzR2xWZVo3eUxh?=
- =?utf-8?B?UjhOcFcxYnczKzhtR2g0NUR6ZWhhUkRXdUR6cE00Z09XTjBtZy9iMDIxL0dn?=
- =?utf-8?B?eGpQWWlSWjgzYktJYVhlZnFHbDdBS1dwb2ViUjZOcDNFRDFZM3VSdWRhb1pI?=
- =?utf-8?B?ZW5nTi93ZkFMUkdkQlE3NGk0em9wektiVkJhUkJQSm1VRVZHNzVKaktiNmRj?=
- =?utf-8?B?dTRiVzNPM3ZtTndEc3BWbFBPNUdVTVlTejFSK3RFbWxPTGN6ajcwMnc3VGk0?=
- =?utf-8?B?RTFwRGZ4dGt1RlZncCthYlZDZStPci9XczJabVp4blFoaWZoZ1hPQmNGMmtp?=
- =?utf-8?B?VWFKOXl1VHQ4M2dvWUZNQlBOcU1NZ0ZNTGFIa2J4cklocTJEYW82N1ZGcVdV?=
- =?utf-8?B?U1VGL3V4K1lIMUZoaGZCT2tUenc4d1FMb2xWb1V4RURGMVJpbzB0TlF0MHJI?=
- =?utf-8?B?dkZmSDlvd2VxNFpob3k2TWgzR0xsVTVhWVVwOFBqWjE0OEplb1dtd1YyKzZk?=
- =?utf-8?B?NUxUcDAvTjFhVDc2cjVWUmJZLzFudnhJTjE1UWgyditKbUV3RnhKTUFyRWY1?=
- =?utf-8?B?UG1uSEovNmVMWU5paHhuU2dpN0hRbGRBcVRvcFFIYUptVUUzelJ5N214SUVp?=
- =?utf-8?B?ZnNhK0p1L1J0M2pGWHNGVzFYUzVhK0JSMmFjcVdhSTlDTFNkREt1YjJaOUoy?=
- =?utf-8?B?U0Y0dmtGZ2VMRm8zYTc2djVkdDVrS2UrRWRiVXFlZTdBeU80d2t2VHhJOHo5?=
- =?utf-8?B?alZkUTFCWVU5QmN3VlBKSThodlRRNitoamMvUm5ibTBHbldUeDhFWlZMcGdU?=
- =?utf-8?B?eGFlNURsdm9ScDJIY2RLN3RlVlY0UVJDUGh5Z3A0Qndxb0tBaTVJZFl5Mnlh?=
- =?utf-8?Q?6ZP0=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C054022DFB6
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 11:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.199.217.2
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745581241; cv=none; b=kPGVBkmaERJAwJ51HSRnN1mBJ0JGhzwAaXsCtrKuf+CparCyldZT1X0Fg7gFn2dPLmoCRBnzRDNJZWql+TxW9z44ga7M5Dh9AaE/Te7JAhvXDsfM+M9PAdPPRz27cWXqBR+P3r4NID/oz4RIxTLzEweZuXp/kXDtM8GktZnydpo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745581241; c=relaxed/simple;
+	bh=fZA5VwWDJzT7s1XtXV+i27EDcypQjIMw0KdYu1pMZEU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3U7oOin8PGDz99iQXf8UNpj/leRvV7+s9hC31AFlkhe3myfckluPWOODmKjtBMqvvwrrT/XjjSlVuutEGWTu1B4xDBl1IG7fZ052IQZbZTt4SmExBaXE44r7kPMT86UhByENH7IEm6UDvLNpaqs6jHd3qffKTMcrxwJMabMT1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=SerNet.DE; spf=pass smtp.mailfrom=sernet.de; dkim=pass (2048-bit key) header.d=sernet.de header.i=@sernet.de header.b=sm0aI01L; arc=none smtp.client-ip=185.199.217.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=SerNet.DE
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sernet.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sernet.de;
+	s=20210621-rsa; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=6mV+Bjw+FSYjQ+Cq4/20B1K+PXrFg47CbdQbXqBITlA=; b=sm0aI01LyreIuPAbbAn18anWdH
+	oXD25KxmcSsv4V2nkgvF1uzyiA6ySAStV0Btbi86QxGq+NuyUSQ0A8XtL3kklhXx6F/hahpWT2ZO/
+	0+fM4Tz/GzD4erbxM+f1s67tNDfIB5sB+uf/IcoN1j+1zDuSwu5cmOlFH0SpenFMrCWwseh5sVX4b
+	hE2s1Xvnv+HO9vURE9gnfS2JrhbDp3rrdx9DjTuW/rzfY2rdYOki1XvgSAHSXO/1jFFq8z2wdjCfx
+	vRSf+Bjwp8BQ4dhhyRashAK53OzImiAp1zHsos5AuxYit0zQ1OuIULis+yrbF38gQ99c14KKvlWRD
+	E/h9tQyw==;
+Date: Fri, 25 Apr 2025 13:40:26 +0200
+From: =?iso-8859-1?Q?Bj=F6rn?= JACKE <bjacke@SerNet.DE>
+To: Gabriel Krisman Bertazi <krisman@suse.de>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: Re: casefold is using unsuitable case mapping table
+Message-ID: <20250425114026.GA1032053@sernet.de>
+References: <20250422123141.GD855798@sernet.de>
+ <87h62dtjyk.fsf@mailhost.krisman.be>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 919e1208-e3a1-40d1-871f-08dd83ede545
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Apr 2025 11:39:53.3297
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Sua/RRI1Lof6rpXHkZiX9ZuYKlUxqCR2mUEoiSqg9MgOmYLo2sTfkIipG24U5RVRCMXaCl6AF5q7KfnfOY1ikw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6020
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87h62dtjyk.fsf@mailhost.krisman.be>
+X-Q: Die Schriftsteller koennen nicht so schnell schreiben, wie die
+ Regierungen Kriege machen; denn das Schreiben verlangt Denkarbeit. - Brecht
 
-SGkgQWRyaWFuLA0KDQo+IFdvdWxkIHlvdSBndXlzIG1pbmQgaGVscCBtZSBjcmVhdGUgYW4geGZz
-dGVzdCB0ZXN0IGVudmlyb25tZW50IGFzIHdlbGw/DQoNCkkgYW0gY3VycmVudGx5IHJ1bm5pbmcg
-YXJjaCBsaW51eCBvbiB3c2wgMiBpbiBhIHdpbmRvd3MgbGFwdG9wLg0KDQpJJ20gZm9sbG93aW5n
-IHRoZSBSRUFETUUgc3RlcHMgaGVyZSAoaW5nLCBub3Qgc3VyZSBpZiBJJ2xsIHJ1biBpbnRvIHBy
-b2JsZW1zKS4NCg0KaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2ZzL3hmcy94ZnN0ZXN0
-cy1kZXYuZ2l0L3RyZWUvUkVBRE1FP2g9Zm9yLW5leHQNCmdpdDovL2dpdC5rZXJuZWwub3JnL3B1
-Yi9zY20vZnMveGZzL3hmc3Rlc3RzLWRldi5naXQNCg0KTWF5YmUgc2xhdmEgYW5kIHNvbWUgb3Ro
-ZXIgYWRkaXRpb25zIHRvbz8NCg0KVGh4LA0KWWFuZ3Rhbw0K
+On 2025-04-24 at 15:53 -0400 Gabriel Krisman Bertazi sent off:
+> The big problem is that each of the big OS vendors chose specific
+> semantics of what to casefold.  APFS does NFD + full casefolding[1],
+> right?  except for "some code-points". I'm not sure what they do with ß,
+> tbh. I could never find any documentation on the specific code-points
+> they add/ignore.
+
+Apple basically stores the files in NFD and do casefolding but not those lossy
+folding rules that make "ß" and "ss" equal. I have an overview of filesystems
+and their encodings written up at
+https://www.j3e.de/linux/convmv/man/#Filesystem-issues - that might be
+interesting for the discussion also.
+
+
+> In ext4, we decided to have no exceptions. Just do plain NFD + CF.  That
+> means we do C+F from the table below:
+> 
+>   https://www.unicode.org/Public/12.1.0/ucd/CaseFolding.txt
+> 
+> Which includes ß->SS.  We could argue forever whether that doesn't make
+> sense for language X, such as German.  I'm not a German speaker but
+> friends said it would be common to see straße uppercased to STRASSE there,
+> even though the 2017 agreement abolished it in favor of ẞ.  So what is
+> the right way?
+
+I am a German speaker, so I can shed light on that. "ß" and "ss" are definetely
+not equal. If your Name is "Groß" this is a different Name than "Gross". The
+word "Ma0e" exists and the word "Masse" existist, they are something completely
+different. The only thing to say here is that people without that letter on the
+keyboard often use "ss" as a fallback, just like writing "ae" is a common
+fallback for writing "ä". In a filesystem they should not be projected on the
+same file.
+
+The main problem that was made when the casefolding was introduced in the Linux
+kernel was to use all of the cases listed in
+https://www.unicode.org/Public/12.1.0/ucd/CaseFolding.txt
+If you grep for all the F flagged cases there (grep " F;") you will get 104
+"casefold" rules, which are essentially bogous for filesystem casefolding. They
+mainly reduce the number of valid codepoints for filenames. Apart of the German
+"ß" they also contain ligatures and combinations of greek letters, which are
+being "equalized". All of those reduced codepoints can be unique characters of
+filenames on ci Windows or Apple filesystems, they are not considered for
+casefolding in any way, except for the "simple" (S flagged) casefolding of the
+corresponding codepoint.
+
+Those F flagged casefolding make sense for cases like CTRL-F in browsers, there
+you want to find places, where a "fi" ligature (ﬁ) is used if you search for
+"fi" but in filenames you need to be able to use both. At least this is what
+all operating systems with case-insensitive filesystems do (except for Linux
+till now).
+
+
+> My point is we can't rely fully on languages to argue the right
+> semantics.  There are no right semantics.  And Languages are also alive
+> and changing. There are many other examples where full casefold will
+> look stupid; for instance, one would argue we should also translate the
+> T column (i.e non-Turkish languages).
+
+The Turkish language with the dottet/dotless i/I is a very special and
+exceptional case, ci is not being done for that in any other ci filesystem
+implementation. The i/I case doesn't really matter in this discussion.
+
+
+> It is not useless.  Android and Wine emulators have been using it just
+> fine for years.  We also cannot break compatibility for them.
+
+I understand that we can't break compatibility with it but we should try to
+find a way to improve the current situation, which is far from being good.
+
+
+> > Can this be changed without causing too much hassle?
+> 
+> We attempted to do a much smaller change recently in commit
+> 5c26d2f1d3f5, because we assumed no one would be trying to create files
+> with silly stuff like ZWSP (U+200B). Turns out there is a reasonable
+> use-case for that with Variation Selectors, and we had to revert it.  So
+> we need to be very careful with any changes here, so people don't lose
+> access to their files on a kernel update.  Even with that, more
+> casefolding flavor will cause all sorts of compatibility issues when
+> moving data across volumes, so I'd be very wary of having more than one
+> flavor.
+
+especially becasue files should be movable also from other platforms also, we
+should be very close to what other platforms do here. The fact that our
+casefolding is significantly recuding the number of possible codepoints (the
+104 F flagged ones), causes a major interoperability problem.
+
+
+> What are the exact requirements for samba?  Do you only fold the C
+> column? Do you need stuff like compatibility normalization?
+
+For Samba it's required that we don't have a reduced set of valid Unicode
+characters. And that means that the F flaged mappings are not being used. The
+Turkish T mapping should also not be used.
+Mappings we should use:
+- the "C"ommonand  and
+- the "S"imple
+flagged mappings from the Unicode mapping table only.
+
+I understand that it's difficult to change this as we store hashes of the
+current lowercase version of the filenames. I'm not an expert enough in the
+filesystem code to come up with a good idea how to solve this though.
+Eventually we can use different versions of casefolding tables and store in the
+filesystem, which version to use?
 
