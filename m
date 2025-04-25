@@ -1,99 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-47376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47377-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0ECA9CD56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 17:40:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43564A9CD6B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 17:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C71A4A6743
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 15:40:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 931A74C4102
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 15:45:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E6B9289371;
-	Fri, 25 Apr 2025 15:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA89D288CA3;
+	Fri, 25 Apr 2025 15:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QYkWPO+/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="J+Idr3dD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66A35218ADE;
-	Fri, 25 Apr 2025 15:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B3D728D850
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 15:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745595628; cv=none; b=Sxuw7KtYcbz6d3vmdx194fe1vmlYr3piGGvcbH/4zevDiTTQHLr5yrMbEDIQefVLbicbALiI8IYjn01NYW6/t7SclyPlZmhJmYG9YX2qOKDhKTMQPz55tNq/2pkOM/u+sthUPWl4nKzRiW35W0D0L4UtzmjHoNE1nL00h6H1P9A=
+	t=1745595908; cv=none; b=EYdXCkNPGUVAEoz/h3/XHY8bZtWXmUX/oqRMRgwknILghFfD+JyPQ49t2VMBGNXJLKTBTM3vrea+k+HocmnOZB/LkfV5pzP+DVu01TMUbfc8++AnxCjBS+XwLRqrlNwo+vVsQV0Ruf0RYJwQZwfovmDkOMo9FTT43+/jfshkZQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745595628; c=relaxed/simple;
-	bh=xM4Z3LtZ7LXHApwD4pFmA72hVFcFp2bzGljl/jzk/58=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=KFHVPHA9OEuQsR/6UPhtkiHkUnCUMigMk7Kf35KKcdatZSxq1eZn1uV09NfIwK62/0TqawVUCwuewPzwIdI2tOv9zByBkP1g12Hi4KkH4k0v1fFid/tbnDjExyiWKa2Nu0C1lTnJak4GGnHXS5TUrJP2QdgT9jZImWbXr70PoeA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QYkWPO+/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3C2BC4CEFA;
-	Fri, 25 Apr 2025 15:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745595627;
-	bh=xM4Z3LtZ7LXHApwD4pFmA72hVFcFp2bzGljl/jzk/58=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=QYkWPO+/5ZeiSI9UJ43sTd/W+Eh8IQLzXJbIBOEf/tLtASg41adpBCSQ1vltBB/rO
-	 OOdykLAaEVC4vQsB63nsaYyY7Jcn1R72Q58OLOwR7YPLjGAC9xlBrm7BxkPDBwxK48
-	 xSpd6//JQ5+kU08HDHiH1ErPgua9bcLfmoAZdEeN1st5sukFFXrGf05tkFo7L5Blnu
-	 J28B2C7Jr1LQPCogKca9c9lAgzs3M1yEqUU86C6L9oRMx/Kq4tXv3FvuWNKQlyjRX8
-	 dZeWwLfrrMsp7NO8hGHKMoTBoXk9ySRhVyParE8TDPK7MWKnl9Cl04Y+ZcvbV75g5a
-	 lDZ3t4GURkZMQ==
-Date: Fri, 25 Apr 2025 08:40:23 -0700
-From: Kees Cook <kees@kernel.org>
-To: Christoph Hellwig <hch@lst.de>, Christian Brauner <brauner@kernel.org>
-CC: Heiko Carstens <hca@linux.ibm.com>, gregkh@linuxfoundation.org,
- rafael@kernel.org, dakr@kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org,
- Shin'ichiro Kawasaki <shinichiro.kawasaki@wdc.com>, Xiao Ni <xni@redhat.com>
-Subject: Re: [PATCH] devtmpfs: don't use vfs_getattr_nosec to query i_mode
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250425133259.GA6626@lst.de>
-References: <20250423045941.1667425-1-hch@lst.de> <20250425100304.7180Ea5-hca@linux.ibm.com> <20250425-stehlen-koexistieren-c0f650dcccec@brauner> <20250425133259.GA6626@lst.de>
-Message-ID: <D865215C-0373-464C-BB7D-235ECAF16E49@kernel.org>
+	s=arc-20240116; t=1745595908; c=relaxed/simple;
+	bh=7Qr54RLIIUURTVvUAneM4I3kDi4Hksd7DxjUOsMoHvA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bzXUuVLNEMg8I9spMWfAT1bNr0OjXh42KMxK7Zgs/PDzWHYxDJtqgNC66sWFSjHVJJGhoS8Z6SPyZBZciO2y6Tim3bNQ79Eod/Mm0OI7bo5hGBJkwgiu2l2OEC45eOmMCdHknihXCig+MyS2aA8CxLqHSFURj1sV4xEVBA+Fv4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=J+Idr3dD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745595905;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hiof3A3cTkiDcDIiwDJpp213Ent/m5U6m6lMi/Ixq+s=;
+	b=J+Idr3dDY3yZXIvFOLJElj7UCsV841Ivir9QPIa4bR9qS56PSnOLxc6F0+oQ3XikIQYc1r
+	Uka26d1TX6N6TFKGT7HK/+gLav4Jt7UMjvTB4Mw/Oc5HzEbY+RZXA4DtlMUcXKgPhlxVpp
+	sND+9W8/iX+vFV0I3SFLHaIGhOrmTUM=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-627-FXbjWrjtMVuSZ6FRavAMeQ-1; Fri, 25 Apr 2025 11:45:03 -0400
+X-MC-Unique: FXbjWrjtMVuSZ6FRavAMeQ-1
+X-Mimecast-MFC-AGG-ID: FXbjWrjtMVuSZ6FRavAMeQ_1745595902
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5d608e703so440421885a.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 08:45:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745595902; x=1746200702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Hiof3A3cTkiDcDIiwDJpp213Ent/m5U6m6lMi/Ixq+s=;
+        b=UWXWA9HS3f5DpnYVZwImIUK+3YVccc9RsEGeroYhLHE/B2nIa79RhjWvrH6A1EUTsV
+         KyrzxQSvZv0dQUkjdSeyC1q2ePGjdrTUyNf69C5QyxmscQAPjFhmCPfsOc7vsZ2bXUK8
+         uAMVuHB6eoMA/sM2j+Yh/0O5nQoKA8ZuH1Lnv4mVNcw732+bN209Lw8Gm+ge/dgeNt61
+         j9tb5WVkdO/q3nrySHGK3BKUCc56Q7m0BWbtswcZpAPdh+OwTVO8a7w7ABiZsk6Btooj
+         uoy/g19pHJb+8mpBfZEH40kQQBLoRzCPnNZmlNKQu47gGcI0i5xBD+MDLejj5JCO5CFa
+         2/zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUj/Ws3yc6ydPRUjtzYJ1+C6ZQY2qSEfwhcCMx5lXavQyDKmwM9WSkPyulfZKcebwoC1nk0dKMtpwmfmBH2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9rpHMkQyHpL95ocakgZykk2Ou5t4DnWAxu8tejCCXRiXAKifb
+	z3iJTLoIkSCTc3LVuZ7sBKxZVksONw3InlbtZ4VcMFx4yLiwvSWNECKsgSM42W2bdGSG2XWvoRo
+	oQU4/Iqug9wJyY4H1VDq9b2TDaAGbk5R6FIPJoAAhMyqLEMqu1KMEzLncgCWYyCY=
+X-Gm-Gg: ASbGncvqxVJirBSNdm2PSC7TNM/7sADKjdbBRb/eDVX7NUz7aOVFAB6zzFCbeXIVZhN
+	V/aEqE6NwWNgq0mqKkJYVQElP6yfET9sRDu41ZcrmxgPm1FjJ3fVnsEFRidKMEFiOaZXJ8IFfHf
+	Lrhi20bkm3Xmqai84QsrTTF5ZhUorh9xmRXKxUipBm9xc0mSkoKPCBbjsY9GjgthgV1iGB+NKEc
+	IBGH4YfWN8lmvSShuZToP4HdIEv9crtwyEGlLgGphQdX3xP3Wjy6MchfZZBeCQBO3pmFjAZWCeT
+	oAc=
+X-Received: by 2002:a05:622a:315:b0:477:41e5:cb8d with SMTP id d75a77b69052e-4801e9e3639mr37436571cf.44.1745595902624;
+        Fri, 25 Apr 2025 08:45:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFMtGEXUdc1pttInszqwGo8CcuEvmRkp5U7mI9l29hGjtQVzppVl01ysYhGDpH/L9C07a++UQ==
+X-Received: by 2002:a05:622a:315:b0:477:41e5:cb8d with SMTP id d75a77b69052e-4801e9e3639mr37436391cf.44.1745595902345;
+        Fri, 25 Apr 2025 08:45:02 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47e9efdaa41sm26715741cf.19.2025.04.25.08.45.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 25 Apr 2025 08:45:01 -0700 (PDT)
+Date: Fri, 25 Apr 2025 11:44:58 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	Linux-MM <linux-mm@kvack.org>
+Subject: Re: [PATCH] mm/userfaultfd: prevent busy looping for tasks with
+ signals pending
+Message-ID: <aAut-ohM5Lt2uH4I@x1.local>
+References: <27c3a7f5-aad8-4f2a-a66e-ff5ae98f31eb@kernel.dk>
+ <20250424140344.GA840@cmpxchg.org>
+ <aAqCXfPirHqWMlb4@x1.local>
+ <aAqUCK6V1I08cPpj@casper.infradead.org>
+ <aAqxAX2PimC2uZds@x1.local>
+ <aAsVBIIUvXJ6KQ5d@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <aAsVBIIUvXJ6KQ5d@casper.infradead.org>
 
+On Fri, Apr 25, 2025 at 05:52:20AM +0100, Matthew Wilcox wrote:
+> Because "interruptible" means it can be interrupted by inane stuff like
+> SIGWINCH and SIGALRM.  And then we return from a page fault prematurely
+> and can't actually handle the situation, so we end up going back into the
+> page fault handler anyway having accomplished nothing other than burn CPU.
+> 
+> At least it's better than interruptible system calls which just gets
+> you short reads, corrupted data and crashing programs.
 
+I see where it came from now, thanks.
 
-On April 25, 2025 6:32:59 AM PDT, Christoph Hellwig <hch@lst=2Ede> wrote:
->On Fri, Apr 25, 2025 at 12:12:36PM +0200, Christian Brauner wrote:
->> > That is: if dev_mynode(dev, inode) is not true some random value will=
- be returned=2E
->>=20
->> Don't bother resending, Christoph=2E
->> I've already fixed this with int err =3D 0 in the tree=2E
->
->Thanks!  Let me use this as a platform to rant about our option
->defaults and/or gcc error handling=2E  It seems like ever since we starte=
-d
->zeroing on-stack variables by default gcc stopped warnings about using
->uninitialized on-stack variables, leading to tons of these case where
->we don't catch uninitialized variables=2E  Now in this and in many cases
->the code works fine because it assumed zero initialization, but there are
->also cases where it didn't, leading to new bugs=2E
+IIUC it'll be a major spinning issue only if the fault is generated from
+the sighandler itself which spins on its own. The hope is that sighandler
+should almost always be suggested to be as tiny as possible, to make it
+unlikely to happen.  Said that, it's a valid point indeed.
 
-This isn't the case: the feature was explicitly designed in both GCC and C=
-lang to not disrupt -Wuninitialized=2E But -Wuninitialized has been so flak=
-ey for so long that it is almost useless (there was even -Wmaybe-uninitiali=
-zed added to try to cover some of the missed diagnostics)=2E And it's one o=
-f the many reasons stack variable zeroing is so important, since so much go=
-es undiagnosed=2E :(
+Maybe we should make FAULT_FLAG_INTERRUPTIBLE a hint rather than a request
+to handle_mm_fault(), so the internal of page resolution can decide whether
+to respect the hint.
 
->Can we fix this somehow?
+Thanks,
 
-Fixing -Wuninitialized would be lovely, but it seems no one has been able =
-to for years now=2E =F0=9F=98=AD
+-- 
+Peter Xu
 
---=20
-Kees Cook
 
