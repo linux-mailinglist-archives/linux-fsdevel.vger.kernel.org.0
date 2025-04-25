@@ -1,247 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-47373-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04778A9CC96
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 17:16:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EABA9CD1C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 17:33:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BABEF5A1244
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 15:14:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFE1C5A232A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 15:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35B3270575;
-	Fri, 25 Apr 2025 15:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 812C828468B;
+	Fri, 25 Apr 2025 15:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XU2B+BtB"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cXcYVjQt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C933274662;
-	Fri, 25 Apr 2025 15:14:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F02126C3AE
+	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 15:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745594100; cv=none; b=PCpQjCb/PR5ME8bh8rNRAa2USgRrTN6SlCVT4hZNCk/EXMi6sNAPK381rTwDcE4ec2PvDAVv/nDT38ZBqttjCDf3caxLNSQUnI9Xl0m+fh55wLsfRw3wH9j4cY84zHqGzjc8+eELppbzc3DX1yglzmvrH5hIwqy8jqkQSU/Iwxo=
+	t=1745595182; cv=none; b=WeGoiNmsKxyoi3sMb1v4YC0D5VfFUpZSEkvygYxKrloQ0b7q5JYLNAHpcJlv1F/9vMZlLytaWH1OJOXN2WI9L++t9iS4s1rO0GxgGRtTo9JI8oTYnYg4RYdGV6QzmzPsT4hCM52cY4rqzUEXZQeRxmlroIUb3+brFeMrKZiXYaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745594100; c=relaxed/simple;
-	bh=y23ZVPGVcTitl6yU4MxdmIYNLFF7uoP5dxp4sp9DaKk=;
+	s=arc-20240116; t=1745595182; c=relaxed/simple;
+	bh=azphG0LvZMLBQfUOp84PmDRab8XVCOT21CuIpXdnZ78=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mPU7BLmgcm84NYToAJ3r2ie9wGB9SB21Kdz9Wz67revl+DeIY7w+rH3MJ99BfSZ6/0AkE7RvRv2tdgQaoSplqan9tLOugbr91IyCwx1Cea+UvmnAdFUr/jQjbwYdZ8jv6rVhPTk2+7vZJUjbjOaIYBbpamUwoKtF8RvH8WH6aGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XU2B+BtB; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227914acd20so30503145ad.1;
-        Fri, 25 Apr 2025 08:14:58 -0700 (PDT)
+	 To:Content-Type; b=Vwhi6m7bFdnnIv7YSAIhHyq1eb3IPdIfKK7QMm+3n8v2vVKr9PujvgaXWMUflXRj/3hY9L8mbqZDdS2PtjjFzwREMApcQUuRxkckCbCYXYGYID3LsQ2+mW+92idACqPAODwbGN48qsoc6XVHsNhYlJ45wbEVC5MuzXKLggdWvaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cXcYVjQt; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4774611d40bso339471cf.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 08:33:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745594098; x=1746198898; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=google.com; s=20230601; t=1745595180; x=1746199980; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8MbIsWkT2PPGddqwQtyenmGVRw/Qqkpli16lpvi3GR0=;
-        b=XU2B+BtBTkayA10RMpw7vfhFmTebHAnZiZG14THxsjEl2z4u4TpHsHNiQIwPljpZ3b
-         BeXo4nFs23p+oJJs8FIlMxUWTRRkz7eFxhEs2PfKUkTEqqCXrnxHclDGr8/gBEsHfHHe
-         dJQmtThY4C9yTy0KrVdG97jhCv+gapsBypYEc/mRwtCZS5yThffi/GUZQ6Ls85/4ZODO
-         6gqUDOS0aqnO6rDuxA5FcwazHbo7Lp54cXgcUSxLMQgPfgw60Pgk4PSbvd1evAzk2ux4
-         Ri3tSK2r1VQ0tQ4gxoTwfPRUDffKPLyWyMO8LWT2yivOVSbOlpfn/XDHY5DF0OCWF3q5
-         FuIw==
+        bh=pP6z3CE+fLIrfWHZmKWlxUhDiYFfaprQFcGgrLTshIA=;
+        b=cXcYVjQtEow59hw4yD0zdZKh+ZNeG3XDmG0f5GkSLfkG0FIvOPMt9l4GBPyg/SDHMr
+         tDgSPHoYb0CTNfXFYp8qfPH+a/c+lIg5orRvT0tPydZZWdVs1HmAgksZlrn2IGH87A3a
+         sJGxYisr95SC0c2U135zuZtwXNzR6/L7OIuUWT1MZKg8+wXHkXkuzX8aqASKwkQwzK6Z
+         AWOWSsRD0Q/1vh0sRR5RiUbzUKUQpjcCevo2Ohb05a+4cN13t+glaKU06lKo7Cfv7t/z
+         zL2ZdpKwhgDnc6xCu0pqBqghY2DHpBZMO7EIDgYdrFKEShB3SxljOeyoOZOPg3fIuvhX
+         9ARA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745594098; x=1746198898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1745595180; x=1746199980;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8MbIsWkT2PPGddqwQtyenmGVRw/Qqkpli16lpvi3GR0=;
-        b=EjxO4xRU0tl8bt2NsGHim0/wbbSrkDBfHZzavBHSwiljadt46GIvaHnKUln/P3boD0
-         nQ1bFG24XVRzunSzP3z14p9H7tVlD9M/BTtXS65Sd7mzgppPbdqc7SjOFMuWJ2X7Gu0g
-         p0HAABpmx4iiod6XhappyEtBnOY4E5S07xXb60arCcKgWAHZnZLWnKLjST151HQlebDI
-         J6/eTykWzVL3f+BN2OnUc9x7IyIq8jSH6lkapuwZrCigIw2jWf2a6G7Wug1pL65G+9Ko
-         roFwbK1MZBYqRqqhnvT3UiWnSW+T2YFnK87MsTFfZvjn5NEV/jCNtflZmalUz2ZBFk0O
-         wjEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUgsAqv203nvjQkQfFXiqy5fIId1Q2F1qfyVZRaa5lLEYZ2ydtdzGduoWBLX12BE+eIk/htCj8BBiE2ZATLYvqgF5o5f3sx@vger.kernel.org, AJvYcCUsN+Qh6Vaf5dV5NM2IL6yP7lfbMDDi3qDgBKhMc0Y9g/toGX+pNxE2ElX/T8iGv8MnkvI3qakDLG0XTfMA@vger.kernel.org, AJvYcCVCaoz+mFISAsIZWwKUMGcbVVPmgv2hoeGjW9bBqx/DZG+TadlvYiwNalcoD79CmJDffwurJlpROw==@vger.kernel.org, AJvYcCXxP3PRLJC4p6y0daqvT95ZwKj9Rm6ehPIeSpTcDTd0ifxtkLm+oSx9rUqjWB30Nmyv4N9fAGh5+OyURbze@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj6vu+b4b8VMCX34X6EuaCJJH01GF9grcqrxTGoHB1sNpgpnX7
-	m9yDWBZ4psXPsR+8yrpPOsSxFywenWpzy6YGXW7teTrgYGrCCpW5ksfm/f/wYPpxl+W4UW3+kuj
-	MlShPfHLgN9LHwILTE0CYmiSYo7k=
-X-Gm-Gg: ASbGncsNK1/dg6kPBRErFMa1UKiEfYjD2/r/oa5yhg7NkyoOC3WZjPajvFbNNGA/sZZ
-	w/iLEd7rVJ90h1PzY2E6Iw6cW+wvNNVwYu9QQC/pzX/06sXkH5mf/eAhNaE4aeuKHyaOGNVoN5I
-	kLqw7T71gz6lA4EkmpEeKKKw==
-X-Google-Smtp-Source: AGHT+IEtVX13MpKP47aS7whL3XKhn2KCCn5rHkVnZWX4At2Rfu+6bJEe3mUbY8+ozgrDXBiXZkRhZVpx0PZDZoPflLM=
-X-Received: by 2002:a17:902:e5d1:b0:21f:6f33:f96 with SMTP id
- d9443c01a7336-22db47c9cefmr78622445ad.6.1745594097600; Fri, 25 Apr 2025
- 08:14:57 -0700 (PDT)
+        bh=pP6z3CE+fLIrfWHZmKWlxUhDiYFfaprQFcGgrLTshIA=;
+        b=T9UWtebgBJFmscVmh8RWCwGWAcUgJdN+QpusptzyUWtuK6RDpxmBqtMFWLnnxMXDS1
+         J9TNThFvO48OtH+O6te/szRkdFSKq7jMXF9vbdXXrKA2lHfbiAmPcfIhJ506gSJO5SYa
+         a4xXXWccNfx/aTtfF/T9BlkbbLxQs1trnbnJmLUQ3MpsrvPWq/M8+qDxPJ7Hi1buZwoB
+         SZu0Ns2VGvSNTDAx0QPkk7qaQqArsTF/FxwUCvyzBXclNKMuMamLHERXVxxXb5TLyd8i
+         7S6u83CSC291s0x09K6LrhUwhONmTGelYNh70G01cHQwsiYTZb4cRfTJINZBNj32+mkk
+         9D0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWDxuRHgd6j8nysBHcCa1Swb+mEncr9zLROdzEFpJd+AUMsPJ42otVlTolnSR+QyZj+aaii4g0wF96SJJH/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0SjXCgy7YCSFj2SClrzb+A1x7F1Bb3JAnGPeWZlwRYu3Vg4iy
+	KAsoyyccPWjQN6Dh7lcvRbLnlPyXxmBmzibX7kPyw7uj/2an4Rf4J3/OFOZhsCCU9L8yrDYF5Z9
+	6kfFgzzNALQ8jV+XYAeS7eKIgOgdrsAzleCXpFCFsHzWOPjhu8bdlF8s=
+X-Gm-Gg: ASbGncu8D8jD0qQ/nFSYzvgBMaN1Lo/1fDYayH2OWp2zYZzSF8668/YTlLvMFftmObW
+	zjNL4czKfn1F2e7rcVmE9QIMPIrQf8+wGcQbLFOzvWoX2/pdhZeWDyIDcx95D2ZORu8+2oIciFK
+	lXhppEgYygjwmktpeoJlTd
+X-Google-Smtp-Source: AGHT+IGI+8KofZYr/rnLzwwlH5lcjuihGFz+/pVqSeDJMF8TV6u79oDolvsETvevEUoiykM1utbOMi84hjY6taQXhiM=
+X-Received: by 2002:a05:622a:2517:b0:477:c4f:ee58 with SMTP id
+ d75a77b69052e-47fe1ed5f87mr4183671cf.24.1745595179801; Fri, 25 Apr 2025
+ 08:32:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424152822.2719-1-stephen.smalley.work@gmail.com> <20250425-einspannen-wertarbeit-3f0c939525dc@brauner>
-In-Reply-To: <20250425-einspannen-wertarbeit-3f0c939525dc@brauner>
-From: Stephen Smalley <stephen.smalley.work@gmail.com>
-Date: Fri, 25 Apr 2025 11:14:46 -0400
-X-Gm-Features: ATxdqUFoaGk9OHJ0N5v_7u7M2tLmdB4Wyi7K0hWeHlvABdGu57_MpkHYXb2Skyc
-Message-ID: <CAEjxPJ4vntQ5cCo_=KN0d+5FDPRwStjXUimE4iHXJkz9oeuVCw@mail.gmail.com>
-Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list to always include
- security.* xattrs
-To: Christian Brauner <brauner@kernel.org>
-Cc: paul@paul-moore.com, omosnace@redhat.com, selinux@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+References: <cover.1745528282.git.lorenzo.stoakes@oracle.com>
+ <0f848d59f3eea3dd0c0cdc3920644222c40cffe6.1745528282.git.lorenzo.stoakes@oracle.com>
+ <51903B43-2BFC-4BA6-9D74-63F79CF890B7@kernel.org> <7212f5f4-f12b-4b94-834f-b392601360a3@lucifer.local>
+ <n6lrbjs4o6luzl3fydpo4frj35q6kvoz74mhlyae5gp7t5loyy@ubmfmzwfhnwq>
+In-Reply-To: <n6lrbjs4o6luzl3fydpo4frj35q6kvoz74mhlyae5gp7t5loyy@ubmfmzwfhnwq>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 25 Apr 2025 08:32:48 -0700
+X-Gm-Features: ATxdqUH-7fcjY1Nm52E2GQYuVXFxGwTyQxbInQgwFOhzX15Q8W5Vpu5wImOKUvg
+Message-ID: <CAJuCfpErtLvktCsbFSGmrT_zir9z0g+uuVvhr=QEitA7ARkdkw@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mm: perform VMA allocation, freeing, duplication in mm
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Kees Cook <kees@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	David Hildenbrand <david@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 25, 2025 at 5:20=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
+On Fri, Apr 25, 2025 at 6:55=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
+e.com> wrote:
 >
-> On Thu, Apr 24, 2025 at 11:28:20AM -0400, Stephen Smalley wrote:
-> > The vfs has long had a fallback to obtain the security.* xattrs from th=
-e
-> > LSM when the filesystem does not implement its own listxattr, but
-> > shmem/tmpfs and kernfs later gained their own xattr handlers to support
-> > other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
->
-> This change is from 2011. So no living soul has ever cared at all for
-> at least 14 years. Surprising that this is an issue now.
-
-Prior to the coreutils change noted in [1], no one would have had
-reason to notice. I might also be wrong about the point where it was
-first introduced - I didn't verify via testing the old commit, just
-looked for when tmpfs gained its own xattr handlers that didn't call
-security_inode_listsecurity().
-
-[1] https://lore.kernel.org/selinux/CAEjxPJ6ocwsAAdT8cHGLQ77Z=3D+HOXg2KkaKN=
-P8w9CruFj2ChoA@mail.gmail.com/T/#t
-
->
-> > filesystems like sysfs no longer return the synthetic security.* xattr
-> > names via listxattr unless they are explicitly set by userspace or
-> > initially set upon inode creation after policy load. coreutils has
-> > recently switched from unconditionally invoking getxattr for security.*
-> > for ls -Z via libselinux to only doing so if listxattr returns the xatt=
-r
-> > name, breaking ls -Z of such inodes.
->
-> So no xattrs have been set on a given inode and we lie to userspace by
-> listing them anyway. Well ok then.
-
-SELinux has always returned a result for getxattr(...,
-"security.selinux", ...) regardless of whether one has been set by
-userspace or fetched from backing store because it assigns a label to
-all inodes for use in permission checks, regardless.
-And likewise returned "security.selinux" in listxattr() for all inodes
-using either the vfs fallback or in the per-filesystem handlers prior
-to the introduction of xattr handlers for tmpfs and later
-sysfs/kernfs. SELinux labels were always a bit different than regular
-xattrs; the original implementation didn't use xattrs but we were
-directed to use them instead of our own MAC labeling scheme.
-
->
-> > Before:
-> > $ getfattr -m.* /run/initramfs
-> > <no output>
-> > $ getfattr -m.* /sys/kernel/fscaps
-> > <no output>
-> > $ setfattr -n user.foo /run/initramfs
-> > $ getfattr -m.* /run/initramfs
-> > user.foo
+> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250425 06:40]:
+> > On Thu, Apr 24, 2025 at 08:15:26PM -0700, Kees Cook wrote:
+> > >
+> > >
+> > > On April 24, 2025 2:15:27 PM PDT, Lorenzo Stoakes <lorenzo.stoakes@or=
+acle.com> wrote:
+> > > >+static void vm_area_init_from(const struct vm_area_struct *src,
+> > > >+                        struct vm_area_struct *dest)
+> > > >+{
+> > > >+  dest->vm_mm =3D src->vm_mm;
+> > > >+  dest->vm_ops =3D src->vm_ops;
+> > > >+  dest->vm_start =3D src->vm_start;
+> > > >+  dest->vm_end =3D src->vm_end;
+> > > >+  dest->anon_vma =3D src->anon_vma;
+> > > >+  dest->vm_pgoff =3D src->vm_pgoff;
+> > > >+  dest->vm_file =3D src->vm_file;
+> > > >+  dest->vm_private_data =3D src->vm_private_data;
+> > > >+  vm_flags_init(dest, src->vm_flags);
+> > > >+  memcpy(&dest->vm_page_prot, &src->vm_page_prot,
+> > > >+         sizeof(dest->vm_page_prot));
+> > > >+  /*
+> > > >+   * src->shared.rb may be modified concurrently when called from
+> > > >+   * dup_mmap(), but the clone will reinitialize it.
+> > > >+   */
+> > > >+  data_race(memcpy(&dest->shared, &src->shared, sizeof(dest->shared=
+)));
+> > > >+  memcpy(&dest->vm_userfaultfd_ctx, &src->vm_userfaultfd_ctx,
+> > > >+         sizeof(dest->vm_userfaultfd_ctx));
+> > > >+#ifdef CONFIG_ANON_VMA_NAME
+> > > >+  dest->anon_name =3D src->anon_name;
+> > > >+#endif
+> > > >+#ifdef CONFIG_SWAP
+> > > >+  memcpy(&dest->swap_readahead_info, &src->swap_readahead_info,
+> > > >+         sizeof(dest->swap_readahead_info));
+> > > >+#endif
+> > > >+#ifdef CONFIG_NUMA
+> > > >+  dest->vm_policy =3D src->vm_policy;
+> > > >+#endif
+> > > >+}
+> > >
+> > > I know you're doing a big cut/paste here, but why in the world is thi=
+s function written this way? Why not just:
+> > >
+> > > *dest =3D *src;
+> > >
+> > > And then do any one-off cleanups?
 > >
-> > After:
-> > $ getfattr -m.* /run/initramfs
-> > security.selinux
-> > $ getfattr -m.* /sys/kernel/fscaps
-> > security.selinux
-> > $ setfattr -n user.foo /run/initramfs
-> > $ getfattr -m.* /run/initramfs
-> > security.selinux
-> > user.foo
+> > Yup I find it odd, and error prone to be honest. We'll end up with unin=
+itialised
+> > state for some fields if we miss them here, seems unwise...
 > >
-> > Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=3DiOawX4y77=
-ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
-> > Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.sma=
-lley.work@gmail.com/
-> > Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> > ---
-> >  fs/xattr.c | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
+> > Presumably for performance?
 > >
-> > diff --git a/fs/xattr.c b/fs/xattr.c
-> > index 02bee149ad96..2fc314b27120 100644
-> > --- a/fs/xattr.c
-> > +++ b/fs/xattr.c
-> > @@ -1428,6 +1428,15 @@ static bool xattr_is_trusted(const char *name)
-> >       return !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_=
-LEN);
-> >  }
-> >
-> > +static bool xattr_is_maclabel(const char *name)
-> > +{
-> > +     const char *suffix =3D name + XATTR_SECURITY_PREFIX_LEN;
-> > +
-> > +     return !strncmp(name, XATTR_SECURITY_PREFIX,
-> > +                     XATTR_SECURITY_PREFIX_LEN) &&
-> > +             security_ismaclabel(suffix);
-> > +}
-> > +
-> >  /**
-> >   * simple_xattr_list - list all xattr objects
-> >   * @inode: inode from which to get the xattrs
-> > @@ -1460,6 +1469,17 @@ ssize_t simple_xattr_list(struct inode *inode, s=
-truct simple_xattrs *xattrs,
-> >       if (err)
-> >               return err;
-> >
-> > +     err =3D security_inode_listsecurity(inode, buffer, remaining_size=
-);
+> > This is, as you say, me simply propagating what exists, but I do wonder=
+.
 >
-> Is that supposed to work with multiple LSMs?
-> Afaict, bpf is always active and has a hook for this.
-> So the LSMs trample over each other filling the buffer?
+> Two things come to mind:
+>
+> 1. How ctors are done.  (v3 of Suren's RCU safe patch series, willy made
+> a comment.. I think)
+>
+> 2. Some race that Vlastimil came up with the copy and the RCU safeness.
+> IIRC it had to do with the ordering of the setting of things?
+>
+> Also, looking at it again...
+>
+> How is it safe to do dest->anon_name =3D src->anon_name?  Isn't that ref
+> counted?
 
-There are a number of residual challenges to supporting full stacking
-of arbitrary LSMs; this is just one instance. Why one would stack
-SELinux with Smack though I can't imagine, and that's the only
-combination that would break (and already doesn't work, so no change
-here).
+dest->anon_name =3D src->anon_name is fine here because right after
+vm_area_init_from() we call dup_anon_vma_name() which will bump up the
+refcount. I don't recall why this is done this way but now looking at
+it I wonder if I could call dup_anon_vma_name() directly instead of
+this assignment. Might be just an overlooked legacy from the time we
+memcpy'd the entire structure. I'll need to double-check.
 
 >
-> > +     if (err < 0)
-> > +             return err;
-> > +
-> > +     if (buffer) {
-> > +             if (remaining_size < err)
-> > +                     return -ERANGE;
-> > +             buffer +=3D err;
-> > +     }
-> > +     remaining_size -=3D err;
+> Pretty sure it's okay, but Suren would know for sure on all of this.
 >
-> Really unpleasant code duplication in here. We have xattr_list_one() for
-> that. security_inode_listxattr() should probably receive a pointer to
-> &remaining_size?
+> Suren, maybe you could send a patch with comments on this stuff?
 
-Not sure how to avoid the duplication, but willing to take it inside
-of security_inode_listsecurity() and change its hook interface if
-desired.
+Yeah, I think I need to add some comments in this code for
+clarification. We do not copy the entire vm_area_struct because we
+have to preserve vma->vm_refcnt field of the dest vma. Since these
+structures are allocated from a cache with SLAB_TYPESAFE_BY_RCU,
+another thread might be concurrently checking the state of the dest
+object by reading dest->vm_refcnt. Therefore it's important here not
+to override the vm_refcnt. Changelog in
+https://lore.kernel.org/all/20250213224655.1680278-18-surenb@google.com/
+touches on it but a comment in the code would be indeed helpful. Will
+add it but will wait for Lorenzo's refactoring to land into linux-mm
+first to avoid adding merge conflicts.
 
 >
-> > +
-> >       read_lock(&xattrs->lock);
-> >       for (rbp =3D rb_first(&xattrs->rb_root); rbp; rbp =3D rb_next(rbp=
-)) {
-> >               xattr =3D rb_entry(rbp, struct simple_xattr, rb_node);
-> > @@ -1468,6 +1488,10 @@ ssize_t simple_xattr_list(struct inode *inode, s=
-truct simple_xattrs *xattrs,
-> >               if (!trusted && xattr_is_trusted(xattr->name))
-> >                       continue;
-> >
-> > +             /* skip MAC labels; these are provided by LSM above */
-> > +             if (xattr_is_maclabel(xattr->name))
-> > +                     continue;
-> > +
-> >               err =3D xattr_list_one(&buffer, &remaining_size, xattr->n=
-ame);
-> >               if (err)
-> >                       break;
-> > --
-> > 2.49.0
-> >
+> Thanks,
+> Liam
 
