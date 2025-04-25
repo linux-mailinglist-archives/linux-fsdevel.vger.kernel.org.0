@@ -1,136 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-47417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47418-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A127AA9D384
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 22:52:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799A6A9D416
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 23:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27C5177AA6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 20:52:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 899DC1BC56C4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 21:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD50422332B;
-	Fri, 25 Apr 2025 20:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F27B224B04;
+	Fri, 25 Apr 2025 21:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="BoHNI5D/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg574WEH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE8D1AC458
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 20:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9771221DBC;
+	Fri, 25 Apr 2025 21:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745614289; cv=none; b=MW99RTp2I476Bhv2HR9mTplrOQdnKPLwgNH4hb/GYfsP7qW5/2VpZE0qJJjwlxPoo8EnVROEaZPJlDbeWbl15e0PTxIikkVQtdi+5owcCLGVTosD84PHhcjdSGG2fuimP2n5x1NfAJuglKExHH7udcxKb77k4oKCgdQKXvE2bys=
+	t=1745616193; cv=none; b=MVtmWbrfc8y88WABEdtbUFOjfH5L4sOYvK1G33vwJ5FX38X3aZhoD6i/WXq6hqlpXUNkvZfBgvub+vCTN0PkAW3s9llKPM48RKRWfSnXmLcc6I0vke4jsXP3syvJ6jy3lkpXil3xfBlGswq1hGMTMu7DNTB0xEglzZk1pX7j2Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745614289; c=relaxed/simple;
-	bh=B2f42Zr9us5jZMi9vn7unY84Vdb6UxZQTwEV2SDQIGM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KvD8BQ0B48OLX1v4GrBH+nETRwU2Lia37xmiW8iK6W2S5D7qNOcXTEk1JoelrsLaY8fY2CY7FTkfaYtUsCHBbu7pjBYp7I0mcsxmej186xGDuqymrgcpQeQBb/3F7z5/sRxvQvY2KK5WOZ7EIyLpi+NB0rNNtyrGeswEoeHHEEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=BoHNI5D/; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=wEiVbYUwhbBCQ6lA7RbhQ9aKpA2x87b6T2nS9gBE3xg=; t=1745614286; x=1746219086; 
-	b=BoHNI5D/RYRomgv1LykjfUIKjHhKba1JHs2BOYHgE4+XRGVAlFIqnHHlvCodCLuPZ+7d4c80haG
-	/JGENxT6Wf2s+GrA8Oa4FwvtAxSogWP8j6UxnbNp+Obx7Div9YJIhapZTazbgReTxImwJMYB3sTam
-	wPKo2emm+h7KfZjzMVTpD5VZg0lef76MzPJJ37fgwt1TSGRnKlGRrmRAkWWPMkxPByh6+g7AeEbOe
-	GI//cpl0KtrDJgcUqls1aiLj3shfj7tHH9blE9y86cxfftwD1gbTxmGFoZygTbHTdP/ZA2keIuO7h
-	sTCQ16w2a5Y42TwS06ZH3IohCtr9Xg4caj2A==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1u8Q15-00000000pb4-2roY; Fri, 25 Apr 2025 22:51:23 +0200
-Received: from p5b13afe4.dip0.t-ipconnect.de ([91.19.175.228] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1u8Q15-000000003oS-1rid; Fri, 25 Apr 2025 22:51:23 +0200
-Message-ID: <1dc5a637002fca90b7f3e756c65a27da66dc2174.camel@physik.fu-berlin.de>
-Subject: Re: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D=3A?=
- =?UTF-8?Q?__=E5=9B=9E=E5=A4=8D=3A?= =?UTF-8?Q?_=E5=9B=9E=E5=A4=8D=3A?=
- HFS/HFS+ maintainership action items
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: =?UTF-8?Q?=E6=9D=8E=E6=89=AC=E9=9F=AC?= <frank.li@vivo.com>, 
- Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
- "brauner@kernel.org"
-	 <brauner@kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>
-Date: Fri, 25 Apr 2025 22:51:21 +0200
-In-Reply-To: <SEZPR06MB5269BB960025304C687D6270E8842@SEZPR06MB5269.apcprd06.prod.outlook.com>
-References: <f06f324d5e91eb25b42aea188d60def17093c2c7.camel@ibm.com>
-							 <2a7218cdc136359c5315342cef5e3fa2a9bf0e69.camel@physik.fu-berlin.de>
-						 <1d543ef5e5d925484179aca7a5aa1ebe2ff66b3e.camel@ibm.com>
-					 <d4e0f37aa8d4daf83aa2eb352415cf110c846101.camel@physik.fu-berlin.de>
-				 <7f81ec6af1c0f89596713e144abd89d486d9d986.camel@physik.fu-berlin.de>
-			 <787a6449b3ba3dce8c163b6e5b9c3d1ec1b302e4.camel@ibm.com>
-			 <TYZPR06MB527574C2A8265BF6912994E6E8842@TYZPR06MB5275.apcprd06.prod.outlook.com>
-		 <84ebd3fb27957d926fc145a28b38c1ac737c5953.camel@physik.fu-berlin.de>
-		 <SEZPR06MB5269CBE385E73704B368001AE8842@SEZPR06MB5269.apcprd06.prod.outlook.com>
-	 <d35a7b6e8fce1e894e74133d7e2fbe0461c2d0a5.camel@ibm.com>
-	 <SEZPR06MB5269BB960025304C687D6270E8842@SEZPR06MB5269.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1745616193; c=relaxed/simple;
+	bh=6fjTmNSFrlTdsaBLXQ/GnLckkpWkOX+NxpTc0rHAaO4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=skuHFEP66TcuHvWDKfedhBHccT1wxVvLvlbueqPFUXlTN7JsmsARGIj+iRm4U1yW2pEjrmRZMf/hTrs9Zk2b7Py01zFUjKoi/ZpxHepFnF/O05dfbwmeaPsaGLxZ8PO4mi+ilUqUEgjiDPsqgc0g7JTMoi+ngikJQV1Z8IbiI8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg574WEH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C29C4CEE4;
+	Fri, 25 Apr 2025 21:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745616193;
+	bh=6fjTmNSFrlTdsaBLXQ/GnLckkpWkOX+NxpTc0rHAaO4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Qg574WEHUhuhCKcIUzPme+SaUW33YIp/65c8R6n0wg6lUM8I5jSGV+QVMsbuBJ2zg
+	 zXHVkK7S0QQUX5m9nSCNtQI9vHovy5nWFP9xH2s1/c9J1022Cd8dTfuEpZUk4HTmZ3
+	 xKgzFoTLqj56jCDjE3NJvG7V4ncciBwdYmQQNEs45ikgpAlddQjOYNZ9wK68OjezoC
+	 Q8RSnT7fqtMEoZ2tDsEyFftTI26kpecwBSUcglT6MY6+Tc8GyzMV6hhckyb2Ra3nFb
+	 0tvRKiBauQJGmFRNW6I/s2GMZr50ratR+8Y7j/9e60Xial5ryTIsZ8i42rcf+rEMIV
+	 XDmo1vKcUFROA==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] vfs fixes
+Date: Fri, 25 Apr 2025 23:22:54 +0200
+Message-ID: <20250425-vfs-fixes-dc6a1661a28f@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4803; i=brauner@kernel.org; h=from:subject:message-id; bh=6fjTmNSFrlTdsaBLXQ/GnLckkpWkOX+NxpTc0rHAaO4=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRw/9W/srO2wOHiouJlFbHaMXxRIkqCdv2ZWx6bWDw5/ q/Gv6igo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIWrQz/NDMW757mekb0ie2y vKPejm5XRb32H+Zblusbqs8oUL3Vn+Gf9u6P0kkq74P0jTRvO595JnzPqtz7zrK8qVf9X/1d9tS FDwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-Hi Yangtao,
+Hey Linus,
 
-On Fri, 2025-04-25 at 19:36 +0000, =E6=9D=8E=E6=89=AC=E9=9F=AC wrote:
-> 2). Arch Linux has the hfsprogs installation package, but
-> after installation there is only mkfs.hfsplus, missing mkfs.hfs
->=20
-> I think if I switch to Ubuntu or something, this problem should go away.
+/* Summary */
 
-Apple removed support for creating legacy HFS filesystems around version
-500 of the hfs source code but kept the code for checking legacy HFS
-filesystems.
+This contains various fixes for this cycle:
 
-For the Debian package, I just forward-ported support for creating legacy
-HFS filesystems such that Debian's hfsprogs supports both HFS and HFS+.
+- For some reason we went from zero to three maintainers for HFS/HFS+ in
+  a matter of days. The lesson to learn from this might just be that we
+  need to threaten code removal more often!?
 
-The patch can be found in [1].
+- Fix a regression introduced by enabling large folios for lage logical
+  block sizes. This has caused issues for noref migration with large
+  folios due to sleeping while in an atomic context.
 
-In the future, I'm planning to split the Debian packages into a hfsprogs-le=
-gacy
-and a hfsprogs package. The -legacy package is supposed to stay at the old
-package version and provide mkfs.hfs while the hfsprogs package will track =
-the
-current upstream sources as Apple is still actively maintaining hfsprogs [2=
-].
+  New sleeping variants of pagecache lookup helpers are introduced.
+  These helpers take the folio lock instead of the mapping's private
+  spinlock. The problematic users are converted to the sleeping variants
+  and serialize against noref migration. Atomic users will bail on
+  seeing the new BH_Migrate flag.
 
-I am also working on creating a patch set that all Linux distributions can =
-use
-on top of Apple's vanilla upstream sources. The current WIP can be found in=
- [3].
+  This also shrinks the critical region of the mapping's private lock
+  and the new blocking callers reduce contention on the spinlock for
+  bdev mappings.
 
-Adrian
+- Fix two bugs in do_move_mount() when with MOVE_MOUNT_BENEATH.
+  The first bug is using a mountpoint that is located on a mount we're
+  not holding a reference to. The second bug is putting the mountpoint
+  after we've called namespace_unlock() as it's no longer guaranteed
+  that it does stay a mountpoint.
 
-> [1] https://salsa.debian.org/debian/hfsprogs/-/blob/master/debian/patches=
-/0005-Re-add-support-for-creating-legacy-HFS-filesystems.patch?ref_type=3Dh=
-eads
-> [2] https://github.com/apple-oss-distributions/hfs
-> [3] https://github.com/glaubitz/hfs/tree/linux
+- Remove a pointless call to vfs_getattr_nosec() in the devtmpfs code
+  just to query i_mode instead of simply querying the inode directly.
+  This also avoids lifetime issues for the dm code by an earlier bugfix
+  this cycle that moved bdev_statx() handling into vfs_getattr_nosec().
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+- Fix AT_FDCWD handling with getname_maybe_null() in the xattr code.
+
+- Fix a performance regression for files when multiple callers issue a
+  close when it's not the last reference.
+
+- Remove a duplicate noinline annotation from pipe_clear_nowait().
+
+/* Testing */
+
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3)
+
+No build failures or warnings were observed.
+
+/* Conflicts */
+
+Merge conflicts with mainline
+=============================
+
+No known conflicts.
+
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit a33b5a08cbbdd7aadff95f40cbb45ab86841679e:
+
+  Merge tag 'sched_ext-for-6.15-rc3-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/tj/sched_ext (2025-04-21 19:16:29 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc4.fixes
+
+for you to fetch changes up to f520bed25d17bb31c2d2d72b0a785b593a4e3179:
+
+  fs/xattr: Fix handling of AT_FDCWD in setxattrat(2) and getxattrat(2) (2025-04-25 12:11:56 +0200)
+
+Please consider pulling these changes from the signed vfs-6.15-rc4.fixes tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.15-rc4.fixes
+
+----------------------------------------------------------------
+Al Viro (1):
+      fix a couple of races in MNT_TREE_BENEATH handling by do_move_mount()
+
+Christian Brauner (1):
+      Merge patch series "fs/buffer: split pagecache lookups into atomic or blocking"
+
+Christoph Hellwig (1):
+      devtmpfs: don't use vfs_getattr_nosec to query i_mode
+
+Davidlohr Bueso (7):
+      fs/buffer: split locking for pagecache lookups
+      fs/buffer: introduce sleeping flavors for pagecache lookups
+      fs/buffer: use sleeping version of __find_get_block()
+      fs/ocfs2: use sleeping version of __find_get_block()
+      fs/jbd2: use sleeping version of __find_get_block()
+      fs/ext4: use sleeping version of sb_find_get_block()
+      mm/migrate: fix sleep in atomic for large folios and buffer heads
+
+Jan Kara (1):
+      fs/xattr: Fix handling of AT_FDCWD in setxattrat(2) and getxattrat(2)
+
+Mateusz Guzik (1):
+      fs: fall back to file_ref_put() for non-last reference
+
+T.J. Mercier (1):
+      splice: remove duplicate noinline from pipe_clear_nowait
+
+Viacheslav Dubeyko (1):
+      MAINTAINERS: add HFS/HFS+ maintainers
+
+Yangtao Li (1):
+      MAINTAINERS: hfs/hfsplus: add myself as maintainer
+
+ MAINTAINERS                 | 10 +++++--
+ drivers/base/devtmpfs.c     | 22 ++++++--------
+ fs/buffer.c                 | 73 +++++++++++++++++++++++++++++++++------------
+ fs/ext4/ialloc.c            |  3 +-
+ fs/ext4/mballoc.c           |  3 +-
+ fs/file.c                   |  2 +-
+ fs/jbd2/revoke.c            | 15 ++++++----
+ fs/namespace.c              | 69 ++++++++++++++++++++++--------------------
+ fs/ocfs2/journal.c          |  2 +-
+ fs/splice.c                 |  2 +-
+ fs/xattr.c                  |  4 +--
+ include/linux/buffer_head.h |  9 ++++++
+ include/linux/file_ref.h    | 19 ++++--------
+ mm/migrate.c                |  8 +++--
+ 14 files changed, 145 insertions(+), 96 deletions(-)
 
