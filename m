@@ -1,146 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-47414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10AD9A9D315
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 22:36:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499F0A9D33C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 22:48:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A07F43B113A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 20:35:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E7811C016A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 20:48:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10E8221FA6;
-	Fri, 25 Apr 2025 20:36:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDBD1FF7CD;
+	Fri, 25 Apr 2025 20:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="AcqdYf7s"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="mUOahFw2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE2821FF28
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 20:35:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F9F22539D;
+	Fri, 25 Apr 2025 20:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745613360; cv=none; b=FmUCeC1mK4fDvRnQpjPj4iB4VS796n+a9ewEGiUIlVB/ucRzSQCPAr6OO2SeCzDx2jruBODmVNHLrWUDqYYm3hPuNnXHacaT9BCa8L6It3WQYAJGRYxDXY5grXV3ET4EE8SydIGCJrrMzgIvRlUukpJht6BM9hzFrVXl8jREXfw=
+	t=1745614014; cv=none; b=eNELQ1buZLHvwx7a/VVdtVeRBn6BmCfVnwFW+LyINigByo9iI3ysqczVqimCzGssMyg+7PxgCBclpM/WGtmjd7bHWZ3y5gvX2NVppXvo4FJ2fBPhF3If378dLPG53mgvUVHmMU/sixHi5jDDEn1Bygia+I/1IpVPjCqWCeFWb28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745613360; c=relaxed/simple;
-	bh=SQExu4w4hPgGkdy5kCAct+RvK8+FjV4snNR+nLyJBNA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FyDRYm3Oh3bL34Prgnv5LaWzvP+bdVc9/Ev/ChzwKAzAy1Ztk8idgMPukV1DHkH4IizQuW0Dcq0UdyF24/vIZuizT5IgY7ZGhlAnL9tUDro3sdqrCiEemHcFeVuS8Lc2i4zLftIhctQSE/ktCGFot+iajCk+0LpKV1nu/h9lxmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=AcqdYf7s; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ace333d5f7bso439420566b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 13:35:56 -0700 (PDT)
+	s=arc-20240116; t=1745614014; c=relaxed/simple;
+	bh=Q2j8AgYptvGhX1CCldmrMv0sriO+eLrH7eAydpVEGOs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b/QG1GIsdI7Vv4kRQKfojkX/pyerSuO/5vbNal/CP2daReOwq8wiuInSS11fFZIb0aQ3ODcJNf/HlcSXpXElriOUyQMuJO8CEefOTv62Mpq5We7/n59riqscyMnqSn8ISFRJh7wzXcirjqk37ySjrHnFGEx5Nlg9yYzLY7QE0Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=mUOahFw2; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1745613355; x=1746218155; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qHF1zPVwXD8IdJu/yf1YIr/T0XDnrM1CQwq7Bj5CPDw=;
-        b=AcqdYf7sEb5O+p7PVg+SZBBLgQsUwDcGRQTQc2JJgrlVDWdBnJNhSSZvwB9Y/uq95v
-         SFZOHoWJVu8NVIHqXNYAkdH/DMLXOVm+keHTgYF5b4Ka8r3hg0WEDUVNB49RjBh7Z12x
-         Jj5oHdUODbq4ly6ayEpYN6M10Qjlnt3VJEsL8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745613355; x=1746218155;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qHF1zPVwXD8IdJu/yf1YIr/T0XDnrM1CQwq7Bj5CPDw=;
-        b=jrl/3GmEUPXWmwhmVvhqfQxjRwmIJ+OExAYI7mjbS3IUb/WvHDMyl4eK/qPR6uW+z6
-         EuFQC55sIhfvuWbPX2pdvXGmB0j6O8R3lV8talpPWsDxbLNYtxFoch1qK5N5c28yXUbS
-         gwy9SK2JH9uWGcXCFERpwQ7YgRoTkBxobmbpqWMXMk2gvGWm8ywtesR0PGhGhdBtpMuu
-         1ZrLb8iL8zhtGVDpRLKxBKXvEH7G++b6Vd9CVylB7sZyiYjjeepfAChv5UkLYhupT+Cp
-         UiSEGq/GW5C/QySqQbKCPTno+xr7XnAlVQSegTfpokjwMdXUOvFxCsYqTYQbR8GOcfn4
-         iwTA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyZgstPKvgabloVsu/xhWjYjJCFOm3LNMbepvhiiPYuMENHz4ix0hrZaEs3kPvHlHHc+poVQwSrHcL8Bq4@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAfnf3pV8Ud38v9lUSmoDsaE54dJ5WhHnyOK1+tBc8WT80AD7W
-	fMCCBuvRxM5xXRti1OzcDWSlp0uKAq4VwjWBB2DAtmjY38Ro60GpKBVaQXfTELCF4jMbyMBk9wu
-	0/FU=
-X-Gm-Gg: ASbGncv6tPGS8mWWcUS12J+LBSM18FXLBN5tIdK0heBqSQQDxswyc/COFzH8lgwM2/e
-	+HintxCLIqpQ/eqTSRgwa/07SmOrWp/FFoGeNLc076rJoQVnKZiPX/b2y+5egLpIA9MNvMBDsic
-	35LLI0VkbmlBT3BnGx9B8pDGNQxNSPfM7fgEoytO970fVRHcvfpDsjtvSnsqQhWgM5st34OmBNR
-	MD2pWBBrS8Xq2e73nImHLAHuyBmxI/SLEyRMrOPn9NH3Pu+dsR8o4NceGXWoGce8fvLOfFjSKfj
-	jqyNL4wzZI6y7zV2GqjvHSQIzxjRydsj2y3QCnqWCQcT4hFkqPWTI3zvORexAaVrXA82yn2D5sb
-	KKSiIcEC3kqV1VZE=
-X-Google-Smtp-Source: AGHT+IFDOcGjCWk2OA6B6lFduIkQLcoFN3mp6m230QBIyCTCRRx93l5uTezczady7Uhnv6Lb8ZTN4Q==
-X-Received: by 2002:a17:907:72ca:b0:ac8:197f:3ff6 with SMTP id a640c23a62f3a-ace8493ad90mr62584266b.28.1745613354683;
-        Fri, 25 Apr 2025 13:35:54 -0700 (PDT)
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecfa354sm183393766b.120.2025.04.25.13.35.53
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 13:35:54 -0700 (PDT)
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-ace333d5f7bso439415466b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 13:35:53 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuiQggsoBqW+YsUG1D3qfVkdATnT2Mgnw0x1Qj2PlekdeNFeXieodGLGJrO4YsKLN82LKVkZH+V2SHWcAU@vger.kernel.org
-X-Received: by 2002:a17:907:7f24:b0:acb:107e:95af with SMTP id
- a640c23a62f3a-ace84ad7774mr62978366b.39.1745613353476; Fri, 25 Apr 2025
- 13:35:53 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1745614010; x=1777150010;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=kTjNtVzivnzTy/oybVUy2SYwiaPHJOJ2MNj6K8muiDk=;
+  b=mUOahFw2bRg2/ZZTnK1tgZh4lYHtmLRE1uIeV3SqW2UE8D9mFg1SH+aq
+   /wS1k+jppQR6sA1N4LZwzVXed7PNeiyZ8G4N4kG4kx+26NhzMY0XSZhUR
+   6j59R164V16tkFrlebzRK3TgrwhkqEPprMpPVumUXNw1lG3EJIrXK4dUT
+   g=;
+X-IronPort-AV: E=Sophos;i="6.15,240,1739836800"; 
+   d="scan'208";a="483805900"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Apr 2025 20:46:46 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.7.35:11515]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.42.20:2525] with esmtp (Farcaster)
+ id 6f09c9c8-3454-4d43-892c-532df97ba350; Fri, 25 Apr 2025 20:46:44 +0000 (UTC)
+X-Farcaster-Flow-ID: 6f09c9c8-3454-4d43-892c-532df97ba350
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 25 Apr 2025 20:46:44 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.142.164.216) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 25 Apr 2025 20:46:40 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <brauner@kernel.org>
+CC: <alexander@mihalicyn.com>, <bluca@debian.org>, <daan.j.demeyer@gmail.com>,
+	<davem@davemloft.net>, <david@readahead.eu>, <edumazet@google.com>,
+	<horms@kernel.org>, <jack@suse.cz>, <kuba@kernel.org>, <kuniyu@amazon.com>,
+	<lennart@poettering.net>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <me@yhndnzj.com>, <netdev@vger.kernel.org>,
+	<oleg@redhat.com>, <pabeni@redhat.com>
+Subject: Re: [PATCH v2 2/4] net, pidfs: prepare for handing out pidfds for reaped sk->sk_peer_pid
+Date: Fri, 25 Apr 2025 13:46:05 -0700
+Message-ID: <20250425204632.44889-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250425-work-pidfs-net-v2-2-450a19461e75@kernel.org>
+References: <20250425-work-pidfs-net-v2-2-450a19461e75@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
- <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
- <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
- <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com> <aAvlM1G1k94kvCs9@casper.infradead.org>
-In-Reply-To: <aAvlM1G1k94kvCs9@casper.infradead.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 25 Apr 2025 13:35:37 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiX-CVhm0S2Ba4+pLO2U=3dY0x56jcunMyOz2TEHAgnYg@mail.gmail.com>
-X-Gm-Features: ATxdqUGwKlTpu4bheZKrvcER-qlO-D6uY_4AgFPDdEUKnYAjfRZ_s0Tk9V5ZhUc
-Message-ID: <CAHk-=wiX-CVhm0S2Ba4+pLO2U=3dY0x56jcunMyOz2TEHAgnYg@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D036UWC002.ant.amazon.com (10.13.139.242) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Fri, 25 Apr 2025 at 12:40, Matthew Wilcox <willy@infradead.org> wrote:
->
-> I think this is something that NTFS actually got right.  Each filesystem
-> carries with it a 128KiB table that maps each codepoint to its
-> case-insensitive equivalent.
+From: Christian Brauner <brauner@kernel.org>
+Date: Fri, 25 Apr 2025 10:11:31 +0200
+> SO_PEERPIDFD currently doesn't support handing out pidfds if the
+> sk->sk_peer_pid thread-group leader has already been reaped. In this
+> case it currently returns EINVAL. Userspace still wants to get a pidfd
+> for a reaped process to have a stable handle it can pass on.
+> This is especially useful now that it is possible to retrieve exit
+> information through a pidfd via the PIDFD_GET_INFO ioctl()'s
+> PIDFD_INFO_EXIT flag.
+> 
+> Another summary has been provided by David in [1]:
+> 
+> > A pidfd can outlive the task it refers to, and thus user-space must
+> > already be prepared that the task underlying a pidfd is gone at the time
+> > they get their hands on the pidfd. For instance, resolving the pidfd to
+> > a PID via the fdinfo must be prepared to read `-1`.
+> >
+> > Despite user-space knowing that a pidfd might be stale, several kernel
+> > APIs currently add another layer that checks for this. In particular,
+> > SO_PEERPIDFD returns `EINVAL` if the peer-task was already reaped,
+> > but returns a stale pidfd if the task is reaped immediately after the
+> > respective alive-check.
+> >
+> > This has the unfortunate effect that user-space now has two ways to
+> > check for the exact same scenario: A syscall might return
+> > EINVAL/ESRCH/... *or* the pidfd might be stale, even though there is no
+> > particular reason to distinguish both cases. This also propagates
+> > through user-space APIs, which pass on pidfds. They must be prepared to
+> > pass on `-1` *or* the pidfd, because there is no guaranteed way to get a
+> > stale pidfd from the kernel.
+> > Userspace must already deal with a pidfd referring to a reaped task as
+> > the task may exit and get reaped at any time will there are still many
+> > pidfds referring to it.
+> 
+> In order to allow handing out reaped pidfd SO_PEERPIDFD needs to ensure
+> that PIDFD_INFO_EXIT information is available whenever a pidfd for a
+> reaped task is created by PIDFD_INFO_EXIT. The uapi promises that reaped
+> pidfds are only handed out if it is guaranteed that the caller sees the
+> exit information:
+> 
+> TEST_F(pidfd_info, success_reaped)
+> {
+>         struct pidfd_info info = {
+>                 .mask = PIDFD_INFO_CGROUPID | PIDFD_INFO_EXIT,
+>         };
+> 
+>         /*
+>          * Process has already been reaped and PIDFD_INFO_EXIT been set.
+>          * Verify that we can retrieve the exit status of the process.
+>          */
+>         ASSERT_EQ(ioctl(self->child_pidfd4, PIDFD_GET_INFO, &info), 0);
+>         ASSERT_FALSE(!!(info.mask & PIDFD_INFO_CREDS));
+>         ASSERT_TRUE(!!(info.mask & PIDFD_INFO_EXIT));
+>         ASSERT_TRUE(WIFEXITED(info.exit_code));
+>         ASSERT_EQ(WEXITSTATUS(info.exit_code), 0);
+> }
+> 
+> To hand out pidfds for reaped processes we thus allocate a pidfs entry
+> for the relevant sk->sk_peer_pid at the time the sk->sk_peer_pid is
+> stashed and drop it when the socket is destroyed. This guarantees that
+> exit information will always be recorded for the sk->sk_peer_pid task
+> and we can hand out pidfds for reaped processes.
+> 
+> Link: https://lore.kernel.org/lkml/20230807085203.819772-1-david@readahead.eu [1]
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-I agree that that is indeed a technically correct way to deal with
-case sensitivity at least from a filesystem standpoint.
-
-It does have some usability issues - exactly because of that "fixed at
-filesystem creation time" - but since in *practice* nobody actually
-cares about the odd cases, that isn't really much of a real issue.
-
-And the fixed translation table means that it at least gets versioning
-right, and you hopefully filled the table up sanely and don't end up
-with the crazy cases (ie the nonprinting characters etc) so hopefully
-it contains only the completely unambiguous stuff.
-
-That said, I really suspect that in practice, folding even just the
-7-bit ASCII subset would have been ok and would have obviated even
-that table. And I say that as somebody who grew up in an environment
-that used a bigger character set than that.
-
-Of course, the NTFS stuff came about because FAT had code pages for
-just the 8-bit cases - and people used them, and that then caused odd
-issues when moving data around.
-
-Again - 8-bit tables were entirely sufficient in practice but actually
-caused more problems than not doing it at all would have. And then
-people go "we switched to 16-bit wide characters, so we need to expand
-on the code table too".
-
-Which is obviously exactly how you end up with that 128kB table.
-
-But you have to ask yourself: do you think that the people who made
-the incredibly bad choice to use a fixed 16-bit wide character set -
-which caused literally decades of trouble in Windows, and still shows
-up today - then made the perfect choice when dealing with case
-folding? Yeah, no.
-
-Still, I very much agree it was a better choice than "let's call
-random unicode routines we don't really appreciate the complexity of".
-
-            Linus
+Reviewed-by: Kuniyuki Iwashima <kuniyu@amazon.com>
 
