@@ -1,214 +1,308 @@
-Return-Path: <linux-fsdevel+bounces-47379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E12A9CE63
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 18:40:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E4BA9CEE2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 18:53:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B9CC4E1974
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 16:39:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E08699A5ECA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 16:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F131A76BC;
-	Fri, 25 Apr 2025 16:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB52F209F49;
+	Fri, 25 Apr 2025 16:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="h5bB/9FH"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Grf8jZeR";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="HGmc761n"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32241991A9
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 16:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745599164; cv=none; b=LnElpFFdqDELEbn5VBX407ioxk7/RT5t2NDhB/VroG6TUlsVDdjfh/5ni4p4KdJkwVYD/KLVjWaHWGcNmHOtgDmIrsJMYe1mAcXGndfjG+bE06W7potvhy7eerARf5mlgFlzUzb1OpMaf/7FSc6bnPyXWzK0/RUx7WQLrR1R51c=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745599164; c=relaxed/simple;
-	bh=qkCd8/HmV6AfmTU+1hru+x2meizjAEoGcJvos3klyC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J6LA6XQ4mPTpBVpscGWwNU3XGRyCBqKd+l4M2fqaEjy5Iq0i6CAE8Mf98iLNt693kwhGT+90xJKiZqvlDkB7qF5CIqYxSUvlJZBn0VhXBLklQD6HuRgeDipcw0aV931DCSLuc7LasSYn3L2aHNs+6Qi0Ns2ECWT8klxJKn+BN3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=h5bB/9FH; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22c336fcdaaso30667465ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 09:39:22 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3681F460F;
+	Fri, 25 Apr 2025 16:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745599707; cv=fail; b=tw1D8d9VMJAmFQlLJecthxfl+q7xtS5FwzSa0imhfvuYYCaglehQAqaFduZU5ob+fAqOBub5UDFUKm9J0I41XvreNi25EM+Ude5VHdqcK/jEui2haPtH9145I7e6qFmTgWQEDcpzKaBKc6ST0/A6xE/lVzZ02ZYf99fZOxQ50Bc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745599707; c=relaxed/simple;
+	bh=JxtzGFiRhwdBr+dkq3HdAjTE9OpOdB/Sk9uP1itUjcY=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=JHO7L4nM7lZ+TGSFCiUnf/XGzSyisd3ONSrj9OXHq2Si4FZ5LkUP89LZWa4CagUy65XuPMmIJ/nVrmGDvDeKpWkPCOoEturzj9BeY/w5AvQaL3Li3YTpcyMK5zPUdFCgWbLprTiPR9G5RNiFS1ftUi+sdLqtJJAj3y3xbsJ3tac=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Grf8jZeR; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=HGmc761n; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53PFqWNt008437;
+	Fri, 25 Apr 2025 16:45:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2023-11-20; bh=zQXWYGPRwG7ARzno
+	hUdBR5+X9tWFsGBXO8WB9D8sKq8=; b=Grf8jZeR2tOjc7hbVFa2kuqD0gQCznee
+	Dg5rZkcDSmamP/dmBOKz2ArOhjW/6N7g3yPznHsLhIf6yBIScDEtxpEMF3yhjldD
+	krN136Ba1Pc6/s83PLpYrWYdimB+LF6Py2abGwI1hJnpRqXaqUdKU1vNPN8V7Pme
+	k5/B66PNuinlvTAT8kjDnQalBS9/zi7r3fpjTMhlNEgC6W6NyWfc7T37hbOYgBN8
+	TyrCx4gMaGAebG8ZdsB8wyOnwpAtg6SM19KAgL4c9qv85oalUCZfA3xIRLY+2FZ8
+	RleJcZvz9452xvbudaUYDCakoQihC5sDaAHZTGnP+zFET8nkcmXgPQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 468d45r9ek-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 16:45:35 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53PFsW4b024767;
+	Fri, 25 Apr 2025 16:45:34 GMT
+Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazlp17013060.outbound.protection.outlook.com [40.93.20.60])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 467pud19p7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 25 Apr 2025 16:45:33 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BjjN71J9DQhaQEYWCnbtDuizEegHwdRKboJnnutBWJAcHq9cJX8di6KZAu4MunfWoZXAIl0SsfsdwTfUp3+2OfwnW/ONpOS4aMEju4r73GXJy8Rw51CGCPAlBJEElkNZJE6+0MzqmrFk82ImClj9odpvioAroihhr7GhxA5n3iiGkuJ44+svK89LzeRiP7tDPpPKh71wkMR0YCLDORlimNA4b1ExjOxB7XZ7KvO84AVsfzDR0KbWBY/GzelSs1X4L32HRyxKkOM5GcnCRzoFMshtgPHv5wp0RfpInUTT3Hd7HjqdnA00sAxuYFDTS/1A5SNR8sAEYzQ+mRhZtHejaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zQXWYGPRwG7ARznohUdBR5+X9tWFsGBXO8WB9D8sKq8=;
+ b=Y0lxfBTIwp2Gp1dyWTsXpk2N1iH9RDNqGsdt7/bHknlRPDxJryYLwGugyeyieYix0oANYBOVdWr1+RBQzuYqwO2x4MhXRPvN+h2t4TkpLajqyWYGXm0z9U6LkdA6bT5wFjl4gMxA7ZQw9/LLqpNaQBqmVOy36hUDnkhy/STeI0RqnCpVLa6NUWGxY4fSO5RtNNdAQanc4QkCOLV45EMiaa9JAsHVI13CZ+qhXI3FnEwQFEwELa34ijZCbc8TpqPa5rPkhkJL9rSy+b3CN72mVZL06G4Gh/l3MheYVCTjxLuRvx0mdY5r4BQ9oNkWm7QtLbfICmhsYVdD7qGcdIlXig==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1745599162; x=1746203962; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uObhd6griCLVRMAdAUyHQB5JJqltVnuTe7FYQAThLL4=;
-        b=h5bB/9FH3uuFQB9MGVTFRuKmBfYMZdnWjj+zXWRTiOZToLNMdi+oX2MEW6t/ZPmpHl
-         GK73pGy/PVb8Si66FZz5Eggh9C//4G65TVGNbv3fntfkXlfc0s129oVt105q+Cu/CRpb
-         tFgk+8ge7Nb+LoWbSpKZ6lYgW4UZ7SkwTY4Fo0YkFowVFL4l2sYOvu+0dznaZqAwJx8R
-         bjcvRsADqsfd5g4IFp8kTTsUuYraRKKQxPOecO4EVAgr0w6lVTaVfvr1qPD6oA6FmfDY
-         gNmgDyjMTHFINntIJeebAXPqCkWqkdPr9JyZPeXeLQZ5pF5swa7F5BKEbsqj94LmDd0g
-         NngA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745599162; x=1746203962;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uObhd6griCLVRMAdAUyHQB5JJqltVnuTe7FYQAThLL4=;
-        b=hth5llFxS6UYXA+O+G3UeKnWD8OKhQySnpY8Qoh/FlPvc5DVAtrdATxzImUa/1VpeW
-         nCcT54c8giTMA7SDUFnlG8EAbOpBQIu3tMbF1zNwRb+fOIvKN4STunmFf5FvpXiSkXN6
-         JFfHoUkHcjjfY4NAT51nNBF+m/eA00QDQTrwMOj1BgMpmm3sFpbnO/1FVzw+GasgBqAr
-         9s4GurjMIWz4rLICxi3d6POzVDYzbNfL65XVeShDnnD+BP0XC8/gekf4elrn4+WtZ8f1
-         cTWIZSQzdaX1rxlt7Ro63aNc1iEvdPYVVg4m7Y9O+cdiExoGr8PJhYxT0OY+j3ESRG5A
-         gU8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVCiM5acVywP0t5SKaYy+07+LFfQEgfFVD6+Jz3RRPULCWPYV9kxJP6VtUUW76wc5mt8B1PcONsE995J0OX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFqBmSVUnCkvcyxNTH2F/GMnVHfyZVau0Pj0ETHPGd6mPFzN1L
-	BESMUclOmBNxPPBkEdGatkicx8/vijROxfrbL3QrmUPpWZjsA+uHM0CCWdVm0EQ=
-X-Gm-Gg: ASbGncu3CnYSITxjP9lK5aczDhqzGN8KTCq1UdittzSJ/hcjMFO0RehJ9zsMCCkxI+F
-	H6KgY9oadrCj7XdiKoYaZ9geRPKQDp1Auawluw488wL2uPvdfhApzjnU6eIgycbRUzsnpFYe2or
-	p7C73yYzkMJUvNkerUe11QU9802yZH7EX38RS/R+ZdSQ87gEEGT14mG4MGs5yYfxGMB8QaUhM74
-	k/jy3N6JcniBdGPQ6Ub3+54bKHvKHmyCP5lEw9MSwJcHXswcvZYu4ddUJ2zPoO8lfxkNVXid7b0
-	GKPbggxJjr9YUupyUiSEB1IeVYcAHfHpmpXzyh/lriBrdggrnoM=
-X-Google-Smtp-Source: AGHT+IFNazEr6ZYOzQGCXjgc58dYoHgOgILSppSPlOaxKyAejkPiwQZrkFFar4hARLXGCzwX+g5Izw==
-X-Received: by 2002:a17:903:40c9:b0:215:b9a6:5cb9 with SMTP id d9443c01a7336-22dbf4db64dmr47389315ad.5.1745599161894;
-        Fri, 25 Apr 2025 09:39:21 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db51028basm34556395ad.196.2025.04.25.09.39.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 09:39:21 -0700 (PDT)
-Date: Fri, 25 Apr 2025 09:39:18 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Christian Brauner <brauner@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
-	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-	alistair.francis@wdc.com, richard.henderson@linaro.org,
-	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
-	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
-	cleger@rivosinc.com, alexghiti@rivosinc.com,
-	samitolvanen@google.com, broonie@kernel.org,
-	rick.p.edgecombe@intel.com,
-	linux-riscv <linux-riscv-bounces@lists.infradead.org>
-Subject: Re: [PATCH v12 12/28] riscv: Implements arch agnostic shadow stack
- prctls
-Message-ID: <aAu6toR4VkcPMTlH@debug.ba.rivosinc.com>
-References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
- <20250314-v5_user_cfi_series-v12-12-e51202b53138@rivosinc.com>
- <D92V2NPNZYV0.136MJ2HOK48HE@ventanamicro.com>
- <aAnBmexbL4XmVxQk@debug.ba.rivosinc.com>
- <D9EWR3RQK0FD.3GF55KNS53YSR@ventanamicro.com>
- <aAp_87-Xr6gn_hD7@debug.ba.rivosinc.com>
- <D9FOY8JACYTH.1FU7ZTEHFC5NI@ventanamicro.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zQXWYGPRwG7ARznohUdBR5+X9tWFsGBXO8WB9D8sKq8=;
+ b=HGmc761nvRB70mVSI1Ds0nlAWhbeMEOYAp6jbczbrNWLeseOD3e17SorUb80SRWPjrbB6u+sUzLAZFzix343SVTLvqHDjruf3FoNa6bMCrrcPkgTFSYP93PM5yMH5zFyZge+mOfdjs31sUXGtKDKPv4GPjM+be9aAB1z0AWReXk=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by IA1PR10MB6027.namprd10.prod.outlook.com (2603:10b6:208:389::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8655.40; Fri, 25 Apr
+ 2025 16:45:29 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%4]) with mapi id 15.20.8678.025; Fri, 25 Apr 2025
+ 16:45:28 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: brauner@kernel.org, djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+        jack@suse.cz, cem@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+        martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+        linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+        linux-api@vger.kernel.org, John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v9 00/15] large atomic writes for xfs
+Date: Fri, 25 Apr 2025 16:44:49 +0000
+Message-Id: <20250425164504.3263637-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0134.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::19) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <D9FOY8JACYTH.1FU7ZTEHFC5NI@ventanamicro.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|IA1PR10MB6027:EE_
+X-MS-Office365-Filtering-Correlation-Id: a063bb96-8169-4cc9-ef3c-08dd84189605
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SZ7ViwgvsPZ0B1hJjyJnzjIsIULJyzH1EIqLq0jR4pnKVq14IGz7caumLBS2?=
+ =?us-ascii?Q?htx/1sclVq3G+dDpWgVEPD7mBknds066VDqN6vfo+sMa+o0jhylpdOnDb+KM?=
+ =?us-ascii?Q?Ezklj+xIKYCqusJln0ZLd+gCEyAC/UsYQbT8tpgXwo6MepiskngwBlzOY2q2?=
+ =?us-ascii?Q?+dLCUDJhFBo3vPhFzLPfFhh7if+L8aSlJlvxq/bHMZkF3lhfh8WdSRP/eIAV?=
+ =?us-ascii?Q?4dMWl7ozISyU83jaQRCG5M+JGcXpwqKKFZcsPseqNb/Bu6jhwEVxlGI9hK4+?=
+ =?us-ascii?Q?scxbUiYiwsafsD8xuKBIfwmsuVDSclCy5afF6cTOP6zJhqPQ2cTp3WtN9s5G?=
+ =?us-ascii?Q?8ptk+NnXzWfiOeyFu3jNcEo1hhZ6XzJN2ldy0KdoTaqMRMlH+zd1k2mmMaoU?=
+ =?us-ascii?Q?TlprMWsljHqTArtUaRq/fK8YxPZhs2EkvPGQViTjeuKEodtA2m6p6i373tNK?=
+ =?us-ascii?Q?ZTaA4xS/siEqiPZcootheMzSoQP3NSTwbPR0NxeF/qlWfew79xL486LgMKDS?=
+ =?us-ascii?Q?9EY85X/2XvUfrY0tT6MLOn91hdKyrsoHIDKHrtuRE1FuU1psXmN3V/C+zcJ3?=
+ =?us-ascii?Q?Jp1+6EzB2IBEKv9TG7HeomFeDAa2y2LvFNr4t3M0nzTxr4YI9MP+ak0x6bHG?=
+ =?us-ascii?Q?3xzYgQrwfGrucfCS3sJcxNbr+NLBznyj5MWPwoCWohvlr6bHzTsjtfiJdaAM?=
+ =?us-ascii?Q?Uzxx+EVTOlmu7fFvUbYLM89ft4SJy15/ZLO4dgQOueVL5GgwiBgA6YufHvN4?=
+ =?us-ascii?Q?FSGlrOFZpIjvMKe3/rwezcnYNqVGYWkFhdZhLehhC1QgKuK/elIVgZIT6YL0?=
+ =?us-ascii?Q?fCLZQ089rRaQ2TOgh1LR4bDRl2dEbdmkaRMeFxvwQQqoBXQau8R1GqDlcudV?=
+ =?us-ascii?Q?CMoiqWD6lraNnB8aUTDwPhsEzxOCQDwQhA2BZ6xAi7TF/cZlT8mN5M/8rFp4?=
+ =?us-ascii?Q?DP+dPB5wPegHU5Bi2aJv+cA08xLh1hXsSBZH/Cfo2K2GrgSCAF5jsu/5qDSD?=
+ =?us-ascii?Q?NQdfHTt8h7YFdKyKFOYtnfGxInvnEZbtGYi3chilId8S3ZAq4MNNmpSBaZDa?=
+ =?us-ascii?Q?xcAjhoX9qiIWwk11+i77GqIouAKiGhzEVzypuY3ANXJAm0w+7mMxr8S0TpAE?=
+ =?us-ascii?Q?4p6QynZP5yxDjRgSipYVfJk+91QKjDBUX0wIAVc2Excv32QdeSfE4lcRzWyw?=
+ =?us-ascii?Q?SvTtJsB7fndNlP5ntPGPznmRmZoz9uc49IHGGE+oz/+jKZeSpB18L+An7FGW?=
+ =?us-ascii?Q?zzBgT3nHREsEBfQZ6LCRvRfkx7eRHPhqR5IXEvpAIkC/vIm4OUuGIjDPHitf?=
+ =?us-ascii?Q?u0py1HT8m8tbzjOsNJYAWDYwL/23OjN/4w+3r3U9a0/ooCfSkvViX8goCV+5?=
+ =?us-ascii?Q?bL5goFmxyygBtOSHtCpHVmWFuKSyTSXif53pUqwSgyxNg9VaWg1ZMr7FSiOr?=
+ =?us-ascii?Q?h8LJ/BLa3tA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?7aya9FiEEwOwUfIYq3XiIQp2oOuRekCdhhKLZ7ycbtpW31mVuRLDJncHQeix?=
+ =?us-ascii?Q?MT8P8L1wR5Kx6XUawUDHDvxIw/6fF6xem45lb/8VI1rbwkmIBEH6oqC5pSPj?=
+ =?us-ascii?Q?0bbZKCIig4gT538olGqwBO4SnYWRywyEWHHkFZ/XK0vre9Z5Thx/CqQeBo9x?=
+ =?us-ascii?Q?pvJOAjDrjcGraxk8E41beJut7vV2sehKAh2TMm55FZpo8VCCjDJddWqFt+rf?=
+ =?us-ascii?Q?tztWJctYGEH3daWchY5PBfKXZDFqtA9nvZJMHIP6AFJHrQVydqR18VXow7O8?=
+ =?us-ascii?Q?OFEoXy+aK63E50SMHzoV4TcILWKnJoj9iKKkXmIsPWJeb0a3zvbCycsDFv+X?=
+ =?us-ascii?Q?WyipwGYd/wFaXwcpu5h2FTR/rfW+UeTopncqlJ+pb6UCRgx/oxGQlN35QSbl?=
+ =?us-ascii?Q?SbI5rRps+KqwTCKCbljobIan84s2TabHQMjXFUC9BeJgxb0YXME0P6SFsv65?=
+ =?us-ascii?Q?0gei26uQsPVXc6uRWdDChwtE1C1paQRK5T6g/x0c0CtATuPL/UEBA9tjMOZO?=
+ =?us-ascii?Q?eLndOveD13kqfcNOO8zVP1Q2cPUuwL9qdmQJmvfud8tGmVAYQWeO3Ibazy8K?=
+ =?us-ascii?Q?JnhnXGOlC0O58/vmXooyayW9UUrenb2MGJUAVrxzcLuFsneHubnLw3ysCjF2?=
+ =?us-ascii?Q?W8ehEUwEA8AeghB+dcxWxH+9xPUArHXckZEH5toQl99K/UqxKeWJsVDlEARK?=
+ =?us-ascii?Q?YaIO375yvCNCXa04OehUgoH+iLBSawQE6IIi98Tip9cumTGbYyBgcDxpbU7p?=
+ =?us-ascii?Q?dZqJsrPICr0mzNDRuR3Dj5SYEHBOv0yyrpuxHNIIrQn2fifrMM0GuGAqNmqW?=
+ =?us-ascii?Q?vwe4Ku3FQSZMW27WUgMHJVuEZjPYa/p/9oe9WgKOn2NmzCmlP9guTBT0vSvC?=
+ =?us-ascii?Q?aAkiYGIpzM/ANTHfRXAUFveCpIuKgmKHcFWESvixM18uBTeVwhnCCt0W+naJ?=
+ =?us-ascii?Q?bITr9cLs3IKYQT4DfEpaxIOgO/+XK5Safr93QzDorwLKpMSD8Gb8VUH0ATrX?=
+ =?us-ascii?Q?8VjMYUZkeIakmxRQlKWDzlhkDV+zkI+S2foimpsSG3+5nmsspO+Ivv8NAhcl?=
+ =?us-ascii?Q?nNXJIDyvkpcjuK2hTsCnHZpwP1Xs4d/t1nL6d9zEsSMD4c3MLjwJBdePjvtL?=
+ =?us-ascii?Q?Lnmrj0upeeFECE1mgXRi9H4YyTRn4mMfdSkjcePLidtYe5QSM+0HBeI3nD6z?=
+ =?us-ascii?Q?ogNkI+Q0NvtxVO2XLuVYSlp4yg5XzWAWRMfqNwTSZkoMmlOrtZyo7ujAPZzr?=
+ =?us-ascii?Q?9EwTYONbwknJUADeEebqN0iJxK9nmUJV4WPp7wb4omQv3mskkgUvUtGfqFAs?=
+ =?us-ascii?Q?04Gp9OGZ6ZmLQUFWBWyC7VE5bSCUDE2PtvQR5NCSUG2TGFzeIDR5+3kKOzrD?=
+ =?us-ascii?Q?1NcHLSF+X2i4QF/AWeET96HhdoPT1FoJtnBHvCcVODecX9ctWRJvSeuv2QKx?=
+ =?us-ascii?Q?GHj4pF4apiAKbh2Gj+R/70kRMEOLP/kMe2J2zIGGgR4jStbbmJWDRs3IBM8j?=
+ =?us-ascii?Q?F4TfWJv9Ef7Yr/IPmILJj0OAVENOrUlJDLPApIchppADBK4BTwpiy0cp2Re4?=
+ =?us-ascii?Q?lxyCU0j5m1pQm5YjImvk2PNleJ7oxkKHHZouUHFfc7RC132SJoD+ZukaDe21?=
+ =?us-ascii?Q?tg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	2frlRXwMWOzgA8DN6Xh/5gn46bronMJMJHGoObD6m9xgrjI7+mUd9qGF4NYY537tAWvnIpqXbDfStvzJN3Dw66liQugQE+jLZBozIyn9PfUjJmlL41bLgP51evAGFOsTcVbngxf+9lE/f+pooS7TrDSWO+6G2UikEc50QhkOEG/rO5UzVhOdR2enRpaxNK5Afxy8LBCinbAASfVt7DqmevizwNY6S7f6vgA9Aj1y+aBBonjE8UOPjJC885xPgYwJVRJzeUYHQXQEcCgXkVPYqargm//+ThOC2IHbs3dWL1PFmawOM3U5F4bkoOVZyR0fij0zIXDuB/lnkYFwiMxq4eh25PQt6l3+tGLxO2zJLATRkuJUn5UnwjhomA+v7W328v5/YdbJXPZnDE2KOg2eVsyVUSnpMwzEhJbHEBKOllEUrE+cGdSinVwGIPVhqjPpYSdrDlH9iZULHsmvd3X7U//Uithb8IU59GgL45BUJ//TfawXOuv8P/yGj42dUbOdveCE4Notye7AD0xl6/zrHCuaUHkHPsWdp8Gru+4uMWNlxJKCAYYMor6zzdPeReaXCa4u374jf0UUs+5cVIgPp5yfo+I0+uOUoDQ8DcTB4hs=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a063bb96-8169-4cc9-ef3c-08dd84189605
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Apr 2025 16:45:28.8674
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6Lw44CEX23u05FSkACPp7t1ZMLK9w8JjFdpwnYL7/tDw+shmcdEu8WOimZiklqoEHCn6n2r5lCHkHkDdlfpEFg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6027
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-25_05,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 mlxlogscore=999
+ mlxscore=0 spamscore=0 phishscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2504250118
+X-Proofpoint-GUID: ZF8L4b2wIc4FuT_D1ySQCeghQ7fYMqtB
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI1MDExOCBTYWx0ZWRfX+yGzc8aJImVW mG4RjzjwcX0IyYmw8TB+au7foA00ZPb9D3324Dl5FEOIWFyUIzkdkopQtVDsvJ6koZBfyLorrm5 zQnuxtHkH22w3EQmZvpGOChI+MGCVCAwBY9Pa84ATQWaYaC+Hum0R280Zid+5u043n2M/BiE25a
+ HJK+OteYP7CiEhxgzEPlQL2ATD+TH+KscBDTvROM8ogr3aQeRhMrTkiRuSssbSXhFuWGuP80XGC zJaOENQNmluqDMw7no8YinAXDlKDfnev8aOHPJD0JYURsw5wJr35RP/X4cZQS3GqWhPjmsYV1+o AFLjAFzBLEyDXgApv5V70TQoavwW4wFMO5E4o0QEMKDdKmOgaGBgsCovAwbJbT9TLo9eHSgpbZr 63YMSZoC
+X-Proofpoint-ORIG-GUID: ZF8L4b2wIc4FuT_D1ySQCeghQ7fYMqtB
 
-On Fri, Apr 25, 2025 at 01:42:44PM +0200, Radim Krčmář wrote:
->2025-04-24T11:16:19-07:00, Deepak Gupta <debug@rivosinc.com>:
->> On Thu, Apr 24, 2025 at 03:36:54PM +0200, Radim Krčmář wrote:
->>>2025-04-23T21:44:09-07:00, Deepak Gupta <debug@rivosinc.com>:
->>>> On Thu, Apr 10, 2025 at 11:45:58AM +0200, Radim Krčmář wrote:
->>>>>2025-03-14T14:39:31-07:00, Deepak Gupta <debug@rivosinc.com>:
->>>>>> diff --git a/arch/riscv/include/asm/usercfi.h b/arch/riscv/include/asm/usercfi.h
->>>>>> @@ -14,7 +15,8 @@ struct kernel_clone_args;
->>>>>>  struct cfi_status {
->>>>>>  	unsigned long ubcfi_en : 1; /* Enable for backward cfi. */
->>>>>> -	unsigned long rsvd : ((sizeof(unsigned long) * 8) - 1);
->>>>>> +	unsigned long ubcfi_locked : 1;
->>>>>> +	unsigned long rsvd : ((sizeof(unsigned long) * 8) - 2);
->>>>>
->>>>>The rsvd field shouldn't be necessary as the container for the bitfield
->>>>>is 'unsigned long' sized.
->>>>>
->>>>>Why don't we use bools here, though?
->>>>>It might produce a better binary and we're not hurting for struct size.
->>>>
->>>> If you remember one of the previous patch discussion, this goes into
->>>> `thread_info` Don't want to bloat it. Even if we end shoving into task_struct,
->>>> don't want to bloat that either. I can just convert it into bitmask if
->>>> bitfields are an eyesore here.
->>>
->>>  "unsigned long rsvd : ((sizeof(unsigned long) * 8) - 2);"
->>>
->>>is an eyesore that defines exactly the same as the two lines alone
->>>
->>>  unsigned long ubcfi_en : 1;
->>>  unsigned long ubcfi_locked : 1;
->>>
->>>That one should be removed.
->>>
->>>If we have only 4 bits in 4/8 bytes, then bitfields do generate worse
->>>code than 4 bools and a 0/4 byte hole.  The struct size stays the same.
->>>
->>>I don't care much about the switch to bools, though, because this code
->>>is not called often.
->>
->> I'll remove the bitfields, have single `unsigned long cfi_control_state`
->> And do `#define RISCV_UBCFI_EN 1` and so on.
->
->I might have seemed too much against the bitfieds, sorry.  I am against
->the rsvd fields, because it is a pointless cognitive overhead and even
->this series already had a bug in them.
+Currently atomic write support for xfs is limited to writing a single
+block as we have no way to guarantee alignment and that the write covers
+a single extent.
 
-Aah got it.
+This series introduces a method to issue atomic writes via a
+software-based method.
 
->
->#defines should generate the same code as bitfields (worse than bools),
->so the source code is really a matter of personal preference.
->(I do prefer bitfields.)
->
->>>>>> @@ -262,3 +292,83 @@ void shstk_release(struct task_struct *tsk)
->>>>>> +int arch_lock_shadow_stack_status(struct task_struct *task,
->>>>>> +				  unsigned long arg)
->>>>>> +{
->>>>>> +	/* If shtstk not supported or not enabled on task, nothing to lock here */
->>>>>> +	if (!cpu_supports_shadow_stack() ||
->>>>>> +	    !is_shstk_enabled(task) || arg != 0)
->>>>>> +		return -EINVAL;
->>>>>
->>>>>The task might want to prevent shadow stack from being enabled?
->>>>
->>>> But Why would it want to do that? Task can simply not issue the prctl. There
->>>> are glibc tunables as well using which it can be disabled.
->>>
->>>The task might do it as some last resort to prevent a buggy code from
->>>enabling shadow stacks that would just crash.  Or whatever complicated
->>>reason userspace can think of.
->>>
->>>It's more the other way around.  I wonder why we're removing this option
->>>when we don't really care what userspace does to itself.
->>>I think it's complicating the kernel without an obvious gain.
->>
->> It just feels wierd. There isn't anything like this for other features lit-up
->> via envcfg. Does hwprobe allow this on per-task basis? I'll look into it.
->
->I think PMM doesn't allow to lock and the rest don't seem configurable
->from userspace.
->
->It's not that important and we hopefully won't be breaking any userspace
->if we decided to allow it later, so I'm fine with this version.
+The software-based method is used as a fallback for when attempting to
+issue an atomic write over misaligned or multiple extents.
+
+For xfs, this support is based on reflink CoW support.
+
+The basic idea of this CoW method is to alloc a range in the CoW fork,
+write the data, and atomically update the mapping.
+
+Initial mysql performance testing has shown this method to perform ok.
+However, there we are only using 16K atomic writes (and 4K block size),
+so typically - and thankfully - this software fallback method won't be
+used often.
+
+For other FSes which want large atomics writes and don't support CoW, I
+think that they can follow the example in [0].
+
+Catherine is currently working on further xfstests for this feature,
+which we hope to share soon.
+
+Based on f0447f80aec8 (xfs/next-rc, xfs/for-next) xfs: remove
+duplicate Zoned Filesystems sections in admin-guide
+
+[0] https://lore.kernel.org/linux-xfs/20250310183946.932054-1-john.g.garry@oracle.com/
+
+Differences to v8:
+- Darrick reworked patch for mount option
+- Darrick reworked patch to ignore HW
+- Minor changes and cleanups from Darrick
+- Rework some commit messages (Christoph)
+- Pick up RB tags from Christoph (thanks!)
+
+Differences to v7:
+- Add patch for mp hw awu max and min
+- Fixed for awu max mount option (Darrick)
+
+Differences to v6:
+- log item sizes updates (Darrick)
+- rtvol support (Darrick)
+- mount option for atomic writes (Darrick)
+- Add RB tags from Darrick and Christoph (Thanks!)
+
+Darrick J. Wong (4):
+  xfs: add helpers to compute log item overhead
+  xfs: add helpers to compute transaction reservation for finishing
+    intent items
+  xfs: ignore HW which cannot atomic write a single block
+  xfs: allow sysadmins to specify a maximum atomic write limit at mount
+    time
+
+John Garry (11):
+  fs: add atomic write unit max opt to statx
+  xfs: rename xfs_inode_can_atomicwrite() ->
+    xfs_inode_can_hw_atomic_write()
+  xfs: allow block allocator to take an alignment hint
+  xfs: refactor xfs_reflink_end_cow_extent()
+  xfs: refine atomic write size check in xfs_file_write_iter()
+  xfs: add xfs_atomic_write_cow_iomap_begin()
+  xfs: add large atomic writes checks in xfs_direct_write_iomap_begin()
+  xfs: commit CoW-based atomic writes atomically
+  xfs: add xfs_file_dio_write_atomic()
+  xfs: add xfs_compute_atomic_write_unit_max()
+  xfs: update atomic write limits
+
+ Documentation/admin-guide/xfs.rst |  11 +
+ block/bdev.c                      |   3 +-
+ fs/ext4/inode.c                   |   2 +-
+ fs/stat.c                         |   6 +-
+ fs/xfs/libxfs/xfs_bmap.c          |   5 +
+ fs/xfs/libxfs/xfs_bmap.h          |   6 +-
+ fs/xfs/libxfs/xfs_log_rlimit.c    |   4 +
+ fs/xfs/libxfs/xfs_trans_resv.c    | 343 +++++++++++++++++++++++++++---
+ fs/xfs/libxfs/xfs_trans_resv.h    |  25 +++
+ fs/xfs/xfs_bmap_item.c            |  10 +
+ fs/xfs/xfs_bmap_item.h            |   3 +
+ fs/xfs/xfs_buf.c                  |  41 +++-
+ fs/xfs/xfs_buf.h                  |   3 +-
+ fs/xfs/xfs_buf_item.c             |  19 ++
+ fs/xfs/xfs_buf_item.h             |   3 +
+ fs/xfs/xfs_extfree_item.c         |  10 +
+ fs/xfs/xfs_extfree_item.h         |   3 +
+ fs/xfs/xfs_file.c                 |  87 +++++++-
+ fs/xfs/xfs_inode.h                |  14 +-
+ fs/xfs/xfs_iomap.c                | 190 ++++++++++++++++-
+ fs/xfs/xfs_iomap.h                |   1 +
+ fs/xfs/xfs_iops.c                 |  76 ++++++-
+ fs/xfs/xfs_iops.h                 |   3 +
+ fs/xfs/xfs_log_cil.c              |   4 +-
+ fs/xfs/xfs_log_priv.h             |  13 ++
+ fs/xfs/xfs_mount.c                | 166 +++++++++++++++
+ fs/xfs/xfs_mount.h                |  17 ++
+ fs/xfs/xfs_refcount_item.c        |  10 +
+ fs/xfs/xfs_refcount_item.h        |   3 +
+ fs/xfs/xfs_reflink.c              | 146 ++++++++++---
+ fs/xfs/xfs_reflink.h              |   6 +
+ fs/xfs/xfs_rmap_item.c            |  10 +
+ fs/xfs/xfs_rmap_item.h            |   3 +
+ fs/xfs/xfs_super.c                |  58 ++++-
+ fs/xfs/xfs_trace.h                | 115 ++++++++++
+ include/linux/fs.h                |   3 +-
+ include/linux/stat.h              |   1 +
+ include/uapi/linux/stat.h         |   8 +-
+ 38 files changed, 1322 insertions(+), 109 deletions(-)
+
+-- 
+2.31.1
+
 
