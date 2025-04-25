@@ -1,151 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-47421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34207A9D5ED
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 00:52:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C517A9D644
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 01:35:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8171BC67EF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 22:52:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90EDD4C6965
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 23:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0A9296D0E;
-	Fri, 25 Apr 2025 22:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A2C4297A5E;
+	Fri, 25 Apr 2025 23:34:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jEYaJyoC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FEGIJO86"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6160F224AE1;
-	Fri, 25 Apr 2025 22:51:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62570296175;
+	Fri, 25 Apr 2025 23:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745621516; cv=none; b=KIhlUd6uT3iqWuKmkp6QyJMOEq8PWoriHLb9u+cT/0gbUOMtEkWOWDD/usiif12wRx5k4PwC89e4vptC/Af/AWYssRrtZTXgMhsgb2hbsYxXq11/mgsYxpruk1SdnE2+tdirb+LEOAq1QjUqJQqC5GJopwHm5BFSx/RDykkWhgg=
+	t=1745624096; cv=none; b=bKLqMG/q12wZIE0vhG8Er4FIbN++0OLYqRCEiaaABedNXIpV0CV0a5fpUzP/tSv2zzW5ZxnKnJn8hcQChfg9Wf6c1n+Ka0MVyITypsiiuSGPH6/unkXiuQtFq7CgKv3NGejI7yLPBrdSBHMZEUZjCsFYspDCHGqnEFQF03qX/KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745621516; c=relaxed/simple;
-	bh=36lugvvl4zzEMISZR+vkYMgDKBdjxnRI+gAdGLkgpKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j30uz9StqEjcgSBbJmw1H3WsYLGvbjMgh/nheJ6HZIEiHNO87pLZtDMtk9B3gkycA6CPYJWGdlKXGdpZbQJWkZA9VRvIz4gJeuxnhM9SRi1Sr5/7pp+X+kyFQiytyttEffmadZGPZ8SeXFnX42tmoVH54y83dLuhMXaeNga0QIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jEYaJyoC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4297BC4CEE4;
-	Fri, 25 Apr 2025 22:51:55 +0000 (UTC)
+	s=arc-20240116; t=1745624096; c=relaxed/simple;
+	bh=CazE6Yt0BobYKcChm8Ix9TS+hLRlPKanHUQJdYTZIqI=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bEhfeeWFyon9DSbGqk1CaDFsRIGiDuTl2O270TdVL/PS06Lyoq8aknsUvAJSc4fEmZ3n68Cd+Jnp/Z5L9HkVhz6r4+3aqO5w02/z+dkLFBcOQChaN/4LopXCbSuiJJiGROzpGVi7Tz3zzpYg+qVEoIQNSKG3odRuNW0B+PFa9pI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FEGIJO86; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431B7C4CEE9;
+	Fri, 25 Apr 2025 23:34:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745621515;
-	bh=36lugvvl4zzEMISZR+vkYMgDKBdjxnRI+gAdGLkgpKc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jEYaJyoCx0+Ng3BLeOf9fGGqg7JGn6rmbpV+T1iMGeX0fLpbiF7XjrJQAwrXj3ii9
-	 s+zMTyN+46Sm8mnZMyUU6eHag5qE8moum14tNMMYgEdHWfYuQPXbdDu2pcGAkGZVBE
-	 lE3W88Af9w/iqj311UZwlCXkxuXQ7FXSuV+H38e3pa3kVTjKmUW3rCS8A+OwTrxzm2
-	 Oa155moLXl3x978WwIWVXGtNm7FFjb7EUAmIgVBb6YrVwaNicnEGLWnvXlMW22HmvY
-	 KIyctV3KaeiT9pFpctTrsg8HTf1qRKyJPjgQeW2i3NZpnfyUZ2KNOjNzy7gmw4YPuL
-	 ZANOj7MJpSh6g==
-Date: Fri, 25 Apr 2025 15:51:53 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: dave@stgolabs.net, brauner@kernel.org, tytso@mit.edu,
-	adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-	riel@surriel.com, willy@infradead.org, hannes@cmpxchg.org,
-	oliver.sang@intel.com, david@redhat.com, axboe@kernel.dk,
-	hare@suse.de, david@fromorbit.com, djwong@kernel.org,
-	ritesh.list@gmail.com, linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-mm@kvack.org,
-	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com,
-	syzbot+f3c6fda1297c748a7076@syzkaller.appspotmail.com
-Subject: Re: [PATCH v2 1/8] migrate: fix skipping metadata buffer heads on
- migration
-Message-ID: <aAwSCSG1c-t8ATr3@bombadil.infradead.org>
-References: <20250410014945.2140781-1-mcgrof@kernel.org>
- <20250410014945.2140781-2-mcgrof@kernel.org>
- <dpn6pb7hwpmajoh5k5zla6x7fsmh4rlttstj3hkuvunp6tok3j@ikz2fxpikfv4>
- <Z_6Gwl6nowYnsO3w@bombadil.infradead.org>
- <mxmnbr6gni2lupljf7pzkhs6f3hynr2lq2nshbgcmzg77jduwk@wn76alaoxjts>
- <Z__hthNd2nj9QjrM@bombadil.infradead.org>
- <jwciumjkfwwjeoklsi6ubcspcjswkz5s5gtttzpjqft6dtb7sp@c4ae6y5pix5w>
- <aAlN4-pMHoc-PZ1G@bombadil.infradead.org>
+	s=k20201202; t=1745624096;
+	bh=CazE6Yt0BobYKcChm8Ix9TS+hLRlPKanHUQJdYTZIqI=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=FEGIJO86RG1aOI8rDVZU4X2WVKaB+43X+KNb5Bo0mXDRFA5MZTCkPFwzaQBQrf8AB
+	 aZB69IR6liGh9kNoJPwoUYVA98Xvt9Us4S8gT9POGdKD/KzcL1FlCwgTbbf9nl+Noh
+	 dR+I0JwjHREPolCtLaopApqtGvxSuIt76U3m88Dxn5KStYklq9feiWo6xlrVZauZdz
+	 AT1pikwllytU3GUjW/GTOy4kkqc7nJ2OEHrEp3NStDUqohBWqDP2kVqOMK5M8dSBuY
+	 +Bz+RDusbOaF/cs2AKSBd2aDWWpYxiV1nVoabZcwP1Cq7VSNSh7TyxDn7xarAuTL5+
+	 GuOD/tCUJHWdg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33B8F380CFD7;
+	Fri, 25 Apr 2025 23:35:36 +0000 (UTC)
+Subject: Re: [GIT PULL] vfs fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250425-vfs-fixes-dc6a1661a28f@brauner>
+References: <20250425-vfs-fixes-dc6a1661a28f@brauner>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250425-vfs-fixes-dc6a1661a28f@brauner>
+X-PR-Tracked-Remote: git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc4.fixes
+X-PR-Tracked-Commit-Id: f520bed25d17bb31c2d2d72b0a785b593a4e3179
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: eb98f304420c95d1169cc8c73d5427ca9ee29833
+Message-Id: <174562413494.3874874.13607195134554197433.pr-tracker-bot@kernel.org>
+Date: Fri, 25 Apr 2025 23:35:34 +0000
+To: Christian Brauner <brauner@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aAlN4-pMHoc-PZ1G@bombadil.infradead.org>
 
-On Wed, Apr 23, 2025 at 01:30:29PM -0700, Luis Chamberlain wrote:
-> On Wed, Apr 23, 2025 at 07:09:28PM +0200, Jan Kara wrote:
-> > On Wed 16-04-25 09:58:30, Luis Chamberlain wrote:
-> > > On Tue, Apr 15, 2025 at 06:28:55PM +0200, Jan Kara wrote:
-> > > > > So I tried:
-> > > > > 
-> > > > > root@e1-ext4-2k /var/lib/xfstests # fsck /dev/loop5 -y 2>&1 > log
-> > > > > e2fsck 1.47.2 (1-Jan-2025)
-> > > > > root@e1-ext4-2k /var/lib/xfstests # wc -l log
-> > > > > 16411 log
-> > > > 
-> > > > Can you share the log please?
-> > > 
-> > > Sure, here you go:
-> > > 
-> > > https://github.com/linux-kdevops/20250416-ext4-jbd2-bh-migrate-corruption
-> > > 
-> > > The last trace-0004.txt is a fresh one with Davidlohr's patches
-> > > applied. It has trace-0004-fsck.txt.
-> > 
-> > Thanks for the data! I was staring at them for some time and at this point
-> > I'm leaning towards a conclusion that this is actually not a case of
-> > metadata corruption but rather a bug in ext4 transaction credit computation
-> > that is completely independent of page migration.
-> > 
-> > Based on the e2fsck log you've provided the only damage in the filesystem
-> > is from the aborted transaction handle in the middle of extent tree growth.
-> > So nothing points to a lost metadata write or anything like that. And the
-> > credit reservation for page writeback is indeed somewhat racy - we reserve
-> > number of transaction credits based on current tree depth. However by the
-> > time we get to ext4_ext_map_blocks() another process could have modified
-> > the extent tree so we may need to modify more blocks than we originally
-> > expected and reserved credits for.
-> > 
-> > Can you give attached patch a try please?
-> > 
-> > 								Honza
-> > -- 
-> > Jan Kara <jack@suse.com>
-> > SUSE Labs, CR
-> 
-> > From 4c53fb9f4b9b3eb4a579f69b7adcb6524d55629c Mon Sep 17 00:00:00 2001
-> > From: Jan Kara <jack@suse.cz>
-> > Date: Wed, 23 Apr 2025 18:10:54 +0200
-> > Subject: [PATCH] ext4: Fix calculation of credits for extent tree modification
-> > 
-> > Luis and David are reporting that after running generic/750 test for 90+
-> > hours on 2k ext4 filesystem, they are able to trigger a warning in
-> > jbd2_journal_dirty_metadata() complaining that there are not enough
-> > credits in the running transaction started in ext4_do_writepages().
-> > 
-> > Indeed the code in ext4_do_writepages() is racy and the extent tree can
-> > change between the time we compute credits necessary for extent tree
-> > computation and the time we actually modify the extent tree. Thus it may
-> > happen that the number of credits actually needed is higher. Modify
-> > ext4_ext_index_trans_blocks() to count with the worst case of maximum
-> > tree depth.
-> > 
-> > Link: https://lore.kernel.org/all/20250415013641.f2ppw6wov4kn4wq2@offworld
-> > Reported-by: Davidlohr Bueso <dave@stgolabs.net>
-> > Reported-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Signed-off-by: Jan Kara <jack@suse.cz>
-> 
-> I kicked off tests! Let's see after ~ 90 hours!
+The pull request you sent on Fri, 25 Apr 2025 23:22:54 +0200:
 
-Tested-by: kdevops@lists.linux.dev
+> git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.15-rc4.fixes
 
-I have run the test over 3 separate guests and each one has tested this
-over 48 hours each. There is no ext4 fs corruption reported, all is
-good, so I do believe thix fixes the issue. One of the guests was on
-Linus't tree which didn't yet have Davidlorh's fixes for folio migration.
-And so I believe this patch should have a stable tag fix so stable gets it.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/eb98f304420c95d1169cc8c73d5427ca9ee29833
 
-  Luis
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
