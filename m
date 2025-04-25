@@ -1,160 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-47332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11AB7A9C30D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 11:14:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7C7A9C333
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 11:21:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58B6921E7F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 09:13:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AAC324A3D57
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 09:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BAAD21D59B;
-	Fri, 25 Apr 2025 09:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDFBE2343AF;
+	Fri, 25 Apr 2025 09:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uQKULTGS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zQOWKp0D";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="uQKULTGS";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zQOWKp0D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gs9eIrkz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5482153C7
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 09:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB94235C1E;
+	Fri, 25 Apr 2025 09:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745572422; cv=none; b=TJ8xsNmxJx21Z2adx+EOpvO+ZhYB7JbfXJduTyqnsvKZP5mROwkq2ka9/n1eyY89cnJ9BRIuiarR1x0tZNSWHNmaDk0UFvkePuqa6u5+BU7C3nBaqibrmeyMG97RfBqWLuUE3ivAXClg2nDDXAWcHwdUoVOWuL+71Bi66dYiFxA=
+	t=1745572825; cv=none; b=lEGZirk6ULS3ahbrevliQ3fllVQ+fYwhwtcmqBr3HHsg0CHORtLF9CXuzj14tAZIQjlOUqX6Ia3s37KgLy/TeXCxhY/GtvBmM1PRDqwoe2Ev2VcMxaqFDf6jCRLk5W3RGc/vsAJM1Y6vnihN7yX8lp4Y3iTbWavXkinbWc37s5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745572422; c=relaxed/simple;
-	bh=hbAsa/ABnFkF+UFHf8+iOuqOHC4Cxk/Fhu3FtxRmOOQ=;
+	s=arc-20240116; t=1745572825; c=relaxed/simple;
+	bh=H670AXytogW3BrNyI3zj2dCfgNBrgFaCF3Zvvd9T9Rg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G2YXctPFAB7BZrt7TIztSwpD/LQUwkKhJaPuYnMX6VT+gNn3WHqCi9of9Pzf7nXD38b2CqNqM20/oESBwvIDvhDv5S7GQHLrFRq62TCUwPY+6CYHqULl9HmdJY2bo7S1jCQBXMhRe6MUUC9c3cDhO3zG3TWqM1s4JK8X0PCwZvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uQKULTGS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zQOWKp0D; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=uQKULTGS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zQOWKp0D; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id C0980210F4;
-	Fri, 25 Apr 2025 09:13:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745572417; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mXUDXhw17net05lqqHisrXbeaS6mPgXHDC3B6OTn9Tw=;
-	b=uQKULTGSfxBxxB8sSbNAYciYun+rFVkSX6rXzJ8igjByBX01eMidEmRR40uhfsFv1F8GPE
-	77pTqS0iKjs1QE3zw+8ZIB7tslPw+G3PRyqcUR7UaMvBTHhyPI0+wou9XaU/uFA0CInn27
-	4MJoMv5bDypIB50eyf1GSYN7ZN2Ov2Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745572417;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mXUDXhw17net05lqqHisrXbeaS6mPgXHDC3B6OTn9Tw=;
-	b=zQOWKp0DzcJkhbXLeDO/rAe5OOcrVMOP+bV0DVJohyogkox4dVZTSi6MeVCRUv2M0Km7V1
-	qrT0yum3abR2IJAg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1745572417; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mXUDXhw17net05lqqHisrXbeaS6mPgXHDC3B6OTn9Tw=;
-	b=uQKULTGSfxBxxB8sSbNAYciYun+rFVkSX6rXzJ8igjByBX01eMidEmRR40uhfsFv1F8GPE
-	77pTqS0iKjs1QE3zw+8ZIB7tslPw+G3PRyqcUR7UaMvBTHhyPI0+wou9XaU/uFA0CInn27
-	4MJoMv5bDypIB50eyf1GSYN7ZN2Ov2Y=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1745572417;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mXUDXhw17net05lqqHisrXbeaS6mPgXHDC3B6OTn9Tw=;
-	b=zQOWKp0DzcJkhbXLeDO/rAe5OOcrVMOP+bV0DVJohyogkox4dVZTSi6MeVCRUv2M0Km7V1
-	qrT0yum3abR2IJAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B43BC13A79;
-	Fri, 25 Apr 2025 09:13:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cc20KEBSC2jrDAAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Fri, 25 Apr 2025 09:13:36 +0000
-Date: Fri, 25 Apr 2025 10:13:35 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	David Hildenbrand <david@redhat.com>, Kees Cook <kees@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] mm: move dup_mmap() to mm
-Message-ID: <i4g4glnafku73cfsj6yrrkkjxe2yape2eeamqkaqrw3zs7q2wq@f3oa6qkumuer>
-References: <cover.1745528282.git.lorenzo.stoakes@oracle.com>
- <4ee8edd6e54445b8af6077e6961543df6a639418.1745528282.git.lorenzo.stoakes@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ML44JXnk9xI+rR0J+jLPtyK1NR+aErYLvYiDFh0QevYd6qHiVUPEqfZ3NWOgAxHmwg7ihJqxV2zv0xEK1z1AM9y53b11EyL+quJzUHLNjUPt6vMlhN5oXOYTHFQAmjMVlz6zd+wBi9e/udZVe27ORNeVHDyys7pU1o5KFoBjxV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gs9eIrkz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD95C4CEEB;
+	Fri, 25 Apr 2025 09:20:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745572824;
+	bh=H670AXytogW3BrNyI3zj2dCfgNBrgFaCF3Zvvd9T9Rg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gs9eIrkz4k1iKTdXlkm8+x4io+XHkGrz39eiAB8zgKKW1IcN+/sEpBguKrN+pvYQS
+	 d6peSzBGxQP6nHQtrpzgzRIyIRbWPcGymtfMTHUyqob2mvPLTtHh9QUoemrHUYjUpD
+	 iD2B/AH4cSEcfcPCNvWOiHf+7FrTKNfArQI1QzfNk0v/aIW7st+PFsBFaKYwoT8fpv
+	 0uNOxuvMv632mVT77r25PlYvFsbkq2Vq0UzTRjn6MdlRfRhAv04PglUZoiWocs7IHF
+	 qLLMdgcmqFo+9jmIDHFHwPbY8/+Qx0fs384QESF6HANCf8XRLeCkWtqBjQj1RfThHF
+	 uAt0+XCj873oQ==
+Date: Fri, 25 Apr 2025 11:20:19 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Stephen Smalley <stephen.smalley.work@gmail.com>
+Cc: paul@paul-moore.com, omosnace@redhat.com, selinux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list to always include
+ security.* xattrs
+Message-ID: <20250425-einspannen-wertarbeit-3f0c939525dc@brauner>
+References: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4ee8edd6e54445b8af6077e6961543df6a639418.1745528282.git.lorenzo.stoakes@oracle.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+In-Reply-To: <20250424152822.2719-1-stephen.smalley.work@gmail.com>
 
-On Thu, Apr 24, 2025 at 10:15:28PM +0100, Lorenzo Stoakes wrote:
-> This is a key step in our being able to abstract and isolate VMA allocation
-> and destruction logic.
-> 
-> This function is the last one where vm_area_free() and vm_area_dup() are
-> directly referenced outside of mmap, so having this in mm allows us to
-> isolate these.
-> 
-> We do the same for the nommu version which is substantially simpler.
-> 
-> We place the declaration for dup_mmap() in mm/internal.h and have
-> kernel/fork.c import this in order to prevent improper use of this
-> functionality elsewhere in the kernel.
-> 
-> While we're here, we remove the useless #ifdef CONFIG_MMU check around
-> mmap_read_lock_maybe_expand() in mmap.c, mmap.c is compiled only if
-> CONFIG_MMU is set.
-> 
-> Suggested-by: Pedro Falcato <pfalcato@suse.de>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Thu, Apr 24, 2025 at 11:28:20AM -0400, Stephen Smalley wrote:
+> The vfs has long had a fallback to obtain the security.* xattrs from the
+> LSM when the filesystem does not implement its own listxattr, but
+> shmem/tmpfs and kernfs later gained their own xattr handlers to support
+> other xattrs. Unfortunately, as a side effect, tmpfs and kernfs-based
 
-Reviewed-by: Pedro Falcato <pfalcato@suse.de>
+This change is from 2011. So no living soul has ever cared at all for
+at least 14 years. Surprising that this is an issue now.
 
-Have I told you how awesome you are? Thank you so much for the series!
+> filesystems like sysfs no longer return the synthetic security.* xattr
+> names via listxattr unless they are explicitly set by userspace or
+> initially set upon inode creation after policy load. coreutils has
+> recently switched from unconditionally invoking getxattr for security.*
+> for ls -Z via libselinux to only doing so if listxattr returns the xattr
+> name, breaking ls -Z of such inodes.
 
--- 
-Pedro
+So no xattrs have been set on a given inode and we lie to userspace by
+listing them anyway. Well ok then.
+
+> Before:
+> $ getfattr -m.* /run/initramfs
+> <no output>
+> $ getfattr -m.* /sys/kernel/fscaps
+> <no output>
+> $ setfattr -n user.foo /run/initramfs
+> $ getfattr -m.* /run/initramfs
+> user.foo
+> 
+> After:
+> $ getfattr -m.* /run/initramfs
+> security.selinux
+> $ getfattr -m.* /sys/kernel/fscaps
+> security.selinux
+> $ setfattr -n user.foo /run/initramfs
+> $ getfattr -m.* /run/initramfs
+> security.selinux
+> user.foo
+> 
+> Link: https://lore.kernel.org/selinux/CAFqZXNtF8wDyQajPCdGn=iOawX4y77ph0EcfcqcUUj+T87FKyA@mail.gmail.com/
+> Link: https://lore.kernel.org/selinux/20250423175728.3185-2-stephen.smalley.work@gmail.com/
+> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+> ---
+>  fs/xattr.c | 24 ++++++++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/fs/xattr.c b/fs/xattr.c
+> index 02bee149ad96..2fc314b27120 100644
+> --- a/fs/xattr.c
+> +++ b/fs/xattr.c
+> @@ -1428,6 +1428,15 @@ static bool xattr_is_trusted(const char *name)
+>  	return !strncmp(name, XATTR_TRUSTED_PREFIX, XATTR_TRUSTED_PREFIX_LEN);
+>  }
+>  
+> +static bool xattr_is_maclabel(const char *name)
+> +{
+> +	const char *suffix = name + XATTR_SECURITY_PREFIX_LEN;
+> +
+> +	return !strncmp(name, XATTR_SECURITY_PREFIX,
+> +			XATTR_SECURITY_PREFIX_LEN) &&
+> +		security_ismaclabel(suffix);
+> +}
+> +
+>  /**
+>   * simple_xattr_list - list all xattr objects
+>   * @inode: inode from which to get the xattrs
+> @@ -1460,6 +1469,17 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+>  	if (err)
+>  		return err;
+>  
+> +	err = security_inode_listsecurity(inode, buffer, remaining_size);
+
+Is that supposed to work with multiple LSMs?
+Afaict, bpf is always active and has a hook for this.
+So the LSMs trample over each other filling the buffer?
+
+> +	if (err < 0)
+> +		return err;
+> +
+> +	if (buffer) {
+> +		if (remaining_size < err)
+> +			return -ERANGE;
+> +		buffer += err;
+> +	}
+> +	remaining_size -= err;
+
+Really unpleasant code duplication in here. We have xattr_list_one() for
+that. security_inode_listxattr() should probably receive a pointer to
+&remaining_size?
+
+> +
+>  	read_lock(&xattrs->lock);
+>  	for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
+>  		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+> @@ -1468,6 +1488,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+>  		if (!trusted && xattr_is_trusted(xattr->name))
+>  			continue;
+>  
+> +		/* skip MAC labels; these are provided by LSM above */
+> +		if (xattr_is_maclabel(xattr->name))
+> +			continue;
+> +
+>  		err = xattr_list_one(&buffer, &remaining_size, xattr->name);
+>  		if (err)
+>  			break;
+> -- 
+> 2.49.0
+> 
 
