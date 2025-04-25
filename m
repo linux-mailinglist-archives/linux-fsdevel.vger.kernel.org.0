@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-47322-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47323-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AE12A9C038
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 09:58:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C18CA9C052
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 10:02:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A12E73B1568
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 07:58:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A19853BC0A7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 08:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C249232395;
-	Fri, 25 Apr 2025 07:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25AF72343AE;
+	Fri, 25 Apr 2025 08:02:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8CUcVj6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oqiguB/X"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16B8217679;
-	Fri, 25 Apr 2025 07:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782CF26AEC;
+	Fri, 25 Apr 2025 08:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745567921; cv=none; b=RTwlOqIhD9Or2GXoZ8JSMSDCEpwHqhRLsqFa79UxSe3dJiLKe7DwaDdJudKbLK/nuoyUdFm9S2zIY9mVWAwdbq/eDpV1QSEvI6e03cubDULdeJstOW8EryyaE+AGnjiQ+V20ODY/BF9QnYFkj3ERPuLZGt31zgGgh6LqRpP0OAs=
+	t=1745568147; cv=none; b=uJz0H2n0G3vu7o6QKR+JvOprDDFdJN3Rl6ncdxttBdHmcOjCGaxGBup/S2oXMvm/mEmNjtwcBUPw21mzyCtovFt6gD5pkB3W2cm3fwiLcwHKJZlp8mlwJQwB+L9gf/UmJcInrzAokiQ1NIJoUvIlQP1sOulDq0OCogBA8Lj3diE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745567921; c=relaxed/simple;
-	bh=MNSoiT5I5qQHlef7awPnIJZm3jU3lLmkkpuLMdWhXxc=;
+	s=arc-20240116; t=1745568147; c=relaxed/simple;
+	bh=ZzZjk3TjuB5fjuT9Nol3bp4rK92tHdKiUKt3jAgH5SM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Zk420+dwKkpYdXYQ/HP6VClc36zTvSgI04UeXsKD4lPkz8cwMqyZgz7GZhpgPB46j1HaKFuo5bcxZtLA+1HOfc8M9XuMxwHHbc/gOD+S3Q70yc+8U89yLALrcqh2iN07m4tHUuadkJcOwxmUu1KdIef6mlXLwR58oHAEZTEN0Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8CUcVj6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 482A9C4CEE4;
-	Fri, 25 Apr 2025 07:58:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tc014s2zn2kgo7TqPyj2ZfV4aCXJgLqkhVnuPDK9vyoEeDzeCNOsI4Go4wPvancoL/Lrod8dLHM96vn6p8fDpQ/w5V0i8yzQUs/t75dy7OGhwUOJ9EGjkd3L5VBwupjIjG5tbLsBtaRHLQ2smRwea2xeK9J24bnQ7FbVQW+hOT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oqiguB/X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 430DCC4CEE4;
+	Fri, 25 Apr 2025 08:02:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745567921;
-	bh=MNSoiT5I5qQHlef7awPnIJZm3jU3lLmkkpuLMdWhXxc=;
+	s=k20201202; t=1745568147;
+	bh=ZzZjk3TjuB5fjuT9Nol3bp4rK92tHdKiUKt3jAgH5SM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t8CUcVj6DOdiQ4hQvtV6Z8Qz8+gBpb75eJNx3kv1LFM5U8nTJjM4qdTs1M4O23sPy
-	 O7+mxkN6G57LTNv1BxY5QkBvGlQVwPWcUTSBQ7KzBQh6ENRfK6YaVv7YD13r5J62wa
-	 cxUIPmoIA68/3o0hwjJyeqH6/o3nYpVf092YyQZzZWC7l7fuSMD1ByrnbuPclsY3B6
-	 WDtiKbaNU2exFA+pjNIaF6zoNPMrERj/oFfNg7iFINPh0RqbApeAF2wr1jTD/246/a
-	 eprRDy4sLBhGvwp/iNUhVFM2ThqaiUc2bfJgDE1k7JofXpCDwxdYfzmm+j/T8NTPW5
-	 TXUS640aW0XCw==
-Date: Fri, 25 Apr 2025 09:58:34 +0200
+	b=oqiguB/XOmcobZQ6DwFVt3el425tJHvMGeEjW7EoxMhwMX99Esi8Bs4MiLfDbH1ee
+	 mnelrUXFdpEUvjXI8i1NfphmSFgqffJ3CRLCzBzmT0Pil4MsVtfRjt8kH3q4izCMOw
+	 xDm84uYLAjQIF/qAqCQbMdk0sJEizII5nfALI+uoA2otCBkDZEtNfajRHbR5L1S6Uw
+	 djSkk2gh9OCezgZ/Dn55FQx1cF+2FGxXgUMxBe1rpLQKmXYLunxcqmnGibyaTED/C3
+	 aSCyqm+P4uMRSGXbzXGvlliFAfBGja2oHT85/Kn1oeNMyjIpsxJb95SKqAJB/bFJtV
+	 XH/1SMdYq4xYw==
+Date: Fri, 25 Apr 2025 10:02:20 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Kuniyuki Iwashima <kuniyu@amazon.com>
 Cc: alexander@mihalicyn.com, bluca@debian.org, daan.j.demeyer@gmail.com, 
@@ -51,9 +51,9 @@ Cc: alexander@mihalicyn.com, bluca@debian.org, daan.j.demeyer@gmail.com,
 	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com
 Subject: Re: [PATCH RFC 2/4] net, pidfs: prepare for handing out pidfds for
  reaped sk->sk_peer_pid
-Message-ID: <20250425-wegfielen-galaabend-91b1b684cb76@brauner>
-References: <20250424-work-pidfs-net-v1-2-0dc97227d854@kernel.org>
- <20250425015911.93197-1-kuniyu@amazon.com>
+Message-ID: <20250425-richten-hubschrauber-02bba42aa559@brauner>
+References: <20250424-chipsatz-verpennen-afa9e213e332@brauner>
+ <20250425011448.86924-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,55 +62,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250425015911.93197-1-kuniyu@amazon.com>
+In-Reply-To: <20250425011448.86924-1-kuniyu@amazon.com>
 
-On Thu, Apr 24, 2025 at 06:57:19PM -0700, Kuniyuki Iwashima wrote:
-> From: Christian Brauner <brauner@kernel.org>
-> Date: Thu, 24 Apr 2025 14:24:35 +0200
-> > @@ -734,13 +743,48 @@ static void unix_release_sock(struct sock *sk, int embrion)
-> >  		unix_gc();		/* Garbage collect fds */
-> >  }
-> >  
-> > -static void init_peercred(struct sock *sk)
-> > +struct af_unix_peercred {
-> 
-> nit: conventional naming for AF_UNIX is without af_, all structs
-> (and most functions) start with unix_.
+> I prefer DEBUG_NET_WARN_ON_ONCE() or removing it as rcu_sleep_check()
 
-Done.
-
-> 
-> 
-> > +	struct pid *peer_pid;
-> > +	const struct cred *peer_cred;
-> > +};
-> > +
-> > +static inline int prepare_peercred(struct af_unix_peercred *peercred)
-> > +{
-> > +	struct pid *pid;
-> > +	int err;
-> > +
-> > +	pid = task_tgid(current);
-> > +	err = pidfs_register_pid(pid);
-> > +	if (likely(!err)) {
-> > +		peercred->peer_pid = get_pid(pid);
-> > +		peercred->peer_cred = get_current_cred();
-> > +	}
-> > +	return err;
-> > +}
-> > +
-> > +static void drop_peercred(struct af_unix_peercred *peercred)
-> > +{
-> > +	struct pid *pid = NULL;
-> > +	const struct cred *cred = NULL;
-> 
-> another nit: please keep variables in reverse xmas tree order.
-> https://docs.kernel.org/process/maintainer-netdev.html#local-variable-ordering-reverse-xmas-tree-rcs
-
-Done.
-
-> 
-> Otherwise looks good to me.
-
-Thanks!
+I've removed it.
 
