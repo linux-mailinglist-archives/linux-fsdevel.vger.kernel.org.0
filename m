@@ -1,208 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-47360-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47361-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2BE5A9C7FA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 13:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DCA7A9C85B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 13:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4CD1BC2F77
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 11:44:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BBFB9E3666
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Apr 2025 11:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A842459D6;
-	Fri, 25 Apr 2025 11:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1C324E4A4;
+	Fri, 25 Apr 2025 11:57:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="nH89DDly"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EVg7g6w9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE8242459D0
-	for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 11:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 397E824BC1D;
+	Fri, 25 Apr 2025 11:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745581369; cv=none; b=rYabP67GXGagTogEa4l93vH16FIRms49ybRQFdGUoohxqZpAnl0uF+cwiA7kxqG2ATA3BQMUArlC7AfTc6cnKDMOpxHA/afE3TC3SHj4eDo/wWXbyxObOgja37jGsTZ/UdJse74tcWMuTc0/1rhF0VsHteiuAU9D3BBkRKAhbZs=
+	t=1745582240; cv=none; b=uKQT/b9vmdkJEC0pSsTaHLBwVCVvsGveZoVmDahBkwXOC0g7KVf0yde1W4bYgeW6uPJ9/2yBK9HCCjyH0V/1t1/rdSVwGRwiMNk0Tox1ARt9Hs6xaXmvhVN00Q8BOXDgB8O7DbtL0+B3RxDElqobdgh0dARDNVYtDRynmRCEXps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745581369; c=relaxed/simple;
-	bh=3Ji49cbT2gfSvIq8CYcUaaNLPtr+CzcaLLKg5QrQiT8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=lpU34DZyjBqDQxM1NtAwNwvEqCbORJkYQiTiPbyfII2qUvj4hYUh2flWOnB5FLGjb2hw9A0LPdASkemRLy7gN08XXvKzgVvDELchafVloOag6i78IRmq0C4ctwWvpZx3su+lnqxRakqnUT2gsqG6udGJDXuaRQTCJ5DoErKEyu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=nH89DDly; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43eeb4e09b5so2340495e9.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 04:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1745581366; x=1746186166; darn=vger.kernel.org;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RyVQraiD8choursJseiRmBXZoIZWNTeRkqd4Ai9q43w=;
-        b=nH89DDlyI9q4NUmPG6uPGSIMY5PE3mHWQaGnwuDjzhIpFtGqZltNEeVSOMeVa3SRM2
-         g7xOdBFxjtVrckTTvBVgyYJXhwJ7XkUHp0bliIaSFY0SEbKl33L40+Gx5gZyqll0Uj1k
-         W8reo0a4FE8SuyO746giZhk3U2tI6Ay2Pxo4hiF9gI0DFyu0jpwx8keDmtDboBcsNqxr
-         lGAbfEV/ym6CSFmy1ogXzThNGMSAbhCnMVcFU9918rAMWsxa5xB6pSR52vYxT7BrmXAv
-         yiguZdBGYAB3ll3wElZKKLKXP+sx59peEi1bnf1Nu0WTq43Q0tJl0R+s2n9MAM4rhMBZ
-         +UwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745581366; x=1746186166;
-        h=in-reply-to:references:from:to:cc:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=RyVQraiD8choursJseiRmBXZoIZWNTeRkqd4Ai9q43w=;
-        b=b8rxmDtPR/MCLZjGcp/FbkZ6+s7XjzmPomgS4PdgNeGYDKgreYxZ0KNyLW3yPAi3S8
-         u6q+vK3fgDHTBxnzx7sc36m1kT7xJn4XnQxngzR78DVJsDvUktkUraGd4POkF/gM5DYv
-         SrhvcKdGCbqtQGDkCP8j5eFMbJwJg8EGW6OWuom6Je87PJiPecxdzThQWSlellMeaBtt
-         YgaT16O9AHHmB1EfyJnGdvDt1NLMFRDqZNoHCpLfJ+CxeQD91ch1obRqTqJOj1gsEAej
-         ww3QkUh7MezqfSCZEaa0oWjJg3+rcV41LzNVzqUr8viuMV4nqB1cY3OvNrvoZGz5o2Xv
-         o8TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUy6gdfKwMd4NuCTdwnefmTZubBboLYB6IR2EpX++Ljaic/e9Dn297Sdgmnx07DSIpBvy1awrdJAPr3Op4o@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx82UU5rM4UepN4WArrEOc89eAHeR3rrSu3jORvy71klbvp9Gik
-	LUbzy8NrBdgRutDP0uBnailipGaIB76asX3URzLyp4VA/x58aY24pqC7ED4a/IU=
-X-Gm-Gg: ASbGncv9xywyjGen25Pyhbq++dqugz2Q1QgIlFSh4P+Mqaiir3gNfEq+JRTDmCnXnlQ
-	WkJXCVVABHRu9kUL/MaXCu5c1i+BZQB/CyLwLUYIIh8j0DCbNmCJc2wPerKrIsCPgDnFXh84xmf
-	kQk2pQTMw292Utp9/Tq3L18j9v0JlipbS+zNO0Ih/2ViPMMBt02J0dqTjWF85+rWlzG9zRRN13N
-	UIRVCWvqXa3CuFFV8ujN2aTH39od99s/FwQkhiafZg281vU/QnFjf3Wi3X5Ns6g0ksQ/xitVf/p
-	W0VV4ufi1FLhqhzXpXSCRbFEaMHqs58EFqwBGhZFUC3N9LV2
-X-Google-Smtp-Source: AGHT+IHSwXKm2b0KR1kACN9BXrADFLHJi8d2f8OL0xZ1T0iAnfUkAWtBlFVbUnZ2xOUkCinbSJhTAg==
-X-Received: by 2002:a05:600c:1d01:b0:43d:fa5e:50e6 with SMTP id 5b1f17b1804b1-440a66c250dmr6293955e9.9.1745581365815;
-        Fri, 25 Apr 2025 04:42:45 -0700 (PDT)
-Received: from localhost ([2a02:8308:a00c:e200:84a3:2b0a:bdb8:ce08])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e4698csm2104230f8f.62.2025.04.25.04.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 04:42:45 -0700 (PDT)
+	s=arc-20240116; t=1745582240; c=relaxed/simple;
+	bh=KMQeJ0Hp8WHAWUQDAWMTEpOv2mG7Q43RvElIe/5zzzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mg7jGiF58pyxoz8idY83bQtm5sun2dkJprlmsiQ/zs7aCkqbbkZA+FdTA4KED981SwSokaNZ4LybuvyZXyMvSRVzP55W1QtZmKbseg2YWoxthWokgu+haPe0oQjc/z6xb8brHUruzRZVhSnGXC7EHXQooxiEIOax51r1V5zX/+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EVg7g6w9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B936C4CEE4;
+	Fri, 25 Apr 2025 11:57:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745582238;
+	bh=KMQeJ0Hp8WHAWUQDAWMTEpOv2mG7Q43RvElIe/5zzzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EVg7g6w95ov7UsAVceaf3qBOt1aIlp6V3lsMltPBk53vDGvXL7WJ+dHkE96QqeiFE
+	 7FyHDc0bcow8unfeGUbtFUFMNQ0zy4A7Wg1n1UU1b0Wc86TMwnlU44AlorZtdm7fxa
+	 IWZfGLlClL0IDXCor5RC9uZvsghsC8KuUQkXca1iitSrAf5i6l6HvfmOLJW+swE7b3
+	 lpv6hq7ZEhW26vxuMf8dlzLkHb8VLIjttlwfXeTUlGG3Jfyu2YR94c4Ag03Md3RUu9
+	 O+Hka3QUdXRuf2tN910dtCHDkyOoifZE0ziNMWMvmDBbXObXRHUV700FViAFw//buA
+	 DZp98X6c7lEAA==
+Date: Fri, 25 Apr 2025 13:57:13 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Benjamin Drung <benjamin.drung@canonical.com>
+Cc: linux-fsdevel@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>, 
+	Luca Boccassi <luca.boccassi@gmail.com>, Lennart Poettering <lennart@poettering.net>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, Mike Yuan <me@yhndnzj.com>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/3] coredump: hand a pidfd to the usermode coredump
+ helper
+Message-ID: <20250425-eskapaden-regnen-4534af2aef11@brauner>
+References: <20250414-work-coredump-v2-0-685bf231f828@kernel.org>
+ <20250414-work-coredump-v2-3-685bf231f828@kernel.org>
+ <ee1263a1bcb7510f2ec7a4c34e5c64b3a1d21d7a.camel@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 25 Apr 2025 13:42:44 +0200
-Message-Id: <D9FOY8JACYTH.1FU7ZTEHFC5NI@ventanamicro.com>
-Subject: Re: [PATCH v12 12/28] riscv: Implements arch agnostic shadow stack
- prctls
-Cc: "Thomas Gleixner" <tglx@linutronix.de>, "Ingo Molnar"
- <mingo@redhat.com>, "Borislav Petkov" <bp@alien8.de>, "Dave Hansen"
- <dave.hansen@linux.intel.com>, <x86@kernel.org>, "H. Peter Anvin"
- <hpa@zytor.com>, "Andrew Morton" <akpm@linux-foundation.org>, "Liam R.
- Howlett" <Liam.Howlett@oracle.com>, "Vlastimil Babka" <vbabka@suse.cz>,
- "Lorenzo Stoakes" <lorenzo.stoakes@oracle.com>, "Paul Walmsley"
- <paul.walmsley@sifive.com>, "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert
- Ou" <aou@eecs.berkeley.edu>, "Conor Dooley" <conor@kernel.org>, "Rob
- Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Arnd Bergmann" <arnd@arndb.de>, "Christian Brauner" <brauner@kernel.org>,
- "Peter Zijlstra" <peterz@infradead.org>, "Oleg Nesterov" <oleg@redhat.com>,
- "Eric Biederman" <ebiederm@xmission.com>, "Kees Cook" <kees@kernel.org>,
- "Jonathan Corbet" <corbet@lwn.net>, "Shuah Khan" <shuah@kernel.org>, "Jann
- Horn" <jannh@google.com>, "Conor Dooley" <conor+dt@kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-mm@kvack.org>, <linux-riscv@lists.infradead.org>,
- <devicetree@vger.kernel.org>, <linux-arch@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
- <alistair.francis@wdc.com>, <richard.henderson@linaro.org>,
- <jim.shu@sifive.com>, <andybnac@gmail.com>, <kito.cheng@sifive.com>,
- <charlie@rivosinc.com>, <atishp@rivosinc.com>, <evan@rivosinc.com>,
- <cleger@rivosinc.com>, <alexghiti@rivosinc.com>, <samitolvanen@google.com>,
- <broonie@kernel.org>, <rick.p.edgecombe@intel.com>, "linux-riscv"
- <linux-riscv-bounces@lists.infradead.org>
-To: "Deepak Gupta" <debug@rivosinc.com>
-From: =?utf-8?q?Radim_Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@ventanamicro.com>
-References: <20250314-v5_user_cfi_series-v12-0-e51202b53138@rivosinc.com>
- <20250314-v5_user_cfi_series-v12-12-e51202b53138@rivosinc.com>
- <D92V2NPNZYV0.136MJ2HOK48HE@ventanamicro.com>
- <aAnBmexbL4XmVxQk@debug.ba.rivosinc.com>
- <D9EWR3RQK0FD.3GF55KNS53YSR@ventanamicro.com>
- <aAp_87-Xr6gn_hD7@debug.ba.rivosinc.com>
-In-Reply-To: <aAp_87-Xr6gn_hD7@debug.ba.rivosinc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ee1263a1bcb7510f2ec7a4c34e5c64b3a1d21d7a.camel@canonical.com>
 
-2025-04-24T11:16:19-07:00, Deepak Gupta <debug@rivosinc.com>:
-> On Thu, Apr 24, 2025 at 03:36:54PM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99 wro=
-te:
->>2025-04-23T21:44:09-07:00, Deepak Gupta <debug@rivosinc.com>:
->>> On Thu, Apr 10, 2025 at 11:45:58AM +0200, Radim Kr=C4=8Dm=C3=A1=C5=99 w=
-rote:
->>>>2025-03-14T14:39:31-07:00, Deepak Gupta <debug@rivosinc.com>:
->>>>> diff --git a/arch/riscv/include/asm/usercfi.h b/arch/riscv/include/as=
-m/usercfi.h
->>>>> @@ -14,7 +15,8 @@ struct kernel_clone_args;
->>>>>  struct cfi_status {
->>>>>  	unsigned long ubcfi_en : 1; /* Enable for backward cfi. */
->>>>> -	unsigned long rsvd : ((sizeof(unsigned long) * 8) - 1);
->>>>> +	unsigned long ubcfi_locked : 1;
->>>>> +	unsigned long rsvd : ((sizeof(unsigned long) * 8) - 2);
->>>>
->>>>The rsvd field shouldn't be necessary as the container for the bitfield
->>>>is 'unsigned long' sized.
->>>>
->>>>Why don't we use bools here, though?
->>>>It might produce a better binary and we're not hurting for struct size.
->>>
->>> If you remember one of the previous patch discussion, this goes into
->>> `thread_info` Don't want to bloat it. Even if we end shoving into task_=
-struct,
->>> don't want to bloat that either. I can just convert it into bitmask if
->>> bitfields are an eyesore here.
->>
->>  "unsigned long rsvd : ((sizeof(unsigned long) * 8) - 2);"
->>
->>is an eyesore that defines exactly the same as the two lines alone
->>
->>  unsigned long ubcfi_en : 1;
->>  unsigned long ubcfi_locked : 1;
->>
->>That one should be removed.
->>
->>If we have only 4 bits in 4/8 bytes, then bitfields do generate worse
->>code than 4 bools and a 0/4 byte hole.  The struct size stays the same.
->>
->>I don't care much about the switch to bools, though, because this code
->>is not called often.
->
-> I'll remove the bitfields, have single `unsigned long cfi_control_state`
-> And do `#define RISCV_UBCFI_EN 1` and so on.
+On Fri, Apr 25, 2025 at 01:31:56PM +0200, Benjamin Drung wrote:
+> Hi,
+> 
+> On Mon, 2025-04-14 at 15:55 +0200, Christian Brauner wrote:
+> > Give userspace a way to instruct the kernel to install a pidfd into the
+> > usermode helper process. This makes coredump handling a lot more
+> > reliable for userspace. In parallel with this commit we already have
+> > systemd adding support for this in [1].
+> > 
+> > We create a pidfs file for the coredumping process when we process the
+> > corename pattern. When the usermode helper process is forked we then
+> > install the pidfs file as file descriptor three into the usermode
+> > helpers file descriptor table so it's available to the exec'd program.
+> > 
+> > Since usermode helpers are either children of the system_unbound_wq
+> > workqueue or kthreadd we know that the file descriptor table is empty
+> > and can thus always use three as the file descriptor number.
+> > 
+> > Note, that we'll install a pidfd for the thread-group leader even if a
+> > subthread is calling do_coredump(). We know that task linkage hasn't
+> > been removed due to delay_group_leader() and even if this @current isn't
+> > the actual thread-group leader we know that the thread-group leader
+> > cannot be reaped until @current has exited.
+> > 
+> > Link: https://github.com/systemd/systemd/pull/37125 [1]
+> > Tested-by: Luca Boccassi <luca.boccassi@gmail.com>
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  fs/coredump.c            | 59 ++++++++++++++++++++++++++++++++++++++++++++----
+> >  include/linux/coredump.h |  1 +
+> >  2 files changed, 56 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/coredump.c b/fs/coredump.c
+> > index 9da592aa8f16..403be0ff780e 100644
+> > --- a/fs/coredump.c
+> > +++ b/fs/coredump.c
+> > @@ -43,6 +43,9 @@
+> >  #include <linux/timekeeping.h>
+> >  #include <linux/sysctl.h>
+> >  #include <linux/elf.h>
+> > +#include <linux/pidfs.h>
+> > +#include <uapi/linux/pidfd.h>
+> > +#include <linux/vfsdebug.h>
+> >  
+> >  #include <linux/uaccess.h>
+> >  #include <asm/mmu_context.h>
+> > @@ -60,6 +63,12 @@ static void free_vma_snapshot(struct coredump_params *cprm);
+> >  #define CORE_FILE_NOTE_SIZE_DEFAULT (4*1024*1024)
+> >  /* Define a reasonable max cap */
+> >  #define CORE_FILE_NOTE_SIZE_MAX (16*1024*1024)
+> > +/*
+> > + * File descriptor number for the pidfd for the thread-group leader of
+> > + * the coredumping task installed into the usermode helper's file
+> > + * descriptor table.
+> > + */
+> > +#define COREDUMP_PIDFD_NUMBER 3
+> >  
+> >  static int core_uses_pid;
+> >  static unsigned int core_pipe_limit;
+> > @@ -339,6 +348,27 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
+> >  			case 'C':
+> >  				err = cn_printf(cn, "%d", cprm->cpu);
+> >  				break;
+> > +			/* pidfd number */
+> > +			case 'F': {
+> > +				/*
+> > +				 * Installing a pidfd only makes sense if
+> > +				 * we actually spawn a usermode helper.
+> > +				 */
+> > +				if (!ispipe)
+> > +					break;
+> > +
+> > +				/*
+> > +				 * Note that we'll install a pidfd for the
+> > +				 * thread-group leader. We know that task
+> > +				 * linkage hasn't been removed yet and even if
+> > +				 * this @current isn't the actual thread-group
+> > +				 * leader we know that the thread-group leader
+> > +				 * cannot be reaped until @current has exited.
+> > +				 */
+> > +				cprm->pid = task_tgid(current);
+> > +				err = cn_printf(cn, "%d", COREDUMP_PIDFD_NUMBER);
+> > +				break;
+> > +			}
+> >  			default:
+> >  				break;
+> >  			}
+> > 
+> 
+> I tried this change with Apport: I took the Ubuntu mainline kernel build
+> https://kernel.ubuntu.com/mainline/daily/2025-04-24/ (that refers to
+> mainline commit e54f9b0410347c49b7ffdd495578811e70d7a407) and applied
+> these three patches on top. Then I modified Apport to take the
+> additional `-F%F` and tested that on Ubuntu 25.04 (plucky). The result
+> is the coredump failed as long as there was `-F%F` on
 
-I might have seemed too much against the bitfieds, sorry.  I am against
-the rsvd fields, because it is a pointless cognitive overhead and even
-this series already had a bug in them.
+I have no clue what -F%F is and whether that leading -F is something
+specific to Apport but the specifier is %F not -F%F. For example:
 
-#defines should generate the same code as bitfields (worse than bools),
-so the source code is really a matter of personal preference.
-(I do prefer bitfields.)
+        > cat /proc/sys/kernel/core_pattern
+        |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h %F
 
->>>>> @@ -262,3 +292,83 @@ void shstk_release(struct task_struct *tsk)
->>>>> +int arch_lock_shadow_stack_status(struct task_struct *task,
->>>>> +				  unsigned long arg)
->>>>> +{
->>>>> +	/* If shtstk not supported or not enabled on task, nothing to lock =
-here */
->>>>> +	if (!cpu_supports_shadow_stack() ||
->>>>> +	    !is_shstk_enabled(task) || arg !=3D 0)
->>>>> +		return -EINVAL;
->>>>
->>>>The task might want to prevent shadow stack from being enabled?
->>>
->>> But Why would it want to do that? Task can simply not issue the prctl. =
-There
->>> are glibc tunables as well using which it can be disabled.
->>
->>The task might do it as some last resort to prevent a buggy code from
->>enabling shadow stacks that would just crash.  Or whatever complicated
->>reason userspace can think of.
->>
->>It's more the other way around.  I wonder why we're removing this option
->>when we don't really care what userspace does to itself.
->>I think it's complicating the kernel without an obvious gain.
->
-> It just feels wierd. There isn't anything like this for other features li=
-t-up
-> via envcfg. Does hwprobe allow this on per-task basis? I'll look into it.
-
-I think PMM doesn't allow to lock and the rest don't seem configurable
-from userspace.
-
-It's not that important and we hopefully won't be breaking any userspace
-if we decided to allow it later, so I'm fine with this version.
+And note that this requires the pipe logic to be used, aka "|" needs to
+be specified. Without it this doesn't make sense.
 
