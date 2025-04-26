@@ -1,114 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-47448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A3AA9D8E9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 08:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC98A9DABA
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 14:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98C213AAFFC
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 06:59:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 881F83AEA32
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 12:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D3E22157F;
-	Sat, 26 Apr 2025 06:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24F33256C95;
+	Sat, 26 Apr 2025 12:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="Xl4xqpIh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ck1xjdwm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4232701A7
-	for <linux-fsdevel@vger.kernel.org>; Sat, 26 Apr 2025 06:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8536B256C77;
+	Sat, 26 Apr 2025 12:29:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745650769; cv=none; b=QL3SK+ta+XiU6zoR2Z9AGourJ4UgalTUyeM+rc/gM+cHYt40L9LywRnylzj2FR+3mxMWgPgRKVB5XwvzZay7bagUDdJo0qNaLJls0fvW8nCequ3+Slb4AsLO2nCYDM8VcG8L4ZJTbbQX3x0C3+WwyW7eh8Zy2E9bKD7YV4WXYNw=
+	t=1745670560; cv=none; b=UiQMdfTpBONQXGf4usGsLHmrSug9m+LjPTPPWNXUQMvkkE1ryhfLzDL9xu1+srimxpJcvXMtGa+Qpmb5vv0XhpJjPScPYKqiRTQUKilu1pL7b/jK805RFVUfAO/DOpgjOwXYg2JjZNb3nYsE5UUW4i/aDl2roRtvoTfJ/vBrCWw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745650769; c=relaxed/simple;
-	bh=R15b57+PqVmtlymCHMEZIgZ4eEuBMQpxvBu4ubEhvzQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VGRrS+7y+VloZWI2LEx7cAWUthJTpX+BkKGC/cdUA7UIjxFxvoFz1YulSBS147DitevylS7kBeD8VvfS2t4JlsvJnUVDrTbzFC1NzFk6ZPhzwj1o5RX2SFd7bBaDGTJejUXb8Kfma9qPpDHRAHWoSvERp3uRjQV1OYQhrhJRUoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=Xl4xqpIh; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=asiXK04Ov4MdQCyJscfM0XtJCrt9HKoOuhirEevDlak=; t=1745650766; x=1746255566; 
-	b=Xl4xqpIhG2bc4G7ReGIhTbLKV33CWY77VQVyS+goxMpBo44SLNiMPB6nsD2XsrMduGSYa7ivhvW
-	d1giZYyE8TH6b/q8wduvhhrnRiwR7TXlbV3QrFyYYE3x4B1bDiMPCRv+0B+n5ea88VFRzBjgtq5bT
-	mG0BZARKWJSEnUEMCSPaEFxEu2nhG7apW3ppJaWqvUd2rkrS+qFz/qw8rhD+hojqnAsvQ/exd7MGA
-	Vhf/3OVzLTxJyt1TC+BFMTQq4p+QoqR5dyndlPuTD8wMSmd6LUYIjTws2DYVrCUn6G7runKbYs8X5
-	ufv1LfDBG6ftdf031O5qQMdzSwDkPGEK8UOw==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1u8ZVT-00000002fL5-3W31; Sat, 26 Apr 2025 08:59:23 +0200
-Received: from p5b13afe4.dip0.t-ipconnect.de ([91.19.175.228] helo=[192.168.178.61])
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1u8ZVT-00000002e6d-2VIv; Sat, 26 Apr 2025 08:59:23 +0200
-Message-ID: <0995ae944427253daccca3ff42db2c9ce37f8322.camel@physik.fu-berlin.de>
-Subject: Re: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D=3A?=
- =?UTF-8?Q?__=E5=9B=9E=E5=A4=8D=3A?= =?UTF-8?Q?__=E5=9B=9E=E5=A4=8D=3A?=
- =?UTF-8?Q?_=E5=9B=9E=E5=A4=8D=3A?= HFS/HFS+ maintainership action items
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: =?UTF-8?Q?=E6=9D=8E=E6=89=AC=E9=9F=AC?= <frank.li@vivo.com>, 
- Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
- "brauner@kernel.org"
-	 <brauner@kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>
-Date: Sat, 26 Apr 2025 08:59:22 +0200
-In-Reply-To: <SEZPR06MB52699F3D7B651C40266E4445E8872@SEZPR06MB5269.apcprd06.prod.outlook.com>
-References: <f06f324d5e91eb25b42aea188d60def17093c2c7.camel@ibm.com>
-								 <2a7218cdc136359c5315342cef5e3fa2a9bf0e69.camel@physik.fu-berlin.de>
-							 <1d543ef5e5d925484179aca7a5aa1ebe2ff66b3e.camel@ibm.com>
-						 <d4e0f37aa8d4daf83aa2eb352415cf110c846101.camel@physik.fu-berlin.de>
-					 <7f81ec6af1c0f89596713e144abd89d486d9d986.camel@physik.fu-berlin.de>
-				 <787a6449b3ba3dce8c163b6e5b9c3d1ec1b302e4.camel@ibm.com>
-				 <TYZPR06MB527574C2A8265BF6912994E6E8842@TYZPR06MB5275.apcprd06.prod.outlook.com>
-			 <84ebd3fb27957d926fc145a28b38c1ac737c5953.camel@physik.fu-berlin.de>
-			 <SEZPR06MB5269CBE385E73704B368001AE8842@SEZPR06MB5269.apcprd06.prod.outlook.com>
-		 <d35a7b6e8fce1e894e74133d7e2fbe0461c2d0a5.camel@ibm.com>
-		 <SEZPR06MB5269BB960025304C687D6270E8842@SEZPR06MB5269.apcprd06.prod.outlook.com>
-	 <97cd591a7b5a2f8e544f0c00aeea98cd88f19349.camel@ibm.com>
-	 <SEZPR06MB52699F3D7B651C40266E4445E8872@SEZPR06MB5269.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1 
+	s=arc-20240116; t=1745670560; c=relaxed/simple;
+	bh=KR+rfuw8H//rMIq7kpzvnAJPweissT+mX1RMC6mTrso=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nOVoUomD2mkjHg1P3sjge40nPMN59oP/3J4zwmp0p9gcPkiuPWRF3zuFkZcTL14T6BaBS4TEVr01qeofZU+3XlvgGM81nl2Vb3FTOCgjKxaEcmEC/a0ev9mtjG5KMU6Ps+rCX5USc3sEf4ItXSwuIX/B85aPViDUdA81WFwILy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ck1xjdwm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53490C4CEE2;
+	Sat, 26 Apr 2025 12:29:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745670560;
+	bh=KR+rfuw8H//rMIq7kpzvnAJPweissT+mX1RMC6mTrso=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ck1xjdwm3NiB03q7WeQHdfrtGxmlWGUvUDhPpClLGoWvsPkWnI+c60xzDYNjff7P2
+	 1nSLwGgomrcjjJBbNXpRLQwYmr6gxazNdqu18NYlCGdxvE3ww+aNgvHHrIrhtTz5b4
+	 IQumcCn+Ssr0KHBGOaawgUyPpCWjLIauLJv9IlR4LEvHoFRUIyOg/7Awd0MiqZyIF5
+	 lt4AmGEJ5uwIGV3puw8kDQeFpj1RvVLP+2vuA3ytvN5BK3SbJEbrRUlpNc/sLPzgxI
+	 SF1vpeCbJGjBrOUPb1vglz8AgiC4Auwm93cVu7pWnXsa+Ww03aHWk7rBdJGE4QXH/9
+	 +/BM3fGBmF3Hw==
+Date: Sat, 26 Apr 2025 14:29:15 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Joe Damato <jdamato@fastly.com>
+Cc: linux-fsdevel@vger.kernel.org, jack@suse.cz, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Sridhar Samudrala <sridhar.samudrala@intel.com>, 
+	Alexander Duyck <alexander.h.duyck@intel.com>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH vfs/vfs.fixes v2] eventpoll: Set epoll timeout if it's in
+ the future
+Message-ID: <20250426-haben-redeverbot-0b58878ac722@brauner>
+References: <20250416185826.26375-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250416185826.26375-1-jdamato@fastly.com>
 
-Hi Yangtao,
+On Wed, Apr 16, 2025 at 06:58:25PM +0000, Joe Damato wrote:
+> Avoid an edge case where epoll_wait arms a timer and calls schedule()
+> even if the timer will expire immediately.
+> 
+> For example: if the user has specified an epoll busy poll usecs which is
+> equal or larger than the epoll_wait/epoll_pwait2 timeout, it is
+> unnecessary to call schedule_hrtimeout_range; the busy poll usecs have
+> consumed the entire timeout duration so it is unnecessary to induce
+> scheduling latency by calling schedule() (via schedule_hrtimeout_range).
+> 
+> This can be measured using a simple bpftrace script:
+> 
+> tracepoint:sched:sched_switch
+> / args->prev_pid == $1 /
+> {
+>   print(kstack());
+>   print(ustack());
+> }
+> 
+> Before this patch is applied:
+> 
+>   Testing an epoll_wait app with busy poll usecs set to 1000, and
+>   epoll_wait timeout set to 1ms using the script above shows:
+> 
+>      __traceiter_sched_switch+69
+>      __schedule+1495
+>      schedule+32
+>      schedule_hrtimeout_range+159
+>      do_epoll_wait+1424
+>      __x64_sys_epoll_wait+97
+>      do_syscall_64+95
+>      entry_SYSCALL_64_after_hwframe+118
+> 
+>      epoll_wait+82
+> 
+>   Which is unexpected; the busy poll usecs should have consumed the
+>   entire timeout and there should be no reason to arm a timer.
+> 
+> After this patch is applied: the same test scenario does not generate a
+> call to schedule() in the above edge case. If the busy poll usecs are
+> reduced (for example usecs: 100, epoll_wait timeout 1ms) the timer is
+> armed as expected.
+> 
+> Fixes: bf3b9f6372c4 ("epoll: Add busy poll support to epoll with socket fds.")
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> ---
+>  v2: 
+>    - No longer an RFC and rebased on vfs/vfs.fixes
+>    - Added Jan's Reviewed-by
+>    - Added Fixes tag
+>    - No functional changes from the RFC
+> 
+>  rfcv1: https://lore.kernel.org/linux-fsdevel/20250415184346.39229-1-jdamato@fastly.com/
+> 
+>  fs/eventpoll.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 100376863a44..4bc264b854c4 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -1996,6 +1996,14 @@ static int ep_try_send_events(struct eventpoll *ep,
+>  	return res;
+>  }
+>  
+> +static int ep_schedule_timeout(ktime_t *to)
+> +{
+> +	if (to)
+> +		return ktime_after(*to, ktime_get());
+> +	else
+> +		return 1;
+> +}
+> +
+>  /**
+>   * ep_poll - Retrieves ready events, and delivers them to the caller-supplied
+>   *           event buffer.
+> @@ -2103,7 +2111,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  
+>  		write_unlock_irq(&ep->lock);
+>  
+> -		if (!eavail)
+> +		if (!eavail && ep_schedule_timeout(to))
+>  			timed_out = !schedule_hrtimeout_range(to, slack,
+>  							      HRTIMER_MODE_ABS);
 
-On Sat, 2025-04-26 at 06:17 +0000, =E6=9D=8E=E6=89=AC=E9=9F=AC wrote:
-> > I am also working on creating a patch set that all Linux distributions =
-can use on top of
-> > Apple's vanilla upstream sources. The current WIP can be found in [3].
->=20
-> Adrian, Would you mind adding a branch that supports mkfs.hfs in your git=
- repository now?
-
-Yes, I can do that. Will let you know once that's ready.
-
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Isn't this buggy? If @to is non-NULL and ep_schedule_timeout() returns
+false you want to set timed_out to 1 to break the wait. Otherwise you
+hang, no?
 
