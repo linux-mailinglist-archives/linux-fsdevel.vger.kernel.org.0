@@ -1,140 +1,90 @@
-Return-Path: <linux-fsdevel+bounces-47444-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47445-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08931A9D79C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 07:01:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D902CA9D7A6
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 07:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C61B84A8742
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 05:01:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C51554C2BD2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 05:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D431A0711;
-	Sat, 26 Apr 2025 05:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46B0019DF6A;
+	Sat, 26 Apr 2025 05:19:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="befHzSvp"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FIcO4hed"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC544409
-	for <linux-fsdevel@vger.kernel.org>; Sat, 26 Apr 2025 05:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ABA729B0
+	for <linux-fsdevel@vger.kernel.org>; Sat, 26 Apr 2025 05:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745643704; cv=none; b=Mn0yCE01lp1QAqiVoCwl7+bu8Bco5VtaWVbkLTgX9fDiinr1NrtpbXfP5esNu4MrTUqUrlf9ykfB/3RZemAnNHva12cy+YwnQ2xe5ukVXCGdQ+oW+TSWYDd603jYzigfOIZ01Bk+Xl9DDRPpWlerNji+AEI2R9HnkQWbRRX7mHM=
+	t=1745644764; cv=none; b=fl5k8sGVyZoTRyn68EhVE0Qz0fdZAcmg+inrDa2M22PNZX26B6PcdLktlM5JVSKjUw/5L/oIxacKS13Kg/KTa9SovwEKFz33g9aDQ4LDAVs0VQ8WQQ9ESQccQhg3zhoLzKK/kWBJJDeLSzmFMDuQ5Gnx/TNUEwRhvD50y8Wz//o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745643704; c=relaxed/simple;
-	bh=cXDJuE/yHxwV04PJPoKVlfNQF+rhGqfW81Ns96b8E2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gw2OfPULc6zFQCHTMQAurd87SXO+B89Vy+m2Fmr6mIm7RKecg/4nniZ2EfBcgyMS9uyHouzNrkaxxJNCzQxnjCHbm3/B030LCcsmk/mAxh8ZzUJPuzZjx/eSceWtl+rBF2bTdOtf9PvHjOs7Ooi7Y+WkbqVyTct0A92wMU8Q+vQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=befHzSvp; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e5e63162a0so4447241a12.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 22:01:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1745643699; x=1746248499; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1Zg0s0tJJS2TEem3MFSImn2y5n2w5Xsq8PYaeuyKw6E=;
-        b=befHzSvpC6nEm049fo2PSKtmwjM2uEQmg5QBRwJajygSMbCXpt5xtyA9HC+GvPcjeh
-         xrfEV47/qGquenENAwLniSXAwYXJ/YW/GslzxAatGfRb5FOxtCWREe/0u0xenyBQj7JA
-         OKZaMabyvs8QCcSUZD113i4bdZublzgxyIumg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745643699; x=1746248499;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1Zg0s0tJJS2TEem3MFSImn2y5n2w5Xsq8PYaeuyKw6E=;
-        b=JXkta8RCmJblw/4/ivh5EPFbLncSRGySlV/lWvK+m2KEOugOHUtQWOqusMLgAwlqvV
-         fztbvg1c7fU7hAQ6aDy4sog+NAD+D0fNfcd09znBxD2UBmNPldBpHHgfvPMmhhDnVPHf
-         GMK2l+zSOJ0PlP0Mur6hBYjLKqGNMll7h05DvOZVQO/0Y5m38uf1bsF9v0x3Omw7B7xb
-         vMrLNjOzxEqQueifRubKdKa0KRqoXUW+/B9FLB361tDrTKyvdedFgnDUEk9545Lo7FJ7
-         ZmeM9eZ14px4Y2jJSp1H72t8tova7dTcMLHhmk5xM82O9tnyizxEVDDC49ksJY9FwwLn
-         R3Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVgaQ91CT1Y1jkt1giU8Ztiue9OZiG+dbsZbsAN75Rn/NyHfVyUCLijhyfMdOOIl41c9f7Zh5nSid605u//@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjukYpNNWEgjH5D68BKirRIOdrzhNXMzb2u7TUIfOCCt2ktlIb
-	RcMVlSjC/QiT8gp8TGSCTKryaQaUpvDOZv0aWiDOUPAw9NtfZXd/8cs+E3kNWFDijBai4ThkXQF
-	slwU=
-X-Gm-Gg: ASbGnctTIbt9x1ZxwunLWPSy1mtJtooi5e+T+bcF51R1pRAL8J+HjzvH9okVi3LirE9
-	PxcalNtNLKOCv7qHDXyI5iHV4VfMtmwsVyXq+QNmm+Jg0rWOHjAtMuj7g9DrlOBb3NMeCwm89y1
-	qP9KB1fYXXvBABSlMMmpJJuSpu0+lddlt0sRlMzx+WZcX2vpRB9udZstoGNgPlNcyBpMM9UHbLD
-	1YNL4Wdyc8gsq+s1x/8PQDGj9jGkEioyYCLGxr+woC+P2yF3xO63/iasqgXpLlHsLa/k8ehxunP
-	fcRQTPYiye82cb95r+Y884NbhI8rzP4ke8gvcb8UoNBAhH9Trj0rC+qcXBNLpPEBSrmV+75rblo
-	MhbQttacWU7a57p4=
-X-Google-Smtp-Source: AGHT+IFpsu2w4vwKcA33gT0gS5ADMpoKztNPK5GOCkNzwA6xrupmCTa3pHFzDtBttG4IlpIIMBadYQ==
-X-Received: by 2002:a05:6402:2750:b0:5f4:d4e7:3c2a with SMTP id 4fb4d7f45d1cf-5f722b6be4amr4185580a12.18.1745643699458;
-        Fri, 25 Apr 2025 22:01:39 -0700 (PDT)
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5f7380cbda1sm858159a12.74.2025.04.25.22.01.37
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 25 Apr 2025 22:01:38 -0700 (PDT)
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5f6214f189bso5604850a12.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 22:01:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWF3Nm2lU9UUYJvoCM5Kyh102aMwoUdyPW1mX0SkSpkUtok9sECiA3cNZFzzIu/GrI1XpmA+WC4oDKqFrR1@vger.kernel.org
-X-Received: by 2002:a17:907:7214:b0:ac7:ec31:deb0 with SMTP id
- a640c23a62f3a-ace739dce1cmr296946666b.9.1745643697218; Fri, 25 Apr 2025
- 22:01:37 -0700 (PDT)
-Precedence: bulk
-X-Mailing-List: linux-fsdevel@vger.kernel.org
-List-Id: <linux-fsdevel.vger.kernel.org>
-List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
- <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
- <q3thzkbsq6bwur7baoxvxijnlvnobyt6cx4sckonhgdkviwz76@45b6xlzvrtkr>
+	s=arc-20240116; t=1745644764; c=relaxed/simple;
+	bh=bB5XztPcwhGgq0w4hFRaWniz6quIVBbnVp/gaAwzoUI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c7HnDFPBIrJkk+UoAwDcUzdUvb1L20n9zh4ziaSSE86O74FDPs62tREkkDzZCt96ONcGWT+3v4CZg9jqfn3c4NTKBa+462h+JnW+bcg2VuQjFcDJshhNviKclzsYoz68nPxhboEXVu1KZIW5MlMo8NkZJthkj1gfiC8hfY7Xk0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FIcO4hed; arc=none smtp.client-ip=91.218.175.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 26 Apr 2025 01:18:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745644750;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SjzGeYFc1rskazNUv+0k9pTt5tEX8drK3NYo3dasRKw=;
+	b=FIcO4hed44HoGLxPSgpaJvSf1ptubwjR9rqYAtdw2qjVS1zIq7sNNsTGgBP8qTUa95PuqF
+	Iv+PZc5ATuScTNaECA0S6Frr9TZQwZpAkZcY+bpcHpCqMoGnPQfORx9yfP0ganteyY92hW
+	1r/WOPBmva/atfnOb7fMaBNFCObk3zQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+Message-ID: <tu2cvzmxdhqtzaoykggbksosqziaghoyswokpvfyy4iv4okdyy@cpis5wvp3msy>
+References: <q3thzkbsq6bwur7baoxvxijnlvnobyt6cx4sckonhgdkviwz76@45b6xlzvrtkr>
  <CAHk-=wh09TvgFu3WKaeLu8jAxCmwZa24N7spAXi=jrVGW7X9ZA@mail.gmail.com>
  <mlsjl7qigswkjvvqg2bheyagebpm2eo66nyysztnrbpjau2czt@pdxzjedm5nqw>
  <CAHk-=wiSXnaqfv0+YkOkJOotWKW6w5oHFB5xU=0yJKUf8ZFb-Q@mail.gmail.com>
  <lmp73ynmvpl55lnfym3ry76ftegc6bu35akltfdwtwtjyyy46z@d3oygrswoiki>
  <CAHk-=wiZ=ZBZyKfg-pyA3wmEq+RkscKB1s68c7k=3GaT48e9Jg@mail.gmail.com>
  <opsx7zniuyrf5uef3x4vbmbusu34ymdt5myyq47ajiefigrg4n@ky74wpog4gr4>
- <CAHk-=wjGiu1BA_hOBYdaYWE0yMyJvMqw66_0wGe_M9FBznm9JQ@mail.gmail.com> <rn2bojnk2h3z6xavoap6phjbib55poltxclv64xaijtikg4f5v@npknltjjnzan>
-In-Reply-To: <rn2bojnk2h3z6xavoap6phjbib55poltxclv64xaijtikg4f5v@npknltjjnzan>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Fri, 25 Apr 2025 22:01:20 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiLE9BkSiq8F-mFW5NOtPzYrtrXsXiLrn+qXTx4-Sy6MA@mail.gmail.com>
-X-Gm-Features: ATxdqUHWqxV-OrhDY-rKh16ASGQeohXR7OrfwoZY40F3L9gFfuaxZ44BLo28GKU
-Message-ID: <CAHk-=wiLE9BkSiq8F-mFW5NOtPzYrtrXsXiLrn+qXTx4-Sy6MA@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <CAHk-=wjGiu1BA_hOBYdaYWE0yMyJvMqw66_0wGe_M9FBznm9JQ@mail.gmail.com>
+ <rn2bojnk2h3z6xavoap6phjbib55poltxclv64xaijtikg4f5v@npknltjjnzan>
+ <CAHk-=wiLE9BkSiq8F-mFW5NOtPzYrtrXsXiLrn+qXTx4-Sy6MA@mail.gmail.com>
+Precedence: bulk
+X-Mailing-List: linux-fsdevel@vger.kernel.org
+List-Id: <linux-fsdevel.vger.kernel.org>
+List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiLE9BkSiq8F-mFW5NOtPzYrtrXsXiLrn+qXTx4-Sy6MA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 25 Apr 2025 at 21:49, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> And you never noticed that the complaints I had about the dcache bits
-> didn't make sense and how I said it should work was how it actually does
-> work? Heh.
+On Fri, Apr 25, 2025 at 10:01:20PM -0700, Linus Torvalds wrote:
+> On Fri, 25 Apr 2025 at 21:49, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > And you never noticed that the complaints I had about the dcache bits
+> > didn't make sense and how I said it should work was how it actually does
+> > work? Heh.
+> 
+> That's a funny way of saying
+> 
+>   "Oh, Linus, you were right in the first place when you called me out
+> on my bullshit"
 
-That's a funny way of saying
+You started out going off about how filesystem developers don't know how
+Unicode works, and when I brought up the dcache all you had to say was
+how wrong I was.
 
-  "Oh, Linus, you were right in the first place when you called me out
-on my bullshit"
-
-Here's a clue, Kent. I told you you were wrong and full of shit. Let
-me quote that for you again:
-
-  "I think you're confused, and don't know what you are talking about.
-   You'd better go learn how the dcache actually works"
-
-You doubled down and tried to tell me otherwise.
-
-You were wrong. Again.
-
-I'm really tired of your constant attitude where you think you
-absolutely know best, and then EVEN WHEN YOU ARE WRONG you try to make
-it be about somebody else.
-
-Now you are trying to make it about *me* somehow not noticing YOUR
-ABSOLUTE BULLSHIT.
-
-Just walk away, Kent. Because I'm very close to being done with this
-constant aggravation.
-
-                Linus
+Sorry, I'm not going to give you credit for being "right" when you're
+just trying to play gotcha.
 
