@@ -1,173 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-47434-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61475A9D697
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 02:10:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4456CA9D70D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 03:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C7D925C9A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 00:10:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9059D466689
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Apr 2025 01:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0D218DB05;
-	Sat, 26 Apr 2025 00:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C661F3BB4;
+	Sat, 26 Apr 2025 01:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqp/enAh"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s2+fqNlk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4271865E5
-	for <linux-fsdevel@vger.kernel.org>; Sat, 26 Apr 2025 00:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656DD1898FB
+	for <linux-fsdevel@vger.kernel.org>; Sat, 26 Apr 2025 01:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745626228; cv=none; b=THpN94T6hdlGmtbctFDzKiDNQz+wfMYLB6AlWEO/unxtD3NhqEedr9N3HCrJeFZfHYsWde0HjPA8iJMhgNMbptx30xx+tLJX+nrMVcs6Y3fN8ztU779Ldx5FAbba/+I9VFZIW3julnF0EsTy5HUUSQi8mGi3T6nQyTFNoju4vRQ=
+	t=1745631502; cv=none; b=i15c++BlWV2I7MmsMXkFX9nlly7rmUNND7Fj8orPMDNQBXq9cx6sDml8/KDtRvjAfqf4QGzyI8p4a4WHYYTBHDZJ48NheU+p30VMfU4zN7O81VUlB3ElzyQtSHnXI7h2Co4gGq8pXPvUvMHfKaceq2IFeBoyuxGe+HCSOzG9GMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745626228; c=relaxed/simple;
-	bh=9VtlaZD+FG+agIIGrwxJ9agJjeWVCg+MXM2mzIvt+CM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uqTSqJ19jhZrMnefmIw0yOF6irM0O8f5AW0i8xPtou3g1CI2UCdYcPfPuP4SwMwBmh+xmF1MfDZTM5E5b1Kl0f7dTMMR0AwRwc/kM4ORFcbLjd1zOxvqIvenFxyOGZCnN8buoblNo1RbD32KDVffg6KDj3xwJe5WuOHR2LD6UP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqp/enAh; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-736ab1c43c4so2818293b3a.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Apr 2025 17:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745626226; x=1746231026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zMNRMuSH2EJGmSZ+bv18TFewiiEMEEc1BteF+0jQ5HQ=;
-        b=fqp/enAhAq+a2qyCmt/tjKix2FHTZZhHFY/kiCUfe+iEJ+7JrIFWNmyfTn3NDfSXEs
-         40oNGf83btrycDbq7NeWczmm6QBCKsFApj09tEC+5KvPQDzKLZmyoGgw7WMxCvpsPTze
-         X77f812DU1jDiZJed8Kh2pvZhL2JaRIpXGLunnbcrpiQfrMV4QUFbVHf8JmnAv15gEea
-         MYMbr8TR1Q3N2VaZif+T37fHC/bl6aTAo4urwKASYjSTgGt2Kmga017bAMVUi7ry2ybC
-         RKZVAAA/Rgc8zbebk7nb4tOqUXs0/MGeprYfw6YbCGWKs2mjkFoW4a3EzdtL872tex1k
-         YkbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745626226; x=1746231026;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zMNRMuSH2EJGmSZ+bv18TFewiiEMEEc1BteF+0jQ5HQ=;
-        b=bmiCWWBZJFgdss21FMC6nn8DcukOjQxeb1pw1DMY0BNZoLH5L3dyEH7iTjE1SKH+5G
-         ctP2zeJf2FdRBHDNzoPfq+pj4pS860XHc5A/jPO6+DRmJ/5s69nPvzqCrYLiu5xuZzWY
-         6Z1ZodClrxy1L4ch48w+Xy+jExwmQbkhsITmqdH3R0qDb2u1eJ5b4XVW3BhyRl8H85tu
-         f+2DJhMPQHOb7fmMiZNNuWERMepVSMdGALBwOfyek81OII2wgZgekmKrzjSDyVVu6R5f
-         KTzeMWSjIktL+8CC4CjP/EsdWh+wHZ7BwV18yFoKxZniYsbXkkm8ulHD5g4cJNKsEZd6
-         Aadg==
-X-Gm-Message-State: AOJu0YyqPo2F/ZujGZqQOpqUhjYZ9LM8J+8Q2o59KQptrkvwoaO5WeAX
-	X65+JbFa3Jgww68VMTkvy31E7YMkj8pezwNeu2C5z6LAWSILOJ1m
-X-Gm-Gg: ASbGncsIqsQzhZZtKx4WjET5mI8X+7aKXj8941fTm/sPPTigW6h14SADWU5oqdqq+MG
-	jrhiPO9JnxO4ir4iQH2+RRNEzfdST/nN4zoO0G4c5R1Uo3JFMFyTcd2Aw9VJWcuBai3ZDpu5Hfc
-	eQ6Knok4+jeyq0JkZQN1jxgpcn07ZyzyvB+1SlQHFdiZl4KfViKFknwBvM8C4SqwLw3ZBmR8HZZ
-	bPtu8hMMi4NQukA+vdX//8qyGvn18td2aYURPRwr8x5mEmPcYZZJ9sWHXihBh43/MohN+AhNsJG
-	zwFIPl09sHi8m9z4cUv3TlEjp83dLRtob2w=
-X-Google-Smtp-Source: AGHT+IHHX/6mjfyQCZ748IujuZn/vmN+Q9FR/BDQExLoSaD+RX6UpLbgYh3Mb3NTLNqYellXcoN56w==
-X-Received: by 2002:a05:6a00:2f44:b0:736:53f2:87bc with SMTP id d2e1a72fcca58-73ff72e4075mr1227569b3a.13.1745626225776;
-        Fri, 25 Apr 2025 17:10:25 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:6::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e259134d5sm3935036b3a.19.2025.04.25.17.10.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Apr 2025 17:10:25 -0700 (PDT)
-From: Joanne Koong <joannelkoong@gmail.com>
-To: miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org,
-	jlayton@kernel.org,
-	jefflexu@linux.alibaba.com,
-	josef@toxicpanda.com,
-	bernd.schubert@fastmail.fm,
-	willy@infradead.org,
-	kernel-team@meta.com
-Subject: [PATCH v5 11/11] fuse: support large folios for writeback
-Date: Fri, 25 Apr 2025 17:08:28 -0700
-Message-ID: <20250426000828.3216220-12-joannelkoong@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250426000828.3216220-1-joannelkoong@gmail.com>
-References: <20250426000828.3216220-1-joannelkoong@gmail.com>
+	s=arc-20240116; t=1745631502; c=relaxed/simple;
+	bh=ogcQIujD79K4IHDyOfmSYQEQC9XIlGMIxKjhrhahnKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QXDv0049ZWmigh/EZv3U85kl7k/4XbIUIxM8KJUEk6qN9vHOAh9V0V6KPJaqnu5IGbxp4jYO4cioFZWvCo82XOAmceDq3ZKxa4VSBXoHjfK0lb+bkjSKYLRSnOfP/hKrZfuDYF2exBu8YFSW5vD6hgVCnf+UYblg0uXrk4qD/lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s2+fqNlk; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 25 Apr 2025 21:38:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745631487;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UlQDI5leMOTzecRb0HcGY/zda5YRvxMOa39eLdxx4kw=;
+	b=s2+fqNlkqe8x/x8xYgOlBo7yrtcd78bTQ0F0bEdu9edVE4ilRpVdbUZuhNCdGIBmjv8XxJ
+	4H6/Gg+ylUi9ywCE921e16l6puX+zIovYpaI7fvsM+xrVPBv/eRhWrTh7k0MCT8pmAJV7c
+	Tjv24IFZVyYutG5ZduoKWNoT+1ONWP4=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+Message-ID: <q3thzkbsq6bwur7baoxvxijnlvnobyt6cx4sckonhgdkviwz76@45b6xlzvrtkr>
+References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
+ <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
+ <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
+ <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Add support for folios larger than one page size for writeback.
+On Fri, Apr 25, 2025 at 09:35:27AM -0700, Linus Torvalds wrote:
+> On Thu, 24 Apr 2025 at 21:52, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> >
+> > And the attitude of "I hate this, so I'm going to partition this off as
+> > much as I can and spend as little time as I can on this" has all made
+> > this even worse - the dcache stuff is all half baked.
+> 
+> No. The dcache side is *correct*.
+> 
+> The thing is, you absolutely cannot make the case-insensitive lookup
+> be the fast case.
 
-Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-Reviewed-by: Josef Bacik <josef@toxicpanda.com>
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
----
- fs/fuse/file.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+That's precisely what the dcache code does, and is the source of the
+preblems.
 
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 61eaec1c993b..5e7187446730 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -2014,7 +2014,7 @@ static void fuse_writepage_args_page_fill(struct fuse_writepage_args *wpa, struc
- 
- 	ap->folios[folio_index] = folio;
- 	ap->descs[folio_index].offset = 0;
--	ap->descs[folio_index].length = PAGE_SIZE;
-+	ap->descs[folio_index].length = folio_size(folio);
- 
- 	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
- }
-@@ -2088,6 +2088,7 @@ struct fuse_fill_wb_data {
- 	struct fuse_file *ff;
- 	struct inode *inode;
- 	unsigned int max_folios;
-+	unsigned int nr_pages;
- };
- 
- static bool fuse_pages_realloc(struct fuse_fill_wb_data *data)
-@@ -2135,15 +2136,15 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
- 	WARN_ON(!ap->num_folios);
- 
- 	/* Reached max pages */
--	if (ap->num_folios == fc->max_pages)
-+	if (data->nr_pages + folio_nr_pages(folio) > fc->max_pages)
- 		return true;
- 
- 	/* Reached max write bytes */
--	if ((ap->num_folios + 1) * PAGE_SIZE > fc->max_write)
-+	if ((data->nr_pages * PAGE_SIZE) + folio_size(folio) > fc->max_write)
- 		return true;
- 
- 	/* Discontinuity */
--	if (ap->folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
-+	if (folio_next_index(ap->folios[ap->num_folios - 1]) != folio_index(folio))
- 		return true;
- 
- 	/* Need to grow the pages array?  If so, did the expansion fail? */
-@@ -2174,6 +2175,7 @@ static int fuse_writepages_fill(struct folio *folio,
- 	if (wpa && fuse_writepage_need_send(fc, folio, ap, data)) {
- 		fuse_writepages_send(data);
- 		data->wpa = NULL;
-+		data->nr_pages = 0;
- 	}
- 
- 	if (data->wpa == NULL) {
-@@ -2188,6 +2190,7 @@ static int fuse_writepages_fill(struct folio *folio,
- 	folio_start_writeback(folio);
- 
- 	fuse_writepage_args_page_fill(wpa, folio, ap->num_folios);
-+	data->nr_pages += folio_nr_pages(folio);
- 
- 	err = 0;
- 	ap->num_folios++;
-@@ -2218,6 +2221,7 @@ static int fuse_writepages(struct address_space *mapping,
- 	data.inode = inode;
- 	data.wpa = NULL;
- 	data.ff = NULL;
-+	data.nr_pages = 0;
- 
- 	err = write_cache_pages(mapping, wbc, fuse_writepages_fill, &data);
- 	if (data.wpa) {
--- 
-2.47.1
+Case insensitivy in the dcache caches the case sensitive name the lookup
+was done with, not the case insensitive name we do the comparison
+against.
 
+That means we end up with extra aliases - and potentially an _unbounded_
+number of aliases if someone is screwing around. Given the problems
+we've had with negative dentries, that sounds like a DOS attack waiting
+to happen.
+
+It also introduces tricky corner cases into the filesystem code; last
+bug I was chasing last night was one where without calling
+d_prune_aliases(), those aliases would stick around and end up pointing
+to an old version of the vfs inode when the file was deleted and
+recreated, which was only caught by bcachefs assertions in our
+write_inode method. Eesh.
+
+And that's to say nothing of the complications w.r.t. negative dentries.
+
+I would've rather had the dcache itself do normalization in pathwalk,
+and only cache the _normalized_ dirent name.
+
+That would've made lookups a tiny bit slower - but like you said, who
+cares; we don't need case insensitive lookups to be the fastpath. RCU
+pathwalks would've still worked, it wouldn't have been huge.
+
+Maybe the samba people cared, I haven't looked up the original
+discussions. But it seems more likely the determining factor was keeping
+case insensitivity out of the dcache code.
+
+> Now, if filesystem people were to see the light, and have a proper and
+> well-designed case insensitivity, that might change. But I've never
+> seen even a *whiff* of that. I have only seen bad code that
+> understands neither how UTF-8 works, nor how unicode works (or rather:
+> how unicode does *not* work - code that uses the unicode comparison
+> functions without a deeper understanding of what the implications
+> are).
+
+Since you're not saying anything about how you think filesystems get
+this wrong, this is just trash talking. I haven't seen anything that
+looks broken about how case insensitivy is handled.
+
+And honestly I don't think the security "concerns" are real concerns
+anymore, since we're actively getting away from directories shared by
+different users - /tmp - because that's caused _so_ many problems all on
+its own.
+
+(But unicode does create problems with e.g. all the different space
+characters, because if you do have a shared directory you can now do
+sneaky things like drop in a file that appears to have the same name as
+another file, and try to get a unsuspecting user to click on the wrong
+one. I don't think that's something the filesystem needs to be getting
+involved in - that's a "don't use shared directories, idiot" problem,
+i.e. your permissions model is broken if you're affected by that.)
+
+> It's in filesystem people who didn't understand - and still don't,
+> after decades - that you MUST NOT just blindly follow some external
+> case folding table that you don't understand and that can change over
+> time.
+> 
+> The "change overr time" part is particularly vexing to me, because it
+> breaks one of the fundamental rules that unicode was *supposed* to
+> fix: no locale garbage.
+
+First off, since the unicode folding rules are referenced by the on disk
+formats, they are _not_ changing without review by filesystem folks.
+
+Actually - not in the case of bcachefs, since we store both the
+normalized and unnormalized d_name.
+
+Like Ted said, updates that simply add folding rules for new unicode
+charecters are totally fine. Aside from that, everyone agrees with you
+that we don't want locale garbage, literally no one is asking for that.
+
+So I don't know where yuo're getting that from.
+
+In filesystem land, we version things because you'd be BLOODY STUPID not
+to - not because we plan on making changes willy-nilly.
 
