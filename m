@@ -1,57 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-47460-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A327A9E49A
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Apr 2025 22:50:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A294EA9E580
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 02:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8331318928F7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Apr 2025 20:50:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA26189B006
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 00:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D4C81FFC5F;
-	Sun, 27 Apr 2025 20:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488A778F4E;
+	Mon, 28 Apr 2025 00:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gbhRtubs"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T98fcr7o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 831E81E1DEE
-	for <linux-fsdevel@vger.kernel.org>; Sun, 27 Apr 2025 20:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0894D8BF8;
+	Mon, 28 Apr 2025 00:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745787023; cv=none; b=JmZVXIcFVg+Lts8E1kPVVg+CW+Ikn5l38TCDqqUGQ/X3zQCHKd9FMCs3knT5oN4Du3jB5mT1fr4V5VPBgsxlr7iRG14k6wKMmrVg6euqMpEmJfw8ygr4CTgcDu4iGID9l2ofzNCecjFC+9ll1Lcl5Zo9lfJXBruvY7Tbu/QqoRc=
+	t=1745800688; cv=none; b=Lg3S4DMYigtDlQIqEwn+GEcXsKoFn/Kd3nlV1dGUXkX6kSGqMLTW/yjid46F8G1GSyMtpkfGeaWyTBo7MS6J41e/XM2TQtPFYfvIOzfvV1DWSHUFM3HB17zszehVH0LeTlYbjaz+g8DD2/aJ5sFuuE+PdmVsTkgD25s+LfePM9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745787023; c=relaxed/simple;
-	bh=IySfsG/Fon0rlcGAzIt0Y80/E514IZK3vTvQ6N8Lp4s=;
+	s=arc-20240116; t=1745800688; c=relaxed/simple;
+	bh=X93ENz4hZ9SghUIv/n963X0gxLuWiGrP0pFJLjKpsSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=htP/k8dyS7w7haY6tLdPsKZu2w+Yle+8ZWKFuRj71PkQFdutsGBi9buRCKc36MGFKIXc21HmcbP3btdAD8sIDwPT1VEteEK4JbVAFrYU6pd8ndw+O7U8Of3Dti3Y7ivt+fyIrWNU7qL6taZInvXzzgVxdHwBRcB70NUpfkREelI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gbhRtubs; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 27 Apr 2025 16:50:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745787007;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DjaP+b4X34P31aw/uqok/yS3GcR1WDAXWGJx5LawSFw=;
-	b=gbhRtubsr8dhX6Tb8BlH4xKRLQ/mQlxnmWIJkzzATi86vUmsAWzp3ML+CGxxgwWf2+OfyT
-	Gx80UEI+IBB712adtpbS82uo4YSIFDouFwiy3Qx+MyVzgzJitkXBJqjeeee78VJJWm2jxY
-	FRqdHR/aQTEJOvdk7/Bzq6BJv/m4MVo=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: linux-kernel@vger.kernel.org, Coly Li <colyli@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Carlos Maiolino <cem@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Darrick J. Wong" <djwong@kernel.org>, linux-bcache@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, lvc-project@linuxtesting.org
-Subject: Re: [PATCH] sort.h: hoist cmp_int() into generic header file
-Message-ID: <ztruxbvaatkgbngjr42twcpwmsowvpvlzxls6f576nzfqs7po2@ttzbexdvps3h>
-References: <20250427201451.900730-1-pchelkin@ispras.ru>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HH1BI2+zyLbU9VoSDwk6Tuh7aG1gqVESVPoGL1men+YxhYOov8eKbnbYy91v0UACEAZSvtNp6aY8DRMfpvAqHQVXFWnnJAihgDtuKrRsUVAKB2eg0gF3/to++goPTPSBG0aYcjx6fRFOJNtWbjuz3w1aQcDkaBbkE90VcaBx/Yw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T98fcr7o; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=WwuY/6ttiqKGxuiZxXTw1pq5GZbsJP4t0dCyVGoDwXg=; b=T98fcr7okBkuiBWbdzq0KStxgu
+	umKA8nfSz3IUntLKD9imBZ9mgjMydQgtVoRWFQa98SrZltEw4jaWcTDdSEC68GcEkGi2IalBR8f3V
+	eGWyQ9kwIvYWbaI3Qegv4BgikQaEaFmT10qJxtH704B0V69FdqofAku90hZCFn3KFvBh4V/WkS0ra
+	1feaPdT1TkFkrSYxBGuGYXxoc2MpVxS8eqBKBY4K3iWZMR5sqcCcGNXFljbPl0X1w2pfov9IkPBiM
+	dPEsfuAGULpUBPOIQpgvsp6RVdCPjmBrwDhcSQo8m00+jv8hmnS4xLUyvQUWGW7Oi2hoB6NkmTjRh
+	xEZcWOwg==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1u9CVC-00000004ewq-0kBu;
+	Mon, 28 Apr 2025 00:37:42 +0000
+Date: Mon, 28 Apr 2025 01:37:42 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Kairui Song <kasong@tencent.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>,
+	Yosry Ahmed <yosryahmed@google.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
+	linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/6] fuse: drop usage of folio_index
+Message-ID: <aA7N1SHoR-tY4PJW@casper.infradead.org>
+References: <20250427185908.90450-1-ryncsn@gmail.com>
+ <20250427185908.90450-2-ryncsn@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,18 +68,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250427201451.900730-1-pchelkin@ispras.ru>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250427185908.90450-2-ryncsn@gmail.com>
 
-On Sun, Apr 27, 2025 at 11:14:49PM +0300, Fedor Pchelkin wrote:
-> Deduplicate the same functionality implemented in several places by
-> moving the cmp_int() helper macro into linux/sort.h.
+On Mon, Apr 28, 2025 at 02:59:03AM +0800, Kairui Song wrote:
+> folio_index is only needed for mixed usage of page cache and swap
+> cache, for pure page cache usage, the caller can just use
+> folio->index instead.
 > 
-> The macro performs a three-way comparison of the arguments mostly useful
-> in different sorting strategies and algorithms.
+> It can't be a swap cache folio here.  Swap mapping may only call into fs
+> through `swap_rw` and that is not supported for fuse.  So just drop it
+> and use folio->index instead.
 > 
-> Suggested-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
+> uigned-off-by: Kairui Song <kasong@tencent.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Joanne Koong <joannelkoong@gmail.com>
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Signed-off-by: Kairui Song <kasong@tencent.com>
 
-Acked-by: Kent Overstreet <kent.overstreet@linux.dev>
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+
+> @@ -2349,7 +2349,7 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
+>  		return true;
+>  
+>  	/* Discontinuity */
+> -	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
+> +	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio->index)
+>  		return true;
+
+This looks like a pre-existing bug.
+
+-	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
++	prev_folio = data->orig_folios[ap->num_folios - 1];
++	if (prev_folio->index + folio_nr_pages(prev_folio) != folio->index)
+		return true;
 
