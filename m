@@ -1,77 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-47529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426F6A9F60F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 18:42:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C7C6A9F618
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 18:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA7033BD0F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 16:42:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0CFC7AB84E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 16:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B4B26461D;
-	Mon, 28 Apr 2025 16:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE90E27FD63;
+	Mon, 28 Apr 2025 16:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sy8McH2D"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="ph9KMfpE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA38E27A93B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 16:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53C6527D763
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 16:45:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745858565; cv=none; b=jOS9TcwS1B4oB80QK6k6goCFfK2zdKIvPjmia0+VLwACaFgMOe7O1PN6STtGmIco8wSWE+RvKW/e3cZJhr+6mpz8aB7blyrLwIO3wFKwAkX8vJ52wN7rbMJpvlpHAhrMGQGfSW49V8g/Oom6VlTZSn/YxThSkXcEpcp5JScdCxQ=
+	t=1745858723; cv=none; b=Ezhz9YBTC/MciNC++d6z+P1uDhUo1FhXL5bl2SWjwSQVHDSbyc9GnE3LhvncOsRi4k5qUkAzz2Qu+3RgLP7rTvV2GEb9rByQQ7HvyZS9Xf4zZzqGMbuFfQipbBRFZKHLGscVgcZ6m9nQ4GNZImZudY52gEVDHP1JGhVlcUAPgD8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745858565; c=relaxed/simple;
-	bh=6xY2nc0RaB26C8Wx9+EpDD+pS50ZQFFzgqmN0vDJVM8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QRBFsJclN42hLCTnyViss8fhqBO2VsMNr6/vTmT4WC9Gnlq0TkVhWSTdlDZmpNnMGzkG6YpWVBjSHYgUiMYKge0Ujv3oO6NEZUofKl0lINiHbIa4e9m0KuNBUyUDcKNGzbfZ3XCIPmWIIbv2ualYT49o23scB7KzRgRlbAfqbAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=sy8McH2D; arc=none smtp.client-ip=66.163.184.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745858557; bh=sqVT6q/gS2IO11mPSx1zGKMYT49soEThtm+blh315uA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=sy8McH2Dg0hZ+KIcGa9BrMAEbFL9dd9DzyuowdMBJ42kmfJcNKcRZt20kBLnpBWxnK9oHCEjqL0jIJGw6Jtq9jNNR1eViSzRtfYWXdrphC7qiDYYCq7VhgXBFs9qjXquZSKbKMyErHKPEa2LGXGEF8YWq0m/sLcR5SdRe4bI7Z+ROhYVWxG3U0UsFAP3fTJ5iliwOxPfW8UYP3DASScj5Leb+0OPP/WjnHmcrg6DBqyAyw7C7qcZ/8Ls94zH6DAttq/h6ta/MaKruY0dIPBVund0sWCwcbBAVjeFyVvuoXFNVjwwZYmODAJu7sNtM5CymBG0SLzj+HeBFrGOshz67Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1745858557; bh=AaB+4b8R6aK9GpofH2aLyUTW2SGOUbvNypMJJvMPNSK=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=ksZjKFQUg7ed8L28KAyveI004hSn4tNZesU/IxyNMpw4OmJTaffC+5J1e8Te+vkl1U8j8Zd+CvS/SNU8YOPC3xWBkfh+2ZSdfebMFGrEgxP4GPvCJdpQceWg+MWRBRCYjr/pmdqW+vGTcdy306o1SRe1uT7BFpnvACK+iV/9h2Zr1xNK8Zfur85ENlx0/N9+2s/hPhOk47PVUXDiODRD9T+BmC3Echc67A9Iyw80Q8bfREy3ESHeBTm15puTg+7LqYUmgVRivo4z4aN3IlCdDppjlAA4808sgzbPtvsDvBwAB5Yci1WL/whwEQ8/AjzZljPSQkH4Kcyw+M4V07kp4w==
-X-YMail-OSG: UYxsJJYVM1nve9Q1xFVLkeERBzVnVqyeHNPd50KUB7jgbH3qnYdOeQSyfMHuvbW
- qdxenoAyQY4kfeXtpWqZncnvV4pEA65QrNlhYkSBm5eHxEzqJaN_MrUWFi4HLAdU3NTv9ONO8gLT
- cLAu_MOBPS_LgVGCglF1z0Y3_8ytqhiuFo_TP8MCy0UFNM6a1IbxYWDG86Cox61EjEcmypBIvpe1
- uWuUd4TD4tK.3ul8yWMxqrd25_WVjmqzIPeI2kQxA80v8bDSvAvS9fRfgBQie1dFmB7b.lMgWFOP
- ZilW7mYqGAUAEd5sIHhRbM5sX06GQSi1mpsVcYkc8PJknupzijLUWFVZter12xVOFjb0BA55oSAH
- 77H4.ISHRjuvqylanW3b5ADWiS95coLks.f8xOjtuxNenvVMAg8nqxpdtyEdsA_UdRr4ecIQECqE
- bmgJN.bhYwx3oMX6z3Jz1bkOJklFDEYmnAKw3D3str.Nht9hC_xVNgrbLJZ9.rNr.mOFSxqa6jfR
- NzTWQm.Ytw63L55tA06hyzHHdrjVR2OXcgnBOkat708FMl_IPur7I3GO7c4xZx1cLwYxLsVyQlM2
- vLwoPcqv2JNGJlx.k_S6poZ78DMhnZPo1Fi5UANnyldKm0qx2nvSkgFeSxH_dSA2oUxF38Jv05Ex
- uPnh4LNRt2ILoAAhOXhYaQBMOFAHUmDPQjBMyjx8eZA84SDu2cVeBZrZdVN01GhuztLQNAVp294G
- ULILjvCOs.54DRfxU1wtH17Sk79MRyUWr7F2m1MfzeT0xDCQ2oSEuRMV9JWeS7rkBFeYtUEFcUW.
- Ps03SFKOZwHHSe7i1CUN1AQL79JqCpL2D2vGFmZElBKd654KIWGglrDvQzz9go6t_dnC_0XNuFFz
- Wqfs7cwGDr1KAQbGHT1tMMN62xIPoyd_lYLpXpPLS6T.i1PVqtCeHq0agMU62JEcFBVVHeNq0Q5y
- mMIR8R_58uuJGV80TTO8N1InesdhPtkZG17KfzZZvINBYepDdFtaqqkiiBMdwmDvIJnUKUTq8RqS
- x80QqukyMnMk8ThsUJYJh7MuGF59h2T8N7GxnM7K9zgIZvCApcvG2ecW.Hagm535fBKgeZ0GuN6T
- wiN7fj8CSnxIEf_0tjTs2hd_CtNjs8SOo.FceppCmCHalLAesziEagVow2DCsId4mAsLZ71.1NYv
- UM92W_x6lVQ2vZW8fpmNtXDjV6DeZgshzQGWrjWc5lF9TmZ55DoTsPTGyMcqDW8Mhi8Y4z9i5EMw
- CWoPC1chtCz9ZdvpDp4qoHVc_j3gH9PNFj8xOBHxZOnW6EAV76Srgpn_yfaAL6R1qRitIkQ3zVba
- se2GMNKCv42Z4LlEa6TVZnzW7d.s1xmc4I5nEbAM6as4EXDBMCURXjgZkS8G2BpYfHRXrvrLN9An
- Plqi._0rEVZ2rLX5T9oTpcEATS9cFX7LHkTPtZQDEEDSiq5419tp0MLu0nUE0Mzc_BaWFqe7j6MV
- lJUinby15mI.gtJVB88ANtxOgY0xa4bjspGMx0ECpJNHzOzwvRhcjz6fru4tXGfll_EI0ippPIKM
- W8anfa3hFd3u5KeQF0v38m8BShW4c229uA06WOCdxy16JBMDZNRX6wC8iiwbUX6O8zmrAjhjzGCq
- 8DBAN9gSguBrMmyQfB9o1y_vYNPbiRJhNk5BckAjmHuytY.ZPhAU6RKnJsxHUkntiUL3Yj_vuUv0
- ZApsmGak9pq3qlG5QUcnQvs6v0DMvfgq50PynoFhABZkdJVH0q9P8DdveQcOMI7OKHSgrLik59kD
- zaAPDwdXDMgvaHXZGiHD_O7bBbCYplhKf2VkM9JNis2_GH.mGmPc0wDqk2xNoJsy_iRm4YJQmnZ1
- Jw2c_L2ut7ybkHC9Psxxp_7UnGIAXvGz0NIIJuf8qh4T._FjQXNr69vuYWFV7T76pOB8boFnM5ja
- l7YhKZuFRVmZ5L9nsUvkc.gHXv1JPVQofrP2YOb4NQ0c2zJhGP9RqrTDcMjCUxhYdYydxislMlC9
- 5h9hTDI2E0ppdVWQHyCCtUufdASICa2N11Z._oEMpPJA4daZpCA_mE.C2jtNPkKssc5BJ9BN9lrt
- nLrLJj3TroWEET.3j7WUAXcboQKa9astOlpVySbvvahbPdIInXS0_eNLewaYQdPs9jgfKzFjlmfK
- T1srwHLociI00t176XO8hSn3oi0EoSBcwNnUUgDQU6Y_pXmS753OvERIzjlzBKsc_l58.0hGdfjW
- a2f_2_EOabiLHJtwbquFCYOboie.Js47cjFkCbFEceb5TxLWGaqgqoGFms5rdJF23KIRecTSMtda
- VUg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: dc9f098f-28ea-41ed-87ec-fab9cfeed3e1
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Mon, 28 Apr 2025 16:42:37 +0000
-Received: by hermes--production-gq1-74d64bb7d7-4ndhm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0d3d3196c6fbd5ff60aed6348ba5f11a;
-          Mon, 28 Apr 2025 16:32:29 +0000 (UTC)
-Message-ID: <f24142d4-e0eb-4d35-b230-80dff1e58331@schaufler-ca.com>
-Date: Mon, 28 Apr 2025 09:32:28 -0700
+	s=arc-20240116; t=1745858723; c=relaxed/simple;
+	bh=Z5cQJUX1NbkXvQwgA7QujW9GmijALGJJ/RcgDNIxvyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OabLEJFWIn8K38r/ehge+bXwbLLAlazhKjsC5SFz6UtmqOeuKPNQbw3ECG0oTsqYDHmDcRPrix7HZqghh2c2l5TIdugiOkHkAI0+k9n+QkGega9xet2VOQmkI366DdKYYgO3tF3d6RkdomVlrD3SSa9uGY5N0XUIyKpDZirKBVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=ph9KMfpE; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3d90208e922so24764575ab.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 09:45:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1745858720; x=1746463520; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=9MUWsMO8+zzeKqEoat3ch1kch4vWM2YGYaR6q5i5jRI=;
+        b=ph9KMfpEirpCgXCJgHKtKO/gGSts2nuGaBIEMT6T0ojOiqku7tX31Ndhki+y8cx6sW
+         3pa6kKG3OA76hQcGTvYY+pEr6S+WvSxuGwia1qOImhCoUAAh9a0SzazZpqKkUdbGsOCv
+         i5gcQl9DzLw0v6jihs9096G2AD7EOaVVjFtZTHa33j8wPmBDjmnSmEWKRLCmhSCAvLK7
+         mpcLQpgt7r2uRowKucyN13bDLI693xO8AYZG9gNKqNGuz1OMj1LhE2WIPVUP8+zR72hn
+         v295p8EoyiKN7GgF0RJHE97I2XyEHZfEKcnKIcXTnt44W19bxjtua3cMQaVVmPEAyt1T
+         BTtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745858720; x=1746463520;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9MUWsMO8+zzeKqEoat3ch1kch4vWM2YGYaR6q5i5jRI=;
+        b=bzwLBBAFBJnUzAhYa63TAp0sMWpB/vhW7vnxtIuGVlhJVkC3wP6mT3PTbN2Ur7aaAE
+         Vproq7W+tCL7Se9w2ybMLkyCNZAZVyKScdi2K3tR0yaxkGhdfeEcOmnSuSZ1V7OpqU+a
+         +18vSUzN8mHCjSKwM7BYRowLS5DmuoQvz4qH3YB6wJ4RjLvvToCFbfVUGyr9lWEisg/m
+         6JJ7UTn/ICc7m8ILy6b1wa4xtcf5eTIWuce8L1YbwGjZDvWNza9qHEcRzc+EmQ8RkS/y
+         FFeuGzRF2ckxu0C2wFcmh5STq37mBIA19Ppq3D/HSOl3R3XfMVRV+AiLeDZUQxOQavYJ
+         6vfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdBvmADtPasy/XRAltImEjrIVWAMll+k8DvdG+T3C1QWXez8o4h95MHbt7JJ+rqpwYZt+9pEFoDC+Puk7H@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVlVmdNvB4dzgysFLhwft8SL5Tnhd4CkOxxeLFk+fTAeqCC/Il
+	xit2sy3WtbSMLOdG3JdioLX90iYLIkc/B2G+eVmBxOX3RGiZnL0M1MoQuvK/j3g=
+X-Gm-Gg: ASbGnctTfHiqpp7K4ADawvSjg9OMqdzNdmSpmiGbd83b3Kpy6iwontOUsjMkHYYWoNt
+	+Sdz7ROYNqXn3dRWLg9wnDbIdyWmMGoZiWhBn4Le9ljzAErtFnzvK9QQX4VJrVcadEZ3M83BFG7
+	pIf7MmsV/Q60DWl/cDQQPsvE4UTJUccLwxKJmWpAPvnI2DY9Z7Q/7U96/4FcCmIDDGQVAYr26lq
+	OjA2jVu/dfbmmvgVdUMt8IWFEHxGERnxpLf/OceybUXMV+Egrt7kjZRiHlpSYxpOkB6JBLpKP7u
+	DS/kBMMdLd6NMyUwmbcKJ4z6il0R1WmBlgXV8p5J290IlxI=
+X-Google-Smtp-Source: AGHT+IG5qV/mX+wlx/OUaoyJ42BYYbyU09yi/RjQzH4juW3GMl5ZeowBow5Cy/cY5c60VK0rkXq88A==
+X-Received: by 2002:a05:6e02:1527:b0:3d8:20fb:f060 with SMTP id e9e14a558f8ab-3d942d1ddc2mr100354175ab.4.1745858720085;
+        Mon, 28 Apr 2025 09:45:20 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f824a41dedsm2336055173.50.2025.04.28.09.45.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Apr 2025 09:45:19 -0700 (PDT)
+Message-ID: <c70692b8-4026-4ba7-b6a6-561bbb887001@kernel.dk>
+Date: Mon, 28 Apr 2025 10:45:18 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -79,61 +81,88 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security,fs,nfs,net: update security_inode_listsecurity()
- interface
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: paul@paul-moore.com, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
- Paolo Abeni <pabeni@redhat.com>, Willem de Bruijn <willemb@google.com>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Simon Horman <horms@kernel.org>, Ondrej Mosnacek <omosnace@redhat.com>,
- linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- netdev@vger.kernel.org, selinux@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250428155535.6577-2-stephen.smalley.work@gmail.com>
- <988adabb-4236-4401-9db1-130687b0d84f@schaufler-ca.com>
- <CAEjxPJ66vErSdqaMkdx8H2xcYXQ1hrscLpkWDSQ906q8c2VTFQ@mail.gmail.com>
+Subject: Re: [syzbot] [io-uring] KMSAN: uninit-value in putname
+To: syzbot <syzbot+9b12063ba8beec94f5b8@syzkaller.appspotmail.com>,
+ asml.silence@gmail.com, brauner@kernel.org, io-uring@vger.kernel.org,
+ jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <680f4c94.050a0220.2b69d1.035b.GAE@google.com>
 Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <CAEjxPJ66vErSdqaMkdx8H2xcYXQ1hrscLpkWDSQ906q8c2VTFQ@mail.gmail.com>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <680f4c94.050a0220.2b69d1.035b.GAE@google.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Mailer: WebService/1.1.23737 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 7bit
 
-On 4/28/2025 9:23 AM, Stephen Smalley wrote:
-> On Mon, Apr 28, 2025 at 12:17 PM Casey Schaufler <casey@schaufler-ca.com> wrote:
->> On 4/28/2025 8:55 AM, Stephen Smalley wrote:
->>> Update the security_inode_listsecurity() interface to allow
->>> use of the xattr_list_one() helper and update the hook
->>> implementations.
->>>
->>> Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com/
->>>
->>> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
->>> ---
->>> This patch is relative to the one linked above, which in theory is on
->>> vfs.fixes but doesn't appear to have been pushed when I looked.
->>> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
->>> index bf3bbac4e02a..3c3919dcdebc 100644
->>> --- a/include/linux/lsm_hook_defs.h
->>> +++ b/include/linux/lsm_hook_defs.h
->>> @@ -174,8 +174,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_getsecurity, struct mnt_idmap *idmap,
->>>        struct inode *inode, const char *name, void **buffer, bool alloc)
->>>  LSM_HOOK(int, -EOPNOTSUPP, inode_setsecurity, struct inode *inode,
->>>        const char *name, const void *value, size_t size, int flags)
->>> -LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
->>> -      size_t buffer_size)
->>> +LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char **buffer,
->>> +      ssize_t *remaining_size)
->> How about "rem", "rsize" or some other name instead of the overly long
->> "remaining_size_"?
-> I don't especially care either way but was just being consistent with
-> the xattr_list_one() code.
+On 4/28/25 3:38 AM, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    a33b5a08cbbd Merge tag 'sched_ext-for-6.15-rc3-fixes' of g..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13f77fac580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fca45111586bf9a6
+> dashboard link: https://syzkaller.appspot.com/bug?extid=9b12063ba8beec94f5b8
+> compiler:       Debian clang version 15.0.6, Debian LLD 15.0.6
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/e23fd3b01d5c/disk-a33b5a08.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/d39e4ee184b3/vmlinux-a33b5a08.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d4117549249f/bzImage-a33b5a08.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+9b12063ba8beec94f5b8@syzkaller.appspotmail.com
+> 
+> =====================================================
+> BUG: KMSAN: uninit-value in putname+0x8f/0x1d0 fs/namei.c:285
+>  putname+0x8f/0x1d0 fs/namei.c:285
+>  io_statx_cleanup+0x57/0x80 io_uring/statx.c:70
+>  io_clean_op+0x154/0x690 io_uring/io_uring.c:411
+>  io_free_batch_list io_uring/io_uring.c:1424 [inline]
+>  __io_submit_flush_completions+0x1b00/0x1cd0 io_uring/io_uring.c:1465
+>  io_submit_flush_completions io_uring/io_uring.h:165 [inline]
+>  io_fallback_req_func+0x28e/0x4e0 io_uring/io_uring.c:260
+>  process_one_work kernel/workqueue.c:3238 [inline]
+>  process_scheduled_works+0xc1d/0x1e80 kernel/workqueue.c:3319
+>  worker_thread+0xea3/0x1500 kernel/workqueue.c:3400
+>  kthread+0x6ce/0xf10 kernel/kthread.c:464
+>  ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:153
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+> 
+> Uninit was created at:
+>  slab_post_alloc_hook mm/slub.c:4167 [inline]
+>  slab_alloc_node mm/slub.c:4210 [inline]
+>  kmem_cache_alloc_noprof+0x926/0xe20 mm/slub.c:4217
+>  getname_flags+0x102/0xa20 fs/namei.c:146
+>  getname_uflags+0x3a/0x50 fs/namei.c:222
+>  io_statx_prep+0x26f/0x430 io_uring/statx.c:39
+>  io_init_req io_uring/io_uring.c:2140 [inline]
+>  io_submit_sqe io_uring/io_uring.c:2187 [inline]
+>  io_submit_sqes+0x10c1/0x2f50 io_uring/io_uring.c:2342
+>  __do_sys_io_uring_enter io_uring/io_uring.c:3402 [inline]
+>  __se_sys_io_uring_enter+0x410/0x4db0 io_uring/io_uring.c:3336
+>  __x64_sys_io_uring_enter+0x11f/0x1a0 io_uring/io_uring.c:3336
+>  x64_sys_call+0x2dbb/0x3c80 arch/x86/include/generated/asm/syscalls_64.h:427
+>  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>  do_syscall_64+0xcd/0x1b0 arch/x86/entry/syscall_64.c:94
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> CPU: 0 UID: 0 PID: 10442 Comm: kworker/0:3 Tainted: G        W           6.15.0-rc3-syzkaller-00008-ga33b5a08cbbd #0 PREEMPT(undef) 
+> Tainted: [W]=WARN
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+> Workqueue: events io_fallback_req_func
+> =====================================================
 
-Sigh. Then I'd leave it as is.
+I took a look at this and there should be no way for this to happen.
+Then I looked at the dmesg log, and there's a ton of failures prior
+to this, including what looks like memory corruption due to UAF
+on other pages.
+
+#syz invalid
+
+-- 
+Jens Axboe
 
 
