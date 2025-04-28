@@ -1,284 +1,260 @@
-Return-Path: <linux-fsdevel+bounces-47508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47509-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25C2AA9EDA9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 12:14:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FF52A9EE45
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 12:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FA5317AE10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 10:14:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 879747A8C38
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 10:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E2B25F98A;
-	Mon, 28 Apr 2025 10:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DEF224244;
+	Mon, 28 Apr 2025 10:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="n1VbAPbp";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="R6slzjSm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8C0254879;
-	Mon, 28 Apr 2025 10:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745835252; cv=none; b=La43n52UHJmp0uXpS2M88XiK7YS7h/DzwIR8cmXJOzKfZZGihCDy6tPCduofwP+D0l9QWcmSr5RpM5eKPBuI5574nDd6VbVoOreIRMS4n1itaZCaMqCRX3zL3s7+4uAH5mkLwOMWpKgsATarjzSVGx8Bn2zUGoRc5NcGjYlbyIk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745835252; c=relaxed/simple;
-	bh=HkTNp77Xv/WN2djASSapKS/GGL9ub1ZggUCpE1DQWh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Vug9UmuKQXC9hfYfh4sSCqRV/lDdVoDjpYBBwPRtXZzpPrHM3XMH5TgwX7uxJ6pIunOviTZh7MHaHvUnOcheeuMsd8bCLpfaP1h+YfIHAW7Xp59PtCqXTpZxLaLhHRrqSfLnFJYO1cdpxQpn8wtGrJlaCo9FGlohLDZ/5RH3hEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E9DC1595;
-	Mon, 28 Apr 2025 03:14:03 -0700 (PDT)
-Received: from [10.57.90.155] (unknown [10.57.90.155])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33D603F66E;
-	Mon, 28 Apr 2025 03:14:08 -0700 (PDT)
-Message-ID: <ad6b492c-cf5e-42ec-b772-52e74238483b@arm.com>
-Date: Mon, 28 Apr 2025 11:14:06 +0100
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711951FFC45;
+	Mon, 28 Apr 2025 10:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745837189; cv=fail; b=vA93K4mwlzHexdqEN23RqVIVH33V2uWYFdA6WTL2oyCqZ6RukvNsiLGRW4rv0YlNHE/hfoJBTXI/464FMgGRyW1WEoFAYD16kl+qqilww2qvtq7CqoZ2PYx9mrGw4uUpjCw8u6YHVR26/O6WQTW+Qzak8Dtr4zQL1s73weTUypM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745837189; c=relaxed/simple;
+	bh=ow0d+7OGh16r5F7Wr4EVZvzPAJvfj6LveYBryGnWTiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=APLjxZqvUc5VBhcF5LdKE4gjRnfl9LWu+j+U7hC79fpDeBc1hvHESPHq7SsMEf/UbkiBy6vzEHZXoI79kG2h2peATANGO7Rtm+hovGDL91aP8afM07cuS1gNv6CJX38qIDSZ1zyoioELbrFKQVilyB1YzOhK3ZaTRZq0xDNZ1AA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=n1VbAPbp; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=R6slzjSm; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 53SAX5Wp027756;
+	Mon, 28 Apr 2025 10:46:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=NqIA6rMGVbB+dVewIW
+	pHNFdkx12niiXMt9nnoYuaezI=; b=n1VbAPbpxbQXq0ZR0S7nO6MIxickkP7J36
+	1V/jxoc3/IKFgd/aIfi9JEwJMXTNq0dwSEfGqLDaUxV3ih149q2mWE+m0Sa5D2rh
+	4ClHsG4F6nBU6KnpJgc32v3wmbo4Kb+SeQ0p5iNRSxaYJoWblms9eS7KQkKZ/dHx
+	ZOGWhWuaOI9UBp5XfMFl0thl+C/LrpmImBVrgVExCw+oPKXDO2e+EEBND9uhih5v
+	vV82RYWjAF3KJt/fBhWcyQOMj2JCm4FdaQNHQzFS4jV3m/CKnN03vZzAyN7ztREc
+	ZLOB7WfWB3UshI4Sk9+Qtby9zX2AA0cTsLaoEFSC5AhR2vpjOWHA==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46a815g0k6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 10:46:12 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 53S90eww007773;
+	Mon, 28 Apr 2025 10:46:10 GMT
+Received: from cy4pr02cu008.outbound.protection.outlook.com (mail-westcentralusazlp17011028.outbound.protection.outlook.com [40.93.6.28])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 468nx80cwr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Apr 2025 10:46:10 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sp1Vfd50sAXJw3VG7v2KEjKJR7ZYC0zqD2jb8Uhh/2T9073fZuaVdPZBAUrvtXMuJhejWmU9myArwpeBAU3MeFuf5Y9TEj1nJfrvtX/y/g+ZaMBCrqTsLDmVdZbd+h9rRv1oqe1tspN2SFTfSqAgJQ7bfWmO5JgQx5TClTpYjab35wHNddtc2N1AWvQE8FryO8cLVj5tcSebRiuwcMlLlaNEuEdlZm/H/X3CLxTB80FWpvvGs1CeXcjGlwTqpaVPStblLPwLWx8rToV3RMwrqAiHaT92wq/C/LzqB7mpGcWPxbdF4S9ZYG9yDf8pP404zC5yH5nU3+xP2RALt8Fa0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NqIA6rMGVbB+dVewIWpHNFdkx12niiXMt9nnoYuaezI=;
+ b=yE8I+RpUMshUTbdUYtBr7OgJy3WUxGqjf7l1UdTXP8xNGAt83X1klJa3V3vXmP1NLlzN7qKavpLdtgLo0JQmKoxKVPKwKDVdZc+Sd9q1qwSDwrU4klf0Z2/N1iVnqFdlKJorxTFbDXnWJHka3ThlbtqeQY3TvSCifvZ4Rr1EDO3yAbhXYkvuGqUqsB3RFkpH1qFao0+QyeBQWsx8IurkaBWUmvXwlDfOwEDyIrjKvBQOuTyFJhtXefiLdShBsZAXvSphNQ7FD/D2F0EJDh2+cRo12rwLmCGgOOWyPEoFtxMMIDGrs1FUbad89KTfvTf7RZ5WCiA6tHar5dbj36x4ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NqIA6rMGVbB+dVewIWpHNFdkx12niiXMt9nnoYuaezI=;
+ b=R6slzjSmwDJJuA7xoBY651PUTevBLeFuJ2YYC8i3HdmUvyothHJy5F9ya4o5NNgOk8Q0XdKImf7H3fQ7epbEIFpck1Iq9Y/rZp5ihl7eGfblxQPRfY1RbrYSKYFThAjMw5HoEBqIk/+xkFwjjEiBnAEeyobxfpcanc2IP3olm18=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH2PR10MB4165.namprd10.prod.outlook.com (2603:10b6:610:a5::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.33; Mon, 28 Apr
+ 2025 10:46:08 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8678.028; Mon, 28 Apr 2025
+ 10:46:08 +0000
+Date: Mon, 28 Apr 2025 11:46:06 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Kees Cook <kees@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] mm: abstract initial stack setup to mm subsystem
+Message-ID: <4941ed00-09a4-4926-b7e4-9cdd70eed281@lucifer.local>
+References: <cover.1745592303.git.lorenzo.stoakes@oracle.com>
+ <92a8e5ef7d5ce31a3b3cf631cb65c6311374c866.1745592303.git.lorenzo.stoakes@oracle.com>
+ <202504250925.58434D763@keescook>
+ <8fc4249b-9155-438a-8ef8-c678a12ea30d@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8fc4249b-9155-438a-8ef8-c678a12ea30d@lucifer.local>
+X-ClientProxiedBy: LO4P265CA0133.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2c4::8) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] binfmt_elf: Move brk for static PIE even if ASLR disabled
-Content-Language: en-GB
-To: Kees Cook <kees@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>, Ali Saidi <alisaidi@amazon.com>,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20250425224502.work.520-kees@kernel.org>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250425224502.work.520-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH2PR10MB4165:EE_
+X-MS-Office365-Filtering-Correlation-Id: 131b8bed-1d42-4268-ae63-08dd8641e246
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hJ4p6GhOubjKbg74NI6l0jakLdO7vvjejhVhwTOb7KreRgwPd4wHCXBvTvZy?=
+ =?us-ascii?Q?e2tWHNi1ZlILqU4p2fQzKXGv6hsqmiHFCt3BCqcBrU7bkedgebm2BpzXasic?=
+ =?us-ascii?Q?nSVnCzoEsrdxCmLPM1uTHO1CaagdT1UKQEpG1WsDSoPdKAsMsM2y1oUJxaCA?=
+ =?us-ascii?Q?pKyCHZ4qMbknD7W9UlQqsLA4Deth5f2E0IzmoV1MrktQY/0VNqUfnD5nSK8v?=
+ =?us-ascii?Q?w4LXhWl3QftcEzs8Y0RFlYLVXnVcEeffdW9w+WZQlMqGcftV5hTy3YgyvzQx?=
+ =?us-ascii?Q?qIhB4Ma5SSFqW9F4GSQSrmOoeQXu59p/QP3kLc/jrF3rB71J9Xbb2jXG9WDk?=
+ =?us-ascii?Q?sSyBtg6HMRIlWIAltpvHRQEsAQ55h38us1AdMYENORsdcIiYmFfZXHMzyHdP?=
+ =?us-ascii?Q?FjcY/BNsrCoOcc961TQVlDDElg02nrAsdSF0ROnblu6m3HyNe9v0cpDI/3pf?=
+ =?us-ascii?Q?T8w51EF5ngsN9P2g+2lQ/tdiAnzWGR+0aCvotjg5abPVVsZrix2Z87npNQM3?=
+ =?us-ascii?Q?zEPRv0Gq7z6pXAe1R0nf7XHnq13Y2ZztUa7A7vxgW/2JQnohKTRnywETy/TD?=
+ =?us-ascii?Q?xe3LM8t5AejO7oF8JAJm+WzcWyFZl+bEGEgO+k6EmdBDkPnc9ckbiX3dFlPA?=
+ =?us-ascii?Q?BcNTqkGq3cEWzsSWMHVRw9gcRZx/rHD9LsBzYkPuQhvpYfIb9xY4OAVmWUEZ?=
+ =?us-ascii?Q?hFEsSXR8Bl53IRgdYJ/kNhIn94K85/YUJf5CVPCeg09UMyG2PB2RKcjp4Oo8?=
+ =?us-ascii?Q?l7Y0nfkaEgvpXsXDiF2pWBmuU3TXTXKAyYNSZX8BUtFdvkkkOeVBX0D9rhH3?=
+ =?us-ascii?Q?Fn6joeQbrJ3rQeHZQUiaE1n9yvUNJTAv1eMUchQRtZHH4+GSjAMsWb+fQI+C?=
+ =?us-ascii?Q?Hv7z7xMfXJFzUJ51lC0R5GGGUnEkHB7bvgsQySqYLCCNcYwc7sEy4dxOciQQ?=
+ =?us-ascii?Q?T1ECKZrl+EcomQB7gu1PwL2t31dslyKQ5wKtE6ZRzYe6P2UXlGOlXbckwGus?=
+ =?us-ascii?Q?Ys/ylXhXsRj3L/vfHx6YVEVFtX0XXRQk4/lQ0vKIWmGGlmjYsN7sPGnwQX+i?=
+ =?us-ascii?Q?GZhF18K12XElKrFZzK9APrdJcnessu0Wx93BjhMySFiw1nfj6Nrvm9j3rgx8?=
+ =?us-ascii?Q?7grbM0ClaffvISpnnfJLryF5Ul5uYLfABIItXKI0BHJzOAZBHU5QvbDIZyKs?=
+ =?us-ascii?Q?rIUAz9q/DEAtz8yAYRwpUB5zGM2j1QF9cOTmJwm/rN9An1k6ag6OMU4qlgRw?=
+ =?us-ascii?Q?jggDNUeVJBPULn4KJa0Dotw4NLigzq87No1AMiwInanZfO33Jz6xVGtlYKCl?=
+ =?us-ascii?Q?/x9A3QZeNaU3kSx+nezPgsKXHqzxDX6jhb7KCKm428WUJEYdyME5yuLpDoi0?=
+ =?us-ascii?Q?Ki702sweeQRKIavrWDHQpNHPKVCpDMYxV9P+9fMirKIca/GbPVMpiDHaPhf5?=
+ =?us-ascii?Q?KpiR87x118A=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?j+lFLaHZC9jEsNs+orYyWodBGPWfFKtncdKzEJJ03hxSEfSWIWSVjAQupRh4?=
+ =?us-ascii?Q?absI5Q8Jp7WwC0/oJf1/zAoffiCnZSm7SblpHiER5dGZsgSAaSznlMknNcsw?=
+ =?us-ascii?Q?uiuAAfVgfSA415girl59Vd8GJynpbvxk5oFgUVjY+5PWWJCmq2OGX0GP19MP?=
+ =?us-ascii?Q?lxkgeTlGzVb8cUOphTA2YPVNMiMzHEAZcwFShgh68B/BMqxg7u0Td7Rhpypx?=
+ =?us-ascii?Q?wepzU5RWfGW8YOQSQbnF50/vIjDcj6bHUbn8s8fw+/21sxYxXV7gGLsVuNdy?=
+ =?us-ascii?Q?zIJVHXeB33MMISIXPlli1igAKxtHncawxis+KO39gKjsxKQbkSkAOOFNhlKw?=
+ =?us-ascii?Q?QFGMCB8iqeQQRk5XGAt0VO7SDTGY/7JW5CT1Un0WB/9A00U1hx52d1NTn38o?=
+ =?us-ascii?Q?hSRLxmFgVT17cXUGySgPzc7Yto+WWo8xlysV7MMDs8fz+x6N25weVfkPpHDS?=
+ =?us-ascii?Q?X12WNbrK2dL6kulT2LPEq070B4QUVVTTN8RtMLRYROv9HeIUZS5ocglGaRnb?=
+ =?us-ascii?Q?LgOylicPy1Yg/x1Gln8KsGfuO8cuzFDUFchsGc8Grlbu3ScJ9svHrfkZFLit?=
+ =?us-ascii?Q?6YV9VpArhrW0kJFtWE8vFYknA9GoQ9r+L52eEO+b41KT9pmdcQVyk+PTRIfr?=
+ =?us-ascii?Q?a09dEyZFEycOTBF9OtwDEbKuM0NswRexLfSU+hjEd2s5bdFqwiiGYGQkJKze?=
+ =?us-ascii?Q?szOlbs9h7/N7G7fo+StOb5SKaMfnRgUmXquxs/H+42xFKEKiJMbpIIKGdsAZ?=
+ =?us-ascii?Q?pN4U1i3RQuihhJfrvOJImIQq+RkQ12Kt1a1khh6k3TktD9CLUBaceHFp7+9E?=
+ =?us-ascii?Q?04eBMDVRBdxGksS/BE5bsUhwufPtxR5T1z8dItGZgYJhki0dpDzIu4qe7Ufg?=
+ =?us-ascii?Q?zbn3OBwF8G2bAoG31fBZQMmTTR05N1TlPQTqJsplJkz+L5QT68laxMUf/qqO?=
+ =?us-ascii?Q?uOPravU7L62HU0RbnD5Avd+f8kqD1XNIUtdqjyJlvVyp6VP5zJVqX2IRfnVa?=
+ =?us-ascii?Q?tLQEDqtc1kdprhID7NBXBLB7Ob1DLd/sJaGnVFxj8Pau23J6aisiNZ+oNIsP?=
+ =?us-ascii?Q?Hsi9OlxrwQHs/0015oOZeOqEJR7W1Vcs6CXS7Bo9lmOlO0cmi4hlUcjeEUup?=
+ =?us-ascii?Q?Oh7NDPcXmd4ZLC6wn+sU5HR4jwA+Yl+6mIJn24ST368H9PmeSJgkIuRuCCAj?=
+ =?us-ascii?Q?qSjIIbyGoAgfQ6SE5zPBXQ67LWAQJYHsXqycvapYfFUqp/UUufrWPU9FJ9Qa?=
+ =?us-ascii?Q?bJp1mv3/ECz4lqw59u4dgIYgxrtbrHXunticUSn2krqkdHqWOvWet1FD6kxt?=
+ =?us-ascii?Q?+vlZiIWNXqCIBAQE0bHeTbGpucsVASN8gtnO1WvS8mxxorG2/68RNWacTzGH?=
+ =?us-ascii?Q?lOnXWU0tfljFIVe0J3inFMhoZY9U52IlRZjX6hHBvcExN4LG82qvxYhsC/ea?=
+ =?us-ascii?Q?YzclhdhiIHsCOOpQEwCQBLA9i+tkkmWJNbBYXt3un1pssgPC36+KuY5fVLVK?=
+ =?us-ascii?Q?Vm2yEs0nR48KjJtGYd/rzAejRrxxzqQwW8SGY/V9oUCFgYun0L2GzWwgep0p?=
+ =?us-ascii?Q?BV1wczQ6iPsKpYAZZ34vvihX/tS2nlQPkuPOMdG9xweCfevMzWbr9pbjLDSw?=
+ =?us-ascii?Q?IQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	RcNpTTdiGuMNpDGoIeGQxSAt+nTLpZfQwIHxUEFfR+XjB64CYnPKdMDAyInS40JOEo9tgoGUmnWYwcGXHAzNBjwZwCG4QfKsNGOMILj3rCbefKoFLhSOOQ9gaBQVUCqvA1eWSQ7WtN0RJYn24pOFpYkTqPIc1lVOX0m010iparuSX94ojGx0aBGP9ms0bWIRU+QzAnf84/KE7CI7/1Z8g2NVh8jWc23snXdN2lKZ+1lmKtDaoKduEOQ0p7QMQKfXAG/Ink4sWbQdQ1x2vbE4msFjuIZhTuSRSxWFkj+LCPn/cUfViyOrO83g23T/F30R0pX2tUxyuu+lhk5uMBwwL6xIIruwxZNdLNzQLg6shAmgjmsV3mA4o3dAY09064lWnIcPxSL9IuGLK2ozGCMotMGkgqs9gUMfFvNmOUvLvlP7x3RCsTYuoIL5503g+5ytm81trdNMs87pC7yb+pqE5Rjmtu8LINEc4bG1IZUSPgu4CYN8sHL/N5RvchLI+MqwVHCG0gKclNrl7nIpHYKxcbyB+UQi9fNT/Mk7UnucNZYJx9nFG0AMSdZ0I+TrRhf7Kq2NNRt3dtwrsAK61h6xlx865NVQXh6zCY7DhHuDjdM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 131b8bed-1d42-4268-ae63-08dd8641e246
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Apr 2025 10:46:08.4522
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9mlhv2O2LM7zEfeQ52Rv5sbS7yeOjo5K2qhU93j2XDjJD5hiwbFejPyOIIoEsQ226ceEaDbJ35ZmaYSXXKTSgf2yjuyirpyv3fzlXIg/mgQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR10MB4165
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-04-28_04,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 adultscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2504280088
+X-Proofpoint-ORIG-GUID: q0EVTP9d3_VdJC1hkTz7OwXXpGct_ejP
+X-Proofpoint-GUID: q0EVTP9d3_VdJC1hkTz7OwXXpGct_ejP
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNDI4MDA4OCBTYWx0ZWRfX+cnBFhNYJHq2 gBF8xXxR/zRAXIoHMPH7+2QQIVIE9RK3xC1Ch1BveXX1cTmbooK2bhCSdmj9bWbMcLpXv8zv7z6 2ss1RhjXx5h4XxBb8JlTAbelBb6D5/XiDZsb0lPCxfQ0WL90D54eYQAnK13UE2coDTT2P1J+aZS
+ QX1OuyKi52TfIDXhPJZH7y2U0slZJIDKPQhz1b23a6LuHFbzQRqT9wfiYKQi71arzXUb75w0+k3 2kExlr6q2EpjlCZUssQr4hung4qjhLGEUV2dZ3kopFp3ekXw9yAdSwPoVCAItdrMHjrWEOtcjtM uEkTZI0/FdO+M6HdJExuCdJH9mmCNAHp+UlhSk4J4ljy199NI0esjl5fko5L8yLaJn3OduIobfN GS5JrGGw
 
-On 25/04/2025 23:45, Kees Cook wrote:
-> In commit bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing
-> direct loader exec"), the brk was moved out of the mmap region when
-> loading static PIE binaries (ET_DYN without INTERP). The common case
-> for these binaries was testing new ELF loaders, so the brk needed to
-> be away from mmap to avoid colliding with stack, future mmaps (of the
-> loader-loaded binary), etc. But this was only done when ASLR was enabled,
-> in an attempt to minimize changes to memory layouts.
+On Mon, Apr 28, 2025 at 09:53:05AM +0100, Lorenzo Stoakes wrote:
+> On Fri, Apr 25, 2025 at 10:09:34AM -0700, Kees Cook wrote:
+> > On Fri, Apr 25, 2025 at 03:54:34PM +0100, Lorenzo Stoakes wrote:
+> > > There are peculiarities within the kernel where what is very clearly mm
+> > > code is performed elsewhere arbitrarily.
+> > >
+> > > This violates separation of concerns and makes it harder to refactor code
+> > > to make changes to how fundamental initialisation and operation of mm logic
+> > > is performed.
+> > >
+> > > One such case is the creation of the VMA containing the initial stack upon
+> > > execve()'ing a new process. This is currently performed in __bprm_mm_init()
+> > > in fs/exec.c.
+> > >
+> > > Abstract this operation to create_init_stack_vma(). This allows us to limit
+> > > use of vma allocation and free code to fork and mm only.
+> > >
+> > > We previously did the same for the step at which we relocate the initial
+> > > stack VMA downwards via relocate_vma_down(), now we move the initial VMA
+> > > establishment too.
+> > >
+> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > Acked-by: David Hildenbrand <david@redhat.com>
+> > > Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> > > ---
+> > >  fs/exec.c          | 51 +---------------------------------
+> >
+> > I'm kind of on the fence about this. On the one hand, yes, it's all vma
+> > goo, and should live with the rest of vma code, as you suggest. On the
+> > other had, exec is the only consumer of this behavior, and moving it
+> > out of fs/exec.c means that changes to the code that specifically only
+> > impacts exec are now in a separate file, and will no longer get exec
+> > maintainer/reviewer CCs (based on MAINTAINERS file matching). Exec is
+> > notoriously fragile, so I'm kind of generally paranoid about changes to
+> > its behaviors going unnoticed.
+> >
+> > In defense of moving it, yes, this routine has gotten updates over the
+> > many years, but it's relatively stable. But at least one thing has gone in
+> > without exec maintainer review recently (I would have Acked it, but the
+> > point is review): 9e567ca45f ("mm/ksm: fix ksm exec support for prctl")
+> > Everything else was before I took on the role officially (Nov 2022).
+> >
+> > So I guess I'm asking, how do we make sure stuff pulled out of exec
+> > still gets exec maintainer review?
+>
+> I think we have two options here:
+>
+> 1. Separate out this code into mm/vma_exec.c and treat it like
+>    mm/vma_init.c, then add you as a reviewer, so you have visibility on
+>    everything that happens there.
+>
 
-If it's ok to move the brk to low memory for the !INTERP case, why is it not ok
-to just load the whole program in low memory? Perhaps if the thing that is being
-loaded does turn out to be the interpretter then it will move the brk to just
-after to the program it loads so there is no conflict (I'm just guessing).
+Actually, (off-list) Vlastimil made the very good suggestion that we can
+just add this new file to both exec and memory mapping sections, have
+tested it and it works!
 
-> 
-> After adding support to respect alignment requirements for static PIE
-> binaries in commit 3545deff0ec7 ("binfmt_elf: Honor PT_LOAD alignment
-> for static PIE"), it became possible to have a large gap after the
-> final PT_LOAD segment and the top of the mmap region. This means that
-> future mmap allocations might go after the last PT_LOAD segment (where
-> brk might be if ASLR was disabled) instead of before them (where they
-> traditionally ended up).
-> 
-> On arm64, running with ASLR disabled, Ubuntu 22.04's "ldconfig" binary,
-> a static PIE, has alignment requirements that leaves a gap large enough
-> after the last PT_LOAD segment to fit the vdso and vvar, but still leave
-> enough space for the brk (which immediately follows the last PT_LOAD
-> segment) to be allocated by the binary.
-> 
-> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /home/ubuntu/glibc-2.35/build/elf/ldconfig
-> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /home/ubuntu/glibc-2.35/build/elf/ldconfig
+So I think this should cover off your concerns?
 
-nit: I captured this with a locally built version that has debug symbols, hence
-the weird "/home/ubuntu/glibc-2.35/build/elf/ldconfig" path. Perhaps it is
-clearer to change this to "/sbin/ldconfig.real", which is the system installed
-location?
-
-> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
-> ***[brk will go here at fffff7ffa000]***
-> fffff7ffc000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
-> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
-> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
-> 
-> After commit 0b3bc3354eb9 ("arm64: vdso: Switch to generic storage
-> implementation"), the arm64 vvar grew slightly, and suddenly the brk
-> collided with the allocation.
-> 
-> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /home/ubuntu/glibc-2.35/build/elf/ldconfig
-> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /home/ubuntu/glibc-2.35/build/elf/ldconfig
-> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
-> ***[oops, no room any more, vvar is at fffff7ffa000!]***
-> fffff7ffa000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
-> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
-> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
-> 
-> The solution is to unconditionally move the brk out of the mmap region
-> for static PIE binaries. Whether ASLR is enabled or not does not change if
-> there may be future mmap allocation collisions with a growing brk region.
-> 
-> Update memory layout comments (with kernel-doc headings), consolidate
-> the setting of mm->brk to later (it isn't needed early), move static PIE
-> brk out of mmap unconditionally, and make sure brk(2) knows to base brk
-> position off of mm->start_brk not mm->end_data no matter what the cause of
-> moving it is (via current->brk_randomized). (Though why isn't this always
-> just start_brk? More research is needed, but leave that alone for now.)
-> 
-> Reported-by: Ryan Roberts <ryan.roberts@arm.com>
-> Closes: https://lore.kernel.org/lkml/f93db308-4a0e-4806-9faf-98f890f5a5e6@arm.com/
-> Fixes: bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing direct loader exec")
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Al Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: <linux-fsdevel@vger.kernel.org>
-> Cc: <linux-mm@kvack.org>
-> ---
->  fs/binfmt_elf.c | 67 +++++++++++++++++++++++++++++++------------------
->  1 file changed, 43 insertions(+), 24 deletions(-)
-> 
-> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-> index 584fa89bc877..26c87d076adb 100644
-> --- a/fs/binfmt_elf.c
-> +++ b/fs/binfmt_elf.c
-> @@ -830,6 +830,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
->  	struct elf_phdr *elf_property_phdata = NULL;
->  	unsigned long elf_brk;
-> +	bool brk_moved = false;
->  	int retval, i;
->  	unsigned long elf_entry;
->  	unsigned long e_entry;
-> @@ -1097,15 +1098,19 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  			/* Calculate any requested alignment. */
->  			alignment = maximum_alignment(elf_phdata, elf_ex->e_phnum);
->  
-> -			/*
-> -			 * There are effectively two types of ET_DYN
-> -			 * binaries: programs (i.e. PIE: ET_DYN with PT_INTERP)
-> -			 * and loaders (ET_DYN without PT_INTERP, since they
-> -			 * _are_ the ELF interpreter). The loaders must
-> -			 * be loaded away from programs since the program
-> -			 * may otherwise collide with the loader (especially
-> -			 * for ET_EXEC which does not have a randomized
-> -			 * position). For example to handle invocations of
-> +			/**
-> +			 * DOC: PIE handling
-> +			 *
-> +			 * There are effectively two types of ET_DYN ELF
-> +			 * binaries: programs (i.e. PIE: ET_DYN with
-> +			 * PT_INTERP) and loaders (i.e. static PIE: ET_DYN
-> +			 * without PT_INTERP, usually the ELF interpreter
-> +			 * itself). Loaders must be loaded away from programs
-> +			 * since the program may otherwise collide with the
-> +			 * loader (especially for ET_EXEC which does not have
-> +			 * a randomized position).
-> +			 *
-> +			 * For example, to handle invocations of
->  			 * "./ld.so someprog" to test out a new version of
->  			 * the loader, the subsequent program that the
->  			 * loader loads must avoid the loader itself, so
-> @@ -1118,6 +1123,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  			 * ELF_ET_DYN_BASE and loaders are loaded into the
->  			 * independently randomized mmap region (0 load_bias
->  			 * without MAP_FIXED nor MAP_FIXED_NOREPLACE).
-> +			 *
-> +			 * See below for "brk" handling details, which is
-> +			 * also affected by program vs loader and ASLR.
->  			 */
->  			if (interpreter) {
->  				/* On ET_DYN with PT_INTERP, we do the ASLR. */
-> @@ -1234,8 +1242,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	start_data += load_bias;
->  	end_data += load_bias;
->  
-> -	current->mm->start_brk = current->mm->brk = ELF_PAGEALIGN(elf_brk);
-> -
->  	if (interpreter) {
->  		elf_entry = load_elf_interp(interp_elf_ex,
->  					    interpreter,
-> @@ -1291,27 +1297,40 @@ static int load_elf_binary(struct linux_binprm *bprm)
->  	mm->end_data = end_data;
->  	mm->start_stack = bprm->p;
->  
-> -	if ((current->flags & PF_RANDOMIZE) && (snapshot_randomize_va_space > 1)) {
-> +	/**
-> +	 * DOC: "brk" handling
-> +	 *
-> +	 * For architectures with ELF randomization, when executing a
-> +	 * loader directly (i.e. static PIE: ET_DYN without PT_INTERP),
-> +	 * move the brk area out of the mmap region and into the unused
-> +	 * ELF_ET_DYN_BASE region. Since "brk" grows up it may collide
-> +	 * early with the stack growing down or other regions being put
-> +	 * into the mmap region by the kernel (e.g. vdso).
-> +	 */
-> +	if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
-
-Does this imply that this issue will persist for !CONFIG_ARCH_HAS_ELF_RANDOMIZE
-arches?
-
-> +	    elf_ex->e_type == ET_DYN && !interpreter) {
-> +		elf_brk = ELF_ET_DYN_BASE;
-> +		/* This counts as moving the brk, so let brk(2) know. */
-> +		brk_moved = true;
-
-So you are now randomizing the brk regardless of the value of
-snapshot_randomize_va_space. I suggested this as a potential solution but was
-concerned about back-compat issues. See this code snippet from memory.c:
-
-----8<----
-/*
- * Randomize the address space (stacks, mmaps, brk, etc.).
- *
- * ( When CONFIG_COMPAT_BRK=y we exclude brk from randomization,
- *   as ancient (libc5 based) binaries can segfault. )
- */
-int randomize_va_space __read_mostly =
-#ifdef CONFIG_COMPAT_BRK
-					1;
-#else
-					2;
-#endif
-----8<----
-
-This implies to me that this change is in danger of breaking libc5-based binaries?
-
-Thanks,
-Ryan
-
-> +	}
-> +	mm->start_brk = mm->brk = ELF_PAGEALIGN(elf_brk);
-> +
-> +	if ((current->flags & PF_RANDOMIZE) && snapshot_randomize_va_space > 1) {
->  		/*
-> -		 * For architectures with ELF randomization, when executing
-> -		 * a loader directly (i.e. no interpreter listed in ELF
-> -		 * headers), move the brk area out of the mmap region
-> -		 * (since it grows up, and may collide early with the stack
-> -		 * growing down), and into the unused ELF_ET_DYN_BASE region.
-> +		 * If we didn't move the brk to ELF_ET_DYN_BASE (above),
-> +		 * leave a gap between .bss and brk.
->  		 */
-> -		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
-> -		    elf_ex->e_type == ET_DYN && !interpreter) {
-> -			mm->brk = mm->start_brk = ELF_ET_DYN_BASE;
-> -		} else {
-> -			/* Otherwise leave a gap between .bss and brk. */
-> +		if (!brk_moved)
->  			mm->brk = mm->start_brk = mm->brk + PAGE_SIZE;
-> -		}
->  
->  		mm->brk = mm->start_brk = arch_randomize_brk(mm);
-> +		brk_moved = true;
-> +	}
-> +
->  #ifdef compat_brk_randomized
-> +	if (brk_moved)
->  		current->brk_randomized = 1;
->  #endif
-> -	}
->  
->  	if (current->personality & MMAP_PAGE_ZERO) {
->  		/* Why this, you ask???  Well SVr4 maps page 0 as read-only,
-
+[snip]
 
