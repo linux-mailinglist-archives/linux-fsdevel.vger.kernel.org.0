@@ -1,56 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-47471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F975A9E63B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 04:22:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28794A9E645
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 04:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCD207A8C6A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 02:21:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7FD17783E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 02:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A499A1624C0;
-	Mon, 28 Apr 2025 02:22:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA2B156C62;
+	Mon, 28 Apr 2025 02:33:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d0iY5bad"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="oEj4e8W0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0441E4C80;
-	Mon, 28 Apr 2025 02:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC084BE67
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 02:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745806963; cv=none; b=V27r9TymOIIGHLMxRlhBLtGbAKgiJMACmP3jKy+Nc+VUEIcA+qyQChK0neRraEjtYWWc8MFbZh8puXVK6rV8M7FRjW87zR9Zj+o0Gm4TsUy9N4VzsYC9NstaCBQC9tvINUqxJ4v0vLPKy+gC1oSHYp/PcmnvMNafC6FQOIHGf8M=
+	t=1745807621; cv=none; b=dJWj1GZbDLkeS44QUtn4jPlLuHvE+NNh5EceFg+rs6DO/WXPxYpEEHb5GqWL1pn02W3zZN+aGSbIDgshTuaazGxcx1teckSZlLHCK1UWzLj6HankFy19GtBM19MbVDgT2PX+hDCTQGN372kDe/rq81iuykRxdTr5SHsrBBf9gQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745806963; c=relaxed/simple;
-	bh=QuqCy+3t7hxV+nKMKZmPQlH1nktnAtsU0pqtylUPRlg=;
+	s=arc-20240116; t=1745807621; c=relaxed/simple;
+	bh=DKLbDWf9uKQXbVFxsu2pn2EL2EuFGM6ImWSv256I7rw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ps0rFJ2Or9DYriJuTJKR52e3uzRzv3qaq1tuYfnN57n3FT6D9LA7LVJ+oW0mD4RrZtbWrTxwe24Tr6F2qpNhYtjDBrKc4ca3/pLVilYVEdaZzYlrcAJi9AoZE/GF6eh453R+6+GGsxzwFipI5xkVdzyORDOp+3d2NU57kAof+Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d0iY5bad; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DBAEC4CEE3;
-	Mon, 28 Apr 2025 02:22:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745806962;
-	bh=QuqCy+3t7hxV+nKMKZmPQlH1nktnAtsU0pqtylUPRlg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=d0iY5badWrKuDAN+rvW6ulgb5QAaAPNdb0Dl/OSQm3ljKEvT1VQMYiOH19noo02p8
-	 bTbp3sRq6KM2cuD0Lm4Ei9AIo3ywJjNEqwhtWCJMmuHg4H2EB9BUBroh1pPHk6Gf95
-	 X3QrM89K3wJO2aLt9A9YAq+4cIf6+MW5NQlaYhspG+O/oAf49R6noigdeP2NmkFFZb
-	 C/LeMepsTfQ3ZsNIjcNdt8sZ6MhKerN95dgAr0nXDEKQfl6weUqK+sGYncm1fKVnU/
-	 GpHmhR8ZmUBL9R6zU0XJ0FfkuKVecVJKxX2oaE0lU9HV8luY+v+PiCC8SFn15Y2EUn
-	 ooEajkcY9l2cw==
-Date: Sun, 27 Apr 2025 19:22:40 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Autumn Ashton <misyl@froggi.es>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Matthew Wilcox <willy@infradead.org>, Theodore Ts'o <tytso@mit.edu>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=maj28D2ksr7c2iyOTkMzGCyh/KZvdjSazjLHjw+cK77w0OXMx8Kwbb/IMgzoHwJO0FneuZiV3IWBKvTRvdtEgF46EdfNpGpHY4Bo16wLCSphUuQR3lqzUyWyBccwX5pe/xSBUX+p21eMjbAjSBG17JFcacxdOlhxFQwsteSLH50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=oEj4e8W0; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 27 Apr 2025 22:33:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745807616;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y+pdkbsXzv3EJJcbLvktiLnbo0al+9T3EXAV22sII1M=;
+	b=oEj4e8W0oFk2mGNhPgirxXJHhuIOkV8i7UsVb6fMFH+AEwkqQilH0pFNHZpFuGA/JJhiB5
+	z/D1xop6a5oQZ5EPZxmKCSWdyPo1bxRAAJx9iH0+LggTRfiXov4ucbKoyK6jlGHaZH5aoP
+	4Bwh5gX4QPFWOcUUpgjglk2jLqYpQNM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Theodore Ts'o <tytso@mit.edu>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-Message-ID: <20250428022240.GC6134@sol.localdomain>
+Message-ID: <ogtnxaeyjldd6lapfbhwj3ptpvwkjpn66e3gejawdjs7s7hg2v@pksyrq3gzwal>
 References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
  <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
  <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
@@ -59,22 +57,20 @@ References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
  <ahdxc464lydwmyqugl472r3orhrj5dasevw5f6edsdhj3dm6zc@lolmht6hpi6t>
  <20250428013059.GA6134@sol.localdomain>
  <ytjddsxe5uy4swchkn2hh56lwqegv6hinmlmipq3xxinqzkjnd@cpdw4thi3fqq>
- <5ea8aeb1-3760-4d00-baac-a81a4c4c3986@froggi.es>
+ <20250428021514.GB6134@sol.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5ea8aeb1-3760-4d00-baac-a81a4c4c3986@froggi.es>
+In-Reply-To: <20250428021514.GB6134@sol.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Apr 28, 2025 at 03:05:19AM +0100, Autumn Ashton wrote:
-> 
-> 
-> On 4/28/25 2:43 AM, Kent Overstreet wrote:
+On Sun, Apr 27, 2025 at 07:15:14PM -0700, Eric Biggers wrote:
+> On Sun, Apr 27, 2025 at 09:43:43PM -0400, Kent Overstreet wrote:
 > > On Sun, Apr 27, 2025 at 06:30:59PM -0700, Eric Biggers wrote:
 > > > On Sun, Apr 27, 2025 at 08:55:30PM -0400, Kent Overstreet wrote:
 > > > > The thing is, that's exactly what we're doing. ext4 and bcachefs both
@@ -121,57 +117,35 @@ On Mon, Apr 28, 2025 at 03:05:19AM +0100, Autumn Ashton wrote:
 > > 
 > > No, because right now on a case-insensitive filesystem we _only_ do the
 > > lookup with the normalized name.
-> > 
-> > > Regardless, the long-term plan for the case-insensitivity rules should be to
-> > > deprecate the current set of rules, which does Unicode normalization which is
-> > > way overkill.  It should be replaced with a simple version of case-insensitivity
-> > > that matches what FAT does.  And *possibly* also a version that matches what
-> > > NTFS does (a u16 upcase_table[65536] indexed by UTF-16 coding units), if someone
-> > > really needs that.
-> > > 
-> > > As far as I know, that was all that was really needed in the first place.
-> > > 
-> > > People misunderstood the problem as being about language support, rather than
-> > > about compatibility with legacy filesystems.  And as a result they incorrectly
-> > > decided they should do Unicode normalization, which is way too complex and has
-> > > all sorts of weird properties.
-> > 
-> > Believe me, I do see the appeal of that.
-> > 
-> > One of the things I should really float with e.g. Valve is the
-> > possibility of providing tooling/auditing to make it easy to fix
-> > userspace code that's doing lookups that only work with casefolding.
 > 
-> This is not really about fixing userspace code that expects casefolding, or
-> providing some form of stopgap there.
-> 
-> The main need there is Proton/Wine, which is a compat layer for Windows
-> apps, which needs to pretend it's on NTFS and everything there expects
-> casefolding to work.
-> 
-> No auditing/tooling required, we know the problem. It is unavoidable.
-> 
-> I agree with the calling about Unicode normalization being odd though, when
-> I was implementing casefolding for bcachefs, I immediately thought it was a
-> huge hammer to do full normalization for the intended purpose, and not just
-> a big table...
-> 
-> FWIR, there is actually two forms of casefolding in unicode, full
-> casefolding, C+F, (eg. ß->ss) and the simpler one, simple casefolding (C+S),
-> where lengths don't change and it's glyph for glyph.
+> Well, changing the case-insensitivity rules on an existing filesystem breaks the
+> directory indexing, so when the filesystem does an indexed lookup in a directory
+> it might no longer look in the right place.  But if the dentry were to be
+> examined regardless, it would still match.  (Again, assuming that the lookup
+> uses a name that is case-sensitively the same as the name the file was created
+> with.  If it's not case-sensitively the same, that's another story.)  ext4 and
+> f2fs recently added a fallback to a linear search for dentries in "casefolded"
+> directories, which handle this by no longer relying solely on the directory
+> indexing.  See commits 9e28059d56649 and 91b587ba79e1b.
 
-Yet, ext4 and f2fs's (and now bcachefs's...) "casefolding" is *not* compatible
-with NTFS.
+bcachefs stores the normalized d_name, in addition to the
+un-normalized version, so our low level directory indexing works just
+fine if the normalization rules change.
 
-Nor is it compatible with FAT (which is what Android needed).
+That is, bcachefs could be changed to always load the latest unicode
+normalization table, and internally everything will work completely
+fine.
 
-Nor does it actually do Unicode casefolding
-(https://www.unicode.org/Public/16.0.0/ucd/CaseFolding.txt), but rather
-Unicode normalization which is more complex.
+BUT:
 
-I suspect that all that was really needed was case-insensitivity of ASCII a-z.
-All of these versions of case-insensitivity provide that, so that is why they
-may "seem" compatible...
+If the normalization rules change for an existing dirent, then looking up
+the un-normalized name with the new rules gives you a different
+normalization than what's on disk and would return -ENOENT. You'd have
+to look up the old normalized name, or something that normalized to the
+old normalized name, to find it. Obviously, that's broken.
 
-- Eric
+IOW: bcachefs doesn't have the linear search fallback, and that's not
+something I'd ever add. That effectively means a silent fallback to
+O(n^2) algorithms, and I don't want the bug reports that would someday
+generate.
 
