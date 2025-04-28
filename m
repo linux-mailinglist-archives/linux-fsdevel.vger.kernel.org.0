@@ -1,65 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-47461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A294EA9E580
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 02:38:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF3BA9E596
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 02:56:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DA26189B006
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 00:38:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10F65189B741
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 00:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488A778F4E;
-	Mon, 28 Apr 2025 00:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E79D7DA9C;
+	Mon, 28 Apr 2025 00:55:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T98fcr7o"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ov22VojP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0894D8BF8;
-	Mon, 28 Apr 2025 00:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EDF035979
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 00:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745800688; cv=none; b=Lg3S4DMYigtDlQIqEwn+GEcXsKoFn/Kd3nlV1dGUXkX6kSGqMLTW/yjid46F8G1GSyMtpkfGeaWyTBo7MS6J41e/XM2TQtPFYfvIOzfvV1DWSHUFM3HB17zszehVH0LeTlYbjaz+g8DD2/aJ5sFuuE+PdmVsTkgD25s+LfePM9Y=
+	t=1745801750; cv=none; b=S9ar99WBu1i3453E8iqb5jg/dr5UQRp2vAoKjsdwWl5qeV5QR3swoPTZw6tM43cjBhe36cyHhkRh1DOiEwBUCCVhHy/ibVgMWW695ymRcdp049vEZYesAyG9Ds9s7IRXROG8LTIQXNHJPOl+pQyLexw8/B3dlhKmcV97aE2Nho4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745800688; c=relaxed/simple;
-	bh=X93ENz4hZ9SghUIv/n963X0gxLuWiGrP0pFJLjKpsSM=;
+	s=arc-20240116; t=1745801750; c=relaxed/simple;
+	bh=FU00C0T481/jSCv3vgzcjHa0ie/Ez9/9TTNaJickNx0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HH1BI2+zyLbU9VoSDwk6Tuh7aG1gqVESVPoGL1men+YxhYOov8eKbnbYy91v0UACEAZSvtNp6aY8DRMfpvAqHQVXFWnnJAihgDtuKrRsUVAKB2eg0gF3/to++goPTPSBG0aYcjx6fRFOJNtWbjuz3w1aQcDkaBbkE90VcaBx/Yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T98fcr7o; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=WwuY/6ttiqKGxuiZxXTw1pq5GZbsJP4t0dCyVGoDwXg=; b=T98fcr7okBkuiBWbdzq0KStxgu
-	umKA8nfSz3IUntLKD9imBZ9mgjMydQgtVoRWFQa98SrZltEw4jaWcTDdSEC68GcEkGi2IalBR8f3V
-	eGWyQ9kwIvYWbaI3Qegv4BgikQaEaFmT10qJxtH704B0V69FdqofAku90hZCFn3KFvBh4V/WkS0ra
-	1feaPdT1TkFkrSYxBGuGYXxoc2MpVxS8eqBKBY4K3iWZMR5sqcCcGNXFljbPl0X1w2pfov9IkPBiM
-	dPEsfuAGULpUBPOIQpgvsp6RVdCPjmBrwDhcSQo8m00+jv8hmnS4xLUyvQUWGW7Oi2hoB6NkmTjRh
-	xEZcWOwg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u9CVC-00000004ewq-0kBu;
-	Mon, 28 Apr 2025 00:37:42 +0000
-Date: Mon, 28 Apr 2025 01:37:42 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>, Chris Li <chrisl@kernel.org>,
-	Yosry Ahmed <yosryahmed@google.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Nhat Pham <nphamcs@gmail.com>, Johannes Weiner <hannes@cmpxchg.org>,
-	linux-kernel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/6] fuse: drop usage of folio_index
-Message-ID: <aA7N1SHoR-tY4PJW@casper.infradead.org>
-References: <20250427185908.90450-1-ryncsn@gmail.com>
- <20250427185908.90450-2-ryncsn@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYZZirMUIq79C91cOvbzAX8m4Ha0GnbgM7bjoRmXjlm3jeKZO32eClL7INoyaqS6jJmdv0GyTuQS9p6vLvb2l9ZntmWT1NwGPqi/ugiJATbs65PbF3ONy3ZxB/ypWIpWjOeot/i0mK1k3wz3Ea6FjEpSnE9dr8yJVBMnNiIvcyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ov22VojP; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 27 Apr 2025 20:55:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745801735;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bxq7q7wAknwL4KNeKYIKF+Dh28c38IM2QaZFmvN2tR8=;
+	b=ov22VojPyR6U+Dt50uvsEFx8zb6wU6MSXTD4gUGUMU8piBroz6kmPaXycfNU7S1TOSYVKQ
+	68PwjzvTI9rCqAlEVW4tZGszYk+++mJqpNYSIZA0VJpmlD8BFzQUadKupUijjn0itONKcy
+	mkKWeVRwbhzFhXajrCm4PWzMF7jWZyo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Matthew Wilcox <willy@infradead.org>, Theodore Ts'o <tytso@mit.edu>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+Message-ID: <ahdxc464lydwmyqugl472r3orhrj5dasevw5f6edsdhj3dm6zc@lolmht6hpi6t>
+References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
+ <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
+ <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
+ <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
+ <aAvlM1G1k94kvCs9@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,38 +61,73 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250427185908.90450-2-ryncsn@gmail.com>
+In-Reply-To: <aAvlM1G1k94kvCs9@casper.infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Apr 28, 2025 at 02:59:03AM +0800, Kairui Song wrote:
-> folio_index is only needed for mixed usage of page cache and swap
-> cache, for pure page cache usage, the caller can just use
-> folio->index instead.
+On Fri, Apr 25, 2025 at 08:40:35PM +0100, Matthew Wilcox wrote:
+> On Fri, Apr 25, 2025 at 09:35:27AM -0700, Linus Torvalds wrote:
+> > Now, if filesystem people were to see the light, and have a proper and
+> > well-designed case insensitivity, that might change. But I've never
+> > seen even a *whiff* of that. I have only seen bad code that
+> > understands neither how UTF-8 works, nor how unicode works (or rather:
+> > how unicode does *not* work - code that uses the unicode comparison
+> > functions without a deeper understanding of what the implications
+> > are).
+> > 
+> > Your comments blaming unicode is only another sign of that.
+> > 
+> > Because no, the problem with bad case folding isn't in unicode.
+> > 
+> > It's in filesystem people who didn't understand - and still don't,
+> > after decades - that you MUST NOT just blindly follow some external
+> > case folding table that you don't understand and that can change over
+> > time.
 > 
-> It can't be a swap cache folio here.  Swap mapping may only call into fs
-> through `swap_rw` and that is not supported for fuse.  So just drop it
-> and use folio->index instead.
+> I think this is something that NTFS actually got right.  Each filesystem
+> carries with it a 128KiB table that maps each codepoint to its
+> case-insensitive equivalent.  So there's no ambiguity about "which
+> version of the unicode standard are we using", "Does the user care
+> about Turkish language rules?", "Is Aachen a German or Danish word?".
+> The sysadmin specified all that when they created the filesystem, and it
+> doesn't matter what the Unicode standard changes in the future; if you
+> need to change how the filesystem sorts things, you can update the table.
 > 
-> uigned-off-by: Kairui Song <kasong@tencent.com>
-> Cc: Miklos Szeredi <miklos@szeredi.hu>
-> Cc: Joanne Koong <joannelkoong@gmail.com>
-> Cc: Josef Bacik <josef@toxicpanda.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Signed-off-by: Kairui Song <kasong@tencent.com>
+> It's not the perfect solution, but it might be the least-bad one I've
+> seen.
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+The thing is, that's exactly what we're doing. ext4 and bcachefs both
+refer to a specific revision of the folding rules: for ext4 it's
+specified in the superblock, for bcachefs it's hardcoded for the moment.
 
-> @@ -2349,7 +2349,7 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
->  		return true;
->  
->  	/* Discontinuity */
-> -	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
-> +	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio->index)
->  		return true;
+I don't think this is the ideal approach, though.
 
-This looks like a pre-existing bug.
+That means the folding rules are "whatever you got when you mkfs'd".
+Think about what that means if you've got a fleet of machines, of
+different ages, but all updated in sync: that's a really annoying way
+for gremlins of the "why does this machine act differently" variety to
+creep in.
 
--	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
-+	prev_folio = data->orig_folios[ap->num_folios - 1];
-+	if (prev_folio->index + folio_nr_pages(prev_folio) != folio->index)
-		return true;
+What I'd prefer is for the unicode folding rules to be transparently and
+automatically updated when the kernel is updated, so that behaviour
+stays in sync. That would behave more the way users would expect.
+
+But I only gave this real thought just over the past few days, and doing
+this safely and correctly would require some fairly significant changes
+to the way casefolding works.
+
+We'd have to ensure that lookups via the case sensitive name always
+works, even if the casefolding table the dirent was created with give
+different results that the currently active casefolding table.
+
+That would require storing two different "dirents" for each real dirent,
+one normalized and one un-normalized, because we'd have to do an
+un-normalized lookup if the normalized lookup fails (and vice versa).
+Which should be completely fine from a performance POV, assuming we have
+working negative dentries.
+
+But, if the unicode folding rules are stable enough (and one would hope
+they are), hopefully all this is a non-issue.
+
+I'd have to gather more input from users of casefolding on other
+filesystems before saying what our long term plans (if any) will be.
 
