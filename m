@@ -1,223 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-47502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9EEA9EBAC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 11:18:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472F6A9EBAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 11:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0297F3AD21E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 09:18:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE5A1189D73E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 09:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7B81E1DF0;
-	Mon, 28 Apr 2025 09:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1421233145;
+	Mon, 28 Apr 2025 09:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="n/iTIxSW";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Agtj1A+n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UYn1dQyE"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8923233145;
-	Mon, 28 Apr 2025 09:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.141.245
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745831907; cv=fail; b=t0THRw2CdVqwg6s50zpqvqPdcmf0Dbb2UR587fyAZ7PENTrF2MJlnbHWBtgexg10XhReVsopomQ8/EDpZv8NhyB3nf8ecz+QUSqJ4hT1ytkPcO7L3TPeM83+aLAjtwia5xJbxkBJYVla/urcsgyx1DL/6WhrXNNiv9+O1HKTLcI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745831907; c=relaxed/simple;
-	bh=OULjwvA3neUG1sHmKwW7kKV848AllbzgwDzP8DFs31M=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=seARsYnqRjtERkd2Cdr2XtKX8fW3xYECVBftI9ZjKEiqQwppe1+cHzKYbsan2oP3F+QB1Iud49gNubiOApEPtvjUp/kuqYYCwfnSPmyuBhhOebbQ2Yxg3SAtXGbFT5Ls+VCY+3Ccn97rXMo0wipgtTgRE6csCuiN3ET1rE0Rl+c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=n/iTIxSW; dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b=Agtj1A+n; arc=fail smtp.client-ip=68.232.141.245
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1745831906; x=1777367906;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=OULjwvA3neUG1sHmKwW7kKV848AllbzgwDzP8DFs31M=;
-  b=n/iTIxSWPkTIvi8qLCH/HdqR8KcMLJGtSjJgqZHaUrIUkhuxfB1Wf1bb
-   C2i/Xmse3JrLrRVOMGxNkSNvWVco3LUVdix9eFVO7KFeHC8Fbkiq9itwJ
-   U3cTyH0Bg1G8g9PPWiFkN5jdXff803hIYT5FwAbDwmCh+L6q8WKRkwtiN
-   QLa2/gmdnaqBKM5m3Vhr9xESul2IIrHxE07igwtK8TfPhazC+hrBPgfvg
-   XyHdCu96HhtI0+DBv/4z28SgDFSrYL+aC9usBRnUbKfFr52Fr1CpwNld2
-   FELWYDqxzMWI6ba59EMpHmxJWyFZWfgdLNVsirvjtUpgfWWxUezxsfUqI
-   Q==;
-X-CSE-ConnectionGUID: ggR+iemKSJC1fT3FoGKXOA==
-X-CSE-MsgGUID: TRW93quJR1iSrFE52+RgLg==
-X-IronPort-AV: E=Sophos;i="6.15,245,1739808000"; 
-   d="scan'208";a="76687869"
-Received: from mail-eastus2azlp17011025.outbound.protection.outlook.com (HELO BN8PR05CU002.outbound.protection.outlook.com) ([40.93.12.25])
-  by ob1.hgst.iphmx.com with ESMTP; 28 Apr 2025 17:18:15 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DyCq5TX9DO4y7rRujHsKRnPDst6jiLcr12jMkHlU0hb3haczF6UlYWBHnLsGZIhSr2RXb3smInIcJyZsWczEt2a7Hmm0HMIX6AKy8UA3N5pXQqVU1f/Zfp8zce0KXrDg0593F5WyGvBNJbNZl+ZI8B7gVY+lpiTh0HZqroab4INdYy9fn3RGh7uxnCsZt+80D//p44KtPDJiqMs6PoItyBYRipUrOUP+IAdZ67ptG1Vqrv1gXo9MXYAvWmmqDkCKebT+d0uSVa/zbr/qM/7GK0n2XJH60edcsV7lSt/yPZWXkVMfMD98JQs34pHPuVBB2NuAelI3fppAkOLpf1ccHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OULjwvA3neUG1sHmKwW7kKV848AllbzgwDzP8DFs31M=;
- b=hiJ9fzv0yDmNggTsF4s9Ts4JbY1SDLN6VV79aTES862PefP0I297Y9HxumUsZAo+Y6vXeeKiK+S1o/wXfGKkSR+vkZ5W0tLKcnBvtNYXs0GTqJk1KVg9khEAdZQezv8lherQWSXrE5U2NxOL6Cc0H4zih4bBm/0lFTAMQ8yBQVMaUlawAlIUxfPFRwgQ81tXLlUkG4wGvqcQyZ6CMaq7jTOsujllA55m/jpkjDZuh9PaPFIwyKa/vzRgzrZt95qOaiv4eTJMCo73qjY9fBPoKBB14TPe4Bh3t8Pz5S6cVG8nI/lRruu4BxMAzJTOtO/HIE6z7VtCJdOIgQn7vIr2MQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OULjwvA3neUG1sHmKwW7kKV848AllbzgwDzP8DFs31M=;
- b=Agtj1A+nD4SsVwV2h3qQjee4WWg//kYjrOX9buTXbPvK1HWe2wA9jxMfdkVxceSC1+BivwveWvk4ZY1VtESRZRZ3yvRgJ7YZmAQk6thAZ/T+mquXdER6Eb9chmgeCeLYVIonvRFw7eOUF/d9nr5eYR2E2fhUyVSDiD0f1IM4eYI=
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
- by SJ0PR04MB7232.namprd04.prod.outlook.com (2603:10b6:a03:294::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Mon, 28 Apr
- 2025 09:18:13 +0000
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::ee22:5d81:bfcf:7969]) by PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::ee22:5d81:bfcf:7969%5]) with mapi id 15.20.8678.025; Mon, 28 Apr 2025
- 09:18:13 +0000
-From: Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To: hch <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
-CC: "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>, "Md. Haris
- Iqbal" <haris.iqbal@ionos.com>, Jack Wang <jinpu.wang@ionos.com>, Coly Li
-	<colyli@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, Mike
- Snitzer <snitzer@kernel.org>, Mikulas Patocka <mpatocka@redhat.com>, Chris
- Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba
-	<dsterba@suse.com>, Andreas Gruenbacher <agruenba@redhat.com>, Carlos
- Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, Naohiro Aota
-	<Naohiro.Aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	"linux-bcache@vger.kernel.org" <linux-bcache@vger.kernel.org>,
-	"dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
-	"linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-	"gfs2@lists.linux.dev" <gfs2@lists.linux.dev>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH 13/17] btrfs: use bdev_rw_virt in scrub_one_super
-Thread-Topic: [PATCH 13/17] btrfs: use bdev_rw_virt in scrub_one_super
-Thread-Index: AQHbs5NbnE7IIw60gkC8Par+3ci2JrO41cWA
-Date: Mon, 28 Apr 2025 09:18:12 +0000
-Message-ID: <0bd0fa0a-e98a-4ac0-9d91-9e5ee4669946@wdc.com>
-References: <20250422142628.1553523-1-hch@lst.de>
- <20250422142628.1553523-14-hch@lst.de>
-In-Reply-To: <20250422142628.1553523-14-hch@lst.de>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-user-agent: Mozilla Thunderbird
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|SJ0PR04MB7232:EE_
-x-ms-office365-filtering-correlation-id: 70b43dde-1b84-4102-3a79-08dd863599dc
-x-ld-processed: b61c8803-16f3-4c35-9b17-6f65f441df86,ExtAddr
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?L1VnVmtQZXlOV09EdHQ0ZUczWXNEa1ovVFBCaWhYOUY4eDVIaEprcVpjd050?=
- =?utf-8?B?cEp4NWxTcDk1QUh6bDd2ZjJPUUlpeEIxSGJIUkV4M3RrSEVuNHB0MWRhUnMy?=
- =?utf-8?B?eEpMeEh6TlQwbnZRV1lzU25zMksybUNuOXJiVmF2ZUYxS0ZKaVNtZ215R2Jq?=
- =?utf-8?B?RzRYaTV4WUJXY2cyRU5xUUF2c1lPK0Vjd0lMNS9NNnQwM2pudWJiak9meTlL?=
- =?utf-8?B?SDRaSHF4bFJQeW9zL1YvYVJWU2JoUWFRZW5lTmkxVUQ3elZ0dHRCT1dNcjBl?=
- =?utf-8?B?QTJvaFBBcnJFSmJqa2ZJdisxZEUxMHlQTWJObGVENVc0V2xENWFsdWRLa1ZC?=
- =?utf-8?B?OWhKdHFSdk5TTlhoekYvWmdtY0pHMG5BN2I3UlNLTlQyVWVkZU1DNi9PZEdY?=
- =?utf-8?B?Q05qUUJsUzRldzhvMDZpYmxXNllRSHFTVEo0S0gvbFBtUEF5SmNpU2w1dnF5?=
- =?utf-8?B?enJQdDI4dytsS1ZWOFQvZWxHN2wxVW9tOW1aMldCMXV1U05VSVJYYTZiUmRC?=
- =?utf-8?B?elJPTlhaY2JGcjZJS3RMRVFrWUFUL1VYK1ZPQ1pBWWhFZXBwT3Axc1dBOW1R?=
- =?utf-8?B?SkZlWVBLaUozZVQ0YXhVM2dHQlc1OFErUVl5WnNkbDB0MUpKb0syMFNUck15?=
- =?utf-8?B?TnBZRk8xaWh0dzk2bWQ5YkVLU3dheGIxaUNwb2lnNnR3RnhCblpDcFJQV1Bh?=
- =?utf-8?B?T1dmaDNuajRnb2YxVlpTc0JMTHlkVVlGeVdnMHRSbmc2elNxQnFEODQwWXpI?=
- =?utf-8?B?U2l3VGJYS0FNcDJyaDVraDc0ZGYyQkhFcVQ2UnZOQ1pyS3BVK3pMUWhzM1lr?=
- =?utf-8?B?ZXBwQThKUEdyMzVWNzBwNE5ESlJ1d0dOd1VPSVQwKzdIeUFybVRyMVFUZDNz?=
- =?utf-8?B?TVd5N1JHWkc3QlE5bGZySGtUdUJiMStQek9ySnZsLzZmcGw3bWRhN1drSW1k?=
- =?utf-8?B?cHYxYXEwdThiSGd2QkdDZURwWjh1bEpPc3E4empHSDgwUk5kMWcwejhKTnpt?=
- =?utf-8?B?Mm9tREpjelZJTDVuUm9zWnpRZzRzVExuU0F5YW9VUHZFcDIxczNkVTl6SHdB?=
- =?utf-8?B?VFNZdzUvZWIyY29uZjgvRHVnRkl5MlVCeUtpNlJka3NBNUcrbkZvYjZWdUZV?=
- =?utf-8?B?clBoUzhDZnR6MElnODFsbnpQVCtDcnVraExWUU1XTzlyODdQa1lmUGE3STYr?=
- =?utf-8?B?SSswNnAxVUdkTURpemJoQ0pHQWE5STlKUklDbXhKNmprc1FYM3lyNEVrdkp6?=
- =?utf-8?B?cm5GcDFBOHRUeHJLYitOeG5ROVRLVnJpM2c1WHcwSTRLc1kvdUtYNTNzZUtv?=
- =?utf-8?B?Q3pQY2NsaFdxc2VEYTV1cWR0TEpFRE1UY3VUbFNob2xDTXVIV1A2N0xsUGdu?=
- =?utf-8?B?STdXREdsdEVLRDdsOVpDSDZoNHNMdVZBOGIxUHBPczg1L1MrbER0NjBsQ2Uw?=
- =?utf-8?B?NmxjUFBrbHc0K3lNaS9hMXhSUXVHU1o4Y3NaY00vTUQzMDVJaGFla1ZUdWJn?=
- =?utf-8?B?Qzc1S2Y3dHE5K0I4Z3pRRmc5MlVnZjMzVlg1WG5IQ0s4TkNzMWpoZ0x0RXpL?=
- =?utf-8?B?Z0t0dmtvQkE5cDBkTk5SNU94WTZSS29TaWNFQzF1LzFVY0tYa214akY2c2xX?=
- =?utf-8?B?RmZSN1lvMzhNaVVLOW8rS0tZdEtraitZRzhxWk5xcllBWHRjYXJCRGlxT0Jm?=
- =?utf-8?B?TGt5MVdMNjcxVjQ0WGVUQjN5M3h1OUYwQlVZL0pQYUdwZ3dKSVdja2JrNzlR?=
- =?utf-8?B?K0FtU1NicVZtUXpFSC9GclIvRmdkSkIwNkdQakdUSEsxMG1CYTNsUGJWd3lk?=
- =?utf-8?B?WWFZblNKZ29XVW83blE4ZVlIb3M0a1paSnMyQUNxejBweE5kWDdDc0l3Z1V5?=
- =?utf-8?B?WURkUm1GTEpNVTdrMzFKUk5iQXpLWmE5UVdvVzV6THhJRmNIelBYQjd5M2F2?=
- =?utf-8?B?YVg4RytvTGhJZmhtWEdSaWlVRmtQTS9TUnUybFE5MTk4V1Vuc3d2MkoyU1RD?=
- =?utf-8?B?T0pvNHBjdk1nPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?K3ZXTVFVNmZESGhDc085UmVsNDhtZ2ZENURFeFg5NnduSkpSUmZVcWVSbnpv?=
- =?utf-8?B?REhRTG5lZzJ2elY5MjNVb0tHbEQ0bzlvdFF3QXJjMnJSL2ZzV3dMazVVUEVp?=
- =?utf-8?B?QkhXV0lhaTdTc3JGcG1sSWpFYWZIcGdRZnhCUnByS0dIZitkYmxhVWVaVVBp?=
- =?utf-8?B?Vk42bzNtb0JENC9DVWQ4NnBkbGE5RDRQWTBpL0d3TkErNHVvVkl5SUxRcXVK?=
- =?utf-8?B?T3RSMHVwSkJDVWhDcVZmMFBKSlBQN1NKcWl1U2lZU1Y4VzhuNGQwVVkvMmNM?=
- =?utf-8?B?Rk8xSjVkZkJnZzFkdU16TzBxRis0bFlmQlAzb2lxWmpnOHlCdTkrcjVGbTQ0?=
- =?utf-8?B?aFNSVDA4ZEFhbmdjZ1B5N3ZiZ2UwSG15akRVNFFjdmE0NGZUcHU4VFpCYWsy?=
- =?utf-8?B?N3RFSHoxWC85UE1TMlpHZGV0OWFmQldEUEhpSU5lelZDa3RhdkR3eXNsdUcx?=
- =?utf-8?B?Vkd0bVBERUhTbUJ4a1RGU290NTNtS1EwUWhVbkgwRWY1SkpmL1VMRVFBOVZa?=
- =?utf-8?B?SjN6dy9hZCtIZzdVOHNia0h1YmZBdWJGNlRVZTVlT2s5NUREbW1xZWpiZkto?=
- =?utf-8?B?djJGSXdjT0tTaEE4cUF5QkdtTFV4K3FMV1JDODkzeFJYRlo3WjNjSFdyNzlj?=
- =?utf-8?B?OXlyc2U2bGp5Z2FrNWRmeXFEdmJwUlE2ZzBRekgzSXBrbEdMV041RER4cm4x?=
- =?utf-8?B?Q01zcG8yT3pjdG5Kc3dSMUFZWlRTbzNlN3RzZjZ0dTJmVTA5dG5RSkpQTnE5?=
- =?utf-8?B?Um1TUmtVTi9lMHIzb0V2OGk5dThZT0ZYeTNqTFQyOFpzaGxPRkZOcE5SejY3?=
- =?utf-8?B?SzFZWGNxTVowQ25yMm5Pd0prdkx3K0VVY2FkV0lsV202Smc5anZYVlV5UDNM?=
- =?utf-8?B?VGRIR3NweGFJbTZ3ZG1BZldGeEZyNE4yZFRITEFtR0ZucWpCOGxxZ0JGU0tL?=
- =?utf-8?B?djdSb092d1RoWjNOa3hIbEJ1OENXYkJkbVpCMExJeFFubDNweGsvWDViU2pt?=
- =?utf-8?B?bHdEK3BWOE1Qajk3K1BYdVBScSsvZXo4MUxNSTJmTnlBL1ZwQlpOTStLQ0kx?=
- =?utf-8?B?eHlVaDg0MFpLRVZhVGtuOTdLVzQvMEplRTJwRVVHRFhOLzgrc1BrcVNsKysy?=
- =?utf-8?B?SkhGM2xvVmlTMXRUWE1SZjRMT0xDcWVqNFFnN0NxU0xuMEVuNU9ZSURSU3By?=
- =?utf-8?B?bjlINDRRSUN3ckVHZlhqM09MUzZmWVFTcHRZYWw5TTlEWnJCTk1DbzNyKzV3?=
- =?utf-8?B?RVJlMDVFUGttTG5FWDlvcmlKLzVqSWdnT2g2c1dsTzZadzJjVjJsRlBjZ3ps?=
- =?utf-8?B?U1RPeWd6UGM3T1I1N2pZTXI4QWp6dEFJYXFLa2NhSW9Ddi9iOTlGWEpub2FD?=
- =?utf-8?B?ZitldlUrY2hMWnQrZDZTNUhVQ1ZaK2U5QWRqOWRDNG5HK2dsSzZVN3Y0N1JQ?=
- =?utf-8?B?ZUtPU25TK1BEcnoySHh5UUFGYmpUb2Z2NW5NQ04zL1c5bG1rNHI1QkZteHVs?=
- =?utf-8?B?SytTTFoyRkFtMmp0T2s3VFdJNnhzTURTcjBIVTlMUnMxU1lGaHIvb0ZLbXEw?=
- =?utf-8?B?NUVjekhIOUh3TEJhVU9OUjd5eVJoT1hOTXVXbGNNWUVVL2trVm5uaFNuY2kz?=
- =?utf-8?B?eWhuRm03UHlIYlQ4SnFyb2ZpUkJMOXFxdHRreEhwQjVuUEJrWUVtYmFxamZV?=
- =?utf-8?B?bmt5anRid1FxcytCRVhqR3lITTM2WVYrS3N3cy8vbEZCc1g3NHhLeGU5OExs?=
- =?utf-8?B?cTZRemxPMlF4bjdVYjJuTXVNdy9tOHAvR1ZvT0ZBZkwwMVFtY2pCdTQzQ2ho?=
- =?utf-8?B?Tzl3WFdkVFppV1ZwZERuRnhxVE50eWcxZExZWjhCa3l0cS9ZbEQzWEV3VTQ0?=
- =?utf-8?B?d0cwUGordFBiNFNRTXk3VHhwdUZkOVNobjdVekwvUGJQNVFLdncrRVBPMHFB?=
- =?utf-8?B?dVN2ZmwvUm5pVlpHWXZjb0tEWHFSMnNsWkFocWp5Tjk3OExoNmZwUTB6dHpJ?=
- =?utf-8?B?eFYvOXNWUDJaODRGei9oc2hESS9heS9hVmRPc2FvcmwxQ3pyKzhDcFVZOEk3?=
- =?utf-8?B?TUJTNTFWZC9NRjU5Vk5CMkJRSWlWTzF0S1ozMUQ4OFF1TlhRTHlTNzlpYnk1?=
- =?utf-8?B?aW42MWtNU1FtVnVuNzdKUllxU01EQy9tcjNhcWFHUzRmU0x2QjhNNkJvZ3RJ?=
- =?utf-8?B?WlE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EA4F12478AF5F74FA23B806A1A148EC3@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A98618C937
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 09:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745831971; cv=none; b=enYa79M4dyNKPD11/7j4Lb21MeIzUP9Bgffc51t4/i+ZvXDoie/YD1fTENOGe9vsNZrVb+51GZqE0cua9YX+r7eNNVderU54EpvVgkvzCl2X50UBtxR4ZAhtR58W5fB1X2R7cZqGJ0w9EMVsnOdy4D6hSwi5LBaIWAs2sFipZQA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745831971; c=relaxed/simple;
+	bh=FV6pRbUNKc/G/CkVMy80TrYGct7pP+2S5Czg6FVii8o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nk/nzuww6ibgA7QXjUOXFkFcTJOFpfOHiB+DfAkFEKcfJcQikN43cFBILYt7Td9bdM4NsOwenDLldxmEy+GPsQYL4SWxt7lQL407aV3FOBuvviRJECf6sBjC3wzAwEQhiQXaqvQsDNnyPB6R8hQv2KJyEVvV7zf5DrnPNs78rbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UYn1dQyE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE27C4CEE4;
+	Mon, 28 Apr 2025 09:19:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745831970;
+	bh=FV6pRbUNKc/G/CkVMy80TrYGct7pP+2S5Czg6FVii8o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UYn1dQyEKdJTZVxdWl7kwfj+BZF9TUGc8/NzNWjAA3xaEtOIn4kYyWKOYuRlMKHl+
+	 p+WGgHg6TIVIDg7Fg+CupZWgZnk28DqSvnh55HrbkL0R1OlVgQAQdQ3gV97/rEm58x
+	 37NS0K9dfZ0y5UHm0xlzElNEOPCnAJJ5eEajSjeWdFvWcxx1W1Yrw6LJR4jMghUSa0
+	 gpTehHBE200or1MUZ8qgedJIzHxJ2yMuAk/UXFYecrFsgnVOhq1JfFZaayxIu68E2x
+	 RQ/UBP7UD+J6TTV25tTfwOr05A59nlcHXbzFbWQlXLiSuXRDLxQKWrxMxh9BzR5OfA
+	 8eUzi/lruz+fA==
+Date: Mon, 28 Apr 2025 11:19:27 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/xattr: Fix handling of AT_FDCWD in setxattrat(2) and
+ getxattrat(2)
+Message-ID: <20250428-gesendet-bemerken-f2535df7b4cd@brauner>
+References: <20250424132246.16822-2-jack@suse.cz>
+ <uz6xvk77mvfsq6hkeclq3yksbalcvjvaqgdi4a5ai6kwydx2os@sbklkpv4wgah>
+ <20250425-fahrschein-obacht-c622fbb4399b@brauner>
+ <a3w7xdgldyoodxeav6zwn3dkw6y4cir6fdhftopo3snrpgbjoz@zvz4vny63ehf>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	zXJtBKsO2CFSEtHpcX6e7PPT+8see5596YPaS/f2mTpwCr3kBwYmsldKSPTG8tnZt4ne06mC8smiFTu2BXzT0rWKCsVO14ENnxzGNQpkaobIVXtpN6C/AeaG9jlDnitQN6c/1mTptWbW8OPIKKZ7LBLLdmA4NRSaAzhqdwxe7soXsicpJ8cjFXuBjBmCmkyMLvM0uZGcxRttvEHjVp/yUoXTkklmIkVFQhBTRAXuI2hUg/EBk/1+FyBYa4QJQHSz8bGvbdEpVXz9ZgtzoVDDSC3DUOunn+bkC9BaqSz9IFuZi8+Ayg0RGcy89cBZoOlXfuFuUWNFitdPSj5BMJWsQleTicXW5e3lxOZqscxMDf8D5dV+APGhowpGcLg6HKMbVYNlES6o5jfOCnmtfFCRDnGJLhHMfSUIuh/yx2y8uVgcSWI5abER4UkZYTBKDvHrymWEcCVSkBKhTf5i6AxKHd8dMH43gWRO4Hk7kO0pKtd4LwYLfi4Xt/czO0rztILP1aVo2ueS/ZJxhb31tXb/PTLVuraoPSHp99uXgXGKntb9jPTqbzVYNCHeDGPdZzWYDkda1Zi6dxCGb/5dtSZXyQeLMSN9QUFWXglXrsnoq3sKO63Jrga+AmsBFargUp27
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70b43dde-1b84-4102-3a79-08dd863599dc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Apr 2025 09:18:12.8653
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 4Vux3Pz62n0TAv4xn/num/QRN21dgo2tEuC/XESzBDo7bJvxNDkFY6CVyO8tY7y4YicG/1TcsaBnfK9P2fw56ffREpO3/Od92u+0Wi+YJ+o=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR04MB7232
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a3w7xdgldyoodxeav6zwn3dkw6y4cir6fdhftopo3snrpgbjoz@zvz4vny63ehf>
 
-TG9va3MgZ29vZCB0byBtZSwNClJldmlld2VkLWJ5OiBKb2hhbm5lcyBUaHVtc2hpcm4gPGpvaGFu
-bmVzLnRodW1zaGlybkB3ZGMuY29tPg0K
+On Fri, Apr 25, 2025 at 03:33:05PM +0200, Jan Kara wrote:
+> On Fri 25-04-25 10:45:22, Christian Brauner wrote:
+> > On Thu, Apr 24, 2025 at 05:45:17PM +0200, Mateusz Guzik wrote:
+> > > On Thu, Apr 24, 2025 at 03:22:47PM +0200, Jan Kara wrote:
+> > > > Currently, setxattrat(2) and getxattrat(2) are wrongly handling the
+> > > > calls of the from setxattrat(AF_FDCWD, NULL, AT_EMPTY_PATH, ...) and
+> > > > fail with -EBADF error instead of operating on CWD. Fix it.
+> > > > 
+> > > > Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
+> > > > Signed-off-by: Jan Kara <jack@suse.cz>
+> > > > ---
+> > > >  fs/xattr.c | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/fs/xattr.c b/fs/xattr.c
+> > > > index 02bee149ad96..fabb2a04501e 100644
+> > > > --- a/fs/xattr.c
+> > > > +++ b/fs/xattr.c
+> > > > @@ -703,7 +703,7 @@ static int path_setxattrat(int dfd, const char __user *pathname,
+> > > >  		return error;
+> > > >  
+> > > >  	filename = getname_maybe_null(pathname, at_flags);
+> > > > -	if (!filename) {
+> > > > +	if (!filename && dfd >= 0) {
+> > > >  		CLASS(fd, f)(dfd);
+> > > >  		if (fd_empty(f))
+> > > >  			error = -EBADF;
+> > > > @@ -847,7 +847,7 @@ static ssize_t path_getxattrat(int dfd, const char __user *pathname,
+> > > >  		return error;
+> > > >  
+> > > >  	filename = getname_maybe_null(pathname, at_flags);
+> > > > -	if (!filename) {
+> > > > +	if (!filename && dfd >= 0) {
+> > > >  		CLASS(fd, f)(dfd);
+> > > >  		if (fd_empty(f))
+> > > >  			return -EBADF;
+> > > 
+> > > Is there any code which legitimately does not follow this pattern?
+> > > 
+> > > With some refactoring getname_maybe_null() could handle the fd thing,
+> > > notably return the NULL pointer if the name is empty. This could bring
+> > > back the invariant that the path argument is not NULL.
+> > > 
+> > > Something like this:
+> > > static inline struct filename *getname_maybe_null(int fd, const char __user *name, int flags)
+> > > {
+> > >         if (!(flags & AT_EMPTY_PATH))
+> > >                 return getname(name);
+> > > 
+> > >         if (!name && fd >= 0)
+> > >                 return NULL;
+> > >         return __getname_maybe_null(fd, name);
+> > > }
+> > > 
+> > > struct filename *__getname_maybe_null(int fd, const char __user *pathname)
+> > > {
+> > >         char c;
+> > > 
+> > >         if (fd >= 0) {
+> > >                 /* try to save on allocations; loss on um, though */
+> > >                 if (get_user(c, pathname))
+> > >                         return ERR_PTR(-EFAULT);
+> > >                 if (!c)
+> > >                         return NULL;
+> > >         }
+> > > 
+> > > 	/* we alloc suffer the allocation of the buffer. worst case, if
+> > > 	 * the name turned empty in the meantime, we return it and
+> > > 	 * handle it the old-fashioned way.
+> > > 	 /
+> > >         return getname_flags(pathname, LOOKUP_EMPTY);
+> > > }
+> > > 
+> > > Then callers would look like this:
+> > > filename = getname_maybe_null(dfd, pathname, at_flags);
+> > > if (!filename) {
+> > > 	/* fd handling goes here */
+> > > 	CLASS(fd, f)(dfd);
+> > > 	....
+> > > 
+> > > } else {
+> > > 	/* regular path handling goes here */
+> > > }
+> > > 
+> > > 
+> > > set_nameidata() would lose this branch:
+> > > p->pathname = likely(name) ? name->name : "";
+> > > 
+> > > and putname would convert IS_ERR_OR_NULL (which is 2 branches) into one,
+> > > maybe like so:
+> > > -       if (IS_ERR_OR_NULL(name))
+> > > +       VFS_BUG_ON(!name);
+> > > +
+> > > +       if (IS_ERR(name))
+> > >                 return;
+> > > 
+> > > i think this would be an ok cleanup
+> > 
+> > Not opposed, but please for -next and Jan's thing as a backportable fix,
+> > please. Thanks!
+> 
+> Exactly, I agree the code is pretty subtle and ugly. It shouldn't take
+> several engineers to properly call a function to lookup a file :) So
+> some cleanup and refactoring is definitely long overdue but for now I
+> wanted some minimal fix which is easy to backport to stable.
+> 
+> When we speak about refactoring: Is there a reason why user_path_at()
+> actually doesn't handle NULL 'name' as empty like we do it in *xattrat()
+> syscalls? I understand this will make all _at() syscalls accept NULL name
+> with AT_EMPTY_PATH but is that a problem?
+
+It probably isn't but it needs an audit of all callers.
 
