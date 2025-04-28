@@ -1,275 +1,284 @@
-Return-Path: <linux-fsdevel+bounces-47507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47508-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B224FA9ED5F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 11:58:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C2AA9EDA9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 12:14:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B444188BF13
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 09:58:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FA5317AE10
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 10:14:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 017EC25EFB6;
-	Mon, 28 Apr 2025 09:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVNEWYAY"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E2B25F98A;
+	Mon, 28 Apr 2025 10:14:12 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D621FF603
-	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 09:58:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8C0254879;
+	Mon, 28 Apr 2025 10:14:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745834321; cv=none; b=Hnx2RQ8SFHJRWIMVx6qjSZKMmLUgCUbqAoeitAIxOcZUyQBFV7oshratNXjAlN9gheig7JVqXxRcVtKW0Rt2f5bc9mzvOHy1zij5Wcac85tGHtEoSiAcvGzk+whcFdvypyNHdMZeuFc49le18AftsOiuGI+Y4ZaGoBzizs7mpNs=
+	t=1745835252; cv=none; b=La43n52UHJmp0uXpS2M88XiK7YS7h/DzwIR8cmXJOzKfZZGihCDy6tPCduofwP+D0l9QWcmSr5RpM5eKPBuI5574nDd6VbVoOreIRMS4n1itaZCaMqCRX3zL3s7+4uAH5mkLwOMWpKgsATarjzSVGx8Bn2zUGoRc5NcGjYlbyIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745834321; c=relaxed/simple;
-	bh=XtmfWinvkqRmFbA+vdlnJwaIxoZ6o+3WHY9QrPt1yFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HCTERshvNdhi/QvXp+KtZiIDbiHNXGgzqKElcz0Pjw2m9SP4UpXtVnPcZGiF2Y2WN16rJfNa8MJt9GIMFwsFy+zLw+Xjx49b8HFMUJYDJ8cEBGTugP7y23EJNGdNm0zCy3JnDB4H28kpam9z4HzNx1Gx6d4WAiWJIn67LvWl6+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVNEWYAY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD483C4CEE4;
-	Mon, 28 Apr 2025 09:58:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745834320;
-	bh=XtmfWinvkqRmFbA+vdlnJwaIxoZ6o+3WHY9QrPt1yFo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dVNEWYAYkUuR7ZM5Zj6XigXZ4LirVyzWM7wH2Eneh85fhOitPuk6hUz4Hhmdp8kpd
-	 LnkEZ/1OE8IJxyJCvXWEILGEOyiH0tdtTmIIOFpS+bLGk9xASw71uTOW5bhWQ2LO4T
-	 pgfFPKgz7GMhRLfhtpYVCdUlRid3EhNm4VxuzUPdBEkDocL3+0D9uWKZhs5AlQ/G44
-	 SIV/IyuPK5RVNtIXFA6QPamd48aAiwMUGOze5m5tIo4aKMnTNQ2Pfk8SJpaZl9Q7E6
-	 KC1iM9LCJ/wd+WE/ejs/1N6pMKkRoWLrsRnm0E5c8Ob0QnjTxh1pONlsBz3qGSKj7x
-	 r56D+Iwotn7cA==
-Date: Mon, 28 Apr 2025 11:58:37 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs/xattr: Fix handling of AT_FDCWD in setxattrat(2) and
- getxattrat(2)
-Message-ID: <20250428-fortpflanzen-elektrisch-93cfdde43763@brauner>
-References: <20250424132246.16822-2-jack@suse.cz>
- <uz6xvk77mvfsq6hkeclq3yksbalcvjvaqgdi4a5ai6kwydx2os@sbklkpv4wgah>
- <20250425-fahrschein-obacht-c622fbb4399b@brauner>
- <a3w7xdgldyoodxeav6zwn3dkw6y4cir6fdhftopo3snrpgbjoz@zvz4vny63ehf>
- <CAGudoHF_h0Yg9pp9LqG0CKaqZDJgAjA9Tp+piJ0aMO+V9iFXBg@mail.gmail.com>
+	s=arc-20240116; t=1745835252; c=relaxed/simple;
+	bh=HkTNp77Xv/WN2djASSapKS/GGL9ub1ZggUCpE1DQWh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Vug9UmuKQXC9hfYfh4sSCqRV/lDdVoDjpYBBwPRtXZzpPrHM3XMH5TgwX7uxJ6pIunOviTZh7MHaHvUnOcheeuMsd8bCLpfaP1h+YfIHAW7Xp59PtCqXTpZxLaLhHRrqSfLnFJYO1cdpxQpn8wtGrJlaCo9FGlohLDZ/5RH3hEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E9DC1595;
+	Mon, 28 Apr 2025 03:14:03 -0700 (PDT)
+Received: from [10.57.90.155] (unknown [10.57.90.155])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 33D603F66E;
+	Mon, 28 Apr 2025 03:14:08 -0700 (PDT)
+Message-ID: <ad6b492c-cf5e-42ec-b772-52e74238483b@arm.com>
+Date: Mon, 28 Apr 2025 11:14:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGudoHF_h0Yg9pp9LqG0CKaqZDJgAjA9Tp+piJ0aMO+V9iFXBg@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] binfmt_elf: Move brk for static PIE even if ASLR disabled
+Content-Language: en-GB
+To: Kees Cook <kees@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>, Ali Saidi <alisaidi@amazon.com>,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20250425224502.work.520-kees@kernel.org>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250425224502.work.520-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sat, Apr 26, 2025 at 09:30:25PM +0200, Mateusz Guzik wrote:
-> On Fri, Apr 25, 2025 at 3:33 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Fri 25-04-25 10:45:22, Christian Brauner wrote:
-> > > On Thu, Apr 24, 2025 at 05:45:17PM +0200, Mateusz Guzik wrote:
-> > > > On Thu, Apr 24, 2025 at 03:22:47PM +0200, Jan Kara wrote:
-> > > > > Currently, setxattrat(2) and getxattrat(2) are wrongly handling the
-> > > > > calls of the from setxattrat(AF_FDCWD, NULL, AT_EMPTY_PATH, ...) and
-> > > > > fail with -EBADF error instead of operating on CWD. Fix it.
-> > > > >
-> > > > > Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
-> > > > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > > > ---
-> > > > >  fs/xattr.c | 4 ++--
-> > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > >
-> > > > > diff --git a/fs/xattr.c b/fs/xattr.c
-> > > > > index 02bee149ad96..fabb2a04501e 100644
-> > > > > --- a/fs/xattr.c
-> > > > > +++ b/fs/xattr.c
-> > > > > @@ -703,7 +703,7 @@ static int path_setxattrat(int dfd, const char __user *pathname,
-> > > > >           return error;
-> > > > >
-> > > > >   filename = getname_maybe_null(pathname, at_flags);
-> > > > > - if (!filename) {
-> > > > > + if (!filename && dfd >= 0) {
-> > > > >           CLASS(fd, f)(dfd);
-> > > > >           if (fd_empty(f))
-> > > > >                   error = -EBADF;
-> > > > > @@ -847,7 +847,7 @@ static ssize_t path_getxattrat(int dfd, const char __user *pathname,
-> > > > >           return error;
-> > > > >
-> > > > >   filename = getname_maybe_null(pathname, at_flags);
-> > > > > - if (!filename) {
-> > > > > + if (!filename && dfd >= 0) {
-> > > > >           CLASS(fd, f)(dfd);
-> > > > >           if (fd_empty(f))
-> > > > >                   return -EBADF;
-> > > >
-> > > > Is there any code which legitimately does not follow this pattern?
-> > > >
-> > > > With some refactoring getname_maybe_null() could handle the fd thing,
-> > > > notably return the NULL pointer if the name is empty. This could bring
-> > > > back the invariant that the path argument is not NULL.
-> > > >
-> > > > Something like this:
-> > > > static inline struct filename *getname_maybe_null(int fd, const char __user *name, int flags)
-> > > > {
-> > > >         if (!(flags & AT_EMPTY_PATH))
-> > > >                 return getname(name);
-> > > >
-> > > >         if (!name && fd >= 0)
-> > > >                 return NULL;
-> > > >         return __getname_maybe_null(fd, name);
-> > > > }
-> > > >
-> > > > struct filename *__getname_maybe_null(int fd, const char __user *pathname)
-> > > > {
-> > > >         char c;
-> > > >
-> > > >         if (fd >= 0) {
-> > > >                 /* try to save on allocations; loss on um, though */
-> > > >                 if (get_user(c, pathname))
-> > > >                         return ERR_PTR(-EFAULT);
-> > > >                 if (!c)
-> > > >                         return NULL;
-> > > >         }
-> > > >
-> > > >     /* we alloc suffer the allocation of the buffer. worst case, if
-> > > >      * the name turned empty in the meantime, we return it and
-> > > >      * handle it the old-fashioned way.
-> > > >      /
-> > > >         return getname_flags(pathname, LOOKUP_EMPTY);
-> > > > }
-> > > >
-> > > > Then callers would look like this:
-> > > > filename = getname_maybe_null(dfd, pathname, at_flags);
-> > > > if (!filename) {
-> > > >     /* fd handling goes here */
-> > > >     CLASS(fd, f)(dfd);
-> > > >     ....
-> > > >
-> > > > } else {
-> > > >     /* regular path handling goes here */
-> > > > }
-> > > >
-> > > >
-> > > > set_nameidata() would lose this branch:
-> > > > p->pathname = likely(name) ? name->name : "";
-> > > >
-> > > > and putname would convert IS_ERR_OR_NULL (which is 2 branches) into one,
-> > > > maybe like so:
-> > > > -       if (IS_ERR_OR_NULL(name))
-> > > > +       VFS_BUG_ON(!name);
-> > > > +
-> > > > +       if (IS_ERR(name))
-> > > >                 return;
-> > > >
-> > > > i think this would be an ok cleanup
-> > >
-> > > Not opposed, but please for -next and Jan's thing as a backportable fix,
-> > > please. Thanks!
-> >
-> > Exactly, I agree the code is pretty subtle and ugly. It shouldn't take
-> > several engineers to properly call a function to lookup a file :) So
-> > some cleanup and refactoring is definitely long overdue but for now I
-> > wanted some minimal fix which is easy to backport to stable.
-> >
-> > When we speak about refactoring: Is there a reason why user_path_at()
-> > actually doesn't handle NULL 'name' as empty like we do it in *xattrat()
-> > syscalls? I understand this will make all _at() syscalls accept NULL name
-> > with AT_EMPTY_PATH but is that a problem?
+On 25/04/2025 23:45, Kees Cook wrote:
+> In commit bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing
+> direct loader exec"), the brk was moved out of the mmap region when
+> loading static PIE binaries (ET_DYN without INTERP). The common case
+> for these binaries was testing new ELF loaders, so the brk needed to
+> be away from mmap to avoid colliding with stack, future mmaps (of the
+> loader-loaded binary), etc. But this was only done when ASLR was enabled,
+> in an attempt to minimize changes to memory layouts.
+
+If it's ok to move the brk to low memory for the !INTERP case, why is it not ok
+to just load the whole program in low memory? Perhaps if the thing that is being
+loaded does turn out to be the interpretter then it will move the brk to just
+after to the program it loads so there is no conflict (I'm just guessing).
+
 > 
-> Is there a benefit for doing it though?
+> After adding support to respect alignment requirements for static PIE
+> binaries in commit 3545deff0ec7 ("binfmt_elf: Honor PT_LOAD alignment
+> for static PIE"), it became possible to have a large gap after the
+> final PT_LOAD segment and the top of the mmap region. This means that
+> future mmap allocations might go after the last PT_LOAD segment (where
+> brk might be if ASLR was disabled) instead of before them (where they
+> traditionally ended up).
 > 
-> I think the entire AT_EMPTY_PATH and NULL thing is trainwreck which
-> needs to be reasonably contained instead. In particular the flag has
-> most regrettable semantics of requiring an actual path (the NULL thing
-> is a Linux extension) and being a nop if the path is not empty.
+> On arm64, running with ASLR disabled, Ubuntu 22.04's "ldconfig" binary,
+> a static PIE, has alignment requirements that leaves a gap large enough
+> after the last PT_LOAD segment to fit the vdso and vvar, but still leave
+> enough space for the brk (which immediately follows the last PT_LOAD
+> segment) to be allocated by the binary.
 > 
-> The entire thing is a kludge for syscalls which don't have an fd-only
-> variant and imo was the wrong way to approach this (provide fd-only
-> variants instead), but it's too late now.
+> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /home/ubuntu/glibc-2.35/build/elf/ldconfig
+> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /home/ubuntu/glibc-2.35/build/elf/ldconfig
+
+nit: I captured this with a locally built version that has debug symbols, hence
+the weird "/home/ubuntu/glibc-2.35/build/elf/ldconfig" path. Perhaps it is
+clearer to change this to "/sbin/ldconfig.real", which is the system installed
+location?
+
+> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
+> ***[brk will go here at fffff7ffa000]***
+> fffff7ffc000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
+> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
+> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
 > 
-> user_path_at() always returns a path (go figure). Suppose it got
-> extended with the fuckery and some userspace started to rely on it.
+> After commit 0b3bc3354eb9 ("arm64: vdso: Switch to generic storage
+> implementation"), the arm64 vvar grew slightly, and suddenly the brk
+> collided with the allocation.
 > 
-> Part of the benefit of having a fd-based op and knowing it is fd-based
-> is that you know the inode itself is secured by liveness of the file
-> object. If the calling thread is a part of a single-threaded process,
-> then there is the extra benefit of eliding atomics on the file thing
-> (reducing single-threaded cost). If the thing is multi-threaded,
-> atomics are only done on the file (not the inode), which scales better
-> if other procs use a different file obj for the same inode.
+> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /home/ubuntu/glibc-2.35/build/elf/ldconfig
+> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /home/ubuntu/glibc-2.35/build/elf/ldconfig
+> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
+> ***[oops, no room any more, vvar is at fffff7ffa000!]***
+> fffff7ffa000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
+> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
+> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
 > 
-> Or to put it differently, if user_path_at() keeps returning a path
-> like it does now *and* is relied on for AT_EMPTY_PATH fuckery, it is
-> going to impose extra overhead on its consumers.
+> The solution is to unconditionally move the brk out of the mmap region
+> for static PIE binaries. Whether ASLR is enabled or not does not change if
+> there may be future mmap allocation collisions with a growing brk region.
 > 
-> Suppose one will decide to combat it. Then the routine will have to
-> copy path from the file without refing it and return an indicator
-> what's needed -- path_put for a real path handling, fput for fd-only
-> in a multithreaded proc [but then also it will need to return the
-> found file obj] and nothing for a fd-only in a single-threaded proc.
+> Update memory layout comments (with kernel-doc headings), consolidate
+> the setting of mm->brk to later (it isn't needed early), move static PIE
+> brk out of mmap unconditionally, and make sure brk(2) knows to base brk
+> position off of mm->start_brk not mm->end_data no matter what the cause of
+> moving it is (via current->brk_randomized). (Though why isn't this always
+> just start_brk? More research is needed, but leave that alone for now.)
 > 
-> I think that's ugly af and completely unnecessary.
+> Reported-by: Ryan Roberts <ryan.roberts@arm.com>
+> Closes: https://lore.kernel.org/lkml/f93db308-4a0e-4806-9faf-98f890f5a5e6@arm.com/
+> Fixes: bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing direct loader exec")
+> Signed-off-by: Kees Cook <kees@kernel.org>
+> ---
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Al Viro <viro@zeniv.linux.org.uk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: <linux-fsdevel@vger.kernel.org>
+> Cc: <linux-mm@kvack.org>
+> ---
+>  fs/binfmt_elf.c | 67 +++++++++++++++++++++++++++++++------------------
+>  1 file changed, 43 insertions(+), 24 deletions(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 584fa89bc877..26c87d076adb 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -830,6 +830,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+>  	struct elf_phdr *elf_property_phdata = NULL;
+>  	unsigned long elf_brk;
+> +	bool brk_moved = false;
+>  	int retval, i;
+>  	unsigned long elf_entry;
+>  	unsigned long e_entry;
+> @@ -1097,15 +1098,19 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  			/* Calculate any requested alignment. */
+>  			alignment = maximum_alignment(elf_phdata, elf_ex->e_phnum);
+>  
+> -			/*
+> -			 * There are effectively two types of ET_DYN
+> -			 * binaries: programs (i.e. PIE: ET_DYN with PT_INTERP)
+> -			 * and loaders (ET_DYN without PT_INTERP, since they
+> -			 * _are_ the ELF interpreter). The loaders must
+> -			 * be loaded away from programs since the program
+> -			 * may otherwise collide with the loader (especially
+> -			 * for ET_EXEC which does not have a randomized
+> -			 * position). For example to handle invocations of
+> +			/**
+> +			 * DOC: PIE handling
+> +			 *
+> +			 * There are effectively two types of ET_DYN ELF
+> +			 * binaries: programs (i.e. PIE: ET_DYN with
+> +			 * PT_INTERP) and loaders (i.e. static PIE: ET_DYN
+> +			 * without PT_INTERP, usually the ELF interpreter
+> +			 * itself). Loaders must be loaded away from programs
+> +			 * since the program may otherwise collide with the
+> +			 * loader (especially for ET_EXEC which does not have
+> +			 * a randomized position).
+> +			 *
+> +			 * For example, to handle invocations of
+>  			 * "./ld.so someprog" to test out a new version of
+>  			 * the loader, the subsequent program that the
+>  			 * loader loads must avoid the loader itself, so
+> @@ -1118,6 +1123,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  			 * ELF_ET_DYN_BASE and loaders are loaded into the
+>  			 * independently randomized mmap region (0 load_bias
+>  			 * without MAP_FIXED nor MAP_FIXED_NOREPLACE).
+> +			 *
+> +			 * See below for "brk" handling details, which is
+> +			 * also affected by program vs loader and ASLR.
+>  			 */
+>  			if (interpreter) {
+>  				/* On ET_DYN with PT_INTERP, we do the ASLR. */
+> @@ -1234,8 +1242,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	start_data += load_bias;
+>  	end_data += load_bias;
+>  
+> -	current->mm->start_brk = current->mm->brk = ELF_PAGEALIGN(elf_brk);
+> -
+>  	if (interpreter) {
+>  		elf_entry = load_elf_interp(interp_elf_ex,
+>  					    interpreter,
+> @@ -1291,27 +1297,40 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	mm->end_data = end_data;
+>  	mm->start_stack = bprm->p;
+>  
+> -	if ((current->flags & PF_RANDOMIZE) && (snapshot_randomize_va_space > 1)) {
+> +	/**
+> +	 * DOC: "brk" handling
+> +	 *
+> +	 * For architectures with ELF randomization, when executing a
+> +	 * loader directly (i.e. static PIE: ET_DYN without PT_INTERP),
+> +	 * move the brk area out of the mmap region and into the unused
+> +	 * ELF_ET_DYN_BASE region. Since "brk" grows up it may collide
+> +	 * early with the stack growing down or other regions being put
+> +	 * into the mmap region by the kernel (e.g. vdso).
+> +	 */
+> +	if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
 
-I'm not going to debate AT_EMPTY_PATH with NULL again. This particular
-hedgehog can never be buggered at all (anymore).
+Does this imply that this issue will persist for !CONFIG_ARCH_HAS_ELF_RANDOMIZE
+arches?
 
-The fdsyscall() and fdatsyscall() is an ancient debate as well. In
-principle for most use-cases its possible to get away with openat(fd,
-path) and then most other system calls could very likely just fd-based.
+> +	    elf_ex->e_type == ET_DYN && !interpreter) {
+> +		elf_brk = ELF_ET_DYN_BASE;
+> +		/* This counts as moving the brk, so let brk(2) know. */
+> +		brk_moved = true;
 
-So one could argue "fsck fdatsyscall()s" and refuse to add them. That of
-course will ignore everyone who doesn't want to or cannot open the file
-they want to operate on which is not super common but common enough.
-O_PATH won't save them in all cases because they might need a file with
-proper file_operations not empty_fops set.
+So you are now randomizing the brk regardless of the value of
+snapshot_randomize_va_space. I suggested this as a potential solution but was
+concerned about back-compat issues. See this code snippet from memory.c:
 
-The other thing is that this forces everyone to allocate a file for
-every operation they do and returning it to userspace and then closing
-it again. It's annoying and also very costly for a bunch of use-cases.
+----8<----
+/*
+ * Randomize the address space (stacks, mmaps, brk, etc.).
+ *
+ * ( When CONFIG_COMPAT_BRK=y we exclude brk from randomization,
+ *   as ancient (libc5 based) binaries can segfault. )
+ */
+int randomize_va_space __read_mostly =
+#ifdef CONFIG_COMPAT_BRK
+					1;
+#else
+					2;
+#endif
+----8<----
 
-Ok, so the other option is that we just merge fdsyscall()s whenever
-someone needs to really not be bothered with passing a path and we also
-merge fdatsyscall() whenever someone needs to be able to lookup. I
-personally hate this and I'm sure we'd get some questions form Linus why
-we always merge two variants.
+This implies to me that this change is in danger of breaking libc5-based binaries?
 
-But ok we'd probably handle the fdsyscall()/fdatsyscall() split
-gracefully enough by separating pure fdsyscall() vfs_*() helpers and
-fdatsyscall() vfs_*() helpers and come up with a scheme that doesn't
-lead to too much fragementation in how we handle this.
+Thanks,
+Ryan
 
-And that is at the core of the issue for me:
+> +	}
+> +	mm->start_brk = mm->brk = ELF_PAGEALIGN(elf_brk);
+> +
+> +	if ((current->flags & PF_RANDOMIZE) && snapshot_randomize_va_space > 1) {
+>  		/*
+> -		 * For architectures with ELF randomization, when executing
+> -		 * a loader directly (i.e. no interpreter listed in ELF
+> -		 * headers), move the brk area out of the mmap region
+> -		 * (since it grows up, and may collide early with the stack
+> -		 * growing down), and into the unused ELF_ET_DYN_BASE region.
+> +		 * If we didn't move the brk to ELF_ET_DYN_BASE (above),
+> +		 * leave a gap between .bss and brk.
+>  		 */
+> -		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+> -		    elf_ex->e_type == ET_DYN && !interpreter) {
+> -			mm->brk = mm->start_brk = ELF_ET_DYN_BASE;
+> -		} else {
+> -			/* Otherwise leave a gap between .bss and brk. */
+> +		if (!brk_moved)
+>  			mm->brk = mm->start_brk = mm->brk + PAGE_SIZE;
+> -		}
+>  
+>  		mm->brk = mm->start_brk = arch_randomize_brk(mm);
+> +		brk_moved = true;
+> +	}
+> +
+>  #ifdef compat_brk_randomized
+> +	if (brk_moved)
+>  		current->brk_randomized = 1;
+>  #endif
+> -	}
+>  
+>  	if (current->personality & MMAP_PAGE_ZERO) {
+>  		/* Why this, you ask???  Well SVr4 maps page 0 as read-only,
 
-(1) We try to reduce the number of helpers that we have internally as
-    much as possible.
-(2) We try to reduce the number of special paths that code can take as
-    much as possible.
-
-This is vital. It is a long-term survival and sanity question. Because
-we have again and again observed endless fragmentation in the number of
-helpers and number of special-cases. They will keep coming and someone
-needs to understand them all.
-
-The price is high, very very high in the long-term. Because if we don't
-pay close attention we suddenly end up with 10 helpers for the same
-thing, 5 of which inexplicably end up being exported to 15 random
-modules of which 5 abuse it. So now we need to clean this up - tree
-wide. Fun times.
-
-Same with special-cases.
-
-So yes, there's a trade-off where taking the additional hit of an atomic
-or refcount is done because it collapses a bunch of special-cases into a
-single case. And that may have an impact on some workloads. If that gets
-reported we always try to figure out an acceptable solution and we
-almost always do.
-
-Your work is actually a good example of this. You _should be_ (note the
-_should_) a pain in our sweet little behinds :) because in some sense a
-lot of your requests are "If we make this a special-case and add a tiny
-helper for it then we elide an atomic in this and that condition for the
-single-threaded use-case.". So you are always on the border of pushing
-against (1) and (2). That's fine and your work is great and needed and
-we seem to always fine a good way to make it acceptable.
 
