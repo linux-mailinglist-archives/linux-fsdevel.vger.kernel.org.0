@@ -1,178 +1,198 @@
-Return-Path: <linux-fsdevel+bounces-47476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47477-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B49EA9E658
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 04:53:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973BBA9E65D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 04:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CA8617A5817
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 02:52:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E10471673C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 02:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DBC18D643;
-	Mon, 28 Apr 2025 02:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC36118DF6D;
+	Mon, 28 Apr 2025 02:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="E6teud58"
+	dkim=pass (1024-bit key) header.d=froggi.es header.i=misyl@froggi.es header.b="HPuwsRKj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sender4-op-o10.zoho.com (sender4-op-o10.zoho.com [136.143.188.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2690E42A89
-	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 02:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745808829; cv=none; b=ei3EVWprHyPgL3ynXh+hwM8sWC44rslEquNmM3vntsNGI/Yqo6KwNgj2uWF9/RMp3ciZFGcEeOGVvT19l8ZPAEhj5/s8f4MGy5yMgpxQPma0mc4cGujI74B8caZU79QXHtavMykdu415vd1YlrRL7y1IgHcSWfJ7Ht0DCi8IA0k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745808829; c=relaxed/simple;
-	bh=UYBN6HdnwtEXdHHUY5kI3syKqrU1cYLpXW7HNGKUdm4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UTtM+phEkJ6WfIzGEVulaQYGg3wE3tBvZwGjldDmKANBgow0WTMEXb0VISk+UqQAX2HdJy6MjgOMPG4aWxQzi86eeT6yAsrfCTzdjL5TR7sDZoUVszjvCvaGVxjLWbYl8aqnfEoA2QF6Pr2yf+tchudHMFzqa2E554/8qJMjBeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=E6teud58; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac2902f7c2aso710275466b.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Apr 2025 19:53:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1745808824; x=1746413624; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6iPnRBaGFfe17FMavfrpmiKhUoHcfBaVv2/5epCw8RU=;
-        b=E6teud58tC7rqAvnj7LJl+M8T8G8ehEvbekGLhT4mu8rfaNJOgc0s3Y/9K74MZoSRL
-         E/1cDnxWiKZ0EzLve2oYdnFMHF5VKKUNfIUVTKUY6MzppRwCXBX4QT8N6kwe5sfdUs6p
-         TKoyn3PbNL/ltlu/804BEpUHAGMxGS6i02P1s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745808824; x=1746413624;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6iPnRBaGFfe17FMavfrpmiKhUoHcfBaVv2/5epCw8RU=;
-        b=aO/+lPT5UlXBiyRzWWniA9wOloldakgTAkFnRC0jJOSs312V5rXtkNbbMBFz9khkCz
-         8gu8BrgD5WmthcC1UKt4MsTPeWeAX+C5X5qI5P+joUGf9+IFPeR86BU/IM2GPg56Nzyf
-         4RRX/nxqgRgTxAf6rnYk8R7yN03YS9FXhedpQqRQOKcn/OQR4L+5T5JtqugFl193WbGb
-         UaCDo2y4SmKWpbTxi2+coNGKEnjZUxNUdcmzBkhD2iGjUAzDjqIxOKDIoa/+ERdsjT6e
-         R90YJUrbTAy3x7VVdcdD6TpUVNmCwtOgdEzGiQk+DZnFcL0Gi9n2MS+/EWqOyQok1taw
-         Qokg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgDuq+Y7sbUHTQARLj/IvyaOei7q8dRhgfswC5/+EBBpn5VmBSM26prd/7eyh83KgUE/c6PKDpwHDJVBS6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMY88lKvgjNIzxb3+QtTby/y/GNe23XHRdOU5VcHdcnv0yHBe4
-	5xl6ElTTLwav9G1RfipQMzcI8VAQ0Ao0nBkbmGpDB1ZXBNRgMLUqTJoUr8jyw5yB5wXpEgep17y
-	gZeE=
-X-Gm-Gg: ASbGncsvXFzutLocPZSAWthQl8pvvUFQNOdp7MpMe2S93wEd8kEeOmisD1KUUP9cMhe
-	lRnfa5shJ6/bwrt4al9M6gWiXFOO0KbVF86s26pbpEuH6tMUVPTiJP2eBb67KWpzfVoFlKLu/Ar
-	YWfknZzsnWQU8aUfswdUdk9Pw4meIPXYzknABcuhxjNOhQJCVMBPGgbpuP9NZWGmp7nqhuoQfRt
-	Y1Bb/eYKgprSA0HLMamzj/EryYdVrCaJl4xDHbp9ZK/ZEAMLwubQ7TuGf4NDXmQk8Alf4kNMyMz
-	sfB2TtYpJAkfYZHKh0A81N03lzh18I1nZHCNwPKIk6wsYQEhM0NcI/6LgZdxLA/OKR/JKx/gefw
-	oJM2yUYZ7qs0BLGE=
-X-Google-Smtp-Source: AGHT+IHT81s65NUsCrQ2Z90JboPXH7PGorObO/mRWCCqGB9PtNHtX+bMW2ZYb1kmIfrmsaZ9SS51VA==
-X-Received: by 2002:a17:906:c110:b0:aca:a688:fb13 with SMTP id a640c23a62f3a-ace71178f01mr952608266b.36.1745808824149;
-        Sun, 27 Apr 2025 19:53:44 -0700 (PDT)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com. [209.85.218.43])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ace6ecf8603sm535117566b.112.2025.04.27.19.53.43
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Apr 2025 19:53:43 -0700 (PDT)
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ace94273f0dso237574166b.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Apr 2025 19:53:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUG6X9Y+/w0p/TuOm66Zwrd5XREggU8KlI2VJ5qIQaqC/6tDBsFLlzmdUdVcWTkA1JZ9JxO0NkBiWKlaHQS@vger.kernel.org
-X-Received: by 2002:a17:907:1c89:b0:ac1:db49:99a3 with SMTP id
- a640c23a62f3a-ace7133c2d4mr947487766b.40.1745808823097; Sun, 27 Apr 2025
- 19:53:43 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2667E1DA4E;
+	Mon, 28 Apr 2025 02:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745808998; cv=pass; b=Ggc/3ZwRdZ2JA96vMfFjvTQ6enPCzG0gNcsqNUBOfCsJYrOWa9aLuTfEOp+0zwCLM9hV5fQjDKmFzAi/mHbxMwXwytMfxMvU8qVJ11SIanwjiLOPvR4BqVtS+jt4RxutU6bPnrlk/jVguV3OvKo5+9ZYtLEK6Cba1UasVn7Eivc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745808998; c=relaxed/simple;
+	bh=fH3qI3XFE2DEsNQ5IAkdOccOgKRev6Ql/EWFMsF7NjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ng5BcsPslCfH+f2VFwG+loIkssnqMZ6mPXWuS3uWUKf6AViHLY0Kx0DXMx7FxzNBU6X/e6umXhCGIFVpjlnc6FeZXf8cYLavx7bAcifQblQp8NaIU1P1KWj7Lkqe8026qmb2Nqec1IVDlei8M7F9sFlvHhnW0DAiObTgLan3UWw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=froggi.es; spf=pass smtp.mailfrom=froggi.es; dkim=pass (1024-bit key) header.d=froggi.es header.i=misyl@froggi.es header.b=HPuwsRKj; arc=pass smtp.client-ip=136.143.188.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=froggi.es
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=froggi.es
+ARC-Seal: i=1; a=rsa-sha256; t=1745808987; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=ipgjB/CmEGy3ejS9TD5+ujCDw8UG/amzLsfTPJfVHF0qS8UqF3+gQhqLNgHYA7Z+jvd43b9i7IdUxALlMl6QSlaD1iUO6Q8PWRxXrQiZWksJd9WYVeCQhNlcOXMCXMroZw8jf6flkycIm8FiRdxHX+q4palXMtmXFYoZbDFo+bE=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1745808987; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1yb+OYIn/b4qG+ZJPpww3rWATbp1NUFUz3CJKNrPeGs=; 
+	b=ZMeGJbCxGzWaEmzPtR64j2L32sRT1xRtbuKrI1LoDOIoGllEh+2z8EVFhenyK4KSctxvAgTvlwD0o8U6uf/t8d5V1tq1yCE0tVCOW0vZ3NUDWFINJFGGaHxtrkOi+wbOwr7Fv0xLmjmzKUbmWWt0FCQ4ofzFJrUv7b6/lcpLAhM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=froggi.es;
+	spf=pass  smtp.mailfrom=misyl@froggi.es;
+	dmarc=pass header.from=<misyl@froggi.es>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1745808987;
+	s=mail; d=froggi.es; i=misyl@froggi.es;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=1yb+OYIn/b4qG+ZJPpww3rWATbp1NUFUz3CJKNrPeGs=;
+	b=HPuwsRKjhqGSOsczMmiZ64OVOlvb/eSNV075Q+stCX5y330RLuOevoyF64GBKWy6
+	qD6g0RVnSd4cWoaC+j5DkttZlqOTDZtXe8OdY69xV8ga9RwtogD+U72RXbQkxgDsoiw
+	0Up2VAEloZUpgCXcqzjYyFsjcLwfhJsQrx7loVeQ=
+Received: by mx.zohomail.com with SMTPS id 1745808984779377.53546209008414;
+	Sun, 27 Apr 2025 19:56:24 -0700 (PDT)
+Message-ID: <42a3bda8-bbec-4991-a96e-303636d7bbd1@froggi.es>
+Date: Mon, 28 Apr 2025 03:56:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Eric Biggers <ebiggers@kernel.org>, Matthew Wilcox <willy@infradead.org>,
+ Theodore Ts'o <tytso@mit.edu>, Linus Torvalds
+ <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
  <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
  <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
  <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
- <aAvlM1G1k94kvCs9@casper.infradead.org> <ahdxc464lydwmyqugl472r3orhrj5dasevw5f6edsdhj3dm6zc@lolmht6hpi6t>
- <20250428013059.GA6134@sol.localdomain> <ytjddsxe5uy4swchkn2hh56lwqegv6hinmlmipq3xxinqzkjnd@cpdw4thi3fqq>
- <5ea8aeb1-3760-4d00-baac-a81a4c4c3986@froggi.es> <20250428022240.GC6134@sol.localdomain>
- <dorhk5yr66eemxszl6hrujiqxnpera5kpvkkd4ebumh6xc3q2c@gtvl3cjfqfln>
-In-Reply-To: <dorhk5yr66eemxszl6hrujiqxnpera5kpvkkd4ebumh6xc3q2c@gtvl3cjfqfln>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 27 Apr 2025 19:53:26 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgtibpSH3+th-YjbQUSZVMbGNxG87oBDeqx+UkbHWejGw@mail.gmail.com>
-X-Gm-Features: ATxdqUGcdKhwN_XGkfQCtIIDjIKiRGyOs20GwmO8dm7_o5J-qX3JKlU0UN9-k6M
-Message-ID: <CAHk-=wgtibpSH3+th-YjbQUSZVMbGNxG87oBDeqx+UkbHWejGw@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Eric Biggers <ebiggers@kernel.org>, Autumn Ashton <misyl@froggi.es>, 
-	Matthew Wilcox <willy@infradead.org>, "Theodore Ts'o" <tytso@mit.edu>, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <aAvlM1G1k94kvCs9@casper.infradead.org>
+ <ahdxc464lydwmyqugl472r3orhrj5dasevw5f6edsdhj3dm6zc@lolmht6hpi6t>
+ <20250428013059.GA6134@sol.localdomain>
+ <ytjddsxe5uy4swchkn2hh56lwqegv6hinmlmipq3xxinqzkjnd@cpdw4thi3fqq>
+ <5ea8aeb1-3760-4d00-baac-a81a4c4c3986@froggi.es>
+ <wjj4ld5jpnj57wwe6ygtldm3jazlnlbendzwpe65xce5xfv5tg@im53llnthtxd>
+Content-Language: en-US
+From: Autumn Ashton <misyl@froggi.es>
+In-Reply-To: <wjj4ld5jpnj57wwe6ygtldm3jazlnlbendzwpe65xce5xfv5tg@im53llnthtxd>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-On Sun, 27 Apr 2025 at 19:34, Kent Overstreet <kent.overstreet@linux.dev> wrote:
->
-> Do you mean to say that we invented yet another incompatible unicode
-> casefolding scheme?
->
-> Dear god, why?
 
-Oh, Unicode itself comes with multiple "you can do this" schemes.
 
-It's designed by committee, and meant for different situations and
-different uses.  Because the rules for things like sorting names are
-wildly different even for the same language, just for different
-contexts.
+On 4/28/25 3:16 AM, Kent Overstreet wrote:
+> On Mon, Apr 28, 2025 at 03:05:19AM +0100, Autumn Ashton wrote:
+>>
+>>
+>> On 4/28/25 2:43 AM, Kent Overstreet wrote:
+>>> On Sun, Apr 27, 2025 at 06:30:59PM -0700, Eric Biggers wrote:
+>>>> On Sun, Apr 27, 2025 at 08:55:30PM -0400, Kent Overstreet wrote:
+>>>>> The thing is, that's exactly what we're doing. ext4 and bcachefs both
+>>>>> refer to a specific revision of the folding rules: for ext4 it's
+>>>>> specified in the superblock, for bcachefs it's hardcoded for the moment.
+>>>>>
+>>>>> I don't think this is the ideal approach, though.
+>>>>>
+>>>>> That means the folding rules are "whatever you got when you mkfs'd".
+>>>>> Think about what that means if you've got a fleet of machines, of
+>>>>> different ages, but all updated in sync: that's a really annoying way
+>>>>> for gremlins of the "why does this machine act differently" variety to
+>>>>> creep in.
+>>>>>
+>>>>> What I'd prefer is for the unicode folding rules to be transparently and
+>>>>> automatically updated when the kernel is updated, so that behaviour
+>>>>> stays in sync. That would behave more the way users would expect.
+>>>>>
+>>>>> But I only gave this real thought just over the past few days, and doing
+>>>>> this safely and correctly would require some fairly significant changes
+>>>>> to the way casefolding works.
+>>>>>
+>>>>> We'd have to ensure that lookups via the case sensitive name always
+>>>>> works, even if the casefolding table the dirent was created with give
+>>>>> different results that the currently active casefolding table.
+>>>>>
+>>>>> That would require storing two different "dirents" for each real dirent,
+>>>>> one normalized and one un-normalized, because we'd have to do an
+>>>>> un-normalized lookup if the normalized lookup fails (and vice versa).
+>>>>> Which should be completely fine from a performance POV, assuming we have
+>>>>> working negative dentries.
+>>>>>
+>>>>> But, if the unicode folding rules are stable enough (and one would hope
+>>>>> they are), hopefully all this is a non-issue.
+>>>>>
+>>>>> I'd have to gather more input from users of casefolding on other
+>>>>> filesystems before saying what our long term plans (if any) will be.
+>>>>
+>>>> Wouldn't lookups via the case-sensitive name keep working even if the
+>>>> case-insensitivity rules change?  It's lookups via a case-insensitive name that
+>>>> could start producing different results.  Applications can depend on
+>>>> case-insensitive lookups being done in a certain way, so changing the
+>>>> case-insensitivity rules can be risky.
+>>>
+>>> No, because right now on a case-insensitive filesystem we _only_ do the
+>>> lookup with the normalized name.
+>>>
+>>>> Regardless, the long-term plan for the case-insensitivity rules should be to
+>>>> deprecate the current set of rules, which does Unicode normalization which is
+>>>> way overkill.  It should be replaced with a simple version of case-insensitivity
+>>>> that matches what FAT does.  And *possibly* also a version that matches what
+>>>> NTFS does (a u16 upcase_table[65536] indexed by UTF-16 coding units), if someone
+>>>> really needs that.
+>>>>
+>>>> As far as I know, that was all that was really needed in the first place.
+>>>>
+>>>> People misunderstood the problem as being about language support, rather than
+>>>> about compatibility with legacy filesystems.  And as a result they incorrectly
+>>>> decided they should do Unicode normalization, which is way too complex and has
+>>>> all sorts of weird properties.
+>>>
+>>> Believe me, I do see the appeal of that.
+>>>
+>>> One of the things I should really float with e.g. Valve is the
+>>> possibility of providing tooling/auditing to make it easy to fix
+>>> userspace code that's doing lookups that only work with casefolding.
+>>
+>> This is not really about fixing userspace code that expects casefolding, or
+>> providing some form of stopgap there.
+>>
+>> The main need there is Proton/Wine, which is a compat layer for Windows
+>> apps, which needs to pretend it's on NTFS and everything there expects
+>> casefolding to work.
+>>
+>> No auditing/tooling required, we know the problem. It is unavoidable.
+> 
+> Does this boil all the way up to e.g. savegames?
 
-Think of Unicode as "several decades of many different people coming
-together, all having very different use cases".
+Everything, assets, save games.
 
-So you find four different normalization forms, all with different use-cases.
+You can't just patch the games... Doing that for every game on Steam 
+with every way they load games would be impossible, especially with 
+modern day obfuscated binaries, and anti-cheat and anti-tamper solutions.
 
-And guess what? The only actual *valid* scheme for a filesystem is
-none of the four. Literally. It's to say "we don't normalize".
+- Autumn ✨
 
-Because the normalization forms are not meant to be some kind of "you
-should do this".
+> 
+> I was imagining predetermined assets, where the name of the file would
+> be present in a compiled binary, and it's little more than a search and
+> replace. But would only work if it's present as a string literal.
+> 
+>> I agree with the calling about Unicode normalization being odd though, when
+>> I was implementing casefolding for bcachefs, I immediately thought it was a
+>> huge hammer to do full normalization for the intended purpose, and not just
+>> a big table...
+> 
+> Samba's historically wanted casefolding, and Windows casefolding is
+> Unicode (and it's full, not simple - mostly), so I'd expect that was the
+> other main driver.
+> 
+> I'm sure there's other odd corners besides just Samba where Windows
+> compatibility comes up, people cook up all kinds of strange things.
 
-They are meant as a kind of "if you are going to do X, then you can
-normalize into form Y, which makes doing X easier". And often the
-normalized form should only ever be an intermediate _temporary_ form
-for doing comparisons, not the actual form you save things in.
 
-Sadly, people so often get it wrong.
 
-For example, one very typical "you got it wrong, because you didn't
-understand the problem" case is to do comparisons by normalizing both
-sides (in one of the normalization forms) and then doing the
-comparison in that form.
-
-And guess what? 99.9% of the time, you just wasted enormous amounts of
-time, because you could have done the comparison first *without* any
-normalization at all, because equality is equality even when neither
-side is normalized.
-
-And the *common* case is that you are comparing things that are in the
-same form. For example, in filesystem operations, 99.999% of the time
-when you do a 'stat()' the *source* of the 'stat()' is typically a
-'readdir()' operation. So you are going to be using the same exact
-form that the filesystem ALREADY HAD, and it's going to be an exact
-match, and there will NEVER EVER be any case folding issues in those
-situations.
-
-But the "simplistic" way to do it is to always normalize - which
-involves allocating temporary storage for the new form, doing a fairly
-expensive transformation including case folding, and then comparing
-those things.
-
-Christ.
-
-The pure and incompetence in case-insensitivity *hurts*.
-
-And what is so sad is that all of this is self-inflicted damage by
-filesystem people who SHOULD NOT HAVE DONE THE COMPLEXITY IN THE FIRST
-PLACE!
-
-It's a classic case of
-
-  "Doctor, doctor, it hurts when I hit myself in the balls with this hammer"
-
-and then people wonder why I still claim the answer still remains -
-and always will remain - "Don't do that then".
-
-               Linus
 
