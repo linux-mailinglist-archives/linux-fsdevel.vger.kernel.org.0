@@ -1,220 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-47499-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47500-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EADC9A9EB6A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 11:05:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45725A9EB9F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 11:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 474A0188E178
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 09:05:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 930F317A1AE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 09:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F150925F79B;
-	Mon, 28 Apr 2025 09:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4383025F7A5;
+	Mon, 28 Apr 2025 09:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DTeB5saO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A94B19C54B;
-	Mon, 28 Apr 2025 09:04:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B7F3524F;
+	Mon, 28 Apr 2025 09:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745831084; cv=none; b=qEV79fZqJiQStfuYmg9hro1l3GwsJJ+dPFv7P1pvmsmIN/6oUm6nKDph8/YifD/bI0OvLDClKsiL62hY1+90KLnvVHB5HLmY7JxgZsvCtEzlJA45S/7zf7zlHKU7ZRL9DdFbNMmWnsdM2KscPiWyNqpQhU9xYOfdQitfCsofoEI=
+	t=1745831851; cv=none; b=dEDcfxRJMh1y7ZtwPJEI3s8dd6FqfZ1Om901ny8NkSsmdg66hUJXCArrH1wikhC0G+KmVmYQsrNrEI18GSfGqC3UPGDMy9tdU282tWeeaC8X9Sewc8zgtJzsA1LJkxjpeL7OsUm/uJTFGcNBVqVLpMQegh12X6TMfy2ecF2iAjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745831084; c=relaxed/simple;
-	bh=WX5MAHNpgcyH1hkVPmK8gYDhlT25wMqZzAOKCkr+DHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UwJvtvpn1KlFPriwXrh/wF6DEXVVVGuL+uIsi6g9K9dQWQbXK+vBojrFepbmKUfk/wiOZjbACIKIquqorDfTmFaUySMfaWRkvurQcyU0au+gsYRmkeg0NYMLDwu70spesrs8fzOEWQ+vsnpzY9cbrniKTjH4rUDceCh4ki7Ivt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZmHZ32lD6z4f3jMF;
-	Mon, 28 Apr 2025 17:04:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 090511A018D;
-	Mon, 28 Apr 2025 17:04:37 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgDHK2CiRA9o7nM7Kw--.50307S3;
-	Mon, 28 Apr 2025 17:04:36 +0800 (CST)
-Message-ID: <a5d847d1-9799-4294-ac8f-e78d73e3733d@huaweicloud.com>
-Date: Mon, 28 Apr 2025 17:04:34 +0800
+	s=arc-20240116; t=1745831851; c=relaxed/simple;
+	bh=rE/9aBzbnF3T+gnZPwU56POXUdpF+I32mFhG6FkrGuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nn9/PqjewyyI36DO5s8TfX+SBWKpoWUi2oRTtLdf/za1dZDpaJw60Ib65CiY3eOPAdZWw98rCy01+fPK8oj6k+Eyqh6q3MvFmSVwzdk87FlpwWYQ0qQ9KGHeGWBOn8PKY16+EmlJikOhOpLelATPH0BA80S/t4IoMvTteB7ZIPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DTeB5saO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A6ABC4CEE4;
+	Mon, 28 Apr 2025 09:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745831850;
+	bh=rE/9aBzbnF3T+gnZPwU56POXUdpF+I32mFhG6FkrGuA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DTeB5saOxudMljAGIKv9nUmX1EsHifqW9vERWjak3y1cplx2lfh4omOTPPIlfCZpi
+	 wVa75UdWzQiVyPB7wGU0brrQsEOrM3sMtnY+nMpIIYRHQZ2YtJ9yuW+ST1XYuCPCpr
+	 SnTI1UU/jJlc1I5owTVcLfxL/58hZnS2aOKb6GgWI4s6Z3m9DYGoLPKxseEQa9e8IQ
+	 ldMKANF9rz5rcbp7kW8JyMzRvl3HVO39jtmDEA03JIaGEmW9sSRgynDf3txoAUepUs
+	 5CzWXZxc+9fwH8OkG+/gKXbsep/UpXsd4b/BkeeALa1VxwrDO5/wHbfZUzmS1r2SPx
+	 GaUIefJ4hTjQw==
+Date: Mon, 28 Apr 2025 11:17:16 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Andrey Albershteyn <aalbersh@redhat.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, 
+	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
+	Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev <agordeev@linux.ibm.com>, 
+	Christian Borntraeger <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, 
+	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, "David S. Miller" <davem@davemloft.net>, 
+	Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, =?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, 
+	Arnd Bergmann <arnd@arndb.de>, Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] fs: introduce getfsxattrat and setfsxattrat
+ syscalls
+Message-ID: <20250428-obigen-gebadet-96a12d55bc08@brauner>
+References: <20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org>
+ <20250321-xattrat-syscall-v4-3-3e82e6fb3264@kernel.org>
+ <CAOQ4uxj2Fqmc_pSD4bqqoQu7QjmgSVp2V15FbmBdTNqQ03aPGQ@mail.gmail.com>
+ <faqun3wrpvwrhwukql3niqvvauy5ngrpytx5bxbrv5xkounez3@m7j2znjuzapu>
+ <CAOQ4uxjs=Gg-ocwx_fkzc0gxQ_dHx-P9EAgz5ZwbdbrxV0T_EA@mail.gmail.com>
+ <20250422-suchen-filmpreis-3573a913457c@brauner>
+ <20250422-gefressen-faucht-8ded2c9a5375@brauner>
+ <l33napyvz5fwbcdju4otllbu4zr6faaz6mufz652alpxnjjfvl@h7j4hu4uwqwv>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH blktests 2/3] dm/003: add unmap write zeroes tests
-To: Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
- "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
- "dm-devel@lists.linux.dev" <dm-devel@lists.linux.dev>,
- "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
- "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- hch <hch@lst.de>, "tytso@mit.edu" <tytso@mit.edu>,
- "djwong@kernel.org" <djwong@kernel.org>,
- "john.g.garry@oracle.com" <john.g.garry@oracle.com>,
- "bmarzins@redhat.com" <bmarzins@redhat.com>,
- "chaitanyak@nvidia.com" <chaitanyak@nvidia.com>,
- "yi.zhang@huawei.com" <yi.zhang@huawei.com>,
- "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
- "yukuai3@huawei.com" <yukuai3@huawei.com>,
- "yangerkun@huawei.com" <yangerkun@huawei.com>
-References: <20250318072835.3508696-1-yi.zhang@huaweicloud.com>
- <20250318072835.3508696-3-yi.zhang@huaweicloud.com>
- <t4vmmsupkbffrp3p33okbdjtf6il2ahp5omp2s5fvuxkngipeo@4thxzp4zlcse>
- <7b0319ac-cad4-4285-800c-b1e18ee4d92b@huaweicloud.com>
- <6p2dh577oiqe7lfaexv4fzct4aqhc56lxrz2ecwwctvbuxrjx3@oual7hmxfiqc>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <6p2dh577oiqe7lfaexv4fzct4aqhc56lxrz2ecwwctvbuxrjx3@oual7hmxfiqc>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDHK2CiRA9o7nM7Kw--.50307S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF4DXFWxKw1xCw17Xr1kKrg_yoW5KF4kpr
-	yfAFyvyrW7KF12qr1jvF1fZr1ayw4rGw17Xw13Jry0y3yDZr1agFZ7KF4Uuas7XrW3uF40
-	vay7Wa9I9w15tFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <l33napyvz5fwbcdju4otllbu4zr6faaz6mufz652alpxnjjfvl@h7j4hu4uwqwv>
 
-On 2025/4/28 16:13, Shinichiro Kawasaki wrote:
-> On Apr 28, 2025 / 12:32, Zhang Yi wrote:
->> On 2025/4/3 15:43, Shinichiro Kawasaki wrote:
-> [...]
->>>> +
->>>> +setup_test_device() {
->>>> +	if ! _configure_scsi_debug "$@"; then
->>>> +		return 1
->>>> +	fi
->>>
->>> In same manner as the 1st patch, I suggest to check /queue/write_zeroes_unmap
->>> here.
->>>
->>> 	if [[ ! -f /sys/block/${SCSI_DEBUG_DEVICES[0]}/queue/write_zeroes_unmap ]]; then
->>> 		_exit_scsi_debug
->>> 		SKIP_REASONS+=("kernel does not support unmap write zeroes sysfs interface")
->>> 		return 1
->>> 	fi
->>>
->>> The caller will need to check setup_test_device() return value.
->>
->> Sure.
->>
->>>
->>>> +
->>>> +	local dev="/dev/${SCSI_DEBUG_DEVICES[0]}"
->>>> +	local blk_sz="$(blockdev --getsz "$dev")"
->>>> +	dmsetup create test --table "0 $blk_sz linear $dev 0"
->>>
->>> I suggest to call _real_dev() here, and echo back the device name.
->>>
->>> 	dpath=$(_real_dev /dev/mapper/test)
->>> 	echo ${dpath##*/}
->>>
->>> The bash parameter expansion ${xxx##*/} works in same manner as the basename
->>> command. The caller can receive the device name in a local variable. This will
->>> avoid a bit of code duplication, and allow to avoid _short_dev().
->>>
->>
->> I'm afraid this approach will not work since we may set the
->> SKIP_REASONS parameter. We cannot pass the device name in this
->> manner as it will overlook the SKIP_REASONS setting when the caller
->> invokes $(setup_test_device xxx), this function runs in a subshell.
+On Fri, Apr 25, 2025 at 08:16:48PM +0200, Andrey Albershteyn wrote:
+> On 2025-04-22 17:14:10, Christian Brauner wrote:
+> > On Tue, Apr 22, 2025 at 04:31:29PM +0200, Christian Brauner wrote:
+> > > On Thu, Mar 27, 2025 at 12:39:28PM +0100, Amir Goldstein wrote:
+> > > > On Thu, Mar 27, 2025 at 10:33 AM Andrey Albershteyn <aalbersh@redhat.com> wrote:
+> > > > >
+> > > > > On 2025-03-23 09:56:25, Amir Goldstein wrote:
+> > > > > > On Fri, Mar 21, 2025 at 8:49 PM Andrey Albershteyn <aalbersh@redhat.com> wrote:
+> > > > > > >
+> > > > > > > From: Andrey Albershteyn <aalbersh@redhat.com>
+> > > > > > >
+> > > > > > > Introduce getfsxattrat and setfsxattrat syscalls to manipulate inode
+> > > > > > > extended attributes/flags. The syscalls take parent directory fd and
+> > > > > > > path to the child together with struct fsxattr.
+> > > > > > >
+> > > > > > > This is an alternative to FS_IOC_FSSETXATTR ioctl with a difference
+> > > > > > > that file don't need to be open as we can reference it with a path
+> > > > > > > instead of fd. By having this we can manipulated inode extended
+> > > > > > > attributes not only on regular files but also on special ones. This
+> > > > > > > is not possible with FS_IOC_FSSETXATTR ioctl as with special files
+> > > > > > > we can not call ioctl() directly on the filesystem inode using fd.
+> > > > > > >
+> > > > > > > This patch adds two new syscalls which allows userspace to get/set
+> > > > > > > extended inode attributes on special files by using parent directory
+> > > > > > > and a path - *at() like syscall.
+> > > > > > >
+> > > > > > > CC: linux-api@vger.kernel.org
+> > > > > > > CC: linux-fsdevel@vger.kernel.org
+> > > > > > > CC: linux-xfs@vger.kernel.org
+> > > > > > > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> > > > > > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > > > > > > ---
+> > > > > > ...
+> > > > > > > +SYSCALL_DEFINE5(setfsxattrat, int, dfd, const char __user *, filename,
+> > > > > > > +               struct fsxattr __user *, ufsx, size_t, usize,
+> > > > > > > +               unsigned int, at_flags)
+> > > > > > > +{
+> > > > > > > +       struct fileattr fa;
+> > > > > > > +       struct path filepath;
+> > > > > > > +       int error;
+> > > > > > > +       unsigned int lookup_flags = 0;
+> > > > > > > +       struct filename *name;
+> > > > > > > +       struct mnt_idmap *idmap;.
+> > > > > >
+> > > > > > > +       struct dentry *dentry;
+> > > > > > > +       struct vfsmount *mnt;
+> > > > > > > +       struct fsxattr fsx = {};
+> > > > > > > +
+> > > > > > > +       BUILD_BUG_ON(sizeof(struct fsxattr) < FSXATTR_SIZE_VER0);
+> > > > > > > +       BUILD_BUG_ON(sizeof(struct fsxattr) != FSXATTR_SIZE_LATEST);
+> > > > > > > +
+> > > > > > > +       if ((at_flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) != 0)
+> > > > > > > +               return -EINVAL;
+> > > > > > > +
+> > > > > > > +       if (!(at_flags & AT_SYMLINK_NOFOLLOW))
+> > > > > > > +               lookup_flags |= LOOKUP_FOLLOW;
+> > > > > > > +
+> > > > > > > +       if (at_flags & AT_EMPTY_PATH)
+> > > > > > > +               lookup_flags |= LOOKUP_EMPTY;
+> > > > > > > +
+> > > > > > > +       if (usize > PAGE_SIZE)
+> > > > > > > +               return -E2BIG;
+> > > > > > > +
+> > > > > > > +       if (usize < FSXATTR_SIZE_VER0)
+> > > > > > > +               return -EINVAL;
+> > > > > > > +
+> > > > > > > +       error = copy_struct_from_user(&fsx, sizeof(struct fsxattr), ufsx, usize);
+> > > > > > > +       if (error)
+> > > > > > > +               return error;
+> > > > > > > +
+> > > > > > > +       fsxattr_to_fileattr(&fsx, &fa);
+> > > > > > > +
+> > > > > > > +       name = getname_maybe_null(filename, at_flags);
+> > > > > > > +       if (!name) {
+> > > > > > > +               CLASS(fd, f)(dfd);
+> > > > > > > +
+> > > > > > > +               if (fd_empty(f))
+> > > > > > > +                       return -EBADF;
+> > > > > > > +
+> > > > > > > +               idmap = file_mnt_idmap(fd_file(f));
+> > > > > > > +               dentry = file_dentry(fd_file(f));
+> > > > > > > +               mnt = fd_file(f)->f_path.mnt;
+> > > > > > > +       } else {
+> > > > > > > +               error = filename_lookup(dfd, name, lookup_flags, &filepath,
+> > > > > > > +                                       NULL);
+> > > > > > > +               if (error)
+> > > > > > > +                       return error;
+> > > > > > > +
+> > > > > > > +               idmap = mnt_idmap(filepath.mnt);
+> > > > > > > +               dentry = filepath.dentry;
+> > > > > > > +               mnt = filepath.mnt;
+> > > > > > > +       }
+> > > > > > > +
+> > > > > > > +       error = mnt_want_write(mnt);
+> > > > > > > +       if (!error) {
+> > > > > > > +               error = vfs_fileattr_set(idmap, dentry, &fa);
+> > > > > > > +               if (error == -ENOIOCTLCMD)
+> > > > > > > +                       error = -EOPNOTSUPP;
+> > > > > >
+> > > > > > This is awkward.
+> > > > > > vfs_fileattr_set() should return -EOPNOTSUPP.
+> > > > > > ioctl_setflags() could maybe convert it to -ENOIOCTLCMD,
+> > > > > > but looking at similar cases ioctl_fiemap(), ioctl_fsfreeze() the
+> > > > > > ioctl returns -EOPNOTSUPP.
+> > > > > >
+> > > > > > I don't think it is necessarily a bad idea to start returning
+> > > > > >  -EOPNOTSUPP instead of -ENOIOCTLCMD for the ioctl
+> > > > > > because that really reflects the fact that the ioctl is now implemented
+> > > > > > in vfs and not in the specific fs.
+> > > > > >
+> > > > > > and I think it would not be a bad idea at all to make that change
+> > > > > > together with the merge of the syscalls as a sort of hint to userspace
+> > > > > > that uses the ioctl, that the sycalls API exists.
+> > > > > >
+> > > > > > Thanks,
+> > > > > > Amir.
+> > > > > >
+> > > > >
+> > > > > Hmm, not sure what you're suggesting here. I see it as:
+> > > > > - get/setfsxattrat should return EOPNOTSUPP as it make more sense
+> > > > >   than ENOIOCTLCMD
+> > > > > - ioctl_setflags returns ENOIOCTLCMD which also expected
+> > > > >
+> > > > > Don't really see a reason to change what vfs_fileattr_set() returns
+> > > > > and then copying this if() to other places or start returning
+> > > > > EOPNOTSUPP.
+> > > > 
+> > > > ENOIOCTLCMD conceptually means that the ioctl command is unknown
+> > > > This is not the case since ->fileattr_[gs]et() became a vfs API
+> > > 
+> > > vfs_fileattr_{g,s}et() should not return ENOIOCTLCMD. Change the return
+> > > code to EOPNOTSUPP and then make EOPNOTSUPP be translated to ENOTTY on
+> > > on overlayfs and to ENOIOCTLCMD in ecryptfs and in fs/ioctl.c. This way
+> > > we get a clean VFS api while retaining current behavior. Amir can do his
+> > > cleanup based on that.
+> > 
+> > Also this get/set dance is not something new apis should do. It should
+> > be handled like setattr_prepare() or generic_fillattr() where the
+> > filesystem calls a VFS helper and that does all of this based on the
+> > current state of the inode instead of calling into the filesystem twice:
+> > 
+> > int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+> > 		     struct fileattr *fa)
+> > {
+> > <snip>
+> > 	inode_lock(inode);
+> > 	err = vfs_fileattr_get(dentry, &old_ma);
+> > 	if (!err) {
+> > 		/* initialize missing bits from old_ma */
+> > 		if (fa->flags_valid) {
+> > <snip>
+> > 		err = fileattr_set_prepare(inode, &old_ma, fa);
+> > 		if (!err && !security_inode_setfsxattr(inode, fa))
+> > 			err = inode->i_op->fileattr_set(idmap, dentry, fa);
+> > 
 > 
-> Ah, that's right. SKIP_REASONS modification in subshell won't work.
-> 
->>
->> If you don't like _short_dev(), I think we can pass dname through a
->> global variable, something like below:
->>
->> setup_test_device() {
->> 	...
->> 	dpath=$(_real_dev /dev/mapper/test)
->> 	dname=${dpath##*/}
->> }
->>
->> if ! setup_test_device lbprz=0; then
->> 	return 1
->> fi
->> umap="$(< "/sys/block/${dname}/queue/write_zeroes_unmap")"
->>
->> What do you think?
-> 
-> I think global variable is a bit dirty. So my suggestion is to still echo back
-> the short device name from the helper, and set the SKIP_REASONS after calling
-> the helper, as follows:
-> 
-> diff --git a/tests/dm/003 b/tests/dm/003
-> index 1013eb5..e00fa99 100755
-> --- a/tests/dm/003
-> +++ b/tests/dm/003
-> @@ -20,13 +20,23 @@ device_requries() {
->  }
->  
->  setup_test_device() {
-> +	local dev blk_sz dpath
-> +
->  	if ! _configure_scsi_debug "$@"; then
->  		return 1
+> You mean something like this? (not all fs are done)
 
-Hmm, if we encounter an error here, the test will be skipped instead of
-returning a failure. This is not the expected outcome.
-
-Thanks,
-Yi.
-
->  	fi
->  
-> -	local dev="/dev/${SCSI_DEBUG_DEVICES[0]}"
-> -	local blk_sz="$(blockdev --getsz "$dev")"
-> +        if [[ ! -f /sys/block/${SCSI_DEBUG_DEVICES[0]}/queue/write_zeroes_unmap ]]; then
-> +		_exit_scsi_debug
-> +                return 1
-> +        fi
-> +
-> +	dev="/dev/${SCSI_DEBUG_DEVICES[0]}"
-> +	blk_sz="$(blockdev --getsz "$dev")"
->  	dmsetup create test --table "0 $blk_sz linear $dev 0"
-> +
-> +	dpath=$(_real_dev /dev/mapper/test)
-> +	echo ${dpath##*/}
->  }
->  
->  cleanup_test_device() {
-> @@ -38,17 +48,21 @@ test() {
->  	echo "Running ${TEST_NAME}"
->  
->  	# disable WRITE SAME with unmap
-> -	setup_test_device lbprz=0
-> -	umap="$(cat "/sys/block/$(_short_dev /dev/mapper/test)/queue/write_zeroes_unmap")"
-> +	local dname
-> +	if ! dname=$(setup_test_device lbprz=0); then
-> +		SKIP_REASONS+=("kernel does not support unmap write zeroes sysfs interface")
-> +		return 1
-> +	fi
-> +	umap="$(cat "/sys/block/${dname}/queue/zoned")"
->  	if [[ $umap -ne 0 ]]; then
->  		echo "Test disable WRITE SAME with unmap failed."
->  	fi
->  	cleanup_test_device
-> 
-
+Yes, possibly. But don't bother with this now as that'll need some more
+thinking and it'll just stall your work for no good reason. Let's just
+get the syscalls in mergable shape now.
 
