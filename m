@@ -1,365 +1,341 @@
-Return-Path: <linux-fsdevel+bounces-47524-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47525-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9438AA9F4F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 17:51:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 405BFA9F512
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 18:00:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E367A17FF16
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 15:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D1513A950F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 16:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099F626B2D2;
-	Mon, 28 Apr 2025 15:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF5C27A138;
+	Mon, 28 Apr 2025 16:00:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lHOjEbWu"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LsdBoFYO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C41478F54
-	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 15:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539C8184524;
+	Mon, 28 Apr 2025 16:00:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745855471; cv=none; b=l3+oshAiUe3PsJ3MRfZskkkBszYSBvEPRI0gvYE1euSJc1M78VOfruS3q8CQJxr/1n9uSudY4OMSIGBSStuWNW81Rp3WDUR19CN1T60H81t0RzEQYfZCLaVRLHUf2AIZ9QG1CubxFYPaBi8qqEKCXM/CRy00Zwd8+gEbo26hIqk=
+	t=1745856035; cv=none; b=fSHXo32ldmqrA7/G3nEI/ibiDyUA/Jwlzu84ElL+5fe+64uWY/QZlLEp+0BfeYOIustWh/L22iCKgAtX3gLnCWWrZQeY8XCNpwPxZ3G/i163x2yLy8luzq/5JirrlG8lqbLHH8obbkZw58n2EF7r3yPJFROxG3OFvWPplE/UNlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745855471; c=relaxed/simple;
-	bh=pfklE0F1SVhBghWOdCZNbtC7aOlEjze6zdRhSRHI88g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gVYEKg3GuNHrAQ8pqTFncfSwszNiXK7hTVhep/hGM3Zs4WRDX/odqGD7FhcMw1cNY0f1NEsbCRRMyT2aKkIyYb3gJXc1K5ezNeMTl10d4K+Dt7QdkkT5gklW3ZkbkQm1zuxCBvF+dvlDTJ6qQqmbR3LpVjYgDedEVF5iWDfHCkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lHOjEbWu; arc=none smtp.client-ip=209.85.208.42
+	s=arc-20240116; t=1745856035; c=relaxed/simple;
+	bh=2pF5ZVuvv6ywjV5CAQxpNFVYGGO75yrto/uXyKHjBqU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tHRa1csF3wmYIgHPRSQgz8ZK6y0pQoJgvUyhNREv6ySAN2v6kCOhjKm5+X+VqpdEsQB27aFP1+jgspl7XKJnDAw+eJ8klcZm7F3xJLgH6gJMVJQsx12AZ3czNFRYDxKx6hmbPTQAaqGw0NTctjG8cRo/mCFErVnMGjW1Vz4Q/a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LsdBoFYO; arc=none smtp.client-ip=209.85.219.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5ed43460d6bso7215028a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 08:51:09 -0700 (PDT)
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8efefec89so51683936d6.3;
+        Mon, 28 Apr 2025 09:00:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1745855468; x=1746460268; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KH5ohwLmyaZzDCCM5MoQyHMDhrZnPuIBhBeAUqE2dZ8=;
-        b=lHOjEbWub+ah1JGSOvG5Hn6HH7cOhkK74tZ4lx4kdnBbGLFsw4kAbqjXdPEy5KAQUu
-         jpLB2BRAFye1eIV4ezgCX9dT06Nfcj3cX1LwD66eZEF+7KxP71pCfCeGCBi6xq70SwJs
-         UgEwHxUJeKuiNNFor2vFf8hUI9wAUmW+O1Xs1A6MLnFsfqcOMrOLQyn9d8cnXPPkcL51
-         e+Sr5AA3GZjI5pSjWCWwQSRm410vPEVHyI9VubQRmLg0HT8Axp/TH0G6UXCoCNTdfI2q
-         G88K5QilUYA57pyYSIMXuu6VQwtNhpfw//n1j2JKbcrIpJi8/zLasbJ94Lmn3hMDfk8O
-         ox1A==
+        d=gmail.com; s=20230601; t=1745856032; x=1746460832; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5r+fit36PDk6bbKWFNNj/Jg/r2XACS3LZjEojHndMuU=;
+        b=LsdBoFYOpcUtBbZ2j/zapDWy/REZXYgOaHfTWylyCbJjilciLBBWH9nRF0ZoPJjk0j
+         ZH7qQCmG72c9Gx7WIf6FJFAfgKQGDwcQl3eWJ2INtxgU/W89xwOIGWeHv+EkyETYeoFF
+         ePG8O5wb+oGQJKCX32lw3QhC+j3l5paNr0N7XWE8uj4St0MW9Ow0zOdcHcaqhy82yzkS
+         ezIunAmE5/2h8trW6yb1QKniBJuZJAtgDL/uecAwIsNe0smZiWH1XCYyQh2TFsE3LhxA
+         UI3/sTAZiCH4GY/5iPjQPGOzwIGb/+aKUcE72310lPDU/ALxEc04tbDUYBer3ys5uG2L
+         u9PA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745855468; x=1746460268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KH5ohwLmyaZzDCCM5MoQyHMDhrZnPuIBhBeAUqE2dZ8=;
-        b=hVMBX8fa56i8xGvePR1IrxHfcgBWlxGG2diRzEi9YLf8yc1utwzPbx9GezM/nqdRFI
-         3J4xRz2+xkWnQXtoS/BV1HyQQnLMv6aN12OW6ad/HrapLoDCm8Zym248h7SZbXhsaK/f
-         MdBXpSTOBHxl8hDaYp3qAwVXv9pvEoaqFBFzKvucUhP4+xkk7b5xk4RnH8lPvzAfUR1l
-         ebSn2x8SvWR1Ke+pTMmpgCXvhFpcQSLEVwB5JNpbTUkLJnwcJ4LvKYKqhHgHr+d6OZxe
-         TuH7zgA1bRGjeAV57/bQ5oNy8DcVNuEr+DbHMfLTO1Vez5ACPywwzfnAyVThL1c78/DW
-         v2eA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsg1ByRseIRrSimNeyjDzQQ93UPhA2ieweocWiRbWc07jJxcO1eOFQbVCPZhPhz7abQeJPp4LMZyXlV2Gh@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfxL+7raNoStFqDhl1O0ulUpQAFifGlaCaCdKwfZ0Fp0tqNZrr
-	jAFO1YR8EV7w9qKoUe52zlBfHgdbMZ25qIgN/hYFcaWUPrY2qVx6QEO7ktOziOsj22Enpu9CXkq
-	SZoTdPfdJb1TtLiwnHW8DxuCR5ok=
-X-Gm-Gg: ASbGncu4b3H/1TUE7hP2cdVUREBadhPjgEdGjq9AXnVAeTz9uKlMkAsHOQpTkcLT6+G
-	PqEAKPTdWnMlG1c+j8jH9FL+6BTrc/MwAfXRK4xHDZTOQGC361yNcqMRTr+swKmjPZoOE5LHHeO
-	6bDbl1T2OpaKvazcoA0mkz
-X-Google-Smtp-Source: AGHT+IFzMKAcBs495p53fjBY1i1MQWtY8bA8JprBDv+UUPl5c7lpe/gSSlHi9JOGxW8qdJ9KH0NGnVuFKeA2ez3c+AA=
-X-Received: by 2002:a05:6402:2707:b0:5f6:25d6:71dd with SMTP id
- 4fb4d7f45d1cf-5f83801c89bmr153383a12.0.1745855467222; Mon, 28 Apr 2025
- 08:51:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745856032; x=1746460832;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5r+fit36PDk6bbKWFNNj/Jg/r2XACS3LZjEojHndMuU=;
+        b=dKXnQp7V/YC0ryBEAumzFayP1o7Q52QtiYsTa+omuWMx1VDCph0cw85qNNcX2LkOyi
+         FZf+jQsw8m9vc7AgGoDbvpY1US1hwehjGSfZQakwppFr2UvsrIbpd/yBp//E61wCuNgT
+         zeP9cdHgDJbBAVh+8dpdONU7UUwyrJuSYXrxAdYFHi66gtIWrle7Kr2QAt+ImX0oW/ZI
+         KO5TZDx+NNIf7YM15oQrbsVw0xFH/R45A1pASCt6CPc5FMSmUsKeb2iLC+c9qHKkMKmx
+         Z+25yXL+pyFumVlMis0KXqx7fF9w+gb9LGo1DDL6vMDM/CSnmYR/Yc8uZmnz8kDvta7i
+         JxIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUJKhUf45rsrv5LLL9C62GJ/tHUJJ9G4bTJ2V2IORYJSIW31DwU65qbeZJjIOUJ2Pwbta4VyCiEXywLX/1S@vger.kernel.org, AJvYcCUQuNuIPJQ92IxoXKFkm4S5a3KknOU0rPl9zjuVt9Ctb0e+Ni2RQDCOZbc0s31tz6WsWwBtMDrn2fV/C7Gy1YC0UAcMlcHV@vger.kernel.org, AJvYcCUtCBv4gXxDWcRMxPJbu3Zyrb4Ex2srDOHekTgQlbaehtYzsKkgtl/EjmaiQdwgOkiCY9u9zOQscrOp/T9P@vger.kernel.org, AJvYcCV/ppjwCU9uG3od+4ZF3J3TvBkTm+FULM8Zaapkkwj79FY52KEszNCXXmIdnRTXkRcJn9ZlXRR2@vger.kernel.org, AJvYcCVsi+5pctAIEYmfdHTF952fP3HQzP2vsZuhCkgNnHX4aUPpn5r3IcUYGBTPkuIYQm55RhAr3MXRTBdx@vger.kernel.org, AJvYcCWGUUMpJRe7hd/4JHr7WHrMkWr/8KeJCH+SQUosP2WwJ2QwzqxidPBUdqSkV0j2+W/5GB62nRvdrw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvTD2ckl1lrRkkUxnBxSmFyHn9SuvSpD7++W9cuXXetDQFqwUr
+	jC3v/7s3AW/YFU0ihVG7CCZLBc7Kd0XdkO9lBSIPB/QLjsk/eJMe85cRNPLoIjU=
+X-Gm-Gg: ASbGncuxb4lxux8Vl2JC1H9Ib1jAoKee+MkfHST9ObkM2LRPIZpcWIsOxjZUrkczQSq
+	QcatiSUeh0iJHUmoqkSwuZnTTlLFhcllErHSahueN0r1E8bLG0CPdU8aeSt4s+KDOJ+zENdTKMF
+	Md7dz13GMMEEK4rOn6ZCr0dohZyd9FqeyrCY6vIILQPb3TqZlo4o0UbX9OqkmmVEnn7IkkTfaLg
+	7FB5HlEX2lbcrADMSox8XpCAdD5ftKXYdyjYQco/kFz5I6pZp96kO401cKl5bntEh1JqE6Y6lMZ
+	mNzUYcZI65B3z6VS9oZhlulMHOuLJn9Fxm+XDngn82ONDEAYpfcWKVDqHne2AAEXoKg7q2BFv6+
+	RjBeK2lMJlzl8uVhWTekLYLftmTqHxHFQPRwvFFD9s4djaNyVpMBAAyMktZySJYR+WIei
+X-Google-Smtp-Source: AGHT+IEaHqdauwA3gBnLn9R84FGC9rQTXYgsEqW4m0sWTxpVGx7bmQRrDTucoMS5bvojIJd4YNLjLw==
+X-Received: by 2002:a0c:f201:0:b0:6e8:97f6:3229 with SMTP id 6a1803df08f44-6f4cbcb9e24mr226814186d6.16.1745856031452;
+        Mon, 28 Apr 2025 09:00:31 -0700 (PDT)
+Received: from fuse-fed34-svr.evoforge.org (ec2-52-70-167-183.compute-1.amazonaws.com. [52.70.167.183])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4c09341d6sm62947416d6.32.2025.04.28.09.00.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Apr 2025 09:00:30 -0700 (PDT)
+From: Stephen Smalley <stephen.smalley.work@gmail.com>
+To: paul@paul-moore.com
+Cc: Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Trond Myklebust <trondmy@kernel.org>,
+	Anna Schumaker <anna@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Simon Horman <horms@kernel.org>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	netdev@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH] security,fs,nfs,net: update security_inode_listsecurity() interface
+Date: Mon, 28 Apr 2025 11:55:31 -0400
+Message-ID: <20250428155535.6577-2-stephen.smalley.work@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250424132246.16822-2-jack@suse.cz> <uz6xvk77mvfsq6hkeclq3yksbalcvjvaqgdi4a5ai6kwydx2os@sbklkpv4wgah>
- <20250425-fahrschein-obacht-c622fbb4399b@brauner> <a3w7xdgldyoodxeav6zwn3dkw6y4cir6fdhftopo3snrpgbjoz@zvz4vny63ehf>
- <CAGudoHF_h0Yg9pp9LqG0CKaqZDJgAjA9Tp+piJ0aMO+V9iFXBg@mail.gmail.com> <20250428-fortpflanzen-elektrisch-93cfdde43763@brauner>
-In-Reply-To: <20250428-fortpflanzen-elektrisch-93cfdde43763@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 28 Apr 2025 17:50:55 +0200
-X-Gm-Features: ATxdqUHhHDX5-gN9x2g2l8I4KLgb3HyJzhYMN9PfN2lkdhdPnnu2PVc9Nv3poOE
-Message-ID: <CAGudoHFQ5jVTwbFgJO5qEVyQynbd7ueY2xrcCEqJ_d+72vVTpA@mail.gmail.com>
-Subject: Re: [PATCH] fs/xattr: Fix handling of AT_FDCWD in setxattrat(2) and getxattrat(2)
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Apr 28, 2025 at 11:58=E2=80=AFAM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Sat, Apr 26, 2025 at 09:30:25PM +0200, Mateusz Guzik wrote:
-> > On Fri, Apr 25, 2025 at 3:33=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Fri 25-04-25 10:45:22, Christian Brauner wrote:
-> > > > On Thu, Apr 24, 2025 at 05:45:17PM +0200, Mateusz Guzik wrote:
-> > > > > On Thu, Apr 24, 2025 at 03:22:47PM +0200, Jan Kara wrote:
-> > > > > > Currently, setxattrat(2) and getxattrat(2) are wrongly handling=
- the
-> > > > > > calls of the from setxattrat(AF_FDCWD, NULL, AT_EMPTY_PATH, ...=
-) and
-> > > > > > fail with -EBADF error instead of operating on CWD. Fix it.
-> > > > > >
-> > > > > > Fixes: 6140be90ec70 ("fs/xattr: add *at family syscalls")
-> > > > > > Signed-off-by: Jan Kara <jack@suse.cz>
-> > > > > > ---
-> > > > > >  fs/xattr.c | 4 ++--
-> > > > > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > > > >
-> > > > > > diff --git a/fs/xattr.c b/fs/xattr.c
-> > > > > > index 02bee149ad96..fabb2a04501e 100644
-> > > > > > --- a/fs/xattr.c
-> > > > > > +++ b/fs/xattr.c
-> > > > > > @@ -703,7 +703,7 @@ static int path_setxattrat(int dfd, const c=
-har __user *pathname,
-> > > > > >           return error;
-> > > > > >
-> > > > > >   filename =3D getname_maybe_null(pathname, at_flags);
-> > > > > > - if (!filename) {
-> > > > > > + if (!filename && dfd >=3D 0) {
-> > > > > >           CLASS(fd, f)(dfd);
-> > > > > >           if (fd_empty(f))
-> > > > > >                   error =3D -EBADF;
-> > > > > > @@ -847,7 +847,7 @@ static ssize_t path_getxattrat(int dfd, con=
-st char __user *pathname,
-> > > > > >           return error;
-> > > > > >
-> > > > > >   filename =3D getname_maybe_null(pathname, at_flags);
-> > > > > > - if (!filename) {
-> > > > > > + if (!filename && dfd >=3D 0) {
-> > > > > >           CLASS(fd, f)(dfd);
-> > > > > >           if (fd_empty(f))
-> > > > > >                   return -EBADF;
-> > > > >
-> > > > > Is there any code which legitimately does not follow this pattern=
-?
-> > > > >
-> > > > > With some refactoring getname_maybe_null() could handle the fd th=
-ing,
-> > > > > notably return the NULL pointer if the name is empty. This could =
-bring
-> > > > > back the invariant that the path argument is not NULL.
-> > > > >
-> > > > > Something like this:
-> > > > > static inline struct filename *getname_maybe_null(int fd, const c=
-har __user *name, int flags)
-> > > > > {
-> > > > >         if (!(flags & AT_EMPTY_PATH))
-> > > > >                 return getname(name);
-> > > > >
-> > > > >         if (!name && fd >=3D 0)
-> > > > >                 return NULL;
-> > > > >         return __getname_maybe_null(fd, name);
-> > > > > }
-> > > > >
-> > > > > struct filename *__getname_maybe_null(int fd, const char __user *=
-pathname)
-> > > > > {
-> > > > >         char c;
-> > > > >
-> > > > >         if (fd >=3D 0) {
-> > > > >                 /* try to save on allocations; loss on um, though=
- */
-> > > > >                 if (get_user(c, pathname))
-> > > > >                         return ERR_PTR(-EFAULT);
-> > > > >                 if (!c)
-> > > > >                         return NULL;
-> > > > >         }
-> > > > >
-> > > > >     /* we alloc suffer the allocation of the buffer. worst case, =
-if
-> > > > >      * the name turned empty in the meantime, we return it and
-> > > > >      * handle it the old-fashioned way.
-> > > > >      /
-> > > > >         return getname_flags(pathname, LOOKUP_EMPTY);
-> > > > > }
-> > > > >
-> > > > > Then callers would look like this:
-> > > > > filename =3D getname_maybe_null(dfd, pathname, at_flags);
-> > > > > if (!filename) {
-> > > > >     /* fd handling goes here */
-> > > > >     CLASS(fd, f)(dfd);
-> > > > >     ....
-> > > > >
-> > > > > } else {
-> > > > >     /* regular path handling goes here */
-> > > > > }
-> > > > >
-> > > > >
-> > > > > set_nameidata() would lose this branch:
-> > > > > p->pathname =3D likely(name) ? name->name : "";
-> > > > >
-> > > > > and putname would convert IS_ERR_OR_NULL (which is 2 branches) in=
-to one,
-> > > > > maybe like so:
-> > > > > -       if (IS_ERR_OR_NULL(name))
-> > > > > +       VFS_BUG_ON(!name);
-> > > > > +
-> > > > > +       if (IS_ERR(name))
-> > > > >                 return;
-> > > > >
-> > > > > i think this would be an ok cleanup
-> > > >
-> > > > Not opposed, but please for -next and Jan's thing as a backportable=
- fix,
-> > > > please. Thanks!
-> > >
-> > > Exactly, I agree the code is pretty subtle and ugly. It shouldn't tak=
-e
-> > > several engineers to properly call a function to lookup a file :) So
-> > > some cleanup and refactoring is definitely long overdue but for now I
-> > > wanted some minimal fix which is easy to backport to stable.
-> > >
-> > > When we speak about refactoring: Is there a reason why user_path_at()
-> > > actually doesn't handle NULL 'name' as empty like we do it in *xattra=
-t()
-> > > syscalls? I understand this will make all _at() syscalls accept NULL =
-name
-> > > with AT_EMPTY_PATH but is that a problem?
-> >
-> > Is there a benefit for doing it though?
-> >
-> > I think the entire AT_EMPTY_PATH and NULL thing is trainwreck which
-> > needs to be reasonably contained instead. In particular the flag has
-> > most regrettable semantics of requiring an actual path (the NULL thing
-> > is a Linux extension) and being a nop if the path is not empty.
-> >
-> > The entire thing is a kludge for syscalls which don't have an fd-only
-> > variant and imo was the wrong way to approach this (provide fd-only
-> > variants instead), but it's too late now.
-> >
-> > user_path_at() always returns a path (go figure). Suppose it got
-> > extended with the fuckery and some userspace started to rely on it.
-> >
-> > Part of the benefit of having a fd-based op and knowing it is fd-based
-> > is that you know the inode itself is secured by liveness of the file
-> > object. If the calling thread is a part of a single-threaded process,
-> > then there is the extra benefit of eliding atomics on the file thing
-> > (reducing single-threaded cost). If the thing is multi-threaded,
-> > atomics are only done on the file (not the inode), which scales better
-> > if other procs use a different file obj for the same inode.
-> >
-> > Or to put it differently, if user_path_at() keeps returning a path
-> > like it does now *and* is relied on for AT_EMPTY_PATH fuckery, it is
-> > going to impose extra overhead on its consumers.
-> >
-> > Suppose one will decide to combat it. Then the routine will have to
-> > copy path from the file without refing it and return an indicator
-> > what's needed -- path_put for a real path handling, fput for fd-only
-> > in a multithreaded proc [but then also it will need to return the
-> > found file obj] and nothing for a fd-only in a single-threaded proc.
-> >
-> > I think that's ugly af and completely unnecessary.
->
-> I'm not going to debate AT_EMPTY_PATH with NULL again. This particular
-> hedgehog can never be buggered at all (anymore).
->
-> The fdsyscall() and fdatsyscall() is an ancient debate as well. In
-> principle for most use-cases its possible to get away with openat(fd,
-> path) and then most other system calls could very likely just fd-based.
->
-> So one could argue "fsck fdatsyscall()s" and refuse to add them. That of
-> course will ignore everyone who doesn't want to or cannot open the file
-> they want to operate on which is not super common but common enough.
-> O_PATH won't save them in all cases because they might need a file with
-> proper file_operations not empty_fops set.
->
-> The other thing is that this forces everyone to allocate a file for
-> every operation they do and returning it to userspace and then closing
-> it again. It's annoying and also very costly for a bunch of use-cases.
->
-> Ok, so the other option is that we just merge fdsyscall()s whenever
-> someone needs to really not be bothered with passing a path and we also
-> merge fdatsyscall() whenever someone needs to be able to lookup. I
-> personally hate this and I'm sure we'd get some questions form Linus why
-> we always merge two variants.
->
-> But ok we'd probably handle the fdsyscall()/fdatsyscall() split
-> gracefully enough by separating pure fdsyscall() vfs_*() helpers and
-> fdatsyscall() vfs_*() helpers and come up with a scheme that doesn't
-> lead to too much fragementation in how we handle this.
->
-> And that is at the core of the issue for me:
->
-> (1) We try to reduce the number of helpers that we have internally as
->     much as possible.
-> (2) We try to reduce the number of special paths that code can take as
->     much as possible.
->
-> This is vital. It is a long-term survival and sanity question. Because
-> we have again and again observed endless fragmentation in the number of
-> helpers and number of special-cases. They will keep coming and someone
-> needs to understand them all.
->
-> The price is high, very very high in the long-term. Because if we don't
-> pay close attention we suddenly end up with 10 helpers for the same
-> thing, 5 of which inexplicably end up being exported to 15 random
-> modules of which 5 abuse it. So now we need to clean this up - tree
-> wide. Fun times.
->
-> Same with special-cases.
->
-> So yes, there's a trade-off where taking the additional hit of an atomic
-> or refcount is done because it collapses a bunch of special-cases into a
-> single case. And that may have an impact on some workloads. If that gets
-> reported we always try to figure out an acceptable solution and we
-> almost always do.
->
-> Your work is actually a good example of this. You _should be_ (note the
-> _should_) a pain in our sweet little behinds :) because in some sense a
-> lot of your requests are "If we make this a special-case and add a tiny
-> helper for it then we elide an atomic in this and that condition for the
-> single-threaded use-case.". So you are always on the border of pushing
-> against (1) and (2). That's fine and your work is great and needed and
-> we seem to always fine a good way to make it acceptable.
+Update the security_inode_listsecurity() interface to allow
+use of the xattr_list_one() helper and update the hook
+implementations.
 
-Well it's not my call to make, moreover is not a good convo to have
-over an e-mail either, so I'm just going to make few remarks and drop
-it.
+Link: https://lore.kernel.org/selinux/20250424152822.2719-1-stephen.smalley.work@gmail.com/
 
-I don't out of control helpers for the syscalls are inherent to
-special casing fd-only operation. In my experience dealing with VFS
-$elsewhere what actually gets in the way of long term maintenance is
-poor assert coverage and weird internal helpers (where the real magic
-happens), not some entry point.
+Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
+---
+This patch is relative to the one linked above, which in theory is on
+vfs.fixes but doesn't appear to have been pushed when I looked.
 
-Also note my proposal above with refactoring getname_maybe_null
-*reduces* special casing by whacking a corner case of a NULL name
-landing in the real lookup.
+ fs/nfs/nfs4proc.c             |  9 +++++----
+ fs/xattr.c                    | 20 ++++++++------------
+ include/linux/lsm_hook_defs.h |  4 ++--
+ include/linux/security.h      |  5 +++--
+ net/socket.c                  |  8 +-------
+ security/security.c           | 16 ++++++++--------
+ security/selinux/hooks.c      | 10 +++-------
+ security/smack/smack_lsm.c    | 13 ++++---------
+ 8 files changed, 34 insertions(+), 51 deletions(-)
 
-That said, looking at this again, I think the cases which already
-explicitly special case fd handling would end up cleaner than they are
-right now with a helper taking care of it. I still disagree
-user_path_at() should be that helper though (to not disturb the
-current consumers).
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 970f28dbf253..a1d7cb0acb5e 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -8023,12 +8023,13 @@ static int nfs4_xattr_get_nfs4_label(const struct xattr_handler *handler,
+ static ssize_t
+ nfs4_listxattr_nfs4_label(struct inode *inode, char *list, size_t list_len)
+ {
+-	int len = 0;
++	ssize_t len = 0;
++	int err;
+ 
+ 	if (nfs_server_capable(inode, NFS_CAP_SECURITY_LABEL)) {
+-		len = security_inode_listsecurity(inode, list, list_len);
+-		if (len >= 0 && list_len && len > list_len)
+-			return -ERANGE;
++		err = security_inode_listsecurity(inode, &list, &len);
++		if (err)
++			len = err;
+ 	}
+ 	return len;
+ }
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 2fc314b27120..fdd2f387bfd5 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -492,9 +492,12 @@ vfs_listxattr(struct dentry *dentry, char *list, size_t size)
+ 	if (inode->i_op->listxattr) {
+ 		error = inode->i_op->listxattr(dentry, list, size);
+ 	} else {
+-		error = security_inode_listsecurity(inode, list, size);
+-		if (size && error > size)
+-			error = -ERANGE;
++		char *buffer = list;
++		ssize_t len = 0;
++
++		error = security_inode_listsecurity(inode, &buffer, &len);
++		if (!error)
++			error = len;
+ 	}
+ 	return error;
+ }
+@@ -1469,17 +1472,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 	if (err)
+ 		return err;
+ 
+-	err = security_inode_listsecurity(inode, buffer, remaining_size);
+-	if (err < 0)
++	err = security_inode_listsecurity(inode, &buffer, &remaining_size);
++	if (err)
+ 		return err;
+ 
+-	if (buffer) {
+-		if (remaining_size < err)
+-			return -ERANGE;
+-		buffer += err;
+-	}
+-	remaining_size -= err;
+-
+ 	read_lock(&xattrs->lock);
+ 	for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
+ 		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+index bf3bbac4e02a..3c3919dcdebc 100644
+--- a/include/linux/lsm_hook_defs.h
++++ b/include/linux/lsm_hook_defs.h
+@@ -174,8 +174,8 @@ LSM_HOOK(int, -EOPNOTSUPP, inode_getsecurity, struct mnt_idmap *idmap,
+ 	 struct inode *inode, const char *name, void **buffer, bool alloc)
+ LSM_HOOK(int, -EOPNOTSUPP, inode_setsecurity, struct inode *inode,
+ 	 const char *name, const void *value, size_t size, int flags)
+-LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char *buffer,
+-	 size_t buffer_size)
++LSM_HOOK(int, 0, inode_listsecurity, struct inode *inode, char **buffer,
++	 ssize_t *remaining_size)
+ LSM_HOOK(void, LSM_RET_VOID, inode_getlsmprop, struct inode *inode,
+ 	 struct lsm_prop *prop)
+ LSM_HOOK(int, 0, inode_copy_up, struct dentry *src, struct cred **new)
+diff --git a/include/linux/security.h b/include/linux/security.h
+index cc9b54d95d22..0efc6a0ab56d 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -457,7 +457,7 @@ int security_inode_getsecurity(struct mnt_idmap *idmap,
+ 			       struct inode *inode, const char *name,
+ 			       void **buffer, bool alloc);
+ int security_inode_setsecurity(struct inode *inode, const char *name, const void *value, size_t size, int flags);
+-int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size);
++int security_inode_listsecurity(struct inode *inode, char **buffer, ssize_t *remaining_size);
+ void security_inode_getlsmprop(struct inode *inode, struct lsm_prop *prop);
+ int security_inode_copy_up(struct dentry *src, struct cred **new);
+ int security_inode_copy_up_xattr(struct dentry *src, const char *name);
+@@ -1077,7 +1077,8 @@ static inline int security_inode_setsecurity(struct inode *inode, const char *na
+ 	return -EOPNOTSUPP;
+ }
+ 
+-static inline int security_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
++static inline int security_inode_listsecurity(struct inode *inode,
++					char **buffer, ssize_t *remaining_size)
+ {
+ 	return 0;
+ }
+diff --git a/net/socket.c b/net/socket.c
+index 9a0e720f0859..52e3670dc89b 100644
+--- a/net/socket.c
++++ b/net/socket.c
+@@ -562,15 +562,9 @@ static ssize_t sockfs_listxattr(struct dentry *dentry, char *buffer,
+ 	ssize_t len;
+ 	ssize_t used = 0;
+ 
+-	len = security_inode_listsecurity(d_inode(dentry), buffer, size);
++	len = security_inode_listsecurity(d_inode(dentry), &buffer, &used);
+ 	if (len < 0)
+ 		return len;
+-	used += len;
+-	if (buffer) {
+-		if (size < used)
+-			return -ERANGE;
+-		buffer += len;
+-	}
+ 
+ 	len = (XATTR_NAME_SOCKPROTONAME_LEN + 1);
+ 	used += len;
+diff --git a/security/security.c b/security/security.c
+index fb57e8fddd91..3985d040d5a9 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2710,22 +2710,22 @@ int security_inode_setsecurity(struct inode *inode, const char *name,
+ /**
+  * security_inode_listsecurity() - List the xattr security label names
+  * @inode: inode
+- * @buffer: buffer
+- * @buffer_size: size of buffer
++ * @buffer: pointer to buffer
++ * @remaining_size: pointer to remaining size of buffer
+  *
+  * Copy the extended attribute names for the security labels associated with
+- * @inode into @buffer.  The maximum size of @buffer is specified by
+- * @buffer_size.  @buffer may be NULL to request the size of the buffer
+- * required.
++ * @inode into *(@buffer).  The remaining size of @buffer is specified by
++ * *(@remaining_size).  *(@buffer) may be NULL to request the size of the
++ * buffer required. Updates *(@buffer) and *(@remaining_size).
+  *
+- * Return: Returns number of bytes used/required on success.
++ * Return: Returns 0 on success, or -errno on failure.
+  */
+ int security_inode_listsecurity(struct inode *inode,
+-				char *buffer, size_t buffer_size)
++				char **buffer, ssize_t *remaining_size)
+ {
+ 	if (unlikely(IS_PRIVATE(inode)))
+ 		return 0;
+-	return call_int_hook(inode_listsecurity, inode, buffer, buffer_size);
++	return call_int_hook(inode_listsecurity, inode, buffer, remaining_size);
+ }
+ EXPORT_SYMBOL(security_inode_listsecurity);
+ 
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index b8115df536ab..e6c98ebbf7bc 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3612,16 +3612,12 @@ static int selinux_inode_setsecurity(struct inode *inode, const char *name,
+ 	return 0;
+ }
+ 
+-static int selinux_inode_listsecurity(struct inode *inode, char *buffer, size_t buffer_size)
++static int selinux_inode_listsecurity(struct inode *inode, char **buffer,
++				ssize_t *remaining_size)
+ {
+-	const int len = sizeof(XATTR_NAME_SELINUX);
+-
+ 	if (!selinux_initialized())
+ 		return 0;
+-
+-	if (buffer && len <= buffer_size)
+-		memcpy(buffer, XATTR_NAME_SELINUX, len);
+-	return len;
++	return xattr_list_one(buffer, remaining_size, XATTR_NAME_SELINUX);
+ }
+ 
+ static void selinux_inode_getlsmprop(struct inode *inode, struct lsm_prop *prop)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 99833168604e..3f7ac865532e 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -1619,17 +1619,12 @@ static int smack_inode_getsecurity(struct mnt_idmap *idmap,
+  * smack_inode_listsecurity - list the Smack attributes
+  * @inode: the object
+  * @buffer: where they go
+- * @buffer_size: size of buffer
++ * @remaining_size: size of buffer
+  */
+-static int smack_inode_listsecurity(struct inode *inode, char *buffer,
+-				    size_t buffer_size)
++static int smack_inode_listsecurity(struct inode *inode, char **buffer,
++				    ssize_t *remaining_size)
+ {
+-	int len = sizeof(XATTR_NAME_SMACK);
+-
+-	if (buffer != NULL && len <= buffer_size)
+-		memcpy(buffer, XATTR_NAME_SMACK, len);
+-
+-	return len;
++	return xattr_list_one(buffer, remaining_size, XATTR_NAME_SMACK);
+ }
+ 
+ /**
+-- 
+2.49.0
 
-so something like this perhaps (names not binding):
-struct user_path_state {
-    struct path *path;
-    struct file *fp;
-    int flags;
-};
-
-struct user_path_state ups =3D user_path_state_init();
-err =3D user_path_lookup(....., &ups);
-if (err)
-    goto bad;
-err =3D magic_work_based_on_path(ups->path, ....); /* path is secured,
-maybe refed or maybe relying on the file obj */
-user_path_cleanup(&ups); /* mandatory call to clean things up */
-if (!err)
-    err =3D copyout(.....);
-return err;
-
-then user_path_cleanup() knows what's up.
-
-btw, in the name of maintenance, I think part of the problem is the
-notorious NULL checks everywhere, which prevent asserting on the
-consumer knowing what they are executing (for example in path_put).
-
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
