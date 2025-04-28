@@ -1,226 +1,121 @@
-Return-Path: <linux-fsdevel+bounces-47489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81E69A9E8C2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 09:04:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC321A9E8FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 09:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E8C23AB37F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 07:03:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16418189C0AC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 07:15:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC491C9EB1;
-	Mon, 28 Apr 2025 07:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263E51DB366;
+	Mon, 28 Apr 2025 07:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KpTLaw+C"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r4NQSVEk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514A43C3C
-	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 07:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770E71D514E;
+	Mon, 28 Apr 2025 07:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745823838; cv=none; b=h3j32x7BAObL5HNZOW9ocgIbp4kk3/0MPMXc41kLn+6Rd/2mB39rRz/lmvp9a3dqCVpdB4cZqV7EJArMNfGOvF25365z0/d1FVuaoDe8KO+Sfno8Q85UVyYhZxOWbRkr4pjPbhJTBlggAgpnUzr8b+hRaPIlWQM3Ra0bgI2TQ2M=
+	t=1745824487; cv=none; b=AQWXw5NSVU0iZDO6Yc60XPvcBle8AJCA+F1BDUi4hNod1rso2e/yu3B4M9Wh8Olt085L3dKoQuEGNgI9SedTOSJgzvXx+kdwECxqG9coYvhRwyEKTVZZK/i8PeUpaVzQgBOo7wR0HOJ2RSBaTNVRbjA1NGCRWTap8JMDUhQoPdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745823838; c=relaxed/simple;
-	bh=2OSPW8fgaMcrxDQoyK+tqQRMk92HybTPVYv2zepBVn4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c9dVW0QHRs4HHqwhyWFFzO9xtMg9ldElNW7PTzO60jIROYtqJOaf5JqUPc6f2+j9D2V4YsBg8qUybeNvbtjloiK/xkGHnGsuAc79wagSteab84LBmTt2gYCrV/r/FvHAOIboyQA8Ob1+bnxMluOkddNSxYTdgu6q8ZuFZjtx4Uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KpTLaw+C; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=E6ISd+/sZg+sVfkZTbL/515hKYok9F/HWwmBF1C6DHo=; b=KpTLaw+CBMXRaFyRxJOeE4klm5
-	LflgA6+bQ3LjkYeOEEkQVSvQWTq1eK0CoTQOWRNS0BJpg4ueHjmvi3cQ+ii5YBn8k9NXTq+nNR0/G
-	k8haIpYK7Onb0JUIJM00czJfZk/H5rIgo7tn6uIHvlZUH3VmuC1OV19heDx1RnSDJG7eR6vLLC0de
-	WDAdfNtUsil2rRTZzcOUYuJs4SF5iB3l1nbQ/Lhli/dKIlr1j8fNwDM+qsEwneFND7it+46un4amV
-	m5lxqMvwayvK6XsemEtsO9IgESmr13mv777iMIFplE7EU/15r1nKfD8J/5RQzoKbMgBllmYea+dUM
-	u9/oHHYg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1u9IWv-00000006Sf4-1Afu;
-	Mon, 28 Apr 2025 07:03:53 +0000
-Date: Mon, 28 Apr 2025 08:03:53 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC] move_mount(2): still breakage around new mount detection
-Message-ID: <20250428070353.GM2023217@ZenIV>
-References: <20250428063056.GL2023217@ZenIV>
+	s=arc-20240116; t=1745824487; c=relaxed/simple;
+	bh=Bzv1ncWrZjgkqy6XnIMS5/4bommgSxaGXnH8i64OXYk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bP/aklkV8up0/Oyijshjn9AAFdeooIeMlc8peeX95bLNMwQn0OScrP9iFHHWZsdvSbGFovHCk1imPNPUgY47QLeK8LrE9Ea+kamHnLL0Q3avaOlbnWrrmvAJXzcGyEj91OdCNhnWkUBRh/H6VF7j7eK8TJ1yaZgtzVn4tyk79tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r4NQSVEk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 601B2C4CEE4;
+	Mon, 28 Apr 2025 07:14:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1745824487;
+	bh=Bzv1ncWrZjgkqy6XnIMS5/4bommgSxaGXnH8i64OXYk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=r4NQSVEksO3YmPYu/shJOPfU0zsD1qENe6qf71KvNgY9PINe/DYhnHzd81bPUYYmH
+	 LMfg0cQCDnryLskd8OeY94gUhJqtsiiZQJqtDEYSeUG7fbE5v7mM/EeAcWoseTpKsA
+	 ycShJ8XzJlX6DzBa0WzVrOAiJnCzm55qflEb/GhDw5Whs5Fd4BJw9aNxmGvHTx3UC0
+	 n1EW6ZG7eQyixX0ZXcr9pFxjrWLf5rs3i+BO1HeulRu5MWmIWiZW7cs+Kb7Ru7TSSI
+	 3o21mvezkCIsddByZVdCHKabnV1bd40qQvAQsngTBgFqU+iuOZVVo7MYZMD96s4bLW
+	 KB9dKnazS4csg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Benno
+ Lossin" <benno.lossin@proton.me>,  "Alice Ryhl" <aliceryhl@google.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Matthew Wilcox"
+ <willy@infradead.org>,  "Bjorn Helgaas" <bhelgaas@google.com>,  "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki"
+ <rafael@kernel.org>,  "FUJITA Tomonori" <fujita.tomonori@gmail.com>,  "Rob
+ Herring (Arm)" <robh@kernel.org>,  "Tamir Duberstein" <tamird@gmail.com>,
+  =?utf-8?Q?Ma=C3=ADra?= Canal <mcanal@igalia.com>,  "Asahi Lina"
+ <lina@asahilina.net>,
+  <rust-for-linux@vger.kernel.org>,  <linux-fsdevel@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-pci@vger.kernel.org>
+Subject: Re: [PATCH v19 0/3] rust: xarray: Add a minimal abstraction for XArray
+In-Reply-To: <87ldrl4mwp.fsf@kernel.org> (Andreas Hindborg's message of "Sun,
+	27 Apr 2025 17:57:58 +0200")
+References: <20250423-rust-xarray-bindings-v19-0-83cdcf11c114@gmail.com>
+	<174569693396.840230.8180149993897629324.b4-ty@kernel.org>
+	<-4ES_myfpiIqBRA27qXi1g19UfFVV7HMTi9wB6PA5Zs-yv3UgTg3Rnq5nnUiNWz9b1cnux0LNB7K_0t-49B7Pg==@protonmail.internalid>
+	<aA5Bp3Psj7yWg9wu@pollux> <87ldrl4mwp.fsf@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Mon, 28 Apr 2025 09:14:34 +0200
+Message-ID: <87cycw4v1h.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250428063056.GL2023217@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 28, 2025 at 07:30:56AM +0100, Al Viro wrote:
-> have at most one ns so marked, right?  And we only care about it in
-> propagate_mnt(), where we are serialized under namespace_lock.
-> So why not simply remember the anon_ns we would've marked and compare
-> ->mnt_ns with it instead of dereferencing and checking for flag?
-> 
-> IOW, what's wrong with the following?
+Andreas Hindborg <a.hindborg@kernel.org> writes:
 
-Hmm... You also have propagation_would_overmount() (from
-can_move_mount_beneath()) checking it...  IDGI.
+> "Danilo Krummrich" <dakr@kernel.org> writes:
+>
+>> On Sat, Apr 26, 2025 at 09:48:53PM +0200, Andreas Hindborg wrote:
+>>>
+>>> On Wed, 23 Apr 2025 09:54:36 -0400, Tamir Duberstein wrote:
+>>> > This is a reimagining relative to earlier versions[0] by Asahi Lina a=
+nd
+>>> > Ma=C3=ADra Canal.
+>>> >
+>>> > It is needed to support rust-binder, though this version only provides
+>>> > enough machinery to support rnull.
+>>> >
+>>> >
+>>> > [...]
+>>>
+>>> Applied, thanks!
+>>>
+>>> [1/3] rust: types: add `ForeignOwnable::PointedTo`
+>>>       commit: a68f46e837473de56e2c101bc0df19078a0cfeaf
+>>> [2/3] rust: xarray: Add an abstraction for XArray
+>>>       commit: dea08321b98ed6b4e06680886f60160d30254a6d
+>>> [3/3] MAINTAINERS: add entry for Rust XArray API
+>>>       commit: 1061e78014e80982814083ec8375c455848abdb4
+>>
+>> I assume this went into xarray-next? If so, you probably want to adjust =
+the
+>> MAINTAINERS entry accordingly.
+>
+> Yes, thanks for catching that. I'm very much in the learning phase
+> still.
+>
 
-For that predicate to trigger in there you need source
-anon ns - you won't see NULL ->mnt_ns there.  So...
-mnt_from is the absolute root of anon ns, target is
-*not* in that anon ns (either it's in our current namespace,
-or in a different anon ns).  IOW, in
-        if (propagation_would_overmount(parent_mnt_to, mnt_to, mp))
-		return -EINVAL;
-IS_MNT_PROPAGATED() will be false (mnt_to has unmarked namespace)
-and in
-        if (propagation_would_overmount(parent_mnt_to, mnt_from, mp))
-		return -EINVAL;
-IS_MNT_PROPAGATED() is true.  So basically, we can drop that
-check inf propagation_would_overmount() and take it to
-can_move_mount_beneath(), turning the second check into
-        if (check_mnt(mnt_from) &&
-	    propagation_would_overmount(parent_mnt_to, mnt_from, mp))
-		    return -EINVAL;
-since mnt_from is either ours or root of anon and the check removed
-from propagation_would_overmount() had it return false in "mnt_from
-is root of anon" case.
+I changed the branch to `xarray-rust` on my side.
 
-And we obviously need it cleared at the end of propagate_mnt(),
-yielding the patch below.  Do you see any other problems?
 
-diff --git a/fs/mount.h b/fs/mount.h
-index 7aecf2a60472..ad7173037924 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -7,10 +7,6 @@
- 
- extern struct list_head notify_list;
- 
--typedef __u32 __bitwise mntns_flags_t;
--
--#define MNTNS_PROPAGATING	((__force mntns_flags_t)(1 << 0))
--
- struct mnt_namespace {
- 	struct ns_common	ns;
- 	struct mount *	root;
-@@ -37,7 +33,6 @@ struct mnt_namespace {
- 	struct rb_node		mnt_ns_tree_node; /* node in the mnt_ns_tree */
- 	struct list_head	mnt_ns_list; /* entry in the sequential list of mounts namespace */
- 	refcount_t		passive; /* number references not pinning @mounts */
--	mntns_flags_t		mntns_flags;
- } __randomize_layout;
- 
- struct mnt_pcp {
-diff --git a/fs/namespace.c b/fs/namespace.c
-index eba4748388b1..3061f1b04d4c 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3556,7 +3556,8 @@ static int can_move_mount_beneath(const struct path *from,
- 	 * @mnt_from itself. This defeats the whole purpose of mounting
- 	 * @mnt_from beneath @mnt_to.
- 	 */
--	if (propagation_would_overmount(parent_mnt_to, mnt_from, mp))
-+	if (check_mnt(mnt_from) &&
-+	    propagation_would_overmount(parent_mnt_to, mnt_from, mp))
- 		return -EINVAL;
- 
- 	return 0;
-@@ -3656,14 +3657,6 @@ static int do_move_mount(struct path *old_path,
- 		 */
- 		if ((is_anon_ns(p->mnt_ns) && ns == p->mnt_ns))
- 			goto out;
--
--		/*
--		 * If this is an anonymous mount tree ensure that mount
--		 * propagation can detect mounts that were just
--		 * propagated to the target mount tree so we don't
--		 * propagate onto them.
--		 */
--		ns->mntns_flags |= MNTNS_PROPAGATING;
- 	} else if (is_anon_ns(p->mnt_ns)) {
- 		/*
- 		 * Don't allow moving an attached mount tree to an
-@@ -3714,9 +3707,6 @@ static int do_move_mount(struct path *old_path,
- 	if (err)
- 		goto out;
- 
--	if (is_anon_ns(ns))
--		ns->mntns_flags &= ~MNTNS_PROPAGATING;
--
- 	/* if the mount is moved, it should no longer be expire
- 	 * automatically */
- 	list_del_init(&old->mnt_expire);
-diff --git a/fs/pnode.c b/fs/pnode.c
-index 7a062a5de10e..26d0482fe017 100644
---- a/fs/pnode.c
-+++ b/fs/pnode.c
-@@ -13,6 +13,18 @@
- #include "internal.h"
- #include "pnode.h"
- 
-+static struct mnt_namespace *source_anon;
-+static inline bool IS_MNT_PROPAGATED(const struct mount *m)
-+{
-+	/*
-+	 * If this is an anonymous mount tree ensure that mount
-+	 * propagation can detect mounts that were just
-+	 * propagated to the target mount tree so we don't
-+	 * propagate onto them.
-+	 */
-+	return !m->mnt_ns || m->mnt_ns == source_anon;
-+}
-+
- /* return the next shared peer mount of @p */
- static inline struct mount *next_peer(struct mount *p)
- {
-@@ -300,6 +312,9 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
- 	last_source = source_mnt;
- 	list = tree_list;
- 	dest_master = dest_mnt->mnt_master;
-+	source_anon = source_mnt->mnt_ns;
-+	if (source_anon && !is_anon_ns(source_anon))
-+		source_anon = NULL;
- 
- 	/* all peers of dest_mnt, except dest_mnt itself */
- 	for (n = next_peer(dest_mnt); n != dest_mnt; n = next_peer(n)) {
-@@ -328,6 +343,7 @@ int propagate_mnt(struct mount *dest_mnt, struct mountpoint *dest_mp,
- 			CLEAR_MNT_MARK(m->mnt_master);
- 	}
- 	read_sequnlock_excl(&mount_lock);
-+	source_anon = NULL;
- 	return ret;
- }
- 
-@@ -380,9 +396,6 @@ bool propagation_would_overmount(const struct mount *from,
- 	if (!IS_MNT_SHARED(from))
- 		return false;
- 
--	if (IS_MNT_PROPAGATED(to))
--		return false;
--
- 	if (to->mnt.mnt_root != mp->m_dentry)
- 		return false;
- 
-diff --git a/fs/pnode.h b/fs/pnode.h
-index ddafe0d087ca..ba28110c87d2 100644
---- a/fs/pnode.h
-+++ b/fs/pnode.h
-@@ -12,7 +12,6 @@
- 
- #define IS_MNT_SHARED(m) ((m)->mnt.mnt_flags & MNT_SHARED)
- #define IS_MNT_SLAVE(m) ((m)->mnt_master)
--#define IS_MNT_PROPAGATED(m) (!(m)->mnt_ns || ((m)->mnt_ns->mntns_flags & MNTNS_PROPAGATING))
- #define CLEAR_MNT_SHARED(m) ((m)->mnt.mnt_flags &= ~MNT_SHARED)
- #define IS_MNT_UNBINDABLE(m) ((m)->mnt.mnt_flags & MNT_UNBINDABLE)
- #define IS_MNT_MARKED(m) ((m)->mnt.mnt_flags & MNT_MARKED)
+Best regards,
+Andreas Hindborg
+
+
+
 
