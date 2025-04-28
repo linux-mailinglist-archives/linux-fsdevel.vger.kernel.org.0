@@ -1,80 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-47545-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47546-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D988A9FD0E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 00:32:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5018A9FD2F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 00:41:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DAFD170278
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 22:32:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02AC57AB275
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Apr 2025 22:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80062211A11;
-	Mon, 28 Apr 2025 22:32:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DCB212B1F;
+	Mon, 28 Apr 2025 22:41:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gQRs8mqz"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="a2frI5ub"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC4D15687D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 22:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0545420B7FD
+	for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 22:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745879560; cv=none; b=nwPIRhO/0Jie22sie//9xeiN81daZIAf3kqsbcXDiCYSbVGuGM6Z9yKjxrvbZ2L6iEXk+Ic+bM5cpn8eMttm1LevXsRaWBLMhrjeOPJST+X6zmC0QvaO0Ux7I5BB+fm/RwwRr6V4qX3F5oo+FQMe5bLsUgnDyUGHO1IzR+XEA0I=
+	t=1745880082; cv=none; b=IKYsTbz75l4tIYRMmsiaawHm7QiGRRsUrY8SN8GMF754C4pRpx8BrKZ0IGWu4yN+7Uug69SnOoUSWE7OF24V5o+BrHGG2pRGeiw5rKqd4ZkUxlMt6KVmKBvYw7WwO0IMRenQtRBibOI6KUAPoIiWD0erSYNcbpzHvJgX3gBmvxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745879560; c=relaxed/simple;
-	bh=9qTnesBJ1x9pJGR5DoNyNyK46lrwv4v/BXjoFGJHypw=;
+	s=arc-20240116; t=1745880082; c=relaxed/simple;
+	bh=AlvOVXFXCRCq8I8E0me/Q1kPoZ1O1bXqgITfhcvz9gY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J5zRTwKOUOvQoyYWlZ6w9I/Y9R9TbzqmwiMYsE8WS3rvnyx4ySPie2Tmt4ZDxwkBlVCvfSwa4pacR4Dxq7Hx4iNlShaxdDzj+24SAIfpMWBDdDrgDvf83+ohOCc24ujoGlvB2lMSNWM6jQdLC1aMUl6xQ8NvITY8+G3u/2+VooI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gQRs8mqz; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2264c9d0295so13555ad.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 15:32:39 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=uvyqki35HtcEDvRTEuoLQ3Ngq7jXsXl/kAlNzdyWcKIcM9GPszCvlVsA2/YtaklBT2srMevGua77Mi8UcI7h7UHwhb5GdLp6MPzBsah6gcP08Enbmxzxj4dOyVm/IEyoerdQBH/WODzTOtF6jpBeyhBVtxnZqoKAj0T8ItOh8NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=a2frI5ub; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-227914acd20so54341165ad.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Apr 2025 15:41:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745879559; x=1746484359; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1745880080; x=1746484880; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iyV8p9+7U3mrNHllqv/HYRzTu27JVC6zq9eByWVVIn4=;
-        b=gQRs8mqzfw5G0BJuyzQDXS5uAPDDnWj2wyGeZXYGYWYMKR+dcrkbUUardbC1Vnuh/4
-         cVtNQToY2MVBURX1GmyHC18QnXc8Ua+v4VM35elns35Mm/mV7c49d3RjGUh1kMQr0M7Y
-         6lhwBqYdgdFnYEmSuIDAOhszaX1n631UMUI70Rl0EH/EbCTJIzOAItW5iiYjUOYerpy3
-         5h42eQHkJtRWeCMHF/81ptf8lP9rKHksxPk32pJQ/FMyHKwH8D3VHTVYHjIOjybiNdzP
-         7SPvSb9TGuR8Q6A+EBwjfokDESRQN4EaTowNYpx1Smas+1sJ+DP70UbGGGGBEO0/rJao
-         oFQA==
+        bh=Q1zF7iiKiJhxVauo67vkFbkwxJz6M/6/Hp9e+j/XY2M=;
+        b=a2frI5ubmyU9Fp1/j9NfmDmV+CfZ3cjU9Hh1jSHcBQSnZb8bjBahBQa4YH5iFO/XCh
+         urS7Ug1dSL+wvCnhvHH0X+jx3W97JZG8Ce+lRj8Da27rVAby0w6WZ//xuFy0xpoDrsLe
+         gdLM4fG+Ivdk28eH1siPa0DYHf54mwG75DdOc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745879559; x=1746484359;
+        d=1e100.net; s=20230601; t=1745880080; x=1746484880;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iyV8p9+7U3mrNHllqv/HYRzTu27JVC6zq9eByWVVIn4=;
-        b=n4a4WooOmDXhojlbjmPL1FHBTuPnOXFZQVXQRF86y6t8H27NeiszwefR/yZ0YciC6h
-         mMpc+JjiHZAgg37sqnuji1PF/x9+3CMvh3cEA0oGW/aS1AO8cH5kUehOnq+2R+Ix0Q4+
-         PtfsS0NpGDKveu92BYMNEZTrp4HWmbk+6dBPfvaohUHrV2KFGDG97+JcClufofMNJWjj
-         Ent3rL/Mhefk4a3I5GWs7DEpEIQljevLv9y+XNRES9WPH9K6NFi9iXJrNEEro5ikn1jC
-         ruw6juwdEy8PUgepTbA+7S5dL5fLmEvr/qgEFKzG4+xw1jsSxtoDthkrsbBfz8PukklY
-         PuQw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaIjSzeHeiGOLVlkETzp6nmpgSGMp2fyUQrZQJesjFez8Zg637QQG7nxMNlFyijR+5qzQ6DzHYznFXQO8p@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMEiiIIu+afNxEQjYq7REYE0NKzUZX1PCkWJK9aUnGDV80unbW
-	CGayJ+dh5ycMUmFfW9VmNQKhPv1ebEsvWs4y/f/NIR9Rp8jmkAiut7gDucbNLA==
-X-Gm-Gg: ASbGncsnLDobqPIK0QXiQ3SroUzTLdRrUcUGN8w9R8J/G7lqcAb3VnlvT+eLBAnFCxC
-	uK3Q+ER6q29G8PS5x1hA4TsfA1h4jua6lw6D4bnyILoZW8E082yxHN7HFBBgIyIDi5fo+vaeOm7
-	+eu0mB8MqfAqWMBYcmlmoJabXGytxjT84i7TuRxkiZHD9bfr5yXKNGNQMaHTl07k5GVNaZA/pqz
-	X0C741rxC1fAGVPXiKDH49KKg84qNwm55x7+DNMU3mTVlvRwBte7S10TbjNxDgxU+4Pr/+xLskX
-	WY3dhSu+epUT2evDT81nEOgy6Ji30NHB6dfPm/gL4CofwpUOu7oDe6rtwwJQit3Fwa0I9DWKs7C
-	9
-X-Google-Smtp-Source: AGHT+IGsmsHhSlt1m1Ge4MM29yK31OrlTG/5dxumFFtIkx9IfHhDaVXh/V5pz3CbgEiWW4EBbU6FYQ==
-X-Received: by 2002:a17:902:e945:b0:223:7f8f:439b with SMTP id d9443c01a7336-22de8628a21mr481695ad.29.1745879558384;
-        Mon, 28 Apr 2025 15:32:38 -0700 (PDT)
-Received: from google.com (152.33.83.34.bc.googleusercontent.com. [34.83.33.152])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73e25912ae0sm8596242b3a.1.2025.04.28.15.32.35
+        bh=Q1zF7iiKiJhxVauo67vkFbkwxJz6M/6/Hp9e+j/XY2M=;
+        b=XsJz9z/KWoq06IZAl4Vzhm616SEx+smgz0gs5D/A/eTvtNw6ThLieR4Sy1+ubQlHU0
+         i5TzUruH0k9JNg+H4MmE5FwGHebdUuGUUpOLtv/FGru5JXtYN20eJQRGCM/mlM2Wv3OU
+         W+XQviR1KslcPhwyIW4lkxn+hJi+EJVs5t9eyDVZ4rTURphq74ClhsRbiaLE5L6cpVd3
+         D15nqIUe1GWHBcQCiphPvUTlBrtuhgM0v0J8pPVR14SHIvg/XK566zBCb6cHVt4P/4eo
+         pX5qs2TsUtExw+20k/K1zAgvM7LBaN2R6/hKrtCpdUxDjDiF76pMOyc6G2a6e//wnL8x
+         /p7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVPOZPBdHaNx4IqilgJdwzD40sjlOTHUIL1rirEPyg90NezMlbba2weQHZYM3mp68/eW8NNx8980CTiGXSF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHl84Nr35jKktVraEAVSgCG/fKTgzfXWeKIum0r8z0Jofe7E9i
+	fT+oS04tjq1mlvokvBOEvzgsN+IPamBNJAxL9W4Jv4J7lJNXCjXUkFSOnS/sjpE=
+X-Gm-Gg: ASbGncv96SRlshOyQXwNrNrl4U9JZjm1CZgQFnh1GocUeLcs+MxFFhpZEIsWYC4AgpZ
+	oM9e3+pcWiBbYzoeMEpAyYstHKkfflDgaSyN/s+nQiWwKJBZGBKK1NqVegG/uYvvb4GIYEQav8j
+	XfO2P/gMqbVibDcTrgcfYmBDGbXYIoK0v4isMWRw8Y6KH+B/NBYhcNudxCVVCVpSabh+XfFysCK
+	ykTy0A4HhER4ZWEaB/xzmoSTGgCrnCv8nn8x+negIyKsQJ1BZCzNbylGP9SvWMgPtcGvQhw4zgb
+	PtON1Wa6VGNBcnvNJxN/9MRdACVcMqw69sJsCfm5pnhsK8RymqQHBS6/ofMCClCfjZsovBecPMP
+	ez6Ka9jE=
+X-Google-Smtp-Source: AGHT+IGs8v7qFjLt5uguqm0k7RJ6lOeFhXTFHUcr3VX560dCyFuGMIu3yj7cSKfJemZbK13XI+wmKA==
+X-Received: by 2002:a17:902:f143:b0:223:607c:1d99 with SMTP id d9443c01a7336-22de6b650e2mr14854735ad.0.1745880080181;
+        Mon, 28 Apr 2025 15:41:20 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4e0cb15sm89249515ad.106.2025.04.28.15.41.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Apr 2025 15:32:36 -0700 (PDT)
-Date: Mon, 28 Apr 2025 22:32:31 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Joe Damato <jdamato@fastly.com>
+        Mon, 28 Apr 2025 15:41:19 -0700 (PDT)
+Date: Mon, 28 Apr 2025 15:41:17 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Carlos Llamas <cmllamas@google.com>
 Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -87,11 +84,12 @@ Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>,
 	William McVicker <willmcvicker@google.com>
 Subject: Re: [PATCH vfs/vfs.fixes v2] eventpoll: Set epoll timeout if it's in
  the future
-Message-ID: <aBAB_4gQ6O_haAjp@google.com>
+Message-ID: <aBAEDdvoazY6UGbS@LQ3V64L9R2>
 References: <20250416185826.26375-1-jdamato@fastly.com>
  <20250426-haben-redeverbot-0b58878ac722@brauner>
  <ernjemvwu6ro2ca3xlra5t752opxif6pkxpjuegt24komexsr6@47sjqcygzako>
  <aA-xutxtw3jd00Bz@LQ3V64L9R2>
+ <aBAB_4gQ6O_haAjp@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -100,46 +98,50 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aA-xutxtw3jd00Bz@LQ3V64L9R2>
+In-Reply-To: <aBAB_4gQ6O_haAjp@google.com>
 
-On Mon, Apr 28, 2025 at 09:50:02AM -0700, Joe Damato wrote:
-> Thank you for spotting that and sorry for the trouble.
-
-This was also flagged by our Android's epoll_pwait2 tests here:
-https://android.googlesource.com/platform/bionic/+/refs/heads/main/tests/sys_epoll_test.cpp
-They would all timeout, so the hang reported by Christian fits.
-
-
-> Christian / Jan what would be the correct way for me to deal with
-> this? Would it be to post a v3 (re-submitting the patch in its
-> entirety) or to post a new patch that fixes the original and lists
-> the commit sha from vfs.fixes with a Fixes tag ?
-
-The original commit has landed in mainline already, so it needs to be
-new patch at this point. If if helps, here is the tag:
-Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
-
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 4bc264b854c4..1a5d1147f082 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -2111,7 +2111,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+On Mon, Apr 28, 2025 at 10:32:31PM +0000, Carlos Llamas wrote:
+> On Mon, Apr 28, 2025 at 09:50:02AM -0700, Joe Damato wrote:
+> > Thank you for spotting that and sorry for the trouble.
 > 
->                 write_unlock_irq(&ep->lock);
+> This was also flagged by our Android's epoll_pwait2 tests here:
+> https://android.googlesource.com/platform/bionic/+/refs/heads/main/tests/sys_epoll_test.cpp
+> They would all timeout, so the hang reported by Christian fits.
 > 
-> -               if (!eavail && ep_schedule_timeout(to))
-> +               if (!ep_schedule_timeout(to))
-> +                       timed_out = 1;
-> +               else if (!eavail)
->                         timed_out = !schedule_hrtimeout_range(to, slack,
->                                                               HRTIMER_MODE_ABS);
->                 __set_current_state(TASK_RUNNING);
+> 
+> > Christian / Jan what would be the correct way for me to deal with
+> > this? Would it be to post a v3 (re-submitting the patch in its
+> > entirety) or to post a new patch that fixes the original and lists
+> > the commit sha from vfs.fixes with a Fixes tag ?
+> 
+> The original commit has landed in mainline already, so it needs to be
+> new patch at this point. If if helps, here is the tag:
+> Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
+> 
+> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > index 4bc264b854c4..1a5d1147f082 100644
+> > --- a/fs/eventpoll.c
+> > +++ b/fs/eventpoll.c
+> > @@ -2111,7 +2111,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+> > 
+> >                 write_unlock_irq(&ep->lock);
+> > 
+> > -               if (!eavail && ep_schedule_timeout(to))
+> > +               if (!ep_schedule_timeout(to))
+> > +                       timed_out = 1;
+> > +               else if (!eavail)
+> >                         timed_out = !schedule_hrtimeout_range(to, slack,
+> >                                                               HRTIMER_MODE_ABS);
+> >                 __set_current_state(TASK_RUNNING);
+> 
+> I've ran your change through our internal CI and I confirm it fixes the
+> hangs seen on our end. If you send the fix feel free to add:
+> 
+> Tested-by: Carlos Llamas <cmllamas@google.com>
 
-I've ran your change through our internal CI and I confirm it fixes the
-hangs seen on our end. If you send the fix feel free to add:
+Thanks, will do.
 
-Tested-by: Carlos Llamas <cmllamas@google.com>
-
-Cheers,
-Carlos Llamas
+I was waiting to hear back from Christian / Jan if they are OK with
+the proposed fix before submitting something, but glad to hear it
+fixes the issue for you. Sorry for the trouble.
 
