@@ -1,224 +1,280 @@
-Return-Path: <linux-fsdevel+bounces-47607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AB36AA109A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 17:37:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4894AA10AA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 17:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B69C3B7A38
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 15:36:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C08453DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 15:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2CC221DA1;
-	Tue, 29 Apr 2025 15:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C21022A7F3;
+	Tue, 29 Apr 2025 15:40:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b="Ju/5DHQ3"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="igkPu5v2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9A221CC56
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 15:36:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0B0227EB6
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 15:40:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745941018; cv=none; b=BgchMC3sfdKp1wR40PCtlJhJMLCPxCYAToRwl82DDHaQNPxVYbLwVKC//GHuNlvMkMLTJd5EDROrGdr4Yczbr1XjsTXfIFnXACrwVgqkAVrXfhQg9CVz5nZUYEWHHIFlgQ3Xr0/hMibIKKCClFoW500oHhjZ6EKkdCcpnq4OwwY=
+	t=1745941205; cv=none; b=WCJc8mWrhDgO14j2MR1UkyaW5nu/tNBSPbNpmazNxSMVoGh6SxpvTkyV1lUUh7HBZBfX3f5Flu9jZ86orik1ZuQW1OvwsnMhDSvs52GEe8+2coU1NbLHh3JdAiB6hEptOIJwiZIEfkDf6kWw98m8dffQdZpwALnPeR0pYX0sx8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745941018; c=relaxed/simple;
-	bh=3usbEIK+Vf0eiZW7mghNbw6ET31WZBrHVcaTo5PhsD4=;
+	s=arc-20240116; t=1745941205; c=relaxed/simple;
+	bh=m4RIdnC33T+0DzN2pkMUmi2ZJdkLEyYSorF3bzhZmQI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OuCszB1WyoKj5HFgOGLpTy+bWpp/Zbf9BrZbSTXP/1PMd5lKu9SfRw6g6z0itPe2+wvY+oFSEXIWeUshy/fluUOm4y4glew6r5BGzTCNs7Ul0C9jyt4OWMNPcWchtPEVqJuluYC/QuKi9Iq9qrlIPrMzqNMCaGk39sinIE1Oh7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com; spf=none smtp.mailfrom=batbytes.com; dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b=Ju/5DHQ3; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=batbytes.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-3018e2d042bso4148056a91.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 08:36:56 -0700 (PDT)
+	 To:Cc:Content-Type; b=s+CClPklu3hZNfclLlxNGbLthNHasDUhGDgax0F/xWlzAhapEn9IsVgu4GEU2pkGl0L2P3I5msVkuOCs2DU/K6Ggcrp4UmdQyvB7FVSjecnEZxGkJbQpHF2Q+kQwMw9xav0veULIO/MPbHX4zqIZ07+Sc1lJpgYbIITlMVQJE7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=igkPu5v2; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dbfc122b82so9154a12.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 08:40:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=batbytes-com.20230601.gappssmtp.com; s=20230601; t=1745941016; x=1746545816; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1745941202; x=1746546002; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=1ebRG7jeBkWEyD/xAGDvW23IxuEay2SS0xU4F/+a64M=;
-        b=Ju/5DHQ3nXPb+Y6F0ChYlavpte/IBmFRnebMTJ78WCHR82EIk6eSeTt2n/dGU197+t
-         xj5+52sL3/iIZW4MhXj7mejF8s/esJ+CkX5p24Rnhi1dgDTdy1lW74TeAbrUGuXxkfiJ
-         iaY45Knz00Ima1O/KB723NvbmgDv47DYAZIzOGuQVerE5il3N+n1/BqHxKXjzPECaq87
-         mKzXZ+tyylYHaZAwiDC9WAhOYo1BG+MufftOFsDS1DayBDkq1KS1VixmedXzmZB9+gz0
-         ip2RUfM2VBtkKxtdPoz2Uw/poqcYrFDO34R6//QZ9phxBAfgmyjzzdoEJhhOdcBi62wg
-         WUmA==
+        bh=nrLjz0SO4NLZaGlZgmJ5ANLBwSUMQ+H6anEYSpKzKcw=;
+        b=igkPu5v2E8TpJbmhkZaYMFhSI1L7Qtv4eKmpWL0Gina+4r8Qxihkactxa3ckTeS4it
+         klnhE32dMbujO+Y1KfmfAdI/redH2erF39k/0T2zCF7m3MkvGKuASkcokX3gsONoO68/
+         LydkD1sZwjDOA3Myo288fcZKl32BA7nsAQGdw849qvnwfoxKWl2XKBwf1ZEEMS+1rCEH
+         RQxTEkCwT10Rh2ceVGJ83RsiN8VL7N0yaJU0Z2JOERwHvrc+VmDTm6UlvuoZ5WyTyTgb
+         nxQstjnbhFD+H81RHNvsjTv55sCMOuTd+eSfh+LS7BQIlxa6CmKS9VqyBsL7/8285pz9
+         0Enw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745941016; x=1746545816;
+        d=1e100.net; s=20230601; t=1745941202; x=1746546002;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=1ebRG7jeBkWEyD/xAGDvW23IxuEay2SS0xU4F/+a64M=;
-        b=YfurCHWxL17TO2LGjKst35Kjdl2m6oN6d1lU7KOpvznYvoPr/ygJYs4eq7V7VSmy5Q
-         PUdiLB3M7DgHJ5Er+Xk4jJYLZIJgbKCgcbFTk3KNg62pEKIwhY4rBNDtgd2w8AgN+CDM
-         6ywOnv3pJe9DgJu3R3QKIrGJfJ7zdvOisAcxRF84DlFTdR5G3ldcl/rC8f41elnHf2gv
-         Lctvsi+XhHsx9O7SgTJ4oNEJg5oMl/HzljZB0NoLiW8hvYIViBhuww0zysUiC8u53+V/
-         li7CJeaqvwaGna/v3pZE4Ed3g3usXLT92RRIRsv/kNzbZO8H2Rkz32F2xQCXVqBsBi8N
-         1ZKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUxqZWVPr7n6xKz/xZ6rW0caxOO+QyzCNehb0ZxrgkdmF1X1i4HsImmjeoO5IoAsUn4oCeDkm5jEEYrPl6W@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1ktyqY3VK8nMkMiSvB5xndZYVgnOcOIsgl6RhzyAqPsPCwn1T
-	E9Gn96NmQnIKWU0vQWoBzQSzO7LyxIxR8YuJk0plU5vhxP5oj2jpnwnW9IVgxOSoJBh5SBBNgBa
-	eypzGp+n9/vbfABzcG2mOV077pkz5yG7t8ANJGjGq10Mgm+2CMw==
-X-Gm-Gg: ASbGncu9LPxAw8GSAOeLYV9MVDvEHCq5VEjmhxEJpEhHXvKtsDoA230gBbg6YzKuBBy
-	6qBxht0NNI2C5LaTVYxUZXwJoAE9Dz8hB3Ves4l4RedjTcZpyOsnJ7Y1NP3Scgc+oyXdKtiLnPi
-	YN4EJbo0t/fmhiMmFglG4gZifJvoPytHmk
-X-Google-Smtp-Source: AGHT+IEXBqEgt3qTlVv+o57ePa/sffj59yz152ICUQH8M50uSy4IOzvgJ/912q7YAwzI9BcMfF3zbK4OLOx/mI6NTK0=
-X-Received: by 2002:a17:90b:4fc2:b0:2ff:58c7:a71f with SMTP id
- 98e67ed59e1d1-30a2214c2famr4603260a91.32.1745941016193; Tue, 29 Apr 2025
- 08:36:56 -0700 (PDT)
+        bh=nrLjz0SO4NLZaGlZgmJ5ANLBwSUMQ+H6anEYSpKzKcw=;
+        b=H+3LrXbOSFy006aU9dRwCeQI1Cyo3TF442LnmdeJxj2Nk7URHRUYr+1hJju0rnakhJ
+         C8h2YWX1xchAG0dNWbKsHpwpyck+njnkDV3llmnS6HfwOvE5ppbEjJLGAu6XVmXi6+cj
+         x8Rw3eU+g2GsWgw3XZDBmiZkkIAmoPjSL/rrhVofXcsY6yov2mHBFXAxsmTEgnWdEhsw
+         C4MOZgvX2iJwkraC4/8JS4ck9eH2vZif3ednl/mx8VINQJqSliR2+dT9WHtZxIwnhbhF
+         HKFEhY3DJ34A5e0kdSoul1P0W2wewZhMuUu95j67FAy1RTaEKE+zEoyk5upVawZYQrYe
+         vRxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaQFes3CiKQn7to58WcO7902K10xDnaBAnftuqorL8xepXZ8qx6rM0YyiroboODJ6YuceuevL2BOqkL6aU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3zytOHZZmZvkCW/QPTSKjyROZ/yLWVDQkkK7RRFt0gk41S4GP
+	U3qOmEuIsCrDSWJDqmxGjolmBuiglYXWk392kQQ4RQSprhkZUEADIprBb3AUPN/H5nvmV55DOab
+	m/5KvuCMBUXG1xkgKawL1WlUnRDarBj+07Ap0w4uXIQyBPOpw5Y47o7M=
+X-Gm-Gg: ASbGncvEQhYR18c+dQEsCicAyI0siMPJVuS1b/dZuFqaNn55OUX7cGL+NczvTfkKXTn
+	Q9B9Sd+QuCMCEo3k4NLV2GitVbfvgLOfXswnyvUF01Ca1j2p2/NR7bysGe4+Ruz+upEp60czNSX
+	7ZxXzLiJH9gn4C9iyGD+2vhK+G8UOCB4jd/ZJzSpLsIMzzy2Mv/w==
+X-Google-Smtp-Source: AGHT+IGTmRrDj58386rjJZziDq63lizkFMzj1lu/PM65c5dMEelMGMumc3qFR5YFmPkjXr20u694i69kdm2X64XfN50=
+X-Received: by 2002:a50:8713:0:b0:5de:bcd9:4aa with SMTP id
+ 4fb4d7f45d1cf-5f83c1b5a2bmr96410a12.3.1745941201725; Tue, 29 Apr 2025
+ 08:40:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
- <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
- <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
- <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
- <q3thzkbsq6bwur7baoxvxijnlvnobyt6cx4sckonhgdkviwz76@45b6xlzvrtkr>
- <CAHk-=wh09TvgFu3WKaeLu8jAxCmwZa24N7spAXi=jrVGW7X9ZA@mail.gmail.com>
- <mlsjl7qigswkjvvqg2bheyagebpm2eo66nyysztnrbpjau2czt@pdxzjedm5nqw>
- <CAHk-=wiSXnaqfv0+YkOkJOotWKW6w5oHFB5xU=0yJKUf8ZFb-Q@mail.gmail.com>
- <lmp73ynmvpl55lnfym3ry76ftegc6bu35akltfdwtwtjyyy46z@d3oygrswoiki> <CAHk-=wiZ=ZBZyKfg-pyA3wmEq+RkscKB1s68c7k=3GaT48e9Jg@mail.gmail.com>
-In-Reply-To: <CAHk-=wiZ=ZBZyKfg-pyA3wmEq+RkscKB1s68c7k=3GaT48e9Jg@mail.gmail.com>
-From: Patrick Donnelly <batrick@batbytes.com>
-Date: Tue, 29 Apr 2025 11:36:44 -0400
-X-Gm-Features: ATxdqUHuC157o0Nat5aBHJKsyiSBROfN1gD_06S9513asTF0ToaHKcRLVgAt2Tk
-Message-ID: <CACh33FqQ_Ge6y0i0nRhGppftWdfMY=SpGsN0EFoy9B8VMgY-_Q@mail.gmail.com>
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-8-surenb@google.com>
+In-Reply-To: <20250418174959.1431962-8-surenb@google.com>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 29 Apr 2025 17:39:25 +0200
+X-Gm-Features: ATxdqUE5eaCYmwGd2V3bpxMHfmJQqwTFsFKw7F4dJMhdfNXiMK8VuoXSkdfNDiE
+Message-ID: <CAG48ez3YLWh9hXQQdGVQ7hCsd=k_i2Z2NO6qzT6NaOYiRjy=nw@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] mm/maps: read proc/pid/maps under RCU
+To: Suren Baghdasaryan <surenb@google.com>, Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
+	peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
+	shuah@kernel.org, adobriyan@gmail.com, josef@toxicpanda.com, 
+	yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org, 
+	osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com, 
+	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Apr 18, 2025 at 7:50=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+> With maple_tree supporting vma tree traversal under RCU and vma and
+> its important members being RCU-safe, /proc/pid/maps can be read under
+> RCU and without the need to read-lock mmap_lock. However vma content
+> can change from under us, therefore we make a copy of the vma and we
+> pin pointer fields used when generating the output (currently only
+> vm_file and anon_name). Afterwards we check for concurrent address
+> space modifications, wait for them to end and retry. While we take
+> the mmap_lock for reading during such contention, we do that momentarily
+> only to record new mm_wr_seq counter. This change is designed to reduce
+> mmap_lock contention and prevent a process reading /proc/pid/maps files
+> (often a low priority task, such as monitoring/data collection services)
+> from blocking address space updates.
+[...]
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index b9e4fbbdf6e6..f9d50a61167c 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+[...]
+> +/*
+> + * Take VMA snapshot and pin vm_file and anon_name as they are used by
+> + * show_map_vma.
+> + */
+> +static int get_vma_snapshot(struct proc_maps_private *priv, struct vm_ar=
+ea_struct *vma)
+> +{
+> +       struct vm_area_struct *copy =3D &priv->vma_copy;
+> +       int ret =3D -EAGAIN;
+> +
+> +       memcpy(copy, vma, sizeof(*vma));
+> +       if (copy->vm_file && !get_file_rcu(&copy->vm_file))
+> +               goto out;
 
-I'm one of the maintainers of the Ceph file system (CephFS). I
-recently introduced case-insensitive directory trees into CephFS to
-support performance improvements for Samba. Perhaps my experience
-would add to this timely discussion.
+I think this uses get_file_rcu() in a different way than intended.
 
-[
+As I understand it, get_file_rcu() is supposed to be called on a
+pointer which always points to a file with a non-zero refcount (except
+when it is NULL). That's why it takes a file** instead of a file* - if
+it observes a zero refcount, it assumes that the pointer must have
+been updated in the meantime, and retries. Calling get_file_rcu() on a
+pointer that points to a file with zero refcount, which I think can
+happen with this patch, will cause an endless loop.
+(Just as background: For other usecases, get_file_rcu() is supposed to
+still behave nicely and not spuriously return NULL when the file* is
+concurrently updated to point to another file*; that's what that loop
+is for.)
+(If my understanding is correct, maybe we should document that more
+explicitly...)
 
-A brief context/background on that effort for those interested:
+Also, I think you are introducing an implicit assumption that
+remove_vma() does not NULL out the ->vm_file pointer (because that
+could cause tearing and could theoretically lead to a torn pointer
+being accessed here).
 
-CephFS has an inherited (at mkdir) metadata on directories which adds
-"normalization" (string: unicode normalization type) or
-"casesensitive" (bool) which permanently affects how dentries are
-looked up. The directory must be empty and free of snapshots to change
-this metadata ("charmap").
+One alternative might be to change the paths that drop references to
+vma->vm_file (search for vma_close to find them) such that they first
+NULL out ->vm_file with a WRITE_ONCE() and do the fput() after that,
+maybe with a new helper like this:
 
-Clients with support for this feature will perform a mapping [1] from
-the application (userspace libcephfs or ceph-fuse) path namespace to
-the MDS (metadata server) path namespace during a path walk or lookup.
-For affected directories, the MDS namespace is the normalized and
-possibly case-folded name for each dentry. The MDS also stores an
-uninterpreted "alternate_name" with each dentry that is the original
-name from the application namespace used to create the dentry. The
-alternate_name is **only** visible via file system operations that
-expose dentry names to the application, readdir/getcwd [2].
+static void vma_fput(struct vm_area_struct *vma)
+{
+  struct file *file =3D vma->vm_file;
 
-Benefits I identified for this approach were:
+  if (file) {
+    WRITE_ONCE(vma->vm_file, NULL);
+    fput(file);
+  }
+}
 
-- The core file system (mainly: MDS) paths were virtually unchanged.
-The MDS does not care about case sensitivity or normalization. It uses
-what the client gave it for the dentry name.
-- It's the client's job to perform any namespace mapping and store
-metadata in alternate_name to reverse the mapping (i.e. get the
-original dentry name used to create the dentry).
-- The Client's cache uses the same file system namespace as the MDS:
-dentry names are normalized/case-folded. The transformation is only
-applied during path walk / lookup with user-supplied paths/names.
+Then on the lockless lookup path you could use get_file_rcu() on the
+->vm_file pointer _of the original VMA_, and store the returned file*
+into copy->vm_file.
 
-We use libicu (indirectly through boost) for actually doing the
-normalization / casefolding. It's simple [3]. It works. Despite your
-(Linus) objections to this in prior postings, I do not see this as
-problematic. There are backwards compatibility guarantees in the
-standard [4].  Does that mean mistakes can't happen? No. Certainly
-there could be a backwards-compatibility breakage where we have two
-physical dentries with names that should be equivalent: one dentry
-shadows the other for some clients with upgraded Unicode tables. Even
-so, I do not see this as significant barrier to adopting the Unicode
-routines. In my opinion, the real danger is a file system person
-foolishly thinking they know best by rolling their own mapping table
-and discovering why that's a terrible idea. I think this thread
-illustrates that in several places.
+> +       if (!anon_vma_name_get_if_valid(copy))
+> +               goto put_file;
+> +
+> +       if (!mmap_lock_speculate_retry(priv->mm, priv->mm_wr_seq))
+> +               return 0;
 
-]
+We only check for concurrent updates at this point, so up to here,
+anything we read from "copy" could contain torn pointers (both because
+memcpy() is not guaranteed to copy pointers atomically and because the
+updates to the original VMA are not done with WRITE_ONCE()).
+That probably means that something like the preceding
+anon_vma_name_get_if_valid() could crash on an access to a torn
+pointer.
+Please either do another mmap_lock_speculate_retry() check directly
+after the memcpy(), or ensure nothing before this point reads from
+"copy".
 
-On Fri, Apr 25, 2025 at 11:41=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+> +       /* Address space got modified, vma might be stale. Re-lock and re=
+try. */
+> +       rcu_read_unlock();
+> +       ret =3D mmap_read_lock_killable(priv->mm);
+> +       if (!ret) {
+> +               /* mmap_lock_speculate_try_begin() succeeds when holding =
+mmap_read_lock */
+> +               mmap_lock_speculate_try_begin(priv->mm, &priv->mm_wr_seq)=
+;
+> +               mmap_read_unlock(priv->mm);
+> +               ret =3D -EAGAIN;
+> +       }
+> +
+> +       rcu_read_lock();
+> +
+> +       anon_vma_name_put_if_valid(copy);
+> +put_file:
+> +       if (copy->vm_file)
+> +               fput(copy->vm_file);
+> +out:
+> +       return ret;
+> +}
+[...]
+> @@ -266,39 +399,41 @@ static void get_vma_name(struct vm_area_struct *vma=
+,
+>                 } else {
+>                         *path =3D file_user_path(vma->vm_file);
+>                 }
+> -               return;
+> +               goto out;
+>         }
 >
-> On Fri, 25 Apr 2025 at 20:09, Kent Overstreet <kent.overstreet@linux.dev>=
- wrote:
-> >
-> > The subject is CI lookups, and I'll eat my shoe if you wrote that.
+>         if (vma->vm_ops && vma->vm_ops->name) {
+>                 *name =3D vma->vm_ops->name(vma);
+
+This seems to me like a big, subtle change of semantics. After this
+change, vm_ops->name() will no longer receive a real VMA; and in
+particular, I think the .name implementation special_mapping_name used
+in special_mapping_vmops will have a UAF because it relies on
+vma->vm_private_data pointing to a live object.
+
+I think you'll need to fall back to using the mmap lock and the real
+VMA if you see a non-NULL vma->vm_ops->name pointer.
+
+>                 if (*name)
+> -                       return;
+> +                       goto out;
+>         }
 >
-> Start chomping. That nasty code with d_compare and d_hash goes way back.
+>         *name =3D arch_vma_name(vma);
+>         if (*name)
+> -               return;
+> +               goto out;
 >
-> From a quick look, it's from '97, and got merged in in 2.1.50. It was
-> added (obviously) for FAT. Back then, that was the only case that
-> wanted it.
+>         if (!vma->vm_mm) {
+>                 *name =3D "[vdso]";
+> -               return;
+> +               goto out;
+>         }
 >
-> I don't have any archives from that time, and I'm sure others were
-> involved, but that whole init_name_hash / partial_name_hash /
-> end_name_hash pattern in 2.1.50 looks like code I remember. So I was
-> at least part of it.
+>         if (vma_is_initial_heap(vma)) {
+>                 *name =3D "[heap]";
+> -               return;
+> +               goto out;
+>         }
 >
-> The design, if you haven't figured it out yet, is that filesystems
-> that have case-independent name comparisons can do their own hash
-> functions and their own name comparison functions, exactly so that one
-> dentry can match multiple different strings (and different strings can
-> hash to the same bucket).
+>         if (vma_is_initial_stack(vma)) {
+>                 *name =3D "[stack]";
+> -               return;
+> +               goto out;
+>         }
 >
-> If you get dentry aliases, you may be doing something wrong.
+>         if (anon_name) {
+>                 *name_fmt =3D "[anon:%s]";
+>                 *name =3D anon_name->name;
+> -               return;
+>         }
+> +out:
+> +       if (anon_name && !mmap_locked)
+> +               anon_vma_name_put(anon_name);
 
-I would not consider myself a kernel developer but I assume this
-terminology (dentry aliases) refers to multiple dentries in the dcache
-referring to the same physical dentry on the backing file system?
+Isn't this refcount drop too early, causing UAF read? We drop the
+reference on the anon_name here, but (on some paths) we're about to
+return anon_name->name to the caller through *name, and the caller
+will read from it.
 
-If so, I can't convince myself that's a real problem. Wouldn't this be
-beneficial because each application/process may utilize a different
-name for the backing file system dentry? This keeps the cache hot with
-relevant names without any need to do transformations on the dentry
-names. Happy to learn otherwise because I expected this situation to
-occur in practice with ceph-fuse. I just tested and the dcache entries
-(/proc/sys/fs/dentry-state) increases as expected when performing case
-permutations on a case-insensitive file name. I didn't observe any
-cache inconsistencies when editing/removing these dentries. The danger
-perhaps is cache pollution and some kind of DoS? That should be a
-solvable problem but perhaps I misunderstand some complexity.
-
-> Also, originally this was all in the same core dcache lookup path. So
-> the whole "we have to check if the filesystem has its own hash
-> function" ended up slowing down the normal case. It's obviously been
-> massively modified since 1997 ("No, really?"), and now the code is
-> very much set up so that the straight-line normal case is all the
-> non-CI cases, and then case idnependence ends up out-of-line with its
-> own dcache hash lookup loops so that it doesn't affect the normal good
-> case.
-
-It's seems to me this is a good argument for keeping case-sensitivity
-awareness out of the dcache. Let the fs do the namespace mapping and
-accept that you may have dentry aliases.
-
-FWIW, I also wish we didn't have to deal with case-sensitivity but we
-have users/protocols to support (as usual).
-
-[1] https://github.com/ceph/ceph/blob/ebb2f72bfc37577d5389809ba0c16fca032ac=
-d8a/src/client/Client.cc#L7732-L7735
-[2] https://github.com/ceph/ceph/blob/ebb2f72bfc37577d5389809ba0c16fca032ac=
-d8a/src/client/Client.cc#L1353
-[3] https://github.com/ceph/ceph/blob/ebb2f72bfc37577d5389809ba0c16fca032ac=
-d8a/src/client/Client.cc#L1299-L1340
-[4] https://unicode.org/reports/tr15/#Versioning
-
-Kind regards,
-
---
-Patrick Donnelly
+Ah, but I guess it's actually fine because the refcount increment was
+unnecessary in the first place, because the vma pointer actually
+points to a copy of the original VMA, and the copy has its own
+refcounted reference to the anon_name thanks to get_vma_snapshot()?
+It might be helpful to have some comments documenting which VMA
+pointers can point to copies.
 
