@@ -1,141 +1,330 @@
-Return-Path: <linux-fsdevel+bounces-47612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47613-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0127EAA1175
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:22:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 036D2AA11AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C944C4A132C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:22:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5410416EE30
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:37:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AB624503E;
-	Tue, 29 Apr 2025 16:21:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0904D2459FF;
+	Tue, 29 Apr 2025 16:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VeL22eYD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LfCKzisC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B72244694
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 16:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903B4221719
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 16:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745943713; cv=none; b=RuqtaWSxqBpxAaM2+LVVlq1iWClmwgRBM5blAoy3yZOZWkZBZD3ISsCKLGwlJD/puxbDkvGEOdAAGLC6/clqUMr4LMAJUOu7HPRPFx0CiR9Ygd0QQMYqHP2X0R3lT+601UYUeJSRkcG1UJz1lGCN+XoTNDbKmFfPjZuR1Ol9esQ=
+	t=1745944665; cv=none; b=R2Jd87Nhge1UcwkYFnwzQSpZW/1gQlJcHHyUK1ZT0tW9v4VI8fIsraSbQtjE+41JqoSC4ZG++dExboeiVEsWHQs61sQbtJI8S7d6W0LPCjStGcazDk5MuXLLr+rdlh4XM9AE0NRnrpabLGnQanO+AQ/b+7QMNyQ2CbyrTIuTPp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745943713; c=relaxed/simple;
-	bh=Y6JiO7oYoeOTKUsy66zGL+B19kEo8r9m8dto+yrP6TQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=twchMNurTX6LCGxqAkT+hCOUTa4MVK/IRJ3sJvplECT8NAhfDSTz8ngnMdADdXz3uPT0fND84GU7eY0SsJggR4lnr2um4KsZim9dic9LDcyxXNj7WOFT3Mw4Rf+2VFOXDcSln4sx5xNcdCdoTXs4Mc98gsMsk7WUWU+N5jOLuTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VeL22eYD; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 29 Apr 2025 12:21:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1745943699;
+	s=arc-20240116; t=1745944665; c=relaxed/simple;
+	bh=GTBwZABLBbNP1w6oTnGAs8DazHtwqpwsSWLbCx8V+J0=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=kqX9J44ryl9BphgWCvUmDAeYnrKVC43JhaYZXVf3hp3TvfmCDX/pgJ1TAqqJSLgdVYxVjoF1+chZisFSL0s26VFlj0NKwlaL67OEejgGC5rQYMkZI3qf1EXfTD5UXgNLBNT0LdoP6thF7E21y7J5LaWbpFDdZtUgm64Dk7Ca2v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LfCKzisC; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745944662;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cTpA6o8PWXuPbIwQZ+jU9BV1D3QBfTnXkZ2PpDFhcgQ=;
-	b=VeL22eYDp+0JnPOPNWmQrO47wxt0dcHS4l10sYycSwWR+QuMITchnza5SE/uWI8Kh8X4pv
-	Rf/XuAdpyPn2LD2ErpUaiz/ZKA+T7upTeWDp4CMD3XJVlsmyTeAp7io8UT/x8kW2Dc767z
-	tBUd1mB1pfhpJ9Uz2QNoo/INNU7c2OQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Patrick Donnelly <batrick@batbytes.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-Message-ID: <pkpzm6okfqchet42lhcebwaiuwrwil6wp76flnk3p3mgijtg2e@us7jkctbpsgc>
-References: <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
- <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
- <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
- <q3thzkbsq6bwur7baoxvxijnlvnobyt6cx4sckonhgdkviwz76@45b6xlzvrtkr>
- <CAHk-=wh09TvgFu3WKaeLu8jAxCmwZa24N7spAXi=jrVGW7X9ZA@mail.gmail.com>
- <mlsjl7qigswkjvvqg2bheyagebpm2eo66nyysztnrbpjau2czt@pdxzjedm5nqw>
- <CAHk-=wiSXnaqfv0+YkOkJOotWKW6w5oHFB5xU=0yJKUf8ZFb-Q@mail.gmail.com>
- <lmp73ynmvpl55lnfym3ry76ftegc6bu35akltfdwtwtjyyy46z@d3oygrswoiki>
- <CAHk-=wiZ=ZBZyKfg-pyA3wmEq+RkscKB1s68c7k=3GaT48e9Jg@mail.gmail.com>
- <CACh33FqQ_Ge6y0i0nRhGppftWdfMY=SpGsN0EFoy9B8VMgY-_Q@mail.gmail.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=v4Z7IYlxZGIUKwJwhWYGYh06tJAodt68SWJ/LkN2PlU=;
+	b=LfCKzisCmflNKQxZcRgDENjysK3Apxvb4TNZmncey5STMewUb8LpH4aSIuKVJOODJBOh+k
+	2lYv4LuiZ6Rl3fwh+b+ErZmXzHQUoRFVfv9Pogn/hasKg7wwHKnfiFjcjJwbJPFbpOkBds
+	nMnjSFGoQaORTLIWSQ8BCiEJ4GvgF50=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-152-eRO5V1PWO2ysRFZJIgC9aA-1; Tue,
+ 29 Apr 2025 12:37:39 -0400
+X-MC-Unique: eRO5V1PWO2ysRFZJIgC9aA-1
+X-Mimecast-MFC-AGG-ID: eRO5V1PWO2ysRFZJIgC9aA_1745944657
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6F24F1800EC9;
+	Tue, 29 Apr 2025 16:37:36 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.188])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9F810180047F;
+	Tue, 29 Apr 2025 16:37:32 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Alexander Viro <viro@zeniv.linux.org.uk>,
+    Christian Brauner <brauner@kernel.org>
+cc: dhowells@redhat.com,
+    Etienne Champetier <champetier.etienne@gmail.com>,
+    Marc Dionne <marc.dionne@auristor.com>,
+    Jeffrey Altman <jaltman@auristor.com>,
+    Chet Ramey <chet.ramey@case.edu>, Steve French <sfrench@samba.org>,
+    linux-afs@lists.infradead.org, openafs-devel@openafs.org,
+    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a sticky dir
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACh33FqQ_Ge6y0i0nRhGppftWdfMY=SpGsN0EFoy9B8VMgY-_Q@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <433927.1745944651.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date: Tue, 29 Apr 2025 17:37:31 +0100
+Message-ID: <433928.1745944651@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Tue, Apr 29, 2025 at 11:36:44AM -0400, Patrick Donnelly wrote:
-> I would not consider myself a kernel developer but I assume this
-> terminology (dentry aliases) refers to multiple dentries in the dcache
-> referring to the same physical dentry on the backing file system?
+    =
 
-This issue turned out to be my own pebcak; I'd missed the
-dentry_operations that do normalized lookups (to be fair, they were
-rather hidden) and I'd just pulled a 14 hour day so was a tad bitchy
-about it on the list.
+Bash has a work around in redir_open() that causes open(O_CREAT) of a file
+in a sticky directory to be retried without O_CREAT if bash was built with
+AFS workarounds configured:
 
-> If so, I can't convince myself that's a real problem. Wouldn't this be
-> beneficial because each application/process may utilize a different
-> name for the backing file system dentry? This keeps the cache hot with
-> relevant names without any need to do transformations on the dentry
-> names. Happy to learn otherwise because I expected this situation to
-> occur in practice with ceph-fuse. I just tested and the dcache entries
-> (/proc/sys/fs/dentry-state) increases as expected when performing case
-> permutations on a case-insensitive file name. I didn't observe any
-> cache inconsistencies when editing/removing these dentries. The danger
-> perhaps is cache pollution and some kind of DoS? That should be a
-> solvable problem but perhaps I misunderstand some complexity.
+        #if defined (AFS)
+              if ((fd < 0) && (errno =3D=3D EACCES))
+            {
+              fd =3D open (filename, flags & ~O_CREAT, mode);
+              errno =3D EACCES;    /* restore errno */
+            }
 
-Dentry aliases are fine when they're intended, they're properly
-supported by the dcache.
+        #endif /* AFS */
 
-The issue with caching an alias for the un-normalized lookup name is
-(as you note) that by permuting the different combinations of upper and
-lower case characters in a filename, userspace would be able to create
-an unbounded (technically, exponential bound in the length of the
-filename) number of aliases, and that's not what we want.
+This works around the kernel not being able to validly check the
+current_fsuid() against i_uid on the file or the directory because the
+uidspaces of the system and of AFS may well be disjoint.  The problem lies
+with the uid checks in may_create_in_sticky().
 
-(e.g. d_prune_aliases processes the whole list of aliases for an inode
-under a spinlock, so it's an easy way to produce unbounded latencies).
+However, the bash work around is going to be removed:
 
-So it sounds like you probably didn't find the dentry_operations for
-normalized lookups, same as me.
+        https://git.savannah.gnu.org/cgit/bash.git/tree/redir.c?h=3Dbash-5=
+.3-rc1#n733
 
-Have a look at generic_set_sb_d_ops().
+Fix this in the kernel by:
 
-> > Also, originally this was all in the same core dcache lookup path. So
-> > the whole "we have to check if the filesystem has its own hash
-> > function" ended up slowing down the normal case. It's obviously been
-> > massively modified since 1997 ("No, really?"), and now the code is
-> > very much set up so that the straight-line normal case is all the
-> > non-CI cases, and then case idnependence ends up out-of-line with its
-> > own dcache hash lookup loops so that it doesn't affect the normal good
-> > case.
-> 
-> It's seems to me this is a good argument for keeping case-sensitivity
-> awareness out of the dcache. Let the fs do the namespace mapping and
-> accept that you may have dentry aliases.
-> 
-> FWIW, I also wish we didn't have to deal with case-sensitivity but we
-> have users/protocols to support (as usual).
+ (1) Provide an ->is_owned_by_me() inode op, similar to ->permission(),
+     and, if provided, call that to determine if the caller owns the file
+     instead of checking the i_uid to current_fsuid().
 
-The next issue I'm looking at is that the "keep d_ops out of the
-fastpath" only works if case sensitivity isn't enabled on the filesystem
-as a whole - i.e. if case sensitivity is enabled on even a single
-directory, we'll be flagging all the dentries to hit the d_ops methods.
+ (2) Provide a ->have_same_owner() inode op, that, if provided, can be
+     called to see if an inode has the same owner as the parent on the pat=
+h
+     walked.
 
-dcache.c doesn't check IS_CASEFOLD(inode) - d_init can probably be used
-for this, but we need to be careful when flipping casefolding on and off
-on an (empty) directory, there might still be cached negative dentries.
+For kafs, use the first hook to check to see if the server indicated the
+ADMINISTER bit in the access rights returned by the FS.FetchStatus and
+suchlike and the second hook to compare the AFS user IDs retrieved by
+FS.FetchStatus (which may not fit in a kuid if AuriStor's YFS variant).
 
-ext4 has a filesystem wide flag for "case sensitive directories are
-allowed", so that enables/disables that optimization. But bcachefs
-doesn't have that kind of filesystem level flag, and I'm not going to
-add one - that sort of "you have to enable this option to have access to
-this other option" is a pita for end users.
+This can be tested by creating a sticky directory (the user must have a
+token to do this) and creating a file in it.  Then strace bash doing "echo
+foo >>file" and look at whether bash does a single, successful O_CREAT ope=
+n
+on the file or whether that one fails and then bash does one without
+O_CREAT that succeeds.
+
+Reported-by: Etienne Champetier <champetier.etienne@gmail.com>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Marc Dionne <marc.dionne@auristor.com>
+cc: Jeffrey Altman <jaltman@auristor.com>
+cc: Chet Ramey <chet.ramey@case.edu>
+cc: Alexander Viro <viro@zeniv.linux.org.uk>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Steve French <sfrench@samba.org>
+cc: linux-afs@lists.infradead.org
+cc: openafs-devel@openafs.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/afs/dir.c       |    2 ++
+ fs/afs/file.c      |    2 ++
+ fs/afs/internal.h  |    3 +++
+ fs/afs/security.c  |   52 +++++++++++++++++++++++++++++++++++++++++++++++=
++++++
+ fs/namei.c         |   22 ++++++++++++++++++----
+ include/linux/fs.h |    3 +++
+ 6 files changed, 80 insertions(+), 4 deletions(-)
+
+diff --git a/fs/afs/dir.c b/fs/afs/dir.c
+index 9e7b1fe82c27..6360db1673b0 100644
+--- a/fs/afs/dir.c
++++ b/fs/afs/dir.c
+@@ -65,6 +65,8 @@ const struct inode_operations afs_dir_inode_operations =3D=
+ {
+ 	.permission	=3D afs_permission,
+ 	.getattr	=3D afs_getattr,
+ 	.setattr	=3D afs_setattr,
++	.is_owned_by_me	=3D afs_is_owned_by_me,
++	.have_same_owner =3D afs_have_same_owner,
+ };
+ =
+
+ const struct address_space_operations afs_dir_aops =3D {
+diff --git a/fs/afs/file.c b/fs/afs/file.c
+index fc15497608c6..0317f0a36cf2 100644
+--- a/fs/afs/file.c
++++ b/fs/afs/file.c
+@@ -47,6 +47,8 @@ const struct inode_operations afs_file_inode_operations =
+=3D {
+ 	.getattr	=3D afs_getattr,
+ 	.setattr	=3D afs_setattr,
+ 	.permission	=3D afs_permission,
++	.is_owned_by_me	=3D afs_is_owned_by_me,
++	.have_same_owner =3D afs_have_same_owner,
+ };
+ =
+
+ const struct address_space_operations afs_file_aops =3D {
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 440b0e731093..fbfbf615abe3 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -1495,6 +1495,9 @@ extern struct key *afs_request_key(struct afs_cell *=
+);
+ extern struct key *afs_request_key_rcu(struct afs_cell *);
+ extern int afs_check_permit(struct afs_vnode *, struct key *, afs_access_=
+t *);
+ extern int afs_permission(struct mnt_idmap *, struct inode *, int);
++int afs_is_owned_by_me(struct mnt_idmap *idmap, struct inode *inode);
++int afs_have_same_owner(struct mnt_idmap *idmap, struct inode *inode,
++			struct dentry *dentry);
+ extern void __exit afs_clean_up_permit_cache(void);
+ =
+
+ /*
+diff --git a/fs/afs/security.c b/fs/afs/security.c
+index 6a7744c9e2a2..cc9689fbed47 100644
+--- a/fs/afs/security.c
++++ b/fs/afs/security.c
+@@ -477,6 +477,58 @@ int afs_permission(struct mnt_idmap *idmap, struct in=
+ode *inode,
+ 	return ret;
+ }
+ =
+
++/*
++ * Determine if an inode is owned by 'me' - whatever that means for the
++ * filesystem.  In the case of AFS, this means that the file is owned by =
+the
++ * AFS user represented by the token (e.g. from a kerberos server) held i=
+n a
++ * key.  Returns 0 if owned by me, 1 if not; can also return an error.
++ */
++int afs_is_owned_by_me(struct mnt_idmap *idmap, struct inode *inode)
++{
++	struct afs_vnode *vnode =3D AFS_FS_I(inode);
++	afs_access_t access;
++	struct key *key;
++	int ret;
++
++	key =3D afs_request_key(vnode->volume->cell);
++	if (IS_ERR(key))
++		return PTR_ERR(key);
++
++	/* Get the access rights for the key on this file. */
++	ret =3D afs_check_permit(vnode, key, &access);
++	if (ret < 0)
++		goto error;
++
++	/* We get the ADMINISTER bit if we own the file. */
++	ret =3D (access & AFS_ACE_ADMINISTER) ? 0 : 1;
++error:
++	key_put(key);
++	return ret;
++}
++
++/*
++ * Determine if a file has the same owner as its parent - whatever that m=
+eans
++ * for the filesystem.  In the case of AFS, this means comparing their AF=
+S
++ * UIDs.  Returns 0 if same, 1 if not same; can also return an error.
++ */
++int afs_have_same_owner(struct mnt_idmap *idmap, struct inode *inode,
++			struct dentry *dentry)
++{
++	struct afs_vnode *vnode =3D AFS_FS_I(inode);
++	struct dentry *parent;
++	s64 owner;
++
++	/* Get the owner's ID for the directory.  Ideally, we'd use RCU to
++	 * access the parent rather than getting a ref.
++	 */
++	parent =3D dget_parent(dentry);
++	vnode =3D AFS_FS_I(d_backing_inode(parent));
++	owner =3D vnode->status.owner;
++	dput(parent);
++
++	return vnode->status.owner !=3D owner;
++}
++
+ void __exit afs_clean_up_permit_cache(void)
+ {
+ 	int i;
+diff --git a/fs/namei.c b/fs/namei.c
+index 84a0e0b0111c..79e8ef1b6900 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -1318,11 +1318,25 @@ static int may_create_in_sticky(struct mnt_idmap *=
+idmap, struct nameidata *nd,
+ =
+
+ 	i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
+ =
+
+-	if (vfsuid_eq(i_vfsuid, dir_vfsuid))
+-		return 0;
++	if (unlikely(inode->i_op->have_same_owner)) {
++		int ret =3D inode->i_op->have_same_owner(idmap, inode, nd->path.dentry)=
+;
+ =
+
+-	if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
+-		return 0;
++		if (ret <=3D 0)
++			return ret;
++	} else {
++		if (vfsuid_eq(i_vfsuid, dir_vfsuid))
++			return 0;
++	}
++
++	if (unlikely(inode->i_op->is_owned_by_me)) {
++		int ret =3D inode->i_op->is_owned_by_me(idmap, inode);
++
++		if (ret <=3D 0)
++			return ret;
++	} else {
++		if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
++			return 0;
++	}
+ =
+
+ 	if (likely(dir_mode & 0002)) {
+ 		audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 016b0fe1536e..ec278d2d362a 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2236,6 +2236,9 @@ struct inode_operations {
+ 			    struct dentry *dentry, struct fileattr *fa);
+ 	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+ 	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
++	int (*is_owned_by_me)(struct mnt_idmap *idmap, struct inode *inode);
++	int (*have_same_owner)(struct mnt_idmap *idmap, struct inode *inode,
++			       struct dentry *dentry);
+ } ____cacheline_aligned;
+ =
+
+ static inline int call_mmap(struct file *file, struct vm_area_struct *vma=
+)
+
 
