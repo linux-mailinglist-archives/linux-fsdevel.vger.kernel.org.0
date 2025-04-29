@@ -1,116 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-47639-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47642-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6065BAA1B5B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 21:29:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B72A1AA1BC6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 22:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 422BF3BA539
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 19:28:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC0F37A4B26
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 20:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AAE25EF80;
-	Tue, 29 Apr 2025 19:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DB5C262FD9;
+	Tue, 29 Apr 2025 20:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="BDrRs6yc"
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="yNxtPCwA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31951242D80
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 19:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4337925A2A5
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 20:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745954945; cv=none; b=dIJAHWVAHIygpBjoKMAc6WvdN0uhlPlrTGurpTGLAU53+4yjvLsYajtIZBPbbWHo9SX8XnGZFqoztE9vqLPCc3zwrtaeY2FhCqx+uUMEUrXudqCUPZzbsWv/qMSZkkzj2h/v1bJiS0E7JEFi2d9BVXciSjMD7l3EHTm/7XmQPq4=
+	t=1745957071; cv=none; b=O6RB84gtpDa9aSUkAzc1SH87pyWxx/RYpDbzohnSd1jFwpaLZIQ60X6+KBTCbqIFLANqEMnrjew0owlZoU+gmdK9744KJCoZ/JhhOBCwP0yELeH/kEA/78woeatAIralwSPRP/Ncdx+UEypMX4YywnLpLkWHpLjic/z+uo3L72Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745954945; c=relaxed/simple;
-	bh=1aF+f6v+aQuKxWlA0Cd06ifc6V9V2SOLgGmWF81iqUI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lGy8KsMHO6p2LvhZFcAbbwk3c2RzPiP3jhdpxDzWYIrRlGX5coSuC4u9pp8CzferiQi55XDzr/d1znkUg1Ehlo38JCRcjqf6WKoi9cL253XB7swkMlgzfLX1VG7xL6HQtlhbPkO780SHl7ZEnUsr135NPOSP7oqsCvkJtnIMSy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=BDrRs6yc; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-ace333d5f7bso1048827066b.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 12:29:02 -0700 (PDT)
+	s=arc-20240116; t=1745957071; c=relaxed/simple;
+	bh=mIDBgyIrGai5i2PevDFrQWDS2WLUPqJT0lUwwpqkZqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bqtfUlWNqtfNzjGXEWy1BIsQeYvHRUqcTiercVdO1T+PcUdyNjh6qAXM9KyyLjzgydPGfJt3Edh1cePWBPooQTyXy8p4PN6XOtwEr5NSdejflExXvNS4vRm9ttnZFHFpWK4c5qmPXXU8SPWpzRobxtrmnw9wvsItJxTfB8es2bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=yNxtPCwA; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-af589091049so4897957a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 13:04:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1745954941; x=1746559741; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1aF+f6v+aQuKxWlA0Cd06ifc6V9V2SOLgGmWF81iqUI=;
-        b=BDrRs6ycPKuNG23KgIOc9tDSB8djF0oVqwpucNk2ex4OJM2ALc7pXyvqrgNj4G2xOx
-         KVY4XmVao0t7gz6S/is2O0rImKmvrGphnMAiZRWLjQ2mxKBe0JDmPM+L3Eh9CMQqAW/Y
-         lDl4ZsrnAA+V85rFDtiLHkq8XI6CZFXZ4aSzgnbHPQYpiMGRBZIyxavK4Ng/rU5F/Fzg
-         GIj8hvmuRC64I8m07q4NIw1sKact15AJxJbH540BlS6Dq2lyHeFcnEbvtue0Yh1m6wwF
-         ccM/iU0E23Wl5Dw908YordAvqU+v9o4XhcSe+9FGEiTkRNGbvzPp7jb72dCalHo0sczx
-         VOog==
+        d=fastly.com; s=google; t=1745957067; x=1746561867; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LawO1f4/ezKmBz6/weBaTcmEk8JNPzax80742Sn6nQg=;
+        b=yNxtPCwAe7lD+ytg0a/9F15O/xnKFG1Gu/N7LEnq1KP4ncrUklaT3XbwjEPSyhipyD
+         XdSOmI1wqi2voj0p+JmqbMnxIfpqQ4I5S27k7VJySzNKGfpncpmZIP0nQ4JdcDnV8O1+
+         Hfpj2xWe1j+RF8EQ7C3mzeQiKFc6qwGkJC9d8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745954941; x=1746559741;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1aF+f6v+aQuKxWlA0Cd06ifc6V9V2SOLgGmWF81iqUI=;
-        b=rSHk2eGBjzWnFuX9eznMdONGksRucmQhalebl9g/LNV9asxP7DS3oz+WYIjI+4/faD
-         PdGj0b5kYBigiQ9GBIK7LyzZeYU+ZPrexbE8F+oqy4zgx28eWGBZXt8U2q0MzDLjbtzG
-         4kznof3OEYnFIFE1VOVMhQDj73FaoQeqAenfX8yQkKkQEd8LjO/NrzQZv2Tf3Suut2PS
-         AHTCEYuXKlHrvFoJryHCqyt5D7kOaCLxtIM+hlGz4v5WEfRe6D+ibPPJY5Az0Wanj96d
-         fC7Fh3/Dx0fXihaVORoY376xckFuPA7TOc13LiFk6RygsSCdYV5wKsAQblJmY20Yb9UC
-         SPXA==
-X-Gm-Message-State: AOJu0YwRd8LN9SyNdrjxqncCnwbls2lXgfcSyre8zG5JumgpZ7sEeLIH
-	K5G1npNobbsezATcTDt2UOHYlPk6D4g6EHfBF+KVMo6n4W0ZkyX2zBCm7svJGp0kOgVcQd+lySn
-	VhhxK5vU0bP6BiRgSSPct3U604BNxtcL6kX+Idg==
-X-Gm-Gg: ASbGncs2e/foSDnlY9arMpNj4xp65yzGpzzQx0L5EFrd1mcp5sBwt54lfDDqUii2c/x
-	Yh+IT9+f9t7+w8TeaLcMW9Q4Uw80TzIPvfXEwjTI1F214WmqFVKEitKVUXMQvLRPJIZMf8yL61B
-	TxdKy1svvq3Iw1Kn2+jGy5pdSf/jhlg8vqRlLeNo4qlDlLaLbkIh8=
-X-Google-Smtp-Source: AGHT+IFSpr31KDSEP1Eo9r2vBjmWH6MIOXDWyuBNwRJ0R5Of2C/YeUZlB2zLOFtZv7OnDvtjjhTYoGleJQqBcZyYPFU=
-X-Received: by 2002:a17:906:6a16:b0:ac2:49b1:166f with SMTP id
- a640c23a62f3a-acedc767b0amr55454966b.52.1745954941461; Tue, 29 Apr 2025
- 12:29:01 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1745957067; x=1746561867;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LawO1f4/ezKmBz6/weBaTcmEk8JNPzax80742Sn6nQg=;
+        b=DY0O/YhdWyZ3NRUWpK9W36W5SuDT3lewyyvh8iQDF+zlDQB2nH6Xk8QQivXvLk8IQp
+         j2iZ43JPaRlPD177bXksh1ubT8HfhRWSJ+PfW8stWRxamQJRMWhgEboqPt/9s05cUins
+         w3tg4MS2a3b1aJeIraOJCERFGoJHCcaxHwHK8gCGbGscYbvs13uM4w1H+12IhqLNMDnF
+         Ilt9cew93vJOsJOecqKLHmx3td8tNhAtvzB+5MvA6lVB1mTzbJmkhftrAxkIt1NrUccg
+         /az3vdcxCPAbUelk7xiVrTba+cvAZ643dCo1+LeLCpusjfiEC4RFQ/cWnN51NVPXTPur
+         XEBQ==
+X-Gm-Message-State: AOJu0Yx3w87BqbFiioRC0VDGjAd1o9W1834Z4eUVz+3hurjT7zOvPIQB
+	KwpK958OJoa6CjRDleqN+smke7ZvkGhSfaed6Bh06XqTnPvpDs6GuTu/MN8hAx4=
+X-Gm-Gg: ASbGncsDy5nylJJ+/SgCI51FoJOvplkUOJEJY+I3Jubc1sd7M5Tr28JS9V43YXAr+HS
+	FHV9qPWBSw8ebxBEnY8vmSE3gkxk3VnbQoTIqR6noLXaJXZtM9qAm4pVCCthRDUrXPRa+SfmSkL
+	cLtdjiauELuu+FtsuHLHl6ou3H0m/sIT8yBj7MoWX10pieA4FfxIU6nPeoNx7is1lc4TozSVWRe
+	WUz/glocbl53ua8N+Mk/Q0mdCvELPXsGK7NUC6EqcvQbtiHAbykiVqjtCZCPGLTkwKEpgSkz91v
+	k5hxgdcHWoq5E/ckSuMBagdYzVz8DVX2Mhuu5gQRdy7x853BJXEnoE0NJxAVrf1RaEMmmAf28RU
+	K2y720KMY/vxW
+X-Google-Smtp-Source: AGHT+IGU1RP/mRANwzOjXe0cKgOZefEpYNYpcqI8RxMrlNXOANsV0zmRwyjxkpQy8QrrzJi5VwNW3w==
+X-Received: by 2002:a17:903:4405:b0:21a:8300:b9ce with SMTP id d9443c01a7336-22df35cad23mr8306975ad.49.1745957067559;
+        Tue, 29 Apr 2025 13:04:27 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22db4dc2119sm107243345ad.91.2025.04.29.13.04.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 13:04:26 -0700 (PDT)
+Date: Tue, 29 Apr 2025 13:04:24 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
+	Mike Pagano <mpagano@gentoo.org>,
+	Carlos Llamas <cmllamas@google.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH vfs.fixes] eventpoll: Prevent hang in epoll_wait
+Message-ID: <aBEwyNwBuihjvQ4g@LQ3V64L9R2>
+References: <20250429153419.94723-1-jdamato@fastly.com>
+ <CAKPOu+980gvzd-uXUARnYQ4V++08spfBVj26nZapExVF80ryYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429153419.94723-1-jdamato@fastly.com>
-In-Reply-To: <20250429153419.94723-1-jdamato@fastly.com>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Tue, 29 Apr 2025 21:28:50 +0200
-X-Gm-Features: ATxdqUF0Un6CsTVEnxmSZSEZC15AFRtpeccjLpwY4y6WttEn7mafiLiqTlJKDqs
-Message-ID: <CAKPOu+980gvzd-uXUARnYQ4V++08spfBVj26nZapExVF80ryYg@mail.gmail.com>
-Subject: Re: [PATCH vfs.fixes] eventpoll: Prevent hang in epoll_wait
-To: Joe Damato <jdamato@fastly.com>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
-	Mike Pagano <mpagano@gentoo.org>, Carlos Llamas <cmllamas@google.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKPOu+980gvzd-uXUARnYQ4V++08spfBVj26nZapExVF80ryYg@mail.gmail.com>
 
-On Tue, Apr 29, 2025 at 9:22=E2=80=AFPM Joe Damato <jdamato@fastly.com> wro=
-te:
-> In commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the
-> future"), a bug was introduced causing the loop in ep_poll to hang under
-> certain circumstances.
->
-> When the timeout is non-NULL and ep_schedule_timeout returns false, the
-> flag timed_out was not set to true. This causes a hang.
->
-> Adjust the logic and set timed_out, if needed, fixing the original code.
+On Tue, Apr 29, 2025 at 09:28:50PM +0200, Max Kellermann wrote:
+> On Tue, Apr 29, 2025 at 9:22 PM Joe Damato <jdamato@fastly.com> wrote:
+> > In commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the
+> > future"), a bug was introduced causing the loop in ep_poll to hang under
+> > certain circumstances.
+> >
+> > When the timeout is non-NULL and ep_schedule_timeout returns false, the
+> > flag timed_out was not set to true. This causes a hang.
+> >
+> > Adjust the logic and set timed_out, if needed, fixing the original code.
+> 
+> Hi Joe,
+> 
+> we have been working on the fix at the same time, this is my fix:
+> 
+>  https://lore.kernel.org/linux-fsdevel/20250429185827.3564438-1-max.kellermann@ionos.com/T/#u
+> 
+> I think mine is better because it checks "eavail" before setting
+> "timed_out", preserving the old behavior (before commit 0a65bc27bd64).
+> Your version may set "timed_out" and thus does an unnecessary
+> list_empty() call in the following block. (And maybe it can reset
+> "evail" to false?)
 
-Hi Joe,
-
-we have been working on the fix at the same time, this is my fix:
-
- https://lore.kernel.org/linux-fsdevel/20250429185827.3564438-1-max.kellerm=
-ann@ionos.com/T/#u
-
-I think mine is better because it checks "eavail" before setting
-"timed_out", preserving the old behavior (before commit 0a65bc27bd64).
-Your version may set "timed_out" and thus does an unnecessary
-list_empty() call in the following block. (And maybe it can reset
-"evail" to false?)
-
-Max
+I think it's up to the maintainers to decide which patch is
+preferred; I don't really have a preference.
 
