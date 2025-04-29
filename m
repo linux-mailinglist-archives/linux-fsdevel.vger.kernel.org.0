@@ -1,126 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-47578-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47579-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04FF4AA093F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 13:08:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E119AA0941
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 13:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05A737B001B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 11:07:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E8071894F01
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 11:09:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF952C10B1;
-	Tue, 29 Apr 2025 11:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B522C10AA;
+	Tue, 29 Apr 2025 11:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="upzrlCDO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ep8YiIFS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 344D41E766F;
-	Tue, 29 Apr 2025 11:08:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5F91E231E;
+	Tue, 29 Apr 2025 11:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745924888; cv=none; b=hN3C+d657DMXPmRRBQnPR1pnTZq03JivvsEe/QSQJZYpXvbwQjMHAPAsI/On/1ftzO0tRB2pPXCC58+bcdC/Unw5eKmuxeb4aHQ67+sfOF9DostFOiMxsDYM2yOg74QWU4gy0MTsaN2SkkyUuCvz6Mi+Vtdfyd5hCwM17QGHRZg=
+	t=1745924938; cv=none; b=ZsPy2H+e1QvvI6wN1Xm4qAaCCNEoYaH3Hogvh9vscf4s0TRk3wg8Ft7CNRvHWKlI5TocR+97lNcd4Bxdi/R028XBaUkZA2aC12kkkDJlE2lpG1GmUugmo6c4XWzTKC/JO7RqNehjoQ9cr2/GGt1brVFxMW4zwtVt0vNKwg2n+F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745924888; c=relaxed/simple;
-	bh=qPh/WrlbObgcctkRbyV6SsPJr/nOENTeraBZjUkNaww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NQbRpxHzMTtMbIQp/fVz1LbNQtdrBeQhO8Zku0c2drFduTHf95Gx+QoUx7Ld2n8E0ygyjsmJGMIccnzIn/sJ+54IE6UY5Hhui5NC0l85rmxw/mSkMrqEIC4FhsEzLBa+Tjb0KpeMmay3R634NE3MxqGy97SmBkVeqKPn7NXzBvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=upzrlCDO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C4E1C4CEE3;
-	Tue, 29 Apr 2025 11:08:04 +0000 (UTC)
+	s=arc-20240116; t=1745924938; c=relaxed/simple;
+	bh=2FnrdaPoR6yU2qmctP2qpvbz6w9gH8tMRvd6MmMwPtE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PYRSWngZPLpsbCplqwdQPVzhtreTcxGpOTt19pfiO+OOEDuS3Ld7ovDY8KTBee8LCILkHDdYxRCPgzyIQGYWGoF0PUmT1V/+5CszEBT60R4bv4j7ox8gkX75Ux4GrhaPawUKDG7djxWxvgjDAqMGWD9ykxaAmWPxsSDz9hv8eZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ep8YiIFS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3346C4CEE3;
+	Tue, 29 Apr 2025 11:08:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745924887;
-	bh=qPh/WrlbObgcctkRbyV6SsPJr/nOENTeraBZjUkNaww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=upzrlCDOu25+anPHC9qHJrGtE9lgprNGBqAZF3Aw9jR4m7rYhcNhImz7gTBLelQJp
-	 ipaTGIsJwaM+5m92zHWBQel3ynbnw1d1dzEoh6ySYaCXp7Wa5I9781W6Bn6juIRjO5
-	 pkgDLASRxiFXKnyjCfBldYfxxCqATgFmAGcYfE0oozo/nFkdyDaN+kr0qRNXRmZ7/o
-	 YrUAeTtymw/19eanV/PAsqI68oVlKsnjHA1XNhdZ5/GTldHmI43FnObOa4/FMUW+o4
-	 g28BX5FfA4lEbnm7T+ZlygCe9V25dl0cRoEx2vrugITgO9o52yhmyKmkUHqJlYGAV5
-	 7AczTN260dvVA==
-Date: Tue, 29 Apr 2025 13:08:02 +0200
+	s=k20201202; t=1745924934;
+	bh=2FnrdaPoR6yU2qmctP2qpvbz6w9gH8tMRvd6MmMwPtE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Ep8YiIFSMnfU3uuqFEOyAL/4NxG6aIOZUmzynEAW/YlI9o/KCPiY5jGR/dmplSQwN
+	 d2MRjQb6a5JM7uQ64BWL0rAHmYVpqKL8/lglRXyhHr7zlYJgVVW0V0T6odu8OYuvfG
+	 KcSYQA8K9UJ2O/mN1bV1ELz31g4XXVrxZEJ57OnxNWbn40TZnHv3wwZ2fqMBWXNG0u
+	 nGQtgOU6yWS2ThnBhOrpoBLwpdC943UZg0VdcbIYW+iovwgrvi1swm2HMVNQgLt/Qj
+	 3z2IP66Pjgl6UnShX4SxrjmVddzN2+hYdkwDjCF4aSvaQtWbq24NDK2pT+JpMa1nCH
+	 7Qu6KhR6I22aA==
 From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Joe Damato <jdamato@fastly.com>, Carlos Llamas <cmllamas@google.com>, 
-	linux-fsdevel@vger.kernel.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Sridhar Samudrala <sridhar.samudrala@intel.com>, Alexander Duyck <alexander.h.duyck@intel.com>, 
-	open list <linux-kernel@vger.kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	William McVicker <willmcvicker@google.com>
-Subject: Re: [PATCH vfs/vfs.fixes v2] eventpoll: Set epoll timeout if it's in
- the future
-Message-ID: <20250429-begeben-zulagen-543d4ea75ca2@brauner>
-References: <20250416185826.26375-1-jdamato@fastly.com>
- <20250426-haben-redeverbot-0b58878ac722@brauner>
- <ernjemvwu6ro2ca3xlra5t752opxif6pkxpjuegt24komexsr6@47sjqcygzako>
- <aA-xutxtw3jd00Bz@LQ3V64L9R2>
- <aBAB_4gQ6O_haAjp@google.com>
- <aBAEDdvoazY6UGbS@LQ3V64L9R2>
- <zvkvenkysbzves2qzknju5pmaws322r3lugzbstv6kuxcbw23k@mtddhwfxj3ce>
+To: alexjlzheng@gmail.com
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jinliang Zheng <alexjlzheng@tencent.com>,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz
+Subject: Re: [PATCH] fs: remove useless plus one in super_cache_scan()
+Date: Tue, 29 Apr 2025 13:08:44 +0200
+Message-ID: <20250429-nennen-denkt-6975ae5b1e98@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250428135050.267297-1-alexjlzheng@tencent.com>
+References: <20250428135050.267297-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <zvkvenkysbzves2qzknju5pmaws322r3lugzbstv6kuxcbw23k@mtddhwfxj3ce>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1052; i=brauner@kernel.org; h=from:subject:message-id; bh=2FnrdaPoR6yU2qmctP2qpvbz6w9gH8tMRvd6MmMwPtE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQIbHbc8nQRz3mTBs533PUhfSJSMw00H9dXWh/q/3/La db9Xj3VjlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgImsuc7I8FF2yUcNjbWGxh9n pHmJJjqXnqv+fbHGXOeNa9xavkP9RxgZZi8z/cu2TUJqlWrR8Xzj3vdM53uDJ9wtf7LUNudw1KZ f7AA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Tue, Apr 29, 2025 at 12:19:15PM +0200, Jan Kara wrote:
-> On Mon 28-04-25 15:41:17, Joe Damato wrote:
-> > On Mon, Apr 28, 2025 at 10:32:31PM +0000, Carlos Llamas wrote:
-> > > On Mon, Apr 28, 2025 at 09:50:02AM -0700, Joe Damato wrote:
-> > > > Thank you for spotting that and sorry for the trouble.
-> > > 
-> > > This was also flagged by our Android's epoll_pwait2 tests here:
-> > > https://android.googlesource.com/platform/bionic/+/refs/heads/main/tests/sys_epoll_test.cpp
-> > > They would all timeout, so the hang reported by Christian fits.
-> > > 
-> > > 
-> > > > Christian / Jan what would be the correct way for me to deal with
-> > > > this? Would it be to post a v3 (re-submitting the patch in its
-> > > > entirety) or to post a new patch that fixes the original and lists
-> > > > the commit sha from vfs.fixes with a Fixes tag ?
-> > > 
-> > > The original commit has landed in mainline already, so it needs to be
-> > > new patch at this point. If if helps, here is the tag:
-> > > Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
-> > > 
-> > > > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> > > > index 4bc264b854c4..1a5d1147f082 100644
-> > > > --- a/fs/eventpoll.c
-> > > > +++ b/fs/eventpoll.c
-> > > > @@ -2111,7 +2111,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
-> > > > 
-> > > >                 write_unlock_irq(&ep->lock);
-> > > > 
-> > > > -               if (!eavail && ep_schedule_timeout(to))
-> > > > +               if (!ep_schedule_timeout(to))
-> > > > +                       timed_out = 1;
-> > > > +               else if (!eavail)
-> > > >                         timed_out = !schedule_hrtimeout_range(to, slack,
-> > > >                                                               HRTIMER_MODE_ABS);
-> > > >                 __set_current_state(TASK_RUNNING);
-> > > 
-> > > I've ran your change through our internal CI and I confirm it fixes the
-> > > hangs seen on our end. If you send the fix feel free to add:
-> > > 
-> > > Tested-by: Carlos Llamas <cmllamas@google.com>
-> > 
-> > Thanks, will do.
-> > 
-> > I was waiting to hear back from Christian / Jan if they are OK with
-> > the proposed fix before submitting something, but glad to hear it
-> > fixes the issue for you. Sorry for the trouble.
+On Mon, 28 Apr 2025 21:50:50 +0800, alexjlzheng@gmail.com wrote:
+> After commit 475d0db742e3 ("fs: Fix theoretical division by 0 in
+> super_cache_scan()."), there's no need to plus one to prevent
+> division by zero.
 > 
-> Yep, a new patch submission with proper Fixes tag is needed at this point.
+> Remove it to simplify the code.
+> 
+> 
+> [...]
 
-Yes, please send a new fixes patch that I can pick up!
+Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.16.misc branch should appear in linux-next soon.
 
-Thanks!
-Christian
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.16.misc
+
+[1/1] fs: remove useless plus one in super_cache_scan()
+      https://git.kernel.org/vfs/vfs/c/9f81d707022c
 
