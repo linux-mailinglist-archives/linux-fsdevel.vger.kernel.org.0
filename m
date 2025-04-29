@@ -1,202 +1,317 @@
-Return-Path: <linux-fsdevel+bounces-47641-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47643-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3762AA1BAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 21:55:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54B15AA1C38
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 22:33:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D203C16F99F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 19:55:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D7F3A98FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 20:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAB1262FC7;
-	Tue, 29 Apr 2025 19:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71521262FDB;
+	Tue, 29 Apr 2025 20:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="E6EdkWc+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gJTtreEY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013003.outbound.protection.outlook.com [52.101.127.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8319259CAF;
-	Tue, 29 Apr 2025 19:55:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.3
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745956531; cv=fail; b=DTu0p9cGyAKD4Zo7Rt6Rwna3Vnofk6TWizxEMfsYhdTquwEmNUV5A6CG6eaL0TWpBVOiOXcEaMPcbsIxMrw4Nw1mzPugrxVqQ3RgpJx3xhGLX+yNhfA0SoH4xZfEd2WZH921FZh/T+CnjIS9okqjHSVZpZJUIUoiUW6BK9bSQdI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745956531; c=relaxed/simple;
-	bh=iOXlGB9tYSC2PmpD/mK3lYdGUNnUdxMo+ajMvlS9eCo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kqfJBo/O3BRlqCjRBaWG1yZRUlEkbdi9pieGl/QVc2b7ZORg0Uz6X9XbTVn8guL8fvCdtChCJGlHOLfmyi8BzaEX3emi9g9rvUxWCgy3FkKiS2QxI2kFlU7B2XS6mfLfnBzy1QTKrhRXXLETTAq5GZW2XZECN2p+VRFkImiTTwk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=E6EdkWc+; arc=fail smtp.client-ip=52.101.127.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I2aG52KTgsF/yqutRAF8LF3YqBBQIN71WzQievxjWG8MQsvzJ191MOXTO66vf0Chg4IsKXc5oNoaviQ4sM9QB3VwhBPgtVOLPIfvVwtmGXvZCWdUCYHErg4hW1mb8Bfn6Bjl9G17g/LG7K7rafk2z6VObmPD7ggdStpyv+HPiBUmb5UWndcAbgs00Fss55ztxYqwO7yDcm3kbcc/VQrExtyXGvyvhymPB0tFNjLqJ+EDILukHOEdQx7s6qUC4StKJVpKW2qEixPvsHG9avj5tGBGrdpZi63cx/pCSYfZKJtNDsvsBHaSN9vUmkekbwKtvBFx0JOUHNAK9M0OgJkWfQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dXR6tgFZJE5gJWJBNnq3JXG5k5YIXmzqfi/KAJDhsP4=;
- b=VkLOdz95a6Y2rYc5FkxQX8s3EESuHFnL6MbmJiN1fS2NTVYswGpTpRpdu2xZeZV5X0Ybvy2gb3BQAN21vqUtQHVQLeHSWrpWVU7K0XS3bq05VT6r638UjZ0oZjg0xgjAlXmTED2QH/bjwl8pkXjP2JQj6qG3zPxXr8sSgrGRZLgnWHnaXC6oTgJbLP5mHV//0aWDdWImq4KKaI8m89yzXzeehUEmjBEyTmU6dBBojQdoqDimZS3O7Ih85VGRE1sEUTWQOQsNQ8NiDSTGeXXT2v4r43hs4w9pGWLT2YLK9jmTrtIFeEXAUcvWJJq3WYBWnNVYMUB628WvbnNWcQSOBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dXR6tgFZJE5gJWJBNnq3JXG5k5YIXmzqfi/KAJDhsP4=;
- b=E6EdkWc+QWh0NiCAoBqhPUGdNymVSGPv5J4BaAz8eEe3Mb3fQ81mWMqGwmlYc0cYUqtkFMBA71xFelVfkC9WrmGNSFGzfkBNFc4OwzDo93QFJ5mSytcbc3FJICcF1mDa+JhlzdGrhHYzHebbOx29mgIaYfS2Y9UJ2E2g/3g6PMOFKJqUEMdA8wHVURri7ABFck3fCQb3hB4H0GNBgvDWHxP3poGAGBZMcVy8jI7qq37R6DvENTk1t8Jp6QgMLh4fijXUBuhcUay807g1ZzS8K6MymImdf55anaPBjYr7M5OUl8NZ6z9DLwj8avgYSk7P6ar0Kn4waAJu2OidbzS8Dg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by TY0PR06MB4983.apcprd06.prod.outlook.com (2603:1096:400:1ad::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Tue, 29 Apr
- 2025 19:55:24 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%6]) with mapi id 15.20.8678.028; Tue, 29 Apr 2025
- 19:55:24 +0000
-From: Yangtao Li <frank.li@vivo.com>
-To: slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yangtao Li <frank.li@vivo.com>
-Subject: [PATCH 2/2] hfs: fix to update ctime after rename
-Date: Tue, 29 Apr 2025 14:15:16 -0600
-Message-Id: <20250429201517.101323-2-frank.li@vivo.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250429201517.101323-1-frank.li@vivo.com>
-References: <20250429201517.101323-1-frank.li@vivo.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR01CA0170.apcprd01.prod.exchangelabs.com
- (2603:1096:4:28::26) To SEZPR06MB5269.apcprd06.prod.outlook.com
- (2603:1096:101:78::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA1D1CAA6E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 20:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1745958800; cv=none; b=OIXIDwaENdtIsFk5K6Cm6aJFORvUrMUB5S3VEyplO5ZuxxdRN0rzY5DRixZSq/2mUdfC5aElC31T40hUbeQncSrsMq1EU0EVEw1NDMXw2mteLvN0KS+j1NTvHqtvW2r7rxDblcORLZbQL5SlsoxJRC9NV52/wfNkT7RO9jT2420=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1745958800; c=relaxed/simple;
+	bh=3/CUJIs+JRvVspffRj6ZGRTR6X6h0zQfLy2IiLb4+yY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qjnLvqMvrQo+QxHO8h6M4CfGAOPsxOk306nBgy7vWCEQbCZz0apFBOqdoSFKt92nYl1Lh3UcGuvvUQyhZMozJP1k30C1LxFE0xxNBqZxxStoM8v83Xpk+7yMfUO02OoNartKUnkc6K4JoAoeDjxt8Fw6s3ildF+ERs7zkY4l6MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gJTtreEY; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-4774611d40bso347591cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 13:33:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1745958798; x=1746563598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6RuHqTNBtcvgW69uG+veZI2+mQpj/OYd2zcCul6gKi8=;
+        b=gJTtreEYX5hxAOQxn80wiy0lcl9Kx+CmTbcBk174vwcjgaYX7CPOW3y7jv97l91Zxj
+         X6105lsErg1wWKPHkd65nkKMIRS51su1NGnvJOp8142t5yX2IQl9+/CZQrvUWg05B8KK
+         8IOEcCYv8dL4JE7dSg3llRcrNAfcsxnA+K/jejqUfXjNNDk3oD58xgY4gtUcvrjxY7xT
+         7iyw4APg4YzPHSZd/rJGQEo8kKoAKbBgwmQJk+kOg4Rk7QoD48jwpNavoowpakrH3YeO
+         Nakw3hG2+tKUry+p787R5s7bC2La/92bQGX2NLaQ09EOaZeMdBCwe+BHSfraGxg32WOz
+         84gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745958798; x=1746563598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6RuHqTNBtcvgW69uG+veZI2+mQpj/OYd2zcCul6gKi8=;
+        b=mP5xLYtk25fndyAKWo7ufno+rX5QiSUz45CtqNtdPyOW5e8klc+XvdihsUgv4QbsNy
+         U/r/YpCiZ2RMFEiESpfaR5HYafp+Yh4akKYEEvU7963fmZ4pum0ibNRaEv+a0RbU5bOb
+         eRSU+Dq3ITVrpHqpC4eHMgKZFkE/v3sbXomgbmgl3BQ+b2qwbYqo0C523GQ/szxguuXC
+         msveY/JHrPJ2pdmBiLqyzJVxj8BGdDG1mbilP55S0u8XGNy2AErs05gnpVzokL3OMDZu
+         CIdtb/eDG1cSVcj/omT0C3Uj76BfxCKaGqm5Q8qEhsYZCVrTB4PZnOy4Ev5IQebUmqI/
+         1OIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTUjuiuuAQ9NJRNXBceGHIjud510o51zjb4tEQCgkdTXfP8Fw2Nl9TiRdNv1f7VwAc6L7xwQ1ZYV5nJsdv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAcUpDf3Iai9Jc3A2RVt1FHGm9mwgtyetMMBs96Py8+OEDgM9+
+	abI+yzQZg7A4cHlpXK5yYDoXoWhLp83d316TRkPeFVT3rGXK88+VphKUpoOA0ua95RZtfzhLhrr
+	XX8bgGJnLygsxdUqbtO8bUc9Aq71sgq7X4P1j
+X-Gm-Gg: ASbGncs8ZQIZ56McO/RzSMsdxLBYNtIiawOVTjxPsBgOvSwifPAN1Noq4V4rfrSFkuG
+	TsTSFVVl4ipwWL+dieWn11RZ3vplUFYzlFabCUoJ8wJIHAvYHGfloZrt7Vn2Me75jHkubw59ntj
+	Ll0g8CB5hH0/M90iAlZSwKL18M0b7aFSBpvzAoZacLVr9AdwfOB+lT0kv2VIu/yiY=
+X-Google-Smtp-Source: AGHT+IFfAqUaqm8TlmxiDs/TpA8pVnnKtFrG+o0jmeCwd2WChU9Uegcp05S3xNJHn3OsPIEFvPnGKyo2zqt4PAryZbg=
+X-Received: by 2002:ac8:578b:0:b0:489:7ea9:4263 with SMTP id
+ d75a77b69052e-489b9838a60mr982441cf.10.1745958797430; Tue, 29 Apr 2025
+ 13:33:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|TY0PR06MB4983:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6cf3f34-37bd-4390-e9c8-08dd8757c800
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GdgHoLYg6mQk7u1ByVJ31iIJtf8m+MWiLdRDhcqL5eul/yWLEpfhVddfFegm?=
- =?us-ascii?Q?YJwf0WitRjpaJXlWLd9y9KLhPVv3TESAG0MA0qr1GYRV8+CCyWS10zIuArTs?=
- =?us-ascii?Q?P/U6iIWLguDphUC7mcMtbUpXwC6BS3FxtyFC3yo1TaQQnoOslRLBDlHeOWtl?=
- =?us-ascii?Q?PaEq/kHHZOBtgWrStf38jR2R2M7CsigAJLMWBM4scjDAaWlwW/M+0uG2rJTY?=
- =?us-ascii?Q?1EGZ9bM8T9bArgAOP5V5hcfbFNP5MHQDhVmKrOEvJIUQHuCvqX+Ox9tg3Jou?=
- =?us-ascii?Q?JuRfTYgOiPAqeRTLyE86r4uruzD3ih6rBD+73ft+VRtVAzgRzlmg4F7U05Bh?=
- =?us-ascii?Q?MOB9l4M2mtDjatetj2kkRwUnEwmCN+Jgodfv5gfQstMKRuteQXIZFcGlq7RQ?=
- =?us-ascii?Q?nIbnOIbMJDMhMSLb6ehBOm1T6JTW/CUH/6pJMEHFcpK18OXjUB0htL1rJFRa?=
- =?us-ascii?Q?0tCNsxYLlgIqaTYAvyvQQMivOltHkBUMn5N0OOEuAA3UKWAGv7BkQYtKKfQn?=
- =?us-ascii?Q?bWQd8lTN8JEYzKLGidVMuh/4Ek9fFigV5i13jO8jj3UwPi46LYh3cCP6s4G6?=
- =?us-ascii?Q?iKMFVoY4VJYWnjvw5ncnJQlTRYf5zJk2bDMtvqYUI178477UyvmjPELnQfta?=
- =?us-ascii?Q?JH6B6p2d01NZpoCQdbZVRgfx+aA88Mx7kQDDvxYt5hb9Z2zwOK05N8+vvVrq?=
- =?us-ascii?Q?AEEguEoiTDHH17iZvcg3lycmGFfOL12WjCMhub1y4DyugudWWi8a6qu460KY?=
- =?us-ascii?Q?Pe3aRBdD5DyhjHH2Gx1CD5Uya4sdVITthk+PabbtfPIPqbmjg8XG9GzImsED?=
- =?us-ascii?Q?NVcjGHtZHB49ROwAuPtxaOrs6mW0Bl096fFjOmU7O34H3Ca7oqxw2e5OJXXa?=
- =?us-ascii?Q?LQxPyOUxftdWWI4hJLNd1PpvXy+qIj/KBkw05106fLUwMejUPJM7aPfdbXAv?=
- =?us-ascii?Q?7Ok8e36cntIl7NqkpUpPO3lKi0KTm95E+fWdhNZKTWZmsSGDoynV1O/f5NiJ?=
- =?us-ascii?Q?wmYFXOPuib4bn2N+L6n8Xp5L5e3TIqlxLOVA2DtDNzfY846Jw7+51nX+wO+2?=
- =?us-ascii?Q?RqbTw4KMhbUU59BKjgBLViKMhNVKWEpl+fI48cK+XeKE/08bmnl4FMA9n08L?=
- =?us-ascii?Q?6WdyCC7UDDGPgzInteaS3Bt3y3M/gJnrgdrpZmuUQSNSH/eNGM0haxttE5EP?=
- =?us-ascii?Q?stkAYqC4NXdX7NmCLtONsZCAs0Ryuh8hoqZgkJYrP3QMjGTq5hZEd2vvtB9K?=
- =?us-ascii?Q?wfp4QAxbpaeJRYm3BC8NZZGs1p0wLzAFWASlt6Ee1xACKbtyNep8RjpEov03?=
- =?us-ascii?Q?B4KQjk9gmBW8kz7Jpc24K5oZ75+l4W4oKWr7abXtbDUR+rxcXg1+lBBStiCc?=
- =?us-ascii?Q?qUxcpmj1CdTvOvY5WaUFFZj9hWzq+JcCZY8h8ht6Gw+qsDiIpKGnDAAELz6l?=
- =?us-ascii?Q?yv0eWJcqmXAcx8ONCRuGcEu6/aH3ejwrrID4rzpn/HyqYXtMybXFXw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Nr+UywbYROZC/MhsdTTZgwLMsxqbVRc3s219EhUveeEhhoyZIJimsfBJaYWa?=
- =?us-ascii?Q?IVd7OJ4J7pPMggoB1CXYr+7334ezUllSo5lB7UkuSZDbFh2VDTKb+ynoz3/3?=
- =?us-ascii?Q?XmRuwMYT3X2IMulmCIAskI4BQ3z1ua74hyIMBnXeNWEse6l5IdcJ5iQaSnFa?=
- =?us-ascii?Q?H7J7eF9NzogLFVQOWnhKnacxWVAnh44GE4xEoSg6vkMuR9ML9QC12GThHV4h?=
- =?us-ascii?Q?UNzRB/zfsrCkX+f6sUZeG/JiNmdsyHPRZ54beG8yIbqn8vs+Fx7omFDsHb0h?=
- =?us-ascii?Q?sMpOwDjE2ljLAqcvOOjeWa392s90QMY0pKZfOM0U+nlJAvy4GBgqKWlnzKs8?=
- =?us-ascii?Q?3QC27UxAzIh2cGoSxtj+Su6y1ZlI6M1DFliULy5fYpgLvltYucYjdoNWoF0B?=
- =?us-ascii?Q?gJ8mTQEvpJ8vtwczAgs7bVPT1mvGBFl8c0CAGIORbghWWcr6U9XtvtrsZbQn?=
- =?us-ascii?Q?EuTkVtuQInAenQNk4dQ/tB3L9zFdou6034Zb4piUJn7q/pwUZ5d4md9Yue1+?=
- =?us-ascii?Q?5sHEaP+NfTGnZQ6aq8NHSqDeWimeFVL+OToqo3dtZJAkzyaizbWg3zeIqadQ?=
- =?us-ascii?Q?mrC29MbiEnd6tx0VtyCSgkrEIs58A65PxEL4Gnc0iBzQ5zoo8+FvV5Lw+SZw?=
- =?us-ascii?Q?cUl09L2ZUE2hA0CTTHQE1fRZRioU7hBu59yqDLKJG+hx2/hVXpMgP9a+9u7J?=
- =?us-ascii?Q?R2xzLKiY8FlESJ45iKjzfYpRzrLZJahrYKRc8+yDMD55U284DErXSqrTHz8b?=
- =?us-ascii?Q?8SN58R581P3OAZsbXNj1lGuN5dg7uln1ntfNhrYt3qun/eqJWV+1dB7YS3Ny?=
- =?us-ascii?Q?BBArZxN3iCwq96lFLGQlcCpz8/8XgPycO2Ur0AtYXbflpxO3iA9hQLI4yakO?=
- =?us-ascii?Q?J5Zbwmu4SsMvkeTLMxXrqDJGQoDEsehrB8RSsmaJ+S/9sX9s+lM1Cd+7ojbZ?=
- =?us-ascii?Q?zoDA8nCQne5OVFcsOZqUCSsnJmJxsRBscrJjJTwoJrtdWiRRR1c5jVP011Zm?=
- =?us-ascii?Q?LPmG3WAyv9mdUWPLnSJltbLZPyFenLB4sWGk2a8oG90MBhZVDmzFKdn2r9m8?=
- =?us-ascii?Q?fMUGH+djR+oePWXctoDC3percJQXagt/W2Dd2N40T3HHN0ly+vPPr9gcEQPm?=
- =?us-ascii?Q?c8srFUcqWhVAMiNm4Tr+HNmopHAJk1kmh3Zx/Z4FqFGhvJZPuIuMRJVcvuZF?=
- =?us-ascii?Q?+WRtWe8j3i+N5ITY6hq2SJ3oOhH+a5VzTgEwAOr0kTxdi55CW/DNJSytADG0?=
- =?us-ascii?Q?HE5aXaubdug5layDcrdTgcngCYri/3C2BUNDcr+GZKRNv9doZjD1Ad7gmcAo?=
- =?us-ascii?Q?TIo7+gxX2Ey2uofNufk0qCCUJS6ULoyi28/zmizBipZ7nSr6V4k7aio1p8wm?=
- =?us-ascii?Q?gaP/qtacDxI55FUUp/8qYtYZ/bhcg1qgk9fyzI6hC3IHlTDEqHxVpnGDOS5x?=
- =?us-ascii?Q?O0KmZhswpufcWO+9dP8VjzQgbNlLdskPae23J4mzQwP3j8ZAohYrTBg5hU0O?=
- =?us-ascii?Q?fwyUB9qPvkOUKtbQG66nvUj+x4A01/mVy8zTKU36TjU8NaKuewlGD8LvIuzW?=
- =?us-ascii?Q?n19JJB8rZKfeUtZNkSu2TNOX9d2oYEZeMFdyYIhA?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6cf3f34-37bd-4390-e9c8-08dd8757c800
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Apr 2025 19:55:24.6407
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gcMbUxEHA8HNHMMfmq2smQkDVBUPXB2T+65dJHkrZTUjBAlPaIO1ePUIQ0RzuCVd2NycOFvy6WURiDGjaZYYEg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB4983
+References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-8-surenb@google.com>
+ <CAG48ez3YLWh9hXQQdGVQ7hCsd=k_i2Z2NO6qzT6NaOYiRjy=nw@mail.gmail.com>
+ <CAJuCfpGGiwTbMeGAeYNtQ5SsFenUw8up6ToLy=VstULM_TSoXA@mail.gmail.com>
+ <CAG48ez15g5n9AoMJk1yPHsDCq2PGxCHc2WhCAzH8B2o6PgDwzQ@mail.gmail.com>
+ <CAJuCfpG+YjyVE-6TaAQEjwc0iixqN8Epf25jo2awtL=gqY=afA@mail.gmail.com> <CAG48ez0ntTH_sOaPiqML715jyTCujwyh3Og1wBq9RNLbu55C5Q@mail.gmail.com>
+In-Reply-To: <CAG48ez0ntTH_sOaPiqML715jyTCujwyh3Og1wBq9RNLbu55C5Q@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 29 Apr 2025 13:33:05 -0700
+X-Gm-Features: ATxdqUEe002VsMDCR8tZV7bMaBYZb2LRjVYTvWo45vIOB09sAK6-nvvtt3xxSRU
+Message-ID: <CAJuCfpFA0Kqt_KOceq6bxbJG80z-RaxcFbC+-59F_sPOXAorQA@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] mm/maps: read proc/pid/maps under RCU
+To: Jann Horn <jannh@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, 
+	linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, 
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, 
+	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Similar to hfsplus, let's update file ctime after the rename operation
-in hfs_rename().
+On Tue, Apr 29, 2025 at 11:55=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
+:
+>
+> On Tue, Apr 29, 2025 at 8:04=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> > On Tue, Apr 29, 2025 at 10:21=E2=80=AFAM Jann Horn <jannh@google.com> w=
+rote:
+> > >
+> > > Hi!
+> > >
+> > > (I just noticed that I incorrectly assumed that VMAs use kfree_rcu
+> > > (not SLAB_TYPESAFE_BY_RCU) when I wrote my review of this, somehow I
+> > > forgot all about that...)
+> >
+> > Does this fact affect your previous comments? Just want to make sure
+> > I'm not missing something...
+>
+> When I suggested using "WRITE_ONCE(vma->vm_file, NULL)" when tearing
+> down a VMA, and using get_file_rcu() for the lockless lookup, I did
+> not realize that you could actually also race with all the other
+> places that set ->vm_file, like __mmap_new_file_vma() and so on; and I
+> did not think about whether any of those code paths might leave a VMA
+> with a dangling ->vm_file pointer.
 
-Signed-off-by: Yangtao Li <frank.li@vivo.com>
----
- fs/hfs/dir.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+So, let me summarize my understanding and see if it's correct.
 
-diff --git a/fs/hfs/dir.c b/fs/hfs/dir.c
-index 86a6b317b474..3b95bafb3f04 100644
---- a/fs/hfs/dir.c
-+++ b/fs/hfs/dir.c
-@@ -284,6 +284,7 @@ static int hfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 		      struct dentry *old_dentry, struct inode *new_dir,
- 		      struct dentry *new_dentry, unsigned int flags)
- {
-+	struct inode *inode = d_inode(old_dentry);
- 	int res;
- 
- 	if (flags & ~RENAME_NOREPLACE)
-@@ -299,11 +300,15 @@ static int hfs_rename(struct mnt_idmap *idmap, struct inode *old_dir,
- 	res = hfs_cat_move(d_inode(old_dentry)->i_ino,
- 			   old_dir, &old_dentry->d_name,
- 			   new_dir, &new_dentry->d_name);
--	if (!res)
--		hfs_cat_build_key(old_dir->i_sb,
--				  (btree_key *)&HFS_I(d_inode(old_dentry))->cat_key,
--				  new_dir->i_ino, &new_dentry->d_name);
--	return res;
-+	if (res)
-+		return res;
-+
-+	hfs_cat_build_key(old_dir->i_sb,
-+			  (btree_key *)&HFS_I(d_inode(old_dentry))->cat_key,
-+			  new_dir->i_ino, &new_dentry->d_name);
-+	inode_set_ctime_current(inode);
-+	mark_inode_dirty(inode);
-+	return 0;
- }
- 
- const struct file_operations hfs_dir_operations = {
--- 
-2.39.0
+If we copy the original vma, ensure that it hasn't changed while we
+were copying (with mmap_lock_speculate_retry()) and then use
+get_file_rcu(&copy->vm_file) I think we are guaranteed no UAF because
+we are in RCU read section. At this point the only issue is that
+copy->vm_file might have lost its last refcount and get_file_rcu()
+would enter an infinite loop. So, to avoid that we have to use the
+original vma when calling get_file_rcu() but then we should also
+ensure that vma itself does not change from under us due to
+SLAB_TYPESAFE_BY_RCU used for vm_area_struct cache. If it does change
+from under us we might end up accessing an invalid address if
+vma->vm_file is being modified concurrently.
 
+>
+> I guess maybe that means you really do need to do the lookup from the
+> copied data, as you did in your patch; and that might require calling
+> get_file_active() on the copied ->vm_file pointer (instead of
+> get_file_rcu()), even though I think that is not really how
+> get_file_active() is supposed to be used (it's supposed to be used
+> when you know the original file hasn't been freed yet). Really what
+> you'd want for that is basically a raw __get_file_rcu(), but that is
+> static and I think Christian wouldn't want to expose more of these
+> internals outside VFS...
+> (In that case, all the stuff below about get_file_rcu() would be moot.)
+>
+> Or you could pepper WRITE_ONCE() over all the places that write
+> ->vm_file, and ensure that ->vm_file is always NULLed before its
+> reference is dropped... but that seems a bit more ugly to me.
+
+Ugh, yes. We either ensure no vma->vm_file tearing or use
+__get_file_rcu() on a copy of the vma. Or we have to stabilize the vma
+by locking it... Let me think about all these options. Thanks!
+
+>
+> > > On Tue, Apr 29, 2025 at 7:09=E2=80=AFPM Suren Baghdasaryan <surenb@go=
+ogle.com> wrote:
+> > > > On Tue, Apr 29, 2025 at 8:40=E2=80=AFAM Jann Horn <jannh@google.com=
+> wrote:
+> > > > > On Fri, Apr 18, 2025 at 7:50=E2=80=AFPM Suren Baghdasaryan <suren=
+b@google.com> wrote:
+> > > > > > With maple_tree supporting vma tree traversal under RCU and vma=
+ and
+> > > > > > its important members being RCU-safe, /proc/pid/maps can be rea=
+d under
+> > > > > > RCU and without the need to read-lock mmap_lock. However vma co=
+ntent
+> > > > > > can change from under us, therefore we make a copy of the vma a=
+nd we
+> > > > > > pin pointer fields used when generating the output (currently o=
+nly
+> > > > > > vm_file and anon_name). Afterwards we check for concurrent addr=
+ess
+> > > > > > space modifications, wait for them to end and retry. While we t=
+ake
+> > > > > > the mmap_lock for reading during such contention, we do that mo=
+mentarily
+> > > > > > only to record new mm_wr_seq counter. This change is designed t=
+o reduce
+> > > > > > mmap_lock contention and prevent a process reading /proc/pid/ma=
+ps files
+> > > > > > (often a low priority task, such as monitoring/data collection =
+services)
+> > > > > > from blocking address space updates.
+> > > > > [...]
+> > > > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> > > > > > index b9e4fbbdf6e6..f9d50a61167c 100644
+> > > > > > --- a/fs/proc/task_mmu.c
+> > > > > > +++ b/fs/proc/task_mmu.c
+> > > > > [...]
+> > > > > > +/*
+> > > > > > + * Take VMA snapshot and pin vm_file and anon_name as they are=
+ used by
+> > > > > > + * show_map_vma.
+> > > > > > + */
+> > > > > > +static int get_vma_snapshot(struct proc_maps_private *priv, st=
+ruct vm_area_struct *vma)
+> > > > > > +{
+> > > > > > +       struct vm_area_struct *copy =3D &priv->vma_copy;
+> > > > > > +       int ret =3D -EAGAIN;
+> > > > > > +
+> > > > > > +       memcpy(copy, vma, sizeof(*vma));
+> > > > > > +       if (copy->vm_file && !get_file_rcu(&copy->vm_file))
+> > > > > > +               goto out;
+> > > > >
+> > > > > I think this uses get_file_rcu() in a different way than intended=
+.
+> > > > >
+> > > > > As I understand it, get_file_rcu() is supposed to be called on a
+> > > > > pointer which always points to a file with a non-zero refcount (e=
+xcept
+> > > > > when it is NULL). That's why it takes a file** instead of a file*=
+ - if
+> > > > > it observes a zero refcount, it assumes that the pointer must hav=
+e
+> > > > > been updated in the meantime, and retries. Calling get_file_rcu()=
+ on a
+> > > > > pointer that points to a file with zero refcount, which I think c=
+an
+> > > > > happen with this patch, will cause an endless loop.
+> > > > > (Just as background: For other usecases, get_file_rcu() is suppos=
+ed to
+> > > > > still behave nicely and not spuriously return NULL when the file*=
+ is
+> > > > > concurrently updated to point to another file*; that's what that =
+loop
+> > > > > is for.)
+> > > >
+> > > > Ah, I see. I wasn't aware of this subtlety. I think this is fixable=
+ by
+> > > > checking the return value of get_file_rcu() and retrying speculatio=
+n
+> > > > if it changed.
+> > >
+> > > I think you could probably still end up looping endlessly in get_file=
+_rcu().
+>
+> (Just to be clear: What I meant here is that get_file_rcu() loops
+> *internally*; get_file_rcu() is not guaranteed to ever return if the
+> pointed-to file has a zero refcount.)
+>
+> > By "retrying speculation" I meant it in the sense of
+> > get_vma_snapshot() retry when it takes the mmap_read_lock and then
+> > does mmap_lock_speculate_try_begin to restart speculation. I'm also
+> > thinking about Liam's concern of guaranteeing forward progress for the
+> > reader. Thinking maybe I should not drop mmap_read_lock immediately on
+> > contention but generate some output (one vma or one page worth of
+> > vmas) before dropping mmap_read_lock and proceeding with speculation.
+>
+> Hm, yeah, I guess you need that for forward progress...
+>
+> > > > > (If my understanding is correct, maybe we should document that mo=
+re
+> > > > > explicitly...)
+> > > >
+> > > > Good point. I'll add comments for get_file_rcu() as a separate patc=
+h.
+> > > >
+> > > > >
+> > > > > Also, I think you are introducing an implicit assumption that
+> > > > > remove_vma() does not NULL out the ->vm_file pointer (because tha=
+t
+> > > > > could cause tearing and could theoretically lead to a torn pointe=
+r
+> > > > > being accessed here).
+> > > > >
+> > > > > One alternative might be to change the paths that drop references=
+ to
+> > > > > vma->vm_file (search for vma_close to find them) such that they f=
+irst
+> > > > > NULL out ->vm_file with a WRITE_ONCE() and do the fput() after th=
+at,
+> > > > > maybe with a new helper like this:
+> > > > >
+> > > > > static void vma_fput(struct vm_area_struct *vma)
+> > > > > {
+> > > > >   struct file *file =3D vma->vm_file;
+> > > > >
+> > > > >   if (file) {
+> > > > >     WRITE_ONCE(vma->vm_file, NULL);
+> > > > >     fput(file);
+> > > > >   }
+> > > > > }
+> > > > >
+> > > > > Then on the lockless lookup path you could use get_file_rcu() on =
+the
+> > > > > ->vm_file pointer _of the original VMA_, and store the returned f=
+ile*
+> > > > > into copy->vm_file.
+> > > >
+> > > > Ack. Except for storing the return value of get_file_rcu(). I think
+> > > > once we detect that  get_file_rcu() returns a different file we sho=
+uld
+> > > > bail out and retry. The change in file is an indication that the vm=
+a
+> > > > got changed from under us, so whatever we have is stale.
+> > >
+> > > What does "different file" mean here - what file* would you compare
+> > > the returned one against?
+> >
+> > Inside get_vma_snapshot() I would pass the original vma->vm_file to
+> > get_file_rcu() and check if it returns the same value. If the value
+> > got changed we jump to  /* Address space got modified, vma might be
+> > stale. Re-lock and retry. */ section. That should work, right?
+>
+> Where do you get an "original vma->vm_file" from?
+>
+> To be clear, get_file_rcu(p) returns one of the values that *p had
+> while get_file_rcu(p) is running.
+
+``````
 
