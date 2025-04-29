@@ -1,235 +1,185 @@
-Return-Path: <linux-fsdevel+bounces-47635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BE5AA1911
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 20:07:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13542AA1A82
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 20:23:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB858461989
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:04:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46A239836EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:19:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A4A25335B;
-	Tue, 29 Apr 2025 18:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5BF253B42;
+	Tue, 29 Apr 2025 18:19:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gb5mgiqP"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="h7Plhp3r";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="p1HLQ60f";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IUrPCMto";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VkGIEqrB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D662517A6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 18:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3863155A4E
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 18:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745949871; cv=none; b=rsvFvphaWttUJup7j5vpQhSUNzxU2GYKjTwAreJPj4xOhf2vm0M59iG7nOyUq48NYbqX8YJD+JwvvyA9uQF9SbFG4qnqW0RVf7Onwlu3GrWIohGD24DhcMlUPrIQWu1D737AkNja49NrWB6BR415d0Cfy8a6LY1Ojg0IUcWWHBY=
+	t=1745950752; cv=none; b=TDY7o8oJdP8v3qhcoUIUgWeB4zxZeY+Ujac0u61eeRm91dQ1a1NDMAAK4tYb7ZgbnGiS7Lo1JKhD1cPkhFCOmBBT2ZkC3plSl0ARvqo/c+jm+C01+GBVLUHT9w1Yb6QNf7L6ga0/UNRMQgQ44vHLXMd9ggvjx8sifMRpVdqi0gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745949871; c=relaxed/simple;
-	bh=0+Jt6wnHoPe3/Gkun9y2Xjhz+Air4hf4yJp89So0d10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cpi7oBFW8awwAh5wPeoC97yIhKPzF/V7qZh28Xvy4fpEUPCkrCuOnnBvaO6ZXH3E3asW70X8hnVeOgwLqCe1Fd8klVmm7Xja+yREoE5SmmfinIZlg4e5AZ63OzW69H4pNtdteYQ99SERwmwz0mqA1FC3q6GzRxYwkLHDJrsHDPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gb5mgiqP; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-47666573242so381331cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 11:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745949869; x=1746554669; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bGFBOIYiVFMA2gosF4fAzdDOnh60Gs1cEA/UxI1BGcI=;
-        b=Gb5mgiqP4+8F2I/gxzXjkmR31CUbqviLeocNN7oubhvWNamm8PNIHXehAl7zPqMiX/
-         3GwzpwURSoUi6RaNUwyfk1kWOeJ82eolM37z67lDIGAOc48k92NyIfqRgub5RWJmviPu
-         xXDDgBiwaPrf0htRRtv8YOHxQy4OeOMIGXjaTt4NnpShd75Bl65skYamDCVUdaUU/1iM
-         ym/lsEf1DW6K51r97wG9uPXfeMmSfSkgStSiZw+wsw88e2ONOz3vaSkZQnN+lYd4TuDG
-         Bl+K/DvaO7d1+J7mNPG1os2V3Aawvhzf316oIma8ZK3D8gIBhh6+ffFT+y7Q5e78E7yk
-         IKeg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745949869; x=1746554669;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bGFBOIYiVFMA2gosF4fAzdDOnh60Gs1cEA/UxI1BGcI=;
-        b=A3FRTTbiMq3mh0ecsc2W5EZ7ZtRCDnLYhaxWaFakQDJ644pVjWVexkN/7Duu97ysbQ
-         HwbbtatqZhCGpXuAYUpcQ/myYm+W4GGCPbVLYmvF9W6lyMpP1qCfuVweVDYGVn6/mj+o
-         yxlsv16GbPrCRisKe6Gzaqw7njtsJwUjo2g7W/O6N3+KXgZhSi4YT15JveImL4o77S/E
-         5Gff9qan45k2l6uAdYIPS+hpadpQSaTxj+tP1tc9qEg2shyBith2GpiEkX2OSgySMQO0
-         k1+xu84OleSws7Shli9X833gsjTYwBkUbsq3kR9vv+2LyervPRgteUHeevRZK8DSVw80
-         D6RA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3rLKXP5UxPkLK/BNkVUvEkNXSYMJrqWcr/EqFszI/+cfGP4rJx65C1/wABhqb5b89tXTDOqtKPPHM2HyS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw9wKlZdwZa669iMisAEkwwlEqxfkI1I4CUbi3z3usN1wDxMNi
-	gRb3HSvE6gLq47SOzlEl8gsT2HtxRhuvvgMpjPLfzYwqEcMoskLViORo9VHal6lJWkSjehjghxS
-	+ZLQhPMm2jXHUyOd+fmNZtRq88IKhUiI7WFyI
-X-Gm-Gg: ASbGncvpJBzP3VVXnzCy+OeCzpgw7Td3LDpijAbp7HbUHaobrizjx3cNnPjUXZEiiuN
-	mltIlTtafuAax9i9fSFc5RvKZt++Gm5hAJQIw5BYS4vS7n7if+xIZoWTNvY8ikN9gDGbLwUor8b
-	mbwfS4WCNDTAnIBtZpXyp4UreSRN+CTJXbYewaM6NouXsUTJaDniwk
-X-Google-Smtp-Source: AGHT+IGTHdof2vv8tE6oOakqNkRD6qkaYwcU2GMDuR1dry0vZWexciL9KgeFFNdap4sTR6sGZPImbJQwIIPq3LvxJ3k=
-X-Received: by 2002:a05:622a:8e:b0:472:538:b795 with SMTP id
- d75a77b69052e-489bb19045fmr245541cf.22.1745949868234; Tue, 29 Apr 2025
- 11:04:28 -0700 (PDT)
+	s=arc-20240116; t=1745950752; c=relaxed/simple;
+	bh=pDtPY5G1bgPWWMsc5mRyVdova/GQU5G1vxe50KbA6tI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=re1PFxgIWqw5Z9NXu0Q/didFr9GxVSP3+Q3m6H9ro2DSXzV1LUB8l3jcx8k8kOhPCNl32keWHRatzBjyjeqJeLuzK46DoW+TFkqOP5n4XIc0xYKvdjbH4dX6HpZg4jRPA3G7jrf48GX9naZFyVfu5YHpx6HXr4K1wfbxIlI1+Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=h7Plhp3r; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=p1HLQ60f; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IUrPCMto; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VkGIEqrB; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E6AAA211AC;
+	Tue, 29 Apr 2025 18:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745950749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nnw5ae/HO1yyHSgwf2xuM2bVdUNSuja2EqHtH5v8DhM=;
+	b=h7Plhp3r7VEPw6qUeGtTJklvC/POKMbNrDkeZedgLFtzUkJ1Ded7Ip+43vJ2ZyI5u1R9Qw
+	UtFhvynUDMGvO65azn4xG+hNFitvKBFGGvVQPyytcXjWbyrVERRa6r+sI6x2/FhpTaWPET
+	9xVPu9/ELCoLB+NHnXXp3dzrHydevoA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745950749;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nnw5ae/HO1yyHSgwf2xuM2bVdUNSuja2EqHtH5v8DhM=;
+	b=p1HLQ60fdTGtKNNGq+qpfns/cSkk4CdfHNtoiYO2mQOybFRPlc7z7KwI2mhPF6Y3ZSzoj8
+	5huTUUe/Re7yLpBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745950748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nnw5ae/HO1yyHSgwf2xuM2bVdUNSuja2EqHtH5v8DhM=;
+	b=IUrPCMtoHh2NyKtRxU15vuKNfnHQQKXyCeRHhnI6zVAks/kpX7pjztEnEQfjB4+BzkyE5p
+	ZFzNeWnbd7rj9gIWVZ2P+ZEiGWhRj1Vh1WWTyqbis7RRYEZ2F71jCzhYvxa5EXqB2sV+gv
+	AI8Aqp2kU2KnR07NAfKTwD2uYSM0U9I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745950748;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Nnw5ae/HO1yyHSgwf2xuM2bVdUNSuja2EqHtH5v8DhM=;
+	b=VkGIEqrBjSI19CoPXKnO+RmdS7IMwT76ohiXaL8sFvYenXxau1RWLepRDEh4pp0BSFdcyd
+	JFLmJcUmNx/YKuAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BB67D13931;
+	Tue, 29 Apr 2025 18:19:08 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4xd0LRwYEWgbPQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 29 Apr 2025 18:19:08 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id BD7ACA0AF0; Tue, 29 Apr 2025 20:19:03 +0200 (CEST)
+Date: Tue, 29 Apr 2025 20:19:03 +0200
+From: Jan Kara <jack@suse.cz>
+To: Joe Damato <jdamato@fastly.com>
+Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, 
+	Mike Pagano <mpagano@gentoo.org>, Carlos Llamas <cmllamas@google.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH vfs.fixes] eventpoll: Prevent hang in epoll_wait
+Message-ID: <a5t4wx72g3mnyz6h7ko5joairx6zjycdt5jkfdfgmvbrfwhlus@jtsewowpwsxd>
+References: <20250429153419.94723-1-jdamato@fastly.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-8-surenb@google.com>
- <CAG48ez3YLWh9hXQQdGVQ7hCsd=k_i2Z2NO6qzT6NaOYiRjy=nw@mail.gmail.com>
- <CAJuCfpGGiwTbMeGAeYNtQ5SsFenUw8up6ToLy=VstULM_TSoXA@mail.gmail.com> <CAG48ez15g5n9AoMJk1yPHsDCq2PGxCHc2WhCAzH8B2o6PgDwzQ@mail.gmail.com>
-In-Reply-To: <CAG48ez15g5n9AoMJk1yPHsDCq2PGxCHc2WhCAzH8B2o6PgDwzQ@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 29 Apr 2025 11:04:15 -0700
-X-Gm-Features: ATxdqUEFK_c8BfZNtNDlAtU3sfwm14-hJ5pe2ZNDycq9_J7ILXRelmx3Box4ufQ
-Message-ID: <CAJuCfpG+YjyVE-6TaAQEjwc0iixqN8Epf25jo2awtL=gqY=afA@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] mm/maps: read proc/pid/maps under RCU
-To: Jann Horn <jannh@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, 
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, 
-	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250429153419.94723-1-jdamato@fastly.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Tue, Apr 29, 2025 at 10:21=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
-:
->
-> Hi!
->
-> (I just noticed that I incorrectly assumed that VMAs use kfree_rcu
-> (not SLAB_TYPESAFE_BY_RCU) when I wrote my review of this, somehow I
-> forgot all about that...)
+On Tue 29-04-25 15:34:19, Joe Damato wrote:
+> In commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the
+> future"), a bug was introduced causing the loop in ep_poll to hang under
+> certain circumstances.
+> 
+> When the timeout is non-NULL and ep_schedule_timeout returns false, the
+> flag timed_out was not set to true. This causes a hang.
+> 
+> Adjust the logic and set timed_out, if needed, fixing the original code.
+> 
+> Reported-by: Christian Brauner <brauner@kernel.org>
+> Closes: https://lore.kernel.org/linux-fsdevel/20250426-haben-redeverbot-0b58878ac722@brauner/
+> Reported-by: Mike Pagano <mpagano@gentoo.org>
+> Closes: https://bugs.gentoo.org/954806
+> Reported-by: Carlos Llamas <cmllamas@google.com>
+> Closes: https://lore.kernel.org/linux-fsdevel/aBAB_4gQ6O_haAjp@google.com/
+> Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
+> Tested-by: Carlos Llamas <cmllamas@google.com>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 
-Does this fact affect your previous comments? Just want to make sure
-I'm not missing something...
+Looks good. Feel free to add:
 
->
-> On Tue, Apr 29, 2025 at 7:09=E2=80=AFPM Suren Baghdasaryan <surenb@google=
-.com> wrote:
-> > On Tue, Apr 29, 2025 at 8:40=E2=80=AFAM Jann Horn <jannh@google.com> wr=
-ote:
-> > > On Fri, Apr 18, 2025 at 7:50=E2=80=AFPM Suren Baghdasaryan <surenb@go=
-ogle.com> wrote:
-> > > > With maple_tree supporting vma tree traversal under RCU and vma and
-> > > > its important members being RCU-safe, /proc/pid/maps can be read un=
-der
-> > > > RCU and without the need to read-lock mmap_lock. However vma conten=
-t
-> > > > can change from under us, therefore we make a copy of the vma and w=
-e
-> > > > pin pointer fields used when generating the output (currently only
-> > > > vm_file and anon_name). Afterwards we check for concurrent address
-> > > > space modifications, wait for them to end and retry. While we take
-> > > > the mmap_lock for reading during such contention, we do that moment=
-arily
-> > > > only to record new mm_wr_seq counter. This change is designed to re=
-duce
-> > > > mmap_lock contention and prevent a process reading /proc/pid/maps f=
-iles
-> > > > (often a low priority task, such as monitoring/data collection serv=
-ices)
-> > > > from blocking address space updates.
-> > > [...]
-> > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > > index b9e4fbbdf6e6..f9d50a61167c 100644
-> > > > --- a/fs/proc/task_mmu.c
-> > > > +++ b/fs/proc/task_mmu.c
-> > > [...]
-> > > > +/*
-> > > > + * Take VMA snapshot and pin vm_file and anon_name as they are use=
-d by
-> > > > + * show_map_vma.
-> > > > + */
-> > > > +static int get_vma_snapshot(struct proc_maps_private *priv, struct=
- vm_area_struct *vma)
-> > > > +{
-> > > > +       struct vm_area_struct *copy =3D &priv->vma_copy;
-> > > > +       int ret =3D -EAGAIN;
-> > > > +
-> > > > +       memcpy(copy, vma, sizeof(*vma));
-> > > > +       if (copy->vm_file && !get_file_rcu(&copy->vm_file))
-> > > > +               goto out;
-> > >
-> > > I think this uses get_file_rcu() in a different way than intended.
-> > >
-> > > As I understand it, get_file_rcu() is supposed to be called on a
-> > > pointer which always points to a file with a non-zero refcount (excep=
-t
-> > > when it is NULL). That's why it takes a file** instead of a file* - i=
-f
-> > > it observes a zero refcount, it assumes that the pointer must have
-> > > been updated in the meantime, and retries. Calling get_file_rcu() on =
-a
-> > > pointer that points to a file with zero refcount, which I think can
-> > > happen with this patch, will cause an endless loop.
-> > > (Just as background: For other usecases, get_file_rcu() is supposed t=
-o
-> > > still behave nicely and not spuriously return NULL when the file* is
-> > > concurrently updated to point to another file*; that's what that loop
-> > > is for.)
-> >
-> > Ah, I see. I wasn't aware of this subtlety. I think this is fixable by
-> > checking the return value of get_file_rcu() and retrying speculation
-> > if it changed.
->
-> I think you could probably still end up looping endlessly in get_file_rcu=
-().
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-By "retrying speculation" I meant it in the sense of
-get_vma_snapshot() retry when it takes the mmap_read_lock and then
-does mmap_lock_speculate_try_begin to restart speculation. I'm also
-thinking about Liam's concern of guaranteeing forward progress for the
-reader. Thinking maybe I should not drop mmap_read_lock immediately on
-contention but generate some output (one vma or one page worth of
-vmas) before dropping mmap_read_lock and proceeding with speculation.
+								Honza
 
->
-> > > (If my understanding is correct, maybe we should document that more
-> > > explicitly...)
-> >
-> > Good point. I'll add comments for get_file_rcu() as a separate patch.
-> >
-> > >
-> > > Also, I think you are introducing an implicit assumption that
-> > > remove_vma() does not NULL out the ->vm_file pointer (because that
-> > > could cause tearing and could theoretically lead to a torn pointer
-> > > being accessed here).
-> > >
-> > > One alternative might be to change the paths that drop references to
-> > > vma->vm_file (search for vma_close to find them) such that they first
-> > > NULL out ->vm_file with a WRITE_ONCE() and do the fput() after that,
-> > > maybe with a new helper like this:
-> > >
-> > > static void vma_fput(struct vm_area_struct *vma)
-> > > {
-> > >   struct file *file =3D vma->vm_file;
-> > >
-> > >   if (file) {
-> > >     WRITE_ONCE(vma->vm_file, NULL);
-> > >     fput(file);
-> > >   }
-> > > }
-> > >
-> > > Then on the lockless lookup path you could use get_file_rcu() on the
-> > > ->vm_file pointer _of the original VMA_, and store the returned file*
-> > > into copy->vm_file.
-> >
-> > Ack. Except for storing the return value of get_file_rcu(). I think
-> > once we detect that  get_file_rcu() returns a different file we should
-> > bail out and retry. The change in file is an indication that the vma
-> > got changed from under us, so whatever we have is stale.
->
-> What does "different file" mean here - what file* would you compare
-> the returned one against?
-
-Inside get_vma_snapshot() I would pass the original vma->vm_file to
-get_file_rcu() and check if it returns the same value. If the value
-got changed we jump to  /* Address space got modified, vma might be
-stale. Re-lock and retry. */ section. That should work, right?
+> ---
+>  fs/eventpoll.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 4bc264b854c4..1a5d1147f082 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2111,7 +2111,9 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  
+>  		write_unlock_irq(&ep->lock);
+>  
+> -		if (!eavail && ep_schedule_timeout(to))
+> +		if (!ep_schedule_timeout(to))
+> +			timed_out = 1;
+> +		else if (!eavail)
+>  			timed_out = !schedule_hrtimeout_range(to, slack,
+>  							      HRTIMER_MODE_ABS);
+>  		__set_current_state(TASK_RUNNING);
+> 
+> base-commit: f520bed25d17bb31c2d2d72b0a785b593a4e3179
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
