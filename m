@@ -1,135 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-47610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47612-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33717AA1111
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 17:57:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0127EAA1175
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:22:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB1BC3BF8A8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 15:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C944C4A132C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD880242902;
-	Tue, 29 Apr 2025 15:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AB624503E;
+	Tue, 29 Apr 2025 16:21:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O/USvDw8"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VeL22eYD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDEF241667
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 15:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B72244694
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 16:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745942199; cv=none; b=AXFDb3tuDQvUSapfMmnr8piFCAPgkhnocCsJqdfla3nWgKlkXEw2Kb63D2HW55eKTBkJRy0vl2KHD5Wop2lT+pVmR8zpE1o18zOr9EFifK4e7xBcHMDWJFMrBbdZehTE0lMKVmIJae3gnDmkLRwtC7/o7kWTm3KCq57CczGux9A=
+	t=1745943713; cv=none; b=RuqtaWSxqBpxAaM2+LVVlq1iWClmwgRBM5blAoy3yZOZWkZBZD3ISsCKLGwlJD/puxbDkvGEOdAAGLC6/clqUMr4LMAJUOu7HPRPFx0CiR9Ygd0QQMYqHP2X0R3lT+601UYUeJSRkcG1UJz1lGCN+XoTNDbKmFfPjZuR1Ol9esQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745942199; c=relaxed/simple;
-	bh=PksiWfpMfxllb9cMtMeDE5xqZSJKQGuK3D2npFWtovY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N39S6pP1ep/pC4fqFTjODihydJajbVLTusO6DLzHN1lWKm70Pd8d49bGcdV+4H/9aO8Oqecd6HPNkmkEv9pJ+dE53PA6dcYwDwYKbD8MBCAyXmx7MoZ5oo7ywbQf4V8pC6lCuMF9orQcud2B5V/ICnVP59JO5S4z8dvYWiBaHJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=O/USvDw8; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5f8684d4188so4252a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 08:56:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745942196; x=1746546996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PksiWfpMfxllb9cMtMeDE5xqZSJKQGuK3D2npFWtovY=;
-        b=O/USvDw8of1oGQ9GiuPDnsjhFb+4Hax6Oh5hkKMjDJozdj2o1GWvM+XqwdOhdzlgDf
-         4MCRPNyTVTo3rrOYBImstWzN7PdKlwN6zIO5QMaRqgv2g9kNUb2JmWZpSUnwzJPASmvw
-         ojVKVpD5HoBJhaAn+n/Cl/Cj/LX9+PJMApIeIuVN3TKi6mCNqC4NbDsZEeZLhS5amTcX
-         6NiH9H1rkZNn//7U6BdmGEa/o9x3f1LnBQNSkT3fW+qtBaiaq0idGJHLqIW9IpoGLsEC
-         j5RH6TXJ/0fHjj9zb+PGhwVvYTR7OYo0ka98XXaLGv9wgvilcm7osgx1dKjYeywpsLQ6
-         mLnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745942196; x=1746546996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PksiWfpMfxllb9cMtMeDE5xqZSJKQGuK3D2npFWtovY=;
-        b=xDLCu79FQKLsG4cZdkhw6JS6GAg7vHLy4z51EQFTlw5xOPZ/gjxXSrqutrvj3HPkTw
-         a2+P7+T99MvfAA+VnoeSpU5iP9Dtc8jjTAPWrjns7nESmebuZ2BXgzmzvbyjW90/L6Ew
-         l7ritq2eRu36l5a/YtdGM/Z4/GeUm0P8M0+d0yWGL7uFxwbMatwxEaH0eQ9Lg8GCgOKF
-         MHsoVfEhdHLqURcQrmT25GcGOodHi2Ns9S2Tx1dsUt5YGtHGI4uAWbIf7yGu/FeJcsKz
-         079FJTf6gE8xgtZKHVZDWBP+eA29Ut/6aB1Cfh7GpK7qAW4fxhjs7PSOd2XqCe2eclUi
-         E9Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCWAN3hICPdkVYWWhTno4AsSZAV10PkUe1iNL7N0tqQYGIahqWGtp+3dj6W9rPYEw2a2Qtcdxad9n+CcV/mr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwQ+l8g4uC1bfu/8UfS02GBtHPm8GqXSxjc6FLTawFy9juv5fz
-	Zu6HrKL6yTuDq9t6Fc07k4Q/72wDKzF8tZen/v7vCeUwzjVfP57iL4uQKfEixJ3mkZ/4ciRecaS
-	Cq2kUBJaQAMNMXgTverNW60qvXIa/GI+DdRYi
-X-Gm-Gg: ASbGncv2vpk+yQ1OhEavKDBS6m2WihgBPJWKQVWFIMAyqrxPRoqjavlMeBljXYZrGwC
-	NJRo9A+a0BvtrgGTjDkA0vxVghaCOysVO0dS+kGgZNw3uFFsmv5jZ9Ss4oxh1E7WZpy621SHyBk
-	rh2mk2f8mJJkmcIi5KQu1dcoO/7s0ce4xMmJj0qz4zRC/ycJ0pSg==
-X-Google-Smtp-Source: AGHT+IGtxlZGWu2Je/bOBDJTv80S1Q80Y7hLVWaw/Dsh1sFOZ7mVM95j4NTnHLX0IbqUIKK8zCAe/YhlOZPXyx67i/w=
-X-Received: by 2002:a50:cd0f:0:b0:5e5:7c1:43bd with SMTP id
- 4fb4d7f45d1cf-5f83c1b5a74mr91868a12.1.1745942195429; Tue, 29 Apr 2025
- 08:56:35 -0700 (PDT)
+	s=arc-20240116; t=1745943713; c=relaxed/simple;
+	bh=Y6JiO7oYoeOTKUsy66zGL+B19kEo8r9m8dto+yrP6TQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=twchMNurTX6LCGxqAkT+hCOUTa4MVK/IRJ3sJvplECT8NAhfDSTz8ngnMdADdXz3uPT0fND84GU7eY0SsJggR4lnr2um4KsZim9dic9LDcyxXNj7WOFT3Mw4Rf+2VFOXDcSln4sx5xNcdCdoTXs4Mc98gsMsk7WUWU+N5jOLuTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VeL22eYD; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 29 Apr 2025 12:21:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1745943699;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cTpA6o8PWXuPbIwQZ+jU9BV1D3QBfTnXkZ2PpDFhcgQ=;
+	b=VeL22eYDp+0JnPOPNWmQrO47wxt0dcHS4l10sYycSwWR+QuMITchnza5SE/uWI8Kh8X4pv
+	Rf/XuAdpyPn2LD2ErpUaiz/ZKA+T7upTeWDp4CMD3XJVlsmyTeAp7io8UT/x8kW2Dc767z
+	tBUd1mB1pfhpJ9Uz2QNoo/INNU7c2OQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Patrick Donnelly <batrick@batbytes.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+Message-ID: <pkpzm6okfqchet42lhcebwaiuwrwil6wp76flnk3p3mgijtg2e@us7jkctbpsgc>
+References: <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
+ <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
+ <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
+ <q3thzkbsq6bwur7baoxvxijnlvnobyt6cx4sckonhgdkviwz76@45b6xlzvrtkr>
+ <CAHk-=wh09TvgFu3WKaeLu8jAxCmwZa24N7spAXi=jrVGW7X9ZA@mail.gmail.com>
+ <mlsjl7qigswkjvvqg2bheyagebpm2eo66nyysztnrbpjau2czt@pdxzjedm5nqw>
+ <CAHk-=wiSXnaqfv0+YkOkJOotWKW6w5oHFB5xU=0yJKUf8ZFb-Q@mail.gmail.com>
+ <lmp73ynmvpl55lnfym3ry76ftegc6bu35akltfdwtwtjyyy46z@d3oygrswoiki>
+ <CAHk-=wiZ=ZBZyKfg-pyA3wmEq+RkscKB1s68c7k=3GaT48e9Jg@mail.gmail.com>
+ <CACh33FqQ_Ge6y0i0nRhGppftWdfMY=SpGsN0EFoy9B8VMgY-_Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-9-surenb@google.com>
- <CAEf4BzabPLJTy1U=aBrGZqKpskNYvj5MYuhPHSh_=hjmVJMvrg@mail.gmail.com>
-In-Reply-To: <CAEf4BzabPLJTy1U=aBrGZqKpskNYvj5MYuhPHSh_=hjmVJMvrg@mail.gmail.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 29 Apr 2025 17:55:59 +0200
-X-Gm-Features: ATxdqUFo7EtQYKmtjBK-XwiZ1ZSWDYl5j8WIiYqQOeXkDF7OdcxVClYh41AITzo
-Message-ID: <CAG48ez29frEbJG+ySVARX-bO_QWe8eUbZiV8Jq2sqYemfuqP_g@mail.gmail.com>
-Subject: Re: [PATCH v3 8/8] mm/maps: execute PROCMAP_QUERY ioctl under RCU
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
-	peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
-	shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACh33FqQ_Ge6y0i0nRhGppftWdfMY=SpGsN0EFoy9B8VMgY-_Q@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Apr 23, 2025 at 12:54=E2=80=AFAM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
-> On Fri, Apr 18, 2025 at 10:50=E2=80=AFAM Suren Baghdasaryan <surenb@googl=
-e.com> wrote:
-> > Utilize speculative vma lookup to find and snapshot a vma without
-> > taking mmap_lock during PROCMAP_QUERY ioctl execution. Concurrent
-> > address space modifications are detected and the lookup is retried.
-> > While we take the mmap_lock for reading during such contention, we
-> > do that momentarily only to record new mm_wr_seq counter.
->
-> PROCMAP_QUERY is an even more obvious candidate for fully lockless
-> speculation, IMO (because it's more obvious that vma's use is
-> localized to do_procmap_query(), instead of being spread across
-> m_start/m_next and m_show as with seq_file approach). We do
-> rcu_read_lock(), mmap_lock_speculate_try_begin(), query for VMA (no
-> mmap_read_lock), use that VMA to produce (speculative) output, and
-> then validate that VMA or mm_struct didn't change with
-> mmap_lock_speculate_retry(). If it did - retry, if not - we are done.
-> No need for vma_copy and any gets/puts, no?
+On Tue, Apr 29, 2025 at 11:36:44AM -0400, Patrick Donnelly wrote:
+> I would not consider myself a kernel developer but I assume this
+> terminology (dentry aliases) refers to multiple dentries in the dcache
+> referring to the same physical dentry on the backing file system?
 
-I really strongly dislike this "fully lockless" approach because it
-means we get data races all over the place, and it gets hard to reason
-about what happens especially if we do anything other than reading
-plain data from the VMA. When reading the implementation of
-do_procmap_query(), at basically every memory read you'd have to think
-twice as hard to figure out which fields can be concurrently updated
-elsewhere and whether the subsequent sequence count recheck can
-recover from the resulting badness.
+This issue turned out to be my own pebcak; I'd missed the
+dentry_operations that do normalized lookups (to be fair, they were
+rather hidden) and I'd just pulled a 14 hour day so was a tad bitchy
+about it on the list.
 
-Just as one example, I think get_vma_name() could (depending on
-compiler optimizations) crash with a NULL deref if the VMA's ->vm_ops
-pointer is concurrently changed to &vma_dummy_vm_ops by vma_close()
-between "if (vma->vm_ops && vma->vm_ops->name)" and
-"vma->vm_ops->name(vma)". And I think this illustrates how the "fully
-lockless" approach creates more implicit assumptions about the
-behavior of core MM code, which could be broken by future changes to
-MM code.
+> If so, I can't convince myself that's a real problem. Wouldn't this be
+> beneficial because each application/process may utilize a different
+> name for the backing file system dentry? This keeps the cache hot with
+> relevant names without any need to do transformations on the dentry
+> names. Happy to learn otherwise because I expected this situation to
+> occur in practice with ceph-fuse. I just tested and the dcache entries
+> (/proc/sys/fs/dentry-state) increases as expected when performing case
+> permutations on a case-insensitive file name. I didn't observe any
+> cache inconsistencies when editing/removing these dentries. The danger
+> perhaps is cache pollution and some kind of DoS? That should be a
+> solvable problem but perhaps I misunderstand some complexity.
+
+Dentry aliases are fine when they're intended, they're properly
+supported by the dcache.
+
+The issue with caching an alias for the un-normalized lookup name is
+(as you note) that by permuting the different combinations of upper and
+lower case characters in a filename, userspace would be able to create
+an unbounded (technically, exponential bound in the length of the
+filename) number of aliases, and that's not what we want.
+
+(e.g. d_prune_aliases processes the whole list of aliases for an inode
+under a spinlock, so it's an easy way to produce unbounded latencies).
+
+So it sounds like you probably didn't find the dentry_operations for
+normalized lookups, same as me.
+
+Have a look at generic_set_sb_d_ops().
+
+> > Also, originally this was all in the same core dcache lookup path. So
+> > the whole "we have to check if the filesystem has its own hash
+> > function" ended up slowing down the normal case. It's obviously been
+> > massively modified since 1997 ("No, really?"), and now the code is
+> > very much set up so that the straight-line normal case is all the
+> > non-CI cases, and then case idnependence ends up out-of-line with its
+> > own dcache hash lookup loops so that it doesn't affect the normal good
+> > case.
+> 
+> It's seems to me this is a good argument for keeping case-sensitivity
+> awareness out of the dcache. Let the fs do the namespace mapping and
+> accept that you may have dentry aliases.
+> 
+> FWIW, I also wish we didn't have to deal with case-sensitivity but we
+> have users/protocols to support (as usual).
+
+The next issue I'm looking at is that the "keep d_ops out of the
+fastpath" only works if case sensitivity isn't enabled on the filesystem
+as a whole - i.e. if case sensitivity is enabled on even a single
+directory, we'll be flagging all the dentries to hit the d_ops methods.
+
+dcache.c doesn't check IS_CASEFOLD(inode) - d_init can probably be used
+for this, but we need to be careful when flipping casefolding on and off
+on an (empty) directory, there might still be cached negative dentries.
+
+ext4 has a filesystem wide flag for "case sensitive directories are
+allowed", so that enables/disables that optimization. But bcachefs
+doesn't have that kind of filesystem level flag, and I'm not going to
+add one - that sort of "you have to enable this option to have access to
+this other option" is a pita for end users.
 
