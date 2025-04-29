@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-47615-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C449AA12A2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:56:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52630AA12A5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:56:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 837FA188AE3E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DCD1BA46A6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:55:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C95024E4C4;
-	Tue, 29 Apr 2025 16:54:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582722528E8;
+	Tue, 29 Apr 2025 16:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcKV1ohs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y0fkmEwu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54053221DA7;
-	Tue, 29 Apr 2025 16:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99ADA2512D9;
+	Tue, 29 Apr 2025 16:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745945640; cv=none; b=KHDcKYMS+96Wbhvyk003hfND/pi17H7rbOKcqUDxcS0HBb6i++FNjHcKF+g6ggD/GLLfLkSRVWTD1PIYpr1rG6cIKz61pctyO3f5qagmDA9p17Uys68Cj0Agle+F09aRz8q1Qs6I57LiRYRbea38D9IHZzgS8K/y/7IMavmtOkk=
+	t=1745945648; cv=none; b=bfLwmJ7HvD+QB1FIIp2ifQLm+/+MQF7QA8J1CRSK1jZdRj+WGYXOh3AxETk6T6tPrMwUcKu5CwJPlLR2y+WJFbK3u4WW6G5/C578oLKQiDjwIjZTpmSgEm+15e6Tw5m+Ob8Qc2M0qvz0V/m6sTe0BG66vjPFnVQElL8q+HBzuEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745945640; c=relaxed/simple;
-	bh=5RJO3uiAH1dTPxWEzb5m8V+Y2lqOnzCa86KySLOdzbU=;
+	s=arc-20240116; t=1745945648; c=relaxed/simple;
+	bh=9EpGsEydVO4ujP3VhHPeJjQ0b0EshPfB4gOYpmpqVbc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SIV4B/i617K4XULHR8ta14z1mCrB6vE3/4eAn9/5BiHjkRIQdnRH0hL+VB7HBn6tz8WInE+BlsCsvb8JAyaHBUNZDX4OsSjkOwCkvYtoBgDsmd4iAy8RzmfkS5Geq7j2RUo5OCrbLix4ZvVDHkbuL4VWoUqTCdMBNxqHT7X9wBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcKV1ohs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F553C4CEE3;
-	Tue, 29 Apr 2025 16:54:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=UADGiFessVLUIUPr9F1madSVgwtbMesZTtzMs7pfeBuNyHcyZ2IQW3CD9mqrBbCKp/fU1yX1NxGyKGtJxAXdHDEMh/m5tasl7InoLel8O+pt5KIYjtZkwjLmIXj9m6oWcAq2gVfIg47H6Ev52stPeE54oOBe4/hcvB6U1ABTJTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y0fkmEwu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F7BCC4CEE3;
+	Tue, 29 Apr 2025 16:54:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745945640;
-	bh=5RJO3uiAH1dTPxWEzb5m8V+Y2lqOnzCa86KySLOdzbU=;
+	s=k20201202; t=1745945648;
+	bh=9EpGsEydVO4ujP3VhHPeJjQ0b0EshPfB4gOYpmpqVbc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hcKV1ohsGwxmF70tNP3aPhc8lKT3edJ3ES1uM32qXcH2EOduPFu1cAiHltG0DSPzy
-	 5+N5jYm8EBGIJIzsvjh4qLoZ8JYAjAqyxHDpkTHXIZDQP2kVd2OxrCzahgejBGUt8q
-	 ijbUIJUZRh0cAsbQ8iSvNwq2Iq2msZBlUtLbpyqMgKKrf7zuSa71HtCe/h8QnvRFqM
-	 qKISiBXSav1WhxZgAuJCqaITIeeJu9Ta6cnTmREv7AK3VFkAGGjbmcyyn4EVrqVoo3
-	 aaobg3vS2YEZQ3Z/pLI9quBdSkEcOH32KbwKEXLoBb5h9gV6+vgt7uzEajhul+9829
-	 UNAxCaFkA8r3g==
-Date: Tue, 29 Apr 2025 09:53:56 -0700
+	b=Y0fkmEwucjzGJrbCZcqAz9g9wpYGiz9/6Mf5/Mm+tz+iJC7GxmMXZTKbJDxv/gX4x
+	 djEbPCk0DVuSOxASTbYWccPSVrzDAGMZQlIEHWaTgVcRCKwOhT9zhptJImI+vgy6oG
+	 GF20Zpaiss+p57IsbfhZ6iOGVHDv6GTJD0iSJjdjxf5Zkh352IDP0RmN4kGyjXS2ly
+	 ZacVNWLXVa30JYuTuBR7ukIIP0XqCBtOFq4Tx3LHAiJqtACL1GaqLQmsiK25eUQHfu
+	 Q/NX2ktzM2vNbYmHKzHzq1UyK75W87hwtLVnd70q8nDKQrsFGH3hoovsRk1GJrQCHE
+	 QXWaB+qxw6Frg==
+Date: Tue, 29 Apr 2025 09:54:04 -0700
 From: Kees Cook <kees@kernel.org>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -53,11 +53,10 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] mm: establish mm/vma_exec.c for shared exec/mm
- VMA functionality
-Message-ID: <202504290953.70A8F99@keescook>
+Subject: Re: [PATCH v3 2/4] mm: abstract initial stack setup to mm subsystem
+Message-ID: <202504290954.EE741AB@keescook>
 References: <cover.1745853549.git.lorenzo.stoakes@oracle.com>
- <91f2cee8f17d65214a9d83abb7011aa15f1ea690.1745853549.git.lorenzo.stoakes@oracle.com>
+ <118c950ef7a8dd19ab20a23a68c3603751acd30e.1745853549.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,25 +65,31 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <91f2cee8f17d65214a9d83abb7011aa15f1ea690.1745853549.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <118c950ef7a8dd19ab20a23a68c3603751acd30e.1745853549.git.lorenzo.stoakes@oracle.com>
 
-On Mon, Apr 28, 2025 at 04:28:14PM +0100, Lorenzo Stoakes wrote:
-> There is functionality that overlaps the exec and memory mapping
-> subsystems. While it properly belongs in mm, it is important that exec
-> maintainers maintain oversight of this functionality correctly.
+On Mon, Apr 28, 2025 at 04:28:15PM +0100, Lorenzo Stoakes wrote:
+> There are peculiarities within the kernel where what is very clearly mm
+> code is performed elsewhere arbitrarily.
 > 
-> We can establish both goals by adding a new mm/vma_exec.c file which
-> contains these 'glue' functions, and have fs/exec.c import them.
+> This violates separation of concerns and makes it harder to refactor code
+> to make changes to how fundamental initialisation and operation of mm logic
+> is performed.
 > 
-> As a part of this change, to ensure that proper oversight is achieved, add
-> the file to both the MEMORY MAPPING and EXEC & BINFMT API, ELF sections.
+> One such case is the creation of the VMA containing the initial stack upon
+> execve()'ing a new process. This is currently performed in __bprm_mm_init()
+> in fs/exec.c.
 > 
-> scripts/get_maintainer.pl can correctly handle files in multiple entries
-> and this neatly handles the cross-over.
+> Abstract this operation to create_init_stack_vma(). This allows us to limit
+> use of vma allocation and free code to fork and mm only.
+> 
+> We previously did the same for the step at which we relocate the initial
+> stack VMA downwards via relocate_vma_down(), now we move the initial VMA
+> establishment too.
+> 
+> Take the opportunity to also move insert_vm_struct() to mm/vma.c as it's no
+> longer needed anywhere outside of mm.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-(I realize I didn't actually send tags...)
 
 Reviewed-by: Kees Cook <kees@kernel.org>
 
