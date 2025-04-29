@@ -1,280 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-47608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4894AA10AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 17:40:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52C09AA10EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 17:50:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C7C08453DE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 15:40:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7147C7ABA35
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 15:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C21022A7F3;
-	Tue, 29 Apr 2025 15:40:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7D7023F26A;
+	Tue, 29 Apr 2025 15:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="igkPu5v2"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ie63ie1i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0B0227EB6
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 15:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A66923ED5B
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 15:50:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745941205; cv=none; b=WCJc8mWrhDgO14j2MR1UkyaW5nu/tNBSPbNpmazNxSMVoGh6SxpvTkyV1lUUh7HBZBfX3f5Flu9jZ86orik1ZuQW1OvwsnMhDSvs52GEe8+2coU1NbLHh3JdAiB6hEptOIJwiZIEfkDf6kWw98m8dffQdZpwALnPeR0pYX0sx8g=
+	t=1745941837; cv=none; b=BgbtcGMKHB9KX12O0oT3iqHTm+8QntzWt9Owltp7/mVLeJJDJpT1rc3kdfSBRXYloXvfc6Luioqjo9oebFwdcMNSSRlvo6deVeLtKOSfo+LhTXk4dskkY5VS24HKYmyiNBQDAYttvM8aVkPDV1nNEZzxXKOrUKcrZFL+19VMlBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745941205; c=relaxed/simple;
-	bh=m4RIdnC33T+0DzN2pkMUmi2ZJdkLEyYSorF3bzhZmQI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s+CClPklu3hZNfclLlxNGbLthNHasDUhGDgax0F/xWlzAhapEn9IsVgu4GEU2pkGl0L2P3I5msVkuOCs2DU/K6Ggcrp4UmdQyvB7FVSjecnEZxGkJbQpHF2Q+kQwMw9xav0veULIO/MPbHX4zqIZ07+Sc1lJpgYbIITlMVQJE7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=igkPu5v2; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5dbfc122b82so9154a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 08:40:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1745941202; x=1746546002; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nrLjz0SO4NLZaGlZgmJ5ANLBwSUMQ+H6anEYSpKzKcw=;
-        b=igkPu5v2E8TpJbmhkZaYMFhSI1L7Qtv4eKmpWL0Gina+4r8Qxihkactxa3ckTeS4it
-         klnhE32dMbujO+Y1KfmfAdI/redH2erF39k/0T2zCF7m3MkvGKuASkcokX3gsONoO68/
-         LydkD1sZwjDOA3Myo288fcZKl32BA7nsAQGdw849qvnwfoxKWl2XKBwf1ZEEMS+1rCEH
-         RQxTEkCwT10Rh2ceVGJ83RsiN8VL7N0yaJU0Z2JOERwHvrc+VmDTm6UlvuoZ5WyTyTgb
-         nxQstjnbhFD+H81RHNvsjTv55sCMOuTd+eSfh+LS7BQIlxa6CmKS9VqyBsL7/8285pz9
-         0Enw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745941202; x=1746546002;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nrLjz0SO4NLZaGlZgmJ5ANLBwSUMQ+H6anEYSpKzKcw=;
-        b=H+3LrXbOSFy006aU9dRwCeQI1Cyo3TF442LnmdeJxj2Nk7URHRUYr+1hJju0rnakhJ
-         C8h2YWX1xchAG0dNWbKsHpwpyck+njnkDV3llmnS6HfwOvE5ppbEjJLGAu6XVmXi6+cj
-         x8Rw3eU+g2GsWgw3XZDBmiZkkIAmoPjSL/rrhVofXcsY6yov2mHBFXAxsmTEgnWdEhsw
-         C4MOZgvX2iJwkraC4/8JS4ck9eH2vZif3ednl/mx8VINQJqSliR2+dT9WHtZxIwnhbhF
-         HKFEhY3DJ34A5e0kdSoul1P0W2wewZhMuUu95j67FAy1RTaEKE+zEoyk5upVawZYQrYe
-         vRxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaQFes3CiKQn7to58WcO7902K10xDnaBAnftuqorL8xepXZ8qx6rM0YyiroboODJ6YuceuevL2BOqkL6aU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3zytOHZZmZvkCW/QPTSKjyROZ/yLWVDQkkK7RRFt0gk41S4GP
-	U3qOmEuIsCrDSWJDqmxGjolmBuiglYXWk392kQQ4RQSprhkZUEADIprBb3AUPN/H5nvmV55DOab
-	m/5KvuCMBUXG1xkgKawL1WlUnRDarBj+07Ap0w4uXIQyBPOpw5Y47o7M=
-X-Gm-Gg: ASbGncvEQhYR18c+dQEsCicAyI0siMPJVuS1b/dZuFqaNn55OUX7cGL+NczvTfkKXTn
-	Q9B9Sd+QuCMCEo3k4NLV2GitVbfvgLOfXswnyvUF01Ca1j2p2/NR7bysGe4+Ruz+upEp60czNSX
-	7ZxXzLiJH9gn4C9iyGD+2vhK+G8UOCB4jd/ZJzSpLsIMzzy2Mv/w==
-X-Google-Smtp-Source: AGHT+IGTmRrDj58386rjJZziDq63lizkFMzj1lu/PM65c5dMEelMGMumc3qFR5YFmPkjXr20u694i69kdm2X64XfN50=
-X-Received: by 2002:a50:8713:0:b0:5de:bcd9:4aa with SMTP id
- 4fb4d7f45d1cf-5f83c1b5a2bmr96410a12.3.1745941201725; Tue, 29 Apr 2025
- 08:40:01 -0700 (PDT)
+	s=arc-20240116; t=1745941837; c=relaxed/simple;
+	bh=3Sy9kbsRYuk4QScRSGShkv+SS95vYtgFwONeRuo8LTw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RnFuXcpCte2YzjDLF5f6jRcverBkfhfLlHPt4RhsBj4CxXOoGH56tIWbA3eMUcoPwXnF1vUNYT7oIz2VUozTLzJBn76i8fPK0obkQtLs3HvCnYAt2YRg2fTOmcIlQkGbjlR5S0Z+3Lx262H4WimboOaFIlStgZoNE/Mpama5eU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ie63ie1i; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1745941834;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mzyuIC5lN8iw0yHtCMolMLvXO2aa9rMo4MO2VDH7oxk=;
+	b=ie63ie1ic6GpNnwTHGpmKLM0tJtx/FIc50YsiDorDa47BCDgUkSzUEzNFzJg5pg9lCorOj
+	g3b5U+s/uPZBv076klD7+wwaF7NNCI1xpzroNN8f1kzPmPPfqho+nnUQz6cHHDfyo1ousR
+	2FKMN9Jh1iZ8ogW4ax5mL/I1ME5zAVk=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-517-PK0iwh_NP1SddwatWXB-yg-1; Tue,
+ 29 Apr 2025 11:50:30 -0400
+X-MC-Unique: PK0iwh_NP1SddwatWXB-yg-1
+X-Mimecast-MFC-AGG-ID: PK0iwh_NP1SddwatWXB-yg_1745941829
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2315D1800878;
+	Tue, 29 Apr 2025 15:50:29 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.224])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6B435195608D;
+	Tue, 29 Apr 2025 15:50:25 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 29 Apr 2025 17:49:49 +0200 (CEST)
+Date: Tue, 29 Apr 2025 17:49:44 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: brauner@kernel.org, kees@kernel.org, viro@zeniv.linux.org.uk
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	syzkaller-bugs@googlegroups.com, mjguzik@gmail.com,
+	Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] exec: fix the racy usage of fs_struct->in_exec
+Message-ID: <20250429154944.GA18907@redhat.com>
+References: <67dc67f0.050a0220.25ae54.001f.GAE@google.com>
+ <20250324160003.GA8878@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-8-surenb@google.com>
-In-Reply-To: <20250418174959.1431962-8-surenb@google.com>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 29 Apr 2025 17:39:25 +0200
-X-Gm-Features: ATxdqUE5eaCYmwGd2V3bpxMHfmJQqwTFsFKw7F4dJMhdfNXiMK8VuoXSkdfNDiE
-Message-ID: <CAG48ez3YLWh9hXQQdGVQ7hCsd=k_i2Z2NO6qzT6NaOYiRjy=nw@mail.gmail.com>
-Subject: Re: [PATCH v3 7/8] mm/maps: read proc/pid/maps under RCU
-To: Suren Baghdasaryan <surenb@google.com>, Al Viro <viro@zeniv.linux.org.uk>, brauner@kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
-	peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
-	shuah@kernel.org, adobriyan@gmail.com, josef@toxicpanda.com, 
-	yebin10@huawei.com, linux@weissschuh.net, willy@infradead.org, 
-	osalvador@suse.de, andrii@kernel.org, ryan.roberts@arm.com, 
-	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250324160003.GA8878@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Fri, Apr 18, 2025 at 7:50=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
-> With maple_tree supporting vma tree traversal under RCU and vma and
-> its important members being RCU-safe, /proc/pid/maps can be read under
-> RCU and without the need to read-lock mmap_lock. However vma content
-> can change from under us, therefore we make a copy of the vma and we
-> pin pointer fields used when generating the output (currently only
-> vm_file and anon_name). Afterwards we check for concurrent address
-> space modifications, wait for them to end and retry. While we take
-> the mmap_lock for reading during such contention, we do that momentarily
-> only to record new mm_wr_seq counter. This change is designed to reduce
-> mmap_lock contention and prevent a process reading /proc/pid/maps files
-> (often a low priority task, such as monitoring/data collection services)
-> from blocking address space updates.
-[...]
-> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> index b9e4fbbdf6e6..f9d50a61167c 100644
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-[...]
-> +/*
-> + * Take VMA snapshot and pin vm_file and anon_name as they are used by
-> + * show_map_vma.
-> + */
-> +static int get_vma_snapshot(struct proc_maps_private *priv, struct vm_ar=
-ea_struct *vma)
-> +{
-> +       struct vm_area_struct *copy =3D &priv->vma_copy;
-> +       int ret =3D -EAGAIN;
-> +
-> +       memcpy(copy, vma, sizeof(*vma));
-> +       if (copy->vm_file && !get_file_rcu(&copy->vm_file))
-> +               goto out;
+Damn, I am stupid.
 
-I think this uses get_file_rcu() in a different way than intended.
-
-As I understand it, get_file_rcu() is supposed to be called on a
-pointer which always points to a file with a non-zero refcount (except
-when it is NULL). That's why it takes a file** instead of a file* - if
-it observes a zero refcount, it assumes that the pointer must have
-been updated in the meantime, and retries. Calling get_file_rcu() on a
-pointer that points to a file with zero refcount, which I think can
-happen with this patch, will cause an endless loop.
-(Just as background: For other usecases, get_file_rcu() is supposed to
-still behave nicely and not spuriously return NULL when the file* is
-concurrently updated to point to another file*; that's what that loop
-is for.)
-(If my understanding is correct, maybe we should document that more
-explicitly...)
-
-Also, I think you are introducing an implicit assumption that
-remove_vma() does not NULL out the ->vm_file pointer (because that
-could cause tearing and could theoretically lead to a torn pointer
-being accessed here).
-
-One alternative might be to change the paths that drop references to
-vma->vm_file (search for vma_close to find them) such that they first
-NULL out ->vm_file with a WRITE_ONCE() and do the fput() after that,
-maybe with a new helper like this:
-
-static void vma_fput(struct vm_area_struct *vma)
-{
-  struct file *file =3D vma->vm_file;
-
-  if (file) {
-    WRITE_ONCE(vma->vm_file, NULL);
-    fput(file);
-  }
-}
-
-Then on the lockless lookup path you could use get_file_rcu() on the
-->vm_file pointer _of the original VMA_, and store the returned file*
-into copy->vm_file.
-
-> +       if (!anon_vma_name_get_if_valid(copy))
-> +               goto put_file;
-> +
-> +       if (!mmap_lock_speculate_retry(priv->mm, priv->mm_wr_seq))
-> +               return 0;
-
-We only check for concurrent updates at this point, so up to here,
-anything we read from "copy" could contain torn pointers (both because
-memcpy() is not guaranteed to copy pointers atomically and because the
-updates to the original VMA are not done with WRITE_ONCE()).
-That probably means that something like the preceding
-anon_vma_name_get_if_valid() could crash on an access to a torn
-pointer.
-Please either do another mmap_lock_speculate_retry() check directly
-after the memcpy(), or ensure nothing before this point reads from
-"copy".
-
-> +       /* Address space got modified, vma might be stale. Re-lock and re=
-try. */
-> +       rcu_read_unlock();
-> +       ret =3D mmap_read_lock_killable(priv->mm);
-> +       if (!ret) {
-> +               /* mmap_lock_speculate_try_begin() succeeds when holding =
-mmap_read_lock */
-> +               mmap_lock_speculate_try_begin(priv->mm, &priv->mm_wr_seq)=
-;
-> +               mmap_read_unlock(priv->mm);
-> +               ret =3D -EAGAIN;
-> +       }
-> +
-> +       rcu_read_lock();
-> +
-> +       anon_vma_name_put_if_valid(copy);
-> +put_file:
-> +       if (copy->vm_file)
-> +               fput(copy->vm_file);
-> +out:
-> +       return ret;
-> +}
-[...]
-> @@ -266,39 +399,41 @@ static void get_vma_name(struct vm_area_struct *vma=
-,
->                 } else {
->                         *path =3D file_user_path(vma->vm_file);
->                 }
-> -               return;
-> +               goto out;
->         }
+On 03/24, Oleg Nesterov wrote:
 >
->         if (vma->vm_ops && vma->vm_ops->name) {
->                 *name =3D vma->vm_ops->name(vma);
-
-This seems to me like a big, subtle change of semantics. After this
-change, vm_ops->name() will no longer receive a real VMA; and in
-particular, I think the .name implementation special_mapping_name used
-in special_mapping_vmops will have a UAF because it relies on
-vma->vm_private_data pointing to a live object.
-
-I think you'll need to fall back to using the mmap lock and the real
-VMA if you see a non-NULL vma->vm_ops->name pointer.
-
->                 if (*name)
-> -                       return;
-> +                       goto out;
->         }
+> check_unsafe_exec() sets fs->in_exec under cred_guard_mutex, then execve()
+> paths clear fs->in_exec lockless. This is fine if exec succeeds, but if it
+> fails we have the following race:
 >
->         *name =3D arch_vma_name(vma);
->         if (*name)
-> -               return;
-> +               goto out;
+> 	T1 sets fs->in_exec = 1, fails, drops cred_guard_mutex
 >
->         if (!vma->vm_mm) {
->                 *name =3D "[vdso]";
-> -               return;
-> +               goto out;
->         }
+> 	T2 sets fs->in_exec = 1
 >
->         if (vma_is_initial_heap(vma)) {
->                 *name =3D "[heap]";
-> -               return;
-> +               goto out;
->         }
->
->         if (vma_is_initial_stack(vma)) {
->                 *name =3D "[stack]";
-> -               return;
-> +               goto out;
->         }
->
->         if (anon_name) {
->                 *name_fmt =3D "[anon:%s]";
->                 *name =3D anon_name->name;
-> -               return;
->         }
-> +out:
-> +       if (anon_name && !mmap_locked)
-> +               anon_vma_name_put(anon_name);
+> 	T1 clears fs->in_exec
 
-Isn't this refcount drop too early, causing UAF read? We drop the
-reference on the anon_name here, but (on some paths) we're about to
-return anon_name->name to the caller through *name, and the caller
-will read from it.
+When I look at this code again, I think this race was not possible and thus
+this patch (applied as af7bb0d2ca45) was not needed.
 
-Ah, but I guess it's actually fine because the refcount increment was
-unnecessary in the first place, because the vma pointer actually
-points to a copy of the original VMA, and the copy has its own
-refcounted reference to the anon_name thanks to get_vma_snapshot()?
-It might be helpful to have some comments documenting which VMA
-pointers can point to copies.
+Yes, begin_new_exec() can drop cred_guard_mutex on failure, but only after
+de_thread() succeeds, when we can't race with another sub-thread.
+
+I hope this patch didn't make the things worse so we don't need to revert it.
+Plus I think it makes this (confusing) logic a bit more clear. Just, unless
+I am confused again, it wasn't really needed.
+
+-----------------------------------------------------------------------------
+But. I didn't read the original report from syzbot,
+https://lore.kernel.org/all/67dc67f0.050a0220.25ae54.001f.GAE@google.com/#t
+because I wasn't CC'ed. and then - sorry Kees!!! - I didn't bother to read
+your first reply carefully.
+
+So yes, with or without this patch the "if (fs->in_exec)" check in copy_fs()
+can obviously hit the 1 -> 0 transition.
+
+This is harmless, but should be probably fixed just to avoid another report
+from KCSAN.
+
+I do not want to add another spin_lock(fs->lock). We can change copy_fs() to
+use data_race(), but I'd prefer the patch below. Yes, it needs the additional
+comment(s) to explain READ_ONCE().
+
+What do you think? Did I miss somthing again??? Quite possibly...
+
+Mateusz, I hope you will cleanup this horror sooner or later ;)
+
+Oleg.
+---
+
+diff --git a/fs/exec.c b/fs/exec.c
+index 5d1c0d2dc403..42a7f9b43911 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1495,7 +1495,7 @@ static void free_bprm(struct linux_binprm *bprm)
+ 	free_arg_pages(bprm);
+ 	if (bprm->cred) {
+ 		/* in case exec fails before de_thread() succeeds */
+-		current->fs->in_exec = 0;
++		WRITE_ONCE(current->fs->in_exec, 0);
+ 		mutex_unlock(&current->signal->cred_guard_mutex);
+ 		abort_creds(bprm->cred);
+ 	}
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 4c2df3816728..381af8c8ece8 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -1802,7 +1802,7 @@ static int copy_fs(unsigned long clone_flags, struct task_struct *tsk)
+ 		/* tsk->fs is already what we want */
+ 		spin_lock(&fs->lock);
+ 		/* "users" and "in_exec" locked for check_unsafe_exec() */
+-		if (fs->in_exec) {
++		if (READ_ONCE(fs->in_exec)) {
+ 			spin_unlock(&fs->lock);
+ 			return -EAGAIN;
+ 		}
+
 
