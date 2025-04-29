@@ -1,55 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-47602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C6B3AA0F7C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:49:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFC7BAA0FBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827B84A2321
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 14:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C71EA920A73
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 14:53:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD3B217F35;
-	Tue, 29 Apr 2025 14:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1858721C197;
+	Tue, 29 Apr 2025 14:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+RcvVL/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tsxr6no2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6E51BF37;
-	Tue, 29 Apr 2025 14:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A29E21A42C;
+	Tue, 29 Apr 2025 14:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745938124; cv=none; b=j9gCiA704OhtZsheyGM9K26tmsd0bIwttjTtBO5LlkXcncyloPUNIHJ9KKKGFT0e/Pr+VcRf8Illj2TZ58LQ6GYG0hurZ0S5JokmaH6VslwJ4pGkuYF9up9h+YZXY6HryVeJuAGgmA8iozc4tZtDXI3XRrBs7j2NEozsv+SZT6o=
+	t=1745938406; cv=none; b=INP8ZVwo1Jaw6LiKbt0kAZwudVdoX/ygSObRjsTwAD3vjlbuTpAFhLDQMChP5tDMGdmDnCspWqNYC/0xd+CmMyV4F2lv8rPmFL6ydw8kbs2rEg5LPUB9/F00Vii4MFqKvIECKGVD/wTc6WdkIAOwVjE96BQG35Yzqw3LPkaP/PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745938124; c=relaxed/simple;
-	bh=xxrhrbslaKkkPFZLrwGjlachyjJaJ9EgfJlvRH5Vhzk=;
+	s=arc-20240116; t=1745938406; c=relaxed/simple;
+	bh=vubdbnsnHfKy+rIrOM3B9U3Uq8p9rxcHh2wPGFm5ZmU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cJwKzZWjJ5RP4/Y4NdPtB5l5XWeNvrjzQ/pKO8CjpFveMH4oIL4LNh+HRYyyRgMpjPBkCWdQfWWMU8/mfsfplWgIkGpiUhP6140vZEO/OfJB7m5Kvk2UtTYH5nYLqoMjfjY4aSRTEgC5TfiOn/ftK8EurBkqFrjkO9VJ4l8JPvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+RcvVL/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3BEC4CEE3;
-	Tue, 29 Apr 2025 14:48:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=D/86A4bHyjEj+C/C2KkMJCQHOGN8y3TcDixe/7H6+bJbu+S5IWBIkwpmDmlqrnv3IPWk5XamEOmTgrQpCV7+IVWNB0JRErPuVFH7fkqWpxJXn7+9jDj+0VP34mF2WWu+an2exQQAOTCoTCuREReRGcxu8SyCyka8lrfE7sMd7iA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tsxr6no2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3A8DC4CEE3;
+	Tue, 29 Apr 2025 14:53:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745938123;
-	bh=xxrhrbslaKkkPFZLrwGjlachyjJaJ9EgfJlvRH5Vhzk=;
+	s=k20201202; t=1745938405;
+	bh=vubdbnsnHfKy+rIrOM3B9U3Uq8p9rxcHh2wPGFm5ZmU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m+RcvVL/+sXmy4nK8UBOmjHGkteYfD34W+9+jHy2xXjfMeHxVOq/9oByrW7xcTG3z
-	 O8+XQfz43fd9bs/4+b/DbTAszcxwN6newZH+N1r4emiP3xnxdgw0wY+Zyjs9GwlbUI
-	 F5K35KfcTKz4dHUY1GdgV9mkNI3vHy6ALNitc5LchvXfnYyHgAMfR/SXdku08j3l9B
-	 xOV5Tx4hH3XTmdtiVbJd9s31biCsTJs3zxxuIXxbriZmZ3n4Jk1oC+Q4fHNekENvrk
-	 wUVvkTwQXiV8XCwHc7bQL/aiGqIn79zHnm5XO1DQG1hWu4ejcGAAMjJXWjcq61BBhT
-	 E8sOjRDS1pdZA==
-Date: Tue, 29 Apr 2025 07:48:42 -0700
+	b=Tsxr6no2sqTig7DfKnBSZWaq1XBwKiz+sJmah/Z64xNs2Tq56YK1KROWuxvk/bL49
+	 FgMKfP2HBFad1ql/hzUNqi43pVeXqTe+UbaSTSufCq289q0dfSKir5ZOwtmiJ8R2P5
+	 UeUUWZ8TLwsWx9HKvqhTDR8D/hzV4vdfp6WtgbWaSmauaIG35WJ1RcmGvcZUVS0dvI
+	 VA8murp+5LwoUyTNHQAhQHTLsic2ifDHk8mz1wXHg4T/E7KkO9fIc132VRb+pQXsGA
+	 tioUtpiP0LHEfgtTwcTbIoOOmuy1zSR82LEJOs8YoPYCDJletRdEgLwGLwyJyhdV6C
+	 ALA2ZO+ITTUog==
+Date: Tue, 29 Apr 2025 07:53:25 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-	Damien Le Moal <dlemoal@kernel.org>, Christoph Hellwig <hch@lst.de>,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: Re: [PATCH] zonefs: use ZONEFS_SUPER_SIZE instead of PAGE_SIZE
-Message-ID: <20250429144842.GC1035866@frogsfrogsfrogs>
-References: <c14f62628e0417498ace0caaa1f4fef2cb0f8477.1745934166.git.jth@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+	Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-btrfs@vger.kernel.org,
+	gfs2@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH 11/17] xfs: simplify xfs_buf_submit_bio
+Message-ID: <20250429145325.GV25675@frogsfrogsfrogs>
+References: <20250422142628.1553523-1-hch@lst.de>
+ <20250422142628.1553523-12-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -58,56 +73,76 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c14f62628e0417498ace0caaa1f4fef2cb0f8477.1745934166.git.jth@kernel.org>
+In-Reply-To: <20250422142628.1553523-12-hch@lst.de>
 
-On Tue, Apr 29, 2025 at 03:42:53PM +0200, Johannes Thumshirn wrote:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+On Tue, Apr 22, 2025 at 04:26:12PM +0200, Christoph Hellwig wrote:
+> Convert the __bio_add_page(..., virt_to_page(), ...) pattern to the
+> bio_add_virt_nofail helper implementing it and use bio_add_vmalloc
+> to insulate xfs from the details of adding vmalloc memory to a bio.
 > 
-> Use ZONEFS_SUPER_SIZE constant instead of PAGE_SIZE allocating memory for
-> reading the super block in zonefs_read_super().
-> 
-> While PAGE_SIZE technically isn't incorrect as Linux doesn't support pages
-> smaller than 4k ZONEFS_SUPER_SIZE is semantically more correct.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-Yeah, that is less likely to leave a landmine if the super size ever
-gets bigger or someone goes nuts and reintroduces tinypages.
-
+That reads much more cleanly now :)
 Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> 
 > ---
-> This patch is based on top of Christoph's series titled "add more bio
-> helper" specifically on top of "[PATCH 16/17] zonefs: use bdev_rw_virt in
-> zonefs_read_super"
-> ---
->  fs/zonefs/super.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
+>  fs/xfs/xfs_buf.c | 27 ++++++++-------------------
+>  1 file changed, 8 insertions(+), 19 deletions(-)
 > 
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index d165eb979f21..4dc7f967c861 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -1113,11 +1113,12 @@ static int zonefs_read_super(struct super_block *sb)
->  	u32 crc, stored_crc;
->  	int ret;
+> diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+> index 1a2b3f06fa71..042a738b7fda 100644
+> --- a/fs/xfs/xfs_buf.c
+> +++ b/fs/xfs/xfs_buf.c
+> @@ -1339,37 +1339,26 @@ xfs_buf_submit_bio(
 >  
-> -	super = kmalloc(PAGE_SIZE, GFP_KERNEL);
-> +	super = kmalloc(ZONEFS_SUPER_SIZE, GFP_KERNEL);
->  	if (!super)
->  		return -ENOMEM;
+>  	if (is_vmalloc_addr(bp->b_addr)) {
+>  		unsigned int	size = BBTOB(bp->b_length);
+> -		unsigned int	alloc_size = roundup(size, PAGE_SIZE);
+>  		void		*data = bp->b_addr;
+> +		unsigned int	added;
 >  
-> -	ret = bdev_rw_virt(sb->s_bdev, 0, super, PAGE_SIZE, REQ_OP_READ);
-> +	ret = bdev_rw_virt(sb->s_bdev, 0, super, ZONEFS_SUPER_SIZE,
-> +			   REQ_OP_READ);
->  	if (ret)
->  		goto free_super;
+> -		bio = bio_alloc(bp->b_target->bt_bdev, alloc_size >> PAGE_SHIFT,
+> -				xfs_buf_bio_op(bp), GFP_NOIO);
+> +		bio = bio_alloc(bp->b_target->bt_bdev,
+> +				howmany(size, PAGE_SIZE), xfs_buf_bio_op(bp),
+> +				GFP_NOIO);
 >  
+>  		do {
+> -			unsigned int	len = min(size, PAGE_SIZE);
+> -
+> -			ASSERT(offset_in_page(data) == 0);
+> -			__bio_add_page(bio, vmalloc_to_page(data), len, 0);
+> -			data += len;
+> -			size -= len;
+> +			added = bio_add_vmalloc(bio, data, size);
+> +			data += added;
+> +			size -= added;
+>  		} while (size);
+> -
+> -		flush_kernel_vmap_range(bp->b_addr, alloc_size);
+>  	} else {
+>  		/*
+>  		 * Single folio or slab allocation.  Must be contiguous and thus
+>  		 * only a single bvec is needed.
+> -		 *
+> -		 * This uses the page based bio add helper for now as that is
+> -		 * the lowest common denominator between folios and slab
+> -		 * allocations.  To be replaced with a better block layer
+> -		 * helper soon (hopefully).
+>  		 */
+>  		bio = bio_alloc(bp->b_target->bt_bdev, 1, xfs_buf_bio_op(bp),
+>  				GFP_NOIO);
+> -		__bio_add_page(bio, virt_to_page(bp->b_addr),
+> -				BBTOB(bp->b_length),
+> -				offset_in_page(bp->b_addr));
+> +		bio_add_virt_nofail(bio, bp->b_addr, BBTOB(bp->b_length));
+>  	}
+>  
+>  	bio->bi_private = bp;
 > -- 
-> 2.43.0
+> 2.47.2
 > 
 > 
 
