@@ -1,96 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-47558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DA1AA0404
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 09:05:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B313AA0422
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 09:12:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B291E1667B6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 07:04:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35A987A4DD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 07:11:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450042741DD;
-	Tue, 29 Apr 2025 07:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD1E2741B2;
+	Tue, 29 Apr 2025 07:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="N3+eLKPi";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="e0PycWnI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CaoR+gbv";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="OQZf30C+"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="joQ4XPYf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d05QraI5";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="joQ4XPYf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="d05QraI5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FC62211460
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 07:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4327513A3F7
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 07:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745910291; cv=none; b=d9Rh+wehWG/QC29mnMRBlPpllYXTQuufIJs3yGyCcSaqbvcZomDC9WD+6vbMtHSJFiI1jRTCE55qS7dSv2EaqSm7Bqk8C1iKdvUhLDVxxcxyM8BGsoIiNwyA/MwouqvGTsQRTesTZ5ufjN8Dn0O+dzeKLfrBjtuqmCuK5qTFS3I=
+	t=1745910734; cv=none; b=QoiMn1DJRXl3ZguV+CXWwrUGiaApC+TfzuRatrXihElzXpUpEOF60HSG69UgwnkVgrUcvKlGsw9x5OjYt3UGkkgxIekk/0/p4ibgzj+XESFln0iM0UAMUI0xoFWaTXt6ynnZMbEF7Mx26LIdBep0Cm5qHxTqMv0/YTHOW/RRuG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745910291; c=relaxed/simple;
-	bh=JtxlWTYotSvpVGuvio3XfF65pDQc1HIbrVH0hrdHEgI=;
+	s=arc-20240116; t=1745910734; c=relaxed/simple;
+	bh=m4KOHjxc2m1aPBLsfGsEdOS3x4H8QGIaXyxw2p2H0K8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k8R0SBe+pcAJbmQ0Q00fE0idpvhIV4RcpRzDjuR/FRVYN11iJaorLiSy4Z23x99MTUErYPoPsC/+/CkD+sIwuQ7gVigfsGkVzNfKGWY+msGDDUwLwg4Orao0Tjv9wWd1x1qgvZH0LraeBAjOP1skrT6SpkvYrbWYeNWZKOO06aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=N3+eLKPi; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=e0PycWnI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CaoR+gbv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=OQZf30C+; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=TkJB/SloeIT/Q+W4WeJFMXD55BrnwbVS4g7H2fvIdRs1l5rujEN+2WVVAL8irRR36twlli5Zx4P7vgYWtcHa69VmBVhxz65sSWHL7jSnYi0OKnYSE8PJsjKbXFPclM0YfJrbvY8a/4vhCotPg6tmI8buI31L0Fc/8Jh+ADk/hSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=joQ4XPYf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d05QraI5; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=joQ4XPYf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=d05QraI5; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8BFC91F7C4;
-	Tue, 29 Apr 2025 07:04:47 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 48CE01F7B2;
+	Tue, 29 Apr 2025 07:12:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745910288; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1745910731; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MqvsRhjnn+RZGEpmIR369oMtuYilqQjlvxG48FFcaPc=;
-	b=N3+eLKPiHk+6Z1e5/cZ1jhgoqKXxatQKwKNT8jA4UzXpe2DGq2pKdbNoL54ht2lEGYn6s4
-	Ojt4KsbNww3y16a+CFGTGZtp0AkyHBI8xQAvHGEwFacIXTuxOhRguokKYrObbNFUFDOfKr
-	OAANUh2eMJ2Dp6xtJnCXCHg6Labun+0=
+	bh=FAnYvCRSuq+beLh1M6IqxzqwtA7wBRCze/1dQn8xZDs=;
+	b=joQ4XPYfC+pQXhTmWBn8j5YFUS9dQ+/nsyS8bs+rIIExXLaBFTOOERizH6vGeMejHAvM/n
+	qQXRlYvZwkCsYhttDg/Fee6KGSsf4m7PRsrnRt/AODB5XoPUx2c0N3HEIiPRlZQcFy3dWV
+	vhNYBloE6ev+j0tn6rpUEsxI9Y5Qw0Y=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745910288;
+	s=susede2_ed25519; t=1745910731;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MqvsRhjnn+RZGEpmIR369oMtuYilqQjlvxG48FFcaPc=;
-	b=e0PycWnI+wqPkcJO95uWgA7G1ItlpnUjgTq8URK12OmFmdx8loJWhlLqvkMdu+SGLu1uft
-	anbK4xz93mN4cQBQ==
+	bh=FAnYvCRSuq+beLh1M6IqxzqwtA7wBRCze/1dQn8xZDs=;
+	b=d05QraI5DeF27vBcG/1hGnTpoYMhrotyg7eo54RlFd/bmK2SOLp3JwmG+i+wDmFtxLizlv
+	hC5K0hPvJvWCjQCw==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=CaoR+gbv;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=OQZf30C+
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=joQ4XPYf;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=d05QraI5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1745910287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1745910731; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MqvsRhjnn+RZGEpmIR369oMtuYilqQjlvxG48FFcaPc=;
-	b=CaoR+gbvIsfOyUE0JKLCpqlSd2oYalS+iwyL1yakadg+eXwtiZp3dixF0vNoIK/pQvM1CP
-	ZAmLSRP7drWuJq5WRAaTVpBkZqZ4dfqBrSCyeIoHnmIBVm6ZOyX5qCkdtIo1G1NgO9omEh
-	VsqqVNAMKcwOp61+wVDeb5Mzutwg78M=
+	bh=FAnYvCRSuq+beLh1M6IqxzqwtA7wBRCze/1dQn8xZDs=;
+	b=joQ4XPYfC+pQXhTmWBn8j5YFUS9dQ+/nsyS8bs+rIIExXLaBFTOOERizH6vGeMejHAvM/n
+	qQXRlYvZwkCsYhttDg/Fee6KGSsf4m7PRsrnRt/AODB5XoPUx2c0N3HEIiPRlZQcFy3dWV
+	vhNYBloE6ev+j0tn6rpUEsxI9Y5Qw0Y=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1745910287;
+	s=susede2_ed25519; t=1745910731;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MqvsRhjnn+RZGEpmIR369oMtuYilqQjlvxG48FFcaPc=;
-	b=OQZf30C+m3KDGiZnMver31eip7JBc7O5UeqRfyhJGFgO07TBi9j3O/VlIMUcAi+4TvafQu
-	ZvO3Mb68Lm9EBsBg==
+	bh=FAnYvCRSuq+beLh1M6IqxzqwtA7wBRCze/1dQn8xZDs=;
+	b=d05QraI5DeF27vBcG/1hGnTpoYMhrotyg7eo54RlFd/bmK2SOLp3JwmG+i+wDmFtxLizlv
+	hC5K0hPvJvWCjQCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6AA671340C;
-	Tue, 29 Apr 2025 07:04:47 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2DCE21340C;
+	Tue, 29 Apr 2025 07:12:11 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1q05GQ96EGg6agAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 29 Apr 2025 07:04:47 +0000
-Message-ID: <d1fbd13b-b2a4-4725-9676-7c7081230fb2@suse.cz>
-Date: Tue, 29 Apr 2025 09:04:47 +0200
+	id AZLgCst7EGhkbAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 29 Apr 2025 07:12:11 +0000
+Message-ID: <d57366ae-3a6a-4f2a-867a-3d34cd93c865@suse.cz>
+Date: Tue, 29 Apr 2025 09:12:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,7 +98,7 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] mm: abstract initial stack setup to mm subsystem
+Subject: Re: [PATCH v3 3/4] mm: move dup_mmap() to mm
 Content-Language: en-US
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Andrew Morton <akpm@linux-foundation.org>
@@ -110,12 +110,12 @@ Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
  Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <cover.1745853549.git.lorenzo.stoakes@oracle.com>
- <118c950ef7a8dd19ab20a23a68c3603751acd30e.1745853549.git.lorenzo.stoakes@oracle.com>
+ <e49aad3d00212f5539d9fa5769bfda4ce451db3e.1745853549.git.lorenzo.stoakes@oracle.com>
 From: Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <118c950ef7a8dd19ab20a23a68c3603751acd30e.1745853549.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <e49aad3d00212f5539d9fa5769bfda4ce451db3e.1745853549.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 8BFC91F7C4
+X-Rspamd-Queue-Id: 48CE01F7B2
 X-Spam-Level: 
 X-Spamd-Result: default: False [-4.51 / 50.00];
 	BAYES_HAM(-3.00)[99.99%];
@@ -124,23 +124,22 @@ X-Spamd-Result: default: False [-4.51 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
 	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[14];
 	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
 	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
 	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
 	FROM_EQ_ENVFROM(0.00)[];
 	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[oracle.com:email,suse.de:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,suse.cz:mid];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	DKIM_TRACE(0.00)[suse.cz:+]
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
@@ -149,30 +148,26 @@ X-Spam-Score: -4.51
 X-Spam-Flag: NO
 
 On 4/28/25 17:28, Lorenzo Stoakes wrote:
-> There are peculiarities within the kernel where what is very clearly mm
-> code is performed elsewhere arbitrarily.
+> This is a key step in our being able to abstract and isolate VMA allocation
+> and destruction logic.
 > 
-> This violates separation of concerns and makes it harder to refactor code
-> to make changes to how fundamental initialisation and operation of mm logic
-> is performed.
+> This function is the last one where vm_area_free() and vm_area_dup() are
+> directly referenced outside of mmap, so having this in mm allows us to
+> isolate these.
 > 
-> One such case is the creation of the VMA containing the initial stack upon
-> execve()'ing a new process. This is currently performed in __bprm_mm_init()
-> in fs/exec.c.
+> We do the same for the nommu version which is substantially simpler.
 > 
-> Abstract this operation to create_init_stack_vma(). This allows us to limit
-> use of vma allocation and free code to fork and mm only.
+> We place the declaration for dup_mmap() in mm/internal.h and have
+> kernel/fork.c import this in order to prevent improper use of this
+> functionality elsewhere in the kernel.
 > 
-> We previously did the same for the step at which we relocate the initial
-> stack VMA downwards via relocate_vma_down(), now we move the initial VMA
-> establishment too.
-> 
-> Take the opportunity to also move insert_vm_struct() to mm/vma.c as it's no
-> longer needed anywhere outside of mm.
+> While we're here, we remove the useless #ifdef CONFIG_MMU check around
+> mmap_read_lock_maybe_expand() in mmap.c, mmap.c is compiled only if
+> CONFIG_MMU is set.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+> Suggested-by: Pedro Falcato <pfalcato@suse.de>
+> Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 
 Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
