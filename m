@@ -1,169 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-47571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6729AA07B2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 11:48:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD572AA07CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 11:55:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A2F2844DC6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 09:46:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01128484D39
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 09:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFEFD2BE7B4;
-	Tue, 29 Apr 2025 09:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCFDC2BE0E4;
+	Tue, 29 Apr 2025 09:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="eYAveLgE"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y/yOL/EX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k1hzt2sk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y/yOL/EX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="k1hzt2sk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7340429E059
-	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 09:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821821F416A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 09:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745920012; cv=none; b=V5W+ZlVgjovL8yz//m2p8XvLqs8n5LxUK0tECuMSQDv6Xb/P+8WIPTPDEWPbwTakOCM/tnVhWUSDDNVTTGOuuTf68DkRklZnE6tffsUa+cpbdY1s/G8fWdqgcG70szLJMf9XzY7GGc+WuSN1P7Np3tl8rnRhBPBbkSrSXBDU7fo=
+	t=1745920503; cv=none; b=Is41IMEqH54hewICxnX/wK75OHH+uGA95tCophiYfnfM1dg3rs3AvUy8jrxW9BzhZirHpDiRU76APeW8+IrM7H5XtZYY7idXSoTwaegiuU7iKoZRnWxnJxhZ9g7k9f4kyds9l77FgcJTvb8Vf+xaU41rbe3MhylLi/9nXc+h+A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745920012; c=relaxed/simple;
-	bh=AeKWSJmiN8iAK+uVu2ieF+hO9jl5x9VDzPNaYAevQao=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OHCu5++Vyp5FMHhp3seB5mwYw7zyVqu8DLBWcWiLoMOKoXSi5IaxUkF/Yv5Fz/SphpEVyUKowAwcsdrskZu1WyoKT9GzPHg3N4wREjt1r+rTy9b2YXhlcOZuYDLqMvaOkwZ9of3ycfd9XNGWH3CSY/ObboXx5JV9wlVUpS+76x8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=eYAveLgE; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43cf848528aso41049125e9.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 02:46:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1745920008; x=1746524808; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FWtEW0Fw6mMrZWVIgF9jffmLWBhDa/XPlG8gKYF8LLg=;
-        b=eYAveLgEtJPIFF28dtcXtf1nSdm8+ebWDuGnc0Na1M5IVH+shsCia8yRTYahrqcKaK
-         tNkkhloEAbiV+lfYFr69WwQNq+uX/HBww8/t8l2InAPB8tzalczgYljlXNWBmq/XEIyW
-         FHmpXNyEkWDT+xgtzFgMCXGsTSO8+6saS1ZlBGNBq6c6dr53J/lpl/zwn5gFrdy6SsrQ
-         u2eZHxOoOV4fE2r0od9niCDD6E30KDcxc2L02cI4faaKbkjkuL3bOuvItMhBxOT1JOmr
-         zGxR2IISXzvX60rdbYDGHyQRdPQisVOM93iMVDbbd+97AOqHkxg/IP1hy07MiVP8tB5q
-         5x8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1745920008; x=1746524808;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FWtEW0Fw6mMrZWVIgF9jffmLWBhDa/XPlG8gKYF8LLg=;
-        b=BqJjf/PyYrFA/AqtIPlY1UE6NHwD5EEnLMKqhVEN0aCEb+eAkH9pD5RqACWCVR2mMJ
-         X1GkEtP2EVzmt8Qt2RRRuJxsGTIzP+JnS/98hAvhMP4Koc2wKnPK0CE4xwn0nNGN0q3a
-         dJISgLhVHLXx6FdPX91S61JIfss2AiLaxDHCPf68yhD+pXtVM7DhP478uRZiOYhktlQB
-         5AQcMLZ7kO4QI/ThgmknBQyjc/xn7r1qgzrxhc+zlj+EHkWJrSnDII2nJXAQmnofMDFI
-         c1ikXiVSF4TSz5bGzEgwE14a2r9QmALQPxsQMybKEuUKjsfROb5fdRl6EvLw8oj14Hk7
-         VTXw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9HLSE3azAvXA7NibTFeUSmkyjTikxtHR6EZKv2bbuWrU+6FrOOJUQk8ddSd8vOHmRj4j0Qd+i0pLMs81T@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMnQRLkoStyQjNSVe9LdSAhB8GoPhaG2mnu+hZFQgNBkw6Mszp
-	l8v2w0UmLa3iPn3TbEt17pn2jr6FmtMZDTURW5jotsvcbqFj2YjOwcDJkQkrjf4=
-X-Gm-Gg: ASbGnct+QNvgRxW76sE62q90Z5KXVXT1J1p/GLfPT2BnYfPnXwb8M+q7Hxc9G1E1vRx
-	x8wMqtu7dm96u54S65t1RZglMR38Aw1A/IeGfiSvONviVSKUwrI+60J9y5AuJ9c4fU8t8f22O0I
-	mW3my5ezb6hXP3to4KpnOd2N3o3lQZn+zdK44GjH49EQ1y2UScA37dyeGgTpq9fbEvfBouUgP/4
-	gmDp1Ue3NbT7FTVTze85ZXxsk5Q2yu5J/YqCPU625KMSMVZsW4dQE+5F4TEnUjpOQsu3yD0V1eY
-	tWNHJizx9zO89EdrKdlpHJs2FBXVnEhUJ7uJZv4rKdYVGRb50p0DrK/8LArzcWrejST7yvADcTL
-	5NMlbvFdS6UMrn1sYciGfge/3LBpR+0Ft34UtOfOq
-X-Google-Smtp-Source: AGHT+IFPQLVLxetlM4rzijSZkUU29HGx2KZApNaKDjXu/t7Gi8I8MVg4pmVAhpsVpd8uGH3w5LKWiw==
-X-Received: by 2002:a05:600c:1c0a:b0:43d:49eb:9675 with SMTP id 5b1f17b1804b1-441ad4e7dbemr11535915e9.22.1745920007763;
-        Tue, 29 Apr 2025 02:46:47 -0700 (PDT)
-Received: from raven.intern.cm-ag (p200300dc6f46c100023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f46:c100:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-440a0692a22sm169766855e9.2.2025.04.29.02.46.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Apr 2025 02:46:47 -0700 (PDT)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH 2/2] fs: make several inode lock operations killable
-Date: Tue, 29 Apr 2025 11:46:44 +0200
-Message-ID: <20250429094644.3501450-2-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250429094644.3501450-1-max.kellermann@ionos.com>
-References: <20250429094644.3501450-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1745920503; c=relaxed/simple;
+	bh=sT3XIdFQ6Pyhe7oapXbNFeTfYoCnYG7Zz7pboetzDSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OibsJiXR+xRb/F6ifKK5sPq33RrNCsTYn9vnId7dBZthMj1fIHDotUma35wDInOSO2C59SjTW604VNOC+OFHsewRjcIo/zsfjak4DT2cf+MzH6vj4fmvMY9fjVoJI8O5tYcqVLbqCBpN42zcQUeXNkQ+PU9H1/8sHHXNTwFUTJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y/yOL/EX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k1hzt2sk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y/yOL/EX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=k1hzt2sk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9AA9B2120B;
+	Tue, 29 Apr 2025 09:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745920499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4xlHQqP7IumQSWX28RlWg5A7y/SFv7iickr6pEHy2mI=;
+	b=y/yOL/EXPIhgLHCTn3kEuHw2QuB5slroRXNaWjQ2Yt8yGhdWb/s+HMm+Fm0iG2CiqKDhCq
+	3dFqcVy/ElFOAdYfVb02jVDXKgtF/+m2yW947OF1urfkCUIWFeIEIw6/p/KguIXYaen9/t
+	DO30xmO5z6jE12pxS0LtKduR6LByS7M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745920499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4xlHQqP7IumQSWX28RlWg5A7y/SFv7iickr6pEHy2mI=;
+	b=k1hzt2skMNFN0GRxEC714b5zn1wQ11lWK+hyC2EXkFcXDZwtVc7ElMJjwyHd3+ygW680ky
+	c6swYpr7pFJKgTAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1745920499; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4xlHQqP7IumQSWX28RlWg5A7y/SFv7iickr6pEHy2mI=;
+	b=y/yOL/EXPIhgLHCTn3kEuHw2QuB5slroRXNaWjQ2Yt8yGhdWb/s+HMm+Fm0iG2CiqKDhCq
+	3dFqcVy/ElFOAdYfVb02jVDXKgtF/+m2yW947OF1urfkCUIWFeIEIw6/p/KguIXYaen9/t
+	DO30xmO5z6jE12pxS0LtKduR6LByS7M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1745920499;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4xlHQqP7IumQSWX28RlWg5A7y/SFv7iickr6pEHy2mI=;
+	b=k1hzt2skMNFN0GRxEC714b5zn1wQ11lWK+hyC2EXkFcXDZwtVc7ElMJjwyHd3+ygW680ky
+	c6swYpr7pFJKgTAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8D5001340C;
+	Tue, 29 Apr 2025 09:54:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GO94IvOhEGg2IwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 29 Apr 2025 09:54:59 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1D006A0952; Tue, 29 Apr 2025 11:54:51 +0200 (CEST)
+Date: Tue, 29 Apr 2025 11:54:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: alexjlzheng@gmail.com
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jinliang Zheng <alexjlzheng@tencent.com>
+Subject: Re: [PATCH] fs: remove useless plus one in super_cache_scan()
+Message-ID: <7k7og24ts2sfulbqni7dtosknr5nng4p6l5zfu4mrbyoqfd6mz@wfslwlrlcaux>
+References: <20250428135050.267297-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250428135050.267297-1-alexjlzheng@tencent.com>
+X-Spam-Score: -3.79
+X-Spamd-Result: default: False [-3.79 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.19)[-0.968];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Allows killing processes that are waiting for the inode lock.
+On Mon 28-04-25 21:50:50, alexjlzheng@gmail.com wrote:
+> From: Jinliang Zheng <alexjlzheng@tencent.com>
+> 
+> After commit 475d0db742e3 ("fs: Fix theoretical division by 0 in
+> super_cache_scan()."), there's no need to plus one to prevent
+> division by zero.
+> 
+> Remove it to simplify the code.
+> 
+> Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/open.c       | 14 +++++++++++---
- fs/read_write.c |  4 +++-
- 2 files changed, 14 insertions(+), 4 deletions(-)
+Fair enough. Feel free to add:
 
-diff --git a/fs/open.c b/fs/open.c
-index a9063cca9911..7828234a7caa 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -60,7 +60,10 @@ int do_truncate(struct mnt_idmap *idmap, struct dentry *dentry,
- 	if (ret)
- 		newattrs.ia_valid |= ret | ATTR_FORCE;
- 
--	inode_lock(dentry->d_inode);
-+	ret = inode_lock_killable(dentry->d_inode);
-+	if (ret)
-+		return ret;
-+
- 	/* Note any delegations or leases have already been broken: */
- 	ret = notify_change(idmap, dentry, &newattrs, NULL);
- 	inode_unlock(dentry->d_inode);
-@@ -635,7 +638,9 @@ int chmod_common(const struct path *path, umode_t mode)
- 	if (error)
- 		return error;
- retry_deleg:
--	inode_lock(inode);
-+	error = inode_lock_killable(inode);
-+	if (error)
-+		goto out_mnt_unlock;
- 	error = security_path_chmod(path, mode);
- 	if (error)
- 		goto out_unlock;
-@@ -650,6 +655,7 @@ int chmod_common(const struct path *path, umode_t mode)
- 		if (!error)
- 			goto retry_deleg;
- 	}
-+out_mnt_unlock:
- 	mnt_drop_write(path->mnt);
- 	return error;
- }
-@@ -769,7 +775,9 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
- 		return -EINVAL;
- 	if ((group != (gid_t)-1) && !setattr_vfsgid(&newattrs, gid))
- 		return -EINVAL;
--	inode_lock(inode);
-+	error = inode_lock_killable(inode);
-+	if (error)
-+		return error;
- 	if (!S_ISDIR(inode->i_mode))
- 		newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
- 				     setattr_should_drop_sgid(idmap, inode);
-diff --git a/fs/read_write.c b/fs/read_write.c
-index bb0ed26a0b3a..0ef70e128c4a 100644
---- a/fs/read_write.c
-+++ b/fs/read_write.c
-@@ -332,7 +332,9 @@ loff_t default_llseek(struct file *file, loff_t offset, int whence)
- 	struct inode *inode = file_inode(file);
- 	loff_t retval;
- 
--	inode_lock(inode);
-+	retval = inode_lock_killable(inode);
-+	if (retval)
-+		return retval;
- 	switch (whence) {
- 		case SEEK_END:
- 			offset += i_size_read(inode);
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
+> ---
+>  fs/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 97a17f9d9023..6bbdb7e59a8d 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -201,7 +201,7 @@ static unsigned long super_cache_scan(struct shrinker *shrink,
+>  
+>  	inodes = list_lru_shrink_count(&sb->s_inode_lru, sc);
+>  	dentries = list_lru_shrink_count(&sb->s_dentry_lru, sc);
+> -	total_objects = dentries + inodes + fs_objects + 1;
+> +	total_objects = dentries + inodes + fs_objects;
+>  	if (!total_objects)
+>  		total_objects = 1;
+>  
+> -- 
+> 2.49.0
+> 
 -- 
-2.47.2
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
