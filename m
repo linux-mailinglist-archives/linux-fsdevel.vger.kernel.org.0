@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-47617-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5698EAA12C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:58:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B94AA12AF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 18:57:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5E5D98310D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:55:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62F31BA4952
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6263124C08D;
-	Tue, 29 Apr 2025 16:54:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF265253959;
+	Tue, 29 Apr 2025 16:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JvCxpf1z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjBqGeHi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7FA2517A5;
-	Tue, 29 Apr 2025 16:54:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5688924113C;
+	Tue, 29 Apr 2025 16:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745945658; cv=none; b=UFNJCHSEcwWZbxxqCcp2xfdGqHQDMOPPgL1Zpe+7E8AngnzdcSc2FEcExpeC54ZrzgE8rH2wyJx1XBzt9vnNceqWByee34Y13ZiicEl4I1WgCbIBnz0OqKHUXZUU2f16zOHs0TrYW1Oc4lCKXuDf0hNXjsHbrRTeoy75SRXw+ZI=
+	t=1745945662; cv=none; b=dbTs/qhIu2aQtQE3+NvxXKami4enTtYs98DNz7BIcYMMf/RoTJh+PG22TbhuJue8QacqzcRrbjrMbKZX1J1sHQYRlDcEdLumx/mYfYWsK7WI5QlmhVX/sdtT4N0AK5OYhECVkHK3pzdez9K5u81Asi5I4EeHmPcPpgBWK88NI1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745945658; c=relaxed/simple;
-	bh=++dhepfBhRi0erK+LYv8IWVCWaZFGXckt9RPxoukWxs=;
+	s=arc-20240116; t=1745945662; c=relaxed/simple;
+	bh=gr9TqpDzik67MmDx/yJNWxsvaR2w9xNR+74mtWIzDSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YLi71MLrnSD2qAfiQUTbz3xjkGcTSZ9tTZaRcV5X3MX/DM+y5ib4HvLaOq3w8C4uTKMbATYqqMiXaxqcpaRum2X62OMtvxgAVPc5lGaXDQJInJ/li32ZfXMD8+qUl6FsZBCXA7i3i0PozCHhr11mGKrwi7RosTd4gp4giwQmz2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JvCxpf1z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 386C9C4CEE9;
-	Tue, 29 Apr 2025 16:54:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rB6veQCX3Iyea6CA4VN+6wpv8NjO14B6vCd6KSwM0mKvcVHYJPQwm7ir619rwp+oP4cyD7RL5W+IpRVTSZkVb5HFd02pzbT69l7ASC/XMZLNzNzzB+CWgcT3MLVdYm0ZkVKCl9/W1Rxye4fvb12cZbLMe0yycLk1fEcCc6jvPp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjBqGeHi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18493C4CEE9;
+	Tue, 29 Apr 2025 16:54:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745945658;
-	bh=++dhepfBhRi0erK+LYv8IWVCWaZFGXckt9RPxoukWxs=;
+	s=k20201202; t=1745945662;
+	bh=gr9TqpDzik67MmDx/yJNWxsvaR2w9xNR+74mtWIzDSw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JvCxpf1zBWxt7kM/bFBgYrYsVwdvEhgx8DFDqgQezureiY3Ayu7GnmqEwIE5Pq7GN
-	 L6W2qSGh70igv0zgSYxP++zBPUJ8is4gXDYl8CCPoMHa0/lePsK0tVy09LkxO4iXEd
-	 yoi/SHAnRjszqDaHEpKmGxlBlMV/Sx3RyZJhlVGcN5OlglvJost7IbR2QAtUfwJwuA
-	 rpD0tRSpBJ2XLnFhYaWgnZbq3NEXo3YaEN29VwQ5UVlJxuhe7+siV06LROBG6l7/qA
-	 HTC2eEpHs0tv30aVV6ftZuS/nRhVCLFdbe4hdksymcwQAlurG5YPZCWqzHLKmic3Jt
-	 xjjIDtKPb89Dg==
-Date: Tue, 29 Apr 2025 09:54:14 -0700
+	b=YjBqGeHiSIyYnLF9JqHGyzte8jhcIToNNU0IVcuqLDrSYZO4KSuKRFBBoTEc++q12
+	 lRPsVjFUCO7dUmV6nBeu4sP1DX4s8GJwbjslnBbXSyJ8s0/A7VnvhbAeGyyUmjXlyr
+	 74K+qiT2F8xLKeivwmSxSxaA1T2BFaN4tG9805eYGd4/SSvIIWEXvHdfPKqx7RtDOW
+	 vwZTyUXri3wv6BHe+ghfzhoBxNEyJBSCZ2cF6IM6oX9aVhzUEQAUKFHJoleIoC10X1
+	 ZLybNxoWxmfyvSZKPug07cfwmUSIXJdEX5uOpWH+2j8uxPR6rYOHxRtvE9D9ORGAIn
+	 bRaUOpC+98uxQ==
+Date: Tue, 29 Apr 2025 09:54:21 -0700
 From: Kees Cook <kees@kernel.org>
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -53,10 +53,11 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 	Suren Baghdasaryan <surenb@google.com>, linux-mm@kvack.org,
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/4] mm: move dup_mmap() to mm
-Message-ID: <202504290954.754D25567A@keescook>
+Subject: Re: [PATCH v3 4/4] mm: perform VMA allocation, freeing, duplication
+ in mm
+Message-ID: <202504290954.B4A4F99E7@keescook>
 References: <cover.1745853549.git.lorenzo.stoakes@oracle.com>
- <e49aad3d00212f5539d9fa5769bfda4ce451db3e.1745853549.git.lorenzo.stoakes@oracle.com>
+ <f97b3a85a6da0196b28070df331b99e22b263be8.1745853549.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -65,25 +66,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e49aad3d00212f5539d9fa5769bfda4ce451db3e.1745853549.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <f97b3a85a6da0196b28070df331b99e22b263be8.1745853549.git.lorenzo.stoakes@oracle.com>
 
-On Mon, Apr 28, 2025 at 04:28:16PM +0100, Lorenzo Stoakes wrote:
-> This is a key step in our being able to abstract and isolate VMA allocation
-> and destruction logic.
+On Mon, Apr 28, 2025 at 04:28:17PM +0100, Lorenzo Stoakes wrote:
+> Right now these are performed in kernel/fork.c which is odd and a violation
+> of separation of concerns, as well as preventing us from integrating this
+> and related logic into userland VMA testing going forward, and perhaps more
+> importantly - enabling us to, in a subsequent commit, make VMA
+> allocation/freeing a purely internal mm operation.
 > 
-> This function is the last one where vm_area_free() and vm_area_dup() are
-> directly referenced outside of mmap, so having this in mm allows us to
-> isolate these.
+> There is a fly in the ointment - nommu - mmap.c is not compiled if
+> CONFIG_MMU not set, and neither is vma.c.
 > 
-> We do the same for the nommu version which is substantially simpler.
+> To square the circle, let's add a new file - vma_init.c. This will be
+> compiled for both CONFIG_MMU and nommu builds, and will also form part of
+> the VMA userland testing.
 > 
-> We place the declaration for dup_mmap() in mm/internal.h and have
-> kernel/fork.c import this in order to prevent improper use of this
-> functionality elsewhere in the kernel.
+> This allows us to de-duplicate code, while maintaining separation of
+> concerns and the ability for us to userland test this logic.
 > 
-> While we're here, we remove the useless #ifdef CONFIG_MMU check around
-> mmap_read_lock_maybe_expand() in mmap.c, mmap.c is compiled only if
-> CONFIG_MMU is set.
+> Update the VMA userland tests accordingly, additionally adding a
+> detach_free_vma() helper function to correctly detach VMAs before freeing
+> them in test code, as this change was triggering the assert for this.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
