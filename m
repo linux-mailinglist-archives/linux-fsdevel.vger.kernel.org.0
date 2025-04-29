@@ -1,63 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-47601-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47602-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632A5AA0F64
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:46:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C6B3AA0F7C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 16:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24DE84A182A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 14:45:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827B84A2321
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 14:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EDD21B9D6;
-	Tue, 29 Apr 2025 14:44:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD3B217F35;
+	Tue, 29 Apr 2025 14:48:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K/uYZu5c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+RcvVL/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A879321B9FE;
-	Tue, 29 Apr 2025 14:44:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C6E51BF37;
+	Tue, 29 Apr 2025 14:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745937887; cv=none; b=ah1N1L42IMojBFxkw4JtU1aPn5G/tz85z4XlcBWEEWxRP1tIN5N4nnxcjA9EJL9P1WfRe5jfGHc1Edzlq+/2RoV+gYr1aaOD7qhfKk+TQY03tKxem4OZ2b9YcYb/3NsuvJ7a6TLRvxvrKI1sHKOAZ3ikRE0mvKknL+j7SkgsTV8=
+	t=1745938124; cv=none; b=j9gCiA704OhtZsheyGM9K26tmsd0bIwttjTtBO5LlkXcncyloPUNIHJ9KKKGFT0e/Pr+VcRf8Illj2TZ58LQ6GYG0hurZ0S5JokmaH6VslwJ4pGkuYF9up9h+YZXY6HryVeJuAGgmA8iozc4tZtDXI3XRrBs7j2NEozsv+SZT6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745937887; c=relaxed/simple;
-	bh=Sn37PoBA6uqfcLiWQTD8NTw2UC4GID4xT6QTryU0oQs=;
+	s=arc-20240116; t=1745938124; c=relaxed/simple;
+	bh=xxrhrbslaKkkPFZLrwGjlachyjJaJ9EgfJlvRH5Vhzk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VrgnW6hUTv54+RIcUsD1XQxsVEOHoK8aTRRXl7zdGmznfEEn1nxfSI3+YWjAqXu/qiHILDKmx1zZLhN/Vtdwxn3NB2/sfuruN5fey6SCUtMJGD1rBYjI2Js9SyNHF5jmyng7rxSJxSM48CUSLBOtiyoCoh6NCoy12GteBaKrJiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K/uYZu5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08579C4CEED;
-	Tue, 29 Apr 2025 14:44:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cJwKzZWjJ5RP4/Y4NdPtB5l5XWeNvrjzQ/pKO8CjpFveMH4oIL4LNh+HRYyyRgMpjPBkCWdQfWWMU8/mfsfplWgIkGpiUhP6140vZEO/OfJB7m5Kvk2UtTYH5nYLqoMjfjY4aSRTEgC5TfiOn/ftK8EurBkqFrjkO9VJ4l8JPvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+RcvVL/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF3BEC4CEE3;
+	Tue, 29 Apr 2025 14:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745937887;
-	bh=Sn37PoBA6uqfcLiWQTD8NTw2UC4GID4xT6QTryU0oQs=;
+	s=k20201202; t=1745938123;
+	bh=xxrhrbslaKkkPFZLrwGjlachyjJaJ9EgfJlvRH5Vhzk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K/uYZu5c408ALa13N5kX/SmSPfL0m6yn7R0QuEVBQbDAqAgVYE4GQ6bdjR4CybSDm
-	 AA+3BlqOoJ59ffnNrj0v5dokfxMpkB/NX7D0VdKr0wrwPxlCRyalKB9B131gVwfP/F
-	 jzdnY5MZC309X3t4if4ZgLu59j3SOWn00SboM1CvqC2G7SKwAI9v4oCSWDPNyfekIP
-	 a2+zmJ98lzdqnW6PtyH84h9y1JXQ9MG0PiKZcfGCt4qLGI28SRX0sbhp5pwaUn12AB
-	 pQJ9g4G+l0yCy1jJG6IsQtBUW0hXPwNOIiXhdZ1YU42N1uw2x3dFJ8cjX1MI1ahd+5
-	 nea5zftOOlPOQ==
-Date: Tue, 29 Apr 2025 07:44:46 -0700
+	b=m+RcvVL/+sXmy4nK8UBOmjHGkteYfD34W+9+jHy2xXjfMeHxVOq/9oByrW7xcTG3z
+	 O8+XQfz43fd9bs/4+b/DbTAszcxwN6newZH+N1r4emiP3xnxdgw0wY+Zyjs9GwlbUI
+	 F5K35KfcTKz4dHUY1GdgV9mkNI3vHy6ALNitc5LchvXfnYyHgAMfR/SXdku08j3l9B
+	 xOV5Tx4hH3XTmdtiVbJd9s31biCsTJs3zxxuIXxbriZmZ3n4Jk1oC+Q4fHNekENvrk
+	 wUVvkTwQXiV8XCwHc7bQL/aiGqIn79zHnm5XO1DQG1hWu4ejcGAAMjJXWjcq61BBhT
+	 E8sOjRDS1pdZA==
+Date: Tue, 29 Apr 2025 07:48:42 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
-	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
-	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
-	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
-	linux-api@vger.kernel.org
-Subject: Re: [PATCH v9 05/15] xfs: ignore HW which cannot atomic write a
- single block
-Message-ID: <20250429144446.GD25655@frogsfrogsfrogs>
-References: <20250425164504.3263637-1-john.g.garry@oracle.com>
- <20250425164504.3263637-6-john.g.garry@oracle.com>
- <20250429122105.GA12603@lst.de>
+To: Johannes Thumshirn <jth@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	Damien Le Moal <dlemoal@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH] zonefs: use ZONEFS_SUPER_SIZE instead of PAGE_SIZE
+Message-ID: <20250429144842.GC1035866@frogsfrogsfrogs>
+References: <c14f62628e0417498ace0caaa1f4fef2cb0f8477.1745934166.git.jth@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,29 +58,56 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250429122105.GA12603@lst.de>
+In-Reply-To: <c14f62628e0417498ace0caaa1f4fef2cb0f8477.1745934166.git.jth@kernel.org>
 
-On Tue, Apr 29, 2025 at 02:21:05PM +0200, Christoph Hellwig wrote:
-> On Fri, Apr 25, 2025 at 04:44:54PM +0000, John Garry wrote:
-> > +	/* Configure hardware atomic write geometry */
-> > +	xfs_buftarg_config_atomic_writes(mp->m_ddev_targp);
-> > +	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp)
-> > +		xfs_buftarg_config_atomic_writes(mp->m_logdev_targp);
-> > +	if (mp->m_rtdev_targp && mp->m_rtdev_targp != mp->m_ddev_targp)
-> > +		xfs_buftarg_config_atomic_writes(mp->m_rtdev_targp);
+On Tue, Apr 29, 2025 at 03:42:53PM +0200, Johannes Thumshirn wrote:
+> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 > 
-> So this can't be merged into xfs_setsize_buftarg as suggeted last round
-> instead of needing yet another per-device call into the buftarg code?
+> Use ZONEFS_SUPER_SIZE constant instead of PAGE_SIZE allocating memory for
+> reading the super block in zonefs_read_super().
+> 
+> While PAGE_SIZE technically isn't incorrect as Linux doesn't support pages
+> smaller than 4k ZONEFS_SUPER_SIZE is semantically more correct.
 
-Oh, heh, I forgot that xfs_setsize_buftarg is called a second time by
-xfs_setup_devices at the end of fill_super.  xfs_setup_devices is a
-better place to call xfs_buftarg_config_atomic_writes.
+Yeah, that is less likely to leave a landmine if the super size ever
+gets bigger or someone goes nuts and reintroduces tinypages.
 
-I don't like the idea of merging the hw atomic write detection into
-xfs_setsize_buftarg itself because (a) it gets called for the data
-device before we've read the fs blocksize so the validation is
-meaningless and (b) that makes xfs_setsize_buftarg's purpose less
-cohesive.
+Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
+
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> 
+> ---
+> This patch is based on top of Christoph's series titled "add more bio
+> helper" specifically on top of "[PATCH 16/17] zonefs: use bdev_rw_virt in
+> zonefs_read_super"
+> ---
+>  fs/zonefs/super.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index d165eb979f21..4dc7f967c861 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -1113,11 +1113,12 @@ static int zonefs_read_super(struct super_block *sb)
+>  	u32 crc, stored_crc;
+>  	int ret;
+>  
+> -	super = kmalloc(PAGE_SIZE, GFP_KERNEL);
+> +	super = kmalloc(ZONEFS_SUPER_SIZE, GFP_KERNEL);
+>  	if (!super)
+>  		return -ENOMEM;
+>  
+> -	ret = bdev_rw_virt(sb->s_bdev, 0, super, PAGE_SIZE, REQ_OP_READ);
+> +	ret = bdev_rw_virt(sb->s_bdev, 0, super, ZONEFS_SUPER_SIZE,
+> +			   REQ_OP_READ);
+>  	if (ret)
+>  		goto free_super;
+>  
+> -- 
+> 2.43.0
+> 
+> 
 
