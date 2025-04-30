@@ -1,38 +1,38 @@
-Return-Path: <linux-fsdevel+bounces-47732-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47734-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE037AA4F6A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 17:02:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8681BAA4F6D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 17:02:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D20F3A4755
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 15:00:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7444B1C07CB7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 15:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C010263F3C;
-	Wed, 30 Apr 2025 14:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD2A259CA6;
+	Wed, 30 Apr 2025 14:59:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08CFC25D1FC;
-	Wed, 30 Apr 2025 14:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 356F92609E8;
+	Wed, 30 Apr 2025 14:59:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746025182; cv=none; b=UxYXjom03X7Ytsjpu1dKtRqygA0lO6JF08IrA35pj8yd8qhyuumhNp3NQ/xxihVLe6UNxIamczmjinbJ3o4U0nzK7dJQQa2ZUWxxOs6HMDmRisathDXfkwi21rneHUbHoUEhbesFoEiHTDUj8+1/dynO8mduCmetgZrr63ExV+Y=
+	t=1746025185; cv=none; b=FL1uNVTqpiepdBUKg0hmfIF8Q0tayw3biCk1v36XTP/GYruMmxIeoB4HaxM0nPCVhMRfNYeK0Wg3Wz67bmkPB7laM543lB5nYgrlcNN8gXZonO6pNUkgntrEHviiZ3Uf5JzPLus63woO8wGvVudQUwHfFrXB/nGpCUJkKuPFlQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746025182; c=relaxed/simple;
-	bh=JVbPOsvLeMWk+lkjYa/VAEsekF//E3bh+xYcrX4BwlE=;
+	s=arc-20240116; t=1746025185; c=relaxed/simple;
+	bh=yOkO5yo/Je+XkA0DgEov7k5YzE1XESWbXQqbCUzpz9s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fPJYeZ+3KBEB4QkDtGcL+SUIZGB+XwZPK38zWKWtX6/XjIFsDNlJC76DhKYeTSBePlKrDhqmM4rBrhABLknl9xhAco/R+cxUDLRaJ2nYUw6A/Z9kHsAhK81HT6rq4B37VPU5HKatCUJHx2dqYjXi9l89sUiFFMGY2HootVfOXEY=
+	 MIME-Version; b=UUQCpCl0LvEhyBe4mWRfjtNvTZ8rNQyfsAj49PKeUdd/c09z6QCRvORq9Pi75JyV4xWGI90VoEHlgb5vyZQzTlkimNSHT16bUL0SMjHmwBKEvGMNKcxw378xPd7KVxUwJQl771OLlvF079d3F2iOTbtfxKytmRDYAaSvLt0oaEM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22DCD1007;
-	Wed, 30 Apr 2025 07:59:33 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 49C1C106F;
+	Wed, 30 Apr 2025 07:59:35 -0700 (PDT)
 Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71A883F5A1;
-	Wed, 30 Apr 2025 07:59:38 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 976E73F5A1;
+	Wed, 30 Apr 2025 07:59:40 -0700 (PDT)
 From: Ryan Roberts <ryan.roberts@arm.com>
 To: Andrew Morton <akpm@linux-foundation.org>,
 	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
@@ -50,9 +50,9 @@ Cc: Ryan Roberts <ryan.roberts@arm.com>,
 	linux-kernel@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH v4 4/5] mm/readahead: Store folio order in struct file_ra_state
-Date: Wed, 30 Apr 2025 15:59:17 +0100
-Message-ID: <20250430145920.3748738-5-ryan.roberts@arm.com>
+Subject: [RFC PATCH v4 5/5] mm/filemap: Allow arch to request folio size for exec memory
+Date: Wed, 30 Apr 2025 15:59:18 +0100
+Message-ID: <20250430145920.3748738-6-ryan.roberts@arm.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250430145920.3748738-1-ryan.roberts@arm.com>
 References: <20250430145920.3748738-1-ryan.roberts@arm.com>
@@ -64,237 +64,196 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Previously the folio order of the previous readahead request was
-inferred from the folio who's readahead marker was hit. But due to the
-way we have to round to non-natural boundaries sometimes, this first
-folio in the readahead block is often smaller than the preferred order
-for that request. This means that for cases where the initial sync
-readahead is poorly aligned, the folio order will ramp up much more
-slowly.
+Change the readahead config so that if it is being requested for an
+executable mapping, do a synchronous read into a set of folios with an
+arch-specified order and in a naturally aligned manner. We no longer
+center the read on the faulting page but simply align it down to the
+previous natural boundary. Additionally, we don't bother with an
+asynchronous part.
 
-So instead, let's store the order in struct file_ra_state so we are not
-affected by any required alignment. We previously made enough room in
-the struct for a 16 order field. This should be plenty big enough since
-we are limited to MAX_PAGECACHE_ORDER anyway, which is certainly never
-larger than ~20.
+On arm64 if memory is physically contiguous and naturally aligned to the
+"contpte" size, we can use contpte mappings, which improves utilization
+of the TLB. When paired with the "multi-size THP" feature, this works
+well to reduce dTLB pressure. However iTLB pressure is still high due to
+executable mappings having a low likelihood of being in the required
+folio size and mapping alignment, even when the filesystem supports
+readahead into large folios (e.g. XFS).
 
-Since we now pass order in struct file_ra_state, page_cache_ra_order()
-no longer needs it's new_order parameter, so let's remove that.
+The reason for the low likelihood is that the current readahead
+algorithm starts with an order-0 folio and increases the folio order by
+2 every time the readahead mark is hit. But most executable memory tends
+to be accessed randomly and so the readahead mark is rarely hit and most
+executable folios remain order-0.
 
-Worked example:
+So let's special-case the read(ahead) logic for executable mappings. The
+trade-off is performance improvement (due to more efficient storage of
+the translations in iTLB) vs potential for making reclaim more difficult
+(due to the folios being larger so if a part of the folio is hot the
+whole thing is considered hot). But executable memory is a small portion
+of the overall system memory so I doubt this will even register from a
+reclaim perspective.
 
-Here we are touching pages 17-256 sequentially just as we did in the
-previous commit, but now that we are remembering the preferred order
-explicitly, we no longer have the slow ramp up problem. Note
-specifically that we no longer have 2 rounds (2x ~128K) of order-2
-folios:
+I've chosen 64K folio size for arm64 which benefits both the 4K and 16K
+base page size configs. Crucially the same amount of data is still read
+(usually 128K) so I'm not expecting any read amplification issues. I
+don't anticipate any write amplification because text is always RO.
 
-TYPE    STARTOFFS     ENDOFFS        SIZE  STARTPG    ENDPG   NRPG  ORDER  RA
------  ----------  ----------  ----------  -------  -------  -----  -----  --
-HOLE   0x00000000  0x00001000        4096        0        1      1
-FOLIO  0x00001000  0x00002000        4096        1        2      1      0
-FOLIO  0x00002000  0x00003000        4096        2        3      1      0
-FOLIO  0x00003000  0x00004000        4096        3        4      1      0
-FOLIO  0x00004000  0x00005000        4096        4        5      1      0
-FOLIO  0x00005000  0x00006000        4096        5        6      1      0
-FOLIO  0x00006000  0x00007000        4096        6        7      1      0
-FOLIO  0x00007000  0x00008000        4096        7        8      1      0
-FOLIO  0x00008000  0x00009000        4096        8        9      1      0
-FOLIO  0x00009000  0x0000a000        4096        9       10      1      0
-FOLIO  0x0000a000  0x0000b000        4096       10       11      1      0
-FOLIO  0x0000b000  0x0000c000        4096       11       12      1      0
-FOLIO  0x0000c000  0x0000d000        4096       12       13      1      0
-FOLIO  0x0000d000  0x0000e000        4096       13       14      1      0
-FOLIO  0x0000e000  0x0000f000        4096       14       15      1      0
-FOLIO  0x0000f000  0x00010000        4096       15       16      1      0
-FOLIO  0x00010000  0x00011000        4096       16       17      1      0
-FOLIO  0x00011000  0x00012000        4096       17       18      1      0
-FOLIO  0x00012000  0x00013000        4096       18       19      1      0
-FOLIO  0x00013000  0x00014000        4096       19       20      1      0
-FOLIO  0x00014000  0x00015000        4096       20       21      1      0
-FOLIO  0x00015000  0x00016000        4096       21       22      1      0
-FOLIO  0x00016000  0x00017000        4096       22       23      1      0
-FOLIO  0x00017000  0x00018000        4096       23       24      1      0
-FOLIO  0x00018000  0x00019000        4096       24       25      1      0
-FOLIO  0x00019000  0x0001a000        4096       25       26      1      0
-FOLIO  0x0001a000  0x0001b000        4096       26       27      1      0
-FOLIO  0x0001b000  0x0001c000        4096       27       28      1      0
-FOLIO  0x0001c000  0x0001d000        4096       28       29      1      0
-FOLIO  0x0001d000  0x0001e000        4096       29       30      1      0
-FOLIO  0x0001e000  0x0001f000        4096       30       31      1      0
-FOLIO  0x0001f000  0x00020000        4096       31       32      1      0
-FOLIO  0x00020000  0x00021000        4096       32       33      1      0
-FOLIO  0x00021000  0x00022000        4096       33       34      1      0
-FOLIO  0x00022000  0x00024000        8192       34       36      2      1
-FOLIO  0x00024000  0x00028000       16384       36       40      4      2
-FOLIO  0x00028000  0x0002c000       16384       40       44      4      2
-FOLIO  0x0002c000  0x00030000       16384       44       48      4      2
-FOLIO  0x00030000  0x00034000       16384       48       52      4      2
-FOLIO  0x00034000  0x00038000       16384       52       56      4      2
-FOLIO  0x00038000  0x0003c000       16384       56       60      4      2
-FOLIO  0x0003c000  0x00040000       16384       60       64      4      2
-FOLIO  0x00040000  0x00050000       65536       64       80     16      4
-FOLIO  0x00050000  0x00060000       65536       80       96     16      4
-FOLIO  0x00060000  0x00080000      131072       96      128     32      5
-FOLIO  0x00080000  0x000a0000      131072      128      160     32      5
-FOLIO  0x000a0000  0x000c0000      131072      160      192     32      5
-FOLIO  0x000c0000  0x000e0000      131072      192      224     32      5
-FOLIO  0x000e0000  0x00100000      131072      224      256     32      5
-FOLIO  0x00100000  0x00120000      131072      256      288     32      5
-FOLIO  0x00120000  0x00140000      131072      288      320     32      5  Y
-HOLE   0x00140000  0x00800000     7077888      320     2048   1728
+Note that the text region of an ELF file could be populated into the
+page cache for other reasons than taking a fault in a mmapped area. The
+most common case is due to the loader read()ing the header which can be
+shared with the beginning of text. So some text will still remain in
+small folios, but this simple, best effort change provides good
+performance improvements as is.
+
+Confine this special-case approach to the bounds of the VMA. This
+prevents wasting memory for any padding that might exist in the file
+between sections. Previously the padding would have been contained in
+order-0 folios and would be easy to reclaim. But now it would be part of
+a larger folio so more difficult to reclaim. Solve this by simply not
+reading it into memory in the first place.
+
+Benchmarking
+============
+TODO: NUMBERS ARE FOR V3 OF SERIES. NEED TO RERUN FOR THIS VERSION.
+
+The below shows nginx and redis benchmarks on Ampere Altra arm64 system.
+
+First, confirmation that this patch causes more text to be contained in
+64K folios:
+
+| File-backed folios     |   system boot   |      nginx      |      redis      |
+| by size as percentage  |-----------------|-----------------|-----------------|
+| of all mapped text mem | before |  after | before |  after | before |  after |
+|========================|========|========|========|========|========|========|
+| base-page-4kB          |    26% |     9% |    27% |     6% |    21% |     5% |
+| thp-aligned-8kB        |     4% |     2% |     3% |     0% |     4% |     1% |
+| thp-aligned-16kB       |    57% |    21% |    57% |     6% |    54% |    10% |
+| thp-aligned-32kB       |     4% |     1% |     4% |     1% |     3% |     1% |
+| thp-aligned-64kB       |     7% |    65% |     8% |    85% |     9% |    72% |
+| thp-aligned-2048kB     |     0% |     0% |     0% |     0% |     7% |     8% |
+| thp-unaligned-16kB     |     1% |     1% |     1% |     1% |     1% |     1% |
+| thp-unaligned-32kB     |     0% |     0% |     0% |     0% |     0% |     0% |
+| thp-unaligned-64kB     |     0% |     0% |     0% |     1% |     0% |     1% |
+| thp-partial            |     1% |     1% |     0% |     0% |     1% |     1% |
+|------------------------|--------|--------|--------|--------|--------|--------|
+| cont-aligned-64kB      |     7% |    65% |     8% |    85% |    16% |    80% |
+
+The above shows that for both workloads (each isolated with cgroups) as
+well as the general system state after boot, the amount of text backed
+by 4K and 16K folios reduces and the amount backed by 64K folios
+increases significantly. And the amount of text that is contpte-mapped
+significantly increases (see last row).
+
+And this is reflected in performance improvement:
+
+| Benchmark                                     |          Improvement |
++===============================================+======================+
+| pts/nginx (200 connections)                   |                8.96% |
+| pts/nginx (1000 connections)                  |                6.80% |
++-----------------------------------------------+----------------------+
+| pts/redis (LPOP, 50 connections)              |                5.07% |
+| pts/redis (LPUSH, 50 connections)             |                3.68% |
 
 Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 ---
- include/linux/fs.h |  2 ++
- mm/filemap.c       |  6 ++++--
- mm/internal.h      |  3 +--
- mm/readahead.c     | 18 +++++++++++-------
- 4 files changed, 18 insertions(+), 11 deletions(-)
+ arch/arm64/include/asm/pgtable.h |  8 +++++++
+ include/linux/pgtable.h          | 11 +++++++++
+ mm/filemap.c                     | 40 ++++++++++++++++++++++++++------
+ 3 files changed, 52 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 44362bef0010..cde482a7270a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1031,6 +1031,7 @@ struct fown_struct {
-  *      and so were/are genuinely "ahead".  Start next readahead when
-  *      the first of these pages is accessed.
-  * @ra_pages: Maximum size of a readahead request, copied from the bdi.
-+ * @order: Preferred folio order used for most recent readahead.
-  * @mmap_miss: How many mmap accesses missed in the page cache.
-  * @prev_pos: The last byte in the most recent read request.
-  *
-@@ -1042,6 +1043,7 @@ struct file_ra_state {
- 	unsigned int size;
- 	unsigned int async_size;
- 	unsigned int ra_pages;
-+	unsigned short order;
- 	unsigned short mmap_miss;
- 	loff_t prev_pos;
- };
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index 2a77f11b78d5..9eb35af0d3cf 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -1537,6 +1537,14 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
+  */
+ #define arch_wants_old_prefaulted_pte	cpu_has_hw_af
+ 
++/*
++ * Request exec memory is read into pagecache in at least 64K folios. This size
++ * can be contpte-mapped when 4K base pages are in use (16 pages into 1 iTLB
++ * entry), and HPA can coalesce it (4 pages into 1 TLB entry) when 16K base
++ * pages are in use.
++ */
++#define exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
++
+ static inline bool pud_sect_supported(void)
+ {
+ 	return PAGE_SIZE == SZ_4K;
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index b50447ef1c92..1dd539c49f90 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -456,6 +456,17 @@ static inline bool arch_has_hw_pte_young(void)
+ }
+ #endif
+ 
++#ifndef exec_folio_order
++/*
++ * Returns preferred minimum folio order for executable file-backed memory. Must
++ * be in range [0, PMD_ORDER). Default to order-0.
++ */
++static inline unsigned int exec_folio_order(void)
++{
++	return 0;
++}
++#endif
++
+ #ifndef arch_check_zapped_pte
+ static inline void arch_check_zapped_pte(struct vm_area_struct *vma,
+ 					 pte_t pte)
 diff --git a/mm/filemap.c b/mm/filemap.c
-index fa129ecfd80f..e61f374068d4 100644
+index e61f374068d4..37fe4a55c00d 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -3222,7 +3222,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
- 		if (!(vm_flags & VM_RAND_READ))
- 			ra->size *= 2;
- 		ra->async_size = HPAGE_PMD_NR;
--		page_cache_ra_order(&ractl, ra, HPAGE_PMD_ORDER);
-+		ra->order = HPAGE_PMD_ORDER;
-+		page_cache_ra_order(&ractl, ra);
+@@ -3252,14 +3252,40 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+ 	if (mmap_miss > MMAP_LOTSAMISS)
  		return fpin;
- 	}
- #endif
-@@ -3258,8 +3259,9 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
- 	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
- 	ra->size = ra->ra_pages;
- 	ra->async_size = ra->ra_pages / 4;
-+	ra->order = 0;
- 	ractl._index = ra->start;
--	page_cache_ra_order(&ractl, ra, 0);
-+	page_cache_ra_order(&ractl, ra);
- 	return fpin;
- }
  
-diff --git a/mm/internal.h b/mm/internal.h
-index 40464f755092..437c7738668d 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -442,8 +442,7 @@ void zap_page_range_single_batched(struct mmu_gather *tlb,
- int folio_unmap_invalidate(struct address_space *mapping, struct folio *folio,
- 			   gfp_t gfp);
- 
--void page_cache_ra_order(struct readahead_control *, struct file_ra_state *,
--		unsigned int order);
-+void page_cache_ra_order(struct readahead_control *, struct file_ra_state *);
- void force_page_cache_ra(struct readahead_control *, unsigned long nr);
- static inline void force_page_cache_readahead(struct address_space *mapping,
- 		struct file *file, pgoff_t index, unsigned long nr_to_read)
-diff --git a/mm/readahead.c b/mm/readahead.c
-index 82f9f623f2d7..18972bc34861 100644
---- a/mm/readahead.c
-+++ b/mm/readahead.c
-@@ -457,7 +457,7 @@ static inline int ra_alloc_folio(struct readahead_control *ractl, pgoff_t index,
- }
- 
- void page_cache_ra_order(struct readahead_control *ractl,
--		struct file_ra_state *ra, unsigned int new_order)
-+		struct file_ra_state *ra)
- {
- 	struct address_space *mapping = ractl->mapping;
- 	pgoff_t start = readahead_index(ractl);
-@@ -469,6 +469,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 	int err = 0;
- 	gfp_t gfp = readahead_gfp_mask(mapping);
- 	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
-+	unsigned int new_order = ra->order;
- 
- 	/*
- 	 * Fallback when size < min_nrpages as each folio should be
-@@ -483,6 +484,8 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
- 	new_order = max(new_order, min_order);
- 
-+	ra->order = new_order;
+-	/*
+-	 * mmap read-around
+-	 */
+ 	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+-	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
+-	ra->size = ra->ra_pages;
+-	ra->async_size = ra->ra_pages / 4;
+-	ra->order = 0;
++	if (vm_flags & VM_EXEC) {
++		/*
++		 * Allow arch to request a preferred minimum folio order for
++		 * executable memory. This can often be beneficial to
++		 * performance if (e.g.) arm64 can contpte-map the folio.
++		 * Executable memory rarely benefits from readahead, due to its
++		 * random access nature, so set async_size to 0.
++		 *
++		 * Limit to the boundaries of the VMA to avoid reading in any
++		 * pad that might exist between sections, which would be a waste
++		 * of memory.
++		 */
++		struct vm_area_struct *vma = vmf->vma;
++		unsigned long start = vma->vm_pgoff;
++		unsigned long end = start + ((vma->vm_end - vma->vm_start) >> PAGE_SHIFT);
++		unsigned long ra_end;
 +
- 	/* See comment in page_cache_ra_unbounded() */
- 	nofs = memalloc_nofs_save();
- 	filemap_invalidate_lock_shared(mapping);
-@@ -525,6 +528,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
- 	 * ->readahead() may have updated readahead window size so we have to
- 	 * check there's still something to read.
- 	 */
-+	ra->order = 0;
- 	if (ra->size > index - start)
- 		do_page_cache_ra(ractl, ra->size - (index - start),
- 				 ra->async_size);
-@@ -614,8 +618,9 @@ void page_cache_sync_ra(struct readahead_control *ractl,
- 	ra->size = min(contig_count + req_count, max_pages);
- 	ra->async_size = 1;
- readit:
-+	ra->order = 0;
- 	ractl->_index = ra->start;
--	page_cache_ra_order(ractl, ra, 0);
-+	page_cache_ra_order(ractl, ra);
- }
- EXPORT_SYMBOL_GPL(page_cache_sync_ra);
- 
-@@ -626,7 +631,6 @@ void page_cache_async_ra(struct readahead_control *ractl,
- 	struct file_ra_state *ra = ractl->ra;
- 	pgoff_t index = readahead_index(ractl);
- 	pgoff_t expected, start, end, aligned_end;
--	unsigned int order = folio_order(folio);
- 
- 	/* no readahead */
- 	if (!ra->ra_pages)
-@@ -649,7 +653,7 @@ void page_cache_async_ra(struct readahead_control *ractl,
- 	 * Ramp up sizes, and push forward the readahead window.
- 	 */
- 	expected = round_down(ra->start + ra->size - ra->async_size,
--			1UL << order);
-+			1UL << folio_order(folio));
- 	if (index == expected) {
- 		ra->start += ra->size;
- 		/*
-@@ -678,14 +682,14 @@ void page_cache_async_ra(struct readahead_control *ractl,
- 	ra->size += req_count;
- 	ra->size = get_next_ra_size(ra, max_pages);
- readit:
--	order += 2;
-+	ra->order += 2;
- 	end = ra->start + ra->size;
--	aligned_end = round_down(end, 1UL << order);
-+	aligned_end = round_down(end, 1UL << ra->order);
- 	if (aligned_end > ra->start)
- 		ra->size -= end - aligned_end;
- 	ra->async_size = ra->size;
- 	ractl->_index = ra->start;
--	page_cache_ra_order(ractl, ra, order);
-+	page_cache_ra_order(ractl, ra);
- }
- EXPORT_SYMBOL_GPL(page_cache_async_ra);
- 
++		ra->order = exec_folio_order();
++		ra->start = round_down(vmf->pgoff, 1UL << ra->order);
++		ra->start = max(ra->start, start);
++		ra_end = round_up(ra->start + ra->ra_pages, 1UL << ra->order);
++		ra_end = min(ra_end, end);
++		ra->size = ra_end - ra->start;
++		ra->async_size = 0;
++	} else {
++		/*
++		 * mmap read-around
++		 */
++		ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
++		ra->size = ra->ra_pages;
++		ra->async_size = ra->ra_pages / 4;
++		ra->order = 0;
++	}
+ 	ractl._index = ra->start;
+ 	page_cache_ra_order(&ractl, ra);
+ 	return fpin;
 -- 
 2.43.0
 
