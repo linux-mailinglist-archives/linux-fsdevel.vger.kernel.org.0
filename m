@@ -1,210 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-47705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05BBAAA4565
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 10:30:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B27DAAA45D4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 10:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F08A9A35D1
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 08:29:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18C581C04AC5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 08:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568BC219EAD;
-	Wed, 30 Apr 2025 08:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VIjl0B80";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="34ylF4mT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0KLLECP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0xeY6gNN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7566A21930B;
+	Wed, 30 Apr 2025 08:44:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28546218587
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 08:27:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31F621767D;
+	Wed, 30 Apr 2025 08:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001676; cv=none; b=NlD1MNm5MkXqLoE68bquDizVCqVtacYyw+SPJAN8lE3yun/V5Mq/rL8DWuJX5T16ehnciVX2pBe/TjNqMYuckvnggy3MomCT+oxgqVh0V24VOUaOYMWZCIICpXICWNRwvlx+RbcwEE3/te9JJPcm2ng0DPAJJS1dpfrtUiPhy9o=
+	t=1746002676; cv=none; b=K8cGrqbX1RQ/XRn8jwuknyIR1CoFa3XBlfQTb1pr82fatd1+v8SXXeDes5fjgrR41Zg68Q3MIiBwMps+s6fjp8W7Y7O76yWVzGYLltgItk5XZ1oXsBrrBfD2apVMdHJvOSg8aJNVS2/VN5B1k9Z+3QopSpEw7t75ph7bpX28974=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001676; c=relaxed/simple;
-	bh=KP0WbRYyXweFla+W9yKoUm82l153JkxLlFZrvyQgDFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q8KFLPICqit3Oxv30F8UoOKLxynbOpK6UXgrQjR+5UcfWI3oUDSsHJ1Ss+XxazQbrSAYn7Hv5BMwQ2aShSnvCph6J2wG3/DuGkMQ7z31dUWJ3oS75NyeByyc2pg7+VhAJhrvUZms+7UdeBCF97D2RCbOt3gMv1djLLwazgnXc0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VIjl0B80; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=34ylF4mT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0KLLECP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0xeY6gNN; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 53CF51F7BF;
-	Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746001667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
-	b=VIjl0B80Uh3OUx3+Pshx9kY6dUdBWDIAmXxE40ltIMkkAw6HJy5NF8n2wR/Vw/N6U//Mz/
-	q43tMlVKwvxlPjDZIZ36pWNmVElVfkBF4fjZjXjb+R/BwO3W7x7vCttQLcGPSfe9+U5wkc
-	VwECC9C1r4ivjILpHWOsw+9pE8Eo2RM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746001667;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
-	b=34ylF4mTZj3STtfYtJGb1S3C6Ei9P7OlRGBTUYXWqsGldxCwQKSpPz7iANglSxXlRrs4UZ
-	c6LQlp1HcrReJHAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r0KLLECP;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0xeY6gNN
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746001666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
-	b=r0KLLECPsP8+xL6H7OibzAZq/4xdyKExIWg8qM+i0x7PUIvIfnbE2dV7hSQSAO3cIBumqi
-	iHq36qGokctFQcDoZgBGcdJsLcvBgorABMY+VR57Zx07RQ/nE28cZng+QrN6ez4u6DgzTN
-	vxn1r/IhXvabSNT2XWH1rCieh1qKkJg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746001666;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
-	b=0xeY6gNNADEAcP/1u5v0rxgig/6h7Zy3mSE8sNHy7Dg42tJTDMR6SpT4vFQFK1wPPVq3nS
-	3P54IpBgpCUANGCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 47A4D139E7;
-	Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 4yVvEQLfEWgaEAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 30 Apr 2025 08:27:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 05DDEA0AF0; Wed, 30 Apr 2025 10:27:45 +0200 (CEST)
-Date: Wed, 30 Apr 2025 10:27:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Damato <jdamato@fastly.com>, 
-	stable@vger.kernel.org
-Subject: Re: [PATCH] fs/eventpoll: fix endless busy loop after timeout has
- expired
-Message-ID: <diilyq37i35qlll7hu3si6dqrjntiif5gzajazkgtqvfsi4kgg@yr3v562urmjp>
-References: <20250429185827.3564438-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1746002676; c=relaxed/simple;
+	bh=hMq64hngGFSstWOr2pEMUIC+DWCr0d63A5M0vCkc+k0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q3QaGNLIgekeuds+Ul2UDK5pRSMvnvWlQyGyEX7pJn1Akv9Tnshp7dr1kU96Jhlc3Ze2BlBNr8qno4vyEO2g9E+IUB/0xmU9VtoHEorAtgzxA3JoSzdzADOGF8pRiNIMk5z8TkUlF3d7Cq9NVQDD/MidDFUHX0qd3uTeF5+uWfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4ZnW1s34sSz4f3lCm;
+	Wed, 30 Apr 2025 16:44:01 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 2B8041A1653;
+	Wed, 30 Apr 2025 16:44:27 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCnC2Dp4hFomugCLA--.14448S3;
+	Wed, 30 Apr 2025 16:44:26 +0800 (CST)
+Message-ID: <8c1f9230-a475-4fc3-9b2d-5f11f5122bb3@huaweicloud.com>
+Date: Wed, 30 Apr 2025 16:44:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250429185827.3564438-1-max.kellermann@ionos.com>
-X-Rspamd-Queue-Id: 53CF51F7BF
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] ext4: fix incorrect punch max_end
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ wanghaichi0403@gmail.com, yi.zhang@huawei.com, libaokun1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250430011301.1106457-1-yi.zhang@huaweicloud.com>
+ <20250430011301.1106457-2-yi.zhang@huaweicloud.com>
+ <ykm27jvrnmhgd4spslhn4mano452c6z34fab7r3776dmjkgo7q@cv2lvsiteufa>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <ykm27jvrnmhgd4spslhn4mano452c6z34fab7r3776dmjkgo7q@cv2lvsiteufa>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCnC2Dp4hFomugCLA--.14448S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uF1ktw4DXrWrurWUArykAFb_yoW8ArW5pF
+	y3C3WUKw4kuay7u3yFqF45ZFnFy3Z5AF4UXrWrWr13Wa43C34SkFyjgayjv3W2vw4Ikw40
+	q3s8tryfA34j9aDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	7KsUUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Tue 29-04-25 20:58:27, Max Kellermann wrote:
-> After commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in
-> the future"), the following program would immediately enter a busy
-> loop in the kernel:
+On 2025/4/30 16:18, Jan Kara wrote:
+> On Wed 30-04-25 09:12:59, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> For the extents inodes, the maxbytes should be sb->s_maxbytes instead of
+>> sbi->s_bitmap_maxbytes. Correct the maxbytes value to correct the
+>> behavior of punch hole.
+>>
+>> Fixes: 2da376228a24 ("ext4: limit length to bitmap_maxbytes - blocksize in punch_hole")
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 > 
-> ```
-> int main() {
->   int e = epoll_create1(0);
->   struct epoll_event event = {.events = EPOLLIN};
->   epoll_ctl(e, EPOLL_CTL_ADD, 0, &event);
->   const struct timespec timeout = {.tv_nsec = 1};
->   epoll_pwait2(e, &event, 1, &timeout, 0);
-> }
-> ```
+> Thinking about this some more...
 > 
-> This happens because the given (non-zero) timeout of 1 nanosecond
-> usually expires before ep_poll() is entered and then
-> ep_schedule_timeout() returns false, but `timed_out` is never set
-> because the code line that sets it is skipped.  This quickly turns
-> into a soft lockup, RCU stalls and deadlocks, inflicting severe
-> headaches to the whole system.
+>> @@ -4015,6 +4015,12 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
+>>  	trace_ext4_punch_hole(inode, offset, length, 0);
+>>  	WARN_ON_ONCE(!inode_is_locked(inode));
+>>  
+>> +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+>> +		max_end = sb->s_maxbytes;
+>> +	else
+>> +		max_end = EXT4_SB(sb)->s_bitmap_maxbytes;
+>> +	max_end -= sb->s_blocksize;
 > 
-> When the timeout has expired, we don't need to schedule a hrtimer, but
-> we should set the `timed_out` variable.  Therefore, I suggest moving
-> the ep_schedule_timeout() check into the `timed_out` expression
-> instead of skipping it.
+> I think the -= sb->s_blocksize is needed only for indirect-block based
+> scheme (due to an implementation quirk in ext4_ind_remove_space()). But
+> ext4_ext_remove_space() should be fine with punch hole ending right at
+> sb->s_maxbytes. And since I find it somewhat odd that you can create file
+> upto s_maxbytes but cannot punch hole to the end, it'd limit that behavior
+> as much as possible. Ideally we'd fix ext4_ind_remove_space() but I can't
+> be really bothered for the ancient format...
 > 
-> Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
-> Cc: Joe Damato <jdamato@fastly.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-I agree this makes the logic somewhat more obvious than Joe's fix so feel
-free to add:
+Yes, I share your feelings. Currently, we do not seem to have any
+practical issues. To maintain consistent behavior between the two inode
+types and to keep the code simple, I retained the -= sb->s_blocksize
+operation. Would you suggest that we should at least address the extents
+inodes by removing the -=sb->s_blocksize now?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Thanks,
+Yi.
 
-Thanks!
-
-								Honza
-
-> ---
->  fs/eventpoll.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 4bc264b854c4..d4dbffdedd08 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -2111,9 +2111,10 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  
->  		write_unlock_irq(&ep->lock);
->  
-> -		if (!eavail && ep_schedule_timeout(to))
-> -			timed_out = !schedule_hrtimeout_range(to, slack,
-> -							      HRTIMER_MODE_ABS);
-> +		if (!eavail)
-> +			timed_out = !ep_schedule_timeout(to) ||
-> +				!schedule_hrtimeout_range(to, slack,
-> +							  HRTIMER_MODE_ABS);
->  		__set_current_state(TASK_RUNNING);
->  
->  		/*
-> -- 
-> 2.47.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
 
