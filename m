@@ -1,212 +1,238 @@
-Return-Path: <linux-fsdevel+bounces-47789-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47790-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A8CAAA57AE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 23:58:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC3DCAA57F3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 00:24:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 768054C5EEE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 21:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76BF93ABEB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 22:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17B9221F20;
-	Wed, 30 Apr 2025 21:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39822253A7;
+	Wed, 30 Apr 2025 22:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K5SxxCSg"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="37EeOJmL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D54220698
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 21:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5812C34545
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 22:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746050303; cv=none; b=nkN+coO8cLazDCRldrPN5QufQBdEmKqyEDrkmn2shp2d3xfrN7d0oUJUhO2XRNc0bOEYqO+qjOisc7bvmZaiOFJv/ribUnIeTBOScpv00fVw9hHSFtprQzUByLoTuwbENHpvCixmuElyftr7npOEpxloidaatQxDouVZ126BZXo=
+	t=1746051867; cv=none; b=GtAk0yYASMR7i2lAEM5wYsegMc/qaWnig5eGVHbGGDX/4awOAraXDyr3etVaPARHSY0otK0y54KTMU5h6ivG0Ha5KJWMLfmKOMsqFYMLs1W/0ihHGxZZWZxdqeIserQzTUbccwmgfeHeui23/iyR4nDcOrPy3FCfQnfviSSg6/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746050303; c=relaxed/simple;
-	bh=OSlLfiT7oPSVW0Vhu/WXB7k0cz6UDEiznLAGwSMZ3m4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bhSXwDNQEi7i6mRwQ0z+0Xsu7xlFslTnV1/UTwqzcn9F7/1Y5JF3SJihf9ZF7QGNeMIsvrDKe5djv8wP6zBMkBYdGE8b0GIdgqjo8cRnaLuu5ULurqZ3cXTOr6V5Qx+YzuMxjQKVEBg10HvPNXyGkParMato72mpIuGXmBWxbuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K5SxxCSg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746050300;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ZAaCJDVeUqC/iRZsZzcfKKZg/z12nJeHt7AWXEHu+W8=;
-	b=K5SxxCSg91mgDaA/l5FMOiWk9Jtp0Iuu4Hz/Xfcad5HmYh30n8t7gpdb8kHhkfeQRTjldn
-	TUWZrxVvup1fIzb3Bh6eHsBcf86iim8usVDEkxH3oLN2g4MLxVEtXXL2eTGpzEM0jum2pu
-	rEUu16z9RxrqoQgjGE/OCw0c04Ytj0I=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-428-_B_FlyXoOxGj6xMqjVfKlw-1; Wed, 30 Apr 2025 17:58:18 -0400
-X-MC-Unique: _B_FlyXoOxGj6xMqjVfKlw-1
-X-Mimecast-MFC-AGG-ID: _B_FlyXoOxGj6xMqjVfKlw_1746050296
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-39126c3469fso71013f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 14:58:18 -0700 (PDT)
+	s=arc-20240116; t=1746051867; c=relaxed/simple;
+	bh=XUNiapQ3xbVcqbsb25qLtByac0s7+WQgBwW6DMvVUyk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8gHTxpL55OFpT60aLp/y9ewu5Vsi4bWQHS/qPqB942Mb3M/K+HxLLXIju21xjOqt4B79APX2S1vU9DewLt6xTtzkMu/ilZinJqKmV3bubi09TqigxzZ9aQNsXtjP6H2+vSZH9q39fn2qXUEcftRNwJvsq4tMFvVvQY5l/e4vjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=37EeOJmL; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5f88f236167so1552a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 15:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746051863; x=1746656663; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XUNiapQ3xbVcqbsb25qLtByac0s7+WQgBwW6DMvVUyk=;
+        b=37EeOJmLnnYZg8UsocxqQIuTdOohrn0EuYO9JThx6DdCAck+j6D0RTN4VCj+Vb6TJR
+         a3OSRp6yQLBNUFvhj0yidHG4Qu+r9TlU+vQu3Bexm+LA7MOef8YStBhLxujQeiy98VXH
+         J47x4vP14nRqfb6FhAi0UVml3wvBheCH9x1G06f2GZgOSET310y2JDgeHdV/6IkimnjK
+         7NES2znqK89WFEryUrMRJ1lgNyl014oBXby1iMT7SqI1cEl0rgSe4ae2usAqxxY+l6ov
+         82vq0PJ2Zy9A+/tPRQF46tnzE2E4An843mh3hdQdK4TrT5JlBc9nFC+wV/yilR3hH4hD
+         BK/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746050296; x=1746655096;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZAaCJDVeUqC/iRZsZzcfKKZg/z12nJeHt7AWXEHu+W8=;
-        b=HS6gS3RZvmMfszjXwuXfw8dkJ3svbSSgPF19fLpr+a0cEtQB8rQH9pFPxVswzXNQRZ
-         z5GvlNzk/mdH01JBmGdBrHw+TIWBPFbqz/8XbTHPsB7IJOaH6mwgty1w8Ish0+PT3UJn
-         3m96ZBagjE2JtseGiMomS0Uo1mMZNLBp5Vx4lNHPd4shP2//ePcye/QNm0nJHywdKkkN
-         q0fia7bOXJ3mZZVtEEso9UMqC8Cj5IAx4eUztorqVSJzT8wS+eaBw7v8d8Iu42U6bS4Y
-         rp9sBdEWVR0vgsuPNSol/PikACVA3+DuY+f0jEVsl4lyvdaFk9TpyJZ5RMgqY45uIsh3
-         2S2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWVjgoN2M1arrFjzaaQ4uRdd8i4nCngl8st30bykXZfpESsWkTNZScjyBvuB27HmK+lAUUNSlgXJu5U8Vf3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMHZsGPaelu/n4jt/I5nJs5rdvh6YseMtmOdnrHB1EJjopqTA9
-	qyUs8DZ8G2E0OuEIqQ1+lCDqjn5JA7wJBZqwZPLVsp7kAgQh3sjw3r0DxVEWLd+zNZxhe3M3kIQ
-	JFvuoWYw9nTlAvHv8NFf3EhSfvqgw5dMJOyy7mOg1JCTXW+Xzh9T26j/w4H9X3YU=
-X-Gm-Gg: ASbGnctKQhQT4QO5nzCBBksLz37AeBdlf1VVl2hjOKmgz9QdbDizKgXjSE3j+FK6TIR
-	8bX6fldn6uFhvTRL7ISTQgrz1lDbmhQxaFeagXuWSH5VR54KIBXAVCSE7yjaUAmNF1CZXBvZOnC
-	m8yZq+pUH4roOHzssMXGP1ydLO+oIRVuSKrtHY7sRUCeCqFUhi7abfmofrmhs+ETeyxaNypB3+a
-	cknz1hpwNACmncNLdQzEfDJC4kSEdr8F2X42Tp+z2Nm6g8+/SeGhXK1MQQj8K0S78ns90IqxTRb
-	vmQ71+A0jL8+vEhYNFpYjWjURyJO2W1eCEepSVx62w==
-X-Received: by 2002:a5d:64a5:0:b0:39f:efb:c2f6 with SMTP id ffacd0b85a97d-3a094053655mr72094f8f.33.1746050296028;
-        Wed, 30 Apr 2025 14:58:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIUfs9wV073mQDXRyQLoTF/v/RVuHpOr0Qx8MhdARsvRHVgQY3znuEKqA1Jf53XmKmX6ViRw==
-X-Received: by 2002:a5d:64a5:0:b0:39f:efb:c2f6 with SMTP id ffacd0b85a97d-3a094053655mr72076f8f.33.1746050295698;
-        Wed, 30 Apr 2025 14:58:15 -0700 (PDT)
-Received: from [192.168.3.141] (p4ff231f0.dip0.t-ipconnect.de. [79.242.49.240])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073e5d264sm18470464f8f.95.2025.04.30.14.58.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Apr 2025 14:58:15 -0700 (PDT)
-Message-ID: <7ab1743b-8826-44e8-ac11-283731ef51e1@redhat.com>
-Date: Wed, 30 Apr 2025 23:58:14 +0200
+        d=1e100.net; s=20230601; t=1746051863; x=1746656663;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XUNiapQ3xbVcqbsb25qLtByac0s7+WQgBwW6DMvVUyk=;
+        b=dqoj6A2i9J8aQhc2yLbFx5X6HdLkVwk2JFFdhKNhiYqtz0aTPa5JVDhpYa2opD9uf/
+         GbCg8AMRDDOMl6oopDbABCgiUC9Bs7vjU6dKk08Ay2QyNSzfckgxelTVogA1yAfXatMD
+         DnHQcIrUdqyp6Eq7wWxSb8WQwCquvRJRNmiCI4QvduDbuzMB4pdn/0W/6sxDIoCEdN35
+         dsSE7ghD7TAzN5Es3D1fWq6G/K7TQVSNcPxwqfbGAeSjox7JfTytApNxSO1qMQ95qlKX
+         /MbzewYt19+ekLzxTJX1gg61FuuuNEjAWHQdWR0DSaGQDbqEi1AOQIl+8D7fPJ6l+YkR
+         Py4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPf3haIU+hlk+IB1CsZdvnbgb99GNHYYrOX3Kkpwk28PmCPUPZ2WbJgfUkJ5JWe/DnUGLFW/WNw6+QPCdx@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9YsxZddv5vpSLDJUpW7/nRZh7doA42Em58DWkzJB3+TYBNzUI
+	YC7OZnJQ/PtyNwjCMGDb+vQHpr7mN7DlV69Rp2KnrVdsx4tDqvhWVAi01FuvPTZSLZPLmuc818x
+	ybaf2xZaweOWLRqXodHqZtQkfQ4dmzBOcYYVx
+X-Gm-Gg: ASbGncuG8arlFEkMYyvNR9fG52zwrhxnS2TQReMi7wNq1DkxgPsIKzI0MmInh/wUx5t
+	uHTEDWC7ychmuGsHD2QZrT4J3bY6DloAH7/k0ZxrFyUhYYhb3yGibv9fxcG3QREZbkVNhVROcw6
+	p9tlqp1yQV/s2Cbhc8gWHDSKyXQKDD8tg8D5jkIVu5LnKs2FZiQ6I=
+X-Google-Smtp-Source: AGHT+IFVcSZqF3LSwjizhWIDIAGbMvuwlg83EEH88/bio2Bjc5ERIX+1GSG2WXLcYBnNvvC4Sn5lwOVMlFwInA3a9MA=
+X-Received: by 2002:aa7:cc12:0:b0:5e4:9ee2:afe1 with SMTP id
+ 4fb4d7f45d1cf-5f9132eb267mr41793a12.2.1746051863339; Wed, 30 Apr 2025
+ 15:24:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/3] mm: introduce new .mmap_proto() f_op callback
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@kernel.org>
-References: <cover.1746040540.git.lorenzo.stoakes@oracle.com>
- <f1bf4b452cc10281ef831c5e38ce16f09923f8c5.1746040540.git.lorenzo.stoakes@oracle.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
- 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
- rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
- wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
- 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
- pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
- KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
- BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
- 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
- 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
- M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
- boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
- 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
- XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
- a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
- Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
- 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
- kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
- th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
- jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f1bf4b452cc10281ef831c5e38ce16f09923f8c5.1746040540.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <aAZMe21Ic2sDIAtY@harry> <aAa-gCSHDFcNS3HS@dread.disaster.area>
+ <aAttYSQsYc5y1AZO@harry> <CAG48ez3W8-JH4QJsR5AS1Z0bLtfuS3qz7sSVtOH39vc_y534DQ@mail.gmail.com>
+ <aBIhen0HXGgQf_d5@harry>
+In-Reply-To: <aBIhen0HXGgQf_d5@harry>
+From: Jann Horn <jannh@google.com>
+Date: Thu, 1 May 2025 00:23:47 +0200
+X-Gm-Features: ATxdqUGBf-5tMzw_PZpBetjJLb-AbditMFVlki6zbVxQVlraj4l0hnwwuUfe3hc
+Message-ID: <CAG48ez3z6YPo9f_m5ErYJQi9O7DGdibBWqF1BqxVGN9AfvpMgA@mail.gmail.com>
+Subject: Re: [DISCUSSION] Revisiting Slab Movable Objects
+To: Harry Yoo <harry.yoo@oracle.com>
+Cc: Dave Chinner <david@fromorbit.com>, Christoph Lameter <cl@linux.com>, 
+	David Rientjes <rientjes@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, "Tobin C. Harding" <tobin@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, Rik van Riel <riel@surriel.com>, 
+	Andrea Arcangeli <aarcange@redhat.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Pedro Falcato <pfalcato@suse.de>, 
+	David Hildenbrand <david@redhat.com>, Oscar Salvador <osalvador@suse.de>, Michal Hocko <mhocko@kernel.org>, 
+	Byungchul Park <byungchul@sk.com>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 30.04.25 21:54, Lorenzo Stoakes wrote:
-> Provide a means by which drivers can specify which fields of those
-> permitted to be changed should be altered to prior to mmap()'ing a
-> range (which may either result from a merge or from mapping an entirely new
-> VMA).
-> 
-> Doing so is substantially safer than the existing .mmap() calback which
-> provides unrestricted access to the part-constructed VMA and permits
-> drivers and file systems to do 'creative' things which makes it hard to
-> reason about the state of the VMA after the function returns.
-> 
-> The existing .mmap() callback's freedom has caused a great deal of issues,
-> especially in error handling, as unwinding the mmap() state has proven to
-> be non-trivial and caused significant issues in the past, for instance
-> those addressed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
-> error path behaviour").
-> 
-> It also necessitates a second attempt at merge once the .mmap() callback
-> has completed, which has caused issues in the past, is awkward, adds
-> overhead and is difficult to reason about.
-> 
-> The .mmap_proto() callback eliminates this requirement, as we can update
-> fields prior to even attempting the first merge. It is safer, as we heavily
-> restrict what can actually be modified, and being invoked very early in the
-> mmap() process, error handling can be performed safely with very little
-> unwinding of state required.
-> 
-> Update vma userland test stubs to account for changes.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Wed, Apr 30, 2025 at 3:11=E2=80=AFPM Harry Yoo <harry.yoo@oracle.com> wr=
+ote:
+> On Mon, Apr 28, 2025 at 05:31:35PM +0200, Jann Horn wrote:
+> > On Fri, Apr 25, 2025 at 1:09=E2=80=AFPM Harry Yoo <harry.yoo@oracle.com=
+> wrote:
+> > > On Tue, Apr 22, 2025 at 07:54:08AM +1000, Dave Chinner wrote:
+> > > > On Mon, Apr 21, 2025 at 10:47:39PM +0900, Harry Yoo wrote:
+> > > > > Hi folks,
+> > > > >
+> > > > > As a long term project, I'm starting to look into resurrecting
+> > > > > Slab Movable Objects. The goal is to make certain types of slab m=
+emory
+> > > > > movable and thus enable targeted reclamation, migration, and
+> > > > > defragmentation.
+> > > > >
+> > > > > The main purpose of this posting is to briefly review what's been=
+ tried
+> > > > > in the past, ask people why prior efforts have stalled (due to la=
+ck of
+> > > > > time or insufficient justification for additional complexity?),
+> > > > > and discuss what's feasible today.
+> > > > >
+> > > > > Please add anyone I may have missed to Cc. :)
+> > > >
+> > > > Adding -fsdevel because dentry/inode cache discussion needs to be
+> > > > visible to all the fs/VFS developers.
+> > > >
+> > > > I'm going to cut straight to the chase here, but I'll leave the res=
+t
+> > > > of the original email quoted below for -fsdevel readers.
+> > > >
+> > > > > Previous Work on Slab Movable Objects
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >
+> > > > <snip>
+> > > >
+> > > > Without including any sort of viable proposal for dentry/inode
+> > > > relocation (i.e. the showstopper for past attempts), what is the
+> > > > point of trying to ressurect this?
+> > >
+> > > Migrating slabs still makes sense for other objects such as xarray / =
+maple
+> > > tree nodes, and VMAs.
+> >
+> > Do we have examples of how much memory is actually wasted on
+> > sparsely-used slabs, and which slabs this happens in, from some real
+> > workloads?
+>
+> Workloads that uses a large amount of reclaimable slab memory (inode,
+> dentry, etc.) and triggers reclamation can observe this problem.
+>
+> On my laptop, I can reproduce the problem by running 'updatedb' command
+> that touches many files and triggering reclamation by running programs
+> that consume large amount of memory. As slab memory is reclaimed, it beco=
+mes
+> sparsely populated (as slab memory is not reclaimed folio by folio)
+>
+> During reclamation, the total slab memory utilization drops from 95% to 5=
+0%.
+> For very sparsely populated caches, the cache utilization is between
+> 12% and 33%. (ext4_inode_cache, radix_tree_node, dentry, trace_event_file=
+,
+> and some kmalloc caches on my machine).
+>
+> At the time OOM-killer is invoked, there's about 50% slab memory wasted
+> due to sparsely populated slabs, which is about 236 MiB on my laptop.
+> I would say it's a sufficiently big problem to solve.
+>
+> I wonder how worse this problem would be on large file servers,
+> but I don't run such servers :-)
+>
+> > If sparsely-used slabs are a sufficiently big problem, maybe another
+> > big hammer we have is to use smaller slab pages, or something along
+> > those lines? Though of course a straightforward implementation of that
+> > would probably have negative effects on the performance of SLUB
+> > fastpaths, and depending on object size it might waste more memory on
+> > padding.
+>
+> So it'll be something like prefering low orders when in calculate_order()
+> while keeping fractional waste reasonably.
+>
+> One problem could be making n->list_lock contention much worse
+> on larger machines as you need to grab more slabs from the list?
 
+Maybe. I imagine using batched operations could help, such that the
+amount of managed memory that is transferred per locking operation
+stays the same...
 
-I really don't like the "proto" terminology. :)
+> > (An adventurous idea would be to try to align kmem_cache::size such
+> > that objects start at some subpage boundaries of SLUB folios, and then
+> > figure out a way to shatter SLUB folios into smaller folios at runtime
+> > while they contain objects... but getting the SLUB locking right for
+> > that without slowing down the fastpath for freeing an object would
+> > probably be a large pain.)
+>
+> You can't make virt_to_slab() work if you shatter a slab folio
+> into smaller ones?
 
-[yes, David and his naming :P ]
+Yeah, I think that would be hard. We could maybe avoid the
+virt_to_slab() on the active-slab fastpath, and maybe there is some
+kind of RCU-transition scheme that could be used on the path for
+non-active slabs (a bit similarly to how percpu refcounts transition
+to atomic mode, with a transition period where objects are allowed to
+still go on the freelist of the former head page)...
 
-No, the problem is that it is fairly unintuitive what is happening here.
+> A more general question: will either shattering or allocating
+> smaller slabs help free more memory anyway? It likely depends on
+> the spatial pattern of how the objects are reclaimed and remain
+> populated within a slab?
 
-Coming from a different direction, the callback is trigger after 
-__mmap_prepare() ... could we call it "->mmap_prepare" or something like 
-that? (mmap_setup, whatever)
+Probably, yeah.
 
-Maybe mmap_setup and vma_setup_param? Just a thought ...
+As a crude thought experiment, if you (somewhat pessimistically?)
+assume that the spatial pattern is "we first allocate a lot of
+objects, then for each object we roll a random number and free it with
+a 90% probability", and you have something like a kmalloc-512 slab
+(normal order 2, which fits 32 objects), then the probability that an
+entire order-2 page will be empty would be
+pow(0.9, 32) ~=3D 3.4%
+while the probability that an individual order-0 page is empty would be
+pow(0.9, 8) ~=3D 43%
+There could be patterns that are worse, like "we preserve exactly
+every fourth object"; though SLUB's freelist randomization (if
+CONFIG_SLAB_FREELIST_RANDOM is enabled) would probably transform that
+into a different pattern, so that it's not actually a sequential
+pattern where every fourth object is allocated.
 
+In case you want to do more detailed experiments with this: FYI, I
+have a branch "slub-binary-snapshot" at https://github.com/thejh/linux
+with a draft patch that provides a debugfs API for getting a binary
+dump of SLUB allocations (I wrote that patch for another project):
+https://github.com/thejh/linux/commit/685944dc69fd21e92bf110713b491d5c05032=
+8af
+- maybe with some changes that would be useful for analyzing SLUB
+fragmentation from userspace.
 
-In general (although it's late in Germany), it does sound like an 
-interesting approach.
-
-How feasiable is it to remove ->mmap in the long run, and would we maybe 
-need other callbacks to make that possible?
-
-
--- 
-Cheers,
-
-David / dhildenb
-
+But IDK if that's a good way to experiment with this, or if it'd be
+easier to directly analyze fragmentation in debugfs code in SLUB.
 
