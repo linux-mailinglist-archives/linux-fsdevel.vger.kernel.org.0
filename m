@@ -1,65 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-47763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEBCAA5671
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 23:06:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7276AA5679
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 23:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70AAE1C02D7A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 21:07:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A13679C6B9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 21:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D010A26AA83;
-	Wed, 30 Apr 2025 21:06:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FD92C1080;
+	Wed, 30 Apr 2025 21:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Bm7AUtyf"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XPENOww+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C58251DE891
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 21:06:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BCD025E454
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 21:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746047212; cv=none; b=UtnEmo2uyL38ce6OoNmb74I3QE9lNSRmuvS7tTMl1hYBZLS/iUqb587QAidlQj81rSHk5YpYnaKz24o2iUb4mmanzFhR1z3pAlJZQwb4Sh4p/LXOYqMmMf4HOx/kfuju9hqZlBJMAtaCpmHG1CmKrjf9cjoNm7GAczkb/9S08/Q=
+	t=1746047303; cv=none; b=szx6XkPId9mfsocUGqSuAEPdPwpH2cCIWtcXOcc5fmCb1gPbs1Y+Sko1FuUbO7fh9dUX38LVZs5Rio/mGshDHjWamk8bRNDqs5eTSgSYh4D567h1F6NcWYLpfpafr61zpr2FjZGWn63T5sxWprSLUxtv892lrU7Wgyjj5i35FOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746047212; c=relaxed/simple;
-	bh=mTyJDEtXg9QplZ+sAVFBykImRpGaev1FnKVSq5MyJOk=;
+	s=arc-20240116; t=1746047303; c=relaxed/simple;
+	bh=1WlT2SrSfy0Td2d5Rk5U/Sxd4MjTMw+198rYgCZ7nok=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G0G/TUdIkR+lrVFX08ZyhUNQkdjew4EP/pm7C1FrDy8oiB1evbYKA+wF/Mep2Z7KVQLKGdsOEBoISfQIrnJJqh0wcHDV9EQrmWWQG7RE3PzMWk6rTfuptGImLj9cYIy/BgSECM1xPtBbRGqUy3HHZMXDgLIwDWFeHM4C4KtaFhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Bm7AUtyf; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746047211; x=1777583211;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=mTyJDEtXg9QplZ+sAVFBykImRpGaev1FnKVSq5MyJOk=;
-  b=Bm7AUtyfQS+sgMuPuJdr/STwaOLsiChPTIymjZID5awWUfm5ZsdyzeeZ
-   IYht8qSPNDK4pqZL6SfKf9U7mI6bETxR2sKFk2u19GmY8ClVSZY9n70or
-   taUdcOg6rgxS4WVdE57C7O+rbUQqi6/RtlHvAdfZ4Y2UjccpEzsmyDIE1
-   vbfGlc9+BSg0XO66hrj3d2ncBXHLDrg7fXBbNFvxUKnucMnUzKMom8jUs
-   K89zkmiwF4aA9K1YrwHqjqNzKPmQLT2DA+8f/BUS/CuEK81wPL+BMxiF8
-   tUdizrsBmtlJaSZA1Wj1PDhSp9eRAVM4JnmRagyeEqlR8TKpEus2sUjsy
-   Q==;
-X-CSE-ConnectionGUID: X2oLgUUTQSq3fb/lvGiIpQ==
-X-CSE-MsgGUID: dnHKZgE6RuKC9NIIhpcnFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11419"; a="65256248"
-X-IronPort-AV: E=Sophos;i="6.15,252,1739865600"; 
-   d="scan'208";a="65256248"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 14:06:49 -0700
-X-CSE-ConnectionGUID: dIJ5/3RgQz67iopru3HvMQ==
-X-CSE-MsgGUID: EMMPyNccRtiXNCpu8mI+Mw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,252,1739865600"; 
-   d="scan'208";a="139200525"
-Received: from tfalcon-desk.amr.corp.intel.com (HELO [10.124.223.193]) ([10.124.223.193])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Apr 2025 14:06:46 -0700
-Message-ID: <86a9656f-211c-4af5-9d19-9565e83fb56d@intel.com>
-Date: Wed, 30 Apr 2025 14:06:43 -0700
+	 In-Reply-To:Content-Type; b=ELN1gtIaXGou7+1xzdF5jgNwoHSl8KLsnbUuxw+yRTvaK9ssNpNAw4SNY67KNpxWl53JZg9vh0eDQieRUXnGWZ3mX8fPpKelYH5YLaM1NYJWpzWzRiJwuPQrPDGKQIGTKkMqWQeTTsmQjI+mcvv5VoguGW21/nFSekvH9JaL2MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XPENOww+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746047296;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=01jBPxnqk92t1rPGznj6ym7/qLqG6tY/jU5pL3ZoH4k=;
+	b=XPENOww+hTX+N4/wV/vMoOzJgiaRulnIcxUJauskB0pz5ljv3hztSelULRguk23vG9ruHp
+	YMJZpsCgWWAjtS9GdTmI/Jv0FZxtgGF4zIOepAauIXM3l2LNEBBJsw0RYmbDwqd4zdoh86
+	QhFUo35YPi4LG7+HjDTsDohF5MgbGh8=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-298-gIQSrGKgMqWZA7AxE_LCIQ-1; Wed, 30 Apr 2025 17:08:13 -0400
+X-MC-Unique: gIQSrGKgMqWZA7AxE_LCIQ-1
+X-Mimecast-MFC-AGG-ID: gIQSrGKgMqWZA7AxE_LCIQ_1746047292
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-39ee4b91d1cso607126f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 14:08:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746047292; x=1746652092;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=01jBPxnqk92t1rPGznj6ym7/qLqG6tY/jU5pL3ZoH4k=;
+        b=uc2DhTEKc8p4+Dr0+OJBEQ2Gqdci84DOaIZHUJ0ZLpD5egp3LPz5FdD1wq03Rmee+p
+         3jhp11V0J7gWAWWBehYdAeC7K9vOmYC2zxBFdDvnMR6r91aA+MQxp7mevJLnAA7HecUS
+         ojzqkZu4AVWquQLvSXnKqea0AgxjYXkHPwhRZzmd6QAOiDR7Qtxwwrx5drxL95YbCw/P
+         BWOJJh4FM4d+NXqUHUlt2XSuWD3z2rh2TN/E5LqzRwlK6GFAicZF3FY9vOjovZnlxPoV
+         XBsnBIeJo35hhPE7rrUWWIvHSUB0la/U2/TKo2fHwYrdBH0KdwnS5KsaPKNcN15xT2tB
+         tlOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXSHR91n2iSKZC6y/D6juTSoCTD9tfOfLhzpsbnyYeSr459+fM4+GO+HZ4GQWd1RL1vroOyab6joNrMSaQM@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOaDrh5eW96YiLFCtNV5b0rFnnDrUGhU4u5+cYc7RuFOpqsKk3
+	xV+5VFv0kbus5zXK10nCxXEfputkLJxiy6/q3LBKk2JbidbcBoLVCcHhc0g4GUjjqeCZZvi7Kbh
+	kTJSi0/RwVt1n8O4Aj6rpS0biv1SAX3Drof+iV/ZzcydYOAppu08gL9IiVtDq5Do=
+X-Gm-Gg: ASbGncuJzsMd6Hm6a23ssuzm78a42i01aEBvs7VSU2aHpLPCc5febFoHE1SgC6WZLix
+	v+11pPPUJnHZh8IeXcNKva9bK/g14z0LsCcQfzTv8kYJU0iKgNJkbvsaWOmjy9iSaF85GPHa2Gt
+	4Q6UrwIF/tJy6eanMbJoAeUvRvbguSy0hMIPxo9ReJhqx7W59Xmif3Zdt8LzFw6eo6chpb2dswc
+	YbVPQt8V/d+/mX7JMVmTklagZqOiGN0kZYmQndJ5Q2OjVpIVr19i40JCj09RXhG/8WF+9mjEy0P
+	9esW7lR8seUEgHP2RNZHrLL6ksq57VCs68W2XIVQdnCtot7yydhBI4UvhYZhhJPwSOOkXC89bVt
+	CxXSkL35d0gLQjezBEp/pOzrW3JmsaP2QblaCHh8=
+X-Received: by 2002:a5d:684a:0:b0:39f:d13:32a with SMTP id ffacd0b85a97d-3a092d028ccmr748154f8f.29.1746047292485;
+        Wed, 30 Apr 2025 14:08:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHn7bC7vT1tiu/n8jrljv5sjGW6uSdNlOCmXc7ddSIDa2k3vXUMwpJkn2Ldnsb3A0+SQjpNkA==
+X-Received: by 2002:a5d:684a:0:b0:39f:d13:32a with SMTP id ffacd0b85a97d-3a092d028ccmr748144f8f.29.1746047292033;
+        Wed, 30 Apr 2025 14:08:12 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c745:a500:7f54:d66b:cf40:8ee9? (p200300cbc745a5007f54d66bcf408ee9.dip0.t-ipconnect.de. [2003:cb:c745:a500:7f54:d66b:cf40:8ee9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a073ca543bsm18124715f8f.34.2025.04.30.14.08.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Apr 2025 14:08:11 -0700 (PDT)
+Message-ID: <5e6cd2c8-b0d1-436a-96e7-b8cb7f6d75cc@redhat.com>
+Date: Wed, 30 Apr 2025 23:08:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,94 +90,116 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] orangefs: page writeback problem in 6.14 (bisected
- to 665575cf)
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, devel@lists.orangefs.org
-References: <CAOg9mSTLUOEobom72-MekLpdH-FuF0S+JkU4E13PK6KzNqT1pw@mail.gmail.com>
- <2040f153-c50e-49ea-acb6-72914c62fecb@intel.com>
- <CAOg9mSRPok2NR5UNkkyBb8nGgZxQo36dfvL0ZWSpMZ3pT5884Q@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH v3 1/6] fuse: drop usage of folio_index
+To: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Hugh Dickins <hughd@google.com>,
+ Chris Li <chrisl@kernel.org>, Yosry Ahmed <yosryahmed@google.com>,
+ "Huang, Ying" <ying.huang@linux.alibaba.com>, Nhat Pham <nphamcs@gmail.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, linux-kernel@vger.kernel.org,
+ Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>,
+ Josef Bacik <josef@toxicpanda.com>, linux-fsdevel@vger.kernel.org
+References: <20250430181052.55698-1-ryncsn@gmail.com>
+ <20250430181052.55698-2-ryncsn@gmail.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAOg9mSRPok2NR5UNkkyBb8nGgZxQo36dfvL0ZWSpMZ3pT5884Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250430181052.55698-2-ryncsn@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 4/30/25 13:43, Mike Marshall wrote:
-> [ 1991.319111] orangefs_writepage_locked: wr->pos:0: len:4080:
-> [ 1991.319450] service_operation: file_write returning: 0 for 0000000018e1923a.
-> [ 1991.319457] orangefs_writepage_locked: wr->pos:4080: len:4080:
+On 30.04.25 20:10, Kairui Song wrote:
+> From: Kairui Song <kasong@tencent.com>
+> 
+> folio_index is only needed for mixed usage of page cache and swap
+> cache, for pure page cache usage, the caller can just use
+> folio->index instead.
+> 
+> It can't be a swap cache folio here.  Swap mapping may only call into fs
+> through `swap_rw` but fuse does not use that method for SWAP.
+> 
+> Signed-off-by: Kairui Song <kasong@tencent.com>
+> Cc: Miklos Szeredi <miklos@szeredi.hu>
+> Cc: Joanne Koong <joannelkoong@gmail.com>
+> Cc: Josef Bacik <josef@toxicpanda.com>
+> Cc: linux-fsdevel@vger.kernel.org
+> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>   fs/fuse/file.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 754378dd9f71..6f19a4daa559 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -487,7 +487,7 @@ static inline bool fuse_folio_is_writeback(struct inode *inode,
+>   					   struct folio *folio)
+>   {
+>   	pgoff_t last = folio_next_index(folio) - 1;
+> -	return fuse_range_is_writeback(inode, folio_index(folio), last);
+> +	return fuse_range_is_writeback(inode, folio->index, last);
+>   }
+>   
+>   static void fuse_wait_on_folio_writeback(struct inode *inode,
+> @@ -2349,7 +2349,7 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
+>   		return true;
+>   
+>   	/* Discontinuity */
+> -	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio_index(folio))
+> +	if (data->orig_folios[ap->num_folios - 1]->index + 1 != folio->index)
+>   		return true;
+>   
+>   	/* Need to grow the pages array?  If so, did the expansion fail? */
 
-Is that consistent with an attempt to write 4080 bytes that failed,
-returned a 0 and then encountered the WARN_ON()?
+Reviewed-by: David Hildenbrand <david@redhat.com>
 
-While I guess it's possible that userspace might be trying to write
-4080 bytes twice, the wr->pos:4080 looks suspicious. Is it possible
-that wr->pos inadvertently got set to 4080 during the write _failure_?
-Then, the write (aiming to write the beginning of the file) retries
-but pos==4080 and not 0.
+-- 
+Cheers,
 
-> [ 1991.319581] Call Trace:
-> [ 1991.319583]  <TASK>
-...
-> [ 1991.319613]  orangefs_launder_folio+0x2e/0x50 [orangefs]
-> [ 1991.319619]  orangefs_write_begin+0x87/0x150 [orangefs]
-> [ 1991.319624]  generic_perform_write+0x81/0x280
-> [ 1991.319627]  generic_file_write_iter+0x5e/0xe0
-> [ 1991.319629]  orangefs_file_write_iter+0x44/0x50 [orangefs]
-> [ 1991.319633]  vfs_write+0x240/0x410
-> [ 1991.319636]  ksys_write+0x52/0xc0
-> [ 1991.319638]  do_syscall_64+0x62/0x180
-> [ 1991.319640]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [ 1991.319643] RIP: 0033:0x7f218b134f44
+David / dhildenb
 
-This is the path I was expecting. Note that my hackish patch will just
-lift the old (pre-regression) faulting from generic_file_write_iter()
-up to its caller: orangefs_file_write_iter().
-
-So now I'm doubly curious if that also hides the underlying bug.
 
