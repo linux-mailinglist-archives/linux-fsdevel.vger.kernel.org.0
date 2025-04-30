@@ -1,103 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-47704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95231AA450F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 10:19:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BBAAA4565
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 10:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87D3C1C02299
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 08:19:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F08A9A35D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 08:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E00AD214223;
-	Wed, 30 Apr 2025 08:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568BC219EAD;
+	Wed, 30 Apr 2025 08:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AtbNnbGd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NljBk0hx";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="AtbNnbGd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NljBk0hx"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VIjl0B80";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="34ylF4mT";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r0KLLECP";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0xeY6gNN"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB352144DE
-	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 08:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28546218587
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 08:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746001151; cv=none; b=MoGyvADXtesPyDvdL4pamxCfmo37JkbgWNZE626m5AxrGML+iy9+tdYpR3J5Yf7p0BRrcu6eyqNtEAb0Zy9I1UB2PR/GChfpvtyfl9ZjD603U+vWi48I6vx3Dc4U+JNDpTukB55ewfTWboSaL4JQ7vNAOL0AmrLopRD5cUu9kmI=
+	t=1746001676; cv=none; b=NlD1MNm5MkXqLoE68bquDizVCqVtacYyw+SPJAN8lE3yun/V5Mq/rL8DWuJX5T16ehnciVX2pBe/TjNqMYuckvnggy3MomCT+oxgqVh0V24VOUaOYMWZCIICpXICWNRwvlx+RbcwEE3/te9JJPcm2ng0DPAJJS1dpfrtUiPhy9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746001151; c=relaxed/simple;
-	bh=fZ/MYVbLqY0OeUa9PQrWNIxmBYwca4exX0OpU3bifHA=;
+	s=arc-20240116; t=1746001676; c=relaxed/simple;
+	bh=KP0WbRYyXweFla+W9yKoUm82l153JkxLlFZrvyQgDFE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmiUJBiHOFA2sCYRZPT4NlaJveKnD3YR52drVtOM0WK5/BjoHLXlwyyDrHLPsgDDhXH3Cq5Echf71XgDug2MPwVaBZR6qZlmec0QnjF0cy+N6Ch48VeXlxWA9A/3BtHyaE+XkxIzk8wLIFprbaHqBNoQi6vE1ZGKZwXT1jcTPR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AtbNnbGd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NljBk0hx; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=AtbNnbGd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NljBk0hx; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q8KFLPICqit3Oxv30F8UoOKLxynbOpK6UXgrQjR+5UcfWI3oUDSsHJ1Ss+XxazQbrSAYn7Hv5BMwQ2aShSnvCph6J2wG3/DuGkMQ7z31dUWJ3oS75NyeByyc2pg7+VhAJhrvUZms+7UdeBCF97D2RCbOt3gMv1djLLwazgnXc0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VIjl0B80; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=34ylF4mT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r0KLLECP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0xeY6gNN; arc=none smtp.client-ip=195.135.223.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 20CBB1F7CC;
-	Wed, 30 Apr 2025 08:19:07 +0000 (UTC)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 53CF51F7BF;
+	Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746001147; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1746001667; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J3bkF3kbJkw9SyS9aDetvTvyDlSv2dhlIRzNF669X3U=;
-	b=AtbNnbGdDRHPH1ATDpa5RdwJe4x0BTIsDRsdLunAsLWGzjTyAXhiQr8cNs2VSBR1r2iX3a
-	ffKqJwPBuGMsB7tum+v01LhUwHyxgzcbQjioO25u6I4zhR7bPWRdYo4S7T8TbjILO9p3VY
-	xM+U3OB2iT1EG5IwcNinVPsNsqJSlaA=
+	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
+	b=VIjl0B80Uh3OUx3+Pshx9kY6dUdBWDIAmXxE40ltIMkkAw6HJy5NF8n2wR/Vw/N6U//Mz/
+	q43tMlVKwvxlPjDZIZ36pWNmVElVfkBF4fjZjXjb+R/BwO3W7x7vCttQLcGPSfe9+U5wkc
+	VwECC9C1r4ivjILpHWOsw+9pE8Eo2RM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746001147;
+	s=susede2_ed25519; t=1746001667;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J3bkF3kbJkw9SyS9aDetvTvyDlSv2dhlIRzNF669X3U=;
-	b=NljBk0hxl46d0Zpm/6kIPvcNGq4MVqNpeGpXGgTTYE+j+zUBtYXnJfo51c1WgEV2kVWHxJ
-	diCoEzB7df3MhkDw==
+	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
+	b=34ylF4mTZj3STtfYtJGb1S3C6Ei9P7OlRGBTUYXWqsGldxCwQKSpPz7iANglSxXlRrs4UZ
+	c6LQlp1HcrReJHAA==
 Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=AtbNnbGd;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NljBk0hx
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r0KLLECP;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0xeY6gNN
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746001147; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1746001666; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J3bkF3kbJkw9SyS9aDetvTvyDlSv2dhlIRzNF669X3U=;
-	b=AtbNnbGdDRHPH1ATDpa5RdwJe4x0BTIsDRsdLunAsLWGzjTyAXhiQr8cNs2VSBR1r2iX3a
-	ffKqJwPBuGMsB7tum+v01LhUwHyxgzcbQjioO25u6I4zhR7bPWRdYo4S7T8TbjILO9p3VY
-	xM+U3OB2iT1EG5IwcNinVPsNsqJSlaA=
+	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
+	b=r0KLLECPsP8+xL6H7OibzAZq/4xdyKExIWg8qM+i0x7PUIvIfnbE2dV7hSQSAO3cIBumqi
+	iHq36qGokctFQcDoZgBGcdJsLcvBgorABMY+VR57Zx07RQ/nE28cZng+QrN6ez4u6DgzTN
+	vxn1r/IhXvabSNT2XWH1rCieh1qKkJg=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746001147;
+	s=susede2_ed25519; t=1746001666;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J3bkF3kbJkw9SyS9aDetvTvyDlSv2dhlIRzNF669X3U=;
-	b=NljBk0hxl46d0Zpm/6kIPvcNGq4MVqNpeGpXGgTTYE+j+zUBtYXnJfo51c1WgEV2kVWHxJ
-	diCoEzB7df3MhkDw==
+	bh=L+g1TDP6rhx8pD3i0tB2oZWqxFYE0CqTNE2BvNf7Ycw=;
+	b=0xeY6gNNADEAcP/1u5v0rxgig/6h7Zy3mSE8sNHy7Dg42tJTDMR6SpT4vFQFK1wPPVq3nS
+	3P54IpBgpCUANGCw==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1554A139E7;
-	Wed, 30 Apr 2025 08:19:07 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 47A4D139E7;
+	Wed, 30 Apr 2025 08:27:46 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id RMYtBfvcEWh/DQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 30 Apr 2025 08:19:07 +0000
+	id 4yVvEQLfEWgaEAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 30 Apr 2025 08:27:46 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C502AA0AF0; Wed, 30 Apr 2025 10:18:58 +0200 (CEST)
-Date: Wed, 30 Apr 2025 10:18:58 +0200
+	id 05DDEA0AF0; Wed, 30 Apr 2025 10:27:45 +0200 (CEST)
+Date: Wed, 30 Apr 2025 10:27:45 +0200
 From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca, jack@suse.cz, 
-	wanghaichi0403@gmail.com, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
-	yangerkun@huawei.com
-Subject: Re: [PATCH 2/4] ext4: fix incorrect punch max_end
-Message-ID: <ykm27jvrnmhgd4spslhn4mano452c6z34fab7r3776dmjkgo7q@cv2lvsiteufa>
-References: <20250430011301.1106457-1-yi.zhang@huaweicloud.com>
- <20250430011301.1106457-2-yi.zhang@huaweicloud.com>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Joe Damato <jdamato@fastly.com>, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] fs/eventpoll: fix endless busy loop after timeout has
+ expired
+Message-ID: <diilyq37i35qlll7hu3si6dqrjntiif5gzajazkgtqvfsi4kgg@yr3v562urmjp>
+References: <20250429185827.3564438-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -106,8 +105,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430011301.1106457-2-yi.zhang@huaweicloud.com>
-X-Rspamd-Queue-Id: 20CBB1F7CC
+In-Reply-To: <20250429185827.3564438-1-max.kellermann@ionos.com>
+X-Rspamd-Queue-Id: 53CF51F7BF
 X-Spam-Level: 
 X-Spamd-Result: default: False [-4.01 / 50.00];
 	BAYES_HAM(-3.00)[100.00%];
@@ -117,63 +116,94 @@ X-Spamd-Result: default: False [-4.01 / 50.00];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
 	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
 	FUZZY_BLOCKED(0.00)[rspamd.com];
 	ARC_NA(0.00)[];
 	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[12];
 	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FROM_HAS_DN(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[8];
 	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
 	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[vger.kernel.org,mit.edu,dilger.ca,suse.cz,gmail.com,huawei.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
 	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email,suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim,suse.cz:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
 X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
 X-Rspamd-Action: no action
 X-Spam-Score: -4.01
 X-Spam-Flag: NO
 
-On Wed 30-04-25 09:12:59, Zhang Yi wrote:
-> From: Zhang Yi <yi.zhang@huawei.com>
+On Tue 29-04-25 20:58:27, Max Kellermann wrote:
+> After commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in
+> the future"), the following program would immediately enter a busy
+> loop in the kernel:
 > 
-> For the extents inodes, the maxbytes should be sb->s_maxbytes instead of
-> sbi->s_bitmap_maxbytes. Correct the maxbytes value to correct the
-> behavior of punch hole.
+> ```
+> int main() {
+>   int e = epoll_create1(0);
+>   struct epoll_event event = {.events = EPOLLIN};
+>   epoll_ctl(e, EPOLL_CTL_ADD, 0, &event);
+>   const struct timespec timeout = {.tv_nsec = 1};
+>   epoll_pwait2(e, &event, 1, &timeout, 0);
+> }
+> ```
 > 
-> Fixes: 2da376228a24 ("ext4: limit length to bitmap_maxbytes - blocksize in punch_hole")
-> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> This happens because the given (non-zero) timeout of 1 nanosecond
+> usually expires before ep_poll() is entered and then
+> ep_schedule_timeout() returns false, but `timed_out` is never set
+> because the code line that sets it is skipped.  This quickly turns
+> into a soft lockup, RCU stalls and deadlocks, inflicting severe
+> headaches to the whole system.
+> 
+> When the timeout has expired, we don't need to schedule a hrtimer, but
+> we should set the `timed_out` variable.  Therefore, I suggest moving
+> the ep_schedule_timeout() check into the `timed_out` expression
+> instead of skipping it.
+> 
+> Fixes: 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in the future")
+> Cc: Joe Damato <jdamato@fastly.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 
-Thinking about this some more...
+I agree this makes the logic somewhat more obvious than Joe's fix so feel
+free to add:
 
-> @@ -4015,6 +4015,12 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->  	trace_ext4_punch_hole(inode, offset, length, 0);
->  	WARN_ON_ONCE(!inode_is_locked(inode));
->  
-> +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-> +		max_end = sb->s_maxbytes;
-> +	else
-> +		max_end = EXT4_SB(sb)->s_bitmap_maxbytes;
-> +	max_end -= sb->s_blocksize;
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-I think the -= sb->s_blocksize is needed only for indirect-block based
-scheme (due to an implementation quirk in ext4_ind_remove_space()). But
-ext4_ext_remove_space() should be fine with punch hole ending right at
-sb->s_maxbytes. And since I find it somewhat odd that you can create file
-upto s_maxbytes but cannot punch hole to the end, it'd limit that behavior
-as much as possible. Ideally we'd fix ext4_ind_remove_space() but I can't
-be really bothered for the ancient format...
+Thanks!
 
 								Honza
 
+> ---
+>  fs/eventpoll.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 4bc264b854c4..d4dbffdedd08 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2111,9 +2111,10 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+>  
+>  		write_unlock_irq(&ep->lock);
+>  
+> -		if (!eavail && ep_schedule_timeout(to))
+> -			timed_out = !schedule_hrtimeout_range(to, slack,
+> -							      HRTIMER_MODE_ABS);
+> +		if (!eavail)
+> +			timed_out = !ep_schedule_timeout(to) ||
+> +				!schedule_hrtimeout_range(to, slack,
+> +							  HRTIMER_MODE_ABS);
+>  		__set_current_state(TASK_RUNNING);
+>  
+>  		/*
+> -- 
+> 2.47.2
+> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
