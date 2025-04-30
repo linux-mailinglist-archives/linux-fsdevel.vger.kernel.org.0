@@ -1,134 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-47713-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C11AA4942
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 12:54:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9465AA4974
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 13:08:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6A0A5A74F6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 10:54:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 987B51BC29D3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 11:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E533F23BD0E;
-	Wed, 30 Apr 2025 10:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F8D25A2C9;
+	Wed, 30 Apr 2025 11:05:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GhtuDTpH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386661CD15;
-	Wed, 30 Apr 2025 10:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3558F221F35;
+	Wed, 30 Apr 2025 11:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746010482; cv=none; b=BPJo1ixucZoGUhT26rUlL6wPJY5DP8IweCKzC7TtF86aY3jZqeYRiAvj6D9Gvuh7BcfdbeN7uEfVAefbpV7eUO84E2u/pqBLSiv39eFWvlKn2u/4m/Sxusppu74RVksOXv+0a1JVHu5cF6ElGIDPDSNlIo0pwGP735BoKxyBkSw=
+	t=1746011133; cv=none; b=pnhWvkx+SCXxOyjW0K38KOHeZB/AHCm8F4CfUgNIcBn4bEJsy64hAhTQyCGLQDMRODo5MRcdLcs6JDfg1nO79gJWgrqHwb8cE43XZAl6n+U/S1NQio1i+JlNSkP0dTvI1t3FyWwXTKLaS+IKAGsT1uMRweZUjQLJiItshrOQiR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746010482; c=relaxed/simple;
-	bh=/BtwEq+TKoL4TxiHfus1NfzLpwf48XHvtcbEQ62q0Uc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xk0w2ztHjcIIf9eiOSu72d+faR9sDlI3dhPDuE35sXg9jI8IXFiUl9AdOFqTih8f7c9dTkogaWP05w4g/vyOH0STlvf2ALAQ3umK29BsSmB8nVCivpKgnAfIJB6WTRkaVgWTiqjSaEQ6G+mkIPLBIniNbHT7HBW2/us1eXuzodo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4ZnYwS21byzKHMWJ;
-	Wed, 30 Apr 2025 18:54:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 39B471A0FB4;
-	Wed, 30 Apr 2025 18:54:31 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgB3219lARJoGdoLLA--.26076S3;
-	Wed, 30 Apr 2025 18:54:31 +0800 (CST)
-Message-ID: <610525a1-5fb5-475e-9842-dc145aaf8718@huaweicloud.com>
-Date: Wed, 30 Apr 2025 18:54:29 +0800
+	s=arc-20240116; t=1746011133; c=relaxed/simple;
+	bh=nQrASJ6hdVZOdSLWPhEr1DleCbN40IIG8C9hTJrUoPc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jK79LJCsuSHPApNMTLAZIO51MSXpzNDS3R6EL0pJHN1LdRuCSkT+xbYvSEJXZwL42YV/x9zsjYe84hdROrzqoPVCp/n3Ekn0Jjw/lIe67ab52gKnYF9VgX1NdP2cmfugv/etJEFvmkcW4aAJuYINlMOePCMlHinMCiTNRwshW8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GhtuDTpH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81121C4CEE9;
+	Wed, 30 Apr 2025 11:05:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746011132;
+	bh=nQrASJ6hdVZOdSLWPhEr1DleCbN40IIG8C9hTJrUoPc=;
+	h=From:Subject:Date:To:Cc:From;
+	b=GhtuDTpH/HkACn8tSfiUklpASOuhO/C98x0A3Ood3J7HKFwfXJMGAEjQSveuZ7n0r
+	 YYma3pvwztypVtQtY4GNUXwf3fRmMNncyUeqWSdA7lLmT7vHS3ampVRlxL42GPXg5N
+	 kUwsiSOJLN2yH2exsZulJfFqZTKhj9Jm0Cd4Optp1SbdYLN0dguPTnK8OB/0DlgKSl
+	 cSTMx2LpEwYXRru/m4G32yxusTFjn7UDuHXZa8L87+K5D1PXZ/Fshq9bsA1b+45ywK
+	 xyrpFTwCeos6AVkNnDAzZN9PvjjlPzzhkgLu/eEIuu+R10v5JqhRWWRrezNn/X4I5Z
+	 QInEMwzZvtb/Q==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC 0/3] coredump: support AF_UNIX sockets
+Date: Wed, 30 Apr 2025 13:05:00 +0200
+Message-Id: <20250430-work-coredump-socket-v1-0-2faf027dbb47@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] ext4: fix incorrect punch max_end
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- wanghaichi0403@gmail.com, yi.zhang@huawei.com, libaokun1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250430011301.1106457-1-yi.zhang@huaweicloud.com>
- <20250430011301.1106457-2-yi.zhang@huaweicloud.com>
- <ykm27jvrnmhgd4spslhn4mano452c6z34fab7r3776dmjkgo7q@cv2lvsiteufa>
- <8c1f9230-a475-4fc3-9b2d-5f11f5122bb3@huaweicloud.com>
- <4u2frbxygagij6uxryijqmzgarhotk4cw2w4knm4rpivll5qvg@2d2wd2742v36>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <4u2frbxygagij6uxryijqmzgarhotk4cw2w4knm4rpivll5qvg@2d2wd2742v36>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgB3219lARJoGdoLLA--.26076S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7AFyUXrykAr1fXr15Ww4rZrb_yoW8ur1fpF
-	y3CF1UKw4kG3y7u34IqFn8ZFnFy3WkAF4UXr4rWr13XF90kw1SkFy2ga1j93ZFqw4Ikw40
-	qas8tryfA34UKaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+X-B4-Tracking: v=1; b=H4sIAN0DEmgC/zXMQQrCMBCF4auUWTslCdpYt4IHcCsu0unEhmJSM
+ lqF0rsbBZf/g/ctIJwDCxyqBTLPQUKKJfSmAhpcvDGGvjQYZXZqa1p8pTwipcz98z6hJBr5gXt
+ LpLy21rQE5Tpl9uH9Yy9wPh3hWsbOCWOXXaThK85esKl1U/8xWNcP6GXQnY8AAAA=
+X-Change-ID: 20250429-work-coredump-socket-87cc0f17729c
+To: linux-fsdevel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, 
+ David Rheinsberg <david@readahead.eu>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>, 
+ Lennart Poettering <lennart@poettering.net>, 
+ Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+ Oleg Nesterov <oleg@redhat.com>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4051; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=nQrASJ6hdVZOdSLWPhEr1DleCbN40IIG8C9hTJrUoPc=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQIMX/3vbNgemrJCh1x413lhw1stm97ynD8et7heV68f
+ P/Opzk96ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIWgWG/z5ng0QbU6QUfmtH
+ te2VmrXM8Gh8pWuSmPFzN+PSnX0/LzH8s6t4FuMxu0623TvS13p1XJfGV07GvLidruXxB5xu7mp
+ iBgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On 2025/4/30 18:09, Jan Kara wrote:
-> On Wed 30-04-25 16:44:25, Zhang Yi wrote:
->> On 2025/4/30 16:18, Jan Kara wrote:
->>> On Wed 30-04-25 09:12:59, Zhang Yi wrote:
->>>> From: Zhang Yi <yi.zhang@huawei.com>
->>>>
->>>> For the extents inodes, the maxbytes should be sb->s_maxbytes instead of
->>>> sbi->s_bitmap_maxbytes. Correct the maxbytes value to correct the
->>>> behavior of punch hole.
->>>>
->>>> Fixes: 2da376228a24 ("ext4: limit length to bitmap_maxbytes - blocksize in punch_hole")
->>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
->>>
->>> Thinking about this some more...
->>>
->>>> @@ -4015,6 +4015,12 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
->>>>  	trace_ext4_punch_hole(inode, offset, length, 0);
->>>>  	WARN_ON_ONCE(!inode_is_locked(inode));
->>>>  
->>>> +	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
->>>> +		max_end = sb->s_maxbytes;
->>>> +	else
->>>> +		max_end = EXT4_SB(sb)->s_bitmap_maxbytes;
->>>> +	max_end -= sb->s_blocksize;
->>>
->>> I think the -= sb->s_blocksize is needed only for indirect-block based
->>> scheme (due to an implementation quirk in ext4_ind_remove_space()). But
->>> ext4_ext_remove_space() should be fine with punch hole ending right at
->>> sb->s_maxbytes. And since I find it somewhat odd that you can create file
->>> upto s_maxbytes but cannot punch hole to the end, it'd limit that behavior
->>> as much as possible. Ideally we'd fix ext4_ind_remove_space() but I can't
->>> be really bothered for the ancient format...
->>>
->>
->> Yes, I share your feelings. Currently, we do not seem to have any
->> practical issues. To maintain consistent behavior between the two inode
->> types and to keep the code simple, I retained the -= sb->s_blocksize
->> operation. Would you suggest that we should at least address the extents
->> inodes by removing the -=sb->s_blocksize now?
-> 
-> Yes, what I'm suggesting is that we keep -=sb->s_blocksize specific for the
-> case !ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS).
-> 
+Coredumping currently supports two modes:
 
-Sure. Let's do it.
+(1) Dumping directly into a file somewhere on the filesystem.
+(2) Dumping into a pipe connected to a usermode helper process
+    spawned as a child of the system_unbound_wq or kthreadd.
 
-Thanks,
-Yi.
+For simplicity I'm mostly ignoring (1). There's probably still some
+users of (1) out there but processing coredumps in this way can be
+considered adventurous especially in the face of set*id binaries.
+
+The most common option should be (2) by now. It works by allowing
+userspace to put a string into /proc/sys/kernel/core_pattern like:
+
+        |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+
+The "|" at the beginning indicates to the kernel that a pipe must be
+used. The path following the pipe indicator is a path to a binary that
+will be spawned as a usermode helper process. Any additional parameters
+pass information about the task that is generating the coredump to the
+binary that processes the coredump.
+
+In this case systemd-coredump is spawned as a usermode helper. There's
+various conceptual consequences of this (non-exhaustive list):
+
+- systemd-coredump is spawned with file descriptor number 0 (stdin)
+  to the read-end of the pipe. All other file descriptors are closed.
+  That specifically includes 1 (stdout) and 2 (stderr). This has already
+  caused bugs because userspace assumed that this cannot happen (Whether
+  or not this is a sane assumption is irrelevant.).
+
+- systemd-coredump will be spawned as a child of system_unbound_wq. So
+  it is not a child of any userspace process and specifically not a
+  child of PID 1 so it cannot be waited upon and is in general a weird
+  hybrid upcall.
+
+- systemd-coredump is spawned highly privileged as it is spawned with
+  full kernel credentials requiring all kinds of weird privilege
+  dropping excercises in userspaces.
+
+This adds another mode:
+
+(3) Dumping into a AF_UNIX socket.
+
+Userspace can set /proc/sys/kernel/core_pattern to:
+
+        :/run/coredump.socket
+
+The ":" at the beginning indicates to the kernel that an AF_UNIX socket
+is used to process coredumps. The task generating the coredump simply
+connects to the socket and writes the coredump into the socket.
+
+Userspace can get a stable handle on the task generating the coredump by
+using the SO_PEERPIDFD socket option. SO_PEERPIDFD uses the thread-group
+leader pid stashed during connect(). Even if the task generating the
+coredump is a subthread in the thread-group the pidfd of the
+thread-group leader is a reliable stable handle. Userspace that's
+interested in the credentials of the specific thread that crashed can
+use SCM_PIDFD to retrieve them.
+
+The pidfd can be used to safely open and parse /proc/<pid> of the task
+and it can also be used to retrieve additional meta information via the
+PIDFD_GET_INFO ioctl().
+
+This will allow userspace to not have to rely on usermode helpers for
+processing coredumps and thus to stop having to handle super privileged
+coredumping helpers.
+
+This is easy to test:
+
+(a) coredump processing (we're using socat):
+
+    > cat coredump_socket.sh
+    #!/bin/bash
+    
+    set -x
+    
+    sudo bash -c "echo ':/tmp/stream.sock' > /proc/sys/kernel/core_pattern"
+    socat --statistics unix-listen:/tmp/stream.sock,fork FILE:core_file,create,append,truncate
+
+(b) trigger a coredump:
+
+    user1@localhost:~/data/scripts$ cat crash.c
+    #include <stdio.h>
+    #include <unistd.h>
+    
+    int main(int argc, char *argv[])
+    {
+            fprintf(stderr, "%u\n", (1 / 0));
+            _exit(0);
+    }
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Christian Brauner (3):
+      coredump: massage format_corname()
+      coredump: massage do_coredump()
+      coredump: support AF_UNIX sockets
+
+ fs/coredump.c | 241 ++++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 168 insertions(+), 73 deletions(-)
+---
+base-commit: 80e14080a00bc429a4ee440d17746a49867df663
+change-id: 20250429-work-coredump-socket-87cc0f17729c
 
 
