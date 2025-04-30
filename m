@@ -1,265 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-47740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1CACAA53B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 20:31:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83E9AAA53CE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 20:37:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F1F318882C3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 18:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81B143B942A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 18:36:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74CE7266B52;
-	Wed, 30 Apr 2025 18:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5061026A098;
+	Wed, 30 Apr 2025 18:36:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="Ru9AMivk"
+	dkim=pass (2048-bit key) header.d=case.edu header.i=@case.edu header.b="OlLXSagP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from LO3P265CU004.outbound.protection.outlook.com (mail-uksouthazon11020114.outbound.protection.outlook.com [52.101.196.114])
+Received: from mta-outp-ksl-2.case.edu (mta-outp-ksl-2.case.edu [129.22.103.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEAF31BE251;
-	Wed, 30 Apr 2025 18:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.196.114
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AF625D1FC
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 18:36:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=129.22.103.6
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746037890; cv=fail; b=UvDt/tyVHsRHhDlG/EdT0vWqjq9+cCoqrRHNXd9n2yS+6GYZNHp5oCtC3l1R9cxHDUZsOOS4YutXHzRgnn6bv41VBF1iCXJ/pGCaTBHWPhbIKx0ur1GLIZ72tZ49KSw8TS2jGQhrxBPT7paBAbGLW4u+OBDUY8IdWYV16ZQXpWY=
+	t=1746038211; cv=pass; b=LktB5N3hYFUoBayOlL5WA7k8dcZ0tPVfbWoXJ/a7w7CJWWDdui8AzqjfTw7HcdbkCWOQqiFl/+omZikRMHakyXQkrFcPch6DtPLhH6qRKwakXmJpcCeerUSmHbc4GpqWPCWuZNEv3eQ8pTC/iQDoysFfOQx/n0GH3jkf71yRefE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746037890; c=relaxed/simple;
-	bh=ig//NbrhfvuC6P9eIgPMeuFQSIJq1uYCBJ49Vtt+OMU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QrQZuz0B/FX2nP5EAGYHANlcvy2k30uHiwP5hw8QOipXQxloCWnDKrzj/+PoCNx7nCa7R5YlwJLB3S4tGfc7C5HsLC/VKNnB418/8ayLmzzDCJAKwGVmsbMuU0Y28uDoBGjRtaB4CYMAB9f39oN00Y1bxcxEAmBSYduHG59HNyY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=Ru9AMivk; arc=fail smtp.client-ip=52.101.196.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=rfAGssRGEARGJR3ujfTU0bGcXvu70At78hcpx5nj0xYYfPUxjTg9xV+p0qSI6uLpYfYvtjMCoGz0dUkn0v8B1teGyceQzv1T/NHkKBfJqg4SyJrLqdYmlEMWBsU1MlkE1bMFwnvujC4HCkjPc4pXaHmwxn46XrcMcAntKQWq34zxsL+97t40dlI29mxU8opf5hOlJTNlwcALw8hXzgKFtR042tM7fWEK/Ci9MbKPA8ZIbdDngt4ZKrGlDSS1nrSkaQu5c7PCPjvgTdmjcLPWx7fiK6VFsef5H7Yq73N/K6jDPvQybucFJ/3dX1dE73bFXimgRmEQQKQcsDEI89kMFw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=4N2bdWskdT0R26gCa/uT7r4PnXaUWyVTGVEAYSVGXyo=;
- b=jG6Vr30QD/uFx83b+0hqYUpMVJqmY1B6ZEOpdxVkLYkyWWSeybbxfrqWQkzM5Q82RyevLvg8JkkeKP9x+W7tYivmofYjncrsT4w/yFO3s2TcR/bRvDRc1njduY9EgT4Oc+IR2vLeziLBCcNCfzyreIkLhHNdH7Wqt7+GmuKTA+zagoFZTT043fUXkljmzgdXJn2cqTHV8AMNY5nrDkw+3iHO0HozgzOVUZEOP6RN1/9kFwDmJ2VnV+Lvb6BINbi4neMlpmaIKq1oPXS3gjptJdmUqPVD6YdS6sLA/Wl3l8IK6do9e8X5SaJWMruz/FTIUbX32WVElLasPJ2W1lZc/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4N2bdWskdT0R26gCa/uT7r4PnXaUWyVTGVEAYSVGXyo=;
- b=Ru9AMivkjUv3c9PqZK+2Cg81NPpGYRRen5TupU0aUOC7SjK4bGev7dcoPMMI/RlvOBrncWfu3c/rZ8Y+ZFrn1ITe1WNx+7VqI+GIS45usX2Z6EBHuXPNhprwm45NKoEbAMMC5jVRwxro1/KmSPDMgIIwu6bvbL3viopXYHracDw=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CWXP265MB5704.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1aa::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Wed, 30 Apr
- 2025 18:31:19 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%4]) with mapi id 15.20.8699.019; Wed, 30 Apr 2025
- 18:31:19 +0000
-Date: Wed, 30 Apr 2025 19:31:12 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Matthew
- Wilcox <willy@infradead.org>, Bjorn Helgaas <bhelgaas@google.com>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
- <rafael@kernel.org>, FUJITA Tomonori <fujita.tomonori@gmail.com>, "Rob
- Herring (Arm)" <robh@kernel.org>, =?UTF-8?B?TWHDrXJh?= Canal
- <mcanal@igalia.com>, Asahi Lina <lina@asahilina.net>,
- rust-for-linux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v19 1/3] rust: types: add `ForeignOwnable::PointedTo`
-Message-ID: <20250430193112.4faaff3d.gary@garyguo.net>
-In-Reply-To: <20250423-rust-xarray-bindings-v19-1-83cdcf11c114@gmail.com>
-References: <20250423-rust-xarray-bindings-v19-0-83cdcf11c114@gmail.com>
-	<20250423-rust-xarray-bindings-v19-1-83cdcf11c114@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P302CA0044.GBRP302.PROD.OUTLOOK.COM
- (2603:10a6:600:317::10) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	s=arc-20240116; t=1746038211; c=relaxed/simple;
+	bh=EU6XUdX+aqjSGI5nezCzcOSTMPFuEyMvb8G98jawzGk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=DkCxSdsZ3wXTURECvuTCowKPUWz82BsMRPRLjF/BdKFIpIk8DmGt+iAjV5AQqyo+UCGGL35hnlS8hXFQOWG4aEzte4ZCIzBxXshNYvOaWVT3XQqzbKM2dK3Fd7zHIGTF7msDYpzjya6Pmv3XyS0sVh9lS/q/vzOrQH4aqiHqlNo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=case.edu; spf=pass smtp.mailfrom=case.edu; dkim=pass (2048-bit key) header.d=case.edu header.i=@case.edu header.b=OlLXSagP; arc=pass smtp.client-ip=129.22.103.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=case.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=case.edu
+Authentication-Results: mta-outp-ksl-2;
+       spf=pass (mta-outp-ksl-2.case.edu: domain of case.edu designates 209.85.219.72 as permitted sender) smtp.mailfrom=case.edu ;
+       dkim=pass (Good 2048 bit rsa-sha256 signature) header.d=case.edu header.i=None header.s=g-case;
+       dmarc=pass (p=REJECT sp=Undefined pct=100 dis=NONE) header.from=case.edu;
+ARC-Filter: OpenARC Filter v1.0.0 mta-outp-ksl-2.case.edu D6A8C31000A9
+Authentication-Results: mta-outp-ksl-2; arc=none smtp.remote-ip=129.22.103.196
+ARC-Seal: i=1; a=rsa-sha256; d=case.edu; s=cwru-mta; t=1746038208; cv=none;
+	b=JJ0iIHEe3f+AZCeJOP6xlSBtvuy1D4WDZEMuo84SZ5QlFzapVxNG7kHrknECwUQt8IZar12uBudwQYuta2j8kc3TzDJHsZdjEM38nhE85TeF5hoVXNLjZ9vGdkZAgKDiWfYNzRN0DroGVj/utWBPwuQA8hnozh3Ubq64Hf8+cp57UNh4lO16RvwhwjyTbfV+UjuChDqCC9mcldcb7WHe5y10P71TP2Cto9wue20NDFrzs18A3J0w/TXGU/+vkkqLYQFdfyIJy/YGIww3viN4rVeKHdkDlfxCe6T9Yu0QpTVqRG42MJSgUHYvy9UqfPQEhUj8F7q0L0ZggSWLziLuow==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=case.edu; s=cwru-mta;
+	t=1746038208; c=relaxed/simple;
+	bh=EU6XUdX+aqjSGI5nezCzcOSTMPFuEyMvb8G98jawzGk=;
+	h=DKIM-Signature:Message-ID:Date:MIME-Version:Subject:To:From:to:
+	 subject:message-id:date:from:mime-version:dkim-signature; b=WATuVBse7h+5jVWYP3+Y6yxQ5nHRikcu6Gy1hLytMlg5BXI9eGB5yrdU6PVz2jkhSFGBnzYNiEDbQ5eLbAZ+rTUk3T6FcziHikZj/vGuv0t9h/7dkLmwc98kFC6pm8J6CiC1ARbPjuDo+OyrSzHFdrH+6TUvver84UcJ09SZEUtt0rTHxHRRQqWogq/8LG4L8I3OuaJ7K3KFOK9mJRpFWUN3AgXdQevLvg5cddWzvM7Ym7/jbzEFg7do0pUstNxIbgaDKdD5f+WazLrCqwsX15JZQhmuod1c/UQAotRVF22cmGhU54PttX5rEpL3Zjm0Ew0+ayK/ZA7HNwJH+HcmKA==
+ARC-Authentication-Results: i=1; mta-outp-ksl-2; spf=pass (mta-outp-ksl-2.case.edu: domain of case.edu designates 209.85.219.72 as permitted sender) smtp.mailfrom=case.edu; dkim=pass (Good 2048 bit rsa-sha256 signature) header.d=case.edu header.i=None header.s=g-case; dmarc=pass (p=REJECT sp=Undefined pct=100 dis=NONE) header.from=case.edu
+Received-SPF: Pass (mta-outp-ksl-2.case.edu: domain of case.edu designates 209.85.219.72 as permitted sender) client-ip=209.85.219.72
+Received: from mpv-out-cfd-1.case.edu (mpv-out-cfd-1.case.edu [129.22.103.196])
+	by mta-outp-ksl-2.case.edu (Postfix) with ESMTPS id D6A8C31000A9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 14:36:48 -0400 (EDT)
+Received: from mpv-in-cfd-1.case.edu (EHLO mpv-in-cfd-1.case.edu) ([129.22.103.211])
+	by mpv-out-cfd-1.case.edu (MOS 4.4.8-GA FastPath queued)
+	with ESMTP id DDJ27654;
+	Wed, 30 Apr 2025 14:36:40 -0400 (EDT)
+Received: from mail-qv1-f72.google.com (EHLO mail-qv1-f72.google.com) ([209.85.219.72])
+	by mpv-in-cfd-1.case.edu (MOS 4.4.8-GA FastPath queued)
+	with ESMTP id PDU47037;
+	Wed, 30 Apr 2025 14:36:40 -0400 (EDT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6f2c7056506so3618506d6.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 11:36:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=case.edu; s=g-case; t=1746038199; x=1746642999; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:cc:reply-to:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4A2sHSHRpt5kileLgP7Ygf59P4BM8A8KvqW9VICqQJ8=;
+        b=OlLXSagPdf+Lgm3U1Q00YNbuTSji7y97kuNMPiIU7J3wr8xYebOEhq5fvzYpBkRwl6
+         PfpmXM6/ljSzc2UWVzgvf9puohkERWOVZm7rHOnLA5uPt6HyVasREpegmwxB0YJMqXhT
+         pbfBJtbD0r5/v9GMuLtGwCDsbucO4XDuWIfCpedK+wJKoNJgSvFLrW0PQRQPeHN9QQp6
+         718RoA9OPZzO3OqftdJ85hjQG7CH5/CHW8BBRn0NpjgFNMIRgfjvOBCNj1z2hPfknARS
+         Zs2HqNerVm7KsxoukoZ6H38GpMItfElSAVfwvGAtnuSHi+zVohzGVeGrn7BuWo4QKE/o
+         Yp6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746038199; x=1746642999;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from:references:to
+         :content-language:subject:cc:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4A2sHSHRpt5kileLgP7Ygf59P4BM8A8KvqW9VICqQJ8=;
+        b=TMXi9/csWRS6QK/Ku94ubw2BG6GGgmO3yd+AyM4QCnlbybQCANrYw/1BH5KBq8MGk3
+         flZ0lVEqgZVJtf/Nr6baLXRgIhXKJO5Hatrj8pgL/TPIej/NpKWMVIe43PONrUuqunx5
+         FDSTRlmGYL3z2gMKAubuVJ4uTlpA6qYRBHbqb22YCnbygy2/nan9aLzlyQ6mwahWpPyw
+         bKUbnwiahQc2CLuDWsE4VPock8EuV4YDYE8BB+wj2/DM4u2JmLgE8qT0kzJlnG5Nj6VS
+         eZzWo7pqWxn/QYB8ZB/juJeVqjeQus87A0hy3gpUlrh6Z0ZjheSrd2JX4ULlh2Msia2r
+         eIYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXouJ/DnVIm+2U2sHilPaOn3sasMXMHxhqbrVv4MgJs1CJym+XhEryMmFrTrZ1Sk5VUw/rKhkkm1MQohZE/@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1qygsyXRGJYYMbqH7wyx+l4EkUhRr91UXB3gr2UTVXE8MmAcA
+	waMnedSW3Uom5yfodLtezbQGfZYvI3Dxpy7Ovih48USqowB5IFAzy1AEehCe3JQNSCZYs89C4xi
+	rhJTft77B0KtwVOEr9m35sYagPVtOEOrYFlNsVR/hJPqaxMj83kIYBuLiltFMt0wv
+X-Gm-Gg: ASbGncvFiu4Bcus7VJujhnta2Eu8cG+R6vYwluDSklgjH1Rh2hagBV6eODl9BlEXnSq
+	c/TsZOrl9wLVxP5rh2T2N2Hb3uNWUV2UO2xxrVrFYVVAnJTIAMCFN5lxbrHmWjax+fqBH6YshAo
+	nURN7N2+UzPOUy+cFrjysd4fNA8u00pMkQVx3flvMZB97H7Jw/i3+7UbAG4e5rJCWpUw0r8rF44
+	qzUhe2+3dS8wJUMprZlVMyEf+KV+a/6WT5d8fUaCEn0CZDQpfWkIox25VwB3+tej48pP7BnVRxW
+	ys4ydWnw9LnX015t8hElwylOnj0r4dpstTXeZOY=
+X-Received: by 2002:a05:6214:2608:b0:6d8:ada3:26c9 with SMTP id 6a1803df08f44-6f4fce82c1cmr75630976d6.10.1746038199739;
+        Wed, 30 Apr 2025 11:36:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH35qCABhwlYLbQIDwzv5bajwn1aPMXtEgjqFfvGVkAXgxHfM/i/R5Qp8C0mRFyalrWwP4+4w==
+X-Received: by 2002:a05:6214:2608:b0:6d8:ada3:26c9 with SMTP id 6a1803df08f44-6f4fce82c1cmr75630596d6.10.1746038199357;
+        Wed, 30 Apr 2025 11:36:39 -0700 (PDT)
+Received: from [129.22.8.211] (caleb.INS.CWRU.Edu. [129.22.8.211])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f4fe70a07esm11327886d6.57.2025.04.30.11.36.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Apr 2025 11:36:38 -0700 (PDT)
+Message-ID: <b548ee65-3a54-43d7-aa6d-36e31cbf16f9@case.edu>
+Date: Wed, 30 Apr 2025 14:36:37 -0400
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWXP265MB5704:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1907b4cb-75b9-4c77-865b-08dd881532d6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?owT7ISVu2ALLbGX705ebkAq/YjO4XNgCclAr38Ovn3W+4sIE8te4EWvV3iBL?=
- =?us-ascii?Q?6Dtl2TQgPyil4vkZmXXV/B5hMi8EEDH5vv62qNVR34cy5zxtW6usBM0+dYTS?=
- =?us-ascii?Q?SswarqihmyeQ7U79NbF7Ti1v0/c++NwXlglXp+ihMynlTb+s8O+LBt89UJCb?=
- =?us-ascii?Q?SxUl7Xm7vOVZFjvyNqkECe+8927PmNsDWlnQnyhI1hACDj6EwjoKoQ4jpm/3?=
- =?us-ascii?Q?9tZFkDDVFExjvoK2DMzeEOB+wOrehMevThUAkHuB82AmgB/BkYEpUDzlcGlR?=
- =?us-ascii?Q?xqsum1UVMEfrz6xGcSqDgGMPX1F5eOVNzPd370FFj2boNzoC2oELinz49x9f?=
- =?us-ascii?Q?6BZvm2DS7cnXVLFYKy0645eK8h3+o5OTHrXPJnN1mPIMhQ0iznbymdtJ5tyx?=
- =?us-ascii?Q?Sv15nv+LDiPRKxtiIdV2u24dNA9oCVdCkETH6UspKDJx6kV6sL3MrS25/0Tp?=
- =?us-ascii?Q?AAE8GkmkGWJogQhrrcoIBjvkt9rRarjTqHkhZuhFRmpUVtPlKqRD4fyB2Hd8?=
- =?us-ascii?Q?nBQAioWPeUDLzGirgDvdF4NGdzubOBsjEnxiaUEIToSI9kE+lfHDCqaS351C?=
- =?us-ascii?Q?mrDvgOa929HxDGyd8xX7FXdErT7NF1tB9QAKww9zehlxH1mb0mgMMoAVTeoR?=
- =?us-ascii?Q?ss4ZRGup5tcnn+6ZAs9yBkVUjxvOJSsIUge62HQ9pyohXF0idXFM50DC/L70?=
- =?us-ascii?Q?yBylQJuDuX3Rsir9fqBLx+sJGG6gAeAx2v5Cgqe9WbMGRr9IOm6favQqsvaF?=
- =?us-ascii?Q?DvqNyg4RVpxdcusA5Vu7JciXbQThSDyhcBaisFiUN1DTbUbCmDdaUxh9RhQ+?=
- =?us-ascii?Q?KTVeMrdsJFWe8mbRjK0RapPeev8Me5eBIIIJ/i1/4Q5+RXfFaI8pSzQAqwFH?=
- =?us-ascii?Q?G+34Z01r/8xVFZoh3L70ZQILKWbXiRaInQV3X+13W8lCQDIH1Jecmdz4Op7C?=
- =?us-ascii?Q?m03hze6v7ROYapuyzVzW4WeL8reSRmKo0sEUDc1W/o20S4anrIw/mrlb/5O7?=
- =?us-ascii?Q?YXynKcCritQYuLqT0T8pV6CY5edlU9Vxm26hNqilJXPsOiMntGmnxX9NV74E?=
- =?us-ascii?Q?iJLl53cx+yLzL4X0PD177T59M55N/shZyIGDnfqImG/bkAyQpySiNUkNnfrM?=
- =?us-ascii?Q?kMhfeNP2pZM5VbxWVCDuUsjODfpoXixt/ypAHG19j3mE25yoON2ACAMNeVGR?=
- =?us-ascii?Q?QvNlvtcLvJ8FjvzpxhB7AGqcg5/RNgW1XhN7BQ2lWl+z1IjWU/+kuXk/IHgO?=
- =?us-ascii?Q?EylUqGDK5Pc9mN3EB09Zk9/GpoBRmwOY5j9hrdbEzt0JyXczu0pGDDcgz0P+?=
- =?us-ascii?Q?H4xboFh/Jm2jggs72V9Nl/iBSPwiSp1TeIvik5RQSfLn0ffqEFUfr41UxrD3?=
- =?us-ascii?Q?Jg848hdmSWAKmAg/PraGd82T+kTmtWXKM4hr8x8aQmKaiSyx974eFWMr1wL/?=
- =?us-ascii?Q?bVkH3Bcz9Fo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(10070799003)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yg9a/U/iRHiwSRgasDJTyqghAdGRaalX5465eLjPuSAmnrWtdUPRSAiFpMTm?=
- =?us-ascii?Q?ehLFectoisPiGKsylQ3UhMRMHBInC4lL7xuf1qLOVVl8Ii5M5kzNUH9kVZ0h?=
- =?us-ascii?Q?VQosNstDMz51y1LhtD/0KHsKMBwibx1SfXGs4vM5wHGVO4b25D4OqGzDtp+g?=
- =?us-ascii?Q?OWbKr91EgJCWo89cIyvW5xgbLr2/c09CJ8ePCZuGqJLritqm3lHaM8Xrd293?=
- =?us-ascii?Q?foZDGuICAbY9xIeOZtdD84fHdg7k7+oMx8/g2cXBHxgNjSipjmJmziLAEkhS?=
- =?us-ascii?Q?Pia3N46Gy9Qml2laEN7ipR1fgmW6vN0TGVLVMIwZQc0TqqiBi1ex6Vew5ipb?=
- =?us-ascii?Q?kVX3f9v2gJkVCCnS6qRClAHinTL6QhLcORO4JKVVreFuuY92DmhQcKEGxgrg?=
- =?us-ascii?Q?DGBzqdQTippXP/37Jz2qhtFpg5mikRgFWmCkPq5WoBsRwoph/9W1VNKc8svU?=
- =?us-ascii?Q?BnhQJxCgCDO2TZ8LhWdV5m68r6/vwoO/d0vEwG8tqvWPC/s4SKhb+Cf5HxgN?=
- =?us-ascii?Q?xwAG5snYlEG1203fS7oKevnhwHZhAlxlQU7XZaPlJbcUXfQaOnXpvC1cbf3v?=
- =?us-ascii?Q?eadci26u+Gvrr2u3RU7CJ0LUrtAxHzhudR6lKI9BBHZk7doUsFJyVNzSDCfG?=
- =?us-ascii?Q?0ca6taWXa0tuEZDEL3YwLvpWqG10/IMBpkbvEEbFoqySXKRwM/ULBVclIYSJ?=
- =?us-ascii?Q?LgiZSgOONIVR+uVWYV/2zZ9d6zmtsFb01rlAPbDiXpYCNUCN2J8cY9TUqb/G?=
- =?us-ascii?Q?csYcwCnD1LF9wHAkuEf9f1h6yTwf2iTRDu+FbhRtDyBaGeCqus/zfRdipjIn?=
- =?us-ascii?Q?JO5VZ2iOfUG+L50qfB91ilzC1pjG2muoaqMZzfzqOBAXzKJyIAhcX7pjFDgV?=
- =?us-ascii?Q?rjeFhTrqqCkqdVbvgOiZmxkoouMmjMthVIaWrxbIp7yD44rWhvM/6+V4gOVe?=
- =?us-ascii?Q?AMEK1s3ALW8Zp/SiPl+h4+QALlZWLbk7aufCd8YshGUp84SSlxRrdP+Yebeu?=
- =?us-ascii?Q?BuPFKbrjavaQXsZbgWQbnyU1ZNUmP0OlJc8DLZWqIOlz9/KSkkRTfTKHEMvo?=
- =?us-ascii?Q?v3ypnSAlCozfJFVMBJNRak5jPohl3RCIhcSRSBcSisL+VLbMwZV2PgWgaJ+u?=
- =?us-ascii?Q?ALpV/8a4WXCFLhPkJ65cjXWpyAnElhX+8QmC4yjVRNwpguPnxso9lZIbablm?=
- =?us-ascii?Q?fjYqERWeZfDlh8YvIv/NrSs/hBEs2266rsGFn3tf8IjV6vve68IPowdGI+Nv?=
- =?us-ascii?Q?MvOZbiFOC1fc/m7UgJ1omICuqAfI28PHXg5+qLUMm05idq/nxnZTeFKDLZ3d?=
- =?us-ascii?Q?dWLzS8/O8QC+SmggNUf0jV8SqxOuDyvMVUWMLHwEHMNxmsryOMqCcdjuLBUt?=
- =?us-ascii?Q?ujd2aA+aTAB/hfdM6wLzmaFScubIYudir69c3Ho2t21FNvHIvfQorqN7ZWN4?=
- =?us-ascii?Q?vPY0xkbMvZlqeawxNkVAhomkYAYol4BJaCTwzSYrg0V9dX0Jrq4Q1aSH4J8v?=
- =?us-ascii?Q?UwY4FPPSr/tPUWD+/xhPovp/b4V9ygLd87iJr3Pfj2CboLXIuIy2n8kjVRnt?=
- =?us-ascii?Q?s6fet5COKTyKZUG5hOTWfMncqhyVvZR8u2kMuaDuUxU1YzcYAgPzD2uOVrOL?=
- =?us-ascii?Q?fw=3D=3D?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1907b4cb-75b9-4c77-865b-08dd881532d6
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Apr 2025 18:31:18.9697
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: MhgrWeau3IhSvSs2gakFqSXyiiWmEfmGE/I6tCxC05gY9PaP6Q30URN9sDQqRNaHfSNmQgm4jCyyEhkFuJJFrw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP265MB5704
+User-Agent: Mozilla Thunderbird
+Reply-To: chet.ramey@case.edu
+Cc: chet.ramey@case.edu, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>,
+        Etienne Champetier <champetier.etienne@gmail.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org,
+        openafs-devel@openafs.org, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a
+ sticky dir
+Content-Language: en-US
+To: Jeffrey E Altman <jaltman@auristor.com>,
+        David Howells <dhowells@redhat.com>
+References: <473bad0c-9e38-4f8b-9939-c70c52890cd2@case.edu>
+ <433928.1745944651@warthog.procyon.org.uk>
+ <3d19dc03-72aa-46de-a6cc-4426cc84eb51@auristor.com>
+ <666533.1746029681@warthog.procyon.org.uk>
+ <8f6bd09c-c3d8-4142-938a-3fab5df7bd64@auristor.com>
+From: Chet Ramey <chet.ramey@case.edu>
+Autocrypt: addr=chet.ramey@case.edu; keydata=
+ xsDiBEEOsGwRBACFa0A1oa71HSZLWxAx0svXzhOZNQZOzqHmSuGOG92jIpQpr8DpvgRh40Yp
+ AwdcXb8QG1J5yGAKeevNE1zCFaA725vGSdHUyypHouV0xoWwukYO6qlyyX+2BZU+okBUqoWQ
+ koWxiYaCSfzB2Ln7pmdys1fJhcgBKf3VjWCjd2XJTwCgoFJOwyBFJdugjfwjSoRSwDOIMf0D
+ /iQKqlWhIO1LGpMrGX0il0/x4zj0NAcSwAk7LaPZbN4UPjn5pqGEHBlf1+xDDQCkAoZ/VqES
+ GZragl4VqJfxBr29Ag0UDvNbUbXoxQsARdero1M8GiAIRc50hj7HXFoERwenbNDJL86GPLAQ
+ OTGOCa4W2o29nFfFjQrsrrYHzVtyA/9oyKvTeEMJ7NA3VJdWcmn7gOu0FxEmSNhSoV1T4vP2
+ 1Wf7f5niCCRKQLNyUy0wEApQi4tSysdz+AbgAc0b/bHYVzIf2uO2lIEZQNNt+3g2bmXgloWm
+ W5fsm/di50Gm1l1Na63d3RZ00SeFQos6WEwLUHEB0yp6KXluXLLIZitEJM0gQ2hldCBSYW1l
+ eSA8Y2hldC5yYW1leUBjYXNlLmVkdT7CYQQTEQIAIQIbAwYLCQgHAwIDFQIDAxYCAQIeAQIX
+ gAUCRX3FIgIZAQAKCRC7WGnwZOp0q069AKCNDRn+zzN/AHbaynls/Lvq1kH/RQCgkLvF8bDs
+ maUHSxSIPqzlGuKWDxbOwE0EQQ6wbxAEAJCukwDigRDPhAuI+lf+6P64lWanIFOXIndqhvU1
+ 3cDbQ/Wt5LwPzm2QTvd7F+fcHOgZ8KOFScbDpjJaRqwIybMTcIN0B2pBLX/C10W1aY+cUrXZ
+ gXUGVISEMmpaP9v02auToo7XXVEHC+XLO9IU7/xaU98FL69l6/K4xeNSBRM/AAMHA/wNAmRB
+ pcyK0+VggZ5esQaIP/LyolAm2qwcmrd3dZi+g24s7yjV0EUwvRP7xHRDQFgkAo6++QbuecU/
+ J90lxrVnQwucZmfz9zgWDkT/MpfB/CNRSKLFjhYq2yHmHWT6vEjw9Ry/hF6Pc0oh1a62USdf
+ aKAiim0nVxxQmPmiRvtCmcJJBBgRAgAJBQJBDrBvAhsMAAoJELtYafBk6nSr43AAn2ZZFQg8
+ Gs/zUzvXMt7evaFqVTzcAJ0cHtKpP1i/4H4R9+OsYeQdxxWxTQ==
+In-Reply-To: <8f6bd09c-c3d8-4142-938a-3fab5df7bd64@auristor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Mirapoint-Received-SPF: 209.85.219.72 mail-qv1-f72.google.com chet.ramey@case.edu 5 none
+X-Mirapoint-Received-SPF: 129.22.103.211 mpv-in-cfd-1.case.edu chet.ramey@case.edu 5 none
+X-Junkmail-Status: score=10/90, host=mpv-out-cfd-1.case.edu
+X-Junkmail-Signature-Raw: score=unknown,
+	refid=str=0001.0A002124.68126DC7.0039,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0,
+	ip=0.0.0.0,
+	so=2016-11-06 16:00:04,
+	dmn=2013-03-21 17:37:32,
+	mode=single engine
+X-Junkmail-IWF: false
 
-On Wed, 23 Apr 2025 09:54:37 -0400
-Tamir Duberstein <tamird@gmail.com> wrote:
-
-> Allow implementors to specify the foreign pointer type; this exposes
-> information about the pointed-to type such as its alignment.
+On 4/30/25 1:26 PM, Jeffrey E Altman wrote:
+> On 4/30/2025 12:14 PM, David Howells wrote:
+>> Chet Ramey <chet.ramey@case.edu> wrote:
+>>
+>>> Well, except for CMU's report.
+>> Do you know of any link for that?  I'm guessing that is it was 1992, 
+>> there may
+>> be no online record of it.
+>>
+>> David
 > 
-> This requires the trait to be `unsafe` since it is now possible for
-> implementors to break soundness by returning a misaligned pointer.
-> 
-> Encoding the pointer type in the trait (and avoiding pointer casts)
-> allows the compiler to check that implementors return the correct
-> pointer type. This is preferable to directly encoding the alignment in
-> the trait using a constant as the compiler would be unable to check it.
-> 
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> ---
->  rust/kernel/alloc/kbox.rs | 38 ++++++++++++++++++++------------------
->  rust/kernel/miscdevice.rs | 10 +++++-----
->  rust/kernel/pci.rs        |  2 +-
->  rust/kernel/platform.rs   |  2 +-
->  rust/kernel/sync/arc.rs   | 21 ++++++++++++---------
->  rust/kernel/types.rs      | 46 +++++++++++++++++++++++++++++++---------------
->  6 files changed, 70 insertions(+), 49 deletions(-)
-> 
-> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
-> index b77d32f3a58b..6aa88b01e84d 100644
-> --- a/rust/kernel/alloc/kbox.rs
-> +++ b/rust/kernel/alloc/kbox.rs
-> @@ -360,68 +360,70 @@ fn try_init<E>(init: impl Init<T, E>, flags: Flags) -> Result<Self, E>
->      }
->  }
->  
-> -impl<T: 'static, A> ForeignOwnable for Box<T, A>
-> +// SAFETY: The `into_foreign` function returns a pointer that is well-aligned.
-> +unsafe impl<T: 'static, A> ForeignOwnable for Box<T, A>
->  where
->      A: Allocator,
->  {
-> +    type PointedTo = T;
+> https://groups.google.com/g/gnu.bash.bug/c/6PPTfOgFdL4/m/2AQU-S1N76UJ?hl=en
 
-I don't think this is the correct solution for this. The returned
-pointer is supposed to opaque, and exposing this type may encourage
-this is to be wrongly used.
+Which of course just claims they reported it, but doesn't include the
+report itself.
 
-IIUC, the only reason for this to be exposed is for XArray to be able
-to check alignment. However `align_of::<PointedTo>()` is not the
-minimum guaranteed alignment.
+But Jeffrey's message seems to indicate that IBM addressed this particular
+issue in AFS 3.2.
 
-For example, if the type is allocated via kernel allocator then it can
-always guarantee to be at least usize-aligned. ZST can be arbitrarily
-aligned so ForeignOwnable` implementation could return a
-validly-aligned pointer for XArray. Actually, I think all current
-ForeignOwnable implementation can be modified to always give 4-byte
-aligned pointers.
-
-Having a const associated item indicating the minimum guaranteed
-alignment for *that specific container* is the correct way IMO, not to
-reason about the pointee type!
-
-Best,
-Gary
-
->      type Borrowed<'a> = &'a T;
->      type BorrowedMut<'a> = &'a mut T;
->  
-> -    fn into_foreign(self) -> *mut crate::ffi::c_void {
-> -        Box::into_raw(self).cast()
-> +    fn into_foreign(self) -> *mut Self::PointedTo {
-> +        Box::into_raw(self)
->      }
->  
-> -    unsafe fn from_foreign(ptr: *mut crate::ffi::c_void) -> Self {
-> +    unsafe fn from_foreign(ptr: *mut Self::PointedTo) -> Self {
->          // SAFETY: The safety requirements of this function ensure that `ptr` comes from a previous
->          // call to `Self::into_foreign`.
-> -        unsafe { Box::from_raw(ptr.cast()) }
-> +        unsafe { Box::from_raw(ptr) }
->      }
->  
-> -    unsafe fn borrow<'a>(ptr: *mut crate::ffi::c_void) -> &'a T {
-> +    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> &'a T {
->          // SAFETY: The safety requirements of this method ensure that the object remains alive and
->          // immutable for the duration of 'a.
-> -        unsafe { &*ptr.cast() }
-> +        unsafe { &*ptr }
->      }
->  
-> -    unsafe fn borrow_mut<'a>(ptr: *mut crate::ffi::c_void) -> &'a mut T {
-> -        let ptr = ptr.cast();
-> +    unsafe fn borrow_mut<'a>(ptr: *mut Self::PointedTo) -> &'a mut T {
->          // SAFETY: The safety requirements of this method ensure that the pointer is valid and that
->          // nothing else will access the value for the duration of 'a.
->          unsafe { &mut *ptr }
->      }
->  }
+-- 
+``The lyf so short, the craft so long to lerne.'' - Chaucer
+		 ``Ars longa, vita brevis'' - Hippocrates
+Chet Ramey, UTech, CWRU    chet@case.edu    http://tiswww.cwru.edu/~chet/
 
