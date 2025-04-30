@@ -1,130 +1,184 @@
-Return-Path: <linux-fsdevel+bounces-47652-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C58AA3D5B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 01:57:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4B5AA3EA1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 02:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03581B63CDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Apr 2025 23:57:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6B17486E11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Apr 2025 00:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28076276A7E;
-	Tue, 29 Apr 2025 23:51:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD247FBAC;
+	Wed, 30 Apr 2025 00:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XljJ/yOK"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="TE7nw/91"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE85276A6D;
-	Tue, 29 Apr 2025 23:51:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DD377104
+	for <linux-fsdevel@vger.kernel.org>; Wed, 30 Apr 2025 00:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1745970660; cv=none; b=sdFJfyezIAVeu91zgk2upMn58ByuXkxvSZw4qScOXpWo5t5unYeLAwL9PqaghvUhCk1NwuGCSq6kUFJ6j1R/Tzr8Dg9YxC/uXEcvwBxT4e1060hV3u8MH6NC+5LWqJe0Ka8Vg9jk6sZBFojYcGztKqNF2Vb435IF0rdPBgmbAy8=
+	t=1745971939; cv=none; b=JZtS877ex33LVARa4Iv7qVwzuBYVd7biIRLKIUxyhkLnBWVTkkqVo6zKNypWT+tUnnYwq9770iHPql7CcqvneX/QpbQ0KM969GbtBBctC/t7EQcQXduC32lvsWm9tAIRtDrekWHYos42pj3nfSjIoBBmr+Uwl9WNDuA3gKLl9zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1745970660; c=relaxed/simple;
-	bh=SQ7K3XBgemfN3MGF8QNgaaqu44GQqwIGTU2BN0A3ax8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fBFhrXE2vWlbyN2Gyu62QNTno9Mj1gjjlSMV82R24N+7NH8Dl+h6R51+5+h+Jbe3axcOOtkLzUeOZ2+fZ9TMuuES27DpJs+OeLg9rxO/WG6fCI0rfn1aKdN/BLYBGvws74v07gST7FShAjHGNNKRSBNlDIZ2a6B3or9/xDrCUos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XljJ/yOK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD1CC4CEEB;
-	Tue, 29 Apr 2025 23:50:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1745970660;
-	bh=SQ7K3XBgemfN3MGF8QNgaaqu44GQqwIGTU2BN0A3ax8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XljJ/yOKeDPBQRUGf4pi8Hghg/RuPyZHAaQF0KsbnP8HU6yd13b3QgAxqL2rpJqJB
-	 lprGUaZpYK6KNfYbDfBRPBZFmURGgTMrmpLGvRcMJoyZLQisMaC7vRo0rhywoEmOHq
-	 54cgXUN2eQZVEZRsucc2HbzbOZpl3rkXgpK2N4wVEFx7F7gARER6xPike2m2c8W50B
-	 LWbtbSrOarKdqyIKIme/56chf61f/pwkrhoPyCJ0r/6DQZ7yg9IsG/OQRlOPoEWygJ
-	 y+OdpU2LarYB/JJHDILLre1cUBESlAleH8LIWL6vIt+v5I0kQdm8Yy0TKsbri8mtqP
-	 dmAyK4sDrDbqQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
-	Jan Kara <jack@suse.cz>,
-	kdevops@lists.linux.dev,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 28/39] fs/buffer: use sleeping version of __find_get_block()
-Date: Tue, 29 Apr 2025 19:49:55 -0400
-Message-Id: <20250429235006.536648-28-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250429235006.536648-1-sashal@kernel.org>
-References: <20250429235006.536648-1-sashal@kernel.org>
+	s=arc-20240116; t=1745971939; c=relaxed/simple;
+	bh=2WFI7YG09+m0cx02C/Cg8tS2QN4QWTbJbjpo7VZ8GSQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tAkzHdJHQ0XxN0pG9Mke3Q532hoKkGi2SFLLuk7xTYpKBC43l2QPCaA/4W00GQ+xPosd6K0htGJQwnFNEv8BmLQryXddTNWn3Ut5kBiJCuDtOs9EevFESOhbx30AkFeaEoecrUpX3xbI7Bkpu1CWstDIG/Re6orNi8Xru4gKg1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=TE7nw/91; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3f6dccdcadaso5244377b6e.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Apr 2025 17:12:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1745971936; x=1746576736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RifrksALX2Vder+a6SHgAFpR082K9ppi+AV/kBSVHQs=;
+        b=TE7nw/91Add6xXVmnDlqM5ZYHCx88OJUihQC1346YZHMhL7II17yeUqFxsJwDqJ0kA
+         OYfObkMDmltSzyxsHTxqEGWtx+CmBAgcfZqioXh+1ub4fYuu9w6NzagMTbeGvaZO0Jb/
+         VpI4gWn+qHXa3QERZFWiJLWBxJlWYRaxVyUgCM2aFeyz2dFSXDquTTr9+Kj2aeRUR1Kw
+         5jBvSaVa9XXE0gh9gQR7OVoHqh/jiSYz5C8qn2Ih0P2VGwAPZySCFu4Hr6z9PLTnXsq1
+         BDXOuQprJlkWtmHPIuheC5NKsv4x+AQq2b06fFm06ywY9G5gF/NVxDsDAxLub+ps/5GT
+         RcoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1745971936; x=1746576736;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RifrksALX2Vder+a6SHgAFpR082K9ppi+AV/kBSVHQs=;
+        b=gLPip9/wKl4O235PLexHftxYL5UkwqR8G4zqjtLhat0DptK0JZWl6GDuQi5KMzVCC/
+         J2zeGbJlfCnEDjkXa0h7ZJt5fBwAZu/4Ac+pfSIPwP+c37LLsw4WakZC9XKVtcMYcHDo
+         5UBSHoOrvVRXGm4K1X69A2kDBnY20RQRa22WMKhunAy5bhPQY6rSwLczE31Cq+9fSbdc
+         u4At26OXzls5Y8F34d0EJg/imfkRkerlCeYmVbKIhKw+jFIcFkoTU0rExfbJ6rzVHEtD
+         6uaCXq+0d4kqg5Wu5TGGBxulqYFRfO2sAXXs1XjeoXZ7nGA2U7G6d3MPMCiA5qx3HORo
+         ge3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXZqAmh7rZPLGhDU88HZDzDcJ4YxzCJkQ1YKD+L6pid2tnB4FMz3q1wHVh0w5gLLiog9wrcvSVoRILMznti@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5UDD+SxRh+ulMVdYUZwGznAvkHr8WNY1l5W22v7mQrPTNnhxO
+	UyO9cN7pY/rZS+/OqnquaRGt1i25WdnNiaEmWtXc2BjiQudqAc758musEwmd8pw=
+X-Gm-Gg: ASbGncueFQwrM1aiiC+yDSPYEGAWsBNZUmFoYsMJBKphH7TmQUyh/eDjBI+d/+4VUPc
+	sTJTK+lkYkaPndDWNbo4e/PEAA9AKEUtySTU1qtdm17hcEQ56qXlvJTQC/Qn3+4j7PJZeJi2kcr
+	ylkzVEQAPxV0dhT9/Eqyd+msod/nObPwaxwmvrIl29Hue6VbeaGZfWxJjd1xFYGDS/Yh0wTSN0n
+	DK8JphtORBtSigKKukLaycKgcKW4RMeq5Tswdw02GZuEDHSq04s3Ii51uYEf3e3G2bfIATJOLJ7
+	pDKu68OVgy8Mt/QCFjS5JcXQYnzZhmk=
+X-Google-Smtp-Source: AGHT+IFnPrNg8+Z4pnoghpX6MpSr/CqPz9Yx7fB2BjbMPsTcgGC66QMwLDMWftDgGPTmQ3JL1jT4HA==
+X-Received: by 2002:a05:6808:6f96:b0:3f9:28b9:702a with SMTP id 5614622812f47-40239e4938amr948898b6e.8.1745971936132;
+        Tue, 29 Apr 2025 17:12:16 -0700 (PDT)
+Received: from pop-os.attlocal.net ([2600:1700:6476:1430::45])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-402129255a2sm512854b6e.13.2025.04.29.17.12.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Apr 2025 17:12:15 -0700 (PDT)
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com
+Cc: Slava.Dubeyko@ibm.com,
+	linux-fsdevel@vger.kernel.org,
+	Johannes.Thumshirn@wdc.com,
+	Viacheslav Dubeyko <slava@dubeyko.com>
+Subject: [PATCH v2] hfs: fix not erasing deleted b-tree node issue
+Date: Tue, 29 Apr 2025 17:12:11 -0700
+Message-Id: <20250430001211.1912533-1-slava@dubeyko.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.4
 Content-Transfer-Encoding: 8bit
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+The generic/001 test of xfstests suite fails and corrupts
+the HFS volume:
 
-[ Upstream commit 5b67d43976828dea2394eae2556b369bb7a61f64 ]
+sudo ./check generic/001
+FSTYP         -- hfs
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc2+ #3 SMP PREEMPT_DYNAMIC Fri Apr 25 17:13:00 PDT 2>
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
 
-Convert to the new nonatomic flavor to benefit from potential performance
-benefits and adapt in the future vs migration such that semantics
-are kept.
+generic/001 32s ... _check_generic_filesystem: filesystem on /dev/loop50 is inconsistent
+(see /home/slavad/XFSTESTS-2/xfstests-dev/results//generic/001.full for details)
 
-Convert write_boundary_block() which already takes the buffer
-lock as well as bdev_getblk() depending on the respective gpf flags.
-There are no changes in semantics.
+Ran: generic/001
+Failures: generic/001
+Failed 1 of 1 tests
 
-Suggested-by: Jan Kara <jack@suse.cz>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Davidlohr Bueso <dave@stgolabs.net>
-Link: https://kdevops.org/ext4/v6.15-rc2.html # [0]
-Link: https://lore.kernel.org/all/aAAEvcrmREWa1SKF@bombadil.infradead.org/ # [1]
-Link: https://lore.kernel.org/20250418015921.132400-4-dave@stgolabs.net
-Tested-by: kdevops@lists.linux.dev # [0] [1]
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+fsck.hfs -d -n ./test-image.bin
+** ./test-image.bin (NO WRITE)
+	Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+   Executing fsck_hfs (version 540.1-Linux).
+** Checking HFS volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+   Unused node is not erased (node = 2)
+   Unused node is not erased (node = 4)
+<skipped>
+   Unused node is not erased (node = 253)
+   Unused node is not erased (node = 254)
+   Unused node is not erased (node = 255)
+   Unused node is not erased (node = 256)
+** Checking catalog hierarchy.
+** Checking volume bitmap.
+** Checking volume information.
+   Verify Status: VIStat = 0x0000, ABTStat = 0x0000 EBTStat = 0x0000
+                  CBTStat = 0x0004 CatStat = 0x00000000
+** The volume untitled was found corrupt and needs to be repaired.
+	volume type is HFS
+	primary MDB is at block 2 0x02
+	alternate MDB is at block 20971518 0x13ffffe
+	primary VHB is at block 0 0x00
+	alternate VHB is at block 0 0x00
+	sector size = 512 0x200
+	VolumeObject flags = 0x19
+	total sectors for volume = 20971520 0x1400000
+	total sectors for embedded volume = 0 0x00
+
+This patch adds logic of clearing the deleted b-tree node.
+
+sudo ./check generic/001
+FSTYP         -- hfs
+PLATFORM      -- Linux/x86_64 hfsplus-testing-0001 6.15.0-rc2+ #3 SMP PREEMPT_DYNAMIC Fri Apr 25 17:13:00 PDT 2025
+MKFS_OPTIONS  -- /dev/loop51
+MOUNT_OPTIONS -- /dev/loop51 /mnt/scratch
+
+generic/001 9s ...  32s
+Ran: generic/001
+Passed all 1 tests
+
+fsck.hfs -d -n ./test-image.bin
+** ./test-image.bin (NO WRITE)
+	Using cacheBlockSize=32K cacheTotalBlock=1024 cacheSize=32768K.
+   Executing fsck_hfs (version 540.1-Linux).
+** Checking HFS volume.
+   The volume name is untitled
+** Checking extents overflow file.
+** Checking catalog file.
+** Checking catalog hierarchy.
+** Checking volume bitmap.
+** Checking volume information.
+** The volume untitled appears to be OK.
+
+Signed-off-by: Viacheslav Dubeyko <slava@dubeyko.com>
 ---
- fs/buffer.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ fs/hfs/bnode.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 7981097c846d4..2494fe3a5e69e 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -658,7 +658,9 @@ EXPORT_SYMBOL(generic_buffers_fsync);
- void write_boundary_block(struct block_device *bdev,
- 			sector_t bblock, unsigned blocksize)
- {
--	struct buffer_head *bh = __find_get_block(bdev, bblock + 1, blocksize);
-+	struct buffer_head *bh;
-+
-+	bh = __find_get_block_nonatomic(bdev, bblock + 1, blocksize);
- 	if (bh) {
- 		if (buffer_dirty(bh))
- 			write_dirty_buffer(bh, 0);
-@@ -1440,7 +1442,12 @@ EXPORT_SYMBOL(__find_get_block_nonatomic);
- struct buffer_head *bdev_getblk(struct block_device *bdev, sector_t block,
- 		unsigned size, gfp_t gfp)
- {
--	struct buffer_head *bh = __find_get_block(bdev, block, size);
-+	struct buffer_head *bh;
-+
-+	if (gfpflags_allow_blocking(gfp))
-+		bh = __find_get_block_nonatomic(bdev, block, size);
-+	else
-+		bh = __find_get_block(bdev, block, size);
- 
- 	might_alloc(gfp);
- 	if (bh)
+diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+index cb823a8a6ba9..50ed4c855364 100644
+--- a/fs/hfs/bnode.c
++++ b/fs/hfs/bnode.c
+@@ -482,6 +482,7 @@ void hfs_bnode_put(struct hfs_bnode *node)
+ 		if (test_bit(HFS_BNODE_DELETED, &node->flags)) {
+ 			hfs_bnode_unhash(node);
+ 			spin_unlock(&tree->hash_lock);
++			hfs_bnode_clear(node, 0, tree->node_size);
+ 			hfs_bmap_free(node);
+ 			hfs_bnode_free(node);
+ 			return;
 -- 
-2.39.5
+2.34.1
 
 
