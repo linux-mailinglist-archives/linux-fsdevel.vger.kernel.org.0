@@ -1,365 +1,312 @@
-Return-Path: <linux-fsdevel+bounces-47834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1CDAAA6165
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 18:29:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA2EAA61AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 18:58:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D93B19C0C4D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 16:28:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178A21BC1D61
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 16:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FE3020E70C;
-	Thu,  1 May 2025 16:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D54542192F9;
+	Thu,  1 May 2025 16:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NdTNJAYu"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZXAEQJvY";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="iDhRVL5o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6372420C49C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 May 2025 16:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746116938; cv=none; b=opF05tCAX5RvPp5b9jOG9gXw9OwNVnltI6ARNEEXxZiRmdLTke1k6SK3YrZSG2rTFHGNFYOAHjyuH3SyHMPp/tALWvjng4G9hPNNI2bomIA6TShTFmuLJNoUhrGbaN8JddHXXA27iQNhwi58KPT12LTZRe0+azOhvKZHasl30A8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746116938; c=relaxed/simple;
-	bh=ObE5VS/qIwThd+nOKdwv90xGXHk/JPOnMtDyXpBTZRE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aM122QtKRHo+s/36eq6JGUMy1ntDpAPtDGa2Es7FCNsE9JuQxGmWWRYWKKdZI6dxqH+rNa484hQIhga/Z9WZvXUYHTyN38NwjAoEQWZOylU63jwhh9KyeS1GgbgCS6BrQjC/EUzb5qL7vO74rXdTEkKas9gc0dmlkxp1dJRsYDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NdTNJAYu; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746116935;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=POFJZm9mCkwmAkqxkeFxdJcXQWJvnT1NIr0tGy5Ovr8=;
-	b=NdTNJAYuF0zTtFsU/LG2NEUf5EwvMbcA5QcMwGJ+inNWgZczdbFZE5cjKQo+RpAmPdTNEr
-	eAoqtFfwq/PxZ6ToeOQjSf00vF1EZVAsERQ9iB3UwfvhzybZbw8AdkJWlYfzUd3IVL50uf
-	sqrYkQ6ECpcEYPA7KVUmY7RaA0nf5lQ=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-691-tuUVZe38MpitTchJ2ezfrw-1; Thu, 01 May 2025 12:28:53 -0400
-X-MC-Unique: tuUVZe38MpitTchJ2ezfrw-1
-X-Mimecast-MFC-AGG-ID: tuUVZe38MpitTchJ2ezfrw_1746116933
-Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c5c9abdbd3so107096485a.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 May 2025 09:28:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746116933; x=1746721733;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=POFJZm9mCkwmAkqxkeFxdJcXQWJvnT1NIr0tGy5Ovr8=;
-        b=JFFpaNNFVykcQBVu4MZGmHUa28UMYiSIqfA8YrJ/9GUj4GB93JbOF4VllqeWVY02G2
-         p9/ld9NtW8qx47SSSK5HVt1GZZnl2NlJ+Bj0+BhryInQWO8LjtWDyVRk9FZK/05RrHe1
-         wMEArt8WYqtv1sLAePCsTeau3EvPtpyqYBcV3kzMZEUq1lKl1wogVRjTaY6wfxN/fDeT
-         dIKcKuTzjttXkbpdfK1584GxuLOaGSbdV2eQmJ7S6sswFzCXCdqshVgydRAkDmmfxoEX
-         rLujuNsfMJKB0oBuer2hhkQFFzp/vJ7CJePXxcly9M8rW+lstD2SEgKIXXdTNB6wPkw+
-         vxAg==
-X-Forwarded-Encrypted: i=1; AJvYcCXCkEPoUpHFbw7zvYqqDmQb5FUn2v7EuQZNIClmiKO3pmP0qLAdA3hVjEkkmBIcOU7j/XlC+GuUo9rEGmxU@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEoo86XLMPFRLZqb/AJfDevyyFJjnmqKqXLYjrYoX7ucecsv3y
-	xNGa3H+g66Q8PQVhAKgTagRpr5SxcJAgpj56ImVtQ1cKst2yG+H3kHJGiYCiGfeO9g0RNXj1aft
-	npJLWZWSKDpPCiznjgnjUabvUfghWbrDXRND93CBlNX3R6p04JJnlWwApDhs1r/FEhAHKt2k=
-X-Gm-Gg: ASbGncsWDKVJDJGLx65JWai00VBPulAFxcfDpFoSyGVzN86H9H8LaKHBBRn7X6Y5hTT
-	L68Lrdbd1FZhrRumdljkj3UICs4HJ+h5hitpyBw/NvqY7R1hvVgmVl0f6cdeqDg4brsWYGiRbF6
-	bWZl2VfbJjuXlrZF3ptigkGFBOyd8u8Xlfyvbkcr3NV+dcTFNWT+eloaRh5HHuv98i9hZsq1G6q
-	w3eS5WOtHL6GskYTYawhyB9KFOyWOQt6AMsVxkPiwekgsPyEyuFr597bFAq64h55eeIRKPyOPnF
-	RCE=
-X-Received: by 2002:a05:620a:4150:b0:7c5:602f:51fc with SMTP id af79cd13be357-7caceffd66fmr404954785a.44.1746116932616;
-        Thu, 01 May 2025 09:28:52 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGaLtDw2oaUnXy5i1K0ukWVnpC8lWGFP2VjjF8AJY1HY9brz4VmAyqEbWQHCliEQppWDHSJEA==
-X-Received: by 2002:a05:620a:4150:b0:7c5:602f:51fc with SMTP id af79cd13be357-7caceffd66fmr404951385a.44.1746116932148;
-        Thu, 01 May 2025 09:28:52 -0700 (PDT)
-Received: from x1.local ([85.131.185.92])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7cad23c3cf3sm65689985a.36.2025.05.01.09.28.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 May 2025 09:28:51 -0700 (PDT)
-Date: Thu, 1 May 2025 12:28:49 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	Linux-MM <linux-mm@kvack.org>
-Subject: Re: [PATCH] mm/userfaultfd: prevent busy looping for tasks with
- signals pending
-Message-ID: <aBOhQVr-jmY1nvlb@x1.local>
-References: <27c3a7f5-aad8-4f2a-a66e-ff5ae98f31eb@kernel.dk>
- <20250424140344.GA840@cmpxchg.org>
- <aAqCXfPirHqWMlb4@x1.local>
- <86e2e26e-e939-4c45-879c-5021473cfb5a@kernel.dk>
- <aAqNYsMvU-7I-nu1@x1.local>
- <26a0a28c-197f-4d0b-ad58-c003d72b1700@kernel.dk>
- <aAqXlcYI9j39zQnE@x1.local>
- <aBOe27gBqlwIj6lD@x1.local>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 745D81A314A;
+	Thu,  1 May 2025 16:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746118686; cv=fail; b=OFt+5bRifKge2l8sPLsG2dyqK0pCEiCDRGlbhJkSU/zVzm2c8PQ6PJWJWKehmq8jS8ZT6mqkQ5so+FH7jDQdGvq5VJlg0MDKxaOW4FaylH8vq9bS/lytH88oK+ZoFMhXnW+1Pb9jxlyg7haHq+POIBfIUyJJM1/mjZ7vRpsIb2c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746118686; c=relaxed/simple;
+	bh=mtBRe3tUtY+uqrN8Hja4a3RAl2uLQhjEcmcfQC0xH5Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=u0hLxOQA4ARZeIMGmFaoSkpC6FxxVlEMmMLNGy0MkA5mR1JCSmDjJP7ooxNWxlrwtJWFjBbmCeElljw8XnI//GCn67VW3rLpyTuBDsT/KMk2+LrmUF08ViOqcIUetVAbD8/Smn4fdLK/1IskoKreLt+zAsafihoIbwroV6qchio=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZXAEQJvY; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=iDhRVL5o; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 541Gk542008227;
+	Thu, 1 May 2025 16:57:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=BERhNCdozwID3SnU
+	1oVEH8Q67sfiJF+mdJTiYT2NVSg=; b=ZXAEQJvY0R/en37GC2Lue/D3Tjj0AfYc
+	zXRk/XUB9BGAxRHyFcSgzEDlFw05gjbYqvKSO4lEBfaOXKgFALg3IoI4fHZ7hDIy
+	DwSWrg7E6zPoR1lWcG/wNvrpBdhCd0IfcJgWoUkOJ9zPE9z/wdJQ9QU3kRolFKhi
+	lSfqjlEvjLxKhRnB0Xd3DxM/oytEIUcegLQbIwccUbPKLPwMDubUJ/AocKzUR7yW
+	ha5es0pM25n00wX2zae29MQO1eKIbfkiB5w5nyP5nUyjNeFhp+Yp19vzo9LPer0t
+	HdGs7G6LE5SwuQg+zT6NY5Bzhz3en0MqZLCF8xBfPNx/AQ1ZIS/Feg==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46b6uskfsm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 01 May 2025 16:57:49 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 541GH4Vg011314;
+	Thu, 1 May 2025 16:57:48 GMT
+Received: from dm5pr21cu001.outbound.protection.outlook.com (mail-centralusazlp17011024.outbound.protection.outlook.com [40.93.13.24])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 468nxd9ada-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 01 May 2025 16:57:48 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Tbzqs7GdGJ1ntsAT8ZyDmIYeNGZzBI5AEgQCQU4RNeO1I+FzkjYZiM1VqrQQM6DpxaMhAFFe/c0FqOMTnqKV3+xPfumuphv/sQPns37uWXEhsjoD6hWW+OdowVeDmjIAg4HMDdsFUwOCOazpZFT7F3e/1SHAXN7seV6KK1Jf2UlWPuSFMExcCPePxy0h73LqYCFZ2Z6XH3097FhwpqAv9+Z+iuM6Ku8qDZHQz8FlC1wQ/zb2E9lmEof24Bsv5SVw5ruBr1YpBdxldpBCJkVAnDxPO+1YRlqocnLt07uJAoEtkPHwNWs5PkCgRbZw2Urkdqn0rEPDo0/KHmjHe01lVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BERhNCdozwID3SnU1oVEH8Q67sfiJF+mdJTiYT2NVSg=;
+ b=jV7zZhjNtptWezylLpigg4iIx2wkSh6HSOaFiXwcyOi/LCmkoI3oQxcVMB4UcXbkVpfvUmPSvxNIwM6o6bRqXZCeVK4bsBJtqP/iuseE7phUlHGGwkuaAMQxybx1fCycwffjc1vzgomCfG9q+WNXztW0KhezhFaSQpIbneTJZbwBeA65ZtGfIHCe96yNSGGQWV3VTk4OYH9BHdc0QkFZ4CKnKQCexgmYyH6PSfJy/TrxfY8rvD9OsXzkoxKUeSkaspQxv0VeQtb1isqj5FWFod3yhRuvredr43dlNjJ7KJnXiCMB32T7RcslniV8YDTvWTXlVg+bv5G9PkgX1siBIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BERhNCdozwID3SnU1oVEH8Q67sfiJF+mdJTiYT2NVSg=;
+ b=iDhRVL5o1tUz52BkpvMyWPvPBvaD1aiF4jeMbVHZwKYyYB9PYVJSa5SPx6vW2mJQWaHL/CtJgv1w+IaXF++wf+ryTfVZA444MjPF74fEG848s26a2/z/u9Y3OINYF5lMhOPnptiV72KH6EW63FMZaM5tgZn/t39CfnH+87HMt+g=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DM4PR10MB6040.namprd10.prod.outlook.com (2603:10b6:8:b9::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.35; Thu, 1 May
+ 2025 16:57:44 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%7]) with mapi id 15.20.8699.022; Thu, 1 May 2025
+ 16:57:44 +0000
+From: John Garry <john.g.garry@oracle.com>
+To: brauner@kernel.org, djwong@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk,
+        jack@suse.cz, cem@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+        linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+        martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+        linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+        linux-api@vger.kernel.org, John Garry <john.g.garry@oracle.com>
+Subject: [PATCH v10 00/15] large atomic writes for xfs
+Date: Thu,  1 May 2025 16:57:18 +0000
+Message-Id: <20250501165733.1025207-1-john.g.garry@oracle.com>
+X-Mailer: git-send-email 2.31.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR13CA0033.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c2::8) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aBOe27gBqlwIj6lD@x1.local>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DM4PR10MB6040:EE_
+X-MS-Office365-Filtering-Correlation-Id: d0d0f716-3f67-4836-286a-08dd88d14b0f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Zj+zYlUvQ8HKc2rkYOIatyJ3JdPIjxo+gB2XHzEqi5EO+IhUfv4MlwttY6fE?=
+ =?us-ascii?Q?+j1ZsJg6zUGblykMyCwqCbtfBZX5Flii/dX5SLf/w3yodq+kDF6XAZsZ3NOK?=
+ =?us-ascii?Q?cm3MgeavUhgzUaBiWA8SMTHLgMPkV9v8fdTzMZhJr/dHc5Hg8DiEmHKPDMJ2?=
+ =?us-ascii?Q?JYsWYRfA2pyDUyvD+bP5AxSyQXpJbf52lcYB+mxemZ6PCQgrpob3ekmcdH5V?=
+ =?us-ascii?Q?gBaqdjh7fdwa6lJf8yodoO0Gq4ROalnWdhHoPhMelxfkZ1aPs/23ADbuqF9Q?=
+ =?us-ascii?Q?gys0lU9FKVv4s+qU4VNuc3OTdcZMu19/SxVSunfRx919WOtZPOXPTblU3RIF?=
+ =?us-ascii?Q?aRhRw15clgKL1/9FpiCHLmT7UHei3MsHcy1mHo9SoWZuHXfiqH36MktzzsJS?=
+ =?us-ascii?Q?GQbhTSB08IFSCO1Zoo8hgsf7UuWodF7E6qymyzVCE3Dy5GvZyYX8hqxPua94?=
+ =?us-ascii?Q?81jWoHWqemgIRR3wPYI6e6xKniXnLsQXC8r0hi2h7cH8KxSRVND59dH3++tu?=
+ =?us-ascii?Q?aOBDcZk6kB5d3c3rXEw0rZ/AdgfeULdyPbUEjlQddtuhd6Cv5blXd0UlUT2x?=
+ =?us-ascii?Q?/x9ZZEX7RyU1ittBHiOyKBMbLm4KxB6WaKWQqOyYoOIcgtwGechAVbBYMbKE?=
+ =?us-ascii?Q?U9Q4ZzdqpIMC6SR3scKhVOeSZj04sL9QyGixBvdCPqwT1hzf2xigWrhIrMyP?=
+ =?us-ascii?Q?L1ae2YlNvGOCOcYC6u5t3TD6UqqPVzQuluBvvNdX2ytCbPvZz4bpKA3AP+2D?=
+ =?us-ascii?Q?W8AKMzqtF+whyWUXI95hxW9othY/+ds+6dIE+5u9w6JAvHpMZlIEnFsh6OhH?=
+ =?us-ascii?Q?OmQLRqxpHw6SqpCi6DuMpQvp1BVshvb8xlXhUryxzvHSCv4O6yUY8lwRs+J3?=
+ =?us-ascii?Q?S+gIjol7SBW49T3fSClBTTWVYkqq3XVxTkUy7s3uocXsLwLY8lCZDymAPFKj?=
+ =?us-ascii?Q?cAYqw4mZKqBRR/3UWFzwr+cTiYCjowe5L7h09ZdgpRiQCJhWdRO+xXFcpfBi?=
+ =?us-ascii?Q?lkMtbGGKXT27jtZ/fdSXa/nFoG2E/MHj2iKTBgh+4CiyBPhNhMN2vXMdDWfU?=
+ =?us-ascii?Q?74jhdtJGyOfKSEPo1bLotNMwaWO4IWzevq8o8Z5jIXINf98zokYE93Tj8QmJ?=
+ =?us-ascii?Q?de2G3j4JhtNbqkVsbnRQehSnRb6gyGX9uuTbEadBwaIgQsms+hLC3LSWp+uc?=
+ =?us-ascii?Q?qIsKsXR11H+86uIIWhMVFyxvAWRstkCWH5fFg4pOfB0aWiQ4gEhfWhdZTyQD?=
+ =?us-ascii?Q?faoRD/ieWLchddsOXd1gU084BU+mGOB580GUeKVPx38+uARVkpniX9zyTYQf?=
+ =?us-ascii?Q?CuDxHtDiZhkg5q8IyDS87AnFodqZSStaxKZfyGjKyF/v5jH4/wU4mtSdfwny?=
+ =?us-ascii?Q?ifaMg4mL2x93XTKNAJu9kXF1vTWGs4pVyGdbugsbljo1Wc6xr5zFcnqZpWK5?=
+ =?us-ascii?Q?ojr1Dg1Y8AI=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/XCKqoxlu9QPndjeAp5nmOh4QItT43M6KuggOCwiiL/nLzPxcHKGktMh9tJH?=
+ =?us-ascii?Q?ovdxWM+n0GUJAXIuGWFbcTx0YOufMK8iErYodKPutnNcTTCgAqm6IqiNjiLm?=
+ =?us-ascii?Q?pPEzYMbDcSb7807DWdpyGQmEkn60RG8v1xuhafYYbRgEttm45vdeDEP5omOV?=
+ =?us-ascii?Q?JmyN6g+TgLDBJzEgqTu0DnKVUdJFyPEdSPd8Y3bhH3lbRKWrwSrZyuxk8UED?=
+ =?us-ascii?Q?Hd8BxiHveLNG8kw6G4LMWc1FvLoNX78Sb+UyTeQZ0u34kGBLTAc4hK6NKNo1?=
+ =?us-ascii?Q?L8jpflBNroT4tq0kE3yq/p+s3sJEAl+3kYDRljn6htveismmqqDWm6BH1p7F?=
+ =?us-ascii?Q?1CaviUP21IdHmLSUCgHUzlVH0fKm2XU34P0KKQ5/LVOmzsbfpED0Ut6+s2E2?=
+ =?us-ascii?Q?npA0OkaYXoWcI9EejbgQff8a5D8utRIjBSR+GkiPSLy6WPCZ9ah1CsN66o5R?=
+ =?us-ascii?Q?dCK2iTaAmiPejG1MAGZKHxeo3fdxrXJEaoESX32lq2AssXR96Bu5Qp+0iVB0?=
+ =?us-ascii?Q?i41/AeH/YexcX4lOG6jy0FIIhwg9e49+9fMohz7rR0pny65aNZ+avsUzpKxo?=
+ =?us-ascii?Q?TgrcSAfJLy0BuiMWV/YtIzHsdCh+B6lFdIZOWTW83gLVdPo/vSa36asqyQGI?=
+ =?us-ascii?Q?7YV4+nWWJCik0/rkbwOFQShDGNFllAR8EHrbqckStPxjKeuTF9sr7bZhz5It?=
+ =?us-ascii?Q?TLYNhJv4SXZWvYGR6qMEukNf6OFvbW3koHy+4o2GQ6tllD7WKUXT7O/Nwu8K?=
+ =?us-ascii?Q?a3UYkoyG/TDUp2OgC1CJ2QxiZURllG0e0MSfdq7bvKYn/pW2AanT93JwrIO9?=
+ =?us-ascii?Q?m1pOcTHXENZxEtg5MxWiq3jua1Js8R0ONlruG4oF8cc6AU2oKNZ01fi0RVHz?=
+ =?us-ascii?Q?emBQGNxydXCCjmKt8x5qOoae4qkWXFVjgkaUFhosSnPXdM/g2Xjv43CjoOGf?=
+ =?us-ascii?Q?ToSWYwdudD+f0xSANYZSpo/No9w59aaqUhKxbP33KIhPbtHjQL2HgFBVD2U+?=
+ =?us-ascii?Q?76L91bdnmUaamhHggIkZqC1BS3f+MihLrpj41IxCK56A73nM5fPv8IGYSR7A?=
+ =?us-ascii?Q?arcXgStUD71UejOOHRDtKi7bYdWklD/Bw0R193z/6LmANasigsfPmdqQHTSX?=
+ =?us-ascii?Q?g9F0J2z2KSIgb5Vl0hKagFRZLqoHXRoUEJq/59KIhwPE6oTDTy476boliuVD?=
+ =?us-ascii?Q?8u3UnjNbxMXrKnyRBNMjZxhX111wXfFQYc9T0BQKklQXSsRemQh4HGKR/DTb?=
+ =?us-ascii?Q?Dqc8kralCsLroMN6ajIfK2Mbog3oZbNYzyWGEuaIyPNWLASTCb3IZDJl6y8E?=
+ =?us-ascii?Q?9cKPSiKGj4tt8S0DIZqxMhinINjwpSJcJeQJIs5QiwGlt5NwXCXzzrVuUt0u?=
+ =?us-ascii?Q?AueHnMEGMtHHi/p6DCq7EguFJhAO6N6cjDrz7aXcCnj/lAmv35KRI9cqlvCs?=
+ =?us-ascii?Q?F5ec5JQHUT4USokTEwGBd1TjaJNG8HYpE8Ta1lKSfSHhhzGcpGbcytUYckEh?=
+ =?us-ascii?Q?Y/sTiDRzsHoYM+//2JhI0C5NnGPZli/ZcXsaUBIfqrYS7APeA+ydNQTykdfl?=
+ =?us-ascii?Q?ythnqdJIIS/Vd3rsm/vn25m1GsSld94IJeDyvnkCTyo/ImXakTH564FUk8mx?=
+ =?us-ascii?Q?KQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	QLi+aLLuWm4HPKItezQnMrtrfgUDHUw2+poJPbzpmgK8nax6HSU8tkbZpeOiKOFXQ5GUJqEdA6C7e8toRes9RAB+xIPCZiWWrbpTlWLtZbYaplq2B5f4Bl5cfXG0BwxoXXr6TzRxAiMk8k80TzT+/beK3yBQzEpPl/ekYxLThUAXyVP7eaCb8wAaPGAhykbR16YM1oSw6BsnDREyHhjCBxYmCm3dt1K06Yz2RU960dBBFhI5aVUQaDvduEGmWJDeEaXCWIdZKdkItSvybcNv7bnYF5Ht+lwGshxrRUKyIMQMTX1SK9vZMgcXbIXlhe/vsaGZePxetg9RUADv1LGUHvUwwC/rkH3yv0NSeKUgP8o0s7EZs8VAj7MOocVWA0dHFw58BXT8pt6aKBGYWuZwbJk8rNCttqLk0/zSGJxwEjWVMtyiSkjJzb8FoGYMt29KelVRMKiGV1um399uH8UQrZLvxPosCLXlxDcqp/PlfQEYIfAa8EDHpAFwIL/oH/4cgl4DFXaULGQiijtP0zgt5BJE9glD2t/m88fq/XxcQn9+qGHRDQUy7QX5awBNFKrPXEmVGKu85SitL6JXfs+iTCx4uhHEnfixjw+KeYDK2dY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d0d0f716-3f67-4836-286a-08dd88d14b0f
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2025 16:57:44.6798
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: PAJio8q0v/eN3OQmoWLRg8RTTtcZYTXIQlFzJuh3H6f60wc0w292HD4n0FrRjO77ZGubXYwo2AQ5Fi9l6C9cfA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB6040
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-01_06,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 adultscore=0 phishscore=0 mlxscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2505010128
+X-Proofpoint-ORIG-GUID: 7kVT3Rk-_9aPHebeOqpX3d3jLkj1SnEu
+X-Proofpoint-GUID: 7kVT3Rk-_9aPHebeOqpX3d3jLkj1SnEu
+X-Authority-Analysis: v=2.4 cv=Hd0UTjE8 c=1 sm=1 tr=0 ts=6813a80d cx=c_pps a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10
+ a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=04d_y77oF55RfSPHe00A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAxMDEyOSBTYWx0ZWRfXyYR8NMETHUN4 mFHNOHWlX4ezc4H7ie7OgnxhdVuVBSuqsXC+eIZCSaFSsmYFwon8kRJxuZgxQ63+qZCF2DrlNg1 W/O/Kg7sPFoT3qNUgfvWXpbAl9Ch+Y7tK8UfLmWU9EmxjTtEAaUnIaiYTBr94DPC4Bz4PCSbrYZ
+ I4iZWidVtNo8HKsucOVPtyaSsajEIzHNq5CZhEoySRPlZjnmZgpYaozlalsManQlAQRR6W6uKpF 9lC0JvH2m0cxKRmP3K3lv4LrGh7l755WL8dKK8YK/PdfstL/7VnjPUW4FN+1LDq02BXSzWYvPrI LRBCmLxSJ1jW6vRzQBDWZHxmiUakD9qqQ3qWo9TiYx605ZGgeI1n1TTZhC2lX38PxE7Ddq24t14
+ jC5e+CPlaLZf89mTmmWuTfMvz9+oRKzu0epXm+cGMYfa+6lt54MgVNCPLtQTIbStJZkAoQyN
 
-On Thu, May 01, 2025 at 12:18:35PM -0400, Peter Xu wrote:
-> On Thu, Apr 24, 2025 at 03:57:09PM -0400, Peter Xu wrote:
-> > On Thu, Apr 24, 2025 at 01:20:46PM -0600, Jens Axboe wrote:
-> > > On 4/24/25 1:13 PM, Peter Xu wrote:
-> > > 
-> > > (skipping to this bit as I think we're mostly in agreement on the above)
-> > > 
-> > > >>> diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-> > > >>> index 296d294142c8..fa721525d93a 100644
-> > > >>> --- a/arch/x86/mm/fault.c
-> > > >>> +++ b/arch/x86/mm/fault.c
-> > > >>> @@ -1300,9 +1300,14 @@ void do_user_addr_fault(struct pt_regs *regs,
-> > > >>>          * We set FAULT_FLAG_USER based on the register state, not
-> > > >>>          * based on X86_PF_USER. User space accesses that cause
-> > > >>>          * system page faults are still user accesses.
-> > > >>> +        *
-> > > >>> +        * When we're in user mode, allow fast response on non-fatal
-> > > >>> +        * signals.  Do not set this in kernel mode faults because normally
-> > > >>> +        * a kernel fault means the fault must be resolved anyway before
-> > > >>> +        * going back to userspace.
-> > > >>>          */
-> > > >>>         if (user_mode(regs))
-> > > >>> -               flags |= FAULT_FLAG_USER;
-> > > >>> +               flags |= FAULT_FLAG_USER | FAULT_FLAG_INTERRUPTIBLE;
-> > > >>>  
-> > > >>>  #ifdef CONFIG_X86_64
-> > > >>>         /*
-> > > >>> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > >>> index 9b701cfbef22..a80f3f609b37 100644
-> > > >>> --- a/include/linux/mm.h
-> > > >>> +++ b/include/linux/mm.h
-> > > >>> @@ -487,8 +487,7 @@ extern unsigned int kobjsize(const void *objp);
-> > > >>>   * arch-specific page fault handlers.
-> > > >>>   */
-> > > >>>  #define FAULT_FLAG_DEFAULT  (FAULT_FLAG_ALLOW_RETRY | \
-> > > >>> -                            FAULT_FLAG_KILLABLE | \
-> > > >>> -                            FAULT_FLAG_INTERRUPTIBLE)
-> > > >>> +                            FAULT_FLAG_KILLABLE)
-> > > >>> ===8<===
-> > > >>>
-> > > >>> That also kind of matches with what we do with fault_signal_pending().
-> > > >>> Would it make sense?
-> > > >>
-> > > >> I don't think doing a non-bounded non-interruptible sleep for a
-> > > >> condition that may never resolve (eg userfaultfd never fills the fault)
-> > > >> is a good idea. What happens if the condition never becomes true? You
-> > > > 
-> > > > If page fault is never going to be resolved, normally we sigkill the
-> > > > program as it can't move any further with no way to resolve the page fault.
-> > > > 
-> > > > But yeah that's based on the fact sigkill will work first..
-> > > 
-> > > Yep
-> > > 
-> > > >> can't even kill the task at that point... Generally UNINTERRUPTIBLE
-> > > >> sleep should only be used if it's a bounded wait.
-> > > >>
-> > > >> For example, if I ran my previous write(2) reproducer here and the task
-> > > >> got killed or exited before the userfaultfd fills the fault, then you'd
-> > > >> have the task stuck in 'D' forever. Can't be killed, can't get
-> > > >> reclaimed.
-> > > >>
-> > > >> In other words, this won't work.
-> > > > 
-> > > > .. Would you help explain why it didn't work even for SIGKILL?  Above will
-> > > > still set FAULT_FLAG_KILLABLE, hence I thought SIGKILL would always work
-> > > > regardless.
-> > > > 
-> > > > For such kernel user page access, IIUC it should respond to SIGKILL in
-> > > > handle_userfault(), then fault_signal_pending() would trap the SIGKILL this
-> > > > time -> going kernel fixups. Then the upper stack should get -EFAULT in the
-> > > > exception fixup path.
-> > > > 
-> > > > I could have missed something..
-> > > 
-> > > It won't work because sending the signal will not wake the process in
-> > > question as it's sleeping uninterruptibly, forever. My looping approach
-> > > still works for fatal signals as we abort the loop every now and then,
-> > > hence we know it won't be stuck forever. But if you don't have a timeout
-> > > on that uninterruptible sleep, it's not waking from being sent a signal
-> > > alone.
-> > > 
-> > > Example:
-> > > 
-> > > axboe@m2max-kvm ~> sudo ./tufd 
-> > > got buf 0xffff89800000
-> > > child will write
-> > > Page fault
-> > > flags = 0; address = ffff89800000
-> > > wait on child
-> > > fish: Job 1, 'sudo ./tufd' terminated by signal SIGKILL (Forced quit)
-> > > 
-> > > meanwhile in ps:
-> > > 
-> > > root         837     837  0.0    2  0.0  14628  1220 ?        Dl   12:37   0:00 ./tufd
-> > > root         837     838  0.0    2  0.0  14628  1220 ?        Sl   12:37   0:00 ./tufd
-> > 
-> > I don't know TASK_WAKEKILL well, but I was hoping it would work in this
-> > case.. E.g., even if with the patch, we still have chance to not use any
-> > timeout at [1] below?
-> > 
-> >         if (likely(must_wait && !READ_ONCE(ctx->released))) {
-> >                 wake_up_poll(&ctx->fd_wqh, EPOLLIN);
-> > -               schedule();
-> > +               /* See comment in userfaultfd_get_blocking_state() */
-> > +               if (!wait_mode.timeout)
-> > +                       schedule();   <----------------------------- [1]
-> > +               else
-> > +                       schedule_timeout(HZ / 10);
-> >         }
-> > 
-> > So my understanding is sigkill also need to work always for [1] if
-> > FAULT_FLAG_KILLABLE is set (which should always be, iiuc).
-> > 
-> > Did I miss something else? It would be helpful too if you could share the
-> > reproducer; I can give it a shot.
-> 
-> Since the signal issue alone can definitely be reproduced with any
-> reproducer that triggers the fault in the kernel.. I wrote one today with
-> write() syscall, I'll attach that at the end.
-> 
-> I did try this patch, meanwhile I also verified that actually what I
-> provided previously (at the end of the reply) can also avoid the cpu
-> spinning, and it is also killable at least here..
-> 
-> https://lore.kernel.org/all/aAqCXfPirHqWMlb4@x1.local/
-> 
-> Jens, could you help me to find why that simpler (and IMHO must cleaner)
-> change wouldn't work for your case?
-> 
-> The important thing is, as I mentioned above sigkill need to also work for
-> [1], and I really want to know when it won't.. meanwhile it's logically
-> incorrect to set INTERRUPTIBLE for kernel faults, which this patch didn't
-> really address.
+Currently atomic write support for xfs is limited to writing a single
+block as we have no way to guarantee alignment and that the write covers
+a single extent.
 
-My reproducer:
+This series introduces a method to issue atomic writes via a
+software-based method.
 
-$ cat uffd-kernel-sig.c
-#define _GNU_SOURCE
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <stdint.h>
-#include <sys/mman.h>
-#include <sys/syscall.h>
-#include <linux/userfaultfd.h>
-#include <poll.h>
-#include <pthread.h>
-#include <fcntl.h>
-#include <signal.h>
-#include <errno.h>
-#include <sys/ioctl.h>
-#include <assert.h>
+The software-based method is used as a fallback for when attempting to
+issue an atomic write over misaligned or multiple extents.
 
-#define PAGE_SIZE 4096
-#define BUFFER_PAGES 2
+For xfs, this support is based on reflink CoW support.
 
-void sigusr1_handler(int signum) {
-    printf("SIGUSR1 SIGNAL\n");
-}
+The basic idea of this CoW method is to alloc a range in the CoW fork,
+write the data, and atomically update the mapping.
 
-static int setup_userfaultfd(void *addr, size_t len) {
-    int uffd = syscall(SYS_userfaultfd, O_CLOEXEC | O_NONBLOCK);
-    if (uffd == -1) {
-        perror("userfaultfd");
-        exit(1);
-    }
+Initial mysql performance testing has shown this method to perform ok.
+However, there we are only using 16K atomic writes (and 4K block size),
+so typically - and thankfully - this software fallback method won't be
+used often.
 
-    struct uffdio_api ua = {
-        .api = UFFD_API
-    };
-    if (ioctl(uffd, UFFDIO_API, &ua) == -1) {
-        perror("UFFDIO_API");
-        exit(1);
-    }
+For other FSes which want large atomics writes and don't support CoW, I
+think that they can follow the example in [0].
 
-    struct uffdio_register ur = {
-        .range = {
-            .start = (unsigned long)addr,
-            .len = len
-        },
-        .mode = UFFDIO_REGISTER_MODE_MISSING
-    };
-    if (ioctl(uffd, UFFDIO_REGISTER, &ur) == -1) {
-        perror("UFFDIO_REGISTER");
-        exit(1);
-    }
+Catherine is currently working on further xfstests for this feature,
+which we hope to share soon.
 
-    return uffd;
-}
+About 15/15, maybe it can be omitted as there is no strong demand to have
+it included.
 
-void *signal_sender(void *arg) {
-    pid_t pid = getpid();
-    usleep(100000);
-    kill(pid, SIGUSR1);
-    return NULL;
-}
+Based on bfecc4091e07 (xfs/next-rc, xfs/for-next) xfs: allow ro mounts
+if rtdev or logdev are read-only
 
-int main() {
-    struct sigaction sa;
+[0] https://lore.kernel.org/linux-xfs/20250310183946.932054-1-john.g.garry@oracle.com/
 
-    sa.sa_handler = sigusr1_handler;
-    sigemptyset(&sa.sa_mask);
-    sa.sa_flags = 0;
-    if (sigaction(SIGUSR1, &sa, NULL) == -1) {
-        perror("sigaction");
-        exit(1);
-    }
+Differences to v9:
+- rework "ignore HW which cannot .." patch by Darrick
+- Ensure power-of-2 max always for unit min/max when no HW support
 
-    size_t buffer_size = BUFFER_PAGES * PAGE_SIZE;
+Differences to v8:
+- Darrick reworked patch for mount option
+- Darrick reworked patch to ignore HW
+- Minor changes and cleanups from Darrick
+- Rework some commit messages (Christoph)
+- Pick up RB tags from Christoph (thanks!)
 
-    void *src_buf = mmap(NULL, buffer_size, PROT_READ | PROT_WRITE,
-                         MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-    if (src_buf == MAP_FAILED) {
-        perror("mmap src_buf");
-        exit(1);
-    }
+Differences to v7:
+- Add patch for mp hw awu max and min
+- Fixed for awu max mount option (Darrick)
 
-    if (madvise(src_buf, buffer_size, MADV_DONTNEED) == -1) {
-        perror("madvise");
-        exit(1);
-    }
+Darrick J. Wong (4):
+  xfs: add helpers to compute log item overhead
+  xfs: add helpers to compute transaction reservation for finishing
+    intent items
+  xfs: ignore HW which cannot atomic write a single block
+  xfs: allow sysadmins to specify a maximum atomic write limit at mount
+    time
 
-    void *dst_buf = malloc(buffer_size);
-    if (!dst_buf) {
-        perror("malloc dst_buf");
-        exit(1);
-    }
+John Garry (11):
+  fs: add atomic write unit max opt to statx
+  xfs: rename xfs_inode_can_atomicwrite() ->
+    xfs_inode_can_hw_atomic_write()
+  xfs: allow block allocator to take an alignment hint
+  xfs: refactor xfs_reflink_end_cow_extent()
+  xfs: refine atomic write size check in xfs_file_write_iter()
+  xfs: add xfs_atomic_write_cow_iomap_begin()
+  xfs: add large atomic writes checks in xfs_direct_write_iomap_begin()
+  xfs: commit CoW-based atomic writes atomically
+  xfs: add xfs_file_dio_write_atomic()
+  xfs: add xfs_calc_atomic_write_unit_max()
+  xfs: update atomic write limits
 
-    int uffd = setup_userfaultfd(src_buf, buffer_size);
-
-    pthread_t thread;
-    if (pthread_create(&thread, NULL, signal_sender, NULL) != 0) {
-        perror("pthread_create");
-        exit(1);
-    }
-
-    int tmp = open("/tmp/file", O_WRONLY | O_CREAT, 0644);
-    if (tmp < 0) {
-        exit(EXIT_FAILURE);
-    }
-
-    ssize_t written = write(tmp, src_buf, buffer_size);
-    printf("write returned：%zd\n", written);
-
-    close(tmp);
-
-    return 0;
-}
+ Documentation/admin-guide/xfs.rst |  11 +
+ block/bdev.c                      |   3 +-
+ fs/ext4/inode.c                   |   2 +-
+ fs/stat.c                         |   6 +-
+ fs/xfs/libxfs/xfs_bmap.c          |   5 +
+ fs/xfs/libxfs/xfs_bmap.h          |   6 +-
+ fs/xfs/libxfs/xfs_log_rlimit.c    |   4 +
+ fs/xfs/libxfs/xfs_trans_resv.c    | 343 +++++++++++++++++++++++++++---
+ fs/xfs/libxfs/xfs_trans_resv.h    |  25 +++
+ fs/xfs/xfs_bmap_item.c            |  10 +
+ fs/xfs/xfs_bmap_item.h            |   3 +
+ fs/xfs/xfs_buf.c                  |  41 +++-
+ fs/xfs/xfs_buf.h                  |   3 +-
+ fs/xfs/xfs_buf_item.c             |  19 ++
+ fs/xfs/xfs_buf_item.h             |   3 +
+ fs/xfs/xfs_extfree_item.c         |  10 +
+ fs/xfs/xfs_extfree_item.h         |   3 +
+ fs/xfs/xfs_file.c                 |  87 +++++++-
+ fs/xfs/xfs_inode.h                |  14 +-
+ fs/xfs/xfs_iomap.c                | 190 ++++++++++++++++-
+ fs/xfs/xfs_iomap.h                |   1 +
+ fs/xfs/xfs_iops.c                 |  76 ++++++-
+ fs/xfs/xfs_iops.h                 |   3 +
+ fs/xfs/xfs_log_cil.c              |   4 +-
+ fs/xfs/xfs_log_priv.h             |  13 ++
+ fs/xfs/xfs_mount.c                | 159 ++++++++++++++
+ fs/xfs/xfs_mount.h                |  17 ++
+ fs/xfs/xfs_refcount_item.c        |  10 +
+ fs/xfs/xfs_refcount_item.h        |   3 +
+ fs/xfs/xfs_reflink.c              | 146 ++++++++++---
+ fs/xfs/xfs_reflink.h              |   6 +
+ fs/xfs/xfs_rmap_item.c            |  10 +
+ fs/xfs/xfs_rmap_item.h            |   3 +
+ fs/xfs/xfs_super.c                |  64 +++++-
+ fs/xfs/xfs_trace.h                | 115 ++++++++++
+ include/linux/fs.h                |   3 +-
+ include/linux/stat.h              |   1 +
+ include/uapi/linux/stat.h         |   8 +-
+ 38 files changed, 1320 insertions(+), 110 deletions(-)
 
 -- 
-Peter Xu
+2.31.1
 
 
