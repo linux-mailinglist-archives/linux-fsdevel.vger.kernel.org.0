@@ -1,135 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-47806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA784AA5A3F
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 06:17:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06257AA5A51
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 06:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B63567B70FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 04:16:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EFBF4E2778
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 04:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80A8D22E3F9;
-	Thu,  1 May 2025 04:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D0A231836;
+	Thu,  1 May 2025 04:30:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqOCDE8i"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OEMM4ItZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954991E5718;
-	Thu,  1 May 2025 04:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6512D4C85;
+	Thu,  1 May 2025 04:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746073068; cv=none; b=mlR25uhy56z5TkWzLa0dVV7ceR0jzSiBtuPiP3fdnTN5+eceVNqLRzIk7jCyOvF3YNirSnrBxv7IbwIabhP2TKuTddQtkv8wicvGtE1PYYMiJE1tY5L4fR8SKoRGNh6nG8Q1pBiuEo0mQ/ZyWTA4QRyRLdpGAhgKrcCGVIBweWA=
+	t=1746073855; cv=none; b=Svwt27nnqWC1qMAXR09rppivrOJuUhgSMlE7M0xT3QrLAxYyOgFZ3ZlHnluQgyhaEkr50dhpmGWjO2tuqHHHOkfY87wDfR9rGWl/Q4n4havpxwqNQw0P8lBZTdlZgB/fJfbIapKbMMPmPTeg1kIclqEmTEwASd5luHLWow6j/ic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746073068; c=relaxed/simple;
-	bh=w6ykFKU6W8XbzySYo6UA6ZzlGN8WlCDHXAPwnIpqbJ0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GfxbWi+skbJ02uJxUb1DgMPS8wK9hXUs7MQDS3jKhxZ3DqKp3y78mNacwr3+uR81RZTEC7sGeH6F/SuXOcKlUO6jeyysTbqk9F+/nahg0RGkU4u2aOdcHdt8PKImUzn52BImebgAjj93O/6Cza73LGzKsxbb90/t/hJpAQBRLzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EqOCDE8i; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-73bf5aa95e7so539217b3a.1;
-        Wed, 30 Apr 2025 21:17:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746073066; x=1746677866; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n21bC37JtSPMbsSu3t2OsrA8QyyqY/ViIMbItOPfpIM=;
-        b=EqOCDE8inQ0tL8XtUkzsJm/Epnkx+RNDphy2dkBrhInRsH9jEaGHYa2S16OfWCfHIp
-         oUSHikw2R6eD1qJOFmezFzTsib2e2xc5KqjaYarnh8TrkPt7rtTBTC9hWfKKqZmmVJOk
-         sMPDCA0gBuBuKCzjrCEBKtJD0tychpfDVLI08ZlSN+V/+JPyrYqiQDKR8UWfa03uxmMG
-         jClOmIRkGI8a5cY4+vbxTq6SRC5D5dkW/Pe+uAgGowscUoUPtGQwcFPyDFzr1z1M9dsF
-         yoOWCFPohhc5tvd2VY0dL7oKFphtbMGVxh04+anGthYiTUID/EcF95gkykaos/UbNypO
-         9HjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746073066; x=1746677866;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n21bC37JtSPMbsSu3t2OsrA8QyyqY/ViIMbItOPfpIM=;
-        b=AdrorPCm5888eFk4mqkWEhZBJ5DFYqjydsE2iD1UFWcTzGljvZnNw9zKOjjkAa4pF8
-         C11BDqpeMl5Kcj9ouLgmL+nY9PDuxP23grokm41aOPP8CP9Rml9F/pZOjBdnOlNTMlvF
-         qEsx0vcu7cmQ2Q3ssD/r7tKjiTpwnWIQSXGteZFo/C53/RSX2bfkp3gr4wJwXUuGHUBz
-         uh7l/Gpu/dj9qMi46ush0SMu64rC/F/in+LzgJEKzJ2LInU7B1AZDre1Of4dr+zSV1JD
-         VR5fB7QLWQy1JxirulOIISYvV35LcNfgCSusUIaL6uC1jSfVZI9ofeYwKO2u+Fkxsg7O
-         SL1g==
-X-Forwarded-Encrypted: i=1; AJvYcCUhSDHxPe62i8ZW0xwkat7PHBBRiMphqCsf397aVl8isap/FcQ0qyyd4WVL+IjRM8UpvbLNRdwBP21yRL+W@vger.kernel.org, AJvYcCVj9eCvrzPdJU5WCYc5KXgbZpjEyeT5SnBcZ/Xd7tOjlc/8rW8z+7scHjR70t8TFVMjMogabJD5wQtQelSv@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEE/3030pHf+/pIt2BWpcfCB3hw5/7PWDStSt7yWeoM+F9NyHU
-	gjTvFzFj0nFo1ajXFdWD2CUGS0P5b2dOI7c8OffvLSasEyXmWaOa
-X-Gm-Gg: ASbGncv+stxruc+OufliW9XRYLhjusj191jPn4hzAlGCCj0rxpydTHc9eGw/kIDRRyD
-	+uDU7djyrUt9GdbKkiaJpHlzD5ngtWVbyCHk4e50D2Ew4GYy04jG5WRBEMEffMQP9doiO9/F54H
-	wx4i1c5UZv78wJUR76ilCFOdXpz1jBEiGOYDxmFXZIHfLojT8g1tFWYH/rLGvfSomW6jko/wuzS
-	B4kJ4ZAf02u+aTqbAi9YncO6thzc+KQ7yJMLQryiq2HgRTC5GM716jBy7uGtNnoWrux41/9WGle
-	V68Uv7DlZTygb6mZ/fH+L2U/D17qQ0mpuc+uhNObbMwEV5K9nE7UMw==
-X-Google-Smtp-Source: AGHT+IHDSecc++JnN9ZF7KiUO77n8h6r+gRK/5dMIMB4VhSxeBrb8DmzphALPYOnOFOCgood6UnY4A==
-X-Received: by 2002:a05:6a00:22c9:b0:736:4ebd:e5a with SMTP id d2e1a72fcca58-740492701c0mr1701661b3a.20.1746073065721;
-        Wed, 30 Apr 2025 21:17:45 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-740398fa1e7sm2585506b3a.5.2025.04.30.21.17.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 21:17:45 -0700 (PDT)
-From: xu.xin.sc@gmail.com
-X-Google-Original-From: xu.xin16@zte.com.cn
-To: xu.xin16@zte.com.cn
-Cc: akpm@linux-foundation.org,
-	david@redhat.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	wang.yaxin@zte.com.cn,
-	yang.yang29@zte.com.cn
-Subject: [PATCH v2 9/9] Documentation: add ksm_stat description in cgroup-v2.rst
-Date: Thu,  1 May 2025 04:17:39 +0000
-Message-Id: <20250501041739.3324672-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250501120854885LyBCW0syCGojqnJ8crLVl@zte.com.cn>
-References: <20250501120854885LyBCW0syCGojqnJ8crLVl@zte.com.cn>
+	s=arc-20240116; t=1746073855; c=relaxed/simple;
+	bh=lXs90SKBYnw4vhtrdlv7Pt+u57vH2VVBsnX6vGGu2bs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=awyMqot5JaiTvacsegZRXL7xIGEySrSalPgKE5mD1d6HsVJ4sLLnjArOI4CDcgrmg8IJ70CP6tGLjE3Fcvf/qHfncgdo8AD2LOOPf4OGFAuW2CpiN77D52H67Ci/r0S3vRAktJoKPbQ8WDE5Z8oxhGff/ieic82yyN8QJzqUfbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OEMM4ItZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7730C4CEE3;
+	Thu,  1 May 2025 04:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746073853;
+	bh=lXs90SKBYnw4vhtrdlv7Pt+u57vH2VVBsnX6vGGu2bs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OEMM4ItZdopdosiaSYbCa9zn9FLKsXaYLkuZ9/1DDoB9pKGOzLyLblGmMTmoB2iON
+	 l4eLBewZ/2mJwB9jjIEc8N38zYGvkw6IVNUJYzg6mKOz5B+7qEs32Zcf76ab76k8le
+	 OrKNXfWO3i84eNC8c8JX+/6lNTdrhzag3dN3RI9bi7sB8CcP5ON2AVbOkt+kj9/V/W
+	 Ao8foGYGxmfpc5Ln3wthIk9oN5kltiV43vKPl+3dVmwe/y9Go/pZMf6obzC7YHi2df
+	 6vjz1SBE2N69O43eV8K3KdH/eq9+r/ZwcOt7x3GS7Z09wzh9XDSHCdfubdpI1s2WGc
+	 UdwFriTArIAlw==
+Date: Wed, 30 Apr 2025 21:30:53 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk, jack@suse.cz,
+	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v9 13/15] xfs: add xfs_compute_atomic_write_unit_max()
+Message-ID: <20250501043053.GD1035866@frogsfrogsfrogs>
+References: <20250425164504.3263637-1-john.g.garry@oracle.com>
+ <20250425164504.3263637-14-john.g.garry@oracle.com>
+ <a8ef548a-b83e-4910-9178-7b3fd35bca14@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a8ef548a-b83e-4910-9178-7b3fd35bca14@oracle.com>
 
-From: xu xin <xu.xin16@zte.com.cn>
+On Wed, Apr 30, 2025 at 08:52:00AM +0100, John Garry wrote:
+> On 25/04/2025 17:45, John Garry wrote:
+> > +static inline xfs_extlen_t xfs_calc_perag_awu_max(struct xfs_mount *mp)
+> > +{
+> > +	if (mp->m_ddev_targp->bt_bdev_awu_min > 0)
+> > +		return max_pow_of_two_factor(mp->m_sb.sb_agblocks);
+> > +	return mp->m_ag_max_usable;
+> 
+> I think that this should be rounddown_pow_of_two(mp->m_ag_max_usable)
+> 
+> ditto for rt
+> 
+> I will fix (unless disagree).
 
-This updates ksm_stat description in cgroup-v2.rst.
+I don't think this needs fixing.  If there's no hardware support on the
+device, then we can do any size of atomic write that we want.
 
-Signed-off-by: xu xin <xu.xin16@zte.com.cn>
----
- Documentation/admin-guide/cgroup-v2.rst | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 8fb14ffab7d1..acab4c9c6e25 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1718,6 +1718,18 @@ The following nested keys are defined.
- 
- 	The entries can refer to the memory.stat.
- 
-+  memory.ksm_stat
-+        A read-only nested-keyed file.
-+
-+        The file can be used to observe the ksm merging status of the
-+        processes within an memory cgroup. There are four items
-+        including "ksm_rmap_items", "ksm_zero_pages", "ksm_merging_pages"
-+        and "ksm_profit".
-+
-+        See
-+        :ref:`Documentation/admin-guide/cgroup-v1/memory.rst ksm_stat <memcg_ksm_stat>`
-+        for details.
-+
-   memory.swap.current
- 	A read-only single value file which exists on non-root
- 	cgroups.
--- 
-2.15.2
-
-
+--D
 
