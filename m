@@ -1,65 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-47832-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47833-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B32EAA6150
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 18:22:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 734FFAA6156
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 18:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD591BA5B93
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 16:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D43D94C4E84
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 16:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88626211499;
-	Thu,  1 May 2025 16:22:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73596212B18;
+	Thu,  1 May 2025 16:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoeNHc6M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uNvxHBb6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B793820297D;
-	Thu,  1 May 2025 16:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68B51DC1AB;
+	Thu,  1 May 2025 16:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746116537; cv=none; b=pCUN9hpDO6Lym3cgQLnECFUZSr7ZNC9eauGAkqfSsOCBqZ0nJrx9VJjMgxZQztmt+I3zsObaapbIqatu7Mjw+L2k/f8Dvs7uimR1pixtLGC1192u02PT9wii76Rz4WbXT32h/3JgAxArehDR+PmLTESqAkxJVInKPlVq6ahDh6E=
+	t=1746116589; cv=none; b=P8naj61wi2qiU8RDTpXVAq2gN0CAQwj/EXk18dgNQMzvSZg7pNPxqv1yO2s1wzzRVNpZgU8SOkPXO9O1cDPs6/GhCB/U67mVFtMSKO6XY9NZf2qXFHoUyeRALCjpzxfVr9As7i/YAU8GFVsjM2eHJxwC7vc49BPFFnCe5LgtHwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746116537; c=relaxed/simple;
-	bh=7mGDLReut9Z4ueLGijvozal54uog/fy6GCv7gOrGGLQ=;
+	s=arc-20240116; t=1746116589; c=relaxed/simple;
+	bh=XrJZW4y7kWD+SksF1XEGU2csTqcBgQ0lzQdMz6fX5JU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsyL1xlLNuc3lfhW9ZtZCmKL358BzBdMOjxJcE789wupC456B+NQognS7ooRBtjISn/HGTmCnMZyaRvc1UC4JHwpwEOk0ywuarn0ZUKjmOTtHcB0bZ+eo3bTEOesHTHT4xV3V7pHYLdb2HSI9a1bjqriyuFLRSTD4WlE4cSQVAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NoeNHc6M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2F8C4CEE3;
-	Thu,  1 May 2025 16:22:17 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZnpIwgOgEdfxzGb1kg3yLyhIQRk5tDemflLVBdhB8kemjpeS/CWxT+KC2HgvijQwyk3j9wVYZQzT9CMj39YmA2pJw7TegzrSYRaRwKHZD8anrrUP9h1gbxJDw/Qkhkf+rxR321qoA4hffzTFPrUD4dImB/AwEx4jNs+AG86weak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uNvxHBb6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 815CEC4CEE3;
+	Thu,  1 May 2025 16:23:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746116537;
-	bh=7mGDLReut9Z4ueLGijvozal54uog/fy6GCv7gOrGGLQ=;
+	s=k20201202; t=1746116589;
+	bh=XrJZW4y7kWD+SksF1XEGU2csTqcBgQ0lzQdMz6fX5JU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NoeNHc6MRswVTdN4Sxr8t/6h602Ehbvkb5m0zKRHq+vu/rv0dzFvu9R2VsSyH59h5
-	 kAXaY8Es7LBTkaasyfrUV0D9HPSmdIn8O3riyEC6jdDMOaboz9x2GhWwQj8h6fOoiX
-	 L2/l88SAMUXEK8O5PUg0SYuOeCQWF8vmZYU6sJ5Kg/1RaVOtgqdSIBhbCBBNhaSkto
-	 /2Orx3ST25iaQ4+zt9zG4EvAziJ08IsOUvGOJBRDnTYPKwdF62YUOg2pnOx6MntBsZ
-	 FXLaMDb0ojHFIUGRbInCeQqMFSohD1L+u8nNHydWai1d0qbaMPC2ODItM5zPsFXMmo
-	 znP8R4oRtF2hA==
-Date: Thu, 1 May 2025 09:22:16 -0700
+	b=uNvxHBb6N3wOOCmY7gMiTycteZjg5d6f5SF2+1c5UlRyngreOzG5ybNaIqEik0xMF
+	 CrbGsQlNilm/rLt5ssixx4OzOQUFhoOZxCPTrEqOj5NEMlAUx+KucUra2mNrV4MpiS
+	 ZBpbpjoosOOSw7EVejbtBV3/l0GEf1SzIq0YbOMS7CgJK5NDDGBNpE11UrRA8Zo1CV
+	 8+0jPTVv+UQ2dyaRBrAqtHDW5hqV6Ip+oVYyRPSGm8WCVAcAC/mTUmG09OUFLTTEt3
+	 uaFsO9HzJI0BtkVoZqvkVL+dwvEOn8F+c37rgUGkkk+OPAZ7Lp1GsiNLxbSWrc4ArH
+	 UOWXOjKc3PswQ==
+Date: Thu, 1 May 2025 09:23:08 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: John Garry <john.g.garry@oracle.com>, brauner@kernel.org,
-	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
-	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk, jack@suse.cz,
+	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
 	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
 	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
 	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
 	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
 	linux-api@vger.kernel.org
-Subject: Re: [PATCH v9 05/15] xfs: ignore HW which cannot atomic write a
- single block
-Message-ID: <20250501162216.GB25675@frogsfrogsfrogs>
+Subject: Re: [PATCH v9 13/15] xfs: add xfs_compute_atomic_write_unit_max()
+Message-ID: <20250501162308.GC25675@frogsfrogsfrogs>
 References: <20250425164504.3263637-1-john.g.garry@oracle.com>
- <20250425164504.3263637-6-john.g.garry@oracle.com>
- <20250429122105.GA12603@lst.de>
- <20250429144446.GD25655@frogsfrogsfrogs>
- <20250430125906.GB834@lst.de>
+ <20250425164504.3263637-14-john.g.garry@oracle.com>
+ <a8ef548a-b83e-4910-9178-7b3fd35bca14@oracle.com>
+ <20250501043053.GD1035866@frogsfrogsfrogs>
+ <01f9a1df-859b-4117-8e12-cb06edee9f17@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,50 +66,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250430125906.GB834@lst.de>
+In-Reply-To: <01f9a1df-859b-4117-8e12-cb06edee9f17@oracle.com>
 
-On Wed, Apr 30, 2025 at 02:59:06PM +0200, Christoph Hellwig wrote:
-> On Tue, Apr 29, 2025 at 07:44:46AM -0700, Darrick J. Wong wrote:
-> > > So this can't be merged into xfs_setsize_buftarg as suggeted last round
-> > > instead of needing yet another per-device call into the buftarg code?
-> > 
-> > Oh, heh, I forgot that xfs_setsize_buftarg is called a second time by
-> > xfs_setup_devices at the end of fill_super.
+On Thu, May 01, 2025 at 06:00:12AM +0100, John Garry wrote:
+> On 01/05/2025 05:30, Darrick J. Wong wrote:
+> > On Wed, Apr 30, 2025 at 08:52:00AM +0100, John Garry wrote:
+> > > On 25/04/2025 17:45, John Garry wrote:
+> > > > +static inline xfs_extlen_t xfs_calc_perag_awu_max(struct xfs_mount *mp)
+> > > > +{
+> > > > +	if (mp->m_ddev_targp->bt_bdev_awu_min > 0)
+> > > > +		return max_pow_of_two_factor(mp->m_sb.sb_agblocks);
+> > > > +	return mp->m_ag_max_usable;
+> > > I think that this should be rounddown_pow_of_two(mp->m_ag_max_usable)
+> > > 
+> > > ditto for rt
+> > > 
+> > > I will fix (unless disagree).
+> > I don't think this needs fixing.  If there's no hardware support on the
+> > device, then we can do any size of atomic write that we want.
 > 
-> That's actually the real call.  The first is just a dummy to have
-> bt_meta_sectorsize/bt_meta_sectormask initialized because if we didn't
-> do that some assert in the block layer triggered.  We should probably
-> remove that call and open code the two assignments..
+> Check man pages for statx:
 > 
-> > I don't like the idea of merging the hw atomic write detection into
-> > xfs_setsize_buftarg itself because (a) it gets called for the data
-> > device before we've read the fs blocksize so the validation is
-> > meaningless and (b) that makes xfs_setsize_buftarg's purpose less
-> > cohesive.
+> stx_atomic_write_unit_min
+> stx_atomic_write_unit_max
+>               ... These values are each guaranteed to be
+>               a power-of-2.
 > 
-> As explained last round this came up I'd of course rename it if
-> we did that.  But I can do that later.
+> Same is enforced for size for RWF_ATOMIC.
 
-<nod> Would you be willing to review this patch as it is now and either
-you or me can just tack a new cleanup patch on the end?  I tried writing
-a patch to clean this up, but ran into questions:
-
-At first I thought that the xfs_setsize_buftarg call in
-xfs_alloc_buftarg could be replaced by open-coding the bt_meta_sector*
-assignment, checking that bdev_validate_blocksize is ok, and dropping
-the sync_blockdev.
-
-Once we get to xfs_setup_devices, we can call xfs_setsize_buftarg on the
-three buftargs, and xfs_setsize_buftarg will configure the atomic writes
-geometry.
-
-But then as I was reading the patch, it occurred to me that at least for
-the data device, we actually /do/ want that sync_blockdev call so that
-any dirty pagecache for the superblock actually get written to disk.
-Maybe that can go at the end of xfs_open_devices?  But would it be
-preferable to sync all the devices prior to trying to read the primary
-sb?  I don't think there's a need, but maybe someone else has a
-different viewpoint?
+Ok then.
 
 --D
 
