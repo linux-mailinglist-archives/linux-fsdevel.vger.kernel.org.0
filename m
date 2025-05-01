@@ -1,151 +1,138 @@
-Return-Path: <linux-fsdevel+bounces-47792-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47793-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63B8FAA5996
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 04:14:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32494AA59CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 04:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BC5E7A73E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 02:12:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE94A1BC2D4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 02:49:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D6D22F75D;
-	Thu,  1 May 2025 02:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A8422FE10;
+	Thu,  1 May 2025 02:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XyIVoeUU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Bj7ap4Jj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945222DC782;
-	Thu,  1 May 2025 02:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADD0A53365;
+	Thu,  1 May 2025 02:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746065631; cv=none; b=cK51N9/j4Yn3QaItucfvrAauHQz4GkN9xvM5BCmm0x3gj4XHBayYEYjdEsqVo21t1+TsRvOXV68oN0V8Vq0AW2xJewjTVj8niBiRLmbCyyg3Mlw43kXZK7H5ErLXQCRgfbDyFJ665rqNH/BQ5P6PrCdWYWjH0BaUKbYy8QRfDSY=
+	t=1746067727; cv=none; b=iQFiQkayNNp6JFkZfd+UR8NvVIIv/l3YkTRdivGLiK+T2V/d816NCheYUbSal/n7UbqWRhWpzmVicIRdZrkSqUvR/TkFKs8+2cEu5km4hosNpmIG3FkJkN4UymxJNEUJEyeO9f1EfuFWqg1fPh1cs9tLY//iFfZfVhk5okInkRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746065631; c=relaxed/simple;
-	bh=IXL7L7GEzmRTgpRI7W6C+cM7nwoU1zodTrcRAWVG/RY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iFtNF2o+pZTPBXJqpZHlBCENkBl9WAwH1+61QtVVbMMN/L8CMghj4VMoMbQ1aFwMtHxCw5FungNtEEvnZ/uJrKZqLSteaXniDtbgFDL42glD1/oZ+2IdNDXQ3ZHFI97KfRlKQa9qHWmClNukn9+kbfN+VrAw/qY+/QWhxPODW5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XyIVoeUU; arc=none smtp.client-ip=209.85.210.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-72ecc30903cso300997a34.0;
-        Wed, 30 Apr 2025 19:13:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746065628; x=1746670428; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=IXdPE0dAK6WPnTA+7Y1kfcDmuDvdGOZCfAYjmJvCT6s=;
-        b=XyIVoeUUZCaRM8EhzzdIasPytauhPQEUby8+kPXUQaP6+7ikB7qohQoTiCYpFCZzz4
-         dsMpscwh6qrSAlzdKNLxhKyuq7THG8tTz41bXCw5JAgT1PJj7EpdeRiNRjTUTWvazKuc
-         h6t9FqjSo+Xtit5RBj9rPnf3rpkYn4OvMRtpmviod1E1UjJglPalNkWz5O1nt/ZAQEMr
-         6YFsid1fnYpXGH1uDXrUAEkTi77YYqCMyAqbnw+6m/JgOKA5b0I3VP2yj/IH3emQqw6s
-         ouZEcPJ0fJSCWTPgKXsF95X+RU3i5LzgbHuSw/0aI/y37CZSYxNsmAFmafq01Y7KUEYQ
-         +MSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746065628; x=1746670428;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IXdPE0dAK6WPnTA+7Y1kfcDmuDvdGOZCfAYjmJvCT6s=;
-        b=gAJI0/ynwecudn8s/osQNYjn3w2qsnSjrZ+U7nPTaFsvqt52Dma41MZwoNuG5A8OIx
-         xVZ3QXzo9GrmP73uXDXkH7qqGVIf1MCXQQb2+zrSA83zUdC1ODTY2dZ6+XhNpaOJpPJo
-         EZfVCridJRygyEO1+6upgFzwvxpxYGy7Ckk8Ua61PMw+9XjVeI2hy5J3s6Zq/HS/zQh4
-         M533hwSeFh0HL//4ZiL+b1FBhRZMJc4rJ31/SZ6R54ifpm+loODxrg7iWPiR40bpFSEv
-         0X5YL9FfHjYL/gfZ5v4hBAkTh3er2rt/mn5ZyEKevzAOZQvNskfSjhJbTCjQpjTHrLeF
-         pzoQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIOUaEsn8YrZLjCt2GF8lO5NOzdJT8pLgVt0Jz0TYIdQhdR6vrjfUdpuuQT0WnMG3xuuvTh30F2qgo@vger.kernel.org, AJvYcCUQbQvz7tnhtyA1YrEX8tcUV/pxn5AujwTR7VNo2A3dov8M0MXhj4erIrQIEuAi5J45Nsba6xyKCBA=@vger.kernel.org, AJvYcCUaxTFCPZFULmWDNC1Lzo3CrZuKIrB/6nxFnXkkbgslOnm7lqgnYKX9AUP7ckwH2vo5YSBBJK7DMA9thWeLng==@vger.kernel.org, AJvYcCWvi20q77XzS0ZI4GezQCTyRvUHCuXcjP4ciSOdoeX16PiBQH6XT3wpEMZa2SuHQeoIIALyTqFmT/Wep/Zi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxof/Ph0MI5RBZzqaUWbpVRcO3PCHcfbT5MXBzbLT68/0fPkSn9
-	K/LFANn1Qk9J6SLgHSd5tDV3n7IQVRufQfLl7PnBHkkWaCElcIi+
-X-Gm-Gg: ASbGncvc0j45TxX+pbm/nOf9yAMYMRJFLRFgOBeGkhyTIZmG26BsJHS7jGZAAUTzILE
-	liVGkCXPhPj9Ak3fHwTjQk6kJODtR87cfL5t8kdoKqtp625lV5eriH839ZUuTjjGmQrN5Wg/Chy
-	9AluiqTsPaBj0YhqO4lALOZk0DwVJpuWMkCp6FblZf8YBXbIEtuY41x6UidInoif5/GxvnXGxaf
-	YS5qz6qJnOJC3xtKgCm+wG+7TXhpHZFfVvtmn5hHFGMKK3m5Fq+6+BXLuEg6rhlmXh2jII0+2Vx
-	hpPKVMgaQ8HK837CvSuviRPCxoGO987HJ/fKmoJXafG76f056Ga5y2+gIqfBDueifc0WMi5SwPJ
-	ggTsjUFFp
-X-Google-Smtp-Source: AGHT+IEmR48bt7XEiYsncU5O4Q5GIS0VjcmLqFK0GdoL7joQ9ta5UZGYwgpLnkZ5GqCYSdv4P6TBYA==
-X-Received: by 2002:a05:6830:3982:b0:72b:9cc7:25c4 with SMTP id 46e09a7af769-731ce3f9330mr690833a34.22.1746065628499;
-        Wed, 30 Apr 2025 19:13:48 -0700 (PDT)
-Received: from groves.net (syn-070-114-204-161.res.spectrum.com. [70.114.204.161])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7308b117371sm1140234a34.16.2025.04.30.19.13.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Apr 2025 19:13:47 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Wed, 30 Apr 2025 19:13:37 -0700
-From: John Groves <John@groves.net>
-To: Alireza Sanaee <alireza.sanaee@huawei.com>
-Cc: Dan Williams <dan.j.williams@intel.com>, 
-	Miklos Szeredi <miklos@szeredb.hu>, Bernd Schubert <bschubert@ddn.com>, 
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Luis Henriques <luis@igalia.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC PATCH 00/19] famfs: port into fuse
-Message-ID: <n4idslcksqlegd5e2nyggyzahwhgfh7qqsh3qni7fgpj342ohr@do2fu5pz7fsv>
-References: <20250421013346.32530-1-john@groves.net>
- <20250430154232.000045dd.alireza.sanaee@huawei.com>
+	s=arc-20240116; t=1746067727; c=relaxed/simple;
+	bh=SiR8qUZCHcaaM06puI2UAqKKAllCO1PPU9VZ+0A/yzo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HfeggEaW5XX3OZrLN7AJaRuF/38IY0fm78OLC9VA4YUtPC2PWH8ciabzOqJ53NqF1DW2VbOdbo0b/3D0TiZjzU0hKo5oa6QoxbbKSfa5YHO6Q2Lx+3ew7GmISXeGpGjyN7KzZA+W/SqV2YLYoY8e1idcjKn6OGigKBC1IW6BqFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Bj7ap4Jj reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [IPV6:2601:646:8081:9485:ffb5:969f:14f8:8aa9] ([IPv6:2601:646:8081:9485:ffb5:969f:14f8:8aa9])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5412mQDW1193808
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 30 Apr 2025 19:48:26 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5412mQDW1193808
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1746067707;
+	bh=7PRkK9qqVbjo+7so5yHj1jsP+OQZAeYuOWlcUQa1x8A=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Bj7ap4JjvS2526GBrqy6wR3W7Q4NgXUX7C1Nii91CwwfCtDL2OK3p/Rns92gK8E2s
+	 TfuXIJPqMHYQeH2OfG+y3uoaNw740EaLDQWtMKLAkZV3hoIGb/3tnfDtmk1WjVBfjF
+	 Q8fQ5h7U2e/L5rv2db7SDC5YCA36m73dAj797nuftG5TjNdlRXwJcVmeKRN8kW+mZs
+	 /IoBdiwJDoOF3ap5kcCVIdBTUiaWg5uXOZLmvmIJKlEKfZn0l0mVCxkoBkiyZxAnTE
+	 HEHcQw78hBdFKzZDKeRsDRleHp/CPqQzz+6cAKUGeR5zfkDgaIfgyWHf5j2P9ZOpy8
+	 TyTFGrGY/uL6A==
+Message-ID: <d87f7b76-8a53-4023-81e2-5d257c90acc2@zytor.com>
+Date: Wed, 30 Apr 2025 19:48:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430154232.000045dd.alireza.sanaee@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
+To: "Theodore Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip>
+ <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com>
+ <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp>
+ <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com>
+ <20250425195910.GA1018738@mit.edu>
+Content-Language: en-US
+From: "H. Peter Anvin" <hpa@zytor.com>
+In-Reply-To: <20250425195910.GA1018738@mit.edu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 25/04/30 03:42PM, Alireza Sanaee wrote:
-> On Sun, 20 Apr 2025 20:33:27 -0500
-> John Groves <John@Groves.net> wrote:
+On 4/25/25 12:59, Theodore Ts'o wrote:
 > 
->> <snip>
+> Another use case was Valve who wanted to support Windows games that
+> expcted case folding to work.  (Microsoft Windows; the gift that keeps
+> on giving...)  In fact the engineer who worked on case folding was
+> paid by Valve to do the work.
 > 
-> Hi John,
+> That being said, I completely agree with Linus that case insensitivity
+> is a nightmare, and I don't really care about performance.  The use
+> cases where people care about this don't have directories with a large
+> number of entries, and we **really** don't want to encourage more use
+> of case insensitive lookups.  There's a reason why spent much effort
+> improving the CLI tools' support for case folding.  It's good enough
+> that it works for Android and Valve, and that's fine.
 > 
-> Apologies if the question is far off or irrelevant.
+[...]
 > 
-> I am trying to understand FAMFS, and I am thinking where does FAMFS
-> stand when compared to OpenSHMEM PGAS. Can't we have a OpenSHMEM-based
-> shared memory implementation over CXL that serves as FAMFS?
+> Perhaps if we were going to do it all over, we might have only
+> supported ASCII, or ISO Latin-1, and not used Unicode at all.  But
+> then I'm sure Valve or Android mobile handset manufacturers would be
+> unhappy that this might not be good enough for some country that they
+> want to sell into, like, say, Japan or more generally, any country
+> beyond US and Europe.
 > 
-> Maybe FAMFS does more than that!?!
+> What we probably could do is to create our own table that didn't
+> support all Unicode scripts, but only the ones which are required by
+> Valve and Android.  But that would require someone willing to do this
+> work on a volunteer basis, or confinuce some company to pay to do this
+> work.  We could probably reduce the kernel size by doing this, and it
+> would probably make the code more maintainable.  I'm just not sure
+> anyone thinks its worthwhile to invest more into it.  In fact, I'm a
+> bit surprised Kent decided he wanted to add this feature into bcachefs.
 > 
-> Thanks,
-> Alireza
->
+> Sometimes, partitioning a feature which is only needed for backwards
+> compatibiltiy with is in fact the right approach.  And throwing good
+> money after bad is rarely worth it.
+> 
 
-Continuation of this conversation likely belongs in the discusison section
-at [1], but a couple of thoughts.
+[Yes, I realize I'm really late to weigh in on this discussion]
 
-Famfs provides a scale-out filesystem mounts where the files that map to the
-same disaggregated shared memory. If you mmap a famfs file, you are accessing
-the memory directly. Since shmem is file-backed (usually tmpfs or
-its ilk), shmem is a higher-level and more specialized abstraction, and
-OpenSHMEM may be able to run atop famfs. It looks like OpenSHMEM and PGAS
-cover the possibility that "shared memory" might require grabbing a copy via
-[r]dma - which famfs will probably never do. Famfs only handles cases where
-the memory is actually shared. (hey, I work for a memory company.)
+It is worth noting that Microsoft has basically declared their 
+"recommended" case folding (upcase) table to be permanently frozen (for 
+new filesystem instances in the case where they use an on-disk 
+translation table created at format time.)  As far as I know they have 
+never supported anything other than 1:1 conversion of BMP code points, 
+nor normalization.
 
-Since famfs provides memory-mappable files, almost all apps can access them
-(no requirement to write to the shmem, or other related but more estoteric
-interfaces). Apps are responsible for not doing "nonsense" access WRT cache
-coherency, but famfs manages cache coherency for its metadata.
+The exFAT specification enumerates the full recommended upcase table, 
+although in a somewhat annoying format (basically a hex dump of 
+compressed data):
 
-The video at [2] may be useful to get up to speed.
+https://learn.microsoft.com/en-us/windows/win32/fileio/exfat-specification
 
-[1] http://github.com/cxl-micron-reskit/famfs
-[2] https://www.youtube.com/watch?v=L1QNpb-8VgM&t=1680
+This is basically an admission that the problems involved with case 
+folding are unsolvable, and just puts a tourniquet on the wound.
+
+It also means that "legacy OS compatibility" is really a totally 
+different problem than "proper Unicode normalization" and that the 
+former far more limited in scope.
+
+	-hpa
 
 
