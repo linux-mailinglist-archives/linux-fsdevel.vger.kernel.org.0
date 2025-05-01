@@ -1,233 +1,303 @@
-Return-Path: <linux-fsdevel+bounces-47815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47816-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39350AA5BEF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 10:08:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3DEAA5D2C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 12:24:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7743E4C5052
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 08:08:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AAB3BF85E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 10:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FF4265CC4;
-	Thu,  1 May 2025 08:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 945E621B9C2;
+	Thu,  1 May 2025 10:23:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="q86CUkuf";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="hBg6G6CB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F0540BF5
-	for <linux-fsdevel@vger.kernel.org>; Thu,  1 May 2025 08:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746086923; cv=none; b=bmM1mn+S6y457RZ0dne/BR0Ef9lbahiR5wojgIKFbxeIXylseEUI4ICOczT0Eni+AGlk2vU8dZBb2Nm1gukT3ab9KqqUqewcl7sRnIbtwf1eXa20vsXI0GFUvvXQkJ5SyZvAh0sycBHmnrf0AwPoL2R1lSTX2cork7g3h3j62YU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746086923; c=relaxed/simple;
-	bh=6CS+mD6fzts1P1fSlYpcm7I0+NU8n7R08zNCC7Fs5SY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=H2qiBUt6kJnFehep2DPKidig8IGAb1nIYlQesvOFWlUTEunoG51ygeawNXBBGJJ1ZW7Plpc/Rj7uW/vZELbVzCKzjG7Dwo6ujgxoxPMwoh5CLd3NraphwPJaLyTsC5mCGr8Lz2Sjbmk/2EFxOVwHSmWsQ08l8jaUYPAzmL/Z1Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-85b4ee2e69bso79471539f.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 May 2025 01:08:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746086920; x=1746691720;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ql6YYBERpJOsbTEQcpqxxcK3lPb1peFfvwvGY2f/FNg=;
-        b=Ozbu8Wus8dgZbE5GHzI9iAzxwaOpDedRovfV9zHiM2yVwZNdr0lVkIo4ADcEn8S52W
-         OxK7VOmxdyBeMrAJOC9XkMAYtDo+niCJ5aS+4Dx8F3kAJeKndaZ4GVu94VuY153PDyF8
-         bXTuTH5qjWijZvLJtlZE1S1h9ojkePCCDD61lr2pHdG8zultXnLjhqXtScqH5NSy6YIU
-         tm/+xKCxTWd1qwRMoAPATC3KuGmOId/7go7MdAvLW2QRxS/+eBqOL2X40kPzL9JNPJgJ
-         NOqH8vnSbyxze5Su1K7bHylYeWU42hI6kKip1e8Vf6P0Unribotg2BsSi4o8VMugVbao
-         zf9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUShCKl2khou2zDzWIZw3NV96ilaWc5mNVhcxYzy++SCPzLArBYf4kPVlL6U7xgTvI37wcyCqlhV/nadZMv@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqHNrubwQSSWdP/GoH9p5FEmNWmSNK3ZRnfkYWth++O5KbnjSF
-	WN6DXiJqjznecTvaNzL8zY9yRaR78EqTrIgW+h0WWwU6wnzQf/QDrOmmHwogjSU5v1Tbi66wXfw
-	6ma5rvxnNYUdF+SwKdQYHiMc31kMGpReJNsp8pRMug9BJIfPhKa0L1Iw=
-X-Google-Smtp-Source: AGHT+IH8lE3jRxC6jxsU8/g0jLpBmYKNJ8KGjxoa0WYAUZ+FEIPCW0sZxUjTbQ0WnSamP6a8kdSvn0FU1t+ddlOVRJigbAhhmlDa
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CCFD1C5D7B;
+	Thu,  1 May 2025 10:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746095036; cv=fail; b=ho6VijBvASd0yAbtSTfukGhBrRAu7BHj/U4TkOZLTEtRcuK4t6YbRKLBNFscuVXsD4lfx4k98ILZTRnUi23PJryUYKdj6sG0Ai8qrahEiQYowRfaU3hmripE/KCaPZikDXqSpjNDLP5stB8ypi3czu2J0k7nwG7M24F67zSyZbw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746095036; c=relaxed/simple;
+	bh=BsrJGBy9NaQDUb35BRl93QV1fwt0QBPeOcOohOmrAOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=gXbg2StgLkLQPS4f2bTrq3V17JSCo6fYgsaEDFJ74312+cdCMJX9VDeaz4iiOiu5+8q5rkA+NpXalL5C20V9iJAWhzbbGBbUO2TE9E9krNN1S11eCuypV00/hYjhUQqlBOa9Ud1HYOpeFWKijBza6a7V5gamRCElMaESarAZOEc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=q86CUkuf; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=hBg6G6CB; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5418g0Dl001888;
+	Thu, 1 May 2025 10:23:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=BsrJGBy9NaQDUb35BR
+	l93QV1fwt0QBPeOcOohOmrAOg=; b=q86CUkuf1KptqwfVkO/leEOJrzfc87yPo0
+	tWe0mmQ8zg5JC8TN7kTblDWtK7xY18wvesTcEBLi5DAhIYVBPvPUG5W0S4Jd2FN8
+	pAdcSBEqBCuEYKJBknaS+zssQWwKBH6buna+AzG4SQLVdTd4bKdpUfJtKXcDKSGq
+	vwgzk2A9pIOTLTE58etcZeSbOrO6gor1n/FjrPU3FhEuIA0BCsWN2FBTWYBUJRP8
+	2YLsM+T664MJoNDO+RuoPn5YxQYdAytTKqu9JUVhGLGWzhD4dZ1i9ve9J5enfN/5
+	D1Iikj9nQuKI8jo1iAHxE6NXbKaWr0soeSzL6RmXQT5HtvOmW4wQ==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46b6utaty0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 01 May 2025 10:23:39 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5418sx9r023735;
+	Thu, 1 May 2025 10:23:38 GMT
+Received: from dm1pr04cu001.outbound.protection.outlook.com (mail-centralusazlp17010002.outbound.protection.outlook.com [40.93.13.2])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 468nxjn6mt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 01 May 2025 10:23:38 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WN+b2rqUAwdf1sCmkbrzSnGqH5Yaxh51pR2FICwtt3oW+Q386cGja6uUDYzJUDWScVrTTGHaJziw5xyMdSYNtL6HExM4RT92ydpROXi7wyywTGSX++zqpqYkid2ZqZVNFEr01Rb06BRcaZ0I6nWK2A6Tn3vtcbP+zH1MAiFmBCxJjoQXmRnrl55wTHZd8q0P1bLoJb+mcyOMxpYPPPJLgnTG3HR4a6T/HyDOdbI2moaonyV1fuKyZybQcaTO14P9yBAk5kUB1c9uA9I8B/Gg6MtG/K5FWzKTBNxA9rH0ttW2dSLu9eljP88hCs+Cfa3jR02MCwNG1Wyz6xUb2kFFLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BsrJGBy9NaQDUb35BRl93QV1fwt0QBPeOcOohOmrAOg=;
+ b=y2xjFP5ePw4EwmhQKgn8CAP5BxL6P1CnddlWIuviA9nhMu57NWeOgtB6v37gVQ+tERSBYw4BNZvB7reZ0eLfS+6Hx14LRXjNE6d0O8dB/nMn8YMj3fjK2zjVLWMLDE8H3m2Jb2eDmKnEuEMR9rBcoC1VnZzIi/Lv6ih1P0n6Dy/UsYRJn2ZBlODlCbXOue18FzIEK6WUEOmPqzsjrpNHAGdJ7GyKJw/FTBfy5ArjX/pmcAGUJFCFIHWeE2fbPKmLQTWrOj85UTwss9fI6tr/g/sd75Ppp0HXLQ9QnkGnAz1MpSvkl9MveIc5ZLKq77bGRMqUcYZWWDhyLI1X6vnNcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BsrJGBy9NaQDUb35BRl93QV1fwt0QBPeOcOohOmrAOg=;
+ b=hBg6G6CBPNYQsMBZDHYtZpkopFZHk1PU5S48qyBDI7PlRNou9L9GUAwjs5C1//RYzw4PMif+V36vIq8xtuxVDULLjwx4ndBpCesiv5n5oV9ahabppsCXMIQ2fY0aRdFeDXFVNEiv3r6UojuqDURvOgUWCjA8W3lzXtqANWXacXM=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by SJ0PR10MB4416.namprd10.prod.outlook.com (2603:10b6:a03:2ae::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.19; Thu, 1 May
+ 2025 10:23:35 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8699.022; Thu, 1 May 2025
+ 10:23:35 +0000
+Date: Thu, 1 May 2025 11:23:32 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [RFC PATCH 1/3] mm: introduce new .mmap_proto() f_op callback
+Message-ID: <982acf21-6551-472d-8f4d-4b273b4c2485@lucifer.local>
+References: <cover.1746040540.git.lorenzo.stoakes@oracle.com>
+ <f1bf4b452cc10281ef831c5e38ce16f09923f8c5.1746040540.git.lorenzo.stoakes@oracle.com>
+ <7ab1743b-8826-44e8-ac11-283731ef51e1@redhat.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ab1743b-8826-44e8-ac11-283731ef51e1@redhat.com>
+X-ClientProxiedBy: LO2P265CA0273.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:a1::21) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:274b:b0:864:68b0:60b3 with SMTP id
- ca18e2360f4ac-8649805684bmr700099839f.12.1746086920444; Thu, 01 May 2025
- 01:08:40 -0700 (PDT)
-Date: Thu, 01 May 2025 01:08:40 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68132c08.050a0220.14dd7d.0007.GAE@google.com>
-Subject: [syzbot] [netfs?] INFO: task hung in anon_pipe_write
-From: syzbot <syzbot+ef2c1c404cbcbcc66453@syzkaller.appspotmail.com>
-To: brauner@kernel.org, ceph-devel@vger.kernel.org, dhowells@redhat.com, 
-	idryomov@gmail.com, jack@suse.cz, jlayton@kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com, 
-	mhiramat@kernel.org, netfs@lists.linux.dev, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, xiubli@redhat.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB4416:EE_
+X-MS-Office365-Filtering-Correlation-Id: d3feffb7-9619-4e46-a7d2-08dd889a3ae3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?1hxNKHuzKkQVg4W7qnyjb/z1Tu6noak0DPJ/sKTMtpvVJHGRcjA7Q4O5ZFB2?=
+ =?us-ascii?Q?9J9BGa7U6Gtd5F7FkzYFlUMh9HUAtBq4a99gXUp48apO91+zCceBVI/dmjOT?=
+ =?us-ascii?Q?nfy7XrWfFHdFuyWKVOdK6HXEW07GlAkZmDpYp5vSPezZAyf1FneuI+/tMupm?=
+ =?us-ascii?Q?81oCqOpMi1lC7cvtD8oAkNHMEFP9n1RFAT+3jHP4vb7CxzNF65YMT1mL/Bw1?=
+ =?us-ascii?Q?lGkU0pvETpPiIhUm38uoMx5RH+/waSR0nj8XEhz9xb2NQ2MX+kUOwtpkqwdE?=
+ =?us-ascii?Q?NlNVaznJ7jFynP0qsYCR22bRq8ftxpCe86RxP10+wHCsBpWFpKvlXbr5e3EO?=
+ =?us-ascii?Q?I8bkI3Qz1ajSS/iEDhTHfNuPJmfkMBCUpt4PlH+8nhKMfoCJtvk/NM9dOZuw?=
+ =?us-ascii?Q?uOgRB7+ktdGws7DQQEOzIQM6EZQSL83vgVIB5U37/jrTjQ3STsM3MKbQm0dZ?=
+ =?us-ascii?Q?Zyv7awOYfufr2yQhwRDhk2joD0e+Svaf0AW2eu14PQKxRSMa5BaWB5XilxA5?=
+ =?us-ascii?Q?+Z9RA+eQCCnd4i2bX/PQJUhXR9Km7DI9ZUyJ3v+aOxuKTkFzKmFuUz9ifMNB?=
+ =?us-ascii?Q?lvKi7z+qW5pvmCaUpPr4ENq/op0StD86BrZnozfq3XJ4DWS2RnAB5a3eTARV?=
+ =?us-ascii?Q?pPec56JA5yF7pNpcIw2mdh/Ml4Qd99ZBp22vamqLchbbJ2qcnmD/FmEm2V9f?=
+ =?us-ascii?Q?x18VhfUsp8AR2RdAtmpqXnlqUl68pii5GvszmGldXObDZ0uDpgXaencosmHy?=
+ =?us-ascii?Q?ab5LqK5hH5CCSBah398BJJfVjfOFYJmkUAJcb74e6qSCn1gFd2yeCfjnhHK5?=
+ =?us-ascii?Q?8WAgOxHdQA2Rn0jc8eDo80IyDn+2ovObj0xTTAcKzBQy95kW/fbc80g2LlLQ?=
+ =?us-ascii?Q?5n4j1BipalgE2OLU2/1ZjkfV/qQS37ojYfz5Lgq1kRJKKiLZMfQHv1siwrbL?=
+ =?us-ascii?Q?SLRaVG5WR1h7IOB9DabIJGrnJ5Ar97zqs0wBG4jWUQ05Z/3uPn3M+igAW6ST?=
+ =?us-ascii?Q?quWohPz/vDvYJjdSL+FlFmuuGpoHSU3ygFvJ3lf0lk6NPpcsXGKDf4vxBoCf?=
+ =?us-ascii?Q?JWnWtyHZpZvTpJ5A9PkKK6r6w5M2E6xuQqBnnvh0+BA7iVMaCVCGCZrj4BFC?=
+ =?us-ascii?Q?vmmWwFMIFnfQiyhTPy8zIH8B3A9z9xnCAyOG8/JeZaA8EGIXXZcjF1uILdSq?=
+ =?us-ascii?Q?lAOD3hiblbCU6a1XjDzT6Btn8j8J8UjXvDk9qqdEvCnl6nSWotTxkaB0ym9x?=
+ =?us-ascii?Q?yZwK8p3KuWFL0zoOICiob3s4bWMIifvrCro3wXMg4CXvDMtSLyVyxAwS6CXS?=
+ =?us-ascii?Q?zowyjbP1FBvxqQWforfWAX4PLDRfBAUls54+qKeJ06tT8uLC6j8g2qdGlUlf?=
+ =?us-ascii?Q?jKrKBZiKCOMmExaRCCfHV+yian1BXLhRNkUloN95+Lgrc7BA4myeQHtyFkV2?=
+ =?us-ascii?Q?yrTqHEZDeLM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Gtj3iFnOUX0Mal7lnhgjpKN9tdUmLMQquCWu1iBZz759upORsnFnlm5ZAl3q?=
+ =?us-ascii?Q?JOAYNB6ILxJwVARHxxfg6tHu6N6azJWPdwlG2JPey/bKxWHfl1r81JHnlDu0?=
+ =?us-ascii?Q?TE14Zs1AoXEa6nroQFGljbnYMgmUhvwyfamU6WUNDVUpTy7sRhQx7pAb2Iy0?=
+ =?us-ascii?Q?tyLUkDDGiGn+899HGUojfNiDtdZhNmG30zGeuB8zv2wO3itzRMv6b8FbC0Oy?=
+ =?us-ascii?Q?kTz8JT/jSKBY9VOqaRN2Te4xdiCNki04k0S21hXjTnLhXx6QctUZ/ydh/bie?=
+ =?us-ascii?Q?C+TrySQ6ZcRmj7LGIfX9KNPXcwOvJNtQRap20NaHXmrSkW9cBRs+DUd+VeEn?=
+ =?us-ascii?Q?MCh9dft0Iq4YfKO/B5zh2MbK4O5lNABOGfhm8HwmfhsP0ugyNpznQako+vWa?=
+ =?us-ascii?Q?jF6EQzhCeSdq2PftNQAS/i027Bgdhh+8pIjQ4iVH2GU+6Tg0X4qhRAOAjSpF?=
+ =?us-ascii?Q?IiDjjbFh4cm92WPh8bfbVhY/6+u7+j8ioJusko6VmnA50UfKZ4ObHlmbK9o2?=
+ =?us-ascii?Q?ozysjPy4wQmasbDJIWLhavdAqzNe6Uf6bx/+R11pgmx5rG070HVtN/PGA/MJ?=
+ =?us-ascii?Q?cUoC0fu0vSMu1g/kyYunFNQ3QQch1wbg9JcttRZdakZv05My4DCgXdl8zKhP?=
+ =?us-ascii?Q?s8lUvmP4wlVKr5PPYd6YFnMgliKDOzASwip3k4uYr+ePqHYA7/XmJTNX3egQ?=
+ =?us-ascii?Q?oaseSohfdgSm+dB1gwjAFcTsWa0XIZoDH8N7K0aP0f4OmHoaFQKQ89KHa8tS?=
+ =?us-ascii?Q?6dr3y7EAAf3naHSZqHRvsQuuMyJxk1MfKt8hv+v0InK34Swl4CFR2itK7ocX?=
+ =?us-ascii?Q?6KF6ofF4CgLkYtLAsx319FZ3YD8syNyZZwIYJNAb7QAwrANP1nCufq6Wn7LP?=
+ =?us-ascii?Q?1j8PpKO2rEb91mONdM1k4AvD+PEwF3kxUTcYREh82bszv7cRNn9QiHHMYdwO?=
+ =?us-ascii?Q?Rh0JHH0qWkENGeQQV+BWfbtCeGgZVGPxdfu6jxrD/aaqbTgvjHhavJO1qI6/?=
+ =?us-ascii?Q?+PVhmNgLQ115CVJkRRRDOre7G10vP9Rb7bDBBJYgD7uTz35Ph12rV83E9id8?=
+ =?us-ascii?Q?xzf+9vq0QlMfWYG1JbceOk1ttcws1CKhHjoc3PgjQfsFx/EZQfQjAtbC9e84?=
+ =?us-ascii?Q?35Ib7Njjj2FwYaFUQA/XV23jOMbFfzdGXqD1UqH+bdnF/fCmdDMmXdn4jCQo?=
+ =?us-ascii?Q?F9y6h4QUVy/EaZTynTIJPQ/qzTrqYjmWrjEQhKMt5AmEI6/SyNm2ahZf+aRI?=
+ =?us-ascii?Q?ykHouI0q929al5F7uZC8DzM054EqB3nHdiiNwptbhPP/m1llzusbh4GQU+XW?=
+ =?us-ascii?Q?l2vJM82+yyfmLL8angFUUdfrWusrHLiTWRQn1IjwZOb+NP5NA+mddV8WuRTE?=
+ =?us-ascii?Q?o7WWjAaioC7p0+XkPIlFEVEcubDMWIQizkAet5dJ30fFIl7vfWW3LaJyypux?=
+ =?us-ascii?Q?EtCULIJVGbi6FlKBC8hTEPZQizKWix2m4cG4AcaVCWCdXKXEhJp9sH2dJpLH?=
+ =?us-ascii?Q?m79t01upbTC5jD0aO0BnMgu9KCXrdwCNIpmgZ1W43NJtdEbWA7gZ6KGVpeDk?=
+ =?us-ascii?Q?Kdkoq8FZNCR6IFrfVPhwubwgOwujynV6iKZ5QZ9xoHdag5YNRdTUgqnqg7rG?=
+ =?us-ascii?Q?gw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	g1Kdgz/WqGhn6rOYidA0xdwDaMbN26SJzqTGtx/+ewTqTLDioCwVQaP/9AaxSOigS7bdgqgToigOeY4TPDd5ucBV98RNCAE0MPljkdkFJlhUgxjcGzYQwwro7ySAVYvWAhO3J0Tu18mYx2V0aWZpD3XdqKv7Omy2gIgAKRFoz6RXOoqu0UO6dQ64DnCYpTvaSnrgEaWdaEp+rYmSR8W9mT37Y1eDYmjalR6vNVvXBjOaladhdJuoRHs+SJAmK1iCeNDOfKtcSldIbfC3xsIZb8ZcNEEl2iu52FBDsl3rgLONzKsn9mFJJG2A/uj+OhGQoIHFiMg76t8EF+j4SDbGkA59M0KRr+bvHAWMZEI2PmNNF5TBlmtWg/u23zh+mfbXWAxEBcihEiwuUod3VPPoqQrD0gxDuLwInnXdZVAUybPIS6+TaAJ0zBPSSULnI7LnFEKQjYLWI79tgNty5wVUBXm7MpY5g15Rp03sp4FVCJHTozDBFfdgDa5J70QSy7BrvBn7fmN4w2CuC1u837jDjlh49qMw8H/2WUpSw1dI5tGJQU1xk3aUEBJVS5HLgNwouZ6u/vlU3McM0K42hGFoMD1mMzlXRKxOgYCZ/WNO0WA=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d3feffb7-9619-4e46-a7d2-08dd889a3ae3
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 May 2025 10:23:35.1738
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QzrERoSTcW0jJmnhQvZnjU9pP2ClwEuKSrHVorqJSDKVEv3wtlks0zwN/4uwA25G1Jxapp9MNBqKMZSlLgZoecgkmnk2v/o7TNdxclOlCf8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4416
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-01_03,2025-04-24_02,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 spamscore=0 adultscore=0 mlxscore=0 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2505010079
+X-Proofpoint-GUID: jXpSbO13x4jkrY3lH1rDL1fIb2hdBSIn
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTAxMDA3OSBTYWx0ZWRfX+Pge8FpzXXd1 QaBa9G6M/yeDBvCNKwxpS2RxiNLlVEIs9BSjyMaug+aNhd+qH7XgVRa3l6QoBiEV/t9liKJJ3z4 qhM8HtIQG+1EKcwb0MKiSIskTwZKzQcfYK4kYgGCKqdPirTiyayo3cshCUMMHKRLuP+goqXfMOa
+ 5krI5csMa9+AnIsNqyyqUv2Y5KYJAEn/UcMIiRAadQXiIq+JwiWFlj2mPJ5DPy9uBpkSTdeh7bT JplBmCyjxaBvvflB1uaU2j140BIBGkSz/uGSvM5MjY3yEEu35aBFInKRY0Z8mHQkftfUWKZGtya bLbxt1vSTSdpi7X+d0WJvcKEkHJ3AAELTLtd1lBBsPFUzkfipij02ORyPSY1zL+McwZLXuj4lqa
+ uIjYpb3AaQbSlZJPPHH5wZxExoXY5yDDt8VzX424GjgmN14CqaOzPkN3GE0vC02ov/7rQUN7
+X-Authority-Analysis: v=2.4 cv=ZuHtK87G c=1 sm=1 tr=0 ts=68134bab b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=iap-qV7jxApwZ7o55zkA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13130
+X-Proofpoint-ORIG-GUID: jXpSbO13x4jkrY3lH1rDL1fIb2hdBSIn
 
-Hello,
+On Wed, Apr 30, 2025 at 11:58:14PM +0200, David Hildenbrand wrote:
+> On 30.04.25 21:54, Lorenzo Stoakes wrote:
+> > Provide a means by which drivers can specify which fields of those
+> > permitted to be changed should be altered to prior to mmap()'ing a
+> > range (which may either result from a merge or from mapping an entirely new
+> > VMA).
+> >
+> > Doing so is substantially safer than the existing .mmap() calback which
+> > provides unrestricted access to the part-constructed VMA and permits
+> > drivers and file systems to do 'creative' things which makes it hard to
+> > reason about the state of the VMA after the function returns.
+> >
+> > The existing .mmap() callback's freedom has caused a great deal of issues,
+> > especially in error handling, as unwinding the mmap() state has proven to
+> > be non-trivial and caused significant issues in the past, for instance
+> > those addressed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
+> > error path behaviour").
+> >
+> > It also necessitates a second attempt at merge once the .mmap() callback
+> > has completed, which has caused issues in the past, is awkward, adds
+> > overhead and is difficult to reason about.
+> >
+> > The .mmap_proto() callback eliminates this requirement, as we can update
+> > fields prior to even attempting the first merge. It is safer, as we heavily
+> > restrict what can actually be modified, and being invoked very early in the
+> > mmap() process, error handling can be performed safely with very little
+> > unwinding of state required.
+> >
+> > Update vma userland test stubs to account for changes.
+> >
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>
+>
+> I really don't like the "proto" terminology. :)
+>
+> [yes, David and his naming :P ]
+>
+> No, the problem is that it is fairly unintuitive what is happening here.
+>
+> Coming from a different direction, the callback is trigger after
+> __mmap_prepare() ... could we call it "->mmap_prepare" or something like
+> that? (mmap_setup, whatever)
+>
+> Maybe mmap_setup and vma_setup_param? Just a thought ...
 
-syzbot found the following issue on:
+Haha that's fine, I'm not sure I love 'proto' either to be honest, naming is
+hard...
 
-HEAD commit:    5bc1018675ec Merge tag 'pci-v6.15-fixes-3' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=13a01270580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9f5bd2a76d9d0b4e
-dashboard link: https://syzkaller.appspot.com/bug?extid=ef2c1c404cbcbcc66453
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a130d4580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12944374580000
+I would rather not refer to VMA's at all to be honest, if I had my way, no
+driver would ever have access to a VMA at all...
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/33f182866e0b/disk-5bc10186.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/103760a3e862/vmlinux-5bc10186.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9954dc25ed1d/bzImage-5bc10186.xz
+But mmap_setup() or mmap_prepare() sound good!
 
-The issue was bisected to:
+>
+>
+> In general (although it's late in Germany), it does sound like an
+> interesting approach.
 
-commit 7ba167c4c73ed96eb002c98a9d7d49317dfb0191
-Author: David Howells <dhowells@redhat.com>
-Date:   Mon Mar 18 16:57:31 2024 +0000
+Thanks! Appreciate it :) I really want to attack this, as I _hate_ how we
+effectively allow drivers to do _anything_ with VMAs like this.
 
-    netfs: Switch to using unsigned long long rather than loff_t
+Yes, hate-driven development...
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=112ba374580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=132ba374580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=152ba374580000
+Locking this down is just a generally good idea I think!
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ef2c1c404cbcbcc66453@syzkaller.appspotmail.com
-Fixes: 7ba167c4c73e ("netfs: Switch to using unsigned long long rather than loff_t")
+Was late in UK too when I sent :P hence why I managed to not send it properly
+the first time... (sorry again...)
 
-INFO: task kworker/0:0:9 blocked for more than 143 seconds.
-      Not tainted 6.15.0-rc3-syzkaller-00342-g5bc1018675ec #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/0:0     state:D stack:28184 pid:9     tgid:9     ppid:2      task_flags:0x4208060 flags:0x00004000
-Workqueue: events p9_write_work
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5382 [inline]
- __schedule+0x116f/0x5de0 kernel/sched/core.c:6767
- __schedule_loop kernel/sched/core.c:6845 [inline]
- schedule+0xe7/0x3a0 kernel/sched/core.c:6860
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6917
- __mutex_lock_common kernel/locking/mutex.c:678 [inline]
- __mutex_lock+0x6c7/0xb90 kernel/locking/mutex.c:746
- anon_pipe_write+0x15d/0x1a70 fs/pipe.c:459
- __kernel_write_iter+0x317/0xa90 fs/read_write.c:617
- __kernel_write fs/read_write.c:637 [inline]
- kernel_write fs/read_write.c:658 [inline]
- kernel_write+0x1f4/0x6c0 fs/read_write.c:648
- p9_fd_write net/9p/trans_fd.c:434 [inline]
- p9_write_work+0x258/0xc10 net/9p/trans_fd.c:485
- process_one_work+0x9cc/0x1b70 kernel/workqueue.c:3238
- process_scheduled_works kernel/workqueue.c:3319 [inline]
- worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
+>
+> How feasiable is it to remove ->mmap in the long run, and would we maybe
+> need other callbacks to make that possible?
 
-Showing all locks held in the system:
-3 locks held by kworker/0:0/9:
- #0: ffff88801b478d48 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work+0x12a2/0x1b70 kernel/workqueue.c:3213
- #1: ffffc900000e7d18 ((work_completion)(&m->wq)){+.+.}-{0:0}, at: process_one_work+0x929/0x1b70 kernel/workqueue.c:3214
- #2: ffff888021730068 (&pipe->mutex){+.+.}-{4:4}, at: anon_pipe_write+0x15d/0x1a70 fs/pipe.c:459
-1 lock held by khungtaskd/31:
- #0: ffffffff8e3bf5c0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e3bf5c0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e3bf5c0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x36/0x1c0 kernel/locking/lockdep.c:6764
-2 locks held by getty/5571:
- #0: ffff8880323de0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc9000333b2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x41b/0x14f0 drivers/tty/n_tty.c:2222
-2 locks held by syz-executor149/5821:
- #0: ffff888021730068 (&pipe->mutex){+.+.}-{4:4}, at: anon_pipe_write+0x15d/0x1a70 fs/pipe.c:459
- #1: ffff88807f568958 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_invalidate_lock_shared include/linux/fs.h:922 [inline]
- #1: ffff88807f568958 (mapping.invalidate_lock#3){.+.+}-{4:4}, at: filemap_fault+0x625/0x2740 mm/filemap.c:3410
+I do think it is, because we can do this super-incrementally, and I'm willing to
+put in the legwork to gradually move drivers over.
 
-=============================================
+I think it might be folio-like in taking some time, but we'll get there
+(obviously _nowhere near_ the impact of that work, a mere humble effort, but
+comparable somewhat in this regard).
 
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.15.0-rc3-syzkaller-00342-g5bc1018675ec #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:274 [inline]
- watchdog+0xf70/0x12c0 kernel/hung_task.c:437
- kthread+0x3c2/0x780 kernel/kthread.c:464
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 0 Comm: swapper/1 Not tainted 6.15.0-rc3-syzkaller-00342-g5bc1018675ec #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 04/19/2025
-RIP: 0010:hlock_class+0x13/0x70 kernel/locking/lockdep.c:233
-Code: 00 00 00 00 0f 1f 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 0f b7 47 20 66 25 ff 1f 0f b7 c0 48 0f a3 05 3d cd 12 14 <73> 15 48 8d 04 80 48 8d 04 80 48 8d 04 c5 60 6f aa 95 c3 cc cc cc
-RSP: 0018:ffffc90000197a30 EFLAGS: 00000003
-RAX: 000000000000006d RBX: ffff88801dad2f30 RCX: 0000000000000000
-RDX: 0000000000040000 RSI: 0000000000000000 RDI: ffff88801dad2f30
-RBP: ffff88801dad2f30 R08: 0000000000080000 R09: 0000000000000001
-R10: 0000000000000000 R11: ffff8880b8527858 R12: 0000000000000001
-R13: 0000000000000002 R14: ffff88801dad2440 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff888124ae4000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005650ce575028 CR3: 000000000e180000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- check_wait_context kernel/locking/lockdep.c:4856 [inline]
- __lock_acquire+0x1f9/0x1ba0 kernel/locking/lockdep.c:5185
- lock_acquire kernel/locking/lockdep.c:5866 [inline]
- lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5823
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:110 [inline]
- _raw_spin_lock_irqsave+0x3a/0x60 kernel/locking/spinlock.c:162
- hrtimer_get_next_event+0x5f/0x260 kernel/time/hrtimer.c:1530
- cmp_next_hrtimer_event kernel/time/timer.c:1976 [inline]
- __get_next_timer_interrupt+0x43e/0x810 kernel/time/timer.c:2318
- tick_nohz_next_event+0x309/0x400 kernel/time/tick-sched.c:922
- tick_nohz_idle_stop_tick+0x7d3/0xef0 kernel/time/tick-sched.c:1218
- cpuidle_idle_call kernel/sched/idle.c:183 [inline]
- do_idle+0x38c/0x510 kernel/sched/idle.c:325
- cpu_startup_entry+0x4f/0x60 kernel/sched/idle.c:423
- start_secondary+0x21d/0x2b0 arch/x86/kernel/smpboot.c:315
- common_startup_64+0x13e/0x148
- </TASK>
+I actually took the time to look through ~350 or so .mmap() callbacks so it's
+not so crazy to delve in either.
 
+Re: other callbacks, yes I suspect we will need. But I think we are fine to
+start with this and add as needed.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+I suspect esp. given Jann's comments we might want to make .mmap_prepare() and
+.mmap() mutualy exclusive actually. Idea of allowing them both wass flexibility
+but I think is more downside than up.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+We can then add additional callbacks as needed. Also good for the transition
+away from .mmap() which I really want to absolutely deprecate.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
