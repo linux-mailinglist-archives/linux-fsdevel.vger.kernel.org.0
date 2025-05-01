@@ -1,109 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-47796-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8214AA59FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 05:32:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9542AAA5A26
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 06:09:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 314F34A446A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 03:32:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4169E1BC561F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 May 2025 04:09:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FDA22FF22;
-	Thu,  1 May 2025 03:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Cq5CnQfu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B18022FDE2;
+	Thu,  1 May 2025 04:09:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81314C80;
-	Thu,  1 May 2025 03:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3B1D1E5718;
+	Thu,  1 May 2025 04:09:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746070342; cv=none; b=oUgdpqxUH3w8/Bvp04HZqB2vOWCexAr2mgiH73CXkMu9nwIMQZkuQT2HR0/Qq8rV4mFq4s7ZQfKO9SVDIXWn+0L9v0H0GKY/KvHx9o8n3syRAQeM1bwqfIPLjJ1i5if7OfGU+kYY0lo2r2CaW2dz9YyT3eNoCiOAx3SgxTQSE5E=
+	t=1746072555; cv=none; b=c+2iOCGsVpAJAJTLXH91y4M3L1l9TXChCR3gzOPEUV/1Pb5NS2bmbLtpC2ajfVSOrk3tNchrgwzrMjB6m7gbl/rzpLxl0It2IrMIy573/tx0I0/nyNqTaXuCKPLIhv1uwiOJ2+7v9f3TBICyZJz50K/sUXaOkWe2Fl+4WvUMc0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746070342; c=relaxed/simple;
-	bh=fRMZdEm7fOJ8v4QMbXUj8vea++1ipKTKHFyioNAwYaw=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=g6MQ8LVDfaOgm/TSzMNveFKiDlVwGiuQJwcDZwc0NLeS3AAWTA4PNHdOGFlvi+Dsp4jivWgzB3K9+5TTZ3oFfhOetDX89hP7Tv2cfQholjVdcc2TnPavjnqWRMHyXlzAgOF6txjZ0rzOqmxElVXv1Od5PBLaWPXuMiI2ZtQA8CM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=fail (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Cq5CnQfu reason="signature verification failed"; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5413W3Ga1206913
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 30 Apr 2025 20:32:04 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5413W3Ga1206913
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1746070325;
-	bh=wZ8hCQkM3wsEnq2HUgkkQULMcmqkfBTaRw1XvFt2KG4=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=Cq5CnQfumMQgV/QuJlPOpMFFl3/hdCSTtri7CsWNwhcJ78uojh9NbSgAJPCeA5CCi
-	 kzL0HT7n4URyLjbruVPu/4HLsSkEsmpdiSg9gg7H+CQ+Fz8ghHX3WcINt3y3/SnoLz
-	 gzIQZrq/S1ru3Wb+nQMlHk8ynljGXBi2xcchb4uv+UryTVux1VIoziPxS9g/iYt/TS
-	 pxjT+Z7UZeyEWMj84CTHl1ABDIie/2+IGzJFs7topZwUZiCZNzJhqPouYyEfNs65wl
-	 KwqjRGbO6xjeHrbYaTnyLdx7Hl1FdLip3zqj1BSeNJ/koUkur53dJFz6YBdofU2VOD
-	 esZ+xdGZIuyjQ==
-Date: Wed, 30 Apr 2025 20:32:03 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-CC: "Theodore Ts'o" <tytso@mit.edu>,
-        Kent Overstreet <kent.overstreet@linux.dev>,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.15-rc4
-User-Agent: K-9 Mail for Android
-In-Reply-To: <CAHk-=wgwuu5Yp0Y-t_U6MoeKmDbJ-Y+0e+MoQi7pkGw2Eu9BzQ@mail.gmail.com>
-References: <l7pfaexlj6hs56znw754bwl2spconvhnmbnqxkju5vqxienp4w@h2eocgvgdlip> <CAHk-=wjajMJyoTv2KZdpVRoPn0LFZ94Loci37WLVXmMxDbLOjg@mail.gmail.com> <ivvkek4ykbdgktx5dimhfr5eniew4esmaz2wjowcggvc7ods4a@mlvoxz5bevqp> <CAHk-=wg546GhBGFLWiuUCB7M1b3TuKqMEARCXhCkxXjZ56FMrg@mail.gmail.com> <20250425195910.GA1018738@mit.edu> <d87f7b76-8a53-4023-81e2-5d257c90acc2@zytor.com> <CAHk-=wgwuu5Yp0Y-t_U6MoeKmDbJ-Y+0e+MoQi7pkGw2Eu9BzQ@mail.gmail.com>
-Message-ID: <114E260B-7AC4-4F5D-BBC4-60036CC7188F@zytor.com>
+	s=arc-20240116; t=1746072555; c=relaxed/simple;
+	bh=KfSrdHusUAwnyXl/SAjl5LcCOK4cacE/Ammmm4oHo1E=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=r6EzGgJADqQJrqvS0iPXUDdpmM+tiBUZ+UT2omLFsgqkILEfbG0HEAzWHrbXDSdsJxSQ77WXY74qgOGsWFuJswV835My5sNYdIfSIjTdXWyjYgYSdD03GV17zLGwgg7sKHcEy1t8cBcDbtGaBnvrfaU1a65bddj9lUT2fRIMsms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Zp0t13CjTz51SWH;
+	Thu,  1 May 2025 12:08:57 +0800 (CST)
+Received: from xaxapp02.zte.com.cn ([10.88.97.241])
+	by mse-fl2.zte.com.cn with SMTP id 54148rMj021500;
+	Thu, 1 May 2025 12:08:53 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp04[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Thu, 1 May 2025 12:08:54 +0800 (CST)
+Date: Thu, 1 May 2025 12:08:54 +0800 (CST)
+X-Zmail-TransId: 2afb6812f3d6005-4673f
+X-Mailer: Zmail v1.0
+Message-ID: <20250501120854885LyBCW0syCGojqnJ8crLVl@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <akpm@linux-foundation.org>
+Cc: <david@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <wang.yaxin@zte.com.cn>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <yang.yang29@zte.com.cn>,
+        <xu.xin16@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIHYyIDAvOV0gc3VwcG9ydCBrc21fc3RhdCBzaG93aW5nIGF0IGNncm91cCBsZXZlbA==?=
 Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 54148rMj021500
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 6812F3D9.000/4Zp0t13CjTz51SWH
 
-On April 30, 2025 8:12:20 PM PDT, Linus Torvalds <torvalds@linux-foundation=
-=2Eorg> wrote:
->On Wed, 30 Apr 2025 at 19:48, H=2E Peter Anvin <hpa@zytor=2Ecom> wrote:
->>
->> It is worth noting that Microsoft has basically declared their
->> "recommended" case folding (upcase) table to be permanently frozen (for
->> new filesystem instances in the case where they use an on-disk
->> translation table created at format time=2E)  As far as I know they hav=
-e
->> never supported anything other than 1:1 conversion of BMP code points,
->> nor normalization=2E
->
->So no crazy '=C3=9F' matches 'ss' kind of thing? (And yes, afaik that's
->technically wrong even in German, but afaik at least sorts the same in
->some locales)=2E
->
->Because yes, if MS basically does a 1:1 unicode translation with a
->fixed table, that is not only "simpler", I think it's what we should
->strive for=2E
->
->Because I think the *only* valid reason for case insensitive
->filesystems is "backwards compatibility", and given that, it's
->_particularly_ stupid to then do anything more complicated and broken
->than the thing you're trying to be compatible with=2E
->
->I hope to everything holy that nobody ever wants to be compatible with
->the absolute garbage that is the OSX HFS model=2E
->
->Because the whole "let's actively corrupt names into something that is
->almost, but not exactly, NFD" stuff is just some next-level evil
->stuff=2E
->
->            Linus
->
+From: xu xin <xu.xin16@zte.com.cn>
 
-I suspect the NFD bit in HFS comes from the use of decomposed characters i=
-n the 8-bit character systems of MacOS Classic=2E
+With the enablement of container-level KSM (e.g., via prctl [1]), there is
+a growing demand for container-level observability of KSM behavior. However,
+current cgroup implementations lack support for exposing KSM-related
+metrics.
+
+This patch introduces a new interface named ksm_stat
+at the cgroup hierarchy level, enabling users to monitor KSM merging
+statistics specifically for containers where this feature has been
+activated, eliminating the need to manually inspect KSM information for
+each individual process within the cgroup.
+
+Users can obtain the KSM information of a cgroup just by:
+
+# cat /sys/fs/cgroup/memory.ksm_stat
+ksm_rmap_items 76800
+ksm_zero_pages 0
+ksm_merging_pages 76800
+ksm_process_profit 309657600
+
+Current implementation supports both cgroup v2 and cgroup v1.
+
+xu xin (9):
+  memcontrol: rename mem_cgroup_scan_tasks()
+  memcontrol: introduce the new mem_cgroup_scan_tasks()
+  memcontrol: introduce ksm_stat at memcg-v2
+  memcontrol: add ksm_zero_pages in cgroup/memory.ksm_stat
+  memcontrol: add ksm_merging_pages in cgroup/memory.ksm_stat
+  memcontrol: add ksm_profit in cgroup/memory.ksm_stat
+  memcontrol-v1: add ksm_stat at memcg-v1
+  Documentation: add ksm_stat description in cgroup-v1/memory.rst
+  Documentation: add ksm_stat description in cgroup-v2.rst
+
+ Documentation/admin-guide/cgroup-v1/memory.rst | 36 +++++++++++
+ Documentation/admin-guide/cgroup-v2.rst        | 12 ++++
+ include/linux/memcontrol.h                     | 14 +++++
+ mm/memcontrol-v1.c                             |  6 ++
+ mm/memcontrol.c                                | 83 +++++++++++++++++++++++++-
+ mm/oom_kill.c                                  |  6 +-
+ 6 files changed, 152 insertions(+), 5 deletions(-)
+
+-- 
+2.15.2
 
