@@ -1,192 +1,236 @@
-Return-Path: <linux-fsdevel+bounces-47932-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47933-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD43AA7567
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 16:55:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F064AA75C1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 17:12:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3B2D1BA865B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:55:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B9DC7BA610
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 15:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB18256C99;
-	Fri,  2 May 2025 14:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24D32580DE;
+	Fri,  2 May 2025 15:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipg8sWW+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ajkja3WU"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A19A256C81
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 14:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF0025742C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 15:11:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746197696; cv=none; b=tkUzqZkwlWj1y7mWa6usM50NwdNycroJuKFlTZy4azlu0akaoK0jDGAuxdq7vjcYdFVdA5jguCXCM71KzRPKLyC+leBgzxdM51VqR3i1dvUFH8XbSvyR2V+Z9Y9bPFfPoruRMHh4lzl6MqndanKmueyYVzT4adzgZmK7nbGeS+8=
+	t=1746198706; cv=none; b=evmXv6oLcKUOrKX3JzVCEHqWGieuHWC5cuxK5InmyhM9muUTxBYuswwTDKVCF72tLXiRjYti3O8BOPZcYS9/ljNtUlyThtR/DpKn22rUkwls22IXtYibW8QShH4779sxGcXvdzEAPM2NQpylJPuZjEgKv9j+hPv3byKMCvCpYt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746197696; c=relaxed/simple;
-	bh=RpJVwCDKSnByw8jtUR+cMwoe+OU/wu1hEclu+sJDocE=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=Wz2KUWtBfDisRELiLy591b/Ffupy5ks2zRD77kG/IZWOoGvv0gMF5VLmOiEru2DZqR0Ljn3M0qF2sx/ikJ55qXzr52WooqJXYsqlFkioKI2mEMTgPFv4LRh0WTxh4HN8nlChKJVpH3CBp0lzw9r3Ycw46kqPX5Zz9ss0V89kUuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipg8sWW+; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-af589091049so1599579a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 May 2025 07:54:54 -0700 (PDT)
+	s=arc-20240116; t=1746198706; c=relaxed/simple;
+	bh=FKlZk6KjghNkNzFfe2VS93WmUZ24CsLkd431OYU93qY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gQDGIHhni0dyWWp9OFYdsIL6gEmRClpng0IH/y22U324p2dfL5Eqkon2b7f0V+c1IlkAneRGW3oL3Bn34QSDBIPc7K7SeZ3Al1albItsRDOe+CGMymEKy1PLLKNI/htH6UtxTLECHHdfiG9rIry39vlyA7nxZ14+e4qmrNgr7HU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ajkja3WU; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5f632bada3bso9184a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 May 2025 08:11:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746197694; x=1746802494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:to:from
-         :reply-to:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=APu7gvDG+GWIH3CqaZfGtDjeCKACn6athf5zXmMCeek=;
-        b=ipg8sWW+RO3PsDQgPyWlbcohGJpxSLAypGyplxCAnf9Vila0qIIWauksYFGKOVp3h8
-         Isc2tEIObakhn+4V4nbW3kH0YSQbp/NaIxqKUcEptDRci9skPzcfmTWt0GqcgicfBnc+
-         rMlWlpkwzvsbipW1a8OjrAs1OhFBNdvi6O0FXZC4YPB6GihY6F7XEJCYXjCsq3rkz06n
-         iooPZJH6fd5/txrB5EF7vR0wWkLieq6f+J12IFH6HCWp5H7xQIaZZ0OiGV/lSx26Am3a
-         Aht4UZpEypFR5ZaukxitSLKKFURAVGxJgVu1MCrfE91tJcq7aPagSr8rPF0v39TiCqj+
-         nUJg==
+        d=google.com; s=20230601; t=1746198700; x=1746803500; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FKlZk6KjghNkNzFfe2VS93WmUZ24CsLkd431OYU93qY=;
+        b=Ajkja3WUo0rxHuf2/tgJlAngX37r2hJMRaaecRC4TysL+C3Y2sFzkbexKIsAkBFG/W
+         JGz3EOJzl22JWyAVISNZq/OL7nVL5ayV/HToFFUIlyJboKCz4vOKuBPqwN8OlVme634p
+         WTxJPF/xEuURWyGHk459ZMLbV7cL3W/OE9/mFw4u1uOcbo7q+WsGGMcHYU0PEzvmJl8h
+         8AuAtW7n+mxztXw5RefMYDzAhWsLiWUZCU9Gn5miHzpsW+bNfmn/azmi+eKQ3/IF/uwS
+         QVmi4P2FcaoCI0efpDbf0f1S2y9ymkBwq4iocbOhVuoWT52yJ4Rab7JLk2podlWfTlkI
+         rDyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746197694; x=1746802494;
-        h=content-transfer-encoding:mime-version:message-id:subject:to:from
-         :reply-to:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=APu7gvDG+GWIH3CqaZfGtDjeCKACn6athf5zXmMCeek=;
-        b=l4htV7u+v2b8YMeYCvVqEmzynYqcqKk1v7jEYO7Zdo6Wa2Mgre7mLMEziUU2Ru37Lu
-         x7apVjcz76AF/KcOKFH9PbPiTNOp4KY6Hy1HS37+HhQpF4l32CKr5gQ4AMbhgC0LuR5S
-         UG/Nr+ItJQkEK7uUwSiYA2IH90tGhfEjPOa6H4WkGaX0M9fSku7cxiAH/VMA6nZqzpNC
-         VrMakeZ1tJsT0TR7MmsLK17arAovPtb3LKlgJEW+8CQoSu6+B/VHYK6M8mIzL69K6/5e
-         oe6fJ211MFiNX3H/V2fcrO7strHF13ZSv+rrg/Ha+Vb6vGFCnCO5/Fn/dPVBVkii0nSW
-         invA==
-X-Gm-Message-State: AOJu0YyTNKjCLTYJXrr2SKLLPN5JATHEdQVpx4yH6cD7reICa9+Aj7Yy
-	RscodSpKwB7WNAhiBwfaomrulYTdrJtuBHFMkAXEgGkLgmCTsN55DDLVsPtqAh8=
-X-Gm-Gg: ASbGncu9uv2FiORnk62B2NNHPs1QCC5Tw70wUruwJFmpI0uwUvBbvyD3RziiZJZIRCF
-	ekBI1KoOSgxemw+ZcOjzLmtcHU1SRRplOMf2VGwGoRSw+ZGxWpl/oWHVjfIWH7KvIycBBEgytZB
-	EwD44TYIoWaEiqlTWbuqIWHvXw5d5QpmcuZZhWS2DbM19sXCdxHZEh0wo+cKZUFvEDP4k8O+4JT
-	f/JMVSNNVibZxjWPLe0+pvIIyqYZrrZzdyjnYSAFlSOAZITJbrwEK49nLVMtkUb0MKccFiBlI2E
-	l5Ph9gddwuQK7JG82RoYEy9VUeh6aPeOHmcLPi+7s8EERb9XhqcEQOvhP4PaMlNoCYn6DvKOPmE
-	Yfs7iyT+uQ80zOua1
-X-Google-Smtp-Source: AGHT+IGxo9c13ps+OLbXDL80t7q4tXdQKgx5Z8iaB4QVaAToXzlRcys88xSVCbahLBH8/2L6G6DIVw==
-X-Received: by 2002:a17:90b:280c:b0:2ff:4bac:6fa2 with SMTP id 98e67ed59e1d1-30a4e5c4d9emr5815641a91.16.1746197693830;
-        Fri, 02 May 2025 07:54:53 -0700 (PDT)
-Received: from 179-190-173-23.cable.cabotelecom.com.br ([179.190.173.23])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a3480f0aasm6423373a91.35.2025.05.02.07.54.51
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 07:54:53 -0700 (PDT)
-Date: Fri, 02 May 2025 07:54:53 -0700 (PDT)
-X-Google-Original-Date: 2 May 2025 09:54:50 -0500
-Reply-To: sales1@theleadingone.net
-From: Winston Taylor <sglvlinks@gmail.com>
-To: linux-fsdevel@vger.kernel.org
-Subject: wts
-Message-ID: <20250502095449.A4D814737FAB33FD@gmail.com>
+        d=1e100.net; s=20230601; t=1746198700; x=1746803500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FKlZk6KjghNkNzFfe2VS93WmUZ24CsLkd431OYU93qY=;
+        b=gYOpxd052WCmjrqqCSfrbaJJiujVs4DPFywtrlLUzcnMSPpvxdrTtxYgbCGc5ygO4z
+         KcuOIl+/UYS9IJQH1OfWlsOlsVCgvJSCJQICQt09VZ7nkTjh8V2laKCu/FnzVqCE37M8
+         S3hHY6GAl7OoO23nXBs4xh1WCdM1q1FW0VRk+9WLuO6XwhvbMCSwePclZ/1aR3R9nkzv
+         UFAPxVgQ7SpUCSLS44SVt6QCsxLL81asgjb2whKvEuPTmsI+gdniEBcJjMk9QQoI3ssE
+         FnFVKAHf5myi2L539V5SZu3sWfQwXtruQNxcoUZeEmd3ccT1dWVX3R/2FnN3fm+sLy3G
+         s8xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXkyEomgtfuocPTKQnI2q9Uco0pqRRfCCd64E5TyT+QsZpwrOaR0m5Qh5o+X2J9fNOTrn5TvSwilct68mOk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWixB4lxPaS2gSgyTF+QFLjOcUYrxWuiH0c3cWs5aDdFnqrld7
+	RQt1cAuShFTKhOuZ7Twxkk6w/+rpfemPLP/LqcQl6hoIiD8ndBUJC2iZZ7HQ/g7phgnmNDxuvbQ
+	z5zXFIKlLek174KCRao+GBq/BeE0x2LLbzI+b
+X-Gm-Gg: ASbGncsePyhkSSV4AtDa56coXkpVWZOuSRDMkMLvSnZ99h+CnbeoX2ZtOJvNhsAlSjf
+	CCwie9uCbwi246t/1ibIbmbM4FZlog3xfE0Spjj875SJT9teLL88gemapqhOdfw8S4DhSbNKtNX
+	4gWD/AMzcJCTZ2XKEVeMJ88p8NG0GaoKWBNoIQL+/y/YSspI6NCg==
+X-Google-Smtp-Source: AGHT+IERkzDNyTmOeaZwge9izZvT+3a5JL1Pt5BG92diaSrHdsXlC4LhpWG/7aF50+We9CxCzaJagP6DJzyfICQLxvQ=
+X-Received: by 2002:a50:d556:0:b0:5e6:15d3:ffe7 with SMTP id
+ 4fb4d7f45d1cf-5f918c2a177mr184575a12.7.1746198699387; Fri, 02 May 2025
+ 08:11:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
+References: <20250418174959.1431962-1-surenb@google.com> <20250418174959.1431962-9-surenb@google.com>
+ <CAEf4BzabPLJTy1U=aBrGZqKpskNYvj5MYuhPHSh_=hjmVJMvrg@mail.gmail.com>
+ <CAG48ez29frEbJG+ySVARX-bO_QWe8eUbZiV8Jq2sqYemfuqP_g@mail.gmail.com>
+ <CAJuCfpGxw7L67CvDnTiHN0kdVjFcPoZZ4ZsOHi0=wR7Y2umk0Q@mail.gmail.com>
+ <CAG48ez1cR+kXBsvk4murYDBBxSzg9g5FSU--P8-BCrMKV6A+KA@mail.gmail.com> <CAEf4BzarQAmj477Lyp2aS0i2RM4JaxnAVvem6Kz-Eh1a5x-=6A@mail.gmail.com>
+In-Reply-To: <CAEf4BzarQAmj477Lyp2aS0i2RM4JaxnAVvem6Kz-Eh1a5x-=6A@mail.gmail.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 2 May 2025 17:11:03 +0200
+X-Gm-Features: ATxdqUFG2iaTkmFhKeQVVpe2LikO_MhFJjHWYrIsMyz9yg82E2DdMFylx1L3_Nc
+Message-ID: <CAG48ez2tQsqS3+ZfSus+Wi5ur6HbYuaAhhmOOrkDyrZG+gsvXg@mail.gmail.com>
+Subject: Re: [PATCH v3 8/8] mm/maps: execute PROCMAP_QUERY ioctl under RCU
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
+	peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
+	shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello ,
+On Fri, May 2, 2025 at 12:10=E2=80=AFAM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+> On Tue, Apr 29, 2025 at 10:25=E2=80=AFAM Jann Horn <jannh@google.com> wro=
+te:
+> > On Tue, Apr 29, 2025 at 7:15=E2=80=AFPM Suren Baghdasaryan <surenb@goog=
+le.com> wrote:
+> > > On Tue, Apr 29, 2025 at 8:56=E2=80=AFAM Jann Horn <jannh@google.com> =
+wrote:
+> > > > On Wed, Apr 23, 2025 at 12:54=E2=80=AFAM Andrii Nakryiko
+> > > > <andrii.nakryiko@gmail.com> wrote:
+> > > > > On Fri, Apr 18, 2025 at 10:50=E2=80=AFAM Suren Baghdasaryan <sure=
+nb@google.com> wrote:
+> > > > > > Utilize speculative vma lookup to find and snapshot a vma witho=
+ut
+> > > > > > taking mmap_lock during PROCMAP_QUERY ioctl execution. Concurre=
+nt
+> > > > > > address space modifications are detected and the lookup is retr=
+ied.
+> > > > > > While we take the mmap_lock for reading during such contention,=
+ we
+> > > > > > do that momentarily only to record new mm_wr_seq counter.
+> > > > >
+> > > > > PROCMAP_QUERY is an even more obvious candidate for fully lockles=
+s
+> > > > > speculation, IMO (because it's more obvious that vma's use is
+> > > > > localized to do_procmap_query(), instead of being spread across
+> > > > > m_start/m_next and m_show as with seq_file approach). We do
+> > > > > rcu_read_lock(), mmap_lock_speculate_try_begin(), query for VMA (=
+no
+> > > > > mmap_read_lock), use that VMA to produce (speculative) output, an=
+d
+> > > > > then validate that VMA or mm_struct didn't change with
+> > > > > mmap_lock_speculate_retry(). If it did - retry, if not - we are d=
+one.
+> > > > > No need for vma_copy and any gets/puts, no?
+> > > >
+> > > > I really strongly dislike this "fully lockless" approach because it
+> > > > means we get data races all over the place, and it gets hard to rea=
+son
+> > > > about what happens especially if we do anything other than reading
+> > > > plain data from the VMA. When reading the implementation of
+> > > > do_procmap_query(), at basically every memory read you'd have to th=
+ink
+> > > > twice as hard to figure out which fields can be concurrently update=
+d
+> > > > elsewhere and whether the subsequent sequence count recheck can
+> > > > recover from the resulting badness.
+> > > >
+> > > > Just as one example, I think get_vma_name() could (depending on
+> > > > compiler optimizations) crash with a NULL deref if the VMA's ->vm_o=
+ps
+> > > > pointer is concurrently changed to &vma_dummy_vm_ops by vma_close()
+> > > > between "if (vma->vm_ops && vma->vm_ops->name)" and
+> > > > "vma->vm_ops->name(vma)". And I think this illustrates how the "ful=
+ly
+> > > > lockless" approach creates more implicit assumptions about the
+> > > > behavior of core MM code, which could be broken by future changes t=
+o
+> > > > MM code.
+> > >
+> > > Yeah, I'll need to re-evaluate such an approach after your review. I
+> > > like having get_stable_vma() to obtain a completely stable version of
+> > > the vma in a localized place and then stop worrying about possible
+> > > races. If implemented correctly, would that be enough to address your
+> > > concern, Jann?
+> >
+> > Yes, I think a stable local snapshot of the VMA (where tricky data
+> > races are limited to the VMA snapshotting code) is a good tradeoff.
+>
+> I'm not sure I agree with VMA snapshot being better either, tbh. It is
+> error-prone to have a byte-by-byte local copy of VMA (which isn't
+> really that VMA anymore), and passing it into ops callbacks (which
+> expect "real" VMA)... Who guarantees that this won't backfire,
+> depending on vm_ops implementations? And constantly copying 176+ bytes
+> just to access a few fields out of it is a bit unfortunate...
 
- These are available for sale. If you=E2=80=99re interested in purchasing=
-=20
-these, please email me
+Yeah, we shouldn't be passing VMA snapshots into ops callbacks, I
+agree that we need to fall back to using proper locking for that.
 
- 960GB SSD SATA 600 pcs/18 USD
+> Also taking mmap_read_lock() sort of defeats the point of "RCU-only
+> access". It's still locking/unlocking and bouncing cache lines between
+> writer and reader frequently. How slow is per-VMA formatting?
 
-S/N MTFDDAK960TDS-1AW1ZABDB
+I think this mainly does two things?
 
-Brand New C9200L-48T-4X-E  $1,200 EAC
-Brand New ST8000NM017B  $70 EA
+1. It shifts the latency burden of concurrent access toward the reader
+a bit, essentially allowing writers to preempt this type of reader to
+some extent.
+2. It avoids bouncing cache lines between this type of reader and
+other *readers*.
 
-Brand New ST20000NM007D
-QTY 86  $100 EACH
-Brand New ST4000NM000A   $30 EA
-Brand New WD80EFPX   $60 EA
- Brand New WD101PURZ    $70 EA
+> If we
+> take mmap_read_lock, format VMA information into a buffer under this
+> lock, and drop the mmap_read_lock, would it really be that much slower
+> compared to what Suren is doing in this patch set? And if no, that
+> would be so much simpler compared to this semi-locked/semi-RCU way
+> that is added in this patch set, no?
 
-Intel Xeon Gold 5418Y Processors
+> But I do agree that vma->vm_ops->name access is hard to do in a
+> completely lockless way reliably. But also how frequently VMAs have
+> custom names/anon_vma_name?
 
-QTY $70 each
+I think there are typically two VMAs with vm_ops->name per MM, vvar
+and vdso. (Since you also asked about anon_vma_name: I think
+anon_vma_name is more frequent than that on Android, there seem to be
+58 of those VMAs even in a simple "cat" process.)
 
+> What if we detect that VMA has some
+> "fancy" functionality (like this custom name thing), and just fallback
+> to mmap_read_lock-protected logic, which needs to be supported as a
+> fallback even for lockless approach?
+>
+> This way we can process most (typical) VMAs completely locklessly,
+> while not adding any extra assumptions for all the potentially
+> complicated data pieces. WDYT?
 
+And then we'd also use the fallback path if karg.build_id_size is set?
+And I guess we also need it if the VMA is hugetlb, because of
+vma_kernel_pagesize()? And use READ_ONCE() in places like
+vma_is_initial_heap()/vma_is_initial_stack()/arch_vma_name() for
+accessing both the VMA and the MM?
 
-CPU  4416+   200pcs/$500
+And on top of that, we'd have to open-code/change anything that
+currently uses the ->vm_ops (such as vma_kernel_pagesize()), because
+between us checking the type of the VMA and later accessing ->vm_ops,
+the VMA object could have been reallocated with different ->vm_ops?
 
-CPU  5418Y    222pcs/$700
-
- 
-
-8TB 7.2K RPM SATA
-6Gbps 512   2500pcs/$70
-
-
-960GB SSD SATA   600pcs/$30
-serial number MTFDDAK960TDS-1AW1ZABDB
-
-
-SK Hynix 48GB 2RX8 PC5 56008 REO_1010-XT
-PH HMCGY8MG8RB227N AA
-QTY 239 $50 EACH
-
-
-SAMSUNG 64GB 4DRX4 PC4-2666V-LD2-12-MAO
-M386A8K40BM2-CTD60 S
-QTY 320 $42 each
-
-
-Ipad pro 129 2021 MI 5th Gen 256 WiFi + Cellular
-quantity 24 $200 EACH
-
-=20
-Ipad pro 12.9 2022 m2 6th Gen 128 WiFi + Cellular
-quantity - 44 $250 EAC
-
-Brand New NVIDIA GeForce RTX 4090 Founders
-Edition 24GB - QTY: 56 - $700 each
-
- Brand New ASUS TUF Gaming GeForce RTX 4090 OC
- 24GB GDDR6X Graphics Card
- QTY87 $1000 each
-=20
-Refurbished MacBook Pro with Touch Bar 13 inches
-MacBook Pro 2018 i5 8GB 256gb quantity $ 200 EACH
-MacBook Pro 2019 i5 8GB 256gb Quantity $ 200
-MacBook Pro 2020 i5 8gb 256gb Quantity $200
-MacBook Pro 2022 i5 m2 8gb 256gb quantity $250 EACH
-
- 
-
-Refurbished Apple iPhone 14 Pro Max - 256 GB
-quantity-10 $35O EACH
-
-Refurbished Apple iPhone 13 Pro Max has
-quantity-22 $300 EACH
-
-
-Apple MacBook Pro 14-inch with M3 Pro chip, 512GB SSD (Space=20
-Black)[2023
-QTY50
-USD 280
-
-
-Apple MacBook Air 15" (2023) MQKR3LL/A M2 8GB 256GB
-QTY25
-USD 300 EACH
-
-
-HP EliteBook 840 G7 i7-10610U 16GB RAM 512GB
-SSD Windows 11 Pro TOUCH Screen
-QTY 237 USD 100 each
-
-
- Best Regards,
-
-300 Laird St, Wilkes-Barre, PA 18702, USA
-Mobile: +1 570-890-5512
-Email: sales1@theleadingone.net
-www.theleadingone.net
-
+I still don't like the idea of pushing the complexity of "the VMA
+contents are unstable, and every read from the VMA object may return
+data about a logically different VMA" down into these various helpers.
+In my mind, making the API contract "The VMA contents can be an
+internally consistent snapshot" to the API contract for these helpers
+constrains the weirdness a bit more - though I guess the helpers will
+still need READ_ONCE() for accessing properties of the MM either
+way...
 
