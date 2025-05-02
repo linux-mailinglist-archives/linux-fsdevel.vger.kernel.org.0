@@ -1,339 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-47923-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04E20AA7328
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 15:16:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC68AA731E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 15:15:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59C1E7B6692
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 13:15:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E4EF984E56
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 13:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 862642550A9;
-	Fri,  2 May 2025 13:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB022550A6;
+	Fri,  2 May 2025 13:15:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="HOGu/oGM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aqKijeqk"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wzzqh8a9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b5-smtp.messagingengine.com (fhigh-b5-smtp.messagingengine.com [202.12.124.156])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F65254AF5
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 13:16:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11D8254AEE
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 13:15:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746191779; cv=none; b=JDaOs0+uei+wG0g4iqeSVxZ/LoCywjcOHg9OHStDijaXXXa9W8nEHHJK6IvKKR29kTEHvf/MMXnPb5bvpgl6rCgfXwJrTnnNqVE3sHE8W9ks8c5J9JxMCClN2usTcxx2aQHbEHujvmu9pqdi92cqLQo4uTck+bjYKU0NOk2voh4=
+	t=1746191735; cv=none; b=qkBMmRtnes+s5jYHsGFrTnzIn5RVCDw2xjsG6cWk8s1VPJHQ69IIHPvJB4jjelLjtpqmm1ZIAaEOdcbnmJW45h19YP3bxZTdkWmjT9oyq6dwctLuBjeLDaf9pY95dPhxnHO1vtjGnwbAe3kXX3FtjkbvlBRqUbS5aqDytKhSQQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746191779; c=relaxed/simple;
-	bh=n0lgB4b2Bx6I8wlLQWgZ7ZRinU+5kfnUQqN+kSff0Bs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pkwpawXpBjSGWgQnKZDVw3VQBVvxXglN8rjPcCPoopdkOnJ8Papzn04Lp9c2BP9CP3Jq7kZp3dhkHqxUwYEDgiZ54AmqrjJS1PGnCdnivKAcXUzNEiTj7Fe+ClOu983xhiEGVQ/wztgIttx6RF/St7dSzqyu6dtHcs8+ZG1KzCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=HOGu/oGM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aqKijeqk; arc=none smtp.client-ip=202.12.124.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 5846D25400EE;
-	Fri,  2 May 2025 09:16:14 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Fri, 02 May 2025 09:16:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1746191774;
-	 x=1746278174; bh=lyCok09Flhdnpo9gZAHP46RSJ9bt00BSWsfNVrPOGx8=; b=
-	HOGu/oGMq289Izx72+PNBKJJ+3DSJ/ZczTDv+pTjUajli3C7H90XvT95zYAR4H9g
-	5KiTTtaF9sXwr9E01l6nGjMB/GSPczTbIoSqccPrTIv7oQ5an5mh99cFiH3jGDvi
-	C2PuzfHZQOMly88RbQ1XyyXiRb69MeosvBUlqjCDNTcZrEEZV4Un4H0+avVVK5Ie
-	7lCmJsjLURwvYde1awNH7UWqhC07W+lcI132/tKCfPtxIo2W8YAg2DTKf5Cul+19
-	43eqmJvx7iTamMePWh/r8EBemmA169s2O+I/lXqNjfKcgu2ezo0GuEGnK17eeoSh
-	Q4pFYl4YuzW7zxQwYWn3iA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746191774; x=
-	1746278174; bh=lyCok09Flhdnpo9gZAHP46RSJ9bt00BSWsfNVrPOGx8=; b=a
-	qKijeqkIU7QsHUTFJ0bnED9S4wzK3rwOvC+k0dXOpjTVn0DT7wxCQCniExE8eUac
-	WLXf+4UUTyWW+/UZScdI28CeYVEzPeaG4nmXSTqHGzdHqfc4CsE2CK3BPGfN1/Ez
-	NnAF9eyd6FZH9k+D/U4UoBzvgTlcB67MxphNo4nQJ4COTWfMxw+co3EYXqtrzaCk
-	OgOKDoY92UGNpbVQuMVnw9DDwVPMA/KqW/APuumpAL/N3WLogt8UdEg2ZIB77hC4
-	RIbfe8a/PwjPGFdbJvT9FQ+nZ111rA8DvgkY3EVyUsoJSo4KipBrlf3x4lk8uiBV
-	GZZXZOGIS9ibgSKfsZUrw==
-X-ME-Sender: <xms:ncUUaKR-Xh3TcRYS3Gxu1S61NU-b0LGtuELxMSpbNo5rDSl61NBECQ>
-    <xme:ncUUaPxfKaZRSSLkssNPal6n6255f9EzaXTWI4DQnFXfR7Dk8puMExCNEQsUNH6Nc
-    xSEUmS-CjfZdmfn>
-X-ME-Received: <xmr:ncUUaH2eiue8XrLwhESvLE3c5W0V1yIECHEdoxyYs3M1gyaOwPdN0BX4TUm2Dsy_hzk9reY9ukSQGYNfm9hU-gcG6Uq8oGRpX_NbRnbs87pPCLpM68zZ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedvheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepffejveeffeej
-    gffhfefhieeuffffteeltdfghffhtddtfeeuveelvdelteefvedtnecuffhomhgrihhnpe
-    hkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnh
-    gspghrtghpthhtohephedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhorghn
-    nhgvlhhkohhonhhgsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhikhhlohhssehsii
-    gvrhgvughirdhhuhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhm
-X-ME-Proxy: <xmx:ncUUaGA1iebyhGyoinG3qh8taeOa8oO_P2JZi_dXIvzbaGeWaPdwFg>
-    <xmx:ncUUaDi-Ix-6lPx245_Dt5qS_Ir9QxY12Hn3PrxL5M-v0UmXFmmDcw>
-    <xmx:ncUUaCrqpMsMxvJ5QbNR5AmzRhkr8eY5nKUi9s4y7QhFXZkqATDeFg>
-    <xmx:ncUUaGgB75zzLrzkaOyEaLZnOweB7Pz35_O9STerJO3AR60g4P27eg>
-    <xmx:nsUUaDnxDrwcwStTTnmF4lgPUrn7aGyHQM93pffDCmBsfzQaxR7BI1QV>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 2 May 2025 09:16:12 -0400 (EDT)
-Message-ID: <05cdb745-632e-42b0-8c44-ee2af09e9869@fastmail.fm>
-Date: Fri, 2 May 2025 15:16:12 +0200
+	s=arc-20240116; t=1746191735; c=relaxed/simple;
+	bh=jJejY/kf7IDqaZNybWSSFUeVHRlYJ/plDhZW6vp3vyE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sxvN2qgVf/JOO2xFXCUC3khBkTNvC7Ik+84HhxdU9P2VKpryXhsajy4OCZs44IvfBJJ1Jvbwe4dPiX5bv2yCN5TE4r2vUqxXML4OuFMNj0OQaPRZPl1W7uNUkfTz73xdl/BYWU+/hUJHXQMjC4tcvgK5hYHyKIldHlNU1quVNWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wzzqh8a9; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746191732;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bl9xS8/zrnkeUjZjg41gkZkBRahrSQQdcDdXOBJn19Y=;
+	b=Wzzqh8a9hIEzluYr9e6iNw+kPh74lbuFRd0i4FuN5uQyiWCINDYBUi+F5J4LpnTVqj4Hbt
+	3qQ97e2mhmN81SPj45aRGQrSs5OceQeNtEto4woeM3iUE05fy9GfQ5PGCIzrxR0HLHz62s
+	SxO7VbRu47BdBuLzgi6dqjWaRSHBONA=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-244-9IurcSpxOBqP51bcApkz4g-1; Fri,
+ 02 May 2025 09:15:31 -0400
+X-MC-Unique: 9IurcSpxOBqP51bcApkz4g-1
+X-Mimecast-MFC-AGG-ID: 9IurcSpxOBqP51bcApkz4g_1746191730
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F891195608E;
+	Fri,  2 May 2025 13:15:30 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.112])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 871B1195608D;
+	Fri,  2 May 2025 13:15:29 +0000 (UTC)
+Date: Fri, 2 May 2025 09:18:40 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH 6/6] iomap: rework iomap_write_begin() to return folio
+ offset and length
+Message-ID: <aBTGMGWjnVZ3lP4d@bfoster>
+References: <20250430190112.690800-1-bfoster@redhat.com>
+ <20250430190112.690800-7-bfoster@redhat.com>
+ <20250501222229.GL25675@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fuse: use splice for reading user pages on servers
- that enable it
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, jlayton@kernel.org, kernel-team@meta.com
-References: <20250422235607.3652064-1-joannelkoong@gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250422235607.3652064-1-joannelkoong@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250501222229.GL25675@frogsfrogsfrogs>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+On Thu, May 01, 2025 at 03:22:29PM -0700, Darrick J. Wong wrote:
+> On Wed, Apr 30, 2025 at 03:01:12PM -0400, Brian Foster wrote:
+> > iomap_write_begin() returns a folio based on current pos and
+> > remaining length in the iter, and each caller then trims the
+> > pos/length to the given folio. Clean this up a bit and let
+> > iomap_write_begin() return the trimmed range along with the folio.
+> > 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
+> > ---
+> >  fs/iomap/buffered-io.c | 26 +++++++++++++++-----------
+> >  1 file changed, 15 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index d3b30ebad9ea..2fde268c39fc 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -793,15 +793,22 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
+> >  	return iomap_read_inline_data(iter, folio);
+> >  }
+> >  
+> > -static int iomap_write_begin(struct iomap_iter *iter, size_t len,
+> > -		struct folio **foliop)
+> > +/*
+> > + * Grab and prepare a folio for write based on iter state. Returns the folio,
+> > + * offset, and length. Callers can optionally pass a max length *plen,
+> > + * otherwise init to zero.
+> > + */
+> > +static int iomap_write_begin(struct iomap_iter *iter, struct folio **foliop,
+> > +		size_t *poffset, u64 *plen)
+> 
+> Hmm, is this offset and length supposed to be bytes within the folio?
+> I find it a little odd that plen would be a u64 then, unless we're
+> preparing for folios that huge?  Or is that just to avoid integer
+> truncation issues?
+> 
 
+It was more the latter.. it's an input/output param for callers that use
+iomap_length(). That returns a u64, so just trying to keep things
+consistent. I suppose we could break the function decl into one param
+per line with "in/out" type comments if you think that is useful..?
 
-On 4/23/25 01:56, Joanne Koong wrote:
-> For direct io writes, splice is disabled when forwarding pages from the
-> client to the server. This is because the pages in the pipe buffer are
-> user pages, which is controlled by the client. Thus if a server replies
-> to the request and then keeps accessing the pages afterwards, there is
-> the possibility that the client may have modified the contents of the
-> pages in the meantime. More context on this can be found in commit
-> 0c4bcfdecb1a ("fuse: fix pipe buffer lifetime for direct_io").
-> 
-> For servers that do not need to access pages after answering the
-> request, splice gives a non-trivial improvement in performance.
-> Benchmarks show roughly a 40% speedup.
-> 
-> Allow servers with CAP_SYS_ADMIN privileges to enable zero-copy splice
-> for servicing client direct io writes. By enabling this, the server
-> understands that they should not continue accessing the pipe buffer
-> after completing the request or may face incorrect data if they do so.
-> Only servers with CAP_SYS_ADMIN may enable this, since having access to
-> the underlying user pages may allow servers to snoop or modify the
-> user pages after completing the request.
-> 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+Brian
 
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-
+> --D
 > 
-> ---
+> >  {
+> >  	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
+> >  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+> >  	loff_t pos = iter->pos;
+> > +	u64 len = min_t(u64, SIZE_MAX, iomap_length(iter));
+> >  	struct folio *folio;
+> >  	int status = 0;
+> >  
+> > +	len = *plen > 0 ? min_t(u64, len, *plen) : len;
+> >  	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
+> >  	if (srcmap != &iter->iomap)
+> >  		BUG_ON(pos + len > srcmap->offset + srcmap->length);
+> > @@ -833,8 +840,7 @@ static int iomap_write_begin(struct iomap_iter *iter, size_t len,
+> >  		}
+> >  	}
+> >  
+> > -	if (pos + len > folio_pos(folio) + folio_size(folio))
+> > -		len = folio_pos(folio) + folio_size(folio) - pos;
+> > +	pos = iomap_trim_folio_range(iter, folio, poffset, &len);
+> >  
+> >  	if (srcmap->type == IOMAP_INLINE)
+> >  		status = iomap_write_begin_inline(iter, folio);
+> > @@ -847,6 +853,7 @@ static int iomap_write_begin(struct iomap_iter *iter, size_t len,
+> >  		goto out_unlock;
+> >  
+> >  	*foliop = folio;
+> > +	*plen = len;
+> >  	return 0;
+> >  
+> >  out_unlock:
+> > @@ -967,7 +974,7 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+> >  			break;
+> >  		}
+> >  
+> > -		status = iomap_write_begin(iter, bytes, &folio);
+> > +		status = iomap_write_begin(iter, &folio, &offset, &bytes);
+> >  		if (unlikely(status)) {
+> >  			iomap_write_failed(iter->inode, iter->pos, bytes);
+> >  			break;
+> > @@ -975,7 +982,7 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+> >  		if (iter->iomap.flags & IOMAP_F_STALE)
+> >  			break;
+> >  
+> > -		pos = iomap_trim_folio_range(iter, folio, &offset, &bytes);
+> > +		pos = iter->pos;
+> >  
+> >  		if (mapping_writably_mapped(mapping))
+> >  			flush_dcache_folio(folio);
+> > @@ -1295,14 +1302,12 @@ static int iomap_unshare_iter(struct iomap_iter *iter)
+> >  		bool ret;
+> >  
+> >  		bytes = min_t(u64, SIZE_MAX, bytes);
+> > -		status = iomap_write_begin(iter, bytes, &folio);
+> > +		status = iomap_write_begin(iter, &folio, &offset, &bytes);
+> >  		if (unlikely(status))
+> >  			return status;
+> >  		if (iomap->flags & IOMAP_F_STALE)
+> >  			break;
+> >  
+> > -		iomap_trim_folio_range(iter, folio, &offset, &bytes);
+> > -
+> >  		ret = iomap_write_end(iter, bytes, bytes, folio);
+> >  		__iomap_put_folio(iter, bytes, folio);
+> >  		if (WARN_ON_ONCE(!ret))
+> > @@ -1367,7 +1372,7 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+> >  		bool ret;
+> >  
+> >  		bytes = min_t(u64, SIZE_MAX, bytes);
+> > -		status = iomap_write_begin(iter, bytes, &folio);
+> > +		status = iomap_write_begin(iter, &folio, &offset, &bytes);
+> >  		if (status)
+> >  			return status;
+> >  		if (iter->iomap.flags & IOMAP_F_STALE)
+> > @@ -1376,7 +1381,6 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+> >  		/* warn about zeroing folios beyond eof that won't write back */
+> >  		WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
+> >  
+> > -		iomap_trim_folio_range(iter, folio, &offset, &bytes);
+> >  		folio_zero_range(folio, offset, bytes);
+> >  		folio_mark_accessed(folio);
+> >  
+> > -- 
+> > 2.49.0
+> > 
+> > 
 > 
-> Changes from v1 -> v2:
-> * Gate this behind CAP_SYS_ADMIN (Bernd)
-> v1: https://lore.kernel.org/linux-fsdevel/20250419000614.3795331-1-joannelkoong@gmail.com/
-> 
-> ---
->  fs/fuse/dev.c             | 18 ++++++++++--------
->  fs/fuse/dev_uring.c       |  4 ++--
->  fs/fuse/fuse_dev_i.h      |  5 +++--
->  fs/fuse/fuse_i.h          |  3 +++
->  fs/fuse/inode.c           |  5 ++++-
->  include/uapi/linux/fuse.h |  9 +++++++++
->  6 files changed, 31 insertions(+), 13 deletions(-)
-> 
-> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-> index 67d07b4c778a..e4949c379eaf 100644
-> --- a/fs/fuse/dev.c
-> +++ b/fs/fuse/dev.c
-> @@ -816,12 +816,13 @@ static int unlock_request(struct fuse_req *req)
->  	return err;
->  }
->  
-> -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
-> -		    struct iov_iter *iter)
-> +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn *fc,
-> +		    bool write, struct iov_iter *iter)
->  {
->  	memset(cs, 0, sizeof(*cs));
->  	cs->write = write;
->  	cs->iter = iter;
-> +	cs->splice_read_user_pages = fc->splice_read_user_pages;
->  }
->  
->  /* Unmap and put previous page of userspace buffer */
-> @@ -1105,9 +1106,10 @@ static int fuse_copy_page(struct fuse_copy_state *cs, struct page **pagep,
->  		if (cs->write && cs->pipebufs && page) {
->  			/*
->  			 * Can't control lifetime of pipe buffers, so always
-> -			 * copy user pages.
-> +			 * copy user pages if server does not support reading
-> +			 * user pages through splice.
->  			 */
-> -			if (cs->req->args->user_pages) {
-> +			if (cs->req->args->user_pages && !cs->splice_read_user_pages) {
->  				err = fuse_copy_fill(cs);
->  				if (err)
->  					return err;
-> @@ -1538,7 +1540,7 @@ static ssize_t fuse_dev_read(struct kiocb *iocb, struct iov_iter *to)
->  	if (!user_backed_iter(to))
->  		return -EINVAL;
->  
-> -	fuse_copy_init(&cs, true, to);
-> +	fuse_copy_init(&cs, fud->fc, true, to);
->  
->  	return fuse_dev_do_read(fud, file, &cs, iov_iter_count(to));
->  }
-> @@ -1561,7 +1563,7 @@ static ssize_t fuse_dev_splice_read(struct file *in, loff_t *ppos,
->  	if (!bufs)
->  		return -ENOMEM;
->  
-> -	fuse_copy_init(&cs, true, NULL);
-> +	fuse_copy_init(&cs, fud->fc, true, NULL);
->  	cs.pipebufs = bufs;
->  	cs.pipe = pipe;
->  	ret = fuse_dev_do_read(fud, in, &cs, len);
-> @@ -2227,7 +2229,7 @@ static ssize_t fuse_dev_write(struct kiocb *iocb, struct iov_iter *from)
->  	if (!user_backed_iter(from))
->  		return -EINVAL;
->  
-> -	fuse_copy_init(&cs, false, from);
-> +	fuse_copy_init(&cs, fud->fc, false, from);
->  
->  	return fuse_dev_do_write(fud, &cs, iov_iter_count(from));
->  }
-> @@ -2301,7 +2303,7 @@ static ssize_t fuse_dev_splice_write(struct pipe_inode_info *pipe,
->  	}
->  	pipe_unlock(pipe);
->  
-> -	fuse_copy_init(&cs, false, NULL);
-> +	fuse_copy_init(&cs, fud->fc, false, NULL);
->  	cs.pipebufs = bufs;
->  	cs.nr_segs = nbuf;
->  	cs.pipe = pipe;
-> diff --git a/fs/fuse/dev_uring.c b/fs/fuse/dev_uring.c
-> index ef470c4a9261..52b883a6a79d 100644
-> --- a/fs/fuse/dev_uring.c
-> +++ b/fs/fuse/dev_uring.c
-> @@ -593,7 +593,7 @@ static int fuse_uring_copy_from_ring(struct fuse_ring *ring,
->  	if (err)
->  		return err;
->  
-> -	fuse_copy_init(&cs, false, &iter);
-> +	fuse_copy_init(&cs, ring->fc, false, &iter);
->  	cs.is_uring = true;
->  	cs.req = req;
->  
-> @@ -623,7 +623,7 @@ static int fuse_uring_args_to_ring(struct fuse_ring *ring, struct fuse_req *req,
->  		return err;
->  	}
->  
-> -	fuse_copy_init(&cs, true, &iter);
-> +	fuse_copy_init(&cs, ring->fc, true, &iter);
->  	cs.is_uring = true;
->  	cs.req = req;
->  
-> diff --git a/fs/fuse/fuse_dev_i.h b/fs/fuse/fuse_dev_i.h
-> index db136e045925..25e593e64c67 100644
-> --- a/fs/fuse/fuse_dev_i.h
-> +++ b/fs/fuse/fuse_dev_i.h
-> @@ -32,6 +32,7 @@ struct fuse_copy_state {
->  	bool write:1;
->  	bool move_pages:1;
->  	bool is_uring:1;
-> +	bool splice_read_user_pages:1;
->  	struct {
->  		unsigned int copied_sz; /* copied size into the user buffer */
->  	} ring;
-> @@ -51,8 +52,8 @@ struct fuse_req *fuse_request_find(struct fuse_pqueue *fpq, u64 unique);
->  
->  void fuse_dev_end_requests(struct list_head *head);
->  
-> -void fuse_copy_init(struct fuse_copy_state *cs, bool write,
-> -			   struct iov_iter *iter);
-> +void fuse_copy_init(struct fuse_copy_state *cs, struct fuse_conn *conn,
-> +		    bool write, struct iov_iter *iter);
->  int fuse_copy_args(struct fuse_copy_state *cs, unsigned int numargs,
->  		   unsigned int argpages, struct fuse_arg *args,
->  		   int zeroing);
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index 3d5289cb82a5..e21875f16220 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -898,6 +898,9 @@ struct fuse_conn {
->  	/* Use io_uring for communication */
->  	bool io_uring:1;
->  
-> +	/* Allow splice for reading user pages */
-> +	bool splice_read_user_pages:1;
-> +
->  	/** Maximum stack depth for passthrough backing files */
->  	int max_stack_depth;
->  
-> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> index 43b6643635ee..8b78dacf6c97 100644
-> --- a/fs/fuse/inode.c
-> +++ b/fs/fuse/inode.c
-> @@ -1439,6 +1439,9 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
->  
->  			if (flags & FUSE_REQUEST_TIMEOUT)
->  				timeout = arg->request_timeout;
-> +
-> +			if (flags & FUSE_SPLICE_READ_USER_PAGES && capable(CAP_SYS_ADMIN))
-> +				fc->splice_read_user_pages = true;
->  		} else {
->  			ra_pages = fc->max_read / PAGE_SIZE;
->  			fc->no_lock = true;
-> @@ -1489,7 +1492,7 @@ void fuse_send_init(struct fuse_mount *fm)
->  		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP |
->  		FUSE_HAS_EXPIRE_ONLY | FUSE_DIRECT_IO_ALLOW_MMAP |
->  		FUSE_NO_EXPORT_SUPPORT | FUSE_HAS_RESEND | FUSE_ALLOW_IDMAP |
-> -		FUSE_REQUEST_TIMEOUT;
-> +		FUSE_REQUEST_TIMEOUT | FUSE_SPLICE_READ_USER_PAGES;
->  #ifdef CONFIG_FUSE_DAX
->  	if (fm->fc->dax)
->  		flags |= FUSE_MAP_ALIGNMENT;
-> diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-> index 122d6586e8d4..fecb06921da9 100644
-> --- a/include/uapi/linux/fuse.h
-> +++ b/include/uapi/linux/fuse.h
-> @@ -235,6 +235,9 @@
->   *
->   *  7.44
->   *  - add FUSE_NOTIFY_INC_EPOCH
-> + *
-> + *  7.45
-> + *  - add FUSE_SPLICE_READ_USER_PAGES
->   */
->  
->  #ifndef _LINUX_FUSE_H
-> @@ -443,6 +446,11 @@ struct fuse_file_lock {
->   * FUSE_OVER_IO_URING: Indicate that client supports io-uring
->   * FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.
->   *			 init_out.request_timeout contains the timeout (in secs)
-> + * FUSE_SPLICE_READ_USER_PAGES: kernel supports splice on the device for reading
-> + *				user pages. If the server enables this, then the
-> + *				server should not access the pipe buffer after
-> + *				completing the request. Only servers with
-> + *				CAP_SYS_ADMIN privileges can enable this.
->   */
->  #define FUSE_ASYNC_READ		(1 << 0)
->  #define FUSE_POSIX_LOCKS	(1 << 1)
-> @@ -490,6 +498,7 @@ struct fuse_file_lock {
->  #define FUSE_ALLOW_IDMAP	(1ULL << 40)
->  #define FUSE_OVER_IO_URING	(1ULL << 41)
->  #define FUSE_REQUEST_TIMEOUT	(1ULL << 42)
-> +#define FUSE_SPLICE_READ_USER_PAGES (1ULL << 43)
->  
->  /**
->   * CUSE INIT request/reply flags
 
 
