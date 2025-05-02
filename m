@@ -1,210 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-47910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05388AA7191
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:20:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8704CAA71AE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:23:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 638AC16A0B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 12:20:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CCE83B472B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 12:23:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734FE250C08;
-	Fri,  2 May 2025 12:20:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C139252904;
+	Fri,  2 May 2025 12:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V6DegJyw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H+e5aQFV";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zIljpT8R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TfQgwou6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFtS0zkr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4891122578C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 12:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6204926ACD;
+	Fri,  2 May 2025 12:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746188444; cv=none; b=AoeDLNY4bY2qV/rw7SShf8OlY/BeSw+Qe4tUmqkh42gRbjgDnF+x1EkdkBTWT7GbLxi+1F+0t/FLjwrDfB1hq5ZgDBkw0t8a3bJelVKS3QEErqRIE5px4LVBvnEuvBGapnWfDbLPHFD7czeTOqq25rUW8mBmQyXyCVc5fhRaI2Y=
+	t=1746188600; cv=none; b=AclsBKHu7hnTt0LAJchm5K8c8c7WMvkKY7BF4ukDEN5KTnnYFXpF9P1Qlnk8vLVoRZkCtbszP8rQqfCXLlt+rUyJak4+kZrFmMnPUz8rU/TNSzGmVkxtVPUdmsWczrpoQmw0HVRroznUYZRkSFQhxwQt+pJxAhQGoYMJX3pS1U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746188444; c=relaxed/simple;
-	bh=q9Wt2nv3tB4D1QRkd4VGcrAcWby6DCCuswobmhTV6vA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K9d4Nq7KreoaosQRE/77PX49dgLy9hJdocizXzdNqyIUW9ggm0VkwugK5HbecrvJMzagp+NHCmf46cmoYQOAFJGTObyR8jPUXNhpY/M0zELwIqmRmMT0r40SSIRqgRhSJfrpiXr62xs54hYK8myXvH6PD0aCuivr7A7aMzzsIaE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V6DegJyw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H+e5aQFV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zIljpT8R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TfQgwou6; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id F14451F387;
-	Fri,  2 May 2025 12:20:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746188440; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l3XGzJGzTYHGCyVRD8KTVZyUw74RJvDiVdSvzltzOus=;
-	b=V6DegJywf70AoxraMTuMW3jX9SKGfYwdLkLahmtXuDy5LAxewP6td7SnDTTO+NzYfktOsm
-	PnN3lOm084p+AOAKJdweLY4xX5KFWpqGMyspqZW0t/WEwJnouVx9eWrpAcHZTdN9CYO+k7
-	Q7qO4v9gXdHur7d7rPmxltYcck5Y6uw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746188440;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l3XGzJGzTYHGCyVRD8KTVZyUw74RJvDiVdSvzltzOus=;
-	b=H+e5aQFVjUIdjrBDL6m5nNJPljJgie3g0+7oaAQxYM88121amB/4uERDL6LtjksEXKCWEk
-	Fzwdmp4cEKLT92CA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zIljpT8R;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TfQgwou6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746188438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l3XGzJGzTYHGCyVRD8KTVZyUw74RJvDiVdSvzltzOus=;
-	b=zIljpT8RYZGWd/HBqgGRL0/G/EPLljblmAn6xhBisAStcablM7g7QF0gUsaHrQXmW0jKTl
-	dwjOsB7J49AfnSGAcZGtH3/MakJXuhOpKUZuo7xVVEnTlXycCvM2AcykGc1HUaDAs/6A/P
-	zz76gazA5mrQeaa7EMBz8jLGP4fox9o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746188438;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=l3XGzJGzTYHGCyVRD8KTVZyUw74RJvDiVdSvzltzOus=;
-	b=TfQgwou6GFyRLC590TZR8fNmQk57E8vvDttvruRgNUVOqSnjaPNyXinuLP4siuNGqte9Jx
-	ZbU7EJsr0SUHThAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DBE861372E;
-	Fri,  2 May 2025 12:20:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lB6qNZa4FGiICAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 02 May 2025 12:20:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 520F6A0921; Fri,  2 May 2025 14:20:38 +0200 (CEST)
-Date: Fri, 2 May 2025 14:20:38 +0200
-From: Jan Kara <jack@suse.cz>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
-	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
-	Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH v2 0/3] eliminate mmap() retry merge, add
- .mmap_prepare hook
-Message-ID: <uevybgodhkny6dihezto4gkfup6n7znaei6q4ehlkksptlptwr@vgm2tzhpidli>
-References: <cover.1746116777.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1746188600; c=relaxed/simple;
+	bh=uoD6t+xSncOXPND7SdJCqz7ylBLgqUWXuLMSQgfYQkk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VUj8+1VRVOx/u2FutwJOUOiG4CNxruZzNj0XNiiODfgJDGmZJGgp/G3fSvwlmncP57IKtmodxUeGKzZvz4us59FH5dlZsYFpItYggWyQKcw+mUgvaEPiwzpzbaamBt6a2R2zCMVamf7LELLK3GE7wUgIm3ikr/c3il+aOIcCyms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFtS0zkr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3DE5C4CEE4;
+	Fri,  2 May 2025 12:23:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746188599;
+	bh=uoD6t+xSncOXPND7SdJCqz7ylBLgqUWXuLMSQgfYQkk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nFtS0zkrIJQJTniM+JOv0gxqdgx6KvbV5OIOTVoqEqjZxevrkxkuIV1yk+mRDvpV6
+	 iS2490aAU5BtrlsyKIDkXQ7zEl4hpfEvu9jw/mJnyolDnF53/QqrOm/nYdZV8vvXpr
+	 PdGRawT5Ll2RQpg3hH87X/oUuTXxW7GTRvT2QDklXGj7D0MVwGvjzM2zglcgIsvjwi
+	 hJL60EY2z3RkiKLNz8c262GhkI3jJtj/w7JW/frvXLjIoM3SnEA9o6qxfuKkRApQrI
+	 AxxgGZpYa1R5WVGm0Q5F5j8v1ZUNSp60C/7KnVH11WS49Yp2n9VNMfkEU1bENU+BC1
+	 Whtmtat0VYXEg==
+From: Christian Brauner <brauner@kernel.org>
+To: Max Kellermann <max.kellermann@ionos.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	Joe Damato <jdamato@fastly.com>,
+	stable@vger.kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs/eventpoll: fix endless busy loop after timeout has expired
+Date: Fri,  2 May 2025 14:22:45 +0200
+Message-ID: <20250502-exzellent-hingucken-53c88d2917a1@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250429185827.3564438-1-max.kellermann@ionos.com>
+References: <20250429185827.3564438-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1746116777.git.lorenzo.stoakes@oracle.com>
-X-Rspamd-Queue-Id: F14451F387
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[17];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1399; i=brauner@kernel.org; h=from:subject:message-id; bh=uoD6t+xSncOXPND7SdJCqz7ylBLgqUWXuLMSQgfYQkk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSI7DSawGjp7NLa93D/iUWKVbKtv7jb4xOlTjC6OnQwG v8+sNCio5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCLdBxj+F6VcK+Ys5tYuFvM3 9Jy5N9aQp8h89tldnx8xvpv2cvXaBkaGN7ZLkvqy+Oe08MgvO7/s2+qzcex9XzdO5fq4PGp72Xt DfgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Thu 01-05-25 18:25:26, Lorenzo Stoakes wrote:
-> During the mmap() of a file-backed mapping, we invoke the underlying driver
-> file's mmap() callback in order to perform driver/file system
-> initialisation of the underlying VMA.
+On Tue, 29 Apr 2025 20:58:27 +0200, Max Kellermann wrote:
+> After commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in
+> the future"), the following program would immediately enter a busy
+> loop in the kernel:
 > 
-> This has been a source of issues in the past, including a significant
-> security concern relating to unwinding of error state discovered by Jann
-> Horn, as fixed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
-> error path behaviour") which performed the recent, significant, rework of
-> mmap() as a whole.
+> ```
+> int main() {
+>   int e = epoll_create1(0);
+>   struct epoll_event event = {.events = EPOLLIN};
+>   epoll_ctl(e, EPOLL_CTL_ADD, 0, &event);
+>   const struct timespec timeout = {.tv_nsec = 1};
+>   epoll_pwait2(e, &event, 1, &timeout, 0);
+> }
+> ```
 > 
-> However, we have had a fly in the ointment remain - drivers have a great
-> deal of freedom in the .mmap() hook to manipulate VMA state (as well as
-> page table state).
-> 
-> This can be problematic, as we can no longer reason sensibly about VMA
-> state once the call is complete (the ability to do - anything - here does
-> rather interfere with that).
-> 
-> In addition, callers may choose to do odd or unusual things which might
-> interfere with subsequent steps in the mmap() process, and it may do so and
-> then raise an error, requiring very careful unwinding of state about which
-> we can make no assumptions.
-> 
-> Rather than providing such an open-ended interface, this series provides an
-> alternative, far more restrictive one - we expose a whitelist of fields
-> which can be adjusted by the driver, along with immutable state upon which
-> the driver can make such decisions:
-> 
-> struct vm_area_desc {
-> 	/* Immutable state. */
-> 	struct mm_struct *mm;
-> 	unsigned long start;
-> 	unsigned long end;
-> 
-> 	/* Mutable fields. Populated with initial state. */
-> 	pgoff_t pgoff;
-> 	struct file *file;
-> 	vm_flags_t vm_flags;
-> 	pgprot_t page_prot;
-> 
-> 	/* Write-only fields. */
-> 	const struct vm_operations_struct *vm_ops;
-> 	void *private_data;
-> };
-> 
-> The mmap logic then updates the state used to either merge with a VMA or
-> establish a new VMA based upon this logic.
-> 
-> This is achieved via new file hook .mmap_prepare(), which is, importantly,
-> invoked very early on in the mmap() process.
-> 
-> If an error arises, we can very simply abort the operation with very little
-> unwinding of state required.
+> [...]
 
-Looks sensible. So is there a plan to transform existing .mmap hooks to
-.mmap_prepare hooks? I agree that for most filesystems this should be just
-easy 1:1 replacement and AFAIU this would be prefered?
+I've taken this version but also credited/mentioned Joe in the commit message,
+noting that I added that info
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+---
+
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
+
+[1/1] fs/eventpoll: fix endless busy loop after timeout has expired
+      https://git.kernel.org/vfs/vfs/c/d9ec73301099
 
