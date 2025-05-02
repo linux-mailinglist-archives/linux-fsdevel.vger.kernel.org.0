@@ -1,98 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-47900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46CA7AA6C57
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 10:11:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E4E8AA6C63
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 10:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A533983BE8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 08:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3A321BA4FFE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 08:18:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE46A2690D9;
-	Fri,  2 May 2025 08:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8051F426C;
+	Fri,  2 May 2025 08:17:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QUyud9VP"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEFF19FA92;
-	Fri,  2 May 2025 08:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E228828
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 08:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746173485; cv=none; b=OkT5AxPPKOdH4ym4YukaPE7EBxAoo1LupozW01SZDYDbUH4LdOZmyX2JawXSAECWAUTvg5Uv3+XWspAGgZbPeqThzk9Q3FBfC7i/udChXXLeF3u2y59Xlj7M4t8jsqzyd2mEGMVi8D3XYsQ3rYhuWpIGdOJAdMGQV3wxacwhEsA=
+	t=1746173870; cv=none; b=b5hJ8rOYC6FnbLKOF11BtQgJwpTCKNkyRUZ7i3XNGeEyDuLYItYi46rgQCYXbL3CBDRhSdjuLJzcspmDQFnVboBRS634u4TLFzNRarFVqC3Wa7gs6XhbNSf3Z2kZJD3ZuWsrDNEHN0WV4AOXOe8MmzwvzZVcQZDyigNlWsx1eqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746173485; c=relaxed/simple;
-	bh=/l9WRHoddJfJFKPKt/vNBHpMtm1OJBFgkOV9dcTiSDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LiniIj/znMtAD+X+o0SKwP8ic7RXJaS1uq7kWEaTEvqL+WNz4oYs8PsGJ+g5wQ2l8IJiujjRRGyNzyJTaf8FLmjPxt1n6mOI+wNBJkgxltX8NNBHQH/2Fd8tLSg285z4DTHu8s66UvZW+a1EbGC0H6HnhSBfQX70MdLjv1CK4BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43ce70f9afbso13616735e9.0;
-        Fri, 02 May 2025 01:11:23 -0700 (PDT)
+	s=arc-20240116; t=1746173870; c=relaxed/simple;
+	bh=uUtde6FLSqIRIUjkxrKfbCbR7EcIoza7yfWbHlcAm0o=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=UeMdkf9HkaUYUGk8KeSPJTQgm5oQ0SuEXSyOImT4ER8yBQZ/FZVEqGpCk332BtB4XHtMgPbQVcQhaKcIQyCBRxGl5ZgbFVyP9r1Nq3YJcpJeA+OzNyEecxeIYDUmKXdTBkA8Abrr0+Uq97QpGdUlJMT+Hoqzr7faUa6B6f9cpoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QUyud9VP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746173866;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type;
+	bh=nVQlT567fRkdg68ZomwjxZQGPU8NbKasYEQg8bOfVjE=;
+	b=QUyud9VPhnkYoeqzCKfdxW8vmnXJUrI4n8o2pE54fbMOyF8rsrL8QqcnNuKibdOUdse/2y
+	nQPczeNse5Z1ti4Ukpg8DaiwQ9sNJQEiSz5accaBBdJQIUuRcDZOLzffdjZAD+o/tgQ4yO
+	smZZbDZwV2RJjFafDJiY6XCoSyvo9UM=
+Received: from mail-oi1-f199.google.com (mail-oi1-f199.google.com
+ [209.85.167.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-680-fyDgDekOO-OKMEy2Qd9jPA-1; Fri, 02 May 2025 04:16:24 -0400
+X-MC-Unique: fyDgDekOO-OKMEy2Qd9jPA-1
+X-Mimecast-MFC-AGG-ID: fyDgDekOO-OKMEy2Qd9jPA_1746173784
+Received: by mail-oi1-f199.google.com with SMTP id 5614622812f47-3fe246005c6so598934b6e.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 May 2025 01:16:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746173482; x=1746778282;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/l9WRHoddJfJFKPKt/vNBHpMtm1OJBFgkOV9dcTiSDo=;
-        b=pcQZBnDz6PDlsFkwUVfID2HPnMKhcneNC//sWHPJlOVtb0pw3pGBX1F2WjINJjJDKq
-         g5en82s7pAUu6d7yEJ1wyDMJlsJLAzS6LFLz5NQsSXFRY911iHsy3XIsve4OrONz/bgk
-         NKZpGBD4Encz2iX/smED3Q/iSvclY4JqpcLqPi+/a0h/rSfUqXVVhTjCWisHUyM+3b1Z
-         zzY3TIpA3XwtCecJO7zZXwozs31Q7hwywUjZcMkiweOHR2LTunBwn0Dism9quEeGwgdh
-         4yis0iBvQJB0JMdkNcWpPIjgB3tDKERqBFJL2YnkY1et7y5l9bI+6sk5ITo9U2MAU+0Z
-         OEoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUVo6RKyWB3rOSN3Aj58ct1ifp9WV0Xr8rUms5RA52WHNQVPvKzucB89NAO/61tTvNu5hBsVZjDOybT@vger.kernel.org, AJvYcCVxxLIB8fyY7GwzkyNHqgnwYUcpe4QQX8pVxuxoTMCzCfRKxUDmyEfhormFJQz62P5SsTHdwMbu0DzA6Bo=@vger.kernel.org, AJvYcCXPwcOeWiuathjXbrn53N7Sb4o9ydPWMbnvzADuzzRU0D3vUFAr0PNpVUQBr2aDqAzdm2gN0O7T9b0t/e8=@vger.kernel.org, AJvYcCXV1EB7+pT8UHUN063M3VbedC+1pFMLMfP9dRHt6tSuggZsZynHD4g6AeJdJQk7n2+xtaR6SXgdIvJs6PA=@vger.kernel.org, AJvYcCXV6iPVmEcTUsyA8lH/zZHOHE7M5bNkRXYpr3Uo4lyHvIs/ui41aNxJfw0fdgW2pXfBV0AT1hDtGnaUDBBl3A==@vger.kernel.org, AJvYcCXfWfQhKq6aLQ9noMLvhoYJn2wFNAkiXlWaYWnibsaXB1s0HW/qRjTMzBgEHUJWX/mUfDpGYtHWnG4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtrtGsguGwe3nd14l12FwTvbpbUuvgXvgk5Rfd72K/5G+HfY5b
-	Sgx9nZonXsA5PVGdbzPW7onnX7MZt7CgOFFuj0T1dNy3KYwnVwOQ
-X-Gm-Gg: ASbGncsWt40bmBRbcbytn+FxxHY4SMhTsu3pcgPWft9qA3LCpTBkm5K11zdOB+QzzNG
-	1LCgLh+ved/2oUawZPKZjAYl+CssO2v9vwuPUDnOHNE70WPCpCTOqwN/xxip4uvFjnIpxBlLkQS
-	R4uUx3SGMYhSyYDGboHnJF3SWPXkSCxFfSogW8Xyue4/l0UWIXCC0sbuR7jn2YNwYxaxw5GvTEC
-	yryQoik/Z519ZtIs/KktQfoGJFfwn2T9Jn1O/UhuUq4VSSUFLBjJigeT92pArchKuW/aIiT+B8V
-	kjvqHZcZ1TAyOB8i6IIL1mVoBcfMSGb3t5Gsyh5EOwlPQ3PR641CTuH0vw==
-X-Google-Smtp-Source: AGHT+IF5PXSof6LicA+MgHiU22N+nB2PIEsPoZ92lRPcS/dOgUxz6GrNK7mU/Mus+h0qVk26GnapfQ==
-X-Received: by 2002:a05:600c:1d99:b0:441:b19c:96fc with SMTP id 5b1f17b1804b1-441bbeb0e07mr13471465e9.11.1746173481946;
-        Fri, 02 May 2025 01:11:21 -0700 (PDT)
-Received: from fedora (p54ad9a78.dip0.t-ipconnect.de. [84.173.154.120])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b89cc441sm36983865e9.3.2025.05.02.01.11.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 02 May 2025 01:11:21 -0700 (PDT)
-Date: Fri, 2 May 2025 10:11:18 +0200
-From: Johannes Thumshirn <jth@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
-	Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Mike Snitzer <snitzer@kernel.org>,
-	Mikulas Patocka <mpatocka@redhat.com>, Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	Andreas Gruenbacher <agruenba@redhat.com>,
-	Carlos Maiolino <cem@kernel.org>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Naohiro Aota <naohiro.aota@wdc.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, slava@dubeyko.com,
-	glaubitz@physik.fu-berlin.de, frank.li@vivo.com,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH 03/19] block: add a bio_add_max_vecs helper
-Message-ID: <aBR-JiTsQj3Hv4DA@fedora>
-References: <20250430212159.2865803-1-hch@lst.de>
- <20250430212159.2865803-4-hch@lst.de>
+        d=1e100.net; s=20230601; t=1746173783; x=1746778583;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nVQlT567fRkdg68ZomwjxZQGPU8NbKasYEQg8bOfVjE=;
+        b=ogV4bCWL6OX4ERDg/F3EhhRZFFodkmAyH7TS6zSKr4eLtI4SaZb+j8abOliuDM6fSd
+         CoCxzh4E7NxWtOJYHM7RliAcLgDKsk7HwjP8w/m8JTnAs1XErjCrygdQ6WQc8/zXEFXl
+         Xw/GIkk6LUS2GuJ4yzs5/AfK+lxCz2Kegp2pqgULdbRZTSeikPYzKo1Sox8cU36Y1BOC
+         2MLBLaDIWI8FB19V3vQ+zbbi+YbfSYWgGcqKABcQvlV9AMBOpWsQptVyT0Wc7Gq5pKjC
+         yyl56HaLW1Ms2CT2euFiQ4v8rASTGVY2D9h+6XkhrR4lEl42t4dT0QfMotdZQ2t0/4Rf
+         xHQQ==
+X-Gm-Message-State: AOJu0Yz/nD4bvOiX7JvebZbHZKIctinx+VEQ/e/hVtPT4JFteLHYn78r
+	VE7KNdSFOH2WQJyIQW35ccWuILkaYZstE+EgijqLEfo8PP4Gi3AHngXpSRJEEwDeMPnfUg04jV/
+	CHbja12hl4VjkFA5xdMmey9h3lrtgr55sAApsb4JncM30GcnGvbpFzyS3hUbXh02TZyCxuzs+Hw
+	8/t9slUZDL5cFEa+pcF387VnvFYe6zp1Xjcy2WLHxH26pfdwnr+iA=
+X-Gm-Gg: ASbGnct7nK04hiTIPMWuXsUrR5FJyh+GFg6SuvLpz0h8PEv+1SQJyBCA5Vxv83T2ywf
+	kYVojbBMM9J4a4e5deihByipcdN/Rp+8g9nHDv3g46EpU4PLgzBF+/RB3Bji449wnZeeIMnjzSo
+	D8J9ustul3fZorvV0Qngzi3to=
+X-Received: by 2002:a05:6870:8983:b0:2d4:e96a:580d with SMTP id 586e51a60fabf-2dab2fe2bc4mr856917fac.16.1746173783714;
+        Fri, 02 May 2025 01:16:23 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEXtKRXkJxW7DZbCb/1AwwLKDWp4IBf9QqVK1RkstrGTSL1AfAlAm50tM21B5YK5zU/V1qubqdvD1PPoMYAUMk=
+X-Received: by 2002:a05:6870:8983:b0:2d4:e96a:580d with SMTP id
+ 586e51a60fabf-2dab2fe2bc4mr856910fac.16.1746173783387; Fri, 02 May 2025
+ 01:16:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430212159.2865803-4-hch@lst.de>
+From: Allison Karlitskaya <lis@redhat.com>
+Date: Fri, 2 May 2025 10:16:12 +0200
+X-Gm-Features: ATxdqUHt3A8gyOfuYcnBrdn_xykN8UHYxESrWI3EYlpe-5GNKHLYHnl8S4oMQ7s
+Message-ID: <CAOYeF9V_FM+0iZcsvi22XvHJuXLXP6wUYPwRYfwVFThajww9YA@mail.gmail.com>
+Subject: CAP_SYS_ADMIN restriction for passthrough fds
+To: linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Looks good to me,
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+hi,
+
+Please excuse me if these are dumb questions.  I'm not great at this stuff. :)
+
+In fuse_backing_open() there's a check with an interesting comment:
+
+    /* TODO: relax CAP_SYS_ADMIN once backing files are visible to lsof */
+    res = -EPERM;
+    if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+        goto out;
+
+I've done some research into this but I wasn't able to find any
+original discussion about what led to this, or about current plans to
+"relax" this restriction -- only speculation about it being a
+potential mechanism to "hide" open files.
+
+It would be nice to have an official story about this, on the record.
+What's the concrete problem here, and what would it take to solve it?
+Are there plans?  Is help required?  Would it be possible to relax the
+check to having CAP_SYS_ADMIN in the userns which owns the mount (ie:
+ns_capable(...))?  What would it take to do that?  It would be
+wonderful to be able to use this inside of containers.
+
+The most obvious guess about direction (based on the comment) is that
+we need to do something to make sure that fds that are registered with
+backing IDs remain visible in the output of `lsof` even after the
+original fd is closed?
+
+Thanks in advance for any information you can give.  Even if the
+answer is "no, it's impossible" it would be great to have that on
+record.
+
+Cheers
+
+lis
+
 
