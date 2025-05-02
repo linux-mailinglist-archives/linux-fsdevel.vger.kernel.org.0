@@ -1,145 +1,110 @@
-Return-Path: <linux-fsdevel+bounces-47928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47929-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A3B1AA7480
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 16:10:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3D9AA7491
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 16:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C1D9E06DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:09:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D232189A6BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57734255F5B;
-	Fri,  2 May 2025 14:09:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AFE256C64;
+	Fri,  2 May 2025 14:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="B5wb5Ahn"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YaG2OyDd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E88623C4EB
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 14:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79A62561D5
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 14:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746194994; cv=none; b=Q9DTbfq8JJkVlkn0LObXD0ra/sHlAMSlfL3fC7oAmU7LyrEgdhLDkdEE6PXokhQdgePmQuj6pVBY38qjOgSfXbUROVnevW9/UYvq9YjeAk20l7VrpqsxfmoY+O06kDNysSBWHNJmZx4oNHt3cYJAx8Rt+iT05nJa6e9QcY8r3BM=
+	t=1746195088; cv=none; b=E5HLWv25PYrRFMue5SkDVsCUMKi9sjdqJy699IuwK40aydzeNjaqzELWh/TiVKTk8Uw8lsvA6GX8O2UJGGDcnqGUilp7/Sbj0lhBt4UiD6qwle3ISSy9KWKkfqfyQpHdfjmFh83wkneYHN/Obt8ae219Sz6JFLroaIn8yoTBT2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746194994; c=relaxed/simple;
-	bh=TY3gSKwbF1lNE9LVMCWRdusB6/9qpU7BzIkUVPeNLkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lkCjvi4tJ22zloCyUZBVOzf+iQl5N9or2WE7GVZHPeSf3phIqA9w/izZ0gF+jr+gOeBGE1V4zKJqIkPlfX+S3R+n+44WVYkxA5DuVjagO7P0rRJ8PCYbbGVwuyqp9K1zgvCI8TxXYFHqwrSzh5pIdsyHRCiXyw5xWgareJHS1X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=B5wb5Ahn; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4Zpt8k3c2kz9tW3;
-	Fri,  2 May 2025 16:09:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
-	t=1746194982;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xN9w4RmE6zjsaQ9MbjOzKmQSdpH3nvhTfpbQEvmypO0=;
-	b=B5wb5AhnVsypFIhJ5yBHVmTDkSLiwQCAFIXJzU1Rguj8KWu4zvLj3T0c4k0RV1eZRq8RdX
-	djQ0HWuvoizzsS4X2DVM0RuWXSk61d9bLfMHd5G6KNNsUICx97lDEnLg8EkV4CY4Ysy2CU
-	XLexnkjrHrzzHEg301bWskPBoA9yQ+aEM/X5f4RiCvNzR9R6kaC168ogGtxZHgFd7rrqmi
-	RAKNNV16M5ItZYIlwG71EpBnhWm/k+iky9qAh3mgBs8vxcfYAyFe/SjRIPUAlXtxaZirqF
-	NKAJGKVPbCijUYupfTtxlHf8SGP3lbXAQ6tL7W7+LXzO59JQ6Skzkwvoq0+OZA==
-Date: Sat, 3 May 2025 00:09:32 +1000
-From: Aleksa Sarai <cyphar@cyphar.com>
-To: Allison Karlitskaya <lis@redhat.com>
-Cc: linux-fsdevel@vger.kernel.org
-Subject: Re: CAP_SYS_ADMIN restriction for passthrough fds
-Message-ID: <20250502.085944-vague.answers.simpler.cure-3kij9vZ9O1RB@cyphar.com>
-References: <CAOYeF9V_FM+0iZcsvi22XvHJuXLXP6wUYPwRYfwVFThajww9YA@mail.gmail.com>
+	s=arc-20240116; t=1746195088; c=relaxed/simple;
+	bh=Vt2jUIItSucYOFtSbIcXHATgjkrt7oAf8nrQ6pmlrbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EKxiGXnQyeQXLEYe0UDdi9wCG4weIjBbz1UQ8O3HxID8Y6iM+YJOzRhC5s6W21Um2pRRNn0pqHUxV3aWxhKVkFfDpFgi6z7MTfJBQreFYXdWcbwon76hdDCOFLJ7DKT7dCo/nsSOfgN110SwnRpoi46F+HPnbJWHWB+ZJYvU1Ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YaG2OyDd; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso7829a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 May 2025 07:11:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746195085; x=1746799885; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vt2jUIItSucYOFtSbIcXHATgjkrt7oAf8nrQ6pmlrbo=;
+        b=YaG2OyDdfxp6rWAfJEcX0jTBAp1bikRAEsb3RZ0sVY1Ci1V2Wssrwo01mcXZJQC6WU
+         54g+QpeGj9ixHjP+K6GwtpMMFjA37mHJgEs/VhGrIO8v2DfLTnxnucVgZxd9EXz2DyCZ
+         4aDbpLFVt6+opDL94J3CWeoXmHbWNYSOJ8lKhV0QPTCkp+v7vVUs11B+/vRqooR1IQl2
+         PXHvLWRRElKm2AdKtUCg+P8gF/4x3gLwpKX5q77oSKh4QlC5gEGvnnlm+pjV5lMET0te
+         b00baFbNlCj/haUM82JciErz1tJH3MeOH7qc1W27MnoBk8flsKSv+9un59puG8+t14J+
+         CI/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746195085; x=1746799885;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vt2jUIItSucYOFtSbIcXHATgjkrt7oAf8nrQ6pmlrbo=;
+        b=aO6aq62Fadlqx2hwMkXHRCjY/sSvoVeAbDTJ2+GHmvVXC8s+JNd+Hyz95GxHLbddik
+         6/KrafM7LaS0ee61acEU4v8wCMptLDsK13qBlt5+mmLks7oUdYORsRqGbD2SuTta2alw
+         KiqoYn6H+hm46hUiecD/iStfqA+W7uMK7nEbaypSHCZEQJ+vqL0blgMxJcO0a01mHkFx
+         8se2xttXE51pNjrkgIgfb3r8UEZyp3qsFzu4GJWnW215Fjvvbqo3EPyIzAo7vdLxQkdh
+         dT3FllhUa9ccyEo2koyAEAXz27XMdS1ux/HrJOzHTirsBkwLlKNBIThNKQxSFKV0gmxE
+         1W9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXXeh/JktlM3FnfbIdB/dVsIB40a2DaAkbMQIe1+p7klqBkOHUto1kiLPHZgV+13KL3EIqu+NdRA9PpnjZv@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4lm2XlqYC6Pzb9QUBwfee7mlN4niCtGW0ahvD6ABinzlyBvoJ
+	flIg8meGAhXvtsK5eA3p60ieRO1H/kaqy+GoAn5NmTs94JtLMz1REBN8OpK+gcT3uD4udccQaeo
+	0IT/OTNfWW/JXzOn/B/ujdnwmLeQrzGXee/Fn
+X-Gm-Gg: ASbGncsQo2RTc/cSefpjyVhS8Q8EKY58CJ68SN7KLOAtpgvbcpwQq2m0qj9S29F7+oz
+	iMHHIawP5XT6ilLMJDtlo+Gf3MMQpvvHpVWEZdi8QuDaFKMpgJ99kBJdy2OaPxyKKJXT0ntTxAe
+	lcFnXonhRXuIFKRwfesMMg6Ap6AZjztSG5i31Fm1r4fweE7TTzVw==
+X-Google-Smtp-Source: AGHT+IEq4zZYwSq4JbP1XWIN3z7LZZH/ze1XMZW0I7CaF9AqWXRX3zQiHPa0jJanCkxNdcG6ojLB9VYf79HdE5YqMJ0=
+X-Received: by 2002:a50:c018:0:b0:5f7:f888:4cb5 with SMTP id
+ 4fb4d7f45d1cf-5f918c08662mr174781a12.1.1746195084602; Fri, 02 May 2025
+ 07:11:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="xolgulxv2log4ffi"
-Content-Disposition: inline
-In-Reply-To: <CAOYeF9V_FM+0iZcsvi22XvHJuXLXP6wUYPwRYfwVFThajww9YA@mail.gmail.com>
-X-Rspamd-Queue-Id: 4Zpt8k3c2kz9tW3
-
-
---xolgulxv2log4ffi
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250502-work-coredump-socket-v2-0-43259042ffc7@kernel.org> <20250502-work-coredump-socket-v2-5-43259042ffc7@kernel.org>
+In-Reply-To: <20250502-work-coredump-socket-v2-5-43259042ffc7@kernel.org>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 2 May 2025 16:10:48 +0200
+X-Gm-Features: ATxdqUENxkugyPW7ElgtsxNZpy_Nh_FmjQSxMwJIlzlcl6CVeGfFkE7y7zUJP5s
+Message-ID: <CAG48ez1x09k3neRXqZYtPwgcxN+8a9=HZCtUkok54bRwAk6BSA@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 5/6] pidfs, coredump: add PIDFD_INFO_COREDUMP
+To: Christian Brauner <brauner@kernel.org>
+Cc: Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: CAP_SYS_ADMIN restriction for passthrough fds
-MIME-Version: 1.0
 
-On 2025-05-02, Allison Karlitskaya <lis@redhat.com> wrote:
-> hi,
->=20
-> Please excuse me if these are dumb questions.  I'm not great at this stuf=
-f. :)
->=20
-> In fuse_backing_open() there's a check with an interesting comment:
->=20
->     /* TODO: relax CAP_SYS_ADMIN once backing files are visible to lsof */
->     res =3D -EPERM;
->     if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
->         goto out;
->=20
-> I've done some research into this but I wasn't able to find any
-> original discussion about what led to this, or about current plans to
-> "relax" this restriction -- only speculation about it being a
-> potential mechanism to "hide" open files.
->=20
-> It would be nice to have an official story about this, on the record.
-> What's the concrete problem here, and what would it take to solve it?
-> Are there plans?  Is help required?  Would it be possible to relax the
-> check to having CAP_SYS_ADMIN in the userns which owns the mount (ie:
-> ns_capable(...))?  What would it take to do that?  It would be
-> wonderful to be able to use this inside of containers.
->=20
-> The most obvious guess about direction (based on the comment) is that
-> we need to do something to make sure that fds that are registered with
-> backing IDs remain visible in the output of `lsof` even after the
-> original fd is closed?
->=20
-> Thanks in advance for any information you can give.  Even if the
-> answer is "no, it's impossible" it would be great to have that on
-> record.
+On Fri, May 2, 2025 at 2:43=E2=80=AFPM Christian Brauner <brauner@kernel.or=
+g> wrote:
+> Let userspace know that the task coredumped and whether it was dumped as
+> root or as regular user. The latter is needed so that access permissions
+> to the executable are correctly handled.
+>
+> I don't think this requires any additional privileges checks. The
+> missing exposure of the dumpability attribute of a given task is an
+> issue we should fix given that we already expose whether a task is
+> coredumping or not.
 
-My guess is that the issue is that we don't want an unprivileged process
-to be able to create a file reference that cannot be found (with
-something like lsof) and forcefully closed/killed by a sysadmin.
-Otherwise you could end up with a DOS with an admin being unable to
-unmount a filesystem or otherwise figure out what process is holding on
-to garbage.
-
-My hot take is that this is already possible in several ways, though
-admittedly the ones I can think of all require unprivileged user
-namespaces. (You can create bind-mount that is kept alive but not
-visible to any user-space process. The simplest way is to do mounts and
-chroot. Another is with open_tree().) Now, these won't block umount
-outright but you'll get the same effect as umount -l, which can be a
-problem.
-
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-https://www.cyphar.com/
-
---xolgulxv2log4ffi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCaBTSHAAKCRAol/rSt+lE
-b90cAP4wSdxVmo5KSvTzHDyuF3Jv2Ab18u4bhXZSNlBW+SQADQD/fU8CXXXRp0fZ
-pd6C3uEoICbnMEs9wVTI2dDCT/Nr7AM=
-=KOug
------END PGP SIGNATURE-----
-
---xolgulxv2log4ffi--
+Yeah, it certainly isn't more sensitive than things like the exit code and =
+UIDs.
 
