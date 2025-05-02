@@ -1,196 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-47886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73F4AA6950
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 05:27:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 862DEAA6953
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 05:29:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CE0E1BA3F34
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 03:27:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CB254A5AF6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 03:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AF3D19ABB6;
-	Fri,  2 May 2025 03:26:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B41719ABC2;
+	Fri,  2 May 2025 03:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b="OzMPpFP7"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mALTpKF4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbgeu2.qq.com (smtpbgeu2.qq.com [18.194.254.142])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4021E487;
-	Fri,  2 May 2025 03:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.194.254.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8661E487;
+	Fri,  2 May 2025 03:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746156415; cv=none; b=hQbqPlz1R3s+zzvDVfVez0QC/I2zm3Kl1LprUpYSqsGwzFX1bzlMOxf8SIxadJTeaTsGN1GZXX42hHDkBuq8N4jr2rTuWVyTnCzw/9Ntg2YPM+rJEdUQ5J1udjJhurCscxBkMHzkL5u2mLhHCORLd1n9i5wX1E5lmtOOa4mAcbE=
+	t=1746156587; cv=none; b=sNDZBZ270Wc1eJgvK890UoJzA4eMbujHfsXhfFjAudZsXsQg1vudraqlb2iGmthi/251KaEjO8/T8MFsfsXnIdyGDKVhVb4Gsa+dqw/xB2Wx93pUU8PE6C7FxsC8EpKFpZW6JOHOPXGCr+dxkiGFeCvwkp7+JVJHXLIZX1RhvAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746156415; c=relaxed/simple;
-	bh=CeAxYJL40IAc4WevQgi/9Zn/wz6TCqQ/DC6u8WQgj2M=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=SWClN8i5CVPx446v4PKb2EG8EaUo0TSv60BKBgje+GAa1pNXpAruE5U4bmq1120GLGPTT8c73JrqK4d5g6gjJqJLP3pUTSGyOyKLR+Qhcf+GmnuzswSn5QkRBhtGJfnTSjx+4/GPysaPxNTQ8t20XTK8GETYO7cuBBryloHlwo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn; spf=pass smtp.mailfrom=m.fudan.edu.cn; dkim=pass (1024-bit key) header.d=m.fudan.edu.cn header.i=@m.fudan.edu.cn header.b=OzMPpFP7; arc=none smtp.client-ip=18.194.254.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=m.fudan.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=m.fudan.edu.cn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=m.fudan.edu.cn;
-	s=sorc2401; t=1746156388;
-	bh=CeAxYJL40IAc4WevQgi/9Zn/wz6TCqQ/DC6u8WQgj2M=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=OzMPpFP7cAHx4S8fBVhqRbcrNebes4xe5XFM0uYCyuwA+YMpMdvsoZOVddWCAcD1G
-	 ofFaq55teJ7E0GLkqJnvTo/bifd+hCHezVlVYwSXlTA8nyyASOveSW4ri7oEYCUAsd
-	 qbL84f7kgIQF5bAX4W1q9fDbMgq9QuEd33iuM/fg=
-X-QQ-mid: zesmtpip4t1746156383t4d1c2a11
-X-QQ-Originating-IP: ghygKwZcCbXYhvQh7L5goCWy1cTLm0Hsn153gKSZtLo=
-Received: from TYSPR06MB7158.apcprd06.prod.out ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 02 May 2025 11:26:21 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 12978927380798215302
-EX-QQ-RecipientCnt: 7
-From: "huk23@m.fudan.edu.cn" <huk23@m.fudan.edu.cn>
-To: Andrew Morton <akpm@linux-foundation.org>
-CC: "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>,
-	=?utf-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>, linux-fsdevel
-	<linux-fsdevel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>
-Subject: WARNING in __folio_mark_dirty
-Thread-Topic: WARNING in __folio_mark_dirty
-Thread-Index: AQHbuxGSHQF9skQaSUOMuTuTamScwQ==
-X-MS-Exchange-MessageSentRepresentingType: 1
-Date: Fri, 2 May 2025 03:26:20 +0000
-Message-ID:
-	<TYSPR06MB7158B63753ECD29758D09D49F68D2@TYSPR06MB7158.apcprd06.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-Exchange-Organization-SCL: -1
-X-MS-TNEF-Correlator:
-X-MS-Exchange-Organization-RecordReviewCfmType: 0
-msip_labels:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1746156587; c=relaxed/simple;
+	bh=1Vfo6UxyrVA8Uw2LFErCgOYbbOibb5xD9ULhiLHKILI=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=mBth8AX1PwKHIgruzpECMNjKpeeXWUax+4RMaE2NSqOsX/gzQ/7aygv5/MN+e02En050xj5we/DHD3wYk+yZID0eeKisC4SzSGwKXoiPGacevuLlPdAY5ThlT8V20vkiMeSaTJEZO7KtGBRZmuqcxqBn9QYtlGZfD6dGS92VP88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mALTpKF4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B44CBC4CEE9;
+	Fri,  2 May 2025 03:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1746156584;
+	bh=1Vfo6UxyrVA8Uw2LFErCgOYbbOibb5xD9ULhiLHKILI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mALTpKF4SJBYkZgWGKhNgqJesO7HoQnZzCbTTiN8MU2+R8R+ED7sS/B5yBZWB+/ac
+	 s3XDg347KVjXWG6LwRSOqghv3wXEagFovu9dBIt3mfUOO7ydNYjI0oI3Q7rT/uPn5b
+	 artr3EP8Wbos0/CvDjqWm14UPP7rACTTXMmC7Og4=
+Date: Thu, 1 May 2025 20:29:43 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: "huk23@m.fudan.edu.cn" <huk23@m.fudan.edu.cn>
+Cc: "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>, =?UTF-8?B?55m954OB?=
+ =?UTF-8?B?5YaJ?= <baishuoran@hrbeu.edu.cn>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "syzkaller@googlegroups.com"
+ <syzkaller@googlegroups.com>, linux-fsdevel
+ <linux-fsdevel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+ gfs2@lists.linux.dev
+Subject: Re: WARNING in __folio_mark_dirty
+Message-Id: <20250501202943.e72b7bae3d1957efa60db553@linux-foundation.org>
+In-Reply-To: <TYSPR06MB7158B63753ECD29758D09D49F68D2@TYSPR06MB7158.apcprd06.prod.outlook.com>
+References: <TYSPR06MB7158B63753ECD29758D09D49F68D2@TYSPR06MB7158.apcprd06.prod.outlook.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:m.fudan.edu.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NHHBtKpbeb7pMrMYVy88UOTZFcqCbtGEbPjoClrRvKLEjkb/kzJrOENo
-	E+B8LLV1s8ZBH8bZgHtRWu2w2Y99hF5Su3ltqsSYY9vrlOvPY8gtSeYAYl7vvt57lqsUdEh
-	53r2Xf5n+N5teinNbUMFqVi0oSi/nhasLkt2ZVsk5bYM+JS8+msLnVSpWWBK3n3awEquMBu
-	L4xo+3SR9Pk9jdOsRHbvAifV5iiByP6AVByA6gAKeM6cAh+PVDXURKXs5LUCgkiUv4g+XdN
-	RfYzp74e0nmI2H7mvsemDk7ZPy9+xG5h64F+F3N+TLgmYCmAqZAxsKSK4q7C2fBXTiYAs+w
-	+ySv35ASdzZvXitqDE2+Uvm1vGjtN+2XWlfJYCd9+wgQYZ1hEQRfo8Pd5wWBb8JPQIHRWtZ
-	gn5bBxUYe0d0pgojt417qllb+eJZnK0cEKuxs12ocx11d9/2llJC60Gn3nkdw6PbLJeUavY
-	nbwxbU2wlq55TCWObTLAEj5QS7Xh7kyfhWmK9ziVd8fhTKHk+er9+YdcLEwaJNRc+GlvRdL
-	x+6YbVNEEqyRsn+1Req6EhDKk2EfJIZS/ZdWtKkHf2P+z9M2+a1wknJ6VCvw+7ceS03Rnc9
-	zvpRMeiQuydNbdO3Pfb+Dff5G2uXflKTSw43ACgT+oQewtB5CDgUEr2mqopvs+t3Fu4sQU2
-	kjCPjIlZCHziBrVCuWnODRbABSL8kRY54YjQogActHfyjs92diL1zqb8Kai7CQZY9WOq1hl
-	xpAwooNgroyYednraWjVuXz/mMz4CokpP6cWcGe5hB3n6H17xvU6oD40Jvf9NOvqGGHZ7cq
-	SwgZvLDtwb9P0wNbCZ5TElSwv7gFkijSmXT+PQ0xJwvOxiOfUF6k7otYdzIxUBKUpyhRjfd
-	jwa7kLje97Pn6tl3S8TKb6jReiVr2PT1r0VMUANHLg8umYeRsU5EQCLvVDBFMfLMgYEbNXD
-	P7W2Du45xATgwlyZvCIsO+s8XC6ZETZMoRiawlOlEjqnpRRu2+NyK6YhlFeCis8VAfeUKJH
-	tdCjDpGjtK0+ku0Ors
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-RGVhciBNYWludGFpbmVyc++8jAoKCldoZW4gdXNpbmcgb3VyIGN1c3RvbWl6ZWQgU3l6a2FsbGVy
-IHRvIGZ1enogdGhlIGxhdGVzdCBMaW51eCBrZXJuZWwsIHRoZSBmb2xsb3dpbmcgY3Jhc2ggKDM3
-dGggYW5kIDc2dGgpd2FzIHRyaWdnZXJlZC4KCgozN3Ro77yaCkhFQUQgY29tbWl0OiA2NTM3Y2Zi
-Mzk1ZjM1Mjc4MjkxOGQ4ZWU3YjdmMTBiYTJjYzNjYmYyCmdpdCB0cmVlOiB1cHN0cmVhbQpPdXRw
-dXQ6aHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8xMjIwXzYu
-MTNyY19LQVNBTi8yLiVFNSU5QiU5RSVFNSVCRCU5Mi0xMS8xNC1LQVNBTl8lMjBzbGFiLW91dC1v
-Zi1ib3VuZHMlMjBSZWFkJTIwaW4lMjBoZnNwbHVzX2Jub2RlX3JlYWQvMTRjYWxsX3RyYWNlLnR4
-dApLZXJuZWwgY29uZmlnOmh0dHBzOi8vZ2l0aHViLmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9i
-L21haW4vMDMwNV82LjE1cmMxL2NvbmZpZy50eHQKQyByZXByb2R1Y2VyOmh0dHBzOi8vZ2l0aHVi
-LmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDIxOV82LjEzcmM3X3RvZG8vNzYtVUJT
-QU5fJTIwc2hpZnQtb3V0LW9mLWJvdW5kcyUyMGluJTIwYmNoMl90cmFuc19pdGVyX2luaXRfb3V0
-bGluZWQvMzdyZXByby5jClN5emxhbmcgcmVwcm9kdWNlcjogaHR0cHM6Ly9naXRodWIuY29tL3Bn
-aGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wMjE5XzYuMTNyYzdfdG9kby83Ni1VQlNBTl8lMjBz
-aGlmdC1vdXQtb2YtYm91bmRzJTIwaW4lMjBiY2gyX3RyYW5zX2l0ZXJfaW5pdF9vdXRsaW5lZC8z
-N3JlcHJvLnR4dAoKNzZ0aO+8mgpIRUFEIGNvbW1pdDogNjUzN2NmYjM5NWYzNTI3ODI5MThkOGVl
-N2I3ZjEwYmEyY2MzY2JmMgpnaXQgdHJlZTogdXBzdHJlYW0KT3V0cHV0Omh0dHBzOi8vZ2l0aHVi
-LmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDIxOV82LjEzcmM3X3RvZG8vNzYtVUJT
-QU5fJTIwc2hpZnQtb3V0LW9mLWJvdW5kcyUyMGluJTIwYmNoMl90cmFuc19pdGVyX2luaXRfb3V0
-bGluZWQvNzZjYWxsX3RyYWNlLnR4dApLZXJuZWwgY29uZmlnOmh0dHBzOi8vZ2l0aHViLmNvbS9w
-Z2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDMwNV82LjE1cmMxL2NvbmZpZy50eHQKQyByZXBy
-b2R1Y2VyOmh0dHBzOi8vZ2l0aHViLmNvbS9wZ2hrMTMvS2VybmVsLUJ1Zy9ibG9iL21haW4vMDIx
-OV82LjEzcmM3X3RvZG8vNzYtVUJTQU5fJTIwc2hpZnQtb3V0LW9mLWJvdW5kcyUyMGluJTIwYmNo
-Ml90cmFuc19pdGVyX2luaXRfb3V0bGluZWQvNzZyZXByby5jClN5emxhbmcgcmVwcm9kdWNlcjog
-aHR0cHM6Ly9naXRodWIuY29tL3BnaGsxMy9LZXJuZWwtQnVnL2Jsb2IvbWFpbi8wMjE5XzYuMTNy
-YzdfdG9kby83Ni1VQlNBTl8lMjBzaGlmdC1vdXQtb2YtYm91bmRzJTIwaW4lMjBiY2gyX3RyYW5z
-X2l0ZXJfaW5pdF9vdXRsaW5lZC83NnJlcHJvLnR4dAoKCgpUaGUgdHdvIGVycm9ycyBzZWVtIHRv
-IGhhdmUgdGhlIHNhbWUgZXJyb3IgcG9pbnRzLCBidXQgdGhlcmUgYXJlIGEgZmV3IGRpZmZlcmVu
-Y2VzIGluIHRoZSBwcm9jZXNzLiBUaGV5IGFsbCB0cmlnZ2VyIHdhcm5pbmdzIGluIHRoZSBfX2Zv
-bGlvX21hcmtfZGlydHkrMHhiNTAvMHhmMTAgZnVuY3Rpb24gb2YgYmFja2luZy1kZXYuaDoyNTEu
-IEluIF9fZm9saW9fbWFya19kaXJ0eSBmdW5jdGlvbiwgYSB3YXJuaW5nIGlzIHRyaWdnZXJlZCB3
-aGVuIHRoZSBjb2RlIHRyaWVzIHRvIGFjY2VzcyBvciBtb2RpZnkgdGhlIGJhY2tpbmctZGV2IGlu
-Zm9ybWF0aW9uLiBUaGUgNzZ0aCBjYWxsIHN0YWNrIGhhcyBsb25nZXIgY2FsbCBjaGFpbnMgZnJv
-bSBmaWxlIHdyaXRlYmFja3M6IHdyaXRlYmFjayB3b3JrIHF1ZXVlcyDihpIgd3JpdGViYWNrIGlu
-b2RlcyDihpIgR0ZTMiB3cml0ZSBpbm9kZXMg4oaSIGxvZyByZWZyZXNoZXMuCldlIGhhdmUgcmVw
-cm9kdWNlZCB0aGlzIGlzc3VlIHNldmVyYWwgdGltZXMgb24gNi4xNS1yYzEgYWdhaW4uCgoKCgpJ
-ZiB5b3UgZml4IHRoaXMgaXNzdWUsIHBsZWFzZSBhZGQgdGhlIGZvbGxvd2luZyB0YWcgdG8gdGhl
-IGNvbW1pdDoKUmVwb3J0ZWQtYnk6IEt1biBIdSA8aHVrMjNAbS5mdWRhbi5lZHUuY24+LCBKaWFq
-aSBRaW4gPGpqdGFuMjRAbS5mdWRhbi5lZHUuY24+LCBTaHVvcmFuIEJhaSA8YmFpc2h1b3JhbkBo
-cmJldS5lZHUuY24+CgoKCjM3dGjvvJoKPT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09CldBUk5JTkc6IENQVTogMiBQSUQ6IDk0
-OTQgYXQgLi9pbmNsdWRlL2xpbnV4L2JhY2tpbmctZGV2Lmg6MjUxIF9fZm9saW9fbWFya19kaXJ0
-eSsweGI1MC8weGYxMApNb2R1bGVzIGxpbmtlZCBpbjoKQ1BVOiAyIFVJRDogMCBQSUQ6IDk0OTQg
-Q29tbTogZ2ZzMl9sb2dkL3N5ejpzIE5vdCB0YWludGVkIDYuMTUuMC1yYzEgIzEgUFJFRU1QVChm
-dWxsKQpIYXJkd2FyZSBuYW1lOiBRRU1VIFN0YW5kYXJkIFBDIChpNDQwRlggKyBQSUlYLCAxOTk2
-KSwgQklPUyAxLjEzLjAtMXVidW50dTEuMSAwNC8wMS8yMDE0ClJJUDogMDAxMDpfX2ZvbGlvX21h
-cmtfZGlydHkrMHhiNTAvMHhmMTAKQ29kZTogZmYgZmYgNDggOGQgNzggNzAgZTggYWYgZTMgNzYg
-MDkgMzEgZmYgODkgYzYgODkgNDQgMjQgMDggZTggNzIgZDMgYzUgZmYgOGIgNDQgMjQgMDggODUg
-YzAgMGYgODUgYWYgZjkgZmYgZmYgZTggNTEgZDEgYzUgZmYgOTAgPDBmPiAwYiA5MCBlOSBhMSBm
-OSBmZiBmZiBlOCA0MyBkMSBjNSBmZiA5MCAwZiAwYiA5MCBlOSA1OSBmNSBmZiBmZgpSU1A6IDAw
-MTg6ZmZmZmM5MDAxNGJiN2IxOCBFRkxBR1M6IDAwMDEwMDQ2ClJBWDogMDAwMDAwMDAwMDAwMDAw
-MCBSQlg6IGZmZmY4ODgwNDI5OGNiNTggUkNYOiBmZmZmZmZmZjgxZjU0MDhlClJEWDogMDAwMDAw
-MDAwMDAwMDAwMCBSU0k6IGZmZmY4ODgwMjNlZGM5MDAgUkRJOiAwMDAwMDAwMDAwMDAwMDAyClJC
-UDogZmZmZmVhMDAwMTVjOWQ4MCBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5OiBmZmZmZWQxMDA4
-NTMxOWEwClIxMDogZmZmZmVkMTAwODUzMTk5ZiBSMTE6IGZmZmY4ODgwNDI5OGNjZmYgUjEyOiAw
-MDAwMDAwMDAwMDAwMjQ2ClIxMzogZmZmZjg4ODA0OWJkOGJjOCBSMTQ6IDAwMDAwMDAwMDAwMDAw
-MDEgUjE1OiAwMDAwMDAwMDAwMDAwMDAxCkZTOiDCoDAwMDAwMDAwMDAwMDAwMDAoMDAwMCkgR1M6
-ZmZmZjg4ODA5N2M2YjAwMCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwCkNTOiDCoDAwMTAg
-RFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzCkNSMjogMDAwMDdmZjJjN2Jl
-OTAyOCBDUjM6IDAwMDAwMDAwMGUxODAwMDAgQ1I0OiAwMDAwMDAwMDAwNzUwZWYwClBLUlU6IDU1
-NTU1NTU0CkNhbGwgVHJhY2U6CsKgPFRBU0s+CsKgbWFya19idWZmZXJfZGlydHkrMHgzNTgvMHg0
-MTAKwqBnZnMyX3VucGluKzB4MTA2LzB4ZWYwCsKgYnVmX2xvX2FmdGVyX2NvbW1pdCsweDE1NS8w
-eDIzMArCoGdmczJfbG9nX2ZsdXNoKzB4ZDk1LzB4MmNiMArCoGdmczJfbG9nZCsweDI5Yi8weDEy
-YzAKwqBrdGhyZWFkKzB4NDQ3LzB4OGEwCsKgcmV0X2Zyb21fZm9yaysweDQ4LzB4ODAKwqByZXRf
-ZnJvbV9mb3JrX2FzbSsweDFhLzB4MzAKwqA8L1RBU0s+CmV4dHJhY3RpbmcgcHJvZzogMWg1Nm0x
-MS42NDQyNjMxNjJzCm1pbmltaXppbmcgcHJvZzogMTRtMTIuNjk1ODkxNDE3cwpzaW1wbGlmeWlu
-ZyBwcm9nIG9wdGlvbnM6IDBzCmV4dHJhY3RpbmcgQzogMzIuMjM0MzY1OTc2cwpzaW1wbGlmeWlu
-ZyBDOiA5bTUwLjU2NTg0NTg1M3MKCgoKCgo3NnRo77yaCj09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQpXQVJOSU5HOiBDUFU6
-IDMgUElEOiAzMDUxIGF0IC4vaW5jbHVkZS9saW51eC9iYWNraW5nLWRldi5oOjI1MSBfX2ZvbGlv
-X21hcmtfZGlydHkrMHhiNTAvMHhmMTAKTW9kdWxlcyBsaW5rZWQgaW46CkNQVTogMyBVSUQ6IDAg
-UElEOiAzMDUxIENvbW06IGt3b3JrZXIvdTE4OjUgTm90IHRhaW50ZWQgNi4xNS4wLXJjMSAjMSBQ
-UkVFTVBUKGZ1bGwpCkhhcmR3YXJlIG5hbWU6IFFFTVUgU3RhbmRhcmQgUEMgKGk0NDBGWCArIFBJ
-SVgsIDE5OTYpLCBCSU9TIDEuMTMuMC0xdWJ1bnR1MS4xIDA0LzAxLzIwMTQKV29ya3F1ZXVlOiB3
-cml0ZWJhY2sgd2Jfd29ya2ZuIChmbHVzaC03OjApClJJUDogMDAxMDpfX2ZvbGlvX21hcmtfZGly
-dHkrMHhiNTAvMHhmMTAKQ29kZTogZmYgZmYgNDggOGQgNzggNzAgZTggYWYgZTMgNzYgMDkgMzEg
-ZmYgODkgYzYgODkgNDQgMjQgMDggZTggNzIgZDMgYzUgZmYgOGIgNDQgMjQgMDggODUgYzAgMGYg
-ODUgYWYgZjkgZmYgZmYgZTggNTEgZDEgYzUgZmYgOTAgPDBmPiAwYiA5MCBlOSBhMSBmOSBmZiBm
-ZiBlOCA0MyBkMSBjNSBmZiA5MCAwZiAwYiA5MCBlOSA1OSBmNSBmZiBmZgpSU1A6IDAwMTg6ZmZm
-ZmM5MDAxMWUyZjQxMCBFRkxBR1M6IDAwMDEwMDQ2ClJBWDogMDAwMDAwMDAwMDAwMDAwMCBSQlg6
-IGZmZmY4ODgwNDI2NmJmZDggUkNYOiBmZmZmZmZmZjgxZjU0MDhlClJEWDogMDAwMDAwMDAwMDAw
-MDAwMCBSU0k6IGZmZmY4ODgwNDNlNDgwMDAgUkRJOiAwMDAwMDAwMDAwMDAwMDAyClJCUDogZmZm
-ZmVhMDAwMDg2ZTljMCBSMDg6IDAwMDAwMDAwMDAwMDAwMDAgUjA5OiBmZmZmZWQxMDA4NGNkODMw
-ClIxMDogZmZmZmVkMTAwODRjZDgyZiBSMTE6IGZmZmY4ODgwNDI2NmMxN2YgUjEyOiAwMDAwMDAw
-MDAwMDAwMjQ2ClIxMzogZmZmZjg4ODAxMmJmODdmMCBSMTQ6IDAwMDAwMDAwMDAwMDAwMDEgUjE1
-OiAwMDAwMDAwMDAwMDAwMDAxCkZTOiAwMDAwMDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY4ODgw
-ZWI0NmIwMDAoMDAwMCkga25sR1M6MDAwMDAwMDAwMDAwMDAwMApDUzogMDAxMCBEUzogMDAwMCBF
-UzogMDAwMCBDUjA6IDAwMDAwMDAwODAwNTAwMzMKQ1IyOiAwMDAwN2Y2NDEwZThlMTQwIENSMzog
-MDAwMDAwMDAyMzY0ODAwMCBDUjQ6IDAwMDAwMDAwMDA3NTBlZjAKUEtSVTogNTU1NTU1NTQKQ2Fs
-bCBUcmFjZToKPFRBU0s+Cm1hcmtfYnVmZmVyX2RpcnR5KzB4MzU4LzB4NDEwCmdmczJfdW5waW4r
-MHgxMDYvMHhlZjAKYnVmX2xvX2FmdGVyX2NvbW1pdCsweDE1NS8weDIzMApnZnMyX2xvZ19mbHVz
-aCsweGQ5NS8weDJjYjAKZ2ZzMl93cml0ZV9pbm9kZSsweDM3MS8weDQ1MApfX3dyaXRlYmFja19z
-aW5nbGVfaW5vZGUrMHhhZDcvMHhmNTAKd3JpdGViYWNrX3NiX2lub2RlcysweDVmNS8weGVlMApf
-X3dyaXRlYmFja19pbm9kZXNfd2IrMHhiZS8weDI3MAp3Yl93cml0ZWJhY2srMHg3MjgvMHhiNTAK
-d2Jfd29ya2ZuKzB4OTZlLzB4ZTkwCnByb2Nlc3Nfc2NoZWR1bGVkX3dvcmtzKzB4NWRlLzB4MWJk
-MAp3b3JrZXJfdGhyZWFkKzB4NWE5LzB4ZDEwCmt0aHJlYWQrMHg0NDcvMHg4YTAKcmV0X2Zyb21f
-Zm9yaysweDQ4LzB4ODAKcmV0X2Zyb21fZm9ya19hc20rMHgxYS8weDMwCjwvVEFTSz4KCgoKdGhh
-bmtzLApLdW4gSHUKCg==
+On Fri, 2 May 2025 03:26:20 +0000 "huk23@m.fudan.edu.cn" <huk23@m.fudan.edu.cn> wrote:
+
+> Dear Maintainers，
+> 
+
+Let's Cc the gfs2 developers.
+
+Do you know if this is reproducible on any other filesystem?
+
+> 
+> When using our customized Syzkaller to fuzz the latest Linux kernel, the following crash (37th and 76th)was triggered.
+> 
+> 
+> 37th：
+> HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
+> git tree: upstream
+> Output:https://github.com/pghk13/Kernel-Bug/blob/main/1220_6.13rc_KASAN/2.%E5%9B%9E%E5%BD%92-11/14-KASAN_%20slab-out-of-bounds%20Read%20in%20hfsplus_bnode_read/14call_trace.txt
+> Kernel config:https://github.com/pghk13/Kernel-Bug/blob/main/0305_6.15rc1/config.txt
+> C reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/37repro.c
+> Syzlang reproducer: https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/37repro.txt
+> 
+> 76th：
+> HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
+> git tree: upstream
+> Output:https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/76call_trace.txt
+> Kernel config:https://github.com/pghk13/Kernel-Bug/blob/main/0305_6.15rc1/config.txt
+> C reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/76repro.c
+> Syzlang reproducer: https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/76repro.txt
+> 
+> 
+> 
+> The two errors seem to have the same error points, but there are a few differences in the process. They all trigger warnings in the __folio_mark_dirty+0xb50/0xf10 function of backing-dev.h:251. In __folio_mark_dirty function, a warning is triggered when the code tries to access or modify the backing-dev information. The 76th call stack has longer call chains from file writebacks: writeback work queues → writeback inodes → GFS2 write inodes → log refreshes.
+> We have reproduced this issue several times on 6.15-rc1 again.
+> 
+> 
+> 
+> 
+> If you fix this issue, please add the following tag to the commit:
+> Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin <jjtan24@m.fudan.edu.cn>, Shuoran Bai <baishuoran@hrbeu.edu.cn>
+> 
+> 
+> 
+> 37th：
+> ==================================================================
+> WARNING: CPU: 2 PID: 9494 at ./include/linux/backing-dev.h:251 __folio_mark_dirty+0xb50/0xf10
+> Modules linked in:
+> CPU: 2 UID: 0 PID: 9494 Comm: gfs2_logd/syz:s Not tainted 6.15.0-rc1 #1 PREEMPT(full)
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+> RIP: 0010:__folio_mark_dirty+0xb50/0xf10
+> Code: ff ff 48 8d 78 70 e8 af e3 76 09 31 ff 89 c6 89 44 24 08 e8 72 d3 c5 ff 8b 44 24 08 85 c0 0f 85 af f9 ff ff e8 51 d1 c5 ff 90 <0f> 0b 90 e9 a1 f9 ff ff e8 43 d1 c5 ff 90 0f 0b 90 e9 59 f5 ff ff
+> RSP: 0018:ffffc90014bb7b18 EFLAGS: 00010046
+> RAX: 0000000000000000 RBX: ffff88804298cb58 RCX: ffffffff81f5408e
+> RDX: 0000000000000000 RSI: ffff888023edc900 RDI: 0000000000000002
+> RBP: ffffea00015c9d80 R08: 0000000000000000 R09: ffffed10085319a0
+> R10: ffffed100853199f R11: ffff88804298ccff R12: 0000000000000246
+> R13: ffff888049bd8bc8 R14: 0000000000000001 R15: 0000000000000001
+> FS:  0000000000000000(0000) GS:ffff888097c6b000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007ff2c7be9028 CR3: 000000000e180000 CR4: 0000000000750ef0
+> PKRU: 55555554
+> Call Trace:
+>  <TASK>
+>  mark_buffer_dirty+0x358/0x410
+>  gfs2_unpin+0x106/0xef0
+>  buf_lo_after_commit+0x155/0x230
+>  gfs2_log_flush+0xd95/0x2cb0
+>  gfs2_logd+0x29b/0x12c0
+>  kthread+0x447/0x8a0
+>  ret_from_fork+0x48/0x80
+>  ret_from_fork_asm+0x1a/0x30
+>  </TASK>
+> extracting prog: 1h56m11.644263162s
+> minimizing prog: 14m12.695891417s
+> simplifying prog options: 0s
+> extracting C: 32.234365976s
+> simplifying C: 9m50.565845853s
+> 
+> 
+> 
+> 
+> 
+> 76th：
+> ==================================================================
+> WARNING: CPU: 3 PID: 3051 at ./include/linux/backing-dev.h:251 __folio_mark_dirty+0xb50/0xf10
+> Modules linked in:
+> CPU: 3 UID: 0 PID: 3051 Comm: kworker/u18:5 Not tainted 6.15.0-rc1 #1 PREEMPT(full)
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
+> Workqueue: writeback wb_workfn (flush-7:0)
+> RIP: 0010:__folio_mark_dirty+0xb50/0xf10
+> Code: ff ff 48 8d 78 70 e8 af e3 76 09 31 ff 89 c6 89 44 24 08 e8 72 d3 c5 ff 8b 44 24 08 85 c0 0f 85 af f9 ff ff e8 51 d1 c5 ff 90 <0f> 0b 90 e9 a1 f9 ff ff e8 43 d1 c5 ff 90 0f 0b 90 e9 59 f5 ff ff
+> RSP: 0018:ffffc90011e2f410 EFLAGS: 00010046
+> RAX: 0000000000000000 RBX: ffff88804266bfd8 RCX: ffffffff81f5408e
+> RDX: 0000000000000000 RSI: ffff888043e48000 RDI: 0000000000000002
+> RBP: ffffea000086e9c0 R08: 0000000000000000 R09: ffffed10084cd830
+> R10: ffffed10084cd82f R11: ffff88804266c17f R12: 0000000000000246
+> R13: ffff888012bf87f0 R14: 0000000000000001 R15: 0000000000000001
+> FS: 0000000000000000(0000) GS:ffff8880eb46b000(0000) knlGS:0000000000000000
+> CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f6410e8e140 CR3: 0000000023648000 CR4: 0000000000750ef0
+> PKRU: 55555554
+> Call Trace:
+> <TASK>
+> mark_buffer_dirty+0x358/0x410
+> gfs2_unpin+0x106/0xef0
+> buf_lo_after_commit+0x155/0x230
+> gfs2_log_flush+0xd95/0x2cb0
+> gfs2_write_inode+0x371/0x450
+> __writeback_single_inode+0xad7/0xf50
+> writeback_sb_inodes+0x5f5/0xee0
+> __writeback_inodes_wb+0xbe/0x270
+> wb_writeback+0x728/0xb50
+> wb_workfn+0x96e/0xe90
+> process_scheduled_works+0x5de/0x1bd0
+> worker_thread+0x5a9/0xd10
+> kthread+0x447/0x8a0
+> ret_from_fork+0x48/0x80
+> ret_from_fork_asm+0x1a/0x30
+> </TASK>
+> 
+> 
+> 
+> thanks,
+> Kun Hu
+> 
 
