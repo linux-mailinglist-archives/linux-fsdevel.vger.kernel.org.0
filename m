@@ -1,109 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-47911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8704CAA71AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:23:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67E05AA722D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:35:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CCE83B472B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 12:23:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 410DC98118F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 12:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C139252904;
-	Fri,  2 May 2025 12:23:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B302B2522A7;
+	Fri,  2 May 2025 12:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nFtS0zkr"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="glUojonQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hmbaG9yz";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="glUojonQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hmbaG9yz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6204926ACD;
-	Fri,  2 May 2025 12:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 852B0252284
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 12:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746188600; cv=none; b=AclsBKHu7hnTt0LAJchm5K8c8c7WMvkKY7BF4ukDEN5KTnnYFXpF9P1Qlnk8vLVoRZkCtbszP8rQqfCXLlt+rUyJak4+kZrFmMnPUz8rU/TNSzGmVkxtVPUdmsWczrpoQmw0HVRroznUYZRkSFQhxwQt+pJxAhQGoYMJX3pS1U0=
+	t=1746189306; cv=none; b=UCGilmSX8Agw2PAoM/xxRNY4j4895ELvOnZw1QrjSk7JefSneg7nW21NPy/vIw2OUq9ZYhUYw+db9DbfQ7NhqrPZtjjr1Wu0ve2pbwtLaAXuiHIJI/QEncZ6tovJ+McMljJFlTJeXREoeYS25rmwGoxuB3+1U69c3n89/z+8raY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746188600; c=relaxed/simple;
-	bh=uoD6t+xSncOXPND7SdJCqz7ylBLgqUWXuLMSQgfYQkk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VUj8+1VRVOx/u2FutwJOUOiG4CNxruZzNj0XNiiODfgJDGmZJGgp/G3fSvwlmncP57IKtmodxUeGKzZvz4us59FH5dlZsYFpItYggWyQKcw+mUgvaEPiwzpzbaamBt6a2R2zCMVamf7LELLK3GE7wUgIm3ikr/c3il+aOIcCyms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nFtS0zkr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3DE5C4CEE4;
-	Fri,  2 May 2025 12:23:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746188599;
-	bh=uoD6t+xSncOXPND7SdJCqz7ylBLgqUWXuLMSQgfYQkk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nFtS0zkrIJQJTniM+JOv0gxqdgx6KvbV5OIOTVoqEqjZxevrkxkuIV1yk+mRDvpV6
-	 iS2490aAU5BtrlsyKIDkXQ7zEl4hpfEvu9jw/mJnyolDnF53/QqrOm/nYdZV8vvXpr
-	 PdGRawT5Ll2RQpg3hH87X/oUuTXxW7GTRvT2QDklXGj7D0MVwGvjzM2zglcgIsvjwi
-	 hJL60EY2z3RkiKLNz8c262GhkI3jJtj/w7JW/frvXLjIoM3SnEA9o6qxfuKkRApQrI
-	 AxxgGZpYa1R5WVGm0Q5F5j8v1ZUNSp60C/7KnVH11WS49Yp2n9VNMfkEU1bENU+BC1
-	 Whtmtat0VYXEg==
-From: Christian Brauner <brauner@kernel.org>
-To: Max Kellermann <max.kellermann@ionos.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Joe Damato <jdamato@fastly.com>,
-	stable@vger.kernel.org,
-	viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/eventpoll: fix endless busy loop after timeout has expired
-Date: Fri,  2 May 2025 14:22:45 +0200
-Message-ID: <20250502-exzellent-hingucken-53c88d2917a1@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250429185827.3564438-1-max.kellermann@ionos.com>
-References: <20250429185827.3564438-1-max.kellermann@ionos.com>
+	s=arc-20240116; t=1746189306; c=relaxed/simple;
+	bh=9toq2mWM33oieAxJ23AVg7MVhndjEuWk6KVteNPfBQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f3LIUwYTsAcc5VeqN5Z5ocz3CuBln45SYaIbusoc/UHosgof7Ksex+2rTnWO/wSFx3Xz9O2i3UniFG2Eph/POLLN4eCXldc0bfdfq1Gt9sFL13HZzwMrF3JMCI2c0ykOWzgHJDyNxqxQaL6RP5wa0ON0ByOBJQui9lKtOfatetg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=glUojonQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hmbaG9yz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=glUojonQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hmbaG9yz; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0D22A219F2;
+	Fri,  2 May 2025 12:34:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746189297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w17CW48Q24WrWib2SSf4Vlpk3F7XhAZYx1Bh6viL9x4=;
+	b=glUojonQGHwg18Ss5KhUmR8f6UG9EmFCzSuiZxairIcsjOXnzeASd+j9C4ktxVSSlYf3JG
+	YL31RwUTtXRd5CbmKf9vyJMSfHMsu+U+mFHGUwumUqr5Xi5tB7RNjW0DH4BqH0fmgY+cDk
+	Ja3GHFPQ3huIGcTXUP678ilPJUugjRE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746189297;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w17CW48Q24WrWib2SSf4Vlpk3F7XhAZYx1Bh6viL9x4=;
+	b=hmbaG9yzPqskD1Py0VRLW7ef6fMxeGcXHXSDK5TITpcsWms4y/gZKMdIkRHmxoMoxMKN7r
+	30s92c+ZP3e7qaDg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746189297; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w17CW48Q24WrWib2SSf4Vlpk3F7XhAZYx1Bh6viL9x4=;
+	b=glUojonQGHwg18Ss5KhUmR8f6UG9EmFCzSuiZxairIcsjOXnzeASd+j9C4ktxVSSlYf3JG
+	YL31RwUTtXRd5CbmKf9vyJMSfHMsu+U+mFHGUwumUqr5Xi5tB7RNjW0DH4BqH0fmgY+cDk
+	Ja3GHFPQ3huIGcTXUP678ilPJUugjRE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746189297;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w17CW48Q24WrWib2SSf4Vlpk3F7XhAZYx1Bh6viL9x4=;
+	b=hmbaG9yzPqskD1Py0VRLW7ef6fMxeGcXHXSDK5TITpcsWms4y/gZKMdIkRHmxoMoxMKN7r
+	30s92c+ZP3e7qaDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EE83213687;
+	Fri,  2 May 2025 12:34:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id gRHeOfC7FGhaDAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 02 May 2025 12:34:56 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 9961FA0921; Fri,  2 May 2025 14:34:56 +0200 (CEST)
+Date: Fri, 2 May 2025 14:34:56 +0200
+From: Jan Kara <jack@suse.cz>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFF] realpathat system call
+Message-ID: <idlhgryyp4336ybkmtjdxotb5agos3h44vkp2p7cg6dvc2uefg@no4dm6c6vyzd>
+References: <CAGudoHFULfaG4h-46GG2cJG9BDCKX0YoPEpQCpgefpaSBYk4hw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1399; i=brauner@kernel.org; h=from:subject:message-id; bh=uoD6t+xSncOXPND7SdJCqz7ylBLgqUWXuLMSQgfYQkk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSI7DSawGjp7NLa93D/iUWKVbKtv7jb4xOlTjC6OnQwG v8+sNCio5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCLdBxj+F6VcK+Ys5tYuFvM3 9Jy5N9aQp8h89tldnx8xvpv2cvXaBkaGN7ZLkvqy+Oe08MgvO7/s2+qzcex9XzdO5fq4PGp72Xt DfgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHFULfaG4h-46GG2cJG9BDCKX0YoPEpQCpgefpaSBYk4hw@mail.gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-0.998];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Tue, 29 Apr 2025 20:58:27 +0200, Max Kellermann wrote:
-> After commit 0a65bc27bd64 ("eventpoll: Set epoll timeout if it's in
-> the future"), the following program would immediately enter a busy
-> loop in the kernel:
+On Wed 30-04-25 22:50:23, Mateusz Guzik wrote:
+> Before I explain why the system call and how, I'm noting a significant
+> limitation upfront: in my proposal the system call is allowed to fail
+> with EAGAIN. It's not inherent, but I think it's the sane thing to do.
+> Why I think that's sensible and why it does not defeat the point is
+> explained later.
 > 
-> ```
-> int main() {
->   int e = epoll_create1(0);
->   struct epoll_event event = {.events = EPOLLIN};
->   epoll_ctl(e, EPOLL_CTL_ADD, 0, &event);
->   const struct timespec timeout = {.tv_nsec = 1};
->   epoll_pwait2(e, &event, 1, &timeout, 0);
-> }
-> ```
+> Why the system call: realpath(3) is issued a lot for example by gcc
+> (mostly for header files). libc implements it as a series of
+> readlinks(!) and it unsurprisingly looks atrocious:
+> [pid 1096382] readlink("/usr", 0x7fffbac84f90, 1023) = -1 EINVAL
+> (Invalid argument)
+> [pid 1096382] readlink("/usr/local", 0x7fffbac84f90, 1023) = -1 EINVAL
+> (Invalid argument)
+> [pid 1096382] readlink("/usr/local/include", 0x7fffbac84f90, 1023) =
+> -1 EINVAL (Invalid argument)
+> [pid 1096382] readlink("/usr/local/include/bits", 0x7fffbac84f90,
+> 1023) = -1 ENOENT (No such file or directory)
+> [pid 1096382] readlink("/usr", 0x7fffbac84f90, 1023) = -1 EINVAL
+> (Invalid argument)
+> [pid 1096382] readlink("/usr/include", 0x7fffbac84f90, 1023) = -1
+> EINVAL (Invalid argument)
+> [pid 1096382] readlink("/usr/include/x86_64-linux-gnu",
+> 0x7fffbac84f90, 1023) = -1 EINVAL (Invalid argument)
+> [pid 1096382] readlink("/usr/include/x86_64-linux-gnu/bits",
+> 0x7fffbac84f90, 1023) = -1 EINVAL (Invalid argument)
+> [pid 1096382] readlink("/usr/include/x86_64-linux-gnu/bits/types",
+> 0x7fffbac84f90, 1023) = -1 EINVAL (Invalid argument)
+> [pid 1096382] readlink("/usr/include/x86_64-linux-gnu/bits/types/FILE.h",
+> 0x7fffbac84f90, 1023) = -1 EINVAL (Invalid argument)
 > 
-> [...]
+> and so on. This converts one path lookup to N (by path component). Not
+> only that's terrible single-threaded, you may also notice all these
+> lookups bounce lockref-containing cachelines for every path component
+> in face of gccs running at the same time (and highly parallel
+> compilations are not rare, are they).
+> 
+> One way to approach this is to construct the new path on the fly. The
+> problem with that is that it would require some rototoiling and more
+> importantly is highly error prone (notably due to symlinks). This is
+> the bit I'm trying to avoid.
+> 
+> A very pleasant way out is to instead walk the path forward, then
+> backward on the found dentry et voila -- all the complexity is handled
+> for you. There is however a catch: no forward progress guarantee.
 
-I've taken this version but also credited/mentioned Joe in the commit message,
-noting that I added that info
+So AFAIU what you describe here is doing a path lookup and then calling
+d_path() on the result - actually prepend_path() as I'm glancing in your
+POC code.
 
----
+> rename seqlock is needed to guarantee correctness, otherwise if
+> someone renamed a dir as you were resolving the path forward, by the
+> time you walk it backwards you may get a path which would not be
+> accessible to you -- a result which is not possible with userspace
+> realpath.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+In presence of filesystem mutations paths are always unreliable, aren't
+they? I mean even with userspace realpath() implementation the moment the
+function call is returning the path the filesystem can be modified so that
+the path stops being valid. With kernel it is the same. So I don't see any
+strong reason to bother with handling parallel filesystem modifications.
+But maybe I'm missing some practically important case...
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] fs/eventpoll: fix endless busy loop after timeout has expired
-      https://git.kernel.org/vfs/vfs/c/d9ec73301099
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
