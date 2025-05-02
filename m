@@ -1,52 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-47882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03905AA6866
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 03:34:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B54AA68D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 04:35:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB34498042C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 01:33:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14291BA6AC0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 02:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1DE26AD9;
-	Fri,  2 May 2025 01:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE0E17A2ED;
+	Fri,  2 May 2025 02:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PT1uvR4E"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="wWJocYSy"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7934F18E3F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 01:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1913B4689;
+	Fri,  2 May 2025 02:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746149639; cv=none; b=eLL6cvDHNKRW2Th5W9MU9YWTsPqYNLZ7RVvt7tkaFTpk44r1TjmQd+wpcaVEX0SzHWdfyWSLsAi2MGr/XB6sYhvSiG8H29AuP3IhJHe9RxWaLrIKU+N7UaDHbg4NDnp4Iypgg/bX8GD0G3/AtCFf6ihR6uI0r4Pa5Qw7ckWz8DQ=
+	t=1746153300; cv=none; b=rRQnhAEA9bouCbfFiwEjafEAvn4eMegBslu2nZ+GHuI4ZRjt55mBGEFd3SzNs/+nanPpYUIYCf8RoBYJcDbzt0/Vi3Y3w+vj6XMV0Kvi1dRunI+2rVI7mD2Uc14WeDyUWUslXUuhqUnrv/CI6vWhbzbXJoIxV1CJTwZIv5qIk5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746149639; c=relaxed/simple;
-	bh=VFjD3rX9Q7nIanEsWLWsYCBzpSANUb1jB6SFhJ8JD70=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=qSENbKg3VLBgAVfYwJH/pr0dWmpBnmQIBTT/9ucTsuvWcUa2rw4n0I6/LTTBL6/m6zkyqy8aN+bq/yGtGed4sh088BBEhsgV1SPMTkk+t4/GIqLJcvQ26gYgWrY/PIqvi9y49xsLIWf3RpKb29JWYKA9OmVKaBWt55C02VjZC1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PT1uvR4E; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 1 May 2025 21:33:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1746149631;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=KC+mXqTnHbJi8iH4wCBFRFB5qghJEho5DX6blQUzrxc=;
-	b=PT1uvR4EjRmouoTxItV+lh4PXW7hPBZjZcwBY/IkdPOJnyAeDnfTLi7PJZVvrjAs+8EORo
-	cvzdImNSjJM3BIWeiCauNanWtkElANOXjjG0rovOCZ2m0gUaqXCiePt7k+oGXizms+DYEb
-	v1w26vGW4EWIlsz2FrH9D/lVp/jbhhU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for rc5
-Message-ID: <avyfprbtjpphuhxjqekretgco6xs5r23efrlpkqx6uc5lhec7v@igrgjqacgb7i>
+	s=arc-20240116; t=1746153300; c=relaxed/simple;
+	bh=f5h1Ie7dXSDU8i0YNIdrMw8K7HFjGkJ4NCJCiwAwALs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B2C5J6D9rCYOLZBt5AtfhTtL6FU+jvhn9aAvdd4plSATn2ipkeQEf1DxuxisuKO+x1W9V01WAW+9b0Q6owFxtGdCY/PhflvdUJh2fWFl9ducBipUrGL8ISrpRDUuYkL3dI9F/IjNWVVhSwR9B54Aa+xuKj5+Slw7G6u1Yj8zIsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=wWJocYSy; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=P8bGVFcQNC8bUMcQFTsN63CjDxjXndvf41sHelhW6H0=; b=wWJocYSy4eEtn2ABOR4emJvlY/
+	6Tnj9e1xzI+e33h7hXaotSUYbz4BhuLe5sco8BPyM2GklEjHS5hFpp3X8VFJpeN8zY854LaEaZzCE
+	boOkWSUpK/cHocbZVJMuT+BPEcDeLOVFRajKMBmAvKWA5st1J60p0MTJnqaj7061jJqXaa27fP0RB
+	DGHpsPoz6ZHW0aNdmaL0VLocXD8wngmT+TSv/c+IlsST2UPiZqavOodfz1zE6v/QPuo94hz66VDPz
+	RHLZQOpmf7CPd2ztkj0h6V74x6S5r6LvzDUHcIDkvWwhcs4QN5vaY3hO979aB4Q5pvXp1Z+lJArx+
+	1imCFZ0Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uAgEh-0000000FDhl-3Vaf;
+	Fri, 02 May 2025 02:34:47 +0000
+Date: Fri, 2 May 2025 03:34:47 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Kees Cook <kees@kernel.org>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Christian Koenig <christian.koenig@amd.com>,
+	Somalapuram Amaranath <Amaranath.Somalapuram@amd.com>,
+	Huang Rui <ray.huang@amd.com>,
+	Matthew Auld <matthew.auld@intel.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2] drm/ttm: Silence randstruct warning about casting
+ struct file
+Message-ID: <20250502023447.GV2023217@ZenIV>
+References: <20250502002437.it.851-kees@kernel.org>
+ <aBQqOCQZrHBBbPbL@lstrano-desk.jf.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -55,108 +73,37 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <aBQqOCQZrHBBbPbL@lstrano-desk.jf.intel.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-Every week I keep telling myself "boy, that was a busy week of
-bugfixing, but next week is sure to finally slow down a bit".
+On Thu, May 01, 2025 at 07:13:12PM -0700, Matthew Brost wrote:
+> On Thu, May 01, 2025 at 05:24:38PM -0700, Kees Cook wrote:
+> > Casting through a "void *" isn't sufficient to convince the randstruct
+> > GCC plugin that the result is intentional. Instead operate through an
+> > explicit union to silence the warning:
+> > 
+> > drivers/gpu/drm/ttm/ttm_backup.c: In function 'ttm_file_to_backup':
+> > drivers/gpu/drm/ttm/ttm_backup.c:21:16: note: randstruct: casting between randomized structure pointer types (ssa): 'struct ttm_backup' and 'struct file'
+> >    21 |         return (void *)file;
+> >       |                ^~~~~~~~~~~~
+> > 
+> > Suggested-by: Matthew Brost <matthew.brost@intel.com>
+> 
+> I forgot the policy if suggest-by but will add:
+> Reviewed-by: Matthew Brost <matthew.brost@intel.com>
+> 
+> Thomas was out today I suspect he will look at this tomorrow when he is
+> back too.
 
-Hah.
+[fsdevel and the rest of VFS maintainers Cc'd]
 
-But it's all pretty small and boring.
+NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
 
-A note on repair to users:
---------------------------
+Reason: struct file should *NOT* be embedded into other objects without
+the core VFS being very explicitly aware of those.  The only such case
+is outright local to fs/file_table.c, and breeding more of those is
+a really bad idea.
 
-We're continuing to steadily improve on self healing/automatic repair;
-we want to automatically repair and mount no matter what filesystem
-damage has occurred (and I've been seeing some fun ones, we had one this
-week that was from pcie power savings mode gone haywire).
-
-But we aren't doing this all at once, because repair code is among the
-most fiddly and least well tested: we're steadily adding error paths to
-the whitelist for automatic repair as they come up.
-
-So if you ever run into something where a manual fsck is required, do
-drop me a note and include the output of 'bcachefs show-super -f errors'
-- that'll tell me what to add to the whitelist.
-
-The following changes since commit b4432656b36e5cc1d50a1f2dc15357543add530e:
-
-  Linux 6.15-rc4 (2025-04-27 15:19:23 -0700)
-
-are available in the Git repository at:
-
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-01
-
-for you to fetch changes up to 6846100b00d97d3d6f05766ae86a0d821d849e78:
-
-  bcachefs: Remove incorrect __counted_by annotation (2025-05-01 16:38:58 -0400)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.15-rc5
-
-Lots of assorted small fixes...
-
-- Some repair path fixes, a fix for -ENOMEM when reconstructing lots of
-  alloc info on large filesystems, upgrade for ancient 0.14 filesystems,
-  etc.
-
-- Various assert tweaks; assert -> ERO, ERO -> log the error in the
-  superblock and continue
-
-- casefolding now uses d_ops like on other casefolding filesystems
-
-- fix device label create on device add, fix bucket array resize on
-  filesystem resize
-
-- fix xattrs with FORTIFY_SOURCE builds with gcc-15/clang
-
-----------------------------------------------------------------
-Alan Huang (1):
-      bcachefs: Remove incorrect __counted_by annotation
-
-Kent Overstreet (21):
-      bcachefs: Fix losing return code in next_fiemap_extent()
-      bcachefs: Use generic_set_sb_d_ops for standard casefolding d_ops
-      bcachefs: Emit unicode version message on startup
-      bcachefs: Add missing utf8_unload()
-      bcachefs: Run BCH_RECOVERY_PASS_reconstruct_snapshots on missing subvol -> snapshot
-      bcachefs: Add upgrade table entry from 0.14
-      bcachefs: fix bch2_dev_buckets_resize()
-      bcachefs: Improve bch2_dev_bucket_missing()
-      bcachefs: Don't generate alloc updates to invalid buckets
-      bcachefs: btree_node_data_missing is now autofix
-      bcachefs: btree_root_unreadable_and_scan_found_nothing autofix for non data btrees
-      bcachefs: More informative error message when shutting down due to error
-      bcachefs: Use bch2_kvmalloc() for journal keys array
-      bcachefs: Topology error after insert is now an ERO
-      bcachefs: improve missing journal write device error message
-      bcachefs: readdir fixes
-      bcachefs: Kill ERO in __bch2_i_sectors_acct()
-      bcachefs: check for inode.bi_sectors underflow
-      bcachefs: Kill ERO for i_blocks check in truncate
-      bcachefs: Fix __bch2_dev_group_set()
-      bcachefs: add missing sched_annotate_sleep()
-
- fs/bcachefs/btree_gc.c              | 27 ++++++++++++++++++--
- fs/bcachefs/btree_journal_iter.c    |  2 +-
- fs/bcachefs/btree_update_interior.c | 49 ++++++++++++++++++++++++-------------
- fs/bcachefs/buckets.c               | 15 ++++++++----
- fs/bcachefs/dirent.c                |  4 +--
- fs/bcachefs/disk_groups.c           | 25 +++++++++----------
- fs/bcachefs/ec.c                    |  4 +--
- fs/bcachefs/error.c                 |  4 ++-
- fs/bcachefs/fs-io.c                 | 44 ++++++++++++++++++++++++++-------
- fs/bcachefs/fs.c                    | 15 ++++++++----
- fs/bcachefs/io_write.c              | 21 ++++++++++++++++
- fs/bcachefs/journal_io.c            |  2 +-
- fs/bcachefs/namei.c                 |  3 +++
- fs/bcachefs/sb-downgrade.c          |  4 +++
- fs/bcachefs/sb-errors_format.h      | 13 +++++++---
- fs/bcachefs/sb-members.c            |  6 +++--
- fs/bcachefs/sb-members.h            | 13 ++++++----
- fs/bcachefs/subvolume.c             |  5 ++--
- fs/bcachefs/super.c                 | 46 ++++++++++++++++++++--------------
- fs/bcachefs/xattr_format.h          |  8 +++++-
- 20 files changed, 219 insertions(+), 91 deletions(-)
+Don't do that.  Same goes for struct {dentry, super_block, mount}
+in case anyone gets similar ideas.
 
