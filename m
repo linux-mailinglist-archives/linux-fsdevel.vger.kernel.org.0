@@ -1,106 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-47950-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47951-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82415AA7A9D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 22:11:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0153AA7AA2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 22:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF000466DF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 20:11:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 333D6467411
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 20:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E4E1F7910;
-	Fri,  2 May 2025 20:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84FF1F8722;
+	Fri,  2 May 2025 20:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HfGK8+5K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z1zXSQCA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED5B21DE4E7;
-	Fri,  2 May 2025 20:11:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F7B1EBFFF;
+	Fri,  2 May 2025 20:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746216690; cv=none; b=M4p6XWkwf6uK8DrJINmgm5xu57QBkpgZrs7jORQ22iO1je9CKfp4EvIyhUGea3E4s8Tcbr4GiPY0HcobJyphJJDCL1kN1GUpJUQQnzgdyOHdhkh/4f5lqb7vguXlE4/tvJEUxeIuS4QSmwB6hQazMMKmssZ06xY6opDsU92AiUY=
+	t=1746216721; cv=none; b=qEOpiBJe2RNuSPhiYQLvRAUC8j1jvQ5A0ka/PKtjbk4slK/p8UyzwMjyYCCtwL6psCgGN4FxY2V2j6ExlNxmDmf0RdYof4OH/5xuhRsk+SHyEGFv+me9pq0oxD7MnqH48UI5x+DM92Q1fk0oTxQYTwC4RFrNkjf1oA0dfAPWLnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746216690; c=relaxed/simple;
-	bh=fNb/U1Naew7SwzCXUAnbIHev7jMNaHPPTiUJSpadZyw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9tlqMrV43/EOFdpYmdUBo7p+7B3SgUdhJbGGzjnzHC70CuDVnrR477XGZP1Hh08dd3Gmu3cJZ6om3nTJmKLqnin7JdfYkEgc0c59hejcMpY0/T8JAMkhB4wYG5YsE08Bn4LmZGfOcJWrXUy2EzWrDgfpPVX3VGQ7izEHSve82A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HfGK8+5K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC21C4CEE4;
-	Fri,  2 May 2025 20:11:25 +0000 (UTC)
+	s=arc-20240116; t=1746216721; c=relaxed/simple;
+	bh=u5Z8wpvFxHNyn281JUcC5aJjExa9fXKR0LlwurFoJOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=sqSAPZncN33naM7TGdeMmoBzhTot+MOmeIvMt/9fapZGHF2ZbGMrBTNAoGPtSYf04tTRoq6oUqDqitz1dCXroFhyzq07L4NJn7NLsgzQXTUlI/8Kayvj+WSJzAJ3gkq4BVfWMVRyoAdEAbDME4uwBGgpcO0ZZ7aekhvN0yIPg6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z1zXSQCA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DE2AC4CEE4;
+	Fri,  2 May 2025 20:12:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746216689;
-	bh=fNb/U1Naew7SwzCXUAnbIHev7jMNaHPPTiUJSpadZyw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HfGK8+5KcuxZO1r/6Egtm1iaDIgfN1LWFqd+4i0JLZNdZC3GAvFLeW3bOcnfaAOL0
-	 EEPFHkY4oSuFeGEb6uVu64vsOno982nujxxEgwsZe3m+Byu5BPcge9SGSUwX9VGZYR
-	 IzRl0SYW9J6Ac9cYGZyqRwDViYJyWZkLDHT/iFkLWWz+rZrEiKQcFpIuNrLhmAkjH7
-	 C3XvCo73OsY7/UueGMX6G0opY1AQVOQrwfiacX1m75+64xwgYEjVziRqy2IR5EIY5N
-	 9Vba91YbI8iCk6ROGlBYsp7ckuGEbpP53hOXYxweraFCAKSjouGD2/6iYtJ8jOzEqy
-	 oCC5qfh2xd5fg==
-Date: Fri, 2 May 2025 22:11:22 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Eric Dumazet <edumazet@google.com>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH RFC v2 4/6] coredump: show supported coredump modes
-Message-ID: <20250502-zugrunde-mehrheit-5fc9ef5d6ec8@brauner>
-References: <20250502-work-coredump-socket-v2-0-43259042ffc7@kernel.org>
- <20250502-work-coredump-socket-v2-4-43259042ffc7@kernel.org>
- <CAG48ez1YjoHnH9Tsh8aO2SNkJUW=7VUPXAdvxqt7d0B4A8evEw@mail.gmail.com>
+	s=k20201202; t=1746216720;
+	bh=u5Z8wpvFxHNyn281JUcC5aJjExa9fXKR0LlwurFoJOo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Z1zXSQCA6uvZog8m73AsLZiKFKCo/9ZgdhCii6J5RUCUt2HIxFvCq6DiA7/W+8foD
+	 DH7NXB5sgdG046YyxnOxDDEx5qpRWQAzFICFm2YO98Lf61l71s2iO8PUn4rLUsLtA4
+	 AtUyHDZXcXd/r/tyF6h4eQ+9Gb2GgzmEfAHNemv7AwMjdxp/GwZkAZAjnld40MOFML
+	 sR0E8bGJJU1dQDkmJEPbcMtjtefojiU7YTTWmatlY6maRZFm0gywcMaAfHYNUtPlHI
+	 yHhLrX1U4i16+k8L9DNEeChBsXdNYdNly2tUxZEnpmzhKlh9RyqWPsFTIINt3yq/EH
+	 TEMV3sj9OGU6A==
+Date: Fri, 2 May 2025 13:12:00 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, hch@lst.de, viro@zeniv.linux.org.uk, jack@suse.cz,
+	cem@kernel.org, linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: [PATCH v10.1 1.1/15] xfs: only call xfs_setsize_buftarg once per
+ buffer target
+Message-ID: <20250502201200.GU25675@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1YjoHnH9Tsh8aO2SNkJUW=7VUPXAdvxqt7d0B4A8evEw@mail.gmail.com>
+In-Reply-To: <20250501165733.1025207-2-john.g.garry@oracle.com>
 
-On Fri, May 02, 2025 at 04:07:23PM +0200, Jann Horn wrote:
-> On Fri, May 2, 2025 at 2:43 PM Christian Brauner <brauner@kernel.org> wrote:
-> > Allow userspace to discover what coredump modes are supported.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> > ---
-> >  fs/coredump.c | 14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
-> > diff --git a/fs/coredump.c b/fs/coredump.c
-> > index 9a6cba233db9..1c7428c23878 100644
-> > --- a/fs/coredump.c
-> > +++ b/fs/coredump.c
-> > @@ -1217,6 +1217,13 @@ static int proc_dostring_coredump(const struct ctl_table *table, int write,
-> >
-> >  static const unsigned int core_file_note_size_min = CORE_FILE_NOTE_SIZE_DEFAULT;
-> >  static const unsigned int core_file_note_size_max = CORE_FILE_NOTE_SIZE_MAX;
-> > +static char core_modes[] = {
-> > +#ifdef CONFIG_UNIX
-> > +       "file\npipe\nunix"
-> > +#else
-> > +       "file\npipe"
-> > +#endif
-> > +};
-> 
-> Nit: You could do something like
-> 
-> static char core_modes[] =
-> #ifdef CONFIG_UNIX
->   "unix\n"
-> #endif
->   "file\npipe"
-> ;
+From: Darrick J. Wong <djwong@kernel.org>
 
-Thanks!
+It's silly to call xfs_setsize_buftarg from xfs_alloc_buftarg with the
+block device LBA size because we don't need to ask the block layer to
+validate a geometry number that it provided us.  Instead, set the
+preliminary bt_meta_sector* fields to the LBA size in preparation for
+reading the primary super.
+
+However, we still want to flush and invalidate the pagecache for all
+three block devices before we start reading metadata from those devices.
+Move the sync_blockdev calls into a separate helper function, and call
+it immediately after xfs_open_devices creates the buftargs.
+
+This will enable a subsequent patch to validate hw atomic write geometry
+against the filesystem geometry.
+
+Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+---
+v10.1: call sync_blockdev on open for all the devices and move this to
+immediately after the vfs change
+---
+ fs/xfs/xfs_buf.h   |    5 +++++
+ fs/xfs/xfs_buf.c   |   14 +++++---------
+ fs/xfs/xfs_super.c |   33 +++++++++++++++++++++++++++++++++
+ 3 files changed, 43 insertions(+), 9 deletions(-)
+
+diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
+index d0b065a9a9f0d2..132210705602b4 100644
+--- a/fs/xfs/xfs_buf.h
++++ b/fs/xfs/xfs_buf.h
+@@ -383,6 +383,11 @@ int xfs_buf_reverify(struct xfs_buf *bp, const struct xfs_buf_ops *ops);
+ bool xfs_verify_magic(struct xfs_buf *bp, __be32 dmagic);
+ bool xfs_verify_magic16(struct xfs_buf *bp, __be16 dmagic);
+ 
++static inline int xfs_buftarg_sync(struct xfs_buftarg *btp)
++{
++	return sync_blockdev(btp->bt_bdev);
++}
++
+ /* for xfs_buf_mem.c only: */
+ int xfs_init_buftarg(struct xfs_buftarg *btp, size_t logical_sectorsize,
+ 		const char *descr);
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index 5ae77ffdc947b1..292891d6ff69ac 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -1733,11 +1733,7 @@ xfs_setsize_buftarg(
+ 		return -EINVAL;
+ 	}
+ 
+-	/*
+-	 * Flush the block device pagecache so our bios see anything dirtied
+-	 * before mount.
+-	 */
+-	return sync_blockdev(btp->bt_bdev);
++	return 0;
+ }
+ 
+ int
+@@ -1810,10 +1806,10 @@ xfs_alloc_buftarg(
+ 	 * When allocating the buftargs we have not yet read the super block and
+ 	 * thus don't know the file system sector size yet.
+ 	 */
+-	if (xfs_setsize_buftarg(btp, bdev_logical_block_size(btp->bt_bdev)))
+-		goto error_free;
+-	if (xfs_init_buftarg(btp, bdev_logical_block_size(btp->bt_bdev),
+-			mp->m_super->s_id))
++	btp->bt_meta_sectorsize = bdev_logical_block_size(btp->bt_bdev);
++	btp->bt_meta_sectormask = btp->bt_meta_sectorsize - 1;
++
++	if (xfs_init_buftarg(btp, btp->bt_meta_sectorsize, mp->m_super->s_id))
+ 		goto error_free;
+ 
+ 	return btp;
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index b2dd0c0bf50979..83de3ac39ae53b 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -519,6 +519,35 @@ xfs_open_devices(
+ 	return error;
+ }
+ 
++/*
++ * Flush and invalidate all devices' pagecaches before reading any metadata
++ * because XFS doesn't use the bdev pagecache.
++ */
++STATIC int
++xfs_preflush_devices(
++	struct xfs_mount	*mp)
++{
++	int			error;
++
++	error = xfs_buftarg_sync(mp->m_ddev_targp);
++	if (error)
++		return error;
++
++	if (mp->m_logdev_targp && mp->m_logdev_targp != mp->m_ddev_targp) {
++		error = xfs_buftarg_sync(mp->m_ddev_targp);
++		if (error)
++			return error;
++	}
++
++	if (mp->m_rtdev_targp) {
++		error = xfs_buftarg_sync(mp->m_rtdev_targp);
++		if (error)
++			return error;
++	}
++
++	return 0;
++}
++
+ /*
+  * Setup xfs_mount buffer target pointers based on superblock
+  */
+@@ -1671,6 +1700,10 @@ xfs_fs_fill_super(
+ 	if (error)
+ 		return error;
+ 
++	error = xfs_preflush_devices(mp);
++	if (error)
++		goto out_shutdown_devices;
++
+ 	if (xfs_debugfs) {
+ 		mp->m_debugfs = xfs_debugfs_mkdir(mp->m_super->s_id,
+ 						  xfs_debugfs);
 
