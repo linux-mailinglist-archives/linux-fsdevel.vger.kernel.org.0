@@ -1,279 +1,258 @@
-Return-Path: <linux-fsdevel+bounces-47905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12F6BAA6E7A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 11:52:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DD3CAA6EC4
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 12:03:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A6C9A5B6C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 09:52:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 875689C5B3A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 10:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2BDD2356DD;
-	Fri,  2 May 2025 09:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OrZcYTWN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E09254861;
+	Fri,  2 May 2025 10:01:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AC222F39C
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 09:52:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 615E123A995;
+	Fri,  2 May 2025 10:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746179551; cv=none; b=RPUciWtDJO/9pHINPo1CO9EA/gHxkoIgWKQ8/XQtqSBCnVQKGywFwFDRVTsfqd9Tt+Xgk9JucGQpiKJzq+cbcSppCr4HWJCG9KqQQHwT5W0lsN3p8Jnca7LJMpQK9/iv3iYnxqdA2dYbesjio8ZtUZxLqcVni9+DDFr+61KeSnY=
+	t=1746180079; cv=none; b=PKg32VaCKw4JoWS1Bhtg/gXbHYNgpTgiFBEXlBFUvRC2nMVmYaBAT+XuACWzYuyjWakl/7oBOBI92axaBfwxwX/MG9UG6ii7S1annc/jDwYX8cwCVQK0XQVdfb6x4fQSjJhRpIvW9SFw5DefpJV4dYHKy5kRR75eEGfd0bHN70k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746179551; c=relaxed/simple;
-	bh=ZS+f+Pfa5TGtF2r8wVszZHda4cYa5Eb0bHdA6ZwVU+E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DBtELmR+ajAadf4FPy0bgMq0CuMcQhDP95A2Tn5Ik2KbBZS+YCf6fhs7/XWD2kjBoVnm5/VscMhNhyoiP8DYS6L8kLu3gUDwrKw/VjeZ1en68b2gUlgQIX7RRUzHphXhyHw1Ld27rKlvTg8m9Kse5jfTvZODuoY6fDib9O9a1ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OrZcYTWN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746179548;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dXGsWu/sVUjfIQjTnfB+mQNrmVQD1XLyhhrYW1W2edU=;
-	b=OrZcYTWNJq8zrfRrG6jgc8X5U3cJw5QI+6YhAtp918e8C73zZWbfuYLFXWDef/gyJpMLAw
-	It0AdRxJ26Fy6TfkxyQo58kz9zfRntO5hJqGMzQpXL63pDSr2lVvp4wJiz9n3ubTQU1qd9
-	KZNfcxKiRQVbg/VIaPvTPkvHV+U7u5k=
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
- [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-76-7ZPR-PGDPsy1bpr2nGjECQ-1; Fri, 02 May 2025 05:52:26 -0400
-X-MC-Unique: 7ZPR-PGDPsy1bpr2nGjECQ-1
-X-Mimecast-MFC-AGG-ID: 7ZPR-PGDPsy1bpr2nGjECQ_1746179545
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-225429696a9so27940935ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 May 2025 02:52:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746179545; x=1746784345;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dXGsWu/sVUjfIQjTnfB+mQNrmVQD1XLyhhrYW1W2edU=;
-        b=a9qZVn1huGEB/0Ecnlz2gTxZ3ph5qRVuZFZ2PTgWRM0IWy+qSK7d+0w0S0GKxMuPl8
-         OGR6woBdNHPmxeGWEkUg0LEPp06Nmh5WtkQQaDeAXFDQgof9eW0FQD3B1fPNpPljyPpx
-         Hx8ghIaj4xxZrsdfAAxwdpg3y/EQ7KxsTBNke/Vw7jgERPGDzz5+zN/RXzhxAh4EJxKo
-         /FokfgzHCuXrYwTaaRnlfKyrifDJ8CiYs9s4moyEjvHhCVAG+N08sWOBxWUYme04MduL
-         3R2uCeATJvy2+VvCdBF0oFz7A0miR/g5EG41ANnqY9k6IQS7ooA67wamQLqpYLCLiUDq
-         lgCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXK27pVjQpnY0g3wOvhbPzZT2BcUsbKFEJ/iMml2LpGXU/G0FtruwOLpAQkYuMTF3ErBYShcisp0BRgDULV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrI7ZQ1m8qQwFLCKyDRCpDaGf8mWR6EW9tppnhuEcQvpnYMg37
-	XVgGO7tJrjJtKory4bvQnsFiQc1WTmrPTwJizcb2XBUhvSGc/Zl72c7xkGIF7KGdHFQyVJvIDx1
-	oWFUUezdkqJIexXa22/ljDzERWq2cWYVQl7tsuWWf+KsGiHIbHYOwrkw6+B0d5HAM/UxtM48aoL
-	4AIhxh1D8Yvz33Q3tthBqGWrOFtZrPpGClgO5hgA==
-X-Gm-Gg: ASbGncv4/bkm8Ov0jLj+b71M6EVJUjTIBQMuMRxwz/YW3xjjfI5dUXAdtv9KRgfOWWC
-	0Ubvif/DsZy4Dxt0hwLBmcxr5wo8i8cS8kRhMFv11D1A++D+2RyiMW46bSEYP2873ciM=
-X-Received: by 2002:a17:903:2352:b0:220:c86d:d7eb with SMTP id d9443c01a7336-22e1032ebc5mr35111585ad.36.1746179545282;
-        Fri, 02 May 2025 02:52:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEPi23jEaWUfx5+/hAlXlXqhO6rvOVoF1TJPb1nn7S1D1B2KjpWylLrHJ8i6Jmbfs80U/fXdvtp29JFcP9CCWA=
-X-Received: by 2002:a17:903:2352:b0:220:c86d:d7eb with SMTP id
- d9443c01a7336-22e1032ebc5mr35111125ad.36.1746179544756; Fri, 02 May 2025
- 02:52:24 -0700 (PDT)
+	s=arc-20240116; t=1746180079; c=relaxed/simple;
+	bh=vJOvnivph6oCb2dMXGXiOHXi7mT7HtXtJsbbfl4ZPcs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JoQofrHb3GSskepbnOisSwLPbgAdAQwz9NuaBxJus5/kJi1pg1YyohWjlYxEr5QwPB5KnweQPbEJPc/I4wtjSYaLqOI/RiKCgo9R790bK+QTcjeI9o4WzMxp0e9HZ7Jci0JBMEaGKt9H0cwZp1S2yzBgtTdw5jf8+tl32ZcZB64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 69BCD168F;
+	Fri,  2 May 2025 03:01:05 -0700 (PDT)
+Received: from [10.57.93.118] (unknown [10.57.93.118])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A4C7B3F66E;
+	Fri,  2 May 2025 03:01:10 -0700 (PDT)
+Message-ID: <87f80506-eeb3-4848-adc9-8a030b5f4136@arm.com>
+Date: Fri, 2 May 2025 11:01:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYSPR06MB7158B63753ECD29758D09D49F68D2@TYSPR06MB7158.apcprd06.prod.outlook.com>
- <20250501202943.e72b7bae3d1957efa60db553@linux-foundation.org>
-In-Reply-To: <20250501202943.e72b7bae3d1957efa60db553@linux-foundation.org>
-From: Andreas Gruenbacher <agruenba@redhat.com>
-Date: Fri, 2 May 2025 11:52:13 +0200
-X-Gm-Features: ATxdqUEmdWvqbf7pU_cAzCFcFc3sFR361fdkrY_4pFwKDQj8PiTwFoGn-3DHIGc
-Message-ID: <CAHc6FU6O9ys6cbwOBmgz9e3EZgNDSRnnm6c=056VdJKF490ixQ@mail.gmail.com>
-Subject: Re: WARNING in __folio_mark_dirty
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "huk23@m.fudan.edu.cn" <huk23@m.fudan.edu.cn>, "jjtan24@m.fudan.edu.cn" <jjtan24@m.fudan.edu.cn>, 
-	=?UTF-8?B?55m954OB5YaJ?= <baishuoran@hrbeu.edu.cn>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"syzkaller@googlegroups.com" <syzkaller@googlegroups.com>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	linux-mm <linux-mm@kvack.org>, gfs2@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] binfmt_elf: Move brk for static PIE even if ASLR
+ disabled
+To: Kees Cook <kees@kernel.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Ali Saidi <alisaidi@amazon.com>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, linux-hardening@vger.kernel.org
+References: <20250502001820.it.026-kees@kernel.org>
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250502001820.it.026-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 2, 2025 at 5:36=E2=80=AFAM Andrew Morton <akpm@linux-foundation=
-.org> wrote:
-> On Fri, 2 May 2025 03:26:20 +0000 "huk23@m.fudan.edu.cn" <huk23@m.fudan.e=
-du.cn> wrote:
-> > Dear Maintainers=EF=BC=8C
->
-> Let's Cc the gfs2 developers.
+On 02/05/2025 01:18, Kees Cook wrote:
+> In commit bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing
+> direct loader exec"), the brk was moved out of the mmap region when
+> loading static PIE binaries (ET_DYN without INTERP). The common case
+> for these binaries was testing new ELF loaders, so the brk needed to
+> be away from mmap to avoid colliding with stack, future mmaps (of the
+> loader-loaded binary), etc. But this was only done when ASLR was enabled,
+> in an attempt to minimize changes to memory layouts.
+> 
+> After adding support to respect alignment requirements for static PIE
+> binaries in commit 3545deff0ec7 ("binfmt_elf: Honor PT_LOAD alignment
+> for static PIE"), it became possible to have a large gap after the
+> final PT_LOAD segment and the top of the mmap region. This means that
+> future mmap allocations might go after the last PT_LOAD segment (where
+> brk might be if ASLR was disabled) instead of before them (where they
+> traditionally ended up).
+> 
+> On arm64, running with ASLR disabled, Ubuntu 22.04's "ldconfig" binary,
+> a static PIE, has alignment requirements that leaves a gap large enough
+> after the last PT_LOAD segment to fit the vdso and vvar, but still leave
+> enough space for the brk (which immediately follows the last PT_LOAD
+> segment) to be allocated by the binary.
+> 
+> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /sbin/ldconfig.real
+> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /sbin/ldconfig.real
+> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
+> ***[brk will go here at fffff7ffa000]***
+> fffff7ffc000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
+> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
+> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
+> 
+> After commit 0b3bc3354eb9 ("arm64: vdso: Switch to generic storage
+> implementation"), the arm64 vvar grew slightly, and suddenly the brk
+> collided with the allocation.
+> 
+> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /sbin/ldconfig.real
+> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /sbin/ldconfig.real
+> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
+> ***[oops, no room any more, vvar is at fffff7ffa000!]***
+> fffff7ffa000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
+> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
+> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
+> 
+> The solution is to unconditionally move the brk out of the mmap region
+> for static PIE binaries. Whether ASLR is enabled or not does not change if
+> there may be future mmap allocation collisions with a growing brk region.
+> 
+> Update memory layout comments (with kernel-doc headings), consolidate
+> the setting of mm->brk to later (it isn't needed early), move static PIE
+> brk out of mmap unconditionally, and make sure brk(2) knows to base brk
+> position off of mm->start_brk not mm->end_data no matter what the cause of
+> moving it is (via current->brk_randomized).
+> 
+> For the CONFIG_COMPAT_BRK case, though, leave the logic unchanged, as we
+> can never safely move the brk. These systems, however, are not using
+> specially aligned static PIE binaries.
+> 
+> Reported-by: Ryan Roberts <ryan.roberts@arm.com>
+> Closes: https://lore.kernel.org/lkml/f93db308-4a0e-4806-9faf-98f890f5a5e6@arm.com/
+> Fixes: bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing direct loader exec")
+> Link: https://lore.kernel.org/r/20250425224502.work.520-kees@kernel.org
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-On gfs2, these warnings should be fixed by the following two commits:
+It's a shame we can't figure out a universal solution that would work for
+CONFIG_COMPAT_BRK too, but I can't think of anything. So as you say, let's worry
+about that in the unlikely event that an issue is reported.
 
-9e888998ea4d ("writeback: fix false warning in inode_to_wb()")
-ae9f3bd8259a ("gfs2: replace sd_aspace with sd_inode")
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
+Tested-by: Ryan Roberts <ryan.roberts@arm.com>
 
-The first one is in v6.15-rc3 thanks to Andrew; the second one is on
-gfs2's for-next branch right now:
+Thanks for sorting this out! Would be great to get it into v6.15.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git/commit/=
-?h=3Dfor-next&id=3Dae9f3bd8259a
-
-> Do you know if this is reproducible on any other filesystem?
->
-> >
-> > When using our customized Syzkaller to fuzz the latest Linux kernel, th=
-e following crash (37th and 76th)was triggered.
-> >
-> >
-> > 37th=EF=BC=9A
-> > HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
-> > git tree: upstream
-> > Output:https://github.com/pghk13/Kernel-Bug/blob/main/1220_6.13rc_KASAN=
-/2.%E5%9B%9E%E5%BD%92-11/14-KASAN_%20slab-out-of-bounds%20Read%20in%20hfspl=
-us_bnode_read/14call_trace.txt
-> > Kernel config:https://github.com/pghk13/Kernel-Bug/blob/main/0305_6.15r=
-c1/config.txt
-> > C reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc=
-7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined=
-/37repro.c
-> > Syzlang reproducer: https://github.com/pghk13/Kernel-Bug/blob/main/0219=
-_6.13rc7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_o=
-utlined/37repro.txt
-> >
-> > 76th=EF=BC=9A
-> > HEAD commit: 6537cfb395f352782918d8ee7b7f10ba2cc3cbf2
-> > git tree: upstream
-> > Output:https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc7_todo=
-/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined/76cal=
-l_trace.txt
-> > Kernel config:https://github.com/pghk13/Kernel-Bug/blob/main/0305_6.15r=
-c1/config.txt
-> > C reproducer:https://github.com/pghk13/Kernel-Bug/blob/main/0219_6.13rc=
-7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_outlined=
-/76repro.c
-> > Syzlang reproducer: https://github.com/pghk13/Kernel-Bug/blob/main/0219=
-_6.13rc7_todo/76-UBSAN_%20shift-out-of-bounds%20in%20bch2_trans_iter_init_o=
-utlined/76repro.txt
-> >
-> >
-> >
-> > The two errors seem to have the same error points, but there are a few =
-differences in the process. They all trigger warnings in the __folio_mark_d=
-irty+0xb50/0xf10 function of backing-dev.h:251. In __folio_mark_dirty funct=
-ion, a warning is triggered when the code tries to access or modify the bac=
-king-dev information. The 76th call stack has longer call chains from file =
-writebacks: writeback work queues =E2=86=92 writeback inodes =E2=86=92 GFS2=
- write inodes =E2=86=92 log refreshes.
-> > We have reproduced this issue several times on 6.15-rc1 again.
-> >
-> >
-> >
-> >
-> > If you fix this issue, please add the following tag to the commit:
-> > Reported-by: Kun Hu <huk23@m.fudan.edu.cn>, Jiaji Qin <jjtan24@m.fudan.=
-edu.cn>, Shuoran Bai <baishuoran@hrbeu.edu.cn>
-> >
-> >
-> >
-> > 37th=EF=BC=9A
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > WARNING: CPU: 2 PID: 9494 at ./include/linux/backing-dev.h:251 __folio_=
-mark_dirty+0xb50/0xf10
-> > Modules linked in:
-> > CPU: 2 UID: 0 PID: 9494 Comm: gfs2_logd/syz:s Not tainted 6.15.0-rc1 #1=
- PREEMPT(full)
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubu=
-ntu1.1 04/01/2014
-> > RIP: 0010:__folio_mark_dirty+0xb50/0xf10
-> > Code: ff ff 48 8d 78 70 e8 af e3 76 09 31 ff 89 c6 89 44 24 08 e8 72 d3=
- c5 ff 8b 44 24 08 85 c0 0f 85 af f9 ff ff e8 51 d1 c5 ff 90 <0f> 0b 90 e9 =
-a1 f9 ff ff e8 43 d1 c5 ff 90 0f 0b 90 e9 59 f5 ff ff
-> > RSP: 0018:ffffc90014bb7b18 EFLAGS: 00010046
-> > RAX: 0000000000000000 RBX: ffff88804298cb58 RCX: ffffffff81f5408e
-> > RDX: 0000000000000000 RSI: ffff888023edc900 RDI: 0000000000000002
-> > RBP: ffffea00015c9d80 R08: 0000000000000000 R09: ffffed10085319a0
-> > R10: ffffed100853199f R11: ffff88804298ccff R12: 0000000000000246
-> > R13: ffff888049bd8bc8 R14: 0000000000000001 R15: 0000000000000001
-> > FS:  0000000000000000(0000) GS:ffff888097c6b000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007ff2c7be9028 CR3: 000000000e180000 CR4: 0000000000750ef0
-> > PKRU: 55555554
-> > Call Trace:
-> >  <TASK>
-> >  mark_buffer_dirty+0x358/0x410
-> >  gfs2_unpin+0x106/0xef0
-> >  buf_lo_after_commit+0x155/0x230
-> >  gfs2_log_flush+0xd95/0x2cb0
-> >  gfs2_logd+0x29b/0x12c0
-> >  kthread+0x447/0x8a0
-> >  ret_from_fork+0x48/0x80
-> >  ret_from_fork_asm+0x1a/0x30
-> >  </TASK>
-> > extracting prog: 1h56m11.644263162s
-> > minimizing prog: 14m12.695891417s
-> > simplifying prog options: 0s
-> > extracting C: 32.234365976s
-> > simplifying C: 9m50.565845853s
-> >
-> >
-> >
-> >
-> >
-> > 76th=EF=BC=9A
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > WARNING: CPU: 3 PID: 3051 at ./include/linux/backing-dev.h:251 __folio_=
-mark_dirty+0xb50/0xf10
-> > Modules linked in:
-> > CPU: 3 UID: 0 PID: 3051 Comm: kworker/u18:5 Not tainted 6.15.0-rc1 #1 P=
-REEMPT(full)
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubu=
-ntu1.1 04/01/2014
-> > Workqueue: writeback wb_workfn (flush-7:0)
-> > RIP: 0010:__folio_mark_dirty+0xb50/0xf10
-> > Code: ff ff 48 8d 78 70 e8 af e3 76 09 31 ff 89 c6 89 44 24 08 e8 72 d3=
- c5 ff 8b 44 24 08 85 c0 0f 85 af f9 ff ff e8 51 d1 c5 ff 90 <0f> 0b 90 e9 =
-a1 f9 ff ff e8 43 d1 c5 ff 90 0f 0b 90 e9 59 f5 ff ff
-> > RSP: 0018:ffffc90011e2f410 EFLAGS: 00010046
-> > RAX: 0000000000000000 RBX: ffff88804266bfd8 RCX: ffffffff81f5408e
-> > RDX: 0000000000000000 RSI: ffff888043e48000 RDI: 0000000000000002
-> > RBP: ffffea000086e9c0 R08: 0000000000000000 R09: ffffed10084cd830
-> > R10: ffffed10084cd82f R11: ffff88804266c17f R12: 0000000000000246
-> > R13: ffff888012bf87f0 R14: 0000000000000001 R15: 0000000000000001
-> > FS: 0000000000000000(0000) GS:ffff8880eb46b000(0000) knlGS:000000000000=
-0000
-> > CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f6410e8e140 CR3: 0000000023648000 CR4: 0000000000750ef0
-> > PKRU: 55555554
-> > Call Trace:
-> > <TASK>
-> > mark_buffer_dirty+0x358/0x410
-> > gfs2_unpin+0x106/0xef0
-> > buf_lo_after_commit+0x155/0x230
-> > gfs2_log_flush+0xd95/0x2cb0
-> > gfs2_write_inode+0x371/0x450
-> > __writeback_single_inode+0xad7/0xf50
-> > writeback_sb_inodes+0x5f5/0xee0
-> > __writeback_inodes_wb+0xbe/0x270
-> > wb_writeback+0x728/0xb50
-> > wb_workfn+0x96e/0xe90
-> > process_scheduled_works+0x5de/0x1bd0
-> > worker_thread+0x5a9/0xd10
-> > kthread+0x447/0x8a0
-> > ret_from_fork+0x48/0x80
-> > ret_from_fork_asm+0x1a/0x30
-> > </TASK>
-> >
-> >
-> >
-> > thanks,
-> > Kun Hu
-> >
->
-
-Thanks,
-Andreas
+> ---
+>  v2: exclude CONFIG_COMPAT_BRK (ryan)
+>  v1: https://lore.kernel.org/all/20250425224502.work.520-kees@kernel.org/
+> ---
+>  fs/binfmt_elf.c | 71 ++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 47 insertions(+), 24 deletions(-)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index 584fa89bc877..4c1ea6b52a53 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -830,6 +830,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
+>  	struct elf_phdr *elf_property_phdata = NULL;
+>  	unsigned long elf_brk;
+> +	bool brk_moved = false;
+>  	int retval, i;
+>  	unsigned long elf_entry;
+>  	unsigned long e_entry;
+> @@ -1097,15 +1098,19 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  			/* Calculate any requested alignment. */
+>  			alignment = maximum_alignment(elf_phdata, elf_ex->e_phnum);
+>  
+> -			/*
+> -			 * There are effectively two types of ET_DYN
+> -			 * binaries: programs (i.e. PIE: ET_DYN with PT_INTERP)
+> -			 * and loaders (ET_DYN without PT_INTERP, since they
+> -			 * _are_ the ELF interpreter). The loaders must
+> -			 * be loaded away from programs since the program
+> -			 * may otherwise collide with the loader (especially
+> -			 * for ET_EXEC which does not have a randomized
+> -			 * position). For example to handle invocations of
+> +			/**
+> +			 * DOC: PIE handling
+> +			 *
+> +			 * There are effectively two types of ET_DYN ELF
+> +			 * binaries: programs (i.e. PIE: ET_DYN with
+> +			 * PT_INTERP) and loaders (i.e. static PIE: ET_DYN
+> +			 * without PT_INTERP, usually the ELF interpreter
+> +			 * itself). Loaders must be loaded away from programs
+> +			 * since the program may otherwise collide with the
+> +			 * loader (especially for ET_EXEC which does not have
+> +			 * a randomized position).
+> +			 *
+> +			 * For example, to handle invocations of
+>  			 * "./ld.so someprog" to test out a new version of
+>  			 * the loader, the subsequent program that the
+>  			 * loader loads must avoid the loader itself, so
+> @@ -1118,6 +1123,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  			 * ELF_ET_DYN_BASE and loaders are loaded into the
+>  			 * independently randomized mmap region (0 load_bias
+>  			 * without MAP_FIXED nor MAP_FIXED_NOREPLACE).
+> +			 *
+> +			 * See below for "brk" handling details, which is
+> +			 * also affected by program vs loader and ASLR.
+>  			 */
+>  			if (interpreter) {
+>  				/* On ET_DYN with PT_INTERP, we do the ASLR. */
+> @@ -1234,8 +1242,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	start_data += load_bias;
+>  	end_data += load_bias;
+>  
+> -	current->mm->start_brk = current->mm->brk = ELF_PAGEALIGN(elf_brk);
+> -
+>  	if (interpreter) {
+>  		elf_entry = load_elf_interp(interp_elf_ex,
+>  					    interpreter,
+> @@ -1291,27 +1297,44 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>  	mm->end_data = end_data;
+>  	mm->start_stack = bprm->p;
+>  
+> -	if ((current->flags & PF_RANDOMIZE) && (snapshot_randomize_va_space > 1)) {
+> +	/**
+> +	 * DOC: "brk" handling
+> +	 *
+> +	 * For architectures with ELF randomization, when executing a
+> +	 * loader directly (i.e. static PIE: ET_DYN without PT_INTERP),
+> +	 * move the brk area out of the mmap region and into the unused
+> +	 * ELF_ET_DYN_BASE region. Since "brk" grows up it may collide
+> +	 * early with the stack growing down or other regions being put
+> +	 * into the mmap region by the kernel (e.g. vdso).
+> +	 *
+> +	 * In the CONFIG_COMPAT_BRK case, though, everything is turned
+> +	 * off because we're not allowed to move the brk at all.
+> +	 */
+> +	if (!IS_ENABLED(CONFIG_COMPAT_BRK) &&
+> +	    IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+> +	    elf_ex->e_type == ET_DYN && !interpreter) {
+> +		elf_brk = ELF_ET_DYN_BASE;
+> +		/* This counts as moving the brk, so let brk(2) know. */
+> +		brk_moved = true;
+> +	}
+> +	mm->start_brk = mm->brk = ELF_PAGEALIGN(elf_brk);
+> +
+> +	if ((current->flags & PF_RANDOMIZE) && snapshot_randomize_va_space > 1) {
+>  		/*
+> -		 * For architectures with ELF randomization, when executing
+> -		 * a loader directly (i.e. no interpreter listed in ELF
+> -		 * headers), move the brk area out of the mmap region
+> -		 * (since it grows up, and may collide early with the stack
+> -		 * growing down), and into the unused ELF_ET_DYN_BASE region.
+> +		 * If we didn't move the brk to ELF_ET_DYN_BASE (above),
+> +		 * leave a gap between .bss and brk.
+>  		 */
+> -		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+> -		    elf_ex->e_type == ET_DYN && !interpreter) {
+> -			mm->brk = mm->start_brk = ELF_ET_DYN_BASE;
+> -		} else {
+> -			/* Otherwise leave a gap between .bss and brk. */
+> +		if (!brk_moved)
+>  			mm->brk = mm->start_brk = mm->brk + PAGE_SIZE;
+> -		}
+>  
+>  		mm->brk = mm->start_brk = arch_randomize_brk(mm);
+> +		brk_moved = true;
+> +	}
+> +
+>  #ifdef compat_brk_randomized
+> +	if (brk_moved)
+>  		current->brk_randomized = 1;
+>  #endif
+> -	}
+>  
+>  	if (current->personality & MMAP_PAGE_ZERO) {
+>  		/* Why this, you ask???  Well SVr4 maps page 0 as read-only,
 
 
