@@ -1,193 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-47909-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEDA1AA718D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:20:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05388AA7191
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 14:20:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCDFC9C72C1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 12:19:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 638AC16A0B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 12:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A955C26ACD;
-	Fri,  2 May 2025 12:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734FE250C08;
+	Fri,  2 May 2025 12:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="FurY7+Nu"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="V6DegJyw";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H+e5aQFV";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="zIljpT8R";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TfQgwou6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011049.outbound.protection.outlook.com [52.101.129.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBB724C664
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 12:18:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746188338; cv=fail; b=Yllj5ZK+hQNPEtWFp462OO2dbCauxQBQWySR/E9TXhJ1sUHdGT0f1dmEPbHTCv5y8AUr5bngKcoOBrOfsZ1vnskiwYVnnOPWP2k55kBMvm+SydY6RABuSgembMQtQsJhgJVFDnMuMx0K449a923vn5G2qb65PsRXKCEJAM6SxXI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746188338; c=relaxed/simple;
-	bh=oeTLNN/zZFF+6ypuXQ62q3DrefsCp/XyAlDtZyIAvX4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZQILCXs+JXJCcxUQedWcxlnTjNp0yP1b/UYk5uc76J1e3UCXjvOgSzDt+hYudCfzHtTbzd6fufTmwtX0BFUTNwzQEogSnXyzdOsQCYEmyYceSrSHQoarjpks5Xp+udOHn+h/acuz2NqdTGg7YfqxJ/4J0RUBnA1qa40FkuHvpbs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=FurY7+Nu; arc=fail smtp.client-ip=52.101.129.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ikfht4SgMOUDVr0r8v3oOgCB28ljA4Bzp8kx9mPOnpow4FwOMOn6ckEbUdCHu99bfvPFHQbnGRzlduzENhVhiO4d/PACFx2hlPxcpwwnQDEQylEe/U49gnGDUMFsQ4kBOanocihUVeEiEHZXk9a1wckXAc2vPqfG6XJLePIpgJd3ZG731i/1vjEZyIpRgpy+kf6qkm7Tq2K5i73lPN+CT0OVrsDa2WQ0kqsLK/GOwZmGeIdgzFpWUANVe5TGQv6ZVJisGO378DRKF3dVtg3BeWXpOQ0JPqJWaKNKGrYXlsAWuskVa+JPE2EWQ1FwKwEyS8/fbZFzGvu0hPmCfH5a8g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oeTLNN/zZFF+6ypuXQ62q3DrefsCp/XyAlDtZyIAvX4=;
- b=E+B9w7/lZ+rjXv+sPvdjy2W0VJg+zehUy+/XFKzbCuJCDx4hbU9bAO/7JbrV8+6PI3j9JpcDDnr4xL8XTLlLhuRvZ61tHm0PAnmTJaAVQeWvbmoMhY9lcmdWCfDMrlNns+OT6udZsM8elsP/HYsMHn10RPIPnwKbsg6VY/Zfo/zQUO75Ie4fYli86Ksh5kMxK57RLUUYCNt/0LYJvoV5PK8yfEY5Me5RtakYzLqMHdYPDpsay2s9UvlfKRUAK6acJcekarWi67V7ZmLRYEV2MG2+OLEcYp+hlJK1JsJFe8/eDoIvNgNLTsOX+KEEbUnGDL7CU93XXfGONLUTErsh3A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oeTLNN/zZFF+6ypuXQ62q3DrefsCp/XyAlDtZyIAvX4=;
- b=FurY7+NuE8VeXKZzbm5SkaQwk9Ls1NiYoE1Q8r0WxzzLGiBbk40/pRNksBmAKarPIYQ9gv3coVQhHTXkZKueSUGScNAsiuwA4TVJ38jzNzOr1VBTn+CeNbM+Q6NPwAqKWBOBJFuuLzFyC33aU/vkCIvuQiYd8WHwECmFWO3x4u13jJ39r87ABlq95Lna6q2qVc41T+2QI7hcwZXpRwcWRQmOHh4/5nqRA4+4vCDT3+ElUrgcwwRn9UrVlIxEqgdOvg+hWHunx5i/7ekgqZ7RuVsONrJq+VxOrwlz4aDBWndul2u3Ksf+0rPMq0jB7BnxybH6+tPokPeZ55RF1F3TGQ==
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by KL1PR06MB6476.apcprd06.prod.outlook.com (2603:1096:820:f0::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.20; Fri, 2 May
- 2025 12:18:50 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%4]) with mapi id 15.20.8699.021; Fri, 2 May 2025
- 12:18:50 +0000
-From: =?gb2312?B?wO7R7+i6?= <frank.li@vivo.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>, "glaubitz@physik.fu-berlin.de"
-	<glaubitz@physik.fu-berlin.de>
-CC: "Slava.Dubeyko@ibm.com" <Slava.Dubeyko@ibm.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"Johannes.Thumshirn@wdc.com" <Johannes.Thumshirn@wdc.com>
-Subject:
- =?gb2312?B?u9i4tDogW1BBVENIIHYyXSBoZnM6IGZpeCBub3QgZXJhc2luZyBkZWxldGVk?=
- =?gb2312?Q?_b-tree_node_issue?=
-Thread-Topic: [PATCH v2] hfs: fix not erasing deleted b-tree node issue
-Thread-Index: AQHbuWSLZohYluS6G0q/CM56WuIW3bO/Q/2w
-Date: Fri, 2 May 2025 12:18:49 +0000
-Message-ID:
- <SEZPR06MB52699CD3E9F2FBBF94E3435DE88D2@SEZPR06MB5269.apcprd06.prod.outlook.com>
-References: <20250430001211.1912533-1-slava@dubeyko.com>
-In-Reply-To: <20250430001211.1912533-1-slava@dubeyko.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEZPR06MB5269:EE_|KL1PR06MB6476:EE_
-x-ms-office365-filtering-correlation-id: a0561640-c6bc-41b8-4dcf-08dd89737ecf
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?gb2312?B?STRWZ0xhWWRMMS9Nc0UvL3didVB3VUQ0OUZJUXgwWHVxZlNIVm5tZ0JmWDFn?=
- =?gb2312?B?M28rTjQrRGdmZk9va0lVTkNHcDgwdm1Vdy8zVkRZT0VON0I1WFFSTzJNVFF0?=
- =?gb2312?B?cjhONGtnZUJ0eDNnYy9XMG5lWnhEVHlBTU5rRVNlVmljY2dzeGtwOXZQeWRJ?=
- =?gb2312?B?RWltWUNod2tRLy92emtuS1E1OG5renVEaVc1MnltUzlPZkVnYkZCZUJEZzFh?=
- =?gb2312?B?Q1RxeEI3ckdNNVBzN29jbU1TbitVRVp5N1dSY0JCYVNzNVlWZXd2YU9PcVZX?=
- =?gb2312?B?V3JGT0hSVW9hYWxXd1RsdHliS25PdTJJczRHSzBpejhmYjA0d3BnTVVrUlVW?=
- =?gb2312?B?T01HTlhHMFE5eTlpMG9EK21NZ3p6Mko4WmFTcWZmY3BoL2RselBOemZJdDdR?=
- =?gb2312?B?VC9SVXYrRHZPb1l0ZG91amlMRkF3dW5KTzRBYVdqNkhhbENQTkdUUFpscHVU?=
- =?gb2312?B?SlNpVXl6TnVnTm5IWjdTc2hiUXVtVExDR3BDeUN0SVpJTXNwbHFHTUV6VGU0?=
- =?gb2312?B?S2FTd2JocmNFajJqSkV3YTZ5clpnd2wzVVdnS1FNNVg4dENZT3JtNi9ZaU1o?=
- =?gb2312?B?YnZiUUlYUlozcDY1YXdTczdHbE1TaVRURkdLOU9oUWtOa2c0OFpBRWorNnc0?=
- =?gb2312?B?NmNGbjNsUnRxYm5lTmVweVpxbndXQVNTZHBoU0xuVzErNTQyQTYxeStXUWQ1?=
- =?gb2312?B?MEY2alBOcWVIU1doSnhIeDg0Wnh0Uk50U1l0YStXY2lXUm1sRWZDeXRPS3BV?=
- =?gb2312?B?V0NWMCtHN3VNVW5wWEFHam1yMFVSMFk1SWNvcmFLSm9OOUxTbE42ODBUVDI5?=
- =?gb2312?B?eEk5dDBZa052RHB2Ri9vRHY1clFkbDEyZlVvUEJ3NnZvWlIrVjBDS3FmaDFy?=
- =?gb2312?B?UXRXSkFtN2Z0NStBbWlmK2NUVzgvQlhNRUdiUlZ6cTVMV0I3NG1STVRGekQx?=
- =?gb2312?B?cTNJQUZleExTRllqRGN5elJKZ2VKUnd0YWNZa2hhSldJdnZ3dGhBN3YxMnd0?=
- =?gb2312?B?YmYxMTl3M1Brb0M3dk05aEVvdi8xTmcxZ1hBdkdiSDdRWmx2ZEhsWlVaMnc0?=
- =?gb2312?B?ckU0N0t4dElsNHRaSXB0RGRtNjRTdGpnTjJXOXVDeEN0VmJ0THpwYURVdm5H?=
- =?gb2312?B?bGt3enZEdldRSG1IdEVIclhwSzZPL0NYTVMvV1NVc2NFRncxM090d3RXVUVV?=
- =?gb2312?B?UXN1Mm90VXliRnFlZFhyNXo0QmR4SjE4eW1jS1BDbVhtcVZUTUczVk9jcGk1?=
- =?gb2312?B?dFpwcjNEeDQwOVoxWDlUSm1zR1JjU2kwZ3dsbTdOQ1RyRmkzUFpFME5XRVll?=
- =?gb2312?B?Z1JPZm9pekhVSDdyTEMrN29oS1I0U05yWFdiMEgxVk9OTHpNeFN4d1BQVHNt?=
- =?gb2312?B?U1NUQzlWb3NhTlZmcExzOTlWV3lBRXVPdnozSERTS2tOMHhQUUdBL1JUR3hx?=
- =?gb2312?B?MSt5STB2WlIwd2V3UHRoNWh6dFBIQ0c0dW9BTWV6aGUySTNlSmk0SWpSd3B6?=
- =?gb2312?B?MHRQbkpaV3RqdEdNV1JDRjNMNEUvcUFWQ3JLSlJhOWV5U0RIRWlnZEcrSEZV?=
- =?gb2312?B?N2ZzdHd0RHRjTXFXa3o2UVd1Z1kzN1NyM1M5dlp1TDd3MTB6cHNGdHhmVFRu?=
- =?gb2312?B?RjBVU1hMOG54cTlyWlpjT1ZOay9sMUxwN3lBT01VbXZEbzFSWERBRENiRmRQ?=
- =?gb2312?B?aVRLdGkrY3FkeElrVHVneExWMjVuekZySzJxcXJhTGJ1dTBTRW50SnZBL3Z1?=
- =?gb2312?B?SnBFN1M2ZFYyUytwT3RwWXU4b1d2RkFNUTEzb0dRVjBia291bWNVdk9YMlpO?=
- =?gb2312?B?QUJMQkdPUWZNTk04NGFSSUg1Qmx5UGdyOW1XenVaVFJFRjNxUEtaRmtnY0lP?=
- =?gb2312?B?YnViTEF1MHFtSmdiclJmSDgwYUJVaFQ5R2czUHRSQzIvQnFHc3VMbVhMKzdi?=
- =?gb2312?B?b2tTUWl1T25SMEc4TWxLVDhielR0NkdLZit6U1h2TFBKNEQzbTAwUyt4T1FY?=
- =?gb2312?B?R0RsMms1YmhBPT0=?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?gb2312?B?NUg2bDJFVXB1WEJFQnBXenFpbGp0QitYbG9VT2RHRlh1djZjaGIzaUJDNm96?=
- =?gb2312?B?Rm1Nb1U3ZkNUNHZUUlZjOVl6OTJ5YjBneHBWSXVBd0EzYm5pVDZ6c05IM25F?=
- =?gb2312?B?THd0OE54WFJYNVpzaVBqMWUwM0FBQ1F1OUFxT0FseC93b2VrL2Q0R3RTM1Y3?=
- =?gb2312?B?My9idm8wTVlpNlRLRlhIeEE0NVh4ZHVKS2hCa2h0QWM2ODc2blo4MkNVUWRt?=
- =?gb2312?B?STNIQytmMk00ZnE2ekF1cC9GOW54QXNwUGt3TXJMODk3aWVBbzNkTlpBcGQw?=
- =?gb2312?B?RGVTQ0hVTmN1SWkzU3ZFRVg3YlNhSjZueHRpRjNnbDN6cEE1clU4a2NKeXdv?=
- =?gb2312?B?d2IrZmsxVjZ0QUNZQ1NHdkpENTBsNkVCQXoram1paEQ0TDdmTEdhNWhqczZn?=
- =?gb2312?B?aDBBd3dnNHNsRGphY2daeVlxVHo3UHQ3K0VwNTlvcTBLMnVJczMzbDZvd2xq?=
- =?gb2312?B?TkJBRVNzS2RoK0pKOXFlLzJ5MzF2Zkxla0tHaGRwQldTa2JqWVZoODdFdUN1?=
- =?gb2312?B?NUNRRW9UWHMxVHNVYVdoVWhKazdjaGRPZzViQ216N0U2VW1ramFBWlhsaVo0?=
- =?gb2312?B?TURJREVIb1NzVk9HL1piVm5SL2xSVm1td21YTldBQjU0Q2dpc212bk9rWU5E?=
- =?gb2312?B?N0YwK2VGSDdqOFFUUk1iUWN6NnVCVWtKZG9IY1RlQ1pDQzg5YnpJcENFS2NS?=
- =?gb2312?B?ZzJIQi9BdFR4Q0JPc3hlRjdDbFdMcWs0dGxIUmQ3OUk5Ynh5eG1BOElkUmZV?=
- =?gb2312?B?RkV0eS84ZjRZdkVLdURwSXorN1ltY3VtV21SSHRMeWhBS0p0K3czREZ6L2Y3?=
- =?gb2312?B?bnBvM3pYbVlkUTBESEtFclQxSkN1eGVFbExueXJTaUdHb3dPZ05zMVVGS29a?=
- =?gb2312?B?a2ZPVFN4SG1kc3dZNktLM1RWVUYxQm96M0hNdDJlVE0xT2JjUzZUK0ZXdXNv?=
- =?gb2312?B?QmhKWkRya0ZmQXVTNS9TV205d016dkFURk1jMElVR3dqdVh2aHdTdXMzWEFq?=
- =?gb2312?B?aDB2RCtOVllWNTBURXkveE1WbUxTNGUreHRySkRuU2tkdk1DQUMrS3Fyd1NV?=
- =?gb2312?B?SSs3T0dFSE1weEFUSkIrZGxpOTlacFNzam50dEZpcW5lYjBqalg0UGIxZGhp?=
- =?gb2312?B?aU9ENHVRM096Ky9rVHhjS1lhSEM4VG01RmhuZGwzc0w5Um5NWXBUdlpWd25Q?=
- =?gb2312?B?K1NGcDBhd2RPdlRIZHRIdEtNSXQ0V0N6Vy9jU1BvQkNmTkk4aU5LQngxZGxX?=
- =?gb2312?B?L1VzS2U3bzdSeWlDcWFpWUcwQ0RHV2lRUm9rRjFZek9UM3NmbGNHK1JGRnJZ?=
- =?gb2312?B?OG15Q1ZZSndpa3pnbi9sZmp2OVcrQW81REZWWWNVTVk4Nng0bWw1MWU5c0s0?=
- =?gb2312?B?ZlhOdmg3ak1vUWtjYmJvd2wrY1FrVWtUMUFlSldmbXBDVmg1aE9KTnFQc201?=
- =?gb2312?B?Vkh5Y1dsV0srQldZdlhhSjVjeXpFLzVzb1hZTWpxRzFHaFFUVlgrS1hJWngw?=
- =?gb2312?B?cWRUVkJES0U2ZVF5dVlaQWZ3ckdhWklGcjRFRis3bkdLZWF2cUdhMDZxTEV2?=
- =?gb2312?B?dHdwSi9tU0VYNjh3d3hyL0FhQi9xb3FOTUR6NlN3M3RQdlVCYS9DYzRtdHla?=
- =?gb2312?B?ZWYyYmhQSjJuVUpLTkdjRzRrMTMzdTk1dGRpaVpzTFNJSUpKRmsyMW1JSEN3?=
- =?gb2312?B?ZFVZN0EvU2IzMnFmQ01CbFY3eFp4M1p6OE5RRVoyRklVSGwvSmpDR1BhZFlU?=
- =?gb2312?B?cEg1YThFc3hndk94WGVjaXVIeU1tQkhWV3hlajNWbHczUExtbTk4YnJGNEVs?=
- =?gb2312?B?UHV5SEtURlVBWGNaRUJSNEtkSUxsdVBzbnBXcTZHQU5weTc0TEVMZjFvK0NF?=
- =?gb2312?B?S1dqTURnQ2EyZWVzc2ZCVFNydkUzd1BvV1hVSG15NmM3YXdYSk04T3Y5R0NX?=
- =?gb2312?B?bDNyVERQODExd3ZDWnQ1RjFRcTVTSW1DY1owYWtnYTJXZEJZanYxaXFXMi9Q?=
- =?gb2312?B?WGQ3bEM1UXcwcDZFbTg3bUJqMG1ob0JLZ2ZDS0tNenFMUjZFOFZ4R2w5REs1?=
- =?gb2312?B?RTM4V0ZUMVJ0OXY5emFTdmE2dHJNS2Exa0VLc0VDNFNrajIra242MkVPbnpr?=
- =?gb2312?Q?3l1A=3D?=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4891122578C
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 12:20:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746188444; cv=none; b=AoeDLNY4bY2qV/rw7SShf8OlY/BeSw+Qe4tUmqkh42gRbjgDnF+x1EkdkBTWT7GbLxi+1F+0t/FLjwrDfB1hq5ZgDBkw0t8a3bJelVKS3QEErqRIE5px4LVBvnEuvBGapnWfDbLPHFD7czeTOqq25rUW8mBmQyXyCVc5fhRaI2Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746188444; c=relaxed/simple;
+	bh=q9Wt2nv3tB4D1QRkd4VGcrAcWby6DCCuswobmhTV6vA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K9d4Nq7KreoaosQRE/77PX49dgLy9hJdocizXzdNqyIUW9ggm0VkwugK5HbecrvJMzagp+NHCmf46cmoYQOAFJGTObyR8jPUXNhpY/M0zELwIqmRmMT0r40SSIRqgRhSJfrpiXr62xs54hYK8myXvH6PD0aCuivr7A7aMzzsIaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=V6DegJyw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H+e5aQFV; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=zIljpT8R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TfQgwou6; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id F14451F387;
+	Fri,  2 May 2025 12:20:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746188440; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l3XGzJGzTYHGCyVRD8KTVZyUw74RJvDiVdSvzltzOus=;
+	b=V6DegJywf70AoxraMTuMW3jX9SKGfYwdLkLahmtXuDy5LAxewP6td7SnDTTO+NzYfktOsm
+	PnN3lOm084p+AOAKJdweLY4xX5KFWpqGMyspqZW0t/WEwJnouVx9eWrpAcHZTdN9CYO+k7
+	Q7qO4v9gXdHur7d7rPmxltYcck5Y6uw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746188440;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l3XGzJGzTYHGCyVRD8KTVZyUw74RJvDiVdSvzltzOus=;
+	b=H+e5aQFVjUIdjrBDL6m5nNJPljJgie3g0+7oaAQxYM88121amB/4uERDL6LtjksEXKCWEk
+	Fzwdmp4cEKLT92CA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=zIljpT8R;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=TfQgwou6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746188438; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l3XGzJGzTYHGCyVRD8KTVZyUw74RJvDiVdSvzltzOus=;
+	b=zIljpT8RYZGWd/HBqgGRL0/G/EPLljblmAn6xhBisAStcablM7g7QF0gUsaHrQXmW0jKTl
+	dwjOsB7J49AfnSGAcZGtH3/MakJXuhOpKUZuo7xVVEnTlXycCvM2AcykGc1HUaDAs/6A/P
+	zz76gazA5mrQeaa7EMBz8jLGP4fox9o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746188438;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l3XGzJGzTYHGCyVRD8KTVZyUw74RJvDiVdSvzltzOus=;
+	b=TfQgwou6GFyRLC590TZR8fNmQk57E8vvDttvruRgNUVOqSnjaPNyXinuLP4siuNGqte9Jx
+	ZbU7EJsr0SUHThAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DBE861372E;
+	Fri,  2 May 2025 12:20:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id lB6qNZa4FGiICAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 02 May 2025 12:20:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 520F6A0921; Fri,  2 May 2025 14:20:38 +0200 (CEST)
+Date: Fri, 2 May 2025 14:20:38 +0200
+From: Jan Kara <jack@suse.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [RFC PATCH v2 0/3] eliminate mmap() retry merge, add
+ .mmap_prepare hook
+Message-ID: <uevybgodhkny6dihezto4gkfup6n7znaei6q4ehlkksptlptwr@vgm2tzhpidli>
+References: <cover.1746116777.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a0561640-c6bc-41b8-4dcf-08dd89737ecf
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 May 2025 12:18:49.7763
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: U0HMMgPvwV4oU7vO7ecKBG9RatPprraRhWZtn8Q7gnv2AHdzo1+e16bS7ieLXujN8PGzRln8om97AXLjer5ByA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6476
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1746116777.git.lorenzo.stoakes@oracle.com>
+X-Rspamd-Queue-Id: F14451F387
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[17];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:106:10:150:64:167:received,2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
+X-Spam-Flag: NO
 
-SGkgU2xhdmEsDQoNCkluIGhmc3BsdXMsIHRoZXJlIGFyZToNCg0KICAgICAgICAgICAgICAgICAg
-ICAgICAgaWYgKGhmc19ibm9kZV9uZWVkX3plcm9vdXQodHJlZSkpDQogICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIGhmc19ibm9kZV9jbGVhcihub2RlLCAwLCB0cmVlLT5ub2RlX3NpemUp
-Ow0KDQpib29sIGhmc19ibm9kZV9uZWVkX3plcm9vdXQoc3RydWN0IGhmc19idHJlZSAqdHJlZSkN
-CnsNCiAgICAgICAgc3RydWN0IHN1cGVyX2Jsb2NrICpzYiA9IHRyZWUtPmlub2RlLT5pX3NiOw0K
-ICAgICAgICBzdHJ1Y3QgaGZzcGx1c19zYl9pbmZvICpzYmkgPSBIRlNQTFVTX1NCKHNiKTsNCiAg
-ICAgICAgY29uc3QgdTMyIHZvbHVtZV9hdHRyID0gYmUzMl90b19jcHUoc2JpLT5zX3ZoZHItPmF0
-dHJpYnV0ZXMpOw0KDQogICAgICAgIHJldHVybiB0cmVlLT5jbmlkID09IEhGU1BMVVNfQ0FUX0NO
-SUQgJiYNCiAgICAgICAgICAgICAgICB2b2x1bWVfYXR0ciAmIEhGU1BMVVNfVk9MX1VOVVNFRF9O
-T0RFX0ZJWDsNCn0gICAgICAgICAgICAgICAgICAgICAgICAgICAgDQoNClNvIGRvIHdlIG5lZWQg
-dG8gY2hhbmdlIGl0IHRvDQogDQoJaWYgKHRyZWUtPmNuaWQgPT0gSEZTX0NBVF9DTklEKQ0KCQlo
-ZnNfYm5vZGVfY2xlYXIobm9kZSwgMCwgdHJlZS0+bm9kZV9zaXplKTsNCg0Kb3Igc29tZXRoaW5n
-IGVsc2U/DQoNClRoeCwNCllhbmd0YW8NCg==
+On Thu 01-05-25 18:25:26, Lorenzo Stoakes wrote:
+> During the mmap() of a file-backed mapping, we invoke the underlying driver
+> file's mmap() callback in order to perform driver/file system
+> initialisation of the underlying VMA.
+> 
+> This has been a source of issues in the past, including a significant
+> security concern relating to unwinding of error state discovered by Jann
+> Horn, as fixed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
+> error path behaviour") which performed the recent, significant, rework of
+> mmap() as a whole.
+> 
+> However, we have had a fly in the ointment remain - drivers have a great
+> deal of freedom in the .mmap() hook to manipulate VMA state (as well as
+> page table state).
+> 
+> This can be problematic, as we can no longer reason sensibly about VMA
+> state once the call is complete (the ability to do - anything - here does
+> rather interfere with that).
+> 
+> In addition, callers may choose to do odd or unusual things which might
+> interfere with subsequent steps in the mmap() process, and it may do so and
+> then raise an error, requiring very careful unwinding of state about which
+> we can make no assumptions.
+> 
+> Rather than providing such an open-ended interface, this series provides an
+> alternative, far more restrictive one - we expose a whitelist of fields
+> which can be adjusted by the driver, along with immutable state upon which
+> the driver can make such decisions:
+> 
+> struct vm_area_desc {
+> 	/* Immutable state. */
+> 	struct mm_struct *mm;
+> 	unsigned long start;
+> 	unsigned long end;
+> 
+> 	/* Mutable fields. Populated with initial state. */
+> 	pgoff_t pgoff;
+> 	struct file *file;
+> 	vm_flags_t vm_flags;
+> 	pgprot_t page_prot;
+> 
+> 	/* Write-only fields. */
+> 	const struct vm_operations_struct *vm_ops;
+> 	void *private_data;
+> };
+> 
+> The mmap logic then updates the state used to either merge with a VMA or
+> establish a new VMA based upon this logic.
+> 
+> This is achieved via new file hook .mmap_prepare(), which is, importantly,
+> invoked very early on in the mmap() process.
+> 
+> If an error arises, we can very simply abort the operation with very little
+> unwinding of state required.
+
+Looks sensible. So is there a plan to transform existing .mmap hooks to
+.mmap_prepare hooks? I agree that for most filesystems this should be just
+easy 1:1 replacement and AFAIU this would be prefered?
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
