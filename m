@@ -1,68 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-47884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD98DAA68DB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 04:47:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71FB2AA68ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 05:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 616DA5A7EF2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 02:46:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2406E1B6196C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 03:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 636A718C011;
-	Fri,  2 May 2025 02:47:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uA2+3X0Y"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092A1149C4A;
+	Fri,  2 May 2025 03:01:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB74A17BB6;
-	Fri,  2 May 2025 02:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0938A33F7
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 03:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746154022; cv=none; b=iCrkbVXAziWqXos/SYvvf1kfl0fobe3yR0m28/gpR5M+O1EOjLbjNB04z0FB989+o+4mDiI+qt2dYJURFYvTvbA1TLm36UGWnOhpNcMKe4S6lzs0uAMVUd1thM2jVHtK0EJRXmCfWHhBDDDtc0vUlC1xU12WAMq94yXjosypZKk=
+	t=1746154896; cv=none; b=shKoyc/qnzrJSDbgDJAC+2EB+HQ5RHuQrSuBYHqBeQBwkQvTLobO4bl/r2qFu0M/GS6UgWY+FrVHznDuK5by6X4kQbDNrVpXRH0D2GBjK2y89v3Iyo8eoIqi8Csir3mEI6AEn+mknzcglrqCE+EFraaGixet+lNOZh5vSRP0178=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746154022; c=relaxed/simple;
-	bh=kCsuUYT/SjUQVrPNwt+MDCVPrSpdg5Uljxu8zKa+2bg=;
+	s=arc-20240116; t=1746154896; c=relaxed/simple;
+	bh=hJXX/RPHrJxrJn8ATlbZPgs/xNKoJm8YK+BH/tr3dys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e5lkxymeUaZO+CJ9uERzDsMTkxTorTyvdmnZXfxGaXQdpKwkIugTrsO3+7i7z7MhiZBZhUDp4QXbUnBjnHxf2F9fb/lyzpJNfmF3/kZiym3dbBiB8lzGk18V25uhuoGoBcpaQQDAbzX9Ye2vhDAz2StJfsrhEnkJI/pIaVaaL6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uA2+3X0Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 270FCC4CEE3;
-	Fri,  2 May 2025 02:47:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746154022;
-	bh=kCsuUYT/SjUQVrPNwt+MDCVPrSpdg5Uljxu8zKa+2bg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uA2+3X0YwVrQUFVA9HsqyCw5af9OMSANt0To2/hJS+SeOWEthCCcE5nlBXU8PPQQw
-	 2G9h7L18fn1sGbCjOfnE86TLGT2X/AACZaIThdUgIPdnL85HHiLf1eQIkloGdR5Q5C
-	 V5cKY+g/KJ7yKlGJKd9+nsWawOer6r/ApOZJthha6P1IToRMij8G+oTrZ1taauF2DG
-	 QSSXC1uJZM0rSE4hb5oKG+9VUensoClaZkRBbzWYu2P2SiMk0orkiRFX5YAnbgWaBM
-	 hKobl+lHiuMGVdDxmoNzzDD5Pl/lI9z1PPKDI1UsyGfSlsJcNSKp9nxCKrD+91KPZ6
-	 pFuHK50PMq6fg==
-Date: Thu, 1 May 2025 19:46:59 -0700
-From: Kees Cook <kees@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Matthew Brost <matthew.brost@intel.com>,
-	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
-	Christian Koenig <christian.koenig@amd.com>,
-	Somalapuram Amaranath <Amaranath.Somalapuram@amd.com>,
-	Huang Rui <ray.huang@amd.com>,
-	Matthew Auld <matthew.auld@intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2] drm/ttm: Silence randstruct warning about casting
- struct file
-Message-ID: <202505011944.E35A427@keescook>
-References: <20250502002437.it.851-kees@kernel.org>
- <aBQqOCQZrHBBbPbL@lstrano-desk.jf.intel.com>
- <20250502023447.GV2023217@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0gGGxUv58EWZVueKy1Ub5gCEzt1u5WDJY/D9fNM60puInjBCVIWhrsioXXQN6/7MY4oGo3GMO1fZq4rgYeYRNo+cY4gznzW1CyFVEC4R/vz6hCKISPzXdmIccWlto+mtMjrpXGB1wCFGWwo9hr3YjPNtQ6cXRJrDs9jgdXb2UY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
+Received: from trampoline.thunk.org (pool-108-26-156-120.bstnma.fios.verizon.net [108.26.156.120])
+	(authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 542318gb012316
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 1 May 2025 23:01:09 -0400
+Received: by trampoline.thunk.org (Postfix, from userid 15806)
+	id 8483D2E00E9; Thu, 01 May 2025 23:01:08 -0400 (EDT)
+Date: Thu, 1 May 2025 23:01:08 -0400
+From: "Theodore Ts'o" <tytso@mit.edu>
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "frank.li@vivo.com" <frank.li@vivo.com>,
+        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "slava@dubeyko.com" <slava@dubeyko.com>
+Subject: Re: =?utf-8?B?5Zue5aSNOiAg5Zue5aSNOiAg5Zue?=
+ =?utf-8?B?5aSNOiDlm57lpI06?= HFS/HFS+ maintainership action items
+Message-ID: <20250502030108.GC205188@mit.edu>
+References: <7f81ec6af1c0f89596713e144abd89d486d9d986.camel@physik.fu-berlin.de>
+ <787a6449b3ba3dce8c163b6e5b9c3d1ec1b302e4.camel@ibm.com>
+ <TYZPR06MB527574C2A8265BF6912994E6E8842@TYZPR06MB5275.apcprd06.prod.outlook.com>
+ <84ebd3fb27957d926fc145a28b38c1ac737c5953.camel@physik.fu-berlin.de>
+ <SEZPR06MB5269CBE385E73704B368001AE8842@SEZPR06MB5269.apcprd06.prod.outlook.com>
+ <d35a7b6e8fce1e894e74133d7e2fbe0461c2d0a5.camel@ibm.com>
+ <SEZPR06MB5269BB960025304C687D6270E8842@SEZPR06MB5269.apcprd06.prod.outlook.com>
+ <97cd591a7b5a2f8e544f0c00aeea98cd88f19349.camel@ibm.com>
+ <SEZPR06MB52699F3D7B651C40266E4445E8872@SEZPR06MB5269.apcprd06.prod.outlook.com>
+ <7b76ad938f586658950d2e878759d9cbcd8644e1.camel@ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -71,47 +66,21 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250502023447.GV2023217@ZenIV>
+In-Reply-To: <7b76ad938f586658950d2e878759d9cbcd8644e1.camel@ibm.com>
 
-On Fri, May 02, 2025 at 03:34:47AM +0100, Al Viro wrote:
-> On Thu, May 01, 2025 at 07:13:12PM -0700, Matthew Brost wrote:
-> > On Thu, May 01, 2025 at 05:24:38PM -0700, Kees Cook wrote:
-> > > Casting through a "void *" isn't sufficient to convince the randstruct
-> > > GCC plugin that the result is intentional. Instead operate through an
-> > > explicit union to silence the warning:
-> > > 
-> > > drivers/gpu/drm/ttm/ttm_backup.c: In function 'ttm_file_to_backup':
-> > > drivers/gpu/drm/ttm/ttm_backup.c:21:16: note: randstruct: casting between randomized structure pointer types (ssa): 'struct ttm_backup' and 'struct file'
-> > >    21 |         return (void *)file;
-> > >       |                ^~~~~~~~~~~~
-> > > 
-> > > Suggested-by: Matthew Brost <matthew.brost@intel.com>
-> > 
-> > I forgot the policy if suggest-by but will add:
-> > Reviewed-by: Matthew Brost <matthew.brost@intel.com>
-> > 
-> > Thomas was out today I suspect he will look at this tomorrow when he is
-> > back too.
-> 
-> [fsdevel and the rest of VFS maintainers Cc'd]
-> 
-> NAKed-by: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> Reason: struct file should *NOT* be embedded into other objects without
-> the core VFS being very explicitly aware of those.  The only such case
-> is outright local to fs/file_table.c, and breeding more of those is
-> a really bad idea.
-> 
-> Don't do that.  Same goes for struct {dentry, super_block, mount}
-> in case anyone gets similar ideas.
+Hey, in case it would be helpfui, I've added hfs support to the
+kvm-xfstests/gce-xfstests[1] test appliance.  Following the
+instructions at [2], you can now run "kvm-xfstests -c hfs -g auto" to
+run all of the tests in the auto group.  If you want to replicate the
+failure in generic/001, you could run "kvm-fstests -c hfs generic/001".
 
-Well, in that case, the NAK should be against commit e7b5d23e5d47
-("drm/ttm: Provide a shmem backup implementation"), but that looks to
-have had 15 revisions already...
+[1] http://thunk.org/gce-xfstests
+[2] https://github.com/tytso/xfstests-bld/blob/master/Documentation/kvm-quickstart.md
 
-But I will just back away slowly now. I was just fixing a warning
-introduced by it. :)
+Your IBM colleages Ritesh Harjani and Ojaswin Mujoo use this framework
+for testing ext4, and have contributed towards this test framework.
+So if you have any questions, you could reach out to them.  I'm quite
+willing to help as well, of course!
 
--- 
-Kees Cook
+					- Ted
 
