@@ -1,212 +1,187 @@
-Return-Path: <linux-fsdevel+bounces-47922-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-47924-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC68AA731E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 15:15:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABC5EAA736F
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 15:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E4EF984E56
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 13:15:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF36E1C04FF0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 May 2025 13:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CB022550A6;
-	Fri,  2 May 2025 13:15:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CE22561CC;
+	Fri,  2 May 2025 13:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wzzqh8a9"
+	dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b="Pc93X485";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SbpPpx23"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11D8254AEE
-	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 13:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73232561C3
+	for <linux-fsdevel@vger.kernel.org>; Fri,  2 May 2025 13:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746191735; cv=none; b=qkBMmRtnes+s5jYHsGFrTnzIn5RVCDw2xjsG6cWk8s1VPJHQ69IIHPvJB4jjelLjtpqmm1ZIAaEOdcbnmJW45h19YP3bxZTdkWmjT9oyq6dwctLuBjeLDaf9pY95dPhxnHO1vtjGnwbAe3kXX3FtjkbvlBRqUbS5aqDytKhSQQs=
+	t=1746192156; cv=none; b=SViJd+l5+PAyT+Ec0bNQ3eeaagA/hbhikFlXKiYMNW4f+wDWD0DOxfyUbqnNJThxLutroUuTyEHUnJAxzWDIGmphNnQETElbxsN3mooAnQCpFoG23Dy8u5Pij8S4ZQabbtCFV6aUNK5uT7/YRKggTU0v4Q10GU9DGmlBRM55DV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746191735; c=relaxed/simple;
-	bh=jJejY/kf7IDqaZNybWSSFUeVHRlYJ/plDhZW6vp3vyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sxvN2qgVf/JOO2xFXCUC3khBkTNvC7Ik+84HhxdU9P2VKpryXhsajy4OCZs44IvfBJJ1Jvbwe4dPiX5bv2yCN5TE4r2vUqxXML4OuFMNj0OQaPRZPl1W7uNUkfTz73xdl/BYWU+/hUJHXQMjC4tcvgK5hYHyKIldHlNU1quVNWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wzzqh8a9; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746191732;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Bl9xS8/zrnkeUjZjg41gkZkBRahrSQQdcDdXOBJn19Y=;
-	b=Wzzqh8a9hIEzluYr9e6iNw+kPh74lbuFRd0i4FuN5uQyiWCINDYBUi+F5J4LpnTVqj4Hbt
-	3qQ97e2mhmN81SPj45aRGQrSs5OceQeNtEto4woeM3iUE05fy9GfQ5PGCIzrxR0HLHz62s
-	SxO7VbRu47BdBuLzgi6dqjWaRSHBONA=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-244-9IurcSpxOBqP51bcApkz4g-1; Fri,
- 02 May 2025 09:15:31 -0400
-X-MC-Unique: 9IurcSpxOBqP51bcApkz4g-1
-X-Mimecast-MFC-AGG-ID: 9IurcSpxOBqP51bcApkz4g_1746191730
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F891195608E;
-	Fri,  2 May 2025 13:15:30 +0000 (UTC)
-Received: from bfoster (unknown [10.22.64.112])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 871B1195608D;
-	Fri,  2 May 2025 13:15:29 +0000 (UTC)
-Date: Fri, 2 May 2025 09:18:40 -0400
-From: Brian Foster <bfoster@redhat.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH 6/6] iomap: rework iomap_write_begin() to return folio
- offset and length
-Message-ID: <aBTGMGWjnVZ3lP4d@bfoster>
-References: <20250430190112.690800-1-bfoster@redhat.com>
- <20250430190112.690800-7-bfoster@redhat.com>
- <20250501222229.GL25675@frogsfrogsfrogs>
+	s=arc-20240116; t=1746192156; c=relaxed/simple;
+	bh=wVYRuXNWvXPFFKnnfDz3wCjx48iLAjedm1kTXCi4C00=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Oaa4bIqgmfDeaAh+diWRVsrS7y4IHrGnMhgqupu7JxciFnWwLeQUslk14PII4POz6BrgGI9jxvx6zT5COHxM17/hZKefj8koEPx3KLw5iJKkd61s1SQHzMzJtbgfXj6+12qRrWoHbS9Cu5gvjnrG5UsgEMdiyBQepTfbeTVdTzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com; spf=pass smtp.mailfrom=bsbernd.com; dkim=pass (2048-bit key) header.d=bsbernd.com header.i=@bsbernd.com header.b=Pc93X485; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SbpPpx23; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bsbernd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bsbernd.com
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.stl.internal (Postfix) with ESMTP id B0CA411401CA;
+	Fri,  2 May 2025 09:22:32 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Fri, 02 May 2025 09:22:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bsbernd.com; h=
+	cc:content-transfer-encoding:content-type:content-type:date:date
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1746192152;
+	 x=1746278552; bh=1R64tR7/yI77hMx4+u564pCl17JPquewAAB4WlNMWGQ=; b=
+	Pc93X4853PVVPbGWlOuQL0znI6VsJSdKCkazEP0dX7nzbwmu+wIq4HPHzNE120HA
+	GwcQwo/NZN+NwcgY7OHMnsWgeLy7slG0czrmK4HxVNu5SxqRI5Z2v/6CNNiAERo4
+	UWdTTTwBkQLYatcXRKwhlk8Gv06NvtXeN/WZK75WMiImQmi2cuoCO1B7fg0TRR8a
+	a56/+LtrjE3orW244gYFWFwZNsRlRQCQ/3LyclCCLIlQOM0uOCX/CseC7OTtqnhl
+	EDWCIpfD6TsAbamGzNAyBnAACcKZON4rEprim5YXFB5+ayt1/+tDL0LiniNGX4cC
+	Ik40cweICT7sOAiaGn+XyA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-transfer-encoding:content-type
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
+	:x-me-sender:x-sasl-enc; s=fm3; t=1746192152; x=1746278552; bh=1
+	R64tR7/yI77hMx4+u564pCl17JPquewAAB4WlNMWGQ=; b=SbpPpx233Jv6k7Mud
+	F+SMt9iq/C09pSp4/vXuvtVkfnq+3IzInRLI2bBZzN8732/j9zY3ULQmK/HeuwyM
+	EUA7p+B2dNzN14jLxCdLssxP0rJm7BX+rRdkHM/hAoDtOE1yB45+GwjekJ6sPQ1n
+	EwchygNeAKX/5oWO4clL4DBhVy6feB3/evL7fG+94LRDxgOJ6+o+k8n+rmkvR+Nn
+	W4f21yGvNgmAK9fWz9nO4ZM5omXt8eGVlGxCdjRgqRHKhm615aN3eLKe2zejxg5D
+	BTHCaJA8tJaiTvME+Hkw4/JBCMAM8e3ytEpByhNY6xjbACn841qGKrAovxSxkJ0r
+	V+ReA==
+X-ME-Sender: <xms:F8cUaNNa52URRgAWYkSNnIa4SFAbUaKaIoAfWPzZ2HQrfBdEH42GJA>
+    <xme:F8cUaP9ZlTubdpBG9ngcXEH6Rg5tk4uGT1RbrD_D1AbD05gSHAdLmEqWbt9QvEsks
+    J4SUzl6t4Gp_Upp>
+X-ME-Received: <xmr:F8cUaMTD5p0ojJyUP8sM2KWMPO82BBaDIkRev9ZJZmIf_WwkyjtrlHV25KepMPh3nfF9JpTDhdAeLKMgosxzNorHkmOVLRj7pql_VqMBruyxfEPAayDg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjedvheehucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepuegvrhhnugcuufgthhhusggvrhhtuceosggvrhhnugessghssggvrh
+    hnugdrtghomheqnecuggftrfgrthhtvghrnhepvdellefhuefghedugfefteeuffejgfet
+    hfeuleegueethfegffegueffteehgeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepsggvrhhnugessghssggvrhhnugdrtghomhdpnhgspghr
+    tghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhishesrhgvug
+    hhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopegrmhhirhejfehilhesghhmrghilhdrtghomh
+    dprhgtphhtthhopegthhgvnhhlihhngihurghnsehunhhiohhnthgvtghhrdgtohhm
+X-ME-Proxy: <xmx:F8cUaJvetkTLhhOCQPwjfJ_kHtUKaToz2vnxNSx8oEChmd6Jh4nu2A>
+    <xmx:F8cUaFfOA2sRlIe4fneAo3ewiDIf2B_gjblSEvC3RiVRciIChOUFZA>
+    <xmx:F8cUaF2hGyeYSMndS1OxMU_ONx3o2fLZ8DkJ21gj7xbUZBUGlpX_tA>
+    <xmx:F8cUaB_UFlQV9IWxaOLv2lgCY8Z1GszU0Dsba7RNAfHE1LTgeAFwUA>
+    <xmx:GMcUaFAGkF0uVam20Ntv3g8AS6qZ8bWV7ct_MKVcUbhmwkBiV8P_n_AR>
+Feedback-ID: i5c2e48a5:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 2 May 2025 09:22:31 -0400 (EDT)
+Message-ID: <ec87f7f4-5c12-4e71-952c-861f67dc4603@bsbernd.com>
+Date: Fri, 2 May 2025 15:22:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250501222229.GL25675@frogsfrogsfrogs>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: CAP_SYS_ADMIN restriction for passthrough fds (fuse)
+To: Allison Karlitskaya <lis@redhat.com>, linux-fsdevel@vger.kernel.org,
+ Amir Goldstein <amir73il@gmail.com>, Chen Linxuan <chenlinxuan@uniontech.com>
+References: <CAOYeF9V_FM+0iZcsvi22XvHJuXLXP6wUYPwRYfwVFThajww9YA@mail.gmail.com>
+From: Bernd Schubert <bernd@bsbernd.com>
+Content-Language: en-US, de-DE, fr
+In-Reply-To: <CAOYeF9V_FM+0iZcsvi22XvHJuXLXP6wUYPwRYfwVFThajww9YA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 01, 2025 at 03:22:29PM -0700, Darrick J. Wong wrote:
-> On Wed, Apr 30, 2025 at 03:01:12PM -0400, Brian Foster wrote:
-> > iomap_write_begin() returns a folio based on current pos and
-> > remaining length in the iter, and each caller then trims the
-> > pos/length to the given folio. Clean this up a bit and let
-> > iomap_write_begin() return the trimmed range along with the folio.
-> > 
-> > Signed-off-by: Brian Foster <bfoster@redhat.com>
-> > ---
-> >  fs/iomap/buffered-io.c | 26 +++++++++++++++-----------
-> >  1 file changed, 15 insertions(+), 11 deletions(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index d3b30ebad9ea..2fde268c39fc 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -793,15 +793,22 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
-> >  	return iomap_read_inline_data(iter, folio);
-> >  }
-> >  
-> > -static int iomap_write_begin(struct iomap_iter *iter, size_t len,
-> > -		struct folio **foliop)
-> > +/*
-> > + * Grab and prepare a folio for write based on iter state. Returns the folio,
-> > + * offset, and length. Callers can optionally pass a max length *plen,
-> > + * otherwise init to zero.
-> > + */
-> > +static int iomap_write_begin(struct iomap_iter *iter, struct folio **foliop,
-> > +		size_t *poffset, u64 *plen)
+
+
+On 5/2/25 10:16, Allison Karlitskaya wrote:
+> hi,
 > 
-> Hmm, is this offset and length supposed to be bytes within the folio?
-> I find it a little odd that plen would be a u64 then, unless we're
-> preparing for folios that huge?  Or is that just to avoid integer
-> truncation issues?
+> Please excuse me if these are dumb questions.  I'm not great at this stuff. :)
 > 
-
-It was more the latter.. it's an input/output param for callers that use
-iomap_length(). That returns a u64, so just trying to keep things
-consistent. I suppose we could break the function decl into one param
-per line with "in/out" type comments if you think that is useful..?
-
-Brian
-
-> --D
+> In fuse_backing_open() there's a check with an interesting comment:
 > 
-> >  {
-> >  	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
-> >  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> >  	loff_t pos = iter->pos;
-> > +	u64 len = min_t(u64, SIZE_MAX, iomap_length(iter));
-> >  	struct folio *folio;
-> >  	int status = 0;
-> >  
-> > +	len = *plen > 0 ? min_t(u64, len, *plen) : len;
-> >  	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
-> >  	if (srcmap != &iter->iomap)
-> >  		BUG_ON(pos + len > srcmap->offset + srcmap->length);
-> > @@ -833,8 +840,7 @@ static int iomap_write_begin(struct iomap_iter *iter, size_t len,
-> >  		}
-> >  	}
-> >  
-> > -	if (pos + len > folio_pos(folio) + folio_size(folio))
-> > -		len = folio_pos(folio) + folio_size(folio) - pos;
-> > +	pos = iomap_trim_folio_range(iter, folio, poffset, &len);
-> >  
-> >  	if (srcmap->type == IOMAP_INLINE)
-> >  		status = iomap_write_begin_inline(iter, folio);
-> > @@ -847,6 +853,7 @@ static int iomap_write_begin(struct iomap_iter *iter, size_t len,
-> >  		goto out_unlock;
-> >  
-> >  	*foliop = folio;
-> > +	*plen = len;
-> >  	return 0;
-> >  
-> >  out_unlock:
-> > @@ -967,7 +974,7 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
-> >  			break;
-> >  		}
-> >  
-> > -		status = iomap_write_begin(iter, bytes, &folio);
-> > +		status = iomap_write_begin(iter, &folio, &offset, &bytes);
-> >  		if (unlikely(status)) {
-> >  			iomap_write_failed(iter->inode, iter->pos, bytes);
-> >  			break;
-> > @@ -975,7 +982,7 @@ static int iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
-> >  		if (iter->iomap.flags & IOMAP_F_STALE)
-> >  			break;
-> >  
-> > -		pos = iomap_trim_folio_range(iter, folio, &offset, &bytes);
-> > +		pos = iter->pos;
-> >  
-> >  		if (mapping_writably_mapped(mapping))
-> >  			flush_dcache_folio(folio);
-> > @@ -1295,14 +1302,12 @@ static int iomap_unshare_iter(struct iomap_iter *iter)
-> >  		bool ret;
-> >  
-> >  		bytes = min_t(u64, SIZE_MAX, bytes);
-> > -		status = iomap_write_begin(iter, bytes, &folio);
-> > +		status = iomap_write_begin(iter, &folio, &offset, &bytes);
-> >  		if (unlikely(status))
-> >  			return status;
-> >  		if (iomap->flags & IOMAP_F_STALE)
-> >  			break;
-> >  
-> > -		iomap_trim_folio_range(iter, folio, &offset, &bytes);
-> > -
-> >  		ret = iomap_write_end(iter, bytes, bytes, folio);
-> >  		__iomap_put_folio(iter, bytes, folio);
-> >  		if (WARN_ON_ONCE(!ret))
-> > @@ -1367,7 +1372,7 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
-> >  		bool ret;
-> >  
-> >  		bytes = min_t(u64, SIZE_MAX, bytes);
-> > -		status = iomap_write_begin(iter, bytes, &folio);
-> > +		status = iomap_write_begin(iter, &folio, &offset, &bytes);
-> >  		if (status)
-> >  			return status;
-> >  		if (iter->iomap.flags & IOMAP_F_STALE)
-> > @@ -1376,7 +1381,6 @@ static int iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
-> >  		/* warn about zeroing folios beyond eof that won't write back */
-> >  		WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
-> >  
-> > -		iomap_trim_folio_range(iter, folio, &offset, &bytes);
-> >  		folio_zero_range(folio, offset, bytes);
-> >  		folio_mark_accessed(folio);
-> >  
-> > -- 
-> > 2.49.0
-> > 
-> > 
+>     /* TODO: relax CAP_SYS_ADMIN once backing files are visible to lsof */
+>     res = -EPERM;
+>     if (!fc->passthrough || !capable(CAP_SYS_ADMIN))
+>         goto out;
+> 
+> I've done some research into this but I wasn't able to find any
+> original discussion about what led to this, or about current plans to
+> "relax" this restriction -- only speculation about it being a
+> potential mechanism to "hide" open files.
+> 
+> It would be nice to have an official story about this, on the record.
+> What's the concrete problem here, and what would it take to solve it?
+> Are there plans?  Is help required?  Would it be possible to relax the
+> check to having CAP_SYS_ADMIN in the userns which owns the mount (ie:
+> ns_capable(...))?  What would it take to do that?  It would be
+> wonderful to be able to use this inside of containers.
+> 
+> The most obvious guess about direction (based on the comment) is that
+> we need to do something to make sure that fds that are registered with
+> backing IDs remain visible in the output of `lsof` even after the
+> original fd is closed?
+> 
+> Thanks in advance for any information you can give.  Even if the
+> answer is "no, it's impossible" it would be great to have that on
+> record.
+
+There is a private discussion, Chen and Amir are discussing exactly this topic.
+
+<quote>
+
+>>Chen
+>>    Additionally, according to previous discussions, backing files are >somewhat
+>>    similar to the fixed files in `io_uring`.
+>>    If it is considered acceptable for the fixed files in `io_uring` to
+>>    have their status visible in `fdinfo`,
+>>    then exposing backing file information via `/sys/fs/fuse/connections`
+>>    also seems like a feasible approach.
+
+>Amir
+> Yes I agree.
+> That sounds like a good approach to expose the backing files to userspace and allow admin to force close then by aborting the connection.
+
+> In fact if you want you can start with that.
+> I don't think it will be controversial.
+> I think this will be useful step towards relaxing cap sys admin.
+
+</quote>
+
+
+I think it would be good to document all these details somewhere,
+really hard to follow all of it.
+
+
+Thanks,
+Bernd
+
+
+
+
+
+
+
+
+
+> 
+> Cheers
+> 
+> lis
+> 
 > 
 
 
