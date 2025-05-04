@@ -1,208 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-48015-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48016-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 771E4AA891C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 May 2025 21:15:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFAAAA89FC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 01:24:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0491890273
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 May 2025 19:15:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EB127A89D2
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 May 2025 23:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFC8725760;
-	Sun,  4 May 2025 19:15:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19E81C6FF4;
+	Sun,  4 May 2025 23:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="NHEF4apx";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="t0/Ck9c2"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="dvjYfnXN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB716F30C
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 May 2025 19:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6F4D5579E
+	for <linux-fsdevel@vger.kernel.org>; Sun,  4 May 2025 23:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746386107; cv=none; b=BJVRh4w90+Z8QkWXXvIZePw2QI4aC63EC9iOKcUzdRAcH4wPQuzYnr7FYcp5Vv2tkODnTH35OuNPzTAJGHdMm4hJ1hkcEptJYu0A/2AC63BEZB1Zcc3llM8txKVYQ03qUE2f2S8fB+Aw4KaeIdZG2J1Sr030aiIm5en3+4WGwyg=
+	t=1746401088; cv=none; b=QLwBB05jQyUyT5DnRKUTnD2X/z8S4KgrPs8qxt4qTMgX4gWZqsMxs9QqlCGuI7w7Q/qZ28vSbo1nnLj0O8K4WnKJxLXgz5AlP8G5KWyw+XRbuGvozCpf0ppLcrtUEGcPj0SBrp3CmvKFROF1/DGCL5UfX3+825bhqIl4rgdmIak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746386107; c=relaxed/simple;
-	bh=jIk9ZPBALwecQqJd49UIFMtxHCi3vnw5nZSZYq0bTTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uK3aQ3ShDxxe9y5FJleVf7KT3EPR3hk1oyy8hfWvk5WEDaWhSBShCpm3g6lOqBpO1c7UE7LBF5YPtb9RDQgPMuCaLjtEqiXdZ+5DU3V8ZNcaRhbif7+ga6qqbNkfImFMbVHJpxJP/skQ6wJtF3MOVbNg7czR0SvHNiKncuYiTPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=NHEF4apx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=t0/Ck9c2; arc=none smtp.client-ip=103.168.172.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id B4E27114018A;
-	Sun,  4 May 2025 15:15:03 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 04 May 2025 15:15:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1746386103;
-	 x=1746472503; bh=PgwoSh59qsf74Q8sIM8xHvUGgngtA9+FpomgeB+/JYU=; b=
-	NHEF4apxtSj089QpdehycvgnbKyYQwcSEUnkiz9BOZSkMsW4VVxp2tdZl6ULqRCx
-	9VnGZ5JaV1gXIwWKIStINh8MLudK/ubP7EpMK8Vv+fso0Il+EJVunyaQ1Jvj31Kh
-	92V2XMEYjTATOW6PYZOkGPJM4jTOTNIuxNoZEt2b42ADKNlNkT95Ep0FPmdhXKgv
-	br/izNRE/XTxAXfOSdmL1zILozltrvZBfhjL3CCNVuDLSlgeNQrEy7z98kUIZ5X0
-	HRcduBj+bnaXtn4qGXDZaycfDM972uHsjCoXjMgPosZl8wFMygnFBBjWWKm/21Ao
-	e1XkynHHwXS8QStqRWGAzw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746386103; x=
-	1746472503; bh=PgwoSh59qsf74Q8sIM8xHvUGgngtA9+FpomgeB+/JYU=; b=t
-	0/Ck9c2FHnIBUuQfVbuNHhBPHMVkfVwCUlkGrrthOZa+qhnu4LSZeMibGv7JC6Lx
-	1PlmLduSj4rlmUqXqBrJ8mbnlL2PWW4V7B9jbdyiYGO2k6SkdiDX3YH7W1CsHeDY
-	i5ZsKATdQzSDkoF05zRA2jTfSdglIscx9x0S5Cg0sfbPOAnYzEKnJmsRKXyqHVzB
-	8Aed0YOHwiYPMHvG8h/qtR5iOjyS5BNXeBa/ZpjyRDpzZpGtzdgx8wQeFaNr0CAx
-	3aPZUIToWH++lJknORQ1mDXw7DjuUjZMOcdrckfeBuw0RvLaS7E5dCwpgbnconut
-	5lmdvgYpo1Fue4gfDgj+A==
-X-ME-Sender: <xms:t7wXaB2n8ZNgXAqntpbFZSUd7rnEvvpHkgmg3qEZ2U4r1LZwYIXTSw>
-    <xme:t7wXaIFRupbcW1VyZ6RYUCio9_SbcLKGyrSIJQ8HbZXJoSNVSUUpMuzDFqskxR-I1
-    FJN7IKTjtEFUID5>
-X-ME-Received: <xmr:t7wXaB7y2oovgRujPu2WDoYEnjw34rNcf9qEd6qH2WMLIFRZt19TSpumOfmqMRklbejP_BaMGlLb0BKgiaoye8D0v6BIUaMgYCg_8WDmZwA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjeeltddvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledt
-    udfgtdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinh
-    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehj
-    lhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjvghffhhlvgiguheslh
-    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgt
-    phgrnhgurgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorh
-    hgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhm
-X-ME-Proxy: <xmx:t7wXaO12S1FkOFFTncWoxa0PacWR0nS59wlc-e8LPV7AvLyttwYwjw>
-    <xmx:t7wXaEFVus6z1S4n2ZOcl2fEzvAGhgkBDLTUIfxBFbUNCj5_cD_mmw>
-    <xmx:t7wXaP9OweRJXaA-d1CeN19x7KLLOucQTM_2jtb80XZ6dOTtlc1U8A>
-    <xmx:t7wXaBlO-XqABSF7V5oZb4QmPJBJuRzqPppsl0y3wKXBH3lZWFhwiQ>
-    <xmx:t7wXaKrtTWJY_mkbyH8ZxtsEMOGojZ1Cf9BebVepOt91IWCjZsvUBVPk>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 4 May 2025 15:15:02 -0400 (EDT)
-Message-ID: <98d5cfcb-3617-4118-a68d-d9d25e1e9aa0@fastmail.fm>
-Date: Sun, 4 May 2025 21:15:00 +0200
+	s=arc-20240116; t=1746401088; c=relaxed/simple;
+	bh=rOHxoah9cwQ3J5H/KQowvi/9Mc4DBfjzqzbwOLQ3rIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HJ8ewJ0GZapv83Kfny41YbqDb2q0tSJxA9Hot5484IDV8oWbjrwy8orEe+3CbEFiSDwhrsnYaDd6MTbHCw9JQFbOD99Y8BtEIT17LxZ/eUnto1hxDCNHC/1ND8UflFTHsvVj1mlEova+Ulp7y94iL/e94UWAoAYHaUwhYt7Q5Zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=dvjYfnXN; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=v6EoHCIevqCTqTDfvsK+4VK/BjZpUFy/AvhnLIsuVYs=; b=dvjYfnXNGT6LdoyvZZW6tg+MYs
+	va6KhnHgg5K06XBsqiDyL0EGJPeIV4h0IWyRxhWVNp5jYCkyIxNehUMU8HRy+SbqA8Ccq6vsKPCPb
+	pWjJqHnBufIg8YQj7YobMLsKl1DtrHGZHZXQhHMo6o4bx4KnbdDJ9ibOJhVMGm20dFCYw2h8OG85Y
+	NM8k/ntIhJ/TEm+Rxof7xkxL1SW3lmlRW8sDcMJdLtNzNqkKcfUVxeuRtzYUw+0jOIW8nGv95T6HF
+	YLNnkllaLR/MHRWtMzb7XNNjEp+OM/8NfP7Jwqwm8Zg1hN1l7VH2VFdkGMCdpIRsUgilbSXTIzZhD
+	JsIefd8Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uBihN-00000000IGr-16mG;
+	Sun, 04 May 2025 23:24:41 +0000
+Date: Mon, 5 May 2025 00:24:41 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [RFC] MNT_LOCKED vs. finish_automount()
+Message-ID: <20250504232441.GC2023217@ZenIV>
+References: <20250501201506.GS2023217@ZenIV>
+ <87plgq8igd.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/11] fuse: optimize direct io large folios processing
-To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu
-Cc: linux-fsdevel@vger.kernel.org, jlayton@kernel.org,
- jefflexu@linux.alibaba.com, josef@toxicpanda.com, willy@infradead.org,
- kernel-team@meta.com
-References: <20250426000828.3216220-1-joannelkoong@gmail.com>
- <20250426000828.3216220-11-joannelkoong@gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250426000828.3216220-11-joannelkoong@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87plgq8igd.fsf@email.froward.int.ebiederm.org>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-
-
-On 4/26/25 02:08, Joanne Koong wrote:
-> Optimize processing folios larger than one page size for the direct io
-> case. If contiguous pages are part of the same folio, collate the
-> processing instead of processing each page in the folio separately.
+On Fri, May 02, 2025 at 10:46:26PM -0500, Eric W. Biederman wrote:
+> Al Viro <viro@zeniv.linux.org.uk> writes:
 > 
-> Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
-> Reviewed-by: Jeff Layton <jlayton@kernel.org>
-
-Reviewed-by: Bernd Schubert <bschubert@ddn.com>
-
-> ---
->  fs/fuse/file.c | 55 +++++++++++++++++++++++++++++++++++++-------------
->  1 file changed, 41 insertions(+), 14 deletions(-)
+> > 	Back in 2011, when ->d_automount() had been introduced,
+> > we went with "stepping on NFS referral, etc., has the submount
+> > inherit the flags of parent one" (with the obvious exceptions
+> > for internal-only flags).  Back then MNT_LOCKED didn't exist.
+> >
+> > 	Two years later, when MNT_LOCKED had been added, an explicit
+> > "don't set MNT_LOCKED on expirable mounts when propagating across
+> > the userns boundary; their underlying mountpoints can be exposed
+> > whenever the original expires anyway".  Same went for root of
+> > subtree attached by explicit mount --[r]bind - the mountpoint
+> > had been exposed before the call, after all and for roots of
+> > any propagation copies created by such (same reason).  Normal mount
+> > (created by do_new_mount()) could never get MNT_LOCKED to start with.
+> >
+> > 	However, mounts created by finish_automount() bloody well
+> > could - if the parent mount had MNT_LOCKED on it, submounts would
+> > inherited it.  Even if they had been expirable.  Moreover, all their
+> > propagation copies would have MNT_LOCKED stripped out.
+> >
+> > 	IMO this inconsistency is a bug; MNT_LOCKED should not
+> > be inherited in finish_automount().
+> >
+> > 	Eric, is there something subtle I'm missing here?
 > 
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 9a31f2a516b9..61eaec1c993b 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1490,7 +1490,8 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
->  	}
->  
->  	while (nbytes < *nbytesp && nr_pages < max_pages) {
-> -		unsigned nfolios, i;
-> +		struct folio *prev_folio = NULL;
-> +		unsigned npages, i;
->  		size_t start;
->  
->  		ret = iov_iter_extract_pages(ii, &pages,
-> @@ -1502,23 +1503,49 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
->  
->  		nbytes += ret;
->  
-> -		nfolios = DIV_ROUND_UP(ret + start, PAGE_SIZE);
-> +		npages = DIV_ROUND_UP(ret + start, PAGE_SIZE);
->  
-> -		for (i = 0; i < nfolios; i++) {
-> -			struct folio *folio = page_folio(pages[i]);
-> -			unsigned int offset = start +
-> -				(folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
-> -			unsigned int len = min_t(unsigned int, ret, PAGE_SIZE - start);
-> +		/*
-> +		 * We must check each extracted page. We can't assume every page
-> +		 * in a large folio is used. For example, userspace may mmap() a
-> +		 * file PROT_WRITE, MAP_PRIVATE, and then store to the middle of
-> +		 * a large folio, in which case the extracted pages could be
-> +		 *
-> +		 * folio A page 0
-> +		 * folio A page 1
-> +		 * folio B page 0
-> +		 * folio A page 3
-> +		 *
-> +		 * where folio A belongs to the file and folio B is an anonymous
-> +		 * COW page.
-> +		 */
-> +		for (i = 0; i < npages && ret; i++) {
-> +			struct folio *folio;
-> +			unsigned int offset;
-> +			unsigned int len;
-> +
-> +			WARN_ON(!pages[i]);
-> +			folio = page_folio(pages[i]);
-> +
-> +			len = min_t(unsigned int, ret, PAGE_SIZE - start);
-> +
-> +			if (folio == prev_folio && pages[i] != pages[i - 1]) {
-> +				WARN_ON(ap->folios[ap->num_folios - 1] != folio);
-> +				ap->descs[ap->num_folios - 1].length += len;
-> +				WARN_ON(ap->descs[ap->num_folios - 1].length > folio_size(folio));
-> +			} else {
-> +				offset = start + (folio_page_idx(folio, pages[i]) << PAGE_SHIFT);
-> +				ap->descs[ap->num_folios].offset = offset;
-> +				ap->descs[ap->num_folios].length = len;
-> +				ap->folios[ap->num_folios] = folio;
-> +				start = 0;
-> +				ap->num_folios++;
-> +				prev_folio = folio;
-> +			}
->  
-> -			ap->descs[ap->num_folios].offset = offset;
-> -			ap->descs[ap->num_folios].length = len;
-> -			ap->folios[ap->num_folios] = folio;
-> -			start = 0;
->  			ret -= len;
-> -			ap->num_folios++;
->  		}
-> -
-> -		nr_pages += nfolios;
-> +		nr_pages += npages;
->  	}
->  	kfree(pages);
->  
+> I don't think you are missing anything.  This looks like a pretty clear
+> cut case of simply not realizing finish_automount was special in a way
+> that could result in MNT_LOCKED getting set.
+> 
+> I skimmed through the code just a minute ago and my reading of it
+> matches your reading of it above.
+> 
+> The intended semantics of MNT_LOCKED are to not let an unprivileged user
+> see under mounts they would never be able to see under without creating
+> a mount namespace.
+> 
+> The mount point of an automount is pretty clearly something that is safe
+> to see under.  Doubly so if this is a directory that will always be
+> empty on a pseudo filesystem (aka autofs).
 
+Does anybody have objections to the following?
+
+[PATCH] finish_automount(): don't leak MNT_LOCKED from parent to child
+
+Intention for MNT_LOCKED had always been to protect the internal
+mountpoints within a subtree that got copied across the userns boundary,
+not the mountpoint that tree got attached to - after all, it _was_
+exposed before the copying.
+
+For roots of secondary copies that is enforced in attach_recursive_mnt() -
+MNT_LOCKED is explicitly stripped for those.  For the root of primary
+copy we are almost always guaranteed that MNT_LOCKED won't be there,
+so attach_recursive_mnt() doesn't bother.  Unfortunately, one call
+chain got overlooked - triggering e.g. NFS referral will have the
+submount inherit the public flags from parent; that's fine for such
+things as read-only, nosuid, etc., but not for MNT_LOCKED.
+
+This is particularly pointless since the mount attached by finish_automount()
+is usually expirable, which makes any protection granted by MNT_LOCKED
+null and void; just wait for a while and that mount will go away on its own.
+
+The minimal fix is to have do_add_mount() treat MNT_LOCKED the same
+way as other internal-only flags.  Longer term it would be cleaner to
+deal with that in attach_recursive_mnt(), but that takes a bit more
+massage, so let's go with the one-liner fix for now.
+
+Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 04a9bb9f31fa..352b4ccf1aaa 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3761,7 +3761,7 @@ static int do_add_mount(struct mount *newmnt, struct mountpoint *mp,
+ {
+ 	struct mount *parent = real_mount(path->mnt);
+ 
+-	mnt_flags &= ~MNT_INTERNAL_FLAGS;
++	mnt_flags &= ~(MNT_INTERNAL_FLAGS | MNT_LOCKED);
+ 
+ 	if (unlikely(!check_mnt(parent))) {
+ 		/* that's acceptable only for automounts done in private ns */
 
