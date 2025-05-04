@@ -1,96 +1,97 @@
-Return-Path: <linux-fsdevel+bounces-48010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AED7CAA8904
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 May 2025 20:41:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0435BAA8910
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 May 2025 20:58:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BADF3B8054
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 May 2025 18:40:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C369418941D4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  4 May 2025 18:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA06D246797;
-	Sun,  4 May 2025 18:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C88242D7E;
+	Sun,  4 May 2025 18:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="Ee1whrGl";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="wMJ+IrZm"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="pEEzGbZy";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="G7JLIyoz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-a3-smtp.messagingengine.com (fhigh-a3-smtp.messagingengine.com [103.168.172.154])
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3EC11D9A41
-	for <linux-fsdevel@vger.kernel.org>; Sun,  4 May 2025 18:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC884C96
+	for <linux-fsdevel@vger.kernel.org>; Sun,  4 May 2025 18:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746384058; cv=none; b=E+U/FlOeLqcgCvqUzctgTWPln5rbawebRrPZscHqfXYQi6X0D6OenuAAFO0C6UWfWL7fuq2bJaDM/fR2LAxaGURecTJ5kp7FM00DZLnD0BiL3PO53hSuqZwrdydu0vpXtGM9cI+OqGkmUdZM+gJ8coSlAyOVYB4kaY9GyVFTl2M=
+	t=1746385105; cv=none; b=j1vd0ZmCM2CpX2ZFGfSLb/U+lRDXF7jaxErX1XPvlvRJkXXMhtvGEujMev0qmiZTr5B+PjJW+5dwQGTMasvluZTivVDvth4CsLBfZI458bUORSA3zgFb+vyQmWqS5/0Ki4yar0SHd3ys+DkycjaqZeA/OaV8oERjmi3oKZoBmF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746384058; c=relaxed/simple;
-	bh=A6eHRFecl88uoqKyU/Kdp/1DZUad8vYKznb8z95QxT8=;
+	s=arc-20240116; t=1746385105; c=relaxed/simple;
+	bh=Inn+ZfBm0UTqysrs7hUyJoaGYL3HdZEkFL8xHwn/VXs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fO4OibBjmuqioAZSuGj2w7+hJhw+jC1NYCSH8fPqPazHrOx1jgN1J+DtlzErb/sCWrK0Auwwwa5A770Nz7V/VfP5AwX7/W3KntpqaX28iSw/F9eeDeZLIVNdzR5UhR85ibtNbxNw2K2M8yYJjYorGXAnHuHk0hLUkcswtNhCwKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=Ee1whrGl; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=wMJ+IrZm; arc=none smtp.client-ip=103.168.172.154
+	 In-Reply-To:Content-Type; b=W7etYWwIazuZ+9BRabPErf1hqw00hJBtyHn/XfU6FQMnkkaqpU1utnnsMdMzUZnVV0+mvKFAMhvFFTS2w+i/Tiyg2cA5jVDRmNSkjQuYjNCMlj1zcm3q6z263QdTFPLoKu8iOdmNOReQQcM9sUcL2bDs+Sv0psvgbNsoVoT6IGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=pEEzGbZy; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=G7JLIyoz; arc=none smtp.client-ip=103.168.172.144
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 166041140172;
-	Sun,  4 May 2025 14:40:55 -0400 (EDT)
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id 7C25E1380198;
+	Sun,  4 May 2025 14:58:22 -0400 (EDT)
 Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Sun, 04 May 2025 14:40:55 -0400
+  by phl-compute-11.internal (MEProxy); Sun, 04 May 2025 14:58:22 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
 	cc:cc:content-transfer-encoding:content-type:content-type:date
 	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1746384055;
-	 x=1746470455; bh=3D2C/jqS5EPQP/NfKZNciwDgqFZRDTqvhP4vwht7Yrc=; b=
-	Ee1whrGlelX0gSvXZNdlm8Ca5nqpC3ytAvkTdrVgd5BHhYvwUh7fF2opaCzCuODc
-	QimaekVJTL+voc0UkhwvYhdci+wKhKownf4Dw+piT8j/cRO6dGxDrXac7WwxRZrO
-	Ap875+C8OEp6ZZeF/UtngPnhgutLuo8xeXp679zqX6MQjyduX3ihfNPAmH1+5M7V
-	eCqTPwuJ9gT5iXwPvhmMiwg9U/ahLnCgq4H8lzuUUKto7FXqvyRjIOp1cPM/M/0P
-	bpeIgHLvzXxsm32ZEPsfVULE3bL1wpdOjVQr7FEBeMTeKonH5aqs32EigldDpLQA
-	ipxh/f6+jWkP+8a5KVqwvA==
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1746385102;
+	 x=1746471502; bh=/cGKzKIDGbdv9DOgwF0aU3ARIiUoVbY29ZrHMj40yiU=; b=
+	pEEzGbZyg6pHBFKv192TMDWEb0d37Zyk813XQVdu8NuM2xbfBP9wUWumeMIGRyfW
+	nMapgF4169XczzZGymsS7PN0Ge5b7BHDHGl7CkxYMDIlBFbzzhCsIWRmUZOhYC0S
+	uBwcTo4fxKP2Sqk1GsegcFWXecZgNSPs+qpFe02DEf+DT1Ld33iYjIsF4R7jYJ5f
+	RtQkoWKO4lo425tnfsf1RYJAuHH4BHhXrFl37tBspl1/dtLHic0wmAoHxfexfgsv
+	1O58vOnA1swqwNY26oX3eVhMD9LfeDBuxqyrAE1ucbc/soH+U1ym2Q4F5lUsVRLA
+	JNB/OGbixit1Sfh7ut+DMQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:content-type:date:date:feedback-id:feedback-id
 	:from:from:in-reply-to:in-reply-to:message-id:mime-version
 	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746384055; x=
-	1746470455; bh=3D2C/jqS5EPQP/NfKZNciwDgqFZRDTqvhP4vwht7Yrc=; b=w
-	MJ+IrZmVzIeBniNM4krRLy+760Wxl/ZEpgUq1Xa1Y0ufOulZWS+55Q5q+95F08vL
-	aeaK4LbjfvumIe+oCB4Cm4diwWmmGQzNMpWOfuUrEaQphMjB/u86pXdaWabPRgKF
-	3a48IX1zO2D9tdUiE3FpmOvSKe3JBajHQ06mUBoPpRwkRrSeyqDrfvXSHwDqf8k3
-	6mG6RJ5TAd6Gabznk7YUUT24tIEi2PjSTa241Z1c/ijuzWC8ygKD/P2YG0haNrb9
-	e72AJbACb4q/42ynRdPTbEAXl7pPqAG1QFyTVQt5PaaFIGXv6yWMFf92ZpOw98Et
-	9d9+M0fFqs1IFk3Fktvgw==
-X-ME-Sender: <xms:tbQXaP48NGwrSNpgKmkpPQ4IyUdxaFJIKYB8UvkTq5nDQwPZsoBdRg>
-    <xme:tbQXaE5IKMdCFKFd4olFrWLe8e-6rFiglhT_JryR8n7Spg72IA5Yuh30d9tGP9EIy
-    X82aeDeQoAzzF7W>
-X-ME-Received: <xmr:tbQXaGc1ZUBMXnPeRrQd4LSFawJWcQ_7rQ-1smY60qQlDZZOIv54aTsZlAeg_X3D5r92Vj3OnI_Zm75bLr4Nf7Rqc2KzrgFPAx9obYtSz-4>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjeekleeiucetufdoteggodetrf
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1746385102; x=
+	1746471502; bh=/cGKzKIDGbdv9DOgwF0aU3ARIiUoVbY29ZrHMj40yiU=; b=G
+	7JLIyozJnkE3TOf2cSpbwwkQVqmKpKHgcVVUYUQrqSAMQbmYbMcQS6CIy/gMJ0cY
+	pF7YEvNWPbHdi+Q0P9pzOqXuN85Abz7GGXOjYrahTUOAPbczieW5KUiCAEv1INIZ
+	56IZzfzV0UB9c1L6ZCsecNG/xiZpSWBYIwBTovmfHT8oF2dJQlgpeU+EH3u08quG
+	PO3Hr7ovh2exjBtzeitNBtBlCXldPsgqr7cEApR4jSwuwtMaizYV/dLVerXJCil1
+	4i3E765eMZQkSP3OLBuZW3wJ8sIP2xye/CCGbACJsmAH+w/LPUkOtQuDy7yn5M13
+	vQp+lUlsdtbk7y7JLo0LA==
+X-ME-Sender: <xms:zbgXaObXR0_Nw9mW3PI2nV8QgESGgNP-dFKMCMBuqb5Ykx7nn-GX7g>
+    <xme:zbgXaBatjRH9Vmihf3BLAXg-gCyI0sB9e_C2LMUnh51EhKVrK2hQT7Yzm-HJdEezO
+    AhpxdTmS0D2yIx9>
+X-ME-Received: <xmr:zbgXaI_OfF4qwJ-JER-aJPOK82yUplOkbPYb5VSmpofDV9iAR3wuAzdSKbvrhmVpxqyBl4e_0c9D5TKPJ--Teo871FbW8SJjGA2rhIZUPuk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddvjeekleelucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
     pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
     gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
     vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepvefhgfdvledt
-    udfgtdfggeelfedvheefieevjeeifeevieetgefggffgueelgfejnecuvehluhhsthgvrh
-    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdrshgthhhusggv
-    rhhtsehfrghsthhmrghilhdrfhhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhmth
-    hpohhuthdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesghhmrghilhdrtghomhdp
-    rhgtphhtthhopehmihhklhhoshesshiivghrvgguihdrhhhupdhrtghpthhtoheplhhinh
-    hugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehj
-    lhgrhihtohhnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjvghffhhlvgiguheslh
-    hinhhugidrrghlihgsrggsrgdrtghomhdprhgtphhtthhopehjohhsvghfsehtohigihgt
-    phgrnhgurgdrtghomhdprhgtphhtthhopeifihhllhihsehinhhfrhgruggvrggurdhorh
-    hgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhm
-X-ME-Proxy: <xmx:tbQXaAKz6SrnUx0r8WDQh-hTplUDbIpExG1pqphYOS20c7w3QEuAGQ>
-    <xmx:tbQXaDLIcDosEW5aYCHSDxn_YNyROrQDiZ5phvCTBFEfNgxLCQcWjg>
-    <xmx:tbQXaJzF4KDFYJJJelRsnZUCQYZgEdFEtRrvYvyowAuayTiI9ZxU-g>
-    <xmx:tbQXaPLcq1dJnRG2gIYs_liEZpNrVC3yoEFQmWOTtYXTGw-iNTFBUg>
-    <xmx:t7QXaNNHwOgV_XHgIrhqC0EklMA6PJme9HEpShaZpxLOaozfhE7ABN1K>
+    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnheptdfhieekleej
+    leelfffhveffgeekhfeihfekieeuvdetkefgudeltdegheegfefgnecuffhomhgrihhnpe
+    grrhhgshdrphgrghgvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepsggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilhdrfhhmpdhnsg
+    gprhgtphhtthhopeekpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehjohgrnhhn
+    vghlkhhoohhnghesghhmrghilhdrtghomhdprhgtphhtthhopehmihhklhhoshesshiivg
+    hrvgguihdrhhhupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
+    vghrnhgvlhdrohhrghdprhgtphhtthhopehjlhgrhihtohhnsehkvghrnhgvlhdrohhrgh
+    dprhgtphhtthhopehjvghffhhlvgiguheslhhinhhugidrrghlihgsrggsrgdrtghomhdp
+    rhgtphhtthhopehjohhsvghfsehtohigihgtphgrnhgurgdrtghomhdprhgtphhtthhope
+    ifihhllhihsehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepkhgvrhhnvghlqdht
+    vggrmhesmhgvthgrrdgtohhm
+X-ME-Proxy: <xmx:zbgXaArZbw8x5DYFsRsmeCHByzTef4bJCKWGD4S9hly7UWVuVJ68AA>
+    <xmx:zbgXaJopGg1P7Lquywc9DngMR38fJ83p_M47jmcwb6k3O7le18AYDw>
+    <xmx:zbgXaOSuYnxJUzKzxs0LuPq37iu_gLlZKzJXd_neM8MRS3fkM0pftg>
+    <xmx:zbgXaJrg8gNYOKQr77ybD_2p-27iUqsSgSg5IuZLpM5zLuyvn1tj4Q>
+    <xmx:zrgXaCY6KdUmVhROBnkUIHHADbtSiDOFWhHk4gzvbG9l0YzvwqrQqcLC>
 Feedback-ID: id8a24192:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 4 May 2025 14:40:52 -0400 (EDT)
-Message-ID: <7056a0db-106d-4a4a-8d4a-848458bd13e0@fastmail.fm>
-Date: Sun, 4 May 2025 20:40:51 +0200
+ 4 May 2025 14:58:20 -0400 (EDT)
+Message-ID: <06d9f7e9-4dc7-445b-af34-2b8e8f95951e@fastmail.fm>
+Date: Sun, 4 May 2025 20:58:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -98,93 +99,47 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 04/11] fuse: support large folios for writethrough
- writes
+Subject: Re: [PATCH v5 05/11] fuse: support large folios for folio reads
 To: Joanne Koong <joannelkoong@gmail.com>, miklos@szeredi.hu
 Cc: linux-fsdevel@vger.kernel.org, jlayton@kernel.org,
  jefflexu@linux.alibaba.com, josef@toxicpanda.com, willy@infradead.org,
  kernel-team@meta.com
 References: <20250426000828.3216220-1-joannelkoong@gmail.com>
- <20250426000828.3216220-5-joannelkoong@gmail.com>
+ <20250426000828.3216220-6-joannelkoong@gmail.com>
 From: Bernd Schubert <bernd.schubert@fastmail.fm>
 Content-Language: en-US, de-DE, fr
-In-Reply-To: <20250426000828.3216220-5-joannelkoong@gmail.com>
+In-Reply-To: <20250426000828.3216220-6-joannelkoong@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 
 
 On 4/26/25 02:08, Joanne Koong wrote:
-> Add support for folios larger than one page size for writethrough
-> writes.
+> Add support for folios larger than one page size for folio reads into
+> the page cache.
 > 
 > Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
+> Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 > Reviewed-by: Jeff Layton <jlayton@kernel.org>
+
+Reviewed-by: Bernd Schubert <bschubert@ddn.com>
+
 > ---
->  fs/fuse/file.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
+>  fs/fuse/file.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index edc86485065e..e44b6d26c1c6 100644
+> index e44b6d26c1c6..0ca3b31c59f9 100644
 > --- a/fs/fuse/file.c
 > +++ b/fs/fuse/file.c
-> @@ -1146,7 +1146,8 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
->  		size_t tmp;
->  		struct folio *folio;
->  		pgoff_t index = pos >> PAGE_SHIFT;
-> -		unsigned bytes = min(PAGE_SIZE - offset, num);
-> +		unsigned int bytes;
-> +		unsigned int folio_offset;
->  
->   again:
->  		folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
-> @@ -1159,7 +1160,10 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
->  		if (mapping_writably_mapped(mapping))
->  			flush_dcache_folio(folio);
->  
-> -		tmp = copy_folio_from_iter_atomic(folio, offset, bytes, ii);
-> +		folio_offset = ((index - folio->index) << PAGE_SHIFT) + offset;
-> +		bytes = min(folio_size(folio) - folio_offset, num);
-> +
-> +		tmp = copy_folio_from_iter_atomic(folio, folio_offset, bytes, ii);
->  		flush_dcache_folio(folio);
->  
->  		if (!tmp) {f 
-> @@ -1180,6 +1184,7 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
->  
->  		err = 0;
->  		ap->folios[ap->num_folios] = folio;
-> +		ap->descs[ap->num_folios].offset = folio_offset;
->  		ap->descs[ap->num_folios].length = tmp;
->  		ap->num_folios++;
->  
-> @@ -1187,11 +1192,11 @@ static ssize_t fuse_fill_write_pages(struct fuse_io_args *ia,
->  		pos += tmp;
->  		num -= tmp;
->  		offset += tmp;
-> -		if (offset == PAGE_SIZE)
-> +		if (offset == folio_size(folio))
->  			offset = 0;
->  
-> -		/* If we copied full page, mark it uptodate */
-> -		if (tmp == PAGE_SIZE)
-> +		/* If we copied full folio, mark it uptodate */
-> +		if (tmp == folio_size(folio))
->  			folio_mark_uptodate(folio);
-
-Here am I confused. I think tmp can be a subpart of the folio, let's say
-the folio is 2MB and somehow the again loop would iterate through the
-folio in smaller steps. So the folio would be entirely written out, but
-tmp might not be folio_size? Doesn't this need to sum up tmp for per
-folio and then use that value?  And I actually wonder if we could use
-the above "(offset == folio_size(folio)" as well. At least if the
-initial offset for a folio is 0 it should work.
-
-
-Thanks,
-Bernd
-
->  
->  		if (folio_test_uptodate(folio)) {
+> @@ -793,7 +793,7 @@ static int fuse_do_readfolio(struct file *file, struct folio *folio)
+>  	struct inode *inode = folio->mapping->host;
+>  	struct fuse_mount *fm = get_fuse_mount(inode);
+>  	loff_t pos = folio_pos(folio);
+> -	struct fuse_folio_desc desc = { .length = PAGE_SIZE };
+> +	struct fuse_folio_desc desc = { .length = folio_size(folio) };
+>  	struct fuse_io_args ia = {
+>  		.ap.args.page_zeroing = true,
+>  		.ap.args.out_pages = true,
 
 
