@@ -1,162 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-48111-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE0EAA97DC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 17:49:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C839BAA97AB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 17:42:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54A473A7121
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:49:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFAFD7A507A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928A12609E1;
-	Mon,  5 May 2025 15:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E906F25DD11;
+	Mon,  5 May 2025 15:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="nUWm3bhJ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L1Ao8tpQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190a.mail.infomaniak.ch (smtp-190a.mail.infomaniak.ch [185.125.25.10])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FCA259CA4
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 15:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026F1DFF7
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 15:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746460176; cv=none; b=Z5XagMyTYmXpwLmELMwdv6PoEkqTCiud2C5oX6ArGanKQUsTJVerEh79hxXBlh3+wmSQ6SeVQoxf8oMkvW1bUcAUvO0PoyVJ+gPf41sZ4+6p1Go3DFHv2Q308U/M5sAbi34CEdnXhkhwF/N0vaeoJB5INwpiCgagm8rdCUPEJG4=
+	t=1746459717; cv=none; b=HjEVOO24ieYRRy5fvLd2fzKAy0E+BBCxGiplAwxje3Pf3M7uLXttkJVwgdVEY80rCDTO5CYiLwEgNWI1sQK5iwLdSSoRwXo1czH34mbYY1Jkz3ETBRhdczcSZCC42TCGFV+DsUGmlMYhQmACvSzmD3Lq+JjR9gXjnOik5jsI100=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746460176; c=relaxed/simple;
-	bh=HfDy/HkyH9OE4BdyiLFSHkuBVpYPTVkooXLx5f3rZOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=avbBko9FGWOuPHE0k0kVd89xH6lco2qPSfdkPFww3L5URWwu3Pd/opGDuj91eEEwyOhqvfNX3ix+C6fiFIiO1H6Z/uRg36nl6Ym6rIAJmWfZbXI2R6zUskpwCohueHgVG9m86t+UGLqkgVpyEIUtKtFgZsl76vuNJztb+8WUfTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=nUWm3bhJ; arc=none smtp.client-ip=185.125.25.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:4:17::246b])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zrm150CSJzYMl;
-	Mon,  5 May 2025 17:39:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1746459576;
-	bh=2rr0NxT3YygR9iTO8oBRTuCPuvHO/u8bPQjZ4fJ4Dmg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nUWm3bhJWq419tUFjizOeRUyHfqL1Ps0Bp0obcoIHzLGMUEs7xv+vVf6XmVNsmKvV
-	 wH9r8SMThoIJnMs9qG2cF5fm99NtOCWlGhihJTREL47QhIulH762DJBS1raj+bSvfd
-	 1Wvsw7/AXtuQSbncvRxa75Y+GzPBAPZ9bWztxg5M=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zrm134TtlzTc8;
-	Mon,  5 May 2025 17:39:35 +0200 (CEST)
-Date: Mon, 5 May 2025 17:39:34 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Jann Horn <jannh@google.com>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Eric Dumazet <edumazet@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH RFC v3 00/10] coredump: add coredump socket
-Message-ID: <20250505.ej2ephiNg7Ve@digikod.net>
-References: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
- <20250505.aFia3choo1aw@digikod.net>
- <CAG48ez0Ti8y5GzZFhdf5cmZWH1XMmz0Q_3y8RCn6ca8UL-jrcA@mail.gmail.com>
+	s=arc-20240116; t=1746459717; c=relaxed/simple;
+	bh=8SUR3eIjJyiV5mOznaY1XN0Vrlv2AV0j80ctEezBTio=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cTSjy2ZhmD6FOf2/YhWWer8Ept77tdafssjppqJLhdHarBuyqB0i7NXrVLbkDtb54rPXyS7BDZYKisDz1TWleZaCuAlOHUoOjk/nt2j7uE3lKlAoiHhMzqJrq3p4EjAcE+GleAxP87qOyx3DhGvtRicviSDP/TFWRFAD6ZLNmsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L1Ao8tpQ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746459714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=BgMn8Y7RIA5Dg2IX0x5PF8QY+c+X8RduvdrPNnF9iCs=;
+	b=L1Ao8tpQtSHFAuDw10oaUMyQcXkWjBqOzDR0khw8LabIFRwnu8cebfdnqKpMDko+JeF9vQ
+	AvkC1iz/Hju2r+NQ9GbzZD/P0jZMNwfT9uDYeG3EbcH4ZHcn6ZZoAhggRhkABa/Cg0EuEk
+	+PnqPKofgDnmWxrlx/Wod/pjCSJlJnA=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-339-apboQGd8ODuSlMSTfdQMRw-1; Mon, 05 May 2025 11:41:53 -0400
+X-MC-Unique: apboQGd8ODuSlMSTfdQMRw-1
+X-Mimecast-MFC-AGG-ID: apboQGd8ODuSlMSTfdQMRw_1746459712
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d733063cdso33442485e9.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 May 2025 08:41:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746459712; x=1747064512;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BgMn8Y7RIA5Dg2IX0x5PF8QY+c+X8RduvdrPNnF9iCs=;
+        b=sl3fColR4/utPW8Yt9lU0jdezWk4xJ2Fx4Q9aVPb+vxgRaKfXY5/eW2sVjjs6BEq2L
+         qgovTqxMlEjMq11fr52NkPfNK7+k6qjwGFGo3xhsiGWlqUCZw8xlKg34TOGalpbbC87v
+         bg1YwStyKQld6ENyldQj/VHpeZg+YKHz//QldnP3pbXM2Xp8VBqv8MsMXrfK1OkWYSm2
+         KgwJrUsbGEIeB0+QwdzgaOK1YLbph0ZLKUxCZGaXG61A21GeY22TYHYx1q4Cmn99KfME
+         3hu5iM98Te1cdevb6TG/WluJiFi653TFWnlmW4MnOCuZZrfz/SJrz65OuStvOLFnhgsN
+         IZ8A==
+X-Gm-Message-State: AOJu0YwrCln5VZwsIX7oiFhdpPj8g+UdneHqf8/BlqLNncyYa6lIe9uK
+	hFqeRTuyFFQDjPE0C5ot6zuQP33LxIt26T+U4e9m1ir9jLL8TFEssSWTvRqml5uI+XeUBqMCymw
+	OWP4y9kYdNv4xDOh3CzZY/MqBityd0SyPJmmta6k2tX2c8LexY1imhClZWq2RynX4tZbFQrQIBi
+	L1fJb45GUcF/ISyHfqpP+21lvhmUBHrikp2Y8MAWWh+EUzNWM=
+X-Gm-Gg: ASbGncsdGIn9MYX4+UFgBak/9YM7SvGc9K+qvNLQZeWtTdi44lgI7/sqpZ+gGeSJ4yI
+	GuWJ7hyvQHDFpBByybY9/Ypoegy7tZLiM/0GhK78FbMU2uotuFJWkQYPAE2xATvoDiexp+Cg1WT
+	pjVtHxH9UdNPhU2pJBUqcz2O7XsAA4AH1HkJTWemvUVjBiX+tD2yMJjvXUR/SuKMnDAiR2edlEI
+	FLsE643T0/eKtWogFGfesDA96reHPYbWqjzo0XA+X3JrBnXb7rR9sN1FKSC6atRIJWAxdEt9xVJ
+	pmrT+H0CkFDg0PzwV1kNzRg/+hgOu5L2B62z5pDx9j5qliasQ5TUMQwbxoEN
+X-Received: by 2002:a05:6000:1867:b0:3a0:82d1:f3c2 with SMTP id ffacd0b85a97d-3a09cea6910mr7711607f8f.10.1746459711771;
+        Mon, 05 May 2025 08:41:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEejKsM1gDbt9iE1rpnhSlw0xY6e0GTmB1wzLQG7mBxhKJbWxs7mdbSIeEnh34KN2/bhCIT8w==
+X-Received: by 2002:a05:6000:1867:b0:3a0:82d1:f3c2 with SMTP id ffacd0b85a97d-3a09cea6910mr7711582f8f.10.1746459711442;
+        Mon, 05 May 2025 08:41:51 -0700 (PDT)
+Received: from maszat.piliscsaba.szeredi.hu (87-97-19-85.pool.digikabel.hu. [87.97.19.85])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2b28045sm181392515e9.35.2025.05.05.08.41.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 May 2025 08:41:50 -0700 (PDT)
+From: Miklos Szeredi <mszeredi@redhat.com>
+To: linux-fsdevel@vger.kernel.org
+Cc: linux-unionfs@vger.kernel.org,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	John Schoenick <johns@valvesoftware.com>
+Subject: [PATCH] vfs: change 'struct file *' argument to 'const struct file *' where possible
+Date: Mon,  5 May 2025 17:41:47 +0200
+Message-ID: <20250505154149.301235-1-mszeredi@redhat.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez0Ti8y5GzZFhdf5cmZWH1XMmz0Q_3y8RCn6ca8UL-jrcA@mail.gmail.com>
-X-Infomaniak-Routing: alpha
 
-On Mon, May 05, 2025 at 04:59:41PM +0200, Jann Horn wrote:
-> On Mon, May 5, 2025 at 4:41 PM Mickaël Salaün <mic@digikod.net> wrote:
-> > On Mon, May 05, 2025 at 01:13:38PM +0200, Christian Brauner wrote:
-> > > Coredumping currently supports two modes:
-> > >
-> > > (1) Dumping directly into a file somewhere on the filesystem.
-> > > (2) Dumping into a pipe connected to a usermode helper process
-> > >     spawned as a child of the system_unbound_wq or kthreadd.
-> > >
-> > > For simplicity I'm mostly ignoring (1). There's probably still some
-> > > users of (1) out there but processing coredumps in this way can be
-> > > considered adventurous especially in the face of set*id binaries.
-> > >
-> > > The most common option should be (2) by now. It works by allowing
-> > > userspace to put a string into /proc/sys/kernel/core_pattern like:
-> > >
-> > >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
-> > >
-> > > The "|" at the beginning indicates to the kernel that a pipe must be
-> > > used. The path following the pipe indicator is a path to a binary that
-> > > will be spawned as a usermode helper process. Any additional parameters
-> > > pass information about the task that is generating the coredump to the
-> > > binary that processes the coredump.
-> > >
-> > > In the example core_pattern shown above systemd-coredump is spawned as a
-> > > usermode helper. There's various conceptual consequences of this
-> > > (non-exhaustive list):
-> > >
-> > > - systemd-coredump is spawned with file descriptor number 0 (stdin)
-> > >   connected to the read-end of the pipe. All other file descriptors are
-> > >   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
-> > >   already caused bugs because userspace assumed that this cannot happen
-> > >   (Whether or not this is a sane assumption is irrelevant.).
-> > >
-> > > - systemd-coredump will be spawned as a child of system_unbound_wq. So
-> > >   it is not a child of any userspace process and specifically not a
-> > >   child of PID 1. It cannot be waited upon and is in a weird hybrid
-> > >   upcall which are difficult for userspace to control correctly.
-> > >
-> > > - systemd-coredump is spawned with full kernel privileges. This
-> > >   necessitates all kinds of weird privilege dropping excercises in
-> > >   userspace to make this safe.
-> > >
-> > > - A new usermode helper has to be spawned for each crashing process.
-> > >
-> > > This series adds a new mode:
-> > >
-> > > (3) Dumping into an abstract AF_UNIX socket.
-> > >
-> > > Userspace can set /proc/sys/kernel/core_pattern to:
-> > >
-> > >         @linuxafsk/coredump_socket
-> > >
-> > > The "@" at the beginning indicates to the kernel that the abstract
-> > > AF_UNIX coredump socket will be used to process coredumps.
-> > >
-> > > The coredump socket uses the fixed address "linuxafsk/coredump.socket"
-> > > for now.
-> > >
-> > > The coredump socket is located in the initial network namespace. To bind
-> > > the coredump socket userspace must hold CAP_SYS_ADMIN in the initial
-> > > user namespace. Listening and reading can happen from whatever
-> > > unprivileged context is necessary to safely process coredumps.
-> > >
-> > > When a task coredumps it opens a client socket in the initial network
-> > > namespace and connects to the coredump socket. For now only tasks that
-> > > are acctually coredumping are allowed to connect to the initial coredump
-> > > socket.
-> >
-> > I think we should avoid using abstract UNIX sockets, especially for new
-> > interfaces, because it is hard to properly control such access.  Can we
-> > create new dedicated AF_UNIX protocols instead?  One could be used by a
-> > privileged process in the initial namespace to create a socket to
-> > collect coredumps, and the other could be dedicatde to coredumped
-> > proccesses.  Such (coredump collector) file descriptor or new (proxy)
-> > socketpair ones could be passed to containers.
-> 
-> I would agree with you if we were talking about designing a pure
-> userspace thing; but I think the limits that Christian added on bind()
-> and connect() to these special abstract names in this series
-> effectively make it behave as if they were dedicated AF_UNIX
-> protocols, and prevent things like random unprivileged userspace
-> processes bind()ing to them.
+Let file_user_path(), file_user_inode() and file_clone_open() take const
+pointer.
 
-OK, so why not create a proper protocol?  That should also simplify the
-interface.
+This allows removing a cast in ovl_open_realfile() when calling
+backing_file_open().
+
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+---
+
+This depends on commit 924577e4f6ca ("ovl: Fix nested backing file paths") in
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes
+
+ fs/file_table.c     | 10 ++++++----
+ fs/internal.h       |  1 +
+ fs/overlayfs/file.c |  2 +-
+ include/linux/fs.h  | 12 ++++++------
+ 4 files changed, 14 insertions(+), 11 deletions(-)
+
+diff --git a/fs/file_table.c b/fs/file_table.c
+index c04ed94cdc4b..3b3f920a9175 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -52,16 +52,18 @@ struct backing_file {
+ 	};
+ };
+ 
+-static inline struct backing_file *backing_file(struct file *f)
++#define backing_file(f) container_of(f, struct backing_file, file)
++
++struct path *backing_file_user_path(struct file *f)
+ {
+-	return container_of(f, struct backing_file, file);
++	return &backing_file(f)->user_path;
+ }
+ 
+-struct path *backing_file_user_path(struct file *f)
++const struct path *backing_file_user_path_c(const struct file *f)
+ {
+ 	return &backing_file(f)->user_path;
+ }
+-EXPORT_SYMBOL_GPL(backing_file_user_path);
++EXPORT_SYMBOL_GPL(backing_file_user_path_c);
+ 
+ static inline void file_free(struct file *f)
+ {
+diff --git a/fs/internal.h b/fs/internal.h
+index b9b3e29a73fd..84a330763343 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -100,6 +100,7 @@ extern void chroot_fs_refs(const struct path *, const struct path *);
+ struct file *alloc_empty_file(int flags, const struct cred *cred);
+ struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred);
+ struct file *alloc_empty_backing_file(int flags, const struct cred *cred);
++struct path *backing_file_user_path(struct file *f);
+ 
+ static inline void file_put_write_access(struct file *file)
+ {
+diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+index dfea7bd800cb..f5b8877d5fe2 100644
+--- a/fs/overlayfs/file.c
++++ b/fs/overlayfs/file.c
+@@ -48,7 +48,7 @@ static struct file *ovl_open_realfile(const struct file *file,
+ 		if (!inode_owner_or_capable(real_idmap, realinode))
+ 			flags &= ~O_NOATIME;
+ 
+-		realfile = backing_file_open(file_user_path((struct file *) file),
++		realfile = backing_file_open(file_user_path(file),
+ 					     flags, realpath, current_cred());
+ 	}
+ 	ovl_revert_creds(old_cred);
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 016b0fe1536e..7db9cd5a4bee 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2813,7 +2813,7 @@ struct file *dentry_open_nonotify(const struct path *path, int flags,
+ 				  const struct cred *cred);
+ struct file *dentry_create(const struct path *path, int flags, umode_t mode,
+ 			   const struct cred *cred);
+-struct path *backing_file_user_path(struct file *f);
++const struct path *backing_file_user_path_c(const struct file *f);
+ 
+ /*
+  * When mmapping a file on a stackable filesystem (e.g., overlayfs), the file
+@@ -2825,21 +2825,21 @@ struct path *backing_file_user_path(struct file *f);
+  * by fstat() on that same fd.
+  */
+ /* Get the path to display in /proc/<pid>/maps */
+-static inline const struct path *file_user_path(struct file *f)
++static inline const struct path *file_user_path(const struct file *f)
+ {
+ 	if (unlikely(f->f_mode & FMODE_BACKING))
+-		return backing_file_user_path(f);
++		return backing_file_user_path_c(f);
+ 	return &f->f_path;
+ }
+ /* Get the inode whose inode number to display in /proc/<pid>/maps */
+-static inline const struct inode *file_user_inode(struct file *f)
++static inline const struct inode *file_user_inode(const struct file *f)
+ {
+ 	if (unlikely(f->f_mode & FMODE_BACKING))
+-		return d_inode(backing_file_user_path(f)->dentry);
++		return d_inode(backing_file_user_path_c(f)->dentry);
+ 	return file_inode(f);
+ }
+ 
+-static inline struct file *file_clone_open(struct file *file)
++static inline struct file *file_clone_open(const struct file *file)
+ {
+ 	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
+ }
+-- 
+2.49.0
+
 
