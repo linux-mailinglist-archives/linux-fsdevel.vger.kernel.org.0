@@ -1,58 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-48076-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24261AA9429
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:14:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B955AAA9441
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 267967A5D83
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:13:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E65023AC5C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A782566D5;
-	Mon,  5 May 2025 13:14:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6742580E4;
+	Mon,  5 May 2025 13:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhvkX1td"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqCQV8gu"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1C0204689;
-	Mon,  5 May 2025 13:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79FB2561C2;
+	Mon,  5 May 2025 13:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746450881; cv=none; b=buA3dg0JtjzFvbCUGXEzUaQUzWT0SnDXOSER5Hth8Oy7mrNmxcDrd5/2R1Z/V0/sBpncx+MnCX0qWPSpCqWDPLjgOWqBumd5G3p8E+5lXlSNSmIQvB7tXVctnfeeBmKrSzYW/UewQErQ50+X42Xjx2SMCPNTndfwigkuUVvmxRs=
+	t=1746451287; cv=none; b=RutKbkJd16ocAzP5mplcRT4M/mById3FrzxJBsKHBlSugbV+Cjbhupps+kMZJoNoZPS8s/xMJHVVUzGK5ZAtbLB1P6SrmfEEvRDlaGJ+5lEOMVNz6m9kaimBPQ/rYl7x/JeLCl9L+qFB2HqZf9/XM1ZxsYbgd6NoWipRtp05X+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746450881; c=relaxed/simple;
-	bh=CMlk2ik9FJdWKIPQKsmVJ9PVaP518uo2AvuY9ufhylc=;
+	s=arc-20240116; t=1746451287; c=relaxed/simple;
+	bh=ldELQzfHK87PQQQfleRnUEJg/gMY/mZ4vI8tzWyzr8Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PotMSGmwsBTgH+MJmzb1yUqAtLQIEkwIJqXCwPgulGNTg2+47Kw4LkiEy7CDNZypYVJRd5p7fMXBMerZMs4dIoet8pbxvVSQno9V6cX2wVWuWU1mYUR5p8xNRCDKsWJmaJkTfLnytS3T85aXRzojq6xZY81PrfHdJq1UDPNQO8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhvkX1td; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8BA5C4CEE4;
-	Mon,  5 May 2025 13:14:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wh6BLW+noAZArJnJXLT4FmV5Ozt+VraUqqfWUp7jGxEb/aIimcEaFbFgMOOH2P892Pab/nPO4NF0j5v5JaAiP0QgOpdSM59Ew5wQaatJ/CZ21ht2vJPuM91j58kYA5XGIUp88tuwRxOWiDvtENrNA0RSqb3R9UkFcG4StdJfPZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqCQV8gu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 001CCC4CEE4;
+	Mon,  5 May 2025 13:21:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746450880;
-	bh=CMlk2ik9FJdWKIPQKsmVJ9PVaP518uo2AvuY9ufhylc=;
+	s=k20201202; t=1746451287;
+	bh=ldELQzfHK87PQQQfleRnUEJg/gMY/mZ4vI8tzWyzr8Q=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BhvkX1td/NPPT6fT/ZCrsdtrUfDphRsb/O887Nmn2CH7+khaeV3TgApS8JrPlm0s3
-	 FN2n6WWrM0ZQv4L97ROub40Z/i1/9+X98cheEz9Vay6kgcU6aLs7a6n+AafTluMH4T
-	 jAF0ihDNNYRzIoRkeeZZ+RHViyE9lk3a8clp7WXiVd8XKVRSCAkKUudkk1XTfe66oo
-	 KnkTyoJSqjS6JbgY7HBqD02yp0OOsX69on9tzp4kWtq8rUD10ZYaBdW47sqb5YUGaQ
-	 gY7WXxf91RrUHk0g+LBYwtRiXTUohy2DpJk4Z2f6Ym0UmJAYyV6hfgg/B1w3kGybRj
-	 2pM4Eit4jvMSA==
-Date: Mon, 5 May 2025 15:14:35 +0200
+	b=cqCQV8gu4LRto+ZkjWGndNuymkJJsRRzkAl7dGtF8Jzh7NxOopKqmx+ajhdmjGKSo
+	 zkCqlGMkNv8ApbDvTO00gn/RVLQiTdLPz90Lg/+bCgJ7r9vZzngmWa3UBZ1yxfRe5z
+	 4ZeCPBaraj+hJgcpWd5J0uQKzcww8gyaZwP8I1vppEWwH8F807//ruhgFeHAYErFPt
+	 4Bre1vcN0tPFEeyxVHwFY5KjtVPlS5vU06s7WaL/n0EdCZ9shWjktJU1sg+6CIybAg
+	 tCK3gtky9HD6d/6PhHtE+bM/ZIOVnYxdsGTX92sOvOt6Do76DFtckjUFkF/8vrB+ba
+	 ZSaud9Jqsfeew==
+Date: Mon, 5 May 2025 15:21:23 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Etienne Champetier <champetier.etienne@gmail.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Jeffrey Altman <jaltman@auristor.com>, Chet Ramey <chet.ramey@case.edu>, 
-	Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org, openafs-devel@openafs.org, 
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a
- sticky dir
-Message-ID: <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
-References: <433928.1745944651@warthog.procyon.org.uk>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [QUESTION vfs] Namespaces from kernel code for user mode threads
+Message-ID: <20250505-festplatten-befragen-0cb139d40b6d@brauner>
+References: <20250430144436-d3c2c91d-b32e-4967-96c9-3913579ce626@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,35 +57,46 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <433928.1745944651@warthog.procyon.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250430144436-d3c2c91d-b32e-4967-96c9-3913579ce626@linutronix.de>
 
-On Tue, Apr 29, 2025 at 05:37:31PM +0100, David Howells wrote:
->     
-> Bash has a work around in redir_open() that causes open(O_CREAT) of a file
-> in a sticky directory to be retried without O_CREAT if bash was built with
-> AFS workarounds configured:
+On Wed, Apr 30, 2025 at 03:05:04PM +0200, Thomas Weißschuh wrote:
+> Hi everybody,
 > 
->         #if defined (AFS)
->               if ((fd < 0) && (errno == EACCES))
->             {
->               fd = open (filename, flags & ~O_CREAT, mode);
->               errno = EACCES;    /* restore errno */
->             }
-> 
->         #endif /* AFS */
-> 
-> This works around the kernel not being able to validly check the
-> current_fsuid() against i_uid on the file or the directory because the
-> uidspaces of the system and of AFS may well be disjoint.  The problem lies
-> with the uid checks in may_create_in_sticky().
-> 
-> However, the bash work around is going to be removed:
+> I am trying to set up mount namespaces on top of a 'struct vfsmount'
+> and run user mode threads inside that namespace. All of this from kernel code.
 
-Why is it removed? That's a very strange comment:
+I have a hard time understanding what you want to do.
 
-#if 0	/* reportedly no longer needed */
+> However there doesn't seem a way to run the equivalent of unshare(CLONE_NEWNS)
+> inside the kernel.
 
-So then just don't remove it. I don't see a reason for us to workaround
-userspace creating a bug for itself and forcing us to add two new inode
-operations to work around it.
+ksys_unshare(CLONE_NEWNS)?
+
+> Is this something that should work and if so, how?
+> The goal is that these processes execute inside a nearly empty filesystem tree.
+> 
+> The full context is in this series:
+> https://lore.kernel.org/all/20250217-kunit-kselftests-v1-0-42b4524c3b0a@linutronix.de/
+> Specifically "[PATCH 09/12] kunit: Introduce UAPI testing framework"
+> in kunit_uapi_mount_tmpfs() and related.
+
+Shouldn't something like:
+
+static int umh_kunit_uapi_mount_setup(struct subprocess_info *info, struct cred *new)
+{
+	return ksys_unshare(CLONE_NEWNS);
+}
+
+sub_info = call_usermodehelper_setup(something_prog,
+				     something_argv,
+				     NULL,
+				     GFP_KERNEL,
+				     umh_kunit_uapi_mount_set(),
+				     NULL,
+				     something_setup_data);
+
+retval = call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
+
+do what you want?
 
