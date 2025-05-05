@@ -1,102 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-48077-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48078-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B955AAA9441
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:21:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08D6EAA944E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:22:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E65023AC5C1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:21:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F2C2178828
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B6742580E4;
-	Mon,  5 May 2025 13:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqCQV8gu"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C296258CD3;
+	Mon,  5 May 2025 13:22:19 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79FB2561C2;
-	Mon,  5 May 2025 13:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87064204840;
+	Mon,  5 May 2025 13:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746451287; cv=none; b=RutKbkJd16ocAzP5mplcRT4M/mById3FrzxJBsKHBlSugbV+Cjbhupps+kMZJoNoZPS8s/xMJHVVUzGK5ZAtbLB1P6SrmfEEvRDlaGJ+5lEOMVNz6m9kaimBPQ/rYl7x/JeLCl9L+qFB2HqZf9/XM1ZxsYbgd6NoWipRtp05X+w=
+	t=1746451338; cv=none; b=WQzTXkt7J9sdilhgr0IlRgcufHaRs1ElxtIa+jBlxqS1TV12mv/ESx8cgwTYqyjkAeg8lc+YEgBGVBsH09k0DA9jq3LbXPfE2P3/fUXecHDDIQcubDRGlD79rZns1IorigFVilVNxOlHComM2MEbPvDowrqsbKz2FTvnBUrRc4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746451287; c=relaxed/simple;
-	bh=ldELQzfHK87PQQQfleRnUEJg/gMY/mZ4vI8tzWyzr8Q=;
+	s=arc-20240116; t=1746451338; c=relaxed/simple;
+	bh=+O8XcPHr3zahII0nWAcKTPrXEdHRGL4hSFQbkqlKhMc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wh6BLW+noAZArJnJXLT4FmV5Ozt+VraUqqfWUp7jGxEb/aIimcEaFbFgMOOH2P892Pab/nPO4NF0j5v5JaAiP0QgOpdSM59Ew5wQaatJ/CZ21ht2vJPuM91j58kYA5XGIUp88tuwRxOWiDvtENrNA0RSqb3R9UkFcG4StdJfPZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqCQV8gu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 001CCC4CEE4;
-	Mon,  5 May 2025 13:21:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746451287;
-	bh=ldELQzfHK87PQQQfleRnUEJg/gMY/mZ4vI8tzWyzr8Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cqCQV8gu4LRto+ZkjWGndNuymkJJsRRzkAl7dGtF8Jzh7NxOopKqmx+ajhdmjGKSo
-	 zkCqlGMkNv8ApbDvTO00gn/RVLQiTdLPz90Lg/+bCgJ7r9vZzngmWa3UBZ1yxfRe5z
-	 4ZeCPBaraj+hJgcpWd5J0uQKzcww8gyaZwP8I1vppEWwH8F807//ruhgFeHAYErFPt
-	 4Bre1vcN0tPFEeyxVHwFY5KjtVPlS5vU06s7WaL/n0EdCZ9shWjktJU1sg+6CIybAg
-	 tCK3gtky9HD6d/6PhHtE+bM/ZIOVnYxdsGTX92sOvOt6Do76DFtckjUFkF/8vrB+ba
-	 ZSaud9Jqsfeew==
-Date: Mon, 5 May 2025 15:21:23 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [QUESTION vfs] Namespaces from kernel code for user mode threads
-Message-ID: <20250505-festplatten-befragen-0cb139d40b6d@brauner>
-References: <20250430144436-d3c2c91d-b32e-4967-96c9-3913579ce626@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fDVRMTTqXfEONXF5t0hC/dVRDVvDyKMTPKN9DYWTSYIdc4VoajRnaVfZtCWD+oLZvHjTv/PiU/pMLHyjsnWrAmon/Uz98dOc5Bqdv/amWsHowth1qMIkwB5Ap+jn2CjIttNkNlsn9x4vCccTcIa9fgVh+NWeZK30IDOwzt/LM6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id A7E7D68BFE; Mon,  5 May 2025 15:22:08 +0200 (CEST)
+Date: Mon, 5 May 2025 15:22:08 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
+	tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
+	bmarzins@redhat.com, chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
+Message-ID: <20250505132208.GA22182@lst.de>
+References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com> <20250421021509.2366003-8-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250430144436-d3c2c91d-b32e-4967-96c9-3913579ce626@linutronix.de>
+In-Reply-To: <20250421021509.2366003-8-yi.zhang@huaweicloud.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Wed, Apr 30, 2025 at 03:05:04PM +0200, Thomas Weißschuh wrote:
-> Hi everybody,
+On Mon, Apr 21, 2025 at 10:15:05AM +0800, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> I am trying to set up mount namespaces on top of a 'struct vfsmount'
-> and run user mode threads inside that namespace. All of this from kernel code.
-
-I have a hard time understanding what you want to do.
-
-> However there doesn't seem a way to run the equivalent of unshare(CLONE_NEWNS)
-> inside the kernel.
-
-ksys_unshare(CLONE_NEWNS)?
-
-> Is this something that should work and if so, how?
-> The goal is that these processes execute inside a nearly empty filesystem tree.
+> Add a new attribute flag to statx to determine whether a bdev or a file
+> supports the unmap write zeroes command.
 > 
-> The full context is in this series:
-> https://lore.kernel.org/all/20250217-kunit-kselftests-v1-0-42b4524c3b0a@linutronix.de/
-> Specifically "[PATCH 09/12] kunit: Introduce UAPI testing framework"
-> in kunit_uapi_mount_tmpfs() and related.
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> ---
+>  block/bdev.c              | 4 ++++
+>  fs/ext4/inode.c           | 9 ++++++---
+>  include/uapi/linux/stat.h | 1 +
+>  3 files changed, 11 insertions(+), 3 deletions(-)
+> 
+> diff --git a/block/bdev.c b/block/bdev.c
+> index 4844d1e27b6f..29b0e5feb138 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -1304,6 +1304,10 @@ void bdev_statx(struct path *path, struct kstat *stat,
+>  			queue_atomic_write_unit_max_bytes(bd_queue));
+>  	}
+>  
+> +	if (bdev_write_zeroes_unmap(bdev))
+> +		stat->attributes |= STATX_ATTR_WRITE_ZEROES_UNMAP;
+> +	stat->attributes_mask |= STATX_ATTR_WRITE_ZEROES_UNMAP;
 
-Shouldn't something like:
+Hmm, shouldn't this always be set by stat?  But I might just be
+really confused what attributes_mask is, and might in fact have
+misapplied it in past patches of my own..
 
-static int umh_kunit_uapi_mount_setup(struct subprocess_info *info, struct cred *new)
-{
-	return ksys_unshare(CLONE_NEWNS);
-}
+Also shouldn't the patches to report the flag go into the bdev/ext4
+patches that actually implement the feature for the respective files
+to keep bisectability?
 
-sub_info = call_usermodehelper_setup(something_prog,
-				     something_argv,
-				     NULL,
-				     GFP_KERNEL,
-				     umh_kunit_uapi_mount_set(),
-				     NULL,
-				     something_setup_data);
-
-retval = call_usermodehelper_exec(sub_info, UMH_WAIT_EXEC);
-
-do what you want?
 
