@@ -1,65 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-48081-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC53AA949E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:35:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D04D6AA94AA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:37:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53F2173D9A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:35:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49ED8175ADB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:37:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A08258CCB;
-	Mon,  5 May 2025 13:35:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D744253921;
+	Mon,  5 May 2025 13:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qkF1cTFv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KTC/a18v"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BED2040B6;
-	Mon,  5 May 2025 13:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F9C4C62;
+	Mon,  5 May 2025 13:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746452119; cv=none; b=GkdW+QDPMht/RcvlnQpjhltlURthfFCsiSbieehNI+4KIUJZEHAeu9hfG2N+fPUNw5SFWq+WTAQ6x7fn4YpqHDBvtKKhaNBqp6WoNnlAvrINlJqDSnoMguwLcE4ALWmHufUkFN2u2SDApSTq/G5SKUUWecHKz9a9GLKt5mF0n1k=
+	t=1746452265; cv=none; b=KO0qJWjP41zuYwlra8ecxS9Yzsq4WxnV6yIaDFCBm0shtAD99jws52BVoQSBYOCfJVjP4ECASkPhIvg7yBO/k2Dc13+hbFd3CmYq2y+fs+2//t7+d8H+DPN9ha58gR8CeaX4Gxh2OPt/Ic0FmtY2eJXhWNQ6qwzd9T9TY+6tP1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746452119; c=relaxed/simple;
-	bh=lZYJj5+RvlpcB3C/3nThNIVF+4ts/zwD2yTL3wPkp6I=;
+	s=arc-20240116; t=1746452265; c=relaxed/simple;
+	bh=IZHg9odk9bDIZMztFTJjQU96GEYqgDiVHKES6Znv4V0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kuaOK6RC86zHlAzerYOF/Royd3zJyVZI7hNQkbToyOu9662p7Z8k/qZW8q90uesOxoT/LyIFWhTJlqZjFjNKBFjwTN6G873sR7o424MKWNExTaUdcpKniWkJe5ntmbxnSx9gwhMrxMK8aN+4yg3kIHz5vClh2vDmrsBtroBrXKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qkF1cTFv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4726BC4CEE4;
-	Mon,  5 May 2025 13:35:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=fJpUo43sr7k609JTBsO9W6dsfDjLyk3vLHQ/uiO+TeS5WMVjSJDRPTtgrcu3qpvbKdWbpcqMEshMf4GZIIB0NBHUWEgIZqQbToRHFnN/XsIE//XgekPez6s3Q2dwrXv99InnGN3Lvp+xnUh37X6c3VSdNmmj6k7oC0sNVICw4ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KTC/a18v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52B2CC4CEE4;
+	Mon,  5 May 2025 13:37:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746452118;
-	bh=lZYJj5+RvlpcB3C/3nThNIVF+4ts/zwD2yTL3wPkp6I=;
+	s=k20201202; t=1746452264;
+	bh=IZHg9odk9bDIZMztFTJjQU96GEYqgDiVHKES6Znv4V0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qkF1cTFvbhP4Ye7NeV9917c1PkBLXuYnLDbiOErKUKsUumdsSQbOSMNV+zqY18Rek
-	 iMgcsmDQnKKTGn+zuxvwpTgU95tKAC7axgb/oimBwIeWBH4Qdl//jsdS4phegc4QB6
-	 Od8s6UqytlBBSYBU6sYpgrW0+Xp5QP9sPiVwNULR2e9TANRtMUkmw+uXdjg01d79Ln
-	 oApceD/DookzKf4fYwsDQNTRHGg1JtviuRWBg02Cwd5WEcQ0XvCA/LXEG/YJP63KIn
-	 sUWf6i8bS2nrfk6KNE3ZE7xDcac83jrNRzGftJ/nnH7mqWNvilg2dKT7aNvbAlNFVZ
-	 3fsRCjlhW9PCw==
-Date: Mon, 5 May 2025 15:35:13 +0200
+	b=KTC/a18vN15zzDRcH6W2HE4hiOXv6dG+FfkKUWIpOc9XgzPMWRLVg8DaK8r9mtI8h
+	 MDTCgUVV8uNAdmZvRh0kQGTImWlzCwIto+6hdjuaXYqMrJcP7aAYTnKWaY3yGmHgGK
+	 glTj3npkVpgtVZHNSFdorACh8GtoduHxWTY9sg7pdZLGcp4vaKRiUH5vocu6489mc5
+	 R8oPGS4RJo4BhkG/zCB6vrxDxqEXfuyiM7wVcaJ4s56wwtLPdv6m/rlDihtj5F7rtu
+	 ZIivXEjuenPfkWTz92vnczGkpyCqqhQA2qn/RDvx0bLmURWL5botH/txI9iruxQuKD
+	 zAWqyEYF9S7iA==
+Date: Mon, 5 May 2025 15:37:39 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: John Hubbard <jhubbard@nvidia.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>, seanjc@google.com
-Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
-Message-ID: <20250505-postablage-drinnen-ddaa539abc18@brauner>
-References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
- <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
- <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
- <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
- <5b0b8e1e-6f50-4e18-bf46-39b00376c26e@nvidia.com>
- <20250501114235.GP4198@noisy.programming.kicks-ass.net>
- <20250501124646.GC4356@noisy.programming.kicks-ass.net>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Jan Kara <jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [RFC PATCH v2 0/3] eliminate mmap() retry merge, add
+ .mmap_prepare hook
+Message-ID: <20250505-frisur-stempeln-9b66d6115726@brauner>
+References: <cover.1746116777.git.lorenzo.stoakes@oracle.com>
+ <uevybgodhkny6dihezto4gkfup6n7znaei6q4ehlkksptlptwr@vgm2tzhpidli>
+ <0776ce6e-ed62-4eaa-a71a-a082dafbdb99@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,89 +65,77 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250501124646.GC4356@noisy.programming.kicks-ass.net>
+In-Reply-To: <0776ce6e-ed62-4eaa-a71a-a082dafbdb99@lucifer.local>
 
-On Thu, May 01, 2025 at 02:46:46PM +0200, Peter Zijlstra wrote:
-> On Thu, May 01, 2025 at 01:42:35PM +0200, Peter Zijlstra wrote:
-> > On Wed, Oct 16, 2024 at 07:14:34PM -0700, John Hubbard wrote:
-> > > On 10/16/24 3:06 PM, Lorenzo Stoakes wrote:
-> > > > On Wed, Oct 16, 2024 at 02:00:27PM -0600, Shuah Khan wrote:
-> > > > > On 10/16/24 04:20, Lorenzo Stoakes wrote:
-> > > ...
-> > > > > > diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
-> > > > > > index 88d6830ee004..1640b711889b 100644
-> > > > > > --- a/tools/testing/selftests/pidfd/pidfd.h
-> > > > > > +++ b/tools/testing/selftests/pidfd/pidfd.h
-> > > > > > @@ -50,6 +50,14 @@
-> > > > > >    #define PIDFD_NONBLOCK O_NONBLOCK
-> > > > > >    #endif
-> > > > > > +/* System header file may not have this available. */
-> > > > > > +#ifndef PIDFD_SELF_THREAD
-> > > > > > +#define PIDFD_SELF_THREAD -100
-> > > > > > +#endif
-> > > > > > +#ifndef PIDFD_SELF_THREAD_GROUP
-> > > > > > +#define PIDFD_SELF_THREAD_GROUP -200
-> > > > > > +#endif
-> > > > > > +
-> > > > > 
-> > > > > As mentioned in my response to v1 patch:
-> > > > > 
-> > > > > kselftest has dependency on "make headers" and tests include
-> > > > > headers from linux/ directory
-> > > > 
-> > > > Right but that assumes you install the kernel headers on the build system,
-> > > > which is quite a painful thing to have to do when you are quickly iterating
-> > > > on a qemu setup.
-> > > > 
-> > > > This is a use case I use all the time so not at all theoretical.
-> > > > 
-> > > 
-> > > This is turning out to be a fairly typical reaction from kernel
-> > > developers, when presented with the "you must first run make headers"
-> > > requirement for kselftests.
-> > > 
-> > > Peter Zijlstra's "NAK NAK NAK" response [1] last year was the most
-> > > colorful, so I'll helpfully cite it here. :)
-> > 
-> > Let me re-try this.
-> > 
-> > This is driving me insane. I've spend the past _TWO_ days trying to
-> > build KVM selftests and I'm still failing.
-> > 
-> > This is absolute atrocious crap and is costing me valuable time.
-> > 
-> > Please fix this fucking selftests shit to just build. This is unusable
-> > garbage.
+On Fri, May 02, 2025 at 01:59:49PM +0100, Lorenzo Stoakes wrote:
+> On Fri, May 02, 2025 at 02:20:38PM +0200, Jan Kara wrote:
+> > On Thu 01-05-25 18:25:26, Lorenzo Stoakes wrote:
+> > > During the mmap() of a file-backed mapping, we invoke the underlying driver
+> > > file's mmap() callback in order to perform driver/file system
+> > > initialisation of the underlying VMA.
+> > >
+> > > This has been a source of issues in the past, including a significant
+> > > security concern relating to unwinding of error state discovered by Jann
+> > > Horn, as fixed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
+> > > error path behaviour") which performed the recent, significant, rework of
+> > > mmap() as a whole.
+> > >
+> > > However, we have had a fly in the ointment remain - drivers have a great
+> > > deal of freedom in the .mmap() hook to manipulate VMA state (as well as
+> > > page table state).
+> > >
+> > > This can be problematic, as we can no longer reason sensibly about VMA
+> > > state once the call is complete (the ability to do - anything - here does
+> > > rather interfere with that).
+> > >
+> > > In addition, callers may choose to do odd or unusual things which might
+> > > interfere with subsequent steps in the mmap() process, and it may do so and
+> > > then raise an error, requiring very careful unwinding of state about which
+> > > we can make no assumptions.
+> > >
+> > > Rather than providing such an open-ended interface, this series provides an
+> > > alternative, far more restrictive one - we expose a whitelist of fields
+> > > which can be adjusted by the driver, along with immutable state upon which
+> > > the driver can make such decisions:
+> > >
+> > > struct vm_area_desc {
+> > > 	/* Immutable state. */
+> > > 	struct mm_struct *mm;
+> > > 	unsigned long start;
+> > > 	unsigned long end;
+> > >
+> > > 	/* Mutable fields. Populated with initial state. */
+> > > 	pgoff_t pgoff;
+> > > 	struct file *file;
+> > > 	vm_flags_t vm_flags;
+> > > 	pgprot_t page_prot;
+> > >
+> > > 	/* Write-only fields. */
+> > > 	const struct vm_operations_struct *vm_ops;
+> > > 	void *private_data;
+> > > };
+> > >
+> > > The mmap logic then updates the state used to either merge with a VMA or
+> > > establish a new VMA based upon this logic.
+> > >
+> > > This is achieved via new file hook .mmap_prepare(), which is, importantly,
+> > > invoked very early on in the mmap() process.
+> > >
+> > > If an error arises, we can very simply abort the operation with very little
+> > > unwinding of state required.
+> >
+> > Looks sensible. So is there a plan to transform existing .mmap hooks to
+> > .mmap_prepare hooks? I agree that for most filesystems this should be just
+> > easy 1:1 replacement and AFAIU this would be prefered?
 > 
-> So after spending more time trying to remember how to debug Makefiles (I
-> hate my life), I found that not only do I need this headers shit, the
-> kvm selftests Makefile is actively broken if you use: make O=foo
+> Thanks!
 > 
-> -INSTALL_HDR_PATH = $(top_srcdir)/usr
-> +INSTALL_HDR_PATH = $(top_srcdir)/$(O)/usr
+> Yeah the intent is to convert _all_ callers away from .mmap() so we can
+> lock down what drivers are doing and be able to (relatively) safely make
+> assumptions about what's going on in mmap logic.
 > 
-> 
-> And then finally, I can do:
-> 
-> make O=foo headers_install
-> make O=foo -C tools/testing/selftests/kvm/
-> 
-> So yeah, thank you very much for wasting my time *AGAIN*.
-> 
-> 
-> Seriously, I want to be able to do:
-> 
->   cd tools/testing/selftests/foo; make
-> 
-> and have it just work. I would strongly suggest every subsystem to
-> reclaim their selftests and make it so again.
-> 
-> And on that, let me go merge the fixes I need to have x86 and futex
-> build without this headers shit.
+> As David points out, we may need to add new callbacks to account for other
 
-I'm completely lost as to what's happening here or whether the test here
-is somehow at fault for something.
-
-The pidfd.h head explicitly has no dependency on the pidfd uapi header
-itself and I will NAK anything that makes it so. It's just a giant pain.
+The plural is a little worrying, let's please aim minimize the number of
+new methods we need for this.
 
