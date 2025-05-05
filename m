@@ -1,212 +1,269 @@
-Return-Path: <linux-fsdevel+bounces-48116-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48117-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F19FAA9B21
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 19:58:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 373A8AA9B96
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 20:33:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CEF8189E744
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 17:58:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E4027A1B7C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 18:32:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31F1826E176;
-	Mon,  5 May 2025 17:58:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D5D26E15F;
+	Mon,  5 May 2025 18:33:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iaCZcNSJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0GXIZKmn";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="iaCZcNSJ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0GXIZKmn"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="qs2smi/h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8452F25D8E0
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 17:58:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA0434CF5;
+	Mon,  5 May 2025 18:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746467892; cv=none; b=Pue8F9EKWgEdU3DsfQqtmUUKroOL2tWBltGUk7CuOYP1deKp0maeXhJsrVl1QUbcCvYj3shkq5TlsA0H7hUnd6NsEElPyuMf+TSyB2JEm8w/w3Mx/Y1ul5Z801UB0Wavqq5EEkax3uOdV4iDYoap/mW9lIHdqh9B61003tWpcu0=
+	t=1746470012; cv=none; b=s0x3MczJ/IYK79Y+St3BnvZJXklqWTc2EoQlBwiuKsYKVVc6sFAE40n05/jZDGd5zK9loc60IqWBCkvV3MRCwB6BUM4Cf+mwvWqQUmXMDY86ipNcuiAMQrhsrLhpp/FOx9G+kcZn7zBNaMVMYaz6x3EAGH8RV71ioPW5qDiBXbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746467892; c=relaxed/simple;
-	bh=0e6YhLzsG/OfglvPJikQQMARBv9rNGTKfHPfNR9HTjw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VgCl96H1yvP2fsnTmZjXf6hN+ncFUdpnXI86OA0yLaB7/ln4apvV7rROcRe/T01P+i5x8JhN3Y8eZvy92hiNEKykUYfCck+N8L/iIwYghmV2cXeSuHPr5Wwmo7vG7j+VRuBPsRh+gsj1Muawoed8hAtu83j00MI9sQL+9erO3m8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iaCZcNSJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0GXIZKmn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=iaCZcNSJ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0GXIZKmn; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6D2782116B;
-	Mon,  5 May 2025 17:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746467888;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AfZbvSoYQLgkuReZJnUb5jjUb2PCP+pD3VIzLsuKudA=;
-	b=iaCZcNSJURrtUF72m9iBwMU1WRBj3hX0la53PMv4GerGNZaiyhUq1wx0c60Gsmq2NajqpH
-	ugn9TvjaSf1uAIJEfWW04FecRhJIQu7j9T298D40uTwB8aZbc3s/lcnNgv5JOyxLS3jrIb
-	x3e/UXZvEhM1S37QO7Pks0HaCEgb0eY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746467888;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AfZbvSoYQLgkuReZJnUb5jjUb2PCP+pD3VIzLsuKudA=;
-	b=0GXIZKmniMBQB60nqeXwqXR1p67YWpSvFifs4BpJB8WMJ/rbI2tlqqfnr0zxfCAkE2wrsV
-	YV1BzWOofPODJCCg==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=iaCZcNSJ;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=0GXIZKmn
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746467888;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AfZbvSoYQLgkuReZJnUb5jjUb2PCP+pD3VIzLsuKudA=;
-	b=iaCZcNSJURrtUF72m9iBwMU1WRBj3hX0la53PMv4GerGNZaiyhUq1wx0c60Gsmq2NajqpH
-	ugn9TvjaSf1uAIJEfWW04FecRhJIQu7j9T298D40uTwB8aZbc3s/lcnNgv5JOyxLS3jrIb
-	x3e/UXZvEhM1S37QO7Pks0HaCEgb0eY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746467888;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AfZbvSoYQLgkuReZJnUb5jjUb2PCP+pD3VIzLsuKudA=;
-	b=0GXIZKmniMBQB60nqeXwqXR1p67YWpSvFifs4BpJB8WMJ/rbI2tlqqfnr0zxfCAkE2wrsV
-	YV1BzWOofPODJCCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 47CBB1398F;
-	Mon,  5 May 2025 17:58:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /spJETD8GGiSCAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Mon, 05 May 2025 17:58:08 +0000
-Date: Mon, 5 May 2025 19:58:07 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [RFC][PATCH] btrfs_get_tree_subvol(): switch from fc_mount() to
- vfs_create_mount()
-Message-ID: <20250505175807.GB9140@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250505030345.GD2023217@ZenIV>
+	s=arc-20240116; t=1746470012; c=relaxed/simple;
+	bh=HXO5JcDo80JaOhk9cK0Fhw9BSR/xmOMPB4eD9xgN0xI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IsnOLEr/a1ph0OC4HvFL7khpG7+Q2jOKXo7ynmhppUCs3aWXk8+uzcunhPJm/UrZH3gTUiYvTrD7iNSSJyxg8tiHGRElVOVd2JPmR5n2cjARFWgSlnwRRf2AtfjK6nPF4MjR43ka0MjmoknmEkdeCnQvnisKOpuxJ+sBfEmQUBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=qs2smi/h; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1746470011; x=1778006011;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=KmnKyyPy8iUgcNbmIz3b3IApAhNbCnLedsjN4F9Uwb0=;
+  b=qs2smi/hdp+Hg2DcoQK/DkOIQt7IvquaZ1E0XAgmkEF2EtxTAw4maH0V
+   VBgZbQb+IlZCh2R1iVo/enHBieGfSSrOXTcLNjQ7A9C3tiQi3aP+9/z2d
+   6V3XVu/89brAqOCodWOVE8yhGGeHuiuVul80QUFLgdU5irTthjgcJgfF+
+   M=;
+X-IronPort-AV: E=Sophos;i="6.15,264,1739836800"; 
+   d="scan'208";a="90169577"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 May 2025 18:33:23 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.21.151:46279]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.30.21:2525] with esmtp (Farcaster)
+ id bf9ed52f-b5c4-4af4-80e5-24084eff4961; Mon, 5 May 2025 18:33:16 +0000 (UTC)
+X-Farcaster-Flow-ID: bf9ed52f-b5c4-4af4-80e5-24084eff4961
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 5 May 2025 18:33:15 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.18) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Mon, 5 May 2025 18:33:11 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <brauner@kernel.org>
+CC: <alexander@mihalicyn.com>, <bluca@debian.org>, <daan.j.demeyer@gmail.com>,
+	<davem@davemloft.net>, <david@readahead.eu>, <edumazet@google.com>,
+	<horms@kernel.org>, <jack@suse.cz>, <jannh@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <lennart@poettering.net>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<me@yhndnzj.com>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
+Subject: Re: [PATCH RFC v3 00/10] coredump: add coredump socket
+Date: Mon, 5 May 2025 11:33:00 -0700
+Message-ID: <20250505183303.14126-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
+References: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505030345.GD2023217@ZenIV>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 6D2782116B
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_THREE(0.00)[3];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWB002.ant.amazon.com (10.13.139.188) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Mon, May 05, 2025 at 04:03:45AM +0100, Al Viro wrote:
-> it's simpler to do btrfs_reconfigure_for_mount() right after vfs_get_tree() -
-> no need to mess with ->s_umount.
+From: Christian Brauner <brauner@kernel.org>
+Date: Mon, 05 May 2025 13:13:38 +0200
+> Coredumping currently supports two modes:
 > 
-> Objections?
->     
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
-> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-> index 7121d8c7a318..a3634e7f2304 100644
-> --- a/fs/btrfs/super.c
-> +++ b/fs/btrfs/super.c
-> @@ -1984,17 +1984,13 @@ static int btrfs_get_tree_super(struct fs_context *fc)
->   * btrfs or not, setting the whole super block RO.  To make per-subvolume mounting
->   * work with different options work we need to keep backward compatibility.
->   */
-> -static int btrfs_reconfigure_for_mount(struct fs_context *fc, struct vfsmount *mnt)
-> +static int btrfs_reconfigure_for_mount(struct fs_context *fc)
->  {
->  	int ret = 0;
->  
-> -	if (fc->sb_flags & SB_RDONLY)
-> -		return ret;
-> -
-> -	down_write(&mnt->mnt_sb->s_umount);
-> -	if (!(fc->sb_flags & SB_RDONLY) && (mnt->mnt_sb->s_flags & SB_RDONLY))
-> +	if (!(fc->sb_flags & SB_RDONLY) && (fc->root->d_sb->s_flags & SB_RDONLY))
->  		ret = btrfs_reconfigure(fc);
-> -	up_write(&mnt->mnt_sb->s_umount);
-> +
->  	return ret;
->  }
->  
-> @@ -2047,17 +2043,18 @@ static int btrfs_get_tree_subvol(struct fs_context *fc)
->  	security_free_mnt_opts(&fc->security);
->  	fc->security = NULL;
->  
-> -	mnt = fc_mount(dup_fc);
-> -	if (IS_ERR(mnt)) {
-> -		put_fs_context(dup_fc);
-> -		return PTR_ERR(mnt);
-> +	ret = vfs_get_tree(dup_fc);
+> (1) Dumping directly into a file somewhere on the filesystem.
+> (2) Dumping into a pipe connected to a usermode helper process
+>     spawned as a child of the system_unbound_wq or kthreadd.
+> 
+> For simplicity I'm mostly ignoring (1). There's probably still some
+> users of (1) out there but processing coredumps in this way can be
+> considered adventurous especially in the face of set*id binaries.
+> 
+> The most common option should be (2) by now. It works by allowing
+> userspace to put a string into /proc/sys/kernel/core_pattern like:
+> 
+>         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+> 
+> The "|" at the beginning indicates to the kernel that a pipe must be
+> used. The path following the pipe indicator is a path to a binary that
+> will be spawned as a usermode helper process. Any additional parameters
+> pass information about the task that is generating the coredump to the
+> binary that processes the coredump.
+> 
+> In the example core_pattern shown above systemd-coredump is spawned as a
+> usermode helper. There's various conceptual consequences of this
+> (non-exhaustive list):
+> 
+> - systemd-coredump is spawned with file descriptor number 0 (stdin)
+>   connected to the read-end of the pipe. All other file descriptors are
+>   closed. That specifically includes 1 (stdout) and 2 (stderr). This has
+>   already caused bugs because userspace assumed that this cannot happen
+>   (Whether or not this is a sane assumption is irrelevant.).
+> 
+> - systemd-coredump will be spawned as a child of system_unbound_wq. So
+>   it is not a child of any userspace process and specifically not a
+>   child of PID 1. It cannot be waited upon and is in a weird hybrid
+>   upcall which are difficult for userspace to control correctly.
+> 
+> - systemd-coredump is spawned with full kernel privileges. This
+>   necessitates all kinds of weird privilege dropping excercises in
+>   userspace to make this safe.
+> 
+> - A new usermode helper has to be spawned for each crashing process.
+> 
+> This series adds a new mode:
+> 
+> (3) Dumping into an abstract AF_UNIX socket.
+> 
+> Userspace can set /proc/sys/kernel/core_pattern to:
+> 
+>         @linuxafsk/coredump_socket
+> 
+> The "@" at the beginning indicates to the kernel that the abstract
+> AF_UNIX coredump socket will be used to process coredumps.
+> 
+> The coredump socket uses the fixed address "linuxafsk/coredump.socket"
+> for now.
 
-So this open codes fc_mount(), which is vfs_get_tree() + vfs_create_mount(),
-the only difference I see in the new code is that
-btrfs_reconfigure_for_mount() dropped the SB_RDONLY check.
+What's behind this dicision from v2 ?
 
-Why the check is there is explained in the lengthy comment above
-btrfs_reconfigure_for_mount(), so it should stay. If it can be removed
-then it should be a separate patch from the cleanup.
+/proc/sys/kernel/core_pattern can only be set by Administrator
+and I don't see the point in having this limitation on the
+AF_UNIX side.
 
-> +	if (!ret) {
-> +		ret = btrfs_reconfigure_for_mount(dup_fc);
-> +		up_write(&fc->root->d_sb->s_umount);
->  	}
-> -	ret = btrfs_reconfigure_for_mount(dup_fc, mnt);
-> +	if (!ret)
-> +		mnt = vfs_create_mount(fc);
-> +	else
-> +		mnt = ERR_PTR(ret);
->  	put_fs_context(dup_fc);
-> -	if (ret) {
-> -		mntput(mnt);
-> -		return ret;
-> -	}
-> +	if (IS_ERR(mnt))
-> +		return PTR_ERR(mnt);
->  
->  	/*
->  	 * This free's ->subvol_name, because if it isn't set we have to
+
+
+> 
+> The coredump socket is located in the initial network namespace.
+
+I understand this is a reasonable decision to avoid complicated
+path management in the mount ns but keep connectivity from any
+namespace.
+
+
+> To bind
+> the coredump socket userspace must hold CAP_SYS_ADMIN in the initial
+> user namespace. Listening and reading can happen from whatever
+> unprivileged context is necessary to safely process coredumps.
+> 
+> When a task coredumps it opens a client socket in the initial network
+> namespace and connects to the coredump socket. For now only tasks that
+> are acctually coredumping are allowed to connect to the initial coredump
+> socket.
+
+This can be controlled by BPF (cgroup sockops or LSM) if a user
+really cares about spam clients.
+
+I think how to set up coredump is userspace responsibility.
+
+
+> 
+> - The coredump server should use SO_PEERPIDFD to get a stable handle on
+>   the connected crashing task. The retrieved pidfd will provide a stable
+>   reference even if the crashing task gets SIGKILLed while generating
+>   the coredump.
+> 
+> - By setting core_pipe_limit non-zero userspace can guarantee that the
+>   crashing task cannot be reaped behind it's back and thus process all
+>   necessary information in /proc/<pid>. The SO_PEERPIDFD can be used to
+>   detect whether /proc/<pid> still refers to the same process.
+> 
+>   The core_pipe_limit isn't used to rate-limit connections to the
+>   socket. This can simply be done via AF_UNIX socket directly.
+> 
+> - The pidfd for the crashing task will contain information how the task
+>   coredumps. The PIDFD_GET_INFO ioctl gained a new flag
+>   PIDFD_INFO_COREDUMP which can be used to retreive the coredump
+>   information.
+> 
+>   If the coredump gets a new coredump client connection the kernel
+>   guarantees that PIDFD_INFO_COREDUMP information is available.
+>   Currently the following information is provided in the new
+>   @coredump_mask extension to struct pidfd_info:
+> 
+>   * PIDFD_COREDUMPED is raised if the task did actually coredump.
+>   * PIDFD_COREDUMP_SKIP	is raised if the task skipped coredumping (e.g.,
+>     undumpable).
+>   * PIDFD_COREDUMP_USER	is raised if this is a regular coredump and
+>     doesn't need special care by the coredump server.
+>   * IDFD_COREDUMP_ROOT is raised if the generated coredump should be
+>     treated as sensitive and the coredump server should restrict to the
+>     generated coredump to sufficiently privileged users.
+> 
+> - Since unix_stream_connect() runs bpf programs during connect it's
+>   possible to even redirect or multiplex coredumps to other sockets.
+
+If the socket is in a cgroup, yes, and even if not, BPF LSM can
+reject some requests.
+
+
+> 
+> - The coredump server should mark itself as non-dumpable.
+>   To capture coredumps for the coredump server itself a bpf program
+>   should be run at connect to redirect it to another socket in
+>   userspace. This can be useful for debugging crashing coredump servers.
+> 
+> - A container coredump server in a separate network namespace can simply
+>   bind to linuxafsk/coredump.socket and systemd-coredump fowards
+>   coredumps to the container.
+
+I think the name should be also configurable in non-initial netns.
+
+
+> 
+> - Fwiw, one idea is to handle coredumps via per-user/session coredump
+>   servers that run with that users privileges.
+> 
+>   The coredump server listens on the coredump socket and accepts a
+>   new coredump connection. It then retrieves SO_PEERPIDFD for the
+>   client, inspects uid/gid and hands the accepted client to the users
+>   own coredump handler which runs with the users privileges only.
+> 
+> The new coredump socket will allow userspace to not have to rely on
+> usermode helpers for processing coredumps and provides a safer way to
+> handle them instead of relying on super privileged coredumping helpers.
+> 
+> This will also be significantly more lightweight since no fork()+exec()
+> for the usermodehelper is required for each crashing process. The
+> coredump server in userspace can just keep a worker pool.
+> 
+> This is easy to test:
+> 
+> (a) coredump processing (we're using socat):
+> 
+>     > cat coredump_socket.sh
+>     #!/bin/bash
+> 
+>     set -x
+> 
+>     sudo bash -c "echo '@linuxafsk/coredump.socket' > /proc/sys/kernel/core_pattern"
+>     sudo socat --statistics abstract-listen:linuxafsk/coredump.socket,fork FILE:core_file,create,append,trunc
+> 
+> (b) trigger a coredump:
+> 
+>     user1@localhost:~/data/scripts$ cat crash.c
+>     #include <stdio.h>
+>     #include <unistd.h>
+> 
+>     int main(int argc, char *argv[])
+>     {
+>             fprintf(stderr, "%u\n", (1 / 0));
+>             _exit(0);
+>     }
 
