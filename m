@@ -1,211 +1,281 @@
-Return-Path: <linux-fsdevel+bounces-48109-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48112-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C839BAA97AB
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 17:42:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C0DDAA9863
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 18:14:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFAFD7A507A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B595F189BD6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 16:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E906F25DD11;
-	Mon,  5 May 2025 15:41:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3F326772C;
+	Mon,  5 May 2025 16:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L1Ao8tpQ"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oKHuvvPg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DtUluaRr";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oKHuvvPg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DtUluaRr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8026F1DFF7
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 15:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661C7C8FE
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 16:14:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746459717; cv=none; b=HjEVOO24ieYRRy5fvLd2fzKAy0E+BBCxGiplAwxje3Pf3M7uLXttkJVwgdVEY80rCDTO5CYiLwEgNWI1sQK5iwLdSSoRwXo1czH34mbYY1Jkz3ETBRhdczcSZCC42TCGFV+DsUGmlMYhQmACvSzmD3Lq+JjR9gXjnOik5jsI100=
+	t=1746461650; cv=none; b=n4xQI5QvG+GnOl2V11MKDtd3fdmb2oXzqXGJUpq8yQDakM7aaAwR2gDllmAlnBbBAWp7OCXngmR5P3n2LCEkgOtSf3a9Bg4c2NtKOzQRsEzWe9MXcoO7k+5mm65bUntL73Yy+er6jIJc86vkSmGOVOFN6RW+XmfWYjl3A+X+zhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746459717; c=relaxed/simple;
-	bh=8SUR3eIjJyiV5mOznaY1XN0Vrlv2AV0j80ctEezBTio=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cTSjy2ZhmD6FOf2/YhWWer8Ept77tdafssjppqJLhdHarBuyqB0i7NXrVLbkDtb54rPXyS7BDZYKisDz1TWleZaCuAlOHUoOjk/nt2j7uE3lKlAoiHhMzqJrq3p4EjAcE+GleAxP87qOyx3DhGvtRicviSDP/TFWRFAD6ZLNmsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L1Ao8tpQ; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746459714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=BgMn8Y7RIA5Dg2IX0x5PF8QY+c+X8RduvdrPNnF9iCs=;
-	b=L1Ao8tpQtSHFAuDw10oaUMyQcXkWjBqOzDR0khw8LabIFRwnu8cebfdnqKpMDko+JeF9vQ
-	AvkC1iz/Hju2r+NQ9GbzZD/P0jZMNwfT9uDYeG3EbcH4ZHcn6ZZoAhggRhkABa/Cg0EuEk
-	+PnqPKofgDnmWxrlx/Wod/pjCSJlJnA=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-339-apboQGd8ODuSlMSTfdQMRw-1; Mon, 05 May 2025 11:41:53 -0400
-X-MC-Unique: apboQGd8ODuSlMSTfdQMRw-1
-X-Mimecast-MFC-AGG-ID: apboQGd8ODuSlMSTfdQMRw_1746459712
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43d733063cdso33442485e9.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 May 2025 08:41:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746459712; x=1747064512;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BgMn8Y7RIA5Dg2IX0x5PF8QY+c+X8RduvdrPNnF9iCs=;
-        b=sl3fColR4/utPW8Yt9lU0jdezWk4xJ2Fx4Q9aVPb+vxgRaKfXY5/eW2sVjjs6BEq2L
-         qgovTqxMlEjMq11fr52NkPfNK7+k6qjwGFGo3xhsiGWlqUCZw8xlKg34TOGalpbbC87v
-         bg1YwStyKQld6ENyldQj/VHpeZg+YKHz//QldnP3pbXM2Xp8VBqv8MsMXrfK1OkWYSm2
-         KgwJrUsbGEIeB0+QwdzgaOK1YLbph0ZLKUxCZGaXG61A21GeY22TYHYx1q4Cmn99KfME
-         3hu5iM98Te1cdevb6TG/WluJiFi653TFWnlmW4MnOCuZZrfz/SJrz65OuStvOLFnhgsN
-         IZ8A==
-X-Gm-Message-State: AOJu0YwrCln5VZwsIX7oiFhdpPj8g+UdneHqf8/BlqLNncyYa6lIe9uK
-	hFqeRTuyFFQDjPE0C5ot6zuQP33LxIt26T+U4e9m1ir9jLL8TFEssSWTvRqml5uI+XeUBqMCymw
-	OWP4y9kYdNv4xDOh3CzZY/MqBityd0SyPJmmta6k2tX2c8LexY1imhClZWq2RynX4tZbFQrQIBi
-	L1fJb45GUcF/ISyHfqpP+21lvhmUBHrikp2Y8MAWWh+EUzNWM=
-X-Gm-Gg: ASbGncsdGIn9MYX4+UFgBak/9YM7SvGc9K+qvNLQZeWtTdi44lgI7/sqpZ+gGeSJ4yI
-	GuWJ7hyvQHDFpBByybY9/Ypoegy7tZLiM/0GhK78FbMU2uotuFJWkQYPAE2xATvoDiexp+Cg1WT
-	pjVtHxH9UdNPhU2pJBUqcz2O7XsAA4AH1HkJTWemvUVjBiX+tD2yMJjvXUR/SuKMnDAiR2edlEI
-	FLsE643T0/eKtWogFGfesDA96reHPYbWqjzo0XA+X3JrBnXb7rR9sN1FKSC6atRIJWAxdEt9xVJ
-	pmrT+H0CkFDg0PzwV1kNzRg/+hgOu5L2B62z5pDx9j5qliasQ5TUMQwbxoEN
-X-Received: by 2002:a05:6000:1867:b0:3a0:82d1:f3c2 with SMTP id ffacd0b85a97d-3a09cea6910mr7711607f8f.10.1746459711771;
-        Mon, 05 May 2025 08:41:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEejKsM1gDbt9iE1rpnhSlw0xY6e0GTmB1wzLQG7mBxhKJbWxs7mdbSIeEnh34KN2/bhCIT8w==
-X-Received: by 2002:a05:6000:1867:b0:3a0:82d1:f3c2 with SMTP id ffacd0b85a97d-3a09cea6910mr7711582f8f.10.1746459711442;
-        Mon, 05 May 2025 08:41:51 -0700 (PDT)
-Received: from maszat.piliscsaba.szeredi.hu (87-97-19-85.pool.digikabel.hu. [87.97.19.85])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441b2b28045sm181392515e9.35.2025.05.05.08.41.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 May 2025 08:41:50 -0700 (PDT)
-From: Miklos Szeredi <mszeredi@redhat.com>
-To: linux-fsdevel@vger.kernel.org
-Cc: linux-unionfs@vger.kernel.org,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	John Schoenick <johns@valvesoftware.com>
-Subject: [PATCH] vfs: change 'struct file *' argument to 'const struct file *' where possible
-Date: Mon,  5 May 2025 17:41:47 +0200
-Message-ID: <20250505154149.301235-1-mszeredi@redhat.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1746461650; c=relaxed/simple;
+	bh=MCWhqFbULxo5xbY6Fq33psJuzUih8YIlnGyO9d5LIHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uj8og2ruwSmSRUxKIOuS3E9ZW/JpfT/GWpK3GLuPhrAT/vhH8GcqCMUpo5yF/CCvKDZMjN99YZXIljlEhW/4P2f4zi1AoiMKCeM5nIHyobhQfA0VZ96XfGFE5STbpw1KhvEhxrLQsaWgyu8xlfRy09JwuBI4b4lscWCdtqJbJOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oKHuvvPg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DtUluaRr; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oKHuvvPg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DtUluaRr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 6464C21995;
+	Mon,  5 May 2025 16:14:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746461646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OjHxQbu9HdAgaWrOliNNorCvOEEPBNiLd69xje/6Noc=;
+	b=oKHuvvPgCfHd6aphoHyFtSKX5wL8YXjEQyJmjX4DBH/8Uj/Eb7mNCdyaXpyJeTE0AIZm9u
+	Ja39d3mxkzXe1VxmKljl7MhtDC7jRMLxf39OPsypfK8L3c42zcjXIa5ZeP3PGQKy1i5Zbp
+	eoERvZ9O+v9eZWuzfTl9dqbdnEsDcXU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746461646;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OjHxQbu9HdAgaWrOliNNorCvOEEPBNiLd69xje/6Noc=;
+	b=DtUluaRrH/+1PejaGWGLSaWkpIHyzVOaR40upM46+gr0w3nOWzPjgEhypyo74h/hRGjecQ
+	lstibh+yN+sP+qDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oKHuvvPg;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=DtUluaRr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746461646; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OjHxQbu9HdAgaWrOliNNorCvOEEPBNiLd69xje/6Noc=;
+	b=oKHuvvPgCfHd6aphoHyFtSKX5wL8YXjEQyJmjX4DBH/8Uj/Eb7mNCdyaXpyJeTE0AIZm9u
+	Ja39d3mxkzXe1VxmKljl7MhtDC7jRMLxf39OPsypfK8L3c42zcjXIa5ZeP3PGQKy1i5Zbp
+	eoERvZ9O+v9eZWuzfTl9dqbdnEsDcXU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746461646;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OjHxQbu9HdAgaWrOliNNorCvOEEPBNiLd69xje/6Noc=;
+	b=DtUluaRrH/+1PejaGWGLSaWkpIHyzVOaR40upM46+gr0w3nOWzPjgEhypyo74h/hRGjecQ
+	lstibh+yN+sP+qDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 44B3E13883;
+	Mon,  5 May 2025 16:14:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id V7m+EM7jGGgqawAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 05 May 2025 16:14:06 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E34D5A0948; Mon,  5 May 2025 18:14:05 +0200 (CEST)
+Date: Mon, 5 May 2025 18:14:05 +0200
+From: Jan Kara <jack@suse.cz>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: David Hildenbrand <david@redhat.com>, Jan Kara <jack@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Dave Chinner <david@fromorbit.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH v4 1/5] mm/readahead: Honour new_order in
+ page_cache_ra_order()
+Message-ID: <dhn2icty267xinyxxhovnztj2pelcsterpwzodu3tippe55u42@iyz5ndffs2zh>
+References: <20250430145920.3748738-1-ryan.roberts@arm.com>
+ <20250430145920.3748738-2-ryan.roberts@arm.com>
+ <48b4aa79-943b-46bc-ac24-604fdf998566@redhat.com>
+ <mhayjykmkxhvnivthdrc2bb3cvqbdesa42puzimx75xfagcnqn@osy4qeiyfxvn>
+ <d4bfefdf-bd87-4d2e-b7bb-4a11e5d32242@redhat.com>
+ <12a74640-753a-4116-90f9-42ec0337f751@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <12a74640-753a-4116-90f9-42ec0337f751@arm.com>
+X-Rspamd-Queue-Id: 6464C21995
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	URIBL_BLOCKED(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Let file_user_path(), file_user_inode() and file_clone_open() take const
-pointer.
+On Mon 05-05-25 13:51:48, Ryan Roberts wrote:
+> On 05/05/2025 11:25, David Hildenbrand wrote:
+> > On 05.05.25 12:09, Jan Kara wrote:
+> >> On Mon 05-05-25 11:51:43, David Hildenbrand wrote:
+> >>> On 30.04.25 16:59, Ryan Roberts wrote:
+> >>>> page_cache_ra_order() takes a parameter called new_order, which is
+> >>>> intended to express the preferred order of the folios that will be
+> >>>> allocated for the readahead operation. Most callers indeed call this
+> >>>> with their preferred new order. But page_cache_async_ra() calls it with
+> >>>> the preferred order of the previous readahead request (actually the
+> >>>> order of the folio that had the readahead marker, which may be smaller
+> >>>> when alignment comes into play).
+> >>>>
+> >>>> And despite the parameter name, page_cache_ra_order() always treats it
+> >>>> at the old order, adding 2 to it on entry. As a result, a cold readahead
+> >>>> always starts with order-2 folios.
+> >>>>
+> >>>> Let's fix this behaviour by always passing in the *new* order.
+> >>>>
+> >>>> Worked example:
+> >>>>
+> >>>> Prior to the change, mmaping an 8MB file and touching each page
+> >>>> sequentially, resulted in the following, where we start with order-2
+> >>>> folios for the first 128K then ramp up to order-4 for the next 128K,
+> >>>> then get clamped to order-5 for the rest of the file because pa_pages is
+> >>>> limited to 128K:
+> >>>>
+> >>>> TYPE    STARTOFFS     ENDOFFS       SIZE  STARTPG    ENDPG   NRPG  ORDER
+> >>>> -----  ----------  ----------  ---------  -------  -------  -----  -----
+> >>>> FOLIO  0x00000000  0x00004000      16384        0        4      4      2
+> >>>> FOLIO  0x00004000  0x00008000      16384        4        8      4      2
+> >>>> FOLIO  0x00008000  0x0000c000      16384        8       12      4      2
+> >>>> FOLIO  0x0000c000  0x00010000      16384       12       16      4      2
+> >>>> FOLIO  0x00010000  0x00014000      16384       16       20      4      2
+> >>>> FOLIO  0x00014000  0x00018000      16384       20       24      4      2
+> >>>> FOLIO  0x00018000  0x0001c000      16384       24       28      4      2
+> >>>> FOLIO  0x0001c000  0x00020000      16384       28       32      4      2
+> >>>> FOLIO  0x00020000  0x00030000      65536       32       48     16      4
+> >>>> FOLIO  0x00030000  0x00040000      65536       48       64     16      4
+> >>>> FOLIO  0x00040000  0x00060000     131072       64       96     32      5
+> >>>> FOLIO  0x00060000  0x00080000     131072       96      128     32      5
+> >>>> FOLIO  0x00080000  0x000a0000     131072      128      160     32      5
+> >>>> FOLIO  0x000a0000  0x000c0000     131072      160      192     32      5
+> >>>
+> >>> Interesting, I would have thought we'd ramp up earlier.
+> >>>
+> >>>> ...
+> >>>>
+> >>>> After the change, the same operation results in the first 128K being
+> >>>> order-0, then we start ramping up to order-2, -4, and finally get
+> >>>> clamped at order-5:
+> >>>>
+> >>>> TYPE    STARTOFFS     ENDOFFS       SIZE  STARTPG    ENDPG   NRPG  ORDER
+> >>>> -----  ----------  ----------  ---------  -------  -------  -----  -----
+> >>>> FOLIO  0x00000000  0x00001000       4096        0        1      1      0
+> >>>> FOLIO  0x00001000  0x00002000       4096        1        2      1      0
+> >>>> FOLIO  0x00002000  0x00003000       4096        2        3      1      0
+> >>>> FOLIO  0x00003000  0x00004000       4096        3        4      1      0
+> >>>> FOLIO  0x00004000  0x00005000       4096        4        5      1      0
+> >>>> FOLIO  0x00005000  0x00006000       4096        5        6      1      0
+> >>>> FOLIO  0x00006000  0x00007000       4096        6        7      1      0
+> >>>> FOLIO  0x00007000  0x00008000       4096        7        8      1      0
+> >>>> FOLIO  0x00008000  0x00009000       4096        8        9      1      0
+> >>>> FOLIO  0x00009000  0x0000a000       4096        9       10      1      0
+> >>>> FOLIO  0x0000a000  0x0000b000       4096       10       11      1      0
+> >>>> FOLIO  0x0000b000  0x0000c000       4096       11       12      1      0
+> >>>> FOLIO  0x0000c000  0x0000d000       4096       12       13      1      0
+> >>>> FOLIO  0x0000d000  0x0000e000       4096       13       14      1      0
+> >>>> FOLIO  0x0000e000  0x0000f000       4096       14       15      1      0
+> >>>> FOLIO  0x0000f000  0x00010000       4096       15       16      1      0
+> >>>> FOLIO  0x00010000  0x00011000       4096       16       17      1      0
+> >>>> FOLIO  0x00011000  0x00012000       4096       17       18      1      0
+> >>>> FOLIO  0x00012000  0x00013000       4096       18       19      1      0
+> >>>> FOLIO  0x00013000  0x00014000       4096       19       20      1      0
+> >>>> FOLIO  0x00014000  0x00015000       4096       20       21      1      0
+> >>>> FOLIO  0x00015000  0x00016000       4096       21       22      1      0
+> >>>> FOLIO  0x00016000  0x00017000       4096       22       23      1      0
+> >>>> FOLIO  0x00017000  0x00018000       4096       23       24      1      0
+> >>>> FOLIO  0x00018000  0x00019000       4096       24       25      1      0
+> >>>> FOLIO  0x00019000  0x0001a000       4096       25       26      1      0
+> >>>> FOLIO  0x0001a000  0x0001b000       4096       26       27      1      0
+> >>>> FOLIO  0x0001b000  0x0001c000       4096       27       28      1      0
+> >>>> FOLIO  0x0001c000  0x0001d000       4096       28       29      1      0
+> >>>> FOLIO  0x0001d000  0x0001e000       4096       29       30      1      0
+> >>>> FOLIO  0x0001e000  0x0001f000       4096       30       31      1      0
+> >>>> FOLIO  0x0001f000  0x00020000       4096       31       32      1      0
+> >>>> FOLIO  0x00020000  0x00024000      16384       32       36      4      2
+> >>>> FOLIO  0x00024000  0x00028000      16384       36       40      4      2
+> >>>> FOLIO  0x00028000  0x0002c000      16384       40       44      4      2
+> >>>> FOLIO  0x0002c000  0x00030000      16384       44       48      4      2
+> >>>> FOLIO  0x00030000  0x00034000      16384       48       52      4      2
+> >>>> FOLIO  0x00034000  0x00038000      16384       52       56      4      2
+> >>>> FOLIO  0x00038000  0x0003c000      16384       56       60      4      2
+> >>>> FOLIO  0x0003c000  0x00040000      16384       60       64      4      2
+> >>>> FOLIO  0x00040000  0x00050000      65536       64       80     16      4
+> >>>> FOLIO  0x00050000  0x00060000      65536       80       96     16      4
+> >>>> FOLIO  0x00060000  0x00080000     131072       96      128     32      5
+> >>>> FOLIO  0x00080000  0x000a0000     131072      128      160     32      5
+> >>>> FOLIO  0x000a0000  0x000c0000     131072      160      192     32      5
+> >>>> FOLIO  0x000c0000  0x000e0000     131072      192      224     32      5
+> >>>
+> >>> Similar here, do you know why we don't ramp up earlier. Allocating that many
+> >>> order-0 + order-2 pages looks a bit suboptimal to me for a sequential read.
+> >>
+> >> Note that this is reading through mmap using the mmap readahead code. If
+> >> you use standard read(2), the readahead window starts small as well and
+> >> ramps us along with the desired order so we don't allocate that many small
+> >> order pages in that case.
+> 
+> That does raise an interesting question though; why do we use a fixed size
+> window for mmap? It feels like we could start with a smaller window and ramp it
+> up as order ramps up too, capped to the end of the vma.
+> 
+> Although perhaps that is an investigation for another day... My main motivation
+> here was to be consistent about what page_cache_ra_order()'s new_order means,
+> and to actually implement algorithm that was originally intended - start from 0
+> and ramp up +2 on each readahead marker.
 
-This allows removing a cast in ovl_open_realfile() when calling
-backing_file_open().
+Well, in my opinion the whole mmap readahead logic would deserve some
+remodelling :) because a lot of decisions there are quite disputable for
+contemporary systems. But that's definitely for some other patchset...
 
-Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
----
-
-This depends on commit 924577e4f6ca ("ovl: Fix nested backing file paths") in
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git ovl-fixes
-
- fs/file_table.c     | 10 ++++++----
- fs/internal.h       |  1 +
- fs/overlayfs/file.c |  2 +-
- include/linux/fs.h  | 12 ++++++------
- 4 files changed, 14 insertions(+), 11 deletions(-)
-
-diff --git a/fs/file_table.c b/fs/file_table.c
-index c04ed94cdc4b..3b3f920a9175 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -52,16 +52,18 @@ struct backing_file {
- 	};
- };
- 
--static inline struct backing_file *backing_file(struct file *f)
-+#define backing_file(f) container_of(f, struct backing_file, file)
-+
-+struct path *backing_file_user_path(struct file *f)
- {
--	return container_of(f, struct backing_file, file);
-+	return &backing_file(f)->user_path;
- }
- 
--struct path *backing_file_user_path(struct file *f)
-+const struct path *backing_file_user_path_c(const struct file *f)
- {
- 	return &backing_file(f)->user_path;
- }
--EXPORT_SYMBOL_GPL(backing_file_user_path);
-+EXPORT_SYMBOL_GPL(backing_file_user_path_c);
- 
- static inline void file_free(struct file *f)
- {
-diff --git a/fs/internal.h b/fs/internal.h
-index b9b3e29a73fd..84a330763343 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -100,6 +100,7 @@ extern void chroot_fs_refs(const struct path *, const struct path *);
- struct file *alloc_empty_file(int flags, const struct cred *cred);
- struct file *alloc_empty_file_noaccount(int flags, const struct cred *cred);
- struct file *alloc_empty_backing_file(int flags, const struct cred *cred);
-+struct path *backing_file_user_path(struct file *f);
- 
- static inline void file_put_write_access(struct file *file)
- {
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index dfea7bd800cb..f5b8877d5fe2 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -48,7 +48,7 @@ static struct file *ovl_open_realfile(const struct file *file,
- 		if (!inode_owner_or_capable(real_idmap, realinode))
- 			flags &= ~O_NOATIME;
- 
--		realfile = backing_file_open(file_user_path((struct file *) file),
-+		realfile = backing_file_open(file_user_path(file),
- 					     flags, realpath, current_cred());
- 	}
- 	ovl_revert_creds(old_cred);
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e..7db9cd5a4bee 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2813,7 +2813,7 @@ struct file *dentry_open_nonotify(const struct path *path, int flags,
- 				  const struct cred *cred);
- struct file *dentry_create(const struct path *path, int flags, umode_t mode,
- 			   const struct cred *cred);
--struct path *backing_file_user_path(struct file *f);
-+const struct path *backing_file_user_path_c(const struct file *f);
- 
- /*
-  * When mmapping a file on a stackable filesystem (e.g., overlayfs), the file
-@@ -2825,21 +2825,21 @@ struct path *backing_file_user_path(struct file *f);
-  * by fstat() on that same fd.
-  */
- /* Get the path to display in /proc/<pid>/maps */
--static inline const struct path *file_user_path(struct file *f)
-+static inline const struct path *file_user_path(const struct file *f)
- {
- 	if (unlikely(f->f_mode & FMODE_BACKING))
--		return backing_file_user_path(f);
-+		return backing_file_user_path_c(f);
- 	return &f->f_path;
- }
- /* Get the inode whose inode number to display in /proc/<pid>/maps */
--static inline const struct inode *file_user_inode(struct file *f)
-+static inline const struct inode *file_user_inode(const struct file *f)
- {
- 	if (unlikely(f->f_mode & FMODE_BACKING))
--		return d_inode(backing_file_user_path(f)->dentry);
-+		return d_inode(backing_file_user_path_c(f)->dentry);
- 	return file_inode(f);
- }
- 
--static inline struct file *file_clone_open(struct file *file)
-+static inline struct file *file_clone_open(const struct file *file)
- {
- 	return dentry_open(&file->f_path, file->f_flags, file->f_cred);
- }
+								Honza
 -- 
-2.49.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
