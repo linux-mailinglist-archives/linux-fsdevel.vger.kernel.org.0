@@ -1,49 +1,49 @@
-Return-Path: <linux-fsdevel+bounces-48055-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48056-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C23F2AA91BE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:15:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28DDAAA91BD
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3833A3BA769
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 11:14:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B5FF17700F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 11:15:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 777D3208961;
-	Mon,  5 May 2025 11:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24461204680;
+	Mon,  5 May 2025 11:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkjSkPhN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kGuXjLIA"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE5A9282EE;
-	Mon,  5 May 2025 11:14:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C95320299B;
+	Mon,  5 May 2025 11:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746443644; cv=none; b=J6kCKcA9joh4YGsLnVYsID8KB2kixBihw1jlbI41tUrX/QIvlnHQ+hJOgXLWTXOc50bBVs3ZI4CSwD5YVfFNYHiLT2zGWXz95wOGcS5gw7OtRCOsAQiWisc+dDRz4P7hFhMi+vRqeQG4jeJqtzOUmtC+N7nM8X9PZ6dEG4hk+GY=
+	t=1746443649; cv=none; b=Gnql+xQFTlTo8NHy3K9iV9Kad9VZn2gfZl4SDfmDvXBLbdcmiJjLAOwb+zhm3Pl4r1UvdcBp5sHJkBjSkp7votISZmTTK6cD10iKHaRqa65+8so/EuaOrWruNBmEQdTtdwmv3vFojIyRxLA9HU191VHs0nbM39zqzgLrwx9qIIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746443644; c=relaxed/simple;
-	bh=sY3uIB6g6xsWBkS/M2/GrdpdnZH6W10Su5t41D1OTEg=;
+	s=arc-20240116; t=1746443649; c=relaxed/simple;
+	bh=M/nfP+nWzNfyDS+hsdkqduv5bjH+2u+KfH7py/tn25g=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pUWmYn5X528XLlehdI3ymxGtW4B4C48uRpB/drLEpiQdoiSrUD/UqtSpfCYLQZzCPx1SJxaJDr5g6jea0l5HzBe3Dss+kL/rFwDDU2EtrHnW63+hKToW56qcOej99NTGMt23s+LIZ8hydMu7EnF1SnhmWC+KboZ9tdtJlLTcvOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkjSkPhN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0224C4CEF6;
-	Mon,  5 May 2025 11:13:59 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=CxXrlXt7F1FSwtYzRjiQnWcuxauDfL6WrQXnanHN6Jc3A2Utg2uVNxOiPYOQvcB2pdKLlbEcda3FollcmaO2hBDBlgRPcm8CJ62ag7rlHiUKzgF8tAVJ4IkTfntJFHHfHaThUwjGylw8+GbtraxZRm/rbnWZlZ+jm8ltz+g0S4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kGuXjLIA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1741C4CEF0;
+	Mon,  5 May 2025 11:14:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746443644;
-	bh=sY3uIB6g6xsWBkS/M2/GrdpdnZH6W10Su5t41D1OTEg=;
+	s=k20201202; t=1746443648;
+	bh=M/nfP+nWzNfyDS+hsdkqduv5bjH+2u+KfH7py/tn25g=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=DkjSkPhNx+2WHsjnkemPSKwEKlYmWiVFAjCsefhgqCjdo1xJj6bcJNeA2a8Ou2WKA
-	 SURnXWsH2M/UdG56h7kNdGeLQWLbhG4pVajNe7U5lxizSsAvAGdgGs2MikY/xJr+/x
-	 49KBSqPzPrCV+J/KU+8/tKqR+s4rdQT5Ygb0H5TW6cV6vJjsLA8nFJPRwdXQ7c8TlA
-	 2Qhz3ASB81qh7v1qNZ++XJHsux+tdpnjRHW6cH1JNv4NvtsAIC7/afpTHvsw3fNVep
-	 6/PmZKvgV5eqYk6wfd7cfgvavvzCtdsjn3baLvq2PprT/r7RUXCdOEitX/++gB9xNF
-	 zH97+ePNwENfg==
+	b=kGuXjLIAaTGgKQhAsYkggP5Gp9Jg0WaL2xqiiIQ51kL+kpyxIT6EBqdFPX8z5oyWo
+	 s3UuUuj/gZz3fXGIHYI5i4bgyrdR/awg+Q8VZRp4p1q5vjUJOKlRVR3rqDmln+gUio
+	 sPHGHmI6XY7LcvrdLeW31c+dB3oulmKBr3RUSTONNKG1oOwnfzAMldzDRxkz5P8AJ3
+	 lKstb2sTwtFZZIhcHfjk+faDgq7jHrjCI6jkpldk/XIJKsgVRA4gYApvd4aAsXelCI
+	 Y2oUt+jVqdTa6PD42dJs3m3nGg5DoZdFVLJ1GyEYHyCSOBwno8ZztUo6FVMBZ9f8z/
+	 LgOVKU8yCTAxg==
 From: Christian Brauner <brauner@kernel.org>
-Date: Mon, 05 May 2025 13:13:40 +0200
-Subject: [PATCH RFC v3 02/10] coredump: massage do_coredump()
+Date: Mon, 05 May 2025 13:13:41 +0200
+Subject: [PATCH RFC v3 03/10] net: reserve prefix
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250505-work-coredump-socket-v3-2-e1832f0e1eae@kernel.org>
+Message-Id: <20250505-work-coredump-socket-v3-3-e1832f0e1eae@kernel.org>
 References: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
 In-Reply-To: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
 To: Eric Dumazet <edumazet@google.com>, 
@@ -70,164 +70,136 @@ Cc: "David S. Miller" <davem@davemloft.net>,
  Christian Brauner <brauner@kernel.org>, 
  Alexander Mikhalitsyn <alexander@mihalicyn.com>
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4933; i=brauner@kernel.org;
- h=from:subject:message-id; bh=sY3uIB6g6xsWBkS/M2/GrdpdnZH6W10Su5t41D1OTEg=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRIzM1VmvSjT9vAUM2qf//zapt/V2/L/b+o/dfh49EJH
- //wpGYKdpSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykO5+R4VPHvy2sy7kMJSze
- ShS25Hx7wcP+9Oqn6T8uvVj7aZfIXQ+G/9Xd8p6LNIV+nLy1XWY/R/2Fud37j99886DNzt9l/8r
- vj/kA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4545; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=M/nfP+nWzNfyDS+hsdkqduv5bjH+2u+KfH7py/tn25g=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRIzM3T0P3D/IQ7IHliiLiy8M3fm7pbY2UrJpqdulfwX
+ NllT0VPRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwETq2hj+u7JHZ22bcbfOO9ho
+ r7BAXsu39XFmETXKJk/elk9LabEJZ2S47seeb62Q77BP03Hipptnf1fOO7m1fufD7sPPtE6a7H7
+ OBAA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-We're going to extend the coredump code in follow-up patches.
-Clean it up so we can do this more easily.
+Add the reserved "linuxafsk/" prefix for AF_UNIX sockets and require
+CAP_NET_ADMIN in the owning user namespace of the network namespace to
+bind it. This will be used in next patches to support the coredump
+socket but is a generally useful concept.
+
+The collision risk is so low that we can just start using it. Userspace
+must already be prepared to retry if a given abstract address isn't
+usable anyway.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/coredump.c | 123 +++++++++++++++++++++++++++++++---------------------------
- 1 file changed, 66 insertions(+), 57 deletions(-)
+ include/uapi/linux/un.h |  2 ++
+ net/unix/af_unix.c      | 45 +++++++++++++++++++++++++++++++++++++++++----
+ 2 files changed, 43 insertions(+), 4 deletions(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 281320ea351f..1779299b8c61 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -646,63 +646,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		goto fail_unlock;
- 	}
+diff --git a/include/uapi/linux/un.h b/include/uapi/linux/un.h
+index 0ad59dc8b686..bbd5ad508dfa 100644
+--- a/include/uapi/linux/un.h
++++ b/include/uapi/linux/un.h
+@@ -5,6 +5,8 @@
+ #include <linux/socket.h>
  
--	if (cn.core_type == COREDUMP_PIPE) {
--		int argi;
--		int dump_count;
--		char **helper_argv;
--		struct subprocess_info *sub_info;
--
--		if (cprm.limit == 1) {
--			/* See umh_coredump_setup() which sets RLIMIT_CORE = 1.
--			 *
--			 * Normally core limits are irrelevant to pipes, since
--			 * we're not writing to the file system, but we use
--			 * cprm.limit of 1 here as a special value, this is a
--			 * consistent way to catch recursive crashes.
--			 * We can still crash if the core_pattern binary sets
--			 * RLIM_CORE = !1, but it runs as root, and can do
--			 * lots of stupid things.
--			 *
--			 * Note that we use task_tgid_vnr here to grab the pid
--			 * of the process group leader.  That way we get the
--			 * right pid if a thread in a multi-threaded
--			 * core_pattern process dies.
--			 */
--			coredump_report_failure("RLIMIT_CORE is set to 1, aborting core");
--			goto fail_unlock;
--		}
--		cprm.limit = RLIM_INFINITY;
--
--		dump_count = atomic_inc_return(&core_dump_count);
--		if (core_pipe_limit && (core_pipe_limit < dump_count)) {
--			coredump_report_failure("over core_pipe_limit, skipping core dump");
--			goto fail_dropcount;
--		}
--
--		helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
--					    GFP_KERNEL);
--		if (!helper_argv) {
--			coredump_report_failure("%s failed to allocate memory", __func__);
--			goto fail_dropcount;
--		}
--		for (argi = 0; argi < argc; argi++)
--			helper_argv[argi] = cn.corename + argv[argi];
--		helper_argv[argi] = NULL;
--
--		retval = -ENOMEM;
--		sub_info = call_usermodehelper_setup(helper_argv[0],
--						helper_argv, NULL, GFP_KERNEL,
--						umh_coredump_setup, NULL, &cprm);
--		if (sub_info)
--			retval = call_usermodehelper_exec(sub_info,
--							  UMH_WAIT_EXEC);
--
--		kfree(helper_argv);
--		if (retval) {
--			coredump_report_failure("|%s pipe failed", cn.corename);
--			goto close_fail;
--		}
--	} else if (cn.core_type == COREDUMP_FILE) {
-+	switch (cn.core_type) {
-+	case COREDUMP_FILE: {
- 		struct mnt_idmap *idmap;
- 		struct inode *inode;
- 		int open_flags = O_CREAT | O_WRONLY | O_NOFOLLOW |
-@@ -796,6 +741,70 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		if (do_truncate(idmap, cprm.file->f_path.dentry,
- 				0, 0, cprm.file))
- 			goto close_fail;
-+		break;
-+	}
-+	case COREDUMP_PIPE: {
-+		int argi;
-+		int dump_count;
-+		char **helper_argv;
-+		struct subprocess_info *sub_info;
-+
-+		if (cprm.limit == 1) {
-+			/* See umh_coredump_setup() which sets RLIMIT_CORE = 1.
-+			 *
-+			 * Normally core limits are irrelevant to pipes, since
-+			 * we're not writing to the file system, but we use
-+			 * cprm.limit of 1 here as a special value, this is a
-+			 * consistent way to catch recursive crashes.
-+			 * We can still crash if the core_pattern binary sets
-+			 * RLIM_CORE = !1, but it runs as root, and can do
-+			 * lots of stupid things.
-+			 *
-+			 * Note that we use task_tgid_vnr here to grab the pid
-+			 * of the process group leader.  That way we get the
-+			 * right pid if a thread in a multi-threaded
-+			 * core_pattern process dies.
-+			 */
-+			coredump_report_failure("RLIMIT_CORE is set to 1, aborting core");
-+			goto fail_unlock;
-+		}
-+		cprm.limit = RLIM_INFINITY;
-+
-+		dump_count = atomic_inc_return(&core_dump_count);
-+		if (core_pipe_limit && (core_pipe_limit < dump_count)) {
-+			coredump_report_failure("over core_pipe_limit, skipping core dump");
-+			goto fail_dropcount;
-+		}
-+
-+		helper_argv = kmalloc_array(argc + 1, sizeof(*helper_argv),
-+					    GFP_KERNEL);
-+		if (!helper_argv) {
-+			coredump_report_failure("%s failed to allocate memory", __func__);
-+			goto fail_dropcount;
-+		}
-+		for (argi = 0; argi < argc; argi++)
-+			helper_argv[argi] = cn.corename + argv[argi];
-+		helper_argv[argi] = NULL;
-+
-+		retval = -ENOMEM;
-+		sub_info = call_usermodehelper_setup(helper_argv[0],
-+						helper_argv, NULL, GFP_KERNEL,
-+						umh_coredump_setup, NULL, &cprm);
-+		if (sub_info)
-+			retval = call_usermodehelper_exec(sub_info,
-+							  UMH_WAIT_EXEC);
-+
-+		kfree(helper_argv);
-+		if (retval) {
-+			coredump_report_failure("|%s pipe failed", cn.corename);
-+			goto close_fail;
-+		}
-+		break;
-+	}
-+	default:
-+		WARN_ON_ONCE(true);
-+		retval = -EINVAL;
-+		goto close_fail;
- 	}
+ #define UNIX_PATH_MAX	108
++/* reserved AF_UNIX socket namespace. */
++#define UNIX_SOCKET_NAMESPACE "linuxafsk/"
  
- 	/* get us an unshared descriptor table; almost always a no-op */
+ struct sockaddr_un {
+ 	__kernel_sa_family_t sun_family; /* AF_UNIX */
+diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+index 472f8aa9ea15..edc2f143f401 100644
+--- a/net/unix/af_unix.c
++++ b/net/unix/af_unix.c
+@@ -114,6 +114,9 @@ static atomic_long_t unix_nr_socks;
+ static struct hlist_head bsd_socket_buckets[UNIX_HASH_SIZE / 2];
+ static spinlock_t bsd_socket_locks[UNIX_HASH_SIZE / 2];
+ 
++static struct sockaddr_un linuxafsk_addr;
++static size_t linuxafsk_addr_len;
++
+ /* SMP locking strategy:
+  *    hash table is protected with spinlock.
+  *    each socket state is protected by separate spinlock.
+@@ -436,6 +439,30 @@ static struct sock *__unix_find_socket_byname(struct net *net,
+ 	return NULL;
+ }
+ 
++static int unix_may_bind_name(struct net *net, struct sockaddr_un *sunname,
++			      int len, unsigned int hash)
++{
++	struct sock *s;
++
++	s = __unix_find_socket_byname(net, sunname, len, hash);
++	if (s)
++		return -EADDRINUSE;
++
++	/*
++	 * Check whether this is our reserved prefix and if so ensure
++	 * that only privileged processes can bind it.
++	 */
++	if (linuxafsk_addr_len <= len &&
++	    !memcmp(&linuxafsk_addr, sunname, linuxafsk_addr_len)) {
++		/* Don't bind the namespace itself. */
++		if (linuxafsk_addr_len == len)
++			return -ECONNREFUSED;
++		if (!ns_capable(net->user_ns, CAP_NET_ADMIN))
++			return -ECONNREFUSED;
++	}
++	return 0;
++}
++
+ static inline struct sock *unix_find_socket_byname(struct net *net,
+ 						   struct sockaddr_un *sunname,
+ 						   int len, unsigned int hash)
+@@ -1258,10 +1285,10 @@ static int unix_autobind(struct sock *sk)
+ 	new_hash = unix_abstract_hash(addr->name, addr->len, sk->sk_type);
+ 	unix_table_double_lock(net, old_hash, new_hash);
+ 
+-	if (__unix_find_socket_byname(net, addr->name, addr->len, new_hash)) {
++	if (unix_may_bind_name(net, addr->name, addr->len, new_hash)) {
+ 		unix_table_double_unlock(net, old_hash, new_hash);
+ 
+-		/* __unix_find_socket_byname() may take long time if many names
++		/* unix_may_bind_name() may take long time if many names
+ 		 * are already in use.
+ 		 */
+ 		cond_resched();
+@@ -1379,7 +1406,8 @@ static int unix_bind_abstract(struct sock *sk, struct sockaddr_un *sunaddr,
+ 	new_hash = unix_abstract_hash(addr->name, addr->len, sk->sk_type);
+ 	unix_table_double_lock(net, old_hash, new_hash);
+ 
+-	if (__unix_find_socket_byname(net, addr->name, addr->len, new_hash))
++	err = unix_may_bind_name(net, addr->name, addr->len, new_hash);
++	if (err)
+ 		goto out_spin;
+ 
+ 	__unix_set_addr_hash(net, sk, addr, new_hash);
+@@ -1389,7 +1417,6 @@ static int unix_bind_abstract(struct sock *sk, struct sockaddr_un *sunaddr,
+ 
+ out_spin:
+ 	unix_table_double_unlock(net, old_hash, new_hash);
+-	err = -EADDRINUSE;
+ out_mutex:
+ 	mutex_unlock(&u->bindlock);
+ out:
+@@ -3841,6 +3868,16 @@ static int __init af_unix_init(void)
+ 
+ 	BUILD_BUG_ON(sizeof(struct unix_skb_parms) > sizeof_field(struct sk_buff, cb));
+ 
++	/*
++	 * We need a leading NUL byte for the abstract namespace. Just
++	 * use the trailing one given by sizeof().
++	 */
++	linuxafsk_addr_len = offsetof(struct sockaddr_un, sun_path) + sizeof(UNIX_SOCKET_NAMESPACE);
++	linuxafsk_addr.sun_family = AF_UNIX;
++	memcpy(linuxafsk_addr.sun_path + 1, UNIX_SOCKET_NAMESPACE, sizeof(UNIX_SOCKET_NAMESPACE) - 1);
++	/* Technically not needed, but let's be explicit. */
++	linuxafsk_addr.sun_path[0] = '\0';
++
+ 	for (i = 0; i < UNIX_HASH_SIZE / 2; i++) {
+ 		spin_lock_init(&bsd_socket_locks[i]);
+ 		INIT_HLIST_HEAD(&bsd_socket_buckets[i]);
 
 -- 
 2.47.2
