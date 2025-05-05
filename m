@@ -1,233 +1,200 @@
-Return-Path: <linux-fsdevel+bounces-48083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48084-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9305DAA94D4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:51:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 004EFAA94E3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:53:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9563A3BB1C6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:50:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E41D3BCC55
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D65258CE8;
-	Mon,  5 May 2025 13:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTQlqip/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB042512F3;
+	Mon,  5 May 2025 13:52:50 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D1C2C859;
-	Mon,  5 May 2025 13:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50DC1D54EE
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 13:52:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746453052; cv=none; b=JrB4a0ZxKVqz3/Yt9scEezyb48Fu/+JPy6PO1DAD5g1YCd3KrUNHe9OrzV6ryBN1YBGZoo0NQMSzAZU/nivv4g+iO8uhKQ0qoxEFwZh7wNhJSHZSr/AhDju6E5C6mbQSNvap4TDSplPkAOw1pqMiIFtKhqtgrS5/rZhnvwt5+O8=
+	t=1746453170; cv=none; b=FJm+vFRsRO98bM+XofkjrxItVW+ph4HIs2xoqSTuoWlOCLRlgrxPkCZhIVU49Z2gmDS8F0plWcQCYJxgHrhKteBfEHOl2BO5JjCOIzHMQw3f+dONjMRvy/i+m+lTsqQ+hGBcpwL2WHEZuG6SVhLWYlFoJ6zGkNCEqKOQsMWmQw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746453052; c=relaxed/simple;
-	bh=Vqk0ZpZc2qCwVlVPa1gNgdMWQzO0ZUreacqfzsriyUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oxxq4seAFvOCGpgpY/WZikIAE68zEbzB+6wQ9MkltnhvYzd7Yt9/3w8GgWvFWdkgqcGAewltpUdQiyHOgPLqPtr7UiF1pFEEIHqyzQTAkNHIGNQnSDI8PochzFyvDiVNh5FrjxR505B2CV0quP83Jvy4POEGRMWnbt/bgFhUQEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTQlqip/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17FD5C4CEE4;
-	Mon,  5 May 2025 13:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746453051;
-	bh=Vqk0ZpZc2qCwVlVPa1gNgdMWQzO0ZUreacqfzsriyUM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hTQlqip/9RtDq3faJnMsVwE+9Nde3Mnr3H4IzjZ81T1juQF7EOoMHDLstfmKej10J
-	 H5gITaG4z0iFzIuIUu5YI7joHG0oT4jg+r6UknQ66QsthJD0whwF68MulFkkvvx6et
-	 WST+LOzBuWuy5KdJQ27kmB+EfVrnyofS9Igy5t4TJA6uKGA0YIxV3KfJwtKhE0pqQt
-	 4t7Fv+aAPqZhR3s55I2uhb1r5gusiltCLG2pwI7myW53nhgqHhnin9Pc/ah2May61z
-	 7/WfFkRLcv9dcAN0AftB7MhohCeBd6cdZO5VhJRPo7G8KY1PzQPG8f2UkLMhs1fkaW
-	 5roincr1ws3Uw==
-Date: Mon, 5 May 2025 15:50:43 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org, 
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
-	peterx@redhat.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
-	shuah@kernel.org, adobriyan@gmail.com, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v3 7/8] mm/maps: read proc/pid/maps under RCU
-Message-ID: <20250505-wachen-konform-3fe08f1b3214@brauner>
-References: <20250418174959.1431962-1-surenb@google.com>
- <20250418174959.1431962-8-surenb@google.com>
- <CAG48ez3YLWh9hXQQdGVQ7hCsd=k_i2Z2NO6qzT6NaOYiRjy=nw@mail.gmail.com>
- <CAJuCfpGGiwTbMeGAeYNtQ5SsFenUw8up6ToLy=VstULM_TSoXA@mail.gmail.com>
- <CAG48ez15g5n9AoMJk1yPHsDCq2PGxCHc2WhCAzH8B2o6PgDwzQ@mail.gmail.com>
- <CAJuCfpG+YjyVE-6TaAQEjwc0iixqN8Epf25jo2awtL=gqY=afA@mail.gmail.com>
- <CAG48ez0ntTH_sOaPiqML715jyTCujwyh3Og1wBq9RNLbu55C5Q@mail.gmail.com>
+	s=arc-20240116; t=1746453170; c=relaxed/simple;
+	bh=6rF087bLoQRwLq16vOa2+Km1hupFRfBI0gqS3iF7oOI=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=kfy09fhzsVRUvz7FCdSsImYq5JFvSGFvGCy0ou76scZnEtnX8vvgR1qn7mY+vlNsCE97A275DJAi97t/AhTT2ze+zdAPx0HvNB4ko2nk92kgOfLdCN72rBYoeKzEi6WyCuGEZrwGxBs6myahvmIUs+Kv+nanfyAKaFRDu9zMI3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:46336)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uBwFN-009xXi-Vg; Mon, 05 May 2025 07:52:42 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:58068 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uBwFM-00GCH5-Lm; Mon, 05 May 2025 07:52:41 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  Christian Brauner <brauner@kernel.org>
+References: <20250501201506.GS2023217@ZenIV>
+	<87plgq8igd.fsf@email.froward.int.ebiederm.org>
+	<20250504232441.GC2023217@ZenIV>
+Date: Mon, 05 May 2025 08:52:16 -0500
+In-Reply-To: <20250504232441.GC2023217@ZenIV> (Al Viro's message of "Mon, 5
+	May 2025 00:24:41 +0100")
+Message-ID: <877c2v88rz.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez0ntTH_sOaPiqML715jyTCujwyh3Og1wBq9RNLbu55C5Q@mail.gmail.com>
+Content-Type: text/plain
+X-XM-SPF: eid=1uBwFM-00GCH5-Lm;;;mid=<877c2v88rz.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/gjawIl9rXZ0MvC6Dz88W7DXU87QkMZ18=
+X-Spam-Level: ***
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.5000]
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa05 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_03 6+ unique symbols in subject
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  1.0 XMGenDplmaNmb Diploma spam phrases+possible phone number
+	*  1.5 TR_AI_Phishing Email matches multiple AI-related patterns
+X-Spam-DCC: XMission; sa05 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ***;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 691 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 12 (1.8%), b_tie_ro: 11 (1.5%), parse: 1.61
+	(0.2%), extract_message_metadata: 21 (3.0%), get_uri_detail_list: 4.6
+	(0.7%), tests_pri_-2000: 13 (1.9%), tests_pri_-1000: 3.2 (0.5%),
+	tests_pri_-950: 1.67 (0.2%), tests_pri_-900: 1.28 (0.2%),
+	tests_pri_-90: 91 (13.1%), check_bayes: 87 (12.6%), b_tokenize: 13
+	(1.9%), b_tok_get_all: 11 (1.6%), b_comp_prob: 4.1 (0.6%),
+	b_tok_touch_all: 55 (7.9%), b_finish: 1.05 (0.2%), tests_pri_0: 524
+	(75.8%), check_dkim_signature: 0.76 (0.1%), check_dkim_adsp: 3.6
+	(0.5%), poll_dns_idle: 1.19 (0.2%), tests_pri_10: 3.9 (0.6%),
+	tests_pri_500: 14 (2.0%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC] MNT_LOCKED vs. finish_automount()
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: brauner@kernel.org, torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-On Tue, Apr 29, 2025 at 08:54:58PM +0200, Jann Horn wrote:
-> On Tue, Apr 29, 2025 at 8:04 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> > On Tue, Apr 29, 2025 at 10:21 AM Jann Horn <jannh@google.com> wrote:
-> > >
-> > > Hi!
-> > >
-> > > (I just noticed that I incorrectly assumed that VMAs use kfree_rcu
-> > > (not SLAB_TYPESAFE_BY_RCU) when I wrote my review of this, somehow I
-> > > forgot all about that...)
-> >
-> > Does this fact affect your previous comments? Just want to make sure
-> > I'm not missing something...
-> 
-> When I suggested using "WRITE_ONCE(vma->vm_file, NULL)" when tearing
-> down a VMA, and using get_file_rcu() for the lockless lookup, I did
-> not realize that you could actually also race with all the other
-> places that set ->vm_file, like __mmap_new_file_vma() and so on; and I
-> did not think about whether any of those code paths might leave a VMA
-> with a dangling ->vm_file pointer.
-> 
-> I guess maybe that means you really do need to do the lookup from the
-> copied data, as you did in your patch; and that might require calling
-> get_file_active() on the copied ->vm_file pointer (instead of
-> get_file_rcu()), even though I think that is not really how
-> get_file_active() is supposed to be used (it's supposed to be used
-> when you know the original file hasn't been freed yet). Really what
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-I think it's fine for get_file_active() to be used in this way. That
-->vm_file pointer usage should get a fat comment above it explaining how
-what you're doing is safe.
+> On Fri, May 02, 2025 at 10:46:26PM -0500, Eric W. Biederman wrote:
+>> Al Viro <viro@zeniv.linux.org.uk> writes:
+>> 
+>> > 	Back in 2011, when ->d_automount() had been introduced,
+>> > we went with "stepping on NFS referral, etc., has the submount
+>> > inherit the flags of parent one" (with the obvious exceptions
+>> > for internal-only flags).  Back then MNT_LOCKED didn't exist.
+>> >
+>> > 	Two years later, when MNT_LOCKED had been added, an explicit
+>> > "don't set MNT_LOCKED on expirable mounts when propagating across
+>> > the userns boundary; their underlying mountpoints can be exposed
+>> > whenever the original expires anyway".  Same went for root of
+>> > subtree attached by explicit mount --[r]bind - the mountpoint
+>> > had been exposed before the call, after all and for roots of
+>> > any propagation copies created by such (same reason).  Normal mount
+>> > (created by do_new_mount()) could never get MNT_LOCKED to start with.
+>> >
+>> > 	However, mounts created by finish_automount() bloody well
+>> > could - if the parent mount had MNT_LOCKED on it, submounts would
+>> > inherited it.  Even if they had been expirable.  Moreover, all their
+>> > propagation copies would have MNT_LOCKED stripped out.
+>> >
+>> > 	IMO this inconsistency is a bug; MNT_LOCKED should not
+>> > be inherited in finish_automount().
+>> >
+>> > 	Eric, is there something subtle I'm missing here?
+>> 
+>> I don't think you are missing anything.  This looks like a pretty clear
+>> cut case of simply not realizing finish_automount was special in a way
+>> that could result in MNT_LOCKED getting set.
+>> 
+>> I skimmed through the code just a minute ago and my reading of it
+>> matches your reading of it above.
+>> 
+>> The intended semantics of MNT_LOCKED are to not let an unprivileged user
+>> see under mounts they would never be able to see under without creating
+>> a mount namespace.
+>> 
+>> The mount point of an automount is pretty clearly something that is safe
+>> to see under.  Doubly so if this is a directory that will always be
+>> empty on a pseudo filesystem (aka autofs).
+>
+> Does anybody have objections to the following?
+>
+> [PATCH] finish_automount(): don't leak MNT_LOCKED from parent to child
+>
+> Intention for MNT_LOCKED had always been to protect the internal
+> mountpoints within a subtree that got copied across the userns boundary,
+> not the mountpoint that tree got attached to - after all, it _was_
+> exposed before the copying.
+>
+> For roots of secondary copies that is enforced in attach_recursive_mnt() -
+> MNT_LOCKED is explicitly stripped for those.  For the root of primary
+> copy we are almost always guaranteed that MNT_LOCKED won't be there,
+> so attach_recursive_mnt() doesn't bother.  Unfortunately, one call
+> chain got overlooked - triggering e.g. NFS referral will have the
+> submount inherit the public flags from parent; that's fine for such
+> things as read-only, nosuid, etc., but not for MNT_LOCKED.
+>
+> This is particularly pointless since the mount attached by finish_automount()
+> is usually expirable, which makes any protection granted by MNT_LOCKED
+> null and void; just wait for a while and that mount will go away on its own.
+>
+> The minimal fix is to have do_add_mount() treat MNT_LOCKED the same
+> way as other internal-only flags.  Longer term it would be cleaner to
+> deal with that in attach_recursive_mnt(), but that takes a bit more
+> massage, so let's go with the one-liner fix for now.
 
-> you'd want for that is basically a raw __get_file_rcu(), but that is
-> static and I think Christian wouldn't want to expose more of these
-> internals outside VFS...
+How would you deal with this in attach_recursive_mnt?  The problem case
+appears to be an automount on top of a recursive mount.  So I don't
+see the recursive mount code path being involved at all.
 
-Yeah, no. I don't want that to be usable outside of that file.
 
-> (In that case, all the stuff below about get_file_rcu() would be moot.)
-> 
-> Or you could pepper WRITE_ONCE() over all the places that write
-> ->vm_file, and ensure that ->vm_file is always NULLed before its
-> reference is dropped... but that seems a bit more ugly to me.
-> 
-> > > On Tue, Apr 29, 2025 at 7:09 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> > > > On Tue, Apr 29, 2025 at 8:40 AM Jann Horn <jannh@google.com> wrote:
-> > > > > On Fri, Apr 18, 2025 at 7:50 PM Suren Baghdasaryan <surenb@google.com> wrote:
-> > > > > > With maple_tree supporting vma tree traversal under RCU and vma and
-> > > > > > its important members being RCU-safe, /proc/pid/maps can be read under
-> > > > > > RCU and without the need to read-lock mmap_lock. However vma content
-> > > > > > can change from under us, therefore we make a copy of the vma and we
-> > > > > > pin pointer fields used when generating the output (currently only
-> > > > > > vm_file and anon_name). Afterwards we check for concurrent address
-> > > > > > space modifications, wait for them to end and retry. While we take
-> > > > > > the mmap_lock for reading during such contention, we do that momentarily
-> > > > > > only to record new mm_wr_seq counter. This change is designed to reduce
-> > > > > > mmap_lock contention and prevent a process reading /proc/pid/maps files
-> > > > > > (often a low priority task, such as monitoring/data collection services)
-> > > > > > from blocking address space updates.
-> > > > > [...]
-> > > > > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > > > > index b9e4fbbdf6e6..f9d50a61167c 100644
-> > > > > > --- a/fs/proc/task_mmu.c
-> > > > > > +++ b/fs/proc/task_mmu.c
-> > > > > [...]
-> > > > > > +/*
-> > > > > > + * Take VMA snapshot and pin vm_file and anon_name as they are used by
-> > > > > > + * show_map_vma.
-> > > > > > + */
-> > > > > > +static int get_vma_snapshot(struct proc_maps_private *priv, struct vm_area_struct *vma)
-> > > > > > +{
-> > > > > > +       struct vm_area_struct *copy = &priv->vma_copy;
-> > > > > > +       int ret = -EAGAIN;
-> > > > > > +
-> > > > > > +       memcpy(copy, vma, sizeof(*vma));
-> > > > > > +       if (copy->vm_file && !get_file_rcu(&copy->vm_file))
-> > > > > > +               goto out;
-> > > > >
-> > > > > I think this uses get_file_rcu() in a different way than intended.
-> > > > >
-> > > > > As I understand it, get_file_rcu() is supposed to be called on a
-> > > > > pointer which always points to a file with a non-zero refcount (except
-> > > > > when it is NULL). That's why it takes a file** instead of a file* - if
-> > > > > it observes a zero refcount, it assumes that the pointer must have
-> > > > > been updated in the meantime, and retries. Calling get_file_rcu() on a
-> > > > > pointer that points to a file with zero refcount, which I think can
-> > > > > happen with this patch, will cause an endless loop.
-> > > > > (Just as background: For other usecases, get_file_rcu() is supposed to
-> > > > > still behave nicely and not spuriously return NULL when the file* is
-> > > > > concurrently updated to point to another file*; that's what that loop
-> > > > > is for.)
-> > > >
-> > > > Ah, I see. I wasn't aware of this subtlety. I think this is fixable by
-> > > > checking the return value of get_file_rcu() and retrying speculation
-> > > > if it changed.
-> > >
-> > > I think you could probably still end up looping endlessly in get_file_rcu().
-> 
-> (Just to be clear: What I meant here is that get_file_rcu() loops
-> *internally*; get_file_rcu() is not guaranteed to ever return if the
-> pointed-to file has a zero refcount.)
-> 
-> > By "retrying speculation" I meant it in the sense of
-> > get_vma_snapshot() retry when it takes the mmap_read_lock and then
-> > does mmap_lock_speculate_try_begin to restart speculation. I'm also
-> > thinking about Liam's concern of guaranteeing forward progress for the
-> > reader. Thinking maybe I should not drop mmap_read_lock immediately on
-> > contention but generate some output (one vma or one page worth of
-> > vmas) before dropping mmap_read_lock and proceeding with speculation.
-> 
-> Hm, yeah, I guess you need that for forward progress...
-> 
-> > > > > (If my understanding is correct, maybe we should document that more
-> > > > > explicitly...)
-> > > >
-> > > > Good point. I'll add comments for get_file_rcu() as a separate patch.
-> > > >
-> > > > >
-> > > > > Also, I think you are introducing an implicit assumption that
-> > > > > remove_vma() does not NULL out the ->vm_file pointer (because that
-> > > > > could cause tearing and could theoretically lead to a torn pointer
-> > > > > being accessed here).
-> > > > >
-> > > > > One alternative might be to change the paths that drop references to
-> > > > > vma->vm_file (search for vma_close to find them) such that they first
-> > > > > NULL out ->vm_file with a WRITE_ONCE() and do the fput() after that,
-> > > > > maybe with a new helper like this:
-> > > > >
-> > > > > static void vma_fput(struct vm_area_struct *vma)
-> > > > > {
-> > > > >   struct file *file = vma->vm_file;
-> > > > >
-> > > > >   if (file) {
-> > > > >     WRITE_ONCE(vma->vm_file, NULL);
-> > > > >     fput(file);
-> > > > >   }
-> > > > > }
-> > > > >
-> > > > > Then on the lockless lookup path you could use get_file_rcu() on the
-> > > > > ->vm_file pointer _of the original VMA_, and store the returned file*
-> > > > > into copy->vm_file.
-> > > >
-> > > > Ack. Except for storing the return value of get_file_rcu(). I think
-> > > > once we detect that  get_file_rcu() returns a different file we should
-> > > > bail out and retry. The change in file is an indication that the vma
-> > > > got changed from under us, so whatever we have is stale.
-> > >
-> > > What does "different file" mean here - what file* would you compare
-> > > the returned one against?
-> >
-> > Inside get_vma_snapshot() I would pass the original vma->vm_file to
-> > get_file_rcu() and check if it returns the same value. If the value
-> > got changed we jump to  /* Address space got modified, vma might be
-> > stale. Re-lock and retry. */ section. That should work, right?
-> 
-> Where do you get an "original vma->vm_file" from?
-> 
-> To be clear, get_file_rcu(p) returns one of the values that *p had
-> while get_file_rcu(p) is running.
+
+Given that only new mounts explicitly specified by a user and
+finish_automount call do_add_mount this looks safe.  Having
+MNT_LOCKED set will always be inappropriate in these two
+cases.
+
+Eric
+
+
+> Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/fs/namespace.c b/fs/namespace.c
+> index 04a9bb9f31fa..352b4ccf1aaa 100644
+> --- a/fs/namespace.c
+> +++ b/fs/namespace.c
+> @@ -3761,7 +3761,7 @@ static int do_add_mount(struct mount *newmnt, struct mountpoint *mp,
+>  {
+>  	struct mount *parent = real_mount(path->mnt);
+>  
+> -	mnt_flags &= ~MNT_INTERNAL_FLAGS;
+> +	mnt_flags &= ~(MNT_INTERNAL_FLAGS | MNT_LOCKED);
+>  
+>  	if (unlikely(!check_mnt(parent))) {
+>  		/* that's acceptable only for automounts done in private ns */
 
