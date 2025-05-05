@@ -1,360 +1,275 @@
-Return-Path: <linux-fsdevel+bounces-48052-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48053-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C69AA918C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:08:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14367AA91B9
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:14:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE2A4175683
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 11:08:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F346F3AFD62
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 11:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49641FF7B0;
-	Mon,  5 May 2025 11:07:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07BFF2040B6;
+	Mon,  5 May 2025 11:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EbaW63iD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kTv5xL64";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EbaW63iD";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kTv5xL64"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcZW8TbH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 718D21C3BE2
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 11:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CA02282EE;
+	Mon,  5 May 2025 11:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746443276; cv=none; b=X24CDTmlCWzJQRuaRAOrCw57U4HIFUcCruqR+dGjOXsGuIkB42FJDKwxsIweCBDHwiWLCV4PHhvioVBY5J52eRk/rL23FaZCPsXwf74wIANQkNSfkKsese83to8CVEaUVlGQyOnnb9zz1OJfwK/2sutX9MWAoGiP3LPXo0GdBSk=
+	t=1746443635; cv=none; b=sAtB9Q2ce/YBiVyHu9L6bZ4wsMqgFLgrglZq8kMRUASiQzQpsqjIQyrURCbJwJZkgKVR/9d/LVe1e18iDGA+cqGjXhzgo2I4Bq69Yoc/NP+Spcbn8zoTAlNx34MFlc/bAesE9VJz/oa7jQA1civ40j6TpwNgryda4pba8RRI858=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746443276; c=relaxed/simple;
-	bh=75xTaqX5t3LkXn4DghonFn4V2vp0/OkMdcyBgJ3fOMw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSm6K53GXrk5Q3oXp5gsXnr9V1zVr+Qimlhj0b1ShmQnzkVMewyjhrK3AK7sp1LpafoWgt89MFK0ygsZeiyHNDEPeDSJmY23Qi/kwtuKpe4XdAcOIEF5OMFUB3uV/XzE0RP7JoXyOUq2rfYP0+kdv/dFA6E35phCaEpwlisXJCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EbaW63iD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kTv5xL64; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EbaW63iD; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kTv5xL64; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 749FA1F453;
-	Mon,  5 May 2025 11:07:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746443272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=moeccF8N//NdzTwsOxcbl58QpJE0t4cPwcQaT+6GOws=;
-	b=EbaW63iDsy1jtD+R9ckfxVrSqDWzot8JkPEB7kbCsBgB2UvC+Yx/F1LZEcnx9fAQLUjwlV
-	qcxnMhC6VeHtVxBnBRUHttjgdpk2bsp6qZWxQepMCunT5EkeuO/U81jDjD/ExI3Plyt/S8
-	xRKGLaTWwIQtcY914DkeBcCEwceXdCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746443272;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=moeccF8N//NdzTwsOxcbl58QpJE0t4cPwcQaT+6GOws=;
-	b=kTv5xL64qPXfGQEwMcvAO+AbTZVXRozuyEagoeH3ZjjWI50I+joLkCjXrYYhDIjQwvm1/C
-	St+8ynBE47hyD1Dg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746443272; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=moeccF8N//NdzTwsOxcbl58QpJE0t4cPwcQaT+6GOws=;
-	b=EbaW63iDsy1jtD+R9ckfxVrSqDWzot8JkPEB7kbCsBgB2UvC+Yx/F1LZEcnx9fAQLUjwlV
-	qcxnMhC6VeHtVxBnBRUHttjgdpk2bsp6qZWxQepMCunT5EkeuO/U81jDjD/ExI3Plyt/S8
-	xRKGLaTWwIQtcY914DkeBcCEwceXdCk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746443272;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=moeccF8N//NdzTwsOxcbl58QpJE0t4cPwcQaT+6GOws=;
-	b=kTv5xL64qPXfGQEwMcvAO+AbTZVXRozuyEagoeH3ZjjWI50I+joLkCjXrYYhDIjQwvm1/C
-	St+8ynBE47hyD1Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 65EF113AB7;
-	Mon,  5 May 2025 11:07:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lBDZGAicGGjvCQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 05 May 2025 11:07:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 1DED5A0670; Mon,  5 May 2025 13:07:52 +0200 (CEST)
-Date: Mon, 5 May 2025 13:07:52 +0200
-From: Jan Kara <jack@suse.cz>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, Melissa Wen <mwen@igalia.com>, 
-	Jani Nikula <jani.nikula@linux.intel.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH][CFT][RFC] sanitize handling of long-term internal mounts
-Message-ID: <jlvm4mtd2pexrb2n5msf5fmhp3zxvbqi6tqyi2ea5f5z3yuckk@rmpggn53till>
-References: <20250503230251.GA2023217@ZenIV>
+	s=arc-20240116; t=1746443635; c=relaxed/simple;
+	bh=2kAcBtas/AQjLAblI34TL2k5SEbCYozEXdmK/YGiGRw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=F0zZ72FyRqR7omNypnhG+nkvRN/Wb5jBpv/hmdV6WLE4wXJ/z05RInxVcQpQfOxayRjc1D23dSB/I5L8gyFBGtM7njnbXBGQXsMfoXc9Bs746YZlHzQl1lqtd0/MoqtRBS2Xr7iC23GKZ4coRedFjCC58N1eSDiSFxoqJtNDtag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcZW8TbH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC244C4CEE4;
+	Mon,  5 May 2025 11:13:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746443634;
+	bh=2kAcBtas/AQjLAblI34TL2k5SEbCYozEXdmK/YGiGRw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=jcZW8TbHC9xMR303np7qvoqC5qR4RKdkImHM7avmzoiuWHN0KsUFuUn6P7hlHezqK
+	 /V9AJpx0rUlUl/B59cSz5moJpEYbwil+lH8q1BPm4LsH/U/Uh3A4FiuirENnry/Upo
+	 JsEjPOvOWDaPbo4Jde1jntc+FqIm3y+UH12+ZZRpcjigkWPKVXlOeAEUx5eqftk5Ku
+	 j2c3k3+0IcQ93jznZvTicXlQGHA1zLtpSdt+SvREEKfoDnwiNHEJQUvjsE8FtPrNUw
+	 KLEVJsX/JOoEK/h+S/MKPRtPDOJGQpcvQy6ayYz8fhYqvy9B+QsJAcUeax+BqoLBJM
+	 fAF45kR2ALeBA==
+From: Christian Brauner <brauner@kernel.org>
+Subject: [PATCH RFC v3 00/10] coredump: add coredump socket
+Date: Mon, 05 May 2025 13:13:38 +0200
+Message-Id: <20250505-work-coredump-socket-v3-0-e1832f0e1eae@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250503230251.GA2023217@ZenIV>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGKdGGgC/3WPzUrFMBCFX+WStVPS6U+sK0G4D+BWXDTppA29N
+ mXSG5XSdzetCxHuXZ4D5/tmVhGIHQXxdFoFU3TB+SmF4uEkzNBOPYHrUhYosZIlNvDpeQTjmbr
+ rxwzBm5EWeFTGSJsrhY0RaTozWfd1YN/E6/lFvKdSt4FAczuZYSdGG6DO8jqbXWfDvhpcWDx/H
+ 7fE/Nj+agt5WxtzkIC2tRJVp3WpnkfiiS6Z5/5QRvyjVBLvUDBRygKrJj1orflP2bbtBzRwZsw
+ lAQAA
+X-Change-ID: 20250429-work-coredump-socket-87cc0f17729c
+To: Eric Dumazet <edumazet@google.com>, 
+ Kuniyuki Iwashima <kuniyu@amazon.com>, Oleg Nesterov <oleg@redhat.com>, 
+ linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Daan De Meyer <daan.j.demeyer@gmail.com>, 
+ David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, 
+ Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
+ Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Christian Brauner <brauner@kernel.org>, 
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>
+X-Mailer: b4 0.15-dev-c25d1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8212; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=2kAcBtas/AQjLAblI34TL2k5SEbCYozEXdmK/YGiGRw=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRIzM0t3xF6amKBl4nu9FtnHzkW7YnbfXvJTdln9TcKr
+ 545Gst9pqOUhUGMi0FWTJHFod0kXG45T8Vmo0wNmDmsTCBDGLg4BWAiy4sY/qm37F00pehAwro/
+ 8wKFFtRd2TYx73uY0LuPxp67l37nu3iEkWG5gPuBFbpfrX6ET/0XyXZFMejE9bIY4cNqU6/0bHU
+ sfMwEAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-On Sun 04-05-25 00:02:51, Al Viro wrote:
-> [folks, review and testing would be very welcome; i915 and v3d conversions
-> are essentially untested and I would really like to hear from DRM people
-> before pushing those anywhere.  I've no problem with splitting these
-> parts off and putting the infrastructure bits into a never-rebased
-> branch, if somebody prefers to have those taken via drm tree]
-> 
-> Original rationale for those had been the reduced cost of mntput()
-> for the stuff that is mounted somewhere.  Mount refcount increments and
-> decrements are frequent; what's worse, they tend to concentrate on the
-> same instances and cacheline pingpong is quite noticable.
-> 
-> As the result, mount refcounts are per-cpu; that allows a very cheap
-> increment.  Plain decrement would be just as easy, but decrement-and-test
-> is anything but (we need to add the components up, with exclusion against
-> possible increment-from-zero, etc.).
-> 
-> Fortunately, there is a very common case where we can tell that decrement
-> won't be the final one - if the thing we are dropping is currently
-> mounted somewhere.  We have an RCU delay between the removal from mount
-> tree and dropping the reference that used to pin it there, so we can
-> just take rcu_read_lock() and check if the victim is mounted somewhere.
-> If it is, we can go ahead and decrement without and further checks -
-> the reference we are dropping is not the last one.  If it isn't, we
-> get all the fun with locking, carefully adding up components, etc.,
-> but the majority of refcount decrements end up taking the fast path.
-> 
-> There is a major exception, though - pipes and sockets.  Those live
-> on the internal filesystems that are not going to be mounted anywhere.
-> They are not going to be _un_mounted, of course, so having to take the
-> slow path every time a pipe or socket gets closed is really obnoxious.
-> Solution had been to mark them as long-lived ones - essentially faking
-> "they are mounted somewhere" indicator.
-> 
-> With minor modification that works even for ones that do eventually get
-> dropped - all it takes is making sure we have an RCU delay between
-> clearing the "mounted somewhere" indicator and dropping the reference.
-> 
-> There are some additional twists (if you want to drop a dozen of such
-> internal mounts, you'd be better off with clearing the indicator on
-> all of them, doing an RCU delay once, then dropping the references),
-> but in the basic form it had been
-> 	* use kern_mount() if you want your internal mount to be
-> a long-term one.
-> 	* use kern_unmount() to undo that.
-> 
-> Unfortunately, the things did rot a bit during the mount API reshuffling.
-> In several cases we have lost the "fake the indicator" part; kern_unmount()
-> on the unmount side remained (it doesn't warn if you use it on a mount
-> without the indicator), but all benefits regaring mntput() cost had been
-> lost.
-> 
-> To get rid of that bitrot, let's add a new helper that would work
-> with fs_context-based API: fc_mount_longterm().  It's a counterpart
-> of fc_mount() that does, on success, mark its result as long-term.
-> It must be paired with kern_unmount() or equivalents.
-> 
-> Converted:
-> 	1) mqueue (it used to use kern_mount_data() and the umount side
-> is still as it used to be)
-> 	2) hugetlbfs (used to use kern_mount_data(), internal mount is
-> never unmounted in this one)
-> 	3) i915 gemfs (used to be kern_mount() + manual remount to set
-> options, still uses kern_unmount() on umount side)
-> 	4) v3d gemfs (copied from i915)
-> 
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+Coredumping currently supports two modes:
 
-The VFS bits look good to me. Feel free to add:
+(1) Dumping directly into a file somewhere on the filesystem.
+(2) Dumping into a pipe connected to a usermode helper process
+    spawned as a child of the system_unbound_wq or kthreadd.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+For simplicity I'm mostly ignoring (1). There's probably still some
+users of (1) out there but processing coredumps in this way can be
+considered adventurous especially in the face of set*id binaries.
 
-								Honza
+The most common option should be (2) by now. It works by allowing
+userspace to put a string into /proc/sys/kernel/core_pattern like:
 
-> ---
-> diff --git a/drivers/gpu/drm/i915/gem/i915_gemfs.c b/drivers/gpu/drm/i915/gem/i915_gemfs.c
-> index 46b9a17d6abc..aae7c0a3c966 100644
-> --- a/drivers/gpu/drm/i915/gem/i915_gemfs.c
-> +++ b/drivers/gpu/drm/i915/gem/i915_gemfs.c
-> @@ -6,16 +6,23 @@
->  
->  #include <linux/fs.h>
->  #include <linux/mount.h>
-> +#include <linux/fs_context.h>
->  
->  #include "i915_drv.h"
->  #include "i915_gemfs.h"
->  #include "i915_utils.h"
->  
-> +static int add_param(struct fs_context *fc, const char *key, const char *val)
-> +{
-> +	return vfs_parse_fs_string(fc, key, val, strlen(val));
-> +}
-> +
->  void i915_gemfs_init(struct drm_i915_private *i915)
->  {
-> -	char huge_opt[] = "huge=within_size"; /* r/w */
->  	struct file_system_type *type;
-> +	struct fs_context *fc;
->  	struct vfsmount *gemfs;
-> +	int ret;
->  
->  	/*
->  	 * By creating our own shmemfs mountpoint, we can pass in
-> @@ -39,8 +46,16 @@ void i915_gemfs_init(struct drm_i915_private *i915)
->  	if (!type)
->  		goto err;
->  
-> -	gemfs = vfs_kern_mount(type, SB_KERNMOUNT, type->name, huge_opt);
-> -	if (IS_ERR(gemfs))
-> +	fc = fs_context_for_mount(type, SB_KERNMOUNT);
-> +	if (IS_ERR(fc))
-> +		goto err;
-> +	ret = add_param(fc, "source", "tmpfs");
-> +	if (!ret)
-> +		ret = add_param(fc, "huge", "within_size");
-> +	if (!ret)
-> +		gemfs = fc_mount_longterm(fc);
-> +	put_fs_context(fc);
-> +	if (ret)
->  		goto err;
->  
->  	i915->mm.gemfs = gemfs;
-> diff --git a/drivers/gpu/drm/v3d/v3d_gemfs.c b/drivers/gpu/drm/v3d/v3d_gemfs.c
-> index 4c5e18590a5c..8ec6ed82b3d9 100644
-> --- a/drivers/gpu/drm/v3d/v3d_gemfs.c
-> +++ b/drivers/gpu/drm/v3d/v3d_gemfs.c
-> @@ -3,14 +3,21 @@
->  
->  #include <linux/fs.h>
->  #include <linux/mount.h>
-> +#include <linux/fs_context.h>
->  
->  #include "v3d_drv.h"
->  
-> +static int add_param(struct fs_context *fc, const char *key, const char *val)
-> +{
-> +	return vfs_parse_fs_string(fc, key, val, strlen(val));
-> +}
-> +
->  void v3d_gemfs_init(struct v3d_dev *v3d)
->  {
-> -	char huge_opt[] = "huge=within_size";
->  	struct file_system_type *type;
-> +	struct fs_context *fc;
->  	struct vfsmount *gemfs;
-> +	int ret;
->  
->  	/*
->  	 * By creating our own shmemfs mountpoint, we can pass in
-> @@ -28,8 +35,16 @@ void v3d_gemfs_init(struct v3d_dev *v3d)
->  	if (!type)
->  		goto err;
->  
-> -	gemfs = vfs_kern_mount(type, SB_KERNMOUNT, type->name, huge_opt);
-> -	if (IS_ERR(gemfs))
-> +	fc = fs_context_for_mount(type, SB_KERNMOUNT);
-> +	if (IS_ERR(fc))
-> +		goto err;
-> +	ret = add_param(fc, "source", "tmpfs");
-> +	if (!ret)
-> +		ret = add_param(fc, "huge", "within_size");
-> +	if (!ret)
-> +		gemfs = fc_mount_longterm(fc);
-> +	put_fs_context(fc);
-> +	if (ret)
->  		goto err;
->  
->  	v3d->gemfs = gemfs;
-> diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-> index e4de5425838d..4e0397775167 100644
-> --- a/fs/hugetlbfs/inode.c
-> +++ b/fs/hugetlbfs/inode.c
-> @@ -1587,7 +1587,7 @@ static struct vfsmount *__init mount_one_hugetlbfs(struct hstate *h)
->  	} else {
->  		struct hugetlbfs_fs_context *ctx = fc->fs_private;
->  		ctx->hstate = h;
-> -		mnt = fc_mount(fc);
-> +		mnt = fc_mount_longterm(fc);
->  		put_fs_context(fc);
->  	}
->  	if (IS_ERR(mnt))
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 6f7b2174f25b..07f636036b86 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1258,6 +1258,15 @@ struct vfsmount *fc_mount(struct fs_context *fc)
->  }
->  EXPORT_SYMBOL(fc_mount);
->  
-> +struct vfsmount *fc_mount_longterm(struct fs_context *fc)
-> +{
-> +	struct vfsmount *mnt = fc_mount(fc);
-> +	if (!IS_ERR(mnt))
-> +		real_mount(mnt)->mnt_ns = MNT_NS_INTERNAL;
-> +	return mnt;
-> +}
-> +EXPORT_SYMBOL(fc_mount_longterm);
-> +
->  struct vfsmount *vfs_kern_mount(struct file_system_type *type,
->  				int flags, const char *name,
->  				void *data)
-> diff --git a/include/linux/mount.h b/include/linux/mount.h
-> index dcc17ce8a959..9376d76dd61f 100644
-> --- a/include/linux/mount.h
-> +++ b/include/linux/mount.h
-> @@ -94,6 +94,7 @@ int mnt_get_write_access(struct vfsmount *mnt);
->  void mnt_put_write_access(struct vfsmount *mnt);
->  
->  extern struct vfsmount *fc_mount(struct fs_context *fc);
-> +extern struct vfsmount *fc_mount_longterm(struct fs_context *fc);
->  extern struct vfsmount *vfs_create_mount(struct fs_context *fc);
->  extern struct vfsmount *vfs_kern_mount(struct file_system_type *type,
->  				      int flags, const char *name,
-> diff --git a/ipc/mqueue.c b/ipc/mqueue.c
-> index 35b4f8659904..daabf7f02b63 100644
-> --- a/ipc/mqueue.c
-> +++ b/ipc/mqueue.c
-> @@ -482,7 +482,7 @@ static struct vfsmount *mq_create_mount(struct ipc_namespace *ns)
->  	put_user_ns(fc->user_ns);
->  	fc->user_ns = get_user_ns(ctx->ipc_ns->user_ns);
->  
-> -	mnt = fc_mount(fc);
-> +	mnt = fc_mount_longterm(fc);
->  	put_fs_context(fc);
->  	return mnt;
->  }
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+        |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
+
+The "|" at the beginning indicates to the kernel that a pipe must be
+used. The path following the pipe indicator is a path to a binary that
+will be spawned as a usermode helper process. Any additional parameters
+pass information about the task that is generating the coredump to the
+binary that processes the coredump.
+
+In the example core_pattern shown above systemd-coredump is spawned as a
+usermode helper. There's various conceptual consequences of this
+(non-exhaustive list):
+
+- systemd-coredump is spawned with file descriptor number 0 (stdin)
+  connected to the read-end of the pipe. All other file descriptors are
+  closed. That specifically includes 1 (stdout) and 2 (stderr). This has
+  already caused bugs because userspace assumed that this cannot happen
+  (Whether or not this is a sane assumption is irrelevant.).
+
+- systemd-coredump will be spawned as a child of system_unbound_wq. So
+  it is not a child of any userspace process and specifically not a
+  child of PID 1. It cannot be waited upon and is in a weird hybrid
+  upcall which are difficult for userspace to control correctly.
+
+- systemd-coredump is spawned with full kernel privileges. This
+  necessitates all kinds of weird privilege dropping excercises in
+  userspace to make this safe.
+
+- A new usermode helper has to be spawned for each crashing process.
+
+This series adds a new mode:
+
+(3) Dumping into an abstract AF_UNIX socket.
+
+Userspace can set /proc/sys/kernel/core_pattern to:
+
+        @linuxafsk/coredump_socket
+
+The "@" at the beginning indicates to the kernel that the abstract
+AF_UNIX coredump socket will be used to process coredumps.
+
+The coredump socket uses the fixed address "linuxafsk/coredump.socket"
+for now.
+
+The coredump socket is located in the initial network namespace. To bind
+the coredump socket userspace must hold CAP_SYS_ADMIN in the initial
+user namespace. Listening and reading can happen from whatever
+unprivileged context is necessary to safely process coredumps.
+
+When a task coredumps it opens a client socket in the initial network
+namespace and connects to the coredump socket. For now only tasks that
+are acctually coredumping are allowed to connect to the initial coredump
+socket.
+
+- The coredump server should use SO_PEERPIDFD to get a stable handle on
+  the connected crashing task. The retrieved pidfd will provide a stable
+  reference even if the crashing task gets SIGKILLed while generating
+  the coredump.
+
+- By setting core_pipe_limit non-zero userspace can guarantee that the
+  crashing task cannot be reaped behind it's back and thus process all
+  necessary information in /proc/<pid>. The SO_PEERPIDFD can be used to
+  detect whether /proc/<pid> still refers to the same process.
+
+  The core_pipe_limit isn't used to rate-limit connections to the
+  socket. This can simply be done via AF_UNIX socket directly.
+
+- The pidfd for the crashing task will contain information how the task
+  coredumps. The PIDFD_GET_INFO ioctl gained a new flag
+  PIDFD_INFO_COREDUMP which can be used to retreive the coredump
+  information.
+
+  If the coredump gets a new coredump client connection the kernel
+  guarantees that PIDFD_INFO_COREDUMP information is available.
+  Currently the following information is provided in the new
+  @coredump_mask extension to struct pidfd_info:
+
+  * PIDFD_COREDUMPED is raised if the task did actually coredump.
+  * PIDFD_COREDUMP_SKIP	is raised if the task skipped coredumping (e.g.,
+    undumpable).
+  * PIDFD_COREDUMP_USER	is raised if this is a regular coredump and
+    doesn't need special care by the coredump server.
+  * IDFD_COREDUMP_ROOT is raised if the generated coredump should be
+    treated as sensitive and the coredump server should restrict to the
+    generated coredump to sufficiently privileged users.
+
+- Since unix_stream_connect() runs bpf programs during connect it's
+  possible to even redirect or multiplex coredumps to other sockets.
+
+- The coredump server should mark itself as non-dumpable.
+  To capture coredumps for the coredump server itself a bpf program
+  should be run at connect to redirect it to another socket in
+  userspace. This can be useful for debugging crashing coredump servers.
+
+- A container coredump server in a separate network namespace can simply
+  bind to linuxafsk/coredump.socket and systemd-coredump fowards
+  coredumps to the container.
+
+- Fwiw, one idea is to handle coredumps via per-user/session coredump
+  servers that run with that users privileges.
+
+  The coredump server listens on the coredump socket and accepts a
+  new coredump connection. It then retrieves SO_PEERPIDFD for the
+  client, inspects uid/gid and hands the accepted client to the users
+  own coredump handler which runs with the users privileges only.
+
+The new coredump socket will allow userspace to not have to rely on
+usermode helpers for processing coredumps and provides a safer way to
+handle them instead of relying on super privileged coredumping helpers.
+
+This will also be significantly more lightweight since no fork()+exec()
+for the usermodehelper is required for each crashing process. The
+coredump server in userspace can just keep a worker pool.
+
+This is easy to test:
+
+(a) coredump processing (we're using socat):
+
+    > cat coredump_socket.sh
+    #!/bin/bash
+
+    set -x
+
+    sudo bash -c "echo '@linuxafsk/coredump.socket' > /proc/sys/kernel/core_pattern"
+    sudo socat --statistics abstract-listen:linuxafsk/coredump.socket,fork FILE:core_file,create,append,trunc
+
+(b) trigger a coredump:
+
+    user1@localhost:~/data/scripts$ cat crash.c
+    #include <stdio.h>
+    #include <unistd.h>
+
+    int main(int argc, char *argv[])
+    {
+            fprintf(stderr, "%u\n", (1 / 0));
+            _exit(0);
+    }
+
+Signed-off-by: Christian Brauner <brauner@kernel.org>
+---
+Changes in v3:
+- Use an abstract unix socket.
+- Add documentation.
+- Add selftests.
+- Link to v2: https://lore.kernel.org/20250502-work-coredump-socket-v2-0-43259042ffc7@kernel.org
+
+Changes in v2:
+- Expose dumpability via PIDFD_GET_INFO.
+- Place COREDUMP_SOCK handling under CONFIG_UNIX.
+- Link to v1: https://lore.kernel.org/20250430-work-coredump-socket-v1-0-2faf027dbb47@kernel.org
+
+---
+Christian Brauner (10):
+      coredump: massage format_corname()
+      coredump: massage do_coredump()
+      net: reserve prefix
+      coredump: add coredump socket
+      coredump: validate socket name as it is written
+      coredump: show supported coredump modes
+      pidfs, coredump: add PIDFD_INFO_COREDUMP
+      net, pidfs, coredump: only allow coredumping tasks to connect to coredump socket
+      selftests/pidfd: add PIDFD_INFO_COREDUMP infrastructure
+      selftests/coredump: add tests for AF_UNIX coredumps
+
+ fs/coredump.c                                     | 358 +++++++++++++++++-----
+ fs/pidfs.c                                        |  68 ++++
+ include/linux/coredump.h                          |  12 +
+ include/linux/pidfs.h                             |   4 +
+ include/uapi/linux/pidfd.h                        |  16 +
+ include/uapi/linux/un.h                           |   2 +
+ net/unix/af_unix.c                                |  64 +++-
+ tools/testing/selftests/coredump/stackdump_test.c |  71 ++++-
+ tools/testing/selftests/pidfd/pidfd.h             |  22 ++
+ 9 files changed, 528 insertions(+), 89 deletions(-)
+---
+base-commit: 4dd6566b5a8ca1e8c9ff2652c2249715d6c64217
+change-id: 20250429-work-coredump-socket-87cc0f17729c
+
 
