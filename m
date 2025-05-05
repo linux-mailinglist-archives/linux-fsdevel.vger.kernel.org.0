@@ -1,56 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-48085-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48086-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D043AA94EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:54:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD52AA94F1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 15:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CACDC1767B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:54:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED5647A51DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 13:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25C50258CC5;
-	Mon,  5 May 2025 13:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97273258CF6;
+	Mon,  5 May 2025 13:57:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWA0TpLX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKmOHCi5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D561FDD
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 13:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004B918B47D;
+	Mon,  5 May 2025 13:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746453288; cv=none; b=M4jLqOpfJ+trrEl+hI3pPrv/XblU0VZ7+bj1GqMHJ726uXKIzcBir1gk6+220mVAbkDKZy3Qqsphb7iyGcH+0zf99Z5X/Ix73CNl+xk+4RqmqeblL780SeiLaVK4BwVT7tphcCaGf7DhuSIZ80pBDTmzJ+fYkXiF9Dx98KC9n9I=
+	t=1746453425; cv=none; b=l2ayQkv8VuB7fMIA0vTfGZyJp2dwHiw2y17WbmV6RKw11EuhWHTCt0p3WrzIVVB8iAXBUbMnEL/nALmWQDxqpwBsU+86zEdVLOh4jXQDg5pTxYTPnO+TdE5UrjcF+83iMv5WYiqGiWXePfS+BWmccEAOYZInCxXT3A+tOFaTxKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746453288; c=relaxed/simple;
-	bh=Qn7uvVYHTJ5WRy7pDWCa629/TUC+NLm4cg1D59ru1cM=;
+	s=arc-20240116; t=1746453425; c=relaxed/simple;
+	bh=zWfY1vmuQi68izjgxT0dgn4PZjEV3azHt33lIIPHMLM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CEOR//GN/CDtPLG5mlFxP5wLEzzVrpmuZp/btkluU751qhL77Gr/zHup5ZVanhVjfvYS2jtJui0uyI1H1oAPhLAzTYUKbWkuXzS4MXGX9l9axLDzfUjJipf9vtmWiMWGk2UXjq4wNuCcHGLSoX+qLkU1Qp86G1zZDsUVuiw1YVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWA0TpLX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E42E1C4CEE4;
-	Mon,  5 May 2025 13:54:46 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NwpNaNHZ/1P2QKTPkAiqMpgj8nZ/p+TYOfOzmXUi3w0YSlIq5yuoLll0ei4WtTX2ytN4YI5xeJ6LHXxf9A+dD3B/NBSBI2gSRrMANsYLvL9UJtEvE3S5M9XDNmHMoprnWkx4FYahtoX7g7RxMRDzZ68tjdJ+EZYen3lnG0wJ3Gg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKmOHCi5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27EDBC4CEE4;
+	Mon,  5 May 2025 13:57:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746453288;
-	bh=Qn7uvVYHTJ5WRy7pDWCa629/TUC+NLm4cg1D59ru1cM=;
+	s=k20201202; t=1746453424;
+	bh=zWfY1vmuQi68izjgxT0dgn4PZjEV3azHt33lIIPHMLM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LWA0TpLXbu8LVjoiFR/bU0cHUaQ2pxsUh0v78hM/+DjaMhtpjW7gCbamgyIpZwI+X
-	 gx6MyzglidZ7xs4NY8ta8LtimzAwKUuI/Mok8fw2qLMVBsp8epumQ2pXBM3dabd9+l
-	 GouGSkHGhBuRCBeqc7yQntCHNbgilwhmrQm9/bhKesc2YX58yPisE5QRdMepMVpUnk
-	 zmIIKPh3mksFAKDUkU/ypLevhM47DvffRURztPopjcUkndUJO7ekeatm0cs8ukNh2L
-	 cG7JJzEfCG9S5LPpJw4GQTDceKNogemmLSnlloMwCyNNf0NfhL4dhybEIyzuWEHE9I
-	 I9sFX1MPG1Zag==
-Date: Mon, 5 May 2025 15:54:44 +0200
+	b=UKmOHCi5cOQZs6L5xhgZlIvHyq++ccvU+BL7ByQ5DEGhO78SnBHdD2xaU6FEGFlTe
+	 Dqi5wFXMrmTM0DE0NhzahfiLiJO7AJlz+6XfpDvLpPc0djnqEPHbaGxcwdzJODPcio
+	 8Nj9NQ+6NSuUyMwDryFvlr52tFFI0+VWZw2qGfLSvCvSrMHIxl1IKHsvneRJspiSjz
+	 f7shFYSEBXw+YeXNuTlK57epEiG1lD7H82L1mEl6F9Op4pyaj87sJlShPqQQD/xzrJ
+	 jTzeIhLrIlsuu6qZh4zue9CZYWeMwl+OM9iPSXK16wAgavRU8B9ZBuMMDBFd5lJGRt
+	 /lmLNuWGXKMtA==
+Date: Mon, 5 May 2025 15:57:00 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>, 
-	linux-fsdevel@vger.kernel.org, Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC] MNT_LOCKED vs. finish_automount()
-Message-ID: <20250505-ausfuhr-zuschauen-1dbf7b0ea9bd@brauner>
-References: <20250501201506.GS2023217@ZenIV>
- <87plgq8igd.fsf@email.froward.int.ebiederm.org>
- <20250504232441.GC2023217@ZenIV>
+Cc: linux-fsdevel@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>, 
+	linux-trace-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH][RFC][CFT] kill vfs_submount(), already
+Message-ID: <20250505-geteilt-qualifizieren-0c94320e7f7e@brauner>
+References: <20250503212925.GZ2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,97 +57,135 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250504232441.GC2023217@ZenIV>
+In-Reply-To: <20250503212925.GZ2023217@ZenIV>
 
-On Mon, May 05, 2025 at 12:24:41AM +0100, Al Viro wrote:
-> On Fri, May 02, 2025 at 10:46:26PM -0500, Eric W. Biederman wrote:
-> > Al Viro <viro@zeniv.linux.org.uk> writes:
-> > 
-> > > 	Back in 2011, when ->d_automount() had been introduced,
-> > > we went with "stepping on NFS referral, etc., has the submount
-> > > inherit the flags of parent one" (with the obvious exceptions
-> > > for internal-only flags).  Back then MNT_LOCKED didn't exist.
-> > >
-> > > 	Two years later, when MNT_LOCKED had been added, an explicit
-> > > "don't set MNT_LOCKED on expirable mounts when propagating across
-> > > the userns boundary; their underlying mountpoints can be exposed
-> > > whenever the original expires anyway".  Same went for root of
-> > > subtree attached by explicit mount --[r]bind - the mountpoint
-> > > had been exposed before the call, after all and for roots of
-> > > any propagation copies created by such (same reason).  Normal mount
-> > > (created by do_new_mount()) could never get MNT_LOCKED to start with.
-> > >
-> > > 	However, mounts created by finish_automount() bloody well
-> > > could - if the parent mount had MNT_LOCKED on it, submounts would
-> > > inherited it.  Even if they had been expirable.  Moreover, all their
-> > > propagation copies would have MNT_LOCKED stripped out.
-> > >
-> > > 	IMO this inconsistency is a bug; MNT_LOCKED should not
-> > > be inherited in finish_automount().
-> > >
-> > > 	Eric, is there something subtle I'm missing here?
-> > 
-> > I don't think you are missing anything.  This looks like a pretty clear
-> > cut case of simply not realizing finish_automount was special in a way
-> > that could result in MNT_LOCKED getting set.
-> > 
-> > I skimmed through the code just a minute ago and my reading of it
-> > matches your reading of it above.
-> > 
-> > The intended semantics of MNT_LOCKED are to not let an unprivileged user
-> > see under mounts they would never be able to see under without creating
-> > a mount namespace.
-> > 
-> > The mount point of an automount is pretty clearly something that is safe
-> > to see under.  Doubly so if this is a directory that will always be
-> > empty on a pseudo filesystem (aka autofs).
+On Sat, May 03, 2025 at 10:29:25PM +0100, Al Viro wrote:
+> The last remaining user of vfs_submount() (tracefs) is easy to convert
+> to fs_context_for_submount(); do that and bury that thing, along with
+> SB_SUBMOUNT
 > 
-> Does anybody have objections to the following?
+> If nobody objects, I'm going to throw that into the mount-related pile;
+> alternatively, that could be split into kernel/trace.c part (in invariant
+> branch, to be pulled by tracefs folks and into the mount pile before
+> the rest of the patch).  Preferences?
 > 
-> [PATCH] finish_automount(): don't leak MNT_LOCKED from parent to child
-> 
-> Intention for MNT_LOCKED had always been to protect the internal
-> mountpoints within a subtree that got copied across the userns boundary,
-> not the mountpoint that tree got attached to - after all, it _was_
-> exposed before the copying.
-> 
-> For roots of secondary copies that is enforced in attach_recursive_mnt() -
-> MNT_LOCKED is explicitly stripped for those.  For the root of primary
-> copy we are almost always guaranteed that MNT_LOCKED won't be there,
-> so attach_recursive_mnt() doesn't bother.  Unfortunately, one call
-> chain got overlooked - triggering e.g. NFS referral will have the
-
-/me rolls eyes. Why is it always NFS.
-
-> submount inherit the public flags from parent; that's fine for such
-> things as read-only, nosuid, etc., but not for MNT_LOCKED.
-> 
-> This is particularly pointless since the mount attached by finish_automount()
-> is usually expirable, which makes any protection granted by MNT_LOCKED
-> null and void; just wait for a while and that mount will go away on its own.
-> 
-> The minimal fix is to have do_add_mount() treat MNT_LOCKED the same
-> way as other internal-only flags.  Longer term it would be cleaner to
-> deal with that in attach_recursive_mnt(), but that takes a bit more
-> massage, so let's go with the one-liner fix for now.
-> 
-> Fixes: 5ff9d8a65ce8 ("vfs: Lock in place mounts from more privileged users")
 > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 > ---
 
+Looks good,
 Reviewed-by: Christian Brauner <brauner@kernel.org>
 
 > diff --git a/fs/namespace.c b/fs/namespace.c
-> index 04a9bb9f31fa..352b4ccf1aaa 100644
+> index 07f636036b86..293e6f925eff 100644
 > --- a/fs/namespace.c
 > +++ b/fs/namespace.c
-> @@ -3761,7 +3761,7 @@ static int do_add_mount(struct mount *newmnt, struct mountpoint *mp,
+> @@ -1297,21 +1297,6 @@ struct vfsmount *vfs_kern_mount(struct file_system_type *type,
+>  }
+>  EXPORT_SYMBOL_GPL(vfs_kern_mount);
+>  
+> -struct vfsmount *
+> -vfs_submount(const struct dentry *mountpoint, struct file_system_type *type,
+> -	     const char *name, void *data)
+> -{
+> -	/* Until it is worked out how to pass the user namespace
+> -	 * through from the parent mount to the submount don't support
+> -	 * unprivileged mounts with submounts.
+> -	 */
+> -	if (mountpoint->d_sb->s_user_ns != &init_user_ns)
+> -		return ERR_PTR(-EPERM);
+> -
+> -	return vfs_kern_mount(type, SB_SUBMOUNT, name, data);
+> -}
+> -EXPORT_SYMBOL_GPL(vfs_submount);
+> -
+>  static struct mount *clone_mnt(struct mount *old, struct dentry *root,
+>  					int flag)
 >  {
->  	struct mount *parent = real_mount(path->mnt);
+> diff --git a/fs/super.c b/fs/super.c
+> index 97a17f9d9023..1886e4c930e0 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -823,13 +823,6 @@ struct super_block *sget(struct file_system_type *type,
+>  	struct super_block *old;
+>  	int err;
 >  
-> -	mnt_flags &= ~MNT_INTERNAL_FLAGS;
-> +	mnt_flags &= ~(MNT_INTERNAL_FLAGS | MNT_LOCKED);
+> -	/* We don't yet pass the user namespace of the parent
+> -	 * mount through to here so always use &init_user_ns
+> -	 * until that changes.
+> -	 */
+> -	if (flags & SB_SUBMOUNT)
+> -		user_ns = &init_user_ns;
+
+Oh thank god this disgusting hack is finally gone.
+
+> -
+>  retry:
+>  	spin_lock(&sb_lock);
+>  	if (test) {
+> @@ -849,7 +842,7 @@ struct super_block *sget(struct file_system_type *type,
+>  	}
+>  	if (!s) {
+>  		spin_unlock(&sb_lock);
+> -		s = alloc_super(type, (flags & ~SB_SUBMOUNT), user_ns);
+> +		s = alloc_super(type, flags, user_ns);
+>  		if (!s)
+>  			return ERR_PTR(-ENOMEM);
+>  		goto retry;
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 016b0fe1536e..515e702d98ae 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1240,7 +1240,6 @@ extern int send_sigurg(struct file *file);
+>  /* These sb flags are internal to the kernel */
+>  #define SB_DEAD         BIT(21)
+>  #define SB_DYING        BIT(24)
+> -#define SB_SUBMOUNT     BIT(26)
+>  #define SB_FORCE        BIT(27)
+>  #define SB_NOSEC        BIT(28)
+>  #define SB_BORN         BIT(29)
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index fa488721019f..7b6248ba4428 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
+> @@ -51,6 +51,7 @@
+>  #include <linux/workqueue.h>
+>  #include <linux/sort.h>
+>  #include <linux/io.h> /* vmap_page_range() */
+> +#include <linux/fs_context.h>
 >  
->  	if (unlikely(!check_mnt(parent))) {
->  		/* that's acceptable only for automounts done in private ns */
+>  #include <asm/setup.h> /* COMMAND_LINE_SIZE */
+>  
+> @@ -10072,6 +10073,8 @@ static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
+>  {
+>  	struct vfsmount *mnt;
+>  	struct file_system_type *type;
+> +	struct fs_context *fc;
+> +	int ret;
+>  
+>  	/*
+>  	 * To maintain backward compatibility for tools that mount
+> @@ -10081,10 +10084,20 @@ static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
+>  	type = get_fs_type("tracefs");
+>  	if (!type)
+>  		return NULL;
+> -	mnt = vfs_submount(mntpt, type, "tracefs", NULL);
+> +
+> +	fc = fs_context_for_submount(type, mntpt);
+> +	if (IS_ERR(fc))
+> +		return ERR_CAST(fc);
+> +
+> +	ret = vfs_parse_fs_string(fc, "source",
+> +				  "tracefs", strlen("tracefs"));
+> +	if (!ret)
+> +		mnt = fc_mount(fc);
+> +	else
+> +		mnt = ERR_PTR(ret);
+> +
+> +	put_fs_context(fc);
+>  	put_filesystem(type);
+> -	if (IS_ERR(mnt))
+> -		return NULL;
+>  	return mnt;
+>  }
+>  
 
