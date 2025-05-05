@@ -1,147 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-48148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AAEAAAEB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 05:02:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DCA9AAAF6F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 05:17:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 576C33A733A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 02:57:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE003A4D4B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 03:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D0F2874FC;
-	Mon,  5 May 2025 23:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2958F3B3BD8;
+	Mon,  5 May 2025 23:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e8dP6+MD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE2135D7B0;
-	Mon,  5 May 2025 22:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1606396EDE;
+	Mon,  5 May 2025 23:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746485907; cv=none; b=NqXndjlF7UXtxwhv5z97T9mG8vtn7fe0UZWKJ2/siY2KfX2elLmjlwiUmF8ldmBJrqIdPV6or73MKZtBsvKdvv0g/ILbbiwvQApe/ohty1SpxZ1X2lHa5+gJoyONuW2GGfov5ldHJ+oYS61pQ4hmnizFB3wA3Msjbw8eMYVzN9o=
+	t=1746486397; cv=none; b=rHp8v9lqoDQGut/l/a3XMiNao9e3ivT1Dgy690g77hnHcct6SHbqNWfrotELx8WpEjTHTpee7wGpoo0xGfAcd9LGq2XLeF7dJV7H7NpOC+rPi6S7b2g5R3ozPEHwQiW1W+zJL13gxgTVVhxZVKw7gPTNiQHn2x4G6GM95VifYBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746485907; c=relaxed/simple;
-	bh=0iA7SnkO+rHs3cH5clhDyFXZGFleV4DrWF4XKWa+sJE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uf8qPEEDBUnaZ553HgnSeD5UqVrieQTt3M/dYADeJC30THNN4W6Efhcj34Fk4JGNNoyNsEkUdeZGXENHGrbGjSG3GQe75Ih070Oub1BKk2f8yTEy7nVeMxefOTtvNl15qJsacBp1sgsyv8ZmUsUV5j7Y7p6H2ITyq+P7dgFVe8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-301a8b7398cso562090a91.1;
-        Mon, 05 May 2025 15:58:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746485904; x=1747090704;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E69HBkxQBdEYOvZVGJya06bZ/qelSSQFUZVNp/6hv4Q=;
-        b=lJvzSgtyPnoHiFxUpFmzKiz6URvRZCx33ChApMBAWF5Uz4p1OO6I1sMp03p/ZBPdC5
-         CV2FEGQWEd3E4Adp4bPi2kC2N5bhT/wnoMehzaRNZcemP6lGxUBuNuXGJUsAxryDBtmu
-         Rms+Vn2Z+aN6yYDDw+b7VyapearqB8sxGQpkE2RPvuA2JyH4OsgM4nr9WpzmT+rs2iSx
-         Zj2MoGS+0klurQsSW1GHPX5MzQPmgMQvrU8gPG3aBJGyaf2JBo37mzzWLUbLtjbByi2k
-         NS/qM1NE4n8xIh/SzcACPHBeGSnkHfCG4ORTyK73nAAK5cWAVE35+cQO+tMZDx1WUB+x
-         1fYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUy6vXRy3kTbASz93AciySyXYKbLdiB0fKenkW1NjoReB3gmSsA0+oM+nnU8TcJtItGnmBSCEGDFvw=@vger.kernel.org, AJvYcCW3l945nYAP1uoPIEObMwQN5vNaEhUmPxu8fCwGkR7reNSzGJB2C/UR7WjrSTxyWvtuYi48bmNDyL04c0xb@vger.kernel.org, AJvYcCXoIxNff7atlPMw04bMfZJInDljxL1XIH3+HKisiGdAV/xwd5MKP6qrLp+WFnQnk3xxKz5yCEDWQmDZIcDz3A==@vger.kernel.org, AJvYcCXrFlfSJZJopr1GzL9abx1UcVQzAmxI+CxHiaRy9dLHMrTRcmUiisFnyBELekhLrln7Gg2OJ5Yfo+4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Kn69NkgJleSsMj82SLxJRVlEphWtb+4NVeyh1/s+RKJP4GE4
-	IffK3d/+i5+KK9+DvlZTzQSPLfTgkXw/vCtMxJLkG/cXFlwkKdRV
-X-Gm-Gg: ASbGnctmvgOoU12WsfDLDTmS0ysJgv7vV8tlt6/iPrlv89zx67kJ6L6yuwy8UA3XZwd
-	tESQWLnaLzdJQ3W7IaOVVlX7dCwskH4YyihJHfOgPAXWXMVYH7ADSikJdROMI8ytUnFKj78Ob7w
-	F6Cneypm7r9SJBI7peWvFfvgIkXQ+RhzdgwSdiGmmYP3uGakvu7kI1Wz1dvum0L1m9Lcyr9DOKQ
-	ljVFJPmJAtLWdugEkb90rC3kldSorJ/sVj913oybvLSmd8GjRTSyuIyVnQep3efrD9PyD2Gq2Jf
-	oHWZVc00o6lD/qJ8kxHYowJxSSnwxdMxwVUKvkxtr8l/W36k/e+I
-X-Google-Smtp-Source: AGHT+IHJTeyvyyCYbIt/rYD4AuU2+QD3JmkKZhwPhbVCwB3WHS4NZFqPQbdjDVG7wdbKMVf90do5qQ==
-X-Received: by 2002:a17:902:d4c4:b0:224:e0e:e08b with SMTP id d9443c01a7336-22e1022be16mr89698425ad.0.1746485903779;
-        Mon, 05 May 2025 15:58:23 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30a347488b0sm12359854a91.16.2025.05.05.15.58.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 15:58:23 -0700 (PDT)
-Message-ID: <81a917f3-fb41-4958-8d76-7cdfa7b60a7c@kzalloc.com>
-Date: Tue, 6 May 2025 07:58:18 +0900
+	s=arc-20240116; t=1746486397; c=relaxed/simple;
+	bh=m2GFJbyIvE55mB9sL7la2Qs3ZSWL0oLBjNaV/X80mp4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=j9luuiGJxwJW/HHBQRAZODIVUxsYoyDFHSBU3+u5OEdaiDoFrEDQOcwRrY9LYtDSmCd2Zy8hL7H8TJPmJIiK+iBOFuqy4906L6cLNzsl4bLRGyvI8oBDyjzlr2KDYpOT6JjV8JMuUO0dCrBCbEhWjXuOPdtCHC4wHaPzIbZPHmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e8dP6+MD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 052F5C4CEF1;
+	Mon,  5 May 2025 23:06:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746486395;
+	bh=m2GFJbyIvE55mB9sL7la2Qs3ZSWL0oLBjNaV/X80mp4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=e8dP6+MDzZYcqJ+NfokNkVk+kyisLRLlQZn4GHZ4p1ss8aNzwyHYb3BFbCCCqXFfV
+	 bKGq9yXQtBlv69Vbt6LYpXmhLWm36DyFRR5XWoot0NqP7z8JkpXJ/OnJGvvQHZu8wi
+	 aHDVV8FDnEJIrLqGUtTiLZK17f77uDEM0lXF6DkSctdIc/G2+hAWY/9+9GpJrVq8Kp
+	 avj68vOnaOOs2kDFFJMn3FfCOQL2M/VgUKGceoUvDuw9wKZb3DI7y1MHLVt743QTiD
+	 QFPkrbB9/1mjGd59SRaW4R3O3JZSWwtnMn9vHOoo7/x96wwlcmGiVyZBzwqvhTGVH1
+	 uuqotkUouEcfw==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Matt Johnston <matt@codeconstruct.com.au>,
+	Miklos Szeredi <mszeredi@redhat.com>,
+	Sasha Levin <sashal@kernel.org>,
+	miklos@szeredi.hu,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 006/212] fuse: Return EPERM rather than ENOSYS from link()
+Date: Mon,  5 May 2025 19:02:58 -0400
+Message-Id: <20250505230624.2692522-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250505230624.2692522-1-sashal@kernel.org>
+References: <20250505230624.2692522-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: Prevent panic from NULL dereference in
- alloc_fs_context() during do_exit()
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Len Brown <len.brown@intel.com>, byungchul@sk.com,
- max.byungchul.park@gmail.com, linux-fsdevel@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jeremy Kerr <jk@ozlabs.org>, Ard Biesheuvel <ardb@kernel.org>,
- linux-efi@vger.kernel.org
-References: <20250505203801.83699-2-ysk@kzalloc.com>
- <20250505223615.GK2023217@ZenIV>
-Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <20250505223615.GK2023217@ZenIV>
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.1.136
 Content-Transfer-Encoding: 8bit
 
-Hi Alexander,
+From: Matt Johnston <matt@codeconstruct.com.au>
 
-Thanks for the feedback!
+[ Upstream commit 8344213571b2ac8caf013cfd3b37bc3467c3a893 ]
 
-On 5/6/25 7:36 오전, Al Viro wrote:
-> On Tue, May 06, 2025 at 05:38:02AM +0900, Yunseong Kim wrote:
->> The function alloc_fs_context() assumes that current->nsproxy and its
->> net_ns field are valid. However, this assumption can be violated in
->> cases such as task teardown during do_exit(), where current->nsproxy can
->> be NULL or already cleared.
->>
->> This issue was triggered during stress-ng's kernel-coverage.sh testing,
->> Since alloc_fs_context() can be invoked in various contexts — including
->> from asynchronous or teardown paths like do_exit() — it's difficult to
->> guarantee that its input arguments are always valid.
->>
->> A follow-up patch will improve the granularity of this fix by moving the
->> check closer to the actual mount trigger(e.g., in efivarfs_pm_notify()).
-> 
-> UGH.
-> 
->> diff --git a/fs/fs_context.c b/fs/fs_context.c
->> index 582d33e81117..529de43b8b5e 100644
->> --- a/fs/fs_context.c
->> +++ b/fs/fs_context.c
->> @@ -282,6 +282,9 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
->>  	struct fs_context *fc;
->>  	int ret = -ENOMEM;
->>  
->> +	if (!current->nsproxy || !current->nsproxy->net_ns)
->> +		return ERR_PTR(-EINVAL);
->> +
->>  	fc = kzalloc(sizeof(struct fs_context), GFP_KERNEL_ACCOUNT);
->>  	if (!fc)
->>  		return ERR_PTR(-ENOMEM);
-> 
-> That might paper over the oops, but I very much doubt that this will be
-> a correct fix...  Note that in efivarfs_pm_notify() we have other
-> fun issues when run from such context - have task_work_add() fail in
-> fput() and if delayed_fput() runs right afterwards and
->         efivar_init(efivarfs_check_missing, sfi->sb, false);
-> in there might end up with UAF...
+link() is documented to return EPERM when a filesystem doesn't support
+the operation, return that instead.
 
-I see your point — simply returning early in alloc_fs_context() may just
-paper over a deeper issue, and I agree that this might not be the right
-long-term fix. I wasn’t aware of the potential UAF scenario involving
-efivarfs_pm_notify() and delayed_fput().
+Link: https://github.com/libfuse/libfuse/issues/925
+Signed-off-by: Matt Johnston <matt@codeconstruct.com.au>
+Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/fuse/dir.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I’ll take a closer look at the call paths involved here, especially
-around efivarfs_pm_notify(), fput(), and delayed_fput() interactions
-during do_exit().
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index c431abbf48e66..0dbacdd7bb0d8 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1068,6 +1068,8 @@ static int fuse_link(struct dentry *entry, struct inode *newdir,
+ 	else if (err == -EINTR)
+ 		fuse_invalidate_attr(inode);
+ 
++	if (err == -ENOSYS)
++		err = -EPERM;
+ 	return err;
+ }
+ 
+-- 
+2.39.5
 
-Also, I’ll loop in the EFI mailing list so we can discuss this
-further from the efivarfs side as well.
-
-Thanks again,
-Yunseong
 
