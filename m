@@ -1,140 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-48122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4AEDAA9C40
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 21:11:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBD1AA9C67
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 21:21:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B163117DAE7
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 19:11:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B6817E4F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 19:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBBA526FA4C;
-	Mon,  5 May 2025 19:11:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C899926FD81;
+	Mon,  5 May 2025 19:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VCeLJmEz"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qEmdSgcF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E0B26B949
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 19:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E971C2335;
+	Mon,  5 May 2025 19:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746472268; cv=none; b=Iv+TkFYX9mPTkrr5uGtQJHKyw01JzcQ9IQ67o+hyiwVre+UEyDnqufrsqGpzKJ66zu1VlXYawjNwTFNJteC6yrT4u3HR+i0EAlNkZ1QwEPTh3OfcunaGwwEuny1nOuB1coUC+zrrCpERdYxqmEpK5fonMBGDRCx+CWjSzhthscU=
+	t=1746472877; cv=none; b=mgLhXTV9WYBL+JhAYZ2wuy/Ue/4Hhxz0z3qpA1PSOBYm6ZKNKp6K7lw2Fk/9pQ7j4mPaPf+t1xtuHgMYyc9bWat+KEBnPZiKpqSkiVqj9A2v99b0aMLJ1Gs7Yxwa5CqTV3SlwRJehRwoMTenGA6v8KMMjTcPp9SKjpQb4y8wgKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746472268; c=relaxed/simple;
-	bh=pAknAznVkP3PWsitz4sVuSAnL0zOvo9smehn1BcwQ1c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kznt4O7Mawp80bovyl60eAKPUHjfkgtVXjsoYeDY9dslDuoPTpFZultHDdiTAujRywV/ratUnPrUlcPifJ3ukNpNKdaRXvaDmDSOxC46MSItvkd2uIvXY+EGG5YM1roI3dqVlUZCPU9CdZVExPffaf28Et8Xpw/P0iP1TsCZiTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VCeLJmEz; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5f88f236167so2196a12.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 May 2025 12:11:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746472265; x=1747077065; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pAknAznVkP3PWsitz4sVuSAnL0zOvo9smehn1BcwQ1c=;
-        b=VCeLJmEzjLMcoftheRs6vqqfe9m4EIvfehn/xh0U/kj0TlpbHlPyptrGmueT7EcCkw
-         65aIUkBufPiF+K2PSwh35Bcc595rwVJ4Oq6fC+201YWNIziFAVUFSonKLzuPdo6mQACH
-         fNydJkHYG6dQwijWrsxxTi2coNFv3twHpII/jHpW43avtS7DdoeVfcJpC5ifGmRAR7gm
-         oXYQsuSqihwG2fIw0r/ET05AYgNW2vdocSnoaQBno9WXK07vnBEQz+lM5lb68SN6k9RG
-         EqNFEKN6EUg1VVyK6FuXHS0xtQWR+ikPP4bFq5Ir3Y7DWy/ZsYp7IuTkBZxpcrwB+lrh
-         nmBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746472265; x=1747077065;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pAknAznVkP3PWsitz4sVuSAnL0zOvo9smehn1BcwQ1c=;
-        b=ZVinhZdWWdXfO97FFxu061QQeBNn3hRLmoBeYM8+wGHvu7zt8soG88QZywsIrWAMUt
-         ogGbaLTBJaooCgORXnQt33I+8phWKo01lYBHti/6au9zSYIi1p/WYer2q5JO8pJ5hO2W
-         1vOAKpE85BGvQUOtWz0Zqut3wLYMtWHa28H2QPuIFERjYKozatiaTygTdAAcE731HZ9j
-         Yf4QqB657QohMpyeA40NhnRkqK4VURgevhFScz2iSAdjBP98XF/YeW16+chYCn6fUHXF
-         AeLVDvUPGDnjekCG4+JchW8k001vLgWVe4ulus8mwu5JKGh4Y+OsUKKrNnAEu6eM9gB4
-         sbuw==
-X-Forwarded-Encrypted: i=1; AJvYcCUASLwVy0G6YlakxcEF6tejg8pQFqsM7DWfJWgZCraPbTUoMqI/zFFW37zuSArgUeNz9dsxFOJioDaqrOa/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyfANNn+dUjEKwfiq9NT1M3mBbs4vzwouuhwHJNWMJu4+giZxtK
-	4xNkxO6PzVonUd/UbCDBvIB1UrZs34OptSvSB/f/zCiuky6xb4JTzX99LOWKCdB0dRySIZbtTTN
-	wixTAVFF7HYE+jaak93kXc87fKmXF4ZOxhR4d
-X-Gm-Gg: ASbGncvhD7wlFm8PjzDnEkOvMI1DxlG/+RegqtxZYfEq6+Kh/qnRBydKYzERceZEHxO
-	Rbt7foGWmk8h0kCG/CRNiETx+BnvEP2hP7zj2Tejry3q98nhx/xul+VVVRjpH29NpbHSay7uYMy
-	F5DKexVMXH8vBSpLx/SHRUGdqiC/vbTxywvpo83kHsuZ8Fj1HxJA==
-X-Google-Smtp-Source: AGHT+IGwZGxg96ElZslVmbfeSZeSCp6jF1H2BA5MmcSCrGlICW244/v/lyYSx0dACBSYjKs0D1e/Y5tW6omcN2BLXPI=
-X-Received: by 2002:a05:6402:c92:b0:5e6:15d3:ffe7 with SMTP id
- 4fb4d7f45d1cf-5fb6e6182eamr7154a12.7.1746472264493; Mon, 05 May 2025 12:11:04
- -0700 (PDT)
+	s=arc-20240116; t=1746472877; c=relaxed/simple;
+	bh=2o6qr+fHmN9pgquP02b3XCjNjRGm3F4nTOBm4Di+yKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F1uXuP1qHZsgBpd3BrEwEjvqqRTYxBnYMnCUHjoRclAn21HwafQy3bYawlkC9FQqSir5aWwbR5qpSKb3ktap/7ZJ1gMO5NqX82xkZummbq3WALD64QSliZ9EEX3+Gx4VemejMnKORrwTdgGYkB2396juTqHBt9MoHpW3+gzsVR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qEmdSgcF; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Ton5nVJpxImyrBYmbgbsO+2sxMUNoZgaaOLlpnALkyE=; b=qEmdSgcFacq3fu3BlbtZjd4bQ3
+	5giu5JVNTXasxn9tiXreLTOaGtq5QR1rq33By2Bx75K2zYEAl+pEfaKVkSablVa7zk8wGU9RgoDIQ
+	sYks1Yyf7XbQbU+rFIh42CepvtGRknOK/88As+BL33b55iCbOcQrk77YvhVTT6zTBbUdcWwSYbZx3
+	zR6ctchFIhZrvKUbZtFMuyeTOXVHMnC9jk+2HAnnUxGHPxxoPwUxHqNYZhAaciC7xCGfpZJLdfx15
+	1uVx4+JbuFsmC4gA+R+XmY2fgifIEJ9w9njlvnMcyVdMoCYq55hr6YsU/fe6gFZ73E7eIOIO4Ae5C
+	vg4Cdc3w==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uC1NH-000000065nk-0Vt7;
+	Mon, 05 May 2025 19:21:11 +0000
+Date: Mon, 5 May 2025 20:21:11 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: David Sterba <dsterba@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [RFC][PATCH] btrfs_get_tree_subvol(): switch from fc_mount() to
+ vfs_create_mount()
+Message-ID: <20250505192111.GH2023217@ZenIV>
+References: <20250505030345.GD2023217@ZenIV>
+ <20250505175807.GB9140@twin.jikos.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250505-dompteur-hinhalten-204b1e16bd02@brauner> <20250505184136.14852-1-kuniyu@amazon.com>
-In-Reply-To: <20250505184136.14852-1-kuniyu@amazon.com>
-From: Jann Horn <jannh@google.com>
-Date: Mon, 5 May 2025 21:10:28 +0200
-X-Gm-Features: ATxdqUGIZsct8Z3NMZ5k4I15ZXbUNsHbBRTzP0WkqnCmU97QaFVoUgE4Cb_ED7A
-Message-ID: <CAG48ez35FN6ka4QtrNQ6aKEycQBOpJKy=VyhQDzKTwey+4KOMg@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow coredumping
- tasks to connect to coredump socket
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: brauner@kernel.org, alexander@mihalicyn.com, bluca@debian.org, 
-	daan.j.demeyer@gmail.com, davem@davemloft.net, david@readahead.eu, 
-	edumazet@google.com, horms@kernel.org, jack@suse.cz, kuba@kernel.org, 
-	lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, me@yhndnzj.com, netdev@vger.kernel.org, 
-	oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
-	zbyszek@in.waw.pl
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250505175807.GB9140@twin.jikos.cz>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, May 5, 2025 at 8:41=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon.com=
-> wrote:
-> From: Christian Brauner <brauner@kernel.org>
-> Date: Mon, 5 May 2025 16:06:40 +0200
-> > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
-> > > On Mon, May 5, 2025 at 1:14=E2=80=AFPM Christian Brauner <brauner@ker=
-nel.org> wrote:
-> > > > Make sure that only tasks that actually coredumped may connect to t=
-he
-> > > > coredump socket. This restriction may be loosened later in case
-> > > > userspace processes would like to use it to generate their own
-> > > > coredumps. Though it'd be wiser if userspace just exposed a separat=
-e
-> > > > socket for that.
-> > >
-> > > This implementation kinda feels a bit fragile to me... I wonder if we
-> > > could instead have a flag inside the af_unix client socket that says
-> > > "this is a special client socket for coredumping".
-> >
-> > Should be easily doable with a sock_flag().
->
-> This restriction should be applied by BPF LSM.
+On Mon, May 05, 2025 at 07:58:07PM +0200, David Sterba wrote:
 
-I think we shouldn't allow random userspace processes to connect to
-the core dump handling service and provide bogus inputs; that
-unnecessarily increases the risk that a crafted coredump can be used
-to exploit a bug in the service. So I think it makes sense to enforce
-this restriction in the kernel.
+> > -	if (fc->sb_flags & SB_RDONLY)
+> > -		return ret;
+> > -
+> > -	down_write(&mnt->mnt_sb->s_umount);
+> > -	if (!(fc->sb_flags & SB_RDONLY) && (mnt->mnt_sb->s_flags & SB_RDONLY))
+> > +	if (!(fc->sb_flags & SB_RDONLY) && (fc->root->d_sb->s_flags & SB_RDONLY))
+> >  		ret = btrfs_reconfigure(fc);
+> > -	up_write(&mnt->mnt_sb->s_umount);
 
-My understanding is that BPF LSM creates fairly tight coupling between
-userspace and the kernel implementation, and it is kind of unwieldy
-for userspace. (I imagine the "man 5 core" manpage would get a bit
-longer and describe more kernel implementation detail if you tried to
-show how to write a BPF LSM that is capable of detecting unix domain
-socket connections to a specific address that are not initiated by
-core dumping.) I would like to keep it possible to implement core
-userspace functionality in a best-practice way without needing eBPF.
+> So this open codes fc_mount(), which is vfs_get_tree() + vfs_create_mount(),
+> the only difference I see in the new code is that
+> btrfs_reconfigure_for_mount() dropped the SB_RDONLY check.
+> 
+> Why the check is there is explained in the lengthy comment above
+> btrfs_reconfigure_for_mount(), so it should stay. If it can be removed
+> then it should be a separate patch from the cleanup.
 
-> It's hard to loosen such a default restriction as someone might
-> argue that's unexpected and regression.
+What do you mean, dropped?  It's still right there - the current
+variant checks it *twice*, once before grabbing ->s_umount, then
+after it's been grabbed.  Checking it before down_write() makes sense
+if we are called after ->s_umount had been dropped (by fc_mount()).
+I'm not sure why you recheck it after down_write(), since it's not
+going to change, but you do recheck it.  In this variant we don't need
+to bother grabbing the rwsem, since that thing is called while ->s_umount
+is still held...
 
-If userspace wants to allow other processes to connect to the core
-dumping service, that's easy to implement - userspace can listen on a
-separate address that is not subject to these restrictions.
+I can turn that into
+	if (fc->sb_flags & SB_RDONLY)
+		return ret;
+	if (fc->root->d_sb->s_flags & SB_RDONLY)
+		ret = btrfs_reconfigure(fc);
+	return ret;
+but I don't see how it's better than the variant posted; up to you, of course...
 
