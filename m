@@ -1,57 +1,67 @@
-Return-Path: <linux-fsdevel+bounces-48139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C8C3AA9EEF
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 00:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AA4AAA010
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 00:31:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD43D3BD112
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 22:16:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1CAC16C876
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 22:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF2127A936;
-	Mon,  5 May 2025 22:14:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E335328DEFE;
+	Mon,  5 May 2025 22:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8+Be04r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bX07YPAt"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C6A275868;
-	Mon,  5 May 2025 22:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4782A27A932;
+	Mon,  5 May 2025 22:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746483278; cv=none; b=k2fW2xUO3EER/z+yDvRjcm1f2Vut0VhHh2vSqMqV0upx63/Tc3xFyba4uH+ExbWAqfz1vjR573B0tmehyflGpfy3BW7DR8gK6LhRj+NT442UMH+QDqGa+kW7Z/OQAYZufaZaGNQ4UpbzEJYWQsEj3zNZ24by6W7+sk6IcG67htc=
+	t=1746483401; cv=none; b=eFhVH9RfA/uR/ehydrTXjLA3l8r7WrdhKgD7370Fml3WXoshJ0UxRF/fklmAa6GUuadK08dAOJW0PNiz0xe4ie2oBvX69Db8sf7dNma7au+dEd/LDnfRA6jCvm5s6Ndzau5XohXdTEYLHCWBMHZEATlEVqcHG4fQHprt5B1dVtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746483278; c=relaxed/simple;
-	bh=clU6H9YBIBZ5AUwBp84Vouo+odx4clLgL35roPTLh6M=;
+	s=arc-20240116; t=1746483401; c=relaxed/simple;
+	bh=/fRhfQDcAa8JTF6epwyuiyDsSdv8eh6R+2Cbd+/YmjY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OwNhdbSlp0y7yRtXia1v4hHg32vChuo9B6YYPlJw9SZ0Zh1RptNCfTEWaruy54u6TR32kKSkDl2x+499Ob6AHxKumrHMOFroOIsWGDGwXXNL1f8/YRCPFxvoGnvMns7tO+Vach2XNiS5FU5NXgeoGFE9gy+xheHe8cW5Mxs/LlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8+Be04r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC17BC4CEEE;
-	Mon,  5 May 2025 22:14:36 +0000 (UTC)
+	 MIME-Version; b=m6KGnc+pEwtjsXpFkhVfuZOga5XEsDLDzu4iEoOrjd2kQ/cRKFARZWnMRWNRT/LgTJjJHIxJlAPB4EV+I0sBNe5/t7LeYREeAaNcHdLafUHw2mzLRop60OpDIGyMp6zvkPpgEQKtA2BrbTHz1ZScEor2BaqPWwW1VLWUjAoorug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bX07YPAt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6514CC4CEE4;
+	Mon,  5 May 2025 22:16:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746483277;
-	bh=clU6H9YBIBZ5AUwBp84Vouo+odx4clLgL35roPTLh6M=;
+	s=k20201202; t=1746483401;
+	bh=/fRhfQDcAa8JTF6epwyuiyDsSdv8eh6R+2Cbd+/YmjY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=J8+Be04rnzdnBFW24iltAknom7flR+SDPmAqID900EEfMk3Jv/zVJxBHqX9ddQNJM
-	 SrQVRfmMZPOK95ApsxJRzj7AhzugJ+HLpcajtq4LuxWIjMXUMzMmPxjp+4Vk025jBV
-	 iQGYi7079TQc1+FmdUhEYOTmjgZqqK1m2R746uEDyonLb9BgMScKb2OQ6sxvBGausa
-	 vJB8ofnvY64fAdp8gXZBkmn1OUT/kuEfAAkQPvZyy+jXFJ3nBnEgi3HDcTohUb/has
-	 bJlIvcXXoQKhkqmbrFsvmJLweVXJ1phFfHA0vcglf9D+43ZBpDgbJx3IaJe65DvojO
-	 s/y2FSwjf6s0w==
+	b=bX07YPAttgcH88uHmxzc+9XkpSJzjkv47BTMo0/oUCSiQxttKAsioQkchXqj8QZ0Y
+	 30SDmd+lLW6fY5L7HXipZGze5nVvycsYjBRQ7Aw+wl07adr6TKRpjPIHIJqjO82d/Y
+	 HCfbyV1LuPGB8yOxaiUfNyzG+ZwanerOv/HPesT3lXRZIqvl19BiS7YJcCizhwnUaY
+	 bB8sWLCBdP5Ur+QfWqz9GDigh8lGc+B35fH1boGXc4SeM3YA2ySZCBO2JawDDSjZQG
+	 jDO8+eOBZkn04FX/mf2Kedgjsbm1oDPspl7MU928HnWrqYTLhCQ2ZYsHTQTLXgCT22
+	 J6PSNz5XkFQkA==
 From: Sasha Levin <sashal@kernel.org>
 To: linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Cc: Sungjong Seo <sj1557.seo@samsung.com>,
-	Yuezhang Mo <Yuezhang.Mo@sony.com>,
-	Namjae Jeon <linkinjeon@kernel.org>,
+Cc: Christian Brauner <brauner@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
 	Sasha Levin <sashal@kernel.org>,
+	viro@zeniv.linux.org.uk,
+	akpm@linux-foundation.org,
+	mhocko@suse.com,
+	Liam.Howlett@Oracle.com,
+	mjguzik@gmail.com,
+	alexjlzheng@tencent.com,
+	pasha.tatashin@soleen.com,
+	tglx@linutronix.de,
+	frederic@kernel.org,
+	peterz@infradead.org,
+	lorenzo.stoakes@oracle.com,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 010/642] exfat: call bh_read in get_block only when necessary
-Date: Mon,  5 May 2025 18:03:46 -0400
-Message-Id: <20250505221419.2672473-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.14 067/642] pidfs: improve multi-threaded exec and premature thread-group leader exit polling
+Date: Mon,  5 May 2025 18:04:43 -0400
+Message-Id: <20250505221419.2672473-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250505221419.2672473-1-sashal@kernel.org>
 References: <20250505221419.2672473-1-sashal@kernel.org>
@@ -66,220 +76,126 @@ X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.14.5
 Content-Transfer-Encoding: 8bit
 
-From: Sungjong Seo <sj1557.seo@samsung.com>
+From: Christian Brauner <brauner@kernel.org>
 
-[ Upstream commit c73e680d1f84059e1b1ea82a537f6ccc1c563eb4 ]
+[ Upstream commit 0fb482728ba1ee2130eaa461bf551f014447997c ]
 
-With commit 11a347fb6cef ("exfat: change to get file size from DataLength"),
-exfat_get_block() can now handle valid_size. However, most partial
-unwritten blocks that could be mapped with other blocks are being
-inefficiently processed separately as individual blocks.
+This is another attempt trying to make pidfd polling for multi-threaded
+exec and premature thread-group leader exit consistent.
 
-Except for partial unwritten blocks that require independent processing,
-let's handle them simply as before.
+A quick recap of these two cases:
 
-Signed-off-by: Sungjong Seo <sj1557.seo@samsung.com>
-Reviewed-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+(1) During a multi-threaded exec by a subthread, i.e., non-thread-group
+    leader thread, all other threads in the thread-group including the
+    thread-group leader are killed and the struct pid of the
+    thread-group leader will be taken over by the subthread that called
+    exec. IOW, two tasks change their TIDs.
+
+(2) A premature thread-group leader exit means that the thread-group
+    leader exited before all of the other subthreads in the thread-group
+    have exited.
+
+Both cases lead to inconsistencies for pidfd polling with PIDFD_THREAD.
+Any caller that holds a PIDFD_THREAD pidfd to the current thread-group
+leader may or may not see an exit notification on the file descriptor
+depending on when poll is performed. If the poll is performed before the
+exec of the subthread has concluded an exit notification is generated
+for the old thread-group leader. If the poll is performed after the exec
+of the subthread has concluded no exit notification is generated for the
+old thread-group leader.
+
+The correct behavior would be to simply not generate an exit
+notification on the struct pid of a subhthread exec because the struct
+pid is taken over by the subthread and thus remains alive.
+
+But this is difficult to handle because a thread-group may exit
+prematurely as mentioned in (2). In that case an exit notification is
+reliably generated but the subthreads may continue to run for an
+indeterminate amount of time and thus also may exec at some point.
+
+So far there was no way to distinguish between (1) and (2) internally.
+This tiny series tries to address this problem by discarding
+PIDFD_THREAD notification on premature thread-group leader exit.
+
+If that works correctly then no exit notifications are generated for a
+PIDFD_THREAD pidfd for a thread-group leader until all subthreads have
+been reaped. If a subthread should exec aftewards no exit notification
+will be generated until that task exits or it creates subthreads and
+repeates the cycle.
+
+Co-Developed-by: Oleg Nesterov <oleg@redhat.com>
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Link: https://lore.kernel.org/r/20250320-work-pidfs-thread_group-v4-1-da678ce805bf@kernel.org
+Signed-off-by: Christian Brauner <brauner@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/exfat/inode.c | 159 +++++++++++++++++++++++------------------------
- 1 file changed, 77 insertions(+), 82 deletions(-)
+ fs/pidfs.c      | 9 +++++----
+ kernel/exit.c   | 6 +++---
+ kernel/signal.c | 3 +--
+ 3 files changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index a23677de4544f..b22c02d6000f7 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -274,9 +274,11 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
- 	sector_t last_block;
- 	sector_t phys = 0;
- 	sector_t valid_blks;
-+	loff_t i_size;
+diff --git a/fs/pidfs.c b/fs/pidfs.c
+index c0478b3c55d9f..9aa4c705776dd 100644
+--- a/fs/pidfs.c
++++ b/fs/pidfs.c
+@@ -188,20 +188,21 @@ static void pidfd_show_fdinfo(struct seq_file *m, struct file *f)
+ static __poll_t pidfd_poll(struct file *file, struct poll_table_struct *pts)
+ {
+ 	struct pid *pid = pidfd_pid(file);
+-	bool thread = file->f_flags & PIDFD_THREAD;
+ 	struct task_struct *task;
+ 	__poll_t poll_flags = 0;
  
- 	mutex_lock(&sbi->s_lock);
--	last_block = EXFAT_B_TO_BLK_ROUND_UP(i_size_read(inode), sb);
-+	i_size = i_size_read(inode);
-+	last_block = EXFAT_B_TO_BLK_ROUND_UP(i_size, sb);
- 	if (iblock >= last_block && !create)
- 		goto done;
+ 	poll_wait(file, &pid->wait_pidfd, pts);
+ 	/*
+-	 * Depending on PIDFD_THREAD, inform pollers when the thread
+-	 * or the whole thread-group exits.
++	 * Don't wake waiters if the thread-group leader exited
++	 * prematurely. They either get notified when the last subthread
++	 * exits or not at all if one of the remaining subthreads execs
++	 * and assumes the struct pid of the old thread-group leader.
+ 	 */
+ 	guard(rcu)();
+ 	task = pid_task(pid, PIDTYPE_PID);
+ 	if (!task)
+ 		poll_flags = EPOLLIN | EPOLLRDNORM | EPOLLHUP;
+-	else if (task->exit_state && (thread || thread_group_empty(task)))
++	else if (task->exit_state && !delay_group_leader(task))
+ 		poll_flags = EPOLLIN | EPOLLRDNORM;
  
-@@ -305,102 +307,95 @@ static int exfat_get_block(struct inode *inode, sector_t iblock,
- 	if (buffer_delay(bh_result))
- 		clear_buffer_delay(bh_result);
+ 	return poll_flags;
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 6bb59b16e33e1..a9960dd6d0aa0 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -744,10 +744,10 @@ static void exit_notify(struct task_struct *tsk, int group_dead)
  
--	if (create) {
-+	/*
-+	 * In most cases, we just need to set bh_result to mapped, unmapped
-+	 * or new status as follows:
-+	 *  1. i_size == valid_size
-+	 *  2. write case (create == 1)
-+	 *  3. direct_read (!bh_result->b_folio)
-+	 *     -> the unwritten part will be zeroed in exfat_direct_IO()
-+	 *
-+	 * Otherwise, in the case of buffered read, it is necessary to take
-+	 * care the last nested block if valid_size is not equal to i_size.
-+	 */
-+	if (i_size == ei->valid_size || create || !bh_result->b_folio)
- 		valid_blks = EXFAT_B_TO_BLK_ROUND_UP(ei->valid_size, sb);
-+	else
-+		valid_blks = EXFAT_B_TO_BLK(ei->valid_size, sb);
+ 	tsk->exit_state = EXIT_ZOMBIE;
+ 	/*
+-	 * sub-thread or delay_group_leader(), wake up the
+-	 * PIDFD_THREAD waiters.
++	 * Ignore thread-group leaders that exited before all
++	 * subthreads did.
+ 	 */
+-	if (!thread_group_empty(tsk))
++	if (!delay_group_leader(tsk))
+ 		do_notify_pidfd(tsk);
  
--		if (iblock + max_blocks < valid_blks) {
--			/* The range has been written, map it */
--			goto done;
--		} else if (iblock < valid_blks) {
--			/*
--			 * The range has been partially written,
--			 * map the written part.
--			 */
--			max_blocks = valid_blks - iblock;
--			goto done;
--		}
-+	/* The range has been fully written, map it */
-+	if (iblock + max_blocks < valid_blks)
-+		goto done;
- 
--		/* The area has not been written, map and mark as new. */
--		set_buffer_new(bh_result);
-+	/* The range has been partially written, map the written part */
-+	if (iblock < valid_blks) {
-+		max_blocks = valid_blks - iblock;
-+		goto done;
-+	}
- 
-+	/* The area has not been written, map and mark as new for create case */
-+	if (create) {
-+		set_buffer_new(bh_result);
- 		ei->valid_size = EXFAT_BLK_TO_B(iblock + max_blocks, sb);
- 		mark_inode_dirty(inode);
--	} else {
--		valid_blks = EXFAT_B_TO_BLK(ei->valid_size, sb);
-+		goto done;
-+	}
- 
--		if (iblock + max_blocks < valid_blks) {
--			/* The range has been written, map it */
--			goto done;
--		} else if (iblock < valid_blks) {
--			/*
--			 * The area has been partially written,
--			 * map the written part.
--			 */
--			max_blocks = valid_blks - iblock;
-+	/*
-+	 * The area has just one block partially written.
-+	 * In that case, we should read and fill the unwritten part of
-+	 * a block with zero.
-+	 */
-+	if (bh_result->b_folio && iblock == valid_blks &&
-+	    (ei->valid_size & (sb->s_blocksize - 1))) {
-+		loff_t size, pos;
-+		void *addr;
-+
-+		max_blocks = 1;
-+
-+		/*
-+		 * No buffer_head is allocated.
-+		 * (1) bmap: It's enough to set blocknr without I/O.
-+		 * (2) read: The unwritten part should be filled with zero.
-+		 *           If a folio does not have any buffers,
-+		 *           let's returns -EAGAIN to fallback to
-+		 *           block_read_full_folio() for per-bh IO.
-+		 */
-+		if (!folio_buffers(bh_result->b_folio)) {
-+			err = -EAGAIN;
- 			goto done;
--		} else if (iblock == valid_blks &&
--			   (ei->valid_size & (sb->s_blocksize - 1))) {
--			/*
--			 * The block has been partially written,
--			 * zero the unwritten part and map the block.
--			 */
--			loff_t size, pos;
--			void *addr;
--
--			max_blocks = 1;
--
--			/*
--			 * For direct read, the unwritten part will be zeroed in
--			 * exfat_direct_IO()
--			 */
--			if (!bh_result->b_folio)
--				goto done;
--
--			/*
--			 * No buffer_head is allocated.
--			 * (1) bmap: It's enough to fill bh_result without I/O.
--			 * (2) read: The unwritten part should be filled with 0
--			 *           If a folio does not have any buffers,
--			 *           let's returns -EAGAIN to fallback to
--			 *           per-bh IO like block_read_full_folio().
--			 */
--			if (!folio_buffers(bh_result->b_folio)) {
--				err = -EAGAIN;
--				goto done;
--			}
-+		}
- 
--			pos = EXFAT_BLK_TO_B(iblock, sb);
--			size = ei->valid_size - pos;
--			addr = folio_address(bh_result->b_folio) +
--			       offset_in_folio(bh_result->b_folio, pos);
-+		pos = EXFAT_BLK_TO_B(iblock, sb);
-+		size = ei->valid_size - pos;
-+		addr = folio_address(bh_result->b_folio) +
-+			offset_in_folio(bh_result->b_folio, pos);
- 
--			/* Check if bh->b_data points to proper addr in folio */
--			if (bh_result->b_data != addr) {
--				exfat_fs_error_ratelimit(sb,
-+		/* Check if bh->b_data points to proper addr in folio */
-+		if (bh_result->b_data != addr) {
-+			exfat_fs_error_ratelimit(sb,
- 					"b_data(%p) != folio_addr(%p)",
- 					bh_result->b_data, addr);
--				err = -EINVAL;
--				goto done;
--			}
--
--			/* Read a block */
--			err = bh_read(bh_result, 0);
--			if (err < 0)
--				goto done;
-+			err = -EINVAL;
-+			goto done;
-+		}
- 
--			/* Zero unwritten part of a block */
--			memset(bh_result->b_data + size, 0,
--			       bh_result->b_size - size);
-+		/* Read a block */
-+		err = bh_read(bh_result, 0);
-+		if (err < 0)
-+			goto done;
- 
--			err = 0;
--		} else {
--			/*
--			 * The range has not been written, clear the mapped flag
--			 * to only zero the cache and do not read from disk.
--			 */
--			clear_buffer_mapped(bh_result);
--		}
-+		/* Zero unwritten part of a block */
-+		memset(bh_result->b_data + size, 0, bh_result->b_size - size);
-+		err = 0;
-+		goto done;
- 	}
-+
-+	/*
-+	 * The area has not been written, clear mapped for read/bmap cases.
-+	 * If so, it will be filled with zero without reading from disk.
-+	 */
-+	clear_buffer_mapped(bh_result);
- done:
- 	bh_result->b_size = EXFAT_BLK_TO_B(max_blocks, sb);
- 	if (err < 0)
+ 	if (unlikely(tsk->ptrace)) {
+diff --git a/kernel/signal.c b/kernel/signal.c
+index 875e97f6205a2..b2e5c90f29602 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -2180,8 +2180,7 @@ bool do_notify_parent(struct task_struct *tsk, int sig)
+ 	WARN_ON_ONCE(!tsk->ptrace &&
+ 	       (tsk->group_leader != tsk || !thread_group_empty(tsk)));
+ 	/*
+-	 * tsk is a group leader and has no threads, wake up the
+-	 * non-PIDFD_THREAD waiters.
++	 * Notify for thread-group leaders without subthreads.
+ 	 */
+ 	if (thread_group_empty(tsk))
+ 		do_notify_pidfd(tsk);
 -- 
 2.39.5
 
