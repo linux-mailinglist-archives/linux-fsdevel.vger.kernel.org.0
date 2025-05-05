@@ -1,301 +1,302 @@
-Return-Path: <linux-fsdevel+bounces-48043-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 968AEAA9093
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 12:06:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B807EAA9099
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 12:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67FD91890774
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 10:07:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA97D17608C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 10:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEA91FDE09;
-	Mon,  5 May 2025 10:06:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A73141FFC54;
+	Mon,  5 May 2025 10:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CFY+Bo+D";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NyrGr7IM";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CFY+Bo+D";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NyrGr7IM"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ijC8Cqhb"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A871F3FC3
-	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 10:06:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E7F51FECB0
+	for <linux-fsdevel@vger.kernel.org>; Mon,  5 May 2025 10:08:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746439610; cv=none; b=et7/kWsoFQnLt9nLiRRughYlhSMaHmpuvmGjk4a/Scc4/gpT+vVIMGuw7nwkis5IiFn+6zvhIT3MM6VYiQ54MaVv5LX9yMliN6W1QxPizWF9xT7T9RuYgNWyuYVp+G84A7zT96CHkUxVK2iztbHm7gcZ7LQTsARukYJtU6axQM4=
+	t=1746439742; cv=none; b=adzLsUbA/QXnHjoajfaCmfXDylxgTmf+WUBAuTXO7OCqEwDAIJ2f+R0EEK23azdm8M1OE7OHGmWF957BLm40AswiqlclvZ83CVi+lpvAeAiIkrUSNBiA+lSgaj/XLZ5ZlCY7qRUNDSXSgVIv+Sh5wLAIID6ElnYMTrSdJgD9Qdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746439610; c=relaxed/simple;
-	bh=nlKuLgwyphuIzI6gkbuywQ4Yc9EOdbzVgtg7McxUqKE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UCi8HtoS+GWbEjtiBu+eZiPxJrTjncTGfaiFWVnoQ38nyWrj1cJiuFjFtbSv1Odw8Cg1qw6fkHPGmVCOHcvVOZkPCf4wk0bFvr0tLf1F9k+31iWG/xHJEkP3STES7h1UxJszpDcxoiaJEe2nqb3GCLuPX+a2O5rQUvOmB7BozUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CFY+Bo+D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NyrGr7IM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CFY+Bo+D; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NyrGr7IM; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id A616421282;
-	Mon,  5 May 2025 10:06:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746439606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1uHrYEe/BCPIKsghK9cJ2gEqy5Nqd9eQ4C+mGF/QN4A=;
-	b=CFY+Bo+DtYwUuRgBGl5AmLhRSuPGKPQIAQynukOPOCqzVtgYDAeQ4gsGHvWB40vrQLZ1zS
-	joSg0B0ocmFM0tyX8U1z6G8YuN2iuO5RqPn4OkxGMEtzpTGFrp83K5mKDPCS9w3OLyFkIV
-	OokPgUlPg9wkcdAbSF+agNyYk1v1aNY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746439606;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1uHrYEe/BCPIKsghK9cJ2gEqy5Nqd9eQ4C+mGF/QN4A=;
-	b=NyrGr7IMNGQ01PenLUsQ9R4tyXomoJxqrWT7MBSfOe2jqiijjmBvmsTisSeLYQYmw4WEr7
-	UX+/PSAfcFLja/DA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=CFY+Bo+D;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=NyrGr7IM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1746439606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1uHrYEe/BCPIKsghK9cJ2gEqy5Nqd9eQ4C+mGF/QN4A=;
-	b=CFY+Bo+DtYwUuRgBGl5AmLhRSuPGKPQIAQynukOPOCqzVtgYDAeQ4gsGHvWB40vrQLZ1zS
-	joSg0B0ocmFM0tyX8U1z6G8YuN2iuO5RqPn4OkxGMEtzpTGFrp83K5mKDPCS9w3OLyFkIV
-	OokPgUlPg9wkcdAbSF+agNyYk1v1aNY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1746439606;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1uHrYEe/BCPIKsghK9cJ2gEqy5Nqd9eQ4C+mGF/QN4A=;
-	b=NyrGr7IMNGQ01PenLUsQ9R4tyXomoJxqrWT7MBSfOe2jqiijjmBvmsTisSeLYQYmw4WEr7
-	UX+/PSAfcFLja/DA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 92F1713883;
-	Mon,  5 May 2025 10:06:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YyWGI7aNGGi4dwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 05 May 2025 10:06:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3F95DA0670; Mon,  5 May 2025 12:06:46 +0200 (CEST)
-Date: Mon, 5 May 2025 12:06:46 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, David Hildenbrand <david@redhat.com>, 
-	Dave Chinner <david@fromorbit.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH v4 5/5] mm/filemap: Allow arch to request folio size
- for exec memory
-Message-ID: <b2xibk62rakzb3ln7i4evdtqrkd75xboj5y4vfqf2fyt3y7g5a@5x7qqsjpanxd>
-References: <20250430145920.3748738-1-ryan.roberts@arm.com>
- <20250430145920.3748738-6-ryan.roberts@arm.com>
+	s=arc-20240116; t=1746439742; c=relaxed/simple;
+	bh=722/T7/hn4P4TvL9II+YDJBbS5pxncQAa28oCON+Vrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SdHjUp0z799/VEL4XnR7Fx2QQHyJKkBSqaaDs3NtWPY4cF4brXYzSovrdKPF43UAIU/RXnGknmmAVN2wPJ1csE3O4iMtGMlD+B43/N8fsmulqcwAJLD69eEIF1Zu0mr8/kMbk6LuMf9TG7lP6bLWS3yJbiGoBnbybAuiFepJOnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ijC8Cqhb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746439739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BmTwP3C/5RRHNa0cESV330FAgf6OjrxM/JkWPUJkdr4=;
+	b=ijC8Cqhb9owexcj8Ls/ioT2HGqT5u3EyYh1DokUuROFfWzzuAVi39BWv8BM4rOOiGPmUl+
+	tQOL/Wp2aLlm24iRdUD3ds2ar4PIXlW7423JsZrehAV+5ElJmHmCaQfKbYuekQpjpgsHOc
+	1vcHAJt6fjySPfW7xXl09Z9ox7UaGTA=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-606-whX1y_mvNwqvCcAsY7TYKw-1; Mon, 05 May 2025 06:08:58 -0400
+X-MC-Unique: whX1y_mvNwqvCcAsY7TYKw-1
+X-Mimecast-MFC-AGG-ID: whX1y_mvNwqvCcAsY7TYKw_1746439737
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-440667e7f92so24790095e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 May 2025 03:08:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746439737; x=1747044537;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BmTwP3C/5RRHNa0cESV330FAgf6OjrxM/JkWPUJkdr4=;
+        b=nBqGBS+J3Z9WS0i+tLdjJp0TtGcAfByV3cRvpDl+a0uXmNA39DhoNR/Q39bqFpfWBv
+         xH/j0QuRz2eQWhw/N3rvp7Y7DkeCl2e9q4DPg9z+/kn/O5wz9nq7hSc8LwlAMGBUBN/s
+         4hqU5H0wTLxBkV4EiCAueqM3xmfbg+tDzL953xQrBMtqzA7eBjRP4Uu4zhVFXKeJzN6w
+         srMQJMUSRI8zAzTx9awCM4Hh0bwhy6IF07kezwwtgv65XuvNkZz7A7GU3AX7biYH1Rui
+         8PIuQOxiD5FJqgKSVeb6tTOP+7yLx5oqja0z76O87EZ/mJlMixbr6P1nGCNlWFIetXYr
+         UkBw==
+X-Forwarded-Encrypted: i=1; AJvYcCXqPb/lYLLRkYgz1dYaonKqxJxeBa+Cx4uDu6sdWoFLedgcnM6+VBSRVigzndqsJ4nu3IHpB73YTfnM1k6z@vger.kernel.org
+X-Gm-Message-State: AOJu0YyncPADgwoKXAPZgUGHx6EWZhErtl6AjG+MFq7SQKbSDsxeVIpx
+	tdg88qKdu3S9optwFV4c6FHp0e7Crvi3x+dheIahVtUWSJ3OZU/eDxSOvkhnoIp1sQXhzcq8i1C
+	tB955vQ8v7FhaxmcfSKeecERj1heuUrLZzGDp4UQeWw8xOtLkO7vfrSCRJStZI1s=
+X-Gm-Gg: ASbGnctb6uMCr+xuVKjBRBmXW1oF9zzH9E5HPEg3cFDVwJ64emsGyIiD2ioUs8l+GoB
+	tN0BmfCb9pK42dcL0cLi66fQGGB2MQN3gE3ZPwgqDhltaK9LpeSZxXWsSs0fRFvrYI1Ha2ej++e
+	qNg+soUAH7mUde21uM0DZFVyycIQA3G1/+AKca8zZ0aZ0dvIv4WjcETbV30KIwZ6zsw/h/I4AIc
+	A6hLwvI0h4vX6nQwZ2TksKdIcQZ44O3mkFAP+1Qobqr/ZL3gJgxrogl2ZECyd5AjLCoPKEKcTgE
+	H60PRd32NsqDvsuzOYoFKvbYmIRNA+IiauRk2GVpTHQ1oIa15y65FxkIvPN4QkDFTWEtgRpqq6J
+	giSzHvRFWLCP+oo3F1DdpvCptHEl4musfr1wYRyA=
+X-Received: by 2002:a05:600c:a13:b0:43c:f81d:f with SMTP id 5b1f17b1804b1-441c48bca3bmr57375815e9.8.1746439736743;
+        Mon, 05 May 2025 03:08:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPx432VgCohrDR6C5RgxgqMkrU5XckKpboeqJ5naVLmUoTk99ORY1qD6XhEz6hLJ5dyJF7Ng==
+X-Received: by 2002:a05:600c:a13:b0:43c:f81d:f with SMTP id 5b1f17b1804b1-441c48bca3bmr57375515e9.8.1746439736336;
+        Mon, 05 May 2025 03:08:56 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c73d:2400:3be1:a856:724c:fd29? (p200300cbc73d24003be1a856724cfd29.dip0.t-ipconnect.de. [2003:cb:c73d:2400:3be1:a856:724c:fd29])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-441c0dfc537sm82386455e9.16.2025.05.05.03.08.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 05 May 2025 03:08:55 -0700 (PDT)
+Message-ID: <c8f78fd6-c1fb-4884-b370-cb6b03e573b6@redhat.com>
+Date: Mon, 5 May 2025 12:08:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250430145920.3748738-6-ryan.roberts@arm.com>
-X-Rspamd-Queue-Id: A616421282
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:email,suse.com:email];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 4/5] mm/readahead: Store folio order in struct
+ file_ra_state
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Dave Chinner <david@fromorbit.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20250430145920.3748738-1-ryan.roberts@arm.com>
+ <20250430145920.3748738-5-ryan.roberts@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20250430145920.3748738-5-ryan.roberts@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed 30-04-25 15:59:18, Ryan Roberts wrote:
-> Change the readahead config so that if it is being requested for an
-> executable mapping, do a synchronous read into a set of folios with an
-> arch-specified order and in a naturally aligned manner. We no longer
-> center the read on the faulting page but simply align it down to the
-> previous natural boundary. Additionally, we don't bother with an
-> asynchronous part.
+On 30.04.25 16:59, Ryan Roberts wrote:
+> Previously the folio order of the previous readahead request was
+> inferred from the folio who's readahead marker was hit. But due to the
+> way we have to round to non-natural boundaries sometimes, this first
+> folio in the readahead block is often smaller than the preferred order
+> for that request. This means that for cases where the initial sync
+> readahead is poorly aligned, the folio order will ramp up much more
+> slowly.
 > 
-> On arm64 if memory is physically contiguous and naturally aligned to the
-> "contpte" size, we can use contpte mappings, which improves utilization
-> of the TLB. When paired with the "multi-size THP" feature, this works
-> well to reduce dTLB pressure. However iTLB pressure is still high due to
-> executable mappings having a low likelihood of being in the required
-> folio size and mapping alignment, even when the filesystem supports
-> readahead into large folios (e.g. XFS).
+> So instead, let's store the order in struct file_ra_state so we are not
+> affected by any required alignment. We previously made enough room in
+> the struct for a 16 order field. This should be plenty big enough since
+> we are limited to MAX_PAGECACHE_ORDER anyway, which is certainly never
+> larger than ~20.
 > 
-> The reason for the low likelihood is that the current readahead
-> algorithm starts with an order-0 folio and increases the folio order by
-> 2 every time the readahead mark is hit. But most executable memory tends
-> to be accessed randomly and so the readahead mark is rarely hit and most
-> executable folios remain order-0.
+> Since we now pass order in struct file_ra_state, page_cache_ra_order()
+> no longer needs it's new_order parameter, so let's remove that.
 > 
-> So let's special-case the read(ahead) logic for executable mappings. The
-> trade-off is performance improvement (due to more efficient storage of
-> the translations in iTLB) vs potential for making reclaim more difficult
-> (due to the folios being larger so if a part of the folio is hot the
-> whole thing is considered hot). But executable memory is a small portion
-> of the overall system memory so I doubt this will even register from a
-> reclaim perspective.
+> Worked example:
 > 
-> I've chosen 64K folio size for arm64 which benefits both the 4K and 16K
-> base page size configs. Crucially the same amount of data is still read
-> (usually 128K) so I'm not expecting any read amplification issues. I
-> don't anticipate any write amplification because text is always RO.
+> Here we are touching pages 17-256 sequentially just as we did in the
+> previous commit, but now that we are remembering the preferred order
+> explicitly, we no longer have the slow ramp up problem. Note
+> specifically that we no longer have 2 rounds (2x ~128K) of order-2
+> folios:
 > 
-> Note that the text region of an ELF file could be populated into the
-> page cache for other reasons than taking a fault in a mmapped area. The
-> most common case is due to the loader read()ing the header which can be
-> shared with the beginning of text. So some text will still remain in
-> small folios, but this simple, best effort change provides good
-> performance improvements as is.
-> 
-> Confine this special-case approach to the bounds of the VMA. This
-> prevents wasting memory for any padding that might exist in the file
-> between sections. Previously the padding would have been contained in
-> order-0 folios and would be easy to reclaim. But now it would be part of
-> a larger folio so more difficult to reclaim. Solve this by simply not
-> reading it into memory in the first place.
-> 
-> Benchmarking
-> ============
-> TODO: NUMBERS ARE FOR V3 OF SERIES. NEED TO RERUN FOR THIS VERSION.
-> 
-> The below shows nginx and redis benchmarks on Ampere Altra arm64 system.
-> 
-> First, confirmation that this patch causes more text to be contained in
-> 64K folios:
-> 
-> | File-backed folios     |   system boot   |      nginx      |      redis      |
-> | by size as percentage  |-----------------|-----------------|-----------------|
-> | of all mapped text mem | before |  after | before |  after | before |  after |
-> |========================|========|========|========|========|========|========|
-> | base-page-4kB          |    26% |     9% |    27% |     6% |    21% |     5% |
-> | thp-aligned-8kB        |     4% |     2% |     3% |     0% |     4% |     1% |
-> | thp-aligned-16kB       |    57% |    21% |    57% |     6% |    54% |    10% |
-> | thp-aligned-32kB       |     4% |     1% |     4% |     1% |     3% |     1% |
-> | thp-aligned-64kB       |     7% |    65% |     8% |    85% |     9% |    72% |
-> | thp-aligned-2048kB     |     0% |     0% |     0% |     0% |     7% |     8% |
-> | thp-unaligned-16kB     |     1% |     1% |     1% |     1% |     1% |     1% |
-> | thp-unaligned-32kB     |     0% |     0% |     0% |     0% |     0% |     0% |
-> | thp-unaligned-64kB     |     0% |     0% |     0% |     1% |     0% |     1% |
-> | thp-partial            |     1% |     1% |     0% |     0% |     1% |     1% |
-> |------------------------|--------|--------|--------|--------|--------|--------|
-> | cont-aligned-64kB      |     7% |    65% |     8% |    85% |    16% |    80% |
-> 
-> The above shows that for both workloads (each isolated with cgroups) as
-> well as the general system state after boot, the amount of text backed
-> by 4K and 16K folios reduces and the amount backed by 64K folios
-> increases significantly. And the amount of text that is contpte-mapped
-> significantly increases (see last row).
-> 
-> And this is reflected in performance improvement:
-> 
-> | Benchmark                                     |          Improvement |
-> +===============================================+======================+
-> | pts/nginx (200 connections)                   |                8.96% |
-> | pts/nginx (1000 connections)                  |                6.80% |
-> +-----------------------------------------------+----------------------+
-> | pts/redis (LPOP, 50 connections)              |                5.07% |
-> | pts/redis (LPUSH, 50 connections)             |                3.68% |
+> TYPE    STARTOFFS     ENDOFFS        SIZE  STARTPG    ENDPG   NRPG  ORDER  RA
+> -----  ----------  ----------  ----------  -------  -------  -----  -----  --
+> HOLE   0x00000000  0x00001000        4096        0        1      1
+> FOLIO  0x00001000  0x00002000        4096        1        2      1      0
+> FOLIO  0x00002000  0x00003000        4096        2        3      1      0
+> FOLIO  0x00003000  0x00004000        4096        3        4      1      0
+> FOLIO  0x00004000  0x00005000        4096        4        5      1      0
+> FOLIO  0x00005000  0x00006000        4096        5        6      1      0
+> FOLIO  0x00006000  0x00007000        4096        6        7      1      0
+> FOLIO  0x00007000  0x00008000        4096        7        8      1      0
+> FOLIO  0x00008000  0x00009000        4096        8        9      1      0
+> FOLIO  0x00009000  0x0000a000        4096        9       10      1      0
+> FOLIO  0x0000a000  0x0000b000        4096       10       11      1      0
+> FOLIO  0x0000b000  0x0000c000        4096       11       12      1      0
+> FOLIO  0x0000c000  0x0000d000        4096       12       13      1      0
+> FOLIO  0x0000d000  0x0000e000        4096       13       14      1      0
+> FOLIO  0x0000e000  0x0000f000        4096       14       15      1      0
+> FOLIO  0x0000f000  0x00010000        4096       15       16      1      0
+> FOLIO  0x00010000  0x00011000        4096       16       17      1      0
+> FOLIO  0x00011000  0x00012000        4096       17       18      1      0
+> FOLIO  0x00012000  0x00013000        4096       18       19      1      0
+> FOLIO  0x00013000  0x00014000        4096       19       20      1      0
+> FOLIO  0x00014000  0x00015000        4096       20       21      1      0
+> FOLIO  0x00015000  0x00016000        4096       21       22      1      0
+> FOLIO  0x00016000  0x00017000        4096       22       23      1      0
+> FOLIO  0x00017000  0x00018000        4096       23       24      1      0
+> FOLIO  0x00018000  0x00019000        4096       24       25      1      0
+> FOLIO  0x00019000  0x0001a000        4096       25       26      1      0
+> FOLIO  0x0001a000  0x0001b000        4096       26       27      1      0
+> FOLIO  0x0001b000  0x0001c000        4096       27       28      1      0
+> FOLIO  0x0001c000  0x0001d000        4096       28       29      1      0
+> FOLIO  0x0001d000  0x0001e000        4096       29       30      1      0
+> FOLIO  0x0001e000  0x0001f000        4096       30       31      1      0
+> FOLIO  0x0001f000  0x00020000        4096       31       32      1      0
+> FOLIO  0x00020000  0x00021000        4096       32       33      1      0
+> FOLIO  0x00021000  0x00022000        4096       33       34      1      0
+> FOLIO  0x00022000  0x00024000        8192       34       36      2      1
+> FOLIO  0x00024000  0x00028000       16384       36       40      4      2
+> FOLIO  0x00028000  0x0002c000       16384       40       44      4      2
+> FOLIO  0x0002c000  0x00030000       16384       44       48      4      2
+> FOLIO  0x00030000  0x00034000       16384       48       52      4      2
+> FOLIO  0x00034000  0x00038000       16384       52       56      4      2
+> FOLIO  0x00038000  0x0003c000       16384       56       60      4      2
+> FOLIO  0x0003c000  0x00040000       16384       60       64      4      2
+> FOLIO  0x00040000  0x00050000       65536       64       80     16      4
+> FOLIO  0x00050000  0x00060000       65536       80       96     16      4
+> FOLIO  0x00060000  0x00080000      131072       96      128     32      5
+> FOLIO  0x00080000  0x000a0000      131072      128      160     32      5
+> FOLIO  0x000a0000  0x000c0000      131072      160      192     32      5
+> FOLIO  0x000c0000  0x000e0000      131072      192      224     32      5
+> FOLIO  0x000e0000  0x00100000      131072      224      256     32      5
+> FOLIO  0x00100000  0x00120000      131072      256      288     32      5
+> FOLIO  0x00120000  0x00140000      131072      288      320     32      5  Y
+> HOLE   0x00140000  0x00800000     7077888      320     2048   1728
 > 
 > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+> ---
+>   include/linux/fs.h |  2 ++
+>   mm/filemap.c       |  6 ++++--
+>   mm/internal.h      |  3 +--
+>   mm/readahead.c     | 18 +++++++++++-------
+>   4 files changed, 18 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 44362bef0010..cde482a7270a 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1031,6 +1031,7 @@ struct fown_struct {
+>    *      and so were/are genuinely "ahead".  Start next readahead when
+>    *      the first of these pages is accessed.
+>    * @ra_pages: Maximum size of a readahead request, copied from the bdi.
+> + * @order: Preferred folio order used for most recent readahead.
 
-Looks good to me. Feel free to add:
+Looking at other members, and how it relates to the other members, 
+should we call this something like "ra_prev_order" / "prev_ra_order" to 
+distinguish it from !ra members and indicate the "most recent" semantics 
+similar to "prev_pos"?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Just a thought while digging through this patch ...
 
-								Honza
+...
 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index e61f374068d4..37fe4a55c00d 100644
 > --- a/mm/filemap.c
 > +++ b/mm/filemap.c
-> @@ -3252,14 +3252,40 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->  	if (mmap_miss > MMAP_LOTSAMISS)
->  		return fpin;
->  
-> -	/*
-> -	 * mmap read-around
-> -	 */
->  	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> -	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
-> -	ra->size = ra->ra_pages;
-> -	ra->async_size = ra->ra_pages / 4;
-> -	ra->order = 0;
-> +	if (vm_flags & VM_EXEC) {
-> +		/*
-> +		 * Allow arch to request a preferred minimum folio order for
-> +		 * executable memory. This can often be beneficial to
-> +		 * performance if (e.g.) arm64 can contpte-map the folio.
-> +		 * Executable memory rarely benefits from readahead, due to its
-> +		 * random access nature, so set async_size to 0.
-> +		 *
-> +		 * Limit to the boundaries of the VMA to avoid reading in any
-> +		 * pad that might exist between sections, which would be a waste
-> +		 * of memory.
-> +		 */
-> +		struct vm_area_struct *vma = vmf->vma;
-> +		unsigned long start = vma->vm_pgoff;
-> +		unsigned long end = start + ((vma->vm_end - vma->vm_start) >> PAGE_SHIFT);
-> +		unsigned long ra_end;
-> +
-> +		ra->order = exec_folio_order();
-> +		ra->start = round_down(vmf->pgoff, 1UL << ra->order);
-> +		ra->start = max(ra->start, start);
-> +		ra_end = round_up(ra->start + ra->ra_pages, 1UL << ra->order);
-> +		ra_end = min(ra_end, end);
-> +		ra->size = ra_end - ra->start;
-> +		ra->async_size = 0;
-> +	} else {
-> +		/*
-> +		 * mmap read-around
-> +		 */
-> +		ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
-> +		ra->size = ra->ra_pages;
-> +		ra->async_size = ra->ra_pages / 4;
-> +		ra->order = 0;
-> +	}
->  	ractl._index = ra->start;
->  	page_cache_ra_order(&ractl, ra);
->  	return fpin;
-> -- 
-> 2.43.0
-> 
+> @@ -3222,7 +3222,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+>   		if (!(vm_flags & VM_RAND_READ))
+>   			ra->size *= 2;
+>   		ra->async_size = HPAGE_PMD_NR;
+> -		page_cache_ra_order(&ractl, ra, HPAGE_PMD_ORDER);
+> +		ra->order = HPAGE_PMD_ORDER;
+> +		page_cache_ra_order(&ractl, ra);
+>   		return fpin;
+>   	}
+>   #endif
+> @@ -3258,8 +3259,9 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+>   	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
+>   	ra->size = ra->ra_pages;
+>   	ra->async_size = ra->ra_pages / 4;
+> +	ra->order = 0;
+>   	ractl._index = ra->start;
+> -	page_cache_ra_order(&ractl, ra, 0);
+> +	page_cache_ra_order(&ractl, ra);
+>   	return fpin;
+>   }
+
+Why not let page_cache_ra_order() consume the order and update ra->order 
+(or however it will be called :) ) internally?
+
+That might make at least the "most recent readahead" semantics of the 
+variable clearer.
+
+Again, just a thought ...
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+
+David / dhildenb
+
 
