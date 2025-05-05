@@ -1,58 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-48123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48124-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBD1AA9C67
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 21:21:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70AEDAA9CB0
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 21:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7B6817E4F6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 19:21:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C7067A95DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 May 2025 19:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C899926FD81;
-	Mon,  5 May 2025 19:21:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788E81FFC50;
+	Mon,  5 May 2025 19:35:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qEmdSgcF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WMWv89U6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87E971C2335;
-	Mon,  5 May 2025 19:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C105D1C6FF6;
+	Mon,  5 May 2025 19:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746472877; cv=none; b=mgLhXTV9WYBL+JhAYZ2wuy/Ue/4Hhxz0z3qpA1PSOBYm6ZKNKp6K7lw2Fk/9pQ7j4mPaPf+t1xtuHgMYyc9bWat+KEBnPZiKpqSkiVqj9A2v99b0aMLJ1Gs7Yxwa5CqTV3SlwRJehRwoMTenGA6v8KMMjTcPp9SKjpQb4y8wgKQ=
+	t=1746473721; cv=none; b=fTRM9U5YOlWwF7Be7JTXGwQ87Zti484yKipezBtVAMozPaX1V0zJBWjoO2poo1+3k9WYYpxChwNvHd0RrreeKQDf8S6rR4fTG2+jbN90GPGH/iZNvuMIZLu4wNngaPGiZGjs2vCYN0PFVCBYrAoqcNWX/dSXRQjCV1BK6TJAGkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746472877; c=relaxed/simple;
-	bh=2o6qr+fHmN9pgquP02b3XCjNjRGm3F4nTOBm4Di+yKo=;
+	s=arc-20240116; t=1746473721; c=relaxed/simple;
+	bh=kkVGLS5k8ofegIDhfT5iFiahxbKTEbpN7507mhzkw3k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F1uXuP1qHZsgBpd3BrEwEjvqqRTYxBnYMnCUHjoRclAn21HwafQy3bYawlkC9FQqSir5aWwbR5qpSKb3ktap/7ZJ1gMO5NqX82xkZummbq3WALD64QSliZ9EEX3+Gx4VemejMnKORrwTdgGYkB2396juTqHBt9MoHpW3+gzsVR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qEmdSgcF; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Ton5nVJpxImyrBYmbgbsO+2sxMUNoZgaaOLlpnALkyE=; b=qEmdSgcFacq3fu3BlbtZjd4bQ3
-	5giu5JVNTXasxn9tiXreLTOaGtq5QR1rq33By2Bx75K2zYEAl+pEfaKVkSablVa7zk8wGU9RgoDIQ
-	sYks1Yyf7XbQbU+rFIh42CepvtGRknOK/88As+BL33b55iCbOcQrk77YvhVTT6zTBbUdcWwSYbZx3
-	zR6ctchFIhZrvKUbZtFMuyeTOXVHMnC9jk+2HAnnUxGHPxxoPwUxHqNYZhAaciC7xCGfpZJLdfx15
-	1uVx4+JbuFsmC4gA+R+XmY2fgifIEJ9w9njlvnMcyVdMoCYq55hr6YsU/fe6gFZ73E7eIOIO4Ae5C
-	vg4Cdc3w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uC1NH-000000065nk-0Vt7;
-	Mon, 05 May 2025 19:21:11 +0000
-Date: Mon, 5 May 2025 20:21:11 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: David Sterba <dsterba@suse.cz>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [RFC][PATCH] btrfs_get_tree_subvol(): switch from fc_mount() to
- vfs_create_mount()
-Message-ID: <20250505192111.GH2023217@ZenIV>
-References: <20250505030345.GD2023217@ZenIV>
- <20250505175807.GB9140@twin.jikos.cz>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uhVfD8A5WFoFg4FEgXXsKHvWxKtnYAwgneAvnp1P+0Rx3LCOcmHagWsN9sC55cW7aTUr4id6Y2nwGK+dMlYOHTK1PQaWx+fr8gX4azoVMR8Lphy9I9y0mJGzVGMmVw4TWrkcnofXexglvsFA5ARnXz/icTiCu4A9cirBz5SCnLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WMWv89U6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FE68C4CEE4;
+	Mon,  5 May 2025 19:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746473721;
+	bh=kkVGLS5k8ofegIDhfT5iFiahxbKTEbpN7507mhzkw3k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WMWv89U6riQOg0Z7sRsgfFg/QNM6QL8JKKlbKGR9I/ualu31CVxgMhqjNat+xeidx
+	 vI7vJ5QeO2CBwinrGlGSc/S5FIW9A4qrtPWbPzcBX5QlxEHlVjHY7AT+PgM9iMrr3X
+	 51Z8YyBZ68t/1GuxeZD2ghFHd+AuZCcj1+HF1A+XqHSXiHloGCSADphdQ4SCszwYAx
+	 /pg6hf0Ftjclu36skX8o/ORuzqwep//Xa/lNbjQF8TpzcCF48rhFmvygMhNjxpNow2
+	 0bHUuCdMtSIdOGrg8fBLbntRGHTCggDRBz1UedOQEALdvYVKwK5OzEA5ZP0RnMbQPy
+	 XJp7go4YHbFAw==
+Date: Mon, 5 May 2025 12:35:19 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-mm@kvack.org,
+	gost.dev@samsung.com, p.raghav@samsung.com, da.gomez@samsung.com
+Subject: [PATCH v2] swapfile: disable swapon for bs > ps devices
+Message-ID: <aBkS926thy9zvdZb@bombadil.infradead.org>
+References: <20250502231309.766016-1-mcgrof@kernel.org>
+ <20250505-schildern-wolfsrudel-6d867c48f9db@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,42 +59,51 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250505175807.GB9140@twin.jikos.cz>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250505-schildern-wolfsrudel-6d867c48f9db@brauner>
 
-On Mon, May 05, 2025 at 07:58:07PM +0200, David Sterba wrote:
+Devices which have a requirement for bs > ps cannot be supported for
+swap as swap still needs work. Now that the block device cache sets the
+min order for block devices we need this stop gap otherwise all
+swap operations are rejected.
 
-> > -	if (fc->sb_flags & SB_RDONLY)
-> > -		return ret;
-> > -
-> > -	down_write(&mnt->mnt_sb->s_umount);
-> > -	if (!(fc->sb_flags & SB_RDONLY) && (mnt->mnt_sb->s_flags & SB_RDONLY))
-> > +	if (!(fc->sb_flags & SB_RDONLY) && (fc->root->d_sb->s_flags & SB_RDONLY))
-> >  		ret = btrfs_reconfigure(fc);
-> > -	up_write(&mnt->mnt_sb->s_umount);
+Without this you'll end up with errors on these devices as the swap
+code still needs much love to support min order.
 
-> So this open codes fc_mount(), which is vfs_get_tree() + vfs_create_mount(),
-> the only difference I see in the new code is that
-> btrfs_reconfigure_for_mount() dropped the SB_RDONLY check.
-> 
-> Why the check is there is explained in the lengthy comment above
-> btrfs_reconfigure_for_mount(), so it should stay. If it can be removed
-> then it should be a separate patch from the cleanup.
+With this we at least now put a stop gap of its use, until the
+swap subsystem completes its major overhaul:
 
-What do you mean, dropped?  It's still right there - the current
-variant checks it *twice*, once before grabbing ->s_umount, then
-after it's been grabbed.  Checking it before down_write() makes sense
-if we are called after ->s_umount had been dropped (by fc_mount()).
-I'm not sure why you recheck it after down_write(), since it's not
-going to change, but you do recheck it.  In this variant we don't need
-to bother grabbing the rwsem, since that thing is called while ->s_umount
-is still held...
+mkswap: /dev/nvme3n1: warning: wiping old swap signature.
+Setting up swapspace version 1, size = 100 GiB (107374178304 bytes)
+no label, UUID=6af76b5c-7e7b-4902-b7f7-4c24dde6fa36
+swapon: /dev/nvme3n1: swapon failed: Invalid argument
 
-I can turn that into
-	if (fc->sb_flags & SB_RDONLY)
-		return ret;
-	if (fc->root->d_sb->s_flags & SB_RDONLY)
-		ret = btrfs_reconfigure(fc);
-	return ret;
-but I don't see how it's better than the variant posted; up to you, of course...
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+---
+ mm/swapfile.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 2eff8b51a945..9e49875ca1fd 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -3322,6 +3322,15 @@ SYSCALL_DEFINE2(swapon, const char __user *, specialfile, int, swap_flags)
+ 		goto bad_swap_unlock_inode;
+ 	}
+ 
++	/*
++	 * The swap subsystem needs a major overhaul to support this.
++	 * It doesn't work yet so just disable it for now.
++	 */
++	if (mapping_min_folio_order(mapping) > 0) {
++		error = -EINVAL;
++		goto bad_swap_unlock_inode;
++	}
++
+ 	/*
+ 	 * Read the swap header.
+ 	 */
+-- 
+2.47.2
+
 
