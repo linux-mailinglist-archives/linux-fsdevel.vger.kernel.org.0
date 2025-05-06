@@ -1,91 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-48155-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48156-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8151FAAB869
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:34:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70F32AAB928
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15EEE1C27AA1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:26:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57913A445E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206A227BF8A;
-	Tue,  6 May 2025 01:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465F62980D0;
+	Tue,  6 May 2025 03:54:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eJbg0MqW"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B90830B28F;
-	Tue,  6 May 2025 00:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98432353108;
+	Tue,  6 May 2025 01:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746490739; cv=none; b=SrtMu5NnuVMjHUZ/1fgT/SPDZREOxDjKt1BE2htJP3y+8XUyFCOLBbOGPb4uJAwD9sqctjl7IDcMHDhP9AOK7u6TY80hTEzd9nb2p2ea+slVDec3Lwv73J8ll0aScHFtQ8hgc/vwIcXlUs3X1PPuS0Pm0G2f4dVL6BId3/g1rls=
+	t=1746493317; cv=none; b=ghnpX8Jcj2LKrsEY9xlmr6je9pjA838oJxcI9mbyZaLoePnslkwYRtmCnK0zNl+oF/EthN0sWcu98HjYbTc41M7FK/GYmgN8OAdVlwA0v6hqvCg2hKDMdOwyCkq30Fa1R8xpvsAGaIm7P7GePnKwxApGLar+ZxBFNkKlknkOu1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746490739; c=relaxed/simple;
-	bh=UWQ6ERmGL6IZkWLxGd0o3ECXAkhD3bUzYsXfgnKEYHY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=npChp9E6Bw+u3+Gwa5GYv5pFB8RM1PHzh90V4Ye7rgJtooDTuhrLb9rhApAGzTvSFrWgb66WZdSof5sQGNMJrvQLfFi36WV+iaNqi2zEzp9QOo7Or4r3WlAPiw7RiQMCMDb5z0OtLSp+Hl8PCCOtu9ZQgf71Z8fTMp8v17XA7mU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E541C4CEE4;
-	Tue,  6 May 2025 00:18:58 +0000 (UTC)
-Date: Mon, 5 May 2025 20:19:04 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH v2] kill vfs_submount()
-Message-ID: <20250505201904.59cd46d0@gandalf.local.home>
-In-Reply-To: <20250505213829.GI2023217@ZenIV>
-References: <20250503212925.GZ2023217@ZenIV>
-	<utebik76wcdgaspk7sjzb3aedmlcwbmwj3olur45zuycbpapjc@pd5rhnudxb35>
-	<20250505213829.GI2023217@ZenIV>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1746493317; c=relaxed/simple;
+	bh=Q7sf4DCZ7/YCbSs+WNWgVbrWK8nZx3UuEcr6fvAaq7k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ca3ko4lmm7sEE7jmGh+svOYSwDaZpukauTeX8/uFhWOTgnD9ld5Ecn0T8CIw/rHtnvAKmmfIbzNLAD37IM8VkSlHcGKYZW6stq2hMkvG37NTGWP90kLoSVa1871EKPLHhJ8KJlw+KUC86PcHW9DOhZIxRyEpCLkD+Ewc7qfFZzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eJbg0MqW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7156C4CEEE;
+	Tue,  6 May 2025 01:01:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746493317;
+	bh=Q7sf4DCZ7/YCbSs+WNWgVbrWK8nZx3UuEcr6fvAaq7k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eJbg0MqWMi4z/ikUODUOJ2SQNtVEMS1Pi4gt/AWGNP2Imnki22QI0mTOI6pBOX0e0
+	 ks1uCPTEWTf7ZkOdOocF+hNgmYE9Jro0LHIFdpQpeevz+KqRPmr390NujC7N14NSEE
+	 eDv3vOdIAweUp3OoK1w6xMO4MZx68YDzqLhHFJuJIewOQe+LcCNDryyG6lb6aN9d8w
+	 eTgn+McM1W5mYyd7/hZrnz20m/XNGly9+pnoAlP2vvCbtuRlrP7a+9EQUpEgVfNJai
+	 WkXdrHB3uz2bUvnaJQOwfUy8PspA8M/rR87Jq7iSEvmZcY/7ecn5TmDdWcusWQCnKW
+	 z/Ey237rbhOWw==
+Date: Mon, 5 May 2025 18:01:55 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	Hannes Reinecke <hare@kernel.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Hannes Reinecke <hare@suse.de>,
+	Christian Brauner <brauner@kernel.org>, viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.14 342/642] fs/mpage: avoid negative shift for
+ large blocksize
+Message-ID: <aBlfg8tuWY1_GVPJ@bombadil.infradead.org>
+References: <20250505221419.2672473-1-sashal@kernel.org>
+ <20250505221419.2672473-342-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250505221419.2672473-342-sashal@kernel.org>
 
-On Mon, 5 May 2025 22:38:29 +0100
-Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Mon, May 05, 2025 at 06:09:18PM -0400, Sasha Levin wrote:
+> From: Hannes Reinecke <hare@kernel.org>
+> 
+> [ Upstream commit 86c60efd7c0ede43bd677f2eee1d84200528df1e ]
+> 
+> For large blocksizes the number of block bits is larger than PAGE_SHIFT,
+> so calculate the sector number from the byte offset instead. This is
+> required to enable large folios with buffer-heads.
+> 
+> Reviewed-by: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> Signed-off-by: Hannes Reinecke <hare@kernel.org>
+> Link: https://lore.kernel.org/r/20250221223823.1680616-4-mcgrof@kernel.org
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-> @@ -10084,10 +10087,20 @@ static struct vfsmount *trace_automount(struct dentry *mntpt, void *ingore)
->  	type = get_fs_type("tracefs");
->  	if (!type)
->  		return NULL;
-> -	mnt = vfs_submount(mntpt, type, "tracefs", NULL);
-> +
-> +	fc = fs_context_for_submount(type, mntpt);
->  	put_filesystem(type);
-> -	if (IS_ERR(mnt))
-> -		return NULL;
-> +	if (IS_ERR(fc))
-> +		return ERR_CAST(fc);
-> +
-> +	ret = vfs_parse_fs_string(fc, "source",
-> +				  "tracefs", strlen("tracefs"));
-> +	if (!ret)
-> +		mnt = fc_mount(fc);
-> +	else
-> +		mnt = ERR_PTR(ret);
-> +
-> +	put_fs_context(fc);
->  	return mnt;
->  }
->  
+This is not relevant to older kernels as we had no buffer-head usage of
+large folios before v6.15. So this is just creating noise / drama for
+older kernels.
 
-In case others try to apply this on Linus or linux-next, this is based on top of:
+Where's that code for  auto-sel again?
 
-  https://lore.kernel.org/all/20250424060845.GG2023217@ZenIV/
-
-Otherwise it doesn't apply cleanly.
-
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-Tested-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
+  Luis
 
