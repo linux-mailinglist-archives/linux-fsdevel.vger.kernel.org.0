@@ -1,140 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-48307-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48308-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88F88AAD19E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 01:39:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 473A0AAD1A4
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 01:45:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D90717C83A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 23:39:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 171271C00B81
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 23:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3502D21D5AA;
-	Tue,  6 May 2025 23:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD21E21CC68;
+	Tue,  6 May 2025 23:45:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MI6NKVCy"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OZDZjf47"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B27021CA04;
-	Tue,  6 May 2025 23:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE05C2FA
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 23:45:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746574748; cv=none; b=fmBs8AF3a/Wrh+pivPGxKeMuCUO4WD3HhWb4o/cU6FwAG5NkVKZjhevu0v3Z9356LNoFkFYBhFFQeuPrltYvBoA6gPTAPybw+ckEogIGAqI+7TyjIZmQpu2CPZT6v6xr3FrsXS4L7GhCCzTp/XuxxtXb4uAkIjyLDPRSuaJEdIA=
+	t=1746575123; cv=none; b=RlFiE/eaQqoCoVmR9MVHSCRmX2Wwtu5N3o6OfHpu4N4MaeRY1wIqPKfkPjvY+DCiKSM6maxQo9CCGz1q/jfee8LUInAKYHiiSd8KoO07l0SlQxuUt+fttu6hE1jSWsh2qggtDcABg0cn4j83KmtcaTpcNw03ZaErRL156XzLBpg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746574748; c=relaxed/simple;
-	bh=RtTfCzdvA8kKTsBb680Ada7FdLAq/TjbjBFv8liv6f8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E0E5ybDpEXpPLcx/srguQdSG9fgIapw6zCih5lJvXAN2ZSjDfvDKqfQb/lqUFpeLUQ6rStRAMYqxz7X8W1lLrZqNcP9J8tyrGAZJIu80QgWj3SR2pPcqvnvjXLEysWo5X9uvY9TZIARpKcJQxe4AmueVRgnQSBn+CyDt5ARUOZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MI6NKVCy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8697CC4CEE4;
-	Tue,  6 May 2025 23:39:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746574748;
-	bh=RtTfCzdvA8kKTsBb680Ada7FdLAq/TjbjBFv8liv6f8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=MI6NKVCyDtlbvA8NgsKWl5eu7TYLpDcFBcApghEX+IZRhK91Px5/6E2pEijjQ/uaz
-	 HUUWXfYx4cnXW3hBANS9SNpeNrF7dKpXEQBPY1bCTDOqpHV5lb8IsDQJXunbkgiYiO
-	 tBEt2IXDSpvwyZTvFsEmecOQnWunwLo4u+fxy1fLhegwJvE4taXtnhlsdsgkvJN1U2
-	 bH6BwggDrNFWaPYZgy10aARIZ9CF4gQGAs4DIkaIrf5n03SvH2IC6fqEZJ3e2/Us+V
-	 4O5P1+BPSXOv8hEWR1mbi0Pp7y/cQXH+ylLs9bEZaXteL/pgWA7qWG500pqO0MO0o2
-	 l58zZ1dnQRrrQ==
-Date: Tue, 6 May 2025 17:39:03 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH][next] fanotify: Avoid a couple of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <aBqdlxlBtb9s7ydc@kspp>
+	s=arc-20240116; t=1746575123; c=relaxed/simple;
+	bh=XS7JJ3Nvl0CmH2LCkgen7htJdtCoZtihW3XvOWVmfV8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=OO/ZWQ7IEt3DlPpH9y5SdRFuKKRg+US9E9WjwekFPJL9UVj4neSrnXILgN5ADvHBay4PXDfkdU6mh5p6kH8DVOUIPAVL2tjeaEn8Xo0Rff5wCx71jT+MGPIwHlWorv5WcHoGF2Z7fmMHwDeldlTsAgiIzy6LkbnEWuVvP2HmY4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jbongio.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OZDZjf47; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jbongio.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b1fdf8f67e6so804237a12.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 May 2025 16:45:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746575121; x=1747179921; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OtsPDcfZJqIIpn5wMR7VBZW6rWeFTQMhjG+hUDcv2rM=;
+        b=OZDZjf47gWGNzU/JMsZyHG/iWBdNCe7CX8VgSYddCyhNKDl+WpZ6s5yUHX4v51quwr
+         ARV5TooqRjTqWn2t8u1ugO0WShYdkrAomy0qPkP+pjz1QoRgxU53bp4yRUS2u5RC+A6q
+         2v4OTgzUzV9oqLtc0cd2kBx91jJCfhSPiHWhp/fkepzJILa2JvjPeHFMDusaH1CDq9H8
+         z9YIm6oHm3NG3gvfRr1ZmdbFVne0W7fHgCE+396c48YGsOetWK8CubiGGorhtcjk6/Wd
+         YaeaHiiMPVJtVi/6iAeE98yfD9/YgymaZE1NgSe6fi3DbgdCK2nVfkD4xs11T+Mc/m0P
+         I4aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746575121; x=1747179921;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OtsPDcfZJqIIpn5wMR7VBZW6rWeFTQMhjG+hUDcv2rM=;
+        b=UIDq3H2A//wF3kM51pwXrIG8+uJeqkd0BsFOJHKBFlF36eKergNxpLUV9wW1Fgf2Lh
+         ws7PNOlWYOXeEEuV9q4ntqK6RHDMWWsB9PWvsDjm5lD0wZydoyqYXxpyZTK7wUALqHaL
+         t+jEme0tE/4eY6rVfz93jhcqrJXOMYZWnW97j4AKQ85aFUKy0Y4RgOAXfQ/ocWbEcfWy
+         Pndd4cziE72X3DYylT1lFn87diEiQekb6cX2Evjy6PP/8OoZt3AWW8UgTHeZcJ3x0KzQ
+         PooMsofUgeIxKDdjWSLbBGFfcskWkzRPgOt7d+VE4W7jvDnk37Ksx/xa+T4/tbA1rfId
+         bbMA==
+X-Gm-Message-State: AOJu0YxCBLyiKnGaafR8DeMKuyX5b16+wix8OkSKXoLSRhnTvUHrj5d0
+	sPhWPx8ccWUnh6Ef1WPuyN13RQUYtSWQl4JKbF0CRpHoVLM3MS9rgBiMHa9C/zz6WYqTTCWzaN4
+	w9IWU6w==
+X-Google-Smtp-Source: AGHT+IFOaTs6P5tiVHNZk2Rtlo+DhEBVeGcUQKxC4Xo2GccgbstxSSMbBnoVUIgGOLU8TijamyIqip32VXfx
+X-Received: from pfiu20.prod.google.com ([2002:a05:6a00:1254:b0:740:91e5:c308])
+ (user=jbongio job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:438d:b0:1f5:8c05:e8f8
+ with SMTP id adf61e73a8af0-2148c0f6678mr1495484637.25.1746575120863; Tue, 06
+ May 2025 16:45:20 -0700 (PDT)
+Date: Tue,  6 May 2025 23:45:07 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
+Message-ID: <20250506234507.1017554-1-jbongio@google.com>
+Subject: [PATCH] fs: Remove redundant errseq_set call in mark_buffer_write_io_error.
+From: Jeremy Bongio <jbongio@google.com>
+To: Christoph Hellwig <hch@lst.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeremy Bongio <jbongio@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+mark_buffer_write_io_error sets sb->s_wb_err to -EIO twice.
+Once in mapping_set_error and once in errseq_set.
+Only mapping_set_error checks if bh->b_assoc_map->host is NULL.
 
-Modify FANOTIFY_INLINE_FH() macro, which defines a struct containing a
-flexible-array member in the middle (struct fanotify_fh::buf), to use
-struct_size_t() to pre-allocate space for both struct fanotify_fh and
-its flexible-array member. Replace the struct with a union and relocate
-the flexible structure (struct fanotify_fh) to the end.
+Discovered during null pointer dereference while removing
+a failing iblock device:
 
-See the memory layout of struct fanotify_fid_event before and after
-changes below.
+0xffffffff8be13778      mark_buffer_write_io_error + 0x98
+0xffffffff8c755310      end_buffer_async_write + 0x90
+0xffffffff8c75791b      end_bio_bh_io_sync + 0x2b
+0xffffffff8c7c54d2      blk_update_request + 0x1b2
+0xffffffff8c7c58c8      blk_mq_end_request + 0x18
+0xffffffff8c7c6f96      blk_mq_dispatch_rq_list + 0x8d6
+0xffffffff8c7caf98      __blk_mq_sched_dispatch_requests + 0x218
+0xffffffff8c7cad2a      blk_mq_sched_dispatch_requests + 0x3a
+0xffffffff8c7c6088      blk_mq_run_hw_queue + 0x108
+0xffffffff8c7c74b8      blk_mq_flush_plug_list + 0x178
+0xffffffff8c7c0c61      __blk_flush_plug + 0x41
+0xffffffff8c7c0d72      blk_finish_plug + 0x22
+0xffffffff8c6d8a98      do_writepages + 0x98
+0xffffffff8c6d16f0      filemap_fdatawrite_wbc + 0x70
+0xffffffff8c6d195c      filemap_flush + 0x9c
+0xffffffff8be0d730      sync_filesystem + 0x40
+0xffffffff8bdecfd7      fs_bdev_mark_dead + 0x27
+0xffffffff8bf35fdb      bdev_mark_dead + 0x6b
+0xffffffff8bf4a993      blk_report_disk_dead + 0x73
+0xffffffff8c7cc2ce      del_gendisk + 0xde
+0xffffffff8c153f14      iblock_destroy_blkdev + 0x24
+0xffffffff8c1523ce      iblock_destroy_work_fn + 0x1e
+0xffffffff8c658b75      process_scheduled_works + 0x1d5
+0xffffffff8c6590ca      worker_thread + 0x1da
 
-pahole -C fanotify_fid_event fs/notify/fanotify/fanotify.o
-
-BEFORE:
-struct fanotify_fid_event {
-        struct fanotify_event      fae;                  /*     0    48 */
-        __kernel_fsid_t            fsid;                 /*    48     8 */
-        struct {
-                struct fanotify_fh object_fh;            /*    56     4 */
-                unsigned char      _inline_fh_buf[12];   /*    60    12 */
-        };                                               /*    56    16 */
-
-        /* size: 72, cachelines: 2, members: 3 */
-        /* last cacheline: 8 bytes */
-};
-
-AFTER:
-struct fanotify_fid_event {
-        struct fanotify_event      fae;                  /*     0    48 */
-        __kernel_fsid_t            fsid;                 /*    48     8 */
-        union {
-                unsigned char      _inline_fh_buf[16];   /*    56    16 */
-                struct fanotify_fh object_fh __attribute__((__aligned__(1))); /*    56     4 */
-        } __attribute__((__aligned__(1)));               /*    56    16 */
-
-        /* size: 72, cachelines: 2, members: 3 */
-        /* forced alignments: 1 */
-        /* last cacheline: 8 bytes */
-} __attribute__((__aligned__(8)));
-
-So, with these changes, fix the following warnings:
-
-fs/notify/fanotify/fanotify.h:317:28: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-fs/notify/fanotify/fanotify.h:289:28: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Fixes: 4b2201dad2674 ("fs: stop using bdev->bd_super in mark_buffer_write_io_error")
+Signed-off-by: Jeremy Bongio <jbongio@google.com>
 ---
- fs/notify/fanotify/fanotify.h | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ fs/buffer.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
-index b44e70e44be6..91c26b1c1d32 100644
---- a/fs/notify/fanotify/fanotify.h
-+++ b/fs/notify/fanotify/fanotify.h
-@@ -275,12 +275,12 @@ static inline void fanotify_init_event(struct fanotify_event *event,
- 	event->pid = NULL;
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 7be23ff20b27..d7456e4643f6 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1222,7 +1222,6 @@ void mark_buffer_write_io_error(struct buffer_head *bh)
+ 		mapping_set_error(bh->b_folio->mapping, -EIO);
+ 	if (bh->b_assoc_map) {
+ 		mapping_set_error(bh->b_assoc_map, -EIO);
+-		errseq_set(&bh->b_assoc_map->host->i_sb->s_wb_err, -EIO);
+ 	}
  }
- 
--#define FANOTIFY_INLINE_FH(name, size)					\
--struct {								\
--	struct fanotify_fh name;					\
--	/* Space for object_fh.buf[] - access with fanotify_fh_buf() */	\
--	unsigned char _inline_fh_buf[size];				\
--}
-+#define FANOTIFY_INLINE_FH(name, size)						      \
-+union {										      \
-+	/* Space for object_fh and object_fh.buf[] - access with fanotify_fh_buf() */ \
-+	unsigned char _inline_fh_buf[struct_size_t(struct fanotify_fh, buf, size)];   \
-+	struct fanotify_fh name;						      \
-+} __packed
- 
- struct fanotify_fid_event {
- 	struct fanotify_event fae;
+ EXPORT_SYMBOL(mark_buffer_write_io_error);
 -- 
-2.43.0
+2.49.0.967.g6a0df3ecc3-goog
 
 
