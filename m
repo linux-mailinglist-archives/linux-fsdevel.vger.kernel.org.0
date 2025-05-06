@@ -1,274 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-48162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48164-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FECAAAB942
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:54:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5926AAAB9FA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 09:09:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6505506256
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:50:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9D115A0A7B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024E9289342;
-	Tue,  6 May 2025 04:01:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03D3278776;
+	Tue,  6 May 2025 04:01:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KMWQWDJe"
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="k30NXRBH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6C5202998
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 02:25:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373782D2693
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 02:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498317; cv=none; b=oNMyB1pXGbFMTKNpR4417U3Rdfyw87MdlAD6MP8WXdL1sT9UkwghFL0F6swfKc/GR7/+njwPqojYbd78nYuFJcGoSycC574u54NVikGI0hXMRyrN46JciNS+Nh+8Q6RUpb8WuNubRBabJ2IhET/RxmnmJ4KAnxQk2pk78MgLZow=
+	t=1746499712; cv=none; b=pVKbuos9bK+i3sKwDG0c5P+yt2Jpf0X5dMVd/9amaelHf0mHxUio6WoEBkyyOEfgD1FmvrGZbjn/j2h07acGutEIHLMvNG5yCU31ouZc+7EfqphOOoX98CQQV4yhHCBSpWHFtDKEowmm7vkJ75oT9cV6Jdhg0DtmFCD78Vpd9W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498317; c=relaxed/simple;
-	bh=n4dPN7wAD9npJr/nizY53yXeyAXyrXHg8YJr9ymyrnc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ROqwAmDlE7vDXZTf/qdC8LPLzh3/Ig1Eo7Zlx3kfRyq979emXfiUzEAIdpKOsTQfewUglBo6KFp+/ZTgygQ+BApBlygTx28Xo9Ro5wJtJq+BP8BbFaMW1HdmU4xA5IJN+wYHUcNKsle8pkHYNNDrFOChmKBiCxceS20FJheXLNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KMWQWDJe; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TTjO9FVT8AMn4y+ZaWkMDn84kdaTZxX3hyJLAkPjnkA=; b=KMWQWDJeXtjgYCv8fS5Wy36afg
-	a7B/p26ypkdVPSJ623AEUgIMVjnV0pwfOOiy/nW6YTjUetorKEpEB8NNvdH/p3X4DZT7zjzzGdWNK
-	fQA60MYnuqErutvzlVXSJiie0f1CajS7ZBsUf0Jtd8fq/tgmRs+7eLKM4UxqZWL1PwrdQYWwEvKjw
-	FqFPfMjUyLpdVc6AgCCGWBBgwsE6GNgA/IfKRIfHlPBDZWAKQc1panHjNf+P8MrjgtSbVzGt/jZFN
-	BW2ua5p4WEpR1UxRq22lrMrWNgEhK3b+RgpRM+eZqtfWTCELzh/JlKUb2Lex6zfMhG0V5jpTQSqKJ
-	K1giwBrw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uC7zb-00000008993-06xS;
-	Tue, 06 May 2025 02:25:11 +0000
-Date: Tue, 6 May 2025 03:25:11 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: Re: [RFC] MNT_LOCKED vs. finish_automount()
-Message-ID: <20250506022511.GL2023217@ZenIV>
-References: <20250501201506.GS2023217@ZenIV>
- <87plgq8igd.fsf@email.froward.int.ebiederm.org>
- <20250504232441.GC2023217@ZenIV>
- <877c2v88rz.fsf@email.froward.int.ebiederm.org>
- <20250505190215.GG2023217@ZenIV>
+	s=arc-20240116; t=1746499712; c=relaxed/simple;
+	bh=lESGC6aZRbjMUeFinxQkj5BF3WE2a+Fwj91rdLS0t2M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NOoLUZPA2JXfzHb0YanNTzg6p1IkHaSzgTRxdug/n715zoYMATVH3ccbbxrm6zHJ8C9p/BsSHUN40ua38R5n2FnIUN8nub7HTJoasCD1HbzYVhqwNMq3Sa9IgRW/lzYEPAzka5+weTxcz0d13sr5U3OHZfE9DAyHRORPK7jzYGk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=k30NXRBH; arc=none smtp.client-ip=18.132.163.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1746499696;
+	bh=lESGC6aZRbjMUeFinxQkj5BF3WE2a+Fwj91rdLS0t2M=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To;
+	b=k30NXRBH5wHogeBGoX45ORynE8ZKz1jiW2gKsdlYvi6cskL4G/gA5Prun5eZe7oMP
+	 faJTbT32qz9EBey/K7YdDFbzYII4uutU3UIj+nNWXVIqE869N1CwZXrlBG7S0ppfK5
+	 l8i0StA4oWu1mPZbgAmQ/JKf+a21pto9fqy6E8eQ=
+X-QQ-mid: zesmtpsz4t1746499692ta7315774
+X-QQ-Originating-IP: ymkZsv06Ek93hW9qegQrc4WaymVEPD8FlZH+tRtW4ls=
+Received: from mail-yb1-f170.google.com ( [209.85.219.170])
+	by bizesmtp.qq.com (ESMTP) with SMTP id 0
+	for <linux-fsdevel@vger.kernel.org>; Tue, 06 May 2025 10:48:10 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 14190113298413557877
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e743bffc234so4059532276.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 May 2025 19:48:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXvn3N/gvxhOD/6/HG7LSjn1P+owfBtTL7U9wf5s1cj683QNK7rh+65UYv/AAgSxi0sGKmskAkzGVlauG06@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa4Shd4HI8pxPMCh4uPlZZ4lBZXv++4COtbZ1XMXxFurpVqSpH
+	b9XtvOxwD0Pdrx5J2F3n7I+p6U78WVI2eAZhb6oUtuwq+Sjzr+I2RCQAu7fI+EZV7oHvMM8FSxy
+	lS7YTYQ6xM5lKCu43kQN3P6jSHXM=
+X-Google-Smtp-Source: AGHT+IENQXzTasux+h/Er8Nb1TBsKrrm9Xh9BPp6jbQyh8r3pZ56fUI+7QDwt0vU7ehdv/KdN/hOLpB68uBntMbFuLc=
+X-Received: by 2002:a05:6902:144d:b0:e72:ed11:32b with SMTP id
+ 3f1490d57ef6-e757d0dbf4fmr12154889276.18.1746499689905; Mon, 05 May 2025
+ 19:48:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250505190215.GG2023217@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <CAOYeF9V_FM+0iZcsvi22XvHJuXLXP6wUYPwRYfwVFThajww9YA@mail.gmail.com>
+ <ec87f7f4-5c12-4e71-952c-861f67dc4603@bsbernd.com>
+In-Reply-To: <ec87f7f4-5c12-4e71-952c-861f67dc4603@bsbernd.com>
+From: Chen Linxuan <chenlinxuan@uniontech.com>
+Date: Tue, 6 May 2025 10:47:59 +0800
+X-Gmail-Original-Message-ID: <E8720A2B82C8F866+CAC1kPDM2gm_Lsg-0KqDm9R3b_TV_JDX1RL9iqD_mJzgLdG+Bzw@mail.gmail.com>
+X-Gm-Features: ATxdqUHPWtnlpkH38y_LJhMXFnuUB1FKtxftG6hZgqPrWe5Jh_SwDF5vJKlga1o
+Message-ID: <CAC1kPDM2gm_Lsg-0KqDm9R3b_TV_JDX1RL9iqD_mJzgLdG+Bzw@mail.gmail.com>
+Subject: Re: CAP_SYS_ADMIN restriction for passthrough fds (fuse)
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Allison Karlitskaya <lis@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Chen Linxuan <chenlinxuan@uniontech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
+X-QQ-XMAILINFO: MI0yrMZxA1C4agwxpBGjOsVDd2f74DXErEeOGbg/LlFEYUjvVUOOkklw
+	dANKFhJn/mSSrtcf/+Si0zUwK4SEeTuOxANepipe9MVldXhg3q9Fnqhyna0ypQjMvENYHi1
+	G5aiWmTVRCVqLC5MoOEtr6XamPPyu8bEuD0BYh7Mlc7YiClDNTiyzpa4xl75gSwLNLzv/Hl
+	QA/H5aU7oTUMLBFvmHQQgknrgthRfik7bWKams+qeYNtE4RJzBs/3hFQ6iFQnIr3UrjkfN1
+	C12zjsQXDNrgkkt0kLNd2MBxjiOKAtwr9GKtmDnF+KvFS0WlPqSk7BZsQ90IuVfvwUTlG+x
+	svFNTO8OO2qkfkSVn95jCv/bzi23P4vGfGZNAVc9pqaEykmr+xCtuA68UIGn+81fGs51h2C
+	rX7KGTu49vsybreTswYzXsuEu9DnYBvXDXqoulV3F5HWBzjaYiBO5crtaLrMh1w0oiLPbdw
+	f2qRVbURU0+Tbxh0sF0Osl6Dkq9XmHSZrgcAbrGylDTGS5u6U4iabvQs5VYVMXCq0AFr54a
+	TwBRdBCdA1h/yebJmT9GG64berqMNuH2MQrjqgj70cla/x33LsIudLdrcE4X3hHilBZYtHM
+	yQ8MU91dncpLOphzghpQ0RNyDe0gDFgnI3uw99/ntv6Ep+aUsT/gK+iy1NxWtvpMn1Hl1wS
+	IAa3vweZtDRWtLCTpTEgMUp99i8+csOgx1G0cacT+ecvaduI0cpC347UYOlQbwLmi+zReVP
+	bXta3tJb4pK/Wja7W5KhIn9mRcUPVHgSGg9467P7SqLvmUxbxOohAInx/te2X7r7CPwAKw8
+	zdgsV0EWMnu7IM9O/cLI1NGlw8qjVHYI6LGJdQfL8tw9+AOoTlMp+BXLYrBt0BnUUSb449w
+	v3FRitn8U75G9rOvTxryHo/aHOgY4OvEmpbaYWK8LhLNM6lfs84BP8MPwL4mSQEhh3+Cl/v
+	Mguw1QKqXXs4LuTbCANBi/Vm5/caYVCJk3i3wuWKKF1mW2iT3S00cBumUkLcCvNQlJ3IPX8
+	xt1JIQRS4T9tVvFNQY
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On Mon, May 05, 2025 at 08:02:15PM +0100, Al Viro wrote:
+On Fri, May 2, 2025 at 9:22=E2=80=AFPM Bernd Schubert <bernd@bsbernd.com> w=
+rote:
 
-> Said that, from digging I'd done last night there might be a different
-> long-term approach; the thing is, there are very few places where we
-> ever look at MNT_LOCKED for mounts with !mnt_has_parent():
-> 	do_umount()
-> 	can_umount()
-> 	do_move_mount()
-> 	pivot_root()
-> and two of those four are of dubious use - can_umount() will be followed
-> by rechecking in do_umount(), so there's not much point in bailing out
-> early in a very pathological case.  And do_move_mount() might check
-> MNT_LOCKED on such, but only in move-from-anon case, where we do *NOT*
-> set MNT_LOCKED on namespace root.
+> I think it would be good to document all these details somewhere,
+> really hard to follow all of it.
 
-Even better, we have a check for !mnt_has_parent() downstream of that in
-pivot_root() and we reject such there.  So having that set on absolute
-root of non-anon namespaces buys us very little - do_umount() is the only
-place that would need to explicitly check for that.
-
-> IOW, looking at the way things are now, I'm no longer sure that the trick
-> you've done in da362b09e42 "umount: Do not allow unmounting rootfs"
-> had been a good idea long-term - it certainly made for smaller fix,
-> but it overloaded semantics of MNT_LOCKED, making it not just about
-> protecting the mountpoint against exposure.
-> 
-> What if we add explicit checks for mnt_has_parent() in do_umount() and
-> pivot_root() next to existing checks for MNT_LOCKED?  Then we can
-> 	* have clone_mnt() treat that flag as "internal, ignore" (matter
-> of fact, I would simply add MNT_LOCKED to MNT_INTERNAL_FLAGS and have
-> clone_mnt() strip that, same as we do in do_add_mount()).
-> 	* have copy_tree() set it right next to attach_mnt(), if the source
-> had it.  Yes, leaving it clear for root of copied tree.
-> 	* no need to clear it in the end of __do_loopback() (racy at the
-> moment, BTW - no mount_lock held there, so race with mount -o remount,ro
-> for the original is possible, so something is needed there)
-> 	* have lock_mnt_tree() skip the MNT_LOCKED not just for the expirable
-> but for the root of subtree as well.
-> 	* don't bother stripping MNT_LOCKED for roots of propagation copies
-> (or anyone, for that matter) in attach_recursive_mnt()
-> 	* don't bother setting it on absolute root of initial namespace
-> 
-> Looks like we end up with overall simpler code that way; it's certainly
-> conceptually simpler - MNT_LOCKED is set only on the mounts that do
-> have parent we care to protect, with that being done atomically wrt
-> mount becoming reachable (lock_mnt_tree() is in the same lock_mount_hash()
-> scope where we call commit_tree() that makes the entire subtree reachable).
-> 
-> Your argument in "mnt: Move the clear of MNT_LOCKED from copy_tree to
-> it's callers" about wanting to keep it in collect_mounts() for audit
-> purposes is wrong, AFAICS - audit does not see or care about MNT_LOCKED;
-> the only thing we use the result of collect_mounts() for is passing
-> it to iterate_mounts(), which literally "apply this callback to each
-> vfsmount in the set", completely ignoring anything else.  What's more,
-> all callbacks audit is passing to it actually look only at the inode of
-> that mount's root...
-> 
-> Anyway, that's longer-term stuff; I'll put together a patch along those
-> lines on top of this one.
-
-Here it is, on top of the previous.  Objections, comments?
-
-[PATCH] don't set MNT_LOCKED on parentless mounts
-
-Originally MNT_LOCKED meant only one thing - "don't let this mount to
-be peeled off its parent, we don't want to have mountpoint exposed".
-Accordingly, it had only been set on mounts that *do* have a parent.
-Later it had been overloaded with another use - setting it on the
-absolute root had given free protection against umount(2) on absolute
-root (possible to trigger, oopsed).  Not a bad trick, but it ended
-up costing more than it bought us.  Unfortunately, the cost included
-both hard-to-reason-about logics and a subtle race between
-mount -o remount,ro and mount --[r]bind - lockless &= ~MNT_LOCKED in
-the end of __do_loopback() could race with sb_prepare_remount_readonly()
-setting and clearing MNT_HOLD_WRITE (under mount_lock, as it should
-be).
-
-Turns out that nobody except umount(2) had ever made use of having
-MNT_LOCKED set on absolute root.  So let's give up on that trick,
-clever as it had been, add an explicit check in do_umount() and
-return to using MNT_LOCKED only for mounts that have a parent.
-
-It means that
-	* clone_mnt() no longer copies MNT_LOCKED
-	* copy_tree() sets it on submounts if their counterparts had
-been marked such, and do that right next to attach_mnt() in there,
-in the same mount_lock scope.
-	* __do_loopback() no longer needs to strip MNT_LOCKED off the
-root of subtree it's about to return; no store, no race.
-	* init_mount_tree() doesn't bother setting MNT_LOCKED on absolute
-root.
-	* lock_mnt_tree() does not set MNT_LOCKED on the subtree's root;
-accordingly, its caller (loop in attach_recursive_mnt()) does not need to
-bother stripping that MNT_LOCKED.  Note that lock_mnt_tree() setting
-MNT_LOCKED on submounts happens in the same mount_lock scope as __attach_mnt()
-(from commit_tree()) that makes them reachable.
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 04a9bb9f31fa..165b3bd26857 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1363,7 +1363,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 	}
- 
- 	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
--	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
-+	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL|MNT_LOCKED);
- 
- 	atomic_inc(&sb->s_active);
- 	mnt->mnt.mnt_idmap = mnt_idmap_get(mnt_idmap(&old->mnt));
-@@ -2038,6 +2038,9 @@ static int do_umount(struct mount *mnt, int flags)
- 	if (mnt->mnt.mnt_flags & MNT_LOCKED)
- 		goto out;
- 
-+	if (!mnt_has_parent(mnt))
-+		goto out;
-+
- 	event++;
- 	if (flags & MNT_DETACH) {
- 		if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list))
-@@ -2308,6 +2311,8 @@ struct mount *copy_tree(struct mount *src_root, struct dentry *dentry,
- 			if (IS_ERR(dst_mnt))
- 				goto out;
- 			lock_mount_hash();
-+			if (src_mnt->mnt.mnt_flags & MNT_LOCKED)
-+				dst_mnt->mnt.mnt_flags |= MNT_LOCKED;
- 			list_add_tail(&dst_mnt->mnt_list, &res->mnt_list);
- 			attach_mnt(dst_mnt, dst_parent, src_parent->mnt_mp, false);
- 			unlock_mount_hash();
-@@ -2547,7 +2552,7 @@ static void lock_mnt_tree(struct mount *mnt)
- 		if (flags & MNT_NOEXEC)
- 			flags |= MNT_LOCK_NOEXEC;
- 		/* Don't allow unprivileged users to reveal what is under a mount */
--		if (list_empty(&p->mnt_expire))
-+		if (list_empty(&p->mnt_expire) && p != mnt)
- 			flags |= MNT_LOCKED;
- 		p->mnt.mnt_flags = flags;
- 	}
-@@ -2758,7 +2763,6 @@ static int attach_recursive_mnt(struct mount *source_mnt,
- 		/* Notice when we are propagating across user namespaces */
- 		if (child->mnt_parent->mnt_ns->user_ns != user_ns)
- 			lock_mnt_tree(child);
--		child->mnt.mnt_flags &= ~MNT_LOCKED;
- 		commit_tree(child);
- 	}
- 	put_mountpoint(smp);
-@@ -3027,26 +3031,21 @@ static inline bool may_copy_tree(struct path *path)
- 
- static struct mount *__do_loopback(struct path *old_path, int recurse)
- {
--	struct mount *mnt = ERR_PTR(-EINVAL), *old = real_mount(old_path->mnt);
-+	struct mount *old = real_mount(old_path->mnt);
- 
- 	if (IS_MNT_UNBINDABLE(old))
--		return mnt;
-+		return ERR_PTR(-EINVAL);
- 
- 	if (!may_copy_tree(old_path))
--		return mnt;
-+		return ERR_PTR(-EINVAL);
- 
- 	if (!recurse && has_locked_children(old, old_path->dentry))
--		return mnt;
-+		return ERR_PTR(-EINVAL);
- 
- 	if (recurse)
--		mnt = copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
-+		return copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
- 	else
--		mnt = clone_mnt(old, old_path->dentry, 0);
--
--	if (!IS_ERR(mnt))
--		mnt->mnt.mnt_flags &= ~MNT_LOCKED;
--
--	return mnt;
-+		return clone_mnt(old, old_path->dentry, 0);
- }
- 
- /*
-@@ -4789,11 +4788,11 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
- 	if (!path_mounted(&root))
- 		goto out4; /* not a mountpoint */
- 	if (!mnt_has_parent(root_mnt))
--		goto out4; /* not attached */
-+		goto out4; /* absolute root */
- 	if (!path_mounted(&new))
- 		goto out4; /* not a mountpoint */
- 	if (!mnt_has_parent(new_mnt))
--		goto out4; /* not attached */
-+		goto out4; /* absolute root */
- 	/* make sure we can reach put_old from new_root */
- 	if (!is_path_reachable(old_mnt, old.dentry, &new))
- 		goto out4;
-@@ -6191,7 +6190,6 @@ static void __init init_mount_tree(void)
- 
- 	root.mnt = mnt;
- 	root.dentry = mnt->mnt_root;
--	mnt->mnt_flags |= MNT_LOCKED;
- 
- 	set_fs_pwd(current->fs, &root);
- 	set_fs_root(current->fs, &root);
+I agree with you but where should we document these details?
 
