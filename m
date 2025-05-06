@@ -1,151 +1,350 @@
-Return-Path: <linux-fsdevel+bounces-48265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B88EAACA64
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 18:03:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64ED7AACA9A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 18:14:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73036188926C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 16:03:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 784413A8736
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 16:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37D2E283FF5;
-	Tue,  6 May 2025 16:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7571728468D;
+	Tue,  6 May 2025 16:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XJSsrXAA"
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="VolozZ25"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976B32836A1
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 16:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 010A128151F
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 16:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746547381; cv=none; b=Gy4lcOyPxA86hrW8U00AyjtzcmRJHd+ii5U1MCwqQX8sdEjMYNnYcQh/TfGlp85cxyRDCyWcxkPz+kIllNzJfz59PsehG0i+nUsh4ggHFSa/4WN83npL7HnQhAhM0TmZaycUVdjhRQhKz/mBVi7LR9WZ8KYWGMoSAfNtsunHk1s=
+	t=1746548038; cv=none; b=djlju9l7sZDpr+9gk5WeBSX8vSgsFhCT0DB3JBxYlKsJISlF/adwgaf9GMKDDbW3jto9dKUPMb4YM/g9/qWhU9rj7xXG6XH/TVrWee+SuTxY9430QQTs5iRjB3+WwZDmUjhhuZMGxbGGmPfzhowfsNeIJI6I4mNNaFPJIWaYJhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746547381; c=relaxed/simple;
-	bh=GfX1nTFezZeREFCc7cbz+QTDMqbI2Ud4Musyc7cwTy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMmcTEsne7AmZqlKHLJNtVFgp0fFefVVvyEjC63arjXXqNl6R8dvxoPTSMfjBPao4NjkQIZT8tN13gRryjWhFEl1I1ZR0lTPIIrieUXejalgZL8vthUtgvsHNvqETq+wNI9LIcxOU/YUeqBifa7TeEpAjKYBeONCNraiGtJCMo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XJSsrXAA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBD74C4CEE4;
-	Tue,  6 May 2025 16:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746547381;
-	bh=GfX1nTFezZeREFCc7cbz+QTDMqbI2Ud4Musyc7cwTy8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XJSsrXAAp/M49taRaxcSt8fv3j/aIbEUjpjKsJoa/QwQ7ElukBpbGNIYUAtpuqhnw
-	 ChjnC8kmi6IIZU8dHhvbsItJIVAR7yPf6AUn/guUlBPMxkmQ/LW12NRd9QpmYobV6p
-	 bKMKLaFAuBkFPQAS36SpEW8tihea4mwjaPAHA3mO3c7mGTQruAd5v+YZywVnvmt23e
-	 otrqVMbY7h2MHGVQBU7BvvT0x6OrCyhBp4urGcLZ3TfAT+gEFMgz3b1fiAUr5o8dF+
-	 BKayjOe74sbc0jkzOvfcHiR6k8ugRth97fSao1nFAq3dZDDyjdHDfevrJMS7hqiZ/g
-	 pc863tLVByCeg==
-Date: Tue, 6 May 2025 16:02:59 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-	chao@kernel.org, lihongbo22@huawei.com
-Subject: Re: [PATCH V3 0/7] f2fs: new mount API conversion
-Message-ID: <aBoys-gkIcu2AARF@google.com>
-References: <20250423170926.76007-1-sandeen@redhat.com>
- <b673458e-98b6-42ad-b95f-7a771cd56b03@redhat.com>
+	s=arc-20240116; t=1746548038; c=relaxed/simple;
+	bh=ctEJGduRkC2qEEhy+2LbPD9UxeStYYphXNtfefVEQbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EK/v8Rm80RK0iQIyPhwSSI01eOd3d4Vp62+9aY0nVyEEG117sxEr2/Yz3U34l+tqjjKB6QS/ryGic4clnadKJfz+CoODSUIbSb/z3eBZ/BDb0K/LulQdZm/efM5T1YRxWk30SboZYPNtzE4ma+Cini3jmXD0dNFCg8p2ZfvFH5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=VolozZ25; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-af907e48e00so276362a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 May 2025 09:13:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1746548035; x=1747152835; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LYWN5cRoGfT1PfSiqnzPsV4NQG6bqVTjCaW1CwrUJcM=;
+        b=VolozZ256Rjn+7z/1yPNGVRV2dWyQz7KeNP+GPWRI27v7l4LDHNdarr+IO0roMDhHi
+         QJdN8FpiAfP2cIMaWWfIOx1P+BKxoaWixKq3Aaqu1lDJtYG0K3A9R6HUrxLRFnvsFmQ/
+         l97DHLF1PzselBbPbVyqge5o2j+gwG3be5QV7bNmpkCz74aVyO5MrjE5wM3hLpgtWb6P
+         tePYqkt++pdXtZvhk9BSjDwB3Haxpyqa61aYdBPKs5xQ+0gNdnOXAfCieurCoi9VZaEU
+         3p9/ySYSXXjLvGB0FZE7Z8O29F0Uqc7ogumV9jWtsRTgx9c1ZnPXxL1FXY74hgnoP01c
+         qO+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746548035; x=1747152835;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LYWN5cRoGfT1PfSiqnzPsV4NQG6bqVTjCaW1CwrUJcM=;
+        b=vKkeOrzIodU7/erEpiv+Wyvs7u5Flwlcw3yMhf6HSrFMNzYdkqLL+NGnJYnDPO/nic
+         L1L5PL61F9SkX0zf4yXWwKlAgNvoJcLqQPhFrqjiLJOOBK1niANVgS/f0QNTEuLVv6LB
+         OeA1+8hNs0nlCTmwxWV5aNW4dy0eMhLYpl0w5foCbcT9nvBfOpKOeSLRGN0IKFJalh+Q
+         qutTN+bXDnEE54o46AIxfBbVZBHW9NP7V4WB5Xz+Jk39BQ0W6KkVJKoPOVRZGnhbAFQe
+         P9IqHx+BaSvjp8v0Z9LPhePQRA7mB9nYfpNlMYD1DbA3H+zfgA56CTGD1z3CYw1YvMAE
+         bUDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1jqtWrmQToo+oIqtOa2ZnU1HRSx5HMR3u+sJCrDhLZN17I0Uobm0h00ncH3lKogunde0+35V62Yq3b36g@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyonhzVA1sB6oiYBsardLPi/pGOL6g1pSFnS6f04H/1o6hqroz
+	iU+xmjdkGNfNaC90DjO4f/IofIciavSuzY/CqcphctSN5gl606yBmxk4whCmURu6I04espuVsu6
+	xTc7A9bHJwkheCfGqqaJ3VWl966wgTpwKH+24Nw==
+X-Gm-Gg: ASbGncsjR5zQQVK9NL34vY2JBb8E+V0qrQ+00Kv/1rPUIa/5CWJfuIz61ss6Jun+Ka/
+	B8UTlXv0alspeHbGF5HmFbigfBvD+HqJYnuCv5djcdt1bzXsW21OY2tHv+fT5d04fE6gpVgabg1
+	E8vmFyzSOPi2CvWH/1uZj9
+X-Google-Smtp-Source: AGHT+IGOvJyPbLr4kwXZSGT/2CsH/jVCIq02WBu70npsFnHamIQl6sWwQf+KO12hU6AkAJPFapxgBzCBfCm4l5n/zjI=
+X-Received: by 2002:a17:90b:33c1:b0:2ff:5759:549a with SMTP id
+ 98e67ed59e1d1-30aac16c2e2mr36846a91.1.1746548035169; Tue, 06 May 2025
+ 09:13:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b673458e-98b6-42ad-b95f-7a771cd56b03@redhat.com>
+References: <CGME20250506122651epcas5p4100fd5435ce6e6686318265b414c1176@epcas5p4.samsung.com>
+ <20250506121732.8211-1-joshi.k@samsung.com> <20250506121732.8211-11-joshi.k@samsung.com>
+In-Reply-To: <20250506121732.8211-11-joshi.k@samsung.com>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Tue, 6 May 2025 09:13:33 -0700
+X-Gm-Features: ATxdqUE6maBvoXv4TdPf4qTULxuJw6-FSb-pKV6qaK5B-HKqjYsETzXEW4MddQU
+Message-ID: <CADUfDZqqqQVHqMpVaMWre1=GZfu42_SOQ5W9m0vhSZYyp1BBUA@mail.gmail.com>
+Subject: Re: [PATCH v16 10/11] nvme: register fdp parameters with the block layer
+To: Kanchan Joshi <joshi.k@samsung.com>
+Cc: axboe@kernel.dk, kbusch@kernel.org, hch@lst.de, asml.silence@gmail.com, 
+	io-uring@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-nvme@lists.infradead.org, 
+	Hannes Reinecke <hare@suse.de>, Nitesh Shetty <nj.shetty@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/05, Eric Sandeen wrote:
-> Hi all - it would be nice to get some review or feedback on this;
-> seems that these patches tend to go stale fairly quickly as f2fs
-> evolves. :)
+On Tue, May 6, 2025 at 5:31=E2=80=AFAM Kanchan Joshi <joshi.k@samsung.com> =
+wrote:
+>
+> From: Keith Busch <kbusch@kernel.org>
+>
+> Register the device data placement limits if supported. This is just
+> registering the limits with the block layer. Nothing beyond reporting
+> these attributes is happening in this patch.
+>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Nitesh Shetty <nj.shetty@samsung.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
+> ---
+>  drivers/nvme/host/core.c | 144 +++++++++++++++++++++++++++++++++++++++
+>  drivers/nvme/host/nvme.h |   2 +
+>  2 files changed, 146 insertions(+)
+>
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index dd71b4c2b7b7..f25e03ff03df 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -38,6 +38,8 @@ struct nvme_ns_info {
+>         u32 nsid;
+>         __le32 anagrpid;
+>         u8 pi_offset;
+> +       u16 endgid;
+> +       u64 runs;
+>         bool is_shared;
+>         bool is_readonly;
+>         bool is_ready;
+> @@ -1611,6 +1613,7 @@ static int nvme_ns_info_from_identify(struct nvme_c=
+trl *ctrl,
+>         info->is_shared =3D id->nmic & NVME_NS_NMIC_SHARED;
+>         info->is_readonly =3D id->nsattr & NVME_NS_ATTR_RO;
+>         info->is_ready =3D true;
+> +       info->endgid =3D le16_to_cpu(id->endgid);
+>         if (ctrl->quirks & NVME_QUIRK_BOGUS_NID) {
+>                 dev_info(ctrl->device,
+>                          "Ignoring bogus Namespace Identifiers\n");
+> @@ -1651,6 +1654,7 @@ static int nvme_ns_info_from_id_cs_indep(struct nvm=
+e_ctrl *ctrl,
+>                 info->is_ready =3D id->nstat & NVME_NSTAT_NRDY;
+>                 info->is_rotational =3D id->nsfeat & NVME_NS_ROTATIONAL;
+>                 info->no_vwc =3D id->nsfeat & NVME_NS_VWC_NOT_PRESENT;
+> +               info->endgid =3D le16_to_cpu(id->endgid);
+>         }
+>         kfree(id);
+>         return ret;
+> @@ -2155,6 +2159,132 @@ static int nvme_update_ns_info_generic(struct nvm=
+e_ns *ns,
+>         return ret;
+>  }
+>
+> +static int nvme_query_fdp_granularity(struct nvme_ctrl *ctrl,
+> +                                     struct nvme_ns_info *info, u8 fdp_i=
+dx)
+> +{
+> +       struct nvme_fdp_config_log hdr, *h;
+> +       struct nvme_fdp_config_desc *desc;
+> +       size_t size =3D sizeof(hdr);
+> +       void *log, *end;
+> +       int i, n, ret;
+> +
+> +       ret =3D nvme_get_log_lsi(ctrl, 0, NVME_LOG_FDP_CONFIGS, 0,
+> +                              NVME_CSI_NVM, &hdr, size, 0, info->endgid)=
+;
+> +       if (ret) {
+> +               dev_warn(ctrl->device,
+> +                        "FDP configs log header status:0x%x endgid:%d\n"=
+, ret,
+> +                        info->endgid);
+> +               return ret;
+> +       }
+> +
+> +       size =3D le32_to_cpu(hdr.sze);
+> +       if (size > PAGE_SIZE * MAX_ORDER_NR_PAGES) {
+> +               dev_warn(ctrl->device, "FDP config size too large:%zu\n",
+> +                        size);
+> +               return 0;
+> +       }
+> +
+> +       h =3D kvmalloc(size, GFP_KERNEL);
+> +       if (!h)
+> +               return -ENOMEM;
+> +
+> +       ret =3D nvme_get_log_lsi(ctrl, 0, NVME_LOG_FDP_CONFIGS, 0,
+> +                              NVME_CSI_NVM, h, size, 0, info->endgid);
+> +       if (ret) {
+> +               dev_warn(ctrl->device,
+> +                        "FDP configs log status:0x%x endgid:%d\n", ret,
+> +                        info->endgid);
+> +               goto out;
+> +       }
+> +
+> +       n =3D le16_to_cpu(h->numfdpc) + 1;
+> +       if (fdp_idx > n) {
+> +               dev_warn(ctrl->device, "FDP index:%d out of range:%d\n",
+> +                        fdp_idx, n);
+> +               /* Proceed without registering FDP streams */
+> +               ret =3D 0;
+> +               goto out;
+> +       }
+> +
+> +       log =3D h + 1;
+> +       desc =3D log;
+> +       end =3D log + size - sizeof(*h);
+> +       for (i =3D 0; i < fdp_idx; i++) {
+> +               log +=3D le16_to_cpu(desc->dsze);
+> +               desc =3D log;
+> +               if (log >=3D end) {
+> +                       dev_warn(ctrl->device,
+> +                                "FDP invalid config descriptor list\n");
+> +                       ret =3D 0;
+> +                       goto out;
+> +               }
+> +       }
+> +
+> +       if (le32_to_cpu(desc->nrg) > 1) {
+> +               dev_warn(ctrl->device, "FDP NRG > 1 not supported\n");
+> +               ret =3D 0;
+> +               goto out;
+> +       }
+> +
+> +       info->runs =3D le64_to_cpu(desc->runs);
+> +out:
+> +       kvfree(h);
+> +       return ret;
+> +}
+> +
+> +static int nvme_query_fdp_info(struct nvme_ns *ns, struct nvme_ns_info *=
+info)
+> +{
+> +       struct nvme_ns_head *head =3D ns->head;
+> +       struct nvme_ctrl *ctrl =3D ns->ctrl;
+> +       struct nvme_fdp_ruh_status *ruhs;
+> +       struct nvme_fdp_config fdp;
+> +       struct nvme_command c =3D {};
+> +       size_t size;
+> +       int ret;
+> +
+> +       /*
+> +        * The FDP configuration is static for the lifetime of the namesp=
+ace,
+> +        * so return immediately if we've already registered this namespa=
+ce's
+> +        * streams.
+> +        */
+> +       if (head->nr_plids)
+> +               return 0;
+> +
+> +       ret =3D nvme_get_features(ctrl, NVME_FEAT_FDP, info->endgid, NULL=
+, 0,
+> +                               &fdp);
+> +       if (ret) {
+> +               dev_warn(ctrl->device, "FDP get feature status:0x%x\n", r=
+et);
+> +               return ret;
+> +       }
+> +
+> +       if (!(fdp.flags & FDPCFG_FDPE))
+> +               return 0;
+> +
+> +       ret =3D nvme_query_fdp_granularity(ctrl, info, fdp.fdpcidx);
+> +       if (!info->runs)
+> +               return ret;
+> +
+> +       size =3D struct_size(ruhs, ruhsd, S8_MAX - 1);
+> +       ruhs =3D kzalloc(size, GFP_KERNEL);
+> +       if (!ruhs)
+> +               return -ENOMEM;
+> +
+> +       c.imr.opcode =3D nvme_cmd_io_mgmt_recv;
+> +       c.imr.nsid =3D cpu_to_le32(head->ns_id);
+> +       c.imr.mo =3D NVME_IO_MGMT_RECV_MO_RUHS;
+> +       c.imr.numd =3D cpu_to_le32(nvme_bytes_to_numd(size));
+> +       ret =3D nvme_submit_sync_cmd(ns->queue, &c, ruhs, size);
+> +       if (ret) {
+> +               dev_warn(ctrl->device, "FDP io-mgmt status:0x%x\n", ret);
+> +               goto free;
+> +       }
+> +
+> +       head->nr_plids =3D le16_to_cpu(ruhs->nruhsd);
+> +free:
+> +       kfree(ruhs);
+> +       return ret;
+> +}
+> +
+>  static int nvme_update_ns_info_block(struct nvme_ns *ns,
+>                 struct nvme_ns_info *info)
+>  {
+> @@ -2192,6 +2322,12 @@ static int nvme_update_ns_info_block(struct nvme_n=
+s *ns,
+>                         goto out;
+>         }
+>
+> +       if (ns->ctrl->ctratt & NVME_CTRL_ATTR_FDPS) {
+> +               ret =3D nvme_query_fdp_info(ns, info);
+> +               if (ret < 0)
+> +                       goto out;
+> +       }
+> +
+>         lim =3D queue_limits_start_update(ns->disk->queue);
+>
+>         memflags =3D blk_mq_freeze_queue(ns->disk->queue);
+> @@ -2225,6 +2361,12 @@ static int nvme_update_ns_info_block(struct nvme_n=
+s *ns,
+>         if (!nvme_init_integrity(ns->head, &lim, info))
+>                 capacity =3D 0;
+>
+> +       lim.max_write_streams =3D ns->head->nr_plids;
+> +       if (lim.max_write_streams)
+> +               lim.write_stream_granularity =3D max(info->runs, U32_MAX)=
+;
 
-Thank you so much for the work! Let me queue this series into dev-test for
-tests. If I find any issue, let me ping to the thread. So, you don't need
-to worry about rebasing it. :)
+What is the purpose of this max(..., U32_MAX)? Should it be min() instead?
 
-Thanks,
+Best,
+Caleb
 
-> 
-> Thanks,
-> -Eric
-> 
-> On 4/23/25 12:08 PM, Eric Sandeen wrote:
-> > V3:
-> > - Rebase onto git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
-> >   dev branch
-> > - Fix up some 0day robot warnings
-> > 
-> > This is a forward-port of Hongbo's original f2fs mount API conversion,
-> > posted last August at 
-> > https://lore.kernel.org/linux-f2fs-devel/20240814023912.3959299-1-lihongbo22@huawei.com/
-> > 
-> > I had been trying to approach this with a little less complexity,
-> > but in the end I realized that Hongbo's approach (which follows
-> > the ext4 approach) was a good one, and I was not making any progrss
-> > myself. 😉
-> > 
-> > In addition to the forward-port, I have also fixed a couple bugs I found
-> > during testing, and some improvements / style choices as well. Hongbo and
-> > I have discussed most of this off-list already, so I'm presenting the
-> > net result here.
-> > 
-> > This does pass my typical testing which does a large number of random
-> > mounts/remounts with valid and invalid option sets, on f2fs filesystem
-> > images with various features in the on-disk superblock. (I was not able
-> > to test all of this completely, as some options or features require
-> > hardware I dn't have.)
-> > 
-> > Thanks,
-> > -Eric
-> > 
-> > (A recap of Hongbo's original cover letter is below, edited slightly for
-> > this series:)
-> > 
-> > Since many filesystems have done the new mount API conversion,
-> > we introduce the new mount API conversion in f2fs.
-> > 
-> > The series can be applied on top of the current mainline tree
-> > and the work is based on the patches from Lukas Czerner (has
-> > done this in ext4[1]). His patch give me a lot of ideas.
-> > 
-> > Here is a high level description of the patchset:
-> > 
-> > 1. Prepare the f2fs mount parameters required by the new mount
-> > API and use it for parsing, while still using the old API to
-> > get mount options string. Split the parameter parsing and
-> > validation of the parse_options helper into two separate
-> > helpers.
-> > 
-> >   f2fs: Add fs parameter specifications for mount options
-> >   f2fs: move the option parser into handle_mount_opt
-> > 
-> > 2. Remove the use of sb/sbi structure of f2fs from all the
-> > parsing code, because with the new mount API the parsing is
-> > going to be done before we even get the super block. In this
-> > part, we introduce f2fs_fs_context to hold the temporary
-> > options when parsing. For the simple options check, it has
-> > to be done during parsing by using f2fs_fs_context structure.
-> > For the check which needs sb/sbi, we do this during super
-> > block filling.
-> > 
-> >   f2fs: Allow sbi to be NULL in f2fs_printk
-> >   f2fs: Add f2fs_fs_context to record the mount options
-> >   f2fs: separate the options parsing and options checking
-> > 
-> > 3. Switch the f2fs to use the new mount API for mount and
-> > remount.
-> > 
-> >   f2fs: introduce fs_context_operation structure
-> >   f2fs: switch to the new mount api
-> > 
-> > [1] https://lore.kernel.org/all/20211021114508.21407-1-lczerner@redhat.com/
-> > 
-> > 
+> +       else
+> +               lim.write_stream_granularity =3D 0;
+> +
+>         ret =3D queue_limits_commit_update(ns->disk->queue, &lim);
+>         if (ret) {
+>                 blk_mq_unfreeze_queue(ns->disk->queue, memflags);
+> @@ -2328,6 +2470,8 @@ static int nvme_update_ns_info(struct nvme_ns *ns, =
+struct nvme_ns_info *info)
+>                         ns->head->disk->flags |=3D GENHD_FL_HIDDEN;
+>                 else
+>                         nvme_init_integrity(ns->head, &lim, info);
+> +               lim.max_write_streams =3D ns_lim->max_write_streams;
+> +               lim.write_stream_granularity =3D ns_lim->write_stream_gra=
+nularity;
+>                 ret =3D queue_limits_commit_update(ns->head->disk->queue,=
+ &lim);
+>
+>                 set_capacity_and_notify(ns->head->disk, get_capacity(ns->=
+disk));
+> diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+> index aedb734283b8..3e14daa4ed3e 100644
+> --- a/drivers/nvme/host/nvme.h
+> +++ b/drivers/nvme/host/nvme.h
+> @@ -496,6 +496,8 @@ struct nvme_ns_head {
+>         struct device           cdev_device;
+>
+>         struct gendisk          *disk;
+> +
+> +       u16                     nr_plids;
+>  #ifdef CONFIG_NVME_MULTIPATH
+>         struct bio_list         requeue_list;
+>         spinlock_t              requeue_lock;
+> --
+> 2.25.1
+>
+>
 
