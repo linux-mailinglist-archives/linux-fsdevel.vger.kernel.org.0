@@ -1,98 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-48172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48173-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15EADAABA8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 09:22:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3310BAABBC3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 09:48:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 083117AE9FA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 07:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F4E83B724A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 07:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA6B288C26;
-	Tue,  6 May 2025 05:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E034428F00D;
+	Tue,  6 May 2025 05:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhuoWC9y"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479D81A0B08;
-	Tue,  6 May 2025 05:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1723672629;
+	Tue,  6 May 2025 05:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746508184; cv=none; b=XSVUjK+0vtkvJgux5E1cE0uktBJC2XYPVoyZsSU+qpR24pscvZPbQdSn1bCe8Fi8pPn7xmWAa5F4fgMPRcOiAv7VHeDADYnuizeQGKazEvJswAdStrJoy+EP8C0e4Tm8gsZW+7NarqBX4BO+ChLQoR/NYHQqDAM8caZUO+gklLo=
+	t=1746509816; cv=none; b=fPijXw7JG/JJ3et4MSdEkND+MJJ3eekwHS3evBUfVi6WP6NK5v/9EyNJLDsUqlQpY4Nf0XYlgGNORCbdUKBCQCbniMipB6znErjw9isNjk+UKqYTEKDH88asAbvYdtHp3Ut336XOy8ULyrRn7bfeTgnX7tv1MOAeLJ8RPYvrq0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746508184; c=relaxed/simple;
-	bh=Iy/AZKcSHU+KhWBWnvXil0TW7vTOtLm5IboPLW2DxdU=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=YGEMi4/TJN+T8wTKFJy8KmkIuCwHjzjtOFwHWV1j0VmOfUDNgA3A70NwTObPnT2bXH7CKfRcrd3hastwISUvv/hDN/2oUYrCZCNpyoDGMWfA1Fx6UQS4aVZBqeNbXEsc2kUTlvhDAtG3ARX5sYXcitRr3X0yNcxifc+FOzHfcfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4Zs5zX2C74z4x5rs;
-	Tue,  6 May 2025 13:09:28 +0800 (CST)
-Received: from xaxapp04.zte.com.cn ([10.99.98.157])
-	by mse-fl1.zte.com.cn with SMTP id 54659NaT042159;
-	Tue, 6 May 2025 13:09:23 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp04[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Tue, 6 May 2025 13:09:25 +0800 (CST)
-Date: Tue, 6 May 2025 13:09:25 +0800 (CST)
-X-Zmail-TransId: 2afb68199985284-2afe3
-X-Mailer: Zmail v1.0
-Message-ID: <20250506130925568unpXQ7vLOEaRX4iDWSow2@zte.com.cn>
-In-Reply-To: <ir2s6sqi6hrbz7ghmfngbif6fbgmswhqdljlntesurfl2xvmmv@yp3w2lqyipb5>
-References: 20250501120854885LyBCW0syCGojqnJ8crLVl@zte.com.cn,ir2s6sqi6hrbz7ghmfngbif6fbgmswhqdljlntesurfl2xvmmv@yp3w2lqyipb5
+	s=arc-20240116; t=1746509816; c=relaxed/simple;
+	bh=UVuy9ogA8kbxN31PqG2ogdS080rmyL1HXX6AhQqmcnU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iDORfY0Jc08+0Y1cR2Ms/cqoMgpDcUJXlpI1wLrIWShypCqh9uKqX5RzOnjAjQ4XRJGAxU6XaGjqdLI6YdSejEmBrOlz+2GQqE/f9cFj6Ev8VqowjrSgvR55xp49BBXXfZpze2H7A6S8+vMGhIAK2065StahpomNDpM7fxU8aJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhuoWC9y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C383C4CEF0;
+	Tue,  6 May 2025 05:36:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746509815;
+	bh=UVuy9ogA8kbxN31PqG2ogdS080rmyL1HXX6AhQqmcnU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mhuoWC9yPuKYxQ/EmkpumPF/OMvdDEn0ZOt2eABGZszCs9GkLyi3ecQepcp2rWj/x
+	 wFKiLMD3llXUiNqheph9fmutbUvp3ABiPKvR6+j1/C3PnAJzXDM0BdYyV1SDKFuLf1
+	 ZX2RmwkYj0NY6RH+uwkKQ1DKSHuSkgC0VcbFKJjIg+n7IvWIPRMOysPxQ75BmHqenI
+	 W0G8v7YRjGEbcDmHpgb0BZRTxDak8ZW06Hry5zqz3ryzlYvOIJed3YsBz12nLEwRBK
+	 A8zmixdDoSmYbAbxCdbncqfsxOh5dHZhi3XnWaubezymoQZXz8VMHQCTnTsrFBqRCl
+	 IkccwrvcUqMcQ==
+Date: Mon, 5 May 2025 22:36:54 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Zhang Yi <yi.zhang@huaweicloud.com>, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	john.g.garry@oracle.com, bmarzins@redhat.com, chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
+Message-ID: <20250506053654.GA25700@frogsfrogsfrogs>
+References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
+ <20250421021509.2366003-8-yi.zhang@huaweicloud.com>
+ <20250505132208.GA22182@lst.de>
+ <20250505142945.GJ1035866@frogsfrogsfrogs>
+ <20250506050239.GA27687@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <shakeel.butt@linux.dev>
-Cc: <akpm@linux-foundation.org>, <david@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <wang.yaxin@zte.com.cn>,
-        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MiAwLzldIHN1cHBvcnQga3NtX3N0YXQgc2hvd2luZyBhdCBjZ3JvdXAgbGV2ZWw=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 54659NaT042159
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 68199988.000/4Zs5zX2C74z4x5rs
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506050239.GA27687@lst.de>
 
-> > Users can obtain the KSM information of a cgroup just by:
-> > 
-> > # cat /sys/fs/cgroup/memory.ksm_stat
-> > ksm_rmap_items 76800
-> > ksm_zero_pages 0
-> > ksm_merging_pages 76800
-> > ksm_process_profit 309657600
-> > 
-> > Current implementation supports both cgroup v2 and cgroup v1.
-> > 
+On Tue, May 06, 2025 at 07:02:39AM +0200, Christoph Hellwig wrote:
+> On Mon, May 05, 2025 at 07:29:45AM -0700, Darrick J. Wong wrote:
+> > attributes_mask contains attribute flags known to the filesystem,
+> > whereas attributes contains flags actually set on the file.
+> > "known_attributes" would have been a better name, but that's water under
+> > the bridge. :P
 > 
-> Before adding these stats to memcg, add global stats for them in
-> enum node_stat_item and then you can expose them in memcg through
-> memory.stat instead of a new interface.
+> Oooh.  I think I was very confused at what this patch does, and what
+> it does seems confused as well.
+> 
+> The patch adds a new flag to the STATX_ATTR_* namespace, which
+> historically was used for persistent on-disk flags like immutable,
+> not the STATX_* namespace where I assumed it, and which has no
+> support mask.  Which seems really odd for a pure kernel feature.
+> Then again it seems to follow STATX_ATTR_WRITE_ATOMIC which seems
+> just as wrongly place unless I'm missing something?
 
-Dear shakeel.butt,
+I think STATX_* (i.e. not STATX_ATTR_*) flags have two purposes: 1) to
+declare that specific fields in struct statx actually have meaning, most
+notably in scenarios where zeroes are valid field contents; and 2) if
+filling out the field is expensive, userspace can elect not to have it
+filled by leaving the bit unset.  I don't know how userspace is supposed
+to figure out which fields are expensive.
 
-If adding these ksm-related items to enum node_stat_item and bringing extra counters-updating
-code like __lruvec_stat_add_folio()... embedded into KSM procudure, it increases extra
-CPU-consuming while normal KSM procedures happen. Or, we can just traversal all processes of
-this memcg and sum their ksm'counters like the current patche set implmentation.
+STATX_ATTR_* are supposed to be reflect persistent inode state.  I think
+STATX_ATTR_WRITE_ATOMIC is a (now unremovable) artifact of the era when
+we were going to have a new iflag and feature bit for all the new
+forcealign functionality.  For XFS it's not necessary anymore because we
+always have software fallback and the statx::atomic_write_* fields being
+nonzero is sufficient to detect the functionality.
 
-If only including a single "KSM merged pages" entry in memory.stat, I think it is reasonable as
-it reflects this memcg's KSM page count. However, adding the other three KSM-related metrics is
-less advisable since they are strongly coupled with KSM internals and would primarily interest
-users monitoring KSM-specific behavior.
+(I'm confused about the whole premise of /this/ patch -- it's a "fast
+zeroing" fallocate flag that causes the *device* to unmap, so that the
+filesystem can preallocate and avoid unwritten extent conversions?
+What happens if the block device is thinp and it runs out of space?
+That seems antithetical to fallocate...)
 
-Last but not least, the rationale for adding a ksm_stat entry to memcg also lies in maintaining
-structural consistency with the existing /proc/<pid>/ksm_stat interface.
+--D
 
