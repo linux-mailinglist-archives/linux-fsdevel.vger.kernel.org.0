@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-48159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48157-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B488DAAB914
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:49:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A5CAAB963
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B74DC1C2526C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:43:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 066913AFCB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77D4E255F4B;
-	Tue,  6 May 2025 04:00:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F87253947;
+	Tue,  6 May 2025 04:00:28 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42F9264610;
-	Tue,  6 May 2025 01:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742C5264624;
+	Tue,  6 May 2025 01:31:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746495080; cv=none; b=EInKy7LKUWK/fdA6Dcr0SsFxq4cyGxdWUIO+ZUyv2/l1FxWtkH7IzjJnKIpic+wGR/mJbBWJIcAtk1fETc4+lFf2oLtQ/R7UJ0vnXEh1tweuAD01U+ESS69lWV5L8WJbV51385viUTOqjge8f870vwqgEp6iQBzTOXwY0HI2nDs=
+	t=1746495080; cv=none; b=iHSKxzcWlNuAvyafzU5w4orUZw4qfrvINaVLbbthmIqw97spkgtrvaJTJu3+ttIoVc/7VT2RgLieLnxEWTCMNj2aMmr+svtuWIKcCLBBF/7Immn8SAU/m53cY/mXjSWrfqLA/p6HWuubPmO/mxvb7/om3s4nYlUexT7jHkpBQKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746495080; c=relaxed/simple;
-	bh=yD1OJ1Lk6it9VvLEBJUITds949oIkD+zWX00JaodrXM=;
+	bh=o5p9sZMqKq34QlNHKQvY5g4ZzK5KQ7epCIwDMCypNcE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=NL4C5LrJTtgz+aJbwF74G6x1d8PYbqQNovrnZDcU4O13o4CwuqoTvjYAkCK2PrYCN2aOWTrdRyCCCwkzfj1gq/v3Nb2HQDbrdreM3ribB8hQARfNBXfaiSs0zUY8RjghzF1EestnLDSlHCBx3QdKRh7Dh5+Fc+2/P5o3Ulpn4Hk=
+	 MIME-Version; b=fA26X2QFAhY+bebKmlecD91F3vn/NdIIYdlTvaifeLXPMhnqXc4g+4kCly6CkybYrvYAOm6wzTEh/eWLIkbwq6JUhrFl1kS2zIFHq9RW5HiyhxPe7djragNJAhem+XrhcZPBk4VnBFvyx2W9tsqh9jrKgjwpAjdK+tOpV9BI/7c=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zs17D70Gjz4f3lfr;
-	Tue,  6 May 2025 09:30:48 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zs17F3Ykhz4f3lg9;
+	Tue,  6 May 2025 09:30:49 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id E7D6A1A1A91;
-	Tue,  6 May 2025 09:31:14 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 6D6C41A0359;
+	Tue,  6 May 2025 09:31:15 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP3 (Coremail) with SMTP id _Ch0CgAne8VbZhloHx2MLQ--.59787S5;
-	Tue, 06 May 2025 09:31:14 +0800 (CST)
+	by APP3 (Coremail) with SMTP id _Ch0CgAne8VbZhloHx2MLQ--.59787S6;
+	Tue, 06 May 2025 09:31:15 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-ext4@vger.kernel.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -51,9 +51,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	libaokun1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH v2 2/4] ext4: fix incorrect punch max_end
-Date: Tue,  6 May 2025 09:20:07 +0800
-Message-ID: <20250506012009.3896990-2-yi.zhang@huaweicloud.com>
+Subject: [PATCH v2 3/4] ext4: factor out ext4_get_maxbytes()
+Date: Tue,  6 May 2025 09:20:08 +0800
+Message-ID: <20250506012009.3896990-3-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250506012009.3896990-1-yi.zhang@huaweicloud.com>
 References: <20250506012009.3896990-1-yi.zhang@huaweicloud.com>
@@ -64,13 +64,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgAne8VbZhloHx2MLQ--.59787S5
-X-Coremail-Antispam: 1UD129KBjvJXoW7KFWfJF47trWrZw4UKF1kGrg_yoW8Zry8pr
-	y3Cr1rGrsrWa92gws2qa13XF1Syan5Cr48XrW8ZFn8A3s8t3s2gFy0kF1xW3WjgrWxCF1F
-	qFWDKryxAr17CrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:_Ch0CgAne8VbZhloHx2MLQ--.59787S6
+X-Coremail-Antispam: 1UD129KBjvJXoW7tF4xAryrtr43tFW8KrWrAFb_yoW8tF4xp3
+	sxAF1UJr48Z39ru397KF4UZw1Yy3W7Cw48XrWFgF1agryxXry0vFySkF40k3WYgrWrCF1j
+	q3WYkrW7Jw1akFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUm014x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jr4l82xGYIkIc2
-	x26xkF7I0E14v26r4j6ryUM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_Jryl82xGYIkIc2
+	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
 	Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F4UJw
 	A2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAS
 	0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2
@@ -81,59 +81,77 @@ X-Coremail-Antispam: 1UD129KBjvJXoW7KFWfJF47trWrZw4UKF1kGrg_yoW8Zry8pr
 	kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY
 	6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0x
 	vEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVj
-	vjDU0xZFpf9x0JUIiiDUUUUU=
+	vjDU0xZFpf9x0JUl9a9UUUUU=
 X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-For the extents based inodes, the maxbytes should be sb->s_maxbytes
-instead of sbi->s_bitmap_maxbytes. Additionally, for the calculation of
-max_end, the -sb->s_blocksize operation is necessary only for
-indirect-block based inodes. Correct the maxbytes and max_end value to
-correct the behavior of punch hole.
+There are several locations that get the correct maxbytes value based on
+the inode's block type. It would be beneficial to extract a common
+helper function to make the code more clear.
 
-Fixes: 2da376228a24 ("ext4: limit length to bitmap_maxbytes - blocksize in punch_hole")
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 ---
- fs/ext4/inode.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ fs/ext4/ext4.h    | 7 +++++++
+ fs/ext4/extents.c | 7 +------
+ fs/ext4/file.c    | 7 +------
+ 3 files changed, 9 insertions(+), 12 deletions(-)
 
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 4ec4a80b6879..5691966a19e1 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -4006,7 +4006,7 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
- 	struct inode *inode = file_inode(file);
- 	struct super_block *sb = inode->i_sb;
- 	ext4_lblk_t start_lblk, end_lblk;
--	loff_t max_end = EXT4_SB(sb)->s_bitmap_maxbytes - sb->s_blocksize;
-+	loff_t max_end = sb->s_maxbytes;
- 	loff_t end = offset + length;
- 	handle_t *handle;
- 	unsigned int credits;
-@@ -4015,14 +4015,20 @@ int ext4_punch_hole(struct file *file, loff_t offset, loff_t length)
- 	trace_ext4_punch_hole(inode, offset, length, 0);
- 	WARN_ON_ONCE(!inode_is_locked(inode));
+diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+index 5a20e9cd7184..8664bb5367c5 100644
+--- a/fs/ext4/ext4.h
++++ b/fs/ext4/ext4.h
+@@ -3378,6 +3378,13 @@ static inline unsigned int ext4_flex_bg_size(struct ext4_sb_info *sbi)
+ 	return 1 << sbi->s_log_groups_per_flex;
+ }
  
-+	/*
-+	 * For indirect-block based inodes, make sure that the hole within
-+	 * one block before last range.
-+	 */
-+	if (!ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
-+		max_end = EXT4_SB(sb)->s_bitmap_maxbytes - sb->s_blocksize;
++static inline loff_t ext4_get_maxbytes(struct inode *inode)
++{
++	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
++		return inode->i_sb->s_maxbytes;
++	return EXT4_SB(inode->i_sb)->s_bitmap_maxbytes;
++}
 +
- 	/* No need to punch hole beyond i_size */
- 	if (offset >= inode->i_size || offset >= max_end)
- 		return 0;
+ #define ext4_std_error(sb, errno)				\
+ do {								\
+ 	if ((errno))						\
+diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+index c616a16a9f36..b294d2f35a26 100644
+--- a/fs/ext4/extents.c
++++ b/fs/ext4/extents.c
+@@ -4931,12 +4931,7 @@ static const struct iomap_ops ext4_iomap_xattr_ops = {
  
- 	/*
- 	 * If the hole extends beyond i_size, set the hole to end after
--	 * the page that contains i_size, and also make sure that the hole
--	 * within one block before last range.
-+	 * the page that contains i_size.
- 	 */
- 	if (end > inode->i_size)
- 		end = round_up(inode->i_size, PAGE_SIZE);
+ static int ext4_fiemap_check_ranges(struct inode *inode, u64 start, u64 *len)
+ {
+-	u64 maxbytes;
+-
+-	if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+-		maxbytes = inode->i_sb->s_maxbytes;
+-	else
+-		maxbytes = EXT4_SB(inode->i_sb)->s_bitmap_maxbytes;
++	u64 maxbytes = ext4_get_maxbytes(inode);
+ 
+ 	if (*len == 0)
+ 		return -EINVAL;
+diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+index beb078ee4811..b845a25f7932 100644
+--- a/fs/ext4/file.c
++++ b/fs/ext4/file.c
+@@ -929,12 +929,7 @@ static int ext4_file_open(struct inode *inode, struct file *filp)
+ loff_t ext4_llseek(struct file *file, loff_t offset, int whence)
+ {
+ 	struct inode *inode = file->f_mapping->host;
+-	loff_t maxbytes;
+-
+-	if (!(ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS)))
+-		maxbytes = EXT4_SB(inode->i_sb)->s_bitmap_maxbytes;
+-	else
+-		maxbytes = inode->i_sb->s_maxbytes;
++	loff_t maxbytes = ext4_get_maxbytes(inode);
+ 
+ 	switch (whence) {
+ 	default:
 -- 
 2.46.1
 
