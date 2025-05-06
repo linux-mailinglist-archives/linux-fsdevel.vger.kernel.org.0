@@ -1,126 +1,274 @@
-Return-Path: <linux-fsdevel+bounces-48163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B43AAB941
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:53:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FECAAAB942
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1FF14A694D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:50:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6505506256
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6070F295DAE;
-	Tue,  6 May 2025 04:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 024E9289342;
+	Tue,  6 May 2025 04:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="KMWQWDJe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB4B1386DA;
-	Tue,  6 May 2025 02:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6C5202998
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 02:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746498314; cv=none; b=rLqJbJLau16g8f/D1wiWvNrCNlc3rQT2oXZ7JsjJ/HRPKHYDxDrYzYrv4rNTaHp9F+4064yvZLPV3nOre2fW5FqUPCJIOzB4Dg0+npxI+80qnvTb8qffsOZlQr8jC2+kWBoTEUta7yk1HRdlk/O3z9V5uuJn05zEwg768ks7JTY=
+	t=1746498317; cv=none; b=oNMyB1pXGbFMTKNpR4417U3Rdfyw87MdlAD6MP8WXdL1sT9UkwghFL0F6swfKc/GR7/+njwPqojYbd78nYuFJcGoSycC574u54NVikGI0hXMRyrN46JciNS+Nh+8Q6RUpb8WuNubRBabJ2IhET/RxmnmJ4KAnxQk2pk78MgLZow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746498314; c=relaxed/simple;
-	bh=yEpidYVsK6d7u4CVEdAvzxNONuSeJ4rBRYQkAnE47VU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=buI/pyRaHrncxTekHyg3sLZ7ljOMIbYajO9kCM6bXOJCxey1bS/vN/baECyMyLJJz3gOYB14n5U/PJMR8D4UrFGN2x9C/z7n3rPcmG9vo76Xm0GbYjUkt/df3EzlfFnqy2VfSEYSfvViXsYOHrWFdVCDZiCC6wE+a8Mb3hKDkao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zs2KR62dBz4f3jdt;
-	Tue,  6 May 2025 10:24:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 49BD21A12DD;
-	Tue,  6 May 2025 10:25:08 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCnCl8CcxloBMVDLg--.27787S3;
-	Tue, 06 May 2025 10:25:07 +0800 (CST)
-Message-ID: <d93e69d0-8145-40ac-8afc-f1e8ccbe2052@huaweicloud.com>
-Date: Tue, 6 May 2025 10:25:06 +0800
+	s=arc-20240116; t=1746498317; c=relaxed/simple;
+	bh=n4dPN7wAD9npJr/nizY53yXeyAXyrXHg8YJr9ymyrnc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ROqwAmDlE7vDXZTf/qdC8LPLzh3/Ig1Eo7Zlx3kfRyq979emXfiUzEAIdpKOsTQfewUglBo6KFp+/ZTgygQ+BApBlygTx28Xo9Ro5wJtJq+BP8BbFaMW1HdmU4xA5IJN+wYHUcNKsle8pkHYNNDrFOChmKBiCxceS20FJheXLNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=KMWQWDJe; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=TTjO9FVT8AMn4y+ZaWkMDn84kdaTZxX3hyJLAkPjnkA=; b=KMWQWDJeXtjgYCv8fS5Wy36afg
+	a7B/p26ypkdVPSJ623AEUgIMVjnV0pwfOOiy/nW6YTjUetorKEpEB8NNvdH/p3X4DZT7zjzzGdWNK
+	fQA60MYnuqErutvzlVXSJiie0f1CajS7ZBsUf0Jtd8fq/tgmRs+7eLKM4UxqZWL1PwrdQYWwEvKjw
+	FqFPfMjUyLpdVc6AgCCGWBBgwsE6GNgA/IfKRIfHlPBDZWAKQc1panHjNf+P8MrjgtSbVzGt/jZFN
+	BW2ua5p4WEpR1UxRq22lrMrWNgEhK3b+RgpRM+eZqtfWTCELzh/JlKUb2Lex6zfMhG0V5jpTQSqKJ
+	K1giwBrw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uC7zb-00000008993-06xS;
+	Tue, 06 May 2025 02:25:11 +0000
+Date: Tue, 6 May 2025 03:25:11 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [RFC] MNT_LOCKED vs. finish_automount()
+Message-ID: <20250506022511.GL2023217@ZenIV>
+References: <20250501201506.GS2023217@ZenIV>
+ <87plgq8igd.fsf@email.froward.int.ebiederm.org>
+ <20250504232441.GC2023217@ZenIV>
+ <877c2v88rz.fsf@email.froward.int.ebiederm.org>
+ <20250505190215.GG2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: kernel BUG in zero_user_segments
-To: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
-Cc: Liebes Wang <wanghaichi0403@gmail.com>, ojaswin@linux.ibm.com,
- Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
- syzkaller@googlegroups.com, Ext4 Developers List <linux-ext4@vger.kernel.org>
-References: <CADCV8spm=TtW_Lu6p-5q-jdHv1ryLcx45mNBEcYdELbHv_4TnQ@mail.gmail.com>
- <uxweupjmz7pzbj77cciiuxduxnbuk33mx75bimynzcjmq664zo@xqrdf6ouf5v6>
- <ac3a58f6-e686-488b-a9ee-fc041024e43d@huawei.com>
- <aBGVmIin8YxRyFDp@casper.infradead.org>
- <znfg4s5ysxqvrzeevkmtgixj5vztcyqbuny7waqkugnzkpg2zx@2vxwh57flvva>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <znfg4s5ysxqvrzeevkmtgixj5vztcyqbuny7waqkugnzkpg2zx@2vxwh57flvva>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCnCl8CcxloBMVDLg--.27787S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1xCw4UGr47WF45CF45KFg_yoW8WF4UpF
-	WxAryrtF4DtFWIkan7Zr1Iqrnaq3s8CFWUXF95Gr4fArZ8WFn29rn0kF4YkasF9r4xuw1j
-	qFyjg3srJ3sIyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250505190215.GG2023217@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 2025/5/1 19:19, Jan Kara wrote:
-> On Wed 30-04-25 04:14:32, Matthew Wilcox wrote:
->> On Tue, Apr 29, 2025 at 03:55:18PM +0800, Zhang Yi wrote:
->>> After debugging, I found that this problem is caused by punching a hole
->>> with an offset variable larger than max_end on a corrupted ext4 inode,
->>> whose i_size is larger than maxbyte. It will result in a negative length
->>> in the truncate_inode_partial_folio(), which will trigger this problem.
->>
->> It seems to me like we're asking for trouble when we allow an inode with
->> an i_size larger than max_end to be instantiated.  There are probably
->> other places which assume it is smaller than max_end.  We should probably
->> decline to create the bad inode in the first place?
+On Mon, May 05, 2025 at 08:02:15PM +0100, Al Viro wrote:
+
+> Said that, from digging I'd done last night there might be a different
+> long-term approach; the thing is, there are very few places where we
+> ever look at MNT_LOCKED for mounts with !mnt_has_parent():
+> 	do_umount()
+> 	can_umount()
+> 	do_move_mount()
+> 	pivot_root()
+> and two of those four are of dubious use - can_umount() will be followed
+> by rechecking in do_umount(), so there's not much point in bailing out
+> early in a very pathological case.  And do_move_mount() might check
+> MNT_LOCKED on such, but only in move-from-anon case, where we do *NOT*
+> set MNT_LOCKED on namespace root.
+
+Even better, we have a check for !mnt_has_parent() downstream of that in
+pivot_root() and we reject such there.  So having that set on absolute
+root of non-anon namespaces buys us very little - do_umount() is the only
+place that would need to explicitly check for that.
+
+> IOW, looking at the way things are now, I'm no longer sure that the trick
+> you've done in da362b09e42 "umount: Do not allow unmounting rootfs"
+> had been a good idea long-term - it certainly made for smaller fix,
+> but it overloaded semantics of MNT_LOCKED, making it not just about
+> protecting the mountpoint against exposure.
 > 
-> Indeed somewhat less quirky fix could be to make ext4_max_bitmap_size()
-> return one block smaller limit. Something like:
+> What if we add explicit checks for mnt_has_parent() in do_umount() and
+> pivot_root() next to existing checks for MNT_LOCKED?  Then we can
+> 	* have clone_mnt() treat that flag as "internal, ignore" (matter
+> of fact, I would simply add MNT_LOCKED to MNT_INTERNAL_FLAGS and have
+> clone_mnt() strip that, same as we do in do_add_mount()).
+> 	* have copy_tree() set it right next to attach_mnt(), if the source
+> had it.  Yes, leaving it clear for root of copied tree.
+> 	* no need to clear it in the end of __do_loopback() (racy at the
+> moment, BTW - no mount_lock held there, so race with mount -o remount,ro
+> for the original is possible, so something is needed there)
+> 	* have lock_mnt_tree() skip the MNT_LOCKED not just for the expirable
+> but for the root of subtree as well.
+> 	* don't bother stripping MNT_LOCKED for roots of propagation copies
+> (or anyone, for that matter) in attach_recursive_mnt()
+> 	* don't bother setting it on absolute root of initial namespace
 > 
->         /* Compute how many blocks we can address by block tree */
->         res += ppb;
->         res += ppb * ppb;
->         res += ((loff_t)ppb) * ppb * ppb;
-> +	/*
-> +	 * Hole punching assumes it can map the block past end of hole to
-> +	 * tree offsets
-> +	 */
-> +	res -= 1;
->         /* Compute how many metadata blocks are needed */
->         meta_blocks = 1;
->         meta_blocks += 1 + ppb;
+> Looks like we end up with overall simpler code that way; it's certainly
+> conceptually simpler - MNT_LOCKED is set only on the mounts that do
+> have parent we care to protect, with that being done atomically wrt
+> mount becoming reachable (lock_mnt_tree() is in the same lock_mount_hash()
+> scope where we call commit_tree() that makes the entire subtree reachable).
 > 
-> The slight caveat is that in theory there could be filesystems out there
-> with so large files and then we'd stop allowing access to such files. But I
-> guess the chances are so low that it's probably worth trying.
+> Your argument in "mnt: Move the clear of MNT_LOCKED from copy_tree to
+> it's callers" about wanting to keep it in collect_mounts() for audit
+> purposes is wrong, AFAICS - audit does not see or care about MNT_LOCKED;
+> the only thing we use the result of collect_mounts() for is passing
+> it to iterate_mounts(), which literally "apply this callback to each
+> vfsmount in the set", completely ignoring anything else.  What's more,
+> all callbacks audit is passing to it actually look only at the inode of
+> that mount's root...
 > 
+> Anyway, that's longer-term stuff; I'll put together a patch along those
+> lines on top of this one.
 
-Hmm, I suppose this approach could pose some risks to our legacy products,
-and it makes me feel uneasy. Personally, I am more inclined toward the
-current solution, unless we decide to fix the ext4_ind_remove_space()
-directly. :)
+Here it is, on top of the previous.  Objections, comments?
 
-Thanks,
-Yi.
+[PATCH] don't set MNT_LOCKED on parentless mounts
 
+Originally MNT_LOCKED meant only one thing - "don't let this mount to
+be peeled off its parent, we don't want to have mountpoint exposed".
+Accordingly, it had only been set on mounts that *do* have a parent.
+Later it had been overloaded with another use - setting it on the
+absolute root had given free protection against umount(2) on absolute
+root (possible to trigger, oopsed).  Not a bad trick, but it ended
+up costing more than it bought us.  Unfortunately, the cost included
+both hard-to-reason-about logics and a subtle race between
+mount -o remount,ro and mount --[r]bind - lockless &= ~MNT_LOCKED in
+the end of __do_loopback() could race with sb_prepare_remount_readonly()
+setting and clearing MNT_HOLD_WRITE (under mount_lock, as it should
+be).
 
+Turns out that nobody except umount(2) had ever made use of having
+MNT_LOCKED set on absolute root.  So let's give up on that trick,
+clever as it had been, add an explicit check in do_umount() and
+return to using MNT_LOCKED only for mounts that have a parent.
+
+It means that
+	* clone_mnt() no longer copies MNT_LOCKED
+	* copy_tree() sets it on submounts if their counterparts had
+been marked such, and do that right next to attach_mnt() in there,
+in the same mount_lock scope.
+	* __do_loopback() no longer needs to strip MNT_LOCKED off the
+root of subtree it's about to return; no store, no race.
+	* init_mount_tree() doesn't bother setting MNT_LOCKED on absolute
+root.
+	* lock_mnt_tree() does not set MNT_LOCKED on the subtree's root;
+accordingly, its caller (loop in attach_recursive_mnt()) does not need to
+bother stripping that MNT_LOCKED.  Note that lock_mnt_tree() setting
+MNT_LOCKED on submounts happens in the same mount_lock scope as __attach_mnt()
+(from commit_tree()) that makes them reachable.
+
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 04a9bb9f31fa..165b3bd26857 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -1363,7 +1363,7 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
+ 	}
+ 
+ 	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
+-	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL);
++	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL|MNT_LOCKED);
+ 
+ 	atomic_inc(&sb->s_active);
+ 	mnt->mnt.mnt_idmap = mnt_idmap_get(mnt_idmap(&old->mnt));
+@@ -2038,6 +2038,9 @@ static int do_umount(struct mount *mnt, int flags)
+ 	if (mnt->mnt.mnt_flags & MNT_LOCKED)
+ 		goto out;
+ 
++	if (!mnt_has_parent(mnt))
++		goto out;
++
+ 	event++;
+ 	if (flags & MNT_DETACH) {
+ 		if (mnt_ns_attached(mnt) || !list_empty(&mnt->mnt_list))
+@@ -2308,6 +2311,8 @@ struct mount *copy_tree(struct mount *src_root, struct dentry *dentry,
+ 			if (IS_ERR(dst_mnt))
+ 				goto out;
+ 			lock_mount_hash();
++			if (src_mnt->mnt.mnt_flags & MNT_LOCKED)
++				dst_mnt->mnt.mnt_flags |= MNT_LOCKED;
+ 			list_add_tail(&dst_mnt->mnt_list, &res->mnt_list);
+ 			attach_mnt(dst_mnt, dst_parent, src_parent->mnt_mp, false);
+ 			unlock_mount_hash();
+@@ -2547,7 +2552,7 @@ static void lock_mnt_tree(struct mount *mnt)
+ 		if (flags & MNT_NOEXEC)
+ 			flags |= MNT_LOCK_NOEXEC;
+ 		/* Don't allow unprivileged users to reveal what is under a mount */
+-		if (list_empty(&p->mnt_expire))
++		if (list_empty(&p->mnt_expire) && p != mnt)
+ 			flags |= MNT_LOCKED;
+ 		p->mnt.mnt_flags = flags;
+ 	}
+@@ -2758,7 +2763,6 @@ static int attach_recursive_mnt(struct mount *source_mnt,
+ 		/* Notice when we are propagating across user namespaces */
+ 		if (child->mnt_parent->mnt_ns->user_ns != user_ns)
+ 			lock_mnt_tree(child);
+-		child->mnt.mnt_flags &= ~MNT_LOCKED;
+ 		commit_tree(child);
+ 	}
+ 	put_mountpoint(smp);
+@@ -3027,26 +3031,21 @@ static inline bool may_copy_tree(struct path *path)
+ 
+ static struct mount *__do_loopback(struct path *old_path, int recurse)
+ {
+-	struct mount *mnt = ERR_PTR(-EINVAL), *old = real_mount(old_path->mnt);
++	struct mount *old = real_mount(old_path->mnt);
+ 
+ 	if (IS_MNT_UNBINDABLE(old))
+-		return mnt;
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (!may_copy_tree(old_path))
+-		return mnt;
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (!recurse && has_locked_children(old, old_path->dentry))
+-		return mnt;
++		return ERR_PTR(-EINVAL);
+ 
+ 	if (recurse)
+-		mnt = copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
++		return copy_tree(old, old_path->dentry, CL_COPY_MNT_NS_FILE);
+ 	else
+-		mnt = clone_mnt(old, old_path->dentry, 0);
+-
+-	if (!IS_ERR(mnt))
+-		mnt->mnt.mnt_flags &= ~MNT_LOCKED;
+-
+-	return mnt;
++		return clone_mnt(old, old_path->dentry, 0);
+ }
+ 
+ /*
+@@ -4789,11 +4788,11 @@ SYSCALL_DEFINE2(pivot_root, const char __user *, new_root,
+ 	if (!path_mounted(&root))
+ 		goto out4; /* not a mountpoint */
+ 	if (!mnt_has_parent(root_mnt))
+-		goto out4; /* not attached */
++		goto out4; /* absolute root */
+ 	if (!path_mounted(&new))
+ 		goto out4; /* not a mountpoint */
+ 	if (!mnt_has_parent(new_mnt))
+-		goto out4; /* not attached */
++		goto out4; /* absolute root */
+ 	/* make sure we can reach put_old from new_root */
+ 	if (!is_path_reachable(old_mnt, old.dentry, &new))
+ 		goto out4;
+@@ -6191,7 +6190,6 @@ static void __init init_mount_tree(void)
+ 
+ 	root.mnt = mnt;
+ 	root.dentry = mnt->mnt_root;
+-	mnt->mnt_flags |= MNT_LOCKED;
+ 
+ 	set_fs_pwd(current->fs, &root);
+ 	set_fs_root(current->fs, &root);
 
