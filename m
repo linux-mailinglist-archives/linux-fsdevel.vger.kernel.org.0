@@ -1,66 +1,40 @@
-Return-Path: <linux-fsdevel+bounces-48213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF66AAC027
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 11:45:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17296AAC06F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 11:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2600C1C27C1E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 09:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 042841C2205A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 09:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6C42750E2;
-	Tue,  6 May 2025 09:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B2126FD84;
+	Tue,  6 May 2025 09:53:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828FB442C;
-	Tue,  6 May 2025 09:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17065278142;
+	Tue,  6 May 2025 09:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746524548; cv=none; b=Wa4R5nZjYZRUsV7AA2EWHVXwlrKMAtcgzTyio9I30oUFhPkzN8Z5x5xdGllKt2yfhIc1UMt3vfoMs55EQ/iwEDI3ttqasvwg9JGlJcVbOJwDoPcleyghmUxoTiJNVPjHObzYx5YABsbyFWXzCN7CzBWdKHGZjeCi+K7Hu4yJXk8=
+	t=1746525195; cv=none; b=aFvOESmv0512yuOSVz9ULJL+K3MJyiZpDQOc7LGCC1rR6Eu6puQ9IzpzOIBjn7Bacb2KoCGtDJdYrgsqoxYIHYSmQW8SestO3O9XkRyq+ihzTE6mnzXdWeSi8ECzdX99hn+IpMFqfhwlC9XmsqQx/5sqPzByqaSPpaOUkUEKEfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746524548; c=relaxed/simple;
-	bh=tV0nDwIoH2g7mHnHzytl/Ey8Bl8yk1y+cNBPV8pyc5s=;
+	s=arc-20240116; t=1746525195; c=relaxed/simple;
+	bh=mF1A3vX/n2fU9RBpzMdEW5F0yNbhrXJTL4Pr32b2H4A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BqdnmcNpP0CXKuirJwuUQ5luH5D53n38b2MLkMojQvUERUaQClGVflz7PftJNcbkmsi/5SeaKcW8QHfMeZRmQWUg/oP2nZfI95hSsVk4bgZMRQKeHGFZ6z5g3Dds1oi+Bu5VEVi3nuxDIHmsIe9iPX3uhQq8ZnzFMeaGEKZuuto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7373aa99e2cso794963b3a.0;
-        Tue, 06 May 2025 02:42:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746524547; x=1747129347;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T0NjyGvijBDvIUSC5O5zU3aez3V3m7u5cMnfIW2NYxk=;
-        b=vNWKMPvb3P3CPwoVYGONDAs/4Q8brwXpho4xViHaThaWq8WhBd4dls4a5JsTMN0seD
-         zPQdXlo0AVkbrB1aoVAwJiLvwWQkd9TCdCE3N9QASwL/uBNJiiUYY23tnnVeKfqZF6gc
-         lslvL+jMjnOATIDGuwzcUkI68VmJBZ4+LAFKw5rdMbTj7k5noLj2qaNTxZn8eKqYTlAu
-         7I3QGqaavCLvBfHHOJW2gHfi4GbFZfXELxE+tYBME3I31vi6ylwjsHF9MDkqsidxqp//
-         /nybecEWhSI9DAZfhw6V3oXIN5ZB2OezxByVkBz1PAFm2K/anMvFJsMPtM9x4mQBFNwi
-         C/qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJJ/I9/VqqszwvvSk43rAU+C07g0qQ3N+2drK4yCYTv+Fo6D69UIACNjIn97eDBgrWzdBWn9pmoMWJPrQp@vger.kernel.org, AJvYcCWA3x+owDHEvcV6d/lTrjjc3S7lrz2JRtAIkPWj+aCHsEpqRAzU1/2A0J6TvH3VfVx3Az2K29BU2AY=@vger.kernel.org, AJvYcCWrN8FVv/sps6D6Dlm3amA/ecldIy9/ggCX3+6RSiuzdjHKPQSjfFeJoVajy8HEVUWmKi1DqGZ/CT6KNlVS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQg1JatYahWw6eChXHfAxZ0JpU/Q79+O7HLMFe9/a+MppAghqh
-	owNzhhT9BugCHtyEbaVhxJHwAsSHnFdH4luidT/GmJkbqrWlFpY2sxG3VQ==
-X-Gm-Gg: ASbGncu5blTw5Hhc4Sn97kEMgWgxAfIVKB7z5vTaZqGS4ZW/XmTFK/zZmawTckOdDUF
-	c5ibeU+LrtVgZtV38dy/TmjMMz34LhQT4GT7A0ae8Dr8T7e4pj1CQpbYDyDNIKSh/6k9lLn3DRG
-	AV+zs/r0wMTvobzzRS2Bto2z8BXCcyOxC17gKtlt1B1l5nS7oFyLHf30J5k4yN6KBUhhFR+fpyK
-	H2FM1dtpJB/I/0H3IsSAKcXycXxXNarR72jTmH11m5gFSe+/y5zYtzNLTGPCFNy2ylYREu3nbw2
-	V2bwKm8WkSqwCWRbCl07CGQ8Eu105AnIL98S1HYOJRze/MX+sUKe
-X-Google-Smtp-Source: AGHT+IHJPV6QHn0fik5+fgOnYxj6sw2W5noBjtawQua2EwoODPBFi11YGxjUR1TwWEuCjtTqOEsvmA==
-X-Received: by 2002:a05:6a21:e89:b0:1ee:ea8f:2e9f with SMTP id adf61e73a8af0-20cdc0f5235mr9752018637.0.1746524546592;
-        Tue, 06 May 2025 02:42:26 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fc0e32b8bsm5555899a12.48.2025.05.06.02.42.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 May 2025 02:42:26 -0700 (PDT)
-Message-ID: <4dcff9ce-4ec8-4b57-9f21-a7e2f37b4d5c@kzalloc.com>
-Date: Tue, 6 May 2025 18:42:21 +0900
+	 In-Reply-To:Content-Type; b=DCashHbhs3oMfVSwPkArvIfALCOMu4dPKit8bNpE6MIVsf5XYtRFffzHuUV9bLiCRsCJaKiUt3LkuecZNAqNOs15cQFwXd8Buf5+M2E1z4G5ZJYNSArPRowgdCQ2I16muOmdzoKpIWPZDoxZJzvM+1dflZf2xRxhAfUV/FsMrYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 962BF113E;
+	Tue,  6 May 2025 02:53:02 -0700 (PDT)
+Received: from [10.57.93.118] (unknown [10.57.93.118])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3ED6E3F5A1;
+	Tue,  6 May 2025 02:53:09 -0700 (PDT)
+Message-ID: <df09f0f4-fd23-469e-94d7-864b3bdb17c6@arm.com>
+Date: Tue, 6 May 2025 10:53:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,59 +42,186 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: Prevent panic from NULL dereference in
- alloc_fs_context() during do_exit()
-To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>,
- byungchul@sk.com, max.byungchul.park@gmail.com,
- linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250505203801.83699-2-ysk@kzalloc.com>
- <20250505223615.GK2023217@ZenIV>
- <20250506-hochphase-kicken-7fa895216c2a@brauner>
-Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <20250506-hochphase-kicken-7fa895216c2a@brauner>
+Subject: Re: [RFC PATCH v4 4/5] mm/readahead: Store folio order in struct
+ file_ra_state
+Content-Language: en-GB
+To: Jan Kara <jack@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, David Hildenbrand
+ <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+References: <20250430145920.3748738-1-ryan.roberts@arm.com>
+ <20250430145920.3748738-5-ryan.roberts@arm.com>
+ <hsh7gqrzzxmgihjnud6p6iqbysustua3rv7vkfgknz4vho4hhx@jvzfztjk4cc4>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <hsh7gqrzzxmgihjnud6p6iqbysustua3rv7vkfgknz4vho4hhx@jvzfztjk4cc4>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Hi Christian,
-
-On 5/6/25 5:45 오후, Christian Brauner wrote:
->>> diff --git a/fs/fs_context.c b/fs/fs_context.c
->>> index 582d33e81117..529de43b8b5e 100644
->>> --- a/fs/fs_context.c
->>> +++ b/fs/fs_context.c
->>> @@ -282,6 +282,9 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
->>>  	struct fs_context *fc;
->>>  	int ret = -ENOMEM;
->>>  
->>> +	if (!current->nsproxy || !current->nsproxy->net_ns)
->>> +		return ERR_PTR(-EINVAL);
->>> +
->>>  	fc = kzalloc(sizeof(struct fs_context), GFP_KERNEL_ACCOUNT);
->>>  	if (!fc)
->>>  		return ERR_PTR(-ENOMEM);
+On 05/05/2025 10:52, Jan Kara wrote:
+> On Wed 30-04-25 15:59:17, Ryan Roberts wrote:
+>> Previously the folio order of the previous readahead request was
+>> inferred from the folio who's readahead marker was hit. But due to the
+>> way we have to round to non-natural boundaries sometimes, this first
+>> folio in the readahead block is often smaller than the preferred order
+>> for that request. This means that for cases where the initial sync
+>> readahead is poorly aligned, the folio order will ramp up much more
+>> slowly.
 >>
->> That might paper over the oops, but I very much doubt that this will be
->> a correct fix...  Note that in efivarfs_pm_notify() we have other
->> fun issues when run from such context - have task_work_add() fail in
->> fput() and if delayed_fput() runs right afterwards and
->>         efivar_init(efivarfs_check_missing, sfi->sb, false);
->> in there might end up with UAF...
+>> So instead, let's store the order in struct file_ra_state so we are not
+>> affected by any required alignment. We previously made enough room in
+>> the struct for a 16 order field. This should be plenty big enough since
+>> we are limited to MAX_PAGECACHE_ORDER anyway, which is certainly never
+>> larger than ~20.
+>>
+>> Since we now pass order in struct file_ra_state, page_cache_ra_order()
+>> no longer needs it's new_order parameter, so let's remove that.
+>>
+>> Worked example:
+>>
+>> Here we are touching pages 17-256 sequentially just as we did in the
+>> previous commit, but now that we are remembering the preferred order
+>> explicitly, we no longer have the slow ramp up problem. Note
+>> specifically that we no longer have 2 rounds (2x ~128K) of order-2
+>> folios:
+>>
+>> TYPE    STARTOFFS     ENDOFFS        SIZE  STARTPG    ENDPG   NRPG  ORDER  RA
+>> -----  ----------  ----------  ----------  -------  -------  -----  -----  --
+>> HOLE   0x00000000  0x00001000        4096        0        1      1
+>> FOLIO  0x00001000  0x00002000        4096        1        2      1      0
+>> FOLIO  0x00002000  0x00003000        4096        2        3      1      0
+>> FOLIO  0x00003000  0x00004000        4096        3        4      1      0
+>> FOLIO  0x00004000  0x00005000        4096        4        5      1      0
+>> FOLIO  0x00005000  0x00006000        4096        5        6      1      0
+>> FOLIO  0x00006000  0x00007000        4096        6        7      1      0
+>> FOLIO  0x00007000  0x00008000        4096        7        8      1      0
+>> FOLIO  0x00008000  0x00009000        4096        8        9      1      0
+>> FOLIO  0x00009000  0x0000a000        4096        9       10      1      0
+>> FOLIO  0x0000a000  0x0000b000        4096       10       11      1      0
+>> FOLIO  0x0000b000  0x0000c000        4096       11       12      1      0
+>> FOLIO  0x0000c000  0x0000d000        4096       12       13      1      0
+>> FOLIO  0x0000d000  0x0000e000        4096       13       14      1      0
+>> FOLIO  0x0000e000  0x0000f000        4096       14       15      1      0
+>> FOLIO  0x0000f000  0x00010000        4096       15       16      1      0
+>> FOLIO  0x00010000  0x00011000        4096       16       17      1      0
+>> FOLIO  0x00011000  0x00012000        4096       17       18      1      0
+>> FOLIO  0x00012000  0x00013000        4096       18       19      1      0
+>> FOLIO  0x00013000  0x00014000        4096       19       20      1      0
+>> FOLIO  0x00014000  0x00015000        4096       20       21      1      0
+>> FOLIO  0x00015000  0x00016000        4096       21       22      1      0
+>> FOLIO  0x00016000  0x00017000        4096       22       23      1      0
+>> FOLIO  0x00017000  0x00018000        4096       23       24      1      0
+>> FOLIO  0x00018000  0x00019000        4096       24       25      1      0
+>> FOLIO  0x00019000  0x0001a000        4096       25       26      1      0
+>> FOLIO  0x0001a000  0x0001b000        4096       26       27      1      0
+>> FOLIO  0x0001b000  0x0001c000        4096       27       28      1      0
+>> FOLIO  0x0001c000  0x0001d000        4096       28       29      1      0
+>> FOLIO  0x0001d000  0x0001e000        4096       29       30      1      0
+>> FOLIO  0x0001e000  0x0001f000        4096       30       31      1      0
+>> FOLIO  0x0001f000  0x00020000        4096       31       32      1      0
+>> FOLIO  0x00020000  0x00021000        4096       32       33      1      0
+>> FOLIO  0x00021000  0x00022000        4096       33       34      1      0
+>> FOLIO  0x00022000  0x00024000        8192       34       36      2      1
+>> FOLIO  0x00024000  0x00028000       16384       36       40      4      2
+>> FOLIO  0x00028000  0x0002c000       16384       40       44      4      2
+>> FOLIO  0x0002c000  0x00030000       16384       44       48      4      2
+>> FOLIO  0x00030000  0x00034000       16384       48       52      4      2
+>> FOLIO  0x00034000  0x00038000       16384       52       56      4      2
+>> FOLIO  0x00038000  0x0003c000       16384       56       60      4      2
+>> FOLIO  0x0003c000  0x00040000       16384       60       64      4      2
+>> FOLIO  0x00040000  0x00050000       65536       64       80     16      4
+>> FOLIO  0x00050000  0x00060000       65536       80       96     16      4
+>> FOLIO  0x00060000  0x00080000      131072       96      128     32      5
+>> FOLIO  0x00080000  0x000a0000      131072      128      160     32      5
+>> FOLIO  0x000a0000  0x000c0000      131072      160      192     32      5
+>> FOLIO  0x000c0000  0x000e0000      131072      192      224     32      5
+>> FOLIO  0x000e0000  0x00100000      131072      224      256     32      5
+>> FOLIO  0x00100000  0x00120000      131072      256      288     32      5
+>> FOLIO  0x00120000  0x00140000      131072      288      320     32      5  Y
+>> HOLE   0x00140000  0x00800000     7077888      320     2048   1728
+>>
+>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > 
-> We've already accepted a patch that removes the need for
-> vfs_kern_mount() from efivarfs completely.
+> ...
+> 
+>> @@ -469,6 +469,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>>  	int err = 0;
+>>  	gfp_t gfp = readahead_gfp_mask(mapping);
+>>  	unsigned int min_ra_size = max(4, mapping_min_folio_nrpages(mapping));
+>> +	unsigned int new_order = ra->order;
+>>  
+>>  	/*
+>>  	 * Fallback when size < min_nrpages as each folio should be
+>> @@ -483,6 +484,8 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>>  	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
+>>  	new_order = max(new_order, min_order);
+>>  
+>> +	ra->order = new_order;
+>> +
+>>  	/* See comment in page_cache_ra_unbounded() */
+>>  	nofs = memalloc_nofs_save();
+>>  	filemap_invalidate_lock_shared(mapping);
+>> @@ -525,6 +528,7 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>>  	 * ->readahead() may have updated readahead window size so we have to
+>>  	 * check there's still something to read.
+>>  	 */
+>> +	ra->order = 0;
+> 
+> Hum, so you reset desired folio order if readahead hit some pre-existing
+> pages in the page cache. Is this really desirable? Why not leave the
+> desired order as it was for the next request?
 
-I’ll take a look at the patch you mentioned, check if the issue reproduces, and get back to you.
+My aim was to not let order grow unbounded. When the filesystem doesn't support
+large folios we end up here (from the "goto fallback") and without this, order
+will just grow and grow (perhaps it doesn't matter though). I think we should
+keep this.
 
-Link: https://lore.kernel.org/all/20250318194111.19419-4-James.Bottomley@HansenPartnership.com/
+But I guess your point is that we can also end up here when the filesystem does
+support large folios but there is an error. In thta case, yes, I'll change to
+not reset order to 0; it has already been fixed up earlier in this path.
 
-Thanks for checking it!
+How's this:
 
-Best regards,
-Yunseong Kim
+---8<---
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 18972bc34861..0054ca18a815 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -475,8 +475,10 @@ void page_cache_ra_order(struct readahead_control *ractl,
+         * Fallback when size < min_nrpages as each folio should be
+         * at least min_nrpages anyway.
+         */
+-       if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size)
++       if (!mapping_large_folio_support(mapping) || ra->size < min_ra_size) {
++               ra->order = 0;
+                goto fallback;
++       }
+
+        limit = min(limit, index + ra->size - 1);
+
+@@ -528,7 +530,6 @@ void page_cache_ra_order(struct readahead_control *ractl,
+         * ->readahead() may have updated readahead window size so we have to
+         * check there's still something to read.
+         */
+-       ra->order = 0;
+        if (ra->size > index - start)
+                do_page_cache_ra(ractl, ra->size - (index - start),
+                                 ra->async_size);
+---8<---
+
+Thanks,
+Ryan
+
+> 
+>>  	if (ra->size > index - start)
+>>  		do_page_cache_ra(ractl, ra->size - (index - start),
+>>  				 ra->async_size);
+> 
+> 								Honza
 
 
