@@ -1,233 +1,165 @@
-Return-Path: <linux-fsdevel+bounces-48216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0486AAAC0BD
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 12:03:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6ACDAAC0D5
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 12:05:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E137A1898F3F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 10:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9473AC7B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 10:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D0726D4D3;
-	Tue,  6 May 2025 10:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068532701B6;
+	Tue,  6 May 2025 10:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="nwj6ZlrZ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QlUFc5M7";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3OW/QdYO";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7pkniqqj"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E8A19F115;
-	Tue,  6 May 2025 10:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958F526FDAA
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 10:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746525807; cv=none; b=DpZVvvKxJAW5W0i7igE7lBRRZOMmW/t5hNMQ+W0QM0j2YFtEbS5wbMXowxC6uBbw6AcJu+5IhYBcwDmMUT1djorDl4lTZsR1K4ircfCvxZd+T/b9eP2wRIorj9r+YiMDtUHxyQy2ji6sKAqFLtE7PqiVEKIFx9DtgihxX6B8qQQ=
+	t=1746525908; cv=none; b=tLSktSTtBiOst0vVFum34Sykq8FqKAihMCWrzNQcfUJqPyMl4xgnd4TJcREndoD2G/dTLDIWJAetVap6DahnoGnl9oDBalYy7RYUMbn3CI5sdSh+JSwnCvC8ydBrhOza+LdLo8wJWPlocL7HRStS4D/V78PShW0pmDXscBrZ6s8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746525807; c=relaxed/simple;
-	bh=ziefAz+B+rdu/4DKS2su0k81iH4hKodkDzS+HwXh8/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RFgzm3Kj0d2lN75oLr8eukRMpqsYjQ/K7509ZSy7JKmuH3zpusMW44mVHIGRD1BujBmxBd72rO3pw0DyHllZwAARMOKIuSbfF/mzaE/LodMhfhwYCXwQ5Ne+EtH7f6ztciMenszkLHVLCo1583TcU88VV4jbLYLRvFX71DJZ5mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2F0B113E;
-	Tue,  6 May 2025 03:03:14 -0700 (PDT)
-Received: from [10.57.93.118] (unknown [10.57.93.118])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CF2A83F5A1;
-	Tue,  6 May 2025 03:03:20 -0700 (PDT)
-Message-ID: <2b1ea3d9-6c9b-4700-ae21-5f65565a995a@arm.com>
-Date: Tue, 6 May 2025 11:03:19 +0100
+	s=arc-20240116; t=1746525908; c=relaxed/simple;
+	bh=NYYPUTt20O2TPocnUB7Huf4QETUChDygy6WWv8pAHHA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QANY3RKpaobYpWMRWY6NjUeVdj9+GRaS+IW6hd1OImK3rzPelUzVlHTTO7TPgenKdoLEXaf5L+nkROfQ8OwTomhKFdQ5QpO6XRb8sC28WBL8NYatH0KnOwVCySCnKQy9or0bCK82cZkX2aHmNCQUxakpTG2tHJJTbZe90Faxrnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=nwj6ZlrZ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QlUFc5M7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3OW/QdYO; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7pkniqqj; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 8EDC81F441;
+	Tue,  6 May 2025 10:05:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746525903;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zk0fDN+7PJwjKDDJ2t6a08GL5EW0lCf5wZyG/z+TpX0=;
+	b=nwj6ZlrZcRjlCYdYReDfiy1eA0rokC3eC7qMNjEzo6jZoP5RYGmCpmqTXYSz+gYSHdcBct
+	1fQ8VGOSfmPR5GUJ3SjIgFC+FmaB6dnOwp3j1YObZqC5vMQp2Gq3UtLJzGZZUm+cO3/6al
+	GgjxAZxybGEM732anF1sYDwIE+KC5qw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746525903;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zk0fDN+7PJwjKDDJ2t6a08GL5EW0lCf5wZyG/z+TpX0=;
+	b=QlUFc5M7P2UMRTf5b8sMNOvsNWpV3EKID+TC1Ny1SOjRGv9mK8BD8XFGHZVSSgbMVHA+e0
+	yZAzBiZGErpa+HCQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1746525902;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zk0fDN+7PJwjKDDJ2t6a08GL5EW0lCf5wZyG/z+TpX0=;
+	b=3OW/QdYOX0c1xiiAgUgDKH2AcQ7BDVzfTjnX3yBpkGJhMqnt3PY4oT8nBSRc3gigMJWnco
+	XxtBxQtK+j03L3mhgVDyfYkrDkoqyJg4Gfl5zHs1fQzyEJ4AZ/EsldoecJVF9js0IXMSor
+	jEWK1qgIsbJZ7rr6c604gjs56bE4T2k=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1746525902;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zk0fDN+7PJwjKDDJ2t6a08GL5EW0lCf5wZyG/z+TpX0=;
+	b=7pkniqqj3sMt7dDjl4jgK30iZTiYX4ZtHQwoF9Zs7NawwyLpJYWEWz2IaTq8DDbxyN0L9U
+	R2K4cBWvwD5vRkDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 574EA13687;
+	Tue,  6 May 2025 10:05:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id sv0WFc7eGWjjegAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Tue, 06 May 2025 10:05:02 +0000
+Date: Tue, 6 May 2025 12:05:01 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+	Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>, slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de, frank.li@vivo.com,
+	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+	Qu Wenruo <wqu@suse.com>
+Subject: Re: [PATCH 18/19] btrfs: use bdev_rw_virt in scrub_one_super
+Message-ID: <20250506100500.GC9140@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20250430212159.2865803-1-hch@lst.de>
+ <20250430212159.2865803-19-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/5] mm/readahead: Store folio order in struct
- file_ra_state
-Content-Language: en-GB
-To: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Dave Chinner <david@fromorbit.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20250430145920.3748738-1-ryan.roberts@arm.com>
- <20250430145920.3748738-5-ryan.roberts@arm.com>
- <c8f78fd6-c1fb-4884-b370-cb6b03e573b6@redhat.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <c8f78fd6-c1fb-4884-b370-cb6b03e573b6@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250430212159.2865803-19-hch@lst.de>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	R_RATELIMIT(0.00)[to_ip_from(RLndmnr811gycae4b5bcnms9ur)];
+	RCPT_COUNT_TWELVE(0.00)[31];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,twin.jikos.cz:mid,suse.com:email,lst.de:email,wdc.com:email,suse.cz:replyto];
+	URIBL_BLOCKED(0.00)[suse.com:email];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Score: -4.00
+X-Spam-Flag: NO
 
-On 05/05/2025 11:08, David Hildenbrand wrote:
-> On 30.04.25 16:59, Ryan Roberts wrote:
->> Previously the folio order of the previous readahead request was
->> inferred from the folio who's readahead marker was hit. But due to the
->> way we have to round to non-natural boundaries sometimes, this first
->> folio in the readahead block is often smaller than the preferred order
->> for that request. This means that for cases where the initial sync
->> readahead is poorly aligned, the folio order will ramp up much more
->> slowly.
->>
->> So instead, let's store the order in struct file_ra_state so we are not
->> affected by any required alignment. We previously made enough room in
->> the struct for a 16 order field. This should be plenty big enough since
->> we are limited to MAX_PAGECACHE_ORDER anyway, which is certainly never
->> larger than ~20.
->>
->> Since we now pass order in struct file_ra_state, page_cache_ra_order()
->> no longer needs it's new_order parameter, so let's remove that.
->>
->> Worked example:
->>
->> Here we are touching pages 17-256 sequentially just as we did in the
->> previous commit, but now that we are remembering the preferred order
->> explicitly, we no longer have the slow ramp up problem. Note
->> specifically that we no longer have 2 rounds (2x ~128K) of order-2
->> folios:
->>
->> TYPE    STARTOFFS     ENDOFFS        SIZE  STARTPG    ENDPG   NRPG  ORDER  RA
->> -----  ----------  ----------  ----------  -------  -------  -----  -----  --
->> HOLE   0x00000000  0x00001000        4096        0        1      1
->> FOLIO  0x00001000  0x00002000        4096        1        2      1      0
->> FOLIO  0x00002000  0x00003000        4096        2        3      1      0
->> FOLIO  0x00003000  0x00004000        4096        3        4      1      0
->> FOLIO  0x00004000  0x00005000        4096        4        5      1      0
->> FOLIO  0x00005000  0x00006000        4096        5        6      1      0
->> FOLIO  0x00006000  0x00007000        4096        6        7      1      0
->> FOLIO  0x00007000  0x00008000        4096        7        8      1      0
->> FOLIO  0x00008000  0x00009000        4096        8        9      1      0
->> FOLIO  0x00009000  0x0000a000        4096        9       10      1      0
->> FOLIO  0x0000a000  0x0000b000        4096       10       11      1      0
->> FOLIO  0x0000b000  0x0000c000        4096       11       12      1      0
->> FOLIO  0x0000c000  0x0000d000        4096       12       13      1      0
->> FOLIO  0x0000d000  0x0000e000        4096       13       14      1      0
->> FOLIO  0x0000e000  0x0000f000        4096       14       15      1      0
->> FOLIO  0x0000f000  0x00010000        4096       15       16      1      0
->> FOLIO  0x00010000  0x00011000        4096       16       17      1      0
->> FOLIO  0x00011000  0x00012000        4096       17       18      1      0
->> FOLIO  0x00012000  0x00013000        4096       18       19      1      0
->> FOLIO  0x00013000  0x00014000        4096       19       20      1      0
->> FOLIO  0x00014000  0x00015000        4096       20       21      1      0
->> FOLIO  0x00015000  0x00016000        4096       21       22      1      0
->> FOLIO  0x00016000  0x00017000        4096       22       23      1      0
->> FOLIO  0x00017000  0x00018000        4096       23       24      1      0
->> FOLIO  0x00018000  0x00019000        4096       24       25      1      0
->> FOLIO  0x00019000  0x0001a000        4096       25       26      1      0
->> FOLIO  0x0001a000  0x0001b000        4096       26       27      1      0
->> FOLIO  0x0001b000  0x0001c000        4096       27       28      1      0
->> FOLIO  0x0001c000  0x0001d000        4096       28       29      1      0
->> FOLIO  0x0001d000  0x0001e000        4096       29       30      1      0
->> FOLIO  0x0001e000  0x0001f000        4096       30       31      1      0
->> FOLIO  0x0001f000  0x00020000        4096       31       32      1      0
->> FOLIO  0x00020000  0x00021000        4096       32       33      1      0
->> FOLIO  0x00021000  0x00022000        4096       33       34      1      0
->> FOLIO  0x00022000  0x00024000        8192       34       36      2      1
->> FOLIO  0x00024000  0x00028000       16384       36       40      4      2
->> FOLIO  0x00028000  0x0002c000       16384       40       44      4      2
->> FOLIO  0x0002c000  0x00030000       16384       44       48      4      2
->> FOLIO  0x00030000  0x00034000       16384       48       52      4      2
->> FOLIO  0x00034000  0x00038000       16384       52       56      4      2
->> FOLIO  0x00038000  0x0003c000       16384       56       60      4      2
->> FOLIO  0x0003c000  0x00040000       16384       60       64      4      2
->> FOLIO  0x00040000  0x00050000       65536       64       80     16      4
->> FOLIO  0x00050000  0x00060000       65536       80       96     16      4
->> FOLIO  0x00060000  0x00080000      131072       96      128     32      5
->> FOLIO  0x00080000  0x000a0000      131072      128      160     32      5
->> FOLIO  0x000a0000  0x000c0000      131072      160      192     32      5
->> FOLIO  0x000c0000  0x000e0000      131072      192      224     32      5
->> FOLIO  0x000e0000  0x00100000      131072      224      256     32      5
->> FOLIO  0x00100000  0x00120000      131072      256      288     32      5
->> FOLIO  0x00120000  0x00140000      131072      288      320     32      5  Y
->> HOLE   0x00140000  0x00800000     7077888      320     2048   1728
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>   include/linux/fs.h |  2 ++
->>   mm/filemap.c       |  6 ++++--
->>   mm/internal.h      |  3 +--
->>   mm/readahead.c     | 18 +++++++++++-------
->>   4 files changed, 18 insertions(+), 11 deletions(-)
->>
->> diff --git a/include/linux/fs.h b/include/linux/fs.h
->> index 44362bef0010..cde482a7270a 100644
->> --- a/include/linux/fs.h
->> +++ b/include/linux/fs.h
->> @@ -1031,6 +1031,7 @@ struct fown_struct {
->>    *      and so were/are genuinely "ahead".  Start next readahead when
->>    *      the first of these pages is accessed.
->>    * @ra_pages: Maximum size of a readahead request, copied from the bdi.
->> + * @order: Preferred folio order used for most recent readahead.
+On Wed, Apr 30, 2025 at 04:21:48PM -0500, Christoph Hellwig wrote:
+> Replace the code building a bio from a kernel direct map address and
+> submitting it synchronously with the bdev_rw_virt helper.
 > 
-> Looking at other members, and how it relates to the other members, should we
-> call this something like "ra_prev_order" / "prev_ra_order" to distinguish it
-> from !ra members and indicate the "most recent" semantics similar to "prev_pos"?
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+> Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> Reviewed-by: Qu Wenruo <wqu@suse.com>
 
-As you know, I'm crap at naming, but...
-
-start, size, async_size and order make up the parameters for the "most recent"
-readahead request. Where "most recent" includes "current" once passed into
-page_cache_ra_order(). The others don't include "ra" or "prev" in their name so
-wasn't sure it was necessary here.
-
-ra_pages is a bit different; that's not part of the request, it's a (dynamic)
-ceiling to use when creating requests.
-
-Personally I'd leave it as is, but no strong opinion.
-
-> 
-> Just a thought while digging through this patch ...
-> 
-> ...
-> 
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -3222,7 +3222,8 @@ static struct file *do_sync_mmap_readahead(struct
->> vm_fault *vmf)
->>           if (!(vm_flags & VM_RAND_READ))
->>               ra->size *= 2;
->>           ra->async_size = HPAGE_PMD_NR;
->> -        page_cache_ra_order(&ractl, ra, HPAGE_PMD_ORDER);
->> +        ra->order = HPAGE_PMD_ORDER;
->> +        page_cache_ra_order(&ractl, ra);
->>           return fpin;
->>       }
->>   #endif
->> @@ -3258,8 +3259,9 @@ static struct file *do_sync_mmap_readahead(struct
->> vm_fault *vmf)
->>       ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
->>       ra->size = ra->ra_pages;
->>       ra->async_size = ra->ra_pages / 4;
->> +    ra->order = 0;
->>       ractl._index = ra->start;
->> -    page_cache_ra_order(&ractl, ra, 0);
->> +    page_cache_ra_order(&ractl, ra);
->>       return fpin;
->>   }
-> 
-> Why not let page_cache_ra_order() consume the order and update ra->order (or
-> however it will be called :) ) internally?
-
-You mean continue to pass new_order as a parameter to page_cache_ra_order()? The
-reason I did it the way I'm doing it is because I thought it would be weird for
-the caller of page_cache_ra_order() to set up all the parameters (start, size,
-async_size) of the request except for order...
-
-> 
-> That might make at least the "most recent readahead" semantics of the variable
-> clearer.
-
-But if you think your suggestion makes things clearer, then that's fine by me.
-
-Thanks,
-Ryan
-
-> 
-> Again, just a thought ...
-> 
-
+Acked-by: David Sterba <dsterba@suse.com>
 
