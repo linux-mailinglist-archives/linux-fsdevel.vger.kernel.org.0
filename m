@@ -1,61 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-48269-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A41AACAF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 18:28:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B895BAACB3E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 18:43:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95CC83B47AC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 16:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB6981C067B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 16:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9F0284B56;
-	Tue,  6 May 2025 16:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54906284667;
+	Tue,  6 May 2025 16:43:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIhl+hDV"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="sxooxhdr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38BA283FD9;
-	Tue,  6 May 2025 16:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E6C27FD52;
+	Tue,  6 May 2025 16:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746548889; cv=none; b=EbBF2vkWCu1ASwjr/qN7REtFs/IZpEs5AVm7BKhh3amUCOWqbdMp1I0GfwHVRamNOcpdTQQb7s9ei7E7p/MFJv0AOkFgROz65F4aLycz/wd9ruRjmCqARjID2aeB84iraDqAkoNbPkZv0rvCQRGjPUHXcIquG2U0P1fiMvDBmoU=
+	t=1746549795; cv=none; b=eKj9hNWAUCBEValjvaiH4XiwKV7DTTxQVfxZt/F0SNaij7WxLVjg1WtxTLlVeW3RYqOyQMP1WLgmVP6zkO4kxj5GXPT5Ny+eUwevdeq4E/uu8kpI7l7NAosa4ZrwZFZ8vT1hxBHTmlGd1C2jWP1mfcNeF3VXdhmYJVdIVQwt1Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746548889; c=relaxed/simple;
-	bh=l+1Yy2LMZkqI2UGfxB7y8XrZgZuxgFkcvjxpPhz2zqM=;
+	s=arc-20240116; t=1746549795; c=relaxed/simple;
+	bh=Jh3rWhQ9pQIpNUSGw0L7Rz90Jnyxe1SsLvOCkSeCwQw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BhP2HLn15ScVnnfreByYMnlUqj709xx0XJ42YYPkJt/vKy/CIgQYBLs/bfoNHffeX18ADzw1E36XhNF0SNVvviKKsQ8NeKTN6bLwWIdARg1NimNnZArK9h1xD2GsDKyHzOyieL9KXGEBcdis/fBDmGYKTt3DY/xhRMrTBI/uziQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIhl+hDV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBDE0C4CEE4;
-	Tue,  6 May 2025 16:28:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746548889;
-	bh=l+1Yy2LMZkqI2UGfxB7y8XrZgZuxgFkcvjxpPhz2zqM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gIhl+hDVvP+N5Eh4G9K1CizeYtMvMU01L+FIsjtrktrJ9Ebu4F7MtceO//hyZL4fp
-	 7GFzJjO2G1GpkHuA6FzORzvdhaNP5QFyMBp+u507XpkQY81nxLtCYm/F7IZaiH+J9G
-	 cK839Cfq48TW8EMmD4eK5euk5pRgJHXHV+jWypZlEL19olcTCZglL246EiwD8TAd/y
-	 4J9v1IQ5MRD2iF0reTzV7Mw8FtLdQEZqqRP+mvl8DcDV3JMHG9qU19Z1EqAHVk8+lb
-	 WCEap/Nrd6PDEHPo5sZruY3WjtxbfpnukLOiD3EXtcuNPIrVOJon5yV6rRxYCofZ/K
-	 SSiqGymysJW/w==
-Date: Tue, 6 May 2025 10:28:06 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Caleb Sander Mateos <csander@purestorage.com>
-Cc: Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, hch@lst.de,
-	asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-nvme@lists.infradead.org, Hannes Reinecke <hare@suse.de>,
-	Nitesh Shetty <nj.shetty@samsung.com>
-Subject: Re: [PATCH v16 11/11] nvme: use fdp streams if write stream is
- provided
-Message-ID: <aBo4lkbeq1IU3RDU@kbusch-mbp.dhcp.thefacebook.com>
-References: <CGME20250506122653epcas5p1824d4af64d0b599fde2de831d8ebf732@epcas5p1.samsung.com>
- <20250506121732.8211-1-joshi.k@samsung.com>
- <20250506121732.8211-12-joshi.k@samsung.com>
- <CADUfDZrWstGcx+EqsmaQvSJJrMAK-Ls+HtGyS8j3okZQ+N4FKQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KYXpW6gj4ZVDdJt3VTJxTwo6jmtCf7dg6//lKF51R6jN95YjuHoLheTRQAYJoKLZ0mzvzTLba3D+wxHLis+759EeiFZV9B59b8NckQYd7ka2ZWZ+jmbp3ccRFLRhGV53EG2dJb7A1qg9s+W8Ux3N77kAtCSqr53KbOrcB4kDS9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=sxooxhdr; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=8LuCH0xhKs0sBheYldxQy35hKwUJMVNdfKQhXZVJI64=; b=sxooxhdrKr2sE4I68IIbrIyyUJ
+	BIBA1x50K7DrIkbJhAvaaupsZuTFtQ5631/CyjMrHOlFsXx00WthwF2JugZOuOl2z6fqjLy+mOvxD
+	3jQeWQ9tPWZoqBTIacEGUU2Nc5qa8L5mYPaakTvfCYCUDl2X3/Yi6Y6ChTylJX6ZAaBcAs9RorgLx
+	xiXQpYLbOWH0P7Ilg3Z9mthw5lfI4BtapEtdg1rkq/aFa8mANZey6ljq/AdzqVuW3AXIpg55gWdh3
+	Q2ccyEZVNt9GTNgPV4wRdB2yxTtMur69wAjF9fw4U76HjwbxcaBw5D09fZbCBykUfdln8KwS5XTm6
+	8yH8TrAg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uCLNu-0000000Ba2X-250z;
+	Tue, 06 May 2025 16:43:10 +0000
+Date: Tue, 6 May 2025 17:43:10 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [RFC][PATCH] btrfs_get_tree_subvol(): switch from fc_mount() to
+ vfs_create_mount()
+Message-ID: <20250506164310.GM2023217@ZenIV>
+References: <20250505030345.GD2023217@ZenIV>
+ <3qdz7ntes5ufac7ldgfsrnvotk4izalmtdf7opqox5mk3kpxus@gabtxt27uwah>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,14 +61,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADUfDZrWstGcx+EqsmaQvSJJrMAK-Ls+HtGyS8j3okZQ+N4FKQ@mail.gmail.com>
+In-Reply-To: <3qdz7ntes5ufac7ldgfsrnvotk4izalmtdf7opqox5mk3kpxus@gabtxt27uwah>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, May 06, 2025 at 09:14:19AM -0700, Caleb Sander Mateos wrote:
-> > +       head->plids = kcalloc(head->nr_plids, sizeof(head->plids),
-> > +                             GFP_KERNEL);
+On Tue, May 06, 2025 at 03:36:03PM +0200, Klara Modin wrote:
+> Hi,
 > 
-> Should this be sizeof(*head->plids)?
+> On 2025-05-05 04:03:45 +0100, Al Viro wrote:
+> > it's simpler to do btrfs_reconfigure_for_mount() right after vfs_get_tree() -
+> > no need to mess with ->s_umount.
+> > 
+> > Objections?
+> >     
+> 
+> I hit an oops on today's next-20250506 which seems to point here, and
+> reverting makes it go away.
+> 
+> Let me know if there's anything else you need.
 
-Indeed it should. This as-is overallocates the array size, so wouldn't
-have easily found it at runtime.
+.config and toolchain information would be useful...
 
