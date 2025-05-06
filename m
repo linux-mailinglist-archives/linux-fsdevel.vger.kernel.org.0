@@ -1,223 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-48258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48259-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C613AAC83D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 16:38:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C669AAC866
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 16:44:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA203B6C8D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 14:38:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B41D1C43374
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 14:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8620F2820CF;
-	Tue,  6 May 2025 14:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0702820B4;
+	Tue,  6 May 2025 14:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CRxKH3Pk"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GcQmmg8c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15562145B3E
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 14:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22EE270EA1;
+	Tue,  6 May 2025 14:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746542311; cv=none; b=ULedVarN1GbKtHivv1GI8EX2DIEsFAa3CY5Tmg+bjlZYdlWMZgTtaBk7cyPpQI2I1NirPNv+egmNQPLLAXdEQPVFBDyUO7Jmons4CMbihvW8diwzv925jmikmcgFr34Xcl+EV9QKtvpVAvv1nh44LWEVcSPVBDyfraOWEWcoCeM=
+	t=1746542647; cv=none; b=ELzPa1jvbhk43czkTOLoagZuA7LKIFS6PApVY4QIOEtqT35+tz7MajJVZfgD8NFVnDkZrpwNvFkeVByH9nhgSeWaShTqxxyu5dHzwmVTj6w9Ot/MEB5ZxqJ/CX0J79sLws3AZffHmih5ks9MuC5bULp/ZupsEe3ktqzuSj0zTbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746542311; c=relaxed/simple;
-	bh=Ma83b15qnnbFaueFtEvSpUdw/TKvSFOJHfOZe78Fr4A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uMB01eC0MLSJSrLasrfUWG95CTakEvDTnNkkif8WdIRYSRdQeMLiitfgkZnFzviVYdKc94QwAdFZOL1BLtRKrHW2a+sM4OIwYpDVaSV2RStA2TPJz/wT01YQQj+xIuNpQmkfBPZuqVpBz3ojwc+ymEdg7FeYkOxhjqITY9efl24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CRxKH3Pk; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5f632bada3bso9380a12.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 May 2025 07:38:28 -0700 (PDT)
+	s=arc-20240116; t=1746542647; c=relaxed/simple;
+	bh=3QfXSnc5w8R7jrH8OugG82kWJ+PxgyWUlsLE3oZD9XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lWqMeb1Y9IKuw7vQMsW8FHXoB+JdZUKiTYRT2WUTJmB1vdy9apBVUdrj3x3AVwha+PrFxEY8Y8YqySvvSaZxiqKKWjEJE9rM+iCIk+PIiTSW79vgusjLAi1QPZFzv91JAGKxWGP/OmceV+Ckv+68MEruRlj8wBFS653Se8A9jZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GcQmmg8c; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3a0adcc3e54so472700f8f.1;
+        Tue, 06 May 2025 07:44:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746542307; x=1747147107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WS0cqO7mEX8JBUGkY5ZSym9XPagAwEGfVvGLKmJF5sY=;
-        b=CRxKH3PkApshm30WZX8T9D4ebFVa2DK7zxt1/b5UuPL7Un040C1U04ni6pt6wn4EUz
-         5jx1dasvgSqPUAApV3udF1A/6C+nUlyypZIjBlpCM0dEuoRq7fICJSpaB2UhsFtOvRan
-         cgQZYs6G4UwwFepUYX64nBp1bhYcLI2CFkrti2s0X0fJmnym8e6wcNm1nbXBgHxxU4DO
-         73DjIY+ZRiUL8YZ58MzUU1ACZJE2e8eq3/y6W2agirsIrZFZiItiW8MF9e73oHUvzxHh
-         hKax1ddqHIzpONWeLztbYaFGdnyw3RTmNcKMUjTpBsKxrrazzPA+4XJ0EXcghTL4bPa9
-         UEJA==
+        d=gmail.com; s=20230601; t=1746542644; x=1747147444; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kgv2Oz6iPtMbJz2CTRkx8b47IVM/KLpXEmF8ocTs9kc=;
+        b=GcQmmg8c3imgKQKYsW0Vk5g/NoxyzB95h1HJR9sleHqgGJA+2mDR4+hNYV4tsm1+UK
+         fqamAjHcUa7YtZh2z1ssMATUaYa+LDp9Zzex+6FTR08RinZ0VJrBttkZ/2z3lWgeX5Ed
+         DzR9t/BjZqbXyUIftzE6kCdVn2f/1DL37pcT9nHXKl/bcV1oUauOFGoPaLU51wvNnxwo
+         yMeKIBTzoUXfN5mg1TlSYtlbAiKDY3dUnDqL47j7r9SdLFfjcJOspP4GWfKvIYuhE9wd
+         +23yF1eKqAdaL4nBHhxK4zBzBltgwRLX16Be+VOoxS3CcAMY5Njhu4jvUhbK4Q6X4zwc
+         +QeQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746542307; x=1747147107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WS0cqO7mEX8JBUGkY5ZSym9XPagAwEGfVvGLKmJF5sY=;
-        b=kMJFi3B8xFBshFJ95bjKB1Uz7m5xE2JEKxdab4Tgt3DsnTzl+BYs96kcz46qDgGyWJ
-         XNWKGUm5j/d5Pgs9+eyfKdIdyQO6M8jDt6bfxLq89B9t3T53bHDUk5d/1UIc70JGdLb5
-         sZaoIq5YjyFyFuzoVD2nLn3WbW38FcT3BA0mMFakG3AyBDcqJ2/KMcNId3QBxxXZXxNk
-         CJbOPM+As2Tv74KqY9egpay5fqJ2ItXowwn3rowaM4So8EeeZzLbswmT2uPRjSq75Mdu
-         bE6e2iGBLKDhqvzDFr1+/5aUSFkoCobTmVtjxDn1PxpVi0crQwLfSQANgo0xH5UprEh1
-         xvKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcGJ3oPlxDTXmS0kLU6P2k9lR1pjLVt0RrWNzrJ7ENrt9BbsnL1+tGRQ5e3UTCIRmE4yPcCRpKyf57bRaP@vger.kernel.org
-X-Gm-Message-State: AOJu0Yykbe9ruqUBem4/gRCa4Tb9qxEdLM/70U/p4IUkwmJsVo7gkHPy
-	VzVPR6Kyg+XKmRpT7l4TlS01OOsEMTfT7bw2msB1gt/gvS/uzrhUUgDRGI6Nxyx04fSF6mOWNXi
-	NLOugJk+ZU3ueLFXP8RdF7O8q/uYlDaLhBvDX
-X-Gm-Gg: ASbGncsku9vrpvZzUkHekpB9W9ya87W/bs965BW9MnFSHX1Sr0gC7bap6g4NjOxZu7z
-	TQCxz1QPb7d7WyE6S2rE5ca873/OMu/W48C3aOG8rq2bvXVdsrPc4KvOGjIV1TEOqq9bp+/Dkwz
-	uwJUqt5QIqquFkeDA08zVVmaVuC5bZaW4mHDIiVWLjQ3nlPDwGuQ==
-X-Google-Smtp-Source: AGHT+IEKBtQbqHTSi7RTxOlTKbd2L3krdaRx+iHlrQhBUxrpFEHfioEBlUhMAatv2Ff4k8wWL2KQK5USpqhewEIPDcg=
-X-Received: by 2002:aa7:d1d9:0:b0:5f8:d6b1:71ba with SMTP id
- 4fb4d7f45d1cf-5fbe76ccb80mr239a12.4.1746542307024; Tue, 06 May 2025 07:38:27
- -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746542644; x=1747147444;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Kgv2Oz6iPtMbJz2CTRkx8b47IVM/KLpXEmF8ocTs9kc=;
+        b=dRaI4mjJ/gSiM8CGdH/CIT/YXCG/18jy5g9ZFhhwn169XD31n4Y+Kle90rX4lfKHTj
+         JGrUGlTlM3bUSVm1CoGXpGp15ZnHgS4u7jiDq/UTnposRa9ZE8LUpx8yWi1/RwOo1yRC
+         saVGL1B6dBdk6m9wNcYssz/hQewbBZAsHOMW2Rer6Vv7MhZV3DncKH25ggoCJFAO7G2B
+         Ykvup5+tLbEQoHS+l7lDiRftseQpqMZVNONMPvz+FbAF89FIAqp8cJpDhzvdq4C5LDJY
+         pAZxL8h5TLH1l1pmWgF34MrLawOqa474sp9p+rfUMFPrm4hGcYUIv8PgV3/ai5JdgdFQ
+         nbrA==
+X-Forwarded-Encrypted: i=1; AJvYcCU0DcMcgLsqIhkuIqvHh8yDy8rZ5O5tePbnOIOR6cMxMh4wp9IpD0tTXVv9tOUUvMcmjZUbrMitK/cJGeXA@vger.kernel.org, AJvYcCWb4HCiZLmZz0TELzjM51KoQWOEw+dYTCaSaflQkabT1zD3jJ8u6BUbSAOHBN5xm6ZFVVlPe60YPDCymfDX@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywcqh33TR35+BhIULW9uWcXWNv6nEYTrBPgIJjXGCTXBVGnxq7r
+	Rb99xdJU2AeyswVx5TcOyeCt4pD6o+MeCnmViMlmIyACmUz+CsceQej/yw==
+X-Gm-Gg: ASbGncuYy721Hy1+5avY8Ni0VqGD1LXbVzPm9AbBBuWDWz1aeZ4wfz+EMP3mDR+Tzv1
+	eYm2gEd/Fl4RvEJT3znH+OKlCK6uIuKLLxmRZ31zNL+M1d0iTiYE3tz8CURQhWkVRDanBtcLDjA
+	VxNr4jNCwvJqiJGKcmwSltbsioIPXVfuUzSOda637fjn+qFVCzeYnfVwsyV3Vjl2ERPRmAUUZeF
+	4cPeGrRmkWTPJn3KP3j32xXFhk+63oOvOBFSVxjGTjddlSbJzyCK+NDYDi2OAY/y4/vjFq8hEEy
+	ceqbSfJae2nWn5YE9B/E0ZMMSmrboctrJN4/cYUWIyCh2rBix8M=
+X-Google-Smtp-Source: AGHT+IHbMZ5DozORsI2hRq+KWiNqDXAo9wLcIv2syQJ6WB+ScvWPPTo+aWIn/YhouYmVnEXqo73U8Q==
+X-Received: by 2002:a05:6000:1785:b0:39c:1f11:ead with SMTP id ffacd0b85a97d-3a09fd87a2cmr7930671f8f.26.1746542643823;
+        Tue, 06 May 2025 07:44:03 -0700 (PDT)
+Received: from f (cst-prg-3-11.cust.vodafone.cz. [46.135.3.11])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b178absm14124554f8f.97.2025.05.06.07.44.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 07:44:03 -0700 (PDT)
+Date: Tue, 6 May 2025 16:43:56 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pidfs: detect refcount bugs
+Message-ID: <bsap2vh4o7h3c5kwmtbgrcjuzldic2m33tlierxx6eqxz7uuqy@p3v3ipakqv3y>
+References: <20250506-uferbereich-guttun-7c8b1a0a431f@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250505-dompteur-hinhalten-204b1e16bd02@brauner>
- <20250505184136.14852-1-kuniyu@amazon.com> <CAG48ez35FN6ka4QtrNQ6aKEycQBOpJKy=VyhQDzKTwey+4KOMg@mail.gmail.com>
- <20250506-zugabe-bezog-f688fbec72d3@brauner>
-In-Reply-To: <20250506-zugabe-bezog-f688fbec72d3@brauner>
-From: Jann Horn <jannh@google.com>
-Date: Tue, 6 May 2025 16:37:49 +0200
-X-Gm-Features: ATxdqUG1RLsm5I44mZFoXDEOhGLmKo0PIMKTKhu327qv26lJZYIhQ2B6edAN2po
-Message-ID: <CAG48ez0Pc+QzxgAnT25KqyvjC8n0=diL6DnxBe7CcdQ32u9GcA@mail.gmail.com>
-Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow coredumping
- tasks to connect to coredump socket
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, alexander@mihalicyn.com, bluca@debian.org, 
-	daan.j.demeyer@gmail.com, davem@davemloft.net, david@readahead.eu, 
-	edumazet@google.com, horms@kernel.org, jack@suse.cz, kuba@kernel.org, 
-	lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, me@yhndnzj.com, netdev@vger.kernel.org, 
-	oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
-	zbyszek@in.waw.pl
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250506-uferbereich-guttun-7c8b1a0a431f@brauner>
 
-On Tue, May 6, 2025 at 10:06=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> On Mon, May 05, 2025 at 09:10:28PM +0200, Jann Horn wrote:
-> > On Mon, May 5, 2025 at 8:41=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon=
-.com> wrote:
-> > > From: Christian Brauner <brauner@kernel.org>
-> > > Date: Mon, 5 May 2025 16:06:40 +0200
-> > > > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
-> > > > > On Mon, May 5, 2025 at 1:14=E2=80=AFPM Christian Brauner <brauner=
-@kernel.org> wrote:
-> > > > > > Make sure that only tasks that actually coredumped may connect =
-to the
-> > > > > > coredump socket. This restriction may be loosened later in case
-> > > > > > userspace processes would like to use it to generate their own
-> > > > > > coredumps. Though it'd be wiser if userspace just exposed a sep=
-arate
-> > > > > > socket for that.
-> > > > >
-> > > > > This implementation kinda feels a bit fragile to me... I wonder i=
-f we
-> > > > > could instead have a flag inside the af_unix client socket that s=
-ays
-> > > > > "this is a special client socket for coredumping".
-> > > >
-> > > > Should be easily doable with a sock_flag().
-> > >
-> > > This restriction should be applied by BPF LSM.
-> >
-> > I think we shouldn't allow random userspace processes to connect to
-> > the core dump handling service and provide bogus inputs; that
-> > unnecessarily increases the risk that a crafted coredump can be used
-> > to exploit a bug in the service. So I think it makes sense to enforce
-> > this restriction in the kernel.
-> >
-> > My understanding is that BPF LSM creates fairly tight coupling between
-> > userspace and the kernel implementation, and it is kind of unwieldy
-> > for userspace. (I imagine the "man 5 core" manpage would get a bit
-> > longer and describe more kernel implementation detail if you tried to
-> > show how to write a BPF LSM that is capable of detecting unix domain
-> > socket connections to a specific address that are not initiated by
-> > core dumping.) I would like to keep it possible to implement core
-> > userspace functionality in a best-practice way without needing eBPF.
-> >
-> > > It's hard to loosen such a default restriction as someone might
-> > > argue that's unexpected and regression.
-> >
-> > If userspace wants to allow other processes to connect to the core
-> > dumping service, that's easy to implement - userspace can listen on a
-> > separate address that is not subject to these restrictions.
->
-> I think Kuniyuki's point is defensible. And I did discuss this with
-> Lennart when I wrote the patch and he didn't see a point in preventing
-> other processes from connecting to the core dump socket. He actually
-> would like this to be possible because there's some userspace programs
-> out there that generate their own coredumps (Python?) and he wanted them
-> to use the general coredump socket to send them to.
->
-> I just found it more elegant to simply guarantee that only connections
-> are made to that socket come from coredumping tasks.
->
-> But I should note there are two ways to cleanly handle this in
-> userspace. I had already mentioned the bpf LSM in the contect of
-> rate-limiting in an earlier posting:
->
-> (1) complex:
->
->     Use a bpf LSM to intercept the connection request via
->     security_unix_stream_connect() in unix_stream_connect().
->
->     The bpf program can simply check:
->
->     current->signal->core_state
->
->     and reject any connection if it isn't set to NULL.
+On Tue, May 06, 2025 at 01:55:54PM +0200, Christian Brauner wrote:
+> Now that we have pidfs_{get,register}_pid() that needs to be paired with
+> pidfs_put_pid() it's possible that someone pairs them with put_pid().
+> Thus freeing struct pid while it's still used by pidfs. Notice when that
+> happens. I'll also add a scheme to detect invalid uses of
+> pidfs_get_pid() and pidfs_put_pid() later.
+> 
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
+> ---
+>  kernel/pid.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/pid.c b/kernel/pid.c
+> index 26f1e136f017..8317bcbc7cf7 100644
+> --- a/kernel/pid.c
+> +++ b/kernel/pid.c
+> @@ -100,6 +100,7 @@ void put_pid(struct pid *pid)
+>  
+>  	ns = pid->numbers[pid->level].ns;
+>  	if (refcount_dec_and_test(&pid->count)) {
+> +		WARN_ON_ONCE(pid->stashed);
+>  		kmem_cache_free(ns->pid_cachep, pid);
+>  		put_pid_ns(ns);
+>  	}
+> -- 
+> 2.47.2
+> 
 
-I think that would be racy, since zap_threads sets that pointer before
-ensuring that the other threads under the signal_struct are killed.
+With the patch as proposed you are only catching the misuse if this is
+the last ref though.
 
->     The big downside is that bpf (and security) need to be enabled.
->     Neither is guaranteed and there's quite a few users out there that
->     don't enable bpf.
->
-> (2) simple (and supported in this series):
->
->     Userspace accepts a connection. It has to get SO_PEERPIDFD anyway.
->     It then needs to verify:
->
->     struct pidfd_info info =3D {
->             info.mask =3D PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
->     };
->
->     ioctl(pidfd, PIDFD_GET_INFO, &info);
->     if (!(info.mask & PIDFD_INFO_COREDUMP)) {
->             // Can't be from a coredumping task so we can close the
->             // connection without reading.
->             close(coredump_client_fd);
->             return;
->     }
->
->     /* This has to be set and is only settable by do_coredump(). */
->     if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
->             // Can't be from a coredumping task so we can close the
->             // connection without reading.
->             close(coredump_client_fd);
->             return;
->     }
->
->     // Ok, this is a connection from a task that has coredumped, let's
->     // handle it.
->
->     The crux is that the series guarantees that by the time the
->     connection is made the info whether the task/thread-group did
->     coredump is guaranteed to be available via the pidfd.
->
-> I think if we document that most coredump servers have to do (2) then
-> this is fine. But I wouldn't mind a nod from Jann on this.
-
-I wouldn't recommend either of these as a way to verify that the data
-coming over the socket is a core dump generated by the kernel, since
-they both look racy in that regard.
-
-But given that you're saying the initial userspace user wouldn't
-actually want such a restriction, and that we could later provide a
-separate way for userspace to check what initiated the connection, I
-guess this is fine for now.
+iow, the check should be hoisted above unrefing?
 
