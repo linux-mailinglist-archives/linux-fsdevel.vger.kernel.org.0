@@ -1,104 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-48212-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48213-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AE7AAC043
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 11:47:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF66AAC027
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 11:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B403B169F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 09:43:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2600C1C27C1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 09:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF5D27CCDE;
-	Tue,  6 May 2025 09:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HClMRX/Z"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E6C42750E2;
+	Tue,  6 May 2025 09:42:29 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 605B926D4D3
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 09:39:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828FB442C;
+	Tue,  6 May 2025 09:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746524380; cv=none; b=Z4E58yOo47SQre7Toj/CMggIOSaVGnxdQSWR9s/0F6ycJmHl+QYDKBjTh8yIiV6RjFV9hepenAZVXHHpsUFIQu7DgyEnIxxIU4qoYzgK1JHp/vqbqF8XEknjLYqidhxfYwtxOzUrYccfIH8gRPz1pjO5852YkpLuB8COWiHkiAg=
+	t=1746524548; cv=none; b=Wa4R5nZjYZRUsV7AA2EWHVXwlrKMAtcgzTyio9I30oUFhPkzN8Z5x5xdGllKt2yfhIc1UMt3vfoMs55EQ/iwEDI3ttqasvwg9JGlJcVbOJwDoPcleyghmUxoTiJNVPjHObzYx5YABsbyFWXzCN7CzBWdKHGZjeCi+K7Hu4yJXk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746524380; c=relaxed/simple;
-	bh=ddeL3+4Xwx6F8i2l6J2Sv8a8RQHIHwLek7kPAiXOVMM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=SBlr8zDdpZ2HUzCXN+JCEYDXC56Ppe0oXKxDLQLqWtLXZhSujCbqV85kdtp7knvbkddKReAVvMCyVfZttAL9bN4tgLzYcnLqhUrudbGn04rGmudnJnHWhv5lW67pej7kwSP0Yo/cRQl6gZdpuBi2ZuTFO9EBVx2F2WWG5G5Sp/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HClMRX/Z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746524378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WCH41PJGqffHSnBHBV0vSWsb+4SL3xUtY0q4b59CQS4=;
-	b=HClMRX/Z4/OhB3wsEAN33cs+kNURvGHTkzzWXizZ6hPTnB5oMF6LcBY44cVHNOMLv6o5Pt
-	OdZLHKmZgwVtJqOy9EzITug+1v+dUIvqCSyXIvgZkZyZHbRQk096wZ//7rgyi+vHT04uqv
-	Ud+YmMQplu/2JtFfplICNVjJxyXTZH8=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-332-p-oLq_gOMhmKBu2I3DM2IQ-1; Tue,
- 06 May 2025 05:39:32 -0400
-X-MC-Unique: p-oLq_gOMhmKBu2I3DM2IQ-1
-X-Mimecast-MFC-AGG-ID: p-oLq_gOMhmKBu2I3DM2IQ_1746524368
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B6C061801A2B;
-	Tue,  6 May 2025 09:39:27 +0000 (UTC)
-Received: from [10.22.80.45] (unknown [10.22.80.45])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 57D821956094;
-	Tue,  6 May 2025 09:39:20 +0000 (UTC)
-Date: Tue, 6 May 2025 11:39:17 +0200 (CEST)
-From: Mikulas Patocka <mpatocka@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-    "Md. Haris Iqbal" <haris.iqbal@ionos.com>, 
-    Jack Wang <jinpu.wang@ionos.com>, Coly Li <colyli@kernel.org>, 
-    Kent Overstreet <kent.overstreet@linux.dev>, 
-    Mike Snitzer <snitzer@kernel.org>, Chris Mason <clm@fb.com>, 
-    Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-    Andreas Gruenbacher <agruenba@redhat.com>, 
-    Carlos Maiolino <cem@kernel.org>, Damien Le Moal <dlemoal@kernel.org>, 
-    Naohiro Aota <naohiro.aota@wdc.com>, Johannes Thumshirn <jth@kernel.org>, 
-    "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-    slava@dubeyko.com, glaubitz@physik.fu-berlin.de, frank.li@vivo.com, 
-    linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, 
-    linux-btrfs@vger.kernel.org, gfs2@lists.linux.dev, 
-    linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-    linux-pm@vger.kernel.org
-Subject: Re: add more bio helpers v2
-In-Reply-To: <20250506044723.GA27656@lst.de>
-Message-ID: <db71b7f6-42ca-ed44-477a-19f22dbeefba@redhat.com>
-References: <20250430212159.2865803-1-hch@lst.de> <20250506044723.GA27656@lst.de>
+	s=arc-20240116; t=1746524548; c=relaxed/simple;
+	bh=tV0nDwIoH2g7mHnHzytl/Ey8Bl8yk1y+cNBPV8pyc5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BqdnmcNpP0CXKuirJwuUQ5luH5D53n38b2MLkMojQvUERUaQClGVflz7PftJNcbkmsi/5SeaKcW8QHfMeZRmQWUg/oP2nZfI95hSsVk4bgZMRQKeHGFZ6z5g3Dds1oi+Bu5VEVi3nuxDIHmsIe9iPX3uhQq8ZnzFMeaGEKZuuto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7373aa99e2cso794963b3a.0;
+        Tue, 06 May 2025 02:42:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746524547; x=1747129347;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T0NjyGvijBDvIUSC5O5zU3aez3V3m7u5cMnfIW2NYxk=;
+        b=vNWKMPvb3P3CPwoVYGONDAs/4Q8brwXpho4xViHaThaWq8WhBd4dls4a5JsTMN0seD
+         zPQdXlo0AVkbrB1aoVAwJiLvwWQkd9TCdCE3N9QASwL/uBNJiiUYY23tnnVeKfqZF6gc
+         lslvL+jMjnOATIDGuwzcUkI68VmJBZ4+LAFKw5rdMbTj7k5noLj2qaNTxZn8eKqYTlAu
+         7I3QGqaavCLvBfHHOJW2gHfi4GbFZfXELxE+tYBME3I31vi6ylwjsHF9MDkqsidxqp//
+         /nybecEWhSI9DAZfhw6V3oXIN5ZB2OezxByVkBz1PAFm2K/anMvFJsMPtM9x4mQBFNwi
+         C/qw==
+X-Forwarded-Encrypted: i=1; AJvYcCUJJ/I9/VqqszwvvSk43rAU+C07g0qQ3N+2drK4yCYTv+Fo6D69UIACNjIn97eDBgrWzdBWn9pmoMWJPrQp@vger.kernel.org, AJvYcCWA3x+owDHEvcV6d/lTrjjc3S7lrz2JRtAIkPWj+aCHsEpqRAzU1/2A0J6TvH3VfVx3Az2K29BU2AY=@vger.kernel.org, AJvYcCWrN8FVv/sps6D6Dlm3amA/ecldIy9/ggCX3+6RSiuzdjHKPQSjfFeJoVajy8HEVUWmKi1DqGZ/CT6KNlVS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQg1JatYahWw6eChXHfAxZ0JpU/Q79+O7HLMFe9/a+MppAghqh
+	owNzhhT9BugCHtyEbaVhxJHwAsSHnFdH4luidT/GmJkbqrWlFpY2sxG3VQ==
+X-Gm-Gg: ASbGncu5blTw5Hhc4Sn97kEMgWgxAfIVKB7z5vTaZqGS4ZW/XmTFK/zZmawTckOdDUF
+	c5ibeU+LrtVgZtV38dy/TmjMMz34LhQT4GT7A0ae8Dr8T7e4pj1CQpbYDyDNIKSh/6k9lLn3DRG
+	AV+zs/r0wMTvobzzRS2Bto2z8BXCcyOxC17gKtlt1B1l5nS7oFyLHf30J5k4yN6KBUhhFR+fpyK
+	H2FM1dtpJB/I/0H3IsSAKcXycXxXNarR72jTmH11m5gFSe+/y5zYtzNLTGPCFNy2ylYREu3nbw2
+	V2bwKm8WkSqwCWRbCl07CGQ8Eu105AnIL98S1HYOJRze/MX+sUKe
+X-Google-Smtp-Source: AGHT+IHJPV6QHn0fik5+fgOnYxj6sw2W5noBjtawQua2EwoODPBFi11YGxjUR1TwWEuCjtTqOEsvmA==
+X-Received: by 2002:a05:6a21:e89:b0:1ee:ea8f:2e9f with SMTP id adf61e73a8af0-20cdc0f5235mr9752018637.0.1746524546592;
+        Tue, 06 May 2025 02:42:26 -0700 (PDT)
+Received: from [192.168.50.136] ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b1fc0e32b8bsm5555899a12.48.2025.05.06.02.42.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 06 May 2025 02:42:26 -0700 (PDT)
+Message-ID: <4dcff9ce-4ec8-4b57-9f21-a7e2f37b4d5c@kzalloc.com>
+Date: Tue, 6 May 2025 18:42:21 +0900
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Prevent panic from NULL dereference in
+ alloc_fs_context() during do_exit()
+To: Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Pavel Machek <pavel@kernel.org>, Len Brown <len.brown@intel.com>,
+ byungchul@sk.com, max.byungchul.park@gmail.com,
+ linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250505203801.83699-2-ysk@kzalloc.com>
+ <20250505223615.GK2023217@ZenIV>
+ <20250506-hochphase-kicken-7fa895216c2a@brauner>
+Content-Language: en-US
+From: Yunseong Kim <ysk@kzalloc.com>
+Organization: kzalloc
+In-Reply-To: <20250506-hochphase-kicken-7fa895216c2a@brauner>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi Christian,
 
+On 5/6/25 5:45 오후, Christian Brauner wrote:
+>>> diff --git a/fs/fs_context.c b/fs/fs_context.c
+>>> index 582d33e81117..529de43b8b5e 100644
+>>> --- a/fs/fs_context.c
+>>> +++ b/fs/fs_context.c
+>>> @@ -282,6 +282,9 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
+>>>  	struct fs_context *fc;
+>>>  	int ret = -ENOMEM;
+>>>  
+>>> +	if (!current->nsproxy || !current->nsproxy->net_ns)
+>>> +		return ERR_PTR(-EINVAL);
+>>> +
+>>>  	fc = kzalloc(sizeof(struct fs_context), GFP_KERNEL_ACCOUNT);
+>>>  	if (!fc)
+>>>  		return ERR_PTR(-ENOMEM);
+>>
+>> That might paper over the oops, but I very much doubt that this will be
+>> a correct fix...  Note that in efivarfs_pm_notify() we have other
+>> fun issues when run from such context - have task_work_add() fail in
+>> fput() and if delayed_fput() runs right afterwards and
+>>         efivar_init(efivarfs_check_missing, sfi->sb, false);
+>> in there might end up with UAF...
+> 
+> We've already accepted a patch that removes the need for
+> vfs_kern_mount() from efivarfs completely.
 
-On Tue, 6 May 2025, Christoph Hellwig wrote:
+I’ll take a look at the patch you mentioned, check if the issue reproduces, and get back to you.
 
-> This has maintaner ACKs for everything but the two dm and the one
-> btrfs patch one.  Maybe we can queue up the series minus those three
-> patches and then deal with them later?
+Link: https://lore.kernel.org/all/20250318194111.19419-4-James.Bottomley@HansenPartnership.com/
 
-Hi
+Thanks for checking it!
 
-I've just acked the two dm patches, so you can queue them.
-
-Mikulas
+Best regards,
+Yunseong Kim
 
 
