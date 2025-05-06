@@ -1,153 +1,175 @@
-Return-Path: <linux-fsdevel+bounces-48182-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48183-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E962AABCDC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 10:15:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85C93AABCAC
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 10:10:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 346B83BF802
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:00:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CEAD1B61B44
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94521553AA;
-	Tue,  6 May 2025 07:51:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997A1221FD8;
+	Tue,  6 May 2025 08:06:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EylYSC+V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2BEF4B1E6B;
-	Tue,  6 May 2025 07:51:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03C321D3C9;
+	Tue,  6 May 2025 08:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746517883; cv=none; b=BaxwbXjyh7CAKHPtpfrT1CZdxEIkftbfOMmkXqWq4lmb5bRTKNMzfZo8pzKBZkM8S3L514z5A4px/vdmFGqQceD5XU1rhVHBfqRp2rpfel+1s0pdiNdf+8t4MUifZRZAIOOWLZikG0RLR8kXjg0UMfGNBUFOnGDmWT4kP3S4x1M=
+	t=1746518795; cv=none; b=srPuEjqJGPjSK8bwHkJu2ApleERyRUx7eWQuAl1EArhA3kOsCW3fux1aVoGh1VDNC9ZdtItqgdS6PV5bKIiQR+N7oq4PmorFLRBNjPFtc6Wq1K89tsbK8nEErN2d5E4Rn8k63SR23zvREWmwSh+I24zDUyDlNna0+RyJRfdIDRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746517883; c=relaxed/simple;
-	bh=1CX/lfJBBRj/7Bkzs8EaPt98CGd3E61b+7bPWFKLsdI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bTgHqQpo8kNbM5mWksZVCQbMA6JYrQIfL4tymVgN9LgtYWjjIE+Aq2ThtsJAff2dbYf7OKjlcfSd9hR6a7xKYqnprjqibEXRPyy7u6DcxkJ9zYknf2+Itd8sj1oyhlnv5VBp17xrlYhwYMbWgoGU6Kbp3RIKSrzcwvPvn8dylKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zs9Ym0TKjz4f3jXs;
-	Tue,  6 May 2025 15:50:52 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 798ED1A1C5E;
-	Tue,  6 May 2025 15:51:16 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgAXe19yvxlod1paLg--.34192S3;
-	Tue, 06 May 2025 15:51:16 +0800 (CST)
-Message-ID: <52c1dd13-1a04-4d9a-b687-639ed348474e@huaweicloud.com>
-Date: Tue, 6 May 2025 15:51:13 +0800
+	s=arc-20240116; t=1746518795; c=relaxed/simple;
+	bh=xBVf+USjaN2b46y+i8ZxNLUPXMEkl18B42uMt5ZF8Mg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2rsF8hzvIoct9aSoQxDdyTklCgpJBWbf73Elh/cC9hi5xISesFAafXhc+kTxkIKowo19GkVu6WVdFRcjq3sgeyr5AS0kT2DnLHWcGecPbPsiG+3QTyOnIAhBktxhPV0x1iX+IheWdFNhdNF6i6EXQ/L4sJl7wIhC9TU1p6lJiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EylYSC+V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01620C4CEE4;
+	Tue,  6 May 2025 08:06:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746518794;
+	bh=xBVf+USjaN2b46y+i8ZxNLUPXMEkl18B42uMt5ZF8Mg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EylYSC+V8AWbshXqQqYtWI2wZCpFaPqMY0n3ALUAAWccDAiLeiB41bAfldq+XJFrE
+	 FDzN0dGVB2gTFYKblVQsSmEg4SMZeQ37BVzEG0lymYgQKXOWTfW3/62o7dZ78SZPkR
+	 5ZD/0ahDIeCQGKRSzfBTwTeQ1Tcko2+SAENZc4dxJcGV6d9UR30fVjOe6vvzybYKXh
+	 IMY1VfckZ7w6GyMG5rjKGqDPltkbb6NXc22Y6zzqgLUG+nsNPfAco1MrZThALl+UPm
+	 WWh0eI4vRIlJ7whfduueC5Am75ScxesnLyBmbfuIpUl8NoZ2AX1V/OV6nKbXN7FJus
+	 umTUcrP5Zi2GA==
+Date: Tue, 6 May 2025 10:06:27 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alexander@mihalicyn.com, bluca@debian.org, daan.j.demeyer@gmail.com, 
+	davem@davemloft.net, david@readahead.eu, edumazet@google.com, horms@kernel.org, 
+	jack@suse.cz, kuba@kernel.org, lennart@poettering.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
+	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow
+ coredumping tasks to connect to coredump socket
+Message-ID: <20250506-zugabe-bezog-f688fbec72d3@brauner>
+References: <20250505-dompteur-hinhalten-204b1e16bd02@brauner>
+ <20250505184136.14852-1-kuniyu@amazon.com>
+ <CAG48ez35FN6ka4QtrNQ6aKEycQBOpJKy=VyhQDzKTwey+4KOMg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 01/11] block: introduce BLK_FEAT_WRITE_ZEROES_UNMAP
- to queue limits features
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
- linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
- linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org, hch@lst.de,
- tytso@mit.edu, djwong@kernel.org, john.g.garry@oracle.com,
- bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
- brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
- <20250421021509.2366003-2-yi.zhang@huaweicloud.com>
- <yq18qnav4zj.fsf@ca-mkp.ca.oracle.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <yq18qnav4zj.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAXe19yvxlod1paLg--.34192S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWF4rtF4kur4rCryrKF15Arb_yoW5AF1rp3
-	yjv3W8tr9xGF17uw1kZw1vqry5uws3CFW3Gw48X3s09ws8XF1xtFySqFyYg3yxGr1fGa4j
-	vFWvqa47Aan8AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez35FN6ka4QtrNQ6aKEycQBOpJKy=VyhQDzKTwey+4KOMg@mail.gmail.com>
 
-Hi, Martin!
-
-On 2025/5/6 12:21, Martin K. Petersen wrote:
+On Mon, May 05, 2025 at 09:10:28PM +0200, Jann Horn wrote:
+> On Mon, May 5, 2025 at 8:41 PM Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
+> > From: Christian Brauner <brauner@kernel.org>
+> > Date: Mon, 5 May 2025 16:06:40 +0200
+> > > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
+> > > > On Mon, May 5, 2025 at 1:14 PM Christian Brauner <brauner@kernel.org> wrote:
+> > > > > Make sure that only tasks that actually coredumped may connect to the
+> > > > > coredump socket. This restriction may be loosened later in case
+> > > > > userspace processes would like to use it to generate their own
+> > > > > coredumps. Though it'd be wiser if userspace just exposed a separate
+> > > > > socket for that.
+> > > >
+> > > > This implementation kinda feels a bit fragile to me... I wonder if we
+> > > > could instead have a flag inside the af_unix client socket that says
+> > > > "this is a special client socket for coredumping".
+> > >
+> > > Should be easily doable with a sock_flag().
+> >
+> > This restriction should be applied by BPF LSM.
 > 
-> Hi Zhang!
+> I think we shouldn't allow random userspace processes to connect to
+> the core dump handling service and provide bogus inputs; that
+> unnecessarily increases the risk that a crafted coredump can be used
+> to exploit a bug in the service. So I think it makes sense to enforce
+> this restriction in the kernel.
 > 
->> +		[RO] Devices that explicitly support the unmap write zeroes
->> +		operation in which a single write zeroes request with the unmap
->> +		bit set to zero out the range of contiguous blocks on storage
->> +		by freeing blocks, rather than writing physical zeroes to the
->> +		media. If the write_zeroes_unmap is set to 1, this indicates
->> +		that the device explicitly supports the write zero command.
->> +		However, this may be a best-effort optimization rather than a
->> +		mandatory requirement, some devices may partially fall back to
->> +		writing physical zeroes due to factors such as receiving
->> +		unaligned commands. If the parameter is set to 0, the device
->> +		either does not support this operation, or its support status is
->> +		unknown.
+> My understanding is that BPF LSM creates fairly tight coupling between
+> userspace and the kernel implementation, and it is kind of unwieldy
+> for userspace. (I imagine the "man 5 core" manpage would get a bit
+> longer and describe more kernel implementation detail if you tried to
+> show how to write a BPF LSM that is capable of detecting unix domain
+> socket connections to a specific address that are not initiated by
+> core dumping.) I would like to keep it possible to implement core
+> userspace functionality in a best-practice way without needing eBPF.
 > 
-> I am not so keen on mixing Write Zeroes (which is NVMe-speak) and Unmap
-> (which is SCSI). Also, Deallocate and Unmap reflect block provisioning
-> state on the device but don't really convey what is semantically
-> important for your proposed change (zeroing speed and/or media wear
-> reduction).
+> > It's hard to loosen such a default restriction as someone might
+> > argue that's unexpected and regression.
 > 
+> If userspace wants to allow other processes to connect to the core
+> dumping service, that's easy to implement - userspace can listen on a
+> separate address that is not subject to these restrictions.
 
-Since this flag doesn't strictly guarantee zeroing speed or media wear
-reduction optimizations, but rather reflects typical optimization
-behavior across most supported devices and cases. Therefore, I propose
-using a name that accurately indicates the function of the block device.
-However, also can't think of a better name either. Using the name
-WRITE_ZEROES_UNMAP seems appropriate to convey that the block device
-supports this type of Deallocate and Unmap state.
+I think Kuniyuki's point is defensible. And I did discuss this with
+Lennart when I wrote the patch and he didn't see a point in preventing
+other processes from connecting to the core dump socket. He actually
+would like this to be possible because there's some userspace programs
+out there that generate their own coredumps (Python?) and he wanted them
+to use the general coredump socket to send them to.
 
-> That said, I'm having a hard time coming up with a better term.
-> WRITE_ZEROES_OPTIMIZED, maybe? Naming is hard...
+I just found it more elegant to simply guarantee that only connections
+are made to that socket come from coredumping tasks.
 
-Using WRITE_ZEROES_OPTIMIZED feels somewhat too generic to me, and
-users may not fully grasp the specific optimizations it entails based
-on the name.
+But I should note there are two ways to cleanly handle this in
+userspace. I had already mentioned the bpf LSM in the contect of
+rate-limiting in an earlier posting:
 
-> 
-> For the description, perhaps something like the following which tries to
-> focus on the block layer semantics without using protocol-specific
-> terminology?
-> 
-> [RO] This parameter indicates whether a device supports zeroing data in
-> a specified block range without incurring the cost of physically writing
-> zeroes to media for each individual block. This operation is a
-> best-effort optimization, a device may fall back to physically writing
-> zeroes to media due to other factors such as misalignment or being asked
-> to clear a block range smaller than the device's internal allocation
-> unit. If write_zeroes_unmap is set to 1, the device implements a zeroing
-> operation which opportunistically avoids writing zeroes to media while
-> still guaranteeing that subsequent reads from the specified block range
-> will return zeroed data. If write_zeroes_unmap is set to 0, the device
-> may have to write each logical block media during a zeroing operation.
-> 
+(1) complex:
 
-Thank you for optimizing the description, it looks good to me. I'd like
-to this one in my next iteration. :)
+    Use a bpf LSM to intercept the connection request via
+    security_unix_stream_connect() in unix_stream_connect().
 
-Thanks,
-Yi.
+    The bpf program can simply check:
 
+    current->signal->core_state
+
+    and reject any connection if it isn't set to NULL.
+
+    The big downside is that bpf (and security) need to be enabled.
+    Neither is guaranteed and there's quite a few users out there that
+    don't enable bpf.
+
+(2) simple (and supported in this series):
+
+    Userspace accepts a connection. It has to get SO_PEERPIDFD anyway.
+    It then needs to verify:
+
+    struct pidfd_info info = {
+            info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
+    };
+
+    ioctl(pidfd, PIDFD_GET_INFO, &info);
+    if (!(info.mask & PIDFD_INFO_COREDUMP)) {
+            // Can't be from a coredumping task so we can close the
+	    // connection without reading.
+	    close(coredump_client_fd);
+	    return;
+    }
+
+    /* This has to be set and is only settable by do_coredump(). */
+    if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
+            // Can't be from a coredumping task so we can close the
+	    // connection without reading.
+	    close(coredump_client_fd);
+	    return;
+    }
+
+    // Ok, this is a connection from a task that has coredumped, let's
+    // handle it.
+
+    The crux is that the series guarantees that by the time the
+    connection is made the info whether the task/thread-group did
+    coredump is guaranteed to be available via the pidfd.
+ 
+I think if we document that most coredump servers have to do (2) then
+this is fine. But I wouldn't mind a nod from Jann on this.
 
