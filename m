@@ -1,239 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-48287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C18FAACDF3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 21:21:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AADFAACE06
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 21:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC1E916F670
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 19:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 322BF1C08947
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 19:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6389D1F4176;
-	Tue,  6 May 2025 19:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5AA205ABB;
+	Tue,  6 May 2025 19:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fauAmZt3"
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="rqJnXozN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp-fw-6001.amazon.com (smtp-fw-6001.amazon.com [52.95.48.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094C0146593;
-	Tue,  6 May 2025 19:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BFD72624;
+	Tue,  6 May 2025 19:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.95.48.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746559252; cv=none; b=LlDcdwSvyJTa1EWpZfEHCeSoj6ElNizYAqkk6oS1AGxwkAVHt1d0LJLu7xqelKdWU71HUoMiftzTbr+gISq2PBKXL2v+CD0ptUNnDbBQdzFKHFucYyfd2GoCK63KDHipTqROp0FQBT1VZqgU+mrUCThpgY9ahFqa98ti0m3tMfE=
+	t=1746559780; cv=none; b=faWhKhOu5EKqKn5p/Id3CSlau/MajUDow+hs9CkO07+U4Hbdt726BpJs7+pfBwRlFUijmx0z7oS1atIW8iwvYnq+rlkW5gOA7sjs80dKkiwAi13jKXPKwg1NprLbuWUSZXvIOiRTKwpESZKHz5hUdIkQ/DxoHz/y0n+5z15oK40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746559252; c=relaxed/simple;
-	bh=2RQ+atHs2ge8P3oUSkl6KzvkCoWLmkp0NnYSwcGFpkc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EedVwMVIq8fQsCDlzSNWdQBdX5LTEeT2c9AVuhhvjWx4VPc2rVNtc1QdJ3YWJfdhQ11nh0OyfWK3O1cYXmtkLEN8f61fZih6H5cl7y4hg9U3E9+lIDoTmOi/9Ht5M2j+/PggLBUJoGhqEt+H/6NSMyiymoNfqPdFQ4Za7hn+T+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fauAmZt3; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac345bd8e13so1001860766b.0;
-        Tue, 06 May 2025 12:20:50 -0700 (PDT)
+	s=arc-20240116; t=1746559780; c=relaxed/simple;
+	bh=b1VVsab0OH/DxDyZuw5vIf9OGWV1aWvyxGG6Y4CMI48=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PdFuv/ni8y1Gs8vwIJ8YW57EJFHyURPwT0YRRjj4C6idhPEzpmbL5A2d9qznfa3eCkyQSvg1sNdt7wJ+j+xuQdbMuBs2ro/11KwxYnAox4ueFq/sHVSPNdHXIAKlt+rx73lgK7v2JnRyt83gUa6X8xpoJvYDyW0buLeHQeCPpqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=rqJnXozN; arc=none smtp.client-ip=52.95.48.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746559249; x=1747164049; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+RWW3H7hnBPC+BlgVAu1FamM2anZ6JxP0vKTBmQ48L8=;
-        b=fauAmZt3pXiP7ZW8myV/2YyBE8zTU+gvp/Ch3b/u2gkg9a40WI0mujBKnv5d2DaY3j
-         qIyWaehp1/Pu7GZqndlhQcOb6vjmHEIBrid5o7blZ6GkUjqtKVGGnuXC2H12/Zv14Qr/
-         SYRRYyq5GyI/195Z0JSr9u6O7VJahlVLBmw48C5lE/uDkOrShLmDve88jXw24a7ZDvSU
-         RsYiLfKF3mJHn2wyF6hygtUkGYEJEYJ5GY9saCxpO8tQHXoVXQ442CNkyhL1/73Kh6YM
-         IAPpTOFITIHfGezENx+n0794iUGlusFCxcPN5zM7tBncs9A2OxjQo02ZoRyAUs+zN2Vs
-         GEKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746559249; x=1747164049;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+RWW3H7hnBPC+BlgVAu1FamM2anZ6JxP0vKTBmQ48L8=;
-        b=vfSDFh2/IjM54T3sg+hoI3+xsXvsj1TQoDK/vx8slbb8rTsj7gEj2u9kTYPacA3RpD
-         D6xd+ip07jyAzagytqlu2xrkGEXWhc12vKztJJaMa7Q+4Hfr+y13A3f4O3UUZzmfZugW
-         2ZlCLU2AyfZ2/44vEPFw5wKR4vj+2ubr+6/iyta1uUnu1m4O3U/zmuJ4PMb8OMPDbkOH
-         h5TMN7VsJ+zWgQ0hRh0iqlqAtbY53DR4ztm9VmtarP5V56/y74SrltgnuEEiWIWZFLF3
-         oaBA947OdMyD67qfWSyt0xxIRztFw+XfGvdqEWJWP04Kl2IfpsQ0wI0E1MBUVKmxYtvi
-         X9WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQ6PFqyzAHHdMz//olUZHqjJeoS5vRyDQczfaBS4f47RJP3pAR9NYLzT9fqCK/Ts/Fm8ankAFSMo+T6Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI3osw0DTZy6KecIfj0NkFTSSFnslLArpamW0v9PYtaKFrxwpn
-	2Ef/qTWJOvJIFFdfLIZMoc8T0xmE4JhF3o3KttPNk5v+g8hiRgfejiqdRw==
-X-Gm-Gg: ASbGncuUgi3hCsbiW7wpRintDPQytlUWFzymkUOFnJogzJFa6KE99SFqba3X6UeSJqv
-	mkoB3/6SADfCHHN96y4jFBhmdv78WMDUOPR1QFCE8hJkV3ZVvux0JGgr4cN3KzGsrIfnKf1u3tK
-	tdOJMZbxkNEPnX5pBMuHnhJhTeilSrNgMy0+KIo3gHj1bR/WlgcLLz0WNxAP8DnnO6+bvKAbdtJ
-	AcK4d1Ol1r+Jbj3hqq9HhCOknBol7iJ2CFZ9nprbi955npB0tyiFveZ1aZ8Fyr8CafhPvwzYd8V
-	X31Xlz1kj2MX0+ICNP/mhOJOCqcf8nW7bvcg0WNGhsOscX5nwTEvNKY=
-X-Google-Smtp-Source: AGHT+IEKTE1cNiZjY7lEaOeC36nnC6rJcUfJMoBq5x+Q128iUL5mPzSvwrzHHgK40Xv3H+/rOeF1uA==
-X-Received: by 2002:a17:907:3ea3:b0:ac6:d142:2c64 with SMTP id a640c23a62f3a-ad1e8bcf2c7mr73472766b.18.1746559248868;
-        Tue, 06 May 2025 12:20:48 -0700 (PDT)
-Received: from localhost (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ad18914733esm750651166b.33.2025.05.06.12.20.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 06 May 2025 12:20:48 -0700 (PDT)
-Date: Tue, 6 May 2025 21:20:47 +0200
-From: Klara Modin <klarasmodin@gmail.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [RFC][PATCH] btrfs_get_tree_subvol(): switch from fc_mount() to
- vfs_create_mount()
-Message-ID: <ukytl7lwaprjovct6qvkgdqaou6kt3pxpjdocv5r45r6unpjbx@qjq6ffj4x3x7>
-References: <20250505030345.GD2023217@ZenIV>
- <3qdz7ntes5ufac7ldgfsrnvotk4izalmtdf7opqox5mk3kpxus@gabtxt27uwah>
- <20250506172539.GN2023217@ZenIV>
- <j2tom2y6562wa7r6wjsxwgc25t3uoine45ills367o4y2booxr@3jdyomwkvt6w>
- <20250506175104.GO2023217@ZenIV>
- <4pg5rjsoxzxjgcx2wzucw2wr7uvaxws423stdlv75t2udfkash@jff3ci54z35u>
- <20250506181604.GP2023217@ZenIV>
- <juv6ldm6i53onsz355znrhcivf6bmog25spdkvnlvydhansmao@bpzxifunwl2n>
- <20250506190513.GQ2023217@ZenIV>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1746559779; x=1778095779;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=eCdDBNAJ30AvlG3uxF4+zSKk9L3XGdJAilQrs6Phzuw=;
+  b=rqJnXozNH3EqnifXC+klhiOAIS2EZF3dHwUniQAC9LnfNJV2SKE0wLCK
+   1kCEE3PF/VUMAyVDDd6PjQdNkwlumjN7wcvxcUulPKIUR26gBOF3Ho3hN
+   dDIV8vHq5UQ/Xyt2aA6EAMSsws1SJZSZw4eLFY6cgUTVli9qINnNp/XvY
+   4=;
+X-IronPort-AV: E=Sophos;i="6.15,267,1739836800"; 
+   d="scan'208";a="487328028"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-6001.iad6.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 May 2025 19:29:33 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.7.35:23426]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.21.231:2525] with esmtp (Farcaster)
+ id e0cbbc4a-76b6-456b-b756-aa36bf60c849; Tue, 6 May 2025 19:29:33 +0000 (UTC)
+X-Farcaster-Flow-ID: e0cbbc4a-76b6-456b-b756-aa36bf60c849
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 6 May 2025 19:29:31 +0000
+Received: from 6c7e67bfbae3.amazon.com (10.187.170.44) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Tue, 6 May 2025 19:29:27 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <brauner@kernel.org>
+CC: <alexander@mihalicyn.com>, <bluca@debian.org>, <daan.j.demeyer@gmail.com>,
+	<davem@davemloft.net>, <david@readahead.eu>, <edumazet@google.com>,
+	<horms@kernel.org>, <jack@suse.cz>, <jannh@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <lennart@poettering.net>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<me@yhndnzj.com>, <netdev@vger.kernel.org>, <oleg@redhat.com>,
+	<pabeni@redhat.com>, <viro@zeniv.linux.org.uk>, <zbyszek@in.waw.pl>
+Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow coredumping tasks to connect to coredump socket
+Date: Tue, 6 May 2025 12:28:44 -0700
+Message-ID: <20250506192920.17567-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250506-buchmacher-gratulant-9960af036671@brauner>
+References: <20250506-buchmacher-gratulant-9960af036671@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250506190513.GQ2023217@ZenIV>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EX19D032UWA003.ant.amazon.com (10.13.139.37) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On 2025-05-06 20:05:13 +0100, Al Viro wrote:
-> On Tue, May 06, 2025 at 08:34:27PM +0200, Klara Modin wrote:
-> 
-> > > What's more, on the overlayfs side we managed to get to
-> > >         upper_mnt = clone_private_mount(upperpath);
-> > >         err = PTR_ERR(upper_mnt);
-> > >         if (IS_ERR(upper_mnt)) {
-> > >                 pr_err("failed to clone upperpath\n");
-> > >                 goto out;
-> > > so the upper path had been resolved...
-> > > 
-> > > OK, let's try to see what clone_private_mount() is unhappy about...
-> > > Could you try the following on top of -next + braino fix and see
-> > > what shows up?  Another interesting thing, assuming you can get
-> > > to shell after overlayfs mount failure, would be /proc/self/mountinfo
-> > > contents and stat(1) output for upper path of your overlayfs mount...
+From: Christian Brauner <brauner@kernel.org>
+Date: Tue, 6 May 2025 17:16:13 +0200
+> On Tue, May 06, 2025 at 04:51:25PM +0200, Jann Horn wrote:
+> > On Tue, May 6, 2025 at 9:39 AM Christian Brauner <brauner@kernel.org> wrote:
+> > > > ("a kernel socket" is not necessarily the same as "a kernel socket
+> > > > intended for core dumping")
+> > >
+> > > Indeed. The usermodehelper is a kernel protocol. Here it's the task with
+> > > its own credentials that's connecting to a userspace socket. Which makes
+> > > this very elegant because it's just userspace IPC. No one is running
+> > > around with kernel credentials anywhere.
 > > 
-> > It looks like the mount never succeded in the first place? It doesn't
-> > appear in /proc/self/mountinfo at all:
-> > 
-> > 2 2 0:2 / / rw - rootfs rootfs rw
-> > 24 2 0:22 / /proc rw,relatime - proc proc rw
-> > 25 2 0:23 / /sys rw,relatime - sysfs sys rw
-> > 26 2 0:6 / /dev rw,relatime - devtmpfs dev rw,size=481992k,nr_inodes=120498,mode=755
-> > 27 2 259:1 / /mnt/root-ro ro,relatime - squashfs /dev/nvme0n1 ro,errors=continue
-> > 
-> > I get the "kern_mount?" message.
-> 
-> What the... actually, the comment in front of that thing makes no
-> sense whatsoever - it's *not* something kernel-internal; we get
-> there for mounts that are absolute roots of some non-anonymous
-> namespace; kernel-internal ones fail on if (!is_mounted(...))
-> just above that.
-> 
-> OK, the comment came from db04662e2f4f "fs: allow detached mounts
-> in clone_private_mount()" and it does point in an interesting
-> direction - commit message there speaks of overlayfs and use of
-> descriptors to specify layers.
-> 
-> Not that check_for_nsfs_mounts() (from the same commit) made any sense
-> there - we don't *care* about anything mounted somewhere in that mount,
-> since whatever's mounted on top of it does not follow into the copy
-> (which is what has_locked_children() call is about - in effect, in copy
-> you see all mountpoints that had been covered in the original)...
-> 
-> Oh, well - so we are seeing an absolute root of some non-anonymous
-> namespace there.  Or a weird detached mount claimed to belong to
-> some namespace, anyway.
-> 
-> Let's see if that's the way upperpath comes to be (and get a bit more
-> information on that weird mount):
-> 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index eb990e9a668a..9b4c4afa2b29 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2480,31 +2480,52 @@ struct vfsmount *clone_private_mount(const struct path *path)
->  
->  	guard(rwsem_read)(&namespace_sem);
->  
-> -	if (IS_MNT_UNBINDABLE(old_mnt))
-> +	if (IS_MNT_UNBINDABLE(old_mnt)) {
-> +		pr_err("unbindable");
->  		return ERR_PTR(-EINVAL);
-> +	}
->  
->  	if (mnt_has_parent(old_mnt)) {
-> -		if (!check_mnt(old_mnt))
-> +		if (!check_mnt(old_mnt)) {
-> +			pr_err("mounted, but not in our namespace");
->  			return ERR_PTR(-EINVAL);
-> +		}
->  	} else {
-> -		if (!is_mounted(&old_mnt->mnt))
-> +		if (!is_mounted(&old_mnt->mnt)) {
-> +			pr_err("not mounted");
->  			return ERR_PTR(-EINVAL);
-> +		}
->  
->  		/* Make sure this isn't something purely kernel internal. */
-> -		if (!is_anon_ns(old_mnt->mnt_ns))
-> +		if (!is_anon_ns(old_mnt->mnt_ns)) {
-> +			if (old_mnt == old_mnt->mnt_ns->root)
-> +				pr_err("absolute root");
-> +			else
-> +				pr_err("detached, but claimed to be in some ns");
-> +			if (check_mnt(old_mnt))
-> +				pr_err("our namespace, at that");
-> +			else
-> +				pr_err("some other non-anon namespace");
->  			return ERR_PTR(-EINVAL);
-> +		}
->  
->  		/* Make sure we don't create mount namespace loops. */
-> -		if (!check_for_nsfs_mounts(old_mnt))
-> +		if (!check_for_nsfs_mounts(old_mnt)) {
-> +			pr_err("shite with nsfs");
->  			return ERR_PTR(-EINVAL);
-> +		}
->  	}
->  
-> -	if (has_locked_children(old_mnt, path->dentry))
-> +	if (has_locked_children(old_mnt, path->dentry)) {
-> +		pr_err("has locked children");
->  		return ERR_PTR(-EINVAL);
-> +	}
->  
->  	new_mnt = clone_mnt(old_mnt, path->dentry, CL_PRIVATE);
-> -	if (IS_ERR(new_mnt))
-> +	if (IS_ERR(new_mnt)) {
-> +		pr_err("clone_mnt failed (%ld)", PTR_ERR(new_mnt));
->  		return ERR_PTR(-EINVAL);
-> +	}
->  
->  	/* Longterm mount to be removed by kern_unmount*() */
->  	new_mnt->mnt_ns = MNT_NS_INTERNAL;
+> > To be clear: I think your current patch is using special kernel
+> > privileges in one regard, because kernel_connect() bypasses the
+> > security_socket_connect() security hook.
 
-I then get:
+Precisely, whether LSM ignores kernel sockets or not depends on LSM.
 
-[    0.881616] absolute root
-[    0.881618] our namespace, at that
+When we create a socket, kern=0/1 is passed to security_socket_create().
+Currently, SELinux always ignore the kernel socket, and AppArmor depends
+on another condition.  Other LSM doesn't care.  Especially, BPF LSM is
+just a set of functions to attach BPF programs, so it can enfoce whatever.
 
-In btrfs_get_tree_subvol:
 
-	ret = vfs_get_tree(dup_fc);
-	if (!ret) {
-		ret = btrfs_reconfigure_for_mount(dup_fc);
-		up_write(&dup_fc->root->d_sb->s_umount);
-	}
-	if (!ret)
-		mnt = vfs_create_mount(fc);
-	else
-		mnt = ERR_PTR(ret);
-	put_fs_context(dup_fc);
-
-Should it perhaps be:
-		mnt = vfs_create_mount(dup_fc);
-
-If I try that it works.
+> I think it is a good thing
+> > that it bypasses security hooks in this way; I think we wouldn't want
+> > LSMs to get in the way of this special connect(), since the task in
+> > whose context the connect() call happens is not in control of this
+> > connection; the system administrator is the one who decided that this
+> > connect() should happen on core dumps. It is kind of inconsistent
+> > though that that separate security_unix_stream_connect() LSM hook will
+> > still be invoked in this case, and we might have to watch out to make
+> > sure that LSMs won't end up blocking such connections... which I think
+> 
+> Right, it is the same as for the usermode helper. It calls
+> kernel_execve() which invokes at least security_bprm_creds_for_exec()
+> and security_bprm_check(). Both of which can be used to make the
+> usermodehelper execve fail.
+> 
+> Fwiw, it's even the case for dumping directly to a file as in that case
+> it's subject to all kinds of lookup and open security hooks like
+> security_file_open() and then another round in do_truncate().
+> 
+> All of that happens fully in the task's context as well via
+> file_open()/file_open_root() or do_truncate().
+> 
+> So there's nothing special here.
 
