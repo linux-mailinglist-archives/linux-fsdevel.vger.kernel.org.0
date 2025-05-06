@@ -1,66 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-48293-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48294-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40344AACE5F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 21:49:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48B28AACE6A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 21:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8176A3B6984
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 19:48:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319F43BC7C8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 19:52:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A8B20E030;
-	Tue,  6 May 2025 19:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07EA20E030;
+	Tue,  6 May 2025 19:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OmlsrX6c"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnVhP0At"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F0120CCC9;
-	Tue,  6 May 2025 19:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CF6E20D4F8;
+	Tue,  6 May 2025 19:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746560934; cv=none; b=j1lj7DKskVFYYoEbXR+c6U8PFyifm5UDelbl4nRKUspp+5raiwbvqLEpEan55m0oXhMl6pwjA7xu7yhzoxqFE30aTuI4ZJ1nj+a81pN0Bd9KhyPgdXCcUXzLuYFXobhY3LBKtsKP/DTdf+RjOuXSOgP5nm/YvDD4RqgjXjzboo0=
+	t=1746561164; cv=none; b=IyZsnXolgiHTsr83Sfkf0gL56MvTY7dFr17MqVSEPk+NVUD9sg8Vc9DvOKl+dAsUvRNG8d3l8LuAVInqn2qG8/OzJjgbcTCzEKp3Xkm0aNsbaloeDu0dnaUyqzlyUX7FeToOBtI3wKx/p15HoWWXNdZQFXyULhKITw+Km2I6Igo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746560934; c=relaxed/simple;
-	bh=MOpqwhBmL84ktvflsNGotPKNyN3JovNc0XIRmZ9dr3E=;
+	s=arc-20240116; t=1746561164; c=relaxed/simple;
+	bh=6Sq9/Mghit77tRGUns1KmWPRRmfM1b+iIS4HF3jA+oc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OB0SsLs4Hwc6OriVge9HYh2qX8jc23QUWTUDvd6PqKZNwjZQiYyq52acQm9bje2VKsP1MGQ4dXQRe1xD8WMa9x2QF1xQ3F2Ynjgz1q4o0kYfUv+mx2XHiMuq8aO3FBseq5j41VnkfbmzwBjXze1R7Wr7orveUDBKSFBI3o//ftw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OmlsrX6c; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=/4vDrddZbD83/HsMao5TSO+wLyzPvUkoUxAbhxnpMuQ=; b=OmlsrX6c/99XBiwJuhh9j/3NhR
-	0VT3ZHiifw7vG9B2RzpBLK7g1Q4YAvsbMEd8VSSW4x5vm4ZMitkEPUM03igMc+EdUU5FSkUrn2KiU
-	IRT/Ej5Qqe3rB6Rxag9jxr4eli4lbQeOOeuazdIm33INrEOlMKBJ7Ljh6iV9qZONEziHIlzTQnQzn
-	2oM/i9oUo1di9UVUor/no4m0tUMUJKdjF11F+kkbxeqn7rzsm2C33VaSsn3LVxQSyRgDky8MKvd0E
-	GthJEwCIDPsSfDRSk/JpKJgvek62TEV9dWz4JQapyAcKgyX7mUa9z6cKmUDI1oTQhBNqszEiEkWrq
-	+WVGwcqw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uCOHZ-0000000CQD4-1S4A;
-	Tue, 06 May 2025 19:48:49 +0000
-Date: Tue, 6 May 2025 20:48:49 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Klara Modin <klarasmodin@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QMRTD1qaHYjTriHEw4tVGVPnZYem5V6tJlFn/IZtC31C/BuW05/BqBCrk+7rv2d+AAI8G5qRv+b8/I3MqGR07ZJbvx5fRJ5juOGhtATfsi0f+RYTH6fdfn1NHGNIsC69O1teRTmbWMcbXOBFmGeVAILD40di7K7/qyBNATb3tKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnVhP0At; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so7588848e87.2;
+        Tue, 06 May 2025 12:52:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746561160; x=1747165960; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ZJa/hAGQmMtbYAFjT6Y3m9RqeMvk687A5kvgcVeADk=;
+        b=PnVhP0AttP8Aq6mk5SNpyMiw5rb8D5UGcfPgYhA0TbOCoO4a+Pccl7MUanXcBJ70Ek
+         Ltevf8u5LAQVk3ZIsTxG1fc+GJWOHmjkAjb7noajNNLJC3I+Y94N1lDKqu5sihQ328Ob
+         dO74XBibzIFfJGYUVe0VebXS+kY8MLZsAAxfE0t1GHSWrv5ID1mNYwK8hFy+dKM9Zk0q
+         8gUjjYc9znPKaTKATJL1P7F+2NsIjp/jwFWOOa08k5Wgf5WYmIpkgPWOnw2D7zJY0b5p
+         IOXcqfoLdpzM9h4/KRiNP68C3n2t7rePH1R9MPWjZoO3Iw6lumDLFFBLKGpw+Os9RVxv
+         7Qjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746561160; x=1747165960;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5ZJa/hAGQmMtbYAFjT6Y3m9RqeMvk687A5kvgcVeADk=;
+        b=jKnU2Rfg4NY+BMxhfhpSIFhpxGF3jYU3zNrXjOnu8dZKqeZ7N1TXvqRXLq9zDyPJBX
+         /AkmDE725Cnqgvb6zqPCmrSZfxiDXrpoXNG5MYMXE5O7KpvvCiv8jaHY7D/n4QP3+BBx
+         CUUDsqqKLD+1qOmJ8MTnJHT7wkggsYXhwnRz8zXLeKI2lYlb0USwfLOrj7r/O1LOm5Q/
+         +xwCJ0Sgk/SkJQwaRxWG/KtNkIyvmGJaVqdOpPt10mhNoKBh0t2LR2jjv528GUD/uyWs
+         hh0pQ+MfQUPIoa+pK/wv7xpJ7fBwJ+XsZbI1iJw3yje9XALRZGeyDdV64E9NXPWjcaw1
+         BuVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIA7NrpFx23zgjuMn6nqr7+vElla6Xz4WDcMyYb4D/viapoI7wKzcu4tSHFojrswCdNLiAJubipe+vrA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOit101CvQ0Clk6QA6HK/oZyhTErI6kaD34GRqbG8YJODXR2C0
+	CuecoIGsjlM6zUkxHbSt6+o/yufW/y8mO7PWL1pQpEWpJjZOdVTh90URCA==
+X-Gm-Gg: ASbGncsewQOcdPVf7yUDD5cR8NsXuOilXbD5BipHVVDC4df1TUmx0mb9sH7DewZpQpt
+	aplwE5sxo/29wQxdaEMO1d4m/GteXwT0XKTQgYCfwhjE1209rEvJ+DjK/vwO8T6b9YJ50R0vZNc
+	q/87FzsP7yUXFp7jZuUoOuVaILbKi9r3CjOSoOgnkDzvOTbcnzT2Mmo64bXGXfCZoMSHICN/vxy
+	yT1MOu415VDaSI825+AcqDZjEGpvtki3XJX2PhOiRjH5+JTyUXZbXLrmtrixSNNqoP+vUnO7L6x
+	1sd3DrAo+6MZUXaqmnETd9Fe+WtWtUtJXDgYISEt6rYU1CNCX2qunOEK1paxThQhdg==
+X-Google-Smtp-Source: AGHT+IGxbXp8MOaGnJKromxzDDqyTEcL/gmS7ylRWTtawX57VreTQSmyVjz5rWz7xrJXsjaruLAGeg==
+X-Received: by 2002:a05:6512:3e05:b0:545:eef:83f1 with SMTP id 2adb3069b0e04-54fb9293c86mr339110e87.17.1746561160095;
+        Tue, 06 May 2025 12:52:40 -0700 (PDT)
+Received: from localhost (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
+        by smtp.gmail.com with UTF8SMTPSA id 2adb3069b0e04-54ea94bf179sm2174815e87.80.2025.05.06.12.52.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 May 2025 12:52:39 -0700 (PDT)
+Date: Tue, 6 May 2025 21:52:39 +0200
+From: Klara Modin <klarasmodin@gmail.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
 Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
-Subject: Re: [RFC][PATCH] btrfs_get_tree_subvol(): switch from fc_mount() to
+Subject: Re: [PATCH v2] btrfs_get_tree_subvol(): switch from fc_mount() to
  vfs_create_mount()
-Message-ID: <20250506194849.GT2023217@ZenIV>
+Message-ID: <2lti24dmmhgthwqu7fm2bhvnsjk5ptwisxco6s6gkoo7m4scgw@ucy5letoospc>
 References: <20250505030345.GD2023217@ZenIV>
- <3qdz7ntes5ufac7ldgfsrnvotk4izalmtdf7opqox5mk3kpxus@gabtxt27uwah>
- <20250506172539.GN2023217@ZenIV>
- <j2tom2y6562wa7r6wjsxwgc25t3uoine45ills367o4y2booxr@3jdyomwkvt6w>
- <20250506175104.GO2023217@ZenIV>
- <4pg5rjsoxzxjgcx2wzucw2wr7uvaxws423stdlv75t2udfkash@jff3ci54z35u>
- <20250506181604.GP2023217@ZenIV>
- <juv6ldm6i53onsz355znrhcivf6bmog25spdkvnlvydhansmao@bpzxifunwl2n>
- <20250506190513.GQ2023217@ZenIV>
- <ukytl7lwaprjovct6qvkgdqaou6kt3pxpjdocv5r45r6unpjbx@qjq6ffj4x3x7>
+ <20250506193405.GS2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,42 +88,70 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ukytl7lwaprjovct6qvkgdqaou6kt3pxpjdocv5r45r6unpjbx@qjq6ffj4x3x7>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250506193405.GS2023217@ZenIV>
 
-On Tue, May 06, 2025 at 09:20:47PM +0200, Klara Modin wrote:
+On 2025-05-06 20:34:05 +0100, Al Viro wrote:
+> it's simpler to do btrfs_reconfigure_for_mount() right after vfs_get_tree() -
+> no need to mess with ->s_umount.
+>     
+> [fix for braino(s) folded in - kudos to Klara Modin <klarasmodin@gmail.com>]
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> ---
+> diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+> index 7121d8c7a318..75934b25ff47 100644
+> --- a/fs/btrfs/super.c
+> +++ b/fs/btrfs/super.c
+> @@ -1984,17 +1984,13 @@ static int btrfs_get_tree_super(struct fs_context *fc)
+>   * btrfs or not, setting the whole super block RO.  To make per-subvolume mounting
+>   * work with different options work we need to keep backward compatibility.
+>   */
+> -static int btrfs_reconfigure_for_mount(struct fs_context *fc, struct vfsmount *mnt)
+> +static int btrfs_reconfigure_for_mount(struct fs_context *fc)
+>  {
+>  	int ret = 0;
+>  
+> -	if (fc->sb_flags & SB_RDONLY)
+> -		return ret;
+> -
+> -	down_write(&mnt->mnt_sb->s_umount);
+> -	if (!(fc->sb_flags & SB_RDONLY) && (mnt->mnt_sb->s_flags & SB_RDONLY))
+> +	if (!(fc->sb_flags & SB_RDONLY) && (fc->root->d_sb->s_flags & SB_RDONLY))
+>  		ret = btrfs_reconfigure(fc);
+> -	up_write(&mnt->mnt_sb->s_umount);
+> +
+>  	return ret;
+>  }
+>  
+> @@ -2047,17 +2043,18 @@ static int btrfs_get_tree_subvol(struct fs_context *fc)
+>  	security_free_mnt_opts(&fc->security);
+>  	fc->security = NULL;
+>  
+> -	mnt = fc_mount(dup_fc);
+> -	if (IS_ERR(mnt)) {
+> -		put_fs_context(dup_fc);
+> -		return PTR_ERR(mnt);
+> +	ret = vfs_get_tree(dup_fc);
+> +	if (!ret) {
+> +		ret = btrfs_reconfigure_for_mount(dup_fc);
 
-> I then get:
-> 
-> [    0.881616] absolute root
-> [    0.881618] our namespace, at that
+> +		up_write(&fc->root->d_sb->s_umount);
 
-OK, so that's a combination of braino (times 2) in that patch
-with quiet regression in clone_private_mount() from back in
-January.
+Looks like this one crept back in.
 
-Reposted with fixes folded in and yes, you are absolutely
-correct about the second 'fc' instead of 'dup_fc' in there.
-
-As for the clone_private_mount() issues...  Christian has
-taught it to allow roots of anon namespaces in addition to
-mounts in our namespace, but did the tests in wrong order.
-
-It's not a rare pattern - "do something to mount in our namespace
-or the root of anon one" and for things like move_mount()
-we absolutely do *not* want to allow it for root of our namespace,
-so there this logics is fine - first split on whether it has
-a parent, then for parented ones require the namespace to be
-ours and for roots - require it to be anon.
-
-In case of clone_private_mount(), though, there's nothing wrong
-with "clone me a subtree of absolute root", so it has to be
-done other way round - check if it's ours first, then in "not
-ours" case check that it's a root of anon namespace.
-
-Failing btrfs mount has ended up with upper layer pathname
-pointing to initramfs directory where btrfs would've been
-mounted, which had walked into that corner case.  In your
-case the problem has already happened by that point, but on
-a setup a-la X Terminal it would cause trouble...
+>  	}
+> -	ret = btrfs_reconfigure_for_mount(dup_fc, mnt);
+> +	if (!ret)
+> +		mnt = vfs_create_mount(dup_fc);
+> +	else
+> +		mnt = ERR_PTR(ret);
+>  	put_fs_context(dup_fc);
+> -	if (ret) {
+> -		mntput(mnt);
+> -		return ret;
+> -	}
+> +	if (IS_ERR(mnt))
+> +		return PTR_ERR(mnt);
+>  
+>  	/*
+>  	 * This free's ->subvol_name, because if it isn't set we have to
 
