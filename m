@@ -1,88 +1,64 @@
-Return-Path: <linux-fsdevel+bounces-48229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48230-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D934AAC329
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 13:56:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACC8BAAC343
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 14:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C804E7A06
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 11:56:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27BAE5078DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 12:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AECD27CB17;
-	Tue,  6 May 2025 11:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mEP27UP/"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5775927E1AA;
+	Tue,  6 May 2025 12:00:24 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B153A27CB0B;
-	Tue,  6 May 2025 11:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FD22798EE;
+	Tue,  6 May 2025 12:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746532563; cv=none; b=ruErTGMDE7BjX16NCnotWFKy6rCYKiW4uAUWq+TsTzha3O8sZXRQGgg36nMo+PSb1dQWBsCFa3Nt+OHSdYOHF/zUrtZmJMMh9PZwRtYpP2qrWJCPnnzLBpXOA5RxuW67KVa+RXLQs9CxUOpB6WEfUZ3/ORD/EQZU3LmY89/QPyQ=
+	t=1746532823; cv=none; b=p/pkXybfb1IlNfQ8/NBVpsYp7wheBsEMGnFAPB87X5hPrqKWmRNzTTPOgWFlHUPv7BAiiHF7b0m+OapTAV6DPDT0fhSZJsC27aE9y2Q7R4fhV6CTcUYSJje3ql5pJdORTEFLNctxM7IdssvPf21V4PR9CKpCXq9MFT5F3+0ksIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746532563; c=relaxed/simple;
-	bh=wkLpQXzGAXHdGAr38No8C2VE5KifFLlLwwTCYQNol9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VLboNMEYJVw5r9xcO+5pDPm5XU3gl9sZk8WaKUYpwlLOClPjXA0nay9f2/eghvoCbp3JSb6R2HBjXpykhMFFJ6SQpXKtgt6vo/bXizybjt5NrEQo4e8JIE7h3I9Dis9sVbJdqqBOiWo5tEtEQ4yfSZ70aD+HtZla9Jd9I0d0QkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mEP27UP/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04EEDC4CEE4;
-	Tue,  6 May 2025 11:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746532563;
-	bh=wkLpQXzGAXHdGAr38No8C2VE5KifFLlLwwTCYQNol9c=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mEP27UP/BmEkNHYglu7YbuBNHWL2kWeo8vvpmlKR0Z/fnee4BcMP76ULSI2xHQ1d5
-	 muCKs/Jb/UtWoMzf273qi1fDnmgjNerKXIKvwftb0PpJ4pjDoy/bdbGGiLL/fcIm+n
-	 YLkunHArPgJoOj4+iw8pZIVd2VQeNwvbRfS+WP6gcMHHBUr0rrxYzbMwJHHxKn6sZP
-	 GlR4FtFYnWQEViG3RkGkczLtqVuCVZ9GWPyzGqAUnDi0fpy7GbvdL8zhdFyPtNLWKl
-	 IXJk5ouAqjD3gBFd4gBoFNmhCrM5hfqz2uC8lQRUSver+gtROOQeSTW8XEjH7Wcdkw
-	 kupm3KAKHmg1A==
-From: Christian Brauner <brauner@kernel.org>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] pidfs: detect refcount bugs
-Date: Tue,  6 May 2025 13:55:54 +0200
-Message-ID: <20250506-uferbereich-guttun-7c8b1a0a431f@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1746532823; c=relaxed/simple;
+	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JAOEtMJ25MYfJ541OuKnPHgfQMClJYxkGVRyswpzBJGip3J+YCInuX9c58QVsNwVmhUVvkBH7bJaUgcy9X79P4DFqlpdsaQpOO1oOINKnPySPmIZOPJdtk6+vXhxBCNHxUFK5ViuOQgHKl88IMJ3xlh3RJpmOgHPBbPkt8RVLx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D34DF68B05; Tue,  6 May 2025 14:00:14 +0200 (CEST)
+Date: Tue, 6 May 2025 14:00:14 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: John Garry <john.g.garry@oracle.com>
+Cc: brauner@kernel.org, djwong@kernel.org, hch@lst.de,
+	viro@zeniv.linux.org.uk, jack@suse.cz, cem@kernel.org,
+	linux-fsdevel@vger.kernel.org, dchinner@redhat.com,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	ojaswin@linux.ibm.com, ritesh.list@gmail.com,
+	martin.petersen@oracle.com, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, catherine.hoang@oracle.com,
+	linux-api@vger.kernel.org
+Subject: Re: [PATCH v12 02/17] xfs: only call xfs_setsize_buftarg once per
+ buffer target
+Message-ID: <20250506120014.GB20817@lst.de>
+References: <20250506090427.2549456-1-john.g.garry@oracle.com> <20250506090427.2549456-3-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=811; i=brauner@kernel.org; h=from:subject:message-id; bh=wkLpQXzGAXHdGAr38No8C2VE5KifFLlLwwTCYQNol9c=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRI/jgtsMHb7dqvroSS49NnJCy9XnjtUyjLe7/YVJ3LK 4RfsYXFdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEwkQI2R4X2vQV5c+44IiayN yx4w/V5zddpilUKFdRO2TpE5sHnpNkuGP/xm+/s01u9TqXsW0Vp0v9uC8cm7S2W/VbO01n87e0h jNTcA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250506090427.2549456-3-john.g.garry@oracle.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Now that we have pidfs_{get,register}_pid() that needs to be paired with
-pidfs_put_pid() it's possible that someone pairs them with put_pid().
-Thus freeing struct pid while it's still used by pidfs. Notice when that
-happens. I'll also add a scheme to detect invalid uses of
-pidfs_get_pid() and pidfs_put_pid() later.
+Looks good:
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- kernel/pid.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/kernel/pid.c b/kernel/pid.c
-index 26f1e136f017..8317bcbc7cf7 100644
---- a/kernel/pid.c
-+++ b/kernel/pid.c
-@@ -100,6 +100,7 @@ void put_pid(struct pid *pid)
- 
- 	ns = pid->numbers[pid->level].ns;
- 	if (refcount_dec_and_test(&pid->count)) {
-+		WARN_ON_ONCE(pid->stashed);
- 		kmem_cache_free(ns->pid_cachep, pid);
- 		put_pid_ns(ns);
- 	}
--- 
-2.47.2
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
 
