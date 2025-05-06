@@ -1,336 +1,223 @@
-Return-Path: <linux-fsdevel+bounces-48257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62861AAC7E2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 16:25:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C613AAC83D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 16:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51C57B20815
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 14:23:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA203B6C8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 14:38:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8451F2820BC;
-	Tue,  6 May 2025 14:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8620F2820CF;
+	Tue,  6 May 2025 14:38:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tz2VDahg"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CRxKH3Pk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD5A022DA1A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 14:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15562145B3E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 14:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746541497; cv=none; b=hn4Ti4pyor3wYADIaGAB+7h6KX8QMxrBHJbDltR76nj99V/sBz4VmZjSKSnTSngcfI7GQnBijNw8qdrzqTnav5JWXnlFkSei3yb2cwF+HMxowRu8auWBUw7xgT+JJ8Jws1pAQ21ag9wRXse05s/s15xjSOMclu5r0c7/yoJki/o=
+	t=1746542311; cv=none; b=ULedVarN1GbKtHivv1GI8EX2DIEsFAa3CY5Tmg+bjlZYdlWMZgTtaBk7cyPpQI2I1NirPNv+egmNQPLLAXdEQPVFBDyUO7Jmons4CMbihvW8diwzv925jmikmcgFr34Xcl+EV9QKtvpVAvv1nh44LWEVcSPVBDyfraOWEWcoCeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746541497; c=relaxed/simple;
-	bh=dEHO0j0Vgi6Cf/+V6oJ/9ba3LOapCHcoabHegshRoCs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dgd7nrcxtO/gHozbk9E7+ktpOXfj04GfHfh3JT2f2I87dxnYCLsgiSKPdEljGQ2AhXdAk5xKIx9JadxuYQiKvI4kFVha88NcdoDhgpx3+TjMH7KdHWlLMgYlVVX0hZglH9JOvegNowAbQ4SybmzeTiPbatc6aatRl+BDYUK/cgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tz2VDahg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746541494;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9zc1ZtvmGJ5KapEi1iwLqXeN/vl2AD2R+iU1xpLs0mw=;
-	b=Tz2VDahgGjoT9E8V/qNhcxuWDHHlW+2Kl7ynqObPJpGTKvAAVYo+STRiiARgVpxRE7fccg
-	855xryVEJ+NPhS7NcLnXhcwBU7QVEysgSdJ2zrYTHIXFRMoPvXtV4rQeJPqad1P/KiG+qH
-	vn0063zvrr6GtOpd3RizMT2hFyWlLdU=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-648--V1VkIzgMeik8k9ktZ1Mpw-1; Tue, 06 May 2025 10:24:53 -0400
-X-MC-Unique: -V1VkIzgMeik8k9ktZ1Mpw-1
-X-Mimecast-MFC-AGG-ID: -V1VkIzgMeik8k9ktZ1Mpw_1746541492
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-39143311936so1552560f8f.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 May 2025 07:24:52 -0700 (PDT)
+	s=arc-20240116; t=1746542311; c=relaxed/simple;
+	bh=Ma83b15qnnbFaueFtEvSpUdw/TKvSFOJHfOZe78Fr4A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uMB01eC0MLSJSrLasrfUWG95CTakEvDTnNkkif8WdIRYSRdQeMLiitfgkZnFzviVYdKc94QwAdFZOL1BLtRKrHW2a+sM4OIwYpDVaSV2RStA2TPJz/wT01YQQj+xIuNpQmkfBPZuqVpBz3ojwc+ymEdg7FeYkOxhjqITY9efl24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CRxKH3Pk; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5f632bada3bso9380a12.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 May 2025 07:38:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1746542307; x=1747147107; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WS0cqO7mEX8JBUGkY5ZSym9XPagAwEGfVvGLKmJF5sY=;
+        b=CRxKH3PkApshm30WZX8T9D4ebFVa2DK7zxt1/b5UuPL7Un040C1U04ni6pt6wn4EUz
+         5jx1dasvgSqPUAApV3udF1A/6C+nUlyypZIjBlpCM0dEuoRq7fICJSpaB2UhsFtOvRan
+         cgQZYs6G4UwwFepUYX64nBp1bhYcLI2CFkrti2s0X0fJmnym8e6wcNm1nbXBgHxxU4DO
+         73DjIY+ZRiUL8YZ58MzUU1ACZJE2e8eq3/y6W2agirsIrZFZiItiW8MF9e73oHUvzxHh
+         hKax1ddqHIzpONWeLztbYaFGdnyw3RTmNcKMUjTpBsKxrrazzPA+4XJ0EXcghTL4bPa9
+         UEJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746541492; x=1747146292;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9zc1ZtvmGJ5KapEi1iwLqXeN/vl2AD2R+iU1xpLs0mw=;
-        b=cYOSFxw3E6dtBHmEEWhhcZoh3NBxhiMfhQyGk1m7HwzmqLm5xmqUj4ktJGc3ebPHEe
-         3kdxqlUMQ+HebJOZSnYe3zFDkf4gTu56f9hIsjP3TRG/C3sUMfCjtsLtSGiA3l1uSQ+Q
-         FyV8HeEEqGe3o7xnCGhHlF+TpcZ6dQK2cRGZM3JCCvtxyIACD1r7Ctyupedxr/XAcg7m
-         zUKTW9g0Fneg7tXk+hPniywB7fZ3IbUjblpwtwGppYGUXmo4bVNgN0KhSwv/kUrLWJZB
-         mEbDTEGEGbEeC2a2fZDzWyUa2eBKnwOiPRi3yw/e1f5whisxZihyYvAMHjaOcyZ3Q8zV
-         5cUg==
-X-Forwarded-Encrypted: i=1; AJvYcCX5aus0QEMtVyyYzI7E05EFF8Ls3e7viIIhATM+O246i7L2L0pVI3qzdbReCDeX5YxKwiOHYpGp+a35D0ZU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9wPsC+UDQbjSMrU6CBo1hAkcCLloR/DL4Vk1UuEaBshVxo9se
-	L/4Xu1zVHxS+Ec4HGCndiVfXVd4CD/W8q5+qD2wyv3f3UHR/3axbzQMjhCwRtEaPxXGKDSReK4N
-	Rz5NS2P2feG8oMG0pLWD38FP1qUyUKZxiHeHF8ZXnd4gUU+RJgyZ/YGPT8wQtOpo=
-X-Gm-Gg: ASbGncsaarKDDr9nLzP//RU5M/1hkkP8UYJOWnEoWAFFIjovniIQUgyOdKgjrAIiXqA
-	pdsAkFvlkIld06CFwt5HjBBtuH2Wjlo81fPXuDdAaNy4A9mVBpjqz9ufIb94wzSVAp92DpG21CT
-	ICdZknPB5tWbyNH2TL+8/9uc7QEUJYuKI8HxvNZp9gKynSDGBENsYcG/r2OtjxDWUfKRxmsppEW
-	YA9I2eOywE2oYg92AprnL6lNsEUHAbFBLbvBKKJCXlitwmfTt8lLjtnk5pMVFiEx4i/ypb+TEAC
-	EtPUqAnMMZul3xNf/0V808LwPRSRzyXkPyUnVPxcO0Jvqbi79Lc=
-X-Received: by 2002:a05:6000:1882:b0:3a0:8c30:63dc with SMTP id ffacd0b85a97d-3a099adcademr12398432f8f.26.1746541491640;
-        Tue, 06 May 2025 07:24:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IELT3uhvXzYaDL4GC+mS3AuYh8FvYuciR4o2IRMpMPpmXJqrQKgtNFIpV3cWERG4orkT5s5GQ==
-X-Received: by 2002:a05:6000:1882:b0:3a0:8c30:63dc with SMTP id ffacd0b85a97d-3a099adcademr12398409f8f.26.1746541491233;
-        Tue, 06 May 2025 07:24:51 -0700 (PDT)
-Received: from ?IPV6:2a01:599:915:8911:b13f:d972:e237:7fe2? ([2a01:599:915:8911:b13f:d972:e237:7fe2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a099b178absm14075606f8f.97.2025.05.06.07.24.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 May 2025 07:24:50 -0700 (PDT)
-Message-ID: <5ea287f0-24cb-4ad4-8448-6e397fbf1ec8@redhat.com>
-Date: Tue, 6 May 2025 16:24:48 +0200
+        d=1e100.net; s=20230601; t=1746542307; x=1747147107;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WS0cqO7mEX8JBUGkY5ZSym9XPagAwEGfVvGLKmJF5sY=;
+        b=kMJFi3B8xFBshFJ95bjKB1Uz7m5xE2JEKxdab4Tgt3DsnTzl+BYs96kcz46qDgGyWJ
+         XNWKGUm5j/d5Pgs9+eyfKdIdyQO6M8jDt6bfxLq89B9t3T53bHDUk5d/1UIc70JGdLb5
+         sZaoIq5YjyFyFuzoVD2nLn3WbW38FcT3BA0mMFakG3AyBDcqJ2/KMcNId3QBxxXZXxNk
+         CJbOPM+As2Tv74KqY9egpay5fqJ2ItXowwn3rowaM4So8EeeZzLbswmT2uPRjSq75Mdu
+         bE6e2iGBLKDhqvzDFr1+/5aUSFkoCobTmVtjxDn1PxpVi0crQwLfSQANgo0xH5UprEh1
+         xvKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcGJ3oPlxDTXmS0kLU6P2k9lR1pjLVt0RrWNzrJ7ENrt9BbsnL1+tGRQ5e3UTCIRmE4yPcCRpKyf57bRaP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yykbe9ruqUBem4/gRCa4Tb9qxEdLM/70U/p4IUkwmJsVo7gkHPy
+	VzVPR6Kyg+XKmRpT7l4TlS01OOsEMTfT7bw2msB1gt/gvS/uzrhUUgDRGI6Nxyx04fSF6mOWNXi
+	NLOugJk+ZU3ueLFXP8RdF7O8q/uYlDaLhBvDX
+X-Gm-Gg: ASbGncsku9vrpvZzUkHekpB9W9ya87W/bs965BW9MnFSHX1Sr0gC7bap6g4NjOxZu7z
+	TQCxz1QPb7d7WyE6S2rE5ca873/OMu/W48C3aOG8rq2bvXVdsrPc4KvOGjIV1TEOqq9bp+/Dkwz
+	uwJUqt5QIqquFkeDA08zVVmaVuC5bZaW4mHDIiVWLjQ3nlPDwGuQ==
+X-Google-Smtp-Source: AGHT+IEKBtQbqHTSi7RTxOlTKbd2L3krdaRx+iHlrQhBUxrpFEHfioEBlUhMAatv2Ff4k8wWL2KQK5USpqhewEIPDcg=
+X-Received: by 2002:aa7:d1d9:0:b0:5f8:d6b1:71ba with SMTP id
+ 4fb4d7f45d1cf-5fbe76ccb80mr239a12.4.1746542307024; Tue, 06 May 2025 07:38:27
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/5] mm/readahead: Store folio order in struct
- file_ra_state
-To: Ryan Roberts <ryan.roberts@arm.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Dave Chinner <david@fromorbit.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20250430145920.3748738-1-ryan.roberts@arm.com>
- <20250430145920.3748738-5-ryan.roberts@arm.com>
- <c8f78fd6-c1fb-4884-b370-cb6b03e573b6@redhat.com>
- <2b1ea3d9-6c9b-4700-ae21-5f65565a995a@arm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <2b1ea3d9-6c9b-4700-ae21-5f65565a995a@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250505-dompteur-hinhalten-204b1e16bd02@brauner>
+ <20250505184136.14852-1-kuniyu@amazon.com> <CAG48ez35FN6ka4QtrNQ6aKEycQBOpJKy=VyhQDzKTwey+4KOMg@mail.gmail.com>
+ <20250506-zugabe-bezog-f688fbec72d3@brauner>
+In-Reply-To: <20250506-zugabe-bezog-f688fbec72d3@brauner>
+From: Jann Horn <jannh@google.com>
+Date: Tue, 6 May 2025 16:37:49 +0200
+X-Gm-Features: ATxdqUG1RLsm5I44mZFoXDEOhGLmKo0PIMKTKhu327qv26lJZYIhQ2B6edAN2po
+Message-ID: <CAG48ez0Pc+QzxgAnT25KqyvjC8n0=diL6DnxBe7CcdQ32u9GcA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow coredumping
+ tasks to connect to coredump socket
+To: Christian Brauner <brauner@kernel.org>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, alexander@mihalicyn.com, bluca@debian.org, 
+	daan.j.demeyer@gmail.com, davem@davemloft.net, david@readahead.eu, 
+	edumazet@google.com, horms@kernel.org, jack@suse.cz, kuba@kernel.org, 
+	lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, me@yhndnzj.com, netdev@vger.kernel.org, 
+	oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 06.05.25 12:03, Ryan Roberts wrote:
-> On 05/05/2025 11:08, David Hildenbrand wrote:
->> On 30.04.25 16:59, Ryan Roberts wrote:
->>> Previously the folio order of the previous readahead request was
->>> inferred from the folio who's readahead marker was hit. But due to the
->>> way we have to round to non-natural boundaries sometimes, this first
->>> folio in the readahead block is often smaller than the preferred order
->>> for that request. This means that for cases where the initial sync
->>> readahead is poorly aligned, the folio order will ramp up much more
->>> slowly.
->>>
->>> So instead, let's store the order in struct file_ra_state so we are not
->>> affected by any required alignment. We previously made enough room in
->>> the struct for a 16 order field. This should be plenty big enough since
->>> we are limited to MAX_PAGECACHE_ORDER anyway, which is certainly never
->>> larger than ~20.
->>>
->>> Since we now pass order in struct file_ra_state, page_cache_ra_order()
->>> no longer needs it's new_order parameter, so let's remove that.
->>>
->>> Worked example:
->>>
->>> Here we are touching pages 17-256 sequentially just as we did in the
->>> previous commit, but now that we are remembering the preferred order
->>> explicitly, we no longer have the slow ramp up problem. Note
->>> specifically that we no longer have 2 rounds (2x ~128K) of order-2
->>> folios:
->>>
->>> TYPE    STARTOFFS     ENDOFFS        SIZE  STARTPG    ENDPG   NRPG  ORDER  RA
->>> -----  ----------  ----------  ----------  -------  -------  -----  -----  --
->>> HOLE   0x00000000  0x00001000        4096        0        1      1
->>> FOLIO  0x00001000  0x00002000        4096        1        2      1      0
->>> FOLIO  0x00002000  0x00003000        4096        2        3      1      0
->>> FOLIO  0x00003000  0x00004000        4096        3        4      1      0
->>> FOLIO  0x00004000  0x00005000        4096        4        5      1      0
->>> FOLIO  0x00005000  0x00006000        4096        5        6      1      0
->>> FOLIO  0x00006000  0x00007000        4096        6        7      1      0
->>> FOLIO  0x00007000  0x00008000        4096        7        8      1      0
->>> FOLIO  0x00008000  0x00009000        4096        8        9      1      0
->>> FOLIO  0x00009000  0x0000a000        4096        9       10      1      0
->>> FOLIO  0x0000a000  0x0000b000        4096       10       11      1      0
->>> FOLIO  0x0000b000  0x0000c000        4096       11       12      1      0
->>> FOLIO  0x0000c000  0x0000d000        4096       12       13      1      0
->>> FOLIO  0x0000d000  0x0000e000        4096       13       14      1      0
->>> FOLIO  0x0000e000  0x0000f000        4096       14       15      1      0
->>> FOLIO  0x0000f000  0x00010000        4096       15       16      1      0
->>> FOLIO  0x00010000  0x00011000        4096       16       17      1      0
->>> FOLIO  0x00011000  0x00012000        4096       17       18      1      0
->>> FOLIO  0x00012000  0x00013000        4096       18       19      1      0
->>> FOLIO  0x00013000  0x00014000        4096       19       20      1      0
->>> FOLIO  0x00014000  0x00015000        4096       20       21      1      0
->>> FOLIO  0x00015000  0x00016000        4096       21       22      1      0
->>> FOLIO  0x00016000  0x00017000        4096       22       23      1      0
->>> FOLIO  0x00017000  0x00018000        4096       23       24      1      0
->>> FOLIO  0x00018000  0x00019000        4096       24       25      1      0
->>> FOLIO  0x00019000  0x0001a000        4096       25       26      1      0
->>> FOLIO  0x0001a000  0x0001b000        4096       26       27      1      0
->>> FOLIO  0x0001b000  0x0001c000        4096       27       28      1      0
->>> FOLIO  0x0001c000  0x0001d000        4096       28       29      1      0
->>> FOLIO  0x0001d000  0x0001e000        4096       29       30      1      0
->>> FOLIO  0x0001e000  0x0001f000        4096       30       31      1      0
->>> FOLIO  0x0001f000  0x00020000        4096       31       32      1      0
->>> FOLIO  0x00020000  0x00021000        4096       32       33      1      0
->>> FOLIO  0x00021000  0x00022000        4096       33       34      1      0
->>> FOLIO  0x00022000  0x00024000        8192       34       36      2      1
->>> FOLIO  0x00024000  0x00028000       16384       36       40      4      2
->>> FOLIO  0x00028000  0x0002c000       16384       40       44      4      2
->>> FOLIO  0x0002c000  0x00030000       16384       44       48      4      2
->>> FOLIO  0x00030000  0x00034000       16384       48       52      4      2
->>> FOLIO  0x00034000  0x00038000       16384       52       56      4      2
->>> FOLIO  0x00038000  0x0003c000       16384       56       60      4      2
->>> FOLIO  0x0003c000  0x00040000       16384       60       64      4      2
->>> FOLIO  0x00040000  0x00050000       65536       64       80     16      4
->>> FOLIO  0x00050000  0x00060000       65536       80       96     16      4
->>> FOLIO  0x00060000  0x00080000      131072       96      128     32      5
->>> FOLIO  0x00080000  0x000a0000      131072      128      160     32      5
->>> FOLIO  0x000a0000  0x000c0000      131072      160      192     32      5
->>> FOLIO  0x000c0000  0x000e0000      131072      192      224     32      5
->>> FOLIO  0x000e0000  0x00100000      131072      224      256     32      5
->>> FOLIO  0x00100000  0x00120000      131072      256      288     32      5
->>> FOLIO  0x00120000  0x00140000      131072      288      320     32      5  Y
->>> HOLE   0x00140000  0x00800000     7077888      320     2048   1728
->>>
->>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->>> ---
->>>    include/linux/fs.h |  2 ++
->>>    mm/filemap.c       |  6 ++++--
->>>    mm/internal.h      |  3 +--
->>>    mm/readahead.c     | 18 +++++++++++-------
->>>    4 files changed, 18 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/include/linux/fs.h b/include/linux/fs.h
->>> index 44362bef0010..cde482a7270a 100644
->>> --- a/include/linux/fs.h
->>> +++ b/include/linux/fs.h
->>> @@ -1031,6 +1031,7 @@ struct fown_struct {
->>>     *      and so were/are genuinely "ahead".  Start next readahead when
->>>     *      the first of these pages is accessed.
->>>     * @ra_pages: Maximum size of a readahead request, copied from the bdi.
->>> + * @order: Preferred folio order used for most recent readahead.
->>
->> Looking at other members, and how it relates to the other members, should we
->> call this something like "ra_prev_order" / "prev_ra_order" to distinguish it
->> from !ra members and indicate the "most recent" semantics similar to "prev_pos"?
-> 
-> As you know, I'm crap at naming, but...
-> 
-> start, size, async_size and order make up the parameters for the "most recent"
-> readahead request. Where "most recent" includes "current" once passed into
-> page_cache_ra_order(). The others don't include "ra" or "prev" in their name so
-> wasn't sure it was necessary here.
-> 
-> ra_pages is a bit different; that's not part of the request, it's a (dynamic)
-> ceiling to use when creating requests.
-> 
-> Personally I'd leave it as is, but no strong opinion.
+On Tue, May 6, 2025 at 10:06=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> On Mon, May 05, 2025 at 09:10:28PM +0200, Jann Horn wrote:
+> > On Mon, May 5, 2025 at 8:41=E2=80=AFPM Kuniyuki Iwashima <kuniyu@amazon=
+.com> wrote:
+> > > From: Christian Brauner <brauner@kernel.org>
+> > > Date: Mon, 5 May 2025 16:06:40 +0200
+> > > > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
+> > > > > On Mon, May 5, 2025 at 1:14=E2=80=AFPM Christian Brauner <brauner=
+@kernel.org> wrote:
+> > > > > > Make sure that only tasks that actually coredumped may connect =
+to the
+> > > > > > coredump socket. This restriction may be loosened later in case
+> > > > > > userspace processes would like to use it to generate their own
+> > > > > > coredumps. Though it'd be wiser if userspace just exposed a sep=
+arate
+> > > > > > socket for that.
+> > > > >
+> > > > > This implementation kinda feels a bit fragile to me... I wonder i=
+f we
+> > > > > could instead have a flag inside the af_unix client socket that s=
+ays
+> > > > > "this is a special client socket for coredumping".
+> > > >
+> > > > Should be easily doable with a sock_flag().
+> > >
+> > > This restriction should be applied by BPF LSM.
+> >
+> > I think we shouldn't allow random userspace processes to connect to
+> > the core dump handling service and provide bogus inputs; that
+> > unnecessarily increases the risk that a crafted coredump can be used
+> > to exploit a bug in the service. So I think it makes sense to enforce
+> > this restriction in the kernel.
+> >
+> > My understanding is that BPF LSM creates fairly tight coupling between
+> > userspace and the kernel implementation, and it is kind of unwieldy
+> > for userspace. (I imagine the "man 5 core" manpage would get a bit
+> > longer and describe more kernel implementation detail if you tried to
+> > show how to write a BPF LSM that is capable of detecting unix domain
+> > socket connections to a specific address that are not initiated by
+> > core dumping.) I would like to keep it possible to implement core
+> > userspace functionality in a best-practice way without needing eBPF.
+> >
+> > > It's hard to loosen such a default restriction as someone might
+> > > argue that's unexpected and regression.
+> >
+> > If userspace wants to allow other processes to connect to the core
+> > dumping service, that's easy to implement - userspace can listen on a
+> > separate address that is not subject to these restrictions.
+>
+> I think Kuniyuki's point is defensible. And I did discuss this with
+> Lennart when I wrote the patch and he didn't see a point in preventing
+> other processes from connecting to the core dump socket. He actually
+> would like this to be possible because there's some userspace programs
+> out there that generate their own coredumps (Python?) and he wanted them
+> to use the general coredump socket to send them to.
+>
+> I just found it more elegant to simply guarantee that only connections
+> are made to that socket come from coredumping tasks.
+>
+> But I should note there are two ways to cleanly handle this in
+> userspace. I had already mentioned the bpf LSM in the contect of
+> rate-limiting in an earlier posting:
+>
+> (1) complex:
+>
+>     Use a bpf LSM to intercept the connection request via
+>     security_unix_stream_connect() in unix_stream_connect().
+>
+>     The bpf program can simply check:
+>
+>     current->signal->core_state
+>
+>     and reject any connection if it isn't set to NULL.
 
-I'm fine with it staying that way; I was merely trying to make sense of 
-it all ...
+I think that would be racy, since zap_threads sets that pointer before
+ensuring that the other threads under the signal_struct are killed.
 
+>     The big downside is that bpf (and security) need to be enabled.
+>     Neither is guaranteed and there's quite a few users out there that
+>     don't enable bpf.
+>
+> (2) simple (and supported in this series):
+>
+>     Userspace accepts a connection. It has to get SO_PEERPIDFD anyway.
+>     It then needs to verify:
+>
+>     struct pidfd_info info =3D {
+>             info.mask =3D PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
+>     };
+>
+>     ioctl(pidfd, PIDFD_GET_INFO, &info);
+>     if (!(info.mask & PIDFD_INFO_COREDUMP)) {
+>             // Can't be from a coredumping task so we can close the
+>             // connection without reading.
+>             close(coredump_client_fd);
+>             return;
+>     }
+>
+>     /* This has to be set and is only settable by do_coredump(). */
+>     if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
+>             // Can't be from a coredumping task so we can close the
+>             // connection without reading.
+>             close(coredump_client_fd);
+>             return;
+>     }
+>
+>     // Ok, this is a connection from a task that has coredumped, let's
+>     // handle it.
+>
+>     The crux is that the series guarantees that by the time the
+>     connection is made the info whether the task/thread-group did
+>     coredump is guaranteed to be available via the pidfd.
+>
+> I think if we document that most coredump servers have to do (2) then
+> this is fine. But I wouldn't mind a nod from Jann on this.
 
-... maybe a better description of the parameters might make the 
-semantics easier to grasp.
+I wouldn't recommend either of these as a way to verify that the data
+coming over the socket is a core dump generated by the kernel, since
+they both look racy in that regard.
 
-""most recent" includes "current" once passed into page_cache_ra_order()"
-
-is *really* hard to digest :)
-
-> 
->>
->> Just a thought while digging through this patch ...
->>
->> ...
->>
->>> --- a/mm/filemap.c
->>> +++ b/mm/filemap.c
->>> @@ -3222,7 +3222,8 @@ static struct file *do_sync_mmap_readahead(struct
->>> vm_fault *vmf)
->>>            if (!(vm_flags & VM_RAND_READ))
->>>                ra->size *= 2;
->>>            ra->async_size = HPAGE_PMD_NR;
->>> -        page_cache_ra_order(&ractl, ra, HPAGE_PMD_ORDER);
->>> +        ra->order = HPAGE_PMD_ORDER;
->>> +        page_cache_ra_order(&ractl, ra);
->>>            return fpin;
->>>        }
->>>    #endif
->>> @@ -3258,8 +3259,9 @@ static struct file *do_sync_mmap_readahead(struct
->>> vm_fault *vmf)
->>>        ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
->>>        ra->size = ra->ra_pages;
->>>        ra->async_size = ra->ra_pages / 4;
->>> +    ra->order = 0;
->>>        ractl._index = ra->start;
->>> -    page_cache_ra_order(&ractl, ra, 0);
->>> +    page_cache_ra_order(&ractl, ra);
->>>        return fpin;
->>>    }
->>
->> Why not let page_cache_ra_order() consume the order and update ra->order (or
->> however it will be called :) ) internally?
-> 
-> You mean continue to pass new_order as a parameter to page_cache_ra_order()? The
-> reason I did it the way I'm doing it is because I thought it would be weird for
-> the caller of page_cache_ra_order() to set up all the parameters (start, size,
-> async_size) of the request except for order...
-
-Agreed. As above, I think we might do better with the description of 
-these parameters in general ...
-
-or even document how page_cache_ra_order() acts on these inputs?
-
--- 
-Cheers,
-
-David / dhildenb
-
+But given that you're saying the initial userspace user wouldn't
+actually want such a restriction, and that we could later provide a
+separate way for userspace to check what initiated the connection, I
+guess this is fine for now.
 
