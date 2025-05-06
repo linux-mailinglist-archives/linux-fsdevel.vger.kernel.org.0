@@ -1,85 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-48161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48163-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17966AAB9B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 09:02:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B43AAB941
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 08:53:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C2213AB4BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1FF14A694D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 06:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B2C223300;
-	Tue,  6 May 2025 04:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GSoEwn2b"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6070F295DAE;
+	Tue,  6 May 2025 04:01:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3F02FECFB
-	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 02:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FB4B1386DA;
+	Tue,  6 May 2025 02:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746497936; cv=none; b=CqQEu+1AfCb7jNF3sUYgSQDjT7Ehx9yohpVVv0iPuQDDzLBeBUhI64jD+nDrx3fD0l7/Mpv73+zBj5yImTAigEQfR24DPvrdzldp3n8qVuIgjA/hm6oTSTD9zpuQQ89Bj1MVJss+1OdcHWlSgchgZGc14kHI/1SiuAEJJTHvfGE=
+	t=1746498314; cv=none; b=rLqJbJLau16g8f/D1wiWvNrCNlc3rQT2oXZ7JsjJ/HRPKHYDxDrYzYrv4rNTaHp9F+4064yvZLPV3nOre2fW5FqUPCJIOzB4Dg0+npxI+80qnvTb8qffsOZlQr8jC2+kWBoTEUta7yk1HRdlk/O3z9V5uuJn05zEwg768ks7JTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746497936; c=relaxed/simple;
-	bh=9JcClZk0+gnvRfYDgRN4RZ+yOXRchbnML0kEvhpXi2I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ZiHtI66vYKwxJSZYG4bYpERk06KXMca6z6Jid7HbcsL9hLoyPcWKfhS/lmsyRkX6EMYaP1SclAlXZTiUVqghato6ycfmsyF97WV8EVRakfDAxEbsTEWgCpPWtVC3NRcr9egGwp+8lgNX2b0zuPe0y0l1OUNwTRWD9oxFH/MvsIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GSoEwn2b; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746497929;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Et8TCn0u/SHrBh2poXeA0ZCHndWgAtXK+u08Te8MVs0=;
-	b=GSoEwn2bwVs/gCTE9iJ1bHJFC2dCb62k2A2vbZjfoydFtSxXt8fRY07l6WRJXJANN9IFwt
-	IpRhI/QQtzdvQ2/F6mWjiGvVrJrOni8uGd8iNURUvoNEnM7TIxGrlzqz+gbgpSdkGqWJ3T
-	O2l1LQvj/v2IxkjV9sTYcQFiz4m3X44=
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
- [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-532--1f1DjYqPG-UDJ-tAeNvcg-1; Mon, 05 May 2025 22:18:48 -0400
-X-MC-Unique: -1f1DjYqPG-UDJ-tAeNvcg-1
-X-Mimecast-MFC-AGG-ID: -1f1DjYqPG-UDJ-tAeNvcg_1746497927
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-86195b64df7so945961539f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 May 2025 19:18:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746497927; x=1747102727;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Et8TCn0u/SHrBh2poXeA0ZCHndWgAtXK+u08Te8MVs0=;
-        b=UO0yF0Ett3+kKvVPqgQIr3it3XecbvzgH9ve5YtYfj6rIQYAR1eaFCIvLta4gui6Xs
-         hvFNPDumUnD2C3BPicDa1IO2gCWEpYU3OkYYlLVndz02ltE/rY6Y3caEsdscIhKSggva
-         zW3thGZXh03hhnSw02uNPcflT9oh3ti4/oX10sBhgB8FXbu46+b7Hk9PcIW2tX+FkH8F
-         4S8Bdu8oOePi3VQzNFZkVZYhnafDp3qipTk8h6+ovfSWUfZSoXioJh9u707wCHU2Kb+L
-         QuG9ziJtrjd2rULGZ67Bsgr4qy/LA7V3+gWwUe+0iFsivRS+vZrwAm/9U8zQjSrAZJY1
-         6u5A==
-X-Gm-Message-State: AOJu0Yz0SjalisayWW0zQbtfMg8yD9/Rc7zboBFyr6VzqH6i0a9RVNRP
-	ykfI/kEFmrcQhVtEgH0E61qZHwFrHGILO9U56Be4ADBgsMsZUMdNsPqOs9+srpQ4BrU0qbWBMzY
-	pSBRzF06Sxo8m7a1fuVewIDON/gwX+2i2IR/ZsYaC26s7FX/RDYkr4lP7l3RXzmA=
-X-Gm-Gg: ASbGncvfqU4VfDbpUnkzLSMJ4bbUiyhoSWo0bvWoEOhtDFqWoCysZXNvb7Pk0J64V6g
-	7h5vkZ63P/A7aqPVF5UGGKvaNhZnOKNEM99deFGb7j7VVYCoEbEcSqH45YScklMT82S4vYk8U1Q
-	MdMUlgNHUVBnuiCDcDru+6C+u8h9FFc2JxXzRw0JQ3B5gg8sh7Eyv2saW1QT+auhcoP9n97+CA1
-	V3fL6TgcSdndzJ5RGeEvOR/tUCbLGVxltfLwL5hOdbD9Gb0OY63igQghQuuI9aK4DD0yH/Kc03G
-	1mIZgN00UZk5J0D0nRsdJyVOXZHp6TZLGRvu0CaLUd3Mzi2sDg==
-X-Received: by 2002:a05:6602:2d85:b0:864:4a82:15ec with SMTP id ca18e2360f4ac-86713adb682mr1151076139f.6.1746497927414;
-        Mon, 05 May 2025 19:18:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzSxB1we3zK5o9gdf7WMzlE6y+dZ6hnjVVgqV7oycZj2oSqm1Nm3N1QL+RrYBY23ySthgLlQ==
-X-Received: by 2002:a05:6602:2d85:b0:864:4a82:15ec with SMTP id ca18e2360f4ac-86713adb682mr1151075039f.6.1746497927070;
-        Mon, 05 May 2025 19:18:47 -0700 (PDT)
-Received: from [10.0.0.82] (97-116-169-14.mpls.qwest.net. [97.116.169.14])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-864aa2bb423sm200783839f.4.2025.05.05.19.18.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 05 May 2025 19:18:46 -0700 (PDT)
-Message-ID: <b673458e-98b6-42ad-b95f-7a771cd56b03@redhat.com>
-Date: Mon, 5 May 2025 21:18:45 -0500
+	s=arc-20240116; t=1746498314; c=relaxed/simple;
+	bh=yEpidYVsK6d7u4CVEdAvzxNONuSeJ4rBRYQkAnE47VU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=buI/pyRaHrncxTekHyg3sLZ7ljOMIbYajO9kCM6bXOJCxey1bS/vN/baECyMyLJJz3gOYB14n5U/PJMR8D4UrFGN2x9C/z7n3rPcmG9vo76Xm0GbYjUkt/df3EzlfFnqy2VfSEYSfvViXsYOHrWFdVCDZiCC6wE+a8Mb3hKDkao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Zs2KR62dBz4f3jdt;
+	Tue,  6 May 2025 10:24:43 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 49BD21A12DD;
+	Tue,  6 May 2025 10:25:08 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCnCl8CcxloBMVDLg--.27787S3;
+	Tue, 06 May 2025 10:25:07 +0800 (CST)
+Message-ID: <d93e69d0-8145-40ac-8afc-f1e8ccbe2052@huaweicloud.com>
+Date: Tue, 6 May 2025 10:25:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -87,95 +47,80 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 0/7] f2fs: new mount API conversion
-From: Eric Sandeen <sandeen@redhat.com>
-To: linux-f2fs-devel@lists.sourceforge.net
-Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, chao@kernel.org,
- lihongbo22@huawei.com
-References: <20250423170926.76007-1-sandeen@redhat.com>
+Subject: Re: kernel BUG in zero_user_segments
+To: Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
+Cc: Liebes Wang <wanghaichi0403@gmail.com>, ojaswin@linux.ibm.com,
+ Theodore Ts'o <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+ syzkaller@googlegroups.com, Ext4 Developers List <linux-ext4@vger.kernel.org>
+References: <CADCV8spm=TtW_Lu6p-5q-jdHv1ryLcx45mNBEcYdELbHv_4TnQ@mail.gmail.com>
+ <uxweupjmz7pzbj77cciiuxduxnbuk33mx75bimynzcjmq664zo@xqrdf6ouf5v6>
+ <ac3a58f6-e686-488b-a9ee-fc041024e43d@huawei.com>
+ <aBGVmIin8YxRyFDp@casper.infradead.org>
+ <znfg4s5ysxqvrzeevkmtgixj5vztcyqbuny7waqkugnzkpg2zx@2vxwh57flvva>
 Content-Language: en-US
-In-Reply-To: <20250423170926.76007-1-sandeen@redhat.com>
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <znfg4s5ysxqvrzeevkmtgixj5vztcyqbuny7waqkugnzkpg2zx@2vxwh57flvva>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCnCl8CcxloBMVDLg--.27787S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Kr1xCw4UGr47WF45CF45KFg_yoW8WF4UpF
+	WxAryrtF4DtFWIkan7Zr1Iqrnaq3s8CFWUXF95Gr4fArZ8WFn29rn0kF4YkasF9r4xuw1j
+	qFyjg3srJ3sIyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
+	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
+	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xII
+	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
+	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
+	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Hi all - it would be nice to get some review or feedback on this;
-seems that these patches tend to go stale fairly quickly as f2fs
-evolves. :)
+On 2025/5/1 19:19, Jan Kara wrote:
+> On Wed 30-04-25 04:14:32, Matthew Wilcox wrote:
+>> On Tue, Apr 29, 2025 at 03:55:18PM +0800, Zhang Yi wrote:
+>>> After debugging, I found that this problem is caused by punching a hole
+>>> with an offset variable larger than max_end on a corrupted ext4 inode,
+>>> whose i_size is larger than maxbyte. It will result in a negative length
+>>> in the truncate_inode_partial_folio(), which will trigger this problem.
+>>
+>> It seems to me like we're asking for trouble when we allow an inode with
+>> an i_size larger than max_end to be instantiated.  There are probably
+>> other places which assume it is smaller than max_end.  We should probably
+>> decline to create the bad inode in the first place?
+> 
+> Indeed somewhat less quirky fix could be to make ext4_max_bitmap_size()
+> return one block smaller limit. Something like:
+> 
+>         /* Compute how many blocks we can address by block tree */
+>         res += ppb;
+>         res += ppb * ppb;
+>         res += ((loff_t)ppb) * ppb * ppb;
+> +	/*
+> +	 * Hole punching assumes it can map the block past end of hole to
+> +	 * tree offsets
+> +	 */
+> +	res -= 1;
+>         /* Compute how many metadata blocks are needed */
+>         meta_blocks = 1;
+>         meta_blocks += 1 + ppb;
+> 
+> The slight caveat is that in theory there could be filesystems out there
+> with so large files and then we'd stop allowing access to such files. But I
+> guess the chances are so low that it's probably worth trying.
+> 
+
+Hmm, I suppose this approach could pose some risks to our legacy products,
+and it makes me feel uneasy. Personally, I am more inclined toward the
+current solution, unless we decide to fix the ext4_ind_remove_space()
+directly. :)
 
 Thanks,
--Eric
+Yi.
 
-On 4/23/25 12:08 PM, Eric Sandeen wrote:
-> V3:
-> - Rebase onto git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
->   dev branch
-> - Fix up some 0day robot warnings
-> 
-> This is a forward-port of Hongbo's original f2fs mount API conversion,
-> posted last August at 
-> https://lore.kernel.org/linux-f2fs-devel/20240814023912.3959299-1-lihongbo22@huawei.com/
-> 
-> I had been trying to approach this with a little less complexity,
-> but in the end I realized that Hongbo's approach (which follows
-> the ext4 approach) was a good one, and I was not making any progrss
-> myself. 😉
-> 
-> In addition to the forward-port, I have also fixed a couple bugs I found
-> during testing, and some improvements / style choices as well. Hongbo and
-> I have discussed most of this off-list already, so I'm presenting the
-> net result here.
-> 
-> This does pass my typical testing which does a large number of random
-> mounts/remounts with valid and invalid option sets, on f2fs filesystem
-> images with various features in the on-disk superblock. (I was not able
-> to test all of this completely, as some options or features require
-> hardware I dn't have.)
-> 
-> Thanks,
-> -Eric
-> 
-> (A recap of Hongbo's original cover letter is below, edited slightly for
-> this series:)
-> 
-> Since many filesystems have done the new mount API conversion,
-> we introduce the new mount API conversion in f2fs.
-> 
-> The series can be applied on top of the current mainline tree
-> and the work is based on the patches from Lukas Czerner (has
-> done this in ext4[1]). His patch give me a lot of ideas.
-> 
-> Here is a high level description of the patchset:
-> 
-> 1. Prepare the f2fs mount parameters required by the new mount
-> API and use it for parsing, while still using the old API to
-> get mount options string. Split the parameter parsing and
-> validation of the parse_options helper into two separate
-> helpers.
-> 
->   f2fs: Add fs parameter specifications for mount options
->   f2fs: move the option parser into handle_mount_opt
-> 
-> 2. Remove the use of sb/sbi structure of f2fs from all the
-> parsing code, because with the new mount API the parsing is
-> going to be done before we even get the super block. In this
-> part, we introduce f2fs_fs_context to hold the temporary
-> options when parsing. For the simple options check, it has
-> to be done during parsing by using f2fs_fs_context structure.
-> For the check which needs sb/sbi, we do this during super
-> block filling.
-> 
->   f2fs: Allow sbi to be NULL in f2fs_printk
->   f2fs: Add f2fs_fs_context to record the mount options
->   f2fs: separate the options parsing and options checking
-> 
-> 3. Switch the f2fs to use the new mount API for mount and
-> remount.
-> 
->   f2fs: introduce fs_context_operation structure
->   f2fs: switch to the new mount api
-> 
-> [1] https://lore.kernel.org/all/20211021114508.21407-1-lczerner@redhat.com/
-> 
-> 
 
 
