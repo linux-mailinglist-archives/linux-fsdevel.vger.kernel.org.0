@@ -1,233 +1,1088 @@
-Return-Path: <linux-fsdevel+bounces-48300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48301-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D862AACF7D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 23:35:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB1AAAD0B0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 00:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C00514A6AB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 21:35:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA7A3B2328
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 22:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D1C9218AC1;
-	Tue,  6 May 2025 21:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE32218838;
+	Tue,  6 May 2025 22:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="AYb6t9KG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jL7nFZ8q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2086.outbound.protection.outlook.com [40.107.212.86])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4774B1E4B;
-	Tue,  6 May 2025 21:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746567291; cv=fail; b=YfP7konMRIsdiO3OzkHVlW7K0kfcfbKu3jBtVf3Koq30lj40Q3qFFIwjLgxbYPo5tGZtaANk6QK6jq4PDqvd7qz+1Xv4NqytWOCQYmMsIotT/9qP02FRTgaTVvMMzsfL8oGK+ISvldPPa3JEQFOYeGxnlOyocwiPqN88jn8X/Zw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746567291; c=relaxed/simple;
-	bh=FTqZaS4Nx21aootXfx/Si493U6kH3P1+S8KVSaMuaM8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dU8rIdaC5XVtME2/f5ciXLiGvWrm6rQKeVS1L1+pu/3U6pO3V9kCdReiw3sT8yXQvGb8o2DghfZd5zSXO8mTGLoYC5bFyAWxkieMUdnzr7xsf9olsTa89S45HwZMQDpzWyIGHh1oK4Y8A5beelDcUIIReYNnt2Kkr5os7RcaLZM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=AYb6t9KG; arc=fail smtp.client-ip=40.107.212.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=AsrI5iZMaKw00UbA26oAwazrZDAp9t0G8idk16qygGhjFDT4ewKr1ZsYtbYwiWJtCL/HvEiRrhPCxSIjpL1jiJrMK0SDPgQHX+wHxBbkU4OLS+piMzSdCiLP/LUoFVP1pGpgWkJQ4YelzHNcIgnQsNGJsyFkI87gbarUSr+1dnxjEIm3vuKCTO7UHUSSOA6/buLBntsaulLv+mxnfijhUeb6m4enLcNfvP4FvjEWMsR8jsMNQewVe8RWM2fc+7mm3ClrrfHDSiTiwcWI1fmZIqs2X1LtHv7xdwtQwSemQtrHAFAFVFJoO+4RHMM1CLn6jkPdH7t/u9qSLht+ncJjEg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nu8swYFeuNnaRfL1EjOa6v3/yJlOZctfSsSsOwyZejQ=;
- b=lE8wN9purVtjOcAkx7Cp9Q7FjKqxGL3ATiTlo6pe6z+dNN2wj47EKjw7MhoSM8/rzoW7Xy84FOGJ+mNFVbYXtbyn/G92gyl+4jOt0dflP3JuWNhnzkEqembLu3qzW+z7lQMbWSYJfcbQ4izYcBmuhNLQeFDp/mwclPq1TWuFfs4uBgp1sS1HCWlyYIdBH46O3V1JB03V8xi48KTwzUqAI8CKiWiyKUsVK9J2SZ56365vDQH/QRhNXlJ7w9aMBKRGWxgo4YzvxJYhzbyXWevv80QzVN+Di0TyiUUrwGB/Za8e429PKxVEbDHeyU0qdTBx6b171JKcoojZdJ8uh0mPLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nu8swYFeuNnaRfL1EjOa6v3/yJlOZctfSsSsOwyZejQ=;
- b=AYb6t9KGuvI0PBrucnaxjqKwqdugLONLZd3Lxr27JefnAjH+VMyrv9SeREzOqeJ+5qDAH9ekxjkD43F/p3e5fVwwbAP8X+p9ZVr91r+9ZoTIlMqPAPzLvEzDajS7XZTYrUXwgg6eqngIHOFWKKKKGSebKQeKA5cNgB3PtAKo6OI0DQWJ0eUjX1Uc97KeSzETQjOGJJcusBTF1sHMRD9NXFfVIAbKXh8j6RLI+KqIieRE4wNDVW1kkHjPsxb1gPp+HH37h0p7+ujxqWlnwPMnI2FN7xfvKt+TGQEo5xeK9x7uJqoBHH5mcCfJkkX0hN8T8SOGfHc7JpQmxnIFRaX0tA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by CH0PR12MB8580.namprd12.prod.outlook.com (2603:10b6:610:192::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8632.48; Tue, 6 May
- 2025 21:34:40 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%7]) with mapi id 15.20.8699.019; Tue, 6 May 2025
- 21:34:40 +0000
-Message-ID: <8f765dc8-421f-420f-bd3e-1a0d889238a1@nvidia.com>
-Date: Tue, 6 May 2025 14:34:37 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
- Oliver Sang <oliver.sang@intel.com>, seanjc@google.com
-References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
- <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
- <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
- <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
- <5b0b8e1e-6f50-4e18-bf46-39b00376c26e@nvidia.com>
- <20250501114235.GP4198@noisy.programming.kicks-ass.net>
- <17464a97-e7be-49d4-9422-96ff824dba7c@linuxfoundation.org>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <17464a97-e7be-49d4-9422-96ff824dba7c@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0209.namprd03.prod.outlook.com
- (2603:10b6:a03:2ef::34) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450875680
+	for <linux-fsdevel@vger.kernel.org>; Tue,  6 May 2025 22:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746568901; cv=none; b=DICrYNG/TziUv+Fg29IdBvWfqRc32xSga3UYKSDYtliftTAMsFS9yTmYvT8/px0xQGhYXntmbQa6T7gGl4QGhcS2Lq4WDdYklQW3TrPcOXKE3bFqJ2NcFnD/t3ugczGypYH6Rbt9aMmnJMxmqzqfLccV8CCXdlBEALQItEhcluQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746568901; c=relaxed/simple;
+	bh=eUVDwRZRe+MYdsBJGEFx53o4ZKL06YKPiHDYeHcv+gI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oXmgji9BNhzYgOJnThL5igYAZ/l6AF17hp0cCsNgFNQcG4QxZsikqoAWpJAz0rGFs5usUzi+e0R71RorjqgqM3qELHRFVPReiqQo5yXwoJx+h0Yo2Z6V3MDVEj7ti6fBAARrfhWnQ1NWFgqqhzcAmzESsxhBpxvw2Sa6AuR9hag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jL7nFZ8q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1A69C4CEEE;
+	Tue,  6 May 2025 22:01:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746568901;
+	bh=eUVDwRZRe+MYdsBJGEFx53o4ZKL06YKPiHDYeHcv+gI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jL7nFZ8qVkGp9E2h/We/QhZ2ttWtE+VhlLJoLXdMPgHlqVSEUhz9qY4oTHaNCmv3j
+	 /+9f2oOekoro8Q+b50EMOSXS30F9lAEOLdfB6klH/WMaev74Tc4Fp49f+XyklXLdI0
+	 LOo0T3LvW72LwwIH9csTQhZdtysQoG9dtsIytGCKM+7CEIgykQGpeX8aEm8UFImZ1F
+	 bKDjUiMF9vX6XyZ4u0lBpoN27VI11ZPSHOkSMBgSzcRtxl+lF23VFviM3EVou5Adx9
+	 4COPQuzTrXen4sx0RzyUJS4uhWVSfdkIW0ito7E/dJVdDovFsnME2bacxwslnGNfZg
+	 npDT0FJ2yE1iA==
+Date: Tue, 6 May 2025 22:01:39 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	chao@kernel.org, lihongbo22@huawei.com
+Subject: Re: [PATCH V3 5/7] f2fs: separate the options parsing and options
+ checking
+Message-ID: <aBqGw8lUbNtvdziC@google.com>
+References: <20250423170926.76007-1-sandeen@redhat.com>
+ <20250423170926.76007-6-sandeen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|CH0PR12MB8580:EE_
-X-MS-Office365-Filtering-Correlation-Id: fdac29b5-975a-40df-5555-08dd8ce5ced5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ekxEeXZlR1FEUWJ3bjBqZXpUb2J0dERqN0FMcWVZTnVpeS9GUHhybEdGNzE3?=
- =?utf-8?B?cmprNUY0K21ERFpnTnZDU2F1dmc4Znp1cHNZWTkwTFRpbDVyMm85bkJUVDZq?=
- =?utf-8?B?ZExtbEtBQS9TcEgrWmU2dXpFZzFHYUU0bkpNeTlpekQwTUR2VWRYUW54VUFq?=
- =?utf-8?B?Mjd0L1JPNmFMam92WVdOWmFpL3ZvKzNZUW9Gak42bWJpdDh6NFFmcDU4Q2cy?=
- =?utf-8?B?S3BiaHhiaDF2VVBUVTh3V3QzMzVTRXE0em1Mb05XeTNuNXBSL25ON2lrU3FG?=
- =?utf-8?B?czhTTHAvSGFmYW9lSjF2R0oyTjdpajh4cHlNR1FWSlh6ZUJNME5TN3RCejc1?=
- =?utf-8?B?NU5HTi9WZkxXRWp1QVVsWlJJak1HTFJPaGJJaDBXTzRWUlhlRFlFZU50aVZN?=
- =?utf-8?B?OUpIUkJCQXR4Q3ZsYTRLcElNZ2FRZ2UySkFQS1A2b05YUWlXaGY3SnI0N1cz?=
- =?utf-8?B?TEsrZEl1cGw1QXRhZWNqdlJ0REl1NDE3aVlGdUxyWDNZMWxrc0JhTkpWV29F?=
- =?utf-8?B?MVpCWWt1Z2NuZHRkc2lFMG83TitqVHhaT0M0R3RyYWFqQU9HWW1od2VPQVFS?=
- =?utf-8?B?OUtoTlhoYWRqUTNkd3NUN0JNaXlGb1NiaVhjM2lUYkxYUHhGWTFFa0c4eWlD?=
- =?utf-8?B?Y3JiYkQ4bUZzM1JVZ0VtZzBEazNCSXRsVWFQdUlGZVNsOWtWUG9iV0pJOEIy?=
- =?utf-8?B?ckluWGJHNm83akdrSEZSMEVzbi9zdmJaclY0MXdCOVhjQ0xJTTZ0ckRtZHk3?=
- =?utf-8?B?bzNyallQYzN0SW02UEJCT0ZSOUhxb0lOay9PbmhGVVROMUF2QjdGWEJ3dUY0?=
- =?utf-8?B?Zk1qY3NaNFJqNXV4anI5d2I1ek5WUDZ4YmsxZDJibWY1ZzJZNEFFMURQNGRR?=
- =?utf-8?B?M0JaVGxXN0lyZTNTSGFUTWNRSXNLMWw4UGFlZERJY096ekc2OVhMcTk1anRE?=
- =?utf-8?B?NklpbWtTM1NsZzcxRHV2VEdaNmMwSGsrR2crOVE2RzNjTDVZM3J0aTVKZ2dM?=
- =?utf-8?B?TWNDdWx4anRGcUdhTnpjdGpWTWUwd3dyajBsNGVrUXRzQUQ5SisyU2xiOWlm?=
- =?utf-8?B?THFjYVNERzl1L3EwRUdJdjhjaTdOZEJBdUhTd0k2MHFjSjIzajdud05IQVZM?=
- =?utf-8?B?UU1WL0tCRXZ4VWlSMWMyTnJueUwxNmNqTFpSVGNXUy9OeWJtOTRUS2duR0ZH?=
- =?utf-8?B?SHp0U0hQM2lya3RnV2l5L2F1bXo3WEhteFZxZWkyNVAycnpFRHdFU2VjKy9N?=
- =?utf-8?B?dHFmYk1ibDhYaENxWnp4UlFoMnBsVDZjSG8vMW81Zld3dGpRc1cyeHpYeGhI?=
- =?utf-8?B?enh1cnJIQ0VONnVHbVVjcDlua0xBOXNVOVJhV2UybW9ZbXM2aGtOWTBXVXVm?=
- =?utf-8?B?aXVRZkRPVlloY05VYmQxOXdrVW54Z0tid1VGS1NQSGcwWkdLQUg0c3padENy?=
- =?utf-8?B?alNrcGgvN3BYWUlwSEk5TUVnd0VBV2p3Qk1nNURUVE9wV3JDYkEyUlZERVBu?=
- =?utf-8?B?UFQ3TEVZbFNCQWRpbm13dnNlZUdWUUNIVHg3bVJoell0T0NCZ2x0WDhuSGNx?=
- =?utf-8?B?bGtlK0RCVUxnQUV4WU00MmVuWVpkTEFlY3NQdlNGdHZsM0pCK2U2VnVKSUJa?=
- =?utf-8?B?bjZqaVdLcWo1VklQZGhtNzg4ZkdyLzhDZk94RWxLV2NtVjFrODFucDlSUVNR?=
- =?utf-8?B?ekpiOW8xR3l0bTJoZWZDeEhuUE5FV1E1ZGF4cHdBMWZmWUNwTEFsZTFPRWMz?=
- =?utf-8?B?ZHRXc25LUE92elAra2VFNEtmbEowVFNyYjVLbVhzYk4zbUNiYTlXaWpuY2pV?=
- =?utf-8?B?bWtYTzhkWTBDZWRTbldvN1NEQ2J0M1hxZGxYdDZhNno0N01HZXl0TjVxRlRC?=
- =?utf-8?B?WDNIS0Q5ZGd0VS90ZXpFcUoxbGR2akwxNlN0VUNQYjFxZEcwMVBEeUR4RkxQ?=
- =?utf-8?Q?QW3vGyZUKRM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VHU0bWJsRG1wQVJGaTF4S2RiUEVrL1NVWXpvNFJ5enZUL2haSGFFMXk2aTRV?=
- =?utf-8?B?blFRdWZRZGJNZ1drYmREQ3luNEhkMGlQTmlFOHE3YzNEbE1oQnhrNUJybU5Z?=
- =?utf-8?B?UEkyKzBpNGZleVlmVzUzQi83Y09XUUhpWS9BUWtPeU1NeC9mVFNSVzRUYXA4?=
- =?utf-8?B?QjNHWHU3UHFlcHhFNDNBNFkzMXNtRVh6eVRiM2pOY3BBNW1yWFNNV2kzUkFB?=
- =?utf-8?B?MzQvZ1VFdGIxREl4SDdJTmM3ZTV4UnhvRVZLa3lFL3JSL3dEUDQ4VDNzVDFv?=
- =?utf-8?B?Zk10RURITVVTLzRiOXRIL1ZVMXZZaUxJTU9ieTR5ZzdybnJOMFZvUHVhM2JL?=
- =?utf-8?B?TDNSWWtEd3JIVTIvOWMzbk1XbGRLaDYzZ3BRd2Fyd0ljK2tHemN4eUVzdmdn?=
- =?utf-8?B?V05XemxDUmwvdUxiUDU3V0pFZXR1THVUNklNajZ0cGFNZXB1MUdlVDA2b05Z?=
- =?utf-8?B?R0g2U00rNm4rTjFpYTdxVk9FMUVRdG1VV2dHbGF6MUVCWU1KRDVsMklmbmFE?=
- =?utf-8?B?OW9qNGl3Z1QxZHlaZFFtU0JlRjYxMEpab1ZQRkFwcGwxS1dXR3VwSEJZdkVq?=
- =?utf-8?B?aSsvcitqbWtHaTBXK01udFYvaTgxbFVEa3lNbEx1THJFM3ozTnJLeWVvMkJZ?=
- =?utf-8?B?a2FqUVVaeFZOazgyWHJleU9qNEowWSsrRitrckd6bXZ1WmhleHJ2V2NJSWpp?=
- =?utf-8?B?YlZWMzBJN2RnVDYrUHBmekd1M1BTWERRd1N4aXpYcTh4TXA5Y3VjZHdoTGFt?=
- =?utf-8?B?SHhvQnFyN3lqVjdjRUx5cE5LekRrV3dBK1VmRHFlYW9qY0RNUE9WbTRrcWg1?=
- =?utf-8?B?NlRpRFNhQU1uNWVPN3Z2YlJlSWZBQ0ZnVzBFd29ETG82amJYSGJOWkYxOExT?=
- =?utf-8?B?RTdNZXVpck5wT3VTNkZ2ZWNDRlBlbVB3dnlNM0pzNk9TRkNRUDNIZXRNcCtG?=
- =?utf-8?B?VTdqN0MyVC96ekNiWmtaUGpaV290MnpFRGV0cDk3Um1XbVJ0ek1DdzRmZkk5?=
- =?utf-8?B?TDV0UzY4WHNTTjVNTkpWK0dTeS9KRE9EeXRwNlNyeUIvU1FzYzBpQWN3ZC9F?=
- =?utf-8?B?dnJtMyt4WUhiUWxPVVZLa1BnQytFdm1OTWZwM3hLQjFQNlhGajAxVEJJVjUy?=
- =?utf-8?B?ZFI0cG5ZSDk0VnpDa0g2c3JjbmdpZUN4cDA2SDQvYjAzWEVhUTJ0YTM3ZXZN?=
- =?utf-8?B?UGZ2MEpwMXViaXI3cHM0VkltZ1Znd1VNWnREK09Pd2xrYTdzanNFRThOZlll?=
- =?utf-8?B?MklKR2wzKzh6MWpWRVdWbnlUUUFTRkdXVXNVSU9oZVpsMldic2pNbDNrUlRj?=
- =?utf-8?B?Um5XSlM5bThOMDNHRlI1Mmt0ZkRoREFaUmZ2S2ozMVc0TTUrRmEwS3RxdkFu?=
- =?utf-8?B?Q2RYMEJhNHFxT3l6eENRU1RnRzBib3Q0V0EwVTVuVW1YR2NvMDgrZnAwUXBB?=
- =?utf-8?B?d3BHbUEzYStWQXpnckNETTVzbjhzdUpLNG1Xb3NBWUgybUlKamMwSkRTdFJN?=
- =?utf-8?B?TDlHb1RzaEUxb1hyclhVazIrdVV1NFlFajY0czVKU0xwL3RMLzlKYlJCbjVx?=
- =?utf-8?B?aDlBbzFtQ0lscnF4dW8yT3FVbEUvQmpNS0ptNjEwWTBFOUorU1RRTFVYbmVN?=
- =?utf-8?B?MkgxZS9ra05oQkRqTFZJeHJvQmpRQnJkMDZvOEZ0ZEpRcHFGMTQ0SUl1UmlG?=
- =?utf-8?B?NjNqWGhUWmN3VHJSNDk3TXdOL05Mcjg1UjV0RnB6TDBna0dxNnBwblErc0lU?=
- =?utf-8?B?Z1dXRkNBN0pRT0p5OXd0ZDN3U0poVWV5MEZUcnBEZEJzcUpRbVN0dVZYVHZR?=
- =?utf-8?B?UlJDeFJSdzZuOHhPWCswZzNuVGVhWFBvVWJaU2RYNmkwQ29aOTZRWEIxN0U2?=
- =?utf-8?B?NnNXVGtsVzBGQmVRYTh4VkFIaTZWTDZoaXpiWmNRY0swVFN4d2tsd05DMDRR?=
- =?utf-8?B?b1RseEFmRXFvcm9TcllKd1hWUXBnNWJUOHVvc0JTeDkvSGZSWnFsZ3liUTZ1?=
- =?utf-8?B?bXpFYkhlWDU3WEJITHNoYnV5Ujl4Y3JhZVg2a2hJdG8xQmx4MlJHUTd4WXU1?=
- =?utf-8?B?bHBpOHg5WFNUOWlqRk1wRXhiUFpUNXNWU0RIUWw2MXg4VjFDUjB5VVBTZDRk?=
- =?utf-8?Q?1zvOoGPVfl2Eyaq0GNl1G7wa/?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fdac29b5-975a-40df-5555-08dd8ce5ced5
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 May 2025 21:34:40.3604
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KakflZ2avcSEjumc9k3ab/JeZMOrHrEwGHqYoRi59aQF8hmhEA10gmFJEeyBTmZd4v9R6EycJonLuCPo7oZfJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8580
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423170926.76007-6-sandeen@redhat.com>
 
-On 5/6/25 2:18 PM, Shuah Khan wrote:
-> On 5/1/25 05:42, Peter Zijlstra wrote:
->> On Wed, Oct 16, 2024 at 07:14:34PM -0700, John Hubbard wrote:
->>> On 10/16/24 3:06 PM, Lorenzo Stoakes wrote:
->>>> On Wed, Oct 16, 2024 at 02:00:27PM -0600, Shuah Khan wrote:
->>>>> On 10/16/24 04:20, Lorenzo Stoakes wrote:
->>> ...
->> Please fix this fucking selftests shit to just build. This is unusable
->> garbage.
+On 04/23, Eric Sandeen wrote:
+> From: Hongbo Li <lihongbo22@huawei.com>
 > 
-> I don't recall all the reasons why kselftests needed "make headers"
-> One reason I could think of was that when a new test depends on a
-> header change, the test won't build unless headers are installed.
-
-...or until an updated copy of that updated header file is copied
-somewhere, and then included in the kselftests. That's the approach
-that I ultimately settled upon, after some discussion and negotion.
-
-Details below.
-
+> The new mount api separates option parsing and super block setup
+> into two distinct steps and so we need to separate the options
+> parsing out of the parse_options().
 > 
-> If this requirement is causing problems for tests that don't fall
-> into the category and we probably have more of them mow, we can
-> clean that up.
+> In order to achieve this, here we handle the mount options with
+> three steps:
+>   - Firstly, we move sb/sbi out of handle_mount_opt.
+>     As the former patch introduced f2fs_fs_context, so we record
+>     the changed mount options in this context. In handle_mount_opt,
+>     sb/sbi is null, so we should move all relative code out of
+>     handle_mount_opt (thus, some check case which use sb/sbi should
+>     move out).
+>   - Secondly, we introduce the some check helpers to keep the option
+>     consistent.
+>     During filling superblock period, sb/sbi are ready. So we check
+>     the f2fs_fs_context which holds the mount options base on sb/sbi.
+>   - Thirdly, we apply the new mount options to sb/sbi.
+>     After checking the f2fs_fs_context, all changed on mount options
+>     are valid. So we can apply them to sb/sbi directly.
 > 
-> John, you mentioned you got mm tests working without headers?
-> Can you share the commit here.
+> After do these, option parsing and super block setting have been
+> decoupled. Also it should have retained the original execution
+> flow.
 > 
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> [sandeen: forward port, minor fixes and updates]
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
+>  fs/f2fs/super.c | 693 +++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 510 insertions(+), 183 deletions(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 15befeb45c94..149134775870 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -360,6 +360,12 @@ static inline void ctx_clear_opt(struct f2fs_fs_context *ctx,
+>  	ctx->opt_mask |= flag;
+>  }
+>  
+> +static inline bool ctx_test_opt(struct f2fs_fs_context *ctx,
+> +				unsigned int flag)
+> +{
+> +	return ctx->info.opt & flag;
+> +}
+> +
+>  static inline void ctx_set_flags(struct f2fs_fs_context *ctx,
+>  				 unsigned int flag)
+>  {
+> @@ -533,51 +539,6 @@ static int f2fs_unnote_qf_name(struct fs_context *fc, int qtype)
+>  	ctx->qname_mask |= 1 << qtype;
+>  	return 0;
+>  }
+> -
+> -static int f2fs_check_quota_options(struct f2fs_sb_info *sbi)
+> -{
+> -	/*
+> -	 * We do the test below only for project quotas. 'usrquota' and
+> -	 * 'grpquota' mount options are allowed even without quota feature
+> -	 * to support legacy quotas in quota files.
+> -	 */
+> -	if (test_opt(sbi, PRJQUOTA) && !f2fs_sb_has_project_quota(sbi)) {
+> -		f2fs_err(sbi, "Project quota feature not enabled. Cannot enable project quota enforcement.");
+> -		return -1;
+> -	}
+> -	if (F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
+> -			F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
+> -			F2FS_OPTION(sbi).s_qf_names[PRJQUOTA]) {
+> -		if (test_opt(sbi, USRQUOTA) &&
+> -				F2FS_OPTION(sbi).s_qf_names[USRQUOTA])
+> -			clear_opt(sbi, USRQUOTA);
+> -
+> -		if (test_opt(sbi, GRPQUOTA) &&
+> -				F2FS_OPTION(sbi).s_qf_names[GRPQUOTA])
+> -			clear_opt(sbi, GRPQUOTA);
+> -
+> -		if (test_opt(sbi, PRJQUOTA) &&
+> -				F2FS_OPTION(sbi).s_qf_names[PRJQUOTA])
+> -			clear_opt(sbi, PRJQUOTA);
+> -
+> -		if (test_opt(sbi, GRPQUOTA) || test_opt(sbi, USRQUOTA) ||
+> -				test_opt(sbi, PRJQUOTA)) {
+> -			f2fs_err(sbi, "old and new quota format mixing");
+> -			return -1;
+> -		}
+> -
+> -		if (!F2FS_OPTION(sbi).s_jquota_fmt) {
+> -			f2fs_err(sbi, "journaled quota format not specified");
+> -			return -1;
+> -		}
+> -	}
+> -
+> -	if (f2fs_sb_has_quota_ino(sbi) && F2FS_OPTION(sbi).s_jquota_fmt) {
+> -		f2fs_info(sbi, "QUOTA feature is enabled, so ignore jquota_fmt");
+> -		F2FS_OPTION(sbi).s_jquota_fmt = 0;
+> -	}
+> -	return 0;
+> -}
+>  #endif
+>  
+>  static int f2fs_parse_test_dummy_encryption(const struct fs_parameter *param,
+> @@ -636,28 +597,28 @@ static bool is_compress_extension_exist(struct f2fs_mount_info *info,
+>   * extension will be treated as special cases and will not be compressed.
+>   * 3. Don't allow the non-compress extension specifies all files.
+>   */
+> -static int f2fs_test_compress_extension(struct f2fs_sb_info *sbi)
+> +static int f2fs_test_compress_extension(unsigned char (*noext)[F2FS_EXTENSION_LEN],
+> +					int noext_cnt,
+> +					unsigned char (*ext)[F2FS_EXTENSION_LEN],
+> +					int ext_cnt)
+>  {
+> -	unsigned char (*ext)[F2FS_EXTENSION_LEN];
+> -	unsigned char (*noext)[F2FS_EXTENSION_LEN];
+> -	int ext_cnt, noext_cnt, index = 0, no_index = 0;
+> -
+> -	ext = F2FS_OPTION(sbi).extensions;
+> -	ext_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
+> -	noext = F2FS_OPTION(sbi).noextensions;
+> -	noext_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
+> +	int index = 0, no_index = 0;
+>  
+>  	if (!noext_cnt)
+>  		return 0;
+>  
+>  	for (no_index = 0; no_index < noext_cnt; no_index++) {
+> +		if (strlen(noext[no_index]) == 0)
+> +			continue;
+>  		if (!strcasecmp("*", noext[no_index])) {
+> -			f2fs_info(sbi, "Don't allow the nocompress extension specifies all files");
+> +			f2fs_info(NULL, "Don't allow the nocompress extension specifies all files");
+>  			return -EINVAL;
+>  		}
+>  		for (index = 0; index < ext_cnt; index++) {
+> +			if (strlen(ext[index]) == 0)
+> +				continue;
+>  			if (!strcasecmp(ext[index], noext[no_index])) {
+> -				f2fs_info(sbi, "Don't allow the same extension %s appear in both compress and nocompress extension",
+> +				f2fs_info(NULL, "Don't allow the same extension %s appear in both compress and nocompress extension",
+>  						ext[index]);
+>  				return -EINVAL;
+>  			}
+> @@ -749,7 +710,6 @@ static int f2fs_set_zstd_level(struct f2fs_fs_context *ctx, const char *str)
+>  static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  {
+>  	struct f2fs_fs_context *ctx = fc->fs_private;
+> -	struct f2fs_sb_info *sbi = fc->s_fs_info;
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+>  	unsigned char (*ext)[F2FS_EXTENSION_LEN];
+>  	unsigned char (*noext)[F2FS_EXTENSION_LEN];
+> @@ -758,15 +718,12 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  #endif
+>  	substring_t args[MAX_OPT_ARGS];
+>  	struct fs_parse_result result;
+> -	int is_remount;
+>  	int token, ret, arg;
+>  
+>  	token = fs_parse(fc, f2fs_param_specs, param, &result);
+>  	if (token < 0)
+>  		return token;
+>  
+> -	is_remount = fc->purpose == FS_CONTEXT_FOR_RECONFIGURE;
+> -
+>  	switch (token) {
+>  	case Opt_gc_background:
+>  		F2FS_CTX_INFO(ctx).bggc_mode = result.uint_32;
+> @@ -780,19 +737,10 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  		ctx_set_opt(ctx, F2FS_MOUNT_NORECOVERY);
+>  		break;
+>  	case Opt_discard:
+> -		if (result.negated) {
+> -			if (f2fs_hw_should_discard(sbi)) {
+> -				f2fs_warn(NULL, "discard is required for zoned block devices");
+> -				return -EINVAL;
+> -			}
+> +		if (result.negated)
+>  			ctx_clear_opt(ctx, F2FS_MOUNT_DISCARD);
+> -		} else {
+> -			if (!f2fs_hw_support_discard(sbi)) {
+> -				f2fs_warn(NULL, "device does not support discard");
+> -				break;
+> -			}
+> +		else
+>  			ctx_set_opt(ctx, F2FS_MOUNT_DISCARD);
+> -		}
+>  		break;
+>  	case Opt_noheap:
+>  	case Opt_heap:
+> @@ -812,6 +760,12 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  			ctx_set_opt(ctx, F2FS_MOUNT_INLINE_XATTR);
+>  		break;
+>  	case Opt_inline_xattr_size:
+> +		if (result.int_32 < MIN_INLINE_XATTR_SIZE ||
+> +			result.int_32 > MAX_INLINE_XATTR_SIZE) {
+> +			f2fs_err(NULL, "inline xattr size is out of range: %zu ~ %zu",
+> +				MIN_INLINE_XATTR_SIZE, MAX_INLINE_XATTR_SIZE);
+> +			return -EINVAL;
+> +		}
+>  		ctx_set_opt(ctx, F2FS_MOUNT_INLINE_XATTR_SIZE);
+>  		F2FS_CTX_INFO(ctx).inline_xattr_size = result.int_32;
+>  		ctx->spec_mask |= F2FS_SPEC_inline_xattr_size;
+> @@ -873,27 +827,18 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  		ctx_set_opt(ctx, F2FS_MOUNT_FASTBOOT);
+>  		break;
+>  	case Opt_extent_cache:
+> -		if (result.negated) {
+> -			if (f2fs_sb_has_device_alias(sbi)) {
+> -				f2fs_err(sbi, "device aliasing requires extent cache");
+> -				return -EINVAL;
+> -			}
+> +		if (result.negated)
+>  			ctx_clear_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE);
+> -		} else
+> +		else
+>  			ctx_set_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE);
+>  		break;
+>  	case Opt_data_flush:
+>  		ctx_set_opt(ctx, F2FS_MOUNT_DATA_FLUSH);
+>  		break;
+>  	case Opt_reserve_root:
+> -		if (test_opt(sbi, RESERVE_ROOT)) {
+> -			f2fs_info(NULL, "Preserve previous reserve_root=%u",
+> -				  F2FS_OPTION(sbi).root_reserved_blocks);
+> -		} else {
+> -			ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
+> -			F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
+> -			ctx->spec_mask |= F2FS_SPEC_reserve_root;
+> -		}
+> +		ctx_set_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
+> +		F2FS_CTX_INFO(ctx).root_reserved_blocks = result.uint_32;
+> +		ctx->spec_mask |= F2FS_SPEC_reserve_root;
+>  		break;
+>  	case Opt_resuid:
+>  		F2FS_CTX_INFO(ctx).s_resuid = result.uid;
+> @@ -909,7 +854,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  		break;
+>  #ifdef CONFIG_F2FS_FAULT_INJECTION
+>  	case Opt_fault_injection:
+> -		if (f2fs_build_fault_attr(sbi, result.int_32, 0, FAULT_RATE))
+> +		if (result.int_32 > INT_MAX)
+>  			return -EINVAL;
+>  		F2FS_CTX_INFO(ctx).fault_info.inject_rate = result.int_32;
+>  		ctx->spec_mask |= F2FS_SPEC_fault_injection;
+> @@ -917,7 +862,7 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  		break;
+>  
+>  	case Opt_fault_type:
+> -		if (f2fs_build_fault_attr(sbi, 0, result.int_32, FAULT_TYPE))
+> +		if (result.uint_32 > BIT(FAULT_MAX))
+>  			return -EINVAL;
+>  		F2FS_CTX_INFO(ctx).fault_info.inject_type = result.uint_32;
+>  		ctx->spec_mask |= F2FS_SPEC_fault_type;
+> @@ -1051,10 +996,6 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  		break;
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+>  	case Opt_compress_algorithm:
+> -		if (!f2fs_sb_has_compression(sbi)) {
+> -			f2fs_info(NULL, "Image doesn't support compression");
+> -			break;
+> -		}
+>  		name = param->string;
+>  		if (!strcmp(name, "lzo")) {
+>  #ifdef CONFIG_F2FS_FS_LZO
+> @@ -1098,10 +1039,6 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  			return -EINVAL;
+>  		break;
+>  	case Opt_compress_log_size:
+> -		if (!f2fs_sb_has_compression(sbi)) {
+> -			f2fs_info(NULL, "Image doesn't support compression");
+> -			break;
+> -		}
+>  		if (result.uint_32 < MIN_COMPRESS_LOG_SIZE ||
+>  		    result.uint_32 > MAX_COMPRESS_LOG_SIZE) {
+>  			f2fs_err(NULL,
+> @@ -1112,10 +1049,6 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  		ctx->spec_mask |= F2FS_SPEC_compress_log_size;
+>  		break;
+>  	case Opt_compress_extension:
+> -		if (!f2fs_sb_has_compression(sbi)) {
+> -			f2fs_info(NULL, "Image doesn't support compression");
+> -			break;
+> -		}
+>  		name = param->string;
+>  		ext = F2FS_CTX_INFO(ctx).extensions;
+>  		ext_cnt = F2FS_CTX_INFO(ctx).compress_ext_cnt;
+> @@ -1136,10 +1069,6 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  		ctx->spec_mask |= F2FS_SPEC_compress_extension;
+>  		break;
+>  	case Opt_nocompress_extension:
+> -		if (!f2fs_sb_has_compression(sbi)) {
+> -			f2fs_info(NULL, "Image doesn't support compression");
+> -			break;
+> -		}
+>  		name = param->string;
+>  		noext = F2FS_CTX_INFO(ctx).noextensions;
+>  		noext_cnt = F2FS_CTX_INFO(ctx).nocompress_ext_cnt;
+> @@ -1160,26 +1089,14 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  		ctx->spec_mask |= F2FS_SPEC_nocompress_extension;
+>  		break;
+>  	case Opt_compress_chksum:
+> -		if (!f2fs_sb_has_compression(sbi)) {
+> -			f2fs_info(NULL, "Image doesn't support compression");
+> -			break;
+> -		}
+>  		F2FS_CTX_INFO(ctx).compress_chksum = true;
+>  		ctx->spec_mask |= F2FS_SPEC_compress_chksum;
+>  		break;
+>  	case Opt_compress_mode:
+> -		if (!f2fs_sb_has_compression(sbi)) {
+> -			f2fs_info(NULL, "Image doesn't support compression");
+> -			break;
+> -		}
+>  		F2FS_CTX_INFO(ctx).compress_mode = result.uint_32;
+>  		ctx->spec_mask |= F2FS_SPEC_compress_mode;
+>  		break;
+>  	case Opt_compress_cache:
+> -		if (!f2fs_sb_has_compression(sbi)) {
+> -			f2fs_info(NULL, "Image doesn't support compression");
+> -			break;
+> -		}
+>  		ctx_set_opt(ctx, F2FS_MOUNT_COMPRESS_CACHE);
+>  		break;
+>  #else
+> @@ -1224,24 +1141,15 @@ static int handle_mount_opt(struct fs_context *fc, struct fs_parameter *param)
+>  	return 0;
+>  }
+>  
+> -static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remount)
+> +static int parse_options(struct fs_context *fc, char *options)
+>  {
+>  	struct fs_parameter param;
+> -	struct fs_context fc;
+> -	struct f2fs_fs_context ctx;
+>  	char *key;
+>  	int ret;
+>  
+>  	if (!options)
+>  		return 0;
+>  
+> -	memset(&fc, 0, sizeof(fc));
+> -	fc.s_fs_info = sbi;
+> -	fc.fs_private = &ctx;
+> -
+> -	if (is_remount)
+> -		fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
+> -
+>  	while ((key = strsep(&options, ",")) != NULL) {
+>  		if (*key) {
+>  			size_t v_len = 0;
+> @@ -1265,7 +1173,7 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
+>  			param.key = key;
+>  			param.size = v_len;
+>  
+> -			ret = handle_mount_opt(&fc, &param);
+> +			ret = handle_mount_opt(fc, &param);
+>  			kfree(param.string);
+>  			if (ret < 0)
+>  				return ret;
+> @@ -1274,24 +1182,293 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
+>  	return 0;
+>  }
+>  
+> -static int f2fs_validate_options(struct f2fs_sb_info *sbi)
+> +/*
+> + * Check quota settings consistency.
+> + */
+> +static int f2fs_check_quota_consistency(struct fs_context *fc,
+> +					struct super_block *sb)
+>  {
+> -#ifdef CONFIG_QUOTA
+> -	if (f2fs_check_quota_options(sbi))
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> + #ifdef CONFIG_QUOTA
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	bool quota_feature = f2fs_sb_has_quota_ino(sbi);
+> +	bool quota_turnon = sb_any_quota_loaded(sb);
+> +	char *old_qname, *new_qname;
+> +	bool usr_qf_name, grp_qf_name, prj_qf_name, usrquota, grpquota, prjquota;
+> +	int i;
+> +
+> +	/*
+> +	 * We do the test below only for project quotas. 'usrquota' and
+> +	 * 'grpquota' mount options are allowed even without quota feature
+> +	 * to support legacy quotas in quota files.
+> +	 */
+> +	if (ctx_test_opt(ctx, F2FS_MOUNT_PRJQUOTA) &&
+> +			!f2fs_sb_has_project_quota(sbi)) {
+> +		f2fs_err(sbi, "Project quota feature not enabled. Cannot enable project quota enforcement.");
+>  		return -EINVAL;
+> +	}
+> +
+> +	if (ctx->qname_mask) {
+> +		for (i = 0; i < MAXQUOTAS; i++) {
+> +			if (!(ctx->qname_mask & (1 << i)))
+> +				continue;
+> +
+> +			old_qname = F2FS_OPTION(sbi).s_qf_names[i];
+> +			new_qname = F2FS_CTX_INFO(ctx).s_qf_names[i];
+> +			if (quota_turnon &&
+> +				!!old_qname != !!new_qname)
+> +				goto err_jquota_change;
+> +
+> +			if (old_qname) {
+> +				if (strcmp(old_qname, new_qname) == 0) {
+> +					ctx->qname_mask &= ~(1 << i);
+> +					continue;
+> +				}
+> +				goto err_jquota_specified;
+> +			}
+> +
+> +			if (quota_feature) {
+> +				f2fs_info(sbi, "QUOTA feature is enabled, so ignore qf_name");
+> +				ctx->qname_mask &= ~(1 << i);
+> +				kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
+> +				F2FS_CTX_INFO(ctx).s_qf_names[i] = NULL;
+> +			}
+> +		}
+> +	}
+> +
+> +	/* Make sure we don't mix old and new quota format */
+> +	usr_qf_name = F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
+> +			F2FS_CTX_INFO(ctx).s_qf_names[USRQUOTA];
+> +	grp_qf_name = F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
+> +			F2FS_CTX_INFO(ctx).s_qf_names[GRPQUOTA];
+> +	prj_qf_name = F2FS_OPTION(sbi).s_qf_names[PRJQUOTA] ||
+> +			F2FS_CTX_INFO(ctx).s_qf_names[PRJQUOTA];
+> +	usrquota = test_opt(sbi, USRQUOTA) ||
+> +			ctx_test_opt(ctx, F2FS_MOUNT_USRQUOTA);
+> +	grpquota = test_opt(sbi, GRPQUOTA) ||
+> +			ctx_test_opt(ctx, F2FS_MOUNT_GRPQUOTA);
+> +	prjquota = test_opt(sbi, PRJQUOTA) ||
+> +			ctx_test_opt(ctx, F2FS_MOUNT_PRJQUOTA);
+> +
+> +	if (usr_qf_name) {
+> +		ctx_clear_opt(ctx, F2FS_MOUNT_USRQUOTA);
+> +		usrquota = false;
+> +	}
+> +	if (grp_qf_name) {
+> +		ctx_clear_opt(ctx, F2FS_MOUNT_GRPQUOTA);
+> +		grpquota = false;
+> +	}
+> +	if (prj_qf_name) {
+> +		ctx_clear_opt(ctx, F2FS_MOUNT_PRJQUOTA);
+> +		prjquota = false;
+> +	}
+> +	if (usr_qf_name || grp_qf_name || prj_qf_name) {
+> +		if (grpquota || usrquota || prjquota) {
+> +			f2fs_err(sbi, "old and new quota format mixing");
+> +			return -EINVAL;
+> +		}
+> +		if (!(ctx->spec_mask & F2FS_SPEC_jqfmt ||
+> +				F2FS_OPTION(sbi).s_jquota_fmt)) {
+> +			f2fs_err(sbi, "journaled quota format not specified");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +	return 0;
+> +
+> +err_jquota_change:
+> +	f2fs_err(sbi, "Cannot change journaled quota options when quota turned on");
+> +	return -EINVAL;
+> +err_jquota_specified:
+> +	f2fs_err(sbi, "%s quota file already specified",
+> +		 QTYPE2NAME(i));
+> +	return -EINVAL;
+> +
+>  #else
+> -	if (f2fs_sb_has_quota_ino(sbi) && !f2fs_readonly(sbi->sb)) {
+> -		f2fs_info(NULL, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
+> +	if (f2fs_readonly(sbi->sb))
+> +		return 0;
+> +	if (f2fs_sb_has_quota_ino(sbi)) {
+> +		f2fs_info(sbi, "Filesystem with quota feature cannot be mounted RDWR without CONFIG_QUOTA");
+>  		return -EINVAL;
+>  	}
+> -	if (f2fs_sb_has_project_quota(sbi) && !f2fs_readonly(sbi->sb)) {
+> -		f2fs_err(NULL, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
+> +	if (f2fs_sb_has_project_quota(sbi)) {
+> +		f2fs_err(sbi, "Filesystem with project quota feature cannot be mounted RDWR without CONFIG_QUOTA");
+>  		return -EINVAL;
+>  	}
+> +
+> +	return 0;
+>  #endif
+> +}
+> +
+> +static int f2fs_check_test_dummy_encryption(struct fs_context *fc,
+> +					    struct super_block *sb)
+> +{
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> +
+> +	if (!fscrypt_is_dummy_policy_set(&F2FS_CTX_INFO(ctx).dummy_enc_policy))
+> +		return 0;
+> +
+> +	if (!f2fs_sb_has_encrypt(sbi)) {
+> +		f2fs_err(sbi, "Encrypt feature is off");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * This mount option is just for testing, and it's not worthwhile to
+> +	 * implement the extra complexity (e.g. RCU protection) that would be
+> +	 * needed to allow it to be set or changed during remount.  We do allow
+> +	 * it to be specified during remount, but only if there is no change.
+> +	 */
+> +	if (fc->purpose == FS_CONTEXT_FOR_RECONFIGURE) {
+> +		if (fscrypt_dummy_policies_equal(&F2FS_OPTION(sbi).dummy_enc_policy,
+> +				&F2FS_CTX_INFO(ctx).dummy_enc_policy))
+> +			return 0;
+> +		f2fs_warn(sbi, "Can't set or change test_dummy_encryption on remount");
+> +		return -EINVAL;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static inline bool test_compression_spec(unsigned int mask)
+> +{
+> +	return mask & (F2FS_SPEC_compress_algorithm
+> +			| F2FS_SPEC_compress_log_size
+> +			| F2FS_SPEC_compress_extension
+> +			| F2FS_SPEC_nocompress_extension
+> +			| F2FS_SPEC_compress_chksum
+> +			| F2FS_SPEC_compress_mode);
+> +}
+> +
+> +static inline void clear_compression_spec(struct f2fs_fs_context *ctx)
+> +{
+> +	ctx->spec_mask &= ~(F2FS_SPEC_compress_algorithm
+> +						| F2FS_SPEC_compress_log_size
+> +						| F2FS_SPEC_compress_extension
+> +						| F2FS_SPEC_nocompress_extension
+> +						| F2FS_SPEC_compress_chksum
+> +						| F2FS_SPEC_compress_mode);
+> +}
+> +
+> +static int f2fs_check_compression(struct fs_context *fc,
+> +				  struct super_block *sb)
+> +{
+> +#ifdef CONFIG_F2FS_FS_COMPRESSION
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> +	int i, cnt;
+> +
+> +	if (!f2fs_sb_has_compression(sbi)) {
+> +		if (test_compression_spec(ctx->opt_mask) ||
+> +			ctx_test_opt(ctx, F2FS_MOUNT_COMPRESS_CACHE))
+> +			f2fs_info(sbi, "Image doesn't support compression");
+> +		clear_compression_spec(ctx);
+> +		ctx->opt_mask &= ~F2FS_MOUNT_COMPRESS_CACHE;
+> +		return 0;
+> +	}
+> +	if (ctx->spec_mask & F2FS_SPEC_compress_extension) {
+> +		cnt = F2FS_CTX_INFO(ctx).compress_ext_cnt;
+> +		for (i = 0; i < F2FS_CTX_INFO(ctx).compress_ext_cnt; i++) {
+> +			if (is_compress_extension_exist(&F2FS_OPTION(sbi),
+> +					F2FS_CTX_INFO(ctx).extensions[i], true)) {
+> +				F2FS_CTX_INFO(ctx).extensions[i][0] = '\0';
+> +				cnt--;
+> +			}
+> +		}
+> +		if (F2FS_OPTION(sbi).compress_ext_cnt + cnt > COMPRESS_EXT_NUM) {
+> +			f2fs_err(sbi, "invalid extension length/number");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +	if (ctx->spec_mask & F2FS_SPEC_nocompress_extension) {
+> +		cnt = F2FS_CTX_INFO(ctx).nocompress_ext_cnt;
+> +		for (i = 0; i < F2FS_CTX_INFO(ctx).nocompress_ext_cnt; i++) {
+> +			if (is_compress_extension_exist(&F2FS_OPTION(sbi),
+> +					F2FS_CTX_INFO(ctx).noextensions[i], false)) {
+> +				F2FS_CTX_INFO(ctx).noextensions[i][0] = '\0';
+> +				cnt--;
+> +			}
+> +		}
+> +		if (F2FS_OPTION(sbi).nocompress_ext_cnt + cnt > COMPRESS_EXT_NUM) {
+> +			f2fs_err(sbi, "invalid noextension length/number");
+> +			return -EINVAL;
+> +		}
+> +	}
+> +
+> +	if (f2fs_test_compress_extension(F2FS_CTX_INFO(ctx).noextensions,
+> +				F2FS_CTX_INFO(ctx).nocompress_ext_cnt,
+> +				F2FS_CTX_INFO(ctx).extensions,
+> +				F2FS_CTX_INFO(ctx).compress_ext_cnt)) {
+> +		f2fs_err(sbi, "invalid compress or nocompress extension");
+> +		return -EINVAL;
+> +	}
+> +	if (f2fs_test_compress_extension(F2FS_CTX_INFO(ctx).noextensions,
+> +				F2FS_CTX_INFO(ctx).nocompress_ext_cnt,
+> +				F2FS_OPTION(sbi).extensions,
+> +				F2FS_OPTION(sbi).compress_ext_cnt)) {
+> +		f2fs_err(sbi, "invalid compress or nocompress extension");
+> +		return -EINVAL;
+> +	}
+> +	if (f2fs_test_compress_extension(F2FS_OPTION(sbi).noextensions,
+> +				F2FS_OPTION(sbi).nocompress_ext_cnt,
+> +				F2FS_CTX_INFO(ctx).extensions,
+> +				F2FS_CTX_INFO(ctx).compress_ext_cnt)) {
+> +		f2fs_err(sbi, "invalid compress or nocompress extension");
+> +		return -EINVAL;
+> +	}
+> +#endif
+> +	return 0;
+> +}
+> +
+> +static int f2fs_check_opt_consistency(struct fs_context *fc,
+> +				      struct super_block *sb)
+> +{
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> +	int err;
+> +
+> +	if (ctx_test_opt(ctx, F2FS_MOUNT_NORECOVERY) && !f2fs_readonly(sb))
+> +		return -EINVAL;
+> +
+> +	if (f2fs_hw_should_discard(sbi) && (ctx->opt_mask & F2FS_MOUNT_DISCARD)
+> +				&& !ctx_test_opt(ctx, F2FS_MOUNT_DISCARD)) {
 
-Yes. This one sets up the general approach, which is available to
-all kselftests: TOOLS_INCLUDES. It also changes selftests/mm to
-set TOOLS_INCLUDES in that build:
+Applied.
 
-    e076eaca5906 ("selftests: break the dependency upon local header files")
-
-And here is a representative application of the above, to selftests/mm. In
-other words, taking advantage of the new file location pointed to by
-TOOLS_INCLUDES:
-
-    580ea358af0a ("selftests/mm: fix additional build errors for selftests")
+       if (f2fs_hw_should_discard(sbi) &&
+                       (ctx->opt_mask & F2FS_MOUNT_DISCARD) &&
+                       !ctx_test_opt(ctx, F2FS_MOUNT_DISCARD)) {
 
 
-thanks,
--- 
-John Hubbard
+> +		f2fs_warn(sbi, "discard is required for zoned block devices");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (f2fs_sb_has_device_alias(sbi)) {
 
+Shouldn't this be?
+
+	if (f2fs_sb_has_device_alias(sbi) &&
+			!ctx_test_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE)) {
+
+
+> +		f2fs_err(sbi, "device aliasing requires extent cache");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!f2fs_hw_support_discard(sbi) && (ctx->opt_mask & F2FS_MOUNT_DISCARD)
+> +				&& ctx_test_opt(ctx, F2FS_MOUNT_DISCARD)) {
+
+       if (!f2fs_hw_support_discard(sbi) &&
+                       (ctx->opt_mask & F2FS_MOUNT_DISCARD) &&
+                       ctx_test_opt(ctx, F2FS_MOUNT_DISCARD)) {
+
+> +		f2fs_warn(sbi, "device does not support discard");
+> +		ctx_clear_opt(ctx, F2FS_MOUNT_DISCARD);
+> +		ctx->opt_mask &= ~F2FS_MOUNT_DISCARD;
+> +	}
+> +
+> +	if (test_opt(sbi, RESERVE_ROOT) && (ctx->opt_mask & F2FS_MOUNT_RESERVE_ROOT)
+> +				&& ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_ROOT)) {
+
+       if (test_opt(sbi, RESERVE_ROOT) &&
+                       (ctx->opt_mask & F2FS_MOUNT_RESERVE_ROOT) &&
+                       ctx_test_opt(ctx, F2FS_MOUNT_RESERVE_ROOT)) {
+
+
+> +		f2fs_info(sbi, "Preserve previous reserve_root=%u",
+> +			F2FS_OPTION(sbi).root_reserved_blocks);
+> +		ctx_clear_opt(ctx, F2FS_MOUNT_RESERVE_ROOT);
+> +		ctx->opt_mask &= ~F2FS_MOUNT_RESERVE_ROOT;
+> +	}
+> +
+> +	err = f2fs_check_test_dummy_encryption(fc, sb);
+> +	if (err)
+> +		return err;
+> +
+> +	err = f2fs_check_compression(fc, sb);
+> +	if (err)
+> +		return err;
+> +
+> +	err = f2fs_check_quota_consistency(fc, sb);
+> +	if (err)
+> +		return err;
+>  
+>  	if (!IS_ENABLED(CONFIG_UNICODE) && f2fs_sb_has_casefold(sbi)) {
+> -		f2fs_err(NULL,
+> +		f2fs_err(sbi,
+>  			"Filesystem with casefold feature cannot be mounted without CONFIG_UNICODE");
+>  		return -EINVAL;
+>  	}
+> @@ -1303,75 +1480,210 @@ static int f2fs_validate_options(struct f2fs_sb_info *sbi)
+>  	 */
+>  	if (f2fs_sb_has_blkzoned(sbi)) {
+>  #ifdef CONFIG_BLK_DEV_ZONED
+> -		if (F2FS_OPTION(sbi).discard_unit !=
+> -						DISCARD_UNIT_SECTION) {
+> -			f2fs_info(NULL, "Zoned block device doesn't need small discard, set discard_unit=section by default");
+> -			F2FS_OPTION(sbi).discard_unit =
+> -					DISCARD_UNIT_SECTION;
+> +		if ((ctx->spec_mask & F2FS_SPEC_discard_unit) &&
+> +		F2FS_CTX_INFO(ctx).discard_unit != DISCARD_UNIT_SECTION) {
+> +			f2fs_info(sbi, "Zoned block device doesn't need small discard, set discard_unit=section by default");
+> +			F2FS_CTX_INFO(ctx).discard_unit = DISCARD_UNIT_SECTION;
+>  		}
+>  
+> -		if (F2FS_OPTION(sbi).fs_mode != FS_MODE_LFS) {
+> -			f2fs_info(NULL, "Only lfs mode is allowed with zoned block device feature");
+> +		if ((ctx->spec_mask & F2FS_SPEC_mode) &&
+> +		F2FS_CTX_INFO(ctx).fs_mode != FS_MODE_LFS) {
+> +			f2fs_info(sbi, "Only lfs mode is allowed with zoned block device feature");
+>  			return -EINVAL;
+>  		}
+>  #else
+> -		f2fs_err(NULL, "Zoned block device support is not enabled");
+> +		f2fs_err(sbi, "Zoned block device support is not enabled");
+>  		return -EINVAL;
+>  #endif
+>  	}
+>  
+> -#ifdef CONFIG_F2FS_FS_COMPRESSION
+> -	if (f2fs_test_compress_extension(sbi)) {
+> -		f2fs_err(NULL, "invalid compress or nocompress extension");
+> -		return -EINVAL;
+> -	}
+> -#endif
+> -
+> -	if (test_opt(sbi, INLINE_XATTR_SIZE)) {
+> -		int min_size, max_size;
+> -
+> +	if (ctx_test_opt(ctx, F2FS_MOUNT_INLINE_XATTR_SIZE)) {
+>  		if (!f2fs_sb_has_extra_attr(sbi) ||
+>  			!f2fs_sb_has_flexible_inline_xattr(sbi)) {
+> -			f2fs_err(NULL, "extra_attr or flexible_inline_xattr feature is off");
+> -			return -EINVAL;
+> -		}
+> -		if (!test_opt(sbi, INLINE_XATTR)) {
+> -			f2fs_err(NULL, "inline_xattr_size option should be set with inline_xattr option");
+> +			f2fs_err(sbi, "extra_attr or flexible_inline_xattr feature is off");
+>  			return -EINVAL;
+>  		}
+> -
+> -		min_size = MIN_INLINE_XATTR_SIZE;
+> -		max_size = MAX_INLINE_XATTR_SIZE;
+> -
+> -		if (F2FS_OPTION(sbi).inline_xattr_size < min_size ||
+> -				F2FS_OPTION(sbi).inline_xattr_size > max_size) {
+> -			f2fs_err(NULL, "inline xattr size is out of range: %d ~ %d",
+> -				 min_size, max_size);
+> +		if (!ctx_test_opt(ctx, F2FS_MOUNT_INLINE_XATTR)) {
+> +			f2fs_err(sbi, "inline_xattr_size option should be set with inline_xattr option");
+>  			return -EINVAL;
+>  		}
+>  	}
+>  
+> -	if (test_opt(sbi, ATGC) && f2fs_lfs_mode(sbi)) {
+> -		f2fs_err(NULL, "LFS is not compatible with ATGC");
+> +	if (ctx_test_opt(ctx, F2FS_MOUNT_ATGC) &&
+> +	    F2FS_CTX_INFO(ctx).fs_mode == FS_MODE_LFS) {
+> +		f2fs_err(sbi, "LFS is not compatible with ATGC");
+>  		return -EINVAL;
+>  	}
+>  
+> -	if (f2fs_is_readonly(sbi) && test_opt(sbi, FLUSH_MERGE)) {
+> -		f2fs_err(NULL, "FLUSH_MERGE not compatible with readonly mode");
+> +	if (f2fs_is_readonly(sbi) && ctx_test_opt(ctx, F2FS_MOUNT_FLUSH_MERGE)) {
+> +		f2fs_err(sbi, "FLUSH_MERGE not compatible with readonly mode");
+>  		return -EINVAL;
+>  	}
+>  
+>  	if (f2fs_sb_has_readonly(sbi) && !f2fs_readonly(sbi->sb)) {
+> -		f2fs_err(NULL, "Allow to mount readonly mode only");
+> +		f2fs_err(sbi, "Allow to mount readonly mode only");
+>  		return -EROFS;
+>  	}
+> +	return 0;
+> +}
+>  
+> -	if (test_opt(sbi, NORECOVERY) && !f2fs_readonly(sbi->sb)) {
+> -		f2fs_err(sbi, "norecovery requires readonly mount");
+> -		return -EINVAL;
+> +static void f2fs_apply_quota_options(struct fs_context *fc,
+> +				     struct super_block *sb)
+> +{
+> +#ifdef CONFIG_QUOTA
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> +	bool quota_feature = f2fs_sb_has_quota_ino(sbi);
+> +	char *qname;
+> +	int i;
+> +
+> +	if (quota_feature)
+> +		return;
+> +
+> +	for (i = 0; i < MAXQUOTAS; i++) {
+> +		if (!(ctx->qname_mask & (1 << i)))
+> +			continue;
+> +
+> +		qname = F2FS_CTX_INFO(ctx).s_qf_names[i];
+> +		if (qname)
+> +			set_opt(sbi, QUOTA);
+> +		F2FS_OPTION(sbi).s_qf_names[i] = qname;
+> +		F2FS_CTX_INFO(ctx).s_qf_names[i] = NULL;
+>  	}
+>  
+> -	return 0;
+> +	if (ctx->spec_mask & F2FS_SPEC_jqfmt)
+> +		F2FS_OPTION(sbi).s_jquota_fmt = F2FS_CTX_INFO(ctx).s_jquota_fmt;
+> +
+> +	if (quota_feature && F2FS_OPTION(sbi).s_jquota_fmt) {
+> +		f2fs_info(sbi, "QUOTA feature is enabled, so ignore jquota_fmt");
+> +		F2FS_OPTION(sbi).s_jquota_fmt = 0;
+> +	}
+> +#endif
+> +}
+> +
+> +static void f2fs_apply_test_dummy_encryption(struct fs_context *fc,
+> +					     struct super_block *sb)
+> +{
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> +
+> +	if (!fscrypt_is_dummy_policy_set(&F2FS_CTX_INFO(ctx).dummy_enc_policy) ||
+> +		/* if already set, it was already verified to be the same */
+> +		fscrypt_is_dummy_policy_set(&F2FS_OPTION(sbi).dummy_enc_policy))
+> +		return;
+> +	F2FS_OPTION(sbi).dummy_enc_policy = F2FS_CTX_INFO(ctx).dummy_enc_policy;
+> +	memset(&F2FS_CTX_INFO(ctx).dummy_enc_policy, 0,
+> +		sizeof(F2FS_CTX_INFO(ctx).dummy_enc_policy));
+> +	f2fs_warn(sbi, "Test dummy encryption mode enabled");
+> +}
+> +
+> +static void f2fs_apply_compression(struct fs_context *fc,
+> +				   struct super_block *sb)
+> +{
+> +#ifdef CONFIG_F2FS_FS_COMPRESSION
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> +	unsigned char (*ctx_ext)[F2FS_EXTENSION_LEN];
+> +	unsigned char (*sbi_ext)[F2FS_EXTENSION_LEN];
+> +	int ctx_cnt, sbi_cnt, i;
+> +
+> +	if (ctx->spec_mask & F2FS_SPEC_compress_level)
+> +		F2FS_OPTION(sbi).compress_level =
+> +					F2FS_CTX_INFO(ctx).compress_level;
+> +	if (ctx->spec_mask & F2FS_SPEC_compress_algorithm)
+> +		F2FS_OPTION(sbi).compress_algorithm =
+> +					F2FS_CTX_INFO(ctx).compress_algorithm;
+> +	if (ctx->spec_mask & F2FS_SPEC_compress_log_size)
+> +		F2FS_OPTION(sbi).compress_log_size =
+> +					F2FS_CTX_INFO(ctx).compress_log_size;
+> +	if (ctx->spec_mask & F2FS_SPEC_compress_chksum)
+> +		F2FS_OPTION(sbi).compress_chksum =
+> +					F2FS_CTX_INFO(ctx).compress_chksum;
+> +	if (ctx->spec_mask & F2FS_SPEC_compress_mode)
+> +		F2FS_OPTION(sbi).compress_mode =
+> +					F2FS_CTX_INFO(ctx).compress_mode;
+> +	if (ctx->spec_mask & F2FS_SPEC_compress_extension) {
+> +		ctx_ext = F2FS_CTX_INFO(ctx).extensions;
+> +		ctx_cnt = F2FS_CTX_INFO(ctx).compress_ext_cnt;
+> +		sbi_ext = F2FS_OPTION(sbi).extensions;
+> +		sbi_cnt = F2FS_OPTION(sbi).compress_ext_cnt;
+> +		for (i = 0; i < ctx_cnt; i++) {
+> +			if (strlen(ctx_ext[i]) == 0)
+> +				continue;
+> +			strscpy(sbi_ext[sbi_cnt], ctx_ext[i]);
+> +			sbi_cnt++;
+> +		}
+> +		F2FS_OPTION(sbi).compress_ext_cnt = sbi_cnt;
+> +	}
+> +	if (ctx->spec_mask & F2FS_SPEC_nocompress_extension) {
+> +		ctx_ext = F2FS_CTX_INFO(ctx).noextensions;
+> +		ctx_cnt = F2FS_CTX_INFO(ctx).nocompress_ext_cnt;
+> +		sbi_ext = F2FS_OPTION(sbi).noextensions;
+> +		sbi_cnt = F2FS_OPTION(sbi).nocompress_ext_cnt;
+> +		for (i = 0; i < ctx_cnt; i++) {
+> +			if (strlen(ctx_ext[i]) == 0)
+> +				continue;
+> +			strscpy(sbi_ext[sbi_cnt], ctx_ext[i]);
+> +			sbi_cnt++;
+> +		}
+> +		F2FS_OPTION(sbi).nocompress_ext_cnt = sbi_cnt;
+> +	}
+> +#endif
+> +}
+> +
+> +static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+> +{
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> +
+> +	F2FS_OPTION(sbi).opt &= ~ctx->opt_mask;
+> +	F2FS_OPTION(sbi).opt |= F2FS_CTX_INFO(ctx).opt;
+> +	sb->s_flags &= ~ctx->sflags_mask;
+> +	sb->s_flags |= ctx->sflags;
+> +
+> +	if (ctx->spec_mask & F2FS_SPEC_background_gc)
+> +		F2FS_OPTION(sbi).bggc_mode = F2FS_CTX_INFO(ctx).bggc_mode;
+> +	if (ctx->spec_mask & F2FS_SPEC_inline_xattr_size)
+> +		F2FS_OPTION(sbi).inline_xattr_size =
+> +					F2FS_CTX_INFO(ctx).inline_xattr_size;
+> +	if (ctx->spec_mask & F2FS_SPEC_active_logs)
+> +		F2FS_OPTION(sbi).active_logs = F2FS_CTX_INFO(ctx).active_logs;
+> +	if (ctx->spec_mask & F2FS_SPEC_reserve_root)
+> +		F2FS_OPTION(sbi).root_reserved_blocks =
+> +					F2FS_CTX_INFO(ctx).root_reserved_blocks;
+> +	if (ctx->spec_mask & F2FS_SPEC_resgid)
+> +		F2FS_OPTION(sbi).s_resgid = F2FS_CTX_INFO(ctx).s_resgid;
+> +	if (ctx->spec_mask & F2FS_SPEC_resuid)
+> +		F2FS_OPTION(sbi).s_resuid = F2FS_CTX_INFO(ctx).s_resuid;
+> +	if (ctx->spec_mask & F2FS_SPEC_mode)
+> +		F2FS_OPTION(sbi).fs_mode = F2FS_CTX_INFO(ctx).fs_mode;
+> +#ifdef CONFIG_F2FS_FAULT_INJECTION
+> +	if (ctx->spec_mask & F2FS_SPEC_fault_injection)
+> +		(void)f2fs_build_fault_attr(sbi,
+> +		F2FS_CTX_INFO(ctx).fault_info.inject_rate, 0, FAULT_RATE);
+> +	if (ctx->spec_mask & F2FS_SPEC_fault_type)
+> +		(void)f2fs_build_fault_attr(sbi, 0,
+> +			F2FS_CTX_INFO(ctx).fault_info.inject_type, FAULT_TYPE);
+> +#endif
+> +	if (ctx->spec_mask & F2FS_SPEC_alloc_mode)
+> +		F2FS_OPTION(sbi).alloc_mode = F2FS_CTX_INFO(ctx).alloc_mode;
+> +	if (ctx->spec_mask & F2FS_SPEC_fsync_mode)
+> +		F2FS_OPTION(sbi).fsync_mode = F2FS_CTX_INFO(ctx).fsync_mode;
+> +	if (ctx->spec_mask & F2FS_SPEC_checkpoint_disable_cap)
+> +		F2FS_OPTION(sbi).unusable_cap = F2FS_CTX_INFO(ctx).unusable_cap;
+> +	if (ctx->spec_mask & F2FS_SPEC_checkpoint_disable_cap_perc)
+> +		F2FS_OPTION(sbi).unusable_cap_perc =
+> +					F2FS_CTX_INFO(ctx).unusable_cap_perc;
+> +	if (ctx->spec_mask & F2FS_SPEC_discard_unit)
+> +		F2FS_OPTION(sbi).discard_unit = F2FS_CTX_INFO(ctx).discard_unit;
+> +	if (ctx->spec_mask & F2FS_SPEC_memory_mode)
+> +		F2FS_OPTION(sbi).memory_mode = F2FS_CTX_INFO(ctx).memory_mode;
+> +	if (ctx->spec_mask & F2FS_SPEC_errors)
+> +		F2FS_OPTION(sbi).errors = F2FS_CTX_INFO(ctx).errors;
+> +
+> +	f2fs_apply_compression(fc, sb);
+> +	f2fs_apply_test_dummy_encryption(fc, sb);
+> +	f2fs_apply_quota_options(fc, sb);
+>  }
+>  
+>  static struct inode *f2fs_alloc_inode(struct super_block *sb)
+> @@ -2275,6 +2587,8 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+>  	struct f2fs_mount_info org_mount_opt;
+> +	struct f2fs_fs_context ctx;
+> +	struct fs_context fc;
+>  	unsigned long old_sb_flags;
+>  	int err;
+>  	bool need_restart_gc = false, need_stop_gc = false;
+> @@ -2331,11 +2645,22 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  
+>  	default_options(sbi, true);
+>  
+> +	memset(&fc, 0, sizeof(fc));
+> +	memset(&ctx, 0, sizeof(ctx));
+> +	fc.fs_private = &ctx;
+> +	fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
+> +
+>  	/* parse mount options */
+> -	err = parse_options(sbi, data, true);
+> +	err = parse_options(&fc, data);
+>  	if (err)
+>  		goto restore_opts;
+>  
+> +	err = f2fs_check_opt_consistency(&fc, sb);
+> +	if (err < 0)
+> +		goto restore_opts;
+> +
+> +	f2fs_apply_options(&fc, sb);
+> +
+>  #ifdef CONFIG_BLK_DEV_ZONED
+>  	if (f2fs_sb_has_blkzoned(sbi) &&
+>  		sbi->max_open_zones < F2FS_OPTION(sbi).active_logs) {
+> @@ -2346,11 +2671,6 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  		goto restore_opts;
+>  	}
+>  #endif
+> -
+> -	err = f2fs_validate_options(sbi);
+> -	if (err)
+> -		goto restore_opts;
+> -
+>  	/* flush outstanding errors before changing fs state */
+>  	flush_work(&sbi->s_error_work);
+>  
+> @@ -4429,6 +4749,8 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  {
+>  	struct f2fs_sb_info *sbi;
+>  	struct f2fs_super_block *raw_super;
+> +	struct f2fs_fs_context ctx;
+> +	struct fs_context fc;
+>  	struct inode *root;
+>  	int err;
+>  	bool skip_recovery = false, need_fsck = false;
+> @@ -4445,6 +4767,9 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	raw_super = NULL;
+>  	valid_super_block = -1;
+>  	recovery = 0;
+> +	memset(&fc, 0, sizeof(fc));
+> +	memset(&ctx, 0, sizeof(ctx));
+> +	fc.fs_private = &ctx;
+>  
+>  	/* allocate memory for f2fs-specific super block info */
+>  	sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
+> @@ -4502,14 +4827,16 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  		goto free_sb_buf;
+>  	}
+>  
+> -	err = parse_options(sbi, options, false);
+> +	err = parse_options(&fc, options);
+>  	if (err)
+>  		goto free_options;
+>  
+> -	err = f2fs_validate_options(sbi);
+> -	if (err)
+> +	err = f2fs_check_opt_consistency(&fc, sb);
+> +	if (err < 0)
+>  		goto free_options;
+>  
+> +	f2fs_apply_options(&fc, sb);
+> +
+>  	sb->s_maxbytes = max_file_blocks(NULL) <<
+>  				le32_to_cpu(raw_super->log_blocksize);
+>  	sb->s_max_links = F2FS_LINK_MAX;
+> -- 
+> 2.49.0
 
