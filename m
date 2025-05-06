@@ -1,120 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-48278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111B9AACCEC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 20:15:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20F73AACCF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 20:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAB527B849C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 18:13:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74EC31C04125
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 May 2025 18:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84F528641C;
-	Tue,  6 May 2025 18:14:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7B9286888;
+	Tue,  6 May 2025 18:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DcrI+Mt8"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="qrWIK9g8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E12EC283C93;
-	Tue,  6 May 2025 18:14:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EA6221FBC;
+	Tue,  6 May 2025 18:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746555296; cv=none; b=NVFm3zyICAKYYiCMgC+UHctdWHvjiaubvRHOzmK188JfjTSn9MHjkbn1yRcyrgFkfq6BFlthuZtM3np1eU/dWgLF6MTIWUAHK/2n7s1DuGSqbRk/aWzE/PnlxyZCZvjhgadfH9pLgVw6mPO575m6z50HInU15h+jiVxPGAwuT1I=
+	t=1746555371; cv=none; b=ZZLDdyR+E/OfApZ/3GN7PQQEI6tpXDrtZcKfKEshapLcjYZhfq4jvLpLXHeP9+x0mF9KBWbyXcCuk/8qKsZSecyxnMSMxyO9KFgIGswTkSqFtXYEBFyVr4xbln/GdEf/Hk2Lnz2JxVwxvSNhaPELsfFhr9MixwlMm+9floC+3qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746555296; c=relaxed/simple;
-	bh=aZkpd2dcF5uB3syEqGA8WZiEqSkxrG768idsWlJZohA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uj8U95vUoZbvIfx/7S5rolbKKNXYmd7bVulvTMo5I1TDixEnA1GvwS26QO5ADmex8rP7+tzb/HBthVNsocpK6mKl87Yg2zm36NzPd85UrgME2vtYtBWYVeqzjrM0rxw1UuWWyakHgwgr8qaO36yT4n21MEvKiwnJvxK5HZfqMGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DcrI+Mt8; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-30a452d3b38so5300939a91.3;
-        Tue, 06 May 2025 11:14:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746555294; x=1747160094; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LgUTLFyRDWkYKDEpuIhDqP9z1m1Yv8U7iugtqQBuYj8=;
-        b=DcrI+Mt8RujXBdJgfpEHGVuXWW/OIOe4zk5wKTDDHDVsbXGotXaaIkClQQyw41h6y1
-         iitityQ6AR2pmKGhV/eTtqWDCMxbJ6mlQEaEFSCwBqY/jZXtyuhWc3elYph8xsVsCmyl
-         QAm6gS+J6RGbsW3A8qlKVy1WDEJTYF/SNlwvJxnP+lf7SnCCdEzJ/3lfMgEIYvbRHIYE
-         bURN21F/1D2PIkPaeOPtV4n1OtvoPf0Aw9y3M8ucZt1tWLlhdgujU75qudTmg3B0Li7Y
-         Ogd2nmKzsJdovc7jRamsnoTvI8ksDFKZIO/JEEye5a74WjpeIPwP2YST6n9vW6N8W/ht
-         Y0Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746555294; x=1747160094;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LgUTLFyRDWkYKDEpuIhDqP9z1m1Yv8U7iugtqQBuYj8=;
-        b=RkVxVdUWgH9prykgyg+5cRtWc1/3e9AEND/+peqeihABdMUceWmr1OdbwDspreak0K
-         011BtSi8RYLaADOeYuwPz06JYHxokei69/1OQG+78l4FoCVArDOxU2wrzpn/+z1nqtvQ
-         VSUFxEx97IOhitoFBLPvQjZp82+sA7jQAyYH3XjC5ARoiUuOuMQo5b0uMx9laBUyPm/B
-         fSs3EkMs4/z1nLdAsULOMQs140NNh8+Lb5ywgtxkSJpNjlWoXwS3j9F/icmk9/xdIqnt
-         SkTF70NfBe55JOpcSjduQEfaWw1W/jBZHM2/KtkcWDXHeEx58jVLaxKqILZFF0hEVSYY
-         wlPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUggVTu6e78MMyS6XE54ecU2UPFMwHpeyrhmP/HjhiOk7B35Zv1o3SUfpJaEJclrnEQJ3TTHRjR9aF4Ks4=@vger.kernel.org, AJvYcCVaUzFjUOUTD1t4bm1568Tt+na8xK5Jcwv1id1biWij7lMYutV675yM58qBnwdDcwsVcT+oMy30YNNCanOjFQ==@vger.kernel.org, AJvYcCX7uGGTAgeiL7q34An/2jdQBtg1JNYZ98XF4CvduZ0tF6LfNxH+RrvRCu+zt0QnYYdfdMYkwJZcug==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRidb95n8c91IOHYYi86QSwDIM7ZFdGp2JvE5QCkQNCZpaedDN
-	faEzo8l80jIa6xmnFiKqCN7JavMEnkkN9FhyL7y2Jb90kbE4wHcA+sV+De1S0oLxTMaAB6rjhNH
-	I7DlDlDifTmXUZo37GRqPbe8Joqs=
-X-Gm-Gg: ASbGnctA7UDQs9O+656zEGTOL4lMSKQFfIV9WHcg2sSzlqP7oCdJ0+0sn5+e1pC+waG
-	B9Hbx8UnzXGrVKjdiBOnC0bvf65cEfmw/yvQvECgFz+H1hOF1pe2aDONVHexekEXquf7Ozp9M0W
-	4j4lBhqvJC51zRXqy73FmN8DEFGIvvrSau6BhYMuvKl8ewHYnYqpveWhgP
-X-Google-Smtp-Source: AGHT+IGwp2IFUitVkyl1IAWa+05GwLKsvMJm418R5rpT8coYjf649UgitPuIXI5xNWy57+nYxUYyxUOZvofrUpHZ/pg=
-X-Received: by 2002:a17:90b:394f:b0:305:5f55:899 with SMTP id
- 98e67ed59e1d1-30aac184a9fmr718325a91.11.1746555294071; Tue, 06 May 2025
- 11:14:54 -0700 (PDT)
+	s=arc-20240116; t=1746555371; c=relaxed/simple;
+	bh=nu7sB6KIhyYYAshkLXr01OixMLPfCVVWGamY4gpkfIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AW66j3Q0IsgMCqwKMADzTSh7VtF5NrKwfxRn3ezBtCGuM34L33nQ/wiSH4tC2y9NVEasO/Tdyzmm3+JpNNaGtRpFApOx9WnRoBzk+htQhVMcyRnF89jMhUdIE3NuNuhlb+OOqUHzwZtrkqM4Iy4ar/RdOyYM5pxpdCZmfjUsN8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=qrWIK9g8; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mOHlJCcq/Cai5TplIIcvhfBFp6DOMO5wvBu/ooYKMfo=; b=qrWIK9g83iL2YXiKq38lakKS9Q
+	qjhwLiGvrqHydXoIO8aD2wFKjQltU5ngXX0BIK01mPezxKueLon95p89fSws5UoQWzuTDmUqnp+up
+	AqLVQznttm392QF2iJCr4qzQkzqCvJTCLufYRz22QSSeMoRdFXuMXTJP3OeRh6Rr7iIWNQSDu1SlD
+	QFDoBxPnOndqOzeojd1oafoUwjvn/8q2uYG9P03TzSPjyxoSIFQSk+/qiESEtEDxmXpZ8W02pI/Vq
+	YlAafMsekmPTUvyJUG1XOv+ZMOokPjpyis+99a56EeuVqvevESpwr51a1e0ug9Q+dI+rZZJw97ay5
+	3BpuzV1A==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uCMpp-0000000Bz1c-06cW;
+	Tue, 06 May 2025 18:16:05 +0000
+Date: Tue, 6 May 2025 19:16:04 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Klara Modin <klarasmodin@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-btrfs@vger.kernel.org
+Subject: Re: [RFC][PATCH] btrfs_get_tree_subvol(): switch from fc_mount() to
+ vfs_create_mount()
+Message-ID: <20250506181604.GP2023217@ZenIV>
+References: <20250505030345.GD2023217@ZenIV>
+ <3qdz7ntes5ufac7ldgfsrnvotk4izalmtdf7opqox5mk3kpxus@gabtxt27uwah>
+ <20250506172539.GN2023217@ZenIV>
+ <j2tom2y6562wa7r6wjsxwgc25t3uoine45ills367o4y2booxr@3jdyomwkvt6w>
+ <20250506175104.GO2023217@ZenIV>
+ <4pg5rjsoxzxjgcx2wzucw2wr7uvaxws423stdlv75t2udfkash@jff3ci54z35u>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250506122651epcas5p4100fd5435ce6e6686318265b414c1176@epcas5p4.samsung.com>
- <20250506121732.8211-1-joshi.k@samsung.com> <20250506121732.8211-11-joshi.k@samsung.com>
- <CADUfDZqqqQVHqMpVaMWre1=GZfu42_SOQ5W9m0vhSZYyp1BBUA@mail.gmail.com> <aBo4OiOOY3tCh_02@kbusch-mbp.dhcp.thefacebook.com>
-In-Reply-To: <aBo4OiOOY3tCh_02@kbusch-mbp.dhcp.thefacebook.com>
-From: Kanchan Joshi <joshiiitr@gmail.com>
-Date: Tue, 6 May 2025 23:44:27 +0530
-X-Gm-Features: ATxdqUG9RIoJxTdSYclAXfevasZNEUaF6CXTR24bqSobnO_8A3U2eC19Wgde8B0
-Message-ID: <CA+1E3rJx3Ch2POT_t4DWiqb2nJiX7bHPrGVMW_ZviJ_b0o9UvQ@mail.gmail.com>
-Subject: Re: [PATCH v16 10/11] nvme: register fdp parameters with the block layer
-To: Keith Busch <kbusch@kernel.org>
-Cc: Caleb Sander Mateos <csander@purestorage.com>, Kanchan Joshi <joshi.k@samsung.com>, axboe@kernel.dk, 
-	hch@lst.de, asml.silence@gmail.com, io-uring@vger.kernel.org, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-nvme@lists.infradead.org, Hannes Reinecke <hare@suse.de>, 
-	Nitesh Shetty <nj.shetty@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4pg5rjsoxzxjgcx2wzucw2wr7uvaxws423stdlv75t2udfkash@jff3ci54z35u>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, May 6, 2025 at 9:56=E2=80=AFPM Keith Busch <kbusch@kernel.org> wrot=
-e:
->
-> On Tue, May 06, 2025 at 09:13:33AM -0700, Caleb Sander Mateos wrote:
-> > On Tue, May 6, 2025 at 5:31=E2=80=AFAM Kanchan Joshi <joshi.k@samsung.c=
-om> wrote:
-> > > @@ -2225,6 +2361,12 @@ static int nvme_update_ns_info_block(struct nv=
-me_ns *ns,
-> > >         if (!nvme_init_integrity(ns->head, &lim, info))
-> > >                 capacity =3D 0;
-> > >
-> > > +       lim.max_write_streams =3D ns->head->nr_plids;
-> > > +       if (lim.max_write_streams)
-> > > +               lim.write_stream_granularity =3D max(info->runs, U32_=
-MAX);
-> >
-> > What is the purpose of this max(..., U32_MAX)? Should it be min() inste=
-ad?
->
-> You're right, should have been min. Because "runs" is a u64 and the
-> queue_limit is a u32, so U32_MAX is the upper limit, but it's not
-> supposed to exceed "runs".
+On Tue, May 06, 2025 at 07:54:32PM +0200, Klara Modin wrote:
 
-Would it be better to change write_stream_granularity to "long
-unsigned int" so that it matches with what is possible in nvme?
+> > > Though now I hit another issue which I don't know if it's related or
+> > > not. I'm using an overlay mount with squashfs as lower and btrfs as
+> > > upper. The mount fails with invalid argument and I see this in the log:
+> > > 
+> > > overlayfs: failed to clone upperpath
+> > 
+> > Seeing that you already have a kernel with that thing reverted, could
+> > you check if the problem exists there?
+> 
+> Yeah, it works fine with the revert instead.
+
+Interesting...  That message means that you've got clone_private_mount()
+returning an error; the thing is, mount passed to it has come from
+pathname lookup - it is *not* the mount created by that fc_mount() of
+vfs_create_mount() in the modified code.  That one gets passed to
+mount_subvol() and consumed there (by mount_subtree()).  All that is returned
+is root dentry; the mount passed to clone_private_mount() is created
+from scratch using dentry left by btrfs_get_tree_subvol() in its fc->root -
+see
+        dentry = mount_subvol(ctx->subvol_name, ctx->subvol_objectid, mnt);
+        ctx->subvol_name = NULL;
+        if (IS_ERR(dentry))
+                return PTR_ERR(dentry);
+
+        fc->root = dentry;
+        return 0;
+in the end of btrfs_get_tree_subvol().
+
+What's more, on the overlayfs side we managed to get to
+        upper_mnt = clone_private_mount(upperpath);
+        err = PTR_ERR(upper_mnt);
+        if (IS_ERR(upper_mnt)) {
+                pr_err("failed to clone upperpath\n");
+                goto out;
+so the upper path had been resolved...
+
+OK, let's try to see what clone_private_mount() is unhappy about...
+Could you try the following on top of -next + braino fix and see
+what shows up?  Another interesting thing, assuming you can get
+to shell after overlayfs mount failure, would be /proc/self/mountinfo
+contents and stat(1) output for upper path of your overlayfs mount...
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index eb990e9a668a..f7ce53f437dd 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2480,31 +2480,45 @@ struct vfsmount *clone_private_mount(const struct path *path)
+ 
+ 	guard(rwsem_read)(&namespace_sem);
+ 
+-	if (IS_MNT_UNBINDABLE(old_mnt))
++	if (IS_MNT_UNBINDABLE(old_mnt)) {
++		pr_err("unbindable");
+ 		return ERR_PTR(-EINVAL);
++	}
+ 
+ 	if (mnt_has_parent(old_mnt)) {
+-		if (!check_mnt(old_mnt))
++		if (!check_mnt(old_mnt)) {
++			pr_err("mounted, but not in our namespace");
+ 			return ERR_PTR(-EINVAL);
++		}
+ 	} else {
+-		if (!is_mounted(&old_mnt->mnt))
++		if (!is_mounted(&old_mnt->mnt)) {
++			pr_err("not mounted");
+ 			return ERR_PTR(-EINVAL);
++		}
+ 
+ 		/* Make sure this isn't something purely kernel internal. */
+-		if (!is_anon_ns(old_mnt->mnt_ns))
++		if (!is_anon_ns(old_mnt->mnt_ns)) {
++			pr_err("kern_mount?");
+ 			return ERR_PTR(-EINVAL);
++		}
+ 
+ 		/* Make sure we don't create mount namespace loops. */
+-		if (!check_for_nsfs_mounts(old_mnt))
++		if (!check_for_nsfs_mounts(old_mnt)) {
++			pr_err("shite with nsfs");
+ 			return ERR_PTR(-EINVAL);
++		}
+ 	}
+ 
+-	if (has_locked_children(old_mnt, path->dentry))
++	if (has_locked_children(old_mnt, path->dentry)) {
++		pr_err("has locked children");
+ 		return ERR_PTR(-EINVAL);
++	}
+ 
+ 	new_mnt = clone_mnt(old_mnt, path->dentry, CL_PRIVATE);
+-	if (IS_ERR(new_mnt))
++	if (IS_ERR(new_mnt)) {
++		pr_err("clone_mnt failed (%ld)", PTR_ERR(new_mnt));
+ 		return ERR_PTR(-EINVAL);
++	}
+ 
+ 	/* Longterm mount to be removed by kern_unmount*() */
+ 	new_mnt->mnt_ns = MNT_NS_INTERNAL;
 
