@@ -1,63 +1,60 @@
-Return-Path: <linux-fsdevel+bounces-48429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A65C8AAEDF0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 23:36:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E5BAAEE30
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 23:53:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8103188CE70
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 21:36:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A443ADB5A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 21:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC7E22D7BD;
-	Wed,  7 May 2025 21:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5B528FFD0;
+	Wed,  7 May 2025 21:50:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaPmW32a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c587/yhQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF2322B8A9
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 21:36:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E6828FA88;
+	Wed,  7 May 2025 21:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746653796; cv=none; b=oJWbBVvC13rplhKM21ymQmsb2VR539k+vIzrAk81uDM4X3usXybagSpLWgxdrR9ACQrHdB+Bqgf/DrU7yWFAcebVakjLmu+4WkfgvmUT41regV58j+cm5WbL37nFZpqFRfDy/OiQM3v8dfK8tLlVSGrtJix/0tNSEXt7lRA2bPk=
+	t=1746654617; cv=none; b=nftbXejwOHrSjXZa685fo1lOYFV2swNjsHs2DTG/D3OUYkT6jzeM/zBZLud4605ZPgpzJqKo/YROTRZwiXqzW/hZu1MnOYZHkG827Vhuv954VbjiBANhlXpcL2AYCy/R3PDO2Wz6a/q2JzoNEKXqtUu8VLZOwuEIMt7Yj5ut9BI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746653796; c=relaxed/simple;
-	bh=rf1Gmwr6WthhJ4eu6zM0aOsriwhnXZ9Mu6TEWRFlGgQ=;
+	s=arc-20240116; t=1746654617; c=relaxed/simple;
+	bh=U1Bq1469yNv7erJEul5P+4Y4mH40ucnTgrnUKuCoPpc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tYTv0radxARsA96UOs2XkcbOT815sqP+kozr+n8CPxyfNNmWU4pUsr24pO/nXdqsvCmlhI6SFEdockySgy+jp0b8PrGQJp69XdHRvj7VIj2cRQa2jzvSDalOZgjQwNrXAbLK9AJimHPqXE9/+vklPJtLRMQiSG3z/sbCQgUXaYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaPmW32a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA497C4CEE2;
-	Wed,  7 May 2025 21:36:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=rJmjePr0eHMozOPndPcFWCFzLDM245NFNrtXPgQPUhFa7OjNTmi2BofK8nLN6Gpg2Crw/r8p93WYj0FmrxRQeEkDhzss8NgpnbWiVnIINhtllIJJhv8/evLJRDbn7kFkwhQ9vWa7dKRPRuh5C4TwTrLNua+og4Jnam5vrh28Ce4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c587/yhQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57EB0C4CEE2;
+	Wed,  7 May 2025 21:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746653796;
-	bh=rf1Gmwr6WthhJ4eu6zM0aOsriwhnXZ9Mu6TEWRFlGgQ=;
+	s=k20201202; t=1746654615;
+	bh=U1Bq1469yNv7erJEul5P+4Y4mH40ucnTgrnUKuCoPpc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HaPmW32apFHwgWmFJ9h4cZxpOSCHIHJXPxRr0eRRusD6ZVS/14XoI0ktxt0dsd8Pt
-	 Pz5pDLa0Zw2pMVCsMVMsc1pCuxevwlGVM00xh4I/CgZJQxnGyol9CehTCWhaTjAEgn
-	 ZH/4aVXdHtxilbfR8RSyKpIUZLaem9HnrCk35jPG+7fdJGRdzEIsGuKWhh77/lam83
-	 5XadviB+4FOCkff77rVllMQTa53MCO+sG7MIMuuQR8+Suf6U9Ut66ysL1L8XrlLqxd
-	 ofFYofGmWSN+J0zhpawz2vPtuH5ZoyYGk4eTKE0qB0G3F002NPzHDwdLI3wdJf+xVG
-	 UaAdKWmPmPe+w==
-Date: Wed, 7 May 2025 21:36:33 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Eric Sandeen <sandeen@redhat.com>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
-	chao@kernel.org, lihongbo22@huawei.com
-Subject: Re: [PATCH V3 0/7] f2fs: new mount API conversion
-Message-ID: <aBvSYa-0IxQREIUV@google.com>
-References: <f9170e82-a795-4d74-89f5-5c7c9d233978@redhat.com>
- <aBq2GrqV9hw5cTyJ@google.com>
- <380f3d52-1e48-4df0-a576-300278d98356@redhat.com>
- <25cb13c8-3123-4ee6-b0bc-b44f3039b6c1@redhat.com>
- <aBtyRFIrDU3IfQhV@google.com>
- <6528bdf7-3f8b-41c0-acfe-a293d68176a7@redhat.com>
- <aBu5CU7k0568RU6E@google.com>
- <e72e0693-6590-4c1e-8bb8-9d891e1bc5c0@redhat.com>
- <aBvCi9KplfQ_7Gsn@google.com>
- <f1674387-66d3-443f-8d48-74d8dfd111f1@redhat.com>
+	b=c587/yhQ7XXLt62AyNX35sO+7BucK5gwgInhOrY6HpMH7xRCF76MmeLd5bzH4h+tB
+	 bJFYsvrWNXgkTBoqExoXmtG4unBbIk9p3LXbOBW4GGa9cbzf+tLe/O/coerGgDqGdg
+	 yALaGfoQE6sH1A7aDBbu2mdyWLN1NapW0RMAoqdgUGI+me4KnzjO1ZW5JzroV0Y5UC
+	 8p6lPKttQorUECGCpW0kPLQFzdPwtusq5buuWmEf0mdob025ckW342XHZtaESRKaD/
+	 SAFB9gMnRRIa1a3TP0vTy5OSz6Ce7bgW+VkSOC20M0Twbz9FUUnrDnX+cn4t3whk6Z
+	 uEYERDB4jXc+Q==
+Date: Wed, 7 May 2025 17:50:14 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
+	Trond Myklebust <trondmy@hammerspace.com>,
+	Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@meta.com>,
+	Anna Schumaker <anna@kernel.org>
+Subject: Re: performance r nfsd with RWF_DONTCACHE and larger wsizes
+Message-ID: <aBvVltbDKdHXMtLL@kernel.org>
+References: <370dd4ae06d44f852342b7ee2b969fc544bd1213.camel@kernel.org>
+ <aBqNtfPwFBvQCgeT@dread.disaster.area>
+ <8039661b7a4c4f10452180372bd985c0440f1e1d.camel@kernel.org>
+ <aBrKbOoj4dgUvz8f@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,146 +63,316 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f1674387-66d3-443f-8d48-74d8dfd111f1@redhat.com>
+In-Reply-To: <aBrKbOoj4dgUvz8f@dread.disaster.area>
 
-On 05/07, Eric Sandeen wrote:
-> On 5/7/25 3:28 PM, Jaegeuk Kim wrote:
-> >> But as far as I can tell, at least for the extent cache, remount is handled
-> >> properly already (with the hunk above):
-> >>
-> >> # mkfs/mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
-> >> # mount /dev/vdb mnt
-> >> # mount -o remount,noextent_cache mnt
-> >> mount: /root/mnt: mount point not mounted or bad option.
-> >>        dmesg(1) may have more information after failed mount system call.
-> >> # dmesg | tail -n 1
-> >> [60012.364941] F2FS-fs (vdb): device aliasing requires extent cache
-> >> #
-> >>
-> >> I haven't tested with i.e. blkzoned devices though, is there a testcase
-> >> that fails for you?
-> > I'm worrying about any missing case to check options enabled by default_options.
-> > For example, in the case of device_aliasing, we rely on enabling extent_cache
-> > by default_options, which was not caught by f2fs_check_opt_consistency.
+Hey Dave,
+
+Thanks for providing your thoughts on all this.  More inlined below.
+
+On Wed, May 07, 2025 at 12:50:20PM +1000, Dave Chinner wrote:
+> On Tue, May 06, 2025 at 08:06:51PM -0400, Jeff Layton wrote:
+> > On Wed, 2025-05-07 at 08:31 +1000, Dave Chinner wrote:
+> > > On Tue, May 06, 2025 at 01:40:35PM -0400, Jeff Layton wrote:
+> > > > FYI I decided to try and get some numbers with Mike's RWF_DONTCACHE
+> > > > patches for nfsd [1]. Those add a module param that make all reads and
+> > > > writes use RWF_DONTCACHE.
+> > > > 
+> > > > I had one host that was running knfsd with an XFS export, and a second
+> > > > that was acting as NFS client. Both machines have tons of memory, so
+> > > > pagecache utilization is irrelevant for this test.
+> > > 
+> > > Does RWF_DONTCACHE result in server side STABLE write requests from
+> > > the NFS client, or are they still unstable and require a post-write
+> > > completion COMMIT operation from the client to trigger server side
+> > > writeback before the client can discard the page cache?
+> > > 
 > > 
-> > I was thinking that we'd need a post sanity check.
+> > The latter. I didn't change the client at all here (other than to allow
+> > it to do bigger writes on the wire). It's just doing bog-standard
+> > buffered I/O. nfsd is adding RWF_DONTCACHE to every write via Mike's
+> > patch.
 > 
-> I see. If you want a "belt and suspenders" approach and it works for
-> you, no argument from me :)
+> Ok, that wasn't clear that it was only server side RWF_DONTCACHE.
+> 
+> I have some more context from a different (internal) discussion
+> thread about how poorly the NFSD read side performs with
+> RWF_DONTCACHE compared to O_DIRECT. This is because there is massive
+> page allocator spin lock contention due to all the concurrent reads
+> being serviced.
 
-Thanks. :)
+That discussion started with: its a very chaotic workload "read a
+bunch of large files that cause memory to be oversubscribed 2.5x
+across 8 servers".  Many knfsd threads (~240) per server handling 1MB
+IO to 8 XFS on NVMe.. (so 8 servers, each with 8 NVMe devices).
 
-I just found that I had to check it's from remount or not. And, this change does
-not break my setup having a specific options. Let me queue the series back and
-wait for further review from Chao.
+For others' benefit here is the flamegraph for this heavy
+nfsd.nfsd_dontcache=Y read workload as seen on 1 of the 8 servers:
+https://original.art/dontcache_read.svg
 
----
- fs/f2fs/super.c | 54 +++++++++++++++++++++++++++++++++----------------
- 1 file changed, 37 insertions(+), 17 deletions(-)
+Dave offered this additional analysis:
+"the flame graph indicates massive lock contention in the page
+allocator (i.e. on the page free lists). There's a chunk of time in
+data copying (copy_page_to_iter), but 70% of the CPU usage looks to be
+page allocator spinlock contention."
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index d89b9ede221e..0ee783224953 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1412,6 +1412,7 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
- 	}
- 
- 	if (f2fs_sb_has_device_alias(sbi) &&
-+			(ctx->opt_mask & F2FS_MOUNT_READ_EXTENT_CACHE) &&
- 			!ctx_test_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE)) {
- 		f2fs_err(sbi, "device aliasing requires extent cache");
- 		return -EINVAL;
-@@ -1657,6 +1658,33 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
- 	f2fs_apply_quota_options(fc, sb);
- }
- 
-+static int f2fs_sanity_check_options(struct f2fs_sb_info *sbi, bool remount)
-+{
-+	if (f2fs_sb_has_device_alias(sbi) &&
-+	    !test_opt(sbi, READ_EXTENT_CACHE)) {
-+		f2fs_err(sbi, "device aliasing requires extent cache");
-+		return -EINVAL;
-+	}
-+
-+	if (!remount)
-+		return 0;
-+
-+#ifdef CONFIG_BLK_DEV_ZONED
-+	if (f2fs_sb_has_blkzoned(sbi) &&
-+	    sbi->max_open_zones < F2FS_OPTION(sbi).active_logs) {
-+		f2fs_err(sbi,
-+			"zoned: max open zones %u is too small, need at least %u open zones",
-+				 sbi->max_open_zones, F2FS_OPTION(sbi).active_logs);
-+		return -EINVAL;
-+	}
-+#endif
-+	if (f2fs_lfs_mode(sbi) && !IS_F2FS_IPU_DISABLE(sbi)) {
-+		f2fs_warn(sbi, "LFS is not compatible with IPU");
-+		return -EINVAL;
-+	}
-+	return 0;
-+}
-+
- static struct inode *f2fs_alloc_inode(struct super_block *sb)
- {
- 	struct f2fs_inode_info *fi;
-@@ -2616,21 +2644,15 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
- 	default_options(sbi, true);
- 
- 	err = f2fs_check_opt_consistency(fc, sb);
--	if (err < 0)
-+	if (err)
- 		goto restore_opts;
- 
- 	f2fs_apply_options(fc, sb);
- 
--#ifdef CONFIG_BLK_DEV_ZONED
--	if (f2fs_sb_has_blkzoned(sbi) &&
--		sbi->max_open_zones < F2FS_OPTION(sbi).active_logs) {
--		f2fs_err(sbi,
--			"zoned: max open zones %u is too small, need at least %u open zones",
--				 sbi->max_open_zones, F2FS_OPTION(sbi).active_logs);
--		err = -EINVAL;
-+	err = f2fs_sanity_check_options(sbi, true);
-+	if (err)
- 		goto restore_opts;
--	}
--#endif
-+
- 	/* flush outstanding errors before changing fs state */
- 	flush_work(&sbi->s_error_work);
- 
-@@ -2663,12 +2685,6 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
- 		}
- 	}
- #endif
--	if (f2fs_lfs_mode(sbi) && !IS_F2FS_IPU_DISABLE(sbi)) {
--		err = -EINVAL;
--		f2fs_warn(sbi, "LFS is not compatible with IPU");
--		goto restore_opts;
--	}
--
- 	/* disallow enable atgc dynamically */
- 	if (no_atgc == !!test_opt(sbi, ATGC)) {
- 		err = -EINVAL;
-@@ -4808,11 +4824,15 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	default_options(sbi, false);
- 
- 	err = f2fs_check_opt_consistency(fc, sb);
--	if (err < 0)
-+	if (err)
- 		goto free_sb_buf;
- 
- 	f2fs_apply_options(fc, sb);
- 
-+	err = f2fs_sanity_check_options(sbi, false);
-+	if (err)
-+		goto free_options;
-+
- 	sb->s_maxbytes = max_file_blocks(NULL) <<
- 				le32_to_cpu(raw_super->log_blocksize);
- 	sb->s_max_links = F2FS_LINK_MAX;
--- 
-2.49.0.1015.ga840276032-goog
+All this causes RWF_DONTCACHE reads to be considerably slower than
+normal buffered reads (only getting 40-66% of normal buffered reads,
+worse read performance occurs when the system is less loaded).  How
+knfsd is handling the IO seems to be contributing to the 100% cpu
+usage.  If fio is used (with pvsync2 and uncached=1) directly to a
+single XFS then CPU is ~50%.
 
+(Jeff: not following why you were seeing EOPNOTSUPP for RWF_DONTCACHE
+reads, is that somehow due to the rsize/wsize patches from Chuck?
+RWF_DONTCACHE reads work with my patch you quoted as "[1]").
+
+> The buffered write path locking is different, but I suspect
+> something similar is occurring and I'm going to ask you to confirm
+> it...
+
+With knfsd to XFS on NVMe, favorable difference for RWF_DONTCACHE
+writes is that despite also seeing 100% CPU usage, due to lock
+contention et al, RWF_DONTCACHE does perform 0-54% better compared to
+normal buffered writes that exceed the system's memory by 2.5x
+(largest gains seen with most extreme load).
+
+Without RWF_DONTCACHE the system gets pushed to reclaim and the
+associated work really hurts.
+
+As tested with knfsd we've been generally unable to see the
+reduced CPU usage that is documented in Jens' commit headers:
+  for reads:  https://git.kernel.org/linus/8026e49bff9b
+  for writes: https://git.kernel.org/linus/d47c670061b5
+But as mentioned above, eliminating knfsd and testing XFS directly
+with fio does generally reflect what Jens documented.
+
+So more work needed to address knfsd RWF_DONTCACHE inefficiencies.
+
+> > > > I tested sequential writes using the fio-seq_write.fio test, both with
+> > > > and without the module param enabled.
+> > > > 
+> > > > These numbers are from one run each, but they were pretty stable over
+> > > > several runs:
+> > > > 
+> > > > # fio /usr/share/doc/fio/examples/fio-seq-write.fio
+> > > 
+> > > $ cat /usr/share/doc/fio/examples/fio-seq-write.fio
+> > > cat: /usr/share/doc/fio/examples/fio-seq-write.fio: No such file or directory
+> > > $
+> > > 
+> > > What are the fio control parameters of the IO you are doing? (e.g.
+> > > is this single threaded IO, does it use the psync, libaio or iouring
+> > > engine, etc)
+> > > 
+> > 
+> > 
+> > ; fio-seq-write.job for fiotest
+> > 
+> > [global]
+> > name=fio-seq-write
+> > filename=fio-seq-write
+> > rw=write
+> > bs=256K
+> > direct=0
+> > numjobs=1
+> > time_based
+> > runtime=900
+> > 
+> > [file1]
+> > size=10G
+> > ioengine=libaio
+> > iodepth=16
+>
+> Ok, so we are doing AIO writes on the client side, so we have ~16
+> writes on the wire from the client at any given time.
+
+Jeff's workload is really underwhelming given he is operating well
+within available memory (so avoiding reclaim, etc).  As such this test
+is really not testing what RWF_DONTCACHE is meant to address (and to
+answer Chuck's question of "what do you hope to get from
+RWF_DONTCACHE?"): the ability to reach steady state where even if
+memory is oversubscribed the network pipes and NVMe devices are as
+close to 100% utilization as possible.
+
+> This also means they are likely not being received by the NFS server
+> in sequential order, and the NFS server is going to be processing
+> roughly 16 write RPCs to the same file concurrently using
+> RWF_DONTCACHE IO.
+> 
+> These are not going to be exactly sequential - the server side IO
+> pattern to the filesystem is quasi-sequential, with random IOs being
+> out of order and leaving temporary holes in the file until the OO
+> write is processed.
+> 
+> XFS should handle this fine via the speculative preallocation beyond
+> EOF that is triggered by extending writes (it was designed to
+> mitigate the fragmentation this NFS behaviour causes). However, we
+> should always keep in mind that while client side IO is sequential,
+> what the server is doing to the underlying filesystem needs to be
+> treated as "concurrent IO to a single file" rather than "sequential
+> IO".
+
+Hammerspace has definitely seen that 1MB IO coming off the wire is
+fragmented by the time it XFS issues it to underlying storage; so much
+so that IOPs bound devices (e.g. AWS devices that are capped at ~10K
+IOPs) are choking due to all the small IO.
+
+So yeah, minimizing the fragmentation is critical (and largely *not*
+solved at this point... hacks like sync mount from NFS client or using
+O_DIRECT at the client, which sets sync bit, helps reduce the
+fragmentation but as soon as you go full buffered the N=16+ IOs on the
+wire will fragment each other).
+
+Do you recommend any particular tuning to help XFS's speculative
+preallocation work for many competing "sequential" IO threads?  Like
+would having 32 AG allow for 32 speculative preallocation engines?  Or
+is it only possible to split across AG for different inodes?
+(Sorry, I really do aim to get more well-versed with XFS... its only
+been ~17 years that it has featured in IO stacks I've had to
+engineer, ugh...).
+
+> > > > wsize=1M:
+> > > > 
+> > > > Normal:      WRITE: bw=1034MiB/s (1084MB/s), 1034MiB/s-1034MiB/s (1084MB/s-1084MB/s), io=910GiB (977GB), run=901326-901326msec
+> > > > DONTCACHE:   WRITE: bw=649MiB/s (681MB/s), 649MiB/s-649MiB/s (681MB/s-681MB/s), io=571GiB (613GB), run=900001-900001msec
+> > > > 
+> > > > DONTCACHE with a 1M wsize vs. recent (v6.14-ish) knfsd was about 30%
+> > > > slower. Memory consumption was down, but these boxes have oodles of
+> > > > memory, so I didn't notice much change there.
+> > > 
+> > > So what is the IO pattern that the NFSD is sending to the underlying
+> > > XFS filesystem?
+> > > 
+> > > Is it sending 1M RWF_DONTCACHE buffered IOs to XFS as well (i.e. one
+> > > buffered write IO per NFS client write request), or is DONTCACHE
+> > > only being used on the NFS client side?
+> > > 
+> > 
+> > It's should be sequential I/O, though the writes would be coming in
+> > from different nfsd threads. nfsd just does standard buffered I/O. The
+> > WRITE handler calls nfsd_vfs_write(), which calls vfs_write_iter().
+> > With the module parameter enabled, it also adds RWF_DONTCACHE.
+> 
+> Ok, so buffered writes (even with RWF_DONTCACHE) are not processed
+> concurrently by XFS - there's an exclusive lock on the inode that
+> will be serialising all the buffered write IO.
+> 
+> Given that most of the work that XFS will be doing during the write
+> will not require releasing the CPU, there is a good chance that
+> there is spin contention on the i_rwsem from the 15 other write
+> waiters.
+> 
+> That may be a contributing factor to poor performance, so kernel
+> profiles from the NFS server for both the normal buffered write path
+> as well as the RWF_DONTCACHE buffered write path. Having some idea
+> of the total CPU usage of the nfsds during the workload would also
+> be useful.
+> 
+> > DONTCACHE is only being used on the server side. To be clear, the
+> > protocol doesn't support that flag (yet), so we have no way to project
+> > DONTCACHE from the client to the server (yet). This is just early
+> > exploration to see whether DONTCACHE offers any benefit to this
+> > workload.
+> 
+> The nfs client largely aligns all of the page caceh based IO, so I'd
+> think that O_DIRECT on the server side would be much more performant
+> than RWF_DONTCACHE. Especially as XFS will do concurrent O_DIRECT
+> writes all the way down to the storage.....
+
+Yes.  We really need to add full-blown O_DIRECT support to knfsd.  And
+Hammerspace wants me to work on it ASAP.  But I welcome all the help I
+can get, I have ideas but look forward to discussing next week at
+Bakeathon and/or in this thread...
+
+The first hurdle is coping with the head and/or tail of IO being
+misaligned relative to the underlying storage's logical_block_size.
+Need to cull off misaligned IO and use RWF_DONTCACHE for those but
+O_DIRECT for the aligned middle is needed.
+
+I aim to deal with that for NFS LOCALIO first (NFS client issues
+IO direct to XFS, bypassing knfsd) and then reuse it for knfsd's
+O_DIRECT support.
+
+> > > > I wonder if we need some heuristic that makes generic_write_sync() only
+> > > > kick off writeback immediately if the whole folio is dirty so we have
+> > > > more time to gather writes before kicking off writeback?
+> > > 
+> > > You're doing aligned 1MB IOs - there should be no partially dirty
+> > > large folios in either the client or the server page caches.
+> > 
+> > Interesting. I wonder what accounts for the slowdown with 1M writes? It
+> > seems likely to be related to the more aggressive writeback with
+> > DONTCACHE enabled, but it'd be good to understand this.
+> 
+> What I suspect is that block layer IO submission latency has
+> increased significantly  with RWF_DONTCACHE and that is slowing down
+> the rate at which it can service buffered writes to a single file.
+> 
+> The difference between normal buffered writes and RWF_DONTCACHE is
+> that the write() context will marshall the dirty folios into bios
+> and submit them to the block layer (via generic_write_sync()). If
+> the underlying device queues are full, then the bio submission will
+> be throttled to wait for IO completion.
+> 
+> At this point, all NFSD write processing to that file stalls. All
+> the other nfsds are blocked on the i_rwsem, and that can't be
+> released until the holder is released by the block layer throttling.
+> Hence any time the underlying device queue fills, nfsd processing of
+> incoming writes stalls completely.
+> 
+> When doing normal buffered writes, this IO submission stalling does
+> not occur because there is no direct writeback occurring in the
+> write() path.
+> 
+> Remember the bad old days of balance_dirty_pages() doing dirty
+> throttling by submitting dirty pages for IO directly in the write()
+> context? And how much better buffered write performance and write()
+> submission latency became when we started deferring that IO to the
+> writeback threads and waiting on completions?
+> 
+> We're essentially going back to the bad old days with buffered
+> RWF_DONTCACHE writes. Instead of one nicely formed background
+> writeback stream that can be throttled at the block layer without
+> adversely affecting incoming write throughput, we end up with every
+> write() context submitting IO synchronously and being randomly
+> throttled by the block layer throttle....
+> 
+> There are a lot of reasons the current RWF_DONTCACHE implementation
+> is sub-optimal for common workloads. This IO spraying and submission
+> side throttling problem
+> is one of the reasons why I suggested very early on that an async
+> write-behind window (similar in concept to async readahead winodws)
+> would likely be a much better generic solution for RWF_DONTCACHE
+> writes. This would retain the "one nicely formed background
+> writeback stream" behaviour that is desirable for buffered writes,
+> but still allow in rapid reclaim of DONTCACHE folios as IO cleans
+> them...
+
+I recall you voicing this concern and nobody really seizing on it.
+Could be that Jens is open changing the RWF_DONTCACHE implementation
+if/when more proof is made for the need?
+
+> > > That said, this is part of the reason I asked about both whether the
+> > > client side write is STABLE and  whether RWF_DONTCACHE on
+> > > the server side. i.e. using either of those will trigger writeback
+> > > on the serer side immediately; in the case of the former it will
+> > > also complete before returning to the client and not require a
+> > > subsequent COMMIT RPC to wait for server side IO completion...
+> > > 
+> > 
+> > I need to go back and sniff traffic to be sure, but I'm fairly certain
+> > the client is issuing regular UNSTABLE writes and following up with a
+> > later COMMIT, at least for most of them. The occasional STABLE write
+> > might end up getting through, but that should be fairly rare.
+> 
+> Yeah, I don't think that's an issue given that only the server side
+> is using RWF_DONTCACHE. The COMMIT will effectively just be a
+> journal and/or device cache flush as all the dirty data has already
+> been written back to storage....
+
+FYI, most of Hammerspace RWF_DONTCACHE testing has been using O_DIRECT
+for client IO and nfsd.nfsd_dontcache=Y on the server.
+
+Thanks for the interesting discussion!
+Mike
 
