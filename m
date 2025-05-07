@@ -1,111 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-48413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48414-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DEE8AAE91D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 20:34:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADE3AAE921
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 20:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59BDB1C021A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 18:34:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EA634A7A03
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 18:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4346C28E578;
-	Wed,  7 May 2025 18:34:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8CC28E576;
+	Wed,  7 May 2025 18:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="U1Cj1AO+"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUyggFmA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-190c.mail.infomaniak.ch (smtp-190c.mail.infomaniak.ch [185.125.25.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBF0C22B597
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 18:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E43528B7EB;
+	Wed,  7 May 2025 18:38:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746642867; cv=none; b=avAlMaYK++s4Qw+dMGPXADumSv6JGkRpztCX2MNHHLMoYequd+msa1MmJZr/T7csrP9qb0BgWb4d2UFEzIADJQIRP7bFD4mnNmONDEXn/AP2SLlEDFbnfSUqli+pyvjwPn9iIvLWJv2fpzrB6EyZrZ7eTitC8CV1qyrDU/trrWI=
+	t=1746643141; cv=none; b=i4pDUB5uuj7k29qydTnkfIqUB0H8dNC0a/odouvWxNMv6zItXhcsiTfvnG1uxw/CXWbVm1NzFXb5a4a43EbpBFfT8SCiJffyzVdETt9pHGQFkiP1a/hSr2eCf9Fi8BcTSw4oQqH0fmoeUZYNnHCIlfDv727bpJ9DET9yoaCB0Gg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746642867; c=relaxed/simple;
-	bh=NBToG/AciZDbMvzA31ccgEUcWNBjM7xnKTulT/6/qgw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kBTI2915EFc3/slYnU74L9g2dDgAE9Bnp5s5vTwluuzWNWaYdaJTs28M2fWOfO8YS43KgCKeFzO5JnJEUeqYIheQrW+pdatFvCOs6rAG1fLPIdEXDY72od2pYxu86Rr14qVSBHpCaYrb4N5r5R5fATQbOy6rAoNZXAFdTKFU8PU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=U1Cj1AO+; arc=none smtp.client-ip=185.125.25.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-3-0000.mail.infomaniak.ch (smtp-3-0000.mail.infomaniak.ch [10.4.36.107])
-	by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zt3nh438nzwky;
-	Wed,  7 May 2025 20:34:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1746642856;
-	bh=UDOvGdA2DhLPcDKhb29sc57SUIgsv1FWMsjXSpnI7XE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U1Cj1AO+93w4KYltrM6aHLMINy5LaUdgfB//HeUnT3hEmubw5QoFEnTj9i3RkwfPy
-	 8jB7fb6hGaDg3EK5XiJPaXts8zDsNppvOo3tNBVDLJLF89g+F6JMT3Ru6v0sm0bMUZ
-	 7/w6GLxVFHw6OEO8u1crVk19ZPF2ObnavFbq8IlY=
-Received: from unknown by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zt3nf2JBczTnN;
-	Wed,  7 May 2025 20:34:14 +0200 (CEST)
-Date: Wed, 7 May 2025 20:34:13 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, linux-fsdevel@vger.kernel.org, 
-	Jann Horn <jannh@google.com>, Eric Dumazet <edumazet@google.com>, 
-	Oleg Nesterov <oleg@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Alexander Mikhalitsyn <alexander@mihalicyn.com>, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v4 09/11] pidfs, coredump: allow to verify coredump
- connection
-Message-ID: <20250507.uS1oa0shi0eu@digikod.net>
-References: <20250507-work-coredump-socket-v4-0-af0ef317b2d0@kernel.org>
- <20250507-work-coredump-socket-v4-9-af0ef317b2d0@kernel.org>
+	s=arc-20240116; t=1746643141; c=relaxed/simple;
+	bh=PV737ALlxa0MeAF/NHQ8BESH0VjY7KX6yUU/8UuLB3k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p6KJi/9lQlgAecqITrHlusyGOWEF2V5QAnfHTNcc+fvDHb+ssx8UZInijDlhr8wIJXML9hVnJSM0OGU/ovHU/G04c45SnfEnvoCq2P2yJq/iw+hGtlsjprwchOqvbu72i5apsvEtyG9o1BZsxExiz/Mag2rg+V9AUuIa3NvR0R8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUyggFmA; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac3b12e8518so28061466b.0;
+        Wed, 07 May 2025 11:38:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746643138; x=1747247938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WwOZ6sM38vEmJemz8hfnEukIYKzcuyuDEhTG4BejXDQ=;
+        b=mUyggFmA7+nVI2aWg6UIjcKXlpi/3DFpnIc3l12yEKSwrsFmruvGLXUhgM6aPKtllW
+         IkW9cSmU3br68o4aXQh/Dw2EIepGpcQidzG290e7i7YRHVUf10sLBlZJHQmn/xgFWC3t
+         P3cSgfEmh5qvHXyW/GG+RYtCatVyiZGWrzV8Hdlq1O0QpzMBqGvUNF7OvnajRxRSO1iz
+         okV2Y3zKRWKhlDoiqOUiA/BWIkBj7uI6rNk/4Zg0gjR10A+QaD9FkJa3T4uwQGqKtHz/
+         5nG8ivMdPb9y1T5tFR1JUZOrrNRqlOxjmYRgJo66wpsN4U8wCRUWg+Y1jvTTQgdruwYo
+         E9Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746643138; x=1747247938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WwOZ6sM38vEmJemz8hfnEukIYKzcuyuDEhTG4BejXDQ=;
+        b=RC5INiMT1puTcXUPny9xMskFwfPHvAlG6OPNLV6zQOJpj/UbwNMOfXS0kK9JdWryLf
+         /tpJVKRLku6loQ0hrC1A55w1fdvplXId86nFQdyooVeBCbs+pWvousLue6y0Zf59/CY8
+         l1j86Xicq5E8jpnihdhmGebyFX4IGTjqKy6ZBAGobsFGwAoQJY7A/Qgbp1gMdXVK4thH
+         mjX1GBqanNVanQBX1ch+B/ozi3qppFB+2Mn5fv4fMvLwoxp/15viG7gyN5s8LMW3I09R
+         g8AJMvvSwRwmHB+zaRbq8DxUvV0XnQPGL6dzcNQlXsIbaBb581XZCBR2exkeZC5Wo5jG
+         O9/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVIqZxw1NUzrSbrcO3VbYjRZPyJHswDE1NXIIpBrTexP5pqswU5fp8lNFZas1iMdJjoqYcf3tlnBNLWlqF5@vger.kernel.org, AJvYcCXZtU3fsw41brmrcOzS5crIduiq+uKnD20pQf2oHZe1l19qa5OPb9+xByTNRcM6h53/D3ZxSFu+sPyEkFbV@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDeyUOIxtsrAV5l4apVya1G7F8jarG/h2mStIG+zrtHVRyjk3n
+	E9tJOUVUmD2Rw1tCCCNBb9ShcY9KNXn1S5ughi3cloRl6j7UG86G2ksUZ14J84YVsmdrfGbYCMY
+	8QqMXmZoLsT4rA3vnr9CiDW9d9c4EMkFk5wTRdw==
+X-Gm-Gg: ASbGncsqeLGzY5NwRhqn76hx3QMYtql8JNcV0nVaKg8zT5foVHJkmD/Cpu7qk8GtkIL
+	F9rc9ziUexb1Ntj/CDXrKhL1+U/UcYF7vyWhG8RHC+fbbR7a2IaZjI5E7lfPO95I20YhSThBeWZ
+	RIb6qzLSPVSUmGqgWWB7YPQw==
+X-Google-Smtp-Source: AGHT+IFr+3Ye5QMBuJIsFDOQ2klnsMlUpF41G2L/3TujM36UNYhyO4/udyRLjWeLjkwseybUqZhsLAI8bt4uiKLuqhQ=
+X-Received: by 2002:a17:906:d542:b0:ad1:a87d:3de8 with SMTP id
+ a640c23a62f3a-ad1e8b9580emr478125966b.5.1746643137312; Wed, 07 May 2025
+ 11:38:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250507-work-coredump-socket-v4-9-af0ef317b2d0@kernel.org>
-X-Infomaniak-Routing: alpha
+References: <20250507032926.377076-2-chenlinxuan@uniontech.com>
+ <CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com>
+ <CAC1kPDP4oO29B_TM-2wvzt1+Gc6hWTDGMfHSJhOax4_Cg2dEkg@mail.gmail.com>
+ <CAOQ4uxgS3OUy9tpphAJKCQFRAn2zTERXXa0QN_KvP6ZOe2KVBw@mail.gmail.com> <CAC1kPDPY=qpGNRO3CH6_jSMKh6RyfHPFw71gCcpBZ-ogG41psA@mail.gmail.com>
+In-Reply-To: <CAC1kPDPY=qpGNRO3CH6_jSMKh6RyfHPFw71gCcpBZ-ogG41psA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 7 May 2025 20:38:45 +0200
+X-Gm-Features: ATxdqUHFHlh6G7irS8Pz1TUWzU4HF3KGg5Uc-QyCpr3WaPLK2uyUoX3kINubol8
+Message-ID: <CAOQ4uxg=HvoGFV+WerJcuD-qMyr-9fTBRA_+ZQRejodtBd0mnA@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: fuse: add backing_files control file
+To: Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 07, 2025 at 06:13:42PM +0200, Christian Brauner wrote:
-> When a coredump connection is initiated use the socket cookie as the
-> coredump cookie and store it in the pidfd. The receiver can now easily
-> authenticate that the connection is coming from the kernel.
-> 
-> Unless the coredump server expects to handle connection from
-> non-crashing task it can validate that the connection has been made from
-> a crashing task:
-> 
->    fd_coredump = accept4(fd_socket, NULL, NULL, SOCK_CLOEXEC);
->    getsockopt(fd_coredump, SOL_SOCKET, SO_PEERPIDFD, &fd_peer_pidfd, &fd_peer_pidfd_len);
-> 
->    struct pidfd_info info = {
->            info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
->    };
-> 
->    ioctl(pidfd, PIDFD_GET_INFO, &info);
->    /* Refuse connections that aren't from a crashing task. */
->    if (!(info.mask & PIDFD_INFO_COREDUMP) || !(info.coredump_mask & PIDFD_COREDUMPED) )
->            close(fd_coredump);
-> 
->    /*
->     * Make sure that the coredump cookie matches the connection cookie.
->     * If they don't it's not the coredump connection from the kernel.
->     * We'll get another connection request in a bit.
->     */
->    getsocketop(fd_coredump, SOL_SOCKET, SO_COOKIE, &peer_cookie, &peer_cookie_len);
->    if (!info.coredump_cookie || (info.coredump_cookie != peer_cookie))
->            close(fd_coredump);
-> 
-> The kernel guarantees that by the time the connection is made the
-> coredump info is available.
+On Wed, May 7, 2025 at 7:03=E2=80=AFPM Chen Linxuan <chenlinxuan@uniontech.=
+com> wrote:
+>
+> On Thu, May 8, 2025 at 12:57=E2=80=AFAM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+>
+> > It means everything to userspace.
+> > backing ids are part of the userspace UAPI - you have documented it you=
+rself.
+> > The fuse server used backing ids to manage access to backing files
+> > https://github.com/libfuse/libfuse/blob/master/example/passthrough_hp.c=
+c#L855
+>
+> Oh, I see.
 
-Nice approach to tie the coredump socket with the coredumped pidfd!
-This indeed removes previous race condition.
+For the record, I mean to print the same format as io_uring:
+                        seq_printf(m, "%5u: ", id);
+                        seq_file_path(m, f, " \t\n\\");
+                        seq_puts(m, "\n");
 
-I guess a socket's cookie is never zero?
+Thanks,
+Amir.
 
