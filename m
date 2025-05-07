@@ -1,76 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-48425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D1FBAAED5D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 22:49:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9850AAAED70
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 22:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8A51BC419B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 20:49:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7E63B9356
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 20:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEBD28FFC2;
-	Wed,  7 May 2025 20:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B069D28FFFB;
+	Wed,  7 May 2025 20:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UHuXWIud"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qn+qzhC4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C709B28FAA8
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 20:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330EE28DF37
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 20:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746650969; cv=none; b=UOC94ngT/aIW+4rdfcNCed4d7qTZcXRysbMtvfZQmfk5l6pZ7YRR9eNuQiITYJ9aiiL93I2FkQNDWVikm9ahg/uwAInpuPq9cotwlLnurxb3WgkbUdYzinw2+gpI7veOxAjupTAa3/XWAYO3ROWUZQdKmSW7K835WJmllc2uQ6Q=
+	t=1746651059; cv=none; b=KUZRQT7oNJMAnOVZb3+1GsJQ1j4y3N74v05FzgCVpk82tE/9aTf1ET31xau74rc23UfRMwFn7JuuFpw5XZJnPMu/xwsu7wH8ibPHBy5ClTYWZi1twpRSjFUYoHiXCtKa9RzOrT/OhKWnUWGDpPChtU4yRKLyMtY6xMRZPAO1gys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746650969; c=relaxed/simple;
-	bh=G75xtNcBa/HKc4thX1U4JClvdxzbtUn3lxLH5U+xQzk=;
+	s=arc-20240116; t=1746651059; c=relaxed/simple;
+	bh=aK1tvNbc65kXi4eTJ4y1WbB1Yq7chC+uIx6eWtLwSdU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U4dykIuwyt9XigfyO6hk8b20kLxDiDAjaCNkumYPKedxBii9GJxGB9FytOE4/8ldOPjV9DtW6RiNnMP1nc8YvjSKijJW+uuvg64vn8AgU9Ibi0akcDA+b6svQuxWATYZLSYL7hRUJ4bsCTFv2W/Ol/v5IBXsgI3H0e5GhVFOT4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UHuXWIud; arc=none smtp.client-ip=209.85.166.51
+	 In-Reply-To:Content-Type; b=dcChvYFTVDF/0VWbArHqxVIKz7oO9ovCtFGas4Uwqw72+LUzsE/wz4Vwx4cxUJvkbyGxVrF4CavyQb+4e1QENRaipVJgEGqYr9aeI82iMY+w5UHH8m5YevAu4MX/m99vcrrI9pnjShClTvOtKVwJsDdTuEmbfXL7AeM3A+Aceao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qn+qzhC4; arc=none smtp.client-ip=209.85.166.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-864a22fcdf2so13550739f.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 13:49:27 -0700 (PDT)
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85dac9729c3so18117639f.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 13:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1746650967; x=1747255767; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1746651055; x=1747255855; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=nbrLfo/HVOEcIGm/SsMmNRXcHh8Er8SMroRu1GzttWY=;
-        b=UHuXWIudVx0iFjD1cgs/WMt7Gy9yO3wmQjyiBGzXln3lJ7WGSKiHsgxVKrlFnbg8RU
-         5Z5W0V6HBs9CygCznH005Mizq3na5geCOEAgoxhHSlLDun1G4lPLwIe20U3DiSDZ5XEg
-         eCoxbcFAOFMAcZEyOGE2st9H7RVSIXOA2HBoM=
+        bh=l1i3VA5pX+AnNv8o3MlfdxwnFv3V4vTyMLMmTMdRyK8=;
+        b=Qn+qzhC4kB08fRop1tL1Iw9IMdwEJAfD0hq8Ox0Hv6jGnIQyF0UH9FAvWsOriDQXX4
+         6FAMtzPouqa55+FvAwhiBkAImQ9BQhM7X4j3ZVCXf6sDG8WgVh0DBlHSvI6nP3ppFnzY
+         h40Zw77fSuU8H+dF0FMKaPFsZHo5iUhTgXuUk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746650967; x=1747255767;
+        d=1e100.net; s=20230601; t=1746651055; x=1747255855;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=nbrLfo/HVOEcIGm/SsMmNRXcHh8Er8SMroRu1GzttWY=;
-        b=cDzxBkFoobNdfRwH6+6eY0WjrCSUa1ZM3Qlf9bsTd7z7f1BKj20QupLw3Wlo+THXI8
-         kXyqe+mWzsmPxZ01jTW5hdVQdEdybUjnrKVWCCxtVxMXa3YAgYyOBPNuCBWzCpl2HYHv
-         ulD+Daj+4e+Z0YWMBWmSQs+TMdXK39fmi4hmtm7BGSm4zMdZVJt08wmQYz8mPeNT9f1a
-         O/DD5mo+/O3NvLHHzOwMqcghdyLkIydlvpbQgl5TpAjbo5oFJTazE1C972HxHUPp+7lI
-         WNQ2X/UjNUGhHcG9piAr1p3kcsT8vVTPtQETYlNPLkq8Kn9gtzqNdYVNSfm83ihvqLzU
-         5MCw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7Smk8gVm/rs1KVtOODa6KXeW1IEBpm2+2P1p++/pJOG6zVjsg/hRv752kaSMbXKp1/OOyppFE6CdPzWhl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8uduBAEpS6Dx0kBpiFuP2v5t1geVu011+fg71ss98b8xiexJU
-	0gvP3mxqh1iUXseNXP7iDgFpS4yw/QbnntqaDJ/u0OjscYlIGygJEJeVRHoOkLw=
-X-Gm-Gg: ASbGncsRIfjbuRCJ3flstwlzE87XDSRSlvMLxOXxC1RrV2guZr2lTmnnQHha6+mrEdC
-	WINRBKa1M5ol9mf2e9mo4yqlCKG0n2eIn4guiYbqVj3taJ4fD7SzW2L9Ahw9K4PTTxTTYhRVg8N
-	GHtrcxdWIV93/PHpaj+nhq/XMYlepoBcX92zaMWp13DjP9QKLaiEOfXW3gGWmclNvtUekuLnlk9
-	z1ZdK+PZzP9MrFK11OK3xYFhL0ItJd8sU/ci6MnmE1nB2hI76rCyofe7oZ3EKrIxNJtdesyfhFC
-	Xf/PHWRRma7eaRhyS5Y1acpcuJJjdTWtCAxBDW4ZRgghboiwxhY=
-X-Google-Smtp-Source: AGHT+IGX4LIZdxiQGhsPmHJayBQ3t4X15bBVjp4+dG9Yr+NmPEGNWKAvicjiqoIWxW3kT3pxCS3NFg==
-X-Received: by 2002:a05:6602:29c9:b0:85e:16e9:5e8d with SMTP id ca18e2360f4ac-867550e2fdemr166032339f.7.1746650966768;
-        Wed, 07 May 2025 13:49:26 -0700 (PDT)
+        bh=l1i3VA5pX+AnNv8o3MlfdxwnFv3V4vTyMLMmTMdRyK8=;
+        b=R5hgNketj2YNkGbFpYZSgQiBSfBR5bOCPuSpUI79Ma4Bx7vfGOgtjcsR6nNU0b0gIO
+         RDYC1zjyhsqtnwPldH86eA7Vfj6asFS3hHEf4CqsPUKFU22VQU+pB7e0xHWWfvwn4DjX
+         FVRfRMBMAh9Ah+ZMI6tHyl5yeEBM9t8+U9o8BW//BJaB4if3e10HzztjcEBdNU/ScZaR
+         NUtc/2HapQG6NVWvJI11SIpm7Lvp7/MUvk7Q+YVa4XQb1G0XA3lB1g7qRHiPUlnRw623
+         M/6+cK5pytvYIdgJs/fC+D8tVq1ZJQwV43zS9zl9HVDtUnl0MOiyExWAnY/SkHqSSdAm
+         1OYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxnkx9OM4GeRHdz59AekngZX7S+d42x+wKuIyUu4kJ/D9z4JYL1j8qeIJ4s9SZbbi3AZI8IBTvTscsSk/S@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdrI6hUjYcn8Htuz0DC46Hkg2gbQ/ZgFAGaGwfTHPoGEGffT3S
+	0dFe2hf1K6vBNvPOhAQlE9PueXy+O05Mr4YDayuWb0WJ8OEWHce1ZJvtz/BLRD0=
+X-Gm-Gg: ASbGncsQqiw8l0dzL4In6FqeY7Z3rKaePQFj1EBhKeGOXauIT/rJa/tGFXZeh+HMPqL
+	Wr93aGdWeL7BKHMSobs90FUhlxvjRNkn/lWjpcARbDW+Dhqk3cbINIKJzJ7gXxK8p2TvL94NnCM
+	sHf2xgmlLQaznDZ1TgYkrQigUTfmzY6YlX7ngy428z971EpAvZCD0hCRfTROLYdS467/QBRInQU
+	gxFI7VwlYDrU/Mvi+4lPNTK2lE6SPIhWc0CTmGhq3ZcqPKQoDDzzu7QKXcBv36yt0Ieo7nvdNsh
+	dvi4dZHrGHRGxp2S/Wy3t9c2R7Tpg5fnwZgawncxEKs+IKnIsJw=
+X-Google-Smtp-Source: AGHT+IGXfbY2TdlADjhrlZDdaegNr623acfnrkFbqKORg+uz4s4neNOrD9k8reaOICCdp3cse52JQw==
+X-Received: by 2002:a05:6e02:1489:b0:3d9:5d50:e3b1 with SMTP id e9e14a558f8ab-3da739304a7mr62088825ab.18.1746651055223;
+        Wed, 07 May 2025 13:50:55 -0700 (PDT)
 Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-864aa31e07dsm271901639f.21.2025.05.07.13.49.25
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d975eca7b6sm31478705ab.38.2025.05.07.13.50.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 13:49:26 -0700 (PDT)
-Message-ID: <efd8baf5-f30e-4e7b-af53-a75efaab12f7@linuxfoundation.org>
-Date: Wed, 7 May 2025 14:49:25 -0600
+        Wed, 07 May 2025 13:50:54 -0700 (PDT)
+Message-ID: <e87bbc68-0403-4d67-ae2d-64065e36a011@linuxfoundation.org>
+Date: Wed, 7 May 2025 14:50:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -78,42 +78,80 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
+Subject: Re: The "make headers" requirement, revisited: [PATCH v3 3/3]
+ selftests: pidfd: add tests for PIDFD_SELF_*
 To: John Hubbard <jhubbard@nvidia.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
- Oliver Sang <oliver.sang@intel.com>, seanjc@google.com,
- Shuah Khan <skhan@linuxfoundation.org>
+Cc: Shuah Khan <shuah@kernel.org>, "Liam R . Howlett"
+ <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
+ linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
+ Christian Brauner <christian@brauner.io>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
  <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
  <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
- <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
- <5b0b8e1e-6f50-4e18-bf46-39b00376c26e@nvidia.com>
- <20250501114235.GP4198@noisy.programming.kicks-ass.net>
- <17464a97-e7be-49d4-9422-96ff824dba7c@linuxfoundation.org>
- <8f765dc8-421f-420f-bd3e-1a0d889238a1@nvidia.com>
+ <6dd57f0e-34b4-4456-854b-a8abdba9163b@nvidia.com>
+ <e0b9d4ad-0d47-499a-9ec8-7307b67cae5c@linuxfoundation.org>
+ <3687348f-7ee0-4fe1-a953-d5a2edd02ce8@nvidia.com>
 Content-Language: en-US
 From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <8f765dc8-421f-420f-bd3e-1a0d889238a1@nvidia.com>
+In-Reply-To: <3687348f-7ee0-4fe1-a953-d5a2edd02ce8@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 5/6/25 15:34, John Hubbard wrote:
-> On 5/6/25 2:18 PM, Shuah Khan wrote:
->> On 5/1/25 05:42, Peter Zijlstra wrote:
->>> On Wed, Oct 16, 2024 at 07:14:34PM -0700, John Hubbard wrote:
->>>> On 10/16/24 3:06 PM, Lorenzo Stoakes wrote:
->>>>> On Wed, Oct 16, 2024 at 02:00:27PM -0600, Shuah Khan wrote:
->>>>>> On 10/16/24 04:20, Lorenzo Stoakes wrote:
->>>> ...
->>> Please fix this fucking selftests shit to just build. This is unusable
->>> garbage.
+On 10/17/24 10:47, John Hubbard wrote:
+> On 10/17/24 9:33 AM, Shuah Khan wrote:
+>> On 10/16/24 20:01, John Hubbard wrote:
+>>> On 10/16/24 1:00 PM, Shuah Khan wrote:
+>>>> On 10/16/24 04:20, Lorenzo Stoakes wrote:
+> ...
+>>> The requirement to do "make headers" is not a keeper. Really.
 >>
+>> The reason we added the requirement to avoid duplicate defines
+>> such as this one added to kselftest source files. These are
+>> error prone and hard to resolve.
+>>
+>> In some cases, these don't become uapi and don't make it into
+>> system headers. selftests are in a category of depending on
+>> kernel headers to be able to test some features.
+>>
+>> Getting rid of this dependency mean, tests will be full of local
+>> defines such as this one which will become unmanageable overtime.
+> 
+> Not if we do it correctly...Please do look at the reference I provided
+> for how that works. Here is is again: [1].
+> 
+> The basic idea, which has been discussed and reviewed, is to take
+> very occasional snapshots and drop them into a static location where
+> they are available for kselftests, without disurbing other things:
+> $(top_srcdir)/tools/include/uapi
+> 
+> This has worked well so far.
+> 
+>>
+>> The discussion should be: "How do we get rid of the dependency without
+>> introducing local defines?" not just "Let's get rid of the dependency"
+>>
+> 
+> Yes. Good. We are apparently in violent agreement, because a few lines above,
+> I wrote:
+> 
+>      The requirement to do "make headers" is not a keeper.
+> 
+> The "make headers" is the problem, not the fact that we need to depend
+> on various includes. And so the solution stops requiring "make headers".
+> It gets the includes from a less volatile location.
+> 
+> Yes?
+> 
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e076eaca5906
+> 
+> thanks,
+
+Posting this on this thread as well -
 
 Peter, John,
 
@@ -151,7 +189,7 @@ The issues Peter is seeing regarding KHDR_INCLUDES in the following
 tests can be easily fixed by simply changing the test Makefile. These
 aren't framework related.
 
-kvm/Makefile.kvm:	-I ../rseq -I.. $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
+kvm/Makefile.kvm:    -I ../rseq -I.. $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
 x86/Makefile:CFLAGS := -O2 -g -std=gnu99 -pthread -Wall $(KHDR_INCLUDES)
 futex/functional/Makefile:INCLUDES := -I../include -I../../ $(KHDR_INCLUDES)
 futex/functional/Makefile:CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
