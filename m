@@ -1,352 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-48332-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48333-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4000EAAD9EF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 10:17:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A201AADA0E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 10:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F84E466C89
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 08:17:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3AAE4E5DE2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 08:23:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B009221540;
-	Wed,  7 May 2025 08:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gFsk8/wO"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52AF221DBA;
+	Wed,  7 May 2025 08:23:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8537772610;
-	Wed,  7 May 2025 08:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC6B221287;
+	Wed,  7 May 2025 08:23:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746605852; cv=none; b=F/UQlNHS3/ZQqcakvtQTZPXaHvtEQK2Kk+kDrzL7fLeo73SxcaPE4y/JT1r9F9hNmvyZ0WM0Im391NdVGCSY9fnNYQOEB7ehrAyl/6JcXfIBdD+IWwo8cz+WDIyLDcr+SYDR9FckgkixDKCzLPNt4deu9aSVRJi7IhZjk0kyGEc=
+	t=1746606195; cv=none; b=KzFhqhaSUrqQMJoK/r1qxQ2VTpc/Fi8RDxhHqJqkCClH+QDVNONXTdMUQYnBRJH0/ns0i9+MVJQw/lzIWJehppvnYA3PBLkk6tSf2cVAhk8p5Zdby7wLHIDORnjQwMJmhC2K42vJ2mzwgRdiKYqTCSEDo2sLnOCX1xXAt6lHFmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746605852; c=relaxed/simple;
-	bh=D6cma0vL5Rh++cxTISOfBfgLFkFrX0+2TyTGVxq8doY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qQ+CWhpdV77upQ3Hbl88GpdgUIkPym0DK6g0l8A2oNUrK/xpldswTHynQU6HXiV1zygZ0QXRgj7Gb/i+kYg9imI5mYE68t7PioK4opa7y1/HXF31L6d3gGnw5YZIAQAyGYSu36q5OldQTDaVLLY8bC+gwhfvXDoaP9QP9lCI4B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gFsk8/wO; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ac34257295dso382132966b.2;
-        Wed, 07 May 2025 01:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746605849; x=1747210649; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wOcMtx4PKUVaz+M3wsOZw+iCH7Jjj2//niizegtMkcE=;
-        b=gFsk8/wOcyPDH4lGf+KVwajItQ3HN5ZXDMDvBeimkCupnkVYe28+o0WCpJw8BW02bp
-         shfsh8O1V0SJ4+KdAOR7b/xYs6BfIivne9u26ZUySL9pBFBuwcIWfn+Y5xbUMWi6XfVx
-         7PUJZHuhw2wNlkMttFlX40l/knPKZ9+jKvupyCYC/9KIJMs5TeLX/XBcBcfIy+sUFkRJ
-         fZv2/TH9gvzklUHYyPNUb037OnrUJ23FBagdAJ8J9Rpor/VgpiAYFLZFFqOCI0k4bNK4
-         GJQij1xWyE6k4V27S8hBmf05k4iuzCIaGyK6Qbmud2qXS5Sy6IbIqH3KWMTlzrSnjeRs
-         q7DA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746605849; x=1747210649;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wOcMtx4PKUVaz+M3wsOZw+iCH7Jjj2//niizegtMkcE=;
-        b=BDP2civUgIXZpkETmcXIH4X1Rcgw2vJ16EjLJIpq8r3Wb43u5ZKG77B58lqJostpBr
-         YveuR5WMswRw07FzeMdvWW5Su0h4mfwz6irg4cF0s6xMs5XLx4PbUjYY2hPnMA9h2lJ1
-         IkRuaj+QHPjimsEkHo56ELXSaleKWE+yXDimvO2/RNon313LRN4dvfE4nPYIJXNTUZ2O
-         5Keyqu/AyrTmUBdhPvYBuNZeTvbU1LGBGxMLQzxZJZVPuB1ebO2D5QJ1zfmviDOk9uQV
-         xGnfw95DA1/oEuvtoMz8l3HPpdgIOH3I6QXKQ19PTRPTaXcmg+lh5B1NyhzLUEzINaVZ
-         To3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUfsSDgdMYY62o2m5h7ixNzky7qLIGK1pyebczo6U0aQzBECecgIQuni6miguchDCaHkm5q85t/H+4=@vger.kernel.org, AJvYcCWWZ6s4aMO8jnZU+jtqnRwMFHP9ZcZ1D2RbJc2uQrxlab9EYg87ecOUj2lxjxEyksk2clHxBQ0bl5oTy5Osiw==@vger.kernel.org, AJvYcCWv8liTopLTboDdSfad9LCNx9YYTz/049BzGWE8LrRMer9eQMs4ARhxUGkelNEkg7UJLV2eO3W31OY4S4XQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLJz89EHO5t8nsNUN7jK4kxDPX/ssw23MMd+nhI3UTkh4adryz
-	AMiwAYPQvoD1dcKCDmjR1hIi3baHvHofwB6WyUIPZtSR19GH0Q1ywXa26G/4GOW/PtFADLpT1QK
-	lbyfTLKRSBWfTl2iKiBdputsE2Ic=
-X-Gm-Gg: ASbGncvNzWZgJH2LIiZkES2ZxB0ylkprEyZgddysrr12lUqv0QH7sux6Siufq2ko9dS
-	AsfTw9SRqkdOz3mlv1TXLHTVeeI2gvzLyjMHZTQ2c3wd6PMfv7zOYREiY2ORdEjnhoVQsZYFQFG
-	j3UK75fPyyoNLUn4B+2tOIyQ==
-X-Google-Smtp-Source: AGHT+IEfs45lPNRVqQHY2iwgcFacb4wwkFr/FyO7PqYkYoFsuhzG2N8Ws7XweyERkxOoE/M8hr02Okqc+a42TOIBIdI=
-X-Received: by 2002:a17:907:2ce6:b0:ac7:b8d0:86c0 with SMTP id
- a640c23a62f3a-ad1e8b936c7mr243471066b.9.1746605848173; Wed, 07 May 2025
- 01:17:28 -0700 (PDT)
+	s=arc-20240116; t=1746606195; c=relaxed/simple;
+	bh=dKQSYssCqjab+VThR2A6t9EL5/fdsI5w0NftenKqgO8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ibWIb95PO3EaJJ/ByiG3lHgsKX15j1qGqKZaC6Dc4LKEDm/jpb38ip7Lkg/HFIzkJ0LX9mApPhyOL4ZVg3PloSyxrne0uuvQKjJaLcEEaom6lCYY1wQjBO+attNr0xXVFuOZrC4byyMXm1Zm86HoDCfW6j7r2CewVNK0dMfY4MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZspD501PTz4f3jXv;
+	Wed,  7 May 2025 16:22:44 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.112])
+	by mail.maildlp.com (Postfix) with ESMTP id 7419B1A018C;
+	Wed,  7 May 2025 16:23:09 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP1 (Coremail) with SMTP id cCh0CgAXfHxqGBto+dv_LQ--.31348S3;
+	Wed, 07 May 2025 16:23:08 +0800 (CST)
+Message-ID: <6fc62631-fb6f-4207-badb-1964b20fa89a@huaweicloud.com>
+Date: Wed, 7 May 2025 16:23:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507-fuse-passthrough-doc-v1-0-cc06af79c722@uniontech.com> <20250507-fuse-passthrough-doc-v1-2-cc06af79c722@uniontech.com>
-In-Reply-To: <20250507-fuse-passthrough-doc-v1-2-cc06af79c722@uniontech.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 7 May 2025 10:17:16 +0200
-X-Gm-Features: ATxdqUEQ2Or9YyhH4VDoUQ9y0QC0t57LMgOREmqSDmj948giV1S36Qp1iLWvIUw
-Message-ID: <CAOQ4uxiMh+3JqzqMbK+HpFt-hWaM6A2nW3UHNK9nNntDRkRBeQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] docs: filesystems: add fuse-passthrough.rst
-To: chenlinxuan@uniontech.com
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>, Bagas Sanjaya <bagasdotme@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
+To: "Darrick J. Wong" <djwong@kernel.org>, Christoph Hellwig <hch@lst.de>
+Cc: dhowells@redhat.com, brauner@kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, john.g.garry@oracle.com,
+ bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
+ yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+ yangerkun@huawei.com
+References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
+ <20250421021509.2366003-8-yi.zhang@huaweicloud.com>
+ <20250505132208.GA22182@lst.de> <20250505142945.GJ1035866@frogsfrogsfrogs>
+ <20250506050239.GA27687@lst.de> <20250506053654.GA25700@frogsfrogsfrogs>
+ <20250506054722.GA28781@lst.de>
+ <c3105509-9d63-4fa2-afaf-5b508ddeeaca@huaweicloud.com>
+ <20250506121012.GA21705@lst.de> <20250506155515.GL1035866@frogsfrogsfrogs>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250506155515.GL1035866@frogsfrogsfrogs>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:cCh0CgAXfHxqGBto+dv_LQ--.31348S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7uw1ktr18Gr17CFy8Kw48Zwb_yoW8CFWDpF
+	WjgF4UGFWUKry3Jw1kuw1Igr15ZFn5GFy3C39Ykr18Zws0qr1kKF95W3ZYkF9ruryrAa1U
+	ta9xK3sxWws3A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Wed, May 7, 2025 at 7:17=E2=80=AFAM Chen Linxuan via B4 Relay
-<devnull+chenlinxuan.uniontech.com@kernel.org> wrote:
->
-> From: Chen Linxuan <chenlinxuan@uniontech.com>
->
-> Add a documentation about FUSE passthrough.
->
-> It's mainly about why FUSE passthrough needs CAP_SYS_ADMIN.
->
+On 2025/5/6 23:55, Darrick J. Wong wrote:
+> On Tue, May 06, 2025 at 02:10:12PM +0200, Christoph Hellwig wrote:
+>> On Tue, May 06, 2025 at 07:25:06PM +0800, Zhang Yi wrote:
+>>> +       if (request_mask & STATX_WRITE_ZEROES_UNMAP &&
+>>> +           bdev_write_zeroes_unmap(bdev))
+>>> +               stat->result_mask |= STATX_WRITE_ZEROES_UNMAP;
+>>
+>> That would be my expectation.  But then again this area seems to
+>> confuse me a lot, so maybe we'll get Christian or Dave to chim in.
+> 
+> Um... does STATX_WRITE_ZEROES_UNMAP protect a field somewhere?
+> It might be nice to expose the request alignment granularity/max
+> size/etc.
 
-Hi Chen,
+I think that simply returning the support state is sufficient at the
+moment. __blkdev_issue_write_zeroes() will send write zeroes through
+multiple iterations, and there are no specific restrictions on the
+parameters provided by users.
 
-Thank you for this contribution!
+> Or does this flag exist solely to support discovering that
+> FALLOC_FL_WRITE_ZEROES is supported?  In which case, why not discover
+> its existence by calling fallocate(fd, WRITE_ZEROES, 0, 0) like the
+> other modes?
+> 
 
-Very good summary.
-with minor nits below fix you may add to both patches:
+Current STATX_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES are
+inconsistent, we allow users to call fallocate(FALLOC_FL_WRITE_ZEROES) on
+files that STATX_WRITE_ZEROES_UNMAP is not set. Users can check whether
+the device supports unmap write zeroes through STATX_WRITE_ZEROES_UNMAP
+and then decide to call fallocate(FALLOC_FL_WRITE_ZEROES) if it is
+supported. Please see this explanation for details.
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+  https://lore.kernel.org/linux-fsdevel/20250421021509.2366003-1-yi.zhang@huaweicloud.com/T/#mc1618822bc27d486296216fc1643d5531fee03e1
 
-
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Cc: Bernd Schubert <bernd.schubert@fastmail.fm>
-> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
-> ---
->  Documentation/filesystems/fuse-passthrough.rst | 139 +++++++++++++++++++=
-++++++
->  1 file changed, 139 insertions(+)
->
-> diff --git a/Documentation/filesystems/fuse-passthrough.rst b/Documentati=
-on/filesystems/fuse-passthrough.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..f7c3b3ac08c255906ed7c9092=
-29107ff15cdb223
-> --- /dev/null
-> +++ b/Documentation/filesystems/fuse-passthrough.rst
-> @@ -0,0 +1,139 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +FUSE Passthrough
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Introduction
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +FUSE (Filesystem in Userspace) passthrough is a feature designed to impr=
-ove the
-> +performance of FUSE filesystems for I/O operations. Typically, FUSE oper=
-ations
-> +involve communication between the kernel and a userspace FUSE daemon, wh=
-ich can
-> +introduce overhead. Passthrough allows certain operations on a FUSE file=
- to
-> +bypass the userspace daemon and be executed directly by the kernel on an
-> +underlying "backing file".
-> +
-> +This is achieved by the FUSE daemon registering a file descriptor (point=
-ing to
-> +the backing file on a lower filesystem) with the FUSE kernel module. The=
- kernel
-> +then receives an identifier (`backing_id`) for this registered backing f=
-ile.
-> +When a FUSE file is subsequently opened, the FUSE daemon can, in its res=
-ponse to
-> +the ``OPEN`` request, include this ``backing_id`` and set the
-> +``FOPEN_PASSTHROUGH`` flag. This establishes a direct link for specific
-> +operations.
-> +
-> +Currently, passthrough is supported for operations like ``read(2)``/``wr=
-ite(2)``
-> +(via ``read_iter``/``write_iter``), ``splice(2)``, and ``mmap(2)``.
-> +
-> +Enabling Passthrough
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +To use FUSE passthrough:
-> +
-> +  1. The FUSE filesystem must be compiled with ``CONFIG_FUSE_PASSTHROUGH=
-``
-> +     enabled.
-> +  2. The FUSE daemon, during the ``FUSE_INIT`` handshake, must negotiate=
- the
-> +     ``FUSE_PASSTHROUGH`` capability and specify its desired
-> +     ``max_stack_depth``.
-> +  3. The (privileged) FUSE daemon uses the ``FUSE_DEV_IOC_BACKING_OPEN``=
- ioctl
-> +     on its connection file descriptor (e.g., ``/dev/fuse``) to register=
- a
-> +     backing file descriptor and obtain a ``backing_id``.
-> +  4. When handling an ``OPEN`` or ``CREATE`` request for a FUSE file, th=
-e daemon
-> +     replies with the ``FOPEN_PASSTHROUGH`` flag set in
-> +     ``fuse_open_out::open_flags`` and provides the corresponding ``back=
-ing_id``
-> +     in ``fuse_open_out::backing_id``.
-> +  5. The FUSE daemon should eventually call ``FUSE_DEV_IOC_BACKING_CLOSE=
-`` with
-> +     the ``backing_id`` to release the kernel's reference to the backing=
- file
-> +     when it's no longer needed for passthrough setups.
-> +
-> +Privilege Requirements
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +Setting up passthrough functionality currently requires the FUSE daemon =
-to
-> +possess the ``CAP_SYS_ADMIN`` capability. This requirement stems from se=
-veral
-> +security and resource management considerations that are actively being
-> +discussed and worked on. The primary reasons for this restriction are de=
-tailed
-> +below.
-> +
-> +Resource Accounting and Visibility
-> +----------------------------------
-> +
-> +The core mechanism for passthrough involves the FUSE daemon opening a fi=
-le
-> +descriptor to a backing file and registering it with the FUSE kernel mod=
-ule via
-> +the ``FUSE_DEV_IOC_BACKING_OPEN`` ioctl. This ioctl returns a ``backing_=
-id``
-> +associated with a kernel-internal ``struct fuse_backing`` object, which =
-holds a
-> +reference to the backing ``struct file``.
-> +
-> +A significant concern arises because the FUSE daemon can close its own f=
-ile
-> +descriptor to the backing file after registration. The kernel, however, =
-will
-> +still hold a reference to the ``struct file`` via the ``struct fuse_back=
-ing``
-> +object as long as it's associated with a ``backing_id`` (or subsequently=
-, with
-> +an open FUSE file in passthrough mode).
-> +
-> +This behavior leads to two main issues for unprivileged FUSE daemons:
-> +
-> +  1. **Invisibility to lsof and other inspection tools**: Once the FUSE
-> +     daemon closes its file descriptor, the open backing file held by th=
-e kernel
-> +     becomes "hidden." Standard tools like ``lsof``, which typically ins=
-pect
-> +     process file descriptor tables, would not be able to identify that =
-this
-> +     file is still open by the system on behalf of the FUSE filesystem. =
-This
-> +     makes it difficult for system administrators to track resource usag=
-e or
-> +     debug issues related to open files (e.g., preventing unmounts).
-> +
-> +  2. **Bypassing RLIMIT_NOFILE**: The FUSE daemon process is subject to
-> +     resource limits, including the maximum number of open file descript=
-ors
-> +     (``RLIMIT_NOFILE``). If an unprivileged daemon could register backi=
-ng files
-> +     and then close its own FDs, it could potentially cause the kernel t=
-o hold
-> +     an unlimited number of open ``struct file`` references without thes=
-e being
-> +     accounted against the daemon's ``RLIMIT_NOFILE``. This could lead t=
-o a
-> +     denial-of-service (DoS) by exhausting system-wide file resources.
-> +
-> +The ``CAP_SYS_ADMIN`` requirement acts as a safeguard against these issu=
-es,
-> +restricting this powerful capability to trusted processes.
-
-> As noted in the
-> +kernel code (``fs/fuse/passthrough.c`` in ``fuse_backing_open()``):
-
-As Bagas commented, I don't see the need to reference comments in the code
-here.
-
-> +
-> +Discussions suggest that exposing information about these backing files,=
- perhaps
-> +through a dedicated interface under ``/sys/fs/fuse/connections/``, could=
- be a
-> +step towards relaxing this capability. This would be analogous to how
-
-I am not sure this is helpful to have this "maybe this is how we will solve=
- it"
-documented here.
-the idea was to document the concerns and the reasons for CAP_SYS_ADMIN.
-Now that you documented them, you can work on the solution and document
-the solution here.
-
-> +``io_uring`` exposes its "fixed files", which are also visible via ``fdi=
-nfo``
-> +and accounted under the registering user's ``RLIMIT_NOFILE``.
-
-If you want, you can leave this as a NOTE about how io_uring solves a
-similar issue.
-
-> +
-> +Filesystem Stacking and Shutdown Loops
-> +--------------------------------------
-> +
-> +Another concern relates to the potential for creating complex and proble=
-matic
-> +filesystem stacking scenarios if unprivileged users could set up passthr=
-ough.
-> +A FUSE passthrough filesystem might use a backing file that resides:
-> +
-> +  * On the *same* FUSE filesystem.
-> +  * On another filesystem (like OverlayFS) which itself might have an up=
-per or
-> +    lower layer that is a FUSE filesystem.
-> +
-> +These configurations could create dependency loops, particularly during
-> +filesystem shutdown or unmount sequences, leading to deadlocks or system
-> +instability. This is conceptually similar to the risks associated with t=
-he
-> +``LOOP_SET_FD`` ioctl, which also requires ``CAP_SYS_ADMIN``.
-> +
-> +To mitigate this, FUSE passthrough already incorporates checks based on
-> +filesystem stacking depth (``sb->s_stack_depth`` and ``fc->max_stack_dep=
-th``).
-> +For example, during the ``FUSE_INIT`` handshake, the FUSE daemon can neg=
-otiate
-> +the ``max_stack_depth`` it supports. When a backing file is registered v=
-ia
-> +``FUSE_DEV_IOC_BACKING_OPEN``, the kernel checks if the backing file's
-> +filesystem stack depth is within the allowed limit.
-> +
-> +The ``CAP_SYS_ADMIN`` requirement provides an additional layer of securi=
-ty,
-> +ensuring that only privileged users can create these potentially complex
-> +stacking arrangements.
-> +
-> +General Security Posture
-> +------------------------
-> +
-> +As a general principle for new kernel features that allow userspace to i=
-nstruct
-> +the kernel to perform direct operations on its behalf based on user-prov=
-ided
-> +file descriptors, starting with a higher privilege requirement (like
-> +``CAP_SYS_ADMIN``) is a conservative and common security practice. This =
-allows
-> +the feature to be used and tested while further security implications ar=
-e
-> +evaluated and addressed.
-
-> As Amir Goldstein mentioned in one of the discussions,
-> +there was "no proof that this is the only potential security risk" when =
-the
-> +initial privilege checks were put in place.
-> +
-
-I don't think that referencing those discussions is useful.
-They are too messy. The idea of the doc is clarity.
-It's fine to have Link: in the commit message tail for git history sake.
-
-You could instead write that a documented security model
-is needed before CAP_SYS_ADMIN can be relaxed.
-or add nothing at all, because you already documented the concerns.
+However, removing STATX_WRITE_ZEROES_UNMAP also seems good to me(Perhaps
+it would be better.).It means we do not allow to call
+fallocate(FALLOC_FL_WRITE_ZEROES) if the device does not explicitly
+support unmap write zeroes.
 
 Thanks,
-Amir.
+Yi.
+
 
