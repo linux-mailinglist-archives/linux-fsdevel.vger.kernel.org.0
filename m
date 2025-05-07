@@ -1,140 +1,114 @@
-Return-Path: <linux-fsdevel+bounces-48327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D011AAD5B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 08:09:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B40AAD5E6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 08:21:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 623411C07089
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 06:10:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE2A3B91C8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 06:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0521B1FECCD;
-	Wed,  7 May 2025 06:09:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 049E0202F6D;
+	Wed,  7 May 2025 06:21:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgXw7fYY"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rqb2Fzbp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F835182D2;
-	Wed,  7 May 2025 06:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E26A51DE2DE
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 06:21:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746598185; cv=none; b=djLO8HSpGiu2mJgR5kwqQ8vKYA4uKt64YCZrNH5ToNRKteC08orroS6GNktkziwafpcxFFAji+kSyAQ8DvTktHLSAul8F6S5ukgZiduSJnREordR/6oObajxT4R0lKfhVrjZZUt1D48YN0IcJ8PIqoXh5g5B/Q3qa/owfWqq4oA=
+	t=1746598890; cv=none; b=IWAflMG6VicUX+D0qv0Sv+hu+1lmDc0rsyit4LrllWh4RuwEhJk6Y0RPgg5yawrDrwQYyY6xHvwpi/HyDkDjVZepa84teqJeAqe4Y38cuEEaTvXujINxTXCUnubZKyn6PwsZwiipfSFiCdwpAXacVIwkQuMVnib+dsXQU/R9JOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746598185; c=relaxed/simple;
-	bh=OlQ3/kKW5MYGe5tgiUmLTmGp9Kk6UH7ZYoweCTKK+Go=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SuN38Q+gl1MAPYB5GmpARs9e4Ah2W3HFRC4ky8kT5f9W+PaeVW4oEf7hS768Q3OeA6s3K1iVNOT/SKDzdzKs2jraEsRs24sKIL2Cwb07bM8fhQDT6Tbff7FA7uG62dAimipvkOR8FQHkjElYHry8io3hqeGjQ9F57B2RxIvip7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgXw7fYY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6356C4CEE7;
-	Wed,  7 May 2025 06:09:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746598184;
-	bh=OlQ3/kKW5MYGe5tgiUmLTmGp9Kk6UH7ZYoweCTKK+Go=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QgXw7fYYyPWrhR+g4yqjQidjaU5sPh3CwA23eu0zSWlt8rcn5T7eBv9zYWLZrjBlr
-	 cwC2e7h8dHepo0xi+JAcAWQ5HLZM79zYoB7S0z/Thh/KjQAYrmMe+kjlXVciztu2gh
-	 ifDoUXWxPFrPxaihin0P/GvX2VvT9IX4SsMoHAFHUvVTcgXxLzmn+fFcFhb1zMCOiS
-	 R/n87FrixZw2krbGncZYUd3crnDI75QKeG4ZyxTun26AyN1TATFp9v8bwtyrvTBiZ/
-	 5hbRX7woHiwfAtb5RP3D1ZHpGP+5/iBsK7vvT5Cg736neDYbqcorbCK8MhRBy8Pqmj
-	 jFqlKdcwonZCg==
-Date: Wed, 7 May 2025 09:09:35 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>,
-	Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Matthew Wilcox <willy@infradead.org>
-Subject: Re: [RFC PATCH v2 2/3] mm: secretmem: convert to .mmap_prepare() hook
-Message-ID: <aBr5H3DZiJVzfd0v@kernel.org>
-References: <cover.1746116777.git.lorenzo.stoakes@oracle.com>
- <987b620592ad6a472281039c07cc1d67e48d864f.1746116777.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1746598890; c=relaxed/simple;
+	bh=0hZQxzSSSoumFQk+MGhMqe+rIU12+QettwwHhg34OsA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mpmoA+Djs/QcI5abNKPeTkuxBJeF+l2uEcaXPNbK7YF0OHE4nOZ2e/e63hlBBxmIbiV+bgYEkGxw+4Izyh/mKiiv9aEXl+nAgP4zwJf6uUG3J6H9joiDjqhSgG6S6dN7A1UDY286+8bciNAM5gQcndDZ/RROpWaWBLEUQSL8uDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rqb2Fzbp; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=1jI8xVPEaieICBAQy5mFs8K4/rLYqxIx0o7gMz9fF5o=; b=rqb2Fzbp3guv9ytwkMXP8pwY1n
+	9BQbAJi4KZiCkzTkdsm5CRbtBTEzJG64gNB5ymfh8Dd3RYKOAz+HI3mlc2+/+XR70dYPTzTmbq9AE
+	pEY0TnaxSl0l+PYTZMFPFgz8IXDJ7/bf00U1oQ0iuSfKUjfPt3fXK3CMmZqqMVLZG7wWpkkGJ1T3k
+	Wstll5oKLtt2dCz/LHUPWP/Dqy2MR0TemL3wrz2QeFz5oUQMn/mAAm0eX5E/LgolRETDLYidM6Vk+
+	zkvTKnlRP9bcnWDjcZydnfKxMosHYKKNBlJ+lgW5zdyBMbftjfrhdf2CP3atWaWt9TTlYeq1uxICz
+	TKqcnDtw==;
+Received: from 2a02-8389-2341-5b80-3ba7-83fe-7065-4f0b.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:3ba7:83fe:7065:4f0b] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uCY9n-0000000EM92-2jaw;
+	Wed, 07 May 2025 06:21:28 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: viro@zeniv.linux.org.uk,
+	brauner@kernel.org
+Cc: jack@suse.cz,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH] fs: use writeback_iter directly in mpage_writepages
+Date: Wed,  7 May 2025 08:21:24 +0200
+Message-ID: <20250507062124.3933305-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <987b620592ad6a472281039c07cc1d67e48d864f.1746116777.git.lorenzo.stoakes@oracle.com>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, May 01, 2025 at 06:25:28PM +0100, Lorenzo Stoakes wrote:
-> Secretmem has a simple .mmap() hook which is easily converted to the new
-> .mmap_prepare() callback.
-> 
-> Importantly, it's a rare instance of an driver that manipulates a VMA which
-> is mergeable (that is, not a VM_SPECIAL mapping) while also adjusting VMA
-> flags which may adjust mergeability, meaning the retry merge logic might
-> impact whether or not the VMA is merged.
-> 
-> By using .mmap_prepare() there's no longer any need to retry the merge
-> later as we can simply set the correct flags from the start.
-> 
-> This change therefore allows us to remove the retry merge logic in a
-> subsequent commit.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Stop using write_cache_pages and use writeback_iter directly.  This
+removes an indirect call per written folio and makes the code easier
+to follow.
 
-Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ fs/mpage.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-> ---
->  mm/secretmem.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 1b0a214ee558..f98cf3654974 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -120,18 +120,18 @@ static int secretmem_release(struct inode *inode, struct file *file)
->  	return 0;
->  }
->  
-> -static int secretmem_mmap(struct file *file, struct vm_area_struct *vma)
-> +static int secretmem_mmap_prepare(struct vm_area_desc *desc)
->  {
-> -	unsigned long len = vma->vm_end - vma->vm_start;
-> +	unsigned long len = desc->end - desc->start;
->  
-> -	if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
-> +	if ((desc->vm_flags & (VM_SHARED | VM_MAYSHARE)) == 0)
->  		return -EINVAL;
->  
-> -	if (!mlock_future_ok(vma->vm_mm, vma->vm_flags | VM_LOCKED, len))
-> +	if (!mlock_future_ok(desc->mm, desc->vm_flags | VM_LOCKED, len))
->  		return -EAGAIN;
->  
-> -	vm_flags_set(vma, VM_LOCKED | VM_DONTDUMP);
-> -	vma->vm_ops = &secretmem_vm_ops;
-> +	desc->vm_flags |= VM_LOCKED | VM_DONTDUMP;
-> +	desc->vm_ops = &secretmem_vm_ops;
->  
->  	return 0;
->  }
-> @@ -143,7 +143,7 @@ bool vma_is_secretmem(struct vm_area_struct *vma)
->  
->  static const struct file_operations secretmem_fops = {
->  	.release	= secretmem_release,
-> -	.mmap		= secretmem_mmap,
-> +	.mmap_prepare	= secretmem_mmap_prepare,
->  };
->  
->  static int secretmem_migrate_folio(struct address_space *mapping,
-> -- 
-> 2.49.0
-> 
-
+diff --git a/fs/mpage.c b/fs/mpage.c
+index ad7844de87c3..c5fd821fd30e 100644
+--- a/fs/mpage.c
++++ b/fs/mpage.c
+@@ -445,10 +445,9 @@ static void clean_buffers(struct folio *folio, unsigned first_unmapped)
+ 		try_to_free_buffers(folio);
+ }
+ 
+-static int __mpage_writepage(struct folio *folio, struct writeback_control *wbc,
+-		      void *data)
++static int mpage_write_folio(struct writeback_control *wbc, struct folio *folio,
++		struct mpage_data *mpd)
+ {
+-	struct mpage_data *mpd = data;
+ 	struct bio *bio = mpd->bio;
+ 	struct address_space *mapping = folio->mapping;
+ 	struct inode *inode = mapping->host;
+@@ -656,14 +655,16 @@ mpage_writepages(struct address_space *mapping,
+ 	struct mpage_data mpd = {
+ 		.get_block	= get_block,
+ 	};
++	struct folio *folio = NULL;
+ 	struct blk_plug plug;
+-	int ret;
++	int error;
+ 
+ 	blk_start_plug(&plug);
+-	ret = write_cache_pages(mapping, wbc, __mpage_writepage, &mpd);
++	while ((folio = writeback_iter(mapping, wbc, folio, &error)))
++		error = mpage_write_folio(wbc, folio, &mpd);
+ 	if (mpd.bio)
+ 		mpage_bio_submit_write(mpd.bio);
+ 	blk_finish_plug(&plug);
+-	return ret;
++	return error;
+ }
+ EXPORT_SYMBOL(mpage_writepages);
 -- 
-Sincerely yours,
-Mike.
+2.47.2
+
 
