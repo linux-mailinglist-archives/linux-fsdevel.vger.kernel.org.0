@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-48350-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48351-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB305AADCEF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 13:07:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9902DAADCFB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 13:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11DC2985A4A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 11:06:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 854E27BF12D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 11:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330B5235BFB;
-	Wed,  7 May 2025 11:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0372367BE;
+	Wed,  7 May 2025 11:05:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="YiiUP5eQ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="c+V9v308"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04AD220F4D;
-	Wed,  7 May 2025 11:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA528236440;
+	Wed,  7 May 2025 11:05:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746615918; cv=none; b=IDzXo8yCdbYUTjPjlvbopl+mT3HmyFdmSfnlW1/0i2ONEXC/r2B38GyJCA/e2wQUF4M7hSEqhF7Z7wx88aasegI9Z0KX2V9lW2tbTpAexXW6CshbWZTCiYlEn4cg9RWv9vebS/YKHLnVCmlYJVNLXPCPNlihwrWw/moc48qBeog=
+	t=1746615922; cv=none; b=i9k7/WhFFjZb4Ha09VUSB4m4UFw1qcGRY7B2yq7BIbtUT1JIg720qbJcTwVATZrj1v2LIzMPP9A2SRKFiDLFKUrXAM0FlVcXvykcUZh5s0xDGPpK7wf4riqxhYfRGeVmP66KiRn/Uxzk/UDymD/+Wpg1j7xFCoJNQsyYXzDsM6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746615918; c=relaxed/simple;
-	bh=e3aGZP70jxUNb+/lCFUVUQ4+81xhoV5u73X0xieaeFA=;
+	s=arc-20240116; t=1746615922; c=relaxed/simple;
+	bh=7XqKkySLH3XnP5dCcWNxk+0DtN1bkrte9oK/saSgtts=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NltG/ftFJsn0Yx/v30cFc6AAomc7oTF1wRsp5d+NQ2DGEcZJn1ESxau4/nFS3gwAxBa+/2QNeRWh5J+ry33dVtLQ2q9Vzm3UWbxneLBSF+owz/G2+hze8TMw4avIXJ3B5RHdl+Q35Vr0Iai4Kb+d6CslexcrSIyKX4xL3ZkzqNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=YiiUP5eQ; arc=none smtp.client-ip=213.97.179.56
+	 MIME-Version; b=NkicUFrTvhY138a/CCgpQMK24xtIgJeOUid3Fx8kFtDRyFdUQhmKy1l/n68I2grxddwLbcEtfFaL8dpG+++W/kFk+6FSHRhJRDXkRK762JniHJhmJoQiXleq8YkgQQ2hMxSNv5kLT6E002eqiqZJcg23owUX7EX/+bul+9kjeVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=c+V9v308; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=WDkvWa3TSuFgagk4tHSvnu3aN8dyFDkVfMiKuLfeTvc=; b=YiiUP5eQmiRvA58V2urS/zA0/i
-	lrhuXgQKnAoXV0QlYLqB7dnloSUu6KsWBSpQUJIi9WtRqfYxnD5y/aDxXUEqtRElGBt1wjkRtxJfz
-	4II61sik1sB7z2u7cdwEnaESgdtdEHVAGIeHtU/qfe8myoWRXVzk+kd7TtRGWYvtj8Xjuqlx4/ivV
-	/K1NyD/RZWnBduY0dymnxEkuJNIHplFhxhux5hWKuxI4i1BCejDjZysj26YBDmrk63IOi3tS85tN7
-	ltg9pe4l7aAxEL4752bP3qMgD8j3VlyZEljXAFj0uDAf2PK+URJm4n7TujpbZpNZYU6uG2Ov9/vfd
-	pc3yyTdg==;
+	bh=51AuBhOBwcqdxbUaoVuoZuKLaFvWUDOFVfRKxcUsvBc=; b=c+V9v308TdkSpaG+OfUH7HAacT
+	9/B9haik3YVxK0Ia3scGUjrCntDrNaLtCbHYvRr2HNnjF7DVkLEicy0+dtcxdd2NlxYVC1gLPGtt7
+	n8ibJh4vHTvLTsjgyF5oXT788+GUY0ltDBPXOAhKweJeJZr5ZYypXBOVik9/+ipxGfij5ozXQoDTK
+	hMwpeT2LSMeUG3TWyYhsjTij331Vx2F16L9PFbz6qLBFUu3Dxk8ClrOAuwC/4x18wvjTy0fpXX2mZ
+	Gy1DeGH7iZnapCCKlVg5ohtDpP3yg6HJgiwRB8pBEwHHxGeHrenrerLHCVQlCVlzz73u92xCeOpdM
+	ZDzBRbYg==;
 Received: from [223.233.66.62] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uCcWa-004fhg-HR; Wed, 07 May 2025 13:05:11 +0200
+	id 1uCcWg-004fhg-Ha; Wed, 07 May 2025 13:05:17 +0200
 From: Bhupesh <bhupesh@igalia.com>
 To: akpm@linux-foundation.org
 Cc: bhupesh@igalia.com,
@@ -79,9 +79,9 @@ Cc: bhupesh@igalia.com,
 	bsegall@google.com,
 	mgorman@suse.de,
 	vschneid@redhat.com
-Subject: [PATCH v3 2/3] treewide: Switch memcpy() users of 'task->comm' to a more safer implementation
-Date: Wed,  7 May 2025 16:34:43 +0530
-Message-Id: <20250507110444.963779-3-bhupesh@igalia.com>
+Subject: [PATCH v3 3/3] exec: Add support for 64 byte 'tsk->real_comm'
+Date: Wed,  7 May 2025 16:34:44 +0530
+Message-Id: <20250507110444.963779-4-bhupesh@igalia.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250507110444.963779-1-bhupesh@igalia.com>
 References: <20250507110444.963779-1-bhupesh@igalia.com>
@@ -93,256 +93,99 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-As Linus mentioned in [1], currently we have several memcpy() use-cases
-which use 'current->comm' to copy the task name over to local copies.
-For an example:
+Historically due to the 16-byte length of TASK_COMM_LEN, the
+users of 'tsk->comm' are restricted to use a fixed-size target
+buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
 
- ...
- char comm[TASK_COMM_LEN];
- memcpy(comm, current->comm, TASK_COMM_LEN);
- ...
+To fix the same, Linus suggested in [1] that we can add the
+following union inside 'task_struct':
+       union {
+               char    comm[TASK_COMM_LEN];
+               char    real_comm[REAL_TASK_COMM_LEN];
+       };
 
-These should be modified so that we can later implement approaches
-to handle the task->comm's 16-byte length limitation (TASK_COMM_LEN)
-is a more modular way (follow-up patches do the same):
+and then modify '__set_task_comm()' to pass 'tsk->real_comm'
+to the existing users.
 
- ...
- char comm[TASK_COMM_LEN];
- memcpy(comm, current->comm, TASK_COMM_LEN);
- comm[TASK_COMM_LEN - 1] = 0;
- ...
+This would mean that:
+(1) The old common pattern of just printing with '%s' and tsk->comm
+    would just continue to work (as it is):
 
-The relevant 'memcpy()' users were identified using the following search
-pattern:
- $ git grep 'memcpy.*->comm\>'
+        pr_alert("BUG: Bad page state in process %s  pfn:%05lx\n",
+                current->comm, page_to_pfn(page));
 
-[1]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/
+(2) And, the memcpy() users of 'tsk->comm' would need to be made more
+    stable by ensuring that the destination buffer always has a closing
+    NUL character (done already in the preceding patch in this series).
+
+So, eventually:
+- users who want the existing 'TASK_COMM_LEN' behavior will get it
+  (existing ABIs would continue to work),
+- users who just print out 'tsk->comm' as a string will get the longer
+  new "real comm",
+- users who do 'sizeof(->comm)' will continue to get the old value
+  because of the union.
+
+[1]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com
 
 Signed-off-by: Bhupesh <bhupesh@igalia.com>
 ---
- include/linux/coredump.h       |  3 ++-
- include/trace/events/block.h   |  5 +++++
- include/trace/events/oom.h     |  1 +
- include/trace/events/osnoise.h |  1 +
- include/trace/events/sched.h   | 13 +++++++++++++
- include/trace/events/signal.h  |  1 +
- include/trace/events/task.h    |  2 ++
- 7 files changed, 25 insertions(+), 1 deletion(-)
+ fs/exec.c             | 6 +++---
+ include/linux/sched.h | 8 ++++++--
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/coredump.h b/include/linux/coredump.h
-index 77e6e195d1d6..058ae3f2bec8 100644
---- a/include/linux/coredump.h
-+++ b/include/linux/coredump.h
-@@ -53,7 +53,8 @@ extern void do_coredump(const kernel_siginfo_t *siginfo);
- 	do {	\
- 		char comm[TASK_COMM_LEN];	\
- 		/* This will always be NUL terminated. */ \
--		memcpy(comm, current->comm, sizeof(comm)); \
-+		memcpy(comm, current->comm, TASK_COMM_LEN); \
-+		comm[TASK_COMM_LEN] = '\0'; \
- 		printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",	\
- 			task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);	\
- 	} while (0)	\
-diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-index bd0ea07338eb..94a941ac2034 100644
---- a/include/trace/events/block.h
-+++ b/include/trace/events/block.h
-@@ -214,6 +214,7 @@ DECLARE_EVENT_CLASS(block_rq,
- 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
- 		__get_str(cmd)[0] = '\0';
- 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 	),
+diff --git a/fs/exec.c b/fs/exec.c
+index 8e4ea5f1e64c..2b2f2dacc013 100644
+--- a/fs/exec.c
++++ b/fs/exec.c
+@@ -1190,11 +1190,11 @@ static int unshare_sighand(struct task_struct *me)
+  */
+ void __set_task_comm(struct task_struct *tsk, const char *buf, bool exec)
+ {
+-	size_t len = min(strlen(buf), sizeof(tsk->comm) - 1);
++	size_t len = min(strlen(buf), sizeof(tsk->real_comm) - 1);
  
- 	TP_printk("%d,%d %s %u (%s) %llu + %u %s,%u,%u [%s]",
-@@ -352,6 +353,7 @@ DECLARE_EVENT_CLASS(block_bio,
- 		__entry->nr_sector	= bio_sectors(bio);
- 		blk_fill_rwbs(__entry->rwbs, bio->bi_opf);
- 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 	),
+ 	trace_task_rename(tsk, buf);
+-	memcpy(tsk->comm, buf, len);
+-	memset(&tsk->comm[len], 0, sizeof(tsk->comm) - len);
++	memcpy(tsk->real_comm, buf, len);
++	memset(&tsk->real_comm[len], 0, sizeof(tsk->real_comm) - len);
+ 	perf_event_comm(tsk, exec);
+ }
  
- 	TP_printk("%d,%d %s %llu + %u [%s]",
-@@ -439,6 +441,7 @@ TRACE_EVENT(block_plug,
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index cb219c6db179..2744d90badf1 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -317,6 +317,7 @@ struct user_event_mm;
+  */
+ enum {
+ 	TASK_COMM_LEN = 16,
++	REAL_TASK_COMM_LEN = 64,
+ };
  
- 	TP_fast_assign(
- 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 	),
+ extern void sched_tick(void);
+@@ -1162,7 +1163,10 @@ struct task_struct {
+ 	 *   - logic inside set_task_comm() will ensure it is always NUL-terminated and
+ 	 *     zero-padded
+ 	 */
+-	char				comm[TASK_COMM_LEN];
++	union {
++		char			comm[TASK_COMM_LEN];
++		char			real_comm[REAL_TASK_COMM_LEN];
++	};
  
- 	TP_printk("[%s]", __entry->comm)
-@@ -458,6 +461,7 @@ DECLARE_EVENT_CLASS(block_unplug,
- 	TP_fast_assign(
- 		__entry->nr_rq = depth;
- 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 	),
+ 	struct nameidata		*nameidata;
  
- 	TP_printk("[%s] %d", __entry->comm, __entry->nr_rq)
-@@ -509,6 +513,7 @@ TRACE_EVENT(block_split,
- 		__entry->new_sector	= new_sector;
- 		blk_fill_rwbs(__entry->rwbs, bio->bi_opf);
- 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 	),
+@@ -2005,7 +2009,7 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
+  */
+ #define get_task_comm(buf, tsk) ({			\
+ 	BUILD_BUG_ON(sizeof(buf) < TASK_COMM_LEN);	\
+-	strscpy_pad(buf, (tsk)->comm);			\
++	strscpy_pad(buf, (tsk)->real_comm);		\
+ 	buf;						\
+ })
  
- 	TP_printk("%d,%d %s %llu / %llu [%s]",
-diff --git a/include/trace/events/oom.h b/include/trace/events/oom.h
-index 9f0a5d1482c4..a5641ed4285f 100644
---- a/include/trace/events/oom.h
-+++ b/include/trace/events/oom.h
-@@ -24,6 +24,7 @@ TRACE_EVENT(oom_score_adj_update,
- 	TP_fast_assign(
- 		__entry->pid = task->pid;
- 		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
- 
-diff --git a/include/trace/events/osnoise.h b/include/trace/events/osnoise.h
-index 3f4273623801..0321b3f8d532 100644
---- a/include/trace/events/osnoise.h
-+++ b/include/trace/events/osnoise.h
-@@ -117,6 +117,7 @@ TRACE_EVENT(thread_noise,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid = t->pid;
- 		__entry->start = start;
- 		__entry->duration = duration;
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index 8994e97d86c1..3126d44c43ee 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -26,6 +26,7 @@ TRACE_EVENT(sched_kthread_stop,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid	= t->pid;
- 	),
- 
-@@ -153,6 +154,7 @@ DECLARE_EVENT_CLASS(sched_wakeup_template,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid		= p->pid;
- 		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
- 		__entry->target_cpu	= task_cpu(p);
-@@ -238,10 +240,12 @@ TRACE_EVENT(sched_switch,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->prev_comm, prev->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->prev_pid	= prev->pid;
- 		__entry->prev_prio	= prev->prio;
- 		__entry->prev_state	= __trace_sched_switch_state(preempt, prev_state, prev);
- 		memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
-+		__entry->next_comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->next_pid	= next->pid;
- 		__entry->next_prio	= next->prio;
- 		/* XXX SCHED_DEADLINE */
-@@ -285,6 +289,7 @@ TRACE_EVENT(sched_migrate_task,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid		= p->pid;
- 		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
- 		__entry->orig_cpu	= task_cpu(p);
-@@ -310,6 +315,7 @@ DECLARE_EVENT_CLASS(sched_process_template,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, p->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid		= p->pid;
- 		__entry->prio		= p->prio; /* XXX SCHED_DEADLINE */
- 	),
-@@ -356,6 +362,7 @@ TRACE_EVENT(sched_process_wait,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid		= pid_nr(pid);
- 		__entry->prio		= current->prio; /* XXX SCHED_DEADLINE */
- 	),
-@@ -382,8 +389,10 @@ TRACE_EVENT(sched_process_fork,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->parent_comm, parent->comm, TASK_COMM_LEN);
-+		__entry->parent_comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->parent_pid	= parent->pid;
- 		memcpy(__entry->child_comm, child->comm, TASK_COMM_LEN);
-+		__entry->child_comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->child_pid	= child->pid;
- 	),
- 
-@@ -480,6 +489,7 @@ DECLARE_EVENT_CLASS_SCHEDSTAT(sched_stat_template,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid	= tsk->pid;
- 		__entry->delay	= delay;
- 	),
-@@ -538,6 +548,7 @@ DECLARE_EVENT_CLASS(sched_stat_runtime,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid		= tsk->pid;
- 		__entry->runtime	= runtime;
- 	),
-@@ -570,6 +581,7 @@ TRACE_EVENT(sched_pi_setprio,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid		= tsk->pid;
- 		__entry->oldprio	= tsk->prio;
- 		__entry->newprio	= pi_task ?
-@@ -595,6 +607,7 @@ TRACE_EVENT(sched_process_hang,
- 
- 	TP_fast_assign(
- 		memcpy(__entry->comm, tsk->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid = tsk->pid;
- 	),
- 
-diff --git a/include/trace/events/signal.h b/include/trace/events/signal.h
-index 1db7e4b07c01..7f490e553db5 100644
---- a/include/trace/events/signal.h
-+++ b/include/trace/events/signal.h
-@@ -68,6 +68,7 @@ TRACE_EVENT(signal_generate,
- 		__entry->sig	= sig;
- 		TP_STORE_SIGINFO(__entry, info);
- 		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->pid	= task->pid;
- 		__entry->group	= group;
- 		__entry->result	= result;
-diff --git a/include/trace/events/task.h b/include/trace/events/task.h
-index af535b053033..4ddf21b69372 100644
---- a/include/trace/events/task.h
-+++ b/include/trace/events/task.h
-@@ -22,6 +22,7 @@ TRACE_EVENT(task_newtask,
- 	TP_fast_assign(
- 		__entry->pid = task->pid;
- 		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
-+		__entry->comm[TASK_COMM_LEN - 1] = '\0';
- 		__entry->clone_flags = clone_flags;
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
-@@ -45,6 +46,7 @@ TRACE_EVENT(task_rename,
- 
- 	TP_fast_assign(
- 		memcpy(entry->oldcomm, task->comm, TASK_COMM_LEN);
-+		entry->oldcomm[TASK_COMM_LEN - 1] = '\0';
- 		strscpy(entry->newcomm, comm, TASK_COMM_LEN);
- 		__entry->oom_score_adj = task->signal->oom_score_adj;
- 	),
 -- 
 2.38.1
 
