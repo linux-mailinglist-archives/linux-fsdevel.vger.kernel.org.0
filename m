@@ -1,136 +1,152 @@
-Return-Path: <linux-fsdevel+bounces-48380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48381-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6090AAADF2B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:30:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A477EAADF4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:34:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7792E188EAC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:30:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADD2A986574
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:31:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8216526E17A;
-	Wed,  7 May 2025 12:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B17027A46F;
+	Wed,  7 May 2025 12:31:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fDoB4BVB"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D1uhdeD7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A52126FA40
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 12:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3537E27A12A
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 12:31:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746621019; cv=none; b=HCykAiCjzTtNNNyL+FmHXJMvXKMtlw9SP0pQEXu2MZYlcXPhrxiddgm5/W7rVZPaGPiDsNyfZHs+O1GtwsssYrP//cphqv2+9oCtMcY2e/btiqb0l6wUTirPQtIsjqcZAX47cpX8ZRzTDM/MnIW4Q9EKHm8+LcQNqXLemntoX0g=
+	t=1746621079; cv=none; b=iOu6vLalcNi0qBrWRuAiPUDATpqB4COckfRS4cob0rE9J8nLuzrliaeG5UIsF0r0+kOE81SRQ2LDCxgzG8+nngP9ntqsasLI4vmi5AC9QF6mzMF+qQiLdQstrOeeW6L6jv+q48ZrbaBtA//EuYrfjjCfxyoSdjLkj1YKQeX9jfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746621019; c=relaxed/simple;
-	bh=jVTLpnH1ToFiMhLryE6e/RlERX0ngJ62bz7zsEwdBpw=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IQxL6h1AMgQHwWyKn5kNPwww203nh7KUwbieTRyz8GGb/pISwxEYrL5+rX8x9DV5g2rT33JNiq4QvXHcI/8LL3VWRL5DQgfx3YtV6Qo67wNo8WDJ+uqiGLqnGZG7ejlNYDcziIwhNynwm0rqlurXuT3eOwviRphkSywdGNnDnqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jbongio.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fDoB4BVB; arc=none smtp.client-ip=209.85.215.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jbongio.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b115383fcecso3987225a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 05:30:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1746621015; x=1747225815; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fZm5iwwK8C7Xild1vEzRzbpfCJNu9cpHt0iq+yqi0mA=;
-        b=fDoB4BVBXjPeulwM6g0iM7rz092fitolh5xh8oiwoZXpEKejAT74zzxwaG1HEinug3
-         TXcl2sTmu8qa/qKzYMSOZsWO8TZJyGKfWkr0N1Do0MsIGrNGo77MJzpgBZ9FBtwn6PJd
-         bx2xX4YbHD6dZnYSNNu/hj5XYRqzmC8Des/PBTQSBRXCme9ESNsRYvjc7Fn20aAtVrLL
-         w+Fh6l1gY9UFM3Yy+gUZ55YozX9J4NXunJww/PaePHJwMTj/zB23J6Rsx1QcM44FHv6u
-         E868lCrkfzH6jNkqvDpNDtwHOAz9YlEmwaP3HUDYj7dBkGiOGq2HtAuMm83Gnrw6M2h0
-         ew0Q==
+	s=arc-20240116; t=1746621079; c=relaxed/simple;
+	bh=tFrfZ0rEZv9vM5/rihPfchjuieo3TFAlubbSr3BJlXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RrN1/s2coEvQxC/J/6IhhtbblcuYvnawN2b6B+zUSsfXVl1SNi0jfibkWOb5qtJJ/O6FDrL0k2CwViEKgLCR8j9zg0VNSRXuMOKb+OwezxlpHfBKAb68BIjYEIHlDqc/fl3OFqERW7pAgkTdsxk1yEkqC53qSaX3NLVcoOIWnFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D1uhdeD7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746621077;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lYtdEZFWKmpC8xSomua+Eb/tpZI4qDTrOenLKiGUZTY=;
+	b=D1uhdeD7kyAIDE+m+B3Z2M6pAqMvMo25IeNf+mC5j8Qn9yQ2Xl9qbA2eAyZbG3TRRdyApW
+	NaPo+ze+tI+5YdmHXdnPk4Gm7ZoRMJTP9oZGvfde74CzXc89CClbTgPbZC0aDwU9yn9Dmq
+	MKCBAESfz6+Hoyy2HKwjO8TeB1xdcrA=
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com
+ [209.85.166.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-266-fnfhohQgMaONYjZMPq8oDA-1; Wed, 07 May 2025 08:31:16 -0400
+X-MC-Unique: fnfhohQgMaONYjZMPq8oDA-1
+X-Mimecast-MFC-AGG-ID: fnfhohQgMaONYjZMPq8oDA_1746621075
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3da779063a3so1926605ab.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 05:31:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746621015; x=1747225815;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fZm5iwwK8C7Xild1vEzRzbpfCJNu9cpHt0iq+yqi0mA=;
-        b=eN/cUAz1K3OBKNpcAmQSvauiNZqsUPeeIScRTmsuobJvzh7xOenR89XQP/23h0fqRH
-         8RQyapbeUqrv2zmchYjxKC2EphHHfmzcv2bSPDTJFBTNRlyBD1cDn+9kLCs1OEEEdvXN
-         5vaucGyueGuW+6tipvo1BNoWyw5BPv4CeKjjhoAg/oBJ1LZ0RajpEo/hE2tLTggHXXe2
-         0bPg/mZ/b8/TL7U5w2pNidTvvKIvTZx5UXEo1Ub/BFtA55W5/9T8tRIt0m4Ul8kfeun/
-         cP7S3CUpguqGVLbTPu+MANhJ2N7Zag0INMekxIYK4rSAzh9v38ehCuFR80pMJuRvCDfF
-         OGfg==
-X-Gm-Message-State: AOJu0YxT8scFCvyd7+pcacXh/ek6jjiyGAvBvfga3Ifou1vAhZYAodqt
-	5Hie+IvFvI8JINB1AqBf26BBl1YYVEsv8Ujorx75yCoF5q0iDV9FX4WIlm/+7UAOieCmv8Cc/X6
-	HrDKDIA==
-X-Google-Smtp-Source: AGHT+IG0s9mmAwtjcErZA6XvgyOx4XtPiFlVQqITZqYsgnCfrkIE/m+c2QJq6mlfQu5CCY9xqh9GeMoKJ/6T
-X-Received: from pfhx20.prod.google.com ([2002:a05:6a00:1894:b0:73e:780:270e])
- (user=jbongio job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2d07:b0:1f5:8a1d:38fd
- with SMTP id adf61e73a8af0-2148b113301mr4916207637.2.1746621015415; Wed, 07
- May 2025 05:30:15 -0700 (PDT)
-Date: Wed,  7 May 2025 12:30:10 +0000
+        d=1e100.net; s=20230601; t=1746621075; x=1747225875;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lYtdEZFWKmpC8xSomua+Eb/tpZI4qDTrOenLKiGUZTY=;
+        b=TF/EJ3DgZM3B8ohJGd8WDutO85qUqDcmc6X2DfKSA55cUksWHv2qy4a4M7fk3m19OS
+         NlRa5ZJEJA6GOuK3EgkL/iE58es+E7Y0OCFqMaMMQQNUgJNIOq+d/aWtZbEw0jmfNv3T
+         60En6ImHgo+iysKTdH+nw8my/ZfGNUHvkvufYwFu/YMTL0f7HktF7JdV2T5SCopE0bxp
+         or43fDr/JMZrttF7O/0tqWr6UYX5C/nrHj1QcmWpr74Y+qolm/J8+fe+QjO5hZnwFAB7
+         gdn+COYjm5rzihWjn7WJ3Qds1NA5y4DnNT2SzTH2V8yKg8ma8wiFi7vXNCEvrBpSOyVr
+         YZVg==
+X-Gm-Message-State: AOJu0YzH1yzgmbq8V6Bb73C/lmOlYdqhZa4plqN7cN2zBoc5VfOF76az
+	yUchl7ADsHkIG9Xq0SEtvpHLucIgFSsNcB6IRMKwuHNUY/RtuWGopKaGBICg0lG+GP2H3zucQ+S
+	Sic5pDawhHzRMblwBzXZ7i62NbYPsoQPzygbSRygCcNsmmDeH3U3rueA0YLmClEPdCjlMFR+fyQ
+	==
+X-Gm-Gg: ASbGnctMehOKpU8TVu1OUfhpi13OdFEoMSuw4I74yKWzxj9C1Wt8E8UjYQutjRO+zDK
+	ugtqAVkw8eREL6I4SyHw+oEG2fU6k4jSWfCmN5Px7R2mY6xQbZIvLh7d7GgA5RUA32C2m5RNy+X
+	c/5L7ufXUuMrkyZyYSuVTsNQiBYQv2eftfaLgnrny5k4zc4tTZZ0Web0b06bsYeQ0a1no3WMSD0
+	+fIzGZCDvXKrB8o/XebMHpoovSxgs4y+Nd8/BXb0VqtajfxEstwHFv9bd6tERLNVxt21rTxP+EJ
+	YQgNOkiZ4Dgdc8YdOcMLOFbZCIY6yblMo8nVNqUikJ0EUqIkLQpa
+X-Received: by 2002:a05:6e02:3709:b0:3d8:975:b808 with SMTP id e9e14a558f8ab-3da738d8a98mr34022555ab.5.1746621075018;
+        Wed, 07 May 2025 05:31:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEQAiNI9kfVQqBa8xVioYNC5IOk9jOeCgJeTdIQHIoZgNy+sJuKSFYSQWdauJCP5LwEyafPSw==
+X-Received: by 2002:a05:6e02:3709:b0:3d8:975:b808 with SMTP id e9e14a558f8ab-3da738d8a98mr34022095ab.5.1746621074663;
+        Wed, 07 May 2025 05:31:14 -0700 (PDT)
+Received: from [10.0.0.82] (75-168-235-180.mpls.qwest.net. [75.168.235.180])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f8a0c3df0bsm2372652173.73.2025.05.07.05.31.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 05:31:14 -0700 (PDT)
+Message-ID: <db0c33f2-9fa0-4ee7-b5c9-e055fcc4d538@redhat.com>
+Date: Wed, 7 May 2025 07:31:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
-Message-ID: <20250507123010.1228243-1-jbongio@google.com>
-Subject: [PATCH v2] fs: Remove redundant errseq_set call in mark_buffer_write_io_error.
-From: Jeremy Bongio <jbongio@google.com>
-To: Christoph Hellwig <hch@lst.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jeremy Bongio <jbongio@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/7] f2fs: move the option parser into handle_mount_opt
+To: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, lihongbo22@huawei.com
+References: <20250420154647.1233033-1-sandeen@redhat.com>
+ <20250420154647.1233033-3-sandeen@redhat.com>
+ <2e354373-9f00-4499-8812-bcb7f00a6dbc@kernel.org>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <2e354373-9f00-4499-8812-bcb7f00a6dbc@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-mark_buffer_write_io_error sets sb->s_wb_err to -EIO twice.
-Once in mapping_set_error and once in errseq_set.
-Only mapping_set_error checks if bh->b_assoc_map->host is NULL.
+On 5/7/25 6:26 AM, Chao Yu wrote:
+> On 4/20/25 23:25, Eric Sandeen wrote:
+>> From: Hongbo Li <lihongbo22@huawei.com>
+>>
+>> In handle_mount_opt, we use fs_parameter to parse each option.
+>> However we're still using the old API to get the options string.
+>> Using fsparams parse_options allows us to remove many of the Opt_
+>> enums, so remove them.
+>>
+>> The checkpoint disable cap (or percent) involves rather complex
+>> parsing; we retain the old match_table mechanism for this, which
+>> handles it well.
+>>
+>> There are some changes about parsing options:
+>>   1. For `active_logs`, `inline_xattr_size` and `fault_injection`,
+>>      we use s32 type according the internal structure to record the
+>>      option's value.
+> 
+> We'd better to use u32 type for these options, as they should never
+> be negative.
+> 
+> Can you please update based on below patch?
+> 
+> https://lore.kernel.org/linux-f2fs-devel/20250507112425.939246-1-chao@kernel.org
 
-Discovered during null pointer dereference during writeback
-to a failing device:
+Hi Chao - I agree that that patch makes sense, but maybe there is a timing
+issue now? At the moment, there is a mix of signed and unsigned handling
+for these options. I agree that the conversion series probably should have
+left the parsing type as unsigned, but it was a mix internally, so it was
+difficult to know for sure.
 
-[<ffffffff9a416dc8>] ? mark_buffer_write_io_error+0x98/0xc0
-[<ffffffff9a416dbe>] ? mark_buffer_write_io_error+0x8e/0xc0
-[<ffffffff9ad4bda0>] end_buffer_async_write+0x90/0xd0
-[<ffffffff9ad4e3eb>] end_bio_bh_io_sync+0x2b/0x40
-[<ffffffff9adbafe6>] blk_update_request+0x1b6/0x480
-[<ffffffff9adbb3d8>] blk_mq_end_request+0x18/0x30
-[<ffffffff9adbc6aa>] blk_mq_dispatch_rq_list+0x4da/0x8e0
-[<ffffffff9adc0a68>] __blk_mq_sched_dispatch_requests+0x218/0x6a0
-[<ffffffff9adc07fa>] blk_mq_sched_dispatch_requests+0x3a/0x80
-[<ffffffff9adbbb98>] blk_mq_run_hw_queue+0x108/0x330
-[<ffffffff9adbcf58>] blk_mq_flush_plug_list+0x178/0x5f0
-[<ffffffff9adb6741>] __blk_flush_plug+0x41/0x120
-[<ffffffff9adb6852>] blk_finish_plug+0x22/0x40
-[<ffffffff9ad47cb0>] wb_writeback+0x150/0x280
-[<ffffffff9ac5343f>] ? set_worker_desc+0x9f/0xc0
-[<ffffffff9ad4676e>] wb_workfn+0x24e/0x4a0
+For your patch above, if it is to stand alone or be merged first, it 
+should probably also change the current parsing to match_uint. (this would
+also make it backportable to -stable kernels, if you want to).
 
-Fixes: 485e9605c0573 ("fs/buffer.c: record blockdev write errors in super_block that it backs")
-Signed-off-by: Jeremy Bongio <jbongio@google.com>
----
-Changes in v2:
-- Removed brackets
-- Corrected Fixed SHA
-- Changed backtrace to a more relevant failure path.
+Otherwise, I would suggest that if it is merged after the mount API series,
+then your patch to clean up internal types could fix the (new mount API)
+parsing from %s to %u at the same time?
 
----
- fs/buffer.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Happy to do it either way but your patch should probably be internally
+consistent, changing the parsing types at the same time.
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index 7be23ff20b27..7ba1807145aa 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -1220,10 +1220,8 @@ void mark_buffer_write_io_error(struct buffer_head *bh)
- 	/* FIXME: do we need to set this in both places? */
- 	if (bh->b_folio && bh->b_folio->mapping)
- 		mapping_set_error(bh->b_folio->mapping, -EIO);
--	if (bh->b_assoc_map) {
-+	if (bh->b_assoc_map)
- 		mapping_set_error(bh->b_assoc_map, -EIO);
--		errseq_set(&bh->b_assoc_map->host->i_sb->s_wb_err, -EIO);
--	}
- }
- EXPORT_SYMBOL(mark_buffer_write_io_error);
- 
--- 
-2.49.0.967.g6a0df3ecc3-goog
+(I suppose we could incorporate your patch into the mount API series too,
+though it'd be a little strange to have a minor bugfix like this buried
+in the series.)
+
+Thanks,
+-Eric
 
 
