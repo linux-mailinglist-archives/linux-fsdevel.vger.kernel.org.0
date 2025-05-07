@@ -1,411 +1,311 @@
-Return-Path: <linux-fsdevel+bounces-48407-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48408-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD0EAAE685
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 18:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCA5AAE73D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 18:57:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593991BC0890
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 16:20:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C9821890624
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 16:57:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C6728C2D7;
-	Wed,  7 May 2025 16:14:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E2C28C03E;
+	Wed,  7 May 2025 16:56:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lv9u8LxM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hBLZblBv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3903128C2D2;
-	Wed,  7 May 2025 16:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A9C528C011;
+	Wed,  7 May 2025 16:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746634477; cv=none; b=jnCcl2wghm6I75d8JELT+Z8l2cccm6EmxQYe6d63c4jYWQiUoutdKi11dCUkNaxgrkpZQFXZLqUwtGUd3PKD/+n+0OuREQLd/tPrnETwKRGiAdVtGZYm881oPYaBJm/XbovG02trHFDjaUa1kE4cywSedFeiYiLxXlmNs2L447M=
+	t=1746637007; cv=none; b=a/kAkOR3i+sCLbA6QFhgY5ZMxrVSbuz9kSeOdK6tWcTk4MrYGeaM+4IszjJicZgyRxAu4unocIMTiVZ+JWSLLsHNsLeQ+V6UiCz8Jzkn/+uzJWp5ZrlXbJA1H6wtaVq3nW5V7LPDnoOXHRuvSAbq/qiohK8QzQMPeULy166SrfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746634477; c=relaxed/simple;
-	bh=mMQMwLxi2MCFyRld7ql6OOPUv4ZPktnYFa2FfvFYeVA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=o8giI3/SC8/99UnuueudPj6VixY/z4ilH6Opg/at8NtUxzBeere/y0fIV7LuZzhw/nFLyXnSPQy2g6vyLwJIyeJdO+Ah7VhTOVlor0CdG/gm9moHOKdGjYobyWaEIcVSjdL7dDOT4WXpA3Gmbk1za5df0ueu+Gn47VrsUFTQvdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lv9u8LxM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE70C4CEE2;
-	Wed,  7 May 2025 16:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746634476;
-	bh=mMQMwLxi2MCFyRld7ql6OOPUv4ZPktnYFa2FfvFYeVA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=lv9u8LxMkKUcqbP+6wfitDelliIHX6l+NpKakqtT6CWKYqmMuHDE1z+5eCX3b1qHB
-	 p8wkA8sjyZ+YJuvX9juivSdIUpky43LcjQC4cR6UIyj43jtJ/DwrfD2BK7+wbb6Wio
-	 jIucYMirqzEaECmfck1t8HWA2yxZ/UhuCHMUG96okp01+fAo/w/zflR75hUmQDnXDk
-	 /a1FAS+ur8rzXnksfDbeXc+A7g79qFaBjzCHgC/XbvJBxPmmobCuM/WiYtbPL1MqUW
-	 s11UZfBTMKQxaYKox2FKi/LReWnJePshNSdyGa3DyEG4a6AMKj6+HifEtA/NKNb6Nb
-	 2nZqg7S5VpUxA==
-From: Christian Brauner <brauner@kernel.org>
-Date: Wed, 07 May 2025 18:13:44 +0200
-Subject: [PATCH v4 11/11] selftests/coredump: add tests for AF_UNIX
- coredumps
+	s=arc-20240116; t=1746637007; c=relaxed/simple;
+	bh=M8hqAuafWKlzWJxl30NzD8kz2WfTnQJN5wvmWCfhGHM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rg0ioNPfQAG4gxt/qWUtcHM4zigwcm/rdiOjU42kJ/xoGDobtjz8KIU6eEGF/s1aTAvJIuZIrpsEuRQWheXxMSwSsBlZlptzkY6R5xiN6JAS+9vX5ADrBsdIhMelJ7NBjlF1FXkc/Xuxi4Ns2EEa9kY+f0wHRZYnHf8nGzrsVeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hBLZblBv; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5e0caa151so78171a12.0;
+        Wed, 07 May 2025 09:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746637003; x=1747241803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bbQgJe6mi5e6seyWphPc3GG0/Me0mvQbZgaUQ7DeMw0=;
+        b=hBLZblBvjG82ts+k2aQmeNrFpJ6XBrHI1a8xJcyyMWJ2kHwtDDnz6HCOWKVcmwk3ui
+         RN4mst1cB6zVJnHLj4irmEctSd35enY1+yICotU/NlfwnMtPmXY1rglGs3Z1CleocP45
+         L0CckTNgS9wK64lp0xQoqSloVoFXgzpq6ncNn+ibyeDYpkWDLrq7UwVKNH8pwqZJ643s
+         s4CEzYsTIx8KpaWEtpJFjNNrQqavykrrBea3GQISCkjuS8Zmpt7lh0wY8eGWVGGfZ4ZT
+         79yt7gHyPFD411bFRIvBr6MG+s8plnM51lL2aXfmRFT3xds8HRw68S8VNCGGVR03Snke
+         3oOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746637003; x=1747241803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bbQgJe6mi5e6seyWphPc3GG0/Me0mvQbZgaUQ7DeMw0=;
+        b=JM5U0vfi384nL+hUVPVWAocJn1AGSRiZidHxgVrMYoToFYgXWMZzhGhmQnZrLlUBQA
+         RogDIVaTGf9tCHZIrgByX5+ZNa+svAkWmgcwFsjb8UPUlfdMXG9AgF6Ipb1bDk0KW0RO
+         SRWcMRje5dq8XugVTf3bZhVxVi2nklsa1RHMDdsgugR97b1r50jqL26P8lA4UJbVRF2Q
+         D1UKh7gee2jXfuiTX0piq5QmmFsiRl3piooiZgSgY9EqF3Wu+R2bavFlXK9+glsVxvGP
+         GnezcdjhMNYniBb9ujEFQ2oxvwz58yCnTvS4j9twz7Bh15RboB7votFEbTJrnAjPSwdF
+         d86Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUCh0VEcnAzjbYqdKmW89sgwEbtup4ZG4w16Z0T+r13hOmMetMgEvsxBG0phdbPWQr+UaYHIimbfs9Jnf+d@vger.kernel.org, AJvYcCVtFoDc1fqegfS71bwhOFwEMuIsBLC8GYWN1JqHVzFgnMRb8kpvc7OEJDqYY0uPWjZMTfTLJwGti788Xcmq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGlMJiZxxal4Yxlg76tbdDjby9mSjSN6ZSl6DVFLzMydIIeWNF
+	CP19MCXnRVX2IuNDwwB/DOUlS+vTDSXVODS6eDtSNNwIFw6dS6OdkkLzfKwgtX5S7B7wnrcriQZ
+	m5zFWQhOyAlPvf70sc1HC8mUlQH4=
+X-Gm-Gg: ASbGncsWGD3gFDznOqpPsMmr6S1nJz/6C9JSdUUmliEuAMK1NKHBNkT0mMT16CNQn8b
+	YkQTx4pW8hACYDiUb+7FKge6jI9vXYb3uZShAc0vILaChdYp4ZBGxNTbx0Q/bTn5y5ZZBjviWtd
+	HDeK7amBLlOBykRmS5a6OPMg==
+X-Google-Smtp-Source: AGHT+IEpiSm+Lms2NGKnrMl4I9FeMG7u5NOy/L1fcvTs161jhL2q8timDPhGlcJ+3eXzBu017BBrz9g29yNfLxIjetw=
+X-Received: by 2002:a17:906:fe0c:b0:acb:b9db:aa22 with SMTP id
+ a640c23a62f3a-ad1e8978112mr379989066b.0.1746637003080; Wed, 07 May 2025
+ 09:56:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250507-work-coredump-socket-v4-11-af0ef317b2d0@kernel.org>
-References: <20250507-work-coredump-socket-v4-0-af0ef317b2d0@kernel.org>
-In-Reply-To: <20250507-work-coredump-socket-v4-0-af0ef317b2d0@kernel.org>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>, linux-fsdevel@vger.kernel.org, 
- Jann Horn <jannh@google.com>
-Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Alexander Viro <viro@zeniv.linux.org.uk>, 
- Daan De Meyer <daan.j.demeyer@gmail.com>, 
- David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, 
- Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, 
- Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- =?utf-8?q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- Christian Brauner <brauner@kernel.org>, 
- Alexander Mikhalitsyn <alexander@mihalicyn.com>
-X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9262; i=brauner@kernel.org;
- h=from:subject:message-id; bh=mMQMwLxi2MCFyRld7ql6OOPUv4ZPktnYFa2FfvFYeVA=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWRIt219NXVSxeau3O3e+61X9izbf1SF63yvf7UV09J+L
- omC32/2dZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEykYg4jw+6j//+9cdxsvWjb
- xDbuUo4T71XUDWPd067lG59kTJa1z2X4K3jy0bG2iX5VcY92v5E1Yzr6Zf6W2WHWLKKVuzkyUmS
- FuQE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp;
- fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+References: <20250507032926.377076-2-chenlinxuan@uniontech.com>
+ <CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com> <CAC1kPDP4oO29B_TM-2wvzt1+Gc6hWTDGMfHSJhOax4_Cg2dEkg@mail.gmail.com>
+In-Reply-To: <CAC1kPDP4oO29B_TM-2wvzt1+Gc6hWTDGMfHSJhOax4_Cg2dEkg@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Wed, 7 May 2025 18:56:31 +0200
+X-Gm-Features: ATxdqUEbY-81fyoPFOCtlc2Ubdm-cLABAOgs-Dxmf27FuHMDDx780lEoG71SZYY
+Message-ID: <CAOQ4uxgS3OUy9tpphAJKCQFRAn2zTERXXa0QN_KvP6ZOe2KVBw@mail.gmail.com>
+Subject: Re: [RFC PATCH] fs: fuse: add backing_files control file
+To: Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a simple test for generating coredumps via AF_UNIX sockets.
+On Wed, May 7, 2025 at 2:34=E2=80=AFPM Chen Linxuan <chenlinxuan@uniontech.=
+com> wrote:
+>
+> On Wed, May 7, 2025 at 7:03=E2=80=AFPM Amir Goldstein <amir73il@gmail.com=
+> wrote:
+> >
+> > On Wed, May 7, 2025 at 5:29=E2=80=AFAM Chen Linxuan <chenlinxuan@uniont=
+ech.com> wrote:
+> > >
+> > > Add a new FUSE control file "/sys/fs/fuse/connections/*/backing_files=
+"
+> > > that exposes the paths of all backing files currently being used in
+> > > FUSE mount points. This is particularly valuable for tracking and
+> > > debugging files used in FUSE passthrough mode.
+> > >
+> > > This approach is similar to how fixed files in io_uring expose their
+> > > status through fdinfo, providing administrators with visibility into
+> > > backing file usage. By making backing files visible through the FUSE
+> > > control filesystem, administrators can monitor which files are being
+> > > used for passthrough operations and can force-close them if needed by
+> > > aborting the connection.
+> > >
+> > > This exposure of backing files information is an important step towar=
+ds
+> > > potentially relaxing CAP_SYS_ADMIN requirements for certain passthrou=
+gh
+> > > operations in the future, allowing for better security analysis of
+> > > passthrough usage patterns.
+> > >
+> > > The control file is implemented using the seq_file interface for
+> > > efficient handling of potentially large numbers of backing files.
+> > > Access permissions are set to read-only (0400) as this is an
+> > > informational interface.
+> > >
+> > > FUSE_CTL_NUM_DENTRIES has been increased from 5 to 6 to accommodate t=
+he
+> > > additional control file.
+> > >
+> > > Some related discussions can be found at:
+> > >
+> > > Link: https://lore.kernel.org/all/4b64a41c-6167-4c02-8bae-3021270ca51=
+9@fastmail.fm/T/#mc73e04df56b8830b1d7b06b5d9f22e594fba423e
+> > > Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxhAY1m7ubJ3p-A3rSuf=
+w_53WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com/
+> > >
+> >
+> > remove newline
+> >
+> > > Cc: Amir Goldstein <amir73il@gmail.com>
+> > > Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+> > >
+> > > ---
+> > > Please review this patch carefully. I am new to kernel development an=
+d
+> > > I am not quite sure if I have followed the best practices, especially
+> > > in terms of seq_file, error handling and locking. I would appreciate
+> > > any feedback.
+> >
+> > Very nice work!
+> >
+> > >
+> > > I have do some simply testing using libfuse example [1]. It seems to
+> > > work well.
+> >
+> > It would be great if you could add basic sanity tests to libfuse
+> > maybe in test_passthrough_hp(), but I do not see any tests for
+> > /sys/fs/fuse/connections.
+> >
+> > I also see that there is one kernel selftest that mounts a fuse fs
+> > tools/testing/selftests/memfd
+> > maybe that is an easier way to write a simple test to verify the
+> > /sys/fs/fuse/connections functionally.
+> >
+> > Anyway, I do not require that you do that as a condition for merging th=
+is patch,
+> > but I may require that for removing CAP_SYS_ADMIN ;)
+> >
+> > >
+> > > [1]: https://github.com/libfuse/libfuse/blob/master/example/passthrou=
+gh_hp.cc
+> > > ---
+> > >  fs/fuse/control.c | 129 ++++++++++++++++++++++++++++++++++++++++++++=
++-
+> > >  fs/fuse/fuse_i.h  |   2 +-
+> > >  2 files changed, 129 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+> > > index 2a730d88cc3bd..4d1e0acc5030f 100644
+> > > --- a/fs/fuse/control.c
+> > > +++ b/fs/fuse/control.c
+> > > @@ -11,6 +11,7 @@
+> > >  #include <linux/init.h>
+> > >  #include <linux/module.h>
+> > >  #include <linux/fs_context.h>
+> > > +#include <linux/seq_file.h>
+> > >
+> > >  #define FUSE_CTL_SUPER_MAGIC 0x65735543
+> > >
+> > > @@ -180,6 +181,129 @@ static ssize_t fuse_conn_congestion_threshold_w=
+rite(struct file *file,
+> > >         return ret;
+> > >  }
+> > >
+> > > +struct fuse_backing_files_seq_state {
+> > > +       struct fuse_conn *fc;
+> > > +       int pos;
+> >
+> > It will be more clear to call this 'backing_id'.
+> > It is more than an abstract pos in this context.
+> >
+> > > +};
+> > > +
+> > > +static void *fuse_backing_files_seq_start(struct seq_file *seq, loff=
+_t *pos)
+> > > +{
+> > > +       struct fuse_backing_files_seq_state *state =3D seq->private;
+> > > +       struct fuse_conn *fc =3D state->fc;
+> > > +
+> > > +       if (!fc)
+> > > +               return NULL;
+> > > +
+> > > +       spin_lock(&fc->lock);
+> > > +
+> > > +       if (*pos > idr_get_cursor(&fc->backing_files_map)) {
+> >
+> > This won't do after the ida allocator has wrapped up back to 1,
+> > it will not iterate the high ids.
+> >
+> > Please look at using idr_get_next() iteration, like bpf_prog_seq_ops.
+> >
+> > With that change, I don't think that you need to take the spin lock
+> > for iteration.
+> > I think that you can use rcu_read_lock() for the scope of each
+> > start(). next(), show()
+> > because we do not need to promise a "snapshot" of the backing_file at a=
+ specific
+> > time. If backing files are added/removed while iterating it is undefine=
+d if they
+> > are listed or not, just like readdir.
+> >
+> > > +               spin_unlock(&fc->lock);
+> > > +               return NULL;
+> >
+> > Not critical, but if you end up needing a "scoped" unlock for the
+> > entire iteration, you can use
+> > the unlock in stop() if you return ERR_PTR(ENOENT) instead of NULL in
+> > those error conditions.
+> >
+> > > +       }
+> > > +
+> > > +       state->pos =3D *pos;
+> > > +       return state;
+> > > +}
+> > > +
+> > > +static void *fuse_backing_files_seq_next(struct seq_file *seq, void =
+*v,
+> > > +                                        loff_t *pos)
+> > > +{
+> > > +       struct fuse_backing_files_seq_state *state =3D seq->private;
+> > > +
+> > > +       (*pos)++;
+> > > +       state->pos =3D *pos;
+> > > +
+> > > +       if (state->pos > idr_get_cursor(&state->fc->backing_files_map=
+)) {
+> > > +               spin_unlock(&state->fc->lock);
+> > > +               return NULL;
+> > > +       }
+> > > +
+> > > +       return state;
+> > > +}
+> > > +
+> > > +static int fuse_backing_files_seq_show(struct seq_file *seq, void *v=
+)
+> > > +{
+> > > +       struct fuse_backing_files_seq_state *state =3D seq->private;
+> > > +       struct fuse_conn *fc =3D state->fc;
+> > > +       struct fuse_backing *fb;
+> > > +
+> > > +       fb =3D idr_find(&fc->backing_files_map, state->pos);
+> >
+> > You must fuse_backing_get/put(fb) around dereferencing fb->file
+> > if not holding the fc->lock.
+> > See fuse_passthrough_open().
+> >
+> > > +       if (!fb || !fb->file)
+> > > +               return 0;
+> > > +
+> > > +       seq_file_path(seq, fb->file, " \t\n\\");
+> >
+> > Pls print the backing id that is associated with the open file.
+>
+> Does the backing id means anything in user space?
+> I think maybe we shouldn't expose kernel details to userspace.
+>
 
-Signed-off-by: Christian Brauner <brauner@kernel.org>
----
- tools/testing/selftests/coredump/stackdump_test.c | 273 +++++++++++++++++++++-
- 1 file changed, 272 insertions(+), 1 deletion(-)
+It means everything to userspace.
+backing ids are part of the userspace UAPI - you have documented it yoursel=
+f.
+The fuse server used backing ids to manage access to backing files
+https://github.com/libfuse/libfuse/blob/master/example/passthrough_hp.cc#L8=
+55
 
-diff --git a/tools/testing/selftests/coredump/stackdump_test.c b/tools/testing/selftests/coredump/stackdump_test.c
-index fe3c728cd6be..a86f4ba0a367 100644
---- a/tools/testing/selftests/coredump/stackdump_test.c
-+++ b/tools/testing/selftests/coredump/stackdump_test.c
-@@ -5,10 +5,15 @@
- #include <linux/limits.h>
- #include <pthread.h>
- #include <string.h>
-+#include <sys/mount.h>
- #include <sys/resource.h>
-+#include <sys/stat.h>
-+#include <sys/socket.h>
-+#include <sys/un.h>
- #include <unistd.h>
- 
- #include "../kselftest_harness.h"
-+#include "../pidfd/pidfd.h"
- 
- #define STACKDUMP_FILE "stack_values"
- #define STACKDUMP_SCRIPT "stackdump"
-@@ -35,6 +40,7 @@ static void crashing_child(void)
- FIXTURE(coredump)
- {
- 	char original_core_pattern[256];
-+	pid_t pid_coredump_server;
- };
- 
- FIXTURE_SETUP(coredump)
-@@ -44,6 +50,7 @@ FIXTURE_SETUP(coredump)
- 	char *dir;
- 	int ret;
- 
-+	self->pid_coredump_server = -ESRCH;
- 	file = fopen("/proc/sys/kernel/core_pattern", "r");
- 	ASSERT_NE(NULL, file);
- 
-@@ -61,10 +68,15 @@ FIXTURE_TEARDOWN(coredump)
- {
- 	const char *reason;
- 	FILE *file;
--	int ret;
-+	int ret, status;
- 
- 	unlink(STACKDUMP_FILE);
- 
-+	if (self->pid_coredump_server > 0) {
-+		kill(self->pid_coredump_server, SIGTERM);
-+		waitpid(self->pid_coredump_server, &status, 0);
-+	}
-+
- 	file = fopen("/proc/sys/kernel/core_pattern", "w");
- 	if (!file) {
- 		reason = "Unable to open core_pattern";
-@@ -154,4 +166,263 @@ TEST_F_TIMEOUT(coredump, stackdump, 120)
- 	fclose(file);
- }
- 
-+TEST_F(coredump, socket)
-+{
-+	int fd, pidfd, ret, status;
-+	FILE *file;
-+	pid_t pid, pid_coredump_server;
-+	struct stat st;
-+	char core_file[PATH_MAX];
-+	struct pidfd_info info = {};
-+	int ipc_sockets[2];
-+	char c;
-+
-+	ASSERT_EQ(unshare(CLONE_NEWNS), 0);
-+	ASSERT_EQ(mount(NULL, "/", NULL, MS_PRIVATE | MS_REC, NULL), 0);
-+	ASSERT_EQ(mount(NULL, "/tmp", "tmpfs", 0, NULL), 0);
-+
-+	file = fopen("/proc/sys/kernel/core_pattern", "w");
-+	ASSERT_NE(NULL, file);
-+
-+	ret = fprintf(file, "@linuxafsk/coredump.socket");
-+	ASSERT_EQ(ret, strlen("@linuxafsk/coredump.socket"));
-+	ASSERT_EQ(fclose(file), 0);
-+
-+	ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-+	ASSERT_EQ(ret, 0);
-+
-+	pid_coredump_server = fork();
-+	ASSERT_GE(pid_coredump_server, 0);
-+	if (pid_coredump_server == 0) {
-+		int fd_socket, fd_coredump, fd_peer_pidfd, fd_core_file;
-+		__u64 peer_cookie;
-+		socklen_t fd_peer_pidfd_len, peer_cookie_len;
-+		static const struct sockaddr_un coredump_sk = {
-+			.sun_family = AF_UNIX,
-+			.sun_path = "\0linuxafsk/coredump.socket",
-+		};
-+		static const size_t coredump_sk_len =
-+			offsetof(struct sockaddr_un, sun_path) +
-+			sizeof("linuxafsk/coredump.socket"); /* +1 for leading NUL */
-+
-+		close(ipc_sockets[0]);
-+
-+		fd_socket = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+		if (fd_socket < 0)
-+			_exit(EXIT_FAILURE);
-+
-+		ret = bind(fd_socket, (const struct sockaddr *)&coredump_sk, coredump_sk_len);
-+		if (ret < 0) {
-+			fprintf(stderr, "Failed to bind coredump socket\n");
-+			close(fd_socket);
-+			close(ipc_sockets[1]);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		ret = listen(fd_socket, 1);
-+		if (ret < 0) {
-+			fprintf(stderr, "Failed to listen on coredump socket\n");
-+			close(fd_socket);
-+			close(ipc_sockets[1]);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (write_nointr(ipc_sockets[1], "1", 1) < 0) {
-+			close(fd_socket);
-+			close(ipc_sockets[1]);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		close(ipc_sockets[1]);
-+
-+		fd_coredump = accept4(fd_socket, NULL, NULL, SOCK_CLOEXEC);
-+		if (fd_coredump < 0) {
-+			fprintf(stderr, "Failed to accept coredump socket connection\n");
-+			close(fd_socket);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		peer_cookie_len = sizeof(peer_cookie);
-+		ret = getsockopt(fd_coredump, SOL_SOCKET, SO_COOKIE,
-+				 &peer_cookie, &peer_cookie_len);
-+		if (ret < 0) {
-+			fprintf(stderr, "%m - Failed to retrieve cookie for coredump socket connection\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		fd_peer_pidfd_len = sizeof(fd_peer_pidfd);
-+		ret = getsockopt(fd_coredump, SOL_SOCKET, SO_PEERPIDFD,
-+				 &fd_peer_pidfd, &fd_peer_pidfd_len);
-+		if (ret < 0) {
-+			fprintf(stderr, "%m - Failed to retrieve peer pidfd for coredump socket connection\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		memset(&info, 0, sizeof(info));
-+		info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP;
-+		ret = ioctl(fd_peer_pidfd, PIDFD_GET_INFO, &info);
-+		if (ret < 0) {
-+			fprintf(stderr, "Failed to retrieve pidfd info from peer pidfd for coredump socket connection\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (!(info.mask & PIDFD_INFO_COREDUMP)) {
-+			fprintf(stderr, "Missing coredump information from coredumping task\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
-+			fprintf(stderr, "Received connection from non-coredumping task\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (!info.coredump_cookie) {
-+			fprintf(stderr, "Missing coredump cookie\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		if (info.coredump_cookie != peer_cookie) {
-+			fprintf(stderr, "Mismatching coredump cookies\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		fd_core_file = creat("/tmp/coredump.file", 0644);
-+		if (fd_core_file < 0) {
-+			fprintf(stderr, "Failed to create coredump file\n");
-+			close(fd_coredump);
-+			close(fd_socket);
-+			close(fd_peer_pidfd);
-+			_exit(EXIT_FAILURE);
-+		}
-+
-+		for (;;) {
-+			char buffer[4096];
-+			ssize_t bytes_read, bytes_write;
-+
-+			bytes_read = read(fd_coredump, buffer, sizeof(buffer));
-+			if (bytes_read < 0) {
-+				close(fd_coredump);
-+				close(fd_socket);
-+				close(fd_peer_pidfd);
-+				close(fd_core_file);
-+				_exit(EXIT_FAILURE);
-+			}
-+
-+			if (bytes_read == 0)
-+				break;
-+
-+			bytes_write = write(fd_core_file, buffer, bytes_read);
-+			if (bytes_read != bytes_write) {
-+				close(fd_coredump);
-+				close(fd_socket);
-+				close(fd_peer_pidfd);
-+				close(fd_core_file);
-+				_exit(EXIT_FAILURE);
-+			}
-+		}
-+
-+		close(fd_coredump);
-+		close(fd_socket);
-+		close(fd_peer_pidfd);
-+		close(fd_core_file);
-+		_exit(EXIT_SUCCESS);
-+	}
-+	self->pid_coredump_server = pid_coredump_server;
-+
-+	EXPECT_EQ(close(ipc_sockets[1]), 0);
-+	ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-+	EXPECT_EQ(close(ipc_sockets[0]), 0);
-+
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+	if (pid == 0)
-+		crashing_child();
-+
-+	pidfd = sys_pidfd_open(pid, 0);
-+	ASSERT_GE(pidfd, 0);
-+
-+	waitpid(pid, &status, 0);
-+	ASSERT_TRUE(WIFSIGNALED(status));
-+	ASSERT_TRUE(WCOREDUMP(status));
-+
-+	info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP;
-+	ASSERT_EQ(ioctl(pidfd, PIDFD_GET_INFO, &info), 0);
-+	ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-+	ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-+
-+	waitpid(pid_coredump_server, &status, 0);
-+	self->pid_coredump_server = -ESRCH;
-+	ASSERT_TRUE(WIFEXITED(status));
-+	ASSERT_EQ(WEXITSTATUS(status), 0);
-+
-+	ASSERT_EQ(stat("/tmp/coredump.file", &st), 0);
-+	ASSERT_GT(st.st_size, 0);
-+	/*
-+	 * We should somehow validate the produced core file.
-+	 * For now just allow for visual inspection
-+	 */
-+	system("file /tmp/coredump.file");
-+}
-+
-+TEST_F(coredump, socket_econnrefused)
-+{
-+	int fd_socket;
-+	static const struct sockaddr_un linuxafsk = {
-+		.sun_family = AF_UNIX,
-+		.sun_path = "\0linuxafsk/",
-+	};
-+	static const size_t linuxafsk_len =
-+		offsetof(struct sockaddr_un, sun_path) +
-+		sizeof("linuxafsk/"); /* +1 for leading NUL */
-+
-+	fd_socket = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+	ASSERT_GT(fd_socket, 0);
-+
-+	ASSERT_NE(bind(fd_socket, (const struct sockaddr *)&linuxafsk, linuxafsk_len), 0);
-+	ASSERT_EQ(errno, ECONNREFUSED);
-+	EXPECT_EQ(close(fd_socket), 0);
-+}
-+
-+TEST_F(coredump, socket_econnrefused_privilege)
-+{
-+	int fd_socket;
-+	static const struct sockaddr_un linuxafsk = {
-+		.sun_family = AF_UNIX,
-+		.sun_path = "\0linuxafsk/nope",
-+	};
-+	static const size_t linuxafsk_len =
-+		offsetof(struct sockaddr_un, sun_path) +
-+		sizeof("linuxafsk/nope"); /* +1 for leading NUL */
-+
-+	ASSERT_EQ(seteuid(1234), 0);
-+
-+	fd_socket = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0);
-+	ASSERT_GT(fd_socket, 0);
-+
-+	ASSERT_NE(bind(fd_socket, (const struct sockaddr *)&linuxafsk, linuxafsk_len), 0);
-+	ASSERT_EQ(errno, ECONNREFUSED);
-+	EXPECT_EQ(close(fd_socket), 0);
-+
-+	ASSERT_EQ(seteuid(0), 0);
-+}
-+
- TEST_HARNESS_MAIN
+> >
+> > I wonder out loud if we should also augment the backing fd
+> > information in fdinfo of specific open fuse FOPEN_PASSTHROUGH files?
+>
+> Or do you mean that we should display backing id and fuse connection id h=
+ere?
+>
 
--- 
-2.47.2
+This is extra and nice to have.
+It can show admin which files are using fuse passthrough.
+It cannot replace displaying all backing ids under connection
+because server can register backing ids without using them to open files
+and most importantly server can leak backing ids, which is a good
+reason to kill it.
 
+Thanks,
+Amir.
 
