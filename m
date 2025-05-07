@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-48362-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48363-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED47EAADE26
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:06:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677D8AADE3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CE313BBECD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:06:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45CB57BFDC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64E025F78E;
-	Wed,  7 May 2025 12:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8899425F960;
+	Wed,  7 May 2025 12:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="3hQtTGlU"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YLcHxZTG"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACEF9258CD7;
-	Wed,  7 May 2025 12:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6C825F78B;
+	Wed,  7 May 2025 12:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746619510; cv=none; b=lq5h+52H/YNdYaumrhC0i7uGLYSacyMafdOPwJ/A66/lPCZX0gJIBIBa44Z8QJzxWkT0Qr7CzeqR1P01sGmUJCSX4o++iVSfemFtbM57FT4e/Gz1HX6ynfdA8Pyz9QxlgdimfXnWHG49pBJCP28hb9rn9G6gDtZUQOJA2mANJtg=
+	t=1746619513; cv=none; b=r33BizKJ3bk/HfXg6XUCLhf6ZOaY7o/BDH14mXSLzef9RhceEkOQc7HFOZhboEweDMPYdJoS5IIgeRaL9hX8ELn9o9TygJ7rBX7/QtVFnu96+3xZCnP1rLpJ5nOCiQXf4Apn81YbyKSrsZ91gfwO1qxYIlXNm2ZzXlsB2Rz0zT4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746619510; c=relaxed/simple;
-	bh=KuBY6LtACbwqb/zFHkXewWq55txMxcrKDbIsj1B3zvU=;
+	s=arc-20240116; t=1746619513; c=relaxed/simple;
+	bh=2P1mA2GfvPbVAuC5viglHBy2a7ZoR47JI5xaM5dEW8w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=r9+LFun1+MDDJPN5tc4+71oXNUlyqRQ473ukNmGGbhYcfHccSTuwS2SorEn5pgKMHF8HqkPywOB6D5xCkbjYMsr3RDVPUq5aoVUJVObT8DOVYoC5cot+Ln0K4YA0qj+eKQey4AVho9UOq3nq6x4rJNiTmhiTbbwQ7f6SJwK9/3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=3hQtTGlU; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=U4w5U9ku4VJbEJA1MVV/IxaSnrdh8EndMhQoRXkJpgh0A46MwByOg6efi9S6VUEaTp6OI509NLcyGw96daO/Z+qIMlTM8BeicGen3xb3JkIWtfbazuTvKOyxDWQI0J9F0ku1P4BsH2ZJMUKx60t2fAcz4cURKXNtzXAQBIV/F2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YLcHxZTG; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=JBCkxERCaY17eUam+RKeYBI+iZwFhXND9E1Te3bQWPU=; b=3hQtTGlUhLXnSizxa3hU1XVmUu
-	MuW6YydCDnqjXJVLm+U6a70/jmwXutL927D9d6y3ETBfbymL/niMMlfmVtEPRvbghZrKxpFaBHXuZ
-	d1uNdQ8p9iBs8g9Q3qw9JCQ0wdAyXxEEEXbXVgRMb14UMvsngYzETOqv4+vVY3rjEV1Oy9Wqk+Lut
-	EDpqF/rdUHRjtbo7fLE+pHB/D4+u0E4lAgS1zd4FLsN7414bqMiBu/aY3SOomLVYeF78074RCj+z1
-	0q/fILhroFOA4jO/6qV5CGzeJJRxdBJsAad60jWXldAJPajBUyPks3jjiq7vDF0Zi+pxROGQ05Iw0
-	mfNCzs+w==;
+	bh=JvZk3+JydqNShFn24oNLR10d/452EhlYIOMIqIUM0hU=; b=YLcHxZTGhbr8J//k+2nHpYuMzM
+	Nqi69pCoKUv7BAg3OGlsLK7sLOslClWHKukgzv9E+/SB3rRe+0WTtbzlL4iwConfBElGzJyB4hw7p
+	cyqvGIztvvPRTGuMwGVT0DpjZYPrB8b6XMc0jRdUtR4KyrJ1AkHeIV8lgYOIGNN9XeimKA8mxcILI
+	9HOTG1BWEQvZzja78RQLXJqwvO9spBn1aGE/dLkwqukCrBhBcP3We8rCgzsMRuh9ky5kJBVYL9Vyj
+	geWw3F2BFUNAu2D9u118YijZLZv/eA57tCE4MrqMCNiaR+zV6U3Rnc3zMLNtL6W95v9OHFBNXrQBE
+	K8Gyd4Bw==;
 Received: from [2001:4bb8:2cc:5a47:1fe7:c9d0:5f76:7c02] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uCdWN-0000000FJ5r-3Vub;
-	Wed, 07 May 2025 12:05:08 +0000
+	id 1uCdWQ-0000000FJ6c-1mkK;
+	Wed, 07 May 2025 12:05:10 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
@@ -74,10 +74,11 @@ Cc: linux-block@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
 	linux-pm@vger.kernel.org,
+	Hannes Reinecke <hare@suse.de>,
 	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 04/19] block: add a bio_add_vmalloc helpers
-Date: Wed,  7 May 2025 14:04:28 +0200
-Message-ID: <20250507120451.4000627-5-hch@lst.de>
+Subject: [PATCH 05/19] block: remove the q argument from blk_rq_map_kern
+Date: Wed,  7 May 2025 14:04:29 +0200
+Message-ID: <20250507120451.4000627-6-hch@lst.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250507120451.4000627-1-hch@lst.de>
 References: <20250507120451.4000627-1-hch@lst.de>
@@ -90,98 +91,207 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Add a helper to add a vmalloc region to a bio, abstracting away the
-vmalloc addresses from the underlying pages and another one wrapping
-it for the simple case where all data fits into a single bio.
+Remove the q argument from blk_rq_map_kern and the internal helpers
+called by it as the queue can trivially be derived from the request.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
 Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- block/bio.c         | 55 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/bio.h |  3 +++
- 2 files changed, 58 insertions(+)
+ block/blk-map.c            | 22 +++++++++-------------
+ drivers/block/pktcdvd.c    |  2 +-
+ drivers/block/ublk_drv.c   |  3 +--
+ drivers/block/virtio_blk.c |  4 ++--
+ drivers/nvme/host/core.c   |  2 +-
+ drivers/scsi/scsi_ioctl.c  |  2 +-
+ drivers/scsi/scsi_lib.c    |  3 +--
+ include/linux/blk-mq.h     |  4 ++--
+ 8 files changed, 18 insertions(+), 24 deletions(-)
 
-diff --git a/block/bio.c b/block/bio.c
-index 26782ff85dbf..988f5de3c02c 100644
---- a/block/bio.c
-+++ b/block/bio.c
-@@ -1076,6 +1076,61 @@ bool bio_add_folio(struct bio *bio, struct folio *folio, size_t len,
- }
- EXPORT_SYMBOL(bio_add_folio);
+diff --git a/block/blk-map.c b/block/blk-map.c
+index cadbf11b50a3..9002cfe855b9 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -319,7 +319,6 @@ static void bio_map_kern_endio(struct bio *bio)
  
-+/**
-+ * bio_add_vmalloc_chunk - add a vmalloc chunk to a bio
-+ * @bio: destination bio
-+ * @vaddr: vmalloc address to add
-+ * @len: total length in bytes of the data to add
-+ *
-+ * Add data starting at @vaddr to @bio and return how many bytes were added.
-+ * This may be less than the amount originally asked.  Returns 0 if no data
-+ * could be added to @bio.
-+ *
-+ * This helper calls flush_kernel_vmap_range() for the range added.  For reads
-+ * the caller still needs to manually call invalidate_kernel_vmap_range() in
-+ * the completion handler.
-+ */
-+unsigned int bio_add_vmalloc_chunk(struct bio *bio, void *vaddr, unsigned len)
-+{
-+	unsigned int offset = offset_in_page(vaddr);
-+
-+	len = min(len, PAGE_SIZE - offset);
-+	if (bio_add_page(bio, vmalloc_to_page(vaddr), len, offset) < len)
-+		return 0;
-+	if (op_is_write(bio_op(bio)))
-+		flush_kernel_vmap_range(vaddr, len);
-+	return len;
-+}
-+EXPORT_SYMBOL_GPL(bio_add_vmalloc_chunk);
-+
-+/**
-+ * bio_add_vmalloc - add a vmalloc region to a bio
-+ * @bio: destination bio
-+ * @vaddr: vmalloc address to add
-+ * @len: total length in bytes of the data to add
-+ *
-+ * Add data starting at @vaddr to @bio.  Return %true on success or %false if
-+ * @bio does not have enough space for the payload.
-+ *
-+ * This helper calls flush_kernel_vmap_range() for the range added.  For reads
-+ * the caller still needs to manually call invalidate_kernel_vmap_range() in
-+ * the completion handler.
-+ */
-+bool bio_add_vmalloc(struct bio *bio, void *vaddr, unsigned int len)
-+{
-+	do {
-+		unsigned int added = bio_add_vmalloc_chunk(bio, vaddr, len);
-+
-+		if (!added)
-+			return false;
-+		vaddr += added;
-+		len -= added;
-+	} while (len);
-+
-+	return true;
-+}
-+EXPORT_SYMBOL_GPL(bio_add_vmalloc);
-+
- void __bio_release_pages(struct bio *bio, bool mark_dirty)
+ /**
+  *	bio_map_kern	-	map kernel address into bio
+- *	@q: the struct request_queue for the bio
+  *	@data: pointer to buffer to map
+  *	@len: length in bytes
+  *	@gfp_mask: allocation flags for bio allocation
+@@ -327,8 +326,7 @@ static void bio_map_kern_endio(struct bio *bio)
+  *	Map the kernel address into a bio suitable for io to a block
+  *	device. Returns an error pointer in case of error.
+  */
+-static struct bio *bio_map_kern(struct request_queue *q, void *data,
+-		unsigned int len, gfp_t gfp_mask)
++static struct bio *bio_map_kern(void *data, unsigned int len, gfp_t gfp_mask)
  {
- 	struct folio_iter fi;
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 128b1c6ca648..5d880903bcc5 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -433,6 +433,9 @@ static inline unsigned int bio_add_max_vecs(void *kaddr, unsigned int len)
- 	return 1;
- }
+ 	unsigned long kaddr = (unsigned long)data;
+ 	unsigned long end = (kaddr + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
+@@ -402,7 +400,6 @@ static void bio_copy_kern_endio_read(struct bio *bio)
  
-+unsigned int bio_add_vmalloc_chunk(struct bio *bio, void *vaddr, unsigned len);
-+bool bio_add_vmalloc(struct bio *bio, void *vaddr, unsigned int len);
-+
- int submit_bio_wait(struct bio *bio);
- int bdev_rw_virt(struct block_device *bdev, sector_t sector, void *data,
- 		size_t len, enum req_op op);
+ /**
+  *	bio_copy_kern	-	copy kernel address into bio
+- *	@q: the struct request_queue for the bio
+  *	@data: pointer to buffer to copy
+  *	@len: length in bytes
+  *	@gfp_mask: allocation flags for bio and page allocation
+@@ -411,8 +408,8 @@ static void bio_copy_kern_endio_read(struct bio *bio)
+  *	copy the kernel address into a bio suitable for io to a block
+  *	device. Returns an error pointer in case of error.
+  */
+-static struct bio *bio_copy_kern(struct request_queue *q, void *data,
+-		unsigned int len, gfp_t gfp_mask, int reading)
++static struct bio *bio_copy_kern(void *data, unsigned int len, gfp_t gfp_mask,
++		int reading)
+ {
+ 	unsigned long kaddr = (unsigned long)data;
+ 	unsigned long end = (kaddr + len + PAGE_SIZE - 1) >> PAGE_SHIFT;
+@@ -687,7 +684,6 @@ EXPORT_SYMBOL(blk_rq_unmap_user);
+ 
+ /**
+  * blk_rq_map_kern - map kernel data to a request, for passthrough requests
+- * @q:		request queue where request should be inserted
+  * @rq:		request to fill
+  * @kbuf:	the kernel buffer
+  * @len:	length of user data
+@@ -698,23 +694,23 @@ EXPORT_SYMBOL(blk_rq_unmap_user);
+  *    buffer is used. Can be called multiple times to append multiple
+  *    buffers.
+  */
+-int blk_rq_map_kern(struct request_queue *q, struct request *rq, void *kbuf,
+-		    unsigned int len, gfp_t gfp_mask)
++int blk_rq_map_kern(struct request *rq, void *kbuf, unsigned int len,
++		gfp_t gfp_mask)
+ {
+ 	int reading = rq_data_dir(rq) == READ;
+ 	unsigned long addr = (unsigned long) kbuf;
+ 	struct bio *bio;
+ 	int ret;
+ 
+-	if (len > (queue_max_hw_sectors(q) << 9))
++	if (len > (queue_max_hw_sectors(rq->q) << SECTOR_SHIFT))
+ 		return -EINVAL;
+ 	if (!len || !kbuf)
+ 		return -EINVAL;
+ 
+-	if (!blk_rq_aligned(q, addr, len) || object_is_on_stack(kbuf))
+-		bio = bio_copy_kern(q, kbuf, len, gfp_mask, reading);
++	if (!blk_rq_aligned(rq->q, addr, len) || object_is_on_stack(kbuf))
++		bio = bio_copy_kern(kbuf, len, gfp_mask, reading);
+ 	else
+-		bio = bio_map_kern(q, kbuf, len, gfp_mask);
++		bio = bio_map_kern(kbuf, len, gfp_mask);
+ 
+ 	if (IS_ERR(bio))
+ 		return PTR_ERR(bio);
+diff --git a/drivers/block/pktcdvd.c b/drivers/block/pktcdvd.c
+index 65b96c083b3c..d5cc7bd2875c 100644
+--- a/drivers/block/pktcdvd.c
++++ b/drivers/block/pktcdvd.c
+@@ -725,7 +725,7 @@ static int pkt_generic_packet(struct pktcdvd_device *pd, struct packet_command *
+ 	scmd = blk_mq_rq_to_pdu(rq);
+ 
+ 	if (cgc->buflen) {
+-		ret = blk_rq_map_kern(q, rq, cgc->buffer, cgc->buflen,
++		ret = blk_rq_map_kern(rq, cgc->buffer, cgc->buflen,
+ 				      GFP_NOIO);
+ 		if (ret)
+ 			goto out;
+diff --git a/drivers/block/ublk_drv.c b/drivers/block/ublk_drv.c
+index 3650bab40dd0..cb612151e9a1 100644
+--- a/drivers/block/ublk_drv.c
++++ b/drivers/block/ublk_drv.c
+@@ -368,8 +368,7 @@ static int ublk_report_zones(struct gendisk *disk, sector_t sector,
+ 		if (ret)
+ 			goto free_req;
+ 
+-		ret = blk_rq_map_kern(disk->queue, req, buffer, buffer_length,
+-					GFP_KERNEL);
++		ret = blk_rq_map_kern(req, buffer, buffer_length, GFP_KERNEL);
+ 		if (ret)
+ 			goto erase_desc;
+ 
+diff --git a/drivers/block/virtio_blk.c b/drivers/block/virtio_blk.c
+index 7cffea01d868..30bca8cb7106 100644
+--- a/drivers/block/virtio_blk.c
++++ b/drivers/block/virtio_blk.c
+@@ -571,7 +571,7 @@ static int virtblk_submit_zone_report(struct virtio_blk *vblk,
+ 	vbr->out_hdr.type = cpu_to_virtio32(vblk->vdev, VIRTIO_BLK_T_ZONE_REPORT);
+ 	vbr->out_hdr.sector = cpu_to_virtio64(vblk->vdev, sector);
+ 
+-	err = blk_rq_map_kern(q, req, report_buf, report_len, GFP_KERNEL);
++	err = blk_rq_map_kern(req, report_buf, report_len, GFP_KERNEL);
+ 	if (err)
+ 		goto out;
+ 
+@@ -817,7 +817,7 @@ static int virtblk_get_id(struct gendisk *disk, char *id_str)
+ 	vbr->out_hdr.type = cpu_to_virtio32(vblk->vdev, VIRTIO_BLK_T_GET_ID);
+ 	vbr->out_hdr.sector = 0;
+ 
+-	err = blk_rq_map_kern(q, req, id_str, VIRTIO_BLK_ID_BYTES, GFP_KERNEL);
++	err = blk_rq_map_kern(req, id_str, VIRTIO_BLK_ID_BYTES, GFP_KERNEL);
+ 	if (err)
+ 		goto out;
+ 
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index a8444d1e8398..af871d268fcb 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -1174,7 +1174,7 @@ int __nvme_submit_sync_cmd(struct request_queue *q, struct nvme_command *cmd,
+ 		req->cmd_flags &= ~REQ_FAILFAST_DRIVER;
+ 
+ 	if (buffer && bufflen) {
+-		ret = blk_rq_map_kern(q, req, buffer, bufflen, GFP_KERNEL);
++		ret = blk_rq_map_kern(req, buffer, bufflen, GFP_KERNEL);
+ 		if (ret)
+ 			goto out;
+ 	}
+diff --git a/drivers/scsi/scsi_ioctl.c b/drivers/scsi/scsi_ioctl.c
+index 2fa45556e1ea..0ddc95bafc71 100644
+--- a/drivers/scsi/scsi_ioctl.c
++++ b/drivers/scsi/scsi_ioctl.c
+@@ -601,7 +601,7 @@ static int sg_scsi_ioctl(struct request_queue *q, bool open_for_write,
+ 	}
+ 
+ 	if (bytes) {
+-		err = blk_rq_map_kern(q, rq, buffer, bytes, GFP_NOIO);
++		err = blk_rq_map_kern(rq, buffer, bytes, GFP_NOIO);
+ 		if (err)
+ 			goto error;
+ 	}
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index 39320dccbdd5..6f006cca0b5e 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -313,8 +313,7 @@ int scsi_execute_cmd(struct scsi_device *sdev, const unsigned char *cmd,
+ 		return PTR_ERR(req);
+ 
+ 	if (bufflen) {
+-		ret = blk_rq_map_kern(sdev->request_queue, req,
+-				      buffer, bufflen, GFP_NOIO);
++		ret = blk_rq_map_kern(req, buffer, bufflen, GFP_NOIO);
+ 		if (ret)
+ 			goto out;
+ 	}
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index ef84d53095a6..fb87a2fe1c44 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -1034,8 +1034,8 @@ int blk_rq_map_user_io(struct request *, struct rq_map_data *,
+ int blk_rq_map_user_iov(struct request_queue *, struct request *,
+ 		struct rq_map_data *, const struct iov_iter *, gfp_t);
+ int blk_rq_unmap_user(struct bio *);
+-int blk_rq_map_kern(struct request_queue *, struct request *, void *,
+-		unsigned int, gfp_t);
++int blk_rq_map_kern(struct request *rq, void *kbuf, unsigned int len,
++		gfp_t gfp);
+ int blk_rq_append_bio(struct request *rq, struct bio *bio);
+ void blk_execute_rq_nowait(struct request *rq, bool at_head);
+ blk_status_t blk_execute_rq(struct request *rq, bool at_head);
 -- 
 2.47.2
 
