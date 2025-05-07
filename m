@@ -1,205 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-48426-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9850AAAED70
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 22:51:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B975CAAED8F
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 23:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7E63B9356
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 20:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75E69501D29
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 21:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B069D28FFFB;
-	Wed,  7 May 2025 20:50:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DA5F28FFE5;
+	Wed,  7 May 2025 21:03:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qn+qzhC4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ou5UvFB7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330EE28DF37
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 20:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2287202F83;
+	Wed,  7 May 2025 21:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746651059; cv=none; b=KUZRQT7oNJMAnOVZb3+1GsJQ1j4y3N74v05FzgCVpk82tE/9aTf1ET31xau74rc23UfRMwFn7JuuFpw5XZJnPMu/xwsu7wH8ibPHBy5ClTYWZi1twpRSjFUYoHiXCtKa9RzOrT/OhKWnUWGDpPChtU4yRKLyMtY6xMRZPAO1gys=
+	t=1746651792; cv=none; b=tSgSR3YHPOkbeE9L15qP7uQEIWMX73s7j/CRnykYic2NibDPGKUDZTkzHfiIcsAQ0+emMv3i8NWmGkiyQSeFejcnnRPZvIjRaWhFxehtTFYDE4Oz9U7E1mtAgXJD8gk2RWnnoFlSJtXFNmBi1kvBhjHuTUL/U7+qUMySzyXro5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746651059; c=relaxed/simple;
-	bh=aK1tvNbc65kXi4eTJ4y1WbB1Yq7chC+uIx6eWtLwSdU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dcChvYFTVDF/0VWbArHqxVIKz7oO9ovCtFGas4Uwqw72+LUzsE/wz4Vwx4cxUJvkbyGxVrF4CavyQb+4e1QENRaipVJgEGqYr9aeI82iMY+w5UHH8m5YevAu4MX/m99vcrrI9pnjShClTvOtKVwJsDdTuEmbfXL7AeM3A+Aceao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qn+qzhC4; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-85dac9729c3so18117639f.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 13:50:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1746651055; x=1747255855; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l1i3VA5pX+AnNv8o3MlfdxwnFv3V4vTyMLMmTMdRyK8=;
-        b=Qn+qzhC4kB08fRop1tL1Iw9IMdwEJAfD0hq8Ox0Hv6jGnIQyF0UH9FAvWsOriDQXX4
-         6FAMtzPouqa55+FvAwhiBkAImQ9BQhM7X4j3ZVCXf6sDG8WgVh0DBlHSvI6nP3ppFnzY
-         h40Zw77fSuU8H+dF0FMKaPFsZHo5iUhTgXuUk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746651055; x=1747255855;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l1i3VA5pX+AnNv8o3MlfdxwnFv3V4vTyMLMmTMdRyK8=;
-        b=R5hgNketj2YNkGbFpYZSgQiBSfBR5bOCPuSpUI79Ma4Bx7vfGOgtjcsR6nNU0b0gIO
-         RDYC1zjyhsqtnwPldH86eA7Vfj6asFS3hHEf4CqsPUKFU22VQU+pB7e0xHWWfvwn4DjX
-         FVRfRMBMAh9Ah+ZMI6tHyl5yeEBM9t8+U9o8BW//BJaB4if3e10HzztjcEBdNU/ScZaR
-         NUtc/2HapQG6NVWvJI11SIpm7Lvp7/MUvk7Q+YVa4XQb1G0XA3lB1g7qRHiPUlnRw623
-         M/6+cK5pytvYIdgJs/fC+D8tVq1ZJQwV43zS9zl9HVDtUnl0MOiyExWAnY/SkHqSSdAm
-         1OYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxnkx9OM4GeRHdz59AekngZX7S+d42x+wKuIyUu4kJ/D9z4JYL1j8qeIJ4s9SZbbi3AZI8IBTvTscsSk/S@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdrI6hUjYcn8Htuz0DC46Hkg2gbQ/ZgFAGaGwfTHPoGEGffT3S
-	0dFe2hf1K6vBNvPOhAQlE9PueXy+O05Mr4YDayuWb0WJ8OEWHce1ZJvtz/BLRD0=
-X-Gm-Gg: ASbGncsQqiw8l0dzL4In6FqeY7Z3rKaePQFj1EBhKeGOXauIT/rJa/tGFXZeh+HMPqL
-	Wr93aGdWeL7BKHMSobs90FUhlxvjRNkn/lWjpcARbDW+Dhqk3cbINIKJzJ7gXxK8p2TvL94NnCM
-	sHf2xgmlLQaznDZ1TgYkrQigUTfmzY6YlX7ngy428z971EpAvZCD0hCRfTROLYdS467/QBRInQU
-	gxFI7VwlYDrU/Mvi+4lPNTK2lE6SPIhWc0CTmGhq3ZcqPKQoDDzzu7QKXcBv36yt0Ieo7nvdNsh
-	dvi4dZHrGHRGxp2S/Wy3t9c2R7Tpg5fnwZgawncxEKs+IKnIsJw=
-X-Google-Smtp-Source: AGHT+IGXfbY2TdlADjhrlZDdaegNr623acfnrkFbqKORg+uz4s4neNOrD9k8reaOICCdp3cse52JQw==
-X-Received: by 2002:a05:6e02:1489:b0:3d9:5d50:e3b1 with SMTP id e9e14a558f8ab-3da739304a7mr62088825ab.18.1746651055223;
-        Wed, 07 May 2025 13:50:55 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d975eca7b6sm31478705ab.38.2025.05.07.13.50.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 13:50:54 -0700 (PDT)
-Message-ID: <e87bbc68-0403-4d67-ae2d-64065e36a011@linuxfoundation.org>
-Date: Wed, 7 May 2025 14:50:53 -0600
+	s=arc-20240116; t=1746651792; c=relaxed/simple;
+	bh=cnPOQ8rH8mGEWg2SZAMmFPn+K66GqaSykHvHWUjRJFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kwQ9scGayCQ05N3YqjBmMMRM0npvbcH7vLMMxiXOJ7F7KX0wknWPeBKkre1f5TqD0vnleB15iBTXTXwtewWa1TmgvlQaCe2r2105qeceG3seMu9CLHROnRwXlY3RWJ4nH5m/UXdjSg9aAVIcbrDfv0nZD4r/Nq2zMciBGCyczH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ou5UvFB7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E59BAC4CEE2;
+	Wed,  7 May 2025 21:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746651792;
+	bh=cnPOQ8rH8mGEWg2SZAMmFPn+K66GqaSykHvHWUjRJFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ou5UvFB7TRZFqaxnYiEakdi8Tv4V4TzoEj9Wbs7Q232VF867LOvRSZU+HZuD0Bq29
+	 6CsCTPAn0pECDaosSJX8x976KW3ktLd9AEIM0HbZDqa6j9FdJY0JVbrPH5Nv3bO1hF
+	 iIRu+OKZ1opelRfc+PFgGG2aRNfJhh4De1IHrOez/LdSHTTOSeQKEui3LTnMMeRTT9
+	 W+5W3K5rrPfVhLUgD3gPmbJZPXu0JaLwoj23F/peyg6pNFb6IhrHsA/7+Eet9shIt4
+	 Sng0fra5pNs4VfCOHaFQ+hSm5RXYO+syELa8jv0hYssg/oKu0kM6h7bFr8uzfaXdN3
+	 ajieBlH8ExtxQ==
+Date: Wed, 7 May 2025 14:03:10 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+	dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+	linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	john.g.garry@oracle.com, bmarzins@redhat.com, chaitanyak@nvidia.com,
+	shinichiro.kawasaki@wdc.com, brauner@kernel.org,
+	yi.zhang@huawei.com, chengzhihao1@huawei.com, yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
+Message-ID: <20250507210310.GG25675@frogsfrogsfrogs>
+References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
+ <20250421021509.2366003-8-yi.zhang@huaweicloud.com>
+ <20250505132208.GA22182@lst.de>
+ <20250505142945.GJ1035866@frogsfrogsfrogs>
+ <c7d8d0c3-7efa-4ee6-b518-f8b09ec87b73@huaweicloud.com>
+ <20250506043907.GA27061@lst.de>
+ <64c8b62a-83ba-45be-a83e-62b6ad8d6f22@huaweicloud.com>
+ <20250506121102.GA21905@lst.de>
+ <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: The "make headers" requirement, revisited: [PATCH v3 3/3]
- selftests: pidfd: add tests for PIDFD_SELF_*
-To: John Hubbard <jhubbard@nvidia.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Shuah Khan <shuah@kernel.org>, "Liam R . Howlett"
- <Liam.Howlett@oracle.com>, Suren Baghdasaryan <surenb@google.com>,
- Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com,
- linux-kselftest@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
- linux-kernel@vger.kernel.org, Oliver Sang <oliver.sang@intel.com>,
- Christian Brauner <christian@brauner.io>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
- <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
- <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
- <6dd57f0e-34b4-4456-854b-a8abdba9163b@nvidia.com>
- <e0b9d4ad-0d47-499a-9ec8-7307b67cae5c@linuxfoundation.org>
- <3687348f-7ee0-4fe1-a953-d5a2edd02ce8@nvidia.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <3687348f-7ee0-4fe1-a953-d5a2edd02ce8@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
 
-On 10/17/24 10:47, John Hubbard wrote:
-> On 10/17/24 9:33 AM, Shuah Khan wrote:
->> On 10/16/24 20:01, John Hubbard wrote:
->>> On 10/16/24 1:00 PM, Shuah Khan wrote:
->>>> On 10/16/24 04:20, Lorenzo Stoakes wrote:
-> ...
->>> The requirement to do "make headers" is not a keeper. Really.
->>
->> The reason we added the requirement to avoid duplicate defines
->> such as this one added to kselftest source files. These are
->> error prone and hard to resolve.
->>
->> In some cases, these don't become uapi and don't make it into
->> system headers. selftests are in a category of depending on
->> kernel headers to be able to test some features.
->>
->> Getting rid of this dependency mean, tests will be full of local
->> defines such as this one which will become unmanageable overtime.
+On Wed, May 07, 2025 at 03:33:23PM +0800, Zhang Yi wrote:
+> On 2025/5/6 20:11, Christoph Hellwig wrote:
+> > On Tue, May 06, 2025 at 07:16:56PM +0800, Zhang Yi wrote:
+> >> Sorry, but I don't understand your suggestion. The
+> >> STATX_ATTR_WRITE_ZEROES_UNMAP attribute only indicate whether the bdev
+> >> and the block device that under the specified file support unmap write
+> >> zeroes commoand. It does not reflect whether the bdev and the
+> >> filesystems support FALLOC_FL_WRITE_ZEROES. The implementation of
+> >> FALLOC_FL_WRITE_ZEROES doesn't fully rely on the unmap write zeroes
+> >> commoand now, users simply refer to this attribute flag to determine
+> >> whether to use FALLOC_FL_WRITE_ZEROES when preallocating a file.
+> >> So, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES doesn't
+> >> have strong relations, why do you suggested to put this into the ext4
+> >> and bdev patches that adding FALLOC_FL_WRITE_ZEROES?
+> > 
+> > So what is the point of STATX_ATTR_WRITE_ZEROES_UNMAP?
 > 
-> Not if we do it correctly...Please do look at the reference I provided
-> for how that works. Here is is again: [1].
+> My idea is not to strictly limiting the use of FALLOC_FL_WRITE_ZEROES to
+> only bdev or files where bdev_unmap_write_zeroes() returns true. In
+> other words, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES
+> are not consistent, they are two independent features. Even if some
+> devices STATX_ATTR_WRITE_ZEROES_UNMAP are not set, users should still be
+> allowed to call fallcoate(FALLOC_FL_WRITE_ZEROES). This is because some
+> devices and drivers currently cannot reliably ascertain whether they
+> support the unmap write zero command; however, certain devices, such as
+> specific cloud storage devices, do support it. Users of these devices
+> may also wish to use FALLOC_FL_WRITE_ZEROES to expedite the zeroing
+> process.
 > 
-> The basic idea, which has been discussed and reviewed, is to take
-> very occasional snapshots and drop them into a static location where
-> they are available for kselftests, without disurbing other things:
-> $(top_srcdir)/tools/include/uapi
+> Therefore, I think that the current point of
+> STATX_ATTR_WRITE_ZEROES_UNMAP (possibly STATX_WRITE_ZEROES_UNMAP) should
+> be to just indicate whether a bdev or file supports the unmap write zero
+> command (i.e., whether bdev_unmap_write_zeroes() returns true). If we
+> use standard SCSI and NVMe storage devices, and the
+> STATX_ATTR_WRITE_ZEROES_UNMAP attribute is set, users can be assured
+> that FALLOC_FL_WRITE_ZEROES is fast and can choose to use
+> fallocate(FALLOC_FL_WRITE_ZEROES) immediately.
 > 
-> This has worked well so far.
+> Would you prefer to make STATX_ATTR_WRITE_ZEROES_UNMAP and
+> FALLOC_FL_WRITE_ZEROES consistent, which means
+> fallcoate(FALLOC_FL_WRITE_ZEROES) will return -EOPNOTSUPP if the block
+> device doesn't set STATX_ATTR_WRITE_ZEROES_UNMAP ?
 > 
->>
->> The discussion should be: "How do we get rid of the dependency without
->> introducing local defines?" not just "Let's get rid of the dependency"
->>
-> 
-> Yes. Good. We are apparently in violent agreement, because a few lines above,
-> I wrote:
-> 
->      The requirement to do "make headers" is not a keeper.
-> 
-> The "make headers" is the problem, not the fact that we need to depend
-> on various includes. And so the solution stops requiring "make headers".
-> It gets the includes from a less volatile location.
-> 
-> Yes?
+> If so, I'd suggested we need to:
+> 1) Remove STATX_ATTR_WRITE_ZEROES_UNMAP since users can check the
+>    existence by calling fallocate(FALLOC_FL_WRITE_ZEROES) directly, this
+>    statx flag seems useless.
+> 2) Make the BLK_FEAT_WRITE_ZEROES_UNMAP sysfs interface to RW, allowing
+>    users to adjust the block device's support state according to the
+>    real situation.
+
+Sounds fine to me... ;)
+
+--D
+
+> Thanks,
+> Yi.
 > 
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=e076eaca5906
-> 
-> thanks,
-
-Posting this on this thread as well -
-
-Peter, John,
-
-There seems to be confusion regarding  KHDR_INCLUDES. Tests don't have
-to use KHDR_INCLUDES if they don't want to.
-
-There are 4623 test Makefiles (excluding the main Makefile) under selftests/.
-Out of those 73 Makefiles reference KHDR_INCLUDES exported by lib.mk and
-selftests/Makefile. The rest are happy with system headers.
-
-The support for this KHDR_INCLUDES was added just for the case when a new
-test depends on header change. This is the reason why only a few
-test Makefiles use it. When test rings ran into issues related to
-dependencies between header changes, we recommended installing headers
-to solve the problem and introduced KHDR_INCLUDES so test Makefiles
-can use it in their Makefiles overriding the framework defaults.
-
-If your test doesn't need it, you can simply stop referencing it or
-use the approach used in mm test.
-
-It is a manual step. Works well for developers who know what they are doing.
-This isn't ideal for test rings. This isn't an ideal solution really.
-It works for the mm developers.
-
-# In order to use newer items that haven't yet been added to the user's system
-# header files, add $(TOOLS_INCLUDES) to the compiler invocation in each
-# each selftest.
-# You may need to add files to that location, or to refresh an existing file. In
-# order to do that, run "make headers" from $(top_srcdir), then copy the
-# header file that you want from $(top_srcdir)/usr/include/... , to the matching
-# subdir in $(TOOLS_INCLUDE).
-TOOLS_INCLUDES := -isystem $(top_srcdir)/tools/include/uapi
-
-The issues Peter is seeing regarding KHDR_INCLUDES in the following
-tests can be easily fixed by simply changing the test Makefile. These
-aren't framework related.
-
-kvm/Makefile.kvm:    -I ../rseq -I.. $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
-x86/Makefile:CFLAGS := -O2 -g -std=gnu99 -pthread -Wall $(KHDR_INCLUDES)
-futex/functional/Makefile:INCLUDES := -I../include -I../../ $(KHDR_INCLUDES)
-futex/functional/Makefile:CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
-
-You can make the change to remove the reference to KHDR_INCLUDES.
-If don't have the time/bandwidth to do it, I will take care of it.
-
-If test build fails, you can then figure out how to address that.
-Hopefully build issues related to header changes are infrequent.
-
-thanks,
--- Shuah
 
