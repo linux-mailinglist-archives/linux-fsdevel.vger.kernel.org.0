@@ -1,172 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-48379-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48380-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC15CAADF37
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:32:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6090AAADF2B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:30:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F6053B13D7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:29:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7792E188EAC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C1B25F7BC;
-	Wed,  7 May 2025 12:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8216526E17A;
+	Wed,  7 May 2025 12:30:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PEwP1aAD"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fDoB4BVB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A33DC25C80D
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 12:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A52126FA40
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 12:30:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746620992; cv=none; b=csgVe89o5qYz8s4hmok0xyRlHAR/BcOVaQevZUnOnFyjRgyxmj0fN2w4fyJ2KdIkOcCLrD4xe1EPN45MlT6eEqZ62cBFz4ITL9Wxbr7EVwMjRIxDgQsjCCEB61saCUFsu8vzzYuwzc4AOHvrJ4HvTkPTb0Wi2foSJGh6wtL57IM=
+	t=1746621019; cv=none; b=HCykAiCjzTtNNNyL+FmHXJMvXKMtlw9SP0pQEXu2MZYlcXPhrxiddgm5/W7rVZPaGPiDsNyfZHs+O1GtwsssYrP//cphqv2+9oCtMcY2e/btiqb0l6wUTirPQtIsjqcZAX47cpX8ZRzTDM/MnIW4Q9EKHm8+LcQNqXLemntoX0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746620992; c=relaxed/simple;
-	bh=Mqaui1F9/bOT/JMKClMuGVkx2vOY4zGOZ5ph/2yYf6I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gHoeTPiHC01phrCJ1rRgSnF8pakaE+vqotTMnnlPYC1X0rHXCCLbYACQoHHbEdMcil9mGhd+hso5TPC0evs3yz+mXVjfQ9Z1Qm//0L74RUZCG2PvZlRMfoCKvy5XB98tPa0d5/GoiscmoChM7xwnVuZOtgAf2FSNScWxPNpkoYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PEwP1aAD; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so10812004a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 05:29:50 -0700 (PDT)
+	s=arc-20240116; t=1746621019; c=relaxed/simple;
+	bh=jVTLpnH1ToFiMhLryE6e/RlERX0ngJ62bz7zsEwdBpw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IQxL6h1AMgQHwWyKn5kNPwww203nh7KUwbieTRyz8GGb/pISwxEYrL5+rX8x9DV5g2rT33JNiq4QvXHcI/8LL3VWRL5DQgfx3YtV6Qo67wNo8WDJ+uqiGLqnGZG7ejlNYDcziIwhNynwm0rqlurXuT3eOwviRphkSywdGNnDnqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jbongio.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fDoB4BVB; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jbongio.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b115383fcecso3987225a12.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 05:30:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1746620989; x=1747225789; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZW0x6+aPcBTGf4RTVQ8qhVtJhNXiKy2eXwn1Y4GghS4=;
-        b=PEwP1aADFuIaRTSntQhykyjqBYcV858AXTJdBoF0vhOJ2NnxgFwT9S8QzO6/8u3TOX
-         YXD4/bPwrqnTmZFsKlA4nGKofy/QJj+cfTLQw1hh07Z5sRfHM9GQJ8dB2iQWcv6i2sBT
-         W8oHd1QIsuQLaDNOIwpDO23SjAVdeUkshwbyrFQQtSpmpwKyP9yW87HHOgfyxnPDRyYq
-         j/nMHNJEUi2sVU/dP35gqIDKdsfWlFqWzCL/z9PLr8f1IcYkwoZTfJ2zatcIA3DU9S93
-         ySS9oacZGkqQ8a3yXGmVdRyv9rOHoZLziVQEbEVr8eeeM7XdJ+iv3Uy3OFJSXJ8ZpqGO
-         yqBg==
+        d=google.com; s=20230601; t=1746621015; x=1747225815; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fZm5iwwK8C7Xild1vEzRzbpfCJNu9cpHt0iq+yqi0mA=;
+        b=fDoB4BVBXjPeulwM6g0iM7rz092fitolh5xh8oiwoZXpEKejAT74zzxwaG1HEinug3
+         TXcl2sTmu8qa/qKzYMSOZsWO8TZJyGKfWkr0N1Do0MsIGrNGo77MJzpgBZ9FBtwn6PJd
+         bx2xX4YbHD6dZnYSNNu/hj5XYRqzmC8Des/PBTQSBRXCme9ESNsRYvjc7Fn20aAtVrLL
+         w+Fh6l1gY9UFM3Yy+gUZ55YozX9J4NXunJww/PaePHJwMTj/zB23J6Rsx1QcM44FHv6u
+         E868lCrkfzH6jNkqvDpNDtwHOAz9YlEmwaP3HUDYj7dBkGiOGq2HtAuMm83Gnrw6M2h0
+         ew0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746620989; x=1747225789;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZW0x6+aPcBTGf4RTVQ8qhVtJhNXiKy2eXwn1Y4GghS4=;
-        b=QuQKdt38CmvGEj8g87kaTjorzxYl+CukAKGgQNEA5yaQAuL07H/EVK46Sn1mQZSOfi
-         29eAzIDUHaWeDlbEYU9xKTtJkfPo8ofNAw4L5NllO82xc7wy1lc1LocXE/DdkAw9Jy/I
-         BKlovmiIiZ3hoxerFf1hx4AIWabC/g9epZtHlYu6naZq+RiOyvg7P7VGF+n8tXHskPHQ
-         4IrLFyskx3tZCakM8OqGInglr0MHMCckeCbaWZZRynoLNhlS5aEZp2TvEHVwaiZIw0zc
-         fcvZx1jnE1OubAc4EGVqY4T1WZzYbV8geJk3kVp6fqjBhs4/xWafFVwmdn2/sXZX4Pzz
-         m6eA==
-X-Forwarded-Encrypted: i=1; AJvYcCU+gn7h1Q6vaBoZ7TTtDx1wl+g/4nstGCBzQ3fSx8JKdPHcXqB1uFqv/RFzV0On07vfYF/y2NHPkL3OrC1i@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywif4VHQK87sEOebBUxPLNUvx2IwuZ/2OnkSdnZ+z9r7dp/bsae
-	p9Q6G1lZgoyO2cbaVyyID2LHKfzaOEh15StB32mbYNv8zxclPSoCAn53OJBjXG4i0hNoeThUAgB
-	w
-X-Gm-Gg: ASbGncuY+6p07yQEqVcm7Ub5MfVlwcAUQNq8BNpkKkn7WwHiNzPnpWA7oRBTJgWzmjJ
-	oynYlf9ehYiPUt/Fbq661PPwQWorUuvKWY+8h7owAE/QCsnLdEXy33xNj9mnNYELr+1MxR8UxNE
-	LH0zw0M5Hu5VDKMv95/TtR9gjot95RwRW0iDzD3DJw0qXtsW99iJMiIr3EQccMT8XjdygAiZ3G4
-	WV9YcvKQpOB6xB1pqugyfo6oBqNuiy/TiWiNDJW9Af9HOs3mNbUqvwByLZ+5a0KZvmL7zxV2abJ
-	PVfYciCKFBCrros/gxnqiRheoLYtZpiZ5RI/aamF
-X-Google-Smtp-Source: AGHT+IFcaF2HbosKXMSG7ssx4/Idj9ECcUf+SjKCY6flcCBO1BJAIS54Xv8b1MSnCIFm4q1ZvQeSUQ==
-X-Received: by 2002:a05:6402:2804:b0:5fa:aa28:b10 with SMTP id 4fb4d7f45d1cf-5fbe9dcd645mr2810548a12.13.1746620988876;
-        Wed, 07 May 2025 05:29:48 -0700 (PDT)
-Received: from pathway.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5fa777c5c3asm9429175a12.21.2025.05.07.05.29.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 05:29:48 -0700 (PDT)
-Date: Wed, 7 May 2025 14:29:46 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
-	laoar.shao@gmail.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
-	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
-	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com
-Subject: Re: [PATCH v3 2/3] treewide: Switch memcpy() users of 'task->comm'
- to a more safer implementation
-Message-ID: <aBtSK5dFmtFXUaOE@pathway.suse.cz>
-References: <20250507110444.963779-1-bhupesh@igalia.com>
- <20250507110444.963779-3-bhupesh@igalia.com>
+        d=1e100.net; s=20230601; t=1746621015; x=1747225815;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fZm5iwwK8C7Xild1vEzRzbpfCJNu9cpHt0iq+yqi0mA=;
+        b=eN/cUAz1K3OBKNpcAmQSvauiNZqsUPeeIScRTmsuobJvzh7xOenR89XQP/23h0fqRH
+         8RQyapbeUqrv2zmchYjxKC2EphHHfmzcv2bSPDTJFBTNRlyBD1cDn+9kLCs1OEEEdvXN
+         5vaucGyueGuW+6tipvo1BNoWyw5BPv4CeKjjhoAg/oBJ1LZ0RajpEo/hE2tLTggHXXe2
+         0bPg/mZ/b8/TL7U5w2pNidTvvKIvTZx5UXEo1Ub/BFtA55W5/9T8tRIt0m4Ul8kfeun/
+         cP7S3CUpguqGVLbTPu+MANhJ2N7Zag0INMekxIYK4rSAzh9v38ehCuFR80pMJuRvCDfF
+         OGfg==
+X-Gm-Message-State: AOJu0YxT8scFCvyd7+pcacXh/ek6jjiyGAvBvfga3Ifou1vAhZYAodqt
+	5Hie+IvFvI8JINB1AqBf26BBl1YYVEsv8Ujorx75yCoF5q0iDV9FX4WIlm/+7UAOieCmv8Cc/X6
+	HrDKDIA==
+X-Google-Smtp-Source: AGHT+IG0s9mmAwtjcErZA6XvgyOx4XtPiFlVQqITZqYsgnCfrkIE/m+c2QJq6mlfQu5CCY9xqh9GeMoKJ/6T
+X-Received: from pfhx20.prod.google.com ([2002:a05:6a00:1894:b0:73e:780:270e])
+ (user=jbongio job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:2d07:b0:1f5:8a1d:38fd
+ with SMTP id adf61e73a8af0-2148b113301mr4916207637.2.1746621015415; Wed, 07
+ May 2025 05:30:15 -0700 (PDT)
+Date: Wed,  7 May 2025 12:30:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507110444.963779-3-bhupesh@igalia.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.967.g6a0df3ecc3-goog
+Message-ID: <20250507123010.1228243-1-jbongio@google.com>
+Subject: [PATCH v2] fs: Remove redundant errseq_set call in mark_buffer_write_io_error.
+From: Jeremy Bongio <jbongio@google.com>
+To: Christoph Hellwig <hch@lst.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Jeremy Bongio <jbongio@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed 2025-05-07 16:34:43, Bhupesh wrote:
-> As Linus mentioned in [1], currently we have several memcpy() use-cases
-> which use 'current->comm' to copy the task name over to local copies.
-> For an example:
-> 
->  ...
->  char comm[TASK_COMM_LEN];
->  memcpy(comm, current->comm, TASK_COMM_LEN);
->  ...
-> 
-> These should be modified so that we can later implement approaches
-> to handle the task->comm's 16-byte length limitation (TASK_COMM_LEN)
-> is a more modular way (follow-up patches do the same):
-> 
->  ...
->  char comm[TASK_COMM_LEN];
->  memcpy(comm, current->comm, TASK_COMM_LEN);
->  comm[TASK_COMM_LEN - 1] = 0;
->  ...
-> 
-> The relevant 'memcpy()' users were identified using the following search
-> pattern:
->  $ git grep 'memcpy.*->comm\>'
-> 
-> [1]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/
-> 
-> --- a/include/linux/coredump.h
-> +++ b/include/linux/coredump.h
-> @@ -53,7 +53,8 @@ extern void do_coredump(const kernel_siginfo_t *siginfo);
->  	do {	\
->  		char comm[TASK_COMM_LEN];	\
->  		/* This will always be NUL terminated. */ \
-> -		memcpy(comm, current->comm, sizeof(comm)); \
-> +		memcpy(comm, current->comm, TASK_COMM_LEN); \
-> +		comm[TASK_COMM_LEN] = '\0'; \
+mark_buffer_write_io_error sets sb->s_wb_err to -EIO twice.
+Once in mapping_set_error and once in errseq_set.
+Only mapping_set_error checks if bh->b_assoc_map->host is NULL.
 
-I would expect that we replace this with a helper function/macro
-which would do the right thing.
+Discovered during null pointer dereference during writeback
+to a failing device:
 
-Why is get_task_comm() not used here, please?
+[<ffffffff9a416dc8>] ? mark_buffer_write_io_error+0x98/0xc0
+[<ffffffff9a416dbe>] ? mark_buffer_write_io_error+0x8e/0xc0
+[<ffffffff9ad4bda0>] end_buffer_async_write+0x90/0xd0
+[<ffffffff9ad4e3eb>] end_bio_bh_io_sync+0x2b/0x40
+[<ffffffff9adbafe6>] blk_update_request+0x1b6/0x480
+[<ffffffff9adbb3d8>] blk_mq_end_request+0x18/0x30
+[<ffffffff9adbc6aa>] blk_mq_dispatch_rq_list+0x4da/0x8e0
+[<ffffffff9adc0a68>] __blk_mq_sched_dispatch_requests+0x218/0x6a0
+[<ffffffff9adc07fa>] blk_mq_sched_dispatch_requests+0x3a/0x80
+[<ffffffff9adbbb98>] blk_mq_run_hw_queue+0x108/0x330
+[<ffffffff9adbcf58>] blk_mq_flush_plug_list+0x178/0x5f0
+[<ffffffff9adb6741>] __blk_flush_plug+0x41/0x120
+[<ffffffff9adb6852>] blk_finish_plug+0x22/0x40
+[<ffffffff9ad47cb0>] wb_writeback+0x150/0x280
+[<ffffffff9ac5343f>] ? set_worker_desc+0x9f/0xc0
+[<ffffffff9ad4676e>] wb_workfn+0x24e/0x4a0
 
->  		printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",	\
+Fixes: 485e9605c0573 ("fs/buffer.c: record blockdev write errors in super_block that it backs")
+Signed-off-by: Jeremy Bongio <jbongio@google.com>
+---
+Changes in v2:
+- Removed brackets
+- Corrected Fixed SHA
+- Changed backtrace to a more relevant failure path.
 
-Also the name seems to be used for printing a debug information.
-I would expect that we could use the bigger buffer here and print
-the "full" name. Is this planed, please?
+---
+ fs/buffer.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
->  			task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);	\
->  	} while (0)	\
-> diff --git a/include/trace/events/block.h b/include/trace/events/block.h
-> index bd0ea07338eb..94a941ac2034 100644
-> --- a/include/trace/events/block.h
-> +++ b/include/trace/events/block.h
-> @@ -214,6 +214,7 @@ DECLARE_EVENT_CLASS(block_rq,
->  		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
->  		__get_str(cmd)[0] = '\0';
->  		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
-> +		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 7be23ff20b27..7ba1807145aa 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -1220,10 +1220,8 @@ void mark_buffer_write_io_error(struct buffer_head *bh)
+ 	/* FIXME: do we need to set this in both places? */
+ 	if (bh->b_folio && bh->b_folio->mapping)
+ 		mapping_set_error(bh->b_folio->mapping, -EIO);
+-	if (bh->b_assoc_map) {
++	if (bh->b_assoc_map)
+ 		mapping_set_error(bh->b_assoc_map, -EIO);
+-		errseq_set(&bh->b_assoc_map->host->i_sb->s_wb_err, -EIO);
+-	}
+ }
+ EXPORT_SYMBOL(mark_buffer_write_io_error);
+ 
+-- 
+2.49.0.967.g6a0df3ecc3-goog
 
-Same for all other callers.
-
-That said, I am not sure if the larger buffer is save in all situations.
-
->  	),
-
-Best Regards,
-Petr
 
