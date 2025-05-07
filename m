@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-48358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48359-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B0EAADE0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:05:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57596AADE11
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:05:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEFF4C031E
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55BC23BD85B
 	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3949B25A33E;
-	Wed,  7 May 2025 12:04:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC5125D55F;
+	Wed,  7 May 2025 12:05:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A9TWos8G"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="xn/w0PYU"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375931FF7B4;
-	Wed,  7 May 2025 12:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E2241FF7B4;
+	Wed,  7 May 2025 12:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746619497; cv=none; b=RsdeOCfsd4EoiVeRIEwvKvv+q50A4guYt9KvNtBnQzbOpUsONNWbLTKoUbcEVb2ypKeTES6caPo0y5ESGuth1hVyZSUOkPxoxY0d2c1RWe5nxnB1FaXMK2NMKHzS0dv4RTFX2KdX+C1HcgfEi3ZZQ1smH3kzgkBktEIAWMSZc+0=
+	t=1746619500; cv=none; b=XU5Ua5oVbN2nwTz6I6WBn4nW92YrPlOL47CgZT7fuk8QgOt4SjoKYcaEc5D0xy1GO8YgirbToUXuumjISBK4Z8QJt93tTSpYzniGY6OMcnJOMZtm53GI6GknDf6VFMJYcw4pPJCUis+26UQq/FS8SIFcjSgEu9oNKh5GLzf7N4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746619497; c=relaxed/simple;
-	bh=S7C0i6guyQUxOmCmzpSvqnFdBd5hRF8ZNROLA+/7kxY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JRFPh7arbif3yah10F5m9BZHqHASvXad6V40pn1Ls/3hESoAuO4lj5QNf9COL6944mnXn4otRhfgEzQQJEBGnvMiAhGOa0Nfp0g040VSpVB1bwjoqX99DsHmYaf4nuJlcQIpvcJWu48TXUXBubV92upi7et1tIltHO5bZoXkD2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A9TWos8G; arc=none smtp.client-ip=198.137.202.133
+	s=arc-20240116; t=1746619500; c=relaxed/simple;
+	bh=kWAvFnMe+9arwJUpwLWc7bDqJd6kgJkeCYPK3bgUCPg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kNY20BC0p5Yvwt3BPHJAv0rrlcbwgPklnQ2ed36E2Wza3yAOJl8409PhNdAyAhNNXiI7eqwVKdp9SosuzciQejIO0bOAiiDhkN9AKk4N3+qnAW+kU7KQRAaeb+P/m7GJNf89aWPHMoxH+msw6VEtLILlzQV9P9EleaiF4pPargY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=xn/w0PYU; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=taTa50vCOqf4qXYa/4iG8HTZJGZUASEUn4x1pmkgTG0=; b=A9TWos8GWPhEHAZOpDq5FqK2Ni
-	wmHmUL7vq5tnXVsJAPlg2Fd3H9Lyc3vEC3ayp0PZ0pQcxwbZCyOUYrBt9eNGl/RAPXFBg0bRkKXi0
-	iuL8IqEVadvqhfYRBsbbPGCTeb0Ab3N3iyFYBp9Ai/eJNUYqN0kDTYTzEQCEWgIeDf5khCiE+MA6R
-	O52BIR//+QAbHZXgMEJ6gb6UG9lhMnh8/PT5xZXP13vn0u2Q5R4GnOhLAV3yZKjntb2cM18o8EksU
-	Vv7KVXVQt+ANVEI5gW15AkwboYZR+caE7YC8AWsetDxrPZQQUzxg2rlSd+H1f3HZfmvhXoQYfoxMj
-	wacMh52w==;
+	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
+	:Reply-To:Content-Type:Content-ID:Content-Description;
+	bh=7sKBij/18hKZXL1goke5lA/hYCecXOSCKj1BCa9hfgI=; b=xn/w0PYUzYCMJjjPQwpFstCDJe
+	SNECrG57m915CVtqG4SoWzBLvkcOEKwP9zdxAbadHd1mhiX2RBikip81gpOt/QX+0bg3k85RVfk2M
+	8cfEsckHlhNRPiiz6ckYgnEOxpHhL8di/wdD78Um+jkunHE81YuDssD5NjahiCuDZMBVEPzTqOAKB
+	NOseS5EoiceTlLxPKtE2bLQD5B9RyqCaNIQxP3Rep/O091xb8iwNrteJook0Qx0qcm3B5IaOvtgF7
+	MoBbrerRbURo+iSL5/JPnbyskEQjnpyXUu3CXqYYJeqCPFvW+wHmxqWcraR6rzB8zYvtkyLRoiZR2
+	rLKTz9MQ==;
 Received: from [2001:4bb8:2cc:5a47:1fe7:c9d0:5f76:7c02] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uCdW9-0000000FJ3e-424a;
-	Wed, 07 May 2025 12:04:54 +0000
+	id 1uCdWD-0000000FJ3s-41Bl;
+	Wed, 07 May 2025 12:04:58 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
@@ -72,11 +73,15 @@ Cc: linux-block@vger.kernel.org,
 	gfs2@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: add more bio helpers v3
-Date: Wed,  7 May 2025 14:04:24 +0200
-Message-ID: <20250507120451.4000627-1-hch@lst.de>
+	linux-pm@vger.kernel.org,
+	Hannes Reinecke <hare@suse.de>,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: [PATCH 01/19] block: add a bio_add_virt_nofail helper
+Date: Wed,  7 May 2025 14:04:25 +0200
+Message-ID: <20250507120451.4000627-2-hch@lst.de>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250507120451.4000627-1-hch@lst.de>
+References: <20250507120451.4000627-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -86,47 +91,62 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi all,
+Add a helper to add a directly mapped kernel virtual address to a
+bio so that callers don't have to convert to pages or folios.
 
-this series adds more block layer helpers to remove boilerplate code when
-adding memory to a bio or to even do the entire synchronous I/O.
+For now only the _nofail variant is provided as that is what all the
+obvious callers want.
 
-The main aim is to avoid having to convert to a struct page in the caller
-when adding kernel direct mapping or vmalloc memory.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Reviewed-by: Hannes Reinecke <hare@suse.de>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+---
+ block/bio.c         | 16 ++++++++++++++++
+ include/linux/bio.h |  2 ++
+ 2 files changed, 18 insertions(+)
 
-Changes since v2:
- - rebase on top of the latest block for-next branch to resolve
-   conflicts with the bonuce buffering removal
+diff --git a/block/bio.c b/block/bio.c
+index 1e42aefc7377..bd3d048d0a72 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -991,6 +991,22 @@ void __bio_add_page(struct bio *bio, struct page *page,
+ }
+ EXPORT_SYMBOL_GPL(__bio_add_page);
+ 
++/**
++ * bio_add_virt_nofail - add data in the direct kernel mapping to a bio
++ * @bio: destination bio
++ * @vaddr: data to add
++ * @len: length of the data to add, may cross pages
++ *
++ * Add the data at @vaddr to @bio.  The caller must have ensure a segment
++ * is available for the added data.  No merging into an existing segment
++ * will be performed.
++ */
++void bio_add_virt_nofail(struct bio *bio, void *vaddr, unsigned len)
++{
++	__bio_add_page(bio, virt_to_page(vaddr), len, offset_in_page(vaddr));
++}
++EXPORT_SYMBOL_GPL(bio_add_virt_nofail);
++
+ /**
+  *	bio_add_page	-	attempt to add page(s) to bio
+  *	@bio: destination bio
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index cafc7c215de8..acca7464080c 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -417,6 +417,8 @@ void __bio_add_page(struct bio *bio, struct page *page,
+ 		unsigned int len, unsigned int off);
+ void bio_add_folio_nofail(struct bio *bio, struct folio *folio, size_t len,
+ 			  size_t off);
++void bio_add_virt_nofail(struct bio *bio, void *vaddr, unsigned len);
++
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter);
+ void bio_iov_bvec_set(struct bio *bio, const struct iov_iter *iter);
+ void __bio_release_pages(struct bio *bio, bool mark_dirty);
+-- 
+2.47.2
 
-Changes since v1:
- - typo fixes
- - improve commit messages and kerneldoc comments
- - move bio_add_virt_nofail out of line
- - make the number of bio_vecs calculation helper more generic
- - add another vmalloc helper for the common case
-
-Diffstat:
- block/bio.c                   |  101 +++++++++++++++++++++++++++++++++++++++++
- block/blk-map.c               |   92 +++++++++----------------------------
- drivers/block/pktcdvd.c       |    2 
- drivers/block/rnbd/rnbd-srv.c |    7 --
- drivers/block/ublk_drv.c      |    3 -
- drivers/block/virtio_blk.c    |    4 -
- drivers/md/bcache/super.c     |    3 -
- drivers/md/dm-bufio.c         |    2 
- drivers/md/dm-integrity.c     |   16 ++----
- drivers/nvme/host/core.c      |    2 
- drivers/scsi/scsi_ioctl.c     |    2 
- drivers/scsi/scsi_lib.c       |    3 -
- fs/btrfs/scrub.c              |   10 ----
- fs/gfs2/ops_fstype.c          |   24 +++------
- fs/hfsplus/wrapper.c          |   46 +++---------------
- fs/xfs/xfs_bio_io.c           |   30 ++++--------
- fs/xfs/xfs_buf.c              |   43 +++--------------
- fs/xfs/xfs_log.c              |   32 ++-----------
- fs/zonefs/super.c             |   34 ++++---------
- include/linux/bio.h           |   25 +++++++++-
- include/linux/blk-mq.h        |    4 -
- kernel/power/swap.c           |  103 ++++++++++++++++++------------------------
- 22 files changed, 270 insertions(+), 318 deletions(-)
 
