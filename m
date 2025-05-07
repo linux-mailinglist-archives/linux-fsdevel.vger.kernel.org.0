@@ -1,121 +1,141 @@
-Return-Path: <linux-fsdevel+bounces-48409-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48410-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D60AAE75C
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 19:04:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE373AAE779
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 19:11:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5142D9C4091
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 17:03:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E09633B4A47
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 17:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84FE28C2D8;
-	Wed,  7 May 2025 17:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4763628B7D8;
+	Wed,  7 May 2025 17:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="PyRPQmvK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gk6j96ju"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017862147EE;
-	Wed,  7 May 2025 17:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F117A28C2BE
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 17:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746637420; cv=none; b=jCW6y+yIVDmqi/ax2ofaa7NiZBwltrxyz3NfOUI2yu9Ft2mqteaMbX5L//GctvSwxrhmgjnN0MA07sxC4sQx43lw2gDQxqxW2dGWazgSYp7qHgvvsulV+x0Zi5sRf8s8/HfDFYiIBFm3o9THSkMq5ABR2lWNS51aDgISY/gZels=
+	t=1746637906; cv=none; b=SE2i+fmVxxWhfYW3dAZ6X7pIhChIJC8z6BxS6Zwd5evmkdGGGh+cbQwFFQLBjkzn4zx0UJKhY/vWLgbGm0rHZLGn36z9HBe3VoB8Z2HxyHZDhLTVNApOQpULdpfe3qNJZ06DmwfyLuynyFCe8bSe1bG/IxGaS0r7wB8KqrsxYuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746637420; c=relaxed/simple;
-	bh=5TAhFObYg7zZDMui/hMZM8JDbT69wYaipxEKQMXqeUs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=igWPreJroSvvKparFxGSYrn6MGWTNiM5ty8UH+W00h6vvttGa7YD7tk715JL+4jVuYaqD6RHwAMYNYfL9B1ooiopxtOE0SKWoCwRrx4xfNs65xiwSQUmXNlNwnEC1PMsjBnSa+11Med9taANdJRLTQNW8WbulhbIup22LxdI2bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=PyRPQmvK; arc=none smtp.client-ip=54.207.22.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1746637407;
-	bh=5TAhFObYg7zZDMui/hMZM8JDbT69wYaipxEKQMXqeUs=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=PyRPQmvKBvLdOJiUQRZ1h7X+PFHT6n4snimB0ekkFwh4NW5dpVhAN6vPNNXj6hqMh
-	 i6kZKAhx+1akWDoTTPydJs2nuS9SoRx15W/O38pTfHS0XQBz/3vqz6hOGEWjwQ7R3a
-	 9vwGbX2TyanK3Sc8InZzyw8f/xLoooMuTRYJf/yI=
-X-QQ-mid: esmtpgz14t1746637404t6f1d7e20
-X-QQ-Originating-IP: wHEFxwwMZcx8373H9xGyhJ2zpWqxA8Dkd5gvKEGsg6k=
-Received: from mail-yw1-f181.google.com ( [209.85.128.181])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Thu, 08 May 2025 01:03:22 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 7374583256002677600
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-7053f85f059so593487b3.2;
-        Wed, 07 May 2025 10:03:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW+8/kPsqfKfgm7n9fdAvhXFucdID1tqou3lrmWvJ5umVKQ7DEglAw2t1cQL4bx1d7RJTRAbZ90Uun1Wnaj@vger.kernel.org, AJvYcCXjMAX8hprhXJ3FL9hTwM+fgtSuzZhzWt8w8u4HSnh4B5t5ZrtlzaUP/b1nwkmGF4c+qURDQJ2MypYSTCQz@vger.kernel.org
-X-Gm-Message-State: AOJu0YynDVGqElS9DZwkNpIEH/GpkrIdznZi56LurhmOl8g5QNX2E01S
-	51tJMp+TRhu2N59x4uboChe1PD88fWPNpC4jcXQpy+Lee4WgTjMK6tyeNW01niUCe6cEe6QoJA6
-	YnFk19ZVwvCElZcOQdW28tlLhnAY=
-X-Google-Smtp-Source: AGHT+IEB01ceoUeRdveS4boU89jBoptUVv0fs/vajQv4IpiFz42jTRAQsh6IhFh1tBJYKgn08X+p6yNbuG9bfjFod1A=
-X-Received: by 2002:a05:690c:3749:b0:709:176d:2b5 with SMTP id
- 00721157ae682-70a2ce86309mr3461347b3.2.1746637402104; Wed, 07 May 2025
- 10:03:22 -0700 (PDT)
+	s=arc-20240116; t=1746637906; c=relaxed/simple;
+	bh=D1J7HuRcXvcw25jBkFuTWpcuJ/aCBJioWOKdjIUpPqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NuJvPC9i2RihsiSbnIeiT17mKfcG+t7KxBjY8bTuyrU5d38+ybC0qtVoCXL5dJHd2YGSSmQ1Ej0gzP994y67aTZJbPwmBlA58oB2xCFByCJC0blvvTIUCsBRM2dvqLvSnZwujoM/P2V22S6rWf17DztOEtAy76Gi/21b+CBBU+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gk6j96ju; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746637902;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f5O2TqgpWxzRwP3QqeFI3cCUlhW/V+ugLYUrXf8tgEs=;
+	b=gk6j96jutAPnIi7jMqwx7JkgnH8EGspVWmgGqIx4NQpf5DCI/2DExfJ379XnvtirFVmseG
+	CI28NqkxFbrxZhiUJ+f71A4636XLskwETP2sE56pvXJQPSHMjq8tYTkUP1RCbT9QM6IS0L
+	0W4kNxSy2TTAHkFb8x8/mV+ZMwwNVrg=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-252-UAuYJg6KMO2IfKsdgjYc6Q-1; Wed, 07 May 2025 13:11:41 -0400
+X-MC-Unique: UAuYJg6KMO2IfKsdgjYc6Q-1
+X-Mimecast-MFC-AGG-ID: UAuYJg6KMO2IfKsdgjYc6Q_1746637899
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85e7551197bso19016639f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 10:11:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746637899; x=1747242699;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f5O2TqgpWxzRwP3QqeFI3cCUlhW/V+ugLYUrXf8tgEs=;
+        b=a9nXgnjSnJ4BEAi8IZMTszRIYJfwGaPSO53HiIyv/RqKRclxbK6y/yOBDvdsaEZS68
+         m8f3K7WOG6GNF9q5oM3u100/QCq0JVIZVrx7eq4Zdux3HUNjyivxbvV/KRmm91LLEIVk
+         lUnpwLk8+jgZieucOsTuPTq0PjZQTYnxgeXfpFZtFt5OB5g3dHvEubO+CpcZV3KByFv+
+         DZ1pYLTiWMtXqYWSUumSFkXfpEY5ZkqrzbdKNKUVOtFJrL2T0NZq7fAwWWa8YhqNZCHm
+         fxL87OaZqPyOtSPeAg9+DnbThWpI1CMUoZoHq0zs0Ojqi3oOhETqaaZIbI0AuqOtUPiI
+         NPJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbF2rWHFtFxQ8oIs549Bm7y+lEDKFffbNId4l37w6O/09NWB/iNw5pku3+TwyGJAwR71IP5ltcqtKsKITY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc6CnODH4j62Sv+mnPuuqiJ9UJ6q1iaxHTb1+hMmjVq0Gg6TV9
+	oDtCJvNEJ4JH8V8RQ4JeWNvovo1n3nxQk6ELJoo4IeqS5eGlHOJuSG3ckhoBbelOGKQk+fTbf3A
+	nX2RQTR2/qRWv0ZZkj9wrcIJVdqrc+MiVFlhCAlaVD+DKX5qBQ4tyKeg7w+va1X5BU4xk81RDOw
+	==
+X-Gm-Gg: ASbGnctA3pT0TO3D6Dq19C4yGijDxQl6YtQYXrOQz+2Wb+hidNN7bguZ88/LI5JlS/w
+	ec1105tjP4tN78WeIJg372xa5FW3BVHWNnD/ma5JkT9hHsnT8jgHLrzy6dW/oa+vDisNCqEX3rP
+	MvYGEa+q9MwH2EGmgOvDy+WNp/I/uxvHUnfJiMB0zBbQK76yigPTHVMWWUzN3Q5fNF55/yk899k
+	T+C0dXwQBrwNkyDUXlPKX4hI2W0mnHbOMNpv9W6MKpnA5cDXsXVAEjxrJyN//t5tcHSDajcpx1/
+	Z65UYlV3WYAdgFMM77s+YJSYFncBIl92EGTrbJNUu6kDDfM9zw==
+X-Received: by 2002:a05:6602:6d8e:b0:867:973:f2cb with SMTP id ca18e2360f4ac-8675504b269mr45217739f.7.1746637898920;
+        Wed, 07 May 2025 10:11:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF/wX5e69Mhobwt2UxF7KW1vk8xgMiCcyMylgrksgKX/WZmmmbkgTlQU19JIYMNiyJAl2ZLlA==
+X-Received: by 2002:a05:6602:6d8e:b0:867:973:f2cb with SMTP id ca18e2360f4ac-8675504b269mr45213339f.7.1746637898572;
+        Wed, 07 May 2025 10:11:38 -0700 (PDT)
+Received: from [10.0.0.82] (97-116-169-14.mpls.qwest.net. [97.116.169.14])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-864aa2bcf11sm263323839f.8.2025.05.07.10.11.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 07 May 2025 10:11:38 -0700 (PDT)
+Message-ID: <6528bdf7-3f8b-41c0-acfe-a293d68176a7@redhat.com>
+Date: Wed, 7 May 2025 12:11:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507032926.377076-2-chenlinxuan@uniontech.com>
- <CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com>
- <CAC1kPDP4oO29B_TM-2wvzt1+Gc6hWTDGMfHSJhOax4_Cg2dEkg@mail.gmail.com> <CAOQ4uxgS3OUy9tpphAJKCQFRAn2zTERXXa0QN_KvP6ZOe2KVBw@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgS3OUy9tpphAJKCQFRAn2zTERXXa0QN_KvP6ZOe2KVBw@mail.gmail.com>
-From: Chen Linxuan <chenlinxuan@uniontech.com>
-Date: Thu, 8 May 2025 01:03:08 +0800
-X-Gmail-Original-Message-ID: <792479EEC274B193+CAC1kPDPY=qpGNRO3CH6_jSMKh6RyfHPFw71gCcpBZ-ogG41psA@mail.gmail.com>
-X-Gm-Features: ATxdqUEnZjnlcVOxnEDi_RdK47R8Vtl6mCVCgMItBEKveTQPCEKYTRG2lP9l4oo
-Message-ID: <CAC1kPDPY=qpGNRO3CH6_jSMKh6RyfHPFw71gCcpBZ-ogG41psA@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: fuse: add backing_files control file
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Chen Linxuan <chenlinxuan@uniontech.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-QQ-SENDSIZE: 520
-Feedback-ID: esmtpgz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz5a-1
-X-QQ-XMAILINFO: OStqjMFNanKnuIfUx9301bN4eKlmdiUbBcs54cHnm9NuFBI+9U3X4uCv
-	Vs5+CaSAWKmV+pcjqeFFvtwHEP3S7ZIi48Lh2ceZ65FyNFMKDBrSUdJ/SnbsMHbJ+kX7BG4
-	RGEAafEus1JUU1Aw9Htxyf6Oe5lEovOoqBgjQOsGQFNOfnxxMXZ4OLSYC0xVMl8GYaLbPmZ
-	macbaU9phAq3YBED4XPIM/v5kbmTnGLQ9qfAeHRAbQl0Lxq3TtKbZ/6TFoSgqshAmUKX/Ll
-	iSITsppyLkA8NAefKRZfddw2IYlgry585GU4gT/TbGndVw9BznUw6JdMANfjuo5qfqnPaVE
-	bJxyvEdPNmDImaiJoUz3deJITygdPhzUK4nIo3qMnboeZ66uxRYYIf+R8W1MtFOFfYmYq6L
-	bS3FGEp0dmvxPnZZIu52uth8eDNfa/9/Rw/IRWBlSkbr3eXXccAnHMamCeq+rXuz6r52Cgi
-	W2alYB7T+N+oQU0TNnIfqCYmsKzV9ZTu2qEam089jrPVfkpaSEBXFXnwG3sFl+tNpVcA2Li
-	vgE40/igYx9Fi8jqyRZP+nJBIqOlbJClt6ad+jWy5njgWuW7v5LZwfxQiscaqhs81tX5Rud
-	OBWW7fL8EyhZ3G4ZbyVB5eWvhwBUxmJXKpD4NhxXQr0lgLFCaGgX/9bqQBuY1RHD05gIY+j
-	At47639TicgRitiTTrayAUOAw+JBIFXzrGQJTdsb7ThOvKFQVrKust4pyqFbZxmDXNoueQm
-	r/kFefTNjO0adSgUtARmkw8CcAvpq/kAFLcdoqP2Iu3zSm/kCgFPB0UbwfAztGOepsnjPHO
-	8JA7nA2CmFLUVJvOsLBY5TESL4wZmqBVVxfCyFKbzfReh5vjEZin2UnkjXsM3nb6oXWCzTK
-	xLyP4TBJSQSNR4v2/XM06156qLpyEMMMDBSbhlOFzB/G1X6ErR4p9djkfVKu6P7rJMqF1NC
-	UqlzGdDH/twQBCKqLUCNH9COgPIllT2bjb6mkc0bAFmVwCKxWGBD/y7W1jFAvYQCsqbvjG8
-	1oZkRzztzo4TUgESFuQjPGr8Rx9HhNtc3SKOJJhphKF8EZJ8yD
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 0/7] f2fs: new mount API conversion
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+ chao@kernel.org, lihongbo22@huawei.com
+References: <20250423170926.76007-1-sandeen@redhat.com>
+ <aBqq1fQd1YcMAJL6@google.com>
+ <f9170e82-a795-4d74-89f5-5c7c9d233978@redhat.com>
+ <aBq2GrqV9hw5cTyJ@google.com>
+ <380f3d52-1e48-4df0-a576-300278d98356@redhat.com>
+ <25cb13c8-3123-4ee6-b0bc-b44f3039b6c1@redhat.com>
+ <aBtyRFIrDU3IfQhV@google.com>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <aBtyRFIrDU3IfQhV@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 8, 2025 at 12:57=E2=80=AFAM Amir Goldstein <amir73il@gmail.com>=
- wrote:
+On 5/7/25 9:46 AM, Jaegeuk Kim wrote:
 
-> It means everything to userspace.
-> backing ids are part of the userspace UAPI - you have documented it yours=
-elf.
-> The fuse server used backing ids to manage access to backing files
-> https://github.com/libfuse/libfuse/blob/master/example/passthrough_hp.cc#=
-L855
+> I meant:
+> 
+> # mkfs/mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
+> # mount /dev/vdb mnt
+> 
+> It's supposed to be successful, since extent_cache is enabled by default.
 
-Oh, I see.
+I'm sorry, clearly I was too sleepy last night. This fixes it for me.
 
-> This is extra and nice to have.
-> It can show admin which files are using fuse passthrough.
-> It cannot replace displaying all backing ids under connection
-> because server can register backing ids without using them to open files
-> and most importantly server can leak backing ids, which is a good
-> reason to kill it.
+We have to test the mask to see if the option was explisitly set (either
+extent_cache or noextent_cache) at mount time.
 
-I will have a try later.
+If it was not specified at all, it will be set by the default f'n and
+remain in the sbi, and it will pass this consistency check.
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index d89b9ede221e..e178796ce9a7 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1412,7 +1414,8 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
+ 	}
+ 
+ 	if (f2fs_sb_has_device_alias(sbi) &&
+-			!ctx_test_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE)) {
++			(ctx->opt_mask & F2FS_MOUNT_READ_EXTENT_CACHE) &&
++			 !ctx_test_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE)) {
+ 		f2fs_err(sbi, "device aliasing requires extent cache");
+ 		return -EINVAL;
+ 	}
+
 
