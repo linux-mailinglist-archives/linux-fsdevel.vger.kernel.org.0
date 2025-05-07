@@ -1,199 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-48356-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48358-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB7CAADDCC
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 13:54:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B0EAADE0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121B73AC4B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 11:51:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEFF4C031E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653582580F9;
-	Wed,  7 May 2025 11:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3949B25A33E;
+	Wed,  7 May 2025 12:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="GM5+LqYg"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A9TWos8G"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-8fad.mail.infomaniak.ch (smtp-8fad.mail.infomaniak.ch [83.166.143.173])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B142135D0
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 11:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.166.143.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375931FF7B4;
+	Wed,  7 May 2025 12:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746618701; cv=none; b=NrYof3BbZUxmHDwgbVNBlK+TacxrVQXFi7BLrCYUyKfmlhtGlpaIb4AcMyLO3KLjnvQ23AsYmoAdtZxBKRlQh2/1SM1prtNBL/VbmX1zge7X3jciYz5D9fjbsyiK32hADTQLwXRgGrgm9owqIMpSI9q6UefmtqhfBjlQXnpZFKk=
+	t=1746619497; cv=none; b=RsdeOCfsd4EoiVeRIEwvKvv+q50A4guYt9KvNtBnQzbOpUsONNWbLTKoUbcEVb2ypKeTES6caPo0y5ESGuth1hVyZSUOkPxoxY0d2c1RWe5nxnB1FaXMK2NMKHzS0dv4RTFX2KdX+C1HcgfEi3ZZQ1smH3kzgkBktEIAWMSZc+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746618701; c=relaxed/simple;
-	bh=kIPJFzOybRVKUZttYLjyp0h855fjPHYRSmr7h4xhlBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c8xU8ydgrhFiEh7CDGk9luAqZWqwTTnx95GsHxgP9xO1a+0JXbcAsp3kJcwmKv7NJ3py7lCnuKFreJRTpwyPzHM0O3DA/D9n1hqkGbosh2gmT4HIdKDl75w/VO8aFgN+Bbp9DfQl1KaN9Mhyn9L7j+PV+uQU16RnRKFkLIbBxC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=GM5+LqYg; arc=none smtp.client-ip=83.166.143.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6b])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4Zstry50t6zt16;
-	Wed,  7 May 2025 13:51:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1746618690;
-	bh=ukRcsiWioIJpQnZONA7OOVHLy1rF/BILBsY01ynF49o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GM5+LqYgqtdWSoNl6eaQIrraLqbPVitAXzcP6S0KIDJ7OQKcfOHf3zC7G/3SwUJN3
-	 7YDEkyhiS3lDk3BxovPVOnTNfOcMkWX9Qzdeef5kNZ8gCB/YDpPzq+HJaL7m/9YbT9
-	 fCrJQlqK0c83g4qp/xga2NlY/X5iszJ0UFyvvCqg=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4Zstrx6DJNzTf6;
-	Wed,  7 May 2025 13:51:29 +0200 (CEST)
-Date: Wed, 7 May 2025 13:51:28 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: brauner@kernel.org, alexander@mihalicyn.com, bluca@debian.org, 
-	daan.j.demeyer@gmail.com, davem@davemloft.net, david@readahead.eu, edumazet@google.com, 
-	horms@kernel.org, jack@suse.cz, jannh@google.com, kuba@kernel.org, 
-	lennart@poettering.net, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	me@yhndnzj.com, netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, 
-	viro@zeniv.linux.org.uk, zbyszek@in.waw.pl, linux-security-module@vger.kernel.org
-Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow
- coredumping tasks to connect to coredump socket
-Message-ID: <20250507.ohsaiQuoh3uo@digikod.net>
-References: <20250506-zugabe-bezog-f688fbec72d3@brauner>
- <20250506191817.14620-1-kuniyu@amazon.com>
+	s=arc-20240116; t=1746619497; c=relaxed/simple;
+	bh=S7C0i6guyQUxOmCmzpSvqnFdBd5hRF8ZNROLA+/7kxY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JRFPh7arbif3yah10F5m9BZHqHASvXad6V40pn1Ls/3hESoAuO4lj5QNf9COL6944mnXn4otRhfgEzQQJEBGnvMiAhGOa0Nfp0g040VSpVB1bwjoqX99DsHmYaf4nuJlcQIpvcJWu48TXUXBubV92upi7et1tIltHO5bZoXkD2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A9TWos8G; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=taTa50vCOqf4qXYa/4iG8HTZJGZUASEUn4x1pmkgTG0=; b=A9TWos8GWPhEHAZOpDq5FqK2Ni
+	wmHmUL7vq5tnXVsJAPlg2Fd3H9Lyc3vEC3ayp0PZ0pQcxwbZCyOUYrBt9eNGl/RAPXFBg0bRkKXi0
+	iuL8IqEVadvqhfYRBsbbPGCTeb0Ab3N3iyFYBp9Ai/eJNUYqN0kDTYTzEQCEWgIeDf5khCiE+MA6R
+	O52BIR//+QAbHZXgMEJ6gb6UG9lhMnh8/PT5xZXP13vn0u2Q5R4GnOhLAV3yZKjntb2cM18o8EksU
+	Vv7KVXVQt+ANVEI5gW15AkwboYZR+caE7YC8AWsetDxrPZQQUzxg2rlSd+H1f3HZfmvhXoQYfoxMj
+	wacMh52w==;
+Received: from [2001:4bb8:2cc:5a47:1fe7:c9d0:5f76:7c02] (helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uCdW9-0000000FJ3e-424a;
+	Wed, 07 May 2025 12:04:54 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org,
+	"Md. Haris Iqbal" <haris.iqbal@ionos.com>,
+	Jack Wang <jinpu.wang@ionos.com>,
+	Coly Li <colyli@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Mike Snitzer <snitzer@kernel.org>,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Andreas Gruenbacher <agruenba@redhat.com>,
+	Carlos Maiolino <cem@kernel.org>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Naohiro Aota <naohiro.aota@wdc.com>,
+	Johannes Thumshirn <jth@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@kernel.org>,
+	slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	frank.li@vivo.com,
+	linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-btrfs@vger.kernel.org,
+	gfs2@lists.linux.dev,
+	linux-fsdevel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: add more bio helpers v3
+Date: Wed,  7 May 2025 14:04:24 +0200
+Message-ID: <20250507120451.4000627-1-hch@lst.de>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250506191817.14620-1-kuniyu@amazon.com>
-X-Infomaniak-Routing: alpha
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, May 06, 2025 at 12:18:12PM -0700, Kuniyuki Iwashima wrote:
-> From: Christian Brauner <brauner@kernel.org>
-> Date: Tue, 6 May 2025 10:06:27 +0200
-> > On Mon, May 05, 2025 at 09:10:28PM +0200, Jann Horn wrote:
-> > > On Mon, May 5, 2025 at 8:41 PM Kuniyuki Iwashima <kuniyu@amazon.com> wrote:
-> > > > From: Christian Brauner <brauner@kernel.org>
-> > > > Date: Mon, 5 May 2025 16:06:40 +0200
-> > > > > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
-> > > > > > On Mon, May 5, 2025 at 1:14 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > > > > > Make sure that only tasks that actually coredumped may connect to the
-> > > > > > > coredump socket. This restriction may be loosened later in case
-> > > > > > > userspace processes would like to use it to generate their own
-> > > > > > > coredumps. Though it'd be wiser if userspace just exposed a separate
-> > > > > > > socket for that.
-> > > > > >
-> > > > > > This implementation kinda feels a bit fragile to me... I wonder if we
-> > > > > > could instead have a flag inside the af_unix client socket that says
-> > > > > > "this is a special client socket for coredumping".
-> > > > >
-> > > > > Should be easily doable with a sock_flag().
-> > > >
-> > > > This restriction should be applied by BPF LSM.
-> > > 
-> > > I think we shouldn't allow random userspace processes to connect to
-> > > the core dump handling service and provide bogus inputs; that
-> > > unnecessarily increases the risk that a crafted coredump can be used
-> > > to exploit a bug in the service. So I think it makes sense to enforce
-> > > this restriction in the kernel.
-> > > 
-> > > My understanding is that BPF LSM creates fairly tight coupling between
-> > > userspace and the kernel implementation, and it is kind of unwieldy
-> > > for userspace. (I imagine the "man 5 core" manpage would get a bit
-> > > longer and describe more kernel implementation detail if you tried to
-> > > show how to write a BPF LSM that is capable of detecting unix domain
-> > > socket connections to a specific address that are not initiated by
-> > > core dumping.) I would like to keep it possible to implement core
-> > > userspace functionality in a best-practice way without needing eBPF.
-> > > 
-> > > > It's hard to loosen such a default restriction as someone might
-> > > > argue that's unexpected and regression.
-> > > 
-> > > If userspace wants to allow other processes to connect to the core
-> > > dumping service, that's easy to implement - userspace can listen on a
-> > > separate address that is not subject to these restrictions.
-> > 
-> > I think Kuniyuki's point is defensible. And I did discuss this with
-> > Lennart when I wrote the patch and he didn't see a point in preventing
-> > other processes from connecting to the core dump socket. He actually
-> > would like this to be possible because there's some userspace programs
-> > out there that generate their own coredumps (Python?) and he wanted them
-> > to use the general coredump socket to send them to.
-> > 
-> > I just found it more elegant to simply guarantee that only connections
-> > are made to that socket come from coredumping tasks.
-> > 
-> > But I should note there are two ways to cleanly handle this in
-> > userspace. I had already mentioned the bpf LSM in the contect of
-> > rate-limiting in an earlier posting:
-> > 
-> > (1) complex:
-> > 
-> >     Use a bpf LSM to intercept the connection request via
-> >     security_unix_stream_connect() in unix_stream_connect().
-> > 
-> >     The bpf program can simply check:
-> > 
-> >     current->signal->core_state
-> > 
-> >     and reject any connection if it isn't set to NULL.
-> > 
-> >     The big downside is that bpf (and security) need to be enabled.
-> >     Neither is guaranteed and there's quite a few users out there that
-> >     don't enable bpf.
+Hi all,
 
-The kernel should indeed always have a minimal security policy in place,
-LSM can tailored that but we should not assume that a specific LSM with
-a specific policy is enabled/configured on the system.
+this series adds more block layer helpers to remove boilerplate code when
+adding memory to a bio or to even do the entire synchronous I/O.
 
-> > 
-> > (2) simple (and supported in this series):
-> > 
-> >     Userspace accepts a connection. It has to get SO_PEERPIDFD anyway.
-> >     It then needs to verify:
-> > 
-> >     struct pidfd_info info = {
-> >             info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP,
-> >     };
-> > 
-> >     ioctl(pidfd, PIDFD_GET_INFO, &info);
-> >     if (!(info.mask & PIDFD_INFO_COREDUMP)) {
-> >             // Can't be from a coredumping task so we can close the
-> > 	    // connection without reading.
-> > 	    close(coredump_client_fd);
-> > 	    return;
-> >     }
-> > 
-> >     /* This has to be set and is only settable by do_coredump(). */
-> >     if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
-> >             // Can't be from a coredumping task so we can close the
-> > 	    // connection without reading.
-> > 	    close(coredump_client_fd);
-> > 	    return;
-> >     }
-> > 
-> >     // Ok, this is a connection from a task that has coredumped, let's
-> >     // handle it.
+The main aim is to avoid having to convert to a struct page in the caller
+when adding kernel direct mapping or vmalloc memory.
 
-What if the task send a "fake" coredump and just after that really
-coredump?  There could be a race condition on the server side when
-checking the coredump property of this pidfd.
+Changes since v2:
+ - rebase on top of the latest block for-next branch to resolve
+   conflicts with the bonuce buffering removal
 
-Could we add a trusted header to the coredump payload that is always
-written by the kernel?  This would enable to read a trusted flag
-indicating if the following payload is a coredumped generated by the
-kernel or not.
+Changes since v1:
+ - typo fixes
+ - improve commit messages and kerneldoc comments
+ - move bio_add_virt_nofail out of line
+ - make the number of bio_vecs calculation helper more generic
+ - add another vmalloc helper for the common case
 
-> > 
-> >     The crux is that the series guarantees that by the time the
-> >     connection is made the info whether the task/thread-group did
-> >     coredump is guaranteed to be available via the pidfd.
-> >  
-> > I think if we document that most coredump servers have to do (2) then
-> > this is fine. But I wouldn't mind a nod from Jann on this.
-> 
-> I like this approach (2) allowing users to filter the right client.
-> This way we can extend the application flexibly for another coredump
-> service.
+Diffstat:
+ block/bio.c                   |  101 +++++++++++++++++++++++++++++++++++++++++
+ block/blk-map.c               |   92 +++++++++----------------------------
+ drivers/block/pktcdvd.c       |    2 
+ drivers/block/rnbd/rnbd-srv.c |    7 --
+ drivers/block/ublk_drv.c      |    3 -
+ drivers/block/virtio_blk.c    |    4 -
+ drivers/md/bcache/super.c     |    3 -
+ drivers/md/dm-bufio.c         |    2 
+ drivers/md/dm-integrity.c     |   16 ++----
+ drivers/nvme/host/core.c      |    2 
+ drivers/scsi/scsi_ioctl.c     |    2 
+ drivers/scsi/scsi_lib.c       |    3 -
+ fs/btrfs/scrub.c              |   10 ----
+ fs/gfs2/ops_fstype.c          |   24 +++------
+ fs/hfsplus/wrapper.c          |   46 +++---------------
+ fs/xfs/xfs_bio_io.c           |   30 ++++--------
+ fs/xfs/xfs_buf.c              |   43 +++--------------
+ fs/xfs/xfs_log.c              |   32 ++-----------
+ fs/zonefs/super.c             |   34 ++++---------
+ include/linux/bio.h           |   25 +++++++++-
+ include/linux/blk-mq.h        |    4 -
+ kernel/power/swap.c           |  103 ++++++++++++++++++------------------------
+ 22 files changed, 270 insertions(+), 318 deletions(-)
 
