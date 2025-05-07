@@ -1,57 +1,63 @@
-Return-Path: <linux-fsdevel+bounces-48428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48429-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35104AAEDBA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 23:15:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A65C8AAEDF0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 23:36:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A092C5003E2
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 21:15:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A8103188CE70
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 21:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9EE28FFC2;
-	Wed,  7 May 2025 21:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC7E22D7BD;
+	Wed,  7 May 2025 21:36:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="HAKNhiIW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaPmW32a"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA0DC7E1
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 21:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF2322B8A9
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 21:36:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746652529; cv=none; b=rn2Z/fVQczkE1lcRHd/JHyrar0sKAkR/xwY5Bs6zxv5qE7g4eJFSIHh5rdtIYZAAE+BqIjyHbqtbeFNUOBRiOc7B/ZwC05lhpzInxn0RBS6rLdDO5cYKBvyMiSohu3lnmUo4hOZkJcNFSeExWRyoHaw9YDYg9u8Srdm5zJtFdQo=
+	t=1746653796; cv=none; b=oJWbBVvC13rplhKM21ymQmsb2VR539k+vIzrAk81uDM4X3usXybagSpLWgxdrR9ACQrHdB+Bqgf/DrU7yWFAcebVakjLmu+4WkfgvmUT41regV58j+cm5WbL37nFZpqFRfDy/OiQM3v8dfK8tLlVSGrtJix/0tNSEXt7lRA2bPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746652529; c=relaxed/simple;
-	bh=4mwrNEZcGwQ9wxQ+w8B1HmJrQDNN4brkNaPrtU70NsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dddHudtlhUY46WR2TeiZnC1hybYdY5wfvHC+lBAw8wHp30HjY3jp5RiLM+88oZlALTaubY3TtXGwgm1kBHtXmt/I6mRdd90DkyvnG8XXGFlJ2dvfZU+HAulxpWNA3ITix1kw8PcaYFWGzKwoTY9FxYbjC0F30mhX89nbG8/0GYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=HAKNhiIW; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=fDrtPjgJvedzKvDF7oXiyIHw9T0kg6hL7xXeQGL750U=; b=HAKNhiIWYYujLybHC0VhSLu4t3
-	8AhnvIpHezoADwpi/qBdRA+ApAfIQZK18DsX4qDa742lakFrKIXtOBef+lQ0twlL1WKJ//o1jrw/L
-	m90OzJvmwdxHdX0xTAGDw6SCvrqqUm6bBK9OU3URapvKqxLVAra4MIWt6RwaiujjvDkyMJUyQQUe/
-	0mXhnI2B1Z21oWjFNZ6j5arUiuNF6A/+RP1Sk9tLoaRTQs2CTMOLHLp9B6V/07vrG96HVZHbcUjsT
-	6eFeZYB3vaOQnSqwvIfiDN11z2W8/gki6t76Q7HRa3XM2ECK8ordYqOQF2f5p+rbXmLLRwosWJ/yR
-	VwRbO2Nw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uCm6t-00000001bwE-26UZ;
-	Wed, 07 May 2025 21:15:23 +0000
-Date: Wed, 7 May 2025 22:15:23 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Christian Brauner <brauner@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>
-Subject: [PATCH][CFT][RFC] clone_mnt(): simplify the propagation-related
- logics
-Message-ID: <20250507211523.GW2023217@ZenIV>
+	s=arc-20240116; t=1746653796; c=relaxed/simple;
+	bh=rf1Gmwr6WthhJ4eu6zM0aOsriwhnXZ9Mu6TEWRFlGgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYTv0radxARsA96UOs2XkcbOT815sqP+kozr+n8CPxyfNNmWU4pUsr24pO/nXdqsvCmlhI6SFEdockySgy+jp0b8PrGQJp69XdHRvj7VIj2cRQa2jzvSDalOZgjQwNrXAbLK9AJimHPqXE9/+vklPJtLRMQiSG3z/sbCQgUXaYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaPmW32a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA497C4CEE2;
+	Wed,  7 May 2025 21:36:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746653796;
+	bh=rf1Gmwr6WthhJ4eu6zM0aOsriwhnXZ9Mu6TEWRFlGgQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HaPmW32apFHwgWmFJ9h4cZxpOSCHIHJXPxRr0eRRusD6ZVS/14XoI0ktxt0dsd8Pt
+	 Pz5pDLa0Zw2pMVCsMVMsc1pCuxevwlGVM00xh4I/CgZJQxnGyol9CehTCWhaTjAEgn
+	 ZH/4aVXdHtxilbfR8RSyKpIUZLaem9HnrCk35jPG+7fdJGRdzEIsGuKWhh77/lam83
+	 5XadviB+4FOCkff77rVllMQTa53MCO+sG7MIMuuQR8+Suf6U9Ut66ysL1L8XrlLqxd
+	 ofFYofGmWSN+J0zhpawz2vPtuH5ZoyYGk4eTKE0qB0G3F002NPzHDwdLI3wdJf+xVG
+	 UaAdKWmPmPe+w==
+Date: Wed, 7 May 2025 21:36:33 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	chao@kernel.org, lihongbo22@huawei.com
+Subject: Re: [PATCH V3 0/7] f2fs: new mount API conversion
+Message-ID: <aBvSYa-0IxQREIUV@google.com>
+References: <f9170e82-a795-4d74-89f5-5c7c9d233978@redhat.com>
+ <aBq2GrqV9hw5cTyJ@google.com>
+ <380f3d52-1e48-4df0-a576-300278d98356@redhat.com>
+ <25cb13c8-3123-4ee6-b0bc-b44f3039b6c1@redhat.com>
+ <aBtyRFIrDU3IfQhV@google.com>
+ <6528bdf7-3f8b-41c0-acfe-a293d68176a7@redhat.com>
+ <aBu5CU7k0568RU6E@google.com>
+ <e72e0693-6590-4c1e-8bb8-9d891e1bc5c0@redhat.com>
+ <aBvCi9KplfQ_7Gsn@google.com>
+ <f1674387-66d3-443f-8d48-74d8dfd111f1@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -60,98 +66,146 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <f1674387-66d3-443f-8d48-74d8dfd111f1@redhat.com>
 
-[
-Help with testing and review would be very welcome; it does survive
-xfstests and ltp.  No visible regressions on kselftests either.
-IIRC, Christian mentioned some bunch of mount-related regression
-tests somewhere; was that a part of kselftests, or is it something
-separate?
-]
+On 05/07, Eric Sandeen wrote:
+> On 5/7/25 3:28 PM, Jaegeuk Kim wrote:
+> >> But as far as I can tell, at least for the extent cache, remount is handled
+> >> properly already (with the hunk above):
+> >>
+> >> # mkfs/mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
+> >> # mount /dev/vdb mnt
+> >> # mount -o remount,noextent_cache mnt
+> >> mount: /root/mnt: mount point not mounted or bad option.
+> >>        dmesg(1) may have more information after failed mount system call.
+> >> # dmesg | tail -n 1
+> >> [60012.364941] F2FS-fs (vdb): device aliasing requires extent cache
+> >> #
+> >>
+> >> I haven't tested with i.e. blkzoned devices though, is there a testcase
+> >> that fails for you?
+> > I'm worrying about any missing case to check options enabled by default_options.
+> > For example, in the case of device_aliasing, we rely on enabling extent_cache
+> > by default_options, which was not caught by f2fs_check_opt_consistency.
+> > 
+> > I was thinking that we'd need a post sanity check.
+> 
+> I see. If you want a "belt and suspenders" approach and it works for
+> you, no argument from me :)
 
-The underlying rules are simple:
-	* MNT_SHARED should be set iff ->mnt_group_id of new mount ends up
-non-zero.
-	* mounts should be on the same ->mnt_share cyclic list iff they have
-the same non-zero ->mnt_group_id value.
-	* CL_PRIVATE is mutually exclusive with MNT_SHARED, MNT_SLAVE,
-MNT_SHARED_TO_SLAVE and MNT_EXPIRE; the whole point of that thing is to
-get a clone of old mount that would *not* be on any namespace-related
-lists.
+Thanks. :)
 
-The above allows to make the logics more straightforward; what's more,
-it makes the proof that invariants are maintained much simpler.
-The variant in mainline is safe (aside of a very narrow race with
-unsafe modification of mnt_flags right after we had the mount exposed
-in superblock's ->s_mounts; theoretically it can race with ro remount
-of the original, but it's not easy to hit), but proof of its correctness
-is really unpleasant.
+I just found that I had to check it's from remount or not. And, this change does
+not break my setup having a specific options. Let me queue the series back and
+wait for further review from Chao.
 
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 165b3bd26857..4456a6448b45 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -1351,6 +1351,9 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 	if (!mnt)
- 		return ERR_PTR(-ENOMEM);
- 
-+	mnt->mnt.mnt_flags = READ_ONCE(old->mnt.mnt_flags) &
-+			     ~MNT_INTERNAL_FLAGS;
-+
- 	if (flag & (CL_SLAVE | CL_PRIVATE | CL_SHARED_TO_SLAVE))
- 		mnt->mnt_group_id = 0; /* not a peer of original */
- 	else
-@@ -1362,8 +1365,8 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 			goto out_free;
+ fs/f2fs/super.c | 54 +++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 37 insertions(+), 17 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index d89b9ede221e..0ee783224953 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1412,6 +1412,7 @@ static int f2fs_check_opt_consistency(struct fs_context *fc,
  	}
  
--	mnt->mnt.mnt_flags = old->mnt.mnt_flags;
--	mnt->mnt.mnt_flags &= ~(MNT_WRITE_HOLD|MNT_MARKED|MNT_INTERNAL|MNT_LOCKED);
-+	if (mnt->mnt_group_id)
-+		set_mnt_shared(mnt);
+ 	if (f2fs_sb_has_device_alias(sbi) &&
++			(ctx->opt_mask & F2FS_MOUNT_READ_EXTENT_CACHE) &&
+ 			!ctx_test_opt(ctx, F2FS_MOUNT_READ_EXTENT_CACHE)) {
+ 		f2fs_err(sbi, "device aliasing requires extent cache");
+ 		return -EINVAL;
+@@ -1657,6 +1658,33 @@ static void f2fs_apply_options(struct fs_context *fc, struct super_block *sb)
+ 	f2fs_apply_quota_options(fc, sb);
+ }
  
- 	atomic_inc(&sb->s_active);
- 	mnt->mnt.mnt_idmap = mnt_idmap_get(mnt_idmap(&old->mnt));
-@@ -1376,22 +1379,20 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 	list_add_tail(&mnt->mnt_instance, &sb->s_mounts);
- 	unlock_mount_hash();
- 
-+	if (flag & CL_PRIVATE)	// we are done with it
-+		return mnt;
++static int f2fs_sanity_check_options(struct f2fs_sb_info *sbi, bool remount)
++{
++	if (f2fs_sb_has_device_alias(sbi) &&
++	    !test_opt(sbi, READ_EXTENT_CACHE)) {
++		f2fs_err(sbi, "device aliasing requires extent cache");
++		return -EINVAL;
++	}
 +
-+	if (mnt->mnt_group_id && mnt->mnt_group_id == old->mnt_group_id)
-+		list_add(&mnt->mnt_share, &old->mnt_share);
++	if (!remount)
++		return 0;
 +
- 	if ((flag & CL_SLAVE) ||
- 	    ((flag & CL_SHARED_TO_SLAVE) && IS_MNT_SHARED(old))) {
- 		list_add(&mnt->mnt_slave, &old->mnt_slave_list);
- 		mnt->mnt_master = old;
--		CLEAR_MNT_SHARED(mnt);
--	} else if (!(flag & CL_PRIVATE)) {
--		if ((flag & CL_MAKE_SHARED) || IS_MNT_SHARED(old))
--			list_add(&mnt->mnt_share, &old->mnt_share);
--		if (IS_MNT_SLAVE(old))
--			list_add(&mnt->mnt_slave, &old->mnt_slave);
-+	} else if (IS_MNT_SLAVE(old)) {
-+		list_add(&mnt->mnt_slave, &old->mnt_slave);
- 		mnt->mnt_master = old->mnt_master;
--	} else {
--		CLEAR_MNT_SHARED(mnt);
- 	}
--	if (flag & CL_MAKE_SHARED)
--		set_mnt_shared(mnt);
++#ifdef CONFIG_BLK_DEV_ZONED
++	if (f2fs_sb_has_blkzoned(sbi) &&
++	    sbi->max_open_zones < F2FS_OPTION(sbi).active_logs) {
++		f2fs_err(sbi,
++			"zoned: max open zones %u is too small, need at least %u open zones",
++				 sbi->max_open_zones, F2FS_OPTION(sbi).active_logs);
++		return -EINVAL;
++	}
++#endif
++	if (f2fs_lfs_mode(sbi) && !IS_F2FS_IPU_DISABLE(sbi)) {
++		f2fs_warn(sbi, "LFS is not compatible with IPU");
++		return -EINVAL;
++	}
++	return 0;
++}
++
+ static struct inode *f2fs_alloc_inode(struct super_block *sb)
+ {
+ 	struct f2fs_inode_info *fi;
+@@ -2616,21 +2644,15 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 	default_options(sbi, true);
  
- 	/* stick the duplicate mount on the same expiry list
- 	 * as the original if that was on one */
-@@ -1399,7 +1400,6 @@ static struct mount *clone_mnt(struct mount *old, struct dentry *root,
- 		if (!list_empty(&old->mnt_expire))
- 			list_add(&mnt->mnt_expire, &old->mnt_expire);
+ 	err = f2fs_check_opt_consistency(fc, sb);
+-	if (err < 0)
++	if (err)
+ 		goto restore_opts;
+ 
+ 	f2fs_apply_options(fc, sb);
+ 
+-#ifdef CONFIG_BLK_DEV_ZONED
+-	if (f2fs_sb_has_blkzoned(sbi) &&
+-		sbi->max_open_zones < F2FS_OPTION(sbi).active_logs) {
+-		f2fs_err(sbi,
+-			"zoned: max open zones %u is too small, need at least %u open zones",
+-				 sbi->max_open_zones, F2FS_OPTION(sbi).active_logs);
+-		err = -EINVAL;
++	err = f2fs_sanity_check_options(sbi, true);
++	if (err)
+ 		goto restore_opts;
+-	}
+-#endif
++
+ 	/* flush outstanding errors before changing fs state */
+ 	flush_work(&sbi->s_error_work);
+ 
+@@ -2663,12 +2685,6 @@ static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+ 		}
  	}
+ #endif
+-	if (f2fs_lfs_mode(sbi) && !IS_F2FS_IPU_DISABLE(sbi)) {
+-		err = -EINVAL;
+-		f2fs_warn(sbi, "LFS is not compatible with IPU");
+-		goto restore_opts;
+-	}
 -
- 	return mnt;
+ 	/* disallow enable atgc dynamically */
+ 	if (no_atgc == !!test_opt(sbi, ATGC)) {
+ 		err = -EINVAL;
+@@ -4808,11 +4824,15 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	default_options(sbi, false);
  
-  out_free:
+ 	err = f2fs_check_opt_consistency(fc, sb);
+-	if (err < 0)
++	if (err)
+ 		goto free_sb_buf;
+ 
+ 	f2fs_apply_options(fc, sb);
+ 
++	err = f2fs_sanity_check_options(sbi, false);
++	if (err)
++		goto free_options;
++
+ 	sb->s_maxbytes = max_file_blocks(NULL) <<
+ 				le32_to_cpu(raw_super->log_blocksize);
+ 	sb->s_max_links = F2FS_LINK_MAX;
+-- 
+2.49.0.1015.ga840276032-goog
+
 
