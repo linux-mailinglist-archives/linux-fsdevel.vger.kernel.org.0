@@ -1,86 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-48424-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48425-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD24AAED51
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 22:47:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D1FBAAED5D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 22:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F98A7BA716
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 20:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A8A51BC419B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 20:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D121628C5B5;
-	Wed,  7 May 2025 20:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BEBD28FFC2;
+	Wed,  7 May 2025 20:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IV2L6LOr"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UHuXWIud"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9E65A79B
-	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 20:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C709B28FAA8
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 20:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746650772; cv=none; b=enCuuClXNdRRxzzITZHpWlmkT+eOmlsdrRRSa5Dc/ufI0J74dutA8kbheQib8+jTm7+CMDW8vOlSjPFXaoAShH3m0vxr8P4fa+WXT8Lp49tem9tE6C5W3Ur2uqUvJr+XNXkV6ajXMNcs/cN6JpheBKj/2agh5VN0WOGRO531BOI=
+	t=1746650969; cv=none; b=UOC94ngT/aIW+4rdfcNCed4d7qTZcXRysbMtvfZQmfk5l6pZ7YRR9eNuQiITYJ9aiiL93I2FkQNDWVikm9ahg/uwAInpuPq9cotwlLnurxb3WgkbUdYzinw2+gpI7veOxAjupTAa3/XWAYO3ROWUZQdKmSW7K835WJmllc2uQ6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746650772; c=relaxed/simple;
-	bh=m+9RrP6mDWX5/XkfRqIpJ5SmBohazOWCYcqVRlZJ1OM=;
+	s=arc-20240116; t=1746650969; c=relaxed/simple;
+	bh=G75xtNcBa/HKc4thX1U4JClvdxzbtUn3lxLH5U+xQzk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jEf+WTLBDvCqzg3KXD30BLcyCIwFfKT7mR0zmDTKP4eLDyh8daEiGYTwkcsKNd4DrfOhS4UEXw2vZPokSQQlYV46GTObW4kJV0YZAGQmXjRt1c1C+FOsTWJ/NtI7EKczwwek+Ba+wVx0ZoKkYN79y9H8NP/SE32JEgPQGoIIK8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IV2L6LOr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746650766;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZtvJYDNlO6G6hDwP0P9OZNeT6PCGTZnZorZ/GCvPqHw=;
-	b=IV2L6LOrVVGTqJx6T1xM9qfG++Hx4Qjs7hkSy6GMyoCTIPxMaSwjkMSKNCWUIMjyAsZ+mk
-	+z+KaykuwnBfWv0PNMYL4jhtRH+VBVxxctWRi3utTz5nevZp9lLMlXFb5mJl05ZK7pht5z
-	K4mnW+RWCPnKk/p1G2vWFcCzlJtIhQE=
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com
- [209.85.166.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-278-B9Np0XgwMaWwmGaTapGbRw-1; Wed, 07 May 2025 16:46:05 -0400
-X-MC-Unique: B9Np0XgwMaWwmGaTapGbRw-1
-X-Mimecast-MFC-AGG-ID: B9Np0XgwMaWwmGaTapGbRw_1746650765
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3da76423b9cso3010385ab.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 13:46:05 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=U4dykIuwyt9XigfyO6hk8b20kLxDiDAjaCNkumYPKedxBii9GJxGB9FytOE4/8ldOPjV9DtW6RiNnMP1nc8YvjSKijJW+uuvg64vn8AgU9Ibi0akcDA+b6svQuxWATYZLSYL7hRUJ4bsCTFv2W/Ol/v5IBXsgI3H0e5GhVFOT4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UHuXWIud; arc=none smtp.client-ip=209.85.166.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-864a22fcdf2so13550739f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 13:49:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1746650967; x=1747255767; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nbrLfo/HVOEcIGm/SsMmNRXcHh8Er8SMroRu1GzttWY=;
+        b=UHuXWIudVx0iFjD1cgs/WMt7Gy9yO3wmQjyiBGzXln3lJ7WGSKiHsgxVKrlFnbg8RU
+         5Z5W0V6HBs9CygCznH005Mizq3na5geCOEAgoxhHSlLDun1G4lPLwIe20U3DiSDZ5XEg
+         eCoxbcFAOFMAcZEyOGE2st9H7RVSIXOA2HBoM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746650764; x=1747255564;
+        d=1e100.net; s=20230601; t=1746650967; x=1747255767;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZtvJYDNlO6G6hDwP0P9OZNeT6PCGTZnZorZ/GCvPqHw=;
-        b=pTwqFONUyuiX4sSTYqdy1ZGS+df/ooF9eyqisklujepWKJ3p4ByDOhfW6Rcs88jX+k
-         2Ymg7rHCI2YKnBhwirjOhj2wVMhNx56WSHXmySykQPuKd7ZPZxtpaYjkwOwOiDzWYN2z
-         Jk+IpcUEKn87WGSCrEXNQCUyrWZX8BAccNsTkB0y4D6/03PgjtMM6fJXoDPUCDGhPZJk
-         n65di7OUHQHjmdbBmKmazIn2zsRj8N5YvwdvEBXU/nJXxIGJe5iJKAaJef5foJOxcvS1
-         4aAnxNsf4Y5MA1Jg1I9s/NuVHXcMfVXuWLn4c73gKFPFvKKD9MHvkfKeSFzqavm5kjnl
-         pcFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVuDAifhfuEnfOVLDFiMUOHjIGz4ecgxMMgN3WIzUdw+hgv0nSSkKfzMAnfBHYxHQWYF4EreF7o+h0ZVgBH@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywz5otEyDKuRAwWMZbBz5AgA+w8jGXhAIqlFCTNYwQm2mSYrCzn
-	SCHxGs5aZB4TVh/sAh5M+weCbkzIpqEN1mSmK27OAhcUqB/M+zEBf8zYQT6fAVoTEohdIMkeSeB
-	XZqvXSvL/mJg6UgKE5Sauu/lb8pDmMmwE7LZgLpHjK0b16aZWzGF1m09HxCrdxd8=
-X-Gm-Gg: ASbGncu9sk7Io1TiG+prW36W0RwIByNpYY8LCDv52bLKek6NBa64jaKQ1BWBmteA2gp
-	9Lhf+HwFjAEigtiIXjJEkqDGTyOxvEmGAsdcthsbY7+9Hnj7BrA7vrg/CimB9gJRnPxCkQCgMUK
-	RBAT1DnwhR7eY2wWKvcbn5N1YlE3vycjkNlg7QTIZ9RfMCpd0TRA285QZzF3zuskIb8jNxCM6va
-	tcBgyiz7l8MIR665D2YW0MTGkO8X8Tp1anh+Nrxt6r/RklxYDQteOYBpV+gCh2Hpk110TrrvHfE
-	GBGAaeqvkQ8EJMkTwQjuD2syzSSaHfGKR1Gx5hzJ8Zr6J2enGw==
-X-Received: by 2002:a05:6e02:194e:b0:3d9:39ae:b23c with SMTP id e9e14a558f8ab-3da73930025mr57875345ab.20.1746650764719;
-        Wed, 07 May 2025 13:46:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHScsCoRYIjUNWW5yDa0E+5rQrYqBqSuhif/7D+Zq0+3jJ4Uj1U10vDL6uVhOSKCIfNdkckww==
-X-Received: by 2002:a05:6e02:194e:b0:3d9:39ae:b23c with SMTP id e9e14a558f8ab-3da73930025mr57875155ab.20.1746650764416;
-        Wed, 07 May 2025 13:46:04 -0700 (PDT)
-Received: from [10.0.0.82] (97-116-169-14.mpls.qwest.net. [97.116.169.14])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f88a91b069sm2895193173.52.2025.05.07.13.46.03
+        bh=nbrLfo/HVOEcIGm/SsMmNRXcHh8Er8SMroRu1GzttWY=;
+        b=cDzxBkFoobNdfRwH6+6eY0WjrCSUa1ZM3Qlf9bsTd7z7f1BKj20QupLw3Wlo+THXI8
+         kXyqe+mWzsmPxZ01jTW5hdVQdEdybUjnrKVWCCxtVxMXa3YAgYyOBPNuCBWzCpl2HYHv
+         ulD+Daj+4e+Z0YWMBWmSQs+TMdXK39fmi4hmtm7BGSm4zMdZVJt08wmQYz8mPeNT9f1a
+         O/DD5mo+/O3NvLHHzOwMqcghdyLkIydlvpbQgl5TpAjbo5oFJTazE1C972HxHUPp+7lI
+         WNQ2X/UjNUGhHcG9piAr1p3kcsT8vVTPtQETYlNPLkq8Kn9gtzqNdYVNSfm83ihvqLzU
+         5MCw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7Smk8gVm/rs1KVtOODa6KXeW1IEBpm2+2P1p++/pJOG6zVjsg/hRv752kaSMbXKp1/OOyppFE6CdPzWhl@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8uduBAEpS6Dx0kBpiFuP2v5t1geVu011+fg71ss98b8xiexJU
+	0gvP3mxqh1iUXseNXP7iDgFpS4yw/QbnntqaDJ/u0OjscYlIGygJEJeVRHoOkLw=
+X-Gm-Gg: ASbGncsRIfjbuRCJ3flstwlzE87XDSRSlvMLxOXxC1RrV2guZr2lTmnnQHha6+mrEdC
+	WINRBKa1M5ol9mf2e9mo4yqlCKG0n2eIn4guiYbqVj3taJ4fD7SzW2L9Ahw9K4PTTxTTYhRVg8N
+	GHtrcxdWIV93/PHpaj+nhq/XMYlepoBcX92zaMWp13DjP9QKLaiEOfXW3gGWmclNvtUekuLnlk9
+	z1ZdK+PZzP9MrFK11OK3xYFhL0ItJd8sU/ci6MnmE1nB2hI76rCyofe7oZ3EKrIxNJtdesyfhFC
+	Xf/PHWRRma7eaRhyS5Y1acpcuJJjdTWtCAxBDW4ZRgghboiwxhY=
+X-Google-Smtp-Source: AGHT+IGX4LIZdxiQGhsPmHJayBQ3t4X15bBVjp4+dG9Yr+NmPEGNWKAvicjiqoIWxW3kT3pxCS3NFg==
+X-Received: by 2002:a05:6602:29c9:b0:85e:16e9:5e8d with SMTP id ca18e2360f4ac-867550e2fdemr166032339f.7.1746650966768;
+        Wed, 07 May 2025 13:49:26 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-864aa31e07dsm271901639f.21.2025.05.07.13.49.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 07 May 2025 13:46:04 -0700 (PDT)
-Message-ID: <f1674387-66d3-443f-8d48-74d8dfd111f1@redhat.com>
-Date: Wed, 7 May 2025 15:46:03 -0500
+        Wed, 07 May 2025 13:49:26 -0700 (PDT)
+Message-ID: <efd8baf5-f30e-4e7b-af53-a75efaab12f7@linuxfoundation.org>
+Date: Wed, 7 May 2025 14:49:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,51 +78,90 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 0/7] f2fs: new mount API conversion
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- chao@kernel.org, lihongbo22@huawei.com
-References: <20250423170926.76007-1-sandeen@redhat.com>
- <aBqq1fQd1YcMAJL6@google.com>
- <f9170e82-a795-4d74-89f5-5c7c9d233978@redhat.com>
- <aBq2GrqV9hw5cTyJ@google.com>
- <380f3d52-1e48-4df0-a576-300278d98356@redhat.com>
- <25cb13c8-3123-4ee6-b0bc-b44f3039b6c1@redhat.com>
- <aBtyRFIrDU3IfQhV@google.com>
- <6528bdf7-3f8b-41c0-acfe-a293d68176a7@redhat.com>
- <aBu5CU7k0568RU6E@google.com>
- <e72e0693-6590-4c1e-8bb8-9d891e1bc5c0@redhat.com>
- <aBvCi9KplfQ_7Gsn@google.com>
+Subject: Re: [PATCH v3 3/3] selftests: pidfd: add tests for PIDFD_SELF_*
+To: John Hubbard <jhubbard@nvidia.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Christian Brauner <christian@brauner.io>, Shuah Khan <shuah@kernel.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
+ pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Oliver Sang <oliver.sang@intel.com>, seanjc@google.com,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
+ <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
+ <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
+ <a6133831-3fc3-49aa-83c6-f9aeef3713c9@lucifer.local>
+ <5b0b8e1e-6f50-4e18-bf46-39b00376c26e@nvidia.com>
+ <20250501114235.GP4198@noisy.programming.kicks-ass.net>
+ <17464a97-e7be-49d4-9422-96ff824dba7c@linuxfoundation.org>
+ <8f765dc8-421f-420f-bd3e-1a0d889238a1@nvidia.com>
 Content-Language: en-US
-From: Eric Sandeen <sandeen@redhat.com>
-In-Reply-To: <aBvCi9KplfQ_7Gsn@google.com>
-Content-Type: text/plain; charset=UTF-8
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <8f765dc8-421f-420f-bd3e-1a0d889238a1@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 5/7/25 3:28 PM, Jaegeuk Kim wrote:
->> But as far as I can tell, at least for the extent cache, remount is handled
->> properly already (with the hunk above):
+On 5/6/25 15:34, John Hubbard wrote:
+> On 5/6/25 2:18 PM, Shuah Khan wrote:
+>> On 5/1/25 05:42, Peter Zijlstra wrote:
+>>> On Wed, Oct 16, 2024 at 07:14:34PM -0700, John Hubbard wrote:
+>>>> On 10/16/24 3:06 PM, Lorenzo Stoakes wrote:
+>>>>> On Wed, Oct 16, 2024 at 02:00:27PM -0600, Shuah Khan wrote:
+>>>>>> On 10/16/24 04:20, Lorenzo Stoakes wrote:
+>>>> ...
+>>> Please fix this fucking selftests shit to just build. This is unusable
+>>> garbage.
 >>
->> # mkfs/mkfs.f2fs -c /dev/vdc@vdc.file /dev/vdb
->> # mount /dev/vdb mnt
->> # mount -o remount,noextent_cache mnt
->> mount: /root/mnt: mount point not mounted or bad option.
->>        dmesg(1) may have more information after failed mount system call.
->> # dmesg | tail -n 1
->> [60012.364941] F2FS-fs (vdb): device aliasing requires extent cache
->> #
->>
->> I haven't tested with i.e. blkzoned devices though, is there a testcase
->> that fails for you?
-> I'm worrying about any missing case to check options enabled by default_options.
-> For example, in the case of device_aliasing, we rely on enabling extent_cache
-> by default_options, which was not caught by f2fs_check_opt_consistency.
-> 
-> I was thinking that we'd need a post sanity check.
 
-I see. If you want a "belt and suspenders" approach and it works for
-you, no argument from me :)
+Peter, John,
 
--Eric
+There seems to be confusion regarding  KHDR_INCLUDES. Tests don't have
+to use KHDR_INCLUDES if they don't want to.
 
+There are 4623 test Makefiles (excluding the main Makefile) under selftests/.
+Out of those 73 Makefiles reference KHDR_INCLUDES exported by lib.mk and
+selftests/Makefile. The rest are happy with system headers.
+
+The support for this KHDR_INCLUDES was added just for the case when a new
+test depends on header change. This is the reason why only a few
+test Makefiles use it. When test rings ran into issues related to
+dependencies between header changes, we recommended installing headers
+to solve the problem and introduced KHDR_INCLUDES so test Makefiles
+can use it in their Makefiles overriding the framework defaults.
+
+If your test doesn't need it, you can simply stop referencing it or
+use the approach used in mm test.
+
+It is a manual step. Works well for developers who know what they are doing.
+This isn't ideal for test rings. This isn't an ideal solution really.
+It works for the mm developers.
+
+# In order to use newer items that haven't yet been added to the user's system
+# header files, add $(TOOLS_INCLUDES) to the compiler invocation in each
+# each selftest.
+# You may need to add files to that location, or to refresh an existing file. In
+# order to do that, run "make headers" from $(top_srcdir), then copy the
+# header file that you want from $(top_srcdir)/usr/include/... , to the matching
+# subdir in $(TOOLS_INCLUDE).
+TOOLS_INCLUDES := -isystem $(top_srcdir)/tools/include/uapi
+
+The issues Peter is seeing regarding KHDR_INCLUDES in the following
+tests can be easily fixed by simply changing the test Makefile. These
+aren't framework related.
+
+kvm/Makefile.kvm:	-I ../rseq -I.. $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
+x86/Makefile:CFLAGS := -O2 -g -std=gnu99 -pthread -Wall $(KHDR_INCLUDES)
+futex/functional/Makefile:INCLUDES := -I../include -I../../ $(KHDR_INCLUDES)
+futex/functional/Makefile:CFLAGS := $(CFLAGS) -g -O2 -Wall -pthread $(INCLUDES) $(KHDR_INCLUDES)
+
+You can make the change to remove the reference to KHDR_INCLUDES.
+If don't have the time/bandwidth to do it, I will take care of it.
+
+If test build fails, you can then figure out how to address that.
+Hopefully build issues related to header changes are infrequent.
+
+thanks,
+-- Shuah
 
