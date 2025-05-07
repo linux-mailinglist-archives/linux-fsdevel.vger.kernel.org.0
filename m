@@ -1,378 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-48430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E5BAAEE30
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 23:53:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E905AAEE80
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 00:10:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A443ADB5A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 21:51:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42FA63B0F6A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 22:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF5B528FFD0;
-	Wed,  7 May 2025 21:50:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50B24290D9E;
+	Wed,  7 May 2025 22:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c587/yhQ"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GqsA1WJ6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E6828FA88;
-	Wed,  7 May 2025 21:50:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBEC824469B
+	for <linux-fsdevel@vger.kernel.org>; Wed,  7 May 2025 22:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746654617; cv=none; b=nftbXejwOHrSjXZa685fo1lOYFV2swNjsHs2DTG/D3OUYkT6jzeM/zBZLud4605ZPgpzJqKo/YROTRZwiXqzW/hZu1MnOYZHkG827Vhuv954VbjiBANhlXpcL2AYCy/R3PDO2Wz6a/q2JzoNEKXqtUu8VLZOwuEIMt7Yj5ut9BI=
+	t=1746655819; cv=none; b=OrbFpmgkCcNAY2nDegA6hGMKHqitPP5GtM30G25zMFOrmYeQK8vnjXNDsUbKFq+KxPDd+ewguoFZG2jvf3JretvCX70Xhwf87W7Lcmjcj0SXIAYZP7TK6Dhb7T2AKebFeQaNC8UtVNb6yisdZXj5coJS0GWFccztOihHY/HMFNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746654617; c=relaxed/simple;
-	bh=U1Bq1469yNv7erJEul5P+4Y4mH40ucnTgrnUKuCoPpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJmjePr0eHMozOPndPcFWCFzLDM245NFNrtXPgQPUhFa7OjNTmi2BofK8nLN6Gpg2Crw/r8p93WYj0FmrxRQeEkDhzss8NgpnbWiVnIINhtllIJJhv8/evLJRDbn7kFkwhQ9vWa7dKRPRuh5C4TwTrLNua+og4Jnam5vrh28Ce4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c587/yhQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57EB0C4CEE2;
-	Wed,  7 May 2025 21:50:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746654615;
-	bh=U1Bq1469yNv7erJEul5P+4Y4mH40ucnTgrnUKuCoPpc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=c587/yhQ7XXLt62AyNX35sO+7BucK5gwgInhOrY6HpMH7xRCF76MmeLd5bzH4h+tB
-	 bJFYsvrWNXgkTBoqExoXmtG4unBbIk9p3LXbOBW4GGa9cbzf+tLe/O/coerGgDqGdg
-	 yALaGfoQE6sH1A7aDBbu2mdyWLN1NapW0RMAoqdgUGI+me4KnzjO1ZW5JzroV0Y5UC
-	 8p6lPKttQorUECGCpW0kPLQFzdPwtusq5buuWmEf0mdob025ckW342XHZtaESRKaD/
-	 SAFB9gMnRRIa1a3TP0vTy5OSz6Ce7bgW+VkSOC20M0Twbz9FUUnrDnX+cn4t3whk6Z
-	 uEYERDB4jXc+Q==
-Date: Wed, 7 May 2025 17:50:14 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@meta.com>,
-	Anna Schumaker <anna@kernel.org>
-Subject: Re: performance r nfsd with RWF_DONTCACHE and larger wsizes
-Message-ID: <aBvVltbDKdHXMtLL@kernel.org>
-References: <370dd4ae06d44f852342b7ee2b969fc544bd1213.camel@kernel.org>
- <aBqNtfPwFBvQCgeT@dread.disaster.area>
- <8039661b7a4c4f10452180372bd985c0440f1e1d.camel@kernel.org>
- <aBrKbOoj4dgUvz8f@dread.disaster.area>
+	s=arc-20240116; t=1746655819; c=relaxed/simple;
+	bh=dYo9vKzMaOxJPsZQzZ1VgsSgO28N/5CS+Q0P9XJ9lsk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ye5kHjDMm/+u/Y5tTUnf7AtzChAQIq2VJ+1Pmvolsbw0JZUjpqNaqECYP3Opgr650rJGCwp9SvlJHkkoXydHjhV52fQ4jXPPp1c/j7akwRkzlH0c6bRBkIEknw1HqiuZO6ONRuAIdTzrYiPtA65PZsRs+qdWh/LFiuw0tEKC3oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GqsA1WJ6; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-708b3cc144cso3906867b3.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 15:10:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1746655817; x=1747260617; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wIiUIWqYEojG1+/v0+6p5gp77rijVYSqMC0AzSN7lbc=;
+        b=GqsA1WJ6PS9iRQmZn3hhsGc7s6WkiSTFhvG9wcx4JpsRJFyhBpblYpzmUTF0ZjuIKU
+         A2jQIZAcaF7WR/rPStJx1kjs6xWFIPhUFeBpu6fmW+kb/gT+72vV0y6FjhnFmDkznZvM
+         7H7/QdM6SovoqDrjHTE1GdJXP1ChjebX832lAYptiLg37t5H4o0mdIsz/ZQg9IFUjHeF
+         7+JQOdL4e81gVUv9mo7cKn8HQ7GWBn9cWMdwVnGlq5qoTeX2EvpuxeotchBB3NJmkBwb
+         rXdqseHK5HlUKJ/lVLbQOXCJexqdCJ5Bvuu/N7MI+Hx477SHUa6Ui6bMHtIWS1VjlVP2
+         6nsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746655817; x=1747260617;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wIiUIWqYEojG1+/v0+6p5gp77rijVYSqMC0AzSN7lbc=;
+        b=PtG2dfgEHMqR4QBt+Kog9k4gT6uZEx2wTYCnrEVL+ZXtqpodBSN+x2GtTrDtTYCthK
+         QF3yXhoKuYK31ifkQxUo0x1uLT4+5eZ47GZ+xBkDb6gf4qXVJoYuv7lwj7QwPWuojaDd
+         k9BRje/SKO7/JodW8xw58ljg15NuCZAmlwmSy7omiY+vV3ACNj7AqNBKs09VB/mUjmTf
+         u9maB2CjpmyiYeU7DbQK72rF/ivJ2eYjjMLRsG+1JqKNJNYgHuzB4wdj+WgrLJm6GO/B
+         R5Zeje2W0qDYOYwqOaJOpaHjyqn8EZubJQ1tqjb0CB0CK01ufuDvtsBMVwtqRJHxxR5w
+         UFoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVw7ES9/4hDnYm1Sxnsl5fo2OshrLSapKtmXvu0EHTDRT8mzJEBNPbLKCqOgwPYh7CW5sMPPiOrJ9MQ8AeA@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkaEKoHnVPi46Zf9gdVfBHSIUrSGyyha8tDIj+2SxFTzsuMl/x
+	+4Hqc0cNo/IvZ5+RPIf4Y7YJ+ZqxNzkV++5O0ANa6TCz1W2zkz+eM98jhItcrKXYhRikN6n4K+h
+	rsHiGB3hyJ1ShhCx18C2f9FWUVNR1G1RIOoJe
+X-Gm-Gg: ASbGnctpCbaUYZUz/nVTACfMtKmR20irzox29TnNNwxr6hHifsHlVvZZRR1R0qQIIQH
+	N44NBQbcO3wVjyoIqjWHAumqoVARX3FQdc3IYoJS8g7Xr9Z/AdjrSaot/I7DF7BeHOhzvXR5Rgl
+	yiJznhnE7kSI2BbJOQwfEKtg==
+X-Google-Smtp-Source: AGHT+IFwYzZ6ciK23Fz2b2pczQZhzZY0A6NhOxfiU/PHNVse4rkWHp1PgMap3HM1k4CDsvnj/47dt1VxNlD3Nz4tgQ4=
+X-Received: by 2002:a05:690c:4988:b0:6f9:ad48:a3c7 with SMTP id
+ 00721157ae682-70a2cf202f3mr19770607b3.21.1746655816808; Wed, 07 May 2025
+ 15:10:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aBrKbOoj4dgUvz8f@dread.disaster.area>
+References: <20250506-zugabe-bezog-f688fbec72d3@brauner> <20250506191817.14620-1-kuniyu@amazon.com>
+ <20250507.ohsaiQuoh3uo@digikod.net>
+In-Reply-To: <20250507.ohsaiQuoh3uo@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 7 May 2025 18:10:06 -0400
+X-Gm-Features: ATxdqUHq8EdIoIcW3r6G08_e5ZHNIf6QppZcl2fZN3xKRzQTjRIXJBOvas1ean0
+Message-ID: <CAHC9VhSXU3yPa6QiFtUpqUpmsAeyhN7jLJDFC_rZ=oRZarZijA@mail.gmail.com>
+Subject: Re: [PATCH RFC v3 08/10] net, pidfs, coredump: only allow coredumping
+ tasks to connect to coredump socket
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, brauner@kernel.org, alexander@mihalicyn.com, 
+	bluca@debian.org, daan.j.demeyer@gmail.com, davem@davemloft.net, 
+	david@readahead.eu, edumazet@google.com, horms@kernel.org, jack@suse.cz, 
+	jannh@google.com, kuba@kernel.org, lennart@poettering.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
+	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, 
+	viro@zeniv.linux.org.uk, zbyszek@in.waw.pl, 
+	linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hey Dave,
+On Wed, May 7, 2025 at 7:54=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+> On Tue, May 06, 2025 at 12:18:12PM -0700, Kuniyuki Iwashima wrote:
+> > From: Christian Brauner <brauner@kernel.org>
+> > Date: Tue, 6 May 2025 10:06:27 +0200
+> > > On Mon, May 05, 2025 at 09:10:28PM +0200, Jann Horn wrote:
+> > > > On Mon, May 5, 2025 at 8:41=E2=80=AFPM Kuniyuki Iwashima <kuniyu@am=
+azon.com> wrote:
+> > > > > From: Christian Brauner <brauner@kernel.org>
+> > > > > Date: Mon, 5 May 2025 16:06:40 +0200
+> > > > > > On Mon, May 05, 2025 at 03:08:07PM +0200, Jann Horn wrote:
+> > > > > > > On Mon, May 5, 2025 at 1:14=E2=80=AFPM Christian Brauner <bra=
+uner@kernel.org> wrote:
+> > > > > > > > Make sure that only tasks that actually coredumped may conn=
+ect to the
+> > > > > > > > coredump socket. This restriction may be loosened later in =
+case
+> > > > > > > > userspace processes would like to use it to generate their =
+own
+> > > > > > > > coredumps. Though it'd be wiser if userspace just exposed a=
+ separate
+> > > > > > > > socket for that.
+> > > > > > >
+> > > > > > > This implementation kinda feels a bit fragile to me... I wond=
+er if we
+> > > > > > > could instead have a flag inside the af_unix client socket th=
+at says
+> > > > > > > "this is a special client socket for coredumping".
+> > > > > >
+> > > > > > Should be easily doable with a sock_flag().
+> > > > >
+> > > > > This restriction should be applied by BPF LSM.
+> > > >
+> > > > I think we shouldn't allow random userspace processes to connect to
+> > > > the core dump handling service and provide bogus inputs; that
+> > > > unnecessarily increases the risk that a crafted coredump can be use=
+d
+> > > > to exploit a bug in the service. So I think it makes sense to enfor=
+ce
+> > > > this restriction in the kernel.
+> > > >
+> > > > My understanding is that BPF LSM creates fairly tight coupling betw=
+een
+> > > > userspace and the kernel implementation, and it is kind of unwieldy
+> > > > for userspace. (I imagine the "man 5 core" manpage would get a bit
+> > > > longer and describe more kernel implementation detail if you tried =
+to
+> > > > show how to write a BPF LSM that is capable of detecting unix domai=
+n
+> > > > socket connections to a specific address that are not initiated by
+> > > > core dumping.) I would like to keep it possible to implement core
+> > > > userspace functionality in a best-practice way without needing eBPF=
+.
+> > > >
+> > > > > It's hard to loosen such a default restriction as someone might
+> > > > > argue that's unexpected and regression.
+> > > >
+> > > > If userspace wants to allow other processes to connect to the core
+> > > > dumping service, that's easy to implement - userspace can listen on=
+ a
+> > > > separate address that is not subject to these restrictions.
+> > >
+> > > I think Kuniyuki's point is defensible. And I did discuss this with
+> > > Lennart when I wrote the patch and he didn't see a point in preventin=
+g
+> > > other processes from connecting to the core dump socket. He actually
+> > > would like this to be possible because there's some userspace program=
+s
+> > > out there that generate their own coredumps (Python?) and he wanted t=
+hem
+> > > to use the general coredump socket to send them to.
 
-Thanks for providing your thoughts on all this.  More inlined below.
+From a security perspective, it seems very reasonable to me that an
+LSM would want to potentially control which processes are allowed to
+bind or connect to the coredump socket.  Assuming that the socket
+creation, bind(), and connect() operations go through all of the
+normal LSM hooks like any other socket that shouldn't be a problem.
+Some LSMs may have challenges with the lack of a filesystem path
+associated with the socket, but abstract sockets are far from a new
+concept and those LSMs should already have a mechanism for dealing
+with such sockets.
 
-On Wed, May 07, 2025 at 12:50:20PM +1000, Dave Chinner wrote:
-> On Tue, May 06, 2025 at 08:06:51PM -0400, Jeff Layton wrote:
-> > On Wed, 2025-05-07 at 08:31 +1000, Dave Chinner wrote:
-> > > On Tue, May 06, 2025 at 01:40:35PM -0400, Jeff Layton wrote:
-> > > > FYI I decided to try and get some numbers with Mike's RWF_DONTCACHE
-> > > > patches for nfsd [1]. Those add a module param that make all reads and
-> > > > writes use RWF_DONTCACHE.
-> > > > 
-> > > > I had one host that was running knfsd with an XFS export, and a second
-> > > > that was acting as NFS client. Both machines have tons of memory, so
-> > > > pagecache utilization is irrelevant for this test.
-> > > 
-> > > Does RWF_DONTCACHE result in server side STABLE write requests from
-> > > the NFS client, or are they still unstable and require a post-write
-> > > completion COMMIT operation from the client to trigger server side
-> > > writeback before the client can discard the page cache?
-> > > 
-> > 
-> > The latter. I didn't change the client at all here (other than to allow
-> > it to do bigger writes on the wire). It's just doing bog-standard
-> > buffered I/O. nfsd is adding RWF_DONTCACHE to every write via Mike's
-> > patch.
-> 
-> Ok, that wasn't clear that it was only server side RWF_DONTCACHE.
-> 
-> I have some more context from a different (internal) discussion
-> thread about how poorly the NFSD read side performs with
-> RWF_DONTCACHE compared to O_DIRECT. This is because there is massive
-> page allocator spin lock contention due to all the concurrent reads
-> being serviced.
+I also want to stress that when we think about LSM controls, we need
+to think in generic terms and not solely on a specific LSM, e.g. BPF.
+It's fine and good to have documentation about how one might use a BPF
+LSM to mitigate access to a coredump socket, but it should be made
+clear in that same documentation that other LSMs may also be enforcing
+access controls on that socket.  Further, and I believe everyone here
+already knows this, but just to be clear, the kernel code should
+definitely not assume either the presence of a specific LSM, or the
+LSM in general.
 
-That discussion started with: its a very chaotic workload "read a
-bunch of large files that cause memory to be oversubscribed 2.5x
-across 8 servers".  Many knfsd threads (~240) per server handling 1MB
-IO to 8 XFS on NVMe.. (so 8 servers, each with 8 NVMe devices).
-
-For others' benefit here is the flamegraph for this heavy
-nfsd.nfsd_dontcache=Y read workload as seen on 1 of the 8 servers:
-https://original.art/dontcache_read.svg
-
-Dave offered this additional analysis:
-"the flame graph indicates massive lock contention in the page
-allocator (i.e. on the page free lists). There's a chunk of time in
-data copying (copy_page_to_iter), but 70% of the CPU usage looks to be
-page allocator spinlock contention."
-
-All this causes RWF_DONTCACHE reads to be considerably slower than
-normal buffered reads (only getting 40-66% of normal buffered reads,
-worse read performance occurs when the system is less loaded).  How
-knfsd is handling the IO seems to be contributing to the 100% cpu
-usage.  If fio is used (with pvsync2 and uncached=1) directly to a
-single XFS then CPU is ~50%.
-
-(Jeff: not following why you were seeing EOPNOTSUPP for RWF_DONTCACHE
-reads, is that somehow due to the rsize/wsize patches from Chuck?
-RWF_DONTCACHE reads work with my patch you quoted as "[1]").
-
-> The buffered write path locking is different, but I suspect
-> something similar is occurring and I'm going to ask you to confirm
-> it...
-
-With knfsd to XFS on NVMe, favorable difference for RWF_DONTCACHE
-writes is that despite also seeing 100% CPU usage, due to lock
-contention et al, RWF_DONTCACHE does perform 0-54% better compared to
-normal buffered writes that exceed the system's memory by 2.5x
-(largest gains seen with most extreme load).
-
-Without RWF_DONTCACHE the system gets pushed to reclaim and the
-associated work really hurts.
-
-As tested with knfsd we've been generally unable to see the
-reduced CPU usage that is documented in Jens' commit headers:
-  for reads:  https://git.kernel.org/linus/8026e49bff9b
-  for writes: https://git.kernel.org/linus/d47c670061b5
-But as mentioned above, eliminating knfsd and testing XFS directly
-with fio does generally reflect what Jens documented.
-
-So more work needed to address knfsd RWF_DONTCACHE inefficiencies.
-
-> > > > I tested sequential writes using the fio-seq_write.fio test, both with
-> > > > and without the module param enabled.
-> > > > 
-> > > > These numbers are from one run each, but they were pretty stable over
-> > > > several runs:
-> > > > 
-> > > > # fio /usr/share/doc/fio/examples/fio-seq-write.fio
-> > > 
-> > > $ cat /usr/share/doc/fio/examples/fio-seq-write.fio
-> > > cat: /usr/share/doc/fio/examples/fio-seq-write.fio: No such file or directory
-> > > $
-> > > 
-> > > What are the fio control parameters of the IO you are doing? (e.g.
-> > > is this single threaded IO, does it use the psync, libaio or iouring
-> > > engine, etc)
-> > > 
-> > 
-> > 
-> > ; fio-seq-write.job for fiotest
-> > 
-> > [global]
-> > name=fio-seq-write
-> > filename=fio-seq-write
-> > rw=write
-> > bs=256K
-> > direct=0
-> > numjobs=1
-> > time_based
-> > runtime=900
-> > 
-> > [file1]
-> > size=10G
-> > ioengine=libaio
-> > iodepth=16
+> > > I just found it more elegant to simply guarantee that only connection=
+s
+> > > are made to that socket come from coredumping tasks.
+> > >
+> > > But I should note there are two ways to cleanly handle this in
+> > > userspace. I had already mentioned the bpf LSM in the contect of
+> > > rate-limiting in an earlier posting:
+> > >
+> > > (1) complex:
+> > >
+> > >     Use a bpf LSM to intercept the connection request via
+> > >     security_unix_stream_connect() in unix_stream_connect().
+> > >
+> > >     The bpf program can simply check:
+> > >
+> > >     current->signal->core_state
+> > >
+> > >     and reject any connection if it isn't set to NULL.
+> > >
+> > >     The big downside is that bpf (and security) need to be enabled.
+> > >     Neither is guaranteed and there's quite a few users out there tha=
+t
+> > >     don't enable bpf.
 >
-> Ok, so we are doing AIO writes on the client side, so we have ~16
-> writes on the wire from the client at any given time.
+> The kernel should indeed always have a minimal security policy in place,
+> LSM can tailored that but we should not assume that a specific LSM with
+> a specific policy is enabled/configured on the system.
 
-Jeff's workload is really underwhelming given he is operating well
-within available memory (so avoiding reclaim, etc).  As such this test
-is really not testing what RWF_DONTCACHE is meant to address (and to
-answer Chuck's question of "what do you hope to get from
-RWF_DONTCACHE?"): the ability to reach steady state where even if
-memory is oversubscribed the network pipes and NVMe devices are as
-close to 100% utilization as possible.
+None of the LSM mailing lists were CC'd so I haven't seen the full
+thread yet, and haven't had the chance to dig it up on lore, but at
+the very least I would think there should be some basic controls
+around who can bind/receive coredumps.
 
-> This also means they are likely not being received by the NFS server
-> in sequential order, and the NFS server is going to be processing
-> roughly 16 write RPCs to the same file concurrently using
-> RWF_DONTCACHE IO.
-> 
-> These are not going to be exactly sequential - the server side IO
-> pattern to the filesystem is quasi-sequential, with random IOs being
-> out of order and leaving temporary holes in the file until the OO
-> write is processed.
-> 
-> XFS should handle this fine via the speculative preallocation beyond
-> EOF that is triggered by extending writes (it was designed to
-> mitigate the fragmentation this NFS behaviour causes). However, we
-> should always keep in mind that while client side IO is sequential,
-> what the server is doing to the underlying filesystem needs to be
-> treated as "concurrent IO to a single file" rather than "sequential
-> IO".
-
-Hammerspace has definitely seen that 1MB IO coming off the wire is
-fragmented by the time it XFS issues it to underlying storage; so much
-so that IOPs bound devices (e.g. AWS devices that are capped at ~10K
-IOPs) are choking due to all the small IO.
-
-So yeah, minimizing the fragmentation is critical (and largely *not*
-solved at this point... hacks like sync mount from NFS client or using
-O_DIRECT at the client, which sets sync bit, helps reduce the
-fragmentation but as soon as you go full buffered the N=16+ IOs on the
-wire will fragment each other).
-
-Do you recommend any particular tuning to help XFS's speculative
-preallocation work for many competing "sequential" IO threads?  Like
-would having 32 AG allow for 32 speculative preallocation engines?  Or
-is it only possible to split across AG for different inodes?
-(Sorry, I really do aim to get more well-versed with XFS... its only
-been ~17 years that it has featured in IO stacks I've had to
-engineer, ugh...).
-
-> > > > wsize=1M:
-> > > > 
-> > > > Normal:      WRITE: bw=1034MiB/s (1084MB/s), 1034MiB/s-1034MiB/s (1084MB/s-1084MB/s), io=910GiB (977GB), run=901326-901326msec
-> > > > DONTCACHE:   WRITE: bw=649MiB/s (681MB/s), 649MiB/s-649MiB/s (681MB/s-681MB/s), io=571GiB (613GB), run=900001-900001msec
-> > > > 
-> > > > DONTCACHE with a 1M wsize vs. recent (v6.14-ish) knfsd was about 30%
-> > > > slower. Memory consumption was down, but these boxes have oodles of
-> > > > memory, so I didn't notice much change there.
-> > > 
-> > > So what is the IO pattern that the NFSD is sending to the underlying
-> > > XFS filesystem?
-> > > 
-> > > Is it sending 1M RWF_DONTCACHE buffered IOs to XFS as well (i.e. one
-> > > buffered write IO per NFS client write request), or is DONTCACHE
-> > > only being used on the NFS client side?
-> > > 
-> > 
-> > It's should be sequential I/O, though the writes would be coming in
-> > from different nfsd threads. nfsd just does standard buffered I/O. The
-> > WRITE handler calls nfsd_vfs_write(), which calls vfs_write_iter().
-> > With the module parameter enabled, it also adds RWF_DONTCACHE.
-> 
-> Ok, so buffered writes (even with RWF_DONTCACHE) are not processed
-> concurrently by XFS - there's an exclusive lock on the inode that
-> will be serialising all the buffered write IO.
-> 
-> Given that most of the work that XFS will be doing during the write
-> will not require releasing the CPU, there is a good chance that
-> there is spin contention on the i_rwsem from the 15 other write
-> waiters.
-> 
-> That may be a contributing factor to poor performance, so kernel
-> profiles from the NFS server for both the normal buffered write path
-> as well as the RWF_DONTCACHE buffered write path. Having some idea
-> of the total CPU usage of the nfsds during the workload would also
-> be useful.
-> 
-> > DONTCACHE is only being used on the server side. To be clear, the
-> > protocol doesn't support that flag (yet), so we have no way to project
-> > DONTCACHE from the client to the server (yet). This is just early
-> > exploration to see whether DONTCACHE offers any benefit to this
-> > workload.
-> 
-> The nfs client largely aligns all of the page caceh based IO, so I'd
-> think that O_DIRECT on the server side would be much more performant
-> than RWF_DONTCACHE. Especially as XFS will do concurrent O_DIRECT
-> writes all the way down to the storage.....
-
-Yes.  We really need to add full-blown O_DIRECT support to knfsd.  And
-Hammerspace wants me to work on it ASAP.  But I welcome all the help I
-can get, I have ideas but look forward to discussing next week at
-Bakeathon and/or in this thread...
-
-The first hurdle is coping with the head and/or tail of IO being
-misaligned relative to the underlying storage's logical_block_size.
-Need to cull off misaligned IO and use RWF_DONTCACHE for those but
-O_DIRECT for the aligned middle is needed.
-
-I aim to deal with that for NFS LOCALIO first (NFS client issues
-IO direct to XFS, bypassing knfsd) and then reuse it for knfsd's
-O_DIRECT support.
-
-> > > > I wonder if we need some heuristic that makes generic_write_sync() only
-> > > > kick off writeback immediately if the whole folio is dirty so we have
-> > > > more time to gather writes before kicking off writeback?
-> > > 
-> > > You're doing aligned 1MB IOs - there should be no partially dirty
-> > > large folios in either the client or the server page caches.
-> > 
-> > Interesting. I wonder what accounts for the slowdown with 1M writes? It
-> > seems likely to be related to the more aggressive writeback with
-> > DONTCACHE enabled, but it'd be good to understand this.
-> 
-> What I suspect is that block layer IO submission latency has
-> increased significantly  with RWF_DONTCACHE and that is slowing down
-> the rate at which it can service buffered writes to a single file.
-> 
-> The difference between normal buffered writes and RWF_DONTCACHE is
-> that the write() context will marshall the dirty folios into bios
-> and submit them to the block layer (via generic_write_sync()). If
-> the underlying device queues are full, then the bio submission will
-> be throttled to wait for IO completion.
-> 
-> At this point, all NFSD write processing to that file stalls. All
-> the other nfsds are blocked on the i_rwsem, and that can't be
-> released until the holder is released by the block layer throttling.
-> Hence any time the underlying device queue fills, nfsd processing of
-> incoming writes stalls completely.
-> 
-> When doing normal buffered writes, this IO submission stalling does
-> not occur because there is no direct writeback occurring in the
-> write() path.
-> 
-> Remember the bad old days of balance_dirty_pages() doing dirty
-> throttling by submitting dirty pages for IO directly in the write()
-> context? And how much better buffered write performance and write()
-> submission latency became when we started deferring that IO to the
-> writeback threads and waiting on completions?
-> 
-> We're essentially going back to the bad old days with buffered
-> RWF_DONTCACHE writes. Instead of one nicely formed background
-> writeback stream that can be throttled at the block layer without
-> adversely affecting incoming write throughput, we end up with every
-> write() context submitting IO synchronously and being randomly
-> throttled by the block layer throttle....
-> 
-> There are a lot of reasons the current RWF_DONTCACHE implementation
-> is sub-optimal for common workloads. This IO spraying and submission
-> side throttling problem
-> is one of the reasons why I suggested very early on that an async
-> write-behind window (similar in concept to async readahead winodws)
-> would likely be a much better generic solution for RWF_DONTCACHE
-> writes. This would retain the "one nicely formed background
-> writeback stream" behaviour that is desirable for buffered writes,
-> but still allow in rapid reclaim of DONTCACHE folios as IO cleans
-> them...
-
-I recall you voicing this concern and nobody really seizing on it.
-Could be that Jens is open changing the RWF_DONTCACHE implementation
-if/when more proof is made for the need?
-
-> > > That said, this is part of the reason I asked about both whether the
-> > > client side write is STABLE and  whether RWF_DONTCACHE on
-> > > the server side. i.e. using either of those will trigger writeback
-> > > on the serer side immediately; in the case of the former it will
-> > > also complete before returning to the client and not require a
-> > > subsequent COMMIT RPC to wait for server side IO completion...
-> > > 
-> > 
-> > I need to go back and sniff traffic to be sure, but I'm fairly certain
-> > the client is issuing regular UNSTABLE writes and following up with a
-> > later COMMIT, at least for most of them. The occasional STABLE write
-> > might end up getting through, but that should be fairly rare.
-> 
-> Yeah, I don't think that's an issue given that only the server side
-> is using RWF_DONTCACHE. The COMMIT will effectively just be a
-> journal and/or device cache flush as all the dirty data has already
-> been written back to storage....
-
-FYI, most of Hammerspace RWF_DONTCACHE testing has been using O_DIRECT
-for client IO and nfsd.nfsd_dontcache=Y on the server.
-
-Thanks for the interesting discussion!
-Mike
+--=20
+paul-moore.com
 
