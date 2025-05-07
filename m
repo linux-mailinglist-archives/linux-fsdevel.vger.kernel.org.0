@@ -1,385 +1,354 @@
-Return-Path: <linux-fsdevel+bounces-48343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48346-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF36AADCD5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 13:03:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AC90AADCE0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 13:05:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 257847BE26E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 11:01:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29F6C9864F1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 11:04:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716E6215F49;
-	Wed,  7 May 2025 11:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563CE21A45D;
+	Wed,  7 May 2025 11:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NQopF+6R"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NQQFbPwM";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="QBbMSfGI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87AF20B1F4;
-	Wed,  7 May 2025 11:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746615781; cv=none; b=qf8ie8QansAO0lMjyOyesqamTRjUqqOdB91BHbrOPK7tIht6kcAawRY9ml11xh6C7xtLB2/2xzcPTzG/9DfV1QUm6oS/haWgwmX1Url8UhlJQPICF9vzWrekMkJjQxGu5ppVCKhQpgkJtpbDRWUQhduir64OYaKVlAWd1NlrB0w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746615781; c=relaxed/simple;
-	bh=co+3odHbt1zWjccEgbz6zjoHKiJ+hnJ1gCjdF7eOJXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bu86qorGbRp4WtGYDnTKEmQaVnSxrFPNkdZr4UA/RnDv2fCw7WaR+SiYTPlmFnqs7R9FrXIQUz5aFiGygZfwKCamsi89sorAKh+/fp2saUFwu48D/SSywtfqb7JXi60iA5gUJI3sifKCebRO0KfNEuAByUrMyRir+4yxbI3fhKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NQopF+6R; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ac29fd22163so1132258366b.3;
-        Wed, 07 May 2025 04:02:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAB3215798;
+	Wed,  7 May 2025 11:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746615883; cv=fail; b=B1o8iasXlRPvU/tnWfSJ0dx7MY3NRLebzTawBrbnefP/z9eAngq0kYke61FdFIR0JNc8gtdlvxtngWUwr93xI2y1OqvCAMVuktGlqOJ5tio/t5Nn/N3NiSDY97ygGruE7kpd6aLftys6Gt1E5DD+VP0X8cx9qTq8bS/trprtK2Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746615883; c=relaxed/simple;
+	bh=FBeV61wQTSG839UsRLSclI+6k2hbf8oY2OeARCr3zZ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=AL963n9R+WomCHH1urDw75TB5bKxZTipE8NUTK/7ltIUQKaaaFKRI+1f46lLdM1BC17dNrWrzAxbsCPysIkp0LqynLTcy4S8XTO3gVrtBAn4S+T4wMe43PoVT1JWC0kFPEMTCj0WE5HtQd9NfmXcapfz8w/jLXbRSAh5n/Pcr88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NQQFbPwM; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=QBbMSfGI; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 547AqjR8029934;
+	Wed, 7 May 2025 11:04:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=corp-2025-04-25; bh=j/xOL2PRdzuFZKl5
+	i//TEdQk3m8y1roLZyPmZnfawL4=; b=NQQFbPwM20u5wC7JRIo6s+rNtrIBhSjQ
+	GLBIeVhALKZkjXvP22zquc26pRA8isvZ7RUGhM4eb31cK0q8Klu0JLoJGRdZ1W/S
+	YX3KufS4X4mwgEqOvIOh0hpppwHAGN7YIqVsRsl+O7KvxvbidNlHmCuvrl8oEbrW
+	V6AHiiitnU+/FtutJYBkSjl3APzFdgs30XSkCnCgLdeR6hP5LyMNxa0NnoRcDTCF
+	I+f/x32LONT1I8ruYycFd42YFie6LuHHZoS/9gw99+31xExbhRLRLmW7qD2xylVs
+	ba4Pwoe6GPEJFNEKgDDFjuR6Ovyg+6kTBVeJStkkI9+Fzw+Op+3ttQ==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46g652r0rx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 07 May 2025 11:04:05 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 547AgY0e035437;
+	Wed, 7 May 2025 11:04:04 GMT
+Received: from bl2pr02cu003.outbound.protection.outlook.com (mail-eastusazlp17010006.outbound.protection.outlook.com [40.93.11.6])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 46d9ka95kd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 07 May 2025 11:04:04 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qk6ANHKzNl0mzwlLD68kyfi/aH1Z1btdD/4fgLRCX6UoyxdNbgR982DkGk8+20p09MGa4+xlMXnkw/4wJg351ncJ9mdFeBX8Ihq9WTU4Pe79ksyrwRem/QOtOURFL6Y5ljYXZtTXDOqjlUxa73TQtcvVyyq8QlpKPW4tl/T1wOVpa7ENsNtomhEurIsjomhekrEDqvDanGvdViCIH/9Cln9Wt8VO3MinlAhr81/8CHExR7AZ0ziZ9Uz/nKZSwv4baZ4PxRTSG0/Iu/uLW+rYHW+JVPoECXAoEu1r/hDTJT7WeczyKR8v0Ds+z9xSpbhV5k+hsvkMVTWJy8Qxw5FGhw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j/xOL2PRdzuFZKl5i//TEdQk3m8y1roLZyPmZnfawL4=;
+ b=UGNVlfjfnH+xj00mBOIu5NcY2bMEXohwL+X8Bb0jfDGIJnYnWA9E1Q7qwhdM1H5+hyt8mzLOQzzhrP8Pz9TBLkn6Xceyr5wvwX2KGSRmQ7569G+fbVsnhxq7O2/yoM2KtNSnQzozjrC4lIRAu3SST0V6g49M08erYdH8LEdfx2Um4YHaERBButPJRhSJ7GkjauCjzKR/zjW1OQ1PoDMpXWGZB9CB7tfeRMhW5vRhl9VRhCOk4gAg5bYcbwotlRzJlrkcMD2JKTzOeHZwGh0jPvglnRE9PLIDDkAuSXxmJVpoVqJ3cLlba3VwrkUrKASODwaL28Cx242SQO9sy02X9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746615778; x=1747220578; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wA1RCs9R0+wjorugvs8gPuBKuJdfVEv7Kl8WM15CE3I=;
-        b=NQopF+6RARY+FGEcQjHlYWqn2PAL1+OAsbgKB3LLjTC6SfCw2b2Z/uoibhloYiPcIc
-         gH5i6VVTWmC/9qKaDYkWnsec6bnMUTHmw+jABJlhLTOiiUOpow+3BDLtnTzmA1dXZ6e4
-         rwwJMgI+4KgcwIRCFlU3GEdTFW4Xmg/f/atSnVHfJuqDJYCLA7SVy/+/3U8AW5UYB4cu
-         SaO1SSDGwOs62I2U05AZGNATzEYT3Ny1Rz5hn5OhdDmcOwqRTCymbi+mdDBv6EKS/hsf
-         Hp7bJDqWNPOHRy+rhG5mdZk7DTtnnR4OgizY6X5085zdc3tzSZu8/OGpiVoMQs75dxci
-         sQ+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746615778; x=1747220578;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wA1RCs9R0+wjorugvs8gPuBKuJdfVEv7Kl8WM15CE3I=;
-        b=Ndz0ZcxryJhpGjExl78QbLVKvQfs63CynoKy6vAMuVXNWiDmHtLihyAB8R9o3IWWo+
-         JHeGSnaiWRlTbk/veFhq1DL8oPc7dRZLGkSO2aqdoMIpQnLIHGtw7fLAPE4kx2wf8rKy
-         EeX3s6pF/BDdRGyIOZXcz9Twr+VweZvaaMIlfmaC+kzNsBsdgUICfJtGRoG5aBiCYlPv
-         5yRxPc38AF+ISj6t72yUyzp56i+blRjafLxctnD38Ttzyi1yZkt7xCuDscmsiJSTFWTH
-         MIXc+qLNwwUqSS0qRaeb0y4beQqFm3rPpSfl1gWbkNVzeacjhlBQI3lNHuxHlB+Fo6U8
-         QM/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWegopoWlO7Hv5rvr1FMVmbrasoQJ6h57JHB3BgqL7aqx/YukOhLQs1CGBOed2y0V7tQRCoqSO1ng9e7OB7@vger.kernel.org, AJvYcCWt0WU9j6AVtzphEIdCmB4W7kFcedALrcNzbIROusOE3OXU88kVfB46PukhYzc8CXdImh67ou+faq/GQRiT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKM3yheZFdByXgs7J552KnpWy0b2NuxI1h09HHccXg6scKzgyf
-	oXO4S17vkTkoHFnHLUXD+IhK+byt7RF8B+yP6FcqXP8mIiYRjl4/VOAj6LLXeD2dTI6we/6v4zL
-	Gc7uDxpVB0JeKqPzjLwDVopORz54=
-X-Gm-Gg: ASbGnctGBo+sScpaq+CJIg5+nlyWqaYgYWZntJV7VtsIhzXhHIbgOmReJs8jWbC2Ua7
-	UaLR88pWui5fET3UVLykKYp2fW9PuxOg8PfIB0Ag+ytoaZtjywn7kgsGVzaL6Lqt72GQcMwFub0
-	tp/VOm4jBTIU9jc9YqAkHxSg==
-X-Google-Smtp-Source: AGHT+IGmJOcljDg0qVKwGACkmSUln0pLwi7bS9k+5ZtNAzBUFtBbohM4Qbz0zcYTxJcsS9avGrCQ8ecueXjEzNrT8G8=
-X-Received: by 2002:a17:907:7b8d:b0:aca:d6f2:c39e with SMTP id
- a640c23a62f3a-ad1e8c14806mr257565166b.23.1746615777361; Wed, 07 May 2025
- 04:02:57 -0700 (PDT)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j/xOL2PRdzuFZKl5i//TEdQk3m8y1roLZyPmZnfawL4=;
+ b=QBbMSfGIDa1jv17n1csDUkuR9I1wH9da0H97sOtnVhi5A4dWzIAvqV/rtFtUJqk6NuG9WVK2YORw6g+yQLqQ0eHacpPhMOYmPnmGKK3urWYvF6TaaiqEwCN4/nmN8mmUr0lQP5YkqQGsYXOGBxL/0xoKMNnlSL6zLk2QguN898I=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by PH7PR10MB6251.namprd10.prod.outlook.com (2603:10b6:510:211::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Wed, 7 May
+ 2025 11:03:56 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8699.022; Wed, 7 May 2025
+ 11:03:56 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
+        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
+        Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 0/3] eliminate mmap() retry merge, add .mmap_prepare hook
+Date: Wed,  7 May 2025 12:03:33 +0100
+Message-ID: <cover.1746615512.git.lorenzo.stoakes@oracle.com>
+X-Mailer: git-send-email 2.49.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P265CA0287.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:38f::15) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507032926.377076-2-chenlinxuan@uniontech.com>
-In-Reply-To: <20250507032926.377076-2-chenlinxuan@uniontech.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 7 May 2025 13:02:45 +0200
-X-Gm-Features: ATxdqUFCvpNsMtuCuTXY_Dfsfcttlem-5BEXzZXnYCBOxHIphLZbzSLrdptFOIg
-Message-ID: <CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com>
-Subject: Re: [RFC PATCH] fs: fuse: add backing_files control file
-To: Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH7PR10MB6251:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5fad5881-6f21-4c76-98af-08dd8d56dcbc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?0DCdhZIpzbfvaK5NogAPLYa/EhBSgS63tr6r6CYcMGsYjVMzr2GEf121Qdq0?=
+ =?us-ascii?Q?+Ero1/AAKhYtwY516EomTX8o6RaeIlUbnB9i4dJPby87Jx+b0kNqwvdxCK9e?=
+ =?us-ascii?Q?xGbx3Mow02PCObjumlnlGPv/2fH88xBYJYPVMwyn5zZWkGmvzaRp9pbsQw4u?=
+ =?us-ascii?Q?jHfL3chfJg/zb4XpA8UCA/Acr+ahujR2rbLnI4pKLNfv2BgdopYZ4+roKmaT?=
+ =?us-ascii?Q?Hycbl29jdmRnKpDAxNzQQ0fzPCNibS5iFXaQakhW7rwz5rU11bnc4jck/IA8?=
+ =?us-ascii?Q?fpe/XJCgokjCypZrxFK7nQkKB8yx29PaK647u5fLQJCcgpfyXwAuML2a3Y1/?=
+ =?us-ascii?Q?SyOk8a0dXOEmeKF0K1tlNAfvFinMg6rFiA7JUZQl/IaGnZhDLO59FokbUiqb?=
+ =?us-ascii?Q?qBNpUXzQ1uj2uSyV0vHeBCHICov1qnhh+QePLiBjA9gIuKs8cVa1vQ8phVJS?=
+ =?us-ascii?Q?kKzNEUMOwLNw/Y0RQNViVLcJ++a7MEf5MTbaaG6kVTwW+x2z14o764Ifo1if?=
+ =?us-ascii?Q?QZIUnRRdQ6+aUB4FZuPPzqWwYueOQrw0e07M209HTMs2uHPvwcoceKkaeYNl?=
+ =?us-ascii?Q?OUfr4NJSwwIp+QqFse5JHWGQvnV+Kre4b0dKzJ1sv3Co69HHPcN5lWrltZAZ?=
+ =?us-ascii?Q?5rFC5MFYMEyDWxk8PWipWdtmsdAjOn1nidiGa63YYHCDa0oMsBGVeHhlwT95?=
+ =?us-ascii?Q?rVZkoc6lZitKR6Ggm700flP5EYlSR0q1KG1RuMsbOZpSyN0yd9brjBcvllJ8?=
+ =?us-ascii?Q?g4wfHpsCkRSPWmMn5y+CACdqz2Y/9gdetu07eWI/QNA1+J7iXl7iHTieT7C8?=
+ =?us-ascii?Q?QBZd8cua5VCnWzQD8vvx0CSfsXBNFH/85S8qwBfHmjueEoWbkfIAYfg8oqAc?=
+ =?us-ascii?Q?bDYdxehV1EKhLIi/0Hn8zdOfDYlh3v+v+sIKXPcEUM4yRW0o8GPu3o7kdgc+?=
+ =?us-ascii?Q?+ZGYdH0PyChrjDNuUZfxf1L/hrVHLdX5yLwzVXJdHYmIKJMXf5ySmtjab4Ya?=
+ =?us-ascii?Q?BwAxxxGRWRgGFb0/X/URa82cBLYn6xtxb9O3zd9K0AJo2bzJCYQXNSEC/d9N?=
+ =?us-ascii?Q?T+yF/fphr0R0iUAb4TuiIEOKLa1/MRza1Vs/ZdEQzxEgyal6uDcGRA3YqqYP?=
+ =?us-ascii?Q?bYkLthuePhlhOfrXoSQui1zSTghA8MQdbWk6MNpPr8cpZ4x8yLz4kk4SFAaY?=
+ =?us-ascii?Q?yc8aZK3RXm9EBadb9koDwcfCDQfJJ5DBVPlJUYE//xVwcIkLu63EUFYvzS23?=
+ =?us-ascii?Q?rw4xLoQCi+G4a9g4e+OVnJtztTevWAXFShnpKjJorYWw4ZDEwSfO39WX67Gc?=
+ =?us-ascii?Q?c21++TBoilqCMgzAeb0KhjJJ/TPOsfiq1DUblkn93jk65ErQFm0/xTOrp0xE?=
+ =?us-ascii?Q?wL6z50FIzYCBJ7CTPH+1eQvFYLHuhcc/UeZWDh8NCn0oCypHDp3+6c+9y/yS?=
+ =?us-ascii?Q?Q3sXlL5GpiQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?38nFNzhhhFqihcRt7imnUR0rt3unVCHXC5tgJUSuaUcbNqyCA2EkieexLmpc?=
+ =?us-ascii?Q?6WNRuTdOLLGyPFOe9pQNdGnWDFamY9oxiYR3ZUh1w5reT1/yeVeRf8bkR1oC?=
+ =?us-ascii?Q?pj0JFTjBLxCcYcbgCoRvCck42FIOysERUJHbfcVsYz+tAbuQEO0zyg+Qzal6?=
+ =?us-ascii?Q?Yc8KinTboQWS7uhwlpJk/AZcyEezfPkkIAeAkTUAI/UJ3hgHnJfkvF5nQThT?=
+ =?us-ascii?Q?UsVQq4/cb2ekIXVEgrecQJyziZd5Ga47rrueD3dHTj9Jjilr0QKNC86Hogoa?=
+ =?us-ascii?Q?2rNTZYS5ceG41w3F4x9CjvycFHf5IZWUahVR0Hszzm6mHAdfPTJwR5ZQPETm?=
+ =?us-ascii?Q?J6RfsRi6B6srWNJYHXMjO4j76rBfep7s9sbMTUFqeKf4ZW0CFdZT1uaZGpqD?=
+ =?us-ascii?Q?jmikP5D+zRK52GHXGQ7Gro8+szddQabUcfi8EHe4Ey/UB1a9rv3LoqrrWhuv?=
+ =?us-ascii?Q?H/c89VKHd0mDGhtowDV9Q18X/tqqevyNARl+rT8gx/ipnHNrCgn0yASUxm1c?=
+ =?us-ascii?Q?TWghvBwSdzaLrOV1b14gk9etOn9LPjKLmmUkx48ZezBqUGl/7CmzAiiRDWSq?=
+ =?us-ascii?Q?vc+AAeo4HWdjF7Qp/wSeEdJ1QCgJs99uV9cffnUN4tlA2I5v5vCJkcnAuPBu?=
+ =?us-ascii?Q?n1h/dASZsgp/1iZ5Cb3c+BltDVi8ReGwnOzZS2zcIV93hkquy47CumifywfD?=
+ =?us-ascii?Q?NOLJR7JVQOTu1NGlNk3rxqe6HLOGz3LRZFrCZn21RD3BWNm6hwpMBP/+cFEB?=
+ =?us-ascii?Q?Cl798L87SVmA2cu1RjjtYnrgkiowkcfJflM9CPW4qf0b7FLvwJK6WM+acMpW?=
+ =?us-ascii?Q?qTkIYyvpIxomtj4tVJAoClFw1C55FZR4+aOfRSm4jXBkojHHAU+uYAOcTixl?=
+ =?us-ascii?Q?XPXrRuPkORPsg8xnYrAGiqAXnrevi242WdOpU5ItJCsKwPQik2ZwN5V2mTSh?=
+ =?us-ascii?Q?GMUADoJpgRYfIozczyWl4+1BQp+txfyuvYSRnOjuaif34A+8TILsRuyy6t+C?=
+ =?us-ascii?Q?qMk1zC121ZaOLLmYOfN0a8neSn7W013IuhdbeOtbobrozbMjnCJhwPMwu8us?=
+ =?us-ascii?Q?8iHFW8VYXsltbLR7N3NY55BPlKAguv3gR/syiKO0iaBTGKahTkc2agYX6NkH?=
+ =?us-ascii?Q?FYQJd/Ev9Isx5mkghJ4Zi3FToM4Z+iu8/LcTx7X0/NjUnMPucy8tQ5Y82qNw?=
+ =?us-ascii?Q?bv2Ed7Vgf1gxpeDsIMjcYb8Ft7N7ppAkmdtbSWkmX3i7yKD7IS94wAmd672e?=
+ =?us-ascii?Q?dmuzchCu5YhX6q0g+8+YdnsH6/36WEcz0F8QwV5vi+3rbxyN37K6Cmpxokbz?=
+ =?us-ascii?Q?2EcuaIFM6ApbwtBoKhBxkxLz1S9rpObSyMbzsbLcRA0fsRnr4TrATm9KPSU/?=
+ =?us-ascii?Q?qjvHfftFk345GKjHt6QzLPtTO81aJq5BBDyICZUSodCzROTzN6MNmWTG3kkQ?=
+ =?us-ascii?Q?y52GZ6eYlcsONll1pY6FeyYZrqlgy2TEdeY3+mDVeCtiQrHk1eb94dFsyZpP?=
+ =?us-ascii?Q?L6fI4YCqjqjJTgKdjdwoXR8DJiOjoH0iZ+cYHNzaGGrW3vxFlPsTRmRPLQZI?=
+ =?us-ascii?Q?GuoMTVs8TnTaWZBqXC8VOjxhkKWsX4W28WwkFGksvNsrvRMH3ohgk8tTYIMT?=
+ =?us-ascii?Q?pw=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	R+e0D8jF4kE3q4UEH+BxZ5G6OuAXSpYkTPuYqbRFqsfk1KEdNI8povJeSWCt1wcqUujbWC+D0DYK6uwjL3lS18lF2DICgIgBNn/kgLa03FsA80DNgT1sKBUQNQUxZGvZhsU+NKFgLUp0N5Od7MeDOmihbIMHxkHX3mM43biyZmF6hxnnkikywcP8VOjTCfFPM5qGU9lj/aV0KbAyypHk9f9Q1w15qzqpgyQYGdBxc4pfKliMkdhW4fC1/qzJD7KplRAikKZZjY5YeG7PRL8+ipaoeMG+96B/A49awFhUTD6/Qw4ttFhL6fuY32/OWZ30O0En6BPib+cqCeUnSn6BeZgUwqsKxGin7ULbBgWVBALJeDxd12ZIpDh8bY/mUMROU7C5XtC9oOYD6SWsnHGDMfLT1BEU8jBA2rMhmJCTF0i14Y3avS0m9UILN+OkyNU7zcM8o7tlCpmTqmFIwo0lgFtZo3BWpLlqEsRkYvD5xT//WwSutDH3M2WO7uBKWp7H5D6oQw0USgigeZMEchJ8sdmiAwUHAJ/buuYYJmsyeVXa1tn3DTf9758s6rvFvyViNtUu3BxXzgypG7QY99SSSrNuqMxZUH/GP7mP7Es35FQ=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5fad5881-6f21-4c76-98af-08dd8d56dcbc
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2025 11:03:56.7675
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ylc1kHr7TptxvS3H9NUDqgJZ36eI6i8y8CnMa0zXwjeEC7pxZDCb1PzFLMUVx0funj0Bq1gElss693kbv/C7nF7Oole98MsFF9Yr+UqOYB0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB6251
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-07_03,2025-05-06_01,2025-02-21_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 phishscore=0
+ malwarescore=0 spamscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2504070000 definitions=main-2505070103
+X-Authority-Analysis: v=2.4 cv=Va/3PEp9 c=1 sm=1 tr=0 ts=681b3e25 b=1 cx=c_pps a=WeWmnZmh0fydH62SvGsd2A==:117 a=WeWmnZmh0fydH62SvGsd2A==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
+ a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=fYcPrh1RY6OB40ofYu8A:9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA3MDEwMyBTYWx0ZWRfX0JDcaZhuqpVc Jly+4lBoEOmfB8ze5hmqXcSqqjVwsUg0Ff/ivXYBEVNgm/P9OUIaVbHmF7j7dkj/5xegFab8pX+ 8SCvV7bmTsBiuYMu/6NKxYESR3LahCKRC3mxbEGzYs2GsvZGESopk2TBc+WG3G2ccQTIFs0YjZb
+ 4loYv7r2iQ8Ok897V9Ak9WbBb3GT7soV/9U9BNMconzuPKyrFb4ePHqjzrLxOlerY3SIwHW7WGl J9MGHIThnuKQsAABzp9uQazsM2rC75v3quvHCGjl1B8f4AWdYyWRsfmNemiqQ56nMlGT6AMzWsA /RQCztXXjZ3KxlrHqOJxILaNM4PEFZRNrJEeagz+eXmtFUHAe0bIUSjMh/e9438qwZfyG8Gh7in
+ t1hyGxHlM1tMCvidxy6T0lz6DKYze6D+lJ6Drb9ZpnCNhok9gNfoRTzR9WTWa57A8XmSHh/j
+X-Proofpoint-ORIG-GUID: QkuyDdL_YXeygzJi4bzrEFq5hdOHA7KT
+X-Proofpoint-GUID: QkuyDdL_YXeygzJi4bzrEFq5hdOHA7KT
 
-On Wed, May 7, 2025 at 5:29=E2=80=AFAM Chen Linxuan <chenlinxuan@uniontech.=
-com> wrote:
->
-> Add a new FUSE control file "/sys/fs/fuse/connections/*/backing_files"
-> that exposes the paths of all backing files currently being used in
-> FUSE mount points. This is particularly valuable for tracking and
-> debugging files used in FUSE passthrough mode.
->
-> This approach is similar to how fixed files in io_uring expose their
-> status through fdinfo, providing administrators with visibility into
-> backing file usage. By making backing files visible through the FUSE
-> control filesystem, administrators can monitor which files are being
-> used for passthrough operations and can force-close them if needed by
-> aborting the connection.
->
-> This exposure of backing files information is an important step towards
-> potentially relaxing CAP_SYS_ADMIN requirements for certain passthrough
-> operations in the future, allowing for better security analysis of
-> passthrough usage patterns.
->
-> The control file is implemented using the seq_file interface for
-> efficient handling of potentially large numbers of backing files.
-> Access permissions are set to read-only (0400) as this is an
-> informational interface.
->
-> FUSE_CTL_NUM_DENTRIES has been increased from 5 to 6 to accommodate the
-> additional control file.
->
-> Some related discussions can be found at:
->
-> Link: https://lore.kernel.org/all/4b64a41c-6167-4c02-8bae-3021270ca519@fa=
-stmail.fm/T/#mc73e04df56b8830b1d7b06b5d9f22e594fba423e
-> Link: https://lore.kernel.org/linux-fsdevel/CAOQ4uxhAY1m7ubJ3p-A3rSufw_53=
-WuDRMT1Zqe_OC0bP_Fb3Zw@mail.gmail.com/
->
+During the mmap() of a file-backed mapping, we invoke the underlying driver
+file's mmap() callback in order to perform driver/file system
+initialisation of the underlying VMA.
 
-remove newline
+This has been a source of issues in the past, including a significant
+security concern relating to unwinding of error state discovered by Jann
+Horn, as fixed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
+error path behaviour") which performed the recent, significant, rework of
+mmap() as a whole.
 
-> Cc: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
->
-> ---
-> Please review this patch carefully. I am new to kernel development and
-> I am not quite sure if I have followed the best practices, especially
-> in terms of seq_file, error handling and locking. I would appreciate
-> any feedback.
+However, we have had a fly in the ointment remain - drivers have a great
+deal of freedom in the .mmap() hook to manipulate VMA state (as well as
+page table state).
 
-Very nice work!
+This can be problematic, as we can no longer reason sensibly about VMA
+state once the call is complete (the ability to do - anything - here does
+rather interfere with that).
 
->
-> I have do some simply testing using libfuse example [1]. It seems to
-> work well.
+In addition, callers may choose to do odd or unusual things which might
+interfere with subsequent steps in the mmap() process, and it may do so and
+then raise an error, requiring very careful unwinding of state about which
+we can make no assumptions.
 
-It would be great if you could add basic sanity tests to libfuse
-maybe in test_passthrough_hp(), but I do not see any tests for
-/sys/fs/fuse/connections.
+Rather than providing such an open-ended interface, this series provides an
+alternative, far more restrictive one - we expose a whitelist of fields
+which can be adjusted by the driver, along with immutable state upon which
+the driver can make such decisions:
 
-I also see that there is one kernel selftest that mounts a fuse fs
-tools/testing/selftests/memfd
-maybe that is an easier way to write a simple test to verify the
-/sys/fs/fuse/connections functionally.
+struct vm_area_desc {
+	/* Immutable state. */
+	struct mm_struct *mm;
+	unsigned long start;
+	unsigned long end;
 
-Anyway, I do not require that you do that as a condition for merging this p=
-atch,
-but I may require that for removing CAP_SYS_ADMIN ;)
+	/* Mutable fields. Populated with initial state. */
+	pgoff_t pgoff;
+	struct file *file;
+	vm_flags_t vm_flags;
+	pgprot_t page_prot;
 
->
-> [1]: https://github.com/libfuse/libfuse/blob/master/example/passthrough_h=
-p.cc
-> ---
->  fs/fuse/control.c | 129 +++++++++++++++++++++++++++++++++++++++++++++-
->  fs/fuse/fuse_i.h  |   2 +-
->  2 files changed, 129 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/fuse/control.c b/fs/fuse/control.c
-> index 2a730d88cc3bd..4d1e0acc5030f 100644
-> --- a/fs/fuse/control.c
-> +++ b/fs/fuse/control.c
-> @@ -11,6 +11,7 @@
->  #include <linux/init.h>
->  #include <linux/module.h>
->  #include <linux/fs_context.h>
-> +#include <linux/seq_file.h>
->
->  #define FUSE_CTL_SUPER_MAGIC 0x65735543
->
-> @@ -180,6 +181,129 @@ static ssize_t fuse_conn_congestion_threshold_write=
-(struct file *file,
->         return ret;
->  }
->
-> +struct fuse_backing_files_seq_state {
-> +       struct fuse_conn *fc;
-> +       int pos;
+	/* Write-only fields. */
+	const struct vm_operations_struct *vm_ops;
+	void *private_data;
+};
 
-It will be more clear to call this 'backing_id'.
-It is more than an abstract pos in this context.
+The mmap logic then updates the state used to either merge with a VMA or
+establish a new VMA based upon this logic.
 
-> +};
-> +
-> +static void *fuse_backing_files_seq_start(struct seq_file *seq, loff_t *=
-pos)
-> +{
-> +       struct fuse_backing_files_seq_state *state =3D seq->private;
-> +       struct fuse_conn *fc =3D state->fc;
-> +
-> +       if (!fc)
-> +               return NULL;
-> +
-> +       spin_lock(&fc->lock);
-> +
-> +       if (*pos > idr_get_cursor(&fc->backing_files_map)) {
+This is achieved via new file hook .mmap_prepare(), which is, importantly,
+invoked very early on in the mmap() process.
 
-This won't do after the ida allocator has wrapped up back to 1,
-it will not iterate the high ids.
+If an error arises, we can very simply abort the operation with very little
+unwinding of state required.
 
-Please look at using idr_get_next() iteration, like bpf_prog_seq_ops.
+The existing logic contains another, related, peccadillo - since the
+.mmap() callback might do anything, it may also cause a previously
+unmergeable VMA to become mergeable with adjacent VMAs.
 
-With that change, I don't think that you need to take the spin lock
-for iteration.
-I think that you can use rcu_read_lock() for the scope of each
-start(). next(), show()
-because we do not need to promise a "snapshot" of the backing_file at a spe=
-cific
-time. If backing files are added/removed while iterating it is undefined if=
- they
-are listed or not, just like readdir.
+Right now the logic will retry a merge like this only if the driver changes
+VMA flags, and changes them in such a way that a merge might succeed (that
+is, the flags are not 'special', that is do not contain any of the flags
+specified in VM_SPECIAL).
 
-> +               spin_unlock(&fc->lock);
-> +               return NULL;
+This has also been the source of a great deal of pain - it's hard to
+reason about an .mmap() callback that might do - anything - but it's also
+hard to reason about setting up a VMA and writing to the maple tree, only
+to do it again utilising a great deal of shared state.
 
-Not critical, but if you end up needing a "scoped" unlock for the
-entire iteration, you can use
-the unlock in stop() if you return ERR_PTR(ENOENT) instead of NULL in
-those error conditions.
+Since .mmap_prepare() sets fields before the first merge is even attempted,
+the use of this callback obviates the need for this retry merge logic.
 
-> +       }
-> +
-> +       state->pos =3D *pos;
-> +       return state;
-> +}
-> +
-> +static void *fuse_backing_files_seq_next(struct seq_file *seq, void *v,
-> +                                        loff_t *pos)
-> +{
-> +       struct fuse_backing_files_seq_state *state =3D seq->private;
-> +
-> +       (*pos)++;
-> +       state->pos =3D *pos;
-> +
-> +       if (state->pos > idr_get_cursor(&state->fc->backing_files_map)) {
-> +               spin_unlock(&state->fc->lock);
-> +               return NULL;
-> +       }
-> +
-> +       return state;
-> +}
-> +
-> +static int fuse_backing_files_seq_show(struct seq_file *seq, void *v)
-> +{
-> +       struct fuse_backing_files_seq_state *state =3D seq->private;
-> +       struct fuse_conn *fc =3D state->fc;
-> +       struct fuse_backing *fb;
-> +
-> +       fb =3D idr_find(&fc->backing_files_map, state->pos);
+A driver may only specify .mmap_prepare() or the deprecated .mmap()
+callback. In future we may add futher callbacks beyond .mmap_prepare() to
+faciliate all use cass as we convert drivers.
 
-You must fuse_backing_get/put(fb) around dereferencing fb->file
-if not holding the fc->lock.
-See fuse_passthrough_open().
+In researching this change, I examined every .mmap() callback, and
+discovered only a very few that set VMA state in such a way that a. the VMA
+flags changed and b. this would be mergeable.
 
-> +       if (!fb || !fb->file)
-> +               return 0;
-> +
-> +       seq_file_path(seq, fb->file, " \t\n\\");
+In the majority of cases, it turns out that drivers are mapping kernel
+memory and thus ultimately set VM_PFNMAP, VM_MIXEDMAP, or other unmergeable
+VM_SPECIAL flags.
 
-Pls print the backing id that is associated with the open file.
+Of those that remain I identified a number of cases which are only
+applicable in DAX, setting the VM_HUGEPAGE flag:
 
-I wonder out loud if we should also augment the backing fd
-information in fdinfo of specific open fuse FOPEN_PASSTHROUGH files?
+* dax_mmap()
+* erofs_file_mmap()
+* ext4_file_mmap()
+* xfs_file_mmap()
 
-I am not requiring that you do that, but if you want to take a look
-I think that it could be cool to display this info, along with open_flags
-and other useful fuse_file information.
+For this remerge to not occur and to impact users, each of these cases
+would require a user to mmap() files using DAX, in parts, immediately
+adjacent to one another.
 
-Thanks,
-Amir.
+This is a very unlikely usecase and so it does not appear to be worthwhile
+to adjust this functionality accordingly.
 
-> +       seq_puts(seq, "\n");
-> +
-> +       return 0;
-> +}
-> +
-> +static void fuse_backing_files_seq_stop(struct seq_file *seq, void *v)
-> +{
-> +       struct fuse_backing_files_seq_state *state =3D seq->private;
-> +
-> +       if (v)
-> +               spin_unlock(&state->fc->lock);
-> +}
-> +
-> +static const struct seq_operations fuse_backing_files_seq_ops =3D {
-> +       .start =3D fuse_backing_files_seq_start,
-> +       .next =3D fuse_backing_files_seq_next,
-> +       .stop =3D fuse_backing_files_seq_stop,
-> +       .show =3D fuse_backing_files_seq_show,
-> +};
-> +
-> +static int fuse_backing_files_seq_open(struct inode *inode, struct file =
-*file)
-> +{
-> +       struct fuse_conn *fc;
-> +       struct fuse_backing_files_seq_state *state;
-> +       int err;
-> +
-> +       fc =3D fuse_ctl_file_conn_get(file);
-> +       if (!fc)
-> +               return -ENOTCONN;
-> +
-> +       err =3D seq_open(file, &fuse_backing_files_seq_ops);
-> +       if (err) {
-> +               fuse_conn_put(fc);
-> +               return err;
-> +       }
-> +
-> +       state =3D kmalloc(sizeof(*state), GFP_KERNEL);
-> +       if (!state) {
-> +               seq_release(file->f_inode, file);
-> +               fuse_conn_put(fc);
-> +               return -ENOMEM;
-> +       }
-> +
-> +       state->fc =3D fc;
-> +       state->pos =3D 0;
-> +       ((struct seq_file *)file->private_data)->private =3D state;
-> +
-> +       return 0;
-> +}
-> +
-> +static int fuse_backing_files_seq_release(struct inode *inode,
-> +                                         struct file *file)
-> +{
-> +       struct seq_file *seq =3D file->private_data;
-> +       struct fuse_backing_files_seq_state *state =3D seq->private;
-> +
-> +       if (state) {
-> +               fuse_conn_put(state->fc);
-> +               kfree(state);
-> +               seq->private =3D NULL;
-> +       }
-> +
-> +       return seq_release(inode, file);
-> +}
-> +
-> +static const struct file_operations fuse_conn_passthrough_backing_files_=
-ops =3D {
-> +       .open =3D fuse_backing_files_seq_open,
-> +       .read =3D seq_read,
-> +       .llseek =3D seq_lseek,
-> +       .release =3D fuse_backing_files_seq_release,
-> +};
-> +
->  static const struct file_operations fuse_ctl_abort_ops =3D {
->         .open =3D nonseekable_open,
->         .write =3D fuse_conn_abort_write,
-> @@ -270,7 +394,10 @@ int fuse_ctl_add_conn(struct fuse_conn *fc)
->                                  1, NULL, &fuse_conn_max_background_ops) =
-||
->             !fuse_ctl_add_dentry(parent, fc, "congestion_threshold",
->                                  S_IFREG | 0600, 1, NULL,
-> -                                &fuse_conn_congestion_threshold_ops))
-> +                                &fuse_conn_congestion_threshold_ops) ||
-> +           !fuse_ctl_add_dentry(parent, fc, "backing_files", S_IFREG | 0=
-400, 1,
-> +                                NULL,
-> +                                &fuse_conn_passthrough_backing_files_ops=
-))
->                 goto err;
->
->         return 0;
-> diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> index d56d4fd956db9..2830b05bb0928 100644
-> --- a/fs/fuse/fuse_i.h
-> +++ b/fs/fuse/fuse_i.h
-> @@ -46,7 +46,7 @@
->  #define FUSE_NAME_MAX (PATH_MAX - 1)
->
->  /** Number of dentries for each connection in the control filesystem */
-> -#define FUSE_CTL_NUM_DENTRIES 5
-> +#define FUSE_CTL_NUM_DENTRIES 6
->
->  /* Frequency (in seconds) of request timeout checks, if opted into */
->  #define FUSE_TIMEOUT_TIMER_FREQ 15
-> --
-> 2.43.0
->
+We can, however, very quickly do so if needed by simply adding an
+.mmap_prepare() callback to these as required.
+
+There are two further non-DAX cases I idenitfied:
+
+* orangefs_file_mmap() - Clears VM_RAND_READ if set, replacing with
+  VM_SEQ_READ.
+* usb_stream_hwdep_mmap() - Sets VM_DONTDUMP.
+
+Both of these cases again seem very unlikely to be mmap()'d immediately
+adjacent to one another in a fashion that would result in a merge.
+
+Finally, we are left with a viable case:
+
+* secretmem_mmap() - Set VM_LOCKED, VM_DONTDUMP.
+
+This is viable enough that the mm selftests trigger the logic as a matter
+of course. Therefore, this series replace the .secretmem_mmap() hook with
+.secret_mmap_prepare().
+
+v1:
+* Seems generally supported, so un-RFC :)
+* Propagated tag, thanks Mike!
+
+RFC v2:
+* Renamed .mmap_proto() to .mmap_prepare() as per David.
+* Made .mmap_prepare(), .mmap() mutually exclusive.
+* Updated call_mmap() to bail out if .mmap_prepare() callback present as per Jann.
+* Renamed vma_proto to vm_area_desc as per Mike.
+* Added accidentally missing page_prot assignment/read from vm_area_desc.
+* Renamed vm_area_desc->flags to vm_flags as per Liam.
+* Added [__]call_mmap_prepare() for consistency with call_mmap().
+* Added file_has_xxx_hook() helpers.
+* Renamed file_has_valid_mmap() to file_has_valid_mmap_hooks() and check that
+  the hook is mutually exclusive.
+https://lore.kernel.org/all/cover.1746116777.git.lorenzo.stoakes@oracle.com/
+
+RFC v1:
+https://lore.kernel.org/all/cover.1746040540.git.lorenzo.stoakes@oracle.com/
+
+Lorenzo Stoakes (3):
+  mm: introduce new .mmap_prepare() file callback
+  mm: secretmem: convert to .mmap_prepare() hook
+  mm/vma: remove mmap() retry merge
+
+ include/linux/fs.h               | 38 +++++++++++++++
+ include/linux/mm_types.h         | 24 ++++++++++
+ mm/memory.c                      |  3 +-
+ mm/mmap.c                        |  2 +-
+ mm/secretmem.c                   | 14 +++---
+ mm/vma.c                         | 82 ++++++++++++++++++++++++++------
+ tools/testing/vma/vma_internal.h | 79 ++++++++++++++++++++++++++++--
+ 7 files changed, 214 insertions(+), 28 deletions(-)
+
+--
+2.49.0
 
