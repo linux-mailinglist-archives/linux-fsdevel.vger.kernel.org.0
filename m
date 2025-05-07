@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-48367-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48368-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A609EAADE4D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:08:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0EFDAADE54
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 14:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B267F9A5FBF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:07:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72E529A62F3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 May 2025 12:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB9E2641E8;
-	Wed,  7 May 2025 12:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBED265CB2;
+	Wed,  7 May 2025 12:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u/ajwSbZ"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h6i7yW1E"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2527D259CAE;
-	Wed,  7 May 2025 12:05:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E964825C6F0;
+	Wed,  7 May 2025 12:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746619523; cv=none; b=KYgnvCEb4HDFPms9AW6P3aUiu9B98YI/vckRfYfrt5e0E+05sOjgHyfs20lmcyC0nuKrz3sqF+L2n4P3fMFC0sSK4s8Ni2MuuJrFYdoEuPh31Sm0R6H23WmlrFdlF6cVEOle2pAJVXMdQ/fveCey8rDYEfwCPJYyMTRVsjF2Lig=
+	t=1746619526; cv=none; b=XXMYe0n9C+BxgIY4jCGoPvY7Zqj8LZ6RSH4eLvCP6flPyIAoyzFfgo9R4GRQEcJSSWRgKiVheMXUszgx0mUJ2NpJpZKMokox0cFoSMIISbF473WiOQj+3bjQbNi0hjoBGNr1HEnuii7k5S4zzA2l9lyGSsQwTJOO7RmuMIO74n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746619523; c=relaxed/simple;
-	bh=TJl2I95NFOuYgUamM0YBAXXsGJOnBB5UV/kxuVfusic=;
+	s=arc-20240116; t=1746619526; c=relaxed/simple;
+	bh=wiIb0dwSxihC2tC0+I4bW6s6w1Jdrr7wjX7VsYNgCCg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dKB+PTSV5hlAxkOsYes2Vlmi2pQZUdpavvs4xoXV9XTFMlCJtjGh66eGjy5wn+FKZNpyyIoRDEzz+mhAJA4AYNhLzIjq06g1M2Ey9KF3dO3gAaI88NvdcIJeAZI8bCJP6Fg45Cj4jk/6YqIYrL6V3jORlkTliIBLqAo13lOfdxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=u/ajwSbZ; arc=none smtp.client-ip=198.137.202.133
+	 MIME-Version; b=Oe2j2854ATY4twqcwitiemSpPllJYMM8W1xlRgeWsJ+Zn9fVAFn0SEm2cIbUuqHwKBD4GUpSvuQ3+AeV1o+l05w9iHXVNieMzn284v44IDnKIOtLk0X8jg7PCpW1/6plxZO7eKoKd0eE6bjIWXYrGxpeNufk5uiXAn+AXJaTa4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h6i7yW1E; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
 	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
 	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=B/8McNCwBO1O6ZzRLryGsHc7hjRg0cD2+DZ6Cs57sr4=; b=u/ajwSbZ8nBBOHpgh+zfvgVXmO
-	iZIb8LdKrR0mE5H4Liz81wGdFSG6zWi6xmceXk5errke93bpP9PJjvU1pIjb/LQkG3fsdGaqaxw4/
-	kuIhMYJcA+BBLahEzxwgO6LH50bq2F7BZjm5/feVFkomGiG+hmlD0SzVv0TPnFEnma6SsClVdSujC
-	ariDnpYZkW+RRF7GJP2ve2wQ65QEtP9sNhRRvUoMq4Qq5YmiXfiOuw/7MBpd/yvsB93vWZIy8HJAs
-	m1vYkkzIGX/Ffplo8T8LsrKaCMuVnxDAwHREl4nxZMqr9f96ffdRxRDbuhMzZf+qwrrgFpug3oQJ2
-	Z6UMEiQg==;
+	bh=BXRwU4K0o1tFolX8zTbu/pD8mnktNKiqmpCuV5KLDco=; b=h6i7yW1EgJRDa7avDr+kGwHBrI
+	TKTtXrMqfEu5/TermNB9JKuWPEl+C4YqCCiFSxEzmsudNw8gF1aYmeoVp7ZcVE9mV2OK7trtvNpwW
+	xvEyCICSWZzgUX81x3hjWP+0ZlLHCVTzRjPCyJjkon6xuIT5ojpxsi1HV8eSzObhkGxaZfdIO8QBo
+	UtU+Q3AgKBIQ472M4N/yoby3GKsVwmC9U8AHHbeBuWKcP//cakSoW/o5dxeLQhbit1a48Bw8ZVpTh
+	/vdAnnXZkKS/wtcpTC8L1mzCTQqiHuR+Jrcb+bhvHcKR3R8WjFKcdBZd+1pDWXwi4THlVJ4Lx40HE
+	BSyxwCoA==;
 Received: from [2001:4bb8:2cc:5a47:1fe7:c9d0:5f76:7c02] (helo=localhost)
 	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uCdWb-0000000FJ9o-0NCj;
-	Wed, 07 May 2025 12:05:21 +0000
+	id 1uCdWe-0000000FJB9-0nQ5;
+	Wed, 07 May 2025 12:05:24 +0000
 From: Christoph Hellwig <hch@lst.de>
 To: Jens Axboe <axboe@kernel.dk>
 Cc: linux-block@vger.kernel.org,
@@ -73,11 +73,10 @@ Cc: linux-block@vger.kernel.org,
 	gfs2@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-xfs@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH 09/19] rnbd-srv: use bio_add_virt_nofail
-Date: Wed,  7 May 2025 14:04:33 +0200
-Message-ID: <20250507120451.4000627-10-hch@lst.de>
+	linux-pm@vger.kernel.org
+Subject: [PATCH 10/19] gfs2: use bdev_rw_virt in gfs2_read_super
+Date: Wed,  7 May 2025 14:04:34 +0200
+Message-ID: <20250507120451.4000627-11-hch@lst.de>
 X-Mailer: git-send-email 2.47.2
 In-Reply-To: <20250507120451.4000627-1-hch@lst.de>
 References: <20250507120451.4000627-1-hch@lst.de>
@@ -90,35 +89,60 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Use the bio_add_virt_nofail to add a single kernel virtual address
-to a bio as that can't fail.
+Switch gfs2_read_super to allocate the superblock buffer using kmalloc
+which falls back to the page allocator for PAGE_SIZE allocation but
+gives us a kernel virtual address and then use bdev_rw_virt to perform
+the synchronous read into it.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
-Acked-by: Jack Wang <jinpu.wang@ionos.com>
+Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
 Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
-Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- drivers/block/rnbd/rnbd-srv.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ fs/gfs2/ops_fstype.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/block/rnbd/rnbd-srv.c b/drivers/block/rnbd/rnbd-srv.c
-index 2ee6e9bd4e28..2df8941a6b14 100644
---- a/drivers/block/rnbd/rnbd-srv.c
-+++ b/drivers/block/rnbd/rnbd-srv.c
-@@ -147,12 +147,7 @@ static int process_rdma(struct rnbd_srv_session *srv_sess,
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index e83d293c3614..7c1014ba7ac7 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -226,28 +226,22 @@ static void gfs2_sb_in(struct gfs2_sbd *sdp, const struct gfs2_sb *str)
  
- 	bio = bio_alloc(file_bdev(sess_dev->bdev_file), 1,
- 			rnbd_to_bio_flags(le32_to_cpu(msg->rw)), GFP_KERNEL);
--	if (bio_add_page(bio, virt_to_page(data), datalen,
--			offset_in_page(data)) != datalen) {
--		rnbd_srv_err_rl(sess_dev, "Failed to map data to bio\n");
--		err = -EINVAL;
--		goto bio_put;
--	}
-+	bio_add_virt_nofail(bio, data, datalen);
+ static int gfs2_read_super(struct gfs2_sbd *sdp, sector_t sector, int silent)
+ {
+-	struct super_block *sb = sdp->sd_vfs;
+-	struct page *page;
+-	struct bio_vec bvec;
+-	struct bio bio;
++	struct gfs2_sb *sb;
+ 	int err;
  
- 	bio->bi_opf = rnbd_to_bio_flags(le32_to_cpu(msg->rw));
- 	if (bio_has_data(bio) &&
+-	page = alloc_page(GFP_KERNEL);
+-	if (unlikely(!page))
++	sb = kmalloc(PAGE_SIZE, GFP_KERNEL);
++	if (unlikely(!sb))
+ 		return -ENOMEM;
+-
+-	bio_init(&bio, sb->s_bdev, &bvec, 1, REQ_OP_READ | REQ_META);
+-	bio.bi_iter.bi_sector = sector * (sb->s_blocksize >> 9);
+-	__bio_add_page(&bio, page, PAGE_SIZE, 0);
+-
+-	err = submit_bio_wait(&bio);
++	err = bdev_rw_virt(sdp->sd_vfs->s_bdev,
++			sector * (sdp->sd_vfs->s_blocksize >> 9), sb, PAGE_SIZE,
++			REQ_OP_READ | REQ_META);
+ 	if (err) {
+ 		pr_warn("error %d reading superblock\n", err);
+-		__free_page(page);
++		kfree(sb);
+ 		return err;
+ 	}
+-	gfs2_sb_in(sdp, page_address(page));
+-	__free_page(page);
++	gfs2_sb_in(sdp, sb);
++	kfree(sb);
+ 	return gfs2_check_sb(sdp, silent);
+ }
+ 
 -- 
 2.47.2
 
