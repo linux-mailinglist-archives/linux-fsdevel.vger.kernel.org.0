@@ -1,91 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-48449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D956AAF3D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 08:38:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BC72AAF4AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 09:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64931BC1C3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 06:38:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 349891BC4AED
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 07:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFE32185A6;
-	Thu,  8 May 2025 06:37:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9F821D596;
+	Thu,  8 May 2025 07:31:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hh7uQ/ES"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="YZUJG/Mv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2049.outbound.protection.outlook.com [40.107.237.49])
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2042.outbound.protection.outlook.com [40.107.212.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063F0217736;
-	Thu,  8 May 2025 06:37:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C320C288A8
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 07:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746686274; cv=fail; b=trlNvecV2CXsEPvqYZY0fN7s3bdD7Cw/0cB5/iDEhw2mhzWwNVKvGIyC7VrGQ2tsKn21JTf04yLc3cTKKXXmk5N5oz4JDaTMxzY54Eq0mwRvjPW/PUaZK2T1V2gNPQVy1Qgb6DJ7PQNkkrsD5XrFsyRtse6X6Rw7Xi/MFgEl2bk=
+	t=1746689474; cv=fail; b=cvghCxu6rmqm1jqc5YzPA/KdYjQgC5dOs+wyTc6RhyXV7kfnIoKB+2E4rQrw7Z06dZySE2ODZ25xqcizsV4Pe+ZzXltLRLL5ZAM2w/MYvgRQggQj61WMfMxUsuPWm4ncwT9WQeQRHc5egp20uuLBLlpGmSTVfyB/XQzSwHW7KiA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746686274; c=relaxed/simple;
-	bh=/T4fc8S0aGSn5oHrrGuJEuhleBLfW1/BWNgEugQm3Wk=;
-	h=Content-Type:Message-ID:Date:From:Subject:To:Cc:References:
-	 In-Reply-To:MIME-Version; b=Ay6/85ZS1YSBJ1Dz+T7/svOOC6YbFpbBcZmSpsaqrandtaBhNf5WWrjWFcGpS5OX0o79eSwtAKWUg9bjHUH/ytYqN6s2j15541jlx5qTF2MB2FhI8M2HzkpTrrOKYeoG5M6IUe3VjTAOBnApnecmqtLs3iy7RgdWA9Q6RpFlwGo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hh7uQ/ES; arc=fail smtp.client-ip=40.107.237.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1746689474; c=relaxed/simple;
+	bh=Yknz5OXm2+7GH2Xvimq0/xKSCAwDGmwrokj9163YsgE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZJ0Da6bRzB3ULi7j10tBs1qDOnm6LcdlkhWj2hBR5mLvirFj7KJrssogPJkaDxUfGRXLghX4MeQrR9S+RIFPTlz8w9eFfFsoylVqKalwjoln6TnGa88AtNG1wFM5nSuhbQkprc0Sl+6O6V9D8WdqkDdM4GlNjy15jHtIhprnCUg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=YZUJG/Mv; arc=fail smtp.client-ip=40.107.212.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BeJu8fdXBMikTVYaAF2dim02swyvBDIFNt6J0HYVV5hCGpp4px3zbhMfM9oCdY2j6cpH7nGbH0Zo8VHbGCluQlCd0I5FKXkPK77kZjzUXYB+RjYvI5PJ5dfK14fHV68laxQeM0jjQZNZKuZFMyBT3kkezbReGTDT9HNeDGC4lb/fwgHHU3mcoNWdDkIBxZSqcUb9Fxcv6K2c1r204Fa1apqEZeDbBCc9IzayvOX3ptEM77bk9e+p4oYV1Rd/ChNO+6JvgDLcRrTedGdVL/tDBmbCWyIuZANERL273VfE5J7aoNOnL2XWnj9HKBR7/4cc637vi28u7OHBSCHMOzEh6g==
+ b=bsQgY3OGjzFbQYrSooSuumBz75wfuMTIlmjgnqntghjBbIP+NcRrx2GLKn+1LTJcNHGAlJAZV4yQf3pw7MLhCQBb88ruYHKh17KxxKqepcga+X5J0zEOT83Lpr7ERpFJ3tXwA/4GQ/QgjEYNAtsoStxYa1W0Aq1bUGA19nJnhic44TEbOk+C0BxjTgQoKehnZsd6gYc5xdE3R559wmrlV8SWyS3+zHY73VH1tsqFAQP8i8RZlUhYTl2YeY0hLdM5/OX9koDwFRumBEhTlFhEoIPEIEEJiOPBthgJzNywvFHCQXj81NKuvlasbwrs0Gsd0CjflR8WfrDbMnbo9xZMBQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c4gH6vmlqu/hX8l9hiih0kUqJdcHpHGqZserN/dDONw=;
- b=AywYH0bBSXji8p5ameEK9XyMcXM/nN/JRkb3PK1SyCj6/NXiu/fQ8fHwIloLOyPuNB3zUH+2LG6RDNhUEPuKBDFeQxBoGsrzIUSLVczILtsbU5dExDxD2fL2NPefg8TkNgBByxJFYbybZaZ/I1cA1jAKCXLDFD2tGOc4reGC1nmCQlchuCtKSb7WHIhuQsDM9JE23mVk4yHdKSs+oT1wIR0LF4isRppIeUHUvJZPITUY45ec7TQNNBm8FvOmq1tzjQHUbVR6ToMTA5hcv1hIoLMKBEPKcfFRbsnQZtet1wcINmNgxK6OoCgTsYyh13vrSTgjBCP3e8azhdP9hcZOJg==
+ bh=AJaoE/PUC4L0uFovdgzmEZZ79vrrtJZAryVukV6QlGQ=;
+ b=IafC6J6Dd3jhYJv+hOtcNJYs0/t6zr8gmlbkqCG5TVZH3pL2Tx79qK7xdzBy5KlT2tFpOBjSsZfEhR2RcAF/mm5Mxrxlq4G1gLILObinPhzrfoPpCfy/IStFesdJa78EqGo4DYVfJvwEe49dcwjdk8lMnZc9QRGRj54aVp6MLKgAaQeYRCzdh8W4DXsim6MExIQKFQmnZRT1KgMDj3KYQK6T0r9uxhMcs9s2Uo8z+GqQ4mMfXi9hegbT5MJ9qlzKlnp4R29aYXS0I9WfIu+liUQ/Pe9oYTP4sLduGAwVGo2zkyPPk2JijkS5TImmqqUa8rBZ/APBSLoUYJb2nWFd4g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c4gH6vmlqu/hX8l9hiih0kUqJdcHpHGqZserN/dDONw=;
- b=hh7uQ/ESm3G+z7SkfSqfKTazvwvvep9WyywAUlNgmwEa/Tes1SBASkaoln3APf2tUbUlBaq0hdqUa4eAwUckVkIBCGQSDLZ5LY0fVi93nIK/auuO820Q/f+ze22FWVrWj+X+tyAtewtjv80DuZpswm06WiXGZncS1tDZyLGVi7Q=
+ bh=AJaoE/PUC4L0uFovdgzmEZZ79vrrtJZAryVukV6QlGQ=;
+ b=YZUJG/Mv5YhfpN+zp8uRkMYMeGgjb/umQMGSL8/htQWU2glUhEHzHM7Lv0252tjwFKYBrBkw2EFhr2cM6MpZPASkzxzv29kzGO5VEu7vjgW5gcoTSzPoZ7qo4Aeg8q9CHgtgR7M4SG2ynVc24WltSEulKubtaTuekkBGrMVqEoM3f8PXLtwDsbHiKQ250HcPha+uDgh1JyyrkbPA02mv1xjUyYeURoiHUsThaNM6eOlzTKnb1TjwzA0xLDDytANSLQvFeiY3uiS6mfsXkjcDa+9VxebniO/QysgJAGzEW6nVj6fb0N8vvKKrK6+S7LcoYTtxI9IXsmbtHVqYuozn3w==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com (2603:10b6:610:af::8)
- by IA1PR12MB7709.namprd12.prod.outlook.com (2603:10b6:208:423::15) with
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
+ by CH3PR12MB8354.namprd12.prod.outlook.com (2603:10b6:610:12f::21) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Thu, 8 May
- 2025 06:37:48 +0000
-Received: from CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870]) by CH2PR12MB4262.namprd12.prod.outlook.com
- ([fe80::3bdb:bf3d:8bde:7870%5]) with mapi id 15.20.8722.020; Thu, 8 May 2025
- 06:37:46 +0000
-Content-Type: multipart/mixed; boundary="------------20J8wHG41v0zlwJYCL04QA7w"
-Message-ID: <fc6b74e1-cbe4-4871-89d4-3855ca8f576b@amd.com>
-Date: Thu, 8 May 2025 12:07:25 +0530
+ 2025 07:31:01 +0000
+Received: from LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
+ ([fe80::e6dd:1206:6677:f9c4%7]) with mapi id 15.20.8722.021; Thu, 8 May 2025
+ 07:31:00 +0000
+Message-ID: <ad3c6713-1b4b-47e4-983b-d5f3903de4d0@nvidia.com>
+Date: Thu, 8 May 2025 00:30:58 -0700
 User-Agent: Mozilla Thunderbird
-From: Shivank Garg <shivankg@amd.com>
-Subject: Re: [PATCH RFC v7 3/8] security: Export
- security_inode_init_security_anon for KVM guest_memfd
-To: David Hildenbrand <david@redhat.com>,
- Christoph Hellwig <hch@infradead.org>
-Cc: seanjc@google.com, vbabka@suse.cz, willy@infradead.org,
- akpm@linux-foundation.org, shuah@kernel.org, pbonzini@redhat.com,
- ackerleytng@google.com, paul@paul-moore.com, jmorris@namei.org,
- serge@hallyn.com, pvorel@suse.cz, bfoster@redhat.com, tabba@google.com,
- vannapurve@google.com, chao.gao@intel.com, bharata@amd.com, nikunj@amd.com,
- michael.day@amd.com, yan.y.zhao@intel.com, Neeraj.Upadhyay@amd.com,
- thomas.lendacky@amd.com, michael.roth@amd.com, aik@amd.com, jgg@nvidia.com,
- kalyazin@amazon.com, peterx@redhat.com, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- linux-security-module@vger.kernel.org, kvm@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-coco@lists.linux.dev,
- =?UTF-8?Q?Christian_G=C3=B6ttsche?= <cgzones@googlemail.com>,
- Mike Rapoport <rppt@kernel.org>, brauner@kernel.org, Jan Kara <jack@suse.cz>
-References: <20250408112402.181574-1-shivankg@amd.com>
- <20250408112402.181574-4-shivankg@amd.com> <Z_eEUrkyq1NApL1U@infradead.org>
- <b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com>
+Subject: Re: [PATCH 2/5] selftests/fs/statmount: build with tools include dir
+To: Amir Goldstein <amir73il@gmail.com>,
+ Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, Shuah Khan <skhan@linuxfoundation.org>,
+ linux-fsdevel@vger.kernel.org
+References: <20250507204302.460913-1-amir73il@gmail.com>
+ <20250507204302.460913-3-amir73il@gmail.com>
 Content-Language: en-US
-In-Reply-To: <b9e5fa41-62fd-4b3d-bb2d-24ae9d3c33da@redhat.com>
-X-ClientProxiedBy: BMXPR01CA0080.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:b00:54::20) To CH2PR12MB4262.namprd12.prod.outlook.com
- (2603:10b6:610:af::8)
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20250507204302.460913-3-amir73il@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BY5PR13CA0008.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::21) To LV2PR12MB5968.namprd12.prod.outlook.com
+ (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -93,473 +82,460 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PR12MB4262:EE_|IA1PR12MB7709:EE_
-X-MS-Office365-Filtering-Correlation-Id: b1c919c6-e476-4e1c-b51f-08dd8dfad7aa
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|CH3PR12MB8354:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e2cbe8b-47ca-46fb-023c-08dd8e02481d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|4053099003;
+	BCL:0;ARA:13230040|376014|366016|1800799024|10070799003|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eDZGbEs2TlNKRktVWlpPbHBvOXBLa0gxRlZPNGNFY0MzS0NTMjAzNGFEeXJp?=
- =?utf-8?B?Zk5FaFN3ejVtQlB6UTV2UWxHSy9IOWJrWXBhcXo0SDRYekgybW95N0RYSk9F?=
- =?utf-8?B?U0dTK0NuMkJaTStSbFJ4T1RlYWRDTWdxTk02NTFhSHZKSkV1N3ZQSURRTXQ5?=
- =?utf-8?B?b0haN0pOR24xOHZtdzNmR2l4OWFwYTYvakRNYXpWcDE4TnJQVy9NTXJzRzRo?=
- =?utf-8?B?OExSMHA0K1p0L3UvdE8wMEs3a0t2cE5PcGdnYmJOMjVBODVLL1RRMXB3aDY5?=
- =?utf-8?B?aWpWQ0JHTGdsN2pCaXBvRTRhMDlrMittMUFTTWpnbTJqRlJUdVNXQzZSajA1?=
- =?utf-8?B?K3hXcEVsNWxUSXl6L1VVc01Kb0dxRm1lR2NVU0loVm5nZTNXS3pHN1NRRDJv?=
- =?utf-8?B?VkhDbW5ndWNrNXZuQUJoN2ZLcnFrKzQ5R29YNXhkL05vWG5hL1d6d2RidzFs?=
- =?utf-8?B?d1NDa1hsbzJqdi85TmU5RmZCbEtMODcySW9uaVpCNXBaKzBraHZHR0JOTWEv?=
- =?utf-8?B?Mk44SDdaem11YXNieHlxRXIwbGFYeWhmbnZDSHRpZ0tnTGhleWFQMXNNS1l2?=
- =?utf-8?B?dDRBRGtoR3Q1azY3MnhMSkxoK3hNRUpGUzVzVlBVZTN2S3RuTitaMTBMMHk4?=
- =?utf-8?B?NjlycGpwd3FKQ2FLSU1kMWVNUWthc3d3VDBrVDZkVUlRdDFOUDUycnN3Tlhl?=
- =?utf-8?B?eEVOUUpNRUZmNmpZdkdKdnBrRlJOVjhDeDJid0FvcnZ2R1FnSWp5VkY3OXhi?=
- =?utf-8?B?dWptMGV5cVBIc3Q4VjRMRlJPMnJzclNsYUkzRVRpZVdZOFMxcWtSTGhRMHMr?=
- =?utf-8?B?a1V5am4rYTJUaW5lZW1wcWxqUzNCRURvRHEzQVhIaGRrMFl2VEdpMW5mVUZr?=
- =?utf-8?B?R3ZXemR4T3V6NVdvZ3llbmkxSXFqY3lGTFdxM1NRcjRGR0V4WjY0cVdlNmhB?=
- =?utf-8?B?RkxBVm5QMWxLVTk1QlFDYnpCeGRySnNWYUZYWHlIaHF3MVc1bGpWMCtSZ09u?=
- =?utf-8?B?aytYQjV3Ym9za0RGSFN4MFdneWQ5aURqejdDeG5EaHpueDBtUzBEZEZLU21M?=
- =?utf-8?B?TUp0UUYxbXJORTRhZDdIcjM2aEkxcE5oOGFZdjkyYW5WT0Z5TVA5WS8rVStN?=
- =?utf-8?B?bjk3Z3dnaTArKzQxdVBhYnhWOGp6NVF0OEdwNXpqeFEwNCtGZzhUdGlUVjhW?=
- =?utf-8?B?OGtWdWE3V1Z6SHpidGRsNTFIMFFvVE9wVDBQQS9Bb0lRY0d3UkVKVFgxRFh0?=
- =?utf-8?B?Sjd1MENsMkJXS0RuQytLNzl5SWR2TVNTZUxOMytqWm9ZSXdPbGFWVm5UZ093?=
- =?utf-8?B?d0o4WE0rYW9NeVBqUDFxSkJ4VUcrNGlmTmtpMnZUOThVcVN5amtLOXhqYjJ5?=
- =?utf-8?B?RXJPUXNzYjNlRHkxd1ZLNDZWWVVXU2U1VzVOT01XaUdNZlkxZXo1UjJ6SWt0?=
- =?utf-8?B?TjlrQUxoaXVBSmVhQlBuZGlXM0t6aTdka3ppREhxS3E1Rk5ORTJjOW9paXpN?=
- =?utf-8?B?Uk5VWFluUkZQSUtOVXJQZ0dLTGMzUVRxT2VPbVlLR0Y4VnJER09JdHhwV2Zv?=
- =?utf-8?B?NEVrREFVMGVwdk1nUkJhdnNiTG8vYXB4dysvWWQwdEVla1RRNUNHQy91N1ZS?=
- =?utf-8?B?MVJURm5aYWx5dDg4UjgrQjJGQmxLc1Z0VXp1SkZtS2krTHdMeUptcS9BZHZk?=
- =?utf-8?B?Ti9CSUFTazYzKzcwN1NUK09XUTg0Qkp1cEN5cm1XaXRma1ptNzNxNS96alhD?=
- =?utf-8?B?SDNtQmJSOEFnSWd1WEZ6SElkR0QwdGRLUkRCNXpnMU9hb082c3RocEUrQi9T?=
- =?utf-8?B?WkdBRUNCclluT053N2Q5ZjZrMEU0UUNYZ0F3NUc5ZGxGa2YrTTYrVit1OTgy?=
- =?utf-8?B?OE1QM0c3YndwemlBcGl4ejBFaUJTMG1lMU9WbFBoeGQ0ZlhtTWFrMFlnTjVY?=
- =?utf-8?Q?guI4Vy/msh0=3D?=
+	=?utf-8?B?YzlWTUp3dUhmRUdzNzNKRUxleThpM3JhN0VQdG4wMXJndkRRcmIyTi9ZVVRo?=
+ =?utf-8?B?N3daeTdoOUJ1eHp4aWNOUElLeG5CVkpONTFYM3BrY2hxV1BTY3lWMlZBZHNh?=
+ =?utf-8?B?dy92RHZ5Tmp2QUZXc1JhSE80emxkUFFCT1ZhRmlyQWxsbkFGU2hnOGg1WUxw?=
+ =?utf-8?B?VnRmSE9oSTFUWjkyQjYyVXVQMENQYlFyMU9nSGlpbXcyOTkvSmVZaEFpdVFR?=
+ =?utf-8?B?NGsrYVJIZGp6c2VNSDVWZVgyaGlEakJZR3dMRU5EWm03MHA1Qm9vZmEzSnRv?=
+ =?utf-8?B?MjZ6czBlLzVjVnVKUzJJZW54ZzY2RTV5d2xscUhTWWszaFJNS2hieE9TQ2hJ?=
+ =?utf-8?B?WFoxaXBwczBXRmppWkpkaHFZRC8yNHEzd3FjenVaai9mR2ZNc3RsNmxzMlMx?=
+ =?utf-8?B?aVcwLzRxeVliRDJ3dS9rNS9laWtxOHdSOWFvRXZPRmJBZnNJUSs0aXRIVEJM?=
+ =?utf-8?B?a1FEWEVnYVZJSnZodklYOEt3MnpLUnhGSm56bjl5dHE1cmxEZk92bWFzeVpk?=
+ =?utf-8?B?UGlRb1R4MjMrRmo3SHFEc1U3WmRueWNlYmhuRm0vL095ZjRGTjNtckdUbVRz?=
+ =?utf-8?B?cHFyZmZJN1RiMUNpOE9QVktLd2lCVExQYVBPdFg1RmZBT0ZXVStIVUdnRHBG?=
+ =?utf-8?B?Q09yVFM0M2sxaXhwdi81ODUxbXBzemdzSXl1N1dHa3hMaGVKcHllVzF4Y1Az?=
+ =?utf-8?B?K0xKNTY2SncxUHZXN21jWWllTE5iM0haa0x2OFMybStrb0tvZ09JK0dydE82?=
+ =?utf-8?B?bHNlODZaa0JXdHRsVEdlb3YrNmJGVXB0WStMMWZWdTlSL0hUa20vdVlkK09C?=
+ =?utf-8?B?cGpUN1I1aXg2MkJkSmxNSjd4TGZqMzdpN0tMY1FwK0E5N3FjVjBjaVFGYytI?=
+ =?utf-8?B?cmIyWDBLMlUzM2Y5TXhUVmtzb1V4N1pwV1NEZU5mQkhQSUF4M0d0MzIxejBW?=
+ =?utf-8?B?TUJEem5JVUExelBKamFJanVKd0ZrS0c3bUJvczZVU1cycSs4MmlqZmo4a3Jz?=
+ =?utf-8?B?ZDBMZjZ5b2RlRVUrLzNOTm5CeFBKaGdsNHRFeEI1Vk9FUXdYanVvMVczbjZE?=
+ =?utf-8?B?SGZ6MlVLR2daY1RnTWpKSVpadXh4SVNVUUJNVVAvMkVtSjJiUEdBbWdzazls?=
+ =?utf-8?B?WkNWcUt5SnQrVy9DOUhURmIrSmVweVBJcEhVZm1OaG1Pb2d1bm4rTTFPamNs?=
+ =?utf-8?B?cnc1WW41bXphR3g5WXNUemtrcnFJUCtMZmhYMWhVNm5EdktneDkyMzhYQm5i?=
+ =?utf-8?B?eUJpaHRIbmh3NVNlZ09ydlNKcFpXMXI0T2JxN3NSVVU4MVhBVTc4bGZMMi8w?=
+ =?utf-8?B?MjZ3czNNSzQ0TytBdFBmQ09rQ3VBL2FDZlhDZXlJSExEK3o3bzdFRHgrbEM5?=
+ =?utf-8?B?MGY0UkNRNHZzRmZ1bXpWd1Jib2lmcFlSMWVhdXc1KzFOMzluLytUQ1p6bWQz?=
+ =?utf-8?B?NWlaRjNRTEFmV2JMZkpJeUlFVGEyQ3pQSkVXT2JJemNwdk53eGFGMHpsWS9O?=
+ =?utf-8?B?UDg0aElSZ0dZUFN3eFVIQmhNejJTSzZGVEJ4MnFFMkxXOTJwTGZIZ04waDR3?=
+ =?utf-8?B?NFhQSnNEbXdMaUNiNkNFc21qQlJjbmI3MnhNaFNFVUVVWlN1MU5ObE5zYmEw?=
+ =?utf-8?B?ZXRvWFJtYXJFdHRzcHB1WlRpNVVCbERSK0Vqbno4MjNEWWJzdFBpbTFGbnoz?=
+ =?utf-8?B?NE81S0h0OVFjZ0pEK2xnbzUxZzJQTDllczdKdHRIWkUwSGduVzh2Z0VCMisv?=
+ =?utf-8?B?Y2c4UExuWENOb1Vla3N4dXhxWWxSL0h5SDNkZ1phWS9COFdkWUFhUUxIL0JK?=
+ =?utf-8?B?RXhQb2xGN2ZLb3QxYS9QRmNzOEdSS2MvUVJ6RFI1Z3MxeVBkOFd5RUdrdldj?=
+ =?utf-8?B?Nm51UVZCcVhPYUNGVFhQaUQwTVpRNStKNGh4OXVEZHM0UWEzS0V6UVk3aE1S?=
+ =?utf-8?Q?5MqBCYBglxg=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB4262.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(4053099003);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(10070799003)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Z0EwTXd6ZVlaL2xZZHN6WGo4S1ozVHVUSk9xM2NrTVluT0Npd3JJTmZOKysr?=
- =?utf-8?B?LzJBRTZiQVN6aXp4cSttVDhNNVkxeGRrU2ZZaWpnQjBTT0NFOW9lTUNYWk5z?=
- =?utf-8?B?UEdyMkxmcUhBNmkrSnVSSnhzb3lRQkRzdUw2bS9wQzhBZXNINVo3c3YycnpC?=
- =?utf-8?B?cFZXRnlLejBwS3RGQmx1d2FmbEdaZDZJQ1J1czVGZWpBd0I4WlU3U1ZKUWNQ?=
- =?utf-8?B?Y3lNNWtzKzhyZWp3MGZJdC83MjNhZHU0RGxMeFdSVDR2K0d2MzF5RFJHRXpG?=
- =?utf-8?B?bHNUOWRqaDJXRXdmYWp5RDJweFNtQUZmcmFCbVVsRnRtbHVwa0RIRTJNa2V6?=
- =?utf-8?B?SFZkSUF0UGR5QWE5QVFlU1Ruek5HZjFEQUZ0cWVzcnpoZXloTDNKQkRUZCti?=
- =?utf-8?B?TkFWOTE1eTJOZXBTRGdIV3F1aE15R2pPRlJieDl3L1o3bk9NQmZMcWtMRVV6?=
- =?utf-8?B?NVZaUHJuTUFBWGl1bUFmYVAvMTFERjJPWnBUK0RZeFhlcDcxYkFZd0dubFRX?=
- =?utf-8?B?MDdnazlKTzFqNFBYVWlPK3FaVDJXNXR5YllxT2JkWnRoZVZDcVA1VFcwems5?=
- =?utf-8?B?ZVRLTS9ORWtRazROa09Rcy9KdURtdTdocmRHL2tJU2F1YnJpQmhBdkQ2VEYx?=
- =?utf-8?B?dDFWYVpETWdXMUtUeTJOVUEzQlVUSWJGL05LSFF0bVdqcjFJOWFpWlk2dmFp?=
- =?utf-8?B?eU5OcjNuOGdRWWx4SEhFRysrZHFuWkV0WUQ5UXNsT3V0NXZnT21uYlVBMFhm?=
- =?utf-8?B?clNqdDFZcnF0Y2tVQ3liRW1VS0RVWkRreXlxWXczcnJzUzVzcFR1Sm0wNW1N?=
- =?utf-8?B?M0liRjVxVkxEdUlvNHhaWjN2eWNPVkdyOFc1WW1sUDAwN1VRcUZrc3M3TkE3?=
- =?utf-8?B?ZVB6cTFYUDNiOWdjZXJXMUJOdU9BRG15SFBMMmoxWVlMYjZFS3J2Rk1xWnlj?=
- =?utf-8?B?NXN6cXh4M2RRS3k0QmpJR1ZubDJWQ2JVZmVoVGYxeTRVWS9oL3lVZ01TRlJB?=
- =?utf-8?B?ZU1kb3lDSTI3YVdXTm85d3BaYUVSY2liU2hlVG1SVEllWDJ3T3A1NEZiaGxq?=
- =?utf-8?B?cUFkeC9wSERQdzhEd1V6WUp5Y0E5RThCR1VzQ2c5ZDllZSthYmphVXhtU0xX?=
- =?utf-8?B?bld5aG91K1d5c1BVc05TWW44bjF6eTZ0SS95Y3duUDA0YXp6ZEw2NklZOE41?=
- =?utf-8?B?WHMwdXhmcHZoREZwMWtjSnNiZmJPVXlEbzhtcnhoVmpBN0RReTdKZXBNK3B0?=
- =?utf-8?B?MUl0WXY3RUlDVzNzWjJ2T3dSVEVSb2NDTWlwRWhhUXR3Nlp0QUQ4L3NIRnkz?=
- =?utf-8?B?UGUvNnVaam9WNFdiWlZjME9RRXBPNWJPZ1RCTHNHdVVFZE9KK0s4bFhxdzl3?=
- =?utf-8?B?RGQ3QmVqOHhKRlV0Zm5TV1J5Z3UwRTdycGM3OC9EbE5xMzdEUXp1ZHpBei9l?=
- =?utf-8?B?dS9YeFk2UENOUmxMR204QlFmQ3duY3VIbkltaVBXb1NzbVRMREt6bkNwanlX?=
- =?utf-8?B?Tm5XM0lQRm1qSU9ZWGhmZWZwbTluZmxmMC94Tyt2NXI4NWFJL2p6TWhTamcz?=
- =?utf-8?B?SGo0RmF4eE9XZk1LelVwYnhBaWlxdm03Ty9JTWFXd3NmWEZnNDQvRGNIaTlL?=
- =?utf-8?B?SW55U0hMelN0ak1WUFVlMzNtQlNtUnNXVFhoVWZ1VWU2VUFwb0d1SUxvMzNj?=
- =?utf-8?B?dDJCQld4dVRGNGdoNDdBQmhBdlFjMEIvbVU5QURIQklPcHB2MjU2dS9hb0VT?=
- =?utf-8?B?aG53bExrb1RpNGZvM1Q3dkhJRkgxakZHOWVpQUc5VFc3c1ZmbUVLZ3NLb2Jm?=
- =?utf-8?B?Zy91U3R3QjVPRm9xWklTSzc2bm0rd1NMUk54dzVhK2pXU1N2TFdWTk5pMmtY?=
- =?utf-8?B?M0RnTk5Hb0NrT1g0ZmorcXFpUjUyYXlFQ2xRL1ZEZUprTndrY09DTjFxY29l?=
- =?utf-8?B?blhsNlBScUd5OVFZa3Z6NnBmSlgrSWpxL3d1b1lWTTA1YW5qSlk0c0NIaU5k?=
- =?utf-8?B?cURXaHdPam5Lc0xGQjlCNXhucVM2M0tOc3JQUmxOdThjRTNJYW11dmFTQW00?=
- =?utf-8?B?aTlsbW8zZ095U3NNbzlDMEY4aWE5TmZFQjcxcStaMnIrZkJ4a0RWNFZ2RmR5?=
- =?utf-8?Q?M2OotYNT7MSvO53OC4VBNGIdz?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b1c919c6-e476-4e1c-b51f-08dd8dfad7aa
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB4262.namprd12.prod.outlook.com
+	=?utf-8?B?V1JGMVRURUo3M0wrb3VSY2pOWUgzbHI1dXl1cEN2ZDBFS3ZMQ01XaUd6bW9V?=
+ =?utf-8?B?bHdNMkNiNy94TWNqRGE0M1dtU21XKzNNNG0zT1lKN2dHcVlyUWhUZnVhZmsv?=
+ =?utf-8?B?MjRuWjc2YmNIM0NQWFFIY0hPNkE2R2kzNlpIS08xMUluRDF4WVE4QzlhbWFs?=
+ =?utf-8?B?ZGl2azcvbU10MXF3MUZRenJQdytMM1MwNlRFd0V3TGFCQUFzSWU0M0x6QjlD?=
+ =?utf-8?B?cTBteTI5RmFDeDBMVytPTzhyUDVWSXgyRVdFajkvYVAwMkVyU29jcmhteHd4?=
+ =?utf-8?B?TEZaRVNrRW44YWgyeWY0SXVaL0VuZytOM2djdGVhbzJOTzdyOXpvRlhPeUdn?=
+ =?utf-8?B?TnFBT3pXMzlZWUNzL3BJMlZQNDRXR1NsbFZIandtUER2aEJCS1cxMHRKM2tu?=
+ =?utf-8?B?c1duRzl1YVlTVkJuRU55RE9mNExWUDlUU0FUZXFEaUI2VWpqQzQ0enoyYWQw?=
+ =?utf-8?B?S3FxNEQ5eWhhNWFDN3oySE5mWjFIUGFmVGFQZDVadU93UEpzOXJrSkVkN29Q?=
+ =?utf-8?B?cTl4K09HQWI2aGh5VjQvOGxNZys0a3VSamU2VUZBc002U3FWOUtwOU4zRlV2?=
+ =?utf-8?B?NXI3anRUWjV1MDFMZkhqRXkxSCtGV2xwT0ZlS09sWVY1Yy8xRlVZU3gzd2Vz?=
+ =?utf-8?B?S1hrT3ZXSDlkb2U2dDFzTHJIZEg4ZlFMQmd2NzVnRGY0UUtXL21HNFBwejJ3?=
+ =?utf-8?B?NVhUWXR2aHk4SEJ1YkpDcWFVRm5sd1FVb0FYWWkvMmRtMndLaWJIbXhpVHAx?=
+ =?utf-8?B?c1VzcnJ6b3ZyZVB1cGsrd3A5WmsyNHJuSDdmNDFDT2Z1bkNxaEhsVEJ0UFJD?=
+ =?utf-8?B?WmtDeUVQRWVNdy9ERkd1NVAzUHZYMW1lbjJsSVRHNHR1T3B4ZFU4R0hFUTF4?=
+ =?utf-8?B?RW1oeXZ3QWpaTlVWbCtQMVFVbmFOeEs0MVNSeWF1TkZFRUZyWkVtV2oydFBZ?=
+ =?utf-8?B?bVNZdytvRUdJdWFySG15TE55U0xqYkFIYk1DZXRHSi9ORWxmOHlTQ3Nib3JS?=
+ =?utf-8?B?WnZmTzliU2JqZ2dvL0JSaXc4SkdWbU9WL3NRcmR0aDNYUE03M0N3RlRrUTl6?=
+ =?utf-8?B?R2RmTXRqazVFNDJHdytBaGF0Y2lmaThqRTNacnFhTWVYUkRoQ1BSTjJTMzFO?=
+ =?utf-8?B?QitBSUJEclMvcDkxTmlvNURBWnF1dkV3eGdCb1YrckE5a04vNG40WURwelpo?=
+ =?utf-8?B?QXhiejNZcFhPMTZsVFp1V0lpdVRmY2xXejQ5Mk1ORmk4UXVtQW1NcnQxbmJp?=
+ =?utf-8?B?RDhGUTBKWFZHWG5zM2twUGVJSDYrU1RaQ1NHK3VSTWVrbVVxbjVzSTZQSmZx?=
+ =?utf-8?B?WGRESkUvbE5ST1dJV0xyc3l2bENPQnUzYUxRNm5Ocnl3UlVjOSttSmVOd0di?=
+ =?utf-8?B?WmVVaHc1RjRTMjhEOXloNURCaEE1WHc2ckhTa0ZJL003OUUrVVkyQ2wyUE40?=
+ =?utf-8?B?TmxTNzVjck1xcDlra25jdjFSM09ZK1EraWIyS2dhaEU5RzNyajFDQ1lDaTBB?=
+ =?utf-8?B?Rm9reWpyUXYrSkkyVlh2c2I1aU81VGx0bUJSR1VwdFRIODFkSENzYXFHTisx?=
+ =?utf-8?B?UXlsczNKWXFNWDB4UDNndEhFZTJkOE1UMUpYdmxrbEMvN2Zlb0NSMU56aG9F?=
+ =?utf-8?B?dmNTNlVZelBMakszbUIyRTJERHA0b0diZ2lNMmpZb1VOWW53c25WV2lrTCs1?=
+ =?utf-8?B?VUFHbFNRWTRYUi9RbjJYb2VPMWdYekF3YUJ4OGpCcUFuT3VlZlR0a0pKcFds?=
+ =?utf-8?B?ZFV3TkxqNmwxaCs5MTZaUmtEeFFOK3RqZXh1TW1mUy9QY20yQ0FMY2JXbVRz?=
+ =?utf-8?B?S2lGQTI1dDVpMkJWTXh5VUVKODVkVkpZZzlDVUJLZDBOSjNYTkFUY2w0SXlK?=
+ =?utf-8?B?M1pQejhaU091SStXYWp6Rlg2aFJYSlI5Ni9qd0gxOC9XR2FUZTNtWmxaVUxL?=
+ =?utf-8?B?RHQxeGpxVWhSUDlTRVpGMTlJejdwTWZaQnoxNkJFRXAwdSsvMTVzako2dWJu?=
+ =?utf-8?B?dlk2bnZIWDAvd0ptMzdMS0FLL3NXblBnb2U3bGt5ZzYxZWFCWG54emJqRVlH?=
+ =?utf-8?B?Y3JjTlhUWm85cUZobklHUHN3ZzVtZ1hDRlN2STdMcDgyaG9nWEpFMTNGZm1D?=
+ =?utf-8?B?Q0VCOUhvK01Xb3l6N3JYMFVRVSsydWxSUUZsMFhTZ0YzSU9qVUVTbmtlS1ln?=
+ =?utf-8?B?SHc9PQ==?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e2cbe8b-47ca-46fb-023c-08dd8e02481d
+X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 06:37:46.1312
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 07:31:00.8718
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h+kqvJRsLZN/eb+T2NbKzjrVTNAeXu1Hlqr6xZJBcprInfLMYMPNFnvFLv6cOjo/9qK0XBEpyACiB6rManyGxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7709
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ap7J0rckRe1HN6ZErZmfbby0dHReUaYAQvNveG2hupmxx28/reuUJ9S07wC7ixO6otqufq+HML+QAKh0szkkfg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8354
 
---------------20J8wHG41v0zlwJYCL04QA7w
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-
-
-On 4/22/2025 10:55 PM, David Hildenbrand wrote:
-> On 10.04.25 10:41, Christoph Hellwig wrote:
->> On Tue, Apr 08, 2025 at 11:23:57AM +0000, Shivank Garg wrote:
->>> KVM guest_memfd is implementing its own inodes to store metadata for
->>> backing memory using a custom filesystem. This requires the ability to
->>> initialize anonymous inode using security_inode_init_security_anon().
->>>
->>> As guest_memfd currently resides in the KVM module, we need to export this
->>> symbol for use outside the core kernel. In the future, guest_memfd might be
->>> moved to core-mm, at which point the symbols no longer would have to be
->>> exported. When/if that happens is still unclear.
->>
->> This really should be a EXPORT_SYMBOL_GPL, if at all.
->>
->> But you really should look into a new interface in anon_inode.c that
->> can be reused instead of duplicating anonymouns inode logic in kvm.ko.
+On 5/7/25 1:42 PM, Amir Goldstein wrote:
+> Copy the required headers files (mount.h, nsfs.h) to the
+> tools include dir and define the statmount/listmount syscalls
+> for x86_64 to decouple dependency with headers_install for the
+> common case.
 > 
-> I assume you mean combining the alloc_anon_inode()+
-> security_inode_init_security_anon(), correct?
-> 
-> I can see mm/secretmem.c doing the same thing, so agreed that
-> we're duplicating it.
-> 
-> 
-> Regarding your other mail, I am also starting to wonder where/why
-> we want security_inode_init_security_anon(). At least for
-> mm/secretmem.c, it was introduced by:
-> 
-> commit 2bfe15c5261212130f1a71f32a300bcf426443d4
-> Author: Christian Göttsche <cgzones@googlemail.com>
-> Date:   Tue Jan 25 15:33:04 2022 +0100
-> 
->     mm: create security context for memfd_secret inodes
->         Create a security context for the inodes created by memfd_secret(2) via
->     the LSM hook inode_init_security_anon to allow a fine grained control.
->     As secret memory areas can affect hibernation and have a global shared
->     limit access control might be desirable.
->         Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
->     Signed-off-by: Paul Moore <paul@paul-moore.com>
-> 
-> 
-> In combination with Paul's review comment [1]
-> 
-> "
-> This seems reasonable to me, and I like the idea of labeling the anon
-> inode as opposed to creating a new set of LSM hooks.  If we want to
-> apply access control policy to the memfd_secret() fds we are going to
-> need to attach some sort of LSM state to the inode, we might as well
-> use the mechanism we already have instead of inventing another one.
-> "
-> 
-> 
-> IIUC, we really only want security_inode_init_security_anon() when there
-> might be interest to have global access control.
-> 
-> 
-> Given that guest_memfd already shares many similarities with guest_memfd
-> (e.g., pages not swappable/migratable) and might share even more in the future
-> (e.g., directmap removal), I assume that we want the same thing for guest_memfd.
-> 
-> 
-> Would something like the following seem reasonable? We should be adding some
-> documentation for the new function, and I wonder if S_PRIVATE should actually
-> be cleared for secretmem + guest_memfd (I have no idea what this "fs-internal" flag
-> affects).
-> 
-
-Here's my understanding of S_PRIVATE flag:
-1. S_PRIVATE tells the kernel that an inode is special and it should
-skip the LSM permission checks (via IS_PRIVATE()):
-
-​For instance,
-int security_inode_mknod(struct inode *dir, struct dentry *dentry,
-                         umode_t mode, dev_t dev)
-{
-        if (unlikely(IS_PRIVATE(dir)))
-                return 0;
-        return call_int_hook(inode_mknod, dir, dentry, mode, dev);
-}
-
-2. In landlock LSM:
-S_PRIVATE inodes are denied from opening file and getting path from fd
-syscall: open_by_handle_at
-calls do_handle_open -> handle_to_path -> get_path_from_fd
-
-static int get_path_from_fd(const s32 fd, struct path *const path)
-{
-...
-        /*
-         * Forbids ruleset FDs, internal filesystems (e.g. nsfs), including
-         * pseudo filesystems that will never be mountable (e.g. sockfs,
-         * pipefs).
-         */
-        if ((fd_file(f)->f_op == &ruleset_fops) ||
-            (fd_file(f)->f_path.mnt->mnt_flags & MNT_INTERNAL) ||
-            (fd_file(f)->f_path.dentry->d_sb->s_flags & SB_NOUSER) ||
-            d_is_negative(fd_file(f)->f_path.dentry) ||
-            IS_PRIVATE(d_backing_inode(fd_file(f)->f_path.dentry)))
-                return -EBADFD;
-
-Using is_nouser_or_private() in is_access_to_paths_allowed() (allows accesses
-for requests with a common path)
-
-static bool is_access_to_paths_allowed() {
-...
-        if (is_nouser_or_private(path->dentry))
-                return true;
-
-3. S_PRIVATE skips security attribute initialization in SELinux:
-security/selinux/hooks.c
-sb_finish_set_opts(){
-...
-                if (inode) {
-                        if (!IS_PRIVATE(inode))
-                                inode_doinit_with_dentry(inode, NULL);
-
-4. mm/shmem.c
-/**
- * shmem_kernel_file_setup - get an unlinked file living in tmpfs which must be
- *      kernel internal.  There will be NO LSM permission checks against the
- *      underlying inode.  So users of this interface must do LSM checks at a
- *      higher layer.  The users are the big_key and shm implementations.  LSM
- *      checks are provided at the key or shm level rather than the inode.
- * @name: name for dentry (to be seen in /proc/<pid>/maps)
- * @size: size to be set for the file
- * @flags: VM_NORESERVE suppresses pre-accounting of the entire object size
- */
-struct file *shmem_kernel_file_setup(const char *name, loff_t size, unsigned long flags)
-{
-        return __shmem_file_setup(shm_mnt, name, size, flags, S_PRIVATE);
-
-
-From these observations, S_PRIVATE inodes are handled differently from other inodes.
-It appears to bypass LSM checks (probably saving some cycles) or In other words, it
-ensure the LSMs don't try to reason about these files. While it expects the details
-of these inodes should not be leaked to userspace (indicated by comments around
-S_PRIVATE refs).
-
-I think we should keep the use of S_PRIVATE flag as it is for secretmem and kvm_gmem.
-However, I'm uncertain about whether we still need security_inode_init_security_anon()
-for inodes that are already marked S_PRIVATE.
-The two seem contradictory. First, we mark an inode as private to bypass LSM checks,
-but then initialize security context for it.
-
-I'd appreciate the guidance from the security team.
-
-
-> From 782a6053268d8a2bddf90ba18c008495b0791710 Mon Sep 17 00:00:00 2001
-> From: David Hildenbrand <david@redhat.com>
-> Date: Tue, 22 Apr 2025 19:22:00 +0200
-> Subject: [PATCH] tmp
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  fs/anon_inodes.c   | 20 ++++++++++++++------
->  include/linux/fs.h |  1 +
->  mm/secretmem.c     |  9 +--------
->  3 files changed, 16 insertions(+), 14 deletions(-)
+>   tools/include/uapi/linux/mount.h              | 235 ++++++++++++++++++
+>   tools/include/uapi/linux/nsfs.h               |  45 ++++
+>   .../selftests/filesystems/statmount/Makefile  |   3 +-
+>   .../filesystems/statmount/statmount.h         |  12 +
+>   4 files changed, 294 insertions(+), 1 deletion(-)
+>   create mode 100644 tools/include/uapi/linux/mount.h
+>   create mode 100644 tools/include/uapi/linux/nsfs.h
 > 
-> diff --git a/fs/anon_inodes.c b/fs/anon_inodes.c
-> index 583ac81669c24..ea51fd582deb4 100644
-> --- a/fs/anon_inodes.c
-> +++ b/fs/anon_inodes.c
-> @@ -55,17 +55,18 @@ static struct file_system_type anon_inode_fs_type = {
->      .kill_sb    = kill_anon_super,
->  };
->  
-> -static struct inode *anon_inode_make_secure_inode(
-> -    const char *name,
-> -    const struct inode *context_inode)
-> +static struct inode *anon_inode_make_secure_inode(struct super_block *s,
-> +        const char *name, const struct inode *context_inode,
-> +        bool fs_internal)
->  {
->      struct inode *inode;
->      int error;
->  
-> -    inode = alloc_anon_inode(anon_inode_mnt->mnt_sb);
-> +    inode = alloc_anon_inode(s);
->      if (IS_ERR(inode))
->          return inode;
-> -    inode->i_flags &= ~S_PRIVATE;
-> +    if (!fs_internal)
-> +        inode->i_flags &= ~S_PRIVATE;
->      error =    security_inode_init_security_anon(inode, &QSTR(name),
->                            context_inode);
->      if (error) {
-> @@ -75,6 +76,12 @@ static struct inode *anon_inode_make_secure_inode(
->      return inode;
->  }
->  
-> +struct inode *alloc_anon_secure_inode(struct super_block *s, const char *name)
-> +{
-> +    return anon_inode_make_secure_inode(s, name, NULL, true);
-> +}
-> +EXPORT_SYMBOL_GPL(alloc_anon_secure_inode);
+> diff --git a/tools/include/uapi/linux/mount.h b/tools/include/uapi/linux/mount.h
+> new file mode 100644
+> index 000000000000..7fa67c2031a5
+> --- /dev/null
+> +++ b/tools/include/uapi/linux/mount.h
+> @@ -0,0 +1,235 @@
+> +#ifndef _UAPI_LINUX_MOUNT_H
+> +#define _UAPI_LINUX_MOUNT_H
 > +
->  static struct file *__anon_inode_getfile(const char *name,
->                       const struct file_operations *fops,
->                       void *priv, int flags,
-> @@ -88,7 +95,8 @@ static struct file *__anon_inode_getfile(const char *name,
->          return ERR_PTR(-ENOENT);
->  
->      if (make_inode) {
-> -        inode =    anon_inode_make_secure_inode(name, context_inode);
-> +        inode =    anon_inode_make_secure_inode(anon_inode_mnt->mnt_sb,
-> +                             name, context_inode, false);
->          if (IS_ERR(inode)) {
->              file = ERR_CAST(inode);
->              goto err;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 016b0fe1536e3..0fded2e3c661a 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3550,6 +3550,7 @@ extern int simple_write_begin(struct file *file, struct address_space *mapping,
->  extern const struct address_space_operations ram_aops;
->  extern int always_delete_dentry(const struct dentry *);
->  extern struct inode *alloc_anon_inode(struct super_block *);
-> +extern struct inode *alloc_anon_secure_inode(struct super_block *, const char *);
->  extern int simple_nosetlease(struct file *, int, struct file_lease **, void **);
->  extern const struct dentry_operations simple_dentry_operations;
->  
-> diff --git a/mm/secretmem.c b/mm/secretmem.c
-> index 1b0a214ee5580..c0e459e58cb65 100644
-> --- a/mm/secretmem.c
-> +++ b/mm/secretmem.c
-> @@ -195,18 +195,11 @@ static struct file *secretmem_file_create(unsigned long flags)
->      struct file *file;
->      struct inode *inode;
->      const char *anon_name = "[secretmem]";
-> -    int err;
->  
-> -    inode = alloc_anon_inode(secretmem_mnt->mnt_sb);
-> +    inode = alloc_anon_secure_inode(secretmem_mnt->mnt_sb, anon_name);
->      if (IS_ERR(inode))
->          return ERR_CAST(inode);
->  
-> -    err = security_inode_init_security_anon(inode, &QSTR(anon_name), NULL);
-> -    if (err) {
-> -        file = ERR_PTR(err);
-> -        goto err_free_inode;
-> -    }
-> -
->      file = alloc_file_pseudo(inode, secretmem_mnt, "secretmem",
->                   O_RDWR, &secretmem_fops);
->      if (IS_ERR(file))
+> +#include <linux/types.h>
+> +
+> +/*
+> + * These are the fs-independent mount-flags: up to 32 flags are supported
+> + *
+> + * Usage of these is restricted within the kernel to core mount(2) code and
+> + * callers of sys_mount() only.  Filesystems should be using the SB_*
+> + * equivalent instead.
+> + */
+> +#define MS_RDONLY	 1	/* Mount read-only */
+> +#define MS_NOSUID	 2	/* Ignore suid and sgid bits */
+> +#define MS_NODEV	 4	/* Disallow access to device special files */
+> +#define MS_NOEXEC	 8	/* Disallow program execution */
+> +#define MS_SYNCHRONOUS	16	/* Writes are synced at once */
+> +#define MS_REMOUNT	32	/* Alter flags of a mounted FS */
+> +#define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
+> +#define MS_DIRSYNC	128	/* Directory modifications are synchronous */
+> +#define MS_NOSYMFOLLOW	256	/* Do not follow symlinks */
+> +#define MS_NOATIME	1024	/* Do not update access times. */
+> +#define MS_NODIRATIME	2048	/* Do not update directory access times */
+> +#define MS_BIND		4096
+> +#define MS_MOVE		8192
+> +#define MS_REC		16384
+> +#define MS_VERBOSE	32768	/* War is peace. Verbosity is silence.
+> +				   MS_VERBOSE is deprecated. */
+> +#define MS_SILENT	32768
+> +#define MS_POSIXACL	(1<<16)	/* VFS does not apply the umask */
+> +#define MS_UNBINDABLE	(1<<17)	/* change to unbindable */
+> +#define MS_PRIVATE	(1<<18)	/* change to private */
+> +#define MS_SLAVE	(1<<19)	/* change to slave */
+> +#define MS_SHARED	(1<<20)	/* change to shared */
+> +#define MS_RELATIME	(1<<21)	/* Update atime relative to mtime/ctime. */
+> +#define MS_KERNMOUNT	(1<<22) /* this is a kern_mount call */
+> +#define MS_I_VERSION	(1<<23) /* Update inode I_version field */
+> +#define MS_STRICTATIME	(1<<24) /* Always perform atime updates */
+> +#define MS_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
+> +
+> +/* These sb flags are internal to the kernel */
+> +#define MS_SUBMOUNT     (1<<26)
+> +#define MS_NOREMOTELOCK	(1<<27)
+> +#define MS_NOSEC	(1<<28)
+> +#define MS_BORN		(1<<29)
+> +#define MS_ACTIVE	(1<<30)
+> +#define MS_NOUSER	(1<<31)
+> +
+> +/*
+> + * Superblock flags that can be altered by MS_REMOUNT
+> + */
+> +#define MS_RMT_MASK	(MS_RDONLY|MS_SYNCHRONOUS|MS_MANDLOCK|MS_I_VERSION|\
+> +			 MS_LAZYTIME)
+> +
+> +/*
+> + * Old magic mount flag and mask
+> + */
+> +#define MS_MGC_VAL 0xC0ED0000
+> +#define MS_MGC_MSK 0xffff0000
+> +
+> +/*
+> + * open_tree() flags.
+> + */
+> +#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
+> +#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
+> +
+> +/*
+> + * move_mount() flags.
+> + */
+> +#define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
+> +#define MOVE_MOUNT_F_AUTOMOUNTS		0x00000002 /* Follow automounts on from path */
+> +#define MOVE_MOUNT_F_EMPTY_PATH		0x00000004 /* Empty from path permitted */
+> +#define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
+> +#define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
+> +#define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
+> +#define MOVE_MOUNT_SET_GROUP		0x00000100 /* Set sharing group instead */
+> +#define MOVE_MOUNT_BENEATH		0x00000200 /* Mount beneath top mount */
+> +#define MOVE_MOUNT__MASK		0x00000377
+> +
+> +/*
+> + * fsopen() flags.
+> + */
+> +#define FSOPEN_CLOEXEC		0x00000001
+> +
+> +/*
+> + * fspick() flags.
+> + */
+> +#define FSPICK_CLOEXEC		0x00000001
+> +#define FSPICK_SYMLINK_NOFOLLOW	0x00000002
+> +#define FSPICK_NO_AUTOMOUNT	0x00000004
+> +#define FSPICK_EMPTY_PATH	0x00000008
+> +
+> +/*
+> + * The type of fsconfig() call made.
+> + */
+> +enum fsconfig_command {
+> +	FSCONFIG_SET_FLAG	= 0,	/* Set parameter, supplying no value */
+> +	FSCONFIG_SET_STRING	= 1,	/* Set parameter, supplying a string value */
+> +	FSCONFIG_SET_BINARY	= 2,	/* Set parameter, supplying a binary blob value */
+> +	FSCONFIG_SET_PATH	= 3,	/* Set parameter, supplying an object by path */
+> +	FSCONFIG_SET_PATH_EMPTY	= 4,	/* Set parameter, supplying an object by (empty) path */
+> +	FSCONFIG_SET_FD		= 5,	/* Set parameter, supplying an object by fd */
+> +	FSCONFIG_CMD_CREATE	= 6,	/* Create new or reuse existing superblock */
+> +	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
+> +	FSCONFIG_CMD_CREATE_EXCL = 8,	/* Create new superblock, fail if reusing existing superblock */
+> +};
+> +
+> +/*
+> + * fsmount() flags.
+> + */
+> +#define FSMOUNT_CLOEXEC		0x00000001
+> +
+> +/*
+> + * Mount attributes.
+> + */
+> +#define MOUNT_ATTR_RDONLY	0x00000001 /* Mount read-only */
+> +#define MOUNT_ATTR_NOSUID	0x00000002 /* Ignore suid and sgid bits */
+> +#define MOUNT_ATTR_NODEV	0x00000004 /* Disallow access to device special files */
+> +#define MOUNT_ATTR_NOEXEC	0x00000008 /* Disallow program execution */
+> +#define MOUNT_ATTR__ATIME	0x00000070 /* Setting on how atime should be updated */
+> +#define MOUNT_ATTR_RELATIME	0x00000000 /* - Update atime relative to mtime/ctime. */
+> +#define MOUNT_ATTR_NOATIME	0x00000010 /* - Do not update access times. */
+> +#define MOUNT_ATTR_STRICTATIME	0x00000020 /* - Always perform atime updates */
+> +#define MOUNT_ATTR_NODIRATIME	0x00000080 /* Do not update directory access times */
+> +#define MOUNT_ATTR_IDMAP	0x00100000 /* Idmap mount to @userns_fd in struct mount_attr. */
+> +#define MOUNT_ATTR_NOSYMFOLLOW	0x00200000 /* Do not follow symlinks */
+> +
+> +/*
+> + * mount_setattr()
+> + */
+> +struct mount_attr {
+> +	__u64 attr_set;
+> +	__u64 attr_clr;
+> +	__u64 propagation;
+> +	__u64 userns_fd;
+> +};
+> +
+> +/* List of all mount_attr versions. */
+> +#define MOUNT_ATTR_SIZE_VER0	32 /* sizeof first published struct */
+> +
+> +
+> +/*
+> + * Structure for getting mount/superblock/filesystem info with statmount(2).
+> + *
+> + * The interface is similar to statx(2): individual fields or groups can be
+> + * selected with the @mask argument of statmount().  Kernel will set the @mask
+> + * field according to the supported fields.
+> + *
+> + * If string fields are selected, then the caller needs to pass a buffer that
+> + * has space after the fixed part of the structure.  Nul terminated strings are
+> + * copied there and offsets relative to @str are stored in the relevant fields.
+> + * If the buffer is too small, then EOVERFLOW is returned.  The actually used
+> + * size is returned in @size.
+> + */
+> +struct statmount {
+> +	__u32 size;		/* Total size, including strings */
+> +	__u32 mnt_opts;		/* [str] Options (comma separated, escaped) */
+> +	__u64 mask;		/* What results were written */
+> +	__u32 sb_dev_major;	/* Device ID */
+> +	__u32 sb_dev_minor;
+> +	__u64 sb_magic;		/* ..._SUPER_MAGIC */
+> +	__u32 sb_flags;		/* SB_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
+> +	__u32 fs_type;		/* [str] Filesystem type */
+> +	__u64 mnt_id;		/* Unique ID of mount */
+> +	__u64 mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
+> +	__u32 mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
+> +	__u32 mnt_parent_id_old;
+> +	__u64 mnt_attr;		/* MOUNT_ATTR_... */
+> +	__u64 mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
+> +	__u64 mnt_peer_group;	/* ID of shared peer group */
+> +	__u64 mnt_master;	/* Mount receives propagation from this ID */
+> +	__u64 propagate_from;	/* Propagation from in current namespace */
+> +	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
+> +	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
+> +	__u64 mnt_ns_id;	/* ID of the mount namespace */
+> +	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
+> +	__u32 sb_source;	/* [str] Source string of the mount */
+> +	__u32 opt_num;		/* Number of fs options */
+> +	__u32 opt_array;	/* [str] Array of nul terminated fs options */
+> +	__u32 opt_sec_num;	/* Number of security options */
+> +	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
+> +	__u64 supported_mask;	/* Mask flags that this kernel supports */
+> +	__u32 mnt_uidmap_num;	/* Number of uid mappings */
+> +	__u32 mnt_uidmap;	/* [str] Array of uid mappings (as seen from callers namespace) */
+> +	__u32 mnt_gidmap_num;	/* Number of gid mappings */
+> +	__u32 mnt_gidmap;	/* [str] Array of gid mappings (as seen from callers namespace) */
+> +	__u64 __spare2[43];
+> +	char str[];		/* Variable size part containing strings */
+> +};
+> +
+> +/*
+> + * Structure for passing mount ID and miscellaneous parameters to statmount(2)
+> + * and listmount(2).
+> + *
+> + * For statmount(2) @param represents the request mask.
+> + * For listmount(2) @param represents the last listed mount id (or zero).
+> + */
+> +struct mnt_id_req {
+> +	__u32 size;
+> +	__u32 spare;
+> +	__u64 mnt_id;
+> +	__u64 param;
+> +	__u64 mnt_ns_id;
+> +};
+> +
+> +/* List of all mnt_id_req versions. */
+> +#define MNT_ID_REQ_SIZE_VER0	24 /* sizeof first published struct */
+> +#define MNT_ID_REQ_SIZE_VER1	32 /* sizeof second published struct */
+> +
+> +/*
+> + * @mask bits for statmount(2)
+> + */
+> +#define STATMOUNT_SB_BASIC		0x00000001U     /* Want/got sb_... */
+> +#define STATMOUNT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
+> +#define STATMOUNT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
+> +#define STATMOUNT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
+> +#define STATMOUNT_MNT_POINT		0x00000010U	/* Want/got mnt_point */
+> +#define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
+> +#define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
+> +#define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
+> +#define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
+> +#define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
+> +#define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
+> +#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
+> +#define STATMOUNT_SUPPORTED_MASK	0x00001000U	/* Want/got supported mask flags */
+> +#define STATMOUNT_MNT_UIDMAP		0x00002000U	/* Want/got uidmap... */
+> +#define STATMOUNT_MNT_GIDMAP		0x00004000U	/* Want/got gidmap... */
+> +
+> +/*
+> + * Special @mnt_id values that can be passed to listmount
+> + */
+> +#define LSMT_ROOT		0xffffffffffffffff	/* root mount */
+> +#define LISTMOUNT_REVERSE	(1 << 0) /* List later mounts first */
+> +
+> +#endif /* _UAPI_LINUX_MOUNT_H */
+> diff --git a/tools/include/uapi/linux/nsfs.h b/tools/include/uapi/linux/nsfs.h
+> new file mode 100644
+> index 000000000000..34127653fd00
+> --- /dev/null
+> +++ b/tools/include/uapi/linux/nsfs.h
+> @@ -0,0 +1,45 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef __LINUX_NSFS_H
+> +#define __LINUX_NSFS_H
+> +
+> +#include <linux/ioctl.h>
+> +#include <linux/types.h>
+> +
+> +#define NSIO	0xb7
+> +
+> +/* Returns a file descriptor that refers to an owning user namespace */
+> +#define NS_GET_USERNS		_IO(NSIO, 0x1)
+> +/* Returns a file descriptor that refers to a parent namespace */
+> +#define NS_GET_PARENT		_IO(NSIO, 0x2)
+> +/* Returns the type of namespace (CLONE_NEW* value) referred to by
+> +   file descriptor */
+> +#define NS_GET_NSTYPE		_IO(NSIO, 0x3)
+> +/* Get owner UID (in the caller's user namespace) for a user namespace */
+> +#define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
+> +/* Get the id for a mount namespace */
+> +#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
+> +/* Translate pid from target pid namespace into the caller's pid namespace. */
+> +#define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
+> +/* Return thread-group leader id of pid in the callers pid namespace. */
+> +#define NS_GET_TGID_FROM_PIDNS	_IOR(NSIO, 0x7, int)
+> +/* Translate pid from caller's pid namespace into a target pid namespace. */
+> +#define NS_GET_PID_IN_PIDNS	_IOR(NSIO, 0x8, int)
+> +/* Return thread-group leader id of pid in the target pid namespace. */
+> +#define NS_GET_TGID_IN_PIDNS	_IOR(NSIO, 0x9, int)
+> +
+> +struct mnt_ns_info {
+> +	__u32 size;
+> +	__u32 nr_mounts;
+> +	__u64 mnt_ns_id;
+> +};
+> +
+> +#define MNT_NS_INFO_SIZE_VER0 16 /* size of first published struct */
+> +
+> +/* Get information about namespace. */
+> +#define NS_MNT_GET_INFO		_IOR(NSIO, 10, struct mnt_ns_info)
+> +/* Get next namespace. */
+> +#define NS_MNT_GET_NEXT		_IOR(NSIO, 11, struct mnt_ns_info)
+> +/* Get previous namespace. */
+> +#define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
+> +
+> +#endif /* __LINUX_NSFS_H */
+> diff --git a/tools/testing/selftests/filesystems/statmount/Makefile b/tools/testing/selftests/filesystems/statmount/Makefile
+> index 14ee91a41650..19adebfc2620 100644
+> --- a/tools/testing/selftests/filesystems/statmount/Makefile
+> +++ b/tools/testing/selftests/filesystems/statmount/Makefile
+> @@ -1,6 +1,7 @@
+>   # SPDX-License-Identifier: GPL-2.0-or-later
+>   
+> -CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES)
+> +CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
 
-Thanks for the patch.
-I have split this change into two patches and added required documentation.
+Yes. :)
 
-Best Regards,
-Shivank
+> +
+>   TEST_GEN_PROGS := statmount_test statmount_test_ns listmount_test
+>   
+>   include ../../lib.mk
+> diff --git a/tools/testing/selftests/filesystems/statmount/statmount.h b/tools/testing/selftests/filesystems/statmount/statmount.h
+> index a7a5289ddae9..e84d47fadd0b 100644
+> --- a/tools/testing/selftests/filesystems/statmount/statmount.h
+> +++ b/tools/testing/selftests/filesystems/statmount/statmount.h
+> @@ -7,6 +7,18 @@
+>   #include <linux/mount.h>
+>   #include <asm/unistd.h>
+>   
+> +#ifndef __NR_statmount
+> +#if defined(__x86_64__)
+> +#define __NR_statmount	457
+> +#endif
+> +#endif
+> +
+> +#ifndef __NR_listmount
+> +#if defined(__x86_64__)
+> +#define __NR_listmount	458
+> +#endif
+> +#endif
 
---------------20J8wHG41v0zlwJYCL04QA7w
-Content-Type: text/plain; charset=UTF-8;
- name="0003-fs-add-alloc_anon_secure_inode-for-allocating-secure.patch"
-Content-Disposition: attachment;
- filename*0="0003-fs-add-alloc_anon_secure_inode-for-allocating-secure.pa";
- filename*1="tch"
-Content-Transfer-Encoding: base64
+Yes, syscalls are the weak point for this approach, and the above is
+reasonable, given the situation, which is: we are not set up to recreate
+per-arch syscall tables for kselftests to use. But this does leave the
+other big arch out in the cold: arm64.
 
-RnJvbSA3OGY0ODQzN2E4OGIzYjcwYWE3ZDgwYTMyZGI0ZjI2OWEwODA0ZDE4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBEYXZpZCBIaWxkZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT4K
-RGF0ZTogVHVlLCA2IE1heSAyMDI1IDA5OjEzOjA1ICswMDAwClN1YmplY3Q6IFtQQVRDSCBWOCAz
-LzldIGZzOiBhZGQgYWxsb2NfYW5vbl9zZWN1cmVfaW5vZGUoKSBmb3IgYWxsb2NhdGluZwogc2Vj
-dXJlIGFub255bW91cyBpbm9kZXMKClRoaXMgaW50cm9kdWNlcyBhbGxvY19hbm9uX3NlY3VyZV9p
-bm9kZSgpIGNvbWJpbmluZyBhbGxvY19hbm9uX2lub2RlKCkKd2l0aCBzZWN1cml0eV9pbm9kZV9p
-bml0X3NlY3VyaXR5X2Fub24oKSwgc2ltaWxhciB0byBzZWNyZXRtZW0ncyB1c2FnZS4KCkFzIGRp
-c2N1c3NlZCBbMV0sIHdlIG5lZWQgdGhpcyBmb3IgY2FzZXMgbGlrZSBzZWNyZXRtZW0gYW5kIGt2
-bV9nbWVtCndoZW4gdGhlcmUgbWlnaHQgYmUgaW50ZXJlc3QgdG8gaGF2ZSBnbG9iYWwgYWNjZXNz
-IGNvbnRyb2wgdmlhIExTTXMgYW5kCm5lZWQgcHJvcGVyIHNlY3VyaXR5IGxhYmVsaW5nIHdoaWxl
-IG1haW50YWluaW5nIFNfUFJJVkFURS4KClRoZSBuZXcgaGVscGVyIGF2b2lkcyBkdXBsaWNhdGlu
-ZyB0aGUgc2VjdXJpdHkgaW5pdGlhbGl6YXRpb24gZm9yIHNlY3JldG1lbQphbmQga3ZtX2dtZW0u
-CgpbMV06IGh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LW1tL2I5ZTVmYTQxLTYyZmQtNGIz
-ZC1iYjJkLTI0YWU5ZDNjMzNkYUByZWRoYXQuY29tCgpTaWduZWQtb2ZmLWJ5OiBEYXZpZCBIaWxk
-ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT4KW1NoaXZhbms6IGFkZCBkb2N1bWVudGF0aW9uXQpT
-aWduZWQtb2ZmLWJ5OiBTaGl2YW5rIEdhcmcgPHNoaXZhbmtnQGFtZC5jb20+Ci0tLQogZnMvYW5v
-bl9pbm9kZXMuYyAgIHwgNDYgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Ky0tLS0tLQogaW5jbHVkZS9saW51eC9mcy5oIHwgIDEgKwogMiBmaWxlcyBjaGFuZ2VkLCA0MSBp
-bnNlcnRpb25zKCspLCA2IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2ZzL2Fub25faW5vZGVz
-LmMgYi9mcy9hbm9uX2lub2Rlcy5jCmluZGV4IDU4M2FjODE2NjljMi4uNDc5ZWZjZWMyMGJjIDEw
-MDY0NAotLS0gYS9mcy9hbm9uX2lub2Rlcy5jCisrKyBiL2ZzL2Fub25faW5vZGVzLmMKQEAgLTU1
-LDE3ICs1NSwzMyBAQCBzdGF0aWMgc3RydWN0IGZpbGVfc3lzdGVtX3R5cGUgYW5vbl9pbm9kZV9m
-c190eXBlID0gewogCS5raWxsX3NiCT0ga2lsbF9hbm9uX3N1cGVyLAogfTsKIAotc3RhdGljIHN0
-cnVjdCBpbm9kZSAqYW5vbl9pbm9kZV9tYWtlX3NlY3VyZV9pbm9kZSgKLQljb25zdCBjaGFyICpu
-YW1lLAotCWNvbnN0IHN0cnVjdCBpbm9kZSAqY29udGV4dF9pbm9kZSkKKy8qKgorICogYW5vbl9p
-bm9kZV9tYWtlX3NlY3VyZV9pbm9kZSAtIGFsbG9jYXRlIGFuIGFub255bW91cyBpbm9kZSB3aXRo
-IHNlY3VyaXR5IGNvbnRleHQKKyAqIEBzYjoJCVtpbl0JU3VwZXJibG9jayB0byBhbGxvY2F0ZSBm
-cm9tCisgKiBAbmFtZToJW2luXQlOYW1lIG9mIHRoZSBjbGFzcyBvZiB0aGUgbmV3ZmlsZSAoZS5n
-LiwgInNlY3JldG1lbSIpCisgKiBAY29udGV4dF9pbm9kZToKKyAqCQlbaW5dCU9wdGlvbmFsIHBh
-cmVudCBpbm9kZSBmb3Igc2VjdXJpdHkgaW5oZXJpdGFuY2UKKyAqIEBmc19pbnRlcm5hbDoKKyAq
-CQlbaW5dCUlmIHRydWUsIGtlZXAgU19QUklWQVRFIHNldCAoZmxhZyBpbmRpY2F0aW5nIGludGVy
-bmFsIGZzIGlub2RlcykKKyAqCisgKiBUaGUgZnVuY3Rpb24gZW5zdXJlcyBwcm9wZXIgc2VjdXJp
-dHkgaW5pdGlhbGl6YXRpb24gdGhyb3VnaCB0aGUgTFNNIGhvb2sKKyAqIHNlY3VyaXR5X2lub2Rl
-X2luaXRfc2VjdXJpdHlfYW5vbigpLgorICoKKyAqIFJldHVybjoJUG9pbnRlciB0byBuZXcgaW5v
-ZGUgb24gc3VjY2VzcywgRVJSX1BUUiBvbiBmYWlsdXJlLgorICovCitzdGF0aWMgc3RydWN0IGlu
-b2RlICphbm9uX2lub2RlX21ha2Vfc2VjdXJlX2lub2RlKHN0cnVjdCBzdXBlcl9ibG9jayAqc2Is
-CisJCWNvbnN0IGNoYXIgKm5hbWUsIGNvbnN0IHN0cnVjdCBpbm9kZSAqY29udGV4dF9pbm9kZSwK
-KwkJYm9vbCBmc19pbnRlcm5hbCkKIHsKIAlzdHJ1Y3QgaW5vZGUgKmlub2RlOwogCWludCBlcnJv
-cjsKIAotCWlub2RlID0gYWxsb2NfYW5vbl9pbm9kZShhbm9uX2lub2RlX21udC0+bW50X3NiKTsK
-Kwlpbm9kZSA9IGFsbG9jX2Fub25faW5vZGUoc2IpOwogCWlmIChJU19FUlIoaW5vZGUpKQogCQly
-ZXR1cm4gaW5vZGU7Ci0JaW5vZGUtPmlfZmxhZ3MgJj0gflNfUFJJVkFURTsKKwlpZiAoIWZzX2lu
-dGVybmFsKQorCQlpbm9kZS0+aV9mbGFncyAmPSB+U19QUklWQVRFOworCiAJZXJyb3IgPQlzZWN1
-cml0eV9pbm9kZV9pbml0X3NlY3VyaXR5X2Fub24oaW5vZGUsICZRU1RSKG5hbWUpLAogCQkJCQkJ
-ICBjb250ZXh0X2lub2RlKTsKIAlpZiAoZXJyb3IpIHsKQEAgLTc1LDYgKzkxLDIzIEBAIHN0YXRp
-YyBzdHJ1Y3QgaW5vZGUgKmFub25faW5vZGVfbWFrZV9zZWN1cmVfaW5vZGUoCiAJcmV0dXJuIGlu
-b2RlOwogfQogCisvKioKKyAqIGFsbG9jX2Fub25fc2VjdXJlX2lub2RlIC0gYWxsb2NhdGUgYSBz
-ZWN1cmUgYW5vbnltb3VzIGlub2RlCisgKiBAc2I6CQlbaW5dCVN1cGVyYmxvY2sgdG8gYWxsb2Nh
-dGUgdGhlIGlub2RlIGZyb20KKyAqIEBuYW1lOglbaW5dCU5hbWUgb2YgdGhlIGNsYXNzIG9mIHRo
-ZSBuZXdmaWxlIChlLmcuLCAic2VjcmV0bWVtIikKKyAqCisgKiBTcGVjaWFsaXplZCB2ZXJzaW9u
-IG9mIGFub25faW5vZGVfbWFrZV9zZWN1cmVfaW5vZGUoKSBmb3IgZmlsZXN5c3RlbSB1c2UuCisg
-KiBUaGlzIGNyZWF0ZXMgYW4gaW50ZXJuYWwtdXNlIGlub2RlLCBtYXJrZWQgd2l0aCBTX1BSSVZB
-VEUgKGhpZGRlbiBmcm9tCisgKiB1c2Vyc3BhY2UpLgorICoKKyAqIFJldHVybjoJQSBwb2ludGVy
-IHRvIHRoZSBuZXcgaW5vZGUgb24gc3VjY2VzcywgRVJSX1BUUiBvbiBmYWlsdXJlLgorICovCitz
-dHJ1Y3QgaW5vZGUgKmFsbG9jX2Fub25fc2VjdXJlX2lub2RlKHN0cnVjdCBzdXBlcl9ibG9jayAq
-c2IsIGNvbnN0IGNoYXIgKm5hbWUpCit7CisJcmV0dXJuIGFub25faW5vZGVfbWFrZV9zZWN1cmVf
-aW5vZGUoc2IsIG5hbWUsIE5VTEwsIHRydWUpOworfQorRVhQT1JUX1NZTUJPTF9HUEwoYWxsb2Nf
-YW5vbl9zZWN1cmVfaW5vZGUpOworCiBzdGF0aWMgc3RydWN0IGZpbGUgKl9fYW5vbl9pbm9kZV9n
-ZXRmaWxlKGNvbnN0IGNoYXIgKm5hbWUsCiAJCQkJCSBjb25zdCBzdHJ1Y3QgZmlsZV9vcGVyYXRp
-b25zICpmb3BzLAogCQkJCQkgdm9pZCAqcHJpdiwgaW50IGZsYWdzLApAQCAtODgsNyArMTIxLDgg
-QEAgc3RhdGljIHN0cnVjdCBmaWxlICpfX2Fub25faW5vZGVfZ2V0ZmlsZShjb25zdCBjaGFyICpu
-YW1lLAogCQlyZXR1cm4gRVJSX1BUUigtRU5PRU5UKTsKIAogCWlmIChtYWtlX2lub2RlKSB7Ci0J
-CWlub2RlID0JYW5vbl9pbm9kZV9tYWtlX3NlY3VyZV9pbm9kZShuYW1lLCBjb250ZXh0X2lub2Rl
-KTsKKwkJaW5vZGUgPQlhbm9uX2lub2RlX21ha2Vfc2VjdXJlX2lub2RlKGFub25faW5vZGVfbW50
-LT5tbnRfc2IsCisJCQkJCQkgICAgIG5hbWUsIGNvbnRleHRfaW5vZGUsIGZhbHNlKTsKIAkJaWYg
-KElTX0VSUihpbm9kZSkpIHsKIAkJCWZpbGUgPSBFUlJfQ0FTVChpbm9kZSk7CiAJCQlnb3RvIGVy
-cjsKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgvZnMuaCBiL2luY2x1ZGUvbGludXgvZnMuaApp
-bmRleCAwMTZiMGZlMTUzNmUuLjBmZGVkMmUzYzY2MSAxMDA2NDQKLS0tIGEvaW5jbHVkZS9saW51
-eC9mcy5oCisrKyBiL2luY2x1ZGUvbGludXgvZnMuaApAQCAtMzU1MCw2ICszNTUwLDcgQEAgZXh0
-ZXJuIGludCBzaW1wbGVfd3JpdGVfYmVnaW4oc3RydWN0IGZpbGUgKmZpbGUsIHN0cnVjdCBhZGRy
-ZXNzX3NwYWNlICptYXBwaW5nLAogZXh0ZXJuIGNvbnN0IHN0cnVjdCBhZGRyZXNzX3NwYWNlX29w
-ZXJhdGlvbnMgcmFtX2FvcHM7CiBleHRlcm4gaW50IGFsd2F5c19kZWxldGVfZGVudHJ5KGNvbnN0
-IHN0cnVjdCBkZW50cnkgKik7CiBleHRlcm4gc3RydWN0IGlub2RlICphbGxvY19hbm9uX2lub2Rl
-KHN0cnVjdCBzdXBlcl9ibG9jayAqKTsKK2V4dGVybiBzdHJ1Y3QgaW5vZGUgKmFsbG9jX2Fub25f
-c2VjdXJlX2lub2RlKHN0cnVjdCBzdXBlcl9ibG9jayAqLCBjb25zdCBjaGFyICopOwogZXh0ZXJu
-IGludCBzaW1wbGVfbm9zZXRsZWFzZShzdHJ1Y3QgZmlsZSAqLCBpbnQsIHN0cnVjdCBmaWxlX2xl
-YXNlICoqLCB2b2lkICoqKTsKIGV4dGVybiBjb25zdCBzdHJ1Y3QgZGVudHJ5X29wZXJhdGlvbnMg
-c2ltcGxlX2RlbnRyeV9vcGVyYXRpb25zOwogCi0tIAoyLjM0LjEKCg==
+It's easy to add, though, if and when someone wants it.
 
---------------20J8wHG41v0zlwJYCL04QA7w
-Content-Type: text/plain; charset=UTF-8;
- name="0004-mm-secretmem-use-alloc_anon_secure_inode.patch"
-Content-Disposition: attachment;
- filename="0004-mm-secretmem-use-alloc_anon_secure_inode.patch"
-Content-Transfer-Encoding: base64
+> +
+>   static inline int statmount(uint64_t mnt_id, uint64_t mnt_ns_id, uint64_t mask,
+>   			    struct statmount *buf, size_t bufsize,
+>   			    unsigned int flags)
 
-RnJvbSBjYjlmMTE0YjMwOTdkNDlmOTlhMjI0Y2QzZDI0ODNkMTA2NzY2NTIxIE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBEYXZpZCBIaWxkZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT4K
-RGF0ZTogVHVlLCA2IE1heSAyMDI1IDA5OjIxOjI0ICswMDAwClN1YmplY3Q6IFtQQVRDSCBWOCA0
-LzldIG1tL3NlY3JldG1lbTogdXNlIGFsbG9jX2Fub25fc2VjdXJlX2lub2RlKCkKClVzZSBhbGxv
-Y19hbm9uX3NlY3VyZV9pbm9kZSgpIGluc3RlYWQgb2YgYWxsb2NfYW5vbl9pbm9kZSgpICsKc2Vj
-dXJpdHlfaW5vZGVfaW5pdF9zZWN1cml0eV9hbm9uKCkgdG8gYXZvaWQgZHVwbGljYXRpbmcgdGhl
-CmFub25faW5vZGVfbWFrZV9zZWN1cmVfaW5vZGUoKSBsb2dpYy4KClNpZ25lZC1vZmYtYnk6IERh
-dmlkIEhpbGRlbmJyYW5kIDxkYXZpZEByZWRoYXQuY29tPgpTaWduZWQtb2ZmLWJ5OiBTaGl2YW5r
-IEdhcmcgPHNoaXZhbmtnQGFtZC5jb20+Ci0tLQogbW0vc2VjcmV0bWVtLmMgfCA5ICstLS0tLS0t
-LQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCA4IGRlbGV0aW9ucygtKQoKZGlmZiAt
-LWdpdCBhL21tL3NlY3JldG1lbS5jIGIvbW0vc2VjcmV0bWVtLmMKaW5kZXggMWIwYTIxNGVlNTU4
-Li5jMGU0NTllNThjYjYgMTAwNjQ0Ci0tLSBhL21tL3NlY3JldG1lbS5jCisrKyBiL21tL3NlY3Jl
-dG1lbS5jCkBAIC0xOTUsMTggKzE5NSwxMSBAQCBzdGF0aWMgc3RydWN0IGZpbGUgKnNlY3JldG1l
-bV9maWxlX2NyZWF0ZSh1bnNpZ25lZCBsb25nIGZsYWdzKQogCXN0cnVjdCBmaWxlICpmaWxlOwog
-CXN0cnVjdCBpbm9kZSAqaW5vZGU7CiAJY29uc3QgY2hhciAqYW5vbl9uYW1lID0gIltzZWNyZXRt
-ZW1dIjsKLQlpbnQgZXJyOwogCi0JaW5vZGUgPSBhbGxvY19hbm9uX2lub2RlKHNlY3JldG1lbV9t
-bnQtPm1udF9zYik7CisJaW5vZGUgPSBhbGxvY19hbm9uX3NlY3VyZV9pbm9kZShzZWNyZXRtZW1f
-bW50LT5tbnRfc2IsIGFub25fbmFtZSk7CiAJaWYgKElTX0VSUihpbm9kZSkpCiAJCXJldHVybiBF
-UlJfQ0FTVChpbm9kZSk7CiAKLQllcnIgPSBzZWN1cml0eV9pbm9kZV9pbml0X3NlY3VyaXR5X2Fu
-b24oaW5vZGUsICZRU1RSKGFub25fbmFtZSksIE5VTEwpOwotCWlmIChlcnIpIHsKLQkJZmlsZSA9
-IEVSUl9QVFIoZXJyKTsKLQkJZ290byBlcnJfZnJlZV9pbm9kZTsKLQl9Ci0KIAlmaWxlID0gYWxs
-b2NfZmlsZV9wc2V1ZG8oaW5vZGUsIHNlY3JldG1lbV9tbnQsICJzZWNyZXRtZW0iLAogCQkJCSBP
-X1JEV1IsICZzZWNyZXRtZW1fZm9wcyk7CiAJaWYgKElTX0VSUihmaWxlKSkKLS0gCjIuMzQuMQoK
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
 
---------------20J8wHG41v0zlwJYCL04QA7w--
+
+thanks,
+-- 
+John Hubbard
+
 
