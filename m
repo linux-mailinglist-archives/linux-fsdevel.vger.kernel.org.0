@@ -1,46 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-48437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32910AAF133
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 04:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB87DAAF1AA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 05:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3641E4C5D6C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 02:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D30D3A4A3B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 03:28:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E53B1DDA09;
-	Thu,  8 May 2025 02:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C5B1F6694;
+	Thu,  8 May 2025 03:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDWeLQBq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416132CA9
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 02:40:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361A31E32BE
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 03:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746672018; cv=none; b=h9adBiHVydh2TsdHBeWj7IQvvLPHdfceSc95deRk5WL/6ANQMXPIJEjjD5B5uKGd6LZ9Njpfr1CLc8Z4LZIAVX50TB87eyQ+I2pRQ2UoFQudil1UzmB0NOhMfZMZa8F0ySRlgb8pCBjARDwSxU06jDS9eRbCiFcqKawSpP4SUPQ=
+	t=1746674942; cv=none; b=JaXxYzAAUWEVjnqi2SgHpnQHwuRzfrxwl7CY41F14JLH2+CNNQZCzJ7Kafu5SBbeFevCRkoL/AvD6a8A1bqxRQEwdqi/ZAViIxdAhkVcDTjJuv5bk217n/zCzuRYgPOusz5m07YJt5qkZCHE8ik8aiGBrSOmzv63zvrF3IqEr/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746672018; c=relaxed/simple;
-	bh=+hrO2xkMlure1snfwvyc257mVMLZMjwaIn2J5A7q6rQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bnBC6Ij4wP5/tfssJ0vzmu60YgV3v+wfyWRjATl0sGRylMM0u9QYgujm8sxL++ND1Kuw2wek+5VMVlhD2VZlU7etPL/jT2buIQA2x0LZCxiu8hwW/rq/GZzKUFm8qNCwFyToTYYJpLJUTwzqR0TXYFBGPgoxRkCC10j9Xz1K9ms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZtGXk2Jynz13Lc6;
-	Thu,  8 May 2025 10:38:46 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id 57CE71400E3;
-	Thu,  8 May 2025 10:40:04 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 8 May 2025 10:40:03 +0800
-Message-ID: <6c3c7e74-b85b-44df-801b-b37845791051@huawei.com>
-Date: Thu, 8 May 2025 10:40:03 +0800
+	s=arc-20240116; t=1746674942; c=relaxed/simple;
+	bh=pCyYn4N03Oez00d6sol7X1wiGTbexMKVucPmEMi0IPk=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=YHhOo8ezFdpjhvNorjPn5VsAkqE0DMZm+tnsFAh2+vaTCDwU9jHfFQHIJMn2EGZj93BAuHqNf0mkiSlZq69uAw12aKPVhdozZr6uQgH2RgsUUYdZ7gMpOV2rH2/bXuLdgfsTOmDdQOmsjc3iPXndJSOO+ElmjkuH987OguvEvi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDWeLQBq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78AFDC4CEE8;
+	Thu,  8 May 2025 03:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746674941;
+	bh=pCyYn4N03Oez00d6sol7X1wiGTbexMKVucPmEMi0IPk=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=DDWeLQBqkgpfICJXdSRul+dq4RlkiTnu19VuG3L9CR74W81x6sF5Egv5CDgvc/D7r
+	 PvGEVufGsH9PdoaHVh0fpKtIkvQ6SGr2km5hWp/Jlb/vSbbOEc56zTO9ku0Tg0vFxS
+	 nFl5GEQcb6sPsHftw3b2Uy1r244u/NUu/9vuhaLBjQGxlIXBO0CeRlw02Au052//8D
+	 RfqnddBC2R6o3qi/pm6VvKe7RSokVZAE6jFYf7/tc/ptFMJTm7ZrTEYKZ2/UvZxFen
+	 VUgdDsp8BtEN8KCcir1N5jU+TToeJ3jbbOieePwB0rLQetkg4/3/O7dztdU+oPa5R1
+	 omz4EiuXJP10Q==
+Message-ID: <e9a4bd0a-5f3c-4e13-ba4d-9f73782a37ba@kernel.org>
+Date: Thu, 8 May 2025 11:28:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -48,183 +50,79 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/7] f2fs: Add fs parameter specifications for mount
- options
-To: Eric Sandeen <sandeen@redhat.com>,
-	<linux-f2fs-devel@lists.sourceforge.net>
-CC: <linux-fsdevel@vger.kernel.org>, <jaegeuk@kernel.org>, <chao@kernel.org>
-References: <20250423170926.76007-1-sandeen@redhat.com>
- <20250423170926.76007-2-sandeen@redhat.com>
+Cc: chao@kernel.org, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+ lihongbo22@huawei.com
+Subject: Re: [PATCH 2/7] f2fs: move the option parser into handle_mount_opt
+To: Eric Sandeen <sandeen@redhat.com>, linux-f2fs-devel@lists.sourceforge.net
+References: <20250420154647.1233033-1-sandeen@redhat.com>
+ <20250420154647.1233033-3-sandeen@redhat.com>
+ <2e354373-9f00-4499-8812-bcb7f00a6dbc@kernel.org>
+ <db0c33f2-9fa0-4ee7-b5c9-e055fcc4d538@redhat.com>
 Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <20250423170926.76007-2-sandeen@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <db0c33f2-9fa0-4ee7-b5c9-e055fcc4d538@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemo500009.china.huawei.com (7.202.194.199)
 
+On 5/7/25 20:31, Eric Sandeen wrote:
+> On 5/7/25 6:26 AM, Chao Yu wrote:
+>> On 4/20/25 23:25, Eric Sandeen wrote:
+>>> From: Hongbo Li <lihongbo22@huawei.com>
+>>>
+>>> In handle_mount_opt, we use fs_parameter to parse each option.
+>>> However we're still using the old API to get the options string.
+>>> Using fsparams parse_options allows us to remove many of the Opt_
+>>> enums, so remove them.
+>>>
+>>> The checkpoint disable cap (or percent) involves rather complex
+>>> parsing; we retain the old match_table mechanism for this, which
+>>> handles it well.
+>>>
+>>> There are some changes about parsing options:
+>>>   1. For `active_logs`, `inline_xattr_size` and `fault_injection`,
+>>>      we use s32 type according the internal structure to record the
+>>>      option's value.
+>>
+>> We'd better to use u32 type for these options, as they should never
+>> be negative.
+>>
+>> Can you please update based on below patch?
+>>
+>> https://lore.kernel.org/linux-f2fs-devel/20250507112425.939246-1-chao@kernel.org
+> 
+> Hi Chao - I agree that that patch makes sense, but maybe there is a timing
+> issue now? At the moment, there is a mix of signed and unsigned handling
+> for these options. I agree that the conversion series probably should have
+> left the parsing type as unsigned, but it was a mix internally, so it was
+> difficult to know for sure.
+> 
+> For your patch above, if it is to stand alone or be merged first, it 
+> should probably also change the current parsing to match_uint. (this would
+> also make it backportable to -stable kernels, if you want to).
+> 
+> Otherwise, I would suggest that if it is merged after the mount API series,
+> then your patch to clean up internal types could fix the (new mount API)
+> parsing from %s to %u at the same time?
+> 
+> Happy to do it either way but your patch should probably be internally
+> consistent, changing the parsing types at the same time.
+> 
+> (I suppose we could incorporate your patch into the mount API series too,
+> though it'd be a little strange to have a minor bugfix like this buried
+> in the series.)
 
+Eric,
 
-On 2025/4/24 1:08, Eric Sandeen wrote:
-> From: Hongbo Li <lihongbo22@huawei.com>
-> 
-> Use an array of `fs_parameter_spec` called f2fs_param_specs to
-> hold the mount option specifications for the new mount api.
-> 
-> Add constant_table structures for several options to facilitate
-> parsing.
-> 
-> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> [sandeen: forward port, minor fixes and updates, more fsparam_enum]
-> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Thanks, I have checked this.
-Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
+Yeah, it's a little bit strange to include that patch into mount API series,
+now, I realize that rebasing huge change to a minor fix is not necessary,
+anyway, let me focus on reviewing, and pickup that patch after mount API series
+be merged. :P
 
-> ---
->   fs/f2fs/super.c | 122 ++++++++++++++++++++++++++++++++++++++++++++++++
->   1 file changed, 122 insertions(+)
+Thanks,
+
 > 
-> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> index 22f26871b7aa..ebea03bba054 100644
-> --- a/fs/f2fs/super.c
-> +++ b/fs/f2fs/super.c
-> @@ -27,6 +27,7 @@
->   #include <linux/part_stat.h>
->   #include <linux/zstd.h>
->   #include <linux/lz4.h>
-> +#include <linux/fs_parser.h>
->   
->   #include "f2fs.h"
->   #include "node.h"
-> @@ -194,9 +195,130 @@ enum {
->   	Opt_age_extent_cache,
->   	Opt_errors,
->   	Opt_nat_bits,
-> +	Opt_jqfmt,
-> +	Opt_checkpoint,
->   	Opt_err,
->   };
->   
-> +static const struct constant_table f2fs_param_background_gc[] = {
-> +	{"on",		BGGC_MODE_ON},
-> +	{"off",		BGGC_MODE_OFF},
-> +	{"sync",	BGGC_MODE_SYNC},
-> +	{}
-> +};
-> +
-> +static const struct constant_table f2fs_param_mode[] = {
-> +	{"adaptive",		FS_MODE_ADAPTIVE},
-> +	{"lfs",			FS_MODE_LFS},
-> +	{"fragment:segment",	FS_MODE_FRAGMENT_SEG},
-> +	{"fragment:block",	FS_MODE_FRAGMENT_BLK},
-> +	{}
-> +};
-> +
-> +static const struct constant_table f2fs_param_jqfmt[] = {
-> +	{"vfsold",	QFMT_VFS_OLD},
-> +	{"vfsv0",	QFMT_VFS_V0},
-> +	{"vfsv1",	QFMT_VFS_V1},
-> +	{}
-> +};
-> +
-> +static const struct constant_table f2fs_param_alloc_mode[] = {
-> +	{"default",	ALLOC_MODE_DEFAULT},
-> +	{"reuse",	ALLOC_MODE_REUSE},
-> +	{}
-> +};
-> +static const struct constant_table f2fs_param_fsync_mode[] = {
-> +	{"posix",	FSYNC_MODE_POSIX},
-> +	{"strict",	FSYNC_MODE_STRICT},
-> +	{"nobarrier",	FSYNC_MODE_NOBARRIER},
-> +	{}
-> +};
-> +
-> +static const struct constant_table f2fs_param_compress_mode[] = {
-> +	{"fs",		COMPR_MODE_FS},
-> +	{"user",	COMPR_MODE_USER},
-> +	{}
-> +};
-> +
-> +static const struct constant_table f2fs_param_discard_unit[] = {
-> +	{"block",	DISCARD_UNIT_BLOCK},
-> +	{"segment",	DISCARD_UNIT_SEGMENT},
-> +	{"section",	DISCARD_UNIT_SECTION},
-> +	{}
-> +};
-> +
-> +static const struct constant_table f2fs_param_memory_mode[] = {
-> +	{"normal",	MEMORY_MODE_NORMAL},
-> +	{"low",		MEMORY_MODE_LOW},
-> +	{}
-> +};
-> +
-> +static const struct constant_table f2fs_param_errors[] = {
-> +	{"remount-ro",	MOUNT_ERRORS_READONLY},
-> +	{"continue",	MOUNT_ERRORS_CONTINUE},
-> +	{"panic",	MOUNT_ERRORS_PANIC},
-> +	{}
-> +};
-> +
-> +static const struct fs_parameter_spec f2fs_param_specs[] = {
-> +	fsparam_enum("background_gc", Opt_gc_background, f2fs_param_background_gc),
-> +	fsparam_flag("disable_roll_forward", Opt_disable_roll_forward),
-> +	fsparam_flag("norecovery", Opt_norecovery),
-> +	fsparam_flag_no("discard", Opt_discard),
-> +	fsparam_flag("no_heap", Opt_noheap),
-> +	fsparam_flag("heap", Opt_heap),
-> +	fsparam_flag_no("user_xattr", Opt_user_xattr),
-> +	fsparam_flag_no("acl", Opt_acl),
-> +	fsparam_s32("active_logs", Opt_active_logs),
-> +	fsparam_flag("disable_ext_identify", Opt_disable_ext_identify),
-> +	fsparam_flag_no("inline_xattr", Opt_inline_xattr),
-> +	fsparam_s32("inline_xattr_size", Opt_inline_xattr_size),
-> +	fsparam_flag_no("inline_data", Opt_inline_data),
-> +	fsparam_flag_no("inline_dentry", Opt_inline_dentry),
-> +	fsparam_flag_no("flush_merge", Opt_flush_merge),
-> +	fsparam_flag_no("barrier", Opt_barrier),
-> +	fsparam_flag("fastboot", Opt_fastboot),
-> +	fsparam_flag_no("extent_cache", Opt_extent_cache),
-> +	fsparam_flag("data_flush", Opt_data_flush),
-> +	fsparam_u32("reserve_root", Opt_reserve_root),
-> +	fsparam_gid("resgid", Opt_resgid),
-> +	fsparam_uid("resuid", Opt_resuid),
-> +	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
-> +	fsparam_s32("fault_injection", Opt_fault_injection),
-> +	fsparam_u32("fault_type", Opt_fault_type),
-> +	fsparam_flag_no("lazytime", Opt_lazytime),
-> +	fsparam_flag_no("quota", Opt_quota),
-> +	fsparam_flag("usrquota", Opt_usrquota),
-> +	fsparam_flag("grpquota", Opt_grpquota),
-> +	fsparam_flag("prjquota", Opt_prjquota),
-> +	fsparam_string_empty("usrjquota", Opt_usrjquota),
-> +	fsparam_string_empty("grpjquota", Opt_grpjquota),
-> +	fsparam_string_empty("prjjquota", Opt_prjjquota),
-> +	fsparam_flag("nat_bits", Opt_nat_bits),
-> +	fsparam_enum("jqfmt", Opt_jqfmt, f2fs_param_jqfmt),
-> +	fsparam_enum("alloc_mode", Opt_alloc, f2fs_param_alloc_mode),
-> +	fsparam_enum("fsync_mode", Opt_fsync, f2fs_param_fsync_mode),
-> +	fsparam_string("test_dummy_encryption", Opt_test_dummy_encryption),
-> +	fsparam_flag("test_dummy_encryption", Opt_test_dummy_encryption),
-> +	fsparam_flag("inlinecrypt", Opt_inlinecrypt),
-> +	fsparam_string("checkpoint", Opt_checkpoint),
-> +	fsparam_flag_no("checkpoint_merge", Opt_checkpoint_merge),
-> +	fsparam_string("compress_algorithm", Opt_compress_algorithm),
-> +	fsparam_u32("compress_log_size", Opt_compress_log_size),
-> +	fsparam_string("compress_extension", Opt_compress_extension),
-> +	fsparam_string("nocompress_extension", Opt_nocompress_extension),
-> +	fsparam_flag("compress_chksum", Opt_compress_chksum),
-> +	fsparam_enum("compress_mode", Opt_compress_mode, f2fs_param_compress_mode),
-> +	fsparam_flag("compress_cache", Opt_compress_cache),
-> +	fsparam_flag("atgc", Opt_atgc),
-> +	fsparam_flag_no("gc_merge", Opt_gc_merge),
-> +	fsparam_enum("discard_unit", Opt_discard_unit, f2fs_param_discard_unit),
-> +	fsparam_enum("memory", Opt_memory_mode, f2fs_param_memory_mode),
-> +	fsparam_flag("age_extent_cache", Opt_age_extent_cache),
-> +	fsparam_enum("errors", Opt_errors, f2fs_param_errors),
-> +	{}
-> +};
-> +
->   static match_table_t f2fs_tokens = {
->   	{Opt_gc_background, "background_gc=%s"},
->   	{Opt_disable_roll_forward, "disable_roll_forward"},
+> Thanks,
+> -Eric
+> 
+
 
