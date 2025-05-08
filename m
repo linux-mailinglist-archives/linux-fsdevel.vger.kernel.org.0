@@ -1,240 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-48473-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36809AAF957
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 14:08:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 379E7AAF9A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 14:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B43C1BC2FDC
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 12:08:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125E94C53D2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 12:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0652223DD6;
-	Thu,  8 May 2025 12:08:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JjsapCB9"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248CB22688B;
+	Thu,  8 May 2025 12:17:31 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754A61CD2C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 12:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5C01DF25C;
+	Thu,  8 May 2025 12:17:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706112; cv=none; b=fCGtEJf7al22XvgUbnZL9jmxKP23NolJ9SzClNV+BCUx4styUieJd67CeRc+tO2nySinHPr2puxGslasX4y8cMFY6qozjbHl6nTJMfZw7+dYNd1p1SafZTMX/FGiA6K6R568dM2iWmgToEW/aDKyEQt0THnEXblV5yh3dDHncjg=
+	t=1746706650; cv=none; b=h+1XRrkUJuwDGHI0RyMtuUuTBIyb0I3H6YGCoGlzWCGooK2dsfjxhqmhsXEn/9MlWq/aUSpHpHh9F77TG9o4xd+sGFMI223jIk6PTBYlyyym/4HB22YxxUU0JXZJjAnZSHjdj3CunW0ZMFV5a/3EniBuzx4hGrbC0SQCDe2sdjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706112; c=relaxed/simple;
-	bh=rnFkhTv5+tA/8JUTv1WvESm3xGdCv8VtfIEwqqsfRMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ieHzX1EyeexPM7Ko+HR2EPJWz0m+HftaGTbytKC+WMAe+2VWlfRF/vc1PcgrXiyeLeDjwQyXJF675S5FyQxMMdNmsK6mR50v9PCAdEUJdRjBqMzMEjJh/yCbZdYmTzu6O1EleIkIDErY5S78Vt2MPSFxJSH5xrRd0d4S8itIx/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JjsapCB9; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ace333d5f7bso156279666b.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 May 2025 05:08:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746706109; x=1747310909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IThNKgmEjYeycaUD8zcDnYRq0Np+Spg6BHQUasJjRT4=;
-        b=JjsapCB9S9E41vaPGNkPQKaxhFDUbWowr0veCHq/3pdmWRPKe3yBNHQ90jl1eO8v6E
-         5upOrvLlZzez/GQdwnKHvQHOP0n25XzAYxsnZ4OeOjLNGWLoh/5mK+4yAm+rwh8NbAv1
-         rNkO0Ga9rCyKYdu2oHtxmPvdMO4UPA+BDksUdSadmGeSRdE8xZoD1pQtpWZ0pGz875Mg
-         dIYWkqtDeK2M6T99AphoI3Sm6Y89XCueRERAav7X+lksBIu/MMBBSVczKJNo6sStOunP
-         7NsC03pCFcatJfOYByAeG9e2Bd38iglO0ETPY81RnPmqYlH254S/c7K9BtjHnkWFhmMt
-         H91Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746706109; x=1747310909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IThNKgmEjYeycaUD8zcDnYRq0Np+Spg6BHQUasJjRT4=;
-        b=muTfPtS6FAgCRqZ7im1nsB0cn/Zzokjw3jsA+edN7YZxg3EP0t5oEyfMSd8sRF/hyk
-         wGcy99y10wAsAG5ABrZkReoLXe7zaOyjeW+YlemgMMtImvEs8hvNQQaF9F7nxK+CX419
-         6ngD+JeoRjGvhHEBIwHWSjkXqeUYV3GK7UUMQFtHH0x7JMih36DDnzRC748dFuXgR6rh
-         cdUgdqOXlhgBay4vTkNNQTcDn5KcfMA6wlsEKV6WC5yZn7OP6g6wloLYztIm77SFyCr9
-         0NIM3rWeYiKrZH3aqSqtm9FTBPqvTV5hLnhdO2xZpKfa3SD4A9TW8CUWcnVSZrXVBwxc
-         JDrw==
-X-Forwarded-Encrypted: i=1; AJvYcCVzxViLbdU4egKf/dveBK4DiGWXvgESjLg8oLE4CqyU1snDxYFctPstkYA1wR81QRVyQBWBAbOr203Hc3Ia@vger.kernel.org
-X-Gm-Message-State: AOJu0YztdW+9ZXOrB1pOWYeYUjPWEuOsvvsmV3Py5FhFEF7kuS3EW+sm
-	iNn0sMmD22B7HKuF/DEK3bceveNWSDjWSaAAKBglQrLPLH/6YpHhBLSZ/uSUBDVKU6oIHgD/yKS
-	NAlTAZyqndA5MubipciYwc7g14ns=
-X-Gm-Gg: ASbGncvg16oqvzt7AFAoeyNZmqC8FLXLg6vBPIW1x2bUv0/ZLSU4J+wK6dEJP3TZuzx
-	3YatcIvS53TQXGz2nhW1xT2koiAi3i0jFsu8qowfjdPowvUDzgF+b04TWcU9sMQULWOKWDX9BvR
-	PRQXs9O/HKQX/kgIDftjK0fQ==
-X-Google-Smtp-Source: AGHT+IEDh1iBYVILQKiLjysdjIWXfXCUzIVm7EiieT5MzZXTt4LsGx4r97e+QIU/Wp+4X1nvYINQtZ4VnsosPNV5v2k=
-X-Received: by 2002:a17:906:d542:b0:ad1:a87d:3de8 with SMTP id
- a640c23a62f3a-ad1e8b9580emr755613766b.5.1746706108171; Thu, 08 May 2025
- 05:08:28 -0700 (PDT)
+	s=arc-20240116; t=1746706650; c=relaxed/simple;
+	bh=7xiyatHuEYO5siH784i+66R6gDk//PcjZEueVmEeyvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FFfBF6u0J0thAeMNIaUgD7DmEwnGOk+zJb1u+E9v7Gu4Mu932+SvZIyNm+BjexwkSF2OKhOTV1YtNKNP9QIwaJZZc8TYMofOSZiQwQ0RlIm3vQgnocSsjDxOv/UVfiTfDYr9ZnwkSMHCpvDeZX0jdMdolV5zWNdP2WWO8FLslTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ZtWNH1XsWzYQtwc;
+	Thu,  8 May 2025 20:17:19 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 86C091A1A7E;
+	Thu,  8 May 2025 20:17:18 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgDnSl_KoBxoXus0Lw--.707S3;
+	Thu, 08 May 2025 20:17:16 +0800 (CST)
+Message-ID: <68172a9e-cf68-4962-8229-68e283e894e1@huaweicloud.com>
+Date: Thu, 8 May 2025 20:17:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507204302.460913-1-amir73il@gmail.com> <20250507204302.460913-6-amir73il@gmail.com>
- <75a3cb6f-a9cc-441f-a43e-2f02fbfc49bf@nvidia.com>
-In-Reply-To: <75a3cb6f-a9cc-441f-a43e-2f02fbfc49bf@nvidia.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 8 May 2025 14:08:16 +0200
-X-Gm-Features: ATxdqUGZI4ayKBK8R1pgtBDxLx6Tjj_9YjPi8Xq7mRLvMh0J8MlnCn6BYt6y6-c
-Message-ID: <CAOQ4uxiPgh0Lrt-7YnBQLTBFe-6aSUpgYVraoE_N=k0DrP7BEA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] selftests/filesystems: create setup_userns() helper
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Shuah Khan <skhan@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
+To: Christoph Hellwig <hch@lst.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, john.g.garry@oracle.com,
+ bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
+ brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+ yukuai3@huawei.com, yangerkun@huawei.com
+References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
+ <20250421021509.2366003-8-yi.zhang@huaweicloud.com>
+ <20250505132208.GA22182@lst.de> <20250505142945.GJ1035866@frogsfrogsfrogs>
+ <c7d8d0c3-7efa-4ee6-b518-f8b09ec87b73@huaweicloud.com>
+ <20250506043907.GA27061@lst.de>
+ <64c8b62a-83ba-45be-a83e-62b6ad8d6f22@huaweicloud.com>
+ <20250506121102.GA21905@lst.de>
+ <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
+ <20250508050147.GA26916@lst.de>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20250508050147.GA26916@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDnSl_KoBxoXus0Lw--.707S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXF43ZFW3Zry3Aw48Kw1xKrg_yoWrtrWDpF
+	W8WF1jkF4DKr13Cw1v9w4Igrn0vFs3AF15C39Ykr48Cw45XF13KFnaga40yF9rXryxZayD
+	tFZ0kFyUZa1Iy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
+	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
+	s2-5UUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Thu, May 8, 2025 at 9:52=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> w=
-rote:
->
-> On 5/7/25 1:43 PM, Amir Goldstein wrote:
-> > Add helper to utils and use it in statmount userns tests.
-> >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >   .../filesystems/statmount/statmount_test_ns.c | 60 +----------------
-> >   tools/testing/selftests/filesystems/utils.c   | 65 ++++++++++++++++++=
-+
-> >   tools/testing/selftests/filesystems/utils.h   |  1 +
-> >   3 files changed, 68 insertions(+), 58 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/filesystems/statmount/statmount_te=
-st_ns.c b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-> > index 375a52101d08..3c5bc2e33821 100644
-> > --- a/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-> > +++ b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-> > @@ -79,66 +79,10 @@ static int get_mnt_ns_id(const char *mnt_ns, uint64=
-_t *mnt_ns_id)
-> >       return NSID_PASS;
-> >   }
-> >
-> > -static int write_file(const char *path, const char *val)
-> > -{
-> > -     int fd =3D open(path, O_WRONLY);
-> > -     size_t len =3D strlen(val);
-> > -     int ret;
-> > -
-> > -     if (fd =3D=3D -1) {
-> > -             ksft_print_msg("opening %s for write: %s\n", path, strerr=
-or(errno));
-> > -             return NSID_ERROR;
-> > -     }
-> > -
-> > -     ret =3D write(fd, val, len);
-> > -     if (ret =3D=3D -1) {
-> > -             ksft_print_msg("writing to %s: %s\n", path, strerror(errn=
-o));
-> > -             return NSID_ERROR;
-> > -     }
-> > -     if (ret !=3D len) {
-> > -             ksft_print_msg("short write to %s\n", path);
-> > -             return NSID_ERROR;
-> > -     }
-> > -
-> > -     ret =3D close(fd);
-> > -     if (ret =3D=3D -1) {
-> > -             ksft_print_msg("closing %s\n", path);
-> > -             return NSID_ERROR;
-> > -     }
-> > -
-> > -     return NSID_PASS;
-> > -}
-> > -
-> >   static int setup_namespace(void)
-> >   {
-> > -     int ret;
-> > -     char buf[32];
-> > -     uid_t uid =3D getuid();
-> > -     gid_t gid =3D getgid();
-> > -
-> > -     ret =3D unshare(CLONE_NEWNS|CLONE_NEWUSER|CLONE_NEWPID);
-> > -     if (ret =3D=3D -1)
-> > -             ksft_exit_fail_msg("unsharing mountns and userns: %s\n",
-> > -                                strerror(errno));
-> > -
-> > -     sprintf(buf, "0 %d 1", uid);
-> > -     ret =3D write_file("/proc/self/uid_map", buf);
-> > -     if (ret !=3D NSID_PASS)
-> > -             return ret;
-> > -     ret =3D write_file("/proc/self/setgroups", "deny");
-> > -     if (ret !=3D NSID_PASS)
-> > -             return ret;
-> > -     sprintf(buf, "0 %d 1", gid);
-> > -     ret =3D write_file("/proc/self/gid_map", buf);
-> > -     if (ret !=3D NSID_PASS)
-> > -             return ret;
-> > -
-> > -     ret =3D mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
-> > -     if (ret =3D=3D -1) {
-> > -             ksft_print_msg("making mount tree private: %s\n",
-> > -                            strerror(errno));
-> > +     if (setup_userns() !=3D 0)
-> >               return NSID_ERROR;
-> > -     }
-> >
-> >       return NSID_PASS;
-> >   }
-> > @@ -200,7 +144,7 @@ static void test_statmount_mnt_ns_id(void)
-> >               return;
-> >       }
-> >
-> > -     ret =3D setup_namespace();
-> > +     ret =3D setup_userns();
-> >       if (ret !=3D NSID_PASS)
-> >               exit(ret);
-> >       ret =3D _test_statmount_mnt_ns_id();
-> > diff --git a/tools/testing/selftests/filesystems/utils.c b/tools/testin=
-g/selftests/filesystems/utils.c
-> > index 9b5419e6f28d..9dab197ddd9c 100644
-> > --- a/tools/testing/selftests/filesystems/utils.c
-> > +++ b/tools/testing/selftests/filesystems/utils.c
-> > @@ -18,6 +18,7 @@
-> >   #include <sys/types.h>
-> >   #include <sys/wait.h>
-> >   #include <sys/xattr.h>
-> > +#include <sys/mount.h>
-> >
-> >   #include "utils.h"
-> >
-> > @@ -447,6 +448,70 @@ static int create_userns_hierarchy(struct userns_h=
-ierarchy *h)
-> >       return fret;
-> >   }
-> >
-> > +static int write_file(const char *path, const char *val)
-> > +{
-> > +     int fd =3D open(path, O_WRONLY);
-> > +     size_t len =3D strlen(val);
-> > +     int ret;
-> > +
-> > +     if (fd =3D=3D -1) {
-> > +             syserror("opening %s for write: %s\n", path, strerror(err=
-no));
->
-> While I have no opinion about ksft_print_msg() vs. syserror(), I do
-> think it's worth a mention in the commit log: there is some reason
-> that you changed to syserror() throughout. Could you write down
-> what that was?
+On 2025/5/8 13:01, Christoph Hellwig wrote:
+> On Wed, May 07, 2025 at 03:33:23PM +0800, Zhang Yi wrote:
+>> On 2025/5/6 20:11, Christoph Hellwig wrote:
+>>> On Tue, May 06, 2025 at 07:16:56PM +0800, Zhang Yi wrote:
+>>>> Sorry, but I don't understand your suggestion. The
+>>>> STATX_ATTR_WRITE_ZEROES_UNMAP attribute only indicate whether the bdev
+>>>> and the block device that under the specified file support unmap write
+>>>> zeroes commoand. It does not reflect whether the bdev and the
+>>>> filesystems support FALLOC_FL_WRITE_ZEROES. The implementation of
+>>>> FALLOC_FL_WRITE_ZEROES doesn't fully rely on the unmap write zeroes
+>>>> commoand now, users simply refer to this attribute flag to determine
+>>>> whether to use FALLOC_FL_WRITE_ZEROES when preallocating a file.
+>>>> So, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES doesn't
+>>>> have strong relations, why do you suggested to put this into the ext4
+>>>> and bdev patches that adding FALLOC_FL_WRITE_ZEROES?
+>>>
+>>> So what is the point of STATX_ATTR_WRITE_ZEROES_UNMAP?
+>>
+>> My idea is not to strictly limiting the use of FALLOC_FL_WRITE_ZEROES to
+>> only bdev or files where bdev_unmap_write_zeroes() returns true. In
+>> other words, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES
+>> are not consistent, they are two independent features. Even if some
+>> devices STATX_ATTR_WRITE_ZEROES_UNMAP are not set, users should still be
+>> allowed to call fallcoate(FALLOC_FL_WRITE_ZEROES). This is because some
+>> devices and drivers currently cannot reliably ascertain whether they
+>> support the unmap write zero command; however, certain devices, such as
+>> specific cloud storage devices, do support it. Users of these devices
+>> may also wish to use FALLOC_FL_WRITE_ZEROES to expedite the zeroing
+>> process.
+> 
+> What are those "cloud storage devices" where you set it reliably,
+> i.e.g what drivers?
 
-Very good question.
+I don't have these 'cloud storage devices' now, but Ted had mentioned
+those cloud-emulated block devices such as Google's Persistent Desk or
+Amazon's Elastic Block Device in. I'm not sure if they can accurately
+report the BLK_FEAT_WRITE_ZEROES_UNMAP feature, maybe Ted can give more
+details.
 
-I admit I did not put much thought into this. I was blindly following
-Christian's lead in utils.c.
-I will revert those syserror back to ksft_print_msg().
+https://lore.kernel.org/linux-fsdevel/20250106161732.GG1284777@mit.edu/
 
->
-> In any case, it looks correct, so with an update commit message, please
-> feel free to add:
->
->
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
->
+> 
+>> Therefore, I think that the current point of
+>> STATX_ATTR_WRITE_ZEROES_UNMAP (possibly STATX_WRITE_ZEROES_UNMAP) should
+>> be to just indicate whether a bdev or file supports the unmap write zero
+>> command (i.e., whether bdev_unmap_write_zeroes() returns true). If we
+>> use standard SCSI and NVMe storage devices, and the
+>> STATX_ATTR_WRITE_ZEROES_UNMAP attribute is set, users can be assured
+>> that FALLOC_FL_WRITE_ZEROES is fast and can choose to use
+>> fallocate(FALLOC_FL_WRITE_ZEROES) immediately.
+> 
+> That's breaking the abstracton again.  An attribute must say something
+> about the specific file, not about some underlying semi-related feature.
 
-Thanks for the review!
-Amir.
+OK.
+
+> 
+>> Would you prefer to make STATX_ATTR_WRITE_ZEROES_UNMAP and
+>> FALLOC_FL_WRITE_ZEROES consistent, which means
+>> fallcoate(FALLOC_FL_WRITE_ZEROES) will return -EOPNOTSUPP if the block
+>> device doesn't set STATX_ATTR_WRITE_ZEROES_UNMAP ?
+> 
+> Not sure where the block device comes from here, both of these operate
+> on a file.
+
+I am referring to the block device on which the filesystem is mounted.
+The support status of the file is directly dependent on this block
+device.
+
+> 
+>> If so, I'd suggested we need to:
+>> 1) Remove STATX_ATTR_WRITE_ZEROES_UNMAP since users can check the
+>>    existence by calling fallocate(FALLOC_FL_WRITE_ZEROES) directly, this
+>>    statx flag seems useless.
+> 
+> Yes, that was my inital thought.
+> 
+>> 2) Make the BLK_FEAT_WRITE_ZEROES_UNMAP sysfs interface to RW, allowing
+>>    users to adjust the block device's support state according to the
+>>    real situation.
+> 
+> No, it's a feature and not a flag.
+> 
+
+I am a bit confused about the feature and the flag, I checked the other
+features, and it appears that features such as BLK_FEAT_ROTATIONAL allow
+to be modified, is this flexibility due to historical reasons or for the
+convenience of testing?
+
+Think about this again, I suppose we should keep the
+BLK_FEAT_WRITE_ZEROES_UNMAP as read-only and add a new flag,
+BLK_FALG_WRITE_ZEROES_UNMAP_DISABLED, to disable the
+FALLOC_FL_WRITE_ZEROES. Since the Write Zeroes does not guarantee
+performance, and some devices may claim to support **UNMAP** Write Zeroes
+but exhibit extremely slow write-zeroes speeds. Users may want be able to
+disable it. Thoughts？
+
+Thanks,
+Yi.
+
 
