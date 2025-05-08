@@ -1,79 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-48452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7581CAAF4B4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 09:33:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF5B3AAF4CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 09:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D89CE4C721C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 07:33:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2DC087AFB4A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 07:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AD0220680;
-	Thu,  8 May 2025 07:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB22A22068A;
+	Thu,  8 May 2025 07:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="iGGmGo13"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="WwsEs+id"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2086.outbound.protection.outlook.com [40.107.94.86])
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2057.outbound.protection.outlook.com [40.107.220.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCBD195FE8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 07:33:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4111FBCB2
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 07:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746689595; cv=fail; b=sd4M29gM9jsyQvuZVEwX+fVFyAruhV/LvU3swar686ualLKqO/gnwZ24lphtDPJsH9si8DiKsKyIaQIz0EPZe4dIAzX5yukHdVjdbeJnkvEjlFNdmMP/bNQOweXoNs90wfe/Zc1i/tvM1WywskOVmwtIx19YcUnS4FXw2rsmarY=
+	t=1746689922; cv=fail; b=UECn8JvshxqUAU7afYwVSI74d1SdLceNvZwMCbBk7mgL/jDUjDhr5Ac94Aqm/bCaEPabliR0H0Ecr5KzTZN4OJnVjZnX7cleyhTObpoa+76Yrf1sQfj8BSuLv4lqW1XOSCTqfKAzvvMnIaodGmymGn7A9Ktg0HWAbrHW8skZeFo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746689595; c=relaxed/simple;
-	bh=45tZmsN/LdS/xhRaKhSNa8Wxjm/TijVWH7NJxh11uaI=;
+	s=arc-20240116; t=1746689922; c=relaxed/simple;
+	bh=PlMb4i33kHH7RQ9IIDbYXdRuoJqs5yGZB87yrG/WEf0=;
 	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=fZgyjDyhWMeRnTB9ZqUyx2tQ+6G2mjhBTqVh3DjPOTZybsWqYH7KyzjbwW/Z4J8rfodrWksRw9PhyHFJFUeh3SYVB1JDjpJ+zPqJtke7JjSFKfHOTI0eHmz/xIzpzIuruPw2AgiUvm6mokidtt7hrFJG+ghbUJdMxoVHLeF0CYM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=iGGmGo13; arc=fail smtp.client-ip=40.107.94.86
+	 Content-Type:MIME-Version; b=AvhhEUe2cKsTyYUNRFqbteLd4n8m3q7ZhT+66uBU2ojh2NdXdm0RCbHICK2/b5aGbQyzmGMBpVLrt+Z9GjXuznEijA7qWtehErwy603dvDSLbanQ2Lnn7Ei+90oYD4MChTsL1A9IwFq3otfXpnypXYFV4sirUvTjsJoQkAXapJk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=WwsEs+id; arc=fail smtp.client-ip=40.107.220.57
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vdCUufM15OSRcumdzQ62PQU3DQ3KXh4jYiU5fNti/t2+RkPyG88Fnk0/EqxvcPtyybc/lbIA79zvm1e30XaJMUaGGRz/u+HlY1o5UG0xeYTXMyodnI3K28Mtu4t2Bo3HhngFBzBCzer9AuEEG9TZoSwDfH0FctcdL2kGEJ2AdFs4Yj88bLlxezQNdITPNoxcZ+JzdItAfz/iW8JIYAzlGilO31IYGEaxvjxnssMryrvzu2Kel88lQzGaHimuQuV+jAj0oQFfw0g2JJlnOgqVgpmdyJz/CEel9vLZELD66Xaj7hzOIil97D1OC4A97IGnzaTV2ZDI8S31zwKnv21afg==
+ b=zP90+xT1fWdSe63YQ7q24i1pQVouDzqS/fflr1E0d+miK/93X5bWH/fPjoVUSdtYXfZQ9aYB9/+vfo/iO+FcCZkjqA3Kv4zod0v0q0dBq+rQaohPJQ1WRezANPUlRXs4KIT/bYT5mVSBZ/hxd1ZEW5BmCZXlxVLAy8KsJo5TadVF5TwoXLuKjyLVA/bcrjAr9/4o3S6vFPDIA1uHUi35kddfpeoIEePQlFrS17nbTiwndg4kJeBQXvzltDfHF84Oh/ytzyUIAHY54JEHegoyIM17s+zDfbVpF8Mbe+W+pYSMICkpS0QwATvSXtsegxY81n1IsZekTsXjvkBR+t0Nyg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZIYFrx5x98gvvtxAgJyN+Sfo1FI3TeV60dHEsWMPH7E=;
- b=Y6sLP/DqeajxrMUVfjyPxxRhQ0TaW7KHeU/jrJdzqNAZyiJ7HswjrZzxiGHwpiXw+HEfAblh/2ptg3XgEJYLnGhCt3khcJ+Qy2idFvGTh8vwS75ckuSogzs6oBGvkbKCv9b+uuqboT58igEdVWD++Zv+yAvGdKPEMN/r9YTGcCIDSTrbKz/Ni+TuMFej7JnfnjTarf49O3uDotIC1xEdhEjJgSim4AuSolqwPFlr/EM1n6HJay+WYfv0DbAUqsL3xrGMcv5lf7lXxmP//wo6ygun0DGAOIUrhNMnrDbKYEs52N0sgcOM1Q1bQM2SL0we73SBrrd0ihi5Q92jEsHvUg==
+ bh=+SkqHiTGYUN7kUayqfDujRs7znePjc3ng5Z/TM4jd5I=;
+ b=bnsAhZFy1TB24A6XI6fqKNI0kAaGTWLHEVl24IJwG6GjdVWqZTFKSdXn/qApqEdhQRDkRKe3K617KhHxQeiLscKQwzdeF6+pFvyuRlBiLgL0xkd74VjQITktjbMAYZOTWyiSyKIhKEf3S0ffHNnS5uadAFwmswBkz0wYRm2XdDEh9bn66x8BMAH7OLYbBj68VJytO9Eg/4DdvUiYuihidRjwuyuRrgl+njjGviankgCMS670plD4EfGfwEM2DSvTglRvgwtCbqZdMZpg096sLPaQG450JMq1ISYrW3EP9jVjEnuCILooS4kKc2F3q/9SYfl5mLA0hevySSBZGOc44g==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZIYFrx5x98gvvtxAgJyN+Sfo1FI3TeV60dHEsWMPH7E=;
- b=iGGmGo130MdM1gBjdk77HybEprQ36ZxsPouRlB+bSeO+XEOs0N/3+MAzYkuNJDeKai3O8qe+ZNMTq4BKYfopxjcwuwqamiFGulGh1MB9rgUnZyoDrKZd+xPY5hNvqhSkS2p+BzHpHbNj3tSpvmDptmlellsoSltNC13sduxz5CGSSk59K0UtLpv6zT3KKoIStHy32cv+fjC/2HIbx/LQoGzlH+3Fv9f/1q8Tvq4W6l5XQ1i3SuU/20rLVnLFGa+biQ08iT/jZP8yXA4Xuc0b6vxpCkQDUNsCZy/3g93mrgNF+A/w+bsy2qJJ3vC6tv/lUW5boAu2x1mGVzjdHSHnng==
+ bh=+SkqHiTGYUN7kUayqfDujRs7znePjc3ng5Z/TM4jd5I=;
+ b=WwsEs+idYpneSmF3qFQ42XY0LUsecLU+chvCHz/BHPnB7uutGZ23GJrBOxQUj2KDzQ4IJNxkXuxhC9eDjkYmQW3m3i3JEr8nEc/3PQJNkFbUNpJYhxrYirzBs8/BxvI95Xoa5XxiaL4f+0Wh3o6p9diYc/sr6tKGY7a1pZY9Y5tg8IzYe/oOFrljqi6zl7yOWDesRnk2NjOdWs2G4RLguC8pa1bgYpS9BQZiKVDrnEdLVLbFu0udnYzYuim5JaHhhbvQgc1HGxbzmQOzSrvJvCKx7KtNqZChS2OVHS9Cgl9iTBUgjnHMF2W3gZOWbiPt2zSDsPPI9G72VHh8gZNw1g==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by CH3PR12MB8354.namprd12.prod.outlook.com (2603:10b6:610:12f::21) with
+ by CH2PR12MB9541.namprd12.prod.outlook.com (2603:10b6:610:27e::21) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.26; Thu, 8 May
- 2025 07:33:05 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.25; Thu, 8 May
+ 2025 07:38:33 +0000
 Received: from LV2PR12MB5968.namprd12.prod.outlook.com
  ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
  ([fe80::e6dd:1206:6677:f9c4%7]) with mapi id 15.20.8722.021; Thu, 8 May 2025
- 07:33:05 +0000
-Message-ID: <89ff7ea9-fadc-49ec-9ab2-36a737a154c4@nvidia.com>
-Date: Thu, 8 May 2025 00:33:03 -0700
+ 07:38:33 +0000
+Message-ID: <685d5423-5b6a-4a11-9bef-50224e479f44@nvidia.com>
+Date: Thu, 8 May 2025 00:38:31 -0700
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] selftests/fs/statmount: build with tools include dir
+Subject: Re: [PATCH 3/5] selftests/fs/mount-notify: build with tools include
+ dir
 To: Amir Goldstein <amir73il@gmail.com>,
  Christian Brauner <brauner@kernel.org>
 Cc: Jan Kara <jack@suse.cz>, Shuah Khan <skhan@linuxfoundation.org>,
  linux-fsdevel@vger.kernel.org
 References: <20250507204302.460913-1-amir73il@gmail.com>
- <20250507204302.460913-3-amir73il@gmail.com>
+ <20250507204302.460913-4-amir73il@gmail.com>
 Content-Language: en-US
 From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <20250507204302.460913-3-amir73il@gmail.com>
+In-Reply-To: <20250507204302.460913-4-amir73il@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR06CA0005.namprd06.prod.outlook.com
- (2603:10b6:a03:d4::18) To LV2PR12MB5968.namprd12.prod.outlook.com
+X-ClientProxiedBy: SJ0PR03CA0075.namprd03.prod.outlook.com
+ (2603:10b6:a03:331::20) To LV2PR12MB5968.namprd12.prod.outlook.com
  (2603:10b6:408:14f::7)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -82,450 +83,466 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|CH3PR12MB8354:EE_
-X-MS-Office365-Filtering-Correlation-Id: dfb05413-c1f1-43e1-e857-08dd8e029281
+X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|CH2PR12MB9541:EE_
+X-MS-Office365-Filtering-Correlation-Id: 69715411-a3bc-48dd-a2a4-08dd8e0355ca
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|366016|1800799024|10070799003|7053199007;
+	BCL:0;ARA:13230040|1800799024|10070799003|376014|366016|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?U20yOFF0aTRvYThMcmFVMW05WkNMODk1QW92Q0VaWnhCWGYrajNacDluenN0?=
- =?utf-8?B?NmFUR3ZuSmlqdnZiQnNBekFTaUthYjA5UnJ0OU1aaDk1VWc4U09wRmFyU1gz?=
- =?utf-8?B?bWpOc3R5cnBTQ0JqcUpWTHd0ZDVRSnFNdHpjd2VscUJBWUlaRVRrb01xZGlV?=
- =?utf-8?B?MGNBcURqczNzd252Q09XRzcxbFczTDJvcFpnRS9rcDljbjlTdE9yVVprcEs5?=
- =?utf-8?B?NEd4dVp6WkFvZmJrcWxQN3U1cUxDbEFQN3ZHVnRmKzVjV1R1QXJDK3dHQjNl?=
- =?utf-8?B?U29xQlpMSEJsdlgyV0w1QjFPdFVpT3c4OWV0a2FzNUl5SlZocmhpbSsveSs0?=
- =?utf-8?B?V0dBVlhLMlJTNldVRUZIOFYvNUNuSExNdHNHbkdTbVFFbWRYY1RzWk9XUTNv?=
- =?utf-8?B?S3RaOGFSNEVlWml2OFYrelJtMGdxc21maGNKbi9MUEtmV0l1N3puMGlUZ0JZ?=
- =?utf-8?B?NmhOSTd1ci9oZ01RUnkwMkdPS2NWQkR5cWJ4V1phajdaOENua3VqdHZxOHJz?=
- =?utf-8?B?bFFBYmEwbnd2NUl3TzlyYVRsSHI1eTg0dnZjOU5RTjJMR0YzbWxpSmlhZkdF?=
- =?utf-8?B?Yk96SzFQMldWWjhaSjRKK2NuZWY2ZGJaYy9tQVI5elJyZmZrZmhPKzBwNm1t?=
- =?utf-8?B?ZlBPZ3U2bXlJcVl5MXZ2RFVWYWs1Y1BTcUZjem5qbHh6bzBObi90RFY2RUtM?=
- =?utf-8?B?bVorTlQxMHduWXhOcmZFRzZqQlQxeUFYYjhFY05lTmlydFFhWCtCaE5wNEFr?=
- =?utf-8?B?by90K0M4aDZQNVFyOXhIczVRSldDTnlZakZQWmhTUFBuVG9WVWhnejVWeEpa?=
- =?utf-8?B?MDR3ZlJHbkhGVHB1ejJuNkpRckMrbGtvTTgyaHpHcTVEcFBqazROTjJhTFA5?=
- =?utf-8?B?VkZLUE9DUFg0Zmd6OXRYbk9CRFg5ZWVDQU9TRVZuS1pHdTM3VGJPdGRBSXF6?=
- =?utf-8?B?U3k2OHlnck90SEQrTW1aRVVrYlkwSkM2clJNS1NpMXM3c2xUc0pJSjQzbnJy?=
- =?utf-8?B?dVFicHZaVENUVEp3WTRGbTBhQm9oc2ZkLzlsK0piYjk3YjZMcllSTnVSMkE1?=
- =?utf-8?B?VmorZWNTUzZMUE5qSWtCYlREMTZmUTJUUW9NNHFpM2tvZHMyZWhxVU9ndEw0?=
- =?utf-8?B?Nkh2ZmllbkRFK0lDWHR1SmF2b3d0N3NtakpEcjVOVzRoSEpmd1Y5ZklTRG1O?=
- =?utf-8?B?WWFWUUhjOFZRaWdFY2hoZDhIL0lVNUlJbjQxOUlUdVZPOXQ2WUVFQk9wNlpS?=
- =?utf-8?B?T29zUmV0eG1Bait5aWtacTlnUFpRMW5KOTlEclVyL2EyRmllbll0aWlWem4z?=
- =?utf-8?B?QW5RUG9kNjNidTMwZzRwSEVJdXU3dWVydjYrbGFOSC9sWUtvdzhuWjM4QVNU?=
- =?utf-8?B?RHZaQm9reHRqMzhyTkRJeDVQTHpqdE03ZEx2ZEpVRE9BUHZDcnlNaEtMK2h1?=
- =?utf-8?B?SlNzQ1JOdmJmTUxJTk1pZWVPc1BFTktTOEltbTJ3K0FsaCtKQnpaWXJGcmpz?=
- =?utf-8?B?UWdPVkFIUU1aSERLdHB3dVJGcUtyVXVlSjduRm92RU1yczRjY25pVGt4OVVO?=
- =?utf-8?B?WVJzTUlaakRZay9IQ0xZR1JNVXczUTRCbS9aWXowWE9BcWc4MXIydWgwc1E1?=
- =?utf-8?B?SXF6OUtWVXVBaEJTdGx6eEYySmZoaTl3Z09zVkZYblZpWC8wamNsMzI3QUht?=
- =?utf-8?B?M0xsWXZTaVc0SjZ2Ri9qWXUxRTM1VVhTM2Z0SDlualpqcERGOHVSOTNBZDF4?=
- =?utf-8?B?R1ZVSUFHMzVnSWVSQUxMSUdXSUNZNjEvanhrNnNFMlVMK2p1NitkT2tCVERx?=
- =?utf-8?B?THJReEdiS1k4ZVRvbk1iQmlUdkN1M0g4SWQ5Nm5pWFNLdWkyL25yY0hJTy9G?=
- =?utf-8?B?MDJPSm1yVWJpbzFXV0gwMmxPZjViRjAyK2FVV09pMk5XeHFDWkVrMjhudUl3?=
- =?utf-8?Q?Jwv0u1DOiMQ=3D?=
+	=?utf-8?B?NVNYZ2pMYXFkeUk2UjJkeE9UQlFQRU14RG50VnJrRFpOYmdoMytaOEorNGxO?=
+ =?utf-8?B?TWhvaVVFTGVVSUFCVzY4aE9UUDF3VVVpYS9vTWdBUW4yY1c4Wml2UTVheFhC?=
+ =?utf-8?B?VXZvUEFTNi9hODVSanhUbmo1YytJdXNvek5ENkMvaU4xaHNBOTcxV3dnSWJB?=
+ =?utf-8?B?aTU1VTRQbVl2VmZsbDBrR2kzSVhuTU01eHdPdUJueXkzQmdQZHEyOVQ0VStH?=
+ =?utf-8?B?d1JHOHNTYWFNQ2NHbytUMDlrMEw2Q1p6ZktCeUlnaGRhL05IcE01ZVowNHBN?=
+ =?utf-8?B?bzB5bUo1WlY3b2lvSzIrbVYvalZNRXdKMk9FL05jSFBhamZwSFhmR21OM2ZK?=
+ =?utf-8?B?ZjBXeTEyZ05rTWxjZ01ERkJ6eFA3NEo1RkNOVW5vV0ZQTjZQMGJRc2NTVERQ?=
+ =?utf-8?B?MjdSQUlwZ3FpL1NzamY3UGpZK04yci9NSU4vM3FlYW1vYSt3UWp0RWZ5QjUy?=
+ =?utf-8?B?ME9WVWV2djBhaDNlc0phNVJmY3orWTdxWkZ0Y01DUnl0LzhQeDZ4ZGlobTlO?=
+ =?utf-8?B?SUk2RWloWmM2MXV5RG9iM0pCUFhMLzFkUENIazlEb1ZlUmVXb1ZiY3piWENn?=
+ =?utf-8?B?Nkc1VXk4UzNVUnlJbW5wWllvcXlMYzFBL2crRjdvakNhdW53dmx4ck1xRGZE?=
+ =?utf-8?B?ZTBySzJFblBGak1qQ1h1emdLTzBBYkpBcDM3ZDlMZFp0OGw4czNYLzZzMFZy?=
+ =?utf-8?B?YkZtM21qMU55SFE5bG1McXJzc3lCaE9yVnhwZG5zcDdVMWFPa3ltN2NTaWRK?=
+ =?utf-8?B?bkRmR3hHT3NDT2NqN1RFRG12STdSZlpFbzlsUXhvOFRpOHY0YlFJLzZEZlpk?=
+ =?utf-8?B?dVl3bHJXQ0tOUTJwbmFZMUlLbkhZaEZHZXArS24vK21tR3hFdmhleVA5S1Br?=
+ =?utf-8?B?S3luMnpYd0grNWd3RDdoc3lUdVBPTitwNzlRcUpRd2lObWdDalQ4Rk9MNG43?=
+ =?utf-8?B?QUN6U1V4bjNCUmFsb3dvUkgvZi9ibVprL3lCdmVpNEt4YytIaUJYNGpVVFB5?=
+ =?utf-8?B?NE5VQXptaFBqeUFEVHZBbkFXaWFzWmxMRzJxemNTMlNIUEFjclZzTXpuQlNu?=
+ =?utf-8?B?NXZtYW5STzFaSHRWdHhRdkJmQnpiMTB5akNjYzhkQUp5N3lZUjA3RmY1OTV6?=
+ =?utf-8?B?ZFFCTXBFa2o1cHFZWTNLR3NUbXNRZUJiSDEyOWZnUjRvaThSbFQ2Mk5rMXV0?=
+ =?utf-8?B?UEt4eHdSeGFobERFQVZBTHVLN0J0ZUcvT21QWmc2NzIwalZ3NkFXc1ZkSHRu?=
+ =?utf-8?B?bEhZTVRRd3l2VWNFSTdKbkhYV1Q4cnZTYmlkZ0crSW1qRFJLeUloNHAwc1NC?=
+ =?utf-8?B?NXIwTm0rcWFOODZQbHExaURxU2ZmVmwzZHk4WnFwOGdRb3R3ditTMlAxd0dm?=
+ =?utf-8?B?dFRxWkwrSGRzWEhCS1c2b3FJM3I2VEhDd1Bnb0w3U3lqN2Q3N2Z0cVBCa01I?=
+ =?utf-8?B?YndNbU5zNUc0dFU2eWpFZlRNV1pxenZsWTRYTmdldzRTbjVEVWtXT2VYNmdr?=
+ =?utf-8?B?TTl1c0E3R0dJU3ZnQ2ZWdVpsV0lkM1dPKzY1UTArMmRFRmx2c294UmpsWHgz?=
+ =?utf-8?B?SEdiRTVTV1BlN01FWnU2YkxnZHhDSGEwekxvNlFmdjZERGxCOVljVHhJZmty?=
+ =?utf-8?B?RVljeDN3Q0RFSnpZWnNzZWdGK0VTb2g1ZFZ1U0RZYzVraEVWQ1YvaTJpYy9s?=
+ =?utf-8?B?SEtJdG1CSHQvRmhRYlBKMkxyRm8zZkdPaXBRd1hqVW1ZK3FtUkdna2VnNlMx?=
+ =?utf-8?B?ZFJDL25GNGJnT0tWbC9YeVczbzhldG52d1paTXA3OTBpanFqMk9TN2FuOEc3?=
+ =?utf-8?B?U0FmdFJDU2FtNHlBNDJld0FMUzhoQ0p2VnZTMEVMeTFlVzBDeDlLQzkvcmpB?=
+ =?utf-8?B?SUZDZGVBYmxFdFhyQXNSL3RlN2VUYS9NNWt6Mkx6eXhqYVp5T0hCUHo5UXo0?=
+ =?utf-8?Q?Tv3xRU6UGRg=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(10070799003)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MlY0YVFacFBWUXFjSWNqUW93eTRYaXlNOG9HNWxnekZCTExRMWtVTE5MU1lH?=
- =?utf-8?B?QlVFTTVhUE56VUJVNkFqcDlvdXp5bU9rUzJmUE9aa2xQb1JXL2ZEcUFBMFF3?=
- =?utf-8?B?Z05QRGhUSjYrNVdZMTlmS3l1Zll4ckNqVy9IelJqMlMvMUxJY1lsYXdRYkpZ?=
- =?utf-8?B?aC8xT2ROSGFYWVZkaTk3d2xINENRS3BxNzJMbFdnTWp3YlVGN3prakFsNndr?=
- =?utf-8?B?TTlHVmxJTVk4ZFhyRmwvckZDVkJUbndRUElEaDRiMmZRTlcwam1zbDFTK1Ju?=
- =?utf-8?B?aGtqWllnYWFGd3pERXhJNXo3VEVYQjE1elFpazdYcVVEME9QWEd2Q1VWUGh4?=
- =?utf-8?B?V2k2Y2c3WW51eGRUZGt6L0s2VGlhOCtEdzhwU3I0ajVLdjFFQXRWM2d2c0l2?=
- =?utf-8?B?WkJRdDlFekFkeDN0a2N3bENkaGhxQnJtc1JjbEM2ZnlvWlE4TTNDVHQ3T09K?=
- =?utf-8?B?bXhXSGlmT2dWSXhIMmE1MFI4czRjMDgzUkR0Rms2cVBsK3E0MWJRMm1pd1ZP?=
- =?utf-8?B?a0FsaDd0L3g2VFRxS3E1eTZrbnZtTUI1L1VjVmMxN0ZKcnhnZnZVeUlINkZx?=
- =?utf-8?B?K0hMRU1vT00xTXhoQkZmc2hiV2tRVGw3bUh5S3pVQmVNaURBTm91UVg2OTRY?=
- =?utf-8?B?R1ZKNWJtZHBsM0MrbFRQWFdxdTR5QStmenBtVkticlROcmQ5R05SblAzWkI4?=
- =?utf-8?B?T0VqaXkxYnB5dHpKTlh4eDV5NmdPTWY0bFltSkdFVE9PeFVGNjZQZ1hZcjlE?=
- =?utf-8?B?NFhycERSSVVMUjNHQ1FSRy9jRXVpQmRMOVNOY2JKVXpycnlGdGpiMG9GREhD?=
- =?utf-8?B?SGo1ZExXR3pIczBldG5NeldhSVU0Ym53dDRmTE1tOXo2Vi9uWnl4Mm92Y0Fz?=
- =?utf-8?B?b2hqbUQrTnNraUx6Z0hWcHlZNVhWekhNR3N6WXliWU9CSlZrYWI4ckw4dkZz?=
- =?utf-8?B?YXlXRG9yUmxVaEtyeC9jV001RDNGUGNQbi9aZnlTNDdGKzBxVzFUQkx2M2V5?=
- =?utf-8?B?dGZjZzZ6VTBpNnRSNHFOVWtkSnlQckExdmpPT3dwWTQxdWxXUnhhR0NIcURU?=
- =?utf-8?B?NVhpL0NNa0I2TUdUOU90b0Uwdmc0TGN2eXFiZlZlbmhmdUtxd3ZxMFhvc1ND?=
- =?utf-8?B?MFp0STBnU083UXFzYllPU2o3MjQwU3dIV1JpUzZQSjZZUmNlb3ovRThrcUVm?=
- =?utf-8?B?SVd3alRXbXhEVUZVS2VzSU5UN3FzOGFkalR1Ti9EQ1F3cmRyYWRJTWNIZUJD?=
- =?utf-8?B?TWtseUc4eVZWakZ0ZlFCeXVac3RlTWNya1VzcjNUcjNpc3JnL2x3OElVS2xQ?=
- =?utf-8?B?Z28zNmJWYXlSRXFrSUk2dGNzbjEzRDVWcTdGZmpwV1F2bUs2YWE4QkxVaUdU?=
- =?utf-8?B?WHNYRjh2YVhreTYzaUh5WjZDT2p6M0c3WERwQUIzQW9KOWdCTGhvcWZPQmJi?=
- =?utf-8?B?ZXZOWjhabTN3QThuSzk1VTI2ZW85S2ZWTkI4VFZwRGlJSnI5MHd0em5vRmxC?=
- =?utf-8?B?RlJ2SHl0NUlYTldtcW81UXRraUxMSktEcDBnd29tcWpUekpDeS9iZktORzhE?=
- =?utf-8?B?U1psZGUzdDNMMm9TZTJiQUhlL0dLSlFGeVArNjVJaEVwMEFOKzgvRlVoemZi?=
- =?utf-8?B?SHVYVEgxcHFHVGw5UGs2eWJhTzdLdXMzME9PSk9LdW55cUdsdVMwUTkvYUhw?=
- =?utf-8?B?VC94RUl1S2o4bUFMSE5FdWhsdDdZbWNHbWRQUEJRQjAyWUUzTWRCNDczVnhJ?=
- =?utf-8?B?ME0zUXo3NEZQU3NZakhVREZ2UktFcVgwRnBNTm5lNXd0OTJiRUZScWh3MXNp?=
- =?utf-8?B?ODRlRGdWZjdXUEJyakozQnhiR0FIYVllY1hoQzRWL2xEOE93dTFpMmoyaWhi?=
- =?utf-8?B?WTlwMmNQeTNSWmllamhGbE1wZFYxcDFHQjBQWmV5RkdIOHRoY05pbnc2aTA2?=
- =?utf-8?B?ZFk1ckZ0SGZDcGtHVFFvYjU3NDdxWmdKaWY0RnBHeSszQ0E4VENWTkdTYmxa?=
- =?utf-8?B?QWdQMTVUbHRRY1JIZHRxWGxqb1AveHpjODJjMHEvM0xSejdVYlNNaVJ6emty?=
- =?utf-8?B?aE9qcnZMNXFzbTZGSzBpd200Qkx3V2lQWTYzZE9pdWFiaThCWkV5bzF4MXpi?=
- =?utf-8?B?OHNaTUhMQ1BuWmVDb0M5M1VHTTFMcDd2SWZjN2Z3ZTdTMmRQREZiL1lzRUFt?=
- =?utf-8?B?Unc9PQ==?=
+	=?utf-8?B?ejArVmdmTlkyQ0JEVUFVL0ZhUWFYOHBiNFFOL29TRE9lZCtpS0ZMUjhoUGNa?=
+ =?utf-8?B?U21ZbHhVNVBsYmlpZHNVSVpBdmxUajdhUHhLMFBVWVlqMk0wNjZ4RHJHN1lq?=
+ =?utf-8?B?ZjcvRHNwd0x4M2Q3SkIrQU83U3ppeEF1VXVaZUNvTGVDVmxVMVZrZVVMTERi?=
+ =?utf-8?B?VHJtVncvZnQ4L3MzeWVvclptM210NEFsUURheFpMa2VUdGI3RU9pd21KTDJr?=
+ =?utf-8?B?T2RKN3lmSkJabys5TkNDQzF6MnN1T3BFR1dFaURRQVhDeDNYckphaExMemxS?=
+ =?utf-8?B?cUxhcmFUK0htRWZTR0oyejloaXEvNWdLaTUwY1BLRW1yc241VFhZZEhxVFNK?=
+ =?utf-8?B?RHRpTUxOT2VnTkNlak1SUm02OFlSNDBLQXdSOVJEYzFwTTF5OTJkZHRuZ1B2?=
+ =?utf-8?B?OFhyaU05U3RVcXBBVHFDelNsMHdlN3pzMzlOdmlOMFJ6QjFsWHV4OFhSc1JU?=
+ =?utf-8?B?czZrek5ZWTRIeGxzbG9yeWxMaUg1Q0FoMGFsbWpDVVNHYVhYczROTHp3VVJq?=
+ =?utf-8?B?M2NWSjVFallNZGJVeGZNY2dmcjlMREIra2Nuc3l6aFpzcllnQ2w1RC9aOXN0?=
+ =?utf-8?B?c2NEalJwQzNxQkt2RXF1R2orbzNUUHpJWFFSUjlzMm1pNmhSVlpobWJkNGtn?=
+ =?utf-8?B?WS9rQjdPcjBFcW5YZUNqVEExaXhhOTloTHN2SGhxbElSdjd3UTZZQ0pkMnl2?=
+ =?utf-8?B?SjFvd1A1Q2o2bEYxN2xuMXArYUtZK0FvMjNaWjRVM2EwUVBrSXdJd1cvdXlo?=
+ =?utf-8?B?UEdFMXJXUnlPbDBTYjFycmVNc2VLME1HS0g5OFhWa3B0cjBBUjNaNmVkbHdG?=
+ =?utf-8?B?NllaYnplLzlSTExPcitCV29kSUdEdW9oNUFCRG93ZzE0dmFBT2trUzJWNXdH?=
+ =?utf-8?B?YTl5cDhCd1JVaEJmcmhtQVV5ZzAzaXhxQzI3MWJyYWtaNFpRRnltTWNwS3c2?=
+ =?utf-8?B?S3RJNVp3N3dzSXluM3lWeEpueFd1V25PaytxZFo3ZTZiZlh5QUZYODBmMnM0?=
+ =?utf-8?B?TGVBUE1Pc1N1TG5xM1k0RzNyeWc4Zlo1RmRHL2dkN2w2RWR3UzIyRjE0SE81?=
+ =?utf-8?B?MFN0YU9BNDUwMXdad1Mwb05pMmVzdWtEVXVwclptZ3d4U25VaERubHp3VjV2?=
+ =?utf-8?B?T0lYV0E0dFo1TE9XTDB1VEliM2MrZkd0ZmVMdTZWM3U2Z0xyUWcwRXJCNVBR?=
+ =?utf-8?B?ek5LNDBtVjFXbHpkcDhQMVpGZTM0MzlZVkRwSlFJWVFYMmZ6bjFndkFXTzJ6?=
+ =?utf-8?B?L3I4eGl3ODhNWTNMcnZXSmJ4dCszWUlFNWl5STU4VjJ6RExmQmlGelZ4RHRJ?=
+ =?utf-8?B?TGlFNkRya0FtOUFqeWRFSFNkYkRqdlIzREY1YXc1Q3BoZVJLUGluSjNNUVpW?=
+ =?utf-8?B?WlBZMUQwdUF2SGhRM3BLd2VKeElxL3JqRWs3b0hlVzlVd3RJclI2UVIxVlZD?=
+ =?utf-8?B?QlQwV0UvVmdva0NDMW81WmttdUdMWmtCd0dhS0hPdkNoQkJzV3p4dTgvVE9j?=
+ =?utf-8?B?YU45NGJrMU1yeTJpeWI1eGlZQitxcTJWMEMxZ1V5N2tlWWJCcG5JT0UydHdW?=
+ =?utf-8?B?L1FGQUFHeWt6cWQ4Y3cyYTJNOWx4MVBtR1R4Q1BQSjNUSU1nN0ZxSHNlNmt0?=
+ =?utf-8?B?N0hOWE9TdkFxTWp5L2pzQ0lKaXJON3F3Q2FhTVh4T1VLcE84MDlPaXBKai9V?=
+ =?utf-8?B?aS9ZR0VHdWp2YlE5RjFwZmxTWi9aUU9iQWw0Mll2cERKUE5EVmFFdFFEMnVq?=
+ =?utf-8?B?QTBjS0U3SjFodk9IOERFdmpaRWxVZGZ2Mllyd2VSTU5lMmdTR0JkMmoyVzZa?=
+ =?utf-8?B?Z0lXNjduUDZhd1lZUFY4empSRXFDOXpWREYzWGxLZlVBa3U5ZkttR1FyWUFH?=
+ =?utf-8?B?RGxVcUh1enhKRm1JYkprSzNuL1h1TUxsSm5wLy9WSUp2L2ExUFE5c3VHa3F5?=
+ =?utf-8?B?dWE5NnBaUVd3OHlsMjE0N1hkNk1aK3NKdW1DczRqbVdicktuaGxuSTZBOTRX?=
+ =?utf-8?B?OWRycFJZMnJDaDh6UWo5cVpTZ09TRTVqSW1oNUcwY1R4TStNdGNCU0Qzd0hB?=
+ =?utf-8?B?RVgwVXk2N1c3L0hPMXBvNTBNbkgvRCtFdnJaaERGYVpoT3ZST3UxZG56Z2ZD?=
+ =?utf-8?B?MWx4dXUyaDZreVNmWHlxdDNKalIyYVBHclJ2UzFKT0NiRml6UXRtUlhaNUU1?=
+ =?utf-8?Q?yj7YvFG77qijhxo1KUaviHU=3D?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dfb05413-c1f1-43e1-e857-08dd8e029281
+X-MS-Exchange-CrossTenant-Network-Message-Id: 69715411-a3bc-48dd-a2a4-08dd8e0355ca
 X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 07:33:05.6577
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 07:38:33.2811
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AjduoF1H1ZzPv/wuSReIL162u2Q4fUBPdGgLL7ybULc/WHZWYzp4HZtvUzKmRmSJEYbVceKAEeS5VgKPQB70IA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8354
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6xH4raCYrlnwcrapVcyAw4hiQuUNLKPdOwE3KEIQ7BFzUarC//fON0y1XfZ9YcHL+notyGmZoyvEIwg5u8CGLQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB9541
 
-On 5/7/25 1:42 PM, Amir Goldstein wrote:
-> Copy the required headers files (mount.h, nsfs.h) to the
-> tools include dir and define the statmount/listmount syscalls
-> for x86_64 to decouple dependency with headers_install for the
-> common case.
+On 5/7/25 1:43 PM, Amir Goldstein wrote:
+> Copy the fanotify uapi header files to the tools include dir
+> and define __kernel_fsid_t to decouple dependency with headers_install
+> and then remove the redundant re-definitions of fanotify macros.
 > 
 > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->   tools/include/uapi/linux/mount.h              | 235 ++++++++++++++++++
->   tools/include/uapi/linux/nsfs.h               |  45 ++++
->   .../selftests/filesystems/statmount/Makefile  |   3 +-
->   .../filesystems/statmount/statmount.h         |  12 +
->   4 files changed, 294 insertions(+), 1 deletion(-)
->   create mode 100644 tools/include/uapi/linux/mount.h
->   create mode 100644 tools/include/uapi/linux/nsfs.h
+>   tools/include/uapi/linux/fanotify.h           | 274 ++++++++++++++++++
+>   .../filesystems/mount-notify/Makefile         |   3 +-
+>   .../mount-notify/mount-notify_test.c          |  25 +-
+>   3 files changed, 282 insertions(+), 20 deletions(-)
+>   create mode 100644 tools/include/uapi/linux/fanotify.h
 > 
-
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-
-thanks,
--- 
-John Hubbard
-
-> diff --git a/tools/include/uapi/linux/mount.h b/tools/include/uapi/linux/mount.h
+> diff --git a/tools/include/uapi/linux/fanotify.h b/tools/include/uapi/linux/fanotify.h
 > new file mode 100644
-> index 000000000000..7fa67c2031a5
+> index 000000000000..e710967c7c26
 > --- /dev/null
-> +++ b/tools/include/uapi/linux/mount.h
-> @@ -0,0 +1,235 @@
-> +#ifndef _UAPI_LINUX_MOUNT_H
-> +#define _UAPI_LINUX_MOUNT_H
-> +
-> +#include <linux/types.h>
-> +
-> +/*
-> + * These are the fs-independent mount-flags: up to 32 flags are supported
-> + *
-> + * Usage of these is restricted within the kernel to core mount(2) code and
-> + * callers of sys_mount() only.  Filesystems should be using the SB_*
-> + * equivalent instead.
-> + */
-> +#define MS_RDONLY	 1	/* Mount read-only */
-> +#define MS_NOSUID	 2	/* Ignore suid and sgid bits */
-> +#define MS_NODEV	 4	/* Disallow access to device special files */
-> +#define MS_NOEXEC	 8	/* Disallow program execution */
-> +#define MS_SYNCHRONOUS	16	/* Writes are synced at once */
-> +#define MS_REMOUNT	32	/* Alter flags of a mounted FS */
-> +#define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
-> +#define MS_DIRSYNC	128	/* Directory modifications are synchronous */
-> +#define MS_NOSYMFOLLOW	256	/* Do not follow symlinks */
-> +#define MS_NOATIME	1024	/* Do not update access times. */
-> +#define MS_NODIRATIME	2048	/* Do not update directory access times */
-> +#define MS_BIND		4096
-> +#define MS_MOVE		8192
-> +#define MS_REC		16384
-> +#define MS_VERBOSE	32768	/* War is peace. Verbosity is silence.
-> +				   MS_VERBOSE is deprecated. */
-> +#define MS_SILENT	32768
-> +#define MS_POSIXACL	(1<<16)	/* VFS does not apply the umask */
-> +#define MS_UNBINDABLE	(1<<17)	/* change to unbindable */
-> +#define MS_PRIVATE	(1<<18)	/* change to private */
-> +#define MS_SLAVE	(1<<19)	/* change to slave */
-> +#define MS_SHARED	(1<<20)	/* change to shared */
-> +#define MS_RELATIME	(1<<21)	/* Update atime relative to mtime/ctime. */
-> +#define MS_KERNMOUNT	(1<<22) /* this is a kern_mount call */
-> +#define MS_I_VERSION	(1<<23) /* Update inode I_version field */
-> +#define MS_STRICTATIME	(1<<24) /* Always perform atime updates */
-> +#define MS_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
-> +
-> +/* These sb flags are internal to the kernel */
-> +#define MS_SUBMOUNT     (1<<26)
-> +#define MS_NOREMOTELOCK	(1<<27)
-> +#define MS_NOSEC	(1<<28)
-> +#define MS_BORN		(1<<29)
-> +#define MS_ACTIVE	(1<<30)
-> +#define MS_NOUSER	(1<<31)
-> +
-> +/*
-> + * Superblock flags that can be altered by MS_REMOUNT
-> + */
-> +#define MS_RMT_MASK	(MS_RDONLY|MS_SYNCHRONOUS|MS_MANDLOCK|MS_I_VERSION|\
-> +			 MS_LAZYTIME)
-> +
-> +/*
-> + * Old magic mount flag and mask
-> + */
-> +#define MS_MGC_VAL 0xC0ED0000
-> +#define MS_MGC_MSK 0xffff0000
-> +
-> +/*
-> + * open_tree() flags.
-> + */
-> +#define OPEN_TREE_CLONE		1		/* Clone the target tree and attach the clone */
-> +#define OPEN_TREE_CLOEXEC	O_CLOEXEC	/* Close the file on execve() */
-> +
-> +/*
-> + * move_mount() flags.
-> + */
-> +#define MOVE_MOUNT_F_SYMLINKS		0x00000001 /* Follow symlinks on from path */
-> +#define MOVE_MOUNT_F_AUTOMOUNTS		0x00000002 /* Follow automounts on from path */
-> +#define MOVE_MOUNT_F_EMPTY_PATH		0x00000004 /* Empty from path permitted */
-> +#define MOVE_MOUNT_T_SYMLINKS		0x00000010 /* Follow symlinks on to path */
-> +#define MOVE_MOUNT_T_AUTOMOUNTS		0x00000020 /* Follow automounts on to path */
-> +#define MOVE_MOUNT_T_EMPTY_PATH		0x00000040 /* Empty to path permitted */
-> +#define MOVE_MOUNT_SET_GROUP		0x00000100 /* Set sharing group instead */
-> +#define MOVE_MOUNT_BENEATH		0x00000200 /* Mount beneath top mount */
-> +#define MOVE_MOUNT__MASK		0x00000377
-> +
-> +/*
-> + * fsopen() flags.
-> + */
-> +#define FSOPEN_CLOEXEC		0x00000001
-> +
-> +/*
-> + * fspick() flags.
-> + */
-> +#define FSPICK_CLOEXEC		0x00000001
-> +#define FSPICK_SYMLINK_NOFOLLOW	0x00000002
-> +#define FSPICK_NO_AUTOMOUNT	0x00000004
-> +#define FSPICK_EMPTY_PATH	0x00000008
-> +
-> +/*
-> + * The type of fsconfig() call made.
-> + */
-> +enum fsconfig_command {
-> +	FSCONFIG_SET_FLAG	= 0,	/* Set parameter, supplying no value */
-> +	FSCONFIG_SET_STRING	= 1,	/* Set parameter, supplying a string value */
-> +	FSCONFIG_SET_BINARY	= 2,	/* Set parameter, supplying a binary blob value */
-> +	FSCONFIG_SET_PATH	= 3,	/* Set parameter, supplying an object by path */
-> +	FSCONFIG_SET_PATH_EMPTY	= 4,	/* Set parameter, supplying an object by (empty) path */
-> +	FSCONFIG_SET_FD		= 5,	/* Set parameter, supplying an object by fd */
-> +	FSCONFIG_CMD_CREATE	= 6,	/* Create new or reuse existing superblock */
-> +	FSCONFIG_CMD_RECONFIGURE = 7,	/* Invoke superblock reconfiguration */
-> +	FSCONFIG_CMD_CREATE_EXCL = 8,	/* Create new superblock, fail if reusing existing superblock */
-> +};
-> +
-> +/*
-> + * fsmount() flags.
-> + */
-> +#define FSMOUNT_CLOEXEC		0x00000001
-> +
-> +/*
-> + * Mount attributes.
-> + */
-> +#define MOUNT_ATTR_RDONLY	0x00000001 /* Mount read-only */
-> +#define MOUNT_ATTR_NOSUID	0x00000002 /* Ignore suid and sgid bits */
-> +#define MOUNT_ATTR_NODEV	0x00000004 /* Disallow access to device special files */
-> +#define MOUNT_ATTR_NOEXEC	0x00000008 /* Disallow program execution */
-> +#define MOUNT_ATTR__ATIME	0x00000070 /* Setting on how atime should be updated */
-> +#define MOUNT_ATTR_RELATIME	0x00000000 /* - Update atime relative to mtime/ctime. */
-> +#define MOUNT_ATTR_NOATIME	0x00000010 /* - Do not update access times. */
-> +#define MOUNT_ATTR_STRICTATIME	0x00000020 /* - Always perform atime updates */
-> +#define MOUNT_ATTR_NODIRATIME	0x00000080 /* Do not update directory access times */
-> +#define MOUNT_ATTR_IDMAP	0x00100000 /* Idmap mount to @userns_fd in struct mount_attr. */
-> +#define MOUNT_ATTR_NOSYMFOLLOW	0x00200000 /* Do not follow symlinks */
-> +
-> +/*
-> + * mount_setattr()
-> + */
-> +struct mount_attr {
-> +	__u64 attr_set;
-> +	__u64 attr_clr;
-> +	__u64 propagation;
-> +	__u64 userns_fd;
-> +};
-> +
-> +/* List of all mount_attr versions. */
-> +#define MOUNT_ATTR_SIZE_VER0	32 /* sizeof first published struct */
-> +
-> +
-> +/*
-> + * Structure for getting mount/superblock/filesystem info with statmount(2).
-> + *
-> + * The interface is similar to statx(2): individual fields or groups can be
-> + * selected with the @mask argument of statmount().  Kernel will set the @mask
-> + * field according to the supported fields.
-> + *
-> + * If string fields are selected, then the caller needs to pass a buffer that
-> + * has space after the fixed part of the structure.  Nul terminated strings are
-> + * copied there and offsets relative to @str are stored in the relevant fields.
-> + * If the buffer is too small, then EOVERFLOW is returned.  The actually used
-> + * size is returned in @size.
-> + */
-> +struct statmount {
-> +	__u32 size;		/* Total size, including strings */
-> +	__u32 mnt_opts;		/* [str] Options (comma separated, escaped) */
-> +	__u64 mask;		/* What results were written */
-> +	__u32 sb_dev_major;	/* Device ID */
-> +	__u32 sb_dev_minor;
-> +	__u64 sb_magic;		/* ..._SUPER_MAGIC */
-> +	__u32 sb_flags;		/* SB_{RDONLY,SYNCHRONOUS,DIRSYNC,LAZYTIME} */
-> +	__u32 fs_type;		/* [str] Filesystem type */
-> +	__u64 mnt_id;		/* Unique ID of mount */
-> +	__u64 mnt_parent_id;	/* Unique ID of parent (for root == mnt_id) */
-> +	__u32 mnt_id_old;	/* Reused IDs used in proc/.../mountinfo */
-> +	__u32 mnt_parent_id_old;
-> +	__u64 mnt_attr;		/* MOUNT_ATTR_... */
-> +	__u64 mnt_propagation;	/* MS_{SHARED,SLAVE,PRIVATE,UNBINDABLE} */
-> +	__u64 mnt_peer_group;	/* ID of shared peer group */
-> +	__u64 mnt_master;	/* Mount receives propagation from this ID */
-> +	__u64 propagate_from;	/* Propagation from in current namespace */
-> +	__u32 mnt_root;		/* [str] Root of mount relative to root of fs */
-> +	__u32 mnt_point;	/* [str] Mountpoint relative to current root */
-> +	__u64 mnt_ns_id;	/* ID of the mount namespace */
-> +	__u32 fs_subtype;	/* [str] Subtype of fs_type (if any) */
-> +	__u32 sb_source;	/* [str] Source string of the mount */
-> +	__u32 opt_num;		/* Number of fs options */
-> +	__u32 opt_array;	/* [str] Array of nul terminated fs options */
-> +	__u32 opt_sec_num;	/* Number of security options */
-> +	__u32 opt_sec_array;	/* [str] Array of nul terminated security options */
-> +	__u64 supported_mask;	/* Mask flags that this kernel supports */
-> +	__u32 mnt_uidmap_num;	/* Number of uid mappings */
-> +	__u32 mnt_uidmap;	/* [str] Array of uid mappings (as seen from callers namespace) */
-> +	__u32 mnt_gidmap_num;	/* Number of gid mappings */
-> +	__u32 mnt_gidmap;	/* [str] Array of gid mappings (as seen from callers namespace) */
-> +	__u64 __spare2[43];
-> +	char str[];		/* Variable size part containing strings */
-> +};
-> +
-> +/*
-> + * Structure for passing mount ID and miscellaneous parameters to statmount(2)
-> + * and listmount(2).
-> + *
-> + * For statmount(2) @param represents the request mask.
-> + * For listmount(2) @param represents the last listed mount id (or zero).
-> + */
-> +struct mnt_id_req {
-> +	__u32 size;
-> +	__u32 spare;
-> +	__u64 mnt_id;
-> +	__u64 param;
-> +	__u64 mnt_ns_id;
-> +};
-> +
-> +/* List of all mnt_id_req versions. */
-> +#define MNT_ID_REQ_SIZE_VER0	24 /* sizeof first published struct */
-> +#define MNT_ID_REQ_SIZE_VER1	32 /* sizeof second published struct */
-> +
-> +/*
-> + * @mask bits for statmount(2)
-> + */
-> +#define STATMOUNT_SB_BASIC		0x00000001U     /* Want/got sb_... */
-> +#define STATMOUNT_MNT_BASIC		0x00000002U	/* Want/got mnt_... */
-> +#define STATMOUNT_PROPAGATE_FROM	0x00000004U	/* Want/got propagate_from */
-> +#define STATMOUNT_MNT_ROOT		0x00000008U	/* Want/got mnt_root  */
-> +#define STATMOUNT_MNT_POINT		0x00000010U	/* Want/got mnt_point */
-> +#define STATMOUNT_FS_TYPE		0x00000020U	/* Want/got fs_type */
-> +#define STATMOUNT_MNT_NS_ID		0x00000040U	/* Want/got mnt_ns_id */
-> +#define STATMOUNT_MNT_OPTS		0x00000080U	/* Want/got mnt_opts */
-> +#define STATMOUNT_FS_SUBTYPE		0x00000100U	/* Want/got fs_subtype */
-> +#define STATMOUNT_SB_SOURCE		0x00000200U	/* Want/got sb_source */
-> +#define STATMOUNT_OPT_ARRAY		0x00000400U	/* Want/got opt_... */
-> +#define STATMOUNT_OPT_SEC_ARRAY		0x00000800U	/* Want/got opt_sec... */
-> +#define STATMOUNT_SUPPORTED_MASK	0x00001000U	/* Want/got supported mask flags */
-> +#define STATMOUNT_MNT_UIDMAP		0x00002000U	/* Want/got uidmap... */
-> +#define STATMOUNT_MNT_GIDMAP		0x00004000U	/* Want/got gidmap... */
-> +
-> +/*
-> + * Special @mnt_id values that can be passed to listmount
-> + */
-> +#define LSMT_ROOT		0xffffffffffffffff	/* root mount */
-> +#define LISTMOUNT_REVERSE	(1 << 0) /* List later mounts first */
-> +
-> +#endif /* _UAPI_LINUX_MOUNT_H */
-> diff --git a/tools/include/uapi/linux/nsfs.h b/tools/include/uapi/linux/nsfs.h
-> new file mode 100644
-> index 000000000000..34127653fd00
-> --- /dev/null
-> +++ b/tools/include/uapi/linux/nsfs.h
-> @@ -0,0 +1,45 @@
+> +++ b/tools/include/uapi/linux/fanotify.h
+> @@ -0,0 +1,274 @@
 > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef __LINUX_NSFS_H
-> +#define __LINUX_NSFS_H
+> +#ifndef _UAPI_LINUX_FANOTIFY_H
+> +#define _UAPI_LINUX_FANOTIFY_H
 > +
-> +#include <linux/ioctl.h>
 > +#include <linux/types.h>
 > +
-> +#define NSIO	0xb7
+> +/* the following events that user-space can register for */
+> +#define FAN_ACCESS		0x00000001	/* File was accessed */
+> +#define FAN_MODIFY		0x00000002	/* File was modified */
+> +#define FAN_ATTRIB		0x00000004	/* Metadata changed */
+> +#define FAN_CLOSE_WRITE		0x00000008	/* Writable file closed */
+> +#define FAN_CLOSE_NOWRITE	0x00000010	/* Unwritable file closed */
+> +#define FAN_OPEN		0x00000020	/* File was opened */
+> +#define FAN_MOVED_FROM		0x00000040	/* File was moved from X */
+> +#define FAN_MOVED_TO		0x00000080	/* File was moved to Y */
+> +#define FAN_CREATE		0x00000100	/* Subfile was created */
+> +#define FAN_DELETE		0x00000200	/* Subfile was deleted */
+> +#define FAN_DELETE_SELF		0x00000400	/* Self was deleted */
+> +#define FAN_MOVE_SELF		0x00000800	/* Self was moved */
+> +#define FAN_OPEN_EXEC		0x00001000	/* File was opened for exec */
 > +
-> +/* Returns a file descriptor that refers to an owning user namespace */
-> +#define NS_GET_USERNS		_IO(NSIO, 0x1)
-> +/* Returns a file descriptor that refers to a parent namespace */
-> +#define NS_GET_PARENT		_IO(NSIO, 0x2)
-> +/* Returns the type of namespace (CLONE_NEW* value) referred to by
-> +   file descriptor */
-> +#define NS_GET_NSTYPE		_IO(NSIO, 0x3)
-> +/* Get owner UID (in the caller's user namespace) for a user namespace */
-> +#define NS_GET_OWNER_UID	_IO(NSIO, 0x4)
-> +/* Get the id for a mount namespace */
-> +#define NS_GET_MNTNS_ID		_IOR(NSIO, 0x5, __u64)
-> +/* Translate pid from target pid namespace into the caller's pid namespace. */
-> +#define NS_GET_PID_FROM_PIDNS	_IOR(NSIO, 0x6, int)
-> +/* Return thread-group leader id of pid in the callers pid namespace. */
-> +#define NS_GET_TGID_FROM_PIDNS	_IOR(NSIO, 0x7, int)
-> +/* Translate pid from caller's pid namespace into a target pid namespace. */
-> +#define NS_GET_PID_IN_PIDNS	_IOR(NSIO, 0x8, int)
-> +/* Return thread-group leader id of pid in the target pid namespace. */
-> +#define NS_GET_TGID_IN_PIDNS	_IOR(NSIO, 0x9, int)
+> +#define FAN_Q_OVERFLOW		0x00004000	/* Event queued overflowed */
+> +#define FAN_FS_ERROR		0x00008000	/* Filesystem error */
 > +
-> +struct mnt_ns_info {
-> +	__u32 size;
-> +	__u32 nr_mounts;
-> +	__u64 mnt_ns_id;
+> +#define FAN_OPEN_PERM		0x00010000	/* File open in perm check */
+> +#define FAN_ACCESS_PERM		0x00020000	/* File accessed in perm check */
+> +#define FAN_OPEN_EXEC_PERM	0x00040000	/* File open/exec in perm check */
+> +/* #define FAN_DIR_MODIFY	0x00080000 */	/* Deprecated (reserved) */
+> +
+> +#define FAN_PRE_ACCESS		0x00100000	/* Pre-content access hook */
+> +#define FAN_MNT_ATTACH		0x01000000	/* Mount was attached */
+> +#define FAN_MNT_DETACH		0x02000000	/* Mount was detached */
+> +
+> +#define FAN_EVENT_ON_CHILD	0x08000000	/* Interested in child events */
+> +
+> +#define FAN_RENAME		0x10000000	/* File was renamed */
+> +
+> +#define FAN_ONDIR		0x40000000	/* Event occurred against dir */
+> +
+> +/* helper events */
+> +#define FAN_CLOSE		(FAN_CLOSE_WRITE | FAN_CLOSE_NOWRITE) /* close */
+> +#define FAN_MOVE		(FAN_MOVED_FROM | FAN_MOVED_TO) /* moves */
+> +
+> +/* flags used for fanotify_init() */
+> +#define FAN_CLOEXEC		0x00000001
+> +#define FAN_NONBLOCK		0x00000002
+> +
+> +/* These are NOT bitwise flags.  Both bits are used together.  */
+> +#define FAN_CLASS_NOTIF		0x00000000
+> +#define FAN_CLASS_CONTENT	0x00000004
+> +#define FAN_CLASS_PRE_CONTENT	0x00000008
+> +
+> +/* Deprecated - do not use this in programs and do not add new flags here! */
+> +#define FAN_ALL_CLASS_BITS	(FAN_CLASS_NOTIF | FAN_CLASS_CONTENT | \
+> +				 FAN_CLASS_PRE_CONTENT)
+> +
+> +#define FAN_UNLIMITED_QUEUE	0x00000010
+> +#define FAN_UNLIMITED_MARKS	0x00000020
+> +#define FAN_ENABLE_AUDIT	0x00000040
+> +
+> +/* Flags to determine fanotify event format */
+> +#define FAN_REPORT_PIDFD	0x00000080	/* Report pidfd for event->pid */
+> +#define FAN_REPORT_TID		0x00000100	/* event->pid is thread id */
+> +#define FAN_REPORT_FID		0x00000200	/* Report unique file id */
+> +#define FAN_REPORT_DIR_FID	0x00000400	/* Report unique directory id */
+> +#define FAN_REPORT_NAME		0x00000800	/* Report events with name */
+> +#define FAN_REPORT_TARGET_FID	0x00001000	/* Report dirent target id  */
+> +#define FAN_REPORT_FD_ERROR	0x00002000	/* event->fd can report error */
+> +#define FAN_REPORT_MNT		0x00004000	/* Report mount events */
+> +
+> +/* Convenience macro - FAN_REPORT_NAME requires FAN_REPORT_DIR_FID */
+> +#define FAN_REPORT_DFID_NAME	(FAN_REPORT_DIR_FID | FAN_REPORT_NAME)
+> +/* Convenience macro - FAN_REPORT_TARGET_FID requires all other FID flags */
+> +#define FAN_REPORT_DFID_NAME_TARGET (FAN_REPORT_DFID_NAME | \
+> +				     FAN_REPORT_FID | FAN_REPORT_TARGET_FID)
+> +
+> +/* Deprecated - do not use this in programs and do not add new flags here! */
+> +#define FAN_ALL_INIT_FLAGS	(FAN_CLOEXEC | FAN_NONBLOCK | \
+> +				 FAN_ALL_CLASS_BITS | FAN_UNLIMITED_QUEUE |\
+> +				 FAN_UNLIMITED_MARKS)
+> +
+> +/* flags used for fanotify_modify_mark() */
+> +#define FAN_MARK_ADD		0x00000001
+> +#define FAN_MARK_REMOVE		0x00000002
+> +#define FAN_MARK_DONT_FOLLOW	0x00000004
+> +#define FAN_MARK_ONLYDIR	0x00000008
+> +/* FAN_MARK_MOUNT is		0x00000010 */
+> +#define FAN_MARK_IGNORED_MASK	0x00000020
+> +#define FAN_MARK_IGNORED_SURV_MODIFY	0x00000040
+> +#define FAN_MARK_FLUSH		0x00000080
+> +/* FAN_MARK_FILESYSTEM is	0x00000100 */
+> +#define FAN_MARK_EVICTABLE	0x00000200
+> +/* This bit is mutually exclusive with FAN_MARK_IGNORED_MASK bit */
+> +#define FAN_MARK_IGNORE		0x00000400
+> +
+> +/* These are NOT bitwise flags.  Both bits can be used togther.  */
+> +#define FAN_MARK_INODE		0x00000000
+> +#define FAN_MARK_MOUNT		0x00000010
+> +#define FAN_MARK_FILESYSTEM	0x00000100
+> +#define FAN_MARK_MNTNS		0x00000110
+> +
+> +/*
+> + * Convenience macro - FAN_MARK_IGNORE requires FAN_MARK_IGNORED_SURV_MODIFY
+> + * for non-inode mark types.
+> + */
+> +#define FAN_MARK_IGNORE_SURV	(FAN_MARK_IGNORE | FAN_MARK_IGNORED_SURV_MODIFY)
+> +
+> +/* Deprecated - do not use this in programs and do not add new flags here! */
+> +#define FAN_ALL_MARK_FLAGS	(FAN_MARK_ADD |\
+> +				 FAN_MARK_REMOVE |\
+> +				 FAN_MARK_DONT_FOLLOW |\
+> +				 FAN_MARK_ONLYDIR |\
+> +				 FAN_MARK_MOUNT |\
+> +				 FAN_MARK_IGNORED_MASK |\
+> +				 FAN_MARK_IGNORED_SURV_MODIFY |\
+> +				 FAN_MARK_FLUSH)
+> +
+> +/* Deprecated - do not use this in programs and do not add new flags here! */
+> +#define FAN_ALL_EVENTS (FAN_ACCESS |\
+> +			FAN_MODIFY |\
+> +			FAN_CLOSE |\
+> +			FAN_OPEN)
+> +
+> +/*
+> + * All events which require a permission response from userspace
+> + */
+> +/* Deprecated - do not use this in programs and do not add new flags here! */
+> +#define FAN_ALL_PERM_EVENTS (FAN_OPEN_PERM |\
+> +			     FAN_ACCESS_PERM)
+> +
+> +/* Deprecated - do not use this in programs and do not add new flags here! */
+> +#define FAN_ALL_OUTGOING_EVENTS	(FAN_ALL_EVENTS |\
+> +				 FAN_ALL_PERM_EVENTS |\
+> +				 FAN_Q_OVERFLOW)
+> +
+> +#define FANOTIFY_METADATA_VERSION	3
+> +
+> +struct fanotify_event_metadata {
+> +	__u32 event_len;
+> +	__u8 vers;
+> +	__u8 reserved;
+> +	__u16 metadata_len;
+> +	__aligned_u64 mask;
+> +	__s32 fd;
+> +	__s32 pid;
 > +};
 > +
-> +#define MNT_NS_INFO_SIZE_VER0 16 /* size of first published struct */
+> +#define FAN_EVENT_INFO_TYPE_FID		1
+> +#define FAN_EVENT_INFO_TYPE_DFID_NAME	2
+> +#define FAN_EVENT_INFO_TYPE_DFID	3
+> +#define FAN_EVENT_INFO_TYPE_PIDFD	4
+> +#define FAN_EVENT_INFO_TYPE_ERROR	5
+> +#define FAN_EVENT_INFO_TYPE_RANGE	6
+> +#define FAN_EVENT_INFO_TYPE_MNT		7
 > +
-> +/* Get information about namespace. */
-> +#define NS_MNT_GET_INFO		_IOR(NSIO, 10, struct mnt_ns_info)
-> +/* Get next namespace. */
-> +#define NS_MNT_GET_NEXT		_IOR(NSIO, 11, struct mnt_ns_info)
-> +/* Get previous namespace. */
-> +#define NS_MNT_GET_PREV		_IOR(NSIO, 12, struct mnt_ns_info)
+> +/* Special info types for FAN_RENAME */
+> +#define FAN_EVENT_INFO_TYPE_OLD_DFID_NAME	10
+> +/* Reserved for FAN_EVENT_INFO_TYPE_OLD_DFID	11 */
+> +#define FAN_EVENT_INFO_TYPE_NEW_DFID_NAME	12
+> +/* Reserved for FAN_EVENT_INFO_TYPE_NEW_DFID	13 */
 > +
-> +#endif /* __LINUX_NSFS_H */
-> diff --git a/tools/testing/selftests/filesystems/statmount/Makefile b/tools/testing/selftests/filesystems/statmount/Makefile
-> index 14ee91a41650..19adebfc2620 100644
-> --- a/tools/testing/selftests/filesystems/statmount/Makefile
-> +++ b/tools/testing/selftests/filesystems/statmount/Makefile
+> +/* Variable length info record following event metadata */
+> +struct fanotify_event_info_header {
+> +	__u8 info_type;
+> +	__u8 pad;
+> +	__u16 len;
+> +};
+> +
+> +/*
+> + * Unique file identifier info record.
+> + * This structure is used for records of types FAN_EVENT_INFO_TYPE_FID,
+> + * FAN_EVENT_INFO_TYPE_DFID and FAN_EVENT_INFO_TYPE_DFID_NAME.
+> + * For FAN_EVENT_INFO_TYPE_DFID_NAME there is additionally a null terminated
+> + * name immediately after the file handle.
+> + */
+> +struct fanotify_event_info_fid {
+> +	struct fanotify_event_info_header hdr;
+> +	__kernel_fsid_t fsid;
+> +	/*
+> +	 * Following is an opaque struct file_handle that can be passed as
+> +	 * an argument to open_by_handle_at(2).
+> +	 */
+> +	unsigned char handle[];
+> +};
+> +
+> +/*
+> + * This structure is used for info records of type FAN_EVENT_INFO_TYPE_PIDFD.
+> + * It holds a pidfd for the pid that was responsible for generating an event.
+> + */
+> +struct fanotify_event_info_pidfd {
+> +	struct fanotify_event_info_header hdr;
+> +	__s32 pidfd;
+> +};
+> +
+> +struct fanotify_event_info_error {
+> +	struct fanotify_event_info_header hdr;
+> +	__s32 error;
+> +	__u32 error_count;
+> +};
+> +
+> +struct fanotify_event_info_range {
+> +	struct fanotify_event_info_header hdr;
+> +	__u32 pad;
+> +	__u64 offset;
+> +	__u64 count;
+> +};
+> +
+> +struct fanotify_event_info_mnt {
+> +	struct fanotify_event_info_header hdr;
+> +	__u64 mnt_id;
+> +};
+> +
+> +/*
+> + * User space may need to record additional information about its decision.
+> + * The extra information type records what kind of information is included.
+> + * The default is none. We also define an extra information buffer whose
+> + * size is determined by the extra information type.
+> + *
+> + * If the information type is Audit Rule, then the information following
+> + * is the rule number that triggered the user space decision that
+> + * requires auditing.
+> + */
+> +
+> +#define FAN_RESPONSE_INFO_NONE		0
+> +#define FAN_RESPONSE_INFO_AUDIT_RULE	1
+> +
+> +struct fanotify_response {
+> +	__s32 fd;
+> +	__u32 response;
+> +};
+> +
+> +struct fanotify_response_info_header {
+> +	__u8 type;
+> +	__u8 pad;
+> +	__u16 len;
+> +};
+> +
+> +struct fanotify_response_info_audit_rule {
+> +	struct fanotify_response_info_header hdr;
+> +	__u32 rule_number;
+> +	__u32 subj_trust;
+> +	__u32 obj_trust;
+> +};
+> +
+> +/* Legit userspace responses to a _PERM event */
+> +#define FAN_ALLOW	0x01
+> +#define FAN_DENY	0x02
+> +/* errno other than EPERM can specified in upper byte of deny response */
+> +#define FAN_ERRNO_BITS	8
+> +#define FAN_ERRNO_SHIFT (32 - FAN_ERRNO_BITS)
+> +#define FAN_ERRNO_MASK	((1 << FAN_ERRNO_BITS) - 1)
+> +#define FAN_DENY_ERRNO(err) \
+> +	(FAN_DENY | ((((__u32)(err)) & FAN_ERRNO_MASK) << FAN_ERRNO_SHIFT))
+> +
+> +#define FAN_AUDIT	0x10	/* Bitmask to create audit record for result */
+> +#define FAN_INFO	0x20	/* Bitmask to indicate additional information */
+> +
+> +/* No fd set in event */
+> +#define FAN_NOFD	-1
+> +#define FAN_NOPIDFD	FAN_NOFD
+> +#define FAN_EPIDFD	-2
+> +
+> +/* Helper functions to deal with fanotify_event_metadata buffers */
+> +#define FAN_EVENT_METADATA_LEN (sizeof(struct fanotify_event_metadata))
+> +
+> +#define FAN_EVENT_NEXT(meta, len) ((len) -= (meta)->event_len, \
+> +				   (struct fanotify_event_metadata*)(((char *)(meta)) + \
+> +				   (meta)->event_len))
+> +
+> +#define FAN_EVENT_OK(meta, len)	((long)(len) >= (long)FAN_EVENT_METADATA_LEN && \
+> +				(long)(meta)->event_len >= (long)FAN_EVENT_METADATA_LEN && \
+> +				(long)(meta)->event_len <= (long)(len))
+> +
+> +#endif /* _UAPI_LINUX_FANOTIFY_H */
+> diff --git a/tools/testing/selftests/filesystems/mount-notify/Makefile b/tools/testing/selftests/filesystems/mount-notify/Makefile
+> index 10be0227b5ae..41ebfe558a0a 100644
+> --- a/tools/testing/selftests/filesystems/mount-notify/Makefile
+> +++ b/tools/testing/selftests/filesystems/mount-notify/Makefile
 > @@ -1,6 +1,7 @@
 >   # SPDX-License-Identifier: GPL-2.0-or-later
 >   
 > -CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES)
 > +CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
 > +
->   TEST_GEN_PROGS := statmount_test statmount_test_ns listmount_test
+>   TEST_GEN_PROGS := mount-notify_test
 >   
 >   include ../../lib.mk
-> diff --git a/tools/testing/selftests/filesystems/statmount/statmount.h b/tools/testing/selftests/filesystems/statmount/statmount.h
-> index a7a5289ddae9..e84d47fadd0b 100644
-> --- a/tools/testing/selftests/filesystems/statmount/statmount.h
-> +++ b/tools/testing/selftests/filesystems/statmount/statmount.h
-> @@ -7,6 +7,18 @@
->   #include <linux/mount.h>
->   #include <asm/unistd.h>
+> diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+> index 59a71f22fb11..4f0f325379b5 100644
+> --- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+> +++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_test.c
+> @@ -8,33 +8,20 @@
+>   #include <string.h>
+>   #include <sys/stat.h>
+>   #include <sys/mount.h>
+> -#include <linux/fanotify.h>
+>   #include <unistd.h>
+> -#include <sys/fanotify.h>
+>   #include <sys/syscall.h>
 >   
-> +#ifndef __NR_statmount
-> +#if defined(__x86_64__)
-> +#define __NR_statmount	457
-> +#endif
-> +#endif
-> +
-> +#ifndef __NR_listmount
-> +#if defined(__x86_64__)
-> +#define __NR_listmount	458
-> +#endif
-> +#endif
-> +
->   static inline int statmount(uint64_t mnt_id, uint64_t mnt_ns_id, uint64_t mask,
->   			    struct statmount *buf, size_t bufsize,
->   			    unsigned int flags)
+>   #include "../../kselftest_harness.h"
+>   #include "../statmount/statmount.h"
+>   
+> -#ifndef FAN_MNT_ATTACH
+> -struct fanotify_event_info_mnt {
+> -	struct fanotify_event_info_header hdr;
+> -	__u64 mnt_id;
+> -};
+> -#define FAN_MNT_ATTACH 0x01000000 /* Mount was attached */
+> -#endif
+> -
+> -#ifndef FAN_MNT_DETACH
+> -#define FAN_MNT_DETACH 0x02000000 /* Mount was detached */
+> +// Needed for linux/fanotify.h
 
+Is the comment accurate? Below, we are include sys/fanotify.h, not
+linux/fanotify.h
+
+
+> +#ifndef __kernel_fsid_t
+> +typedef struct {
+> +	int	val[2];
+> +} __kernel_fsid_t;
+>   #endif
+>   
+> -#ifndef FAN_REPORT_MNT
+> -#define FAN_REPORT_MNT 0x00004000 /* Report mount events */
+> -#endif
+> -
+> -#ifndef FAN_MARK_MNTNS
+> -#define FAN_MARK_MNTNS 0x00000110
+> -#endif
+> +#include <sys/fanotify.h>
+
+Are you sure that you're including your newly added fanotify.h? Because
+it looks to me like you might be including your local installed version,
+instead. I don't see how it can include
+
+     tools/include/uapi/linux/fanotify.h
+
+...with the above invocation.
+
+>   
+>   static uint64_t get_mnt_id(struct __test_metadata *const _metadata,
+>   			   const char *path)
+
+thanks,
+-- 
+John Hubbard
 
 
