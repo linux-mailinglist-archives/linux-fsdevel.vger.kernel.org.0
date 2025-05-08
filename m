@@ -1,87 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-48471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC06AAF8ED
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 13:44:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 241C0AAF92F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 13:54:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38EFA9E1A12
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 11:44:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 749681C20103
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 11:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CF8221FD5;
-	Thu,  8 May 2025 11:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19FF223702;
+	Thu,  8 May 2025 11:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E1kiN93f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QJuZ/E+M"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBE52153CE
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 11:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71FBB1DED57
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 11:54:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746704668; cv=none; b=OGe1hN34J+c4WQFBEIVrHszfAOR+SbnldG45QrP2VR0bhzm++mYXhliwH4hrPFNUa5NeQ+s1i+8tc85AYy5l5TIGqCqBQIJYs69Ov5MdNbOVEnVJuC8FXjn5gxfxvHK8pkGVSLxW7s+nm7f/aKql7teHA3ZpAbeCNiQSwE9o8fA=
+	t=1746705249; cv=none; b=QHYO23EFetKApSwcELhERk4FlZtkyFZ53USvp+g0uEgStYyIlwHnJ22seGbH5g83hfaYxFGvPDcJN4zIvZ3nEmk/MMRxv5gs7nknx98zZx2g5F5hEe9d4MnOG9JJSXWgnnzo1CmnMl8lGwVt115mjT7MaZ9alRGDGIIHQpPSaDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746704668; c=relaxed/simple;
-	bh=Z83rk8fy7JowVLkyMcWKPqTeMOaGKXcFB+7zIdLih3g=;
+	s=arc-20240116; t=1746705249; c=relaxed/simple;
+	bh=uW+ouyOAUl6pdqSozeSCn5+qOvoE/1GjWdMbDoRt1Kk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cJQtnoDOGINgMVtVcLmZNMDPN4lEQxzMXtTkEdodbSKDYC5wcrOvIJoZwYPch4plhpRq8N7O/C+3H2ozMaKDV+RKajc9IJ5WdVpSOFdtk3I3jXwlZVkmb0TRLz2vWv21cRZ2ndRGWW+or7hkJRzIBKzRmtniclElJRF3LD0YsTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E1kiN93f; arc=none smtp.client-ip=209.85.208.48
+	 To:Cc:Content-Type; b=uH24ZT7liqQwjYnWXb5aGsLQB5EmiDnQ8cGX28n9XmmGNgcSzKeTSd+m+/Sab7eYntMfHGB4/7WNLZ3YtNyZa/lyWNFuUNMrAAlaoypNWQo9SoWPZYU/gPIeLK0rnT79e+qgbD/ua/av4H9EiKDxC/QsVAbkn4C9xxYW/B/wY+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QJuZ/E+M; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5fbf534f8dbso1235020a12.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 May 2025 04:44:26 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so1370896a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 May 2025 04:54:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746704665; x=1747309465; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746705246; x=1747310046; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=j1J85J1ktlvQwUMEPud6Cltiv2VFBOSu8a+MMoUCtEU=;
-        b=E1kiN93fjLT8kdnVnHvNCaBA2jAWHhMZ/jXKisfApC2FvRuwaLregBldeXlPsNx5lu
-         oaoUHi+0Et+VMqaISq2hkk+/CIg/VB2hcWqAliX7YVWYkEZ+oLZ26RwbHREQzM6NKUiC
-         DCQ7pONZJDEjpK1LXPWxk+3dnpxqlAa1Ym4l0LWrgKf+GAlnrC118YCkexuRD2hkftwI
-         hkndxe2ZEyEj3+Ao6Sx9GNibk6Hs5wd9k2uGMWxMowcM/pS92obZYJL3YyQCOoongxWA
-         cHG2Y8IQNIk7hJCDIx8WDfivlVoSlMz4DNh40V96fbm4lppS/JJBtWPtAKIohHSvCHwl
-         Cc7g==
+        bh=EyQB7fOOADDDzgOKXIqy+CycT8HCqgAUpRmI3HQgHh4=;
+        b=QJuZ/E+McHsZt/2/ZtVly0ikodvfp8CH4HXALpAINOOGoQ5rkI1zET3ZZQ5MAjVj3h
+         CJd2uzY6mv04edLd5hcKK+KrVpqcUgoKGK2QYiu/onxKGRhn1/yN5FCfNsE0jHQDKViG
+         wXsx/zgXj9W2V1J7YYas1gMA6Wp97rqaLhZoMcJZhyP0cAwzQiv9V4U7ynv/gbNxJRr1
+         q6jX0fEJ2qjed+VaW0idSkJNPqdEXXMiDhzhQAly+LaS2tSH0A9rukRqX0UD/xmOQEpU
+         OINHDNf8xBFUtpkJew7pX+WtCXeuHOCoiah8QcPSjT/1JgfJcV35kMXF8l5DgGDxyxfe
+         EAWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746704665; x=1747309465;
+        d=1e100.net; s=20230601; t=1746705246; x=1747310046;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=j1J85J1ktlvQwUMEPud6Cltiv2VFBOSu8a+MMoUCtEU=;
-        b=pYwFmyVqcyNYLPOFDlnyeFJQEH2q8NMRyHzaOfbnZQEidYNxT7ZJ9g9j/RoOJjWN1F
-         +RYoZJApQD204kB20s3iIkVwM1lwGfVgY72QVSzCI4cKFNm/jwtFOcAuzYuGXBpOKopu
-         d4OaiHxQtjyFRg6oJKLIOJrHTcKD5mdhtFsItnPH2futCzFtsvVsB3u0zmZ6hPEl2CMe
-         tO+hCXFDSM3VpxZrf70/3X5uBaS/YRSSRpnzuLFumAuhMuc4insAfJ/9QyDLGy5jhJdA
-         gPPgk7XEvGGaUkn6RqP1d13LEvrFgwr1GTYrdlBPQbtdNk1Z/5qovU4TT2kG7kPFc/6m
-         1ipw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfWBTjKkoBgQJ7IcgKLSx1QMpWohP7P/CtIP38Op4gU5vJeys3n1abjCTR03jdWctVJ7AyRs9Rodd1LWGL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZDqmd2Au5WuGWwoiukM/9uyeLofZstSPJcBHsPqRhjWbeyLAr
-	FgCGbZ18S9i4IJW0mlGl38Z9wHKPJArcjIPqPcmQ7QjE/WYXx0uc9DkKc2+JtxNx0m977nvvLc2
-	RJHh0P1tg66HHGqLZnidVZv+39xc=
-X-Gm-Gg: ASbGncvwOZaM+NUu99TXDtmgi+l58Q9nDaw4BtnBChIVNCVUOUhkB3viN4eWLawIhZT
-	M0e98hTJ7A/PZFzDiCC1d2H4btmc9Zh6B1m06pELjrKbVIqytRVcQoM/6/Lj0nsa9fdtXPqRLfF
-	WknVSojYM6OrgFjmGRQXu0cwTYuCu9+sft
-X-Google-Smtp-Source: AGHT+IEnIyOPdt8MTjBpbCI/nMLHTRdumVyxAuZrWPTFJyChToHI5ML7/+Gx6P0DdyqDUxzNqEdMCcaOxG8Q2JDQ1jY=
-X-Received: by 2002:a17:907:6d1c:b0:abf:749f:f719 with SMTP id
- a640c23a62f3a-ad1e8bc2a8cmr700852366b.7.1746704664524; Thu, 08 May 2025
- 04:44:24 -0700 (PDT)
+        bh=EyQB7fOOADDDzgOKXIqy+CycT8HCqgAUpRmI3HQgHh4=;
+        b=nrtm/ug9kf3sQkZVpmafAKJPuS3HzjwP4mvDZC7v15Nx1OAxt3CAvlaAZ6/fH8m8P/
+         kUhxEEQINc1q6gBt1m+emJ6ru5a0/TigIh3IfTxzFJe31+mwsc8dJfVfkDlGH9TIpSrk
+         SXJ9lDoywGNSO2K5YvLD4S7/r1mjobwy77Q2LGn8qAbx6DNKHzEAn5WLLLcAtSQcbnRl
+         jJ3FYti0UM8SPeZaLC1QooSpFOZDrZ8+VMFIoRFiWjQFSqrr9yr1Sd1BLmYmyIlsDCj7
+         16T6zu7ap9V/s9fOGmbCxVlYfNiuQgkFA08g9lw+b/JWAXUOfJd5y9qy8aD8xYO81WMJ
+         Nc9w==
+X-Forwarded-Encrypted: i=1; AJvYcCV6VZ82lLZrUukuh47bgW0QVwOrdqw5PC+6NcMZg8YHOOlvdxrcKoLwQ+ZDoqZzKB5qjZsnjrALM6noJX7k@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1sbuCzJTcycyiT5Fz+ls9kBgrMPZCMJYteT/JHNIplLKHN0mS
+	h8DYLK3DmTKKwoW9Zr+DV1Xy9UNAXcpf+FYxlD43AhVhqeBwlWOIOLzuqUhvoNvN/bLpciT/u8u
+	0Zs6Z1mRVVkcwi1W6LT56ZaRRkz0=
+X-Gm-Gg: ASbGncvfMqTjqzaU+bUKCGXbBK5afi98wCFkcRTyk+7xWWZmtYbcD2n7Khr8gYQqbtt
+	egcc4HYZe4W8pFAwd7Xf40lhR5zry42zSBO1AZAnJGLBCCN3RTqgpDImt3zR694S8M2xBU818bw
+	bNNSpUONVm4MJh/lM83Onh9w==
+X-Google-Smtp-Source: AGHT+IF5OFLIAvaI9uJS33y8+rk7KH89oJ9Rph2Ljf/sefw0mMKprEvZqWojMKAWqahcKC22wj8OCcaAkHgwcvuzEXo=
+X-Received: by 2002:a17:907:7e82:b0:aca:95e7:9977 with SMTP id
+ a640c23a62f3a-ad1fe7fc8c6mr290653866b.28.1746705245373; Thu, 08 May 2025
+ 04:54:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507204302.460913-1-amir73il@gmail.com> <20250507204302.460913-5-amir73il@gmail.com>
- <3d19e405-314d-4a8f-9e89-e62b071c3778@nvidia.com>
-In-Reply-To: <3d19e405-314d-4a8f-9e89-e62b071c3778@nvidia.com>
+References: <20250507204302.460913-1-amir73il@gmail.com> <20250507204302.460913-4-amir73il@gmail.com>
+ <685d5423-5b6a-4a11-9bef-50224e479f44@nvidia.com>
+In-Reply-To: <685d5423-5b6a-4a11-9bef-50224e479f44@nvidia.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 8 May 2025 13:44:13 +0200
-X-Gm-Features: ATxdqUE4YkajifMVTSEA6mPlujZGw1-nvhd1CSaM4fX0Y1Sieit8T33I40USZ0c
-Message-ID: <CAOQ4uxidUg+C=+_zTx+E58V4KH9-sDchsWKrMJn-g2WeoXV0wg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] selftests/filesystems: create get_unique_mnt_id() helper
+Date: Thu, 8 May 2025 13:53:54 +0200
+X-Gm-Features: ATxdqUG-kusR1BytgOhNXND46DOdXgvjnf4QbI-Eibr6-swnWApgiY5nqI5wUqw
+Message-ID: <CAOQ4uxgrpidT0CnuUpnqFp058sLPKMhXQDXiP6u7icRfDt58Gw@mail.gmail.com>
+Subject: Re: [PATCH 3/5] selftests/fs/mount-notify: build with tools include dir
 To: John Hubbard <jhubbard@nvidia.com>
 Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
 	Shuah Khan <skhan@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
@@ -89,124 +89,91 @@ Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 8, 2025 at 9:43=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> w=
+On Thu, May 8, 2025 at 9:38=E2=80=AFAM John Hubbard <jhubbard@nvidia.com> w=
 rote:
 >
 > On 5/7/25 1:43 PM, Amir Goldstein wrote:
-> > Add helper to utils and use it in mount-notify and statmount tests.
+> > Copy the fanotify uapi header files to the tools include dir
+> > and define __kernel_fsid_t to decouple dependency with headers_install
+> > and then remove the redundant re-definitions of fanotify macros.
 > >
 > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > > ---
-> >   .../filesystems/mount-notify/Makefile         |  3 ++
-> >   .../mount-notify/mount-notify_test.c          | 13 ++-------
-> >   .../selftests/filesystems/statmount/Makefile  |  3 ++
-> >   .../filesystems/statmount/statmount_test_ns.c | 28 +++---------------=
--
-> >   tools/testing/selftests/filesystems/utils.c   | 20 +++++++++++++
-> >   tools/testing/selftests/filesystems/utils.h   |  2 ++
-> >   6 files changed, 34 insertions(+), 35 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/filesystems/mount-notify/Makefile =
-b/tools/testing/selftests/filesystems/mount-notify/Makefile
-> > index 41ebfe558a0a..55a2e5399e8a 100644
-> > --- a/tools/testing/selftests/filesystems/mount-notify/Makefile
-> > +++ b/tools/testing/selftests/filesystems/mount-notify/Makefile
-> > @@ -1,7 +1,10 @@
-> >   # SPDX-License-Identifier: GPL-2.0-or-later
-> >
-> >   CFLAGS +=3D -Wall -O2 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
-> > +LDLIBS +=3D -lcap
->
-> This addition of -lcap goes completely unmentioned in the commit log.
-> I'm guessing you are fixing things up to build, so this definitely
-> deserves an explanation there.
->
-
-This is needed because we are linking with utils.c code.
-See below.
-I guess we could have built a filesystems selftests utils library,
-but that seems like an operkill?
-
-> >
-> >   TEST_GEN_PROGS :=3D mount-notify_test
-> >
-> >   include ../../lib.mk
-> > +
-> > +$(OUTPUT)/mount-notify_test: ../utils.c
+...
 > > diff --git a/tools/testing/selftests/filesystems/mount-notify/mount-not=
 ify_test.c b/tools/testing/selftests/filesystems/mount-notify/mount-notify_=
 test.c
-> > index 4f0f325379b5..63ce708d93ed 100644
+> > index 59a71f22fb11..4f0f325379b5 100644
 > > --- a/tools/testing/selftests/filesystems/mount-notify/mount-notify_tes=
 t.c
 > > +++ b/tools/testing/selftests/filesystems/mount-notify/mount-notify_tes=
 t.c
-> > @@ -13,6 +13,7 @@
+> > @@ -8,33 +8,20 @@
+> >   #include <string.h>
+> >   #include <sys/stat.h>
+> >   #include <sys/mount.h>
+> > -#include <linux/fanotify.h>
+> >   #include <unistd.h>
+> > -#include <sys/fanotify.h>
+> >   #include <sys/syscall.h>
 > >
 > >   #include "../../kselftest_harness.h"
 > >   #include "../statmount/statmount.h"
-> > +#include "../utils.h"
 > >
-> >   // Needed for linux/fanotify.h
-> >   #ifndef __kernel_fsid_t
-> > @@ -23,16 +24,6 @@ typedef struct {
-> >
-> >   #include <sys/fanotify.h>
-> >
-> > -static uint64_t get_mnt_id(struct __test_metadata *const _metadata,
-> > -                        const char *path)
-> > -{
-> > -     struct statx sx;
+> > -#ifndef FAN_MNT_ATTACH
+> > -struct fanotify_event_info_mnt {
+> > -     struct fanotify_event_info_header hdr;
+> > -     __u64 mnt_id;
+> > -};
+> > -#define FAN_MNT_ATTACH 0x01000000 /* Mount was attached */
+> > -#endif
 > > -
-> > -     ASSERT_EQ(statx(AT_FDCWD, path, 0, STATX_MNT_ID_UNIQUE, &sx), 0);
-> > -     ASSERT_TRUE(!!(sx.stx_mask & STATX_MNT_ID_UNIQUE));
-> > -     return sx.stx_mnt_id;
-> > -}
+> > -#ifndef FAN_MNT_DETACH
+> > -#define FAN_MNT_DETACH 0x02000000 /* Mount was detached */
+> > +// Needed for linux/fanotify.h
+>
+> Is the comment accurate? Below, we are include sys/fanotify.h, not
+> linux/fanotify.h
+>
+
+Yes, it is accurate.
+sys/fanotify.h includes linux/fanotify.h
+linux/fanotify.h needs __kernel_fsid_t
+I considered copying posix_types.h, but it seemed wrong
+and I think __kernel_fsid_t definition is the same on all archs anyway.
+
+>
+> > +#ifndef __kernel_fsid_t
+> > +typedef struct {
+> > +     int     val[2];
+> > +} __kernel_fsid_t;
+> >   #endif
+> >
+> > -#ifndef FAN_REPORT_MNT
+> > -#define FAN_REPORT_MNT 0x00004000 /* Report mount events */
+> > -#endif
 > > -
-> >   static const char root_mntpoint_templ[] =3D "/tmp/mount-notify_test_r=
-oot.XXXXXX";
-> >
-> >   static const int mark_cmds[] =3D {
-> > @@ -81,7 +72,7 @@ FIXTURE_SETUP(fanotify)
-> >
-> >       ASSERT_EQ(mkdir("b", 0700), 0);
-> >
-> > -     self->root_id =3D get_mnt_id(_metadata, "/");
-> > +     self->root_id =3D get_unique_mnt_id("/");
-> >       ASSERT_NE(self->root_id, 0);
-> >
-> >       for (i =3D 0; i < NUM_FAN_FDS; i++) {
-> > diff --git a/tools/testing/selftests/filesystems/statmount/Makefile b/t=
-ools/testing/selftests/filesystems/statmount/Makefile
-> > index 19adebfc2620..8e354fe99b44 100644
-> > --- a/tools/testing/selftests/filesystems/statmount/Makefile
-> > +++ b/tools/testing/selftests/filesystems/statmount/Makefile
-> > @@ -1,7 +1,10 @@
-> >   # SPDX-License-Identifier: GPL-2.0-or-later
-> >
-> >   CFLAGS +=3D -Wall -O2 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
-> > +LDLIBS +=3D -lcap
+> > -#ifndef FAN_MARK_MNTNS
+> > -#define FAN_MARK_MNTNS 0x00000110
+> > -#endif
+> > +#include <sys/fanotify.h>
 >
-> And here.
+> Are you sure that you're including your newly added fanotify.h? Because
+> it looks to me like you might be including your local installed version,
+> instead. I don't see how it can include
 >
-> >
-> >   TEST_GEN_PROGS :=3D statmount_test statmount_test_ns listmount_test
-> >
-> >   include ../../lib.mk
-> > +
-> > +$(OUTPUT)/statmount_test_ns: ../utils.c
+>      tools/include/uapi/linux/fanotify.h
 >
-> This is surprising: a new Makefile target, without removing an old one.
-> And it's still listed in TEST_GEN_PROGS...
+> ...with the above invocation.
 >
-> Why did you feel the need to add this target?
 
-I am not a makefile expert, but this states that statmount_test_ns
-needs to link with utils.c code.
+Yes, it works.
 
-I copied it from overlayfs/Makefile.
+My local installed linux/fanotify.h does not include FAN_MARK_MNTNS
+it is only available in my source and tools include dirs.
 
-Is there a different way to express this build dependency?
+Does the fact that sys/fanotify.h includes linux/fanotify.h explains what
+didn't make sense to you?
 
 Thanks,
 Amir.
