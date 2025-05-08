@@ -1,359 +1,150 @@
-Return-Path: <linux-fsdevel+bounces-48514-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD560AB04BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 22:39:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48F9CAB04E2
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 22:46:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFAB61BA2AB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 20:39:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FBFC1B66096
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 20:47:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FC428C01F;
-	Thu,  8 May 2025 20:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C941F9A89;
+	Thu,  8 May 2025 20:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKFYvyKz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeZzYuqC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C1F21D5B6;
-	Thu,  8 May 2025 20:38:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5EB78F34
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 20:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746736736; cv=none; b=PqyXEJrE5ODM/PZUaJZbpQsD184zNlvy5jBi9FBIU0mSIafAdm+QaazxxgPvwMNP5azETFSPNbGQyy0vWe73/ZyOGfUJ1IzgpOosxRoRdT+/F1EfO196t0tyQC5+QsvzLpVGUwlN9lJjoeXgcLmqswYhXroWwh2bgFk+3rJ5RM0=
+	t=1746737207; cv=none; b=R5JHkg5BxgJQmoojTIf/mtZ+kPzHjRomrfLIpDJLVqtpOZ0I5iy2IX40n0e3rqotNnlx7QN39iGe8YfAa7ikCzLsgZ+FrIzwbipwrrbPGU3/H81Wb7A8oXs1yROOA01ItgXBixiJVbIk/Hn4XILGLBxpiWDEpM7KYU55P29n9lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746736736; c=relaxed/simple;
-	bh=/NhTmPsq03LOU2Ndupk1HqnkO92bDtzORaW6K8VXNHg=;
+	s=arc-20240116; t=1746737207; c=relaxed/simple;
+	bh=mZg3A4ogx+Cu463bf8RVpgQC+gBQEOdP5OUhAgzF3qg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iNfpMFaruQm+I/RkEG1G7k/1pAuBA2tMpVUPRWAPv/dVX2rH9WwACZRr9q/Hslmok6Vmnc1pYk2OtZdZGPJZWBi6pblLzuyjrQc3M/slVKmMSMpn/5YIlMyzEVwmYaQF0pkdxYVovkjGSEaARB3HUkwPiTjCUnOmDdBueS6R0MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKFYvyKz; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=XjUTdnmURc9S83zP0/5m+pIYRt/BomdpFwoaxZqFsUa96nNwVmFzdt9IF2wh1PlXwymYFPvYlkAeN+WwP3ekXu1aMI0mo6rvhm4ZZiwGk0vG3JfM5RbKg2NOO1Gl4MIZc6qWpDxS4+4xDGIFhFffL2mYUghup+WAhbz0ZsWsfzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aeZzYuqC; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ad216a5a59cso56669566b.3;
-        Thu, 08 May 2025 13:38:53 -0700 (PDT)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac2ab99e16eso285504866b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 May 2025 13:46:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746736732; x=1747341532; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1746737204; x=1747342004; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XI451Xqo7kLwNWLFULFzz06ciaAE0AGPeH3OCBsLZVw=;
-        b=EKFYvyKzxNY6lMVaki+pdVNONqvXLhHU1MnHGaYBoxKDXu32N/TrhbH9dMh2H7R5cK
-         6D0oidxHm+iH99eWu+iyoHq0+Xhpx9+OE+vNRidw6fbQ3fHx8ayXubtMTrNELCEGvsK+
-         LVODFO4qmLrzcIK8G25AeSv2n3cZk8GZTQyFDbYfmW3lpK3ttxOMKRfkwUPaArYG8NBD
-         MpsRe+bV5wBcB2WPajvizacwFFz4CiNrLweZ8KifaKe8Fcc/MdSxEYQlH+iDwpUvjiyX
-         gtQkT8366emhc1x/29mYJR8PsxdW8SgCnH8nNAEnbCL9rbCURty9KgQhqAE6RGf9LDkY
-         lmLQ==
+        bh=mZg3A4ogx+Cu463bf8RVpgQC+gBQEOdP5OUhAgzF3qg=;
+        b=aeZzYuqCQ4IUhdJLBGzBHnKVSY3yjqfSccCRh6W20i+lOmALBzjWxODLmbgYD+54Xm
+         wuQ3IWkM0JsfS0EI6p/EsYHE5/NrvTZjYwJ1PXWTXPyAOXCj6H4nJMH+8fQW7aBwbwJ1
+         b2dsJLhNmyZwUaDMfiKZlZGBvn4F36gvFk47KUEUrmFNHlOZtxY45VBXAUQdoFXZPZRX
+         N+vlRF+qFbSUujt+1Sz79gxEb4nEYG5W+VC32HOsNAN5+NelcEW2p/6JMNa3KPyyioc/
+         dkCZJGQDVOlW2VgUSZCslzzg48eoSJApWVrLL4iMtWJN4ovCKR55pvPzlbQuCdDiw0uE
+         nIwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746736732; x=1747341532;
+        d=1e100.net; s=20230601; t=1746737204; x=1747342004;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XI451Xqo7kLwNWLFULFzz06ciaAE0AGPeH3OCBsLZVw=;
-        b=PTuasNMSOaKIHl1Kvyngv97E9UzMZ/leD/5RdhxF4h2A31OulA8CJv8rR3FwF2Bwjx
-         G/uwxY/D0KID/sWk289BLGvPMZSj0mqcmHxbrPqLctq6UW7JRl59tCmt160k9vTz9KQC
-         riy6geKMaLSX1dKuUq3t4lbN9alMJMzFnHJqxZMO4YLcp4zyPplDpseTLPRqLjLKpfXL
-         rZiENXDlmW8hmLfvsZn2YfWLoYaaW1Y3CG90BiCMtksx94SdXlx2dVqEIdvr9X22rvIb
-         nuOdOnWZi/he5Rd7Vt3BPYyIdxJSk0VnecCeYhfkm+NlYIbTfC5O2PB4h4lXLrmvxojH
-         LBOw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEV86LPXs8Q7GeJGp8hBU/QcwWrkdmVf93TNlbOSFSs1rogZZ1KQ9FMoUOAg8ClfX6IPbIvJHmwTioVByBcQ==@vger.kernel.org, AJvYcCWaAonQr+ZqXLf1Wp1s0mvR5W1vRlz3rX035WIJ04LZbcXUXYmUHH50KbGefkDLCZSBXPnhzwvT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8AIGOZdlpnm2xYRy986jpaENThlTVD7ZH+h5Yu3fzW966dnAt
-	dALZ5wnYOzv9fTq7wMFRDvjjOZViWcA0ZBORIMNIvIhIEgXz47eq/+/KLaTC9CcOWilEjRv4xHW
-	go5TethueFgEHWlX+ZFp3QrX1IRU=
-X-Gm-Gg: ASbGnctxMEks2eZd0rrM6193rFe03DjWpy9XsrarEPS8CFiM/O0mHqSNRDq7Qsqv9DE
-	LeAc4xzA6J619v8hR85ihZ6piTZOnAoICuWvOV6/kVGKywGYz6gR6tb4oBjVoy1Edi8iif8hg4Q
-	uLvYXIdW1phxgnK5VLMLJ6Wg==
-X-Google-Smtp-Source: AGHT+IFzFrHX1p4irUKiYxOsN96aNfbOuXxlA3s7oefQoP35vL7h5Ns3xHMcXI/JqE3JAzZppvSCzyGCFvh3/CvnQW0=
-X-Received: by 2002:a17:907:7f21:b0:ac1:ea29:4e63 with SMTP id
- a640c23a62f3a-ad219002422mr86746566b.26.1746736731947; Thu, 08 May 2025
- 13:38:51 -0700 (PDT)
+        bh=mZg3A4ogx+Cu463bf8RVpgQC+gBQEOdP5OUhAgzF3qg=;
+        b=jXi7rW+Dbm0teVIsfe6+nVXXcMtjyAPHcT02O+jVVI335XEKlaEMQ4E6TLY2q8z1Ro
+         OsyoJ7tN1qHhoLhuAu3HJTtuqhS2XhyftpYsRKM/ZzdFh3z6L0qYQiWQo6Ac9DTPL2eS
+         buWZ9UlrQHrwowW84zGocYxtL67Q/zrpxs4zyB8YJFH5NCfuvrX/IhBm52AkAIYQzN66
+         05QAYWViCFfzOx9D+85D28up87FsMGt79rSu+n19dBxSPyEuItfcgPIj4D5WD2aY2uLy
+         gYZ+Q6DEt4vjezIplGpQwBcAWVq8yAPebzzXSjo3BrCuJo/8wk7dZhxCZBJvpRODgSUE
+         bqhw==
+X-Forwarded-Encrypted: i=1; AJvYcCVbzUOMFvzrq2Gjlaq1npISUc93ZEB2Ar6tRTBfuN+47BSpiCQFCCawog+YtXX+GzvSyBc9mmhhF7mLZ7jf@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRArhurteCBDmlH4dP4akVBue4SU9HFAtnNrK+bo701FWuok2E
+	5GulfVV9lfVM6GjRYXsl4KGYdPttrOb3j9a3chn9AwZrVbI1yG4GuDjPUuXia4DRY8cbip0QAxJ
+	CPEBXUQxXR56fvpZRCNJdgYBZ3TFxl7rYji0T1w==
+X-Gm-Gg: ASbGncv+rhQyd8oQwND2RmVGm0nWfKbYYHZEThJxfbwMCmb6h0Pfs1/+xozV2MqhenM
+	c0FScN7vsPuEYkuf4DOgI/PeTnNLGxYqa5BJ5lKL7ZGv0/+LSmBPsuvXFYSAbCHQCs4CAFkNT77
+	F8T+vdBqTb2N3vhfIlQSf6hw==
+X-Google-Smtp-Source: AGHT+IHpeuPOuNJMavA47nUtb0VN0TQvWikiAY9vOx8G1IlbkcTgiPioS1J/T3QqXyCYIl9d5vdwpcy0yBoZad0Kb+I=
+X-Received: by 2002:a17:907:6d20:b0:acf:4c4b:f8e1 with SMTP id
+ a640c23a62f3a-ad218e940famr118182866b.7.1746737203678; Thu, 08 May 2025
+ 13:46:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409115220.1911467-1-amir73il@gmail.com> <20250409115220.1911467-3-amir73il@gmail.com>
- <20250508193800.q2s4twfldlctre34@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
-In-Reply-To: <20250508193800.q2s4twfldlctre34@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20250419100657.2654744-1-amir73il@gmail.com> <CAOQ4uxj1-8uFp1ShzcC5YXOXfvOrEMLCcB=i1Dr4LaCax03HDQ@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj1-8uFp1ShzcC5YXOXfvOrEMLCcB=i1Dr4LaCax03HDQ@mail.gmail.com>
 From: Amir Goldstein <amir73il@gmail.com>
-Date: Thu, 8 May 2025 22:38:39 +0200
-X-Gm-Features: ATxdqUGH2WWhBzVn6NbMbi0wtRICdDMPY6DRDExoBEHr7eR4DcgZmkxKEa45ZCQ
-Message-ID: <CAOQ4uxjZnL5AMwwc06tiGJGbkjjW+88jDGudtp-MLkkPdzHT0g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] open_by_handle: add a test for connectable file handles
-To: Zorro Lang <zlang@redhat.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, fstests@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
+Date: Thu, 8 May 2025 22:46:31 +0200
+X-Gm-Features: ATxdqUF_jbFORqKYARjGEMZlYLISidH92CoKJLAzP_8CoFpRWhH_IBo--D-_REE
+Message-ID: <CAOQ4uxi+pxS74QCLi5H8f0rj8A_1-kRxVs6qf_-C_0rwS66wfg@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] User namespace aware fanotify
+To: Jan Kara <jack@suse.cz>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 8, 2025 at 9:38=E2=80=AFPM Zorro Lang <zlang@redhat.com> wrote:
+On Sat, Apr 19, 2025 at 1:48=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
 >
-> On Wed, Apr 09, 2025 at 01:52:20PM +0200, Amir Goldstein wrote:
-> > This is a variant of generic/477 with connectable file handles.
-> > This test uses load and store of file handles from a temp file to test
-> > decoding connectable file handles after cycle mount and after renames.
-> > Decoding connectable file handles after being moved to a new parent
-> > is expected to fail.
+> On Sat, Apr 19, 2025 at 12:07=E2=80=AFPM Amir Goldstein <amir73il@gmail.c=
+om> wrote:
 > >
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
+> > Jan,
+> >
+> > This v2 is following a two years leap from the RFC path [1].
+> > the code is based on the mntns fix patches I posted and is available
+> > on my github [2].
+> >
+> > Since then, Christian added support for open_by_handle_at(2)
+> > to admin inside userns, which makes watching FS_USERNS_MOUNT
+> > sb more useful.
+> >
+> > And this should also be useful for Miklos' mntns mount tree watch
+> > inside userns.
+> >
+> > Tested sb/mount watches inside userns manually with fsnotifywatch -S
+> > and -M with some changes to inotify-tools [3].
+> >
+> > Ran mount-notify test manually inside userns and saw that it works
+> > after this change.
+> >
+> > I was going to write a variant of mount-notify selftest that clones
+> > also a userns, but did not get to it.
+> >
+> > Christian, Miklos,
+> >
+> > If you guys have interest and time in this work, it would be nice if
+> > you can help with this test variant or give me some pointers.
+> >
+> > I can work on the test and address review comments when I get back from
+> > vacation around rc5 time, but wanted to get this out soon for review.
+> >
 >
-> Hi Amir,
+> FWIW, this is my failed attempt to copy what statmount_test_ns does
+> to mount-notify_test_ns:
 >
-> This test case fails on some filesystems, e.g. nfs [1] and tmpfs [2].
-> Is this as your expected?
+> https://github.com/amir73il/linux/commits/fanotify_selftests/
+>
 
-No. I will look into this failure.
-Thanks for testing!
+Hi Jan,
 
+This selftests branch is now updated.
+The test is working as expected and verifies the changes in this patch set.
+
+Would you consider queuing the fanotify patches for v6.6?
+
+We need to collaborate the merge of the selftests with Christian
+because my selftests branch has some cleanups with a minor
+conflict with Christian's vfs/vfs-6.16.mount branch.
+
+Maybe you will carry only the fanotify patches to v6.6 and
+Christian will carry the tests in a separate branch?
+because the fanotify patches and the tests do not actually depend
+on each other to build, only for the test to pass.
+
+Thanks,
 Amir.
-
->
-> Thanks,
-> Zorro
->
-> [1]
-> generic/777 fails on nfs:
->
-> --- /dev/fd/63  2025-05-07 02:44:24.150560533 -0400
-> +++ generic/777.out.bad 2025-05-07 02:44:23.999734558 -0400
-> @@ -1,7 +1,37 @@
->  QA output created by 777
->  test_file_handles after cycle mount
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000000) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000001) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000002) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000003) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000004) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000005) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000006) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000007) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000008) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000009) returned 116=
- incorrectly on a linked file!
->  test_file_handles after rename parent
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000000) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000001) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000002) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000003) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000004) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000005) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000006) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000007) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000008) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000009) returned 116=
- incorrectly on a linked file!
->  test_file_handles after rename grandparent
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000000) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000001) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000002) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000003) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000004) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000005) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000006) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000007) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000008) returned 116=
- incorrectly on a linked file!
-> +open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000009) returned 116=
- incorrectly on a linked file!
->  test_file_handles after move to new parent
->  open_by_handle(TEST_DIR/file000000) returned 116 incorrectly on a linked=
- file!
->  open_by_handle(TEST_DIR/file000001) returned 116 incorrectly on a linked=
- file!
->
-> [2]
-> generic/777 fails on tmpfs:
->
-> --- /dev/fd/63  2025-05-07 07:53:26.265453903 -0400
-> +++ generic/777.out.bad 2025-05-07 07:53:25.536434660 -0400
-> @@ -3,13 +3,3 @@
->  test_file_handles after rename parent
->  test_file_handles after rename grandparent
->  test_file_handles after move to new parent
-> -open_by_handle(TEST_DIR/file000000) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000001) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000002) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000003) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000004) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000005) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000006) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000007) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000008) returned 116 incorrectly on a linked=
- file!
-> -open_by_handle(TEST_DIR/file000009) returned 116 incorrectly on a linked=
- file!
->
->
-> >  tests/generic/777     | 79 +++++++++++++++++++++++++++++++++++++++++++
-> >  tests/generic/777.out | 15 ++++++++
-> >  2 files changed, 94 insertions(+)
-> >  create mode 100755 tests/generic/777
-> >  create mode 100644 tests/generic/777.out
-> >
-> > diff --git a/tests/generic/777 b/tests/generic/777
-> > new file mode 100755
-> > index 00000000..52a461c3
-> > --- /dev/null
-> > +++ b/tests/generic/777
-> > @@ -0,0 +1,79 @@
-> > +#! /bin/bash
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +# Copyright (C) 2018-2025 CTERA Networks. All Rights Reserved.
-> > +#
-> > +# FS QA Test No. 777
-> > +#
-> > +# Check open by connectable file handle after cycle mount.
-> > +#
-> > +# This is a variant of test 477 with connectable file handles.
-> > +# This test uses load and store of file handles from a temp file to te=
-st
-> > +# decoding file handles after cycle mount and after directory renames.
-> > +# Decoding connectable file handles after being moved to a new parent
-> > +# is expected to fail.
-> > +#
-> > +. ./common/preamble
-> > +_begin_fstest auto quick exportfs
-> > +
-> > +# Import common functions.
-> > +. ./common/filter
-> > +
-> > +
-> > +# Modify as appropriate.
-> > +_require_test
-> > +# Require connectable file handles support
-> > +_require_open_by_handle -N
-> > +
-> > +NUMFILES=3D10
-> > +testroot=3D$TEST_DIR/$seq-dir
-> > +testdir=3D$testroot/testdir
-> > +
-> > +# Create test dir and test files, encode connectable file handles and =
-store to tmp file
-> > +create_test_files()
-> > +{
-> > +     rm -rf $testdir
-> > +     mkdir -p $testdir
-> > +     $here/src/open_by_handle -N -cwp -o $tmp.handles_file $testdir $N=
-UMFILES
-> > +}
-> > +
-> > +# Decode connectable file handles loaded from tmp file
-> > +test_file_handles()
-> > +{
-> > +     local opt=3D$1
-> > +     local when=3D$2
-> > +
-> > +     echo test_file_handles after $when
-> > +     $here/src/open_by_handle $opt -i $tmp.handles_file $TEST_DIR $NUM=
-FILES
-> > +}
-> > +
-> > +# Decode file handles of files/dir after cycle mount
-> > +create_test_files
-> > +_test_cycle_mount
-> > +test_file_handles -rp "cycle mount"
-> > +
-> > +# Decode file handles of files/dir after rename of parent and cycle mo=
-unt
-> > +create_test_files $testdir
-> > +rm -rf $testdir.renamed
-> > +mv $testdir $testdir.renamed/
-> > +_test_cycle_mount
-> > +test_file_handles -rp "rename parent"
-> > +
-> > +# Decode file handles of files/dir after rename of grandparent and cyc=
-le mount
-> > +create_test_files $testdir
-> > +rm -rf $testroot.renamed
-> > +mv $testroot $testroot.renamed/
-> > +_test_cycle_mount
-> > +test_file_handles -rp "rename grandparent"
-> > +
-> > +# Decode file handles of files/dir after move to new parent and cycle =
-mount
-> > +# This is expected to fail because the conectable file handle encodes =
-the
-> > +# old parent.
-> > +create_test_files $testdir
-> > +rm -rf $testdir.new
-> > +mkdir -p $testdir.new
-> > +mv $testdir/* $testdir.new/
-> > +_test_cycle_mount
-> > +test_file_handles -r "move to new parent" | _filter_test_dir
-> > +
-> > +status=3D0
-> > +exit
-> > diff --git a/tests/generic/777.out b/tests/generic/777.out
-> > new file mode 100644
-> > index 00000000..648c480c
-> > --- /dev/null
-> > +++ b/tests/generic/777.out
-> > @@ -0,0 +1,15 @@
-> > +QA output created by 777
-> > +test_file_handles after cycle mount
-> > +test_file_handles after rename parent
-> > +test_file_handles after rename grandparent
-> > +test_file_handles after move to new parent
-> > +open_by_handle(TEST_DIR/file000000) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000001) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000002) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000003) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000004) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000005) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000006) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000007) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000008) returned 116 incorrectly on a link=
-ed file!
-> > +open_by_handle(TEST_DIR/file000009) returned 116 incorrectly on a link=
-ed file!
-> > --
-> > 2.34.1
-> >
->
 
