@@ -1,177 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-48436-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC334AAF0F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 04:05:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32910AAF133
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 04:40:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 331F04E676D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 02:05:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3641E4C5D6C
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 02:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDC5A1B0402;
-	Thu,  8 May 2025 02:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="f54qKbKa"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E53B1DDA09;
+	Thu,  8 May 2025 02:40:18 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44951953A1
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 02:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 416132CA9
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 02:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746669944; cv=none; b=GgXtHA2VK7PI6VFSXZ2F+Px1ixMp0yyjCkEZZSYwO3v1AeMjM4vld/xvtmKgp/+BkgH1XoRsvlba9WriG5jl7cXqW38DTcK37zyFEXmJCnujm3BRuSNcA5FXZTE8f54Qf7JCQ3N4mRzrBZ5IvkBURAv9YkCw6SLA9AYtd8dzMqE=
+	t=1746672018; cv=none; b=h9adBiHVydh2TsdHBeWj7IQvvLPHdfceSc95deRk5WL/6ANQMXPIJEjjD5B5uKGd6LZ9Njpfr1CLc8Z4LZIAVX50TB87eyQ+I2pRQ2UoFQudil1UzmB0NOhMfZMZa8F0ySRlgb8pCBjARDwSxU06jDS9eRbCiFcqKawSpP4SUPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746669944; c=relaxed/simple;
-	bh=PgkVcTQKPElP9GJqTGMcJ8KpDjr23Hd3HRkX3B1UN7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=omHQ0fQDPci7xibFuE7rFfoDJLIh7ZMAsYP/uvpVpAbNZ45sRE7m8nttlSggIfxPPbBJWS4+JH233Jm4utpfu4j8apvoz78etqF6FEedUWpoykiksCYau4790/BuVDBv408e7/rboxs6YjpIuc4XFDDX7LZ15TcBKy6hpGHOIa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=f54qKbKa; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7406c6dd2b1so1563513b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 07 May 2025 19:05:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1746669940; x=1747274740; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=saKZCDhFeW4DvmqrMwzpBcifdhBVTKscMDpwX3nn5IY=;
-        b=f54qKbKaYm38GzywZI9sBT7w6yl81NWjwbf/N1P9UVTIvK6JdHOoc1QiSLleRcZPG8
-         g+QBpUZ5ijDb1vxHmlbcm0JOoHy+gM/m2bOdjCIYvBWJuD/FTNCEgdU/fs6XK3Bylivd
-         eF1Caf6iG1UyHwOdsxvCFtj//YyTIUGGyeytx3WmbMpvHBPlfbLy1Q3qVcztBrENix5M
-         1+EiYPp8a6PPwKw3eicElTYco8+qcTFHq/uafGC5Yyys8o2NcgmCKgoL/FrNLCrObnO8
-         iX2jv99+GWjqd7z7Ii6xXrg28CZ6X3dXvHedZJnUM7siAT18219HBjbGDpWTla8g8j1F
-         shuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746669940; x=1747274740;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=saKZCDhFeW4DvmqrMwzpBcifdhBVTKscMDpwX3nn5IY=;
-        b=dO5PMGutvpojDwBD7YljwuvywhI9gCCBeu2jj1bwezJoeMiI13dL0qWRzys0RYLZDy
-         hIO6OCfnpjH+lfa+TOW1aioGnACyjCFzj01O4aiZaUKWm+HBHbJU8FNJtVRDYZen3AnU
-         qADFy6BYRFuM+3HEL3Ny/6mdjLXtQTJWnkULaORDGWbySKQkwXA2hvw6PQnUPZovmzze
-         S2NKez6RvTNC+SMGnQx1iLzdr7WUcKj2EkTD55i1IWsI1nLX7h7Lx3K8ywrxYN6Xp/80
-         Xr5eyHrrkgKWNE8PECdzHzXq8BrhM4J4PbJyzkAhlVuYA3/sG7hdbRUSTmhhHSHw5MV5
-         7ICg==
-X-Forwarded-Encrypted: i=1; AJvYcCUd4KD4Ri4lF09W++UsLW3LelUYSPytY4sz9+zO9JV7suop1Z8JBIbXY1907TyJQJJMWYPBoAT3ZQjvPkTr@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywcp6P8XUvj8c3pEC73W14kD5Ofvg8ZGTTTVu/GYVROEq29ckMI
-	nYpFo8Ta7RfEbmVQP2xoNOlOcJqPns9BbLf8mqa+MdPt7VWbxEQoHendTzKkoqoOrl5y3uLZ1Mf
-	G
-X-Gm-Gg: ASbGncuqRsdbvu7UUM0/SZ2zfr8FhXGZtWyRNAFy5T/44C6LV7Lb8fQ++kTQ5I2/kuC
-	pO4sNicRp7nDqPW/TOsuTf0QI+GZ184EUAqPdLy+wtOjvEDPD+ThCRCZaxBB84C+CTxSNtVXYKH
-	TJvgr+F+iIRmgb9K7T3oTwxQwzKuTcQBVeQ0A0lXWK3xCIfo3tkReCqor2sVWPJEX+Kh1mA5+AS
-	nFQzmBDkkYokpoYxiPmbGiH5GVmgvZIXiZXRr1fRmhW81d0ilCU2ZezWW9k0gF6WvYU7ZNUXWqP
-	Tm1ny0HcmRBAiJke3XN354KVXOKdG71YdaWBKsdJtuKKRkvRczslXoJMU9Bi7mrs+ykEum8UeYR
-	N2mQ=
-X-Google-Smtp-Source: AGHT+IF7ZFSapUdnHG4NuCUmRXMwGMb9VgvEbaWmVNT5vLVJcNqglMznHseVnFhOAn8WZhvEh1F++Q==
-X-Received: by 2002:a05:6a20:ce48:b0:1e1:9e9f:ae4 with SMTP id adf61e73a8af0-2159a037634mr2368115637.13.1746669939869;
-        Wed, 07 May 2025 19:05:39 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-60-96.pa.nsw.optusnet.com.au. [49.181.60.96])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7405902104fsm11994415b3a.115.2025.05.07.19.05.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 07 May 2025 19:05:39 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uCqdk-00000000kqB-31cX;
-	Thu, 08 May 2025 12:05:36 +1000
-Date: Thu, 8 May 2025 12:05:36 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Jeff Layton <jlayton@kernel.org>
-Cc: Mike Snitzer <snitzer@kernel.org>, linux-fsdevel@vger.kernel.org,
-	linux-nfs@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-	Trond Myklebust <trondmy@hammerspace.com>,
-	Jens Axboe <axboe@kernel.dk>, Chris Mason <clm@meta.com>,
-	Anna Schumaker <anna@kernel.org>
-Subject: Re: performance r nfsd with RWF_DONTCACHE and larger wsizes
-Message-ID: <aBwRcI26iGzBLnxa@dread.disaster.area>
-References: <370dd4ae06d44f852342b7ee2b969fc544bd1213.camel@kernel.org>
- <aBqNtfPwFBvQCgeT@dread.disaster.area>
- <8039661b7a4c4f10452180372bd985c0440f1e1d.camel@kernel.org>
- <aBrKbOoj4dgUvz8f@dread.disaster.area>
- <aBvVltbDKdHXMtLL@kernel.org>
- <3c770b46f3dc5d4618d87b44158c4c5af00e3b3a.camel@kernel.org>
+	s=arc-20240116; t=1746672018; c=relaxed/simple;
+	bh=+hrO2xkMlure1snfwvyc257mVMLZMjwaIn2J5A7q6rQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bnBC6Ij4wP5/tfssJ0vzmu60YgV3v+wfyWRjATl0sGRylMM0u9QYgujm8sxL++ND1Kuw2wek+5VMVlhD2VZlU7etPL/jT2buIQA2x0LZCxiu8hwW/rq/GZzKUFm8qNCwFyToTYYJpLJUTwzqR0TXYFBGPgoxRkCC10j9Xz1K9ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ZtGXk2Jynz13Lc6;
+	Thu,  8 May 2025 10:38:46 +0800 (CST)
+Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
+	by mail.maildlp.com (Postfix) with ESMTPS id 57CE71400E3;
+	Thu,  8 May 2025 10:40:04 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 8 May 2025 10:40:03 +0800
+Message-ID: <6c3c7e74-b85b-44df-801b-b37845791051@huawei.com>
+Date: Thu, 8 May 2025 10:40:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3c770b46f3dc5d4618d87b44158c4c5af00e3b3a.camel@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/7] f2fs: Add fs parameter specifications for mount
+ options
+To: Eric Sandeen <sandeen@redhat.com>,
+	<linux-f2fs-devel@lists.sourceforge.net>
+CC: <linux-fsdevel@vger.kernel.org>, <jaegeuk@kernel.org>, <chao@kernel.org>
+References: <20250423170926.76007-1-sandeen@redhat.com>
+ <20250423170926.76007-2-sandeen@redhat.com>
+Content-Language: en-US
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <20250423170926.76007-2-sandeen@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemo500009.china.huawei.com (7.202.194.199)
 
-On Wed, May 07, 2025 at 08:09:33PM -0400, Jeff Layton wrote:
-> On Wed, 2025-05-07 at 17:50 -0400, Mike Snitzer wrote:
-> > Hey Dave,
-> > 
-> > Thanks for providing your thoughts on all this.  More inlined below.
-> > 
-> > On Wed, May 07, 2025 at 12:50:20PM +1000, Dave Chinner wrote:
-> > > Remember the bad old days of balance_dirty_pages() doing dirty
-> > > throttling by submitting dirty pages for IO directly in the write()
-> > > context? And how much better buffered write performance and write()
-> > > submission latency became when we started deferring that IO to the
-> > > writeback threads and waiting on completions?
-> > > 
-> > > We're essentially going back to the bad old days with buffered
-> > > RWF_DONTCACHE writes. Instead of one nicely formed background
-> > > writeback stream that can be throttled at the block layer without
-> > > adversely affecting incoming write throughput, we end up with every
-> > > write() context submitting IO synchronously and being randomly
-> > > throttled by the block layer throttle....
-> > > 
-> > > There are a lot of reasons the current RWF_DONTCACHE implementation
-> > > is sub-optimal for common workloads. This IO spraying and submission
-> > > side throttling problem
-> > > is one of the reasons why I suggested very early on that an async
-> > > write-behind window (similar in concept to async readahead winodws)
-> > > would likely be a much better generic solution for RWF_DONTCACHE
-> > > writes. This would retain the "one nicely formed background
-> > > writeback stream" behaviour that is desirable for buffered writes,
-> > > but still allow in rapid reclaim of DONTCACHE folios as IO cleans
-> > > them...
-> > 
-> > I recall you voicing this concern and nobody really seizing on it.
-> > Could be that Jens is open changing the RWF_DONTCACHE implementation
-> > if/when more proof is made for the need?
+
+
+On 2025/4/24 1:08, Eric Sandeen wrote:
+> From: Hongbo Li <lihongbo22@huawei.com>
 > 
-> It does seem like using RWF_DONTCACHE currently leads to a lot of
-> fragmented I/O. I suspect that doing filemap_fdatawrite_range_kick()
-> after every DONTCACHE write is the main problem on the write side. We
-> probably need to come up with a way to make it flush more optimally
-> when there are streaming DONTCACHE writes.
+> Use an array of `fs_parameter_spec` called f2fs_param_specs to
+> hold the mount option specifications for the new mount api.
 > 
-> An async writebehind window could be a solution. How would we implement
-> that? Some sort of delay before we kick off writeback (and hopefully
-> for larger ranges)?
+> Add constant_table structures for several options to facilitate
+> parsing.
+> 
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> [sandeen: forward port, minor fixes and updates, more fsparam_enum]
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Thanks, I have checked this.
+Reviewed-by: Hongbo Li <lihongbo22@huawei.com>
 
-My thoughts on this are as follows...
-
-When we mark the inode dirty, we currently put it on the list of
-dirty inodes for writeback. We could change how we mark an inode
-dirty for RWF_DONTCACHE writes to say "dirty for write-through" and
-put it on a new write-through inode list.  Then we can kick an expedited
-write-through worker thread that writes back all the dirty
-write-through inodes on it's list.
-
-In this case, a delay of a few milliseconds is probably large enough
-time to allow decent write-through IO sizes to build up without
-causing excessive page cache memory usage for dirty DONTCACHE
-folios...
-
-The other thing that this could allow is throttling incoming
-RWF_DONTCACHE IOs in balance_dirty_pages_ratelimited. e.g. if more
-than 16MB of DONTCACHE folios are built up on a BDI, kick the
-write-through worker and wait for the DONTCACHE folio count to drop.
-This then gives some control (and potential admin control) of how
-much dirty page cache is allowed to accrue for DONTCACHE write
-IOs...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> ---
+>   fs/f2fs/super.c | 122 ++++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 122 insertions(+)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 22f26871b7aa..ebea03bba054 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -27,6 +27,7 @@
+>   #include <linux/part_stat.h>
+>   #include <linux/zstd.h>
+>   #include <linux/lz4.h>
+> +#include <linux/fs_parser.h>
+>   
+>   #include "f2fs.h"
+>   #include "node.h"
+> @@ -194,9 +195,130 @@ enum {
+>   	Opt_age_extent_cache,
+>   	Opt_errors,
+>   	Opt_nat_bits,
+> +	Opt_jqfmt,
+> +	Opt_checkpoint,
+>   	Opt_err,
+>   };
+>   
+> +static const struct constant_table f2fs_param_background_gc[] = {
+> +	{"on",		BGGC_MODE_ON},
+> +	{"off",		BGGC_MODE_OFF},
+> +	{"sync",	BGGC_MODE_SYNC},
+> +	{}
+> +};
+> +
+> +static const struct constant_table f2fs_param_mode[] = {
+> +	{"adaptive",		FS_MODE_ADAPTIVE},
+> +	{"lfs",			FS_MODE_LFS},
+> +	{"fragment:segment",	FS_MODE_FRAGMENT_SEG},
+> +	{"fragment:block",	FS_MODE_FRAGMENT_BLK},
+> +	{}
+> +};
+> +
+> +static const struct constant_table f2fs_param_jqfmt[] = {
+> +	{"vfsold",	QFMT_VFS_OLD},
+> +	{"vfsv0",	QFMT_VFS_V0},
+> +	{"vfsv1",	QFMT_VFS_V1},
+> +	{}
+> +};
+> +
+> +static const struct constant_table f2fs_param_alloc_mode[] = {
+> +	{"default",	ALLOC_MODE_DEFAULT},
+> +	{"reuse",	ALLOC_MODE_REUSE},
+> +	{}
+> +};
+> +static const struct constant_table f2fs_param_fsync_mode[] = {
+> +	{"posix",	FSYNC_MODE_POSIX},
+> +	{"strict",	FSYNC_MODE_STRICT},
+> +	{"nobarrier",	FSYNC_MODE_NOBARRIER},
+> +	{}
+> +};
+> +
+> +static const struct constant_table f2fs_param_compress_mode[] = {
+> +	{"fs",		COMPR_MODE_FS},
+> +	{"user",	COMPR_MODE_USER},
+> +	{}
+> +};
+> +
+> +static const struct constant_table f2fs_param_discard_unit[] = {
+> +	{"block",	DISCARD_UNIT_BLOCK},
+> +	{"segment",	DISCARD_UNIT_SEGMENT},
+> +	{"section",	DISCARD_UNIT_SECTION},
+> +	{}
+> +};
+> +
+> +static const struct constant_table f2fs_param_memory_mode[] = {
+> +	{"normal",	MEMORY_MODE_NORMAL},
+> +	{"low",		MEMORY_MODE_LOW},
+> +	{}
+> +};
+> +
+> +static const struct constant_table f2fs_param_errors[] = {
+> +	{"remount-ro",	MOUNT_ERRORS_READONLY},
+> +	{"continue",	MOUNT_ERRORS_CONTINUE},
+> +	{"panic",	MOUNT_ERRORS_PANIC},
+> +	{}
+> +};
+> +
+> +static const struct fs_parameter_spec f2fs_param_specs[] = {
+> +	fsparam_enum("background_gc", Opt_gc_background, f2fs_param_background_gc),
+> +	fsparam_flag("disable_roll_forward", Opt_disable_roll_forward),
+> +	fsparam_flag("norecovery", Opt_norecovery),
+> +	fsparam_flag_no("discard", Opt_discard),
+> +	fsparam_flag("no_heap", Opt_noheap),
+> +	fsparam_flag("heap", Opt_heap),
+> +	fsparam_flag_no("user_xattr", Opt_user_xattr),
+> +	fsparam_flag_no("acl", Opt_acl),
+> +	fsparam_s32("active_logs", Opt_active_logs),
+> +	fsparam_flag("disable_ext_identify", Opt_disable_ext_identify),
+> +	fsparam_flag_no("inline_xattr", Opt_inline_xattr),
+> +	fsparam_s32("inline_xattr_size", Opt_inline_xattr_size),
+> +	fsparam_flag_no("inline_data", Opt_inline_data),
+> +	fsparam_flag_no("inline_dentry", Opt_inline_dentry),
+> +	fsparam_flag_no("flush_merge", Opt_flush_merge),
+> +	fsparam_flag_no("barrier", Opt_barrier),
+> +	fsparam_flag("fastboot", Opt_fastboot),
+> +	fsparam_flag_no("extent_cache", Opt_extent_cache),
+> +	fsparam_flag("data_flush", Opt_data_flush),
+> +	fsparam_u32("reserve_root", Opt_reserve_root),
+> +	fsparam_gid("resgid", Opt_resgid),
+> +	fsparam_uid("resuid", Opt_resuid),
+> +	fsparam_enum("mode", Opt_mode, f2fs_param_mode),
+> +	fsparam_s32("fault_injection", Opt_fault_injection),
+> +	fsparam_u32("fault_type", Opt_fault_type),
+> +	fsparam_flag_no("lazytime", Opt_lazytime),
+> +	fsparam_flag_no("quota", Opt_quota),
+> +	fsparam_flag("usrquota", Opt_usrquota),
+> +	fsparam_flag("grpquota", Opt_grpquota),
+> +	fsparam_flag("prjquota", Opt_prjquota),
+> +	fsparam_string_empty("usrjquota", Opt_usrjquota),
+> +	fsparam_string_empty("grpjquota", Opt_grpjquota),
+> +	fsparam_string_empty("prjjquota", Opt_prjjquota),
+> +	fsparam_flag("nat_bits", Opt_nat_bits),
+> +	fsparam_enum("jqfmt", Opt_jqfmt, f2fs_param_jqfmt),
+> +	fsparam_enum("alloc_mode", Opt_alloc, f2fs_param_alloc_mode),
+> +	fsparam_enum("fsync_mode", Opt_fsync, f2fs_param_fsync_mode),
+> +	fsparam_string("test_dummy_encryption", Opt_test_dummy_encryption),
+> +	fsparam_flag("test_dummy_encryption", Opt_test_dummy_encryption),
+> +	fsparam_flag("inlinecrypt", Opt_inlinecrypt),
+> +	fsparam_string("checkpoint", Opt_checkpoint),
+> +	fsparam_flag_no("checkpoint_merge", Opt_checkpoint_merge),
+> +	fsparam_string("compress_algorithm", Opt_compress_algorithm),
+> +	fsparam_u32("compress_log_size", Opt_compress_log_size),
+> +	fsparam_string("compress_extension", Opt_compress_extension),
+> +	fsparam_string("nocompress_extension", Opt_nocompress_extension),
+> +	fsparam_flag("compress_chksum", Opt_compress_chksum),
+> +	fsparam_enum("compress_mode", Opt_compress_mode, f2fs_param_compress_mode),
+> +	fsparam_flag("compress_cache", Opt_compress_cache),
+> +	fsparam_flag("atgc", Opt_atgc),
+> +	fsparam_flag_no("gc_merge", Opt_gc_merge),
+> +	fsparam_enum("discard_unit", Opt_discard_unit, f2fs_param_discard_unit),
+> +	fsparam_enum("memory", Opt_memory_mode, f2fs_param_memory_mode),
+> +	fsparam_flag("age_extent_cache", Opt_age_extent_cache),
+> +	fsparam_enum("errors", Opt_errors, f2fs_param_errors),
+> +	{}
+> +};
+> +
+>   static match_table_t f2fs_tokens = {
+>   	{Opt_gc_background, "background_gc=%s"},
+>   	{Opt_disable_roll_forward, "disable_roll_forward"},
 
