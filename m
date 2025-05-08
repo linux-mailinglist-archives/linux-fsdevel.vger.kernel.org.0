@@ -1,272 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-48493-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48494-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E8FAAFFB6
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 17:56:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BD1FAAFFCC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 18:00:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 500714A4AE3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 15:56:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A859A00745
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 15:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84ADF27A475;
-	Thu,  8 May 2025 15:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C58127A139;
+	Thu,  8 May 2025 15:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SB8DOljx"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cwiai2VL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0280253345;
-	Thu,  8 May 2025 15:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB60A209F45
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 15:59:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746719807; cv=none; b=s54+96zooJrrWfnExpibkJdY/aC62RI9zf1TtAmycIFARFrjGW0e6syMThJlaMjpfNYGDfKNkwUPmq4j4pxo64SkEMlXy9tWlsHtXeHsj1UL5keSefhgo2Q1TqJVA35ykqL5zuUdZkyFgWvBr3HckDM/4cizv7zZJ2/ZLudHF88=
+	t=1746719954; cv=none; b=GIZWASWvWDwhsmqzAW/6GepkStu1ipPeaTlde35UvMkvQeZ0LsHnz3++nG+LUPkWCrMOBBvgpPzYi5XgnaY/RRb+2Uj1wLNHnelCJFLnPbtVS6FJzDzeWYxjVlOVZ+aUvCO2JXbU6iRu8MIB2TFwWvYdHpChflGDj0oAMN+GZQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746719807; c=relaxed/simple;
-	bh=M28pVjPHrEv/rACw6iZSY40oD1Z45F5bY/GhP8fIzGA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nev9pOLLPAexidYRzI9LuBDVup4plpv/zgnY2PAOOm3BeNsGPiphE5tqu93inWlA9pFAc3lXh6iuXNY4jUEk3QY0e/o1Ufh1iNARfStOYXF/ByYUpFSFD9Z2TlEQuIHjZVKrwom7WMLnARonOizm/HCcNBSF9PBObkAfBGa2HY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SB8DOljx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32C06C4CEE7;
-	Thu,  8 May 2025 15:56:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746719805;
-	bh=M28pVjPHrEv/rACw6iZSY40oD1Z45F5bY/GhP8fIzGA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SB8DOljx5L/gbsKgsDIJkdMGoXwtfwCdhXeS8geafJlSCe6ESXxMa+26O+Z4srap1
-	 NBToJBpic/fvQ2NdOX44kEsjJ8aZS9kiDpG4FXlqEpG/5kJUoS/bqD95Y31K3G0zyw
-	 O73HsnUCnug3uxjdygP95BZDeVw/9CI72sW/qlwfk2r/4cs2ntMcajnW0EmhHbUjO9
-	 wac3FnjEexTGTm/TYtHQ/FJE6RA8xZuWVq7frHC5Xj5KprzH3aahbsNTbDCEL57ASv
-	 zVbUlWCgJnyIEHfBpcL0Mh47/UdA78PDUWhErOvH0/aL3xAFSPgDhHlRCjVLGWVF6e
-	 2APLxub7qfgyA==
-Date: Thu, 8 May 2025 08:56:44 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
-	Bernd Schubert <bschubert@ddn.com>,
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Luis Henriques <luis@igalia.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>, 0@groves.net
-Subject: Re: [RFC PATCH 13/19] famfs_fuse: Create files with famfs fmaps
-Message-ID: <20250508155644.GM1035866@frogsfrogsfrogs>
-References: <20250421013346.32530-1-john@groves.net>
- <20250421013346.32530-14-john@groves.net>
- <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
- <20250424143848.GN25700@frogsfrogsfrogs>
- <5rwwzsya6f7dkf4de2uje2b3f6fxewrcl4nv5ba6jh6chk36f3@ushxiwxojisf>
- <20250428190010.GB1035866@frogsfrogsfrogs>
- <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
+	s=arc-20240116; t=1746719954; c=relaxed/simple;
+	bh=7hHA80AfbXXd9eQ2u2rayBbOZ/VrsdwJOZRSL7eMmTE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uhNi76M51t359m7PXStZ1BziwFctaOWySzP+Yhft7hMdatkP7YWgvDvXPNq17/FYUrhSiWlk6P4J4Lls2WxIu6LkMwu3YS9ZxOY2IKWA+geUz3RQdMW1MOmVVyjhPq5yvlCeCQKpDWnF5an8g7kPl0BYNFlYCh3jw3W6yfekV4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cwiai2VL; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746719951;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Cauju83yaqo1jWa3h/GqWUhPfOlx5r6qLpMTuNwXk4Y=;
+	b=Cwiai2VLprVZBreoF+0nuMucaLUaf1hBOLr7IFwXJ+d1AReI1qQUo5I/xX0XiP37wZksyv
+	3MI2/q/hPTCKd30r8WvAU0LcgNsDSwPMt8PlKUpbfn4Pe14eMsOJxoRYUb7j+nVoXNMawP
+	jEaB3V++3cfiHhYNKaFp6RI2OvKWrv8=
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com
+ [209.85.166.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-173-HjB27JIOO9aHZQ0UsTaE3g-1; Thu, 08 May 2025 11:59:10 -0400
+X-MC-Unique: HjB27JIOO9aHZQ0UsTaE3g-1
+X-Mimecast-MFC-AGG-ID: HjB27JIOO9aHZQ0UsTaE3g_1746719950
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-85b5a7981ccso93862939f.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 May 2025 08:59:10 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746719949; x=1747324749;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Cauju83yaqo1jWa3h/GqWUhPfOlx5r6qLpMTuNwXk4Y=;
+        b=uscaxnTcqRNmc7X7iPWT18vROQQZ7fAJpfR4dyzggk1FkQc0G14hkhgONCMuuUb7dS
+         yvw1r2Q0OOG+2OOvRVEaqp+PiIZQoS6JmnaZgEgjN52ruq61kVohjQdm/E7QafCS2zok
+         cHrNC4y+h8E/u9rl+Mh9PP9rWXvXojA8ZqG7MZzGZDYKoFZrG8woYuZl+uNIWrJmO3RH
+         HJJ1ETZpwpZK7fCWn4fgFoP2SWfEh3CxXxmXpy0+qfI2jO1DpSdnEHCENggqOyoaD9fN
+         Yev1rqdoDK1Fpi1e+oNw+35BP71NN3u6oj7UNdc13NpwnDm+o5JDIqLxVgm8N5xoEolh
+         7Qfg==
+X-Gm-Message-State: AOJu0Yxd9XbJR7+tuAoIod893AnGmRYi1sNtM2THSYiuPDdwOu9O0uuz
+	8582ih+2mIi/maywQUThhDKnv1PHRYTi7OdH5iJK80Y2kjtg33ra685wKJ3N86HR6uRE9zaQ+B9
+	+S7PlKAULPQL/fVh8N7B7SSTgeLZ59zNCM/mQuWm5c0MqlsyW4cceZ3MNuSBd0yYe032ItMMEkw
+	==
+X-Gm-Gg: ASbGncv3WExzYAEuuyaUj/UEnHfXkpcFaM1rR/4WBNFybNkM/MLpvGjZS+FljZfk3aT
+	JOmgakBFg+zrvJrPnyTWlLKw1pAlwYkS2tVR1CyXw+Mr/0TBdKXRrQSrBtk16ck46ykmYWR6rbL
+	uVWoX+6MCEa3Nit6NSVpJDeyRbuqYf92OmMpflJAu2nVf+JK7U9ORXiwGxeoGiq/ErTC1LhKbb4
+	c7Q3I/EFsmnVq9IKAqjot5Uxae9yTiqEOWPHlAESK73Crt8wE03yjF+I8U6zEnodaEgSkzniMxh
+	W98Un+93rmT06CKWJ+MfO0h7iARZNveN8eXNyE68A/4TF0xUjg==
+X-Received: by 2002:a05:6602:2c0d:b0:864:627a:3d85 with SMTP id ca18e2360f4ac-8676362d62emr22243739f.11.1746719949560;
+        Thu, 08 May 2025 08:59:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFEuEA4Zeb23Xh5HTz0dqMYHj7Mfu1sLQt4nv8y0s2IO/n20C2Rw5OQGwnbJqAQFZo/nXe6Bg==
+X-Received: by 2002:a05:6602:2c0d:b0:864:627a:3d85 with SMTP id ca18e2360f4ac-8676362d62emr22241739f.11.1746719949230;
+        Thu, 08 May 2025 08:59:09 -0700 (PDT)
+Received: from [10.0.0.82] (97-116-169-14.mpls.qwest.net. [97.116.169.14])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fa226825c2sm15522173.132.2025.05.08.08.59.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 08 May 2025 08:59:08 -0700 (PDT)
+Message-ID: <763bed71-1f44-4622-a9a0-d200f0418183@redhat.com>
+Date: Thu, 8 May 2025 10:59:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 7/7] f2fs: switch to the new mount api
+To: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net
+Cc: linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org, lihongbo22@huawei.com
+References: <20250423170926.76007-1-sandeen@redhat.com>
+ <20250423170926.76007-8-sandeen@redhat.com>
+ <b56964c2-ad30-4501-a7fd-1c0b41c407e9@kernel.org>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <b56964c2-ad30-4501-a7fd-1c0b41c407e9@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, May 06, 2025 at 06:56:29PM +0200, Miklos Szeredi wrote:
-> On Mon, 28 Apr 2025 at 21:00, Darrick J. Wong <djwong@kernel.org> wrote:
+On 5/8/25 4:19 AM, Chao Yu wrote:
+>> @@ -2645,21 +2603,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>>  
+>>  	default_options(sbi, true);
+>>  
+>> -	memset(&fc, 0, sizeof(fc));
+>> -	memset(&ctx, 0, sizeof(ctx));
+>> -	fc.fs_private = &ctx;
+>> -	fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
+>> -
+>> -	/* parse mount options */
+>> -	err = parse_options(&fc, data);
+>> -	if (err)
+>> -		goto restore_opts;
+> There is a retry flow during f2fs_fill_super(), I intenionally inject a
+> fault into f2fs_fill_super() to trigger the retry flow, it turns out that
+> mount option may be missed w/ below testcase:
+
+I never did understand that retry logic (introduced in ed2e621a95d long
+ago). What errors does it expect to be able to retry, with success?
+
+Anyway ...
+
+Can you show me (as a patch) exactly what you did to trigger the retry,
+just so we are looking at the same thing?
+
+> - mkfs.f2fs -f -O encrypt /dev/vdb
+> - mount -o test_dummy_encryption /dev/vdb /mnt/f2fs/
+> : return success
+> - dmesg -c
 > 
-> > <nod> I don't know what Miklos' opinion is about having multiple
-> > fusecmds that do similar things -- on the one hand keeping yours and my
-> > efforts separate explodes the amount of userspace abi that everyone must
-> > maintain, but on the other hand it then doesn't couple our projects
-> > together, which might be a good thing if it turns out that our domain
-> > models are /really/ actually quite different.
+> [   83.619982] f2fs_fill_super, retry_cnt:1
+> [   83.620914] F2FS-fs (vdb): Test dummy encryption mode enabled
+> [   83.668380] f2fs_fill_super, retry_cnt:0
+> [   83.671601] F2FS-fs (vdb): Mounted with checkpoint version = 7a8dfca5
 > 
-> Sharing the interface at least would definitely be worthwhile, as
-> there does not seem to be a great deal of difference between the
-> generic one and the famfs specific one.  Only implementing part of the
-> functionality that the generic one provides would be fine.
-
-Well right now my barely functional prototype exposes this interface
-for communicating mappings to the kernel.  I've only gotten as far as
-exposing the ->iomap_{begin,end} and ->iomap_ioend calls to the fuse
-server with no caching, because the only functions I've implemented so
-far are FIEMAP, SEEK_{DATA,HOLE}, and directio.
-
-So basically the kernel sends a FUSE_IOMAP_BEGIN command with the
-desired (pos, count) file range to the fuse server, which responds with
-a struct fuse_iomap_begin_out object that is translated into a struct
-iomap.
-
-The fuse server then responds with a read mapping and a write mapping,
-which tell the kernel from where to read data, and where to write data.
-As a shortcut, the write mapping can be of type
-FUSE_IOMAP_TYPE_PURE_OVERWRITE to avoid having to fill out fields twice.
-
-iomap_end is only called if there were errors while processing the
-mapping, or if the fuse server sets FUSE_IOMAP_F_WANT_IOMAP_END.
-
-iomap_ioend is called after read or write IOs complete, so that the
-filesystem can update mapping metadata (e.g. unwritten extent
-conversion, remapping after an out of place write, ondisk isize update).
-
-Some of the flags here might not be needed or workable; I was merely
-cutting and pasting the #defines from iomap.h.
-
-#define FUSE_IOMAP_TYPE_PURE_OVERWRITE	(0xFFFF) /* use read mapping data */
-#define FUSE_IOMAP_TYPE_HOLE		0	/* no blocks allocated, need allocation */
-#define FUSE_IOMAP_TYPE_DELALLOC	1	/* delayed allocation blocks */
-#define FUSE_IOMAP_TYPE_MAPPED		2	/* blocks allocated at @addr */
-#define FUSE_IOMAP_TYPE_UNWRITTEN	3	/* blocks allocated at @addr in unwritten state */
-#define FUSE_IOMAP_TYPE_INLINE		4	/* data inline in the inode */
-
-#define FUSE_IOMAP_DEV_SBDEV		(0)	/* use superblock bdev */
-
-#define FUSE_IOMAP_F_NEW		(1U << 0)
-#define FUSE_IOMAP_F_DIRTY		(1U << 1)
-#define FUSE_IOMAP_F_SHARED		(1U << 2)
-#define FUSE_IOMAP_F_MERGED		(1U << 3)
-#define FUSE_IOMAP_F_XATTR		(1U << 5)
-#define FUSE_IOMAP_F_BOUNDARY		(1U << 6)
-#define FUSE_IOMAP_F_ANON_WRITE		(1U << 7)
-
-#define FUSE_IOMAP_F_WANT_IOMAP_END	(1U << 15) /* want ->iomap_end call */
-
-#define FUSE_IOMAP_OP_WRITE		(1 << 0) /* writing, must allocate blocks */
-#define FUSE_IOMAP_OP_ZERO		(1 << 1) /* zeroing operation, may skip holes */
-#define FUSE_IOMAP_OP_REPORT		(1 << 2) /* report extent status, e.g. FIEMAP */
-#define FUSE_IOMAP_OP_FAULT		(1 << 3) /* mapping for page fault */
-#define FUSE_IOMAP_OP_DIRECT		(1 << 4) /* direct I/O */
-#define FUSE_IOMAP_OP_NOWAIT		(1 << 5) /* do not block */
-#define FUSE_IOMAP_OP_OVERWRITE_ONLY	(1 << 6) /* only pure overwrites allowed */
-#define FUSE_IOMAP_OP_UNSHARE		(1 << 7) /* unshare_file_range */
-#define FUSE_IOMAP_OP_ATOMIC		(1 << 9) /* torn-write protection */
-#define FUSE_IOMAP_OP_DONTCACHE		(1 << 10) /* dont retain pagecache */
-
-#define FUSE_IOMAP_NULL_ADDR		-1ULL	/* addr is not valid */
-
-struct fuse_iomap_begin_in {
-	uint32_t opflags;	/* FUSE_IOMAP_OP_* */
-	uint32_t reserved;
-	uint64_t ino;		/* matches st_ino provided by getattr/open */
-	uint64_t pos;		/* file position, in bytes */
-	uint64_t count;		/* operation length, in bytes */
-};
-
-struct fuse_iomap_begin_out {
-	uint64_t offset;	/* file offset of mapping, bytes */
-	uint64_t length;	/* length of both mappings, bytes */
-
-	uint64_t read_addr;	/* disk offset of mapping, bytes */
-	uint16_t read_type;	/* FUSE_IOMAP_TYPE_* */
-	uint16_t read_flags;	/* FUSE_IOMAP_F_* */
-	uint32_t read_dev;	/* FUSE_IOMAP_DEV_* */
-
-	uint64_t write_addr;	/* disk offset of mapping, bytes */
-	uint16_t write_type;	/* FUSE_IOMAP_TYPE_* */
-	uint16_t write_flags;	/* FUSE_IOMAP_F_* */
-	uint32_t write_dev;	/* FUSE_IOMAP_DEV_* */
-};
-
-struct fuse_iomap_end_in {
-	uint32_t opflags;	/* FUSE_IOMAP_OP_* */
-	uint32_t reserved;
-	uint64_t ino;		/* matches st_ino provided iomap_begin */
-	uint64_t pos;		/* file position, in bytes */
-	uint64_t count;		/* operation length, in bytes */
-	int64_t written;	/* bytes processed */
-
-	uint64_t map_length;	/* length of mapping, bytes */
-	uint64_t map_addr;	/* disk offset of mapping, bytes */
-	uint16_t map_type;	/* FUSE_IOMAP_TYPE_* */
-	uint16_t map_flags;	/* FUSE_IOMAP_F_* */
-	uint32_t map_dev;	/* FUSE_IOMAP_DEV_* */
-};
-
-/* out of place write extent */
-#define FUSE_IOMAP_IOEND_SHARED		(1U << 0)
-/* unwritten extent */
-#define FUSE_IOMAP_IOEND_UNWRITTEN	(1U << 1)
-/* don't merge into previous ioend */
-#define FUSE_IOMAP_IOEND_BOUNDARY	(1U << 2)
-/* is direct I/O */
-#define FUSE_IOMAP_IOEND_DIRECT		(1U << 3)
-
-/* is append ioend */
-#define FUSE_IOMAP_IOEND_APPEND		(1U << 15)
-
-struct fuse_iomap_ioend_in {
-	uint16_t ioendflags;	/* FUSE_IOMAP_IOEND_* */
-	uint16_t reserved;
-	int32_t error;		/* negative errno or 0 */
-	uint64_t ino;		/* matches st_ino provided iomap_begin */
-	uint64_t pos;		/* file position, in bytes */
-	uint64_t addr;		/* disk offset of new mapping, in bytes */
-	uint32_t written;	/* bytes processed */
-	uint32_t reserved1;
-};
-
-> > (Especially because I suspect that interleaving is the norm for memory,
-> > whereas we try to avoid that for disk filesystems.)
+> - mount|grep f2fs
+> /dev/vdb on /mnt/f2fs type f2fs (rw,relatime,lazytime,background_gc=on,nogc_merge,
+> discard,discard_unit=block,user_xattr,inline_xattr,acl,inline_data,inline_dentry,
+> flush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,
+> checkpoint_merge,fsync_mode=posix,memory=normal,errors=continue)
 > 
-> So interleaved extents are just like normal ones except they repeat,
-> right?  What about adding a special "repeat last N extent
-> descriptions" type of extent?
-
-Yeah, I suppose a mapping cache could do that.  From talking to John
-last week, it sounds like the mappings are supposed to be static for the
-life of the file, as opposed to ext* where truncates and fallocate can
-appear at any time.
-
-One thing I forgot to ask John -- can there be multiple sets of
-interleaved mappings per file?  e.g. the first 32g of a file are split
-between 4 memory controllers, whereas the next 64g are split between 4
-different domains?
-
-> > > But the current implementation does not contemplate partially cached fmaps.
-> > >
-> > > Adding notification could address revoking them post-haste (is that why
-> > > you're thinking about notifications? And if not can you elaborate on what
-> > > you're after there?).
-> >
-> > Yeah, invalidating the mapping cache at random places.  If, say, you
-> > implement a clustered filesystem with iomap, the metadata server could
-> > inform the fuse server on the local node that a certain range of inode X
-> > has been written to, at which point you need to revoke any local leases,
-> > invalidate the pagecache, and invalidate the iomapping cache to force
-> > the client to requery the server.
-> >
-> > Or if your fuse server wants to implement its own weird operations (e.g.
-> > XFS EXCHANGE-RANGE) this would make that possible without needing to
-> > add a bunch of code to fs/fuse/ for the benefit of a single fuse driver.
+> The reason may be it has cleared F2FS_CTX_INFO(ctx).dummy_enc_policy in
+> f2fs_apply_test_dummy_encryption().
 > 
-> Wouldn't existing invalidation framework be sufficient?
+> static void f2fs_apply_test_dummy_encryption(struct fs_context *fc,
+> 					     struct super_block *sb)
+> {
+> 	struct f2fs_fs_context *ctx = fc->fs_private;
+> 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> 
+> 	if (!fscrypt_is_dummy_policy_set(&F2FS_CTX_INFO(ctx).dummy_enc_policy) ||
+> 		/* if already set, it was already verified to be the same */
+> 		fscrypt_is_dummy_policy_set(&F2FS_OPTION(sbi).dummy_enc_policy))
+> 		return;
+> 	F2FS_OPTION(sbi).dummy_enc_policy = F2FS_CTX_INFO(ctx).dummy_enc_policy;
+> 	memset(&F2FS_CTX_INFO(ctx).dummy_enc_policy, 0,
+> 		sizeof(F2FS_CTX_INFO(ctx).dummy_enc_policy));
+> 	f2fs_warn(sbi, "Test dummy encryption mode enabled");
+> }
+> 
+> Can we save old mount_info from sbi or ctx from fc, and try to recover it
+> before we retry mount flow?
 
-I'm a little confused, are you talking about FUSE_NOTIFY_INVAL_INODE?
-If so, then I think that's the wrong layer -- INVAL_INODE invalidates
-the page cache, whereas I'm talking about caching the file space
-mappings that iomap uses to construct bios for disk IO, and possibly
-wanting to invalidate parts of that cache to force the kernel to upcall
-the fuse server for a new mapping.
+I'll have to take more time to understand this concern. But thanks for pointing
+it out.
 
-(Obviously this only applies to fuse servers for ondisk filesystems.)
-
---D
+-Eric
 
 > Thanks,
-> Miklos
-> 
+
 
