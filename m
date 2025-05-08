@@ -1,130 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-48489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48490-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E68DAAFE98
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 17:12:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127A3AAFEFD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 17:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A0033A5648
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 15:10:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE8A165A59
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 15:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB05F28688F;
-	Thu,  8 May 2025 15:06:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20B627A113;
+	Thu,  8 May 2025 15:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Qq5FMn76"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hp3UW43P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6611F28688A
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 15:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5053C278E5D
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 15:16:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746716807; cv=none; b=hq9KWaJ7gsmMvUAmYnZuNkdaFM5lF5YzuUkSYPp0FoOjaA4oESkSGstYjNUPT9uHnFyqh7UDCmzfKK6OX72MFY2k8PwhRuoVvqLmqU3ECBFIiQJyw/0lpjWFj4qHUY8Jd2xvhE6hjsz8t+kGpspwL9gk4Q+EBM6kLhmVKiIYuPI=
+	t=1746717399; cv=none; b=ozDQnEAw9kgVE15zEVtaNUk8zcv2XH+7dmnV0HYrLRyJZiiIlvdSuvHLVoR83WBx6McK9JpMdEwHqIsGEEMy1mto9p1hVklGKY8jgBK0e1sv63cCbs9RjuscIPEGRELBpO/OHq7RABU1FizKHOSYaVUhlKgQ2sYxeE7kFZsZehw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746716807; c=relaxed/simple;
-	bh=0SRez/e73G2FWCDWOJtPCRgCBM6jPJuo3QCvOOny7xY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Spqf51rlnt8AUmxs9ln4f4nluvkQ2f7h9krhhYkrkkM0opOe1MQuEugfu31qrBvVtW1y4or9vqnHvnCVYd4MnBhcBN6lRG/L/5aWbHOWji6/w6C2KWd9K/5mCR4ZYlZYQAnwKD1L84B4wTWVjJ4mGlLt2RR0G1pcwwDhxnK7PYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Qq5FMn76; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3da7642b5deso7570515ab.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 08 May 2025 08:06:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1746716804; x=1747321604; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6/7ueoYgZ3OR3TB39uAN4klcPC2fDyaTwTbVZ+ISQok=;
-        b=Qq5FMn76UWOpSv2KpN9Y5VyqG5duqr7VItW2NSDU3FbF6vKsYHaPPN2s5M1xqyDYg2
-         gRLJFcvZoEFB8tYMb0N9MBk18PXvKrPu7reZNKyNKwZfu+usb9Q5fQ+suQcC6c4jh3dB
-         QAABcrvMIKqMp4EoHiyDXLozzCydIpDvjjiZ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746716804; x=1747321604;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6/7ueoYgZ3OR3TB39uAN4klcPC2fDyaTwTbVZ+ISQok=;
-        b=KThKuuAoNu1Igbs/zvUgpQAygykcQQQznn9hlivVNZVUUIS3IeYa/C/JJB8GFWD8B5
-         lfMTfK9AW/RNZ+GuxR6dSRJtxSb0IKFcpAUdO9QEAcZx0tN+h5UYQJgOYpdObXRiZ7hb
-         64fATzrRUUuvlWgKEc3zpeqANB8hdzRHSKkEAPiV1F90OjvQlMQxwNzxC5RQ+mzbU1+A
-         84yVblH0FFfWPLd9gj+c3kJV/7Av18WMcd8yRtmuPBc1a7R7NfqQcHdk/sGlwSERi0BG
-         MxLs9X6eXI0kX+LntEtUZPvMsKQDzC7qCPq1X/7cFOx8yuulpS/DH2G9utM8ftMQMQSG
-         Z5BA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkwJW+208Zs2zsSokZlInFlWGIpbimGE50kwApoWB2uk5vutdHDn+NJTr2uQ9lozPwUf7xxv/537Tefn1/@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU+9nfovJj5+k1al2Sa4/ry//AoQucHpZplBm3OuRBg+8llfUo
-	loBrkPGqfrMwdfbwK6gOzwrU1gr6eVAe5BClfIB7a0Ac8B0Lxj6drfNz7/91XIQ=
-X-Gm-Gg: ASbGncsgibceK+GEf8uxlQi4eZYQJ0nsfjX6nA7tIgo6AKz4LpbnncFcjcvKLwEZMzI
-	ZOo+FnnsNWRn1UpeZFnX+nuWDmBgDYCMrPMpl1YRNOdBrmfWTQaUNkGLgMJGdxAO3lqPivBWmkz
-	/MrqCukStnFdBMZC2NtE0OEFiAxBZtupKd4ZIA9nLjeD9/FyeDOE2GLZugGglGILiglM5O7fTsW
-	Q7C574Nsfbm71KBNsxjML2RQXL8tCEo0wFZ7IQ5sT3kWMWhRoD7o++WMZk82DHRUyaEa/oGeHXK
-	exLENy1RU59CkMn+3sRk2riJdYxOxJ+YpTwgT3bkZKzCalau9GM=
-X-Google-Smtp-Source: AGHT+IEmzmvQ4SB42hghmafdzG3t4YyXDL1hlYw77sgyCL2ktMv/2tM0lwmDTfO/AIM4bcI7oMIiEw==
-X-Received: by 2002:a05:6e02:3cca:b0:3d8:1bd0:9a79 with SMTP id e9e14a558f8ab-3da785ae55fmr54026135ab.21.1746716802693;
-        Thu, 08 May 2025 08:06:42 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d975e7d0c6sm38491925ab.27.2025.05.08.08.06.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 08 May 2025 08:06:42 -0700 (PDT)
-Message-ID: <b547d83f-6e9d-4b11-9207-aca8fd575794@linuxfoundation.org>
-Date: Thu, 8 May 2025 09:06:41 -0600
+	s=arc-20240116; t=1746717399; c=relaxed/simple;
+	bh=COTYU3QmgvXi1znOxNjAtYaadlcYtzHCPWn3YxNuv5s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PhgO1+GSnJZP5lzjV4J7Sf4sTRk9crmNf4qmyzRPldWi2mjbYckez0hNbwe1pqNJYNzwwCxLPnJNIyX2V7x/0K0WcHEPUc5qrA7pFRtY4j+TCefTt0NCROU1Qpmml5+m9Xba8JMWDmIsAvwG0MvDj4jxhMhKPUpLt5bp6iM01S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hp3UW43P; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746717396;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WGChOB8826JoKyjg+zbu6gvpQ5DUzoyXn7dEg3ADRfw=;
+	b=hp3UW43PZW9kWoC130sWndEOJxonKjg7ZxnF1bFlDLeJcjgMRQ05+atKW2j0k92U0Q95ey
+	zTAoPLrGoZAWipBTsyqTkqCGaZSzmX+YqWia2kThiil8AHuIfFcS/dlHPMBius7luxafQL
+	cCpjn5FhgstILUpPRplT1e8DKxRVS4k=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-256--F4kNdpkNHCJWlx2eV_bHw-1; Thu,
+ 08 May 2025 11:16:31 -0400
+X-MC-Unique: -F4kNdpkNHCJWlx2eV_bHw-1
+X-Mimecast-MFC-AGG-ID: -F4kNdpkNHCJWlx2eV_bHw_1746717389
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 32D091800871;
+	Thu,  8 May 2025 15:16:29 +0000 (UTC)
+Received: from bfoster (unknown [10.22.64.112])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C82CC180049D;
+	Thu,  8 May 2025 15:16:26 +0000 (UTC)
+Date: Thu, 8 May 2025 11:19:37 -0400
+From: Brian Foster <bfoster@redhat.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Andreas Gruenbacher <agruenba@redhat.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev
+Subject: Re: [RFC] gfs2: Do not call iomap_zero_range beyond eof
+Message-ID: <aBzLib4tHj351di2@bfoster>
+References: <20250508133427.3799322-1-agruenba@redhat.com>
+ <aBzABse9b6vF_LTv@bfoster>
+ <20250508150446.GB2701446@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: The "make headers" requirement, revisited: [PATCH v3 3/3]
- selftests: pidfd: add tests for PIDFD_SELF_*
-To: Sean Christopherson <seanjc@google.com>
-Cc: John Hubbard <jhubbard@nvidia.com>, Peter Zijlstra
- <peterz@infradead.org>, Shuah Khan <shuah@kernel.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>,
- pedro.falcato@gmail.com, linux-kselftest@vger.kernel.org,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
- Oliver Sang <oliver.sang@intel.com>, Christian Brauner
- <christian@brauner.io>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <cover.1729073310.git.lorenzo.stoakes@oracle.com>
- <c083817403f98ae45a70e01f3f1873ec1ba6c215.1729073310.git.lorenzo.stoakes@oracle.com>
- <a3778bea-0a1e-41b7-b41c-15b116bcbb32@linuxfoundation.org>
- <6dd57f0e-34b4-4456-854b-a8abdba9163b@nvidia.com>
- <e0b9d4ad-0d47-499a-9ec8-7307b67cae5c@linuxfoundation.org>
- <3687348f-7ee0-4fe1-a953-d5a2edd02ce8@nvidia.com>
- <e87bbc68-0403-4d67-ae2d-64065e36a011@linuxfoundation.org>
- <aBy5503w_GuNTu9B@google.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <aBy5503w_GuNTu9B@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250508150446.GB2701446@frogsfrogsfrogs>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On 5/8/25 08:04, Sean Christopherson wrote:
-> On Wed, May 07, 2025, Shuah Khan wrote:
->> The issues Peter is seeing regarding KHDR_INCLUDES in the following
->> tests can be easily fixed by simply changing the test Makefile. These
->> aren't framework related.
->>
->> kvm/Makefile.kvm:    -I ../rseq -I.. $(EXTRA_CFLAGS) $(KHDR_INCLUDES)
+On Thu, May 08, 2025 at 08:04:46AM -0700, Darrick J. Wong wrote:
+> On Thu, May 08, 2025 at 10:30:30AM -0400, Brian Foster wrote:
+> > On Thu, May 08, 2025 at 03:34:27PM +0200, Andreas Gruenbacher wrote:
+> > > Since commit eb65540aa9fc ("iomap: warn on zero range of a post-eof
+> > > folio"), iomap_zero_range() warns when asked to zero a folio beyond eof.
+> > > The warning triggers on the following code path:
 > 
-> ...
+> Which warning?  This one?
 > 
->> You can make the change to remove the reference to KHDR_INCLUDES.
->> If don't have the time/bandwidth to do it, I will take care of it.
+> 	/* warn about zeroing folios beyond eof that won't write back */
+> 	WARN_ON_ONCE(folio_pos(folio) > iter->inode->i_size);
 > 
-> Please don't remove the KHDR_INCLUDES usage in KVM's selftests, KVM routinely
-> adds tests for new uAPI.  Having to manually install headers is annoying, but
-> IMO it's the least awful solution we have.
+> If so, then why are there folios that start entirely beyond EOF?
+> 
 
-Thank you for confirming that KHDR_INCLUDES customization is necessary
-for some tests such as kvm.
+Yeah.. this gfs2 instance is simply a case of their punch hole mechanism
+does unconditional partial folio zeroing via iomap zero range, so if a
+punch hole occurs on some unaligned range of post-eof blocks, it will
+basically create and perform zeroing of post-eof folios. IIUC the caveat
+here is that these blocks are all zeroed on alloc (unwritten extents are
+apparently not a thing in gfs2), so the punch time zeroing and warning
+are spurious. Andreas can correct me if I have any of that wrong.
 
-thanks,
--- Shuah
+> > > 
+> > >   gfs2_fallocate(FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE)
+> > >     __gfs2_punch_hole()
+> > >       gfs2_block_zero_range()
+> > >         iomap_zero_range()
+> > > 
+> > > So far, gfs2 is just zeroing out partial pages at the beginning and end
+> > > of the range, whether beyond eof or not.  The data beyond eof is already
+> > > expected to be all zeroes, though.  Truncate the range passed to
+> > > iomap_zero_range().
+> > > 
+> > > As an alternative approach, we could also implicitly truncate the range
+> > > inside iomap_zero_range() instead of issuing a warning.  Any thoughts?
+> > > 
+> > 
+> > Thanks Andreas. The more I think about this the more it seems like
+> > lifting this logic into iomap is a reasonable compromise between just
+> > dropping the warning and forcing individual filesystems to work around
+> > it. The original intent of the warning was to have something to catch
+> > subtle bad behavior since zero range did update i_size for so long.
+> > 
+> > OTOH I think it's reasonable to argue that we shouldn't need to warn in
+> > situations where we could just enforce correct behavior. Also, I believe
+> > we introduced something similar to avoid post-eof weirdness wrt unshare
+> > range [1], so precedent exists.
+> > 
+> > I'm interested if others have opinions on the iomap side.. (though as I
+> > write this it looks like hch sits on the side of not tweaking iomap).
+> 
+> IIRC XFS calls iomap_zero_range during file extending operations to zero
+> the tail of a folio that spans EOF, so you'd have to allow for that too.
+> 
+
+Yeah, good point. Perhaps we'd want to bail on a folio that starts
+beyond EOF with this approach, similar to the warning logic.
+
+Brian
+
+> --D
+> 
+> > Brian
+> > 
+> > [1] a311a08a4237 ("iomap: constrain the file range passed to iomap_file_unshare")
+> > 
+> > > Thanks,
+> > > Andreas
+> > > 
+> > > --
+> > > 
+> > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > > 
+> > > diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+> > > index b81984def58e..d9a4309cd414 100644
+> > > --- a/fs/gfs2/bmap.c
+> > > +++ b/fs/gfs2/bmap.c
+> > > @@ -1301,6 +1301,10 @@ static int gfs2_block_zero_range(struct inode *inode, loff_t from,
+> > >  				 unsigned int length)
+> > >  {
+> > >  	BUG_ON(current->journal_info);
+> > > +	if (from > inode->i_size)
+> > > +		return 0;
+> > > +	if (from + length > inode->i_size)
+> > > +		length = inode->i_size - from;
+> > >  	return iomap_zero_range(inode, from, length, NULL, &gfs2_iomap_ops,
+> > >  			NULL);
+> > >  }
+> > > 
+> > 
+> > 
+> 
+
 
