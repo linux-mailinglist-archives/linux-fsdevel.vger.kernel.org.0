@@ -1,80 +1,51 @@
-Return-Path: <linux-fsdevel+bounces-48440-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48441-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB45AAF21C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 06:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE1C1AAF289
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 07:08:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E8EB98260A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 04:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D359B3B00D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 05:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAFF20C001;
-	Thu,  8 May 2025 04:30:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aybba2EK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F3F235BF4;
+	Thu,  8 May 2025 05:01:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 918D415A858;
-	Thu,  8 May 2025 04:30:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E041623498F;
+	Thu,  8 May 2025 05:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746678647; cv=none; b=G63HwzjClq9o9qz0h/kqpkShtOX067VNakWZvaYgvViPXSH3UFqezjC1fSzCnch1NJfxwifLesO6DCfPwlWdI/ug5BKFuwwrcAkR91zYE+0CEAjOl2GLmY5GP3xzdnkvXysdT3Hg86UCVL7lBYdbjKNZr7STW4aeQQlJOs17lxU=
+	t=1746680516; cv=none; b=s5bCJSvaf8dr9oPPhvA+WuHfEHDJ5WoWefJAErZl/6ldl64Vu35D5VgECEJPy/mq1Wf6pW8uk3lPpC7Xo9boiYYRMe14z6vS7c4AQn9AW0Nuq04t2+Q/4rh6UJqBLUv3wdit0gKB7nWj9bFQ/rtJC1rn+kDa7NTXCOj8S3lbtMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746678647; c=relaxed/simple;
-	bh=R3lZPq8jE1TfODDLc9DGRZGgvVALUs6gab1xXc8C0LY=;
+	s=arc-20240116; t=1746680516; c=relaxed/simple;
+	bh=AwhhZ2wBTFfk+q7m2bEqg8jP8mcot7mr9qk1rjjHN4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=in1SX2Bjc4A2ebTWxkcabb91psevjmmqCiEp8NEiMDj6SNFypmfChH0M25TzQaPxzVb9IyUlBf08X1gyBhFrKKtidtviVXngL9qXlA3+ASXkJFTUsz5zSa5k5fD3OZl1GZnS1I+xYBajkjlQrVTcVS6227aJEfeIJ3YIlEbSmgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aybba2EK; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746678646; x=1778214646;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=R3lZPq8jE1TfODDLc9DGRZGgvVALUs6gab1xXc8C0LY=;
-  b=Aybba2EKnty+KLPABO17ThiLSv2/QgJ+gfv7RVWum8GXqDgGM5YOe3yn
-   T2ymu4NA0MIjs+Ru5tnuLDZS4tjlQ9gUPXHcpH2Mx9MLDdUvl1lTBI2mZ
-   96YvEQ+UdAorn6W0OUvwmngzAk5XLupBC4KAPXglbDFnHtpcrYSWYie68
-   i+o4WkkcZNTVAMZufF215lvJzJkT6sLDJ9d//27nxWTIoGplm04BTYaP6
-   ccMfieEkZFD4jbCpaCqbucN2rtJNAR444UCIpKBkE8l4HDQzNjE5xHrXf
-   aiOf9hXafgGYkoW9QS/y5ASdPMfpYEHgN6dMlNnpZbdN0G+WjNPDQaBG/
-   g==;
-X-CSE-ConnectionGUID: FUqSlr9AQJmp4p77LM7VZA==
-X-CSE-MsgGUID: uZaE8ZnHTlaBGsggryripg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="48550265"
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="48550265"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 May 2025 21:30:45 -0700
-X-CSE-ConnectionGUID: Va7iEmHhSoCglHAPudVm/g==
-X-CSE-MsgGUID: Kkd+uZjLRWCCCIPj+DQSDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,271,1739865600"; 
-   d="scan'208";a="136105721"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 07 May 2025 21:30:43 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uCsu8-000A3j-1d;
-	Thu, 08 May 2025 04:30:40 +0000
-Date: Thu, 8 May 2025 12:30:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Jan Kara <jack@suse.cz>,
-	Amir Goldstein <amir73il@gmail.com>,
-	Matthew Bobrowski <repnop@google.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH][next] fanotify: Avoid a couple of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <202505081249.CUDWsu7Z-lkp@intel.com>
-References: <aBqdlxlBtb9s7ydc@kspp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YUsJOTlO75FlF4utm5B09QRhU067zUvCUsJuxGHeBAx7xO6k8tbR2QRopwRT/VPaVJLJAwjwwD+eHvEPGJdG+EfrZ/JPJ9amV20oihCmIFSOcqADwwTmPcQ4yiMBeVRihWflV9vWbl5LS3wtADw8tzrA536OO8RfKLi/9Q4Acyw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 7F69868B05; Thu,  8 May 2025 07:01:47 +0200 (CEST)
+Date: Thu, 8 May 2025 07:01:47 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+	linux-block@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-scsi@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tytso@mit.edu, john.g.garry@oracle.com, bmarzins@redhat.com,
+	chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
+	brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
+	yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
+Message-ID: <20250508050147.GA26916@lst.de>
+References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com> <20250421021509.2366003-8-yi.zhang@huaweicloud.com> <20250505132208.GA22182@lst.de> <20250505142945.GJ1035866@frogsfrogsfrogs> <c7d8d0c3-7efa-4ee6-b518-f8b09ec87b73@huaweicloud.com> <20250506043907.GA27061@lst.de> <64c8b62a-83ba-45be-a83e-62b6ad8d6f22@huaweicloud.com> <20250506121102.GA21905@lst.de> <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -83,60 +54,72 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aBqdlxlBtb9s7ydc@kspp>
+In-Reply-To: <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Gustavo,
+On Wed, May 07, 2025 at 03:33:23PM +0800, Zhang Yi wrote:
+> On 2025/5/6 20:11, Christoph Hellwig wrote:
+> > On Tue, May 06, 2025 at 07:16:56PM +0800, Zhang Yi wrote:
+> >> Sorry, but I don't understand your suggestion. The
+> >> STATX_ATTR_WRITE_ZEROES_UNMAP attribute only indicate whether the bdev
+> >> and the block device that under the specified file support unmap write
+> >> zeroes commoand. It does not reflect whether the bdev and the
+> >> filesystems support FALLOC_FL_WRITE_ZEROES. The implementation of
+> >> FALLOC_FL_WRITE_ZEROES doesn't fully rely on the unmap write zeroes
+> >> commoand now, users simply refer to this attribute flag to determine
+> >> whether to use FALLOC_FL_WRITE_ZEROES when preallocating a file.
+> >> So, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES doesn't
+> >> have strong relations, why do you suggested to put this into the ext4
+> >> and bdev patches that adding FALLOC_FL_WRITE_ZEROES?
+> > 
+> > So what is the point of STATX_ATTR_WRITE_ZEROES_UNMAP?
+> 
+> My idea is not to strictly limiting the use of FALLOC_FL_WRITE_ZEROES to
+> only bdev or files where bdev_unmap_write_zeroes() returns true. In
+> other words, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES
+> are not consistent, they are two independent features. Even if some
+> devices STATX_ATTR_WRITE_ZEROES_UNMAP are not set, users should still be
+> allowed to call fallcoate(FALLOC_FL_WRITE_ZEROES). This is because some
+> devices and drivers currently cannot reliably ascertain whether they
+> support the unmap write zero command; however, certain devices, such as
+> specific cloud storage devices, do support it. Users of these devices
+> may also wish to use FALLOC_FL_WRITE_ZEROES to expedite the zeroing
+> process.
 
-kernel test robot noticed the following build warnings:
+What are those "cloud storage devices" where you set it reliably,
+i.e.g what drivers?
 
-[auto build test WARNING on jack-fs/fsnotify]
-[also build test WARNING on linus/master v6.15-rc5 next-20250507]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Therefore, I think that the current point of
+> STATX_ATTR_WRITE_ZEROES_UNMAP (possibly STATX_WRITE_ZEROES_UNMAP) should
+> be to just indicate whether a bdev or file supports the unmap write zero
+> command (i.e., whether bdev_unmap_write_zeroes() returns true). If we
+> use standard SCSI and NVMe storage devices, and the
+> STATX_ATTR_WRITE_ZEROES_UNMAP attribute is set, users can be assured
+> that FALLOC_FL_WRITE_ZEROES is fast and can choose to use
+> fallocate(FALLOC_FL_WRITE_ZEROES) immediately.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gustavo-A-R-Silva/fanotify-Avoid-a-couple-of-Wflex-array-member-not-at-end-warnings/20250507-074110
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify
-patch link:    https://lore.kernel.org/r/aBqdlxlBtb9s7ydc%40kspp
-patch subject: [PATCH][next] fanotify: Avoid a couple of -Wflex-array-member-not-at-end warnings
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250508/202505081249.CUDWsu7Z-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505081249.CUDWsu7Z-lkp@intel.com/reproduce)
+That's breaking the abstracton again.  An attribute must say something
+about the specific file, not about some underlying semi-related feature.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505081249.CUDWsu7Z-lkp@intel.com/
+> Would you prefer to make STATX_ATTR_WRITE_ZEROES_UNMAP and
+> FALLOC_FL_WRITE_ZEROES consistent, which means
+> fallcoate(FALLOC_FL_WRITE_ZEROES) will return -EOPNOTSUPP if the block
+> device doesn't set STATX_ATTR_WRITE_ZEROES_UNMAP ?
 
-All warnings (new ones prefixed by >>):
+Not sure where the block device comes from here, both of these operate
+on a file.
 
-   In file included from fs/notify/fdinfo.c:17:
->> fs/notify/fanotify/fanotify.h:280:16: warning: alignment 1 of 'union <anonymous>' is less than 4 [-Wpacked-not-aligned]
-     280 |         struct fanotify_fh name;                                                      \
-         |                ^~~~~~~~~~~
-   fs/notify/fanotify/fanotify.h:287:9: note: in expansion of macro 'FANOTIFY_INLINE_FH'
-     287 |         FANOTIFY_INLINE_FH(object_fh, FANOTIFY_INLINE_FH_LEN);
-         |         ^~~~~~~~~~~~~~~~~~
->> fs/notify/fanotify/fanotify.h:280:16: warning: alignment 1 of 'union <anonymous>' is less than 4 [-Wpacked-not-aligned]
-     280 |         struct fanotify_fh name;                                                      \
-         |                ^~~~~~~~~~~
-   fs/notify/fanotify/fanotify.h:315:9: note: in expansion of macro 'FANOTIFY_INLINE_FH'
-     315 |         FANOTIFY_INLINE_FH(object_fh, MAX_HANDLE_SZ);
-         |         ^~~~~~~~~~~~~~~~~~
+> If so, I'd suggested we need to:
+> 1) Remove STATX_ATTR_WRITE_ZEROES_UNMAP since users can check the
+>    existence by calling fallocate(FALLOC_FL_WRITE_ZEROES) directly, this
+>    statx flag seems useless.
 
+Yes, that was my inital thought.
 
-vim +280 fs/notify/fanotify/fanotify.h
+> 2) Make the BLK_FEAT_WRITE_ZEROES_UNMAP sysfs interface to RW, allowing
+>    users to adjust the block device's support state according to the
+>    real situation.
 
-b8a6c3a2f0ae4d Amir Goldstein          2020-07-08  275  
-2c5069433a3adc Gabriel Krisman Bertazi 2021-10-25  276  #define FANOTIFY_INLINE_FH(name, size)						      \
-e3725b8a2ecdf6 Gustavo A. R. Silva     2025-05-06  277  union {										      \
-e3725b8a2ecdf6 Gustavo A. R. Silva     2025-05-06  278  	/* Space for object_fh and object_fh.buf[] - access with fanotify_fh_buf() */ \
-e3725b8a2ecdf6 Gustavo A. R. Silva     2025-05-06  279  	unsigned char _inline_fh_buf[struct_size_t(struct fanotify_fh, buf, size)];   \
-1758cd2e95d31b Alexey Dobriyan         2023-10-10 @280  	struct fanotify_fh name;						      \
-e3725b8a2ecdf6 Gustavo A. R. Silva     2025-05-06  281  } __packed
-2c5069433a3adc Gabriel Krisman Bertazi 2021-10-25  282  
+No, it's a feature and not a flag.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
