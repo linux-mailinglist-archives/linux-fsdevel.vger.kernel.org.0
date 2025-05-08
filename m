@@ -1,140 +1,116 @@
-Return-Path: <linux-fsdevel+bounces-48446-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48447-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D55AAAF334
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 07:56:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB39DAAF38B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 08:16:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DF0177FB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 05:56:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2A21BC41B4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 06:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D2A215F49;
-	Thu,  8 May 2025 05:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CDF2139C4;
+	Thu,  8 May 2025 06:16:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="uUPgwH5S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kdq2hmc6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3645F134A8
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 05:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D40747F;
+	Thu,  8 May 2025 06:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746683774; cv=none; b=nMXSl6iT8Z5lxFWaC5OvtGR991ZpMHrgvS0OvXsZy4JaiTSmIuChvit/Y+gOPBXPIxickoRfTuAUrS5qB+oeWqAXY1LJ/3uCA/kiAN2U2w2EZfLoDolprdYRhWIhiVtlgAJRxP/9l8ziwk31kVe74hBC9b6cSzvcWPCqW07djc0=
+	t=1746684997; cv=none; b=TWPGj19rTgQsV4FryGpBSUDruhHIPFmTnbyw3PLjuicPExKxGJS17RgNAd7tQd+GV7C5D74iM2UTt34PewapeadK+ypRtr1wDo3uOXStBD5IZxEUVg31tXko1uNRkbov58Bm9PJiEBwxzEUyJbbCYdCCDSCqUyH1Psb/xtg07VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746683774; c=relaxed/simple;
-	bh=7QTEb5Y84u9dsLF9/EhopGDY1WIYDhEYoTSg0tJY8zM=;
+	s=arc-20240116; t=1746684997; c=relaxed/simple;
+	bh=ZlBwZgLPxWSkt3MKaad6ggNW9bvZErmmOVPw7s8z1Vw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SYPgOUEDKFPvwqw5o6EmJZHQcBYBvUU7O2T5YGFTS3jOGf54gMsseoOFXyjBZEK3wyl624IGYbIQYVYrJyWy1dFje4skg46dPoc2Nht6z5Nxq8PpvXeGgRuF8L4mlOyRyyc3wJACC16M+JDEeRKzi9FXLNxlgLvVjUH/yQE5/yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=uUPgwH5S; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5tBzNmyRL0MhDAjQfsB+x4fkGYmbyAoymagYvHtCgh0=; b=uUPgwH5SzC6e2rAQ7O3rb9TOH5
-	PF6ErJyMKaCUDmAEwYQYGm7oKcDqwIImJZwxJ+fjN7TpVSUWQ7QKABIUO+warS3h7DF/E/V6PwSZT
-	yUTI0+nmtmZbVWSmZcSZ9ef+bckmk5QyAgBMMRGKp1p9rZF7ye6qov7R/3ixYRey16lkER3YXYPvD
-	klLEq9HumzanCopZcR3PKlgl37If1lL/FslEOF9WG3hjBnl0ezgaqX85RlZTZxKdkCfYvmqafG5Ib
-	JagLUAIYC4OHiJI3C7V3NqXCa7L/ubFOgHJRPxllTuYEeqlG1bFt81kFI6FGAKezyM56dPdh76FPM
-	tsNcynMg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uCuEs-000000043vZ-0LoY;
-	Thu, 08 May 2025 05:56:10 +0000
-Date: Thu, 8 May 2025 06:56:10 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: more breakage there (was Re: [RFC] move_mount(2): still breakage
- around new mount detection)
-Message-ID: <20250508055610.GB2023217@ZenIV>
-References: <20250428063056.GL2023217@ZenIV>
- <20250428070353.GM2023217@ZenIV>
- <20250428-wortkarg-krabben-8692c5782475@brauner>
- <20250428185318.GN2023217@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BJDa05CqNysrlpAaf7f1iWy4EBqkCN1J5f58MU4eC0w48Mmq26oIwvH0FV+S4FwfmK3+mlC50/G9wIe/ewddYsL9+28ewv5lvmXBSRUvtxWItNv0h3jd8/GDClMAXHY38CLrLv0PttcOB+gv/8Vzryi6rZtA3++KeEGXwmDUi6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kdq2hmc6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87ECAC4CEEB;
+	Thu,  8 May 2025 06:16:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746684997;
+	bh=ZlBwZgLPxWSkt3MKaad6ggNW9bvZErmmOVPw7s8z1Vw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kdq2hmc6yKLYxjN4wRYSL5M2SjNXWkz9ldEAJauMi4XNQ6rrzcjCxQNtdlOuITKN+
+	 /7EMDg5ReERqc9cxqGXpGFs/Dx4AFOQpgepckMRMsEkZZJT0ciwm8RwbO7nhafEKbY
+	 794tUXgiNlpCycVITbSsbkoI0R4shbBA28i3+D5jEmCUxK8ux9w7pnU/la3lT596Pg
+	 ifvT6hzL9/WvUEdI52wViGgk7hkm5uWaDXDU5IWqfP6HIZnK2r0PAPwDL6Emuq+pg/
+	 uipV8G3UjoGjdXHli6BHirFpTWQoWLFIRMJft/d/wxli7Ok8/VtUWSMWdTr4RXcTXr
+	 0bQsTuGX4pH8A==
+Date: Thu, 8 May 2025 08:16:29 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alexander@mihalicyn.com, bluca@debian.org, daan.j.demeyer@gmail.com, 
+	davem@davemloft.net, david@readahead.eu, edumazet@google.com, horms@kernel.org, 
+	jack@suse.cz, jannh@google.com, kuba@kernel.org, lennart@poettering.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
+	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Subject: Re: [PATCH v4 04/11] net: reserve prefix
+Message-ID: <20250508-vorboten-herein-4ee71336e6f7@brauner>
+References: <20250507-work-coredump-socket-v4-4-af0ef317b2d0@kernel.org>
+ <20250507224658.47266-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250428185318.GN2023217@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250507224658.47266-1-kuniyu@amazon.com>
 
-On Mon, Apr 28, 2025 at 07:53:18PM +0100, Al Viro wrote:
+On Wed, May 07, 2025 at 03:45:52PM -0700, Kuniyuki Iwashima wrote:
+> From: Christian Brauner <brauner@kernel.org>
+> Date: Wed, 07 May 2025 18:13:37 +0200
+> > Add the reserved "linuxafsk/" prefix for AF_UNIX sockets and require
+> > CAP_NET_ADMIN in the owning user namespace of the network namespace to
+> > bind it. This will be used in next patches to support the coredump
+> > socket but is a generally useful concept.
+> 
+> I really think we shouldn't reserve address and it should be
+> configurable by users via core_pattern as with the other
+> coredump types.
+> 
+> AF_UNIX doesn't support SO_REUSEPORT, so once the socket is
+> dying, user can't start the new coredump listener until it's
+> fully cleaned up, which adds unnecessary drawback.
 
-> Up to you; propagation calculations *are* hard-serialized (on namespace_sem)
-> and changing that is too much pain to consider, so I have no problem with
-> globals in that specific case (note several such in propagate_mnt()
-> machinery; that was a deliberate decision to avoid shitloads of arguments
-> that would have to be passed around otherwise), but...
+This really doesn't matter.
 
-OK, now I finally understand what felt fishy about either solution.
+> The semantic should be same with other types, and the todo
+> for the coredump service is prepare file (file, process, socket)
+> that can receive data and set its name to core_pattern.
 
-Back when the checks had been IS_MNT_NEW, we were guaranteed that
-anything on the the slave lists of new mount would be new as well.
+We need to perform a capability check during bind() for the host's
+coredump socket. Otherwise if the coredump server crashes an
+unprivileged attacker can simply bind the address and receive all
+coredumps from suid binaries.
 
-No amount of copy_tree() could change ->mnt_master of existing mounts,
-so anything predating the beginning of propagate_mnt() would still
-have ->mnt_master pointing to old mounts - no operations other than
-copy_tree() had been done since we have taken namespace_sem.
+This is also a problem for legitimate coredump server updates. To change
+the coredump address the coredump server must first setup a new socket
+and then update core_pattern and then shutdown the old coredump socket.
 
-That's where your IS_MNT_PROPAGATED breaks.  It mixes "nothing useful
-to be found in this direction" with "don't mount anything on this one".
-And these are not the same now.
+Now an unprivileged attacker can rebind the old coredump socket address
+but there's still a crashing task that got scheduled out after it copied
+the old coredump server address but before it connected to the coredump
+server. The new server is now up and the old server's address has been
+reused by the attacker. Now the crashing task gets scheduled back in and
+connects to the unprivileged attacker and forwards its suid dump to the
+attacker.
 
-Suppose you have mounts A, B and C, A propagating to B, B - to C.
+The name of the socket needs to be protected. This can be done by prefix
+but the simplest way is what I did in my earlier version and to just use
+a well-known name. The name really doesn't matter and all it adds is
+potential for subtle bugs. I want the coredump code I have to maintain
+to have as little moving parts as possible.
 
-If you made B private, propagation would go directly from A to C,
-and mount on A/foo would result in a copy on C/foo.
-
-Suppose you've done open_tree B with OPEN_TREE_CLONE before making
-B private.  After open_tree your propagation graph is
-	A -> [B <-> B'] -> C
-with new mount B' being in your anon_ns.  Making B private leaves you
-with
-	A -> B' -> C
-and mount on A/foo still propagates to C/foo, along with foo in your
-anon_ns.
-
-So far, so good, but what happens if you move_mount the root of your
-anon_ns to A/foo?  Sure, you want to suppress copying it to foo in B',
-but you will end suppressing the copy on C/foo as well.  propagation_next()
-will not visit C at all - when it reaches B', it'll see IS_MNT_PROPAGATED
-and refuse to look what B' might be propagating to.
-
-IOW, IS_MNT_PROPAGATED in propagate_one() is fine, but in propagation_next(),
-skip_propagation_subtree() and next_group() we really need IS_MNT_NEW.
-And the check in propagate_one() should be
-
-	/* skip ones added by this propagate_mnt() */
-	if (IS_MNT_NEW(m))
-                return 0;
-        /* skip if mountpoint is outside of subtree seen in m */
-	if (!is_subdir(dest_mp->m_dentry, m->mnt.mnt_root))
-		return 0;
-	/* skip if m is in the anon_ns we are emptying */
-	if (m->mnt_ns->mntns_flags & MNTNS_PROPAGATING)
-		return 0;
-That part of check is really about the validity of this particular
-location, not the cutoff for further propagation.  IS_MNT_NEW(),
-OTOH, is a hard cutoff.
-
-FWIW, I would take the last remaining IS_MNT_PROPAGATED() (in
-propagation_would_overmount()) as discussed in this thread -
-with
--       if (propagation_would_overmount(parent_mnt_to, mnt_from, mp))
-+       if (check_mnt(mnt_from) &&
-+           propagation_would_overmount(parent_mnt_to, mnt_from, mp))
-in can_move_mount_beneath() and lose the one in propagation_would_overmount()
-
-I'll cook something along those lines (on top of "do_move_mount(): don't
-leak MNTNS_PROPAGATING on failures") and if it survives overnight tests
-post it tomorrow^Win the morning...
+I'm happy to drop the patch to reserve the prefix as that seems to
+bother you. But the coredump socket name won't be configurable. It'd be
+good if we could just compromise here. Without the capability check on
+bind we can just throw this all out as that's never going to be safe.
 
