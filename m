@@ -1,228 +1,196 @@
-Return-Path: <linux-fsdevel+bounces-48475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48476-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ABD7AAF9B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 14:22:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221F9AAFA3D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 14:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0294C5E46
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 12:22:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9D5500B6F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 12:41:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D5F225415;
-	Thu,  8 May 2025 12:22:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACBA227B94;
+	Thu,  8 May 2025 12:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fvg8W6fF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GEG6zlNF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BF7222568;
-	Thu,  8 May 2025 12:22:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29F9E226CE4
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 12:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706925; cv=none; b=ENq4ZPN9nAGj6QxjC8DoAx2BgDGC4uND3w/NZuYlj+Atg38LuUa4YA7tCzShep0zB/y5DUnGF9tDeA3PMgrVKhrqSxvSEydW6YeMTxkAcelflyKRLCLn9WPMIDwxkiAI8Q3MJf0BPtELQZNlxwGHQcBIaKlIeVuT5T9sT4E5daI=
+	t=1746708057; cv=none; b=PeRQ5ur/WDcxB/nSt1Lyyat/o+AY7a7kqyts1STKrX3NZwSbJjxIds2ZKVPE0q4RdoCYu9hnin/RWxHJOr9pUg7/Qchm6p2ULWvo4AkGL6WSQwZROnQQWbuD6kUfDBLLiy8LAp5mnG6l4mosM6JPG4OHG2yG9rjD1TsRRtOmUBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706925; c=relaxed/simple;
-	bh=2B1VAFopbYwqp+cWfaNd09XKHhaCO5pZWfe0iB09SgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ol/vA+3ZYfV7ZlluZ5pnzRGu5SLJZlWh8gnZTLlOVXILX2Qomb1nyoDXfROiQK4etJ2DfURMOXey1K0EgrMqYVQSv//lUQD+uWCN4soffuuSImVZg912VpiLsxMY6oFaaWUvSiOqS3AP5dKdeSoX2nIf2zDT1k8IQDreBuyboYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fvg8W6fF; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1746706923; x=1778242923;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2B1VAFopbYwqp+cWfaNd09XKHhaCO5pZWfe0iB09SgM=;
-  b=fvg8W6fFX0jCwofd3cAD9yDFMcGxUA6kK1Fov4/d9PhhksbjxEFLDKs1
-   hqBJ0yxvVtcdqXQIeb+UolfnA+rB3BDAhLmebjnFv7F7Zl9hTTsvxFaBg
-   t1i5x48yVFIIbmDHG/tl3bKwXDDVYVolyrHgIEUQRCzSI+fCKrnyUvHtM
-   60LpBs/76HvWVR/1m9g8cfqrjNWOIXN7NjCvFTik2lINHzIUo854lsWQl
-   qzBJk2bQy4sZvDvfXaJ+O4QtzuQQbwXPCEKLyxl/VMqOjRy+ikGUH70ZX
-   3aMHqlXA2hcf0kFEQdDLHfRA9PhyGijE4/1sMQlp8KISL29wH7H/rLZAs
-   Q==;
-X-CSE-ConnectionGUID: taG/2HaDQx2mYpNdL15sIw==
-X-CSE-MsgGUID: iCP6sg5HRq2qV1yxpLJC/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59883099"
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="59883099"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 05:22:02 -0700
-X-CSE-ConnectionGUID: M/O0ahs2QSSbInJwpZqolg==
-X-CSE-MsgGUID: 18OfEl75RnKfUN8GeVzMFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
-   d="scan'208";a="141492373"
-Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 08 May 2025 05:21:56 -0700
-Received: from kbuild by 1992f890471c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uD0G9-000Ax1-2X;
-	Thu, 08 May 2025 12:21:53 +0000
-Date: Thu, 8 May 2025 20:21:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org
-Cc: oe-kbuild-all@lists.linux.dev, bhupesh@igalia.com,
-	kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	oliver.sang@intel.com, lkp@intel.com, laoar.shao@gmail.com,
-	pmladek@suse.com, rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
-	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
-	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
-	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
-	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
-	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
-	mgorman@suse.de
-Subject: Re: [PATCH v3 2/3] treewide: Switch memcpy() users of 'task->comm'
- to a more safer implementation
-Message-ID: <202505082038.A5ejhbR4-lkp@intel.com>
-References: <20250507110444.963779-3-bhupesh@igalia.com>
+	s=arc-20240116; t=1746708057; c=relaxed/simple;
+	bh=t714p2FTPXU2itEvrpjTxltqYjLasx7RT9lxrWRx+sY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dQLh8NUNvRodIqwFRqR2TcuVo7tWOI8i1qcJ+IUizoKBSIuLNwFmFk/GOkQ/IcI8nMZqcB8ngEojLGCSujLIip1liK6fG0mg225rsx2QIFnwpzqiI4G2uHRfAGv6sQZOVlXzKH+Mj40hadHvf3Hv0xxPM3DTn4O8xNm+qOQVs0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GEG6zlNF; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e5e22e6ed2so1445372a12.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 May 2025 05:40:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1746708054; x=1747312854; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4HPYVBkWhi2pZqy8k4gSAnqS0T9CEFZWod68KJrK3RU=;
+        b=GEG6zlNF6n4DxdiCn0i3KXXBwD7f18Gjg2PhV9u3BImty3HdbJ5hUBq7BdoxwRam9u
+         f0xsHqE5Tld+RoRL995/7JHkutcZngN9UFg3rjbmVFORiAIoxDj/krrv2h8voBEiS11r
+         rZkEU5MXnsX6p2PeFMAu5+tB3+mrzpVlhOktxSMlS1uYI8cMOF3IaX0bhMMnsdqji9fm
+         hGZDYZiLN+BnR2Z/kEQ3vRX32ob3sEgMiMiXGqdkTZ/5Rbd6/2oPoEm+BjmdTrPabfuk
+         SClyWlofunLgWcWIQvacOC6merg2jXd8Dpix4ZGON5ZWBq/UGoMnKekGsJrQq20IC6Y5
+         F5iQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746708054; x=1747312854;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4HPYVBkWhi2pZqy8k4gSAnqS0T9CEFZWod68KJrK3RU=;
+        b=oWlT+hEg5LNV9xVGGB08kHqh5Nstwy6dNrkBCv4QgQXZub5A+gkWwlBfeVICcrWnl/
+         yCwuHskbbTitN7M1RhIPp9gvRVlViOzuZW12PB9HCjOJFMh0xsMmXpL8c5LmD7OTfruI
+         k2Ka290Y8oVtaHTiN+gofNe9v54fV6yVJm/2t780UWh6F5KILzLD1FrRn5iIr9lWwrjy
+         ObNCUkdnYlWqH1Tggn7BlPCTdywlKziwpm/j2/p6tvwLIr7BlQFHBTPx+EH9SL2exRzW
+         /xCfI1fVrDOmOLgSJvORVtFB0xLRl8LmoI+ZBTyTZD0YBdgOS0ufM+QnuDu3LDpsGvXp
+         /ZsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcPPhEt54U7SwBMaqWmphqRegpNJgPak/Do4V0tqGYabJZRZ8BAKMQLSqn9LDEW1rA+IEvtat1dHtTclbC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2dfPnQLGVl1dROoMLk3CoXeRSJV2ZAVfc63FHl+nSRQMBI8dZ
+	5DXtpEXvS5COuAiBSkGusBs2SbL/t5R+g6cSYO3L6TGXoILCgWGeIbyWbTz1kefXmfx1lZnyl2J
+	JPD5zkc44RDzvo50vMhqQsN8QIjw=
+X-Gm-Gg: ASbGncsvjDnGffExr7feHdb7AAvqwYrhuVEzXoijUwKbDvGjHie1Ip/MOW6VCcP+vSc
+	4HDROeRLmjSRT5D4WlUPYVTNla/EcCroSJuz1+M5PawtTnm0uCuCEmuyBBBuLpEWSkgIPRETLKz
+	nPp7HZEMBsbhhBSVdD7ira7NGlGU4oEOXt
+X-Google-Smtp-Source: AGHT+IGDOsQ0EQFuU3U1wMUmEi8A8kunVcn3wIMadevtTwaumXDAMbVtzK93cw/gVxgc8Y49vb7okCnVFCVMCF8scxM=
+X-Received: by 2002:a05:6402:350d:b0:5f6:218d:34f3 with SMTP id
+ 4fb4d7f45d1cf-5fc35a2d2e7mr3001529a12.28.1746708054069; Thu, 08 May 2025
+ 05:40:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250507110444.963779-3-bhupesh@igalia.com>
+References: <20250507204302.460913-1-amir73il@gmail.com> <20250507204302.460913-6-amir73il@gmail.com>
+In-Reply-To: <20250507204302.460913-6-amir73il@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 8 May 2025 14:40:41 +0200
+X-Gm-Features: ATxdqUFIh_poCt25AfTheShRyh6NJsQxg-_97OsacTO9sHco5dLI8ftQy0QD9Dk
+Message-ID: <CAOQ4uxjT=5aa9AnR9OgJZAe8btEq5QptzB3VQ7S6rPUwYcC6rQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] selftests/filesystems: create setup_userns() helper
+To: Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>, 
+	Shuah Khan <skhan@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Bhupesh,
+On Wed, May 7, 2025 at 10:43=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> Add helper to utils and use it in statmount userns tests.
+>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
+>  .../filesystems/statmount/statmount_test_ns.c | 60 +----------------
+>  tools/testing/selftests/filesystems/utils.c   | 65 +++++++++++++++++++
+>  tools/testing/selftests/filesystems/utils.h   |  1 +
+>  3 files changed, 68 insertions(+), 58 deletions(-)
+>
+> diff --git a/tools/testing/selftests/filesystems/statmount/statmount_test=
+_ns.c b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
+> index 375a52101d08..3c5bc2e33821 100644
+> --- a/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
+> +++ b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
+> @@ -79,66 +79,10 @@ static int get_mnt_ns_id(const char *mnt_ns, uint64_t=
+ *mnt_ns_id)
+>         return NSID_PASS;
+>  }
+>
+> -static int write_file(const char *path, const char *val)
+> -{
+> -       int fd =3D open(path, O_WRONLY);
+> -       size_t len =3D strlen(val);
+> -       int ret;
+> -
+> -       if (fd =3D=3D -1) {
+> -               ksft_print_msg("opening %s for write: %s\n", path, strerr=
+or(errno));
+> -               return NSID_ERROR;
+> -       }
+> -
+> -       ret =3D write(fd, val, len);
+> -       if (ret =3D=3D -1) {
+> -               ksft_print_msg("writing to %s: %s\n", path, strerror(errn=
+o));
+> -               return NSID_ERROR;
+> -       }
+> -       if (ret !=3D len) {
+> -               ksft_print_msg("short write to %s\n", path);
+> -               return NSID_ERROR;
+> -       }
+> -
+> -       ret =3D close(fd);
+> -       if (ret =3D=3D -1) {
+> -               ksft_print_msg("closing %s\n", path);
+> -               return NSID_ERROR;
+> -       }
+> -
+> -       return NSID_PASS;
+> -}
+> -
+>  static int setup_namespace(void)
+>  {
+> -       int ret;
+> -       char buf[32];
+> -       uid_t uid =3D getuid();
+> -       gid_t gid =3D getgid();
+> -
+> -       ret =3D unshare(CLONE_NEWNS|CLONE_NEWUSER|CLONE_NEWPID);
+> -       if (ret =3D=3D -1)
+> -               ksft_exit_fail_msg("unsharing mountns and userns: %s\n",
+> -                                  strerror(errno));
+> -
+> -       sprintf(buf, "0 %d 1", uid);
+> -       ret =3D write_file("/proc/self/uid_map", buf);
+> -       if (ret !=3D NSID_PASS)
+> -               return ret;
+> -       ret =3D write_file("/proc/self/setgroups", "deny");
+> -       if (ret !=3D NSID_PASS)
+> -               return ret;
+> -       sprintf(buf, "0 %d 1", gid);
+> -       ret =3D write_file("/proc/self/gid_map", buf);
+> -       if (ret !=3D NSID_PASS)
+> -               return ret;
+> -
+> -       ret =3D mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
+> -       if (ret =3D=3D -1) {
+> -               ksft_print_msg("making mount tree private: %s\n",
+> -                              strerror(errno));
+> +       if (setup_userns() !=3D 0)
+>                 return NSID_ERROR;
+> -       }
+>
+>         return NSID_PASS;
+>  }
+> @@ -200,7 +144,7 @@ static void test_statmount_mnt_ns_id(void)
+>                 return;
+>         }
+>
+> -       ret =3D setup_namespace();
+> +       ret =3D setup_userns();
 
-kernel test robot noticed the following build errors:
+FYI, this is a braino.
+It should remain setup_namespace()
 
-[auto build test ERROR on trace/for-next]
-[also build test ERROR on tip/sched/core akpm-mm/mm-everything linus/master v6.15-rc5 next-20250508]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Pushed a branch to my github will all review fixes and a WIP
+mount-notify-ns_test:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bhupesh/exec-Remove-obsolete-comments/20250507-190740
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
-patch link:    https://lore.kernel.org/r/20250507110444.963779-3-bhupesh%40igalia.com
-patch subject: [PATCH v3 2/3] treewide: Switch memcpy() users of 'task->comm' to a more safer implementation
-config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250508/202505082038.A5ejhbR4-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505082038.A5ejhbR4-lkp@intel.com/reproduce)
+https://github.com/amir73il/linux/commits/fanotify_selftests/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202505082038.A5ejhbR4-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from include/trace/define_trace.h:119,
-                    from include/trace/events/sched.h:856,
-                    from kernel/sched/core.c:84:
-   include/trace/events/sched.h: In function 'do_trace_event_raw_event_sched_switch':
->> include/trace/events/sched.h:245:24: error: 'struct trace_event_raw_sched_switch' has no member named 'comm'
-     245 |                 __entry->comm[TASK_COMM_LEN - 1] = '\0';
-         |                        ^~
-   include/trace/trace_events.h:427:11: note: in definition of macro '__DECLARE_EVENT_CLASS'
-     427 |         { assign; }                                                     \
-         |           ^~~~~~
-   include/trace/trace_events.h:435:23: note: in expansion of macro 'PARAMS'
-     435 |                       PARAMS(assign), PARAMS(print))                    \
-         |                       ^~~~~~
-   include/trace/trace_events.h:40:9: note: in expansion of macro 'DECLARE_EVENT_CLASS'
-      40 |         DECLARE_EVENT_CLASS(name,                              \
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
-      44 |                              PARAMS(assign),                   \
-         |                              ^~~~~~
-   include/trace/events/sched.h:224:1: note: in expansion of macro 'TRACE_EVENT'
-     224 | TRACE_EVENT(sched_switch,
-         | ^~~~~~~~~~~
-   include/trace/events/sched.h:243:9: note: in expansion of macro 'TP_fast_assign'
-     243 |         TP_fast_assign(
-         |         ^~~~~~~~~~~~~~
-   In file included from include/trace/define_trace.h:120,
-                    from include/trace/events/sched.h:856,
-                    from kernel/sched/core.c:84:
-   include/trace/events/sched.h: In function 'do_perf_trace_sched_switch':
->> include/trace/events/sched.h:245:24: error: 'struct trace_event_raw_sched_switch' has no member named 'comm'
-     245 |                 __entry->comm[TASK_COMM_LEN - 1] = '\0';
-         |                        ^~
-   include/trace/perf.h:51:11: note: in definition of macro '__DECLARE_EVENT_CLASS'
-      51 |         { assign; }                                                     \
-         |           ^~~~~~
-   include/trace/perf.h:67:23: note: in expansion of macro 'PARAMS'
-      67 |                       PARAMS(assign), PARAMS(print))                    \
-         |                       ^~~~~~
-   include/trace/trace_events.h:40:9: note: in expansion of macro 'DECLARE_EVENT_CLASS'
-      40 |         DECLARE_EVENT_CLASS(name,                              \
-         |         ^~~~~~~~~~~~~~~~~~~
-   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
-      44 |                              PARAMS(assign),                   \
-         |                              ^~~~~~
-   include/trace/events/sched.h:224:1: note: in expansion of macro 'TRACE_EVENT'
-     224 | TRACE_EVENT(sched_switch,
-         | ^~~~~~~~~~~
-   include/trace/events/sched.h:243:9: note: in expansion of macro 'TP_fast_assign'
-     243 |         TP_fast_assign(
-         |         ^~~~~~~~~~~~~~
-
-
-vim +245 include/trace/events/sched.h
-
-   225	
-   226		TP_PROTO(bool preempt,
-   227			 struct task_struct *prev,
-   228			 struct task_struct *next,
-   229			 unsigned int prev_state),
-   230	
-   231		TP_ARGS(preempt, prev, next, prev_state),
-   232	
-   233		TP_STRUCT__entry(
-   234			__array(	char,	prev_comm,	TASK_COMM_LEN	)
-   235			__field(	pid_t,	prev_pid			)
-   236			__field(	int,	prev_prio			)
-   237			__field(	long,	prev_state			)
-   238			__array(	char,	next_comm,	TASK_COMM_LEN	)
-   239			__field(	pid_t,	next_pid			)
-   240			__field(	int,	next_prio			)
-   241		),
-   242	
-   243		TP_fast_assign(
-   244			memcpy(__entry->prev_comm, prev->comm, TASK_COMM_LEN);
- > 245			__entry->comm[TASK_COMM_LEN - 1] = '\0';
-   246			__entry->prev_pid	= prev->pid;
-   247			__entry->prev_prio	= prev->prio;
-   248			__entry->prev_state	= __trace_sched_switch_state(preempt, prev_state, prev);
-   249			memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
-   250			__entry->next_comm[TASK_COMM_LEN - 1] = '\0';
-   251			__entry->next_pid	= next->pid;
-   252			__entry->next_prio	= next->prio;
-   253			/* XXX SCHED_DEADLINE */
-   254		),
-   255	
-   256		TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
-   257			__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
-   258	
-   259			(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
-   260			  __print_flags(__entry->prev_state & (TASK_REPORT_MAX - 1), "|",
-   261					{ TASK_INTERRUPTIBLE, "S" },
-   262					{ TASK_UNINTERRUPTIBLE, "D" },
-   263					{ __TASK_STOPPED, "T" },
-   264					{ __TASK_TRACED, "t" },
-   265					{ EXIT_DEAD, "X" },
-   266					{ EXIT_ZOMBIE, "Z" },
-   267					{ TASK_PARKED, "P" },
-   268					{ TASK_DEAD, "I" }) :
-   269			  "R",
-   270	
-   271			__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
-   272			__entry->next_comm, __entry->next_pid, __entry->next_prio)
-   273	);
-   274	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Amir.
 
