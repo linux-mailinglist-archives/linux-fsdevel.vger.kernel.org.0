@@ -1,193 +1,228 @@
-Return-Path: <linux-fsdevel+bounces-48474-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48475-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 379E7AAF9A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 14:17:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABD7AAF9B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 14:22:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125E94C53D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 12:17:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B0294C5E46
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 12:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 248CB22688B;
-	Thu,  8 May 2025 12:17:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D5F225415;
+	Thu,  8 May 2025 12:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fvg8W6fF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B5C01DF25C;
-	Thu,  8 May 2025 12:17:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33BF7222568;
+	Thu,  8 May 2025 12:22:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746706650; cv=none; b=h+1XRrkUJuwDGHI0RyMtuUuTBIyb0I3H6YGCoGlzWCGooK2dsfjxhqmhsXEn/9MlWq/aUSpHpHh9F77TG9o4xd+sGFMI223jIk6PTBYlyyym/4HB22YxxUU0JXZJjAnZSHjdj3CunW0ZMFV5a/3EniBuzx4hGrbC0SQCDe2sdjo=
+	t=1746706925; cv=none; b=ENq4ZPN9nAGj6QxjC8DoAx2BgDGC4uND3w/NZuYlj+Atg38LuUa4YA7tCzShep0zB/y5DUnGF9tDeA3PMgrVKhrqSxvSEydW6YeMTxkAcelflyKRLCLn9WPMIDwxkiAI8Q3MJf0BPtELQZNlxwGHQcBIaKlIeVuT5T9sT4E5daI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746706650; c=relaxed/simple;
-	bh=7xiyatHuEYO5siH784i+66R6gDk//PcjZEueVmEeyvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FFfBF6u0J0thAeMNIaUgD7DmEwnGOk+zJb1u+E9v7Gu4Mu932+SvZIyNm+BjexwkSF2OKhOTV1YtNKNP9QIwaJZZc8TYMofOSZiQwQ0RlIm3vQgnocSsjDxOv/UVfiTfDYr9ZnwkSMHCpvDeZX0jdMdolV5zWNdP2WWO8FLslTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4ZtWNH1XsWzYQtwc;
-	Thu,  8 May 2025 20:17:19 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 86C091A1A7E;
-	Thu,  8 May 2025 20:17:18 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgDnSl_KoBxoXus0Lw--.707S3;
-	Thu, 08 May 2025 20:17:16 +0800 (CST)
-Message-ID: <68172a9e-cf68-4962-8229-68e283e894e1@huaweicloud.com>
-Date: Thu, 8 May 2025 20:17:14 +0800
+	s=arc-20240116; t=1746706925; c=relaxed/simple;
+	bh=2B1VAFopbYwqp+cWfaNd09XKHhaCO5pZWfe0iB09SgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ol/vA+3ZYfV7ZlluZ5pnzRGu5SLJZlWh8gnZTLlOVXILX2Qomb1nyoDXfROiQK4etJ2DfURMOXey1K0EgrMqYVQSv//lUQD+uWCN4soffuuSImVZg912VpiLsxMY6oFaaWUvSiOqS3AP5dKdeSoX2nIf2zDT1k8IQDreBuyboYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fvg8W6fF; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746706923; x=1778242923;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2B1VAFopbYwqp+cWfaNd09XKHhaCO5pZWfe0iB09SgM=;
+  b=fvg8W6fFX0jCwofd3cAD9yDFMcGxUA6kK1Fov4/d9PhhksbjxEFLDKs1
+   hqBJ0yxvVtcdqXQIeb+UolfnA+rB3BDAhLmebjnFv7F7Zl9hTTsvxFaBg
+   t1i5x48yVFIIbmDHG/tl3bKwXDDVYVolyrHgIEUQRCzSI+fCKrnyUvHtM
+   60LpBs/76HvWVR/1m9g8cfqrjNWOIXN7NjCvFTik2lINHzIUo854lsWQl
+   qzBJk2bQy4sZvDvfXaJ+O4QtzuQQbwXPCEKLyxl/VMqOjRy+ikGUH70ZX
+   3aMHqlXA2hcf0kFEQdDLHfRA9PhyGijE4/1sMQlp8KISL29wH7H/rLZAs
+   Q==;
+X-CSE-ConnectionGUID: taG/2HaDQx2mYpNdL15sIw==
+X-CSE-MsgGUID: iCP6sg5HRq2qV1yxpLJC/w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11426"; a="59883099"
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
+   d="scan'208";a="59883099"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 May 2025 05:22:02 -0700
+X-CSE-ConnectionGUID: M/O0ahs2QSSbInJwpZqolg==
+X-CSE-MsgGUID: 18OfEl75RnKfUN8GeVzMFg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,272,1739865600"; 
+   d="scan'208";a="141492373"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 08 May 2025 05:21:56 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uD0G9-000Ax1-2X;
+	Thu, 08 May 2025 12:21:53 +0000
+Date: Thu, 8 May 2025 20:21:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bhupesh <bhupesh@igalia.com>, akpm@linux-foundation.org
+Cc: oe-kbuild-all@lists.linux.dev, bhupesh@igalia.com,
+	kernel-dev@igalia.com, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	oliver.sang@intel.com, lkp@intel.com, laoar.shao@gmail.com,
+	pmladek@suse.com, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz,
+	mingo@redhat.com, juri.lelli@redhat.com, bsegall@google.com,
+	mgorman@suse.de
+Subject: Re: [PATCH v3 2/3] treewide: Switch memcpy() users of 'task->comm'
+ to a more safer implementation
+Message-ID: <202505082038.A5ejhbR4-lkp@intel.com>
+References: <20250507110444.963779-3-bhupesh@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 07/11] fs: statx add write zeroes unmap attribute
-To: Christoph Hellwig <hch@lst.de>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-fsdevel@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-block@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-scsi@vger.kernel.org, linux-xfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, john.g.garry@oracle.com,
- bmarzins@redhat.com, chaitanyak@nvidia.com, shinichiro.kawasaki@wdc.com,
- brauner@kernel.org, yi.zhang@huawei.com, chengzhihao1@huawei.com,
- yukuai3@huawei.com, yangerkun@huawei.com
-References: <20250421021509.2366003-1-yi.zhang@huaweicloud.com>
- <20250421021509.2366003-8-yi.zhang@huaweicloud.com>
- <20250505132208.GA22182@lst.de> <20250505142945.GJ1035866@frogsfrogsfrogs>
- <c7d8d0c3-7efa-4ee6-b518-f8b09ec87b73@huaweicloud.com>
- <20250506043907.GA27061@lst.de>
- <64c8b62a-83ba-45be-a83e-62b6ad8d6f22@huaweicloud.com>
- <20250506121102.GA21905@lst.de>
- <a39a6612-89ac-4255-b737-37c7d16b3185@huaweicloud.com>
- <20250508050147.GA26916@lst.de>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20250508050147.GA26916@lst.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDnSl_KoBxoXus0Lw--.707S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxXF43ZFW3Zry3Aw48Kw1xKrg_yoWrtrWDpF
-	W8WF1jkF4DKr13Cw1v9w4Igrn0vFs3AF15C39Ykr48Cw45XF13KFnaga40yF9rXryxZayD
-	tFZ0kFyUZa1Iy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWr
-	XwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU0
-	s2-5UUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250507110444.963779-3-bhupesh@igalia.com>
 
-On 2025/5/8 13:01, Christoph Hellwig wrote:
-> On Wed, May 07, 2025 at 03:33:23PM +0800, Zhang Yi wrote:
->> On 2025/5/6 20:11, Christoph Hellwig wrote:
->>> On Tue, May 06, 2025 at 07:16:56PM +0800, Zhang Yi wrote:
->>>> Sorry, but I don't understand your suggestion. The
->>>> STATX_ATTR_WRITE_ZEROES_UNMAP attribute only indicate whether the bdev
->>>> and the block device that under the specified file support unmap write
->>>> zeroes commoand. It does not reflect whether the bdev and the
->>>> filesystems support FALLOC_FL_WRITE_ZEROES. The implementation of
->>>> FALLOC_FL_WRITE_ZEROES doesn't fully rely on the unmap write zeroes
->>>> commoand now, users simply refer to this attribute flag to determine
->>>> whether to use FALLOC_FL_WRITE_ZEROES when preallocating a file.
->>>> So, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES doesn't
->>>> have strong relations, why do you suggested to put this into the ext4
->>>> and bdev patches that adding FALLOC_FL_WRITE_ZEROES?
->>>
->>> So what is the point of STATX_ATTR_WRITE_ZEROES_UNMAP?
->>
->> My idea is not to strictly limiting the use of FALLOC_FL_WRITE_ZEROES to
->> only bdev or files where bdev_unmap_write_zeroes() returns true. In
->> other words, STATX_ATTR_WRITE_ZEROES_UNMAP and FALLOC_FL_WRITE_ZEROES
->> are not consistent, they are two independent features. Even if some
->> devices STATX_ATTR_WRITE_ZEROES_UNMAP are not set, users should still be
->> allowed to call fallcoate(FALLOC_FL_WRITE_ZEROES). This is because some
->> devices and drivers currently cannot reliably ascertain whether they
->> support the unmap write zero command; however, certain devices, such as
->> specific cloud storage devices, do support it. Users of these devices
->> may also wish to use FALLOC_FL_WRITE_ZEROES to expedite the zeroing
->> process.
-> 
-> What are those "cloud storage devices" where you set it reliably,
-> i.e.g what drivers?
+Hi Bhupesh,
 
-I don't have these 'cloud storage devices' now, but Ted had mentioned
-those cloud-emulated block devices such as Google's Persistent Desk or
-Amazon's Elastic Block Device in. I'm not sure if they can accurately
-report the BLK_FEAT_WRITE_ZEROES_UNMAP feature, maybe Ted can give more
-details.
+kernel test robot noticed the following build errors:
 
-https://lore.kernel.org/linux-fsdevel/20250106161732.GG1284777@mit.edu/
+[auto build test ERROR on trace/for-next]
+[also build test ERROR on tip/sched/core akpm-mm/mm-everything linus/master v6.15-rc5 next-20250508]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
->> Therefore, I think that the current point of
->> STATX_ATTR_WRITE_ZEROES_UNMAP (possibly STATX_WRITE_ZEROES_UNMAP) should
->> be to just indicate whether a bdev or file supports the unmap write zero
->> command (i.e., whether bdev_unmap_write_zeroes() returns true). If we
->> use standard SCSI and NVMe storage devices, and the
->> STATX_ATTR_WRITE_ZEROES_UNMAP attribute is set, users can be assured
->> that FALLOC_FL_WRITE_ZEROES is fast and can choose to use
->> fallocate(FALLOC_FL_WRITE_ZEROES) immediately.
-> 
-> That's breaking the abstracton again.  An attribute must say something
-> about the specific file, not about some underlying semi-related feature.
+url:    https://github.com/intel-lab-lkp/linux/commits/Bhupesh/exec-Remove-obsolete-comments/20250507-190740
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace for-next
+patch link:    https://lore.kernel.org/r/20250507110444.963779-3-bhupesh%40igalia.com
+patch subject: [PATCH v3 2/3] treewide: Switch memcpy() users of 'task->comm' to a more safer implementation
+config: x86_64-defconfig (https://download.01.org/0day-ci/archive/20250508/202505082038.A5ejhbR4-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250508/202505082038.A5ejhbR4-lkp@intel.com/reproduce)
 
-OK.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505082038.A5ejhbR4-lkp@intel.com/
 
-> 
->> Would you prefer to make STATX_ATTR_WRITE_ZEROES_UNMAP and
->> FALLOC_FL_WRITE_ZEROES consistent, which means
->> fallcoate(FALLOC_FL_WRITE_ZEROES) will return -EOPNOTSUPP if the block
->> device doesn't set STATX_ATTR_WRITE_ZEROES_UNMAP ?
-> 
-> Not sure where the block device comes from here, both of these operate
-> on a file.
+All errors (new ones prefixed by >>):
 
-I am referring to the block device on which the filesystem is mounted.
-The support status of the file is directly dependent on this block
-device.
+   In file included from include/trace/define_trace.h:119,
+                    from include/trace/events/sched.h:856,
+                    from kernel/sched/core.c:84:
+   include/trace/events/sched.h: In function 'do_trace_event_raw_event_sched_switch':
+>> include/trace/events/sched.h:245:24: error: 'struct trace_event_raw_sched_switch' has no member named 'comm'
+     245 |                 __entry->comm[TASK_COMM_LEN - 1] = '\0';
+         |                        ^~
+   include/trace/trace_events.h:427:11: note: in definition of macro '__DECLARE_EVENT_CLASS'
+     427 |         { assign; }                                                     \
+         |           ^~~~~~
+   include/trace/trace_events.h:435:23: note: in expansion of macro 'PARAMS'
+     435 |                       PARAMS(assign), PARAMS(print))                    \
+         |                       ^~~~~~
+   include/trace/trace_events.h:40:9: note: in expansion of macro 'DECLARE_EVENT_CLASS'
+      40 |         DECLARE_EVENT_CLASS(name,                              \
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
+      44 |                              PARAMS(assign),                   \
+         |                              ^~~~~~
+   include/trace/events/sched.h:224:1: note: in expansion of macro 'TRACE_EVENT'
+     224 | TRACE_EVENT(sched_switch,
+         | ^~~~~~~~~~~
+   include/trace/events/sched.h:243:9: note: in expansion of macro 'TP_fast_assign'
+     243 |         TP_fast_assign(
+         |         ^~~~~~~~~~~~~~
+   In file included from include/trace/define_trace.h:120,
+                    from include/trace/events/sched.h:856,
+                    from kernel/sched/core.c:84:
+   include/trace/events/sched.h: In function 'do_perf_trace_sched_switch':
+>> include/trace/events/sched.h:245:24: error: 'struct trace_event_raw_sched_switch' has no member named 'comm'
+     245 |                 __entry->comm[TASK_COMM_LEN - 1] = '\0';
+         |                        ^~
+   include/trace/perf.h:51:11: note: in definition of macro '__DECLARE_EVENT_CLASS'
+      51 |         { assign; }                                                     \
+         |           ^~~~~~
+   include/trace/perf.h:67:23: note: in expansion of macro 'PARAMS'
+      67 |                       PARAMS(assign), PARAMS(print))                    \
+         |                       ^~~~~~
+   include/trace/trace_events.h:40:9: note: in expansion of macro 'DECLARE_EVENT_CLASS'
+      40 |         DECLARE_EVENT_CLASS(name,                              \
+         |         ^~~~~~~~~~~~~~~~~~~
+   include/trace/trace_events.h:44:30: note: in expansion of macro 'PARAMS'
+      44 |                              PARAMS(assign),                   \
+         |                              ^~~~~~
+   include/trace/events/sched.h:224:1: note: in expansion of macro 'TRACE_EVENT'
+     224 | TRACE_EVENT(sched_switch,
+         | ^~~~~~~~~~~
+   include/trace/events/sched.h:243:9: note: in expansion of macro 'TP_fast_assign'
+     243 |         TP_fast_assign(
+         |         ^~~~~~~~~~~~~~
 
-> 
->> If so, I'd suggested we need to:
->> 1) Remove STATX_ATTR_WRITE_ZEROES_UNMAP since users can check the
->>    existence by calling fallocate(FALLOC_FL_WRITE_ZEROES) directly, this
->>    statx flag seems useless.
-> 
-> Yes, that was my inital thought.
-> 
->> 2) Make the BLK_FEAT_WRITE_ZEROES_UNMAP sysfs interface to RW, allowing
->>    users to adjust the block device's support state according to the
->>    real situation.
-> 
-> No, it's a feature and not a flag.
-> 
 
-I am a bit confused about the feature and the flag, I checked the other
-features, and it appears that features such as BLK_FEAT_ROTATIONAL allow
-to be modified, is this flexibility due to historical reasons or for the
-convenience of testing?
+vim +245 include/trace/events/sched.h
 
-Think about this again, I suppose we should keep the
-BLK_FEAT_WRITE_ZEROES_UNMAP as read-only and add a new flag,
-BLK_FALG_WRITE_ZEROES_UNMAP_DISABLED, to disable the
-FALLOC_FL_WRITE_ZEROES. Since the Write Zeroes does not guarantee
-performance, and some devices may claim to support **UNMAP** Write Zeroes
-but exhibit extremely slow write-zeroes speeds. Users may want be able to
-disable it. Thoughts？
+   225	
+   226		TP_PROTO(bool preempt,
+   227			 struct task_struct *prev,
+   228			 struct task_struct *next,
+   229			 unsigned int prev_state),
+   230	
+   231		TP_ARGS(preempt, prev, next, prev_state),
+   232	
+   233		TP_STRUCT__entry(
+   234			__array(	char,	prev_comm,	TASK_COMM_LEN	)
+   235			__field(	pid_t,	prev_pid			)
+   236			__field(	int,	prev_prio			)
+   237			__field(	long,	prev_state			)
+   238			__array(	char,	next_comm,	TASK_COMM_LEN	)
+   239			__field(	pid_t,	next_pid			)
+   240			__field(	int,	next_prio			)
+   241		),
+   242	
+   243		TP_fast_assign(
+   244			memcpy(__entry->prev_comm, prev->comm, TASK_COMM_LEN);
+ > 245			__entry->comm[TASK_COMM_LEN - 1] = '\0';
+   246			__entry->prev_pid	= prev->pid;
+   247			__entry->prev_prio	= prev->prio;
+   248			__entry->prev_state	= __trace_sched_switch_state(preempt, prev_state, prev);
+   249			memcpy(__entry->next_comm, next->comm, TASK_COMM_LEN);
+   250			__entry->next_comm[TASK_COMM_LEN - 1] = '\0';
+   251			__entry->next_pid	= next->pid;
+   252			__entry->next_prio	= next->prio;
+   253			/* XXX SCHED_DEADLINE */
+   254		),
+   255	
+   256		TP_printk("prev_comm=%s prev_pid=%d prev_prio=%d prev_state=%s%s ==> next_comm=%s next_pid=%d next_prio=%d",
+   257			__entry->prev_comm, __entry->prev_pid, __entry->prev_prio,
+   258	
+   259			(__entry->prev_state & (TASK_REPORT_MAX - 1)) ?
+   260			  __print_flags(__entry->prev_state & (TASK_REPORT_MAX - 1), "|",
+   261					{ TASK_INTERRUPTIBLE, "S" },
+   262					{ TASK_UNINTERRUPTIBLE, "D" },
+   263					{ __TASK_STOPPED, "T" },
+   264					{ __TASK_TRACED, "t" },
+   265					{ EXIT_DEAD, "X" },
+   266					{ EXIT_ZOMBIE, "Z" },
+   267					{ TASK_PARKED, "P" },
+   268					{ TASK_DEAD, "I" }) :
+   269			  "R",
+   270	
+   271			__entry->prev_state & TASK_REPORT_MAX ? "+" : "",
+   272			__entry->next_comm, __entry->next_pid, __entry->next_prio)
+   273	);
+   274	
 
-Thanks,
-Yi.
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
