@@ -1,226 +1,303 @@
-Return-Path: <linux-fsdevel+bounces-48502-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48503-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C9BFAB03BD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 21:36:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2421CAB03C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 21:38:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3CDD1C40DEA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 19:36:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B1C34C6945
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 May 2025 19:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D26528A713;
-	Thu,  8 May 2025 19:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963B928A721;
+	Thu,  8 May 2025 19:38:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ATzuoJPC"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gdjXyihG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2071.outbound.protection.outlook.com [40.107.92.71])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B3721D581
-	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 19:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746732955; cv=fail; b=On+mWpAcC2QCoaVd46pdY5dCPS0rAoymClMxbUQzhVD82XICYUCzsRIZ/YHomAtA/e3KBFZIbgF1NN/EXSJ3SiHdGNuZdIM4/zZqXS0N/zo84szn/P84Xxj6fL2naj0dSJXBycEil5+suUe6b/Lk/z5FQfMJwlwqQg97rPAJXkc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746732955; c=relaxed/simple;
-	bh=bpyyLxlQc+kUKXaRZmNmmDJMrhLoFmnM3sU12bNS8go=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=VrZ6PmpF8XNhKWFhCHR7Jzw9sYa0c3PIP7idRFx+msPORfHt0+eztWQ0Z9k96W1Y97Oee2xYeclQSsvt9muEJZqvSm9/F1Vtxu+BIGIIaUt82rm+I9uFlpDMdCDzBd1vL2WxtDjWsW79FK5ou10l6yt6fH4UVRK5Tp5eTHig5O4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ATzuoJPC; arc=fail smtp.client-ip=40.107.92.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=urPUr8nWjN4t/S4zM5Xw2/ENwVqrIMmfplOsMKMYUnJ/FAmbXev5IPWVCPpqweTlcmDnSdwNgOkKLGkuwmqsnCklFt7Oiy+ayyJbtrV8A26pFRsKo5JHY1f3bK7/Wi+ySmfVHV4MT4JWtFJac/PzsfTfLPEZQH0ofoQ08JQc1wv8zwq79hivGOn5VffYWsAQ27Ef0QIMcBofRBssAIEfp9NDVPY2+IllqbGh6nMjMoQuW8T52eCthV6wGWyxur4jflLWy5z0s8oyndPoqoIQI5+H0AYXt4uVMwA+4J7TTJIk0dZZKeYHCBvrwKJFxoKNwaVbmXED3XS+avnx5qVW5Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7JK0kf5uNivKLroQ6xPXiHS4CP6paCaa9EliVbpt590=;
- b=SsCsfQytoNb3KYMnQg1R1xRTdBE+3xpoDrYG7X6wsVQBUNVFaZ6iQhfG4kKNKoRPJbehIh4Qxl+oS4CsW5PcMZYvXyT8K0M23oZGDqUDdmpgsiLZFpgBg7QMAgUn7zirwf0/tGCdk/9U1l/Sgtt6eHyzjMjU9pTWOQvbahN3HPwKSy052n7LoVBP1XubrP4/zfGDUBpdVR9xme+aPJKdN935+Wnjx+Tbp2iKlg7q5OY3S6SDnMMjZV+l+tTN60D5IYtjMgpatIgm/1U+hAmTNmE7iuPgyYZOHZqsGLmU0T5ZLYJg5cHtoQLVWmTYTxu0jTiP3dn1G4iYcmOf8EPXTg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7JK0kf5uNivKLroQ6xPXiHS4CP6paCaa9EliVbpt590=;
- b=ATzuoJPCuAKMk3NhCoTZVllypuAh2oJ897Jwecnn4YSSLzS8W5jhBOWZy7dn6gYaobB+WlhoMz+sEud1PZa2HRohpWQz0c7nNrEkkcZpgXj9emA+gnpLCvD4qhJ6PCFUJAjqdfBvNViM2LAsBnx2uGBthesj/lSmEjhRVBBNisLzWrXZq/IUsB+Zo74QxB64R5h7wjo497gEQse+y2Gy4yJnFtqcuXfAAxubFsQ9ZH6HICs1oL98JJZ2pATiDbUJMrRqGDd1Ov/yJNxBJ8LKS+hlmy1OrmGT8xCa1VZeG9UO7VhI/PZ27fCHSx7GtKQ5iE8t7vUGKKrOKpOLF+AT/g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com (2603:10b6:408:14f::7)
- by DM6PR12MB4139.namprd12.prod.outlook.com (2603:10b6:5:214::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8678.31; Thu, 8 May
- 2025 19:35:46 +0000
-Received: from LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4]) by LV2PR12MB5968.namprd12.prod.outlook.com
- ([fe80::e6dd:1206:6677:f9c4%7]) with mapi id 15.20.8722.021; Thu, 8 May 2025
- 19:35:45 +0000
-Message-ID: <a5f97646-379c-4146-9dd3-93dab9f6ba91@nvidia.com>
-Date: Thu, 8 May 2025 12:35:43 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] selftests/filesystems: create get_unique_mnt_id()
- helper
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DE0722256E
+	for <linux-fsdevel@vger.kernel.org>; Thu,  8 May 2025 19:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746733091; cv=none; b=qgQmebF3fLabtKlSJdH6i16aHCkzitP0SNtSDMf4vvW/B4x7NCWaC8JcQ4nnJ4PoWQnPZYsp58DGuQNhGtMeRi/4yaAxvFmCTd633yvuo1tNsyarDKmemY/YOUMPvgzhGDP4Nu6arxDLjqVfHcfxdPqP/q7jS49MTvEUJSMVAik=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746733091; c=relaxed/simple;
+	bh=ZwmwOvYQvbf69QSWxLfFXpw2Lk1uXCmE7XS/b+sH8+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dyFGIXm+5PdEA6cWeOK2jTQLAv+kBcSYInkuvAdfjnCgtn2VGpUSxvDamUDto2Q16sR+JfTcXboPDBzlRqQc/I+5Gh9kzUafuBjVXR0z2FgqsN1vD6IV68p6I+nlrHlHpWD94wDPoGkZ0+FXRXcxKnjFkpFCSA/9WGqMIKmk/7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gdjXyihG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1746733088;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9jv++P7xMSOcCEcOtqfXv7rlc0xsLWo70WZEwvo7nUo=;
+	b=gdjXyihGPNNyG+z+ueoDbF4LIfOKLMyeTACu2XGw64hu53Xo2PfSQKjHY3DA2XfoYx8gCn
+	NNx6RtSso8Tr/VTl+EO6KmqEZcVWJdfESOHgLNL9UnFJCPBmBf40uE7h7OO2uReJYlVK8X
+	83b2Tt53tGdtoiqhC5wB9ssJbeFhm1Y=
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
+ [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-197-yeNm_KQyP1esy0Bs21zhYA-1; Thu, 08 May 2025 15:38:06 -0400
+X-MC-Unique: yeNm_KQyP1esy0Bs21zhYA-1
+X-Mimecast-MFC-AGG-ID: yeNm_KQyP1esy0Bs21zhYA_1746733086
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-22fba10f55eso6297045ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 May 2025 12:38:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1746733086; x=1747337886;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9jv++P7xMSOcCEcOtqfXv7rlc0xsLWo70WZEwvo7nUo=;
+        b=To82kOnupGF4E5/syDNJ6tmkyywHl1ktpjF+urQQ9hXCzQh+8GI2qfPMAtEouGsahF
+         /YNDu/Q5nxSJXU7r+BoxAOE7feqjMDiOaY71gzLjkZrRTpfxqj6U6wUHl4HuQU8WP4M1
+         q/yU36bgE+OJVXOoz6lgwtBp69WSudgqzVinL2ugCB3kfJfsr23ZmNiG6XkswqPaOFTW
+         A4alTWyvNZuznrNLFLsJP9l6TDHoAgaZN3l1e/vaRGUpmfCKhV2sMPf64CqWV8BwtzEm
+         Y5p48RjGcV9ogPcmwPp3iV0D/HhcuYRPzenydCp5p/v+wOPoPywfb7qDuIgnqr5dV4VB
+         THwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfLPsMQXXHTmKNcsUrVhmEFejN41KtXzvvjUO6CTfsV3D05yWQqEy1RV7snQv2d2UviHgDuFa3j3Z/EsmU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2ZTaGCTCX32mfsD79TCam/BO/V3jPKfTJNVIUTlF+W7lsR+g3
+	Ky77aca5LF3g8G4WgmlXrkwOtmPl7wHCtsRJqC9Hr9pYHpHN1+aMfiRPn2Ly1o4uHcSBvqpyVNR
+	hzQefvetcGUloH1vuh3mFisGEgq3L7TYU7ZXf1uAZxcZsL5aZmyohF6k+bVmX+H4=
+X-Gm-Gg: ASbGnctxRGQlKh0ShskrgrqxfqLbYaV44fF4mxM75jWOSFxOW4XYCU17Zgr+xsogb5X
+	Dw3V95M2Fb8LoJ1vhfrw0Rgw4u+CtzeB9LAg+bsOvmCjk825P9x61HCcS7bOk/pbZ0/Fdm8s7Ip
+	VEtCRdapWXpg7tyg8THyBNgznrEuLtVEgFQXU7v3MgcutdDtJIDxqzvNIwPoJyZoeYf7z6AZA1x
+	qUHhiXjbw6Ndv3lPMph1PwONv+5PTiRNcfaC0zf/3OdMDiEZX3gxReVaMBkcSRgy0UNWDNhtpo1
+	Itu4x18mPKlRhvurZaPEgY9bPNmFWm5ZKCDTqdx1xen5xoui7yHg
+X-Received: by 2002:a17:903:2349:b0:224:10a2:cae7 with SMTP id d9443c01a7336-22fc8e95bf0mr8986735ad.40.1746733085714;
+        Thu, 08 May 2025 12:38:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFhv3wp38xq2cFaGqXutRUEqQ5bZsD/2Df/pvxLX3UuYRi6ZR4xcX/7W0xqUwgAk5Asg2aD+A==
+X-Received: by 2002:a17:903:2349:b0:224:10a2:cae7 with SMTP id d9443c01a7336-22fc8e95bf0mr8986405ad.40.1746733085361;
+        Thu, 08 May 2025 12:38:05 -0700 (PDT)
+Received: from dell-per750-06-vm-08.rhts.eng.pek2.redhat.com ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc773e7f8sm3396445ad.60.2025.05.08.12.38.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 May 2025 12:38:05 -0700 (PDT)
+Date: Fri, 9 May 2025 03:38:00 +0800
+From: Zorro Lang <zlang@redhat.com>
 To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Shuah Khan <skhan@linuxfoundation.org>, linux-fsdevel@vger.kernel.org,
- Miklos Szeredi <miklos@szeredi.hu>
-References: <20250507204302.460913-1-amir73il@gmail.com>
- <20250507204302.460913-5-amir73il@gmail.com>
- <3d19e405-314d-4a8f-9e89-e62b071c3778@nvidia.com>
- <CAOQ4uxidUg+C=+_zTx+E58V4KH9-sDchsWKrMJn-g2WeoXV0wg@mail.gmail.com>
-Content-Language: en-US
-From: John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <CAOQ4uxidUg+C=+_zTx+E58V4KH9-sDchsWKrMJn-g2WeoXV0wg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: BY5PR16CA0007.namprd16.prod.outlook.com
- (2603:10b6:a03:1a0::20) To LV2PR12MB5968.namprd12.prod.outlook.com
- (2603:10b6:408:14f::7)
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>, fstests@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] open_by_handle: add a test for connectable file
+ handles
+Message-ID: <20250508193800.q2s4twfldlctre34@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
+References: <20250409115220.1911467-1-amir73il@gmail.com>
+ <20250409115220.1911467-3-amir73il@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5968:EE_|DM6PR12MB4139:EE_
-X-MS-Office365-Filtering-Correlation-Id: fc12567a-7f73-41ba-5c6c-08dd8e6786e4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a1R3NFVHNlJ3dGFWYWlFK0U3RnppYlFvcEVyTmVIMm84V3FjbFd5V3Biekt1?=
- =?utf-8?B?ODhEVXg1T1BiZkh2eFU5UzczVDRqSE5RL2VMdkRHZTRWRDQzQkFNMUxBZWli?=
- =?utf-8?B?Yjl5Q0I1TTQ0bkRld0xhVThwNyt4eGc4OGlER1djWXBKWCtpQUlMTGV5QVZl?=
- =?utf-8?B?VCtJUHE1ZUp4L0Nnb1hhVGFkdVh6OFQxZzJ3ZEpmUEhSSi9Ca3c1cVJvTjJt?=
- =?utf-8?B?aGRTbjlXeElGMkpzZjBnd2M5ZzBjY1VMenBtdEM5YXNmeVpnSW9iZHRkTnVN?=
- =?utf-8?B?Y2JIYzJyeUIzaDhlNGNtQWFpc2UvUWd4aGpWR3VKL09tZ21hMng1dGs1dWNU?=
- =?utf-8?B?dDJLVEpub01td1hBSEJIZjBOK2FNR1gwaE9qK0FNM1Bib2lRZ2V4R3d2STd5?=
- =?utf-8?B?VDgyakdtNFFUbEVNSy9UZ05YM3Z1Q0lrcklnNE5Yb0haR3FSUVNTMXcrYmU3?=
- =?utf-8?B?Zi9ESmYzRndMM2h3bUZkQW5uM21CckIxM2wwbDVWVXgxUmtreEd4Sk1lYW05?=
- =?utf-8?B?OTUvSWYwaTc1bXdrNDZrM24rUDAzZ3MvRVZmcVBuZ2NyVU9LaTR3ZldtUnZX?=
- =?utf-8?B?R3c4R0dPQ0IwSGZIQTZOeDJBOEVzMlVucGh4QVhpbHdXajVsc1BnMEtJQ2Fq?=
- =?utf-8?B?QmcraE9iQy9rdmVKK20wSGN6NFBHeDNXNWdUQWg2WlBoUVNUbG85WFNkbDVN?=
- =?utf-8?B?b21jTnNOKy9tZjVybzI3Ym90bW90K281TXozSFVMSzFRSGpJZElaS1VhRTVK?=
- =?utf-8?B?NW5PblU2alJ5cmdua1VZYUpEYnQxaDNJM3ZJTjVFcUJ1UlFCdFpTbExCK1ZL?=
- =?utf-8?B?ZlhqM0kyakQwSGVmUUxaK3RNb0NhK3Y1RGdZVHY5ZFVvMnEwRWRndlN5dURL?=
- =?utf-8?B?RzZFS2VQK3FGTG8vVTdDV1JwTTRZa29CMEJNbjFHWWZoS05ENGJmM2s4eGZC?=
- =?utf-8?B?SGpsTEdrNFBFQUtxZEtjT3plSFpvODRvREZEWnVsc2RUV1ZwcFk0TFA4anZa?=
- =?utf-8?B?dzlvNUFWcmhacE4rS0pFaWJZVUh5WUNPTERrMGxSczdQMjFpOVJ6OW4vaW12?=
- =?utf-8?B?TXYvK3BVY2FBM29PdFlFUUFFR0d5L3pzSGQ3UmM0SHhMSExkQlEyVjc0Y3l3?=
- =?utf-8?B?SG5nMVdDb3lJNm84c1RTKzdIelBkZXY0T0lYMzBHTzM2cGVTMXo3WmREQzlB?=
- =?utf-8?B?K1Q2bkxjU0hoUDRsekdFaHlLR1MxUkZJVWpFeEhaNTdmZDZmcVlJenhHS2lv?=
- =?utf-8?B?OWNmZU40amJ6TzBUS3NJS3cwbXhrZ0hzZ0VhOHhtWDA4SWUvZ1Z2Nmw1bVZ3?=
- =?utf-8?B?NTFrKzdTY0R4QUJOSHU1dnBmWVllYVRwUWIyZGo4MXlqR3puZG1oaGlGRXc3?=
- =?utf-8?B?bUZTRjNLVktlRDlMT1c1d2h1ck5kWStCZENHRFV4cmtRRlNhRDd2R0hzMitE?=
- =?utf-8?B?NjZOZ2tYYWFLZGZDdnZHMWF4a1Z2K1M2ZDhWWEFNaEFvdU13SmlJckt6OVh3?=
- =?utf-8?B?TWdFWjRPWTNWUUozTmIrdCtva1hRajZXMDEyTElvWVdQRDJJK29MVW9Kbm4w?=
- =?utf-8?B?QXpJeFVKVEpJQ1VtS0xNTEZGMW1Fb2JiMmFQRzZaTzQ5T3pJY0kxdzJPdTV1?=
- =?utf-8?B?bkRCTXJMalFSbU1EZGxlaExkVmx3YjM1clhUdHJKSWk0SVFSaXpRQ3dFR1cz?=
- =?utf-8?B?UVEyTUc0Ris1eEsvTWJQcm84Z25hZDRMYjFseGdHeVhUN2Nsa2swYnFRZUM4?=
- =?utf-8?B?cW52Mk50bkRFZ3dSZ1VEQ2JXSnpEaHZ3VDlkNTVBWUxZNWszN0dFUnd2WHpq?=
- =?utf-8?B?SzdnSGhFMTRRZ0pqOHNCM1ZYZ0QzNmY0NVNsaUlTSlFKVTRzMTdpdTF4YklO?=
- =?utf-8?B?a203R01MbkVzMC9ZbS9OTkE5SlordUxOUVVYUjN3T1Y2TXc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5968.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OGxQTW1iYzJISldmbmdvSXJBVTM2UFdHQTRBZUcvem1GMS9Ca1N5NHVYK3lt?=
- =?utf-8?B?WUlXR2lrWGJqN21uSU90QmtjeS9zRlV6Qk9yNEhuSFVPcnB0aXpSVlNmVE1L?=
- =?utf-8?B?VWVsMmFTbzdSSjdWMWdvYS9FYWFHUzlma0tILzFhZlNIK2lzd1ZHUWZUZ0l5?=
- =?utf-8?B?SEFCOWQwSnJhWitxajJuajZ2MUpaZXppaHBOemQ2VU0zVWZxLzd2MGZHd1Fq?=
- =?utf-8?B?Y3UrVHl2VXhDK2lhVWNrMXlHcngvOHlzRTc3UE5xaTVwenNBOGtpcnFWRVhW?=
- =?utf-8?B?YThOd2Vpa2Qyb2xFb1F6TkJTV2hYUHJsVDhmY1NqY3NhTzdwUSs2QXlJTFJo?=
- =?utf-8?B?YzhML2JDNmpvWUtqTHUybVkyT3NBM2szSU1sZXhlTzFRVktJenBsa3p0UEoy?=
- =?utf-8?B?ZTJiT0ZCVzZyRWJyZEJ1QUZzdE13TGlic3dmY2oxbm45SUF4RGRXU1l1eXhG?=
- =?utf-8?B?Rlh6UVBWWURZS2RrUlYyNzhsKzBtamFmdTRKQTh0Mzl1Ui9SQjBTa054aE9i?=
- =?utf-8?B?dlEyeVRzUnpSM0M3ME1qRXJqTGtpM0NOTVZ4WXhDYmdnd2JsbkdpbWFxbjR4?=
- =?utf-8?B?SUZkMS9mRnVVd3AwTStYeWFITXhUL1pLVnVNbmsxQmxybFFNWGhSM2hweDJ4?=
- =?utf-8?B?N05HdlVJV2twRy9uQnJtTTBnQkhnMnVEenhzWXVFTUNFQ1ljLzAxRlA1Y1ky?=
- =?utf-8?B?K2p4TEJxTS9UTkNSd0lDSm9QZE9ZU2ZqMkMzb2NmSjBIdnVURTBsZENwdTN2?=
- =?utf-8?B?eXE2QlAxcUJHcXRQQ0pSV2d5dDV5VytqUENieW9tY3FHQkZENnpjbGw3Wlo1?=
- =?utf-8?B?VFAwRzB1cTFQNC9zNUk4Z0tEZGc0UHFzOHdvL0IySzJqUTdHR1FTbDdTUHRT?=
- =?utf-8?B?dS9qUUtzNEd6M0VKS3ZQNkNXOW9TZkc0cjloQkVCSWJVV3JMdkoyRkFHZThQ?=
- =?utf-8?B?V0YwUlNqWU9MNlN5eUR6WUZ6NVJVS2twV0R5UzZCaTBiZTAydnNvNGFqTkda?=
- =?utf-8?B?bEVURlNpbGZuK3ZPTlhIdFV4UGtyalB5ZXNIVXdwYTdibnM3RkNsY0M4TlhH?=
- =?utf-8?B?OXRkWXE1TThSeXNCcTF5YU5hK0NYUVpaUkY2NnZtVjVOeE9tNUVLaEhuODdu?=
- =?utf-8?B?OU5JYktOWFY0NFlDS2xHM2tEajhzNC9xYkFuUURDNmphaWhKU3kwc1pRNTcz?=
- =?utf-8?B?VDVKV250Mkx3dU5IemtTcnl6Q1NFYmVHanFFazNqZ08zK3lRUGNDVzVHR3RX?=
- =?utf-8?B?VWxoWnlmK1VxclpBdVBQd0cyNXlwd0o0dGhQNWZEYXZYdkF4Uml5eWR0bGdN?=
- =?utf-8?B?bVMwVDBSVm9mRlpRTWhlVFRkRytObzRXeVlpWDE0eS9VK0tjc0QrQzJaZFNU?=
- =?utf-8?B?bGtzMFJ3UEgwYkNrRlU3TGh4YTF3OWQwbnMxZlhtaUNHWjFhK0pZZjRoajlp?=
- =?utf-8?B?OXBJcENhMWRRWi9nUDhqbW5sSkdtOWxoSnl5Vm1rVzJxYUpIK0NGanJFNWJp?=
- =?utf-8?B?SU82M1hvWjBkbXNrcTVtUjc5VSs2K0VtUHRORnFCeUdtR0xVNFFueGphS01l?=
- =?utf-8?B?cGRSN3EwMTFWdlZDUzNZZ2JTekVuN2ZKMFdkbFMzdnluWXF6T3JIVjJaZW9w?=
- =?utf-8?B?RHRiTHI5MVJzUUxPM0VaWnZSbktVU25HZVpaRG16S3FjZmtnMzE4alQ2UW1O?=
- =?utf-8?B?cEdDZDFFWkNTZWhKMjc5azlnVm5hWDJSTDBRU2hTQWw4WmlCNDdadU56VzB5?=
- =?utf-8?B?Y0FVVjFIWStGTHNYaE1zTmg0TVRZdXZ3WU95RWh6QTgrMmc5clBsY1VJdjdv?=
- =?utf-8?B?WU5VbGlsWU5rUk02alBpK1hoVC8rNC9pRmYrMEFKRUltbGgrU3JWTDhlZTVq?=
- =?utf-8?B?bTJlUVhxSTV5b2djbDd6ZzBqdUYvVGpIZ3oxc05CTVB2czFyUnl4NXNMdE10?=
- =?utf-8?B?SUxwaDYwdk0wZkRDSVU1eENkc3RHdVlGYS81QVo0NVBBeURuVlpZSUQrQzN2?=
- =?utf-8?B?TjFaYldSbTF5bk8rNXVabWFXR3Zpa0VKYXFkekEvbnFML0dkTkgwTjEwVDlP?=
- =?utf-8?B?Q29zYjJHNWtnRlRodGNXZGdsRDdiWUdjVjRrYURUK1VhdTF6NUZCSUdCVkhR?=
- =?utf-8?Q?qDnkuR8YZom0qiNTfhRNM9XZ5?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc12567a-7f73-41ba-5c6c-08dd8e6786e4
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5968.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 May 2025 19:35:45.4197
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aOYPxyoAs8HgdVCS5n59LXLBedRL/qluwyAkol1kp1duOLJoKBv4LVBD58OllwghlrTKKHcJIaiLsaQ1L+24sQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4139
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250409115220.1911467-3-amir73il@gmail.com>
 
-On 5/8/25 4:44 AM, Amir Goldstein wrote:
-> On Thu, May 8, 2025 at 9:43 AM John Hubbard <jhubbard@nvidia.com> wrote:
->> On 5/7/25 1:43 PM, Amir Goldstein wrote:
-...
->>>   CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
->>> +LDLIBS += -lcap
->>
->> This addition of -lcap goes completely unmentioned in the commit log.
->> I'm guessing you are fixing things up to build, so this definitely
->> deserves an explanation there.
->>
+On Wed, Apr 09, 2025 at 01:52:20PM +0200, Amir Goldstein wrote:
+> This is a variant of generic/477 with connectable file handles.
+> This test uses load and store of file handles from a temp file to test
+> decoding connectable file handles after cycle mount and after renames.
+> Decoding connectable file handles after being moved to a new parent
+> is expected to fail.
 > 
-> This is needed because we are linking with utils.c code.
-> See below.
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> ---
 
-I'll look into this.
+Hi Amir,
 
-> I guess we could have built a filesystems selftests utils library,
-> but that seems like an operkill?
+This test case fails on some filesystems, e.g. nfs [1] and tmpfs [2].
+Is this as your expected?
 
-Definitely maximum overkill, and that's not where I was going, agreed. :)
+Thanks,
+Zorro
 
-Below...
+[1]
+generic/777 fails on nfs:
 
-...
->>> +$(OUTPUT)/statmount_test_ns: ../utils.c
->>
->> This is surprising: a new Makefile target, without removing an old one.
->> And it's still listed in TEST_GEN_PROGS...
->>
->> Why did you feel the need to add this target?
+--- /dev/fd/63	2025-05-07 02:44:24.150560533 -0400
++++ generic/777.out.bad	2025-05-07 02:44:23.999734558 -0400
+@@ -1,7 +1,37 @@
+ QA output created by 777
+ test_file_handles after cycle mount
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000000) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000001) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000002) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000003) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000004) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000005) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000006) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000007) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000008) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000009) returned 116 incorrectly on a linked file!
+ test_file_handles after rename parent
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000000) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000001) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000002) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000003) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000004) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000005) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000006) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000007) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000008) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000009) returned 116 incorrectly on a linked file!
+ test_file_handles after rename grandparent
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000000) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000001) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000002) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000003) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000004) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000005) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000006) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000007) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000008) returned 116 incorrectly on a linked file!
++open_by_handle(/mnt/fstests/TEST_DIR/nfs-client/file000009) returned 116 incorrectly on a linked file!
+ test_file_handles after move to new parent
+ open_by_handle(TEST_DIR/file000000) returned 116 incorrectly on a linked file!
+ open_by_handle(TEST_DIR/file000001) returned 116 incorrectly on a linked file!
+
+[2]
+generic/777 fails on tmpfs:
+
+--- /dev/fd/63	2025-05-07 07:53:26.265453903 -0400
++++ generic/777.out.bad	2025-05-07 07:53:25.536434660 -0400
+@@ -3,13 +3,3 @@
+ test_file_handles after rename parent
+ test_file_handles after rename grandparent
+ test_file_handles after move to new parent
+-open_by_handle(TEST_DIR/file000000) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000001) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000002) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000003) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000004) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000005) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000006) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000007) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000008) returned 116 incorrectly on a linked file!
+-open_by_handle(TEST_DIR/file000009) returned 116 incorrectly on a linked file!
+
+
+>  tests/generic/777     | 79 +++++++++++++++++++++++++++++++++++++++++++
+>  tests/generic/777.out | 15 ++++++++
+>  2 files changed, 94 insertions(+)
+>  create mode 100755 tests/generic/777
+>  create mode 100644 tests/generic/777.out
 > 
-> I am not a makefile expert, but this states that statmount_test_ns
-> needs to link with utils.c code.
+> diff --git a/tests/generic/777 b/tests/generic/777
+> new file mode 100755
+> index 00000000..52a461c3
+> --- /dev/null
+> +++ b/tests/generic/777
+> @@ -0,0 +1,79 @@
+> +#! /bin/bash
+> +# SPDX-License-Identifier: GPL-2.0
+> +# Copyright (C) 2018-2025 CTERA Networks. All Rights Reserved.
+> +#
+> +# FS QA Test No. 777
+> +#
+> +# Check open by connectable file handle after cycle mount.
+> +#
+> +# This is a variant of test 477 with connectable file handles.
+> +# This test uses load and store of file handles from a temp file to test
+> +# decoding file handles after cycle mount and after directory renames.
+> +# Decoding connectable file handles after being moved to a new parent
+> +# is expected to fail.
+> +#
+> +. ./common/preamble
+> +_begin_fstest auto quick exportfs
+> +
+> +# Import common functions.
+> +. ./common/filter
+> +
+> +
+> +# Modify as appropriate.
+> +_require_test
+> +# Require connectable file handles support
+> +_require_open_by_handle -N
+> +
+> +NUMFILES=10
+> +testroot=$TEST_DIR/$seq-dir
+> +testdir=$testroot/testdir
+> +
+> +# Create test dir and test files, encode connectable file handles and store to tmp file
+> +create_test_files()
+> +{
+> +	rm -rf $testdir
+> +	mkdir -p $testdir
+> +	$here/src/open_by_handle -N -cwp -o $tmp.handles_file $testdir $NUMFILES
+> +}
+> +
+> +# Decode connectable file handles loaded from tmp file
+> +test_file_handles()
+> +{
+> +	local opt=$1
+> +	local when=$2
+> +
+> +	echo test_file_handles after $when
+> +	$here/src/open_by_handle $opt -i $tmp.handles_file $TEST_DIR $NUMFILES
+> +}
+> +
+> +# Decode file handles of files/dir after cycle mount
+> +create_test_files
+> +_test_cycle_mount
+> +test_file_handles -rp "cycle mount"
+> +
+> +# Decode file handles of files/dir after rename of parent and cycle mount
+> +create_test_files $testdir
+> +rm -rf $testdir.renamed
+> +mv $testdir $testdir.renamed/
+> +_test_cycle_mount
+> +test_file_handles -rp "rename parent"
+> +
+> +# Decode file handles of files/dir after rename of grandparent and cycle mount
+> +create_test_files $testdir
+> +rm -rf $testroot.renamed
+> +mv $testroot $testroot.renamed/
+> +_test_cycle_mount
+> +test_file_handles -rp "rename grandparent"
+> +
+> +# Decode file handles of files/dir after move to new parent and cycle mount
+> +# This is expected to fail because the conectable file handle encodes the
+> +# old parent.
+> +create_test_files $testdir
+> +rm -rf $testdir.new
+> +mkdir -p $testdir.new
+> +mv $testdir/* $testdir.new/
+> +_test_cycle_mount
+> +test_file_handles -r "move to new parent" | _filter_test_dir
+> +
+> +status=0
+> +exit
+> diff --git a/tests/generic/777.out b/tests/generic/777.out
+> new file mode 100644
+> index 00000000..648c480c
+> --- /dev/null
+> +++ b/tests/generic/777.out
+> @@ -0,0 +1,15 @@
+> +QA output created by 777
+> +test_file_handles after cycle mount
+> +test_file_handles after rename parent
+> +test_file_handles after rename grandparent
+> +test_file_handles after move to new parent
+> +open_by_handle(TEST_DIR/file000000) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000001) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000002) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000003) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000004) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000005) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000006) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000007) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000008) returned 116 incorrectly on a linked file!
+> +open_by_handle(TEST_DIR/file000009) returned 116 incorrectly on a linked file!
+> -- 
+> 2.34.1
 > 
-> I copied it from overlayfs/Makefile.
-> 
-> Is there a different way to express this build dependency?
-> 
-
-Yes, but first I need to reload the kselftest build story back into
-my head. I *almost* remember the answer offhand, but not quite! I'll
-pull down your branch, just a sec.
-
-thanks,
--- 
-John Hubbard
 
 
