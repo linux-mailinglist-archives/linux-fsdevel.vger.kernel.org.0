@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-48534-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48533-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BAF9AB0AA5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 08:34:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9438DAB0AA1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 08:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97DE24E77FF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 06:34:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14401B62E38
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 06:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA9126B958;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B33126B951;
 	Fri,  9 May 2025 06:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S9ny6bHb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rv6NSuk4"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9E12238D3A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D3E2746C;
 	Fri,  9 May 2025 06:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746772456; cv=none; b=SqAYwrVfe6nnsWYeEcXtvSOfOWdVYt7sIaA9MovsZukriwrihajlx+LL3eo1VjfiCJ+8T9lpg0ZW0IfsQ6/jFDPujix+yihmK2XnFHMoXX+bB6+1uox1t8CU9/fi/Kx8k1yehqFmED13D+mNFAcGZQkV2m48fayzsb8zd+SLYcc=
+	t=1746772456; cv=none; b=MKnIQWlgVAzPi688teYpA3nvuR07ANXGvUbvUiCwyA8N2XjpCYxW4rtb+LQ7libV5BOi/VmztU2AXrWE1pmZZzkMgkQ5zhS3RDCJnNIZPUUhAauPDrJwGxUEL0cNBO1tntldTBIkiaD7Zopvm7eCWUE5LrNYXjnVcl8rC2KhQ0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746772456; c=relaxed/simple;
-	bh=WL7UUCkIaxd70i0yTLn1OxmFS6Mp12a6aWHS71LWZB4=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QOZvUovbPlPBerPAaHrEKfXpNrARwHV/JaEfRPdFKklkf9xuYPbIsfdbGIDIffmi81l/seXoQnC5zXcIsNrsfluzMBut28TAf/nMCbXZKngEak74hqVMm675SsjOg1ng9Cml4pOu345Cg5giiMQbC5VxEVbHrywrxkxE/qz2Z80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S9ny6bHb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6CF52C4CEE4;
+	bh=v/JeCC0zei40yfy+D9huwYbkieCaFfFFzax9gBj3owU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qziWuYx2RbHmeqfMcBDKvCyHx5KAgerk3qpZCpCYT080EhFSdLEXBD4lXSrgSQ1cH8WUmxE6d4HrtBtPc1B7cGBW80TLrI/zTav6c5WVet/lPOy4Qr7jXO2Y4i1SiEBNfmvlRd1c1bcgJsIs4Iy451Q0xHQjfNcZVPuFZhDX7RY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rv6NSuk4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 775E0C4CEE9;
 	Fri,  9 May 2025 06:34:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746772455;
-	bh=WL7UUCkIaxd70i0yTLn1OxmFS6Mp12a6aWHS71LWZB4=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=S9ny6bHbziB3c2KJb4BK/SHl1cX6cEoQSCh44WPmSKoLLbtkEpu6d6sEQYotQL28r
-	 9Wq1n5MBGFzp+EMbw4uByh6DaYG1U+arHnMXsf33s5Lm3nIiel5KyomBl7/5TxBzZp
-	 xE40gRNA+jYH/ePH0E3BZix1XNpnQvwV2NnzoJjoivpEAiuW9Fqn27Uc1VKoogIvq6
-	 CxUljyoc+qqvM1ILWIgML4SgPh0cVVnC2l+QvGtzc+EURpwkHmV/WJKu1iJPkCPt/N
-	 Hsdp3sMNiGdkYWyhHe7VH2b7kLbp71H6T1QjgU5blcfUvqpm5Ph89Om9WzSdEcJBSE
-	 LGi0i8QyHlbgw==
+	bh=v/JeCC0zei40yfy+D9huwYbkieCaFfFFzax9gBj3owU=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=rv6NSuk4adnrMXKq+VlDyhZn9nIJF1tdVBwNBO7diVh716ZmcF4wW64JfJzzPwrlr
+	 f28X63vpY2BoaECUEP6ggbK7h4I/tKR6meSlz8S07Wddp29hs5Ajtgrgm4Ril/lexg
+	 nAFPy35r9zFhH1KTPwRp680UnqqKM2UMuAVkLVS/z7cHzbbARKKx2OCFagI1WyzJRL
+	 7DS2f/GbA8xsQA/KtcSd0Fv92xy2vDUIpZbHBP6Vwkn0XM/nxf2RmBQw7bhQG2NJ8V
+	 +RsKy6FAgtWk1JarMHHssBtbjYkB89XMS6ASiCpQQrTuuaVLM/7IHfr4Uq3F218N3d
+	 HNBG/QZ3wCv+g==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 594C9C3ABBC;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65D44C3ABC9;
 	Fri,  9 May 2025 06:34:15 +0000 (UTC)
 From: Chen Linxuan via B4 Relay <devnull+chenlinxuan.uniontech.com@kernel.org>
-Subject: [PATCH v3 0/3] fuse: Expose more information of fuse backing files
- to userspace
-Date: Fri, 09 May 2025 14:33:52 +0800
-Message-Id: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
+Date: Fri, 09 May 2025 14:33:53 +0800
+Subject: [PATCH v3 1/3] fs: fuse: add const qualifier to
+ fuse_ctl_file_conn_get()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,30 +56,28 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIANChHWgC/3WOwQqDMBBEf0Vy7kq6aqI99T9KDzauutTGkqhYx
- H9vFAql0OMbmDezCE+OyYtTtAhHE3vubYDkEAnTlrYh4CqwQImZzGQO9ejJDB3cSnNn20DNHXl
- Q+VFWWEjSRS5C9+mo5nn3Xq6BW/ZD7177zHTc0o9RywQLVHGitdQKEExLtmM7j6U9jzbcGci0s
- ekfYhNN+F3+d2dCkKCwzlRKWhV5+mta1/UN8btUiPsAAAA=
-X-Change-ID: 20250508-fusectl-backing-files-6810d290e798
+Message-Id: <20250509-fusectl-backing-files-v3-1-393761f9b683@uniontech.com>
+References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
+In-Reply-To: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
 To: Miklos Szeredi <miklos@szeredi.hu>
 Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Chen Linxuan <chenlinxuan@uniontech.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1622;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=867;
  i=chenlinxuan@uniontech.com; h=from:subject:message-id;
- bh=WL7UUCkIaxd70i0yTLn1OxmFS6Mp12a6aWHS71LWZB4=;
- b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBoHaHUhMz/8CHmcC875sPKOKvdbx/+8a0mE3ntX
- 1uteYpfm5yJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaB2h1AAKCRB2HuYUOZmu
- i/C/EADTYfQ+L1ZHVLSWskQ/sieLfZTnqYIWmvIOSqOhKQzWQvaW+K2CZLab/QjBK7UUhWSC6JH
- IT98ORN1w2VAZLjFMdArsvwbTCNyn6kJROHMFxAe1SwVe0c7NKZiQQFUQHisw2N7BaAoolS1cOt
- +fAEPhvVs2aqbHKMohmURiUiZsWpMKROSd/T/eoNHILalLOXdxv4ijNASBMY6iAEPfBxvVgHgU2
- icv/BoeA9FgqTgqTZsVcBc1NpXRLG5EVdKYun3fHbBCpQEQgTdMYkQ+6kby7kS9rRrEF+oKhtNp
- 860gNFycZnK8mCSfkHysaZZWc4wH5ajPsun2mnlxJdzF2mGEWchzyliVfSe/dCjuYreYaJEAshz
- BdkcK2y6FfOEHokUholgBcmAv71+vq8iGgSW2JnQ2RT4/frvqHPvSd9g7qbEMl1TZSTjqC1MVM0
- TB8X+ED7B3BCmcobwCB4aUkOQrs+nJCjY//taqJlySG+fmB04UlexH3ku/8QqfVg3c9AFxofBtj
- 8KwjBQQiWXO5iT0dsarZhebRnAJ3KrSMDL19lJsWjhcE7ihOAj75nuAF9X1MP2eazbIBFCo7vKV
- XLofIUeFyzw3SnPalN+TJ2jlwIL+gxFiZ3x2RpvsJ+WgmwfqW5hqarXGb0f/HgO5Ec06jxacPuN
- NJ4PofMv4UWA5pA==
+ bh=5gsZgPpE9DdgJfjYJLZW01nMHgcjhblXor/5EfeOtfc=;
+ b=owEBbQKS/ZANAwAKAXYe5hQ5ma6LAcsmYgBoHaHiGBTYKTNPLygt65IWwju1YTcRzZlzExW2K
+ 7EfQHe2FhaJAjMEAAEKAB0WIQTO1VElAk6xdvy0ZVp2HuYUOZmuiwUCaB2h4gAKCRB2HuYUOZmu
+ i0T8D/0V2wpmoYFcyUr4RitSZ6jcZ1nvzzmOVRs7e/J1xspBATHnhbH+Apfu0vleG2vBc2FPHg9
+ c3vJlViJKQhida9zgXtDfCDc8PjwaeRNiKmiVmvq6Yug3+AjJE2fdRL4cilxe3h0ms/MEzXgP+H
+ 170FDIGZ1Udm7BzdSVwK+t4XUmINkfKKkl7VJTmQh2JCBbQRa+6t4ZOapdJIir8hWPHUzfmcE9F
+ Y3kF+heZJrTU5rJzO6vMeDj9NfEVMXKgTroMsjiZ3VjBL23Ig4NRch4TL50ef9KMH0j53L9EV/2
+ +clnoh65gDkv4hT9EYrF9EZxgS467tuRvjjnQuWRLVKXTjDmudDKpA9hft5qERyO4TXNIU5EVJR
+ AY9BxoLvWTtga8kF8pgpn1ewu99ItD1b65VRf/xZc8z9/nNhVNzxNLarcKTF8edcxoR66UDxiX7
+ Smvw0XbG5U3y+70cvPNzOsnbi760+CkU3w+gB9hPrB08/73kFVUMB3veXj7bRaFx45TqvRTqLXp
+ 85EAbo2gAiI5nUJnCfa324u7tKxRsV3IvxTKCYFszvTxu+ORiLfz7jCg7VhziAk5A1omoDIE+mI
+ tRoy+OYpJSQLeOoWDdXPE7bONi4O/wP7FjjdzZUjHrczQaZw0tJUpxx1JB5t24eFfqYihDn7QOP
+ LWLrDnHL2HDKJ3w==
 X-Developer-Key: i=chenlinxuan@uniontech.com; a=openpgp;
  fpr=D818ACDD385CAE92D4BAC01A6269794D24791D21
 X-Endpoint-Received: by B4 Relay for chenlinxuan@uniontech.com/default with
@@ -87,48 +85,34 @@ X-Endpoint-Received: by B4 Relay for chenlinxuan@uniontech.com/default with
 X-Original-From: Chen Linxuan <chenlinxuan@uniontech.com>
 Reply-To: chenlinxuan@uniontech.com
 
-Please review this patch series carefully. I am new to kernel
-development and I am not quite sure if I have followed the best
-practices, especially in terms of seq_file, error handling and locking.
-I would appreciate any feedback.
+From: Chen Linxuan <chenlinxuan@uniontech.com>
 
-I have do some simply testing using libfuse example [1]. It seems to
-work well.
-
-[1]: https://github.com/libfuse/libfuse/blob/master/example/passthrough_hp.cc
+Add const qualifier to the file parameter in fuse_ctl_file_conn_get
+function to indicate that this function does not modify the passed file
+object. This improves code clarity and type safety by making the API
+contract more explicit.
 
 Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
 ---
-Changes in v3:
-- Apply some suggestions from Amir Goldstein
-- Link to v2: https://lore.kernel.org/r/20250508-fusectl-backing-files-v2-0-62f564e76984@uniontech.com
+ fs/fuse/control.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes in v2:
-- Void using seq_file private field as it seems that we can just simply
-  returning fuse_backing_files_seq_state in start() and next()
-- Apply some suggestions from Amir Goldstein:
-  - Use idr_get_next() for iteration
-  - Do fuse_backing_get/put(fb) around dereferencing fb->file
-- Update fdinfo of fuse files
-- Link to v1: https://lore.kernel.org/r/20250507032926.377076-2-chenlinxuan@uniontech.com
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 2a730d88cc3bdb50ea1f8a3185faad5f05fc6e74..f0874403b1f7c91571f38e4ae9f8cebe259f7dd1 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -20,7 +20,7 @@
+  */
+ static struct super_block *fuse_control_sb;
+ 
+-static struct fuse_conn *fuse_ctl_file_conn_get(struct file *file)
++static struct fuse_conn *fuse_ctl_file_conn_get(const struct file *file)
+ {
+ 	struct fuse_conn *fc;
+ 	mutex_lock(&fuse_mutex);
 
----
-Chen Linxuan (3):
-      fs: fuse: add const qualifier to fuse_ctl_file_conn_get()
-      fs: fuse: add backing_files control file
-      fs: fuse: add more information to fdinfo
-
- fs/fuse/control.c | 157 +++++++++++++++++++++++++++++++++++++++++++++++++-----
- fs/fuse/file.c    |  20 +++++++
- fs/fuse/fuse_i.h  |   2 +-
- 3 files changed, 165 insertions(+), 14 deletions(-)
----
-base-commit: d76bb1ebb5587f66b0f8b8099bfbb44722bc08b3
-change-id: 20250508-fusectl-backing-files-6810d290e798
-
-Best regards,
 -- 
-Chen Linxuan <chenlinxuan@uniontech.com>
+2.43.0
 
 
 
