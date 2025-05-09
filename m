@@ -1,226 +1,349 @@
-Return-Path: <linux-fsdevel+bounces-48575-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48576-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32C91AB115C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:59:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AF6AB115D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 13:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D88E37B16DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 10:58:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E17949C07E1
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 10:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 939BD28FA92;
-	Fri,  9 May 2025 10:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DAC28F527;
+	Fri,  9 May 2025 10:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d7FqJpug"
+	dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="w3zhrytm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2110.outbound.protection.outlook.com [40.107.20.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB1728F930
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 10:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746788365; cv=none; b=SuTvxxPRpQZbESbdJrXGXqKYZCAY2dwh+Bwj3ZQHWWLPEE4+R5mOZgBS+q6yEMcGVoWg3qw6gPTwO0g6eCENETc0PD4bTYJrHPtmPd9DrGw1Fl9LHVJPYpSW1DM58CEUne4jOl+2tVHS0MhpysLSGiooZxq3WdZVJq50pL4cClM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746788365; c=relaxed/simple;
-	bh=QMnylHRb8gVaUhyCPdjCYA4w3j7YIJu3CW/RKmqnP5A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lLSQi48vtfkuJ6rjn/hFgh2u4ueh71bTAmIKLEjZWbwQFmDU2OP/C5OSHUSiKYU9LwiIKcggOTRRXOsakZ8mV8ztbM+GrlrPuUWvYKRDbXp8ZJ4OR7EaN8nVbmiIBo+ZV0UzJdoxz0em+H5X5H7xRVLlHgDa568Rn2Av/R8RvVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d7FqJpug; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1746788362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Y10xkQY/yB4xBwq93/OQLm1G4yJYnmq+zMsTVySDiHU=;
-	b=d7FqJpugFS0T/qYJgTSn6izG00AKIidHPYoA7JtfpZfvD88HIdDFTgwDpu0XMPPsP3EutY
-	vzdLfAaVNud1cDOgtHyL0YQ7tjkJVg5QEcddHi7+/lSo98pYKRdyTWysSWCQrf0v7TtPI2
-	YrK5GqQbxJ+x6QMBRuphL7CiCMpL9ic=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-677-VbNkbvRHNUyO5ZwW5tejSA-1; Fri, 09 May 2025 06:59:21 -0400
-X-MC-Unique: VbNkbvRHNUyO5ZwW5tejSA-1
-X-Mimecast-MFC-AGG-ID: VbNkbvRHNUyO5ZwW5tejSA_1746788360
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43cec217977so9872645e9.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 May 2025 03:59:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746788360; x=1747393160;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Y10xkQY/yB4xBwq93/OQLm1G4yJYnmq+zMsTVySDiHU=;
-        b=p+QO7A2rRmZ3beLzM64E/MbOJZGLGNEmzZUhHsUBo/ZbXTEbhO6lWhYERIEJica6rO
-         +E1fS2RJxrRKkI8FtjPNc/dAqr5pSLqPmPrhlxcpVZQ+8Jn/lYRJPtTNklRwwaTwhW1s
-         Fa+2+7lSo6kl99umbvsIFOQrydF93ScelOcSFYI+W5fQgx0xUXSY+0QfK8HKyRp/4y7g
-         KLdj0/PZ7wo9Yws8AzTDyxOAaMjjkhdQJ2U7oJt9+WTMi/i4CQsF2xFfdqjV+khzMxzt
-         NxfkjMI08SiBMg33WsWpboX7F1dinOzyl/1SGmcFGsg6Kmb+6sNCypC6YrXsD+KsLsMc
-         4J5w==
-X-Forwarded-Encrypted: i=1; AJvYcCUQrfN4zCTSzuqd/Pu0mhvnayebWzZ3el3vS0fg7M2xW8JQHxT+sJS+1CMUJzqqlgcuWYJM5cZ/G519oPqT@vger.kernel.org
-X-Gm-Message-State: AOJu0YysOYn2eM3BCrdSX2aaotXDCYweeKqUo0+FH7LzZvywQbVWKp3D
-	TzAKo64Ge7MDu6PsqSaEH7cK8wNpRsz71PEi3+Q3kl/6uPzMKH6nbYC/QwFzgIA498DeZwcav8y
-	WI1iZuw0+rFWtA/1ro3QNTsPE2+ITrZ5suRbViSQ+a0uo7qD57Q+SdLduJHsYHHZJ81x+K+A=
-X-Gm-Gg: ASbGncuFz6DWvMOenJB/y6umfYq/A44EVsfkGQqlVN/apqnVNObE8NodRC4vV3h+6k4
-	7vsgo/G4/GpGlzkApfN5kEe5gQsRvHFUMqu27nqxL65tFvihX1xozdlLF5IxwkJNSUxvG/4Wwfu
-	5G0ljgLIoUxW99xphxu/s8kC5a8jJBZGJUyjOOgRxtwaWsLh8KuiS+d8fGy8fGa02GVAnz5CBmx
-	8+Gp+DPpPl8zZmq3HVn4sMpTW60jcTSr8gU+cFz0+EBn/mm8iU9eav4p8b0pShTzOBx9VUp+bpi
-	qGYLC8nsuG1SnqvBG6dGwTaGMLjDS/gahLi1o2w6SW7qAoQMD28xw0XBFCG5vIOYy3TFcL/GweM
-	PdrssXjZM7Hri5tbQZgzV3SJ3pjOk6Xcs8DUneqs=
-X-Received: by 2002:a05:600c:1550:b0:43c:fabf:9146 with SMTP id 5b1f17b1804b1-442d6d6abfdmr26010835e9.17.1746788359923;
-        Fri, 09 May 2025 03:59:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEa9C6hfO9VHsveOSNGjMF0/uVuCXCExS9GUXXbncTi6ENUgjE4uCm4Jc8Z0rbOqKoSCcqvlg==
-X-Received: by 2002:a05:600c:1550:b0:43c:fabf:9146 with SMTP id 5b1f17b1804b1-442d6d6abfdmr26010595e9.17.1746788359474;
-        Fri, 09 May 2025 03:59:19 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f45:5500:8267:647f:4209:dedd? (p200300d82f4555008267647f4209dedd.dip0.t-ipconnect.de. [2003:d8:2f45:5500:8267:647f:4209:dedd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442d67d5c09sm26141235e9.7.2025.05.09.03.59.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 09 May 2025 03:59:19 -0700 (PDT)
-Message-ID: <ac65e657-bfd5-4e6a-a909-79107d23cd1c@redhat.com>
-Date: Fri, 9 May 2025 12:59:17 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC5028F520
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 10:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.110
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1746788395; cv=fail; b=ZQlw/qcFq4BOXu6bX/kI7Hv2ZpJOnt3cDnshmuku4w3EFndhKvHT7foR4VAbBBRHhlQC4nEw2hX5dy7gZpVq80euj1MDsNeN1hgMXpa63ISsG0uxntEYstIfv76x+w7KTb8fYIQRkIahwcn+mAyh3zVreRTIvuHmr9vaqRpnxuI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1746788395; c=relaxed/simple;
+	bh=ihfX72QaxUwDlu6SfS2kzh81cP+pelqHlZj2B98Hxm4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=NNwbO4cDCBV3GK+qVLmggDbRx0RpgkCYhb7z5+xpdyQPr7ztdgVrgBTXkMvt/u8IGocZh4e3xr42fWGvbz/NUZPaBqqf6logDjoxbXnwUujDtYkKaZhEMY+mpEmde5PdSN83kcF5adSzXqwPpeErUOz1/OK1CBXqwJM7YgzO8Ts=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com; spf=pass smtp.mailfrom=virtuozzo.com; dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b=w3zhrytm; arc=fail smtp.client-ip=40.107.20.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=virtuozzo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KDuq0bQw28MvUyRtU5F65Zx/qC4lz95Zi9Cxq7gu2/K8ehWsdXbw9l/G9eM/ruykN0Dj87r+z4bljQhsR/9RZbQmxezBFteJZz4ljC7qRgtw8AV5b2WuoUqH20mQ/E5oLh4L5u2VmNgzw+H29dUVzFphFVLASoawoThprK9T6xp06CZbAkREOJbcDC3k2R72HIwuNJ9c0MQ5rLGQjtvMMGtgp2Vfk6ygmSm0ySUhNcaYLzktJTG2Orm+fc7277jnHEZNVwlCIGAvXIkJEbbzbCBaomChBbxdpgfI4365Wl/ptP9crzgyRAfneYfLc5lZmhzS3Le+2d7kJqkH28Z/pQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gJUdR/k3/K7NgWs7fspLFwK2Otj0PeaAukiocWiL81k=;
+ b=U7eaJLFtaDUH5oev5IJzoGgFkCUDoaJnucPfp5bOtPsB/eSD5c+ZF4EN+Jf/84JrTzrI3CwHAdxBXWUhnM1ceQxH5LSCGeQR1AdkLtDqYceWyWA49YMl5feVcIZeaRBMPbDOWp6ZsSHo6KoS15K889o+I3L7txCwH3TPMvi0K0jp0OFxqI0j1PG00+vxl56sobopARE1am+mENAj/y4FOgx2kEKPj/QEwOielrt3DUtT+X3a+Nwup0FCdXwexCiN9KJYEijeyenc84AxMHXKB7TyQnmbYopF8+7DK402tsv8y+rTbM9AYmvq0MOWqP3L5lXXlap0+NktHmeLRFa3mA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gJUdR/k3/K7NgWs7fspLFwK2Otj0PeaAukiocWiL81k=;
+ b=w3zhrytmkESQFAtwPZ1xwoMGtURf+BT+Nr1CSjywwu7rWvnOiZlqNK0oyXgaDZZOFcIzU0Wg1eYRVrbZjvcWQhiIFfppuZo3w6mnDBTIcU0vZvMz3VyCTyCdNilfXyAZYaJTBY3N7/Aat7OevxbkNIpVOgP9Yh3bbbZGd0r0xLR5i2Yf1P0Tz/OdsJjX/CVLBTWXMdRLRtgmkleNeYlKiep7h9J6760fxbe1wGSne1ntuylW59WYvfydt8iNKimY0RF55BFoi4+nJu5f3wClIXra9SJXEq3mzpbNSclDoOCnrGDBPfay5vsi0oapEe4N5saW9fnzojOQzfVQLDTiDw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=virtuozzo.com;
+Received: from DU0PR08MB9003.eurprd08.prod.outlook.com (2603:10a6:10:471::13)
+ by GV1PR08MB7780.eurprd08.prod.outlook.com (2603:10a6:150:58::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8699.23; Fri, 9 May
+ 2025 10:59:47 +0000
+Received: from DU0PR08MB9003.eurprd08.prod.outlook.com
+ ([fe80::7261:fca8:8c2e:29ce]) by DU0PR08MB9003.eurprd08.prod.outlook.com
+ ([fe80::7261:fca8:8c2e:29ce%7]) with mapi id 15.20.8722.021; Fri, 9 May 2025
+ 10:59:47 +0000
+Message-ID: <2c1ebff3-c840-4f68-84a6-87ae6b3b4a8e@virtuozzo.com>
+Date: Fri, 9 May 2025 18:59:41 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] propagation graph breakage by MOVE_MOUNT_SET_GROUP
+ move_mount(2)
+To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
+Cc: Christian Brauner <brauner@kernel.org>
+References: <20250509082628.GU2023217@ZenIV> <20250509082845.GV2023217@ZenIV>
+Content-Language: en-US
+From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
+In-Reply-To: <20250509082845.GV2023217@ZenIV>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: KU2P306CA0010.MYSP306.PROD.OUTLOOK.COM
+ (2603:1096:d10:14::7) To DU0PR08MB9003.eurprd08.prod.outlook.com
+ (2603:10a6:10:471::13)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] mm: introduce new .mmap_prepare() file callback
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
- Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Matthew Wilcox <willy@infradead.org>
-References: <cover.1746615512.git.lorenzo.stoakes@oracle.com>
- <c958ac6932eb8dd9ddbd2363bc2d242ff244341b.1746615512.git.lorenzo.stoakes@oracle.com>
- <2204037e-f0bd-4059-b32a-d0970d96cea3@redhat.com>
- <9f479d46-cf06-4dfe-ac26-21fce0aafa06@lucifer.local>
- <5a489fa9-b2c0-4a7d-aa0e-5a97381e6b33@redhat.com>
- <9b9fd5ce-c303-46c4-acc7-40db1201f70a@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <9b9fd5ce-c303-46c4-acc7-40db1201f70a@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR08MB9003:EE_|GV1PR08MB7780:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3019cdd6-66a7-4142-b8ca-08dd8ee89cfa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|10070799003|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V3RvOGdMblE5bTRCc1B2V05hR1VHdlJQK2JoWHVhUEd0Q0tVWXM2RE8xUjN6?=
+ =?utf-8?B?NDd3eUhvYk12WFBjMkIzdFI0ZWJFbThjanlRcXAyV21IN2RXUExWZHJZQW8y?=
+ =?utf-8?B?N3c2bUZ5TXZheDFaeGh4cHY2OXIzaGR4dFlNbmtWUUI5MmR4aHM4cCtYQW53?=
+ =?utf-8?B?OC9NZlNlakRlM0xEWlNVZGp6d2kwNGxrWnYvUWpzaEUvSzN6RDhqVHJScXpB?=
+ =?utf-8?B?cFQ5YjVXZFEydDl3K3lESjF3N2lIYXE0aW1qNU1PR0Q1R1pUaW5hbUdKSExv?=
+ =?utf-8?B?WElvU0pzcHdZSm8zbzNYVXFacStqcEpSaU9JREI0ajZIVFZGWkYwRW5EMk40?=
+ =?utf-8?B?N1VpWWVrZlJYQ3VlQTcyY1B1WlhGdlVIMHNzUVpkcHcwS1hYelFON0JkU2o4?=
+ =?utf-8?B?UFhDREEwNzB5UWt6Vm1MeHBVMmNkMXBBL2Z0MEpTejllcjB0NWNHQ1VFSzNr?=
+ =?utf-8?B?d2FlTEtONlErZmFaQjY4RWo3Qmxwc3F5cW5rUktDVS8wU25uWGhQditUemhI?=
+ =?utf-8?B?S2hMMGlKaUQ0VFJYQjBqdzY3dm9VdTFOa3Y3M3hlRCtISzFka0l5QWNCVFFk?=
+ =?utf-8?B?N1dvSzgya0pIYmU4ZW1FRStWUm80SEdWTHo1Q0dIY1VTVXpHMG51WUJ5aTVx?=
+ =?utf-8?B?WGprTU1xMHp3MEN2U1Yxb0dkM0lXakFXcXdDa0lYYTZ5TUxaRWhxcUlDeW5o?=
+ =?utf-8?B?MVpNNUJ0WDJhN0pLTG11SXhOcG9aNlowdStwMmVMU1owOTIxRVZNeGhXNWQ2?=
+ =?utf-8?B?KzlpbzFweTdFQVhSR0MyalpyVmJneEdGK0NJMVBGZTFCNzUycWxFNVlmckxk?=
+ =?utf-8?B?ZFAzVGtYaExIbkgxV3pEUUNMcVdnNUhKL2NjTGdKZS96N1RIb1l3Y1h3d0N0?=
+ =?utf-8?B?elJzYVl5aDRRSWN3NkhWTTg4L1R0Z3BkWHVTRkxEejhwd2ZTREhkczI4b092?=
+ =?utf-8?B?bEVFbUxFQjY5QkxEMjQvVVVyWnZmamdUNU9Fa3l3Q2dNREorRE16am5ZYy9q?=
+ =?utf-8?B?Y0crK3F2RS9pVkJyWmZ5MEU2MnoraDRMaUs3MEVsNndKOFlETkdDUHNVcEpl?=
+ =?utf-8?B?VHRUSEg4bmRRTCtZa3V6Vllsdm9wNyttVmNxaFZJSnh5Ky9nOHMxL2tIOWlZ?=
+ =?utf-8?B?Njh6cEVFcFRLZHQrb3dWRjdTbmlTbUZEUHI4NWxYTGFQYlJsbUJ2ZkhPeVBJ?=
+ =?utf-8?B?NXpKZ09xakV1WGorWkppcTJLdEFvUTh2TFFrelBBUERHMU1nVnVLUWhYTW5j?=
+ =?utf-8?B?WjRVa2oyTExPZmNHZjRtUzVLVzMreHdsRFArTHZ0YzMvWVpaQ1VzNHVnaE5H?=
+ =?utf-8?B?QW9wV2tHYXRYOXRucENlZFlQVXYxbXlPVEdXT2dUOEZPd29rVmp1Zm1CcDRE?=
+ =?utf-8?B?dmZERXJWSFo0MlptNEhsZEgzdVg2NmxHSHVsdXlhSXVmbmF4NHFXU2w3K1Er?=
+ =?utf-8?B?TFFvbVA4ZDhjNCtTTXJJamJmbWVFdkZUekViZUFjOFpCVjVsQVNxcEk3RW1W?=
+ =?utf-8?B?dW1ndktoaUJETFZkNGtYczRaaDlidCtFK0F2R0NERGJDU3crNUVoRUUzNkcx?=
+ =?utf-8?B?QnI1THlSc0FaaGdGSVBWSVBoVHRXNUg5WkpGamJHazZvV0gwQ2t3VlZ1OVNF?=
+ =?utf-8?B?cjRjVXB6MzRJb25iT2RLc2ovZy9uSUtvRUg0NUFsUFhhLzBWZnh5QUlEUUhM?=
+ =?utf-8?B?MFZ4aDVHVzdBb0RTSCs0ZGZ5WTNDS3Jwa0ZlWUtibTh4dENSRHZrSDFkY0w1?=
+ =?utf-8?B?YWF3a1BxTVNGNkJOUHJqWDlNdThOZTlaazJvUmFLaHlKUG1MRmtNMHJSUkl2?=
+ =?utf-8?B?dXFMdFkzZllqV3h6Q3doY3p6YUlZTFBkRFZBTGIyOFRHVVBJTG5OK1AwVisy?=
+ =?utf-8?B?akVqTFVlK1RqUzErU3BpQXhPVUsxTEp4K3BWeVByTzhmTXVaOHJ5a3YxallD?=
+ =?utf-8?Q?aR+aCcyBSIU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB9003.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(1800799024)(376014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RjhaZ0xpREcwempOVFgxQm1PaXh0cjhGUGdJOVJWNU5WRVBScmhYWjF5ZFJj?=
+ =?utf-8?B?SDFITUVVOTBjSFcrRXdYckpXUGEzSGNRS2tXNStGQkFodW5KRjcyTWdBRitH?=
+ =?utf-8?B?dXlieVB6YUpuWHRuMWZXQVRHcHZGWVJmTDVOdERYOUEyK3VLMTRMblhVdmtx?=
+ =?utf-8?B?WXhCNmxJcU1XRndRcHA3V3pseHZCUHVhY3Z0TzBWOTVoQ05JNytUSEtuRVk2?=
+ =?utf-8?B?Tmk4SG9HQ1pWamVmVjRqLy94N2R4cFJLWnUrWnBtaGN0amovRG9pVWM2bldo?=
+ =?utf-8?B?WVlTMHVsaUVyaUhpRDFienRVZkZ4VUI3VzFEWGZUd2lTa01tTmNMaXE4SjY2?=
+ =?utf-8?B?amFSRnlxbkZkZkp1VGhoZC9OUm1uN2Z3MG13TFBGcURjVjFUZ202NmZpbEhK?=
+ =?utf-8?B?S21PSkVlbHduSkpnNUNzQXp2QmxxcFgwWkJxYTgwaVQyRmgxQmFmTzllcm5N?=
+ =?utf-8?B?bnVDTENNbC9KVzVtdFIzdlVPNUYxTzg3Rk1abmlrRHhuaFhuNmowYXhwNDlZ?=
+ =?utf-8?B?SVlrOWxMR1Y5bEJ1TjhNMzBrMGNZc0M4M0ZTNWNhbTg3bGVEK1l5VldRd0hP?=
+ =?utf-8?B?dit2Z2VoSnJCRDQ5T08rOU9RdzV3SU9WeTcrUC9qT0tIcmRINWh3RkNFa2x3?=
+ =?utf-8?B?Q3BzaC9oekxFa1FYY2lsM0psV0tla052bWc5cUd3L0luQjZ3ZTNHbXNYaW9P?=
+ =?utf-8?B?SXcwRXF4RFBjVGVQMjM1b1FRVFp4cnZJV3M2NkFOZ1RYSUIrZkpXR0JhUzlm?=
+ =?utf-8?B?YTNkcEVYdUlZb3BUSXJpSkFQWGw2cllKbGJBSWV3WTB3N1pUNkxGY1ladkVU?=
+ =?utf-8?B?RzEwcGlDMHVWdW5KUTR1Z2dKQVV4T2hVQTlYN2FRUm9OUkRtemNiNjIzT1ZC?=
+ =?utf-8?B?ckM5VStmMW5sL1NMQW8xNDFTY3psZU9ybTIweTRQMW5wMVdTOHJrMXFwN1hO?=
+ =?utf-8?B?WXFmVytmWWVFZ0phMXpmVHhtcVFGaUVFWVBJV2xNYms3VVRZRlg1bGxTUktP?=
+ =?utf-8?B?MEk4NFJxN0Z1SlJzNVF3aXJhSldKNjRtM0tVZDRTcWprdWxPVWU1YTBZU09J?=
+ =?utf-8?B?NDZMKzNJZFFCY3crQlJxS0xwWTZDRkxSUG1Jb2xrUCt1eS9mTGIySXlKWmNR?=
+ =?utf-8?B?dFJlY2tpMTd1RnQ2bm1meXEydzhkOFpVYytqcDVXQlBza3JpY1o3aWxSejdv?=
+ =?utf-8?B?dG9UajdUZ2pIQkVzeTlUNHlDWVFrR094TFd0bjVoV1NpV0lhOEFzempMV1dw?=
+ =?utf-8?B?ZnhmeWR4YmZaejJybWt3djN4cHFHY2F1SzcxUENtNGg5dTR6NUd2bER3Y2Za?=
+ =?utf-8?B?UFp0WmU3L1FlbmRXMHd2ait4aHAxYmx2YU40R1dINVJvQkJ3QlJYMmpXMDdj?=
+ =?utf-8?B?TUp4cmZTY09sVkluVkRDOEpjUCtGNitxWnozc3dIVHJramc2MktIeXpPalpv?=
+ =?utf-8?B?UEpMdTArVzJST2hxbTB4SzU4TlQwOVQxc2NQRURMcWxib3RwT21lbjdUNWN0?=
+ =?utf-8?B?cFhoMDdZVkY2aFZFUjZEUlovbjgrc08rM05FMWYyaGkxQXE0ckd0NFU5bFRj?=
+ =?utf-8?B?dEx2UE41a3pUL2FJR1BmWkVFWjhZMjhvYXM4QnBlOHJuY0JFSityU0N4WmhY?=
+ =?utf-8?B?SHhEcWVPbGFrbC9tSlVkZnQvblpDbUduMzlwWDlqWng0cDg0VWxVVzRlTUVn?=
+ =?utf-8?B?L0trNndjUG9kREE1eUYwQlZpeHlBbUFBVFZKb2xTOGtCTmdCNTJNTk9FalFH?=
+ =?utf-8?B?K0M1V0tFLzUxVmF3blIyL3MvREZRK0k0OHhDUGhyS0toaW5JOHRGQWs0M09W?=
+ =?utf-8?B?dWdMb2pSVHZnS3BMTzhyY1lLV1RyYzdwSjFPZTFZS3ZBQ2YvcXhrR2Z1Mnh2?=
+ =?utf-8?B?WVVkN2x2OEVJaFNTU3NEek5iMjl1UHdjbktiaXdLNWYvdVRQZDdJQmQ0TWdM?=
+ =?utf-8?B?N2hZb2lKYlB3SVcxcDFneXpNTUMwSVl6ODRabGhRQmowbmJEOTU1OVYrVUJz?=
+ =?utf-8?B?QS9BSzVkZTVOeFErRUwwejF3MFFHMEkzbVRxTXk1UmIyeVAxUDRGV2tyYjBj?=
+ =?utf-8?B?cUxjWnJUcmlaQzBzRTdHeXlxeUFHMmd4Ujcyc2FySFp5YWZzeVY4ME8wdktI?=
+ =?utf-8?B?TW5sZ21VRXo2SHVZcVQvTGFCS1pPRk1RZS8ya2IyS2lqUHUvU214eThNbjFz?=
+ =?utf-8?B?RDNnVkdTU0dZcUxLdXFwSjNpdlRZdmFsOU9URElKTkc1dUk4dXMyaTlqWkVk?=
+ =?utf-8?B?c0ozTnlFSEF1Y3JxOUU4bjlubzhBPT0=?=
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3019cdd6-66a7-4142-b8ca-08dd8ee89cfa
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR08MB9003.eurprd08.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 May 2025 10:59:47.6760
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Sv4j6c3Ta3WHsZ3pf5VKW0wsXs8Xmn+r10P3FelVA6Ksbudu9Cq7Ro2N5bz0m5mWJDp8Y1hkTURxTsOcN5V3Y2VbdP6kqrtMzPWo393LuII=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB7780
 
-On 09.05.25 12:57, Lorenzo Stoakes wrote:
-> On Fri, May 09, 2025 at 12:51:14PM +0200, David Hildenbrand wrote:
+
+
+On 5/9/25 16:28, Al Viro wrote:
+> On Fri, May 09, 2025 at 09:26:28AM +0100, Al Viro wrote:
+>> AFAICS, 9ffb14ef61ba "move_mount: allow to add a mount into an existing
+>> group" breaks assertions on ->mnt_share/->mnt_slave.  For once, the data
+>> structures in question are actually documented.
 >>
->>>>> +
->>>>> +static inline int __call_mmap_prepare(struct file *file,
->>>>> +		struct vm_area_desc *desc)
->>>>> +{
->>>>> +	return file->f_op->mmap_prepare(desc);
->>>>> +}
->>>>
->>>> Hm, is there a way avoid a copy of the exact same code from fs.h, and
->>>> essentially test the implementation in fs.h (-> more coverage by using less
->>>> duplciated stubs?).
->>>
->>> Not really, this kind of copying is sadly part of it because we're
->>> intentionally isolating vma.c from everything else, and if we try to bring
->>> in other headers they import yet others and etc. etc. it becomes a
->>> combinatorial explosion potentially.
+>> Documentation/filesystem/sharedsubtree.rst:
+>>          All vfsmounts in a peer group have the same ->mnt_master.  If it is
+>> 	non-NULL, they form a contiguous (ordered) segment of slave list.
 >>
->> I guess what would work is inlining __call_mmap_prepare() -- again, rather
->> simple wrapper ... and having file_has_valid_mmap_hooks() + call_mmap()
->> reside in vma.c. Hm.
+>> fs/pnode.c:
+>>   * Note that peer groups form contiguous segments of slave lists.
 >>
->> As an alternative, we'd really need some separate header that does not allow
->> for any other includes, and is essentially only included in the other header
->> files.
+>> fs/namespace.c:do_set_group():
+>>          if (IS_MNT_SLAVE(from)) {
+>>                  struct mount *m = from->mnt_master;
 >>
->> Duplicating functions in such a way that they can easily go out of sync and
->> are not getting tested is really suboptimal. :(
-> 
-> This is a problem that already exists, if minimised. Perfect is the enemy of
-> good - if we had make these tests existence depend on being able to isolate
-> _everything_ they'd never happen :)
-> 
-> But I will definitely try to improve the situation, as I couldn't agree more
-> about de-syncing and it's a concern I share with you.
-> 
-> I think we have a bit of a mess of header files anyway like this, random helpers
-> put in random places etc.
-> 
-> It doesn't help that a random driver/shm reference call_mmap()...
+>>                  list_add(&to->mnt_slave, &m->mnt_slave_list);
+>>                  to->mnt_master = m;
+>>          }
+>>
+>>          if (IS_MNT_SHARED(from)) {
+>>                  to->mnt_group_id = from->mnt_group_id;
+>>                  list_add(&to->mnt_share, &from->mnt_share);
+>>                  lock_mount_hash();
+>>                  set_mnt_shared(to);
+>>                  unlock_mount_hash();
+>>          }
+>>
+>> Note that 'to' goes right after 'from' in ->mnt_share (i.e. peer group
+>> list) and into the beginning of the slave list 'from' belongs to.  IOW,
+>> contiguity gets broken if 'from' is both IS_MNT_SLAVE and IS_MNT_SHARED.
+>> Which is what happens when the peer group 'from' is in gets propagation
+>> from somewhere.
 
-Yes ...
+Agreed, list ordering consistency looks broken by my commit.
+
+>>
+>> It's not hard to fix - something like
+>>
+>>          if (IS_MNT_SHARED(from)) {
+>> 		to->mnt_group_id = from->mnt_group_id;
+>>                  list_add(&to->mnt_share, &from->mnt_share);
+>> 		if (IS_MNT_SLAVE(from))
+>> 			list_add(&to->mnt_slave, &from->mnt_slave);
+>> 		to->mnt_master = from->mnt_master;
+>>                  lock_mount_hash();
+>>                  set_mnt_shared(to);
+>>                  unlock_mount_hash();
+>>          } else if (IS_MNT_SLAVE(from)) {
+>> 		to->mnt_master = from->mnt_master;
+>> 		list_add(&to->mnt_slave, &from->mnt_master->mnt_slave_list);
+>> 	}
+>>
+>> ought to do it.
+
+Yes it should work.
+
+In case (IS_MNT_SLAVE(from) && !IS_MNT_SHARED(from)) we can probably 
+also do:
+
+list_add(&to->mnt_slave, &from->mnt_slave);
+
+as next slave after "from" is definitely not from the same shared group 
+with "from" (as it's not in a shared group) so we won't break list 
+continuity.
+
+That will allow to simplify code change to:
+
+         if (IS_MNT_SLAVE(from)) {
+                 struct mount *m = from->mnt_master;
+
+-                list_add(&to->mnt_slave, &m->mnt_slave_list);
++                list_add(&to->mnt_slave, &from->mnt_slave);
+                 to->mnt_master = m;
+         }
+
+         if (IS_MNT_SHARED(from)) {
+                 to->mnt_group_id = from->mnt_group_id;
+                 list_add(&to->mnt_share, &from->mnt_share);
+                 lock_mount_hash();
+                 set_mnt_shared(to);
+                 unlock_mount_hash();
+         }
+
+If I'm not missing something (didn't test yet).
+
+>> I'm nowhere near sufficiently awake right now to put
+>> together a regression test, but unless I'm missing something subtle, it
+>> should be possible to get a fairly obvious breakage of propagate_mnt()
+>> out of that...
+
+I managed to see weird behavior like that:
+
+# rmdir /tmp/{A,B,C,D,E,Z}
+# unshare -m
+mkdir /tmp/{A,B,C,D,E,Z}
+mount --make-rprivate /
+mount -t tmpfs tmpfs /tmp/A
+mount --bind /tmp/A /tmp/Z
+mount --make-shared /tmp/A
+mount --bind /tmp/A /tmp/B
+mount --make-slave /tmp/B
+mount --make-shared /tmp/B
+mount --bind /tmp/B /tmp/C
+mount --bind /tmp/C /tmp/D
+mount --bind /tmp/D /tmp/E
+./setgroup-v2 /tmp/C /tmp/Z
+mkdir /tmp/A/subdir
+mount -t tmpfs tmpfs /tmp/A/subdir
+
+This creates 16 subdir mounts instead of expected 6:
+
+cat /proc/self/mountinfo | grep /tmp/
+1071 1065 0:109 / /tmp/A rw,relatime shared:556 - tmpfs tmpfs 
+rw,seclabel,inode64
+1073 1065 0:109 / /tmp/Z rw,relatime shared:1040 master:556 - tmpfs 
+tmpfs rw,seclabel,inode64
+1076 1065 0:109 / /tmp/B rw,relatime shared:1040 master:556 - tmpfs 
+tmpfs rw,seclabel,inode64
+1077 1065 0:109 / /tmp/C rw,relatime shared:1040 master:556 - tmpfs 
+tmpfs rw,seclabel,inode64
+1078 1065 0:109 / /tmp/D rw,relatime shared:1040 master:556 - tmpfs 
+tmpfs rw,seclabel,inode64
+1079 1065 0:109 / /tmp/E rw,relatime shared:1040 master:556 - tmpfs 
+tmpfs rw,seclabel,inode64
+1080 1071 0:136 / /tmp/A/subdir rw,relatime shared:1041 - tmpfs tmpfs 
+rw,seclabel,inode64
+1081 1073 0:136 / /tmp/Z/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1082 1078 0:136 / /tmp/D/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1083 1079 0:136 / /tmp/E/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1084 1076 0:136 / /tmp/B/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1085 1077 0:136 / /tmp/C/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1086 1084 0:136 / /tmp/B/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1087 1085 0:136 / /tmp/C/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1088 1081 0:136 / /tmp/Z/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1089 1082 0:136 / /tmp/D/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1090 1083 0:136 / /tmp/E/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1142 1089 0:136 / /tmp/D/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1143 1090 0:136 / /tmp/E/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1144 1086 0:136 / /tmp/B/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1145 1087 0:136 / /tmp/C/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+1146 1088 0:136 / /tmp/Z/subdir rw,relatime shared:1042 master:1041 - 
+tmpfs tmpfs rw,seclabel,inode64
+
+Maybe that can be converted to a regression test.
 
 > 
-> Anyway, this is somehwat out of scope for this series, as we already have a
-> number of instances like this and this is just symptomatic of an existing
-> problem rather than introducing it.
-> 
-> I think one thing to do might be to have a separate header which is explicitly
-> for functions like these to at least absolutely highlight this case.
+> Not sufficiently awake is right - wrong address on Cc...  Anyway, bedtime
+> for me...
 
-Yes, and then just include it in the relevant header files.
 
-> 
-> The VMA tests need restructuring anyway, so it can be part of a bigger project
-> to do some work cleaning up there.
-
-Cool!
 
 -- 
-Cheers,
-
-David / dhildenb
+Best regards, Pavel Tikhomirov
+Senior Software Developer, Virtuozzo.
 
 
