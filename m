@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-48633-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48634-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35AF7AB1A1D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:16:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D8BAB1A22
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD4DF1C4518F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:12:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D94374C1204
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0FB9236435;
-	Fri,  9 May 2025 16:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B0123816D;
+	Fri,  9 May 2025 16:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="af0B5VQy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pF1YwsbF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 097AD2356C0;
-	Fri,  9 May 2025 16:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B84722FF58;
+	Fri,  9 May 2025 16:12:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746807087; cv=none; b=GlF1HtPO0SIUKIPVBNyy9zRPAU8/TyBH8wInFR7U0IexKIzJm0x8yj3h/Mq+HyTpXpohjlUJOQnPwRm5Z92zzP8xsMebdfRG+emovVI/icTTddPYDMqv6RMVRQln7eKAmEwBL4Bii6O2+yr5aqtOYsElMa7gZPD7lXzUQHxehws=
+	t=1746807128; cv=none; b=jyHkIlNR96hN/AaC9daUMAQZRRSHyPKTko6s3EIf9uB3h7PE+V7aaEnmSXAFHqF9qNnhw2CI9CX1NrR3P9+CvVoLEpHLhma/euu2/vDv5ynYhRAzlS8zfpFTxel3ojQdflSK0hxKNgs25YGUnXR7ByIUly9Uhk4q+H99iXCEhLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746807087; c=relaxed/simple;
-	bh=qFAmpRBipwPI762xkvJQ+WGWMAV3O9aNq/+nZjbf4jM=;
+	s=arc-20240116; t=1746807128; c=relaxed/simple;
+	bh=FAZbGYBloQLXltv1jVW7+wuf9Nj+qiCN4u3kE549nNI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cUhrnWq9j1A6R3E1QGZC1JUjYigF/LUPmH9R9YjDtKAkppqpOT7zufTYtYQ1q6EbRTXreI4mhTJ6X5PejTX9yM/dJGDw7D+t/RGdCt79q076fXvX7QOYao0nDxngeoDY/zjBWUI6qm1RxoJn8jz/UfVJ1LbTSTRDxOeuUFBikko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=af0B5VQy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CDF5C4CEE4;
-	Fri,  9 May 2025 16:11:26 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cP/VJVj0soWStNtLW1E/nAPxAr2TdcDW+iXWNu9YmqgeVTUrDfWLYeGvDYBYLzg6ClL4ioU7eD8Nvh+8GnrDE5AQhnh60zhljou5RTK5GZxh8VTaTT+qG6sEEUBURd9akgKMAWDpD0K/ZPP/aW37bb55jcabPMlk7udoLA//q6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pF1YwsbF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6EE4C4CEEF;
+	Fri,  9 May 2025 16:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746807086;
-	bh=qFAmpRBipwPI762xkvJQ+WGWMAV3O9aNq/+nZjbf4jM=;
+	s=k20201202; t=1746807126;
+	bh=FAZbGYBloQLXltv1jVW7+wuf9Nj+qiCN4u3kE549nNI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=af0B5VQyI5ZKeq9eukqrxympxNkc5AzsQSmd6IKR/FqeMYyIcnFQjGrqPPYiSwjiI
-	 w0WpgmBmPUsrkz7YSrnaH9XivhYPF4yp0PhSbGtmpzD6MoiokCgWGeIzDUw9xUBytD
-	 TR9OZMRnxLmsrDNAr9ujHiU9/nk+wYm75vociC/SLnTbsBM7NI7dolnVdBiBTInd2o
-	 0Qv0OQH7AOLzfNtwQyDd24MsU/0nx4pEwa+MWaQmMmBhgPhH3g+bsLhQLHFYWCY6B8
-	 e11wrI05s821S2/G/x+S2Y8GJlDh/mveK7gKaVzWA2EwBo6+VJawWsMoBJFOP1K56h
-	 bb3l2B2RpnzEw==
-Date: Fri, 9 May 2025 09:11:24 -0700
+	b=pF1YwsbFiscNJvBf+oklkmV160BbhXa1LMOkngmGCl5dU0hKYEmiJazHuL/jTniz6
+	 e2n52nh/bTQQ9GeBQeo6k0CZJcGVYnygkBMKIeFUhbdkp1lbSrcdkB6wfkBoWbVX5Q
+	 avwYf9aVHOiGvxTv2bdONIti9QBi7fzS134RAlsqLY7XWcJcsqpTDkhTPp2WeVuM1j
+	 YZLPO6+7kScenSdE6CgnXoyzBZ7Y1WMEn/Wgu1d2WyjdHlalMQIBY6+QDePJ6Q0AHb
+	 vi+ZDVHuFfx+YGm1FJPrQHkfHtFPUcXk1g6BelhYNpDaGEszgPSdeUPdB816Q923XN
+	 LpOugat+O9mcA==
+Date: Fri, 9 May 2025 09:12:04 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
 To: Joel Granados <joel.granados@kernel.org>
 Cc: Petr Pavlu <petr.pavlu@suse.com>,
@@ -68,10 +68,11 @@ Cc: Petr Pavlu <petr.pavlu@suse.com>,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	rcu@vger.kernel.org, linux-mm@kvack.org,
 	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 11/12] sysctl: Remove (very) old file changelog
-Message-ID: <aB4pLLZqv3rTbb3z@bombadil.infradead.org>
+Subject: Re: [PATCH 12/12] sysctl: Remove superfluous includes from
+ kernel/sysctl.c
+Message-ID: <aB4pVOsZr4pXz6dH@bombadil.infradead.org>
 References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
- <20250509-jag-mv_ctltables_iter2-v1-11-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-12-d0ad83f5f4c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,16 +81,41 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-11-d0ad83f5f4c3@kernel.org>
+In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-12-d0ad83f5f4c3@kernel.org>
 
-On Fri, May 09, 2025 at 02:54:15PM +0200, Joel Granados wrote:
-> These comments are older than 2003 and therefore do not bare any
-> relevance on the current state of the sysctl.c file. Remove them as they
-> confuse more than clarify.
+On Fri, May 09, 2025 at 02:54:16PM +0200, Joel Granados wrote:
+> Remove the following headers from the include list in sysctl.c.
+> 
+> * These are removed as the related variables are no longer there.
+>   ===================   ====================
+>   Include               Related Var
+>   ===================   ====================
+>   linux/kmod.h          usermodehelper
+>   asm/nmi.h             nmi_watchdoc_enabled
+>   asm/io.h              io_delay_type
+>   linux/pid.h           pid_max_{,min,max}
+>   linux/sched/sysctl.h  sysctl_{sched_*,numa_*,timer_*}
+>   linux/mount.h         sysctl_mount_max
+>   linux/reboot.h        poweroff_cmd
+>   linux/ratelimit.h     {,printk_}ratelimit_state
+>   linux/printk.h        kptr_restrict
+>   linux/security.h      CONFIG_SECURITY_CAPABILITIES
+>   linux/net.h           net_table
+>   linux/key.h           key_sysctls
+>   linux/nvs_fs.h        acpi_video_flags
+>   linux/acpi.h          acpi_video_flags
+>   linux/fs.h            proc_nr_files
+> 
+> * These are no longer needed as intermediate includes
+>   ==============
+>   Include
+>   ==============
+>   linux/filter.h
+>   linux/binfmts.h
 > 
 > Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
 Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-  Luis
+ Luis
 
