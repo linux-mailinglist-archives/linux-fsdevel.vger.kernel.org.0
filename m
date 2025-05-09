@@ -1,253 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-48627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1B3AB1926
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 17:46:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63DBFAB1934
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 17:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43835525AFE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 15:46:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A3F27B90AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 15:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A80230269;
-	Fri,  9 May 2025 15:46:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571E823314B;
+	Fri,  9 May 2025 15:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="RYgdbCHf"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z9Mdw/11"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9F722FE02
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 15:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F90230D0F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 15:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746805596; cv=none; b=VAWuHQ29xT69PaPMTKsvlL81gQXAqvgywlOObORY9xZOCPmC7fWFz/VtJupNQceW7fJ8UdH9+STX4oMjx9NHhH5MHSAkRWapoPRE7SRBzxdoTC7ol3FtqK3qnTUyxCc0XQ18SY8+MUW042p8FRR9xhd9oO+12kWPcsEtHhVpKGI=
+	t=1746805712; cv=none; b=n1cbwcGU4NS0ZAYN3ZDlRK/tRZlMIg1g8x7ugShD5INCjud+I5giEX2yrc5fc1JoXJ4i6tIkw43ouABL3if1MHKYW7phzU3SzsgrBnNCHOOH7cCw5S/1JoSSO/OmtCkYBDoj5XSme5q91qC1Kf1hueyREIqyeERqaYh4BD4z3aQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746805596; c=relaxed/simple;
-	bh=DeBCrTmdTR5yKShLY0vZqCOTCX0K9ctcUoU2nBe6LVA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nrklyFrt/ZkVGeJLwIsTYnRbT5r4m/uW57XBWI5tiY2elHfI9tt9lZFXvNzwkv1/QYnUvgz+QLrraYlcKSgFsP99L6k/4J76hFR3Mu75NcQGKL+he5ZsMllPA/oJFIvyOW9qLcsJW5cT7cMZNkHrKglgYlGoVISHZ+mBrmjWIoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=RYgdbCHf; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54998f865b8so2494071e87.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 May 2025 08:46:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1746805593; x=1747410393; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9xNbDuhYMNEOPQ0iDaGg7WmsIQAL98DsMilo3FOILHE=;
-        b=RYgdbCHfoSKZLpdRCIWD/iPlUS9k46KL5BNo5lmTXtbn7IaDHnKqc50vvx/xBcKQzm
-         /JlDDMmg5gmbeYurfPcGQ5tibFSr7uRtrFIfXqbSfv8PP5Jm5UkwkvrRlPC+xCyIBU2z
-         mKPZgn+F80bC4/FqDYh50m47qBFef+DUY2FLc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746805593; x=1747410393;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9xNbDuhYMNEOPQ0iDaGg7WmsIQAL98DsMilo3FOILHE=;
-        b=RPtvrhLxSiY9865hmqGAcu58IyKYeS9Zh8IKaLZSQHrivSCbD+Mc8KenNpFQwJI34b
-         eEX8VpciMsOZ5uoeL4LdCd4t0A5/ewa3lnXXd5i4R+bXWAVxFyaM32Zr+ZXB2ibsYiSq
-         nYi/iTyOZOZH4EmhvFbuzSL1QcbEIMCXlbp6OrWuMvwMtNflXo5YHDg22gzYlQ097LPV
-         9ix1fBEBtVSfgfbouhpZ2yiDSKOj6Xs0D/1r7qENB/q3Luses9+WSgORurbdWcrUE1P8
-         Bx3SibZfrsPiu4EcGvKrWX7G3xPL7nfgjMR0jE7qfGaQtsFflLKXSU069kgpwNDC87dh
-         +WwA==
-X-Gm-Message-State: AOJu0YwPvrmskbH1SblU5YhvI2pGPVO6hkeVte8NPtUJ7NAJi4tuxsOB
-	ryLsi5l4P7SW/3UhhfdMEeFJ53KFCM5niXR6hFrzAgfaeVoNTKFZ541Xb2NLtyMFtSBOxeXA1/o
-	lCG85wGxjrLTCh2r1DFxw+mRS3/16UZwbmfc6tg==
-X-Gm-Gg: ASbGnctD8rAy2yqU8QlNJW7JftEJ76ucIAgCPIb2RV9zCKGZox9LM2QhZgQZpPS09rQ
-	QaDxheofaZwxxF2SOcOOqw74zA9R1lTBwLmktgD98bp4qm+ov18ORefYGvHTeTPl3beEKmxluT5
-	B9PTrDRrAwEDeSWE+aqPL+6XA=
-X-Google-Smtp-Source: AGHT+IHoJp8wBzITN88S1HfrprVuyMRPvWzwS4HbJbfLM7QXMEGjXdAedeYOhNSQ8zXWIJlwtoij1I0pkOJyZ9tEoRk=
-X-Received: by 2002:a05:651c:210a:b0:30c:aae:6d4a with SMTP id
- 38308e7fff4ca-326c4627d80mr18504001fa.26.1746805592184; Fri, 09 May 2025
- 08:46:32 -0700 (PDT)
+	s=arc-20240116; t=1746805712; c=relaxed/simple;
+	bh=sQE2inl0YIg6+YUK95+sm+7J1pVM4PS8ilMmjVAujok=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=M+gRxvbg/BBLtb0KM4e5cceWB8kUVbJ0zqHuC2XKXXeHcjO0Pic7eC+ylOW3UTG8x6tkqKa5Tc6Iu4kYwttRiCzTaPrRCJyxA0p9cDMqU4Y71gn0hsx9tJ5SdAK++MaxFf2tTAScUXUyY997hDAgor/i4HqDdYK8SPc1hiF1QJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z9Mdw/11; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1746805710; x=1778341710;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=sQE2inl0YIg6+YUK95+sm+7J1pVM4PS8ilMmjVAujok=;
+  b=Z9Mdw/11OTnH2wBojULp+KRswqJ/JZhp4gggrAaetOKPvCI5eE/9GsFw
+   ECKG9JzL3m5jTqg2Urz9hyUGwuGMtOO6YK4NAlQHmSrtgCSxLhMMzmOng
+   XntIKqpXhVSVYkRwuP/HXFsKT0zH2WXInK+IcjsljJ3Dgubt3Luz+vdqY
+   XdIAsnLjxQAidLb/NfY4XqgI2gzReWoZNCStIrLX+x8qyAnOu3I2ZWEzv
+   YeewEQ0Prhnuiw0QTnM0gaVGQylmd28vrBqLSTZylzul7e9INpweOrIRt
+   c89K4XTESv2g2Pr7AoIpe2RB+NwvIvTXXsPGPqi1/UlVNo8mOAZluqUuR
+   Q==;
+X-CSE-ConnectionGUID: R1w+fb1KTlKT7ARjDv0TPg==
+X-CSE-MsgGUID: AobQ3syzSKy9e5oLwlcEiA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11427"; a="59271290"
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="59271290"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 May 2025 08:48:30 -0700
+X-CSE-ConnectionGUID: 5FbhNDtoRNekGnsArQMQPg==
+X-CSE-MsgGUID: UJhFLO0/Qe+/L/U78ZiLvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,275,1739865600"; 
+   d="scan'208";a="137637550"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 09 May 2025 08:48:28 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uDPxa-000CDT-0t;
+	Fri, 09 May 2025 15:48:26 +0000
+Date: Fri, 9 May 2025 23:47:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org
+Subject: [viro-vfs:untested.securityfs 6/8]
+ security/integrity/ima/ima_fs.c:524:27: error: 'ima_policy' undeclared; did
+ you mean 'vma_policy'?
+Message-ID: <202505092310.0UXOhVZP-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509-work-coredump-socket-v5-0-23c5b14df1bc@kernel.org> <20250509-work-coredump-socket-v5-1-23c5b14df1bc@kernel.org>
-In-Reply-To: <20250509-work-coredump-socket-v5-1-23c5b14df1bc@kernel.org>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Fri, 9 May 2025 17:46:21 +0200
-X-Gm-Features: AX0GCFuTWF2y33BQszs3BPl-6caIW4wVI9SlZUstCcjjk5CXp49SmJp1kj1c_ao
-Message-ID: <CAJqdLrqCkkA=TcEU0Oo5w=6Xrp=y1VepGZncBC4yKRU1hv2iDg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/9] coredump: massage format_corname()
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
-	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Christian!
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git untested.securityfs
+head:   b0b8e25f92ec20e266859de5f823b4e39b8e2f9d
+commit: 08433f2507554980bc891d8b17c1968c81cb144b [6/8] ima_fs: don't bother with removal of files in directory we'll be removing
+config: i386-buildonly-randconfig-006-20250509 (https://download.01.org/0day-ci/archive/20250509/202505092310.0UXOhVZP-lkp@intel.com/config)
+compiler: gcc-11 (Debian 11.3.0-12) 11.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250509/202505092310.0UXOhVZP-lkp@intel.com/reproduce)
 
-Am Fr., 9. Mai 2025 um 12:25 Uhr schrieb Christian Brauner <brauner@kernel.org>:
->
-> We're going to extend the coredump code in follow-up patches.
-> Clean it up so we can do this more easily.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
-> ---
->  fs/coredump.c | 41 ++++++++++++++++++++++++-----------------
->  1 file changed, 24 insertions(+), 17 deletions(-)
->
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index d740a0411266..281320ea351f 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-> @@ -76,9 +76,15 @@ static char core_pattern[CORENAME_MAX_SIZE] = "core";
->  static int core_name_size = CORENAME_MAX_SIZE;
->  unsigned int core_file_note_size_limit = CORE_FILE_NOTE_SIZE_DEFAULT;
->
-> +enum coredump_type_t {
-> +       COREDUMP_FILE = 1,
-> +       COREDUMP_PIPE = 2,
-> +};
-> +
->  struct core_name {
->         char *corename;
->         int used, size;
-> +       enum coredump_type_t core_type;
->  };
->
->  static int expand_corename(struct core_name *cn, int size)
-> @@ -218,18 +224,21 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
->  {
->         const struct cred *cred = current_cred();
->         const char *pat_ptr = core_pattern;
-> -       int ispipe = (*pat_ptr == '|');
->         bool was_space = false;
->         int pid_in_pattern = 0;
->         int err = 0;
->
->         cn->used = 0;
->         cn->corename = NULL;
-> +       if (*pat_ptr == '|')
-> +               cn->core_type = COREDUMP_PIPE;
-> +       else
-> +               cn->core_type = COREDUMP_FILE;
->         if (expand_corename(cn, core_name_size))
->                 return -ENOMEM;
->         cn->corename[0] = '\0';
->
-> -       if (ispipe) {
-> +       if (cn->core_type == COREDUMP_PIPE) {
->                 int argvs = sizeof(core_pattern) / 2;
->                 (*argv) = kmalloc_array(argvs, sizeof(**argv), GFP_KERNEL);
->                 if (!(*argv))
-> @@ -247,7 +256,7 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
->                  * Split on spaces before doing template expansion so that
->                  * %e and %E don't get split if they have spaces in them
->                  */
-> -               if (ispipe) {
-> +               if (cn->core_type == COREDUMP_PIPE) {
->                         if (isspace(*pat_ptr)) {
->                                 if (cn->used != 0)
->                                         was_space = true;
-> @@ -353,7 +362,7 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
->                                  * Installing a pidfd only makes sense if
->                                  * we actually spawn a usermode helper.
->                                  */
-> -                               if (!ispipe)
-> +                               if (!(cn->core_type != COREDUMP_PIPE))
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505092310.0UXOhVZP-lkp@intel.com/
 
-Shouldn't it be:
-if (cn->core_type != COREDUMP_PIPE)
+All errors (new ones prefixed by >>):
 
-Except this, LGTM
+   security/integrity/ima/ima_fs.c: In function 'ima_release_policy':
+>> security/integrity/ima/ima_fs.c:524:27: error: 'ima_policy' undeclared (first use in this function); did you mean 'vma_policy'?
+     524 |         securityfs_remove(ima_policy);
+         |                           ^~~~~~~~~~
+         |                           vma_policy
+   security/integrity/ima/ima_fs.c:524:27: note: each undeclared identifier is reported only once for each function it appears in
 
-Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
 
->                                         break;
->
->                                 /*
-> @@ -384,12 +393,12 @@ static int format_corename(struct core_name *cn, struct coredump_params *cprm,
->          * If core_pattern does not include a %p (as is the default)
->          * and core_uses_pid is set, then .%pid will be appended to
->          * the filename. Do not do this for piped commands. */
-> -       if (!ispipe && !pid_in_pattern && core_uses_pid) {
-> +       if (!(cn->core_type == COREDUMP_PIPE) && !pid_in_pattern && core_uses_pid) {
->                 err = cn_printf(cn, ".%d", task_tgid_vnr(current));
->                 if (err)
->                         return err;
->         }
-> -       return ispipe;
-> +       return 0;
->  }
->
->  static int zap_process(struct signal_struct *signal, int exit_code)
-> @@ -583,7 +592,6 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->         const struct cred *old_cred;
->         struct cred *cred;
->         int retval = 0;
-> -       int ispipe;
->         size_t *argv = NULL;
->         int argc = 0;
->         /* require nonrelative corefile path and be extra careful */
-> @@ -632,19 +640,18 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->
->         old_cred = override_creds(cred);
->
-> -       ispipe = format_corename(&cn, &cprm, &argv, &argc);
-> +       retval = format_corename(&cn, &cprm, &argv, &argc);
-> +       if (retval < 0) {
-> +               coredump_report_failure("format_corename failed, aborting core");
-> +               goto fail_unlock;
-> +       }
->
-> -       if (ispipe) {
-> +       if (cn.core_type == COREDUMP_PIPE) {
->                 int argi;
->                 int dump_count;
->                 char **helper_argv;
->                 struct subprocess_info *sub_info;
->
-> -               if (ispipe < 0) {
-> -                       coredump_report_failure("format_corename failed, aborting core");
-> -                       goto fail_unlock;
-> -               }
-> -
->                 if (cprm.limit == 1) {
->                         /* See umh_coredump_setup() which sets RLIMIT_CORE = 1.
->                          *
-> @@ -695,7 +702,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->                         coredump_report_failure("|%s pipe failed", cn.corename);
->                         goto close_fail;
->                 }
-> -       } else {
-> +       } else if (cn.core_type == COREDUMP_FILE) {
->                 struct mnt_idmap *idmap;
->                 struct inode *inode;
->                 int open_flags = O_CREAT | O_WRONLY | O_NOFOLLOW |
-> @@ -823,13 +830,13 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->                 file_end_write(cprm.file);
->                 free_vma_snapshot(&cprm);
->         }
-> -       if (ispipe && core_pipe_limit)
-> +       if ((cn.core_type == COREDUMP_PIPE) && core_pipe_limit)
->                 wait_for_dump_helpers(cprm.file);
->  close_fail:
->         if (cprm.file)
->                 filp_close(cprm.file, NULL);
->  fail_dropcount:
-> -       if (ispipe)
-> +       if (cn.core_type == COREDUMP_PIPE)
->                 atomic_dec(&core_dump_count);
->  fail_unlock:
->         kfree(argv);
->
-> --
-> 2.47.2
->
+vim +524 security/integrity/ima/ima_fs.c
+
+f4bd857bc8ed99 Mimi Zohar      2009-02-04  491  
+4af4662fa4a9dc Mimi Zohar      2009-02-04  492  /*
+4af4662fa4a9dc Mimi Zohar      2009-02-04  493   * ima_release_policy - start using the new measure policy rules.
+4af4662fa4a9dc Mimi Zohar      2009-02-04  494   *
+4af4662fa4a9dc Mimi Zohar      2009-02-04  495   * Initially, ima_measure points to the default policy rules, now
+f4bd857bc8ed99 Mimi Zohar      2009-02-04  496   * point to the new policy rules, and remove the securityfs policy file,
+f4bd857bc8ed99 Mimi Zohar      2009-02-04  497   * assuming a valid policy.
+4af4662fa4a9dc Mimi Zohar      2009-02-04  498   */
+4af4662fa4a9dc Mimi Zohar      2009-02-04  499  static int ima_release_policy(struct inode *inode, struct file *file)
+4af4662fa4a9dc Mimi Zohar      2009-02-04  500  {
+0716abbb58e3c4 Dmitry Kasatkin 2014-10-03  501  	const char *cause = valid_policy ? "completed" : "failed";
+0716abbb58e3c4 Dmitry Kasatkin 2014-10-03  502  
+80eae209d63ac6 Petko Manolov   2015-12-02  503  	if ((file->f_flags & O_ACCMODE) == O_RDONLY)
+9a11a18902bc3b Eric Richter    2016-10-13  504  		return seq_release(inode, file);
+80eae209d63ac6 Petko Manolov   2015-12-02  505  
+0112721df4edbd Sasha Levin     2015-12-22  506  	if (valid_policy && ima_check_policy() < 0) {
+0112721df4edbd Sasha Levin     2015-12-22  507  		cause = "failed";
+0112721df4edbd Sasha Levin     2015-12-22  508  		valid_policy = 0;
+0112721df4edbd Sasha Levin     2015-12-22  509  	}
+0112721df4edbd Sasha Levin     2015-12-22  510  
+de636769c8c735 Petr Vorel      2018-04-24  511  	pr_info("policy update %s\n", cause);
+0716abbb58e3c4 Dmitry Kasatkin 2014-10-03  512  	integrity_audit_msg(AUDIT_INTEGRITY_STATUS, NULL, NULL,
+0716abbb58e3c4 Dmitry Kasatkin 2014-10-03  513  			    "policy_update", cause, !valid_policy, 0);
+0716abbb58e3c4 Dmitry Kasatkin 2014-10-03  514  
+4af4662fa4a9dc Mimi Zohar      2009-02-04  515  	if (!valid_policy) {
+4af4662fa4a9dc Mimi Zohar      2009-02-04  516  		ima_delete_rules();
+f4bd857bc8ed99 Mimi Zohar      2009-02-04  517  		valid_policy = 1;
+0716abbb58e3c4 Dmitry Kasatkin 2014-10-03  518  		clear_bit(IMA_FS_BUSY, &ima_fs_flags);
+4af4662fa4a9dc Mimi Zohar      2009-02-04  519  		return 0;
+4af4662fa4a9dc Mimi Zohar      2009-02-04  520  	}
+80eae209d63ac6 Petko Manolov   2015-12-02  521  
+4af4662fa4a9dc Mimi Zohar      2009-02-04  522  	ima_update_policy();
+2068626d1345f2 Mimi Zohar      2017-06-27  523  #if !defined(CONFIG_IMA_WRITE_POLICY) && !defined(CONFIG_IMA_READ_POLICY)
+4af4662fa4a9dc Mimi Zohar      2009-02-04 @524  	securityfs_remove(ima_policy);
+4af4662fa4a9dc Mimi Zohar      2009-02-04  525  	ima_policy = NULL;
+2068626d1345f2 Mimi Zohar      2017-06-27  526  #elif defined(CONFIG_IMA_WRITE_POLICY)
+38d859f991f3a0 Petko Manolov   2015-12-02  527  	clear_bit(IMA_FS_BUSY, &ima_fs_flags);
+ffb122de9a60bd Petr Vorel      2018-04-20  528  #elif defined(CONFIG_IMA_READ_POLICY)
+ffb122de9a60bd Petr Vorel      2018-04-20  529  	inode->i_mode &= ~S_IWUSR;
+38d859f991f3a0 Petko Manolov   2015-12-02  530  #endif
+4af4662fa4a9dc Mimi Zohar      2009-02-04  531  	return 0;
+4af4662fa4a9dc Mimi Zohar      2009-02-04  532  }
+4af4662fa4a9dc Mimi Zohar      2009-02-04  533  
+
+:::::: The code at line 524 was first introduced by commit
+:::::: 4af4662fa4a9dc62289c580337ae2506339c4729 integrity: IMA policy
+
+:::::: TO: Mimi Zohar <zohar@linux.vnet.ibm.com>
+:::::: CC: James Morris <jmorris@namei.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
