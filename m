@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-48637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD17AB1A47
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:20:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 356A9AB1A3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 353031C6033B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:15:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FD8A4E3A47
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87550235BF4;
-	Fri,  9 May 2025 16:15:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF322367B8;
+	Fri,  9 May 2025 16:15:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QdYlK9AE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G3a9wvT5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC50021ABDB;
-	Fri,  9 May 2025 16:14:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54C421442F4;
+	Fri,  9 May 2025 16:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746807299; cv=none; b=uW6WuDrrsh+MD2QpdxjqS4tolC2uCzwN+XAeaeorTHm7M1DerXA+/ltKHjGYWEEDlSWqvkCydspuRSVWTRhL8II2Sg8UEEZjNDWNpjKjqr5zXKGu17nS02NriNgvNqVuozGYhsLry9sf1k46iCaSXmf4dXsLSyskSbSIRTMD4qs=
+	t=1746807341; cv=none; b=JlUE/qw8r9qqNsgY+OgTWTSApxeC0udnxE+TiXzCI31MA7+lns9gP2R6qnyojl0yER8J7J/SOKxTMMJF87e/3sNIRHvD6a3rhrd47oNZTHcEMVCM4m6B63AEQEpobStA1GC/3XG2jl+aDzhzGkxXBfq4jFu76/yeKN3ZT+hi57k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746807299; c=relaxed/simple;
-	bh=qfGfA/lDYVUq9cNM/Ap9jQkrniTOHGXmbD9TLuuU7Xo=;
+	s=arc-20240116; t=1746807341; c=relaxed/simple;
+	bh=XQbL8BmAFuosZaYmT/ElwQ5uw+SyRwdfAf6yqJgUZug=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftkd7CSJcmqgrx1h/F68oO2U3RyJZ/+5vDHzvMhnOQA9Ac9fVlB9oC5jaF2QWBT7gVRQ627JaFOF/xgQYTrI+xXNS/gpWRagrFRmVIdnK5bN1p3lbPldpbJaOe6FueDfaqSZ97hUDwAh8D3sZPdHagI4z6/yaSU4BqZgQjxUpK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QdYlK9AE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CE3DC4CEE4;
-	Fri,  9 May 2025 16:14:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9WFyUoW0NQKbDI1e8xTHC63Q8KUOh6w0DSmnttmVeso64AaYuzcYTRdkbKQA8RTzaMvmWGgQzfSvzr73hFDZCNdWF0eWkUcIgmcA2V8xMp0uRt48Blac15uaP9nEbejbPftHBmmXXaAkD6CQN5Rg/nbdv0usHdccmn3c2nHvuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G3a9wvT5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04945C4CEE4;
+	Fri,  9 May 2025 16:15:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746807299;
-	bh=qfGfA/lDYVUq9cNM/Ap9jQkrniTOHGXmbD9TLuuU7Xo=;
+	s=k20201202; t=1746807340;
+	bh=XQbL8BmAFuosZaYmT/ElwQ5uw+SyRwdfAf6yqJgUZug=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QdYlK9AE99gS56xVvhOU7ONt2nkIOGIMqdB9kTlHA3NIs6oeGubEYqedbnZyI6y2y
-	 5kbil/ar47mJgy1Langth3DgdDGoxZT5ppDbFgl1lOc7a9jGXY0wbv91g6ruWgvOVB
-	 ZtnuPE9++KsxuckqLQLFogzCJEd6TB4rEc1WqGHHn20kls4UHTyot+8Qd/tyj4Kp++
-	 7/aA2vUqLqSSGMHRzjbaFgWkLoGdHY0sbzQ+MAaHK4EVuhpetkg79tcXCF/YfVHzPj
-	 mhpNtKZuLL6kLf0jZfE+jAw3NCwMg9R6QL4bZVGgW2eqy/LLcbLNkl5l/Q7nS0SgrF
-	 CIIaHPj4MP6Pw==
-Date: Fri, 9 May 2025 09:14:56 -0700
+	b=G3a9wvT5biurDKoNcBKnJlCuv01JpDOepyaSOAwd9lorRrm83pFmqxiLpmzPi9jM+
+	 cqx9Oih5ueV7vDXlQjehSx0LA47eKhIYV13U/D8N9v6jY+vwsVE+rhoPZF5mtVxXbX
+	 2UoGiOC4tNESt4sqPojj40mQpmXBcR/vyg8i7jsmjh9KZOSe9+El0Ky4KHSn/CYWM4
+	 OJv1khMt/1hl9MduxJ67iGc+ACG26die+ipSEDXo1GA9A+kwaerWm1wyJw39hu9KEH
+	 ytrdvYPjD5cEsoqgOmk0MMYlz44C602k8yr5JnqfmFOwz4GppwoDMB+3RNHSDjZHuR
+	 AFIsZ2YR+jB1g==
+Date: Fri, 9 May 2025 09:15:38 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
 To: Joel Granados <joel.granados@kernel.org>
 Cc: Petr Pavlu <petr.pavlu@suse.com>,
@@ -68,10 +68,10 @@ Cc: Petr Pavlu <petr.pavlu@suse.com>,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	rcu@vger.kernel.org, linux-mm@kvack.org,
 	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 06/12] fork: mv threads-max into kernel/fork.c
-Message-ID: <aB4qAMaSedFvUXlp@bombadil.infradead.org>
+Subject: Re: [PATCH 05/12] parisc/power: Move soft-power into power.c
+Message-ID: <aB4qKkDXoGs8EDkN@bombadil.infradead.org>
 References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
- <20250509-jag-mv_ctltables_iter2-v1-6-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-5-d0ad83f5f4c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,11 +80,11 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-6-d0ad83f5f4c3@kernel.org>
+In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-5-d0ad83f5f4c3@kernel.org>
 
-On Fri, May 09, 2025 at 02:54:10PM +0200, Joel Granados wrote:
-> make sysctl_max_threads static as it no longer needs to be exported into
-> sysctl.c.
+On Fri, May 09, 2025 at 02:54:09PM +0200, Joel Granados wrote:
+> Move the soft-power ctl table into parisc/power.c. As a consequence the
+> pwrsw_enabled var is made static.
 > 
 > This is part of a greater effort to move ctl tables into their
 > respective subsystems which will reduce the merge conflicts in
@@ -94,5 +94,5 @@ On Fri, May 09, 2025 at 02:54:10PM +0200, Joel Granados wrote:
 
 Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
- Luis
+  Luis
 
