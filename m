@@ -1,58 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-48572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48573-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A21AB1144
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:54:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD944AB114D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7414C5654
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 10:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24BD24C5785
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 10:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0093128ECE0;
-	Fri,  9 May 2025 10:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B734128F527;
+	Fri,  9 May 2025 10:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="joxNj1Wu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b9/C2rp0"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AD721D3EF
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 10:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EC521A434
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 10:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746788060; cv=none; b=bMrC2KjhYgK1LBpSJUXEy7suP3NHaBKibgNjKH97GYs+2G4HwHr4B+bXi5NFXUfITGtu3VKasY64qclPtcnBvsZcqCgb1eKbVg46twWay9maTFocNHYM2vqM8996hrx6nizcLWKpZ3RYDall6KzKV/AJ2YO6CZ//MTx8+kn1Tck=
+	t=1746788228; cv=none; b=OdySRGbdUXE3MqPsoDkkvvTSwq+hz+sY+Upd5fWGCk9ceO141j0jBM4vJZuKkoqOMQmWVVjnsDYO+I4OW4Q/qY+pH365+t5PPpGV8pUEL6WVyvXojwRYKb+oWa3on21w7UBKmUFxEJoWCN/FlRYwhIKpHoNR1+t9wkBeUPTfLCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746788060; c=relaxed/simple;
-	bh=RckD0vsTlke5o4+s0DDmNTU+ZXFZ5Xmdlt/utsylfVE=;
+	s=arc-20240116; t=1746788228; c=relaxed/simple;
+	bh=850pJdfy0yNLYeRcqBmJuIXBRpogsnYVOhr2fLfDQLw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QqFAtGzBoOrP3A0RoOGZuQPJCSXPSRf/HwmCw1nMofSaHB6xT40609wS/3D8NF7j6AvijQ84J0KuvsEBAAntbIYYmiDN1IKNnzMzc54OXoziJnu6Bt2oWbXlPhNCTOPvtsIyYO7F7TqI8fVxN+Ftl8xBPW43fqMD/JEvbGnmsVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=joxNj1Wu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ACABC4CEE4;
-	Fri,  9 May 2025 10:54:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWGhTUxs582oGDl7IdsXRP+O8UrB3EAMRaoZdLUHFWKsKsiuozVBgbdGil+hwvktpguWbvWTeOJ3Q5CKUbanLwR3zgR7P3sLsRs+5aVj8GFZ9h07zNQ4a5LtiYjQvuHKAf63B9YxOIAxb5nkmbqH8ASSp8vQ8jxpb9q7PbFr/fI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b9/C2rp0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EC7AC4CEE4;
+	Fri,  9 May 2025 10:57:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746788056;
-	bh=RckD0vsTlke5o4+s0DDmNTU+ZXFZ5Xmdlt/utsylfVE=;
+	s=k20201202; t=1746788227;
+	bh=850pJdfy0yNLYeRcqBmJuIXBRpogsnYVOhr2fLfDQLw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=joxNj1Wu4oWpYR+QiVMbvaEWUY0ln2D7wJIucR1RT7/pewzcQD9Kl804tCCh6h8dW
-	 g6GgNaIs8OVzaYH6wjR7gTKA6anQLoRb4vrQ8cOEJoVaiW55oLDMEX1Lr44kQxS1et
-	 Y9QjR9urm/hDzSmmPFwxU2bSzvmFR806WnGXDKVhROG9zrbb5ZARu9fb2Q1OrHM1oj
-	 7BZ1XcFLq5mIxRfptzRgTFAQ7bPLfIOJs1CNz4dnLvspmT4vZ4fplWeK+HnOvcdMwT
-	 O3Uk8hCYG4LFGY72cnwqa5rHa2f96bmIG9xKu6Fd16wZeBwRBPLUWUy8o2Fhita34Z
-	 Z5SDgi/c67fAg==
-Date: Fri, 9 May 2025 12:54:12 +0200
+	b=b9/C2rp0wHbd8G339TzfIvmMgnBqa8k8XaP9hIk09LSNvm0YkoqSavTziTMBpDWSn
+	 GKvDcfy0k18b5oXJ123BZBvIvTi2QPK0e18jM+H2UpKpy6m3QJFSG6glDeKFKCh6QO
+	 4peNQIBShvALOPPdQ1YsWbaSXbDxJH9dd0Ds8l800SxIiR8OjaPAWMaURl4xvgvYoO
+	 0m7HZ18Cr9/UEzF4SBUMvWrFG7fjUrgC0PNkLIWpPz26/XgGoAOjpCgc6wb+GaH2Ci
+	 SU6fAXTRmHtySdf//OWusVIA3FEVtuKsJdoc7xkMKBRoCXFNXDwbmJo++B+rHjVw/x
+	 vvrk99TnTHRmQ==
+Date: Fri, 9 May 2025 12:57:03 +0200
 From: Christian Brauner <brauner@kernel.org>
 To: Amir Goldstein <amir73il@gmail.com>
 Cc: John Hubbard <jhubbard@nvidia.com>, Jan Kara <jack@suse.cz>, 
 	Shuah Khan <skhan@linuxfoundation.org>, linux-fsdevel@vger.kernel.org, 
 	Miklos Szeredi <miklos@szeredi.hu>
-Subject: Re: [PATCH 5/5] selftests/filesystems: create setup_userns() helper
-Message-ID: <20250509-sensibel-plakette-510aa1bfc9ee@brauner>
+Subject: Re: [PATCH 2/5] selftests/fs/statmount: build with tools include dir
+Message-ID: <20250509-verhielt-hecht-4850ff585c31@brauner>
 References: <20250507204302.460913-1-amir73il@gmail.com>
- <20250507204302.460913-6-amir73il@gmail.com>
- <75a3cb6f-a9cc-441f-a43e-2f02fbfc49bf@nvidia.com>
- <CAOQ4uxiPgh0Lrt-7YnBQLTBFe-6aSUpgYVraoE_N=k0DrP7BEA@mail.gmail.com>
+ <20250507204302.460913-3-amir73il@gmail.com>
+ <ad3c6713-1b4b-47e4-983b-d5f3903de4d0@nvidia.com>
+ <CAOQ4uxin2B+wieUaAj=CeyEn4Z0xGUvBj5yOawKiuqPp+geSGg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,138 +62,100 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxiPgh0Lrt-7YnBQLTBFe-6aSUpgYVraoE_N=k0DrP7BEA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxin2B+wieUaAj=CeyEn4Z0xGUvBj5yOawKiuqPp+geSGg@mail.gmail.com>
 
-On Thu, May 08, 2025 at 02:08:16PM +0200, Amir Goldstein wrote:
-> On Thu, May 8, 2025 at 9:52 AM John Hubbard <jhubbard@nvidia.com> wrote:
+On Thu, May 08, 2025 at 01:36:09PM +0200, Amir Goldstein wrote:
+> Forgot to CC Miklos (now added)
+> 
+> On Thu, May 8, 2025 at 9:31 AM John Hubbard <jhubbard@nvidia.com> wrote:
 > >
-> > On 5/7/25 1:43 PM, Amir Goldstein wrote:
-> > > Add helper to utils and use it in statmount userns tests.
+> > On 5/7/25 1:42 PM, Amir Goldstein wrote:
+> > > Copy the required headers files (mount.h, nsfs.h) to the
+> > > tools include dir and define the statmount/listmount syscalls
+> > > for x86_64 to decouple dependency with headers_install for the
+> > > common case.
 > > >
 > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > > > ---
-> > >   .../filesystems/statmount/statmount_test_ns.c | 60 +----------------
-> > >   tools/testing/selftests/filesystems/utils.c   | 65 +++++++++++++++++++
-> > >   tools/testing/selftests/filesystems/utils.h   |  1 +
-> > >   3 files changed, 68 insertions(+), 58 deletions(-)
-> > >
-> > > diff --git a/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-> > > index 375a52101d08..3c5bc2e33821 100644
-> > > --- a/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-> > > +++ b/tools/testing/selftests/filesystems/statmount/statmount_test_ns.c
-> > > @@ -79,66 +79,10 @@ static int get_mnt_ns_id(const char *mnt_ns, uint64_t *mnt_ns_id)
-> > >       return NSID_PASS;
-> > >   }
-> > >
-> > > -static int write_file(const char *path, const char *val)
-> > > -{
-> > > -     int fd = open(path, O_WRONLY);
-> > > -     size_t len = strlen(val);
-> > > -     int ret;
-> > > -
-> > > -     if (fd == -1) {
-> > > -             ksft_print_msg("opening %s for write: %s\n", path, strerror(errno));
-> > > -             return NSID_ERROR;
-> > > -     }
-> > > -
-> > > -     ret = write(fd, val, len);
-> > > -     if (ret == -1) {
-> > > -             ksft_print_msg("writing to %s: %s\n", path, strerror(errno));
-> > > -             return NSID_ERROR;
-> > > -     }
-> > > -     if (ret != len) {
-> > > -             ksft_print_msg("short write to %s\n", path);
-> > > -             return NSID_ERROR;
-> > > -     }
-> > > -
-> > > -     ret = close(fd);
-> > > -     if (ret == -1) {
-> > > -             ksft_print_msg("closing %s\n", path);
-> > > -             return NSID_ERROR;
-> > > -     }
-> > > -
-> > > -     return NSID_PASS;
-> > > -}
-> > > -
-> > >   static int setup_namespace(void)
-> > >   {
-> > > -     int ret;
-> > > -     char buf[32];
-> > > -     uid_t uid = getuid();
-> > > -     gid_t gid = getgid();
-> > > -
-> > > -     ret = unshare(CLONE_NEWNS|CLONE_NEWUSER|CLONE_NEWPID);
-> > > -     if (ret == -1)
-> > > -             ksft_exit_fail_msg("unsharing mountns and userns: %s\n",
-> > > -                                strerror(errno));
-> > > -
-> > > -     sprintf(buf, "0 %d 1", uid);
-> > > -     ret = write_file("/proc/self/uid_map", buf);
-> > > -     if (ret != NSID_PASS)
-> > > -             return ret;
-> > > -     ret = write_file("/proc/self/setgroups", "deny");
-> > > -     if (ret != NSID_PASS)
-> > > -             return ret;
-> > > -     sprintf(buf, "0 %d 1", gid);
-> > > -     ret = write_file("/proc/self/gid_map", buf);
-> > > -     if (ret != NSID_PASS)
-> > > -             return ret;
-> > > -
-> > > -     ret = mount("", "/", NULL, MS_REC|MS_PRIVATE, NULL);
-> > > -     if (ret == -1) {
-> > > -             ksft_print_msg("making mount tree private: %s\n",
-> > > -                            strerror(errno));
-> > > +     if (setup_userns() != 0)
-> > >               return NSID_ERROR;
-> > > -     }
-> > >
-> > >       return NSID_PASS;
-> > >   }
-> > > @@ -200,7 +144,7 @@ static void test_statmount_mnt_ns_id(void)
-> > >               return;
-> > >       }
-> > >
-> > > -     ret = setup_namespace();
-> > > +     ret = setup_userns();
-> > >       if (ret != NSID_PASS)
-> > >               exit(ret);
-> > >       ret = _test_statmount_mnt_ns_id();
-> > > diff --git a/tools/testing/selftests/filesystems/utils.c b/tools/testing/selftests/filesystems/utils.c
-> > > index 9b5419e6f28d..9dab197ddd9c 100644
-> > > --- a/tools/testing/selftests/filesystems/utils.c
-> > > +++ b/tools/testing/selftests/filesystems/utils.c
-> > > @@ -18,6 +18,7 @@
-> > >   #include <sys/types.h>
-> > >   #include <sys/wait.h>
-> > >   #include <sys/xattr.h>
-> > > +#include <sys/mount.h>
-> > >
-> > >   #include "utils.h"
-> > >
-> > > @@ -447,6 +448,70 @@ static int create_userns_hierarchy(struct userns_hierarchy *h)
-> > >       return fret;
-> > >   }
-> > >
-> > > +static int write_file(const char *path, const char *val)
-> > > +{
-> > > +     int fd = open(path, O_WRONLY);
-> > > +     size_t len = strlen(val);
-> > > +     int ret;
-> > > +
-> > > +     if (fd == -1) {
-> > > +             syserror("opening %s for write: %s\n", path, strerror(errno));
+> ...
+> > > -CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES)
+> > > +CFLAGS += -Wall -O2 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
 > >
-> > While I have no opinion about ksft_print_msg() vs. syserror(), I do
-> > think it's worth a mention in the commit log: there is some reason
-> > that you changed to syserror() throughout. Could you write down
-> > what that was?
+> > Yes. :)
+> >
+> > > +
+> > >   TEST_GEN_PROGS := statmount_test statmount_test_ns listmount_test
+> > >
+> > >   include ../../lib.mk
+> > > diff --git a/tools/testing/selftests/filesystems/statmount/statmount.h b/tools/testing/selftests/filesystems/statmount/statmount.h
+> > > index a7a5289ddae9..e84d47fadd0b 100644
+> > > --- a/tools/testing/selftests/filesystems/statmount/statmount.h
+> > > +++ b/tools/testing/selftests/filesystems/statmount/statmount.h
+> > > @@ -7,6 +7,18 @@
+> > >   #include <linux/mount.h>
+> > >   #include <asm/unistd.h>
+> > >
+> > > +#ifndef __NR_statmount
+> > > +#if defined(__x86_64__)
+> > > +#define __NR_statmount       457
+> > > +#endif
+> > > +#endif
+> > > +
+> > > +#ifndef __NR_listmount
+> > > +#if defined(__x86_64__)
+> > > +#define __NR_listmount       458
+> > > +#endif
+> > > +#endif
+> >
+> > Yes, syscalls are the weak point for this approach, and the above is
+> > reasonable, given the situation, which is: we are not set up to recreate
+> > per-arch syscall tables for kselftests to use. But this does leave the
+> > other big arch out in the cold: arm64.
+> >
+> > It's easy to add, though, if and when someone wants it.
 > 
-> Very good question.
+> I have no problem adding || defined(__arm64__)
+> it's the same syscall numbers anyway.
 > 
-> I admit I did not put much thought into this. I was blindly following
-> Christian's lead in utils.c.
-> I will revert those syserror back to ksft_print_msg().
+> Or I could do
+> #if !defined(__alpha__) && !defined(_MIPS_SIM)
+> 
+> but I could not bring myself to do the re-definitions that Christian
+> added in mount_setattr_test.c for
+> __NR_mount_setattr, __NR_open_tree, __NR_move_mount
+> 
+> Note that there are stale definitions for __ia64__ in that file
+> and the stale definition for __NR_move_mount is even wrong ;)
+> 
+> Christian,
+> 
+> How about moving the definitions from mount_setattr_test.c into wrappers.h
+> and leaving only the common !defined(__alpha__) && !defined(_MIPS_SIM)
+> case?
+> 
+> Thanks for the review!
 
-I think I copied parts of that over from the work I did for xfstests
-testing.
+For new system calls this covers all arches and is what I usually use:
+
+#ifndef __NR_open_tree
+        #if defined __alpha__
+                #define __NR_open_tree 538
+        #elif defined _MIPS_SIM
+                #if _MIPS_SIM == _MIPS_SIM_ABI32        /* o32 */
+                        #define __NR_open_tree 4428
+                #endif
+                #if _MIPS_SIM == _MIPS_SIM_NABI32       /* n32 */
+                        #define __NR_open_tree 6428
+                #endif
+                #if _MIPS_SIM == _MIPS_SIM_ABI64        /* n64 */
+                        #define __NR_open_tree 5428
+                #endif
+        #elif defined __ia64__
+                #define __NR_open_tree (428 + 1024)
+        #else
+                #define __NR_open_tree 428
+        #endif
+#endif
+
+where the ia64 stuff can obviously be removed now.
 
