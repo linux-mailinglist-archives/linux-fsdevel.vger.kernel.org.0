@@ -1,171 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-48655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48656-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 984B0AB1C06
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 20:09:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E952EAB1CC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 20:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B01CA1C45764
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:09:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87252A0182D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6032223C8C5;
-	Fri,  9 May 2025 18:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26B02405EC;
+	Fri,  9 May 2025 18:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXxMSvLX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iv4X1708"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BADC23BD05;
-	Fri,  9 May 2025 18:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CCA22D4CE;
+	Fri,  9 May 2025 18:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746814154; cv=none; b=QSLS1sgAbDReRX97NNmbKqfmzWhrNXn03vJuwILQpXvEbF0u0WEPmZiISN9P1erKKuLLAx1xgWKIJum87JZH/YZdiCt8Uq4i1EgeRXFjChg3Z6lFO3TJYGuesPFU4OmqFTQU1TTZTHo2yZwEz++ia+X+ZGqtlEdS3iI2WOeXOjo=
+	t=1746817002; cv=none; b=UV0P8vgOUC8MlX19AwIbxAIHMyxEyOjUfK7himW0dZQpH1sD26jRm67xUeQ4Up4dlaX1gw03RqEdpPG77wb1NvY6QQGYxNy1Sw0nptiopoFcD+g4kw4s1hfApFFpBg+OBCtTARiTCHgyeH/Eq81ypXo2LWDAdbAH1Hfm1p1cNF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746814154; c=relaxed/simple;
-	bh=o3aqF2cZ7prE9lem+Axxs/68qbd5Oyb8f3//e0+M6fM=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=ZQBMXQMU5xytYr7ncCKLkhhYa+DqMJZ9Bjr8BbhjVtMgOJlnqmUTRsh4DhNRgK7oEoRGdMd09rmWe9TK0Ipxfdnmtvy+NAsR9izuZZ6n8dVw/Tso0ev7E+gaZyOMQrjFkE1+AObXabsdDmfDC5vdeQTwONQlpAmsbYJMohhkWzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OXxMSvLX; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-73c17c770a7so2996012b3a.2;
-        Fri, 09 May 2025 11:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746814151; x=1747418951; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=MBHyHB1Dk1aI/SNuHaIc0QgPMAr1z+7wIjvpDGXz4WM=;
-        b=OXxMSvLXMHZsvKgFjgh37eWgHmK0QIoF1hHPxRooD3J5Po5ceQpJYlQN4Sf9N+mwBj
-         MZKoOe4GwAUJhQz1uSdyysgllgyuM9T9Ywi4k1ZBnklv4QflJCFYWWc9JnZ77BsgcpwM
-         6jZutTXFmrgumwcJMyTtksHdnibaYCkFx+/Eieurmr7/jnJdk5BzKH/0cpEbd70NSOTz
-         TeEz92ZDznU1rhYJLyBB7ukFKqMVU2EX/QPG/t+CLawN6uNaD5PGFkCaAAA3BvNafMz7
-         ShWi7sVrLp7bqPr7Lm1+QMnDm0vDXXaotoXZN3p8FDFgJMJ+G909L5zZ4zCw0plFKC1B
-         rF9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746814151; x=1747418951;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MBHyHB1Dk1aI/SNuHaIc0QgPMAr1z+7wIjvpDGXz4WM=;
-        b=pZfDNIAQ+aub6OGQgy/Yogf2H5cbav+KEjO1SMKOnBLGxKxqFWC5zbn35PxS8x77qo
-         5/5gQjaHF+klrZiZSdD+GwDn2ASa4C1RYG/dD8ebpox9WAbp7hXIlZ1Nz3rWWDPU+Pfk
-         jJPHhWQXxv+QQ3yeVaDR5F6m9e5NhLuObKGOufKB/HKULO95XLNk5DI5glTOqqimUujn
-         3a0/mRyBINE12o5Rpsflmx3PYNEYGdaQXUm5wmmTgcVkAEbhTlpVTfq0zaJLRz8CkcFH
-         nISV0/ApnPeatzJ+zoctKQuGkFl43uPBj4B1A6tD6yfoEhlqWJPs5bEHeOjXad46rgL2
-         IESA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6PPaacGRRGk1wYrs9e19rrvcnfOr1F1t184icPWEtIqUy3J+rxxDccT2Jnp3kj6co1zz4S8SQQGalyrHZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh2NoJgXSPioUT3KC1AvY01LrqIh69hVIvq4orWuYcQ+longwk
-	M6Nvq5XCsAlcglfSC5jNv5knUGyn+XsvtorHNeUpMTZYGgWvcuAso9nnhA==
-X-Gm-Gg: ASbGncvj8WJd7bzPxs0vEkPkihwKX1uFXtjI7elYUJ8yLYJxKY6IGc3o4yV7tTOLKF1
-	VbhSZA0ue9dmvM4blFePANUVGsxYU9ZrROJcs7VyHSCVzG28OtWEZ76R5A2yiyetgCyEgZnKDh+
-	Oub3Z4NwpD+320S1rTxQRyDlwEVZsX57+CUxj1xtouN96UX9bnUwNETQCPc5YkJk1cWx9ZT70+u
-	Qn1fun7hzarCoJoO2gqVTbhwXO7WXo+5mgX6I8DsVE0P4UIrOGNlazImeUabYd683hVCDB5zOOm
-	WZOw7JtRdAGOOoJWbN8L3bDocubzqdCFTD5n2gQaSgBJ
-X-Google-Smtp-Source: AGHT+IHCCagfbMlF+HCEhFnc3WpilDu595YDEhX7OaURxQDSQkqL3rjCm68ctGB0QZnkzzh8AYp2YQ==
-X-Received: by 2002:a05:6a21:318b:b0:1fd:f55f:881e with SMTP id adf61e73a8af0-215abd22460mr7595451637.36.1746814151050;
-        Fri, 09 May 2025 11:09:11 -0700 (PDT)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-74237a3d1cfsm1999385b3a.127.2025.05.09.11.09.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 11:09:10 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, John Garry <john.g.garry@oracle.com>, djwong@kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] ext4: Add multi-fsblock atomic write support with bigalloc
-In-Reply-To: <cover.1746734745.git.ritesh.list@gmail.com>
-Date: Fri, 09 May 2025 23:12:46 +0530
-Message-ID: <87h61t65pl.fsf@gmail.com>
-References: <cover.1746734745.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1746817002; c=relaxed/simple;
+	bh=mUxEVjMyxn2ufS687Uv1jEwonkP9xfj+lje4fRPivVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mLqIzwAqfAxsz3uR/cfTn8904syaT+WN9tMyT/NcqZ8B/MxCoOJhs/p8/3DpOKIhfoZ47iOZQsgTzXAySekGWfOXPjfwz4QBTrBOSdNCXZIF5TaNonX7B/IioLzcEpuRIp691Y3yHEqGatr8DrUHgaLga71IqlYXBd/C906batE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iv4X1708; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41F93C4CEE4;
+	Fri,  9 May 2025 18:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746817001;
+	bh=mUxEVjMyxn2ufS687Uv1jEwonkP9xfj+lje4fRPivVs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Iv4X1708547EcVt7OI6Ts64jpx9PJrcWPUVIGGIjsk7Rev/grJeIEIUw4XFc5WZcb
+	 cN/lrad7TQKW4xjutOCMy8tLhIjIvRhevgYgsCn+PPUTYk7MA1CXsTjaLyEuYEZj6y
+	 JqxV7wm3mFNVnUOMIG2qi8B1ffiPK2MXqIZxzv5t36shv13vJHHZZNYhYgz+fa0ZnI
+	 YsarZGpH4IWyerXPuJbcBLcR8Ou+TmsiioroHmf4xeFtBNOvLv4FkMoF1cBQkT2Em7
+	 kElg2k47qUuOkupYEKIG4MT5aU+969LlNHqLn+eQU+LrgHJR0v2OtMOmi9EouaYOOk
+	 Vrql2REAKVslw==
+Date: Fri, 9 May 2025 11:56:38 -0700
+From: Kees Cook <kees@kernel.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	rcu@vger.kernel.org, linux-mm@kvack.org,
+	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 02/12] locking/rtmutex: Move max_lock_depth into rtmutex.c
+Message-ID: <202505091156.8B42E42@keescook>
+References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-2-d0ad83f5f4c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-2-d0ad83f5f4c3@kernel.org>
 
-"Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
+On Fri, May 09, 2025 at 02:54:06PM +0200, Joel Granados wrote:
+> Move the max_lock_depth sysctl table element and variable into
+> rtmutex.c. Make the variable static as it no longer needs to be
+> exported. Removed the rtmutex.h include from sysctl.c.
+> 
+> This is part of a greater effort to move ctl tables into their
+> respective subsystems which will reduce the merge conflicts in
+> kernel/sysctl.c.
+> 
+> Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
-> This is v3 of multi-fsblock atomic write support using bigalloc. This has
-> started looking into much better shape now. The major chunk of the design
-> changes has been kept in Patch-4 & 5.
->
-> This series can now be carefully reviewed, as all the error handling related
-> code paths should be properly taken care of.
->
+Yup, all looks good, including the variable relocation.
 
-We spotted that multi-fsblock changes might need to force a journal
-commit if there were mixed mappings in the underlying region e.g. say WUWUWUW...
+Reviewed-by: Kees Cook <kees@kernel.org>
 
-The issue arises when, during block allocation, the unwritten ranges are
-first zeroed out, followed by the unwritten-to-written extent
-conversion. This conversion is part of a journaled metadata transaction
-that has not yet been committed, as the transaction is still running.
-If an iomap write then modifies the data on those multi-fsblocks and a
-sudden power loss occurs before the transaction commits, the
-unwritten-to-written conversion will not be replayed during journal
-recovery. As a result, we end up with new data written over mapped
-blocks, while the alternate unwritten blocks will read zeroes. This
-could cause a torn write behavior for atomic writes.
+> ---
+>  include/linux/rtmutex.h      |  2 --
+>  kernel/locking/rtmutex.c     | 23 +++++++++++++++++++++++
+>  kernel/locking/rtmutex_api.c |  5 -----
+>  kernel/sysctl.c              | 12 ------------
+>  4 files changed, 23 insertions(+), 19 deletions(-)
+> 
+> diff --git a/include/linux/rtmutex.h b/include/linux/rtmutex.h
+> index 7d049883a08ace049384d70b4c97e3f4fb0e46f8..dc9a51cda97cdb6ac8e12be5209071744101b703 100644
+> --- a/include/linux/rtmutex.h
+> +++ b/include/linux/rtmutex.h
+> @@ -18,8 +18,6 @@
+>  #include <linux/rbtree_types.h>
+>  #include <linux/spinlock_types_raw.h>
+>  
+> -extern int max_lock_depth; /* for sysctl */
+> -
+>  struct rt_mutex_base {
+>  	raw_spinlock_t		wait_lock;
+>  	struct rb_root_cached   waiters;
+> diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+> index c80902eacd797c669dedcf10966a8cff38524b50..705a0e0fd72ab8da051e4227a5b89cb3d1539524 100644
+> --- a/kernel/locking/rtmutex.c
+> +++ b/kernel/locking/rtmutex.c
+> @@ -29,6 +29,29 @@
+>  #include "rtmutex_common.h"
+>  #include "lock_events.h"
+>  
+> +/*
+> + * Max number of times we'll walk the boosting chain:
+> + */
+> +static int max_lock_depth = 1024;
+> +
+> +static const struct ctl_table rtmutex_sysctl_table[] = {
+> +	{
+> +		.procname	= "max_lock_depth",
+> +		.data		= &max_lock_depth,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec,
+> +	},
+> +};
+> +
+> +static int __init init_rtmutex_sysctl(void)
+> +{
+> +	register_sysctl_init("kernel", rtmutex_sysctl_table);
+> +	return 0;
+> +}
+> +
+> +subsys_initcall(init_rtmutex_sysctl);
+> +
+>  #ifndef WW_RT
+>  # define build_ww_mutex()	(false)
+>  # define ww_container_of(rtm)	NULL
+> diff --git a/kernel/locking/rtmutex_api.c b/kernel/locking/rtmutex_api.c
+> index 191e4720e546627aed0d7ec715673b1b8753b130..2b5da8af206da6ee72df1234a4db94f5c4f6f882 100644
+> --- a/kernel/locking/rtmutex_api.c
+> +++ b/kernel/locking/rtmutex_api.c
+> @@ -8,11 +8,6 @@
+>  #define RT_MUTEX_BUILD_MUTEX
+>  #include "rtmutex.c"
+>  
+> -/*
+> - * Max number of times we'll walk the boosting chain:
+> - */
+> -int max_lock_depth = 1024;
+> -
+>  /*
+>   * Debug aware fast / slowpath lock,trylock,unlock
+>   *
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 473133d9651eac4ef44b8b63a44b77189818ac08..a22f35013da0d838ef421fc5d192f00d1e70fb0f 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -59,9 +59,6 @@
+>  #include <asm/nmi.h>
+>  #include <asm/io.h>
+>  #endif
+> -#ifdef CONFIG_RT_MUTEXES
+> -#include <linux/rtmutex.h>
+> -#endif
+>  
+>  /* shared constants to be used in various sysctls */
+>  const int sysctl_vals[] = { 0, 1, 2, 3, 4, 100, 200, 1000, 3000, INT_MAX, 65535, -1 };
+> @@ -1709,15 +1706,6 @@ static const struct ctl_table kern_table[] = {
+>  		.proc_handler	= proc_dointvec,
+>  	},
+>  #endif
+> -#ifdef CONFIG_RT_MUTEXES
+> -	{
+> -		.procname	= "max_lock_depth",
+> -		.data		= &max_lock_depth,
+> -		.maxlen		= sizeof(int),
+> -		.mode		= 0644,
+> -		.proc_handler	= proc_dointvec,
+> -	},
+> -#endif
+>  #ifdef CONFIG_TREE_RCU
+>  	{
+>  		.procname	= "panic_on_rcu_stall",
+> 
+> -- 
+> 2.47.2
+> 
+> 
 
-So we were thinking we might need something like this. Hopefully this
-should still be ok, as mixed mapping case mostly is a non-performance
-critical path. Thoughts?
-
-
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 2642e1ef128f..59b59d609976 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3517,7 +3517,8 @@ static int ext4_map_blocks_atomic_write_slow(handle_t *handle,
-  * underlying short holes/unwritten extents within the requested range.
-  */
- static int ext4_map_blocks_atomic_write(handle_t *handle, struct inode *inode,
--                               struct ext4_map_blocks *map, int m_flags)
-+                               struct ext4_map_blocks *map, int m_flags,
-+                               bool *force_commit)
- {
-        ext4_lblk_t m_lblk = map->m_lblk;
-        unsigned int m_len = map->m_len;
-@@ -3537,6 +3538,11 @@ static int ext4_map_blocks_atomic_write(handle_t *handle, struct inode *inode,
-        map->m_len = m_len;
-        map->m_flags = 0;
-
-+       /*
-+        * slow path means we have mixed mapping, that means we will need
-+        * to force txn commit.
-+        */
-+       *force_commit = true;
-        return ext4_map_blocks_atomic_write_slow(handle, inode, map);
- out:
-        return ret;
-@@ -3548,6 +3554,7 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
-        handle_t *handle;
-        u8 blkbits = inode->i_blkbits;
-        int ret, dio_credits, m_flags = 0, retries = 0;
-+       bool force_commit = false;
-
-        /*
-         * Trim the mapping request to the maximum value that we can map at
-@@ -3610,7 +3617,8 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
-                m_flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
-
-        if (flags & IOMAP_ATOMIC)
--               ret = ext4_map_blocks_atomic_write(handle, inode, map, m_flags);
-+               ret = ext4_map_blocks_atomic_write(handle, inode, map, m_flags,
-+                                                  &force_commit);
-        else
-                ret = ext4_map_blocks(handle, inode, map, m_flags);
-
-@@ -3626,6 +3634,9 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
-        if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
-                goto retry;
-
-+       if (ret > 0 && force_commit)
-+               ext4_force_commit(inode->i_sb);
-+
-        return ret;
- }
-
-
--ritesh
+-- 
+Kees Cook
 
