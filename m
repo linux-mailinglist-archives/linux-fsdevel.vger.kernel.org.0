@@ -1,53 +1,52 @@
-Return-Path: <linux-fsdevel+bounces-48599-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48600-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0EFAB1420
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 14:56:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE98AB1423
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 14:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19B4E188B481
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:56:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0D69B23B58
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:55:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B20293474;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E07293727;
 	Fri,  9 May 2025 12:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YzQzGNG2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cvBaQKIl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD272918EB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29638292094;
 	Fri,  9 May 2025 12:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746795307; cv=none; b=agIZ0l+stdk3Ys5U5BnQ9aE+aN5RK9wtM3ly5CCZiL+ob7Hwz89usC8+GdE3i6lAsai05UzhiD4hDuv+fc+KIsBQtagLZxLuEt8GCMlQH0iaRTYnLINR8ZcTMm0ovhfArmqC/yP8erAxZRPzawWvd9bs/vmnGCVEueLxORLIWKI=
+	t=1746795307; cv=none; b=RMdvOBUHiWjow7eR0Zu/mSgCLiwulwUJSR3m3yeXSpBeT3j/GLypZexNd3jQGuZC/RMQV5UY6gnRUEl7kyD31wWXLkVs1/XeYITBpjTPNg8Iw0dtmj2AtRtzLXX29hri7x39f/ZiYntJdrTFNgc0zxyGiIv2p4NnBMUUq1LcXJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746795307; c=relaxed/simple;
-	bh=iBWZYDpQ2juAjhx5pX1DbD1nKbOZE742NSDAPf/9QSo=;
+	bh=l7y3Jbe+VuDhW87xA14zc8M32/viN+V++/E2JThvO9k=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NQdYKpKRSHtpoQqWgIoL3wXLcAtvsYLyttDauuvw7ndXY7PmOTenuIsDBeGKwoA21MqYccs5Hk2iTlghK5QJUNJKsnEL2fQPz4hDapU2Cpwkmy+ZtlDaspl/qE3zgKngBS0YnEwH5BpJZhUzROw2KSDCkpE7wGXMvkPhNhtEOIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YzQzGNG2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 49234C2BC9E;
+	 In-Reply-To:To:Cc; b=fiBJqvEt2uCMvFUf6gowKK3EGnQbIvXO6ahLMSVGjJX6MYcJrbQfkTct3uFy9EybUNGlkhUnJRrrIJaTN0AT/fdQlMDfhL0DkDd9jzIz3Qc90ws/26ZhFP/W2JoJdZ82WB3HZbSsm/C+fkauaO6r0tgEmUQwnpEX7sKkCLlUd6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cvBaQKIl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 5AB1DC4CEF1;
 	Fri,  9 May 2025 12:55:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746795306;
-	bh=iBWZYDpQ2juAjhx5pX1DbD1nKbOZE742NSDAPf/9QSo=;
+	bh=l7y3Jbe+VuDhW87xA14zc8M32/viN+V++/E2JThvO9k=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=YzQzGNG2i+QOu0+1G3VOs39FT4R/N1C52TFCga1mn4Nz8jHMewzsn8ZHyR/a7pxnN
-	 GRc2Mgzjna+zJQG2Hd4OTMU/79ex4ic3GiD8LcKnqxBgYa/ckpSfI8V0J4jreqyEm/
-	 V8qyoGkZneoRaurWLO6AfjOEVZAUZwGTJzvPSp2LvNB6Kf2HESZxzG4bHDwaB30UQG
-	 +L8il5x37JywipHbMXUTAFlpyXfxwBUzz8G0xh1EI4Cjz6GYfwde03JCLNG0UwskVz
-	 s+0EvsOy9/rOTBmSqrL9ljOXyNXrtOF4Q5qR1xGXMBs2IHh9C9r4e2jLQLnh036ABA
-	 kPHtvgDL1WZww==
+	b=cvBaQKIl30gjPnU4L5BcielDqFS0aWNfC4wIqVdZ5yfrPbVavQw6m+ntmmq6DK6v9
+	 td8YrcbypMNsm5/cN3KjyASUVwf7G9k2sMuWMPBWIeVO6WpB48JxM8Jy5rl93xxs2O
+	 SwsEBCktXBI/oMgbR6sEvWDcs4BuEEDcZn0UqFz7CrzS0bsfrJshGWbHPd1WB0yDEX
+	 MEpP60oUErTnvprCfozfhEZ7l+A7awq9qSg+xUr0fiMHLFvZKCc04mt2hgNYuLd1lv
+	 LaI0GS0SUhHEa60sgk0RkDdouQozF/XJVho6oJO+vhJVNNCd5Ri28MVbxD09steA+T
+	 NijHoEj5e/MRg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F82AC3ABBC;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D8D9C3ABCF;
 	Fri,  9 May 2025 12:55:06 +0000 (UTC)
 From: Joel Granados <joel.granados@kernel.org>
-Date: Fri, 09 May 2025 14:54:14 +0200
-Subject: [PATCH 10/12] sysctl: Move sysctl_panic_on_stackoverflow to
- kernel/panic.c
+Date: Fri, 09 May 2025 14:54:15 +0200
+Subject: [PATCH 11/12] sysctl: Remove (very) old file changelog
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250509-jag-mv_ctltables_iter2-v1-10-d0ad83f5f4c3@kernel.org>
+Message-Id: <20250509-jag-mv_ctltables_iter2-v1-11-d0ad83f5f4c3@kernel.org>
 References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
 In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
 To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
@@ -82,76 +81,60 @@ Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org, 
  Joel Granados <joel.granados@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1738;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1555;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=iBWZYDpQ2juAjhx5pX1DbD1nKbOZE742NSDAPf/9QSo=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGgd+yZVZlAJvlSFeIOK7ZUIBFeRAqCzIUtq1
- EXP6L0iac8e6okBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoHfsmAAoJELqXzVK3
- lkFPKsUL/34wrM9l0suCAomA6YIWhJCQFnrdoNObwQnmqYlomYI6m+y92V0xy+ltvIjej2DhMm9
- Zo7HqxRyRmRFfsvqc5OGeZkQQgCiKriH3QMnOiEt7ZNXZZWWura6lhop2H5YVmONmix6awBu8ok
- n6UWQ+lQG8Gg3b+l8Rs+ON5FCfDrM5pFk1VyQnpQ+qKQY8Jz17Isp/gJxz1hPUdCLgWEhuW9kD5
- MTnu4NTj8f7+ZDkSF/2sfIm5O0umKl+BNzXhJ8APNvw9PW2tuX/jD5tTYDxbGfBr1BOchy5eJZe
- DOEJAuJ1fUxNfP4HlZ6OD7TpYvLKsUTEA6cF9YrsqW/TThUbv52ajFr/LHzxj2KbUx9+QTnf3u1
- HdU2RSmv9uKIcVnQBvI80bJftXsSVI2fUQqQfwongGBHQLG4r51JY4KivxNZrgg7qS2CsWccQF9
- 73RaPh70zGvXKDXnO7oh+GVcexPplGQ853rGTC8tjEiG6hO9FnaUG2fGqoWkB9/dH2Pn8Cuz8X8
- 0A=
+ bh=l7y3Jbe+VuDhW87xA14zc8M32/viN+V++/E2JThvO9k=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGgd+yYzKzJgtt4ntTpokN6y9XDIsXdhgoqX5
+ F7WhF8VlYCeSokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoHfsmAAoJELqXzVK3
+ lkFPjG0L/j8GaLr9ywOQsgvVv5Xw8VoMDZucw17xsIkwa74dooJuP9ZQVCakXlhPXB01I+E+zf3
+ aIMBrvOgTKo6Dznr0CNidgX9rcGPeCqQBm1WNeCzPzuu9OPwSblcK0EQW8d9pyF/wLryQK6Wkbc
+ bo4TxGSyK/8Lwd1hn5SX/2Yd93Z2kSvP0lQluV52q/pRUnSgG0qtOaJYx0qb9HBOfZu/2vTWNsj
+ UfCTtfKFJKGdCFF7oQcdtsjFEiicRoKDPxr+k9x4VqGfZvNaIv696bu4gAxC/LerRqjeZXPjbcA
+ 8qM7Sp7gkRABoxRqT/BSQdTCkGqtagv64NcHDdMunCXa+XrVm7rWspSwzwZQpTcqKyDZT6ndewr
+ 58cU4skHP3FxIGDvB499kFVSiZmYHjvngFgvBYrDepXsWdrZqlpnfwE2LERTqNIT+KB5WMkWudT
+ txlECQUXV5CRvQmWSPFxr1Vc5bvZrHm4hsOvJn3EPCdOCSNEV7maDS/tVypyYKkJE2TQQKIh907
+ EE=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-This is part of a greater effort to move ctl tables into their
-respective subsystems which will reduce the merge conflicts in
-kernel/sysctl.c.
+These comments are older than 2003 and therefore do not bare any
+relevance on the current state of the sysctl.c file. Remove them as they
+confuse more than clarify.
 
 Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
- kernel/panic.c  | 10 ++++++++++
- kernel/sysctl.c | 10 ----------
- 2 files changed, 10 insertions(+), 10 deletions(-)
+ kernel/sysctl.c | 16 ----------------
+ 1 file changed, 16 deletions(-)
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 213c6c9d6a750ff3d17f3cf530b37c619cd816f4..401f0997f654797acc3351040bbbda1845ce00c1 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -183,6 +183,16 @@ static const struct ctl_table kern_panic_table[] = {
- 		.mode           = 0644,
- 		.proc_handler   = proc_douintvec,
- 	},
-+#if (defined(CONFIG_X86_32) || defined(CONFIG_PARISC)) && \
-+	defined(CONFIG_DEBUG_STACKOVERFLOW)
-+	{
-+		.procname	= "panic_on_stackoverflow",
-+		.data		= &sysctl_panic_on_stackoverflow,
-+		.maxlen		= sizeof(int),
-+		.mode		= 0644,
-+		.proc_handler	= proc_dointvec,
-+	},
-+#endif
- };
- 
- static __init int kernel_panic_sysctls_init(void)
 diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index d5bebdd02cd4f1def7d9dd2b85454a9022b600b7..446d77ec44f57a4929389b64fc23d3b180f550b4 100644
+index 446d77ec44f57a4929389b64fc23d3b180f550b4..dee9a818a9bbc8b1ecd17b8ac1ae533ce15c2029 100644
 --- a/kernel/sysctl.c
 +++ b/kernel/sysctl.c
-@@ -1552,16 +1552,6 @@ static const struct ctl_table kern_table[] = {
- 		.mode		= 0444,
- 		.proc_handler	= proc_dointvec,
- 	},
--#if (defined(CONFIG_X86_32) || defined(CONFIG_PARISC)) && \
--	defined(CONFIG_DEBUG_STACKOVERFLOW)
--	{
--		.procname	= "panic_on_stackoverflow",
--		.data		= &sysctl_panic_on_stackoverflow,
--		.maxlen		= sizeof(int),
--		.mode		= 0644,
--		.proc_handler	= proc_dointvec,
--	},
--#endif
- #ifdef CONFIG_SYSCTL_ARCH_UNALIGN_NO_WARN
- 	{
- 		.procname	= "ignore-unaligned-usertrap",
+@@ -1,22 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+  * sysctl.c: General linux system control interface
+- *
+- * Begun 24 March 1995, Stephen Tweedie
+- * Added /proc support, Dec 1995
+- * Added bdflush entry and intvec min/max checking, 2/23/96, Tom Dyas.
+- * Added hooks for /proc/sys/net (minor, minor patch), 96/4/1, Mike Shaver.
+- * Added kernel/java-{interpreter,appletviewer}, 96/5/10, Mike Shaver.
+- * Dynamic registration fixes, Stephen Tweedie.
+- * Added kswapd-interval, ctrl-alt-del, printk stuff, 1/8/97, Chris Horn.
+- * Made sysctl support optional via CONFIG_SYSCTL, 1/10/97, Chris
+- *  Horn.
+- * Added proc_doulongvec_ms_jiffies_minmax, 09/08/99, Carlos H. Bauer.
+- * Added proc_doulongvec_minmax, 09/08/99, Carlos H. Bauer.
+- * Changed linked lists to use list.h instead of lists.h, 02/24/00, Bill
+- *  Wendling.
+- * The list_for_each() macro wasn't appropriate for the sysctl loop.
+- *  Removed it and replaced it with older style, 03/23/00, Bill Wendling
+  */
+ 
+ #include <linux/sysctl.h>
 
 -- 
 2.47.2
