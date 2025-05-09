@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-48589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48592-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8691DAB1403
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 14:56:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9237FAB1402
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 14:55:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF4631BC49F0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:56:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 063FF5234EC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:56:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333AB29209F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5352A2920B3;
 	Fri,  9 May 2025 12:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DimXxpcf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oOk/J+va"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE3C290DA1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FF7D290DBE;
 	Fri,  9 May 2025 12:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746795306; cv=none; b=myKgREclvvnouwGRfb81SdOKk7oOkIn2qS/K3Us8VVkCffu/475c8CoKr/65viw7PHRI0nZ+634TawXqLIi4QBNltKiE0lA01C+p99xahoq1Qlo7Djg/TmhkOvoJcF+6mY4rHDyNhGmkdqy7CBL1JT531CLVCQ+iAIiP41k1Q6M=
+	t=1746795306; cv=none; b=YhailvoZIkhfP/KLess+Y/hQMf5qvH7/iZT1f+PpBus5NQvxthUt8l5ipixPYCLJgh6rM1lf0z41WJHkA+TDTZVfnLcI7K1axsJLer4Mn7ez7AIaKqq+3jOpwqzLb09hGhm3kLlXFj+gzlb9cvdAzVzoB3Ybj/3adqnJ8BTtrMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1746795306; c=relaxed/simple;
-	bh=c3c94OjA1q5qb8EGSYnHVBVy8iOw9HUdPL9oEFYfxLk=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jWRrFYex4iLboGjQKE+BTxDHzX8A1LYIMDmQ+NpYLYv9Xi9+iRKZqpIozh69p7nWL/ZVK8qfv/U4ms2z94pHA7grrM5p5cXhTFpJQYVUr0bEClayoDsdFsALZ+Y8Ed/EGj5CkNgoUlxEU7opaVzVv188Ix25r0Fo/s4ONKUQ/FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DimXxpcf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id AC6E0C4CEEB;
+	bh=BpmzDMZbudMRxYnWKdn7By3e4oIcbEz4h214VtRxk9I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=Vz0NZFhwsLqlg5f5jCRh8hvSwNUfJ7l2wCN3I5mvAmgA9VxY6xgbQcGtobN8C4GTkpiay0HrwMQvfyp/RaSb5F7i+2I4F5Cuf8fqWWMx28006V3/qAjXxnC6b5GgsBwWy0+PMaBEsPRKfD1WXyZOAEpwflH58O6jnnMUk9M0Qy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oOk/J+va; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id BD55CC4CEEF;
 	Fri,  9 May 2025 12:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1746795305;
-	bh=c3c94OjA1q5qb8EGSYnHVBVy8iOw9HUdPL9oEFYfxLk=;
-	h=From:Subject:Date:To:Cc:From;
-	b=DimXxpcfw4ebKQKH7DiK6f8PW/85zKA5OAFMbEXfxOrhT0N20cI4VMF5gYPrckgiU
-	 F7rXr8UXkQwhA81+Aj1F6DhsPHy3xi0bQoho7o4uFaBrof6zFimYIV+Pvg/9KSFriQ
-	 Vln4fCLIj70oiahJ7qOxo9+5Me4NpybqeRxX9Yz9bhzRhjOtGiKPsuXO5kygpU0RuW
-	 9VXrlGN/WOzNTqjoSB7/h8d3vsVOWF1NMa7BAr+7G4U03ZkNyEFZcF+k7wtLdW2uVu
-	 dBf5mLXoYU41w2aADbw5csR/3VdK6kbIvay2kxYMvuY14x9NQyrGCFbb5qt8Z/Pvga
-	 +7Do9GVd7Wj5g==
+	bh=BpmzDMZbudMRxYnWKdn7By3e4oIcbEz4h214VtRxk9I=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=oOk/J+vaXcCK+KIoAHGzkTE6SF1jxzmX9CvUYcBR+nY+HuSCBjmFriMTsBAAz/W4b
+	 07h7jWzhlKlcjHwLg0p26MQ23p0yUS+5xgty/9MCfu9V7oFN3MXsA39qQyWvh7W3fl
+	 Iq5AgI9VOLFne6dwxGr0dDSl7S1GdCliiuUxzK479K1e6qQtwWgtDX1QtGAEv+mq4c
+	 Hs7ShgRff+NXpp8P6VAJW4xlkiZC5jtQC+MnmliVVuImATzNBgwr08H8s6jJUL4YyT
+	 GOVC4ltAY08YmmX8Y+wSal1CAuiN87dLWgau8HpMQl2CXOPvWV/HeuVnZIhNPL9XGH
+	 gv3BZhiSiwGZg==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99C9DC3ABBC;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAD60C3ABC3;
 	Fri,  9 May 2025 12:55:05 +0000 (UTC)
 From: Joel Granados <joel.granados@kernel.org>
-Subject: [PATCH 00/12] sysctl: Move sysctls to their respective subsystems
- (second batch)
-Date: Fri, 09 May 2025 14:54:04 +0200
-Message-Id: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
+Date: Fri, 09 May 2025 14:54:05 +0200
+Subject: [PATCH 01/12] module: Move modprobe_path and modules_disabled
+ ctl_tables into the module subsys
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,10 +56,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAO36HWgC/x3M3QpAQBBA4VfRXNtaI7ReRdJYg5G/djcpeXeby
- +/inAc8O2EPdfKA40u8HHtEliZgZ9onVjJEA2osdKGNWmhS29XZsAbqV/adBHaoDGVVSTmiNQP
- E+HQ8yv2Pm/Z9Pxv//uxoAAAA
-X-Change-ID: 20250509-jag-mv_ctltables_iter2-9a176a322c9d
+Message-Id: <20250509-jag-mv_ctltables_iter2-v1-1-d0ad83f5f4c3@kernel.org>
+References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
+In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
 To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
  Sami Tolvanen <samitolvanen@google.com>, 
  Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>, 
@@ -83,127 +82,140 @@ Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org, 
  Joel Granados <joel.granados@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4502;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3577;
  i=joel.granados@kernel.org; h=from:subject:message-id;
- bh=c3c94OjA1q5qb8EGSYnHVBVy8iOw9HUdPL9oEFYfxLk=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGgd+xMW7Hzi52CWL9iWR+Z70SJ7b24h1VVTE
- 9+RcZ6N+tkWRYkBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoHfsTAAoJELqXzVK3
- lkFP/6IL/jqzfrkpLBdybK4gjSc6ouWp4ieAHXYsQp1S7DOTMfmtKoA3WGZiaS/e09VycqVxmV7
- QL7bIphe5aOAGsKRfnzXH/Hw7gCvdsJ7wIDxjbXyoEZUvdZyAOe8ZXj/dvFWk1mTifku+SVY/tF
- 0nAq1rIlLyFh8p7/3PU7knC9Chtj+lelUov03LWHsB7O1+aFpCDy2GRqkhDAeuYFPdE/iQes9mw
- 2NJXuX6auIitRw64qZDDYLrbz2ZhcXKmYkc1m5h4tcIdJPhMOcI5jBaz+xT709w9P0ojGopy/I4
- iRU6Cpv3crKjS07AYXf0mSucoF//u0OalGFPsTMJkN5usP8JcRovnwFrPa+cLE8uC09Z+WXtXIV
- InsEjNTX8XjAZFZ07Z3Im0b4DJaT8bb0HUN1qHPR/smJbhD5qy6XjyWAZ6v1GgsYF1No+2YtLVm
- 74Y6dZPLQqguGo8y7ok+l1LnUwN3yTYUlKz8oHZs4bVH3wIwcgGgmSjJ/E8AWrV+umAJ97WKW55
- TI=
+ bh=BpmzDMZbudMRxYnWKdn7By3e4oIcbEz4h214VtRxk9I=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGgd+yERlHWpCzKql69kqBrlIddBBHXw3ii2o
+ uiBdL8PsdBJNokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJoHfshAAoJELqXzVK3
+ lkFPiYAL/jcKTOT3jHcbWnBmzVITRoAGWzzbqeMhLRmW02xJEovcpCPY557YgiP0MDw733croZF
+ E0B+rCl82lMougLjMo2ERjTkG5jEIC1YMnEdSHENOsBYDKsGjQc78C+gjzKuRex2SijKeNi9iQ1
+ uyVHT+J023ir1ZOBlut49P1x2aMYq/ijeE0GaEf0fKwCon+h4r4tDZl28rRqr3i54D2Ceg0jR/U
+ DdK3iItzrHNAohjw6kT8VcgV38sk6Vqn1GIBtGRXmwT2Hzt8UpXR8Z2UTrHoYw1UoUsT1tjt75K
+ knCtPI1vnOkhFgERft4V4NEq2+JM4D7Q4mnWCQWPXogsEFVdIss6C6E/JXzfQqTXfeMbXuSw/aB
+ FtYyvMGEbh1FldKAR3MrNrWwkFnOFNfVxGhHR7YLyRfsXpeuVWIzTAwTHK3FG2vEvcogCTywjTA
+ QH0H+x43FnFzxiYTQ2JKcV2Nn8mPVyUwTV/FYApI7fa8tKnApPVwY3R+ZcCXgtJy3gd0HxiIcE2
+ os=
 X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
  fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
 X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
  auth_id=239
 
-This series relocates sysctl tables from kern_table to their respective
-subsystems. It is mostly moves to core kernel subsystems but also
-includes mm/memory.c and 2 drivers (parisc and tty). With this series we
-are left with 8 ctl_tables out of the original 50 that existed within
-the kern_table array. With all this activity in kernel/sysctl.c, I took
-the liberty of removing unneeded include headers as well as outdated
-changelog comments.
+Move module sysctl (modprobe_path and modules_disabled) out of sysctl.c
+and into the modules subsystem. Make the modprobe_path variable static
+as it no longer needs to be exported. Remove module.h from the includes
+in sysctl as it no longer uses any module exported variables.
 
-By decentralizing sysctl registrations, subsystem maintainers regain
-control over their sysctl interfaces, improving maintainability and
-reducing the likelihood of merge conflicts. All this is made possible by
-the work done to reduce the ctl_table memory footprint in commit
-d7a76ec87195 ("sysctl: Remove check for sentinel element in ctl_table
-arrays").
-
-A few comments on the process:
-1. If you see that the change is good and want to push it through a tree
-   different than sysctl, please tell me so I can remove it from this
-   series and try to avoid conflicts in linux-next.
-2. Apologies if you have received this in error. Please tell me if you
-   want to be removed from recipient list and note that it is difficult
-   to actually know who is interested in these "treewide" changes.
-
-Testing done by running sysctl selftests on x86_64 and 0-day.
-
-You can find the first batch here [1], if you are curious.
-
-Comments are greatly appreciated
-
-[1] https://lore.kernel.org/20250313-jag-mv_ctltables-v3-0-91f3bb434d27@kernel.org
-
-To: Luis Chamberlain <mcgrof@kernel.org>
-To: Petr Pavlu <petr.pavlu@suse.com>
-To: Sami Tolvanen <samitolvanen@google.com>
-To: Daniel Gomez <da.gomez@samsung.com>
-To: Kees Cook <kees@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-To: Ingo Molnar <mingo@redhat.com>
-To: Will Deacon <will@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-To: Waiman Long <longman@redhat.com>
-To: Paul E. McKenney <paulmck@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-To: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-To: Joel Fernandes <joel@joelfernandes.org>
-To: Josh Triplett <josh@joshtriplett.org>
-To: Uladzislau Rezki <urezki@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Lai Jiangshan <jiangshanlai@gmail.com>
-To: Zqiang <qiang.zhang1211@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: James E.J. Bottomley <James.Bottomley@HansenPartnership.com>
-To: Helge Deller <deller@gmx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-modules@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: rcu@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: linux-parisc@vger.kernel.org
-Cc: linux-serial@vger.kernel.org
+This is part of a greater effort to move ctl tables into their
+respective subsystems which will reduce the merge conflicts in
+kernel/sysctl.c.
 
 Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
-Joel Granados (12):
-      module: Move modprobe_path and modules_disabled ctl_tables into the module subsys
-      locking/rtmutex: Move max_lock_depth into rtmutex.c
-      rcu: Move rcu_stall related sysctls into rcu/tree_stall.h
-      mm: move randomize_va_space into memory.c
-      parisc/power: Move soft-power into power.c
-      fork: mv threads-max into kernel/fork.c
-      Input: sysrq: mv sysrq into drivers/tty/sysrq.c
-      sysctl: Move tainted ctl_table into kernel/panic.c
-      sysctl: move cad_pid into kernel/pid.c
-      sysctl: Move sysctl_panic_on_stackoverflow to kernel/panic.c
-      sysctl: Remove (very) old file changelog
-      sysctl: Remove superfluous includes from kernel/sysctl.c
+ include/linux/kmod.h |  1 -
+ kernel/module/kmod.c | 32 +++++++++++++++++++++++++++++++-
+ kernel/sysctl.c      | 20 --------------------
+ 3 files changed, 31 insertions(+), 22 deletions(-)
 
- drivers/parisc/power.c       |  20 +++-
- drivers/tty/sysrq.c          |  38 +++++++
- include/linux/kmod.h         |   1 -
- include/linux/panic.h        |   2 -
- include/linux/rtmutex.h      |   2 -
- include/linux/sysctl.h       |   4 -
- kernel/fork.c                |  20 +++-
- kernel/locking/rtmutex.c     |  23 +++++
- kernel/locking/rtmutex_api.c |   5 -
- kernel/module/kmod.c         |  32 +++++-
- kernel/panic.c               |  60 +++++++++++
- kernel/pid.c                 |  32 ++++++
- kernel/rcu/tree_stall.h      |  33 +++++-
- kernel/sysctl.c              | 233 -------------------------------------------
- mm/memory.c                  |  18 ++++
- 15 files changed, 271 insertions(+), 252 deletions(-)
----
-base-commit: 7a94ff386a4a0d9322c56c0e998dd20468d869b1
-change-id: 20250509-jag-mv_ctltables_iter2-9a176a322c9d
+diff --git a/include/linux/kmod.h b/include/linux/kmod.h
+index 68f69362d427caaaefc2565127a7a4158433e5f5..cc32e56dae44896f74a9faf0e97f432f133869b9 100644
+--- a/include/linux/kmod.h
++++ b/include/linux/kmod.h
+@@ -17,7 +17,6 @@
+ #define KMOD_PATH_LEN 256
+ 
+ #ifdef CONFIG_MODULES
+-extern char modprobe_path[]; /* for sysctl */
+ /* modprobe exit status on success, -ve on error.  Return value
+  * usually useless though. */
+ extern __printf(2, 3)
+diff --git a/kernel/module/kmod.c b/kernel/module/kmod.c
+index 25f25381251281a390b273cd8a734c92b960113a..5701629adc27b4bb5080db75f0e69f9f55e9d2ad 100644
+--- a/kernel/module/kmod.c
++++ b/kernel/module/kmod.c
+@@ -60,7 +60,7 @@ static DEFINE_SEMAPHORE(kmod_concurrent_max, MAX_KMOD_CONCURRENT);
+ /*
+ 	modprobe_path is set via /proc/sys.
+ */
+-char modprobe_path[KMOD_PATH_LEN] = CONFIG_MODPROBE_PATH;
++static char modprobe_path[KMOD_PATH_LEN] = CONFIG_MODPROBE_PATH;
+ 
+ static void free_modprobe_argv(struct subprocess_info *info)
+ {
+@@ -177,3 +177,33 @@ int __request_module(bool wait, const char *fmt, ...)
+ 	return ret;
+ }
+ EXPORT_SYMBOL(__request_module);
++
++#ifdef CONFIG_MODULES
++static const struct ctl_table kmod_sysctl_table[] = {
++	{
++		.procname	= "modprobe",
++		.data		= &modprobe_path,
++		.maxlen		= KMOD_PATH_LEN,
++		.mode		= 0644,
++		.proc_handler	= proc_dostring,
++	},
++	{
++		.procname	= "modules_disabled",
++		.data		= &modules_disabled,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		/* only handle a transition from default "0" to "1" */
++		.proc_handler	= proc_dointvec_minmax,
++		.extra1		= SYSCTL_ONE,
++		.extra2		= SYSCTL_ONE,
++	},
++};
++
++static int __init init_kmod_sysctl(void)
++{
++	register_sysctl_init("kernel", kmod_sysctl_table);
++	return 0;
++}
++
++subsys_initcall(init_kmod_sysctl);
++#endif
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 9b4f0cff76eaddc823065ea587760156576a8686..473133d9651eac4ef44b8b63a44b77189818ac08 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -19,7 +19,6 @@
+  *  Removed it and replaced it with older style, 03/23/00, Bill Wendling
+  */
+ 
+-#include <linux/module.h>
+ #include <linux/sysctl.h>
+ #include <linux/bitmap.h>
+ #include <linux/printk.h>
+@@ -1616,25 +1615,6 @@ static const struct ctl_table kern_table[] = {
+ 		.proc_handler	= proc_dointvec,
+ 	},
+ #endif
+-#ifdef CONFIG_MODULES
+-	{
+-		.procname	= "modprobe",
+-		.data		= &modprobe_path,
+-		.maxlen		= KMOD_PATH_LEN,
+-		.mode		= 0644,
+-		.proc_handler	= proc_dostring,
+-	},
+-	{
+-		.procname	= "modules_disabled",
+-		.data		= &modules_disabled,
+-		.maxlen		= sizeof(int),
+-		.mode		= 0644,
+-		/* only handle a transition from default "0" to "1" */
+-		.proc_handler	= proc_dointvec_minmax,
+-		.extra1		= SYSCTL_ONE,
+-		.extra2		= SYSCTL_ONE,
+-	},
+-#endif
+ #ifdef CONFIG_UEVENT_HELPER
+ 	{
+ 		.procname	= "hotplug",
 
-Best regards,
 -- 
-Joel Granados <joel.granados@kernel.org>
+2.47.2
 
 
 
