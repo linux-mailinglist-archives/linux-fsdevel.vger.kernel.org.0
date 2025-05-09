@@ -1,85 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-48653-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 167C8AB1BAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 19:39:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9BC3AB1BC7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 19:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38113AC1F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 17:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 627CA9E5AAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 17:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCCF239E9E;
-	Fri,  9 May 2025 17:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8774215060;
+	Fri,  9 May 2025 17:51:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="LPm3qxWQ"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="yu6e1gp3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECA023643F
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 17:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD1B238C2F
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 17:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746812359; cv=none; b=MvenipPm5flHnYbvbf/iK1Aau8hZupq1TTmrKFlz7KDKa1r74oqYOaVzRdWMeXUKwD6eX6ds8XIf2+B8CTfCvcp7vw2JEwTz/k6YBYvq/g06C4wl73QKX6wrZeg5LEYvsB2quVKtWxCI1PfRC42Lo1ZE26NC/Lp4mRMeYsxjUPo=
+	t=1746813108; cv=none; b=G3Pc1d2kj286Mfz8ab54Rscq3efNRksqJ/13S87K0c2qSSQx8Vizhv2sYvfa2+cGtLIuNjTcKy2xV/CLrZ1p8pPBfLoIoXAYsOdGmBf1vX5WjK3oh4VB8tFkM0gdj+9qbI48Z5LTcFiLHfewT19maEHtLXbYu/WtrMyigvFPoPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746812359; c=relaxed/simple;
-	bh=LfrZCmzoSG/oOv69lKZc62lKRYOxuwevfizEFv6KoOM=;
+	s=arc-20240116; t=1746813108; c=relaxed/simple;
+	bh=Q/eDqnaWNfB1O7xKE77ouU9p0ZDT+uECIZdfEDtngBE=;
 	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jiyQwJb3NLIXEhyWzhhHqLjY2av9AVK0lQsR0SGtMXlWvzxAu1ndGFYsjYMf/3gxqhGfCS0AfXLd3+XgfmymHEuOq8t1oVDkSGPfl2JEt5V4d7Cuxk93NVhcx+cxqDYnBWjW/QA8eDeuyEPXN04QwFN5QpmJhc4HCpcxYqhaKdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=LPm3qxWQ; arc=none smtp.client-ip=209.85.214.177
+	 Content-Type:MIME-Version; b=Pc8Mu1/iZ7lhGE+5YfIAklfNfEfAq4qYJxD/9W3VUZ/Ba3DX1J8BDJBPSicePxNX83EaoKW5VVg9sqtKIRhz1NHsY5kwp40Qz02HnYsz/5OhZNgDoBpxew0D/92G7CRjVPSdkjanBP+VkQrICaK2xHFv0y7/VWcwalk6Y+592TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=yu6e1gp3; arc=none smtp.client-ip=209.85.210.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22e7eff58a0so23500555ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 May 2025 10:39:16 -0700 (PDT)
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-72b82c8230aso832465a34.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 May 2025 10:51:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1746812356; x=1747417156; darn=vger.kernel.org;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1746813105; x=1747417905; darn=vger.kernel.org;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Awyu6yx0XWHa7ZiRVrCdZHl8L0TrAJxNWpvp17USw3Q=;
-        b=LPm3qxWQ8pnjwAu6kxyJdVODFnhiWz6NZKK+DW0rUcnqvXjy+gGyKdQl6ZtOufOM7i
-         TxWjUkV6AOLrEFVxqQxOsoQEcjeBwYKB5xrbUhDsaKwTEFN2JQKbDt3JNUWAx7h7Z+2l
-         CBz6xpvsv5xt1c4IqGTZTjSLp961YkVsCg9qDWPwevAksMmwdsI+gm2/pwxdKuOvO4Ow
-         XlROs0z/zakzqlT8WRqqZiGbDzE7djFcv+SVeumhgxyxrzFs2cYigSZCmjHVPLbXh61S
-         hLbyS9dZSHdKh9NuPLDpOsgxgFGKt51+xSLqgs+0tIuS/G6ZBCAA20+9S5ghIqTX0A90
-         dTSw==
+        bh=Q/eDqnaWNfB1O7xKE77ouU9p0ZDT+uECIZdfEDtngBE=;
+        b=yu6e1gp3yzRODnpCUm0YUPeerrwDWg+5lzvXTxiKULbHEO195hyoZjEMkiAF9rTUtO
+         kK7XpqDOSS0to/vBR0Xp/y3Iy8t0UG0h72Iv5nyWHiJIeezC5QBP9zSI7HP0Zk8NtGDM
+         CRtm0VHgrUEyvmj3BsQYyQrWHAa3EhsXqWHpGD3MpdUC+pXkgTPuaZN2sD6x5+GAOzVF
+         7dza4C3NyIbY4ZgPwyiG//YxVec9rMetjlTzkQqpsg6lLjgnPvEjtTao0042FeseM+94
+         G9V57kMLy7o01UHxz8Y6R+EKEVn9IxeN8OPUtvu9tJGQ85iRC0U9YHCV5T5NO0yksLGv
+         Yvhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746812356; x=1747417156;
+        d=1e100.net; s=20230601; t=1746813105; x=1747417905;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Awyu6yx0XWHa7ZiRVrCdZHl8L0TrAJxNWpvp17USw3Q=;
-        b=g/bhD9dPxowmr934/5y/lxEmwjTnOA43NFYHlDJed55aFrslXhkWKXgLBsOdmTqHyA
-         MJL616UyiGiGjrUmFNEBxoXBU+8eqStQ5nVyIrAXx5a+UcG4ojt9PxgmaLrs3N4tPOy4
-         Bob7Ro8p+vKsxJw9iwOaOJZUXM/sWgslXnkwtqNbhH+364xtUN0PITE8Xrl7QnY38zuy
-         xX0IHhqSLFcaQFCXxxVARN7R2xTB1QGBdgBRnkVklXDCoVZIrx3GouoKbL4TtFNgG7U1
-         7g2ZfVHuXKH+S+VsYqzTT8ccLjHH0nwEO+9XRq3X8DswqpNeRrmV/uKeScwMVH1nzvHN
-         tWmw==
-X-Gm-Message-State: AOJu0YxiI7TE8Xh4GDkYNoxcVasc29q/C2XlGMjSMc7RNw+jbWkMOhgm
-	ZsDmL4rm9L0zW8qA1JSrFAcvd3U6kIwX8XsKSoyIq8f2dnX7UBkPC1f1XAGK9+8T/dQfqQWLqgq
-	3bfU=
-X-Gm-Gg: ASbGncud/mmESMDqodTiFj4v5lo7TZqbfxELoRkD/CqAn+vHf6fJiOsnqR98COho9p0
-	ShjwMslmbrjwy619wnCuMOSfA832P6995blZRsn35RRO8YLnsxLVh2tXZ9ctdFuR/hO1SIJdFWt
-	Na6qVpEO0YmC2niWDvWrZiAb+QyABW1VFyHRJQcFtiLZ1ZaW1kHfTHMi7FtGmdzOaoZ24QhTrNZ
-	3lOcnBaQU+Psiu+CugxxceOduZB9FkQPEA1HVpEhvvJ4efqHQUAVcmsaWzgcUqx1BNwTVFvsjkk
-	MaDxsm+0uLMT4bPnu0UuXb2BX2mNTyyKBCFaSn3jDWQC3QC8rACB
-X-Google-Smtp-Source: AGHT+IHGEwIyBm7xgc5W0YMlKDOYo4LdM3owzYLLhxcicqaKrdscfNIqz3QiEtNKj0ZCYv/G3JnZUA==
-X-Received: by 2002:a17:902:cecb:b0:22f:a932:5374 with SMTP id d9443c01a7336-22fc918d1a7mr71694425ad.48.1746812356347;
-        Fri, 09 May 2025 10:39:16 -0700 (PDT)
+        bh=Q/eDqnaWNfB1O7xKE77ouU9p0ZDT+uECIZdfEDtngBE=;
+        b=G4j7yGXN93+SvGjD5Yws/X9x1jKQvE5JWBsxCM0At1Y/lzuWtAcYKEJB+x7WGR2V64
+         R2iLgAwK+UUY6sMuDgGhna+09oiPEZKG8s6tZQoKEHgPxDphw/7yOZobW57zbBH7z40p
+         tWZhRoHo5o0FelxvuER99BfyjQHfKXeEojAz9i03V/S7aXcDbWRreRal1+Zlxv0GZvWZ
+         hb3/2D6LvSHQS5TewKDiAbNiOSyylfYXFv1uyLkQCrahrBD2q8CoWZrDaQJG87sb1kev
+         w2XS54s0KbHMeKWjkNsG6/W8oA/YKuJwb0H4vW5AsIe/nEI2vAFWROllDJjwhTNOGpys
+         yxFg==
+X-Gm-Message-State: AOJu0Yx21nBYQo01c7fKaGGEU2H27a6xnbuV0WJHOhrTCpvccEbCGLrT
+	6cUKKLZRqa62YLgsAS57FhomVeFFquw36YEZunmNXpSi66SO12hHTSwXX6d3E00=
+X-Gm-Gg: ASbGncugakWcgiW3vw4WtpRdCxgONum4SaxBSDCCTdJN5pJUdUt4+eUZy6WdJlY6ZjK
+	soAhHjgYHejvD9GZSxdG4ETodmFXHwJSa4bwj4ePxjR4xPMaG/mcaBJAE0DlNNKWJ68gpgwPmF2
+	/8jgjvAhTwmN4puz+mD8n+GTp3oUISoEvqF/f2yNWLMXfmlnTFBSVccHCQchIcs4uvNfVCIDdFY
+	AwcMOmdrocKfpwLGSTmdfO0aVFvjj92nzOU3zFz4qqZ05MYWwy1ERn1TMMyreForcgVuPJ4Cdq3
+	yfifwAamxYkN5xKIQ+wznQdaRkr9VbHPWw1t42MDVOyodMP5voda
+X-Google-Smtp-Source: AGHT+IHDCQ7Ns9Wq06VLrKzTLv74WPBLip6/SOmObU7e4P5+nkf8W86+WJ2FlLyUAMn2pLU0ZAdu7w==
+X-Received: by 2002:a05:6830:71a3:b0:72c:3289:827c with SMTP id 46e09a7af769-73226a3b787mr2700710a34.16.1746813105531;
+        Fri, 09 May 2025 10:51:45 -0700 (PDT)
 Received: from pop-os.attlocal.net ([2600:1700:6476:1430:f242:4c31:ff5d:e2b7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22fc82a50b3sm19857515ad.240.2025.05.09.10.39.13
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-732265cd9b4sm610362a34.52.2025.05.09.10.51.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 09 May 2025 10:39:15 -0700 (PDT)
-Message-ID: <e87e0fce1391a34ccd3f62581f8dc62d03b5c022.camel@dubeyko.com>
-Subject: Re: [PATCH] hfs: export dbg_flags in debugfs
+        Fri, 09 May 2025 10:51:44 -0700 (PDT)
+Message-ID: <c19db3b68063cd361c475aaebdd95a232aef710c.camel@dubeyko.com>
+Subject: Re: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D=3A?=  [PATCH 2/2] hfs: fix to
+ update ctime after rename
 From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: Yangtao Li <frank.li@vivo.com>, glaubitz@physik.fu-berlin.de
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Fri, 09 May 2025 10:39:12 -0700
-In-Reply-To: <20250507145550.425303-1-frank.li@vivo.com>
-References: <20250507145550.425303-1-frank.li@vivo.com>
+To: =?UTF-8?Q?=E6=9D=8E=E6=89=AC=E9=9F=AC?= <frank.li@vivo.com>,  Viacheslav
+ Dubeyko <Slava.Dubeyko@ibm.com>, "glaubitz@physik.fu-berlin.de"
+ <glaubitz@physik.fu-berlin.de>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>
+Date: Fri, 09 May 2025 10:51:43 -0700
+In-Reply-To: <SEZPR06MB5269E572825AE202D1E146A6E888A@SEZPR06MB5269.apcprd06.prod.outlook.com>
+References: <20250429201517.101323-1-frank.li@vivo.com>
+		 <20250429201517.101323-2-frank.li@vivo.com>
+	 <24ef85453961b830e6ab49ea3f8f81ff7c472875.camel@ibm.com>
+	 <SEZPR06MB5269E572825AE202D1E146A6E888A@SEZPR06MB5269.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.56.1 (by Flathub.org) 
@@ -90,41 +97,54 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-Hi Yangtao,
+On Wed, 2025-05-07 at 14:22 +0000, =E6=9D=8E=E6=89=AC=E9=9F=AC wrote:
+> Hi Slava,
+>=20
+> > =C2=A0=C2=A0 +ERROR: access time has changed for file1 after remount
+> > =C2=A0=C2=A0 +ERROR: access time has changed after modifying file1
+> > =C2=A0=C2=A0 +ERROR: access time has changed for file in read-only file=
+system
+>=20
+> > It looks like that it is not the whole fix of the issue for HFS
+> > case.
+>=20
+> The test cases that failed after applying this patch are all related
+> to the atime not being updated,
 
-On Wed, 2025-05-07 at 08:55 -0600, Yangtao Li wrote:
-> hfs currently has some function tracking points,
-> which are helpful for problem analysis, but rely on
-> modifying the DBG_MASK macro.
->=20
-> Modifying the macro requires recompiling the kernel,
-> and the control of the log is more troublesome.
->=20
-> Let's export this debug facility to debugfs so that
-> it can be easily controlled through the node.
->=20
-> node:
-> 	/sys/kernel/debug/hfs/dbg_flags
->=20
-> for_each_bit:
->=20
-> 	DBG_BNODE_REFS=C2=A0 0x00000001
-> 	DBG_BNODE_MOD=C2=A0=C2=A0 0x00000002
-> 	DBG_CAT_MOD=C2=A0=C2=A0=C2=A0=C2=A0 0x00000004
-> 	DBG_INODE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x00000008
-> 	DBG_SUPER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x00000010
-> 	DBG_EXTENT=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x00000020
-> 	DBG_BITMAP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0x00000040
+If I understood correctly "ERROR: access time has changed for file1
+after remount" means atime has been changed.
+
+> but hfs actually does not have atime.=20
 >=20
 
-Frankly speaking, if we would like to rework the debugging framework in
-HFS/HFS+, then I prefer to switch on pr_debug() and to use dynamic
-debug framework of Linux kernel [1]. It will provide the more flexible
-solution.
+But how the test detects that atime has been updated? If HFS hasn't
+atime, then test cannot detect such update, from my point of view.
+
+> So the current fix is =E2=80=8B=E2=80=8Bsufficient, should we modify the =
+003 test
+> case?
+>=20
+
+I don't think so. Probably, something is wrong in HFS code. We need to
+double check it.
 
 Thanks,
 Slava.
 
-[1]=C2=A0https://www.kernel.org/doc/html/v4.14/admin-guide/dynamic-debug-ho=
-wto.html
+> =C2=A0=C2=A0 dirCrDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of creation}
+> =C2=A0=C2=A0 dirMdDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last modification}
+> =C2=A0=C2=A0 dirBkDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last backup}
+>=20
+> =C2=A0=C2=A0 filCrDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of creation}
+> =C2=A0=C2=A0 filMdDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last modification}
+> =C2=A0=C2=A0 filBkDat:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 LongInt;=C2=A0=C2=A0=
+=C2=A0 {date and time of last backup}
+>=20
+> Thanks,
+> Yangtao
 
