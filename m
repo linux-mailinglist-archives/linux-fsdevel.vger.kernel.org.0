@@ -1,91 +1,87 @@
-Return-Path: <linux-fsdevel+bounces-48565-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48566-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F68AB10DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29755AB10E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:38:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A99521E06
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 10:38:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89DD0521590
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 10:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72B928E57C;
-	Fri,  9 May 2025 10:38:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9813728ECD1;
+	Fri,  9 May 2025 10:38:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfNY23yX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t9voHfwX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46F3328ECDA
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 10:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAFA28E57C;
+	Fri,  9 May 2025 10:38:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746787090; cv=none; b=dNGQyRAIjur+rIXOiTG8orhW/a4m9+xaIV5N291XeqTwNvpLwTdv0mqYdd0fUt1x8Pmr3yOAnGp0gPmkj0Yvn+R13189Q78WLfcsuPkpj2QDrpnxq+E+O4/TSpMWdB2Sa3sElIhlvEwlJC2dQj1hnA8q9SIhlkCxj9BrrvHPfNU=
+	t=1746787116; cv=none; b=l/BcmHe65ULQCTz83L8R8n/Mv7eOPZUPF4iG2WIjZNsEf7TvxZOoFnwBCgm2zsc6KTujZizwNn3fjLHytvN7jGLaAK+7PQFCuzOxuD+0rgtlRF8Ie4NlQgN9IbPrPE5F2eB9vrC34jUuiZSQryj+4NqIaPVMw4tPWc3mxUO/Gck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746787090; c=relaxed/simple;
-	bh=do2B1WUA6o2es6Z8FF95UE/pDAnpjOMYigHicR/TXAE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ibqERyTcwgLnLsh7k4SH5zT7Apo9pru8LVh7LArQGPXQtSve+i0LRSIfIELqv6GOLn/szPcQC6ET/iUFWK0u2PV97FugJlPNS9OErLvdLWkb/qBgHFarVfwqmL+0eiUUrh+39XiVAiGfo8IxUlxT6KMrQtiiBLz5Y97swwK9ebQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfNY23yX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 634A9C4CEE9;
-	Fri,  9 May 2025 10:38:08 +0000 (UTC)
+	s=arc-20240116; t=1746787116; c=relaxed/simple;
+	bh=sBAbm4SuIn80Cm4grT8hVNMovldKiFgkvskTMNgDNrw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rXvuF4J/oUU6tGXxF3nmzcW0UNGTqwiwMg+Fo/JNvMBzX432bjYDbGEruB5y4NHX1TqP6sogzK2067cwKsGwNDZfHCkxt1OQjXs+M8fYsMu1V+T7KsRs8XgxjIcoiP6kgFGK19uIqTiRnB8WmJlzIuiZ3CT5qroOoDdP39DKB4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t9voHfwX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFAADC4CEE4;
+	Fri,  9 May 2025 10:38:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746787089;
-	bh=do2B1WUA6o2es6Z8FF95UE/pDAnpjOMYigHicR/TXAE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UfNY23yXpNx6uuzCLBGSLjBeU5NIK2bQ9OO+GrJuIRArCC3iyE7ACNtHz/BNbbEX6
-	 1AnEubbD7FQUc8vDJxngSRuYvP/ynSWFw8uFtIypUrFjggk5OrHOvmm+xRNmCZgNrO
-	 WiSKngdbKoygSsV14RBN5ytUlM/PDNW82Bu59YYZAtokQMMI7DZ2MXXj4EXDLGU7fR
-	 xnN0tyLd+0SWMxGYptajtq9iFffsnrR8XpTlJlPo24Z2JjkrDePnDdk0yFy9jFLqhW
-	 90MKJrVxHuykToToyTj/uqM2T+OsAndpMeC0sW0J/M306PO9hkSc+nM8b3Vd6RlCIb
-	 I6SZW/QTXVAbQ==
+	s=k20201202; t=1746787115;
+	bh=sBAbm4SuIn80Cm4grT8hVNMovldKiFgkvskTMNgDNrw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t9voHfwXIYBm9ZoVTNUKI4aXHk8tHvdyYI7H7DhWWk8DHI46p6dlhgF/RepjGNUcA
+	 y9CLB+QL3xJhroEHfmo4PZtgm6v034kFYf6dgGj2iF0iWl+qzXAR/H3PurU+qAf5gJ
+	 AbZeX9Ct9RENXJGlEd/Gcq5qcwEiHf5KXBV032PYoFeT0vBTSewXiuTZfnGCSzzCPV
+	 v1ZdPBTerq51/w6f+IWETxcXpPDTlkxrdC/cg5DnQiomxEy/s7wwVFkdrrulJgFCpt
+	 6m6ATTlsszvFJKfs7qYHoDmhLflphfOwy5et17ZrBYYeFIjF31Qz2q1uWWTY6A07UJ
+	 rbb6/we/YLjRA==
+Date: Fri, 9 May 2025 12:38:29 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Christian Brauner <brauner@kernel.org>,
-	jack@suse.cz,
-	linux-fsdevel@vger.kernel.org,
-	viro@zeniv.linux.org.uk
-Subject: Re: [PATCH] fs: use writeback_iter directly in mpage_writepages
-Date: Fri,  9 May 2025 12:37:59 +0200
-Message-ID: <20250509-vollwertig-wohnhaft-765426542567@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250507062124.3933305-1-hch@lst.de>
-References: <20250507062124.3933305-1-hch@lst.de>
+To: Jan Kara <jack@suse.cz>
+Cc: linux-fsdevel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, mcgrof@kernel.org, hch@infradead.org, david@fromorbit.com, 
+	rafael@kernel.org, djwong@kernel.org, pavel@kernel.org, peterz@infradead.org, 
+	mingo@redhat.com, will@kernel.org, boqun.feng@gmail.com
+Subject: Re: [PATCH] fs: allow nesting with FREEZE_EXCL
+Message-ID: <20250509-unzucht-gestundet-8633defb4c9e@brauner>
+References: <ilwyxf34ixfkhbylev6d76tz5ufzg2sdxxhy6i3tr4ko5dbefr@57yuviqrftzr>
+ <20250404-work-freeze-v1-1-31f9a26f7bc9@kernel.org>
+ <m2bvkh2v56akvvomku4w6n4lbw3zkc2awlutijndb7cc3tuirz@o64zcabrekch>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1005; i=brauner@kernel.org; h=from:subject:message-id; bh=do2B1WUA6o2es6Z8FF95UE/pDAnpjOMYigHicR/TXAE=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTI3uY9JqLQbS70lrVVvCH+hhKjhzh3dF3d1vLp8k5l2 mdUYjZ0lLIwiHExyIopsji0m4TLLeep2GyUqQEzh5UJZAgDF6cATCSfi5HhZE9brtGeXbMf9Fx7 H3uVyecLz5uSy0cvXmxd9PltTvElHoa/sh82MO5Nm2C54tOOK9MMvu6QUm4omNtSbzFTvmvaeon p3AA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <m2bvkh2v56akvvomku4w6n4lbw3zkc2awlutijndb7cc3tuirz@o64zcabrekch>
 
-On Wed, 07 May 2025 08:21:24 +0200, Christoph Hellwig wrote:
-> Stop using write_cache_pages and use writeback_iter directly.  This
-> removes an indirect call per written folio and makes the code easier
-> to follow.
+On Wed, May 07, 2025 at 01:18:34PM +0200, Jan Kara wrote:
+> On Fri 04-04-25 12:24:09, Christian Brauner wrote:
+> > If hibernation races with filesystem freezing (e.g. DM reconfiguration),
+> > then hibernation need not freeze a filesystem because it's already
+> > frozen but userspace may thaw the filesystem before hibernation actually
+> > happens.
+> > 
+> > If the race happens the other way around, DM reconfiguration may
+> > unexpectedly fail with EBUSY.
+> > 
+> > So allow FREEZE_EXCL to nest with other holders. An exclusive freezer
+> > cannot be undone by any of the other concurrent freezers.
+> > 
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > 
-> 
+> This has fallen through the cracks in my inbox but the patch now looks good
+> to me. Maybe we should fold it into "fs: add owner of freeze/thaw" to not
+> have strange intermediate state in the series?
 
-Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.misc
-
-[1/1] fs: use writeback_iter directly in mpage_writepages
-      https://git.kernel.org/vfs/vfs/c/bb01e8cc10f0
+Done.
 
