@@ -1,60 +1,55 @@
-Return-Path: <linux-fsdevel+bounces-48562-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48563-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9056AAB10CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:33:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9CCAB10D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 12:34:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2F14A2E0B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 10:33:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0725F1C21D72
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 10:34:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D017B28EA4F;
-	Fri,  9 May 2025 10:33:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCFEB28EA4F;
+	Fri,  9 May 2025 10:34:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5gaGg+U"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aT+2K5kl"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C7038FA3;
-	Fri,  9 May 2025 10:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4515438FA3;
+	Fri,  9 May 2025 10:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746786786; cv=none; b=r/Y2MeGCgVqWEYyTWnXix0CGSw092ngK1R9goyat8dn1PwUSwS8Lwr6Qil7GHCBbKyIWTbPexcjyOsRv12sjmBquAqdh0Nfk6a5msbT3wHmnhBI9R/lckCOnq8iP0zOMyozpxGZx+TV+3oQ8wxuj2kT1PqNn3Rov9bBnd53aj/0=
+	t=1746786866; cv=none; b=WKGj+BM4OyJks/ZV5nTdmpQHDSeV/LQskRcYzJa+WfeHl2NgIZn+2bMKeQomqaWzdWo2Mw62Z3GTNyziBEkIVlkurgtWeP8cvfJZ5iF8m8fGdsVymhsZ+6cBqlL+c+AIi/avySzKwg6Mgn8gi9eHXt9xVe050KD2bPDK7Uuvwrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746786786; c=relaxed/simple;
-	bh=KkMFDCaVIF08+RcZ8ATudO+qvG2u0TSiyy7n3UTijwk=;
+	s=arc-20240116; t=1746786866; c=relaxed/simple;
+	bh=Xo+PhD9M3W1okKf+V7bhGau1qWfkCc3UrKbh/JXSMj4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GnN2tQbq8pItfKl1pkmaa353rdRIyT+9ohnZutCnREv/dJFVQ2Y3sQx95PPSSW/XrKCJV3Dxcz5cZ1hZ3FNIQ42wqI6RqHLJpOPvJtDncRtiJdYF2DlwLFFS7lyjN3CgNMlbQMVaUyYqTUicLhGnZE8J2hshbkusQmQ7Ej6gMwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K5gaGg+U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F37BFC4CEE4;
-	Fri,  9 May 2025 10:33:02 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=COmvs0jGpy23LPwdNr5V/2BEAX6FFgfGb8LBgF/9ONb9WNsre/H0CLPsSwkbYaN9zE6/QiQu6BmP8BtU1q3DTck9i3L5cfFlwWmncVTYeTaucRGO4OPNtUAH5yqmL8CRuiV5/Qe69gFpIVbU8BG+olGpmUngozF4TjXlmJIkSzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aT+2K5kl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA9C4C4CEE4;
+	Fri,  9 May 2025 10:34:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746786785;
-	bh=KkMFDCaVIF08+RcZ8ATudO+qvG2u0TSiyy7n3UTijwk=;
+	s=k20201202; t=1746786865;
+	bh=Xo+PhD9M3W1okKf+V7bhGau1qWfkCc3UrKbh/JXSMj4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K5gaGg+USCmi1nsRdRmhbFwT8U4CTi64nWm2Ld6mzDZnZJmPWI75bm4l3B9mZeQj8
-	 fRTIDsQTl8rGrHHmw6NKlKqmk619lgOgk3qSWekzyEu1EsX0xXNb5ySClpiGEpZImR
-	 x4Y8U8nJhXU9DTHEmT6yKJCMfqaF4oYzTO1/gbHm8dXcqJ7s8MGJGS7jPe8txfxVyN
-	 +/Ya9SpWx493jsmk3rCCQ53iby5UL5V/VjDDTNWoy0Tds2NLqKOUYpG2e+xfb/K/YD
-	 3lWw1G6+6ybV9Xaevnu3TYRczvB1MIlH9i4YDYc5mh/djQm8WJagqpFw18mBn5nPsz
-	 nDDRp0hVfwMDA==
-Date: Fri, 9 May 2025 12:33:00 +0200
+	b=aT+2K5kluS73Xp6CdcV6sLcNu4/lh9XqO98mm3k9MqI68cf6z0ha5v/qkFUbe894P
+	 35PEZK5C1SE3SEcrO6kQGKJa2MlRcfrhSLO4kxW3ZnV3VhkYTQdB0xJCrIjtAoE5UX
+	 igxRzO5aWXKxWALjGCEm7rc6Ro5BDL0BYXfw4MC3Mv16LsNR+dCHbiuYNdMr51CKG/
+	 Mh49prtNNsevrySsgo2Q5Q7L110SRX+hPoEftdyXQShgtHb+qG9O3A4l9TY4vBmFaB
+	 jwEDP7kj9dOqUBOIN68Ayuf9sk76xuOp2gfhKNRRuD5Bnat+E2ZMwyecfCp/Jpzfn9
+	 50NNezN2jGa6Q==
+Date: Fri, 9 May 2025 12:34:22 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: David Howells <dhowells@redhat.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Etienne Champetier <champetier.etienne@gmail.com>, Marc Dionne <marc.dionne@auristor.com>, 
-	Jeffrey Altman <jaltman@auristor.com>, Chet Ramey <chet.ramey@case.edu>, 
-	Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org, openafs-devel@openafs.org, 
-	linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a
- sticky dir
-Message-ID: <20250509-deckung-glitschig-8d27cb12f09f@brauner>
-References: <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
- <433928.1745944651@warthog.procyon.org.uk>
- <1209711.1746527190@warthog.procyon.org.uk>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pidfs: detect refcount bugs
+Message-ID: <20250509-verlieben-respekt-44058457ea59@brauner>
+References: <20250506-uferbereich-guttun-7c8b1a0a431f@brauner>
+ <bsap2vh4o7h3c5kwmtbgrcjuzldic2m33tlierxx6eqxz7uuqy@p3v3ipakqv3y>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,30 +58,42 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1209711.1746527190@warthog.procyon.org.uk>
+In-Reply-To: <bsap2vh4o7h3c5kwmtbgrcjuzldic2m33tlierxx6eqxz7uuqy@p3v3ipakqv3y>
 
-On Tue, May 06, 2025 at 11:26:30AM +0100, David Howells wrote:
-> Christian Brauner <brauner@kernel.org> wrote:
-> 
-> > > However, the bash work around is going to be removed:
+On Tue, May 06, 2025 at 04:43:56PM +0200, Mateusz Guzik wrote:
+> On Tue, May 06, 2025 at 01:55:54PM +0200, Christian Brauner wrote:
+> > Now that we have pidfs_{get,register}_pid() that needs to be paired with
+> > pidfs_put_pid() it's possible that someone pairs them with put_pid().
+> > Thus freeing struct pid while it's still used by pidfs. Notice when that
+> > happens. I'll also add a scheme to detect invalid uses of
+> > pidfs_get_pid() and pidfs_put_pid() later.
 > > 
-> > Why is it removed? That's a very strange comment:
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> > ---
+> >  kernel/pid.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> > 
+> > diff --git a/kernel/pid.c b/kernel/pid.c
+> > index 26f1e136f017..8317bcbc7cf7 100644
+> > --- a/kernel/pid.c
+> > +++ b/kernel/pid.c
+> > @@ -100,6 +100,7 @@ void put_pid(struct pid *pid)
+> >  
+> >  	ns = pid->numbers[pid->level].ns;
+> >  	if (refcount_dec_and_test(&pid->count)) {
+> > +		WARN_ON_ONCE(pid->stashed);
+> >  		kmem_cache_free(ns->pid_cachep, pid);
+> >  		put_pid_ns(ns);
+> >  	}
+> > -- 
+> > 2.47.2
+> > 
 > 
-> Because it makes bash output redirection work differently to other programs, I
-> would guess.  It's actually a simple security check to work around (just retry
-> the open() with O_CREAT dropped) - however, it does expose an... error, I
-> suppose, in the Linux kernel: namely that the VFS itself is treating foreign
-> files as if they had local system ownership.
+> With the patch as proposed you are only catching the misuse if this is
+> the last ref though.
 > 
-> We have the ->permission() inode op for this reason (I presume) - but that
-> only applies to certain checks.  The VFS must not assume that it can interpret
-> i_uid and i_gid on an inode and must not assume that it can compare them to
-> current->fsuid and current->fs_gid.
-> 
-> Now, in my patch, I added two inode ops because they VFS code involved makes
-> two distinct evaluations and so I made an op for each and, as such, those
-> evaluations may be applicable elsewhere, but I could make a combined op that
-> handles that specific situation instead.
+> iow, the check should be hoisted above unrefing?
 
-Try to make it one, please.
+No, not really. If there's more than one reference then pid->stashed can
+be legimitately != NULL.
 
