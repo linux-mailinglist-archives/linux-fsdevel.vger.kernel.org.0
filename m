@@ -1,117 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-48616-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48618-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1275FAB16D3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:08:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11751AB179C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:42:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DDDBA21D8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 14:02:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8381B523726
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 14:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEDF929209C;
-	Fri,  9 May 2025 14:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D6F229B35;
+	Fri,  9 May 2025 14:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kJmjPEwL"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bmMNTaFx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3854821D5B6
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 14:00:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221BD5464E
+	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 14:42:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746799244; cv=none; b=fq4Ruijuf+ChxSuLydcVW4Q2cnXcgahzA+vXxPpfDuc7XuUmwXd6BwIw89l6d+V1dw9oZQ6kAFFGlO+mXj5B52d+5S537jtmPUfmcA57ZFrjzutFE4J0FMh8GiBx6aYSd0gSAyp1Bf/tVND2CQmk/B3rV9sJ0XMBKuoai73KyUQ=
+	t=1746801769; cv=none; b=AnGMJMIhWaZFkqxa+1Jkmhn+Lm7xzO/PsPWlJ77UjV2y4QHqhdAbrpUyYB9hChz630BQ6hca74Mytya+fOGmcAmM13imAVasZNeU2sn37OveT5xMvkqrofs3oPQ+6i+GGrRbw7TvxjMAVEiTM+mn6FTZ7L0sWx0nwRvVza0snWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746799244; c=relaxed/simple;
-	bh=/nEfxeCBEnRy4J1NhW4ZqzTcGc1y/vXaM52vTSkRK7c=;
+	s=arc-20240116; t=1746801769; c=relaxed/simple;
+	bh=J9Go2AU2FeIE9/7MGNHWhoSeT7V2+V/CGMggB3jBZL0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eCmzF3epaxpBxPZejHNvdWKqq3MxA3oGH2JHJcY9VZwAzIUe0/BsQuP3woXChjo3eXPGH2+SbGNMTzJISaKk0BZgzlEKnm0Wvhmsb6zRR/LeqimhjPl+JFOdX1xPBb04ViI5t3aUNxh0H2X+IrG7W8ptEn+T4E6v7j44QfFO4CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=kJmjPEwL; arc=none smtp.client-ip=209.85.221.172
+	 To:Cc:Content-Type; b=kzoJCh6EI72KP01SVxFXKdmvKB6+c4nB/n0BXqGZlzaEfwcGd6I25j1MuHZlDiLkHrGf30pW9tddg3VZOzwQ2nwb6Ri0v0iKgXf5ULxNr8Tjvs0IqoDNSufniHSCTeUBy2d6gPpB/1yf6T4qeU10NWfpqsIRUsrlCtQcAw9Kz+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bmMNTaFx; arc=none smtp.client-ip=209.85.222.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-525b44b7720so673134e0c.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 May 2025 07:00:41 -0700 (PDT)
+Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7cad6a4fae4so381465685a.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 09 May 2025 07:42:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1746799241; x=1747404041; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1746801766; x=1747406566; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=MLzQadwrXSWBi28Qvo99BU7DHYabFA9gVXIbPnyaBXo=;
-        b=kJmjPEwLulPbgtscVmcmyCYbode1jRuculUcYeCNZQ1sst3pUxy+0o08To9fDOqf30
-         6iWFCDh7Za4OH4WT3DRBN4s9S72USyRcR/JbLGhr745og9ZaTy3hFof/TLMU19PAkh2h
-         Jr4H3CB2HZZ8ZPSg3mluIDY6Ti/uMWLzECu9A=
+        bh=81Xnhl4kXRO4UGVjUuSNBUo2sVegpcm3EGgqXOdwxU0=;
+        b=bmMNTaFxc48UU12Wfla1qhrN1CPgvCRwrcqH0a+pscGu8PqXlEFJoXw0E/DDOZg06H
+         MFh4u/128pWp5GUspJTnkjeVmmWUc+QBCBwK+L5ToFY5nFaSVCGWW1tIky0/kbLNAVdK
+         BIzZ4U8juz10Igc0Ass5hrqt6xWWV0qWl7yU8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746799241; x=1747404041;
+        d=1e100.net; s=20230601; t=1746801766; x=1747406566;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=MLzQadwrXSWBi28Qvo99BU7DHYabFA9gVXIbPnyaBXo=;
-        b=LTKSeG/Vyqt5PjPaOh/bBi+QvC8Y6od2q5b8v0Nh6s7M6ERDaEJGPvE26GCTo4nZlJ
-         OY3qcJGxsjgqYbhmqbveno56pHRbSsnc+Ssr0jdgk5/fNodvznuR1DpXtiMXDbFDZzqz
-         laCAGAH5S9ZfJ/SdpyBbuU2qwlHyb3ZBaaqswey175ZOjBzv8A6psoxRkq2o1ROnhraR
-         1Erjr+kQYIH1BbsBLAb93G5JGVtdmWlw65/I6+qXj83+JDZg4Y9ddEjOTL+4G3tVRC8m
-         /lL1R+Yi7foj2J+xIZApSAdgHRYyuxfogli8Sk8I/C7wbXyHSJ91nQXYihQFJMo8mZc/
-         p/UA==
-X-Forwarded-Encrypted: i=1; AJvYcCXMd+2wwBaPndJX7mJ0J5zBDk838Pz4nUV/7w9ZLkKHtsmWf6t0WXar+cpqKGWw6btXyedy0ET6InuKrdW3@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqOWkVHSLfw5fryVgR8E9B3rXjGuwc4WwitY9wrI6/BLge4NJm
-	WF9dkyVxaBiyiYTzsWqKqr/ZhBwo+RTuCYptMgvVgu6uDE+TY9r3ubhsnu5aI2RFAS3B2HcmazZ
-	lO3691wAsPHOWC/GDrJGhaSc3KVaVqJviTayviQ==
-X-Gm-Gg: ASbGncs0KYI/S9cdr3jt/0Nxt8blYToedX4TwyMSJSe7GIgrxan2lY97QRmom/u2Doj
-	yyNYx0wznqKOm3Fp1NC9qmiZgbY78oTav41/YNuILgzD2dC8jnofMIvNJRRAzxpI/JnSJx1SIyM
-	8W8p0TerDIgBp8flUgsva+ABhJ
-X-Google-Smtp-Source: AGHT+IGyXCmdqeHIcOPC3gHNLGaFw/4ws3BpBLfMJMQe3MgaB4FgAiGLVSqxSN1BdX83jJnLj8SFCFTwHy+JNqvfxq0=
-X-Received: by 2002:a05:6122:828d:b0:52a:d093:75ee with SMTP id
- 71dfb90a1353d-52c53be5491mr2951764e0c.5.1746799239114; Fri, 09 May 2025
- 07:00:39 -0700 (PDT)
+        bh=81Xnhl4kXRO4UGVjUuSNBUo2sVegpcm3EGgqXOdwxU0=;
+        b=rQXXKC+gpIAsuDr3AqAMfr4vwNXOvObFTXzy/bVqbqtlUMSuUN90mWT+U4oVJKZvLi
+         rwMOp6tX3MgjnoN1oVMGQAaqZyUfCE5upoio0sM4my6bDBpFv8nxqjm7+JyE3/Jdrw2t
+         B1luDNGi68OmUiXtoPADKiATrkwjL8WoEtJ5sv5BGHTaeXSuQO2CfPFnAtrzqOkYbzQ5
+         TJx/z+BN1aP0/iEt6jFAGvY5Y8tX5AkdHb4qDBsiKSdoh0+Hm2c0wHkeFI8x97cGWHFO
+         eS6fWmfMyjuMXtFkLvkU38zNlIkGg8BMr3K+k0G6N9RAdMd3eKJZXnUODYDpBdwafz02
+         9Fmw==
+X-Gm-Message-State: AOJu0Yx0TO0G3QYay4+lQMAEpJMLiJJHu7Jb8UPcVNHRkITvAdL36nsY
+	AKk0TK/hV+rbUAuLGF6L0cmltukcOameD2xexnSmXLpshWHH08n6Apmj5YCa/qN1+8Cj0HSbl2G
+	zshmml3KIxwoePaPSxIk9FiDJDgXfONRKVxbDZQ==
+X-Gm-Gg: ASbGnctQuy6/vPBGaBmrMGrEkreTdIHVpPphXAljtXpjBHEZFgPpTi8H1RnHvscPkms
+	3HJDkTa+3DcOZtw0uxk03kwq/4OQZWJyZ6fDE1Rsx44DviCuQmsx6rHGI2ludAdJTf7886mlZLj
+	m8w5NCT5JAoHsLTSKCawsTLaVN
+X-Google-Smtp-Source: AGHT+IGwUdA8jxa8eGyPtYQRfJpuBLmhGsSWFfmYjyfGcBEFHY/1UcaEwi2yz9hdQxD26rt6LstDeVEz3jK1chDPFzU=
+X-Received: by 2002:a05:620a:137a:b0:7ca:f039:d471 with SMTP id
+ af79cd13be357-7cd01155c1cmr500551485a.52.1746801765979; Fri, 09 May 2025
+ 07:42:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com> <20250509-fusectl-backing-files-v3-2-393761f9b683@uniontech.com>
-In-Reply-To: <20250509-fusectl-backing-files-v3-2-393761f9b683@uniontech.com>
+References: <BN6PR19MB31871E9C762EDF477DC48CE5BE8D2@BN6PR19MB3187.namprd19.prod.outlook.com>
+In-Reply-To: <BN6PR19MB31871E9C762EDF477DC48CE5BE8D2@BN6PR19MB3187.namprd19.prod.outlook.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 9 May 2025 16:00:27 +0200
-X-Gm-Features: ATxdqUHItDoVCeDRwi4i4w5h2rc4ClAFNW1aPU31NxRA4fxq0P_KhXao0V8Zs7w
-Message-ID: <CAJfpegvhZ8Pts5EJDU0efcdHRZk39mcHxmVCNGvKXTZBG63k6g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] fs: fuse: add backing_files control file
-To: chenlinxuan@uniontech.com
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Fri, 9 May 2025 16:42:35 +0200
+X-Gm-Features: ATxdqUEDxzs4hXNNwbpcM7y3jYzh1qid90HdcHQEtJPMtkog-nmU0oe0wGU6zHY
+Message-ID: <CAJfpegvq-7geNFn1+U3c5SXY8rR4=i6_XcsdFw4zOQEUg5kXaA@mail.gmail.com>
+Subject: Re: [PATCH V4] fs/fuse: fix race between concurrent setattr from
+ multiple nodes
+To: Guang Yuan Wu <gwu@ddn.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Bernd Schubert <bschubert@ddn.com>, 
+	"mszeredi@redhat.com" <mszeredi@redhat.com>
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 9 May 2025 at 08:34, Chen Linxuan via B4 Relay
-<devnull+chenlinxuan.uniontech.com@kernel.org> wrote:
+On Fri, 2 May 2025 at 06:04, Guang Yuan Wu <gwu@ddn.com> wrote:
 >
-> From: Chen Linxuan <chenlinxuan@uniontech.com>
+>     fuse: fix race between concurrent setattrs from multiple nodes
 >
-> Add a new FUSE control file "/sys/fs/fuse/connections/*/backing_files"
-> that exposes the paths of all backing files currently being used in
-> FUSE mount points. This is particularly valuable for tracking and
-> debugging files used in FUSE passthrough mode.
+>     When mounting a user-space filesystem on multiple clients, after
+>     concurrent ->setattr() calls from different node, stale inode
+>     attributes may be cached in some node.
+>
+>     This is caused by fuse_setattr() racing with
+>     fuse_reverse_inval_inode().
+>
+>     When filesystem server receives setattr request, the client node
+>     with valid iattr cached will be required to update the fuse_inode's
+>     attr_version and invalidate the cache by fuse_reverse_inval_inode(),
+>     and at the next call to ->getattr() they will be fetched from user
+>     space.
+>
+>     The race scenario is:
+>     1. client-1 sends setattr (iattr-1) request to server
+>     2. client-1 receives the reply from server
+>     3. before client-1 updates iattr-1 to the cached attributes by
+>        fuse_change_attributes_common(), server receives another setattr
+>        (iattr-2) request from client-2
+>     4. server requests client-1 to update the inode attr_version and
+>        invalidate the cached iattr, and iattr-1 becomes staled
+>     5. client-2 receives the reply from server, and caches iattr-2
+>     6. continue with step 2, client-1 invokes
+>        fuse_change_attributes_common(), and caches iattr-1
+>
+>     The issue has been observed from concurrent of chmod, chown, or
+>     truncate, which all invoke ->setattr() call.
+>
+>     The solution is to use fuse_inode's attr_version to check whether
+>     the attributes have been modified during the setattr request's
+>     lifetime.  If so, mark the attributes as invalid in the function
+>     fuse_change_attributes_common().
+>
+> Signed-off-by: Guang Yuan Wu <gwu@ddn.com>
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
-This is good work, thanks.
+Applied with minor modification (see fuse.git#for-next).  Thanks.
 
-My concern is that this is a very fuse specific interface, even though
-the problem is more generic: list hidden open files belonging to a
-kernel object, but not installed in any fd:
-
- - SCM_RIGHTS
- - io_uring
- - fuse
-
-So we could have a new syscall or set of syscalls for this purpose.
-But that again goes against my "this is not generic enough" pet peeve.
-
-So we had this idea of reusing getxattr and listxattr (or implementing
-a new set of syscalls with the same signature) to allow retrieving a
-hierarchical set of attributes belonging to a kernel object.  This one
-would also fit that pattern, so...
-
-Thoughts?
-
-Thanks,
 Miklos
 
