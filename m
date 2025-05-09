@@ -1,132 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-48644-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48645-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F46EAB1B15
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:58:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BE49AB1B21
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 19:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CD51898A2A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F011AA40679
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 17:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D587D237172;
-	Fri,  9 May 2025 16:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1930228CB0;
+	Fri,  9 May 2025 17:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K5S7U+HT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvlzyhPl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C85717A310;
-	Fri,  9 May 2025 16:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7270428FF;
+	Fri,  9 May 2025 17:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746809836; cv=none; b=KDhP5I+XdNrg0trqUwvqiyyid22pPDyfBQYPbuu/jcDBtFZCKNtUgijYwWV6QecVpV5pvFtXoNY7FmGpZ7jiVKO2/w2Uf1h5f2dXHXfcCj5RqOMWzw/qFxo+ZHWZ1Cf3Zpus+teGw8J0KmydH3s8zufI0RQrXPMZdNCQZJEXtJg=
+	t=1746810040; cv=none; b=RRdg6FCIbM1vRGP8vIan8nTNLTPD23Cgr3yGhc6dXKI1UPS1lEzGj+YSj0Xqk7tSahRkdozOz+mKdnw3/GDDIu7aL/buK97Nd2gyHehc8Vd9A2XevbfT7lzX8GzmWjrIGjulsrZEzkWyqN4KOGUH4PZq4r3fAQb3rOegDSzDQCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746809836; c=relaxed/simple;
-	bh=lT6+5lvqECP8bca6vJ6+nru4nUALqmOYT17O2NyHwKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dj/7ThXQoMdSR8sOJ23EZ5j7Fc3xm/75+QhYDABljy0NF9ieIxoaYPu1SX8czsYKS501PyYaVGjUNrd34cdBl3kqlb+NgCMUdseAONW+AzYm9MhJv70xIwDE8NwFoJV/lq7E/9Sr6l6PoEK4iqGikRytVOvSNbuRVxSbPe2k0kY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K5S7U+HT; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1746810040; c=relaxed/simple;
+	bh=Iu2irIhK7ig4WBckinRMfMxLhwhfAvp4mPY6BtqvZiw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jUqN6Xv3tZ20w3PiSQI8EOgKPPYM/R7bFbRkXpLA6Kk6NVTDDELcCMfZG95bYwee+9WWLYScPjrPIqyCVciX2muStxig8nJjOmTix/teiuOrpyqOzbzhxxp7rliTBAkMn0qwhPufwyVwPJiHUMUKnBJGp6JKP3rld1uLVBYVa38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZvlzyhPl; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad2216ef31cso131480166b.1;
-        Fri, 09 May 2025 09:57:14 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-440685d6afcso24594865e9.0;
+        Fri, 09 May 2025 10:00:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1746809833; x=1747414633; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lT6+5lvqECP8bca6vJ6+nru4nUALqmOYT17O2NyHwKU=;
-        b=K5S7U+HTW8s3c5890DiWgC4g3nKFFWSfm9yEPQRA1hJ4c0PbVd19hQgyt+JFsxbilV
-         ewA5hrZviCpzF2RsAFM9kMvHBoUclb2PcEdk+nVUWVqbKaVQquQN0xc4Px88NzpiuO9g
-         hqWysNtfAPhUOyulSrV7PV4JFIU+s7f6a9erSAjPF8gQkn9Yje8QBFbol/ZpjaNIBrJW
-         TEzTug3gVsQrMHtQAsSCLSs6Cw+GvJ5ZNC5Rph5H3lVyhJIIzZpv6iSOZfU15R51OvzI
-         z9OHYDhszwUSXOXExCwLcO3rKvJQK2tRF66BjsnrykWjkHwoEV3JWoWjXpCHgalXI9CF
-         EKCw==
+        d=gmail.com; s=20230601; t=1746810037; x=1747414837; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GCQug3eV9rd9VG+U+hL5Tr04WF/PElLsG6h66xPI7UI=;
+        b=ZvlzyhPlLztdq9kbWJPsL3CptI1vOBooZYLSBm21/PY7trY8tPwnSI8yokguGmk7lq
+         i+VlCZZk85Z4vJfc0nZfDPy1c7Lzu2+fnbsR4sMwxfUP9Mxs0d9sr2PoIkMpVmLSghn0
+         PmMuCzzJ7KP0m4+RfrWxAOdK3cNUEOAykEU5yG0zX3j2LDHbJICzv5dQ61e38rPxOaVB
+         ksZU6jw8dA/BZJTkprRSh9CT3l8NYnNljMX2tT+4WzvxWcM6swkmuaaGVkCvIUy8/iLs
+         Sk5xgOFPya7SFoFuKd5EcPRO+v4qdpRGr8Yo2MEMD1tfhGZMOeg2Bg0WYLtMwrL80JMr
+         UAcA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746809833; x=1747414633;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lT6+5lvqECP8bca6vJ6+nru4nUALqmOYT17O2NyHwKU=;
-        b=OQ2YNDniLL4ANNFWYHIuJZIj0JZic6ekz6Ut/VTIj35uUrIOE93Qg2RfL1c5kb8wpW
-         G1v5cb+nts6Gwbb7v3Q+vGCPAkKmRKGyot+vYhls7wUvpDjryD3GTNww5nR9Gic/KGga
-         XdR1terJXxkWWqSeWDHbjJcwWgwe9Q/e/yVDsiwakf9KZ4P34/f2QExdjauTwhqG9Q2K
-         l/vdbgYPs5hemcocUpkG7/GujFe1y3Kqvm3C2Uy4dtnK6au8hp0YHFeZNjrn9PhiFWfN
-         p9c6wFLJktVr65AAAp9PxaqeBYbcWcFlrLRHg90KBWKyWlnd7jJPeB57NXMDPu6xnJwo
-         F8Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCVkojI+o5Wc4vigRg7ITSabJRJumA9OdqioSd2G2USE8+gZA0tZRQV0izyjhrIedm2WwbEZVKmTf1+uNUMT2g==@vger.kernel.org, AJvYcCWeIHiq9qkP0uxe5JLrXFR+WlT30bYAIZJ/FaHYQ1Y7A/pHW9fSeBRhfQGvrGkoHJIZmsBkQKb+@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz32MKIMPW5swxQNZG57EruwuOlAV3dSwggyuL4NSxpH/DVTHPq
-	gTUdRV1A4+2Z3hAq/HOppNKZyGZyEE7gN9rPOR55it2IYdjgfveArVCvKLChZ52K3W7rAehoms4
-	6EPUjr28hv5NykzFlpttcoImPEMPMhzntcmI=
-X-Gm-Gg: ASbGncuVxYeEalcDzMCzGkN3zFZSR/txF+FvnFiiwmEPWo9vGu2Lc8dqu3ZJarm7Yri
-	29OmjlhxPcePajnIC/L04cagRLBpvct+ayWlmWkOkjPYb4QLNsJqv1zBeUc8JMV6BUpB4n35u/Z
-	cdJh+VoN/AWsqyRXmAtAHQnA==
-X-Google-Smtp-Source: AGHT+IGvZRN8hq+P3TH772iRYkvZcPOIdS9vjkfIZHy/AcIHVXTSFBcM5QatXHEvNIvkkTkdyZ4y61F2w12HDAdke44=
-X-Received: by 2002:a17:907:3fa6:b0:ac7:b368:b193 with SMTP id
- a640c23a62f3a-ad21905ef00mr496817566b.27.1746809832407; Fri, 09 May 2025
- 09:57:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1746810037; x=1747414837;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GCQug3eV9rd9VG+U+hL5Tr04WF/PElLsG6h66xPI7UI=;
+        b=BPCmaUqll/sfV2gQgzPB6g9wK3o7qhK8YpDod3Ts0HyoOTZ3GJcvdXwfieXzU0Zia5
+         wWiB4oWtQOxNO1qVETS6zZSg+3ui7+wAdH49CeTvpR4I0GgRiaubR+BsFT6+wpIP60BN
+         0zoJQvUC3SAjaNEyYMyzLf/JtmB2hYeT1g87IgsqFdXbLhjmD5gGy/MVHCGCifaiuba5
+         r2I0wj0kh+dhUbCbA7eLIwe/0ea/oS6elFn3u0MsdQga7jUHTuEHO7qyW9UkrqUMhClp
+         7cqyu16pyIFoNQxmp5SsTwrpeI04BCecIVwlu8i/vxzMC2WtcKfJDB/hmuRALtnqHv3b
+         puig==
+X-Forwarded-Encrypted: i=1; AJvYcCW/X1Q5FpzKjMiwFWqlntRPSWDJFXXs0YFicGySSu2M491D3lGHJkOrN4cRnM2TVVA+0JAJWlhffYf+03yGtQ==@vger.kernel.org, AJvYcCXBaeYVDYTff9Jyw/1avgEHhoipd1suNEgcGmy+e/LGLnTuU1oGFz79/qWj0ls8r4+3YRTdyth3@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6uq1vSinV40tecSYjrlmMtJFiKE8sj3BAe3+B8sBX5FKiLki6
+	i0APHDIFgtK4mH/H6t5wJgSJVD6cnQJ28YAIldyt0296U/9Obhgu
+X-Gm-Gg: ASbGnctp49nkHPGLscAzVgcUl0OfEiekwYUKyxJ2tuQ7leDwEBm8TEUF1JVcfMNShaf
+	qbguKpeoM8b/0MJLaj26NJA04KHnIo72YDL4fidMXO20rEPYlaciVZ1+A0UhsaSxLwrbCvF8eZ1
+	vWZVvzb1M5Jyee+V9DoTdInybp4QRIAAp0UtqH64wKZZLJZVTJ9yQQY7P/uOE7ShCMSOJ3HhqgX
+	RgQ4UOaNm4jQS5XrswGGP/DyPbg7nZa3njxD1bq/BXncFOkl1QEEtBhsMa624Xzzx1Lyzrdj9c3
+	EIOn3E9PrOCUbt+H8iBO6/WgjJPPhzmY8h84UoyYKNFGLXUHYgGjKFjy0HgFKv7PJrezJRIfQUZ
+	ffacL1LnnGOPRkufuQ8vhSPA579Gajf15rhHaIA==
+X-Google-Smtp-Source: AGHT+IHuMjjqYSZwmbNoT5SlwfhJ1CoCPpOibv8jNuC8ux9riL/aQIvUEQSnhFS1wzGqafVe8+52NA==
+X-Received: by 2002:a05:600c:384a:b0:43c:ea36:9840 with SMTP id 5b1f17b1804b1-442d6dd24a4mr38312585e9.22.1746810036074;
+        Fri, 09 May 2025 10:00:36 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd3b7d2bsm78469245e9.36.2025.05.09.10.00.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 09 May 2025 10:00:35 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Zorro Lang <zlang@redhat.com>
+Cc: Aleksa Sarai <cyphar@cyphar.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Jeff Layton <jlayton@kernel.org>,
+	fstests@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/2] Tests for AT_HANDLE_CONNECTABLE
+Date: Fri,  9 May 2025 19:00:31 +0200
+Message-Id: <20250509170033.538130-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250409115220.1911467-1-amir73il@gmail.com> <20250409115220.1911467-3-amir73il@gmail.com>
- <20250508193800.q2s4twfldlctre34@dell-per750-06-vm-08.rhts.eng.pek2.redhat.com>
- <CAOQ4uxjZnL5AMwwc06tiGJGbkjjW+88jDGudtp-MLkkPdzHT0g@mail.gmail.com>
-In-Reply-To: <CAOQ4uxjZnL5AMwwc06tiGJGbkjjW+88jDGudtp-MLkkPdzHT0g@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 9 May 2025 18:57:00 +0200
-X-Gm-Features: ATxdqUGcy1EGyRl48rUpqVaNZLxic4o389FofG5c23mDJ8aj5-q68PMTlAz0nW4
-Message-ID: <CAOQ4uxj0M6rfU0AfSMJEz60h0wHqyezUXUKyg=OaQMv+EDbdOw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] open_by_handle: add a test for connectable file handles
-To: Zorro Lang <zlang@redhat.com>
-Cc: Aleksa Sarai <cyphar@cyphar.com>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, fstests@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 8, 2025 at 10:38=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Thu, May 8, 2025 at 9:38=E2=80=AFPM Zorro Lang <zlang@redhat.com> wrot=
-e:
-> >
-> > On Wed, Apr 09, 2025 at 01:52:20PM +0200, Amir Goldstein wrote:
-> > > This is a variant of generic/477 with connectable file handles.
-> > > This test uses load and store of file handles from a temp file to tes=
-t
-> > > decoding connectable file handles after cycle mount and after renames=
-.
-> > > Decoding connectable file handles after being moved to a new parent
-> > > is expected to fail.
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > ---
-> >
-> > Hi Amir,
-> >
-> > This test case fails on some filesystems, e.g. nfs [1] and tmpfs [2].
-> > Is this as your expected?
->
-> No. I will look into this failure.
+This is a test for new flag AT_HANDLE_CONNECTABLE from v6.13.
+See man page update of this flag here [1].
 
-So what happens is that on filesystems that really get unmounted in
-mount cycle, trying to open a connectable file handle after file was
-moved to another parent is expected to fail and this is what the test
-expects, but tmpfs does not really get unmounted on mount cycle
-so opening the file handle does work.
-
-Similarly for nfs, the file remains in cache on the local server so opening
-by handle works.
-
-I have removed that test case in v2 because it is unpredictable and added
-verification that opened files have a connected path.
+This v2 fixes the failures that you observed with tmpfs and nfs.
 
 Thanks,
 Amir.
+
+[1] https://lore.kernel.org/linux-fsdevel/20250330163502.1415011-1-amir73il@gmail.com/
+
+Changes since v1:
+- Remove unpredictable test case of open fh after move to new parent
+- Add check that open fds are connected
+
+Amir Goldstein (2):
+  open_by_handle: add support for testing connectable file handles
+  open_by_handle: add a test for connectable file handles
+
+ common/rc             | 16 ++++++++--
+ src/open_by_handle.c  | 53 ++++++++++++++++++++++++++------
+ tests/generic/777     | 70 +++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/777.out |  5 ++++
+ 4 files changed, 132 insertions(+), 12 deletions(-)
+ create mode 100755 tests/generic/777
+ create mode 100644 tests/generic/777.out
+
+-- 
+2.34.1
+
 
