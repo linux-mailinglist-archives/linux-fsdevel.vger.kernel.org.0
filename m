@@ -1,113 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-48630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48631-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085F6AB19BD
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:06:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB32AB19F2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:11:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3028B7A6601
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:04:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5F87B2662D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6C8230269;
-	Fri,  9 May 2025 16:06:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACBB6239594;
+	Fri,  9 May 2025 16:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="F2f8Yo1t"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jj9Vh6d8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F471182BC
-	for <linux-fsdevel@vger.kernel.org>; Fri,  9 May 2025 16:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFC42356A4;
+	Fri,  9 May 2025 16:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746806765; cv=none; b=PJA4ppKiu9bNpPgv/RjitO6ahGSIrzf1mlzqH7pncfRA4s+WtChqWzJc49vffEBZbWJ1lHMEYmQa9kslZLMd6Bby8Kwe+qvb04KaKvZt3+rRpBqhn0CjdKDxtihE+1ZzqAqJfDtyDzZtlljoUm1Oc80Kzi+cEnqCkJOkflkYZWM=
+	t=1746806987; cv=none; b=mLlxBW0gFOECWjDu5DRwxAqCGpfsax0AE20JV4mlv5+thYxshiLpP8owF19o2d943r8//KHThJFKdOmzN2IIKlmpBFJIymtB9J3OQYTqSR+6tglVayYBraIlOKo5jMQ9Jzap8F7ZdVakEMDNJMINrzBBiaN2XqhwwX6hBnkuLKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746806765; c=relaxed/simple;
-	bh=hpCV+wZEFfyUrH2luJ3W7iXAJRcOLdplJ9Cn2k9I0xU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L0V1TuIiyylfQx1o5ySM1TmNWhL4Bbv4Av75X9u9Smntk3GGO4Zdg4I79CM8z+NSmo7IAfjHS1GzJZOSwd0pJKcT7dOxKQ6evvQFnMEqZmPj88w4+WNPk/sGHQc0UddyaAe0zi7UD5RhJMfs/rnx+704Wy6v3z3Kh++dNnCFQkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=F2f8Yo1t; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-476977848c4so29432411cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 09 May 2025 09:06:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1746806762; x=1747411562; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYYNA5Y8vNqJQ6rm+4NydDIpOhAL1lR7o58DtBKay5I=;
-        b=F2f8Yo1tRJbvxsM8epr+54d8miICSZbQKEDfIMmoA7bnPqKllsF38CPMKjlyC/nJuv
-         oQ0elwF//BoMs997UX+JAkjsfsw7YdyCiihidPVAkPzPq77d/kr3X4Ff+yZk8ApQdAem
-         DGYstaVZSo9dWoaqWqg6j3zwTbCX5/Ggq/vSw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1746806762; x=1747411562;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oYYNA5Y8vNqJQ6rm+4NydDIpOhAL1lR7o58DtBKay5I=;
-        b=HNTezK1l3ptM5RxqzC3MQurSMIHTO9FunsAb7nKgoFcwvO0HIg8RVGOe3ENmt5zRDN
-         NC3IXoO/ah2kO+pANalaagce68iCKDu+QrBKH59f1JviW4e6Xb0GvV3aOVeWOt04XCq1
-         fJf4kkw8HoANVju6bB2sHRyJJBkzfK99PEbl+hy2+L9XIli1SPnSijnahWbAd6xXdXxS
-         FVdMuqLqVt55iwhTLa7lnwcrpxZfJDoLnx78mUXXzy3epObgx5WmPCoqTa1w8IDst+FV
-         MyC+QzuFPFKgMTBtpYjlpHaaS5nE5cz7IYjPv+ViO2RQq99lGUiHiB4IiqGH6yhxhv73
-         kE8w==
-X-Forwarded-Encrypted: i=1; AJvYcCX4l8vP4DrKjPiJ2KBd4kvvyBeqWN/khwOcr9mxKOZV0YbZbgCp8cfA1A0ynBkSc819O7VCRtpOPFVjAUF+@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzJuS7JM25YeqTKn/tWuw0Q64dtDKWFtdbFRO1pq2vNJ6zQOP3
-	mDyL5kBJG5OMWBSNeJZQ35OgKYpCiCV9PCtZnrW3v5hIcqzX1KUkw92IAhAWo3j5kXBvmAXTrd4
-	32gH2OqBGk87eC7Qb3BOZwCWtNXfNZWIzex14rA==
-X-Gm-Gg: ASbGncvl8SWqZl9EdZjC/SyfCaLmV2uEsYgicUsO7E7E5KCs7pEXzxd84jSkCTpxvqo
-	AisA1vUOa4WV9aGjxKUiYgzvvhb6F9ZdLJPqkvDEtGBjRktUqI4WE/abg5LFzMpxlkQ6fq98Ku5
-	nrcJCE711gU8N0PpSCTAHAeJWs
-X-Google-Smtp-Source: AGHT+IEHiCPo7BQcQQ4V4LveV5lpWeKGx3e8fLIkl1enh0LnY61QSyytR7SVE8FYAnVezA0GudCivibZIeDxbD/YCGE=
-X-Received: by 2002:a05:622a:cf:b0:477:5d12:aac5 with SMTP id
- d75a77b69052e-494527f3e64mr70459981cf.35.1746806762213; Fri, 09 May 2025
- 09:06:02 -0700 (PDT)
+	s=arc-20240116; t=1746806987; c=relaxed/simple;
+	bh=Zx9q53OQA04c5qmcm0DsdpJC9W96D9D2DyB30Y/gQSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XBmYtyEpf6jk6Xcllr0OoP8sLuL6/ddcGkbf8bNmSElppTbezv47it6weZ7DhkJa5iCiH6qbYlOPWQ9RoIqHM38soewUWJrCh9uH8lBbRQC8id+pFGGIfS0W/4v1wArvzug0vyzYo/4cr+gzq3jMnqaCSdxNlUbMSApJqQQ398E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jj9Vh6d8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4BCCC4CEE4;
+	Fri,  9 May 2025 16:09:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746806986;
+	bh=Zx9q53OQA04c5qmcm0DsdpJC9W96D9D2DyB30Y/gQSE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jj9Vh6d8aZ3F7OG5lDvoVMttOWKZaPPKIalxI97k/c3EO70+j54kHabw7t/ZrGoNS
+	 zrQteMjPuFQ6I8S8tIpySjMKb3PuIuBtC1BHE4w+ws+84ltQRhnM3QR3LosBoXXZ3H
+	 B6fgLxE2y40MC3ZhcfhRa+pf6qbEi+y38YjqVR1GV1p56MJWu/08UNbehTSA5ky+an
+	 iOu0l0EUXCdZM+8s8zZtK80qZUOfd6PgUInGfEwSU6Am9GvV+QzRyII9EHLDxWRm/A
+	 wmBhOtaea+Ve9EDNILiLlKDlpIqDJ3eumwOOS2UoFgZnZPckifxdwODvxcM1wnrFCG
+	 CgI54YXFKVorw==
+Date: Fri, 9 May 2025 09:09:44 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
+	Helge Deller <deller@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	rcu@vger.kernel.org, linux-mm@kvack.org,
+	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 01/12] module: Move modprobe_path and modules_disabled
+ ctl_tables into the module subsys
+Message-ID: <aB4oyFBMH4PKjJn0@bombadil.infradead.org>
+References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-1-d0ad83f5f4c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com> <20250509-fusectl-backing-files-v3-3-393761f9b683@uniontech.com>
-In-Reply-To: <20250509-fusectl-backing-files-v3-3-393761f9b683@uniontech.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 9 May 2025 18:05:51 +0200
-X-Gm-Features: ATxdqUG0rx57jgc06Deca5uke9zj1A-9nRy55YLo1ywJ9DGv7Z_yGO2Q0eAogAk
-Message-ID: <CAJfpegs-tY8oebgc6YubXt-NCWA+gWEvu0yen0sAT8drM9Dghg@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] fs: fuse: add more information to fdinfo
-To: chenlinxuan@uniontech.com
-Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-1-d0ad83f5f4c3@kernel.org>
 
-On Fri, 9 May 2025 at 08:34, Chen Linxuan via B4 Relay
-<devnull+chenlinxuan.uniontech.com@kernel.org> wrote:
+On Fri, May 09, 2025 at 02:54:05PM +0200, Joel Granados wrote:
+> diff --git a/kernel/module/kmod.c b/kernel/module/kmod.c
+> index 25f25381251281a390b273cd8a734c92b960113a..5701629adc27b4bb5080db75f0e69f9f55e9d2ad 100644
+> --- a/kernel/module/kmod.c
+> +++ b/kernel/module/kmod.c
+> @@ -60,7 +60,7 @@ static DEFINE_SEMAPHORE(kmod_concurrent_max, MAX_KMOD_CONCURRENT);
+>  /*
+>  	modprobe_path is set via /proc/sys.
+>  */
+> -char modprobe_path[KMOD_PATH_LEN] = CONFIG_MODPROBE_PATH;
+> +static char modprobe_path[KMOD_PATH_LEN] = CONFIG_MODPROBE_PATH;
+>  
+>  static void free_modprobe_argv(struct subprocess_info *info)
+>  {
+> @@ -177,3 +177,33 @@ int __request_module(bool wait, const char *fmt, ...)
+>  	return ret;
+>  }
+>  EXPORT_SYMBOL(__request_module);
+> +
+> +#ifdef CONFIG_MODULES
 
->  static const struct file_operations fuse_file_operations = {
->         .llseek         = fuse_file_llseek,
->         .read_iter      = fuse_file_read_iter,
-> @@ -3411,6 +3428,9 @@ static const struct file_operations fuse_file_operations = {
->         .poll           = fuse_file_poll,
->         .fallocate      = fuse_file_fallocate,
->         .copy_file_range = fuse_copy_file_range,
-> +#ifdef CONFIG_PROC_FS
-> +       .show_fdinfo    = fuse_file_show_fdinfo,
-> +#endif
->  };
+kernel/Makefile:
 
-The backing file mechanism is an internal implementation detail of
-fuse and does not need to be displayed in the fuse file's fdinfo.
-Currently we can only have one backing file per fuse file, but that
-may well change in the future, as well as other details like offset
-into the backing file (think FS_IOC_FIEMAP).
+obj-$(CONFIG_MODULES) += module/
 
-So NAK unless there's a very good use case for this.
+And so you can drop this ifdef.
 
-Adding fdinfo for the /dev/fuse file is encouraged, it would be good
-to be able to retrieve the connection number from the dev fd.
+Other than that:
 
-Thanks,
-Miklos
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+
+  Luis
+
 
