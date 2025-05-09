@@ -1,47 +1,47 @@
-Return-Path: <linux-fsdevel+bounces-48635-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48636-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20EF6AB1A28
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:17:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85CDAAB1A36
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 18:18:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 528E5167DD7
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:13:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16FF81B65EFC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 16:14:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F581235BEE;
-	Fri,  9 May 2025 16:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC3B2367DA;
+	Fri,  9 May 2025 16:13:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfwFHQ75"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hg6v/O29"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D90A518DF8D;
-	Fri,  9 May 2025 16:12:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA2522D4FD;
+	Fri,  9 May 2025 16:13:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746807180; cv=none; b=WqVmGmtd75eM29hDCO40mLx2BY7KguyD8EzqP0ScZIXrao/UzQCIF2MyHly/wm61CY+g6joYOFV4tqjPqrvYt4rYhDUN3hamqbwudgvq1gGRZVcwYUHyYo4r4AYSMFYusQH2Qw1Wj2whM7yKRUN1xQ1dU65KBFNfbdFaoGA8ZZ0=
+	t=1746807204; cv=none; b=nOR0xE8xuOSgEuyojFAVADzmATbN2cqDlZc3HlTlWSDogprZaur6v47WHYvS6/SdXdvtp6eyLre9iQfNUyhBzR+XyKwJxgA0AniNqRuo4DbbZ+1YN6kI20SN27ey3TLbm5I+BMilUITonbptUD4CygCmPjDyquGdaEs5rc5iCxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746807180; c=relaxed/simple;
-	bh=KvFVbBZKMEEzgkn+ju6i49wV/DSgXVrOXZUutqy3pcM=;
+	s=arc-20240116; t=1746807204; c=relaxed/simple;
+	bh=90WLMcjZaIacrXRziNVygPsGLxcvNTB/TqZUVJKgH44=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IYtqeInvJeqabOTJCgmYLHdBD/tC9qYWZYtmUzEJ+6Bb+jGv30xZWk2xXty/ED6SXjy94Vr0pDfMXPrIEedUqk3oRyNhXKkTzzicVq360vI6NpGNIjF8ZjBjVxpSuIkwJrWlyVacENHb8LSE9InLi7JD//NldvHXmPHq7kny4go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EfwFHQ75; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A19DC4CEE4;
-	Fri,  9 May 2025 16:12:58 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AjeX9QgXDZInVEhrZ4XH8fwi+8dK33MazgfMZh+sIDtlXA7ZUwSocQ4iFV+kIoV2RHo1stj+x2CRw0iy7x7cRXvepf9FNAvZar08Q+5vmCF0PoJyZJjODol+k5opaSlwMHaLN1g9vIwY3sY94aVWZbYLQQvmYh59f6okEXIu4X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hg6v/O29; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 839FEC4CEE4;
+	Fri,  9 May 2025 16:13:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1746807179;
-	bh=KvFVbBZKMEEzgkn+ju6i49wV/DSgXVrOXZUutqy3pcM=;
+	s=k20201202; t=1746807204;
+	bh=90WLMcjZaIacrXRziNVygPsGLxcvNTB/TqZUVJKgH44=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EfwFHQ7579tnAf+BucCg+rcQjbXUlAALdMDmVOLpkyb3eNinjFQpm9MQOsFZ3cBzn
-	 dR9ZQuCeFkSv2mMDK8OaSY0e5O2sG1SbRiAKdNcZh0x0MKbD/KBWZKsSMtLoWhw2Wd
-	 w2liSNawXm2C6YIEW5MVcDQR4ErSBw4TKZeqA2Y/S+dR85yHXvvWwpLPr/5qlb6cG5
-	 P/WzUrmIttHGCSHGU/LhJE/szVJNrvqCF6b8614XIUMHYiXW5+T5KP5cwo9XQQqujO
-	 nKZmIiCsiqjtdrqQLnWZ4ESxzVbSv595Ez5OByvAJRY8+rm9Vrm9bTuT4GyEuDN5hW
-	 N5QHBOsyBxatw==
-Date: Fri, 9 May 2025 09:12:57 -0700
+	b=hg6v/O29HMpNA5LynknPfbR7Jzd0aPeq7YIiIAiy9O+1kWoEUj/BwVOpNWfPshrTg
+	 T3nj7Ca/OgY4Syrhu1SYrf9nyc1pgSVvImGTQ+zWRRbJqH1Ac0m88PeJUuhDl1MaPs
+	 GO+td8v60SirbtsGf2FhP0aPU1TM8tnPm0FfzTGxYoud6oSYH6hGy0dq80OwUxIwLi
+	 sybpdFa8W36A12ebvr2uBmItdXLoxwswAF3X2GBG4LItxeBA8AYDoHTgWVK3H/VQKJ
+	 yAx8cL70zc3WY5MTmZfEQZTvkgrkSkaudQ7ksKsneuYfVydjegvFFlaqIa/zjUO4RM
+	 RCghvCno/b1tw==
+Date: Fri, 9 May 2025 09:13:22 -0700
 From: Luis Chamberlain <mcgrof@kernel.org>
 To: Joel Granados <joel.granados@kernel.org>
 Cc: Petr Pavlu <petr.pavlu@suse.com>,
@@ -68,10 +68,10 @@ Cc: Petr Pavlu <petr.pavlu@suse.com>,
 	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
 	rcu@vger.kernel.org, linux-mm@kvack.org,
 	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH 08/12] sysctl: Move tainted ctl_table into kernel/panic.c
-Message-ID: <aB4piT844_bxd9eq@bombadil.infradead.org>
+Subject: Re: [PATCH 09/12] sysctl: move cad_pid into kernel/pid.c
+Message-ID: <aB4polMnZXRCqcDD@bombadil.infradead.org>
 References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
- <20250509-jag-mv_ctltables_iter2-v1-8-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-9-d0ad83f5f4c3@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -80,11 +80,13 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-8-d0ad83f5f4c3@kernel.org>
+In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-9-d0ad83f5f4c3@kernel.org>
 
-On Fri, May 09, 2025 at 02:54:12PM +0200, Joel Granados wrote:
-> Move the ctl_table with the "tainted" proc_name into kernel/panic.c.
-> With it moves the proc_tainted helper function.
+On Fri, May 09, 2025 at 02:54:13PM +0200, Joel Granados wrote:
+> Move cad_pid as well as supporting function proc_do_cad_pid into
+> kernel/pic.c. Replaced call to __do_proc_dointvec with proc_dointvec
+> inside proc_do_cad_pid which requires the copy of the ctl_table to
+> handle the temp value.
 > 
 > This is part of a greater effort to move ctl tables into their
 > respective subsystems which will reduce the merge conflicts in
