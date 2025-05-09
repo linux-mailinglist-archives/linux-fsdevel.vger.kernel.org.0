@@ -1,172 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-48529-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433EAAB09AA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 07:21:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838F9AB0A0C
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 07:55:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48E61188C760
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 05:22:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E7E173090
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 May 2025 05:55:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0579267B97;
-	Fri,  9 May 2025 05:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FEEA269AFD;
+	Fri,  9 May 2025 05:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="F4Vq/W/X"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZBQh3ztp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83B3B267B6F;
-	Fri,  9 May 2025 05:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B570117588;
+	Fri,  9 May 2025 05:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1746768100; cv=none; b=GRPudq0794mZDloMINKr3EKeFYxy51rE/SVkY/SOrgor8oKfZ+st/RqyZa2rIgC+4rjl54IzGZSbmCI9tQNsqI0mdG+MlOUFWygck6GhHfflyHpgbVpsR99rnwf54WEvv+3M5wn0qHtNzKReSFDok2ux2L8Faz/8+cI7ZR0AGMs=
+	t=1746770090; cv=none; b=fE3pqXrfIiR4blqhC3ZouU2pZTan9logk4KhzLRo5v3dAQ0XaKp+GpHsDnCcW1/jfAPiPhVcMyGEDGYoCK9DWrJfQZ8x82oJ7gUOTqAqOgU/UmCh8JwsSa4jiSBpzcpXxLP3gv+X5UNfb9U6+Mj6/NwalkDav4W7g80PTP7Auk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1746768100; c=relaxed/simple;
-	bh=NxeyCefMKzU9iG88ojXPIB7wjPcFv82KoV0E0GkDlPM=;
+	s=arc-20240116; t=1746770090; c=relaxed/simple;
+	bh=1tj/ncb9nuGvIlquscrVt2LrxWxbvv0mdKWP0lXEE0A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bknrks0Mf7WSICyFz08YRHADvHhWNs5NpURYJqG1DvFgqdF4A3L3YrOyWvwitSGGKzN0c5KrUAyNP9jkni4X6O5/Xt29opnxnIljlIjgWt+9rgb2NUaiQK8bMcddmENHJZBFJNHkHF4JUcw91dWvYQQS9CPe1LBQqT6apI0xJPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=F4Vq/W/X; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5494BvSC022124;
-	Fri, 9 May 2025 05:21:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=ijKHZBeKgBb+LvKKxHi0IN//TGodfQ
-	K55rA4lQTcJVs=; b=F4Vq/W/Xf4INMWS9kC25Kl9J5oTHd8cIzwpm6IxNvw5D6M
-	tOZeygdO8be4sxXO68y1J3K9U90UqEwPAt3WJw0YgD5sdI1z11MEnlAc/ngnbkSU
-	NCu07da1tsCZ5OLSVty1Jwbrp8DwtkhOUliAgbjJ43PlrGtmbWP1jJxWJ1xju4jj
-	5MOwoSIaBPvbzCft6zH+vRSImHQo6w9g+jHV/cenqOH3MCKs9WeHM2hqN1EsWP2d
-	MN4Lim9g/Vr11NAZKsQyKg28uNET9larnn2Us55WZVB1i7ZCTPsPqZ3FMKry+jUa
-	QJehFI/4FH6Ob/G+tAyMai7jUMW6VshV8xEhCDXQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46gu2t4qg8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 May 2025 05:21:29 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54959FIO006717;
-	Fri, 9 May 2025 05:21:28 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46gu2t4qg4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 May 2025 05:21:28 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5494WonA026011;
-	Fri, 9 May 2025 05:21:28 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46dwv09pqj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 09 May 2025 05:21:28 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5495LQcH56557872
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 9 May 2025 05:21:26 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0C5922004E;
-	Fri,  9 May 2025 05:21:26 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3BF862004B;
-	Fri,  9 May 2025 05:21:24 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.209.93])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  9 May 2025 05:21:24 +0000 (GMT)
-Date: Fri, 9 May 2025 10:51:20 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Jan Kara <jack@suse.cz>, John Garry <john.g.garry@oracle.com>,
-        djwong@kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 3/7] ext4: Make ext4_meta_trans_blocks() non-static
- for later use
-Message-ID: <aB2Q0A64l79MaAuR@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1746734745.git.ritesh.list@gmail.com>
- <53dd687535024df91147d1c30124330d1a5c985c.1746734745.git.ritesh.list@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AexJ9OB8wniG7+uiJoOpHvOfnbI7aEinOmEKWVHQqSHTyo3aV9zVtR48BzwTnTzlIFHsRFcY9knACqhKnwm418juMqM4oKdyiIJkFQ5hOwznRlhCNCqQ+Km9p6Dldu5McPQGm2bMnfyYHtaGnUksvu6AHYwCuBzIMFGVYmZOUXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZBQh3ztp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE1CC4CEE4;
+	Fri,  9 May 2025 05:54:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1746770090;
+	bh=1tj/ncb9nuGvIlquscrVt2LrxWxbvv0mdKWP0lXEE0A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZBQh3ztpEfzxV2/DToP7PN64qDZwEp5EhhPNSWN9Waen9lYd/D+0aQBDPgLgoiH3D
+	 4k9+0fAVGO/Q3D/VxnOmuNpJZ5s2aa1wi+Tz6x5/EHGcxjljJvNUYBJGXnYvwJTnec
+	 uPbZBOt7ia3qLSrtX50A5+69iv872R/n/BI28oESY/5voKZPsGm9NbesCDyICbsnhd
+	 nq3zaex7ZjHaa+IBGSsPvxI3qKtIDBd0pnrzC/5t0Th33KjChCXuS+p1Zw2zjl3/Dn
+	 1rr6ZF+NBCd7MeihPBJm/Pr07ua1V9i0wYSq4m4BtMvgbAM2cgwlppu9WbmDtZ/c5V
+	 9TaYtTWMQsdKw==
+Date: Fri, 9 May 2025 07:54:43 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Kuniyuki Iwashima <kuniyu@amazon.com>
+Cc: alexander@mihalicyn.com, bluca@debian.org, daan.j.demeyer@gmail.com, 
+	davem@davemloft.net, david@readahead.eu, edumazet@google.com, horms@kernel.org, 
+	jack@suse.cz, jannh@google.com, kuba@kernel.org, lennart@poettering.net, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, me@yhndnzj.com, 
+	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
+	zbyszek@in.waw.pl
+Subject: Re: [PATCH v4 04/11] net: reserve prefix
+Message-ID: <20250509-leinwand-leiht-f1031edf9c71@brauner>
+References: <20250508-vorboten-herein-4ee71336e6f7@brauner>
+ <20250508214850.62973-1-kuniyu@amazon.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <53dd687535024df91147d1c30124330d1a5c985c.1746734745.git.ritesh.list@gmail.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=NLnV+16g c=1 sm=1 tr=0 ts=681d90d9 cx=c_pps a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=pGLkceISAAAA:8 a=VnNF1IyMAAAA:8 a=2dvoARLY7QW6gT7WcqQA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: QxhYxrTFzHf8gKMxJVZ0nlZ219JiJGyi
-X-Proofpoint-GUID: YRUnT8noMcuBndz_OpbNLs-myjF7sslF
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTA5MDA0NyBTYWx0ZWRfX63GNS58nwVt6 Svlur359W7zK9zCfuO/wY2eQc+KzvXHiljSOVpOVZcobY8ho1sUL7z/0emwiDzUaRvbdi20kU10 1se6CY9h4IOAYfJMf7ksPi0CvUxhlc+9GfRk1AUJOpPRLoKq46x7z5qwR9pAkyn3TJUz7M6miDM
- BK6Ip3eRIxBSpmPb0kXl9WF8Y6KcfQiMMpG+Sakyduwr+ZIA9Y8ScW6N6TPu0ktHtevYGRU9fIA pB79g7vFBFJb6Kq1/wLXzu0MmZpjDEtnpv34kOCGZBB9KpMdXu+ho5IwDExiFFw9m2rAXbEoU+P jwJFKdRR6Y4f6PNKvYO4mqG/oHUQ/0PeAjobP2/Q1s/Yn36+74QQdheiEzmzBo7qc7Uvr98y7ia
- lSiV5MK+9iQYm6IeZl/eZ8akIXUSkFJHzNifgYJpwgkcfrSLwV5JKeqxiDfC8c9Wfci46LZR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-09_01,2025-05-08_04,2025-02-21_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
- mlxlogscore=693 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2504070000
- definitions=main-2505090047
+In-Reply-To: <20250508214850.62973-1-kuniyu@amazon.com>
 
-On Fri, May 09, 2025 at 02:20:33AM +0530, Ritesh Harjani (IBM) wrote:
-> Let's make ext4_meta_trans_blocks() non-static for use in later
-> functions during ->end_io conversion for atomic writes.
-> We will need this function to estimate journal credits for a special
-> case. Instead of adding another wrapper around it, let's make this
-> non-static.
+On Thu, May 08, 2025 at 02:47:45PM -0700, Kuniyuki Iwashima wrote:
+> From: Christian Brauner <brauner@kernel.org>
+> Date: Thu, 8 May 2025 08:16:29 +0200
+> > On Wed, May 07, 2025 at 03:45:52PM -0700, Kuniyuki Iwashima wrote:
+> > > From: Christian Brauner <brauner@kernel.org>
+> > > Date: Wed, 07 May 2025 18:13:37 +0200
+> > > > Add the reserved "linuxafsk/" prefix for AF_UNIX sockets and require
+> > > > CAP_NET_ADMIN in the owning user namespace of the network namespace to
+> > > > bind it. This will be used in next patches to support the coredump
+> > > > socket but is a generally useful concept.
+> > > 
+> > > I really think we shouldn't reserve address and it should be
+> > > configurable by users via core_pattern as with the other
+> > > coredump types.
+> > > 
+> > > AF_UNIX doesn't support SO_REUSEPORT, so once the socket is
+> > > dying, user can't start the new coredump listener until it's
+> > > fully cleaned up, which adds unnecessary drawback.
+> > 
+> > This really doesn't matter.
+> > 
+> > > The semantic should be same with other types, and the todo
+> > > for the coredump service is prepare file (file, process, socket)
+> > > that can receive data and set its name to core_pattern.
+> > 
+> > We need to perform a capability check during bind() for the host's
+> > coredump socket. Otherwise if the coredump server crashes an
+> > unprivileged attacker can simply bind the address and receive all
+> > coredumps from suid binaries.
 > 
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-
-Looks good Ritesh. Feel free to add:
-
-Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-
-> ---
->  fs/ext4/ext4.h  | 2 ++
->  fs/ext4/inode.c | 6 +-----
->  2 files changed, 3 insertions(+), 5 deletions(-)
+> As I mentioned in the previous thread, this can be better
+> handled by BPF LSM with more fine-grained rule.
 > 
-> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> index c0240f6f6491..e2b36a3c1b0f 100644
-> --- a/fs/ext4/ext4.h
-> +++ b/fs/ext4/ext4.h
-> @@ -3039,6 +3039,8 @@ extern void ext4_set_aops(struct inode *inode);
->  extern int ext4_writepage_trans_blocks(struct inode *);
->  extern int ext4_normal_submit_inode_data_buffers(struct jbd2_inode *jinode);
->  extern int ext4_chunk_trans_blocks(struct inode *, int nrblocks);
-> +extern int ext4_meta_trans_blocks(struct inode *inode, int lblocks,
-> +				  int pextents);
->  extern int ext4_zero_partial_blocks(handle_t *handle, struct inode *inode,
->  			     loff_t lstart, loff_t lend);
->  extern vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf);
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index b10e5cd5bb5c..2f99b087a5d8 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -142,9 +142,6 @@ static inline int ext4_begin_ordered_truncate(struct inode *inode,
->  						   new_size);
->  }
->  
-> -static int ext4_meta_trans_blocks(struct inode *inode, int lblocks,
-> -				  int pextents);
-> -
->  /*
->   * Test whether an inode is a fast symlink.
->   * A fast symlink has its symlink data stored in ext4_inode_info->i_data.
-> @@ -5777,8 +5774,7 @@ static int ext4_index_trans_blocks(struct inode *inode, int lblocks,
->   *
->   * Also account for superblock, inode, quota and xattr blocks
->   */
-> -static int ext4_meta_trans_blocks(struct inode *inode, int lblocks,
-> -				  int pextents)
-> +int ext4_meta_trans_blocks(struct inode *inode, int lblocks, int pextents)
->  {
->  	ext4_group_t groups, ngroups = ext4_get_groups_count(inode->i_sb);
->  	int gdpblocks;
-> -- 
-> 2.49.0
+> 1. register a socket with its name to BPF map
+> 2. check if the destination socket is registered at connect
 > 
+> Even when LSM is not availalbe, the cgroup BPF prog can make
+> connect() fail if the destination name is not registered
+> in the map.
+> 
+> > 
+> > This is also a problem for legitimate coredump server updates. To change
+> > the coredump address the coredump server must first setup a new socket
+> > and then update core_pattern and then shutdown the old coredump socket.
+> 
+> So, for completeness, the server should set up a cgroup BPF
+> prog to route the request for the old name to the new one.
+> 
+> Here, the bpf map above can be reused to check if the socket
+> name is registered in the map or route to another socket in
+> the map.
+> 
+> Then, the unprivileged issue below and the non-dumpable issue
+> mentioned in the cover letter can also be resolved.
+> 
+> The server is expected to have CAP_SYS_ADMIN, so BPF should
+> play a role.
+
+This has been explained by multiple people over the course of this
+thread already. It is simply not acceptable for basic kernel
+functionality to be unsafe without the use of additional separate
+subsystems. It is not ok to require bpf for a core kernel api to be
+safely usable. It's irrelevant whether that's for security or cgroup
+hooks. None of which we can require.
+
+I won't even get this past Linus for that matter because he will rightly
+NAK that hard and probably ask me whether I've paid any attention to
+basic kernel development requirements in the last 10 years. Let alone
+for coredumping which handles crashing suid binaries. I understand the
+urge to outsurce this problem to userspace but that's not ok.
+
+Coredumping is a core kernel service and all options have to be safely
+usable by themselves. In fact, that goes for any kernel API and
+especially VFS apis.
+
+Using AF_UNIX sockets will be a major step forward in both simplicity
+and security. We've compromised on every front so far. It's not too much
+to ask for a basic permission check on a single well-known address
+that's exposed as a kernel-level service.
 
