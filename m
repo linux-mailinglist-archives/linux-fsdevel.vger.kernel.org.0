@@ -1,173 +1,257 @@
-Return-Path: <linux-fsdevel+bounces-48691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4F4AB2E26
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 05:43:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AEF5AB2E7D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 06:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9CB918925D7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 03:44:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D116B3B30B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 04:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B94253F1F;
-	Mon, 12 May 2025 03:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hlay0nWx"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F35A254856;
+	Mon, 12 May 2025 04:52:48 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155E219CC3A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 03:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C1B2576
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 04:52:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747021424; cv=none; b=YoJcpCGWh9cctAI5ERNLP8vmmS1/C2xIc8m2JXMlQYzxfhbZRs7HZifIf3l1UrxrjvYvXjbXKdaV7ZCM+TKrEf1fFvqOXtTEJ/tdIfBs9NUA9VkBIOVUSKYmrRWZXKE6eMMHXtueffAT/UsTERL7Q2QhPFo8tUYub8Y3AAHmzxM=
+	t=1747025567; cv=none; b=lzcZ7nXqkySI/KIEaQSAv5pjKOWh5lHhQBfZFc5XxiWLTjpNK78Ed5wIw+5+PFIjhAZ+SuceCnv7vXo4Qg31V75JHeYDW7kqbm7sQlS3X3Afj7uNjxh23T7uz6zNv4wrxktFt9zfzf/X6U3+pSOc8iAsG64VBWeS7kMy77mqjkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747021424; c=relaxed/simple;
-	bh=uqcWxyA3RFJmeI8q7BXIHG5hR4mrjWFzeRmzlIcHb1o=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=V/3yckRxw/7YiBvsKK/N0Aj4H7XmbFo5lg0BpSW5367X4FCDc0MpswFoMAsoodInOK6E3LhmhIoYm46JIbEu8oG5q92lFk0nGtAoAlP21wdbi/hxhi666E783py2RZITlJtXhppaU34u1IAs7LfN0PiD6//HwTY9OscE/rEi1ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hlay0nWx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D6CC4CEE7;
-	Mon, 12 May 2025 03:43:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747021423;
-	bh=uqcWxyA3RFJmeI8q7BXIHG5hR4mrjWFzeRmzlIcHb1o=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Hlay0nWxsAD+6aUu0owsoGuS4Yhn3oc7mAAgA/FJVNQmVdNSM9eyqyloG4vRjWbyu
-	 kktRd9FO36WG6k200+Sja5bS9EJRpxxa2iwLaHm+btkJUZF5rtgh3wTZMb5B76d0vi
-	 fB4aysq2lk2mknJ1/9LjqE5p1kOSq4b6B6KcpHzEU1OyAwNgTiHcXGioHZe/L6Rrt/
-	 GC37gvmDxylFRFhbnwlly90SMFIMsAamN6epwBdOR2LpRLbypqIvQWRtCcIJzh8M21
-	 57BcXUaAAipfZ+hRFlKFeVnfKEPzBWFsF+pNIrKToAxCJYx7VxYw3MF0OPm+CfRhkt
-	 AkyqCu2sx9hrQ==
-Message-ID: <74704f7c-135e-4614-b805-404da6195930@kernel.org>
-Date: Mon, 12 May 2025 11:43:39 +0800
+	s=arc-20240116; t=1747025567; c=relaxed/simple;
+	bh=O8wICcMAbrvHPRxIP5V2kB7kl1iSs15Vcto8NaWL6e8=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=ah0sDLuUNekZGfAGEau1MTilcKTPEMti69LTF81Ge/JdPbqFvzTFc1hdwbsvJHOyBWZveHBDpkjEttMd675hpLKfiLdonGyVEtalr5s/QTj4HsXMJeJiRyNFYhsUsmRVzT7q350UWtwqBydsdct3Adn13G1FC0p9cHP/djPpu6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:56758)
+	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uEL9a-0030FV-8O; Sun, 11 May 2025 22:52:38 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:34436 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uEL9Y-00CyJM-Jo; Sun, 11 May 2025 22:52:37 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org,  Linus Torvalds
+ <torvalds@linux-foundation.org>,  Christian Brauner <brauner@kernel.org>
+References: <20250511232732.GC2023217@ZenIV>
+Date: Sun, 11 May 2025 23:50:40 -0500
+In-Reply-To: <20250511232732.GC2023217@ZenIV> (Al Viro's message of "Mon, 12
+	May 2025 00:27:32 +0100")
+Message-ID: <87jz6m300v.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: chao@kernel.org, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
- lihongbo22@huawei.com
-Subject: Re: [PATCH V3 7/7] f2fs: switch to the new mount api
-To: Eric Sandeen <sandeen@redhat.com>, linux-f2fs-devel@lists.sourceforge.net
-References: <20250423170926.76007-1-sandeen@redhat.com>
- <20250423170926.76007-8-sandeen@redhat.com>
- <b56964c2-ad30-4501-a7fd-1c0b41c407e9@kernel.org>
- <763bed71-1f44-4622-a9a0-d200f0418183@redhat.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <763bed71-1f44-4622-a9a0-d200f0418183@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-XM-SPF: eid=1uEL9Y-00CyJM-Jo;;;mid=<87jz6m300v.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1/HFB0fJwIN2uQpGMRXihTXGbjmx4ePnfM=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4908]
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 T_TooManySym_02 5+ unique symbols in subject
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 1010 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (1.1%), b_tie_ro: 10 (1.0%), parse: 1.27
+	(0.1%), extract_message_metadata: 14 (1.4%), get_uri_detail_list: 3.4
+	(0.3%), tests_pri_-2000: 9 (0.9%), tests_pri_-1000: 2.4 (0.2%),
+	tests_pri_-950: 1.26 (0.1%), tests_pri_-900: 0.99 (0.1%),
+	tests_pri_-90: 384 (38.0%), check_bayes: 381 (37.7%), b_tokenize: 11
+	(1.1%), b_tok_get_all: 11 (1.1%), b_comp_prob: 3.5 (0.3%),
+	b_tok_touch_all: 351 (34.7%), b_finish: 1.05 (0.1%), tests_pri_0: 565
+	(55.9%), check_dkim_signature: 0.60 (0.1%), check_dkim_adsp: 2.9
+	(0.3%), poll_dns_idle: 1.04 (0.1%), tests_pri_10: 3.3 (0.3%),
+	tests_pri_500: 13 (1.3%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [BUG] propagate_umount() breakage
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: brauner@kernel.org, torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
 
-On 5/8/25 23:59, Eric Sandeen wrote:
-> On 5/8/25 4:19 AM, Chao Yu wrote:
->>> @@ -2645,21 +2603,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
->>>  
->>>  	default_options(sbi, true);
->>>  
->>> -	memset(&fc, 0, sizeof(fc));
->>> -	memset(&ctx, 0, sizeof(ctx));
->>> -	fc.fs_private = &ctx;
->>> -	fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
->>> -
->>> -	/* parse mount options */
->>> -	err = parse_options(&fc, data);
->>> -	if (err)
->>> -		goto restore_opts;
->> There is a retry flow during f2fs_fill_super(), I intenionally inject a
->> fault into f2fs_fill_super() to trigger the retry flow, it turns out that
->> mount option may be missed w/ below testcase:
-> 
-> I never did understand that retry logic (introduced in ed2e621a95d long
-> ago). What errors does it expect to be able to retry, with success?
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-IIRC, it will retry mount if there is recovery failure due to inconsistent
-metadata.
+> reproducer:
+> ------------------------------------------------------------
+> # create a playground
+> mkdir /tmp/foo
+> mount -t tmpfs none /tmp/foo
+> mount --make-private /tmp/foo
+> cd /tmp/foo
+>
+> # set one-way propagation from A to B
+> mkdir A
+> mkdir B
+> mount -t tmpfs none A
+> mount --make-shared A
+> mount --bind A B
+> mount --make-slave B
+>
+> # A/1 -> B/1, A/1/2 -> B/1/2
+> mkdir A/1
+> mount -t tmpfs none A/1
+> mkdir A/1/2
+> mount -t tmpfs none A/1/2
+>
+> # overmount the entire B/1/2
+> mount -t tmpfs none B/1/2
+>
+> # make sure it's busy - set a mount at B/1/2/x
+> mkdir B/1/2/x
+> mount -t tmpfs none B/1/2/x
+>
+> stat B/1/x # shouldn't exist
+>
+> umount -l A/1
+>
+> stat B/1/x # ... and now it does
+> ------------------------------------------------------------
+>
+> What happens is that mounts on B/1 and B/1/2 had been considered
+> as victims - and taken out, since the overmount on top of B/1/2
+> overmounted the root of the first mount on B/1/2 and it got
+> reparented - all the way to B/1.
 
-> 
-> Anyway ...
-> 
-> Can you show me (as a patch) exactly what you did to trigger the retry,
-> just so we are looking at the same thing?
+Yes, that behavior is incorrect since it causes a userspace visible
+change on where the mount is visible.
 
-You can try this?
+> Correct behaviour would be to have B/1 left in place and upper
+> B/1/2 to be reparented once.
 
----
- fs/f2fs/super.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+As I read __propagate_umount that is what is trying to be implemented.
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 0ee783224953..10f0e66059f8 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -5066,6 +5066,12 @@ static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
- 		goto reset_checkpoint;
- 	}
+I am a bit mystified why the semantics aren't simply to lazily umount
+(aka MNT_DETACH) that overmount.  But that is not what the code is
+trying to do.  It probably isn't worth considering a change in semantics
+at this point.
 
-+	if (retry_cnt) {
-+		err = -EIO;
-+		skip_recovery = true;
-+		goto free_meta;
-+	}
-+
- 	/* recover fsynced data */
- 	if (!test_opt(sbi, DISABLE_ROLL_FORWARD) &&
- 			!test_opt(sbi, NORECOVERY)) {
--- 
-2.49.0
+It looks like the challenge is in the __propgate_umount loop.
+If I am reading thing correctly:
+- __propagate_umount recognizes that B/1/2 can be unmounted from the
+  overmount.
+- The code then considers the parent of B/1/2 B/1.
+- When considering B/1 there is only one child B/1/2 that has been
+  umounted and it has already been marked to be umounted so it
+  is ignored (Sigh).
 
-Thanks,
+So a minimal fix would go up the mount pile to see if there is anything
+that must remain.  Or probably use a bit like use a bit like MNT_MARK to
+recognize there is an overmount remaining.  So despite a child being
+unmounted it still should count as if it was mounted.
 
-> 
->> - mkfs.f2fs -f -O encrypt /dev/vdb
->> - mount -o test_dummy_encryption /dev/vdb /mnt/f2fs/
->> : return success
->> - dmesg -c
->>
->> [   83.619982] f2fs_fill_super, retry_cnt:1
->> [   83.620914] F2FS-fs (vdb): Test dummy encryption mode enabled
->> [   83.668380] f2fs_fill_super, retry_cnt:0
->> [   83.671601] F2FS-fs (vdb): Mounted with checkpoint version = 7a8dfca5
->>
->> - mount|grep f2fs
->> /dev/vdb on /mnt/f2fs type f2fs (rw,relatime,lazytime,background_gc=on,nogc_merge,
->> discard,discard_unit=block,user_xattr,inline_xattr,acl,inline_data,inline_dentry,
->> flush_merge,barrier,extent_cache,mode=adaptive,active_logs=6,alloc_mode=reuse,
->> checkpoint_merge,fsync_mode=posix,memory=normal,errors=continue)
->>
->> The reason may be it has cleared F2FS_CTX_INFO(ctx).dummy_enc_policy in
->> f2fs_apply_test_dummy_encryption().
->>
->> static void f2fs_apply_test_dummy_encryption(struct fs_context *fc,
->> 					     struct super_block *sb)
->> {
->> 	struct f2fs_fs_context *ctx = fc->fs_private;
->> 	struct f2fs_sb_info *sbi = F2FS_SB(sb);
->>
->> 	if (!fscrypt_is_dummy_policy_set(&F2FS_CTX_INFO(ctx).dummy_enc_policy) ||
->> 		/* if already set, it was already verified to be the same */
->> 		fscrypt_is_dummy_policy_set(&F2FS_OPTION(sbi).dummy_enc_policy))
->> 		return;
->> 	F2FS_OPTION(sbi).dummy_enc_policy = F2FS_CTX_INFO(ctx).dummy_enc_policy;
->> 	memset(&F2FS_CTX_INFO(ctx).dummy_enc_policy, 0,
->> 		sizeof(F2FS_CTX_INFO(ctx).dummy_enc_policy));
->> 	f2fs_warn(sbi, "Test dummy encryption mode enabled");
->> }
->>
->> Can we save old mount_info from sbi or ctx from fc, and try to recover it
->> before we retry mount flow?
-> 
-> I'll have to take more time to understand this concern. But thanks for pointing
-> it out.
-> 
-> -Eric
-> 
->> Thanks,
-> 
+> As an aside, that's a catch from several days of attempts to prove
+> correctness of propagate_umount(); I'm still not sure there's
+> nothing else wrong with it.  _Maybe_ it's the only problem in
+> there, but reconstructing the proof of correctness has turned
+> out to be a real bitch ;-/
+>
+> I seriously suspect that a lot of headache comes from trying
+> to combine collecting the full set of potential victims with
+> deciding what can and what can not be taken out - gathering
+> all of them first would simplify things.  First pass would've
+> logics similar to your variant, but without __propagate_umount()
+> part[*]
+
+This is there be dragons talk.
+
+With out care it is easy to get the code to go non-linear in
+the number of mounts.
+
+That said I don't see any immediate problem with a first pass
+without my __propgate_umount.
+
+As I read the current code the __propagate_umount loop is just
+about propagating the information up from the leaves.
+
+> After the set is collected, we could go through it, doing the
+> something along the lines of
+> 	how = 0
+> 	for each child in children(m)
+> 		if child in set
+> 			continue
+> 		how = 1
+> 		if child is not mounted on root
+> 			how = 2
+> 			break
+> 	if how == 2
+> 		kick_out_ancestors(m)
+> 		remove m itself from set // needs to cooperate with outer loop
+> 	else if how == 1
+> 		for (p = m; p in set && p is mounted on root; p = p->mnt_parent)
+> 			;
+> 		if p in set
+> 			kick_out_ancestors(p)
+> 	else if children(m) is empty && m is not locked	// to optimize things a bit
+> 		commit to unmounting m (again, needs to cooperate with the outer loop)
+>
+> "Cooperate with the outer loop" might mean something like
+> having this per-element work leave removal of its argument to
+> caller and report whether its argument needs to be removed.
+>
+> After that we'd be left with everything still in the set
+> having no out-of-set children that would be obstacles.
+> The only thing that remains after that is MNT_LOCKED and
+> that's as simple as
+> 	while set is not empty
+> 		m = first element of set
+> 		for (p = m; p is locked && p in set; p = p->mnt_parent)
+> 			;
+> 		if p not in set {
+> 			if p is not committed to unmount
+> 				remove everything from m to p from set
+> 				continue
+> 		} else {
+> 			p = p->mnt_parent
+> 		}
+> 		commit everything from m to p to unmount, removing from set
+>
+> I'll try to put something of that sort together, along with
+> detailed explanation of what it's doing - in D/f/*, rather than
+> buring it in commit messages, and along with "read and update
+> D/f/... if you are ever touch this function" in fs/pnode.c itself;
+> this fun is not something I would like to repeat several years
+> down the road ;-/
+
+I think I understand what you are saying.  But I will have to see the
+actually code.
+
+> We *REALLY* need a good set of regression tests for that stuff.
+> If you have anything along those lines sitting somewhere, please
+> post a reference.  The same goes for everybody else who might
+> have something in that general area.
+
+I will have to look.  As I recall everything I have is completely manual
+but it could be a starting point at least.
+
+> [*] well, that and with fixed skip_propagation_subtree() logics; it's
+> easier to combine it with propagation_next() rather than trying to set
+> the things up so that the next call of propagation_next() would DTRT -
+> it's less work and yours actually has a corner case if the last element
+> of ->mnt_slave_list has non-empty ->mnt_slave_list itself.
+
+I hope that helps a little,
+
+Eric
 
 
