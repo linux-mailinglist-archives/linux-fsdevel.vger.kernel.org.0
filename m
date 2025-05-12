@@ -1,290 +1,414 @@
-Return-Path: <linux-fsdevel+bounces-48758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48759-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D960BAB3C86
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 17:43:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 544EDAB3DA7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 18:33:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC2B17E78F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 15:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BDD93B3BC7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 16:28:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FB923C8A4;
-	Mon, 12 May 2025 15:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD652512C0;
+	Mon, 12 May 2025 16:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ntyjDWB6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DYjlZx8P"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BA823C512
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 15:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EEF1D5178;
+	Mon, 12 May 2025 16:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747064626; cv=none; b=BDhPg97zeJMOgfPkhsTUuS1WcMZjutpCqZC9k2iLx6s8fbfkfYMEMDb7MWmyUtRDlvL2+YhH7TNlpcukegbTBiJEZv7lzhACSllB664mwDDz37AdknrWJtWhaHEIk44PwingdAExmoAzzdCQzFehNbtjLx3zTc3sIWsE5KyW7BM=
+	t=1747067296; cv=none; b=QnT3ADbkD8CyWdEgfTCDzBNMb0i6YZ/dISaUzfzNr8sBy6Rh6YaiQQm/DnQeO3aue78HwUIjCdcbLGlhg4lv4SUDXEXtvYdZLiD+aNe+Z20GO4NNBWDE5AfzrEv1s9QuJADiNAYqfVIMe7HA3Ze+dUfe7iNSPZ8xXDGKYpuKr74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747064626; c=relaxed/simple;
-	bh=1gBUpbibTjYzRxZM991IHxsllk2DYccgIV54Tgef7vI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ok4RdE32DYJCUnoQaDlyt1x1PZFhzhJglV/+4kRlJa3lLQ0GPu63OodkzIY9c8zshCtlizzdL+c3deUBNMtK5aRJjJAIqetG4SQVHf5uEXhvtXXO62F6032j89e06FNa9MzNR9PGGhJDyBzAnpS84BqXPH5STyXdNtyMwzKc7EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ntyjDWB6; arc=none smtp.client-ip=66.163.189.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747064617; bh=QKPRXBWiP6vdtfxBDOOQtpUp6zIgN5XDA7BfuJSNLwU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ntyjDWB6dZv+7X3N+X5yr8pc8QkaeC0EnNEnTjw4j/LhW/o5uxeNqWWaQjHa7TLz0TS2PETV/CDYnYbEmQ/bnq86BJyiMylNlNp6owf1AWCcIDUqcow5jZlmnPPkEivipb8eZNQkjGt0Hy/R95hTcaurNsuxxeInpDw6w3Dblgu/lfHPngbLdlFFOQ593HTotqRgI/YKiping4wg+KPDwR867sRRPcdMxo7eRLA0uyxKFkbYcSKPAkOm/wnDoAgNiXRjT7MuBU+1acqEfzjpNTi2KGV+AqM8oLnThoB+rZYplU+kCGpImYX0vvM9TKYgGjl0+1cvDQjDCWa/GrW6jg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747064617; bh=8redTxGWiikRY2d9LbwTHUnouBcNgByzMEi97v7vI8H=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=nRUEtVeR4NHmVxZuFNuV/CkPDcetgpdNnyk9EeNGbJ1z4LCvrEyKLj6H8RTiJkyOQN/P5zBUNxOVPAjh5QulBI/SJPN/Ud6wBlVsLaIC8xvan/klygJyE8eJtafxegFIY23HdWuxsAYB/Eq3YvAZb37diwk+DN7Od77ETwbBNs5gWnSYXVm6HOzFOMmrOo8AZ/6vyX2kCiwag/vSvEPzkRitY18IzIjweHRfAm/ur/cA3dbgliY4eRe+PwajjzZmRv1kTIPvRbBSfeld/7dp00DXMzA0qODLuk2ccuA6P6cB/Ahqtt/pgOIW/8rN66ENfhIwHVW8FmbqBU2EWO8GZA==
-X-YMail-OSG: WM0Uc6IVM1nokahWIeUzSYQROtDJ9qeYMqEm7._cOi5dW2OQxX1llQWOhl5Htkw
- pjqZQRdX6mFRJ5HACZZsjO4D7uqCqBCGc1hISzip1nkT5f0JbgEYn5DwLsVF_zNN9h5.ljwLXxHG
- MLEdCtBfxijdLgBKpmOBQmdL.6E7I63B67qzw4fTZCtYY87Y2sG7n9V2G3IcXkpSRmCdOjGj35kd
- 6wZhNQBHe_zsRK93qaekXH6G3rQ0llGNpd69ZxMX2YgwokTwHrEjucGbV3zA4aY1A0usOxMeI.5Q
- g_Y7ZfRYb9f_iaOkE0C3wlun.ML7bLz9TNs7LR6hUbiKfS7R_xnua7CMPYcos52uVZESl04Yj8HT
- SgkSN.HPDPy_mTbQODVWMFUR1kwxRfSu6y1pp.8Kf1JHOedaNvoTnKdsWbPX1eDMeTG44MWJnkFp
- BreWN8tfY1ZWTOpSF.UrHsF_M45pb7610HXwrW01_zFezmO9sZ6Hs_IswvhcPI2f8roAsMEnEVsy
- YQcqrMHUb3SKNShsH_B2KvZO1q29_1FgKtCbTknNAsW3JhjznDOIhQFqZz1pKTCgMudVmxsaDaEK
- uXPO8GZ66zJhG.Db_2RCAUOkdgg04QsHPqt_Jv9aFJUu_GC1x0ByCnk7LWRO6Eze_PUMZcFCYE.j
- 7u_q4Ny66FNycDqi0JYh4V2eak0XQ.9fUIs5N.ZtM5.mPEJbU._veqQCv4eeX0PnjmcH6_6jLlvC
- cMnrhKZeSaJvH7jVwQ3Gy8WBtNc3J7SrdTYTIzsVXb57JuhulLTYcW7gANxy5__UCyzz9yrI_Sle
- dDyaQzYAU6eKo3_thzIur1cqBiA0xfbn7YzjFTflnwaTmB9s8Z5cXoi7qL.IrFiNDg8typtgdpiS
- obXp643ZT.cennx8.wg6MfeSxHio3cUCDwnTIxV3dwv_kwKVD0CIotga4WI52Bvi7MXD_t.vbVlW
- AmlnBrxupeN_f_QhVkf0DGOXGVECOMEt3zs5rw5yb_1kx.JHYf4DyYrvh51Rz8vePzxA9IfRbX1d
- 8NITO0GqX7FPEACmRoN9um44C1.b0XjtyqCql7CXQP0P._JiwvpvvNh38RWC7s7RNeG5IFN.JFIf
- jD9l2jK.Vl7WgBphg.Bo.BpPoTBNZh5Jg1Tr_k0e9b4_cTmbpy6fdxwrPF08ENXp.m6DQExcEf0F
- oFaIAzVBYgjolQOlfdgMECkYvUNBAsbdocO00OGFdqxau74UdkBgVM1awnBMUwAflj_Fu_.M1.sg
- svpD5b6Z4HD6d4ILD1C.G9smUlbD1SWuK6KbptHvZqepNB3GTexWWjVem0Z05STHxPGSHOkl.zIN
- _BJDI4ly8NC1S74hHfu4bq.wF..fsPsq1JjyeQLGljkI7SeonIuMRktURm5XxIhdsrFsxNILEzF_
- gJQtx78kT1Vro4YDrt.6wlJGeiPvSnoNDpeAga7Ftm7hQV6zn9cz_M7lAxvvMksUI0_6RWqhrwMa
- Qln6rPUfOOpWXN5KlqhwkU1lcFLoAiqgNtNjxbYrE5pBda3jH3sQBc2fk6ONYxXTmLKR1smptkTh
- zBR2KISLTGFvfO4fypux_tUy.zDVWgQHb.hBwsxdoq.lQQi6P8xIJejgomrkjC_mfNkLwx6ujady
- K2k_12wDulVH7DMfGgH7tb.iriJjz93IfXsXbuzmgQBfGYzFkd7WOlfB2hddSAoJUP5ipAxHtAgU
- 0saYraZitFaM4ggkxcTrL9UzkIb5Fud59DW1FRPZqb_l04XEzkx5pQIkhkGF.oi73yquM24q_dBY
- AAgrnSL8tRBalM_LvCniSz9571Y8kjMjA6G8y7jZJWj4DNh_fi_aozx4Eu9P.XS4OLtgA7AE109t
- SKpkzRlBrUnm505ojZRoLVA4qqYnDwusVoD7K0s9Lcq2S6kopzsptsEHsmWfub0DTOCnlXMbattC
- KavPkZytUKqA2cLl9D7_0ncFvzCOUQvBsilxK0gEUd.994raVMJgtdlMDz_REtm0uROPRIW.KQy2
- RS0hypGIAfb1KSV_lnQxl85e9J.aJ2qxtH99GYclfQrVqxriF0RachyDZaCxsN7tIdHMcP_USx6X
- .nnn.bcWn_Vy3tJDwXoR42hyd27mJSLy4ok3.1BDA0LuOMH6u3y0JPOT0pN6Y1PslOdSw4PUUwOl
- X7cSpTQsWS7ZfnQNOno1IGB.d2nDRZkiy9QB9fsqP6KpY5DGbGaBmtw1ug6xXdzV4o8lYcDW8kcy
- lDxB6hRTPgSCzq62cPOd1UJqAv3_xYrAJp7509YQy8Ef.L.75s27NGiAipeIkuudzCObUkBNkMVK
- z238o0uQ-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 4a184068-b4a9-4c89-b0eb-f26242664d7e
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 12 May 2025 15:43:37 +0000
-Received: by hermes--production-gq1-74d64bb7d7-mh87r (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9937c2f444744075ac11cc686b78df22;
-          Mon, 12 May 2025 15:43:34 +0000 (UTC)
-Message-ID: <f700845d-f332-4336-a441-08f98cd7f075@schaufler-ca.com>
-Date: Mon, 12 May 2025 08:43:32 -0700
+	s=arc-20240116; t=1747067296; c=relaxed/simple;
+	bh=Jt9oZT6MxQ1c9CUyPBdh6LScXwRFEfayip1vATEJODY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H3OJwU3ENuTMf3nfhY6fuy5AY8RnF5RFoXHBdDytgSW1KZNrno0hW1Tnp63bxA2QcXuoLxJer4HdO6Z1AA6uSHzjFqeD07MKNHOn5nZGVDJ/jXETLNZT19f7BbdOAYhL621B7fJGjW+Fd6545gNYyY1ieTI+xKdKxkdz5xcrbFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DYjlZx8P; arc=none smtp.client-ip=209.85.161.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-6063462098eso2917454eaf.0;
+        Mon, 12 May 2025 09:28:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747067293; x=1747672093; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yfXYK2WWJp0fMh8eXP5pHHTLg42XHMgL/jeicNVe0gE=;
+        b=DYjlZx8Pi7xfJYsGFDVn/ad9Q6akpk6gU0XOoz5IHxCOl69mvSvSSn87fBv0aB3sEb
+         8RceTjeWGcSBSUL6SHoHRJQOgQRT7uwgZhdZarANd03dyhL3lYda4EKWYpgtVjpFXlNv
+         N1kPsM3SC+14mDicaVee7DRMJA2JBAnQNSHWIfHuLZuAW2wtO//anWY7BRVsqD8Q2mLN
+         XFFTlmCkE2t179bTvMt+KSkh5zFKf05HMQ5pr2iEUppML/1UmE7Iwwifb1L5VLrpDO44
+         o3lKJ2RGZZ+rChEWrwqU4pvzXP3bVRstxTdN6ajAxMsKa/qXEaHQA1EcVRNKQC3FCGuo
+         /new==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747067293; x=1747672093;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:sender
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yfXYK2WWJp0fMh8eXP5pHHTLg42XHMgL/jeicNVe0gE=;
+        b=T//JSRKFKkUajWO6F6Kpl4nPYF1EQqgkC0WXwwzvRveARW9FZuWOwIcFD+GkEw3VUa
+         aMV3eXvoDTxIwlJHSSdiGK0VTIawrwBikP1iJOi6U5HP2tmbHJ9rKAWd7fJ4/hNY6Vfh
+         JcU7GPXV9eoTQHC7rSyG7A1ZLD5pJuWoEpnyQcnAcwDAW9MtpTKucFVrIcnTn35/0/Yt
+         3qeOVmQTY6cHRdInR84IOBOS924hFFQbUoy6v5wlE3W4/vESAzLgZ9/S4HQLMf4tYDjw
+         RNRE2TMZO7GHXWOngx7KtyX7dKzJc5tRNTs0oEFYQyvWM9qDrTyChQqydsLh32TetHBJ
+         XIPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUiK9EDmwHx7hpVsJ9Ks69kmVgVrSXPPsaJX4IL2i2klSZ/E6IQmoNiqmC4NBPD5zOvNR19vnjLXgkGnYAAnA==@vger.kernel.org, AJvYcCUuxyYPemU2BlZTA/ZEK4pByjnWMrTvRkrQW9oNszEa3ENfolKuxmjR3Q2am7taEhmf01VYpbPpux+yoTvR@vger.kernel.org, AJvYcCVWNb3zkX3hGC4CghSz82dF9e86Toy10WCmVBZO3D63k1SYh2LUJ2Pqk0iwEZ9gX9q1y2dYVtoDy16y@vger.kernel.org, AJvYcCWc8+qQfCpcz1X5VwmRY9NxwOiSERKhRAt/CQiH2kjSaMGH7U/IJTJWcXLDl+ioQFhbMmtL3K0swPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxskq+A+eCRk3PdcL6/R5jeMopzBrGwatZydWuSpmKCp4N/IibB
+	YnGtXiA4EPS+M11hifQ6lFhm10r2Jr0rFTe/WZjM8Dq9A/Yrv0U1
+X-Gm-Gg: ASbGncu22hWNDpQlzG+2iPSRBxXyClp4OWOZ8+Bc+OMp46PRiXvf96Aolo/zuBENTSX
+	3nGPf4Gbtf7D1jSi49WXEncxVD9IxcrfGy05/UMhWS/aJ+54Gb1A+lnsgo0eVr5zMkH5r0CHvP6
+	Prcuxm+1Xehbiwc4bSmEFEtkIQ9QkRGCKdD0A/5EtQKet8r+Wn/ZnAGhxhFxp1xxofBfYfW34Dd
+	DSBKIn6fXmXZF6FcpKohsuCIyIlx1MnYCX6Dsqv6h2ZQUfZi7/fXRSUFViImLbJTCZClMzmS2c6
+	6UNEXo+KEg38+iSZJxQENsn4MA4nCs5btm3HoRmYmGyUFCyrcbUl6kamcz8s+JWNNw==
+X-Google-Smtp-Source: AGHT+IEegXMkAWHU26748SkFBCyunApM/AHaeESZwvCaWTrrzbQhiaf7NFfNXS/WZE1r9TkuTiA14A==
+X-Received: by 2002:a05:6808:1706:b0:403:3503:6a16 with SMTP id 5614622812f47-4037fde77f3mr9050099b6e.1.1747067292387;
+        Mon, 12 May 2025 09:28:12 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:f16b:b065:d67a:e0f7])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-609a8cd7a4fsm985525eaf.10.2025.05.12.09.28.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 09:28:11 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Mon, 12 May 2025 11:28:09 -0500
+From: John Groves <John@groves.net>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: Dan Williams <dan.j.williams@intel.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Luis Henriques <luis@igalia.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC PATCH 12/19] famfs_fuse: Plumb the GET_FMAP message/response
+Message-ID: <xhekfz652u3dla26aj4ge45zr4tk76b2jgkcb22jfo46gvf6ry@zze73cprkx6g>
+References: <20250421013346.32530-1-john@groves.net>
+ <20250421013346.32530-13-john@groves.net>
+ <CAJnrk1ZRSoMN+jan5D9d3UYWnTVxc_5KVaBtP7JV2b+0skrBfg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/7] lsm: introduce new hooks for setting/getting inode
- fsxattr
-To: Andrey Albershteyn <aalbersh@redhat.com>,
- Richard Henderson <richard.henderson@linaro.org>,
- Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
- =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
- Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
- <pali@kernel.org>, Paul Moore <paul@paul-moore.com>,
- James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
- Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>,
- Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org,
- linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
- linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- selinux@vger.kernel.org, ecryptfs@vger.kernel.org,
- linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
- Andrey Albershteyn <aalbersh@kernel.org>,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <20250512-xattrat-syscall-v5-0-4cd6821e8ff7@kernel.org>
- <20250512-xattrat-syscall-v5-2-4cd6821e8ff7@kernel.org>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20250512-xattrat-syscall-v5-2-4cd6821e8ff7@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.23772 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1ZRSoMN+jan5D9d3UYWnTVxc_5KVaBtP7JV2b+0skrBfg@mail.gmail.com>
 
-On 5/12/2025 6:25 AM, Andrey Albershteyn wrote:
-> Introduce new hooks for setting and getting filesystem extended
-> attributes on inode (FS_IOC_FSGETXATTR).
->
-> Cc: selinux@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
->
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
-> ---
->  fs/file_attr.c                | 19 ++++++++++++++++---
->  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      | 16 ++++++++++++++++
->  security/security.c           | 30 ++++++++++++++++++++++++++++++
->  4 files changed, 64 insertions(+), 3 deletions(-)
->
-> diff --git a/fs/file_attr.c b/fs/file_attr.c
-> index 2910b7047721..be62d97cc444 100644
-> --- a/fs/file_attr.c
-> +++ b/fs/file_attr.c
-> @@ -76,10 +76,15 @@ EXPORT_SYMBOL(fileattr_fill_flags);
->  int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
->  {
->  	struct inode *inode = d_inode(dentry);
-> +	int error;
->  
->  	if (!inode->i_op->fileattr_get)
->  		return -ENOIOCTLCMD;
->  
-> +	error = security_inode_file_getattr(dentry, fa);
-> +	if (error)
-> +		return error;
-> +
+On 25/05/01 10:48PM, Joanne Koong wrote:
+> On Sun, Apr 20, 2025 at 6:34 PM John Groves <John@groves.net> wrote:
+> >
+> > Upon completion of a LOOKUP, if we're in famfs-mode we do a GET_FMAP to
+> > retrieve and cache up the file-to-dax map in the kernel. If this
+> > succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
+> >
+> > Signed-off-by: John Groves <john@groves.net>
+> > ---
+> >  fs/fuse/dir.c             | 69 +++++++++++++++++++++++++++++++++++++++
+> >  fs/fuse/fuse_i.h          | 36 +++++++++++++++++++-
+> >  fs/fuse/inode.c           | 15 +++++++++
+> >  include/uapi/linux/fuse.h |  4 +++
+> >  4 files changed, 123 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> > index bc29db0117f4..ae135c55b9f6 100644
+> > --- a/fs/fuse/dir.c
+> > +++ b/fs/fuse/dir.c
+> > @@ -359,6 +359,56 @@ bool fuse_invalid_attr(struct fuse_attr *attr)
+> >         return !fuse_valid_type(attr->mode) || !fuse_valid_size(attr->size);
+> >  }
+> >
+> > +#define FMAP_BUFSIZE 4096
+> > +
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +static void
+> > +fuse_get_fmap_init(
+> > +       struct fuse_conn *fc,
+> > +       struct fuse_args *args,
+> > +       u64 nodeid,
+> > +       void *outbuf,
+> > +       size_t outbuf_size)
+> > +{
+> > +       memset(outbuf, 0, outbuf_size);
+> 
+> I think we can skip the memset here since kcalloc will zero out the
+> memory automatically when the fmap_buf gets allocated
 
-If you're changing VFS behavior to depend on LSMs supporting the new
-hooks I'm concerned about the impact it will have on the LSMs that you
-haven't supplied hooks for. Have you tested these changes with anything
-besides SELinux?
+Good catch, thanks. Queued to -next.
 
->  	return inode->i_op->fileattr_get(dentry, fa);
->  }
->  EXPORT_SYMBOL(vfs_fileattr_get);
-> @@ -242,12 +247,20 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
->  		} else {
->  			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
->  		}
-> +
->  		err = fileattr_set_prepare(inode, &old_ma, fa);
-> -		if (!err)
-> -			err = inode->i_op->fileattr_set(idmap, dentry, fa);
-> +		if (err)
-> +			goto out;
-> +		err = security_inode_file_setattr(dentry, fa);
-> +		if (err)
-> +			goto out;
-> +		err = inode->i_op->fileattr_set(idmap, dentry, fa);
-> +		if (err)
-> +			goto out;
->  	}
-> +
-> +out:
->  	inode_unlock(inode);
-> -
->  	return err;
->  }
->  EXPORT_SYMBOL(vfs_fileattr_set);
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index bf3bbac4e02a..9600a4350e79 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -157,6 +157,8 @@ LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
->  	 struct dentry *dentry, const char *name)
->  LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
->  	 const char *name)
-> +LSM_HOOK(int, 0, inode_file_setattr, struct dentry *dentry, struct fileattr *fa)
-> +LSM_HOOK(int, 0, inode_file_getattr, struct dentry *dentry, struct fileattr *fa)
->  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
->  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
->  LSM_HOOK(void, LSM_RET_VOID, inode_post_set_acl, struct dentry *dentry,
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index cc9b54d95d22..d2da2f654345 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -451,6 +451,10 @@ int security_inode_listxattr(struct dentry *dentry);
->  int security_inode_removexattr(struct mnt_idmap *idmap,
->  			       struct dentry *dentry, const char *name);
->  void security_inode_post_removexattr(struct dentry *dentry, const char *name);
-> +int security_inode_file_setattr(struct dentry *dentry,
-> +			      struct fileattr *fa);
-> +int security_inode_file_getattr(struct dentry *dentry,
-> +			      struct fileattr *fa);
->  int security_inode_need_killpriv(struct dentry *dentry);
->  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
->  int security_inode_getsecurity(struct mnt_idmap *idmap,
-> @@ -1053,6 +1057,18 @@ static inline void security_inode_post_removexattr(struct dentry *dentry,
->  						   const char *name)
->  { }
->  
-> +static inline int security_inode_file_setattr(struct dentry *dentry,
-> +					      struct fileattr *fa)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline int security_inode_file_getattr(struct dentry *dentry,
-> +					      struct fileattr *fa)
-> +{
-> +	return 0;
-> +}
-> +
->  static inline int security_inode_need_killpriv(struct dentry *dentry)
->  {
->  	return cap_inode_need_killpriv(dentry);
-> diff --git a/security/security.c b/security/security.c
-> index fb57e8fddd91..09c891e6027d 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -2622,6 +2622,36 @@ void security_inode_post_removexattr(struct dentry *dentry, const char *name)
->  	call_void_hook(inode_post_removexattr, dentry, name);
->  }
->  
-> +/**
-> + * security_inode_file_setattr() - check if setting fsxattr is allowed
-> + * @dentry: file to set filesystem extended attributes on
-> + * @fa: extended attributes to set on the inode
-> + *
-> + * Called when file_setattr() syscall or FS_IOC_FSSETXATTR ioctl() is called on
-> + * inode
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_inode_file_setattr(struct dentry *dentry, struct fileattr *fa)
-> +{
-> +	return call_int_hook(inode_file_setattr, dentry, fa);
-> +}
-> +
-> +/**
-> + * security_inode_file_getattr() - check if retrieving fsxattr is allowed
-> + * @dentry: file to retrieve filesystem extended attributes from
-> + * @fa: extended attributes to get
-> + *
-> + * Called when file_getattr() syscall or FS_IOC_FSGETXATTR ioctl() is called on
-> + * inode
-> + *
-> + * Return: Returns 0 if permission is granted.
-> + */
-> +int security_inode_file_getattr(struct dentry *dentry, struct fileattr *fa)
-> +{
-> +	return call_int_hook(inode_file_getattr, dentry, fa);
-> +}
-> +
->  /**
->   * security_inode_need_killpriv() - Check if security_inode_killpriv() required
->   * @dentry: associated dentry
->
+> 
+> > +       args->opcode = FUSE_GET_FMAP;
+> > +       args->nodeid = nodeid;
+> > +
+> > +       args->in_numargs = 0;
+> > +
+> > +       args->out_numargs = 1;
+> > +       args->out_args[0].size = FMAP_BUFSIZE;
+> > +       args->out_args[0].value = outbuf;
+> > +}
+> > +
+> > +static int
+> > +fuse_get_fmap(struct fuse_mount *fm, struct inode *inode, u64 nodeid)
+> > +{
+> > +       size_t fmap_size;
+> > +       void *fmap_buf;
+> > +       int err;
+> > +
+> > +       pr_notice("%s: nodeid=%lld, inode=%llx\n", __func__,
+> > +                 nodeid, (u64)inode);
+> > +       fmap_buf = kcalloc(1, FMAP_BUFSIZE, GFP_KERNEL);
+> > +       FUSE_ARGS(args);
+> > +       fuse_get_fmap_init(fm->fc, &args, nodeid, fmap_buf, FMAP_BUFSIZE);
+> > +
+> > +       /* Send GET_FMAP command */
+> > +       err = fuse_simple_request(fm, &args);
+> 
+> I'm assuming the fmap_buf gets freed in a later patch, but for this
+> one we'll probably need a kfree(fmap_buf) here in the meantime?
+
+Nice of you to give me the benefit of the doubt there ;)
+
+At this commit, nothing is done with fmap_buf, and a subsequent
+commit adds a call to famfs_file_init_dax(...fmap_buf...). But
+the fmap_buf was leaked.
+
+I'm adding a kfree(fmap_buf) to this commit, which will come after the
+call to famfs_file_init_dax() when that's added in a subsequent
+commit.
+
+Thanks!
+
+> 
+> > +       if (err) {
+> > +               pr_err("%s: err=%d from fuse_simple_request()\n",
+> > +                      __func__, err);
+> > +               return err;
+> > +       }
+> > +
+> > +       fmap_size = args.out_args[0].size;
+> > +       pr_notice("%s: nodei=%lld fmap_size=%ld\n", __func__, nodeid, fmap_size);
+> > +
+> > +       return 0;
+> > +}
+> > +#endif
+> > +
+> >  int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name,
+> >                      struct fuse_entry_out *outarg, struct inode **inode)
+> >  {
+> > @@ -404,6 +454,25 @@ int fuse_lookup_name(struct super_block *sb, u64 nodeid, const struct qstr *name
+> >                 fuse_queue_forget(fm->fc, forget, outarg->nodeid, 1);
+> >                 goto out;
+> >         }
+> > +
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +       if (fm->fc->famfs_iomap) {
+> > +               if (S_ISREG((*inode)->i_mode)) {
+> > +                       /* Note Lookup returns the looked-up inode in the attr
+> > +                        * struct, but not in outarg->nodeid !
+> > +                        */
+> > +                       pr_notice("%s: outarg: size=%d nodeid=%lld attr.ino=%lld\n",
+> > +                                __func__, args.out_args[0].size, outarg->nodeid,
+> > +                                outarg->attr.ino);
+> > +                       /* Get the famfs fmap */
+> > +                       fuse_get_fmap(fm, *inode, outarg->attr.ino);
+> 
+> I agree with Darrick's comment about fetching the mappings only if the
+> file gets opened. I wonder though if we could bundle the open with the
+> get_fmap so that we don't have to do an additional request / incur 2
+> extra context switches. This seems feasible to me. When we send the
+> open request, we could check if fc->famfs_iomap is set and if so, set
+> inarg.open_flags to include FUSE_OPEN_GET_FMAP and set outarg.value to
+> an allocated buffer that holds both struct fuse_open_out and the
+> fmap_buf and adjust outarg.size accordingly. Then the server could
+> send both the open and corresponding fmap data in the reply.
+
+I agree about moving GET_FMAP to open, but I want to be cautious about 
+moving it *into* open. Right now fitting an entire fmap into a single
+message response looks like a totally acceptable requirement for famfs -
+but it might not survive as a permanent requirement, and it seems likely 
+not to work out for Darrick's use cases - which I think would lead us back 
+to needing GET_FMAP.
+
+Elswhere in this thread, and also 1:1, Darrick and I have discussed the
+possibility of partial retrieval of fmaps (in part due to the possibility
+that they might not always fit in a single message). If these responses 
+can get arbitrarily large, this would become a requirement. GET_FMAP could 
+specify an offset, and the reply could also specify its starting  offset; 
+I think it has to be in both places because  the current "elegantly simple" 
+fmap format doesn't always split easily at arbitrary offsets.
+
+Also, with famfs I think fmaps can be retained in-kernel past close,
+making the retrieval-on-open only needed if the fmap isn't already
+present. Famfs doesn't currently allow fmaps to change, although there
+are reasons we might relax that later.
+
+This can be revisited down the road.
+
+Unless I run into a blocker, the next rev of the series will call
+GET_FMAP on open...
+
+BTW I think moving GET_FMAP to open will remove the reasons why famfs
+currently needs to avoid READDIRPLUS.
+
+> 
+> > +               } else
+> > +                       pr_notice("%s: no get_fmap for non-regular file\n",
+> > +                                __func__);
+> > +       } else
+> > +               pr_notice("%s: fc->dax_iomap is not set\n", __func__);
+> > +#endif
+> > +
+> >         err = 0;
+> >
+> >   out_put_forget:
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index 931613102d32..437177c2f092 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -193,6 +193,10 @@ struct fuse_inode {
+> >         /** Reference to backing file in passthrough mode */
+> >         struct fuse_backing *fb;
+> >  #endif
+> > +
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +       void *famfs_meta;
+> > +#endif
+> >  };
+> >
+> >  /** FUSE inode state bits */
+> > @@ -942,6 +946,8 @@ struct fuse_conn {
+> >  #endif
+> >
+> >  #if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +       struct rw_semaphore famfs_devlist_sem;
+> > +       struct famfs_dax_devlist *dax_devlist;
+> >         char *shadow;
+> >  #endif
+> >  };
+> > @@ -1432,11 +1438,14 @@ void fuse_free_conn(struct fuse_conn *fc);
+> >
+> >  /* dax.c */
+> >
+> > +static inline int fuse_file_famfs(struct fuse_inode *fi); /* forward */
+> > +
+> >  /* This macro is used by virtio_fs, but now it also needs to filter for
+> >   * "not famfs"
+> >   */
+> >  #define FUSE_IS_VIRTIO_DAX(fuse_inode) (IS_ENABLED(CONFIG_FUSE_DAX)    \
+> > -                                       && IS_DAX(&fuse_inode->inode))
+> > +                                       && IS_DAX(&fuse_inode->inode)   \
+> > +                                       && !fuse_file_famfs(fuse_inode))
+> >
+> >  ssize_t fuse_dax_read_iter(struct kiocb *iocb, struct iov_iter *to);
+> >  ssize_t fuse_dax_write_iter(struct kiocb *iocb, struct iov_iter *from);
+> > @@ -1547,4 +1556,29 @@ extern void fuse_sysctl_unregister(void);
+> >  #define fuse_sysctl_unregister()       do { } while (0)
+> >  #endif /* CONFIG_SYSCTL */
+> >
+> > +/* famfs.c */
+> > +static inline struct fuse_backing *famfs_meta_set(struct fuse_inode *fi,
+> > +                                                      void *meta)
+> > +{
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +       return xchg(&fi->famfs_meta, meta);
+> > +#else
+> > +       return NULL;
+> > +#endif
+> > +}
+> > +
+> > +static inline void famfs_meta_free(struct fuse_inode *fi)
+> > +{
+> > +       /* Stub wil be connected in a subsequent commit */
+> > +}
+> > +
+> > +static inline int fuse_file_famfs(struct fuse_inode *fi)
+> > +{
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +       return (fi->famfs_meta != NULL);
+> 
+> Does this need to be "return READ_ONCE(fi->famfs_meta) != NULL"?
+
+I'm not sure, but it can't hurt. Queued...
+
+> 
+> > +#else
+> > +       return 0;
+> > +#endif
+> > +}
+> > +
+> >  #endif /* _FS_FUSE_I_H */
+> > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > index 7f4b73e739cb..848c8818e6f7 100644
+> > --- a/fs/fuse/inode.c
+> > +++ b/fs/fuse/inode.c
+> > @@ -117,6 +117,9 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
+> >         if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> >                 fuse_inode_backing_set(fi, NULL);
+> >
+> > +       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
+> > +               famfs_meta_set(fi, NULL);
+> 
+> "fi->famfs_meta = NULL;" looks simpler here
+
+I toootally agree here, but I was following the passthrough pattern 
+just above.  @miklos or @Amir, got a preference here?
+
+Furthermore, initially I didn't init fi->famfs_meta at all because I 
+*assumed* fi (the fuse_inode) would be zeroed upon allocation - but it's 
+currently not. @miklos, would you object to zeroing fuse_inodes on 
+allocation?  Clearly it's working without that, but it seems like a 
+"normal" thing to do, that might someday pre-empt a problem.
+
+> 
+> > +
+> >         return &fi->inode;
+> >
+> >  out_free_forget:
+> > @@ -138,6 +141,13 @@ static void fuse_free_inode(struct inode *inode)
+> >         if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> >                 fuse_backing_put(fuse_inode_backing(fi));
+> >
+> > +#if IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)
+> > +       if (S_ISREG(inode->i_mode) && fi->famfs_meta) {
+> > +               famfs_meta_free(fi);
+> > +               famfs_meta_set(fi, NULL);
+> > +       }
+> > +#endif
+> > +
+> >         kmem_cache_free(fuse_inode_cachep, fi);
+> >  }
+> >
+> > @@ -1002,6 +1012,11 @@ void fuse_conn_init(struct fuse_conn *fc, struct fuse_mount *fm,
+> >         if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> >                 fuse_backing_files_init(fc);
+> >
+> > +       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX)) {
+> > +               pr_notice("%s: Kernel is FUSE_FAMFS_DAX capable\n", __func__);
+> > +               init_rwsem(&fc->famfs_devlist_sem);
+> > +       }
+> 
+> Should we only init this if the server chooses to opt into famfs (eg
+> if their init reply sets the FUSE_DAX_FMAP flag)? This imo seems to
+> belong more in process_init_reply().
+
+Another good catch. Queued - thanks!
+
+> 
+> 
+> Thanks,
+> Joanne
+
+Thank you!
+
 
