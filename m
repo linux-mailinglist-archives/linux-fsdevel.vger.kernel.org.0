@@ -1,101 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-48704-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4AAAB3128
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 10:11:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D92AB3192
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 10:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97B983B2E0E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 08:10:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9627C18921F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 08:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C95E25745A;
-	Mon, 12 May 2025 08:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B93A258CCA;
+	Mon, 12 May 2025 08:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="QuDg+Yb4"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Oe5ACETo"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC5AD257441
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 08:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AEE2512E2
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 08:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747037454; cv=none; b=ZUswE6Vj3ff0SCfIz7/+oOyVCDZz8XQpAGYIBdCjIXvqODVAGKdxSII0sMHYKC6yAOLB8S4rQuxHu5RBsR4IKjgVaoIXDxPZFifpedqiULqV1e6iJHPbf/txUSDSNPuRtHEbdJS5s//6/2pgbrSrnBM6nw3k4jCOMoLL/aX49fA=
+	t=1747038452; cv=none; b=XbMQj+QxOYJlpi8jjz1HZucck7JXiVy60F2oArfjs7UUejRh+B9gj6H3/Q8PUHHPLzC2DSYOf5N3IyYTUiZZvp7bAZc1PghXtCl81+JXu+sOtkVbijfv87pQCcSoYUaExiVzDin+SF5pwnzTk8PsYaM+mpJm6k+9melwMjFedU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747037454; c=relaxed/simple;
-	bh=BOP6Uw6zm7kXZhT9LMuJCWcMldNLHWkHgkN3+glNCvs=;
+	s=arc-20240116; t=1747038452; c=relaxed/simple;
+	bh=KpI2Ldw9Q5XCynekX7E8uDM8g2s+AhFWPW0rqHWZVJE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EOC3ueXRMcQ1bL6hKeJqLWm/aePMHi++6bnNKlo1DErOzE3RkJP6qXmJTtyyHda8/4groz2uBvH6P/kFtV7q3nPUL4TxJmE/q+t2c0egImzTWbzn1/lP3tbQ+5fngUelh4IPyM5lQk4bYbkD7eQWFrTAti1AEr8QD1DO4YAyuL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=QuDg+Yb4; arc=none smtp.client-ip=209.85.160.182
+	 To:Cc:Content-Type; b=qIu9LT9vKc8ue8d0woXO7YgN45F17euVu7B8Z9QNzaNJ7LwUsby8OklUCRHf98YrVTAJwgAZ5/NJIvfPlSSMonN9150tXTYPqbgxhvIbRTJtwJBPNhR8RSsyPmtzGH73F42CWaH4Rwkpbou8gM8wmH00bZHy93+DUNkSu1XX/Bs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Oe5ACETo; arc=none smtp.client-ip=209.85.160.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-476f4e9cf92so34696651cf.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 01:10:51 -0700 (PDT)
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-47691d82bfbso76055191cf.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 01:27:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747037451; x=1747642251; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1747038450; x=1747643250; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=BOP6Uw6zm7kXZhT9LMuJCWcMldNLHWkHgkN3+glNCvs=;
-        b=QuDg+Yb4FoyhWZ7CnOsbbrw77oYDZczjXNHd4CPBAR899TYUPVigb8cMBnwHxItjdM
-         c0Zkpa3CBi3NVC3qQifXIdqVuNk+p//XpFEaIIG/Y5RnUL+M5BwsVUf2CkDXflr968GV
-         70EpHTuFgURd3CGYTtkY1cATZs9tVXOhOCiKc=
+        bh=WZSshcLUS/dyVyuovWTzmyTQWV68KoRHYV2oCPryNnw=;
+        b=Oe5ACETodc5JhgxEMq2DUl8Bzgse8j9F1smCzTYEgEraAUVU+2sV615yAXjqdm3oac
+         OwyJ8n0UhloUMPILO+o9Pfvtgk1wi0/ihTxlR/eZKx65D/oq8KzCsdktvfazGQqSXy1P
+         91Fkxa3uqeN586rTPEmA6MmBl16uE/1fw3OrI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747037451; x=1747642251;
+        d=1e100.net; s=20230601; t=1747038450; x=1747643250;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BOP6Uw6zm7kXZhT9LMuJCWcMldNLHWkHgkN3+glNCvs=;
-        b=RmZf4K7YGmUD/XvvAASoGqiTJC5Xu5CSKaCMXwIjKNhCapU5RVBsWICVqDXQdL8t/L
-         Qk9eoevtf/h9rKVeaJtxgyv/AIg8xcvqgW0rZYilrXRasdzj1nuVyEirbCIn4DB1337y
-         j/xpSxMCKSymWwBiuI6Gmcgq+CkSp5B3+/pFrXHk/DDrNfFiZ/q6Af/8YbmuNgJR3sW8
-         S/JXn3a0gHuIKi+7z8SEQNii59wjNFJFJSWkmO5w5esxKkitkRep7gMQwdltqQUmDQ3h
-         ul9lT+XvjhN/Rp3kC1AjIEo/XJttXzty8/JBN8huNP3LGzcjIUsWirXOQQxWVjlGDtqT
-         V9gw==
-X-Forwarded-Encrypted: i=1; AJvYcCXmJW8pZ8w518CZIKiBdy8zJq5swmjE1UDf6mFYT4B11qO2zcc1zebv6PnmTYXiArCLW/SW8l4VzMVvdOiE@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCgUJvT6E/hYSpoQK2uhJtZhglH095k7FXbjpiEd5rjDEkDZkz
-	q2dCtpQqE2snGYEfsHhgL+islEo8Bk9xM59We5DCYv3tIN3SO5SXad1Jk7hs7H1Kneb5eMfDxc4
-	1fTcn256aFhshdudlooc9RUlzNhvDVr80XLRhrw==
-X-Gm-Gg: ASbGncs3LQ0A8aGWpUJWnl/oUyKp8n1vegAtt+Huwm0Lg3qG3M8MWiGIVuCVnUYBrxh
-	GAe+eQY8BjVPG/1ILW/FB8zFwH0vtNkSdpktperZXaJjVa7le1GxVc/b45sQJV/mNuwUrBsXh9g
-	LFdShOtn8bFgELQFrS1kQpWq3lalJm6LDhWm9usf/n8okOnw==
-X-Google-Smtp-Source: AGHT+IE9riVAa+kf1k7H/s/DMg0+dtkLLuYpL/QwjZJPyX/AyxDSXkoHgrrw6V5TpkgnV8ryhPngQ9J6/WtkR8aF34o=
-X-Received: by 2002:a05:622a:30c:b0:48a:e2ec:a3b4 with SMTP id
- d75a77b69052e-49452744396mr167098991cf.17.1747037450856; Mon, 12 May 2025
- 01:10:50 -0700 (PDT)
+        bh=WZSshcLUS/dyVyuovWTzmyTQWV68KoRHYV2oCPryNnw=;
+        b=BbFSN5i7PO9q81sySs1c7JDyR+nv8/XZrqW+hjmr0/pWuWy41Bf2NBDnXR9VIcgCMR
+         NSNua+oZfL/qLZyd+DnTo5bJCcP2q/YtuFEhCVx0HEKqQWQNgDHIknuGi6kiMf6tv4YI
+         rp0M6nznFzvkZ14W6UNF4MMlBF97nubOaDaTyLcPg3xivDY66/dZnXPVy+RvMA+vVdNP
+         CC/Icv9bX6o1GamFLmylP/7cuaKDjVgqybeXLLIorK3wxx8WBalXDw6F832Cd5epENOJ
+         ppiAjNhk2ran/Jp5dvEfmDepsEV1tdqUNHFl4AULfmETE3hu296Ad5euNJ5OI9H7uZrD
+         GluA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlb5VEUNxPfvCt1qGf5x72mA/6kYl16K0RmniIE/b7e3DBvg9CxEiIWoX+Qa32m1nfnyFmdpscALWtTa/H@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXbt9S+FVDVLiKGOJuLl0iYtETWu66ynLMUMZsNQpWRgZADTxi
+	iQUmXJ4di4U6fryCzse4y9KSMW8BvyKps6MwNaQ7WH862leGpqEoqtw9ExIYK13hVwP9DgM198v
+	BdQ4Iy6cAfbgDCME0F/LXmjEjB4VXasTpxwWXNh+tZTYnsry6
+X-Gm-Gg: ASbGnctL/9Kpal/DyTrF29tQwo8tylEojvKfjRvQE2hsBgtMCsFjeJ1Z8+rQqjCmjE5
+	tcbDjIzooOrJzDB4QWsl9RSsYZhi+cquZBwHu6jJumUTuBKd7kFOgRA7+AvkYfVO8LGe+3pRHTi
+	lfXGe2E8EUhCr3HMY7tBFYziDJ9btNE3u8w0c=
+X-Google-Smtp-Source: AGHT+IGtNC1aUdyyeI43+8U+artHWY9OR/1bTof+TWdQENJAoLSWoxq+eX3iik65c/E4tn4ZjidjqLC0YPMRryXIc58=
+X-Received: by 2002:ac8:578c:0:b0:480:9ba4:3022 with SMTP id
+ d75a77b69052e-4945273580cmr175507551cf.17.1747038449952; Mon, 12 May 2025
+ 01:27:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250507-fuse-passthrough-doc-v2-0-ae7c0dd8bba6@uniontech.com>
-In-Reply-To: <20250507-fuse-passthrough-doc-v2-0-ae7c0dd8bba6@uniontech.com>
+References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
+ <20250509-fusectl-backing-files-v3-2-393761f9b683@uniontech.com>
+ <CAJfpegvhZ8Pts5EJDU0efcdHRZk39mcHxmVCNGvKXTZBG63k6g@mail.gmail.com>
+ <CAC1kPDPeQbvnZnsqeYc5igT3cX=CjLGFCda1VJE2DYPaTULMFg@mail.gmail.com>
+ <CAJfpegsTfUQ53hmnm7192-4ywLmXDLLwjV01tjCK7PVEqtE=yw@mail.gmail.com> <CAC1kPDPWag5oaZH62YbF8c=g7dK2_AbFfYMK7EzgcegDHL829Q@mail.gmail.com>
+In-Reply-To: <CAC1kPDPWag5oaZH62YbF8c=g7dK2_AbFfYMK7EzgcegDHL829Q@mail.gmail.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Mon, 12 May 2025 10:10:40 +0200
-X-Gm-Features: AX0GCFtoLXIKOqkBSTvl2qMeCrxjYdfhogIog4A5r7OHYgoDzEDxfLUMnrE1sJo
-Message-ID: <CAJfpegt46sKDJfB0V=1Db43VjoZQ-nxHuCVQU_k-A_AgxqnPVw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] Add a documentation for FUSE passthrough
-To: chenlinxuan@uniontech.com
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org, 
-	Amir Goldstein <amir73il@gmail.com>, Bernd Schubert <bernd.schubert@fastmail.fm>
+Date: Mon, 12 May 2025 10:27:19 +0200
+X-Gm-Features: AX0GCFu5sfhVzUqTe5y8_c4SjL32Qv9LBh40xP-R3ct5pAFtrxq8WNsBOYRC3vs
+Message-ID: <CAJfpegu59imrvXSbkPYOSkn0k_FrE6nAK1JYWO2Gg==Ozk9KSg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] fs: fuse: add backing_files control file
+To: Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 7 May 2025 at 10:42, Chen Linxuan via B4 Relay
-<devnull+chenlinxuan.uniontech.com@kernel.org> wrote:
->
-> This series adds a new file,
-> Documentation/filesystems/fuse-passthrough.rst, which documents why
-> FUSE passthrough functionality requires CAP_SYS_ADMIN capabilities.
->
-> The series also updates the MAINTAINERS file to ensure
-> scripts/get_maintainer.pl works correctly with FUSE documentation.
->
-> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
+On Sun, 11 May 2025 at 11:56, Chen Linxuan <chenlinxuan@uniontech.com> wrote:
 
-Applied, thanks.
+> I noticed that the current extended attribute names already use the
+> namespace.value format.
+> Perhaps we could reuse this naming scheme and extend it to support
+> features like nested namespaces.
 
+Right.  Here's a link to an old and long thread about this:
+
+   https://lore.kernel.org/all/YnEeuw6fd1A8usjj@miu.piliscsaba.redhat.com/#r
+
+>
+> For instance, in a situation like this:
+>
+> A fixed file 0 in an io_uring is a FUSE fd.
+> This FUSE fd belongs to FUSE connection 64.
+> This FUSE fd has a backing file.
+> This backing file is actually provided by mnt_id=36.
+>
+> Running getfattr -m '-' /proc/path/to/the/io_uring/fd could return
+> something like:
+>
+> io_uring.fixed_files.0.fuse.conn="64"
+> io_uring.fixed_files.0.fuse.backing_file.mnt_id="36"
+> io_uring.fixed_files.0.fuse.backing_file.path="/path/to/real/file"
+
+Yeah, except listxattr wouldn't be able to properly work in such
+cases: it lacks support for hierarchy.
+
+The proposed solution was something like making getxattr on the
+"directory" return a listing of child object names.
+
+I.e. getxattr("/proc/123/fd/12", "io_uring.fixed_files.") would return
+the list of instantiated fixed file slots, etc...
+
+Thanks,
 Miklos
 
