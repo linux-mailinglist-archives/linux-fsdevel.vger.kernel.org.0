@@ -1,182 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-48689-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21D64AB2C4D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 01:27:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA458AB2E24
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 05:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82AF71896304
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 May 2025 23:27:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB2327AACF0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 03:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CD626158F;
-	Sun, 11 May 2025 23:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90F61254869;
+	Mon, 12 May 2025 03:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QS1GBbxF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OzmfymJ1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0623F1A0BD0
-	for <linux-fsdevel@vger.kernel.org>; Sun, 11 May 2025 23:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57102512C5
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 03:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747006057; cv=none; b=LwFYBxZ7E2N9MdGSeud9crXLmik+0D8Sy1M/n8PJ4IGhIcuLQSZzy2NZxroU9RdX/6cp1bq/LIXF9AgqBCB+v+ozc4qxWj11mFpU8JCe6pyEtF8cTZzPJ1jq9Q1ZBqEmR7GneVXn9oWNy7QbTpVHrCJjtL0LeVgBB+u61Bp9VtY=
+	t=1747020734; cv=none; b=Q506umVtV+Ph75hw04AHeC7eJGrIvMfP7M0BLVKA1JBg0SVE6R7hBMaD5DhYcFq9iBBN1D1N2rVgLwyfqIuNOLLNtrLl+t6xnlLZdgohUtzYb8z9+zsrQ7RAXnCjWQ5mfgQPdhNljida+BB3VVDk/eIUHMoTuf7syDLYj9ozeKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747006057; c=relaxed/simple;
-	bh=ix+2xsDkJVHQ1lvSOu4E8j5KGIUAJcPmPm+E7RtJS/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ZAryK85Inw4cNsq/2d3lLvd0ah/3kKwgeLZpTkUcOqDsSW/TvyQIu2eSr/z1RDxbxgYaIWWY9tSqk9XZN/18GNea/1TzcPcKZAbRqF52k5xhUVleMBPLM/VsAobDofmU2iaXsytvWh3KnNDvt8dWbF2XIn7PsP+suSyzESDxf+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=QS1GBbxF; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=cxVFMVmfciEHEZnGDa+QeVbID9I0w+eCH+evKX0d3lk=; b=QS1GBbxFWbxAlN1tPf2I2XM2p+
-	z4ZWEjSJg7z6MWTyoTe/zhZilka6bjSqGnuoPqt9+JZgjh7RTonNxjShuLY5JPy/1A5iurXdfqDXT
-	nfclkN1uHW3LuhEC6UgluSsyQ8CdbNPkCNoA5U+ZRk/Sd+fDYACg+mbPBEb8rX2cVe6FEwSiQKnA+
-	pubre+NQiL1tkQRT5PK0GU5WW7zFlxSIVzRaSq9h5FO7oz5IWKzA0iN8Mf18jCWp71bAkbF2H/Zhq
-	1SX7kevlyPcfg9DsfG0X3vsPoNTNeX+kz8fcWJmZlWIjIbbMcJYhJztqViAFb5Vqau1VndsqhLE2v
-	AOyutjmA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uEG4y-0000000BiC2-1p4C;
-	Sun, 11 May 2025 23:27:32 +0000
-Date: Mon, 12 May 2025 00:27:32 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [BUG] propagate_umount() breakage
-Message-ID: <20250511232732.GC2023217@ZenIV>
+	s=arc-20240116; t=1747020734; c=relaxed/simple;
+	bh=JxOxpJ0i7h4ePB/814Pne03+XsTSBvsrKXA7Jf+vo4I=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=lkV+oIGnZoogHGQLJCJafeeoOLgecqH93bXrktZg65A/pI26NeyPzaSU4+YS9Pu0OBALvTdInfH2ln3jY7y6XPhqqVvo6/0HHw+QIGNZ7dSmqySKDwgJsisoL0rSW4PIoqMzQ3krqug4oP48qh9RVbY8brzdqclyNyv3ketmDoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OzmfymJ1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C893C4CEE4;
+	Mon, 12 May 2025 03:32:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747020734;
+	bh=JxOxpJ0i7h4ePB/814Pne03+XsTSBvsrKXA7Jf+vo4I=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=OzmfymJ1nyKj5+2xI8DN8rVPTZWCr2As/Bg1NxifzqRuPggy7JTcQePzSZu7/j6sO
+	 C3XnYnj5M7pmHM/sTV5oHUYdCCIa6UkJlEbBxf+5XtNjkkBwlRUuEYG3Bqd1i0Jgo6
+	 offAzjyBnl2Z1b9VnUJXX54RnDQ+TuJV0M6E5PvKBUg4EAr6RQPmPCQkRTzXaVwmTc
+	 4olCLVfAVC3gfHWmxD+OMkJHR9pLn+FuBZXXP2URzwQyN3YLqbIfJuWNse5TJl1Lj3
+	 CyXQw8ldXL31mtnt+9mzMmtduDE5pJg0JePhVItDuWrKc2eK3jBmC0M+wMCa/ySS8U
+	 8djPsFQi3ExHg==
+Message-ID: <44227298-bee2-4978-b785-715427c3cce5@kernel.org>
+Date: Mon, 12 May 2025 11:32:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-fsdevel@vger.kernel.org, jaegeuk@kernel.org,
+ lihongbo22@huawei.com
+Subject: Re: [PATCH V3 5/7] f2fs: separate the options parsing and options
+ checking
+To: Eric Sandeen <sandeen@redhat.com>, linux-f2fs-devel@lists.sourceforge.net
+References: <20250423170926.76007-1-sandeen@redhat.com>
+ <20250423170926.76007-6-sandeen@redhat.com>
+ <61cc47ec-787a-4cad-b7c1-3248dafbea79@kernel.org>
+ <7a2d79f3-d524-4dd3-afff-b6f658935151@redhat.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <7a2d79f3-d524-4dd3-afff-b6f658935151@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-reproducer:
-------------------------------------------------------------
-# create a playground
-mkdir /tmp/foo
-mount -t tmpfs none /tmp/foo
-mount --make-private /tmp/foo
-cd /tmp/foo
+On 5/8/25 23:52, Eric Sandeen wrote:
+> On 5/8/25 3:13 AM, Chao Yu wrote:
+>> On 4/24/25 01:08, Eric Sandeen wrote:
+>>> From: Hongbo Li <lihongbo22@huawei.com>
+> 
+> ...
+> 
+>>> +	if (ctx->qname_mask) {
+>>> +		for (i = 0; i < MAXQUOTAS; i++) {
+>>> +			if (!(ctx->qname_mask & (1 << i)))
+>>> +				continue;
+>>> +
+>>> +			old_qname = F2FS_OPTION(sbi).s_qf_names[i];
+>>> +			new_qname = F2FS_CTX_INFO(ctx).s_qf_names[i];
+>>> +			if (quota_turnon &&
+>>> +				!!old_qname != !!new_qname)
+>>> +				goto err_jquota_change;
+>>> +
+>>> +			if (old_qname) {
+>>> +				if (strcmp(old_qname, new_qname) == 0) {
+>>> +					ctx->qname_mask &= ~(1 << i);
+>>
+>> Needs to free and nully F2FS_CTX_INFO(ctx).s_qf_names[i]?
+>>
+> 
+> I will have to look into this. If s_qf_names are used/applied, they get
+> transferred to the sbi in f2fs_apply_quota_options and are freed in the
+> normal course of the fiesystem lifetime, i.e at unmount in f2fs_put_super.
+> That's the normal non-error lifecycle of the strings.
+> 
+> If they do not get transferred to the sbi in f2fs_apply_quota_options, they
+> remain on the ctx, and should get freed in f2fs_fc_free:
+> 
+>         for (i = 0; i < MAXQUOTAS; i++)
+>                 kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
+> 
+> It is possible to free them before f2fs_fc_free of course and that might
+> be an inconsistency in this function, because we do that in the other case
+> in the check_consistency function:
+> 
+>                         if (quota_feature) {
+>                                 f2fs_info(sbi, "QUOTA feature is enabled, so ignore qf_name");
+>                                 ctx->qname_mask &= ~(1 << i);
+>                                 kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
+>                                 F2FS_CTX_INFO(ctx).s_qf_names[i] = NULL;
+>                         }
 
-# set one-way propagation from A to B
-mkdir A
-mkdir B
-mount -t tmpfs none A
-mount --make-shared A
-mount --bind A B
-mount --make-slave B
+Yes, I noticed such inconsistency, and I'm wondering why we handle ctx.s_qf_names
+w/ different ways.
 
-# A/1 -> B/1, A/1/2 -> B/1/2
-mkdir A/1
-mount -t tmpfs none A/1
-mkdir A/1/2
-mount -t tmpfs none A/1/2
+			if (quota_feature) {
+				f2fs_info(sbi, "QUOTA feature is enabled, so ignore qf_name");
+				ctx->qname_mask &= ~(1 << i);
+				kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
+				F2FS_CTX_INFO(ctx).s_qf_names[i] = NULL;
+			}
 
-# overmount the entire B/1/2
-mount -t tmpfs none B/1/2
+For "quota_feature is on" case, as opt.s_qf_names is NULL, so if it doesn't
+nully ctx.s_qf_names, it will fail below check which is not as expected. So
+I doubt it should be handled separately.
 
-# make sure it's busy - set a mount at B/1/2/x
-mkdir B/1/2/x
-mount -t tmpfs none B/1/2/x
+	/* Make sure we don't mix old and new quota format */
+	usr_qf_name = F2FS_OPTION(sbi).s_qf_names[USRQUOTA] ||
+			F2FS_CTX_INFO(ctx).s_qf_names[USRQUOTA];
+	grp_qf_name = F2FS_OPTION(sbi).s_qf_names[GRPQUOTA] ||
+			F2FS_CTX_INFO(ctx).s_qf_names[GRPQUOTA];
+	prj_qf_name = F2FS_OPTION(sbi).s_qf_names[PRJQUOTA] ||
+			F2FS_CTX_INFO(ctx).s_qf_names[PRJQUOTA];
+	usrquota = test_opt(sbi, USRQUOTA) ||
+			ctx_test_opt(ctx, F2FS_MOUNT_USRQUOTA);
+	grpquota = test_opt(sbi, GRPQUOTA) ||
+			ctx_test_opt(ctx, F2FS_MOUNT_GRPQUOTA);
+	prjquota = test_opt(sbi, PRJQUOTA) ||
+			ctx_test_opt(ctx, F2FS_MOUNT_PRJQUOTA);
 
-stat B/1/x # shouldn't exist
-
-umount -l A/1
-
-stat B/1/x # ... and now it does
-------------------------------------------------------------
-
-What happens is that mounts on B/1 and B/1/2 had been considered
-as victims - and taken out, since the overmount on top of B/1/2
-overmounted the root of the first mount on B/1/2 and it got
-reparented - all the way to B/1.
-
-Correct behaviour would be to have B/1 left in place and upper
-B/1/2 to be reparented once.
-
-As an aside, that's a catch from several days of attempts to prove
-correctness of propagate_umount(); I'm still not sure there's
-nothing else wrong with it.  _Maybe_ it's the only problem in
-there, but reconstructing the proof of correctness has turned
-out to be a real bitch ;-/
-
-I seriously suspect that a lot of headache comes from trying
-to combine collecting the full set of potential victims with
-deciding what can and what can not be taken out - gathering
-all of them first would simplify things.  First pass would've
-logics similar to your variant, but without __propagate_umount()
-part[*]
-
-After the set is collected, we could go through it, doing the
-something along the lines of
-	how = 0
-	for each child in children(m)
-		if child in set
-			continue
-		how = 1
-		if child is not mounted on root
-			how = 2
-			break
-	if how == 2
-		kick_out_ancestors(m)
-		remove m itself from set // needs to cooperate with outer loop
-	else if how == 1
-		for (p = m; p in set && p is mounted on root; p = p->mnt_parent)
-			;
-		if p in set
-			kick_out_ancestors(p)
-	else if children(m) is empty && m is not locked	// to optimize things a bit
-		commit to unmounting m (again, needs to cooperate with the outer loop)
-
-"Cooperate with the outer loop" might mean something like
-having this per-element work leave removal of its argument to
-caller and report whether its argument needs to be removed.
-
-After that we'd be left with everything still in the set
-having no out-of-set children that would be obstacles.
-The only thing that remains after that is MNT_LOCKED and
-that's as simple as
-	while set is not empty
-		m = first element of set
-		for (p = m; p is locked && p in set; p = p->mnt_parent)
-			;
-		if p not in set {
-			if p is not committed to unmount
-				remove everything from m to p from set
-				continue
-		} else {
-			p = p->mnt_parent
+	if (usr_qf_name) {
+		ctx_clear_opt(ctx, F2FS_MOUNT_USRQUOTA);
+		usrquota = false;
+	}
+	if (grp_qf_name) {
+		ctx_clear_opt(ctx, F2FS_MOUNT_GRPQUOTA);
+		grpquota = false;
+	}
+	if (prj_qf_name) {
+		ctx_clear_opt(ctx, F2FS_MOUNT_PRJQUOTA);
+		prjquota = false;
+	}
+	if (usr_qf_name || grp_qf_name || prj_qf_name) {
+		if (grpquota || usrquota || prjquota) {
+			f2fs_err(sbi, "old and new quota format mixing");
+			return -EINVAL;
 		}
-		commit everything from m to p to unmount, removing from set
+		if (!(ctx->spec_mask & F2FS_SPEC_jqfmt ||
+				F2FS_OPTION(sbi).s_jquota_fmt)) {
+			f2fs_err(sbi, "journaled quota format not specified");
+			return -EINVAL;
+		}
+	}
 
-I'll try to put something of that sort together, along with
-detailed explanation of what it's doing - in D/f/*, rather than
-buring it in commit messages, and along with "read and update
-D/f/... if you are ever touch this function" in fs/pnode.c itself;
-this fun is not something I would like to repeat several years
-down the road ;-/
+> 
+> I'll have to look at it a bit more. But this is modeled on ext4's
+> ext4_check_quota_consistency(), and it does not do any freeing in that
+> function; it leaves freeing in error cases to when the fc / ctx gets freed.
+> 
+> But tl;dr: I think we can remove the kfree and "= NULL" in this function,
+> and defer the freeing in the error case.
+> 
+>>> +
+>>> +static inline void clear_compression_spec(struct f2fs_fs_context *ctx)
+>>> +{
+>>> +	ctx->spec_mask &= ~(F2FS_SPEC_compress_algorithm
+>>> +						| F2FS_SPEC_compress_log_size
+>>> +						| F2FS_SPEC_compress_extension
+>>> +						| F2FS_SPEC_nocompress_extension
+>>> +						| F2FS_SPEC_compress_chksum
+>>> +						| F2FS_SPEC_compress_mode);
+>>
+>> How about add a macro to include all compression macros, and use it to clean
+>> up above codes?
+> 
+> That's a good idea and probably easy enough to do without rebase pain.
+>  
+>>> +
+>>> +	if (f2fs_test_compress_extension(F2FS_CTX_INFO(ctx).noextensions,
+>>> +				F2FS_CTX_INFO(ctx).nocompress_ext_cnt,
+>>> +				F2FS_CTX_INFO(ctx).extensions,
+>>> +				F2FS_CTX_INFO(ctx).compress_ext_cnt)) {
+>>> +		f2fs_err(sbi, "invalid compress or nocompress extension");
+>>
+>> Can you please describe what is detailed confliction in the log? e.g. new
+>> noext conflicts w/ new ext...
+> 
+> Hmm, let me think about this. I had not noticed it was calling 
+> f2fs_test_compress_extension 3 times, I wonder if there is a better option.
+> I need to understand this approach better. Maybe Hongbo has thoughts.
 
-We *REALLY* need a good set of regression tests for that stuff.
-If you have anything along those lines sitting somewhere, please
-post a reference.  The same goes for everybody else who might
-have something in that general area.
+Maybe:
 
+f2fs_err(sbi, "new noextensions conflicts w/ new extensions");
 
-[*] well, that and with fixed skip_propagation_subtree() logics; it's
-easier to combine it with propagation_next() rather than trying to set
-the things up so that the next call of propagation_next() would DTRT -
-it's less work and yours actually has a corner case if the last element
-of ->mnt_slave_list has non-empty ->mnt_slave_list itself.
+> 
+>>> +		return -EINVAL;
+>>> +	}
+>>> +	if (f2fs_test_compress_extension(F2FS_CTX_INFO(ctx).noextensions,
+>>> +				F2FS_CTX_INFO(ctx).nocompress_ext_cnt,
+>>> +				F2FS_OPTION(sbi).extensions,
+>>> +				F2FS_OPTION(sbi).compress_ext_cnt)) {
+>>> +		f2fs_err(sbi, "invalid compress or nocompress extension");
+
+f2fs_err(sbi, "new noextensions conflicts w/ old extensions");
+
+>>
+>> Ditto,
+>>
+>>> +		return -EINVAL;
+>>> +	}
+>>> +	if (f2fs_test_compress_extension(F2FS_OPTION(sbi).noextensions,
+>>> +				F2FS_OPTION(sbi).nocompress_ext_cnt,
+>>> +				F2FS_CTX_INFO(ctx).extensions,
+>>> +				F2FS_CTX_INFO(ctx).compress_ext_cnt)) {
+>>> +		f2fs_err(sbi, "invalid compress or nocompress extension");
+
+f2fs_err(sbi, "new extensions conflicts w/ old noextensions");
+
+Then, user may get enough hint from log to update conflicted {no,}extensions
+for mount.
+
+Thanks,
+
+>>
+>> Ditto,
+> 
+> thanks,
+> -Eric
+> 
+
 
