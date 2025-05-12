@@ -1,345 +1,373 @@
-Return-Path: <linux-fsdevel+bounces-48740-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48741-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5A7EAB3805
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 15:03:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FBA8AB385B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 15:19:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84F7A3BEC99
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 13:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF36B3A99C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 13:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8AA293B72;
-	Mon, 12 May 2025 13:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2512A294A11;
+	Mon, 12 May 2025 13:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fvcSHSeN"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="faIl6RqO"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80416292923
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 13:03:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B2F425393A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 13:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747054991; cv=none; b=cWY0qFbEev5CcHhs2urtDZ4OjCFkiEtUbCPIJGeKGm0t5iysNOmSCMHCafNlAUStn70cxSFm0+nK/3XBlSl0CyS8tEUjEXB4NPt4tV7LeDHw6kRgxIcD5pF2iQ9NiljIyEVBwlBfdj866JF2ZUyWJaJIzZQLTTM20W9R//z2fA8=
+	t=1747055965; cv=none; b=PUXjNg1778Ft+sN0N+SQDM/mGefCxKZ9N62h8Jwy/IcirPT5cQ+J51YegSWJJTaPZe9sZQQGuOm6DyQIQOi7g529/gJJlw3n2Yc00a0E83A/zoRXFMDPfetcT7E7B0NknPJ6cH5/dKvzu17KGVAK1cPtTv637/JTOerz88KrDwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747054991; c=relaxed/simple;
-	bh=1WUEWHEolQwC8720ZZECWxHjReWB0vujNXYAmpR1iCc=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=HVGymZgOaBhNn8A/dJeXK65deCp3vp4cOguMKcy8Ni+smHQvK+p5nqccSdaHg5qEAUm8pqs9CIf8PBBTf+MJHGGZd1zzjbzfsT0WsoYpbNE348v7os0iN3fO0afIGHYIL4G2VViEoqFCM57A0bCQmnG5ZVW8S332Mfj0rfc8o+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fvcSHSeN; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1747055965; c=relaxed/simple;
+	bh=DoJT2dz8txJo2HLysgqy6uqVMVeur99HqA28GNGz35o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=fxRXUCKEIuTYndoNPVfNQdwIluN5Oz0Um2SZWZ6asupdQCREh62JyfZPtVTmGfW3b8FMrQ4YGGTkWDMvYie+DMPzSJkAWbp1bIlzbwP/GstJcF5NtzBeeYBKB9ltFycnGHxr9wFWB5ciUcTN7E2zS6P1bexS3zoSXDBnD9USVLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=faIl6RqO; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747054988;
+	s=mimecast20190719; t=1747055962;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rHw3xY0JnT4h9Q3NaKNlwMtkuyY4mD1BTf/wtxHKiQk=;
-	b=fvcSHSeNNbzI3IxXwlzkFHJv4cHVEtfAdpFEv1AY3eqdx7vvdXlyrm66u9SnfP8bZCQZ3W
-	oCkT9waTs81caxBRhs5Mryycoq2YrGuMtoVs/h8Q6mHKNvnzLCA5mEXvWQtn2k9rZALHZ9
-	LAoWHz39jWvOX2ECpjr2MEZhvJW8WsM=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-620-wCVkiRG3N6Cctfq4p2e1Lg-1; Mon,
- 12 May 2025 09:02:54 -0400
-X-MC-Unique: wCVkiRG3N6Cctfq4p2e1Lg-1
-X-Mimecast-MFC-AGG-ID: wCVkiRG3N6Cctfq4p2e1Lg_1747054966
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB4CA180048E;
-	Mon, 12 May 2025 13:02:42 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.188])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ED1C81956095;
-	Mon, 12 May 2025 13:02:38 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20250509-deckung-glitschig-8d27cb12f09f@brauner>
-References: <20250509-deckung-glitschig-8d27cb12f09f@brauner> <20250505-erproben-zeltlager-4c16f07b96ae@brauner> <433928.1745944651@warthog.procyon.org.uk> <1209711.1746527190@warthog.procyon.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: dhowells@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-    Etienne Champetier <champetier.etienne@gmail.com>,
-    Marc Dionne <marc.dionne@auristor.com>,
-    Jeffrey Altman <jaltman@auristor.com>,
-    Chet Ramey <chet.ramey@case.edu>, Steve French <sfrench@samba.org>,
-    linux-afs@lists.infradead.org, openafs-devel@openafs.org,
-    linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: [PATCH v2] afs, bash: Fix open(O_CREAT) on an extant AFS file in a sticky dir
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=znSs0IWOkqtw8MwO3eoXgDf53PvMGgHP2+ODqAezjoE=;
+	b=faIl6RqOrvus5eSfQBcTcgoGIjofnUr2eu2ZTOt4jMbZhgVr8q4pHPzF44k+bIDRKwsWYE
+	FmCG225pSejpOwNLv77GA1wMQzizs7R2T9c43IUWiKgrQGMo79Lz8pQtIGh9jRBHwDNQoU
+	8vionBdfY9fLFpi/Z1KWQUJMPLRx/wI=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-319-42Ct4H4hNwyPujo2_TIx0g-1; Mon, 12 May 2025 09:19:20 -0400
+X-MC-Unique: 42Ct4H4hNwyPujo2_TIx0g-1
+X-Mimecast-MFC-AGG-ID: 42Ct4H4hNwyPujo2_TIx0g_1747055958
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ad24107fc5eso153528466b.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 06:19:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747055955; x=1747660755;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=znSs0IWOkqtw8MwO3eoXgDf53PvMGgHP2+ODqAezjoE=;
+        b=K1KDJ6LiUdRTDEx6KlvBO9QIxNowGmpFdx/PkbbL/fXo3Lgua160iTkppQT/2PlUcm
+         pCJa0keNY2KrFUISmTyHNt63c63nN5ccz7hPK+6Ze1IOuKBu5yDR8D8VInSjZAswDPoi
+         S+qMSOZcWlayirgWF7OGtiuUwndQa6c8cvBqSmO+BtrVFVB5sE/I1qxCUH53R93rFHR/
+         Tu9FQq8M4GRB5OZBzVjvp11vUA4RasS8k7M5RwJtMq24H6FVuVIsbKgWGBAAtFAgwEuL
+         07Y8mzg3p8cilYbjO94Mt63oJu8wwdVsapl0O7MFo3BdaPB10SpQwCHM1OacFZ/z4T32
+         DDQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXVx1BQ7wiFzzS8Atp8CeGrgXE79F/d+WW6CdUjdn4TgGxJ5VmNzRaye5pR1KOLXYLxOwDOFGxKcixagq8@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2/Or7J4r6qgK2p/N5T6Oq1zincsJ2jy7x98vYlhQxCDNRs07H
+	FJuz4pGJ1TsdUo46xuacDe0kmGNMLKMEeUpzBVK5rUaglf81oOmZsSpYWKPkFtjDN9zNoEaz1gt
+	nKcfQVvv1QhTFGliaey5g+g4zjm78+sUdIz7dacVujvT3EIqJtwpqLgy+DIY/Gg==
+X-Gm-Gg: ASbGncvhXaO7qnEEfjLHtmxHKz6Yvnz1I2KymhxAfzHLFeMU1qkg4TJldfiydEfrxe9
+	Kk/5hhOIc6YN2W98rUwdmdEVy0YA6nFEyWBr7VIzw3YhulD7eCfvVtiI2zjEX7njvo3ka0y24Pi
+	4FXmQ+QcyLIb2Tolr5SuuQWzlremyKWsLUFb41WM/64tofVGs4YALaBp5TQBl+i7K4Xdja2HbY7
+	0IBb9ZrdNEB9LiXpTFvctqJim4fROPnBbaEYSCd1cpARdanHDqIR7/QgDf02PaxudKHwZFxld12
+	Mq9hpIoYcNkl4NiyNGY2cttpm44=
+X-Received: by 2002:a17:907:3e1f:b0:ad2:4fa0:88d1 with SMTP id a640c23a62f3a-ad24fa08b96mr397887466b.9.1747055954542;
+        Mon, 12 May 2025 06:19:14 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF2gaN4nId6A/kunm1rnCP/+7J7Yrf/475CQq5wTNUNFEpBtRjClSuGrdC8wxlG4kjN+bjbbw==
+X-Received: by 2002:a17:907:3e1f:b0:ad2:4fa0:88d1 with SMTP id a640c23a62f3a-ad24fa08b96mr397878666b.9.1747055953940;
+        Mon, 12 May 2025 06:19:13 -0700 (PDT)
+Received: from [127.0.0.1] (109-92-26-237.static.isp.telekom.rs. [109.92.26.237])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad2197bde09sm612328766b.125.2025.05.12.06.19.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 May 2025 06:19:13 -0700 (PDT)
+From: Andrey Albershteyn <aalbersh@redhat.com>
+X-Google-Original-From: Andrey Albershteyn <aalbersh@kernel.org>
+Subject: [PATCH v5 0/7] fs: introduce file_getattr and file_setattr
+ syscalls
+Date: Mon, 12 May 2025 15:18:53 +0200
+Message-Id: <20250512-xattrat-syscall-v5-0-a88b20e37aae@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2086611.1747054957.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 12 May 2025 14:02:37 +0100
-Message-ID: <2086612.1747054957@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAD31IWgC/23NTQrCMBCG4auUrI0kkx9bV95DXCTNRIOllaSEl
+ tK7m4ogosv3g3lmIQljwESO1UIi5pDC0JdQu4q0N9NfkQZXmgADxTiXdDLjGM1I05xa03VUG86
+ FduCsaki5ekT0YXqJ50vpW0jjEOfXgwzb+rYAfqwMlFNlhWZOettaON0x9tjth3glG5bFBwDOf
+ wFRAMMOjitfN/UfQH4AAX8ASRkVWANqbwVo+QWs6/oEtac3pDEBAAA=
+X-Change-ID: 20250114-xattrat-syscall-6a1136d2db59
+To: Richard Henderson <richard.henderson@linaro.org>, 
+ Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, 
+ Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+ Christophe Leroy <christophe.leroy@csgroup.eu>, 
+ Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, 
+ Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+ Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+ Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ =?utf-8?q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
+ =?utf-8?q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+ Arnd Bergmann <arnd@arndb.de>, 
+ =?utf-8?q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+ "Serge E. Hallyn" <serge@hallyn.com>, 
+ Stephen Smalley <stephen.smalley.work@gmail.com>, 
+ Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
+ Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, 
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, 
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, 
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
+ selinux@vger.kernel.org, ecryptfs@vger.kernel.org, 
+ linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, 
+ Andrey Albershteyn <aalbersh@kernel.org>, 
+ Andrey Albershteyn <aalbersh@redhat.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7943; i=aalbersh@kernel.org;
+ h=from:subject:message-id; bh=DoJT2dz8txJo2HLysgqy6uqVMVeur99HqA28GNGz35o=;
+ b=owJ4nJvAy8zAJea2/JXEGuOHHIyn1ZIYMhS/+ikUz/+zKeDcJU4Vu/2bX35T2jNhmd4FXg6HD
+ +dm71lmfeB2RykLgxgXg6yYIss6aa2pSUVS+UcMauRh5rAygQxh4OIUgIk8E2D4p9yRo7vd7Fx2
+ +08doV9xDvUxK48fv6Khpfy+e1bF/469nIwMx3ZVrBNbc1PypFML49PkHfx7zu9tPaBw836nz26
+ zZV/5OQBQ90ss
+X-Developer-Key: i=aalbersh@kernel.org; a=openpgp;
+ fpr=AE1B2A9562721A6FC4307C1F46A7EA18AC33E108
 
-Christian Brauner <brauner@kernel.org> wrote:
+This patchset introduced two new syscalls file_getattr() and
+file_setattr(). These syscalls are similar to FS_IOC_FSSETXATTR ioctl()
+except they use *at() semantics. Therefore, there's no need to open the
+file to get a fd.
 
-> > Now, in my patch, I added two inode ops because they VFS code involved=
- makes
-> > two distinct evaluations and so I made an op for each and, as such, th=
-ose
-> > evaluations may be applicable elsewhere, but I could make a combined o=
-p that
-> > handles that specific situation instead.
-> =
+These syscalls allow userspace to set filesystem inode attributes on
+special files. One of the usage examples is XFS quota projects.
 
-> Try to make it one, please.
+XFS has project quotas which could be attached to a directory. All
+new inodes in these directories inherit project ID set on parent
+directory.
 
-Okay, see attached.
+The project is created from userspace by opening and calling
+FS_IOC_FSSETXATTR on each inode. This is not possible for special
+files such as FIFO, SOCK, BLK etc. Therefore, some inodes are left
+with empty project ID. Those inodes then are not shown in the quota
+accounting but still exist in the directory. This is not critical but in
+the case when special files are created in the directory with already
+existing project quota, these new inodes inherit extended attributes.
+This creates a mix of special files with and without attributes.
+Moreover, special files with attributes don't have a possibility to
+become clear or change the attributes. This, in turn, prevents userspace
+from re-creating quota project on these existing files.
 
-David
-----
-Bash has a work around in redir_open() that causes open(O_CREAT) of a file
-in a sticky directory to be retried without O_CREAT if bash was built with
-AFS workarounds configured:
+NAME
 
-        #if defined (AFS)
-              if ((fd < 0) && (errno =3D=3D EACCES))
-            {
-              fd =3D open (filename, flags & ~O_CREAT, mode);
-              errno =3D EACCES;    /* restore errno */
-            }
+	file_getattr/file_setattr - get/set filesystem inode attributes
 
-        #endif /* AFS */
+SYNOPSIS
 
-This works around the kernel not being able to validly check the
-current_fsuid() against i_uid on the file or the directory because the
-uidspaces of the system and of AFS may well be disjoint.  The problem lies
-with the uid checks in may_create_in_sticky().
+	#include <sys/syscall.h>    /* Definition of SYS_* constants */
+	#include <unistd.h>
 
-However, the bash work around is going to be removed:
+	long syscall(SYS_file_getattr, int dirfd, const char *pathname,
+		struct fsxattr *fsx, size_t size, unsigned int at_flags);
+	long syscall(SYS_file_setattr, int dirfd, const char *pathname,
+		struct fsxattr *fsx, size_t size, unsigned int at_flags);
 
-        https://git.savannah.gnu.org/cgit/bash.git/tree/redir.c?h=3Dbash-5=
-.3-rc1#n733
+	Note: glibc doesn't provide for file_getattr()/file_setattr(),
+	use syscall(2) instead.
 
-Fix this in the kernel by providing a ->may_create_in_sticky() inode op,
-similar to ->permission(), that, if provided, is called to:
+DESCRIPTION
 
- (1) see if an inode has the same owner as the parent on the path walked;
+	The syscalls take fd and path. If path is absolute, fd is not
+	used. If path is empty, fd can be AT_FDCWD or any valid fd which
+	will be used to get/set attributes on.
 
- (2) determine if the caller owns the file instead of checking the i_uid t=
-o
-     current_fsuid().
+	This is an alternative to FS_IOC_FSGETXATTR/FS_IOC_FSSETXATTR
+	ioctl with a difference that file don't need to be open as we
+	can reference it with a path instead of fd. By having this we
+	can manipulated filesystem inode attributes not only on regular
+	files but also on special ones. This is not possible with
+	FS_IOC_FSSETXATTR ioctl as with special files we can not call
+	ioctl() directly on the filesystem inode using file descriptor.
 
-For kafs, the hook is implemented to see if:
+	at_flags can be set to AT_SYMLINK_NOFOLLOW or AT_EMPTY_PATH.
 
- (1) the AFS owner IDs retrieved on the file and its parent directory by
-     FS.FetchStatus match;
+RETURN VALUE
 
- (2) if the server set the ADMINISTER bit in the access rights returned by
-     the FS.FetchStatus and suchlike for the key, indicating ownership by
-     the user specified by the key.
+	On success, 0 is returned.  On error, -1 is returned, and errno
+	is set to indicate the error.
 
-(Note that the owner IDs retrieved from an AuriStor YFS server may not fit
-in the kuid_t being 64-bit, so they need comparing directly).
+ERRORS
 
-This can be tested by creating a sticky directory (the user must have a
-token to do this) and creating a file in it.  Then strace bash doing "echo
-foo >>file" and look at whether bash does a single, successful O_CREAT ope=
-n
-on the file or whether that one fails and then bash does one without
-O_CREAT that succeeds.
+	EINVAL		Invalid at_flag specified (only
+			AT_SYMLINK_NOFOLLOW and AT_EMPTY_PATH is
+			supported).
 
-Reported-by: Etienne Champetier <champetier.etienne@gmail.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jeffrey Altman <jaltman@auristor.com>
-cc: Chet Ramey <chet.ramey@case.edu>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Steve French <sfrench@samba.org>
-cc: linux-afs@lists.infradead.org
-cc: openafs-devel@openafs.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
+	EINVAL		Size was smaller than any known version of
+			struct fsxattr.
+
+	EINVAL		Invalid combination of parameters provided in
+			fsxattr for this type of file.
+
+	E2BIG		Size of input argument **struct fsxattr** is too
+			big.
+
+	EBADF		Invalid file descriptor was provided.
+
+	EPERM		No permission to change this file.
+
+	EOPNOTSUPP	Filesystem does not support setting attributes
+			on this type of inode
+
+HISTORY
+
+	Added in Linux 6.15.
+
+EXAMPLE
+
+Create directory and file "mkdir ./dir && touch ./dir/foo" and then
+execute the following program:
+
+	#include <fcntl.h>
+	#include <errno.h>
+	#include <string.h>
+	#include <linux/fs.h>
+	#include <stdio.h>
+	#include <sys/syscall.h>
+	#include <unistd.h>
+
+	int
+	main(int argc, char **argv) {
+		int dfd;
+		int error;
+		struct fsxattr fsx;
+
+		dfd = open("./dir", O_RDONLY);
+		if (dfd == -1) {
+			printf("can not open ./dir");
+			return dfd;
+		}
+
+		error = syscall(467, dfd, "./foo", &fsx, 0);
+		if (error) {
+			printf("can not call 467: %s", strerror(errno));
+			return error;
+		}
+
+		printf("dir/foo flags: %d\n", fsx.fsx_xflags);
+
+		fsx.fsx_xflags |= FS_XFLAG_NODUMP;
+		error = syscall(468, dfd, "./foo", &fsx, 0);
+		if (error) {
+			printf("can not call 468: %s", strerror(errno));
+			return error;
+		}
+
+		printf("dir/foo flags: %d\n", fsx.fsx_xflags);
+
+		return error;
+	}
+
+SEE ALSO
+
+	ioctl(2), ioctl_iflags(2), ioctl_xfs_fsgetxattr(2)
+
 ---
- fs/afs/dir.c       |    1 +
- fs/afs/file.c      |    1 +
- fs/afs/internal.h  |    2 ++
- fs/afs/security.c  |   52 +++++++++++++++++++++++++++++++++++++++++++++++=
-+++++
- fs/namei.c         |   17 ++++++++++++-----
- include/linux/fs.h |    2 ++
- 6 files changed, 70 insertions(+), 5 deletions(-)
+Changes in v5:
+- Remove setting of LOOKUP_EMPTY flags which does not have any effect
+- Return -ENOSUPP from vfs_fileattr_set()
+- Add fsxattr masking (by Amir)
+- Fix UAF issue dentry
+- Fix getname_maybe_null() issue with NULL path
+- Implement file_getattr/file_setattr hooks
+- Return LSM return code from file_setattr
+- Rename from getfsxattrat/setfsxattrat to file_getattr/file_setattr
+- Link to v4: https://lore.kernel.org/r/20250321-xattrat-syscall-v4-0-3e82e6fb3264@kernel.org
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index 9e7b1fe82c27..27e565612bde 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -65,6 +65,7 @@ const struct inode_operations afs_dir_inode_operations =3D=
- {
- 	.permission	=3D afs_permission,
- 	.getattr	=3D afs_getattr,
- 	.setattr	=3D afs_setattr,
-+	.may_create_in_sticky =3D afs_may_create_in_sticky,
- };
- =
+Changes in v4:
+- Use getname_maybe_null() for correct handling of dfd + path semantic
+- Remove restriction for special files on which flags are allowed
+- Utilize copy_struct_from_user() for better future compatibility
+- Add draft man page to cover letter
+- Convert -ENOIOCTLCMD to -EOPNOSUPP as more appropriate for syscall
+- Add missing __user to header declaration of syscalls
+- Link to v3: https://lore.kernel.org/r/20250211-xattrat-syscall-v3-1-a07d15f898b2@kernel.org
 
- const struct address_space_operations afs_dir_aops =3D {
-diff --git a/fs/afs/file.c b/fs/afs/file.c
-index fc15497608c6..dff48d0adec3 100644
---- a/fs/afs/file.c
-+++ b/fs/afs/file.c
-@@ -47,6 +47,7 @@ const struct inode_operations afs_file_inode_operations =
-=3D {
- 	.getattr	=3D afs_getattr,
- 	.setattr	=3D afs_setattr,
- 	.permission	=3D afs_permission,
-+	.may_create_in_sticky =3D afs_may_create_in_sticky,
- };
- =
+Changes in v3:
+- Remove unnecessary "dfd is dir" check as it checked in user_path_at()
+- Remove unnecessary "same filesystem" check
+- Use CLASS() instead of directly calling fdget/fdput
+- Link to v2: https://lore.kernel.org/r/20250122-xattrat-syscall-v2-1-5b360d4fbcb2@kernel.org
 
- const struct address_space_operations afs_file_aops =3D {
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 440b0e731093..4a5bb01606a8 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1495,6 +1495,8 @@ extern struct key *afs_request_key(struct afs_cell *=
-);
- extern struct key *afs_request_key_rcu(struct afs_cell *);
- extern int afs_check_permit(struct afs_vnode *, struct key *, afs_access_=
-t *);
- extern int afs_permission(struct mnt_idmap *, struct inode *, int);
-+int afs_may_create_in_sticky(struct mnt_idmap *idmap, struct inode *inode=
-,
-+			     struct path *path);
- extern void __exit afs_clean_up_permit_cache(void);
- =
+v1:
+https://lore.kernel.org/linuxppc-dev/20250109174540.893098-1-aalbersh@kernel.org/
 
- /*
-diff --git a/fs/afs/security.c b/fs/afs/security.c
-index 6a7744c9e2a2..9fd6e4b5c228 100644
---- a/fs/afs/security.c
-+++ b/fs/afs/security.c
-@@ -477,6 +477,58 @@ int afs_permission(struct mnt_idmap *idmap, struct in=
-ode *inode,
- 	return ret;
- }
- =
+Previous discussion:
+https://lore.kernel.org/linux-xfs/20240520164624.665269-2-aalbersh@redhat.com/
 
-+/*
-+ * Perform the ownership checks for a file in a sticky directory on AFS.
-+ *
-+ * In the case of AFS, this means that:
-+ *
-+ * (1) the file and the directory have the same AFS ownership or
-+ *
-+ * (2) the file is owned by the AFS user represented by the token (e.g. f=
-rom a
-+ *     kerberos server) held in a key.
-+ *
-+ * Returns 0 if owned by me or has same owner as parent dir, 1 if not; ca=
-n also
-+ * return an error.
-+ */
-+int afs_may_create_in_sticky(struct mnt_idmap *idmap, struct inode *inode=
-,
-+			     struct path *path)
-+{
-+	struct afs_vnode *dvnode, *vnode =3D AFS_FS_I(inode);
-+	struct dentry *parent;
-+	struct key *key;
-+	afs_access_t access;
-+	int ret;
-+	s64 owner;
-+
-+	key =3D afs_request_key(vnode->volume->cell);
-+	if (IS_ERR(key))
-+		return PTR_ERR(key);
-+
-+	/* Get the owner's ID for the directory.  Ideally, we'd use RCU to
-+	 * access the parent rather than getting a ref.
-+	 */
-+	parent =3D dget_parent(path->dentry);
-+	dvnode =3D AFS_FS_I(d_backing_inode(parent));
-+	owner =3D dvnode->status.owner;
-+	dput(parent);
-+
-+	if (vnode->status.owner =3D=3D owner) {
-+		ret =3D 0;
-+		goto error;
-+	}
-+
-+	/* Get the access rights for the key on this file. */
-+	ret =3D afs_check_permit(vnode, key, &access);
-+	if (ret < 0)
-+		goto error;
-+
-+	/* We get the ADMINISTER bit if we own the file. */
-+	ret =3D (access & AFS_ACE_ADMINISTER) ? 1 : 0;
-+error:
-+	key_put(key);
-+	return ret;
-+}
-+
- void __exit afs_clean_up_permit_cache(void)
- {
- 	int i;
-diff --git a/fs/namei.c b/fs/namei.c
-index 84a0e0b0111c..e52c91cbed2a 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1316,13 +1316,20 @@ static int may_create_in_sticky(struct mnt_idmap *=
-idmap, struct nameidata *nd,
- 	if (S_ISFIFO(inode->i_mode) && !sysctl_protected_fifos)
- 		return 0;
- =
+---
+Amir Goldstein (1):
+      fs: prepare for extending file_get/setattr()
 
--	i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
-+	if (unlikely(inode->i_op->may_create_in_sticky)) {
-+		int ret =3D inode->i_op->may_create_in_sticky(idmap, inode, &nd->path);
- =
+Andrey Albershteyn (6):
+      fs: split fileattr related helpers into separate file
+      lsm: introduce new hooks for setting/getting inode fsxattr
+      selinux: implement inode_file_[g|s]etattr hooks
+      fs: split fileattr/fsxattr converters into helpers
+      fs: make vfs_fileattr_[get|set] return -EOPNOSUPP
+      fs: introduce file_getattr and file_setattr syscalls
 
--	if (vfsuid_eq(i_vfsuid, dir_vfsuid))
--		return 0;
-+		if (ret <=3D 0) /* 1 if not owned by me or by parent dir. */
-+			return ret;
-+	} else {
-+		i_vfsuid =3D i_uid_into_vfsuid(idmap, inode);
- =
+ arch/alpha/kernel/syscalls/syscall.tbl      |   2 +
+ arch/arm/tools/syscall.tbl                  |   2 +
+ arch/arm64/tools/syscall_32.tbl             |   2 +
+ arch/m68k/kernel/syscalls/syscall.tbl       |   2 +
+ arch/microblaze/kernel/syscalls/syscall.tbl |   2 +
+ arch/mips/kernel/syscalls/syscall_n32.tbl   |   2 +
+ arch/mips/kernel/syscalls/syscall_n64.tbl   |   2 +
+ arch/mips/kernel/syscalls/syscall_o32.tbl   |   2 +
+ arch/parisc/kernel/syscalls/syscall.tbl     |   2 +
+ arch/powerpc/kernel/syscalls/syscall.tbl    |   2 +
+ arch/s390/kernel/syscalls/syscall.tbl       |   2 +
+ arch/sh/kernel/syscalls/syscall.tbl         |   2 +
+ arch/sparc/kernel/syscalls/syscall.tbl      |   2 +
+ arch/x86/entry/syscalls/syscall_32.tbl      |   2 +
+ arch/x86/entry/syscalls/syscall_64.tbl      |   2 +
+ arch/xtensa/kernel/syscalls/syscall.tbl     |   2 +
+ fs/Makefile                                 |   3 +-
+ fs/ecryptfs/inode.c                         |   8 +-
+ fs/file_attr.c                              | 475 ++++++++++++++++++++++++++++
+ fs/ioctl.c                                  | 309 ------------------
+ fs/overlayfs/inode.c                        |   2 +-
+ include/linux/fileattr.h                    |  26 ++
+ include/linux/lsm_hook_defs.h               |   2 +
+ include/linux/security.h                    |  16 +
+ include/linux/syscalls.h                    |   6 +
+ include/uapi/asm-generic/unistd.h           |   8 +-
+ include/uapi/linux/fs.h                     |   3 +
+ security/security.c                         |  30 ++
+ security/selinux/hooks.c                    |  14 +
+ 29 files changed, 621 insertions(+), 313 deletions(-)
+---
+base-commit: 0d8d44db295ccad20052d6301ef49ff01fb8ae2d
+change-id: 20250114-xattrat-syscall-6a1136d2db59
 
--	if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
--		return 0;
-+		if (vfsuid_eq(i_vfsuid, dir_vfsuid))
-+			return 0;
-+
-+		if (vfsuid_eq_kuid(i_vfsuid, current_fsuid()))
-+			return 0;
-+	}
- =
-
- 	if (likely(dir_mode & 0002)) {
- 		audit_log_path_denied(AUDIT_ANOM_CREAT, "sticky_create");
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e..11122e169719 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2236,6 +2236,8 @@ struct inode_operations {
- 			    struct dentry *dentry, struct fileattr *fa);
- 	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
- 	struct offset_ctx *(*get_offset_ctx)(struct inode *inode);
-+	int (*may_create_in_sticky)(struct mnt_idmap *idmap, struct inode *inode=
-,
-+				    struct path *path);
- } ____cacheline_aligned;
- =
-
- static inline int call_mmap(struct file *file, struct vm_area_struct *vma=
-)
+Best regards,
+-- 
+Andrey Albershteyn <aalbersh@kernel.org>
 
 
