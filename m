@@ -1,40 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-48757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A34DAB3BC8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 17:17:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D960BAB3C86
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 17:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C743B3BBE95
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 15:17:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AC2B17E78F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 15:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9897C239E8F;
-	Mon, 12 May 2025 15:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FB923C8A4;
+	Mon, 12 May 2025 15:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="ntyjDWB6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A38E1E1E13;
-	Mon, 12 May 2025 15:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6BA823C512
+	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 15:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747063039; cv=none; b=YqtHl7TVIFux65QRIe5YMR76jgopOxy2Z4OTwbsGs2Q7JuBayMDlimf3dTay62i300yvrZBc8R2vZVw+i3snh7f3VXMLaMp9UYvI48PYQHd8j2UxUtRYbxV/QjmeD/4do0tm/Tk1/7aYtatf7V9XU8x+Mwgv5Xk7byWy4yISfKw=
+	t=1747064626; cv=none; b=BDhPg97zeJMOgfPkhsTUuS1WcMZjutpCqZC9k2iLx6s8fbfkfYMEMDb7MWmyUtRDlvL2+YhH7TNlpcukegbTBiJEZv7lzhACSllB664mwDDz37AdknrWJtWhaHEIk44PwingdAExmoAzzdCQzFehNbtjLx3zTc3sIWsE5KyW7BM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747063039; c=relaxed/simple;
-	bh=oAWdziEgI+nw9iP7oOY5IFlXRYz32SoF5DP1mhuHrP8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ExVe1iZB8UeIWV0qeNbCMOBTq4ayTFymig5UDCgAqqgyAsUS7ejr8X4uf1fDaYCaoTsQamqjSv/vYuUmv1eXDHuyiJbK1kksBqW+b33dWHNhZLHtopVtLcHBeU9cDDLJ4FOysEMcL63V1HLeo3Y0DASyiW5n2JmY6dvZlkueO4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A2AA014BF;
-	Mon, 12 May 2025 08:17:04 -0700 (PDT)
-Received: from [10.57.90.222] (unknown [10.57.90.222])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12CC53F63F;
-	Mon, 12 May 2025 08:17:13 -0700 (PDT)
-Message-ID: <a786b348-7622-4c62-bfdc-f04e05066184@arm.com>
-Date: Mon, 12 May 2025 16:17:12 +0100
+	s=arc-20240116; t=1747064626; c=relaxed/simple;
+	bh=1gBUpbibTjYzRxZM991IHxsllk2DYccgIV54Tgef7vI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ok4RdE32DYJCUnoQaDlyt1x1PZFhzhJglV/+4kRlJa3lLQ0GPu63OodkzIY9c8zshCtlizzdL+c3deUBNMtK5aRJjJAIqetG4SQVHf5uEXhvtXXO62F6032j89e06FNa9MzNR9PGGhJDyBzAnpS84BqXPH5STyXdNtyMwzKc7EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=ntyjDWB6; arc=none smtp.client-ip=66.163.189.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747064617; bh=QKPRXBWiP6vdtfxBDOOQtpUp6zIgN5XDA7BfuJSNLwU=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=ntyjDWB6dZv+7X3N+X5yr8pc8QkaeC0EnNEnTjw4j/LhW/o5uxeNqWWaQjHa7TLz0TS2PETV/CDYnYbEmQ/bnq86BJyiMylNlNp6owf1AWCcIDUqcow5jZlmnPPkEivipb8eZNQkjGt0Hy/R95hTcaurNsuxxeInpDw6w3Dblgu/lfHPngbLdlFFOQ593HTotqRgI/YKiping4wg+KPDwR867sRRPcdMxo7eRLA0uyxKFkbYcSKPAkOm/wnDoAgNiXRjT7MuBU+1acqEfzjpNTi2KGV+AqM8oLnThoB+rZYplU+kCGpImYX0vvM9TKYgGjl0+1cvDQjDCWa/GrW6jg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1747064617; bh=8redTxGWiikRY2d9LbwTHUnouBcNgByzMEi97v7vI8H=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=nRUEtVeR4NHmVxZuFNuV/CkPDcetgpdNnyk9EeNGbJ1z4LCvrEyKLj6H8RTiJkyOQN/P5zBUNxOVPAjh5QulBI/SJPN/Ud6wBlVsLaIC8xvan/klygJyE8eJtafxegFIY23HdWuxsAYB/Eq3YvAZb37diwk+DN7Od77ETwbBNs5gWnSYXVm6HOzFOMmrOo8AZ/6vyX2kCiwag/vSvEPzkRitY18IzIjweHRfAm/ur/cA3dbgliY4eRe+PwajjzZmRv1kTIPvRbBSfeld/7dp00DXMzA0qODLuk2ccuA6P6cB/Ahqtt/pgOIW/8rN66ENfhIwHVW8FmbqBU2EWO8GZA==
+X-YMail-OSG: WM0Uc6IVM1nokahWIeUzSYQROtDJ9qeYMqEm7._cOi5dW2OQxX1llQWOhl5Htkw
+ pjqZQRdX6mFRJ5HACZZsjO4D7uqCqBCGc1hISzip1nkT5f0JbgEYn5DwLsVF_zNN9h5.ljwLXxHG
+ MLEdCtBfxijdLgBKpmOBQmdL.6E7I63B67qzw4fTZCtYY87Y2sG7n9V2G3IcXkpSRmCdOjGj35kd
+ 6wZhNQBHe_zsRK93qaekXH6G3rQ0llGNpd69ZxMX2YgwokTwHrEjucGbV3zA4aY1A0usOxMeI.5Q
+ g_Y7ZfRYb9f_iaOkE0C3wlun.ML7bLz9TNs7LR6hUbiKfS7R_xnua7CMPYcos52uVZESl04Yj8HT
+ SgkSN.HPDPy_mTbQODVWMFUR1kwxRfSu6y1pp.8Kf1JHOedaNvoTnKdsWbPX1eDMeTG44MWJnkFp
+ BreWN8tfY1ZWTOpSF.UrHsF_M45pb7610HXwrW01_zFezmO9sZ6Hs_IswvhcPI2f8roAsMEnEVsy
+ YQcqrMHUb3SKNShsH_B2KvZO1q29_1FgKtCbTknNAsW3JhjznDOIhQFqZz1pKTCgMudVmxsaDaEK
+ uXPO8GZ66zJhG.Db_2RCAUOkdgg04QsHPqt_Jv9aFJUu_GC1x0ByCnk7LWRO6Eze_PUMZcFCYE.j
+ 7u_q4Ny66FNycDqi0JYh4V2eak0XQ.9fUIs5N.ZtM5.mPEJbU._veqQCv4eeX0PnjmcH6_6jLlvC
+ cMnrhKZeSaJvH7jVwQ3Gy8WBtNc3J7SrdTYTIzsVXb57JuhulLTYcW7gANxy5__UCyzz9yrI_Sle
+ dDyaQzYAU6eKo3_thzIur1cqBiA0xfbn7YzjFTflnwaTmB9s8Z5cXoi7qL.IrFiNDg8typtgdpiS
+ obXp643ZT.cennx8.wg6MfeSxHio3cUCDwnTIxV3dwv_kwKVD0CIotga4WI52Bvi7MXD_t.vbVlW
+ AmlnBrxupeN_f_QhVkf0DGOXGVECOMEt3zs5rw5yb_1kx.JHYf4DyYrvh51Rz8vePzxA9IfRbX1d
+ 8NITO0GqX7FPEACmRoN9um44C1.b0XjtyqCql7CXQP0P._JiwvpvvNh38RWC7s7RNeG5IFN.JFIf
+ jD9l2jK.Vl7WgBphg.Bo.BpPoTBNZh5Jg1Tr_k0e9b4_cTmbpy6fdxwrPF08ENXp.m6DQExcEf0F
+ oFaIAzVBYgjolQOlfdgMECkYvUNBAsbdocO00OGFdqxau74UdkBgVM1awnBMUwAflj_Fu_.M1.sg
+ svpD5b6Z4HD6d4ILD1C.G9smUlbD1SWuK6KbptHvZqepNB3GTexWWjVem0Z05STHxPGSHOkl.zIN
+ _BJDI4ly8NC1S74hHfu4bq.wF..fsPsq1JjyeQLGljkI7SeonIuMRktURm5XxIhdsrFsxNILEzF_
+ gJQtx78kT1Vro4YDrt.6wlJGeiPvSnoNDpeAga7Ftm7hQV6zn9cz_M7lAxvvMksUI0_6RWqhrwMa
+ Qln6rPUfOOpWXN5KlqhwkU1lcFLoAiqgNtNjxbYrE5pBda3jH3sQBc2fk6ONYxXTmLKR1smptkTh
+ zBR2KISLTGFvfO4fypux_tUy.zDVWgQHb.hBwsxdoq.lQQi6P8xIJejgomrkjC_mfNkLwx6ujady
+ K2k_12wDulVH7DMfGgH7tb.iriJjz93IfXsXbuzmgQBfGYzFkd7WOlfB2hddSAoJUP5ipAxHtAgU
+ 0saYraZitFaM4ggkxcTrL9UzkIb5Fud59DW1FRPZqb_l04XEzkx5pQIkhkGF.oi73yquM24q_dBY
+ AAgrnSL8tRBalM_LvCniSz9571Y8kjMjA6G8y7jZJWj4DNh_fi_aozx4Eu9P.XS4OLtgA7AE109t
+ SKpkzRlBrUnm505ojZRoLVA4qqYnDwusVoD7K0s9Lcq2S6kopzsptsEHsmWfub0DTOCnlXMbattC
+ KavPkZytUKqA2cLl9D7_0ncFvzCOUQvBsilxK0gEUd.994raVMJgtdlMDz_REtm0uROPRIW.KQy2
+ RS0hypGIAfb1KSV_lnQxl85e9J.aJ2qxtH99GYclfQrVqxriF0RachyDZaCxsN7tIdHMcP_USx6X
+ .nnn.bcWn_Vy3tJDwXoR42hyd27mJSLy4ok3.1BDA0LuOMH6u3y0JPOT0pN6Y1PslOdSw4PUUwOl
+ X7cSpTQsWS7ZfnQNOno1IGB.d2nDRZkiy9QB9fsqP6KpY5DGbGaBmtw1ug6xXdzV4o8lYcDW8kcy
+ lDxB6hRTPgSCzq62cPOd1UJqAv3_xYrAJp7509YQy8Ef.L.75s27NGiAipeIkuudzCObUkBNkMVK
+ z238o0uQ-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 4a184068-b4a9-4c89-b0eb-f26242664d7e
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 12 May 2025 15:43:37 +0000
+Received: by hermes--production-gq1-74d64bb7d7-mh87r (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9937c2f444744075ac11cc686b78df22;
+          Mon, 12 May 2025 15:43:34 +0000 (UTC)
+Message-ID: <f700845d-f332-4336-a441-08f98cd7f075@schaufler-ca.com>
+Date: Mon, 12 May 2025 08:43:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -42,233 +79,212 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] binfmt_elf: Move brk for static PIE even if ASLR
- disabled
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- Ali Saidi <alisaidi@amazon.com>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-hardening@vger.kernel.org
-References: <20250502001820.it.026-kees@kernel.org>
- <87f80506-eeb3-4848-adc9-8a030b5f4136@arm.com>
-In-Reply-To: <87f80506-eeb3-4848-adc9-8a030b5f4136@arm.com>
+Subject: Re: [PATCH v5 2/7] lsm: introduce new hooks for setting/getting inode
+ fsxattr
+To: Andrey Albershteyn <aalbersh@redhat.com>,
+ Richard Henderson <richard.henderson@linaro.org>,
+ Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ Helge Deller <deller@gmx.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>,
+ Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
+ John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+ "David S. Miller" <davem@davemloft.net>,
+ Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
+ <pali@kernel.org>, Paul Moore <paul@paul-moore.com>,
+ James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>,
+ Miklos Szeredi <miklos@szeredi.hu>, Amir Goldstein <amir73il@gmail.com>
+Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+ linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+ selinux@vger.kernel.org, ecryptfs@vger.kernel.org,
+ linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+ Andrey Albershteyn <aalbersh@kernel.org>,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20250512-xattrat-syscall-v5-0-4cd6821e8ff7@kernel.org>
+ <20250512-xattrat-syscall-v5-2-4cd6821e8ff7@kernel.org>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250512-xattrat-syscall-v5-2-4cd6821e8ff7@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23772 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hi Andrew,
+On 5/12/2025 6:25 AM, Andrey Albershteyn wrote:
+> Introduce new hooks for setting and getting filesystem extended
+> attributes on inode (FS_IOC_FSGETXATTR).
+>
+> Cc: selinux@vger.kernel.org
+> Cc: Paul Moore <paul@paul-moore.com>
+>
+> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> ---
+>  fs/file_attr.c                | 19 ++++++++++++++++---
+>  include/linux/lsm_hook_defs.h |  2 ++
+>  include/linux/security.h      | 16 ++++++++++++++++
+>  security/security.c           | 30 ++++++++++++++++++++++++++++++
+>  4 files changed, 64 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/file_attr.c b/fs/file_attr.c
+> index 2910b7047721..be62d97cc444 100644
+> --- a/fs/file_attr.c
+> +++ b/fs/file_attr.c
+> @@ -76,10 +76,15 @@ EXPORT_SYMBOL(fileattr_fill_flags);
+>  int vfs_fileattr_get(struct dentry *dentry, struct fileattr *fa)
+>  {
+>  	struct inode *inode = d_inode(dentry);
+> +	int error;
+>  
+>  	if (!inode->i_op->fileattr_get)
+>  		return -ENOIOCTLCMD;
+>  
+> +	error = security_inode_file_getattr(dentry, fa);
+> +	if (error)
+> +		return error;
+> +
 
+If you're changing VFS behavior to depend on LSMs supporting the new
+hooks I'm concerned about the impact it will have on the LSMs that you
+haven't supplied hooks for. Have you tested these changes with anything
+besides SELinux?
 
-On 02/05/2025 11:01, Ryan Roberts wrote:
-> On 02/05/2025 01:18, Kees Cook wrote:
->> In commit bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing
->> direct loader exec"), the brk was moved out of the mmap region when
->> loading static PIE binaries (ET_DYN without INTERP). The common case
->> for these binaries was testing new ELF loaders, so the brk needed to
->> be away from mmap to avoid colliding with stack, future mmaps (of the
->> loader-loaded binary), etc. But this was only done when ASLR was enabled,
->> in an attempt to minimize changes to memory layouts.
->>
->> After adding support to respect alignment requirements for static PIE
->> binaries in commit 3545deff0ec7 ("binfmt_elf: Honor PT_LOAD alignment
->> for static PIE"), it became possible to have a large gap after the
->> final PT_LOAD segment and the top of the mmap region. This means that
->> future mmap allocations might go after the last PT_LOAD segment (where
->> brk might be if ASLR was disabled) instead of before them (where they
->> traditionally ended up).
->>
->> On arm64, running with ASLR disabled, Ubuntu 22.04's "ldconfig" binary,
->> a static PIE, has alignment requirements that leaves a gap large enough
->> after the last PT_LOAD segment to fit the vdso and vvar, but still leave
->> enough space for the brk (which immediately follows the last PT_LOAD
->> segment) to be allocated by the binary.
->>
->> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /sbin/ldconfig.real
->> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /sbin/ldconfig.real
->> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
->> ***[brk will go here at fffff7ffa000]***
->> fffff7ffc000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
->> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
->> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
->>
->> After commit 0b3bc3354eb9 ("arm64: vdso: Switch to generic storage
->> implementation"), the arm64 vvar grew slightly, and suddenly the brk
->> collided with the allocation.
->>
->> fffff7f20000-fffff7fde000 r-xp 00000000 fe:02 8110426 /sbin/ldconfig.real
->> fffff7fee000-fffff7ff5000 rw-p 000be000 fe:02 8110426 /sbin/ldconfig.real
->> fffff7ff5000-fffff7ffa000 rw-p 00000000 00:00 0
->> ***[oops, no room any more, vvar is at fffff7ffa000!]***
->> fffff7ffa000-fffff7ffe000 r--p 00000000 00:00 0       [vvar]
->> fffff7ffe000-fffff8000000 r-xp 00000000 00:00 0       [vdso]
->> fffffffdf000-1000000000000 rw-p 00000000 00:00 0      [stack]
-
-This change is fixing a pretty serious bug that appeared in v6.15-rc1 so I was
-hoping it would make it into the v6.15 final release. I'm guessing mm is the
-correct route in? But I don't currently see this in linus's tree or in any of
-your mm- staging branches. Is there still time to get this in?
-
-Thanks,
-Ryan
-
-
->>
->> The solution is to unconditionally move the brk out of the mmap region
->> for static PIE binaries. Whether ASLR is enabled or not does not change if
->> there may be future mmap allocation collisions with a growing brk region.
->>
->> Update memory layout comments (with kernel-doc headings), consolidate
->> the setting of mm->brk to later (it isn't needed early), move static PIE
->> brk out of mmap unconditionally, and make sure brk(2) knows to base brk
->> position off of mm->start_brk not mm->end_data no matter what the cause of
->> moving it is (via current->brk_randomized).
->>
->> For the CONFIG_COMPAT_BRK case, though, leave the logic unchanged, as we
->> can never safely move the brk. These systems, however, are not using
->> specially aligned static PIE binaries.
->>
->> Reported-by: Ryan Roberts <ryan.roberts@arm.com>
->> Closes: https://lore.kernel.org/lkml/f93db308-4a0e-4806-9faf-98f890f5a5e6@arm.com/
->> Fixes: bbdc6076d2e5 ("binfmt_elf: move brk out of mmap when doing direct loader exec")
->> Link: https://lore.kernel.org/r/20250425224502.work.520-kees@kernel.org
->> Signed-off-by: Kees Cook <kees@kernel.org>
-> 
-> It's a shame we can't figure out a universal solution that would work for
-> CONFIG_COMPAT_BRK too, but I can't think of anything. So as you say, let's worry
-> about that in the unlikely event that an issue is reported.
-> 
-> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-> Tested-by: Ryan Roberts <ryan.roberts@arm.com>
-> 
-> Thanks for sorting this out! Would be great to get it into v6.15.
-> 
->> ---
->>  v2: exclude CONFIG_COMPAT_BRK (ryan)
->>  v1: https://lore.kernel.org/all/20250425224502.work.520-kees@kernel.org/
->> ---
->>  fs/binfmt_elf.c | 71 ++++++++++++++++++++++++++++++++-----------------
->>  1 file changed, 47 insertions(+), 24 deletions(-)
->>
->> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
->> index 584fa89bc877..4c1ea6b52a53 100644
->> --- a/fs/binfmt_elf.c
->> +++ b/fs/binfmt_elf.c
->> @@ -830,6 +830,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
->>  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
->>  	struct elf_phdr *elf_property_phdata = NULL;
->>  	unsigned long elf_brk;
->> +	bool brk_moved = false;
->>  	int retval, i;
->>  	unsigned long elf_entry;
->>  	unsigned long e_entry;
->> @@ -1097,15 +1098,19 @@ static int load_elf_binary(struct linux_binprm *bprm)
->>  			/* Calculate any requested alignment. */
->>  			alignment = maximum_alignment(elf_phdata, elf_ex->e_phnum);
->>  
->> -			/*
->> -			 * There are effectively two types of ET_DYN
->> -			 * binaries: programs (i.e. PIE: ET_DYN with PT_INTERP)
->> -			 * and loaders (ET_DYN without PT_INTERP, since they
->> -			 * _are_ the ELF interpreter). The loaders must
->> -			 * be loaded away from programs since the program
->> -			 * may otherwise collide with the loader (especially
->> -			 * for ET_EXEC which does not have a randomized
->> -			 * position). For example to handle invocations of
->> +			/**
->> +			 * DOC: PIE handling
->> +			 *
->> +			 * There are effectively two types of ET_DYN ELF
->> +			 * binaries: programs (i.e. PIE: ET_DYN with
->> +			 * PT_INTERP) and loaders (i.e. static PIE: ET_DYN
->> +			 * without PT_INTERP, usually the ELF interpreter
->> +			 * itself). Loaders must be loaded away from programs
->> +			 * since the program may otherwise collide with the
->> +			 * loader (especially for ET_EXEC which does not have
->> +			 * a randomized position).
->> +			 *
->> +			 * For example, to handle invocations of
->>  			 * "./ld.so someprog" to test out a new version of
->>  			 * the loader, the subsequent program that the
->>  			 * loader loads must avoid the loader itself, so
->> @@ -1118,6 +1123,9 @@ static int load_elf_binary(struct linux_binprm *bprm)
->>  			 * ELF_ET_DYN_BASE and loaders are loaded into the
->>  			 * independently randomized mmap region (0 load_bias
->>  			 * without MAP_FIXED nor MAP_FIXED_NOREPLACE).
->> +			 *
->> +			 * See below for "brk" handling details, which is
->> +			 * also affected by program vs loader and ASLR.
->>  			 */
->>  			if (interpreter) {
->>  				/* On ET_DYN with PT_INTERP, we do the ASLR. */
->> @@ -1234,8 +1242,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
->>  	start_data += load_bias;
->>  	end_data += load_bias;
->>  
->> -	current->mm->start_brk = current->mm->brk = ELF_PAGEALIGN(elf_brk);
->> -
->>  	if (interpreter) {
->>  		elf_entry = load_elf_interp(interp_elf_ex,
->>  					    interpreter,
->> @@ -1291,27 +1297,44 @@ static int load_elf_binary(struct linux_binprm *bprm)
->>  	mm->end_data = end_data;
->>  	mm->start_stack = bprm->p;
->>  
->> -	if ((current->flags & PF_RANDOMIZE) && (snapshot_randomize_va_space > 1)) {
->> +	/**
->> +	 * DOC: "brk" handling
->> +	 *
->> +	 * For architectures with ELF randomization, when executing a
->> +	 * loader directly (i.e. static PIE: ET_DYN without PT_INTERP),
->> +	 * move the brk area out of the mmap region and into the unused
->> +	 * ELF_ET_DYN_BASE region. Since "brk" grows up it may collide
->> +	 * early with the stack growing down or other regions being put
->> +	 * into the mmap region by the kernel (e.g. vdso).
->> +	 *
->> +	 * In the CONFIG_COMPAT_BRK case, though, everything is turned
->> +	 * off because we're not allowed to move the brk at all.
->> +	 */
->> +	if (!IS_ENABLED(CONFIG_COMPAT_BRK) &&
->> +	    IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
->> +	    elf_ex->e_type == ET_DYN && !interpreter) {
->> +		elf_brk = ELF_ET_DYN_BASE;
->> +		/* This counts as moving the brk, so let brk(2) know. */
->> +		brk_moved = true;
->> +	}
->> +	mm->start_brk = mm->brk = ELF_PAGEALIGN(elf_brk);
->> +
->> +	if ((current->flags & PF_RANDOMIZE) && snapshot_randomize_va_space > 1) {
->>  		/*
->> -		 * For architectures with ELF randomization, when executing
->> -		 * a loader directly (i.e. no interpreter listed in ELF
->> -		 * headers), move the brk area out of the mmap region
->> -		 * (since it grows up, and may collide early with the stack
->> -		 * growing down), and into the unused ELF_ET_DYN_BASE region.
->> +		 * If we didn't move the brk to ELF_ET_DYN_BASE (above),
->> +		 * leave a gap between .bss and brk.
->>  		 */
->> -		if (IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
->> -		    elf_ex->e_type == ET_DYN && !interpreter) {
->> -			mm->brk = mm->start_brk = ELF_ET_DYN_BASE;
->> -		} else {
->> -			/* Otherwise leave a gap between .bss and brk. */
->> +		if (!brk_moved)
->>  			mm->brk = mm->start_brk = mm->brk + PAGE_SIZE;
->> -		}
->>  
->>  		mm->brk = mm->start_brk = arch_randomize_brk(mm);
->> +		brk_moved = true;
->> +	}
->> +
->>  #ifdef compat_brk_randomized
->> +	if (brk_moved)
->>  		current->brk_randomized = 1;
->>  #endif
->> -	}
->>  
->>  	if (current->personality & MMAP_PAGE_ZERO) {
->>  		/* Why this, you ask???  Well SVr4 maps page 0 as read-only,
-> 
-
+>  	return inode->i_op->fileattr_get(dentry, fa);
+>  }
+>  EXPORT_SYMBOL(vfs_fileattr_get);
+> @@ -242,12 +247,20 @@ int vfs_fileattr_set(struct mnt_idmap *idmap, struct dentry *dentry,
+>  		} else {
+>  			fa->flags |= old_ma.flags & ~FS_COMMON_FL;
+>  		}
+> +
+>  		err = fileattr_set_prepare(inode, &old_ma, fa);
+> -		if (!err)
+> -			err = inode->i_op->fileattr_set(idmap, dentry, fa);
+> +		if (err)
+> +			goto out;
+> +		err = security_inode_file_setattr(dentry, fa);
+> +		if (err)
+> +			goto out;
+> +		err = inode->i_op->fileattr_set(idmap, dentry, fa);
+> +		if (err)
+> +			goto out;
+>  	}
+> +
+> +out:
+>  	inode_unlock(inode);
+> -
+>  	return err;
+>  }
+>  EXPORT_SYMBOL(vfs_fileattr_set);
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index bf3bbac4e02a..9600a4350e79 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -157,6 +157,8 @@ LSM_HOOK(int, 0, inode_removexattr, struct mnt_idmap *idmap,
+>  	 struct dentry *dentry, const char *name)
+>  LSM_HOOK(void, LSM_RET_VOID, inode_post_removexattr, struct dentry *dentry,
+>  	 const char *name)
+> +LSM_HOOK(int, 0, inode_file_setattr, struct dentry *dentry, struct fileattr *fa)
+> +LSM_HOOK(int, 0, inode_file_getattr, struct dentry *dentry, struct fileattr *fa)
+>  LSM_HOOK(int, 0, inode_set_acl, struct mnt_idmap *idmap,
+>  	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
+>  LSM_HOOK(void, LSM_RET_VOID, inode_post_set_acl, struct dentry *dentry,
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index cc9b54d95d22..d2da2f654345 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -451,6 +451,10 @@ int security_inode_listxattr(struct dentry *dentry);
+>  int security_inode_removexattr(struct mnt_idmap *idmap,
+>  			       struct dentry *dentry, const char *name);
+>  void security_inode_post_removexattr(struct dentry *dentry, const char *name);
+> +int security_inode_file_setattr(struct dentry *dentry,
+> +			      struct fileattr *fa);
+> +int security_inode_file_getattr(struct dentry *dentry,
+> +			      struct fileattr *fa);
+>  int security_inode_need_killpriv(struct dentry *dentry);
+>  int security_inode_killpriv(struct mnt_idmap *idmap, struct dentry *dentry);
+>  int security_inode_getsecurity(struct mnt_idmap *idmap,
+> @@ -1053,6 +1057,18 @@ static inline void security_inode_post_removexattr(struct dentry *dentry,
+>  						   const char *name)
+>  { }
+>  
+> +static inline int security_inode_file_setattr(struct dentry *dentry,
+> +					      struct fileattr *fa)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline int security_inode_file_getattr(struct dentry *dentry,
+> +					      struct fileattr *fa)
+> +{
+> +	return 0;
+> +}
+> +
+>  static inline int security_inode_need_killpriv(struct dentry *dentry)
+>  {
+>  	return cap_inode_need_killpriv(dentry);
+> diff --git a/security/security.c b/security/security.c
+> index fb57e8fddd91..09c891e6027d 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -2622,6 +2622,36 @@ void security_inode_post_removexattr(struct dentry *dentry, const char *name)
+>  	call_void_hook(inode_post_removexattr, dentry, name);
+>  }
+>  
+> +/**
+> + * security_inode_file_setattr() - check if setting fsxattr is allowed
+> + * @dentry: file to set filesystem extended attributes on
+> + * @fa: extended attributes to set on the inode
+> + *
+> + * Called when file_setattr() syscall or FS_IOC_FSSETXATTR ioctl() is called on
+> + * inode
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_inode_file_setattr(struct dentry *dentry, struct fileattr *fa)
+> +{
+> +	return call_int_hook(inode_file_setattr, dentry, fa);
+> +}
+> +
+> +/**
+> + * security_inode_file_getattr() - check if retrieving fsxattr is allowed
+> + * @dentry: file to retrieve filesystem extended attributes from
+> + * @fa: extended attributes to get
+> + *
+> + * Called when file_getattr() syscall or FS_IOC_FSGETXATTR ioctl() is called on
+> + * inode
+> + *
+> + * Return: Returns 0 if permission is granted.
+> + */
+> +int security_inode_file_getattr(struct dentry *dentry, struct fileattr *fa)
+> +{
+> +	return call_int_hook(inode_file_getattr, dentry, fa);
+> +}
+> +
+>  /**
+>   * security_inode_need_killpriv() - Check if security_inode_killpriv() required
+>   * @dentry: associated dentry
+>
 
