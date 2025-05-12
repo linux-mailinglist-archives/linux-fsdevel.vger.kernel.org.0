@@ -1,177 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-48771-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48772-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 376D2AB44C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 21:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9311AAB4536
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 21:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D86119E7A3E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 19:18:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09F44189D925
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 19:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405FE298C15;
-	Mon, 12 May 2025 19:17:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59924298CD5;
+	Mon, 12 May 2025 19:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRH1VbgJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="amOLDhpl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B616D23C4E5
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 19:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 009512571A8;
+	Mon, 12 May 2025 19:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747077456; cv=none; b=WA9L6A11/Ar92t2FUjswaRafmS34v5S7tXJmXp8/3KQkTpG8qkaKKASkbRvFe7puwR+p9dW1azbWYTjVQUp73UCwvdR4+SQHebmPCW5L3ODpi0uN372he+ZlLT8a7XABAL04YOhIxbwAodBdaDVZQtkQ7vduZe2QhpxDNMKG9qw=
+	t=1747079511; cv=none; b=M8hAZK1rlKNMqcmLfDeV2stla9HoShaBOlgehgq1CVP5CMB3lPxsIqZ/PTBXr48oKx04MF220iBdUTOnz/qAmH70sn+OfpgSyRYinTeACSu5lMRek7hulOInXblcNBdKB7afvGKHdPGd3UQGoS7KUboUViDZaugKBLtSaQG8ZU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747077456; c=relaxed/simple;
-	bh=DM8G30RWCxGUTepNTSwS9MbBEItCS1h/UpYrlE8rj2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PhENWJjxASKnhSWzoq8lYM4e6vfrGckNF+PfaiYTTAD3wLpK4PPXmlkl944bOXClDyQsyMvWQI+SiokTmUG7f+MYRf6RPjsF7xQEtdkWSBWiI93GZSsGAiSIkdD1VjYgqPPxu4YTMQE4nvqFahf3boT62ag2YYR3pI9i/w2RcoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRH1VbgJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747077453;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=s/18zIVU9SJCaF8Ai1CFMU44OTCynZeUoKhqvxkl5xg=;
-	b=eRH1VbgJmPvACaCKBCdZ8udqxQSkMUcmUFIscXOIipSnH/W63S38OycGGbQA3s4UxXM156
-	G6+kTjhLYIUSM6X+o9NU8VSWiaT2aAciSnyxp4HPhvfcaKkEjkC6FozxRGuvGTr4dXY1mg
-	beQ60vXzavwFiss2/H/vgE6HJPfgfD0=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-452-LtR5QBaKNji3I9dodfhxJQ-1; Mon, 12 May 2025 15:17:32 -0400
-X-MC-Unique: LtR5QBaKNji3I9dodfhxJQ-1
-X-Mimecast-MFC-AGG-ID: LtR5QBaKNji3I9dodfhxJQ_1747077452
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4766e03b92bso82597051cf.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 12:17:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747077452; x=1747682252;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+	s=arc-20240116; t=1747079511; c=relaxed/simple;
+	bh=gzPsO0UrZDgI9iXYum4r5I7+OTPZxIA5JzksCAF1yrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIa7fys6JxRupAZfcp6svVknJdWP1p3ulaQrdXKGh+xQSBC43tVkAQNawqdGaQxZ/5u3ZVdqTIE7SgDBk8KDlZd527QxjognAO05xMhn2peVuoNbhFMhYlSxQnyAPfYLH6I2ltPcv7HtHYUE+7MHUUizikn75z6pDs074mWSKTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=amOLDhpl; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-72c172f1de1so2780919a34.3;
+        Mon, 12 May 2025 12:51:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747079509; x=1747684309; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=s/18zIVU9SJCaF8Ai1CFMU44OTCynZeUoKhqvxkl5xg=;
-        b=HGidvOMxY/rmX1r1jZqwEhOxSm6HoqyWFCDbe27K9z4c2oOJBdYyc3bMP/OZiv2OdK
-         TVsSR0q59t9dfsDMNOa9ibKfpNL1SrakAvS5OHYKAFlKFoelw9G5mWwyWORopaZ0TNj2
-         hy9MsIV9MN76cH6LbBdUaMCM7V2KxhZeul1GcXgHVHucSK4p5d4zAGCgG0mga9A0+AHP
-         HR1Cem9K45sGz4Tsb+9/dozPnfDRL5nVLf9k89t8JEHSLtUx5AZQfxPKUFIbh7pjRw0q
-         D4B3n51WAKofcN1xmOxeJ/qNqRLhYS+oDX2dQO7dssULNZZQKEdoV4TBM+hf4cimTl/f
-         urzg==
-X-Gm-Message-State: AOJu0Yy583xTc7hV0QaKXxZIvKP9Z/V7AhYcL94hcQqKFDaqirFBs8uN
-	F3bb+ENtO72bEb/lskE2AEp5ukrP/U5i649PIoxmWR3d9xc1Ix746SGv9lZqgMlTOnFG+qNRRv+
-	vy/ZWBEj07c/6vbNNEJYm6mpGjt5015OX10J/zmyj+IyAKNEAiFrz3n92V5rY5P0=
-X-Gm-Gg: ASbGncvAQ9iosOf2/boa+70MD1Tw0piAkkt7KaL4ldnFmcBhtqKNNbtvwniXA72BjQx
-	lYLhnx6J0mogR+ysWX5h9g83Sk+1ntwjZfKzXWp0jj0jCGW6agnfBYF50VSzis94LJOFQX/9lEv
-	u7j3211McfUrUvtL2M9gQ2ng3kCwVObDnGKBxLd+g6aacxU28qv/Or+DJmh2zYtrJxSfhF2Siqn
-	/5TStQ0N4Q5+ZB0Mjqf8P8OfEK7lF1n9WnkLPc+S+7N5haNym2gTuc7rZqRmKqobEX/23J3NBRm
-	pVy14U3z5snOFjaHIJBnkAm9z6PdZHt2ho8nz/tyFHc=
-X-Received: by 2002:ac8:5a4b:0:b0:48e:1c13:ecaf with SMTP id d75a77b69052e-4945273c570mr229772421cf.16.1747077451381;
-        Mon, 12 May 2025 12:17:31 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF+7q4UW257no1ZfUNsmnYKJakieEg/UoQSyIMxIM5MObxjq90atPrhvRnYakQEeO5zdg2D9g==
-X-Received: by 2002:ac8:5a4b:0:b0:48e:1c13:ecaf with SMTP id d75a77b69052e-4945273c570mr229770951cf.16.1747077449828;
-        Mon, 12 May 2025 12:17:29 -0700 (PDT)
-Received: from jkangas-thinkpadp1gen3.rmtuswa.csb ([2601:1c2:4301:5e20:98fe:4ecb:4f14:576b])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-494524bbc53sm55635321cf.47.2025.05.12.12.17.28
+        bh=nUkjMRzK3wxS4oootv0crIxPWYrPZ4z6gtzYbFkCOlI=;
+        b=amOLDhplrgLRBlCYuNTIS6m7TXhd5P2T+wvOfFelgDMsa+xkzabostPJx1RiA43zoJ
+         uufUye2S58VCrhibeTgO2JfCoY/JH8pey/+P85VxbQQARWj/3uuX1XLZerp2t8g6Ibbu
+         wlR5i663ieaET3jQc0vPwO1e1+e6vQIa4Op5kRSjsjYzAfCrR+nay7wRNbFXzRpBHP/Y
+         sj/B594L2XngqsNdpKFdCkIz2tIEdju7JWoiFMQnEMWGsNi8w9dWzP+9t20R9OmGfXk/
+         2+rGxQBqfgNRpUa7ferwv9n6x1AAbz03YTApT8sCDc8pIFPmH4VWaLneZgf0GZWTYIUW
+         MIvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747079509; x=1747684309;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nUkjMRzK3wxS4oootv0crIxPWYrPZ4z6gtzYbFkCOlI=;
+        b=rb4PtpUWhuU2OEjNsMTXtMWJAYvsdxEAkHIABunTB58r943Jm9VFTiS/Okrk0oECQd
+         Y5DIjzblRgGDjRYK5rjamxTURXcSNH3xelXtBbtFzG/f7wi4RD+pqK93d6geFI7WoCQ1
+         tmslE7v59+yG3qKWPiK55eGFJClhYoDC5kpdlUApS3MhNaW1SgU17D1fFnChE565yNAx
+         eM7eJV661gbpifumDb/0HDnX9d+tQNOqb/UkJ0PKlOsmnx45j4p/EFx0VoBfjhCOICPj
+         QROWnBAW7PMANwfeBqml5cXP4HbCbCW5q4y5vi/bywKOXH6L9hFqwcAU43j6qXAo37cB
+         ONOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhvkrZBilfPahgyKvme5UAJFo3g7Vtd4uEkT5GzpXg57gJNT+aonAAWxDCsV6QFR4PpigveEd9RlM=@vger.kernel.org, AJvYcCUnuYTVDiZsfBCfwrSmWq6OhuLtUlhOAXLVM1oYcs30DmAUr5qEr2NSDcKh/8AEQYVqxVwiG9rew6KqHuQ2@vger.kernel.org, AJvYcCUu73+lWWak8el+qFwPvMXe1/Ra/BYBruFuN6vhuBD70T8cz3ed/rkX+f9XnSADXeOqi8fbwRDuzG5AsLoz9g==@vger.kernel.org, AJvYcCXUlM4ZH2opS8ypJLrpsb2H5rNshiFw3GQfboMcnHhaWxVl9Q0eFjrdE2+R3rBLzjbltc9LceuzbNGQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzdR5MWLOnIDaLf0C9GeFnFCYIrBsZ+Lp7R+8R4lnEoFAPk6Ct
+	FV5IbhQy1YssejEil4RvTN+Piwno4H+Ztib+/TYeTmwIU5QCih4R
+X-Gm-Gg: ASbGncujUVru/Fz0rkVAeOdqyrM8bCAaKS2kj65giqesSx5zE7hR8S5mJkY6RUNCdal
+	EjdlTa2aEL8z1unv016/jz25DgYvwlws90U45TOun9VZuoBvGQCBBDdVgvUHQTU2tL2FpR4Km1m
+	NVmVPblzn2UVFVX0/AYdBvujjKAQSs2F0ah5jg+MrXFmQSCHNczI5QvgOCCeh7XStuLBdP4lw7i
+	YvoLwQBnHIhXFCGVm57akhRMuNqWAFB65zSUbBwSDrCU406YLqCy47CO0UDI77lTe9BKKvDDhas
+	GsgG1mqkTgEeLRVN3x0l73nQAcLVmRYcXZNSVu3QDseRYfLGm5s9ZsJZDqoMPEixrg==
+X-Google-Smtp-Source: AGHT+IEAeXjZiozlRYEM0gARp0zQzeR/jbozJkUKlmzreQdwjSlhfL93jt9YN6NYGu8g494ESdu3sw==
+X-Received: by 2002:a05:6830:4903:b0:72a:1d2a:4acf with SMTP id 46e09a7af769-73226aaed7fmr9385724a34.17.1747079508876;
+        Mon, 12 May 2025 12:51:48 -0700 (PDT)
+Received: from groves.net ([2603:8080:1500:3d89:f16b:b065:d67a:e0f7])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-73356c72943sm1353348a34.3.2025.05.12.12.51.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 May 2025 12:17:29 -0700 (PDT)
-From: Jared Kangas <jkangas@redhat.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Jared Kangas <jkangas@redhat.com>
-Subject: [PATCH] XArray: fix kmemleak false positive in xas_shrink()
-Date: Mon, 12 May 2025 12:17:07 -0700
-Message-ID: <20250512191707.245153-1-jkangas@redhat.com>
-X-Mailer: git-send-email 2.49.0
+        Mon, 12 May 2025 12:51:47 -0700 (PDT)
+Sender: John Groves <grovesaustin@gmail.com>
+Date: Mon, 12 May 2025 14:51:45 -0500
+From: John Groves <John@groves.net>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, 
+	Dan Williams <dan.j.williams@intel.com>, Bernd Schubert <bschubert@ddn.com>, 
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Luis Henriques <luis@igalia.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Joanne Koong <joannelkoong@gmail.com>, Josef Bacik <josef@toxicpanda.com>, 
+	Aravind Ramesh <arramesh@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, john@groves.net
+Subject: Re: [RFC PATCH 13/19] famfs_fuse: Create files with famfs fmaps
+Message-ID: <aytnzv4tmp7fdvpgxdfoe2ncu7qaxlp2svsxiskfnrvdnknhmp@uu4ifgc6aj34>
+References: <20250421013346.32530-1-john@groves.net>
+ <20250421013346.32530-14-john@groves.net>
+ <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
+ <20250424143848.GN25700@frogsfrogsfrogs>
+ <5rwwzsya6f7dkf4de2uje2b3f6fxewrcl4nv5ba6jh6chk36f3@ushxiwxojisf>
+ <20250428190010.GB1035866@frogsfrogsfrogs>
+ <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
 
-Kmemleak periodically produces a false positive report that resembles
-the following:
+On 25/05/06 06:56PM, Miklos Szeredi wrote:
+> On Mon, 28 Apr 2025 at 21:00, Darrick J. Wong <djwong@kernel.org> wrote:
+> 
+> > <nod> I don't know what Miklos' opinion is about having multiple
+> > fusecmds that do similar things -- on the one hand keeping yours and my
+> > efforts separate explodes the amount of userspace abi that everyone must
+> > maintain, but on the other hand it then doesn't couple our projects
+> > together, which might be a good thing if it turns out that our domain
+> > models are /really/ actually quite different.
+> 
+> Sharing the interface at least would definitely be worthwhile, as
+> there does not seem to be a great deal of difference between the
+> generic one and the famfs specific one.  Only implementing part of the
+> functionality that the generic one provides would be fine.
 
-unreferenced object 0xffff0000c105ed08 (size 576):
-  comm "swapper/0", pid 1, jiffies 4294937478
-  hex dump (first 32 bytes):
-    00 00 03 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-    d8 e7 0a 8b 00 80 ff ff 20 ed 05 c1 00 00 ff ff  ........ .......
-  backtrace (crc 69e99671):
-    kmemleak_alloc+0xb4/0xc4
-    kmem_cache_alloc_lru+0x1f0/0x244
-    xas_alloc+0x2a0/0x3a0
-    xas_expand.constprop.0+0x144/0x4dc
-    xas_create+0x2b0/0x484
-    xas_store+0x60/0xa00
-    __xa_alloc+0x194/0x280
-    __xa_alloc_cyclic+0x104/0x2e0
-    dev_index_reserve+0xd8/0x18c
-    register_netdevice+0x5e8/0xf90
-    register_netdev+0x28/0x50
-    loopback_net_init+0x68/0x114
-    ops_init+0x90/0x2c0
-    register_pernet_operations+0x20c/0x554
-    register_pernet_device+0x3c/0x8c
-    net_dev_init+0x5cc/0x7d8
+Agreed. I'm coming around to thinking the most practical approach would be
+to share the GET_FMAP message/response, but to add a separate response
+format for Darrick's use case - when the time comes. In this patch set, 
+that starts with 'struct fuse_famfs_fmap_header' and is followed by the 
+approriate extent structures, serialized in the message. Collectively 
+that's an fmap in message format.
 
-This transient leak can be traced to xas_shrink(): when the xarray's
-head is reassigned, kmemleak may have already started scanning the
-xarray. When this happens, if kmemleak fails to scan the new xa_head
-before it moves, kmemleak will see it as a leak until the xarray is
-scanned again.
+Side note: the current patch set sends back the logically-variable-sized 
+fmap in a fixed-size message, but V2 of the series will address that; 
+I got some help from Bernd there, but haven't finished it yet.
 
-The report can be reproduced by running the xdp_bonding BPF selftest,
-although it doesn't appear consistently due to the bug's transience.
-In my testing, the following script has reliably triggered the report in
-under an hour on a debug kernel with kmemleak enabled, where KSELFTESTS
-is set to the install path for the kernel selftests:
+So the next version of the patch set would, say, add a more generic first
+'struct fmap_header' that would indicate whether the next item would be
+'struct fuse_famfs_fmap_header' (i.e. my/famfs metadata) or some other
+to be codified metadata format. I'm going here because I'm dubious that
+we even *can* do grand-unified-fmap-metadata (or that we should try).
 
-        #!/bin/sh
-        set -eu
+This will require versioning the affected structures, unless we think
+the fmap-in-message structure can be opaque to the rest of fuse. @miklos,
+is there an example to follow regarding struct versioning in 
+already-existing fuse structures?
 
-        echo 1 >/sys/module/kmemleak/parameters/verbose
-        echo scan=1 >/sys/kernel/debug/kmemleak
+> 
+> > (Especially because I suspect that interleaving is the norm for memory,
+> > whereas we try to avoid that for disk filesystems.)
+> 
+> So interleaved extents are just like normal ones except they repeat,
+> right?  What about adding a special "repeat last N extent
+> descriptions" type of extent?
 
-        while :; do
-                $KSELFTESTS/bpf/test_progs -t xdp_bonding
-        done
+It's a bit more than that. The comment at [1] makes it possible to understand
+the scheme, but I'd be happy to talk through it with you on a call if that
+seems helpful.
 
-To prevent this false positive report, mark the new xa_head in
-xas_shrink() as a transient leak.
+An interleaved extent stripes data spread across N memory devices in raid 0
+format; the space from each device is described by a single simple extent 
+(so it's contigous), but it's not consumed contiguously - it's consumed in 
+fixed-sized chunks that precess across the devices. Notwithstanding that I 
+couldn't explain it very well when we talked about it at LPC, I think I 
+could make it pretty clear in a pretty brief call now.
 
-Signed-off-by: Jared Kangas <jkangas@redhat.com>
----
- lib/xarray.c | 2 ++
- 1 file changed, 2 insertions(+)
+In any case, you have my word that it's actually quite elegant :D
+(seriously, but also with a smile...)
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 9644b18af18d1..51314fa157b31 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -8,6 +8,7 @@
- 
- #include <linux/bitmap.h>
- #include <linux/export.h>
-+#include <linux/kmemleak.h>
- #include <linux/list.h>
- #include <linux/slab.h>
- #include <linux/xarray.h>
-@@ -476,6 +477,7 @@ static void xas_shrink(struct xa_state *xas)
- 			break;
- 		node = xa_to_node(entry);
- 		node->parent = NULL;
-+		kmemleak_transient_leak(node);
- 	}
- }
- 
--- 
-2.49.0
+> 
+> > > But the current implementation does not contemplate partially cached fmaps.
+> > >
+> > > Adding notification could address revoking them post-haste (is that why
+> > > you're thinking about notifications? And if not can you elaborate on what
+> > > you're after there?).
+> >
+> > Yeah, invalidating the mapping cache at random places.  If, say, you
+> > implement a clustered filesystem with iomap, the metadata server could
+> > inform the fuse server on the local node that a certain range of inode X
+> > has been written to, at which point you need to revoke any local leases,
+> > invalidate the pagecache, and invalidate the iomapping cache to force
+> > the client to requery the server.
+> >
+> > Or if your fuse server wants to implement its own weird operations (e.g.
+> > XFS EXCHANGE-RANGE) this would make that possible without needing to
+> > add a bunch of code to fs/fuse/ for the benefit of a single fuse driver.
+> 
+> Wouldn't existing invalidation framework be sufficient?
+> 
+> Thanks,
+> Miklos
+
+My current thinking is that Darrick's use case doesn't need GET_DAXDEV, but
+famfs does. I think Darrick's use case has one backing device, and that should
+be passed in at mount time. Correct me if you think that might be wrong.
+
+Famfs doesn't necessarily have just one backing dev, which means that famfs
+could pass in the *primary* backing dev at mount time, but it would still
+need GET_DAXDEV to get the rest. But if I just use GET_FMAP every time, I
+only need one way to do this.
+
+I'll add a few more responses to Darrick's reply...
+
+Thanks,
+John
+
+[1] https://github.com/cxl-micron-reskit/famfs-linux/blob/c57553c4ca91f0634f137285840ab25be8a87c30/fs/fuse/famfs_kfmap.h#L13
 
 
