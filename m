@@ -1,257 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-48692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48693-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AEF5AB2E7D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 06:52:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CA0AB2FCB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 08:40:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D116B3B30B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 04:52:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25BA11687BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 06:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F35A254856;
-	Mon, 12 May 2025 04:52:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9295255F4F;
+	Mon, 12 May 2025 06:39:58 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out03.mta.xmission.com (out03.mta.xmission.com [166.70.13.233])
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C1B2576
-	for <linux-fsdevel@vger.kernel.org>; Mon, 12 May 2025 04:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8667228F3;
+	Mon, 12 May 2025 06:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747025567; cv=none; b=lzcZ7nXqkySI/KIEaQSAv5pjKOWh5lHhQBfZFc5XxiWLTjpNK78Ed5wIw+5+PFIjhAZ+SuceCnv7vXo4Qg31V75JHeYDW7kqbm7sQlS3X3Afj7uNjxh23T7uz6zNv4wrxktFt9zfzf/X6U3+pSOc8iAsG64VBWeS7kMy77mqjkc=
+	t=1747031998; cv=none; b=pAOoU4wxms8qiS/SqaUvh0hwRzOMY6rKIxZUSYdDvO3nm8004ox582pS5Kk2wStjfgSjo4+80Hdc1pMXT5Uviksj7Hmin1LFG1eMGbglAODoIApNPCxaK7gZbTvo3CKgVzKA+l2MzXLu1oSOLay7CMTotR+ocQqVFi1RwbE9hMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747025567; c=relaxed/simple;
-	bh=O8wICcMAbrvHPRxIP5V2kB7kl1iSs15Vcto8NaWL6e8=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=ah0sDLuUNekZGfAGEau1MTilcKTPEMti69LTF81Ge/JdPbqFvzTFc1hdwbsvJHOyBWZveHBDpkjEttMd675hpLKfiLdonGyVEtalr5s/QTj4HsXMJeJiRyNFYhsUsmRVzT7q350UWtwqBydsdct3Adn13G1FC0p9cHP/djPpu6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:56758)
-	by out03.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uEL9a-0030FV-8O; Sun, 11 May 2025 22:52:38 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:34436 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uEL9Y-00CyJM-Jo; Sun, 11 May 2025 22:52:37 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org,  Linus Torvalds
- <torvalds@linux-foundation.org>,  Christian Brauner <brauner@kernel.org>
-References: <20250511232732.GC2023217@ZenIV>
-Date: Sun, 11 May 2025 23:50:40 -0500
-In-Reply-To: <20250511232732.GC2023217@ZenIV> (Al Viro's message of "Mon, 12
-	May 2025 00:27:32 +0100")
-Message-ID: <87jz6m300v.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1747031998; c=relaxed/simple;
+	bh=tG3i34NXkJj0qQvZ6/E4WhLAPBSDdSQVOh3UElbonBg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f2dREMu3FaAWhVBkl85h2nd9pub6RJFHiA9Ek40geOCIJgdyEbSFTAMK1U0hcWvWn/S8KI/dcz1VPe3ne9IvatAlM4A/bDxM/WNjhIgIRXhWZ2WnoUNpraOlFO6N0PCMXMoKKLqG/mgWCFvMVXQwn0VCuJ3/WhSa0/pBmh9+kuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Zwqhh4s3Bz4f3jv0;
+	Mon, 12 May 2025 14:39:32 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 295BA1A0DE9;
+	Mon, 12 May 2025 14:39:52 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgAni1+xlyFoYAesMA--.11556S4;
+	Mon, 12 May 2025 14:39:51 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	willy@infradead.org,
+	akpm@linux-foundation.org,
+	ziy@nvidia.com,
+	wangkefeng.wang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] mm/truncate: fix out-of-bounds when doing a right-aligned split
+Date: Mon, 12 May 2025 14:28:25 +0800
+Message-ID: <20250512062825.3533342-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1uEL9Y-00CyJM-Jo;;;mid=<87jz6m300v.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/HFB0fJwIN2uQpGMRXihTXGbjmx4ePnfM=
-X-Spam-Level: 
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4908]
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  0.0 T_TooManySym_02 5+ unique symbols in subject
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
-	*      patterns
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 1010 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 11 (1.1%), b_tie_ro: 10 (1.0%), parse: 1.27
-	(0.1%), extract_message_metadata: 14 (1.4%), get_uri_detail_list: 3.4
-	(0.3%), tests_pri_-2000: 9 (0.9%), tests_pri_-1000: 2.4 (0.2%),
-	tests_pri_-950: 1.26 (0.1%), tests_pri_-900: 0.99 (0.1%),
-	tests_pri_-90: 384 (38.0%), check_bayes: 381 (37.7%), b_tokenize: 11
-	(1.1%), b_tok_get_all: 11 (1.1%), b_comp_prob: 3.5 (0.3%),
-	b_tok_touch_all: 351 (34.7%), b_finish: 1.05 (0.1%), tests_pri_0: 565
-	(55.9%), check_dkim_signature: 0.60 (0.1%), check_dkim_adsp: 2.9
-	(0.3%), poll_dns_idle: 1.04 (0.1%), tests_pri_10: 3.3 (0.3%),
-	tests_pri_500: 13 (1.3%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [BUG] propagate_umount() breakage
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: brauner@kernel.org, torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out03.mta.xmission.com); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAni1+xlyFoYAesMA--.11556S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxur1kCrWrurWxZw48ury5XFb_yoWrJFWUp3
+	4UKr1DCr4kGr17Gr47ZF45Aw45tasrCFWUAFyxGr17JFn8Xw1DKF18Ka4j93yUJw1kZryx
+	Gr1Dta1IgF1UJaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI
+	7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
+	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
+	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
+	AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
+	1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUotCzDUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-Al Viro <viro@zeniv.linux.org.uk> writes:
+From: Zhang Yi <yi.zhang@huawei.com>
 
-> reproducer:
-> ------------------------------------------------------------
-> # create a playground
-> mkdir /tmp/foo
-> mount -t tmpfs none /tmp/foo
-> mount --make-private /tmp/foo
-> cd /tmp/foo
->
-> # set one-way propagation from A to B
-> mkdir A
-> mkdir B
-> mount -t tmpfs none A
-> mount --make-shared A
-> mount --bind A B
-> mount --make-slave B
->
-> # A/1 -> B/1, A/1/2 -> B/1/2
-> mkdir A/1
-> mount -t tmpfs none A/1
-> mkdir A/1/2
-> mount -t tmpfs none A/1/2
->
-> # overmount the entire B/1/2
-> mount -t tmpfs none B/1/2
->
-> # make sure it's busy - set a mount at B/1/2/x
-> mkdir B/1/2/x
-> mount -t tmpfs none B/1/2/x
->
-> stat B/1/x # shouldn't exist
->
-> umount -l A/1
->
-> stat B/1/x # ... and now it does
-> ------------------------------------------------------------
->
-> What happens is that mounts on B/1 and B/1/2 had been considered
-> as victims - and taken out, since the overmount on top of B/1/2
-> overmounted the root of the first mount on B/1/2 and it got
-> reparented - all the way to B/1.
+When performing a right split on a folio, the split_at2 may point to a
+not-present page if the offset + length equals the original folio size,
+which will trigger the following error:
 
-Yes, that behavior is incorrect since it causes a userspace visible
-change on where the mount is visible.
+ BUG: unable to handle page fault for address: ffffea0006000008
+ #PF: supervisor read access in kernel mode
+ #PF: error_code(0x0000) - not-present page
+ PGD 143ffb9067 P4D 143ffb9067 PUD 143ffb8067 PMD 0
+ Oops: Oops: 0000 [#1] SMP PTI
+ CPU: 0 UID: 0 PID: 502640 Comm: fsx Not tainted 6.15.0-rc3-gc6156189fc6b #889 PR
+ Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-2.fc40 04/01/4
+ RIP: 0010:truncate_inode_partial_folio+0x208/0x620
+ Code: ff 03 48 01 da e8 78 7e 13 00 48 83 05 10 b5 5a 0c 01 85 c0 0f 85 1c 02 001
+ RSP: 0018:ffffc90005bafab0 EFLAGS: 00010286
+ RAX: 0000000000000000 RBX: ffffea0005ffff00 RCX: 0000000000000002
+ RDX: 000000000000000c RSI: 0000000000013975 RDI: ffffc90005bafa30
+ RBP: ffffea0006000000 R08: 0000000000000000 R09: 00000000000009bf
+ R10: 00000000000007e0 R11: 0000000000000000 R12: 0000000000001633
+ R13: 0000000000000000 R14: ffffea0005ffff00 R15: fffffffffffffffe
+ FS:  00007f9f9a161740(0000) GS:ffff8894971fd000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: ffffea0006000008 CR3: 000000017c2ae000 CR4: 00000000000006f0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ Call Trace:
+  <TASK>
+  truncate_inode_pages_range+0x226/0x720
+  truncate_pagecache+0x57/0x90
+  ...
 
-> Correct behaviour would be to have B/1 left in place and upper
-> B/1/2 to be reparented once.
+Fix this issue by skipping the split if truncation aligns with the folio
+size, make sure the split page number lies within the folio.
 
-As I read __propagate_umount that is what is trying to be implemented.
+Fixes: 7460b470a131 ("mm/truncate: use folio_split() in truncate operation")
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+---
+ mm/truncate.c | 20 ++++++++++++--------
+ 1 file changed, 12 insertions(+), 8 deletions(-)
 
-I am a bit mystified why the semantics aren't simply to lazily umount
-(aka MNT_DETACH) that overmount.  But that is not what the code is
-trying to do.  It probably isn't worth considering a change in semantics
-at this point.
-
-It looks like the challenge is in the __propgate_umount loop.
-If I am reading thing correctly:
-- __propagate_umount recognizes that B/1/2 can be unmounted from the
-  overmount.
-- The code then considers the parent of B/1/2 B/1.
-- When considering B/1 there is only one child B/1/2 that has been
-  umounted and it has already been marked to be umounted so it
-  is ignored (Sigh).
-
-So a minimal fix would go up the mount pile to see if there is anything
-that must remain.  Or probably use a bit like use a bit like MNT_MARK to
-recognize there is an overmount remaining.  So despite a child being
-unmounted it still should count as if it was mounted.
-
-> As an aside, that's a catch from several days of attempts to prove
-> correctness of propagate_umount(); I'm still not sure there's
-> nothing else wrong with it.  _Maybe_ it's the only problem in
-> there, but reconstructing the proof of correctness has turned
-> out to be a real bitch ;-/
->
-> I seriously suspect that a lot of headache comes from trying
-> to combine collecting the full set of potential victims with
-> deciding what can and what can not be taken out - gathering
-> all of them first would simplify things.  First pass would've
-> logics similar to your variant, but without __propagate_umount()
-> part[*]
-
-This is there be dragons talk.
-
-With out care it is easy to get the code to go non-linear in
-the number of mounts.
-
-That said I don't see any immediate problem with a first pass
-without my __propgate_umount.
-
-As I read the current code the __propagate_umount loop is just
-about propagating the information up from the leaves.
-
-> After the set is collected, we could go through it, doing the
-> something along the lines of
-> 	how = 0
-> 	for each child in children(m)
-> 		if child in set
-> 			continue
-> 		how = 1
-> 		if child is not mounted on root
-> 			how = 2
-> 			break
-> 	if how == 2
-> 		kick_out_ancestors(m)
-> 		remove m itself from set // needs to cooperate with outer loop
-> 	else if how == 1
-> 		for (p = m; p in set && p is mounted on root; p = p->mnt_parent)
-> 			;
-> 		if p in set
-> 			kick_out_ancestors(p)
-> 	else if children(m) is empty && m is not locked	// to optimize things a bit
-> 		commit to unmounting m (again, needs to cooperate with the outer loop)
->
-> "Cooperate with the outer loop" might mean something like
-> having this per-element work leave removal of its argument to
-> caller and report whether its argument needs to be removed.
->
-> After that we'd be left with everything still in the set
-> having no out-of-set children that would be obstacles.
-> The only thing that remains after that is MNT_LOCKED and
-> that's as simple as
-> 	while set is not empty
-> 		m = first element of set
-> 		for (p = m; p is locked && p in set; p = p->mnt_parent)
-> 			;
-> 		if p not in set {
-> 			if p is not committed to unmount
-> 				remove everything from m to p from set
-> 				continue
-> 		} else {
-> 			p = p->mnt_parent
-> 		}
-> 		commit everything from m to p to unmount, removing from set
->
-> I'll try to put something of that sort together, along with
-> detailed explanation of what it's doing - in D/f/*, rather than
-> buring it in commit messages, and along with "read and update
-> D/f/... if you are ever touch this function" in fs/pnode.c itself;
-> this fun is not something I would like to repeat several years
-> down the road ;-/
-
-I think I understand what you are saying.  But I will have to see the
-actually code.
-
-> We *REALLY* need a good set of regression tests for that stuff.
-> If you have anything along those lines sitting somewhere, please
-> post a reference.  The same goes for everybody else who might
-> have something in that general area.
-
-I will have to look.  As I recall everything I have is completely manual
-but it could be a starting point at least.
-
-> [*] well, that and with fixed skip_propagation_subtree() logics; it's
-> easier to combine it with propagation_next() rather than trying to set
-> the things up so that the next call of propagation_next() would DTRT -
-> it's less work and yours actually has a corner case if the last element
-> of ->mnt_slave_list has non-empty ->mnt_slave_list itself.
-
-I hope that helps a little,
-
-Eric
+diff --git a/mm/truncate.c b/mm/truncate.c
+index 5d98054094d1..f2aaf99f2990 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -191,6 +191,7 @@ int truncate_inode_folio(struct address_space *mapping, struct folio *folio)
+ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+ {
+ 	loff_t pos = folio_pos(folio);
++	size_t size = folio_size(folio);
+ 	unsigned int offset, length;
+ 	struct page *split_at, *split_at2;
+ 
+@@ -198,14 +199,13 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+ 		offset = start - pos;
+ 	else
+ 		offset = 0;
+-	length = folio_size(folio);
+-	if (pos + length <= (u64)end)
+-		length = length - offset;
++	if (pos + size <= (u64)end)
++		length = size - offset;
+ 	else
+ 		length = end + 1 - pos - offset;
+ 
+ 	folio_wait_writeback(folio);
+-	if (length == folio_size(folio)) {
++	if (length == size) {
+ 		truncate_inode_folio(folio->mapping, folio);
+ 		return true;
+ 	}
+@@ -224,16 +224,20 @@ bool truncate_inode_partial_folio(struct folio *folio, loff_t start, loff_t end)
+ 		return true;
+ 
+ 	split_at = folio_page(folio, PAGE_ALIGN_DOWN(offset) / PAGE_SIZE);
+-	split_at2 = folio_page(folio,
+-			PAGE_ALIGN_DOWN(offset + length) / PAGE_SIZE);
+-
+ 	if (!try_folio_split(folio, split_at, NULL)) {
+ 		/*
+ 		 * try to split at offset + length to make sure folios within
+ 		 * the range can be dropped, especially to avoid memory waste
+ 		 * for shmem truncate
+ 		 */
+-		struct folio *folio2 = page_folio(split_at2);
++		struct folio *folio2;
++
++		if (offset + length == size)
++			goto no_split;
++
++		split_at2 = folio_page(folio,
++				PAGE_ALIGN_DOWN(offset + length) / PAGE_SIZE);
++		folio2 = page_folio(split_at2);
+ 
+ 		if (!folio_try_get(folio2))
+ 			goto no_split;
+-- 
+2.46.1
 
 
