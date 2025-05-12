@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-48763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48764-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4615FAB4196
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 20:08:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B5ADAB423E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 20:20:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB0DB16D722
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 18:07:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 088107B6E7D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 May 2025 18:11:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29761298C2D;
-	Mon, 12 May 2025 18:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9AD29B77C;
+	Mon, 12 May 2025 18:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GIy+h3cG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HPy4xS7B"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E27B298C1B;
-	Mon, 12 May 2025 18:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549BC29B764;
+	Mon, 12 May 2025 18:04:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747073066; cv=none; b=AE2hJyGNdd+i3N1upwih4Y9EShEQjEChDTq2BnP3q0Ek2Zm5FHPaFgvGMRpTCK7xN0QGGlsE7LWcRhSwPiDGZpsj1yrjGEypR/VCx3XKXT6MDHAJSOf8Usd/II4NbhNBsVH8+4A/euvtPSSWhvGnkyzseHYUFb16jDdP2o//Iks=
+	t=1747073092; cv=none; b=TmDhyh50nn0NIwOydHe6puZJukcIdGZ6DkSJbj0F8OPqwZ/XtPW2jQ1vOM6V4EeknbZN9fWHED2INat/V0d804qUyo+osbbNYXDXQJubwp4Ik+316+xJCRckYXwAfiljDcFTeNuD6oK9L1/6NEs7zOV0HfmqpAa7/26lDbLprfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747073066; c=relaxed/simple;
-	bh=UHCXy9jR8dSGqVN48aTVRaYvNMr8ifTKeSKvOn17H8w=;
+	s=arc-20240116; t=1747073092; c=relaxed/simple;
+	bh=RMJNKyIKw876za9y8z2vgxq/gPNbJahPj+b6V8ycI8I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=IWJ0kwNXnOf2DAA27UogijYyEZToXkxD+Y/xCLsa7jvi/7Bg7JukGlJfBX7Le7QK/+50HydBMOM1wCXC/i157JXwnG5TZ7p+JEOii2pBtdfVHchNeWgX38RJx6lt/11YsPnQlIizg44QBpy617c46j3pGkSX6X5Apk6A27PEJgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GIy+h3cG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24A3CC4CEF0;
-	Mon, 12 May 2025 18:04:25 +0000 (UTC)
+	 MIME-Version; b=ad7GtLU93Plu4cMBFD5loBD1hp7VDDGrZ7RYE/MhGWrbGIbO/4R+VszT0WqoyR+PtP3nNGNjcd6IPyoD+nPObnDcoguFdb7zzqTl8PTPT9OUdZihQXOnvo4OqTxj4ayQOQkZx0eG44RW5eSlCK2k3YzSOo1ByNz3fiboulQzMAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HPy4xS7B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64212C4CEE9;
+	Mon, 12 May 2025 18:04:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747073066;
-	bh=UHCXy9jR8dSGqVN48aTVRaYvNMr8ifTKeSKvOn17H8w=;
+	s=k20201202; t=1747073092;
+	bh=RMJNKyIKw876za9y8z2vgxq/gPNbJahPj+b6V8ycI8I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GIy+h3cGV028lDKoKPOQt8neYjnSnCIfJZL23jzQ2stNM3JIKGOIaG3qSXiQfRZM4
-	 NE8qeKGSAParA1fkMHvjPHOhwuyDESiRRCGoSdfdFMVq/vc+cqaI5PKmN6N83HZ6Mm
-	 K0wPGu8coC+QHd334uMmognyvfpr8vW+JC9nzocYlTq5qxFOabDsc5jj6CfLrJjCQF
-	 THcrcSZtpXr+0Sp8lA/2BP0OoylpEC0X0+6cQn1TaNCvWKpp0HbAG65wV5tKE+RtIk
-	 n8OhnCuYpe3oo4w4Xw9tKIKtPWFdRq7Pckp/5R5lIs+Smq9F9jGYk0NURyUK2mFlx0
-	 kBYIBi3Q9vVEQ==
+	b=HPy4xS7BssRQcb+v46A+5H+FAkyUNQBVN+TF0+jQbA4E+2ro+wtV70t4rOn8bqR8l
+	 SeLAxmGuXtS8ccFC2nTDLdofLMI26IsB7UU4iYgJMVP2mf6AN2LfaJvH4Bc9tUK0im
+	 Qr+MyVOLpz7KU/wcQx31GVLp9yl9hawsZxRChO1iXrQOiDVwbhPEW03N3jYmzY3gEB
+	 U0JaU90VGfylSrUrpcXaairV24vTIFTVn8ipemsPTpgIHWb290zD3hn/cnw01osaPS
+	 kghM4uujin1a8C3mAwCxeGrEJ4sK0GNas2xKUeuCJKGRRdLj8Ot11wMCkR3Jqc5Hng
+	 l6qbZZelLblqQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -49,12 +49,12 @@ Cc: Al Viro <viro@zeniv.linux.org.uk>,
 	Sasha Levin <sashal@kernel.org>,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 15/15] __legitimize_mnt(): check for MNT_SYNC_UMOUNT should be under mount_lock
-Date: Mon, 12 May 2025 14:03:50 -0400
-Message-Id: <20250512180352.437356-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 11/11] __legitimize_mnt(): check for MNT_SYNC_UMOUNT should be under mount_lock
+Date: Mon, 12 May 2025 14:04:26 -0400
+Message-Id: <20250512180426.437627-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250512180352.437356-1-sashal@kernel.org>
-References: <20250512180352.437356-1-sashal@kernel.org>
+In-Reply-To: <20250512180426.437627-1-sashal@kernel.org>
+References: <20250512180426.437627-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.6
+X-stable-base: Linux 6.12.28
 Content-Transfer-Encoding: 8bit
 
 From: Al Viro <viro@zeniv.linux.org.uk>
@@ -88,10 +88,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/fs/namespace.c b/fs/namespace.c
-index 280a6ebc46d93..6730ffb03da5b 100644
+index bd601ab26e781..28727a1b4b118 100644
 --- a/fs/namespace.c
 +++ b/fs/namespace.c
-@@ -781,12 +781,8 @@ int __legitimize_mnt(struct vfsmount *bastard, unsigned seq)
+@@ -750,12 +750,8 @@ int __legitimize_mnt(struct vfsmount *bastard, unsigned seq)
  	smp_mb();			// see mntput_no_expire()
  	if (likely(!read_seqretry(&mount_lock, seq)))
  		return 0;
