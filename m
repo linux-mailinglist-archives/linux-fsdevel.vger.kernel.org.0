@@ -1,76 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-48902-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48901-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C009CAB57FD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 17:05:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BE75AB57FF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 17:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E541B47B55
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 15:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AA87172BBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 15:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D4D2BE0FB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178B42BE0F0;
 	Tue, 13 May 2025 15:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="ZyEjKwWr"
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="aoCmLwoF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B89A15ECDF
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 15:03:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6590528F514
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 15:03:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747148619; cv=none; b=Wz/UJ+m44lcT7cuBRD3/YL4zI1J2LtY6Kw1AR0xb4hUoUK+llNQt3s/p7Is2SEwpH+uVGWBN4ZIbH6j8B6Q4OVe6S6w8jJWs7BoGp8EKqKRifl44GEk7uHKg6y13wjLjPvD7eG/UeW3FDXe2wTuTV8Qanf0GD3UllRusigR9X8c=
+	t=1747148619; cv=none; b=aMSXvJFA6IyBOwNRSSZU22O4tcOuQ84xsx3Wp541cvTl1oAmVuJNFdCWRfQSdRUip1exHJqZoQ8Hj11UdPz4nm2B0IYo6m1syyTnvCQ9mczRdVuOtR4/WyAybftnZ4b6fP4Th0oMmKPyCiVKWmUtRa2XABJwZvuY/5uU5HZ7Pgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747148619; c=relaxed/simple;
-	bh=7h6TDK9XO4vi8HAwbxlZy15xoNWwk+1COdubrAjH45o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SrGKAdZ4EfLGzjDHXTOjBo4x3YuBE8D11JHa+fY8KbXSm0dZgevAOozWCLAD+hurXROnqS+PA9ZjLIIaNOWbpBYxNN33a3RI+395Uzr40E0bTtLl9Ci+saAz51/n5zYvnCVqwpIppTJBgwCei6PY4wO5nrB9rd7vZ2s8TjfLrVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=ZyEjKwWr; arc=none smtp.client-ip=209.85.128.47
+	bh=3eb7PyfQipYAH2mOClQzUmK9oJ1sipNCNGsvmnU+0/Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eOOBVW/tcOE8DidJBKFncvxPHSfMWo4vf2NmSp2nxETHLXH/88NvM+vDwdM1NRsn0+kb/Y/XoAQlAEvy1PNrsfSdEALrBauerESaR5IY6O9KKHkLavoEl9yITW86oUNfA+l6M6EFRmUp6sx4sg/OrdIMBiFh8AHYiOccckdaejA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=aoCmLwoF; arc=none smtp.client-ip=209.85.128.65
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43cf3192f3bso61194785e9.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 08:03:35 -0700 (PDT)
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-43cfe574976so41696455e9.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 08:03:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1747148614; x=1747753414; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/khpT6y/LHVtwUJo6f8G8UANag+DTR3Iq07zRFJyCJk=;
-        b=ZyEjKwWrsAnW2QYtYj32PxzL4lx/x3OofUPS7qiK7++XAsrRtdbWZ7mUCwmesvoHmI
-         LPx+IZqLQ8o8K0e4vPf1Bs+gfee4Wuvf4hJALUMDUFHuioV0mu32jgdI8ba/iXZ8Sn0e
-         3ysOx0xT9+T0rFv5sAiCPbiG5XISV8aKMnex0HlpsRt78RdD5T3BWzTmFCenMO0n15B5
-         5G2ipFt52JMrEAiKAuGLhekvL0h0HJEpQKUvh0HYtiskBN9XIWBuZzHt2ArnT7aUY4OU
-         9n8lc4aGfg7kNSDTWGaG/vzNqzxcncQ0DaHb77cFxikBcqLBaRoct4q9hzdFNmDPqrHv
-         X7LA==
+        d=ionos.com; s=google; t=1747148616; x=1747753416; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sGJIs2TI0njjS/7dQefh5772Uvy+I7f3u0bLm0mKqKA=;
+        b=aoCmLwoF/rssH1HZXPZp2yuHef2FLKWDU8tpuXri5oh5N1KTuTtvP0a8M800YW15hQ
+         BcuES91ITfXeKFBKrABqPVpBPPOoSFTOZab9s1KYqPanJL2B/EleJSZvFoBPUmAUFCyS
+         wLNKqmvnXpOdwWMRJ7CKcTHOdhYl12zKejsGMt/4Z9VYyYtXTenPAlW04NlpsWSVbqG0
+         07VtulBq1UiuebDLsac23z03zq9fk3MgmTMFrnHwaPWOSfVkgwndfhnll7BH21jVHfo4
+         3X8KW2T5yT0HyC5/4EEPzN7BVIpKfX7Dh7YroxefmVsO9TpM87SvWkL6q35OQcv97iQL
+         XDVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747148614; x=1747753414;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/khpT6y/LHVtwUJo6f8G8UANag+DTR3Iq07zRFJyCJk=;
-        b=fUJQKqN4Lh6fdR4LnDW6zXwpeRYZ6JWfS57DpPuiJoEOmJxtF5iQlQdAv9XPx4Yns1
-         CqngNnGoguCs82FIUgOCawdW3IHpQUCU1gHbfBTyf2qkfuKUMaLKAO7LL2hZ30tv3Gk9
-         gjSYRCs356k4aM2SdXQcklXnLH2VNFweu6kRPjtA76QOd4KhPZ3zNDqCijMBPeaD1o1J
-         Kqh8xtWPBnBq9fWAPMAWzrD9JzfUcQBLd9t9ZZiG/n3J8/2AnB4mSxuyx4bLmu5dj0AL
-         ZDaZtIYNLCe/rHD1TpfhRAIRImY9JTyEzIjADCAQZMCGOp3ukES9EW7WuAzqTcSc5gOf
-         nvMA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmRlrPf9S3thZ7lnJ0o2Y9zE70Si28Js9Smx2eLwegWG5CsbRCrgaCvHVxNkViBdlLnCAuiANU888WLa4o@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEJbsp2P4Q1diTxICrdRLcqWbaxeHZFzIe32sqo3UQDyYPR7Fn
-	714jue0nUgcRjtH2Pn1ykU6JKdLZLN+l2c2mf6EYHm6+65ldJpLVRuLOoKwtNLA=
-X-Gm-Gg: ASbGncuy46JjF3iGy2eHVXGfO3hwMz2gvyTXlh+iBHJTvADB3W2TffdXhXaFGfpgtSi
-	3P2om5+a4oeU6Wc0u3fO74nLQO4BFV83hIKlBZhitxICawBex+0XMVtURdxgF9dduu9USiamCXJ
-	4IK2FobN7wW6sDCc+zVD6337a02X6oG7hDFmm6AuZ1khum4PXFSez1/hoxlgplkXVr/1TSOELeF
-	psFcWroWpDscUW9iXcroxJZRkhjK2fTKPsT1T42zuScQGd6x6iTgrkWmBGbcXFe26hgdesKAHHv
-	EhYSoISPsTn2nAd5DdWt2VXPGYnjT1cON5eFMss04fxnRItXfVsWv9GaHBc/W3CEJGw/f5gfD6J
-	1iao1uSdpg/BRHvGpD1+2arZH8H31OLCPomouum3PcY8hOKZORTU=
-X-Google-Smtp-Source: AGHT+IFEihMN3DpCrImIRC/9uCzJ+D24g5H8VE5PHrXwPAY3J3KM1oWCaSDbh+5QuPzDZpLQql8OBQ==
-X-Received: by 2002:a05:600c:1d84:b0:441:d2d8:bd8b with SMTP id 5b1f17b1804b1-442eb3a33a1mr34112495e9.8.1747148614433;
-        Tue, 13 May 2025 08:03:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747148616; x=1747753416;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sGJIs2TI0njjS/7dQefh5772Uvy+I7f3u0bLm0mKqKA=;
+        b=kTno1GDM+n6xOKnxV6udNx1/RXUD01J39xmt9lGnu4RVzRUdWt6M9femIBVqEGiMhe
+         M4YLW89d5LPZCKmCoqE6bYhlLz8gs2DgOvahpMZC13lKceFWJbmLl1dDJkz5qth+dqRO
+         fL+GR9J9Ju1G/KknmrUqHDaXeTayYwPJu3r3OtiMUtxiaBN5/49P31f/L3fQD/fJw/Ue
+         lEUbeIR6ZPONI/SRERIQIAE7eb/X86ifutysNLtuSaTlp5BltQ27oLwQ8Y7wGoyrCKpq
+         DbnHzVK9VkJfypWZn+uxm5pzs7Wr01rbytUSrdA4WKttXPlvOj7P/2hZ9z48/eVhQOXn
+         KKlg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvDgVfCwiTphK0clOSn1hg36gZ9DW+VDnlixxBfOd7b6NhTwNwOC4CPklIejuTSaMZR8nLyFMVLxheN2vo@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxoj+MrcxWY0Zkg1ltZNIjNR6oKC+hX8U6yPeiukWpisfF5EH3
+	E24OkrGA9hUAS+9/UG+cazuxMW3FnhTYV6o4JiDbwje1H3jbALG+/a12uLLogdhokMjmgcDQQFl
+	XuqLZ/g==
+X-Gm-Gg: ASbGncsBe2JZm9or+htRgpElt0uIBf8BHX2CEtL+k5LIlAGBQS4riIa5l3dAn3JYLin
+	X4rQNu69oRnEtVGObMBJagPVDcYS0zi+njN+Gn/3NIdGQ/cvgLUCP/MlLrY0w/Zn3QWRP3fhHdm
+	Oj4M9YmFDtgOCrjmRtP/Ch4ALrwhIDFnrm2QDXguOF0KTKYbTtHsxTx4D8jPeiR8HXe+Xg0DzrP
+	IxBVUb0RaBwUZjSVPSU0Jo+CKPSCPOCk93FkxDfqqa+CGr3QOFgKqp9x/RxgC+GCFitmbNClDds
+	mDdJ8v7Wdt5HWGyA53noNsRNfun56yB18vB6dfLgv1/4MN7uLP6gQ4qL3aeZtu7bqVU/FLab+bY
+	BkncfZnkqOTG7PZ+ztJqAM72tZ5B02Z6LPE8o1BQPsLBrf0cJhd0=
+X-Google-Smtp-Source: AGHT+IGbtsokICQNCqwJVgLywlMX6ZnMt2bLgm7dktJCKAmrvUn7dVbybhKncQSFP+L0Faqk1cEhFA==
+X-Received: by 2002:a05:600c:8212:b0:442:d5dd:5b4b with SMTP id 5b1f17b1804b1-442d6de0e29mr181541005e9.31.1747148615543;
+        Tue, 13 May 2025 08:03:35 -0700 (PDT)
 Received: from raven.intern.cm-ag (p200300dc6f46c100023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f46:c100:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd34bc2fsm106800805e9.20.2025.05.13.08.03.32
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd34bc2fsm106800805e9.20.2025.05.13.08.03.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 08:03:32 -0700 (PDT)
+        Tue, 13 May 2025 08:03:34 -0700 (PDT)
 From: Max Kellermann <max.kellermann@ionos.com>
 To: viro@zeniv.linux.org.uk,
 	brauner@kernel.org,
@@ -78,10 +81,12 @@ To: viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH v2 1/4] include/linux/fs.h: add inode_lock_killable()
-Date: Tue, 13 May 2025 17:03:24 +0200
-Message-ID: <20250513150327.1373061-1-max.kellermann@ionos.com>
+Subject: [PATCH v2 2/4] fs/open: make chmod_common() and chown_common() killable
+Date: Tue, 13 May 2025 17:03:25 +0200
+Message-ID: <20250513150327.1373061-2-max.kellermann@ionos.com>
 X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250513150327.1373061-1-max.kellermann@ionos.com>
+References: <20250513150327.1373061-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,42 +95,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Prepare for making inode operations killable while they're waiting for
-the lock.
+Allows killing processes that are waiting for the inode lock.
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 ---
- include/linux/fs.h | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+v2: split into separate patches
 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 016b0fe1536e..5e4ac873228d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -867,6 +867,11 @@ static inline void inode_lock(struct inode *inode)
- 	down_write(&inode->i_rwsem);
+This part was reviewed by Christian Brauner here:
+ https://lore.kernel.org/linux-fsdevel/20250512-unrat-kapital-2122d3777c5d@brauner/
+
+Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
+---
+ fs/open.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index a9063cca9911..d2f2df52c458 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -635,7 +635,9 @@ int chmod_common(const struct path *path, umode_t mode)
+ 	if (error)
+ 		return error;
+ retry_deleg:
+-	inode_lock(inode);
++	error = inode_lock_killable(inode);
++	if (error)
++		goto out_mnt_unlock;
+ 	error = security_path_chmod(path, mode);
+ 	if (error)
+ 		goto out_unlock;
+@@ -650,6 +652,7 @@ int chmod_common(const struct path *path, umode_t mode)
+ 		if (!error)
+ 			goto retry_deleg;
+ 	}
++out_mnt_unlock:
+ 	mnt_drop_write(path->mnt);
+ 	return error;
  }
- 
-+static inline __must_check int inode_lock_killable(struct inode *inode)
-+{
-+	return down_write_killable(&inode->i_rwsem);
-+}
-+
- static inline void inode_unlock(struct inode *inode)
- {
- 	up_write(&inode->i_rwsem);
-@@ -877,6 +882,11 @@ static inline void inode_lock_shared(struct inode *inode)
- 	down_read(&inode->i_rwsem);
- }
- 
-+static inline __must_check int inode_lock_shared_killable(struct inode *inode)
-+{
-+	return down_read_killable(&inode->i_rwsem);
-+}
-+
- static inline void inode_unlock_shared(struct inode *inode)
- {
- 	up_read(&inode->i_rwsem);
+@@ -769,7 +772,9 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+ 		return -EINVAL;
+ 	if ((group != (gid_t)-1) && !setattr_vfsgid(&newattrs, gid))
+ 		return -EINVAL;
+-	inode_lock(inode);
++	error = inode_lock_killable(inode);
++	if (error)
++		return error;
+ 	if (!S_ISDIR(inode->i_mode))
+ 		newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
+ 				     setattr_should_drop_sgid(idmap, inode);
 -- 
 2.47.2
 
