@@ -1,112 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-48888-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48889-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87828AB54CD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 14:33:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF379AB54E3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 14:36:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D7A4683D5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 12:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C046318839DF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 12:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B81628DEE9;
-	Tue, 13 May 2025 12:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA11E2920B9;
+	Tue, 13 May 2025 12:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="C+rU7Uyx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923001DF72E;
-	Tue, 13 May 2025 12:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A8C292080;
+	Tue, 13 May 2025 12:35:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747139604; cv=none; b=bZ/ydH5tD9MAF8PNft8IllNeFZFfRIlFMtdr66CEIvOhPoJsWUbnsTfEToW29rcCg231Xr9EIwRkQt9oXmxH2LqVHxLtf9WmYYkoM3Sg1ibrDY1QA4l2acofWEjHq+MIvWkCRFVHBmwqKrz1h8pdFHGTUSIk/upuHiO8+2IHLkw=
+	t=1747139706; cv=none; b=YIPjQ5o606Oa0tdjQmbzu5PDlWItsaq4M8m9LyI6EGzMtx17KfFHpjwuFcslJ6pfJKEDsN+1NCADFkz9BSc2oFBa632C/lkox+spka/rI1XJ/wFIbKu69413dZx4AsZOkfmrhVf1Bzqm5MZsXu2LvWz0J+SWdZEIbRHsH/WIA/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747139604; c=relaxed/simple;
-	bh=ZU5F8N+rQji5FbwDUVMKpeSS9/srGS2yqeyk5etfHIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=skA1pKp0/c5LH6Nm5Ts1Oo7i2F3KdjjFCTD/rjAGweBfI6fGOcnXPfKK0tzadnoVe/dNb1XrNSJYKVKWqqJHR28k5sqChsg/k5E4JVJc2TxBOCgFaqODchriLTJnAIEVpU2lrMuv5iYMHV35QfpoZRcG+/IFmG3NeZ6irEpf4cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 721171688;
-	Tue, 13 May 2025 05:33:10 -0700 (PDT)
-Received: from [10.1.25.187] (XHFQ2J9959.cambridge.arm.com [10.1.25.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5EB513F5A1;
-	Tue, 13 May 2025 05:33:19 -0700 (PDT)
-Message-ID: <e57613f8-333a-4de4-b1a3-2d806ac8ee4f@arm.com>
-Date: Tue, 13 May 2025 13:33:18 +0100
+	s=arc-20240116; t=1747139706; c=relaxed/simple;
+	bh=ALZ1Y7eqeIWSLtwlNHJDTVrJdqlFq8VngIWKMheXNFw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GIrolWYNIAQS0SAg4BiX4QgVHea2d79CapBSRg/ZoXkx4AM9nLWFoqdBig8UNKrYp6JnzlQFBEIsajScvDQukzbkT+HH6PIPb+JBKr0jwWb5VehgTxAY5Ji76XPwZIrl06zXu0SUyid9qKKDiv3jJmTL4bS720lLLqpRXbYcAqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=C+rU7Uyx; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=AChJjkRKBoBFtHqem4qBYNs6qVLL45ojY4c6NPKMb9o=; b=C+rU7Uyxy0fy+XvPUi/b9wBSH6
+	f1Oaq+JFoZ2kEvKBzeOGCfjDNTnBW5a59B3zdZrOthZUeT429bWEjQBlzWvj0+T9PhglztIC8ap6s
+	6zxt9HA2gkZ4MeMpCMr5dEkhu7vizKzZzcvj9iGpcnwrSryfSNoCkOTRa1mJs32s8l4c+sK0YZsuX
+	YydMsc6m0WdsWBnRMAMO6gECsuEjQpKetgBXN0S8A+eGe+crRgvQdNY43fTK/qnvGQXaWhUz+PsgE
+	igQS5oXPY9XRNbM6Abn69gvsFfQLvjinPX/Ocntl49AdxGiemwVb6GAMQ7unbobB2LqI3ULflJ4da
+	puEG9+IQ==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uEol6-007b70-8h; Tue, 13 May 2025 14:34:53 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: Bernd Schubert <bernd@bsbernd.com>,  Laura Promberger
+ <laura.promberger@cern.ch>,  Dave Chinner <david@fromorbit.com>,  Matt
+ Harvey <mharvey@jumptrading.com>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com
+Subject: Re: [RFC PATCH v2] fuse: add optional workqueue to periodically
+ invalidate expired dentries
+In-Reply-To: <CAJfpeguD6jR7AQ=BWs-nKyT4ZV4d35KLM9UPZNzMd-SkcngmzQ@mail.gmail.com>
+	(Miklos Szeredi's message of "Tue, 13 May 2025 11:56:02 +0200")
+References: <20250415133801.28923-1-luis@igalia.com>
+	<CAJfpeguD6jR7AQ=BWs-nKyT4ZV4d35KLM9UPZNzMd-SkcngmzQ@mail.gmail.com>
+Date: Tue, 13 May 2025 13:34:47 +0100
+Message-ID: <87tt5o7kpk.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 1/5] mm/readahead: Honour new_order in
- page_cache_ra_order()
-Content-Language: en-GB
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, p.raghav@samsung.com
-References: <20250430145920.3748738-1-ryan.roberts@arm.com>
- <20250430145920.3748738-2-ryan.roberts@arm.com>
- <nepi5e74wtghvr6a6n26rdgqaa7tzitylyoamfnzoqu6s5gq4h@zqtve2irigd6>
- <22e4167a-6ed0-4bda-86b8-a11c984f0a71@arm.com>
- <pskrpcu3lflo3pgeyfvnifcn7z2o6bsieaclntsbyvefs4ab3a@cyfnf36mccvi>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <pskrpcu3lflo3pgeyfvnifcn7z2o6bsieaclntsbyvefs4ab3a@cyfnf36mccvi>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 09/05/2025 21:50, Pankaj Raghav (Samsung) wrote:
->>>>  
->>>
->>> So we always had a fallback to do_page_cache_ra() if the size of the
->>> readahead is less than 4 pages (16k). I think this was there because we
->>> were adding `2` to the new_order:
->>
->> If this is the reason for the magic number 4, then it's a bug in itself IMHO. 4
->> pages is only 16K when the page size is 4K; arm64 supports other page sizes. But
->> additionally, it's not just ra->size that dictates the final order of the folio;
->> it also depends on alignment in the file, EOF, etc.
->>
-> 
-> IIRC, initially we were not able to use order-1 folios[1], so we always
-> did a fallback for any order < 2 using do_page_cache_ra(). I think that
-> is where the magic order 2 (4 pages) is coming. Please someone can
-> correct me if I am wrong.
+Hi Miklos,
 
-Ahh, I see. That might have been where it came from, but IMHO, it still didn't
-really belong there; just because the size is bigger than 4 pages, it doesn't
-mean you would never want to use order-1 folios - there are alignment
-considerations that can cause that. The logic in page_cache_ra_order() used to
-know to avoid order-1.
+On Tue, May 13 2025, Miklos Szeredi wrote:
 
-> 
-> But we don't have that limitation for file-backed folios anymore, so the
-> fallback for ra->size < 4 is probably not needed. So the only time we do
-> a fallback is if we don't support large folios.
-> 
->> If we remove the fallback condition completely, things will still work out. So
->> unless someone can explain the reason for that condition (Matthew?), my vote
->> would be to remove it entirely.
-> 
-> I am actually fine with removing the first part of this fallback condition.
-> But as I said, we still need to do a fallback if we don't support large folios.
+> On Tue, 15 Apr 2025 at 15:38, Luis Henriques <luis@igalia.com> wrote:
+>
+>> +inval_wq=3DN
+>> +  Enable a workqueue that will periodically invalidate dentries that
+>> +  have expired.  'N' is a value in seconds and has to be bigger than
+>> +  5 seconds.
+>> +
+>
+> I don't think a mount option is needed.  Perhaps a module option knob
+> instead is sufficient?
 
-Yep agreed. I'll make this change in the next version.
+Sure, that should do the trick.  It'll still be set to zero by default
+(i.e. no periodic invalidation), and it won't be possible to tune it per
+mount.  Which is probably the right thing to do.
 
-> 
-> --
-> Pankaj
-> 
-> [1] https://lore.kernel.org/all/ZH0GvxAdw1RO2Shr@casper.infradead.org/
+>> +static void fuse_dentry_tree_add_node(struct dentry *dentry)
+>> +{
+>> +       struct fuse_conn *fc =3D get_fuse_conn_super(dentry->d_sb);
+>> +       struct dentry_node *dn, *cur;
+>> +       struct rb_node **p, *parent =3D NULL;
+>> +       bool start_work =3D false;
+>> +
+>> +       if (!fc->inval_wq)
+>> +               return;
+>> +
+>> +       dn =3D kmalloc(sizeof(*dn), GFP_KERNEL);
+>> +       if (!dn)
+>> +               return;
+>> +       dn->dentry =3D dget(dentry);
+>
+> A dentry ref without a vfsmount ref is generally bad idea.
+>
+> Instead of acquiring a ref, the lifetime of dn should be tied to that
+> of the dentry (hook into ->d_prune).
+>
+> So just put the rb_node in fuse_dentry and get rid of the "#if
+> BITS_PER_LONG >=3D 64" optimization.
 
+OK, this probably makes more sense.  I'll have a closer look at the
+details, but it seems to be a better option.  Thanks a lot for the
+suggestion.  I'll work on that for v3.
+
+Cheers,
+--=20
+Lu=C3=ADs
 
