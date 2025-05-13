@@ -1,93 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-48806-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48807-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B714DAB4CB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 09:28:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED94AB4CB5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 09:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0728C3B61D2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 07:28:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51FC77A78FD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 07:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1AB31F09A3;
-	Tue, 13 May 2025 07:28:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28571F0991;
+	Tue, 13 May 2025 07:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l49k1T3u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7b2x7UO"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5266374059;
-	Tue, 13 May 2025 07:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 584281E9916;
+	Tue, 13 May 2025 07:29:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747121302; cv=none; b=olAvwIcOuWSczMPdW/kf34iQQJr4JzJUHsygagR5wJC6SSEZ51lIV0cIhKBVr2W5j4dBTVnUEq0Z8noaZ6lGjCZ6uEowKMbiHHJf2N9aQlk8ZXt3cQxYFY8rDFSA9gTKfVKcBaG4a2ZUc2zc/TUasRt13iLPAQ0QQ0lFjS6Hexo=
+	t=1747121378; cv=none; b=KQrTtDV728+d8IxixVs17q20QPG0s5iuM42PpDEjAzMRecctlegLWMuUUaF2KN6cl7WHQ/AGCgN5KuWVD6ZS7OabpyY/9IDXQBFoq2fWKKpigtWajwhokSWeV84kQKXy3u22cCoIXoO+MDLjjCRbm3yWKI1oSFqcYJSY+xOZ+D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747121302; c=relaxed/simple;
-	bh=q7vKAMtpDtiGe3w4FV5/B8hFy8LHK/sB/Y2saJPHOdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hvaTT0KW/DYuB+08Z/bx/iyzZo5bfktg5pAgr1oBNgoHCoXzC9e3P/qcu2rL1NZsxGAhoIrTB6koI6lUt0nba49rMyMHE1MMv3Aambw8cXBdnzNtLiZwLuzfUN8ZFcztAV38/fcbRzFvmTEiaC7bmxvwFRRTGE+RA1xkQTWC/J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l49k1T3u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F367AC4CEED;
-	Tue, 13 May 2025 07:28:19 +0000 (UTC)
+	s=arc-20240116; t=1747121378; c=relaxed/simple;
+	bh=zvM9BKDMjiOqjOOat7uxFRXAuGwKutVEom7szpo0S80=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHeA/DmFATiZ7guC6louUgYj/8oT3WPbCT+kFE9Hm+xKiKlitOBywuOq/qZ/9AJ1bulKrj2Sv36AmP/iS7HFK+l59omlhVADjn+MXMKXxdfHWZXnst4aVH3DMBhBEb+WaxgWu+mlSZk21uZFg5JcSn05Aid7RMhOS5qIMxNllUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7b2x7UO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CA44C4CEE4;
+	Tue, 13 May 2025 07:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747121301;
-	bh=q7vKAMtpDtiGe3w4FV5/B8hFy8LHK/sB/Y2saJPHOdI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=l49k1T3u2A9E2RAxBw+nZHwz0WPWf9l4MT7sd0mt4GtFwyxsv5KqF6YkhSt2K+ol5
-	 2Ivt5dF8dbD2kpcV8oa4/Onu9rAA2gLhUtWzTjjDgLlq6H2QTXgXI0taZpM7kNEbC2
-	 ItEsiXkBDoyD0BHb7qd3KjE/PW69mT4sK+FZqaVqifRpPT/cZd/UAqH5AoV/VPJUfJ
-	 t50QUzyyfV79oxldUa0KG+1/3mD7xVsVgorSm/mkp7lQhMFuOlk+t5w6ACyDpUBq5c
-	 G/cFf3LadnNSxyVBcPR+NOLAz0iYBIb2dzWZfo8Db9NAu5NWESbtH7LYkhAUDU9jUD
-	 k1WHmHaxKoQXA==
+	s=k20201202; t=1747121377;
+	bh=zvM9BKDMjiOqjOOat7uxFRXAuGwKutVEom7szpo0S80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G7b2x7UO1+ZggNwW4RMcLRa6zBnzu7RMfKSk4D00FOL18Sy8by5j1VeYVhNGiDauu
+	 zlxwsWm3UmWEjxb7lZeBKZ7k8iB8b3DHr4iPjirtooIJ/GFPpwiX9oI2+hH/Axwm3h
+	 4oe/38Z07B4hKzjxmxe+F7uF+b9CGs1/FolArjZBWNQqCp4vYC6HRta1u2j3G6qWqC
+	 C1c9j+ET2cXCE3YgOpoZiANyCCyk7UgRC+0RMpYe3EbVU4iFHziZky2mIZbOTRlafQ
+	 mWGwDC0koeyFPAmDPqNAl3O8rjJvyrCTc/gQQIy7HXpcVy5MuyLx5zB/dObQDOHNaC
+	 ry0g81H82qQYg==
+Date: Tue, 13 May 2025 09:29:31 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Petr=20Van=C4=9Bk?= <arkamar@atlas.cz>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>,
-	Christoph Hellwig <hch@lst.de>,
-	Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH RESEND] Documentation: fix typo in root= kernel parameter description
-Date: Tue, 13 May 2025 09:28:12 +0200
-Message-ID: <20250513-textil-kureinrichtung-15d108bb56c8@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250512110827.32530-1-arkamar@atlas.cz>
-References: <20250512110827.32530-1-arkamar@atlas.cz>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 1/3] mm: introduce new .mmap_prepare() file callback
+Message-ID: <20250513-trasse-flugobjekt-22ea7f851118@brauner>
+References: <cover.1746792520.git.lorenzo.stoakes@oracle.com>
+ <adb36a7c4affd7393b2fc4b54cc5cfe211e41f71.1746792520.git.lorenzo.stoakes@oracle.com>
+ <20250512-starren-dannen-12f66d67b4f6@brauner>
+ <b33f05e8-9c5b-4be0-977d-005ca525d1db@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=943; i=brauner@kernel.org; h=from:subject:message-id; bh=q7vKAMtpDtiGe3w4FV5/B8hFy8LHK/sB/Y2saJPHOdI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQofZmw+/ScE4e98huavRV4+XM3v/6dWeFRdbdVKMr68 nH2c+yrO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbim8XwPyHBvHfDfV4TBfmf 52R+xtS/SVFSXJHplWnS8y543Y35jxkZ/v0/lHOHsetbjVOiaiP/juYQBdtdAbO70xP+7RJ/sly IFQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b33f05e8-9c5b-4be0-977d-005ca525d1db@lucifer.local>
 
-On Mon, 12 May 2025 13:08:27 +0200, Petr Vaněk wrote:
-> Fixes a typo in the root= parameter description, changing
-> "this a a" to "this is a".
+On Mon, May 12, 2025 at 12:31:34PM +0100, Lorenzo Stoakes wrote:
+> On Mon, May 12, 2025 at 11:24:06AM +0200, Christian Brauner wrote:
+> > On Fri, May 09, 2025 at 01:13:34PM +0100, Lorenzo Stoakes wrote:
 > 
+> [snip]
 > 
+> > > diff --git a/include/linux/fs.h b/include/linux/fs.h
+> > > index 016b0fe1536e..e2721a1ff13d 100644
+> > > --- a/include/linux/fs.h
+> > > +++ b/include/linux/fs.h
+> 
+> [snip]
+> 
+> > >  static inline int call_mmap(struct file *file, struct vm_area_struct *vma)
+> > >  {
+> > > +	if (WARN_ON_ONCE(file->f_op->mmap_prepare))
+> > > +		return -EINVAL;
+> > > +
+> > >  	return file->f_op->mmap(file, vma);
+> > >  }
+> > >
+> > > +static inline int __call_mmap_prepare(struct file *file,
+> > > +		struct vm_area_desc *desc)
+> > > +{
+> > > +	return file->f_op->mmap_prepare(desc);
+> > > +}
+> >
+> > nit: I would prefer if we could rename this to vfs_mmap() and
+> > vfs_mmap_prepare() as this is in line with all the other vfs related
+> > helpers we expose.
+> >
+> 
+> Happy to do it, but:
+> 
+> call_mmap() is already invoked in a bunch of places, so kinda falls outside this
+> series (+ would touch a bunch of unrelated files), would you mind if I sent that
+> separately?
 
-Applied to the vfs-6.16.misc branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.misc branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.misc
-
-[1/1] Documentation: fix typo in root= kernel parameter description
-      https://git.kernel.org/vfs/vfs/c/678927c0c96b
+Sure, that's fine.
 
