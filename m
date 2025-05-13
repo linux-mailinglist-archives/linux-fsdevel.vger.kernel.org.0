@@ -1,144 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-48899-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48900-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BB6AB5774
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 16:43:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1282CAB578E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 16:49:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA5833B267A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 14:42:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9193B462FD4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 14:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F4328C87E;
-	Tue, 13 May 2025 14:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188CB1A3160;
+	Tue, 13 May 2025 14:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gj3XyjEz"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="bj/xFq04"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C801E5B65
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 14:43:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6036919CC3C
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 14:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747147390; cv=none; b=E71PxaIPVDjFjLO20zlhoJMCraw4OJwoi0xXCZ2zWfvwKu3L047NoA+32ps3IzLurMYx8UoIG0cSU+huJOAKt3oOGqPSzdAz64oq3RY8w5AWz3jlz95WJwxMucshwxN+jnBmprZ3PvJyFzr/fLGzJj4TW9EQjBZcgoTMXDd6HRE=
+	t=1747147758; cv=none; b=pYCDQvwvCn92sIiClVzM+puKfLl6AIvDZQwJYotOHGBvMYGPtXW9h5Ds1JSWCzUKyRJ2FXMxcuC6Yp0ywfOVTPuHCWRL6oaJtnwfcXEy9OsUlI7m1IrZXrYFuopmO7swv2WE7NlebIoC6M9yHffVlfGJh0zPzJx1+9pOlmHMSmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747147390; c=relaxed/simple;
-	bh=K4kcd1FYE6Qcv37fYbSljHtC9TN4iMyxcYCpixOSFxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQ4xyaKVCFdkg6AX7PUzyLZFuZ1+3xKJmquyXCMntTALk2JusA03Aq+f0IA4R73B4ctdwaTjsfgDypI/VYdO+no0ztRZEpuGsfXeKN8lfFluFTxbr7KSXg4ZXkegWL4dsh7pPG1rcvX4i0+QBLIWzZM3QWgOyZJwZDUBxOIdYNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gj3XyjEz; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1747147389; x=1778683389;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=K4kcd1FYE6Qcv37fYbSljHtC9TN4iMyxcYCpixOSFxE=;
-  b=gj3XyjEz8GQEfa1yGlkwyLbp5jc1AuY8d2pxOjsocAiBIJIkbb7m35KN
-   Ys/Px8uoOqMmA4Dgqx44P/9/o9jDhpYfJNQbaFazAbdaZ2z/iyWbOVn48
-   Kd87J0U/CTHizBA+ceXNEmal8aVfoRBpxeVlCf+RoZFR+nlQl5oAXyHU1
-   4NwuR3brhcKuffU1A2G0Xxm3yLIyRRGhk3iHuVlLLjen+N7KZYhiZrCY+
-   s2VFTIeO8p/Qi/eW9LX7dX5pPADGDqXH1ZzRaENh8OYMFQqSbgpxDd+IP
-   5zzJqsop/A6zTmJHS2vXugis6v1fWS5oqr5PDYLPO6ElvVesv9xyleii4
-   A==;
-X-CSE-ConnectionGUID: znTEdUjiQO+Im4b5Ap4wGA==
-X-CSE-MsgGUID: e5uTarJ6Rgy+7FtDAlP7jQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11431"; a="66545559"
-X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
-   d="scan'208";a="66545559"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 07:43:08 -0700
-X-CSE-ConnectionGUID: 3ncQer10RjyVRzbDTm/L4A==
-X-CSE-MsgGUID: mzCOl3BBRASuf0P6XrQlcA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,285,1739865600"; 
-   d="scan'208";a="142845184"
-Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.35.3])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 May 2025 07:43:07 -0700
-Date: Tue, 13 May 2025 22:33:23 +0800
-From: "Lai, Yi" <yi1.lai@linux.intel.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>, yi1.lai@intel.com
-Subject: Re: [PATCH 3/4] do_move_mount(): don't leak MNTNS_PROPAGATING on
- failures
-Message-ID: <aCNYM7XAXBXTdo9G@ly-workstation>
-References: <20250428063056.GL2023217@ZenIV>
- <20250428070353.GM2023217@ZenIV>
- <20250428-wortkarg-krabben-8692c5782475@brauner>
- <20250428185318.GN2023217@ZenIV>
- <20250508055610.GB2023217@ZenIV>
- <20250508195916.GC2023217@ZenIV>
- <20250508200211.GF2023217@ZenIV>
- <aCMm8r48BuZ8+DTo@ly-workstation>
- <20250513120858.GG2023217@ZenIV>
+	s=arc-20240116; t=1747147758; c=relaxed/simple;
+	bh=IH30o/V3WHvNch/5VZ2PDe0ULLqMzq5nHXYVrtZBu2E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RBhy0BqfN4pBz0s4MwSxUydHxTISURwjBlxYJ+n/3s7MEL0uD3xfjWYs82/Y+ENMlpBQm+UdvtOxrgYxchD+3qUKM6tHzK5OzBsQkjjccslQjBpWo/ZUbQpaZYNWHevh8TJmLTq8NZm0T19hWBfwfJwRfBpd9FTWl3L1mFOFqA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=bj/xFq04; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-476a720e806so56681961cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 07:49:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1747147755; x=1747752555; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=INtm454eLGLygSZvRwYLObcd+22LA4H68yKi06CR67c=;
+        b=bj/xFq04riIveZFr1+ySeYCrlH6QCPcXUGVirrPJmk6D2LvMpt1IbcEle2EP9n2/bj
+         Oo2xkZwjMTv6+rASJOyFwDrwS9QG93e6a7yx87fJPsHDyonf1ADOVD/SeRTIWHKCJUeC
+         Ak1FKvcMWHGfeNSdEOo7UE4lX8xwPztdxSymE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747147755; x=1747752555;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=INtm454eLGLygSZvRwYLObcd+22LA4H68yKi06CR67c=;
+        b=eAYTEvnWygylquUoPly99JppV820EzH7C1pitSOipMYFOwX7oIgHQ+9FKZfrOBL+kq
+         uXHSb4JXLFq8SReT++FvnRppQpd3PqGS2kZiZXVBUr3Hr7bLS2/fVjnSOG9V0gKvvWWW
+         SXvPw5QV0kUJN1Ja59s5+x1/yx/ZpOsYSTT21b+w2tkRLTVgyTfp60gcU0tQhX2W1ReC
+         VT5vjcd4wUWxKWNswd2oI9QATsmWOMLXu1cz9OaLuwPoxnT2XqkZfDrM3dJkuqJI9XGA
+         2viFsvOdRCTH2LNaywJJpxJYkSn838fCQcvbCIio8QB+Id8ESGhSMjyVHyiN5Vimq0y9
+         aYAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWPO2elWAzuDRkeN1XORa1FJ8xZZfOCsb9xk3ZSGWbqorRyg5vAe5ZvBMxYqVC9gR2zrgQVwqcTAV9m0gRu@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzxs6ti4lF4Qe+QCpqlPh1TOgQ3Q5Jao38iNO1+qNl9wnXTMOsq
+	976i9T540K7UAM85BBoY5b8vyMQev1HfDMJ7/KyrHiv9LZ4VeLsufXfl+J4YcRPmDocW7zzJZjv
+	fmY4jzV1klf0/6ghAYe+/jk3yVGFe87uase21Ag==
+X-Gm-Gg: ASbGnctsg8OGms0PmEEnmRM08++uUegh7zd1GzmZY9QQGrFFabCFtn1DnKK/H10nH+t
+	/psUZSDceolexhmY2AiigedkLGfHxS6rRwzQ8ddbs0iWOGBkp9uLkBdDIghAyPWkiXtaOun8RLA
+	UDFoioVcqtKdSQ3IeaROEYvBFiA3wNa+0=
+X-Google-Smtp-Source: AGHT+IHMi0b35guHXrgTtiZ4j0wyseNTm6kwyQgLvmBJw94DJ3doIxx6ELS5Iqpew7qaDUBqUQqKzwbuOQT9yZ9ZyN8=
+X-Received: by 2002:ac8:57c8:0:b0:477:c04:b511 with SMTP id
+ d75a77b69052e-494527633b0mr258676151cf.31.1747147754944; Tue, 13 May 2025
+ 07:49:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250513120858.GG2023217@ZenIV>
+References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
+ <20250509-fusectl-backing-files-v3-2-393761f9b683@uniontech.com>
+ <CAJfpegvhZ8Pts5EJDU0efcdHRZk39mcHxmVCNGvKXTZBG63k6g@mail.gmail.com>
+ <CAC1kPDPeQbvnZnsqeYc5igT3cX=CjLGFCda1VJE2DYPaTULMFg@mail.gmail.com>
+ <CAJfpegsTfUQ53hmnm7192-4ywLmXDLLwjV01tjCK7PVEqtE=yw@mail.gmail.com>
+ <CAC1kPDPWag5oaZH62YbF8c=g7dK2_AbFfYMK7EzgcegDHL829Q@mail.gmail.com>
+ <CAJfpegu59imrvXSbkPYOSkn0k_FrE6nAK1JYWO2Gg==Ozk9KSg@mail.gmail.com>
+ <CAOQ4uxgM+oJxp0Od=i=Twj9EN2v2+rFByEKabZybic=6gA0QgA@mail.gmail.com>
+ <CAJfpegs-SbCUA-nGnnoHr=UUwzzNKuZ9fOB86+jgxM6RH4twAA@mail.gmail.com>
+ <20250513-etage-dankbar-0d4e76980043@brauner> <CAJfpegsmvhsSGVGih=44tE6Ro7x3RzvOHuaREu+Abd2eZMR6Rw@mail.gmail.com>
+In-Reply-To: <CAJfpegsmvhsSGVGih=44tE6Ro7x3RzvOHuaREu+Abd2eZMR6Rw@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Tue, 13 May 2025 16:49:03 +0200
+X-Gm-Features: AX0GCFvyVWM0cut2uVH6adta3DCW-B3pHCICF0MF4L8XeLO3CDW5Uw88AbDAlUA
+Message-ID: <CAJfpegvFsWyUsDcN7qQOEArc6WF9xre+gkC_kjgbyXPBHM84kQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] fs: fuse: add backing_files control file
+To: Christian Brauner <brauner@kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, Chen Linxuan <chenlinxuan@uniontech.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 13, 2025 at 01:08:58PM +0100, Al Viro wrote:
-> On Tue, May 13, 2025 at 07:03:14PM +0800, Lai, Yi wrote:
-> > Hi Al Viro,
-> > 
-> > Greetings!
-> > 
-> > I used Syzkaller and found that there is general protection fault in do_move_mount in linux v6.15-rc6.
-> > 
-> > After bisection and the first bad commit is:
-> > "
-> > 267fc3a06a37 do_move_mount(): don't leak MNTNS_PROPAGATING on failures
-> > "
-> > 
-> > All detailed into can be found at:
-> > https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount
-> > Syzkaller repro code:
-> > https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/repro.c
-> > Syzkaller repro syscall steps:
-> > https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/repro.prog
-> > Syzkaller report:
-> > https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/repro.report
-> > Kconfig(make olddefconfig):
-> > https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/kconfig_origin
-> > Bisect info:
-> > https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/bisect_info.log
-> > bzImage:
-> > https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/250513_095133_do_move_mount/bzImage_82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
-> > Issue dmesg:
-> > https://github.com/laifryiee/syzkaller_logs/blob/main/250513_095133_do_move_mount/bzImage_82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
-> 
-> Are you sure that stack traces are from the same reproducer?  Because they
-> look nothing like what it's doing...
+On Tue, 13 May 2025 at 09:57, Miklos Szeredi <miklos@szeredi.hu> wrote:
 >
+> On Tue, 13 May 2025 at 09:39, Christian Brauner <brauner@kernel.org> wrote:
 
-Yes. The reproducer causes the OOP in do_move_mount().
-> I'm pretty sure I see the problem there, but I don't see how it could
-> fail to oops right in do_move_mount() itself if triggered...
-> 
-> As a quick check, could you see if the same kernel + diff below still
-> gives the same report?
-> 
+> > The xattr system call as far as I'm concerned is not going to be pimped
+> > to support stuff like that.
+>
+> Heh?  IIRC there were positive reactions to e.g. "O_XATTR", it just
+> didn't get implemented.  Can try to dig this up from the archives.
 
-After applying the diff, the issue cannot be reproduced.
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 1b466c54a357..a5983726e51d 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -3722,7 +3722,7 @@ static int do_move_mount(struct path *old_path,
->  	if (attached)
->  		put_mountpoint(old_mp);
->  out:
-> -	if (is_anon_ns(ns))
-> +	if (!IS_ERR_OR_NULL(ns) && is_anon_ns(ns))
->  		ns->mntns_flags &= ~MNTNS_PROPAGATING;
->  	unlock_mount(mp);
->  	if (!err) {
+Here it is:
+
+https://lore.kernel.org/all/CAHk-=wjzLmMRf=QG-n+1HnxWCx4KTQn9+OhVvUSJ=ZCQd6Y1WA@mail.gmail.com/
+
+Quoting Linus inline:
+
+| IOW, if you do something more along the lines of
+|
+|        fd = open(""foo/bar", O_PATH);
+|        metadatafd = openat(fd, "metadataname", O_ALT);
+|
+| it might be workable.
+|
+| So you couldn't do it with _one_ pathname, because that is always
+| fundamentally going to hit pathname lookup rules.
+|
+| But if you start a new path lookup with new rules, that's fine.
+|
+| This is what I think xattrs should always have done, because they are
+| broken garbage.
+|
+| In fact, if we do it right, I think we could have "getxattr()" be 100%
+| equivalent to (modulo all the error handling that this doesn't do, of
+| course):
+|
+|   ssize_t getxattr(const char *path, const char *name,
+|                         void *value, size_t size)
+|   {
+|      int fd, attrfd;
+|
+|      fd = open(path, O_PATH);
+|      attrfd = openat(fd, name, O_ALT);
+|      close(fd);
+|      read(attrfd, value, size);
+|      close(attrfd);
+|   }
+|
+| and you'd still use getxattr() and friends as a shorthand (and for
+| POSIX compatibility), but internally in the kernel we'd have a
+| interface around that "xattrs are just file handles" model.
+|
+|                Linus
 
