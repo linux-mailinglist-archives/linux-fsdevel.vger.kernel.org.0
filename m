@@ -1,145 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-48886-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48887-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1084EAB5449
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 14:08:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2509FAB5456
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 14:09:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E75174787
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 12:08:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2F8419E5D9F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 12:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4130C28DB53;
-	Tue, 13 May 2025 12:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F50025525C;
+	Tue, 13 May 2025 12:09:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vE54ruPn"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XLWVk9+8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F08A28CF7C;
-	Tue, 13 May 2025 12:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F4A28DB43
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 12:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747138094; cv=none; b=pDVa51dRzzEUkfv1oVdh53imtQRC9qh4/bfN+S0sYTXKE8gjzUt9yeY4lUIa+0bbJD0HWeV2qBW1sIxzB+oRCx6BPoaAjUGvNQNUfuuMNicGQJ42uGvqBc1yP5uA9IKgwcXk2aIYC9js2VXpIqD4vSon8IByC11XOF2tooUowb4=
+	t=1747138144; cv=none; b=qxV9MEfniBJd5lgNr5DYQV0i797qKteNPnTMbh0jDjQharVwKSK5SIsv8ckbsJwwAvwCgI63t2kyZAkCv6hr0tymeqEVNCYCf6qEA7043ID28Pa8argNCKViL3CttFPybS4Luvnym7azSQYlR7Yxd+oBhwZ7CbSPD+07QHQ22OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747138094; c=relaxed/simple;
-	bh=nqVdR12YYsEgA9wg1QecAZn4HrTlrPXWWZSXA3wGALI=;
+	s=arc-20240116; t=1747138144; c=relaxed/simple;
+	bh=ss4u6YcE4mAdLAihaE/rDdvPNRPkNrolbgZVQwVbMBo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRyQ/OpTZikoNEGeq8WILWDMT5BAmRqmGd5c5w7gYSRsVVGeF7GDSWxswEsm/fpvE9b0Es3tHiM78vfhXp6fD9yvB4BhNbrM0JmXSlOevzRXruyGCASawUsXqQlX6UFcVkvj2tkdtCPjnDIkCLwmJWSn5J+7pVh3ykVx9DP+EPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vE54ruPn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA81DC4CEE9;
-	Tue, 13 May 2025 12:08:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747138094;
-	bh=nqVdR12YYsEgA9wg1QecAZn4HrTlrPXWWZSXA3wGALI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vE54ruPnrf7doS5E2jmmYBdkmsTxo5FaflAHRDTNm3+f96CbeOAw5Y8y7vhbVyWJD
-	 Uz9mycdK2xwg7Pbhrg/UzEg42hQUhqMd7nE38Cv13JKcmwVMkxE4sPl/ygRcNAB/6L
-	 umR60O7gs/mGFegfMKRcOARPtLnnjMNrcOkGNzi1EfbI/FczzhegjEYUv3ePST8nW8
-	 lJUprhs8t2C8t219Ad/gJz8a/HYzR3hT8sls4ATQw8nmaPsmWoToSlVYEYlNH4k4hV
-	 8xGl0aUXxUBUOooxVvrpEOUXj69d4DwHpfoAgivvOu8+WOSJh79OnazbMK7vFofxnM
-	 FKAiqs9orucwA==
-Date: Tue, 13 May 2025 14:08:07 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Lennart Poettering <mzxreary@0pointer.de>
-Cc: Kuniyuki Iwashima <kuniyu@amazon.com>, bluca@debian.org, 
-	alexander@mihalicyn.com, daan.j.demeyer@gmail.com, daniel@iogearbox.net, 
-	davem@davemloft.net, david@readahead.eu, edumazet@google.com, horms@kernel.org, 
-	jack@suse.cz, jannh@google.com, kuba@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, me@yhndnzj.com, 
-	netdev@vger.kernel.org, oleg@redhat.com, pabeni@redhat.com, viro@zeniv.linux.org.uk, 
-	zbyszek@in.waw.pl
-Subject: Re: [PATCH v6 4/9] coredump: add coredump socket
-Message-ID: <20250513-agitation-tastatur-327692d0caf0@brauner>
-References: <CAMw=ZnRC7Okmew=rrEocFuFn8hhrcergHciPjxFPuG4c6qH_Bw@mail.gmail.com>
- <20250513021626.86287-1-kuniyu@amazon.com>
- <aCMJI-2goig2VBDX@gardel-login>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FdUfWzv1Xba+b2Dq6kO6AlegJPo3fgVisFWuxovsbexlsTYK93/ZeQI9aWgiSmqqoqwft7ATXtlvT1sf9ILMkjXPrIa5tIidU6qIozYRaMJdczqn3Sn0yhU6bAYG1MqquvTs8I81F2USZAIOr2+7WOX3BECCeNSJ6rqPy+U9Df4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XLWVk9+8; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=kV16oFuATrxM2aMHoOFhCpkKZxYAA9+xHlDn5lJ58OQ=; b=XLWVk9+8zuuJ7ECejUaREM3NN9
+	fAs0JsAD32y4nnURWIv88d79NnzPImjZLNElDof4Luq76K8Q01wwNtXnFgES6Bhpi7w8TJX/U32Vm
+	nyQH7VFnN484PPFqbx+oGZuIscUZCiwf+EqzY9Yao0VdQYAU0Lv4VxdWqn4Am2xk7yZErh6Vby/h2
+	JuZDUGoc0hHhSdIS0+Wfv8eOoOy19YifQ8MgFfbfR7h0erTy6sbSKq+dPssE7uQJAU5AJMEwIX5gx
+	B7toG+MMhatRmhDQ4vmDcne4xkfPoQpasfRKVjsDiqpfn7iHlhmK7Y1RtdDo+xCsTl2+d6nhPKBrv
+	nsq9sMMg==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uEoRO-00000002eFl-18YP;
+	Tue, 13 May 2025 12:08:58 +0000
+Date: Tue, 13 May 2025 13:08:58 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>, yi1.lai@intel.com
+Subject: Re: [PATCH 3/4] do_move_mount(): don't leak MNTNS_PROPAGATING on
+ failures
+Message-ID: <20250513120858.GG2023217@ZenIV>
+References: <20250428063056.GL2023217@ZenIV>
+ <20250428070353.GM2023217@ZenIV>
+ <20250428-wortkarg-krabben-8692c5782475@brauner>
+ <20250428185318.GN2023217@ZenIV>
+ <20250508055610.GB2023217@ZenIV>
+ <20250508195916.GC2023217@ZenIV>
+ <20250508200211.GF2023217@ZenIV>
+ <aCMm8r48BuZ8+DTo@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aCMJI-2goig2VBDX@gardel-login>
+In-Reply-To: <aCMm8r48BuZ8+DTo@ly-workstation>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, May 13, 2025 at 10:56:03AM +0200, Lennart Poettering wrote:
-> On Mo, 12.05.25 19:14, Kuniyuki Iwashima (kuniyu@amazon.com) wrote:
+On Tue, May 13, 2025 at 07:03:14PM +0800, Lai, Yi wrote:
+> Hi Al Viro,
 > 
-> > > > Note this version does not use prefix.  Now it requires users to
-> > > > just pass the socket cookie via core_pattern so that the kernel
-> > > > can verify the peer.
-> > >
-> > > Exactly - this means the pattern cannot be static in a sysctl.d early
-> > > on boot anymore, and has to be set dynamically by <something>.
-> >
-> > You missed the socket has to be created dynamically by <something>.
+> Greetings!
 > 
-> systemd implements socket activation: the generic code in PID 1 can
-> bind a socket, and then generically forks off a process (or instances
-> of processes for connection-based sockets) once traffic is seen on
-> that socket. On a typical, current systemd system, PID 1 does this for
-> ~40 sockets by default. The code to bind AF_UNIX or AF_INET/AF_INET6
-> sockets is entirely generic.
+> I used Syzkaller and found that there is general protection fault in do_move_mount in linux v6.15-rc6.
 > 
-> Currently, in the existing systemd codebase coredumping is implemented
-> via socket activation: the core_pattern handler binary quickly hands
-> off the coredump fds to an AF_UNIX socket bound that way, and the
-> service behind that does the heavy lifting. Our hope is that with
-> Christian's work we can make the kernel deliver the coredumps directly
-> to the socket PID1 generically binds, getting rid of one middle man.
+> After bisection and the first bad commit is:
+> "
+> 267fc3a06a37 do_move_mount(): don't leak MNTNS_PROPAGATING on failures
+> "
 > 
-> By requiring userspace to echo the SO_COOKIE value into the
-> core_pattern sysctl in a special formatting, you define a bespoke
-> protocol: it's not just enough to bind a socket (for which the generic
-> code in PID1 is good enough), and to write a fixed
-> string into a sysctl (for which the generic code in the current
-> /etc/sysctl.d/ manager, i.e. systemd-sysctl, works fine). But you
-> suddenly are asking from userspace, that some specific tool runs at
-> early boot, extracts the socket cookie from PID1 somehow, and writes
-> that into sysctl. We'd have to come up with a new tool for that, we
-> can no longer use generic tools. And that's the part that Luca doesn't
-> like.
-> 
-> To a large degree I agree with Luca about this. I would much prefer
-> Christian's earlier proposal (i.e. to simply define some prefix of
-> AF_UNIX abstract namespace addresses as requiring privs to bind),
-> because that would enable us to do generic handling in userspace: the
-> existing socket binding logic in PID 1, and the existing sysctl.d
-> handling in the systemd suite would be good enough to set up
-> everything for the coredump handling.
-> 
-> That said, I'd take what we can get. If enforcing privs on some
-> abstract namespace socket address prefix is not acceptable, then we
-> can probably make the SO_COOKIE proposal work (Luca: we'd just hook
-> some small tool into ExecStartPost= of the .socket unit, and make PID1
-> pass the cookie in some env var or so to it; the tool would then just
-> echo that env var into the sysctl with the fixed prefix). In my eyes,
-> it's not ideal though: it would mean the sysctl data on every instance
-> of the system system image would necessarily deviate (because the
-> socket cookie is going to be different), which mgmt tools won't like
-> (as you cannot compare sysctl state anymore), and we'd have a weak
-> conflict of ownership: right now most sysctl settings are managed by
-> /etc/sysctl.d/, but the core_pattern suddenly wouldn't be
-> anymore. This will create conflicts because suddenly two components
-> write to the thing, and will start fighting.
-> 
-> Hence: I'd *much* prefer Christian's original approach as it does not
-> have these issues. But I'll take what I can get, we can make the
-> cookie thing work, but it's much uglier.
-> 
-> I am not sure I understand why enforcing privs on some abstract
-> namespace socke address prefix is such an unacceptable idea though.
+> All detailed into can be found at:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount
+> Syzkaller repro code:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/repro.c
+> Syzkaller repro syscall steps:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/repro.prog
+> Syzkaller report:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/repro.report
+> Kconfig(make olddefconfig):
+> https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/kconfig_origin
+> Bisect info:
+> https://github.com/laifryiee/syzkaller_logs/tree/main/250513_095133_do_move_mount/bisect_info.log
+> bzImage:
+> https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/250513_095133_do_move_mount/bzImage_82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
+> Issue dmesg:
+> https://github.com/laifryiee/syzkaller_logs/blob/main/250513_095133_do_move_mount/bzImage_82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
 
-I prefer the prefix approach as well. It's clean, simple and is safe by
-itself and elegant. And it fits into the generic socket activation and
-system administration models. I mainly show-cased the cookie model as an
-elaborate workaround. It can be done but it's ugly and more difficult to
-use.
+Are you sure that stack traces are from the same reproducer?  Because they
+look nothing like what it's doing...
 
-I do have one more idea how to solve this problem cleanly using regular
-socket paths that hopefully pleases everyone.
+I'm pretty sure I see the problem there, but I don't see how it could
+fail to oops right in do_move_mount() itself if triggered...
+
+As a quick check, could you see if the same kernel + diff below still
+gives the same report?
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 1b466c54a357..a5983726e51d 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -3722,7 +3722,7 @@ static int do_move_mount(struct path *old_path,
+ 	if (attached)
+ 		put_mountpoint(old_mp);
+ out:
+-	if (is_anon_ns(ns))
++	if (!IS_ERR_OR_NULL(ns) && is_anon_ns(ns))
+ 		ns->mntns_flags &= ~MNTNS_PROPAGATING;
+ 	unlock_mount(mp);
+ 	if (!err) {
 
