@@ -1,99 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-48804-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48805-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B177CAB4C96
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 09:19:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55E7EAB4C9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 09:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BCBA189B88D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 07:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 007F919E2FF1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 07:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C541EFFB0;
-	Tue, 13 May 2025 07:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CB11F1500;
+	Tue, 13 May 2025 07:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="H/U5yW85"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="gL97HjRe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3B71E885A
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 07:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268AB1E885A
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 07:21:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747120771; cv=none; b=VHYv7KaveNvmcV07UOYjYZrUIKOqlDPoCU38XVPbcUuaJgTxSXlwHtRYHSbe+kDihI2koMSiBVm5GyFnqd87Dr8eOj94QjH6ZKU1QWCGP/GLd/fJ6/ZJJ57dDdYMjtjDM0xNDIqtqCuaYH38VOpmsdFgex8q54009Tyr8TviQww=
+	t=1747120876; cv=none; b=cbxidwWMposbMYl7X4ZOvhEdqCv9Ez+24j00A/T7xWZaQPYMiy7knX2qauQXWGhB3xZ9Q9yjEGmKnSDdfVYHW+M0XEpX02QAsCK3eF6v+pYEr0VOhpjf+D0ayOmUNcG+m2ZdL7Ze7aoGOsVaXQLzxEjmURrDAiPskzXEcgTeeg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747120771; c=relaxed/simple;
-	bh=4Qx6NyBkcKaqwv3z/SzZWQwaJjYZnPIzw8EWDI4wvUg=;
+	s=arc-20240116; t=1747120876; c=relaxed/simple;
+	bh=PLFaKLspSKToI3oqLpHdbvqIWaZvRsqCO8+SeTZd87U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OvmiDfTPKndSPDr6fow6FcaZuPUP/h1zTp/DbZTLD1YgO42HmQaS8oOQPB93GVnoMXrCLIFweTVfvSzlFEbKsAXFYKungKbhRGPrbjVqaTzXa204lzgk796avTO0h+BmUhdwX+WoRjRSuZlf0jnKMD6c+faCigye65J/x5KvkmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=H/U5yW85; arc=none smtp.client-ip=209.85.222.174
+	 To:Cc:Content-Type; b=gWTCmgLI3/bCIlCjQy2lEuY0SCEWodHYIArHP37j/gcvepT//fG5Olr00z9SbEIwc5dFRYuoT2pIDeVfrepPd+MtqQP8d/8FUIPaI4rUAZqR8nmJ+Ny59yYjnvhdlXUQzs9MH2ClR5ngoMPQHh+caWzREfWB5FXs5TLpfzr1RKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=gL97HjRe; arc=none smtp.client-ip=209.85.160.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7c5ba363f1aso864477585a.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 00:19:29 -0700 (PDT)
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-4769f3e19a9so36908251cf.0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 00:21:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747120768; x=1747725568; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1747120873; x=1747725673; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TJqxMXRsyTR/EBXbAx9Bxzflp16jQDj46oYOWd8r0dA=;
-        b=H/U5yW85AAURa+oqqzClAcfLEsoMh1WBwUYSU/q2Vv/rkDXHkhb9HR1COSs+25UYze
-         SpOm/8NOiKkpBSTS/YnFqFQxAZcE73IorN289lA1r9TBiRvmeKRsYAksoFNbz5g69mck
-         s9m93BLgyxrb0xQ8JhAemfciJ/s2rUrhAd5iE=
+        bh=PLFaKLspSKToI3oqLpHdbvqIWaZvRsqCO8+SeTZd87U=;
+        b=gL97HjRet5Mr5ftzdY4oHXdcf61sHnOiRXx8stWd7KnxN76vS7YuUXWDkvJ1Du3xNn
+         jOEudV089dHHWxkOq9mktYe4nWX14OT5DMPisHZMvY/Fr8UZPLdHCy6YfeIfKJX9xb81
+         Wvdf3fW9MykoLIXA8V7lMpAX0Z6WLylH9igY4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747120768; x=1747725568;
+        d=1e100.net; s=20230601; t=1747120873; x=1747725673;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TJqxMXRsyTR/EBXbAx9Bxzflp16jQDj46oYOWd8r0dA=;
-        b=OBiagOcKkvW51Yg15nv+k6fQMuIRPLl/76rQH8rNZZE70pLyrO26qWCY4JFNkvJ+zG
-         xAxhKlSZC3TlM/mj9hoij3QHSBhf4KmVwXBZ9ucKJDEIMqCJvR3Pae8amHIYvr12aCvS
-         jLen3UP7pnqNzl8gWAHSBlPFieqskabjgf99hiUojC6DHH1gsWobAVvV3E6FCKeBGaPU
-         oDXUNs4utopj+IFX2UjHAppjrB48fBXcIeF9ylGQbwdWp7E/PeitmLklaOczcxnKQ7Bc
-         lWQ03ysNuC1o8JwazaLrRRkQPR+w6EefXkjNDPysalgWw7SaSKthip4/aPqsdqFBat7S
-         TmgA==
-X-Gm-Message-State: AOJu0YxU6LLaKYJfK8pLdADbKMhmZur/+S2hVHG2l5i8TZPAVBqsVR9p
-	Nk1iaxl/XricQfrVt9zSqLu53PHIVpdgLM3z2bw3fNPTSAzrR78lQWhggNn9jjQ4YwcUKnyVKDV
-	5X+vA051UkEteEN9ruYCXw5VEEwPFfhgum5DPzrxbBn8iKHAG
-X-Gm-Gg: ASbGnctlrpeRHJTpxUpFbfGImvp1OUf55cVDGkhL7MnJf8WbpNFMfPMav16lFr7E7kW
-	04kea4yCQYjQMtlnkA4MLRdISR3o1XTXO4b9b9CjniyC0OPqdTe5ftzzsO27ueG+nd3LP+UaLCw
-	dNFIlfbHn4QBDgD1KGpPlsXIQjSo5pYOc=
-X-Google-Smtp-Source: AGHT+IG1mb+AG3fT3eKVSsEkso4KkAupvFMGQvIDV1ILGByPvnKHDTQXZEOhZCUczNAog9mIXTITxkOhIzPwRvKQilE=
-X-Received: by 2002:a05:622a:302:b0:476:91f1:9e5 with SMTP id
- d75a77b69052e-494527dfcc5mr261704971cf.50.1747120757751; Tue, 13 May 2025
- 00:19:17 -0700 (PDT)
+        bh=PLFaKLspSKToI3oqLpHdbvqIWaZvRsqCO8+SeTZd87U=;
+        b=Qm42jGaO8dA8dROVPXDP5/vrY4JOHK3h+VliDzTvlO7GCotXJ8lz7+QBCCbFoHl6j2
+         z4jwKFWHFuN4pFkabk21OyPxsDwWeFLUd2X+/e2tOBb1accoG9v1yqatW/n7V6SNjvaQ
+         dH4ILwM8mPD5NAeFXhL7dWwizfWg7ZzOCPYoVP/Q7dCSYO1BKWGp31oIismacgHURFQb
+         c2BC4PVmbDLvHPiQNaX4f4cAUouHgLS2XiLvgxm+9iRVkg/JEnzO5jCENrYCnOiPnHFJ
+         UmWQb/82TtYL92nTc2iluraKsc6qR4236oxGUngJpcNnBTjHVEeJHO4D0hNHuHgGvESi
+         pW6A==
+X-Gm-Message-State: AOJu0YwQv+huYvGvWQq2TYISmtupn2bCpzxwwgcocc+jQUOU0tLcoGjy
+	1HL1Vz2MLARj9Y+hMiv4hpj+w6C2OcjYQNnLdvPEJvD1mqOyKMS5q76ebONBh7OSEVrdqbfaJN7
+	cVOgSt0hDULc66q/FWOJ+NeRE6jZy4XyG9PaU0w==
+X-Gm-Gg: ASbGncvB1apRBEzxCUtti0MZ+Fj42JL6r8ocS2ZOVQOKnxvGeRdRXAgixsELlqfJSF/
+	au3imd4iYnB/uZ2d9uJ23FMPHvv5f3oUaTyIRCDlmOoichLnOcUUXckN3LcLRjul/LfMcFoXgNP
+	xNecWA+u5jxLX6mWcJxQDkoT6hR8Xy/e0=
+X-Google-Smtp-Source: AGHT+IF0jKCY6qBfrrbWJutfc3aUfMOlMt2zBXsEqu/zkNv0mZoBUk28w6GwEr1MaUwndic1EXLiRZCU9DSDvgZx0mg=
+X-Received: by 2002:ac8:7d51:0:b0:477:5d31:9c3f with SMTP id
+ d75a77b69052e-494527d4685mr283612521cf.42.1747120872990; Tue, 13 May 2025
+ 00:21:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512225840.826249-1-joannelkoong@gmail.com> <20250512225840.826249-11-joannelkoong@gmail.com>
-In-Reply-To: <20250512225840.826249-11-joannelkoong@gmail.com>
+References: <20250513042049.63619-2-chenlinxuan@uniontech.com>
+In-Reply-To: <20250513042049.63619-2-chenlinxuan@uniontech.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 13 May 2025 09:19:05 +0200
-X-Gm-Features: AX0GCFvvguO_3BLqDsKf0F6irP7EVNlb36-aGaxmfYb7COmrkDCTob05IkXsbJA
-Message-ID: <CAJfpegs=3mhpQeXhu37HN=p846UFzxEg3NM9awwLwU+cKr1NZw@mail.gmail.com>
-Subject: Re: [PATCH v6 10/11] fuse: optimize direct io large folios processing
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm, 
-	jlayton@kernel.org, jefflexu@linux.alibaba.com, josef@toxicpanda.com, 
-	willy@infradead.org, kernel-team@meta.com, Bernd Schubert <bschubert@ddn.com>
+Date: Tue, 13 May 2025 09:21:01 +0200
+X-Gm-Features: AX0GCFseOYu9DYFE8yAl84-gPqgQft2sZTfecQhV4mIznFelrLabrsX9eiIzL6E
+Message-ID: <CAJfpeguWa-gWj-2WBWY=UVXATHKvAPKYMj7nbxTTg-_=0+hOxw@mail.gmail.com>
+Subject: Re: [PATCH] fs: fuse: add dev id to /dev/fuse fdinfo
+To: Chen Linxuan <chenlinxuan@uniontech.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 13 May 2025 at 00:59, Joanne Koong <joannelkoong@gmail.com> wrote:
+On Tue, 13 May 2025 at 06:21, Chen Linxuan <chenlinxuan@uniontech.com> wrote:
 >
-> Optimize processing folios larger than one page size for the direct io
-> case. If contiguous pages are part of the same folio, collate the
-> processing instead of processing each page in the folio separately.
+> This commit add fuse connection device id to
+> fdinfo of opened /dev/fuse files.
+>
+> Related discussions can be found at links below.
 
-This patch is sort of special in the series, since the others are
-basically no-op until large folios are enabled.
+Applied thanks.
 
-Did you validate this in particular?  Is there a good way to test
-direct I/O on a buffer with mixed folio sizes?
-
-Thanks,
 Miklos
 
