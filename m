@@ -1,101 +1,199 @@
-Return-Path: <linux-fsdevel+bounces-48880-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48881-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1103AB5331
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 12:50:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63014AB530D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 12:44:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C89A57B7DE9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 10:40:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12E5A167412
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 10:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95852239E69;
-	Tue, 13 May 2025 10:42:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 460CD2417E6;
+	Tue, 13 May 2025 10:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="In1hmpun"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g0SavODX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UOOyyqUY";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="g0SavODX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="UOOyyqUY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9456523F424
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 10:42:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C629239E69
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 10:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747132925; cv=none; b=NdExE+bKXV8rtUMj3LpOfHQjKh2IUX9IGvS1M2XEZwAzuZbwEH6lIdxAN8zQt3wnQv+xSOZc0N5zA1U7Zqn8XPSS+/kYWYw1GCF5CdCgNFTfsqtuz5DsDnn4V3yrMvT+dT9VwPVId1qgG3TMfGXkf6169fOIkRwElmVJ4CiPHLc=
+	t=1747133043; cv=none; b=oTB8G9Y0309oMXWcWFPlyL7V2bVq2n+yQmsZwruOLH9TCO5bVtaWY0y/kM4ckIPBBPX9NoppPQU3isZIKu4gCI5DzzlxYYrmoEVKYt7tOCsdSZUL306kCWgx6rtU8RntmQ7lTYuYCb8p4/Fc1cSxSJhP8sAXXIFMd3sQUBawGX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747132925; c=relaxed/simple;
-	bh=PpkLE4bdcSVatVRZIRFo2nmrSWSvduXDyMtAL26tOmA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n2bYyBgzn9FQawF6vGsbWWWFWLpvOd3PxeGsJ2ETFV1hV6peoRjjBFv9Que+REPfAKroNH+vaXQJrg+DEa6VdwgFlojpSunfcrrgwhSbFyMXMyxQokfTjxvPgn5o0YVs2r0Uq4baXIIr8C7C+rOwxE54VJvZ1QGqz3EHYPxft0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=In1hmpun; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad1a87d93f7so829196866b.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 03:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1747132921; x=1747737721; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PpkLE4bdcSVatVRZIRFo2nmrSWSvduXDyMtAL26tOmA=;
-        b=In1hmpunk4Os8dUk4GFed1tGGAF2PYZMTgKfG+JrHvHw0r+zu1ERRf/faYbXcntjlG
-         McBN7H5lbX3uNTfT6VqhWRhiu6j1Twp+hfxG7pTiM4O4sMdYHeMExswAflzuki2+bQNC
-         Lt7oO7ywkyLmbDg3nw//EkVX3zN6W/YCim3fepJbK4sF0BZPm3NYvujzZWrmCVgmHLYj
-         F1vKdtIEQWNy9xsorbjhJ2qWZENniIVugTnnO5OArADmCXmxNakdxsQEg+NHzVuiok4W
-         2teeRlCY2kxCEH5i/JLepi0lnx4fyBVwVMs+W2QLSWZu5M0gYbRN7mS8TOlFgnN90QIU
-         LQvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747132921; x=1747737721;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PpkLE4bdcSVatVRZIRFo2nmrSWSvduXDyMtAL26tOmA=;
-        b=pi3FeczsmKNIv37aj2NlBFhbAIERFMq+Hmw8C5l+7R2Q2coBphbuTYWTdkYQiLFnZK
-         5cSLcAntkCD3cryY9ruMTkoh38EiEN/SJxeE9wUa/awNC0ixhD9YYKS/3TE+U2lOsf9H
-         hTQeaLkCSv26bmuRhfecxXLx/fQ5pDeC7SssTB3sbA1u6mb7UT+TI9/0YoF+Va/8e5YT
-         bVrVcGfcy6JtrkKKx5fkRDFyKZ6iV0by32KuYnhYtzCT6mRy3bB7k5LMYWR9q2k93NZp
-         mLe9IGpZY/06QgyCmAr61FaSjzdbFs4WgvXeSFIs6Uu74KVyxECGla6bltCPHisljU65
-         zAjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWKy2WLt0xCXHEYauM+OMa9Qee6ZQErJAkbCjI18u6zB/3LiYJbRUpEou9QdpMhiQOAAkEMEdGKxvYub/vl@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbrsoaS2nmB3lLfF/dhtP1DX40bZpdJ8KIiLWtSmCgKAojSkpI
-	xm8+iczYSVkJqvVewR1tDYW3mDyB9NVBP9h2X2XgiHrn12KLAC3lHBcfTMSXLL2DwXOO9Vf5nEr
-	/wn89ecekco+zfF+otbKep4hatrxV2Yd+9I2Y7g==
-X-Gm-Gg: ASbGncuJrOV9hgsCyJrmbSxSfelxSGFcq89bff+HLmnsK2+JCF9p/zMp3s4Ks4gDemG
-	2QxQWVtbh0gd0hRsy1JziXVryBQ9cCcVcLik6JdxByLZd/ptu4BxnwqJeL54ga69C/RNUO8UXsX
-	a5zou8X0mz8qmXDTwzTehnjF/Haae5niWSipxhS/wIaQMYjOJR5Ti6zRRmqaIAhA==
-X-Google-Smtp-Source: AGHT+IG/QGsGyv4Ia4Wsh2r1sJHTSLLfE8cawvhW9uxg8cG6FnAm+n/draAgvW12YWHrgqzue3NkOhUdqobga1cF4p8=
-X-Received: by 2002:a17:907:94d1:b0:ad2:46b2:78ad with SMTP id
- a640c23a62f3a-ad246b2859emr938581966b.24.1747132920838; Tue, 13 May 2025
- 03:42:00 -0700 (PDT)
+	s=arc-20240116; t=1747133043; c=relaxed/simple;
+	bh=JOMeqyEoDj4vkesUvdnVnpqlFYDHJBvDc1WYqwSSUOE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CsCEjUKdeMHXKHGdSCxu82n7qvld+hMM0wPOYy51Etnbr9R5VKrWaoqMS8oJaJuRPvhrfLWLDUcXEc14JEUw4g8tBqTFcikhD9woKWms+qXvOIlNOvmIJzTu3Q0hzhmsYhLrsWPc8tQ21iJHlxdddbvcfjDLbaa7cKDA3Oqdyw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g0SavODX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UOOyyqUY; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=g0SavODX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=UOOyyqUY; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 04F1A211A7;
+	Tue, 13 May 2025 10:44:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747133040; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gqRhh12uOMrMoumVgK2eTFLenrim4mZSK8O3H6qWdK0=;
+	b=g0SavODXjGqhOM+54LKGeEX+N06siCnd4d/LYlfGVwgYBCp+mUBpkKwFLrjN0jeBZcnjbk
+	LLaEkqZTsVfbdbFzhqUXmnpELZBifkFb4cMOicXpnva1X53M8/WofvnV5p1DMKIz04xNCZ
+	yYZ5kOdpODl+rcm/EUnlLAVw50XaOzw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747133040;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gqRhh12uOMrMoumVgK2eTFLenrim4mZSK8O3H6qWdK0=;
+	b=UOOyyqUYcB0ETv5/lI/kHyjlthOL60FvbOeuYcyRiDZB9sGaLjc5uUA2WCKkkn835Ms+g3
+	HwAnvXY+2WXrKSAw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=g0SavODX;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=UOOyyqUY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747133040; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gqRhh12uOMrMoumVgK2eTFLenrim4mZSK8O3H6qWdK0=;
+	b=g0SavODXjGqhOM+54LKGeEX+N06siCnd4d/LYlfGVwgYBCp+mUBpkKwFLrjN0jeBZcnjbk
+	LLaEkqZTsVfbdbFzhqUXmnpELZBifkFb4cMOicXpnva1X53M8/WofvnV5p1DMKIz04xNCZ
+	yYZ5kOdpODl+rcm/EUnlLAVw50XaOzw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747133040;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gqRhh12uOMrMoumVgK2eTFLenrim4mZSK8O3H6qWdK0=;
+	b=UOOyyqUYcB0ETv5/lI/kHyjlthOL60FvbOeuYcyRiDZB9sGaLjc5uUA2WCKkkn835Ms+g3
+	HwAnvXY+2WXrKSAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EB18A137E8;
+	Tue, 13 May 2025 10:43:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ICtiOW8iI2jPIgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 13 May 2025 10:43:59 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 34C6DA0AFB; Tue, 13 May 2025 12:43:51 +0200 (CEST)
+Date: Tue, 13 May 2025 12:43:51 +0200
+From: Jan Kara <jack@suse.cz>
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: 
+	Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>, Yangtao Li <frank.li@vivo.com>, ethan@ethancedwards.com, 
+	asahi@lists.linux.dev, brauner@kernel.org, dan.carpenter@linaro.org, 
+	ernesto@corellium.com, gargaditya08@live.com, gregkh@linuxfoundation.org, jack@suse.cz, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev, 
+	sven@svenpeter.dev, tytso@mit.edu, viro@zeniv.linux.org.uk, willy@infradead.org, 
+	slava@dubeyko.com, glaubitz@physik.fu-berlin.de
+Subject: Re: Subject: [RFC PATCH v2 0/8] staging: apfs: init APFS filesystem
+ support
+Message-ID: <itb4w3r7ypoitotmazkdkkz6tg4xewr26ffupm563aiwogarmc@prntwvbjksyb>
+References: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
+ <20250512101122.569476-1-frank.li@vivo.com>
+ <20250512234024.GA19326@eaf>
+ <63eb2228-dcec-40a6-ba02-b4f3a6e13809@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250429094644.3501450-1-max.kellermann@ionos.com>
- <20250429094644.3501450-2-max.kellermann@ionos.com> <20250429-anpassen-exkremente-98686d53a021@brauner>
- <CAKPOu+8H11mcMEn5gQYcJs5BhTt8J8Cypz73Vdp_tTHZRXgOKg@mail.gmail.com>
- <20250512-unrat-kapital-2122d3777c5d@brauner> <hzrj5b7x3rvtxt4qgjxdihhi5vjoc5gw3i35pbyopa7ccucizo@q5c42kjlkly3>
- <20250513-gebilde-beglichen-e60708a46caf@brauner>
-In-Reply-To: <20250513-gebilde-beglichen-e60708a46caf@brauner>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Tue, 13 May 2025 12:41:49 +0200
-X-Gm-Features: AX0GCFsICYnXFz6P4pIL3Hd1gP1nSyyWhZq2AVrnY-GWc43m-lXrhBG4S3e-bbk
-Message-ID: <CAKPOu+97-ZXA=rr6DbbLKFb1KoJSG7_dwgjRjJ2KXah45=8z3g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] fs: make several inode lock operations killable
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <63eb2228-dcec-40a6-ba02-b4f3a6e13809@gmail.com>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 04F1A211A7
+X-Spam-Flag: NO
+X-Spam-Score: -2.51
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[20];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,live.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TAGGED_RCPT(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FREEMAIL_CC(0.00)[gmail.com,vivo.com,ethancedwards.com,lists.linux.dev,kernel.org,linaro.org,corellium.com,live.com,linuxfoundation.org,suse.cz,vger.kernel.org,svenpeter.dev,mit.edu,zeniv.linux.org.uk,infradead.org,dubeyko.com,physik.fu-berlin.de];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Action: no action
 
-On Tue, May 13, 2025 at 9:30=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
-> Great. @Max you want to send an updated version where split into
-> separate patches?
+On Tue 13-05-25 12:13:23, Nick Chan wrote:
+> 
+> Ernesto A. Fernández 於 2025/5/13 清晨7:40 寫道:
+> > Hi Yangtao,
+> >
+> > On Mon, May 12, 2025 at 04:11:22AM -0600, Yangtao Li wrote:
+> >> I'm interested in bringing apfs upstream to the community, and perhaps
+> >> slava and adrian too.
+> > Do you have any particular use case in mind here? I don't mind putting in
+> > the work to get the driver upstream, but I don't want to be fighting people
+> > to convince them that it's needed. I'm not even sure about it myself.
+> 
+> These are the use cases I can think of:
+> 
+> 
+> 1. When running Linux on Apple Silicon Mac, accessing the xART APFS
+> volume is required for enabling some SEP functionalities.
+> 
+> 2. When running Linux on iPhone, iPad, iPod touch, Apple TV (currently
+> there are Apple A7-A11 SoC support in upstream), resizing the main APFS
+> volume is not feasible especially on A11 due to shenanigans with the
+> encrypted data volume. So the safe ish way to store a file system on the
+> disk becomes a using linux-apfs-rw on a (possibly fixed size) volume that
+> only has one file and that file is used as a loopback device.
+> 
+> (do note that the main storage do not currently work upstream and I only have storage working on A11 downstream)
+> 
+> 3. Obviously, accessing Mac files from Linux too, not sure how big of a use case that is but apparently it is
+> big enough for hfsplus to continue receive patches here and there.
 
-So this is about fear of not-so-perfect existing code calling this.
-Yes, will post splitted v2 today.
+I can see that accessing APFS filesystem is useful at times. But the
+question is: why do we need it in the kernel? Why isn't a FUSE driver
+enough? Because for relatively niche usecase like this that is a much more
+acceptable (and easier to maintain) choice.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
