@@ -1,313 +1,202 @@
-Return-Path: <linux-fsdevel+bounces-48910-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A93EAB5918
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 17:52:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18C83AB598D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 18:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E736C3B81C5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 15:52:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D6B189C7F9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 16:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8955F2BE7A0;
-	Tue, 13 May 2025 15:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b="H1ppq3Kd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720F92BEC2B;
+	Tue, 13 May 2025 16:16:40 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from monticello.secure-endpoints.com (monticello.secure-endpoints.com [208.125.0.237])
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB2F2253E1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 15:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.125.0.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FA02EB1D;
+	Tue, 13 May 2025 16:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747151547; cv=none; b=ZqR5D6usyS+Yle9jSmiW+0AYcc2Dn3kqN16MqLR3G5EjPjQ3Q64Tx4FS2M21SypF0ow/q3eGeHmeVXIkljq5YLCWn90G3Cpw1C/3usB2K1669ueHN9insftOJcDS0VzWxi9bxOW22+iui/9Fodvy4p0tepNMIReaZB5x3+B6lyQ=
+	t=1747153000; cv=none; b=gweGf6yj/xQOyQRohtm5bHA+gRkVhH8A5bT/vKIXQ6x12Wumc+VvFuj4Cnw2qUqlFtjpAIZFaGR72G1aZ0CxK6ifX6NrAj7tfMy+g947DQLAd9uJWGfztiJhVu/YqGJSozsHhg/y164U9P6ZDpZ1b6/AicKp+oiweQPRwhZJbIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747151547; c=relaxed/simple;
-	bh=jmYopdwiDhMadlK9dKMeBUjgpBSTnx0+IFVA2vc/xHQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kZaRVOCHj2wzZQgaZugVFP3gApOaDqIUl7jmID0ShyzML6Nmjc2euTPX5qfOqiQUCON4MSjB2nrbvfopF4rJM9bVuHD1f1Hv0ffbIei4MCAZqSKseMBp0sYvgx+uuOterPbp7YXSjVZ82i/u+a3H0Out2FTq/t6Q7j4KVQNxjHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=auristor.com; dkim=pass (1024-bit key) header.d=auristor.com header.i=jaltman@auristor.com header.b=H1ppq3Kd; arc=none smtp.client-ip=208.125.0.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=auristor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=auristor.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=auristor.com; s=MDaemon; r=y; l=13513; t=1747151083;
-	x=1747755883; i=jaltman@auristor.com; q=dns/txt; h=Message-ID:
-	Date:MIME-Version:User-Agent:Subject:To:Cc:References:
-	Content-Language:From:Organization:Disposition-Notification-To:
-	In-Reply-To:Content-Type; z=Received:=20from=20[IPV6=3A2603=3A70
-	00=3A73c=3Abb00=3A54f7=3A844=3Af9dc=3Aa1a1]=20by=20auristor.com=
-	20(IPv6=3A2001=3A470=3A1f07=3Af77=3Affff=3A=3A312)=20(MDaemon=20
-	PRO=20v25.0.2)=20=0D=0A=09with=20ESMTPSA=20id=20md5001004701151.
-	msg=3B=20Tue,=2013=20May=202025=2011=3A44=3A43=20-0400|Message-I
-	D:=20<0583de50-1acd-4b61-911b-b1e9ed9a843e@auristor.com>|Date:=2
-	0Tue,=2013=20May=202025=2011=3A44=3A51=20-0400|MIME-Version:=201
-	.0|User-Agent:=20Mozilla=20Thunderbird|Subject:=20Re=3A=20[PATCH
-	=20v2]=20afs,=20bash=3A=20Fix=20open(O_CREAT)=20on=20an=20extant
-	=20AFS=20file=20in=0D=0A=20a=20sticky=20dir|To:=20David=20Howell
-	s=20<dhowells@redhat.com>,=0D=0A=20Christian=20Brauner=20<braune
-	r@kernel.org>|Cc:=20Alexander=20Viro=20<viro@zeniv.linux.org.uk>
-	,=0D=0A=20Etienne=20Champetier=20<champetier.etienne@gmail.com>,
-	=0D=0A=20Marc=20Dionne=20<marc.dionne@auristor.com>,=20Chet=20Ra
-	mey=20<chet.ramey@case.edu>,=0D=0A=20Steve=20French=20<sfrench@s
-	amba.org>,=20linux-afs@lists.infradead.org,=0D=0A=20openafs-deve
-	l@openafs.org,=20linux-cifs@vger.kernel.org,=0D=0A=20linux-fsdev
-	el@vger.kernel.org,=20linux-kernel@vger.kernel.org|References:=2
-	0<20250513-dividende-kursniveau-014674876b04@brauner>=0D=0A=20<2
-	0250509-deckung-glitschig-8d27cb12f09f@brauner>=0D=0A=20<2025050
-	5-erproben-zeltlager-4c16f07b96ae@brauner>=0D=0A=20<433928.17459
-	44651@warthog.procyon.org.uk>=0D=0A=20<1209711.1746527190@wartho
-	g.procyon.org.uk>=0D=0A=20<2086612.1747054957@warthog.procyon.or
-	g.uk>=0D=0A=20<2164801.1747125039@warthog.procyon.org.uk>|Conten
-	t-Language:=20en-US|From:=20Jeffrey=20E=20Altman=20<jaltman@auri
-	stor.com>|Organization:=20AuriStor,=20Inc.|Disposition-Notificat
-	ion-To:=20Jeffrey=20E=20Altman=20<jaltman@auristor.com>|In-Reply
-	-To:=20<2164801.1747125039@warthog.procyon.org.uk>|Content-Type:
-	=20multipart/signed=3B=20protocol=3D"application/pkcs7-signature
-	"=3B=20micalg=3Dsha-256=3B=20boundary=3D"------------ms020702040
-	202050001040708"; bh=jmYopdwiDhMadlK9dKMeBUjgpBSTnx0+IFVA2vc/xHQ
-	=; b=H1ppq3KdeqKt/9XCfvr0VBKWW+qXuxiZRl6xjwYHxANPquieC9ib3+7w+X6
-	tVurW9kLKae5eqcQCg64oVH4UrIGvl9c/VV0J27UFF7H3GkB0gEmTpFb1//AA13u
-	28dNyMiagjSFpZjcHGmPSaByAESFc0QusXuzeUX5AcLp/eL8=
-X-MDAV-Result: clean
-X-MDAV-Processed: monticello.secure-endpoints.com, Tue, 13 May 2025 11:44:43 -0400
-Received: from [IPV6:2603:7000:73c:bb00:54f7:844:f9dc:a1a1] by auristor.com (IPv6:2001:470:1f07:f77:ffff::312) (MDaemon PRO v25.0.2) 
-	with ESMTPSA id md5001004701151.msg; Tue, 13 May 2025 11:44:43 -0400
-X-Spam-Processed: monticello.secure-endpoints.com, Tue, 13 May 2025 11:44:43 -0400
-	(not processed: message from trusted or authenticated source)
-X-MDRemoteIP: 2603:7000:73c:bb00:54f7:844:f9dc:a1a1
-X-MDHelo: [IPV6:2603:7000:73c:bb00:54f7:844:f9dc:a1a1]
-X-MDArrival-Date: Tue, 13 May 2025 11:44:43 -0400
-X-MDOrigin-Country: US, NA
-X-Authenticated-Sender: jaltman@auristor.com
-X-Return-Path: prvs=1228a7c52e=jaltman@auristor.com
-X-Envelope-From: jaltman@auristor.com
-X-MDaemon-Deliver-To: linux-fsdevel@vger.kernel.org
-Message-ID: <0583de50-1acd-4b61-911b-b1e9ed9a843e@auristor.com>
-Date: Tue, 13 May 2025 11:44:51 -0400
+	s=arc-20240116; t=1747153000; c=relaxed/simple;
+	bh=zV40bY8h3kW0Hy4xgRE4IG3svvmYOVPxkHpIL4ByJ/M=;
+	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=PAkTnORWSUEbaJ2hD2euZEPa9ZvZ/TJqV6W+loQRZ+q8pbySWpl5WrSw7KQkwb53JngDtHEIIuKN1Nr3kJAvhyFg5FPB3GsjvvlaIzuXEFRYRocd7ufFwoQFo6xYuTA3mVw1c1PTJRBZhFk2sBOnJuWEhJyd1LE2U1DvqVqRGYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:58534)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uEraV-0057bO-9O; Tue, 13 May 2025 09:30:35 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:59502 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uEraS-00FteB-TR; Tue, 13 May 2025 09:30:34 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Kees Cook <keescook@chromium.org>,  Jann Horn <jannh@google.com>,
+  Christian Brauner <brauner@kernel.org>,  Jorge Merlino
+ <jorge.merlino@canonical.com>,  Alexander Viro <viro@zeniv.linux.org.uk>,
+  Thomas Gleixner <tglx@linutronix.de>,  Andy Lutomirski <luto@kernel.org>,
+  Sebastian Andrzej Siewior <bigeasy@linutronix.de>,  Andrew Morton
+ <akpm@linux-foundation.org>,  linux-mm@kvack.org,
+  linux-fsdevel@vger.kernel.org,  John Johansen
+ <john.johansen@canonical.com>,  Paul Moore <paul@paul-moore.com>,  James
+ Morris <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>,
+  Stephen Smalley <stephen.smalley.work@gmail.com>,  Eric Paris
+ <eparis@parisplace.org>,  Richard Haines
+ <richard_c_haines@btinternet.com>,  Casey Schaufler
+ <casey@schaufler-ca.com>,  Xin Long <lucien.xin@gmail.com>,  "David S.
+ Miller" <davem@davemloft.net>,  Todd Kjos <tkjos@google.com>,  Ondrej
+ Mosnacek <omosnace@redhat.com>,  Prashanth Prahlad <pprahlad@redhat.com>,
+  Micah Morton <mortonm@chromium.org>,  Fenghua Yu <fenghua.yu@intel.com>,
+  Andrei Vagin <avagin@gmail.com>,  linux-kernel@vger.kernel.org,
+  apparmor@lists.ubuntu.com,  linux-security-module@vger.kernel.org,
+  selinux@vger.kernel.org,  linux-hardening@vger.kernel.org,
+  oleg@redhat.com
+In-Reply-To: <h65sagivix3zbrppthcobnysgnlrnql5shiu65xyg7ust6mc54@cliutza66zve>
+	(Mateusz Guzik's message of "Tue, 13 May 2025 15:05:45 +0200")
+References: <20221006082735.1321612-1-keescook@chromium.org>
+	<20221006082735.1321612-2-keescook@chromium.org>
+	<20221006090506.paqjf537cox7lqrq@wittgenstein>
+	<CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
+	<86CE201B-5632-4BB7-BCF6-7CB2C2895409@chromium.org>
+	<h65sagivix3zbrppthcobnysgnlrnql5shiu65xyg7ust6mc54@cliutza66zve>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+Date: Tue, 13 May 2025 10:29:47 -0500
+Message-ID: <87o6vw1qc4.fsf@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] afs, bash: Fix open(O_CREAT) on an extant AFS file in
- a sticky dir
-To: David Howells <dhowells@redhat.com>,
- Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
- Etienne Champetier <champetier.etienne@gmail.com>,
- Marc Dionne <marc.dionne@auristor.com>, Chet Ramey <chet.ramey@case.edu>,
- Steve French <sfrench@samba.org>, linux-afs@lists.infradead.org,
- openafs-devel@openafs.org, linux-cifs@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250513-dividende-kursniveau-014674876b04@brauner>
- <20250509-deckung-glitschig-8d27cb12f09f@brauner>
- <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
- <433928.1745944651@warthog.procyon.org.uk>
- <1209711.1746527190@warthog.procyon.org.uk>
- <2086612.1747054957@warthog.procyon.org.uk>
- <2164801.1747125039@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Jeffrey E Altman <jaltman@auristor.com>
-Organization: AuriStor, Inc.
-Disposition-Notification-To: Jeffrey E Altman <jaltman@auristor.com>
-In-Reply-To: <2164801.1747125039@warthog.procyon.org.uk>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms020702040202050001040708"
-X-MDCFSigsAdded: auristor.com
+Content-Type: text/plain
+X-XM-SPF: eid=1uEraS-00FteB-TR;;;mid=<87o6vw1qc4.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+f5aQcvtD7cJuBfQzEABOE535sdGOGPWo=
+X-Spam-Level: ****
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4970]
+	*  1.5 XMNoVowels Alpha-numberic number with no vowels
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  1.0 XMGenDplmaNmb Diploma spam phrases+possible phone number
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
+	*  0.0 T_TooManySym_01 4+ unique symbols in subject
+X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ****;Mateusz Guzik <mjguzik@gmail.com>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 787 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (1.4%), b_tie_ro: 10 (1.2%), parse: 1.65
+	(0.2%), extract_message_metadata: 21 (2.6%), get_uri_detail_list: 4.8
+	(0.6%), tests_pri_-2000: 13 (1.6%), tests_pri_-1000: 6 (0.7%),
+	tests_pri_-950: 1.33 (0.2%), tests_pri_-900: 1.08 (0.1%),
+	tests_pri_-90: 143 (18.2%), check_bayes: 139 (17.7%), b_tokenize: 15
+	(1.9%), b_tok_get_all: 14 (1.8%), b_comp_prob: 7 (0.8%),
+	b_tok_touch_all: 99 (12.6%), b_finish: 0.93 (0.1%), tests_pri_0: 574
+	(72.9%), check_dkim_signature: 0.63 (0.1%), check_dkim_adsp: 2.5
+	(0.3%), poll_dns_idle: 0.46 (0.1%), tests_pri_10: 2.3 (0.3%),
+	tests_pri_500: 10 (1.2%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-This is a cryptographically signed message in MIME format.
+Mateusz Guzik <mjguzik@gmail.com> writes:
 
---------------ms020702040202050001040708
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+> On Thu, Oct 06, 2022 at 08:25:01AM -0700, Kees Cook wrote:
+>> On October 6, 2022 7:13:37 AM PDT, Jann Horn <jannh@google.com> wrote:
+>> >On Thu, Oct 6, 2022 at 11:05 AM Christian Brauner <brauner@kernel.org> wrote:
+>> >> On Thu, Oct 06, 2022 at 01:27:34AM -0700, Kees Cook wrote:
+>> >> > The check_unsafe_exec() counting of n_fs would not add up under a heavily
+>> >> > threaded process trying to perform a suid exec, causing the suid portion
+>> >> > to fail. This counting error appears to be unneeded, but to catch any
+>> >> > possible conditions, explicitly unshare fs_struct on exec, if it ends up
+>> >>
+>> >> Isn't this a potential uapi break? Afaict, before this change a call to
+>> >> clone{3}(CLONE_FS) followed by an exec in the child would have the
+>> >> parent and child share fs information. So if the child e.g., changes the
+>> >> working directory post exec it would also affect the parent. But after
+>> >> this change here this would no longer be true. So a child changing a
+>> >> workding directoro would not affect the parent anymore. IOW, an exec is
+>> >> accompanied by an unshare(CLONE_FS). Might still be worth trying ofc but
+>> >> it seems like a non-trivial uapi change but there might be few users
+>> >> that do clone{3}(CLONE_FS) followed by an exec.
+>> >
+>> >I believe the following code in Chromium explicitly relies on this
+>> >behavior, but I'm not sure whether this code is in active use anymore:
+>> >
+>> >https://source.chromium.org/chromium/chromium/src/+/main:sandbox/linux/suid/sandbox.c;l=101?q=CLONE_FS&sq=&ss=chromium
+>> 
+>> Oh yes. I think I had tried to forget this existed. Ugh. Okay, so back to the drawing board, I guess. The counting will need to be fixed...
+>> 
+>> It's possible we can move the counting after dethread -- it seems the early count was just to avoid setting flags after the point of no return, but it's not an error condition...
+>> 
+>
+> I landed here from git blame.
+>
+> I was looking at sanitizing shared fs vs suid handling, but the entire
+> ordeal is so convoluted I'm confident the best way forward is to whack
+> the problem to begin with.
+>
+> Per the above link, the notion of a shared fs struct across different
+> processes is depended on so merely unsharing is a no-go.
+>
+> However, the shared state is only a problem for suid/sgid.
+>
+> Here is my proposal: *deny* exec of suid/sgid binaries if fs_struct is
+> shared. This will have to be checked for after the execing proc becomes
+> single-threaded ofc.
+>
+> While technically speaking this does introduce a change in behavior,
+> there is precedent for doing it and seeing if anyone yells.
+>
+> With this in place there is no point maintainig ->in_exec or checking
+> the flag.
+>
+> There is the known example of depending on shared fs_struct across exec.
+> Hopefully there is no example of depending on execing a suid/sgid binary
+> in such a setting -- it would be quite a weird setup given that for
+> security reasons the perms must not be changed.
+>
+> The upshot of this method is that any breakage will be immediately
+> visible in the form of a failed exec.
+>
+> Another route would be to do the mandatory unshare but only for
+> suid/sgid, except that would have a hidden failure (if you will).
+>
+> Comments?
 
-SSBwZXJmb3JtZWQgYSByZXZpZXcgb2YgdGhlIHVzYWdlIG9mIHZmc3VpZF9lcV9rdWlkKCkg
-YW5kIHZmc3VpZF9lcSgpLg0KSSBtb3N0bHkgYWdyZWUgd2l0aCBEYXZpZCdzIGNvbmNsdXNp
-b25zIGFuZCBhZGQgc29tZSBhZGRpdGlvbmFsIGluc2lnaHQgDQppbnRvIHRoZSBiZWhhdmlv
-ciBvZiBBRlMgc2VydmVycy4NCg0KT24gNS8xMy8yMDI1IDQ6MzAgQU0sIERhdmlkIEhvd2Vs
-bHMgd3JvdGU6DQo+IENocmlzdGlhbiBCcmF1bmVyIDxicmF1bmVyQGtlcm5lbC5vcmc+IHdy
-b3RlOg0KPg0KPj4gVGhlcmUncyBhIGZldyBvdGhlciBwbGFjZXMgd2hlcmUgd2UgY29tcGFy
-ZSB2ZnN1aWRzOg0KPj4NCj4+ICogbWF5X2RlbGV0ZSgpDQo+PiAgICAtPiBjaGVja19zdGlj
-a3koKQ0KPj4gICAgICAgLT4gX19jaGVja19zdGlja3koKQ0KPj4NCj4+ICogbWF5X2ZvbGxv
-d19saW5rKCkNCj4+DQo+PiAqIG1heV9saW5rYXQoKQ0KPj4NCj4+ICogZnN1aWRnaWRfaGFz
-X21hcHBpbmcoKQ0KPj4NCj4+IEFueW9uZSBvZiB0aG9zZSBuZWVkIHNwZWNpYWwgdHJlYXRt
-ZW50IG9uIEFGUyBhcyB3ZWxsPw0KPiBUaGF0J3MgYSBnb29kIHF1ZXN0aW9uLiAgSSB0aGlu
-ayBpdCBtaWdodCBiZSBiZXR0ZXIgdG8gc3dpdGNoIGJhY2sgdG8gdGhlIHYxDQo+IHBhdGNo
-IC0gd2hpY2ggZ2l2ZXMgbWUgdHdvIHNlcGFyYXRlIG9wcyBhbmQgcHJvdmlkZSBhIGNvdXBs
-ZSBvZiB2ZnMgd3JhcHBlcnMNCj4gZm9yIHRoZW0gYW5kIHVzZSB0aGVtIG1vcmUgd2lkZWx5
-Lg0KPg0KPiBTbywgcGVyaGFwczoNCj4NCj4gCXZmc19oYXZlX3NhbWVfb3duZXIoaW5vZGUx
-LCBpbm9kZTIpDQo+DQo+IHdoaWNoIGluZGljYXRlcyBpZiB0aGUgdHdvIGlub2RlcyBoYXZl
-IHRoZSBzYW1lIG93bmVyc2hpcCBhbmQ6DQo+DQo+IAl2ZnNfaXNfb3duZWRfYnlfbWUoaW5v
-ZGUpDQo+DQo+IHdoaWNoIGNvbXBhcmVzIHRoZSBpbm9kZSdzIG93bmVyc2hpcCB0byBjdXJy
-ZW50X2ZzdWlkKCkgYnkgZGVmYXVsdC4NCg0KVGhlIHVzZSBvZiB0d28gZGlzdGluY3QgaW5v
-ZGUgb3BlcmF0aW9ucyBtYWtlIHRoZSBtb3N0IHNlbnNlIHRvIG1lLsKgIEFuIA0KYWx0ZXJu
-YXRpdmUgaXMgdG8gcHJvdmlkZSBvbmUgaW5vZGUgb3BlcmF0aW9uIHdoaWNoIHNldHMgdHdv
-IGJvb2xlYW4gDQpvdXRwdXQgcGFyYW1ldGVyczoNCg0KaW50ICgqY2hlY2tfb3duZXJzaGlw
-KShzdHJ1Y3QgaW5vZGUgKmNvbnN0IGlub2RlLCBzdHJ1Y3QgaW5vZGUgKmNvbnN0IA0KcGFy
-ZW50LGludCAqaXNfb3duZWRfYnlfbWUsIGludCAqaXNfb3duZWRfYnlfcGFyZW50KTsgd2hl
-cmUgDQonaXNfb3duZWRfYnlfbWUnIG9yICdpc19vd25lZF9ieV9wYXJlbnQnIG1pZ2h0IGJl
-IE5VTEwgaWYgdGhlIGFuc3dlciBpcyANCm5vdCByZXF1aXJlZC4gSG93ZXZlciwgSSBwcmVm
-ZXIgRGF2aWQncyBzdWdnZXN0aW9uLg0KDQo+IFRoZSBmb2xsb3dpbmcgcGxhY2VzIG5lZWQg
-dG8gYmUgY29uc2lkZXJlZCBmb3IgYmVpbmcgY2hhbmdlZDoNCj4NCj4gICAoKikgY2hvd25f
-b2soKQ0KPiAgICgqKSBjaGdycF9vaygpDQo+DQo+ICAgICAgIFNob3VsZCBjYWxsIHZmc19p
-c19vd25lZF9ieV9tZSgpLiAgUG9zc2libHkgdGhlc2UgbmVlZCB0byBkZWZlciBhbGwgdGhl
-aXINCj4gICAgICAgY2hlY2tzIHRvIHRoZSBuZXR3b3JrIGZpbGVzeXN0ZW0gYXMgdGhlIGlu
-dGVycHJldGF0aW9uIG9mIHRoZSB0YXJnZXQNCj4gICAgICAgVUlEL0dJRCBkZXBlbmRzIG9u
-IHRoZSBuZXRmcy4NCg0KU2luY2UgdGhlIGxhdGUgMTk4MHMsIGFmcyBzZXJ2ZXJzIGRvIG5v
-dCBwZXJtaXQgY2hhbmdlcyB0byBvd25lciBvciANCmdyb3VwIG9uIGZpbGVzIHVubGVzcyB0
-aGUgY2FsbGVyIGlzIGEgbWVtYmVyIG9mIHRoZSANCnN5c3RlbTphZG1pbmlzdHJhdG9ycyBn
-cm91cC7CoCBUaGUgZmlsZSBzeXN0ZW0gY2xpZW50cyBjYW5ub3QgbWFrZSB0aGlzIA0KZGV0
-ZXJtaW5hdGlvbiB0aGVtc2VsdmVzLsKgIElmIExpbnV4IHdpc2hlcyB0byBmdXJ0aGVyIHJl
-c3RyaWN0IHRoZSANCm9wZXJhdGlvbiB0byBjdXJyZW50IG93bmVyLCB0aGVuIHVzZSBvZiBh
-IHZmc19pc19vd25lZF9ieV9tZSgpIGxpa2UgDQppbm9kZSBvcGVyYXRpb24gc2hvdWxkIGJl
-IHVzZWQuDQoNClNvbWV0aGluZyB0byBjb25zaWRlciBmb3IgZnV0dXJlIEFGUzMgb3IgWUZT
-IHByb3RvY29sIGNoYW5nZXMgaXMgdG8gDQpyZXBvcnQgdGhlIHJpZ2h0IHRvIGNob3dufGNo
-Z3JwIHRvIHRoZSBjbGllbnQgYXMgcGFydCBvZiBhIHRoZSANCkZldGNoU3RhdHVzIHJlc3Vs
-dCBzZXQuDQoNCj4gICAoKikgZG9fY29yZWR1bXAoKQ0KPg0KPiAgICAgICBTaG91bGQgcHJv
-YmFibHkgY2FsbCB2ZnNfaXNfb3duZWRfYnlfbWUoKSB0byBjaGVjayB0aGF0IHRoZSBmaWxl
-IGNyZWF0ZWQNCj4gICAgICAgaXMgb3duZWQgYnkgdGhlIGNhbGxlciAtIGJ1dCB0aGUgY2hl
-Y2sgdGhhdCdzIHRoZXJlIG1pZ2h0IGJlIHN1ZmZpY2llbnQuDQpJIGFncmVlLg0KPiAgICgq
-KSBpbm9kZV9vd25lcl9vcl9jYXBhYmxlKCkNCj4NCj4gICAgICAgU2hvdWxkIGNhbGwgdmZz
-X2lzX293bmVkX2J5X21lKCkuDQpJIGFncmVlLg0KPiAgICAgICBJJ20gbm90IHN1cmUgd2hl
-dGhlciB0aGUgbmFtZXNwYWNlDQo+ICAgICAgIG1hcHBpbmcgbWFrZXMgc2Vuc2UgaW4gc3Vj
-aCBhIGNhc2UsIGJ1dCBpdCBwcm9iYWJseSBjb3VsZCBiZSB1c2VkLg0KPg0KPiAgICgqKSB2
-ZnNfc2V0bGVhc2UoKQ0KPg0KPiAgICAgICBTaG91bGQgY2FsbCB2ZnNfaXNfb3duZWRfYnlf
-bWUoKS4gIEFjdHVhbGx5LCBpdCBzaG91bGQgcXVlcnkgaWYgbGVhc2luZw0KPiAgICAgICBp
-cyBwZXJtaXR0ZWQuDQo+DQo+ICAgICAgIEFsc28sIHNldHRpbmcgbG9ja3MgY291bGQgcGVy
-aGFwcyBkbyB3aXRoIGEgcGVybWlzc2lvbiBjYWxsIHRvIHRoZQ0KPiAgICAgICBmaWxlc3lz
-dGVtIGRyaXZlciBhcyBBRlMsIGZvciBleGFtcGxlLCBoYXMgYSBsb2NrIHBlcm1pc3Npb24g
-Yml0IGluIHRoZQ0KPiAgICAgICBBQ0wsIGJ1dCBzaW5jZSB0aGUgQUZTIHNlcnZlciBjaGVj
-a3MgdGhhdCB3aGVuIHRoZSBSUEMgY2FsbCBpcyBtYWRlLCBpdCdzDQo+ICAgICAgIHByb2Jh
-Ymx5IHVubmVjZXNzYXJ5Lg0KDQpUaGUgQUZTIHNlcnZlciB3aWxsIGdyYW50IGxvY2tzIGJh
-c2VkIHVwb24gdGhlIGZvbGxvd2luZyBydWxlczoNCg0KICAqIHRoZSBjYWxsZXIgaXMgZ3Jh
-bnRlZCB0aGUgUFJTRlNfTE9DSyByaWdodCAoU2hhcmVkIGxvY2sgb25seSkNCiAgKiB0aGUg
-Y2FsbGVyIGlzIGdyYW50ZWQgdGhlIFBSU0ZTX1dSSVRFIHJpZ2h0IChTaGFyZWQgb3IgRXhj
-bHVzaXZlIGxvY2spDQogICogdGhlIGNhbGxlciBpcyB0aGUgZmlsZSBvd25lciBhbmQgaXMg
-Z3JhbnRlZCB0aGUgUFJTRlNfSU5TRVJUIHJpZ2h0DQogICAgKFNoYXJlZCBvciBFeGNsdXNp
-dmUgbG9jaykNCg0KVGhlIGNsaWVudCBoYXMgZW5vdWdoIGluZm9ybWF0aW9uIHRvIGltcGxl
-bWVudCBhIGxvY2sgcGVybWlzc2lvbiBjaGVjayANCmlmIHRoZXJlIHdhcyBzdWNoIGFuIGlu
-b2RlIG9wZXJhdGlvbi4NCg0KPiAgICgqKSBhY2xfcGVybWlzc2lvbl9jaGVjaygpDQo+ICAg
-KCopIHBvc2l4X2FjbF9wZXJtaXNzaW9uKCkNCj4NCj4gICAgICAgVUlEcyBhcmUgcGFydCBv
-ZiB0aGVzZSBBQ0xzLCBzbyBubyBjaGFuZ2UgcmVxdWlyZWQuICBBRlMgaW1wbGVtZW50cyBp
-dHMNCj4gICAgICAgb3duIEFDTHMgYW5kIGV2YWx1YXRlcyB0aGVtIGluIC0+cGVybWlzc2lv
-bigpIGFuZCBvbiB0aGUgc2VydmVyLg0KYWNsX3Blcm1pc3Npb25fY2hlY2soKSBhbmQgcG9z
-aXhfYWNsX3Blcm1pc3Npb24oKSB3aWxsIG5vdCBiZSBjYWxsZWQgZm9yIA0KQUZTLsKgIEhv
-d2V2ZXIsIGl0IGl0IHByb2JhYmx5IHdvcnRoIGFkZGluZyB0aGUgdmZzX2lzX293bmVkX2J5
-X21lKCkgdG8gDQphY2xfcGVybWlzc2lvbl9jaGVjaygpIGluIGNhc2UgdGhlcmUgaXMgYW5v
-dGhlciBuZXR3b3JrIGZpbGVzeXN0ZW0gd2hpY2ggDQpyZXF1aXJlcyBub24tdWlkIG93bmVy
-c2hpcCBjaGVja3MgYW5kIHdhbnRzIHRvIHVzZSBnZW5lcmljX3Blcm1pc3Npb24oKS4NCj4g
-ICAoKikgbWF5X2ZvbGxvd19saW5rKCkNCj4NCj4gICAgICAgU2hvdWxkIGNhbGwgdmZzX2lz
-X293bmVkX2J5X21lKCkgYW5kIGFsc28gdmZzX2hhdmVfc2FtZV9vd25lcigpIG9uIHRoZQ0K
-PiAgICAgICB0aGUgbGluayBhbmQgaXRzIHBhcmVudCBkaXIuICBUaGUgbGF0dGVyIG9ubHkg
-YXBwbGllcyBvbiB3b3JsZC13cml0YWJsZQ0KPiAgICAgICBzdGlja3kgZGlycy4NCkkgYWdy
-ZWUNCj4gICAoKikgbWF5X2NyZWF0ZV9pbl9zdGlja3koKQ0KPg0KPiAgICAgICBUaGUgaW5p
-dGlhbCBzdWJqZWN0IG9mIHRoaXMgcGF0Y2guICBTaG91bGQgY2FsbCB2ZnNfaXNfb3duZWRf
-YnlfbWUoKSBhbmQNCj4gICAgICAgYWxzbyB2ZnNfaGF2ZV9zYW1lX293bmVyKCkgYm90aC4N
-CkkgYWdyZWUuDQo+ICAgKCopIF9fY2hlY2tfc3RpY2t5KCkNCj4NCj4gICAgICAgU2hvdWxk
-IGNhbGwgdmZzX2lzX293bmVkX2J5X21lKCkgb24gYm90aCB0aGUgZGlyIGFuZCB0aGUgaW5v
-ZGUuDQpJIGFncmVlLg0KPiAgICgqKSBtYXlfZGVkdXBlX2ZpbGUoKQ0KPg0KPiAgICAgICBT
-aG91bGQgY2FsbCB2ZnNfaXNfb3duZWRfYnlfbWUoKS4NCkkgYWdyZWUuDQo+DQo+ICAgKCop
-IElNQSBwb2xpY3kgb3BzLg0KPg0KPiAgICAgICBObyBpZGVhLg0KDQpJIGFtIG5vdCBmYW1p
-bGlhciB3aXRoIHRoZSBJbnRlZ3JpdHkgTWVhc3VyZW1lbnQgT3BlcmF0aW9ucy4gSG93ZXZl
-ciwgDQpsb29raW5nIGF0IHRoZSB1c2FnZSBvZiB0aGUgaW1hX3J1bGVfZW50cnkgZm93bmVy
-X29wIGFuZCBmZ3JvdXBfb3AgDQpvcGVyYXRpb25zLCBJIGRvIG5vdCBiZWxpZXZlIHRoZSBw
-cm9wb3NlZCB2ZnNfaXNfb3duZWRfYnlfbWUoKSBjb3VsZCBiZSANCnVzZWQgdG8gaW1wbGVt
-ZW50IGZvd25lcl9vcC7CoCBJZiBJTUEgc2hvdWxkIHdvcmsgZmlsZXN5c3RlbXMgd2hpY2gg
-DQpjYW5ub3QgcmVseSB1cG9uIGxvY2FsIHVpZCBjb21wYXJpc29ucyBmb3Igb3duZXIgYW5k
-IGdyb3VwLCB0aGVuIEkgdGhpbmsgDQp0aGUgSU1BIGZvd25lcl9vcCBhbmQgZmdyb3VwX29w
-IHdvdWxkIHJlcXVpcmUgYW4gYWx0ZXJuYXRpdmUgDQppbXBsZW1lbnRhdGlvbi7CoCBBdCB0
-aGUgbW9tZW50LCBJTUEgaXMgdW5saWtlbHkgdG8gd29yayBwcm9wZXJseSB3aXRoIEFGUy4N
-Cg0KDQo+IERhdmlkDQoNCkplZmZyZXkgQWx0bWFuDQoNCg0KDQo=
+What is the problem that is trying to be fixed?
 
---------------ms020702040202050001040708
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+A uapi change to not allow sharing a fs_struct for processes that change
+their cred on exec seems possible.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
-DHEwggXSMIIEuqADAgECAhBAAYJpmi/rPn/F0fJyDlzMMA0GCSqGSIb3DQEBCwUAMDoxCzAJ
-BgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEz
-MB4XDTIyMDgwNDE2MDQ0OFoXDTI1MTAzMTE2MDM0OFowcDEvMC0GCgmSJomT8ixkAQETH0Ew
-MTQxMEQwMDAwMDE4MjY5OUEyRkQyMDAwMjMzQ0QxGTAXBgNVBAMTEEplZmZyZXkgRSBBbHRt
-YW4xFTATBgNVBAoTDEF1cmlTdG9yIEluYzELMAkGA1UEBhMCVVMwggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQCkC7PKBBZnQqDKPtZPMLAy77zo2DPvwtGnd1hNjPvbXrpGxUb3
-xHZRtv179LHKAOcsY2jIctzieMxf82OMyhpBziMPsFAG/ukihBMFj3/xEeZVso3K27pSAyyN
-fO/wJ0rX7G+ges22Dd7goZul8rPaTJBIxbZDuaykJMGpNq4PQ8VPcnYZx+6b+nJwJJoJ46kI
-EEfNh3UKvB/vM0qtxS690iAdgmQIhTl+qfXq4IxWB6b+3NeQxgR6KLU4P7v88/tvJTpxIKkg
-9xj89ruzeThyRFd2DSe3vfdnq9+g4qJSHRXyTft6W3Lkp7UWTM4kMqOcc4VSRdufVKBQNXjG
-IcnhAgMBAAGjggKcMIICmDAOBgNVHQ8BAf8EBAMCBPAwgYQGCCsGAQUFBwEBBHgwdjAwBggr
-BgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVudHJ1c3QuY29tMEIGCCsGAQUF
-BzAChjZodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NlcnRzL3RydXN0aWRjYWEx
-My5wN2MwHwYDVR0jBBgwFoAULbfeG1l+KpguzeHUG+PFEBJe6RQwCQYDVR0TBAIwADCCASsG
-A1UdIASCASIwggEeMIIBGgYLYIZIAYb5LwAGAgEwggEJMEoGCCsGAQUFBwIBFj5odHRwczov
-L3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRpZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRt
-bDCBugYIKwYBBQUHAgIwga0MgapUaGlzIFRydXN0SUQgQ2VydGlmaWNhdGUgaGFzIGJlZW4g
-aXNzdWVkIGluIGFjY29yZGFuY2Ugd2l0aCBJZGVuVHJ1c3QncyBUcnVzdElEIENlcnRpZmlj
-YXRlIFBvbGljeSBmb3VuZCBhdCBodHRwczovL3NlY3VyZS5pZGVudHJ1c3QuY29tL2NlcnRp
-ZmljYXRlcy9wb2xpY3kvdHMvaW5kZXguaHRtbDBFBgNVHR8EPjA8MDqgOKA2hjRodHRwOi8v
-dmFsaWRhdGlvbi5pZGVudHJ1c3QuY29tL2NybC90cnVzdGlkY2FhMTMuY3JsMB8GA1UdEQQY
-MBaBFGphbHRtYW5AYXVyaXN0b3IuY29tMB0GA1UdDgQWBBQB+nzqgljLocLTsiUn2yWqEc2s
-gjAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwDQYJKoZIhvcNAQELBQADggEBAJwV
-eycprp8Ox1npiTyfwc5QaVaqtoe8Dcg2JXZc0h4DmYGW2rRLHp8YL43snEV93rPJVk6B2v4c
-WLeQfaMrnyNeEuvHx/2CT44cdLtaEk5zyqo3GYJYlLcRVz6EcSGHv1qPXgDT0xB/25etwGYq
-utYF4Chkxu4KzIpq90eDMw5ajkexw+8ARQz4N5+d6NRbmMCovd7wTGi8th/BZvz8hgKUiUJo
-Qle4wDxrdXdnIhCP7g87InXKefWgZBF4VX21t2+hkc04qrhIJlHrocPG9mRSnnk2WpsY0MXt
-a8ivbVKtfpY7uSNDZSKTDi1izEFH5oeQdYRkgIGb319a7FjslV8wggaXMIIEf6ADAgECAhBA
-AXA7OrqBjMk8rp4OuNQSMA0GCSqGSIb3DQEBCwUAMEoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxJzAlBgNVBAMTHklkZW5UcnVzdCBDb21tZXJjaWFsIFJvb3QgQ0EgMTAe
-Fw0yMDAyMTIyMTA3NDlaFw0zMDAyMTIyMTA3NDlaMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQK
-EwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRydXN0SUQgQ0EgQTEzMIIBIjANBgkqhkiG9w0BAQEF
-AAOCAQ8AMIIBCgKCAQEAu6sUO01SDD99PM+QdZkNxKxJNt0NgQE+Zt6ixaNP0JKSjTd+SG5L
-wqxBWjnOgI/3dlwgtSNeN77AgSs+rA4bK4GJ75cUZZANUXRKw/et8pf9Qn6iqgB63OdHxBN/
-15KbM3HR+PyiHXQoUVIevCKW8nnlWnnZabT1FejOhRRKVUg5HACGOTfnCOONrlxlg+m1Vjgn
-o1uNqNuLM/jkD1z6phNZ/G9IfZGI0ppHX5AA/bViWceX248VmefNhSR14ADZJtlAAWOi2un0
-3bqrBPHA9nDyXxI8rgWLfUP5rDy8jx2hEItg95+ORF5wfkGUq787HBjspE86CcaduLka/Bk2
-VwIDAQABo4IChzCCAoMwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAYYwgYkG
-CCsGAQUFBwEBBH0wezAwBggrBgEFBQcwAYYkaHR0cDovL2NvbW1lcmNpYWwub2NzcC5pZGVu
-dHJ1c3QuY29tMEcGCCsGAQUFBzAChjtodHRwOi8vdmFsaWRhdGlvbi5pZGVudHJ1c3QuY29t
-L3Jvb3RzL2NvbW1lcmNpYWxyb290Y2ExLnA3YzAfBgNVHSMEGDAWgBTtRBnA0/AGi+6ke75C
-5yZUyI42djCCASQGA1UdIASCARswggEXMIIBEwYEVR0gADCCAQkwSgYIKwYBBQUHAgEWPmh0
-dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20vY2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRl
-eC5odG1sMIG6BggrBgEFBQcCAjCBrQyBqlRoaXMgVHJ1c3RJRCBDZXJ0aWZpY2F0ZSBoYXMg
-YmVlbiBpc3N1ZWQgaW4gYWNjb3JkYW5jZSB3aXRoIElkZW5UcnVzdCdzIFRydXN0SUQgQ2Vy
-dGlmaWNhdGUgUG9saWN5IGZvdW5kIGF0IGh0dHBzOi8vc2VjdXJlLmlkZW50cnVzdC5jb20v
-Y2VydGlmaWNhdGVzL3BvbGljeS90cy9pbmRleC5odG1sMEoGA1UdHwRDMEEwP6A9oDuGOWh0
-dHA6Ly92YWxpZGF0aW9uLmlkZW50cnVzdC5jb20vY3JsL2NvbW1lcmNpYWxyb290Y2ExLmNy
-bDAdBgNVHQ4EFgQULbfeG1l+KpguzeHUG+PFEBJe6RQwHQYDVR0lBBYwFAYIKwYBBQUHAwIG
-CCsGAQUFBwMEMA0GCSqGSIb3DQEBCwUAA4ICAQB/7BKcygLX6Nl4a03cDHt7TLdPxCzFvDF2
-bkVYCFTRX47UfeomF1gBPFDee3H/IPlLRmuTPoNt0qjdpfQzmDWN95jUXLdLPRToNxyaoB5s
-0hOhcV6H08u3FHACBif55i0DTDzVSaBv0AZ9h1XeuGx4Fih1Vm3Xxz24GBqqVudvPRLyMJ7u
-6hvBqTIKJ53uCs3dyQLZT9DXnp+kJv8y7ZSAY+QVrI/dysT8avtn8d7k7azNBkfnbRq+0e88
-QoBnel6u+fpwbd5NLRHywXeH+phbzULCa+bLPRMqJaW2lbhvSWrMHRDy3/d8HvgnLCBFK2s4
-Spns4YCN4xVcbqlGWzgolHCKUH39vpcsDo1ymZFrJ8QR6ihIn8FmJ5oKwAnnd/G6ADXFC9bu
-db9+532phSAXOZrrecIQn+vtP366PC+aClAPsIIDJDsotS5z4X2JUFsNIuEgXGqhiKE7SuZb
-rFG9sdcLprSlJN7TsRDc0W2b9nqwD+rj/5MN0C+eKwha+8ydv0+qzTyxPP90KRgaegGowC4d
-UsZyTk2n4Z3MuAHX5nAZL/Vh/SyDj/ajorV44yqZBzQ3ChKhXbfUSwe2xMmygA2Z5DRwMRJn
-p/BscizYdNk2WXJMTnH+wVLN8sLEwEtQR4eTLoFmQvrK2AMBS9kW5sBkMzINt/ZbbcZ3F+eA
-MDGCBAEwggP9AgEBME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEXMBUG
-A1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwDQYJYIZIAWUDBAIBBQCg
-ggKEMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDUxMzE1
-NDQ1MVowLwYJKoZIhvcNAQkEMSIEIFSfqoVqmdtpPD688YbJPhjCcIO5DSBywgaukUhNjxP+
-MF0GCSsGAQQBgjcQBDFQME4wOjELMAkGA1UEBhMCVVMxEjAQBgNVBAoTCUlkZW5UcnVzdDEX
-MBUGA1UEAxMOVHJ1c3RJRCBDQSBBMTMCEEABgmmaL+s+f8XR8nIOXMwwXwYLKoZIhvcNAQkQ
-AgsxUKBOMDoxCzAJBgNVBAYTAlVTMRIwEAYDVQQKEwlJZGVuVHJ1c3QxFzAVBgNVBAMTDlRy
-dXN0SUQgQ0EgQTEzAhBAAYJpmi/rPn/F0fJyDlzMMIIBVwYJKoZIhvcNAQkPMYIBSDCCAUQw
-CwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzANBggqhkiG9w0DAgIBBTAN
-BggqhkiG9w0DAgIBBTAHBgUrDgMCBzANBggqhkiG9w0DAgIBBTAHBgUrDgMCGjALBglghkgB
-ZQMEAgEwCwYJYIZIAWUDBAICMAsGCWCGSAFlAwQCAzALBglghkgBZQMEAgQwCwYJYIZIAWUD
-BAIHMAsGCWCGSAFlAwQCCDALBglghkgBZQMEAgkwCwYJYIZIAWUDBAIKMAsGCSqGSIb3DQEB
-ATALBgkrgQUQhkg/AAIwCAYGK4EEAQsAMAgGBiuBBAELATAIBgYrgQQBCwIwCAYGK4EEAQsD
-MAsGCSuBBRCGSD8AAzAIBgYrgQQBDgAwCAYGK4EEAQ4BMAgGBiuBBAEOAjAIBgYrgQQBDgMw
-DQYJKoZIhvcNAQEBBQAEggEATDkAz14h95X7o7LJAFf68J2MkwKn7QQehKI2VQxA1it0mTNA
-deWcp0NE/pxb4dFbqeX5AGNTG6RTNTbzxfywni1WQ8ookZlbyE4yFtbjE4f9kvFSExA+RifP
-od1mZ8AyTNLOv72E9KrOrSj4328JiV4CfYXyjDEMwIWY68Wdu8x8ZJrphkTRFcP9XVdTzGCW
-Biuwsl3iJlik36lIJWb9sHUvHSF8t0z7A9hGxZOO7LTrbE7Fo1GIWCtsGv2Im2s9/wnwwAvI
-Dv5DHp8IZ8UoRK+hHX+zmh5x6UHPf01Vz9x9FiEbhRA2lVm7GzMV2Nj4PQPpI+11p6W/Lp2m
-MeU53QAAAAAAAA==
---------------ms020702040202050001040708--
+I said changing cred instead of suid/sgid because there are capabilities
+and LSM labels that we probably want this to apply to as well.
+
+I think such a limitation can be justified based upon having a shared
+fs_struct is likely to allow confuse suid executables.
+
+
+Earlier in the thread there was talk about the refcount for fs_struct.
+I don't see that problem at the moment, and I don't see how dealing with
+suid+sgid exectuables will have any bearing on how the refcount works.
+
+Eric
+
 
 
