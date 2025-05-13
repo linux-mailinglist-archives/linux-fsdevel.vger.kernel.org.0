@@ -1,264 +1,182 @@
-Return-Path: <linux-fsdevel+bounces-48890-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48891-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7339AB5526
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 14:46:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E83FAB5549
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 14:53:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C5AE19E739C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 12:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00BCE1B46459
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 12:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9643228DF0F;
-	Tue, 13 May 2025 12:46:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7504728DF43;
+	Tue, 13 May 2025 12:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QuXrkrSi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF6D1DFE8;
-	Tue, 13 May 2025 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B56286439;
+	Tue, 13 May 2025 12:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747140372; cv=none; b=EwxqrCiK2PIbywdwKMqDvSJhP4F8P2sek/40P9ODVFXLBmz6qPyExpdk0jsdBh7ENo5dKR5fK0yWm8YHWEaVxQfgDEq1asRI8n+eqtI2VEOEoLmlLfhR0WD+/uobYaXjW6k33wGmKJ7y2ufGul0BhFG4wNxNN6Bz2AAi8bX1Tjo=
+	t=1747140812; cv=none; b=JA/bh2tnZzifgi4QuE05ypqtmmkoeEs0nIp1CtXE47INtiM/1BSQjqaighg9PEDAjuJXXXhbp/8NGqZfw8e9xQJ1OuLiqx4euPCR93OJmtbIsN0M5DfSY5JqOMr1fyFrprGIWWPC9x/dysugTsTNrYd5LiTkr+EyhYC2NfTa/94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747140372; c=relaxed/simple;
-	bh=HECroQbmfC0nRDQFU+KWqqjaMG83MD5Do6IdYhmQLlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A1An+C318C9Veb6X8QWY+4EFo2rFeiM41CK+8gLacCTcflQpm347bdbvwVLbvZ+k4II2H+TiUfL2dHyEEQCHcJRCv54OtNslR+7nULuPaNC/IqDGbRzltq5TL1KOIll2ZuVLM4RN18BRLDtbZyGm3JzMowXQjKYZo1ez0/BUSWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BBB8168F;
-	Tue, 13 May 2025 05:45:58 -0700 (PDT)
-Received: from [10.1.25.187] (XHFQ2J9959.cambridge.arm.com [10.1.25.187])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A6B5C3F5A1;
-	Tue, 13 May 2025 05:46:07 -0700 (PDT)
-Message-ID: <c52861ac-9622-4d4f-899e-3a759f04af12@arm.com>
-Date: Tue, 13 May 2025 13:46:06 +0100
+	s=arc-20240116; t=1747140812; c=relaxed/simple;
+	bh=i14x7HK+wQByi+0aKyFzNcOhWac1lJuJhW5b260ntpI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mumr5vF6jDD3Fy3Rp/6CfoRgl8B1iSwKyXB3b4kQ4TGyamHE7o9ukTPd6qj9zchptF83NIx2hW4cJkRbXwSp5MyPLshngHBysqThad7VV49/jdhnRpDrLvuKuTFzBPKAI4W7pfxFLdocyu9EtPuRb8JAgeFsMPEARRuXbLDT73Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QuXrkrSi; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad4ce8cc3c1so183121966b.2;
+        Tue, 13 May 2025 05:53:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747140809; x=1747745609; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lhUsGW6Aej7UtwPk8Fo3WswAje2EzwjwJ+3T+imRPIA=;
+        b=QuXrkrSiJBAik3QaKSWS+HCnTCmriB79zSscrWJTudsfLcCdBYURl4R+C+rz0p88Al
+         y1SnyopHLPBjZk1IZI7/9BLTpiykvL+HgLYdzr9hW/O2soRNiM2KXYEIfWHGpShVSoj0
+         hw3YQ/aVmyF2kh4neaYC7LbQpW39YzqrKe9Ln0rVlJB9CFYktdTKyIhc9mpw3Cx5Y5JF
+         zGN25CitcI+6r1dMoYHxd6kbeIaV3OaHJpq5dw94jhIkTgMBFWc+hTcU4e/mzNNSF6Yp
+         r0EbycRgLUdjAJ3gwHmT1mxvsAVqBAWtIBd25OXgxuXr3uuhemqkzQxKkHAye9efZZAw
+         yrRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747140809; x=1747745609;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lhUsGW6Aej7UtwPk8Fo3WswAje2EzwjwJ+3T+imRPIA=;
+        b=fk9n/0i5SHHGShj1aABH9XbUXj8VLnJ6hWskizdQ/Hv6+pvfLvJTiAtR1GIDAQ0SU6
+         8o4Mu5c6+8JMuvppWZ/HILHeh8Fi7sjXgQ7mtLefyMWCVypLu8pvfU53wqhqPjwDbOma
+         hleWf5TAmZRrQqBLkiyCQ55vNn2PbFRSsoGrJ54TSB6rZ8BTBKbSKK4+5Nb5J+bEWab8
+         M7OHcv9BLEuqfTusGLttzncsFS5ssQwKgGFwhENRWMw45jDIuM1DhjNEJwaJHTYvdE5+
+         y1RybgBw8vEx1JG+aWmuFvE1xLQquR8OP0EYaJv9cO/gUgjcGDbhuLQzfb+KaXSJH91H
+         5bNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7e6L9mnrLNooJ9RkHA6ife5t/gy9K25ybm6oqmgzLNPkxadcewB0Q84T3DvnsigKiwCvvyS4yIKQoxEU=@vger.kernel.org, AJvYcCU9mDM6H9T3sz3E554QZWqDrD5rf+qFMM7kw/ORDLPE+1evJYV9Pch539b5BhjgWzhA8Jy6rwz+R6CI@vger.kernel.org, AJvYcCUEDNWuYp/pxKalJXWWlVtzByDM8VpnkS4nFb5mjjSfTeVLfQIX6qLtO5R9zN/s7S37La6/MorrS3q9@vger.kernel.org, AJvYcCUUZcobAqzsK5VY+uEFVQQ7lUNMBHopNXhlDJUGmb2AivwVbTSxD1OeL1xLNunH7ymPjEuu0gYJ2ZCGOg==@vger.kernel.org, AJvYcCUq7yF5v72wOEhtTjmn+EUeTFbucWySHFISH6NMd5TehZIX5U/By+MmziKdpkfvNK8vanOQBR29mw==@vger.kernel.org, AJvYcCV08vqx9uqctDhNUHBlHsayXIP4bb5yrb4i472bEYgGkxrAbDcT7zCNXAP1kRKLnTvDUg2XhoVGvyVdcxiS@vger.kernel.org, AJvYcCVvUrHY5foOtwZ1BUZACwOSKJ/P5st1t1eXjV+nx2AMCQ/CT3gKhezSIA8fIoLY87ZL7SVOo+zzgzfrqpuGPw==@vger.kernel.org, AJvYcCWEgChK2604Cs0evHzTc6/05n6f/a+19uhiKBP7owG6oHz97yX4vgPeE1S/w13z27OUAPL+Nt/7wQ==@vger.kernel.org, AJvYcCWHFfMeaC5nxbtGT3oBViXoNCHuYxNxkHqUt6pxx2+xd7yfpxE1DzkRQo75SiEmpk1ID6I10Bt1ESbleg==@vger.kernel.org, AJvYcCWRekuiSXiiT/D559N5rQC8
+ RIZ4ZgBFwsKO4WnCc0DSCBNpvVqrfN4NXBhQtr+sqRTESPb8NqquRB1pTw==@vger.kernel.org, AJvYcCX9zzBVchTPcWHRSkQgdLCbGa+qVaiP0Mz7gHPPRHIHoDz0fJ6ndyhSSBeI2EWwZRshzGlDTDsXF6ZNTd2vqIkdoKj/voAJ@vger.kernel.org, AJvYcCXL7+hGHVOMpQe9QxfWCmGTiLQF0ZvcyJc9HOrdCBWz3QltWhqE9S/uAzXi9u6lljMNL+yll1VOtWdiWzX+@vger.kernel.org, AJvYcCXMru4J2JwBr6AKU3hllsAf4fbuzRBxQN6HErSvZ7COW/hsvRTLry+q1FYYbFfLXHf3LotstNJ9ttlMA+EJCw==@vger.kernel.org, AJvYcCXMvsnBVLqpvPL68tOrZ8aD2pfaVy11gtH4/pkm6bZ5RLMhO+bL0nauXc1DBHaLDC1D/15JN8GlCUn6eg==@vger.kernel.org, AJvYcCXjfzn+oRwGRlQV1zQ1I4Hg/3+qNIjbrLmHuLga+e7y/rzGDP/4avrZJPfrqotEuOTUASZKQZO1rm4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBy+xrGuTOo/BHoy2MF1yeFX5Fb7UUdoWy5+Go7SmeXOVhBDFr
+	+0jN+kq9uAGcJy+E6qzHrCzySZ+i3idSxVlzKpH5Lo0DddIHgHKs/t9dRLnYVfTEYI0OzHIFgLx
+	QE1o3gxc9o/qjMMxOZ6lJ5W3W8GI=
+X-Gm-Gg: ASbGncvgC5MxgfdU96tnDtzsnHzv0XYRKofolm7sto42gMHQcx5U/N/qLDD+WLUeLu6
+	JgaUFVTokmO1GuItT5jjFNEHv9BP4uCa+UbnlRqn+ZsBrPYWLpm3Cqre2dToPqB/FkWXhMHqEe3
+	P2TE4pHJXXqHODET9kcDOnwwvoPzJYuoQ3
+X-Google-Smtp-Source: AGHT+IE/b0BCD4zsWzgMefEsXbY+DbhCAD/XOG3dRDcg9jP4PpucFQp1j7NsiRF8Za5+3lLoqjezqR5fGVfm35+9pG4=
+X-Received: by 2002:a17:907:7617:b0:ad2:23fb:5a03 with SMTP id
+ a640c23a62f3a-ad223fb7c87mr1075619066b.7.1747140808774; Tue, 13 May 2025
+ 05:53:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 5/5] mm/filemap: Allow arch to request folio size
- for exec memory
-Content-Language: en-GB
-To: Will Deacon <will@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- David Hildenbrand <david@redhat.com>, Dave Chinner <david@fromorbit.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-References: <20250430145920.3748738-1-ryan.roberts@arm.com>
- <20250430145920.3748738-6-ryan.roberts@arm.com>
- <20250509135223.GB5707@willie-the-truck>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20250509135223.GB5707@willie-the-truck>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250513-xattrat-syscall-v5-0-22bb9c6c767f@kernel.org> <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
+In-Reply-To: <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 13 May 2025 14:53:17 +0200
+X-Gm-Features: AX0GCFu24ZFGPch6zxlVZkmp4exgi2YQWGGbqSjGo76MZv2IKCv94Wv0HRsT2OA
+Message-ID: <CAOQ4uxgOAxg7N1OUJfb1KMp7oWOfN=KV9Lzz6ZrX0=XRGOQrEQ@mail.gmail.com>
+Subject: Re: [PATCH v5 0/7] fs: introduce file_getattr and file_setattr syscalls
+To: Arnd Bergmann <arnd@arndb.de>, Christian Brauner <brauner@kernel.org>
+Cc: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
+	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S . Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	=?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
+	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, linux-alpha@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, 
+	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, 
+	Linux-Arch <linux-arch@vger.kernel.org>, selinux@vger.kernel.org, 
+	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/05/2025 14:52, Will Deacon wrote:
-> On Wed, Apr 30, 2025 at 03:59:18PM +0100, Ryan Roberts wrote:
->> Change the readahead config so that if it is being requested for an
->> executable mapping, do a synchronous read into a set of folios with an
->> arch-specified order and in a naturally aligned manner. We no longer
->> center the read on the faulting page but simply align it down to the
->> previous natural boundary. Additionally, we don't bother with an
->> asynchronous part.
->>
->> On arm64 if memory is physically contiguous and naturally aligned to the
->> "contpte" size, we can use contpte mappings, which improves utilization
->> of the TLB. When paired with the "multi-size THP" feature, this works
->> well to reduce dTLB pressure. However iTLB pressure is still high due to
->> executable mappings having a low likelihood of being in the required
->> folio size and mapping alignment, even when the filesystem supports
->> readahead into large folios (e.g. XFS).
->>
->> The reason for the low likelihood is that the current readahead
->> algorithm starts with an order-0 folio and increases the folio order by
->> 2 every time the readahead mark is hit. But most executable memory tends
->> to be accessed randomly and so the readahead mark is rarely hit and most
->> executable folios remain order-0.
->>
->> So let's special-case the read(ahead) logic for executable mappings. The
->> trade-off is performance improvement (due to more efficient storage of
->> the translations in iTLB) vs potential for making reclaim more difficult
->> (due to the folios being larger so if a part of the folio is hot the
->> whole thing is considered hot). But executable memory is a small portion
->> of the overall system memory so I doubt this will even register from a
->> reclaim perspective.
->>
->> I've chosen 64K folio size for arm64 which benefits both the 4K and 16K
->> base page size configs. Crucially the same amount of data is still read
->> (usually 128K) so I'm not expecting any read amplification issues. I
->> don't anticipate any write amplification because text is always RO.
->>
->> Note that the text region of an ELF file could be populated into the
->> page cache for other reasons than taking a fault in a mmapped area. The
->> most common case is due to the loader read()ing the header which can be
->> shared with the beginning of text. So some text will still remain in
->> small folios, but this simple, best effort change provides good
->> performance improvements as is.
->>
->> Confine this special-case approach to the bounds of the VMA. This
->> prevents wasting memory for any padding that might exist in the file
->> between sections. Previously the padding would have been contained in
->> order-0 folios and would be easy to reclaim. But now it would be part of
->> a larger folio so more difficult to reclaim. Solve this by simply not
->> reading it into memory in the first place.
->>
->> Benchmarking
->> ============
->> TODO: NUMBERS ARE FOR V3 OF SERIES. NEED TO RERUN FOR THIS VERSION.
->>
->> The below shows nginx and redis benchmarks on Ampere Altra arm64 system.
->>
->> First, confirmation that this patch causes more text to be contained in
->> 64K folios:
->>
->> | File-backed folios     |   system boot   |      nginx      |      redis      |
->> | by size as percentage  |-----------------|-----------------|-----------------|
->> | of all mapped text mem | before |  after | before |  after | before |  after |
->> |========================|========|========|========|========|========|========|
->> | base-page-4kB          |    26% |     9% |    27% |     6% |    21% |     5% |
->> | thp-aligned-8kB        |     4% |     2% |     3% |     0% |     4% |     1% |
->> | thp-aligned-16kB       |    57% |    21% |    57% |     6% |    54% |    10% |
->> | thp-aligned-32kB       |     4% |     1% |     4% |     1% |     3% |     1% |
->> | thp-aligned-64kB       |     7% |    65% |     8% |    85% |     9% |    72% |
->> | thp-aligned-2048kB     |     0% |     0% |     0% |     0% |     7% |     8% |
->> | thp-unaligned-16kB     |     1% |     1% |     1% |     1% |     1% |     1% |
->> | thp-unaligned-32kB     |     0% |     0% |     0% |     0% |     0% |     0% |
->> | thp-unaligned-64kB     |     0% |     0% |     0% |     1% |     0% |     1% |
->> | thp-partial            |     1% |     1% |     0% |     0% |     1% |     1% |
->> |------------------------|--------|--------|--------|--------|--------|--------|
->> | cont-aligned-64kB      |     7% |    65% |     8% |    85% |    16% |    80% |
->>
->> The above shows that for both workloads (each isolated with cgroups) as
->> well as the general system state after boot, the amount of text backed
->> by 4K and 16K folios reduces and the amount backed by 64K folios
->> increases significantly. And the amount of text that is contpte-mapped
->> significantly increases (see last row).
->>
->> And this is reflected in performance improvement:
->>
->> | Benchmark                                     |          Improvement |
->> +===============================================+======================+
->> | pts/nginx (200 connections)                   |                8.96% |
->> | pts/nginx (1000 connections)                  |                6.80% |
->> +-----------------------------------------------+----------------------+
->> | pts/redis (LPOP, 50 connections)              |                5.07% |
->> | pts/redis (LPUSH, 50 connections)             |                3.68% |
->>
->> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->> ---
->>  arch/arm64/include/asm/pgtable.h |  8 +++++++
->>  include/linux/pgtable.h          | 11 +++++++++
->>  mm/filemap.c                     | 40 ++++++++++++++++++++++++++------
->>  3 files changed, 52 insertions(+), 7 deletions(-)
->>
->> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->> index 2a77f11b78d5..9eb35af0d3cf 100644
->> --- a/arch/arm64/include/asm/pgtable.h
->> +++ b/arch/arm64/include/asm/pgtable.h
->> @@ -1537,6 +1537,14 @@ static inline void update_mmu_cache_range(struct vm_fault *vmf,
->>   */
->>  #define arch_wants_old_prefaulted_pte	cpu_has_hw_af
->>  
->> +/*
->> + * Request exec memory is read into pagecache in at least 64K folios. This size
->> + * can be contpte-mapped when 4K base pages are in use (16 pages into 1 iTLB
->> + * entry), and HPA can coalesce it (4 pages into 1 TLB entry) when 16K base
->> + * pages are in use.
->> + */
->> +#define exec_folio_order() ilog2(SZ_64K >> PAGE_SHIFT)
->> +
->>  static inline bool pud_sect_supported(void)
->>  {
->>  	return PAGE_SIZE == SZ_4K;
->> diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
->> index b50447ef1c92..1dd539c49f90 100644
->> --- a/include/linux/pgtable.h
->> +++ b/include/linux/pgtable.h
->> @@ -456,6 +456,17 @@ static inline bool arch_has_hw_pte_young(void)
->>  }
->>  #endif
->>  
->> +#ifndef exec_folio_order
->> +/*
->> + * Returns preferred minimum folio order for executable file-backed memory. Must
->> + * be in range [0, PMD_ORDER). Default to order-0.
->> + */
->> +static inline unsigned int exec_folio_order(void)
->> +{
->> +	return 0;
->> +}
->> +#endif
->> +
->>  #ifndef arch_check_zapped_pte
->>  static inline void arch_check_zapped_pte(struct vm_area_struct *vma,
->>  					 pte_t pte)
->> diff --git a/mm/filemap.c b/mm/filemap.c
->> index e61f374068d4..37fe4a55c00d 100644
->> --- a/mm/filemap.c
->> +++ b/mm/filemap.c
->> @@ -3252,14 +3252,40 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
->>  	if (mmap_miss > MMAP_LOTSAMISS)
->>  		return fpin;
->>  
->> -	/*
->> -	 * mmap read-around
->> -	 */
->>  	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
->> -	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
->> -	ra->size = ra->ra_pages;
->> -	ra->async_size = ra->ra_pages / 4;
->> -	ra->order = 0;
->> +	if (vm_flags & VM_EXEC) {
->> +		/*
->> +		 * Allow arch to request a preferred minimum folio order for
->> +		 * executable memory. This can often be beneficial to
->> +		 * performance if (e.g.) arm64 can contpte-map the folio.
->> +		 * Executable memory rarely benefits from readahead, due to its
->> +		 * random access nature, so set async_size to 0.
-> 
-> In light of this observation (about randomness of instruction fetch), do
-> you think it's worth ignoring VM_RAND_READ for VM_EXEC?
+On Tue, May 13, 2025 at 11:53=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> wrot=
+e:
+>
+> On Tue, May 13, 2025, at 11:17, Andrey Albershteyn wrote:
+>
+> >
+> >       long syscall(SYS_file_getattr, int dirfd, const char *pathname,
+> >               struct fsxattr *fsx, size_t size, unsigned int at_flags);
+> >       long syscall(SYS_file_setattr, int dirfd, const char *pathname,
+> >               struct fsxattr *fsx, size_t size, unsigned int at_flags);
+>
+> I don't think we can have both the "struct fsxattr" from the uapi
+> headers, and a variable size as an additional argument. I would
+> still prefer not having the extensible structure at all and just
+> use fsxattr, but if you want to make it extensible in this way,
+> it should use a different structure (name). Otherwise adding
+> fields after fsx_pad[] would break the ioctl interface.
+>
 
-Hmm, yeah that makes sense. Something like:
+Are you are suggesting that we need to define this variant?:
 
----8<---
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 7b90cbeb4a1a..6c8bf5116c54 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3233,7 +3233,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault
-*vmf)
-        if (!ra->ra_pages)
-                return fpin;
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -148,6 +148,17 @@ struct fsxattr {
+        unsigned char   fsx_pad[8];
+ };
 
--       if (vm_flags & VM_SEQ_READ) {
-+       /* VM_EXEC case below is already intended for random access */
-+       if ((vm_flags & (VM_SEQ_READ | VM_EXEC)) == VM_SEQ_READ) {
-                fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-                page_cache_sync_ra(&ractl, ra->ra_pages);
-                return fpin;
----8<---
++/*
++ * Variable size structure for file_[sg]et_attr().
++ */
++struct fsx_fileattr {
++       __u32           fsx_xflags;     /* xflags field value (get/set) */
++       __u32           fsx_extsize;    /* extsize field value (get/set)*/
++       __u32           fsx_nextents;   /* nextents field value (get)   */
++       __u32           fsx_projid;     /* project identifier (get/set) */
++       __u32           fsx_cowextsize; /* CoW extsize field value (get/set=
+)*/
++};
++
 
-> 
-> Either way, I was looking at this because it touches arm64 and it looks
-> fine to me:
-> 
-> Acked-by: Will Deacon <will@kernel.org>
+> I also find the bit confusing where the argument contains both
+> "ignored but assumed zero" flags, and "required to be zero"
+> flags depending on whether it's in the fsx_pad[] field or
+> after it. This would be fine if it was better documented.
+>
 
-Thanks!
+I think that is an oversight.
+The syscall should have required that fsx_pad is zero,
+same as patch 6/7 requires that unknown xflags are zero.
 
-> 
-> Will
+If we change to:
+       error =3D copy_struct_from_user(&fsx, sizeof(struct
+fsx_fileattr), ufsx, usize);
 
+It will take care of requiring zero fsx_pad even if user calls the syscall =
+with
+sizeof(struct fsxattr).
+
+Thanks,
+Amir.
 
