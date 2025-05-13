@@ -1,171 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-48892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E05C2AB558A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 15:06:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD894AB55D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 15:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 640CD1B4675F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 13:06:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CEFD173131
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 13:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A8328E570;
-	Tue, 13 May 2025 13:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B513128F946;
+	Tue, 13 May 2025 13:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b1uTxtXd"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rpCelK0Y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BiZmf9dZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rpCelK0Y";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BiZmf9dZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E11213E7B;
-	Tue, 13 May 2025 13:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F4628F532
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 13:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747141568; cv=none; b=mHDKCvoF+Le1ezBPq0XAeKFH6ef88l/lHcMmMiN+mH+tOjdjbohoepjA6mAtc/erKIzyILuMPf12yhDtVKhMAgk2fkpItpvitb//hw1Rv5JxE4k7RIdZhLJZVISL4snan/fAUEY7EH7WNoq77jntKQsJ4/RUZBwUcJpLV3+9hfw=
+	t=1747142299; cv=none; b=TxbQU5R1E9CoisSNmdIFQmASpybvItsbjPebLP88EFrQuFkb/sCW44PfWWscws6Vwbcx0l4UyDzsQVxV0CWX9shxwo+hwfTubLmlz4ihm+Bq0g0JLvMXX621/hdxUosvteYBmZ4YvxnRaWqATv8m8dlmKfY56gyh6OL0jdZHUQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747141568; c=relaxed/simple;
-	bh=4fLD3IdpP6vVXk5/ruBLYk1VyIiGZZJk/ofEm9ybJRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NoxqzNqeYJRbm7WXcCa9WSdVDD3Y+X5S/+jbQHmRQnnimF5+/ZKvJF55lq5NmtgNSLpWZKJXOo+77C2WdQ5mB9+ylhmFO5sZRmvK9RwJOxlDLj4Tx6O633WP5S30bq/fvOG+IiOlMkOkk1WaIQWwD6LmbcAig+zDYPtblT/RBlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b1uTxtXd; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43d04dc73b7so60229885e9.3;
-        Tue, 13 May 2025 06:06:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747141565; x=1747746365; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZRH4yaq02O4BeoAY/f143mbK8AEXX3uy5ZGAgLBp4KM=;
-        b=b1uTxtXdEL1CpB9GB9s/MxPZooV74EiNWTkmBIyRmFx+WivrFCOa31emAxZgdeByUH
-         czRXlcm3yilGhLl1kGSUoAqxcne7UjheRZi0kTY8/yq2YvVfu6JRQGLBlEZyjxH4sYOI
-         rSLXo291wCzaOmXcmip3uHWqkB0oey1pho3SWBHQOwwCr5FimFbe+vpno0Y+fAwEVlyq
-         In2Y/DlZy2y4pw2aNnqhsZjST0k7nS8oSTlwe3cUTI6pBkOOkE6fVoY4NC8psJElB57Z
-         PlQPwg3H1S4EtNzF7nNHbjDGwmznBQ7RJdHAmWpft7GSeq8Jj1kBVJDJ/kZiSmADtgKu
-         +1LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747141565; x=1747746365;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZRH4yaq02O4BeoAY/f143mbK8AEXX3uy5ZGAgLBp4KM=;
-        b=vXYwy691JWJQHFtl0Ygndj5I8rCES7a9XSF0fspTgv3RY6ZnVeKdcJcDdb3ZTFX9Sj
-         mVCvhzmPvIqs9p1RuDvl5T49e4XVvQXIIRbY3b8tGJZLRr0Q3dsFtV1Y+ZbZle6H2pbg
-         PzPYqepL5InfO/4SQHBoxxTT9ng1vEMpb2p7WWBCuykqlQe+pTM4Coi+DHFj8lbRvxP3
-         lYVdFDteCz75EYI/l/ZAAhWzpKaR/Jz9F9ud67kPFAWG2vawZFQuj0t4xzUitOXd99YF
-         ILG1DtyZoIu0XMXxkWJGI9B19/fXYFhUiujrDUOJQrLajaTzPFv9YktxGVbx440YJpjD
-         47NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQj1AqNjfbShJPeuBRR3he6ldDnjmFw0bNnvQY+vKJkHrsnC70XiQJejxrW2R5eo5N6PEshIobFQ==@vger.kernel.org, AJvYcCUrRoHuvBMJm6MewTz/+ucP/USOSWhzs5fzWYIE/NME0hpo+9bpBGfFEZpbpeskJGmUQEL6v8v00phQMYwVvOJT9P51aAHZ@vger.kernel.org, AJvYcCV27BitRMclAabnLBhxFlC5YeIAslDtiKTshl3PW1YyZI47djPROpw+zdaTiOH5RSOdjwC1OaL43oQhtN26@vger.kernel.org, AJvYcCW6EPEpNpkBvbs3cJLTH0heEhkSKJOp/R3K8vHwSlwvglRX9LEsn0J7iruVwib3glPZPrw15CSWF0VOw6lMNzKG@vger.kernel.org, AJvYcCX4PoeikKYvo5jEogD3efWqeZzBBGontK9LesojPOw2vFsuJm+xt50XGzg/ENaG8M46uTlqoZPuARooAAIN@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJvl3MzTPi5ZAFCws0LAeGyXtUW8Fhhadv9dYhEsiK17KslpIP
-	H97BNdG6N2/WnKbUFEqIAGUtaz9ocvcxhxj7YIpq1ELAfrnuPi8Q
-X-Gm-Gg: ASbGnctw8DIkJfG6mnWVAdBH/y9iPaqqCc2bbEgsTDLyx/71U2QYvbDFsqolt3UZ78g
-	GsSMOVNRr3bOh7ALwEGrI63K1tymd6XsOr1pBCM/FUi1yUXoDul56rpZuJ/JGBsxkb1GfXfejqq
-	ZVkHfML2YZWRVvl3lfVrjOT7FdR22YDzzmcw1Hp1eCDYK3RtQ554pBO4UQt8uieT6IEwrWUbonD
-	qq31RS3UQEM1oontSWYViBVfHm8pbx9PIFbEtTYwQvBLQ8CPjBFQffNSu/H43OSaPXU3M71OoZ2
-	yNTUTL4IaAdJHYJxOSgEHL1AxKW2TKzUIFgSIaPpD0YJDyN1Op/tzT5Gi/wy4HyF
-X-Google-Smtp-Source: AGHT+IEHBhhE7TvsAD/FnNo4BJJ0fgMjXWx6eOMY8JlawqVvxffhuMX7kttizQAJ+g7X01ahmWKKUQ==
-X-Received: by 2002:a05:600c:3587:b0:43c:fdbe:43be with SMTP id 5b1f17b1804b1-442d6dd216fmr140842115e9.27.1747141561377;
-        Tue, 13 May 2025 06:06:01 -0700 (PDT)
-Received: from f (cst-prg-88-99.cust.vodafone.cz. [46.135.88.99])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442cd32f3c2sm209934765e9.15.2025.05.13.06.05.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 May 2025 06:06:00 -0700 (PDT)
-Date: Tue, 13 May 2025 15:05:45 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: Kees Cook <keescook@chromium.org>
-Cc: Jann Horn <jannh@google.com>, Christian Brauner <brauner@kernel.org>, 
-	Eric Biederman <ebiederm@xmission.com>, Jorge Merlino <jorge.merlino@canonical.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andy Lutomirski <luto@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	John Johansen <john.johansen@canonical.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Eric Paris <eparis@parisplace.org>, 
-	Richard Haines <richard_c_haines@btinternet.com>, Casey Schaufler <casey@schaufler-ca.com>, 
-	Xin Long <lucien.xin@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
-	Todd Kjos <tkjos@google.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Prashanth Prahlad <pprahlad@redhat.com>, Micah Morton <mortonm@chromium.org>, 
-	Fenghua Yu <fenghua.yu@intel.com>, Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org, 
-	apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org, selinux@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, oleg@redhat.com
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-Message-ID: <h65sagivix3zbrppthcobnysgnlrnql5shiu65xyg7ust6mc54@cliutza66zve>
-References: <20221006082735.1321612-1-keescook@chromium.org>
- <20221006082735.1321612-2-keescook@chromium.org>
- <20221006090506.paqjf537cox7lqrq@wittgenstein>
- <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
- <86CE201B-5632-4BB7-BCF6-7CB2C2895409@chromium.org>
+	s=arc-20240116; t=1747142299; c=relaxed/simple;
+	bh=A6NWfGM+4OQsAaMc0q5sdZE4bBElnWXoW2szyoTV73g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uUyypwyMViC5yotVI390yfcv78QTbYT/hdhFjg9V6MpuuUOZ9KsYUZ5MDuWz2UUrLczYICJBpS30n10riepUG1tEtW7LKMp8a43xD5jY3NBNy0zt7ByMvQ39MiC3wyqqiJRac6c5RQpjAnqLiJVuRw+Yow5xL8VgZRys2EWo3kU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rpCelK0Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BiZmf9dZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rpCelK0Y; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BiZmf9dZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 707FD21207;
+	Tue, 13 May 2025 13:18:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747142294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JJMEGH7c5EYuw2SjPyvg89o8HWXUXIv3i7Y9l8LPlGc=;
+	b=rpCelK0YsydQLLVDSKZekIXItuilSjRF/ZfagKmo1l77rqQm9G5jpcYdnb4ZGVZixsaoDC
+	HKeN/ntH4fx5kK7bZw/wQDXoqhpCg9/S5SZj+uD7Zxc1+FmFCV3KyVXyj3ad8rrl+Hy0Yz
+	CV4dNvUp6Euf+iUCqWVRKR92SdddsSI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747142294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JJMEGH7c5EYuw2SjPyvg89o8HWXUXIv3i7Y9l8LPlGc=;
+	b=BiZmf9dZ3wPtHg00ZnEewwlh/y6fdJZ5H0VW15+aRvIE4iXso6sjKGqc7GQ2uE9todcjX2
+	eQKU1JAehYILkjBw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=rpCelK0Y;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BiZmf9dZ
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1747142294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JJMEGH7c5EYuw2SjPyvg89o8HWXUXIv3i7Y9l8LPlGc=;
+	b=rpCelK0YsydQLLVDSKZekIXItuilSjRF/ZfagKmo1l77rqQm9G5jpcYdnb4ZGVZixsaoDC
+	HKeN/ntH4fx5kK7bZw/wQDXoqhpCg9/S5SZj+uD7Zxc1+FmFCV3KyVXyj3ad8rrl+Hy0Yz
+	CV4dNvUp6Euf+iUCqWVRKR92SdddsSI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1747142294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=JJMEGH7c5EYuw2SjPyvg89o8HWXUXIv3i7Y9l8LPlGc=;
+	b=BiZmf9dZ3wPtHg00ZnEewwlh/y6fdJZ5H0VW15+aRvIE4iXso6sjKGqc7GQ2uE9todcjX2
+	eQKU1JAehYILkjBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6234E1365D;
+	Tue, 13 May 2025 13:18:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 91v3F5ZGI2j2VwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 13 May 2025 13:18:14 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1CC75A0A60; Tue, 13 May 2025 15:18:14 +0200 (CEST)
+From: Jan Kara <jack@suse.cz>
+To: <linux-fsdevel@vger.kernel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>,
+	"Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Jan Kara <jack@suse.cz>
+Subject: [PATCH] fanotify: Drop use of flex array in fanotify_fh
+Date: Tue, 13 May 2025 15:17:46 +0200
+Message-ID: <20250513131745.2808-2-jack@suse.cz>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <86CE201B-5632-4BB7-BCF6-7CB2C2895409@chromium.org>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3150; i=jack@suse.cz; h=from:subject; bh=A6NWfGM+4OQsAaMc0q5sdZE4bBElnWXoW2szyoTV73g=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBoI0Z561gL6olV+HOub1KNd0g3xbCbDEVRdBkaYtkW rhuvgUiJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCaCNGeQAKCRCcnaoHP2RA2Uz+CA CfcOff+0rQDW4pxehTIPqAhl4f4eQi/Yo5TgEcxlRKC248mQCWL2HUnjUSWREvNaWrr9YLbDbG6w9e yQk8ONsP7hDBoovzycN2FQb9ZoGzg1uFEUbcCZkZxRwBpPZSmjfBEcHCFQ+/0yjGvjdcMDhwBAJRpj W6YYohxcGSf+4szoUgG8F0urF0XWRsgmIFbGPGrTqs++Hx30kHbChYBVJlSF9B46p00lcJ+ciwMPE1 fBR1HBr4iyC/aGGe1ZTIZn0zbO4AXYZzl3apbO6YNa8GMrTtDgPpa4bmI5Oy/JjjqfD9+9HKwobGK/ QLNgS5HuDtU+ANAznA0WAO+vLkVcWv
+X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 707FD21207
+X-Spam-Flag: NO
+X-Spam-Score: -3.01
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	FREEMAIL_CC(0.00)[gmail.com,embeddedor.com,suse.cz];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Rspamd-Action: no action
 
-On Thu, Oct 06, 2022 at 08:25:01AM -0700, Kees Cook wrote:
-> On October 6, 2022 7:13:37 AM PDT, Jann Horn <jannh@google.com> wrote:
-> >On Thu, Oct 6, 2022 at 11:05 AM Christian Brauner <brauner@kernel.org> wrote:
-> >> On Thu, Oct 06, 2022 at 01:27:34AM -0700, Kees Cook wrote:
-> >> > The check_unsafe_exec() counting of n_fs would not add up under a heavily
-> >> > threaded process trying to perform a suid exec, causing the suid portion
-> >> > to fail. This counting error appears to be unneeded, but to catch any
-> >> > possible conditions, explicitly unshare fs_struct on exec, if it ends up
-> >>
-> >> Isn't this a potential uapi break? Afaict, before this change a call to
-> >> clone{3}(CLONE_FS) followed by an exec in the child would have the
-> >> parent and child share fs information. So if the child e.g., changes the
-> >> working directory post exec it would also affect the parent. But after
-> >> this change here this would no longer be true. So a child changing a
-> >> workding directoro would not affect the parent anymore. IOW, an exec is
-> >> accompanied by an unshare(CLONE_FS). Might still be worth trying ofc but
-> >> it seems like a non-trivial uapi change but there might be few users
-> >> that do clone{3}(CLONE_FS) followed by an exec.
-> >
-> >I believe the following code in Chromium explicitly relies on this
-> >behavior, but I'm not sure whether this code is in active use anymore:
-> >
-> >https://source.chromium.org/chromium/chromium/src/+/main:sandbox/linux/suid/sandbox.c;l=101?q=CLONE_FS&sq=&ss=chromium
-> 
-> Oh yes. I think I had tried to forget this existed. Ugh. Okay, so back to the drawing board, I guess. The counting will need to be fixed...
-> 
-> It's possible we can move the counting after dethread -- it seems the early count was just to avoid setting flags after the point of no return, but it's not an error condition...
-> 
+We use flex array 'buf' in fanotify_fh to contain the file handle
+content. However the buffer is not a proper flex array. It has a
+preconfigured fixed size. Furthermore if fixed size is not big enough,
+we use external separately allocated buffer. Hence don't pretend buf is
+a flex array since we have to use special accessors anyway and instead
+just modify the accessors to do the pointer math without flex array.
+This fixes warnings that flex array is not the last struct member in
+fanotify_fid_event or fanotify_error_event.
 
-I landed here from git blame.
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ fs/notify/fanotify/fanotify.c | 2 +-
+ fs/notify/fanotify/fanotify.h | 9 ++++-----
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-I was looking at sanitizing shared fs vs suid handling, but the entire
-ordeal is so convoluted I'm confident the best way forward is to whack
-the problem to begin with.
+Amir, how about this solution for the flex array warnings?
 
-Per the above link, the notion of a shared fs struct across different
-processes is depended on so merely unsharing is a no-go.
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 6d386080faf2..7bc5580a91dc 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -415,7 +415,7 @@ static int fanotify_encode_fh(struct fanotify_fh *fh, struct inode *inode,
+ {
+ 	int dwords, type = 0;
+ 	char *ext_buf = NULL;
+-	void *buf = fh->buf;
++	void *buf = fh + 1;
+ 	int err;
+ 
+ 	fh->type = FILEID_ROOT;
+diff --git a/fs/notify/fanotify/fanotify.h b/fs/notify/fanotify/fanotify.h
+index b44e70e44be6..b78308975082 100644
+--- a/fs/notify/fanotify/fanotify.h
++++ b/fs/notify/fanotify/fanotify.h
+@@ -25,7 +25,7 @@ enum {
+  * stored in either the first or last 2 dwords.
+  */
+ #define FANOTIFY_INLINE_FH_LEN	(3 << 2)
+-#define FANOTIFY_FH_HDR_LEN	offsetof(struct fanotify_fh, buf)
++#define FANOTIFY_FH_HDR_LEN	sizeof(struct fanotify_fh)
+ 
+ /* Fixed size struct for file handle */
+ struct fanotify_fh {
+@@ -34,7 +34,6 @@ struct fanotify_fh {
+ #define FANOTIFY_FH_FLAG_EXT_BUF 1
+ 	u8 flags;
+ 	u8 pad;
+-	unsigned char buf[];
+ } __aligned(4);
+ 
+ /* Variable size struct for dir file handle + child file handle + name */
+@@ -92,7 +91,7 @@ static inline char **fanotify_fh_ext_buf_ptr(struct fanotify_fh *fh)
+ 	BUILD_BUG_ON(FANOTIFY_FH_HDR_LEN % 4);
+ 	BUILD_BUG_ON(__alignof__(char *) - 4 + sizeof(char *) >
+ 		     FANOTIFY_INLINE_FH_LEN);
+-	return (char **)ALIGN((unsigned long)(fh->buf), __alignof__(char *));
++	return (char **)ALIGN((unsigned long)(fh + 1), __alignof__(char *));
+ }
+ 
+ static inline void *fanotify_fh_ext_buf(struct fanotify_fh *fh)
+@@ -102,7 +101,7 @@ static inline void *fanotify_fh_ext_buf(struct fanotify_fh *fh)
+ 
+ static inline void *fanotify_fh_buf(struct fanotify_fh *fh)
+ {
+-	return fanotify_fh_has_ext_buf(fh) ? fanotify_fh_ext_buf(fh) : fh->buf;
++	return fanotify_fh_has_ext_buf(fh) ? fanotify_fh_ext_buf(fh) : fh + 1;
+ }
+ 
+ static inline int fanotify_info_dir_fh_len(struct fanotify_info *info)
+@@ -278,7 +277,7 @@ static inline void fanotify_init_event(struct fanotify_event *event,
+ #define FANOTIFY_INLINE_FH(name, size)					\
+ struct {								\
+ 	struct fanotify_fh name;					\
+-	/* Space for object_fh.buf[] - access with fanotify_fh_buf() */	\
++	/* Space for filehandle - access with fanotify_fh_buf() */	\
+ 	unsigned char _inline_fh_buf[size];				\
+ }
+ 
+-- 
+2.43.0
 
-However, the shared state is only a problem for suid/sgid.
-
-Here is my proposal: *deny* exec of suid/sgid binaries if fs_struct is
-shared. This will have to be checked for after the execing proc becomes
-single-threaded ofc.
-
-While technically speaking this does introduce a change in behavior,
-there is precedent for doing it and seeing if anyone yells.
-
-With this in place there is no point maintainig ->in_exec or checking
-the flag.
-
-There is the known example of depending on shared fs_struct across exec.
-Hopefully there is no example of depending on execing a suid/sgid binary
-in such a setting -- it would be quite a weird setup given that for
-security reasons the perms must not be changed.
-
-The upshot of this method is that any breakage will be immediately
-visible in the form of a failed exec.
-
-Another route would be to do the mandatory unshare but only for
-suid/sgid, except that would have a hidden failure (if you will).
-
-Comments?
 
