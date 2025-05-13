@@ -1,202 +1,448 @@
-Return-Path: <linux-fsdevel+bounces-48912-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48911-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C83AB598D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 18:17:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AD14AB596A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 18:11:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D6B189C7F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 16:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF6493B2B0C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 16:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720F92BEC2B;
-	Tue, 13 May 2025 16:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211C12BE7CB;
+	Tue, 13 May 2025 16:11:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IUDQObQQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FA02EB1D;
-	Tue, 13 May 2025 16:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECA02BE114
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 16:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747153000; cv=none; b=gweGf6yj/xQOyQRohtm5bHA+gRkVhH8A5bT/vKIXQ6x12Wumc+VvFuj4Cnw2qUqlFtjpAIZFaGR72G1aZ0CxK6ifX6NrAj7tfMy+g947DQLAd9uJWGfztiJhVu/YqGJSozsHhg/y164U9P6ZDpZ1b6/AicKp+oiweQPRwhZJbIo=
+	t=1747152691; cv=none; b=QOv/lKoNf8O0AkQ5RO+oJzWQQc+VVSMcQpXK+0lBE7wIZYCRUl0MpGu9ufvTXKMUykAxT9o+S2wSoORpAAp+PK2U/SWK+dfvlDJqqC9uzdX+7wqDjiNeIHLeJn8g78tFsD8dI/m7NNmOqmqsd44zG8haZYj9qeCQyWZ/VAZ7Tk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747153000; c=relaxed/simple;
-	bh=zV40bY8h3kW0Hy4xgRE4IG3svvmYOVPxkHpIL4ByJ/M=;
-	h=From:To:Cc:In-Reply-To:References:Date:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=PAkTnORWSUEbaJ2hD2euZEPa9ZvZ/TJqV6W+loQRZ+q8pbySWpl5WrSw7KQkwb53JngDtHEIIuKN1Nr3kJAvhyFg5FPB3GsjvvlaIzuXEFRYRocd7ufFwoQFo6xYuTA3mVw1c1PTJRBZhFk2sBOnJuWEhJyd1LE2U1DvqVqRGYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in02.mta.xmission.com ([166.70.13.52]:58534)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uEraV-0057bO-9O; Tue, 13 May 2025 09:30:35 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:59502 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uEraS-00FteB-TR; Tue, 13 May 2025 09:30:34 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Kees Cook <keescook@chromium.org>,  Jann Horn <jannh@google.com>,
-  Christian Brauner <brauner@kernel.org>,  Jorge Merlino
- <jorge.merlino@canonical.com>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Thomas Gleixner <tglx@linutronix.de>,  Andy Lutomirski <luto@kernel.org>,
-  Sebastian Andrzej Siewior <bigeasy@linutronix.de>,  Andrew Morton
- <akpm@linux-foundation.org>,  linux-mm@kvack.org,
-  linux-fsdevel@vger.kernel.org,  John Johansen
- <john.johansen@canonical.com>,  Paul Moore <paul@paul-moore.com>,  James
- Morris <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>,
-  Stephen Smalley <stephen.smalley.work@gmail.com>,  Eric Paris
- <eparis@parisplace.org>,  Richard Haines
- <richard_c_haines@btinternet.com>,  Casey Schaufler
- <casey@schaufler-ca.com>,  Xin Long <lucien.xin@gmail.com>,  "David S.
- Miller" <davem@davemloft.net>,  Todd Kjos <tkjos@google.com>,  Ondrej
- Mosnacek <omosnace@redhat.com>,  Prashanth Prahlad <pprahlad@redhat.com>,
-  Micah Morton <mortonm@chromium.org>,  Fenghua Yu <fenghua.yu@intel.com>,
-  Andrei Vagin <avagin@gmail.com>,  linux-kernel@vger.kernel.org,
-  apparmor@lists.ubuntu.com,  linux-security-module@vger.kernel.org,
-  selinux@vger.kernel.org,  linux-hardening@vger.kernel.org,
-  oleg@redhat.com
-In-Reply-To: <h65sagivix3zbrppthcobnysgnlrnql5shiu65xyg7ust6mc54@cliutza66zve>
-	(Mateusz Guzik's message of "Tue, 13 May 2025 15:05:45 +0200")
-References: <20221006082735.1321612-1-keescook@chromium.org>
-	<20221006082735.1321612-2-keescook@chromium.org>
-	<20221006090506.paqjf537cox7lqrq@wittgenstein>
-	<CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
-	<86CE201B-5632-4BB7-BCF6-7CB2C2895409@chromium.org>
-	<h65sagivix3zbrppthcobnysgnlrnql5shiu65xyg7ust6mc54@cliutza66zve>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
-Date: Tue, 13 May 2025 10:29:47 -0500
-Message-ID: <87o6vw1qc4.fsf@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1747152691; c=relaxed/simple;
+	bh=O/UOa/QMI6E7dg05hLEJPSwFuFiVjwkcPLIjo7kECPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MRObf2jkedhfwxaw6tSHjuPpcMi21ZAunFDN4+6c8+7/5HD0rrGGsIWaV6pZsldT5aCnRQDLQ/Gu2FWcJGQ2yy918gJUZufMVRCjJ6oVCacstXnklN8a+B5pWApcLGBYcsNI+w5exCBj0QOIFx+Qmobjf5jFbHr2WBye2Sxmq/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IUDQObQQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0548C4CEE9;
+	Tue, 13 May 2025 16:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747152690;
+	bh=O/UOa/QMI6E7dg05hLEJPSwFuFiVjwkcPLIjo7kECPM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IUDQObQQ4BWLtYwHUfpJ/lADTjjNHcZr3j88RWmw6kfG+s4PlqaNavJ/gYJP6acqA
+	 odr4say9b45R5uHaGZ6fIggEQTr4CYT6DXaiY1oNK9zFXHUpFVPyyPZoy3M2yLAok3
+	 374EH4rUenfG8qCGzXxJdiHSpgNFB1Z7U1NSJfzA83tqVzIrmXzP7sATYyRzpHzKsx
+	 OYe7ZhNi594J+iogFrLNU4yWc/Lsl6wTCJkJYRH8vJy4EX/vfWEBijoN/DvR1IVBy1
+	 FRzC/9LFwlzm2C5YqUSoX3PDDX5yTyykAtqOs3Gm6s+rHtd9zAsZEL4lQVbrN7Cp9Y
+	 LWsAKNqmaekgQ==
+Date: Tue, 13 May 2025 16:11:28 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Eric Sandeen <sandeen@redhat.com>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
+	chao@kernel.org, lihongbo22@huawei.com
+Subject: Re: [PATCH V3 7/7] f2fs: switch to the new mount api
+Message-ID: <aCNvMDjawbig4OS1@google.com>
+References: <20250423170926.76007-1-sandeen@redhat.com>
+ <20250423170926.76007-8-sandeen@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1uEraS-00FteB-TR;;;mid=<87o6vw1qc4.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1+f5aQcvtD7cJuBfQzEABOE535sdGOGPWo=
-X-Spam-Level: ****
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.4970]
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa07 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 XMGenDplmaNmb Diploma spam phrases+possible phone number
-	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
-	*  1.0 XM_B_Phish_Phrases Commonly used Phishing Phrases
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa07 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ****;Mateusz Guzik <mjguzik@gmail.com>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 787 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 11 (1.4%), b_tie_ro: 10 (1.2%), parse: 1.65
-	(0.2%), extract_message_metadata: 21 (2.6%), get_uri_detail_list: 4.8
-	(0.6%), tests_pri_-2000: 13 (1.6%), tests_pri_-1000: 6 (0.7%),
-	tests_pri_-950: 1.33 (0.2%), tests_pri_-900: 1.08 (0.1%),
-	tests_pri_-90: 143 (18.2%), check_bayes: 139 (17.7%), b_tokenize: 15
-	(1.9%), b_tok_get_all: 14 (1.8%), b_comp_prob: 7 (0.8%),
-	b_tok_touch_all: 99 (12.6%), b_finish: 0.93 (0.1%), tests_pri_0: 574
-	(72.9%), check_dkim_signature: 0.63 (0.1%), check_dkim_adsp: 2.5
-	(0.3%), poll_dns_idle: 0.46 (0.1%), tests_pri_10: 2.3 (0.3%),
-	tests_pri_500: 10 (1.2%), rewrite_mail: 0.00 (0.0%)
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-X-SA-Exim-Connect-IP: 166.70.13.52
-X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250423170926.76007-8-sandeen@redhat.com>
 
-Mateusz Guzik <mjguzik@gmail.com> writes:
+On 04/23, Eric Sandeen wrote:
+> From: Hongbo Li <lihongbo22@huawei.com>
+> 
+> The new mount api will execute .parse_param, .init_fs_context, .get_tree
+> and will call .remount if remount happened. So we add the necessary
+> functions for the fs_context_operations. If .init_fs_context is added,
+> the old .mount should remove.
+> 
+> See Documentation/filesystems/mount_api.rst for more information.
+> 
+> Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> [sandeen: forward port]
+> Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> ---
+>  fs/f2fs/super.c | 156 +++++++++++++++++++-----------------------------
+>  1 file changed, 62 insertions(+), 94 deletions(-)
+> 
+> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> index 37497fd80bb9..041bd6c482a0 100644
+> --- a/fs/f2fs/super.c
+> +++ b/fs/f2fs/super.c
+> @@ -1141,47 +1141,6 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>  	return 0;
+>  }
+>  
+> -static int parse_options(struct fs_context *fc, char *options)
+> -{
+> -	struct fs_parameter param;
+> -	char *key;
+> -	int ret;
+> -
+> -	if (!options)
+> -		return 0;
+> -
+> -	while ((key = strsep(&options, ",")) != NULL) {
+> -		if (*key) {
+> -			size_t v_len = 0;
+> -			char *value = strchr(key, '=');
+> -
+> -			param.type = fs_value_is_flag;
+> -			param.string = NULL;
+> -
+> -			if (value) {
+> -				if (value == key)
+> -					continue;
+> -
+> -				*value++ = 0;
+> -				v_len = strlen(value);
+> -				param.string = kmemdup_nul(value, v_len, GFP_KERNEL);
+> -				if (!param.string)
+> -					return -ENOMEM;
+> -				param.type = fs_value_is_string;
+> -			}
+> -
+> -			param.key = key;
+> -			param.size = v_len;
+> -
+> -			ret = f2fs_parse_param(fc, &param);
+> -			kfree(param.string);
+> -			if (ret < 0)
+> -				return ret;
+> -		}
+> -	}
+> -	return 0;
+> -}
+> -
+>  /*
+>   * Check quota settings consistency.
+>   */
+> @@ -2583,13 +2542,12 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+>  	f2fs_flush_ckpt_thread(sbi);
+>  }
+>  
+> -static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> +static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+>  {
+>  	struct f2fs_sb_info *sbi = F2FS_SB(sb);
+>  	struct f2fs_mount_info org_mount_opt;
+> -	struct f2fs_fs_context ctx;
+> -	struct fs_context fc;
+>  	unsigned long old_sb_flags;
+> +	unsigned int flags = fc->sb_flags;
+>  	int err;
+>  	bool need_restart_gc = false, need_stop_gc = false;
+>  	bool need_restart_flush = false, need_stop_flush = false;
+> @@ -2635,7 +2593,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  #endif
+>  
+>  	/* recover superblocks we couldn't write due to previous RO mount */
+> -	if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
+> +	if (!(flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
+>  		err = f2fs_commit_super(sbi, false);
+>  		f2fs_info(sbi, "Try to recover all the superblocks, ret: %d",
+>  			  err);
+> @@ -2645,21 +2603,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  
+>  	default_options(sbi, true);
+>  
+> -	memset(&fc, 0, sizeof(fc));
+> -	memset(&ctx, 0, sizeof(ctx));
+> -	fc.fs_private = &ctx;
+> -	fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
+> -
+> -	/* parse mount options */
+> -	err = parse_options(&fc, data);
+> -	if (err)
+> -		goto restore_opts;
+> -
+> -	err = f2fs_check_opt_consistency(&fc, sb);
+> +	err = f2fs_check_opt_consistency(fc, sb);
+>  	if (err < 0)
+>  		goto restore_opts;
+>  
+> -	f2fs_apply_options(&fc, sb);
+> +	f2fs_apply_options(fc, sb);
+>  
+>  #ifdef CONFIG_BLK_DEV_ZONED
+>  	if (f2fs_sb_has_blkzoned(sbi) &&
+> @@ -2678,20 +2626,20 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  	 * Previous and new state of filesystem is RO,
+>  	 * so skip checking GC and FLUSH_MERGE conditions.
+>  	 */
+> -	if (f2fs_readonly(sb) && (*flags & SB_RDONLY))
+> +	if (f2fs_readonly(sb) && (flags & SB_RDONLY))
+>  		goto skip;
+>  
+> -	if (f2fs_dev_is_readonly(sbi) && !(*flags & SB_RDONLY)) {
+> +	if (f2fs_dev_is_readonly(sbi) && !(flags & SB_RDONLY)) {
+>  		err = -EROFS;
+>  		goto restore_opts;
+>  	}
+>  
+>  #ifdef CONFIG_QUOTA
+> -	if (!f2fs_readonly(sb) && (*flags & SB_RDONLY)) {
+> +	if (!f2fs_readonly(sb) && (flags & SB_RDONLY)) {
+>  		err = dquot_suspend(sb, -1);
+>  		if (err < 0)
+>  			goto restore_opts;
+> -	} else if (f2fs_readonly(sb) && !(*flags & SB_RDONLY)) {
+> +	} else if (f2fs_readonly(sb) && !(flags & SB_RDONLY)) {
+>  		/* dquot_resume needs RW */
+>  		sb->s_flags &= ~SB_RDONLY;
+>  		if (sb_any_quota_suspended(sb)) {
+> @@ -2747,7 +2695,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  		goto restore_opts;
+>  	}
+>  
+> -	if ((*flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
+> +	if ((flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
+>  		err = -EINVAL;
+>  		f2fs_warn(sbi, "disabling checkpoint not compatible with read-only");
+>  		goto restore_opts;
+> @@ -2758,7 +2706,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  	 * or if background_gc = off is passed in mount
+>  	 * option. Also sync the filesystem.
+>  	 */
+> -	if ((*flags & SB_RDONLY) ||
+> +	if ((flags & SB_RDONLY) ||
+>  			(F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_OFF &&
+>  			!test_opt(sbi, GC_MERGE))) {
+>  		if (sbi->gc_thread) {
+> @@ -2772,7 +2720,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  		need_stop_gc = true;
+>  	}
+>  
+> -	if (*flags & SB_RDONLY) {
+> +	if (flags & SB_RDONLY) {
+>  		sync_inodes_sb(sb);
+>  
+>  		set_sbi_flag(sbi, SBI_IS_DIRTY);
+> @@ -2785,7 +2733,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  	 * We stop issue flush thread if FS is mounted as RO
+>  	 * or if flush_merge is not passed in mount option.
+>  	 */
+> -	if ((*flags & SB_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
+> +	if ((flags & SB_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
+>  		clear_opt(sbi, FLUSH_MERGE);
+>  		f2fs_destroy_flush_cmd_control(sbi, false);
+>  		need_restart_flush = true;
+> @@ -2827,7 +2775,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  	 * triggered while remount and we need to take care of it before
+>  	 * returning from remount.
+>  	 */
+> -	if ((*flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
+> +	if ((flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
+>  			!test_opt(sbi, MERGE_CHECKPOINT)) {
+>  		f2fs_stop_ckpt_thread(sbi);
+>  	} else {
+> @@ -2854,7 +2802,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+>  		(test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+>  
+>  	limit_reserve_root(sbi);
+> -	*flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+> +	fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+>  
+>  	sbi->umount_lock_holder = NULL;
+>  	return 0;
+> @@ -3523,7 +3471,6 @@ static const struct super_operations f2fs_sops = {
+>  	.freeze_fs	= f2fs_freeze,
+>  	.unfreeze_fs	= f2fs_unfreeze,
+>  	.statfs		= f2fs_statfs,
+> -	.remount_fs	= f2fs_remount,
+>  	.shutdown	= f2fs_shutdown,
+>  };
+>  
+> @@ -4745,16 +4692,13 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+>  	sbi->readdir_ra = true;
+>  }
+>  
+> -static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> +static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  {
+>  	struct f2fs_sb_info *sbi;
+>  	struct f2fs_super_block *raw_super;
+> -	struct f2fs_fs_context ctx;
+> -	struct fs_context fc;
+>  	struct inode *root;
+>  	int err;
+>  	bool skip_recovery = false, need_fsck = false;
+> -	char *options = NULL;
+>  	int recovery, i, valid_super_block;
+>  	struct curseg_info *seg_i;
+>  	int retry_cnt = 1;
+> @@ -4767,9 +4711,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	raw_super = NULL;
+>  	valid_super_block = -1;
+>  	recovery = 0;
+> -	memset(&fc, 0, sizeof(fc));
+> -	memset(&ctx, 0, sizeof(ctx));
+> -	fc.fs_private = &ctx;
+>  
+>  	/* allocate memory for f2fs-specific super block info */
+>  	sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
+> @@ -4820,22 +4761,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  						sizeof(raw_super->uuid));
+>  
+>  	default_options(sbi, false);
+> -	/* parse mount options */
+> -	options = kstrdup((const char *)data, GFP_KERNEL);
+> -	if (data && !options) {
+> -		err = -ENOMEM;
+> -		goto free_sb_buf;
+> -	}
+> -
+> -	err = parse_options(&fc, options);
+> -	if (err)
+> -		goto free_options;
+>  
+> -	err = f2fs_check_opt_consistency(&fc, sb);
+> +	err = f2fs_check_opt_consistency(fc, sb);
+>  	if (err < 0)
+> -		goto free_options;
+> +		goto free_sb_buf;
+>  
+> -	f2fs_apply_options(&fc, sb);
+> +	f2fs_apply_options(fc, sb);
+>  
+>  	sb->s_maxbytes = max_file_blocks(NULL) <<
+>  				le32_to_cpu(raw_super->log_blocksize);
+> @@ -5160,7 +5091,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  		if (err)
+>  			goto sync_free_meta;
+>  	}
+> -	kvfree(options);
+>  
+>  	/* recover broken superblock */
+>  	if (recovery) {
+> @@ -5255,7 +5185,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  		kfree(F2FS_OPTION(sbi).s_qf_names[i]);
+>  #endif
+>  	fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
+> -	kvfree(options);
+>  free_sb_buf:
+>  	kfree(raw_super);
+>  free_sbi:
+> @@ -5271,14 +5200,39 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+>  	return err;
+>  }
+>  
+> -static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+> -			const char *dev_name, void *data)
+> +static int f2fs_get_tree(struct fs_context *fc)
+>  {
+> -	return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
+> +	return get_tree_bdev(fc, f2fs_fill_super);
+> +}
+> +
+> +static int f2fs_reconfigure(struct fs_context *fc)
+> +{
+> +	struct super_block *sb = fc->root->d_sb;
+> +
+> +	return __f2fs_remount(fc, sb);
+> +}
+> +
+> +static void f2fs_fc_free(struct fs_context *fc)
+> +{
+> +	struct f2fs_fs_context *ctx = fc->fs_private;
+> +	int i;
+> +
+> +	if (!ctx)
+> +		return;
+> +
+> +#ifdef CONFIG_QUOTA
+> +	for (i = 0; i < MAXQUOTAS; i++)
+> +		kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
+> +#endif
+> +	fscrypt_free_dummy_policy(&F2FS_CTX_INFO(ctx).dummy_enc_policy);
+> +	kfree(ctx);
+>  }
 
-> On Thu, Oct 06, 2022 at 08:25:01AM -0700, Kees Cook wrote:
->> On October 6, 2022 7:13:37 AM PDT, Jann Horn <jannh@google.com> wrote:
->> >On Thu, Oct 6, 2022 at 11:05 AM Christian Brauner <brauner@kernel.org> wrote:
->> >> On Thu, Oct 06, 2022 at 01:27:34AM -0700, Kees Cook wrote:
->> >> > The check_unsafe_exec() counting of n_fs would not add up under a heavily
->> >> > threaded process trying to perform a suid exec, causing the suid portion
->> >> > to fail. This counting error appears to be unneeded, but to catch any
->> >> > possible conditions, explicitly unshare fs_struct on exec, if it ends up
->> >>
->> >> Isn't this a potential uapi break? Afaict, before this change a call to
->> >> clone{3}(CLONE_FS) followed by an exec in the child would have the
->> >> parent and child share fs information. So if the child e.g., changes the
->> >> working directory post exec it would also affect the parent. But after
->> >> this change here this would no longer be true. So a child changing a
->> >> workding directoro would not affect the parent anymore. IOW, an exec is
->> >> accompanied by an unshare(CLONE_FS). Might still be worth trying ofc but
->> >> it seems like a non-trivial uapi change but there might be few users
->> >> that do clone{3}(CLONE_FS) followed by an exec.
->> >
->> >I believe the following code in Chromium explicitly relies on this
->> >behavior, but I'm not sure whether this code is in active use anymore:
->> >
->> >https://source.chromium.org/chromium/chromium/src/+/main:sandbox/linux/suid/sandbox.c;l=101?q=CLONE_FS&sq=&ss=chromium
->> 
->> Oh yes. I think I had tried to forget this existed. Ugh. Okay, so back to the drawing board, I guess. The counting will need to be fixed...
->> 
->> It's possible we can move the counting after dethread -- it seems the early count was just to avoid setting flags after the point of no return, but it's not an error condition...
->> 
->
-> I landed here from git blame.
->
-> I was looking at sanitizing shared fs vs suid handling, but the entire
-> ordeal is so convoluted I'm confident the best way forward is to whack
-> the problem to begin with.
->
-> Per the above link, the notion of a shared fs struct across different
-> processes is depended on so merely unsharing is a no-go.
->
-> However, the shared state is only a problem for suid/sgid.
->
-> Here is my proposal: *deny* exec of suid/sgid binaries if fs_struct is
-> shared. This will have to be checked for after the execing proc becomes
-> single-threaded ofc.
->
-> While technically speaking this does introduce a change in behavior,
-> there is precedent for doing it and seeing if anyone yells.
->
-> With this in place there is no point maintainig ->in_exec or checking
-> the flag.
->
-> There is the known example of depending on shared fs_struct across exec.
-> Hopefully there is no example of depending on execing a suid/sgid binary
-> in such a setting -- it would be quite a weird setup given that for
-> security reasons the perms must not be changed.
->
-> The upshot of this method is that any breakage will be immediately
-> visible in the form of a failed exec.
->
-> Another route would be to do the mandatory unshare but only for
-> suid/sgid, except that would have a hidden failure (if you will).
->
-> Comments?
+Applied the below to include "int i" in CONFIG_QUOTA.
 
-What is the problem that is trying to be fixed?
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -540,6 +540,14 @@ static int f2fs_unnote_qf_name(struct fs_context *fc, int qtype)
+        ctx->qname_mask |= 1 << qtype;
+        return 0;
+ }
++
++static void f2fs_unnote_qf_name_all(struct fs_context *fc)
++{
++       int i;
++
++       for (i = 0; i < MAXQUOTAS; i++)
++               f2fs_unnote_qf_name(fc, i);
++}
+ #endif
 
-A uapi change to not allow sharing a fs_struct for processes that change
-their cred on exec seems possible.
+ static int f2fs_parse_test_dummy_encryption(const struct fs_parameter *param,
+@@ -5286,14 +5294,12 @@ static int f2fs_reconfigure(struct fs_context *fc)
+ static void f2fs_fc_free(struct fs_context *fc)
+ {
+        struct f2fs_fs_context *ctx = fc->fs_private;
+-       int i;
 
-I said changing cred instead of suid/sgid because there are capabilities
-and LSM labels that we probably want this to apply to as well.
+        if (!ctx)
+                return;
 
-I think such a limitation can be justified based upon having a shared
-fs_struct is likely to allow confuse suid executables.
+ #ifdef CONFIG_QUOTA
+-       for (i = 0; i < MAXQUOTAS; i++)
+-               kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
++       f2fs_unnote_qf_name_all(fc);
+ #endif
+        fscrypt_free_dummy_policy(&F2FS_CTX_INFO(ctx).dummy_enc_policy);
+        kfree(ctx);
 
 
-Earlier in the thread there was talk about the refcount for fs_struct.
-I don't see that problem at the moment, and I don't see how dealing with
-suid+sgid exectuables will have any bearing on how the refcount works.
 
-Eric
-
-
+>  
+>  static const struct fs_context_operations f2fs_context_ops = {
+>  	.parse_param	= f2fs_parse_param,
+> +	.get_tree	= f2fs_get_tree,
+> +	.reconfigure = f2fs_reconfigure,
+> +	.free	= f2fs_fc_free,
+>  };
+>  
+>  static void kill_f2fs_super(struct super_block *sb)
+> @@ -5322,10 +5276,24 @@ static void kill_f2fs_super(struct super_block *sb)
+>  	}
+>  }
+>  
+> +static int f2fs_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct f2fs_fs_context *ctx;
+> +
+> +	ctx = kzalloc(sizeof(struct f2fs_fs_context), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	fc->fs_private = ctx;
+> +	fc->ops = &f2fs_context_ops;
+> +
+> +	return 0;
+> +}
+> +
+>  static struct file_system_type f2fs_fs_type = {
+>  	.owner		= THIS_MODULE,
+>  	.name		= "f2fs",
+> -	.mount		= f2fs_mount,
+> +	.init_fs_context = f2fs_init_fs_context,
+>  	.kill_sb	= kill_f2fs_super,
+>  	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+>  };
+> -- 
+> 2.49.0
 
