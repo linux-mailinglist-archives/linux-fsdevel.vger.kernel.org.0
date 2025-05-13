@@ -1,100 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-48809-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48810-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5335AB4CC7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 09:32:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18D9AB4CD1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 09:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F5403A8F88
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 07:32:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42F3A4645BB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 07:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62351DDA15;
-	Tue, 13 May 2025 07:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051C1F03DE;
+	Tue, 13 May 2025 07:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="EiygpGvc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h1cuC8NK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9719D2F50
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 07:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C274315E;
+	Tue, 13 May 2025 07:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747121543; cv=none; b=BeYzB2P3WyXYv4+ABfDI6wKjli8qe+EY+ljiYXAFzaWL1oB/NQ11+N7Iu0K6Zs3ByY78ZGWFF8C4zMd7Lo31TN5ywMXuBX/uYwJPZ+7CwK6xfDGUtXPEpjroXSIddOHXpuSPCHzIfs4KQbVreGfCb/JcCmJjA1e0vayjiomngtg=
+	t=1747121609; cv=none; b=OK6tE3Wn8RmaaVe7hcx3jEL3twH1WBbsheu4gmYwrWsXtg5TtmcGWyO5g36ZhGEkMRzuZojHigtGiBXNCFUJMoYQL30a97zKvY8cmziGTwX6ZMTdaCM+yfFSK5VfyVVeAjW6vPSnzb1OMfYuonJLp9i5Vr44mvJkCSKtMCTnETY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747121543; c=relaxed/simple;
-	bh=/DjtqgYldkPzgnKKakuAwnR8P2FFT1qB9aGvUM/gJ1Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sRwSCJJW/1DiiseKv+esc1FP0mWGRu8gS0GB4dVAxkNOmtVlDgwcTAAw6hWIfL5Yv3/85gIdA+gvFPI59Of4M304ryjqdx4o7T/uPiosta++aKHILsiTaCWGmX5MKdChDUhKVyxYaiNaNjzBJbjhfYuabUkH+8Cl5hGu7g/MQQo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=EiygpGvc; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4769b16d4fbso29440521cf.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 00:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747121540; x=1747726340; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9dxcLHskhfmtsB8c4dIoVaUbALoLmjCAlq+9MDOep8=;
-        b=EiygpGvc0KDoQuuikSbsIdb0LB77b5T4D6ltpwa9wCDvzp2WhsZTSvc1W8D1pHBCyA
-         GkR3zc/o8vfjnTdin9V0YK7oALkPqJ/BrC1oe3fpADgZQbjTJj41+LYnjKdVTKP7vzUg
-         1iIk/IO6bl3HCwqpJXmJ4BItHUQ6f4T3eHiHM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747121540; x=1747726340;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l9dxcLHskhfmtsB8c4dIoVaUbALoLmjCAlq+9MDOep8=;
-        b=ID67/zeHUnTB/6uiz9vFNkfAvWouPbsiAdOdMpELU0pDtdnAsh4s+WA5wQ+nUYnxcG
-         5eLjGFeLqTiuZO6RhP563vd3GodMzd5jnIdz/VsQbYuaXmDO1JY+boVw8dtKKoTrncNm
-         kjDII3w6GS30Fphbdm8K43+U7cFSg+Y2PJeNpCeKBpgVyOa2lFX+X9SvP/uiQOwlUQ+C
-         5nl+Z1FctJxm0+kaIllwTu1m1nHvq8p67DigB0Jsyp1CzEevfhq18byE5MsRWDtt8FsE
-         w8QLXznbeIQJTHvGPruxL3WmsPkQuunKUyfX2L5Ffp9DBvnslnmO3TKGtFtn8HPJWv0H
-         TCUg==
-X-Gm-Message-State: AOJu0YzqLOJGpbDIGPH2sqaFvpLqhCLSyXv+HF7DidxtPOFeNP7am18T
-	yOJSZPrBtchMHQXujBJAh319y6ozAu0Og5PEZ53TzCkkO+jhvG/jJiqGtPaKd8Qc2p104oluXrD
-	+0b/bR99iDDG/UWrkT2jI/JsEI9Wn88yBKTsGgA==
-X-Gm-Gg: ASbGncsapGtk4tcywGHdee7MX5AP9FwSHTU2yWd2UVqLrmnAQ/l+p7LBqyu4OGYRy8y
-	rzM6NhkuIO2THUfGKtOsLkG5I37oIV3GC/6ihpPXgyEaQw8o+QdM16OvoD5sxEFr5/cliOUS+2u
-	7O3BwLGO4bb8O/3tHRUM8NEVh1uxv42fI=
-X-Google-Smtp-Source: AGHT+IEkL+mTTKhLXSmqWbuD9H+PTsSpjY+Aum2f4M2kW6pMtG64rh0BSNmltpJ5zTL2+aJuaNWxGIr89a9Lfma3of8=
-X-Received: by 2002:a05:622a:49:b0:48e:ef59:db50 with SMTP id
- d75a77b69052e-494527624b3mr214109321cf.31.1747121540520; Tue, 13 May 2025
- 00:32:20 -0700 (PDT)
+	s=arc-20240116; t=1747121609; c=relaxed/simple;
+	bh=oydnFwFzyvTFZLytjGu4FLOFoRfASVhdPt5sskdlZPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E/ZrQwHzlUuGaHtfyGcTxFRDPXA3Fa24/HAWubz+wKwcAnApYmKcarAiB/wsNup6f7r+5btGIoRlC0DTZ85x5owSA2NlEi638C8dxHTpIXyIOc9BngBHF7fy7Gj5UESwMtWnAZMV9G+d7rTFPRhZ7W8pWCNO9yzU1PZfo9lGwNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h1cuC8NK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38272C4CEE4;
+	Tue, 13 May 2025 07:33:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747121608;
+	bh=oydnFwFzyvTFZLytjGu4FLOFoRfASVhdPt5sskdlZPs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h1cuC8NKAbWGk5N4z9eoNPIQ6NBkZHWfTFBOMG6WcDqpnNYaelJWfkZf82BqvkDSl
+	 P/SajPouty4fKsU9symCU24kVd6HIGfDEqjl8fysrHGn06p2mqEb6M0ny0gYBoxxBk
+	 KeV2K9sjGbcqfaahL5nhnRXWUj06irpfg80ARwqSV7eG2SqwwBAwTjvK/K/HmYNC+3
+	 ClsSUW2zxuP5+BIRP9Uh8Sg+1e8cC47UVPi/e6Hv3UN5bc6ttmhPXS1uHrb7nlx2Hl
+	 1bxJvfmr+aeiyc8BpGfu5tpnm9UEP2MWYHDM53CjBoe7hXKGFQZU+2v+E1qoSj2UG6
+	 EapmAmIgZLQyQ==
+Date: Tue, 13 May 2025 09:33:23 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Helge Deller <deller@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org, 
+	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 09/12] sysctl: move cad_pid into kernel/pid.c
+Message-ID: <hqklj5woeb3hl3n4btn6xognyw63tkp7x2ht6dkw52nmhwfioo@ssagrmnhg2bu>
+References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-9-d0ad83f5f4c3@kernel.org>
+ <202505091200.FC2683DD@keescook>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250512225840.826249-1-joannelkoong@gmail.com>
-In-Reply-To: <20250512225840.826249-1-joannelkoong@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Tue, 13 May 2025 09:32:09 +0200
-X-Gm-Features: AX0GCFvOiA_BEFqaWnvR0r4RXWkfO_6h46tyk_uGP83oK8q7fGIq7xChnhZ-BCQ
-Message-ID: <CAJfpeguY0c_u1hPiCFap-CdikfOiOnzKUTpaW=A8ZXeK8yTkpQ@mail.gmail.com>
-Subject: Re: [PATCH v6 00/11] fuse: support large folios
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm, 
-	jlayton@kernel.org, jefflexu@linux.alibaba.com, josef@toxicpanda.com, 
-	willy@infradead.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="5fouo2tqrgcca44q"
+Content-Disposition: inline
+In-Reply-To: <202505091200.FC2683DD@keescook>
 
-On Tue, 13 May 2025 at 00:59, Joanne Koong <joannelkoong@gmail.com> wrote:
->
-> This patchset adds support for large folios in fuse.
->
-> This does not yet switch fuse to using large folios. Using large folios in
-> fuse is dependent on adding granular dirty-page tracking. This will be done
-> in a separate patchset that will have fuse use iomap [1]. There also needs
-> to be a followup (also part of future work) for having dirty page balancing
-> not tank performance for unprivileged servers where bdi limits lead to subpar
-> throttling [1], before enabling large folios for fuse.
 
-Looks good, applied.   Thanks for taking care of this.
+--5fouo2tqrgcca44q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Miklos
+On Fri, May 09, 2025 at 12:01:24PM -0700, Kees Cook wrote:
+> On Fri, May 09, 2025 at 02:54:13PM +0200, Joel Granados wrote:
+> > Move cad_pid as well as supporting function proc_do_cad_pid into
+> > kernel/pic.c. Replaced call to __do_proc_dointvec with proc_dointvec
+> > inside proc_do_cad_pid which requires the copy of the ctl_table to
+> > handle the temp value.
+> >=20
+> > This is part of a greater effort to move ctl tables into their
+> > respective subsystems which will reduce the merge conflicts in
+> > kernel/sysctl.c.
+> >=20
+> > Signed-off-by: Joel Granados <joel.granados@kernel.org>
+> > ---
+> >  kernel/pid.c    | 32 ++++++++++++++++++++++++++++++++
+> >  kernel/sysctl.c | 31 -------------------------------
+> >  2 files changed, 32 insertions(+), 31 deletions(-)
+> >=20
+> > diff --git a/kernel/pid.c b/kernel/pid.c
+> > index 4ac2ce46817fdefff8888681bb5ca3f2676e8add..bc87ba08ae8b7c67f3457b3=
+1309b56b5d90f8c52 100644
+> > --- a/kernel/pid.c
+> > +++ b/kernel/pid.c
+> > @@ -717,6 +717,29 @@ static struct ctl_table_root pid_table_root =3D {
+> >  	.set_ownership	=3D pid_table_root_set_ownership,
+> >  };
+> > =20
+> > +static int proc_do_cad_pid(const struct ctl_table *table, int write, v=
+oid *buffer,
+> > +		size_t *lenp, loff_t *ppos)
+> > +{
+> > +	struct pid *new_pid;
+> > +	pid_t tmp_pid;
+> > +	int r;
+> > +	struct ctl_table tmp_table =3D *table;
+> > +
+> > +	tmp_pid =3D pid_vnr(cad_pid);
+> > +	tmp_table.data =3D &tmp_pid;
+> > +
+> > +	r =3D proc_dointvec(&tmp_table, write, buffer, lenp, ppos);
+> > +	if (r || !write)
+> > +		return r;
+> > +
+> > +	new_pid =3D find_get_pid(tmp_pid);
+> > +	if (!new_pid)
+> > +		return -ESRCH;
+> > +
+> > +	put_pid(xchg(&cad_pid, new_pid));
+> > +	return 0;
+> > +}
+> > +
+> >  static const struct ctl_table pid_table[] =3D {
+> >  	{
+> >  		.procname	=3D "pid_max",
+> > @@ -727,6 +750,15 @@ static const struct ctl_table pid_table[] =3D {
+> >  		.extra1		=3D &pid_max_min,
+> >  		.extra2		=3D &pid_max_max,
+> >  	},
+> > +#ifdef CONFIG_PROC_SYSCTL
+> > +	{
+> > +		.procname	=3D "cad_pid",
+> > +		.data		=3D NULL,
+>=20
+> nit: this is redundant, any unspecified member will be zero-initialized.
+Thx. Changed it locally, but will not resend for this.
+>=20
+> Regardless:
+>=20
+> Reviewed-by: Kees Cook <kees@kernel.org>
+=2E..
+> > -		.data		=3D NULL,
+> > -		.maxlen		=3D sizeof (int),
+> > -		.mode		=3D 0600,
+> > -		.proc_handler	=3D proc_do_cad_pid,
+> > -	},
+> >  #endif
+> >  	{
+> >  		.procname	=3D "overflowuid",
+> >=20
+> > --=20
+> > 2.47.2
+> >=20
+> >=20
+>=20
+> --=20
+> Kees Cook
+
+--=20
+
+Joel Granados
+
+--5fouo2tqrgcca44q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmgi9bkACgkQupfNUreW
+QU9gYwv9HmmGGJZHXMl5xZnY6+FsJWyyJPwiDmBpHKqnKUS42gx1LYy2Q2iMzgFt
+YcxKJxmpLBMq0zNs1c7WNKOBf/3YXplkC/1ZGQPADy/fPhZIqjoZgE9IY7rlPuRW
+ZqHGdVvpT6hjyjx9buwt+BAt7LbMZFrpH+KgqIy27NUu6icIQiZv5p1QTqHW4/MP
+mwk0aJcMZnCExOxBdRgKDzhiQRnKFgDZcbM2QeOLuuPZsLA/rPQA5UxlnXVGJ82s
+1bm/UR896mg8Ziq42SuV2yl9S4cT/mNKoNgxTtVAOrNYajc5mcjQPalvDCitBQTk
+L9ieGsR6I/+jYgJVCoc9vHuYkJuX7B52HcHH2rC/9bmSKqr1ea7xFcG7eA3iViJz
+rQzlj+z9wxfi+81TJSPXsUZmFkFhKXaZNQEgt7rhjtwiv2aafkFpOp6vN7dlrkrW
+OyvLd59uapsslRXXBAlyqMbnHEhg69c/Pqk5bup1Cj5WU4zhK2OmMk3sR2Vu80cD
+/fMGl+l+
+=zOoe
+-----END PGP SIGNATURE-----
+
+--5fouo2tqrgcca44q--
 
