@@ -1,174 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-48907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48908-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AA21AB58A5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 17:32:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F0CAB58BD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 17:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 990EB17F652
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 15:32:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17E5C3A376F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 May 2025 15:36:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F1E255F26;
-	Tue, 13 May 2025 15:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E68722BE0E2;
+	Tue, 13 May 2025 15:36:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0p1asKpy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMvVN74N"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D7B1DD0C7
-	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 15:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAA228E616
+	for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 15:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747150347; cv=none; b=QJhwQI640JR8GvK7HLyKn+bio9/Jo2K//rZ1AaSSGD27O8yAAwYbXRiEmPYxdrFM0cIg0Wgrt97BktynwabEQU2YFvr7YdzqERYQIdyL1QlruZO9an5+9wgaB4Qs9VrwVUcpeY/Yag5U9unF7N/EVLr7c9VTIVnnRxpHXZUMASY=
+	t=1747150582; cv=none; b=UU2T0BlSOKa+LD5s5ikvkTZXuIB4KJ5cDFmTKM3Efp2hc9K2k7pGjrKofFfYBCah6fa0O1tHpcb8o6tf6IRZl6y3LSKQyyh/EvypHiLfrJow2UjFXu8n0omFHEWTX8E8HsjR0wY7Ou4cC0qwUgfXooE4JhwDp2WDPg7IdCra2LM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747150347; c=relaxed/simple;
-	bh=MVkr3QWAI/X4Ew1h+MJOSNkV7y4pQmb/XzRFIHYUEwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Fg1AubWxOvEqjuFTU3hiIO4RhHgsiCEFkZydTsOmjrxOSesXg73W52yNoAJBO6Qdi2+j+PG82qpBEzTW0hpv/AbVCZMrSUwdKTuCm4hnyhCp4JbcJgX58VZoOAAnbCpMC9dYbkpiFjxzt8lhZXQgKFj7GgSZLzdM6o7/OQX0gus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0p1asKpy; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4774611d40bso348181cf.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 May 2025 08:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747150345; x=1747755145; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g7GIEqlT6VpngqlG/9UDc8Z0jwZJiLiyfG5vtoML09U=;
-        b=0p1asKpy0gdYPt8rKvMPBvIYt+hH6T75HDvurqPBy3/dtF7yZbZwHJoHyZ+BqEHhsU
-         a8Ud1rJVmsngDQGu0Ng+hnNed2VxboEmjrQqP1LYReloyx2On3/tfWICIbvFdjo1Udxc
-         us5claWoM2H/1P3055lzUcDx8qPhcj3tijur8bdAB62FJcEiaGacS5YhjPHHE5rtRr+J
-         +sJUSF7wBpWm+4I9iQYnnCufsZrArMcv+BFMxKjUZEEICvrZPTtzmBy8ZUQIZIQxbtXS
-         givyRksKCm/nLLSIEPNCqxS/gbzNWtxqk4i90UljK1RRtUSVZevUuO9RDf0AIj8k2HEp
-         +/2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747150345; x=1747755145;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g7GIEqlT6VpngqlG/9UDc8Z0jwZJiLiyfG5vtoML09U=;
-        b=q/hIFWZfQDEu78RFtqy5svhMqTemTC1VKiNyl785x09CQGy1pzjAcmUuxV/8PvfsyA
-         kr7/v7sX+2vZy7LRQu2wmV0gvZPe/JwwCcYAfqNgrv4DRXqacKGgDfHvVY0FIAz6nh5f
-         sZUPLA97GeFfk72+GgoCq6IlHH2IROR732K2VFjNh1BZnTmC+J+xgl1MqaSQcKICKA6c
-         7IPjh3c5HNkOB4QwTZ5pXudwTBmRv6rhIfOiA/s08hc073RWnOhz8u60s8U2fobEe4Xn
-         cjuVbyfUTgoKv1WJ67yrL2kGvtpurpHrIhu+JQb/1FXKGE4EmqUi/NZqvh1lFSSPpwge
-         kz7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVJfiGTbO+TMgkfzngTbxs5LtPz5EHY0yGO+WwT0DQt2zHs3tyQRCSV+nKZbs3uZYJ9HLj/8kbId2O46lU1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0j8Ojo+mqsfw/1Mo2vKHF2AVfzky3RSNZHYAvUqNaxYRttpqy
-	MXrr4tVEV0wPBBzgm0irASNlpdzfDwzZ0tJe3mNrVztFvrnSg4VBOrjzbmsD4Cog+XAEcaa4j9t
-	abrkPVu0PAFkGy1kOT99Dsn75OVomh/adB9TJRYbS
-X-Gm-Gg: ASbGncuy/IsH1pCgfq5kZXpjCqPvRMgvW54lEOucUZMHmY/mmPoE6fpAzgLS4yGTV4A
-	Jd6eO1iWuAaUZ+SAUE2jk1dgU05VpsgUcZOFX3ioU30gd/V0MB2hn+EuKDWM4/ipLRI8R1FquPD
-	ATPo8M+90McYed6Z98fAEJ4TFGgAW2CgaRcZYCPvIH/4odH3ehmiSzD5MaKnAX
-X-Google-Smtp-Source: AGHT+IGaQOJh2WGLgdgVaUkWCSRwxWI0zOQtCZRpqIPwC1f/xENNQg6z8FkZS2+QDmtcgov4WAX0uJ0FkCBKDw2bCo0=
-X-Received: by 2002:ac8:5d93:0:b0:494:58a3:d3e6 with SMTP id
- d75a77b69052e-494880c8030mr4064571cf.26.1747150344392; Tue, 13 May 2025
- 08:32:24 -0700 (PDT)
+	s=arc-20240116; t=1747150582; c=relaxed/simple;
+	bh=h0SueSLRMRwCJxCC2plmOq+6rDfK1UJPAlE3HaRh1B0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qg2wVxLueWTO50y6VGMG4KdpJm4xwmhqGcRVXr7BDXfugXc1I68+BNZrLo8H0OZ3UdgrZ95tGLlqeMIvLu4c+xdwqIUIvqYcvJowZM55BJxMo5+y4dCCJZeVgFAMEFAgW1VhvmXJs2jCewUXOp/UzZOKGPSKDwWEtdhe6UT9u7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMvVN74N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C53DC4CEE9;
+	Tue, 13 May 2025 15:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747150581;
+	bh=h0SueSLRMRwCJxCC2plmOq+6rDfK1UJPAlE3HaRh1B0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GMvVN74NU4eXkIncpamPk1rXO6UCCOOAE30o+R3Wr5hjj1UDJK3/PZT8I2LEFu8Az
+	 28nFQDVOA8HYw1vXatKyFdf953ssP+jtDnzh8EqqSZLqVIRXyb65DaMyUg4F3+GlVv
+	 hqd2ab+XZ4C3+XfR+i2BfQqSqIfmXSuYTwJuknSjMuTmUzYaGRB8Yflvy9pXKLZrZJ
+	 mk6KKhIJgs3SOlP0g2lwaPLaIShq61fKf7jQXe8bQIkvNIYD/qVvq7RdjYUzW5+q56
+	 gjT3iNtTOGPq6fxM6nw7EIjxukOKEAWb1uf/p4X+FJHkQY84EU984BGPV3bELdOMGd
+	 V+D6V5YSd7fpQ==
+Date: Tue, 13 May 2025 15:36:19 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: Eric Sandeen <sandeen@redhat.com>,
+	linux-f2fs-devel@lists.sourceforge.net, lihongbo22@huawei.com,
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH V3 7/7] f2fs: switch to the new mount api
+Message-ID: <aCNm858Rtt1ozdLp@google.com>
+References: <20250423170926.76007-1-sandeen@redhat.com>
+ <20250423170926.76007-8-sandeen@redhat.com>
+ <b56964c2-ad30-4501-a7fd-1c0b41c407e9@kernel.org>
+ <763bed71-1f44-4622-a9a0-d200f0418183@redhat.com>
+ <74704f7c-135e-4614-b805-404da6195930@kernel.org>
+ <3fe6be01-b9bf-4e26-b3f6-32dafe0a8162@redhat.com>
+ <fb54f933-1669-4e89-8b85-9b88030a68d2@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1746792520.git.lorenzo.stoakes@oracle.com>
- <0f758474fa6a30197bdf25ba62f898a69d84eef3.1746792520.git.lorenzo.stoakes@oracle.com>
- <lbykhkt4sjfb2l4mexgnzq7zumauvi5ycxua666ixvxns4w3qp@pgbo2krrtu2d>
-In-Reply-To: <lbykhkt4sjfb2l4mexgnzq7zumauvi5ycxua666ixvxns4w3qp@pgbo2krrtu2d>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Tue, 13 May 2025 08:32:11 -0700
-X-Gm-Features: AX0GCFuKZoSDkdrM5SwPBVnmxK9uYRCIyU-gKUoqlLzfyT7RC4ZlWav-ftNZMDo
-Message-ID: <CAJuCfpFfoPHgUcu_-S4wXVxGpEGgTH_mLpgVO5UhtDG5+L3b2A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] mm: secretmem: convert to .mmap_prepare() hook
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, Suren Baghdasaryan <surenb@google.com>, 
-	Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fb54f933-1669-4e89-8b85-9b88030a68d2@kernel.org>
 
-On Tue, May 13, 2025 at 6:23=E2=80=AFAM Liam R. Howlett <Liam.Howlett@oracl=
-e.com> wrote:
->
-> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250509 08:14]:
-> > Secretmem has a simple .mmap() hook which is easily converted to the ne=
-w
-> > .mmap_prepare() callback.
-> >
-> > Importantly, it's a rare instance of an driver that manipulates a VMA w=
-hich
-> > is mergeable (that is, not a VM_SPECIAL mapping) while also adjusting V=
-MA
-> > flags which may adjust mergeability, meaning the retry merge logic migh=
-t
-> > impact whether or not the VMA is merged.
-> >
-> > By using .mmap_prepare() there's no longer any need to retry the merge
-> > later as we can simply set the correct flags from the start.
-> >
-> > This change therefore allows us to remove the retry merge logic in a
-> > subsequent commit.
-> >
-> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
-> > Reviewed-by: David Hildenbrand <david@redhat.com>
->
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+On 05/13, Chao Yu wrote:
+> On 5/13/25 10:19, Eric Sandeen wrote:
+> > On 5/11/25 10:43 PM, Chao Yu wrote:
+> >> On 5/8/25 23:59, Eric Sandeen wrote:
+> >>> On 5/8/25 4:19 AM, Chao Yu wrote:
+> >>>>> @@ -2645,21 +2603,11 @@ static int f2fs_remount(struct
+> >>>>> super_block *sb, int *flags, char *data)
+> >>>>>
+> >>>>> default_options(sbi, true);
+> >>>>>
+> >>>>> -	memset(&fc, 0, sizeof(fc)); -	memset(&ctx, 0, sizeof(ctx)); 
+> >>>>> -	fc.fs_private = &ctx; -	fc.purpose =
+> >>>>> FS_CONTEXT_FOR_RECONFIGURE; - -	/* parse mount options */ -
+> >>>>> err = parse_options(&fc, data); -	if (err) -		goto
+> >>>>> restore_opts;
+> >>>> There is a retry flow during f2fs_fill_super(), I intenionally
+> >>>> inject a fault into f2fs_fill_super() to trigger the retry flow,
+> >>>> it turns out that mount option may be missed w/ below testcase:
+> >>>
+> >>> I never did understand that retry logic (introduced in ed2e621a95d
+> >>> long ago). What errors does it expect to be able to retry, with
+> >>> success?
+> >>
+> >> IIRC, it will retry mount if there is recovery failure due to
+> >> inconsistent metadata.
+> > 
+> > Sure, I just wonder what would cause inconsistent metadata to become consistent
+> > after 1 retry ...
+> 
+> I don't remember, Jaegeuk, do you remember?
 
-Reviewed-by: Suren Baghdasaryan <surenb@google.com>
+I remember, if the roll-forward recovery ended up with an error, we had better
+retry mount() as we may have some online fixes.
 
->
-> > ---
-> >  mm/secretmem.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/mm/secretmem.c b/mm/secretmem.c
-> > index 1b0a214ee558..589b26c2d553 100644
-> > --- a/mm/secretmem.c
-> > +++ b/mm/secretmem.c
-> > @@ -120,18 +120,18 @@ static int secretmem_release(struct inode *inode,=
- struct file *file)
-> >       return 0;
-> >  }
-> >
-> > -static int secretmem_mmap(struct file *file, struct vm_area_struct *vm=
-a)
-> > +static int secretmem_mmap_prepare(struct vm_area_desc *desc)
-> >  {
-> > -     unsigned long len =3D vma->vm_end - vma->vm_start;
-> > +     const unsigned long len =3D desc->end - desc->start;
-> >
-> > -     if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) =3D=3D 0)
-> > +     if ((desc->vm_flags & (VM_SHARED | VM_MAYSHARE)) =3D=3D 0)
-> >               return -EINVAL;
-> >
-> > -     if (!mlock_future_ok(vma->vm_mm, vma->vm_flags | VM_LOCKED, len))
-> > +     if (!mlock_future_ok(desc->mm, desc->vm_flags | VM_LOCKED, len))
-> >               return -EAGAIN;
-> >
-> > -     vm_flags_set(vma, VM_LOCKED | VM_DONTDUMP);
-> > -     vma->vm_ops =3D &secretmem_vm_ops;
-> > +     desc->vm_flags |=3D VM_LOCKED | VM_DONTDUMP;
-> > +     desc->vm_ops =3D &secretmem_vm_ops;
-> >
-> >       return 0;
-> >  }
-> > @@ -143,7 +143,7 @@ bool vma_is_secretmem(struct vm_area_struct *vma)
-> >
-> >  static const struct file_operations secretmem_fops =3D {
-> >       .release        =3D secretmem_release,
-> > -     .mmap           =3D secretmem_mmap,
-> > +     .mmap_prepare   =3D secretmem_mmap_prepare,
-> >  };
-> >
-> >  static int secretmem_migrate_folio(struct address_space *mapping,
-> > --
-> > 2.49.0
-> >
+> 
+> Thanks,
+> 
+> > 
+> >>>
+> >>> Anyway ...
+> >>>
+> >>> Can you show me (as a patch) exactly what you did to trigger the
+> >>> retry, just so we are looking at the same thing?
+> >>
+> >> You can try this?
+> > 
+> > Ok, thanks!
+> > -Eric
+> > 
+> >> --- fs/f2fs/super.c | 6 ++++++ 1 file changed, 6 insertions(+)
+> >>
+> >> diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c index
+> >> 0ee783224953..10f0e66059f8 100644 --- a/fs/f2fs/super.c +++ b/fs/
+> >> f2fs/super.c @@ -5066,6 +5066,12 @@ static int
+> >> f2fs_fill_super(struct super_block *sb, struct fs_context *fc) goto
+> >> reset_checkpoint; }
+> >>
+> >> +	if (retry_cnt) { +		err = -EIO; +		skip_recovery = true; +		goto
+> >> free_meta; +	} + /* recover fsynced data */ if (!test_opt(sbi,
+> >> DISABLE_ROLL_FORWARD) && !test_opt(sbi, NORECOVERY)) {
+> > 
 
