@@ -1,78 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-49025-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49026-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87567AB7986
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 01:43:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6D0AB798B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 01:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 56F787A459D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 23:41:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CD613B6CD4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 23:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B65226D00;
-	Wed, 14 May 2025 23:43:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3AA229B0E;
+	Wed, 14 May 2025 23:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dYdTzitm"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SUid32ki"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B264F1EB1B5
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 23:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D74522652E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 23:42:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747266179; cv=none; b=hZIbApDyrbFulduiGWJtH949fJbamq8hQOz5wifY+Ix0/YjHTw9YUJwX1Ey5eLT4hBsF2yf3oFN2oMW0e8UtijYPJOdJ9247xtTSiATUr1BdhvMn3jjGDMPYS50ajRYwPX+leznvDQbwd4kf8mgSTgd0hylYnqGH6dPDDBtH54Y=
+	t=1747266181; cv=none; b=dXM49V1hAujtCK5fCuRRe8xBJn3EhJBMriWohTKbrebXyToC8V70jkdZ8h/7BZwhLZRj+AHXVrQTsFwC0QNfFgHfeweG1yczTCwfgsK56uViTZcx46qBxmMW8x4UgHRMK10no0GrwMKMuFSzKN/l1xaevUQIPXHsEuhWSnr6sl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747266179; c=relaxed/simple;
-	bh=kG7HoMTrfHXv8bqvsDGKYcmezmpctmHwllOqn9qt2cs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=B+GEIxBonpgwpAeR4b65DLevrgCkCW0C2tMummduG7FRsgmtHEautrVIMxXvw3jzyzrkkAKb+bFYl0qzkG+3Yb8IIny2mS3XH/K3MGfWTNpEvvnU4MSlMs38I5zx0lHzbD2/N2jRXpQOkvh0LYP9ViDvs1RNdRMCnVN78gu/Y/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dYdTzitm; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1747266181; c=relaxed/simple;
+	bh=Zi5Qt3d0WMym+lUD/gE5hxU/OpD90amV+k0m8fS2W0s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JsoqwuqMN1LZ7bMnuqKFawfeEthLB7aLgZirmR3NK12eubMi/Z/eavUoxsK7Sy/v3kAE4PpyySj20WWWEYW++c1xHBtQ+jFFuN1kIGur0qCy6BBND8ZYzLyvOYmm1qr6qbG4jR2+w9z1Fu4FwAboVF5yxRyRSLds9STGdq9Bp7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SUid32ki; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30e48854445so266052a91.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 16:42:57 -0700 (PDT)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-30c4bdd0618so342526a91.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 16:42:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747266177; x=1747870977; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zwqGrUiOjHvJJnxbyG+X+anw8ewdbXKmpYSNoes50/Y=;
-        b=dYdTzitmVv6y+TD329LfdTqV5s6eDzgDWz90QFEFBQsDg4O2kdW4tO+g+iPLI8CH0X
-         Ow/NdMeGhUHeFb0Fwl02SwSFCVHDJsm5Lfnjma2D5dwMYAXbAy0Fb/qX+jenfcdD6EgU
-         VxDmROMNSjIb3M1xgEay34k3hP+YB+OIypxh8deDHk3DHCx5HCMBHhTLISMEN5mpRAQB
-         e6C0NCGVGebl2DcgdyqLGo6B/z4xuPZYU25wWLaf8FW3O4TXT7M3kh/IqwOdZc0wtR1D
-         MVTzoGUVUVJY12hzAOKi5FDJM1wUN49xDWqSBLpnLvfWoF6iXjQWyvOY3bX8xTTon/E5
-         Oodg==
+        d=google.com; s=20230601; t=1747266178; x=1747870978; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KZmvgYTH+K9kHlJ7hwKtOyUz/0yI5aXWo1zgz6ld0Aw=;
+        b=SUid32kiLfdOFWx64G1dJU8fPZEcBZ2mKn+DD9hKmB/JGxfVyH454ZT2i43fPxQigc
+         yc0LCXyUabC+fzKgrD9hAiDosuE/ts3try4MoZXJOxnWiQt6lTf8Qm3WI0Pp+L7mdQpp
+         zAH0BwcHU+oDuRRf1DTBVuOXX1vHDvCk4ha1LuMv8CAd3fK+BJgL1QbEwoDJb2iKOgHn
+         xBxUSQwkk+QgUFlloGqNPCjWYRRa/NNRixrSWL44M+ReAf1848uFLd/2E31DFniVOD28
+         PgaNu64A9QOTUgouadDm1Cq+FsSobBWPde9FXkc1S9hxPzIHpwUOS3PtNSzz4kZ6lMfY
+         dEdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747266177; x=1747870977;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zwqGrUiOjHvJJnxbyG+X+anw8ewdbXKmpYSNoes50/Y=;
-        b=RC1vk3KsXyOHjtn10JLS0UwdD32pwgBbOERecK+uFJLimHl1EK+MKOJAPvetb41QQm
-         Z7FolKkkRo7N1keBiLLVD9D3/GZsjarFodguEGfTFz8+uFmwxHTzi4OpIV+BH4bjhaFF
-         CUt+PJgvILXF2i2IhpA+aywvU8DHa+I3fXjXxks4CYPR4hzE7SgWueS8cO4IoeXg7f1C
-         9TjCWOl3HarvSRaW/77EM5ykwxHH8ExxSU4Ukc+sDqa5o9oWwBqPq04jzph9PwI25LHJ
-         RmzQyi9TAxG2i/6kRG5oVLuAS06Pj4Y3X5qS3OHzPhB9+hRNYlSCr60dRDy8b/p/mO77
-         wYMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjZyGcWXuNV1OiQK7dOzaNgvScv55oY75YJvhEETqISsmSRQncCso8Uwz0t00senOlRmjIXggX4CfLS2IC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLzTC1/e0mC/ksZ1VOUHlXNOoECn08FpJI6/kgN/hvlBs12K9q
-	YqSmyfhyIaySNwkN1uZ7SvfXqfONwNha/eN5T18lCNBC/Ot7Yjg8ES9Aa+GWgqZnRo0bsA64i8q
-	FVkUtFC2j8gztdyAkXOaIbQ==
-X-Google-Smtp-Source: AGHT+IERrB6TWSBQZL8LGOX6EETFEN6+F+QJfjTnuW65iRmylkCaeR55nU6SQCFovka0Yb5n9ELAV7ZNQnoM1ohNmw==
-X-Received: from pjf3.prod.google.com ([2002:a17:90b:3f03:b0:2fb:fa85:1678])
+        d=1e100.net; s=20230601; t=1747266178; x=1747870978;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KZmvgYTH+K9kHlJ7hwKtOyUz/0yI5aXWo1zgz6ld0Aw=;
+        b=SiP3wfNc5I4ZbCPlzF1Wh2RJMIHogN3mmkrCNFiOwJeP6oCw31pqSdhbtSEWUileZU
+         il955JhcpbWFWoiEGkqVcvLWM0TuCXbnNiadEuHW87JVbYxOBtMTrg6zLxIyMr/GELKz
+         eNjBBbpH8ux3XzoK3+liJtWF803CQbZaf9gxpGBbsq/T+XFd2Ks8g02+NK4Hu4QvA54M
+         UedbBhUdq0j9Dpga1t14Q8gTXKQKV4KD/yMzCVJPv3gupYPIMP/XtbkhPbjoEInHd9BH
+         ZEQr6pwHSwKLvzdwVIZ9R2U3fRXrygPBpUgviC8MH8LQSI/Ty2NqOpyC/z2hbgle4RNa
+         fKow==
+X-Forwarded-Encrypted: i=1; AJvYcCU/OYak0DIJ2hLEpn4T080m/5eF5q1e4/RcG0r+pWfWxNXtGJGcK4DMQH3aQLSVMww2TgjJ2W+UAUF2vMi2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxUzDLkhb7YN1Y1Luu6DsJVpt0nWNy28RTZjbOO8b67q1e0GPJ
+	GbifH8WOREtmmA1fmdhwLGlpxukNGXLn6Yr1BqCvVzZKpfCQVfnELyIkAAYv4tmfekSayQBx/KM
+	NrtJ0s4TbHbvao8bKyA3oiQ==
+X-Google-Smtp-Source: AGHT+IFFbb8i/sd+A66D+lahsn99vvDx9WnxGpS0pqUZU7qxgHi5C9VACOWp6JM90ib70m9PHQgY1Qlpup+M/X5IOw==
+X-Received: from pjbee11.prod.google.com ([2002:a17:90a:fc4b:b0:30a:3021:c1af])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:5403:b0:301:1d9f:4ba2 with SMTP id 98e67ed59e1d1-30e51914ea8mr650385a91.28.1747266176876;
- Wed, 14 May 2025 16:42:56 -0700 (PDT)
-Date: Wed, 14 May 2025 16:41:39 -0700
+ 2002:a17:90b:560b:b0:2fe:d766:ad8e with SMTP id 98e67ed59e1d1-30e2e59bccamr8372424a91.4.1747266178512;
+ Wed, 14 May 2025 16:42:58 -0700 (PDT)
+Date: Wed, 14 May 2025 16:41:40 -0700
+In-Reply-To: <cover.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-Message-ID: <cover.1747264138.git.ackerleytng@google.com>
-Subject: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+Message-ID: <c1ee659c212b5a8b0e7a7f4d1763699176dd3a62.1747264138.git.ackerleytng@google.com>
+Subject: [RFC PATCH v2 01/51] KVM: guest_memfd: Make guest mem use guest mem
+ inodes instead of anonymous inodes
 From: Ackerley Tng <ackerleytng@google.com>
 To: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
 	x86@kernel.org, linux-fsdevel@vger.kernel.org
@@ -108,253 +112,291 @@ Cc: ackerleytng@google.com, aik@amd.com, ajones@ventanamicro.com,
 	yuzenghui@huawei.com, zhiquan1.li@intel.com
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+guest_memfd's inode represents memory the guest_memfd is
+providing. guest_memfd's file represents a struct kvm's view of that
+memory.
 
-This patchset builds upon discussion at LPC 2024 and many guest_memfd
-upstream calls to provide 1G page support for guest_memfd by taking
-pages from HugeTLB.
+Using a custom inode allows customization of the inode teardown
+process via callbacks. For example, ->evict_inode() allows
+customization of the truncation process on file close, and
+->destroy_inode() and ->free_inode() allow customization of the inode
+freeing process.
 
-This patchset is based on Linux v6.15-rc6, and requires the mmap support
-for guest_memfd patchset (Thanks Fuad!) [1].
+Customizing the truncation process allows flexibility in management of
+guest_memfd memory and customization of the inode freeing process
+allows proper cleanup of memory metadata stored on the inode.
 
-For ease of testing, this series is also available, stitched together,
-at https://github.com/googleprodkernel/linux-cc/tree/gmem-1g-page-support-rfc-v2
+Memory metadata is more appropriately stored on the inode (as opposed
+to the file), since the metadata is for the memory and is not unique
+to a specific binding and struct kvm.
 
-This patchset can be divided into two sections:
+Signed-off-by: Fuad Tabba <tabba@google.com>
+Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 
-(a) Patches from the beginning up to and including "KVM: selftests:
-    Update script to map shared memory from guest_memfd" are a modified
-    version of "conversion support for guest_memfd", which Fuad is
-    managing [2].
-
-(b) Patches after "KVM: selftests: Update script to map shared memory
-    from guest_memfd" till the end are patches that actually bring in 1G
-    page support for guest_memfd.
-
-These are the significant differences between (a) and [2]:
-
-+ [2] uses an xarray to track sharability, but I used a maple tree
-  because for 1G pages, iterating pagewise to update shareability was
-  prohibitively slow even for testing. I was choosing from among
-  multi-index xarrays, interval trees and maple trees [3], and picked
-  maple trees because
-    + Maple trees were easier to figure out since I didn't have to
-      compute the correct multi-index order and handle edge cases if the
-      converted range wasn't a neat power of 2.
-    + Maple trees were easier to figure out as compared to updating
-      parts of a multi-index xarray.
-    + Maple trees had an easier API to use than interval trees.
-+ [2] doesn't yet have a conversion ioctl, but I needed it to test 1G
-  support end-to-end.
-+ (a) Removes guest_memfd from participating in LRU, which I needed, to
-  get conversion selftests to work as expected, since participation in
-  LRU was causing some unexpected refcounts on folios which was blocking
-  conversions.
-
-I am sending (a) in emails as well, as opposed to just leaving it on
-GitHub, so that we can discuss by commenting inline on emails. If you'd
-like to just look at 1G page support, here are some key takeaways from
-the first section (a):
-
-+ If GUEST_MEMFD_FLAG_SUPPORT_SHARED is requested during guest_memfd
-  creation, guest_memfd will
-    + Track shareability (whether an index in the inode is guest-only or
-      if the host is allowed to fault memory at a given index).
-    + Always be used for guest faults - specifically, kvm_gmem_get_pfn()
-      will be used to provide pages for the guest.
-    + Always be used by KVM to check private/shared status of a gfn.
-+ guest_memfd now has conversion ioctls, allowing conversion to
-  private/shared
-    + Conversion can fail if there are unexpected refcounts on any
-      folios in the range.
-
-Focusing on (b) 1G page support, here's an overview:
-
-1. A bunch of refactoring patches for HugeTLB that isolates the
-   allocation of a HugeTLB folio from other HugeTLB concepts such as
-   VMA-level reservations, and HugeTLBfs-specific concepts, such as
-   where memory policy is stored in the VMA, or where the subpool is
-   stored on the inode.
-2. A few patches that add a guestmem_hugetlb allocator within mm/. The
-   guestmem_hugetlb allocator is a wrapper around HugeTLB to modularize
-   the memory management functions, and to cleanly handle cleanup, so
-   that folio cleanup can happen after the guest_memfd inode (and even
-   KVM) goes away.
-3. Some updates to guest_memfd to use the guestmem_hugetlb allocator.
-4. Selftests for 1G page support.
-
-Here are some remaining issues/TODOs:
-
-1. Memory error handling such as machine check errors have not been
-   implemented.
-2. I've not looked into preparedness of pages, only zeroing has been
-   considered.
-3. When allocating HugeTLB pages, if two threads allocate indices
-   mapping to the same huge page, the utilization in guest_memfd inode's
-   subpool may momentarily go over the subpool limit (the requested size
-   of the inode at guest_memfd creation time), causing one of the two
-   threads to get -ENOMEM. Suggestions to solve this are appreciated!
-4. max_usage_in_bytes statistic (cgroups v1) for guest_memfd HugeTLB
-   pages should be correct but needs testing and could be wrong.
-5. memcg charging (charge_memcg()) for cgroups v2 for guest_memfd
-   HugeTLB pages after splitting should be correct but needs testing and
-   could be wrong.
-6. Page cache accounting: When a hugetlb page is split, guest_memfd will
-   incur page count in both NR_HUGETLB (counted at hugetlb allocation
-   time) and NR_FILE_PAGES stats (counted when split pages are added to
-   the filemap). Is this aligned with what people expect?
-
-Here are some optimizations that could be explored in future series:
-
-1. Pages could be split from 1G to 2M first and only split to 4K if
-   necessary.
-2. Zeroing could be skipped for Coco VMs if hardware already zeroes the
-   pages.
-
-Here's RFC v1 [4] if you're interested in the motivation behind choosing
-HugeTLB, or the history of this patch series.
-
-[1] https://lore.kernel.org/all/20250513163438.3942405-11-tabba@google.com/T/
-[2] https://lore.kernel.org/all/20250328153133.3504118-1-tabba@google.com/T/
-[3] https://lore.kernel.org/all/diqzzfih8q7r.fsf@ackerleytng-ctop.c.googlers.com/
-[4] https://lore.kernel.org/all/cover.1726009989.git.ackerleytng@google.com/T/
-
+Change-Id: I5c23bce8fefe492b40b8042ece1e81448752da99
 ---
+ include/uapi/linux/magic.h |   1 +
+ virt/kvm/guest_memfd.c     | 134 +++++++++++++++++++++++++++++++------
+ virt/kvm/kvm_main.c        |   7 +-
+ virt/kvm/kvm_mm.h          |   9 ++-
+ 4 files changed, 125 insertions(+), 26 deletions(-)
 
-Ackerley Tng (49):
-  KVM: guest_memfd: Make guest mem use guest mem inodes instead of
-    anonymous inodes
-  KVM: guest_memfd: Introduce and use shareability to guard faulting
-  KVM: selftests: Update guest_memfd_test for INIT_PRIVATE flag
-  KVM: guest_memfd: Introduce KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-  KVM: guest_memfd: Skip LRU for guest_memfd folios
-  KVM: Query guest_memfd for private/shared status
-  KVM: guest_memfd: Add CAP KVM_CAP_GMEM_CONVERSION
-  KVM: selftests: Test flag validity after guest_memfd supports
-    conversions
-  KVM: selftests: Test faulting with respect to
-    GUEST_MEMFD_FLAG_INIT_PRIVATE
-  KVM: selftests: Refactor vm_mem_add to be more flexible
-  KVM: selftests: Allow cleanup of ucall_pool from host
-  KVM: selftests: Test conversion flows for guest_memfd
-  KVM: selftests: Add script to exercise private_mem_conversions_test
-  KVM: selftests: Update private_mem_conversions_test to mmap
-    guest_memfd
-  KVM: selftests: Update script to map shared memory from guest_memfd
-  mm: hugetlb: Consolidate interpretation of gbl_chg within
-    alloc_hugetlb_folio()
-  mm: hugetlb: Cleanup interpretation of gbl_chg in
-    alloc_hugetlb_folio()
-  mm: hugetlb: Cleanup interpretation of map_chg_state within
-    alloc_hugetlb_folio()
-  mm: hugetlb: Rename alloc_surplus_hugetlb_folio
-  mm: mempolicy: Refactor out policy_node_nodemask()
-  mm: hugetlb: Inline huge_node() into callers
-  mm: hugetlb: Refactor hugetlb allocation functions
-  mm: hugetlb: Refactor out hugetlb_alloc_folio()
-  mm: hugetlb: Add option to create new subpool without using surplus
-  mm: truncate: Expose preparation steps for truncate_inode_pages_final
-  mm: hugetlb: Expose hugetlb_subpool_{get,put}_pages()
-  mm: Introduce guestmem_hugetlb to support folio_put() handling of
-    guestmem pages
-  mm: guestmem_hugetlb: Wrap HugeTLB as an allocator for guest_memfd
-  mm: truncate: Expose truncate_inode_folio()
-  KVM: x86: Set disallow_lpage on base_gfn and guest_memfd pgoff
-    misalignment
-  KVM: guest_memfd: Support guestmem_hugetlb as custom allocator
-  KVM: guest_memfd: Allocate and truncate from custom allocator
-  mm: hugetlb: Add functions to add/delete folio from hugetlb lists
-  mm: guestmem_hugetlb: Add support for splitting and merging pages
-  mm: Convert split_folio() macro to function
-  KVM: guest_memfd: Split allocator pages for guest_memfd use
-  KVM: guest_memfd: Merge and truncate on fallocate(PUNCH_HOLE)
-  KVM: guest_memfd: Update kvm_gmem_mapping_order to account for page
-    status
-  KVM: Add CAP to indicate support for HugeTLB as custom allocator
-  KVM: selftests: Add basic selftests for hugetlb-backed guest_memfd
-  KVM: selftests: Update conversion flows test for HugeTLB
-  KVM: selftests: Test truncation paths of guest_memfd
-  KVM: selftests: Test allocation and conversion of subfolios
-  KVM: selftests: Test that guest_memfd usage is reported via hugetlb
-  KVM: selftests: Support various types of backing sources for private
-    memory
-  KVM: selftests: Update test for various private memory backing source
-    types
-  KVM: selftests: Update private_mem_conversions_test.sh to test with
-    HugeTLB pages
-  KVM: selftests: Add script to test HugeTLB statistics
-  KVM: selftests: Test guest_memfd for accuracy of st_blocks
-
-Elliot Berman (1):
-  filemap: Pass address_space mapping to ->free_folio()
-
-Fuad Tabba (1):
-  mm: Consolidate freeing of typed folios on final folio_put()
-
- Documentation/filesystems/locking.rst         |    2 +-
- Documentation/filesystems/vfs.rst             |   15 +-
- Documentation/virt/kvm/api.rst                |    5 +
- arch/arm64/include/asm/kvm_host.h             |    5 -
- arch/x86/include/asm/kvm_host.h               |   10 -
- arch/x86/kvm/x86.c                            |   53 +-
- fs/hugetlbfs/inode.c                          |    2 +-
- fs/nfs/dir.c                                  |    9 +-
- fs/orangefs/inode.c                           |    3 +-
- include/linux/fs.h                            |    2 +-
- include/linux/guestmem.h                      |   23 +
- include/linux/huge_mm.h                       |    6 +-
- include/linux/hugetlb.h                       |   19 +-
- include/linux/kvm_host.h                      |   32 +-
- include/linux/mempolicy.h                     |   11 +-
- include/linux/mm.h                            |    2 +
- include/linux/page-flags.h                    |   32 +
- include/uapi/linux/guestmem.h                 |   29 +
- include/uapi/linux/kvm.h                      |   16 +
- include/uapi/linux/magic.h                    |    1 +
- mm/Kconfig                                    |   13 +
- mm/Makefile                                   |    1 +
- mm/debug.c                                    |    1 +
- mm/filemap.c                                  |   12 +-
- mm/guestmem_hugetlb.c                         |  512 +++++
- mm/guestmem_hugetlb.h                         |    9 +
- mm/hugetlb.c                                  |  488 ++---
- mm/internal.h                                 |    1 -
- mm/memcontrol.c                               |    2 +
- mm/memory.c                                   |    1 +
- mm/mempolicy.c                                |   44 +-
- mm/secretmem.c                                |    3 +-
- mm/swap.c                                     |   32 +-
- mm/truncate.c                                 |   27 +-
- mm/vmscan.c                                   |    4 +-
- tools/testing/selftests/kvm/Makefile.kvm      |    2 +
- .../kvm/guest_memfd_conversions_test.c        |  797 ++++++++
- .../kvm/guest_memfd_hugetlb_reporting_test.c  |  384 ++++
- ...uest_memfd_provide_hugetlb_cgroup_mount.sh |   36 +
- .../testing/selftests/kvm/guest_memfd_test.c  |  293 ++-
- ...memfd_wrap_test_check_hugetlb_reporting.sh |   95 +
- .../testing/selftests/kvm/include/kvm_util.h  |  104 +-
- .../testing/selftests/kvm/include/test_util.h |   20 +-
- .../selftests/kvm/include/ucall_common.h      |    1 +
- tools/testing/selftests/kvm/lib/kvm_util.c    |  465 +++--
- tools/testing/selftests/kvm/lib/test_util.c   |  102 +
- .../testing/selftests/kvm/lib/ucall_common.c  |   16 +-
- .../kvm/x86/private_mem_conversions_test.c    |  195 +-
- .../kvm/x86/private_mem_conversions_test.sh   |  100 +
- virt/kvm/Kconfig                              |    5 +
- virt/kvm/guest_memfd.c                        | 1655 ++++++++++++++++-
- virt/kvm/kvm_main.c                           |   14 +-
- virt/kvm/kvm_mm.h                             |    9 +-
- 53 files changed, 5080 insertions(+), 640 deletions(-)
- create mode 100644 include/linux/guestmem.h
- create mode 100644 include/uapi/linux/guestmem.h
- create mode 100644 mm/guestmem_hugetlb.c
- create mode 100644 mm/guestmem_hugetlb.h
- create mode 100644 tools/testing/selftests/kvm/guest_memfd_conversions_test.c
- create mode 100644 tools/testing/selftests/kvm/guest_memfd_hugetlb_reporting_test.c
- create mode 100755 tools/testing/selftests/kvm/guest_memfd_provide_hugetlb_cgroup_mount.sh
- create mode 100755 tools/testing/selftests/kvm/guest_memfd_wrap_test_check_hugetlb_reporting.sh
- create mode 100755 tools/testing/selftests/kvm/x86/private_mem_conversions_test.sh
-
---
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index bb575f3ab45e..638ca21b7a90 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -103,5 +103,6 @@
+ #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+ #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+ #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
++#define GUEST_MEMFD_MAGIC	0x474d454d	/* "GMEM" */
+ 
+ #endif /* __LINUX_MAGIC_H__ */
+diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+index b8e247063b20..239d0f13dcc1 100644
+--- a/virt/kvm/guest_memfd.c
++++ b/virt/kvm/guest_memfd.c
+@@ -1,12 +1,16 @@
+ // SPDX-License-Identifier: GPL-2.0
++#include <linux/anon_inodes.h>
+ #include <linux/backing-dev.h>
+ #include <linux/falloc.h>
++#include <linux/fs.h>
+ #include <linux/kvm_host.h>
++#include <linux/pseudo_fs.h>
+ #include <linux/pagemap.h>
+-#include <linux/anon_inodes.h>
+ 
+ #include "kvm_mm.h"
+ 
++static struct vfsmount *kvm_gmem_mnt;
++
+ struct kvm_gmem {
+ 	struct kvm *kvm;
+ 	struct xarray bindings;
+@@ -416,9 +420,51 @@ static struct file_operations kvm_gmem_fops = {
+ 	.fallocate	= kvm_gmem_fallocate,
+ };
+ 
+-void kvm_gmem_init(struct module *module)
++static const struct super_operations kvm_gmem_super_operations = {
++	.statfs		= simple_statfs,
++};
++
++static int kvm_gmem_init_fs_context(struct fs_context *fc)
++{
++	struct pseudo_fs_context *ctx;
++
++	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
++		return -ENOMEM;
++
++	ctx = fc->fs_private;
++	ctx->ops = &kvm_gmem_super_operations;
++
++	return 0;
++}
++
++static struct file_system_type kvm_gmem_fs = {
++	.name		 = "kvm_guest_memory",
++	.init_fs_context = kvm_gmem_init_fs_context,
++	.kill_sb	 = kill_anon_super,
++};
++
++static int kvm_gmem_init_mount(void)
++{
++	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
++
++	if (WARN_ON_ONCE(IS_ERR(kvm_gmem_mnt)))
++		return PTR_ERR(kvm_gmem_mnt);
++
++	kvm_gmem_mnt->mnt_flags |= MNT_NOEXEC;
++	return 0;
++}
++
++int kvm_gmem_init(struct module *module)
+ {
+ 	kvm_gmem_fops.owner = module;
++
++	return kvm_gmem_init_mount();
++}
++
++void kvm_gmem_exit(void)
++{
++	kern_unmount(kvm_gmem_mnt);
++	kvm_gmem_mnt = NULL;
+ }
+ 
+ static int kvm_gmem_migrate_folio(struct address_space *mapping,
+@@ -500,11 +546,71 @@ static const struct inode_operations kvm_gmem_iops = {
+ 	.setattr	= kvm_gmem_setattr,
+ };
+ 
++static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
++						      loff_t size, u64 flags)
++{
++	struct inode *inode;
++
++	inode = alloc_anon_secure_inode(kvm_gmem_mnt->mnt_sb, name);
++	if (IS_ERR(inode))
++		return inode;
++
++	inode->i_private = (void *)(unsigned long)flags;
++	inode->i_op = &kvm_gmem_iops;
++	inode->i_mapping->a_ops = &kvm_gmem_aops;
++	inode->i_mode |= S_IFREG;
++	inode->i_size = size;
++	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
++	mapping_set_inaccessible(inode->i_mapping);
++	/* Unmovable mappings are supposed to be marked unevictable as well. */
++	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
++
++	return inode;
++}
++
++static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
++						  u64 flags)
++{
++	static const char *name = "[kvm-gmem]";
++	struct inode *inode;
++	struct file *file;
++	int err;
++
++	err = -ENOENT;
++	if (!try_module_get(kvm_gmem_fops.owner))
++		goto err;
++
++	inode = kvm_gmem_inode_make_secure_inode(name, size, flags);
++	if (IS_ERR(inode)) {
++		err = PTR_ERR(inode);
++		goto err_put_module;
++	}
++
++	file = alloc_file_pseudo(inode, kvm_gmem_mnt, name, O_RDWR,
++				 &kvm_gmem_fops);
++	if (IS_ERR(file)) {
++		err = PTR_ERR(file);
++		goto err_put_inode;
++	}
++
++	file->f_flags |= O_LARGEFILE;
++	file->private_data = priv;
++
++out:
++	return file;
++
++err_put_inode:
++	iput(inode);
++err_put_module:
++	module_put(kvm_gmem_fops.owner);
++err:
++	file = ERR_PTR(err);
++	goto out;
++}
++
+ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ {
+-	const char *anon_name = "[kvm-gmem]";
+ 	struct kvm_gmem *gmem;
+-	struct inode *inode;
+ 	struct file *file;
+ 	int fd, err;
+ 
+@@ -518,32 +624,16 @@ static int __kvm_gmem_create(struct kvm *kvm, loff_t size, u64 flags)
+ 		goto err_fd;
+ 	}
+ 
+-	file = anon_inode_create_getfile(anon_name, &kvm_gmem_fops, gmem,
+-					 O_RDWR, NULL);
++	file = kvm_gmem_inode_create_getfile(gmem, size, flags);
+ 	if (IS_ERR(file)) {
+ 		err = PTR_ERR(file);
+ 		goto err_gmem;
+ 	}
+ 
+-	file->f_flags |= O_LARGEFILE;
+-
+-	inode = file->f_inode;
+-	WARN_ON(file->f_mapping != inode->i_mapping);
+-
+-	inode->i_private = (void *)(unsigned long)flags;
+-	inode->i_op = &kvm_gmem_iops;
+-	inode->i_mapping->a_ops = &kvm_gmem_aops;
+-	inode->i_mode |= S_IFREG;
+-	inode->i_size = size;
+-	mapping_set_gfp_mask(inode->i_mapping, GFP_HIGHUSER);
+-	mapping_set_inaccessible(inode->i_mapping);
+-	/* Unmovable mappings are supposed to be marked unevictable as well. */
+-	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+-
+ 	kvm_get_kvm(kvm);
+ 	gmem->kvm = kvm;
+ 	xa_init(&gmem->bindings);
+-	list_add(&gmem->entry, &inode->i_mapping->i_private_list);
++	list_add(&gmem->entry, &file_inode(file)->i_mapping->i_private_list);
+ 
+ 	fd_install(fd, file);
+ 	return fd;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 6c75f933bfbe..66dfdafbb3b6 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -6419,7 +6419,9 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
+ 	if (WARN_ON_ONCE(r))
+ 		goto err_vfio;
+ 
+-	kvm_gmem_init(module);
++	r = kvm_gmem_init(module);
++	if (r)
++		goto err_gmem;
+ 
+ 	r = kvm_init_virtualization();
+ 	if (r)
+@@ -6440,6 +6442,8 @@ int kvm_init(unsigned vcpu_size, unsigned vcpu_align, struct module *module)
+ err_register:
+ 	kvm_uninit_virtualization();
+ err_virt:
++	kvm_gmem_exit();
++err_gmem:
+ 	kvm_vfio_ops_exit();
+ err_vfio:
+ 	kvm_async_pf_deinit();
+@@ -6471,6 +6475,7 @@ void kvm_exit(void)
+ 	for_each_possible_cpu(cpu)
+ 		free_cpumask_var(per_cpu(cpu_kick_mask, cpu));
+ 	kmem_cache_destroy(kvm_vcpu_cache);
++	kvm_gmem_exit();
+ 	kvm_vfio_ops_exit();
+ 	kvm_async_pf_deinit();
+ 	kvm_irqfd_exit();
+diff --git a/virt/kvm/kvm_mm.h b/virt/kvm/kvm_mm.h
+index ec311c0d6718..be68c29fc4ab 100644
+--- a/virt/kvm/kvm_mm.h
++++ b/virt/kvm/kvm_mm.h
+@@ -68,17 +68,20 @@ static inline void gfn_to_pfn_cache_invalidate_start(struct kvm *kvm,
+ #endif /* HAVE_KVM_PFNCACHE */
+ 
+ #ifdef CONFIG_KVM_GMEM
+-void kvm_gmem_init(struct module *module);
++int kvm_gmem_init(struct module *module);
++void kvm_gmem_exit(void);
+ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args);
+ int kvm_gmem_bind(struct kvm *kvm, struct kvm_memory_slot *slot,
+ 		  unsigned int fd, loff_t offset);
+ void kvm_gmem_unbind(struct kvm_memory_slot *slot);
+ #else
+-static inline void kvm_gmem_init(struct module *module)
++static inline int kvm_gmem_init(struct module *module)
+ {
+-
++	return 0;
+ }
+ 
++static inline void kvm_gmem_exit(void) {};
++
+ static inline int kvm_gmem_bind(struct kvm *kvm,
+ 					 struct kvm_memory_slot *slot,
+ 					 unsigned int fd, loff_t offset)
+-- 
 2.49.0.1045.g170613ef41-goog
+
 
