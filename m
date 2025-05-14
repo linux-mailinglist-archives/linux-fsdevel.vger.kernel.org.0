@@ -1,182 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-48968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA3AAB6E3D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 16:38:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F193CAB6EFA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 17:09:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FEFF4C1F36
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 14:38:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFCC43A9526
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 15:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4579018A6B0;
-	Wed, 14 May 2025 14:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9C51C8606;
+	Wed, 14 May 2025 15:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="hQJI14Jg"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QjI/TLk8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6125149C4D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 14:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05CD19341F;
+	Wed, 14 May 2025 15:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747233526; cv=none; b=E5G/lNPy4m0Ew/JOfWahfSxlb61jubDQrf5Au0XbBf7b9X5mcWkHv+MaWEbT5gK6mFhWA39d2U5x31ckv/eKPVtUZ6FQSjghcFpl0aFl40ZDrJZ3/T5ULM1Bc3jNfQUDgi+CzZXMkxV/4hcdpEbV8fLGT8xzYHr/EC39Szl9Etg=
+	t=1747235191; cv=none; b=EDHX3a2jEbg0lwghuFPPxnWqR7X4+zvN6kCg/dl4tt4UP7TqBFMDJisBpJszbkuyLcn2aVtXxRTa+kkNT75QewUHIO4aGixgJwLuGY55EOtjUqxkyBnUbSbL6IVM8HSCdtHtsUN3Id96D2FD10+reyeSFDE+pcc9usxTJ+82W8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747233526; c=relaxed/simple;
-	bh=6XWdJgSEvyLJSh3QnLL5Y/Q+Mj3leHuMtjRqxY0hleY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=excpa/rvo1sVGwBpji63vqXWzPcXzHtsyTXcfnvTXtVsLWdoHtCwl8RrtO/YgWU9CHJhc9SqwX7EmAH/KXC69bQ3yTYBn9yMx59GvbJI25iBdSAlSHecK3OeWxftE+WDeEu4MaUnV35RPTFyiCV1eH6gjmlslXrLBg7QWIk0xqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=hQJI14Jg; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-30aa3980af5so7962462a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 07:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1747233524; x=1747838324; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qj7RgkMhTner4sa4FzvrC5A/c9e3z4cp04U9TUzXCKQ=;
-        b=hQJI14Jg5k6lR2DOQ+Z6TCf0foR8FeuNjNG7Wc0P28ChSli0iSUNbKIEP2mzLT2uoB
-         bPJEky+om7rxxwJ+ZWTqv8icaMIU/ODf8MNRexn83SCitlCfKDj0FNAnd63wQbiroC7I
-         fDVmGFKvMDKFSiyPyDQeRehXGkK2z+MWrZYVV1CiBPk0zFodbonQbWhm4hK/b1frvyBo
-         uQH21it3ZczbuXsGHM3VkpcAg4GZh59op4jP7EtxniJcS+dQteG20SoFpKcP5CQS+WF3
-         Nt8OAvHtBbPljBTlbJccYky2EPsEXTlUMmTCdMzXB4EFa1025MfFG9QMM+4cpiIPfatO
-         X4aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747233524; x=1747838324;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qj7RgkMhTner4sa4FzvrC5A/c9e3z4cp04U9TUzXCKQ=;
-        b=FMQ2MzIzmUmNk1gA4EQuXGAwMQi/tKm3EP9ePOG1+ImpDLDFENpFRmuIzL/n69rrEb
-         aYbuod2baeLo2gsDkHV2nTW9qkFXzeH/4/MqSLFhfHgXfhnxyEHSRox4oit/XXQQVju1
-         +DH8mhgF580l0QtIY8uzRqsfZJj3fgE5+LolpQQ6spba56NPppCrHTktCaNfZqT064r/
-         P2RAsYO+FLVmIdJaLuFJVpd6Cb/UC4NMDX51jVrlpI1lasN+ND+PAHZhoAxYMynGsqcI
-         1a2RJUDyTX6u9ZrTNAMkKsJ20cqIcawI0vCNg7gdq83fAdgEON0Tj6y312QWj7+c3Fni
-         n9DQ==
-X-Gm-Message-State: AOJu0YyPuTKHPEQkjARhMh6DjUYy+mG/1ulWYWzZDeEjlMLhEDLuLmSD
-	SR8244hi8qDYafeKiyJE7Dhpc4lA4htah0nxjyMazS+cNzsBFcnqsCGUJpBEuWcv7MGD5gAKVKU
-	APa4x7k69gtusGLPqoIUK6lI4cVeSGIlD2EmhbgacBN9BBBVZxwV6M2PmTQ==
-X-Gm-Gg: ASbGncv+o5HpGu4zfkHxSeCDoh9YjYKfSX7VlISGTxdz17B8aDfRHfN4HBSA83y5PPx
-	MSr87JtGvzHGRlgMkEZYRwZe64BLf8+0rrMGOIynuM41HwRwXCRdItrXFlb3P4KqJplh75/S3Ju
-	NfmzKm7tWPh0JOPWtHhKyfvSH/UGsTNzvLgqwPDPvNzdPv
-X-Google-Smtp-Source: AGHT+IHO56y3whAPbyDBos/nG5P8QVbcKxtQtxBWdOxCDl+TWWVSVhAzjBKh0bUXG+wCV2qXJganXjU7BA7habYytao=
-X-Received: by 2002:a17:90b:38c6:b0:2ee:b2e6:4276 with SMTP id
- 98e67ed59e1d1-30e2e62a163mr5644528a91.27.1747233523636; Wed, 14 May 2025
- 07:38:43 -0700 (PDT)
+	s=arc-20240116; t=1747235191; c=relaxed/simple;
+	bh=49IPILCDFGJoTtGJw6PabOF4qj/kYnh1Lrc/Fqb5kPg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtfLpkdE5Bz3HQadE4Z8rZjxJ0ACHJ15KWlHsgT/qbMMYVjqaf8SlLqCJPUcHOXYzk4Dbet1Pm7YxoYaovtlKJVeYXX2GE7umbHyNQuPGWPyX6mX8EdnqbxN2qa5pB0wTcxDcR2BNqH5wfEvhfx4pNU9VXFG8AGtDnIMo5KQ230=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QjI/TLk8; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=RKownVnGZe2UL1ciUHyNBkHcN2TX+C13oImW60hfDsM=; b=QjI/TLk8bAz6m0/ahaZbmakyUt
+	x6PoTRckDFJRJ7atnSUukQOhJomjiquCpNi81GTpWflVz30z9/umlbb1jXvT1UdwN7bfgW9LzvCIt
+	oqHEpu5SVX9hIxPF75tqWarkJ46AAWqEBBfUnH8KWO0r2hmZZB+hQRDJqEsK8917vjwN/NPP3ZRkN
+	hoJC24wE8zcuhSBPrVIUFAStqct9Oj77OKULK0+gK/V9daIMsV05BjaelUZeUBbigJaqHduOjbdqz
+	q2Y4kll8asCQZOsNXocWuWvr9SvEDbgThaef+u+LHBdvANyq9ajbdFhfUPQTJixgZJ0kSjLarZoyE
+	mbvvM7lQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uFDgh-0000000FWFN-21pV;
+	Wed, 14 May 2025 15:06:27 +0000
+Date: Wed, 14 May 2025 08:06:27 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Theodore Ts'o <tytso@mit.edu>,
+	=?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>,
+	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: [PATCH 1/3] mm/filemap: initialize fsdata with iocb->ki_flags
+Message-ID: <aCSxc7TnJzP-n2Lk@infradead.org>
+References: <20250421105026.19577-1-chentaotao@didiglobal.com>
+ <20250421105026.19577-2-chentaotao@didiglobal.com>
+ <20250514035125.GB178093@mit.edu>
+ <aCScvepl2qxyU40P@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOg9mSTLUOEobom72-MekLpdH-FuF0S+JkU4E13PK6KzNqT1pw@mail.gmail.com>
- <2040f153-c50e-49ea-acb6-72914c62fecb@intel.com> <CAOg9mSRPok2NR5UNkkyBb8nGgZxQo36dfvL0ZWSpMZ3pT5884Q@mail.gmail.com>
- <86a9656f-211c-4af5-9d19-9565e83fb56d@intel.com>
-In-Reply-To: <86a9656f-211c-4af5-9d19-9565e83fb56d@intel.com>
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Wed, 14 May 2025 10:38:32 -0400
-X-Gm-Features: AX0GCFvV9hEv_DN2oszsfzUa0XcZe0oaBaPATVHKSE2v_h_Ny7B-LPQSIHfESK8
-Message-ID: <CAOg9mSS55ocm8G-obQj8C=e7YcMT5nrMAUXAVm6uOfVad7A_Ew@mail.gmail.com>
-Subject: Re: [REGRESSION] orangefs: page writeback problem in 6.14 (bisected
- to 665575cf)
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, devel@lists.orangefs.org, 
-	Mike Marshall <hubcap@omnibond.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aCScvepl2qxyU40P@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-I believe I have a couple of adjustments to the counters that make
-things flow properly again, including through xfstests numerous times on
-top of 6.15-rc6.
+On Wed, May 14, 2025 at 02:38:05PM +0100, Matthew Wilcox wrote:
+> On Tue, May 13, 2025 at 11:51:25PM -0400, Theodore Ts'o wrote:
+> > I understand that it would be a lot more inconvenient change the
+> > function signature of write_begin() to pass through iocb->ki_fags via
+> > a new parameter.  But I think that probably is the best way to go.
+> 
+> I'd suggest that passing in iocb rather than file is the way to go.
+> Most callers of ->write_begin already pass NULL as the first argument so
+> would not need to change.  i915/gem passes a non-NULL file, but it only
+> operates on shmem and shmem does not use the file argument, so they can
+> pass NULL instead.
 
-I guess we had this bug all along, I'm glad Dave's patch uncovered it.
-I think Dave's patch probably should have been pulled during a merge
-window instead of halfway through rc7 though. Maybe it got talked
-about a lot and I missed it.. I don't see where it has caused any other
-problems but 6.14 is on Fedora 42... orangefs is broken there.
+i915/gem needs to stop using write_begin/end and just do an iter_write.
+Someone who has the hardware and/or CI setup needs to figure out if
+vfs_write and kernel_write is fine, or this is magic enough to skip
+checks and protection and go straight to callig ->iter_write.
 
--Mike
+> fs/buffer.c simply passes through the file passed
+> to write_begin and can be changed to pass through the iocb passed in.
+> exfat_extend_valid_size() has an iocb in its caller and can pass in the
+> iocb instead.  generic_perform_write() has an iocb.
 
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 5ac743c6bc2e..08a6f372a352 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -32,12 +32,13 @@ static int orangefs_writepage_locked(struct folio *foli=
-o,
-        len =3D i_size_read(inode);
-        if (folio->private) {
-                wr =3D folio->private;
--               WARN_ON(wr->pos >=3D len);
-                off =3D wr->pos;
--               if (off + wr->len > len)
-+               if ((off + wr->len > len) && (off <=3D len))
-                        wlen =3D len - off;
-                else
-                        wlen =3D wr->len;
-+               if (wlen =3D=3D 0)
-+                       wlen =3D wr->len;
-        } else {
-                WARN_ON(1);
-                off =3D folio_pos(folio);
-@@ -46,8 +47,6 @@ static int orangefs_writepage_locked(struct folio *folio,
-                if (wlen > len - off)
-                        wlen =3D len - off;
-        }
--       /* Should've been handled in orangefs_invalidate_folio. */
--       WARN_ON(off =3D=3D len || off + wlen > len);
+And we really need to stop theading this through the address_space
+ops because it's not a generic method but a callback for the file
+system..
 
-        WARN_ON(wlen =3D=3D 0);
-        bvec_set_folio(&bv, folio, wlen, offset_in_folio(folio, off));
-@@ -320,6 +319,8 @@ static int orangefs_write_begin(struct file *file,
-                        wr->len +=3D len;
-                        goto okay;
-                } else {
-+                       wr->pos =3D pos;
-+                       wr->len =3D len;
-                        ret =3D orangefs_launder_folio(folio);
-                        if (ret)
-                                return ret;
-
-On Wed, Apr 30, 2025 at 5:06=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 4/30/25 13:43, Mike Marshall wrote:
-> > [ 1991.319111] orangefs_writepage_locked: wr->pos:0: len:4080:
-> > [ 1991.319450] service_operation: file_write returning: 0 for 000000001=
-8e1923a.
-> > [ 1991.319457] orangefs_writepage_locked: wr->pos:4080: len:4080:
->
-> Is that consistent with an attempt to write 4080 bytes that failed,
-> returned a 0 and then encountered the WARN_ON()?
->
-> While I guess it's possible that userspace might be trying to write
-> 4080 bytes twice, the wr->pos:4080 looks suspicious. Is it possible
-> that wr->pos inadvertently got set to 4080 during the write _failure_?
-> Then, the write (aiming to write the beginning of the file) retries
-> but pos=3D=3D4080 and not 0.
->
-> > [ 1991.319581] Call Trace:
-> > [ 1991.319583]  <TASK>
-> ...
-> > [ 1991.319613]  orangefs_launder_folio+0x2e/0x50 [orangefs]
-> > [ 1991.319619]  orangefs_write_begin+0x87/0x150 [orangefs]
-> > [ 1991.319624]  generic_perform_write+0x81/0x280
-> > [ 1991.319627]  generic_file_write_iter+0x5e/0xe0
-> > [ 1991.319629]  orangefs_file_write_iter+0x44/0x50 [orangefs]
-> > [ 1991.319633]  vfs_write+0x240/0x410
-> > [ 1991.319636]  ksys_write+0x52/0xc0
-> > [ 1991.319638]  do_syscall_64+0x62/0x180
-> > [ 1991.319640]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> > [ 1991.319643] RIP: 0033:0x7f218b134f44
->
-> This is the path I was expecting. Note that my hackish patch will just
-> lift the old (pre-regression) faulting from generic_file_write_iter()
-> up to its caller: orangefs_file_write_iter().
->
-> So now I'm doubly curious if that also hides the underlying bug.
 
