@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-49065-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49066-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E693FAB7A16
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 01:56:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10A3EAB7A1B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 01:56:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEBDD7A4E8C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 23:55:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 929AA3B0EA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 23:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4466263F42;
-	Wed, 14 May 2025 23:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EB0265CBA;
+	Wed, 14 May 2025 23:44:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xcZycVHj"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iTFFvdb9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAFC25D1EE
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 23:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D8A2620E9
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 23:44:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747266242; cv=none; b=gH7FMxbeLrjyP+FHQYktm2I8X/hjp+PGvpdog6emHGUY+cpNouA3VaIFKWso+pKRixcSGPZMwlY4oEmG99gmjSdm8/EfHuPQF4lGkf8bycGF+/cMbbUDcQQolLhzpVNt8pQP4dI4Cj0Yuo69eyPQ5iX1u4SmFygoEKcxOM+UPQw=
+	t=1747266243; cv=none; b=JnmdO3LRz9eHaw3HQNa4TrqcK8LwBOXuHK+4/PtraeBuFvLXCYfmKuBhKhZs4gAAz+1w5ZabZBRvPyX00ceQbyjPG+oOio8oPpAtMbpnlpqwDR5bQhJqEDg4x0+FjYrn30B4oWBb+TySicR3x9PqaKjP4sL7or7drrtagxIsga8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747266242; c=relaxed/simple;
-	bh=3P1w96IQ4XSGB18Ay+axlVK9B9zTFk4aMEWu6OYLYcM=;
+	s=arc-20240116; t=1747266243; c=relaxed/simple;
+	bh=hpWPV5aHOEDKO6rFgPmyIVni5fletgcR4okZkc1dIp4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eYpvs6osX7beGgJXb3zDB4bTL4W6WUb29LqD45gMarYvgxDFcVE+iYZJLblL5erkZJDSfBaxhvGNTN0Ep6tyO6maJNt3KJu5AuVYzLqiWg3ZZX8+m/207uPH1N4wzcOPVV9JEUYJv40WTcMdffEpBjUd/Cg9a+ceTJCi+9rYKdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xcZycVHj; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=DOOl+TJ/vbXTorTScqMqyU7mYzPyFGo6MC0wyI4gsPa304iYEpGtIjjViPA9sUIxZL2B6dCr2YRgZ0NS8iZCOczOxHTAn0kUL3VY3DCPmEU6Mijnq1AeK7IEJ9nt0EXtHolQVsR4V/bQm7kxUaeLZcERHoA/Og/ea6cZ59bdpeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iTFFvdb9; arc=none smtp.client-ip=209.85.214.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b26cdc70befso168849a12.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 16:44:00 -0700 (PDT)
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-22fba10f55eso2879275ad.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 16:44:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747266240; x=1747871040; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747266241; x=1747871041; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w59iMjR8iadMOYtl6Kc2hNNZvpxUqRzRIVqBODddmXk=;
-        b=xcZycVHjw4RW8M98HOF38surOmCoUT/RcVNXxjoYmXfH9icQ7eV6ADwT8IiFkZlj5M
-         Pk/ljf6tJvphd+g9iL+9GgoaEQQ1SCdsP7SlLy83xGR49hnpp3B4lUIzg6GqE+3NQUko
-         IkrPuY3oW7qPqNp2nCBX0w6YGUo1TdNZP4Mnv9aASeFQyQIrQFP4cZ9T1U3Shl67Hn8V
-         JkV7EYXDaQWTOD6u0/rxSR4HOqBCszHwJ+yza/kDK/NWsCN9qrGd0SjmVGXzIZserK7/
-         9kJ5zDqZFQH8jWudyy9kwytRoOMm0lLjhnJgRtDsByPmbTGlSX1ElftINp8ZsEgIsjXe
-         d9Xw==
+        bh=jN2ogTCvzAJBcchmVAWl03ZLuEFD8lFgW6Z8LiBDfqo=;
+        b=iTFFvdb9nIUJLrJj4bTkI/ktx8t3YbZdIJrIGHr9rjLS+HsGp0mWLx5H/mYMPn+WST
+         0+uRqA0RjTPEaWTxtRx1R1jSS0/CC/NdFU09B38OsPB/pryPfu85aQSzueEqFvx6mHEt
+         /ROlvRHn+d06pIuyv3LpUeIX0w4MPeZJ8R2a5S30DNRVWy1inghgdTe3fR/06dPNWm+C
+         IqljklrmU3OQOYVQG1zDu7xTMpa2DJdJh7+TM9tnwIE/CB3CrCbgvzI7YosX26h4WXet
+         TDkf8y1bIAik5L95iaejMfEmg7oOc0uE0M+SlbcxZ5AaH+gR0ybybmCUNKuozQc+R5+R
+         U17g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747266240; x=1747871040;
+        d=1e100.net; s=20230601; t=1747266241; x=1747871041;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w59iMjR8iadMOYtl6Kc2hNNZvpxUqRzRIVqBODddmXk=;
-        b=I/OCjCT4EfWSSGburW84GQDDLpVkw3Y+g27duWHJ+qudXN9Lrc4RdiSmNxI6UnB0jq
-         qpnwbJVJNEs2e04zxS50TTwcaHtwD44DFinNq9dK6w2CpWBXKse+fyRXQUGkNqormNsW
-         YXJIC4/DR2iEBxtj80MncWFEobWUNSUXXzFRn2XXkmv16b83ueMFO5Ik0rNMXMn3lPHO
-         noLyWEiOBnlhx6TmL24ESG2XmAdClNTGTqWKSGm1HEQlhUVsNnbyAhimozLf/ZYOxBPO
-         zovg5m86FYirugx0ZVyo9R7vAb1a2a3KoNryA10hez0vRg0l4usSXjMjONCucboPif+K
-         eJRA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2i5n0uQK2CPGx9KsnxMFUmZA9zJKpzSEHfq7+R7cz32r+SPHsoxqZnA4N+xGBkypz8Xx+0JQNca4xoKba@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqMG6+INL5YavBxD/7xhLnmQs0brQSPkR4BBUcdvj4BJmmYR23
-	K2F+sD4f7ZLtxMPFpflnbOMLOjQAkJF38nebb09qsBpNOzLgMzHWr1SccbU4NOYURgx7HUlKod5
-	oCeZrNVLQJa/riXrL9b4YZg==
-X-Google-Smtp-Source: AGHT+IGyLkn3nqeNKfrPwmXh8d7PdkrS0NNj4rvg8/rg8+lUUn5fqkFx2CkNgkz2N4cDBWoYAECpFAIq4YtOUG++oA==
-X-Received: from pjbsy6.prod.google.com ([2002:a17:90b:2d06:b0:2e0:915d:d594])
+        bh=jN2ogTCvzAJBcchmVAWl03ZLuEFD8lFgW6Z8LiBDfqo=;
+        b=lhODbfEMeXlOc1WwETzs9TAtGsbZEZ40BYIM9sjAihrxQBA9TEUYhAeaSc86lSEZta
+         L64OhmhJ6IvfR0TphToaXgQGVQ9jdqLgTjU3rG7pVFglvZBrxTMHWemDlHRyKZDuxpYO
+         MAYW6reTQtG0bg9RnY2yk4qJKHtgq0bJyXY2v3GrqHpHNw7XMFjSwcPSLLqoCLpXxff/
+         XbDAxGOhwVhxhg4FVGutOR9zSubqaxyXDFPyh0nDmH8FIl/i9n7khWFVpRIbf9DYuYm1
+         whlFl3LCTEeFQM+ysUmg/9T3WrEK09AIK1NBLSylwEf1zkEJbbLJAdO1CvCje8bt5D+v
+         ljxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXsXYAQjR0hPQi3Kn63UsMF/7JIiSNJSej3eqrraDjmoRRP/Yv6o4zqH6BILVRxESwuix5u1FV3flDGA6KH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGhuHr8hgD3GMG7D+qwO6+H5Yu4HUzCiCsmYsvCSrVhSiKS0Dy
+	wg9GLK1wmoy1rmbMZqtpUZ1k0gSj2rY5HItgz2xVk4okXWmNpUx0LgpEx04V5EBFT8My7djVkPf
+	kkxWodVISH5MPHfTddmE8jg==
+X-Google-Smtp-Source: AGHT+IGK1505Z+7Ltj5/aIaYU2/uK6H1PmXwZ8+A0lZ5yW9OmGTcOSnh69lygj29kJbn7gmEfzs1V0Zln0gB2gFDxA==
+X-Received: from plrj13.prod.google.com ([2002:a17:903:28d:b0:22f:a4aa:b819])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:38cc:b0:2ff:5ec1:6c6a with SMTP id 98e67ed59e1d1-30e2e5dcdcamr9260937a91.18.1747266239615;
- Wed, 14 May 2025 16:43:59 -0700 (PDT)
-Date: Wed, 14 May 2025 16:42:19 -0700
+ 2002:a17:903:198e:b0:22e:5e82:6701 with SMTP id d9443c01a7336-231b5e9cdc6mr4377715ad.18.1747266241271;
+ Wed, 14 May 2025 16:44:01 -0700 (PDT)
+Date: Wed, 14 May 2025 16:42:20 -0700
 In-Reply-To: <cover.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,9 +74,9 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1747264138.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-Message-ID: <3f48795c0c34f4faf661394e5ad9805f9014ae23.1747264138.git.ackerleytng@google.com>
-Subject: [RFC PATCH v2 40/51] KVM: guest_memfd: Update kvm_gmem_mapping_order
- to account for page status
+Message-ID: <147952f80781ebf35446f07c2a36810bce4de032.1747264138.git.ackerleytng@google.com>
+Subject: [RFC PATCH v2 41/51] KVM: Add CAP to indicate support for HugeTLB as
+ custom allocator
 From: Ackerley Tng <ackerleytng@google.com>
 To: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
 	x86@kernel.org, linux-fsdevel@vger.kernel.org
@@ -112,139 +112,43 @@ Cc: ackerleytng@google.com, aik@amd.com, ajones@ventanamicro.com,
 	yuzenghui@huawei.com, zhiquan1.li@intel.com
 Content-Type: text/plain; charset="UTF-8"
 
-kvm_gmem_mapping_order() should return the maximum mapping order for a
-gfn if a page were to be faulted in for that gfn.
+If this CAP returns true, then guestmem_hugetlb can be used as a
+custom allocator for guest_memfd.
 
-For inodes that support a custom allocator, the maximum mapping order
-should be determined by the custom allocator in conjunction with
-guest_memfd.
-
-This patch updates kvm_gmem_mapping_order() to take into account that
-for the guestmem_hugetlb custom allocator, pages are split if any page
-in a huge page range is shared.
-
-Change-Id: I5c061af6cefdcbd708a4334cd58edc340afcf44e
+Change-Id: I4edef395b5bd5814b70c81788d87aa94823c35d5
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
 ---
- virt/kvm/guest_memfd.c | 72 ++++++++++++++++++++++++++++++++++++------
- 1 file changed, 62 insertions(+), 10 deletions(-)
+ include/uapi/linux/kvm.h | 1 +
+ virt/kvm/kvm_main.c      | 4 ++++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-index 04b1513c2998..8b5fe1360e58 100644
---- a/virt/kvm/guest_memfd.c
-+++ b/virt/kvm/guest_memfd.c
-@@ -709,19 +709,27 @@ static int kvm_gmem_split_folio_in_filemap(struct inode *inode, struct folio *fo
- 	return ret;
- }
+diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+index af486b2e4862..5012343dc2c5 100644
+--- a/include/uapi/linux/kvm.h
++++ b/include/uapi/linux/kvm.h
+@@ -932,6 +932,7 @@ struct kvm_enable_cap {
+ #define KVM_CAP_ARM_WRITABLE_IMP_ID_REGS 239
+ #define KVM_CAP_GMEM_SHARED_MEM 240
+ #define KVM_CAP_GMEM_CONVERSION 241
++#define KVM_CAP_GMEM_HUGETLB 242
  
-+static inline bool kvm_gmem_should_split_at_index(struct inode *inode,
-+						  pgoff_t index)
-+{
-+	pgoff_t index_floor;
-+	size_t nr_pages;
-+	void *priv;
-+
-+	priv = kvm_gmem_allocator_private(inode);
-+	nr_pages = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(priv);
-+	index_floor = round_down(index, nr_pages);
-+
-+	return kvm_gmem_has_some_shared(inode, index_floor, nr_pages);
-+}
-+
- static inline int kvm_gmem_try_split_folio_in_filemap(struct inode *inode,
- 						      struct folio *folio)
- {
--	size_t to_nr_pages;
--	void *priv;
--
- 	if (!kvm_gmem_has_custom_allocator(inode))
- 		return 0;
- 
--	priv = kvm_gmem_allocator_private(inode);
--	to_nr_pages = kvm_gmem_allocator_ops(inode)->nr_pages_in_page(priv);
--
--	if (kvm_gmem_has_some_shared(inode, folio->index, to_nr_pages))
-+	if (kvm_gmem_should_split_at_index(inode, folio->index))
- 		return kvm_gmem_split_folio_in_filemap(inode, folio);
- 
- 	return 0;
-@@ -890,6 +898,12 @@ static long kvm_gmem_merge_truncate_indices(struct inode *inode, pgoff_t index,
- 
- #else
- 
-+static inline bool kvm_gmem_should_split_at_index(struct inode *inode,
-+						  pgoff_t index)
-+{
-+	return false;
-+}
-+
- static inline int kvm_gmem_try_split_folio_in_filemap(struct inode *inode,
- 						      struct folio *folio)
- {
-@@ -1523,7 +1537,7 @@ static inline struct file *kvm_gmem_get_file(struct kvm_memory_slot *slot)
- 	return get_file_active(&slot->gmem.file);
- }
- 
--static pgoff_t kvm_gmem_get_index(struct kvm_memory_slot *slot, gfn_t gfn)
-+static pgoff_t kvm_gmem_get_index(const struct kvm_memory_slot *slot, gfn_t gfn)
- {
- 	return gfn - slot->base_gfn + slot->gmem.pgoff;
- }
-@@ -2256,14 +2270,52 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
- EXPORT_SYMBOL_GPL(kvm_gmem_get_pfn);
- 
- /**
-- * Returns the mapping order for this @gfn in @slot.
-+ * kvm_gmem_mapping_order() - Get the mapping order for this @gfn in @slot.
-+ *
-+ * @slot: the memslot that gfn belongs to.
-+ * @gfn: the gfn to look up mapping order for.
-  *
-  * This is equal to max_order that would be returned if kvm_gmem_get_pfn() were
-  * called now.
-+ *
-+ * Return: the mapping order for this @gfn in @slot.
-  */
- int kvm_gmem_mapping_order(const struct kvm_memory_slot *slot, gfn_t gfn)
- {
--	return 0;
-+	struct inode *inode;
-+	struct file *file;
-+	int ret;
-+
-+	file = kvm_gmem_get_file((struct kvm_memory_slot *)slot);
-+	if (!file)
-+		return 0;
-+
-+	inode = file_inode(file);
-+
-+	ret = 0;
-+	if (kvm_gmem_has_custom_allocator(inode)) {
-+		bool should_split;
-+		pgoff_t index;
-+
-+		index = kvm_gmem_get_index(slot, gfn);
-+
-+		filemap_invalidate_lock_shared(inode->i_mapping);
-+		should_split = kvm_gmem_should_split_at_index(inode, index);
-+		filemap_invalidate_unlock_shared(inode->i_mapping);
-+
-+		if (!should_split) {
-+			size_t nr_pages;
-+			void *priv;
-+
-+			priv = kvm_gmem_allocator_private(inode);
-+			nr_pages = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(priv);
-+
-+			ret = ilog2(nr_pages);
-+		}
-+	}
-+
-+	fput(file);
-+	return ret;
- }
- EXPORT_SYMBOL_GPL(kvm_gmem_mapping_order);
- 
+ struct kvm_irq_routing_irqchip {
+ 	__u32 irqchip;
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 92054b1bbd3f..230bcb853712 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4845,6 +4845,10 @@ static int kvm_vm_ioctl_check_extension_generic(struct kvm *kvm, long arg)
+ 	case KVM_CAP_GMEM_SHARED_MEM:
+ 	case KVM_CAP_GMEM_CONVERSION:
+ 		return true;
++#endif
++#ifdef CONFIG_KVM_GMEM_HUGETLB
++	case KVM_CAP_GMEM_HUGETLB:
++		return true;
+ #endif
+ 	default:
+ 		break;
 -- 
 2.49.0.1045.g170613ef41-goog
 
