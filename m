@@ -1,117 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-48959-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C422AB6A8E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 13:52:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37F3EAB6AAD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 13:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDCD8860B30
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 11:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C094A69CA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 11:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A33A2749E5;
-	Wed, 14 May 2025 11:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28B42749E5;
+	Wed, 14 May 2025 11:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="IxAiFxTg"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C382749D9
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 11:52:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4141B1F875A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 11:57:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747223556; cv=none; b=qsjVdI8arrpQD1euFRI9YCJIvtArXLWXCUuDFv8iYbUtjlZ4NbfUey3FHjK+851buc4t/0fYO9ITrUBt5h2ROl3+tgFlPAzZ+4D+tpzKYwyesC6u8En7yhv+zn6yuTlAs66pOyZjJeGX+OzIm6er4FTtaPLvAEZBrpEPFZu9dtg=
+	t=1747223827; cv=none; b=mMGJohiJeTtuNWuVZDL77qw5yXcZ+sby4NK2jxkwSYzLOYZ64fuykGbyXFg0DmxBLbnzVPBllmqbieSaoLZFalQDQxnSLmhKEYWU03xs9YWRrIxUfmgTdxTrlDZGIIPppr3HoemA2GcHlKWL4VTFFU9CM0mKFlmv8Po27+WGYXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747223556; c=relaxed/simple;
-	bh=pI7OHw+XgKtV3gEI9hZrPZaVBBxpKFZqQrAGBXAQ4HE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FZioYNJytmiJDnsjUpkqpJeNHMgH3AD1ahq+kfHhJoz/bwApLHn+Y/8TDPW0DQayeByxb2HGfJ/IeZbsUCU9Ana6+DL046uMWsl7FZDAer4VLfP3Gp6dy3jl/AaK4eFPzGB2xAhC1cYwM1QVr/JXwlXGBj/Th3KpHGRKHMuFacA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-112-151.bstnma.fios.verizon.net [173.48.112.151])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 54EBqBbZ012749
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 May 2025 07:52:12 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 74E822E00DC; Wed, 14 May 2025 07:52:11 -0400 (EDT)
-Date: Wed, 14 May 2025 07:52:11 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: =?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>
-Cc: "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 2/3] ext4: implement IOCB_DONTCACHE handling in write
- operations
-Message-ID: <20250514115211.GC9943@mit.edu>
-References: <20250421105026.19577-1-chentaotao@didiglobal.com>
- <20250421105026.19577-3-chentaotao@didiglobal.com>
+	s=arc-20240116; t=1747223827; c=relaxed/simple;
+	bh=z3DaPFihoK23TL05V6hxbQztAMEFNMjAk2PlRE/6sBs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=glKa5fMm2SrzSJ3i6hSHg+8YWfru3BzXNh8VFtPhIrWdd8K6Bk6v3rF+U6ErQavxgXn9fWCjDxkQKardxS7kbr36xHEHRSXfvE/anap2mznrK0ufkDQB+dYgCbi2xfDT9vCFEW9IleW5cHaNexNnzlelJstcTmBuWKKXQQP/kFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=IxAiFxTg; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-47688ae873fso73989191cf.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 04:57:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1747223824; x=1747828624; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=z3DaPFihoK23TL05V6hxbQztAMEFNMjAk2PlRE/6sBs=;
+        b=IxAiFxTgv8tQK2Yy+wu26B0Fnk44mujyu0S2agQRNBoNYkR5OfGSUG2C44RdMzMTky
+         2Z0uVc5jwyK2Y0qtkaI25Lh4E87/OBLb3CfITlop0N4c8TfPh3cAAdlmkBPy/E6NAqaJ
+         r2tSX6PMwTNBb29xGFj3kd7t+1yDpHu1iveu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747223824; x=1747828624;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z3DaPFihoK23TL05V6hxbQztAMEFNMjAk2PlRE/6sBs=;
+        b=Ut0yLWnK8sgfsmQ5FLVDqm/6vY3Za1kjHE7/ekT2Hdnn2AHyaYHUMVzfqyDcNdf0Wl
+         9iSufCbhMEJBG19uRRuOgaXamdP1OlZLjYayRRG24TcTWO7LFOjsooN3gk6RURhuDibV
+         veNbBE+Gf5vuoLPbo+Id137agJ4gYumrDEZoTosgsTF97474pedBLNjto51yZ7KAzLPX
+         +f1baXYh8e6Nq27ylETNa/KTWUEX+U25nMo7AMyEBluetJRquRYyA6R8uu8maJKZvR+F
+         uzOqj/JBd/kzfsDlxF0DnTDoLNUqYKWjvV+a1ow+jZ7hc+pvXRUnqRStVTsZG5Sk75cL
+         mUhQ==
+X-Gm-Message-State: AOJu0Yw3lU6bIm2HuB462rNLPLwACWbhyzLbcLnK2laVinuVr1agVnJu
+	DzgmFQhkpsYnSPbkAQmKJmhZj46z3mzR1uvZEjylwmQhkuy2jCJPtDdw+LHAp7NRummFEtjORvh
+	00/KYl7VDbbQ80sa5As41ew+rlQZrmKpGmawQhA==
+X-Gm-Gg: ASbGncsHSDCIhX6EEJ83nBzVqhj8FNnTd9nuLEhlqX8u4S9SpOwxscLq4vt9F6/O1AZ
+	3pdDV/6nO2hz+doGBDyIGEemAI2u72vrPUYjLhQ8D8ef4IET+1scF0EUIRcIVzcN15SamY/RuXa
+	qTSHT6l5ztZ7Fz4yPgwY+lyW7TAc4lpAE=
+X-Google-Smtp-Source: AGHT+IHkKUM1mgu6Fjfnaem8QmDzbacaGBn9KHQ7E9DxvC+GSZzWF/EvKQ7FJWl2JOqSbHPcVFIXmPfPLG+9ZFI9cms=
+X-Received: by 2002:a05:622a:59cc:b0:494:77f1:61ac with SMTP id
+ d75a77b69052e-49495cccf79mr53183551cf.18.1747223823991; Wed, 14 May 2025
+ 04:57:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250421105026.19577-3-chentaotao@didiglobal.com>
+References: <20250422235607.3652064-1-joannelkoong@gmail.com>
+ <CAJfpegsc8OHkv8wQrHSxXE-5Tq8DMhNnGWVpSnpu5+z5PBghFA@mail.gmail.com>
+ <CAJnrk1ZXBOzMB69vyhzpqZWdSmpSxRcJuirVBVmPd6ynemt_SQ@mail.gmail.com>
+ <CAJfpegsqCHX759fh1TPfrDE9fu-vj+XWVxRK6kXQz5__60aU=w@mail.gmail.com> <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
+In-Reply-To: <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Wed, 14 May 2025 13:56:52 +0200
+X-Gm-Features: AX0GCFvBpmh1Yr-MEbqg3xW9iRqVg0raWSd_iTUCTmEbRccXvs7cJ-kILWY7H0g
+Message-ID: <CAJfpegv+Bu02Q1zNiXmnaPy0f2GK1J_nDCks62fq_9Dn-Wrq4w@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: use splice for reading user pages on servers
+ that enable it
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm, 
+	jlayton@kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Apr 21, 2025 at 10:50:30AM +0000, 陈涛涛 Taotao Chen wrote:
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 94c7d2d828a6..787dd152a47e 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -1147,16 +1147,22 @@ static int ext4_write_begin(struct file *file, struct address_space *mapping,
->  {
->  	struct inode *inode = mapping->host;
->  	int ret, needed_blocks;
-> +	int iocb_flag;
->  	handle_t *handle;
->  	int retries = 0;
->  	struct folio *folio;
->  	pgoff_t index;
-> +	fgf_t fgp = FGP_WRITEBEGIN;
->  	unsigned from, to;
->  
->  	ret = ext4_emergency_state(inode->i_sb);
->  	if (unlikely(ret))
->  		return ret;
->  
-> +	iocb_flag = (int)(uintptr_t)(*fsdata);
-> +	if (iocb_flag & IOCB_DONTCACHE)
-> +		fgp |= FGP_DONTCACHE;
-> +
+On Tue, 13 May 2025 at 23:29, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-See my comment against the first patch in this series.  It *should* be
-possible to solve the problem just for ext4 by adding this line here:
+> The results vary depending on how IO-intensive the server-side
+> processing logic is (eg ones that are not as intensive would show a
+> bigger relative performance speedup than ones where a lot of time is
+> spent on server-side processing). I can include the results from
+> benchmarks on our internal fuse server, which forwards the data in the
+> write buffer to a remote server over the network. For that, we saw
+> roughly a 5% improvement in throughput for 5 GB writes with 16 MB
+> chunk sizes, and a 2.45% improvement in throughput for 12 parallel
+> writes of 16 GB files with 64 MB chunk sizes.
 
-	*fsdata = (void *)0;
+Okay, those are much saner numbers.
 
-The problem is that it's super-fragile, since how *fsdata gets used
-changes at different points in time, so it makes code review and
-maintenance more difficult.  (As evidenced by the fact that you missed
-this; this is not a criticism on your programming ability, but rather
-for the design choise of overloading the use of *fsdata.  This is a
-trap that someone else might fall into when doing future code
-changes.)
+Does the server use MSG_ZEROCOPY?
 
-And of course, the question is whether PATCH 1/3 could potentially
-break other file systems.  We would need audit all of the other
-*_write_begin() functions, and then document this for the sake of
-future file system developers that might want to change their
-write_begin() function.
+Can you please include these numbers and the details on how the server
+takes advantage of splice in the patch header?
 
-This is why my preference would be to add an extra flags paramter to
-write_begin(), but that is going to be a lot more work.
-
-Cheers,
-
-						- Ted
+Thanks,
+Miklos
 
