@@ -1,101 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-48969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F193CAB6EFA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 17:09:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99250AB6FC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 17:29:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFCC43A9526
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 15:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD509A25FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 15:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F9C51C8606;
-	Wed, 14 May 2025 15:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009A281509;
+	Wed, 14 May 2025 15:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QjI/TLk8"
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="djZFgxiA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05CD19341F;
-	Wed, 14 May 2025 15:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E113D1C6FF9;
+	Wed, 14 May 2025 15:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235191; cv=none; b=EDHX3a2jEbg0lwghuFPPxnWqR7X4+zvN6kCg/dl4tt4UP7TqBFMDJisBpJszbkuyLcn2aVtXxRTa+kkNT75QewUHIO4aGixgJwLuGY55EOtjUqxkyBnUbSbL6IVM8HSCdtHtsUN3Id96D2FD10+reyeSFDE+pcc9usxTJ+82W8I=
+	t=1747235965; cv=none; b=Qx3BFUgIVgkaZ5If0QV3XsoS/saEl4R+eqvJLuTJwtDA4FkRMssREWgwUz3INlDeqjW2mSIJtFW/YQF+W2NGFKCsEh5uEOKU5ZA6Ocl1jtAbVotth0W9enRy5xkgWHc5t3fB2P9Jo+yrm0umwXMjr/KjWEBRsmiOwUF1ZGFs2ZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235191; c=relaxed/simple;
-	bh=49IPILCDFGJoTtGJw6PabOF4qj/kYnh1Lrc/Fqb5kPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QtfLpkdE5Bz3HQadE4Z8rZjxJ0ACHJ15KWlHsgT/qbMMYVjqaf8SlLqCJPUcHOXYzk4Dbet1Pm7YxoYaovtlKJVeYXX2GE7umbHyNQuPGWPyX6mX8EdnqbxN2qa5pB0wTcxDcR2BNqH5wfEvhfx4pNU9VXFG8AGtDnIMo5KQ230=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QjI/TLk8; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RKownVnGZe2UL1ciUHyNBkHcN2TX+C13oImW60hfDsM=; b=QjI/TLk8bAz6m0/ahaZbmakyUt
-	x6PoTRckDFJRJ7atnSUukQOhJomjiquCpNi81GTpWflVz30z9/umlbb1jXvT1UdwN7bfgW9LzvCIt
-	oqHEpu5SVX9hIxPF75tqWarkJ46AAWqEBBfUnH8KWO0r2hmZZB+hQRDJqEsK8917vjwN/NPP3ZRkN
-	hoJC24wE8zcuhSBPrVIUFAStqct9Oj77OKULK0+gK/V9daIMsV05BjaelUZeUBbigJaqHduOjbdqz
-	q2Y4kll8asCQZOsNXocWuWvr9SvEDbgThaef+u+LHBdvANyq9ajbdFhfUPQTJixgZJ0kSjLarZoyE
-	mbvvM7lQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uFDgh-0000000FWFN-21pV;
-	Wed, 14 May 2025 15:06:27 +0000
-Date: Wed, 14 May 2025 08:06:27 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	=?utf-8?B?6ZmI5rab5rab?= Taotao Chen <chentaotao@didiglobal.com>,
-	"adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH 1/3] mm/filemap: initialize fsdata with iocb->ki_flags
-Message-ID: <aCSxc7TnJzP-n2Lk@infradead.org>
-References: <20250421105026.19577-1-chentaotao@didiglobal.com>
- <20250421105026.19577-2-chentaotao@didiglobal.com>
- <20250514035125.GB178093@mit.edu>
- <aCScvepl2qxyU40P@casper.infradead.org>
+	s=arc-20240116; t=1747235965; c=relaxed/simple;
+	bh=fbDxkuzpwYjrGZLFi5VIbeGvuh+o5LtR/w6gApnTSJQ=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=PBbTx9Xys+AZ94m1F3tzBRKbIbtL7Ym3EcA5WHTc9GgRWCe4onHEXII/pIuvuwwezilFekuO5M6WdtIhTV9hfS72jrHG6RK4LYu4jZqLqJoliaxK7lpDewsYJXXdrVsIdKMCVm6AR1KMywBBFzdUUJa9gVcpQHaXEtsb9Rj7JOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=djZFgxiA; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54EFAEbT3012887
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 14 May 2025 08:10:15 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54EFAEbT3012887
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025042001; t=1747235422;
+	bh=yapZ2s67BLNwus6ibHABzXGBCoZzVlVupFJe/q2qy/U=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=djZFgxiAUJE7iFHA0Wd/yFppU4TGqi4fxmoBT1mvTgxRmRiu+8QH1zl3CND+QbbP4
+	 97UVxN+J8QD8iz78UlxzP16emoOIxJpWaoO9qxu1Ec5we80T+FOOb4RfHy40YAODf4
+	 27XX25rvc06YcNMTsxppaOiXgVXhowu2DQa6R8gC1Tcuq8Oq9GVQp3swa9CciK5Vg/
+	 jv/tWyK4JR8CJyAVAYMpVNTUaE0Ax5AVAQfxExqancQ8ZpUjlh9FBEWFvjm5PCVbut
+	 6qwwqWO9GyDweGO8bFsU0TsmuX3ejxdQaqkTWk3Ymh6Yue7onjRsMrCGmrkfplN9Ef
+	 P/Ifsp+Ororjw==
+Date: Wed, 14 May 2025 08:10:12 -0700
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Arnd Bergmann <arnd@arndb.de>, Andrey Albershteyn <aalbersh@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Yoshinori Sato <ysato@users.osdn.me>, Rich Felker <dalias@libc.org>,
+        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andreas Larsson <andreas@gaisler.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        =?ISO-8859-1?Q?G=FCnther_Noack?= <gnoack@google.com>,
+        =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali@kernel.org>,
+        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Amir Goldstein <amir73il@gmail.com>
+CC: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-m68k@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-api@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
+        selinux@vger.kernel.org, ecryptfs@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Andrey Albershteyn <aalbersh@kernel.org>
+Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_0/7=5D_fs=3A_introduce_fi?=
+ =?US-ASCII?Q?le=5Fgetattr_and_file=5Fsetattr_syscalls?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
+References: <20250513-xattrat-syscall-v5-0-22bb9c6c767f@kernel.org> <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
+Message-ID: <B17E8366-DB80-45E6-90D6-294824C40FD9@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aCScvepl2qxyU40P@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 14, 2025 at 02:38:05PM +0100, Matthew Wilcox wrote:
-> On Tue, May 13, 2025 at 11:51:25PM -0400, Theodore Ts'o wrote:
-> > I understand that it would be a lot more inconvenient change the
-> > function signature of write_begin() to pass through iocb->ki_fags via
-> > a new parameter.  But I think that probably is the best way to go.
-> 
-> I'd suggest that passing in iocb rather than file is the way to go.
-> Most callers of ->write_begin already pass NULL as the first argument so
-> would not need to change.  i915/gem passes a non-NULL file, but it only
-> operates on shmem and shmem does not use the file argument, so they can
-> pass NULL instead.
+On May 13, 2025 2:53:23 AM PDT, Arnd Bergmann <arnd@arndb=2Ede> wrote:
+>On Tue, May 13, 2025, at 11:17, Andrey Albershteyn wrote:
+>
+>>
+>> 	long syscall(SYS_file_getattr, int dirfd, const char *pathname,
+>> 		struct fsxattr *fsx, size_t size, unsigned int at_flags);
+>> 	long syscall(SYS_file_setattr, int dirfd, const char *pathname,
+>> 		struct fsxattr *fsx, size_t size, unsigned int at_flags);
+>
+>I don't think we can have both the "struct fsxattr" from the uapi
+>headers, and a variable size as an additional argument=2E I would
+>still prefer not having the extensible structure at all and just
+>use fsxattr, but if you want to make it extensible in this way,
+>it should use a different structure (name)=2E Otherwise adding
+>fields after fsx_pad[] would break the ioctl interface=2E
+>
+>I also find the bit confusing where the argument contains both
+>"ignored but assumed zero" flags, and "required to be zero"
+>flags depending on whether it's in the fsx_pad[] field or
+>after it=2E This would be fine if it was better documented=2E
+>
+>
+>> 		fsx=2Efsx_xflags |=3D FS_XFLAG_NODUMP;
+>> 		error =3D syscall(468, dfd, "=2E/foo", &fsx, 0);
+>
+>The example still uses the calling conventions from a previous
+>version=2E
+>
+>       Arnd
 
-i915/gem needs to stop using write_begin/end and just do an iter_write.
-Someone who has the hardware and/or CI setup needs to figure out if
-vfs_write and kernel_write is fine, or this is magic enough to skip
-checks and protection and go straight to callig ->iter_write.
-
-> fs/buffer.c simply passes through the file passed
-> to write_begin and can be changed to pass through the iocb passed in.
-> exfat_extend_valid_size() has an iocb in its caller and can pass in the
-> iocb instead.  generic_perform_write() has an iocb.
-
-And we really need to stop theading this through the address_space
-ops because it's not a generic method but a callback for the file
-system..
-
+Well, ioctls carry the structure size in the ioctl number, so changing the=
+ structure size would change the ioctl number with it=2E
 
