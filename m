@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-49017-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49018-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695A4AB78B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 00:07:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94688AB78BA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 00:08:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 089883B1F56
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 22:06:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE82086576B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 22:06:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BFA5231821;
-	Wed, 14 May 2025 22:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878AD231A51;
+	Wed, 14 May 2025 22:04:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b4VW0Ubv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PUdZ7K0j"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7D6221296;
-	Wed, 14 May 2025 22:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D740E2153D8;
+	Wed, 14 May 2025 22:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747260274; cv=none; b=sbpta92qKF7gy4iVab+HwUGrruVdEc+oYhX25BiiOssbavs66YFGqhkUsc9QvgZ2jqN+jgMds/YHeXCnLUPAXvL4RqPAXF3bhwROy8jNV1lEPXVaHMooQn6GKasgEHj972RhD/uUsJVMB+zEiAwabFDTEoTi+s7py9Uw3weZ5pA=
+	t=1747260280; cv=none; b=dhwMPkH54szJuhLOHTDfAf3KnTKEnWSWtznrCdZ0vCtvWztH50RQvSOzF1Eyh7xpWvReIA3JTVYXb5SsOnCrfq7bTdehpLDnVGCi3DXoDzI0M/GyHRVs6QROYykYQODpdJthwIzU37PajcWYi6x52wF4JoItB3HIsyLpsvZTp3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747260274; c=relaxed/simple;
-	bh=GofPJKcSMTqtWvKIscS1eZ3G1JH+s1zbLWmsYPBuvtI=;
+	s=arc-20240116; t=1747260280; c=relaxed/simple;
+	bh=WF46UsPN75VDjMGLBPpKqGhF8yXGNp/YIhfAlM9Ro+U=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=MTo1F81qPNF5ldPshU3Ur8jOpi9OOVAWWiCr/7xc4WcLyXbHK1iWuyjHvF+hp2uyXu19QABix+i5VsgH6Yb1m41so93apGq3UE7Ka/pXDkXbvJxKDHLMNpYGaSxohwS3hq/SB664UgFxuvikvLpcVhCntLnfj1TvyURK29+aNjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b4VW0Ubv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F0C0C4CEEF;
-	Wed, 14 May 2025 22:04:29 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=IG9u3ra5NFGEVdrBHRcHQtpmnHG4ef4xR5e3rfXCp/TO7WkVLWGAIf2YSBSAqz9CAMokQM27dt/FvOY7jX1bw7cWdQfD47TSvt24gsUYy9FlhqVS5Mg0hojgjPpO+u/g++QjcKCA1PmNUNN03lmnsqKl4DMnyBP/gLLeElwCqtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PUdZ7K0j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4B48C4CEE3;
+	Wed, 14 May 2025 22:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747260274;
-	bh=GofPJKcSMTqtWvKIscS1eZ3G1JH+s1zbLWmsYPBuvtI=;
+	s=k20201202; t=1747260279;
+	bh=WF46UsPN75VDjMGLBPpKqGhF8yXGNp/YIhfAlM9Ro+U=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=b4VW0UbvM1foRVLyhSsYkbutkTtNDGp86d3vZb+EscZ4wdISAFS98lQCq3NzaXiay
-	 ZhP0tDP5ZmZ2TC/v97vaS1rvTe++YT0MyFwONocFzQClXNc+fP0gIxz6IpKOjMAdfv
-	 Q8K2F5B0m0Wzjt4JFqc+BxmDyzJpkGoDoH+TtN8Cv7tbXaPPn9bE6rxA0L1tSlbEg1
-	 jhCCuNLdGg+fX6Qq9OGJyk+95DUiV3EjaKqxqJdZ+5RhVCPAkx+uwSyjGxDrRu5bD7
-	 itPolyZ6dd+7cXX2Dpb0amdwS9g6WqbrcfcKO4pZLDRvXKYi/J2rZk++3gaUrLiC1b
-	 tQK9tYAoQ+dGA==
+	b=PUdZ7K0j17nsI5ayN7DSVjltWpYjm6oTU1mp9NUMsiQ9ampYAeKPhPeTt5brHKqQh
+	 b1YCx1yrkI4VntLHgZSntgzZxTZm/caerNwwEbZfo3cmjqmUAAc+WZtu2wrI3aEliM
+	 ri/vW74f+MTIsZTTIZ9s9SYep4C/tnT4eUj+KgBI15odyyFD3ZMQTMMsWqMdoD3TBE
+	 BQo0NsjZUHoei2FKsRI6FKvdPXAoQNC2wdOgDR1y60rz7ozbuM8mS24iiXkbAH+g6f
+	 SGDX5xFhxlvhWX7rj2wfQa8CG5G5AJztoexZMQcmzdeXHoign0VYTe4epLf9WTRdY2
+	 WYn7RL2x4q9UA==
 From: Christian Brauner <brauner@kernel.org>
-Date: Thu, 15 May 2025 00:03:40 +0200
-Subject: [PATCH v7 7/9] coredump: validate socket name as it is written
+Date: Thu, 15 May 2025 00:03:41 +0200
+Subject: [PATCH v7 8/9] selftests/pidfd: add PIDFD_INFO_COREDUMP
+ infrastructure
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250515-work-coredump-socket-v7-7-0a1329496c31@kernel.org>
+Message-Id: <20250515-work-coredump-socket-v7-8-0a1329496c31@kernel.org>
 References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
 In-Reply-To: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
 To: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
@@ -72,77 +73,63 @@ Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>,
  Christian Brauner <brauner@kernel.org>, 
  Alexander Mikhalitsyn <alexander@mihalicyn.com>
 X-Mailer: b4 0.15-dev-c25d1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1725; i=brauner@kernel.org;
- h=from:subject:message-id; bh=GofPJKcSMTqtWvKIscS1eZ3G1JH+s1zbLWmsYPBuvtI=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSoCntci0xSrJ0wQfNh4ZtD9w89yM3Y/Vzq4yu1Zd+Fn
- ScaLDsa1lHKwiDGxSArpsji0G4SLrecp2KzUaYGzBxWJpAhDFycAjCRC/0M/z0rNt7Jif9xcMfP
- WRxXnty4Jm2QLnnrxqdXf7et8pe6cXAhw//84jeTOLYqfTnxO3jRbI5pc+aUr2E2WGrwtW+mg1r
- 8FlduAA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1381; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=WF46UsPN75VDjMGLBPpKqGhF8yXGNp/YIhfAlM9Ro+U=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSoCntKiHV/2tWx+UDRFq9PT75FCXS2rnSs5PT8MNHWi
+ tPMcK1VRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQKixkZ1mqXeZYdZTVnDI+1
+ 0p/xf7HU1aasrZ6W2dVuX6avPCwby/DPxi1xptY83v/HVkpxXs2729aYl3PifPG23QrbV8S9cGr
+ hAgA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 
-In contrast to other parameters written into
-/proc/sys/kernel/core_pattern that never fail we can validate enabling
-the new AF_UNIX support. This is obviously racy as hell but it's always
-been that way.
+Add PIDFD_INFO_COREDUMP infrastructure so we can use it in tests.
 
 Signed-off-by: Christian Brauner <brauner@kernel.org>
 ---
- fs/coredump.c | 37 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 34 insertions(+), 3 deletions(-)
+ tools/testing/selftests/pidfd/pidfd.h | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 6ee38e3da108..d4ff08ef03e5 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -1228,13 +1228,44 @@ void validate_coredump_safety(void)
- 	}
- }
+diff --git a/tools/testing/selftests/pidfd/pidfd.h b/tools/testing/selftests/pidfd/pidfd.h
+index 55bcf81a2b9a..887c74007086 100644
+--- a/tools/testing/selftests/pidfd/pidfd.h
++++ b/tools/testing/selftests/pidfd/pidfd.h
+@@ -131,6 +131,26 @@
+ #define PIDFD_INFO_EXIT			(1UL << 3) /* Always returned if available, even if not requested */
+ #endif
  
-+static inline bool check_coredump_socket(void)
-+{
-+	if (core_pattern[0] != '@')
-+		return true;
++#ifndef PIDFD_INFO_COREDUMP
++#define PIDFD_INFO_COREDUMP	(1UL << 4)
++#endif
 +
-+	/*
-+	 * Coredump socket must be located in the initial mount
-+	 * namespace. Don't give the that impression anything else is
-+	 * supported right now.
-+	 */
-+	if (current->nsproxy->mnt_ns != init_task.nsproxy->mnt_ns)
-+		return false;
++#ifndef PIDFD_COREDUMPED
++#define PIDFD_COREDUMPED	(1U << 0) /* Did crash and... */
++#endif
 +
-+	/* Must be an absolute path. */
-+	if (*(core_pattern + 1) != '/')
-+		return false;
++#ifndef PIDFD_COREDUMP_SKIP
++#define PIDFD_COREDUMP_SKIP	(1U << 1) /* coredumping generation was skipped. */
++#endif
 +
-+	return true;
-+}
++#ifndef PIDFD_COREDUMP_USER
++#define PIDFD_COREDUMP_USER	(1U << 2) /* coredump was done as the user. */
++#endif
 +
- static int proc_dostring_coredump(const struct ctl_table *table, int write,
- 		  void *buffer, size_t *lenp, loff_t *ppos)
- {
--	int error = proc_dostring(table, write, buffer, lenp, ppos);
-+	int error;
-+	ssize_t retval;
-+	char old_core_pattern[CORENAME_MAX_SIZE];
++#ifndef PIDFD_COREDUMP_ROOT
++#define PIDFD_COREDUMP_ROOT	(1U << 3) /* coredump was done as root. */
++#endif
 +
-+	retval = strscpy(old_core_pattern, core_pattern, CORENAME_MAX_SIZE);
-+
-+	error = proc_dostring(table, write, buffer, lenp, ppos);
-+	if (error)
-+		return error;
-+	if (!check_coredump_socket()) {
-+		strscpy(core_pattern, old_core_pattern, retval + 1);
-+		return -EINVAL;
-+	}
+ #ifndef PIDFD_THREAD
+ #define PIDFD_THREAD O_EXCL
+ #endif
+@@ -150,6 +170,9 @@ struct pidfd_info {
+ 	__u32 fsuid;
+ 	__u32 fsgid;
+ 	__s32 exit_code;
++	__u32 coredump_mask;
++	__u32 __spare1;
++	__u64 coredump_cookie;
+ };
  
--	if (!error)
--		validate_coredump_safety();
-+	validate_coredump_safety();
- 	return error;
- }
- 
+ /*
 
 -- 
 2.47.2
