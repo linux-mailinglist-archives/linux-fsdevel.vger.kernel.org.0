@@ -1,48 +1,48 @@
-Return-Path: <linux-fsdevel+bounces-48988-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12286AB724F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 19:06:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A17AB724D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 19:06:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65F2E7ABEE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 17:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 743D61B683F4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 17:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66F3027CCE7;
-	Wed, 14 May 2025 17:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198BC2749E3;
+	Wed, 14 May 2025 17:06:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mBKt8ER4"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ktTN6aWL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E0927C173;
-	Wed, 14 May 2025 17:06:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9347927F747;
+	Wed, 14 May 2025 17:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747242381; cv=none; b=bVlCM3sNnphpTv5kVLb6Vyunr8MgZd8e3ZAlRhyPafdWNJj0cA7W+pXbUflXzSxjDS9fLCHOHabDRK2+QFPOc1dMYWs4g7y/3/E3DxUlMir7plrSzsZQfZb/TY1CxS+/BuIQ1LxCc5R6ldIFzacz+VkeTwnB7Kp7Pv7fII2cqyE=
+	t=1747242378; cv=none; b=gnVXynErqIIzaufqT/1KUYAboqZw5rP7rd+UKHPxuWwyLtGYlTyrlQKPlvE+8JCG8pKdKr5aRAGlg4n5+2NEyrlnsyRavdfne0EFpd6OyZa95qMUooCnAjS+MEV0oMqCSIRgVAYzSFkSAGz7vbI/5NcZFUXvbq5r0HP6tGFJeVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747242381; c=relaxed/simple;
-	bh=9VZojGIxJQRgdmpOhuLKg/E2/RlZOsj/kKtjcVee1b0=;
+	s=arc-20240116; t=1747242378; c=relaxed/simple;
+	bh=XqL7Pdzl6R44ZlUwl4s7z/y+eiTe3nHaItxkjQ+dQrM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GS6lVazIqj1O4bjyjPrXu5rI+M5pZgxSRVZAoPaz0nVWhjLFYfXHmULH1+Q6+kzAmt1PzOHaKdFVe3l5qZ2pNzxHBYiLzA0vStwggqj7frXM+rVI7o4zErdp+zqE0IEHE6lJBJa51j5RqFQiN+ZWqcQ57gqrW3skvphnYtqnuhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mBKt8ER4; arc=none smtp.client-ip=90.155.50.34
+	 MIME-Version; b=M9jo+IRVGyk32nXY6IWQq/UIxGhkdJ7PO7ljqowVRpFrOTB8Q2gy1u4NgcQBmEIdMtCCmdqGrfS7CqTmnHjMa5pbe2QsRXFAMsTlay/WmGKbIUwQtQV6NF1qyBCCV7SLsrZPMfxnw7CTs+xciKwnhfT31nCLKlcuqYNx7+yFda0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ktTN6aWL; arc=none smtp.client-ip=90.155.50.34
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
 	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
 	Content-Type:Content-ID:Content-Description;
-	bh=0ObYEzeGaSZX4ivCXibNuorLDdF24fdziBtN69sHkFw=; b=mBKt8ER4Ztw4U6DWrV3z0UZ8aF
-	ugEbly/LvVcAn2zZJ0M9NuBNzOO42aVchXrLt+0ojuOA7Z08d3KijzC4WVgRUJPdc3VPX1QerQdVm
-	BgGtE+VKa29iil9xL1lM4aXF1GNfFAZZDApIeUfqNf2FMBbpK3gvwYY9+YWuWzztJzj09G5AaYnWG
-	gXstThby14wNQOCP+0PBjs6B2qavaQgJi8MLEvWGXrf4HxAtGGmQVAn0pr5tv6lc/ltCUIHNJJQi6
-	C5owuwbXzfnnQ2mq/EmEVSd/0bSPlHiXzsYeY922xT9rARGQX04mZZFge8N9bJYpdBzkMHf6lx1nG
-	geeGXCDg==;
+	bh=QIP/rHjINrJ5Ni5+lZKt00BgN3DmtdYKNBZJi9LlujY=; b=ktTN6aWLboPg8RRtuHowj055yI
+	5BNKpu9DCOyR8lO09SYykWdCBjOVaqrswNmwV7cOEWdE3WYs0NKxZIM8+uJjUQGpjJxsv1iSQmy+N
+	hszPebTIiTLmgBnCEKky4kdGru6r0oJpRWzTqxvuidvX7mwsLNAVGlfhHl1XD2vtYQqB7uH2EzRNP
+	xfCjh+zUZSq6KulNQIz6r/YhLYMoTXsMqfQFy2+oKTsPtZ7xt50anXkQKNAMeGZ0/+DSIKUFi7Z/K
+	wpWce5OnORGq9dv3WpB/fYZXnHLSyzX0YNAYCjEKC/rZNXag7JhVB47Yqe/rgtRj5xEkd+htoTlw5
+	2TWtn39Q==;
 Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uFFYW-0000000CahT-31eh;
+	id 1uFFYW-0000000CahV-3QRd;
 	Wed, 14 May 2025 17:06:08 +0000
 From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
 To: Andrew Morton <akpm@linux-foundation.org>
@@ -52,9 +52,9 @@ Cc: "Matthew Wilcox (Oracle)" <willy@infradead.org>,
 	Alexander Viro <viro@zeniv.linux.org.uk>,
 	linux-fsdevel@vger.kernel.org,
 	Hugh Dickins <hughd@google.com>
-Subject: [PATCH 2/3] ntfs3: Use folios more in ntfs_compress_write()
-Date: Wed, 14 May 2025 18:06:03 +0100
-Message-ID: <20250514170607.3000994-3-willy@infradead.org>
+Subject: [PATCH 3/3] iov: Remove copy_page_from_iter_atomic()
+Date: Wed, 14 May 2025 18:06:04 +0100
+Message-ID: <20250514170607.3000994-4-willy@infradead.org>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <20250514170607.3000994-1-willy@infradead.org>
 References: <20250514170607.3000994-1-willy@infradead.org>
@@ -66,107 +66,109 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the local 'page' variable and do everything in terms of folios.
-Removes the last user of copy_page_from_iter_atomic() and a hidden
-call to compound_head() in ClearPageDirty().
+All callers now use copy_folio_from_iter_atomic(), so convert
+copy_page_from_iter_atomic().  While I'm in there, use kmap_local_folio()
+and pagefault_disable() instead of kmap_atomic().  That allows preemption
+and/or task migration to happen during the copy_from_user().  Also use
+the new folio_test_partial_kmap() predicate instead of open-coding it.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/ntfs3/file.c | 31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+ include/linux/uio.h | 10 ++--------
+ lib/iov_iter.c      | 29 +++++++++++++----------------
+ 2 files changed, 15 insertions(+), 24 deletions(-)
 
-diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
-index 9b6a3f8d2e7c..bc6062e0668e 100644
---- a/fs/ntfs3/file.c
-+++ b/fs/ntfs3/file.c
-@@ -998,7 +998,8 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 	struct ntfs_inode *ni = ntfs_i(inode);
- 	u64 valid = ni->i_valid;
- 	struct ntfs_sb_info *sbi = ni->mi.sbi;
--	struct page *page, **pages = NULL;
-+	struct page **pages = NULL;
-+	struct folio *folio;
- 	size_t written = 0;
- 	u8 frame_bits = NTFS_LZNT_CUNIT + sbi->cluster_bits;
- 	u32 frame_size = 1u << frame_bits;
-@@ -1008,7 +1009,6 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 	u64 frame_vbo;
- 	pgoff_t index;
- 	bool frame_uptodate;
--	struct folio *folio;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 49ece9e1888f..e46477482663 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -176,8 +176,6 @@ static inline size_t iov_length(const struct iovec *iov, unsigned long nr_segs)
+ 	return ret;
+ }
  
- 	if (frame_size < PAGE_SIZE) {
- 		/*
-@@ -1062,8 +1062,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 					    pages_per_frame);
- 			if (err) {
- 				for (ip = 0; ip < pages_per_frame; ip++) {
--					page = pages[ip];
--					folio = page_folio(page);
-+					folio = page_folio(pages[ip]);
- 					folio_unlock(folio);
- 					folio_put(folio);
- 				}
-@@ -1074,10 +1073,9 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 		ip = off >> PAGE_SHIFT;
- 		off = offset_in_page(valid);
- 		for (; ip < pages_per_frame; ip++, off = 0) {
--			page = pages[ip];
--			folio = page_folio(page);
--			zero_user_segment(page, off, PAGE_SIZE);
--			flush_dcache_page(page);
-+			folio = page_folio(pages[ip]);
-+			folio_zero_segment(folio, off, PAGE_SIZE);
-+			flush_dcache_folio(folio);
- 			folio_mark_uptodate(folio);
- 		}
+-size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
+-				  size_t bytes, struct iov_iter *i);
+ void iov_iter_advance(struct iov_iter *i, size_t bytes);
+ void iov_iter_revert(struct iov_iter *i, size_t bytes);
+ size_t fault_in_iov_iter_readable(const struct iov_iter *i, size_t bytes);
+@@ -187,6 +185,8 @@ size_t copy_page_to_iter(struct page *page, size_t offset, size_t bytes,
+ 			 struct iov_iter *i);
+ size_t copy_page_from_iter(struct page *page, size_t offset, size_t bytes,
+ 			 struct iov_iter *i);
++size_t copy_folio_from_iter_atomic(struct folio *folio, size_t offset,
++		size_t bytes, struct iov_iter *i);
  
-@@ -1086,8 +1084,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 		ni_unlock(ni);
+ size_t _copy_to_iter(const void *addr, size_t bytes, struct iov_iter *i);
+ size_t _copy_from_iter(void *addr, size_t bytes, struct iov_iter *i);
+@@ -204,12 +204,6 @@ static inline size_t copy_folio_from_iter(struct folio *folio, size_t offset,
+ 	return copy_page_from_iter(&folio->page, offset, bytes, i);
+ }
  
- 		for (ip = 0; ip < pages_per_frame; ip++) {
--			page = pages[ip];
--			folio = page_folio(page);
-+			folio = page_folio(pages[ip]);
- 			folio_mark_uptodate(folio);
- 			folio_unlock(folio);
- 			folio_put(folio);
-@@ -1131,8 +1128,7 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 				if (err) {
- 					for (ip = 0; ip < pages_per_frame;
- 					     ip++) {
--						page = pages[ip];
--						folio = page_folio(page);
-+						folio = page_folio(pages[ip]);
- 						folio_unlock(folio);
- 						folio_put(folio);
- 					}
-@@ -1150,10 +1146,10 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 		for (;;) {
- 			size_t cp, tail = PAGE_SIZE - off;
+-static inline size_t copy_folio_from_iter_atomic(struct folio *folio,
+-		size_t offset, size_t bytes, struct iov_iter *i)
+-{
+-	return copy_page_from_iter_atomic(&folio->page, offset, bytes, i);
+-}
+-
+ size_t copy_page_to_iter_nofault(struct page *page, unsigned offset,
+ 				 size_t bytes, struct iov_iter *i);
  
--			page = pages[ip];
--			cp = copy_page_from_iter_atomic(page, off,
-+			folio = page_folio(pages[ip]);
-+			cp = copy_folio_from_iter_atomic(folio, off,
- 							min(tail, bytes), from);
--			flush_dcache_page(page);
-+			flush_dcache_folio(folio);
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index d9e19fb2dcf3..969d4ad510df 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -457,38 +457,35 @@ size_t iov_iter_zero(size_t bytes, struct iov_iter *i)
+ }
+ EXPORT_SYMBOL(iov_iter_zero);
  
- 			copied += cp;
- 			bytes -= cp;
-@@ -1173,9 +1169,8 @@ static ssize_t ntfs_compress_write(struct kiocb *iocb, struct iov_iter *from)
- 		ni_unlock(ni);
+-size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
++size_t copy_folio_from_iter_atomic(struct folio *folio, size_t offset,
+ 		size_t bytes, struct iov_iter *i)
+ {
+ 	size_t n, copied = 0;
+-	bool uses_kmap = IS_ENABLED(CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP) ||
+-			 PageHighMem(page);
  
- 		for (ip = 0; ip < pages_per_frame; ip++) {
--			page = pages[ip];
--			ClearPageDirty(page);
--			folio = page_folio(page);
-+			folio = page_folio(pages[ip]);
-+			folio_clear_dirty(folio);
- 			folio_mark_uptodate(folio);
- 			folio_unlock(folio);
- 			folio_put(folio);
+-	if (!page_copy_sane(page, offset, bytes))
++	if (!page_copy_sane(&folio->page, offset, bytes))
+ 		return 0;
+ 	if (WARN_ON_ONCE(!i->data_source))
+ 		return 0;
+ 
+ 	do {
+-		char *p;
++		char *to = kmap_local_folio(folio, offset);
+ 
+ 		n = bytes - copied;
+-		if (uses_kmap) {
+-			page += offset / PAGE_SIZE;
+-			offset %= PAGE_SIZE;
+-			n = min_t(size_t, n, PAGE_SIZE - offset);
+-		}
+-
+-		p = kmap_atomic(page) + offset;
+-		n = __copy_from_iter(p, n, i);
+-		kunmap_atomic(p);
++		if (folio_test_partial_kmap(folio) &&
++		    n > PAGE_SIZE - offset_in_page(offset))
++			n = PAGE_SIZE - offset_in_page(offset);
++
++		pagefault_disable();
++		n = __copy_from_iter(to, n, i);
++		pagefault_enable();
++		kunmap_local(to);
+ 		copied += n;
+ 		offset += n;
+-	} while (uses_kmap && copied != bytes && n > 0);
++	} while (copied != bytes && n > 0);
+ 
+ 	return copied;
+ }
+-EXPORT_SYMBOL(copy_page_from_iter_atomic);
++EXPORT_SYMBOL(copy_folio_from_iter_atomic);
+ 
+ static void iov_iter_bvec_advance(struct iov_iter *i, size_t size)
+ {
 -- 
 2.47.2
 
