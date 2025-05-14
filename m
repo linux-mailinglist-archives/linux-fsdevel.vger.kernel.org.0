@@ -1,105 +1,160 @@
-Return-Path: <linux-fsdevel+bounces-48943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CB1AB666F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 10:51:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61746AB6671
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 10:51:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3067170F79
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 08:51:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631AF19E5A4A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 08:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CAE22129B;
-	Wed, 14 May 2025 08:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0A822129B;
+	Wed, 14 May 2025 08:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="kf4U2n9Y"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u2ECZjR3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/l6f7NQ+";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="u2ECZjR3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/l6f7NQ+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B63721E098
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 08:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227462206B6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 08:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747212653; cv=none; b=lUgH5E5r9iBadJf/976SX2jsnanTgcLgduSLiV416fGxbD5sYlNxw5+z3MTy/hv9fQbGYnCjaux8AtabpQqdkZ/2RNUinDh58mzqG0aNxtBHsxnQyyl3DkraiTgvV1Z02XCKOJrEfTXLEEknzs/d6dHDxvnmv7pbxF1chraAiMM=
+	t=1747212665; cv=none; b=JUoIIzYM8AEhz1Ehq3Fd9pRQi1bmt/8PVOmvcR28LpqGcgVm//29fJ88T28sSJOX3qY5Uv70HKEaCqK71Qpgzj9QDJbMfRWKVRTuTIONUqspzQlMd2iZpNKViv6q5XOBYzc/W55pPVUHmOBQeHRHTFBJhAUAMOimA1xM3o3Rb3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747212653; c=relaxed/simple;
-	bh=tSX3jA/HXWZCcxkvdPn0B4RRhN6070u7urtspGwQs0M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OHIJmX5ikS7gUUcmVRFxBHKG07Smeok99C/JNNxNplc3SSdddkJH84uL4DiXn9ps084jW2CETrjARnKQXP9LOzv6WhizD+QtZuG3R8Uzck7jevydB2GYPK1hfW00XcCcOYd4PkbhB7DiaHW1QmD9lDFZmBtaykkHYtsBMNLJSZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=kf4U2n9Y; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-48d71b77cc0so81321351cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 01:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747212650; x=1747817450; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tSX3jA/HXWZCcxkvdPn0B4RRhN6070u7urtspGwQs0M=;
-        b=kf4U2n9Y1ExQpfzS5NuhX7Ta/Yr/x6hsB89cupFjqJXG5Joi0c0f0k+st1HHPeumMJ
-         A+Swj5610n7rC2V/bTJVeJLn4ERsHqeGP0sT1gXDDNjbJ5+q3UaSKd7IsJ7uqwwydrai
-         0Nd8tk3J5YvWDNM2FhswhD5eX7hsi0oyBj+es=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747212650; x=1747817450;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tSX3jA/HXWZCcxkvdPn0B4RRhN6070u7urtspGwQs0M=;
-        b=Fennxs1/T0yEbJgnMnEHSpBC5pyXgcn6C8bUoG9p29zXQeHSsBDcvVdv6dmO/zLuG7
-         gXRrfEMtKjgSmcsrhT5bLO2G+pwzgh1vR7poJKL3LLSZD6h2+zxdfBcDl5+SQ8XCcYEi
-         GHg0oaHohABBygnW2uM7HIx15nkimWHN570oVATMb4NbCIgZO3x9u9bEYD4lmobL6ydH
-         lkZZa1lBzLtS+IDLfxl8tYE3DQFw5aiR50UICicXEv4lO3OxZIjiXnMYytP51zx/2G/X
-         uIkN4aHGctl12js+cmqAKZkTRSHtYPz+Lzu14W3u60tvUzSi5wiD9M3z0RN53JvtKggw
-         UshA==
-X-Forwarded-Encrypted: i=1; AJvYcCXULXCSD8XUfrhbihy692dX/A19VJX3O8cob4Bs6xQjqAIhZp5lIn/b6eZ0rodV2usXI2ceHutc2R8ESO0O@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIRRiiDfDzUnhWMgMw+yUoNF/XOj0T/In9Pc85Ue9Q0I+PFmMq
-	/p0/vWPtRcBnrk4E0kOlwskz+ohzWLKCUoIe2S7o+j3NWSdqV8xr4XhufOKkmtBIyqZ2x0cs/QL
-	ahuTo0/uj5rygrJtVA7CYRhLyPyJAcKdGnjWhCA==
-X-Gm-Gg: ASbGncuSxYT8Kf/nTRFLVxclX41XaK2ZyYjvOMV9Q+7StlEkhkZfPqlGemcWBVKSDWD
-	q5HJ22WtE/kNUb08/ivm7fHEUT70Gh2wyR9fjZMkV7dhe/GLMcxtyV8rRrzKky1F66eQJF6t/td
-	PTB1vxRBOYrPoXhOdAsdp85hw9FDeUdIxpJ1LE64eTAA==
-X-Google-Smtp-Source: AGHT+IGLeCzQIwc32fG1czjxbITqnFTOhdsSRGzbFubUyBG2WFIbL35MyAP26FPslXlF8Vxt+OWDfIGfCB+vatsKBm8=
-X-Received: by 2002:a05:622a:2517:b0:477:ea0:1b27 with SMTP id
- d75a77b69052e-49495c911b9mr36262961cf.26.1747212650345; Wed, 14 May 2025
- 01:50:50 -0700 (PDT)
+	s=arc-20240116; t=1747212665; c=relaxed/simple;
+	bh=6tEYE069E4mzL3+5dNxHHrmo0j7FVAindoCB3iDcvBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGyi33vWMmoBQTWIqOuDbeTXPcg+2vHW4iDU3SuAPMe0cHpIjzUEibv4DwK2wAy69ib6tZNcKHlcFAczbJV92+UjIG8l0XN+X1w34idKqf/Hc680yEoQjQ4fe5eaktgKRNj5JOlQydymOg++7jzsM1qF8oOylr4N0r5TVcAWUtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u2ECZjR3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/l6f7NQ+; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=u2ECZjR3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/l6f7NQ+; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 24EE021201;
+	Wed, 14 May 2025 08:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747212662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1U2ujuZD1jkB0o1rfSCE6ebNEMGjdZEJaT7dHDxjfSc=;
+	b=u2ECZjR3e1UIcJ1Cl9Ch3q93M8Kx/H21EsXRySOh8CWj2ha8JXy5U7SnYYD0MZMeyR+K6w
+	cbuPP+vVecZKcD+pK9fzOupcrXTUXfordU3SSI1c8b2rgkbN5Jx6uoU2Z8jFZDmVa2XIF8
+	3Tv8oOQqylZkteqzE122GA7qUtFhV2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747212662;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1U2ujuZD1jkB0o1rfSCE6ebNEMGjdZEJaT7dHDxjfSc=;
+	b=/l6f7NQ+h5DrDRwc8EAJztzyphVOW4AYnVxcluu0qZsoeBsj6D+fyATUejRNJKT8qgF4l1
+	/9DsX0OFaPZkJnAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747212662; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1U2ujuZD1jkB0o1rfSCE6ebNEMGjdZEJaT7dHDxjfSc=;
+	b=u2ECZjR3e1UIcJ1Cl9Ch3q93M8Kx/H21EsXRySOh8CWj2ha8JXy5U7SnYYD0MZMeyR+K6w
+	cbuPP+vVecZKcD+pK9fzOupcrXTUXfordU3SSI1c8b2rgkbN5Jx6uoU2Z8jFZDmVa2XIF8
+	3Tv8oOQqylZkteqzE122GA7qUtFhV2o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747212662;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1U2ujuZD1jkB0o1rfSCE6ebNEMGjdZEJaT7dHDxjfSc=;
+	b=/l6f7NQ+h5DrDRwc8EAJztzyphVOW4AYnVxcluu0qZsoeBsj6D+fyATUejRNJKT8qgF4l1
+	/9DsX0OFaPZkJnAg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 310D8137E8;
+	Wed, 14 May 2025 08:51:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id G6TeCHVZJGimHAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 14 May 2025 08:51:01 +0000
+Date: Wed, 14 May 2025 09:50:55 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH] mm: remove WARN_ON_ONCE() in file_has_valid_mmap_hooks()
+Message-ID: <pt5ni6ofhzbiiemnmrueg3w2hicfmi5qvqctz4ixasl2qrgjo7@dr5qcp52txuf>
+References: <20250514084024.29148-1-lorenzo.stoakes@oracle.com>
+ <9b5d232e-7579-42a9-bcbe-a4674bf76fe4@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250509-fusectl-backing-files-v3-0-393761f9b683@uniontech.com>
- <CAOQ4uxjDwk6NA_UKiJuXfyY=2G33rruu3jr70pthFpBBbSgp1A@mail.gmail.com>
- <CAJfpegvEYUgEbpATpQx8NqVR33Mv-VK96C+gbTag1CEUeBqvnA@mail.gmail.com> <CAJnrk1ZxpOBENHk3Q1dJVY78RSdE+PtFR8UpYukT0dLJv3scHw@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZxpOBENHk3Q1dJVY78RSdE+PtFR8UpYukT0dLJv3scHw@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 14 May 2025 10:50:39 +0200
-X-Gm-Features: AX0GCFthxfZY97wXLqodWfQQ_45BmPxv7EIaJAcSOrNefrHrtSaWnhjOExjHadc
-Message-ID: <CAJfpegunxRn3EG3ZoQYteyZ3B6ny_DG1U65=VX25tohQuHCpVQ@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] fuse: Expose more information of fuse backing
- files to userspace
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: Amir Goldstein <amir73il@gmail.com>, chenlinxuan@uniontech.com, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9b5d232e-7579-42a9-bcbe-a4674bf76fe4@suse.cz>
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,intel.com:email,suse.de:email,oracle.com:email,imap1.dmz-prg2.suse.org:helo]
 
-On Tue, 13 May 2025 at 20:52, Joanne Koong <joannelkoong@gmail.com> wrote:
+On Wed, May 14, 2025 at 10:42:53AM +0200, Vlastimil Babka wrote:
+> On 5/14/25 10:40, Lorenzo Stoakes wrote:
+> > Having encountered a trinity report in linux-next (Linked in the 'Closes'
+> > tag) it appears that there are legitimate situations where a file-backed
+> > mapping can be acquired but no file->f_op->mmap or file->f_op->mmap_prepare
+> > is set, at which point do_mmap() should simply error out with -ENODEV.
+> > 
+> > Since previously we did not warn in this scenario and it appears we rely
+> > upon this, restore this situation, while retaining a WARN_ON_ONCE() for the
+> > case where both are set, which is absolutely incorrect and must be
+> > addressed and thus always requires a warning.
+> > 
+> > If further work is required to chase down precisely what is causing this,
+> > then we can later restore this, but it makes no sense to hold up this
+> > series to do so, as this is existing and apparently expected behaviour.
+> > 
+> > Reported-by: kernel test robot <oliver.sang@intel.com>
+> > Closes: https://lore.kernel.org/oe-lkp/202505141434.96ce5e5d-lkp@intel.com
+> > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> 
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-> For getting from conn to fuse server pid, what about adding the server
-> pid to fuse's sysfs info? This use case has come up a few times in
-> production where we've encountered a stuck server and have wanted to
-> identify its pid. I have a patch on a branch I need to clean up and
-> send out for this, but it adds a new "info" file to
-> /sys/fs/fuse/connections/*/ where libfuse can write any identifying
-> info to that file like the server pid or name. If the connection gets
-> migrated to another process then libfuse is responsible for modifying
-> that to reflect the correct info.
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 
-Fine, but then why not just write something in /var/run/fuse?
-
-Thanks,
-Miklos
+-- 
+Pedro
 
