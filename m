@@ -1,109 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-48960-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F3EAB6AAD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 13:57:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D42AB6B27
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 14:14:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C094A69CA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 11:57:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F3804C260A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 12:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28B42749E5;
-	Wed, 14 May 2025 11:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624F2276037;
+	Wed, 14 May 2025 12:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="IxAiFxTg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FJQRA3ot"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4141B1F875A
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 11:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256251B4132
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 12:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747223827; cv=none; b=mMGJohiJeTtuNWuVZDL77qw5yXcZ+sby4NK2jxkwSYzLOYZ64fuykGbyXFg0DmxBLbnzVPBllmqbieSaoLZFalQDQxnSLmhKEYWU03xs9YWRrIxUfmgTdxTrlDZGIIPppr3HoemA2GcHlKWL4VTFFU9CM0mKFlmv8Po27+WGYXg=
+	t=1747224871; cv=none; b=FLYyUMaiQjRZPu7S+gravt4Obx48UNCNVmpkLHeqSy+hCmyQhlpIldYwVhcIRe+LK6v8c7vdA1QzBWr3ASU5neEiDq6KF1j6YdG0n9A4Mh0KJk9LCNUucUgbMyA/Qm4wTNTLvQjHSi7wPtiaQI4YjSfHyFNh5ECcvZs8i9yMTok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747223827; c=relaxed/simple;
-	bh=z3DaPFihoK23TL05V6hxbQztAMEFNMjAk2PlRE/6sBs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=glKa5fMm2SrzSJ3i6hSHg+8YWfru3BzXNh8VFtPhIrWdd8K6Bk6v3rF+U6ErQavxgXn9fWCjDxkQKardxS7kbr36xHEHRSXfvE/anap2mznrK0ufkDQB+dYgCbi2xfDT9vCFEW9IleW5cHaNexNnzlelJstcTmBuWKKXQQP/kFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=IxAiFxTg; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-47688ae873fso73989191cf.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 04:57:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747223824; x=1747828624; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z3DaPFihoK23TL05V6hxbQztAMEFNMjAk2PlRE/6sBs=;
-        b=IxAiFxTgv8tQK2Yy+wu26B0Fnk44mujyu0S2agQRNBoNYkR5OfGSUG2C44RdMzMTky
-         2Z0uVc5jwyK2Y0qtkaI25Lh4E87/OBLb3CfITlop0N4c8TfPh3cAAdlmkBPy/E6NAqaJ
-         r2tSX6PMwTNBb29xGFj3kd7t+1yDpHu1iveu8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747223824; x=1747828624;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z3DaPFihoK23TL05V6hxbQztAMEFNMjAk2PlRE/6sBs=;
-        b=Ut0yLWnK8sgfsmQ5FLVDqm/6vY3Za1kjHE7/ekT2Hdnn2AHyaYHUMVzfqyDcNdf0Wl
-         9iSufCbhMEJBG19uRRuOgaXamdP1OlZLjYayRRG24TcTWO7LFOjsooN3gk6RURhuDibV
-         veNbBE+Gf5vuoLPbo+Id137agJ4gYumrDEZoTosgsTF97474pedBLNjto51yZ7KAzLPX
-         +f1baXYh8e6Nq27ylETNa/KTWUEX+U25nMo7AMyEBluetJRquRYyA6R8uu8maJKZvR+F
-         uzOqj/JBd/kzfsDlxF0DnTDoLNUqYKWjvV+a1ow+jZ7hc+pvXRUnqRStVTsZG5Sk75cL
-         mUhQ==
-X-Gm-Message-State: AOJu0Yw3lU6bIm2HuB462rNLPLwACWbhyzLbcLnK2laVinuVr1agVnJu
-	DzgmFQhkpsYnSPbkAQmKJmhZj46z3mzR1uvZEjylwmQhkuy2jCJPtDdw+LHAp7NRummFEtjORvh
-	00/KYl7VDbbQ80sa5As41ew+rlQZrmKpGmawQhA==
-X-Gm-Gg: ASbGncsHSDCIhX6EEJ83nBzVqhj8FNnTd9nuLEhlqX8u4S9SpOwxscLq4vt9F6/O1AZ
-	3pdDV/6nO2hz+doGBDyIGEemAI2u72vrPUYjLhQ8D8ef4IET+1scF0EUIRcIVzcN15SamY/RuXa
-	qTSHT6l5ztZ7Fz4yPgwY+lyW7TAc4lpAE=
-X-Google-Smtp-Source: AGHT+IHkKUM1mgu6Fjfnaem8QmDzbacaGBn9KHQ7E9DxvC+GSZzWF/EvKQ7FJWl2JOqSbHPcVFIXmPfPLG+9ZFI9cms=
-X-Received: by 2002:a05:622a:59cc:b0:494:77f1:61ac with SMTP id
- d75a77b69052e-49495cccf79mr53183551cf.18.1747223823991; Wed, 14 May 2025
- 04:57:03 -0700 (PDT)
+	s=arc-20240116; t=1747224871; c=relaxed/simple;
+	bh=SMYFdfPmKkQFIR8TkjncJxZa8D146RGZ8rVWRlLToCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=C24ayLhBzEvsCpj3cPNq6JyZ5oaCWWXXfVVVwJcmATBdUh8zzPVwPFGLsyTy5LYrpiXLbUn5kyWkxdQ7R0YqygTd30f6tvck2Kzzq3oPfeZAi274JhFhHN8urW4ts0vy4TtvoK09of4z3aZAIuOriOqlh/xxcSyKkkC4X1PYd+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FJQRA3ot; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747224868;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6L9xo1oZrrwqtlMhuw7yfutiq5gkGV0q5xflk/Imsrk=;
+	b=FJQRA3otnxs+pC5ye4vlGmYaMU3drJrKw3oZmJqIoUpCzTc5NKvrqfpyngT+CsfFehTkSG
+	8sJCLzuuIemEZLouPZ7Jgu7/EcDoBXqPSIwzt9nFxAXEe0zcwYVwzDVmeVIXX/Z9GanO6a
+	k8KDl59jESzuEKof9bxg0kOmrM5Mcus=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-308-umID3qIPPPG2DLqUtBlupQ-1; Wed,
+ 14 May 2025 08:14:27 -0400
+X-MC-Unique: umID3qIPPPG2DLqUtBlupQ-1
+X-Mimecast-MFC-AGG-ID: umID3qIPPPG2DLqUtBlupQ_1747224867
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 97CDB18002A5;
+	Wed, 14 May 2025 12:14:26 +0000 (UTC)
+Received: from toolbx.redhat.com (unknown [10.44.32.219])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8AEA930001AA;
+	Wed, 14 May 2025 12:14:24 +0000 (UTC)
+From: Allison Karlitskaya <allison.karlitskaya@redhat.com>
+To: miklos@szeredi.hu
+Cc: linux-fsdevel@vger.kernel.org,
+	lis@redhat.com,
+	Allison Karlitskaya <allison.karlitskaya@redhat.com>
+Subject: [PATCH] fuse: add max_stack_depth to fuse_init_in
+Date: Wed, 14 May 2025 14:14:15 +0200
+Message-ID: <20250514121415.2116216-1-allison.karlitskaya@redhat.com>
+In-Reply-To: <CAJfpegtdy7BYUpt795vGKFDHfRpyPVhqrL=gbQzauTvNawrZyw@mail.gmail.com>
+References: <CAJfpegtdy7BYUpt795vGKFDHfRpyPVhqrL=gbQzauTvNawrZyw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422235607.3652064-1-joannelkoong@gmail.com>
- <CAJfpegsc8OHkv8wQrHSxXE-5Tq8DMhNnGWVpSnpu5+z5PBghFA@mail.gmail.com>
- <CAJnrk1ZXBOzMB69vyhzpqZWdSmpSxRcJuirVBVmPd6ynemt_SQ@mail.gmail.com>
- <CAJfpegsqCHX759fh1TPfrDE9fu-vj+XWVxRK6kXQz5__60aU=w@mail.gmail.com> <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
-In-Reply-To: <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Wed, 14 May 2025 13:56:52 +0200
-X-Gm-Features: AX0GCFvBpmh1Yr-MEbqg3xW9iRqVg0raWSd_iTUCTmEbRccXvs7cJ-kILWY7H0g
-Message-ID: <CAJfpegv+Bu02Q1zNiXmnaPy0f2GK1J_nDCks62fq_9Dn-Wrq4w@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: use splice for reading user pages on servers
- that enable it
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm, 
-	jlayton@kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, 13 May 2025 at 23:29, Joanne Koong <joannelkoong@gmail.com> wrote:
+FILESYSTEM_MAX_STACK_DEPTH is defined privately inside of the kernel,
+but you need to know its value to properly implement fd passthrough on a
+FUSE filesystem.  So far most users have been assuming its current value
+of 2, but there's nothing that says that it won't change.
 
-> The results vary depending on how IO-intensive the server-side
-> processing logic is (eg ones that are not as intensive would show a
-> bigger relative performance speedup than ones where a lot of time is
-> spent on server-side processing). I can include the results from
-> benchmarks on our internal fuse server, which forwards the data in the
-> write buffer to a remote server over the network. For that, we saw
-> roughly a 5% improvement in throughput for 5 GB writes with 16 MB
-> chunk sizes, and a 2.45% improvement in throughput for 12 parallel
-> writes of 16 GB files with 64 MB chunk sizes.
+Use one of the unused fields in fuse_init_in to add a max_stack_depth
+uint32_t (matching the max_stack_depth uint32_t in fuse_init_out). If
+CONFIG_FUSE_PASSTHROUGH is configured then this is set to the maximum
+value that the kernel will accept for the corresponding field in
+fuse_init_out (ie: FILESYSTEM_MAX_STACK_DEPTH).
 
-Okay, those are much saner numbers.
+Let's not treat this as an ABI change: this struct is zero-initialized
+and the maximum max_stack_depth is non-zero (and always will be) so
+userspace can easily find out for itself if the value is present in the
+struct or not.
 
-Does the server use MSG_ZEROCOPY?
+Signed-off-by: Allison Karlitskaya <allison.karlitskaya@redhat.com>
+---
+ fs/fuse/inode.c           | 4 +++-
+ include/uapi/linux/fuse.h | 3 ++-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-Can you please include these numbers and the details on how the server
-takes advantage of splice in the patch header?
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index fd48e8d37f2e..46fd37eec9ae 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1497,8 +1497,10 @@ void fuse_send_init(struct fuse_mount *fm)
+ #endif
+ 	if (fm->fc->auto_submounts)
+ 		flags |= FUSE_SUBMOUNTS;
+-	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
++	if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH)) {
+ 		flags |= FUSE_PASSTHROUGH;
++		ia->in.max_stack_depth = FILESYSTEM_MAX_STACK_DEPTH;
++	}
+ 
+ 	/*
+ 	 * This is just an information flag for fuse server. No need to check
+diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
+index 5ec43ecbceb7..eb5d77d50176 100644
+--- a/include/uapi/linux/fuse.h
++++ b/include/uapi/linux/fuse.h
+@@ -895,7 +895,8 @@ struct fuse_init_in {
+ 	uint32_t	max_readahead;
+ 	uint32_t	flags;
+ 	uint32_t	flags2;
+-	uint32_t	unused[11];
++	uint32_t	max_stack_depth;
++	uint32_t	unused[10];
+ };
+ 
+ #define FUSE_COMPAT_INIT_OUT_SIZE 8
+-- 
+2.49.0
 
-Thanks,
-Miklos
 
