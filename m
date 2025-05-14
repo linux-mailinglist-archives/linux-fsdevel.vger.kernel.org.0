@@ -1,227 +1,240 @@
-Return-Path: <linux-fsdevel+bounces-48962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48964-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E90AB6BC8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 14:51:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BBD8AB6C16
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 15:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 300BA189DFE7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 12:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2A923ACCFE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 13:05:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6B0279780;
-	Wed, 14 May 2025 12:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=case.edu header.i=@case.edu header.b="ZcFAa+Ep"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB7627979A;
+	Wed, 14 May 2025 13:05:34 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta-outp-cfd-1.case.edu (mta-outp-cfd-1.case.edu [129.22.103.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792E1202990
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 12:51:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=129.22.103.35
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747227069; cv=pass; b=pLfJEBTl+YBVggTqGTh4+GY1QpmIUr5omyBC82hhMcD+zpiwMNhmZ6pOLDM93rtUvLkJWGcsY7Zy3AoBzcr4S7qGoi9MQzN+TRRpvKPgYzZgVD/C96FbW1yAyVrcCEE617LoIYEE59DDYpcjHH/zTRDhfw8uqbSmN3uTEdPeg74=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747227069; c=relaxed/simple;
-	bh=ziBnVImEQka1k/5ArPVUpuK5Uv55pJxDufSS4gEWcPs=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KKkT+CIRfhxe2KA1E1+8EO5dHlQhTUD4c6jf1xnHCOBriMNcc8RLMAE8oD9082I9r8Eyk+QOdCs9QYOGrdymQZcVIaqpxpxVKTwjcquhMUldkEjp4Vem0Frsnuoweq4a890BKXVIE/OvfYBfVCRgbjpKe08lNt/fwJlqWSAiMXE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=case.edu; spf=pass smtp.mailfrom=case.edu; dkim=pass (2048-bit key) header.d=case.edu header.i=@case.edu header.b=ZcFAa+Ep; arc=pass smtp.client-ip=129.22.103.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=case.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=case.edu
-Authentication-Results: mta-outp-cfd-1;
-       spf=pass (mta-outp-cfd-1.case.edu: domain of case.edu designates 209.85.160.197 as permitted sender) smtp.mailfrom=case.edu ;
-       dkim=pass (Good 2048 bit rsa-sha256 signature) header.d=case.edu header.i=None header.s=g-case;
-       dmarc=pass (p=REJECT sp=Undefined pct=100 dis=NONE) header.from=case.edu;
-ARC-Filter: OpenARC Filter v1.0.0 mta-outp-cfd-1.case.edu 5922C509
-Authentication-Results: mta-outp-cfd-1; arc=none smtp.remote-ip=129.22.103.228
-ARC-Seal: i=1; a=rsa-sha256; d=case.edu; s=cwru-mta; t=1747227065; cv=none;
-	b=jsc0N9Lc+bRUT4Lk+CzMLkvkAQeT9WYKotfSvMrv0ph45WluGh0+7th7HrgHyWRVmtZNJMbt+ycqMklLQsQum/z64u+Vzn4iw+6BzHEuZ2k02PhctJlUCGWwT8w/RNJ6Mi4MtD3iel8x7rLzFDRI17cTbn8Ecr142YrOyV1Nq7+8TtgVrS8vrTpzPjN9xBJlFsaMTWjWx+6zXxXd4fdebGlyfAciA2UBeXmEEJXR+LzHdUZRCPbtemd2QSJaC5rYk6ZAyfdh3FeUGl4Nra9sQVsPzx1mWjw21kC8L/rQJQdXVq/aMzGwqh4QV1KYTP4sjEbpcqvQhwjQAcyvawdNrg==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=case.edu; s=cwru-mta;
-	t=1747227065; c=relaxed/simple;
-	bh=ziBnVImEQka1k/5ArPVUpuK5Uv55pJxDufSS4gEWcPs=;
-	h=DKIM-Signature:Message-ID:Date:MIME-Version:Subject:To:From:to:
-	 subject:message-id:date:from:mime-version:dkim-signature; b=W2JsU//ek1j+ILFDckTia1/bP8MdSu1sBVuSvguM0zCi4DkT5KuDriOHQFL+KAKrQjbQzN2nsEr0c41Cxvn0Pqxl6BehpzgLGErwtrP6BZ+hZRn1bdagBbq+LisjG0GyluHbBobgpxZEQPuODIGzeMp+VVSH1FuPGLJpnVPy2S2mWFN92G/JJ7mBiYfwXE+msgPTC3S70ln23tFryTRJQGfp1tdIVZtubxGGwqaigwIL4w0agJ9aNcedT2uq/D2QdPBSkXWBQ+Kc1SljAxwWnIzwkblQQuvYLv0S5Hu/KhWkMzJP8tQZ2aXqqRjc4BBm6FA6ZR8jsNar0CWikSEbng==
-ARC-Authentication-Results: i=1; mta-outp-cfd-1; spf=pass (mta-outp-cfd-1.case.edu: domain of case.edu designates 209.85.160.197 as permitted sender) smtp.mailfrom=case.edu; dkim=pass (Good 2048 bit rsa-sha256 signature) header.d=case.edu header.i=None header.s=g-case; dmarc=pass (p=REJECT sp=Undefined pct=100 dis=NONE) header.from=case.edu
-Received-SPF: Pass (mta-outp-cfd-1.case.edu: domain of case.edu designates 209.85.160.197 as permitted sender) client-ip=209.85.160.197
-Received: from mpv-out-ksl-1.case.edu (mpv-out-ksl-1.case.edu [129.22.103.228])
-	by mta-outp-cfd-1.case.edu (Postfix) with ESMTPS id 5922C509
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 08:51:05 -0400 (EDT)
-Received: from mpv-local-ksl-1.case.edu (EHLO mpv-local-ksl-1.case.edu) ([129.22.103.235])
-	by mpv-out-ksl-1.case.edu (MOS 4.4.8-GA FastPath queued)
-	with ESMTP id DCW46121;
-	Wed, 14 May 2025 08:51:05 -0400 (EDT)
-Received: from mail-qt1-f197.google.com (EHLO mail-qt1-f197.google.com) ([209.85.160.197])
-	by mpv-local-ksl-1.case.edu (MOS 4.4.8-GA FastPath queued)
-	with ESMTP id EKB30364;
-	Wed, 14 May 2025 08:51:04 -0400 (EDT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-478f78ff9beso199380951cf.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 05:51:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=case.edu; s=g-case; t=1747227062; x=1747831862; darn=vger.kernel.org;
-        h=in-reply-to:organization:autocrypt:from:references:to
-         :content-language:subject:cc:reply-to:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=ziBnVImEQka1k/5ArPVUpuK5Uv55pJxDufSS4gEWcPs=;
-        b=ZcFAa+EpiyofytFE4hCoHtpOZDhoI/Ra6ORcTbbyu5xy4zsZuiK0OQtgBSUbtNoR+h
-         qX2vR/vn7QMhngq5lTp8PsdQBimatAB0tgtz2YdL6j1dXlH311ELEHTEsqJmfym8IWJl
-         HgVOp2bpG9j1BXbnKsHe1/GWUlzIsbU4VrQQMTez1oAtqwFdlleQh63IytpGExHY/jzf
-         kWcIExf5/Tw2n92ITFjIIEdLaJuU2sFDTwzqKudE1Oug0ALtJEEf2mTYQr3oNZpqplSO
-         sUzUJvq0HulvGuyhISGl5TVIQcbA201zfr8lCmmVKBkipkdEu5aHZqLGhzoTnCmeI9Nj
-         fulw==
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1334F15AF6
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 13:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747227933; cv=none; b=N9r4sCefZrTHL6YPDGpfPyMGXAVHtaKSneLaHHBkUApF9kVgQNQbEhJ1+y8yIuyUUDxo97qG8im2t+UmYIgaCTzlKcDqYZpkZb+csAE+3oPfnih6yz05/tWPQmCHcGE0RUdyN70vtZamAAxEByuupiLWYaAMqB8WttE7fISqMe8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747227933; c=relaxed/simple;
+	bh=cpCyTDo5beziu+utlCxkuqnuIUq75HoD01K56SLqUnM=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ktAYbnjsY65BHRRplVYkW53b7ynpN06uHVaeUToQklTyv0np2vQ3QKD5m0tSc9jdMyYav9DCIDy8NHBZrRJI6KV11OppUhGCeQT2/oyKT15G47YN4nHjZ0cp9zOMd3f8EBgfgb+edir35ZIAsQ4TZnKP5KUIjZuDTi898P42jqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d6c613bd79so68224075ab.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 06:05:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747227062; x=1747831862;
-        h=in-reply-to:organization:autocrypt:from:references:to
-         :content-language:subject:cc:reply-to:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ziBnVImEQka1k/5ArPVUpuK5Uv55pJxDufSS4gEWcPs=;
-        b=QlsBlrEZXWmnBzuyIV1IRCf+EKW45CFvhDKGayP2tikE5aw46gQwVUOvq5rZQTlWDL
-         WlX79q3C9K8kR4EQo5QU9Ulzg8RctP7dZtYDrfbqdCEQUUXHBN7nRsgxt1NzRDKS+kbW
-         w7ckhp9vDG6KDNFMSli4yfQrRALHWCE8CJLE869g0lHsaZUmlHPiXM2PdZytFDIdpomG
-         vG+/GJ1ypmFY6uCuYW97OSn8v01G8dGIWH/flYJNLZXXhVDmedViCuP7CXTSmNGIcSPI
-         kenxQ6dgC8L/HVMIRgJ8s0V7/ziXl9CmOKrFUYUVBkoT6jbo4fsrmzn0zpL1JP37KMvk
-         xcZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWDW83kSOCfHhHgtg1nf0Qe1kvngZz8KiHf+HEoULjHIYepNTp7AXx+4SGlawz8PeOfi3ZottqYrHpoKbm@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5Xajfe8cuij1ZpaDzClxmarzhczqLKgv3eyMQudNB7vqTSpZ5
-	AOXQS/Betk9aBKBbB5rqmHIRtS+5aPEdI4K0MIVEFBaU9ArcKuIPkKhmR4BQshN7AFvn9TOEq7B
-	Z+PM8Z5jhrYiViNxzTFeexa86Cs6Moz/yXktVfM1z+u0vg4wu+lg0tGUMsiD828OVdbj6E6lk
-X-Gm-Gg: ASbGncslLHSBYdd1N8vmLUkhitgRAQWfySVmqelkBJIKw9UE8XQTBzAJXyDFqR3HKIZ
-	lGjIh+sH3ODAMW3XwwMHuRtQ3jV9e/oTfO39Jewl97xJWrzbGgRRhsu8nHvHiNyyevx3im3IcAq
-	iOwI6G0TCurvPaOvyxqOAJWe2oTMMXF2vKsKMiz7sHKxvQpk9Yk2UG0Pg+5FSfhbzEGN6JSdwta
-	KCF4lIwKkaEYfCsUA9IS8RP+53cOQ4vl5KzCdx4zb5sGyAG0IcSKRjZNvqCG+8PLAu+YlD6frTb
-	Agtr4tr9C6m4A5v8lGcv1dNSj7dXhGdMxwAkKJBt4URPFZMOZgLS9kBXaB7kjV0wtm5uJCP18g=
-	=
-X-Received: by 2002:a05:622a:410d:b0:494:848e:d703 with SMTP id d75a77b69052e-49495ca4f3dmr55820451cf.30.1747227061937;
-        Wed, 14 May 2025 05:51:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHzQHI2rEryjYi08itQLGH9hVhvibYUYkKurYuspAd1v6/xkb8OjQbB/Q3z9M0RpvvTMatudg==
-X-Received: by 2002:ad4:5bae:0:b0:6e8:f470:2b11 with SMTP id 6a1803df08f44-6f896e566cdmr50454446d6.23.1747227049536;
-        Wed, 14 May 2025 05:50:49 -0700 (PDT)
-Received: from ?IPV6:2603:6010:dc00:1e:f5e5:3614:5780:f83d? ([2603:6010:dc00:1e:f5e5:3614:5780:f83d])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6f6e39e0b8bsm80792476d6.20.2025.05.14.05.50.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 May 2025 05:50:48 -0700 (PDT)
-Message-ID: <ad62849c-1728-4bae-b0d5-7d87dc94825f@case.edu>
-Date: Wed, 14 May 2025 08:50:47 -0400
+        d=1e100.net; s=20230601; t=1747227931; x=1747832731;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0IwWfYotB+0yx802A0hGzpAxpFJ2lXOkvxUwAU+FZXQ=;
+        b=iE8mnSK2lO3P+DZfjY19DTZdXvjYyJDXkwH2RSLTXTXMdnDlMSGmG5s369HD1ZKFWr
+         Zgt2oZkRw0V1TIbGiR5IlhGA87ay34gm5PBr0XHmKrFS2RESlvxMgdBCx1eD7pHb29P1
+         ueHUfyW1XfLTcMKPYT6GTTAiJyhO+RAbFphvCroZ4RLZfb13l91UquU3YRk7nWGlmmXs
+         IrmHSn2E3PvZEHecMWEZlBkITNXTZ4PGf8gn/e96DsK3jqjvu6OyoBjFvGbMx4npcsiT
+         GlIOnTuyrLBLb5Tk0Za5YfrWXhgvXSjyelcSDLDw3CxsN985wBdNbVTy1fZgTjSl/pau
+         H/PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSM7D0dZqOWxUcrncFINHuZYKzOW58GNKWL2My1bonwSCQQeRXOH3+XeQG84syJ5FFIqFk1l1YjufKiKyn@vger.kernel.org
+X-Gm-Message-State: AOJu0YybR4Goy+hqLj5naL16FEKh64GleZ/CF6nor2EzUOTfGiAG6jo0
+	vDkgIHpLwFRxG3YZVVRORKGAVBO8LnXwvHz3pTZK+Nq6/2ODFMhEFiHkPwNwSqWuZope+PCDdXL
+	rs2Tf9hUQlwWuDhD9UkBUDiduNo+J8MJkuXzi2JMZr83T8h7zlyNjbU4=
+X-Google-Smtp-Source: AGHT+IFkA1MJSbq3wCRRYAvcd9YGL6ztb7ee4iMxOOFYZcmNLvyJXhNJsB7o2TZgdhk+YotBZYeIRSn5MooZ4KloDLSQHv5BnbLm
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: chet.ramey@case.edu
-Cc: chet.ramey@case.edu, David Howells <dhowells@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Steve French <sfrench@samba.org>, linux-fsdevel@vger.kernel.org,
-        Linux AFS mailing list <linux-afs@lists.infradead.org>,
-        linux-kernel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        "openafs-devel@openafs.org" <openafs-devel@openafs.org>
-Subject: Re: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a
- sticky dir
-Content-Language: en-US
-To: Jeffrey E Altman <jaltman@auristor.com>,
-        Etienne Champetier <champetier.etienne@gmail.com>,
-        Christian Brauner <brauner@kernel.org>
-References: <433928.1745944651@warthog.procyon.org.uk>
- <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
- <CAOdf3grbDQ-Fh2bV7XfoYvVBhgBAh7-hZyyxTNt1RfGekrA-nA@mail.gmail.com>
- <66c958db-0408-451d-b362-fed1f56d7c6d@auristor.com>
-From: Chet Ramey <chet.ramey@case.edu>
-Autocrypt: addr=chet.ramey@case.edu; keydata=
- xsDiBEEOsGwRBACFa0A1oa71HSZLWxAx0svXzhOZNQZOzqHmSuGOG92jIpQpr8DpvgRh40Yp
- AwdcXb8QG1J5yGAKeevNE1zCFaA725vGSdHUyypHouV0xoWwukYO6qlyyX+2BZU+okBUqoWQ
- koWxiYaCSfzB2Ln7pmdys1fJhcgBKf3VjWCjd2XJTwCgoFJOwyBFJdugjfwjSoRSwDOIMf0D
- /iQKqlWhIO1LGpMrGX0il0/x4zj0NAcSwAk7LaPZbN4UPjn5pqGEHBlf1+xDDQCkAoZ/VqES
- GZragl4VqJfxBr29Ag0UDvNbUbXoxQsARdero1M8GiAIRc50hj7HXFoERwenbNDJL86GPLAQ
- OTGOCa4W2o29nFfFjQrsrrYHzVtyA/9oyKvTeEMJ7NA3VJdWcmn7gOu0FxEmSNhSoV1T4vP2
- 1Wf7f5niCCRKQLNyUy0wEApQi4tSysdz+AbgAc0b/bHYVzIf2uO2lIEZQNNt+3g2bmXgloWm
- W5fsm/di50Gm1l1Na63d3RZ00SeFQos6WEwLUHEB0yp6KXluXLLIZitEJM0wQ2hldCBSYW1l
- eSAoQ2FzZSBzdGFuZGFyZCkgPGNoZXQucmFtZXlAY2FzZS5lZHU+wl8EExECAB8FAkPi19EC
- GwMHCwkIBwMCAQMVAgMDFgIBAh4BAheAAAoJELtYafBk6nSrelkAn31Gsuib7GcCZHbv5L5t
- VKYR9LklAJ4hzUHKA49Z0QXR+qCb80osIcmPSc7ATQRBDrBvEAQAkK6TAOKBEM+EC4j6V/7o
- /riVZqcgU5cid2qG9TXdwNtD9a3kvA/ObZBO93sX59wc6Bnwo4VJxsOmMlpGrAjJsxNwg3QH
- akEtf8LXRbVpj5xStdmBdQZUhIQyalo/2/TZq5OijtddUQcL5cs70hTv/FpT3wUvr2Xr8rjF
- 41IFEz8AAwcD/A0CZEGlzIrT5WCBnl6xBog/8vKiUCbarByat3d1mL6DbizvKNXQRTC9E/vE
- dENAWCQCjr75Bu55xT8n3SXGtWdDC5xmZ/P3OBYORP8yl8H8I1FIosWOFirbIeYdZPq8SPD1
- HL+EXo9zSiHVrrZRJ19ooCKKbSdXHFCY+aJG+0KZwkkEGBECAAkFAkEOsG8CGwwACgkQu1hp
- 8GTqdKvjcACfZlkVCDwaz/NTO9cy3t69oWpVPNwAnRwe0qk/WL/gfhH346xh5B3HFbFN
-Organization: ITS, Case Western Reserve University
-In-Reply-To: <66c958db-0408-451d-b362-fed1f56d7c6d@auristor.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------L5LSTY5M39gWnvMqVGp47caB"
-X-Mirapoint-Received-SPF: 209.85.160.197 mail-qt1-f197.google.com chet.ramey@case.edu 5 none
-X-Mirapoint-Received-SPF: 129.22.103.235 mpv-local-ksl-1.case.edu chet.ramey@case.edu 5 none
-X-Junkmail-Status: score=10/90, host=mpv-out-ksl-1.case.edu
-X-Junkmail-Signature-Raw: score=unknown,
-	refid=str=0001.0A002112.682491B7.0002,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0,
-	ip=0.0.0.0,
-	so=2016-11-06 16:00:04,
-	dmn=2013-03-21 17:37:32,
-	mode=single engine
-X-Junkmail-IWF: false
+X-Received: by 2002:a05:6e02:184e:b0:3d3:eeec:89f3 with SMTP id
+ e9e14a558f8ab-3db6f7b405bmr30783005ab.13.1747227931094; Wed, 14 May 2025
+ 06:05:31 -0700 (PDT)
+Date: Wed, 14 May 2025 06:05:31 -0700
+In-Reply-To: <682119bf.050a0220.f2294.0040.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6824951b.a00a0220.104b28.000d.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] KASAN: slab-out-of-bounds Read in iov_iter_revert
+From: syzbot <syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com>
+To: dhowells@redhat.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------L5LSTY5M39gWnvMqVGp47caB
-Content-Type: multipart/mixed; boundary="------------frKCS23FeCmgMLcTNF0WGjn4";
- protected-headers="v1"
-From: Chet Ramey <chet.ramey@case.edu>
-Reply-To: chet.ramey@case.edu
-To: Jeffrey E Altman <jaltman@auristor.com>,
- Etienne Champetier <champetier.etienne@gmail.com>,
- Christian Brauner <brauner@kernel.org>
-Cc: chet.ramey@case.edu, David Howells <dhowells@redhat.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Marc Dionne <marc.dionne@auristor.com>, Steve French <sfrench@samba.org>,
- linux-fsdevel@vger.kernel.org,
- Linux AFS mailing list <linux-afs@lists.infradead.org>,
- linux-kernel@vger.kernel.org, linux-cifs@vger.kernel.org,
- "openafs-devel@openafs.org" <openafs-devel@openafs.org>
-Message-ID: <ad62849c-1728-4bae-b0d5-7d87dc94825f@case.edu>
-Subject: Re: [PATCH] afs, bash: Fix open(O_CREAT) on an extant AFS file in a
- sticky dir
-References: <433928.1745944651@warthog.procyon.org.uk>
- <20250505-erproben-zeltlager-4c16f07b96ae@brauner>
- <CAOdf3grbDQ-Fh2bV7XfoYvVBhgBAh7-hZyyxTNt1RfGekrA-nA@mail.gmail.com>
- <66c958db-0408-451d-b362-fed1f56d7c6d@auristor.com>
-In-Reply-To: <66c958db-0408-451d-b362-fed1f56d7c6d@auristor.com>
+syzbot has found a reproducer for the following issue on:
 
---------------frKCS23FeCmgMLcTNF0WGjn4
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+HEAD commit:    9f35e33144ae x86/its: Fix build errors when CONFIG_MODULES=n
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16388e70580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c9b33a466dfee330
+dashboard link: https://syzkaller.appspot.com/bug?extid=25b83a6f2c702075fcbc
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1193a6f4580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16899cd4580000
 
-T24gNS81LzI1IDEwOjQyIEFNLCBKZWZmcmV5IEUgQWx0bWFuIHdyb3RlOg0KDQo+Pj4gU28g
-dGhlbiBqdXN0IGRvbid0IHJlbW92ZSBpdC4gSSBkb24ndCBzZWUgYSByZWFzb24gZm9yIHVz
-IHRvIHdvcmthcm91bmQNCj4+PiB1c2Vyc3BhY2UgY3JlYXRpbmcgYSBidWcgZm9yIGl0c2Vs
-ZiBhbmQgZm9yY2luZyB1cyB0byBhZGQgdHdvIG5ldyBpbm9kZQ0KPj4+IG9wZXJhdGlvbnMg
-dG8gd29yayBhcm91bmQgaXQuDQo+PiBUaGlzIGJhc2ggd29ya2Fyb3VuZCBpbnRyb2R1Y2Vk
-IGFnZXMgYWdvIGZvciBBRlMgYnlwYXNzIGZzLnByb3RlY3RlZF9yZWd1bGFyDQo+IA0KPiBD
-aGV0LCBJIGRvbid0IHRoaW5rIHRoaXMgaGlzdG9yeSBpcyBjb3JyZWN0LiANCg0KSSB0aGlu
-ayBFdGllbm5lJ3MgdGVyc2UgY29tbWVudCBhY2N1cmF0ZWx5IHN1bW1hcml6ZXMgdGhlIGN1
-cnJlbnQgcHJvYmxlbQ0KKGFuZCBtYXliZSBpdCB3b3VsZCByZWFkIG1vcmUgY2xlYXJseSBp
-ZiBoZSBoYWQgdXNlZCBgYnlwYXNzZXMnKS4NCg0KLS0gDQpgYFRoZSBseWYgc28gc2hvcnQs
-IHRoZSBjcmFmdCBzbyBsb25nIHRvIGxlcm5lLicnIC0gQ2hhdWNlcg0KCQkgYGBBcnMgbG9u
-Z2EsIHZpdGEgYnJldmlzJycgLSBIaXBwb2NyYXRlcw0KQ2hldCBSYW1leSwgVVRlY2gsIENX
-UlUgICAgY2hldEBjYXNlLmVkdSAgICBodHRwOi8vdGlzd3d3LmN3cnUuZWR1L35jaGV0Lw0K
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-9f35e331.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b18c4a4e3b8e/vmlinux-9f35e331.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ae7ab8362f22/bzImage-9f35e331.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in iov_iter_revert lib/iov_iter.c:633 [inline]
+BUG: KASAN: slab-out-of-bounds in iov_iter_revert+0x443/0x5a0 lib/iov_iter.c:611
+Read of size 4 at addr ffff88802912a0b8 by task kworker/u32:7/1147
+
+CPU: 1 UID: 0 PID: 1147 Comm: kworker/u32:7 Not tainted 6.15.0-rc6-syzkaller-00052-g9f35e33144ae #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Workqueue: events_unbound netfs_write_collection_worker
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:408 [inline]
+ print_report+0xc3/0x670 mm/kasan/report.c:521
+ kasan_report+0xe0/0x110 mm/kasan/report.c:634
+ iov_iter_revert lib/iov_iter.c:633 [inline]
+ iov_iter_revert+0x443/0x5a0 lib/iov_iter.c:611
+ netfs_retry_write_stream fs/netfs/write_retry.c:44 [inline]
+ netfs_retry_writes+0x166d/0x1a50 fs/netfs/write_retry.c:231
+ netfs_collect_write_results fs/netfs/write_collect.c:352 [inline]
+ netfs_write_collection_worker+0x23fd/0x3830 fs/netfs/write_collect.c:374
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c2/0x780 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
+Allocated by task 5936:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4327 [inline]
+ __kmalloc_noprof+0x223/0x510 mm/slub.c:4339
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ kzalloc_noprof include/linux/slab.h:1039 [inline]
+ tomoyo_encode2+0x100/0x3e0 security/tomoyo/realpath.c:45
+ tomoyo_encode+0x29/0x50 security/tomoyo/realpath.c:80
+ tomoyo_realpath_from_path+0x18f/0x6e0 security/tomoyo/realpath.c:283
+ tomoyo_get_realpath security/tomoyo/file.c:151 [inline]
+ tomoyo_path_perm+0x274/0x460 security/tomoyo/file.c:822
+ security_file_truncate+0x84/0x1e0 security/security.c:3146
+ handle_truncate fs/namei.c:3499 [inline]
+ do_open fs/namei.c:3884 [inline]
+ path_openat+0xc85/0x2d40 fs/namei.c:4039
+ do_filp_open+0x20b/0x470 fs/namei.c:4066
+ do_sys_openat2+0x11b/0x1d0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_creat fs/open.c:1522 [inline]
+ __se_sys_creat fs/open.c:1516 [inline]
+ __x64_sys_creat+0xcc/0x120 fs/open.c:1516
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5936:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:576
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2380 [inline]
+ slab_free mm/slub.c:4642 [inline]
+ kfree+0x2b6/0x4d0 mm/slub.c:4841
+ tomoyo_path_perm+0x29a/0x460 security/tomoyo/file.c:842
+ security_file_truncate+0x84/0x1e0 security/security.c:3146
+ handle_truncate fs/namei.c:3499 [inline]
+ do_open fs/namei.c:3884 [inline]
+ path_openat+0xc85/0x2d40 fs/namei.c:4039
+ do_filp_open+0x20b/0x470 fs/namei.c:4066
+ do_sys_openat2+0x11b/0x1d0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_creat fs/open.c:1522 [inline]
+ __se_sys_creat fs/open.c:1516 [inline]
+ __x64_sys_creat+0xcc/0x120 fs/open.c:1516
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x260 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff88802912a0a0
+ which belongs to the cache kmalloc-16 of size 16
+The buggy address is located 8 bytes to the right of
+ allocated 16-byte region [ffff88802912a0a0, ffff88802912a0b0)
+
+The buggy address belongs to the physical page:
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2912a
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000000 ffff88801b442640 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000080800080 00000000f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52c00(GFP_NOIO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 1, tgid 1 (swapper/0), ts 13358119373, free_ts 11984335158
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x181/0x1b0 mm/page_alloc.c:1718
+ prep_new_page mm/page_alloc.c:1726 [inline]
+ get_page_from_freelist+0x135c/0x3920 mm/page_alloc.c:3688
+ __alloc_frozen_pages_noprof+0x263/0x23a0 mm/page_alloc.c:4970
+ alloc_pages_mpol+0x1fb/0x550 mm/mempolicy.c:2301
+ alloc_slab_page mm/slub.c:2450 [inline]
+ allocate_slab mm/slub.c:2618 [inline]
+ new_slab+0x244/0x340 mm/slub.c:2672
+ ___slab_alloc+0xd9c/0x1940 mm/slub.c:3858
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3948
+ __slab_alloc_node mm/slub.c:4023 [inline]
+ slab_alloc_node mm/slub.c:4184 [inline]
+ __do_kmalloc_node mm/slub.c:4326 [inline]
+ __kmalloc_noprof+0x2f2/0x510 mm/slub.c:4339
+ kmalloc_noprof include/linux/slab.h:909 [inline]
+ usb_cache_string+0xab/0x150 drivers/usb/core/message.c:1032
+ usb_enumerate_device drivers/usb/core/hub.c:2508 [inline]
+ usb_new_device+0x238/0x1a20 drivers/usb/core/hub.c:2633
+ register_root_hub+0x299/0x730 drivers/usb/core/hcd.c:994
+ usb_add_hcd+0xaf2/0x1730 drivers/usb/core/hcd.c:2976
+ dummy_hcd_probe+0x15c/0x380 drivers/usb/gadget/udc/dummy_hcd.c:2693
+ platform_probe+0x102/0x1f0 drivers/base/platform.c:1404
+ call_driver_probe drivers/base/dd.c:579 [inline]
+ really_probe+0x23e/0xa90 drivers/base/dd.c:657
+ __driver_probe_device+0x1de/0x440 drivers/base/dd.c:799
+page last free pid 838 tgid 838 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1262 [inline]
+ __free_frozen_pages+0x69d/0xff0 mm/page_alloc.c:2725
+ vfree+0x176/0x960 mm/vmalloc.c:3384
+ delayed_vfree_work+0x56/0x70 mm/vmalloc.c:3304
+ process_one_work+0x9cf/0x1b70 kernel/workqueue.c:3238
+ process_scheduled_works kernel/workqueue.c:3319 [inline]
+ worker_thread+0x6c8/0xf10 kernel/workqueue.c:3400
+ kthread+0x3c2/0x780 kernel/kthread.c:464
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+
+Memory state around the buggy address:
+ ffff888029129f80: 00 02 fc fc 00 04 fc fc 00 04 fc fc 00 04 fc fc
+ ffff88802912a000: 00 05 fc fc 00 00 fc fc 00 01 fc fc 00 01 fc fc
+>ffff88802912a080: 00 01 fc fc fa fb fc fc 00 00 fc fc 00 05 fc fc
+                                        ^
+ ffff88802912a100: 00 01 fc fc fa fb fc fc fa fb fc fc 00 00 fc fc
+ ffff88802912a180: 00 01 fc fc 00 00 fc fc 00 01 fc fc 00 01 fc fc
+==================================================================
 
 
---------------frKCS23FeCmgMLcTNF0WGjn4--
-
---------------L5LSTY5M39gWnvMqVGp47caB
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wmMEABEIACMWIQR8ATX7CIqvbGbGULm7WGnwZOp0qwUCaCSRpwUDAAAAAAAKCRC7WGnwZOp0q8F+
-AJ9LqPEdLlhWqcMgSVEfvfVvQQaLUQCeJ3uT3ggHKj9klGbE8GZKsHHVarM=
-=1TNa
------END PGP SIGNATURE-----
-
---------------L5LSTY5M39gWnvMqVGp47caB--
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
