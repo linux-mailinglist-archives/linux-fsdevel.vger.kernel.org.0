@@ -1,70 +1,70 @@
-Return-Path: <linux-fsdevel+bounces-49046-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49047-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724B4AB79CC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 01:50:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31D16AB79F9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 01:53:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF29C16AB32
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 23:50:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A893B7BA5A5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 23:49:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE4024C09C;
-	Wed, 14 May 2025 23:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9F9224EF7B;
+	Wed, 14 May 2025 23:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P8rY/Ivv"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XESTAhq0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC46245019
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 23:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CC422B8BF
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 23:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747266212; cv=none; b=kJZGe0MWV4O/qpDDIk2GGiQ8Ct+t8CWkyLVIgx/F/kWlNwZsbtId90QmNw+DQc46wqqlC2XMvvhw6v3eaUOV2V5XeMjmz6bkFaT1Ph/6lfSIXyAWU5+FXslXt/LsRPvfHCXz/XbZnI7U5RuY/sVmZ4DOFH630z7TssKHAD8duNE=
+	t=1747266214; cv=none; b=W3sFI9VL4Q1o80nu3VXbpbdIUiacR1ip5pNP15j6WUDTq7DWYAFGyHx9kSQJ1XdmOHt/d//OxwxMEMRaaxYlNk5inqW62eWrDEXG4n/7qjvScYxyJeredy0SU292lpHumYfuNeC5JWP/xv0Dqb5orPqZ6uJjahQmzQ3nJKuz5GU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747266212; c=relaxed/simple;
-	bh=mDAgY99g40Yyk1XjcdF9j+JWk/+4IZdORF7bJ79w+2M=;
+	s=arc-20240116; t=1747266214; c=relaxed/simple;
+	bh=VXyPJAGKIQGnQGNvuuAB1rMiRT3oZQFz9jJI9V3sruk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=OvAjLKlOwc8KKHJkxR7lvRtNfuJeEvAIEWpbqenaFdhSdiXSKnzl5p4KjZXxRR/OEG47rp8jP10C94lpga5LSbhftVHkecJVVMH6K6iAO32HwnPk/VHR4UQgkG4zS+CD10Wwl+nzKfvcIa7R4hxwscJpxvGLg91pVUt5XAqJJ6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P8rY/Ivv; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=nVDSlo3Q1yms3SJ+xb7APNHHxUPegK0m6fwqHGV/RPru+HF7FjU45K7/iUuARJo+j16BNddLbsWDUV1RnEkSNy4GMVdX9W2/IzmNbwT7rcU0ip8t2Tn6nYdRNJT54TqOnHuuqwDb/fs7TCwc2zS7uWsQMDAnOfussgZku9uIcYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XESTAhq0; arc=none smtp.client-ip=209.85.210.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30c8c9070d2so551846a91.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 16:43:30 -0700 (PDT)
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-7395d07a3dcso276195b3a.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 16:43:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747266210; x=1747871010; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747266211; x=1747871011; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4sIecgGyO0lUZDlGmfbLoDOBmwYRGdtl4g13CxMI1VY=;
-        b=P8rY/IvvwBvyW70WJBFVGFGhlMamvpRQiCX2/3Q1nOTdYLdi/RsRfZI/YllEZ4XHSw
-         mhp7L+FwBIfmLMHVGDUBdqmeyV0KiJG39NT/ZnJ5IkopEJ9ClSKoN2F2wdlh5xakAM1o
-         2XikV3dtuSleHExPqPDT8SPMlNc1zFUrwDPBnQbilrSCP5E7vOuZrN2c0SrLtj6WX3f5
-         1yHhzCeAHmyuxBRYCsASzmJMJmSSCsqv995fZ6IqXEMBWzBt6br/wxovx1H5Pm2nogz0
-         y8n2ykCVBI7VKICLRD7yRsPfamkyz0jwX80kBG6j0lqu2Himuf77p+J9nn1cQB3SoIVK
-         AdjA==
+        bh=IVT2MIxWnWM/XLaHWjsnvPvOi1XED19jnd4mUMbhvto=;
+        b=XESTAhq0P6Hi/6wMOWlNTw7SLis3iy7DBQlevQCJiweM/u7HT41F5nuPkv7osU4PeF
+         u+8B9eNZwMExk1UCyF8rquCyqQPuQ3ytB80st3CNmAv/i9qsUh79zkh6U/hXHUGpfq2S
+         Oon8/gf2hHYWwdBG/DPlURx02LRgGKdBUVUM8SqQkKFMo4/p8Z/0ybalCgAbYmjexdRb
+         FyRVyUTVz5BJlqqLYOyKwgzSaDPdxRgj1cFayVVQgGYcKfQuv8+lBlIp3JyLNCFpXDm1
+         CqEDQHXMM0MvP6lwFXSVwRSFiUNcevYYeRxAz0K+V4WOK35ZU88AWPC0kF7Z/4lR3EOX
+         SqZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747266210; x=1747871010;
+        d=1e100.net; s=20230601; t=1747266211; x=1747871011;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4sIecgGyO0lUZDlGmfbLoDOBmwYRGdtl4g13CxMI1VY=;
-        b=h7/znAjLCEOcEBh7Mg+0vVip1N6rydEZa1L+mhKYjrN+i2eTKg9V0qjMBOd6CssGUR
-         sEeCbs3SDvgHcx4iaUvDMGjmCzjKEtagxFoDycBblCZSZzRlSBurDJwUP3jCfiZTcIut
-         OVDLtMrkseKap9tYmzjXpdiM0omlbzAWliSVmf+sco7aBLDX+xOMS6kW/e+Ze3ctvGbv
-         3jKcaTawwsSV0txdarQNfdZ3G6Qe4p4f+62FLk/rRse8HFBqK0VRWln/NaQWG3sDIyhX
-         quRBwSCeGo2Vm29nArL7fht5a0az1Wtv3F8B7bzyfGo7r8O/zBQADVXfmE0YxlfgqO0L
-         0CUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX1hJo2QadRA/RP3Xo3dRDi9scu6PE8ntXWDqnNHRMJ/xAr1rHmYPxEd1TLS8cFoRJnackGVgrY43oIW4CC@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8ZnJtRYOoWrKhu/1uk0cYcsWc0H2vr//T2dbAiYir8W87XUDY
-	IO9r9CCtXXsERRC1PdnruOKg/fbsTtMFUCBodhfh/TMx84HynSbPFOSivu7DrhnlJbj52jD6Vdv
-	tmnacr1VX0/6heKpgJ7fdfg==
-X-Google-Smtp-Source: AGHT+IHE2ihGcSaSi+44FOfQo2JFT44j8vrPkcuV6SQcS6l9oOHcwMqkj/ZKectxEWeBtOTnjJpM1DV+MxgAJO4ylw==
-X-Received: from pjbsw16.prod.google.com ([2002:a17:90b:2c90:b0:308:87dc:aa52])
+        bh=IVT2MIxWnWM/XLaHWjsnvPvOi1XED19jnd4mUMbhvto=;
+        b=OWc5B7xwsGjoKkzKgRZocX6WT8ZEQJN8cNELg77gudNN7pDyE6IeqVYhBfHWEd6GWk
+         VShncDwvLbt7eF5kA3OnZi0jx5lNUrsTvP9BaDvjxvp1XYVDcodlq6BU1Iy4dMO98HJb
+         IMKlFpLz8vgF+gp8kjBUohU6QZlmaKdj2Zh8gAlNY1XKN21x1hN8Zt5QTGYinxJgSSvE
+         qjVkoqSufzxwPyAqD1Qs0PXvIhLJQhIFOaz6PNj+fB9wkT4KH9mkfWxKCpomX4KwuCJi
+         u9oTOOvqdh8HBVaJc4Vradq3H8dUL35l7YQ/d2z+8KjdRaBXHb9o8Mzzdjl6aZ3NigAz
+         9/NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWN/84x4d9tezNEGiT4OLJCQS12dALZm7Mtolbs4OIU/1GZWfLNbppNfrYi6Fp/ZYmn2ruFG1ldNN1KxIXn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1rqk/MqJ9Hs8ftcLLqXPBrjbv85yvKeCJCY96TY7MZU52t9v1
+	PMjt8ULdwcEKZV3MXnRtglu+YzFYa16frQ4TFQ+JINi/ICawg+AWFz0ugHulZ+X9xn+dEthLzFY
+	DRPWm6uJZC4KiITPIIh5/rA==
+X-Google-Smtp-Source: AGHT+IGlIyq6CGoOQHt7EoQf0Q/6z4roPUZNjH46k/lCxiZd8Az5X5i/aF2lsphu6KPl7WGlY+LsQbU/H8QuAY5yUQ==
+X-Received: from pgar21.prod.google.com ([2002:a05:6a02:2e95:b0:b1f:dcda:276e])
  (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90a:d647:b0:30c:540b:9b6 with SMTP id 98e67ed59e1d1-30e2e419501mr9813764a91.0.1747266209881;
- Wed, 14 May 2025 16:43:29 -0700 (PDT)
-Date: Wed, 14 May 2025 16:42:00 -0700
+ 2002:a05:6a21:700f:b0:1f5:6f61:a0ac with SMTP id adf61e73a8af0-215ff0970a6mr6985221637.5.1747266211396;
+ Wed, 14 May 2025 16:43:31 -0700 (PDT)
+Date: Wed, 14 May 2025 16:42:01 -0700
 In-Reply-To: <cover.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -74,8 +74,8 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1747264138.git.ackerleytng@google.com>
 X-Mailer: git-send-email 2.49.0.1045.g170613ef41-goog
-Message-ID: <c6ecf0b9425db4993fb043caf3f48f2b32d7eb28.1747264138.git.ackerleytng@google.com>
-Subject: [RFC PATCH v2 21/51] mm: hugetlb: Inline huge_node() into callers
+Message-ID: <1f64e3c7f04fc725f4da4d57de1ea040b7a56952.1747264138.git.ackerleytng@google.com>
+Subject: [RFC PATCH v2 22/51] mm: hugetlb: Refactor hugetlb allocation functions
 From: Ackerley Tng <ackerleytng@google.com>
 To: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
 	x86@kernel.org, linux-fsdevel@vger.kernel.org
@@ -111,129 +111,159 @@ Cc: ackerleytng@google.com, aik@amd.com, ajones@ventanamicro.com,
 	yuzenghui@huawei.com, zhiquan1.li@intel.com
 Content-Type: text/plain; charset="UTF-8"
 
-huge_node()'s role was to read struct mempolicy (mpol) from the vma
-and also interpret mpol to get node id and nodemask.
-
-huge_node() can be inlined into callers since 2 out of 3 of the
-callers will be refactored in later patches to take and interpret mpol
-without reading mpol from the vma.
+Refactor dequeue_hugetlb_folio() and alloc_surplus_hugetlb_folio() to
+take mpol, nid and nodemask. This decouples allocation of a folio from
+a vma.
 
 Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-
-Change-Id: Ic94b2ed916fd4f89b7d2755288a3a2f6a56051f7
+Change-Id: I890fb46fe8c6349383d8cf89befc68a4994eb416
 ---
- include/linux/mempolicy.h | 12 ------------
- mm/hugetlb.c              | 13 ++++++++++---
- mm/mempolicy.c            | 21 ---------------------
- 3 files changed, 10 insertions(+), 36 deletions(-)
+ mm/hugetlb.c | 64 ++++++++++++++++++++++++----------------------------
+ 1 file changed, 30 insertions(+), 34 deletions(-)
 
-diff --git a/include/linux/mempolicy.h b/include/linux/mempolicy.h
-index 840c576abcfd..41fc53605ef0 100644
---- a/include/linux/mempolicy.h
-+++ b/include/linux/mempolicy.h
-@@ -140,9 +140,6 @@ extern void mpol_rebind_mm(struct mm_struct *mm, nodemask_t *new);
- 
- extern int policy_node_nodemask(struct mempolicy *mpol, gfp_t gfp_flags,
- 				pgoff_t ilx, nodemask_t **nodemask);
--extern int huge_node(struct vm_area_struct *vma,
--				unsigned long addr, gfp_t gfp_flags,
--				struct mempolicy **mpol, nodemask_t **nodemask);
- extern bool init_nodemask_of_mempolicy(nodemask_t *mask);
- extern bool mempolicy_in_oom_domain(struct task_struct *tsk,
- 				const nodemask_t *mask);
-@@ -260,15 +257,6 @@ static inline int policy_node_nodemask(struct mempolicy *mpol, gfp_t gfp_flags,
- 	return 0;
- }
- 
--static inline int huge_node(struct vm_area_struct *vma,
--				unsigned long addr, gfp_t gfp_flags,
--				struct mempolicy **mpol, nodemask_t **nodemask)
--{
--	*mpol = NULL;
--	*nodemask = NULL;
--	return 0;
--}
--
- static inline bool init_nodemask_of_mempolicy(nodemask_t *m)
- {
- 	return false;
 diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index b822b204e9b3..5cc261b90e39 100644
+index 5cc261b90e39..29d1a3fb10df 100644
 --- a/mm/hugetlb.c
 +++ b/mm/hugetlb.c
-@@ -1372,10 +1372,12 @@ static struct folio *dequeue_hugetlb_folio(struct hstate *h,
- 	struct mempolicy *mpol;
- 	gfp_t gfp_mask;
- 	nodemask_t *nodemask;
-+	pgoff_t ilx;
- 	int nid;
- 
- 	gfp_mask = htlb_alloc_mask(h);
--	nid = huge_node(vma, address, gfp_mask, &mpol, &nodemask);
-+	mpol = get_vma_policy(vma, address, h->order, &ilx);
-+	nid = policy_node_nodemask(mpol, gfp_mask, ilx, &nodemask);
- 
- 	if (mpol_is_preferred_many(mpol)) {
- 		folio = dequeue_hugetlb_folio_nodemask(h, gfp_mask,
-@@ -2321,8 +2323,11 @@ static struct folio *alloc_surplus_hugetlb_folio(struct hstate *h,
- 	gfp_t gfp_mask = htlb_alloc_mask(h);
- 	int nid;
- 	nodemask_t *nodemask;
-+	pgoff_t ilx;
-+
-+	mpol = get_vma_policy(vma, addr, h->order, &ilx);
-+	nid = policy_node_nodemask(mpol, gfp_mask, ilx, &nodemask);
- 
--	nid = huge_node(vma, addr, gfp_mask, &mpol, &nodemask);
- 	if (mpol_is_preferred_many(mpol)) {
- 		gfp_t gfp = gfp_mask & ~(__GFP_DIRECT_RECLAIM | __GFP_NOFAIL);
- 
-@@ -6829,10 +6834,12 @@ static struct folio *alloc_hugetlb_folio_vma(struct hstate *h,
- 	nodemask_t *nodemask;
- 	struct folio *folio;
- 	gfp_t gfp_mask;
-+	pgoff_t ilx;
- 	int node;
- 
- 	gfp_mask = htlb_alloc_mask(h);
--	node = huge_node(vma, address, gfp_mask, &mpol, &nodemask);
-+	mpol = get_vma_policy(vma, address, h->order, &ilx);
-+	node = policy_node_nodemask(mpol, gfp_mask, ilx, &nodemask);
- 	/*
- 	 * This is used to allocate a temporary hugetlb to hold the copied
- 	 * content, which will then be copied again to the final hugetlb
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 7837158ee5a8..39d0abc407dc 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -2145,27 +2145,6 @@ int policy_node_nodemask(struct mempolicy *mpol, gfp_t gfp_flags,
+@@ -1364,34 +1364,22 @@ static unsigned long available_huge_pages(struct hstate *h)
+ 	return h->free_huge_pages - h->resv_huge_pages;
  }
  
- #ifdef CONFIG_HUGETLBFS
--/*
-- * huge_node(@vma, @addr, @gfp_flags, @mpol)
-- * @vma: virtual memory area whose policy is sought
-- * @addr: address in @vma for shared policy lookup and interleave policy
-- * @gfp_flags: for requested zone
-- * @mpol: pointer to mempolicy pointer for reference counted mempolicy
-- * @nodemask: pointer to nodemask pointer for 'bind' and 'prefer-many' policy
-- *
-- * Returns a nid suitable for a huge page allocation and a pointer
-- * to the struct mempolicy for conditional unref after allocation.
-- * If the effective policy is 'bind' or 'prefer-many', returns a pointer
-- * to the mempolicy's @nodemask for filtering the zonelist.
-- */
--int huge_node(struct vm_area_struct *vma, unsigned long addr, gfp_t gfp_flags,
--		struct mempolicy **mpol, nodemask_t **nodemask)
--{
+-static struct folio *dequeue_hugetlb_folio(struct hstate *h,
+-					   struct vm_area_struct *vma,
+-					   unsigned long address)
++static struct folio *dequeue_hugetlb_folio(struct hstate *h, gfp_t gfp_mask,
++					   struct mempolicy *mpol,
++					   int nid, nodemask_t *nodemask)
+ {
+ 	struct folio *folio = NULL;
+-	struct mempolicy *mpol;
+-	gfp_t gfp_mask;
+-	nodemask_t *nodemask;
 -	pgoff_t ilx;
+-	int nid;
 -
--	*mpol = get_vma_policy(vma, addr, hstate_vma(vma)->order, &ilx);
--	return policy_node_nodemask(*mpol, gfp_flags, ilx, nodemask);
--}
+-	gfp_mask = htlb_alloc_mask(h);
+-	mpol = get_vma_policy(vma, address, h->order, &ilx);
+-	nid = policy_node_nodemask(mpol, gfp_mask, ilx, &nodemask);
+ 
+ 	if (mpol_is_preferred_many(mpol)) {
+-		folio = dequeue_hugetlb_folio_nodemask(h, gfp_mask,
+-							nid, nodemask);
++		folio = dequeue_hugetlb_folio_nodemask(h, gfp_mask, nid, nodemask);
+ 
+ 		/* Fallback to all nodes if page==NULL */
+ 		nodemask = NULL;
+ 	}
+ 
+ 	if (!folio)
+-		folio = dequeue_hugetlb_folio_nodemask(h, gfp_mask,
+-							nid, nodemask);
++		folio = dequeue_hugetlb_folio_nodemask(h, gfp_mask, nid, nodemask);
+ 
+-	mpol_cond_put(mpol);
+ 	return folio;
+ }
+ 
+@@ -2312,21 +2300,14 @@ static struct folio *alloc_migrate_hugetlb_folio(struct hstate *h, gfp_t gfp_mas
+ }
  
  /*
-  * init_nodemask_of_mempolicy
+- * Use the VMA's mpolicy to allocate a huge page from the buddy.
++ * Allocate a huge page from the buddy allocator given memory policy and node information.
+  */
+ static struct folio *alloc_surplus_hugetlb_folio(struct hstate *h,
+-						 struct vm_area_struct *vma,
+-						 unsigned long addr)
++						 gfp_t gfp_mask,
++						 struct mempolicy *mpol,
++						 int nid, nodemask_t *nodemask)
+ {
+ 	struct folio *folio = NULL;
+-	struct mempolicy *mpol;
+-	gfp_t gfp_mask = htlb_alloc_mask(h);
+-	int nid;
+-	nodemask_t *nodemask;
+-	pgoff_t ilx;
+-
+-	mpol = get_vma_policy(vma, addr, h->order, &ilx);
+-	nid = policy_node_nodemask(mpol, gfp_mask, ilx, &nodemask);
+ 
+ 	if (mpol_is_preferred_many(mpol)) {
+ 		gfp_t gfp = gfp_mask & ~(__GFP_DIRECT_RECLAIM | __GFP_NOFAIL);
+@@ -2339,7 +2320,7 @@ static struct folio *alloc_surplus_hugetlb_folio(struct hstate *h,
+ 
+ 	if (!folio)
+ 		folio = alloc_surplus_hugetlb_folio_nodemask(h, gfp_mask, nid, nodemask);
+-	mpol_cond_put(mpol);
++
+ 	return folio;
+ }
+ 
+@@ -2993,6 +2974,11 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 	int ret, idx;
+ 	struct hugetlb_cgroup *h_cg = NULL;
+ 	gfp_t gfp = htlb_alloc_mask(h) | __GFP_RETRY_MAYFAIL;
++	struct mempolicy *mpol;
++	nodemask_t *nodemask;
++	gfp_t gfp_mask;
++	pgoff_t ilx;
++	int nid;
+ 
+ 	idx = hstate_index(h);
+ 
+@@ -3032,7 +3018,6 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 
+ 		subpool_reservation_exists = npages_req == 0;
+ 	}
+-
+ 	reservation_exists = vma_reservation_exists || subpool_reservation_exists;
+ 
+ 	/*
+@@ -3048,21 +3033,30 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 			goto out_subpool_put;
+ 	}
+ 
++	mpol = get_vma_policy(vma, addr, h->order, &ilx);
++
+ 	ret = hugetlb_cgroup_charge_cgroup(idx, pages_per_huge_page(h), &h_cg);
+-	if (ret)
++	if (ret) {
++		mpol_cond_put(mpol);
+ 		goto out_uncharge_cgroup_reservation;
++	}
++
++	gfp_mask = htlb_alloc_mask(h);
++	nid = policy_node_nodemask(mpol, gfp_mask, ilx, &nodemask);
+ 
+ 	spin_lock_irq(&hugetlb_lock);
+ 
+ 	folio = NULL;
+ 	if (reservation_exists || available_huge_pages(h))
+-		folio = dequeue_hugetlb_folio(h, vma, addr);
++		folio = dequeue_hugetlb_folio(h, gfp_mask, mpol, nid, nodemask);
+ 
+ 	if (!folio) {
+ 		spin_unlock_irq(&hugetlb_lock);
+-		folio = alloc_surplus_hugetlb_folio(h, vma, addr);
+-		if (!folio)
++		folio = alloc_surplus_hugetlb_folio(h, gfp_mask, mpol, nid, nodemask);
++		if (!folio) {
++			mpol_cond_put(mpol);
+ 			goto out_uncharge_cgroup;
++		}
+ 		spin_lock_irq(&hugetlb_lock);
+ 		list_add(&folio->lru, &h->hugepage_activelist);
+ 		folio_ref_unfreeze(folio, 1);
+@@ -3087,6 +3081,8 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+ 
+ 	spin_unlock_irq(&hugetlb_lock);
+ 
++	mpol_cond_put(mpol);
++
+ 	hugetlb_set_folio_subpool(folio, spool);
+ 
+ 	/* If vma accounting wasn't bypassed earlier, follow up with commit. */
 -- 
 2.49.0.1045.g170613ef41-goog
 
