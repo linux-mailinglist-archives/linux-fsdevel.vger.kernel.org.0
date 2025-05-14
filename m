@@ -1,58 +1,57 @@
-Return-Path: <linux-fsdevel+bounces-48980-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48981-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47224AB711D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 18:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD36BAB712B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 18:24:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72EE1B66C8F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 16:21:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760091B673FB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 16:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEEB27A139;
-	Wed, 14 May 2025 16:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0AA627C15A;
+	Wed, 14 May 2025 16:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0D3aXik"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C2YX0GW2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B230278161;
-	Wed, 14 May 2025 16:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053A127A92C;
+	Wed, 14 May 2025 16:23:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747239683; cv=none; b=qI09KJX/8NiNahzaHxrozG5hAbIx1w4MIjb0f9CfPC7qJvYvJtEUtdN4A4iJHPV++CCXhG+ywv0wBvB3dHofz734MuX8A+qxYyGZITqHsm7qZuNSEucdvRPOXH6yO9vfSFAfWGbcPHdLmLH/tTmqT2jdyQ2XlERnS00uEGoY19w=
+	t=1747239828; cv=none; b=rEQckvt9TePzu3aAGQeroVLT2Dje4pl6nHvBu17wmraW7780vd+GU4pDvnI8u6Afm0olNE8ssuMcUuG2tStJJdgBQSb79vG3lv58wAUBQZOFC8TwlW3JSatJG14qC6Y12ynJ+JXsB0v72nc5/6i4EoPCArYZ3nEwRhaKLnm59Tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747239683; c=relaxed/simple;
-	bh=PQ9MwKOQ5q9Z6XCumQ1t8CjUKmfnYWJasCHJsQBE6dM=;
+	s=arc-20240116; t=1747239828; c=relaxed/simple;
+	bh=QciJvT0ye+FB7haYpO9Jc0obRolFm9CcU08jRnCZhLU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gsahCn6W3LScelyUmV+vw9mLaiM2RiLXl4y8LOv7AEnCTLw+35IupG0BiT3Hoa3HRLUMBiuU5B5IXUHVymCOZTgtGRbwfXP42oNhWO0b3lpivTz8X0fXvRbOYA+L7lY7fK/X4dO4RwIYKmwJ9B4zYQrR7p1/sdu073EzgyyBxxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0D3aXik; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DCC5C4CEE3;
-	Wed, 14 May 2025 16:21:23 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZUCS1hAWY+kfOi7S0Z1xNiad8QK9B/NIub+E6fFqXO1W/SkqSOzftmIG/ipwh0z9GhyU8brkAJxpevMosIO0CQKzynOMnQ99/41D7L+vhwIWmaqnNOTpSh23tyvh6LtbQ6TPvjOSvf4M9TFEQD0jYmD6vBHmaxMAzOPtI5iERPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C2YX0GW2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70DB0C4CEE3;
+	Wed, 14 May 2025 16:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747239683;
-	bh=PQ9MwKOQ5q9Z6XCumQ1t8CjUKmfnYWJasCHJsQBE6dM=;
+	s=k20201202; t=1747239827;
+	bh=QciJvT0ye+FB7haYpO9Jc0obRolFm9CcU08jRnCZhLU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t0D3aXik8sBqjt5g9cI2Szb0mnt91k3exPp4noakjRW/EcC+bIp1ZbokfeqIS4xvg
-	 3QEpHuKJ1o61nAnKYA5AgHCWZiuWwgciWTjZeMXARIBo7wH8VF0Q4jDXAsI5CZP+2Z
-	 aG41w+3WhlcELxFE0A4PqxeCG/56/f2tDY1GWBGlR4uu0T/axy6cpUWe1E5kfg+6q2
-	 v3VPzlcCcNj6lvUTZredq5FFV00fN6hLpSXGrqsdY1DlBxaLDcNQ6qTKZVvp4eRIO6
-	 R+vi6Y+pucfU7xcvgNd9nx2YMjxqgjgWGVJb8OHrcyrAxY5xfLRNW4pGTot+g0Mu9j
-	 WVt95FzYoSW/g==
-Date: Wed, 14 May 2025 09:21:22 -0700
+	b=C2YX0GW2DZAQXDhCjU3bxHlUdCQbnl7EtZQB0SqEN/bznEQVC8Hrb4PI+KkeeulOy
+	 B5ITeDQW9nGgkOkMjRO0B+IVqihx714IucWIz7hYPY04IaffTn3e4w8pZLqcYL3GjG
+	 HufWlpL+hJ53v7mZQLd2xDa//VMORuSWYVhHC+C9v3V/bipdS51rgZyyiz5PGoqZpb
+	 JJlhk8oxQioteOBZxLDtKVGsVbICMPjpPzw+R1HO6LUOtDggxRxN+z/MLevf4UGriW
+	 Kqg/77Uy6OBeSOMEnZrIwfRD+bubMPOg6kA9Ro5/9nMhkqzBgGQjap/qerQzLwStwl
+	 gADAA7GBSUUVw==
+Date: Wed, 14 May 2025 09:23:47 -0700
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
 	Jan Kara <jack@suse.cz>, John Garry <john.g.garry@oracle.com>,
 	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
 	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] ext4: Enable support for ext4 multi-fsblock
- atomic write using bigalloc
-Message-ID: <20250514162122.GI25655@frogsfrogsfrogs>
+Subject: Re: [PATCH v3 1/7] ext4: Document an edge case for overwrites
+Message-ID: <20250514162347.GJ25655@frogsfrogsfrogs>
 References: <cover.1746734745.git.ritesh.list@gmail.com>
- <71c65793ebc15d59e8ff4112f47df85f3ed766e3.1746734746.git.ritesh.list@gmail.com>
+ <9f95d7e26f3421c5aa0b835b5aa1dd4f702fc380.1746734745.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -61,62 +60,39 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <71c65793ebc15d59e8ff4112f47df85f3ed766e3.1746734746.git.ritesh.list@gmail.com>
+In-Reply-To: <9f95d7e26f3421c5aa0b835b5aa1dd4f702fc380.1746734745.git.ritesh.list@gmail.com>
 
-On Fri, May 09, 2025 at 02:20:36AM +0530, Ritesh Harjani (IBM) wrote:
-> Last couple of patches added the needed support for multi-fsblock atomic
-> writes using bigalloc. This patch ensures that filesystem advertizes the
-> needed atomic write unit min and max values for enabling multi-fsblock
-> atomic write support with bigalloc.
+On Fri, May 09, 2025 at 02:20:31AM +0530, Ritesh Harjani (IBM) wrote:
+> ext4_iomap_overwrite_begin() clears the flag for IOMAP_WRITE before
+> calling ext4_iomap_begin(). Document this above ext4_map_blocks() call
+> as it is easy to miss it when focusing on write paths alone.
 > 
-> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> ---
->  fs/ext4/super.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> index 181934499624..508ea5cff1c7 100644
-> --- a/fs/ext4/super.c
-> +++ b/fs/ext4/super.c
-> @@ -4442,12 +4442,12 @@ static int ext4_handle_clustersize(struct super_block *sb)
->  /*
->   * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
->   * @sb: super block
-> - * TODO: Later add support for bigalloc
->   */
->  static void ext4_atomic_write_init(struct super_block *sb)
->  {
->  	struct ext4_sb_info *sbi = EXT4_SB(sb);
->  	struct block_device *bdev = sb->s_bdev;
-> +	unsigned int clustersize = sb->s_blocksize;
->  
->  	if (!bdev_can_atomic_write(bdev))
->  		return;
-> @@ -4455,9 +4455,12 @@ static void ext4_atomic_write_init(struct super_block *sb)
->  	if (!ext4_has_feature_extents(sb))
->  		return;
->  
-> +	if (ext4_has_feature_bigalloc(sb))
-> +		clustersize = EXT4_CLUSTER_SIZE(sb);
 
-Doesn't EXT4_CLUSTER_SIZE return EXT4_BLOCK_SIZE(sb) (aka s_blocksize)
-for !bigalloc filesystems?
-
-Looks fine to me otherwise
+Weird but ok,
 Acked-by: "Darrick J. Wong" <djwong@kernel.org>
 
 --D
 
-> +
->  	sbi->s_awu_min = max(sb->s_blocksize,
->  			      bdev_atomic_write_unit_min_bytes(bdev));
-> -	sbi->s_awu_max = min(sb->s_blocksize,
-> +	sbi->s_awu_max = min(clustersize,
->  			      bdev_atomic_write_unit_max_bytes(bdev));
->  	if (sbi->s_awu_min && sbi->s_awu_max &&
->  	    sbi->s_awu_min <= sbi->s_awu_max) {
+> ---
+>  fs/ext4/inode.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 94c7d2d828a6..b10e5cd5bb5c 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3436,6 +3436,10 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  		}
+>  		ret = ext4_iomap_alloc(inode, &map, flags);
+>  	} else {
+> +		/*
+> +		 * This can be called for overwrites path from
+> +		 * ext4_iomap_overwrite_begin().
+> +		 */
+>  		ret = ext4_map_blocks(NULL, inode, &map, 0);
+>  	}
+>  
 > -- 
 > 2.49.0
 > 
