@@ -1,149 +1,136 @@
-Return-Path: <linux-fsdevel+bounces-48971-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48970-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99250AB6FC2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 17:29:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC411AB6F80
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 17:19:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBD509A25FA
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 15:21:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A50A4C5E39
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 15:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009A281509;
-	Wed, 14 May 2025 15:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D4B27A101;
+	Wed, 14 May 2025 15:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="djZFgxiA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qde/O+A4"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E113D1C6FF9;
-	Wed, 14 May 2025 15:19:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFFD521FF31;
+	Wed, 14 May 2025 15:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747235965; cv=none; b=Qx3BFUgIVgkaZ5If0QV3XsoS/saEl4R+eqvJLuTJwtDA4FkRMssREWgwUz3INlDeqjW2mSIJtFW/YQF+W2NGFKCsEh5uEOKU5ZA6Ocl1jtAbVotth0W9enRy5xkgWHc5t3fB2P9Jo+yrm0umwXMjr/KjWEBRsmiOwUF1ZGFs2ZA=
+	t=1747235647; cv=none; b=YnsvhkWNLlREyZMEtZdQioOozROn7MULY7GKENGgGh8X7d2LVsqzzdFMWssnylQw2T/g4SWNvgF1UO2k366eD+a3z0ZSXtZEL4KpjwpAba6XL20sOmNDxHYeG7G14m9gjBTeL2ozXEErnDVAufS/ysRnSwzvhdJX7FKUSAWlXNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747235965; c=relaxed/simple;
-	bh=fbDxkuzpwYjrGZLFi5VIbeGvuh+o5LtR/w6gApnTSJQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=PBbTx9Xys+AZ94m1F3tzBRKbIbtL7Ym3EcA5WHTc9GgRWCe4onHEXII/pIuvuwwezilFekuO5M6WdtIhTV9hfS72jrHG6RK4LYu4jZqLqJoliaxK7lpDewsYJXXdrVsIdKMCVm6AR1KMywBBFzdUUJa9gVcpQHaXEtsb9Rj7JOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=djZFgxiA; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 54EFAEbT3012887
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 14 May 2025 08:10:15 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 54EFAEbT3012887
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025042001; t=1747235422;
-	bh=yapZ2s67BLNwus6ibHABzXGBCoZzVlVupFJe/q2qy/U=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=djZFgxiAUJE7iFHA0Wd/yFppU4TGqi4fxmoBT1mvTgxRmRiu+8QH1zl3CND+QbbP4
-	 97UVxN+J8QD8iz78UlxzP16emoOIxJpWaoO9qxu1Ec5we80T+FOOb4RfHy40YAODf4
-	 27XX25rvc06YcNMTsxppaOiXgVXhowu2DQa6R8gC1Tcuq8Oq9GVQp3swa9CciK5Vg/
-	 jv/tWyK4JR8CJyAVAYMpVNTUaE0Ax5AVAQfxExqancQ8ZpUjlh9FBEWFvjm5PCVbut
-	 6qwwqWO9GyDweGO8bFsU0TsmuX3ejxdQaqkTWk3Ymh6Yue7onjRsMrCGmrkfplN9Ef
-	 P/Ifsp+Ororjw==
-Date: Wed, 14 May 2025 08:10:12 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Arnd Bergmann <arnd@arndb.de>, Andrey Albershteyn <aalbersh@redhat.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Yoshinori Sato <ysato@users.osdn.me>, Rich Felker <dalias@libc.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-        =?ISO-8859-1?Q?G=FCnther_Noack?= <gnoack@google.com>,
-        =?ISO-8859-1?Q?Pali_Roh=E1r?= <pali@kernel.org>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>, Tyler Hicks <code@tyhicks.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Amir Goldstein <amir73il@gmail.com>
-CC: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-m68k@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-api@vger.kernel.org, Linux-Arch <linux-arch@vger.kernel.org>,
-        selinux@vger.kernel.org, ecryptfs@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Andrey Albershteyn <aalbersh@kernel.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v5_0/7=5D_fs=3A_introduce_fi?=
- =?US-ASCII?Q?le=5Fgetattr_and_file=5Fsetattr_syscalls?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
-References: <20250513-xattrat-syscall-v5-0-22bb9c6c767f@kernel.org> <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
-Message-ID: <B17E8366-DB80-45E6-90D6-294824C40FD9@zytor.com>
+	s=arc-20240116; t=1747235647; c=relaxed/simple;
+	bh=ASy4XXDUZ+XqgKJMKMfMraYghZijkdij/uWWZG56WI8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mORlD20YTZDiOstDUqRJPkHxgyJoq+0XUpnwCoc6hYc31tneFywSdztTnNlmdCy1tsYNunrMBbCJNvJAtTDUfsQJwOPh4+drZ1v3g4A873FBmK8nnrcPzNJHLTO9dktQT7gjGG+rIHql4McQBftRwBYUadzcvGeVOPBSS5NhRrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qde/O+A4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AB88C4CEE3;
+	Wed, 14 May 2025 15:14:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747235647;
+	bh=ASy4XXDUZ+XqgKJMKMfMraYghZijkdij/uWWZG56WI8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qde/O+A4Int0tYt4EQwVneuXsRQr1YUBRqt7rxRMlvMEWAJba/NBWkoZqkNIgIebj
+	 9S0lhDyh8DffOLN0Qy+hBivOJB2moQtFdeamW2PvJQAbIwCSONv0pmYxMS7J7dRtxg
+	 fFSCY3LP0kcoKl+3Afu/mO2T6+9zfnKuLAixYUcjkzJs3N4z57CdVxf9dcKKtk58iY
+	 PeQ1oLnGtJpLI1gPyy93GClLSVtFJJ6iTkuvAsghIQ4OMvusPwQMhN7IRQUuKhNbR0
+	 FS0eCeyHMXbNNc0jk1gQmvfkg7n0joHw80vdo1QDSRvZ4jCSzBhPWo9JW4xwPO6QUs
+	 9AcK7XSRN/Xpw==
+Date: Wed, 14 May 2025 16:14:01 +0100
+From: Will Deacon <will@kernel.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	David Hildenbrand <david@redhat.com>,
+	Dave Chinner <david@fromorbit.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Kalesh Singh <kaleshsingh@google.com>, Zi Yan <ziy@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v4 5/5] mm/filemap: Allow arch to request folio size
+ for exec memory
+Message-ID: <20250514151400.GB10762@willie-the-truck>
+References: <20250430145920.3748738-1-ryan.roberts@arm.com>
+ <20250430145920.3748738-6-ryan.roberts@arm.com>
+ <20250509135223.GB5707@willie-the-truck>
+ <c52861ac-9622-4d4f-899e-3a759f04af12@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c52861ac-9622-4d4f-899e-3a759f04af12@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On May 13, 2025 2:53:23 AM PDT, Arnd Bergmann <arnd@arndb=2Ede> wrote:
->On Tue, May 13, 2025, at 11:17, Andrey Albershteyn wrote:
->
->>
->> 	long syscall(SYS_file_getattr, int dirfd, const char *pathname,
->> 		struct fsxattr *fsx, size_t size, unsigned int at_flags);
->> 	long syscall(SYS_file_setattr, int dirfd, const char *pathname,
->> 		struct fsxattr *fsx, size_t size, unsigned int at_flags);
->
->I don't think we can have both the "struct fsxattr" from the uapi
->headers, and a variable size as an additional argument=2E I would
->still prefer not having the extensible structure at all and just
->use fsxattr, but if you want to make it extensible in this way,
->it should use a different structure (name)=2E Otherwise adding
->fields after fsx_pad[] would break the ioctl interface=2E
->
->I also find the bit confusing where the argument contains both
->"ignored but assumed zero" flags, and "required to be zero"
->flags depending on whether it's in the fsx_pad[] field or
->after it=2E This would be fine if it was better documented=2E
->
->
->> 		fsx=2Efsx_xflags |=3D FS_XFLAG_NODUMP;
->> 		error =3D syscall(468, dfd, "=2E/foo", &fsx, 0);
->
->The example still uses the calling conventions from a previous
->version=2E
->
->       Arnd
+On Tue, May 13, 2025 at 01:46:06PM +0100, Ryan Roberts wrote:
+> On 09/05/2025 14:52, Will Deacon wrote:
+> > On Wed, Apr 30, 2025 at 03:59:18PM +0100, Ryan Roberts wrote:
+> >> diff --git a/mm/filemap.c b/mm/filemap.c
+> >> index e61f374068d4..37fe4a55c00d 100644
+> >> --- a/mm/filemap.c
+> >> +++ b/mm/filemap.c
+> >> @@ -3252,14 +3252,40 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+> >>  	if (mmap_miss > MMAP_LOTSAMISS)
+> >>  		return fpin;
+> >>  
+> >> -	/*
+> >> -	 * mmap read-around
+> >> -	 */
+> >>  	fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+> >> -	ra->start = max_t(long, 0, vmf->pgoff - ra->ra_pages / 2);
+> >> -	ra->size = ra->ra_pages;
+> >> -	ra->async_size = ra->ra_pages / 4;
+> >> -	ra->order = 0;
+> >> +	if (vm_flags & VM_EXEC) {
+> >> +		/*
+> >> +		 * Allow arch to request a preferred minimum folio order for
+> >> +		 * executable memory. This can often be beneficial to
+> >> +		 * performance if (e.g.) arm64 can contpte-map the folio.
+> >> +		 * Executable memory rarely benefits from readahead, due to its
+> >> +		 * random access nature, so set async_size to 0.
+> > 
+> > In light of this observation (about randomness of instruction fetch), do
+> > you think it's worth ignoring VM_RAND_READ for VM_EXEC?
+> 
+> Hmm, yeah that makes sense. Something like:
+> 
+> ---8<---
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 7b90cbeb4a1a..6c8bf5116c54 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3233,7 +3233,8 @@ static struct file *do_sync_mmap_readahead(struct vm_fault
+> *vmf)
+>         if (!ra->ra_pages)
+>                 return fpin;
+> 
+> -       if (vm_flags & VM_SEQ_READ) {
+> +       /* VM_EXEC case below is already intended for random access */
+> +       if ((vm_flags & (VM_SEQ_READ | VM_EXEC)) == VM_SEQ_READ) {
+>                 fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>                 page_cache_sync_ra(&ractl, ra->ra_pages);
+>                 return fpin;
+> ---8<---
 
-Well, ioctls carry the structure size in the ioctl number, so changing the=
- structure size would change the ioctl number with it=2E
+I was thinking about the:
+
+	if (vm_flags & VM_RAND_READ)
+		return fpin;
+
+code above this which bails if VM_RAND_READ is set. That seems contrary
+to the code you're adding which says that, even for random access
+patterns where readahead doesn't help, it's still worth sizing the folio
+appropriately for contpte mappings.
+
+Will
 
