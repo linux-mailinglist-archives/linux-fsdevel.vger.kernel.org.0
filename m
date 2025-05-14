@@ -1,159 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-48946-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-48947-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB0B8AB66B2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 11:01:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56ADEAB66C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 11:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 683DC19E58D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 09:01:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8191E3AEDBF
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 May 2025 09:04:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9258F1F4C96;
-	Wed, 14 May 2025 09:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C3B2236ED;
+	Wed, 14 May 2025 09:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R+eUJY+T"
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vO9H0UFg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Nddhf0kz";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vO9H0UFg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Nddhf0kz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4776618E1F
-	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 09:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95BE22257E
+	for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 09:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747213266; cv=none; b=pRCRV8AHwxsJQwJ7Ht19iFGKOJn6UjSd5zIeM1Ydnme4x1g57HQk9fKdwP7h79cei1XCRS0DMm5wGOnHBr1sjw5HbRkMXKRVdjOubrYg4GGcySxTLke9wGWMrybMf6ZAN/xzK6I8y0RsVSfiLrzEBJqBHfVZbqhxwZojkA9NOk0=
+	t=1747213460; cv=none; b=TCPwbrS/gT1Db5IW6v8O5vAYxmnwsdso6C/uH/gpHLfL4DiRGs5TYSiGJ2HGL+6gETZYzGuxMDk3WVjQnsc87zzZ64Td7ydI5bPU0lSeFJIg8487krAlUhl9N4t/NHcA1l6z1SfLmBTuXuBw7vAf2vVKfQpnblKwCGuYYPKWbsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747213266; c=relaxed/simple;
-	bh=DmRcfY5difW6YC1dNAh7yzNRHOnS1c0CA4q0VXjmvcw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TdoWk25uwH0tCtJsDGaD3jaJo4qmXrS44WsypwWhd9xw8kqk9dX0ele3VNI4ud0yi3yYY1mb0IEsWrSw0l2oRIVAyOEOsz7WWNhTrn5RUMo9XuKbBgZgq5HMJJqSG4smLbbJsXbbIbIV3OHFikx/baq8qGOVaTWIOvZDlFESqNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R+eUJY+T; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5fbf534f8dbso10012663a12.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 02:01:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747213262; x=1747818062; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DmRcfY5difW6YC1dNAh7yzNRHOnS1c0CA4q0VXjmvcw=;
-        b=R+eUJY+TI7YrGavL+QbXkM40u8tFdSUHcy3McwTTW0uxzuAsFSCU1TwwwyiLXYSFvt
-         KqOd3tDmy3e9rksUnCk4siifJn1j/q9MLfvTFMxW5TQyTPfKMGtEmdqQQ0juErO4SfXg
-         AgtVTOFeLLLOet/AOu8GpoQSady6Sue0Ll+lXw9//NzMLWtlkXNe4zyX4TQl2+inbriY
-         /D/2mm9l7VyBKMBEyWpX3OWHj0o3PlWq4vbAVt0MKz+iSp1RV5HpaXCPlcHI+Qf0f0OK
-         jbnWl7S7JiW/41yx6HXGFi98iXVRN5tSU4kIWGKAQ/hoYoipGyb7kVmiEQ4/2eHVhao1
-         z/hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747213262; x=1747818062;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DmRcfY5difW6YC1dNAh7yzNRHOnS1c0CA4q0VXjmvcw=;
-        b=coMs9UhtGDobXKCB6Bb+9v6QVrzCHx3IWmOZTpCA3s7rzSApcew+2JtRgtulb8tzZK
-         Vd9NT2EGqNQgyZDiwk07nUrlILs0vYiSnlZ8yRKxMLV/9KzIm1n7Xvp0impnQy+iJ37V
-         RnqTTDMA0ifWjkI8JcC/0GIA1u+Uyrw+Jeo+Gld701Ax580Bfs2JDvXjn0N9ojSSdl6i
-         vCj9f4t+/ckGh6O/w5VqIiNJ72PQMDeV7wZ/BnsxBOj3IVRZnhkUEL8sKVj+yOODQgnk
-         6MkJ0pJRBcPDYwIBcbtetI2Ghpfn+1Xg/YCGAUPE/l2SjR30IbhjuBBH7MSUt46vAjKO
-         DPSA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeYr7qO3c2zVuyN49x/FRWhdUwsPECtD/qlGePsGgKBEYpHzbZsU0cIfq/phY2OVI5h2qwrVREfsDfRogE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBsIPYsDGKIBSsMiDaIltmbAidcR41tj08R1sqan6w6WJdJG5P
-	VLSUEvi8ehsfVWxXku9PJjKXqHKyOVBKgJW80vLsIsg+kFoWbFMNbWho+rycbh2mLY5W7IDtRFk
-	0UFTOfa0IzKRQIw7VSp2WuFFS/pc=
-X-Gm-Gg: ASbGncvhMdbOdH/51TkPvusXNdU9v9FV/R6CmqGJGBVJdYYHe5D9B5LAAGrE4Ft/vEc
-	OXA5WCOHUmdjk6hMS67rnJZ5yVI3riUJYeJS055KwWUnqNyuwUpawq57Y6p7juDfWIOdh18NIG1
-	LjopfrGTJmMbN3+3sMnt12vpmaM81Ibmit
-X-Google-Smtp-Source: AGHT+IFV4CCrZPhJCvx/kV0U1eMlsJ7nJopSm1CJHvvDGDBZYQMORaILyqyGB7/IybQn3KIWerrxS6ZmqnbASEaFfAs=
-X-Received: by 2002:a17:907:9725:b0:ad2:43b6:dd6d with SMTP id
- a640c23a62f3a-ad4f70f5ef6mr275092066b.12.1747213262147; Wed, 14 May 2025
- 02:01:02 -0700 (PDT)
+	s=arc-20240116; t=1747213460; c=relaxed/simple;
+	bh=C1LKllG2Fa8wm4iOWNMtcfEqU9DwZwq1MyCxxqcdV+M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LYmDL/jwaK23WZKYP01aspNKX9ogoE6YjnmJ2CjEzuYdzCMjHuc6IG64qe6ZzaMKS2Sem7c0vora3GxFM5h8KE5ro8psdNtqqXuyK5GBHcgVbd6xWURzJktz8jBy7DvfoahAnu/rbFNR9wEZkr0YaNwUpZL4Wv/2cLIthElyfuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vO9H0UFg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Nddhf0kz; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vO9H0UFg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Nddhf0kz; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B44D01F455;
+	Wed, 14 May 2025 09:04:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747213456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uil2b5IHzAypI/ph0mhKh3JmhrE9zgPSiFLLhXdGaQQ=;
+	b=vO9H0UFgUGPqAD7S9PR22XyYmZEo4xckkeaxaJy2QBBk19e+FlGmdCsHuHCdQrFO51dAN4
+	K1hyHUGgN4/RImC8hR4QHwnpOniqJ0dRR6JF0KeZeDfz3/k7RdD9faZGPYaX1yTC5Ydplb
+	kijPL7F+gCVhqt1Jg4H7vIlMIEpLoH4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747213456;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uil2b5IHzAypI/ph0mhKh3JmhrE9zgPSiFLLhXdGaQQ=;
+	b=Nddhf0kzJBh7W69czTE7u1ndGQPV5T9HrRdfSFAl72xwPjchGcqyXIzCOQwli2z7vIWld/
+	IZLdF+OQi3LUDaBg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=vO9H0UFg;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=Nddhf0kz
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1747213456; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uil2b5IHzAypI/ph0mhKh3JmhrE9zgPSiFLLhXdGaQQ=;
+	b=vO9H0UFgUGPqAD7S9PR22XyYmZEo4xckkeaxaJy2QBBk19e+FlGmdCsHuHCdQrFO51dAN4
+	K1hyHUGgN4/RImC8hR4QHwnpOniqJ0dRR6JF0KeZeDfz3/k7RdD9faZGPYaX1yTC5Ydplb
+	kijPL7F+gCVhqt1Jg4H7vIlMIEpLoH4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1747213456;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uil2b5IHzAypI/ph0mhKh3JmhrE9zgPSiFLLhXdGaQQ=;
+	b=Nddhf0kzJBh7W69czTE7u1ndGQPV5T9HrRdfSFAl72xwPjchGcqyXIzCOQwli2z7vIWld/
+	IZLdF+OQi3LUDaBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BEBE7137E8;
+	Wed, 14 May 2025 09:04:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fySAK49cJGjpIAAAD6G6ig
+	(envelope-from <pfalcato@suse.de>); Wed, 14 May 2025 09:04:15 +0000
+Date: Wed, 14 May 2025 10:04:06 +0100
+From: Pedro Falcato <pfalcato@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	David Hildenbrand <david@redhat.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>, 
+	Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>, Jann Horn <jannh@google.com>, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH v2 1/3] mm: introduce new .mmap_prepare() file callback
+Message-ID: <dqir4mv7twugxj6nstqziympxc6z3k5act4cwhgpg2naeqy3sx@wkn4wvnwbpih>
+References: <cover.1746792520.git.lorenzo.stoakes@oracle.com>
+ <adb36a7c4affd7393b2fc4b54cc5cfe211e41f71.1746792520.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250419100657.2654744-1-amir73il@gmail.com> <CAOQ4uxj1-8uFp1ShzcC5YXOXfvOrEMLCcB=i1Dr4LaCax03HDQ@mail.gmail.com>
- <CAOQ4uxi+pxS74QCLi5H8f0rj8A_1-kRxVs6qf_-C_0rwS66wfg@mail.gmail.com>
-In-Reply-To: <CAOQ4uxi+pxS74QCLi5H8f0rj8A_1-kRxVs6qf_-C_0rwS66wfg@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Wed, 14 May 2025 11:00:51 +0200
-X-Gm-Features: AX0GCFtNUbRqMMalw3LsIMZPWRQy8GmMiLK90iVgYy235iccG1k8Y2L1UIusrpM
-Message-ID: <CAOQ4uxhQdUgFnVMuFTyWr60unww40-avGb4NzUUACcvBF4Yx7w@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] User namespace aware fanotify
-To: Jan Kara <jack@suse.cz>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <adb36a7c4affd7393b2fc4b54cc5cfe211e41f71.1746792520.git.lorenzo.stoakes@oracle.com>
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: B44D01F455
+X-Spam-Flag: NO
+X-Spam-Score: -4.01
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,oracle.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Action: no action
 
-On Thu, May 8, 2025 at 10:46=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Sat, Apr 19, 2025 at 1:48=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
-m> wrote:
-> >
-> > On Sat, Apr 19, 2025 at 12:07=E2=80=AFPM Amir Goldstein <amir73il@gmail=
-.com> wrote:
-> > >
-> > > Jan,
-> > >
-> > > This v2 is following a two years leap from the RFC path [1].
-> > > the code is based on the mntns fix patches I posted and is available
-> > > on my github [2].
-> > >
-> > > Since then, Christian added support for open_by_handle_at(2)
-> > > to admin inside userns, which makes watching FS_USERNS_MOUNT
-> > > sb more useful.
-> > >
-> > > And this should also be useful for Miklos' mntns mount tree watch
-> > > inside userns.
-> > >
-> > > Tested sb/mount watches inside userns manually with fsnotifywatch -S
-> > > and -M with some changes to inotify-tools [3].
-> > >
-> > > Ran mount-notify test manually inside userns and saw that it works
-> > > after this change.
-> > >
-> > > I was going to write a variant of mount-notify selftest that clones
-> > > also a userns, but did not get to it.
-> > >
-> > > Christian, Miklos,
-> > >
-> > > If you guys have interest and time in this work, it would be nice if
-> > > you can help with this test variant or give me some pointers.
-> > >
-> > > I can work on the test and address review comments when I get back fr=
-om
-> > > vacation around rc5 time, but wanted to get this out soon for review.
-> > >
-> >
-> > FWIW, this is my failed attempt to copy what statmount_test_ns does
-> > to mount-notify_test_ns:
-> >
-> > https://github.com/amir73il/linux/commits/fanotify_selftests/
-> >
->
-> Hi Jan,
->
-> This selftests branch is now updated.
-> The test is working as expected and verifies the changes in this patch se=
-t.
->
-> Would you consider queuing the fanotify patches for v6.6?
->
-> We need to collaborate the merge of the selftests with Christian
-> because my selftests branch has some cleanups with a minor
-> conflict with Christian's vfs/vfs-6.16.mount branch.
->
-> Maybe you will carry only the fanotify patches to v6.6 and
-> Christian will carry the tests in a separate branch?
-> because the fanotify patches and the tests do not actually depend
-> on each other to build, only for the test to pass.
+On Fri, May 09, 2025 at 01:13:34PM +0100, Lorenzo Stoakes wrote:
+> Provide a means by which drivers can specify which fields of those
+> permitted to be changed should be altered to prior to mmap()'ing a
+> range (which may either result from a merge or from mapping an entirely new
+> VMA).
+> 
+> Doing so is substantially safer than the existing .mmap() calback which
+> provides unrestricted access to the part-constructed VMA and permits
+> drivers and file systems to do 'creative' things which makes it hard to
+> reason about the state of the VMA after the function returns.
+> 
+> The existing .mmap() callback's freedom has caused a great deal of issues,
+> especially in error handling, as unwinding the mmap() state has proven to
+> be non-trivial and caused significant issues in the past, for instance
+> those addressed in commit 5de195060b2e ("mm: resolve faulty mmap_region()
+> error path behaviour").
+> 
+> It also necessitates a second attempt at merge once the .mmap() callback
+> has completed, which has caused issues in the past, is awkward, adds
+> overhead and is difficult to reason about.
+> 
+> The .mmap_prepare() callback eliminates this requirement, as we can update
+> fields prior to even attempting the first merge. It is safer, as we heavily
+> restrict what can actually be modified, and being invoked very early in the
+> mmap() process, error handling can be performed safely with very little
+> unwinding of state required.
+> 
+> The .mmap_prepare() and deprecated .mmap() callbacks are mutually
+> exclusive, so we permit only one to be invoked at a time.
+> 
+> Update vma userland test stubs to account for changes.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-FYI, the selftests to verify these fanotify patches have been queued
-on Christian's vfs-6.16.selftests branch.
+Reviewed-by: Pedro Falcato <pfalcato@suse.de>
 
-Thanks,
-Amir.
+Neat idea, thanks. This should also help out with the insane proliferation of
+vm_flags_set in ->mmap() callbacks all over. Hopefully.
+
+However, could we:
+
+1) Add a small writeup to Documentation/filesystems/vfs.rst for this callback
+
+2) Possibly add a ->mmap_finish()? With a fully constructed vma at that point.
+   So things like remap_pfn_range can still be used by drivers' mmap()
+   implementation.
+
+1) is particularly important so our VFS and driver friends know this is supposed
+to be The Way Forward.
+
+-- 
+Pedro
 
