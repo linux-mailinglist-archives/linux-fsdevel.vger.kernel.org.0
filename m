@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-49149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C331AB89B9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 16:46:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E1CAB89BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 16:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18EF1643B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 14:46:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3726B4E6E4E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 14:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0FAD1FC7CB;
-	Thu, 15 May 2025 14:46:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F231FDE00;
+	Thu, 15 May 2025 14:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fh3cfGOB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kJSB+/tF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4CC12CD8B;
-	Thu, 15 May 2025 14:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67B112CD8B;
+	Thu, 15 May 2025 14:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747320363; cv=none; b=lLQjk3p7iIzX/Ae3zXNaFJkra1044FLherGDjfHvuXoTjXUQlkfiks62GuUN7iddFvbWx4OWpl0NUxGtuEkSEzLKujvV/dUwp+S397nG4i9P2x7edXnkjnK2Wjk5YI0DHlxtKt1tlQFuOCI0wmnsQGmUwRcNcWdedH3U83TvqOc=
+	t=1747320370; cv=none; b=UbzteHn3DAvC74baxmweDynuda6cOoeFsCd0rOflxoD/avUXOn7S/JerTKbSaq/S162BhlBcnoUgYpFQ1eGE9rzLYWdJbdgUW4f7ZZD2I+ecWIIirdmz3KzhCURr+pc91T8qRvi2OOa8Do/f0PEs6NWpwBXkBQJl1rxnaZttNY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747320363; c=relaxed/simple;
-	bh=uP6tMGm9xi2j9pTznEkV9HDsT09jYV8jDGqz6ACeva0=;
+	s=arc-20240116; t=1747320370; c=relaxed/simple;
+	bh=qy5Lsv+8bg5XtirxFaxWUek6uWiiKPkj1UI/BETJAG0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ouDxnUHKptYnXOEq7/U3AFvqdjdKkE4+v2PaebiSNztDYk4ZMdTopusdWpE/JvPLpQMEa50ZLHxrKiMBmwe05bjJCUMrBqyiYXKDXCj4GQ9tZGSkc3Sqdhfj71dXQxV6pBpCqcBaK8DfD9uyhIOJODYYMJr1hKubWOoxJtyFJpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fh3cfGOB; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=XFFNpZP9J7g3rpntscQuW8PEdISqZV+L7FbekBwS0n7x60McENEw8AlJDGhvacAL0M0iXNT+la/p0RC12c+ZKDgAvl4mjNv9Z7f4ROKQhocn548FUo1GTPZa4HarUgdxsbofI5mQo4NA/cTEL09aK1sSnPsWZ0igryFRQjW//aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kJSB+/tF; arc=none smtp.client-ip=209.85.210.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7418e182864so1135009b3a.1;
-        Thu, 15 May 2025 07:46:01 -0700 (PDT)
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-73bf5aa95e7so1087492b3a.1;
+        Thu, 15 May 2025 07:46:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747320361; x=1747925161; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747320364; x=1747925164; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VaNnp133QjePu0G+LkhstF0zTD9c9q+M1LCVIv6hFLM=;
-        b=fh3cfGOBoBXoQvgOygqbWIjp8WOKcwLSw7jNtnH247agyOKplQ0rwVPkTsJKH4Dt4V
-         OAy+SG4FpsHwQDrWScYvvnmkV7fWMwNTFl7dFpbB+T/pR54ZFglM9wIPfXPiacu9SbIM
-         uxK4/hFnWWt8IrQlm5i5iOq18kdgI/Zu/4At0MhgX+3JRiGg5xOPGx/j808MVEWVXCgN
-         9zYuBS9N+guwJZ7XqPW9YrLJAR1Yop2srvS8M1b9Q9uPepkCUL8oVvLA/QTMbIsYw3h0
-         +EGXAXDM08nUOJOL9I1ah9WHIlo3HnKtAqmzX04u5qwJHrScurAZTgpN0l0aPnFpmJXm
-         eQCg==
+        bh=dzSbbiFQm2kwqOByIvSZFOSSFh0n0db4UJIuluy1TUs=;
+        b=kJSB+/tFif8LEhfN10LoOzsUBpZZzlTr3RcXeYV1/wPyGHx4Pa9CVIODKJSzVRweGU
+         +DNnmfu0QJ/6VM02Le1z5j1FPn8iV9KCQ/XRh0LJuDnjD7sy6DyVVvTTCVZ5frQGrbeI
+         t0PT30SgRV7YYwRFwIXIrTMO6nkctDvds/KKHwXy73ifnMo+g6TL/Zn7VP4yHQYK7h1k
+         I+RpVeN4wDOg7m+TtA0tecQvHG2oFIClBvhOO1bQ5JguBj4z2JmzDhszxbNNsvFE2lTu
+         YDfBCU5IrtlSJ6z4hbQod74ONleh6NdQ9NTDPOZE7haJjVVPRlsxdUKiSi6wQfEiiL+m
+         UTRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747320361; x=1747925161;
+        d=1e100.net; s=20230601; t=1747320364; x=1747925164;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VaNnp133QjePu0G+LkhstF0zTD9c9q+M1LCVIv6hFLM=;
-        b=ihof166jfvZQzcX3WqSSENAJT2ecVY+if+COjW6KwKtxqgHkq5k9l7N8T/RqZd5R5s
-         IKrl+idL+p5Qyf+r5XZC/r8RYbxByDlGVW5LxS9BKaZZgilXVXz5rLF9fA/f5kq2WE3i
-         b0BmXQQL4ZzxcPyHGqKdY2k7Nfo9swy8U6glEDJ/HnHhlU8r1DxcsQZ5N4kvz7eAVmKR
-         oUViCg3uQ+zrFkSz3BEe5bAVj0KO7Jgn1lEYdYgtjuBs47qSs4MCApHzgRyjikg5fcgT
-         HjGyxz4wOig05lNJeL9FuNuSDDVJP6aC4VcZcAohLMES7a+hXtR/Z4b++uSC2p+Fgpus
-         7zHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXOSlx08LDDwwO/CDeX4MCLEvB7mVXsMiADxM3D3gbf2yFlle8ruQGHsrxf5yrH/8nhVKWIfumi7IHFWKl0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwsHoFqdz2sEVsCgEha+ozlJOh4qr67E1H/TsTdwkXABQfm0qAi
-	NBuaw4Kc7gdh7W+aZ8S34EZZC3xYDKzh6Uymj5XjEYcQJjQRKspNaN0CEw==
-X-Gm-Gg: ASbGncvlh+9WLKqq0kYTWsiWllZ+7XEB97MsyNgA3jNA2+zdW6tXdjQOkLf6/rXROnz
-	rj29jxxRdFdVPI8PI1mCjfwBkEtRH6q7Ps1YZq0kwjBfc4XMxY/l3iTp+ZIAp9v9UB9EXaUl5aC
-	an41J76+eY9wFaBEcPZVhW+sfqLREnhlJrtejF9xrSPTiFXRb/m55pnx7LwhkGvgs89nPD+GE1o
-	4lanr+2nse2EkBKxbx0WrXOYk75b7cG88OsX7K0mDiQndlDxNgn+S1NWZ0xyJqhpvVdWSe8nEnn
-	DjvX/Vx/YuYrvJqKdBDfnWA+Fh6+Snqhteq9t4iOZLHohwzbi2EibC1k
-X-Google-Smtp-Source: AGHT+IHVlY3Ou5rSi9M6y+RVY3gWSstaRtz0pe8DyW0m0KLQHGBeSZtFTK/OI7PYBd5vkLayLZicBw==
-X-Received: by 2002:a05:6a20:4311:b0:1f5:889c:3cdb with SMTP id adf61e73a8af0-215ff0975ecmr12533607637.8.1747320360481;
-        Thu, 15 May 2025 07:46:00 -0700 (PDT)
+        bh=dzSbbiFQm2kwqOByIvSZFOSSFh0n0db4UJIuluy1TUs=;
+        b=kBXRppm2aXiEGGbzdS/pnRUGFl7+2ghWumKhEl+g1czUlsuKGJF8mQXg1TdhSvRN+N
+         tVi3Y1VY+cwXllUy72T/locc0AurbRIHmPvEQOAJl3DVwFVE6k81qWgcA6WIrU5cRO92
+         19X5f5hSZV3wOy2G6cvjakn5yWK6yIAqTiPISsyY9odvUu6RR86Y/fg+308DsWQg7Ntm
+         9zuMKaTM8ucvzZ3CSomNmywmHEQdLshzeGKDV6dnetwgf0cEV2zsXWNhGmBSdTgqQkXM
+         DuRr9GWY/TG4cgv3I2RR8G3G6JAyF4JGgTaVPYefhdwWo/jmGqYAX8HEzrJBkFApfbBP
+         W/RQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVygtHdkLz9jHd3a+H6vpduhETSq9G9CfsN4T0hL2KfiAH6wMfuzFKdnnIqPDYVYowUC2qi57xkSpgty7eD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3NprH80i4OB0Abg6ecq+IpyK38XWvgtS7kKeznfKJeIGEsVWp
+	ax0Iq+8gQwLSrHzn7prVHkUXhB9Ko0xNx2wZbTPMk0unbBjQEHy3JmgGKg==
+X-Gm-Gg: ASbGnctFrQovR4BISXcbZ/WpUVlP+pY7ig5D07xX7xeBeZbJRCv3fJLFzaC58F5L8kj
+	mY9TfO40GWkypmNwkk0Y5AyTcLU8yp/mPR07FTrevMql8D/XRbi1/MOjCWWL9EfZv/gg4311qlk
+	JsTWHk961uYnXuWCAVvwRjwMk+QCncsighEqZMjvpiLo9OPl9I5F3xRQMSpvDunyXfCyaVA0Dxn
+	6Ghb6hDokW+gif7OC+3bpZHtGtPblDw8QYo6hacSkoxlQV1BVHOg7n+31Ka1rP6VmaSb2GSorBd
+	bRZybAfuM7dRsCB3yOPUfK5dQ1pKoy5c4/tF+tAsuA9zlfN4Zg3+HY5gEbh/f2xSvKA=
+X-Google-Smtp-Source: AGHT+IGJN8OYzfhXTM+harcFNKz8r5fqt5sb4R9gmQ9vQFkPN7PVjZPelRBMQljEa/y9aEVaxK0Qag==
+X-Received: by 2002:a05:6a21:700f:b0:1f3:1d13:96b3 with SMTP id adf61e73a8af0-215ff0933a2mr10204127637.5.1747320363677;
+        Thu, 15 May 2025 07:46:03 -0700 (PDT)
 Received: from dw-tp.in.ibm.com ([129.41.58.7])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6e6a5sm3451a12.17.2025.05.15.07.45.57
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6e6a5sm3451a12.17.2025.05.15.07.46.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 07:45:59 -0700 (PDT)
+        Thu, 15 May 2025 07:46:03 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linux-ext4@vger.kernel.org
 Cc: Theodore Ts'o <tytso@mit.edu>,
@@ -81,9 +81,9 @@ Cc: Theodore Ts'o <tytso@mit.edu>,
 	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
 	linux-fsdevel@vger.kernel.org,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v4 2/7] ext4: Check if inode uses extents in ext4_inode_can_atomic_write()
-Date: Thu, 15 May 2025 20:15:34 +0530
-Message-ID: <86bb502c979398a736ab371d8f35f6866a477f6c.1747289779.git.ritesh.list@gmail.com>
+Subject: [PATCH v4 3/7] ext4: Make ext4_meta_trans_blocks() non-static for later use
+Date: Thu, 15 May 2025 20:15:35 +0530
+Message-ID: <23ce80d4286f792831ce99d13558182ee228fedb.1747289779.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1747289779.git.ritesh.list@gmail.com>
 References: <cover.1747289779.git.ritesh.list@gmail.com>
@@ -95,32 +95,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-EXT4 only supports doing atomic write on inodes which uses extents, so
-add a check in ext4_inode_can_atomic_write() which gets called during
-open.
+Let's make ext4_meta_trans_blocks() non-static for use in later
+functions during ->end_io conversion for atomic writes.
+We will need this function to estimate journal credits for a special
+case. Instead of adding another wrapper around it, let's make this
+non-static.
 
 Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 Acked-by: Darrick J. Wong <djwong@kernel.org>
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- fs/ext4/ext4.h | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/ext4/ext4.h  | 2 ++
+ fs/ext4/inode.c | 6 +-----
+ 2 files changed, 3 insertions(+), 5 deletions(-)
 
 diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-index 5a20e9cd7184..c0240f6f6491 100644
+index c0240f6f6491..e2b36a3c1b0f 100644
 --- a/fs/ext4/ext4.h
 +++ b/fs/ext4/ext4.h
-@@ -3847,7 +3847,9 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
- static inline bool ext4_inode_can_atomic_write(struct inode *inode)
- {
- 
--	return S_ISREG(inode->i_mode) && EXT4_SB(inode->i_sb)->s_awu_min > 0;
-+	return S_ISREG(inode->i_mode) &&
-+		ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS) &&
-+		EXT4_SB(inode->i_sb)->s_awu_min > 0;
+@@ -3039,6 +3039,8 @@ extern void ext4_set_aops(struct inode *inode);
+ extern int ext4_writepage_trans_blocks(struct inode *);
+ extern int ext4_normal_submit_inode_data_buffers(struct jbd2_inode *jinode);
+ extern int ext4_chunk_trans_blocks(struct inode *, int nrblocks);
++extern int ext4_meta_trans_blocks(struct inode *inode, int lblocks,
++				  int pextents);
+ extern int ext4_zero_partial_blocks(handle_t *handle, struct inode *inode,
+ 			     loff_t lstart, loff_t lend);
+ extern vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf);
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index b10e5cd5bb5c..2f99b087a5d8 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -142,9 +142,6 @@ static inline int ext4_begin_ordered_truncate(struct inode *inode,
+ 						   new_size);
  }
  
- extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+-static int ext4_meta_trans_blocks(struct inode *inode, int lblocks,
+-				  int pextents);
+-
+ /*
+  * Test whether an inode is a fast symlink.
+  * A fast symlink has its symlink data stored in ext4_inode_info->i_data.
+@@ -5777,8 +5774,7 @@ static int ext4_index_trans_blocks(struct inode *inode, int lblocks,
+  *
+  * Also account for superblock, inode, quota and xattr blocks
+  */
+-static int ext4_meta_trans_blocks(struct inode *inode, int lblocks,
+-				  int pextents)
++int ext4_meta_trans_blocks(struct inode *inode, int lblocks, int pextents)
+ {
+ 	ext4_group_t groups, ngroups = ext4_get_groups_count(inode->i_sb);
+ 	int gdpblocks;
 -- 
 2.49.0
 
