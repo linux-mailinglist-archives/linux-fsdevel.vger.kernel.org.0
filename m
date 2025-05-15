@@ -1,113 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-49104-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49105-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E19CAB8115
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 10:43:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5522AB8132
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 10:46:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A03861A0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 08:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A93303B5670
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 08:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E902882CC;
-	Thu, 15 May 2025 08:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B00AF276028;
+	Thu, 15 May 2025 08:42:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="CQUkciTF"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="GHENDISz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC29E21773F
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 08:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8487A1ADFFE
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 08:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747298322; cv=none; b=RaHYw5XdQiyQ2CI7Up5wQSr2/GzJqw3yr77RbgQd6EMef3jN7hPFLzJfyKecVSNpVxONihupWdyiuI+LqzS4cJ24jSuyjvvXuHeiW+lSHNs1+/p2aXrtn+EisT+gn3/msKfTY/1jklWUotZjN40r9wFqlrrUCgJ80w+JESB1yAs=
+	t=1747298565; cv=none; b=i5wEOfEUX9Hdp3PVrjbclBoBHGLA8k3SXBuCaSwdwQDQnIRrqNLOjdEreWTUucm7eVuulFPG59RWHqtUhqntneBgYWzVvP3aTEzZ7Q0ModbX3PzQMscIG4aQof2xh2SeMv3aZ0GPtRjo6yVMmBED6vLUvcWxASYao9lG9rC84F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747298322; c=relaxed/simple;
-	bh=0PdTTQT20quX7wXDMvkZ3ogq5W5Chx/Z0jUjneUvm90=;
+	s=arc-20240116; t=1747298565; c=relaxed/simple;
+	bh=lIl3TAR05UN95mf6gnY4qgpstbycN/VCJtwc0W4I5fE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mSr9drRxvIc1gEgxw1iFaoNLd9YHzWbeeAzYyVzze452GocjxHKEttQ5JZ+2GpyKwxQHkAp9nCXOJQDN1fiYTeRc0nH+7HEAXHD6raTIl+8JOcwou28oV1LIX18GIqCMKHqhUQ0q8NcZ0PaQyVyEDKpGiZtOB33IwCk0vtMD+/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=CQUkciTF; arc=none smtp.client-ip=209.85.160.172
+	 To:Cc:Content-Type; b=cKFd0d3ZaDr7rCDzj6JPi0/89DX9tsZQYSWAK2R/m2//NPaIi2EcXoaiAh7R5QNtsQLPmu+/042+2sEpT4WM0PL2Jv9DDElyJzUxXLYQENWM5/RHKZiFfJvqtJNxd/GzhuNp255doQlK6sYVnzZp88FcFjyBkbAdsQii2Zd5q3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=GHENDISz; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4769b16d4fbso4030481cf.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 01:38:39 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4947635914aso7616371cf.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 01:42:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747298318; x=1747903118; darn=vger.kernel.org;
+        d=szeredi.hu; s=google; t=1747298561; x=1747903361; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0PdTTQT20quX7wXDMvkZ3ogq5W5Chx/Z0jUjneUvm90=;
-        b=CQUkciTFjip8UFUKKwsh0pLjC1S0UT4nY/j0UfGNYKthy/wwaOGXqVLP1qRuAu8Nj6
-         iNZwMFxwSlkpMQLTt5cKTgweLY/1tV1TKxLqPRUkY0t2aiXT5Qn4Kn73eNVqXLE/n3JF
-         HwyfpxtyyW0CqE5JvSifNGF0GwsZ0uUt7HY9E=
+        bh=lIl3TAR05UN95mf6gnY4qgpstbycN/VCJtwc0W4I5fE=;
+        b=GHENDISzI6k/zKZkx+F42taPepCgceoe0Ud3Abjrp3pAuKuW5/kDLf0FmEM2YNSz4q
+         +Ciq8DgZKceDhXxTwefMNUNLsMiyX6+4+uvhBqL3FWQaX8GPDD9qbvqiJGq2XpJqxaKi
+         tiF+6jDqIxhTytDUF7gaBPlkCkLoJusrX3ZqI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747298318; x=1747903118;
+        d=1e100.net; s=20230601; t=1747298561; x=1747903361;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=0PdTTQT20quX7wXDMvkZ3ogq5W5Chx/Z0jUjneUvm90=;
-        b=DsyBF6LDSY9eRGmcuAVySWPN5JBAeaCizvYhXv/gqx5J5Xj4LJ0E9tj2+V87Lv4FKw
-         S6tT67FqEf98WRPKWR5fnjLY85axWuelS6MGswV3M7UEsAD7NF+vjC619iHV7sMi5GmD
-         0BWYhvjFkwUvTb8SaPaaMZXCP5NJn/TknuiKfriWGXEIcf8kWtSxdN/hODksxIzPEvYH
-         DHt8XwwxNvM+pSZi8KgkpusBApiqbkAoAo49rhlLYkMHbEUvv69To9ONH9pucVpTm+v7
-         llOlj33ik9FVguyt6DPY5zNhX/fSTAQuhOv5aE+mKdbnGNZ25ULHi2e4VN9Ea4OkENtH
-         QRjA==
-X-Gm-Message-State: AOJu0YzaWcWcBFxEirI0Td/MINHncVMMk8tfg3aqatUHcM2DGwHAUk+l
-	1J5OaS8VYT3C0PYMREpHi7A9XPaJS5vqKm7Yg/IpSbUY8x+/UO3oP4c0at30L4rEiQZrSc1BAkT
-	QjsUJhwQaAn4kc8lJW36tQNYlH8AtoLiK54xhHA==
-X-Gm-Gg: ASbGncsEaAsCJ2PTvlpfiCPz6m/Vtd+YdGqWlQPMhnvNKA74dhdgxCtJvykVKitqrDA
-	CpP3BrsEzbCDuVqcCVk8S5qm3QpRtpdxOne+LRE4Suq+SXj0pG56W4qOkEUp8PeGRzZOVt00t/7
-	QaVlI7Ce0U21dygYad+YKYbrDj1zfrcQk=
-X-Google-Smtp-Source: AGHT+IH68fce/VSGVLlGZmWK50I7mS4fL4GcOIZJtNf7vOBRoAC+zaRourNzh19RRcVW6URcn7YD9tWDTMRTbkqEE8s=
-X-Received: by 2002:a05:622a:248:b0:494:990f:9817 with SMTP id
- d75a77b69052e-494990fb3f1mr61498831cf.26.1747298318557; Thu, 15 May 2025
- 01:38:38 -0700 (PDT)
+        bh=lIl3TAR05UN95mf6gnY4qgpstbycN/VCJtwc0W4I5fE=;
+        b=HBp1s/TeGroNQqm0V5rFKvjwWTgmUGVFjfuNbsQ09YVam7/xnrP+nR7WPWjNXPenkI
+         UOrU9W+vumJbzW4yFTpAuHtVqV7KG54xPpCbfK5FzFUIesU7XyaIqe18+8ffamNQpz0S
+         hJf8Mlsncphc8p+Tjhh/j3+J80LSlnnYyH34FkITtqS031fjQITPN5xYsvLDYtfel8RD
+         fBwrvPgLf4W/2Q2Sek/87GXtb7sDsFILPyUJNjzxR2GolbG0xSg3DXvhuUwFLWRO0C6W
+         u3Jkt1QiBxpx2qEI+N9VhLyNeIORGGsgKRlLPGVVwrtQEsfAmWP3lAMHK/+YJ8YGdehO
+         F+wQ==
+X-Gm-Message-State: AOJu0YxyV1FkvduZYYazHSAsQ/874p/vo2wF6/9rQeVHGSjyCv/RCzUy
+	uIyMrp7AiSsMHtaI+O7jTpBsy+J0peLy/D5eQUixSNTqBhD7ucV6Bn6apHepnPebIrDp/nUcCz7
+	YCXKgV0kiqAys9LKLeLUqVnx4wo4x+KRpKqLje2DjXLd0LqRj
+X-Gm-Gg: ASbGnctkIK62CE04uyw+ZCn4SzwUtBZloLxkXb+CEUej8VZ61Mx0HM0Sr67kksU0KF3
+	F0F/+QBDyUr9Yf2RMUvuFxZhJTpdkk7N2EuGu1Ds9mNVKQ+KdHDY27zw3NtVHapgmsihhTMtgI1
+	e94LxX9WCtzynDS3PjOXXZ/KNc8A1XgSE=
+X-Google-Smtp-Source: AGHT+IEU7KPoYSGIgMPmDvvf+X5o1Uyi107954s5eKk8yyisW9J/HTgOd0hzWQX8jTwVJdmbrVtrne/AiM6N4sbPmOQ=
+X-Received: by 2002:a05:622a:1c0d:b0:48e:1f6c:227b with SMTP id
+ d75a77b69052e-49495cdb74emr98076581cf.26.1747298561391; Thu, 15 May 2025
+ 01:42:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422235607.3652064-1-joannelkoong@gmail.com>
- <CAJfpegsc8OHkv8wQrHSxXE-5Tq8DMhNnGWVpSnpu5+z5PBghFA@mail.gmail.com>
- <CAJnrk1ZXBOzMB69vyhzpqZWdSmpSxRcJuirVBVmPd6ynemt_SQ@mail.gmail.com>
- <CAJfpegsqCHX759fh1TPfrDE9fu-vj+XWVxRK6kXQz5__60aU=w@mail.gmail.com>
- <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
- <CAJfpegv+Bu02Q1zNiXmnaPy0f2GK1J_nDCks62fq_9Dn-Wrq4w@mail.gmail.com> <CAJnrk1aX=GO07XP_ExNxPRj=G8kQPL5DZeg_SYWocK5w0MstMQ@mail.gmail.com>
-In-Reply-To: <CAJnrk1aX=GO07XP_ExNxPRj=G8kQPL5DZeg_SYWocK5w0MstMQ@mail.gmail.com>
+References: <CAJfpegtdy7BYUpt795vGKFDHfRpyPVhqrL=gbQzauTvNawrZyw@mail.gmail.com>
+ <20250514121415.2116216-1-allison.karlitskaya@redhat.com>
+In-Reply-To: <20250514121415.2116216-1-allison.karlitskaya@redhat.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 15 May 2025 10:38:27 +0200
-X-Gm-Features: AX0GCFvUpGn26R9Xi06NrqNcXENaH_igFmqTI1x40QkJpJ57YaaMa2GF7wPpuqs
-Message-ID: <CAJfpegvayjALR9F2mYxPiM2JKuJuvDdzS3gH4WvV12AdM0vU7w@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: use splice for reading user pages on servers
- that enable it
-To: Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm, 
-	jlayton@kernel.org, kernel-team@meta.com
+Date: Thu, 15 May 2025 10:42:30 +0200
+X-Gm-Features: AX0GCFu1PzjJ_L0ozzKHhTV5H9lCd-y4v7HQ27H_tcjIncSseH_FsIQ3PIqSmUA
+Message-ID: <CAJfpegtS3HLCOywFYuJ7HLPVKaSu7i6pQv-GhKQ=PK3JAiz+JQ@mail.gmail.com>
+Subject: Re: [PATCH] fuse: add max_stack_depth to fuse_init_in
+To: Allison Karlitskaya <allison.karlitskaya@redhat.com>
+Cc: linux-fsdevel@vger.kernel.org, lis@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 15 May 2025 at 01:17, Joanne Koong <joannelkoong@gmail.com> wrote:
+On Wed, 14 May 2025 at 14:14, Allison Karlitskaya
+<allison.karlitskaya@redhat.com> wrote:
+> Use one of the unused fields in fuse_init_in to add a max_stack_depth
+> uint32_t (matching the max_stack_depth uint32_t in fuse_init_out).
 
-> No. The server copies the buffer to another buffer (for later
-> processing) so that the server can immediately reply to the request
-> and not hold up work on that libfuse thread. Splice here helps because
-> it gets rid of 1 copy, eg instead of copying the data to the libfuse
-> buffer and then from libfuse buffer to this other buffer, we can now
-> just do a read() on the file descriptor returned from splice into the
-> other buffer.
+This is not a fuse-only thing.
 
-Yeah, splice is neat, but that pesky thing about the buffer liftimes
-makes it not all that desirable.
-
-So I'm wondering if the planned zero copy uring api is perhaps a
-better solution?
-
-In theory there's nothing preventing us from doing it with the plain
-/dev/fuse interface (i.e. read the FUSE_WRITE header and pass a
-virtual offset to the libfuse write callback, which can read the
-payload from the given offset), but perhaps the uring one is more
-elegant.
+What about making it a read-only sysctl attribute? E.g.
+/proc/sys/fs/max-stack-depth.
 
 Thanks,
 Miklos
