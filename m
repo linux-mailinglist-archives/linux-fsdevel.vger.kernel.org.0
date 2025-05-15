@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-49193-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55D4CAB910B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 22:57:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6929EAB910D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 22:57:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E478A7B2F2F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 20:56:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03E9316E71B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 20:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5CE29B791;
-	Thu, 15 May 2025 20:57:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1418A29B8D4;
+	Thu, 15 May 2025 20:57:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2E4TkUI+"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NiK4c5VK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE53F19CCEA
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 20:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1EB29B797
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 20:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747342627; cv=none; b=KWw+EVisYk7qAcsRkTO1gipUsJyyYMGK5CquNkIaFL+5qfctQNPOrTAO7oka52vvO7ioQgloWnjFcbVWInXbQkSDr8Bvdqj9YbwqGxiFGghGgFwfvirpBh1K134Fpf3Tu25o8FbVpOgyrk+x16td3PxxTx7mLszf+uYgRz3S1FQ=
+	t=1747342632; cv=none; b=ekZYRpbE68QhlP7YqbQUmOxAQ8ywudar1VkXkXR8CWXsKHkPOIxC1+5gYTwXV+u2C3NH8O/nhILCfzCrvj/cvTnV2dvdlwTCd2lwb091zzhIwOUFiEvST0xAaa86gbJAThKIBaRpys9FApCFKPSzzpdF3Hr8TtMrnbNdNARcE6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747342627; c=relaxed/simple;
-	bh=WAuojBQeTYGID0V8nfyJqR75i/8ljPBUHbmJ6zl0Hyo=;
+	s=arc-20240116; t=1747342632; c=relaxed/simple;
+	bh=n4S9xk7FkDGi8ZPRR5Krx9XPaCn53xUBcwh32O8sVhA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OC5c4sUe4ruot3FBwj4pqmVpY8kqky0UzwpADzz2UH13AqULrGAkMeka0C+F/jJu01IE1j4a/lMdmd7rUHFfiPHkx26Z0V1UtowJDhQs752qvwsw98GZYe/8utiV1YLUFjMBmIyggq4ZDQab56nK9gjXNa0z0t0O7IGpHsQQtvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2E4TkUI+; arc=none smtp.client-ip=209.85.208.48
+	 To:Cc:Content-Type; b=Zn75uhtEezcgzGrVPsIp3TUBnTSwG9UrcHiEe5LCF3JXZy+SLJFRJYG7DQOHFK2Q7Yl+l3x/XbxzIX4Ebs3JAhm0KRihTOmScJ+mot3B3HW3Jgpfj0mrjp4RdXfxpizHEUh8sPHqrMAOgJEhMVjXuwNcdIrqXaV1y1vtVyqIk2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NiK4c5VK; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5fce6c7598bso3611a12.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 13:57:04 -0700 (PDT)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so1345a12.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 13:57:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747342623; x=1747947423; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747342629; x=1747947429; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G6d1ws3HBhNK42TBISsMf1OSa89s2CwS14owdyho6Rk=;
-        b=2E4TkUI+CkbZkAlnC250Mxe9/xitNISCbm+s0arngzN0SxILB4dg3HqI1BK5I2zKgR
-         7GvKDcylgzK2pQ8eohgxuiqSAqXPEBBRpOLErS9ShOHKJzGF9hlw+W3Qusq8Kh0RKJRH
-         1uv9KbqG70Pudhl5fpsuzWxkf9fEHohYHWmoF1/VcMn9aB4uWARWkKn0F0C7lU75gr9I
-         NN31mT6E32bLzayS0b299ZgICa992MhsyXDwmx0w0rOrghswTtNGP4OOYvHhd+MDzOzh
-         s2i8n7hfxoOkW8mB1+ej/yFWZc5FpQg8COHGEr0eu5XYG8ry1xBhWe9Wt1aIp4x5KIqv
-         5rlQ==
+        bh=n4S9xk7FkDGi8ZPRR5Krx9XPaCn53xUBcwh32O8sVhA=;
+        b=NiK4c5VKp6uMSJjFMco2TAD5PtvZRm+/Nbty7oVQE3OaZnmKVU3RWdW2kJpwdm8WC1
+         9w3+WoYcman57A0RL3v1OVsw2ok20PXL4KRfwkKPZ/DBIqDWy335+k02rAGSMrjKctKZ
+         kIPgCvZ3G6k5tUmICjohmIP7Tqge+2ljZ4o6RWu5N7kW8TSzeumG31IpV+p7XfW+pjve
+         tNqTL2N5jYN4W/2iw1ODL89i8TcXuy+J52rVziqY0RxKH46PaFD2vk6BytslHkn7eUuz
+         WLvCrhCe6ppUBB17JifhmtoB2h3P99gvhohrMn5FM1oktQvi412X2dzVdFTWJaOheR3s
+         XPSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747342623; x=1747947423;
+        d=1e100.net; s=20230601; t=1747342629; x=1747947429;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=G6d1ws3HBhNK42TBISsMf1OSa89s2CwS14owdyho6Rk=;
-        b=mJ1a/iowhDcdvVF0boI9/4HXWj8CG0k3iRFzj5/ECBNNqPNIkV/Ah88H2oNOZEGfH4
-         sunc+j5GS32cBF2WzWbWt72aiypqMGmU3tCJhHhNRpfxSC85hH42hzH5gxqxuUTBe0dF
-         +IHpnLuYZI/NpwyQxMFAxB1kDER8bDBsvBT1FE3wk7SoZETFQ7nTOmVR3ce36lb1wuKy
-         +6AWnQgDxMmgH1Zmgn2oJkNunyGLW9WAyND0GXsxzoQmcsuIumrACnR7lQILXhh/hS7T
-         NKAcVOqA4TE2+JelN/NS/vS2g+VN4L6YjqpZRnPV8YjLCtFcvqSrlH0FYyolznKvC45C
-         Hfuw==
-X-Gm-Message-State: AOJu0Yyhn9T/3cYXPh4WPQUm55yjAruqY3X9XGv30p/JJk0eNV3yJ767
-	22nt0DkHJGE2SOi6WhnINhXG1+N06hAf2HmXugPVvRQZqra1nPX/9awRqDvgHDDqHr1GmckhGPN
-	Os+m903hW3Q36OniZU2tuoWXgnKzeJsekPLDjg95I
-X-Gm-Gg: ASbGncv3dKRRL2vlYiL8YdTJq2MQ68P3kJMuqhEPuXrYC/4L2AYnPNWdejiE15fCokx
-	yjrMtphbcAEubrmh7CexH5kkx4I/VOPxJfLG1Iqoh+VBoVzu1lh1GgJFjhIkYEgywk/rTL18Jgo
-	NOCgXB8eh5SFO+s5ykVRAvMVYwmhQi1N5nLWvSsg9kmnfQH+KKmePL7dMnRyNQ
-X-Google-Smtp-Source: AGHT+IE5Rdo2+rJoO+MntkgAfh3AGDE0/YaYr5xKepwgWrPQCmQuQyp16WQnYIKaU4pJoL2XM+cnwZSzgGO0Z5SGp6I=
+        bh=n4S9xk7FkDGi8ZPRR5Krx9XPaCn53xUBcwh32O8sVhA=;
+        b=k9rNtogNtqpxjwx3WOJL2p2ysCstHJqfZDo3rBf6YKqO2WXkJzma+/4aqzGgESRJek
+         gI5SnPYwM9TV6/8g5fyKZth0NQCsIAaIB/QUamcNYkAM3tYFN895qtQKA2LS9697gG/F
+         KFaYVia8GdLePZ2pG/B35k3bS07hpF43seiEs/7fOaqX9CMpXIP6+JSmw5mMh5LRXGPQ
+         o32r2ukm1c2vfJOsJUrBijGEqZwhdiaCSAzx0RJoecYQngqp76w9ZWMz9pd+au2cyzMv
+         mj32CvnrluWFzk1doWEN/SDOx4oTC7nN/pGRv+USYf3MeE7RWPPyhNEAzt4QlZp4u9zq
+         jZ5A==
+X-Gm-Message-State: AOJu0YwyXsM+o2TI3MhWmKFTySEhvlj/giDySTmXTJ5LDbAHCSYeMubZ
+	d20qbQldyH8H/KylwQNmQ8xo/FfY75TvNnQeIGfIG0h0fDKH8BH+VhwobY8iKoAfb7CzJw7Syo6
+	vYa+L3E3bmL0fRbiOrrzsdP4gSbqFLf2/CqCwh/lipOqx2tZEPsn8gpMU
+X-Gm-Gg: ASbGncuzCkdLpf32mYNMMvInqljiyjv3fbVGsRXGl8mBG+Bmx+oPGLv5uavhicX75NQ
+	2/EnI9jQ5/l7wNOUITlWp5q+rz1PQ0NpH9nChD1Lk2JFdO/cIAscoyWMSUYvzPEshrK77U/QHsM
+	jvAxG2A+2OD6PCN5N5jU9Uckfz56qceOQLDKMFvbVRWPuCq6Yb+k5QTz1qcTSn
+X-Google-Smtp-Source: AGHT+IHZOBTJlThJhcv/ZxHz/H+8QZlugn3sleQN3wcAGTU8hgAWjH2Njf0TmrGz0ZHIoDeXYKzWzlKfCbbNua8Uh/A=
 X-Received: by 2002:a50:cd19:0:b0:5fc:a9f0:3d15 with SMTP id
- 4fb4d7f45d1cf-5ffce28bb43mr138842a12.1.1747342622880; Thu, 15 May 2025
- 13:57:02 -0700 (PDT)
+ 4fb4d7f45d1cf-5ffce28bb43mr138873a12.1.1747342629100; Thu, 15 May 2025
+ 13:57:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org> <20250515-work-coredump-socket-v7-5-0a1329496c31@kernel.org>
-In-Reply-To: <20250515-work-coredump-socket-v7-5-0a1329496c31@kernel.org>
+References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org> <20250515-work-coredump-socket-v7-6-0a1329496c31@kernel.org>
+In-Reply-To: <20250515-work-coredump-socket-v7-6-0a1329496c31@kernel.org>
 From: Jann Horn <jannh@google.com>
-Date: Thu, 15 May 2025 22:56:26 +0200
-X-Gm-Features: AX0GCFsmCNdRDo8SbhgKUg3UIm_6Yt4H4myWdmQn9E_klnoqzxRp7OxxuDj2C0g
-Message-ID: <CAG48ez3-=B1aTftz0srNjV7_t6QqGuk41LFAe6_qeXtXWL3+PA@mail.gmail.com>
-Subject: Re: [PATCH v7 5/9] pidfs, coredump: add PIDFD_INFO_COREDUMP
+Date: Thu, 15 May 2025 22:56:33 +0200
+X-Gm-Features: AX0GCFvCU69IQ16RRV7879LgqrtFsOSgJDh6k5Q76ICOqMSjVLU262TZzPZwqzY
+Message-ID: <CAG48ez0dqyzT3k4-HC3UjhCncgnPk28c1Av-iV8c9hB5tcu2YA@mail.gmail.com>
+Subject: Re: [PATCH v7 6/9] coredump: show supported coredump modes
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
 	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
@@ -97,118 +97,9 @@ Content-Transfer-Encoding: quoted-printable
 
 On Thu, May 15, 2025 at 12:04=E2=80=AFAM Christian Brauner <brauner@kernel.=
 org> wrote:
-> Extend the PIDFD_INFO_COREDUMP ioctl() with the new PIDFD_INFO_COREDUMP
-> mask flag. This adds the fields @coredump_mask and @coredump_cookie to
-> struct pidfd_info.
-
-FWIW, now that you're using path-based sockets and override_creds(),
-one option may be to drop this patch and say "if you don't want
-untrusted processes to directly connect to the coredumping socket,
-just set the listening socket to mode 0000 or mode 0600"...
-
+> Allow userspace to discover what coredump modes are supported.
+>
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
-[...]
-> diff --git a/fs/coredump.c b/fs/coredump.c
-> index e1256ebb89c1..bfc4a32f737c 100644
-> --- a/fs/coredump.c
-> +++ b/fs/coredump.c
-[...]
-> @@ -876,8 +880,34 @@ void do_coredump(const kernel_siginfo_t *siginfo)
->                         goto close_fail;
->                 }
->
-> +               /*
-> +                * Set the thread-group leader pid which is used for the
-> +                * peer credentials during connect() below. Then
-> +                * immediately register it in pidfs...
-> +                */
-> +               cprm.pid =3D task_tgid(current);
-> +               retval =3D pidfs_register_pid(cprm.pid);
-> +               if (retval) {
-> +                       sock_release(socket);
-> +                       goto close_fail;
-> +               }
-> +
-> +               /*
-> +                * ... and set the coredump information so userspace
-> +                * has it available after connect()...
-> +                */
-> +               pidfs_coredump(&cprm);
-> +
-> +               /*
-> +                * ... On connect() the peer credentials are recorded
-> +                * and @cprm.pid registered in pidfs...
 
-I don't understand this comment. Wasn't "@cprm.pid registered in
-pidfs" above with the explicit `pidfs_register_pid(cprm.pid)`?
-
-> +                */
->                 retval =3D kernel_connect(socket, (struct sockaddr *)(&ad=
-dr),
->                                         addr_len, O_NONBLOCK | SOCK_CORED=
-UMP);
-> +
-> +               /* ... So we can safely put our pidfs reference now... */
-> +               pidfs_put_pid(cprm.pid);
-
-Why can we safely put the pidfs reference now but couldn't do it
-before the kernel_connect()? Does the kernel_connect() look up this
-pidfs entry by calling something like pidfs_alloc_file()? Or does that
-only happen later on, when the peer does getsockopt(SO_PEERPIDFD)?
-
->                 if (retval) {
->                         if (retval =3D=3D -EAGAIN)
->                                 coredump_report_failure("Coredump socket =
-%s receive queue full", addr.sun_path);
-[...]
-> diff --git a/fs/pidfs.c b/fs/pidfs.c
-> index 3b39e471840b..d7b9a0dd2db6 100644
-> --- a/fs/pidfs.c
-> +++ b/fs/pidfs.c
-[...]
-> @@ -280,6 +299,13 @@ static long pidfd_info(struct file *file, unsigned i=
-nt cmd, unsigned long arg)
->                 }
->         }
->
-> +       if (mask & PIDFD_INFO_COREDUMP) {
-> +               kinfo.mask |=3D PIDFD_INFO_COREDUMP;
-> +               smp_rmb();
-
-I assume I would regret it if I asked what these barriers are for,
-because the answer is something terrifying about how we otherwise
-don't have a guarantee that memory accesses can't be reordered between
-multiple subsequent syscalls or something like that?
-
-checkpatch complains about the lack of comments on these memory barriers.
-
-> +               kinfo.coredump_cookie =3D READ_ONCE(pidfs_i(inode)->__pei=
-.coredump_cookie);
-> +               kinfo.coredump_mask =3D READ_ONCE(pidfs_i(inode)->__pei.c=
-oredump_mask);
-> +       }
-> +
->         task =3D get_pid_task(pid, PIDTYPE_PID);
->         if (!task) {
->                 /*
-[...]
-> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
-> index a9d1c9ba2961..053d2e48e918 100644
-> --- a/net/unix/af_unix.c
-> +++ b/net/unix/af_unix.c
-[...]
-> @@ -742,6 +743,7 @@ static void unix_release_sock(struct sock *sk, int em=
-brion)
->
->  struct unix_peercred {
->         struct pid *peer_pid;
-> +       u64 cookie;
-
-Maybe add a comment here documenting that for now, this is assumed to
-be used exclusively for coredump sockets.
-
-
->         const struct cred *peer_cred;
->  };
->
+Reviewed-by: Jann Horn <jannh@google.com>
 
