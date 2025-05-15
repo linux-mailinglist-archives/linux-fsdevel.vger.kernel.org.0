@@ -1,205 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-49090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE380AB7C90
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 06:06:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0768EAB7CD2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 07:08:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 770424C1D7B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 04:06:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E1558C1DA0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 05:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2EB1CCB40;
-	Thu, 15 May 2025 04:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5754286D56;
+	Thu, 15 May 2025 05:08:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0/TgGOp"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tvct00RW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AF07E55B
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 04:06:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E8C8C1F;
+	Thu, 15 May 2025 05:08:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747281992; cv=none; b=oLpvy2XlcJMvq6oLT50q3DzveeNPTtuqMvIatzKgEfgj4xd7qUft1LvWoY8/hHYgQMecfdDAvBp5mACr4fSVUmYbwudVO1bPIz52wzWS+ZUgeLgZ7aRCKmGKUZR348Flz8D+pQAWRsYd4PCIOx4Y4+MCgmq7jX60tua7FOWTPzI=
+	t=1747285707; cv=none; b=k6jk/egF9y8EEcg7qnlFkx90M27+8YH4afQ6l56BDLHAheyFu5j69Pb+FqJZOnjFpOeGv1YCixQS5NbnYhC7rNBWNmZhFCImz2/ye13IwFf7SFWyXk6ELUKMi52enMAvcaR+jnQu80G0I2FlTZKvz12SN2Kn8Ga3iu7QrGKs7VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747281992; c=relaxed/simple;
-	bh=n5OSYCfox/wFSCicXOADXUM1vEXJBOwB0PpPZAJA6wE=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=iNAAQ1PFhg+NRGE48Josdut4HJSrv7LDvNYQs0yZjr+MskAa0VNd9J5BB/1HtmeIqzJHChDG+lJgstwEmf5U8RYW2P6LPJkWh2UX7pIlKvFii0YMPB53hxvBM3JMJEj/zO+V9j+RbbIP5Mluc73iBLmqAAdxnD8Eq6/FAa5SzYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0/TgGOp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747281987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=0J45K/iFRRT3Gwux5AeqoSUQbVKEAJKYzYrLt1oWZCQ=;
-	b=Z0/TgGOp+AvmxOw7cG5Ats6iaFFLawb7M293HeOkxD25BTntJuhvGPHriLdp7SctVvCZKg
-	25bvJRsU7NrWPV0tXRCwI4qFSncWE5Oa+b8Nxwr4wtzj144bzn8hpg/gzkdDUF+jGt09rE
-	XizPFP6BeWLB4XblkwC8n5kx8nrhHgg=
-Received: from mail-oo1-f71.google.com (mail-oo1-f71.google.com
- [209.85.161.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-619-8GDpJEOVNj6BgjVmcAhYIA-1; Thu, 15 May 2025 00:06:25 -0400
-X-MC-Unique: 8GDpJEOVNj6BgjVmcAhYIA-1
-X-Mimecast-MFC-AGG-ID: 8GDpJEOVNj6BgjVmcAhYIA_1747281984
-Received: by mail-oo1-f71.google.com with SMTP id 006d021491bc7-607d4777b1dso505951eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 May 2025 21:06:25 -0700 (PDT)
+	s=arc-20240116; t=1747285707; c=relaxed/simple;
+	bh=DfKzu/2uN/ZhVEJNr+7vI8iANsRzWUhlIsxjCoy7V9A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TxaXf5MLrbHIatLOwHy4Yzn161LKlwiPsgmm/ldpfKDoXt2WbrMnXU8vI324QixmclXPFIcgrugmoWCUolDvoFU/cvfFr58mEiE68/b4yuDN/wjAZ3E1kfNyC5qySFSbhRDL1y117VXSMCuoXMfgX6pGBULrVGraM4EwiClFJJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tvct00RW; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7423fb98c5aso566837b3a.0;
+        Wed, 14 May 2025 22:08:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747285705; x=1747890505; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DfKzu/2uN/ZhVEJNr+7vI8iANsRzWUhlIsxjCoy7V9A=;
+        b=Tvct00RWTHIXmreMPYqy3PVY/kyTGv6Dljrt4IfWdltakXQ0BkfJp45nh+pPC8zBnz
+         BKHnBsp4ozu0qezSWo0SYtLohSkvao++UjReCLaeAkv7vDzBXxaxpsubV3I6lmrdyHn+
+         4MrbhclV3+RnQ40mclmP9QzUEpmg/2skIlxA62+Hdpk6I/PTAtRFmnuuEXvrDBBLKDNU
+         S5D2sviW/WnExkP3aBTRVgIAwN74vd+h4KyP9wieTUOgHuPLhP1rJzLWdVMjCrEIibWL
+         EszBSNJqP6qVQeQvp1B6yGDrP6d5odeub85p5DP2kTqKxCpGY1r48k4ixqNVM6dOuS69
+         c0VA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747281984; x=1747886784;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0J45K/iFRRT3Gwux5AeqoSUQbVKEAJKYzYrLt1oWZCQ=;
-        b=CL1XGIoaIcxAi99yddJSRxy6d3ATem9ZbzsX4w4YWXn1pj/fSl/BOjANkDUG2ovF4V
-         Fxz03zvvWbEOvSFnWh+6CgwK08W6ik5q0vHp76ncZTkvRl+kL1rts3+a7ZmlYmCok+aK
-         Hz+rvA31Tn9aC9h3LbRonFlyC3l0stP4GR6mpfkrN5MCbTpC3b657+71SOmWqFOQzn/h
-         Z9RidEEoiCkhC0VTsy4fkOB6woQsmMMz345JfdA5qnUMQBUxvl0SraLuQurltCaZZ7E3
-         RAdndlzvWZfo/ztr4u9rTH/5PWy7DQYq8zwIs9Kpqe8yCffl61ZGe9V0E38eMsZQG/PV
-         3EGQ==
-X-Gm-Message-State: AOJu0YxU/G1FDVeJ1SEvz3hYu2jJNJYc2XrHIM74WMuZzsV/2v7qq6eG
-	Njc+htiaUViIyFM7/ZEpB4zpeJejGVExSDB+RZEJ4C7LDTRHWI+VF+1/8yUA/Ia3944zkw/EWiC
-	kfHTWWMeRPGYssI3gFS8LsGZWcEwi1QI/u2OH2kSBNTRk7b/iIXjQWCKUbuNzztMGjWhPTcWydj
-	mTD1oerTHTGvNvoYRtI9RrUaGYKeMhv2cHTbUEoH/LiB9cLj+5
-X-Gm-Gg: ASbGnct625MhIRscwkQ/sJxyrCJeNDBZCB15BSg4ELhFXlQdkZqGEXcMVaymbdbNajo
-	B5vVgxDP6dM7L/PBszC3Aitqzx6yJlsjlEWnS1+L/AkriTBR2iTyyNI9RrXWy6HtcUTcRJmVWKf
-	hXAiNHsybEu2cJiwIcCYBdiE4=
-X-Received: by 2002:a4a:ec44:0:b0:603:f29b:85b4 with SMTP id 006d021491bc7-609df088777mr2745180eaf.0.1747281984447;
-        Wed, 14 May 2025 21:06:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqgdBMnryuq7yqHoW9nDwEEchC4FIpzmCag+pikXaPOpq4DhHhbVzl0n2e/jb7xD81CvaDywTL9I4QES/gipI=
-X-Received: by 2002:a4a:ec44:0:b0:603:f29b:85b4 with SMTP id
- 006d021491bc7-609df088777mr2745173eaf.0.1747281984144; Wed, 14 May 2025
- 21:06:24 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747285705; x=1747890505;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DfKzu/2uN/ZhVEJNr+7vI8iANsRzWUhlIsxjCoy7V9A=;
+        b=vwkkCax+8o6zf1PSgwJCdMLKB8wontaBV1ky9L6JA0a9i86RI06dZ8UHtFLrAhukWv
+         Eul9zG/nINagThEgQeDXBKKjnn4O6mYUtfPDFa4XmgWzxBZGyBxP4wGMFtNC0MKi+IFY
+         GnScc0J2ui9Vv+1op6MyfTtWgd0VYVJ4KrHFcmBBkaLxMvKF0u5ZFiwnflkR5Rp6dZcB
+         veVxvf8N5ympmUK8aRPVBFAi/sORRD9RSnYjqY7dcD6Qbp8BFEB0AAu98H9s8SxKTV9E
+         ODLwTAwkOP/hRQnT069cWNm5IQ8Pz9fIk/rn6/T4rIHuxIPGajiUfq7CzTI5/FRJcXpz
+         bsmA==
+X-Forwarded-Encrypted: i=1; AJvYcCU2Ax5M4zBiW6ybC9zEjmDLJW54lT/9/SNpujfwcJd9XopliSwQaazASRGEjoeWTudLmTbL/YLIIqHz5muG@vger.kernel.org, AJvYcCUVhCmXB+BDKAuxvdt5l2Cs/jqWfzo9lDH6uJaa2QZSIplGXTwchDxLGYGbnnfbtL0vE7f5wgXSSeybJ5Cd@vger.kernel.org
+X-Gm-Message-State: AOJu0YziL15IisWXAKzj4LapPsuKU1xsnJikkUk7RSiWceruuIPR7eEi
+	NPXyuNl9l1gfBbR5vhuNPuOKR/jUG70MRvcJDt9INY3ACo64XTig
+X-Gm-Gg: ASbGnctgWqh8T9k9LgN/pn9jCAXEuiKNpsF8SRHfYsLSCGbztDx4rEsCIAOaV8C3d2S
+	J4kZ7ROaXPi0fviGxbcNaePXOQUNagM1/Pui9Pb7mFRyvnqHzMzquCXt7x3SWtrNel5zMqHI8U6
+	SAPA8JwLt8smKnNxmFkPrbxGQNypv9AhHr3hgB3Oilkj5Ix1bsrV8D7shxHspUWNlO0zTktkg/c
+	pO0oksJUA4wGGvjUYrhA/pGwDSyUNjJrJEZFLI8T3Snk6ByJxaGP5FIO3BR01iOqXliBJmRqxql
+	+dddKgC3Q5FxEj5E8Snqj6RxxMu/8zHtbLvfiIRf5Cpyi384asF+YUUo6ypLNm33myzEzbeZotI
+	=
+X-Google-Smtp-Source: AGHT+IH+z9/gvNAIgVdBiQEFnvWLdzvjUXhJQoW/YC8WK0Cl0SXJkOGyFoyiodBt7ZVwXDHT1gBPow==
+X-Received: by 2002:a05:6a20:6a20:b0:1f5:55b7:1bb4 with SMTP id adf61e73a8af0-215ff0f95efmr9042786637.11.1747285705060;
+        Wed, 14 May 2025 22:08:25 -0700 (PDT)
+Received: from [192.168.0.120] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-30e128c5a9dsm4077853a91.1.2025.05.14.22.08.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 May 2025 22:08:24 -0700 (PDT)
+Message-ID: <e6a5a737-ce64-4d31-aeea-2e6190da2ff5@gmail.com>
+Date: Thu, 15 May 2025 13:08:19 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Allison Karlitskaya <lis@redhat.com>
-Date: Thu, 15 May 2025 06:06:13 +0200
-X-Gm-Features: AX0GCFu51vxwlxHphCmbzqVG2bqUcpRKDey8S07tgV_6HVlsR0hpacN27yEF4Xg
-Message-ID: <CAOYeF9WQhFDe+BGW=Dp5fK8oRy5AgZ6zokVyTj1Wp4EUiYgt4w@mail.gmail.com>
-Subject: Apparent mount behaviour change in 6.15
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: Subject: [RFC PATCH v2 0/8] staging: apfs: init APFS filesystem
+ support
+To: =?UTF-8?Q?Ernesto_A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
+Cc: Yangtao Li <frank.li@vivo.com>, ethan@ethancedwards.com,
+ asahi@lists.linux.dev, brauner@kernel.org, dan.carpenter@linaro.org,
+ ernesto@corellium.com, gargaditya08@live.com, gregkh@linuxfoundation.org,
+ jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-staging@lists.linux.dev, sven@svenpeter.dev, tytso@mit.edu,
+ viro@zeniv.linux.org.uk, willy@infradead.org, slava@dubeyko.com,
+ glaubitz@physik.fu-berlin.de
+References: <20250319-apfs-v2-0-475de2e25782@ethancedwards.com>
+ <20250512101122.569476-1-frank.li@vivo.com> <20250512234024.GA19326@eaf>
+ <63eb2228-dcec-40a6-ba02-b4f3a6e13809@gmail.com> <20250514201925.GA8597@eaf>
+Content-Language: en-US
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <20250514201925.GA8597@eaf>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-hi,
 
-The CI in the composefs-rs project picked up an interesting issue with
-the recent mount API changes in the latest 6.15-rc kernels.  I've
-managed to produce a minimal reproducer.
+Ernesto A. Fernández 於 2025/5/15 凌晨4:19 寫道:
+> Hi Nick,
+>
+> On Tue, May 13, 2025 at 12:13:23PM +0800, Nick Chan wrote:
+>> 2. When running Linux on iPhone, iPad, iPod touch, Apple TV (currently there are Apple A7-A11 SoC support in
+>> upstream), resizing the main APFS volume is not feasible especially on A11 due to shenanigans with the encrypted
+>> data volume. So the safe ish way to store a file system on the disk becomes a using linux-apfs-rw on a (possibly
+>> fixed size) volume that only has one file and that file is used as a loopback device.
+> That's very interesting. Fragmentation will be brutal after a while though.
+> Unless you are patching away the copy-on-write somehow?'
+On a fixed size (preallocated size == max size) volume with only a single non-sparse file on it,
+copy-on-write should not happen. I believe the xART volume is also the same case with only
+one non-sparse file.
 
-=3D=3D> test.sh <=3D=3D
-#!/bin/sh
 
-set -eux
-
-uname -a
-umount --recursive tmp/mnt || true
-rm -rf tmp/mnt tmp/new
-mkdir -p tmp/mnt tmp/new tmp/new/old
-touch tmp/mnt/this-is-old
-touch tmp/new/this-is-new
-./swapmnt tmp/new tmp/mnt
-find tmp/mnt
-
-=3D=3D> swapmnt.c <=3D=3D
-// Replace [old] with a clone of [new], moving [old] to [new]/"old"
-
-#define _GNU_SOURCE
-#include <err.h>
-#include <fcntl.h>
-#include <linux/mount.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/syscall.h>
-#include <unistd.h>
-
-int
-main (int argc, char **argv) {
-  if (argc !=3D 3) {
-    fprintf(stderr, "usage: %s [new] [old]", argv[0]);
-    return 1;
-  }
-
-  const char *new =3D argv[1];
-  const char *old =3D argv[2];
-
-  int oldfd =3D syscall(SYS_open_tree, AT_FDCWD, old,
-OPEN_TREE_CLONE|OPEN_TREE_CLOEXEC);
-  if (oldfd =3D=3D -1)
-    err(EXIT_FAILURE, "open_tree('%s', OPEN_TREE_CLONE)", old);
-
-  int newfd =3D syscall(SYS_open_tree, AT_FDCWD, new,
-OPEN_TREE_CLONE|OPEN_TREE_CLOEXEC);
-  if (newfd =3D=3D -1)
-    err(EXIT_FAILURE, "open_tree('%s', OPEN_TREE_CLONE)", new);
-
-  if (syscall(SYS_move_mount, newfd, "", AT_FDCWD, old,
-MOVE_MOUNT_F_EMPTY_PATH))
-    err(EXIT_FAILURE, "move_mount('%s' -> '%s')", new, old);
-
-  if (syscall(SYS_move_mount, oldfd, "", newfd, "old", MOVE_MOUNT_F_EMPTY_P=
-ATH))
-    err(EXIT_FAILURE, "move_mount('%s' -> (new)'%s'/old)", old, old);
-
-  return 0;
-}
-
-On 6.14 (Fedora 42) this looks like:
-
-[root@fedora-bls-efi-127-0-0-2-2201 tmp]# sh test.sh
-+ uname -a
-Linux fedora-bls-efi-127-0-0-2-2201 6.14.5-300.fc42.x86_64 #1 SMP
-PREEMPT_DYNAMIC Fri May  2 14:16:46 UTC 2025 x86_64 GNU/Linux
-+ umount --recursive tmp/mnt
-umount: tmp/mnt: not found
-+ true
-+ rm -rf tmp/mnt tmp/new
-+ mkdir -p tmp/mnt tmp/new tmp/new/old
-+ touch tmp/mnt/this-is-old
-+ touch tmp/new/this-is-new
-+ ./swapmnt tmp/new tmp/mnt
-+ find tmp/mnt
-tmp/mnt
-tmp/mnt/this-is-new
-tmp/mnt/old
-tmp/mnt/old/this-is-old
-[root@fedora-bls-efi-127-0-0-2-2201 tmp]#
-
-On 6.15 from yesterday (9f35e33144ae, via @kernel-vanilla/mainline
-copr, on rawhide):
-
-[root@fedora tmp]# sh test.sh
-+ uname -a
-Linux fedora 6.15.0-0.rc6.20250514.9f35e331.450.vanilla.fc43.x86_64 #1
-SMP PREEMPT_DYNAMIC Wed May 14 04:18:35 UTC 2025 x86_64 GNU/Linux
-+ umount --recursive tmp/mnt
-umount: tmp/mnt: not mounted
-+ true
-+ rm -rf tmp/mnt tmp/new
-+ mkdir -p tmp/mnt tmp/new tmp/new/old
-+ touch tmp/mnt/this-is-old
-+ touch tmp/new/this-is-new
-+ ./swapmnt tmp/new tmp/mnt
-+ find tmp/mnt
-tmp/mnt
-tmp/mnt/this-is-new
-find: File system loop detected; =E2=80=98tmp/mnt/old=E2=80=99 is part of t=
-he same
-file system loop as =E2=80=98tmp/mnt=E2=80=99.
-[root@fedora tmp]#
-
-Otherwise, I gotta say I'm loving all of the new mount work this cycle!
-
-Thanks,
-
-lis
+[...]
+> Ernesto
+Nick Chan
 
 
