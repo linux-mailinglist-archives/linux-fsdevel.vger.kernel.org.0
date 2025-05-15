@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-49190-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49191-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4DEAB90FF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 22:54:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2E3AAB9101
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 22:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 018F27AA994
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 20:52:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8024A225C0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 20:54:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5327529B76C;
-	Thu, 15 May 2025 20:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8240229B8F3;
+	Thu, 15 May 2025 20:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dgMIKSY7"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2nKKaXMq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C7A29B79E
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 20:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3289829B781
+	for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 20:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747342413; cv=none; b=lbO5GNdfTI3LbhnPtAoBShl8i4sgwO35nbzA9slmX68+mTTNv9I3dlrdhNqjAw/yH+CrcLlWO9YMNafUS8iA101SNDjubaOAZmDMhpqLqiPUIDZiRgxc69boSnGko5agztD1y61/LJhBtbICgsQOjFYatq+UsoqZVCMlFcTW0nQ=
+	t=1747342420; cv=none; b=pJPU7JMJvGQfYNHR/oTXHpHJMNleTf64xF4PsUj8pXNVQ+lo4G52+eh3YCn0ElU/OOFjETotBs0WZ572ZWutFQe3KSryIab3Pd7dQnkJl6n3EAI3sRpFto5GZtodME3UTZuGTuQEU7AZAHi3J1lcUNmLWcHKKxVCR+QyP2oRMxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747342413; c=relaxed/simple;
-	bh=XMok27LeyvPMVk1wsLnM/8/aHhDw0CNgdmZ28O9DrS0=;
+	s=arc-20240116; t=1747342420; c=relaxed/simple;
+	bh=tRv9EmETRWPXZVHYTT7h73M1bxh8y8TuRvMu5qA/7F0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Cu217KfNbVG8bdjsBuyZIVq8RFWx2q1veofk2Mqg1UArh9U6H6kLkNpGsW406XeRH8OOqRaqFXTsZLbQWOoWtmbBmoiAHeH5xLlSJLNo1nwuL/rB5COEt5cozSBQA4VAj8ghAzCjrvKVx8myjIsQPs20Q1bO0MZDWke8b32fcbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dgMIKSY7; arc=none smtp.client-ip=209.85.208.42
+	 To:Cc:Content-Type; b=abLDhHADtXp6HREI6kKgYBeBUyeZVxq3GyW+6O1/rXoJyBo0JmMy+n6En/RZaZv747iZ1GOsn/owazRLkKgaQCIJ2qMjeIbiL/hn/BFC7Vm/w58T3u3ky0wUI/Q8ENNzlk8chilX2QZBiZQ5gnlQXCAKi0SWdTWUZ45O+C8YIzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2nKKaXMq; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso1451a12.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 13:53:31 -0700 (PDT)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5fce6c7598bso3542a12.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 13:53:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747342410; x=1747947210; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747342417; x=1747947217; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XMok27LeyvPMVk1wsLnM/8/aHhDw0CNgdmZ28O9DrS0=;
-        b=dgMIKSY7qCR1OgW5sBb03YdJPEHN5kAbtkaWQVcH9WAE6tvRKU0b5McF0GAeW3i8Uu
-         TE8jbF2GWjNVROICmloT9YchArTuGtOJzbxD+xoHm4xIT8CZFxNzjQ/jdzBh193hsnCt
-         BR+5IQnWqWuc3yOF0d78xp1JlCN1zRAS2HjDMYEvaAGQH8ImRdcfr//cwhGs7YLtBxxk
-         E4KsoHt7mMgD4GYCoyfD4lScnqrAw7KKzbQSTJrYD/mxKjKRDzSZSYi3EKZQhVT4mVU2
-         PfW7PXj7jh7RZs7LM2QYR6pcfB4FIIHa6/cOA9h02RsBaLoBl8EtzulbNM19ve4q6QmD
-         aqPA==
+        bh=tRv9EmETRWPXZVHYTT7h73M1bxh8y8TuRvMu5qA/7F0=;
+        b=2nKKaXMqiU+Y6HP+xLOkg9rKEusnHOmOeXkq5h/Lhxw2Q5GjKRUQzRj0ZWR+ijlJZi
+         puAiKjv1EPimoohXSmZNbBrrwhMe8MUBiZB8yMz7p1tbx7cu0H6lSylVQldX2FmrKOeL
+         R+9adWGLo8XvTiMS2VuZevsKr+JFhFDC5bWMsCu2tiL8l+ITcqOWfvoMyDO3VmhE57lg
+         9Fb9xr/GIKkVsBl3ivleppN8dMfE+18jhgv9Obr+yCyjBTHUB2QTmso1wprAeKhn+0TW
+         YpcMF5PSUrq+OkYDsycdVPNbhSu8VacQOHAEG0Axm7VsikxPJ/q9GYm5cc1n3Mo741a/
+         nmyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747342410; x=1747947210;
+        d=1e100.net; s=20230601; t=1747342417; x=1747947217;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XMok27LeyvPMVk1wsLnM/8/aHhDw0CNgdmZ28O9DrS0=;
-        b=AlH0RzY9WMlChc3rNpHP3P2aKZok4hT+8vGtg61f6kF7cu4OYSKoWEgNJCiiAX63Jo
-         8Xri4wP35rJSSvVp2CerMCaE8oipxhWEyYhmWfsaiMBMd2J7hvBbJRUS0HHV2Yy++wA9
-         o+qV25BQCnO7mkBmIwIbdIrE2sE9xrH5Ze+s5GK0lle9rRI9xTiuvBAY/GksjJ0isemE
-         aBU2faPymgaz8wm6zYHZcneY+MJgKwiBr3Qk9KVauGN77b3QQlTW+UTobHnuBnd/ZogW
-         X+N1YqNkjvyFYzWEB3dKWpgjRPm6yCND/yiVlEflxZjhHad+6jl/U91x55wz4W7w8uKc
-         1Aig==
-X-Gm-Message-State: AOJu0YxgLCJzrEWEHW0xtXzpT+SKd02aJ7zJHzJ7T8AHB6A2A60q+VDJ
-	+9XsqOFJ8l2bvdftgNB0wy2cR7rpfkpIHGNYz+n5eAagcN0rcs0WX8ztVQ1KdbQa65EKCy8KXFz
-	KqROKOHM3BTq7ivJaL5niuasynr0nmYqlLo2ORBVX
-X-Gm-Gg: ASbGnctRwXafzzPlfOXmUjudXgXlaVZQwqmLROuz/8UI93lZ2yECNDQU/xZYuyR+uX2
-	KE2gi2vsCP6NO+h3j7s9cUNYGa30UlE4oqE4Qa8qArUAP23beUZ5iiwyEymAYK89rgcaFH4rVbX
-	ZUJaMXrIVvFQuWS/fAsBaweqAdo450xJwXSYxq1ZvqyjblVrqjPrUwQGmeu1vuucKaLtDkgLQ=
-X-Google-Smtp-Source: AGHT+IECLHFWIrRiZUC7O4hqEBDUksv17PKckJK1rnL5QMtfgaSKVKKd7QPmPRV/LqJk6d0BzJrKKJ5nDtiVXyuVaB4=
-X-Received: by 2002:a50:fa8e:0:b0:600:77b:5a5a with SMTP id
- 4fb4d7f45d1cf-600077b6b0dmr89509a12.1.1747342410107; Thu, 15 May 2025
- 13:53:30 -0700 (PDT)
+        bh=tRv9EmETRWPXZVHYTT7h73M1bxh8y8TuRvMu5qA/7F0=;
+        b=DgHjy95k0gluNe3kJnQ6ciPIRIvZbZISlOHAVhBAeUeppNtAcZqbhjr20zC2U4x6pB
+         dYozzK5y1uW3ltOvlnNRK01kPB1L9IfFwkHmx2YKiIevYDWCdzVCsJNmC1PSn6+RbVxl
+         1SZZ1H79v3XC+8j8VL00LgbyCB4FVBnsCuK8SUetskV3ckl6JtAOL2ANPCd1bN8dwhQ5
+         0y4iEuyQl20vmpZpOHZDYVAeZMZTfQgRuODdqgayVMYKZoTT3kBDNvsVA2LTQqN8ZInc
+         8Jdgrr0sPYRhmFXf1wvD8vFPdQMmkxXuroaz3R9GI2jBwBLD/smddMmlxQTx0gi20dlm
+         6avA==
+X-Gm-Message-State: AOJu0YyKJzHrJ/75YkmsJw3krjdDHnX4eXhLLFMfLxBV+3zCUu3vW27y
+	akgelNG/PtLxyxIVYNJ1sDszXcZF4h9Nb9YzzMzDKfVOTY62qjrh7iPb9sNL4R/tQ5In/owJ5lj
+	KCD0qNDCPfhsUPj8RII/UmzaPqusboN2Fh31+O/39
+X-Gm-Gg: ASbGncuu343etHwP/mYUZbphpzE7cEpnasoHsA4HkrkREGkApWGIivFDAsfNOVhxOi9
+	SY8CvEkzr+pUh/aXS32dnQoY+CNb4Ko1oXHcKC6h/UL2VOjZEGaLBbpx7wQFBTJeaCZHRKM0E/z
+	XFYJIjqZMkxe/rFAHJHDq1q7VGxDTf0OxTezU2VtkS8P2ERkwNfBqCIImhRPYo
+X-Google-Smtp-Source: AGHT+IHZ9jFIvkL3s/WhGIrI4IThR5QXdM3cICdVMwLZGSJ4WKA5W38ar/Q+P8ZFLrgmTwdP5BUbeE+U40I1JEI8RSQ=
+X-Received: by 2002:aa7:c392:0:b0:601:233a:4f4d with SMTP id
+ 4fb4d7f45d1cf-601233a4fc5mr3186a12.2.1747342415935; Thu, 15 May 2025 13:53:35
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org> <20250515-work-coredump-socket-v7-2-0a1329496c31@kernel.org>
-In-Reply-To: <20250515-work-coredump-socket-v7-2-0a1329496c31@kernel.org>
+References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org> <20250515-work-coredump-socket-v7-3-0a1329496c31@kernel.org>
+In-Reply-To: <20250515-work-coredump-socket-v7-3-0a1329496c31@kernel.org>
 From: Jann Horn <jannh@google.com>
-Date: Thu, 15 May 2025 22:52:54 +0200
-X-Gm-Features: AX0GCFvZyxY7ct4_THeym5x5LEYv3lsYRODqj4j24boe3WIKlaAJKd5VKjymUt4
-Message-ID: <CAG48ez2HPOmWgY1riBJbt6tFzAJbJv_N5XnPwhAbVBfA1-sRBA@mail.gmail.com>
-Subject: Re: [PATCH v7 2/9] coredump: massage do_coredump()
+Date: Thu, 15 May 2025 22:53:00 +0200
+X-Gm-Features: AX0GCFv4nrwtDZxOQKAFnOch8tVFv6sz1vCJIdy3HEL5SN0W7L19J7ev9XtxuAM
+Message-ID: <CAG48ez00GnBZZDjpYBmccgztaW+0206_X8__UiFxtBQhm7rvhg@mail.gmail.com>
+Subject: Re: [PATCH v7 3/9] coredump: reflow dump helpers a little
 To: Christian Brauner <brauner@kernel.org>
 Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
 	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
@@ -97,8 +97,7 @@ Content-Transfer-Encoding: quoted-printable
 
 On Thu, May 15, 2025 at 12:04=E2=80=AFAM Christian Brauner <brauner@kernel.=
 org> wrote:
-> We're going to extend the coredump code in follow-up patches.
-> Clean it up so we can do this more easily.
+> They look rather messy right now.
 >
 > Signed-off-by: Christian Brauner <brauner@kernel.org>
 
