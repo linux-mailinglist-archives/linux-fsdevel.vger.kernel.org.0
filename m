@@ -1,188 +1,289 @@
-Return-Path: <linux-fsdevel+bounces-49100-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CFAAB7FC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 10:06:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F032BAB8018
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 10:17:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 002F18C62D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 08:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F246F3BAF70
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 08:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DAB2798F4;
-	Thu, 15 May 2025 08:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEC827BF6D;
+	Thu, 15 May 2025 08:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="QleRWDJ1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNX9VG11"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C4B27E7F3
-	for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 08:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51CA1ADFFE;
+	Thu, 15 May 2025 08:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747296315; cv=none; b=ib+s7M58LJsf3b1v/sEojWirIsuugKrxRvCZ2qcB+DvPsq/sK5/2vucQGrhQxISaFeBX+DWa2jyrizC1VpQC0zCAFrvDiO90VAhp6j226NFiGPODdcEviGGW71K9y3d4rpWFlKXp0LS+A1CGP69JEm51B6+yu14PKqiX3C40yvM=
+	t=1747297041; cv=none; b=mo1+aV4GpXrXxIfLzfSgUfMmn4Kegc5MfObZDxd7GMLHmla9btxz0qWCs4GmL0+qjSh25rKvQHu6bHx+PeqMDnLEWz3CJ5vRuV8HW0FaJF0aXkcgdqNhbW11MuNBoko1tKc1+eTiQyn9Iw9VKLvzDVwFZ5NjxKnSEhRJYzBYv2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747296315; c=relaxed/simple;
-	bh=0tGKkkemugSf6qbz3gshaWCoVsCRbxCI+SQBbX3dIFY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=COcuADjP9JN/tbu/pT0tqJ77Ds5lNh3ISzjaTc0zwlnyMKbxJ2XcFkyFvmM/KboGII4uPltDlLJSYVMwDQ8aHEUBaD1pJpta/uknxRlQYuZDcrFzVfH11M4DPD2PsVh/eMDy2sXa8zD2gnJuwNY1AW17QJYFb5liNh5bN0zKRbk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=QleRWDJ1; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3a064a3e143so264748f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 May 2025 01:05:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747296311; x=1747901111; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=edff1LhptN7FQ5Bq2oruaEckY3n2IP7/Je81wTRfspE=;
-        b=QleRWDJ1MjKGuTARD+JMrNkTAxf4HJRsTFLkXkCVtL9CbWW4H8867e4gRrYe6EwAgm
-         XPMtN/ccgxu1Iakt4TGULyjyPIWkeK++REj8S0mb+Lp0Y5BdRQJ1RgMKofZ+1rn3lsyW
-         bxi4phbRhYV5kVMHXtDrnLPMbUHaadKUFkpJh31Uhr5GNhzN3CoyH06OzrvpRMWIGd1p
-         lPNsa58+0OPS7jisV6aHdqQaXvnPOoiqqmJRmt4T6k338Xqel0OrIM7fT7Wlbtpc6I1K
-         tJpyOs9c9HSn4DpSUK56f70L5Bp4sMOeG4KS6HeQFC/D8fEHOlBzkrpRaFUFsy+XNvVH
-         FJ7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747296311; x=1747901111;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=edff1LhptN7FQ5Bq2oruaEckY3n2IP7/Je81wTRfspE=;
-        b=Up2ajoDMNF4P3MJJaZXq3NBeghJghMn5OZWS8xLyIFFAPM3nSzxo4iH/7NXMgzrwpH
-         KedS8PgjyGIP79+QWkfzYD6I9hIKYzGhnEIropTWo3Gv+KlXdW97JOm6iN4ivvdC5aHh
-         B7SAZ3aC99nOBk2NX0NSvhDHC151VG38aOsrMBKouZKB78O2fE83EZIr2L5FVwcL0zAG
-         8TF8T0H9OZBZj9RMalgk2xog37yvX8MhlNbdFgzdUJ67ZEgGUZhBbeytf8QHU2ANVt9T
-         UWBMPfr5JvfQpcpDuPWyGSUttbQXfn1L2V8UQlQr6do38K6sigl417DtD9+H0hYYI7uZ
-         B/0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWkQ5WwinFL53Bdv4CeJrpFdjnwAx3rnu5QGz+MNpQ0p8ZytnUKoHDWBwqS6bvl27gWBjHdM88KU81HAfCC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcnZIZElDA7g5aoBekAgT00ncCXjtrh93h1MVjcsiCaLJzdZ6W
-	gidSAyJ/kd1r5DswMKyAXTk2LLoiMRvlaehJNVB6T/5IgOhKtWbMq+Zi9vjVdVs=
-X-Gm-Gg: ASbGncsGQVFSjIYRUYPDKaMFKMHYkuPMvpsNLH5G+paACaxRuNwwEuU7pLVUA5V2ckh
-	DArF0d3JzBbWI20K+UGU4tvSj6TwarURoNzQJEDv3UT0S9fqjEvFLyZGlD0Ru5hhdNCbZwIvvLE
-	WqXgE42gq+Vd9LeEs481znn8Ug50FRjmF/XrXbeTtWfASvns5mq6NyeL2adOtA8unKkpeDkcEfD
-	JS6+ve7iAlHp1/5VdjyFsa0X1jAndjhsI9A0hmmQNSAj7SIHetsMN3n7rYpnN7Fvn1gSs/NYuwM
-	9HOa2YFeBAekjHkDKfSjAL3/4msKd1EiQ4iR0qaikA81yU9TfLAUkg==
-X-Google-Smtp-Source: AGHT+IGXvziHODCht+twr6uozgFfTyAclIKdnZuTVey4CsU1/XVbIcw96mTLNhe3rmJT4ESA13CsYg==
-X-Received: by 2002:a05:6000:2911:b0:39e:dbb0:310f with SMTP id ffacd0b85a97d-3a34992746amr5945525f8f.39.1747296311397;
-        Thu, 15 May 2025 01:05:11 -0700 (PDT)
-Received: from [10.100.51.48] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4dea85df68fsm9441727137.18.2025.05.15.01.04.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 May 2025 01:05:10 -0700 (PDT)
-Message-ID: <e2ebf88d-46a2-4f38-a0c8-940c3d3bee49@suse.com>
-Date: Thu, 15 May 2025 10:04:53 +0200
+	s=arc-20240116; t=1747297041; c=relaxed/simple;
+	bh=vGi9THXEDpvT76QZd9G6tEugzqGz/38PnjMXAVERiPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s+8KpYMHKvCdrVHHYaQ59LpUzpQmQAk9xDRrMTuZPlCx29jM4AwrYFIm09HOc7NAH6YXpYgsQWpkxL2lBryrItIuC9R/Zkjs5RoqOo6EMNgjRI0LZwhJ3a6VIXq9x3ArOXkKJFEfKDH3akSupUG2PVXGPz3v1f8j0SKlXKLwgP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNX9VG11; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C94C6C4CEE9;
+	Thu, 15 May 2025 08:17:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747297041;
+	bh=vGi9THXEDpvT76QZd9G6tEugzqGz/38PnjMXAVERiPs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WNX9VG11602jl0A9wuZQi5Jbi8Xwlq4eCDH55qz1Ak5yKnMKSmMWzQOOc5ggf/NkX
+	 BtJ3kHTzKG3JL16emyTiXFkH8xm/YEg6VPNLi+jCL0nJy6C+ZlEabL4acFidGClz6B
+	 0i/GPSIuPT/8iTEfThxTC3+MUGtTVF2flIAaVyzUQZmVpP8pAntkqlDrp4Al8X7ay8
+	 flLbOElwgktnPgUKmmhD1hnxaPqkgy42ivu8rQzGg9ulCI1GLn+F550xXRLzqhDdiS
+	 ZkUg72C209ESXzEPQZbihyYUTyi6SWHzvQKZQ8DUiVCht47SMO9fmxNoRrhYI0pJGV
+	 t9SBzISOLtYzA==
+Date: Thu, 15 May 2025 10:17:15 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: syzbot <syzbot+0b62957894976d747660@syzkaller.appspotmail.com>
+Cc: kees@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [fs?] BUG: unable to handle kernel paging request in
+ drop_sysctl_table
+Message-ID: <xftkeek5ydwgnfc3x3nhwzhawbe5blucnuatw5hcnm3gp75scs@nhwpxyh6phjo>
+References: <68251af1.a70a0220.3e9d8.001f.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] module: Move modprobe_path and modules_disabled
- ctl_tables into the module subsys
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Waiman Long <longman@redhat.com>, "Paul E. McKenney" <paulmck@kernel.org>,
- Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>,
- linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org,
- linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
-References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
- <20250509-jag-mv_ctltables_iter2-v1-1-d0ad83f5f4c3@kernel.org>
-Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20250509-jag-mv_ctltables_iter2-v1-1-d0ad83f5f4c3@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="m66n6mjpc65tnocx"
+Content-Disposition: inline
+In-Reply-To: <68251af1.a70a0220.3e9d8.001f.GAE@google.com>
 
-On 5/9/25 14:54, Joel Granados wrote:
-> Move module sysctl (modprobe_path and modules_disabled) out of sysctl.c
-> and into the modules subsystem. Make the modprobe_path variable static
-> as it no longer needs to be exported. Remove module.h from the includes
-> in sysctl as it no longer uses any module exported variables.
-> 
-> This is part of a greater effort to move ctl tables into their
-> respective subsystems which will reduce the merge conflicts in
-> kernel/sysctl.c.
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> [...]
-> --- a/kernel/module/kmod.c
-> +++ b/kernel/module/kmod.c
-> @@ -60,7 +60,7 @@ static DEFINE_SEMAPHORE(kmod_concurrent_max, MAX_KMOD_CONCURRENT);
->  /*
->  	modprobe_path is set via /proc/sys.
->  */
-> -char modprobe_path[KMOD_PATH_LEN] = CONFIG_MODPROBE_PATH;
-> +static char modprobe_path[KMOD_PATH_LEN] = CONFIG_MODPROBE_PATH;
->  
->  static void free_modprobe_argv(struct subprocess_info *info)
->  {
-> @@ -177,3 +177,33 @@ int __request_module(bool wait, const char *fmt, ...)
->  	return ret;
->  }
->  EXPORT_SYMBOL(__request_module);
-> +
-> +#ifdef CONFIG_MODULES
-> +static const struct ctl_table kmod_sysctl_table[] = {
-> +	{
-> +		.procname	= "modprobe",
-> +		.data		= &modprobe_path,
-> +		.maxlen		= KMOD_PATH_LEN,
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dostring,
-> +	},
-> +	{
-> +		.procname	= "modules_disabled",
-> +		.data		= &modules_disabled,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		/* only handle a transition from default "0" to "1" */
-> +		.proc_handler	= proc_dointvec_minmax,
-> +		.extra1		= SYSCTL_ONE,
-> +		.extra2		= SYSCTL_ONE,
-> +	},
 
-This is minor.. but the file kernel/module/kmod.c contains the logic to
-request direct modprobe invocation by the kernel. Registering the
-modprobe_path sysctl here is appropriate. However, the modules_disabled
-setting affects the entire module loader so I don't think it's best to
-register it here.
+--m66n6mjpc65tnocx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I suggest keeping a single table for the module sysctl values but moving
-it to kernel/module/main.c. This means the variable modprobe_path must
-retain external linkage, on the other hand, modules_disabled can be made
-static.
+On Wed, May 14, 2025 at 03:36:33PM -0700, syzbot wrote:
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    1a33418a69cc Merge tag '6.15-rc5-smb3-client-fixes' of gi=
+t..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D15c0ccf4580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D925afd2bdd38a=
+581
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3D0b62957894976d7=
+47660
+> compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (=
+GNU Binutils for Debian) 2.40
+> userspace arch: arm
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D160eecf4580=
+000
+>=20
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/9=
+8a89b9f34e4/non_bootable_disk-1a33418a.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/1b719c768f61/vmlinu=
+x-1a33418a.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/37b85c3e7f3b/z=
+Image-1a33418a.xz
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+0b62957894976d747660@syzkaller.appspotmail.com
+>=20
+> veth1_macvtap: left promiscuous mode
+> veth0_macvtap: left promiscuous mode
+> veth1_vlan: left promiscuous mode
+> veth0_vlan: left promiscuous mode
+> 8<--- cut here ---
+> Unable to handle kernel paging request at virtual address 74756f78 when r=
+ead
+> [74756f78] *pgd=3D80000080005003, *pmd=3D00000000
+> Internal error: Oops: 206 [#1] SMP ARM
+> Modules linked in:
+> CPU: 1 UID: 0 PID: 3143 Comm: kworker/u8:2 Not tainted 6.15.0-rc5-syzkall=
+er #0 PREEMPT=20
+> Hardware name: ARM-Versatile Express
+> Workqueue: netns cleanup_net
+> PC is at __rb_change_child include/linux/rbtree_augmented.h:199 [inline]
+> PC is at __rb_erase_augmented include/linux/rbtree_augmented.h:242 [inlin=
+e]
+> PC is at rb_erase+0x270/0x394 lib/rbtree.c:443
+> LR is at 0x0
+> pc : [<81a3fb58>]    lr : [<00000000>]    psr: 200f0013
+> sp : df9e5d80  ip : 74756f70  fp : df9e5d94
+> r10: 82c1f980  r9 : 829d1ec4  r8 : 00000004
+> r7 : 838d8b00  r6 : 00000001  r5 : 8517c348  r4 : 8517c300
+> r3 : 74756f72  r2 : 00000000  r1 : 838d8b34  r0 : 8517c368
+> Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+> Control: 30c5387d  Table: 850515c0  DAC: 00000000
+> Register r0 information: slab kmalloc-128 start 8517c300 pointer offset 1=
+04 size 128
+> Register r1 information: slab kmalloc-128 start 838d8b00 pointer offset 5=
+2 size 128
+> Register r2 information: NULL pointer
+> Register r3 information: non-paged memory
+> Register r4 information: slab kmalloc-128 start 8517c300 pointer offset 0=
+ size 128
+> Register r5 information: slab kmalloc-128 start 8517c300 pointer offset 7=
+2 size 128
+> Register r6 information: non-paged memory
+> Register r7 information: slab kmalloc-128 start 838d8b00 pointer offset 0=
+ size 128
+> Register r8 information: non-paged memory
+> Register r9 information: non-slab/vmalloc memory
+> Register r10 information: non-slab/vmalloc memory
+> Register r11 information: 2-page vmalloc region starting at 0xdf9e4000 al=
+located at kernel_clone+0xac/0x3e4 kernel/fork.c:2844
+> Register r12 information: non-paged memory
+> Process kworker/u8:2 (pid: 3143, stack limit =3D 0xdf9e4000)
+> Stack: (0xdf9e5d80 to 0xdf9e6000)
+> 5d80: 8517c300 8517c348 df9e5dd4 df9e5d98 80610d54 81a3f8f4 0000000c 600f=
+0013
+> 5da0: ddde099c 600f0013 00000000 03710a8b 8517cb00 84813a00 8517cb00 0000=
+0001
+> 5dc0: 8517c300 00000004 df9e5e14 df9e5dd8 80610d88 80610c90 816f4260 829d=
+1ec4
+> 5de0: 829d1ec4 82aca2a8 df9e5e90 03710a8b df9e5e14 84813a00 df9e5e90 829e=
+0224
+> 5e00: df9e5e90 829d1ec4 df9e5e2c df9e5e18 80610e58 80610c90 8517cb00 df9e=
+5e90
+> 5e20: df9e5e3c df9e5e30 81980b1c 80610e3c df9e5e54 df9e5e40 816f45b0 8198=
+0b18
+> 5e40: 84951b00 df9e5e90 df9e5e74 df9e5e58 81539cdc 816f45a4 829e0224 82c1=
+f940
+> 5e60: 829d1e80 df9e5e90 df9e5ed4 df9e5e78 8153c160 81539ca8 81a5bd14 8029=
+ce24
+> 5e80: 82c1f940 829d1e80 808c99b0 81539d04 84951b20 84951b20 00000100 0000=
+0122
+> 5ea0: 00000000 03710a8b 81c01f84 83b83d80 829d1e98 8301bc00 8300e600 8418=
+6000
+> 5ec0: 8301bc15 8300f070 df9e5f2c df9e5ed8 802873bc 8153bebc 81c01a44 8418=
+6000
+> 5ee0: df9e5f14 df9e5ef0 829d1e9c 829d1e98 829d1e9c 829d1e98 df9e5f2c 0000=
+0000
+> 5f00: 80282cf8 83b83d80 8300e620 8300e600 82804d40 83b83dac 84186000 61c8=
+8647
+> 5f20: df9e5f6c df9e5f30 80288004 80287214 81a5bd14 8029ce24 df9e5f6c df9e=
+5f48
+> 5f40: 8028eb98 00000001 84186000 83b83e00 e4935e60 80287e08 83b83d80 0000=
+0000
+> 5f60: df9e5fac df9e5f70 8028f07c 80287e14 80274ea8 81a5bc9c 84186000 0371=
+0a8b
+> 5f80: df9e5fac 84986300 8028ef50 00000000 00000000 00000000 00000000 0000=
+0000
+> 5fa0: 00000000 df9e5fb0 80200114 8028ef5c 00000000 00000000 00000000 0000=
+0000
+> 5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 0000=
+0000
+> 5fe0: 00000000 00000000 00000000 00000000 00000013 00000000 00000000 0000=
+0000
+> Call trace:=20
+> [<81a3f8e8>] (rb_erase) from [<80610d54>] (erase_entry fs/proc/proc_sysct=
+l.c:189 [inline])
+> [<81a3f8e8>] (rb_erase) from [<80610d54>] (erase_header fs/proc/proc_sysc=
+tl.c:225 [inline])
+> [<81a3f8e8>] (rb_erase) from [<80610d54>] (start_unregistering fs/proc/pr=
+oc_sysctl.c:322 [inline])
+> [<81a3f8e8>] (rb_erase) from [<80610d54>] (drop_sysctl_table+0xd0/0x1ac f=
+s/proc/proc_sysctl.c:1514)
+>  r5:8517c348 r4:8517c300
+> [<80610c84>] (drop_sysctl_table) from [<80610d88>] (drop_sysctl_table+0x1=
+04/0x1ac fs/proc/proc_sysctl.c:1521)
+>  r8:00000004 r7:8517c300 r6:00000001 r5:8517cb00 r4:84813a00
+> [<80610c84>] (drop_sysctl_table) from [<80610e58>] (unregister_sysctl_tab=
+le fs/proc/proc_sysctl.c:1539 [inline])
+> [<80610c84>] (drop_sysctl_table) from [<80610e58>] (unregister_sysctl_tab=
+le+0x28/0x38 fs/proc/proc_sysctl.c:1531)
+>  r8:829d1ec4 r7:df9e5e90 r6:829e0224 r5:df9e5e90 r4:84813a00
+> [<80610e30>] (unregister_sysctl_table) from [<81980b1c>] (unregister_net_=
+sysctl_table+0x10/0x14 net/sysctl_net.c:177)
+>  r5:df9e5e90 r4:8517cb00
+> [<81980b0c>] (unregister_net_sysctl_table) from [<816f45b0>] (sysctl_rout=
+e_net_exit+0x18/0x38 net/ipv4/route.c:3632)
+> [<816f4598>] (sysctl_route_net_exit) from [<81539cdc>] (ops_exit_list+0x4=
+0/0x68 net/core/net_namespace.c:172)
+>  r5:df9e5e90 r4:84951b00
+> [<81539c9c>] (ops_exit_list) from [<8153c160>] (cleanup_net+0x2b0/0x49c n=
+et/core/net_namespace.c:654)
+>  r7:df9e5e90 r6:829d1e80 r5:82c1f940 r4:829e0224
+> [<8153beb0>] (cleanup_net) from [<802873bc>] (process_one_work+0x1b4/0x4f=
+4 kernel/workqueue.c:3238)
+>  r10:8300f070 r9:8301bc15 r8:84186000 r7:8300e600 r6:8301bc00 r5:829d1e98
+>  r4:83b83d80
+> [<80287208>] (process_one_work) from [<80288004>] (process_scheduled_work=
+s kernel/workqueue.c:3319 [inline])
+> [<80287208>] (process_one_work) from [<80288004>] (worker_thread+0x1fc/0x=
+3d8 kernel/workqueue.c:3400)
+>  r10:61c88647 r9:84186000 r8:83b83dac r7:82804d40 r6:8300e600 r5:8300e620
+>  r4:83b83d80
+> [<80287e08>] (worker_thread) from [<8028f07c>] (kthread+0x12c/0x280 kerne=
+l/kthread.c:464)
+>  r10:00000000 r9:83b83d80 r8:80287e08 r7:e4935e60 r6:83b83e00 r5:84186000
+>  r4:00000001
+> [<8028ef50>] (kthread) from [<80200114>] (ret_from_fork+0x14/0x20 arch/ar=
+m/kernel/entry-common.S:137)
 
--- 
-Thanks,
-Petr
+I'm looking at https://syzkaller.appspot.com/text?tag=3DReproLog&x=3D11a1b4=
+d4580000
+and I see that a test failed in neigh_parms_release before all this happened
+(output here [1]). Questions:
 
-> +};
-> +
-> +static int __init init_kmod_sysctl(void)
-> +{
-> +	register_sysctl_init("kernel", kmod_sysctl_table);
-> +	return 0;
-> +}
-> +
-> +subsys_initcall(init_kmod_sysctl);
-> +#endif
+1. Could the previous test have caused this to show in sysctl
+   erase_entry? How do I find out?
+
+2. I don't have clear what commit introduced this. I see a head commit,
+   but I cant find the subcommit related to this failure.
+
+Help appreciated.
+
+[1]
+  program crashed: BUG: corrupted list in neigh_parms_release
+  a never seen crash title: BUG: corrupted list in neigh_parms_release, ign=
+ore
+  testing program (duration=3D22m39.514192312s, {Threaded:true Repeat:true =
+RepeatTimes:0 Procs:1 Slowdown:10 Sandbox:none SandboxArg:0 Leak:false NetI=
+njection:true NetDevices:true NetReset:true Cgroups:true BinfmtMisc:true Cl=
+oseFDs:true KCSAN:false DevlinkPCI:false NicVF:false USB:true VhciInjection=
+:false Wifi:false IEEE802154:false Sysctl:true Swap:true UseTmpDir:true Han=
+dleSegv:true Trace:false LegacyOptions:{Collide:false Fault:false FaultCall=
+:0 FaultNth:0}}): openat$binderfs-syz_clone
+  detailed listing:
+  executing program 0:
+  openat$binderfs(0xffffffffffffff9c, &(0x7f0000000380)=3D'./binderfs/binde=
+r0\x00', 0x0, 0x0)
+  syz_clone(0x0, 0x0, 0x0, 0x0, 0x0, 0x0)
+
+
+Best
+--=20
+
+Joel Granados
+
+--m66n6mjpc65tnocx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmglovgACgkQupfNUreW
+QU9RVQv7Bus7sJbRzD8N2jAwJEPxk/2i6aB4JSACBGlUv1FZXD2x9gUq3EomrW9A
+SiQ2SxspUtTWrdxFhhXGbYABFTKAWGY2PDXRE8TYwARcq6/QDRCSTCT3MRU3zJnl
+BIuKHzeBDyMJl8ZeMy0QszKfhLIIFujOend9A+CkCn/fvK7/4WFpzeR0mr+ZToiS
+GfKvt0NUcT7fgICceU7wlyR4gnvjdL0zqKy/ZpoYvoH63PKru7i1s8XbTmd1ZWxD
+fRqpQs7S8DTNEFL6fUYlNi0xdZg9lQhnm1g9zMCfDVJJ66DwmSj2aOqtA8DGyj0S
+11IjDavqVfD4u9IJc8eC7J8Z4SOjRC5AtH8HYypu3efcllbFY2Ud1FFn7zQO41IE
+EwYtf8S957w2jIE3NyGWY/I3HhlCndq1LaLPLq3pV7SCJJEyb+oGSHJq8rBhKpWP
+NDl4BtaOy/c23QwT5c/h1yIs27m41QxGXdRItiZ/lzIO5laE4dCufYgD0oNpX6Np
+ULnwA0yC
+=QYTf
+-----END PGP SIGNATURE-----
+
+--m66n6mjpc65tnocx--
 
