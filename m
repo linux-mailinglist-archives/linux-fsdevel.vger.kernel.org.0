@@ -1,75 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-49180-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49181-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A93AB9024
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 21:51:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77177AB902A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 21:51:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C2C13A3D72
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 19:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192853A2BB2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 19:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E37DF269B07;
-	Thu, 15 May 2025 19:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967F6297114;
+	Thu, 15 May 2025 19:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YkYge+4o"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NgZYiH84"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBAEC2222BB;
-	Thu, 15 May 2025 19:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0B22222BB;
+	Thu, 15 May 2025 19:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747338671; cv=none; b=oeRFBOivgmO+lcCB0nHjKXTv+DxroqbWrC+QBaBFaEqlyY3I23oJNAUsvrjs2XIjkJGVIltoPLYoP4TIZD3wpNOTnULyxSBZ/yzHQRsE1cwVSyCkEV+T/faOcqM0dUlvJXCHK62ZlQlErnFBuqmLa7RrwOgEYS9hM5bzdInSXgw=
+	t=1747338675; cv=none; b=I+nWeREz6AvmPayu2UipngsFMuSsZ8/M0VvYzMahfzKQCndBjUEEoQ2iMT581syfP9tKhgtj6MQpOrH1fwkTO+6nhxLxKfxNFjxqcqjgjkrK5YB5aoSWgaKqtLWNQW63UM/jFn36TV5W31v0GhBEjyn3qsEKEesODFLAdN2F2GI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747338671; c=relaxed/simple;
-	bh=8zWO0nKuJHyuY19P4C+gl+fN9bTE1bgyXr+ig07KTIE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g/zHPGYydHeu2cEg+mxYltr8Q2tYVdbex8c7nxUmq85Z3ktKC1jlth5OCk/244Gn+tAwqLs01/l35RijHgnBR82wlcUKpObIlwLB8fzNoP4AJDQhqEZie0qQpbmcl8RyrtyF1eSapoKJd6HOLJ25WJShg9FlMfpaPx8ND5NxIVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YkYge+4o; arc=none smtp.client-ip=209.85.215.172
+	s=arc-20240116; t=1747338675; c=relaxed/simple;
+	bh=XicbMEzMrzL5lLnQTyLnyLh4Xk1XJmeA6Z9zPsbIdQY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KjAIUwMW72IVo5XQwPWMIm8LCWPJn3hWLOMUaQzihyC2BY3iV2ZtWGlqirZ4dKxZq+RXmVbcQ2VSsk2bpZj/S5uOGZl8ILBzocTcUETfoNJP7G72N5fgIKHpfdWgQgHzrk5jmvDHwNyG62J88wd7Rkd9OmVCfbq238tzbav3IQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NgZYiH84; arc=none smtp.client-ip=209.85.215.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-afc857702d1so1059265a12.3;
-        Thu, 15 May 2025 12:51:09 -0700 (PDT)
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-afc857702d1so1059320a12.3;
+        Thu, 15 May 2025 12:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747338668; x=1747943468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zxs9mEdD69SShrgx9NFel2fGCaImIkFf/eWEMXh924g=;
-        b=YkYge+4odwWgXqcWRB3oEoSx0i2Ys1Sv5byDvmQXaJLfd480MUWc2kqh7/eM5yencl
-         4++isx/r+S10GNHEu6wcR3VROkAlxUs41QEdMu3F8KFKiFFrb7vSpyBQTWCpbeCLztOB
-         SdrHz5lIgdmuLNDDhL+UdceOI9BJhMNujBsmW2VPbgI2hMX1X/gRnWve+Dqi+oHmekrt
-         kjRVSpwKHt+bZ7SnwGUPQWw2+z4joAszt0kE+sJT6wui4vWUEuhPvsQK4dwtkfvti0Jg
-         rp8/oy2cbXYcrTd3Cxn4Centen1JZzkTCfAaSy3Ar7geSB+S2XdFq06BusWEQG1TAhdJ
-         qApg==
+        d=gmail.com; s=20230601; t=1747338672; x=1747943472; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tcmxPwjoxhUfjg0HJ44EtbQ1VFKx48WKH2fTBvu8jZg=;
+        b=NgZYiH845mZatKapIKyQ435H5x8iLDMdciQ6JSIRQR/KImwa8/ScFpWxFFqmfHUu59
+         xOEO+tOD2iHcgCWG8NSvr8ygnsCWHnNQxN1797tDKeAZaqg9/NHxOHS5t5hOKq1HJiy5
+         1ES63EU9iprZNpr5W2BXfG0ZW39DGMf1Y7w+qUDlSp01TEHGo8Qw4rCmCevGH1DcWVEH
+         j2QPlTQIvH6kB6eQyArl8sFbxUnLmYtF6u3xpnaD2Yig+76sQH4BJVhIRiwZfH0NUmsj
+         M+h4/jYU4HsJoJlInhrXC37CsvgAw4yQz8ywUW0SkHyxsej2g45gmIlrW+vjQfmRWr5R
+         Vl0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747338668; x=1747943468;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zxs9mEdD69SShrgx9NFel2fGCaImIkFf/eWEMXh924g=;
-        b=N6Gw+1DZD35twcxbPprP4kacR4qKsgGtsTe2M6nRnxBXrLa91Q2mi9sTZ4l6jDi/G6
-         wtOBGKvb4gFkOsfYmdYGSWq88Dn+RgYgWKLNn96QL2XuX03qWH7mTvhFn1kZxy09cSNG
-         KPUkUScW2TkgT9dnJy1zN3KS/9QQU4SVdj1yqbAxEdFRgaeQrB8lMoD5P5yf55jAxk1y
-         fUyhqBl5xO1rfqfqEDrmlnjMmWpQZxexyMWMJc5YL/ZyW+i+mw3ndyVqLbiP4h7bVeRg
-         BR1YwC+SYl6Ls3xxzBLN0H6oKg4y5ayXVPcSfQYxjA6xwbcLwS2rWPy1u8AgZMIuDkG+
-         bg+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW6DFn38EYVr6zKP+evhdp8jJ//xIjSNWDomjFmGdok4j0CFyntSV00b4U9CPwW0HV8c7Les+1wxh1yY8UI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwND0QPW7mGVLCEM9dTjN2Fyz38gOVSu95XRhXtB6U1cCbp87aX
-	9eB8Cwu2xGa1AMrU3XIfI37XxS+Fs7EZ5f/CfybS1cxfxKyWM5VdsOJK9zHO2Q==
-X-Gm-Gg: ASbGncswSD7TrReYg2nfXfivvcEn8nyanNlEPAPy5JrdLk++qfJKgPBsLw2Pynv5Rw5
-	imE476Uip6IfVVaINTi48ezBHiq3OLj0i7tdpEgH4RwSs3pdvTFYMfYkcYbdh+StfETvCP2N8AO
-	Ytoqv1ABRIGgL4bT0F4+WQ+E1Zljkk8LfsJVMWWDGdrZK6KIVefRx+rd1UsMj9Z5B/cTIqR6tjt
-	GlsRsPNyenmMJ8TmZ0Xao+IYT0exYoKhcZRr26FINuJ7DHgEO0740XmamB9p2TUbSMjs/lHsqde
-	nhA8ckAF+ELgUAyZc8ncnCb11b/nVuJ9whQZx5KXsXJFNBo=
-X-Google-Smtp-Source: AGHT+IEEobN/ph0UrTw1HKSXhckJbRXBdxx+SavBEw8fkJScZbUD7b4UE1lDrUunR5W/qFGSlRlAGA==
-X-Received: by 2002:a05:6a21:502:b0:203:ca66:e30 with SMTP id adf61e73a8af0-216219edf88mr1081288637.37.1747338667987;
-        Thu, 15 May 2025 12:51:07 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747338672; x=1747943472;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tcmxPwjoxhUfjg0HJ44EtbQ1VFKx48WKH2fTBvu8jZg=;
+        b=r+IJtF4sRJ3e/AiFaUoQsRdr1bl5C5z5y8lOsTMu9RuLHhdF7vmrRf7idHNwHYBTpr
+         ybZJicW2ZxrnL4FT1gCqkPelOZIgEiRONmkRV64TtmOd3WxbG4wlvPnpdD8E5OtFiU2q
+         JpHrn6lHT26PN1bMjQtQ0vlBH+lVld+sKurDLaf+Dnl7QRdMnw73LOotpc3UxiFHwPZx
+         zi5EQynrOC5rartQt0ofZGKpTKDSMt28SqwX/V8jpryBy4ZROuui8NNuAaDC16r2vpW9
+         GN1CIRrbc1Kun1fT5w2fKIU228T/tb0j+BvWZ9gNIgFKflzoO897Urk5W1nXlbyK0naE
+         F06Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWVhJZcmtin+Sw4/0EnfE4FjTdinRH+2/aAjbhSAcOjA2WUgTsvsYcdwH2wvN5fEKvCr/gWx06gfS6XUUEO@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCtEocomrNJ2Z0r6X13M+Tx2FXRbAzViLhnFKAWbGZRRRVGgA7
+	dZNU1+D9aEZ1VG++6/OLwsc6QOguGZKUcsJ0p/OFuix6+lX3zasx1qNzyqzZYA==
+X-Gm-Gg: ASbGncv7aDrwMHXxFp8kN3tJKnRpEjpe7He9rV2VehHSlCzNKVTLSYux9S6iBkcfjVr
+	bapV05dlEb73Wp1GQudQZi3cqMYZsl6cu8l7axBjhgF+85AELbaGGWdgqxbkcnFFn+fwlbs0Spn
+	XcXM1CtMRow2OMrGYsnhdUAVkCk+eN5Ocpp3/vZkbi+KSeY8V0CiozBQbRTQqMvDVihxfQTgbjB
+	0XOGdfKoZAwscDa9sslo0TaDf0lHp6reirNvg4t1CJOShmsTlDQ9Nzsh3i+rqukXXyWYiUn70og
+	MgUJVRt1Exez99v4LyV61Gni8058QjxP/8PeJDimAHAxIEE=
+X-Google-Smtp-Source: AGHT+IG5+rh0wXC/kiJYpPBP5QBAPsi0nS3kEdEoJHx7emXmxH6i9gvLCx737MIPQouz1kplR+orrA==
+X-Received: by 2002:a05:6a20:3d12:b0:1f5:59e5:8ada with SMTP id adf61e73a8af0-2162187a945mr1053577637.4.1747338671780;
+        Thu, 15 May 2025 12:51:11 -0700 (PDT)
 Received: from dw-tp.. ([171.76.80.248])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb0a9893sm280463a12.72.2025.05.15.12.51.04
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eb0a9893sm280463a12.72.2025.05.15.12.51.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 May 2025 12:51:07 -0700 (PDT)
+        Thu, 15 May 2025 12:51:11 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linux-ext4@vger.kernel.org
 Cc: Theodore Ts'o <tytso@mit.edu>,
@@ -79,10 +81,12 @@ Cc: Theodore Ts'o <tytso@mit.edu>,
 	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
 	linux-fsdevel@vger.kernel.org,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v5 0/7] ext4: Add multi-fsblock atomic write support with bigalloc
-Date: Fri, 16 May 2025 01:20:48 +0530
-Message-ID: <cover.1747337952.git.ritesh.list@gmail.com>
+Subject: [PATCH v5 1/7] ext4: Document an edge case for overwrites
+Date: Fri, 16 May 2025 01:20:49 +0530
+Message-ID: <fd50ba05440042dff77d555e463a620a79f8d0e9.1747337952.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <cover.1747337952.git.ritesh.list@gmail.com>
+References: <cover.1747337952.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -91,77 +95,33 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This adds multi-fsblock atomic write support to ext4 using bigalloc. The major
-chunk of the design changes are kept in Patch-4 & 5.
+ext4_iomap_overwrite_begin() clears the flag for IOMAP_WRITE before
+calling ext4_iomap_begin(). Document this above ext4_map_blocks() call
+as it is easy to miss it when focusing on write paths alone.
 
-v4 -> v5:
-=========
-1. Addressed review comments and added Acked-by from Darrick.
-2. Changed a minor WARN_ON(1) at one place to WARN_ON_ONCE(1) in patch-5 in
-   ext4_iomap_begin(). Ideally we may never hit it.
-3. Added force commit related info in the Documentation section where
-   mixed mapping details are mentioned.
-[v4]: https://lore.kernel.org/linux-ext4/cover.1747289779.git.ritesh.list@gmail.com/
+Reviewed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Acked-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+---
+ fs/ext4/inode.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-v3 -> v4:
-=========
-1. Added force txn commit in ext4_iomap_alloc(), in case we ended up allocating
-   and converting unwritten to written conversion during allocation time. This
-   happens when the underlying region has mixed mapping [1].
-2. Addressed review comments from Darrick and Ojaswin.
-3. Ran few data integrity tests on actual nvme device supporting atomic writes.
-
-[v2]: https://lore.kernel.org/linux-ext4/cover.1746734745.git.ritesh.list@gmail.com/
-[1]: https://lore.kernel.org/linux-ext4/87msbfyqcm.fsf@gmail.com/T/#m9f6607cc0e65e9fd29e675c5c15b3a03ff02110e
-
-v2 -> v3:
-=========
-1. Improved error handling at several places.
-2. Further fixed some worst case journal credits estimation.
-3. Added better checks in the slow path allocation loop for atomic writes.
-
-v3 testing so far:
-===============
-- This has survived "quick" & "auto" group testing with bigalloc on x86 and Power.
-- We have also tested atomic write related tests using fio and some data integrity
-  tests with sudden power off during writes on scsi_debug module.
-  (Will clean up these tests and try to post them out soon!)
-
-Appreciate any review comments / feedback!
-
-v1 -> v2:
-==========
-1. Handled review comments from Ojaswin to optimize the ext4_map_block() calls
-   in ext4_iomap_alloc().
-2. Fixed the journal credits calculation for both:
-	- during block allocation in ext4_iomap_alloc()
-	- during dio completion in ->end_io callback.
-   Earlier we were starting multiple txns in ->end_io callback for unwritten to
-   written conversion. But since in case of atomic writes, we want a single jbd2
-   txn, hence made the necessary changes there.
-[v2]: https://lore.kernel.org/linux-ext4/cover.1745987268.git.ritesh.list@gmail.com/
-
-
-Ritesh Harjani (IBM) (7):
-  ext4: Document an edge case for overwrites
-  ext4: Check if inode uses extents in ext4_inode_can_atomic_write()
-  ext4: Make ext4_meta_trans_blocks() non-static for later use
-  ext4: Add support for EXT4_GET_BLOCKS_QUERY_LEAF_BLOCKS
-  ext4: Add multi-fsblock atomic write support with bigalloc
-  ext4: Enable support for ext4 multi-fsblock atomic write using bigalloc
-  ext4: Add atomic block write documentation
-
- .../filesystems/ext4/atomic_writes.rst        | 225 +++++++++++++
- Documentation/filesystems/ext4/overview.rst   |   1 +
- fs/ext4/ext4.h                                |  26 +-
- fs/ext4/extents.c                             |  99 ++++++
- fs/ext4/file.c                                |   7 +-
- fs/ext4/inode.c                               | 315 ++++++++++++++++--
- fs/ext4/super.c                               |   7 +-
- 7 files changed, 655 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/filesystems/ext4/atomic_writes.rst
-
---
+diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+index 94c7d2d828a6..b10e5cd5bb5c 100644
+--- a/fs/ext4/inode.c
++++ b/fs/ext4/inode.c
+@@ -3436,6 +3436,10 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 		}
+ 		ret = ext4_iomap_alloc(inode, &map, flags);
+ 	} else {
++		/*
++		 * This can be called for overwrites path from
++		 * ext4_iomap_overwrite_begin().
++		 */
+ 		ret = ext4_map_blocks(NULL, inode, &map, 0);
+ 	}
+ 
+-- 
 2.49.0
 
 
