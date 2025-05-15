@@ -1,278 +1,563 @@
-Return-Path: <linux-fsdevel+bounces-49161-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49162-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F04AB8CCE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 18:48:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C162AB8CDF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 18:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F58B3B9A9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 16:48:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1843C1BA82FF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 16:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C9D253F05;
-	Thu, 15 May 2025 16:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CDC253F13;
+	Thu, 15 May 2025 16:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rUh1Au+5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5BE72638;
-	Thu, 15 May 2025 16:48:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773A8253B4C;
+	Thu, 15 May 2025 16:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747327702; cv=none; b=Qoe2eK7r3rcknE+ZhneTEcKOxjlqA52y94dk0Iqi0Q7tmh/HOBu3pnfKOfiuKbIk3NNoo9Q8jU3jViYZDVpbZTuhaL4RsbyW/RoUgFfrsO8pdMH2R5P7GjkApZvFm1MmXfhXYTpY/4NPU8xNSWrrjd0voY9eylEFIf2+ZsHlKAs=
+	t=1747328030; cv=none; b=ia2AjX0dkOZtmpn4pF7NDp5bsHagM9FpplNlwenkZDbnsKy63Kv0FoU16LlT4No/bHqfng6r0ZE0BRhlSC5d1No3NBCSWi9PSBo5fSR5zLP/2Kp0AOQ0qVErJy+zvlsOjDs1hVeuxkDekQGyAJT+W1iUx3xspwMaqYzM70GE/vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747327702; c=relaxed/simple;
-	bh=ajLCurLFo3eANTDUWWiiZgG4NaMGIOdM5yB4dSWeAs0=;
-	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
-	 Content-Type:Subject; b=ah5HHWDxxCpMtGFpXK13HxEqriMEX07NTJCf5ak/MPMrmgWAN8tWl7taVSjqCSAbd4frv/3UEWnufGCN3kjKiz24iyf7obE60e8s+mUMyPULiKD1QBEfAsxHw3XkqvkQd/0+MJ7juiu/vNh7MWVsc7EqNpqdiwoNV2pMhV+iTiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
-Received: from in01.mta.xmission.com ([166.70.13.51]:52516)
-	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uFbko-008tj4-0n; Thu, 15 May 2025 10:48:18 -0600
-Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:60030 helo=email.froward.int.ebiederm.org.xmission.com)
-	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.93)
-	(envelope-from <ebiederm@xmission.com>)
-	id 1uFbkm-008mIa-JT; Thu, 15 May 2025 10:48:17 -0600
-From: "Eric W. Biederman" <ebiederm@xmission.com>
-To: Kees Cook <kees@kernel.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,  Jann Horn <jannh@google.com>,
-  Christian Brauner <brauner@kernel.org>,  Jorge Merlino
- <jorge.merlino@canonical.com>,  Alexander Viro <viro@zeniv.linux.org.uk>,
-  Thomas Gleixner <tglx@linutronix.de>,  Andy Lutomirski <luto@kernel.org>,
-  Sebastian Andrzej Siewior <bigeasy@linutronix.de>,  Andrew Morton
- <akpm@linux-foundation.org>,  linux-mm@kvack.org,
-  linux-fsdevel@vger.kernel.org,  John Johansen
- <john.johansen@canonical.com>,  Paul Moore <paul@paul-moore.com>,  James
- Morris <jmorris@namei.org>,  "Serge E. Hallyn" <serge@hallyn.com>,
-  Stephen Smalley <stephen.smalley.work@gmail.com>,  Eric Paris
- <eparis@parisplace.org>,  Richard Haines
- <richard_c_haines@btinternet.com>,  Casey Schaufler
- <casey@schaufler-ca.com>,  Xin Long <lucien.xin@gmail.com>,  "David S.
- Miller" <davem@davemloft.net>,  Todd Kjos <tkjos@google.com>,  Ondrej
- Mosnacek <omosnace@redhat.com>,  Prashanth Prahlad <pprahlad@redhat.com>,
-  Micah Morton <mortonm@chromium.org>,  Fenghua Yu <fenghua.yu@intel.com>,
-  Andrei Vagin <avagin@gmail.com>,  linux-kernel@vger.kernel.org,
-  apparmor@lists.ubuntu.com,  linux-security-module@vger.kernel.org,
-  selinux@vger.kernel.org,  linux-hardening@vger.kernel.org,
-  oleg@redhat.com
-References: <20221006082735.1321612-1-keescook@chromium.org>
-	<20221006082735.1321612-2-keescook@chromium.org>
-	<20221006090506.paqjf537cox7lqrq@wittgenstein>
-	<CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
-	<86CE201B-5632-4BB7-BCF6-7CB2C2895409@chromium.org>
-	<h65sagivix3zbrppthcobnysgnlrnql5shiu65xyg7ust6mc54@cliutza66zve>
-	<D03AE210-6874-43B6-B917-80CD259AE2AC@kernel.org>
-	<CAG48ez0aP8LaGppy6Yon7xcFbQa1=CM-HXSZChvXYV2VJZ8y7g@mail.gmail.com>
-	<871pss17hq.fsf@email.froward.int.ebiederm.org>
-	<CAGudoHH-Jn5_4qnLV3qwzjTi2ZgfmfaO0qVSWW5gqdqkvchnDQ@mail.gmail.com>
-	<202505140822.6AB755B6@keescook>
-Date: Thu, 15 May 2025 11:48:07 -0500
-In-Reply-To: <202505140822.6AB755B6@keescook> (Kees Cook's message of "Wed, 14
-	May 2025 08:42:22 -0700")
-Message-ID: <87bjrtrfaw.fsf@email.froward.int.ebiederm.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1747328030; c=relaxed/simple;
+	bh=+TEF3Ajp4Jq1dv1htwpsDi+RrVvh2ssl4jgbuYKjI8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GZ3Y6nAx0OvVMDY8XFIZiKNjO4nwmXuWjGmYF72p/guWHoLcuTrIhRlf7daLDsEv69itEJwcayvWbUsadwOrq7rh4P2h2+jiHxvf/vKPoMiS44MzoB9Q+DWXFd3hLEoq3eLOcabVLstFHzTJoL97Amp3lZlg3jDnZY7y93WS9AE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rUh1Au+5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF38C4CEE7;
+	Thu, 15 May 2025 16:53:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747328029;
+	bh=+TEF3Ajp4Jq1dv1htwpsDi+RrVvh2ssl4jgbuYKjI8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rUh1Au+5IygZOj+3mK/2T5F1QUsHHUBzD1Fc8wcFok47CyFmC1mm8lrJ1zuYq/4Z3
+	 zuKWPYMkrOplW9QD13ZH6sHN8fO2NVMjr/4J12l+cB+08rz8QyyBgd8/A24Ld2KzWX
+	 tf1F+K/3DQLehFkVwWkYI4X8JUzx7kq2cCDJFk82NxPunV+5AeIIa6hn/aUll5cNCD
+	 4ET8z/eeEqrRgoyetoobS68dvqP2YaI16UQ5hIQgeAmnxHq0wo90T5RL/rcek10+7K
+	 y06va/1xJZ9UdywB8YZHKzO0G/Ato31aBSYULcA3+D+IpmYccz59TZg0adwhc8FAF6
+	 BPGEXVIcXLD/g==
+Date: Thu, 15 May 2025 09:53:48 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
+	Jan Kara <jack@suse.cz>, John Garry <john.g.garry@oracle.com>,
+	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 5/7] ext4: Add multi-fsblock atomic write support with
+ bigalloc
+Message-ID: <20250515165348.GO25655@frogsfrogsfrogs>
+References: <cover.1747289779.git.ritesh.list@gmail.com>
+ <3795865b7e5788d66f362cec573b196f54439e9a.1747289779.git.ritesh.list@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-XM-SPF: eid=1uFbkm-008mIa-JT;;;mid=<87bjrtrfaw.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
-X-XM-AID: U2FsdGVkX1/dsw9mCdXAA3N8gGK7mkVPwWeN8eQaLZ4=
-X-Spam-Level: ***
-X-Spam-Report: 
-	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
-	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-	*      [score: 0.5000]
-	*  1.5 XMNoVowels Alpha-numberic number with no vowels
-	*  0.7 XMSubLong Long Subject
-	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
-	*  0.0 XM_B_Unicode BODY: Testing for specific types of unicode
-	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
-	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
-	*  1.0 XMGenDplmaNmb Diploma spam phrases+possible phone number
-	*  0.0 T_TooManySym_01 4+ unique symbols in subject
-X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
-X-Spam-Combo: ***;Kees Cook <kees@kernel.org>
-X-Spam-Relay-Country: 
-X-Spam-Timing: total 883 ms - load_scoreonly_sql: 0.04 (0.0%),
-	signal_user_changed: 8 (1.0%), b_tie_ro: 7 (0.8%), parse: 1.28 (0.1%),
-	extract_message_metadata: 15 (1.7%), get_uri_detail_list: 3.6 (0.4%),
-	tests_pri_-2000: 27 (3.1%), tests_pri_-1000: 7 (0.8%), tests_pri_-950:
-	1.59 (0.2%), tests_pri_-900: 1.27 (0.1%), tests_pri_-90: 93 (10.6%),
-	check_bayes: 91 (10.3%), b_tokenize: 22 (2.5%), b_tok_get_all: 14
-	(1.6%), b_comp_prob: 8 (0.9%), b_tok_touch_all: 40 (4.5%), b_finish:
-	1.39 (0.2%), tests_pri_0: 667 (75.5%), check_dkim_signature: 0.85
-	(0.1%), check_dkim_adsp: 3.6 (0.4%), poll_dns_idle: 1.32 (0.1%),
-	tests_pri_10: 2.4 (0.3%), tests_pri_500: 56 (6.3%), rewrite_mail: 0.00
-	(0.0%)
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-X-SA-Exim-Connect-IP: 166.70.13.51
-X-SA-Exim-Rcpt-To: too long (recipient list exceeded maximum allowed size of 512 bytes)
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3795865b7e5788d66f362cec573b196f54439e9a.1747289779.git.ritesh.list@gmail.com>
 
-Kees Cook <kees@kernel.org> writes:
+On Thu, May 15, 2025 at 08:15:37PM +0530, Ritesh Harjani (IBM) wrote:
+> EXT4 supports bigalloc feature which allows the FS to work in size of
+> clusters (group of blocks) rather than individual blocks. This patch
+> adds atomic write support for bigalloc so that systems with bs = ps can
+> also create FS using -
+>     mkfs.ext4 -F -O bigalloc -b 4096 -C 16384 <dev>
+> 
+> With bigalloc ext4 can support multi-fsblock atomic writes. We will have to
+> adjust ext4's atomic write unit max value to cluster size. This can then support
+> atomic write of size anywhere between [blocksize, clustersize]. This
+> patch adds the required changes to enable multi-fsblock atomic write
+> support using bigalloc in the next patch.
+> 
+> In this patch for block allocation:
+> we first query the underlying region of the requested range by calling
+> ext4_map_blocks() call. Here are the various cases which we then handle
+> depending upon the underlying mapping type:
+> 1. If the underlying region for the entire requested range is a mapped extent,
+>    then we don't call ext4_map_blocks() to allocate anything. We don't need to
+>    even start the jbd2 txn in this case.
+> 2. For an append write case, we create a mapped extent.
+> 3. If the underlying region is entirely a hole, then we create an unwritten
+>    extent for the requested range.
+> 4. If the underlying region is a large unwritten extent, then we split the
+>    extent into 2 unwritten extent of required size.
+> 5. If the underlying region has any type of mixed mapping, then we call
+>    ext4_map_blocks() in a loop to zero out the unwritten and the hole regions
+>    within the requested range. This then provide a single mapped extent type
+>    mapping for the requested range.
+> 
+> Note: We invoke ext4_map_blocks() in a loop with the EXT4_GET_BLOCKS_ZERO
+> flag only when the underlying extent mapping of the requested range is
+> not entirely a hole, an unwritten extent, or a fully mapped extent. That
+> is, if the underlying region contains a mix of hole(s), unwritten
+> extent(s), and mapped extent(s), we use this loop to ensure that all the
+> short mappings are zeroed out. This guarantees that the entire requested
+> range becomes a single, uniformly mapped extent. It is ok to do so
+> because we know this is being done on a bigalloc enabled filesystem
+> where the block bitmap represents the entire cluster unit.
+> 
+> Note having a single contiguous underlying region of type mapped,
+> unwrittn or hole is not a problem. But the reason to avoid writing on
+> top of mixed mapping region is because, atomic writes requires all or
+> nothing should get written for the userspace pwritev2 request. So if at
+> any point in time during the write if a crash or a sudden poweroff
+> occurs, the region undergoing atomic write should read either complete
+> old data or complete new data. But it should never have a mix of both
+> old and new data.
+> So, we first convert any mixed mapping region to a single contiguous
+> mapped extent before any data gets written to it. This is because
+> normally FS will only convert unwritten extents to written at the end of
+> the write in ->end_io() call. And if we allow the writes over a mixed
+> mapping and if a sudden power off happens in between, we will end up
+> reading mix of new data (over mapped extents) and old data (over
+> unwritten extents), because unwritten to written conversion never went
+> through.
+> So to avoid this and to avoid writes getting torned due to mixed
+> mapping, we first allocate a single contiguous block mapping and then
+> do the write.
+> 
+> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+>  fs/ext4/ext4.h    |   2 +
+>  fs/ext4/extents.c |  87 ++++++++++++++++++++
+>  fs/ext4/file.c    |   7 +-
+>  fs/ext4/inode.c   | 200 +++++++++++++++++++++++++++++++++++++++++++++-
+>  4 files changed, 291 insertions(+), 5 deletions(-)
+> 
+> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> index ef6cac6b4b4c..8eb1f332ee7d 100644
+> --- a/fs/ext4/ext4.h
+> +++ b/fs/ext4/ext4.h
+> @@ -3728,6 +3728,8 @@ extern long ext4_fallocate(struct file *file, int mode, loff_t offset,
+>  			  loff_t len);
+>  extern int ext4_convert_unwritten_extents(handle_t *handle, struct inode *inode,
+>  					  loff_t offset, ssize_t len);
+> +extern int ext4_convert_unwritten_extents_atomic(handle_t *handle,
+> +			struct inode *inode, loff_t offset, ssize_t len);
+>  extern int ext4_convert_unwritten_io_end_vec(handle_t *handle,
+>  					     ext4_io_end_t *io_end);
+>  extern int ext4_map_blocks(handle_t *handle, struct inode *inode,
+> diff --git a/fs/ext4/extents.c b/fs/ext4/extents.c
+> index fa850f188d46..2967c74dabaf 100644
+> --- a/fs/ext4/extents.c
+> +++ b/fs/ext4/extents.c
+> @@ -4792,6 +4792,93 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>  	return ret;
+>  }
+>  
+> +/*
+> + * This function converts a range of blocks to written extents. The caller of
+> + * this function will pass the start offset and the size. all unwritten extents
+> + * within this range will be converted to written extents.
+> + *
+> + * This function is called from the direct IO end io call back function for
+> + * atomic writes, to convert the unwritten extents after IO is completed.
+> + *
+> + * Note that the requirement for atomic writes is that all conversion should
+> + * happen atomically in a single fs journal transaction. We mainly only allocate
+> + * unwritten extents either on a hole on a pre-exiting unwritten extent range in
+> + * ext4_map_blocks_atomic_write(). The only case where we can have multiple
+> + * unwritten extents in a range [offset, offset+len) is when there is a split
+> + * unwritten extent between two leaf nodes which was cached in extent status
+> + * cache during ext4_iomap_alloc() time. That will allow
+> + * ext4_map_blocks_atomic_write() to return the unwritten extent range w/o going
+> + * into the slow path. That means we might need a loop for conversion of this
+> + * unwritten extent split across leaf block within a single journal transaction.
+> + * Split extents across leaf nodes is a rare case, but let's still handle that
+> + * to meet the requirements of multi-fsblock atomic writes.
+> + *
+> + * Returns 0 on success.
+> + */
+> +int ext4_convert_unwritten_extents_atomic(handle_t *handle, struct inode *inode,
+> +					  loff_t offset, ssize_t len)
+> +{
+> +	unsigned int max_blocks;
+> +	int ret = 0, ret2 = 0, ret3 = 0;
+> +	struct ext4_map_blocks map;
+> +	unsigned int blkbits = inode->i_blkbits;
+> +	unsigned int credits = 0;
+> +	int flags = EXT4_GET_BLOCKS_IO_CONVERT_EXT;
+> +
+> +	map.m_lblk = offset >> blkbits;
+> +	max_blocks = EXT4_MAX_BLOCKS(len, offset, blkbits);
+> +
+> +	if (!handle) {
+> +		/*
+> +		 * TODO: An optimization can be added later by having an extent
+> +		 * status flag e.g. EXTENT_STATUS_SPLIT_LEAF. If we query that
+> +		 * it can tell if the extent in the cache is a split extent.
+> +		 * But for now let's assume pextents as 2 always.
+> +		 */
+> +		credits = ext4_meta_trans_blocks(inode, max_blocks, 2);
+> +	}
+> +
+> +	if (credits) {
+> +		handle = ext4_journal_start(inode, EXT4_HT_MAP_BLOCKS, credits);
+> +		if (IS_ERR(handle)) {
+> +			ret = PTR_ERR(handle);
+> +			return ret;
+> +		}
+> +	}
+> +
+> +	while (ret >= 0 && ret < max_blocks) {
+> +		map.m_lblk += ret;
+> +		map.m_len = (max_blocks -= ret);
+> +		ret = ext4_map_blocks(handle, inode, &map, flags);
+> +		if (ret != max_blocks)
+> +			ext4_msg(inode->i_sb, KERN_INFO,
+> +				     "inode #%lu: block %u: len %u: "
+> +				     "split block mapping found for atomic write, "
+> +				     "ret = %d",
+> +				     inode->i_ino, map.m_lblk,
+> +				     map.m_len, ret);
+> +		if (ret <= 0)
+> +			break;
+> +	}
+> +
+> +	ret2 = ext4_mark_inode_dirty(handle, inode);
+> +
+> +	if (credits) {
+> +		ret3 = ext4_journal_stop(handle);
+> +		if (unlikely(ret3))
+> +			ret2 = ret3;
+> +	}
+> +
+> +	if (ret <= 0 || ret2)
+> +		ext4_warning(inode->i_sb,
+> +			     "inode #%lu: block %u: len %u: "
+> +			     "returned %d or %d",
+> +			     inode->i_ino, map.m_lblk,
+> +			     map.m_len, ret, ret2);
+> +
+> +	return ret > 0 ? ret2 : ret;
+> +}
+> +
+>  /*
+>   * This function convert a range of blocks to written extents
+>   * The caller of this function will pass the start offset and the size.
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index beb078ee4811..959328072c15 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -377,7 +377,12 @@ static int ext4_dio_write_end_io(struct kiocb *iocb, ssize_t size,
+>  	loff_t pos = iocb->ki_pos;
+>  	struct inode *inode = file_inode(iocb->ki_filp);
+>  
+> -	if (!error && size && flags & IOMAP_DIO_UNWRITTEN)
+> +
+> +	if (!error && size && (flags & IOMAP_DIO_UNWRITTEN) &&
+> +			(iocb->ki_flags & IOCB_ATOMIC))
+> +		error = ext4_convert_unwritten_extents_atomic(NULL, inode, pos,
+> +							      size);
+> +	else if (!error && size && flags & IOMAP_DIO_UNWRITTEN)
+>  		error = ext4_convert_unwritten_extents(NULL, inode, pos, size);
+>  	if (error)
+>  		return error;
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 8b86b1a29bdc..13bc9f07ae7f 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3412,12 +3412,149 @@ static void ext4_set_iomap(struct inode *inode, struct iomap *iomap,
+>  	}
+>  }
+>  
+> +static int ext4_map_blocks_atomic_write_slow(handle_t *handle,
+> +			struct inode *inode, struct ext4_map_blocks *map)
+> +{
+> +	ext4_lblk_t m_lblk = map->m_lblk;
+> +	unsigned int m_len = map->m_len;
+> +	unsigned int mapped_len = 0, m_flags = 0;
+> +	ext4_fsblk_t next_pblk;
+> +	bool check_next_pblk = false;
+> +	int ret = 0;
+> +
+> +	WARN_ON_ONCE(!ext4_has_feature_bigalloc(inode->i_sb));
+> +
+> +	/*
+> +	 * This is a slow path in case of mixed mapping. We use
+> +	 * EXT4_GET_BLOCKS_CREATE_ZERO flag here to make sure we get a single
+> +	 * contiguous mapped mapping. This will ensure any unwritten or hole
+> +	 * regions within the requested range is zeroed out and we return
+> +	 * a single contiguous mapped extent.
+> +	 */
+> +	m_flags = EXT4_GET_BLOCKS_CREATE_ZERO;
+> +
+> +	do {
+> +		ret = ext4_map_blocks(handle, inode, map, m_flags);
+> +		if (ret < 0 && ret != -ENOSPC)
+> +			goto out_err;
+> +		/*
+> +		 * This should never happen, but let's return an error code to
+> +		 * avoid an infinite loop in here.
+> +		 */
+> +		if (ret == 0) {
+> +			ret = -EFSCORRUPTED;
+> +			ext4_warning_inode(inode,
+> +				"ext4_map_blocks() couldn't allocate blocks m_flags: 0x%x, ret:%d",
+> +				m_flags, ret);
+> +			goto out_err;
+> +		}
+> +		/*
+> +		 * With bigalloc we should never get ENOSPC nor discontiguous
+> +		 * physical extents.
+> +		 */
+> +		if ((check_next_pblk && next_pblk != map->m_pblk) ||
+> +				ret == -ENOSPC) {
+> +			ext4_warning_inode(inode,
+> +				"Non-contiguous allocation detected: expected %llu, got %llu, "
+> +				"or ext4_map_blocks() returned out of space ret: %d",
+> +				next_pblk, map->m_pblk, ret);
+> +			ret = -EFSCORRUPTED;
+> +			goto out_err;
+> +		}
+> +		next_pblk = map->m_pblk + map->m_len;
+> +		check_next_pblk = true;
+> +
+> +		mapped_len += map->m_len;
+> +		map->m_lblk += map->m_len;
+> +		map->m_len = m_len - mapped_len;
+> +	} while (mapped_len < m_len);
+> +
+> +	/*
+> +	 * We might have done some work in above loop, so we need to query the
+> +	 * start of the physical extent, based on the origin m_lblk and m_len.
+> +	 * Let's also ensure we were able to allocate the required range for
+> +	 * mixed mapping case.
+> +	 */
+> +	map->m_lblk = m_lblk;
+> +	map->m_len = m_len;
+> +	map->m_flags = 0;
+> +
+> +	ret = ext4_map_blocks(handle, inode, map,
+> +			      EXT4_GET_BLOCKS_QUERY_LAST_IN_LEAF);
+> +	if (ret != m_len) {
+> +		ext4_warning_inode(inode,
+> +			"allocation failed for atomic write request m_lblk:%u, m_len:%u, ret:%d\n",
+> +			m_lblk, m_len, ret);
+> +		ret = -EINVAL;
 
-> On Wed, May 14, 2025 at 02:03:31AM +0200, Mateusz Guzik wrote:
->> On Wed, May 14, 2025 at 12:17=E2=80=AFAM Eric W. Biederman
->> <ebiederm@xmission.com> wrote:
->> >
->> > Jann Horn <jannh@google.com> writes:
->> >
->> > > On Tue, May 13, 2025 at 10:57=E2=80=AFPM Kees Cook <kees@kernel.org>=
- wrote:
->> > >> On May 13, 2025 6:05:45 AM PDT, Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
->> > >> >Here is my proposal: *deny* exec of suid/sgid binaries if fs_struc=
-t is
->> > >> >shared. This will have to be checked for after the execing proc be=
-comes
->> > >> >single-threaded ofc.
->> > >>
->> > >> Unfortunately the above Chrome helper is setuid and uses CLONE_FS.
->> > >
->> > > Chrome first launches a setuid helper, and then the setuid helper do=
-es
->> > > CLONE_FS. Mateusz's proposal would not impact this usecase.
->> > >
->> > > Mateusz is proposing to block the case where a process first does
->> > > CLONE_FS, and *then* one of the processes sharing the fs_struct does=
- a
->> > > setuid execve(). Linux already downgrades such an execve() to be
->> > > non-setuid, which probably means anyone trying to do this will get
->> > > hard-to-understand problems. Mateusz' proposal would just turn this
->> > > hard-to-debug edgecase, which already doesn't really work, into a
->> > > clean error; I think that is a nice improvement even just from the
->> > > UAPI standpoint.
->> > >
->> > > If this change makes it possible to clean up the kernel code a bit, =
-even better.
->> >
->> > What has brought this to everyone's attention just now?  This is
->> > the second mention of this code path I have seen this week.
->> >
->>=20
->> There is a syzkaller report concerning ->in_exec handling, for example:
->> https://lore.kernel.org/all/67dc67f0.050a0220.25ae54.001f.GAE@google.com=
-/#t
->>
->> [...]
->> > It looks like most of the lsm's also test bprm->unsafe.
->> >
->> > So I imagine someone could very carefully separate the non-ptrace case
->> > from the ptrace case but *shrug*.
->> >
->> > Perhaps:
->> >
->> >         if ((is_setid || __cap_gained(permitted, new_old)) &&
->> >             ((bprm->unsafe & ~LSM_UNSAFE_PTRACE) ||
->> >              !ptracer_capable(current, new->user_ns))) {
->> > +               if (!(bprm->unsafe & LSM_UNSAFE_PTRACE)) {
->> > +                       return -EPERM;
->> > +               }
->> >                 /* downgrade; they get no more than they had, and mayb=
-e less */
->> >                 if (!ns_capable(new->user_ns, CAP_SETUID) ||
->> >                     (bprm->unsafe & LSM_UNSAFE_NO_NEW_PRIVS)) {
->> >                         new->euid =3D new->uid;
->> >                         new->egid =3D new->gid;
->> >                 }
->> >                 new->cap_permitted =3D cap_intersect(new->cap_permitte=
-d,
->> >                                                    old->cap_permitted);
->> >          }
->> >
->> > If that is what you want that doesn't look to scary.  I don't think
->> > it simplifies anything about fs->in_exec.  As fs->in_exec is set when
->> > the processing calling exec is the only process that owns the fs_struc=
-t.
->> > With fs->in_exec just being a flag that doesn't allow another thread
->> > to call fork and start sharing the fs_struct during exec.
->> >
->> > *Shrug*
->> >
->> > I don't see why anyone would care.  It is just a very silly corner cas=
-e.
->>=20
->> Well I don't see how ptrace factors into any of this, apart from being
->> a different case of ignoring suid/sgid.
->
-> I actually think we might want to expand the above bit of logic to use
-> an explicit tests of each LSM_UNSAFE case -- the merged
-> logic is very difficult to read currently. Totally untested expansion,
-> if I'm reading everything correctly:
->
-> 	if (bprm->unsafe &&
-> 	    (is_setid || __cap_gained(permitted, new_old))) {
-> 		bool limit_caps =3D false;
-> 		bool strip_eid =3D false;
-> 		unsigned int unsafe =3D bprm->unsafe;
-> 		/* Check each bit */
->
-> 		if (unsafe & LSM_UNSAFE_PTRACE) {
-> 			if (!ptracer_capable(current, new->user_ns))
-> 				limit_caps =3D true;
-                                strip_eid  =3D true;
-You missed the euid stripping there.
-> 			unsafe &=3D ~LSM_UNSAFE_PTRACE;
-> 		}
-> 		if (unsafe & LSM_UNSAFE_SHARE) {
-> 			limit_caps =3D true;
-> 			if (!ns_capable(new->user_ns, CAP_SETUID))
-> 				strip_eid =3D true;
-> 			unsafe &=3D ~LSM_UNSAFE_SHARE;
-> 		}
-> 		if (unsafe & LSM_UNSAFE_NO_NEW_PRIVS) {
-> 			limit_caps =3D true;
-> 			if (!ns_capable(new->user_ns, CAP_SETUID))
-> 				strip_eid =3D true;
-> 			unsafe &=3D ~LSM_UNSAFE_NO_NEW_PRIVS;
-> 		}
->
-> 		if (WARN(unsafe, "Unhandled LSM_UNSAFE flag: %u?!\n", unsafe))
-> 			return -EINVAL;
->
-> 		if (limit_caps) {
-> 			new->cap_permitted =3D cap_intersect(new->cap_permitted,
-> 							   old->cap_permitted);
-> 		}
-> 		if (strip_eid) {
-> 			new->euid =3D new->uid;
-> 			new->egid =3D new->gid;
-> 		}
-> 	}
+When does this produce a short mapping?  In theory the cluster's already
+allocated, right?  So this is (AFAICT) a handler for a "should never
+happen" corner case, right?
 
+> +	}
+> +	return ret;
+> +
+> +out_err:
+> +	/* reset map before returning an error */
+> +	map->m_lblk = m_lblk;
+> +	map->m_len = m_len;
+> +	map->m_flags = 0;
+> +	return ret;
+> +}
+> +
+> +/*
+> + * ext4_map_blocks_atomic: Helper routine to ensure the entire requested
+> + * range in @map [lblk, lblk + len) is one single contiguous extent with no
+> + * mixed mappings.
+> + *
+> + * We first use m_flags passed to us by our caller (ext4_iomap_alloc()).
+> + * We only call EXT4_GET_BLOCKS_ZERO in the slow path, when the underlying
+> + * physical extent for the requested range does not have a single contiguous
+> + * mapping type i.e. (Hole, Mapped, or Unwritten) throughout.
+> + * In that case we will loop over the requested range to allocate and zero out
+> + * the unwritten / holes in between, to get a single mapped extent from
+> + * [m_lblk, m_lblk +  m_len). Note that this is only possible because we know
+> + * this can be called only with bigalloc enabled filesystem where the underlying
+> + * cluster is already allocated. This avoids allocating discontiguous extents
+> + * in the slow path due to multiple calls to ext4_map_blocks().
+> + * The slow path is mostly non-performance critical path, so it should be ok to
+> + * loop using ext4_map_blocks() with appropriate flags to allocate & zero the
+> + * underlying short holes/unwritten extents within the requested range.
+> + */
+> +static int ext4_map_blocks_atomic_write(handle_t *handle, struct inode *inode,
+> +				struct ext4_map_blocks *map, int m_flags,
+> +				bool *force_commit)
+> +{
+> +	ext4_lblk_t m_lblk = map->m_lblk;
+> +	unsigned int m_len = map->m_len;
+> +	int ret = 0;
+> +
+> +	WARN_ON_ONCE(m_len > 1 && !ext4_has_feature_bigalloc(inode->i_sb));
+> +
+> +	ret = ext4_map_blocks(handle, inode, map, m_flags);
+> +	if (ret < 0 || ret == m_len)
+> +		goto out;
+> +	/*
+> +	 * This is a mixed mapping case where we were not able to allocate
+> +	 * a single contiguous extent. In that case let's reset requested
+> +	 * mapping and call the slow path.
+> +	 */
+> +	map->m_lblk = m_lblk;
+> +	map->m_len = m_len;
+> +	map->m_flags = 0;
+> +
+> +	/*
+> +	 * slow path means we have mixed mapping, that means we will need
+> +	 * to force txn commit.
+> +	 */
+> +	*force_commit = true;
+> +	return ext4_map_blocks_atomic_write_slow(handle, inode, map);
+> +out:
+> +	return ret;
+> +}
+> +
+>  static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
+>  			    unsigned int flags)
+>  {
+>  	handle_t *handle;
+>  	u8 blkbits = inode->i_blkbits;
+>  	int ret, dio_credits, m_flags = 0, retries = 0;
+> +	bool force_commit = false;
+>  
+>  	/*
+>  	 * Trim the mapping request to the maximum value that we can map at
+> @@ -3425,7 +3562,30 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
+>  	 */
+>  	if (map->m_len > DIO_MAX_BLOCKS)
+>  		map->m_len = DIO_MAX_BLOCKS;
+> -	dio_credits = ext4_chunk_trans_blocks(inode, map->m_len);
+> +
+> +	/*
+> +	 * journal credits estimation for atomic writes. We call
+> +	 * ext4_map_blocks(), to find if there could be a mixed mapping. If yes,
+> +	 * then let's assume the no. of pextents required can be m_len i.e.
+> +	 * every alternate block can be unwritten and hole.
+> +	 */
+> +	if (flags & IOMAP_ATOMIC) {
+> +		unsigned int orig_mlen = map->m_len;
+> +
+> +		ret = ext4_map_blocks(NULL, inode, map, 0);
+> +		if (ret < 0)
+> +			return ret;
+> +		if (map->m_len < orig_mlen) {
+> +			map->m_len = orig_mlen;
+> +			dio_credits = ext4_meta_trans_blocks(inode, orig_mlen,
+> +							     map->m_len);
+> +		} else {
+> +			dio_credits = ext4_chunk_trans_blocks(inode,
+> +							      map->m_len);
+> +		}
+> +	} else {
+> +		dio_credits = ext4_chunk_trans_blocks(inode, map->m_len);
+> +	}
+>  
+>  retry:
+>  	/*
+> @@ -3456,7 +3616,11 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
+>  	else if (ext4_test_inode_flag(inode, EXT4_INODE_EXTENTS))
+>  		m_flags = EXT4_GET_BLOCKS_IO_CREATE_EXT;
+>  
+> -	ret = ext4_map_blocks(handle, inode, map, m_flags);
+> +	if (flags & IOMAP_ATOMIC)
+> +		ret = ext4_map_blocks_atomic_write(handle, inode, map, m_flags,
+> +						   &force_commit);
+> +	else
+> +		ret = ext4_map_blocks(handle, inode, map, m_flags);
+>  
+>  	/*
+>  	 * We cannot fill holes in indirect tree based inodes as that could
+> @@ -3470,6 +3634,14 @@ static int ext4_iomap_alloc(struct inode *inode, struct ext4_map_blocks *map,
+>  	if (ret == -ENOSPC && ext4_should_retry_alloc(inode->i_sb, &retries))
+>  		goto retry;
+>  
+> +	if (ret > 0 && force_commit) {
+> +		int ret2;
+> +
+> +		ret2 = ext4_force_commit(inode->i_sb);
+> +		if (ret2)
+> +			ret = ret2;
 
-I think I would simplify this all to:
+Nit: This could return ret2 directly instead of assigning it to ret and
+letting it fall out.
 
-	if ((id_changed || __cap_gained(permitted, new, old)) &&
-            !ptracer_capable(current->new_user_ns)) {
-        	if (!ns_capable(new->user_ns, CAP_SETUID)) {
-                	new->euid =3D old->euid;
-                        new->egid =3D old->egid;
-                }
-                new->cap_permitted =3D cap_intersect(new->cap_permitted,
-                				   old->cap_permitted);
-        }
-        if ((id_changed || __cap_gained(permitted, new, old)) &&
-            (bprm->unsafe & ~LSM_UNSAFE_PTRACE)) {
-        	return -EPERM;
-        }
+But my bigger complaint is that you ought to leave a comment here along
+the lines of:
 
-The code of no_new_privs doesn't prevent capset so ignoring the results
-of ns_capable when NO_NEW_PRIVS is set doesn't make sense.
+		/*
+		 * Someone forced us to commit the journal ahead of an
+		 * IO operation so that the ondisk mapping state is
+		 * consistent with the contents of the file data blocks.
+		 * The commit failed, so we abort the whole IO.
+		 */
 
-If we are going to do anything please let's find ways to understand
-what is happening and simplify this code, not add to it's complexity.
+so it's obvious why we got a mapping but are erroring out anyway.
 
-Eric
+If the answers to my questions are all 'yes' and the extra comment gets
+added, then
+
+Acked-by: "Darrick J. Wong" <djwong@kernel.org>
+
+--D
+
+> +	}
+> +
+>  	return ret;
+>  }
+>  
+> @@ -3480,6 +3652,7 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  	int ret;
+>  	struct ext4_map_blocks map;
+>  	u8 blkbits = inode->i_blkbits;
+> +	unsigned int orig_mlen;
+>  
+>  	if ((offset >> blkbits) > EXT4_MAX_LOGICAL_BLOCK)
+>  		return -EINVAL;
+> @@ -3493,6 +3666,7 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  	map.m_lblk = offset >> blkbits;
+>  	map.m_len = min_t(loff_t, (offset + length - 1) >> blkbits,
+>  			  EXT4_MAX_LOGICAL_BLOCK) - map.m_lblk + 1;
+> +	orig_mlen = map.m_len;
+>  
+>  	if (flags & IOMAP_WRITE) {
+>  		/*
+> @@ -3503,8 +3677,16 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  		 */
+>  		if (offset + length <= i_size_read(inode)) {
+>  			ret = ext4_map_blocks(NULL, inode, &map, 0);
+> -			if (ret > 0 && (map.m_flags & EXT4_MAP_MAPPED))
+> -				goto out;
+> +			/*
+> +			 * For atomic writes the entire requested length should
+> +			 * be mapped.
+> +			 */
+> +			if (map.m_flags & EXT4_MAP_MAPPED) {
+> +				if ((!(flags & IOMAP_ATOMIC) && ret > 0) ||
+> +				   (flags & IOMAP_ATOMIC && ret >= orig_mlen))
+> +					goto out;
+> +			}
+> +			map.m_len = orig_mlen;
+>  		}
+>  		ret = ext4_iomap_alloc(inode, &map, flags);
+>  	} else {
+> @@ -3525,6 +3707,16 @@ static int ext4_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+>  	 */
+>  	map.m_len = fscrypt_limit_io_blocks(inode, map.m_lblk, map.m_len);
+>  
+> +	/*
+> +	 * Before returning to iomap, let's ensure the allocated mapping
+> +	 * covers the entire requested length for atomic writes.
+> +	 */
+> +	if (flags & IOMAP_ATOMIC) {
+> +		if (map.m_len < (length >> blkbits)) {
+> +			WARN_ON(1);
+> +			return -EINVAL;
+> +		}
+> +	}
+>  	ext4_set_iomap(inode, iomap, &map, offset, length, flags);
+>  
+>  	return 0;
+> -- 
+> 2.49.0
+> 
+> 
 
