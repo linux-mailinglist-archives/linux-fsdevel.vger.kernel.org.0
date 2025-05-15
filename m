@@ -1,82 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-49082-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49083-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 302B5AB7B65
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 04:06:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A739CAB7B69
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 04:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08CE37B0CFA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 02:05:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71BEC3AEFD2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 May 2025 02:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60CB288516;
-	Thu, 15 May 2025 02:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EAB228E5F3;
+	Thu, 15 May 2025 02:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxm1PjfW"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Gkb/Py1b"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4E64B1E44;
-	Thu, 15 May 2025 02:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3367A1A2391;
+	Thu, 15 May 2025 02:09:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747274786; cv=none; b=LmbXApBD0lc60L15jfGdhSru6+Olk7kojD2qHNHqzXME4NhUzjVGga4rSC2rNuTKovYm1D7adetctWgm4JbnICR/wDTxQ2XaghDuYtOksVwUkKrW90vRBdohPgOf9tea+7Eyc1NzkqeXH1tvIVjYK5MYl6L6tArCpXYJKaVczuE=
+	t=1747274962; cv=none; b=a9FrMKFh/qktUlZivn99Dpj/DyvUOdm73BJy5tluQa0YOza5iE0NpAWhk0pRBNKU0yBAkNrOXBzgKwJJbCEXH9jfdpIMegkT9jaBYsbKVvTHFEXrrmXYjcz2VNUuF+c2zYVxftomaDDIADNuuAp7RkmsYUDTKTCl7jk94zXStz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747274786; c=relaxed/simple;
-	bh=0s4aP+GUXSooXukpZbwoYjCRRnKU1I3gEARrmJir8Kg=;
+	s=arc-20240116; t=1747274962; c=relaxed/simple;
+	bh=8NALHghH/1cRfmuWG2BGindcgl8eogceSoeVSCsKcvU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=obrOdxbltJIKMybUVwax4Bfy/KyIg18++zMpXGMPiChW1AJE1oowE6O8jNudqt5KVSNRB7X16KsvjiwGrW3duHVOTSKuOEDLtx0puEyHu7ifwtwPPZ9zJSomY9w8AGB2sHNTrIVQNmHhyWapZwowVELo/H5hC+tDVOL9EWhRDVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxm1PjfW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85924C4CEE3;
-	Thu, 15 May 2025 02:06:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747274785;
-	bh=0s4aP+GUXSooXukpZbwoYjCRRnKU1I3gEARrmJir8Kg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uxm1PjfWlSxmPpIXMVfETaA8OuYRSur6Ps9dBWi2N9q2pRj6enIo2XEBzRmoohzhn
-	 cVA1Ud8dka8UNRuu5gc27gUmAEooIrqmlSHsvpDchkhy42rX/M12Ekb4nrlSmQlkqt
-	 YFXjwBKS/5BFGB41NEIwpQCzl6NoMh5JFST9Gzra80W7wC+Yhw6KzLC54vEn+2Os09
-	 KbvBUP325JH5Iyg6se3TA5IYgvmjD4k/IM79iSA3+EHKPV53v6DEMSWb3XC2BXfS3M
-	 R3AUE/BYHwqSR04VjJaRl+WIDwDbW4ictpm8FuMJbpzVVjFIPfGfbb8x209cJ+qFA8
-	 7bumzqpOSKidw==
-Date: Wed, 14 May 2025 19:06:24 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
-	Bernd Schubert <bschubert@ddn.com>,
-	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Luis Henriques <luis@igalia.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Stefan Hajnoczi <shajnocz@redhat.com>,
-	Joanne Koong <joannelkoong@gmail.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	Aravind Ramesh <arramesh@micron.com>,
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC PATCH 13/19] famfs_fuse: Create files with famfs fmaps
-Message-ID: <20250515020624.GP1035866@frogsfrogsfrogs>
-References: <20250421013346.32530-1-john@groves.net>
- <20250421013346.32530-14-john@groves.net>
- <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
- <20250424143848.GN25700@frogsfrogsfrogs>
- <5rwwzsya6f7dkf4de2uje2b3f6fxewrcl4nv5ba6jh6chk36f3@ushxiwxojisf>
- <20250428190010.GB1035866@frogsfrogsfrogs>
- <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
- <20250508155644.GM1035866@frogsfrogsfrogs>
- <CAJfpegt4drCVNomOLqcU8JHM+qLrO1JwaQbp69xnGdjLn5O6wA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JCi5TXPhbsl3LbPe7fotmltCP16EXJFcz1iaZjF3FDaKt7DoiPtCdLraqCJbbKd78969I0g7dTsIEYMZysXla9MtBK05ss7sEWW5KkIn3swwSM3WieRIxVbE8nzLr2J6AnxSe1P4Uwq5IRUiOuviPz8Eh7S/etW0hbW2M/WAh6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Gkb/Py1b; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rcjPKZsckWOuKXk0QifKBxWsi1qc+2jD7wDRi0Ywjjc=; b=Gkb/Py1b7SjqiY1IGeHDhfdcCL
+	yvhvtigNLD+QDMU8nTMuug0k4mBcU+NXK6ujLoVDD/sPcE+MKnU3S1ZcfCUbt4KjOvLFTzFsjAiyX
+	/H4EhwPE/ersknsH/hoLBaJpJabGHmuveNdCnxSlZ5VqAyrgsF+7BJqJ15iWSmU6edqmvC/1SbV7w
+	elk0lR+tJVedxKzMHM4iM4fuOYW4cETrHukFQCvJYId5QDcUI382ItL8qYyerpmlx2FuZOaKxx6iE
+	qtaiiKM9R7055aVBDvgMfVciujS9UaGiuUPDIPmcgFB15pOOfwJXCm7R+wOcLyXhG1Km+oFw7N+Fc
+	5AS2L9Sw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uFO21-0000000DAIW-1QpN;
+	Thu, 15 May 2025 02:09:09 +0000
+Date: Thu, 15 May 2025 03:09:09 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+	ajones@ventanamicro.com, akpm@linux-foundation.org,
+	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org,
+	aou@eecs.berkeley.edu, bfoster@redhat.com,
+	binbin.wu@linux.intel.com, brauner@kernel.org,
+	catalin.marinas@arm.com, chao.p.peng@intel.com,
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca,
+	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
+	keirf@google.com, kent.overstreet@linux.dev,
+	kirill.shutemov@intel.com, liam.merwick@oracle.com,
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name,
+	maz@kernel.org, mic@digikod.net, michael.roth@amd.com,
+	mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com,
+	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com,
+	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com,
+	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com,
+	pvorel@suse.cz, qperret@google.com, quic_cvanscha@quicinc.com,
+	quic_eberman@quicinc.com, quic_mnalajal@quicinc.com,
+	quic_pderrin@quicinc.com, quic_pheragu@quicinc.com,
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com,
+	rientjes@google.com, roypat@amazon.co.uk, rppt@kernel.org,
+	seanjc@google.com, shuah@kernel.org, steven.price@arm.com,
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
+	thomas.lendacky@amd.com, usama.arif@bytedance.com,
+	vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com,
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Subject: Re: [RFC PATCH v2 16/51] mm: hugetlb: Consolidate interpretation of
+ gbl_chg within alloc_hugetlb_folio()
+Message-ID: <aCVMxRRTz1d_QyUA@casper.infradead.org>
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <8548af334e01401a776aae37a0e9f30f9ffbba8c.1747264138.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -85,110 +96,18 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJfpegt4drCVNomOLqcU8JHM+qLrO1JwaQbp69xnGdjLn5O6wA@mail.gmail.com>
+In-Reply-To: <8548af334e01401a776aae37a0e9f30f9ffbba8c.1747264138.git.ackerleytng@google.com>
 
-On Tue, May 13, 2025 at 11:14:55AM +0200, Miklos Szeredi wrote:
-> On Thu, 8 May 2025 at 17:56, Darrick J. Wong <djwong@kernel.org> wrote:
-> 
-> > Well right now my barely functional prototype exposes this interface
-> > for communicating mappings to the kernel.  I've only gotten as far as
-> > exposing the ->iomap_{begin,end} and ->iomap_ioend calls to the fuse
-> > server with no caching, because the only functions I've implemented so
-> > far are FIEMAP, SEEK_{DATA,HOLE}, and directio.
-> >
-> > So basically the kernel sends a FUSE_IOMAP_BEGIN command with the
-> > desired (pos, count) file range to the fuse server, which responds with
-> > a struct fuse_iomap_begin_out object that is translated into a struct
-> > iomap.
-> >
-> > The fuse server then responds with a read mapping and a write mapping,
-> > which tell the kernel from where to read data, and where to write data.
-> 
-> So far so good.
-> 
-> The iomap layer is non-caching, right?   This means that e.g. a
-> direct_io request spanning two extents will result in two separate
-> requests, since one FUSE_IOMAP_BEGIN can only return one extent.
+On Wed, May 14, 2025 at 04:41:55PM -0700, Ackerley Tng wrote:
+> -static struct folio *dequeue_hugetlb_folio_vma(struct hstate *h,
+> -				struct vm_area_struct *vma,
+> -				unsigned long address, long gbl_chg)
+> +static struct folio *dequeue_hugetlb_folio(struct hstate *h,
+> +					   struct vm_area_struct *vma,
+> +					   unsigned long address)
 
-Originally it wasn't supposed to be cached at all.  Then history taught
-us a lesson. :P
+Pleaase don't mess with the indentation unless necessary.  Nobody
+cares what your personal style preference is.  You're obscuring the
+actual changes.
 
-In hindsight, there needs to be coordination of the space mapping
-manipulations that go on between pagecache writes and reclaim writeback.
-Pagecache write can get an unwritten iomap, then go to sleep while it
-tries to get a folio.  In the meantime, writeback can find the folio for
-that range, write it back to the disk (which converts unwritten to
-written) and reclaim the folio.  Now the first process wakes up and
-grabs a new folio.  Because its unwritten mapping is now stale, it must
-not start zeroing that folio; it needs to go get a new mapping.
-
-So iomap still doesn't need caching per se, but it needs writer threads
-to revalidate the mapping after locking a folio.  The reason for caching
-iomaps under the fuse_inode somewhere is that I don't want the
-revalidations to have to jump all the way out to userspace with a folio
-lock held.
-
-That said, on a VM on this 12 year old workstation, I can get about
-2.0GB/s direct writes in fuse2fs and 2.2GB/s in kernel ext4, and that's
-with initiating iomap_begin/end/ioends with no caching of the mappings.
-Pagecache writes run at about 1.9GB/s through fuse2fs and 1.5GB/s
-through the kernel, but only if I tweak fuse to use large folios and a
-relatively unconstrained bdi.  2GB/s might be enough IO for anyone. ;)
-
-> And the next direct_io request may need to repeat the query for the
-> same extent as the previous one if the I/O boundary wasn't on the
-> extent boundary (which is likely).
-> 
-> So some sort of caching would make sense, but seeing the multitude of
-> FUSE_IOMAP_OP_ types I'm not clearly seeing how that would look.
-
-Yeah, it's confusing.  The design doc tries to clarify this, but this is
-roughly what we need for fuse:
-
-FUSE_IOMAP_OP_WRITE being set means we're writing to the file.
-FUSE_IOMAP_OP_ZERO being set means we're zeroing the file.
-Neither of those being set means we're reading the file.
-
-(3 different operations)
-
-FUSE_IOMAP_OP_DIRECT being set means directio, and it not being set
-means pagecache.
-
-(and one flag, for 6 different types of IO)
-
-FUSE_IOMAP_OP_REPORT is set all by itself for things like FIEMAP and
-SEEK_DATA/HOLE.
-
-> > I'm a little confused, are you talking about FUSE_NOTIFY_INVAL_INODE?
-> > If so, then I think that's the wrong layer -- INVAL_INODE invalidates
-> > the page cache, whereas I'm talking about caching the file space
-> > mappings that iomap uses to construct bios for disk IO, and possibly
-> > wanting to invalidate parts of that cache to force the kernel to upcall
-> > the fuse server for a new mapping.
-> 
-> Maybe I'm confused, as the layering is not very clear in my head yet.
-> 
-> But in your example you did say that invalidation of data as well as
-> mapping needs to be invalidated, so I thought that the simplest thing
-> to do is to just invalidate the cached mapping from
-> FUSE_NOTIFY_INVAL_INODE as well.
-
-For now I want to keep the two invalidation types separate while I build
-out more of the prototype so that I can be more sure that I haven't
-broken any existing code. :)
-
-The mapping invalidation might be more useful for things like FICLONE on
-weird filesystems where the file allocation unit size is larger than the
-block size and we actually need to invalidate more mappings than the vfs
-knows about.
-
-But I'm only 80% sure of that, as I'm still figuring out how to create a
-notification and send it from fuse2fs and haven't gotten to the caching
-layer yet.
-
---D
-
-> Thanks,
-> Miklos
-> 
 
