@@ -1,206 +1,126 @@
-Return-Path: <linux-fsdevel+bounces-49216-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49217-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBEBAAB96DB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 09:50:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E50EAB9700
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 09:58:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0522C1BC419D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 07:50:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C395012EF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 07:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31FDA22B5AD;
-	Fri, 16 May 2025 07:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA0A21ADC6;
+	Fri, 16 May 2025 07:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infinera.com header.i=@infinera.com header.b="h84Gc7Zu"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="jPj6Vsj5"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11011051.outbound.protection.outlook.com [40.93.194.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA94619CC3D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 07:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747381786; cv=fail; b=upCDExJMEl7+R7BjomSGn3rk/tochr8NJmhkUccBB0+Poj1G6TppcucufIkUmwDaHMMzunlYTCRf6jomsLb8NP8+n0Sa75/PG9nhBTyzyCMAziwOYbk2Uglz2S28qW+HChrf2LImxljAE9Xvcq/KD+ZnYp0Bz84gZxeZD7UQevc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747381786; c=relaxed/simple;
-	bh=waonvTcZLzdKKZMnC+JdG1D7bWWlH30pFo3P0nBYwvY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CMLrqiTrWVan7KugMOdh7dO5dZ0mbeQlMbxJpRqWGI80Q2cEyg5x6oSU4ItD+U+z5eHQqxZV/RjDLZ0UVE/sh/LHhykM9iOsaveJ4d2WGEe51pcr5g4V1uEiCoZfYTQ1Bi7kIYc2C2rGV8Tu0Cpw9h0ID0rx/7aIJN+gQszufOk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinera.com; spf=pass smtp.mailfrom=infinera.com; dkim=pass (2048-bit key) header.d=infinera.com header.i=@infinera.com header.b=h84Gc7Zu; arc=fail smtp.client-ip=40.93.194.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infinera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j4KB1ITmfGMi+jfVbmCfkNd+sR/ydT85o9AWQWay2741QA2eHLSU5/gFRyWMffBJE2NmKRigAWZGL3+VX8FCG/AL8EV1SzUEjjnvS+yreoJRb3IpWmBWZ4rmnHOUFDcxhmtAX7ROvVFOAhFPord6DBgiCZ0aCHUmI+eyCNT/fvRe3bKlRjzosEzveHrKK9ybZ25lqO4EH/HXdN2bBfbKWgpg5ewVURkTPRSJBppnEv/uRpDzste6UegNZ0PnmmmM++UQwRbnlnebg1uSNt+LXLkrCFRcYUwC50WTUqzimBfMQ9jCiIOWndGUjofwShEKBOzZaeKC2deBA+SHFb5e5A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z2DnUmoSdBW4mSEgqVGMryupXIBLFMfwj1IqdEak62U=;
- b=SxE3L0qBXxjcsGiCJTlywgNoZcBUVO/0Lx4q8eGlWrOa/gNNXNlxOzEGQrRO8CujwfWqbVOT1KcbcL4U6+nWuuLjtyaFLsWVDYuj2d3c4SAUpJcfbwy2ddwRkHVWNqr2Vqa5L5gP49nnV4U3eobLinEjyXrO1RvwV8aBCCtBna+XA8Fp8p+TdWSeKK3NrgtoHzc5ubAPpbTVB/iucAg83gtHKr4DmNPdsUmF2RlkoaisntIBDVQIAsfyDivSRGKV7wFPXUOlAGyN7dNgadGjqaHE7DFz7tK9eWw93BOua7DQ0LCyJeYFebmn1pjnWmaTmSOWkwLtSlp+xbu5N8Fwmw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.4.225.30) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=infinera.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=infinera.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infinera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z2DnUmoSdBW4mSEgqVGMryupXIBLFMfwj1IqdEak62U=;
- b=h84Gc7ZuRnaglrWQ2GF7Fcd2sgRgaTB9u7tjnOgfj5ivlZk52iYtVGjIedEkGuH0sdpUoLV+7iBVSyccuzugrIVlgcbrL5COrHeTeDE88gv7l+bAY008ybpXWTan4ejEAri5zO3zFQ8v3AtGNR0rnhNEL0g8OfqBHrAbh+dSnf1pk4iUodlkXUfAZjGY6FiCrYw16NUJ2N0G1fbHbAgoIXuMwXr+musQGrCU2mm9p3+FYtYu3SM+UhXQDbln5t+WnAl/pjCJ1XPq30Ki0c2n1oJVl8WS/GErFUO2QOg/+9ijT3yE5vrWU798vYqYcODV8CSeum5wmB9YJJhDbne7Sg==
-Received: from DM6PR02CA0147.namprd02.prod.outlook.com (2603:10b6:5:332::14)
- by BL3PR10MB6089.namprd10.prod.outlook.com (2603:10b6:208:3b5::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.30; Fri, 16 May
- 2025 07:49:37 +0000
-Received: from CY4PEPF0000E9D2.namprd03.prod.outlook.com
- (2603:10b6:5:332:cafe::8c) by DM6PR02CA0147.outlook.office365.com
- (2603:10b6:5:332::14) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.19 via Frontend Transport; Fri,
- 16 May 2025 07:49:36 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.4.225.30)
- smtp.mailfrom=infinera.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=infinera.com;
-Received-SPF: Pass (protection.outlook.com: domain of infinera.com designates
- 8.4.225.30 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.4.225.30; helo=owa.infinera.com; pr=C
-Received: from owa.infinera.com (8.4.225.30) by
- CY4PEPF0000E9D2.mail.protection.outlook.com (10.167.241.137) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8722.18 via Frontend Transport; Fri, 16 May 2025 07:49:34 +0000
-Received: from sv-ex16-prd.infinera.com (10.100.96.229) by
- sv-ex16-prd.infinera.com (10.100.96.229) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 16 May 2025 00:49:34 -0700
-Received: from sv-smtp-pd1.infinera.com (10.100.98.81) by
- sv-ex16-prd.infinera.com (10.100.96.229) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Fri, 16 May 2025 00:49:34 -0700
-Received: from se-metroit-prd1.infinera.com ([10.210.32.58]) by sv-smtp-pd1.infinera.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Fri, 16 May 2025 00:49:33 -0700
-Received: from se-jocke-lx.infinera.com (se-jocke-lx.infinera.com [10.210.73.25])
-	by se-metroit-prd1.infinera.com (Postfix) with ESMTP id 3E103F403A1
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 09:49:33 +0200 (CEST)
-Received: by se-jocke-lx.infinera.com (Postfix, from userid 1001)
-	id 2ACB0600A081; Fri, 16 May 2025 09:49:33 +0200 (CEST)
-From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
-To: <linux-fsdevel@vger.kernel.org>
-CC: Joakim Tjernlund <joakim.tjernlund@infinera.com>
-Subject: [PATCH v2] block: support mtd:<name> syntax for block devices
-Date: Fri, 16 May 2025 09:47:55 +0200
-Message-ID: <20250516074929.2740708-1-joakim.tjernlund@infinera.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <c0ecfadc57d7e595cad87eeab8dff4d0119989ad.camel@nokia.com>
-References: <c0ecfadc57d7e595cad87eeab8dff4d0119989ad.camel@nokia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE65122A80E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 07:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747382330; cv=none; b=Sh2h4D423giOX5MYhywxRYaxXpWFs/tPuxfh6TWTdnQHRhXqDDmDimN4lPqeUmceTZhabI18h9p4kjb8fx5M+1OSoergzgokJmTmcFMdH4jDpZ7kx39y5rTvvUirs88MPoOm/xkJIKRv6uog9suiUEk6NQyhX7tY/QiXaI5bgFE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747382330; c=relaxed/simple;
+	bh=YmL2D7Er6F7l3Q5ukzLK6B5Pg9nF74OFkgOHhmlQ2Sc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JQWsLKobybQE8kCWqC+2/fWHClJ3vXjB3I3UfoVU8Ckf7jS5jNs5kmZoH7Rn6lNDzbdagppvfRmuHrcpfvdSPjp5Q+Jnq8Bl1AAz+dpB6INSIqjYG9H5/OoV3PFj8Q9PmnKEG+MNEZd3lzZnehTyEHwEd7TmxSHvH1AOE+NnWVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=jPj6Vsj5; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-85b3f92c8f8so171746939f.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 00:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1747382327; x=1747987127; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PFVgKp/dY3dqAEkCj0mC8AvL3gLOkml9a9KsWgEYU4M=;
+        b=jPj6Vsj5yPhkU/FCs17rYu/65y9grkaiFt6XihazHkHzWRLoqjgIy5BujQ3ewLI9J1
+         QVMHHo4FmjBcGbzRODEhkgSlvQAljslAdhEqY1fT8HuBimCvxB8sgy2bkirzTFIjQoPJ
+         QPkVRNPiDvmLh6oc7ow2DpI9HobEwcVoxNxdg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747382327; x=1747987127;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PFVgKp/dY3dqAEkCj0mC8AvL3gLOkml9a9KsWgEYU4M=;
+        b=EF34h8wbwv1kSwLZs0A94TdAYFkmNWiOuck0epLwidOW8seT7ftdIk/B7daQWi+2oi
+         U8PWjXjgVytW3WmL0N1qkCTL63cQaF1qElaLrDkLcaQrJtOgyK3r/yGCZ3Fm9wkXIqQB
+         sXfc0UuMd3JV7KkMfdzLA2faMN8qXelagTGRlL69WCVMCi/z6pPxGRcFoTF7zunOeNM0
+         KZVS8tYwtsQ/YJOeeDq7L2iIbXVnGgQUPIaOKFqkiYPpDlJFOqKNiqv6awh64A1pOk3i
+         Kh2CuPTWVCORbIhvjA6Jgdjz03m0Qz/SE1o7lWvHFD+rh/tqJDJrFqdnUr80P2tFzX7t
+         w14A==
+X-Gm-Message-State: AOJu0YxxLKkbGDwD9FfoKWXRgsgzaPOJAHW5OETS0JDpiYBf385FjNwg
+	FCA0b+UKg/u8DmuZRRB3KnyWR9T9g8ahXHR+KDJQMsib7OizgSo0tDDwuJ/c5kwan1xjAJX22nF
+	vMy+aUhGQj+Vxv8WIeqECNQ9sqqVsBUvzxqxemUXlUVXpG6QZ5EqAqqU=
+X-Gm-Gg: ASbGncvneQuCGm+QaYiv1wn/RUb/JOx5g74JhqOpgxHjebKvdpzkl6PXXn3fqZ1qDRn
+	BLnxu76XdovnjVtYXcVHci793EvAKfbglJV19LmRnpLa/ddJYk3Lf/eFa1k3udeRFXgBwRChbKq
+	wGBgICxtI0a7TpUJGujgxfuVlin+yA6hn/btlJmMgkQg==
+X-Google-Smtp-Source: AGHT+IHYaMsPHgZcS2lfeLI0VKjgKHJ5XwjuFmQi2Cu4otbSVP2MF21iP69mMCCz+Ld5fFykaU3Uo87nHAp9lEa2nGk=
+X-Received: by 2002:a05:622a:4c0a:b0:47b:4f3:b257 with SMTP id
+ d75a77b69052e-494ae3a81d1mr44057981cf.31.1747382316518; Fri, 16 May 2025
+ 00:58:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 16 May 2025 07:49:34.0258 (UTC) FILETIME=[10A91920:01DBC637]
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D2:EE_|BL3PR10MB6089:EE_
-X-MS-Office365-Filtering-Correlation-Id: e186e1c8-0f99-4d8f-9154-08dd944e3399
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YsquWdG2Bb5b/fzWQf2XtsEPO4HSH04d6y44O06+C4RWUImVXtSnLPyrTQQr?=
- =?us-ascii?Q?nY+WLm7En900UmCz960h2WYn5EN4Hvgjmu6IVJLnlO1g3Ga/r68NH0XJTsSW?=
- =?us-ascii?Q?zLg/uYLBbFw9DV5HaiWK80DlZ/Coz8z46dxK3zgLZJOvAVHvSpSbjrKIH50g?=
- =?us-ascii?Q?al8ani2a6t0BSuVirw9jA0/p/Ay+Jp7GnOIHnmxwrYu5Og+l1gBJ/Xb3rZ2e?=
- =?us-ascii?Q?CbGJ5C2OO3ohxKpNRiUUjwei9eX/qEgglqlGznz5eZjmlhKfCc8Px/Y3FltP?=
- =?us-ascii?Q?edrHotJ8v/q7Ws8zL9aWxs8wkM9SY1fOn9lUwHNsCOdUwV85NRgo/t2SfbPB?=
- =?us-ascii?Q?aiPklVvlVY/J44tE7xZI9jdrOm5+mqqRNp6QuJdh4e3AoHhHmtd+B11QN4W1?=
- =?us-ascii?Q?2jb9+doHy4gczZkowXsc4dY80Rqv7vQ3ot71k/ZbgbGzNGW03dhl+xMSc0f1?=
- =?us-ascii?Q?1BnzSL89ZSgaJ7EVG+sb+19Kh/B/REkd/QeCvOX83mLo8H2PYgrgDTAU9P95?=
- =?us-ascii?Q?Csg70PQzZgdmINoXmUlfcFprOkEASmHO6g/Ixb0jNM1nkLH6uJH/PNUhzqmQ?=
- =?us-ascii?Q?zzMZm4bVef183TThYGPKubjAqXp+GjUV0CSgilESVA4Gk+dlaiZ7fGeR9O9E?=
- =?us-ascii?Q?aKRNjEXLYLy1kMe33GHpN+WF3Uh1TCPnTZ2VpovTVkiLV/3Bkvkz/wFPeTcE?=
- =?us-ascii?Q?EFttOc1f8SZEGRZ5sL688lOxXc6yd/0P8u57n4qrLhUPHIndHQGR5BPnk4oT?=
- =?us-ascii?Q?2+W0MwCYlv1JrvaAycbOUbVsI1J+WG1nwGl9TN1eFdt2DtkblAorLNngLX9X?=
- =?us-ascii?Q?lQfptHkVO00GmfrwSjnY6G50tvj/DqbAq3CKCvL8ILLgIZ2d38LyN7J3TH6z?=
- =?us-ascii?Q?o7mfeXt0GvlTikCBButNT9yzgUym2JidCj2URlOUD5N2oBQLDWqmeuQzD76u?=
- =?us-ascii?Q?v4Tp82bUXDxxt7d/HxM50QrnMr6iLyc/5wjg849Okxyua/Wj8csLJXT+1Nyh?=
- =?us-ascii?Q?vGfcBk40TnvTZiy8C4f1+z/dumP5P2aavDioQYmEbJkeyd2YvYajt+1V8XKU?=
- =?us-ascii?Q?ru2oM8WV327DbQ8Dv1ukbWW+20PoE2OCIvgUegryrRnPJCPapQjl7qS832Xu?=
- =?us-ascii?Q?ehlxNOEZqaaXtDKsYJ4RQFnpGX3GXHztRkmGAOgOJKZhqaTJ0vVRW5xf8IsB?=
- =?us-ascii?Q?kcsLLWSm4mcOQZX7WHUPXcnhCbkTfNCvcD32oP6MeJXCN59ysaLcnuFkSwNR?=
- =?us-ascii?Q?pwxzDWtZAseskB+Dkwb2EDCTHHhkznYR2TlOAMMy/MN7oi7jhg139p+OHAcT?=
- =?us-ascii?Q?Suh6YZhpF+af9qJ1QWTrKrfsYhISKN1ghoBx57RpwZHehobQ76S+0wCowEqU?=
- =?us-ascii?Q?ZBjrPn6x3SgbEeGGy2Gj2yINhhyLsqX7MkbBHheYuNKi6YvhxIRRvgrKmuur?=
- =?us-ascii?Q?BJXzKNpFT2aM7enImGlctQgCjMOV6TItmDgpYHJIOsQH7FUlzHWIW6NFdPrn?=
- =?us-ascii?Q?qJf9sy9mjFg+YK19aRxSpdySqPItRQA9o0Er?=
-X-Forefront-Antispam-Report:
-	CIP:8.4.225.30;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:owa.infinera.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: infinera.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 May 2025 07:49:34.9873
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e186e1c8-0f99-4d8f-9154-08dd944e3399
-X-MS-Exchange-CrossTenant-Id: 285643de-5f5b-4b03-a153-0ae2dc8aaf77
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=285643de-5f5b-4b03-a153-0ae2dc8aaf77;Ip=[8.4.225.30];Helo=[owa.infinera.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D2.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR10MB6089
+References: <20250422235607.3652064-1-joannelkoong@gmail.com>
+ <CAJfpegsc8OHkv8wQrHSxXE-5Tq8DMhNnGWVpSnpu5+z5PBghFA@mail.gmail.com>
+ <CAJnrk1ZXBOzMB69vyhzpqZWdSmpSxRcJuirVBVmPd6ynemt_SQ@mail.gmail.com>
+ <CAJfpegsqCHX759fh1TPfrDE9fu-vj+XWVxRK6kXQz5__60aU=w@mail.gmail.com>
+ <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
+ <CAJfpegv+Bu02Q1zNiXmnaPy0f2GK1J_nDCks62fq_9Dn-Wrq4w@mail.gmail.com>
+ <CAJnrk1aX=GO07XP_ExNxPRj=G8kQPL5DZeg_SYWocK5w0MstMQ@mail.gmail.com>
+ <CAJfpegvayjALR9F2mYxPiM2JKuJuvDdzS3gH4WvV12AdM0vU7w@mail.gmail.com> <CAJnrk1bibc9Zj-Khtb4si1-8v3-X-1nX1Jgxc_whLt_SOxuS0Q@mail.gmail.com>
+In-Reply-To: <CAJnrk1bibc9Zj-Khtb4si1-8v3-X-1nX1Jgxc_whLt_SOxuS0Q@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 16 May 2025 09:58:25 +0200
+X-Gm-Features: AX0GCFu2fOO9_kKT4DfQdUVMWPL4-utph466aa5QkYR4E2dvwsH0AF6Td3KqRBQ
+Message-ID: <CAJfpegtFKC=SmYg7w3KDJgON5O3GFaLaUYuGu4VA2yv=aebeOg@mail.gmail.com>
+Subject: Re: [PATCH v2] fuse: use splice for reading user pages on servers
+ that enable it
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, bernd.schubert@fastmail.fm, 
+	jlayton@kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
 
-This enables mounting, like JFFS2, MTD devices by "label":
-   mount -t squashfs mtd:appfs /tmp
-where mtd:appfs comes from:
- # >  cat /proc/mtd
-dev:    size   erasesize  name
-...
-mtd22: 00750000 00010000 "appfs"
+On Thu, 15 May 2025 at 21:16, Joanne Koong <joannelkoong@gmail.com> wrote:
 
-Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
----
- fs/super.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+> As I understand it, the zero copy uring api (I think the one you're
+> talking about is the one discussed here [1]?) requires client-side
+> changes in order to utilize it.
+>
+> [1] https://lore.kernel.org/linux-fsdevel/dc3a5c7d-b254-48ea-9749-2c464bfd3931@davidwei.uk/
 
-diff --git a/fs/super.c b/fs/super.c
-index 97a17f9d9023..e603236b3ad8 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -37,6 +37,7 @@
- #include <linux/user_namespace.h>
- #include <linux/fs_context.h>
- #include <uapi/linux/mount.h>
-+#include <linux/mtd/mtd.h>
- #include "internal.h"
- 
- static int thaw_super_locked(struct super_block *sb, enum freeze_holder who);
-@@ -1612,6 +1613,26 @@ int get_tree_bdev_flags(struct fs_context *fc,
- 	if (!fc->source)
- 		return invalf(fc, "No source specified");
- 
-+#ifdef CONFIG_MTD_BLOCK
-+	if (!strncmp(fc->source, "mtd:", 4)) {
-+		struct mtd_info *mtd;
-+		char *blk_source;
-+
-+		/* mount by MTD device name */
-+		pr_debug("Block SB: name \"%s\"\n", fc->source);
-+
-+		mtd = get_mtd_device_nm(fc->source + 4);
-+		if (IS_ERR(mtd))
-+			return -EINVAL;
-+		blk_source = kmalloc(20, GFP_KERNEL);
-+		if (!blk_source)
-+			return -ENOMEM;
-+		sprintf(blk_source, "/dev/mtdblock%d", mtd->index);
-+		kfree(fc->source);
-+		fc->source = blk_source;
-+		pr_debug("MTD device:%s found\n", fc->source);
-+	}
-+#endif
- 	error = lookup_bdev(fc->source, &dev);
- 	if (error) {
- 		if (!(flags & GET_TREE_BDEV_QUIET_LOOKUP))
--- 
-2.49.0
+No, that's not what I was thinking.  That sort of thing is out of
+scope for fuse, I think.
 
+Hmm, so you actually need "single copy" direct write.
+
+ - there's the buffer that write(2) gets from application
+ - it's copied into server's own buffer, at which point the write(2) can return
+ - at some point this buffer is sent to the network and freed/reused
+
+Currently this is not possible:
+
+ - there's the buffer that write(2) gets from application
+ - it's copied into libfuse's buffer, which is passed to the write callback
+ - the server's write callback copies this to its own buffer, ...
+
+What's preventing libfuse to allow the server to keep the buffer?  It
+seems just a logistic problem, not some fundamental API issue.  Adding
+a fuse_buf_clone() that just transfers ownership of the underlying
+buffer is all that's needed on the API side.  As for the
+implementation: libfuse would then need to handle the case of a buffer
+that has been transferred.
+
+Does this make sense?
+
+Thanks,
+Miklos
 
