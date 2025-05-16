@@ -1,258 +1,485 @@
-Return-Path: <linux-fsdevel+bounces-49284-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4DEABA1DF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 19:29:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC773ABA1E9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 19:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCF0A226B8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 17:29:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58A327A7F99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 17:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184D326D4F1;
-	Fri, 16 May 2025 17:29:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E5818D656;
+	Fri, 16 May 2025 17:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZRd/E9ON"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cwvj3VD8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A692F230274
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 17:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0166721CC7C
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 17:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747416553; cv=none; b=k5YRuYo4EiJH5tJ59iMe4cudTZDZ/hMFg7MvVIXGXk0L6BLQLPiOFkOyf22S6lBiEzPpIwg6f1RpDVUtWMSmJTiI2xrssDu+5MpecgJYiMzt8NgvthaQC0dYVIKC43uTZ6ElGmtAdJT8/Ku8j+PU5XXCr8z6lst1EM9zImsOwfk=
+	t=1747416933; cv=none; b=kI+3TEFgi7E17eHTkW1jXCD+tP5pvPojpL2zAVKKmJsQc9RN9TdFrwYt7a2LY6FKWEb0kefdmIfQfFxxVNsNE46sfUnXDuUvP7i3T7nZILLeSvmo0xCUnqnViNFiBlAo4h47SlZT5lscZLhLf10SmzMzLkO7iD8lxSXsZJ6TpxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747416553; c=relaxed/simple;
-	bh=aU0nNXgJZBPdyvnJ6X9MLgPd/B2DlyBj1XGtMeYPPJM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N15fe6viMV7kR8XhpgTx3E/NWE+WQ5/mjiu6IbpFVAC/4v404iXvvvK757s/DqlpqJYYvRFQDFnNsyTN7/aETeiRPxq8wubyMDjLfWOOiYDI0DNzHUA0L+ELwJKtXi4PMzGMgqiHXnAGwdEKUE3yO+OZREYchpZiJMCU3MVELtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZRd/E9ON; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad238c68b35so427065966b.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 10:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747416550; x=1748021350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UXHzZMhsIBdnLdE83EbJ0Im7v9A2I0SfPzFgMRhSenA=;
-        b=ZRd/E9ONFecBYO04K+uDcBsnnoa0RsU2pocF5A83MBKfbkYnK8hfJaNWlLG64KOm1F
-         +ZxvwFhLG/g7lLUGTTqEHQjPkOF8WZcWhi9naHg2NC1VSmUaf3shNTIwCxpHOOIW5Kq8
-         n2p7vl0/mVOdsriGRNmCosXZFV+yJ4zCRDXiR0irP4s5RgxorY5bZumc8zfeQQgAIHpr
-         2EFYf6EaRijH/KBDWrIX3kQ4oZoOS2/Xhkzp0lEAraJBFT1k3aLk/DV9nZ33hli80O98
-         F1Wuh+J+E/Pq52D+dy/QRWybx534eE2VbZJQCGJZ4xl0Juyj3l0dpcI7YfKlGjz8vwlm
-         YOmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747416550; x=1748021350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UXHzZMhsIBdnLdE83EbJ0Im7v9A2I0SfPzFgMRhSenA=;
-        b=km0ERt002QDzd2JMqPKnUTvr671tkwkEI0XaDm4k9fdTPGBwv5s7SscMBPDVnUgFrH
-         ZISlnchhmUSPeOMJ9VjhqH2OL0HSGcdb7V97YBXZKl3Q1zN4KexHZ+7gGbIKlmqVAiOi
-         RDABBxEFoNVt4yZaPXSB2DgHcOLN4nSmo2nRbhv0bEVD+K+Dl/SEbnD30vmhxfiBQl/7
-         zXQJDELw7zhKbSUfFoRKaH+BB6+EWNZUliCNSEZUTZPd74pGrMs1dTOI218y/1a98aZb
-         5uNN5LeNIBXy7+d3Tg+xNXfhySm5gJBrIHQKfDkjFtkS0xlJqaz6//mOeAuBVpteLTGw
-         7wuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgbSTZIrivf7Ufdo5ZFL/kB1Ep9zyUuY2sKSEhaNMioiVFUfpVj6GfgYrvccCUHjcGl4bXRzuEnQfJM+Je@vger.kernel.org
-X-Gm-Message-State: AOJu0YxksB7pEfUweIQ1YmDC5LFgQ6CtumC0DY5hz1w3MIgH8NuM11Y7
-	O1wjp7dS2NEfJMW5PBzp7syGquK4WdquSH0QaRF0YyleVrLH40MBvHaaRJcsyx2NY3T9auXg9+2
-	z4OWZlFMWQDzLQaeAC0rR+zOtdTcHRbo=
-X-Gm-Gg: ASbGncsc83aOkdci9K7STx0Xdse1mQEfOv9ClWkRa5jcbCRvQ9OvhfVgnc5AM+cSp4Y
-	VLoSs7Ra6ywpB+o6+9GbU+nbB4TOb0givArfM2GqfC0MOcnv9fyMaWApUza4CzI+3MxThTuiopp
-	v3Cc3ituDCITS3wdMo18OTMcFdpf8D385a
-X-Google-Smtp-Source: AGHT+IFjbzXaOF4xkqoWt+YssC57mCaecSj+oJr/GCNQKbV3zxq59qpW4dhIkJZcUDiRQrldmdhs7hQSI9MTjlwcf0U=
-X-Received: by 2002:a17:906:c144:b0:ad2:2ba6:2012 with SMTP id
- a640c23a62f3a-ad536b5b1b1mr305865566b.11.1747416549484; Fri, 16 May 2025
- 10:29:09 -0700 (PDT)
+	s=arc-20240116; t=1747416933; c=relaxed/simple;
+	bh=MPTekxGp1fJB0qA5+SBiPb0jqUXH8X7HX6LExy+cHFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUw8+j+dDJgwKQYKgpXkY/tlwq351iGEktFxT211hMvZUdyJmckpLHXMDG/kq88oNFRO0mWobQ61qhtthRd54F3iSUEp42JRTZhlJ53Q9+gOP0T7nWLmnMlNJ1uqDXUTmX4hFsH/hF3OKyAPdD1zYJ8kUY7LWoj3f25Ukkg5bhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cwvj3VD8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06FADC4CEE4;
+	Fri, 16 May 2025 17:35:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747416932;
+	bh=MPTekxGp1fJB0qA5+SBiPb0jqUXH8X7HX6LExy+cHFc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cwvj3VD8e/alOnRN0tnbaGzel+7m032NProVyuNMKgq/8BldGo+Dj0dA4YWfis6Et
+	 gk5Fbgy9jBeSl6Dn4WFQupbdotDYNPPMlxBH4OvOYr+0bgZP67Gq7ArdPm+yAfoVZe
+	 QZKLS2Sv0y3LXwPHT9MU3fx6AL2Fhet4gYXRlJH2r1xC5KsZRBgaATEXV08Bx9rEFR
+	 1hj1Mdjg4OQg5maRuu2Jh77M1HlDBRVI2JqXDTwH9vMVLgCY5Vkm+CwazrOKo5npTa
+	 cs/+SfnzyxS3xv3wLvcsVpgN7lA0my0+cWHM7sBkhCLnk3NhjlFXukhDoEfYU3Tc0I
+	 3nTTyVzWUaQNw==
+Date: Fri, 16 May 2025 17:35:30 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Hongbo Li <lihongbo22@huawei.com>
+Cc: Chao Yu <chao@kernel.org>, Eric Sandeen <sandeen@redhat.com>,
+	linux-fsdevel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH V3 7/7] f2fs: switch to the new mount api
+Message-ID: <aCd3YoPS_wm2dcff@google.com>
+References: <20250423170926.76007-1-sandeen@redhat.com>
+ <20250423170926.76007-8-sandeen@redhat.com>
+ <ff2c9a74-f359-4bcc-9792-46af946c70ad@kernel.org>
+ <63d1977d-2f0b-4c58-9867-0dc1285815a0@huawei.com>
+ <979015aa-433d-4057-a454-afaea2c68131@kernel.org>
+ <2ea178cb-1ed3-40ba-8dc6-8fa3bff06850@huawei.com>
+ <aCS3LZ3IOMgiissx@google.com>
+ <ceeb4951-ee88-4cae-b20a-8c06edf2bfc3@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250419100657.2654744-1-amir73il@gmail.com> <20250419100657.2654744-3-amir73il@gmail.com>
- <fsldmf3k4u5wi2k2su2z26nw7lmr4jonrt5caaiyt7fmpteqzg@xsu4cnaeu6oy> <CAOQ4uxj3UgaMkrvOmpCSBgsay6bD_+gGTLFBtC2Cqi_69pQgfQ@mail.gmail.com>
-In-Reply-To: <CAOQ4uxj3UgaMkrvOmpCSBgsay6bD_+gGTLFBtC2Cqi_69pQgfQ@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 16 May 2025 19:28:58 +0200
-X-Gm-Features: AX0GCFtelMVlteFJHSNthwAUYgcCjYoUTlavzZ4HqHu1Wl9RGbOeLPko0g0g7Fg
-Message-ID: <CAOQ4uxi=HDMmCLsVXNxVTLAzkYOfEYMTcXUiTBuTB0Hm0=-awA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fanotify: support watching filesystems and mounts
- inside userns
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ceeb4951-ee88-4cae-b20a-8c06edf2bfc3@huawei.com>
 
-On Wed, May 14, 2025 at 8:39=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
- wrote:
->
-> On Wed, May 14, 2025 at 5:49=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Sat 19-04-25 12:06:57, Amir Goldstein wrote:
-> > > An unprivileged user is allowed to create an fanotify group and add
-> > > inode marks, but not filesystem, mntns and mount marks.
-> > >
-> > > Add limited support for setting up filesystem, mntns and mount marks =
-by
-> > > an unprivileged user under the following conditions:
-> > >
-> > > 1.   User has CAP_SYS_ADMIN in the user ns where the group was create=
-d
-> > > 2.a. User has CAP_SYS_ADMIN in the user ns where the filesystem was
-> > >      mounted (implies FS_USERNS_MOUNT)
-> > >   OR (in case setting up a mntns or mount mark)
-> > > 2.b. User has CAP_SYS_ADMIN in the user ns associated with the mntns
-> > >
-> > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> >
-> > I'm sorry for the delay. Both patches look good to me but I'd like some=
-body
-> > more versed with user namespaces to double check namespace checks in th=
-is
-> > patch are indeed sound (so that we don't introduce some security issue)=
-.
->
-> Good idea!
->
-> > Christian, can you have a look please?
-> >
->
-> Christian,
->
-> Please note that the checks below are loosely modeled after the tests in
-> may_decode_fh(), with some differences:
->
-> > >
-> > >       /*
-> > > -      * An unprivileged user is not allowed to setup mount nor files=
-ystem
-> > > -      * marks.  This also includes setting up such marks by a group =
-that
-> > > -      * was initialized by an unprivileged user.
-> > > +      * A user is allowed to setup sb/mount/mntns marks only if it i=
-s
-> > > +      * capable in the user ns where the group was created.
-> > >        */
-> > > -     if ((!capable(CAP_SYS_ADMIN) ||
-> > > -          FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
-> > > +     if (!ns_capable(group->user_ns, CAP_SYS_ADMIN) &&
-> > >           mark_type !=3D FAN_MARK_INODE)
-> > >               return -EPERM;
-> > >
->
-> 1. This is an extra restriction. Not sure is need to remain forever,
-> but it reduces
->     attack surface and does not limit the common use cases,
->     so I think it's worth to have.
->
-> > > @@ -1987,12 +1988,27 @@ static int do_fanotify_mark(int fanotify_fd, =
-unsigned int flags, __u64 mask,
-> > >               obj =3D inode;
-> > >       } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
-> > >               obj =3D path.mnt;
-> > > +             user_ns =3D real_mount(obj)->mnt_ns->user_ns;
-> > >       } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_SB) {
-> > >               obj =3D path.mnt->mnt_sb;
-> > > +             user_ns =3D path.mnt->mnt_sb->s_user_ns;
-> > >       } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_MNTNS) {
-> > >               obj =3D mnt_ns_from_dentry(path.dentry);
-> > > +             user_ns =3D ((struct mnt_namespace *)obj)->user_ns;
-> > >       }
-> > >
-> > > +     /*
-> > > +      * In addition to being capable in the user ns where group was =
-created,
-> > > +      * the user also needs to be capable in the user ns associated =
-with
-> > > +      * the marked filesystem (for FS_USERNS_MOUNT filesystems) or i=
-n the
-> > > +      * user ns associated with the mntns (when marking a mount or m=
-ntns).
-> > > +      * This is aligned with the required permissions to open_by_han=
-dle_at()
-> > > +      * a directory fid provided with the events.
-> > > +      */
-> > > +     ret =3D -EPERM;
-> > > +     if (user_ns && !ns_capable(user_ns, CAP_SYS_ADMIN))
-> > > +             goto path_put_and_out;
-> > > +
->
-> 2. In may_decode_fh() we know the mount that resulting file will be
->     opened from so we accept
->     Either capable mnt->mnt_sb->s_user_ns
->     OR capable real_mount(mnt)->mnt_ns->user_ns
-> whereas here we only check capable mnt->mnt_sb->s_user_ns
->    when subscribing to fs events on sb
->    and only check capable real_mount(mnt)->mnt_ns->user_ns
->    when subscribing to fs events on a specific mount
->
-> I am not sure if there is a use case to allow watching events on a
-> specific mount for capable mnt->mnt_sb->s_user_ns where
-> real_mount(mnt)->mnt_ns->user_ns is not capable
-> or if that setup is even possible?
->
-> 3. Unlike may_decode_fh(), we do not check has_locked_children()
->     Not sure how bad it is to allow receiving events for fs changes in
->     obstructed paths (with file handles that cannot be opened).
-> If this case does needs to be checked  then perhaps we should
-> check for capable mnt->mnt_sb->s_user_ns also when subscribing
-> to fs events on a mount.
->
+On 05/16, Hongbo Li wrote:
+> 
+> 
+> On 2025/5/14 23:30, Jaegeuk Kim wrote:
+> > Hi, Hongbo,
+> > 
+> > It seems we're getting more issues in the patch set. May I ask for some
+> > help sending the new patch series having all the fixes that I made as well
+> > as addressing the concerns? You can get the patches from [1].
+> > 
+> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev-test
+> > 
+> 
+> Hi, Jaegeuk
+> 
+> I will discuss these issues with Eric. It may take some time, but not too
+> long. When we send the next version, should we resend this patch series
+> based on dev-test after modifying the code, only removing your S-O-B?
+> (You'll ultimately add your S-O-B back yourself)
 
-OK, after some thinking I think it is best to align the logic to match
-may_decode_fh() more closely, like this:
+Hi Hongbo,
 
-@@ -1986,13 +1987,40 @@ static int do_fanotify_mark(int fanotify_fd,
-unsigned int flags, __u64 mask,
-                inode =3D path.dentry->d_inode;
-                obj =3D inode;
-        } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
-+               struct mount *mnt =3D real_mount(path.mnt);
-+
-                obj =3D path.mnt;
-+               user_ns =3D path.mnt->mnt_sb->s_user_ns;
-+               /*
-+                * Do not allow watching a mount with locked mounts on top
-+                * that could be hiding access to paths, unless user is als=
-o
-+                * capable on the user ns that created the sb.
-+                */
-+               if (!ns_capable(user_ns, CAP_SYS_ADMIN) &&
-+                   !has_locked_children(mnt, path.mnt->mnt_root))
-+                       user_ns =3D mnt->mnt_ns->user_ns;
-        } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_SB) {
-                obj =3D path.mnt->mnt_sb;
-+               user_ns =3D path.mnt->mnt_sb->s_user_ns;
-        } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_MNTNS) {
--               obj =3D mnt_ns_from_dentry(path.dentry);
-+               struct mnt_namespace *mntns =3D mnt_ns_from_dentry(path.den=
-try);
-+
-+               obj =3D mntns;
-+               user_ns =3D mntns->user_ns;
-        }
+Thank you for this hard work. Could you please resend the entire patch-set based
+on dev-test w/o my SOB? I'm going to dequeue the series from dev-test. Instead,
+I rebased the latest version onto [2].
 
-+       /*
-+        * In addition to being capable in the user ns where group was crea=
-ted,
-+        * the user also needs to be capable in the user ns associated with
-+        * the marked filesystem or in the user ns associated with the mntn=
-s
-+        * (when marking a mount or mntns).
-+        * This is aligned with the required permissions to open_by_handle_=
-at()
-+        * a directory fid provided with the events.
-+        */
-+       ret =3D -EPERM;
-+       if (user_ns && !ns_capable(user_ns, CAP_SYS_ADMIN))
-+               goto path_put_and_out;
-+
+Please also consider another report, [1].
 
-Thanks,
-Amir.
+[1] https://lore.kernel.org/linux-f2fs-devel/2f16981b-0e13-4c64-83a8-d0e0b4297348@suswa.mountain/T/#u
+[2] https://github.com/jaegeuk/f2fs/commits/mount/
+
+> 
+> Thanks,
+> Hongbo
+> 
+> > On 05/14, Hongbo Li wrote:
+> > > 
+> > > 
+> > > On 2025/5/14 12:03, Chao Yu wrote:
+> > > > On 5/14/25 10:33, Hongbo Li wrote:
+> > > > > 
+> > > > > 
+> > > > > On 2025/5/13 16:59, Chao Yu wrote:
+> > > > > > On 4/24/25 01:08, Eric Sandeen wrote:
+> > > > > > > From: Hongbo Li <lihongbo22@huawei.com>
+> > > > > > > 
+> > > > > > > The new mount api will execute .parse_param, .init_fs_context, .get_tree
+> > > > > > > and will call .remount if remount happened. So we add the necessary
+> > > > > > > functions for the fs_context_operations. If .init_fs_context is added,
+> > > > > > > the old .mount should remove.
+> > > > > > > 
+> > > > > > > See Documentation/filesystems/mount_api.rst for more information.
+> > > > > > 
+> > > > > > mkfs.f2fs -f -O extra_attr,flexible_inline_xattr /dev/vdb
+> > > > > > mount -o inline_xattr_size=512 /dev/vdb /mnt/f2fs
+> > > > > > mount: /mnt/f2fs: wrong fs type, bad option, bad superblock on /dev/vdb, missing codepage or helper program, or other error.
+> > > > > >           dmesg(1) may have more information after failed mount system call.
+> > > > > > dmesg
+> > > > > > [ 1758.202282] F2FS-fs (vdb): Image doesn't support compression
+> > > > > > [ 1758.202286] F2FS-fs (vdb): inline_xattr_size option should be set with inline_xattr option
+> > > > > > 
+> > > > > > Eric, Hongbo, can you please take a look at this issue?
+> > > > > > 
+> > > > > Sorry, we only check the option hold in ctx, we should do the double check in sbi. Or other elegant approaches.
+> > > > > 
+> > > > > For the "support compression", is it also the error in this testcase?
+> > > > 
+> > > > I think so, I checked this w/ additional logs, and found this:
+> > > > 
+> > > > #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00080000
+> > > > #define F2FS_SPEC_compress_chksum		(1 << 19) /* equal to 0x00080000)
+> > > > 
+> > > > 	if (!f2fs_sb_has_compression(sbi)) {
+> > > > 		if (test_compression_spec(ctx->opt_mask) ||
+> > > > 			ctx_test_opt(ctx, F2FS_MOUNT_COMPRESS_CACHE))
+> > > > 			f2fs_info(sbi, "Image doesn't support compression");
+> > > > 		clear_compression_spec(ctx);
+> > > > 		ctx->opt_mask &= ~F2FS_MOUNT_COMPRESS_CACHE;
+> > > > 		return 0;
+> > > > 	}
+> > > > 
+> > > > We should use test_compression_spec(ctx->spec_mask) instead of
+> > > > test_compression_spec(ctx->opt_mask) to check special mask of compression
+> > > > option?
+> > > > 
+> > > 
+> > > Yeah, you're right. test_compression_spec is used to check spec_mask, and we
+> > > got it wrong.
+> > > 
+> > > Thanks,
+> > > Hongbo
+> > > 
+> > > > Thanks,
+> > > > 
+> > > > > 
+> > > > > Thanks,
+> > > > > Hongbo
+> > > > > 
+> > > > > > Thanks,
+> > > > > > 
+> > > > > > > 
+> > > > > > > Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
+> > > > > > > [sandeen: forward port]
+> > > > > > > Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+> > > > > > > ---
+> > > > > > >     fs/f2fs/super.c | 156 +++++++++++++++++++-----------------------------
+> > > > > > >     1 file changed, 62 insertions(+), 94 deletions(-)
+> > > > > > > 
+> > > > > > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > > > > > > index 37497fd80bb9..041bd6c482a0 100644
+> > > > > > > --- a/fs/f2fs/super.c
+> > > > > > > +++ b/fs/f2fs/super.c
+> > > > > > > @@ -1141,47 +1141,6 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
+> > > > > > >         return 0;
+> > > > > > >     }
+> > > > > > >     -static int parse_options(struct fs_context *fc, char *options)
+> > > > > > > -{
+> > > > > > > -    struct fs_parameter param;
+> > > > > > > -    char *key;
+> > > > > > > -    int ret;
+> > > > > > > -
+> > > > > > > -    if (!options)
+> > > > > > > -        return 0;
+> > > > > > > -
+> > > > > > > -    while ((key = strsep(&options, ",")) != NULL) {
+> > > > > > > -        if (*key) {
+> > > > > > > -            size_t v_len = 0;
+> > > > > > > -            char *value = strchr(key, '=');
+> > > > > > > -
+> > > > > > > -            param.type = fs_value_is_flag;
+> > > > > > > -            param.string = NULL;
+> > > > > > > -
+> > > > > > > -            if (value) {
+> > > > > > > -                if (value == key)
+> > > > > > > -                    continue;
+> > > > > > > -
+> > > > > > > -                *value++ = 0;
+> > > > > > > -                v_len = strlen(value);
+> > > > > > > -                param.string = kmemdup_nul(value, v_len, GFP_KERNEL);
+> > > > > > > -                if (!param.string)
+> > > > > > > -                    return -ENOMEM;
+> > > > > > > -                param.type = fs_value_is_string;
+> > > > > > > -            }
+> > > > > > > -
+> > > > > > > -            param.key = key;
+> > > > > > > -            param.size = v_len;
+> > > > > > > -
+> > > > > > > -            ret = f2fs_parse_param(fc, &param);
+> > > > > > > -            kfree(param.string);
+> > > > > > > -            if (ret < 0)
+> > > > > > > -                return ret;
+> > > > > > > -        }
+> > > > > > > -    }
+> > > > > > > -    return 0;
+> > > > > > > -}
+> > > > > > > -
+> > > > > > >     /*
+> > > > > > >      * Check quota settings consistency.
+> > > > > > >      */
+> > > > > > > @@ -2583,13 +2542,12 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
+> > > > > > >         f2fs_flush_ckpt_thread(sbi);
+> > > > > > >     }
+> > > > > > >     -static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > > +static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
+> > > > > > >     {
+> > > > > > >         struct f2fs_sb_info *sbi = F2FS_SB(sb);
+> > > > > > >         struct f2fs_mount_info org_mount_opt;
+> > > > > > > -    struct f2fs_fs_context ctx;
+> > > > > > > -    struct fs_context fc;
+> > > > > > >         unsigned long old_sb_flags;
+> > > > > > > +    unsigned int flags = fc->sb_flags;
+> > > > > > >         int err;
+> > > > > > >         bool need_restart_gc = false, need_stop_gc = false;
+> > > > > > >         bool need_restart_flush = false, need_stop_flush = false;
+> > > > > > > @@ -2635,7 +2593,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >     #endif
+> > > > > > >           /* recover superblocks we couldn't write due to previous RO mount */
+> > > > > > > -    if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
+> > > > > > > +    if (!(flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
+> > > > > > >             err = f2fs_commit_super(sbi, false);
+> > > > > > >             f2fs_info(sbi, "Try to recover all the superblocks, ret: %d",
+> > > > > > >                   err);
+> > > > > > > @@ -2645,21 +2603,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >           default_options(sbi, true);
+> > > > > > >     -    memset(&fc, 0, sizeof(fc));
+> > > > > > > -    memset(&ctx, 0, sizeof(ctx));
+> > > > > > > -    fc.fs_private = &ctx;
+> > > > > > > -    fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
+> > > > > > > -
+> > > > > > > -    /* parse mount options */
+> > > > > > > -    err = parse_options(&fc, data);
+> > > > > > > -    if (err)
+> > > > > > > -        goto restore_opts;
+> > > > > > > -
+> > > > > > > -    err = f2fs_check_opt_consistency(&fc, sb);
+> > > > > > > +    err = f2fs_check_opt_consistency(fc, sb);
+> > > > > > >         if (err < 0)
+> > > > > > >             goto restore_opts;
+> > > > > > >     -    f2fs_apply_options(&fc, sb);
+> > > > > > > +    f2fs_apply_options(fc, sb);
+> > > > > > >       #ifdef CONFIG_BLK_DEV_ZONED
+> > > > > > >         if (f2fs_sb_has_blkzoned(sbi) &&
+> > > > > > > @@ -2678,20 +2626,20 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >          * Previous and new state of filesystem is RO,
+> > > > > > >          * so skip checking GC and FLUSH_MERGE conditions.
+> > > > > > >          */
+> > > > > > > -    if (f2fs_readonly(sb) && (*flags & SB_RDONLY))
+> > > > > > > +    if (f2fs_readonly(sb) && (flags & SB_RDONLY))
+> > > > > > >             goto skip;
+> > > > > > >     -    if (f2fs_dev_is_readonly(sbi) && !(*flags & SB_RDONLY)) {
+> > > > > > > +    if (f2fs_dev_is_readonly(sbi) && !(flags & SB_RDONLY)) {
+> > > > > > >             err = -EROFS;
+> > > > > > >             goto restore_opts;
+> > > > > > >         }
+> > > > > > >       #ifdef CONFIG_QUOTA
+> > > > > > > -    if (!f2fs_readonly(sb) && (*flags & SB_RDONLY)) {
+> > > > > > > +    if (!f2fs_readonly(sb) && (flags & SB_RDONLY)) {
+> > > > > > >             err = dquot_suspend(sb, -1);
+> > > > > > >             if (err < 0)
+> > > > > > >                 goto restore_opts;
+> > > > > > > -    } else if (f2fs_readonly(sb) && !(*flags & SB_RDONLY)) {
+> > > > > > > +    } else if (f2fs_readonly(sb) && !(flags & SB_RDONLY)) {
+> > > > > > >             /* dquot_resume needs RW */
+> > > > > > >             sb->s_flags &= ~SB_RDONLY;
+> > > > > > >             if (sb_any_quota_suspended(sb)) {
+> > > > > > > @@ -2747,7 +2695,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >             goto restore_opts;
+> > > > > > >         }
+> > > > > > >     -    if ((*flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
+> > > > > > > +    if ((flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
+> > > > > > >             err = -EINVAL;
+> > > > > > >             f2fs_warn(sbi, "disabling checkpoint not compatible with read-only");
+> > > > > > >             goto restore_opts;
+> > > > > > > @@ -2758,7 +2706,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >          * or if background_gc = off is passed in mount
+> > > > > > >          * option. Also sync the filesystem.
+> > > > > > >          */
+> > > > > > > -    if ((*flags & SB_RDONLY) ||
+> > > > > > > +    if ((flags & SB_RDONLY) ||
+> > > > > > >                 (F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_OFF &&
+> > > > > > >                 !test_opt(sbi, GC_MERGE))) {
+> > > > > > >             if (sbi->gc_thread) {
+> > > > > > > @@ -2772,7 +2720,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >             need_stop_gc = true;
+> > > > > > >         }
+> > > > > > >     -    if (*flags & SB_RDONLY) {
+> > > > > > > +    if (flags & SB_RDONLY) {
+> > > > > > >             sync_inodes_sb(sb);
+> > > > > > >               set_sbi_flag(sbi, SBI_IS_DIRTY);
+> > > > > > > @@ -2785,7 +2733,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >          * We stop issue flush thread if FS is mounted as RO
+> > > > > > >          * or if flush_merge is not passed in mount option.
+> > > > > > >          */
+> > > > > > > -    if ((*flags & SB_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
+> > > > > > > +    if ((flags & SB_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
+> > > > > > >             clear_opt(sbi, FLUSH_MERGE);
+> > > > > > >             f2fs_destroy_flush_cmd_control(sbi, false);
+> > > > > > >             need_restart_flush = true;
+> > > > > > > @@ -2827,7 +2775,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >          * triggered while remount and we need to take care of it before
+> > > > > > >          * returning from remount.
+> > > > > > >          */
+> > > > > > > -    if ((*flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
+> > > > > > > +    if ((flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
+> > > > > > >                 !test_opt(sbi, MERGE_CHECKPOINT)) {
+> > > > > > >             f2fs_stop_ckpt_thread(sbi);
+> > > > > > >         } else {
+> > > > > > > @@ -2854,7 +2802,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
+> > > > > > >             (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
+> > > > > > >           limit_reserve_root(sbi);
+> > > > > > > -    *flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+> > > > > > > +    fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
+> > > > > > >           sbi->umount_lock_holder = NULL;
+> > > > > > >         return 0;
+> > > > > > > @@ -3523,7 +3471,6 @@ static const struct super_operations f2fs_sops = {
+> > > > > > >         .freeze_fs    = f2fs_freeze,
+> > > > > > >         .unfreeze_fs    = f2fs_unfreeze,
+> > > > > > >         .statfs        = f2fs_statfs,
+> > > > > > > -    .remount_fs    = f2fs_remount,
+> > > > > > >         .shutdown    = f2fs_shutdown,
+> > > > > > >     };
+> > > > > > >     @@ -4745,16 +4692,13 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
+> > > > > > >         sbi->readdir_ra = true;
+> > > > > > >     }
+> > > > > > >     -static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> > > > > > > +static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
+> > > > > > >     {
+> > > > > > >         struct f2fs_sb_info *sbi;
+> > > > > > >         struct f2fs_super_block *raw_super;
+> > > > > > > -    struct f2fs_fs_context ctx;
+> > > > > > > -    struct fs_context fc;
+> > > > > > >         struct inode *root;
+> > > > > > >         int err;
+> > > > > > >         bool skip_recovery = false, need_fsck = false;
+> > > > > > > -    char *options = NULL;
+> > > > > > >         int recovery, i, valid_super_block;
+> > > > > > >         struct curseg_info *seg_i;
+> > > > > > >         int retry_cnt = 1;
+> > > > > > > @@ -4767,9 +4711,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> > > > > > >         raw_super = NULL;
+> > > > > > >         valid_super_block = -1;
+> > > > > > >         recovery = 0;
+> > > > > > > -    memset(&fc, 0, sizeof(fc));
+> > > > > > > -    memset(&ctx, 0, sizeof(ctx));
+> > > > > > > -    fc.fs_private = &ctx;
+> > > > > > >           /* allocate memory for f2fs-specific super block info */
+> > > > > > >         sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
+> > > > > > > @@ -4820,22 +4761,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> > > > > > >                             sizeof(raw_super->uuid));
+> > > > > > >           default_options(sbi, false);
+> > > > > > > -    /* parse mount options */
+> > > > > > > -    options = kstrdup((const char *)data, GFP_KERNEL);
+> > > > > > > -    if (data && !options) {
+> > > > > > > -        err = -ENOMEM;
+> > > > > > > -        goto free_sb_buf;
+> > > > > > > -    }
+> > > > > > > -
+> > > > > > > -    err = parse_options(&fc, options);
+> > > > > > > -    if (err)
+> > > > > > > -        goto free_options;
+> > > > > > >     -    err = f2fs_check_opt_consistency(&fc, sb);
+> > > > > > > +    err = f2fs_check_opt_consistency(fc, sb);
+> > > > > > >         if (err < 0)
+> > > > > > > -        goto free_options;
+> > > > > > > +        goto free_sb_buf;
+> > > > > > >     -    f2fs_apply_options(&fc, sb);
+> > > > > > > +    f2fs_apply_options(fc, sb);
+> > > > > > >           sb->s_maxbytes = max_file_blocks(NULL) <<
+> > > > > > >                     le32_to_cpu(raw_super->log_blocksize);
+> > > > > > > @@ -5160,7 +5091,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> > > > > > >             if (err)
+> > > > > > >                 goto sync_free_meta;
+> > > > > > >         }
+> > > > > > > -    kvfree(options);
+> > > > > > >           /* recover broken superblock */
+> > > > > > >         if (recovery) {
+> > > > > > > @@ -5255,7 +5185,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> > > > > > >             kfree(F2FS_OPTION(sbi).s_qf_names[i]);
+> > > > > > >     #endif
+> > > > > > >         fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
+> > > > > > > -    kvfree(options);
+> > > > > > >     free_sb_buf:
+> > > > > > >         kfree(raw_super);
+> > > > > > >     free_sbi:
+> > > > > > > @@ -5271,14 +5200,39 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
+> > > > > > >         return err;
+> > > > > > >     }
+> > > > > > >     -static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
+> > > > > > > -            const char *dev_name, void *data)
+> > > > > > > +static int f2fs_get_tree(struct fs_context *fc)
+> > > > > > >     {
+> > > > > > > -    return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
+> > > > > > > +    return get_tree_bdev(fc, f2fs_fill_super);
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static int f2fs_reconfigure(struct fs_context *fc)
+> > > > > > > +{
+> > > > > > > +    struct super_block *sb = fc->root->d_sb;
+> > > > > > > +
+> > > > > > > +    return __f2fs_remount(fc, sb);
+> > > > > > > +}
+> > > > > > > +
+> > > > > > > +static void f2fs_fc_free(struct fs_context *fc)
+> > > > > > > +{
+> > > > > > > +    struct f2fs_fs_context *ctx = fc->fs_private;
+> > > > > > > +    int i;
+> > > > > > > +
+> > > > > > > +    if (!ctx)
+> > > > > > > +        return;
+> > > > > > > +
+> > > > > > > +#ifdef CONFIG_QUOTA
+> > > > > > > +    for (i = 0; i < MAXQUOTAS; i++)
+> > > > > > > +        kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
+> > > > > > > +#endif
+> > > > > > > +    fscrypt_free_dummy_policy(&F2FS_CTX_INFO(ctx).dummy_enc_policy);
+> > > > > > > +    kfree(ctx);
+> > > > > > >     }
+> > > > > > >       static const struct fs_context_operations f2fs_context_ops = {
+> > > > > > >         .parse_param    = f2fs_parse_param,
+> > > > > > > +    .get_tree    = f2fs_get_tree,
+> > > > > > > +    .reconfigure = f2fs_reconfigure,
+> > > > > > > +    .free    = f2fs_fc_free,
+> > > > > > >     };
+> > > > > > >       static void kill_f2fs_super(struct super_block *sb)
+> > > > > > > @@ -5322,10 +5276,24 @@ static void kill_f2fs_super(struct super_block *sb)
+> > > > > > >         }
+> > > > > > >     }
+> > > > > > >     +static int f2fs_init_fs_context(struct fs_context *fc)
+> > > > > > > +{
+> > > > > > > +    struct f2fs_fs_context *ctx;
+> > > > > > > +
+> > > > > > > +    ctx = kzalloc(sizeof(struct f2fs_fs_context), GFP_KERNEL);
+> > > > > > > +    if (!ctx)
+> > > > > > > +        return -ENOMEM;
+> > > > > > > +
+> > > > > > > +    fc->fs_private = ctx;
+> > > > > > > +    fc->ops = &f2fs_context_ops;
+> > > > > > > +
+> > > > > > > +    return 0;
+> > > > > > > +}
+> > > > > > > +
+> > > > > > >     static struct file_system_type f2fs_fs_type = {
+> > > > > > >         .owner        = THIS_MODULE,
+> > > > > > >         .name        = "f2fs",
+> > > > > > > -    .mount        = f2fs_mount,
+> > > > > > > +    .init_fs_context = f2fs_init_fs_context,
+> > > > > > >         .kill_sb    = kill_f2fs_super,
+> > > > > > >         .fs_flags    = FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
+> > > > > > >     };
+> > > > > > 
+> > > > 
+> > > > 
+> > 
+> > 
 
