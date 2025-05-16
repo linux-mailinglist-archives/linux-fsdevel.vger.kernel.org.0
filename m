@@ -1,485 +1,209 @@
-Return-Path: <linux-fsdevel+bounces-49285-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC773ABA1E9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 19:35:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C346ABA21B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 19:44:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58A327A7F99
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 17:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 514B14E63BA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 17:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E5818D656;
-	Fri, 16 May 2025 17:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5D7278758;
+	Fri, 16 May 2025 17:42:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cwvj3VD8"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HVWo5UR8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0166721CC7C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 17:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675CC2749C7
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 17:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747416933; cv=none; b=kI+3TEFgi7E17eHTkW1jXCD+tP5pvPojpL2zAVKKmJsQc9RN9TdFrwYt7a2LY6FKWEb0kefdmIfQfFxxVNsNE46sfUnXDuUvP7i3T7nZILLeSvmo0xCUnqnViNFiBlAo4h47SlZT5lscZLhLf10SmzMzLkO7iD8lxSXsZJ6TpxA=
+	t=1747417372; cv=none; b=r0r7RPiQA8TnbmF+1ierox7lYO9TVB2cMU+5DA2O50Bq8IV3Y7z7NYC/2AKXS8LbGl+xt4Zy/F7fx+ZSciY+H625d/2Ux7HikB3xyG828J29FUWGqNJKumDOzyLTNRjxhJ1W1QRjJsS6p7m+MQ5XUj8WrxCE4TUinzv3AX2nTrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747416933; c=relaxed/simple;
-	bh=MPTekxGp1fJB0qA5+SBiPb0jqUXH8X7HX6LExy+cHFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUw8+j+dDJgwKQYKgpXkY/tlwq351iGEktFxT211hMvZUdyJmckpLHXMDG/kq88oNFRO0mWobQ61qhtthRd54F3iSUEp42JRTZhlJ53Q9+gOP0T7nWLmnMlNJ1uqDXUTmX4hFsH/hF3OKyAPdD1zYJ8kUY7LWoj3f25Ukkg5bhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cwvj3VD8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06FADC4CEE4;
-	Fri, 16 May 2025 17:35:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747416932;
-	bh=MPTekxGp1fJB0qA5+SBiPb0jqUXH8X7HX6LExy+cHFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cwvj3VD8e/alOnRN0tnbaGzel+7m032NProVyuNMKgq/8BldGo+Dj0dA4YWfis6Et
-	 gk5Fbgy9jBeSl6Dn4WFQupbdotDYNPPMlxBH4OvOYr+0bgZP67Gq7ArdPm+yAfoVZe
-	 QZKLS2Sv0y3LXwPHT9MU3fx6AL2Fhet4gYXRlJH2r1xC5KsZRBgaATEXV08Bx9rEFR
-	 1hj1Mdjg4OQg5maRuu2Jh77M1HlDBRVI2JqXDTwH9vMVLgCY5Vkm+CwazrOKo5npTa
-	 cs/+SfnzyxS3xv3wLvcsVpgN7lA0my0+cWHM7sBkhCLnk3NhjlFXukhDoEfYU3Tc0I
-	 3nTTyVzWUaQNw==
-Date: Fri, 16 May 2025 17:35:30 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Hongbo Li <lihongbo22@huawei.com>
-Cc: Chao Yu <chao@kernel.org>, Eric Sandeen <sandeen@redhat.com>,
-	linux-fsdevel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH V3 7/7] f2fs: switch to the new mount api
-Message-ID: <aCd3YoPS_wm2dcff@google.com>
-References: <20250423170926.76007-1-sandeen@redhat.com>
- <20250423170926.76007-8-sandeen@redhat.com>
- <ff2c9a74-f359-4bcc-9792-46af946c70ad@kernel.org>
- <63d1977d-2f0b-4c58-9867-0dc1285815a0@huawei.com>
- <979015aa-433d-4057-a454-afaea2c68131@kernel.org>
- <2ea178cb-1ed3-40ba-8dc6-8fa3bff06850@huawei.com>
- <aCS3LZ3IOMgiissx@google.com>
- <ceeb4951-ee88-4cae-b20a-8c06edf2bfc3@huawei.com>
+	s=arc-20240116; t=1747417372; c=relaxed/simple;
+	bh=/oZWTLboJ1r1HwZnL8ol3rHmbO0GkMBVgO/nSs8EhQA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=QYGzB3RG4LWNWOiUnoj3yqKv8l8nSaB8ZU3h6rRalutMQQQewx3JuN60Flmsa0C+vRFrU9J/9gC2NuPbFPsBzvI1TlVwdTvtzrwcKC9P+sf5XGwJyJjuQqDREbjwZuatxtKQmHQxSDg4EzubHKDidoDRR0+HnM6lwmOx8+OL53Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HVWo5UR8; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b26e120e300so1816190a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 10:42:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747417369; x=1748022169; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHtggF1Xmmx8sunRLPpEo5y2n3Fbz0jNKo8YthXyxlY=;
+        b=HVWo5UR8opSBCFI1dc6meoyTzedjbObtgTVC7ltLORi93kHV7ixtoQEMROus9pT0AX
+         TyF197cPYWhbksqBQIsqYBZ+0L6mWfDswI4sgOe8UEguzphY3grD5c0wDwmvENLA6Gn1
+         fRzhBwSVJn6aJj041vnfaDo/eZde1L7Qlmo9xyj7DU2n5cnaeJ2U/9JpvqHTAMKuWTeq
+         YZscX//icFQF0qWHdkjqF+zrRmfHRc9L+iyd6HQUqmZxzwypx4O5zqTwV4osA+wnwZd8
+         tljaUaYnsMoFa4EaR5kKIJHuiqwiQ/SFP33dUffo59CoPmm4dJ8GW/dwz6gNp5crU7Ha
+         8rWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747417369; x=1748022169;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHtggF1Xmmx8sunRLPpEo5y2n3Fbz0jNKo8YthXyxlY=;
+        b=S0m/nf6tlJcY3xpPDQWzU71yhcwTGQFutlIVHX0laWSZvNNEBT935hDUb1o0uFucOP
+         RXw2Wpikm+X0qgT81iDuyVehhBB9ruuh4eEZFO8UVV9sHoSMx6D0QSVQKBEIteZYiXZc
+         GCwefKSrHp7J0+YuHfuaHytvC2GfxBIxMxJc44mj6igu91Pz3PPxy1m+gKlFM3rUdxut
+         hZh8o3d8sSUnIPQ6b4zAbQW3IcOMQueJJFyHlZ9UA9KQYn7jA8egCurAMftHxKQeIQ8R
+         jQlhTk8WT95YVxSe9nkqMnzDkMLoZeWIVhRogAdmLuDZ+oVt83jpIxNfghWFhfLkFLaZ
+         Yh7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV7e/pPZjoszqArpkdvJ7oT+Uj+INQ6/JICeQKBPjjYK1mnk3tBmdKCpu/3vZWeGAVl6DDVqoyB1DSAhSrV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFQU30R7F5dHQi4wp2S5JucJRUmeAv6GFdJKP9BzNURRmInXGQ
+	eYCL+CpfiO8F5g6kFYlTWKHRm3/RFfMfGJHCsOVOHoYYFDomW9+7wJKbepI5pLahudvczRV6V36
+	0HFji9/47cnVzWdGIULxd/vuijQ==
+X-Google-Smtp-Source: AGHT+IFZZue4eVCNyGlBlVu3FOMYDdiN/+lNxD2W2guGukj7N1aj09nrbw9YDmV/sDzoeyH8oFlR4vBN8C7KtAQknw==
+X-Received: from pjyp15.prod.google.com ([2002:a17:90a:e70f:b0:2ef:d283:5089])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:4b0f:b0:2fe:b907:562f with SMTP id 98e67ed59e1d1-30e7d527e41mr6797759a91.14.1747417369222;
+ Fri, 16 May 2025 10:42:49 -0700 (PDT)
+Date: Fri, 16 May 2025 10:42:47 -0700
+In-Reply-To: <6825f0f3ac8a7_337c392942d@iweiny-mobl.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ceeb4951-ee88-4cae-b20a-8c06edf2bfc3@huawei.com>
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <65afac3b13851c442c72652904db6d5755299615.1747264138.git.ackerleytng@google.com>
+ <6825f0f3ac8a7_337c392942d@iweiny-mobl.notmuch>
+Message-ID: <diqzmsbcfo4o.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v2 03/51] KVM: selftests: Update guest_memfd_test for
+ INIT_PRIVATE flag
+From: Ackerley Tng <ackerleytng@google.com>
+To: Ira Weiny <ira.weiny@intel.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org
+Cc: aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
+	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
+	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
+	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
+	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
+	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
+	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
+	yuzenghui@huawei.com, zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 05/16, Hongbo Li wrote:
-> 
-> 
-> On 2025/5/14 23:30, Jaegeuk Kim wrote:
-> > Hi, Hongbo,
-> > 
-> > It seems we're getting more issues in the patch set. May I ask for some
-> > help sending the new patch series having all the fixes that I made as well
-> > as addressing the concerns? You can get the patches from [1].
-> > 
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev-test
-> > 
-> 
-> Hi, Jaegeuk
-> 
-> I will discuss these issues with Eric. It may take some time, but not too
-> long. When we send the next version, should we resend this patch series
-> based on dev-test after modifying the code, only removing your S-O-B?
-> (You'll ultimately add your S-O-B back yourself)
+Ira Weiny <ira.weiny@intel.com> writes:
 
-Hi Hongbo,
+> Ackerley Tng wrote:
+>> Test that GUEST_MEMFD_FLAG_INIT_PRIVATE is only valid when
+>> GUEST_MEMFD_FLAG_SUPPORT_SHARED is set.
+>> 
+>> Change-Id: I506e236a232047cfaee17bcaed02ee14c8d25bbb
+>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> ---
+>>  .../testing/selftests/kvm/guest_memfd_test.c  | 36 ++++++++++++-------
+>>  1 file changed, 24 insertions(+), 12 deletions(-)
+>> 
+>> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
+>> index 60aaba5808a5..bf2876cbd711 100644
+>> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
+>> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
+>> @@ -401,13 +401,31 @@ static void test_with_type(unsigned long vm_type, uint64_t guest_memfd_flags,
+>>  	kvm_vm_release(vm);
+>>  }
+>>  
+>> +static void test_vm_with_gmem_flag(struct kvm_vm *vm, uint64_t flag,
+>> +				   bool expect_valid)
+>> +{
+>> +	size_t page_size = getpagesize();
+>> +	int fd;
+>> +
+>> +	fd = __vm_create_guest_memfd(vm, page_size, flag);
+>> +
+>> +	if (expect_valid) {
+>> +		TEST_ASSERT(fd > 0,
+>> +			    "guest_memfd() with flag '0x%lx' should be valid",
+>> +			    flag);
+>> +		close(fd);
+>> +	} else {
+>> +		TEST_ASSERT(fd == -1 && errno == EINVAL,
+>> +			    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
+>> +			    flag);
+>> +	}
+>> +}
+>> +
+>>  static void test_vm_type_gmem_flag_validity(unsigned long vm_type,
+>>  					    uint64_t expected_valid_flags)
+>>  {
+>> -	size_t page_size = getpagesize();
+>>  	struct kvm_vm *vm;
+>>  	uint64_t flag = 0;
+>> -	int fd;
+>>  
+>>  	if (!(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(vm_type)))
+>>  		return;
+>> @@ -415,17 +433,11 @@ static void test_vm_type_gmem_flag_validity(unsigned long vm_type,
+>>  	vm = vm_create_barebones_type(vm_type);
+>>  
+>>  	for (flag = BIT(0); flag; flag <<= 1) {
+>> -		fd = __vm_create_guest_memfd(vm, page_size, flag);
+>> +		test_vm_with_gmem_flag(vm, flag, flag & expected_valid_flags);
+>>  
+>> -		if (flag & expected_valid_flags) {
+>> -			TEST_ASSERT(fd > 0,
+>> -				    "guest_memfd() with flag '0x%lx' should be valid",
+>> -				    flag);
+>> -			close(fd);
+>> -		} else {
+>> -			TEST_ASSERT(fd == -1 && errno == EINVAL,
+>> -				    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
+>> -				    flag);
+>> +		if (flag == GUEST_MEMFD_FLAG_SUPPORT_SHARED) {
+>> +			test_vm_with_gmem_flag(
+>> +				vm, flag | GUEST_MEMFD_FLAG_INIT_PRIVATE, true);
+>
+> I don't understand the point of this check.  In 2/51 we set 
+> GUEST_MEMFD_FLAG_INIT_PRIVATE when GUEST_MEMFD_FLAG_SUPPORT_SHARED is set.
+>
+> When can this check ever fail?
+>
+> Ira
 
-Thank you for this hard work. Could you please resend the entire patch-set based
-on dev-test w/o my SOB? I'm going to dequeue the series from dev-test. Instead,
-I rebased the latest version onto [2].
+In 02/51, GUEST_MEMFD_FLAG_INIT_PRIVATE is not set by default,
+GUEST_MEMFD_FLAG_INIT_PRIVATE is set as one of the valid_flags.
 
-Please also consider another report, [1].
+The intention is that GUEST_MEMFD_FLAG_INIT_PRIVATE is only valid if
+GUEST_MEMFD_FLAG_SUPPORT_SHARED is requested by userspace.
 
-[1] https://lore.kernel.org/linux-f2fs-devel/2f16981b-0e13-4c64-83a8-d0e0b4297348@suswa.mountain/T/#u
-[2] https://github.com/jaegeuk/f2fs/commits/mount/
+In this test, the earlier part before the if block calls
+test_vm_with_gmem_flag() all valid flags, and that already tests
+GUEST_MEMFD_FLAG_SUPPORT_SHARED individually.
 
-> 
-> Thanks,
-> Hongbo
-> 
-> > On 05/14, Hongbo Li wrote:
-> > > 
-> > > 
-> > > On 2025/5/14 12:03, Chao Yu wrote:
-> > > > On 5/14/25 10:33, Hongbo Li wrote:
-> > > > > 
-> > > > > 
-> > > > > On 2025/5/13 16:59, Chao Yu wrote:
-> > > > > > On 4/24/25 01:08, Eric Sandeen wrote:
-> > > > > > > From: Hongbo Li <lihongbo22@huawei.com>
-> > > > > > > 
-> > > > > > > The new mount api will execute .parse_param, .init_fs_context, .get_tree
-> > > > > > > and will call .remount if remount happened. So we add the necessary
-> > > > > > > functions for the fs_context_operations. If .init_fs_context is added,
-> > > > > > > the old .mount should remove.
-> > > > > > > 
-> > > > > > > See Documentation/filesystems/mount_api.rst for more information.
-> > > > > > 
-> > > > > > mkfs.f2fs -f -O extra_attr,flexible_inline_xattr /dev/vdb
-> > > > > > mount -o inline_xattr_size=512 /dev/vdb /mnt/f2fs
-> > > > > > mount: /mnt/f2fs: wrong fs type, bad option, bad superblock on /dev/vdb, missing codepage or helper program, or other error.
-> > > > > >           dmesg(1) may have more information after failed mount system call.
-> > > > > > dmesg
-> > > > > > [ 1758.202282] F2FS-fs (vdb): Image doesn't support compression
-> > > > > > [ 1758.202286] F2FS-fs (vdb): inline_xattr_size option should be set with inline_xattr option
-> > > > > > 
-> > > > > > Eric, Hongbo, can you please take a look at this issue?
-> > > > > > 
-> > > > > Sorry, we only check the option hold in ctx, we should do the double check in sbi. Or other elegant approaches.
-> > > > > 
-> > > > > For the "support compression", is it also the error in this testcase?
-> > > > 
-> > > > I think so, I checked this w/ additional logs, and found this:
-> > > > 
-> > > > #define F2FS_MOUNT_INLINE_XATTR_SIZE	0x00080000
-> > > > #define F2FS_SPEC_compress_chksum		(1 << 19) /* equal to 0x00080000)
-> > > > 
-> > > > 	if (!f2fs_sb_has_compression(sbi)) {
-> > > > 		if (test_compression_spec(ctx->opt_mask) ||
-> > > > 			ctx_test_opt(ctx, F2FS_MOUNT_COMPRESS_CACHE))
-> > > > 			f2fs_info(sbi, "Image doesn't support compression");
-> > > > 		clear_compression_spec(ctx);
-> > > > 		ctx->opt_mask &= ~F2FS_MOUNT_COMPRESS_CACHE;
-> > > > 		return 0;
-> > > > 	}
-> > > > 
-> > > > We should use test_compression_spec(ctx->spec_mask) instead of
-> > > > test_compression_spec(ctx->opt_mask) to check special mask of compression
-> > > > option?
-> > > > 
-> > > 
-> > > Yeah, you're right. test_compression_spec is used to check spec_mask, and we
-> > > got it wrong.
-> > > 
-> > > Thanks,
-> > > Hongbo
-> > > 
-> > > > Thanks,
-> > > > 
-> > > > > 
-> > > > > Thanks,
-> > > > > Hongbo
-> > > > > 
-> > > > > > Thanks,
-> > > > > > 
-> > > > > > > 
-> > > > > > > Signed-off-by: Hongbo Li <lihongbo22@huawei.com>
-> > > > > > > [sandeen: forward port]
-> > > > > > > Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-> > > > > > > ---
-> > > > > > >     fs/f2fs/super.c | 156 +++++++++++++++++++-----------------------------
-> > > > > > >     1 file changed, 62 insertions(+), 94 deletions(-)
-> > > > > > > 
-> > > > > > > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > > > > > > index 37497fd80bb9..041bd6c482a0 100644
-> > > > > > > --- a/fs/f2fs/super.c
-> > > > > > > +++ b/fs/f2fs/super.c
-> > > > > > > @@ -1141,47 +1141,6 @@ static int f2fs_parse_param(struct fs_context *fc, struct fs_parameter *param)
-> > > > > > >         return 0;
-> > > > > > >     }
-> > > > > > >     -static int parse_options(struct fs_context *fc, char *options)
-> > > > > > > -{
-> > > > > > > -    struct fs_parameter param;
-> > > > > > > -    char *key;
-> > > > > > > -    int ret;
-> > > > > > > -
-> > > > > > > -    if (!options)
-> > > > > > > -        return 0;
-> > > > > > > -
-> > > > > > > -    while ((key = strsep(&options, ",")) != NULL) {
-> > > > > > > -        if (*key) {
-> > > > > > > -            size_t v_len = 0;
-> > > > > > > -            char *value = strchr(key, '=');
-> > > > > > > -
-> > > > > > > -            param.type = fs_value_is_flag;
-> > > > > > > -            param.string = NULL;
-> > > > > > > -
-> > > > > > > -            if (value) {
-> > > > > > > -                if (value == key)
-> > > > > > > -                    continue;
-> > > > > > > -
-> > > > > > > -                *value++ = 0;
-> > > > > > > -                v_len = strlen(value);
-> > > > > > > -                param.string = kmemdup_nul(value, v_len, GFP_KERNEL);
-> > > > > > > -                if (!param.string)
-> > > > > > > -                    return -ENOMEM;
-> > > > > > > -                param.type = fs_value_is_string;
-> > > > > > > -            }
-> > > > > > > -
-> > > > > > > -            param.key = key;
-> > > > > > > -            param.size = v_len;
-> > > > > > > -
-> > > > > > > -            ret = f2fs_parse_param(fc, &param);
-> > > > > > > -            kfree(param.string);
-> > > > > > > -            if (ret < 0)
-> > > > > > > -                return ret;
-> > > > > > > -        }
-> > > > > > > -    }
-> > > > > > > -    return 0;
-> > > > > > > -}
-> > > > > > > -
-> > > > > > >     /*
-> > > > > > >      * Check quota settings consistency.
-> > > > > > >      */
-> > > > > > > @@ -2583,13 +2542,12 @@ static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
-> > > > > > >         f2fs_flush_ckpt_thread(sbi);
-> > > > > > >     }
-> > > > > > >     -static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > > +static int __f2fs_remount(struct fs_context *fc, struct super_block *sb)
-> > > > > > >     {
-> > > > > > >         struct f2fs_sb_info *sbi = F2FS_SB(sb);
-> > > > > > >         struct f2fs_mount_info org_mount_opt;
-> > > > > > > -    struct f2fs_fs_context ctx;
-> > > > > > > -    struct fs_context fc;
-> > > > > > >         unsigned long old_sb_flags;
-> > > > > > > +    unsigned int flags = fc->sb_flags;
-> > > > > > >         int err;
-> > > > > > >         bool need_restart_gc = false, need_stop_gc = false;
-> > > > > > >         bool need_restart_flush = false, need_stop_flush = false;
-> > > > > > > @@ -2635,7 +2593,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >     #endif
-> > > > > > >           /* recover superblocks we couldn't write due to previous RO mount */
-> > > > > > > -    if (!(*flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
-> > > > > > > +    if (!(flags & SB_RDONLY) && is_sbi_flag_set(sbi, SBI_NEED_SB_WRITE)) {
-> > > > > > >             err = f2fs_commit_super(sbi, false);
-> > > > > > >             f2fs_info(sbi, "Try to recover all the superblocks, ret: %d",
-> > > > > > >                   err);
-> > > > > > > @@ -2645,21 +2603,11 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >           default_options(sbi, true);
-> > > > > > >     -    memset(&fc, 0, sizeof(fc));
-> > > > > > > -    memset(&ctx, 0, sizeof(ctx));
-> > > > > > > -    fc.fs_private = &ctx;
-> > > > > > > -    fc.purpose = FS_CONTEXT_FOR_RECONFIGURE;
-> > > > > > > -
-> > > > > > > -    /* parse mount options */
-> > > > > > > -    err = parse_options(&fc, data);
-> > > > > > > -    if (err)
-> > > > > > > -        goto restore_opts;
-> > > > > > > -
-> > > > > > > -    err = f2fs_check_opt_consistency(&fc, sb);
-> > > > > > > +    err = f2fs_check_opt_consistency(fc, sb);
-> > > > > > >         if (err < 0)
-> > > > > > >             goto restore_opts;
-> > > > > > >     -    f2fs_apply_options(&fc, sb);
-> > > > > > > +    f2fs_apply_options(fc, sb);
-> > > > > > >       #ifdef CONFIG_BLK_DEV_ZONED
-> > > > > > >         if (f2fs_sb_has_blkzoned(sbi) &&
-> > > > > > > @@ -2678,20 +2626,20 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >          * Previous and new state of filesystem is RO,
-> > > > > > >          * so skip checking GC and FLUSH_MERGE conditions.
-> > > > > > >          */
-> > > > > > > -    if (f2fs_readonly(sb) && (*flags & SB_RDONLY))
-> > > > > > > +    if (f2fs_readonly(sb) && (flags & SB_RDONLY))
-> > > > > > >             goto skip;
-> > > > > > >     -    if (f2fs_dev_is_readonly(sbi) && !(*flags & SB_RDONLY)) {
-> > > > > > > +    if (f2fs_dev_is_readonly(sbi) && !(flags & SB_RDONLY)) {
-> > > > > > >             err = -EROFS;
-> > > > > > >             goto restore_opts;
-> > > > > > >         }
-> > > > > > >       #ifdef CONFIG_QUOTA
-> > > > > > > -    if (!f2fs_readonly(sb) && (*flags & SB_RDONLY)) {
-> > > > > > > +    if (!f2fs_readonly(sb) && (flags & SB_RDONLY)) {
-> > > > > > >             err = dquot_suspend(sb, -1);
-> > > > > > >             if (err < 0)
-> > > > > > >                 goto restore_opts;
-> > > > > > > -    } else if (f2fs_readonly(sb) && !(*flags & SB_RDONLY)) {
-> > > > > > > +    } else if (f2fs_readonly(sb) && !(flags & SB_RDONLY)) {
-> > > > > > >             /* dquot_resume needs RW */
-> > > > > > >             sb->s_flags &= ~SB_RDONLY;
-> > > > > > >             if (sb_any_quota_suspended(sb)) {
-> > > > > > > @@ -2747,7 +2695,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >             goto restore_opts;
-> > > > > > >         }
-> > > > > > >     -    if ((*flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
-> > > > > > > +    if ((flags & SB_RDONLY) && test_opt(sbi, DISABLE_CHECKPOINT)) {
-> > > > > > >             err = -EINVAL;
-> > > > > > >             f2fs_warn(sbi, "disabling checkpoint not compatible with read-only");
-> > > > > > >             goto restore_opts;
-> > > > > > > @@ -2758,7 +2706,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >          * or if background_gc = off is passed in mount
-> > > > > > >          * option. Also sync the filesystem.
-> > > > > > >          */
-> > > > > > > -    if ((*flags & SB_RDONLY) ||
-> > > > > > > +    if ((flags & SB_RDONLY) ||
-> > > > > > >                 (F2FS_OPTION(sbi).bggc_mode == BGGC_MODE_OFF &&
-> > > > > > >                 !test_opt(sbi, GC_MERGE))) {
-> > > > > > >             if (sbi->gc_thread) {
-> > > > > > > @@ -2772,7 +2720,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >             need_stop_gc = true;
-> > > > > > >         }
-> > > > > > >     -    if (*flags & SB_RDONLY) {
-> > > > > > > +    if (flags & SB_RDONLY) {
-> > > > > > >             sync_inodes_sb(sb);
-> > > > > > >               set_sbi_flag(sbi, SBI_IS_DIRTY);
-> > > > > > > @@ -2785,7 +2733,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >          * We stop issue flush thread if FS is mounted as RO
-> > > > > > >          * or if flush_merge is not passed in mount option.
-> > > > > > >          */
-> > > > > > > -    if ((*flags & SB_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
-> > > > > > > +    if ((flags & SB_RDONLY) || !test_opt(sbi, FLUSH_MERGE)) {
-> > > > > > >             clear_opt(sbi, FLUSH_MERGE);
-> > > > > > >             f2fs_destroy_flush_cmd_control(sbi, false);
-> > > > > > >             need_restart_flush = true;
-> > > > > > > @@ -2827,7 +2775,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >          * triggered while remount and we need to take care of it before
-> > > > > > >          * returning from remount.
-> > > > > > >          */
-> > > > > > > -    if ((*flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
-> > > > > > > +    if ((flags & SB_RDONLY) || test_opt(sbi, DISABLE_CHECKPOINT) ||
-> > > > > > >                 !test_opt(sbi, MERGE_CHECKPOINT)) {
-> > > > > > >             f2fs_stop_ckpt_thread(sbi);
-> > > > > > >         } else {
-> > > > > > > @@ -2854,7 +2802,7 @@ static int f2fs_remount(struct super_block *sb, int *flags, char *data)
-> > > > > > >             (test_opt(sbi, POSIX_ACL) ? SB_POSIXACL : 0);
-> > > > > > >           limit_reserve_root(sbi);
-> > > > > > > -    *flags = (*flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
-> > > > > > > +    fc->sb_flags = (flags & ~SB_LAZYTIME) | (sb->s_flags & SB_LAZYTIME);
-> > > > > > >           sbi->umount_lock_holder = NULL;
-> > > > > > >         return 0;
-> > > > > > > @@ -3523,7 +3471,6 @@ static const struct super_operations f2fs_sops = {
-> > > > > > >         .freeze_fs    = f2fs_freeze,
-> > > > > > >         .unfreeze_fs    = f2fs_unfreeze,
-> > > > > > >         .statfs        = f2fs_statfs,
-> > > > > > > -    .remount_fs    = f2fs_remount,
-> > > > > > >         .shutdown    = f2fs_shutdown,
-> > > > > > >     };
-> > > > > > >     @@ -4745,16 +4692,13 @@ static void f2fs_tuning_parameters(struct f2fs_sb_info *sbi)
-> > > > > > >         sbi->readdir_ra = true;
-> > > > > > >     }
-> > > > > > >     -static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > > > > > > +static int f2fs_fill_super(struct super_block *sb, struct fs_context *fc)
-> > > > > > >     {
-> > > > > > >         struct f2fs_sb_info *sbi;
-> > > > > > >         struct f2fs_super_block *raw_super;
-> > > > > > > -    struct f2fs_fs_context ctx;
-> > > > > > > -    struct fs_context fc;
-> > > > > > >         struct inode *root;
-> > > > > > >         int err;
-> > > > > > >         bool skip_recovery = false, need_fsck = false;
-> > > > > > > -    char *options = NULL;
-> > > > > > >         int recovery, i, valid_super_block;
-> > > > > > >         struct curseg_info *seg_i;
-> > > > > > >         int retry_cnt = 1;
-> > > > > > > @@ -4767,9 +4711,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > > > > > >         raw_super = NULL;
-> > > > > > >         valid_super_block = -1;
-> > > > > > >         recovery = 0;
-> > > > > > > -    memset(&fc, 0, sizeof(fc));
-> > > > > > > -    memset(&ctx, 0, sizeof(ctx));
-> > > > > > > -    fc.fs_private = &ctx;
-> > > > > > >           /* allocate memory for f2fs-specific super block info */
-> > > > > > >         sbi = kzalloc(sizeof(struct f2fs_sb_info), GFP_KERNEL);
-> > > > > > > @@ -4820,22 +4761,12 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > > > > > >                             sizeof(raw_super->uuid));
-> > > > > > >           default_options(sbi, false);
-> > > > > > > -    /* parse mount options */
-> > > > > > > -    options = kstrdup((const char *)data, GFP_KERNEL);
-> > > > > > > -    if (data && !options) {
-> > > > > > > -        err = -ENOMEM;
-> > > > > > > -        goto free_sb_buf;
-> > > > > > > -    }
-> > > > > > > -
-> > > > > > > -    err = parse_options(&fc, options);
-> > > > > > > -    if (err)
-> > > > > > > -        goto free_options;
-> > > > > > >     -    err = f2fs_check_opt_consistency(&fc, sb);
-> > > > > > > +    err = f2fs_check_opt_consistency(fc, sb);
-> > > > > > >         if (err < 0)
-> > > > > > > -        goto free_options;
-> > > > > > > +        goto free_sb_buf;
-> > > > > > >     -    f2fs_apply_options(&fc, sb);
-> > > > > > > +    f2fs_apply_options(fc, sb);
-> > > > > > >           sb->s_maxbytes = max_file_blocks(NULL) <<
-> > > > > > >                     le32_to_cpu(raw_super->log_blocksize);
-> > > > > > > @@ -5160,7 +5091,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > > > > > >             if (err)
-> > > > > > >                 goto sync_free_meta;
-> > > > > > >         }
-> > > > > > > -    kvfree(options);
-> > > > > > >           /* recover broken superblock */
-> > > > > > >         if (recovery) {
-> > > > > > > @@ -5255,7 +5185,6 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > > > > > >             kfree(F2FS_OPTION(sbi).s_qf_names[i]);
-> > > > > > >     #endif
-> > > > > > >         fscrypt_free_dummy_policy(&F2FS_OPTION(sbi).dummy_enc_policy);
-> > > > > > > -    kvfree(options);
-> > > > > > >     free_sb_buf:
-> > > > > > >         kfree(raw_super);
-> > > > > > >     free_sbi:
-> > > > > > > @@ -5271,14 +5200,39 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> > > > > > >         return err;
-> > > > > > >     }
-> > > > > > >     -static struct dentry *f2fs_mount(struct file_system_type *fs_type, int flags,
-> > > > > > > -            const char *dev_name, void *data)
-> > > > > > > +static int f2fs_get_tree(struct fs_context *fc)
-> > > > > > >     {
-> > > > > > > -    return mount_bdev(fs_type, flags, dev_name, data, f2fs_fill_super);
-> > > > > > > +    return get_tree_bdev(fc, f2fs_fill_super);
-> > > > > > > +}
-> > > > > > > +
-> > > > > > > +static int f2fs_reconfigure(struct fs_context *fc)
-> > > > > > > +{
-> > > > > > > +    struct super_block *sb = fc->root->d_sb;
-> > > > > > > +
-> > > > > > > +    return __f2fs_remount(fc, sb);
-> > > > > > > +}
-> > > > > > > +
-> > > > > > > +static void f2fs_fc_free(struct fs_context *fc)
-> > > > > > > +{
-> > > > > > > +    struct f2fs_fs_context *ctx = fc->fs_private;
-> > > > > > > +    int i;
-> > > > > > > +
-> > > > > > > +    if (!ctx)
-> > > > > > > +        return;
-> > > > > > > +
-> > > > > > > +#ifdef CONFIG_QUOTA
-> > > > > > > +    for (i = 0; i < MAXQUOTAS; i++)
-> > > > > > > +        kfree(F2FS_CTX_INFO(ctx).s_qf_names[i]);
-> > > > > > > +#endif
-> > > > > > > +    fscrypt_free_dummy_policy(&F2FS_CTX_INFO(ctx).dummy_enc_policy);
-> > > > > > > +    kfree(ctx);
-> > > > > > >     }
-> > > > > > >       static const struct fs_context_operations f2fs_context_ops = {
-> > > > > > >         .parse_param    = f2fs_parse_param,
-> > > > > > > +    .get_tree    = f2fs_get_tree,
-> > > > > > > +    .reconfigure = f2fs_reconfigure,
-> > > > > > > +    .free    = f2fs_fc_free,
-> > > > > > >     };
-> > > > > > >       static void kill_f2fs_super(struct super_block *sb)
-> > > > > > > @@ -5322,10 +5276,24 @@ static void kill_f2fs_super(struct super_block *sb)
-> > > > > > >         }
-> > > > > > >     }
-> > > > > > >     +static int f2fs_init_fs_context(struct fs_context *fc)
-> > > > > > > +{
-> > > > > > > +    struct f2fs_fs_context *ctx;
-> > > > > > > +
-> > > > > > > +    ctx = kzalloc(sizeof(struct f2fs_fs_context), GFP_KERNEL);
-> > > > > > > +    if (!ctx)
-> > > > > > > +        return -ENOMEM;
-> > > > > > > +
-> > > > > > > +    fc->fs_private = ctx;
-> > > > > > > +    fc->ops = &f2fs_context_ops;
-> > > > > > > +
-> > > > > > > +    return 0;
-> > > > > > > +}
-> > > > > > > +
-> > > > > > >     static struct file_system_type f2fs_fs_type = {
-> > > > > > >         .owner        = THIS_MODULE,
-> > > > > > >         .name        = "f2fs",
-> > > > > > > -    .mount        = f2fs_mount,
-> > > > > > > +    .init_fs_context = f2fs_init_fs_context,
-> > > > > > >         .kill_sb    = kill_f2fs_super,
-> > > > > > >         .fs_flags    = FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
-> > > > > > >     };
-> > > > > > 
-> > > > 
-> > > > 
-> > 
-> > 
+Specifically if GUEST_MEMFD_FLAG_SUPPORT_SHARED is set, this if block
+adds a test for when both GUEST_MEMFD_FLAG_SUPPORT_SHARED and
+GUEST_MEMFD_FLAG_INIT_PRIVATE are set, and sets that expect_valid is
+true.
+
+This second test doesn't fail, it is meant to check that the kernel
+allows the pair of flags to be set. Hope that makes sense.
 
