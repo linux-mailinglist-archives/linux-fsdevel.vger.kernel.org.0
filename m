@@ -1,112 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-49262-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49263-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D884AB9D26
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 15:23:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01F0AB9D59
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 15:30:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22C379E0768
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 13:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A120CA25125
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 13:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 750941B808;
-	Fri, 16 May 2025 13:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B1F72603;
+	Fri, 16 May 2025 13:29:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="L9EVjs88"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGwrFC9S"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D16EEB3
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 13:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140A53BB48;
+	Fri, 16 May 2025 13:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747401778; cv=none; b=CE2sarQaNN6a+yPyWIScmxRnOGIOnQtTavsNlF6lGif4WGcCsvhfAnwok+5ny8IZt3lFYlTFjC+gMOjJmPev04/qN6Hc2ZlTyp8+03d9veg6LgNaSdsVbKABfYa/QY1fiboDynAUZzLcx++5mUY0niIVwgbmSIGPxbwW8MXFHZI=
+	t=1747402173; cv=none; b=MNWyvFiaP0N+x3okLuZPUhqOoukbv7KtEoZkF9wcPAZQnkpt1DjMDtWzRVvYVpmilRkQebuAmWSUeeQdyNaMcU9JIdQZvm3LvOjifX1eF15sgaNJyG0sgLnZ7QqMjg0V1CtmRGg4sXWiHLMGQ3DyNAD/q/PbitlsNaMVPHrAyGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747401778; c=relaxed/simple;
-	bh=Mq6LaG0xBwjv9AjnUVCdQRAwR2DWeZ8fcyCh1PjYfE0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JplrsIB9d6IwPbGbVqFBCtxdIuflnhr6nu3+4KiFe46GHmzj5TvtHBMEETHFj0pSJ2l3T8a6Ck7noqfVP+LuTUd0eWIwsYn3SN4ULsCehs/XLSI908nUCcTXqGLBVAulilTz2imRmnyZK/6SFp/tHSW8ZIQZOBKS9tqvmHW7+6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=L9EVjs88; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4766cb762b6so24351861cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 06:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1747401775; x=1748006575; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=f39oE0b2asrQ4dnW0vXfoFvu2HeI4aCcBfP7KjEzx4U=;
-        b=L9EVjs88vO0z07dbQhKy84+J/bm+Zb0Jg2IlXWR9gwlMhqkDJnP28ujpYRaX3w8/7O
-         fkzu0KWXKnYJxqQp6XYEk3pnmLDuc9G7Y6rJkmabd4bYwODhsIkzlTO4O+IYJ7CaPCyT
-         xCtx3gvIG7Ij6QktTCpB+q7c9gGz74IqvWD4E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747401775; x=1748006575;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=f39oE0b2asrQ4dnW0vXfoFvu2HeI4aCcBfP7KjEzx4U=;
-        b=AYtghyelwSzFSaw19/ealpYvJP6qYCPuaAQySWEQWWIymqf5S9WSDgbOxkkWT12EfF
-         Zy/RmBYz/Un6Sso69bYGg0iVlci5cbDn5VtPNaUKeUzBfCgLedPC5R+GMsdDhFD/P6bB
-         k75Kg3YcAwMiZeVIIzAAvHXA97Np2ScTxCOEo2UjNLLPdrKWNW1iNg1OJWxSWPQ24T45
-         R+CS8ar/pzHzt4VTVTJ6YISv+as1NBa68mFpsAzhWunqJM2sxtvdanrDXo6/Fr0SR/Bl
-         icYyPnqWHtvb3ygXoKmWx4kuNE7txgqZbfMEg9LGeADV2e6BjS4qYmWQL1VIwms/UKM7
-         OAwA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/IJVfGCJBP5ObxDKtWMCZ5zcXXMXrO2CMsD27ApRzzWeQjgvv1sLHVL3gX3cAdqwMka72jArTBZSWRvhR@vger.kernel.org
-X-Gm-Message-State: AOJu0YysFocHyx5YKUaOTKx8MnzjFohu5n1DAwL61hCd5u/A/gX51ryw
-	5vP3eQ6wAxRY4dUThUKDskVUzze7mCGfeOYEtGeU5HywFoQTyOBjB08Kv8zgEVT5bQnTTNwIChr
-	55EJhA5yMeJevWHgbWocsbEAgXE2F5oxtW5gYAGRNcg==
-X-Gm-Gg: ASbGncvzGVGzSj1x+14YDD02th4ZjxLfNhWe7+QhKP46vd/bdfrrIPi3RKbJLdPramQ
-	cSR0kfKYAurvUHpPsv+RMsnsG3XNXLLjKN3dBZHDRAdPxoAanYyT77OXo/oaKd+pETicwDpiylr
-	q6xV/F453NPMZmAkmb1PuB6nYLlREnAVU=
-X-Google-Smtp-Source: AGHT+IEAvu9tpjtqXuDYr/81S7DdmO/50+Tpv7T1ApOme1g7g6uD55d8ZWkPlouEKTL4RfaeXIUVFoxmzhyH8GheyOs=
-X-Received: by 2002:a05:622a:995:b0:494:93f6:8f8b with SMTP id
- d75a77b69052e-494ae4a266amr54604061cf.10.1747401774693; Fri, 16 May 2025
- 06:22:54 -0700 (PDT)
+	s=arc-20240116; t=1747402173; c=relaxed/simple;
+	bh=zgD53pa0Ne5kRM52TE45bY+sFebDuSukI3Nkzr0IjBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNKFVyH1s/DcPHeHbTlc23VKrbePQJb2tBLepY6KCUNHfE47A3LjEYzTFoQQULrCrS5sLr9TmOrXyLv05auHdrmgJ4Orc1N6F34fA1QL+OSFeIg9mJTXOOc63g3mqgUUo/J0fYr3x7N469pXoxBiT30TmCUdYrKDuFI5d942JVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGwrFC9S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00918C4CEE4;
+	Fri, 16 May 2025 13:29:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747402172;
+	bh=zgD53pa0Ne5kRM52TE45bY+sFebDuSukI3Nkzr0IjBk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BGwrFC9SMHwcc8mfpe7hJFPmrNcip8Du+0ZFcKYKlWcFdh26xpo3r4rl7pl/r/j53
+	 MMtDHJT+gyI5D4zQTrM4f8ZuX5764q4fiHEqBoX7/2jXVMzvSdDbIPiyR9+MxNY1yV
+	 Kf6JpADX4AKvyGiTTVjh7LeftAssfrr9ier7GkPJ7vmL4AcUCVdxsBjTfIrzlrUgBf
+	 sVwfcPeMmoTPENMfrhT8c2ts1gjwVO+MmFyGvO7pG7KxbGZCpESzNEsOImASjwA1PQ
+	 W51BFTR9eytYk779Y7gu+EYwBrBZZ6vTdUW3ypwW4UgTpY+o5Pva0pBK/4rMJMMCBt
+	 vvmVpnxCSJzJA==
+Date: Fri, 16 May 2025 15:29:24 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, 
+	Oleg Nesterov <oleg@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH v7 7/9] coredump: validate socket name as it is written
+Message-ID: <20250516-erden-demagogen-2f5b823aa8e3@brauner>
+References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
+ <20250515-work-coredump-socket-v7-7-0a1329496c31@kernel.org>
+ <CAG48ez1wqbOmQMqg6rH4LNjNifHU_WciceO_SQwu8T=tA_KxLw@mail.gmail.com>
+ <20250516-planen-radar-2131a4b7d9b1@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250419100657.2654744-1-amir73il@gmail.com> <20250419100657.2654744-3-amir73il@gmail.com>
-In-Reply-To: <20250419100657.2654744-3-amir73il@gmail.com>
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 16 May 2025 15:22:44 +0200
-X-Gm-Features: AX0GCFsPPiBKdqhMm6Ea7sHZuTGzr3VR_ZEJbQQUAOy1CExAMq1ZlIM2zji9lR8
-Message-ID: <CAJfpeguGj0=SmmD3uLECgByh1rOHA+Gp3tbsxsga0K3ay2ML_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fanotify: support watching filesystems and mounts
- inside userns
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250516-planen-radar-2131a4b7d9b1@brauner>
 
-On Sat, 19 Apr 2025 at 12:07, Amir Goldstein <amir73il@gmail.com> wrote:
+> > The third strscpy() argument is semantically supposed to be the
+> > destination buffer size, not the amount of data to copy. For trivial
+> > invocations like here, strscpy() actually allows you to leave out the
+> > third argument.
+> 
+> Eeeeewww, that's really implicit behavior. I can use the destination
 
-> @@ -1987,12 +1988,27 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
->                 obj = inode;
->         } else if (obj_type == FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
->                 obj = path.mnt;
-> +               user_ns = real_mount(obj)->mnt_ns->user_ns;
->         } else if (obj_type == FSNOTIFY_OBJ_TYPE_SB) {
->                 obj = path.mnt->mnt_sb;
-> +               user_ns = path.mnt->mnt_sb->s_user_ns;
-
-The patch header notes that user_ns != &init_user_ns implies
-FS_USERNS_MOUNT, but it'd be nice to document this with a WARN_ON() in
-the code as well.
-
->         } else if (obj_type == FSNOTIFY_OBJ_TYPE_MNTNS) {
->                 obj = mnt_ns_from_dentry(path.dentry);
-> +               user_ns = ((struct mnt_namespace *)obj)->user_ns;
-
-It would be much more elegant if the type wasn't lost before this assignment.
-
-Otherwise looks good:
-
-Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
-
-Thanks,
-Miklos
+Ah, I see the argument is optional. I thought you could pass 0 or
+something weird.
 
