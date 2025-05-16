@@ -1,124 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-49272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49270-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C337AB9EE5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 16:48:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35658AB9EC1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 16:38:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF8221BC5885
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 14:49:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C636317718D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 14:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9CF1A255C;
-	Fri, 16 May 2025 14:48:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E4519D084;
+	Fri, 16 May 2025 14:38:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUyFiL4c"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ylGodoks"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40BB17B425;
-	Fri, 16 May 2025 14:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B2D189B80
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 14:38:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747406922; cv=none; b=Uy5aA8HJu9BO0H2NIHoT3jp0y6lfgpQqDPIRp00Gv3rkxEHjIpCJy07IWBikZjIhdVm74IAE12phIHO57/2Q5frMXoXuv0ijdXYDBN3/GSYBJXcG6b4wi4F0wiznifQ3joTcmBot1jlEr3YKtiEQd6tWxEXlPjZ/jLDWx1CMFao=
+	t=1747406308; cv=none; b=Vh7LxnfI44gwCabkYkAnbl4N20J1vk017y9Wf5Add5+V147v8JQbJd7iZE1hkDGgXLMbQKcyEu+mem0t341VkGFL7v9CkPPAoLlL/WegU/DmLwbhaw/V8HgXAgNgsWmYgWjc+57jpZ5he319V0lwUqukAnkrZ40j/xX35PGKVOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747406922; c=relaxed/simple;
-	bh=mqs3vH8omkf/lFqlcNBLcijBHI7C4HsS+nSuaL+fiyM=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=DbXDq8fzOqtOEWG0xeVZ7EZTD/6xETr3207jKdGFb3fk3tf74mhkV3vY+VL0OSVqmHjSJAzR0Ds4P/qH+blGyuAMfdZKjDnStwL8T/bP2apNlX1ZnVbVwfHwujinOFw1Jy13ah9MZFDRWlZUCFuRIxqE96o1IR2TR+Bz4WhVQp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUyFiL4c; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22e09f57ed4so36312915ad.0;
-        Fri, 16 May 2025 07:48:40 -0700 (PDT)
+	s=arc-20240116; t=1747406308; c=relaxed/simple;
+	bh=x4z2xCYwo9fPX793BRjCTj4nqlE0ZVIMCsmio1DpU7s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PazezM634BPwWf2oP5ORekuGAOBDGsNTRV5lV48Tw+n5xvcxxE203rZwQusrHJJ6zpXgg/EJYMjRHrJmUNXi0wlWi+EKY99I0yO/F+JfgwBeJN8/Z/O9VRvcFfP3L73r+EycYQxeyXjeELA6ylFuOMlLkCrbbQA7iw72vHq3WI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ylGodoks; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-6000791e832so9866a12.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 07:38:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747406919; x=1748011719; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=knLSICsJOojzEUrxMy84SDHLckjfFnqIlSz743nGI+A=;
-        b=HUyFiL4cavlkgUr1d5lspQ5rOZlprR3BN7krY9mYUcuKB0VQALlo7ll2+qb2aeGmM0
-         Rr1Jw0jocVItqfhmA6aVfr66EcWSgJtjJDPfGI+Y9uC6TXji7Pd9tApzWURwvEDcUMxY
-         jz6NAC2EXKTurU1P+FHlYWjfVE9vNtz9+b0NZU58J6umXLuB6T23fVZsLERbwDhI1DCf
-         kMWnGvxAZ6wfnfYnIku/DodE/8j0Ii/lxR1QZo2P0oda5EoyIaHPsjWbk1+MxczgqG8L
-         bAIgvj1r4654bdMBhtmEy5zVefiHlCpqBXrUOljH+9Qp/cX+xfwauXI4gWG0Uveq0o6D
-         a4FA==
+        d=google.com; s=20230601; t=1747406305; x=1748011105; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1sUYusB+kyJ76xlLEHH5qRi/bk9NwvxZ5fkLN1rm8tM=;
+        b=ylGodoks6gEtouvpWiK2FouRrMpwv2Eh1sJF33X1TF2ipa209I7hRwmNWjpOXHpEPo
+         07w2HZyHsUgkM9T7xqmbPEwZpj/qdWAPQvxYqKuwTiTaUY4AR3LFNgbbiC/KYqQg3Q/a
+         3+LPt3qRDwMWan6jgP+oLaCspe2RCg3JULoj4ezt1niCXv7xYEywUqtO1ONlsOj8qvRb
+         zb0R+Mk921gYpg+E2LZkK9P9VjI/V6Vk6CA9CrDzP60gY8Iu39XFnqQuyaKj2QwJHsWR
+         QYQYXhdFlr2+gshcB9eHxm6mliW/f4Ik35K8CHx45fEdoq9USw0tbNtG7GrGww7QKvPj
+         7Vcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747406919; x=1748011719;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=knLSICsJOojzEUrxMy84SDHLckjfFnqIlSz743nGI+A=;
-        b=BUpT01QFdqHciVC7BueCjJOlJ9sh9ip1r+tK8IXDtfigwXNx3CZsrMWwCi5jWvDqAi
-         GYfJ8eGCA/IcprBT8UCM2AUxydLnLFO/2E/y4w21D2fO8K8so35cZIu6pYHlikp+Tp1I
-         Qvs39aJvQZs2s/2hmT/Mo/XqJiOdrAPe2QHteS8zf2uNz2zlb1K8tYLGh1JfeAuwVaYe
-         O7LvZs9foXSOgzvXLWTz9FovfkQm/QNNPyx72SOLFVU8kv5cg3a/79O4KeIjoTeHPM3q
-         v4DlgxOdjvXimBO21hh5o1xY9KbIzqSsF1x9ZKbQyf0KOlVtNCIi2SFGE4gvJCShrw58
-         Zo0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXNt7BGqIQIyvVRF7NDGd/IWI0r2Qq6fCjwj/n8kjIwLegAV/CCR55OnMKYP2YwgdmirlMZOtkEYxvqAPV3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgR5WpFMlb/5R9N4K1EKrxF4vO0qVnAROQdFWmndJr5+XBsN3M
-	qr1UkzYZSwJVBvN9JCMXG4qqCcHA1h4vQF/ubsUKNaVGA/qy1LC3iDKZEb45Dw==
-X-Gm-Gg: ASbGncv/FehUwRWqaZoU9ZQ0INdh53daFFvqurLryrbztVnGQZJcTnLDrarAt2SUXRx
-	5wZijrjAgZ6LYTUF0fKTMamWTBaefZjNTcjNy93yI6ypozfxs/ArQxOy+Mjr9ixOUCb9Ooya/LS
-	TTY4BpcqD4Ycqq1xoZLV0vTQga2tN4qbjnc9SFzgaO7t1iQ4TAx6rkFDHHI2wS71re9ISdOphA6
-	t5vjwCJLUZEdTjDCUXr+IgAf6UiLLbhpi68G7pbEv2ha4/9Fi1JgrwGEPbfBxQmrnULT5ikBuPs
-	7ExIc2rqntfvd7dbkaKtAWiDsLCsbsrUnqB4/MtWWp9U
-X-Google-Smtp-Source: AGHT+IFxyyEuMbaQRaQPPG4vinthQ8415iSw/lh51IcvJj6esfaaVH7TulzMEAOEdeecAaJsVGwGIg==
-X-Received: by 2002:a17:903:1b48:b0:22e:4b74:5f68 with SMTP id d9443c01a7336-231b39acfbcmr120153455ad.19.1747406919232;
-        Fri, 16 May 2025 07:48:39 -0700 (PDT)
-Received: from dw-tp ([171.76.80.248])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ebaef0sm15203785ad.203.2025.05.16.07.48.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 May 2025 07:48:38 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Theodore Ts'o <tytso@mit.edu>, John Garry <john.g.garry@oracle.com>
-Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>, djwong@kernel.org, Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] ext4: Add atomic block write documentation
-In-Reply-To: <20250516121938.GA7158@mit.edu>
-Date: Fri, 16 May 2025 20:06:43 +0530
-Message-ID: <87ldqwwrk4.fsf@gmail.com>
-References: <cover.1747337952.git.ritesh.list@gmail.com> <d3893b9f5ad70317abae72046e81e4c180af91bf.1747337952.git.ritesh.list@gmail.com> <3b69be2c-51b7-4090-b267-0d213d0cecae@oracle.com> <20250516121938.GA7158@mit.edu>
+        d=1e100.net; s=20230601; t=1747406305; x=1748011105;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1sUYusB+kyJ76xlLEHH5qRi/bk9NwvxZ5fkLN1rm8tM=;
+        b=pIn8XOZ27xbASrEqsSKt4JbN+A9idC0/bLA313nmEkUwBwOn+e60WtwfZF5kXMM10J
+         V/entkYzvXzU3nq47yW8cxlI2FxHUJAaa87G0fCWpEv+PdISDsTP2fedDzx4YP37uBBd
+         PIMU0ofMafnbXUfB9gIfzEXLFr7OemFziEvBupYMQdtpBUkjGa3NJunj7hoDWxvQi0OD
+         mGU+Fs30ReAB7l4ktjKHT2GwmGPdqkCXI9JwJeKAMPEt80ZqYHxfNguZ9/QyYl2dWd8/
+         XLHWAletMzOacG0kCuiMYliDTBTADp8p9fmfte7zcVkRwDLPqlrp2kCSTwuwP0JHSdXY
+         pdmA==
+X-Gm-Message-State: AOJu0YxUWU24fqUGQ66Q3ruvRoUl1VTM4V4eBaH/6nWeyuxAuRjpnWyy
+	UM5eLBofMX0psrDt6x+hVhLgR0aWzRQDNF3rig+B+uaQ5xBY9tiMI6Et6PKZ4KHVWl/Q0zDFlIa
+	6kX4+5vHuczAr07Un+S3nA5ncWQo8+uoO1Ov9unaVwvWlmikGSeHVAHul
+X-Gm-Gg: ASbGnctm1z/YZpaxgzLTsaDQisGLGKso0uS+H1NSM45dsaFc9nKd3cYgAGjPRDjXNpS
+	NiN1R12pFblwlPU0EuE489Vh3c3lJcAEyMKg6j9TZXAFLelJcIuCWmGfLJ1dvtNQnyvpAJ8oRVq
+	q+mmGnybQpzFrtBb0DEFW74uv8MtRHMrZoGBB+SW7WmgSfOOWBLI0WTHNfq0IkN0Ik5pn6ZhU=
+X-Google-Smtp-Source: AGHT+IHjVPydHL7cpnwkAmy+wB0lfXFTh8aEtdxrJqk903N82gHmcHf1UJhj/sj7jHSEWrx43rmp+OotJ5wNqgsIi3c=
+X-Received: by 2002:a50:c049:0:b0:5fd:28:c3f6 with SMTP id 4fb4d7f45d1cf-5ffc9dbe5b8mr231155a12.4.1747406305152;
+ Fri, 16 May 2025 07:38:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250516-work-coredump-socket-v8-0-664f3caf2516@kernel.org> <20250516-work-coredump-socket-v8-5-664f3caf2516@kernel.org>
+In-Reply-To: <20250516-work-coredump-socket-v8-5-664f3caf2516@kernel.org>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 16 May 2025 16:37:49 +0200
+X-Gm-Features: AX0GCFsuzCC3CmbLLxfWpRPaI0gyUSqgeVs70kejvwFPyqgeFolUzQNjXbEK5Yo
+Message-ID: <CAG48ez2ewzKuVoUQp=nyMiVS9euPts3fKaexwXMGhVefQXqoig@mail.gmail.com>
+Subject: Re: [PATCH v8 5/9] pidfs, coredump: add PIDFD_INFO_COREDUMP
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>, 
+	"David S. Miller" <davem@davemloft.net>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Daan De Meyer <daan.j.demeyer@gmail.com>, David Rheinsberg <david@readahead.eu>, 
+	Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <luca.boccassi@gmail.com>, 
+	Mike Yuan <me@yhndnzj.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, 
+	Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-"Theodore Ts'o" <tytso@mit.edu> writes:
-
-> On Fri, May 16, 2025 at 09:55:09AM +0100, John Garry wrote:
->> 
->> Or move this file to a common location, and have separate sections for ext4
->> and xfs? This would save having scattered files for instructions.
+On Fri, May 16, 2025 at 1:26=E2=80=AFPM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+> Extend the PIDFD_INFO_COREDUMP ioctl() with the new PIDFD_INFO_COREDUMP
+> mask flag. This adds the @coredump_mask field to struct pidfd_info.
 >
-> What is the current outook for the xfs changes landing in the next
-> merge window?  I haven't been tracking the latest rounds of reviews
-> for the xfs atomic writes patchset.
+> When a task coredumps the kernel will provide the following information
+> to userspace in @coredump_mask:
 >
-> If the xfs atomic writes patchset aren't going to land this window,
-> then we can land them as ext4 specific documentation, and when the xfs
-> patches land, we can reorganize the documentation at that point.  Does
-> that make sense?
+> * PIDFD_COREDUMPED is raised if the task did actually coredump.
+> * PIDFD_COREDUMP_SKIP is raised if the task skipped coredumping (e.g.,
+>   undumpable).
+> * PIDFD_COREDUMP_USER is raised if this is a regular coredump and
+>   doesn't need special care by the coredump server.
+> * PIDFD_COREDUMP_ROOT is raised if the generated coredump should be
+>   treated as sensitive and the coredump server should restrict to the
+>   generated coredump to sufficiently privileged users.
 >
+> The kernel guarantees that by the time the connection is made the all
+> PIDFD_INFO_COREDUMP info is available.
+>
+> Acked-by: Luca Boccassi <luca.boccassi@gmail.com>
+> Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> Signed-off-by: Christian Brauner <brauner@kernel.org>
 
-IMO, the current documentation is primarily intended to capture notes
-from ext4's implementation perspective of single and multi-fsblock
-atomic writes.
+Reviewed-by: Jann Horn <jannh@google.com>
 
-I guess adding a more general atomic write documentation require a lot
-of other grounds to cover too e.g. 
-- block device driver support (scsi & nvme, dm-... )
-- block layer support (bio split & merge )
-- Filesystem & iomap support (iomap, ext4, xfs)
-- VFS layer support (statx, pwritev2...)
-
-So, IMO, even with XFS atomic writes patches queued for v6.16, the
-current documentation still stands correct. To cover more ground around
-atomic writes detail, we can think of adding a common documentation
-later which can refer to individual filesystem's documentation file for
-implementation notes.
-
-Thoughts?
-
--ritesh
-
+Thanks for clarifying the comments!
 
