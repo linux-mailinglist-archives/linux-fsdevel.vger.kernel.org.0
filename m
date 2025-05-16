@@ -1,209 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-49286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C346ABA21B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 19:44:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E1AFABA22C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 19:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 514B14E63BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 17:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC52A02D1A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 17:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5D7278758;
-	Fri, 16 May 2025 17:42:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D913B277022;
+	Fri, 16 May 2025 17:45:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HVWo5UR8"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="20Whvgl+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675CC2749C7
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 17:42:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC772220F50
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 17:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747417372; cv=none; b=r0r7RPiQA8TnbmF+1ierox7lYO9TVB2cMU+5DA2O50Bq8IV3Y7z7NYC/2AKXS8LbGl+xt4Zy/F7fx+ZSciY+H625d/2Ux7HikB3xyG828J29FUWGqNJKumDOzyLTNRjxhJ1W1QRjJsS6p7m+MQ5XUj8WrxCE4TUinzv3AX2nTrc=
+	t=1747417511; cv=none; b=fcMtFYgn3VMo4oqnNcsDlVtZobnfVz5crzbvXeHElX97+iBnYG3oKE/3b8o4e7uL+PhSB26JWxq3XkmjW9HEZVemAKYSB6p4tvt8PbwXHPRW75v5SBOGJ1XeHAvxrV0ncXvoxbV61jA0Z8BgXMty0w5snKA10gtGKicDs3W25N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747417372; c=relaxed/simple;
-	bh=/oZWTLboJ1r1HwZnL8ol3rHmbO0GkMBVgO/nSs8EhQA=;
+	s=arc-20240116; t=1747417511; c=relaxed/simple;
+	bh=SElR/wgeiqhNU2PLvcnH4xPVCpxXR17vAM5o54bgRPY=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=QYGzB3RG4LWNWOiUnoj3yqKv8l8nSaB8ZU3h6rRalutMQQQewx3JuN60Flmsa0C+vRFrU9J/9gC2NuPbFPsBzvI1TlVwdTvtzrwcKC9P+sf5XGwJyJjuQqDREbjwZuatxtKQmHQxSDg4EzubHKDidoDRR0+HnM6lwmOx8+OL53Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HVWo5UR8; arc=none smtp.client-ip=209.85.215.201
+	 To:Cc:Content-Type; b=AeL9F9E6MzM0+u5SB5kp9RRwIcYmaMm+jbv7q+x3+NvrCbBMRwrUZtzl75JJt5oblp6hl2OpLsM+Lx6L2ijSTiBDZ1xKdffSl+qU8W0wb+AtIhZk0OHVj7asTh+vVNpgUS9VCvxURiV2RFpljc6TL2WbZpgIHMyfW3nGyBbDP6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=20Whvgl+; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b26e120e300so1816190a12.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 10:42:50 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-30c54b40096so2695646a91.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 10:45:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747417369; x=1748022169; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHtggF1Xmmx8sunRLPpEo5y2n3Fbz0jNKo8YthXyxlY=;
-        b=HVWo5UR8opSBCFI1dc6meoyTzedjbObtgTVC7ltLORi93kHV7ixtoQEMROus9pT0AX
-         TyF197cPYWhbksqBQIsqYBZ+0L6mWfDswI4sgOe8UEguzphY3grD5c0wDwmvENLA6Gn1
-         fRzhBwSVJn6aJj041vnfaDo/eZde1L7Qlmo9xyj7DU2n5cnaeJ2U/9JpvqHTAMKuWTeq
-         YZscX//icFQF0qWHdkjqF+zrRmfHRc9L+iyd6HQUqmZxzwypx4O5zqTwV4osA+wnwZd8
-         tljaUaYnsMoFa4EaR5kKIJHuiqwiQ/SFP33dUffo59CoPmm4dJ8GW/dwz6gNp5crU7Ha
-         8rWA==
+        d=google.com; s=20230601; t=1747417509; x=1748022309; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RmpgPqdPibQ4HZg5sdzMeXt+/PpG65nXkSoggikM9ks=;
+        b=20Whvgl+p8Wfn7Q/66MnARgGKgOXFaL+voQyeJ1+YKBGykK2WGLuuLNp8rBykhyHGZ
+         oB2R0IQ2ozSuXolxVFBrm+1lwhEbTMNycThSz4bG+rKGpC37T1imqeMgpUiqqA1rFm7+
+         yJLouX7rl9PHs7Ft03IHNcL1e7pmnP8TrXutk6fEj9RXoYVXW3FG04f3oiszW418Yecu
+         Fp+Qmk1w6IkS6e4tlOZok5ZrwQ6E+ksFBEAvDJo5o9muutudgZiCV3Iwdx1ldj8kh3ya
+         QRZvv0jK9IjOumdYyx4duNBaPJxVapTSMGtVx4KvNm+5Az0OZpw4Z64AP64+VGvywYJR
+         dNUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747417369; x=1748022169;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UHtggF1Xmmx8sunRLPpEo5y2n3Fbz0jNKo8YthXyxlY=;
-        b=S0m/nf6tlJcY3xpPDQWzU71yhcwTGQFutlIVHX0laWSZvNNEBT935hDUb1o0uFucOP
-         RXw2Wpikm+X0qgT81iDuyVehhBB9ruuh4eEZFO8UVV9sHoSMx6D0QSVQKBEIteZYiXZc
-         GCwefKSrHp7J0+YuHfuaHytvC2GfxBIxMxJc44mj6igu91Pz3PPxy1m+gKlFM3rUdxut
-         hZh8o3d8sSUnIPQ6b4zAbQW3IcOMQueJJFyHlZ9UA9KQYn7jA8egCurAMftHxKQeIQ8R
-         jQlhTk8WT95YVxSe9nkqMnzDkMLoZeWIVhRogAdmLuDZ+oVt83jpIxNfghWFhfLkFLaZ
-         Yh7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV7e/pPZjoszqArpkdvJ7oT+Uj+INQ6/JICeQKBPjjYK1mnk3tBmdKCpu/3vZWeGAVl6DDVqoyB1DSAhSrV@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFQU30R7F5dHQi4wp2S5JucJRUmeAv6GFdJKP9BzNURRmInXGQ
-	eYCL+CpfiO8F5g6kFYlTWKHRm3/RFfMfGJHCsOVOHoYYFDomW9+7wJKbepI5pLahudvczRV6V36
-	0HFji9/47cnVzWdGIULxd/vuijQ==
-X-Google-Smtp-Source: AGHT+IFZZue4eVCNyGlBlVu3FOMYDdiN/+lNxD2W2guGukj7N1aj09nrbw9YDmV/sDzoeyH8oFlR4vBN8C7KtAQknw==
-X-Received: from pjyp15.prod.google.com ([2002:a17:90a:e70f:b0:2ef:d283:5089])
- (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:4b0f:b0:2fe:b907:562f with SMTP id 98e67ed59e1d1-30e7d527e41mr6797759a91.14.1747417369222;
- Fri, 16 May 2025 10:42:49 -0700 (PDT)
-Date: Fri, 16 May 2025 10:42:47 -0700
-In-Reply-To: <6825f0f3ac8a7_337c392942d@iweiny-mobl.notmuch>
+        d=1e100.net; s=20230601; t=1747417509; x=1748022309;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RmpgPqdPibQ4HZg5sdzMeXt+/PpG65nXkSoggikM9ks=;
+        b=rRbTO2Y+EmfogZ3LZrbQNizYw7fYrDxlc1Q8w6IQ3Ec1Vla8bbs1q3YtoExyiBaHdy
+         lqTmVXkPHPXWImQyPGOJza6+ICmg+kyt17pvZr2HXQoWAVq+/kiLuwby4AMN6z93/ABD
+         3vBO2wCZFfvGNAkFvhXpC+92G5muNnDVDxbzxCNmARIrViZ8oMULWqOAVZwc8MoAZpRK
+         K8gMvlcHYLjDc06zk28F67PpKGCNHRxtIt/Rzp5xkOEhB57VvPccpHSrusY6+kSalkvT
+         IjgBLFUDnbZik71qAGo+3EORMPYkryoiYiKloAEHHDFGN5C7iN3v5fftlpEXw+AtEeR+
+         K8AA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhyWLBACRc975hO5tp2M1cUO0EaRT25FjF4yjVGkPe8NtkR4Dim5teF18pkfs65CG6rKsN5Lh3ZgaVuPSh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBoG57OEPkn4GY+nFI0jSFMgCZgGe2ifdqE7KKP3OU3/aaOD83
+	As3lPn5qhz7vEEFud5VzR9xkHt9JRsdiH/GNKzrCuf8ZFjPLReGjzG4/w/kr3HqekJjBr8EVClN
+	Gj6xwEw==
+X-Google-Smtp-Source: AGHT+IE5q1d8Vhf45B58FtB+DPajsRh9WD6SiM5jWunemSpWwoZ702eFXBFahwA7/IbgQCUG1fK7U0brYiw=
+X-Received: from pjbrs11.prod.google.com ([2002:a17:90b:2b8b:b0:308:867e:1ced])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:e706:b0:2f9:c144:9d13
+ with SMTP id 98e67ed59e1d1-30e7d5a8af4mr6412464a91.24.1747417508805; Fri, 16
+ May 2025 10:45:08 -0700 (PDT)
+Date: Fri, 16 May 2025 10:45:07 -0700
+In-Reply-To: <CAGtprH8EMnmvvVir6_U+L5S3SEvrU1OzLrvkL58fXgfg59bjoA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <65afac3b13851c442c72652904db6d5755299615.1747264138.git.ackerleytng@google.com>
- <6825f0f3ac8a7_337c392942d@iweiny-mobl.notmuch>
-Message-ID: <diqzmsbcfo4o.fsf@ackerleytng-ctop.c.googlers.com>
-Subject: Re: [RFC PATCH v2 03/51] KVM: selftests: Update guest_memfd_test for
- INIT_PRIVATE flag
-From: Ackerley Tng <ackerleytng@google.com>
-To: Ira Weiny <ira.weiny@intel.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org
-Cc: aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
-	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
-	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
-	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
-	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
-	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
-	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
-	xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com, 
-	yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+References: <cover.1747264138.git.ackerleytng@google.com> <ada87be8b9c06bc0678174b810e441ca79d67980.camel@intel.com>
+ <CAGtprH9CTsVvaS8g62gTuQub4aLL97S7Um66q12_MqTFoRNMxA@mail.gmail.com>
+ <24e8ae7483d0fada8d5042f9cd5598573ca8f1c5.camel@intel.com>
+ <aCaM7LS7Z0L3FoC8@google.com> <7d3b391f3a31396bd9abe641259392fd94b5e72f.camel@intel.com>
+ <CAGtprH8EMnmvvVir6_U+L5S3SEvrU1OzLrvkL58fXgfg59bjoA@mail.gmail.com>
+Message-ID: <aCdVXn3ZqFXzQ0e4@google.com>
+Subject: Re: [RFC PATCH v2 00/51] 1G page support for guest_memfd
+From: Sean Christopherson <seanjc@google.com>
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Rick P Edgecombe <rick.p.edgecombe@intel.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>, 
+	Jun Miao <jun.miao@intel.com>, Kirill Shutemov <kirill.shutemov@intel.com>, 
+	"pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, "steven.price@arm.com" <steven.price@arm.com>, 
+	"peterx@redhat.com" <peterx@redhat.com>, "x86@kernel.org" <x86@kernel.org>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "tabba@google.com" <tabba@google.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "maz@kernel.org" <maz@kernel.org>, 
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"keirf@google.com" <keirf@google.com>, "hughd@google.com" <hughd@google.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, "palmer@dabbelt.com" <palmer@dabbelt.com>, 
+	Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>, Yan Y Zhao <yan.y.zhao@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	"nsaenz@amazon.es" <nsaenz@amazon.es>, "vbabka@suse.cz" <vbabka@suse.cz>, Fan Du <fan.du@intel.com>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	Zhiquan1 Li <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, Erdem Aktas <erdemaktas@google.com>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, Haibo1 Xu <haibo1.xu@intel.com>, 
+	"anup@brainfault.org" <anup@brainfault.org>, Dave Hansen <dave.hansen@intel.com>, 
+	Isaku Yamahata <isaku.yamahata@intel.com>, "jthoughton@google.com" <jthoughton@google.com>, 
+	Wei W Wang <wei.w.wang@intel.com>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
+	Kai Huang <kai.huang@intel.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
+	Chao P Peng <chao.p.peng@intel.com>, "nikunj@amd.com" <nikunj@amd.com>, Alexander Graf <graf@amazon.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "pbonzini@redhat.com" <pbonzini@redhat.com>, 
+	"yuzenghui@huawei.com" <yuzenghui@huawei.com>, "jroedel@suse.de" <jroedel@suse.de>, 
+	"suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "jgowans@amazon.com" <jgowans@amazon.com>, 
+	Yilun Xu <yilun.xu@intel.com>, "liam.merwick@oracle.com" <liam.merwick@oracle.com>, 
+	"michael.roth@amd.com" <michael.roth@amd.com>, "quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, Ira Weiny <ira.weiny@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	"qperret@google.com" <qperret@google.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"james.morse@arm.com" <james.morse@arm.com>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"ackerleytng@google.com" <ackerleytng@google.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "pgonda@google.com" <pgonda@google.com>, 
+	"quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "will@kernel.org" <will@kernel.org>, 
+	"hch@infradead.org" <hch@infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ira Weiny <ira.weiny@intel.com> writes:
+On Fri, May 16, 2025, Vishal Annapurve wrote:
+> On Thu, May 15, 2025 at 7:12=E2=80=AFPM Edgecombe, Rick P <rick.p.edgecom=
+be@intel.com> wrote:
+> > On Thu, 2025-05-15 at 17:57 -0700, Sean Christopherson wrote:
+> > > You're conflating two different things.  guest_memfd allocating and m=
+anaging
+> > > 1GiB physical pages, and KVM mapping memory into the guest at 1GiB/2M=
+iB
+> > > granularity.  Allocating memory in 1GiB chunks is useful even if KVM =
+can only
+> > > map memory into the guest using 4KiB pages.
+> >
+> > I'm aware of the 1.6% vmemmap benefits from the LPC talk. Is there more=
+? The
+> > list quoted there was more about guest performance. Or maybe the clever=
+ page
+> > table walkers that find contiguous small mappings could benefit guest
+> > performance too? It's the kind of thing I'd like to see at least broadl=
+y called
+> > out.
+>=20
+> The crux of this series really is hugetlb backing support for guest_memfd=
+ and
+> handling CoCo VMs irrespective of the page size as I suggested earlier, s=
+o 2M
+> page sizes will need to handle similar complexity of in-place conversion.
+>=20
+> Google internally uses 1G hugetlb pages to achieve high bandwidth IO,
 
-> Ackerley Tng wrote:
->> Test that GUEST_MEMFD_FLAG_INIT_PRIVATE is only valid when
->> GUEST_MEMFD_FLAG_SUPPORT_SHARED is set.
->> 
->> Change-Id: I506e236a232047cfaee17bcaed02ee14c8d25bbb
->> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
->> ---
->>  .../testing/selftests/kvm/guest_memfd_test.c  | 36 ++++++++++++-------
->>  1 file changed, 24 insertions(+), 12 deletions(-)
->> 
->> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
->> index 60aaba5808a5..bf2876cbd711 100644
->> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
->> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
->> @@ -401,13 +401,31 @@ static void test_with_type(unsigned long vm_type, uint64_t guest_memfd_flags,
->>  	kvm_vm_release(vm);
->>  }
->>  
->> +static void test_vm_with_gmem_flag(struct kvm_vm *vm, uint64_t flag,
->> +				   bool expect_valid)
->> +{
->> +	size_t page_size = getpagesize();
->> +	int fd;
->> +
->> +	fd = __vm_create_guest_memfd(vm, page_size, flag);
->> +
->> +	if (expect_valid) {
->> +		TEST_ASSERT(fd > 0,
->> +			    "guest_memfd() with flag '0x%lx' should be valid",
->> +			    flag);
->> +		close(fd);
->> +	} else {
->> +		TEST_ASSERT(fd == -1 && errno == EINVAL,
->> +			    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
->> +			    flag);
->> +	}
->> +}
->> +
->>  static void test_vm_type_gmem_flag_validity(unsigned long vm_type,
->>  					    uint64_t expected_valid_flags)
->>  {
->> -	size_t page_size = getpagesize();
->>  	struct kvm_vm *vm;
->>  	uint64_t flag = 0;
->> -	int fd;
->>  
->>  	if (!(kvm_check_cap(KVM_CAP_VM_TYPES) & BIT(vm_type)))
->>  		return;
->> @@ -415,17 +433,11 @@ static void test_vm_type_gmem_flag_validity(unsigned long vm_type,
->>  	vm = vm_create_barebones_type(vm_type);
->>  
->>  	for (flag = BIT(0); flag; flag <<= 1) {
->> -		fd = __vm_create_guest_memfd(vm, page_size, flag);
->> +		test_vm_with_gmem_flag(vm, flag, flag & expected_valid_flags);
->>  
->> -		if (flag & expected_valid_flags) {
->> -			TEST_ASSERT(fd > 0,
->> -				    "guest_memfd() with flag '0x%lx' should be valid",
->> -				    flag);
->> -			close(fd);
->> -		} else {
->> -			TEST_ASSERT(fd == -1 && errno == EINVAL,
->> -				    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
->> -				    flag);
->> +		if (flag == GUEST_MEMFD_FLAG_SUPPORT_SHARED) {
->> +			test_vm_with_gmem_flag(
->> +				vm, flag | GUEST_MEMFD_FLAG_INIT_PRIVATE, true);
->
-> I don't understand the point of this check.  In 2/51 we set 
-> GUEST_MEMFD_FLAG_INIT_PRIVATE when GUEST_MEMFD_FLAG_SUPPORT_SHARED is set.
->
-> When can this check ever fail?
->
-> Ira
+E.g. hitting target networking line rates is only possible with 1GiB mappin=
+gs,
+otherwise TLB pressure gets in the way.
 
-In 02/51, GUEST_MEMFD_FLAG_INIT_PRIVATE is not set by default,
-GUEST_MEMFD_FLAG_INIT_PRIVATE is set as one of the valid_flags.
+> lower memory footprint using HVO and lower MMU/IOMMU page table memory
+> footprint among other improvements. These percentages carry a substantial
+> impact when working at the scale of large fleets of hosts each carrying
+> significant memory capacity.
 
-The intention is that GUEST_MEMFD_FLAG_INIT_PRIVATE is only valid if
-GUEST_MEMFD_FLAG_SUPPORT_SHARED is requested by userspace.
+Yeah, 1.6% might sound small, but over however many bytes of RAM there are =
+in
+the fleet, it's a huge (lol) amount of memory saved.
 
-In this test, the earlier part before the if block calls
-test_vm_with_gmem_flag() all valid flags, and that already tests
-GUEST_MEMFD_FLAG_SUPPORT_SHARED individually.
+> > >   Yes, some of this is useful for TDX, but we (and others) want to us=
+e
+> > > guest_memfd for far more than just CoCo VMs.
+> >
+> >
+> > >  And for non-CoCo VMs, 1GiB hugepages are mandatory for various workl=
+oads.
+> > I've heard this a lot. It must be true, but I've never seen the actual =
+numbers.
+> > For a long time people believed 1GB huge pages on the direct map were c=
+ritical,
+> > but then benchmarking on a contemporary CPU couldn't find much differen=
+ce
+> > between 2MB and 1GB. I'd expect TDP huge pages to be different than tha=
+t because
+> > the combined walks are huge, iTLB, etc, but I'd love to see a real numb=
+er.
 
-Specifically if GUEST_MEMFD_FLAG_SUPPORT_SHARED is set, this if block
-adds a test for when both GUEST_MEMFD_FLAG_SUPPORT_SHARED and
-GUEST_MEMFD_FLAG_INIT_PRIVATE are set, and sets that expect_valid is
-true.
+The direct map is very, very different than userspace and thus guest mappin=
+gs.
+Software (hopefully) isn't using the direct map to index multi-TiB database=
+s,
+or to transfer GiBs of data over the network.  The amount of memory the ker=
+nel
+is regularly accessing is an order or two magnitude smaller than single pro=
+cess
+use cases.
 
-This second test doesn't fail, it is meant to check that the kernel
-allows the pair of flags to be set. Hope that makes sense.
+A few examples from a quick search:
+
+http://pvk.ca/Blog/2014/02/18/how-bad-can-1gb-pages-be
+https://www.percona.com/blog/benchmark-postgresql-with-linux-hugepages/
 
