@@ -1,180 +1,170 @@
-Return-Path: <linux-fsdevel+bounces-49252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 122F7AB9BDE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 14:21:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 977F0AB9C65
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 14:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A26DA22919
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 12:20:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6248918980F1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 12:42:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D44C23C50B;
-	Fri, 16 May 2025 12:21:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46AFD241693;
+	Fri, 16 May 2025 12:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H3U5GJwi"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICZmrBrS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A9CA32
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 12:21:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB95024166A;
+	Fri, 16 May 2025 12:41:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747398072; cv=none; b=FySMa73VIO4ISY8MtKgF+FJI1+VN5WZyrzQlskxc7jhB7DwgSuWZJWSVO6Vmj3BPn3d1aUVhpakwtZTSEV+xeLXneySeb8k2h57KMhpoLCbcC1BZz+O7gAGKdojwFNfPLnBmQLFnGcr9QGvvF9YHCeZxp6xMmomsWlTpKIII7XQ=
+	t=1747399280; cv=none; b=huU1xsyXAW2423pYSSFtMRcwkhWMtazHFQHPs7ffgv7wrLJ3YCAjJ2dPtHrdWjO/HFmTzds0eF3XBvejJ+xBppsqmDZTxIMaSdc9WXeiKrgYCosys3QEplHvSObQRUBrU4B6l6aokWXI1+AS7tDGGchjxF/SmYPtDRYWpAycSNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747398072; c=relaxed/simple;
-	bh=1VvtFkkKFjo2pE3834NRlQen1hQkRX4RVWbKJtTc2Yc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MBujXMrK2A7q+hhuozcdR2IGApqzBbBXa2qtvk8YZqkjb6BqjnfTtPnzez/H37ZEBd9HpXZrfxVF0QHsIGcXFWc0aeBujxgT4vYRcy41w2YyWp9qhp/TTk5KYo4sT4W5vPmidpWPkcGI7we9Vbxn+VT1lxk5sJQAswMwDz0j6nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H3U5GJwi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747398069;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=p311k/uFNyubAfqIeQckgS+ItWxcWXuDkXFewvNpY5Q=;
-	b=H3U5GJwi+5Skx49ee8F17YmJGdmbpQwcbs6IpVnuo4k8Pi8Ww8sKeqMr1cE0a/ZG9hQoud
-	yedSd7QJETxPaeeC0huolCSAK6RK8F9RrVguDxFjvsOBTBLOpuLv+rG1g0pTXxbUx6ld0h
-	i0RN/c35DFTXc/3PMVxotv6lh/Emp/4=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-604-VYtXnSyjP_Cpbf6sfbk6CQ-1; Fri, 16 May 2025 08:21:08 -0400
-X-MC-Unique: VYtXnSyjP_Cpbf6sfbk6CQ-1
-X-Mimecast-MFC-AGG-ID: VYtXnSyjP_Cpbf6sfbk6CQ_1747398067
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a0b570a73eso1317948f8f.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 05:21:08 -0700 (PDT)
+	s=arc-20240116; t=1747399280; c=relaxed/simple;
+	bh=W1LnMroB/BfHUS1m8h58WOZrv8gmAr5UnqYWSeJMj6w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+rCuCRFajJSiD1Uly/JB2fiu1P7Jf6gUVKHUdEU04w+oNZMaAoZsk5hvY0W55/6edkNiDPY472gP4vketvARuDiPaSN6mldfOCMkjcTFPRsxAfpHiaxr+s9kd8lKOaLQHvuOz9qiR3xZzFZEtrZCMIF3hp6reWrze2K4Mw2ab0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICZmrBrS; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5fca2805ca4so3155502a12.1;
+        Fri, 16 May 2025 05:41:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747399277; x=1748004077; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=V7NUGr2BVJhHBDoLt3wMB0yrF5gFmUvtd5fZ0Ivln8c=;
+        b=ICZmrBrSM2+Pcv0UpAMoqhkNoPfFB+gmgPYLyfZILjomorLFwTMWF8vMw6D47G7asa
+         4f00zE4Fgmi0nYBuPB1VbPO/jG5tPZSYGExjwbUt2i1v6WCHQtTKJlEP9ibINMRBnQ6P
+         ASsEa4rV0E41RSlMg4ahxlTiOqZHdkBrrjB/5/SKavR0qbIjOcJAQnj3DKVKC8cpTshh
+         9rFrbNBJ2rVLSy3wI2zrVd2CJcNStVAjwmqJePCsGcYRAO/j8nRglfjWh4hQlH+lFEBr
+         MWkvuJO70I1+A0uAPgQqFaR8gw/MIOW5VB8fbJjxjadKrcZUhBddDRip2nSpavIqCoBd
+         YXcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747398067; x=1748002867;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=p311k/uFNyubAfqIeQckgS+ItWxcWXuDkXFewvNpY5Q=;
-        b=ZDukS2gz3uzSgHS0JkPs8sUHrk6FZ4SHYBCmlOuQVaGPu9jEHPv05nTES8pkJeaqdl
-         8AhhP88Tgh8DDoAhOT0++CLbD1phMpT2DMV1Hb8nM1BjBL6DNzxScFQff3rMwCewTvqA
-         z4yrKdOdBm7No4dyvhv71zdGZUlFX+7ZEes6L3hMfQ8Myi4K9ow6Q1hO/aPvGSEiXrIe
-         PtgHXrqNayPtYtpeXvM2ZCUvwkpcBEI35pQ4aRv+GgQRhfVc4hZiuul5vOX0VuK9N858
-         eIkHpT//HQu2fUCMgSRnDGvshrpctycqGXHIjsJLLjmXaDX+r8dywdWUwhm+KF7m8+rL
-         NItQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWdVLd0oKXK858RJYQ49V3nA/CII2waeks/BIBQ2qpU3NUQoSASQIpSpFoLoXqF//OVI3gYRZatSlac5LTT@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQV0t+OPpJviK7uNYgLnvkDdcHvmPPeGEAJes0lB68AycavwoZ
-	wyYhfF1D6Lxd43cRrRsQIrhxKPTwiBaMQ3iV+axXfaNxmC0Zwf1Z9CpF94rsr4kSDhe/928xePb
-	vH2f51YKsD2WBCE/eQvBQJFAzYwqElKiSV9MG5uZN4en5OtdmWatLZcV3XtZBbzxUF10=
-X-Gm-Gg: ASbGncvcC3VO6tq4k9zaMl/Nj4ytXleYMqQ0A74Un07zEhBLnUv43yDhgvVTBMI7ok7
-	7eXy+3xGPp9eNUrWgwIQuTY7H8MXTJqg5uiqat1SaE3ObXr4jCg3DnJexjat0Pop+Z9gBfJDT58
-	7yEqlcLU3+OvauFmxymA1T4pk9NXqHKeLVj4m9tol1yvUjfJyZDoNbyUpNtQBUzx7ewWNVS6J9D
-	Y/I0RnQR96VaF/gZB48L9d5Djak0CG1r+adKtc6mT0aViGWquNfgOMsN0hdAA4DSeDz4pEWhOX7
-	5vrR/ilixapcq94hX2hqyWejhIb5EhHo2o1drcdqTrrvDB1ERtkK2rXq1105pvAyEXWGUwJmVqD
-	DfMFB2oZczBp24w3g0f4ZNnDiiZbxnh3HMNzC+1Y=
-X-Received: by 2002:a05:6000:4382:b0:39f:4d62:c5fc with SMTP id ffacd0b85a97d-3a35c834e90mr3358776f8f.35.1747398067239;
-        Fri, 16 May 2025 05:21:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFhO/Ha0JNlb5S9EDS2aoRrcqRFXHIbX9PwCply8D0+BG5jF4bRQPNgekhCfxjNKRh5VtcGmw==
-X-Received: by 2002:a05:6000:4382:b0:39f:4d62:c5fc with SMTP id ffacd0b85a97d-3a35c834e90mr3358751f8f.35.1747398066844;
-        Fri, 16 May 2025 05:21:06 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f47:4700:e6f9:f453:9ece:7602? (p200300d82f474700e6f9f4539ece7602.dip0.t-ipconnect.de. [2003:d8:2f47:4700:e6f9:f453:9ece:7602])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f39517f7sm103020455e9.20.2025.05.16.05.21.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 May 2025 05:21:05 -0700 (PDT)
-Message-ID: <cb52312d-348b-49d5-b0d7-0613fb38a558@redhat.com>
-Date: Fri, 16 May 2025 14:21:04 +0200
+        d=1e100.net; s=20230601; t=1747399277; x=1748004077;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=V7NUGr2BVJhHBDoLt3wMB0yrF5gFmUvtd5fZ0Ivln8c=;
+        b=JYElymuOLypnSUT89ovGEitBonfSEaecHgbB1nAihx+ofO3QdmaBV9SEtPEwgjT1Gq
+         Vws0qSeww7mWy6Vl6xhxb4GBDOLiHPhCmCd3FhpUu+2FcYEvNTmqkqRJ1eVIQ+GcLNHd
+         s+4PoAIlCrVJou3L2jHEssIwI0boNrvuvdHrFHs36MqXVfJIMt7pIoGBIR/dMa/I4AY8
+         V5LGIMLPBeRLwkCuBRsVMI3ZNLQ4ZhqVLoiyTM5cmfAw3YvpzuA+8eHvlotrm5TacnO+
+         KEW2AIkg+iHq1ff5sEnUBruQ6Kc9D1GYcnxV9n6fewG4Mc/XERVr3659H//k15bf2x8E
+         LOVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxIvYQP39qTRinnVL3E+ghvyG+o7B0tz/73JR37Nl/TgeIVoJex6vWJ7evcIOeNhxsgIoGNdODzUs=@vger.kernel.org, AJvYcCWNeGfwIlstEawuG8TyPASwys5jy/6OC3knvnMFerf5krsdSte1bfVZcTiet0H0gIG+GSOxiLfrs5af@vger.kernel.org, AJvYcCXyc3mKA0ivqH927ylBAnI5EP3bw3hT4adOxZcyOmU5seFMvh+pwhrC7Z95P8QbyChqPV+E6wxJRdiTSN32Wg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5pzi8l4m1T+p4C+R7w8qZ5lSmD6/Zwb0Qn/ywJDGTSfCID8C
+	1x+Wi2x2rHddADUhcngEMWRCw2eJ+1yCO1flBqVQX26ovsgCb+vKy7kj
+X-Gm-Gg: ASbGnctk/8J19ayFmbskhwcQVIJE4810syPMF0t1kxfNejvikTg6mxrGHbii0DO1PzF
+	AfHgICopcgf+4bAoJX3FDTaIjoDfjGxZVxw6Ci+KHuPAg4Sd133AR+594dVaIKH30Fjy8gPKy9W
+	tztF7aaqRFPRBcxQa0tUivF9R2jH68MCge3ZuKsVz9aFDdL5/L7KHVlT2SHQ3oG38y6Q1OO0OAE
+	C7By20qEK3sbjy1RUFW34TZ8A7BCVrwVrv/YfGYcRja+y5MgRfRJ/fM5RxrQmG51j4jEOVIN0Bi
+	AgSm+8CCCzQFT79QFLXbEl5JXH74mOZYzP2Qi2c2OH91ia/S0l+cejeE7pAKdTYE
+X-Google-Smtp-Source: AGHT+IFTPI2eQkud84FVoFUn8Zc73GAgtlNkErrz3SQM/mI7Y/+0S4tj4ZpolxGMcygIO0zxmFl+6w==
+X-Received: by 2002:a17:906:3491:b0:ad5:40ab:ad38 with SMTP id a640c23a62f3a-ad540abc1d8mr94982366b.51.1747399276851;
+        Fri, 16 May 2025 05:41:16 -0700 (PDT)
+Received: from f (cst-prg-82-53.cust.vodafone.cz. [46.135.82.53])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d437585sm152105866b.115.2025.05.16.05.41.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 05:41:15 -0700 (PDT)
+Date: Fri, 16 May 2025 14:41:09 +0200
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Alejandro Colomar <alx@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, linux-man@vger.kernel.org
+Subject: Re: close(2) with EINTR has been changed by POSIX.1-2024
+Message-ID: <x5mnkxiljojscijzkerut3zmijzxsxeqsjhdozqlxv25lglxsh@zxam27ia6gtw>
+References: <fskxqmcszalz6dmoak6de4c7bxt4juvc5zrpboae4dqw4y6aih@lskezjrbnsws>
+ <ddqmhjc2rpzk2jjvunbt3l3eukcn4xzkocqzdg3j4msihdhzko@fizekvxndg2d>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 1/3] mm: add large zero page for efficient zeroing of larger
- segments
-To: Pankaj Raghav <p.raghav@samsung.com>, "Darrick J . Wong"
- <djwong@kernel.org>, hch@lst.de, willy@infradead.org
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, mcgrof@kernel.org, gost.dev@samsung.com,
- Andrew Morton <akpm@linux-foundation.org>, kernel@pankajraghav.com
-References: <20250516101054.676046-1-p.raghav@samsung.com>
- <20250516101054.676046-2-p.raghav@samsung.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20250516101054.676046-2-p.raghav@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ddqmhjc2rpzk2jjvunbt3l3eukcn4xzkocqzdg3j4msihdhzko@fizekvxndg2d>
 
-On 16.05.25 12:10, Pankaj Raghav wrote:
-> Introduce LARGE_ZERO_PAGE of size 2M as an alternative to ZERO_PAGE of
-> size PAGE_SIZE.
+On Fri, May 16, 2025 at 12:48:56PM +0200, Jan Kara wrote:
+> Hi!
 > 
-> There are many places in the kernel where we need to zeroout larger
-> chunks but the maximum segment we can zeroout at a time is limited by
-> PAGE_SIZE.
+> On Thu 15-05-25 23:33:22, Alejandro Colomar wrote:
+> > I'm updating the manual pages for POSIX.1-2024, and have some doubts
+> > about close(2).  The manual page for close(2) says (conforming to
+> > POSIX.1-2008):
+> > 
+> >        The EINTR error is a somewhat special case.  Regarding the EINTR
+> >        error, POSIX.1‐2008 says:
+> > 
+> >               If close() is interrupted by  a  signal  that  is  to  be
+> >               caught,  it  shall  return -1 with errno set to EINTR and
+> >               the state of fildes is unspecified.
+> > 
+> >        This permits the behavior that occurs on Linux  and  many  other
+> >        implementations,  where,  as  with  other errors that may be re‐
+> >        ported by close(), the  file  descriptor  is  guaranteed  to  be
+> >        closed.   However, it also permits another possibility: that the
+> >        implementation returns an EINTR error and  keeps  the  file  de‐
+> >        scriptor open.  (According to its documentation, HP‐UX’s close()
+> >        does this.)  The caller must then once more use close() to close
+> >        the  file  descriptor, to avoid file descriptor leaks.  This di‐
+> >        vergence in implementation behaviors provides a difficult hurdle
+> >        for  portable  applications,  since  on  many   implementations,
+> >        close() must not be called again after an EINTR error, and on at
+> >        least one, close() must be called again.  There are plans to ad‐
+> >        dress  this  conundrum for the next major release of the POSIX.1
+> >        standard.
+> > 
+> > TL;DR: close(2) with EINTR is allowed to either leave the fd open or
+> > closed, and Linux leaves it closed, while others (HP-UX only?) leaves it
+> > open.
+> > 
+> > Now, POSIX.1-2024 says:
+> > 
+> > 	If close() is interrupted by a signal that is to be caught, then
+> > 	it is unspecified whether it returns -1 with errno set to
+> > 	[EINTR] and fildes remaining open, or returns -1 with errno set
+> > 	to [EINPROGRESS] and fildes being closed, or returns 0 to
+> > 	indicate successful completion; [...]
+> > 
+> > <https://pubs.opengroup.org/onlinepubs/9799919799/functions/close.html>
+> > 
+> > Which seems to bless HP-UX and screw all the others, requiring them to
+> > report EINPROGRESS.
+> > 
+> > Was there any discussion about what to do in the Linux kernel?
 > 
-> This is especially annoying in block devices and filesystems where we
-> attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
-> bvec support in block layer, it is much more efficient to send out
-> larger zero pages as a part of single bvec.
-> 
-> While there are other options such as huge_zero_page, they can fail
-> based on the system memory pressure requiring a fallback to ZERO_PAGE[3].
+> I'm not aware of any discussions but indeed we are returning EINTR while
+> closing the fd. Frankly, changing the error code we return in that case is
+> really asking for userspace regressions so I'm of the opinion we just
+> ignore the standard as in my opinion it goes against a long established
+> reality.
 
-Instead of adding another one, why not have a config option that will 
-always allocate the huge zeropage, and never free it?
+I wonder what are they thinking there.
 
-I mean, the whole thing about dynamically allocating/freeing it was for 
-memory-constrained systems. For large systems, we just don't care.
+Any program which even bothers to check for EINTR assumes the fd is
+already closed, so one has to assume augmenting behavior to support this
+would result in fd leaks.
 
--- 
-Cheers,
+But that crappery aside, I do wonder if a close() variant which can fail
+and leaves the fd intact would be warranted.
 
-David / dhildenb
+For example one of the error modes is ENOSPC (or at least the manpage
+claims as much). As is the error is not actionable as the fd is gone.
+If instead a magic flag was passed down to indicate what to do (e.g.,
+leave the fd in place), the program could try to do some recovery (for
+examples unlinking temp files it knows it stores there).
 
+Similar deal with EINTR, albeit this error for close() would preferably get
+eradicated instead.
+
+Just some meh rambling.
 
