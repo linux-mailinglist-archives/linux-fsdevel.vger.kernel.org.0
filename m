@@ -1,205 +1,212 @@
-Return-Path: <linux-fsdevel+bounces-49237-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49238-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5569AB9A32
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 12:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3A3AB9A45
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 12:34:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42DDC5002A3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 10:32:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F98550072B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 10:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B2C233D9C;
-	Fri, 16 May 2025 10:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A26823642E;
+	Fri, 16 May 2025 10:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5FwqsCu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPr4ETf7";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Q5FwqsCu";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zPr4ETf7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cuymrrxn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00EEB481C4
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 10:32:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C174235340;
+	Fri, 16 May 2025 10:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747391526; cv=none; b=jASA705TVfJOClEwgcrOCyS7dZ8qDbhWDnLtUtgX7ZV0EhLqQfm+cd5H6oUUkAhdKjkBrWMeHxIy42+bJDax/DDUhku2VsWHkhUX/8j9B6F63Uu6R1x5OQz8YpLNuMbodki5npd4vXLcmjtzEG63fTBOmnBkv5LReKL9APyCYwk=
+	t=1747391661; cv=none; b=HD7NGSVUvWJ0Yr8m6CyFxXJmM5dHaU47D2oYbfsjG3qX81bbAy7GcvSm6beS89nzMKuzm9xH9NpF30XXN9cAexdz0VIQQEo0gJ/uJ+sanCpozZFgQZON7b5KNzzxWXvjf7Lax5bhVWh48PTxxGy8ZJK/ruPE2mVX8MSHh2+noOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747391526; c=relaxed/simple;
-	bh=Y6itP7Kh2dIc69u5d6PKjEC5APhDujvVRHjoJJoRjZw=;
+	s=arc-20240116; t=1747391661; c=relaxed/simple;
+	bh=OLawM77/pj4I/rWOm9zcrUGjJDrRfHM+96CF1DvxGgE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMsqriuRlE+2AP+zq8fQ8HBhXtZ5YWH3x/zKxeQ0USlJzJ8mOrZ5wKnH/NvptC6nN7DNoZKzMBZlqd2WvtHB7zVgiyoP3C9N29xJJjpeDIOZWDzwiqTsnJ0+znv6+0uXYG2MHwfWktV00Ud9lesm9yCrq6vSUEDMCAv0i9DJi24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5FwqsCu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPr4ETf7; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Q5FwqsCu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zPr4ETf7; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 25533218B8;
-	Fri, 16 May 2025 10:32:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747391523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
-	b=Q5FwqsCufDChGJ5Ehc6EZzwwM/ZDphg2wt7gThyIWdtYpbRYIBdX0FaqDvh96cGDL2pBgu
-	wO8jSyVxZdmtQqL6H5ISImo7CfmuktlYr+JRtc7ijhb/+yMisqTzPXlzQu09ankUFGdto4
-	q6Z9tmvErpEpgabXmuZyEpzwwQYIBmE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747391523;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
-	b=zPr4ETf7RJtJ3TuezENhO7tXFg9K+iEPbt/oRuYP+oDesI9mfbqO4sZMMs8RyeQO1bUkWc
-	U6b5QLiee5tQ/LDA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747391523; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
-	b=Q5FwqsCufDChGJ5Ehc6EZzwwM/ZDphg2wt7gThyIWdtYpbRYIBdX0FaqDvh96cGDL2pBgu
-	wO8jSyVxZdmtQqL6H5ISImo7CfmuktlYr+JRtc7ijhb/+yMisqTzPXlzQu09ankUFGdto4
-	q6Z9tmvErpEpgabXmuZyEpzwwQYIBmE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747391523;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Mxnb1geN517pevzpOjZliU3PBMZrTHg/aQoTFkapi0Y=;
-	b=zPr4ETf7RJtJ3TuezENhO7tXFg9K+iEPbt/oRuYP+oDesI9mfbqO4sZMMs8RyeQO1bUkWc
-	U6b5QLiee5tQ/LDA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 190C513411;
-	Fri, 16 May 2025 10:32:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id lYYZBiMUJ2jUAgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 16 May 2025 10:32:03 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C788AA09DD; Fri, 16 May 2025 12:31:58 +0200 (CEST)
-Date: Fri, 16 May 2025 12:31:58 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zizhi Wo <wozizhi@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, yangerkun@huawei.com
-Subject: Re: [PATCH] fs: Rename the parameter of mnt_get_write_access()
-Message-ID: <vtfnncganindq4q7t4icfaujkgejlbd7repvurpjx6nwf6i7zp@hr44m22ij4qf>
-References: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOgncdb6HKyYU3XDs0mUD+sevSA+eIIo26TKBdhBzd1ny4q1NEGYtd5vgMitezXo64X9iZuf5xJzT0GxQcsKZhW4afHtoR9kKfEoD7eGU7KeSyrXIbB+1XJHP3J+q2NHMVrgo1ABUIU24xcOqZMv5saq7Dl7PdL0naWrCAFldJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cuymrrxn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 129F2C4CEE4;
+	Fri, 16 May 2025 10:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747391660;
+	bh=OLawM77/pj4I/rWOm9zcrUGjJDrRfHM+96CF1DvxGgE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CuymrrxnrYD7Ka9ndiuRflWUEVaTAgCxSrx9m0FttyMA/0+bEBf6qUQ6FPX+Hz6Aq
+	 CF4eK0pP8zob9s6zmluMBPjGdN74rEWgBFe78tKoE4uziB7Qlz8wwji1Z0ce0okA7s
+	 ZsnpJnqhnQR89Sq+fvfoB9AT8cfcKM0PeX8onZ/Bkw51RHSvBM0V4ak7GeW5DOWCxe
+	 0Ar0E4GowdLJ3hv0z34NBPzPSu1WP2ohiNGtE+NiKgI6crDJwRr7PNBPwBAczlVOVD
+	 pNEg9Y18vGKbkgArlgswDlLjhowyQVQkUIlze6UwPRZcjT2nOeWYhOpmkhiZis/0Cf
+	 3rCsO6VLK7Z8Q==
+Date: Fri, 16 May 2025 12:34:13 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, 
+	Oleg Nesterov <oleg@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH v7 5/9] pidfs, coredump: add PIDFD_INFO_COREDUMP
+Message-ID: <20250516-anfliegen-mausklick-adf097dad304@brauner>
+References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
+ <20250515-work-coredump-socket-v7-5-0a1329496c31@kernel.org>
+ <CAG48ez3-=B1aTftz0srNjV7_t6QqGuk41LFAe6_qeXtXWL3+PA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email]
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3-=B1aTftz0srNjV7_t6QqGuk41LFAe6_qeXtXWL3+PA@mail.gmail.com>
 
-On Fri 16-05-25 11:21:47, Zizhi Wo wrote:
-> From: Zizhi Wo <wozizhi@huawei.com>
+On Thu, May 15, 2025 at 10:56:26PM +0200, Jann Horn wrote:
+> On Thu, May 15, 2025 at 12:04 AM Christian Brauner <brauner@kernel.org> wrote:
+> > Extend the PIDFD_INFO_COREDUMP ioctl() with the new PIDFD_INFO_COREDUMP
+> > mask flag. This adds the fields @coredump_mask and @coredump_cookie to
+> > struct pidfd_info.
 > 
-> Rename the parameter in mnt_get_write_access() from "m" to "mnt" for
-> consistency between declaration and implementation.
+> FWIW, now that you're using path-based sockets and override_creds(),
+> one option may be to drop this patch and say "if you don't want
+> untrusted processes to directly connect to the coredumping socket,
+> just set the listening socket to mode 0000 or mode 0600"...
 > 
-> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
+> [...]
+> > diff --git a/fs/coredump.c b/fs/coredump.c
+> > index e1256ebb89c1..bfc4a32f737c 100644
+> > --- a/fs/coredump.c
+> > +++ b/fs/coredump.c
+> [...]
+> > @@ -876,8 +880,34 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+> >                         goto close_fail;
+> >                 }
+> >
+> > +               /*
+> > +                * Set the thread-group leader pid which is used for the
+> > +                * peer credentials during connect() below. Then
+> > +                * immediately register it in pidfs...
+> > +                */
+> > +               cprm.pid = task_tgid(current);
+> > +               retval = pidfs_register_pid(cprm.pid);
+> > +               if (retval) {
+> > +                       sock_release(socket);
+> > +                       goto close_fail;
+> > +               }
+> > +
+> > +               /*
+> > +                * ... and set the coredump information so userspace
+> > +                * has it available after connect()...
+> > +                */
+> > +               pidfs_coredump(&cprm);
+> > +
+> > +               /*
+> > +                * ... On connect() the peer credentials are recorded
+> > +                * and @cprm.pid registered in pidfs...
+> 
+> I don't understand this comment. Wasn't "@cprm.pid registered in
+> pidfs" above with the explicit `pidfs_register_pid(cprm.pid)`?
 
-I'm sorry but this is just a pointless churn. I agree the declaration and
-implementation should better be consistent (although in this particular
-case it isn't too worrying) but it's much easier (and with much lower
-chance to cause conflicts) to just fixup the declaration.
+I'll answer both questions in one go below...
 
-								Honza
+> 
+> > +                */
+> >                 retval = kernel_connect(socket, (struct sockaddr *)(&addr),
+> >                                         addr_len, O_NONBLOCK | SOCK_COREDUMP);
+> > +
+> > +               /* ... So we can safely put our pidfs reference now... */
+> > +               pidfs_put_pid(cprm.pid);
+> 
+> Why can we safely put the pidfs reference now but couldn't do it
+> before the kernel_connect()? Does the kernel_connect() look up this
+> pidfs entry by calling something like pidfs_alloc_file()? Or does that
+> only happen later on, when the peer does getsockopt(SO_PEERPIDFD)?
 
-> ---
->  fs/namespace.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
+AF_UNIX sockets support SO_PEERPIDFD as you know. Users such as dbus or
+systemd want to be able to retrieve a pidfd for the peer even if the
+peer has already been reaped. To support this AF_UNIX ensures that when
+the peer credentials are set up (connect(), listen()) the corresponding
+@pid will also be registered in pidfs. This ensures that exit
+information is stored in the inode if we hand out a pidfd for a reaped
+task. IOW, we only hand out pidfds for reaped task if at the time of
+reaping a pidfs entry existed for it.
+
+Since we're setting coredump information on the pidfd here we're calling
+pidfs_register_pid() even before connect() sets up the peer credentials
+so we're sure that the coredump information is stored in the inode.
+
+Then we delay our pidfs_put_pid() call until the connect() took it's own
+reference and thus continues pinning the inode. IOW, connect() will also
+call pidfs_register_pid() but it will ofc just increment the reference
+count ensuring that our pidfs_put_pid() doesn't drop the inode.
+
+If we immediately did a pidfs_put_pid() before connect() we'd loose the
+coredump information.
+
 > 
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 1b466c54a357..b1b679433ab3 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -483,7 +483,7 @@ static int mnt_is_readonly(struct vfsmount *mnt)
->   */
->  /**
->   * mnt_get_write_access - get write access to a mount without freeze protection
-> - * @m: the mount on which to take a write
-> + * @mnt: the mount on which to take a write
->   *
->   * This tells the low-level filesystem that a write is about to be performed to
->   * it, and makes sure that writes are allowed (mnt it read-write) before
-> @@ -491,13 +491,13 @@ static int mnt_is_readonly(struct vfsmount *mnt)
->   * frozen. When the write operation is finished, mnt_put_write_access() must be
->   * called. This is effectively a refcount.
->   */
-> -int mnt_get_write_access(struct vfsmount *m)
-> +int mnt_get_write_access(struct vfsmount *mnt)
->  {
-> -	struct mount *mnt = real_mount(m);
-> +	struct mount *m = real_mount(mnt);
->  	int ret = 0;
->  
->  	preempt_disable();
-> -	mnt_inc_writers(mnt);
-> +	mnt_inc_writers(m);
->  	/*
->  	 * The store to mnt_inc_writers must be visible before we pass
->  	 * MNT_WRITE_HOLD loop below, so that the slowpath can see our
-> @@ -505,7 +505,7 @@ int mnt_get_write_access(struct vfsmount *m)
->  	 */
->  	smp_mb();
->  	might_lock(&mount_lock.lock);
-> -	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
-> +	while (READ_ONCE(m->mnt.mnt_flags) & MNT_WRITE_HOLD) {
->  		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
->  			cpu_relax();
->  		} else {
-> @@ -530,8 +530,8 @@ int mnt_get_write_access(struct vfsmount *m)
->  	 * read-only.
->  	 */
->  	smp_rmb();
-> -	if (mnt_is_readonly(m)) {
-> -		mnt_dec_writers(mnt);
-> +	if (mnt_is_readonly(mnt)) {
-> +		mnt_dec_writers(m);
->  		ret = -EROFS;
->  	}
->  	preempt_enable();
-> -- 
-> 2.39.2
+> >                 if (retval) {
+> >                         if (retval == -EAGAIN)
+> >                                 coredump_report_failure("Coredump socket %s receive queue full", addr.sun_path);
+> [...]
+> > diff --git a/fs/pidfs.c b/fs/pidfs.c
+> > index 3b39e471840b..d7b9a0dd2db6 100644
+> > --- a/fs/pidfs.c
+> > +++ b/fs/pidfs.c
+> [...]
+> > @@ -280,6 +299,13 @@ static long pidfd_info(struct file *file, unsigned int cmd, unsigned long arg)
+> >                 }
+> >         }
+> >
+> > +       if (mask & PIDFD_INFO_COREDUMP) {
+> > +               kinfo.mask |= PIDFD_INFO_COREDUMP;
+> > +               smp_rmb();
 > 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> I assume I would regret it if I asked what these barriers are for,
+> because the answer is something terrifying about how we otherwise
+> don't have a guarantee that memory accesses can't be reordered between
+> multiple subsequent syscalls or something like that?
+
+No, not really. It's just so that when someone calls PIDFD_GET_INFO with
+PIDFD_INFO_COREDUMP but one gotten from the coredump socket that they
+don't see half-initialized information. I can just use WRITE_ONCE() for
+that.
+
+> 
+> checkpatch complains about the lack of comments on these memory barriers.
+
+I'll just use WRITE_ONCE().
+
+> 
+> > +               kinfo.coredump_cookie = READ_ONCE(pidfs_i(inode)->__pei.coredump_cookie);
+> > +               kinfo.coredump_mask = READ_ONCE(pidfs_i(inode)->__pei.coredump_mask);
+> > +       }
+> > +
+> >         task = get_pid_task(pid, PIDTYPE_PID);
+> >         if (!task) {
+> >                 /*
+> [...]
+> > diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> > index a9d1c9ba2961..053d2e48e918 100644
+> > --- a/net/unix/af_unix.c
+> > +++ b/net/unix/af_unix.c
+> [...]
+> > @@ -742,6 +743,7 @@ static void unix_release_sock(struct sock *sk, int embrion)
+> >
+> >  struct unix_peercred {
+> >         struct pid *peer_pid;
+> > +       u64 cookie;
+> 
+> Maybe add a comment here documenting that for now, this is assumed to
+> be used exclusively for coredump sockets.
+
+I think we should just drop it.
 
