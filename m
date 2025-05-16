@@ -1,134 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-49290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD3FABA297
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 20:13:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C64ABA29C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 20:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFC835020B2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 18:13:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D213A3A57CB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 18:15:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4949227A136;
-	Fri, 16 May 2025 18:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A37319B3EC;
+	Fri, 16 May 2025 18:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tak05Tzb"
+	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="RmLXgRKc";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dkwgYEId"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E242750FC;
-	Fri, 16 May 2025 18:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F241E9B2F
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 18:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747419212; cv=none; b=JMXhBQaYdGQCFVAfa5y4UM2byQrvFikMiXDL2BeC8GMrdGyZgwRRDhtxXISl6UfDFyxBggXR64FsQVTvuqHuMWqStAX2PYd/J5yGW0FbqabzfevPBTFMmHOaaaiA44p6mcONN6G1zPlD6yoY8mwnMY4PlJX3eoLm3MhupA7ZdnA=
+	t=1747419348; cv=none; b=pxLTZK2Fj9z5XJBC6JnHeUbxeTgcx8wsIk8uylhOxIZpfGu79WBF2uFKbF1kBhUsOQfVmRZ9uM5lviESwcIHTMQgTGaPmrbTURy6iE41TOa/1Ci5AXSchPoqRExC0hcxDtsIynA6mLQbf7YqdECArAWQbiP7tQCYiggRnczCQQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747419212; c=relaxed/simple;
-	bh=FDzfr2SXPIZlkMJTDoiEPwnOAxtoNKZNxwxZRI5QyEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjwO3bSDaeHo3r+7IIQHa5fz3dMSV9M+VcfRgz2pkNkSBM3nigG8IUznbDpgIXzdxvTRgbZhiJRqOwsaN7QtNg9W6CKmJPwCHNT0Qotrm6GjoDGLfGbr1ErSaXeqeigkWTSlgnSXmD3c9vPUENb45ltJp8m82KBJenjkDGfaT78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tak05Tzb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 026F0C4CEE4;
-	Fri, 16 May 2025 18:13:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747419212;
-	bh=FDzfr2SXPIZlkMJTDoiEPwnOAxtoNKZNxwxZRI5QyEk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tak05Tzbg6DkyLWHedmDxiRSJ8LVaAAYtBDAZsWcorDeULXeFIX0hhepzJnGU2SpN
-	 XxkAn+0IxSSyR8mB1QBDIiwAuUtWCoh+VC7ENU5+aCe9PSYImQ1KoZH75TKaeiev8e
-	 oaaMqeYOJvXYbbgH+Wi2b55idrdkxl5aNZhFv1WPAOfcLRmarGidVnJuZGflkbqPVt
-	 f+jYjFdKs9P48K/f6rJHtjPlmuOFXGU9tG+FFvtwh4KjHpuQ15F3ljatBhjJzWmvux
-	 hRbv2LWaMoXrekVBaq1yeLu+OPXR3i+cg/hMEu7rIbIrYEwOxyRQWJWHtsuvaEU98h
-	 rBtOxsgo+zsIQ==
-Date: Fri, 16 May 2025 20:13:26 +0200
-From: Carlos Maiolino <cem@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>, John Garry <john.g.garry@oracle.com>, 
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, linux-ext4@vger.kernel.org, Jan Kara <jack@suse.cz>, 
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 7/7] ext4: Add atomic block write documentation
-Message-ID: <h6wsijwvwjwynsb3ecmg3aanih5lijpyq22acbqcheszltixiw@3iz4nwhao4cd>
-References: <cover.1747337952.git.ritesh.list@gmail.com>
- <d3893b9f5ad70317abae72046e81e4c180af91bf.1747337952.git.ritesh.list@gmail.com>
- <3b69be2c-51b7-4090-b267-0d213d0cecae@oracle.com>
- <20250516121938.GA7158@mit.edu>
- <6zGxoHeq5U6Wkycb78Lf1YqD2UZ_6HbHKjIylyTu1s2iRplyxIkQL9FOimJbx_qlfo2fer1wwGQ-5r8i9M91ng==@protonmail.internalid>
- <920cd126-7cee-4fe5-a4ab-b2c826eb8b8c@oracle.com>
- <cuyujo64iykwa2axim2jj5fisqnc4xhphasxm5n6nsim5qxvkg@rvtkxg6fj6ni>
- <20250516144817.GB21503@mit.edu>
- <DYrUzQxaooJtkUF4rTnYMQSaY0MqNgKMFGweP_aj6jWh7P6ZGScT25sAvZz_8Z5Hc26zgJoTC0g1DuxYY-FS7w==@protonmail.internalid>
- <20250516151005.GS25655@frogsfrogsfrogs>
+	s=arc-20240116; t=1747419348; c=relaxed/simple;
+	bh=ASLQXAgzgYdlW748DG6tC0co84uYm+POSwiVUutuk9U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ioFWpMgZK4vpAfGk7XreLCIq29XN+u6FzW9Fuy7tv+X6s6zzG20i6QgjcbiIzHNj1HWSI0xSktdBPfsxEPmnmAPtfRL4uUcaOPw2KRVnvvwu36eJxSWjmKcb40+8Q3lBqIjxnXwTHbpkQ0mIv0DvYtjrvjZBzOsR/cb3+WjTxiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=RmLXgRKc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dkwgYEId; arc=none smtp.client-ip=202.12.124.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id D6746254018D;
+	Fri, 16 May 2025 14:15:44 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-02.internal (MEProxy); Fri, 16 May 2025 14:15:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1747419344;
+	 x=1747505744; bh=P+fXIyCAwDAwwvcwbqLVppGLeZ+k8MLlpLMFwwlGik0=; b=
+	RmLXgRKckk/ca66pxp2Zi17zrAzKvmdzIz4EoCodctjEdFow4hgADpykT1T2o0Bm
+	A5ToNRmDMuiXwi7PoKChQLf8SEkSY1+XBrXKtkpkiRSYbwqqYcS7IHpAHBH+lpkN
+	EtUXPQ5dvTfViOzqtFmxEgw2UEnNPdiTOgRoGTUsx7ooqM/cyOP2+8NP7d6Xkmot
+	ef+FFAunfo76Pztp8tNLvvUCMZoKnj2xisDOK8mF0V46uL/q2nNEzp+GCpsHKdKJ
+	kQdC0erPQiOAmnhMK2jGb38FimTyc8CdTwx4pU5ez5sBKpF+sT83C9zdfAAUurKx
+	HgWNByjUaC42yF3s8TsVjA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747419344; x=
+	1747505744; bh=P+fXIyCAwDAwwvcwbqLVppGLeZ+k8MLlpLMFwwlGik0=; b=d
+	kwgYEIdxIdLA3sKhXKSjwzhW8c+RRtvbAehQ+M6EW1364N9qIDrhLpc45EAglsQo
+	iarZG/Ea8WqaXh+6p9xlRaDCLNKuG5J33qnhRl9Puf6D8Ii2R73MXqtHD3eVukkt
+	GDE4BlHM/lg2ZQcNoh84dKVHSFIHTJ110cwwdGUP7pDgO1ne9tX0EOW9QX65mwOC
+	X59sZK2mIwtXWidc1SUZkxaHX75zYMDhZRIR7GKF7silX+g1IkA7iYItFbaleCJp
+	2ZjgZH06MrVMmyhAnohwHjPOB6GRKOAcNPmm0tolCCFsqFOXCgLoBoypGe5CbUAD
+	uHn7EIDD87bA86NM0creA==
+X-ME-Sender: <xms:0IAnaHHaZcw-8z7yeodiKG872mFlLiS9IIsz4l6U_lSfX0I9BdkfOQ>
+    <xme:0IAnaEWkwS-3hSqxNXPVcuqlMWlMG2IJzZu5vDgq8uPa_lwmI_KZ60Dz5hvcDI8rv
+    fwypf346H0NX77E>
+X-ME-Received: <xmr:0IAnaJJHBYyJbABEjvn5a4YQ_rrwwQOCdLCgta8xgooBzld6p4G9xL-UNPHTOtJf8g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefudefgeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
+    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
+    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepffejveeffeej
+    gffhfefhieeuffffteeltdfghffhtddtfeeuveelvdelteefvedtnecuffhomhgrihhnpe
+    hkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
+    ihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnh
+    gspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhikhhl
+    ohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesgh
+    hmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdr
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorh
+    hgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhmpdhrtghpthht
+    ohepkhgsuhhstghhsehmvghtrgdrtghomh
+X-ME-Proxy: <xmx:0IAnaFERCDg-biL564Dwn7lR9qgmJ6pHNyUpm7RTLRaGq2YW0SQzUg>
+    <xmx:0IAnaNXp7YuhMjtFijrHWE-YIZecc1WwVGPacqrxHpZQffQ8bNdSIw>
+    <xmx:0IAnaAOKpBtS3crTmSoQi63Iva9TetjBo7Wv6zOLREGqRiG3mfDHtg>
+    <xmx:0IAnaM0Gb-BRim_FGWRX26-hJdCy1A6IVAKcsGhAl0Of5C4s29lQDg>
+    <xmx:0IAnaLixKiPrX3yadGcC0_7acaXygy4SfEu_b77e-MIujUT9H7xWx9PO>
+Feedback-ID: id8a24192:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 16 May 2025 14:15:43 -0400 (EDT)
+Message-ID: <da219671-099c-49e9-afbe-9a6d803cf46f@fastmail.fm>
+Date: Fri, 16 May 2025 20:15:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250516151005.GS25655@frogsfrogsfrogs>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] fuse: use splice for reading user pages on servers
+ that enable it
+To: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, jlayton@kernel.org, kernel-team@meta.com,
+ Keith Busch <kbusch@meta.com>
+References: <20250422235607.3652064-1-joannelkoong@gmail.com>
+ <CAJfpegsc8OHkv8wQrHSxXE-5Tq8DMhNnGWVpSnpu5+z5PBghFA@mail.gmail.com>
+ <CAJnrk1ZXBOzMB69vyhzpqZWdSmpSxRcJuirVBVmPd6ynemt_SQ@mail.gmail.com>
+ <CAJfpegsqCHX759fh1TPfrDE9fu-vj+XWVxRK6kXQz5__60aU=w@mail.gmail.com>
+ <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
+ <CAJfpegv+Bu02Q1zNiXmnaPy0f2GK1J_nDCks62fq_9Dn-Wrq4w@mail.gmail.com>
+ <CAJnrk1aX=GO07XP_ExNxPRj=G8kQPL5DZeg_SYWocK5w0MstMQ@mail.gmail.com>
+ <CAJfpegvayjALR9F2mYxPiM2JKuJuvDdzS3gH4WvV12AdM0vU7w@mail.gmail.com>
+ <CAJnrk1bibc9Zj-Khtb4si1-8v3-X-1nX1Jgxc_whLt_SOxuS0Q@mail.gmail.com>
+ <CAJfpegtFKC=SmYg7w3KDJgON5O3GFaLaUYuGu4VA2yv=aebeOg@mail.gmail.com>
+From: Bernd Schubert <bernd.schubert@fastmail.fm>
+Content-Language: en-US
+In-Reply-To: <CAJfpegtFKC=SmYg7w3KDJgON5O3GFaLaUYuGu4VA2yv=aebeOg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 16, 2025 at 08:10:05AM -0700, Darrick J. Wong wrote:
-> On Fri, May 16, 2025 at 10:48:17AM -0400, Theodore Ts'o wrote:
-> > On Fri, May 16, 2025 at 03:31:17PM +0200, Carlos Maiolino wrote:
-> > >
-> > > This is likely the final state for XFS merge-window and I hope to
-> > > send it to Linus as soon as the merge window opens.
-> >
-> > Very cool!
-> >
-> > I've taken a quick peek, and it looks like the only XFS-specific
-> > atomic writes is an XFS mount option.  Am I missing anything?
-> >
-> > I want to keep merging the ext4 and xfs atomic write patchsets simple,
-> > so I'd prefer not to have any git-level dependencies on the branches.
-> > If we're confident that the xfs changes are going to land at the next
-> > merge window,
+
+
+On 5/16/25 09:58, Miklos Szeredi wrote:
+> On Thu, 15 May 2025 at 21:16, Joanne Koong <joannelkoong@gmail.com> wrote:
 > 
-> /I/ for one hope that the xfs changes land this time around.
-
-Yes, so far everything looks good, and we've atomic writes on for-next for a
-while as I mentioned too (although a rebase yesterday required to have those
-patches re-introduced with different hashes, the content is still the same).
-
-Ted, I'm not exactly sure what kind of git-level dependency you have in mind,
-but just to play safe here, bear in mind the atomic writes in merged on top of
-Axboe's block-6.15.
-
+>> As I understand it, the zero copy uring api (I think the one you're
+>> talking about is the one discussed here [1]?) requires client-side
+>> changes in order to utilize it.
+>>
+>> [1] https://lore.kernel.org/linux-fsdevel/dc3a5c7d-b254-48ea-9749-2c464bfd3931@davidwei.uk/
 > 
-> > given that the ext4 patch set is pretty much ready to
-> > land in the ext4 tree, how about updating the documentation in a
-> > follow-up patch.
-> >
-> > I can either append the commit which generalizes the documentation to
-> > the ext4 tree, or if it turns out that there is a v6 needed of the
-> > ext4 atomic write patchset, we can fold the documentation update into
-> > the "ext4: add atomic block write documentation" commit and rename it
-> > to "Documentation: add atomic write block documentation."
-> >
-> > Does that seem reasonable?
-> 
-> I think it's ok to combine them after the merge.  It would be useful to
-> have a single programmer's guide that takes a person through the whole
-> process of determining the block device's atomic write capabilities,
-> formatting either an XFS or ext4 filesystem appropriately, and then
-> presents a toy program to discover the atomic write limits on an open
-> file and uses that to queue a single IO.
+> No, that's not what I was thinking.  That sort of thing is out of
+> scope for fuse, I think.
 
-This sounds indeed good to me too.
-
-Have a nice weekend all.
-
-Carlos
+Yeah, I don't think that is what Keith had done for ublk either and what is
+planned for fuse. Added in Keith.
 
 > 
-> --D
+> Hmm, so you actually need "single copy" direct write.
 > 
-> >
-> > Cheers,
-> >
-> > 					- Ted
-> >
+>   - there's the buffer that write(2) gets from application
+>   - it's copied into server's own buffer, at which point the write(2) can return
+>   - at some point this buffer is sent to the network and freed/reused
 > 
+> Currently this is not possible:
+> 
+>   - there's the buffer that write(2) gets from application
+>   - it's copied into libfuse's buffer, which is passed to the write callback
+>   - the server's write callback copies this to its own buffer, ...
+> 
+> What's preventing libfuse to allow the server to keep the buffer?  It
+> seems just a logistic problem, not some fundamental API issue.  Adding
+> a fuse_buf_clone() that just transfers ownership of the underlying
+> buffer is all that's needed on the API side.  As for the
+> implementation: libfuse would then need to handle the case of a buffer
+> that has been transferred.
+
+With io-uring the buffer belongs to the request and not to the
+thread anymore - no need to copy from libfuse to the server.
+
+AFAIK, mergerfs also uses a modified libfuse that also allows to keep
+the server the buffer without io-uring. I just don't see much of
+a point to work on these things when we have io-uring now.
+
+
+Thanks,
+Bernd
 
