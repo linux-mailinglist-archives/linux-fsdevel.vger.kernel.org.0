@@ -1,89 +1,151 @@
-Return-Path: <linux-fsdevel+bounces-49309-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49310-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C82BABA61D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 May 2025 00:58:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699CCABA670
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 May 2025 01:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108B74E7472
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 22:58:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 87CFC7B262A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 23:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AED28003B;
-	Fri, 16 May 2025 22:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33BCE280032;
+	Fri, 16 May 2025 23:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8OkA7p3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA2023099C
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 22:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770ED15665C;
+	Fri, 16 May 2025 23:17:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747436284; cv=none; b=U6j3cS6O3r+mZuTHPV3fLNXNjFyY35Ecvz9o/AuVTCnxTlUBBkb+R9FVi8EtEaSsz8cveVy5RDpz7OkGjEFKQ8FLnUbMnvjYKhCJ09r1xD/IunnijfFjSPuvkWEwhJTE+9r8yyWELRU2COfgJndYG/b2VqYGMM/zIDnktqLxn/k=
+	t=1747437468; cv=none; b=fXUaqUiz5TNyYkWKgjYHYmNGypjgx5nwX4X1jPr8UWILFWujWia0hYPBt4AvUEmw6gwfizl4NZ/UmzgNP5ImXVaiKgBOd+5ZbMSOsOBJo/UQaAreTr6Q8QXRZGKUP2kHlHZTxIcrUaQ4fi3oYuX58mfrWsqNNrRMXIWpPUDyYE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747436284; c=relaxed/simple;
-	bh=crlD6hcYkgqUk2VnsMTk6TwuNBRLpWcxydDqwkXANwg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=USo/FXlDhidTBYCnJMeuwlWbgYeQpCjzRhuLG3jnwC5baZOteQgRO84xTh89R3/z9fg+7rvO0lGTlQK77ywvx1Ee5f+UJvBJKkYIaQ9pzKCtQ7U/NuBfwWjAmwFeN0MVFHg+JGeCfHFvPT28N8Rf3TGRYCKfu6yXTg3D8huAtZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3da6fe2a552so43180455ab.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 15:58:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747436282; x=1748041082;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dkCZy4oAbX25iBvlsArzBe31f3vDYggxaZVFFGZRboo=;
-        b=qhbz2sbuRTYDXeir+M+NRR/cXXbGRjOcm9PTW62plTolQFXH28TfE5GO8NLzFtYaa/
-         CBbNngOGLWFPynhQ2ag6q7smYhdrgFmK5hHTX2KX7Un2wjyODQ1HbfSek6wbXwTWGbzf
-         GmWjz5BXYEmBY9L8cXPRa89iNChKBl3DmebYOgdpUEhFYdWC7iv1nGXvIzbCsy/lzWt+
-         p6xZFFDJnKsuWjQFAL4MPsglhFr6i4/bLZnbNW3ErS6q/KfKnjH9SiKcpAKBs5HcX7jI
-         oOJrRaib+2DJD44iz65k1qfYq1FHkfByaTxLpY4HXIrE4WnCHvS3/2paOEl1Dq1dN/UU
-         kZ0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVPQNRFCOvcJrQwWeiToxvvsAdU5jtiGQWusPPixpG6D0xP2fTfu2IZDHqT/r6pck9xJNkJ7x9fC0xrkcQd@vger.kernel.org
-X-Gm-Message-State: AOJu0YywtRaU42LMCQ2W4JV60Gr0o0sUJoOz3HNJRFWYmOey1HWvP8ya
-	WDGCiKEsBwAGp29v7XtPZGYq3ytbl0ul+sponSezkjdzOJ+AYJDVoDDGyIq75l22r6FLDMENPwq
-	6yX5MEv3BmpGG3UgTskpbnp4XMTfhdnDwoEzNs23Ogv9ZZZV2U0RXNeiEteY=
-X-Google-Smtp-Source: AGHT+IGV5LT0uR5Nz7086K5O0wYaH1Zid4vNGxPgFcsJzGd4vSmYuvN7DSZEaJBn3/LkPva3IQ+yfOoGMSc7h1yuY3/yKzxpCgmy
+	s=arc-20240116; t=1747437468; c=relaxed/simple;
+	bh=9QGCU7pQ1CQOC/QLX0rCKLUdZNG8/Rw7HmMWOTN97fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gjol4Ly32mugiaSFgCL7ylVxN6I47wmCBKRR5axzWHN5VZGiIm4xI11aWaNqI9pT5Tb8N6RaqyVc6mw9EuBgWET95qajsa5jIw28UFernJKCaCR+QtLECi9Nc2+o+8ol7vVVDtsUr/07o7coFfiLnzSZhQrH551zKxCN2KfBWoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8OkA7p3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9775C4CEE4;
+	Fri, 16 May 2025 23:17:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747437467;
+	bh=9QGCU7pQ1CQOC/QLX0rCKLUdZNG8/Rw7HmMWOTN97fo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=b8OkA7p3XHFQnWkhDZHSvdhBzeJvX2JWajy6uk7rAqdnI8TISnS1C0kUOVHwzAwf6
+	 /t0JOfPD3nXLY06c8Eiq44LxQiwiS8nLRIBmDmEn2XNeMpw2Tfd1U9lQit+Wy1EL9r
+	 6UzybNl8RZcQXn4fh/B8NO6U/Q0AunkgLh2q7wvF+/Z4GtY2gbJRFEaoNYVmNgPdc+
+	 IWMHOkhcvx3en+Vtwn1/8l0JT6qDMsTRjnpbXnE14b2oyY/PDf/lHxf/J+OuygeWYd
+	 xqIy8fwO+ID5o2/YuJt+HJBDdvWn5867w4MzKnuTskhWhVd2+wMXDALPxHKgZq8V7D
+	 5PdG1wNlZxa4g==
+Date: Fri, 16 May 2025 16:17:47 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>,
+	Bernd Schubert <bschubert@ddn.com>,
+	John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Luis Henriques <luis@igalia.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Stefan Hajnoczi <shajnocz@redhat.com>,
+	Joanne Koong <joannelkoong@gmail.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Aravind Ramesh <arramesh@micron.com>,
+	Ajay Joshi <ajayjoshi@micron.com>
+Subject: Re: [RFC PATCH 13/19] famfs_fuse: Create files with famfs fmaps
+Message-ID: <20250516231747.GB9730@frogsfrogsfrogs>
+References: <20250421013346.32530-14-john@groves.net>
+ <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
+ <20250424143848.GN25700@frogsfrogsfrogs>
+ <5rwwzsya6f7dkf4de2uje2b3f6fxewrcl4nv5ba6jh6chk36f3@ushxiwxojisf>
+ <20250428190010.GB1035866@frogsfrogsfrogs>
+ <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
+ <20250508155644.GM1035866@frogsfrogsfrogs>
+ <CAJfpegt4drCVNomOLqcU8JHM+qLrO1JwaQbp69xnGdjLn5O6wA@mail.gmail.com>
+ <20250515020624.GP1035866@frogsfrogsfrogs>
+ <CAJfpegsKf8Zog3Q6Vd1kBmD6anLSdyYyxy4BjD-dvcyWOyr4QQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1f87:b0:3d1:a75e:65f6 with SMTP id
- e9e14a558f8ab-3db84324635mr82117385ab.18.1747436282520; Fri, 16 May 2025
- 15:58:02 -0700 (PDT)
-Date: Fri, 16 May 2025 15:58:02 -0700
-In-Reply-To: <2705414.1747435079@warthog.procyon.org.uk>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6827c2fa.a70a0220.38f255.000a.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] KASAN: slab-out-of-bounds Read in iov_iter_revert
-From: syzbot <syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, pc@manguebit.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsKf8Zog3Q6Vd1kBmD6anLSdyYyxy4BjD-dvcyWOyr4QQ@mail.gmail.com>
 
-Hello,
+On Fri, May 16, 2025 at 12:06:44PM +0200, Miklos Szeredi wrote:
+> On Thu, 15 May 2025 at 04:06, Darrick J. Wong <djwong@kernel.org> wrote:
+> 
+> > Yeah, it's confusing.  The design doc tries to clarify this, but this is
+> > roughly what we need for fuse:
+> >
+> > FUSE_IOMAP_OP_WRITE being set means we're writing to the file.
+> > FUSE_IOMAP_OP_ZERO being set means we're zeroing the file.
+> > Neither of those being set means we're reading the file.
+> >
+> > (3 different operations)
+> 
+> Okay, I get why these need to be distinct cases.
+> 
+> Am I right that the only read is sanely cacheable?
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+That depends on the filesystem.  Old filesystems (e.g. the ones that
+don't support out of place writes or unwritten extents) most likely can
+cache mappings for writes and zeroing.  Filesystems with static mappings
+(like zonefs which are convenient wrappers around hardware) can cache
+most everything too.
 
-Reported-by: syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com
-Tested-by: syzbot+25b83a6f2c702075fcbc@syzkaller.appspotmail.com
+My next step for this prototype is to go build a real cache and make
+fuse2fs manage the cache, which puts the filesystem in charge of
+maintaining the cache however is appropriate for the design.
 
-Tested on:
+> > FUSE_IOMAP_OP_DIRECT being set means directio, and it not being set
+> > means pagecache.
+> >
+> > (and one flag, for 6 different types of IO)
+> 
+> Why does this make a difference?
 
-commit:         82f2b0b9 Linux 6.15-rc6
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git v6.15-rc6
-console output: https://syzkaller.appspot.com/x/log.txt?x=11960ef4580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=753a0ce88f56915c
-dashboard link: https://syzkaller.appspot.com/bug?extid=25b83a6f2c702075fcbc
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=174022d4580000
+Different allocation strategies -- we can use delayed allocation for
+pagecache writes, whereas with direct writes we must have real disk
+space.
 
-Note: testing is done by a robot and is best-effort only.
+> Okay, maybe I can imagine difference allocation strategies.  Which
+> means that it only matters for the write case?
+
+Probably.  I don't see why a directio read would be any different from a
+pageacache read(ahead) but the distinction exists for the in-kernel
+iomap callers.
+
+> > FUSE_IOMAP_OP_REPORT is set all by itself for things like FIEMAP and
+> > SEEK_DATA/HOLE.
+> 
+> Which should again always be the same as the read case, no?
+
+Not entirely -- if the fuse driver is doing weird caching things with
+file data blocks, a read requires it to invalidate its own cache,
+whereas it needn't do anything for a mapping report.  fuse2fs is guilty
+of this, because it does ... crazy things.
+
+Also for now I don't support read/write to inline data files, though I
+think it would be possible to use the FUSE_READ/FUSE_WRITE for that...
+as soon as I find a filesystem where inline data for regular files isn't
+a giant trash fire and can be QAd properly.
+
+--D
 
