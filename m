@@ -1,179 +1,167 @@
-Return-Path: <linux-fsdevel+bounces-49312-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49313-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9347ABA69F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 May 2025 01:38:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26C8ABA6C1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 May 2025 01:55:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 888FE4E561B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 23:38:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF82F4A7FE0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 23:55:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEE0280A20;
-	Fri, 16 May 2025 23:38:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UwFZp2jf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E7BC281358;
+	Fri, 16 May 2025 23:55:05 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CD7B15A864
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 23:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71ED231856;
+	Fri, 16 May 2025 23:55:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747438696; cv=none; b=rCqScBJ5A90lnFodluF4pIntS3yfrx/mRKmH9WUJcx7f55TuxFon7gMqGRB/48b82Dw1avBr9ootEZoeaYbQtIxjoeRtfIbYOYS+PBqbbu8AbNzkP9J1oSb2gbsZjmCvifQIihV7v4FmcFihqLNEta0EAbpWFR5tHwfSesFFGNQ=
+	t=1747439705; cv=none; b=DQIcXEGkahqz+U7VSY+GidFD/Jr4N2cI0yOfX1EdqR7FS0CyOFldImGRa4sO6HybYD6m0ZD4a4o6KbuHe0INtEig0sTNRwzOR6P5sf4gyijxPVabzGt+VlpiaMn5BKAcgQjHYIQQILJwUdTWPFhPdUAT49//lziS70S68pNXbuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747438696; c=relaxed/simple;
-	bh=KMq6BUukZo0kAoMgt5w4V65oLgoQi3P3KnsCUAAzak8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rdOUgHvcqtWDJGQKbJBHZq3/0eaW090ms2P3gIW4BZ8KIBypfqJBaE2JRQVlW39JsAJPtUWRi9l0IsOFOsU9wHQB6u8vIP/I+DwM/Idhr2dbykNgNFPwfUkAJXx8Z/YkAyDDiCUSdZNIDSd99bIw8f7CxdoTQfLTfK0Bmcx83KU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UwFZp2jf; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-47698757053so35838181cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 16:38:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747438694; x=1748043494; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VDBtN3cZgNhIjrSXN0+rBz1jOVzhGU78XDvl2kYwklc=;
-        b=UwFZp2jf59+Jm27b4xNjuzRyjTnMnsVJwBHjMxPjgyw+gafJg+IgMLIrCLB/SIbjlZ
-         MWHVRI3c2YsTmF5URJ7PHifiLqK285GhupKVhgOSrzf2I0Tht2GkjKVM5Btn83tlBIXT
-         +C3TPdElS+73ahZJnW7EoWXdRZ0INvmdZ9zWsqXPWBYgHZPwGTXC//AMhsJH2PqpXpyj
-         85RnAcifo3BfKG4NNnXmmyFAEXxRAPN0w5O0Jh0ASBCl5bjQ+Mno5kryl7+Zp9iYUxzQ
-         OFjKXgheYap+cVuCj2JY7XvEpuelzyr8Nu8oRWianpvB8j2GIu1cnkY22cr8g0qnB2cQ
-         3m7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747438694; x=1748043494;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VDBtN3cZgNhIjrSXN0+rBz1jOVzhGU78XDvl2kYwklc=;
-        b=C1ALF+AFH3KKTSPBgNk/qQ5WCOO3XURhblaS+o0PKDgI0EV87pO34kCfKajGSFehrp
-         4XMwYxjc9EfVRgnRVvhqkVPuz1f3nTFgdLg8syZmWMMa6i2qKiWWEnkFcwfe+VB4ZdwM
-         sqS0iVpPprAQCam6mE+YN+b4mMDeDIawnUo5osjFvhJ3n8F8V9SlV5QyDij5UucmBJV5
-         gSe6SsGnJnv4CHj0SLcdjcAFGX4FmGjnfMQ0MoNssqlWhKvWZaZrzEtqaRRRZJ3ehcsK
-         8bNFf1Gpxm67JZ8OLECXe07ZjB6/vTinZMeSt0b1SJbkposHZ8heIXQx4SLA+PuQD4Mw
-         J80Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWc2P2MdmumkZvhFw0GBASwcKIlSxRDRZdfYgAj2U98drZcEPZigdgY3F9FnwPiRONqevwRyVVLpUFjkDQA@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4RVuTfQ7BTZ/4ScqJ0S0x6bLYTouHYfIFJ+d9oSpzCFoc4HNo
-	Rt3IlaSdvCzuysqNQ+11uaX1DUapWflcqfQCkEZaH0LaT82AOKiV1IvaoNTksDNlM7G3/5xxMnz
-	wqOYUhuSlUj5Qw26FZ1KxUXClL45Sg6vhaA==
-X-Gm-Gg: ASbGnct/o+16hcRz6BTSDLByccLmGwmFWeKbsSPCQ/GEpOooQHTLAUewYwGoFUtkEoX
-	yAHxp0OLh4+kKf4VLUzu/ktUZ6CbQac0P6DXc9AghfccJpgrpl98G5Qnm8tFhQcabUBDhHrBMjg
-	aLEpH/uC3aRwE+ic+VZspM1FgixHSdXz6f
-X-Google-Smtp-Source: AGHT+IGRJ6eXwgJFU9jwMJ3mii55WI6phDHu247zUqzUz9bI9NNF/qVYv1EC66cahpzqBYBo31ftGYId0hCBQd0VZe8=
-X-Received: by 2002:a05:622a:4c14:b0:494:993d:ec30 with SMTP id
- d75a77b69052e-494ae394332mr98197951cf.16.1747438694060; Fri, 16 May 2025
- 16:38:14 -0700 (PDT)
+	s=arc-20240116; t=1747439705; c=relaxed/simple;
+	bh=CfqjHVwYMYg0l/h6PF8KpBfyUMOE57166y6yYuTN2a8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V8IljFLVgItpe9UfaPQbXOll3PrvUqhN0cITOQnvN5qc+OllrNHImuRaKd9fDd2AeZfZAAy3oCV23u98VmJ2x9cT2H3vcQV8+4YosWXgnJV/CO3hN21lR4fOJkFJE8wxQJeVNwyXiqEv+FcClncJydhvAkmQ5h9f7nzhGH2ANm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4ZzkT53QB4z4f3jd5;
+	Sat, 17 May 2025 07:54:33 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5983D1A1382;
+	Sat, 17 May 2025 07:54:58 +0800 (CST)
+Received: from [10.174.176.88] (unknown [10.174.176.88])
+	by APP4 (Coremail) with SMTP id gCh0CgAHa19P0CdoeQWHMg--.3231S3;
+	Sat, 17 May 2025 07:54:58 +0800 (CST)
+Message-ID: <b3d6db6f-61d8-498a-b90c-0716a64f7528@huaweicloud.com>
+Date: Sat, 17 May 2025 07:54:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250422235607.3652064-1-joannelkoong@gmail.com>
- <CAJfpegsc8OHkv8wQrHSxXE-5Tq8DMhNnGWVpSnpu5+z5PBghFA@mail.gmail.com>
- <CAJnrk1ZXBOzMB69vyhzpqZWdSmpSxRcJuirVBVmPd6ynemt_SQ@mail.gmail.com>
- <CAJfpegsqCHX759fh1TPfrDE9fu-vj+XWVxRK6kXQz5__60aU=w@mail.gmail.com>
- <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
- <CAJfpegv+Bu02Q1zNiXmnaPy0f2GK1J_nDCks62fq_9Dn-Wrq4w@mail.gmail.com>
- <CAJnrk1aX=GO07XP_ExNxPRj=G8kQPL5DZeg_SYWocK5w0MstMQ@mail.gmail.com>
- <CAJfpegvayjALR9F2mYxPiM2JKuJuvDdzS3gH4WvV12AdM0vU7w@mail.gmail.com>
- <CAJnrk1bibc9Zj-Khtb4si1-8v3-X-1nX1Jgxc_whLt_SOxuS0Q@mail.gmail.com>
- <CAJfpegtFKC=SmYg7w3KDJgON5O3GFaLaUYuGu4VA2yv=aebeOg@mail.gmail.com> <da219671-099c-49e9-afbe-9a6d803cf46f@fastmail.fm>
-In-Reply-To: <da219671-099c-49e9-afbe-9a6d803cf46f@fastmail.fm>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Fri, 16 May 2025 16:38:03 -0700
-X-Gm-Features: AX0GCFt8LNbVWE22IWbYrf1F2TiggpdoEOuZPS4VwftgCc1NHRKEOZbfzAM-YQo
-Message-ID: <CAJnrk1Z+TK2rtA0TWDN57YM5YDm-gB8m0DJ9YxVtjgmV-8HGLA@mail.gmail.com>
-Subject: Re: [PATCH v2] fuse: use splice for reading user pages on servers
- that enable it
-To: Bernd Schubert <bernd.schubert@fastmail.fm>
-Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org, jlayton@kernel.org, 
-	kernel-team@meta.com, Keith Busch <kbusch@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs: Rename the parameter of mnt_get_write_access()
+To: Jan Kara <jack@suse.cz>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yangerkun@huawei.com
+References: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
+ <vtfnncganindq4q7t4icfaujkgejlbd7repvurpjx6nwf6i7zp@hr44m22ij4qf>
+From: Zizhi Wo <wozizhi@huaweicloud.com>
+In-Reply-To: <vtfnncganindq4q7t4icfaujkgejlbd7repvurpjx6nwf6i7zp@hr44m22ij4qf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAHa19P0CdoeQWHMg--.3231S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxXFy8tw43Cr17JF18Xr4Utwb_yoW5Aw4kpr
+	WSgFy8Ka1xJry29rnFya9xCa4fW3ykKrZrK34rWw1avrZ8Zr1Sga4vgr4S9F1kAr9rA34x
+	uF40y3s3ur1ayrDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
+X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
 
-On Fri, May 16, 2025 at 11:15=E2=80=AFAM Bernd Schubert
-<bernd.schubert@fastmail.fm> wrote:
->
-> On 5/16/25 09:58, Miklos Szeredi wrote:
-> > On Thu, 15 May 2025 at 21:16, Joanne Koong <joannelkoong@gmail.com> wro=
-te:
-> >
-> >> As I understand it, the zero copy uring api (I think the one you're
-> >> talking about is the one discussed here [1]?) requires client-side
-> >> changes in order to utilize it.
-> >>
-> >> [1] https://lore.kernel.org/linux-fsdevel/dc3a5c7d-b254-48ea-9749-2c46=
-4bfd3931@davidwei.uk/
-> >
-> > No, that's not what I was thinking.  That sort of thing is out of
-> > scope for fuse, I think.
->
-> Yeah, I don't think that is what Keith had done for ublk either and what =
-is
-> planned for fuse. Added in Keith.
->
-> >
-> > Hmm, so you actually need "single copy" direct write.
-> >
-> >   - there's the buffer that write(2) gets from application
-> >   - it's copied into server's own buffer, at which point the write(2) c=
-an return
-> >   - at some point this buffer is sent to the network and freed/reused
-> >
-> > Currently this is not possible:
-> >
-> >   - there's the buffer that write(2) gets from application
-> >   - it's copied into libfuse's buffer, which is passed to the write cal=
-lback
-> >   - the server's write callback copies this to its own buffer, ...
-> >
-> > What's preventing libfuse to allow the server to keep the buffer?  It
-> > seems just a logistic problem, not some fundamental API issue.  Adding
-> > a fuse_buf_clone() that just transfers ownership of the underlying
-> > buffer is all that's needed on the API side.  As for the
-> > implementation: libfuse would then need to handle the case of a buffer
-> > that has been transferred.
 
-The issue is that there's no good way to transfer ownership of the
-buffer. The buffer belongs to the "struct fuse_buf" it's encapsulated
-inside. Libfuse passes to the server's write handler a pointer to the
-write payload inside the buffer. If the handler steals ownership of
-the buffer, the struct fuse_buf that buffer is in needs to set its
-->mem to point to null. The only way I can think of to do this, which
-is hacky, is to add some "bool buffer_stolen : 1;" field to "struct
-fuse_file_info" since we pass "struct fuse_file_info *fi" to the write
-handler as an arg, and then in  fuse_session_process_buf(), set
-"fuse_buf->mem =3D NULL" if fi->buffer_stolen was set by the handler.
-This changes the semantics of the fuse_session_process_buf() public
-API, which I don't believe is backwards compatible. The caller may
-supply its own buffer to fuse_session_{receive_process}_buf() and then
-do whatever it'd like with that buffer afterwards (eg reuse it for
-other data or dereference into it), but now that is not true anymore.
 
->
-> With io-uring the buffer belongs to the request and not to the
-> thread anymore - no need to copy from libfuse to the server.
+在 2025/5/16 18:31, Jan Kara 写道:
+> On Fri 16-05-25 11:21:47, Zizhi Wo wrote:
+>> From: Zizhi Wo <wozizhi@huawei.com>
+>>
+>> Rename the parameter in mnt_get_write_access() from "m" to "mnt" for
+>> consistency between declaration and implementation.
+>>
+>> Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+> 
+> I'm sorry but this is just a pointless churn. I agree the declaration and
+> implementation should better be consistent (although in this particular
+> case it isn't too worrying) but it's much easier (and with much lower
+> chance to cause conflicts) to just fixup the declaration.
+> 
+> 								Honza
 
-I don't see how io-uring helps here. With io-uring, the ent payload is
-now the buffer, no? If a thread still needs that payload to process
-that data, it can't still utilize the pointer to that payload while
-allowing that ent to be used again for another request, no?
-
+Yes, I had considered simply fixing the declaration earlier. However, in
+the include/linux/mount.h file, similar functions like
+"mnt_put_write_access" use "mnt" as the parameter name rather than "m",
+just like "mnt_get_write_access". So I chose to modify the function
+implementation directly, although this resulted in a larger amount of
+changes. So as you can see, for simplicity, I will directly update the
+parameter name in the function declaration in the second version.
 
 Thanks,
-Joanne
->
-> AFAIK, mergerfs also uses a modified libfuse that also allows to keep
-> the server the buffer without io-uring. I just don't see much of
-> a point to work on these things when we have io-uring now.
->
->
-> Thanks,
-> Bernd
+Zizhi Wo
+
+> 
+>> ---
+>>   fs/namespace.c | 14 +++++++-------
+>>   1 file changed, 7 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/namespace.c b/fs/namespace.c
+>> index 1b466c54a357..b1b679433ab3 100644
+>> --- a/fs/namespace.c
+>> +++ b/fs/namespace.c
+>> @@ -483,7 +483,7 @@ static int mnt_is_readonly(struct vfsmount *mnt)
+>>    */
+>>   /**
+>>    * mnt_get_write_access - get write access to a mount without freeze protection
+>> - * @m: the mount on which to take a write
+>> + * @mnt: the mount on which to take a write
+>>    *
+>>    * This tells the low-level filesystem that a write is about to be performed to
+>>    * it, and makes sure that writes are allowed (mnt it read-write) before
+>> @@ -491,13 +491,13 @@ static int mnt_is_readonly(struct vfsmount *mnt)
+>>    * frozen. When the write operation is finished, mnt_put_write_access() must be
+>>    * called. This is effectively a refcount.
+>>    */
+>> -int mnt_get_write_access(struct vfsmount *m)
+>> +int mnt_get_write_access(struct vfsmount *mnt)
+>>   {
+>> -	struct mount *mnt = real_mount(m);
+>> +	struct mount *m = real_mount(mnt);
+>>   	int ret = 0;
+>>   
+>>   	preempt_disable();
+>> -	mnt_inc_writers(mnt);
+>> +	mnt_inc_writers(m);
+>>   	/*
+>>   	 * The store to mnt_inc_writers must be visible before we pass
+>>   	 * MNT_WRITE_HOLD loop below, so that the slowpath can see our
+>> @@ -505,7 +505,7 @@ int mnt_get_write_access(struct vfsmount *m)
+>>   	 */
+>>   	smp_mb();
+>>   	might_lock(&mount_lock.lock);
+>> -	while (READ_ONCE(mnt->mnt.mnt_flags) & MNT_WRITE_HOLD) {
+>> +	while (READ_ONCE(m->mnt.mnt_flags) & MNT_WRITE_HOLD) {
+>>   		if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
+>>   			cpu_relax();
+>>   		} else {
+>> @@ -530,8 +530,8 @@ int mnt_get_write_access(struct vfsmount *m)
+>>   	 * read-only.
+>>   	 */
+>>   	smp_rmb();
+>> -	if (mnt_is_readonly(m)) {
+>> -		mnt_dec_writers(mnt);
+>> +	if (mnt_is_readonly(mnt)) {
+>> +		mnt_dec_writers(m);
+>>   		ret = -EROFS;
+>>   	}
+>>   	preempt_enable();
+>> -- 
+>> 2.39.2
+>>
+
 
