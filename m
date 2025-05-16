@@ -1,157 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-49256-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02A6AB9C9F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 14:52:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62719AB9CD8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 15:03:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B83C4E50D2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 12:52:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84B2E162E4C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 13:03:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C99A2417C2;
-	Fri, 16 May 2025 12:52:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 131E224169A;
+	Fri, 16 May 2025 13:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6EHBt3S"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="QhyCkFW3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E71F923E336;
-	Fri, 16 May 2025 12:52:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610761E521E;
+	Fri, 16 May 2025 13:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747399932; cv=none; b=FRquQmnL8TPWMnSBshUxNXtqb/0RSL5f7cbWqF1lbLu0Ib11LAkoXrrrr4aWNNCEpH5bkpSTgZMy2HR3c5yNZYJHI+4oZyEbKveVv6QZ4tKT+W55bF0vAUQxtYR1t4pQANZoMITR+OnC01f2tFiE5wHTsaTU4ykHWGwKPlJG8aE=
+	t=1747400625; cv=none; b=dAM7MhNnDWY9+232AsqWJc8qneggg7LYPMfVypdnRddCqFWv1/oH2IEX7i5ZgzfEJXuSJ8H6NWqwmXMzHA5Qn8UIr6gfj0f/LZffxoZj2NMonE/XHRTVwfJ8/ijqpBM8+OS3UBM9TzELR/Nlsu5SaVE5mgmurbq33RfmOhCgryo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747399932; c=relaxed/simple;
-	bh=5XNbJn2Os6XRURBhbHEbR26xbDn53Gzi/Niz2e844T0=;
-	h=Date:From:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p8VwVLhe+VW3rqvn8z5yRmSvvxoQ7EnwVP3OHtKh+GmhMmP/cgydIKoU3pWqS2Qc4rIs/f/QZLM7WglQvYTmatSF4viQuCema0w3EiiSYEdcfkt/yMucVS758FLWLmffadkj7kz9VXOHc5WNZ6VRTXYK4Xhuo+53NQymNlflLIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U6EHBt3S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79295C4CEE9;
-	Fri, 16 May 2025 12:52:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747399931;
-	bh=5XNbJn2Os6XRURBhbHEbR26xbDn53Gzi/Niz2e844T0=;
-	h=Date:From:Cc:Subject:References:In-Reply-To:From;
-	b=U6EHBt3SuYdyVL+ZXYeIFCoJPrBp6/N+rm73qneLENMr4zcTsWet/yDGnnlLVE5jv
-	 tjh4M38fBOMJICYf4+oAPi2ZK/Vr4byMoACkSEPbeE7WtvAGGI0H5R/4NbuR7dhadx
-	 Mo6Q7eERm/3pgjr1V0ycZcDsAm1dMt+Cd/zYnsJpr+OBz06v+3MCbbuRPQqeXDLRcN
-	 U4d09CXCtIyDHJtVkrtqrAS2mSQM4NWvI58RWoMVBa5LMM9sKFfnLByVtgOFHv7AmE
-	 P2htj2Ooxvm/OVC1mZix50GIlXDVwvXJHeC6phemVUTxq/zjUgizk+kpU1OiPSTiiY
-	 k0YSrNioaH61Q==
-Date: Fri, 16 May 2025 14:52:05 +0200
-From: Alejandro Colomar <alx@kernel.org>
-Cc: Alejandro Colomar <alx@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Rich Felker <dalias@libc.org>, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	libc-alpha@sourceware.org
-Subject: [RFC v1] man/man2/close.2: CAVEATS: Document divergence from
- POSIX.1-2024
-Message-ID: <efaffc5a404cf104f225c26dbc96e0001cede8f9.1747399542.git.alx@kernel.org>
-X-Mailer: git-send-email 2.49.0
-References: <a5tirrssh3t66q4vpwpgmxgxaumhqukw5nyxd4x6bevh7mtuvy@wtwdsb4oloh4>
+	s=arc-20240116; t=1747400625; c=relaxed/simple;
+	bh=smfuN5fe6M/tq9D8lt3z+Q09J9nsqYyj9JERtoh++yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B/0MDsm1KGVIumlykeSiK4zT4cPb02YHaeiUP9/yG0/EgFLXmxQoGfQHNWd3/W7S4B1QPJEu+ODPQhdNclBfBJz1fWHN+rAdj/KaEeQHPgx0WPir/F6u+40LdfqfCHzOMkP++VK+xO3njRgr+Js0UrRF4KkkdxrK1iVbAnimZoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=QhyCkFW3; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4ZzS2237KPz9svH;
+	Fri, 16 May 2025 15:03:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1747400618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=k5jIIhYbIkxt9gsUjYrJMapDzXrc41ocEumqPERe5Cs=;
+	b=QhyCkFW31XORoLY8RESpZbYqT50XjDBcU+SVfRlQPDM0GXbC1rqrz42fO+APu6Vt7KFGpk
+	52oevjikdjxD5HPX2wsR/CLt+/Rr+lLllu800VS9lTCYKKaTwJpQUdwnK6X9VAqKycemSe
+	1Bdd7XrEqt2UdBXwWiIVDM2kUpq/Zdt5SP9KN0nEY1wd9d/p0KKyKyiQZpOGj6/e7VwRQA
+	/AMn3ZclX85uUcBA8+2MKbpzutKJDhQObyF8pnZp4Ol6DSLpzxwtLShv9WmJ5OzUEL04jN
+	ehK9qq9MlhDifqNjW2mmaibRQXHSTBy2aGPcNZrtHXW7pwumV0T7bxHfljhm6Q==
+Date: Fri, 16 May 2025 15:03:30 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, 
+	"Darrick J . Wong" <djwong@kernel.org>, hch@lst.de, willy@infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, mcgrof@kernel.org, 
+	gost.dev@samsung.com, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC 1/3] mm: add large zero page for efficient zeroing of
+ larger segments
+Message-ID: <d2gqsc55wnzckszesku3xsa33nseueul4vnwfpjcb37flm5su4@xx6nahf5h3vu>
+References: <20250516101054.676046-1-p.raghav@samsung.com>
+ <20250516101054.676046-2-p.raghav@samsung.com>
+ <cb52312d-348b-49d5-b0d7-0613fb38a558@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <a5tirrssh3t66q4vpwpgmxgxaumhqukw5nyxd4x6bevh7mtuvy@wtwdsb4oloh4>
+In-Reply-To: <cb52312d-348b-49d5-b0d7-0613fb38a558@redhat.com>
+X-Rspamd-Queue-Id: 4ZzS2237KPz9svH
 
-POSIX.1-2024 now mandates a behavior different from what Linux (and many
-other implementations) does.  It requires that we report EINPROGRESS for
-what now is EINTR.
+On Fri, May 16, 2025 at 02:21:04PM +0200, David Hildenbrand wrote:
+> On 16.05.25 12:10, Pankaj Raghav wrote:
+> > Introduce LARGE_ZERO_PAGE of size 2M as an alternative to ZERO_PAGE of
+> > size PAGE_SIZE.
+> > 
+> > There are many places in the kernel where we need to zeroout larger
+> > chunks but the maximum segment we can zeroout at a time is limited by
+> > PAGE_SIZE.
+> > 
+> > This is especially annoying in block devices and filesystems where we
+> > attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
+> > bvec support in block layer, it is much more efficient to send out
+> > larger zero pages as a part of single bvec.
+> > 
+> > While there are other options such as huge_zero_page, they can fail
+> > based on the system memory pressure requiring a fallback to ZERO_PAGE[3].
+> 
+> Instead of adding another one, why not have a config option that will always
+> allocate the huge zeropage, and never free it?
+> 
+> I mean, the whole thing about dynamically allocating/freeing it was for
+> memory-constrained systems. For large systems, we just don't care.
 
-There are no plans to conform to POSIX.1-2024 within the Linux kernel,
-so document this divergence.  Keep POSIX.1-2008 as the standard to
-which we conform in STANDARDS.
+That sounds like a good idea. I was just worried about wasting too much
+memory with a huge page in systems with 64k page size. But it can always be
+disabled by putting it behind a config.
 
-Link: <https://sourceware.org/bugzilla/show_bug.cgi?id=14627>
-Link: <https://pubs.opengroup.org/onlinepubs/9799919799/functions/close.html>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Rich Felker <dalias@libc.org>
-Cc: <linux-fsdevel@vger.kernel.org>
-Cc: <linux-api@vger.kernel.org>
-Cc: <libc-alpha@sourceware.org>
-Signed-off-by: Alejandro Colomar <alx@kernel.org>
----
+Thanks, David. I will wait to see what others think but what you
+suggested sounds like a good idea on how to proceed.
 
-Hi,
-
-I've prepared this draft for discussion.  While doing so, I've noticed
-the glibc bug ticket, which sounds possibly reasonable: returning 0
-instead of reporting an error on EINTR.  That would be an option that
-would make us conforming to POSIX.1-2024.  And given that a user can
-(and must) do nothing after seeing EINTR, returning 0 wouldn't change
-things.
-
-So, I'll leave this patch open for discussion.
-
-
-Have a lovely day!
-Alex
-
- man/man2/close.2 | 21 ++++++---------------
- 1 file changed, 6 insertions(+), 15 deletions(-)
-
-diff --git a/man/man2/close.2 b/man/man2/close.2
-index b25ea4de9..9d5e26eed 100644
---- a/man/man2/close.2
-+++ b/man/man2/close.2
-@@ -191,10 +191,7 @@ .SS Dealing with error returns from close()
- meaning that the file descriptor was invalid)
- even if they subsequently report an error on return from
- .BR close ().
--POSIX.1 is currently silent on this point,
--but there are plans to mandate this behavior in the next major release
--.\" Issue 8
--of the standard.
-+POSIX.1-2008 was silent on this point.
- .P
- A careful programmer who wants to know about I/O errors may precede
- .BR close ()
-@@ -206,7 +203,7 @@ .SS Dealing with error returns from close()
- error is a somewhat special case.
- Regarding the
- .B EINTR
--error, POSIX.1-2008 says:
-+error, POSIX.1-2008 said:
- .P
- .RS
- If
-@@ -243,16 +240,10 @@ .SS Dealing with error returns from close()
- error, and on at least one,
- .BR close ()
- must be called again.
--There are plans to address this conundrum for
--the next major release of the POSIX.1 standard.
--.\" FIXME . for later review when Issue 8 is one day released...
--.\" POSIX proposes further changes for EINTR
--.\" http://austingroupbugs.net/tag_view_page.php?tag_id=8
--.\" http://austingroupbugs.net/view.php?id=529
--.\"
--.\" FIXME .
--.\" Review the following glibc bug later
--.\" https://sourceware.org/bugzilla/show_bug.cgi?id=14627
-+.P
-+POSIX.1-2024 standardized the behavior of HP-UX,
-+making Linux and many other implementations non-conforming.
-+There are no plans to change the behavior on Linux.
- .SH SEE ALSO
- .BR close_range (2),
- .BR fcntl (2),
-
-Range-diff against v0:
--:  --------- > 1:  efaffc5a4 man/man2/close.2: CAVEATS: Document divergence from POSIX.1-2024
-
-base-commit: 978b017d93e4e32b752b33877e44a8365644630c
 -- 
-2.49.0
-
+Pankaj Raghav
 
