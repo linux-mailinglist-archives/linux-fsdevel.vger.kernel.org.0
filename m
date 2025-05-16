@@ -1,174 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-49223-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4CDAB9950
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 11:48:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0DA8AB9983
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 11:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B43FF3A2237
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 09:48:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B353167519
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 09:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE4C230BE9;
-	Fri, 16 May 2025 09:48:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE36B2367AF;
+	Fri, 16 May 2025 09:54:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jfHPkFos";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EIEh9PWT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="jfHPkFos";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="EIEh9PWT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyBoMusI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F89021B9E7
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 09:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BE9231836;
+	Fri, 16 May 2025 09:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747388922; cv=none; b=uGvEWATFmmTDmAH1nmiEFW1KbzU0Hqz36xYacrvtfBG4wpStYAyTpBcfioK5n90EXTiIaGpPMOuOLXiw2XqwZ3W4brQOXt2LB01qM5CA2S2h/9TuzVrVC88HfOOJMNy6AmgTW+mjCQkfgW7WpU+WP9wcdePi0rz/DwVwwdIHabI=
+	t=1747389280; cv=none; b=muGvkjV4T9Tz4IPWXGsuNdQrFo+uvDX1oCEcSLA3GOMZxdeuiWQU2YC0bw6Zsn/fKIkP2UvQIF2fZEHPh1PCkMKpn6GD0ObAQQcCW7+/vmHsQ7ZSAeBIdFZMkL64D+YP2gkf0aoMHKcTUdugkFO0otdXYRdTTBlNHTO+E+mE9rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747388922; c=relaxed/simple;
-	bh=nogtO8ftGcaHoVtJVaRpB3bEfBdfkhsxvYWkFVA/SDI=;
+	s=arc-20240116; t=1747389280; c=relaxed/simple;
+	bh=cNGzEGia25lZqXsVStZ30M0Gmy1ujfz1B+xpH/pyz5U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m2o81wERciuNuvfVXEUMxRaJ9MljgFJGUCvL/OJtXQG+zBmTFFtRqPBV4TLZoKOpM0+xIUesiDR7pD7JjnOem99DPMl4A3k+sdlCLcLvZAZGMoDa4uVLvb9GRMS372uN099vHm4490J8EUw7y2/cYD/XTiNALQtrFWio64ORwro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jfHPkFos; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EIEh9PWT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=jfHPkFos; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=EIEh9PWT; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 59DF31F7EE;
-	Fri, 16 May 2025 09:48:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747388919; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fHw5iVD+t2SLXfhdn4ldQrSf6ixQ4NJaqF98oyKz1K8=;
-	b=jfHPkFosPekWRPYxIZK7DMoPmkKErln2qFM+F3MzV1+6ILhpKDl03TrY2BuM/WDGR/VH40
-	1Ig4LDQaQwbHe8PM1FYGrbC1kw9NxfmbJjf/hqyycGntydDpWagBjSkJFK0BCLMb5TqJiP
-	NQyj9l9uThier3b/adQgPqEuqmxJ7CU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747388919;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fHw5iVD+t2SLXfhdn4ldQrSf6ixQ4NJaqF98oyKz1K8=;
-	b=EIEh9PWTxyN6RutoZDatN65xvgmMRe3UcjzJDkFRECE8XOhhjyM/7lTtGZYsA+pbCQCmov
-	bk3TH66tJLScs5Ag==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747388919; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fHw5iVD+t2SLXfhdn4ldQrSf6ixQ4NJaqF98oyKz1K8=;
-	b=jfHPkFosPekWRPYxIZK7DMoPmkKErln2qFM+F3MzV1+6ILhpKDl03TrY2BuM/WDGR/VH40
-	1Ig4LDQaQwbHe8PM1FYGrbC1kw9NxfmbJjf/hqyycGntydDpWagBjSkJFK0BCLMb5TqJiP
-	NQyj9l9uThier3b/adQgPqEuqmxJ7CU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747388919;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fHw5iVD+t2SLXfhdn4ldQrSf6ixQ4NJaqF98oyKz1K8=;
-	b=EIEh9PWTxyN6RutoZDatN65xvgmMRe3UcjzJDkFRECE8XOhhjyM/7lTtGZYsA+pbCQCmov
-	bk3TH66tJLScs5Ag==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4ABAC13977;
-	Fri, 16 May 2025 09:48:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id O0A5EvcJJ2gfdAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 16 May 2025 09:48:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id D4522A09DD; Fri, 16 May 2025 11:48:38 +0200 (CEST)
-Date: Fri, 16 May 2025 11:48:38 +0200
-From: Jan Kara <jack@suse.cz>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	Christian Brauner <brauner@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: Machine lockup with large d_invalidate()
-Message-ID: <tqjywesrp66t4bc4k5xap3bqnomqtm62nwwoff25uxi7nk46dp@7y6rdgwckwag>
-References: <vmjjaofrxvwfkse7gybj5r4mj2mbg345ganq3ydbzllees7oi2@uomtwdvj6xcd>
- <CAJfpegs-umW78v6WzX-4_2DkMLzdoFX=BY5Jp7P+QR+m62TEiw@mail.gmail.com>
- <CAJfpegsWWFqQriC5k859=AYK3C0ingNZ2_KpoMFKMpXkucKEYQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DyPFDknRmyNbcDxBIHgNjRqu/00Yl6g4M4bpPvzET42JBtK/PToz+wBWnvcgugFrEqhwzY8CvZZHU1o6VFWub+DjKEwO2Y0dylOTPEM6LecOEsQUXLUr6JHQPqcgQoxw2IrnCk9JcbsC+Ec7jcCTI2cP/72FN18oUaEeH6S9W2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyBoMusI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F119C4CEEF;
+	Fri, 16 May 2025 09:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747389280;
+	bh=cNGzEGia25lZqXsVStZ30M0Gmy1ujfz1B+xpH/pyz5U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uyBoMusII2b45lXUcrViChhqP2cU17fdLv6zVDaxw8Kajvy9Xy27efVSKrlc7/mCZ
+	 rQaK+BzjNKV0+/XLrIACWcbBCkcehhGXdeuP3numrDxQ6bvbUG/NYX4jJGoK02VYL1
+	 WwLFlY5IX22Jf+cGS7H+XMZLPwJIpKIKPf2FyjvmPpD+98eZ0Hop9w691xyyIGAIrL
+	 jFEBwrap/t9Zwf7UkWrwJImzEvaX0/yNGFatq5AQPED4C5uBGIdSnvMmlFceoZ7qfX
+	 nbZ7FR70pp159O4JwpFKLBZXp6/t05ro6vNYmjTeOS7fYtVWEq8AvlwYlWcRwIM2Ww
+	 JvZZtln9UGzgw==
+Date: Fri, 16 May 2025 11:54:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, 
+	Oleg Nesterov <oleg@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
+	David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>
+Subject: Re: [PATCH v7 7/9] coredump: validate socket name as it is written
+Message-ID: <20250516-planen-radar-2131a4b7d9b1@brauner>
+References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
+ <20250515-work-coredump-socket-v7-7-0a1329496c31@kernel.org>
+ <CAG48ez1wqbOmQMqg6rH4LNjNifHU_WciceO_SQwu8T=tA_KxLw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegsWWFqQriC5k859=AYK3C0ingNZ2_KpoMFKMpXkucKEYQ@mail.gmail.com>
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email]
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez1wqbOmQMqg6rH4LNjNifHU_WciceO_SQwu8T=tA_KxLw@mail.gmail.com>
 
-On Thu 15-05-25 17:22:57, Miklos Szeredi wrote:
-> On Thu, 15 May 2025 at 17:15, Miklos Szeredi <miklos@szeredi.hu> wrote:
+On Thu, May 15, 2025 at 10:56:51PM +0200, Jann Horn wrote:
+> On Thu, May 15, 2025 at 12:04 AM Christian Brauner <brauner@kernel.org> wrote:
+> > In contrast to other parameters written into
+> > /proc/sys/kernel/core_pattern that never fail we can validate enabling
+> > the new AF_UNIX support. This is obviously racy as hell but it's always
+> > been that way.
 > >
-> > On Thu, 15 May 2025 at 16:57, Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > Hello,
-> > >
-> > > we have a customer who is mounting over NFS a directory (let's call it
-> > > hugedir) with many files (there are several millions dentries on d_children
-> > > list). Now when they do 'mv hugedir hugedir.bak; mkdir hugedir' on the
-> > > server, which invalidates NFS cache of this directory, NFS clients get
-> > > stuck in d_invalidate() for hours (until the customer lost patience).
-> > >
-> > > Now I don't want to discuss here sanity or efficiency of this application
-> > > architecture but I'm sharing the opinion that it shouldn't take hours to
-> > > invalidate couple million dentries. Analysis of the crashdump revealed that
-> > > d_invalidate() can have O(n^2) complexity with the number of dentries it is
-> > > invalidating which leads to impractical times to invalidate large numbers
-> > > of dentries. What happens is the following:
-> > >
-> > > There are several processes accessing the hugedir directory - about 16 in
-> > > the case I was inspecting. When the directory changes on the server all
-> > > these 16 processes quickly enter d_invalidate() -> shrink_dcache_parent()
-> >
-> > First thing d_invalidate() does is check if the dentry is unhashed and
-> > return if so, unhash it otherwise.   So only d_invalidate() that won
-> > the race for d_lock is going to invoke shink_dcache_parent() the
-> > others will return immediately.
-> >
-> > What am I missing?
+> > Signed-off-by: Christian Brauner <brauner@kernel.org>
 > 
-> It's it's an old kernel (<4.18) it might be missing commit
-> ff17fa561a04 ("d_invalidate(): unhash immediately")
+> Reviewed-by: Jann Horn <jannh@google.com>
+> 
+> > ---
+> >  fs/coredump.c | 37 ++++++++++++++++++++++++++++++++++---
+> >  1 file changed, 34 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/fs/coredump.c b/fs/coredump.c
+> > index 6ee38e3da108..d4ff08ef03e5 100644
+> > --- a/fs/coredump.c
+> > +++ b/fs/coredump.c
+> > @@ -1228,13 +1228,44 @@ void validate_coredump_safety(void)
+> >         }
+> >  }
+> >
+> > +static inline bool check_coredump_socket(void)
+> > +{
+> > +       if (core_pattern[0] != '@')
+> > +               return true;
+> > +
+> > +       /*
+> > +        * Coredump socket must be located in the initial mount
+> > +        * namespace. Don't give the that impression anything else is
+> > +        * supported right now.
+> > +        */
+> > +       if (current->nsproxy->mnt_ns != init_task.nsproxy->mnt_ns)
+> > +               return false;
+> 
+> (Ah, dereferencing init_task.nsproxy without locks is safe because
+> init_task is actually the boot cpu's swapper/idle task, which never
+> switches namespaces, right?)
 
-Right and thanks for the pointer! I've indeed missed this subtle difference
-between current upstream and the old (4.12-based) distro kernel which does
-not have ff17fa561a04. Thanks again!
+I would be very worried if it did. It would fsck everyone over that
+relies on copying its credentials and assumes that the set of namespaces
+is stable.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 
+> > +       /* Must be an absolute path. */
+> > +       if (*(core_pattern + 1) != '/')
+> > +               return false;
+> > +
+> > +       return true;
+> > +}
+> > +
+> >  static int proc_dostring_coredump(const struct ctl_table *table, int write,
+> >                   void *buffer, size_t *lenp, loff_t *ppos)
+> >  {
+> > -       int error = proc_dostring(table, write, buffer, lenp, ppos);
+> > +       int error;
+> > +       ssize_t retval;
+> > +       char old_core_pattern[CORENAME_MAX_SIZE];
+> > +
+> > +       retval = strscpy(old_core_pattern, core_pattern, CORENAME_MAX_SIZE);
+> > +
+> > +       error = proc_dostring(table, write, buffer, lenp, ppos);
+> > +       if (error)
+> > +               return error;
+> > +       if (!check_coredump_socket()) {
+> 
+> (non-actionable note: This is kiiinda dodgy under
+> SYSCTL_WRITES_LEGACY, but I guess we can assume that new users of the
+> new coredump socket feature aren't actually going to write the
+> coredump path one byte at a time, so I guess it's fine.)
+
+So this is all kinds of broken already imho. Because there's not really
+mutual exclusion between multiple writers to such sysctls from what I
+remember. Which means that this buffer can be trampled in all kinds of
+ways if multiple tasks decide to update it at the same time. That's
+super unlikely of course but whatever.
+
+> 
+> > +               strscpy(core_pattern, old_core_pattern, retval + 1);
+> 
+> The third strscpy() argument is semantically supposed to be the
+> destination buffer size, not the amount of data to copy. For trivial
+> invocations like here, strscpy() actually allows you to leave out the
+> third argument.
+
+Eeeeewww, that's really implicit behavior. I can use the destination
+buffer size but given that retval will always be smaller than that I
+didn't bother but ok. I'll fix that in-tree.
 
