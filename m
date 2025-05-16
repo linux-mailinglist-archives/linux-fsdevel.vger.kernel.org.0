@@ -1,161 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-49224-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49225-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0DA8AB9983
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 11:56:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39655AB99B2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 12:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B353167519
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 09:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBFF53B5D4E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 10:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE36B2367AF;
-	Fri, 16 May 2025 09:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967F7235040;
+	Fri, 16 May 2025 10:06:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyBoMusI"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="Q2yObfd3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20BE9231836;
-	Fri, 16 May 2025 09:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6A223371E
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 10:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747389280; cv=none; b=muGvkjV4T9Tz4IPWXGsuNdQrFo+uvDX1oCEcSLA3GOMZxdeuiWQU2YC0bw6Zsn/fKIkP2UvQIF2fZEHPh1PCkMKpn6GD0ObAQQcCW7+/vmHsQ7ZSAeBIdFZMkL64D+YP2gkf0aoMHKcTUdugkFO0otdXYRdTTBlNHTO+E+mE9rA=
+	t=1747390019; cv=none; b=J6fphgD4rao9UHwb0amLaMkOiLileOcYVLAwtpCXcQWz0CdS7kNkuzIyTNDkYvgFabOFSiI0QtY5lDf8XeyLoMXcrpwNohYl+/YMVdsnTfGapdB1xSrQ+HSN0AWFohDRNgNpQiyWPjmXcy79vKmdeaMRuAHrhTbIzef+8lKHz2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747389280; c=relaxed/simple;
-	bh=cNGzEGia25lZqXsVStZ30M0Gmy1ujfz1B+xpH/pyz5U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DyPFDknRmyNbcDxBIHgNjRqu/00Yl6g4M4bpPvzET42JBtK/PToz+wBWnvcgugFrEqhwzY8CvZZHU1o6VFWub+DjKEwO2Y0dylOTPEM6LecOEsQUXLUr6JHQPqcgQoxw2IrnCk9JcbsC+Ec7jcCTI2cP/72FN18oUaEeH6S9W2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyBoMusI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F119C4CEEF;
-	Fri, 16 May 2025 09:54:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747389280;
-	bh=cNGzEGia25lZqXsVStZ30M0Gmy1ujfz1B+xpH/pyz5U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uyBoMusII2b45lXUcrViChhqP2cU17fdLv6zVDaxw8Kajvy9Xy27efVSKrlc7/mCZ
-	 rQaK+BzjNKV0+/XLrIACWcbBCkcehhGXdeuP3numrDxQ6bvbUG/NYX4jJGoK02VYL1
-	 WwLFlY5IX22Jf+cGS7H+XMZLPwJIpKIKPf2FyjvmPpD+98eZ0Hop9w691xyyIGAIrL
-	 jFEBwrap/t9Zwf7UkWrwJImzEvaX0/yNGFatq5AQPED4C5uBGIdSnvMmlFceoZ7qfX
-	 nbZ7FR70pp159O4JwpFKLBZXp6/t05ro6vNYmjTeOS7fYtVWEq8AvlwYlWcRwIM2Ww
-	 JvZZtln9UGzgw==
-Date: Fri, 16 May 2025 11:54:31 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jann Horn <jannh@google.com>
-Cc: linux-fsdevel@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>, 
-	Kuniyuki Iwashima <kuniyu@amazon.com>, Eric Dumazet <edumazet@google.com>, 
-	Oleg Nesterov <oleg@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Lennart Poettering <lennart@poettering.net>, Luca Boccassi <bluca@debian.org>, Mike Yuan <me@yhndnzj.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	Zbigniew =?utf-8?Q?J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Subject: Re: [PATCH v7 7/9] coredump: validate socket name as it is written
-Message-ID: <20250516-planen-radar-2131a4b7d9b1@brauner>
-References: <20250515-work-coredump-socket-v7-0-0a1329496c31@kernel.org>
- <20250515-work-coredump-socket-v7-7-0a1329496c31@kernel.org>
- <CAG48ez1wqbOmQMqg6rH4LNjNifHU_WciceO_SQwu8T=tA_KxLw@mail.gmail.com>
+	s=arc-20240116; t=1747390019; c=relaxed/simple;
+	bh=PZ1hzhVLhPa3dLDbMLplQU4Z4StkFXuYbw7/HI9oWu0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jkoxq+HasRX32V/G1m8kPL5xo5sigfhaFeX3qWLHyHQ4lOWAs8C9jpzK2Jtm+ohDfi9N910mNdz0fJ1c30ycXklGvkD8JKisHwtiAdryPKw9UnTJjFMDLS/tQmAo0t2w0L8obruckI3hzeoQ5OxKX4nP3pAvNhMtQOGBvkXS81s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=Q2yObfd3; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-476b4c9faa2so27974521cf.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 03:06:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1747390016; x=1747994816; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=sYr4H36z0vOGSYanC1w0/PBFKEWt1tWAZvghYgV0VXg=;
+        b=Q2yObfd32ppE92QCNh3FmQzpGJVQIMNxEUm6x5bXLgiqgoo46K5nyHKNOjGcAqbemp
+         XCzovOtqA5NEaBLxS0I6sqJRDmdqHGQJ34ko+evlxLbg9MjtbqSGRDdCtThEDw2qLt3/
+         bnigLsB8NS4D6wnRo4FM3E1HTAe1FzaZ5BZC8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747390016; x=1747994816;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sYr4H36z0vOGSYanC1w0/PBFKEWt1tWAZvghYgV0VXg=;
+        b=IL4lAbG6dlugTDHMkB9PKEUN7o08u6cgaLATTirJW7KhAlRkq2LBhtkSAuoxDnHYXO
+         spaggLXbtQ4wkeuTdzFIdTFJ4AwHNpe5PxCN0kq8YQkBIWnO4F1558FuMU21IctIlAbb
+         Ros+TT/IIMJ9koEx8HLNwuZ3Smef0h18X9cDvfXA81ceIB0vEw//epNWVeXQFKfYhZlO
+         OOzw22bcOwQGMxJuDqryKgkj143L8gGi/eJKJYfyxAMSmA1Zqvu0ix5I1ltyEVOaxD/C
+         NohadONb3+XgFddxYeyjARx6u6VSeXZC/oKRjzYXg/IqaVuWB0LLmAweOZvu+3ydNXy4
+         SVQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlyO+uPL9Vouq0WuPZjecKTicYS+eQJPxDXeMrUhsHhXSsHQI+58lsohwiYYqO18166hdpfT2iV1hs2166@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDa1f8m49s8bWXKrEE5CDaqVzzkQ9ryk8YisGgbvrfOsc6hCt9
+	74qFJtiFcdmaUtnnp4hJMZ1X4CG3urjaLNTjU207E/uU35abssZXnaWBr6JztK181RU1MZvZN2Y
+	OMvSYgrZaufovm+WpL4xRDrc8xeUvuvnhavzVNrX5LQ==
+X-Gm-Gg: ASbGncs2Dp0QpewFkAFdz6KxquJ7z3ux98CB5JJW/V5vg4VrWnuEczQlmlf4ynnDKn7
+	VCO5p350THDZslpJ9GLq3mbM+6Z82+f1MNBWDfHxBA+C6lh3uDfTCY9zIR/KcISaYRiDdjsyfTx
+	a+i9Wf7+sP+5yA+V5SizurJShs9+9Sycw=
+X-Google-Smtp-Source: AGHT+IFq1iLsujGv3MRAp/42wUNDp8Fjtx0tUWAIAmM1RivLIsnYNC1bAGTr6piq4vefDLhpVhUdj5QcvATegQP1E2k=
+X-Received: by 2002:a05:622a:1f9b:b0:477:13b7:8336 with SMTP id
+ d75a77b69052e-494ae391ca0mr49345951cf.17.1747390016120; Fri, 16 May 2025
+ 03:06:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG48ez1wqbOmQMqg6rH4LNjNifHU_WciceO_SQwu8T=tA_KxLw@mail.gmail.com>
+References: <20250421013346.32530-1-john@groves.net> <20250421013346.32530-14-john@groves.net>
+ <nedxmpb7fnovsgbp2nu6y3cpvduop775jw6leywmmervdrenbn@kp6xy2sm4gxr>
+ <20250424143848.GN25700@frogsfrogsfrogs> <5rwwzsya6f7dkf4de2uje2b3f6fxewrcl4nv5ba6jh6chk36f3@ushxiwxojisf>
+ <20250428190010.GB1035866@frogsfrogsfrogs> <CAJfpegtR28rH1VA-442kS_ZCjbHf-WDD+w_FgrAkWDBxvzmN_g@mail.gmail.com>
+ <20250508155644.GM1035866@frogsfrogsfrogs> <CAJfpegt4drCVNomOLqcU8JHM+qLrO1JwaQbp69xnGdjLn5O6wA@mail.gmail.com>
+ <20250515020624.GP1035866@frogsfrogsfrogs>
+In-Reply-To: <20250515020624.GP1035866@frogsfrogsfrogs>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 16 May 2025 12:06:44 +0200
+X-Gm-Features: AX0GCFvDzLpmkF12kGaynggeZWP00Cr6BBFBchrM1Bqzro0NRWRGfjqCVUyzE8E
+Message-ID: <CAJfpegsKf8Zog3Q6Vd1kBmD6anLSdyYyxy4BjD-dvcyWOyr4QQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 13/19] famfs_fuse: Create files with famfs fmaps
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: John Groves <John@groves.net>, Dan Williams <dan.j.williams@intel.com>, 
+	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
+	Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Luis Henriques <luis@igalia.com>, Randy Dunlap <rdunlap@infradead.org>, 
+	Jeff Layton <jlayton@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Amir Goldstein <amir73il@gmail.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Stefan Hajnoczi <shajnocz@redhat.com>, Joanne Koong <joannelkoong@gmail.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, May 15, 2025 at 10:56:51PM +0200, Jann Horn wrote:
-> On Thu, May 15, 2025 at 12:04 AM Christian Brauner <brauner@kernel.org> wrote:
-> > In contrast to other parameters written into
-> > /proc/sys/kernel/core_pattern that never fail we can validate enabling
-> > the new AF_UNIX support. This is obviously racy as hell but it's always
-> > been that way.
-> >
-> > Signed-off-by: Christian Brauner <brauner@kernel.org>
-> 
-> Reviewed-by: Jann Horn <jannh@google.com>
-> 
-> > ---
-> >  fs/coredump.c | 37 ++++++++++++++++++++++++++++++++++---
-> >  1 file changed, 34 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/fs/coredump.c b/fs/coredump.c
-> > index 6ee38e3da108..d4ff08ef03e5 100644
-> > --- a/fs/coredump.c
-> > +++ b/fs/coredump.c
-> > @@ -1228,13 +1228,44 @@ void validate_coredump_safety(void)
-> >         }
-> >  }
-> >
-> > +static inline bool check_coredump_socket(void)
-> > +{
-> > +       if (core_pattern[0] != '@')
-> > +               return true;
-> > +
-> > +       /*
-> > +        * Coredump socket must be located in the initial mount
-> > +        * namespace. Don't give the that impression anything else is
-> > +        * supported right now.
-> > +        */
-> > +       if (current->nsproxy->mnt_ns != init_task.nsproxy->mnt_ns)
-> > +               return false;
-> 
-> (Ah, dereferencing init_task.nsproxy without locks is safe because
-> init_task is actually the boot cpu's swapper/idle task, which never
-> switches namespaces, right?)
+On Thu, 15 May 2025 at 04:06, Darrick J. Wong <djwong@kernel.org> wrote:
 
-I would be very worried if it did. It would fsck everyone over that
-relies on copying its credentials and assumes that the set of namespaces
-is stable.
+> Yeah, it's confusing.  The design doc tries to clarify this, but this is
+> roughly what we need for fuse:
+>
+> FUSE_IOMAP_OP_WRITE being set means we're writing to the file.
+> FUSE_IOMAP_OP_ZERO being set means we're zeroing the file.
+> Neither of those being set means we're reading the file.
+>
+> (3 different operations)
 
-> 
-> > +       /* Must be an absolute path. */
-> > +       if (*(core_pattern + 1) != '/')
-> > +               return false;
-> > +
-> > +       return true;
-> > +}
-> > +
-> >  static int proc_dostring_coredump(const struct ctl_table *table, int write,
-> >                   void *buffer, size_t *lenp, loff_t *ppos)
-> >  {
-> > -       int error = proc_dostring(table, write, buffer, lenp, ppos);
-> > +       int error;
-> > +       ssize_t retval;
-> > +       char old_core_pattern[CORENAME_MAX_SIZE];
-> > +
-> > +       retval = strscpy(old_core_pattern, core_pattern, CORENAME_MAX_SIZE);
-> > +
-> > +       error = proc_dostring(table, write, buffer, lenp, ppos);
-> > +       if (error)
-> > +               return error;
-> > +       if (!check_coredump_socket()) {
-> 
-> (non-actionable note: This is kiiinda dodgy under
-> SYSCTL_WRITES_LEGACY, but I guess we can assume that new users of the
-> new coredump socket feature aren't actually going to write the
-> coredump path one byte at a time, so I guess it's fine.)
+Okay, I get why these need to be distinct cases.
 
-So this is all kinds of broken already imho. Because there's not really
-mutual exclusion between multiple writers to such sysctls from what I
-remember. Which means that this buffer can be trampled in all kinds of
-ways if multiple tasks decide to update it at the same time. That's
-super unlikely of course but whatever.
+Am I right that the only read is sanely cacheable?
 
-> 
-> > +               strscpy(core_pattern, old_core_pattern, retval + 1);
-> 
-> The third strscpy() argument is semantically supposed to be the
-> destination buffer size, not the amount of data to copy. For trivial
-> invocations like here, strscpy() actually allows you to leave out the
-> third argument.
+> FUSE_IOMAP_OP_DIRECT being set means directio, and it not being set
+> means pagecache.
+>
+> (and one flag, for 6 different types of IO)
 
-Eeeeewww, that's really implicit behavior. I can use the destination
-buffer size but given that retval will always be smaller than that I
-didn't bother but ok. I'll fix that in-tree.
+Why does this make a difference?
+
+Okay, maybe I can imagine difference allocation strategies.  Which
+means that it only matters for the write case?
+
+> FUSE_IOMAP_OP_REPORT is set all by itself for things like FIEMAP and
+> SEEK_DATA/HOLE.
+
+Which should again always be the same as the read case, no?
+
+Thanks,
+Miklos
 
