@@ -1,168 +1,241 @@
-Return-Path: <linux-fsdevel+bounces-49291-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49292-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C64ABA29C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 20:15:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970C0ABA336
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 20:53:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D213A3A57CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 18:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 276E9170282
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 18:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A37319B3EC;
-	Fri, 16 May 2025 18:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E3A27E7E3;
+	Fri, 16 May 2025 18:53:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b="RmLXgRKc";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dkwgYEId"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RAmclpib"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fhigh-b4-smtp.messagingengine.com (fhigh-b4-smtp.messagingengine.com [202.12.124.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F241E9B2F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 18:15:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409AF2E628
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 18:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747419348; cv=none; b=pxLTZK2Fj9z5XJBC6JnHeUbxeTgcx8wsIk8uylhOxIZpfGu79WBF2uFKbF1kBhUsOQfVmRZ9uM5lviESwcIHTMQgTGaPmrbTURy6iE41TOa/1Ci5AXSchPoqRExC0hcxDtsIynA6mLQbf7YqdECArAWQbiP7tQCYiggRnczCQQQ=
+	t=1747421594; cv=none; b=oh04LNu58pnJaakQ3RCS4H4llDOQ7XbHRMLLI9cZ80LeavAcw2KibKzcDNlr74GkIzdf1kx93nUwX8/Za5WCUDirndAuICfyJfEtWLzYw6Biy72wWAcBGCk3A6SN6MHBrsD1q+QMF09jY0EQgI31ZT6uoYHkHvavFuM3GYlxPts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747419348; c=relaxed/simple;
-	bh=ASLQXAgzgYdlW748DG6tC0co84uYm+POSwiVUutuk9U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ioFWpMgZK4vpAfGk7XreLCIq29XN+u6FzW9Fuy7tv+X6s6zzG20i6QgjcbiIzHNj1HWSI0xSktdBPfsxEPmnmAPtfRL4uUcaOPw2KRVnvvwu36eJxSWjmKcb40+8Q3lBqIjxnXwTHbpkQ0mIv0DvYtjrvjZBzOsR/cb3+WjTxiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm; spf=pass smtp.mailfrom=fastmail.fm; dkim=pass (2048-bit key) header.d=fastmail.fm header.i=@fastmail.fm header.b=RmLXgRKc; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dkwgYEId; arc=none smtp.client-ip=202.12.124.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fastmail.fm
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastmail.fm
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id D6746254018D;
-	Fri, 16 May 2025 14:15:44 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-02.internal (MEProxy); Fri, 16 May 2025 14:15:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1747419344;
-	 x=1747505744; bh=P+fXIyCAwDAwwvcwbqLVppGLeZ+k8MLlpLMFwwlGik0=; b=
-	RmLXgRKckk/ca66pxp2Zi17zrAzKvmdzIz4EoCodctjEdFow4hgADpykT1T2o0Bm
-	A5ToNRmDMuiXwi7PoKChQLf8SEkSY1+XBrXKtkpkiRSYbwqqYcS7IHpAHBH+lpkN
-	EtUXPQ5dvTfViOzqtFmxEgw2UEnNPdiTOgRoGTUsx7ooqM/cyOP2+8NP7d6Xkmot
-	ef+FFAunfo76Pztp8tNLvvUCMZoKnj2xisDOK8mF0V46uL/q2nNEzp+GCpsHKdKJ
-	kQdC0erPQiOAmnhMK2jGb38FimTyc8CdTwx4pU5ez5sBKpF+sT83C9zdfAAUurKx
-	HgWNByjUaC42yF3s8TsVjA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747419344; x=
-	1747505744; bh=P+fXIyCAwDAwwvcwbqLVppGLeZ+k8MLlpLMFwwlGik0=; b=d
-	kwgYEIdxIdLA3sKhXKSjwzhW8c+RRtvbAehQ+M6EW1364N9qIDrhLpc45EAglsQo
-	iarZG/Ea8WqaXh+6p9xlRaDCLNKuG5J33qnhRl9Puf6D8Ii2R73MXqtHD3eVukkt
-	GDE4BlHM/lg2ZQcNoh84dKVHSFIHTJ110cwwdGUP7pDgO1ne9tX0EOW9QX65mwOC
-	X59sZK2mIwtXWidc1SUZkxaHX75zYMDhZRIR7GKF7silX+g1IkA7iYItFbaleCJp
-	2ZjgZH06MrVMmyhAnohwHjPOB6GRKOAcNPmm0tolCCFsqFOXCgLoBoypGe5CbUAD
-	uHn7EIDD87bA86NM0creA==
-X-ME-Sender: <xms:0IAnaHHaZcw-8z7yeodiKG872mFlLiS9IIsz4l6U_lSfX0I9BdkfOQ>
-    <xme:0IAnaEWkwS-3hSqxNXPVcuqlMWlMG2IJzZu5vDgq8uPa_lwmI_KZ60Dz5hvcDI8rv
-    fwypf346H0NX77E>
-X-ME-Received: <xmr:0IAnaJJHBYyJbABEjvn5a4YQ_rrwwQOCdLCgta8xgooBzld6p4G9xL-UNPHTOtJf8g>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdefudefgeegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddt
-    vdejnecuhfhrohhmpeeuvghrnhguucfutghhuhgsvghrthcuoegsvghrnhgurdhstghhuh
-    gsvghrthesfhgrshhtmhgrihhlrdhfmheqnecuggftrfgrthhtvghrnhepffejveeffeej
-    gffhfefhieeuffffteeltdfghffhtddtfeeuveelvdelteefvedtnecuffhomhgrihhnpe
-    hkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgr
-    ihhlfhhrohhmpegsvghrnhgurdhstghhuhgsvghrthesfhgrshhtmhgrihhlrdhfmhdpnh
-    gspghrtghpthhtohepiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhhikhhl
-    ohhssehsiigvrhgvughirdhhuhdprhgtphhtthhopehjohgrnhhnvghlkhhoohhnghesgh
-    hmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdr
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhlrgihthhonheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepkhgvrhhnvghlqdhtvggrmhesmhgvthgrrdgtohhmpdhrtghpthht
-    ohepkhgsuhhstghhsehmvghtrgdrtghomh
-X-ME-Proxy: <xmx:0IAnaFERCDg-biL564Dwn7lR9qgmJ6pHNyUpm7RTLRaGq2YW0SQzUg>
-    <xmx:0IAnaNXp7YuhMjtFijrHWE-YIZecc1WwVGPacqrxHpZQffQ8bNdSIw>
-    <xmx:0IAnaAOKpBtS3crTmSoQi63Iva9TetjBo7Wv6zOLREGqRiG3mfDHtg>
-    <xmx:0IAnaM0Gb-BRim_FGWRX26-hJdCy1A6IVAKcsGhAl0Of5C4s29lQDg>
-    <xmx:0IAnaLixKiPrX3yadGcC0_7acaXygy4SfEu_b77e-MIujUT9H7xWx9PO>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 16 May 2025 14:15:43 -0400 (EDT)
-Message-ID: <da219671-099c-49e9-afbe-9a6d803cf46f@fastmail.fm>
-Date: Fri, 16 May 2025 20:15:41 +0200
+	s=arc-20240116; t=1747421594; c=relaxed/simple;
+	bh=2puCuvhOrvm2nvP9CFv/1U8IlCoYkfbeEDDYQYlwL1M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D8k3myl+myrYGotcIhISYQjpjBDnGsy9ZpdjAixjGnXdaPnvLCTKXVeq21R08NrO8dRRdpH1vXRP85pfRgNpiCBx/CmORMrxEsLHWkSiaBUtuoj/O/ScVDeUVEAz50c2qwPIwkzI/q4qRc4sf3UjWU5b1X3rXX2c4x+3mPxI+6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RAmclpib; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-601609043cfso1580958a12.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 11:53:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747421590; x=1748026390; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+fYzUszGIFPDwERZAMiYY0dNSZcjHIjw1aaKLOC8q1E=;
+        b=RAmclpibeAeyJB0i650edGoKjV06wCwKT9HGxI6S2vukmq8SrPQ8IfAIq55bWobr/r
+         5X6H3sQqq4PJN8FoBkAGfwVya8ytXpMsics39iVHeBtduny5OesR5hU6wgEapOUZL5/v
+         I308B+eVFDzQP9SYfqA1wOnoL9WYx3TLHYGs0VhoH4KnHDy7Pz2j2KV6+T2igVCAaLN+
+         K3omHDFhR/CowaLOw3RMvKt4lKEPYa1f20Aj7eJ40asMAu+scEBg8GcYBv527CMF/MvG
+         GDmWUxECHgAS5+13o2eFmFlFQe2jjHSgztyS7Dlq/Non/lUpE7bp8M2lFuJiJQp2Zsz/
+         BVkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747421590; x=1748026390;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+fYzUszGIFPDwERZAMiYY0dNSZcjHIjw1aaKLOC8q1E=;
+        b=gGjD+IMOXdWb1DQ9pNLjcGJ5ZuHxFGBKIVJWkatakpXQjD+I1A04pNz3mY9TkgBGP9
+         JiiHgjsrujq2RuHLtcksVycvV21pnoTZ+QUC/xwsOMclNkXr1t4Qlfk/7+/aEaNwvzFp
+         gdRb4HbgnmYdmnGI3WWZNdzUMkmWJ0tKVDOuLCmKgNd7Te+vKqQ9w4xA+i+w/yA01C02
+         aIB9nEg0fE05YEvXAlUW841PYkhtZoGac3R9XKGyFizjOhpDnY/gn5JWmXZ33UrSpzHZ
+         LP/SezLnjuy7Ka7tYvRL7iXFBuu9xD5wSjWcEqfYoT7zly/zMGfcYwNUzCfqnEixRFYz
+         j+xw==
+X-Forwarded-Encrypted: i=1; AJvYcCWDazta0kP6WZ4OHzK/SMmLnp11AFCplCw/DKFFs7tJCF7grdhKp+MHYg0QbjF2bBGcR69ltTV6R15ynFRm@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB/UUx4/av+KJxpt1WihB4wP5KD/m+1SndefEQHLRz9pnl0RlK
+	zhOC8eHW1AFvnXjS6vs/dv61fPf57kkEaMdGagbCWzYG9PucIqdhy941TNM4xTF80GI8Jdiz8B7
+	/U1RNVrmdjkajdByMjaqvCaimsVgykmc=
+X-Gm-Gg: ASbGncvcwdqKU1xF+0alwTAcYuXrR02rKtRZzGQMF4fWk9h8cLrLyFvMKWW6+q65BnN
+	QngZuavQ1YdwbrHrAcYQewC3ietZ+z1wnyORTzneIo7PcbqSVTDrGS1iLHX+whKzh80EbIB1ETx
+	9b74D3ZVwl5wrHRy2lSqpZyn3mFBIIGR+P
+X-Google-Smtp-Source: AGHT+IHp1vgBB9iHOP0JNMdUr87WakZhsFZpVrxDIvngH8xcR2G272yyvN8Lxv3wwiCiZ/QX6femm96LkDVvfB5SLvs=
+X-Received: by 2002:a17:906:9fc4:b0:ad2:51d8:7930 with SMTP id
+ a640c23a62f3a-ad52d46923emr399102966b.12.1747421590177; Fri, 16 May 2025
+ 11:53:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] fuse: use splice for reading user pages on servers
- that enable it
-To: Miklos Szeredi <miklos@szeredi.hu>, Joanne Koong <joannelkoong@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, jlayton@kernel.org, kernel-team@meta.com,
- Keith Busch <kbusch@meta.com>
-References: <20250422235607.3652064-1-joannelkoong@gmail.com>
- <CAJfpegsc8OHkv8wQrHSxXE-5Tq8DMhNnGWVpSnpu5+z5PBghFA@mail.gmail.com>
- <CAJnrk1ZXBOzMB69vyhzpqZWdSmpSxRcJuirVBVmPd6ynemt_SQ@mail.gmail.com>
- <CAJfpegsqCHX759fh1TPfrDE9fu-vj+XWVxRK6kXQz5__60aU=w@mail.gmail.com>
- <CAJnrk1Yz84j4Wq_HBhaCC8EkuFcJhYhLznwm1UQuiVWpQF8vMQ@mail.gmail.com>
- <CAJfpegv+Bu02Q1zNiXmnaPy0f2GK1J_nDCks62fq_9Dn-Wrq4w@mail.gmail.com>
- <CAJnrk1aX=GO07XP_ExNxPRj=G8kQPL5DZeg_SYWocK5w0MstMQ@mail.gmail.com>
- <CAJfpegvayjALR9F2mYxPiM2JKuJuvDdzS3gH4WvV12AdM0vU7w@mail.gmail.com>
- <CAJnrk1bibc9Zj-Khtb4si1-8v3-X-1nX1Jgxc_whLt_SOxuS0Q@mail.gmail.com>
- <CAJfpegtFKC=SmYg7w3KDJgON5O3GFaLaUYuGu4VA2yv=aebeOg@mail.gmail.com>
-From: Bernd Schubert <bernd.schubert@fastmail.fm>
-Content-Language: en-US
-In-Reply-To: <CAJfpegtFKC=SmYg7w3KDJgON5O3GFaLaUYuGu4VA2yv=aebeOg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250419100657.2654744-1-amir73il@gmail.com> <20250419100657.2654744-3-amir73il@gmail.com>
+ <fsldmf3k4u5wi2k2su2z26nw7lmr4jonrt5caaiyt7fmpteqzg@xsu4cnaeu6oy>
+ <CAOQ4uxj3UgaMkrvOmpCSBgsay6bD_+gGTLFBtC2Cqi_69pQgfQ@mail.gmail.com> <CAOQ4uxi=HDMmCLsVXNxVTLAzkYOfEYMTcXUiTBuTB0Hm0=-awA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxi=HDMmCLsVXNxVTLAzkYOfEYMTcXUiTBuTB0Hm0=-awA@mail.gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Fri, 16 May 2025 20:52:57 +0200
+X-Gm-Features: AX0GCFtRS4phXYcAwR0m6T2hgIYO3cfgdtgWmZkMIrDPN9pfW8m2PQwcbAdSMD4
+Message-ID: <CAOQ4uxiDmZ20W-pHvnEsSoKEWPZbHpb_jjzLJV9FASgPL+F03g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] fanotify: support watching filesystems and mounts
+ inside userns
+To: Christian Brauner <brauner@kernel.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 16, 2025 at 7:28=E2=80=AFPM Amir Goldstein <amir73il@gmail.com>=
+ wrote:
+>
+> On Wed, May 14, 2025 at 8:39=E2=80=AFPM Amir Goldstein <amir73il@gmail.co=
+m> wrote:
+> >
+> > On Wed, May 14, 2025 at 5:49=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > On Sat 19-04-25 12:06:57, Amir Goldstein wrote:
+> > > > An unprivileged user is allowed to create an fanotify group and add
+> > > > inode marks, but not filesystem, mntns and mount marks.
+> > > >
+> > > > Add limited support for setting up filesystem, mntns and mount mark=
+s by
+> > > > an unprivileged user under the following conditions:
+> > > >
+> > > > 1.   User has CAP_SYS_ADMIN in the user ns where the group was crea=
+ted
+> > > > 2.a. User has CAP_SYS_ADMIN in the user ns where the filesystem was
+> > > >      mounted (implies FS_USERNS_MOUNT)
+> > > >   OR (in case setting up a mntns or mount mark)
+> > > > 2.b. User has CAP_SYS_ADMIN in the user ns associated with the mntn=
+s
+> > > >
+> > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > >
+> > > I'm sorry for the delay. Both patches look good to me but I'd like so=
+mebody
+> > > more versed with user namespaces to double check namespace checks in =
+this
+> > > patch are indeed sound (so that we don't introduce some security issu=
+e).
+> >
+> > Good idea!
+> >
+> > > Christian, can you have a look please?
+> > >
+> >
+> > Christian,
+> >
+> > Please note that the checks below are loosely modeled after the tests i=
+n
+> > may_decode_fh(), with some differences:
+> >
+> > > >
+> > > >       /*
+> > > > -      * An unprivileged user is not allowed to setup mount nor fil=
+esystem
+> > > > -      * marks.  This also includes setting up such marks by a grou=
+p that
+> > > > -      * was initialized by an unprivileged user.
+> > > > +      * A user is allowed to setup sb/mount/mntns marks only if it=
+ is
+> > > > +      * capable in the user ns where the group was created.
+> > > >        */
+> > > > -     if ((!capable(CAP_SYS_ADMIN) ||
+> > > > -          FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
+> > > > +     if (!ns_capable(group->user_ns, CAP_SYS_ADMIN) &&
+> > > >           mark_type !=3D FAN_MARK_INODE)
+> > > >               return -EPERM;
+> > > >
+> >
+> > 1. This is an extra restriction. Not sure is need to remain forever,
+> > but it reduces
+> >     attack surface and does not limit the common use cases,
+> >     so I think it's worth to have.
+> >
+> > > > @@ -1987,12 +1988,27 @@ static int do_fanotify_mark(int fanotify_fd=
+, unsigned int flags, __u64 mask,
+> > > >               obj =3D inode;
+> > > >       } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
+> > > >               obj =3D path.mnt;
+> > > > +             user_ns =3D real_mount(obj)->mnt_ns->user_ns;
+> > > >       } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_SB) {
+> > > >               obj =3D path.mnt->mnt_sb;
+> > > > +             user_ns =3D path.mnt->mnt_sb->s_user_ns;
+> > > >       } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_MNTNS) {
+> > > >               obj =3D mnt_ns_from_dentry(path.dentry);
+> > > > +             user_ns =3D ((struct mnt_namespace *)obj)->user_ns;
+> > > >       }
+> > > >
+> > > > +     /*
+> > > > +      * In addition to being capable in the user ns where group wa=
+s created,
+> > > > +      * the user also needs to be capable in the user ns associate=
+d with
+> > > > +      * the marked filesystem (for FS_USERNS_MOUNT filesystems) or=
+ in the
+> > > > +      * user ns associated with the mntns (when marking a mount or=
+ mntns).
+> > > > +      * This is aligned with the required permissions to open_by_h=
+andle_at()
+> > > > +      * a directory fid provided with the events.
+> > > > +      */
+> > > > +     ret =3D -EPERM;
+> > > > +     if (user_ns && !ns_capable(user_ns, CAP_SYS_ADMIN))
+> > > > +             goto path_put_and_out;
+> > > > +
+> >
+> > 2. In may_decode_fh() we know the mount that resulting file will be
+> >     opened from so we accept
+> >     Either capable mnt->mnt_sb->s_user_ns
+> >     OR capable real_mount(mnt)->mnt_ns->user_ns
+> > whereas here we only check capable mnt->mnt_sb->s_user_ns
+> >    when subscribing to fs events on sb
+> >    and only check capable real_mount(mnt)->mnt_ns->user_ns
+> >    when subscribing to fs events on a specific mount
+> >
+> > I am not sure if there is a use case to allow watching events on a
+> > specific mount for capable mnt->mnt_sb->s_user_ns where
+> > real_mount(mnt)->mnt_ns->user_ns is not capable
+> > or if that setup is even possible?
+> >
+> > 3. Unlike may_decode_fh(), we do not check has_locked_children()
+> >     Not sure how bad it is to allow receiving events for fs changes in
+> >     obstructed paths (with file handles that cannot be opened).
+> > If this case does needs to be checked  then perhaps we should
+> > check for capable mnt->mnt_sb->s_user_ns also when subscribing
+> > to fs events on a mount.
+> >
+>
+> OK, after some thinking I think it is best to align the logic to match
+> may_decode_fh() more closely, like this:
+>
+> @@ -1986,13 +1987,40 @@ static int do_fanotify_mark(int fanotify_fd,
+> unsigned int flags, __u64 mask,
+>                 inode =3D path.dentry->d_inode;
+>                 obj =3D inode;
+>         } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
+> +               struct mount *mnt =3D real_mount(path.mnt);
+> +
+>                 obj =3D path.mnt;
+> +               user_ns =3D path.mnt->mnt_sb->s_user_ns;
+> +               /*
+> +                * Do not allow watching a mount with locked mounts on to=
+p
+> +                * that could be hiding access to paths, unless user is a=
+lso
+> +                * capable on the user ns that created the sb.
+> +                */
+> +               if (!ns_capable(user_ns, CAP_SYS_ADMIN) &&
+> +                   !has_locked_children(mnt, path.mnt->mnt_root))
+> +                       user_ns =3D mnt->mnt_ns->user_ns;
 
-
-On 5/16/25 09:58, Miklos Szeredi wrote:
-> On Thu, 15 May 2025 at 21:16, Joanne Koong <joannelkoong@gmail.com> wrote:
-> 
->> As I understand it, the zero copy uring api (I think the one you're
->> talking about is the one discussed here [1]?) requires client-side
->> changes in order to utilize it.
->>
->> [1] https://lore.kernel.org/linux-fsdevel/dc3a5c7d-b254-48ea-9749-2c464bfd3931@davidwei.uk/
-> 
-> No, that's not what I was thinking.  That sort of thing is out of
-> scope for fuse, I think.
-
-Yeah, I don't think that is what Keith had done for ublk either and what is
-planned for fuse. Added in Keith.
-
-> 
-> Hmm, so you actually need "single copy" direct write.
-> 
->   - there's the buffer that write(2) gets from application
->   - it's copied into server's own buffer, at which point the write(2) can return
->   - at some point this buffer is sent to the network and freed/reused
-> 
-> Currently this is not possible:
-> 
->   - there's the buffer that write(2) gets from application
->   - it's copied into libfuse's buffer, which is passed to the write callback
->   - the server's write callback copies this to its own buffer, ...
-> 
-> What's preventing libfuse to allow the server to keep the buffer?  It
-> seems just a logistic problem, not some fundamental API issue.  Adding
-> a fuse_buf_clone() that just transfers ownership of the underlying
-> buffer is all that's needed on the API side.  As for the
-> implementation: libfuse would then need to handle the case of a buffer
-> that has been transferred.
-
-With io-uring the buffer belongs to the request and not to the
-thread anymore - no need to copy from libfuse to the server.
-
-AFAIK, mergerfs also uses a modified libfuse that also allows to keep
-the server the buffer without io-uring. I just don't see much of
-a point to work on these things when we have io-uring now.
-
+No scratch that.
+I will send v2 that is much simpler.
 
 Thanks,
-Bernd
+Amir.
 
