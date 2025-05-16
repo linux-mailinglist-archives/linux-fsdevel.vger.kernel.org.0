@@ -1,143 +1,191 @@
-Return-Path: <linux-fsdevel+bounces-49279-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49280-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28067AB9FE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 17:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5724EAB9FF4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 17:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B00E8500250
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 15:32:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3162165F99
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 15:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11BE1B4F09;
-	Fri, 16 May 2025 15:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B03071C84A1;
+	Fri, 16 May 2025 15:34:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z/cAL7Kz"
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="aNHk+Il8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2F27D07D
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 15:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52FB41B87EB
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 15:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747409560; cv=none; b=f5soIoX8JdTuMpIykE+UNOacwFUBHGq/StWqgQhCpPEb+gx3fn3hsCFe2IbRVwDEWRDGgHU/xb5X+Z294cQeUPduCZuPyGMlHsp6hRdy3Nu+I4Od5k4/4oVgaHEgrxikVB53Ztc1qzuLRkx7KlbH+qtD1D7c5ebGmMgeR1W1H8o=
+	t=1747409672; cv=none; b=YxwTLkrEc4238LKxMBzpSVTKeUGKEXkS4cDNlEnKB3GXz4z7VrR3XsT0hML2dAxdFzbnqPjyxxpO6hV5IN3BpXtbVcu/0RYSGSIvZZX3h+tOd8tvGMw2NLV2N6UgZyWUu7LBd7hT+GPMl49CyN+oX0fySFB2BH/VeWgdvpV9OQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747409560; c=relaxed/simple;
-	bh=5c4FndS0FPBIofzOdmVNQxOEMt/DgaERRWId9DFnmFA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hGTPo3O8NnnJ1b6lN92wonbN6ADeVZWAHzcTXERMKt2FLKVanrLc5UAYRYR81sxhiQSCtxBeUQ2w0xwFn6vYwZPoCefYyzIvlXC9ZnqbdP3rWC7FXYj/S37bsBWKG1XPc7fl2YcYUdsQ7SlelYwxd+sSIjpDjYj87QapmfWnXXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z/cAL7Kz; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad2452e877aso339334866b.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 08:32:38 -0700 (PDT)
+	s=arc-20240116; t=1747409672; c=relaxed/simple;
+	bh=s7M35uwjD+aYg6o9dTgcW1bTJu8deexw+cwFb2Q66d8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIR52hyzPXRxVs05gf/Ym36uB6ckcxIWcF0xsnhOKAmt5HA5B6OYkTvn/c5CV93n3x9aG0myzBeWW25NG1ZajxOmcuG9CC5qJulqRO2LUHFpvw2OjAIq95tDQyfjH/ZS6yPmu7AT3zkZvseKFxf83/w73nCnH45O79wocJSlZAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=aNHk+Il8; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b0b2d1f2845so1673001a12.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 08:34:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747409557; x=1748014357; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mnZktM+CotQBLFaFb+IyVyAJfg4YceN9GS4oeMLwC4s=;
-        b=Z/cAL7Kz2araBozREAAs0ZNp3SyKe3KCpQYGWQCg5/AM82WJxHPbizzbefZGFt44h+
-         GTLCR7h7/kTCjOf49loYFgGBhqbLbEpeuzLZT7hJ7rAkqqiUAQZGmnFj7RkvgDGx4ogg
-         JSVOwopYnuS8C1Plg35rmTkezXK0su28/BxFBiYLKk036YJbiaVDW1DX7MYnAAXCNbEq
-         XhhFUfGydFYzU7anQntRp0bIyV3fEMY7fX+zdvdU9ZclkNWzlzM8dIQEUjzSBibtv2Z3
-         MhKZNj//aEKJjdnmKE0XlIaxkZhMuwREJrK5u3NOlK+rfkvoCmvQS8yBQmhQQz1P81L0
-         xWpA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1747409669; x=1748014469; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=VTPOMqT5C2feU2knCk6fA/APYFa11AZmawpB2cqaoDc=;
+        b=aNHk+Il8tY3wKlYMt8MKNZwFti/luK9M6uD2PQ9xQyLCJ7vcDjw+Wm7wBS2XdpfWpx
+         KoKTdTtSvvxRzxBne9UFxCgPm/Iy49WKNu5yLRr0R3MJKgV75/6SmCD6a6E1AMcwpswu
+         etbcgE59S7n6ZSjhDUCiZbdLQOYRPse4bgKHsAfDLRrmOzlLTSlgtzsS7/ckO2yiYzB5
+         g2adbQQxOrSxb9ZFDXSNYbYeKjMQGP3ta60NYFjtxLTRW3qg/fVMeFT7nfEv8JJn0hUQ
+         coACE1nXsn/3uSg1AtNGtRpja+tGJeajxJ0IApyD2tUvF6kZ7h7BRTqBWIKs704bpsI7
+         HhzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747409557; x=1748014357;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mnZktM+CotQBLFaFb+IyVyAJfg4YceN9GS4oeMLwC4s=;
-        b=RIgegyBukw9asbcGiE8NCayyWMH0Nfi48B1Eis1rsRk8rn+UqZSCvoswGInlR/Suv4
-         6QNr5ynNsP7fUeF2YHLClmkkjl6kUom8qKaj/5umorREfrlO+qZM0gghNJeMosrSsYLb
-         H0CQahYRwjjO8Na02XvI2rVm0e98KJkJ46s2OncNkqUN4xf5isJb1bVStMk0YPLZ8q0N
-         rUqp7obqUhqED0BDubPtd+AAoyNg6QKpAwrRlWNJEy2ob9TuAX6ytKXgF+4tAXtBkRRC
-         an/+gUTo/uxPahrfDjYZl/gEegFP/krJpoUDYCGnEbLCLszDSUxtkM1T0UxDLXJxdu5g
-         UMsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNY/ZX1h2nxKzZZ/fBZGgFxJpzH+TbQPIw8XHU+4jSU6grbxq7n4Oed6+zaE4Z2K/ZIm6WYU17GCp4Cke/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyiqOGmQrdonZH6lu/yklPafG3VnrWqADLA9kIFf/pufNqcXfB
-	FWk53wDU4HKvcO3Sz5dAwEkFVfR1taFOs0tKDzZmtUhN/76/BVqcOIIZ8wKpPzK1uBTGNhbJPII
-	x/9nKA9uKvP1vdA0a5/NV3QV8xBSGbFM8yXdg95Cavg==
-X-Gm-Gg: ASbGncu5y3/m75La+uDZWTh83v3DHSxw+f+0/8E0FqO6VVuEBcNENt1mmC2kCPwEPGM
-	FMhTb4SYLZVzMkfLpWNk4yhIM9wnqSYwClL86zoi5YnikN3klWzYhyL7s7CJbCex5gNoBF8Vv/j
-	mayTQw/y4UTg5GfUPjVwIsL5oIkKeEeEogKjjNPEwFG+s=
-X-Google-Smtp-Source: AGHT+IHVeCrhZf29cvgvq5PIXSuEET2HDdaI5oz1ivkVZFbAEgwSpeiE5pBhpEi0pBiu9ooEbEV8L+YC3hc/7Pilb4E=
-X-Received: by 2002:a17:907:7fa1:b0:ad5:24ee:515d with SMTP id
- a640c23a62f3a-ad536bca810mr311476866b.27.1747409556625; Fri, 16 May 2025
- 08:32:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1747409669; x=1748014469;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VTPOMqT5C2feU2knCk6fA/APYFa11AZmawpB2cqaoDc=;
+        b=vMoKLRjmgyE+L46rM9Cvc7pc1Q1XJW9JX4VnPvksv1+GEdiY1Y93SjYjzRd+kM5PM4
+         j8QwlnImw6AxOrustmrWEYDUj2xApQ3mvGwwuG00Eun45IOW2mlaQAaFjU2bcseeVajn
+         odn2/OBrgF4Jm0pk58FPhpt4vjzetVXeBD18gaqDgMNxpM2YLbnQbHCDlInngskFkeNJ
+         heRxbnjr+kREeZKgWTv40G8zZG+5/EHxwQ9rJ2FcOAb4Dajlbje/UCsSCLU7B7BQI/f7
+         MvOLmK8p9PLpzVQ2RlX4Jt+phZgm8GKgr30Do9KbDvVsxg8IXnn8XVIes7BUrxm1Wx2U
+         yIkw==
+X-Forwarded-Encrypted: i=1; AJvYcCV18peWdvBhnGmgwQs87yW3UcRxhXjuD38YMe0N5cjh8bETiTlSu0kNGWSW7JJP15yJzs+khlKVttiPaOgF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6xZxIcDo3eECuECSd90deRWlFANhIdqxnz83raxkvrOL9BbAh
+	O8Ly1PWgTd7A68iB0MJfTi5yMBjmh/HhbUwvDpT4yvtw9CuRy/WUxoQsjY/0aQFEMS4=
+X-Gm-Gg: ASbGncvZX4fvp41oWsLAJ8yDCy/HBhvbVEi0VNLuzzE10CRxshN9pr5O5GAWUyWe7dD
+	sFSW4rStiQgYPRDZt5ijbRQu57AfKQpB/QD10B1n7SNi3uOBc8sqH5fibyxVcGenuET1JA0+EBc
+	GQLKtg9OipeazyMDIHqC3/s5A8BXId9QedmD1cy9vWnORAGKs1R+m5UpgcHkZQPJORT6GBsUHBT
+	UMbrTCpBfV++a3G1GdJuR/ZUTSKL6u8lJA6qNKrRbNMFHlS6RKlWHPS2aLRJ+Tj4AHghFZcfysG
+	7QguMXMnul17vnpwhraGwSjE1VAPZGMYbDNjJy5SX/WazXgHxMiN0CKYMRbJTQ==
+X-Google-Smtp-Source: AGHT+IFZckSqO5+1mOJ5q3W7tqhvvuTMvoIraIWCKDFfhzREKyJxJcIAzKyffAUquxEcLFZdJvL5nQ==
+X-Received: by 2002:a17:902:f60a:b0:22e:17ee:aa69 with SMTP id d9443c01a7336-231d45740d0mr41158275ad.50.1747409669319;
+        Fri, 16 May 2025 08:34:29 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4ac944esm15870145ad.49.2025.05.16.08.34.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 May 2025 08:34:28 -0700 (PDT)
+Date: Fri, 16 May 2025 08:34:25 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@ventanamicro.com>
+Cc: Alexandre Ghiti <alex@ghiti.fr>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	Jann Horn <jannh@google.com>, Conor Dooley <conor+dt@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, broonie@kernel.org,
+	rick.p.edgecombe@intel.com, rust-for-linux@vger.kernel.org,
+	Zong Li <zong.li@sifive.com>,
+	linux-riscv <linux-riscv-bounces@lists.infradead.org>
+Subject: Re: [PATCH v15 05/27] riscv: usercfi state for task and save/restore
+ of CSR_SSP on trap entry/exit
+Message-ID: <aCdbASlCyqhid82c@debug.ba.rivosinc.com>
+References: <20250502-v5_user_cfi_series-v15-0-914966471885@rivosinc.com>
+ <20250502-v5_user_cfi_series-v15-5-914966471885@rivosinc.com>
+ <D9OZVNOGLU4T.2XOUPX27HN0W8@ventanamicro.com>
+ <122fc6cd-2e21-4fca-979d-bcf558107b81@ghiti.fr>
+ <D9WLRSAB63M5.3DZD4ND3WVZ6F@ventanamicro.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250419100657.2654744-1-amir73il@gmail.com> <20250419100657.2654744-3-amir73il@gmail.com>
- <CAJfpeguGj0=SmmD3uLECgByh1rOHA+Gp3tbsxsga0K3ay2ML_Q@mail.gmail.com>
-In-Reply-To: <CAJfpeguGj0=SmmD3uLECgByh1rOHA+Gp3tbsxsga0K3ay2ML_Q@mail.gmail.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 16 May 2025 17:32:24 +0200
-X-Gm-Features: AX0GCFuCWNlUW4W_TchuOootPFeXPYXzX-L2_rNO-Gxgm2_kuo6_y9EBZOTvQS0
-Message-ID: <CAOQ4uxi98+Bng+gPWNDhgGdJvYXHoWx5cn7iWEYgE5x4fon+yg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fanotify: support watching filesystems and mounts
- inside userns
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: Jan Kara <jack@suse.cz>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <D9WLRSAB63M5.3DZD4ND3WVZ6F@ventanamicro.com>
 
-On Fri, May 16, 2025 at 3:22=E2=80=AFPM Miklos Szeredi <miklos@szeredi.hu> =
-wrote:
+On Thu, May 15, 2025 at 10:48:35AM +0200, Radim Krčmář wrote:
+>2025-05-15T09:28:25+02:00, Alexandre Ghiti <alex@ghiti.fr>:
+>> On 06/05/2025 12:10, Radim Krčmář wrote:
+>>> 2025-05-02T16:30:36-07:00, Deepak Gupta <debug@rivosinc.com>:
+>>>> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+>>>> @@ -91,6 +91,32 @@
+>>>> +.macro restore_userssp tmp
+>>>> +	ALTERNATIVE("nops(2)",
+>>>> +		__stringify(				\
+>>>> +		REG_L \tmp, TASK_TI_USER_SSP(tp);	\
+>>>> +		csrw CSR_SSP, \tmp),
+>>>> +		0,
+>>>> +		RISCV_ISA_EXT_ZICFISS,
+>>>> +		CONFIG_RISCV_USER_CFI)
+>>>> +.endm
+>>> Do we need to emit the nops when CONFIG_RISCV_USER_CFI isn't selected?
+>>>
+>>> (Why not put #ifdef CONFIG_RISCV_USER_CFI around the ALTERNATIVES?)
+>>
+>> The alternatives are used to create a generic kernel that contains the
+>> code for a large number of extensions and only enable it at runtime
+>> depending on the platform capabilities. This way distros can ship a
+>> single kernel that works on all platforms.
 >
-> On Sat, 19 Apr 2025 at 12:07, Amir Goldstein <amir73il@gmail.com> wrote:
+>Yup, and if a kernel is compiled without CONFIG_RISCV_USER_CFI, the nops
+>will only enlarge the binary and potentially slow down execution.
+>In other words, why we don't do something like this
 >
-> > @@ -1987,12 +1988,27 @@ static int do_fanotify_mark(int fanotify_fd, un=
-signed int flags, __u64 mask,
-> >                 obj =3D inode;
-> >         } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
-> >                 obj =3D path.mnt;
-> > +               user_ns =3D real_mount(obj)->mnt_ns->user_ns;
-> >         } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_SB) {
-> >                 obj =3D path.mnt->mnt_sb;
-> > +               user_ns =3D path.mnt->mnt_sb->s_user_ns;
+> (!CONFIG_RISCV_USER_CFI ? "" :
+>   (RISCV_ISA_EXT_ZICFISS ? __stringify(...) : "nops(x)"))
 >
-> The patch header notes that user_ns !=3D &init_user_ns implies
-> FS_USERNS_MOUNT, but it'd be nice to document this with a WARN_ON() in
-> the code as well.
+>instead of the current
 >
-
-Can't do that because the commit message is wrong...
-An sb *can* have non-init s_user_ns without FS_USERNS_MOUNT
-if the mounter was running in non-init user ns, but had CAP_SYS_ADMIN
-in init_user_ns.
-
-Maybe not a very likely use case, but still cannot be asserted,
-so we better remove the (*FS_USERNS_MOUNT*) remark
-from comment and commit message.
-
-> >         } else if (obj_type =3D=3D FSNOTIFY_OBJ_TYPE_MNTNS) {
-> >                 obj =3D mnt_ns_from_dentry(path.dentry);
-> > +               user_ns =3D ((struct mnt_namespace *)obj)->user_ns;
+> (CONFIG_RISCV_USER_CFI &&
+>    RISCV_ISA_EXT_ZICFISS ? __stringify(...) : "nops(x)")
 >
-> It would be much more elegant if the type wasn't lost before this assignm=
-ent.
+>It could be a new preprocessor macro in case we wanted to make it nice,
+>but it's probably not a common case, so an ifdef could work as well.
+>
+>Do we just generally not care about such minor optimizations?
 
-True.
-We can make it:
+On its own just for this series, I am not sure if I would call it even a
+minor optimization.
 
-        struct mnt_namespace *mntns =3D mnt_ns_from_dentry(path.dentry);
-        user_ns =3D mntns->user_ns;
-        obj =3D mntns;
+But sure, it may (or may not) have noticeable effect if someone were
+to go around and muck with ALTERNATIVES macro and emit `old_c` only
+if config were selected. That should be a patch set on its own with
+data providing benefits from it.
 
 >
-> Otherwise looks good:
+>(If we wanted to go an extra mile, we could also keep the nops when both
+> CONFIG_RISCV_USER_CFI and RISCV_ISA_EXT_ZICFISS are present, but
+> command line riscv_nousercfi disabled backward cfi.)
 >
-> Reviewed-by: Miklos Szeredi <mszeredi@redhat.com>
->
-
-Thanks for the review!
-
-Amir.
+>Thanks.
 
