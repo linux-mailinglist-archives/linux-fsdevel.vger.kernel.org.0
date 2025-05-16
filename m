@@ -1,74 +1,74 @@
-Return-Path: <linux-fsdevel+bounces-49297-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49296-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CECCEABA3C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 21:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2614FABA3C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 21:28:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F5B316AC69
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 19:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C8F43BB80A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 May 2025 19:28:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4B2226D13;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015C8226CFF;
 	Fri, 16 May 2025 19:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOP7t6Ec"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FUnMgC8o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D35F1CEAC2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 19:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F6F12253B5
+	for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 19:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747423693; cv=none; b=XSryzSUhJnhTzrDB0gZwJEOP1sbDOg4NyqmYWT4NwgPnjHyFtgI3kq+ojDJoleT4nddyaRyGJgrezrUYuDQaiXA8vEqM2b+HGw4I8tMsXyGtZaXKenF8utp6/ft2r6ANw262w9+GsqHp5od49izY+PFitfumhT+Q0K82cG+B4/I=
+	t=1747423692; cv=none; b=FTioMbCtKU2myWBNMTCl1Aq82DeuFJNXIMZ3S79fC3hj1rJBe2EIFZxBbvxohVbZcdPtrvi0wGT9yL0N0xVYsJnJzEyMvJ98uRKhW580/QVuossRvcstRczRAq5JrWYpHjroqtRW3jy7B0BCvoDUFgEK5fKXVtN+CuPmahlB0rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747423693; c=relaxed/simple;
-	bh=doC0C9FuHlnU3HJ+BrbpGIuYaY5ADywA4krzyLA62Zs=;
+	s=arc-20240116; t=1747423692; c=relaxed/simple;
+	bh=XjiI7BYRtu4gdhFa+LgEJGDjO7taVPS2hqQyYMvsAok=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GKT9RTzOx+yJEOYTcqRbY4dEyMhIKbKcDeln1Zwy4LN/r6oIY8xLlyahMqKayo3ddHneigT+8b7vkPCYmG17IFlsj+j7LfNf1w5VpCgM78dXyIQGErrx93MP8p8KtXrFF81Iy1MQ7s2Cx0pxTNmzW/FYFNJIj5fbiP9rRr2IvFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOP7t6Ec; arc=none smtp.client-ip=209.85.218.54
+	 MIME-Version; b=YnnZ5dtoNlP0/qFfdmqilG0ZE+p8Posyma3UuvRI/raArZb3Fc/hZYH6CEP/yLOBUJeHzx3bGQ1too2dUWAhGl8rnTFuu5H4h8VkbCSlrcIU+zy+FPvXYDc/ly8KiP2t/zJLYNPh+tUNkE64V7DEU6iWH7dthFT4wOIp0pDfYT0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FUnMgC8o; arc=none smtp.client-ip=209.85.218.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ad52d9be53cso228320266b.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 12:28:09 -0700 (PDT)
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad1b94382b8so424220566b.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 May 2025 12:28:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747423688; x=1748028488; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1747423689; x=1748028489; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0TAyDGwn1qRuxYLt/VZ9jh0xi58B7pkPr18aYRJgglQ=;
-        b=SOP7t6EcyiAYnMBTKh6AO+6GndX9UrIMTc3dZEaCgaDpPu2ooIDUmIhFvj7Hj1y/jg
-         H43ITKzENdT+ksPWFPl6rnqascucN1Schjdklz+l0P6maYTOl5BcXUO3Uunr6rX0j15b
-         l+XklSFIY7Nx3vqTcvWb1ycq+yHFLqLoF05xrv82INhYLQ7pQ5zAKup3X9OaxW6KFNCf
-         fFxRwlSbFXPgnA1lYJC9b6jJ8yozUee/EpwpsMSrTdRBNYC/FHjuwCVa9VdX6yyN++5U
-         EJsRRtlrCHE7+6d43ZIYUPvtGIn4IgH37tbkE0c+cV2VmZkqYQKRfqKjHqIs6TU1dzck
-         gOgg==
+        bh=uII9edu742QnNxDO9Z41jiimBwPbVwzdeTZKcD3NcT0=;
+        b=FUnMgC8oGw7R7dn4+p7x2W9/1Fz+aJeJn7extZ7l4hY2Dr+qHZI5FaUZwho0GFUgAc
+         Wbjq4lCOTf2wpYisbaNkjmKKBgVNOxLNXp0F6vfbKubYVi8L67rJGa8nD9olHmvByCZ2
+         GYmVmkpD7AkVEXn/njvj0sRWTvNPrLTIyZSH9WK+myknHOyVmI8O/8prmLIKR07QGnnd
+         6oWHwNOURAVwaRTMWSHxiwF6l2pGWN/NiF/GXbpJERRTqb6uqBm3BjD0+fotJt5AQHzT
+         VLTw+Su8HEYV/SJAw8llJ5rFk1fBVxkWVlYco6MgVoSt6oLAUt/lkrSEOYHIgsqyGXD4
+         874g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747423688; x=1748028488;
+        d=1e100.net; s=20230601; t=1747423689; x=1748028489;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0TAyDGwn1qRuxYLt/VZ9jh0xi58B7pkPr18aYRJgglQ=;
-        b=wk8QTnliWc/4gxTCFxubYceDe0xC0qVbMKoxZIC4kk0sz1V3fIkSf5aU8Vgrx2Cw35
-         PbLVNGHWE9U/ah5Xph2CYDIJA76WvAP3eFo1N3Kjk4dj7VE/B8ZrZ85e596PbsuvBwGM
-         phSzu19DXwxwA/p2BSbqShloLGYCfW6VsH31SLf2nXzZxEiNW9Dk14RHEOmkXYsvgU58
-         dHmpiyq5kQhK538596zGEKTbGXRnctNgwFPb5V3qAHTki047gK34fSnVa3UnzIEHmA5f
-         fBqfU8B93PWpNG5RPwjiFTArqFDCo0JyhIrQXyhTbv3qhpxRpI245adUAnXRZl0xXg4p
-         TJzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYk+2M/QQD4KU0AvwFeTo6383h28ZDUqsWvp5LJagUPG4Pi+1IlWkwzTUsOI44UlLZjI4w5cLelh6omfXP@vger.kernel.org
-X-Gm-Message-State: AOJu0YwcGG+EnoD4q4yOuYg8RREGxd693xaXC0VXulO9W8Grd98ldwON
-	tXhRoQd/Rk+oLcHEzA/yqjJDysMzU3XIRCcK6XVn1xZWvUlVclnLFZeo
-X-Gm-Gg: ASbGncsE7udnm6MhUX80egaJrGOPpGjbPbCO/znpEIjtdO/EYgxpqYEHjikunlrFBxm
-	NQekxracMdPRUTplv7FpuF/Kd5G58Fep1FJ/bXLaB1ZMcmP+ftg9jzVe7BCsG17BQY/SFbeezK8
-	F20P2c/VGxUjT5sdRCZOdnQli8mzyIowIaSL6yU4GDByzUM3sUgqDS3mi64cfkmmaEiIQIpdNy+
-	e05ou2haOX8b+P3uuqXeTIF5MCdYGtkGkadFS1z5bNbvwu1CpCuroNXoLBUStBs9HPH857Z7tJh
-	13O6iskeXcE1astdbrtRJuOa0TOhSx7693hqQJ4fof8Tx6mti77YYUzVn3S23naBRIt8FGeCVeH
-	o1IWYddP/oFlkWnB1MqzoWuARiK/+dK8AV0K+qsno2wFtncVy
-X-Google-Smtp-Source: AGHT+IGB1t0tBsrDxulWr1NXKMVTmLcV5xqXbik33ymiS1UckW2l2OU89J5TzOGAmrnxp3HfFJNDoA==
-X-Received: by 2002:a17:907:97c6:b0:ad5:e0a:5891 with SMTP id a640c23a62f3a-ad52d467000mr468022566b.1.1747423687627;
-        Fri, 16 May 2025 12:28:07 -0700 (PDT)
+        bh=uII9edu742QnNxDO9Z41jiimBwPbVwzdeTZKcD3NcT0=;
+        b=MolfsD6e6iEBIdex9zuUF0WDSK63NcqfMk6PG3cfMJjZo3+G95OX3/et0vHomfaWpZ
+         MH7qLKQERLFey6yuWE/fU/IQpY4SKcuRnFcSTQKcEIth9Up3bzeUA5SUyGMLwOISkbLO
+         624JSeNZH9x7EzMt4AwL+ZXW4k4D4qw5YV0xDt8g7aZ8RwFNUcJJ5UwsuBj9Ao+Qkwbv
+         3qxPQ4Gr7fF7kLHLUC9tOY4P9WSvxg+iYUBlcHukg/SY03VugfoXv+BariAIgeMlwb69
+         Fm1fekUfw5p20QGpgGbELCbas3I8n0IBW2+jSOs7EamuaxkobygdzHbw0s32ZuI2NWDQ
+         V2MA==
+X-Forwarded-Encrypted: i=1; AJvYcCXXRR4b6ldA4qTZrkoqIQxX+FpxcChZLMTJPP8glR3Te5U9D6JM6fiiG31YSXrxE/W5otx8ZaRCU9kvrW1m@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxc3B4vnteGNouGZo8m//9eMPNPb3VGdEw88EdLeHekWuvL8Xgw
+	Anh2w1RPbSBm+UFq2pVz4kFsxiMF+pNjgxX01EZXUiFYYZ4KcxQkP9UW
+X-Gm-Gg: ASbGncvhDpF6TIEg+5bLwXulGYGvP1u8n0XlFarS53BekNYtk1pJgRaHp5sNM9lOMk2
+	l3kd2TMtDlSHa1/eMl3VkHUa4HUwVvbJDZifCypqkkHBqan3Y6O8Dfp5JPZUAAIznkI2iSwLiOP
+	EuZVdPW4/pvWSVd0Ezmkmq4pNpQfir93/EBWeduWUfSPlctRILdWayyPTdMEzi0hAARrV1w5/qm
+	s6XJaQHFgugB4NpvVPd+aYnSgrKiuKlgsWrw3yOyDSOvG/DSavC805/v8N78YBxq8bFqq6BHx1d
+	MsH2pJuQjDZJDiso3QIwL2H+UYJ8bimr3iqwDYVX6YDhtPJ91dcREPQ51QKPH6UawtvLatUtTjp
+	AytUMrtlqmU4iqcNkFY3DLU8GdqPc5rxDWUYg1Wb683WqtC6U
+X-Google-Smtp-Source: AGHT+IEEiEVfBus/Tqa7xx4s5qdL3PUCJCqqudlr4/bcsye/iyaynoDw/22FWX4CI7UsmKMIuE8TZQ==
+X-Received: by 2002:a17:906:4ad8:b0:ad5:43eb:d927 with SMTP id a640c23a62f3a-ad543ebe186mr176559866b.23.1747423688273;
+        Fri, 16 May 2025 12:28:08 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
         by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d4466e2sm201075066b.93.2025.05.16.12.28.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
@@ -78,9 +78,9 @@ To: Jan Kara <jack@suse.cz>
 Cc: Miklos Szeredi <miklos@szeredi.hu>,
 	Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH v3 1/2] fanotify: remove redundant permission checks
-Date: Fri, 16 May 2025 21:28:02 +0200
-Message-Id: <20250516192803.838659-2-amir73il@gmail.com>
+Subject: [PATCH v3 2/2] fanotify: support watching filesystems and mounts inside userns
+Date: Fri, 16 May 2025 21:28:03 +0200
+Message-Id: <20250516192803.838659-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250516192803.838659-1-amir73il@gmail.com>
 References: <20250516192803.838659-1-amir73il@gmail.com>
@@ -92,51 +92,176 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-FAN_UNLIMITED_QUEUE and FAN_UNLIMITED_MARK flags are already checked
-as part of the CAP_SYS_ADMIN check for any FANOTIFY_ADMIN_INIT_FLAGS.
+An unprivileged user is allowed to create an fanotify group and add
+inode marks, but not filesystem, mntns and mount marks.
 
-Remove the individual CAP_SYS_ADMIN checks for these flags.
+Add limited support for setting up filesystem, mntns and mount marks by
+an unprivileged user under the following conditions:
+
+1.   User has CAP_SYS_ADMIN in the user ns where the group was created
+2.a. User has CAP_SYS_ADMIN in the user ns where the sb was created
+  OR (in case setting up a mntns mark)
+2.b. User has CAP_SYS_ADMIN in the user ns associated with the mntns
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 ---
- fs/notify/fanotify/fanotify_user.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ fs/notify/fanotify/fanotify.c      |  1 +
+ fs/notify/fanotify/fanotify_user.c | 39 +++++++++++++++++++++---------
+ include/linux/fanotify.h           |  5 ++--
+ include/linux/fsnotify_backend.h   |  1 +
+ 4 files changed, 31 insertions(+), 15 deletions(-)
 
+diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
+index 6d386080faf2..060d9bee34bd 100644
+--- a/fs/notify/fanotify/fanotify.c
++++ b/fs/notify/fanotify/fanotify.c
+@@ -1009,6 +1009,7 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
+ 
+ static void fanotify_free_group_priv(struct fsnotify_group *group)
+ {
++	put_user_ns(group->user_ns);
+ 	kfree(group->fanotify_data.merge_hash);
+ 	if (group->fanotify_data.ucounts)
+ 		dec_ucount(group->fanotify_data.ucounts,
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index 87f861e9004f..471c57832357 100644
+index 471c57832357..b192ee068a7a 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1334,6 +1334,7 @@ static struct fsnotify_mark *fanotify_add_new_mark(struct fsnotify_group *group,
- 	 * A group with FAN_UNLIMITED_MARKS does not contribute to mark count
- 	 * in the limited groups account.
+@@ -1499,6 +1499,7 @@ static struct hlist_head *fanotify_alloc_merge_hash(void)
+ /* fanotify syscalls */
+ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ {
++	struct user_namespace *user_ns = current_user_ns();
+ 	struct fsnotify_group *group;
+ 	int f_flags, fd;
+ 	unsigned int fid_mode = flags & FANOTIFY_FID_BITS;
+@@ -1513,10 +1514,11 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 		/*
+ 		 * An unprivileged user can setup an fanotify group with
+ 		 * limited functionality - an unprivileged group is limited to
+-		 * notification events with file handles and it cannot use
+-		 * unlimited queue/marks.
++		 * notification events with file handles or mount ids and it
++		 * cannot use unlimited queue/marks.
+ 		 */
+-		if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) || !fid_mode)
++		if ((flags & FANOTIFY_ADMIN_INIT_FLAGS) ||
++		    !(flags & (FANOTIFY_FID_BITS | FAN_REPORT_MNT)))
+ 			return -EPERM;
+ 
+ 		/*
+@@ -1595,8 +1597,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 	}
+ 
+ 	/* Enforce groups limits per user in all containing user ns */
+-	group->fanotify_data.ucounts = inc_ucount(current_user_ns(),
+-						  current_euid(),
++	group->fanotify_data.ucounts = inc_ucount(user_ns, current_euid(),
+ 						  UCOUNT_FANOTIFY_GROUPS);
+ 	if (!group->fanotify_data.ucounts) {
+ 		fd = -EMFILE;
+@@ -1605,6 +1606,7 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
+ 
+ 	group->fanotify_data.flags = flags | internal_flags;
+ 	group->memcg = get_mem_cgroup_from_mm(current->mm);
++	group->user_ns = get_user_ns(user_ns);
+ 
+ 	group->fanotify_data.merge_hash = fanotify_alloc_merge_hash();
+ 	if (!group->fanotify_data.merge_hash) {
+@@ -1804,6 +1806,8 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	struct fsnotify_group *group;
+ 	struct path path;
+ 	struct fan_fsid __fsid, *fsid = NULL;
++	struct user_namespace *user_ns = NULL;
++	struct mnt_namespace *mntns;
+ 	u32 valid_mask = FANOTIFY_EVENTS | FANOTIFY_EVENT_FLAGS;
+ 	unsigned int mark_type = flags & FANOTIFY_MARK_TYPE_BITS;
+ 	unsigned int mark_cmd = flags & FANOTIFY_MARK_CMD_BITS;
+@@ -1897,12 +1901,10 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 	}
+ 
+ 	/*
+-	 * An unprivileged user is not allowed to setup mount nor filesystem
+-	 * marks.  This also includes setting up such marks by a group that
+-	 * was initialized by an unprivileged user.
++	 * A user is allowed to setup sb/mount/mntns marks only if it is
++	 * capable in the user ns where the group was created.
  	 */
-+	BUILD_BUG_ON(!(FANOTIFY_ADMIN_INIT_FLAGS & FAN_UNLIMITED_MARKS));
- 	if (!FAN_GROUP_FLAG(group, FAN_UNLIMITED_MARKS) &&
- 	    !inc_ucount(ucounts->ns, ucounts->uid, UCOUNT_FANOTIFY_MARKS))
- 		return ERR_PTR(-ENOSPC);
-@@ -1637,21 +1638,13 @@ SYSCALL_DEFINE2(fanotify_init, unsigned int, flags, unsigned int, event_f_flags)
- 		goto out_destroy_group;
+-	if ((!capable(CAP_SYS_ADMIN) ||
+-	     FAN_GROUP_FLAG(group, FANOTIFY_UNPRIV)) &&
++	if (!ns_capable(group->user_ns, CAP_SYS_ADMIN) &&
+ 	    mark_type != FAN_MARK_INODE)
+ 		return -EPERM;
+ 
+@@ -1981,18 +1983,31 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
+ 		fsid = &__fsid;
  	}
  
-+	BUILD_BUG_ON(!(FANOTIFY_ADMIN_INIT_FLAGS & FAN_UNLIMITED_QUEUE));
- 	if (flags & FAN_UNLIMITED_QUEUE) {
--		fd = -EPERM;
--		if (!capable(CAP_SYS_ADMIN))
--			goto out_destroy_group;
- 		group->max_events = UINT_MAX;
- 	} else {
- 		group->max_events = fanotify_max_queued_events;
+-	/* inode held in place by reference to path; group by fget on fd */
++	/*
++	 * In addition to being capable in the user ns where group was created,
++	 * the user also needs to be capable in the user ns associated with
++	 * the filesystem or in the user ns associated with the mntns
++	 * (when marking mntns).
++	 */
+ 	if (obj_type == FSNOTIFY_OBJ_TYPE_INODE) {
+ 		inode = path.dentry->d_inode;
+ 		obj = inode;
+ 	} else if (obj_type == FSNOTIFY_OBJ_TYPE_VFSMOUNT) {
++		user_ns = path.mnt->mnt_sb->s_user_ns;
+ 		obj = path.mnt;
+ 	} else if (obj_type == FSNOTIFY_OBJ_TYPE_SB) {
++		user_ns = path.mnt->mnt_sb->s_user_ns;
+ 		obj = path.mnt->mnt_sb;
+ 	} else if (obj_type == FSNOTIFY_OBJ_TYPE_MNTNS) {
+-		obj = mnt_ns_from_dentry(path.dentry);
++		mntns = mnt_ns_from_dentry(path.dentry);
++		user_ns = mntns->user_ns;
++		obj = mntns;
  	}
  
--	if (flags & FAN_UNLIMITED_MARKS) {
--		fd = -EPERM;
--		if (!capable(CAP_SYS_ADMIN))
--			goto out_destroy_group;
--	}
--
- 	if (flags & FAN_ENABLE_AUDIT) {
- 		fd = -EPERM;
- 		if (!capable(CAP_AUDIT_WRITE))
++	ret = -EPERM;
++	if (user_ns && !ns_capable(user_ns, CAP_SYS_ADMIN))
++		goto path_put_and_out;
++
+ 	ret = -EINVAL;
+ 	if (!obj)
+ 		goto path_put_and_out;
+diff --git a/include/linux/fanotify.h b/include/linux/fanotify.h
+index 3c817dc6292e..879cff5eccd4 100644
+--- a/include/linux/fanotify.h
++++ b/include/linux/fanotify.h
+@@ -38,8 +38,7 @@
+ 					 FAN_REPORT_PIDFD | \
+ 					 FAN_REPORT_FD_ERROR | \
+ 					 FAN_UNLIMITED_QUEUE | \
+-					 FAN_UNLIMITED_MARKS | \
+-					 FAN_REPORT_MNT)
++					 FAN_UNLIMITED_MARKS)
+ 
+ /*
+  * fanotify_init() flags that are allowed for user without CAP_SYS_ADMIN.
+@@ -48,7 +47,7 @@
+  * so one of the flags for reporting file handles is required.
+  */
+ #define FANOTIFY_USER_INIT_FLAGS	(FAN_CLASS_NOTIF | \
+-					 FANOTIFY_FID_BITS | \
++					 FANOTIFY_FID_BITS | FAN_REPORT_MNT | \
+ 					 FAN_CLOEXEC | FAN_NONBLOCK)
+ 
+ #define FANOTIFY_INIT_FLAGS	(FANOTIFY_ADMIN_INIT_FLAGS | \
+diff --git a/include/linux/fsnotify_backend.h b/include/linux/fsnotify_backend.h
+index fc27b53c58c2..d4034ddaf392 100644
+--- a/include/linux/fsnotify_backend.h
++++ b/include/linux/fsnotify_backend.h
+@@ -250,6 +250,7 @@ struct fsnotify_group {
+ 						 * full */
+ 
+ 	struct mem_cgroup *memcg;	/* memcg to charge allocations */
++	struct user_namespace *user_ns;	/* user ns where group was created */
+ 
+ 	/* groups can define private fields here or use the void *private */
+ 	union {
 -- 
 2.34.1
 
