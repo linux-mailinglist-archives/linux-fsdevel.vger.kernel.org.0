@@ -1,961 +1,586 @@
-Return-Path: <linux-fsdevel+bounces-49340-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49345-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24EC0ABB84D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:09:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 773FFABB8B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:20:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58EA016BFCE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:09:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28EBC3B5CBE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:20:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F20926FA5B;
-	Mon, 19 May 2025 09:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="URSFCtRf"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788892701AA;
+	Mon, 19 May 2025 09:18:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5201926FA41
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 09:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50EEE26C39A;
+	Mon, 19 May 2025 09:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747645673; cv=none; b=P3guCykD88OfZSuKpy0MtYjYM3B/e6171ltBoW+b3KU83EKQHE5HJY931tpHwCy+/Z1kQjts5uZAL8UpY6ineNmwv0u7iFt/820CTiDwyeKfJCu9peebqqhfxH4KkqRZnTauT6XjiuU6GW9k+/YufpH3IeuZahtcZxcVo4fC9dI=
+	t=1747646330; cv=none; b=XorA1pkilOorLDE5jU+rKODSYj3XpGDdx9Xs+Lmayykjj1YQ58Dt7VeFCpme+R9Wsz8IZRC6goylCHg9etSb7kaG4lYIADB1LF2/3RXf6slxiPPIarnrLbjt9PFI+z0yk7HMlELnU0P88swN/Dhk14Yypf/FgYZu3+/Z1PGTJuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747645673; c=relaxed/simple;
-	bh=bf6IYBS2mPS0ulmrXtY4a5XcaiYhcumNALqNLDRDwus=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CJ44gcEKe4mCdQOMokdJDGaobDTc1EvYa+77jk23YsDL2L3RRrU8vZsZcKijIjLzxA93Z6Wdidgy3eZ3mYWoU1KwdAt0LCTLkyL54sqWLLXU3NOu6f7mXgqT1ZRfxLqcCOL/IjdnTnHSRvz4AwmEcQ8NFGL6j3jlSXP5uRrN6AQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=URSFCtRf; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747645669;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MEhCEz5Qz5DPrKAHl2sm4RhwJl3TeWS3umesQ/LaTBQ=;
-	b=URSFCtRfzX9bZ1PPPa4L/vR7kD/ABfySh9zDM+SliHVu/EbpQF93Mwh7QmV/7PZj22ZvKH
-	VZQ3SmxDY0RMZfr4iSE22p+8+hdB+X06pYZgalYutQjQ00fXBYw6uCknYPG0YRqpjbihV5
-	703iqMkgQVxN5ZFDvyFduXwEw1Oho2Q=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-381-q0E3oxWdMymfiKrCeghlmw-1; Mon,
- 19 May 2025 05:07:44 -0400
-X-MC-Unique: q0E3oxWdMymfiKrCeghlmw-1
-X-Mimecast-MFC-AGG-ID: q0E3oxWdMymfiKrCeghlmw_1747645662
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A0256195608A;
-	Mon, 19 May 2025 09:07:41 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.188])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3CAC218004A7;
-	Mon, 19 May 2025 09:07:35 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
+	s=arc-20240116; t=1747646330; c=relaxed/simple;
+	bh=F2+laTLY35oiksiLpOr9iux3nq/2r3H/WD2kOmMsKRg=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=iBcU88UINsmnVTSPS4MCzeEgz/a09hOgZ42JANAL2+mL7QWJwGP2sBvM/T114NOqeNy2RJ5qLrcbTul94NfnKW72v8G/TGqz6L5Wl7Zi1SS7dRmbZ7oeyLfObdRIZV4mJT/QIbh6Ik9SKRRJXwZ3h0nze7PuKxab/Sbw8bdRcIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-3d-682af76ccf1d
+From: Byungchul Park <byungchul@sk.com>
+To: linux-kernel@vger.kernel.org
+Cc: kernel_team@skhynix.com,
+	torvalds@linux-foundation.org,
+	damien.lemoal@opensource.wdc.com,
+	linux-ide@vger.kernel.org,
+	adilger.kernel@dilger.ca,
+	linux-ext4@vger.kernel.org,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	will@kernel.org,
+	tglx@linutronix.de,
+	rostedt@goodmis.org,
+	joel@joelfernandes.org,
+	sashal@kernel.org,
+	daniel.vetter@ffwll.ch,
+	duyuyang@gmail.com,
+	johannes.berg@intel.com,
+	tj@kernel.org,
+	tytso@mit.edu,
+	willy@infradead.org,
+	david@fromorbit.com,
+	amir73il@gmail.com,
+	gregkh@linuxfoundation.org,
+	kernel-team@lge.com,
+	linux-mm@kvack.org,
+	akpm@linux-foundation.org,
+	mhocko@kernel.org,
+	minchan@kernel.org,
+	hannes@cmpxchg.org,
+	vdavydov.dev@gmail.com,
+	sj@kernel.org,
+	jglisse@redhat.com,
+	dennis@kernel.org,
+	cl@linux.com,
+	penberg@kernel.org,
+	rientjes@google.com,
+	vbabka@suse.cz,
+	ngupta@vflare.org,
+	linux-block@vger.kernel.org,
+	josef@toxicpanda.com,
 	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marc Dionne <marc.dionne@auristor.com>,
-	Steve French <stfrench@microsoft.com>,
-	Ihor Solodrai <ihor.solodrai@pm.me>,
-	Eric Van Hensbergen <ericvh@kernel.org>,
-	Latchesar Ionkov <lucho@ionkov.net>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>,
-	Jeff Layton <jlayton@kernel.org>
-Subject: [PATCH 4/4] netfs: Fix wait/wake to be consistent about the waitqueue used
-Date: Mon, 19 May 2025 10:07:04 +0100
-Message-ID: <20250519090707.2848510-5-dhowells@redhat.com>
-In-Reply-To: <20250519090707.2848510-1-dhowells@redhat.com>
-References: <20250519090707.2848510-1-dhowells@redhat.com>
+	jack@suse.cz,
+	jlayton@kernel.org,
+	dan.j.williams@intel.com,
+	hch@infradead.org,
+	djwong@kernel.org,
+	dri-devel@lists.freedesktop.org,
+	rodrigosiqueiramelo@gmail.com,
+	melissa.srw@gmail.com,
+	hamohammed.sa@gmail.com,
+	harry.yoo@oracle.com,
+	chris.p.wilson@intel.com,
+	gwan-gyeong.mun@intel.com,
+	max.byungchul.park@gmail.com,
+	boqun.feng@gmail.com,
+	longman@redhat.com,
+	yskelg@gmail.com,
+	yunseong.kim@ericsson.com,
+	yeoreum.yun@arm.com,
+	netdev@vger.kernel.org,
+	matthew.brost@intel.com,
+	her0gyugyu@gmail.com
+Subject: [PATCH v16 00/42] DEPT(DEPendency Tracker)
+Date: Mon, 19 May 2025 18:17:44 +0900
+Message-Id: <20250519091826.19752-1-byungchul@sk.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAAzXSW0xTWRQGYPe57HMoVM9Uo0e8TZrgzGBQ0RrXAxrjg26jRseJL2pGO3K0
+	jQVNURCjsSgSBSlqAigIFjSdphTBFuMFqxW1gkatghUJrUqQSKAgSItgvYCXl5Uv+bP+9bJ4
+	WlHFRvPa5N2SPlmtU2IZIwtElcXpBmM1cztzAIIDRxk4W2XD4LlYgcBWk0FB573l8CLUjeDT
+	oyc0FOZ7EJS98dFQ4/YjcFoOYWhsHwtNwV4MDfk5GA6fr8LwtCtMQWvBKQoq7KvhlbmDgYcn
+	yiko7MRQXHiYGhnvKBgyWzkwG2KgzVLEQfhNPDT4vSw4W2bBmdJWDDecDQy4r7ZR0Hj9LAa/
+	7SsLD931DISMU8BzMpeFyp5yDF0hMw3mYC8Hz1wmCtymiVCdOVKY9eELC/dzXRRkXbhEQdPL
+	WgQ3j76mwG7zYrgT7KbAYc+nYfj/ewjajAEOjhwf4qA4w4gg50gBA5mtC+DTx5HLJQPxkHGu
+	moHKz160ZBGxldoQudPdS5NMRxoZDj7HxBkyMeRBuUiuFfk4knmzhSMm+x7isMSS8zc6KVLW
+	H2SJ3XoME3v/KY5kB5oo0vP4Mbd26gZZQqKk06ZK+jmLt8g0RXnqXYZzaG9LX5gzoHBaNorg
+	RUElFj8NcL/cW/8ejxoLf4jNzUP0qCcIv4uO3A42G8l4WvBGii9KXqLRYLwwXzS6Ln1fZoQY
+	8VBWFztqubBAzPNb6R+lM8SKatdPf+TFt18ifniyeNvSzJxAkSY0xooU2uTUJLVWp5qtSU/W
+	7p29dWeSHY28kflAeONV1O/5pw4JPFJGyaudf2kUrDo1JT2pDok8rZwgtzr+1Cjkier0fZJ+
+	52b9Hp2UUoem8IxyknxeKC1RIWxX75Z2SNIuSf8rpfiIaAP61/jbB16xf5tnWmimC/vzE8bG
+	tX++2BcoXZfo4D3RPm2UDxrlhnGFdw/GrlKtOT295cDgytVxHZxhu2rNWm/ltcj/2L/dl2ds
+	3HZlYUFJad+yWwl55Lh9U23q5eHBZ0uNChmE188ZwGHWl656V9+zqq6mfdnkGL6h1smvWGcJ
+	KZkUjTo+ltanqL8BTJirKUIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRyG+//PtdXitKwOdh+EZmVJWb9KIqLoEHT5VBl0GXlqyzllq5VB
+	4dKkLLUEtczL0lgyV+rWB7tMxixrRWZtLZO5UiKyWavpLG1dHNGXlwdeeN4vL0vISqhYVqU5
+	Imo1CrWclpCSrWtyF6u/JyiXFtTNhPDQWRIqGy00dN5qQGC5bcDQ/3ATvB4eQPDz2XMCyks7
+	EVzr7SHgdrsfgb3+NA3u95PAEw7S4Co9T0NuXSMNLwIRDL6yEgwN1i3w1vSBhKcXazGU99Nw
+	tTwXj8VHDCMmMwOmnPnQV1/BQKQ3CVx+LwVtVS4K7N0L4Uq1j4b7dhcJ7S19GNx3K2nwW/5Q
+	8LT9MQnDRTOg81IhBTe/1NIQGDYRYAoHGXjpMGJoN06Dprwxa/7gbwoeFTow5F9vxuB5cw9B
+	69l3GKwWLw1t4QEMNmspAaM3HiLoK/rMwJkLIwxcNRQhOH+mjIQ8XzL8/DG2XDWUBIaaJhJu
+	/vKidWsFS7UFCW0DQULIsx0TRsOvaME+bCSFJ7W8cKeihxHyWrsZwWg9KtjqE4S6+/1YuBYK
+	U4LVfI4WrKESRij47MHCl44OZvus3ZKUNFGt0ovaJWv3S5QVxYqsnBp0vPtbhMlBkWMFaDzL
+	c8v54OOvdJRpLo7v6hohohzDzeVthR+oAiRhCc47gX9d9QZFiyncMr7I0cxEmeTm86fzA1SU
+	pVwyX+w3E/+kc/iGJgdxEbFGNM6MYlQafYZCpU5O1KUrszWq44kHMjOsaOwpppORSy1oyL3J
+	iTgWySdKm+wLlDJKoddlZzgRzxLyGKnZFq+USdMU2SdEbeY+7VG1qHOiGSwpny7dvFPcL+MO
+	KY6I6aKYJWr/t5gdH5uDVn2yVxoPuqfu8m1dvaMXD8Tv3eibFLoRlBkaY0KGklBt2YNIm98W
+	2H5gSKxbM9OzPo4P4I7qxHmjKzpS+tTNMEi0sHsuODeENCu3bZ72rXyvp/nUIq9rdleqwe3I
+	WJ8e59ko6u8tGJf66E7VwsmHiScpvc7WnssV+tLiubl0mpzUKRVJCYRWp/gLeTq8MCUDAAA=
+X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-Fix further inconsistencies in the use of waitqueues
-(clear_and_wake_up_bit() vs private waitqueue).
+Found out a recent deadlock issue can be reported by dept.  The issue is:
 
-Move some of this stuff from the read and write sides into common code so
-that it can be done in fewer places.
+   https://lore.kernel.org/all/20250513093448.592150-1-gavinguo@igalia.com/
 
-To make this work, async I/O needs to set NETFS_RREQ_OFFLOAD_COLLECTION to
-indicate that a workqueue will do the collecting and places that call the
-wait function need to deal with it returning the amount transferred.
+I'm happy to see that dept reported real problems in practice.  See:
 
-Fixes: e2d46f2ec332 ("netfs: Change the read result collector to only use one work item")
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Steve French <stfrench@microsoft.com>
-cc: Ihor Solodrai <ihor.solodrai@pm.me>
-cc: Eric Van Hensbergen <ericvh@kernel.org>
-cc: Latchesar Ionkov <lucho@ionkov.net>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Christian Schoenebeck <linux_oss@crudebyte.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: v9fs@lists.linux.dev
-cc: linux-cifs@vger.kernel.org
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
+   https://lore.kernel.org/lkml/6383cde5-cf4b-facf-6e07-1378a485657d@I-love.SAKURA.ne.jp/
+   https://lore.kernel.org/lkml/1674268856-31807-1-git-send-email-byungchul.park@lge.com/
+   https://lore.kernel.org/all/b6e00e77-4a8c-4e05-ab79-266bf05fcc2d@igalia.com/
+
+I added documents describing dept, that would help you understand what
+dept is and how dept works.  You can use dept just with CONFIG_DEPT on
+and checking dmesg at runtime.
+
+There are still false positives and some of them are already in progress
+to suppress and the efforts need to be kept for a while as lockdep
+experienced.  Especially, since dept tracks PG_locked but folios have
+never been split in class - which needs help from maybe fs guys tho.. -
+we should put up with the AA report of PG_locked for a while, for
+instance, any nested folio_lock()s will give the dept splat for now :(
+
+It's worth noting that *EXPERIMENTAL* in Kconfig is tagged, which means
+dept is not proper for an automation tool yet.
+
+Thanks for the support and contribution, to:
+
+   Harry Yoo <harry.yoo@oracle.com>
+   Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
+   Yunseong Kim <yskelg@gmail.com>
+   Yeoreum Yun <yeoreum.yun@arm.com>
+
 ---
- fs/netfs/buffered_read.c  |   2 +-
- fs/netfs/buffered_write.c |   2 +-
- fs/netfs/direct_read.c    |   4 +-
- fs/netfs/direct_write.c   |  10 +-
- fs/netfs/internal.h       |  33 ++++--
- fs/netfs/misc.c           | 218 ++++++++++++++++++++++++++++++++++++++
- fs/netfs/read_collect.c   | 139 +-----------------------
- fs/netfs/read_retry.c     |  24 +----
- fs/netfs/write_collect.c  |  36 ++-----
- fs/netfs/write_issue.c    |  28 +++--
- fs/netfs/write_retry.c    |  12 +--
- 11 files changed, 284 insertions(+), 224 deletions(-)
 
-diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index cb6202efc466..fd4619275801 100644
---- a/fs/netfs/buffered_read.c
-+++ b/fs/netfs/buffered_read.c
-@@ -312,7 +312,7 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
- 	if (unlikely(size > 0)) {
- 		smp_wmb(); /* Write lists before ALL_QUEUED. */
- 		set_bit(NETFS_RREQ_ALL_QUEUED, &rreq->flags);
--		netfs_wake_read_collector(rreq);
-+		netfs_wake_collector(rreq);
- 	}
- 
- 	/* Defer error return as we may need to wait for outstanding I/O. */
-diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
-index b4826360a411..dbb544e183d1 100644
---- a/fs/netfs/buffered_write.c
-+++ b/fs/netfs/buffered_write.c
-@@ -386,7 +386,7 @@ ssize_t netfs_perform_write(struct kiocb *iocb, struct iov_iter *iter,
- 		wbc_detach_inode(&wbc);
- 		if (ret2 == -EIOCBQUEUED)
- 			return ret2;
--		if (ret == 0)
-+		if (ret == 0 && ret2 < 0)
- 			ret = ret2;
- 	}
- 
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index cb3c6dc0b165..a24e63d2c818 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -103,7 +103,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
- 		rreq->netfs_ops->issue_read(subreq);
- 
- 		if (test_bit(NETFS_RREQ_PAUSE, &rreq->flags))
--			netfs_wait_for_pause(rreq);
-+			netfs_wait_for_paused_read(rreq);
- 		if (test_bit(NETFS_RREQ_FAILED, &rreq->flags))
- 			break;
- 		if (test_bit(NETFS_RREQ_BLOCKED, &rreq->flags) &&
-@@ -115,7 +115,7 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
- 	if (unlikely(size > 0)) {
- 		smp_wmb(); /* Write lists before ALL_QUEUED. */
- 		set_bit(NETFS_RREQ_ALL_QUEUED, &rreq->flags);
--		netfs_wake_read_collector(rreq);
-+		netfs_wake_collector(rreq);
- 	}
- 
- 	return ret;
-diff --git a/fs/netfs/direct_write.c b/fs/netfs/direct_write.c
-index c98f1676f86d..fa9a5bf3c6d5 100644
---- a/fs/netfs/direct_write.c
-+++ b/fs/netfs/direct_write.c
-@@ -87,6 +87,8 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
- 	}
- 
- 	__set_bit(NETFS_RREQ_USE_IO_ITER, &wreq->flags);
-+	if (async)
-+		__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &wreq->flags);
- 
- 	/* Copy the data into the bounce buffer and encrypt it. */
- 	// TODO
-@@ -105,13 +107,9 @@ ssize_t netfs_unbuffered_write_iter_locked(struct kiocb *iocb, struct iov_iter *
- 
- 	if (!async) {
- 		trace_netfs_rreq(wreq, netfs_rreq_trace_wait_ip);
--		wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS,
--			    TASK_UNINTERRUPTIBLE);
--		ret = wreq->error;
--		if (ret == 0) {
--			ret = wreq->transferred;
-+		ret = netfs_wait_for_write(wreq);
-+		if (ret > 0)
- 			iocb->ki_pos += ret;
--		}
- 	} else {
- 		ret = -EIOCBQUEUED;
- 	}
-diff --git a/fs/netfs/internal.h b/fs/netfs/internal.h
-index b6500a7cda81..e2ee9183392b 100644
---- a/fs/netfs/internal.h
-+++ b/fs/netfs/internal.h
-@@ -62,6 +62,14 @@ static inline void netfs_proc_del_rreq(struct netfs_io_request *rreq) {}
- struct folio_queue *netfs_buffer_make_space(struct netfs_io_request *rreq,
- 					    enum netfs_folioq_trace trace);
- void netfs_reset_iter(struct netfs_io_subrequest *subreq);
-+void netfs_wake_collector(struct netfs_io_request *rreq);
-+void netfs_subreq_clear_in_progress(struct netfs_io_subrequest *subreq);
-+void netfs_wait_for_in_progress_stream(struct netfs_io_request *rreq,
-+				       struct netfs_io_stream *stream);
-+ssize_t netfs_wait_for_read(struct netfs_io_request *rreq);
-+ssize_t netfs_wait_for_write(struct netfs_io_request *rreq);
-+void netfs_wait_for_paused_read(struct netfs_io_request *rreq);
-+void netfs_wait_for_paused_write(struct netfs_io_request *rreq);
- 
- /*
-  * objects.c
-@@ -91,11 +99,9 @@ static inline void netfs_see_subrequest(struct netfs_io_subrequest *subreq,
- /*
-  * read_collect.c
-  */
-+bool netfs_read_collection(struct netfs_io_request *rreq);
- void netfs_read_collection_worker(struct work_struct *work);
--void netfs_wake_read_collector(struct netfs_io_request *rreq);
- void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error);
--ssize_t netfs_wait_for_read(struct netfs_io_request *rreq);
--void netfs_wait_for_pause(struct netfs_io_request *rreq);
- 
- /*
-  * read_pgpriv2.c
-@@ -175,8 +181,8 @@ static inline void netfs_stat_d(atomic_t *stat)
-  * write_collect.c
-  */
- int netfs_folio_written_back(struct folio *folio);
-+bool netfs_write_collection(struct netfs_io_request *wreq);
- void netfs_write_collection_worker(struct work_struct *work);
--void netfs_wake_write_collector(struct netfs_io_request *wreq);
- 
- /*
-  * write_issue.c
-@@ -197,8 +203,8 @@ struct netfs_io_request *netfs_begin_writethrough(struct kiocb *iocb, size_t len
- int netfs_advance_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
- 			       struct folio *folio, size_t copied, bool to_page_end,
- 			       struct folio **writethrough_cache);
--int netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
--			   struct folio *writethrough_cache);
-+ssize_t netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
-+			       struct folio *writethrough_cache);
- int netfs_unbuffered_write(struct netfs_io_request *wreq, bool may_wait, size_t len);
- 
- /*
-@@ -253,6 +259,21 @@ static inline void netfs_put_group_many(struct netfs_group *netfs_group, int nr)
- 		netfs_group->free(netfs_group);
- }
- 
-+/*
-+ * Clear and wake up a NETFS_RREQ_* flag bit on a request.
-+ */
-+static inline void netfs_wake_rreq_flag(struct netfs_io_request *rreq,
-+					unsigned int rreq_flag,
-+					enum netfs_rreq_trace trace)
-+{
-+	if (test_bit(rreq_flag, &rreq->flags)) {
-+		trace_netfs_rreq(rreq, trace);
-+		clear_bit_unlock(rreq_flag, &rreq->flags);
-+		smp_mb__after_atomic(); /* Set flag before task state */
-+		wake_up(&rreq->waitq);
-+	}
-+}
-+
- /*
-  * fscache-cache.c
-  */
-diff --git a/fs/netfs/misc.c b/fs/netfs/misc.c
-index 7099aa07737a..77e7f7c79d27 100644
---- a/fs/netfs/misc.c
-+++ b/fs/netfs/misc.c
-@@ -313,3 +313,221 @@ bool netfs_release_folio(struct folio *folio, gfp_t gfp)
- 	return true;
- }
- EXPORT_SYMBOL(netfs_release_folio);
-+
-+/*
-+ * Wake the collection work item.
-+ */
-+void netfs_wake_collector(struct netfs_io_request *rreq)
-+{
-+	if (test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags) &&
-+	    !test_bit(NETFS_RREQ_RETRYING, &rreq->flags)) {
-+		queue_work(system_unbound_wq, &rreq->work);
-+	} else {
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wake_queue);
-+		wake_up(&rreq->waitq);
-+	}
-+}
-+
-+/*
-+ * Mark a subrequest as no longer being in progress and, if need be, wake the
-+ * collector.
-+ */
-+void netfs_subreq_clear_in_progress(struct netfs_io_subrequest *subreq)
-+{
-+	struct netfs_io_request *rreq = subreq->rreq;
-+	struct netfs_io_stream *stream = &rreq->io_streams[subreq->stream_nr];
-+
-+	clear_bit_unlock(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
-+	smp_mb__after_atomic(); /* Clear IN_PROGRESS before task state */
-+
-+	/* If we are at the head of the queue, wake up the collector. */
-+	if (list_is_first(&subreq->rreq_link, &stream->subrequests) ||
-+	    test_bit(NETFS_RREQ_RETRYING, &rreq->flags))
-+		netfs_wake_collector(rreq);
-+}
-+
-+/*
-+ * Wait for all outstanding I/O in a stream to quiesce.
-+ */
-+void netfs_wait_for_in_progress_stream(struct netfs_io_request *rreq,
-+				       struct netfs_io_stream *stream)
-+{
-+	struct netfs_io_subrequest *subreq;
-+	DEFINE_WAIT(myself);
-+
-+	list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
-+		if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
-+			continue;
-+
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-+		for (;;) {
-+			prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
-+
-+			if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
-+				break;
-+
-+			trace_netfs_sreq(subreq, netfs_sreq_trace_wait_for);
-+			schedule();
-+			trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
-+		}
-+	}
-+
-+	finish_wait(&rreq->waitq, &myself);
-+}
-+
-+/*
-+ * Perform collection in app thread if not offloaded to workqueue.
-+ */
-+static int netfs_collect_in_app(struct netfs_io_request *rreq,
-+				bool (*collector)(struct netfs_io_request *rreq))
-+{
-+	bool need_collect = false, inactive = true;
-+
-+	for (int i = 0; i < NR_IO_STREAMS; i++) {
-+		struct netfs_io_subrequest *subreq;
-+		struct netfs_io_stream *stream = &rreq->io_streams[i];
-+
-+		if (!stream->active)
-+			continue;
-+		inactive = false;
-+		trace_netfs_collect_stream(rreq, stream);
-+		subreq = list_first_entry_or_null(&stream->subrequests,
-+						  struct netfs_io_subrequest,
-+						  rreq_link);
-+		if (subreq &&
-+		    (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags) ||
-+		     test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags))) {
-+			need_collect = true;
-+			break;
-+		}
-+	}
-+
-+	if (!need_collect && !inactive)
-+		return 0; /* Sleep */
-+
-+	__set_current_state(TASK_RUNNING);
-+	if (collector(rreq)) {
-+		/* Drop the ref from the NETFS_RREQ_IN_PROGRESS flag. */
-+		netfs_put_request(rreq, netfs_rreq_trace_put_work_ip);
-+		return 1; /* Done */
-+	}
-+
-+	if (inactive) {
-+		WARN(true, "Failed to collect inactive req R=%08x\n",
-+		     rreq->debug_id);
-+		cond_resched();
-+	}
-+	return 2; /* Again */
-+}
-+
-+/*
-+ * Wait for a request to complete, successfully or otherwise.
-+ */
-+static ssize_t netfs_wait_for_request(struct netfs_io_request *rreq,
-+				      bool (*collector)(struct netfs_io_request *rreq))
-+{
-+	DEFINE_WAIT(myself);
-+	ssize_t ret;
-+
-+	for (;;) {
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-+		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
-+
-+		if (!test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
-+			switch (netfs_collect_in_app(rreq, collector)) {
-+			case 0:
-+				break;
-+			case 1:
-+				goto all_collected;
-+			case 2:
-+				continue;
-+			}
-+		}
-+
-+		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
-+			break;
-+
-+		schedule();
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
-+	}
-+
-+all_collected:
-+	finish_wait(&rreq->waitq, &myself);
-+
-+	ret = rreq->error;
-+	if (ret == 0) {
-+		ret = rreq->transferred;
-+		switch (rreq->origin) {
-+		case NETFS_DIO_READ:
-+		case NETFS_DIO_WRITE:
-+		case NETFS_READ_SINGLE:
-+		case NETFS_UNBUFFERED_WRITE:
-+			break;
-+		default:
-+			if (rreq->submitted < rreq->len) {
-+				trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
-+				ret = -EIO;
-+			}
-+			break;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+ssize_t netfs_wait_for_read(struct netfs_io_request *rreq)
-+{
-+	return netfs_wait_for_request(rreq, netfs_read_collection);
-+}
-+
-+ssize_t netfs_wait_for_write(struct netfs_io_request *rreq)
-+{
-+	return netfs_wait_for_request(rreq, netfs_write_collection);
-+}
-+
-+/*
-+ * Wait for a paused operation to unpause or complete in some manner.
-+ */
-+static void netfs_wait_for_pause(struct netfs_io_request *rreq,
-+				 bool (*collector)(struct netfs_io_request *rreq))
-+{
-+	DEFINE_WAIT(myself);
-+
-+	trace_netfs_rreq(rreq, netfs_rreq_trace_wait_pause);
-+
-+	for (;;) {
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
-+		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
-+
-+		if (!test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
-+			switch (netfs_collect_in_app(rreq, collector)) {
-+			case 0:
-+				break;
-+			case 1:
-+				goto all_collected;
-+			case 2:
-+				continue;
-+			}
-+		}
-+
-+		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags) ||
-+		    !test_bit(NETFS_RREQ_PAUSE, &rreq->flags))
-+			break;
-+
-+		schedule();
-+		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
-+	}
-+
-+all_collected:
-+	finish_wait(&rreq->waitq, &myself);
-+}
-+
-+void netfs_wait_for_paused_read(struct netfs_io_request *rreq)
-+{
-+	return netfs_wait_for_pause(rreq, netfs_read_collection);
-+}
-+
-+void netfs_wait_for_paused_write(struct netfs_io_request *rreq)
-+{
-+	return netfs_wait_for_pause(rreq, netfs_write_collection);
-+}
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index 1197ebce5675..900dd51c3b94 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -315,14 +315,8 @@ static void netfs_collect_read_results(struct netfs_io_request *rreq)
- 
- 	if (notes & NEED_RETRY)
- 		goto need_retry;
--	if ((notes & MADE_PROGRESS) && test_bit(NETFS_RREQ_PAUSE, &rreq->flags)) {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_unpause);
--		clear_bit_unlock(NETFS_RREQ_PAUSE, &rreq->flags);
--		smp_mb__after_atomic(); /* Set PAUSE before task state */
--		wake_up(&rreq->waitq);
--	}
--
- 	if (notes & MADE_PROGRESS) {
-+		netfs_wake_rreq_flag(rreq, NETFS_RREQ_PAUSE, netfs_rreq_trace_unpause);
- 		//cond_resched();
- 		goto reassess;
- 	}
-@@ -399,7 +393,7 @@ static void netfs_rreq_assess_single(struct netfs_io_request *rreq)
-  * Note that we're in normal kernel thread context at this point, possibly
-  * running on a workqueue.
-  */
--static bool netfs_read_collection(struct netfs_io_request *rreq)
-+bool netfs_read_collection(struct netfs_io_request *rreq)
- {
- 	struct netfs_io_stream *stream = &rreq->io_streams[0];
- 
-@@ -434,8 +428,7 @@ static bool netfs_read_collection(struct netfs_io_request *rreq)
- 	}
- 	task_io_account_read(rreq->transferred);
- 
--	trace_netfs_rreq(rreq, netfs_rreq_trace_wake_ip);
--	clear_and_wake_up_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
-+	netfs_wake_rreq_flag(rreq, NETFS_RREQ_IN_PROGRESS, netfs_rreq_trace_wake_ip);
- 	/* As we cleared NETFS_RREQ_IN_PROGRESS, we acquired its ref. */
- 
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_done);
-@@ -460,20 +453,6 @@ void netfs_read_collection_worker(struct work_struct *work)
- 	}
- }
- 
--/*
-- * Wake the collection work item.
-- */
--void netfs_wake_read_collector(struct netfs_io_request *rreq)
--{
--	if (test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags) &&
--	    !test_bit(NETFS_RREQ_RETRYING, &rreq->flags)) {
--		queue_work(system_unbound_wq, &rreq->work);
--	} else {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wake_queue);
--		wake_up(&rreq->waitq);
--	}
--}
--
- /**
-  * netfs_read_subreq_progress - Note progress of a read operation.
-  * @subreq: The read request that has terminated.
-@@ -502,7 +481,7 @@ void netfs_read_subreq_progress(struct netfs_io_subrequest *subreq)
- 	    list_is_first(&subreq->rreq_link, &stream->subrequests)
- 	    ) {
- 		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
--		netfs_wake_read_collector(rreq);
-+		netfs_wake_collector(rreq);
- 	}
- }
- EXPORT_SYMBOL(netfs_read_subreq_progress);
-@@ -526,7 +505,6 @@ EXPORT_SYMBOL(netfs_read_subreq_progress);
- void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq)
- {
- 	struct netfs_io_request *rreq = subreq->rreq;
--	struct netfs_io_stream *stream = &rreq->io_streams[0];
- 
- 	switch (subreq->source) {
- 	case NETFS_READ_FROM_CACHE:
-@@ -573,15 +551,7 @@ void netfs_read_subreq_terminated(struct netfs_io_subrequest *subreq)
- 	}
- 
- 	trace_netfs_sreq(subreq, netfs_sreq_trace_terminated);
--
--	clear_bit_unlock(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
--	smp_mb__after_atomic(); /* Clear IN_PROGRESS before task state */
--
--	/* If we are at the head of the queue, wake up the collector. */
--	if (list_is_first(&subreq->rreq_link, &stream->subrequests) ||
--	    test_bit(NETFS_RREQ_RETRYING, &rreq->flags))
--		netfs_wake_read_collector(rreq);
--
-+	netfs_subreq_clear_in_progress(subreq);
- 	netfs_put_subrequest(subreq, netfs_sreq_trace_put_terminated);
- }
- EXPORT_SYMBOL(netfs_read_subreq_terminated);
-@@ -604,102 +574,3 @@ void netfs_cache_read_terminated(void *priv, ssize_t transferred_or_error)
- 	}
- 	netfs_read_subreq_terminated(subreq);
- }
--
--/*
-- * Wait for the read operation to complete, successfully or otherwise.
-- */
--ssize_t netfs_wait_for_read(struct netfs_io_request *rreq)
--{
--	struct netfs_io_subrequest *subreq;
--	struct netfs_io_stream *stream = &rreq->io_streams[0];
--	DEFINE_WAIT(myself);
--	ssize_t ret;
--
--	for (;;) {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
--		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
--
--		subreq = list_first_entry_or_null(&stream->subrequests,
--						  struct netfs_io_subrequest, rreq_link);
--		if (subreq &&
--		    (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags) ||
--		     test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags))) {
--			__set_current_state(TASK_RUNNING);
--			if (netfs_read_collection(rreq)) {
--				/* Drop the ref from the NETFS_RREQ_IN_PROGRESS flag. */
--				netfs_put_request(rreq, netfs_rreq_trace_put_work_ip);
--				break;
--			}
--			continue;
--		}
--
--		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags))
--			break;
--
--		schedule();
--		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
--	}
--
--	finish_wait(&rreq->waitq, &myself);
--
--	ret = rreq->error;
--	if (ret == 0) {
--		ret = rreq->transferred;
--		switch (rreq->origin) {
--		case NETFS_DIO_READ:
--		case NETFS_READ_SINGLE:
--			ret = rreq->transferred;
--			break;
--		default:
--			if (rreq->submitted < rreq->len) {
--				trace_netfs_failure(rreq, NULL, ret, netfs_fail_short_read);
--				ret = -EIO;
--			}
--			break;
--		}
--	}
--
--	return ret;
--}
--
--/*
-- * Wait for a paused read operation to unpause or complete in some manner.
-- */
--void netfs_wait_for_pause(struct netfs_io_request *rreq)
--{
--	struct netfs_io_subrequest *subreq;
--	struct netfs_io_stream *stream = &rreq->io_streams[0];
--	DEFINE_WAIT(myself);
--
--	trace_netfs_rreq(rreq, netfs_rreq_trace_wait_pause);
--
--	for (;;) {
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
--		prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
--
--		if (!test_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &rreq->flags)) {
--			subreq = list_first_entry_or_null(&stream->subrequests,
--							  struct netfs_io_subrequest, rreq_link);
--			if (subreq &&
--			    (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags) ||
--			     test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags))) {
--				__set_current_state(TASK_RUNNING);
--				if (netfs_read_collection(rreq)) {
--					/* Drop the ref from the NETFS_RREQ_IN_PROGRESS flag. */
--					netfs_put_request(rreq, netfs_rreq_trace_put_work_ip);
--					break;
--				}
--				continue;
--			}
--		}
--
--		if (!test_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags) ||
--		    !test_bit(NETFS_RREQ_PAUSE, &rreq->flags))
--			break;
--
--		schedule();
--		trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
--	}
--
--	finish_wait(&rreq->waitq, &myself);
--}
-diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
-index 1378dc7fa2cc..b99e84a8170a 100644
---- a/fs/netfs/read_retry.c
-+++ b/fs/netfs/read_retry.c
-@@ -257,35 +257,15 @@ static void netfs_retry_read_subrequests(struct netfs_io_request *rreq)
-  */
- void netfs_retry_reads(struct netfs_io_request *rreq)
- {
--	struct netfs_io_subrequest *subreq;
- 	struct netfs_io_stream *stream = &rreq->io_streams[0];
--	DEFINE_WAIT(myself);
- 
- 	netfs_stat(&netfs_n_rh_retry_read_req);
- 
--	set_bit(NETFS_RREQ_RETRYING, &rreq->flags);
--
- 	/* Wait for all outstanding I/O to quiesce before performing retries as
- 	 * we may need to renegotiate the I/O sizes.
- 	 */
--	list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
--		if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
--			continue;
--
--		trace_netfs_rreq(rreq, netfs_rreq_trace_wait_queue);
--		for (;;) {
--			prepare_to_wait(&rreq->waitq, &myself, TASK_UNINTERRUPTIBLE);
--
--			if (!test_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags))
--				break;
--
--			trace_netfs_sreq(subreq, netfs_sreq_trace_wait_for);
--			schedule();
--			trace_netfs_rreq(rreq, netfs_rreq_trace_woke_queue);
--		}
--
--		finish_wait(&rreq->waitq, &myself);
--	}
-+	set_bit(NETFS_RREQ_RETRYING, &rreq->flags);
-+	netfs_wait_for_in_progress_stream(rreq, stream);
- 	clear_bit(NETFS_RREQ_RETRYING, &rreq->flags);
- 
- 	trace_netfs_rreq(rreq, netfs_rreq_trace_resubmit);
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 7241d1fd2c14..0ce7b53e7fe8 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -321,18 +321,14 @@ static void netfs_collect_write_results(struct netfs_io_request *wreq)
- 
- 	if (notes & NEED_RETRY)
- 		goto need_retry;
--	if ((notes & MADE_PROGRESS) && test_bit(NETFS_RREQ_PAUSE, &wreq->flags)) {
--		trace_netfs_rreq(wreq, netfs_rreq_trace_unpause);
--		clear_bit_unlock(NETFS_RREQ_PAUSE, &wreq->flags);
--		smp_mb__after_atomic(); /* Set PAUSE before task state */
--		wake_up(&wreq->waitq);
--	}
- 
--	if (notes & NEED_REASSESS) {
-+	if (notes & MADE_PROGRESS) {
-+		netfs_wake_rreq_flag(wreq, NETFS_RREQ_PAUSE, netfs_rreq_trace_unpause);
- 		//cond_resched();
- 		goto reassess_streams;
- 	}
--	if (notes & MADE_PROGRESS) {
-+
-+	if (notes & NEED_REASSESS) {
- 		//cond_resched();
- 		goto reassess_streams;
- 	}
-@@ -356,7 +352,7 @@ static void netfs_collect_write_results(struct netfs_io_request *wreq)
- /*
-  * Perform the collection of subrequests, folios and encryption buffers.
-  */
--static bool netfs_write_collection(struct netfs_io_request *wreq)
-+bool netfs_write_collection(struct netfs_io_request *wreq)
- {
- 	struct netfs_inode *ictx = netfs_inode(wreq->inode);
- 	size_t transferred;
-@@ -417,8 +413,7 @@ static bool netfs_write_collection(struct netfs_io_request *wreq)
- 		inode_dio_end(wreq->inode);
- 
- 	_debug("finished");
--	trace_netfs_rreq(wreq, netfs_rreq_trace_wake_ip);
--	clear_and_wake_up_bit(NETFS_RREQ_IN_PROGRESS, &wreq->flags);
-+	netfs_wake_rreq_flag(wreq, NETFS_RREQ_IN_PROGRESS, netfs_rreq_trace_wake_ip);
- 	/* As we cleared NETFS_RREQ_IN_PROGRESS, we acquired its ref. */
- 
- 	if (wreq->iocb) {
-@@ -448,14 +443,6 @@ void netfs_write_collection_worker(struct work_struct *work)
- 	}
- }
- 
--/*
-- * Wake the collection work item.
-- */
--void netfs_wake_write_collector(struct netfs_io_request *wreq)
--{
--	queue_work(system_unbound_wq, &wreq->work);
--}
--
- /**
-  * netfs_write_subrequest_terminated - Note the termination of a write operation.
-  * @_op: The I/O request that has terminated.
-@@ -479,7 +466,6 @@ void netfs_write_subrequest_terminated(void *_op, ssize_t transferred_or_error)
- {
- 	struct netfs_io_subrequest *subreq = _op;
- 	struct netfs_io_request *wreq = subreq->rreq;
--	struct netfs_io_stream *stream = &wreq->io_streams[subreq->stream_nr];
- 
- 	_enter("%x[%x] %zd", wreq->debug_id, subreq->debug_index, transferred_or_error);
- 
-@@ -531,15 +517,7 @@ void netfs_write_subrequest_terminated(void *_op, ssize_t transferred_or_error)
- 	}
- 
- 	trace_netfs_sreq(subreq, netfs_sreq_trace_terminated);
--
--	clear_and_wake_up_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
--
--	/* If we are at the head of the queue, wake up the collector,
--	 * transferring a ref to it if we were the ones to do so.
--	 */
--	if (list_is_first(&subreq->rreq_link, &stream->subrequests))
--		netfs_wake_write_collector(wreq);
--
-+	netfs_subreq_clear_in_progress(subreq);
- 	netfs_put_subrequest(subreq, netfs_sreq_trace_put_terminated);
- }
- EXPORT_SYMBOL(netfs_write_subrequest_terminated);
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index 8744ed3faf29..50bee2c4130d 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -542,7 +542,7 @@ static void netfs_end_issue_write(struct netfs_io_request *wreq)
- 	}
- 
- 	if (needs_poke)
--		netfs_wake_write_collector(wreq);
-+		netfs_wake_collector(wreq);
- }
- 
- /*
-@@ -576,6 +576,7 @@ int netfs_writepages(struct address_space *mapping,
- 		goto couldnt_start;
- 	}
- 
-+	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &wreq->flags);
- 	trace_netfs_write(wreq, netfs_write_trace_writeback);
- 	netfs_stat(&netfs_n_wh_writepages);
- 
-@@ -599,7 +600,7 @@ int netfs_writepages(struct address_space *mapping,
- 	netfs_end_issue_write(wreq);
- 
- 	mutex_unlock(&ictx->wb_lock);
--	netfs_wake_write_collector(wreq);
-+	netfs_wake_collector(wreq);
- 
- 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
- 	_leave(" = %d", error);
-@@ -674,11 +675,11 @@ int netfs_advance_writethrough(struct netfs_io_request *wreq, struct writeback_c
- /*
-  * End a write operation used when writing through the pagecache.
-  */
--int netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
--			   struct folio *writethrough_cache)
-+ssize_t netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_control *wbc,
-+			       struct folio *writethrough_cache)
- {
- 	struct netfs_inode *ictx = netfs_inode(wreq->inode);
--	int ret;
-+	ssize_t ret;
- 
- 	_enter("R=%x", wreq->debug_id);
- 
-@@ -689,12 +690,10 @@ int netfs_end_writethrough(struct netfs_io_request *wreq, struct writeback_contr
- 
- 	mutex_unlock(&ictx->wb_lock);
- 
--	if (wreq->iocb) {
-+	if (wreq->iocb)
- 		ret = -EIOCBQUEUED;
--	} else {
--		wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS, TASK_UNINTERRUPTIBLE);
--		ret = wreq->error;
--	}
-+	else
-+		ret = netfs_wait_for_write(wreq);
- 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
- 	return ret;
- }
-@@ -723,10 +722,8 @@ int netfs_unbuffered_write(struct netfs_io_request *wreq, bool may_wait, size_t
- 		start += part;
- 		len -= part;
- 		rolling_buffer_advance(&wreq->buffer, part);
--		if (test_bit(NETFS_RREQ_PAUSE, &wreq->flags)) {
--			trace_netfs_rreq(wreq, netfs_rreq_trace_wait_pause);
--			wait_event(wreq->waitq, !test_bit(NETFS_RREQ_PAUSE, &wreq->flags));
--		}
-+		if (test_bit(NETFS_RREQ_PAUSE, &wreq->flags))
-+			netfs_wait_for_paused_write(wreq);
- 		if (test_bit(NETFS_RREQ_FAILED, &wreq->flags))
- 			break;
- 	}
-@@ -886,6 +883,7 @@ int netfs_writeback_single(struct address_space *mapping,
- 		goto couldnt_start;
- 	}
- 
-+	__set_bit(NETFS_RREQ_OFFLOAD_COLLECTION, &wreq->flags);
- 	trace_netfs_write(wreq, netfs_write_trace_writeback_single);
- 	netfs_stat(&netfs_n_wh_writepages);
- 
-@@ -915,7 +913,7 @@ int netfs_writeback_single(struct address_space *mapping,
- 	set_bit(NETFS_RREQ_ALL_QUEUED, &wreq->flags);
- 
- 	mutex_unlock(&ictx->wb_lock);
--	netfs_wake_write_collector(wreq);
-+	netfs_wake_collector(wreq);
- 
- 	netfs_put_request(wreq, netfs_rreq_trace_put_return);
- 	_leave(" = %d", ret);
-diff --git a/fs/netfs/write_retry.c b/fs/netfs/write_retry.c
-index 7408f6bb8e42..9d1d8a8bab72 100644
---- a/fs/netfs/write_retry.c
-+++ b/fs/netfs/write_retry.c
-@@ -200,7 +200,6 @@ static void netfs_retry_write_stream(struct netfs_io_request *wreq,
-  */
- void netfs_retry_writes(struct netfs_io_request *wreq)
- {
--	struct netfs_io_subrequest *subreq;
- 	struct netfs_io_stream *stream;
- 	int s;
- 
-@@ -209,16 +208,13 @@ void netfs_retry_writes(struct netfs_io_request *wreq)
- 	/* Wait for all outstanding I/O to quiesce before performing retries as
- 	 * we may need to renegotiate the I/O sizes.
- 	 */
-+	set_bit(NETFS_RREQ_RETRYING, &wreq->flags);
- 	for (s = 0; s < NR_IO_STREAMS; s++) {
- 		stream = &wreq->io_streams[s];
--		if (!stream->active)
--			continue;
--
--		list_for_each_entry(subreq, &stream->subrequests, rreq_link) {
--			wait_on_bit(&subreq->flags, NETFS_SREQ_IN_PROGRESS,
--				    TASK_UNINTERRUPTIBLE);
--		}
-+		if (stream->active)
-+			netfs_wait_for_in_progress_stream(wreq, stream);
- 	}
-+	clear_bit(NETFS_RREQ_RETRYING, &wreq->flags);
- 
- 	// TODO: Enc: Fetch changed partial pages
- 	// TODO: Enc: Reencrypt content if needed.
+Hi Linus and folks,
+
+I've been developing a tool for detecting deadlock possibilities by
+tracking wait/event rather than lock acquisition order to try to cover
+all synchonization machanisms.
+
+Benefits:
+
+	0. Works with all lock primitives.
+	1. Works with wait_for_completion()/complete().
+	2. Works with PG_locked.
+	3. Works with swait/wakeup.
+	4. Works with waitqueue.
+	5. Works with wait_bit.
+	6. Multiple reports are allowed.
+	7. Deduplication control on multiple reports.
+	8. Withstand false positives thanks to 7.
+	9. Easy to annotate on waits/events.
+
+Future works:
+
+	0. To make it more stable.
+	1. To separates dept from lockdep.
+	2. To improves performance in terms of time and space.
+	3. To use dept as a dependency engine for lockdep.
+	4. To add missing annotations on waits/events.
+
+How to interpret reports:
+(See the document in this patchset for more detail.)
+
+	[S] the start of the event context
+	[W] the wait disturbing the event from being triggered
+	[E] the event that cannot be reachable
+
+Thanks.
+
+	Byungchul
+
+---
+
+Changes from v15:
+	1. Fix typo and improve comments and commit messages (feedbacked
+	   by ALOK TIWARI, Waiman Long, and kernel test robot).
+	2. Do not stop dept on detection of cicular dependency of
+	   recover event, allowing to keep reporting.
+	3. Add SK hynix to copyright.
+	4. Consider folio_lock() as a potectial wait unconditionally.
+	5. Fix Kconfig dependency bug (feedbacked by kernel test rebot).
+	6. Do not suppress reports that involve classes even that have
+	   already involved in other reports, allowing to keep
+	   reporting.
+
+Changes from v14:
+	1. Rebase on the current latest, v6.15-rc6.
+	2. Refactor dept code.
+	3. With multi event sites for a single wait, even if an event
+	   forms a circular dependency, the event can be recovered by
+	   other event(or wake up) paths.  Even though informing the
+	   circular dependency is worthy but it should be suppressed
+	   once informing it, if it doesn't lead an actual deadlock.  So
+	   introduce APIs to annotate the relationship between event
+	   site and recover site, that are, event_site() and
+	   dept_recover_event().
+	4. wait_for_completion() worked with dept map embedded in struct
+	   completion.  However, it generates a few false positves since
+	   all the waits using the instance of struct completion, share
+	   the map and key.  To avoid the false positves, make it not to
+	   share the map and key but each wait_for_completion() caller
+	   have its own key by default.  Of course, external maps also
+	   can be used if needed.
+	5. Fix a bug about hardirq on/off tracing.
+	6. Implement basic unit test for dept.
+	7. Add more supports for dma fence synchronization.
+	8. Add emergency stop of dept e.g. on panic().
+	9. Fix false positives by mmu_notifier_invalidate_*().
+	10. Fix recursive call bug by DEPT_WARN_*() and DEPT_STOP().
+	11. Fix trivial bugs in DEPT_WARN_*() and DEPT_STOP().
+	12. Fix a bug that a spin lock, dept_pool_spin, is used in
+	    both contexts of irq disabled and enabled without irq
+	    disabled.
+	13. Suppress reports with classes, any of that already have
+	    been reported, even though they have different chains but
+	    being barely meaningful.
+	14. Print stacktrace of the wait that an event is now waking up,
+	    not only stacktrace of the event.
+	15. Make dept aware of lockdep_cmp_fn() that is used to avoid
+	    false positives in lockdep so that dept can also avoid them.
+	16. Do do_event() only if there are no ecxts have been
+	    delimited.
+	17. Fix a bug that was not synchronized for stage_m in struct
+	    dept_task, using a spin lock, dept_task()->stage_lock.
+	18. Fix a bug that dept didn't handle the case that multiple
+	    ttwus for a single waiter can be called at the same time
+	    e.i. a race issue.
+	19. Distinguish each kernel context from others, not only by
+	    system call but also by user oriented fault so that dept can
+	    work with more accuracy information about kernel context.
+	    That helps to avoid a few false positives.
+	20. Limit dept's working to x86_64 and arm64.
+
+Changes from v13:
+
+	1. Rebase on the current latest version, v6.9-rc7.
+	2. Add 'dept' documentation describing dept APIs.
+
+Changes from v12:
+
+	1. Refine the whole document for dept.
+	2. Add 'Interpret dept report' section in the document, using a
+	   deadlock report obtained in practice. Hope this version of
+	   document helps guys understand dept better.
+
+	   https://lore.kernel.org/lkml/6383cde5-cf4b-facf-6e07-1378a485657d@I-love.SAKURA.ne.jp/#t
+	   https://lore.kernel.org/lkml/1674268856-31807-1-git-send-email-byungchul.park@lge.com/
+
+Changes from v11:
+
+	1. Add 'dept' documentation describing the concept of dept.
+	2. Rewrite the commit messages of the following commits for
+	   using weaker lockdep annotation, for better description.
+
+	   fs/jbd2: Use a weaker annotation in journal handling
+	   cpu/hotplug: Use a weaker annotation in AP thread
+
+	   (feedbacked by Thomas Gleixner)
+
+Changes from v10:
+
+	1. Fix noinstr warning when building kernel source.
+	2. dept has been reporting some false positives due to the folio
+	   lock's unfairness. Reflect it and make dept work based on
+	   dept annotaions instead of just wait and wake up primitives.
+	3. Remove the support for PG_writeback while working on 2. I
+	   will add the support later if needed.
+	4. dept didn't print stacktrace for [S] if the participant of a
+	   deadlock is not lock mechanism but general wait and event.
+	   However, it made hard to interpret the report in that case.
+	   So add support to print stacktrace of the requestor who asked
+	   the event context to run - usually a waiter of the event does
+	   it just before going to wait state.
+	5. Give up tracking raw_local_irq_{disable,enable}() since it
+	   totally messed up dept's irq tracking. So make it work in the
+	   same way as lockdep does. I will consider it once any false
+	   positives by those are observed again.
+	6. Change the manual rwsem_acquire_read(->j_trans_commit_map)
+	   annotation in fs/jbd2/transaction.c to the try version so
+	   that it works as much as it exactly needs.
+	7. Remove unnecessary 'inline' keyword in dept.c and add
+	   '__maybe_unused' to a needed place.
+
+Changes from v9:
+
+	1. Fix a bug. SDT tracking didn't work well because of my big
+	   mistake that I should've used waiter's map to indentify its
+	   class but it had been working with waker's one. FYI,
+	   PG_locked and PG_writeback weren't affected. They still
+	   worked well. (reported by YoungJun)
+	
+Changes from v8:
+
+	1. Fix build error by adding EXPORT_SYMBOL(PG_locked_map) and
+	   EXPORT_SYMBOL(PG_writeback_map) for kernel module build -
+	   appologize for that. (reported by kernel test robot)
+	2. Fix build error by removing header file's circular dependency
+	   that was caused by "atomic.h", "kernel.h" and "irqflags.h",
+	   which I introduced - appolgize for that. (reported by kernel
+	   test robot)
+
+Changes from v7:
+
+	1. Fix a bug that cannot track rwlock dependency properly,
+	   introduced in v7. (reported by Boqun and lockdep selftest)
+	2. Track wait/event of PG_{locked,writeback} more aggressively
+	   assuming that when a bit of PG_{locked,writeback} is cleared
+	   there might be waits on the bit. (reported by Linus, Hillf
+	   and syzbot)
+	3. Fix and clean bad style code e.i. unnecessarily introduced
+	   a randome pattern and so on. (pointed out by Linux)
+	4. Clean code for applying dept to wait_for_completion().
+
+Changes from v6:
+
+	1. Tie to task scheduler code to track sleep and try_to_wake_up()
+	   assuming sleeps cause waits, try_to_wake_up()s would be the
+	   events that those are waiting for, of course with proper dept
+	   annotations, sdt_might_sleep_weak(), sdt_might_sleep_strong()
+	   and so on. For these cases, class is classified at sleep
+	   entrance rather than the synchronization initialization code.
+	   Which would extremely reduce false alarms.
+	2. Remove the dept associated instance in each page struct for
+	   tracking dependencies by PG_locked and PG_writeback thanks to
+	   the 1. work above.
+	3. Introduce CONFIG_dept_AGGRESIVE_TIMEOUT_WAIT to suppress
+	   reports that waits with timeout set are involved, for those
+	   who don't like verbose reporting.
+	4. Add a mechanism to refill the internal memory pools on
+	   running out so that dept could keep working as long as free
+	   memory is available in the system.
+	5. Re-enable tracking hashed-waitqueue wait. That's going to no
+	   longer generate false positives because class is classified
+	   at sleep entrance rather than the waitqueue initailization.
+	6. Refactor to make it easier to port onto each new version of
+	   the kernel.
+	7. Apply dept to dma fence.
+	8. Do trivial optimizaitions.
+
+Changes from v5:
+
+	1. Use just pr_warn_once() rather than WARN_ONCE() on the lack
+	   of internal resources because WARN_*() printing stacktrace is
+	   too much for informing the lack. (feedback from Ted, Hyeonggon)
+	2. Fix trivial bugs like missing initializing a struct before
+	   using it.
+	3. Assign a different class per task when handling onstack
+	   variables for waitqueue or the like. Which makes dept
+	   distinguish between onstack variables of different tasks so
+	   as to prevent false positives. (reported by Hyeonggon)
+	4. Make dept aware of even raw_local_irq_*() to prevent false
+	   positives. (reported by Hyeonggon)
+	5. Don't consider dependencies between the events that might be
+	   triggered within __schedule() and the waits that requires
+	    __schedule(), real ones. (reported by Hyeonggon)
+	6. Unstage the staged wait that has prepare_to_wait_event()'ed
+	   *and* yet to get to __schedule(), if we encounter __schedule()
+	   in-between for another sleep, which is possible if e.g. a
+	   mutex_lock() exists in 'condition' of ___wait_event().
+	7. Turn on CONFIG_PROVE_LOCKING when CONFIG_DEPT is on, to rely
+	   on the hardirq and softirq entrance tracing to make dept more
+	   portable for now.
+
+Changes from v4:
+
+	1. Fix some bugs that produce false alarms.
+	2. Distinguish each syscall context from another *for arm64*.
+	3. Make it not warn it but just print it in case dept ring
+	   buffer gets exhausted. (feedback from Hyeonggon)
+	4. Explicitely describe "EXPERIMENTAL" and "dept might produce
+	   false positive reports" in Kconfig. (feedback from Ted)
+
+Changes from v3:
+
+	1. dept shouldn't create dependencies between different depths
+	   of a class that were indicated by *_lock_nested(). dept
+	   normally doesn't but it does once another lock class comes
+	   in. So fixed it. (feedback from Hyeonggon)
+	2. dept considered a wait as a real wait once getting to
+	   __schedule() even if it has been set to TASK_RUNNING by wake
+	   up sources in advance. Fixed it so that dept doesn't consider
+	   the case as a real wait. (feedback from Jan Kara)
+	3. Stop tracking dependencies with a map once the event
+	   associated with the map has been handled. dept will start to
+	   work with the map again, on the next sleep.
+
+Changes from v2:
+
+	1. Disable dept on bit_wait_table[] in sched/wait_bit.c
+	   reporting a lot of false positives, which is my fault.
+	   Wait/event for bit_wait_table[] should've been tagged in a
+	   higher layer for better work, which is a future work.
+	   (feedback from Jan Kara)
+	2. Disable dept on crypto_larval's completion to prevent a false
+	   positive.
+
+Changes from v1:
+
+	1. Fix coding style and typo. (feedback from Steven)
+	2. Distinguish each work context from another in workqueue.
+	3. Skip checking lock acquisition with nest_lock, which is about
+	   correct lock usage that should be checked by lockdep.
+
+Changes from RFC(v0):
+
+	1. Prevent adding a wait tag at prepare_to_wait() but __schedule().
+	   (feedback from Linus and Matthew)
+	2. Use try version at lockdep_acquire_cpus_lock() annotation.
+	3. Distinguish each syscall context from another.
+
+Byungchul Park (42):
+  llist: move llist_{head,node} definition to types.h
+  dept: implement DEPT(DEPendency Tracker)
+  dept: add single event dependency tracker APIs
+  dept: add lock dependency tracker APIs
+  dept: tie to lockdep and IRQ tracing
+  dept: add proc knobs to show stats and dependency graph
+  dept: distinguish each kernel context from another
+  x86_64, dept: add support CONFIG_ARCH_HAS_DEPT_SUPPORT to x86_64
+  arm64, dept: add support CONFIG_ARCH_HAS_DEPT_SUPPORT to arm64
+  dept: distinguish each work from another
+  dept: add a mechanism to refill the internal memory pools on running
+    out
+  dept: record the latest one out of consecutive waits of the same class
+  dept: apply sdt_might_sleep_{start,end}() to
+    wait_for_completion()/complete()
+  dept: apply sdt_might_sleep_{start,end}() to swait
+  dept: apply sdt_might_sleep_{start,end}() to waitqueue wait
+  dept: apply sdt_might_sleep_{start,end}() to hashed-waitqueue wait
+  dept: apply sdt_might_sleep_{start,end}() to dma fence
+  dept: track timeout waits separately with a new Kconfig
+  dept: apply timeout consideration to wait_for_completion()/complete()
+  dept: apply timeout consideration to swait
+  dept: apply timeout consideration to waitqueue wait
+  dept: apply timeout consideration to hashed-waitqueue wait
+  dept: apply timeout consideration to dma fence wait
+  dept: make dept able to work with an external wgen
+  dept: track PG_locked with dept
+  dept: print staged wait's stacktrace on report
+  locking/lockdep: prevent various lockdep assertions when
+    lockdep_off()'ed
+  dept: add documentation for dept
+  cpu/hotplug: use a weaker annotation in AP thread
+  fs/jbd2: use a weaker annotation in journal handling
+  dept: assign dept map to mmu notifier invalidation synchronization
+  dept: assign unique dept_key to each distinct dma fence caller
+  dept: make dept aware of lockdep_set_lock_cmp_fn() annotation
+  dept: make dept stop from working on debug_locks_off()
+  i2c: rename wait_for_completion callback to wait_for_completion_cb
+  dept: assign unique dept_key to each distinct wait_for_completion()
+    caller
+  completion, dept: introduce init_completion_dmap() API
+  dept: introduce a new type of dependency tracking between multi event
+    sites
+  dept: add module support for struct dept_event_site and
+    dept_event_site_dep
+  dept: introduce event_site() to disable event tracking if it's
+    recoverable
+  dept: implement a basic unit test for dept
+  dept: call dept_hardirqs_off() in local_irq_*() regardless of irq
+    state
+
+ Documentation/dependency/dept.txt     |  735 ++++++
+ Documentation/dependency/dept_api.txt |  117 +
+ arch/arm64/Kconfig                    |    1 +
+ arch/arm64/kernel/syscall.c           |    7 +
+ arch/arm64/mm/fault.c                 |    7 +
+ arch/x86/Kconfig                      |    1 +
+ arch/x86/entry/syscall_64.c           |    7 +
+ arch/x86/mm/fault.c                   |    7 +
+ drivers/dma-buf/dma-fence.c           |   23 +-
+ drivers/i2c/algos/i2c-algo-pca.c      |    2 +-
+ drivers/i2c/busses/i2c-pca-isa.c      |    2 +-
+ drivers/i2c/busses/i2c-pca-platform.c |    2 +-
+ fs/jbd2/transaction.c                 |    2 +-
+ include/asm-generic/vmlinux.lds.h     |   13 +-
+ include/linux/completion.h            |  124 +-
+ include/linux/dept.h                  |  620 +++++
+ include/linux/dept_ldt.h              |   78 +
+ include/linux/dept_sdt.h              |   68 +
+ include/linux/dept_unit_test.h        |   67 +
+ include/linux/dma-fence.h             |   74 +-
+ include/linux/hardirq.h               |    3 +
+ include/linux/i2c-algo-pca.h          |    2 +-
+ include/linux/irqflags.h              |   21 +-
+ include/linux/llist.h                 |    8 -
+ include/linux/local_lock_internal.h   |    1 +
+ include/linux/lockdep.h               |  105 +-
+ include/linux/lockdep_types.h         |    3 +
+ include/linux/mm_types.h              |    2 +
+ include/linux/mmu_notifier.h          |   26 +
+ include/linux/module.h                |    5 +
+ include/linux/mutex.h                 |    1 +
+ include/linux/page-flags.h            |  125 +-
+ include/linux/pagemap.h               |   16 +-
+ include/linux/percpu-rwsem.h          |    2 +-
+ include/linux/rtmutex.h               |    1 +
+ include/linux/rwlock_types.h          |    1 +
+ include/linux/rwsem.h                 |    1 +
+ include/linux/sched.h                 |  120 +-
+ include/linux/seqlock.h               |    2 +-
+ include/linux/spinlock_types_raw.h    |    3 +
+ include/linux/srcu.h                  |    2 +-
+ include/linux/swait.h                 |    3 +
+ include/linux/types.h                 |    8 +
+ include/linux/wait.h                  |    3 +
+ include/linux/wait_bit.h              |    3 +
+ init/init_task.c                      |    2 +
+ init/main.c                           |    2 +
+ kernel/Makefile                       |    1 +
+ kernel/cpu.c                          |    2 +-
+ kernel/dependency/Makefile            |    5 +
+ kernel/dependency/dept.c              | 3498 +++++++++++++++++++++++++
+ kernel/dependency/dept_hash.h         |   10 +
+ kernel/dependency/dept_internal.h     |   65 +
+ kernel/dependency/dept_object.h       |   13 +
+ kernel/dependency/dept_proc.c         |   94 +
+ kernel/dependency/dept_unit_test.c    |  173 ++
+ kernel/exit.c                         |    1 +
+ kernel/fork.c                         |    2 +
+ kernel/locking/lockdep.c              |   33 +
+ kernel/module/main.c                  |   19 +
+ kernel/sched/completion.c             |   62 +-
+ kernel/sched/core.c                   |    8 +
+ kernel/workqueue.c                    |    3 +
+ lib/Kconfig.debug                     |   51 +
+ lib/debug_locks.c                     |    2 +
+ lib/locking-selftest.c                |    2 +
+ mm/filemap.c                          |   26 +
+ mm/mm_init.c                          |    2 +
+ mm/mmu_notifier.c                     |   31 +-
+ 69 files changed, 6403 insertions(+), 128 deletions(-)
+ create mode 100644 Documentation/dependency/dept.txt
+ create mode 100644 Documentation/dependency/dept_api.txt
+ create mode 100644 include/linux/dept.h
+ create mode 100644 include/linux/dept_ldt.h
+ create mode 100644 include/linux/dept_sdt.h
+ create mode 100644 include/linux/dept_unit_test.h
+ create mode 100644 kernel/dependency/Makefile
+ create mode 100644 kernel/dependency/dept.c
+ create mode 100644 kernel/dependency/dept_hash.h
+ create mode 100644 kernel/dependency/dept_internal.h
+ create mode 100644 kernel/dependency/dept_object.h
+ create mode 100644 kernel/dependency/dept_proc.c
+ create mode 100644 kernel/dependency/dept_unit_test.c
+
+
+base-commit: 82f2b0b97b36ee3fcddf0f0780a9a0825d52fec3
+-- 
+2.17.1
 
 
