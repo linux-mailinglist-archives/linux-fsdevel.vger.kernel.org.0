@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-49437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49438-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ADF5ABC5B9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 19:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30A55ABC5BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 19:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34F4A17A67E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 17:40:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF3F017A03A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 17:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48625288C35;
-	Mon, 19 May 2025 17:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A289288C35;
+	Mon, 19 May 2025 17:41:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hdm3mqTL"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eSxNozkM"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F100E2746A
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 17:40:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC8A2746A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 17:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747676439; cv=none; b=Go3pzrg/LT0bsldoKOgspKaC9L/xPk5FWX79IoWS0rPGw3Bl4hJHB7PzJ4sKv8ALfrSC+OcdFCqBwLeax0qo2yF4AQeDAjtjUrvQw54l8AUhyz8FQ7Imk5cXpHAnxLLnqHgVPh2pzLhc6ky3zRj/Wy3KB91ZrJ1HSXwRvWX8+4k=
+	t=1747676497; cv=none; b=jYdjmwV2Ogp0bI8YgDTdCkr8kYg8H3sQVVbyvS+0ZXQzNK0sOrQvTjNKZEKedFMVNrVaxZVpGQ+eZBJZXILv+U5R/niXd0pdqw0y+tEy4fuOkKQ8quUS8q7j8aMlT8KbqtJ0udNkkNHF7pT5SkzIq8wfxKBgQs65HthYNAD4So4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747676439; c=relaxed/simple;
-	bh=SGYRJ/Pa/rCRIAEp2DzT9CKDo2DR1Kor41Jpn068XTE=;
+	s=arc-20240116; t=1747676497; c=relaxed/simple;
+	bh=ptXpc8hmOruMolxiRX92NsOTJN9PQURGvKBFh9IxnpI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TBIZqSzEd2l7/VBgm9rGZUKEt0su1J/1676528zp2UK2N1LvOxup3Rp7TI+tRfsSnE1Rph4goC41tc4VpEE4WlF6v/ZbX0MsmKU6WU/0igUsAJtsoOzW7zXSjwdv5yuIOlPxrDugRrkfiY+GohfJ+BLuTnSh311xyue/XJTHGmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hdm3mqTL; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=FJdG9kG9vs+mxGkpuxiYRby7YOxVlQoc02o5CUYBCUL5zvlxxHlsqL1C9nVeknh7Q4IqspZd/vrhErYaUCwEFQm6gXxrPCOdgCSup6eUY89SS26gQKDgZfpoOyqfPlTxfmxh/w9VCiw2PBNbaJNgbobnuDQ0EZVulTMPHBz90NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eSxNozkM; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747676436;
+	s=mimecast20190719; t=1747676494;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=K36xPLX2EO98K8la7E6clUlgO3MhKSVoAV5X8FkiL4Y=;
-	b=Hdm3mqTLERqz81R9IGFxrHW8/3lBaHV+7o+ObJdJDxTIk70cY+oKwsU9nCwXdb4+ZdwTY0
-	gpjUhCaE1o0WPpaV21snSdU09fJoVmiQ7wHICjBvdp2s1vJt+lqlQyV+R6qzQGyKBs7N8J
-	MgdVj+hdBx2WseePT6R7BNRj+bcwrZ0=
+	bh=wMM+2s7qRrI63vS75vOPvvwet4wpZHCqIEycJ3tkwcQ=;
+	b=eSxNozkM29Hr5izfPN4diC0kX4EOBkirhZLnZc9L5NmibYdF7gA34G2sQS4r28TdEteYwF
+	Uho8uROcmzhvO02zePbKEYfHictDIrB+diYwC1W5fJFLzJtAf8hp/d3oLWNRLIaoSgQJH9
+	ElFruwoVwIdgP3oIJKow1BQF9cPOK7c=
 Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
  [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-113-i34N3bFRMzej5orUelbFpw-1; Mon, 19 May 2025 13:40:35 -0400
-X-MC-Unique: i34N3bFRMzej5orUelbFpw-1
-X-Mimecast-MFC-AGG-ID: i34N3bFRMzej5orUelbFpw_1747676434
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43cfda30a3cso25027665e9.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 10:40:35 -0700 (PDT)
+ us-mta-225-LK42gtI6PXGU05eIvBfpog-1; Mon, 19 May 2025 13:41:31 -0400
+X-MC-Unique: LK42gtI6PXGU05eIvBfpog-1
+X-Mimecast-MFC-AGG-ID: LK42gtI6PXGU05eIvBfpog_1747676490
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43cf172ffe1so36258305e9.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 10:41:31 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747676434; x=1748281234;
+        d=1e100.net; s=20230601; t=1747676490; x=1748281290;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=K36xPLX2EO98K8la7E6clUlgO3MhKSVoAV5X8FkiL4Y=;
-        b=cl4etEsTkLWlSxWtKXXcRfKE7bigFx0SjN/60DmaY2OOCmzyzES5TdD5AmJ7hlbfhB
-         LMQSlVb/17LREYyYFJqYDpktpa0NShEw/48T5EoJtVBvoe0YVyITqIjkc1wn7ZPqGkBt
-         +6p8SNvbtqCZ2l55xAM/XR0lc2HYWt+2v17tiSZcqQRxKNwtZ6J9FsKc9aDPGWJ7GFRF
-         xHtoOonJ9AwpNCNTcyaN/MJOkqnsJOtsYbAJGQgeOXUlLpfN7Ae2AQGTQIcuMHSh7yQT
-         O6sJciCRA03wB+jeX+64Hg3aNHHn/Jze3Gp6YdRvcjWf65TPHRWI78bvMWP6+GzNLs/2
-         oJXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVAAuqDtr6pvAdHbM/VzHapsBsjQOYqiwQPK+KlcR+OMU808GJzhfEgpkN4sUEoDXx5MzLwQIofknaWPjBo@vger.kernel.org
-X-Gm-Message-State: AOJu0YweCqK6xcY3KbLe20qul7bW/DPRuVTiYt/igLsOIdba09gCAP/Q
-	1JznSLwZUuLllVtDI/aRBQPJuGgQ4SuHfNePiqv3LMC1KYw/4y0DfRtLcVJew+wbYlsC8cQK2lw
-	anYUGV3qLxQCarBQmZM/tp9Fr96o/Im4Datux23mN9lH4sbCQu7XxXcUCOQFj8QE92Aw=
-X-Gm-Gg: ASbGncsKd1HnxkkD5twnlJTii3BeLYtVf5efw3sndz0lkgb71j8KZEti9DWkgiJjwbF
-	cpKyRBO+ohkkcdR9B+kPPlCKepjHTYUdUV2N/gkkI5eWnwSDWMObbl2FTIzV5rXVqHxkoXz/+er
-	YfSJuxfu0Bb3/AmI1M6Bo6q5lxL8GXTyl0vDr6+QffjFCIUDewAbkXEqkzJymgAWsqcFu1CxiFi
-	LIU10ubIDwcY7dvd9Sgr2cjH/jNfbst7tzsPvzLDA5JQM4b6h6GQ4YSkPcqgNcKfIt+TCfP5zYv
-	pqcnmE6ckATTf8fF69dEsbT8W3yXzjO1kP8ZvJeGFTzAJpkLToCQE+b1kQ/sqit6nQxo3o04k8C
-	5jmE+8Iwdz+2YYcTv9eg76uXV4AzTkCL33820rLU=
-X-Received: by 2002:a05:600c:a46:b0:43d:94:cfe6 with SMTP id 5b1f17b1804b1-442feffb5a0mr148453295e9.16.1747676434478;
-        Mon, 19 May 2025 10:40:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFUICFVfnitZqeXCiHKTi2mEcLXl0asuTZmmpVM4HpKVDE2zGdtICR9BqQW79GLRMernQBoBA==
-X-Received: by 2002:a05:600c:a46:b0:43d:94:cfe6 with SMTP id 5b1f17b1804b1-442feffb5a0mr148453035e9.16.1747676434156;
-        Mon, 19 May 2025 10:40:34 -0700 (PDT)
+        bh=wMM+2s7qRrI63vS75vOPvvwet4wpZHCqIEycJ3tkwcQ=;
+        b=ohbqZygL3Ui9nhTZlDi5K94CRUgyQY5lM5v7mIs5CiZMcR3mefM9L0csIHq+FepeDg
+         x8w9VcvCgqWs/7NNEZ8uCGm3sTT81+DHCXpuAwqqqijs7YWgtz29Ak3Ib0hsUoYGoaMd
+         o7FXJMksEvj0T61m1T3Xdiu6Kc1lii8LRC0cXmAiWo95T5F8aSGqxyg4ocUTCoDwsmWt
+         aeQM7IAJcJ3gkBnXQq4gZn2BWrLqkF6nYlp1WVerSXBeMOb27wYx/VlndqoIwZcDNxCo
+         /EF2nuSJifD2J1dznEFhEpmBUDz2FF7v8/0ZqQgEirn9s7ZpGqkadY/kDho02eyI9PiR
+         5vQg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5X+ZIRfpMW/GKtSl9zaT3ryrVRJBCss6Il9wkZuO+vA9V5Tiz3F28eUedhuOUZgNj2cL/V0kzlq/tJdCk@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywl+BuR55AkVl4ay27sS7x4G3+ZEzmbUB+SIpsvy3zDBIras1bh
+	czdJCG13CgcOmHyU+VviMZ1X46OBRxnWZtE8kgqUJ0qsasIRK1pa8i/eYz+3eAnLf6TWMRBRVPd
+	ls4atgho/ZM8D9GhMqEecrWgrGW49OcgQJHbZwnBFYaB/ES8Oza/qireS8TjmosMoNQo=
+X-Gm-Gg: ASbGnctc4WLae1vQG1+taezJYMCEYnHLL0r18YaKfrXp6mIjbpyTk1DsvId0TQSeuqd
+	x3NWAK40W+ZvHII1fswhXeYlVyXiEVzThkvLvvuo8IaHHlLrQxj37q7EcWEW+Iq99D785iDcwyj
+	axcByKfu+bUpz9UvIknxh84kMhFUKuPeXbGX4iryIDN02ziIcW1KHxf+ndaH1aNJq9UaAjjQUgK
+	xvxpXvQP2sRrnWo4/UdXfkN3D6bx/x/9nvjlPrOwKeQqbp98iJG1xn0WMvlne8wIAiKAD5QCKbZ
+	fLPKNBBFDLeVWLfd4O5eyJT5YhkQDNNqvADg2U+CoIkqflqdXbi7e0o2an426/K5OWQFHCCvDcx
+	kYfYvLJ4xEJADYZif+Fccm5yEB90PCjadL/UTuz4=
+X-Received: by 2002:a05:600c:890b:b0:442:ffaa:6681 with SMTP id 5b1f17b1804b1-442ffaa6b6fmr81952155e9.28.1747676490438;
+        Mon, 19 May 2025 10:41:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEWnl7TcWfLB3Pa4DO8nxRC3zmwg6w26E4L7l3KlQwq71GfgWS4BKAiZ5l2yF+Mtm8mxarnwQ==
+X-Received: by 2002:a05:600c:890b:b0:442:ffaa:6681 with SMTP id 5b1f17b1804b1-442ffaa6b6fmr81951945e9.28.1747676490062;
+        Mon, 19 May 2025 10:41:30 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442fd583e84sm143807005e9.25.2025.05.19.10.40.33
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f8ab839esm177926295e9.17.2025.05.19.10.41.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 May 2025 10:40:33 -0700 (PDT)
-Message-ID: <1296c1ee-cb0a-456d-b5b4-e6153928d32a@redhat.com>
-Date: Mon, 19 May 2025 19:40:32 +0200
+        Mon, 19 May 2025 10:41:29 -0700 (PDT)
+Message-ID: <0306ba4f-e0fe-47df-8ffc-4439c01745b2@redhat.com>
+Date: Mon, 19 May 2025 19:41:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,8 +90,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mm: ksm: have KSM VMA checks not require a VMA
- pointer
+Subject: Re: [PATCH 2/4] mm: ksm: refer to special VMAs via VM_SPECIAL in
+ ksm_compatible()
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Andrew Morton <akpm@linux-foundation.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -102,7 +102,7 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
  Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
  linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 References: <cover.1747431920.git.lorenzo.stoakes@oracle.com>
- <daf12021354ce7302ad90b42790d8776173b3a81.1747431920.git.lorenzo.stoakes@oracle.com>
+ <ec973573540c6871683ee763d291b74bd851990f.1747431920.git.lorenzo.stoakes@oracle.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -150,25 +150,37 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <daf12021354ce7302ad90b42790d8776173b3a81.1747431920.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <ec973573540c6871683ee763d291b74bd851990f.1747431920.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 19.05.25 10:51, Lorenzo Stoakes wrote:
-> In subsequent commits we are going to determine KSM eligibility prior to a
-> VMA being constructed, at which point we will of course not yet have access
-> to a VMA pointer.
-> 
-> It is trivial to boil down the check logic to be parameterised on
-> mm_struct, file and VMA flags, so do so.
-> 
-> As a part of this change, additionally expose and use file_is_dax() to
-> determine whether a file is being mapped under a DAX inode.
+> There's no need to spell out all the special cases, also doing it this way
+> makes it absolutely clear that we preclude unmergeable VMAs in general, and
+> puts the other excluded flags in stark and clear contrast.
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
+>   mm/ksm.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 08d486f188ff..d0c763abd499 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -679,9 +679,8 @@ static int break_ksm(struct vm_area_struct *vma, unsigned long addr, bool lock_v
+>   
+>   static bool ksm_compatible(const struct file *file, vm_flags_t vm_flags)
+>   {
+> -	if (vm_flags & (VM_SHARED   | VM_MAYSHARE   | VM_PFNMAP  |
+> -			VM_IO       | VM_DONTEXPAND | VM_HUGETLB |
+> -			VM_MIXEDMAP | VM_DROPPABLE))
+> +	if (vm_flags & (VM_SHARED  | VM_MAYSHARE | VM_SPECIAL |
+> +			VM_HUGETLB | VM_DROPPABLE))
+>   		return false;		/* just ignore the advice */
 
-Looking all good :)
+Stumbled over that recently myself ... (grepping for VM_SPECIAL does not 
+return many results)
 
 Acked-by: David Hildenbrand <david@redhat.com>
 
