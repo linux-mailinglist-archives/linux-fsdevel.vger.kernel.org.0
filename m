@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-49371-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49374-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FBF7ABB959
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:31:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3993ABB96E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3282189FC2D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB3F71B607BA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310C2284695;
-	Mon, 19 May 2025 09:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1BB286404;
+	Mon, 19 May 2025 09:19:07 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B13627AC37;
-	Mon, 19 May 2025 09:18:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA41827F724;
+	Mon, 19 May 2025 09:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747646344; cv=none; b=aHlM6o4CsqVjhI2nJC/o5yRgL+IAuMBqcT1G0LUJL8m5kqSBLuK4wErNbcxYwiBg4MHOTN2nah/wpdevsxrS1yYu5UriqapDBZzsqcCXx4CnKBVDbzKht52MHEV2ecmng73N/BthE02b/nRW4JCo6Ircc5B+BTOOtLCEQaeiQQI=
+	t=1747646345; cv=none; b=vAGVVAtN6YMZ5BXV+Sk0Twae6rSo2f1frjyfZC2IpiSuDXKH86vzkdqo9r75yRLecf1dA1r0EzNNDpg85RZ25h2FlL8/LUDoJziEisFrTqnYAtaUQBU4pCGcbEfncLd0zo9euxWply9ON4fY0zn6ejZw+2FFS6+kpS7oQoBkIuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747646344; c=relaxed/simple;
-	bh=YIhasWAI2DFiyLXsGvo/xd87ErP0zWnVDexTxa/J6wA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=fNKmTGygENd3ji5ff2pbd9Rr4xYYSYTZx9nYiYBxlu7Lf/m2NDgAEfaeZWy2FYyEsC16ZSBe0bqKQ+7ONCx6Urs/VDmzZOkP+7imU2936Go+6CfRVUxUjcp4XDd6HcMZ23KUnvFC0jbwhCCdOhJIHavTtl3lnyyqi4o08rNqwOQ=
+	s=arc-20240116; t=1747646345; c=relaxed/simple;
+	bh=4lmBLhJUCTN3YqRABT7fFsjPpJXFoz041muQQWVH95M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=BkaaF6W8L9JJdOh5kVdJUirO1aMrmSqUw0In/AWt/VQlN5GxboGGQZ4Y63tVeppLB/jMEF306BiJWtEj2y4QDu6wytGmpQSwbJ9LSvTUF1bwSqWxbFfMJk7j651Sy0002lDYGbXRsIRdHJjy7xUm4xpdy/ct7Yk1HjU7QWWHGQU=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-b9-682af770961a
+X-AuditID: a67dfc5b-681ff7000002311f-c8-682af770481e
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -90,44 +90,44 @@ Cc: kernel_team@skhynix.com,
 	netdev@vger.kernel.org,
 	matthew.brost@intel.com,
 	her0gyugyu@gmail.com
-Subject: [PATCH v16 31/42] dept: assign dept map to mmu notifier invalidation synchronization
-Date: Mon, 19 May 2025 18:18:15 +0900
-Message-Id: <20250519091826.19752-32-byungchul@sk.com>
+Subject: [PATCH v16 32/42] dept: assign unique dept_key to each distinct dma fence caller
+Date: Mon, 19 May 2025 18:18:16 +0900
+Message-Id: <20250519091826.19752-33-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250519091826.19752-1-byungchul@sk.com>
 References: <20250519091826.19752-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0yTZxTHfd47lZrXjuijYGaaEDdMFYzY88EZk2l8YrLMxMREjbpuvLGN
-	LWKLCCbLQBGVSoMiMG9YQEtD66itiZdZglQLaERQpEgQsSpZJ7dh2w1FXUH9cvLL+Z/zO1+O
-	QCta2fmCLjNbMmZq9EpOxsiG46tVWf+maFPf2NQQCR9h4GyDk4OOPxwInFcKKAjdWQeB6BCC
-	d/cf0FBZ3oGg+vlTGq74+xF47Qc4ePRyFnRFRjloKzdzcLC2gYPO15MU9FWcoMDh/gGe2QYZ
-	uFdaQ0FliIMzlQepWPmLgglbPQ+2/GQI2k/zMPk8Ddr6u1nw9i6GU1V9HNz0tjHgvxak4NGN
-	sxz0Oz+ycM/fykDUkggdx0tYuDRSw8HrqI0GW2SUh4dNVgr81jngKowJi958YKGlpImCoguX
-	Keh68ieCxiMDFLid3Rz4IkMUeNzlNLytu4MgaBnm4dCxCR7OFFgQmA9VMFDYlw7v/otdPhdO
-	g4LzLgYuve9Gq78jzionIr6hUZoUevaRt5HHHPFGrQy5W4PJ9dNPeVLY2MsTq3sv8dhTSO3N
-	EEWqxyMscdcf5Yh7/ARPioe7KDLS3s5vSNoiW5kh6XU5knHpqp9k2tqBMZQVUOeOTf7N5qN+
-	VTGKE7C4HD8Mt1Bf+J+TL6aZExfhnp4JeooTxIXYUzLIFiOZQIvdM3Hg3BM0FXwlbsPvexqn
-	mRGT8cvyID/FcnEFtlSHPku/xg5X07QoLtbvNfum5xViOu5yVDFTUiyWxWHnhIX7tDAP37L3
-	MKVIbkUz6pFCl5lj0Oj0y5do8zJ1uUt+2W1wo9h/2X6d3HoNjXdsbEaigJTxcpf3W62C1eSY
-	8gzNCAu0MkFe7/lGq5BnaPL2S8bdO4x79ZKpGSUKjHKufFl0X4ZC3KnJlnZJUpZk/JJSQtz8
-	fJQtpeJjnSrf7c7AesgvYneWPUZXRxrC5kFYIWTnOlLjfbWdJ0/pAy0H7qevPRosTUxX5+GK
-	7c+2JiSNLuM572GVuXl/HTNzU3z7QOXGV78ZdgUO3yrIKFk1Vqa/vfmj4XuiDq3ZHjLZk3+W
-	1y1QXdyj/j3UmlzlZ11JYfTjbCVj0mrSUmijSfM/8QQ2DVsDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUzMcRzHfb+/p+s4fjuN34qxMyRT2hwfY3nY6Dvk4R+MmW75zZ0ed3dS
-	zFZKo3SLqTyVq+y0u4vrzoa4pDiOSZRKUoqZdOShi3Lhyvzz2Wuf92evzz9vCSU3M0ESTaJe
-	1Caq4hWslJZuXJa5IPlHqHqhpzEAvAPHaLhw1cpC4xULAuu1DAy996OgddCD4NeTpxQUFTQi
-	KO1+TcE1VycCZ8URFpreTYRmbz8L7oJcFjLLr7LwrM+HoaPwFAaLPRq6TO9peJxfhqGol4Xz
-	RZnYPz5gGDKZOTClz4aeinMc+LojwN3ZwkB9sZsBZ/t8OFvSwcJtp5sG140eDE3VF1jotP5h
-	4LHrIQ2DhmBoPJnHQOXnMhb6Bk0UmLz9HDyvNWJwGaeALctvzf7+m4EHebUYsi9VYWh+eQtB
-	zbE3GOzWFhbqvR4MDnsBBcOX7yPoMXzi4OiJIQ7OZxgQ5B4tpCGrQwm/fvo/Fw9EQMZFGw2V
-	Iy1oZSSxllgRqff0UyTLcYAMe1+wxDlopMmjMoHcPPeaI1k17Rwx2vcTR0UoKb/di0npNy9D
-	7ObjLLF/O8WRnE/NmHxuaOA2T98hXb5HjNekiNrwyBipuvzNF5TcuiT1i+8jk446F+SgAInA
-	LxK+nn6LR5nl5wptbUPUKAfyMwVH3nsmB0klFN8yXmgtfolGg8n8LmGkrWaMaX628K6ghxtl
-	Gb9YMJT24n/SGYLFVjsmCvDv23Prx+7lvFJotpTQ+UhqROPMKFCTmJKg0sQrw3Rx6rRETWpY
-	bFKCHfkbZDrsO3kDDTRF1SFeghQTZDbnPLWcUaXo0hLqkCChFIEysyNELZftUaUdFLVJu7X7
-	40VdHQqW0IqpsnXbxBg5v1elF+NEMVnU/k+xJCAoHc1Syyb6fDGXZbp74UsMO+92BYfFXp+q
-	Lt8effbtNoIyHu17vrrK69Gv6ftTTc95kW+SrjqyN3B9Q/vWV6UrTgwob0Zmb+Ydu1zdXfq4
-	YVg61xM+LarK/SCkmlg3rtWzkcIhRYVpfVDXmexN0TXKSVs2hMpi19g+WHTW8KTCOyOpClqn
-	VkWEUlqd6i9J66ZnPQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSbUxTZxTHfZ57e++lo+amEr2+JHM1vrEMZcJyYoYhi4k3U7cZPyj6Qeu4
+	WaulaMvrFhMQJKzYoijiVKAUrbUUwVs0dVLCKHZDI5ZReWkQB1vcULAGbbciG2s1fjn55X/O
+	+Z0vhyHkXskSRq3NEXRapUZBSUnpVLzloyN/J6rWz2kh9KqchIstDgp815oQONqKMUzc2QKD
+	4UkEr+8/IKCm2oegYewRAW3eUQRu2zEK+v+YD/5QkIKe6goKShpbKOh7Noth5GwVhiZxOzy2
+	PiHh3kkLhpoJCi7UlOBo+QtDxGqnwVq0EsZt52mYHUuGntEBCbgDH8IPdSMUtLt7SPC6xjH0
+	/3iRglHHnATueX8hIWxaCr5TRgk0P7dQ8CxsJcAaCtLwa6cZg9e8EFpLo8Kyl/9J4GdjJ4ay
+	S9cx+IdvI+go/w2D6BigwBOaxOAUqwmYuXIHwbhpiobjJyI0XCg2Iag4fpaE0pFUeP1P9HLt
+	q2Qorm8lofnfAZSexjvqHIj3TAYJvtSZz8+EHlK8O2wm+bsWjr91/hHNl3YEaN4s5vJOWyLf
+	2D6B+YbpkIQX7d9TvDhdRfOGKT/mn/f20l8t2yP9NFPQqPME3bpN+6WqFs8Yebh4Y4G/sYwq
+	QkNJBhTHcGwKZ2wept+x39tBxZhiV3NDQxEixgnscs5pfCIxIClDsAPvcYO1w8iAGGYBm8F1
+	W9JiMyS7kmurvIZjLGM/4Z4a7eit832uqbXzjScumgcqPG9yOZvK+ZvqyJiTY+vjOF+Fl3i7
+	sJj7yTZEnkQyM5pnR3K1Ni9LqdakJKkKteqCpK+zs0QU/S7r0dm9LjTt29mFWAYp4mWt7rUq
+	uUSZpy/M6kIcQygSZHbnGpVclqks/FbQZe/T5WoEfRdaypCKRbKPw/mZcvYbZY5wSBAOC7p3
+	XczELSlCxvb8rczclv5IguGyx5p7SuyOLGs4PehyXa1dta3v99QaQ5qY9l3gZrpZNL18wfbt
+	1udswLbaFXTJzi+6e3fh5hufb1ttci2vCuy5tS5euf1AMDhvr+KIP8O96IO12YdSKrNvP913
+	RpNf9Vnhn8SmcyXlBekZm7/c0WKeqZdV0lcOKki9SpmcSOj0yv8Bb5O8i1kDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUhTexjH7++8/M5xtTqsUYfiUi2ke40sK+uh25UL/eGvlxsRRBSEHurQ
+	VmqyqWURaJp49WovYJapzRnL5krbDOxlc7hcLcks1zQxS6mR5UuUW9e3vLPL/efhw/f78Hn+
+	eXhadYNdyOtS0mR9ipSkwQpGseO3nJWp36K0q290zIXgaD4D5XVWDO23ahFYG7IpGGiJh87Q
+	IIKJp89oKC1pR1DV95qGBk8vAkfNaQwd7+aALziCwVtSiCGnug7D80+TFPRcvEBBre1PeGMO
+	MNB6zkRB6QCGK6U5VHh8oGDMbOHAnBUJ/TVlHEz2xYC318+Cu8LLgqN7BVyu7MHwwOFlwNPY
+	T0HHvXIMvdZpFlo9jxkIFS+C9vNFLNwcNmH4FDLTYA6OcPDCZaTAY5wP9blha97X7yw8KnJR
+	kHftNgW+V/cROPPfUmCz+jG4g4MU2G0lNIxfb0HQXzzEwZm/xzi4kl2MoPDMRQZye2Jh4p/w
+	5YrRGMi+Ws/AzSk/+iOOWCutiLgHR2iSaz9GxoMvMXGEjAx5YhLJ3bLXHMl1dnPEaEsn9poo
+	Uv1ggCJVX4IssVn+wsT25QJHCoZ8FBlua+N2/rxPsemgnKTLkPWr4hIV2jp3H5OavfG4rzoP
+	Z6Gu6AIUwYvCOtHnceIZxsJysatrjJ5htbBEtBcF2AKk4GnBP0vsrHiFChDPzxP2ig9Nv8/s
+	MEKk2HD2FjXDSmG9+LHIgv5zLhZr610/PBHhvLvQ/SNXCbGir7aSOYcURvSTBal1KRnJki4p
+	NtpwRJuZojsefeBosg2FH8h8avJ8IxrtiG9GAo80s5X1jl+1KlbKMGQmNyORpzVqpcX+i1al
+	PChlnpD1RxP06UmyoRkt4hnNAuXWPXKiSjgkpclHZDlV1v/fUnzEwiy0ZmjJB/+zoem1n0/2
+	VG3eNa4sQZ/3lxvUzcu46theJmFzU/67Jtd00+OVfTUPAw7v7CnvnTnzcsoDSyXV2gPbNm1o
+	jdwdiBAOv49rce1XvkS6/J3xg5daG9XHJhwJyRmmzvStV9vStq9ednJLonOdtM9T5owcfits
+	xI1zQ21k6oSGMWilmChab5D+BZdIMXw8AwAA
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -135,217 +135,209 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-Resolved the following false positive by introducing explicit dept map
-and annotations for dealing with this case:
+dma fence can be used at various points in the code and it's very hard
+to distinguish dma fences between different usages.  Using a single
+dept_key for all the dma fences could trigger false positive reports.
 
-   *** DEADLOCK ***
-   context A
-       [S] (unknown)(<sched>:0)
-       [W] lock(&mm->mmap_lock:0)
-       [E] try_to_wake_up(<sched>:0)
-
-   context B
-       [S] lock(&mm->mmap_lock:0)
-       [W] mmu_interval_read_begin(<sched>:0)
-       [E] unlock(&mm->mmap_lock:0)
-
-   [S]: start of the event context
-   [W]: the wait blocked
-   [E]: the event not reachable
-
-dept already tracks dependencies between scheduler sleep and ttwu based
-on internal timestamp called wgen.  However, in case that more than one
-event contexts are overwrapped, dept has chance to wrongly guess the
-start of the event context like the following:
-
-   <before this patch>
-
-   context A: lock L
-   context A: mmu_notifier_invalidate_range_start()
-
-   context B: lock L'
-   context B: mmu_interval_read_begin() : wait
-   <- here is the start of the event context of C.
-   context B: unlock L'
-
-   context C: lock L''
-   context C: mmu_notifier_invalidate_range_start()
-
-   context A: mmu_notifier_invalidate_range_end()
-   context A: unlock L
-
-   context C: mmu_notifier_invalidate_range_end() : ttwu
-   <- here is the end of the event context of C.  dept observes a wait,
-      lock L'' within the event context of C.  Which causes a false
-      positive dept report.
-
-   context C: unlock L''
-
-By explicitly annotating the interesting event context range, make dept
-work with more precise information like:
-
-   <after this patch>
-
-   context A: lock L
-   context A: mmu_notifier_invalidate_range_start()
-
-   context B: lock L'
-   context B: mmu_interval_read_begin() : wait
-   context B: unlock L'
-
-   context C: lock L''
-   context C: mmu_notifier_invalidate_range_start()
-   <- here is the start of the event context of C.
-
-   context A: mmu_notifier_invalidate_range_end()
-   context A: unlock L
-
-   context C: mmu_notifier_invalidate_range_end() : ttwu
-   <- here is the end of the event context of C.  dept doesn't observe
-      the wait, lock L'' within the event context of C.  context C is
-      responsible only for the range delimited by
-      mmu_notifier_invalidate_range_{start,end}().
-
-   context C: unlock L''
+Assign unique dept_key to each distinct dma fence wait to avoid false
+positive reports.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/mmu_notifier.h | 26 ++++++++++++++++++++++++++
- mm/mmu_notifier.c            | 31 +++++++++++++++++++++++++++++--
- 2 files changed, 55 insertions(+), 2 deletions(-)
+ drivers/dma-buf/dma-fence.c | 18 ++++-----
+ include/linux/dma-fence.h   | 74 +++++++++++++++++++++++++++++--------
+ 2 files changed, 68 insertions(+), 24 deletions(-)
 
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index bc2402a45741..1e256f5305b7 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -428,6 +428,14 @@ static inline int mmu_notifier_test_young(struct mm_struct *mm,
- 	return 0;
- }
+diff --git a/drivers/dma-buf/dma-fence.c b/drivers/dma-buf/dma-fence.c
+index a45e5416f2dd..f6a26e9bbe0e 100644
+--- a/drivers/dma-buf/dma-fence.c
++++ b/drivers/dma-buf/dma-fence.c
+@@ -481,7 +481,7 @@ int dma_fence_signal(struct dma_fence *fence)
+ EXPORT_SYMBOL(dma_fence_signal);
  
-+#ifdef CONFIG_DEPT
-+void mmu_notifier_invalidate_dept_ecxt_start(struct mmu_notifier_range *range);
-+void mmu_notifier_invalidate_dept_ecxt_end(struct mmu_notifier_range *range);
-+#else
-+static inline void mmu_notifier_invalidate_dept_ecxt_start(struct mmu_notifier_range *range) {}
-+static inline void mmu_notifier_invalidate_dept_ecxt_end(struct mmu_notifier_range *range) {}
-+#endif
-+
- static inline void
- mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
+ /**
+- * dma_fence_wait_timeout - sleep until the fence gets signaled
++ * __dma_fence_wait_timeout - sleep until the fence gets signaled
+  * or until timeout elapses
+  * @fence: the fence to wait on
+  * @intr: if true, do an interruptible wait
+@@ -499,7 +499,7 @@ EXPORT_SYMBOL(dma_fence_signal);
+  * See also dma_fence_wait() and dma_fence_wait_any_timeout().
+  */
+ signed long
+-dma_fence_wait_timeout(struct dma_fence *fence, bool intr, signed long timeout)
++__dma_fence_wait_timeout(struct dma_fence *fence, bool intr, signed long timeout)
  {
-@@ -439,6 +447,12 @@ mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
- 		__mmu_notifier_invalidate_range_start(range);
- 	}
- 	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
-+
-+	/*
-+	 * From now on, waiters could be there by this start until
-+	 * mmu_notifier_invalidate_range_end().
-+	 */
-+	mmu_notifier_invalidate_dept_ecxt_start(range);
- }
+ 	signed long ret;
  
- /*
-@@ -459,6 +473,12 @@ mmu_notifier_invalidate_range_start_nonblock(struct mmu_notifier_range *range)
- 		ret = __mmu_notifier_invalidate_range_start(range);
- 	}
- 	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
-+
-+	/*
-+	 * From now on, waiters could be there by this start until
-+	 * mmu_notifier_invalidate_range_end().
-+	 */
-+	mmu_notifier_invalidate_dept_ecxt_start(range);
+@@ -520,7 +520,7 @@ dma_fence_wait_timeout(struct dma_fence *fence, bool intr, signed long timeout)
+ 	trace_dma_fence_wait_end(fence);
  	return ret;
  }
+-EXPORT_SYMBOL(dma_fence_wait_timeout);
++EXPORT_SYMBOL(__dma_fence_wait_timeout);
  
-@@ -470,6 +490,12 @@ mmu_notifier_invalidate_range_end(struct mmu_notifier_range *range)
- 
- 	if (mm_has_notifiers(range->mm))
- 		__mmu_notifier_invalidate_range_end(range);
-+
-+	/*
-+	 * The event context that has been started by
-+	 * mmu_notifier_invalidate_range_start() ends.
-+	 */
-+	mmu_notifier_invalidate_dept_ecxt_end(range);
- }
- 
- static inline void mmu_notifier_arch_invalidate_secondary_tlbs(struct mm_struct *mm,
-diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index fc18fe274505..850d75952f98 100644
---- a/mm/mmu_notifier.c
-+++ b/mm/mmu_notifier.c
-@@ -46,6 +46,7 @@ struct mmu_notifier_subscriptions {
- 	unsigned long active_invalidate_ranges;
- 	struct rb_root_cached itree;
- 	wait_queue_head_t wq;
-+	struct dept_map dmap;
- 	struct hlist_head deferred_list;
- };
- 
-@@ -165,6 +166,25 @@ static void mn_itree_inv_end(struct mmu_notifier_subscriptions *subscriptions)
- 	wake_up_all(&subscriptions->wq);
- }
- 
-+#ifdef CONFIG_DEPT
-+void mmu_notifier_invalidate_dept_ecxt_start(struct mmu_notifier_range *range)
-+{
-+	struct mmu_notifier_subscriptions *subscriptions =
-+		range->mm->notifier_subscriptions;
-+
-+	if (subscriptions)
-+		sdt_ecxt_enter(&subscriptions->dmap);
-+}
-+void mmu_notifier_invalidate_dept_ecxt_end(struct mmu_notifier_range *range)
-+{
-+	struct mmu_notifier_subscriptions *subscriptions =
-+		range->mm->notifier_subscriptions;
-+
-+	if (subscriptions)
-+		sdt_ecxt_exit(&subscriptions->dmap);
-+}
-+#endif
-+
  /**
-  * mmu_interval_read_begin - Begin a read side critical section against a VA
-  *                           range
-@@ -246,9 +266,12 @@ mmu_interval_read_begin(struct mmu_interval_notifier *interval_sub)
- 	 */
- 	lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
- 	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
--	if (is_invalidating)
-+	if (is_invalidating) {
-+		sdt_might_sleep_start(&subscriptions->dmap);
- 		wait_event(subscriptions->wq,
- 			   READ_ONCE(subscriptions->invalidate_seq) != seq);
-+		sdt_might_sleep_end();
-+	}
+  * dma_fence_release - default release function for fences
+@@ -747,7 +747,7 @@ dma_fence_default_wait_cb(struct dma_fence *fence, struct dma_fence_cb *cb)
+ }
  
- 	/*
- 	 * Notice that mmu_interval_read_retry() can already be true at this
-@@ -625,6 +648,7 @@ int __mmu_notifier_register(struct mmu_notifier *subscription,
+ /**
+- * dma_fence_default_wait - default sleep until the fence gets signaled
++ * __dma_fence_default_wait - default sleep until the fence gets signaled
+  * or until timeout elapses
+  * @fence: the fence to wait on
+  * @intr: if true, do an interruptible wait
+@@ -759,7 +759,7 @@ dma_fence_default_wait_cb(struct dma_fence *fence, struct dma_fence_cb *cb)
+  * functions taking a jiffies timeout.
+  */
+ signed long
+-dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
++__dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
+ {
+ 	struct default_wait_cb cb;
+ 	unsigned long flags;
+@@ -808,7 +808,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
+ 	spin_unlock_irqrestore(fence->lock, flags);
+ 	return ret;
+ }
+-EXPORT_SYMBOL(dma_fence_default_wait);
++EXPORT_SYMBOL(__dma_fence_default_wait);
  
- 		INIT_HLIST_HEAD(&subscriptions->list);
- 		spin_lock_init(&subscriptions->lock);
-+		sdt_map_init(&subscriptions->dmap);
- 		subscriptions->invalidate_seq = 2;
- 		subscriptions->itree = RB_ROOT_CACHED;
- 		init_waitqueue_head(&subscriptions->wq);
-@@ -1070,9 +1094,12 @@ void mmu_interval_notifier_remove(struct mmu_interval_notifier *interval_sub)
- 	 */
- 	lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
- 	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
--	if (seq)
-+	if (seq) {
-+		sdt_might_sleep_start(&subscriptions->dmap);
- 		wait_event(subscriptions->wq,
- 			   mmu_interval_seq_released(subscriptions, seq));
-+		sdt_might_sleep_end();
-+	}
+ static bool
+ dma_fence_test_signaled_any(struct dma_fence **fences, uint32_t count,
+@@ -828,7 +828,7 @@ dma_fence_test_signaled_any(struct dma_fence **fences, uint32_t count,
+ }
  
- 	/* pairs with mmgrab in mmu_interval_notifier_insert() */
- 	mmdrop(mm);
+ /**
+- * dma_fence_wait_any_timeout - sleep until any fence gets signaled
++ * __dma_fence_wait_any_timeout - sleep until any fence gets signaled
+  * or until timeout elapses
+  * @fences: array of fences to wait on
+  * @count: number of fences to wait on
+@@ -848,7 +848,7 @@ dma_fence_test_signaled_any(struct dma_fence **fences, uint32_t count,
+  * See also dma_fence_wait() and dma_fence_wait_timeout().
+  */
+ signed long
+-dma_fence_wait_any_timeout(struct dma_fence **fences, uint32_t count,
++__dma_fence_wait_any_timeout(struct dma_fence **fences, uint32_t count,
+ 			   bool intr, signed long timeout, uint32_t *idx)
+ {
+ 	struct default_wait_cb *cb;
+@@ -916,7 +916,7 @@ dma_fence_wait_any_timeout(struct dma_fence **fences, uint32_t count,
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL(dma_fence_wait_any_timeout);
++EXPORT_SYMBOL(__dma_fence_wait_any_timeout);
+ 
+ /**
+  * DOC: deadline hints
+diff --git a/include/linux/dma-fence.h b/include/linux/dma-fence.h
+index e7ad819962e3..d7dc7dcd213f 100644
+--- a/include/linux/dma-fence.h
++++ b/include/linux/dma-fence.h
+@@ -393,8 +393,22 @@ int dma_fence_signal_locked(struct dma_fence *fence);
+ int dma_fence_signal_timestamp(struct dma_fence *fence, ktime_t timestamp);
+ int dma_fence_signal_timestamp_locked(struct dma_fence *fence,
+ 				      ktime_t timestamp);
+-signed long dma_fence_default_wait(struct dma_fence *fence,
++signed long __dma_fence_default_wait(struct dma_fence *fence,
+ 				   bool intr, signed long timeout);
++
++/*
++ * Associate every caller with its own dept map.
++ */
++#define dma_fence_default_wait(f, intr, t)				\
++({									\
++	signed long __ret;						\
++									\
++	sdt_might_sleep_start_timeout(NULL, t);				\
++	__ret = __dma_fence_default_wait(f, intr, t);			\
++	sdt_might_sleep_end();						\
++	__ret;								\
++})
++
+ int dma_fence_add_callback(struct dma_fence *fence,
+ 			   struct dma_fence_cb *cb,
+ 			   dma_fence_func_t func);
+@@ -609,12 +623,37 @@ static inline ktime_t dma_fence_timestamp(struct dma_fence *fence)
+ 	return fence->timestamp;
+ }
+ 
+-signed long dma_fence_wait_timeout(struct dma_fence *,
++signed long __dma_fence_wait_timeout(struct dma_fence *,
+ 				   bool intr, signed long timeout);
+-signed long dma_fence_wait_any_timeout(struct dma_fence **fences,
++signed long __dma_fence_wait_any_timeout(struct dma_fence **fences,
+ 				       uint32_t count,
+ 				       bool intr, signed long timeout,
+ 				       uint32_t *idx);
++/*
++ * Associate every caller with its own dept map.
++ */
++#define dma_fence_wait_timeout(f, intr, t)				\
++({									\
++	signed long __ret;						\
++									\
++	sdt_might_sleep_start_timeout(NULL, t);				\
++	__ret = __dma_fence_wait_timeout(f, intr, t);			\
++	sdt_might_sleep_end();						\
++	__ret;								\
++})
++
++/*
++ * Associate every caller with its own dept map.
++ */
++#define dma_fence_wait_any_timeout(fpp, count, intr, t, idx)		\
++({									\
++	signed long __ret;						\
++									\
++	sdt_might_sleep_start_timeout(NULL, t);				\
++	__ret = __dma_fence_wait_any_timeout(fpp, count, intr, t, idx);	\
++	sdt_might_sleep_end();						\
++	__ret;								\
++})
+ 
+ /**
+  * dma_fence_wait - sleep until the fence gets signaled
+@@ -630,19 +669,24 @@ signed long dma_fence_wait_any_timeout(struct dma_fence **fences,
+  * fence might be freed before return, resulting in undefined behavior.
+  *
+  * See also dma_fence_wait_timeout() and dma_fence_wait_any_timeout().
++ *
++ * Associate every caller with its own dept map.
+  */
+-static inline signed long dma_fence_wait(struct dma_fence *fence, bool intr)
+-{
+-	signed long ret;
+-
+-	/* Since dma_fence_wait_timeout cannot timeout with
+-	 * MAX_SCHEDULE_TIMEOUT, only valid return values are
+-	 * -ERESTARTSYS and MAX_SCHEDULE_TIMEOUT.
+-	 */
+-	ret = dma_fence_wait_timeout(fence, intr, MAX_SCHEDULE_TIMEOUT);
+-
+-	return ret < 0 ? ret : 0;
+-}
++#define dma_fence_wait(f, intr)						\
++({									\
++	signed long __ret;						\
++									\
++	sdt_might_sleep_start_timeout(NULL, MAX_SCHEDULE_TIMEOUT);	\
++	__ret = __dma_fence_wait_timeout(f, intr, MAX_SCHEDULE_TIMEOUT);\
++	sdt_might_sleep_end();						\
++									\
++	/*								\
++	 * Since dma_fence_wait_timeout cannot timeout with		\
++	 * MAX_SCHEDULE_TIMEOUT, only valid return values are		\
++	 * -ERESTARTSYS and MAX_SCHEDULE_TIMEOUT.			\
++	 */								\
++	__ret < 0 ? __ret : 0;						\
++})
+ 
+ void dma_fence_set_deadline(struct dma_fence *fence, ktime_t deadline);
+ 
 -- 
 2.17.1
 
