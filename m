@@ -1,282 +1,176 @@
-Return-Path: <linux-fsdevel+bounces-49398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D775FABBCA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 13:38:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F98EABBD00
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 13:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 533417AFA9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:36:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B73563AFCDA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:53:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B8C6274FFE;
-	Mon, 19 May 2025 11:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36559276047;
+	Mon, 19 May 2025 11:53:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pXTAcIz/"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jlo3zky+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0279275117
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 11:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A9F275840
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 11:53:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747654632; cv=none; b=Zwyk+bopDx8OGEOjPI1wChEWVHJcTXQB3e500eeRRQ6lU0A2sVUuWw3CMpjopca7DOdlRCZNWeDKuHQNVUgvimEmgPBezCldbEpxLNkliCDagj1HYpejKL6wjMtsn9uCmnkngZ2+tl4aflQYj6EPYy5gDqPpZmFCwOFQlUt5juo=
+	t=1747655631; cv=none; b=Ejd2dAh1RaC67IUHTha+BWK3X1hKfiOCQtnLYa7JAbkYEFUrbfHm+zV/YdHXh/J81+/JAU+7BeXrIQOlPx+eqEDdyy/6Kfg1RXiC3FYJgER+/afE+QsQ57GazBUOeTF9v2DyT4Wa+dQkP52IViBxjh67BTyfZJOhxW84w6AosbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747654632; c=relaxed/simple;
-	bh=GFhTh8qt5cp6q80eo9lSCWZXWbRWYcGWMwJc66usfSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6a1OkG+jVa01LmUQK/BfRW0muwJqUuIqQVIEFWMzc5bfuP12bB86hoksRE/VEVzyI5rmyvWi7hO0zpJGZML/gYV7tVWDYr3rEZ9pTyzo6AySxl8fe9wqcvKKz06bCf0OJEt8XsTkLg9D+Uvcn0CyJhKWJC6ebEmh13Jae8B/Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pXTAcIz/; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-742c9563fafso884317b3a.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 04:37:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1747654629; x=1748259429; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DkYbc28ZqmxwTCsqpy3spmOraOHqionupf/htIjrysQ=;
-        b=pXTAcIz/GgulyAu0QLlBT9UeD2DHbX4hsEBS6moydy6FP2YFBc9EthoupgN62flhpp
-         xn4ElzxeEaMRoUdjcGLCr/6T8U743jjlDHrhPc3nJlHNeJ9D90PDD/0qwvCbTEtXXnQ1
-         RPgaQQzoByYMNfLhMY+SSeSgYFHJurzhD/epDXsLrHJ8QKO7/mzSdR8ta0wu1TJyzets
-         o/9yD05HLIBtFYJ+IxgsqFOQ7YKNTaFJLRWWee9LxcELfTQnG9oVJybE/EP025yFndXb
-         f9adaN7VXFOsgSuBp7xl2mwq7q5rjr2T9EvmymBmqQ1mhIcKEwe4NG3DJCgDkmIhbGVz
-         5ryg==
+	s=arc-20240116; t=1747655631; c=relaxed/simple;
+	bh=UC0z14M4STSjgw8GcEFs4HF/aAuH5okce1RST8b+udY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z9t5PEZ4xUXH2IfAu6/q/D+mh4rCJxJscnWyiUNBj9Z+fHYl95DCHlnbzvYCqyn/vIPdxgGAjYrhthLiDHp890y46tIzDFZIhvKsHNvcUCWSNRCfwqWYy1bB0uegujjnXL5g0m5FpzT1O4qbM5L/9693AUh+XPwkYP/gRCODrSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jlo3zky+; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747655628;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=GPR3VXLvHXW7ydech2OrYgRwl+zj+Xb2j8cG0tq4eIk=;
+	b=Jlo3zky+HAdiB993L8N0ikAmV0KjPC5DKghoFIXeI/5mofQ4WHAbomAsJOx9XA6LR1jZVu
+	wPPeg48BN1x3mWzKJRZdrdDipy8aSkXw7KD8DW1nzjyu5YQBbJKmIu2iyteMKe7SOct5iF
+	4CJbQV0uI/IckEhTy/qiRJlpiZ0Jz5E=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-680-hi4Bw-tsP0KEmUV5eLVuzg-1; Mon, 19 May 2025 07:53:47 -0400
+X-MC-Unique: hi4Bw-tsP0KEmUV5eLVuzg-1
+X-Mimecast-MFC-AGG-ID: hi4Bw-tsP0KEmUV5eLVuzg_1747655626
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43eea5a5d80so23689775e9.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 04:53:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747654629; x=1748259429;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DkYbc28ZqmxwTCsqpy3spmOraOHqionupf/htIjrysQ=;
-        b=u5ssd7bdEximY57eicKwg1GeIL0uLzV0cfGkehy0EXVbmsOsC7RnyqRsx2KocrkcKR
-         eZy+4cjaBPTn8PQWGFWpGR2XfCwiR2f3B9bwQrzVdThi6Tlji/LX2l1BzDYucUnjxX3t
-         /B4Aez0TjESXIsCyaUxH6vOdCDQnLyLQLsYVq0KV34H6wUnf3fFbeWVhhX8ltpnjRGru
-         lLztw+pHabmFNIpLPVEj0+CsONN/4V9q3AtFravBv1U7fGKMvdk1X8opEQszIdCTHdic
-         tqOAcM7i4ovmg0IZUkDhw8BwYpUuZXSu7eQVNi8CF3yHO1kKL1eZ0h9xf8A6OB6KPiJe
-         Dj5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXGhNv2p1Jl/Lehpgwk589t6D0LqJYkXpjI+8KF5cs7YOyVz1r7oPhCFYfa8QGIXY3J50xKddFcOXVAj6Qa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4coIAL7uaBHFCVgCoe1BMvCsvHkU4w7vq+rx6PICzsemFCpin
-	79CUq2V4ncgtAAbPsvtrTfOeW5DXNzLpzL18oF14uFoEGZWUi5toLEzr+jBM+ErgYbk=
-X-Gm-Gg: ASbGncstuwxthLMSVCjhvswj4cM3P1e/Dd8R33uplHze7xZ7Uwk5R267Rpl9Pgl/fzn
-	TFkUM9FNW6yZc51A7TJPGcT24+i/kjTRmMzEVIztIHq+yVHqhZ3ufWO+peqSr1tIXktg5ouwFVI
-	t6QoIso4TAG1M/OuEHTq+4MvouA44IkmBeQRpPklEyZ0XoM11L2FiIcqm/gBRag+FbD3ouqBboH
-	2mNYxYgUin/JAxOW+zradhELUj6+Li2PpLcfB4cfp9Z95udAgMruYCx/tNly6ofGtHVIAVf+tL6
-	zLO8xQUPRIf7yUIJD8vVi7ocoE1+eiUHYKQeyV2J8eJ230qaefMnDsGMdBTTI2GZ3xuqDNNfnCT
-	iMrt/JEx2heurqqPrADsGAhcR96E=
-X-Google-Smtp-Source: AGHT+IEUy25uZy6yhylI082QEDzxGQ+0mJz25NQX6XuPMH4jpAhK+MU3tNtraGB6TKng6SdbDnt0Eg==
-X-Received: by 2002:a05:6a00:3a20:b0:736:a6e0:e66d with SMTP id d2e1a72fcca58-742a97a6df2mr15123631b3a.6.1747654628667;
-        Mon, 19 May 2025 04:37:08 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-742a973a2f8sm5957134b3a.81.2025.05.19.04.37.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 04:37:08 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uGyno-00000005Si8-44qA;
-	Mon, 19 May 2025 21:37:04 +1000
-Date: Mon, 19 May 2025 21:37:04 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Andrey Albershteyn <aalbersh@redhat.com>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Matt Turner <mattst88@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Michal Simek <monstr@monstr.eu>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-	Helge Deller <deller@gmx.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Yoshinori Sato <ysato@users.sourceforge.jp>,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	"David S . Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-	Linux-Arch <linux-arch@vger.kernel.org>, selinux@vger.kernel.org,
-	ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org,
-	linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v5 0/7] fs: introduce file_getattr and file_setattr
- syscalls
-Message-ID: <aCsX4LTpAnGfFjHg@dread.disaster.area>
-References: <20250513-xattrat-syscall-v5-0-22bb9c6c767f@kernel.org>
- <399fdabb-74d3-4dd6-9eee-7884a986dab1@app.fastmail.com>
- <20250515-bedarf-absagen-464773be3e72@brauner>
- <CAOQ4uxicuEkOas2UR4mqfus9Q2RAeKKYTwbE2XrkcE_zp8oScQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1747655626; x=1748260426;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GPR3VXLvHXW7ydech2OrYgRwl+zj+Xb2j8cG0tq4eIk=;
+        b=hqmFhUX7xIw8zwC2KbysPKHRv8ubW6jACWkq34BFm+1BTAC0gNwdcu/g0tNgr9TuxX
+         GVGw+1k4aFIeOkmP4wCbJInfdEa0RXTXq92YjjAXN7yqscrcwHd5r8F3Y+/OIad5Tcsh
+         FKU/7CdD0SZmNQHkDyxwtNcG4xYJu5DdCWeSr/G0VBEGtQTVfHeVcxH5Ms54MUHX41ZB
+         8B+UJtoBCq4aoXtY5t85AdTe2mMhY8rRFv6D0UIJ6iFn8hlt+Ax1dJt8Pw4wbjuANczF
+         Ra6pfI+GutVtL81TJ8z6ZQqv4e/aHZYgpDjYfzR5GTGZoE7F7wCboGxIrc34CqWrpc5E
+         ogiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrJHNhZUCaKJIsXWTYWKPdH/OM0d73TxZdCKiiLcOHH+DhwhxZdk/NED45TxH1VUE2+YNuBXdz6j4/ROo1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7oB6lJzVc5FQrkJF/R96WyxXvc4J+SqCEvzIhEZYl10L/rr8G
+	N4i52IINs01LoYNcy0UBD6yqLWIFplawgk3jy5S+7IixC5UUelK8m6gDP0T+cWs8QKObaPJoZg7
+	ZyZisc24FMxvfmfKlEYtO8nsNAIDVUJuguPu40I49Pce24Px8Phg3Ano3fdS5vWPv1dc=
+X-Gm-Gg: ASbGncuzJaxu5+c52ksm/J6jnFOVZiN//J/GjwMO+Es1vHelQD1tjWQDOZ1nUM3mPOY
+	C8ahSZclhRjJTYlpCsRwPAmDlSnE5evkal5uDfTv3vZ2hZtYkKrAB9X1KG9na4akI6X9SqoNf8l
+	tlH27jXKAhG9Aog20ZXzvD0gvx99N1r4vtBixE1P9HVC3LyGsOJx+sP/rfn8+FjcdBzyOL99/7x
+	GHSj8s0jKdqHiGpuSHIizDrrNy90hVMIjrjBJdDLQ5eEC8mAIHX3jYwKoq9KL7dKiwl13afm/tB
+	Cd6Rk+a6QxfbvIiHcghp+Nu17ATiJMcQQ4Pv2lAjoYm4kXKKxUxaq2FoLeCB0osZQIZzTdQLSu1
+	RyI+YfNewmDNC2DUC+r/18ICqSdbbbKvnBKvdv4A=
+X-Received: by 2002:a5d:5885:0:b0:3a3:71c2:f74b with SMTP id ffacd0b85a97d-3a371c2f942mr2035390f8f.31.1747655625982;
+        Mon, 19 May 2025 04:53:45 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFeikYDBgPelSMoJHVDougEefZ8K1XTFemF16mNYYeA/UWZsVraadRQAlJr/ByjfGMl+SaWcg==
+X-Received: by 2002:a5d:5885:0:b0:3a3:71c2:f74b with SMTP id ffacd0b85a97d-3a371c2f942mr2035361f8f.31.1747655625595;
+        Mon, 19 May 2025 04:53:45 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-442f39e84d3sm217395445e9.32.2025.05.19.04.53.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 May 2025 04:53:45 -0700 (PDT)
+Message-ID: <135556a3-9b72-4ec0-acc3-21ee0d15ebe3@redhat.com>
+Date: Mon, 19 May 2025 13:53:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxicuEkOas2UR4mqfus9Q2RAeKKYTwbE2XrkcE_zp8oScQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] mm: ksm: prevent KSM from entirely breaking VMA
+ merging
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <cover.1747431920.git.lorenzo.stoakes@oracle.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <cover.1747431920.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 15, 2025 at 12:33:31PM +0200, Amir Goldstein wrote:
-> On Thu, May 15, 2025 at 11:02 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > On Tue, May 13, 2025 at 11:53:23AM +0200, Arnd Bergmann wrote:
-> > > On Tue, May 13, 2025, at 11:17, Andrey Albershteyn wrote:
-> > >
-> > > >
-> > > >     long syscall(SYS_file_getattr, int dirfd, const char *pathname,
-> > > >             struct fsxattr *fsx, size_t size, unsigned int at_flags);
-> > > >     long syscall(SYS_file_setattr, int dirfd, const char *pathname,
-> > > >             struct fsxattr *fsx, size_t size, unsigned int at_flags);
-> > >
-> > > I don't think we can have both the "struct fsxattr" from the uapi
-> > > headers, and a variable size as an additional argument. I would
-> > > still prefer not having the extensible structure at all and just
-> >
-> > We're not going to add new interfaces that are fixed size unless for the
-> > very basic cases. I don't care if we're doing that somewhere else in the
-> > kernel but we're not doing that for vfs apis.
-> >
-> > > use fsxattr, but if you want to make it extensible in this way,
-> > > it should use a different structure (name). Otherwise adding
-> > > fields after fsx_pad[] would break the ioctl interface.
-> >
-> > Would that really be a problem? Just along the syscall simply add
-> > something like:
-> >
-> > diff --git a/fs/ioctl.c b/fs/ioctl.c
-> > index c91fd2b46a77..d3943805c4be 100644
-> > --- a/fs/ioctl.c
-> > +++ b/fs/ioctl.c
-> > @@ -868,12 +868,6 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-> >         case FS_IOC_SETFLAGS:
-> >                 return ioctl_setflags(filp, argp);
-> >
-> > -       case FS_IOC_FSGETXATTR:
-> > -               return ioctl_fsgetxattr(filp, argp);
-> > -
-> > -       case FS_IOC_FSSETXATTR:
-> > -               return ioctl_fssetxattr(filp, argp);
-> > -
-> >         case FS_IOC_GETFSUUID:
-> >                 return ioctl_getfsuuid(filp, argp);
-> >
-> > @@ -886,6 +880,20 @@ static int do_vfs_ioctl(struct file *filp, unsigned int fd,
-> >                 break;
-> >         }
-> >
-> > +       switch (_IOC_NR(cmd)) {
-> > +       case _IOC_NR(FS_IOC_FSGETXATTR):
-> > +               if (WARN_ON_ONCE(_IOC_TYPE(cmd) != _IOC_TYPE(FS_IOC_FSGETXATTR)))
-> > +                       return SOMETHING_SOMETHING;
-> > +               /* Only handle original size. */
-> > +               return ioctl_fsgetxattr(filp, argp);
-> > +
-> > +       case _IOC_NR(FFS_IOC_FSSETXATTR):
-> > +               if (WARN_ON_ONCE(_IOC_TYPE(cmd) != _IOC_TYPE(FFS_IOC_FSSETXATTR)))
-> > +                       return SOMETHING_SOMETHING;
-> > +               /* Only handle original size. */
-> > +               return ioctl_fssetxattr(filp, argp);
-> > +       }
-> > +
+On 19.05.25 10:51, Lorenzo Stoakes wrote:
+> When KSM-by-default is established using prctl(PR_SET_MEMORY_MERGE), this
+> defaults all newly mapped VMAs to having VM_MERGEABLE set, and thus makes
+> them available to KSM for samepage merging. It also sets VM_MERGEABLE in
+> all existing VMAs.
 > 
-> I think what Arnd means is that we will not be able to change struct
-> sfxattr in uapi
-> going forward, because we are not going to deprecate the ioctls and
+> However this causes an issue upon mapping of new VMAs - the initial flags
+> will never have VM_MERGEABLE set when attempting a merge with adjacent VMAs
+> (this is set later in the mmap() logic), and adjacent VMAs will ALWAYS have
+> VM_MERGEABLE set.
 
-There's no need to deprecate anything to rev an ioctl API.  We have
-had to solve this "changing struct size" problem previously in XFS
-ioctls. See XFS_IOC_FSGEOMETRY and the older XFS_IOC_FSGEOMETRY_V4
-and XFS_IOC_FSGEOMETRY_V1 versions of the API/ABI.
+Just to clarify, you mean that VM_MERGEABLE is set later, during 
+__mmap_new_vma()->ksm_add_vma()->__ksm_add_vma(), and we are already 
+past vma_merge_new_range(), correct?
 
-If we need to increase the structure size, we can rename the existing
-ioctl and struct to fix the version in the API, then use the
-original name for the new ioctl and structure definition.
-
-The only thing we have to make sure of is that the old and new
-structures have exactly the same overlapping structure. i.e.
-extension must always be done by appending new varibles, they can't
-be put in the middle of the structure.
-
-This way applications being rebuild will pick up the new definition
-automatically when the system asserts that it is suppored, whilst
-existing binaries will always still be supported by the kernel.
-
-If the application wants/needs to support all possible kernels, then
-if XFS_IOC_FSGEOMETRY is not supported, call XFS_IOC_FSGEOMETRY_V4,
-and if that fails (only on really old irix!) or you only need
-something in that original subset, call XFS_IOC_FSGEOMETRY_V1 which
-will always succeed....
-
-> Should we will need to depart from this struct definition and we might
-> as well do it for the initial release of the syscall rather than later on, e.g.:
-> 
-> --- a/include/uapi/linux/fs.h
-> +++ b/include/uapi/linux/fs.h
-> @@ -148,6 +148,17 @@ struct fsxattr {
->         unsigned char   fsx_pad[8];
->  };
-> 
-> +/*
-> + * Variable size structure for file_[sg]et_attr().
-> + */
-> +struct fsx_fileattr {
-> +       __u32           fsx_xflags;     /* xflags field value (get/set) */
-> +       __u32           fsx_extsize;    /* extsize field value (get/set)*/
-> +       __u32           fsx_nextents;   /* nextents field value (get)   */
-> +       __u32           fsx_projid;     /* project identifier (get/set) */
-> +       __u32           fsx_cowextsize; /* CoW extsize field value (get/set)*/
-> +};
-> +
-> +#define FSXATTR_SIZE_VER0 20
-> +#define FSXATTR_SIZE_LATEST FSXATTR_SIZE_VER0
-
-If all the structures overlap the same, all that is needed in the
-code is to define the structure size that should be copied in and
-parsed. i.e:
-
-	case FSXATTR..._V1:
-		return ioctl_fsxattr...(args, sizeof(fsx_fileattr_v1));
-	case FSXATTR..._V2:
-		return ioctl_fsxattr...(args, sizeof(fsx_fileattr_v2));
-	case FSXATTR...:
-		return ioctl_fsxattr...(args, sizeof(fsx_fileattr));
-
--Dave.
 -- 
-Dave Chinner
-david@fromorbit.com
+Cheers,
+
+David / dhildenb
+
 
