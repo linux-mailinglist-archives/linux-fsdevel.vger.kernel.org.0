@@ -1,62 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-49416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49417-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49F49ABBFD8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 15:52:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F2AABBFE0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 15:53:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41DBE1620DA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 13:50:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 180453A4306
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 13:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E801D28468B;
-	Mon, 19 May 2025 13:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DAF2857C0;
+	Mon, 19 May 2025 13:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BYeSu+I+"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HBmA9tCH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57BB284680
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 13:49:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD747284B57
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 13:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747662546; cv=none; b=FI8ivoH1+rfT6HSoTHdGurLRWTrPdAziLFmfsGtGGSkoe3VUPCxgZ+WmUPtwj1ZvAaGemldJ1HPsfTOM0CvJkctdzjDYBBKcv/uvPA8nze6rb1snqQA68ETfIUEd5HZ9qYgs/A0IBMRZJMW7PgrTK1PZns3uJ67u6jGO4ii66o8=
+	t=1747662552; cv=none; b=og0aZQCJXt8mFGWPMLYDubk/Ot3bDLDCUzSap4+hn5R/tyh4SO0dOTWA57MlefKq7ZIiEdbgFdIfGlesQ8rhJNYclse6Cq260bEE8WR6yClCO7HrJTdlefDEhAXHRpQPQK1Wrm7A7jzbiFaMcJMpJx0KnoGGeHky2yRJPM+tX7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747662546; c=relaxed/simple;
-	bh=d5KgJtKj1G1Ix614pd9iXcZTU2+asPLsKZcS/BvEcGg=;
+	s=arc-20240116; t=1747662552; c=relaxed/simple;
+	bh=mPmvLyfGBuynV0FovR0WJT+p+w87wfi+V4QQOjQPuqM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Epr2cUpca1kn71X8dgEpBSXRseo4FlQQfiqMvRVjNJCXYgAnrF8kdmCfb+yX+fQcicqIx61VL8uJv8AhZRsdnY4Yam6ZDKr/7MlrbWToaUY1ycmBwC1abC1pcm7UqvZlVmVD6Z20276zCApWt0Dk+oJ0+3u5DxU+Kkr0mvEYGok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BYeSu+I+; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=I/jrAtYpBvf/syQN/c0JZFE5d+RT5C4oPFD6YnWzLXUUNcQkJ8TnEU2wfrfRfEpl6M9EYq6tqsaZ8EglLqchmVOtMS28xU6ECuhdDJDmDhTwnlKvCg7VnCusVSCXsDI+bxPsT7s9R2c7790vcHCMa3cA3u6AyopqTprZcrjrkHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HBmA9tCH; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747662543;
+	s=mimecast20190719; t=1747662549;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9zmTO5Dw/6cMLiZQHpM0NETGxNewmzUuOIYw+uFFprs=;
-	b=BYeSu+I+l82Y9aAh4UG4jSPCrB8YRYgzuelrzyVcxtKEmWpmoNWq3BcrhJNRB/qFWAEXp3
-	+Xn//P8Z9uOdOZ6su2vT1EWwJXeRCx9XVgxh2P84ksETzRq37NAui1zpOnREBpuMXL6rO2
-	hvOkF4sfwTkpO2CwVdVyDUtS6IOAW14=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+	bh=m3W33PM6TQ9OEUN7r8/bHM/UYjJbT78cxjm2wZfj69I=;
+	b=HBmA9tCHR4QfPE89ZXCTZhMtwlBjuKSuMeGt40yHqG9iVr9m6cYmwPYRlXdPScQuhQUiQY
+	9bN9x7y3LgG6RnZsV+EPJ7lYkAcXMa8dzOW3SNPVZ9R1y4gupHr39O4AAnFFo+h4kbFKWa
+	1dqv+1DQ2KT9gc8cIQsw1gzN4c6youg=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-571-2rUaU-jNNKG9tI2ycuf2Yw-1; Mon,
- 19 May 2025 09:49:00 -0400
-X-MC-Unique: 2rUaU-jNNKG9tI2ycuf2Yw-1
-X-Mimecast-MFC-AGG-ID: 2rUaU-jNNKG9tI2ycuf2Yw_1747662538
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-488-xLqE-0MJP8SyAXbCrq6Slg-1; Mon,
+ 19 May 2025 09:49:05 -0400
+X-MC-Unique: xLqE-0MJP8SyAXbCrq6Slg-1
+X-Mimecast-MFC-AGG-ID: xLqE-0MJP8SyAXbCrq6Slg_1747662542
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C5F44195608C;
-	Mon, 19 May 2025 13:48:57 +0000 (UTC)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 640141800446;
+	Mon, 19 May 2025 13:49:02 +0000 (UTC)
 Received: from warthog.procyon.org.com (unknown [10.42.28.188])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 8BD1819560AA;
-	Mon, 19 May 2025 13:48:54 +0000 (UTC)
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3772A180049D;
+	Mon, 19 May 2025 13:48:59 +0000 (UTC)
 From: David Howells <dhowells@redhat.com>
 To: Christian Brauner <christian@brauner.io>
 Cc: David Howells <dhowells@redhat.com>,
@@ -70,9 +70,9 @@ Cc: David Howells <dhowells@redhat.com>,
 	v9fs@lists.linux.dev,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 06/11] fs/netfs: reorder struct fields to eliminate holes
-Date: Mon, 19 May 2025 14:48:02 +0100
-Message-ID: <20250519134813.2975312-7-dhowells@redhat.com>
+Subject: [PATCH 07/11] fs/netfs: remove `netfs_io_request.ractl`
+Date: Mon, 19 May 2025 14:48:03 +0100
+Message-ID: <20250519134813.2975312-8-dhowells@redhat.com>
 In-Reply-To: <20250519134813.2975312-1-dhowells@redhat.com>
 References: <20250519134813.2975312-1-dhowells@redhat.com>
 Precedence: bulk
@@ -82,15 +82,13 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
 From: Max Kellermann <max.kellermann@ionos.com>
 
-This shrinks `struct netfs_io_stream` from 104 to 96 bytes and `struct
-netfs_io_request` from 600 to 576 bytes.
-
-[DH: Modified as the patch to turn netfs_io_request::error into a short
-was removed from the set]
+Since this field is only used by netfs_prepare_read_iterator() when
+called by netfs_readahead(), we can simply pass it as parameter.  This
+shrinks the struct from 576 to 568 bytes.
 
 Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
 Signed-off-by: David Howells <dhowells@redhat.com>
@@ -98,59 +96,129 @@ cc: Paulo Alcantara <pc@manguebit.com>
 cc: netfs@lists.linux.dev
 cc: linux-fsdevel@vger.kernel.org
 ---
- include/linux/netfs.h | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+ fs/netfs/buffered_read.c | 24 ++++++++++++------------
+ include/linux/netfs.h    |  1 -
+ 2 files changed, 12 insertions(+), 13 deletions(-)
 
+diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
+index 0d1b6d35ff3b..5f53634a3862 100644
+--- a/fs/netfs/buffered_read.c
++++ b/fs/netfs/buffered_read.c
+@@ -78,7 +78,8 @@ static int netfs_begin_cache_read(struct netfs_io_request *rreq, struct netfs_in
+  * [!] NOTE: This must be run in the same thread as ->issue_read() was called
+  * in as we access the readahead_control struct.
+  */
+-static ssize_t netfs_prepare_read_iterator(struct netfs_io_subrequest *subreq)
++static ssize_t netfs_prepare_read_iterator(struct netfs_io_subrequest *subreq,
++					   struct readahead_control *ractl)
+ {
+ 	struct netfs_io_request *rreq = subreq->rreq;
+ 	size_t rsize = subreq->len;
+@@ -86,7 +87,7 @@ static ssize_t netfs_prepare_read_iterator(struct netfs_io_subrequest *subreq)
+ 	if (subreq->source == NETFS_DOWNLOAD_FROM_SERVER)
+ 		rsize = umin(rsize, rreq->io_streams[0].sreq_max_len);
+ 
+-	if (rreq->ractl) {
++	if (ractl) {
+ 		/* If we don't have sufficient folios in the rolling buffer,
+ 		 * extract a folioq's worth from the readahead region at a time
+ 		 * into the buffer.  Note that this acquires a ref on each page
+@@ -99,7 +100,7 @@ static ssize_t netfs_prepare_read_iterator(struct netfs_io_subrequest *subreq)
+ 		while (rreq->submitted < subreq->start + rsize) {
+ 			ssize_t added;
+ 
+-			added = rolling_buffer_load_from_ra(&rreq->buffer, rreq->ractl,
++			added = rolling_buffer_load_from_ra(&rreq->buffer, ractl,
+ 							    &put_batch);
+ 			if (added < 0)
+ 				return added;
+@@ -211,7 +212,8 @@ static void netfs_issue_read(struct netfs_io_request *rreq,
+  * slicing up the region to be read according to available cache blocks and
+  * network rsize.
+  */
+-static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
++static void netfs_read_to_pagecache(struct netfs_io_request *rreq,
++				    struct readahead_control *ractl)
+ {
+ 	struct netfs_inode *ictx = netfs_inode(rreq->inode);
+ 	unsigned long long start = rreq->start;
+@@ -291,7 +293,7 @@ static void netfs_read_to_pagecache(struct netfs_io_request *rreq)
+ 		break;
+ 
+ 	issue:
+-		slice = netfs_prepare_read_iterator(subreq);
++		slice = netfs_prepare_read_iterator(subreq, ractl);
+ 		if (slice < 0) {
+ 			ret = slice;
+ 			subreq->error = ret;
+@@ -359,11 +361,10 @@ void netfs_readahead(struct readahead_control *ractl)
+ 
+ 	netfs_rreq_expand(rreq, ractl);
+ 
+-	rreq->ractl = ractl;
+ 	rreq->submitted = rreq->start;
+ 	if (rolling_buffer_init(&rreq->buffer, rreq->debug_id, ITER_DEST) < 0)
+ 		goto cleanup_free;
+-	netfs_read_to_pagecache(rreq);
++	netfs_read_to_pagecache(rreq, ractl);
+ 
+ 	netfs_put_request(rreq, true, netfs_rreq_trace_put_return);
+ 	return;
+@@ -389,7 +390,6 @@ static int netfs_create_singular_buffer(struct netfs_io_request *rreq, struct fo
+ 	if (added < 0)
+ 		return added;
+ 	rreq->submitted = rreq->start + added;
+-	rreq->ractl = (struct readahead_control *)1UL;
+ 	return 0;
+ }
+ 
+@@ -459,7 +459,7 @@ static int netfs_read_gaps(struct file *file, struct folio *folio)
+ 	iov_iter_bvec(&rreq->buffer.iter, ITER_DEST, bvec, i, rreq->len);
+ 	rreq->submitted = rreq->start + flen;
+ 
+-	netfs_read_to_pagecache(rreq);
++	netfs_read_to_pagecache(rreq, NULL);
+ 
+ 	if (sink)
+ 		folio_put(sink);
+@@ -528,7 +528,7 @@ int netfs_read_folio(struct file *file, struct folio *folio)
+ 	if (ret < 0)
+ 		goto discard;
+ 
+-	netfs_read_to_pagecache(rreq);
++	netfs_read_to_pagecache(rreq, NULL);
+ 	ret = netfs_wait_for_read(rreq);
+ 	netfs_put_request(rreq, false, netfs_rreq_trace_put_return);
+ 	return ret < 0 ? ret : 0;
+@@ -685,7 +685,7 @@ int netfs_write_begin(struct netfs_inode *ctx,
+ 	if (ret < 0)
+ 		goto error_put;
+ 
+-	netfs_read_to_pagecache(rreq);
++	netfs_read_to_pagecache(rreq, NULL);
+ 	ret = netfs_wait_for_read(rreq);
+ 	if (ret < 0)
+ 		goto error;
+@@ -750,7 +750,7 @@ int netfs_prefetch_for_write(struct file *file, struct folio *folio,
+ 	if (ret < 0)
+ 		goto error_put;
+ 
+-	netfs_read_to_pagecache(rreq);
++	netfs_read_to_pagecache(rreq, NULL);
+ 	ret = netfs_wait_for_read(rreq);
+ 	netfs_put_request(rreq, false, netfs_rreq_trace_put_return);
+ 	return ret < 0 ? ret : 0;
 diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 73537dafa224..33f145f7f2c2 100644
+index 33f145f7f2c2..2b127527544e 100644
 --- a/include/linux/netfs.h
 +++ b/include/linux/netfs.h
-@@ -144,8 +144,8 @@ struct netfs_io_stream {
- 	struct netfs_io_subrequest *front;	/* Op being collected */
- 	unsigned long long	collected_to;	/* Position we've collected results to */
- 	size_t			transferred;	/* The amount transferred from this stream */
--	enum netfs_io_source	source;		/* Where to read from/write to */
- 	unsigned short		error;		/* Aggregate error for the stream */
-+	enum netfs_io_source	source;		/* Where to read from/write to */
- 	unsigned char		stream_nr;	/* Index of stream in parent table */
- 	bool			avail;		/* T if stream is available */
- 	bool			active;		/* T if stream is active */
-@@ -240,19 +240,10 @@ struct netfs_io_request {
- 	void			*netfs_priv;	/* Private data for the netfs */
- 	void			*netfs_priv2;	/* Private data for the netfs */
- 	struct bio_vec		*direct_bv;	/* DIO buffer list (when handling iovec-iter) */
--	unsigned int		direct_bv_count; /* Number of elements in direct_bv[] */
--	unsigned int		debug_id;
--	unsigned int		rsize;		/* Maximum read size (0 for none) */
--	unsigned int		wsize;		/* Maximum write size (0 for none) */
--	atomic_t		subreq_counter;	/* Next subreq->debug_index */
--	unsigned int		nr_group_rel;	/* Number of refs to release on ->group */
--	spinlock_t		lock;		/* Lock for queuing subreqs */
- 	unsigned long long	submitted;	/* Amount submitted for I/O so far */
- 	unsigned long long	len;		/* Length of the request */
- 	size_t			transferred;	/* Amount to be indicated as transferred */
- 	long			error;		/* 0 or error that occurred */
--	enum netfs_io_origin	origin;		/* Origin of the request */
--	bool			direct_bv_unpin; /* T if direct_bv[] must be unpinned */
- 	unsigned long long	i_size;		/* Size of the file */
- 	unsigned long long	start;		/* Start position */
- 	atomic64_t		issued_to;	/* Write issuer folio cursor */
-@@ -260,7 +251,16 @@ struct netfs_io_request {
- 	unsigned long long	cleaned_to;	/* Position we've cleaned folios to */
- 	unsigned long long	abandon_to;	/* Position to abandon folios to */
- 	pgoff_t			no_unlock_folio; /* Don't unlock this folio after read */
-+	unsigned int		direct_bv_count; /* Number of elements in direct_bv[] */
-+	unsigned int		debug_id;
-+	unsigned int		rsize;		/* Maximum read size (0 for none) */
-+	unsigned int		wsize;		/* Maximum write size (0 for none) */
-+	atomic_t		subreq_counter;	/* Next subreq->debug_index */
-+	unsigned int		nr_group_rel;	/* Number of refs to release on ->group */
-+	spinlock_t		lock;		/* Lock for queuing subreqs */
- 	unsigned char		front_folio_order; /* Order (size) of front folio */
-+	enum netfs_io_origin	origin;		/* Origin of the request */
-+	bool			direct_bv_unpin; /* T if direct_bv[] must be unpinned */
- 	refcount_t		ref;
- 	unsigned long		flags;
- #define NETFS_RREQ_OFFLOAD_COLLECTION	0	/* Offload collection to workqueue */
+@@ -228,7 +228,6 @@ struct netfs_io_request {
+ 	struct kiocb		*iocb;		/* AIO completion vector */
+ 	struct netfs_cache_resources cache_resources;
+ 	struct netfs_io_request	*copy_to_cache;	/* Request to write just-read data to the cache */
+-	struct readahead_control *ractl;	/* Readahead descriptor */
+ 	struct list_head	proc_link;	/* Link in netfs_iorequests */
+ 	struct netfs_io_stream	io_streams[2];	/* Streams of parallel I/O operations */
+ #define NR_IO_STREAMS 2 //wreq->nr_io_streams
 
 
