@@ -1,134 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-49422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49423-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09B26ABC01F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 16:03:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9817DABC078
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 16:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF481739DF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 14:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85B771B6068F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 14:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06262283142;
-	Mon, 19 May 2025 14:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2981F283149;
+	Mon, 19 May 2025 14:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P636DutZ"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bp/fQTIr"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281A5280A22
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 14:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C303928153C
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 14:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747663380; cv=none; b=CZyZaxwHHFJkLYpTUbuHu31NpPiM5co6skv05A4M7T+WWcDyd2cTuBAWn/Z4ZZFuL4D0PUhvltA4NYMyjS9y/cXnCTh9xxwnh46qCtoF8amxCg3bx5i5tKG9BzFv4MNdbZ0PLoeKmY80ePuBmqEYuW0veO+5G2xP8h2kCh/S/PQ=
+	t=1747664568; cv=none; b=FzdYSUYiukQaTFr4+fWPwd+JUsLQoz5KKnZNW6RLHXj570Va1qh60+Rig74gneMeeQ24PI8xiVmaUQOVepRmjlCdeti+TBmu6ycXpsp983tqkLVQE8XVLT2WWEnpyqkJhNY/YOZ0xsSBRrq0k9ImDT+3lBqDNst0+YBCzPY3cD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747663380; c=relaxed/simple;
-	bh=6JeicjUHmHodkNN/zM/djUCuOR2HOijRfC1PdA6i1Ok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hEDlA2WDEywKhuvEEazxO+58vy92cVOnGxwSpRuNPre4MpAaYHKCk0bp8wDsBVZW1B0HYH/wbfOk3Uuyub09PuQBr++5tT6QngF7w4Qg725diGKisebXDyavwmS4vLgnSm361JBEugodkXvgKKk9a3q8da5/Z76L/XOZFW5YdIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P636DutZ; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a363ccac20so2281475f8f.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 07:02:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1747663375; x=1748268175; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yWHK376VyM/OI/YTUsa3tJsiwaElzvKB3NW3NOhpiiM=;
-        b=P636DutZeVZfwjnLwuxbXt9gvNyYJSKX2bNgrVDsov0uHT4nKxEBaOfkCx+Upz0I7T
-         VLN42EeAIvGmwPhJkQsQ0l0iJN/KBsDN3/qk1xsPE3oTKcxYm7HshGQpOcR6xGnoJWYs
-         qXsOvMNFlV6lXskj8xwEqoaEK56QpQOlXqIf0I13Nf/Vt2VQCPUnOWFXipvCATD7dt0O
-         rRCMm6/sQopHxPZbDy2Nsf0cXgB05xh3dcs4n47rn2PuQkds16tjOCIFtlCofp4E1QJO
-         pUdEivieJJ5zG9fNXD3OYNAiJUEN/aNfVfW4KfMJK45zsfCjGlrgo5lFMbrxD3TWyuG9
-         R7NA==
+	s=arc-20240116; t=1747664568; c=relaxed/simple;
+	bh=gGOOJfhDZ5SegqCN1QGtjb+q4IT91xtxsNde8Cw0vkQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iw8kb5pAOxC4wxQfIdTwJefORw1YJfE+aKg0UdT5QPm09Os0M+er4RxMbPnEDQRgyVUkPEQyJttj8tTk8UxAlv72v0qLFEu1/Mw0wIJS8W5VLhG0eT7gLMqwSGUtXgDJ2zgKA1muiAIY8qBGPcS9y8KhrX8H243p6ZUh78c9uLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bp/fQTIr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747664565;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gGOOJfhDZ5SegqCN1QGtjb+q4IT91xtxsNde8Cw0vkQ=;
+	b=bp/fQTIrNq3PJOmGQfNPPovYOTAdMNTcOpeB4+0akTN4q+hfk2LOSBXHzNbm2xnwApgTbq
+	ICqxSt2kzocsFh5U1+0nL6av/Erbv3jchKQ4uThfdc3BNxxelj1TjayIcgu1r3jtQO4Jy7
+	JMbZE54RgHfQ98qLEGGZJpCZi5l0Xrk=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-463-azNUsVDRNoCPh5fsIJpNLQ-1; Mon, 19 May 2025 10:22:44 -0400
+X-MC-Unique: azNUsVDRNoCPh5fsIJpNLQ-1
+X-Mimecast-MFC-AGG-ID: azNUsVDRNoCPh5fsIJpNLQ_1747664563
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a36e6b7404so785671f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 07:22:44 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747663375; x=1748268175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yWHK376VyM/OI/YTUsa3tJsiwaElzvKB3NW3NOhpiiM=;
-        b=el0rl9bM459xF5uDQlUIyfn0lNu0XrIgSsFHL50N72ky6McH8b3X9y704f4q27/UyK
-         U8pboGr52VOghX4b3W3ShbBpVSwKcN+6oEK6qKtfsM0nVKoN5Yqq7qrghfipNcf4+XwI
-         GKMj2wRelHKr/ZhbIiwrtun2y/BfH5EMPhHEhKd7+iE7RjQhIjepdqs0ul86h8WEyZ9+
-         VYe3PKPo+9R0FqG2QIQ0UMJbANfTrRiRw21EJkxlKdyXaWJMgGcfujdF8hpgGxVQsOQ4
-         wQCMMvPv02OJN0A5eiqJ0zzCXtyjDKVJBmfSO+0zXM2HB3DHAHLDKWTdJZVmh2anHLMM
-         mgDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXgablmGPue0TpbHP2dT2CuAn7J0iZEv4UYtsN6gA9L9X/F7030kB16w/SKZAJvu1Ws/4k/JUaotjtSOdv/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM5MhJYzhYhUHi0aTGgUPRwV/CWP7IkZi6EhQIt/6fo5v0Drm5
-	+IvykJZIV87/HW2zLYIdxouKzytkjxyHma8nSTtnPL5WGFmY/NBw1Rrj93cqWbTrXcw=
-X-Gm-Gg: ASbGnctC3JxnxhWUCawg5aTy0pcQaYdM8EeaoRBaYaaF5kd9uCHgX+2YpZoE11Z3Dr6
-	exT/Pt9rCwWLSaB9rHJaLfgDIxBugvhzGGPRK5je3aZRt7rq+IAesckWJY7VVqpNXyd/XEn0JBQ
-	yFnbVxJsgWwH32JUUzVKSoX9BELL24X4IzVYvQyxN5Fvnt6D6dhcxiDKuKhaXE8EhECSH0/Qx4c
-	7re63/7ktEyZVyV5TbsTYiAaEigCQhk5n1USXkHlgs9nK3IoAbFmUKMDW4cFS6drbokn5udSn+a
-	mElaRhpHY0WySWc=
-X-Google-Smtp-Source: AGHT+IHgFSt1Ji7/vd8gjbKHf9/ZDkJicJQQ8h96um9tpOt5m+Et9jN1XlhPEUTYTozb2xYGapLzmg==
-X-Received: by 2002:a05:6000:2482:b0:3a3:652d:1631 with SMTP id ffacd0b85a97d-3a3652d1856mr7082207f8f.16.1747663375211;
-        Mon, 19 May 2025 07:02:55 -0700 (PDT)
-Received: from localhost ([213.208.157.38])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca4d230sm12787370f8f.4.2025.05.19.07.02.54
+        d=1e100.net; s=20230601; t=1747664563; x=1748269363;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gGOOJfhDZ5SegqCN1QGtjb+q4IT91xtxsNde8Cw0vkQ=;
+        b=bXLcDGdKWifN1Ha3MemVCKdI2xkC4Fw/6qt67oy0QYNSBicn7B9kM16Sb8x/bJFWng
+         IZymR2mCUSg2M/2FZkebi64nPkUnnzw5yLkrKH3ogrUWNgocmZy4iAkApdl6Dyqf4mhB
+         MYucJHELQqFfgHqHJLY/US6b9r4G1uxqMkr6qUO9DSwishvEpLuXVE9XGYO0Br6U04Ky
+         IrJzlNkh9pmkwuazxs0UlQgHDgLj5lYwo3hIr9X3Oi8HBnEjxM7kJ+a3vv6dcOA51mUb
+         Wz+KxIvLAjsEbmtNitKFtopsvdqCHnfrnRdHCMS7l86Y28G3DqOWlJMO6XHzHo6awSVp
+         gm5g==
+X-Forwarded-Encrypted: i=1; AJvYcCX3FD96MoBkkdRFYvOzDTyV/qJTe8lx7MXgrbnV9nsX8juDLhFzc9k+fDDQ+WrnUbeLDoGkoJda1BVNyxXm@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGePK0CbYsNTbPEKcKscMErWnFbXT6kufzA5t6jNTJcYFfiMT8
+	7Wl0JceFx5kFGeM/BY/a6jaxjE0zAfQvfanY9e5GZdHfbfKwlfLPOQtO+WzhOgUcS5NsR8pq7B+
+	GCgooTb0RpoktOfe+FOkU2JwRB0wRelnxsuvafutdrezrDA0NExUu4nRA5R8zTq3oT0k=
+X-Gm-Gg: ASbGncts3hZXooYS052CRqEj99PoW4wYeM00pQGQ+KgbwlwwJjOCth3y+r+tAmLSkrj
+	w2zONCU9D+L1i/0JhyjmDUiEPN2978I9AHHT52wrhmr2EiAVoKOXdQ7DJ/XHi8syNI07vAyOWQs
+	aNxjsULEMdWb7U8P2k5yfmgsxVBZOrtfvuGF8ws0dNuRlxbxa1Rde6Hia0bflfFPt4y2Nw2lGdV
+	oon0zL4cplJ2aDC8TwYPgvhmBivXRHCH6vrgEkvYSHl84HQKM42oC4558/C1R7NUdvFvqaF5FDz
+	AnDVLRRxKli9xcPR6teudMKqN3tbf72dZfNoDhbeZ61FkC/SmWzuLvxDm2l0w/mX3wJPmcFq
+X-Received: by 2002:a05:6000:2907:b0:3a3:64b7:620b with SMTP id ffacd0b85a97d-3a364b7643cmr8161689f8f.20.1747664563265;
+        Mon, 19 May 2025 07:22:43 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEhm3Ek1ek9W5ZPiXPoMxMaNS8+WO85TNPGle0guQyL6BxmyaWcHjQ9mb2dbC9GE6/77M42Eg==
+X-Received: by 2002:a05:6000:2907:b0:3a3:64b7:620b with SMTP id ffacd0b85a97d-3a364b7643cmr8161648f8f.20.1747664562806;
+        Mon, 19 May 2025 07:22:42 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-135-146.abo.bbox.fr. [213.44.135.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca5a7d6sm13030988f8f.30.2025.05.19.07.22.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 May 2025 07:02:54 -0700 (PDT)
-Date: Mon, 19 May 2025 16:02:51 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Bharat Agrawal <bharat.agrawal@ansys.com>
-Cc: "hughd@google.com" <hughd@google.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"zhangyiru3@huawei.com" <zhangyiru3@huawei.com>,
-	"mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
-	"liuzixian4@huawei.com" <liuzixian4@huawei.com>,
-	"wuxu.wu@huawei.com" <wuxu.wu@huawei.com>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: mlock ulimits for SHM_HUGETLB
-Message-ID: <aCs6C2vKbecx-boy@tiehlicka>
-References: <SJ2PR01MB8345DF192742AC4DB3D2CBB78E9CA@SJ2PR01MB8345.prod.exchangelabs.com>
+        Mon, 19 May 2025 07:22:42 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Nam Cao <namcao@linutronix.de>, Florian Bezdeka
+ <florian.bezdeka@siemens.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
+ <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, John Ogness <john.ogness@linutronix.de>, Clark
+ Williams <clrkwllms@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, linux-rt-users@vger.kernel.org, Joe Damato
+ <jdamato@fastly.com>, Martin Karsten <mkarsten@uwaterloo.ca>, Jens Axboe
+ <axboe@kernel.dk>, Frederic Weisbecker <frederic@kernel.org>, Ben Segall
+ <bsegall@google.com>, K Prateek Nayak <kprateek.nayak@amd.com>, Peter
+ Zijlstra <peterz@infradead.org>, Josh Don <joshdon@google.com>, Ingo
+ Molnar <mingo@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+ Xi Wang <xii@google.com>, Juri Lelli <juri.lelli@redhat.com>, Dietmar
+ Eggemann <dietmar.eggemann@arm.com>, Mel Gorman <mgorman@suse.de>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Chuyi Zhou
+ <zhouchuyi@bytedance.com>, Jan Kiszka <jan.kiszka@siemens.com>, Andreas
+ Ziegler <ziegler.andreas@siemens.com>
+Subject: Re: [PATCH] eventpoll: Fix priority inversion problem
+In-Reply-To: <20250519094543.m4bNJP6X@linutronix.de>
+References: <20250519074016.3337326-1-namcao@linutronix.de>
+ <ae4985d3b157e31c667f532906cb6ff55633141b.camel@siemens.com>
+ <20250519094543.m4bNJP6X@linutronix.de>
+Date: Mon, 19 May 2025 16:22:40 +0200
+Message-ID: <xhsmhbjroade7.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ2PR01MB8345DF192742AC4DB3D2CBB78E9CA@SJ2PR01MB8345.prod.exchangelabs.com>
+Content-Type: text/plain
 
-Hi,
-On Mon 19-05-25 10:21:17, Bharat Agrawal wrote:
-> Hi all,
-> 
-> Could anyone please help comment on the risks associated with an
-> application throwing the "Using mlock ulimits for SHM_HUGETLB is
-> deprecated" message on RHEL 8.9 with 4.18.0-513.18.1.el8_9.x86_64
-> Linux kernel?
+On 19/05/25 11:45, Nam Cao wrote:
+> On Mon, May 19, 2025 at 11:25:51AM +0200, Florian Bezdeka wrote:
+>> Hi all,
+>>
+>> sorry for top-posting, but I think it makes sense in this case as I'm
+>> trying to merge different workstreams, likely working on the same
+>> problem showing up in different colors.
+>>
+>> Main goal is to make everybody aware of the other stream / patch
+>> series.
+>>
+>> We have colleagues from Bytedance working on non-RT performance
+>> optimizations related to CONFIG_CFS_BANDWIDTH at [1].
+>>
+>> This series came to light while searching for a solution for a RT
+>> lockup, reported at [2].
+>>
+>> We heavily tested [1] during the last month on RT and can report
+>> success now. In our tests we saw read-lock holder preemption only
+>> within the epoll interface. It might be that [1] fixes more potential
+>> issues in this regard.
+>>
+>> Today [3] (= the patch I'm replying to, see below) got posted.
+>> Linutronix reworking the epoll infrastructure.
+>>
+>> I would love to learn how/if the combination, basically [1] and [3] fit
+>> together.
+>
+> [1] fixes stall problem involving rw semaphore which epoll uses, but it
+> doesn't fix the possible priority inversion with epoll
+>
+> [3] fixes priority inversion problem with epoll by stop using rw semaphore,
+> but it doesn't do anything about rw semaphore
+>
+> So I propose we keep both.
+>
 
-This is not RHEL specific behavior. The current Linus tree has the same
-warning which has been added by 
-: commit 2584e517320bd48dc8d20e38a2621a2dbe58fade
-: Author: Ravikiran G Thirumalai <kiran@scalex86.org>
-: Date:   Tue Mar 31 15:21:26 2009 -0700
-: 
-:     mm: reintroduce and deprecate rlimit based access for SHM_HUGETLB
-: 
-:     Allow non root users with sufficient mlock rlimits to be able to allocate
-:     hugetlb backed shm for now.  Deprecate this though.  This is being
-:     deprecated because the mlock based rlimit checks for SHM_HUGETLB is not
-:     consistent with mmap based huge page allocations.
-: 
-:     Signed-off-by: Ravikiran Thirumalai <kiran@scalex86.org>
-:     Reviewed-by: Mel Gorman <mel@csn.ul.ie>
-:     Cc: William Lee Irwin III <wli@holomorphy.com>
-:     Cc: Adam Litke <agl@us.ibm.com>
-:     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-:     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+FWIW I'm thinking the same.
 
-HTH
--- 
-Michal Hocko
-SUSE Labs
+[1] fixes the CFS throttling circular dependency on RT but also improves
+tail latency when CFS throttling is in use (so not just for RT).
+[3] is specific to epoll but gets rid of the rwsem which is a win overall.
+
+I need to go get my reviewing hat back on and stare at both...
+
+> Best regards,
+> Nam
+>
+>> My understanding right now is, that [1] fixes a CFS issue, throttling
+>> while holding a lock is not ideal on !RT - but might cause a critical
+>> lockup on RT - while [3] is addressing a similar (RT) problem in epoll.
+>>
+>> Best regards,
+>> Florian
+>>
+>> [1] https://lore.kernel.org/all/20250409120746.635476-1-ziqianlu@bytedance.com/
+>> [2] https://lore.kernel.org/linux-rt-users/xhsmhttqvnall.mognet@vschneid.remote.csb/
+>> [3] https://lore.kernel.org/linux-rt-users/20250519074016.3337326-1-namcao@linutronix.de/T/#u
+
 
