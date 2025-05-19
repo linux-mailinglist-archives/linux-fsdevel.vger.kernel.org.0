@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-49375-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49376-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC4DFABB973
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0ED3ABB976
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:34:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F67D3A9C40
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:31:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDD2E175C54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DA1286415;
-	Mon, 19 May 2025 09:19:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF9A28750B;
+	Mon, 19 May 2025 09:19:09 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF08426D4DB;
-	Mon, 19 May 2025 09:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1BB281376;
+	Mon, 19 May 2025 09:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747646345; cv=none; b=W2JWpAWXABEafAZwWYQPHVU2UG6X49nMGm0bcDGfyU80pUUtwvO9bi5icW72NlJDeIU3CC9Ei3Z0A0KRAHgIVak4cxtYThUbEmdK4xkdGNfIZ8iyOPLin5gmRq8fdHQ3bj+fJ6G79rY2y8JcxIQPMfkcmq7aZ6TP8dN7TLsH4rM=
+	t=1747646347; cv=none; b=dk8PkBAaPrKIU/pvSAPbYZsF83OG4a+aVUm7GQYKXjO1SK6GFmkY2m4w5KA3UYOhpzfdwbaMs/3UwchY5J9YYw7nCxMp0cxNj6WjzUNCDqgagRPmkgwM9o061wr8W//FSHsM1gQ+Sc4oZGM2ccTP1KCfKMohfhXUcadBw+qyofM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747646345; c=relaxed/simple;
-	bh=ZkFyExeh1KnVuSPGRbTV7HuyWfkqFgTaYfXkUw08ekE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=kTifskCpASFtCPU5B+5d3Xn/G+T2w/eQN3sxphqTtAqxYK3bxhiQF7Fr/FV9Dy8I+/HQFL/YyB/7y5+ppHpg/SnUGObUI7E/6LaGaU2J8mpNqKZKK4lfXJCKqgLszc6CTLoQlBHs6OH6fBjJ2Fku1CpA4fDiMoHpYaGGy+hW/20=
+	s=arc-20240116; t=1747646347; c=relaxed/simple;
+	bh=oQEw6Eo1ZD4NTR5FBfSUcltAFBYsFRqKtAgptAn2JR8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=gvBMOU+RH46NM8cb6zEyz5W49tjUHLpHv7D8t4P6zGzB7CWtThUH/JXNbAsNBLOky6nnHq3QCr+PZczHWfzKZxMZd1Dmzy3xqfBZVNysg0RnUS2cC2qSz8UToKjaZHotSmcQtU3/E0BDU+C9g/SE6jo1J0oT+Ux78sGbqpLaS9Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-e7-682af770348a
+X-AuditID: a67dfc5b-669ff7000002311f-f6-682af77082b9
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -90,44 +90,44 @@ Cc: kernel_team@skhynix.com,
 	netdev@vger.kernel.org,
 	matthew.brost@intel.com,
 	her0gyugyu@gmail.com
-Subject: [PATCH v16 34/42] dept: make dept stop from working on debug_locks_off()
-Date: Mon, 19 May 2025 18:18:18 +0900
-Message-Id: <20250519091826.19752-35-byungchul@sk.com>
+Subject: [PATCH v16 35/42] i2c: rename wait_for_completion callback to wait_for_completion_cb
+Date: Mon, 19 May 2025 18:18:19 +0900
+Message-Id: <20250519091826.19752-36-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250519091826.19752-1-byungchul@sk.com>
 References: <20250519091826.19752-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSWUxTeRTG+d+dSic3dbsgZpwmxhGjiII5JqMxPuj1wcTlwUQn4zRytdVS
-	sWWdiRlQIFAWHSISELBUU5tSEG95wKUEQYqViBVqLQRQGjUiIA7Yjmxqi/py8sv58n3nezgM
-	LuskoxiVJkXQahRqOSUhJOMRtevP/B+j3NhVxYD/Yz4BVTetFLga6hBYm7IxGOnYDc8DYwhm
-	Hz/BobzMhaB2eBCHJscQArv5HAW9r34Ct3+CAmdZIQXnr92k4OnoHAYDl0sxqBP3wgvTGwK6
-	LhoxKB+h4Er5eSw43mIwbbLQYMpaDT5zJQ1zw3HgHPKQYO9fBxU1AxTcszsJcDT7MOi9U0XB
-	kPULCV2OhwQESlaA699iEurfGykYDZhwMPknaOhpNWDgMCyDxpxgYN7UZxI6i1sxyLt+CwN3
-	310ELfkvMRCtHgra/WMY2MQyHGZudCDwlYzTkFs0TcOV7BIEhbmXCcgZSIDZT8HL1R/jIPtq
-	IwH18x60YxtvrbEivn1sAudzbOn8jP8ZxdsDBoJ/ZOT425WDNJ/T0k/zBjGVt5lj+Gv3RjC+
-	dtJP8qKlgOLFyVKa14+7Mf59dze9L/qw5LdEQa1KE7Sx2/+UKN9VfiCSh6UZ870rs1D1Ij0K
-	Zzg2npvNm6d+8JQ+Fwsxxa7hvN5pPMRL2FWcrfgNqUcSBmc9i7jn1X0oJCxm93Men2PBQLCr
-	OYv+MxliKbuF+9JThX8L/Zmra2xd4PDgvr+wfcErYxM4d10NEQrl2PJwrmXQ+r1FJHff7CUu
-	IqkBhVmQTKVJS1Ko1PEblJkaVcaGY6eTRBR8L9PZuSPNaNJ1sA2xDJJHSBvta5UyUpGmy0xq
-	QxyDy5dILbZflTJpoiLzL0F7+qg2VS3o2tAKhpAvl24KpCfK2BOKFOGUICQL2h8qxoRHZaGj
-	1wl7lq7i7476PfPp1KqNkQVJYZJY99s1LbuTXx84MBP2T3TU1DZNfP2FzM5Tx5tjFaUdK0vG
-	JgsN6gzjpz7XpV/O/Bd2yDnqPBHpS0XdYsrOPZsaHphnSyVbHvZsfb155uklnddYlL+fqVA9
-	Pnls6UjTH7sSxOQbTQ2CV7qsOfV3OaFTKuJicK1O8RVrPZl9WgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSfUzMcRzHfb+/p+ty9nMav7GG2zyF9KB8NoQZfmwM/9jM6OjH3XrQ7hJF
-	VirLpYapJl2uh51ch9w183QtnTuSTpQr7YoaJuVKdRGFK/PPe6+933u/P/98RIT0BjVbpIxL
-	EFRx8hgZLSbFO1anL4//HqAIGrfMA89wFglFt400NN2qRGCsTsPQY9sCrSN9CH41viSgIK8J
-	QUlXBwHV9k4EloozNDR/mAYtnn4a6vOyaUgvu03Dq94xDK78SxgqTdvhnf4TCQ0XSjEU9NBw
-	tSAde+UzhlG9gQF96gLorihkYKwrGOo7nRRYtfUUWNqXwpViFw2PLPUk2O91Y2h+UERDp/EP
-	BQ32ZySM5M6Bpos5FNx0l9LQO6InQO/pZ+B1rQ6DXTcTqjK8q2eHflPwNKcWw9nyOxha3j5E
-	UJP1HoPJ6KTB6unDYDblEfDzug1Bd+5XBjLPjzJwNS0XQXZmPgkZrjD49cN7WTscDGnXqki4
-	Oe5E6yN4Y7ER8da+foLPMB/nf3re0LxlREfyz0s5/n5hB8Nn1LQzvM50jDdXBPBlj3owXzLo
-	oXiT4RzNmwYvMbzmawvm3Q4Hs9N/r3hNlBCjTBRUKyIixYovhQNkfJfkxHizfyrS+mqQj4hj
-	V3JDmkw8wTS7iGtrGyUm2I+dx5lzPlEaJBYRrNOXa9W+RRPBDHYX5+y2TxZIdgFn0PymJljC
-	hnN/XhcR/0bncpVVtZPs4/Xbs62TXSkbxrVUFpMXkFiHphiQnzIuMVaujAkLVEcrkuKUJwIP
-	HY01Ie8D6VPGLt5Dw81b6hArQrKpkirLEoWUkieqk2LrECciZH4Sg3mxQiqJkiclC6qjB1TH
-	YgR1HZojImWzJNv2CJFS9og8QYgWhHhB9T/FIp/ZqSizcbfOVxO4Kbzjo/+M6s3JobZlG5Nt
-	Dsv16h8py4K+v48+GPx4E+MOLz/n6FrljtCcyXct7D2s7awNWbJirXTfyT0D4lPv1tVsbbyh
-	YLQrD8jnS5+0Octxlj1oKMQWNXh51ovTGxa7pftddw/7JBxUh5bEJz5cFOng1kRt/madHm6U
-	kWqFPDiAUKnlfwGM1sM4PAMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0xTdxTH/f3uq63UXTuid6hxaaIi22Qsak50GjXG3Swh2aYx6iKukRvb
+	WSprFYpxC9jKEISgiKSKUIopCGXWW0zUUaw0gIypdRYoDNkgvnhHpBUUH4XNf04+Od/H+edI
+	CMUtKkqi0R0U9DqVVknLSNlwRNlnP72IUX/eWBwBwfEsEoovOWjw/VaNwFGbgaG/8SvoCA0h
+	eHX7LgFFhT4EZb0PCKht6kHgrjxKw/2Hc8AfHKWhpTCHBlP5JRruDU5h6D5zCkO1GA//2B+T
+	0Jpvw1DUT8O5IhMOj6cYJu1VDNjTl0Bf5VkGpnrjoKWnnQJ31ydgKemmoc7dQkLT1T4M968X
+	09DjeEtBa9MtEkJ5C8B3MpeCmhEbDYMhOwH24CgDf3msGJqs88BpDhdmPn9DQXOuB0PmhcsY
+	/J2/I6jP+heD6GinwRscwuASCwl4WdGIoC9vmIFjJyYZOJeRhyDn2BkSzN2r4NVE+PL58TjI
+	KHWSUPO6HW1YxztKHIj3Do0SvNmVyr8MttG8O2Ql+T9sHH/t7AOGN9d3MbxVPMS7KmP48rp+
+	zJeNBSlerDpO8+LYKYbPHvZjfuTOHeabhbtkXyYKWk2KoI9d/4NMPdjvoJJrOGOzw4bTUW9k
+	NpJKOHYlZ2q8iN9zqb+QmGaaXcYFApMzHMl+zLlyH1PZSCYh2PbZXMf5TjQtfMju5p7da54x
+	kewSznv0LjPNcnY198RX+n/pYq7a6ZnxSMP7rhzvTFbBruL81SXkdCnHFkg5598m+r/AR9zN
+	ygCZj+RWNKsKKTS6lCSVRrtyhTpNpzGu2HsgSUTh/7L/PPX9VTTm29qAWAlSRsid7uVqBaVK
+	MaQlNSBOQigj5VWuaLVCnqhKOyzoD+zRH9IKhga0QEIq58u/CKUmKth9qoPCfkFIFvTvVSyR
+	RqUj3ZwjBZbAni1/fvDdpv3ygSO3PfPnbZ+wmKUDsRXFgYnoC22f3oiyJOfXfbvWrIK56R7D
+	6eePXpw8cX3HwrTD4rgm0r38SX18hrYu/lHW2skWG3NN9HYaC0Z/XfT6686tS38xrttmii2/
+	kjr75oaEvZk7jZsjsgZCP65xDz5rtWwcSZilJA1qVVwMoTeo3gE448iHWwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa1CMcRTG/f/vtdWa11p51bgtTamRmhHHdXzr1cT44DLCZId37E4Xza4i
+	l1HaXEqhma1Bl63MyraR3T6E1qQdZRlZ2lKpqDFIEWlTyWXL+HLmN+d5zvN8OSwhM1G+rDrh
+	sKhJUMYpaAkp2bI2fVnijyBVaNOFAHAPnyOh4LaZBuetCgTm6jQMfY8i4NXIAIKfz54TkK93
+	Iijp6SKguqEbga38NA3N72aAyz1Ig0OfRUN62W0aXvRPYOjMy8VQYdkMb4zvSXh6qRRDfh8N
+	1/LTsWd8xDBmNDFgTPWH3vKrDEz0hIGju5UCe6GDAltHMFwp6qSh1uYgoaGmF0PzvQIaus1/
+	KHja8JiEkRw/cF7OpqDySykN/SNGAozuQQZe1hkwNBh8oErnST3z/TcFjdl1GM5cv4PB1X4f
+	wYNzbzFYzK002N0DGKwWPQHjNx4h6M35zEDGhTEGrqXlIMjKyCNB1xkOP0c9zYXDYZBWXEVC
+	5a9WtHGDYC4yI8E+MEgIOusRYdzdQgu2EQMpPCnlhbtXuxhB96CDEQyWJMFaHiSU1fZhoWTI
+	TQkW03lasAzlMkLmZxcWvjQ1MVvnRUvWHRDj1MmiZvmGfRJVf5+ZSqzkjzaaS3Eq6pFnIi+W
+	51bwxS49Mck0F8C3tY1NsZxbyFuz31OZSMISXOt0/lVhO5oUZnF7+W8vGqdMJOfP208/ZyZZ
+	yq3kPziL8b/QBXxFVd2Ux8uz78iyT93KuHDeVVFEXkISA5pmQnJ1QnK8Uh0XHqKNVaUkqI+G
+	7D8Ub0GeDzKenLhcg4abI+oRxyKFt7TKtlQlo5TJ2pT4esSzhEIuNVkDVTLpAWXKMVFzKEaT
+	FCdq65EfSyrmSCN3ivtk3EHlYTFWFBNFzX8Vs16+qUjTHcDUtjijt5/N3ePqmhv1y2f9sqKQ
+	FnXwqa0Zvar9frMLZraN4ehF24jIJbsND98GPbayu6KW30zRB/oONeZdX7jjviQmdPXX8tCo
+	e3PQ/BPbN6V9ynW9Hm+PmObw9ufVwfKSu8dXBa4pU2i3RCoX5Okc6YMto0k+SYvV3qPVsRcV
+	pFalDAsiNFrlX+hP++A9AwAA
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -135,66 +135,77 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-For many reasons, debug_locks_off() is called to stop lock debuging
-feature e.g. on panic().  dept should also stop it in the conditions.
+Functionally no change.  This patch is a preparation for DEPT(DEPendency
+Tracker) to track dependencies related to a scheduler API,
+wait_for_completion().
+
+Unfortunately, struct i2c_algo_pca_data has a callback member named
+wait_for_completion, that is the same as the scheduler API, which makes
+it hard to change the scheduler API to a macro form because of the
+ambiguity.
+
+Add a postfix _cb to the callback member to remove the ambiguity.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/dept.h     | 2 ++
- kernel/dependency/dept.c | 6 ++++++
- lib/debug_locks.c        | 2 ++
- 3 files changed, 10 insertions(+)
+ drivers/i2c/algos/i2c-algo-pca.c      | 2 +-
+ drivers/i2c/busses/i2c-pca-isa.c      | 2 +-
+ drivers/i2c/busses/i2c-pca-platform.c | 2 +-
+ include/linux/i2c-algo-pca.h          | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/include/linux/dept.h b/include/linux/dept.h
-index 8b4d97fc4627..b164f74e86e5 100644
---- a/include/linux/dept.h
-+++ b/include/linux/dept.h
-@@ -390,6 +390,7 @@ struct dept_ext_wgen {
- 	unsigned int wgen;
+diff --git a/drivers/i2c/algos/i2c-algo-pca.c b/drivers/i2c/algos/i2c-algo-pca.c
+index 384af88e58ad..3647e4e19360 100644
+--- a/drivers/i2c/algos/i2c-algo-pca.c
++++ b/drivers/i2c/algos/i2c-algo-pca.c
+@@ -30,7 +30,7 @@ static int i2c_debug;
+ #define pca_clock(adap) adap->i2c_clock
+ #define pca_set_con(adap, val) pca_outw(adap, I2C_PCA_CON, val)
+ #define pca_get_con(adap) pca_inw(adap, I2C_PCA_CON)
+-#define pca_wait(adap) adap->wait_for_completion(adap->data)
++#define pca_wait(adap) adap->wait_for_completion_cb(adap->data)
+ 
+ static void pca_reset(struct i2c_algo_pca_data *adap)
+ {
+diff --git a/drivers/i2c/busses/i2c-pca-isa.c b/drivers/i2c/busses/i2c-pca-isa.c
+index 85e8cf58e8bf..0cbf2f509527 100644
+--- a/drivers/i2c/busses/i2c-pca-isa.c
++++ b/drivers/i2c/busses/i2c-pca-isa.c
+@@ -95,7 +95,7 @@ static struct i2c_algo_pca_data pca_isa_data = {
+ 	/* .data intentionally left NULL, not needed with ISA */
+ 	.write_byte		= pca_isa_writebyte,
+ 	.read_byte		= pca_isa_readbyte,
+-	.wait_for_completion	= pca_isa_waitforcompletion,
++	.wait_for_completion_cb	= pca_isa_waitforcompletion,
+ 	.reset_chip		= pca_isa_resetchip,
  };
  
-+extern void dept_stop_emerg(void);
- extern void dept_on(void);
- extern void dept_off(void);
- extern void dept_init(void);
-@@ -442,6 +443,7 @@ struct dept_ext_wgen { };
+diff --git a/drivers/i2c/busses/i2c-pca-platform.c b/drivers/i2c/busses/i2c-pca-platform.c
+index 87da8241b927..c0f35ebbe37d 100644
+--- a/drivers/i2c/busses/i2c-pca-platform.c
++++ b/drivers/i2c/busses/i2c-pca-platform.c
+@@ -180,7 +180,7 @@ static int i2c_pca_pf_probe(struct platform_device *pdev)
+ 	}
  
- #define DEPT_MAP_INITIALIZER(n, k) { }
- 
-+#define dept_stop_emerg()				do { } while (0)
- #define dept_on()					do { } while (0)
- #define dept_off()					do { } while (0)
- #define dept_init()					do { } while (0)
-diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index b154c1bb4ee5..b5ba6d939932 100644
---- a/kernel/dependency/dept.c
-+++ b/kernel/dependency/dept.c
-@@ -187,6 +187,12 @@ static void dept_unlock(void)
- 	arch_spin_unlock(&dept_spin);
- }
- 
-+void dept_stop_emerg(void)
-+{
-+	WRITE_ONCE(dept_stop, 1);
-+}
-+EXPORT_SYMBOL_GPL(dept_stop_emerg);
-+
- enum bfs_ret {
- 	BFS_CONTINUE,
- 	BFS_DONE,
-diff --git a/lib/debug_locks.c b/lib/debug_locks.c
-index a75ee30b77cb..14a965914a8f 100644
---- a/lib/debug_locks.c
-+++ b/lib/debug_locks.c
-@@ -38,6 +38,8 @@ EXPORT_SYMBOL_GPL(debug_locks_silent);
-  */
- int debug_locks_off(void)
- {
-+	dept_stop_emerg();
-+
- 	if (debug_locks && __debug_locks_off()) {
- 		if (!debug_locks_silent) {
- 			console_verbose();
+ 	i2c->algo_data.data = i2c;
+-	i2c->algo_data.wait_for_completion = i2c_pca_pf_waitforcompletion;
++	i2c->algo_data.wait_for_completion_cb = i2c_pca_pf_waitforcompletion;
+ 	if (i2c->gpio)
+ 		i2c->algo_data.reset_chip = i2c_pca_pf_resetchip;
+ 	else
+diff --git a/include/linux/i2c-algo-pca.h b/include/linux/i2c-algo-pca.h
+index 7c522fdd9ea7..e305bf32e40a 100644
+--- a/include/linux/i2c-algo-pca.h
++++ b/include/linux/i2c-algo-pca.h
+@@ -71,7 +71,7 @@ struct i2c_algo_pca_data {
+ 	void 				*data;	/* private low level data */
+ 	void (*write_byte)		(void *data, int reg, int val);
+ 	int  (*read_byte)		(void *data, int reg);
+-	int  (*wait_for_completion)	(void *data);
++	int  (*wait_for_completion_cb)	(void *data);
+ 	void (*reset_chip)		(void *data);
+ 	/* For PCA9564, use one of the predefined frequencies:
+ 	 * 330000, 288000, 217000, 146000, 88000, 59000, 44000, 36000
 -- 
 2.17.1
 
