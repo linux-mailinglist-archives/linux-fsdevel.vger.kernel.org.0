@@ -1,149 +1,301 @@
-Return-Path: <linux-fsdevel+bounces-49394-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3CD3ABBB67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 12:47:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61E55ABBBE5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 13:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8C7179604
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 10:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F24053A250F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65E9F267B95;
-	Mon, 19 May 2025 10:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A799626FA7B;
+	Mon, 19 May 2025 11:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9svh31E"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SD6CbBf7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29BE21DC98B
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 10:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 465722B9A5;
+	Mon, 19 May 2025 11:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747651615; cv=none; b=I4DXWP7ozDvVAsWVkga1ky0wwpJirEn5W7CgHoiwpulKWH7gJYbhEcRo+qegPVaYhHzg7iZrrX6cx4qX50DpF+Ju074vSzgLTy9v6feR8aIXJ3f2mSWkBlEHWKM0cE17c2j2BWak2rStglNW6E/lxO8cYelR8LrVmrqqlZrwSsA=
+	t=1747652616; cv=none; b=XYVjZDWPU63nq3XYdbwJN6pL2R2osimaKOBCQY5LJzFZDjm4wKhyDluB5JSQm8klfB9CIm5tw3P7+aRl1wRSOvhecQo4iHeNLB18dVoz69YbsW6Vte0szm6wOvYTPtiRNjEyAw3pCkRwL3XlWc6sZh+sQvBUMQLkv29z+sSSvy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747651615; c=relaxed/simple;
-	bh=LaLjgV+kyqjqRygdZUHEvyapXEdIIdulsydMsuCk9to=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PIc8QEpb++M6dxImJm74CPjpfwlPhLrSFfMl3TxryHt++CQA65XXoZaVf71Na9D1V393tt8Shb/Zq84emIaoZxj1xTyEEOsf9xPEaY7MXsALktvdOsGUri7i/rW/02QUHufmjZCta6rYObYNhLT7QaOC1XB17r9/0mLnag4rEoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9svh31E; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ad51ef2424bso609006066b.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 03:46:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747651612; x=1748256412; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JqwVldrrVQfYaUxnvxKLY+VMoMoo2tXmalWtj+QPuXM=;
-        b=L9svh31EGQXw/BZze2kOYZWTXacg8EaSY+K1s+egWTqMs2tv0At5gD2g9bNl+Ymi8w
-         1+iVnRvk21grEeMUZp0BElJ4+IkG+4h9yfRxxi9mOGP78G5GXJhY8VV5FTbjRK/JS0hg
-         20uvGt8R6v44wUd3Un7Zezyo1gqObgHxjKs/4+a2Ra44Z9wjEyWqkBAwvhGE6vTe1lrx
-         zu63cFLAfowlFvjCrFrvwycjHV7Q0diyfO86yYg9UPO9PEwuTn/StOTKARe6Hca2D09v
-         EeTnZuXM1ZBKC2j+fCGy7tSR9G5nN/4ggM3m+sW6K9ed6Etu4BnNgKBf+h3C6Kcx4eKx
-         5v+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747651612; x=1748256412;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JqwVldrrVQfYaUxnvxKLY+VMoMoo2tXmalWtj+QPuXM=;
-        b=RKbKXFRZFX6MqidstQTX7jmDXcR2HpKIlptbOsrpbn/36456YywEHOC4Df3Jzl6fBX
-         R/+crTJ7gI0tWbzv/kJZo6+xhncsS4a397abhMImsI9eEZ0j2pj9aw5auCmeyhj09+Ui
-         0M9pamF/lu0n5S0FF8W6vK4iijbV1Rs8XHq/689ffANWuqxn6O2Bgy2mc3dAFFd5rWME
-         DyvIBbr3AbulNf00bM3L6BemS71z0uHRD/fmXNp7uqwNdpvx+JNsyseV+Jtj9bY1z1nS
-         hE99ho/0qNa0Mifs97hxChg5jUWuipMj239tXmVRcjQg84PK5VMOx2xqVxzs7HX7TzT3
-         CYRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWm1s2G63DdJvI+Td+BDxzEWSvRWuSrb5r3uTTDqRd23Tk6cc/NciVNPeaJHslalDP2JQcPGncjzWVWAAq6@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFn+v3nb8oaPgx3QkykBIqoH/ErqsGcmZsb/d1fDEQSwzg7wVA
-	VHtGFcjTUesKxZnpu4xWEdm/wLh/GJG1/zPd1ROeMiOlUDJpzAVVielXp42E2KzXn5MLYeT2JTf
-	lgX890KcsiPeNg5LRxvnWDgaqRFLPAHE=
-X-Gm-Gg: ASbGncvpn/YE+USgM44S7MCJMvU6pOujhy1g74ndWPhM0e08Sp3FeRAJ9IyJFVTN5sZ
-	FXJjp5eYbyy9IunyOFSuACrO+USLFqX5KZhm4jnY6JMkSDAv4HyKuAcTXtruONqR5974jpvCwNu
-	8DhXvlDu/6JJ4qTQxIQauHr6ObZzEW19+d
-X-Google-Smtp-Source: AGHT+IFT5LwrHmGKQTkzSrS21UCyLxa+CWhseYaxtu/HPTbVnf1Dso5Ma/cMdKrHWyKziZY+0STlUB7PTahtMyOuzFY=
-X-Received: by 2002:a17:906:f58c:b0:ad5:59c5:a4f0 with SMTP id
- a640c23a62f3a-ad559c5cfefmr580914166b.39.1747651611900; Mon, 19 May 2025
- 03:46:51 -0700 (PDT)
+	s=arc-20240116; t=1747652616; c=relaxed/simple;
+	bh=jWFKKI+8DujAliA5gTb9l1ZcCEXo3qM/I74AOaXXwEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHS8Lrn7ItmrhFvQuyaJCGvhv1bFFisr5qJpCbURkg7IV1RnyOdp37kADZPZ2PQidPEUd1ka2tkJFnRs50nkBuAvyTc8hI+U7OCHTwcEnk/414klCNOK2upTxxaIW8e+GgjOi9JsbKlFntUdIYrG/TAAL9RNmE9813Lm00Q52+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SD6CbBf7; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JAF07v008690;
+	Mon, 19 May 2025 11:03:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=dgmPtD82+qx4IuowidCfCa23Ougofx
+	TYfYJkwcWoZrA=; b=SD6CbBf7yIjPMBqtp3MaO/t+SkKttS7+QWy8aZYlidz5Z6
+	W/jcWE1JRbqgb/osGlOO5YK/IbexH1V4YoTU7Pnhbut+dixmj+sEjnebo2WUT5pj
+	S6ZWLiTSCrYoUl1ByAAYmITxWuBvoea+YTae6pdOHAy7QRsJ4eBsPX3vXrIwB8Aq
+	DvXbY6YyOl2uPFefbLqcNnJIeiLgFbTPfJ3WREn0LQRPlx8ZQIwI+dOT1Xz2VaPA
+	SzPgVuB2iYrQQAeMABc0i9PegmIVV82jqD0lyakyQwrSA8Pp9Q3ZOilyIrKiHWDX
+	2URTfCYLtgsI5B/aMn1dcOJeShnyFPKaG3tp3Y+Q==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46r2qhr70c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 May 2025 11:03:05 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54J7no9p015958;
+	Mon, 19 May 2025 11:03:04 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 46q7g25ytx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 19 May 2025 11:03:04 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54JB32Po19333532
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 19 May 2025 11:03:03 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D1B17200BC;
+	Mon, 19 May 2025 11:03:02 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 47C71200B8;
+	Mon, 19 May 2025 11:03:00 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.249])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 19 May 2025 11:03:00 +0000 (GMT)
+Date: Mon, 19 May 2025 16:32:57 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, willy@infradead.org, tytso@mit.edu,
+        adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+        libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH v2 0/8] ext4: enable large folio for regular files
+Message-ID: <aCsP4bW6c08h3DJv@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <20250512063319.3539411-1-yi.zhang@huaweicloud.com>
+ <aCcmGyse9prx-D7S@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <33b938e9-bd81-4017-a7e0-e5ffb216ac70@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250419100657.2654744-1-amir73il@gmail.com> <20250419100657.2654744-3-amir73il@gmail.com>
- <20250519-faust-umrunden-47d15c4b288d@brauner>
-In-Reply-To: <20250519-faust-umrunden-47d15c4b288d@brauner>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 19 May 2025 12:46:40 +0200
-X-Gm-Features: AX0GCFs6c1cdS6t091JXa7Uzz_BvgPZwdko1kzi2ZLfZeUYkkKyJn5ZBoxdyTy0
-Message-ID: <CAOQ4uxiyJd4haJ7EJrjkOqb+Gj3x36yjtN82i+iSj=RDbxE6hQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] fanotify: support watching filesystems and mounts
- inside userns
-To: Christian Brauner <brauner@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <33b938e9-bd81-4017-a7e0-e5ffb216ac70@huaweicloud.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDEwMCBTYWx0ZWRfX+ghVC3HcGR0Z MG7YjVgYXbIpoRc3CVtxhEO/G6o36N6WuziHihlnQh6Ug2Cnu3cwxH44x5da6KdwMqkd7xBG1lP PWl/mzOE14WOv1fohTL3XwSGanhrVU1d8IZs1cFQsWV3/I4zoonIeZj/MGD5Hjw5LIMIVHtPPyY
+ +unUVf9offQWh5B4TaUEbA9oNj804ThwN8TLqI/NIdDWjILe28WDCspXp0rkXAUfNFk+ThN3jBV LRJyqHth5R1UAGYCn/Dtl0/wmpS4vSRZosyW9E3/y0s8Q1Ulj0KFJuG+rDVZK2YqpAl04PC2hip A7PTZFhBPK3FHXiVhbOZNi0LVmQeZs7oB0fglgQ8a6C2bg7DUOfkm52AGwYJpQMIE+sn6KIz6Gj
+ 9TxkyeZtaiNl+8HVDth3RaUIIfux4Iqh+uOTlkgZ0pT3MpWC5JmTdG33ijkTMVgPb9KmW/rW
+X-Proofpoint-ORIG-GUID: OXLPx6dTN16GSKp6k9WKFNUVaypBk-4q
+X-Proofpoint-GUID: OXLPx6dTN16GSKp6k9WKFNUVaypBk-4q
+X-Authority-Analysis: v=2.4 cv=P406hjAu c=1 sm=1 tr=0 ts=682b0fe9 cx=c_pps a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=VwQbUJbxAAAA:8 a=AiHppB-aAAAA:8 a=i0EeH86SAAAA:8 a=Z-27RSRBR0MrnfT4iaMA:9
+ a=CjuIK1q_8ugA:10 a=l2o5i1_H8WVCs5eH1y1M:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-19_04,2025-05-16_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ clxscore=1015 mlxscore=0 adultscore=0 impostorscore=0 spamscore=0
+ malwarescore=0 priorityscore=1501 mlxlogscore=999 bulkscore=0 phishscore=0
+ suspectscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505070000
+ definitions=main-2505190100
 
-On Mon, May 19, 2025 at 12:03=E2=80=AFPM Christian Brauner <brauner@kernel.=
-org> wrote:
->
-> On Sat, Apr 19, 2025 at 12:06:57PM +0200, Amir Goldstein wrote:
-> > An unprivileged user is allowed to create an fanotify group and add
-> > inode marks, but not filesystem, mntns and mount marks.
-> >
-> > Add limited support for setting up filesystem, mntns and mount marks by
-> > an unprivileged user under the following conditions:
-> >
-> > 1.   User has CAP_SYS_ADMIN in the user ns where the group was created
-> > 2.a. User has CAP_SYS_ADMIN in the user ns where the filesystem was
-> >      mounted (implies FS_USERNS_MOUNT)
-> >   OR (in case setting up a mntns or mount mark)
-> > 2.b. User has CAP_SYS_ADMIN in the user ns associated with the mntns
->
-> So the crux of the problem is that we need to be sure that for all
-> options we need to be sure that the scope of the permission guarantees
-> necessary privileges over all the associated objects are held.
->
-> CAP_SYS_ADMIN in the owning user namespace of the filesystem (1.) seems
-> trivially ok because it means that the caller has privileges to mount
-> that filesystem.
->
-> If the caller is just privileged over the owning user namespace of the
-> mount namespace (2.b) then they are able to listen for mount
-> notifications starting with v6.15. Note how that the permissions are
-> specifically scoped to mount objects in that api.
->
-> But what you're trying to do here is not scoped to mounts. You're using
-> that permission check to delegate privileges over non-mount objects such
-> as directories accessible from that mount as well.
->
-> IOW, if I set up a mount mark on a mount based on the fact that I have
-> privileges over that mount's owning users namespace then it reads to me
-> that if I have:
->
-> mount --bind-into-unprvileged-container /etc /my/container/rootfs/etc
->
-> such that the new bind-mount for /etc that gets plugging into the
-> container is owned by the unprivileged containers's mount namespace then
-> the container can see write/open/read events on /etc/passwd and
-> /etc/shadow? But that bind-mount exposes the host's /etc/shadow and
-> /etc/passwd. That seems like a no go to me.
->
+On Mon, May 19, 2025 at 09:19:10AM +0800, Zhang Yi wrote:
+> On 2025/5/16 19:48, Ojaswin Mujoo wrote:
+> > On Mon, May 12, 2025 at 02:33:11PM +0800, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> Changes since v1:
+> >>  - Rebase codes on 6.15-rc6.
+> >>  - Drop the modifications in block_read_full_folio() which has supported
+> >>    by commit b72e591f74de ("fs/buffer: remove batching from async
+> >>    read").
+> >>  - Fine-tuning patch 6 without modifying the logic.
+> >>
+> >> v1: https://lore.kernel.org/linux-ext4/20241125114419.903270-1-yi.zhang@huaweicloud.com/
+> >>
+> >> Original Description:
+> >>
+> >> Since almost all of the code paths in ext4 have already been converted
+> >> to use folios, there isn't much additional work required to support
+> >> large folios. This series completes the remaining work and enables large
+> >> folios for regular files on ext4, with the exception of fsverity,
+> >> fscrypt, and data=journal mode.
+> >>
+> >> Unlike my other series[1], which enables large folios by converting the
+> >> buffered I/O path from the classic buffer_head to iomap, this solution
+> >> is based on the original buffer_head, it primarily modifies the block
+> >> offset and length calculations within a single folio in the buffer
+> >> write, buffer read, zero range, writeback, and move extents paths to
+> >> support large folios, doesn't do further code refactoring and
+> >> optimization.
+> >>
+> >> This series have passed kvm-xfstests in auto mode several times, every
+> >> thing looks fine, any comments are welcome.
+> >>
+> >> About performance:
+> >>
+> >> I used the same test script from my iomap series (need to drop the mount
+> >> opts parameter MOUNT_OPT) [2], run fio tests on the same machine with
+> >> Intel Xeon Gold 6240 CPU with 400GB system ram, 200GB ramdisk and 4TB
+> >> nvme ssd disk. Both compared with the base and the IOMAP + large folio
+> >> changes.
+> >>
+> >>  == buffer read ==
+> >>
+> >>                 base          iomap+large folio base+large folio
+> >>  type     bs    IOPS  BW(M/s) IOPS  BW(M/s)     IOPS   BW(M/s)
+> >>  ----------------------------------------------------------------
+> >>  hole     4K  | 576k  2253  | 762k  2975(+32%) | 747k  2918(+29%)
+> >>  hole     64K | 48.7k 3043  | 77.8k 4860(+60%) | 76.3k 4767(+57%)
+> >>  hole     1M  | 2960  2960  | 4942  4942(+67%) | 4737  4738(+60%)
+> >>  ramdisk  4K  | 443k  1732  | 530k  2069(+19%) | 494k  1930(+11%)
+> >>  ramdisk  64K | 34.5k 2156  | 45.6k 2850(+32%) | 41.3k 2584(+20%)
+> >>  ramdisk  1M  | 2093  2093  | 2841  2841(+36%) | 2585  2586(+24%)
+> >>  nvme     4K  | 339k  1323  | 364k  1425(+8%)  | 344k  1341(+1%)
+> >>  nvme     64K | 23.6k 1471  | 25.2k 1574(+7%)  | 25.4k 1586(+8%)
+> >>  nvme     1M  | 2012  2012  | 2153  2153(+7%)  | 2122  2122(+5%)
+> >>
+> >>
+> >>  == buffer write ==
+> >>
+> >>  O: Overwrite; S: Sync; W: Writeback
+> >>
+> >>                      base         iomap+large folio    base+large folio
+> >>  type    O S W bs    IOPS  BW     IOPS  BW(M/s)        IOPS  BW(M/s)
+> >>  ----------------------------------------------------------------------
+> >>  cache   N N N 4K  | 417k  1631 | 440k  1719 (+5%)   | 423k  1655 (+2%)
+> >>  cache   N N N 64K | 33.4k 2088 | 81.5k 5092 (+144%) | 59.1k 3690 (+77%)
+> >>  cache   N N N 1M  | 2143  2143 | 5716  5716 (+167%) | 3901  3901 (+82%)
+> >>  cache   Y N N 4K  | 449k  1755 | 469k  1834 (+5%)   | 452k  1767 (+1%)
+> >>  cache   Y N N 64K | 36.6k 2290 | 82.3k 5142 (+125%) | 67.2k 4200 (+83%)
+> >>  cache   Y N N 1M  | 2352  2352 | 5577  5577 (+137%  | 4275  4276 (+82%)
+> >>  ramdisk N N Y 4K  | 365k  1424 | 354k  1384 (-3%)   | 372k  1449 (+2%)
+> >>  ramdisk N N Y 64K | 31.2k 1950 | 74.2k 4640 (+138%) | 56.4k 3528 (+81%)
+> >>  ramdisk N N Y 1M  | 1968  1968 | 5201  5201 (+164%) | 3814  3814 (+94%)
+> >>  ramdisk N Y N 4K  | 9984  39   | 12.9k 51   (+29%)  | 9871  39   (-1%)
+> >>  ramdisk N Y N 64K | 5936  371  | 8960  560  (+51%)  | 6320  395  (+6%)
+> >>  ramdisk N Y N 1M  | 1050  1050 | 1835  1835 (+75%)  | 1656  1657 (+58%)
+> >>  ramdisk Y N Y 4K  | 411k  1609 | 443k  1731 (+8%)   | 441k  1723 (+7%)
+> >>  ramdisk Y N Y 64K | 34.1k 2134 | 77.5k 4844 (+127%) | 66.4k 4151 (+95%)
+> >>  ramdisk Y N Y 1M  | 2248  2248 | 5372  5372 (+139%) | 4209  4210 (+87%)
+> >>  ramdisk Y Y N 4K  | 182k  711  | 186k  730  (+3%)   | 182k  711  (0%)
+> >>  ramdisk Y Y N 64K | 18.7k 1170 | 34.7k 2171 (+86%)  | 31.5k 1969 (+68%)
+> >>  ramdisk Y Y N 1M  | 1229  1229 | 2269  2269 (+85%)  | 1943  1944 (+58%)
+> >>  nvme    N N Y 4K  | 373k  1458 | 387k  1512 (+4%)   | 399k  1559 (+7%)
+> >>  nvme    N N Y 64K | 29.2k 1827 | 70.9k 4431 (+143%) | 54.3k 3390 (+86%)
+> >>  nvme    N N Y 1M  | 1835  1835 | 4919  4919 (+168%) | 3658  3658 (+99%)
+> >>  nvme    N Y N 4K  | 11.7k 46   | 11.7k 46   (0%)    | 11.5k 45   (-1%)
+> >>  nvme    N Y N 64K | 6453  403  | 8661  541  (+34%)  | 7520  470  (+17%)
+> >>  nvme    N Y N 1M  | 649   649  | 1351  1351 (+108%) | 885   886  (+37%)
+> >>  nvme    Y N Y 4K  | 372k  1456 | 433k  1693 (+16%)  | 419k  1637 (+12%)
+> >>  nvme    Y N Y 64K | 33.0k 2064 | 74.7k 4669 (+126%) | 64.1k 4010 (+94%)
+> >>  nvme    Y N Y 1M  | 2131  2131 | 5273  5273 (+147%) | 4259  4260 (+100%)
+> >>  nvme    Y Y N 4K  | 56.7k 222  | 56.4k 220  (-1%)   | 59.4k 232  (+5%)
+> >>  nvme    Y Y N 64K | 13.4k 840  | 19.4k 1214 (+45%)  | 18.5k 1156 (+38%)
+> >>  nvme    Y Y N 1M  | 714   714  | 1504  1504 (+111%) | 1319  1320 (+85%)
+> >>
+> >> [1] https://lore.kernel.org/linux-ext4/20241022111059.2566137-1-yi.zhang@huaweicloud.com/
+> >> [2] https://lore.kernel.org/linux-ext4/3c01efe6-007a-4422-ad79-0bad3af281b1@huaweicloud.com/
+> >>
+> >> Thanks,
+> >> Yi.
+> >>
+> >> Zhang Yi (8):
+> >>   ext4: make ext4_mpage_readpages() support large folios
+> >>   ext4: make regular file's buffered write path support large folios
+> >>   ext4: make __ext4_block_zero_page_range() support large folio
+> >>   ext4/jbd2: convert jbd2_journal_blocks_per_page() to support large
+> >>     folio
+> >>   ext4: correct the journal credits calculations of allocating blocks
+> >>   ext4: make the writeback path support large folios
+> >>   ext4: make online defragmentation support large folios
+> >>   ext4: enable large folio for regular file
+> >>
+> >>  fs/ext4/ext4.h        |  1 +
+> >>  fs/ext4/ext4_jbd2.c   |  3 +-
+> >>  fs/ext4/ext4_jbd2.h   |  4 +--
+> >>  fs/ext4/extents.c     |  5 +--
+> >>  fs/ext4/ialloc.c      |  3 ++
+> >>  fs/ext4/inode.c       | 72 ++++++++++++++++++++++++++++++-------------
+> >>  fs/ext4/move_extent.c | 11 +++----
+> >>  fs/ext4/readpage.c    | 28 ++++++++++-------
+> >>  fs/jbd2/journal.c     |  7 +++--
+> >>  include/linux/jbd2.h  |  2 +-
+> >>  10 files changed, 88 insertions(+), 48 deletions(-)
+> >>
+> >> -- 
+> >> 2.46.1
+> > 
+> > Hi Zhang,
+> > 
+> > I'm currently testing the patches with 4k block size and 64k pagesize on
+> > power and noticed that ext4/046 is hitting a bug on:
+> > 
+> > [  188.351668][ T1320] NIP [c0000000006f15a4] block_read_full_folio+0x444/0x450
+> > [  188.351782][ T1320] LR [c0000000006f15a0] block_read_full_folio+0x440/0x450
+> > [  188.351868][ T1320] --- interrupt: 700
+> > [  188.351919][ T1320] [c0000000058176e0] [c0000000007d7564] ext4_mpage_readpages+0x204/0x910
+> > [  188.352027][ T1320] [c0000000058177e0] [c0000000007a55d4] ext4_readahead+0x44/0x60
+> > [  188.352119][ T1320] [c000000005817800] [c00000000052bd80] read_pages+0xa0/0x3d0
+> > [  188.352216][ T1320] [c0000000058178a0] [c00000000052cb84] page_cache_ra_order+0x2c4/0x560
+> > [  188.352312][ T1320] [c000000005817990] [c000000000514614] filemap_readahead.isra.0+0x74/0xe0
+> > [  188.352427][ T1320] [c000000005817a00] [c000000000519fe8] filemap_get_pages+0x548/0x9d0
+> > [  188.352529][ T1320] [c000000005817af0] [c00000000051a59c] filemap_read+0x12c/0x520
+> > [  188.352624][ T1320] [c000000005817cc0] [c000000000793ae8] ext4_file_read_iter+0x78/0x320
+> > [  188.352724][ T1320] [c000000005817d10] [c000000000673e54] vfs_read+0x314/0x3d0
+> > [  188.352813][ T1320] [c000000005817dc0] [c000000000674ad8] ksys_read+0x88/0x150
+> > [  188.352905][ T1320] [c000000005817e10] [c00000000002fff4] system_call_exception+0x114/0x300
+> > [  188.353019][ T1320] [c000000005817e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+> > 
+> > which is:
+> > 
+> > int block_read_full_folio(struct folio *folio, get_block_t *get_block)
+> > {
+> > 	...
+> > 	/* This is needed for ext4. */
+> > 	if (IS_ENABLED(CONFIG_FS_VERITY) && IS_VERITY(inode))
+> > 		limit = inode->i_sb->s_maxbytes;
+> > 
+> > 	VM_BUG_ON_FOLIO(folio_test_large(folio), folio);    <-------------
+> > 
+> > 	head = folio_create_buffers(folio, inode, 0);
+> > 	blocksize = head->b_size;
+> > 
+> > This seems like it got mistakenly left out. Wihtout this line I'm not
+> > hitting the BUG, however it's strange that none the x86 testing caught
+> > this. I can only replicate this on 4k blocksize on 64k page size power
+> > pc architecture. I'll spend some time to understand why it is not
+> > getting hit on x86 with 1k bs. (maybe ext4_mpage_readpages() is not
+> > falling to block_read_full_folio that easily.)
+> > 
+> > I'll continue testing with the line removed.
+> 
+> Hi Ojaswin.
+> 
+> Thanks for the test again, I checked the commit, this line has already
+> been removed by commit e59e97d42b05 ("fs/buffer fs/mpage: remove large
+> folio restriction").
+> 
+> Thanks,
+> Yi.
 
-You are absolutely right.
+Hi Yi,
 
-This is why I change the mount mark to require same privileges
-as filesystem mark in v3:
+Thanks, seems like they came in via Christian's 6.15-rc1 vfs branch,
+maybe Ted rebased recently since I didnt see this change in the fairly
+recent branhc that I was testing on.
 
-https://lore.kernel.org/linux-fsdevel/20250516192803.838659-1-amir73il@gmai=
-l.com/
-
-Sorry that I have not clarified this in this thread.
+Good to see it is fixed. I've another overnight auto run going on, I'll
+update if I see any regressions.
 
 Thanks,
-Amir.
+Ojaswin
+> 
 
