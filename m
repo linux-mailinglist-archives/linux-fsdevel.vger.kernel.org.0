@@ -1,122 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-49386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49387-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70AF3ABBA42
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:54:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 31FD2ABBA4E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:55:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B745178EA4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:51:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E43017F05D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:52:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6817935957;
-	Mon, 19 May 2025 09:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69A2269CED;
+	Mon, 19 May 2025 09:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p+6JXLC5"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="iGuz3wx/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC5D935961;
-	Mon, 19 May 2025 09:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FAE35957;
+	Mon, 19 May 2025 09:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747648123; cv=none; b=SQeiryU1zcTaT6XcPn299ojbDd7DOoIO1N6VYag8ej92IbRn9xiZJ9zt/W4p+AXKi1dVgnX6sd4623jQv5Hsw1Kzvmxq//ra6OMp4TOZjDyzw0S8ujmRnBRPv2FDLhRR7Y0Zz5iJeWm2ZYhz0TtySGZq2vg0rElLglg+tZ0R39k=
+	t=1747648301; cv=none; b=eJZWIG4ciUU3S+72Hpxc05d9vD254EBTSebeJVH9UwI3ga8MIGnAM0fWAmh7QhULjPwz6gpZzTesRfqmHCVnCjLcaj2x+JO+Tri9Lmja8epdzxuLYKgE41X9Bsxx1YkId7HxriLl6KR16rpXrNGCpUbqBfmT0YF1N0UP5KYiJOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747648123; c=relaxed/simple;
-	bh=/3ArMFUDk3CDwgactLjkgY3d4YWTpgV4Iv5e1mlvnqY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kIpUKpuxHVJvYK6obVrxGUZm5bs009MXfPfhDyCZ0uQ/85Kx2DmvpHj/pF2CJqVsHv63wSVrBe7kYViGtFx2m6WO+ZM6OkM9yTgtQ9eShZWtzfI6eicxNVJD5qzfw7LJilBZkhn3LzjQz79hRE4jg+m+uWxMBEP0dJ5cm4kzWm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p+6JXLC5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7092C4CEE4;
-	Mon, 19 May 2025 09:48:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747648122;
-	bh=/3ArMFUDk3CDwgactLjkgY3d4YWTpgV4Iv5e1mlvnqY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=p+6JXLC5HqzTBiOMIv745yuYXbYZGa64HF/xeCqN3wBh6DaPwA7cKVVF4ShdSo2uV
-	 DNoYctb4jvMcVLUUi2TU8noClNDWsWSBBIEHnNc1AhRmXXBdphesLft36Cgn3TETtU
-	 AQglqUarQLEbV0Mt66nJo2a6luXaowgByI+e8E67/y5fY0wWZDqDRuRQmzOdz3ARAT
-	 bTBSHhw+EcehJy/sDf2Be2FSTZLNiSXN/7ygHvsT/Q5NQjWcDmFVMIx9r0mE1ksHKg
-	 MTneG20OEh26zWdWGUwpzSP4VYsGX/r7m96w2qtG3st7DjS+RRSgz57Q415eL9eRfY
-	 yYvpSBDwsSkvg==
-Date: Mon, 19 May 2025 11:48:37 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Alejandro Colomar <alx@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-man@vger.kernel.org
-Subject: Re: close(2) with EINTR has been changed by POSIX.1-2024
-Message-ID: <20250519-rauben-geldentwertung-3f18b3c8876c@brauner>
-References: <fskxqmcszalz6dmoak6de4c7bxt4juvc5zrpboae4dqw4y6aih@lskezjrbnsws>
- <ddqmhjc2rpzk2jjvunbt3l3eukcn4xzkocqzdg3j4msihdhzko@fizekvxndg2d>
+	s=arc-20240116; t=1747648301; c=relaxed/simple;
+	bh=1TFDZrnppSFAD0JlqH6lVEgL5rsRavitm3KqWQs/JKc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FofiIaHDCLQ+7FTmi43E5W8LYcJAJR+9zXtICfM9v1jGTp1Eac8VWh9le4RDRsAZUqMBS5w+Me5r0HzLP7c9FXsJeKc3vrq9keQEm98DbgRnU8HE8hxjkpM+eZM5SbY0O7sffu7sF5mH0T4un9kdtW2FGDSHdnswNBNX0JrSOCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=iGuz3wx/; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id F19711D0B;
+	Mon, 19 May 2025 09:51:24 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=iGuz3wx/;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 6FF7F21B3;
+	Mon, 19 May 2025 09:51:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=paragon-software.com; s=mail; t=1747648296;
+	bh=jJvs72gtLIf+AhNDgR1jY87eVay24QMwgXIPiSfnjBo=;
+	h=From:To:CC:Subject:Date;
+	b=iGuz3wx/h+N+vwC7HG2rvgFEWMwGTFx8Xhv4xJEppJKty67yDUs3qH5NhWahppZNc
+	 8dz4EWMdKDyjoLTl+ZF2MTVijXG6ks31IxlxdhbLkaZPCfRFcuLmKEIRKaJhs9D3f0
+	 PkodATYA3wJ7kq+UihLz5OUrMamHbKQijAzLSClE=
+Received: from localhost.localdomain (172.30.20.142) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Mon, 19 May 2025 12:51:35 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <ntfs3@lists.linux.dev>
+CC: <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+	Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH] fs/ntfs3: Fix handling of InitializeFileRecordSegment
+Date: Mon, 19 May 2025 11:51:27 +0200
+Message-ID: <20250519095127.7233-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ddqmhjc2rpzk2jjvunbt3l3eukcn4xzkocqzdg3j4msihdhzko@fizekvxndg2d>
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-On Fri, May 16, 2025 at 12:48:56PM +0200, Jan Kara wrote:
-> Hi!
-> 
-> On Thu 15-05-25 23:33:22, Alejandro Colomar wrote:
-> > I'm updating the manual pages for POSIX.1-2024, and have some doubts
-> > about close(2).  The manual page for close(2) says (conforming to
-> > POSIX.1-2008):
-> > 
-> >        The EINTR error is a somewhat special case.  Regarding the EINTR
-> >        error, POSIX.1‐2008 says:
-> > 
-> >               If close() is interrupted by  a  signal  that  is  to  be
-> >               caught,  it  shall  return -1 with errno set to EINTR and
-> >               the state of fildes is unspecified.
-> > 
-> >        This permits the behavior that occurs on Linux  and  many  other
-> >        implementations,  where,  as  with  other errors that may be re‐
-> >        ported by close(), the  file  descriptor  is  guaranteed  to  be
-> >        closed.   However, it also permits another possibility: that the
-> >        implementation returns an EINTR error and  keeps  the  file  de‐
-> >        scriptor open.  (According to its documentation, HP‐UX’s close()
-> >        does this.)  The caller must then once more use close() to close
-> >        the  file  descriptor, to avoid file descriptor leaks.  This di‐
-> >        vergence in implementation behaviors provides a difficult hurdle
-> >        for  portable  applications,  since  on  many   implementations,
-> >        close() must not be called again after an EINTR error, and on at
-> >        least one, close() must be called again.  There are plans to ad‐
-> >        dress  this  conundrum for the next major release of the POSIX.1
-> >        standard.
-> > 
-> > TL;DR: close(2) with EINTR is allowed to either leave the fd open or
-> > closed, and Linux leaves it closed, while others (HP-UX only?) leaves it
-> > open.
-> > 
-> > Now, POSIX.1-2024 says:
-> > 
-> > 	If close() is interrupted by a signal that is to be caught, then
-> > 	it is unspecified whether it returns -1 with errno set to
-> > 	[EINTR] and fildes remaining open, or returns -1 with errno set
-> > 	to [EINPROGRESS] and fildes being closed, or returns 0 to
-> > 	indicate successful completion; [...]
-> > 
-> > <https://pubs.opengroup.org/onlinepubs/9799919799/functions/close.html>
-> > 
-> > Which seems to bless HP-UX and screw all the others, requiring them to
-> > report EINPROGRESS.
-> > 
-> > Was there any discussion about what to do in the Linux kernel?
-> 
-> I'm not aware of any discussions but indeed we are returning EINTR while
-> closing the fd. Frankly, changing the error code we return in that case is
-> really asking for userspace regressions so I'm of the opinion we just
-> ignore the standard as in my opinion it goes against a long established
-> reality.
+Make the logic of handling the InitializeFileRecordSegment operation
+similar to that in windows.
 
-Ignore. We've long since stopped designing apis with input from that
-standard in mind. And I think that was a very wise decision.
+Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+---
+ fs/ntfs3/fslog.c | 30 ++++++++++++++----------------
+ 1 file changed, 14 insertions(+), 16 deletions(-)
+
+diff --git a/fs/ntfs3/fslog.c b/fs/ntfs3/fslog.c
+index e69f623b2e49..38934e6978ec 100644
+--- a/fs/ntfs3/fslog.c
++++ b/fs/ntfs3/fslog.c
+@@ -3091,16 +3091,16 @@ static int do_action(struct ntfs_log *log, struct OPEN_ATTR_ENRTY *oe,
+ 		inode = ilookup(sbi->sb, rno);
+ 		if (inode) {
+ 			mi = &ntfs_i(inode)->mi;
+-		} else if (op == InitializeFileRecordSegment) {
+-			mi = kzalloc(sizeof(struct mft_inode), GFP_NOFS);
+-			if (!mi)
+-				return -ENOMEM;
+-			err = mi_format_new(mi, sbi, rno, 0, false);
+-			if (err)
+-				goto out;
+ 		} else {
+ 			/* Read from disk. */
+ 			err = mi_get(sbi, rno, &mi);
++			if (err && op == InitializeFileRecordSegment) {
++				mi = kzalloc(sizeof(struct mft_inode),
++					     GFP_NOFS);
++				if (!mi)
++					return -ENOMEM;
++				err = mi_format_new(mi, sbi, rno, 0, false);
++			}
+ 			if (err)
+ 				return err;
+ 		}
+@@ -3109,15 +3109,13 @@ static int do_action(struct ntfs_log *log, struct OPEN_ATTR_ENRTY *oe,
+ 		if (op == DeallocateFileRecordSegment)
+ 			goto skip_load_parent;
+ 
+-		if (InitializeFileRecordSegment != op) {
+-			if (rec->rhdr.sign == NTFS_BAAD_SIGNATURE)
+-				goto dirty_vol;
+-			if (!check_lsn(&rec->rhdr, rlsn))
+-				goto out;
+-			if (!check_file_record(rec, NULL, sbi))
+-				goto dirty_vol;
+-			attr = Add2Ptr(rec, roff);
+-		}
++		if (rec->rhdr.sign == NTFS_BAAD_SIGNATURE)
++			goto dirty_vol;
++		if (!check_lsn(&rec->rhdr, rlsn))
++			goto out;
++		if (!check_file_record(rec, NULL, sbi))
++			goto dirty_vol;
++		attr = Add2Ptr(rec, roff);
+ 
+ 		if (is_rec_base(rec) || InitializeFileRecordSegment == op) {
+ 			rno_base = rno;
+-- 
+2.43.0
+
 
