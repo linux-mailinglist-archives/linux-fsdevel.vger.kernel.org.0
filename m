@@ -1,146 +1,134 @@
-Return-Path: <linux-fsdevel+bounces-49421-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49422-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08919ABBFEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 15:54:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B26ABC01F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 16:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99111889A7B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 13:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF481739DF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 14:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2B72874E0;
-	Mon, 19 May 2025 13:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06262283142;
+	Mon, 19 May 2025 14:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MeHFRSp7"
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P636DutZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 624B228689F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 13:49:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 281A5280A22
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 14:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747662569; cv=none; b=J7jQxiXUB2hC0g1G9YM6hUoedX+A2Yi0mEWUD14Gqg1ZU32wy8CE1yFugeFcSFNcns9lXp5tz9c0iheQyeH1s2yjxKto1wa0RLNT8V4inKZoLkBRs7bR4z8LFP5ldsS00SYdt82KhkHUhnbiDzGUyiDtPPS5C6O+jy79WSHzBbE=
+	t=1747663380; cv=none; b=CZyZaxwHHFJkLYpTUbuHu31NpPiM5co6skv05A4M7T+WWcDyd2cTuBAWn/Z4ZZFuL4D0PUhvltA4NYMyjS9y/cXnCTh9xxwnh46qCtoF8amxCg3bx5i5tKG9BzFv4MNdbZ0PLoeKmY80ePuBmqEYuW0veO+5G2xP8h2kCh/S/PQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747662569; c=relaxed/simple;
-	bh=iv8jfhSY2pjUHanj+AjE29zg4dE6ieuCmxfmSPfpSmc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sCsjK41KgWSYFIy+tbdAJ3pnNFEu0jaMVQM8dklH0m7WK3xhA4lpSLG1PBR1J2PkGThqenDkeStVEyJCI7/yPKSIr8iYwH2XsTHnAMOKt7GELaVGlQb8+eY8UYEvPDBnErVVurlydR4fGxOKyQFMSvd4YuMvmzpFM+BBK8ByBY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MeHFRSp7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747662566;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kg+gPJ9yl1JR7feLLpWZNLDRMWZLNWwVqA9/nsyErrQ=;
-	b=MeHFRSp7QjF/9zBbsc2n+VX72qg8ioY7X51oGXnVUeB1yPu0VZdyV0B9w7DdAbQxcY3iwk
-	vmn2lYYV8Pyo8vyMLmPV5x4TEfH/4NNm4sRTT3l/tH5v5DME64qQ7JIgHcigSa1AJtOaOV
-	Kfa/FqZ9zozdc4RJrjqzsNIXV1M0/yc=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-668-6HSQlFW9Nx2ZvVOhQWKZGQ-1; Mon,
- 19 May 2025 09:49:23 -0400
-X-MC-Unique: 6HSQlFW9Nx2ZvVOhQWKZGQ-1
-X-Mimecast-MFC-AGG-ID: 6HSQlFW9Nx2ZvVOhQWKZGQ_1747662561
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E8F51956046;
-	Mon, 19 May 2025 13:49:21 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.188])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id A8C2219560A3;
-	Mon, 19 May 2025 13:49:17 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Max Kellermann <max.kellermann@ionos.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 11/11] fs/netfs: remove unused flag NETFS_RREQ_BLOCKED
-Date: Mon, 19 May 2025 14:48:07 +0100
-Message-ID: <20250519134813.2975312-12-dhowells@redhat.com>
-In-Reply-To: <20250519134813.2975312-1-dhowells@redhat.com>
-References: <20250519134813.2975312-1-dhowells@redhat.com>
+	s=arc-20240116; t=1747663380; c=relaxed/simple;
+	bh=6JeicjUHmHodkNN/zM/djUCuOR2HOijRfC1PdA6i1Ok=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hEDlA2WDEywKhuvEEazxO+58vy92cVOnGxwSpRuNPre4MpAaYHKCk0bp8wDsBVZW1B0HYH/wbfOk3Uuyub09PuQBr++5tT6QngF7w4Qg725diGKisebXDyavwmS4vLgnSm361JBEugodkXvgKKk9a3q8da5/Z76L/XOZFW5YdIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P636DutZ; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3a363ccac20so2281475f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 07:02:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1747663375; x=1748268175; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yWHK376VyM/OI/YTUsa3tJsiwaElzvKB3NW3NOhpiiM=;
+        b=P636DutZeVZfwjnLwuxbXt9gvNyYJSKX2bNgrVDsov0uHT4nKxEBaOfkCx+Upz0I7T
+         VLN42EeAIvGmwPhJkQsQ0l0iJN/KBsDN3/qk1xsPE3oTKcxYm7HshGQpOcR6xGnoJWYs
+         qXsOvMNFlV6lXskj8xwEqoaEK56QpQOlXqIf0I13Nf/Vt2VQCPUnOWFXipvCATD7dt0O
+         rRCMm6/sQopHxPZbDy2Nsf0cXgB05xh3dcs4n47rn2PuQkds16tjOCIFtlCofp4E1QJO
+         pUdEivieJJ5zG9fNXD3OYNAiJUEN/aNfVfW4KfMJK45zsfCjGlrgo5lFMbrxD3TWyuG9
+         R7NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747663375; x=1748268175;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yWHK376VyM/OI/YTUsa3tJsiwaElzvKB3NW3NOhpiiM=;
+        b=el0rl9bM459xF5uDQlUIyfn0lNu0XrIgSsFHL50N72ky6McH8b3X9y704f4q27/UyK
+         U8pboGr52VOghX4b3W3ShbBpVSwKcN+6oEK6qKtfsM0nVKoN5Yqq7qrghfipNcf4+XwI
+         GKMj2wRelHKr/ZhbIiwrtun2y/BfH5EMPhHEhKd7+iE7RjQhIjepdqs0ul86h8WEyZ9+
+         VYe3PKPo+9R0FqG2QIQ0UMJbANfTrRiRw21EJkxlKdyXaWJMgGcfujdF8hpgGxVQsOQ4
+         wQCMMvPv02OJN0A5eiqJ0zzCXtyjDKVJBmfSO+0zXM2HB3DHAHLDKWTdJZVmh2anHLMM
+         mgDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXgablmGPue0TpbHP2dT2CuAn7J0iZEv4UYtsN6gA9L9X/F7030kB16w/SKZAJvu1Ws/4k/JUaotjtSOdv/@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM5MhJYzhYhUHi0aTGgUPRwV/CWP7IkZi6EhQIt/6fo5v0Drm5
+	+IvykJZIV87/HW2zLYIdxouKzytkjxyHma8nSTtnPL5WGFmY/NBw1Rrj93cqWbTrXcw=
+X-Gm-Gg: ASbGnctC3JxnxhWUCawg5aTy0pcQaYdM8EeaoRBaYaaF5kd9uCHgX+2YpZoE11Z3Dr6
+	exT/Pt9rCwWLSaB9rHJaLfgDIxBugvhzGGPRK5je3aZRt7rq+IAesckWJY7VVqpNXyd/XEn0JBQ
+	yFnbVxJsgWwH32JUUzVKSoX9BELL24X4IzVYvQyxN5Fvnt6D6dhcxiDKuKhaXE8EhECSH0/Qx4c
+	7re63/7ktEyZVyV5TbsTYiAaEigCQhk5n1USXkHlgs9nK3IoAbFmUKMDW4cFS6drbokn5udSn+a
+	mElaRhpHY0WySWc=
+X-Google-Smtp-Source: AGHT+IHgFSt1Ji7/vd8gjbKHf9/ZDkJicJQQ8h96um9tpOt5m+Et9jN1XlhPEUTYTozb2xYGapLzmg==
+X-Received: by 2002:a05:6000:2482:b0:3a3:652d:1631 with SMTP id ffacd0b85a97d-3a3652d1856mr7082207f8f.16.1747663375211;
+        Mon, 19 May 2025 07:02:55 -0700 (PDT)
+Received: from localhost ([213.208.157.38])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3a35ca4d230sm12787370f8f.4.2025.05.19.07.02.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 May 2025 07:02:54 -0700 (PDT)
+Date: Mon, 19 May 2025 16:02:51 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Bharat Agrawal <bharat.agrawal@ansys.com>
+Cc: "hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"rientjes@google.com" <rientjes@google.com>,
+	"zhangyiru3@huawei.com" <zhangyiru3@huawei.com>,
+	"mike.kravetz@oracle.com" <mike.kravetz@oracle.com>,
+	"liuzixian4@huawei.com" <liuzixian4@huawei.com>,
+	"wuxu.wu@huawei.com" <wuxu.wu@huawei.com>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>
+Subject: Re: mlock ulimits for SHM_HUGETLB
+Message-ID: <aCs6C2vKbecx-boy@tiehlicka>
+References: <SJ2PR01MB8345DF192742AC4DB3D2CBB78E9CA@SJ2PR01MB8345.prod.exchangelabs.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ2PR01MB8345DF192742AC4DB3D2CBB78E9CA@SJ2PR01MB8345.prod.exchangelabs.com>
 
-From: Max Kellermann <max.kellermann@ionos.com>
+Hi,
+On Mon 19-05-25 10:21:17, Bharat Agrawal wrote:
+> Hi all,
+> 
+> Could anyone please help comment on the risks associated with an
+> application throwing the "Using mlock ulimits for SHM_HUGETLB is
+> deprecated" message on RHEL 8.9 with 4.18.0-513.18.1.el8_9.x86_64
+> Linux kernel?
 
-NETFS_RREQ_BLOCKED was added by commit 016dc8516aec ("netfs: Implement
-unbuffered/DIO read support") but has never been used either.  Without
-NETFS_RREQ_BLOCKED, NETFS_RREQ_NONBLOCK makes no sense, and thus can
-be removed as well.
+This is not RHEL specific behavior. The current Linus tree has the same
+warning which has been added by 
+: commit 2584e517320bd48dc8d20e38a2621a2dbe58fade
+: Author: Ravikiran G Thirumalai <kiran@scalex86.org>
+: Date:   Tue Mar 31 15:21:26 2009 -0700
+: 
+:     mm: reintroduce and deprecate rlimit based access for SHM_HUGETLB
+: 
+:     Allow non root users with sufficient mlock rlimits to be able to allocate
+:     hugetlb backed shm for now.  Deprecate this though.  This is being
+:     deprecated because the mlock based rlimit checks for SHM_HUGETLB is not
+:     consistent with mmap based huge page allocations.
+: 
+:     Signed-off-by: Ravikiran Thirumalai <kiran@scalex86.org>
+:     Reviewed-by: Mel Gorman <mel@csn.ul.ie>
+:     Cc: William Lee Irwin III <wli@holomorphy.com>
+:     Cc: Adam Litke <agl@us.ibm.com>
+:     Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+:     Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Paulo Alcantara <pc@manguebit.com>
-cc: netfs@lists.linux.dev
-cc: linux-fsdevel@vger.kernel.org
----
- fs/netfs/direct_read.c | 3 ---
- fs/netfs/objects.c     | 2 --
- include/linux/netfs.h  | 2 --
- 3 files changed, 7 deletions(-)
-
-diff --git a/fs/netfs/direct_read.c b/fs/netfs/direct_read.c
-index 5e3f0aeb51f3..f11a89f2fdd9 100644
---- a/fs/netfs/direct_read.c
-+++ b/fs/netfs/direct_read.c
-@@ -106,9 +106,6 @@ static int netfs_dispatch_unbuffered_reads(struct netfs_io_request *rreq)
- 			netfs_wait_for_pause(rreq);
- 		if (test_bit(NETFS_RREQ_FAILED, &rreq->flags))
- 			break;
--		if (test_bit(NETFS_RREQ_BLOCKED, &rreq->flags) &&
--		    test_bit(NETFS_RREQ_NONBLOCK, &rreq->flags))
--			break;
- 		cond_resched();
- 	} while (size > 0);
- 
-diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
-index dc6b41ef18b0..d6f8984f9f5b 100644
---- a/fs/netfs/objects.c
-+++ b/fs/netfs/objects.c
-@@ -64,8 +64,6 @@ struct netfs_io_request *netfs_alloc_request(struct address_space *mapping,
- 	}
- 
- 	__set_bit(NETFS_RREQ_IN_PROGRESS, &rreq->flags);
--	if (file && file->f_flags & O_NONBLOCK)
--		__set_bit(NETFS_RREQ_NONBLOCK, &rreq->flags);
- 	if (rreq->netfs_ops->init_request) {
- 		ret = rreq->netfs_ops->init_request(rreq, file);
- 		if (ret < 0) {
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 5f60d8e3a7ef..cf634c28522d 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -270,8 +270,6 @@ struct netfs_io_request {
- #define NETFS_RREQ_IN_PROGRESS		5	/* Unlocked when the request completes */
- #define NETFS_RREQ_FOLIO_COPY_TO_CACHE	6	/* Copy current folio to cache from read */
- #define NETFS_RREQ_UPLOAD_TO_SERVER	8	/* Need to write to the server */
--#define NETFS_RREQ_NONBLOCK		9	/* Don't block if possible (O_NONBLOCK) */
--#define NETFS_RREQ_BLOCKED		10	/* We blocked */
- #define NETFS_RREQ_PAUSE		11	/* Pause subrequest generation */
- #define NETFS_RREQ_USE_IO_ITER		12	/* Use ->io_iter rather than ->i_pages */
- #define NETFS_RREQ_ALL_QUEUED		13	/* All subreqs are now queued */
-
+HTH
+-- 
+Michal Hocko
+SUSE Labs
 
