@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-49354-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E75ABB8F0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:24:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395E3ABB8F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:24:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33ADB17C48D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:23:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49B1D189B056
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:24:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6374C277811;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDD4D278744;
 	Mon, 19 May 2025 09:18:56 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A59626FD81;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76152701C6;
 	Mon, 19 May 2025 09:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747646335; cv=none; b=BiUFp9IzWNiw4rwwc9cQV30lHpHUuSvcHYvLxyqQJA8fO3BEp/62eyNp6S1mBS97aXfCOTw8wDGSMWtvgtInNnqNhQLL3aHozDivOwQvY/5Pi9pfPeqFNNmQV/fcgoalx52ulx5O3fbHzHEtI5X68GrQYKQRN6gMZ8IbKQsHD1w=
+	t=1747646335; cv=none; b=Q3HLxXqMkI3FmHFkpu3rmJG/0hpfTpPRPotu/SAtDuIXT+606dz+Yh4nP5/V5Sp8yxfeQEn+42t8AdOhnlIYfnwJIXLNRfaDDoxeAyY6X5dyTTwz5ae3FTcnIPabvPDD7ccFqdRmkr+cjSeRieO/x0Ika+lyTv6uepLbgSQ6Saw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1747646335; c=relaxed/simple;
-	bh=pLUSXjgVOyB6ewzDMD2B/aTj2n2b3ii/EXLHyurcTzs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=BbQOt1wGFpa3aw7J9hcM9aw9C77CRbFe33i87S3DSNNlDyK0MpujLNDO+cTkQ6lt708FlMhs7D35aVvmCRu53edrkuU1eisVyRoBvPYRsu4aWTT5jRLnnQKXNmNnoE+zrdySflJ9CjhkWg5MmmntiLXsXO5LbRpHxDYfLXduCwM=
+	bh=l20SQrf5lRl3+sKTvdmaOt5bA5DWEDLDzGURyc0sECY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=aljxxVpMCt1l+Gxdsdm32yxFdU49ukXcNAeMXJOHSimSM7X4UtOWpS47O++7usbl62WWC5+ADT2F4o7B38NY7F9etcvgxo97G1+p4NohYfeHq48QzuUjV/zw9Qa8slH4ha25YkEpGfLVye+Ww5aNwPN0Qg1B1ICZFOHxcopkNI0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-b5-682af76ebd89
+X-AuditID: a67dfc5b-681ff7000002311f-c5-682af76e4861
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -90,44 +90,44 @@ Cc: kernel_team@skhynix.com,
 	netdev@vger.kernel.org,
 	matthew.brost@intel.com,
 	her0gyugyu@gmail.com
-Subject: [PATCH v16 14/42] dept: apply sdt_might_sleep_{start,end}() to swait
-Date: Mon, 19 May 2025 18:17:58 +0900
-Message-Id: <20250519091826.19752-15-byungchul@sk.com>
+Subject: [PATCH v16 15/42] dept: apply sdt_might_sleep_{start,end}() to waitqueue wait
+Date: Mon, 19 May 2025 18:17:59 +0900
+Message-Id: <20250519091826.19752-16-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250519091826.19752-1-byungchul@sk.com>
 References: <20250519091826.19752-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAz2Sa0yTdxTG/b/3VuveVDfeqVHSRLdhvNTocj6oMRHjP0aMcV+8zLgGXm0D
-	FNMqt8QIE4yCBcQgXhBr3SrSSrF1mTqLWKSIBNZJKYVxGTjJiCDatcUiXgpRv5w8eZ7z/M6X
-	w5HyJnoep9EeEnVaVYqCkVLS0VmmZdrxOPVK0/UlEAqeoKDCZmXAU2NBYL2VS8Bw42boDI8g
-	eNP6JwnlZR4EVwZ6Sbjl7kPgrPqZgfZ/Z4M3NMZAc1khA8eu2hj46/kkAT1nSwmw2BOg3zxE
-	QUuJiYDyYQYulh8jouM/AiLmahbMOYthsOoCC5MDSmju89Hg7F4K5yt7GLjnbKbAfXuQgPa7
-	FQz0Wd/T0OJ+REG4aD54ThtouPHCxMDzsJkEc2iMhSf1RgLcxq+gNi8KPP7/OxqaDPUEHP/l
-	JgHerj8Q1J34hwC71cdAQ2iEAIe9jISJa40IBotGWcg/FWHhYm4RgsL8sxTk9ayBN6+jly8F
-	lZB7uZaCG299aMM6bK20ItwwMkbiPEcGngh1MNgZNlL4sUnAdy70sjivrpvFRvth7KiKw1fv
-	DRP4SiBEY3v1SQbbA6UsLhj1EvhFWxu7fcFu6dokMUWTLupWrP9Jqg4MdNAHG7lM/6932RzU
-	xhQgCSfwq4X7+YbPusPmmtYM/43g90fIKT2XjxUchiG6AEk5kvfNFDovdaGpYA6fILzq7You
-	cRzFLxbcNfFTtoz/XjhpaP7IXCRYauunOZKo313YMF2V82sEr6WSmmIKfLFEaDln/lj4WnhQ
-	5adKkMyIZlQjuUabnqrSpKxers7SajKXJ6al2lH0vcxHJvfcRgHPDy7Ec0gxS1br/E4tp1Xp
-	+qxUFxI4UjFXVu34Vi2XJamyskVd2j7d4RRR70LzOUoRI1sVzkiS8wdUh8RkUTwo6j6lBCeZ
-	l4Nqftv2haPTW5dY8Y7y3/n9qa9EwySnje/KcArKOkdChO/fatne3tW0Mf7hmdTsjSv3jj+V
-	lB59SS4tDh7J8Py9Ux/cmxgbk325dc6iZ1++XFEQvwqfXlAcE7HRjf2B/TPX7ZwY6vjxcVEr
-	ufAAH7tj0xYHr8u8pnMlB21o/fsnyl0KSq9WKeNInV71AcIr1Q9aAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0iTcRTG+793V6uXZfWiRDGKysg0Ug4ZFRX0FhRCRNGXGvrS5mXKpiuj
-	QHNJzWYXUMvLWppr6cy5+aHbymbOVmim03SppVQkmpK5ee0ypb4cHp7nnN/z5TC45D4ZwiiU
-	aYJKKUuSUiJCdCgme5NyIkweMTuzBHzjlwgoqbFQ0PqgCoGlLguDwcZ98N4/jGCm+S0Ohfmt
-	CO709+JQ5+pD4DBfoKD982Lw+EYpcOfnUpBdXkPBu6FZDHoKbmBQZTsIH01fCXhzrQyDwkEK
-	iguzscD4hsGUqZIGU+ZaGDAX0TDbHwnuvk4SGkrdJDi8G+GWoYeCpw43Aa6HAxi0Py6hoM/y
-	h4Q3rlcE+PNCofW6noTqkTIKhvwmHEy+URra6o0YuIzLwaoNUHN+/iahSV+PQc7dWgw83U8Q
-	PLv0CQObpZOCBt8wBnZbPg7T9xoRDOR9p+HilSkairPyEOReLCBA2xMFM5OB5tLxSMi6bSWg
-	+lcn2rWDtxgsiG8YHsV5rf00P+3roHiH30jwr8s4/lFRL81rn3lp3mhL5+3mML786SDG3xnz
-	kbyt8jLF28Zu0LzuuwfjR1pa6NiVx0Xb44UkhUZQbd5xUiQf6+8gUxuZM10Vj+lM1ELpUBDD
-	sVu5jhrnvKbYdVxX1xQ+p4PZ1Zxd/5XUIRGDs50Lufel3WguWMoe5H70dgeWGIZg13KuB3vn
-	bDEbzV3Wu/8xV3FV1vp5TlDA9+Y2zJ9K2CjOU2UgriGRES2oRMEKpSZZpkiKClcnyjOUijPh
-	cSnJNhR4INP52esP0Xj7PidiGSRdJLY6NsglpEyjzkh2Io7BpcHiSvt6uUQcL8s4K6hSTqjS
-	kwS1E4UyhHSF+MBR4aSEPSVLExIFIVVQ/U8xJigkE7VV+KuVwUXHorfcrI44SsQy21R1Vu2e
-	iOnUwyPppQbPVU1MfIn5CT15vplsMhfIvet0z7XOn4zRszI39uXgtyhdYzmneZG2zDvUtCBh
-	Z21PxqKcsf1m5Zf77KqJ6IrCc3kJzZ82HQnd45/sWKO/Wlyz1CKNiduNPmwJSZwwDPdKCbVc
-	FhmGq9Syvzw9T588AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0yTZxSAfd/v2mK3L1XnNyXRdBoVFcWgO1nQkZlsry5OkUQT/aGNfLGN
+	pbJWkc6QgAJxMJjTAFEutrDV2latLYl4KakQOxhRsdSChIsSR2RycYxWUbwUnH9OnpzLc86P
+	w1NKPzOP1+oPSQa9Wqdi5bR8eKZlpf5FnGZ1fv0KCI+foKHyspOFtksOBM66XAyDt7+DjsgQ
+	gtd37lFQXtqGwPK4h4I6fy8Cr+0YC+1PPoFgeJSFltIiFo7XXmbh/rNJDN1lpzA43FugzzpA
+	Q+vJGgzlgyxUlB/H0fAUw4TVzoE1ZzH0285yMPk4AVp6Qwx4u5bDmepuFm56W2jw1/djaL9e
+	yUKv8x0Drf5mGiIl86Htt2IGLo7UsPAsYqXAGh7lIOAzY/CbPwNXXlRY8N9bBv4s9mEo+P0K
+	huDDGwgaTjzC4HaGWGgKD2HwuEspeHX+NoL+kmEO8n+Z4KAitwRBUX4ZDXnda+H1y+jmqvEE
+	yD3nouHimxBKXk+c1U5EmoZGKZLnOUJehR+wxBsx0+SvGpFcO9vDkbyGLo6Y3YeJxxZHam8O
+	YmIZCzPEbf+ZJe6xUxwpHA5iMnL3Lrctdpc8KU3SaTMlw6oNe+Wahp60jBJZ1pA/QOWgYq4Q
+	yXhRSBSDj66ij+w68wc1xaywROzsnJjm2cJC0VM8wBQiOU8JoRixo+rh9MAsYYfY/tRHTzEt
+	LBY7Ry9Em3heIawT6+zxH5wLRIfLN+2RRdNdRU3To0phrRh0VNNTTlE4LRMDvtD/R3wu3rJ1
+	0ieRwoxm2JFSq89MV2t1ifEak16bFb/vYLobRb/Lmj25ux6NtaU2IoFHqpkKl3eZRsmoM42m
+	9EYk8pRqtsLuWapRKtLUpp8kw8E9hsM6ydiI5vO0aq5iTeRImlLYrz4kHZCkDMnwsYp52bwc
+	tEl39asf+57LkjvCX8dyiwJZ+dqCNaWLyLckJsb198I5hSnoyaftqdjYzeAvfsjeak7ZzHr7
+	Ng0kJrc6mn1Jq9bNmPWvL2lvmWXjS9XcPQf+MSkzuPGt/bHfbOxaZuVqX6QsaM5ekYoSKmyn
+	A3KsybpiqTSNfPm9rGH7Pubozl+rVLRRo06IowxG9XttCfiSWQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTcRTH+923q8VtWl2syAb2sPJRGieKnkS3QosIhUhq5aWN5orNLINA
+	08TUSQlz9NDma825am3SyybD4cwss7ZMxVlJRJIl2Lay7DGN/jl8ON9zPuefw+ASExnJKFRZ
+	glolU0opESFKWZe/UvUtRh7/pnM2BPxFBFy7baGg+1YjAktTHgbDbdvhdXAEwc9nz3HQ67oR
+	VL/z4dDkHkTgMJ2jwPN+JngDoxR06EooyK+9TcGLTxMYDFSUY9BoS4Y3xg8EdF6swUA/TMFV
+	fT4WKh8xGDeaaTDmRsOQ6QoNE+8SoGOwhwRXZQcJjv7lcLlqgIJHjg4C3PeHMPA8vEbBoOUP
+	CZ3uxwQEy+ZB9yUtCTe/1FDwKWjEwRgYpeGl04CB2zAHrAUha+HX3yS0a50YFNbdwcDb14yg
+	pegtBjZLDwWuwAgGdpsOhx832hAMlX2m4XzpOA1X88oQlJyvIKBgIAl+fg9drvQnQN51KwE3
+	f/WgTRt4S5UF8a6RUZwvsJ/ifwReUbwjaCD4JzUc/+CKj+YLWvpp3mA7ydtNMXzto2GMrx4L
+	kLzNfIHibWPlNF/82YvxX7q66D0L9ovWZwhKRbagjttwSCRv8WWcKAs7PeJ+ieciLV2MwhiO
+	TeSsl+vxSabYJVxv7/gUR7BRnF37gSxGIgZne6Zzryv70GQQzqZyno9OYpIJNprrHW0IDTGM
+	mF3DNZlj/zkXco1W55QnLNTuL3FNrUrYJM7bWEVcRCIDmmZGEQpVdqZMoUyK1RyT56gUp2OP
+	HM+0odD/GM9OXLqP/J7trYhlkHSG2OpYJpeQsmxNTmYr4hhcGiE225fKJeIMWc4ZQX38oPqk
+	UtC0onkMIZ0r3pkmHJKwR2VZwjFBOCGo/6cYExaZi6Lewi6dUpteFNcu949nn4t3Dexe/j3N
+	qVAcjW+O3n24q35Vije/QhVF1a7cWxiZfsArvZuFGpJ18zcvS6tPTr3nW/urdPrdxYGHqat9
+	iTn7oG5HW+rG8qyipx69xmx6sQ3fsmNW/1Z9ZPOimoanEkliur96rO966au4GcHwTSvipIRG
+	LkuIwdUa2V860ChtOwMAAA==
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -135,39 +135,39 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-Make dept able to track dependencies by swaits.
+Make dept able to track dependencies by waitqueue waits.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- include/linux/swait.h | 3 +++
+ include/linux/wait.h | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/swait.h b/include/linux/swait.h
-index d324419482a0..277ac74f61c3 100644
---- a/include/linux/swait.h
-+++ b/include/linux/swait.h
-@@ -6,6 +6,7 @@
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 965a19809c7e..aae161e500dc 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -7,6 +7,7 @@
+ #include <linux/list.h>
  #include <linux/stddef.h>
  #include <linux/spinlock.h>
- #include <linux/wait.h>
 +#include <linux/dept_sdt.h>
+ 
  #include <asm/current.h>
  
- /*
-@@ -161,6 +162,7 @@ extern void finish_swait(struct swait_queue_head *q, struct swait_queue *wait);
- 	struct swait_queue __wait;					\
- 	long __ret = ret;						\
- 									\
-+	sdt_might_sleep_start(NULL);					\
- 	INIT_LIST_HEAD(&__wait.task_list);				\
- 	for (;;) {							\
- 		long __int = prepare_to_swait_event(&wq, &__wait, state);\
-@@ -176,6 +178,7 @@ extern void finish_swait(struct swait_queue_head *q, struct swait_queue *wait);
- 		cmd;							\
- 	}								\
- 	finish_swait(&wq, &__wait);					\
-+	sdt_might_sleep_end();						\
- __out:	__ret;								\
+@@ -303,6 +304,7 @@ extern void init_wait_entry(struct wait_queue_entry *wq_entry, int flags);
+ 	struct wait_queue_entry __wq_entry;					\
+ 	long __ret = ret;	/* explicit shadow */				\
+ 										\
++	sdt_might_sleep_start(NULL);						\
+ 	init_wait_entry(&__wq_entry, exclusive ? WQ_FLAG_EXCLUSIVE : 0);	\
+ 	for (;;) {								\
+ 		long __int = prepare_to_wait_event(&wq_head, &__wq_entry, state);\
+@@ -321,6 +323,7 @@ extern void init_wait_entry(struct wait_queue_entry *wq_entry, int flags);
+ 			break;							\
+ 	}									\
+ 	finish_wait(&wq_head, &__wq_entry);					\
++	sdt_might_sleep_end();							\
+ __out:	__ret;									\
  })
  
 -- 
