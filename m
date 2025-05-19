@@ -1,409 +1,210 @@
-Return-Path: <linux-fsdevel+bounces-49448-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F05ABC761
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 20:52:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6708DABC784
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 20:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1010A3BFC47
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 18:52:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 068454A2EBB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 18:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 845E020C00C;
-	Mon, 19 May 2025 18:52:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72D5020B1FC;
+	Mon, 19 May 2025 18:59:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FJyLVTJ7";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="nc8U+1JD"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K1gCuF1T"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1D041EFF8F;
-	Mon, 19 May 2025 18:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747680746; cv=fail; b=eH1zlE4xjfuNSldVPT1Red+d9QzGSVlORFoy1t3qZZ987ZGoL9bsH7TmDzZ43Bm40qV3PIgIfZS34Y8INYzsyOlKRfLLMVsFNdXD22MbN8tsSi5fk/zRVDEbe+mcpFDBQmQLPpbS6212T2va2xd6U5L2s1VzSzRP6KO3jIDezHs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747680746; c=relaxed/simple;
-	bh=vBsOQ1jxlOoVKH86TmmBqRxbjqiFXLJGVlIWNBgVEaU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gBscRYtT0y+0YC8XmGaJz3IEfMc/EceEa7PGSkyk8yq2Jb5yKlIXMPGJIe6nlvkJNfz3rIIE4AgoQqfdas39g4W/wdseeUVgs+cAix5BjEerjWJr6Im38eS2+hUXtmL2iwswU9qqNyYGJYRlnbYBpqG3cf/Qg2INDxvhWXgUb5w=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=FJyLVTJ7; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=nc8U+1JD; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246629.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54JGMuOs028893;
-	Mon, 19 May 2025 18:52:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=U/O3WNGaZT+tXC6AcE
-	lWc0OeEmJxC6ItnAm65goFZzE=; b=FJyLVTJ76EhcU5YSK8AUpm/DiQg3xtGVBs
-	lGe+uUs0SkBBJI8mP8WKtBfhBP9/HZpgLORyqBbYFtAYzdZkQNrTsZmxHOUBUm+m
-	wGPEt6F4LmtvxFEQwXQYqs9X2R8EPAu/+XiMyQuXjHtV/6Q6z9sxDLj2lz+98WyA
-	8/31WgNvMrPOTtfoEkDvaxGn+6IbS8xh8dP2XxJtxf7B8Rc0vr/co+S0+GF5opuA
-	qTFwdnIh0DVukIQYk0m6ioj3kdcnVo/3wCHV8Y+Hf/onqY/ErSdjsstjB3KVxrGz
-	8DzHHiDbvRRbBWPG/IkDI4eVF6GKJEwMI4kM1s7ZN5D3HGDAn5WQ==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46pjbcuphs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 May 2025 18:52:06 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54JIU9sx037162;
-	Mon, 19 May 2025 18:52:05 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2168.outbound.protection.outlook.com [104.47.55.168])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46pgw7tkat-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 19 May 2025 18:52:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ne9PNLtvhGBEzJ9YGt0UQAPdp28uWJEDfPTxzdJjyTuWnXcag5tCDzs0fErQlR2jpLk9IJpYBMRW5JdubnZbkby9ba7S/7wSHAoEecQTUmwO55MTS2iIJ2gGYA88eyfxtrPtoLfPmoJhCsHAzbXKOHvmSm4x5+ProlpTsX6sO5ksCnmA222E1pB5UIl7qRtws5xZHSOz/wO8P/+3foC0EcLBUqy2eATN8JA+/Qu+Ib5zvDNsZtemakSLIc/MqvJ+jXkLtKIJXV9RNCc/qOHNATXTrY4t51KsfQ7dW6/JJgpxKM3uDH8qrsKTb1Qvb5GjTczlIjnHJeEXlVzEeybTew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=U/O3WNGaZT+tXC6AcElWc0OeEmJxC6ItnAm65goFZzE=;
- b=wTmS3hOAIuIctoZH7fuMgUMQOh7bs/6F6CQlD3e/Pu/IsiNjgQaYcjiI8/cINS80ddOUMNr33Y0o2LJ/MgqEaxeiYZQdShXitm8YxZsVYxxnAg3FPaApSk28ACM2nza5FyqHXMHuUnc/9k2CyEkhhu3pIg8DD1q5B4hdhmHaoJyX7YJq5YrfqH+8LKYb/+E0+1fwg9nSHRYqW+OFunCnOxwa1bAtc7hb+QK2Mdr+WdRZUd7PIokkL1G0z+Ug7/drvxX1L4EMsXRjyQITNEjDoC+/q/sY4i+WWF2zUXkROyVZSbqXSnWhYWX1df93qvyTPNKg3UW22IZg7K67Obytnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=U/O3WNGaZT+tXC6AcElWc0OeEmJxC6ItnAm65goFZzE=;
- b=nc8U+1JDeFR9yUo4FyVtvoU/koJugsyHwOMgeNikpoqveSzVF586UQSVTZ6yKPths+xwGVcBWfRooN+pJHxFhgnnPJWLGDCdwsFRKXytyOmjKUNAl0GjTZXNyxoEqFjzquJLd3cDwjLJ1azyAcgEhKXqIrGLEed6yhWgrb7L2ds=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by SJ0PR10MB4573.namprd10.prod.outlook.com (2603:10b6:a03:2ac::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Mon, 19 May
- 2025 18:52:02 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8746.030; Mon, 19 May 2025
- 18:52:02 +0000
-Date: Mon, 19 May 2025 19:52:00 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, Xu Xin <xu.xin16@zte.com.cn>,
-        Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/4] mm: prevent KSM from completely breaking VMA merging
-Message-ID: <2be98bcf-abf5-4819-86d4-74d57cac1fcd@lucifer.local>
-References: <cover.1747431920.git.lorenzo.stoakes@oracle.com>
- <418d3edbec3a718a7023f1beed5478f5952fc3df.1747431920.git.lorenzo.stoakes@oracle.com>
- <e5d0b98f-6d9c-4409-82cd-7d23dc7c3bda@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e5d0b98f-6d9c-4409-82cd-7d23dc7c3bda@redhat.com>
-X-ClientProxiedBy: LO2P265CA0162.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:9::30) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BAC2AEE9
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 18:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747681179; cv=none; b=D2ugES5L+rZLoyeotc6fMTeofWuyzly55M2l+w5tChkYJPTKJJJx8neJieXkuLUwwMvhIvox+ZiVfCZqXRAQQKAR3Uq/rCfQ6x2PGBVv3qbmAN+tMSicF5EGHQxvV+XHdUpH2JN2RjXnTaCXcAnJtk7+htDxxjqk7DpDAmRGen8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747681179; c=relaxed/simple;
+	bh=lP/2jDXCf3Sb7vbcuVLXF6p4vhZ6NTP652T2UCV0QNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L+TLxRqFurft3QpbCNV4wlrAycu0md744smxzUdqMt8nTHbGUyfNnjXPgeHC+PgR/DkJowqEwA/Yj/eIxU5oi1S41fjtLK7g245gwH9e7MQjqChE9SPEDy2NdwDd2o84G1hKkK9BsP1C91v8wzeH1jlwRnhAwO6+bCtX7iYiXw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K1gCuF1T; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747681177;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=X0Qk3+ymMKfgujs1vuiAbuMvJLkr0y04FOhPHdnkwSc=;
+	b=K1gCuF1T8HZOBjtezzhnUyksGhG0QsaNFhgxeXeNxsBl/yDIoU+zSB4Y1oosUUqIEK8TOR
+	ZeSUQAqWBLebAebZjZ98LMqfhmrwnm5aeVaZzjraZTVC5/UUcNCZYSdPCZ+OBZqZTuq1iA
+	xYLtpx8DYQlI1VWduHDccGrQnN/2cUU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-536-Il0ugDYiPcirOmMcWWITEw-1; Mon, 19 May 2025 14:59:35 -0400
+X-MC-Unique: Il0ugDYiPcirOmMcWWITEw-1
+X-Mimecast-MFC-AGG-ID: Il0ugDYiPcirOmMcWWITEw_1747681174
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a370309e5cso914975f8f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 11:59:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747681174; x=1748285974;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=X0Qk3+ymMKfgujs1vuiAbuMvJLkr0y04FOhPHdnkwSc=;
+        b=FnuQfJFzdbTN9TwnTUs9j4EOJisgpooSYwdepAzOoy53AG4CDlCmLYgNFRdeaP3PLh
+         p0MVIPJ4MvFqfBaxW77FCuOMobZN1QShnBhzJQP0VvloUN0jYVYBK9SM/LpAp4JaMB0y
+         cpmwl75pW7AHgv43OSq7cBhfNGa1s2HnPp6gKuIem61an0XydZlcS7Nm+BTipZxZ7FOq
+         ESbYlvktfXEOvINCCG4oeZkrVq9a9i+TO4SBpzkKF5DK41Tj3cBhuwm/Wehe0tr1WUcW
+         mxDEZG89CNIEh6LecTJdEYWIJfuCPLY33pHMMhj6uA1RScgpJerYH50J3wsbR2+pEs5f
+         yd0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWPXI0FZdlIhRAybWs8dO/ozN0AceQrIqOitA3yUXncZs33fDRqn9v667221mSqpuZEeTJXqG/QHlYqCpW@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv2Q+8/9KoqT4uZNmNLSTW1Kk7EudbTqtPZFS/qH2x0eushY13
+	+BuoctiqXLvYheurkAgNi7ONBXtDWzHvJVZBhkozxWQcdYOufAO507txsRzyZ8GC/yeixSXuv5Z
+	4mrsqYuu9yL2/6YSUS5+ASttswM3QjbnPTbRtFhMjMN/9PAIgkDAl9aims0T74YEIjyQ=
+X-Gm-Gg: ASbGncvaNMfvSLh75Z61GyEd0QdlDNVhbxFRYOSZabK5evdp8nmpbtH4dfuy7awSyG4
+	EkAcf6EFKWJznuudwMfikoyFfQHakfDMt5qNkbpsO6xT64KBd93G6E/BJMViRD7XbmG8DUzrwJh
+	G4mbdkha2dCwlyStQtmXavKJeF6fDjRb9CCVy2oTtxja+GKtKNKuZfgNjSRIlOS2GwbHgqKgjKE
+	6YnfGrGIqFNBCadtcQvRTToRfmaZD12RR8l9zAvDnPre3jySFI6XM2H8xMhdMcnlNreQiyd3ta7
+	be7cjfVXhUrWyVuPNYNKe7LUsrL/REfVPqPDVz/50K05S+F7b7YSGu9E6FJvYXubaUfm7MsPIzy
+	vjARDBfIJqJnuElEJj8VRysI40mJ5pkXw9kmkxSQ=
+X-Received: by 2002:a5d:5986:0:b0:3a3:76da:32b3 with SMTP id ffacd0b85a97d-3a376da331fmr2195993f8f.18.1747681174503;
+        Mon, 19 May 2025 11:59:34 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEUwd5DmDCrWqDk782Fvd284ghiMbFSA1l7ydnuebYBS00RZnMHD2oMIoWNw/QJBYRcVq1hKw==
+X-Received: by 2002:a5d:5986:0:b0:3a3:76da:32b3 with SMTP id ffacd0b85a97d-3a376da331fmr2195970f8f.18.1747681174134;
+        Mon, 19 May 2025 11:59:34 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f3c:3a00:5662:26b3:3e5d:438e? (p200300d82f3c3a00566226b33e5d438e.dip0.t-ipconnect.de. [2003:d8:2f3c:3a00:5662:26b3:3e5d:438e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a35ca4d26esm13969960f8f.13.2025.05.19.11.59.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 May 2025 11:59:33 -0700 (PDT)
+Message-ID: <e2910260-8deb-44ce-b6c9-376b4917ecea@redhat.com>
+Date: Mon, 19 May 2025 20:59:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|SJ0PR10MB4573:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0505ac8b-8571-4bc6-da68-08dd97063e1a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1rLAFyJx0vYAFteXlT2Bw1omCkJKjeWQXQtpxbJNoLirfji5b0T2UiHALd/W?=
- =?us-ascii?Q?ZZ6P00jjuHekmh3rutlpbM0i4WOooblEDZA1syYRNqkkgslb5a/kIuFy2bx2?=
- =?us-ascii?Q?h4VOcbIyonUba1dLO7ZFMLLAvrtdhc1O5yXsoJ+l9RwinKTRxkwKvKldrloA?=
- =?us-ascii?Q?+K1gwKAcdakJXvR+ZTrpv8tFIHqYBGtZGr/F1jEp21Q9cAG/br/qtXhMm/M/?=
- =?us-ascii?Q?untQLLApBItIlOcXQgwF47YgcF8/wcobivrKDF8SrPXbiGRmaPdrl26N4jiM?=
- =?us-ascii?Q?gOPX7T2oSa9oYLaYVUfxsHsUM/YkycnFwgsbATtSizZxGf/QPLwePM9jp6Xy?=
- =?us-ascii?Q?xRJqgFx/PPqrKxRaUr86FRC/2YHkwx1V54ovl4Vt7G9m+sAr0HTSqP+c5w+f?=
- =?us-ascii?Q?mM01pSWPrNcaj3nSBoZig6k5Vwu2TL11XKtzuCSj61Z1rfFuMTSviE6gPADo?=
- =?us-ascii?Q?zB0C+haU7DLKD3+XXhC/cXKJlfJC+LLQVe2GaW57/JVPpDRRr3Z8AH15+mBN?=
- =?us-ascii?Q?+MlRZJxNlxGYqa02+XgV0K+x8IJpeyoVopPS7v10uHKjo25oyQ3SdOidydSn?=
- =?us-ascii?Q?ERwvhVwG1Y9AujWNQnzJ5ZSbuyHJAvWRGNznI9WUIYa7CX2r7HNoBIZlGBex?=
- =?us-ascii?Q?85eyLUWf79VhjqLfNSI9XEO5vqWUG82AZoPFEui+DU+Pmp6m/pgoh3msPKdT?=
- =?us-ascii?Q?9W3xeyffTKSc+U9YQEzt3ED1xqrW/Qxn+2Hcwhv/5B9kaQzq2B9DKeLOp6df?=
- =?us-ascii?Q?7eSD6Lp2z44R6KXkp16nGlTXS3ZZuGrfpZJReqyzgN/Ivw0cUEwtSFToxXk4?=
- =?us-ascii?Q?Spb4Nijv9qYJZnkpc5vo1cVYs8AQTBsKwkyTYeOk6xfDMwe68z823xvGthpg?=
- =?us-ascii?Q?UOoUFwWPWfG4pbZKbhyuXP+7FqksW4MF4H26Kcla37eirgerg1YeF+Bcpfj7?=
- =?us-ascii?Q?Px7EtCdkvP1WqkbRzi3Djjo2cXawv1IBpN499GhftznU7RXG47APDyHQIQog?=
- =?us-ascii?Q?LulbMCgSaqpta03CTkySsWDkeNdXqw2qHwzVn2VwD4kpFH4W0xxNHdGJCziO?=
- =?us-ascii?Q?JDFelldlwo27S+/NxUHzHs5uJUuWxtdsd4qMBVjSTGAmkyU+WWRFSZCM15lS?=
- =?us-ascii?Q?NWZ6/XZBnLJ6nZ191SLQLWOihY9TfI15zdDdeoO2+HoQ5aZvJd9OinH6l+kN?=
- =?us-ascii?Q?fR8R7qurvfgoIYREM/lO72pajvBFb7H05hX6dKbfIdHRBG/VbVydMqQ3w4Yl?=
- =?us-ascii?Q?TAr0b5JfX/mFZhsuGKbEQWnz3ZXIw/xGaoxEKLMKrMn84YB3q9RoQAVPTVff?=
- =?us-ascii?Q?oVRyA8JuHCVJyQueE9akFjZ4jzHCr89uYT5fyGJ79FRpIFcbuLVtf46nknVB?=
- =?us-ascii?Q?dj04VeXlh6yPVx8agKZVmMAPcX9a17B44w4L1c45XopB0U7Nh3OgPzMj1+Oq?=
- =?us-ascii?Q?Ny3ygLoq57E=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?b/avXrunVE5Bup9q1PQTRznWlPlC1TXf84ItZuAyo8l+04Cw5O62M3PCnZEv?=
- =?us-ascii?Q?vPifJl7Un4FneQIQi1vPGMuGW0LPLuyDJ4qLbxZS4X8BK9h7JIyksjufK7gK?=
- =?us-ascii?Q?xRxLnGLEoOGDmKYmCyfMVP8YdF3zRF3z8cmnebf5jYyXrYD99HIdne+JnEvB?=
- =?us-ascii?Q?6pYeAlR/7GZjO8srg093ctz0JCGjR6UCoQdHwEMXAnUrbSgwWb8SoxuO4fhh?=
- =?us-ascii?Q?7P/kviGG2yYFtHQ2+fzMv2HJztY28QTB52s0F9KoSX2IBs3D2bwWmqdRXWvg?=
- =?us-ascii?Q?5oTUMKQxnkzXPZ+Ix9t0qP73Gb7T1xq5XH+BFRRa4Nmu//wYf06/LIFmZLQT?=
- =?us-ascii?Q?xsdnHyF9ciy1IO10gJlawN27ygP6j8IbuNIxQZ2jT/pEUa2/cWCV00cHh14b?=
- =?us-ascii?Q?BGtFSx/qMH4aD8EnCuOWpdBy+bWrnj+YIn4/48Tx1vrpkgAGoQH64ZLX+7Bh?=
- =?us-ascii?Q?syMxelOTiz7YHhSKSenlEYj3a9jPJfNrhHED7CU7GOk7KWIapp4TSAxKcvDC?=
- =?us-ascii?Q?ztZeWb46KgiialbK7w4REPvx6zUrQ7aCeg821bpcg+K7v+3XEhjs7Np0/YF/?=
- =?us-ascii?Q?mOsci2mNj6+L9IggFSv97etrHid4H7CW03ae1l28RJjs5Id3s8G3EI1GGjGf?=
- =?us-ascii?Q?j7J0ORdmhD8Bif5RrNiib/XxmkjACqhS0i3qn6VnHEfHjtqG/viO20ByKkqA?=
- =?us-ascii?Q?ewAyMqF11Z0RIjAWOaoTMX1hTby2xak3CPBN80b9hLyvHUv3yGtBZzsY70M/?=
- =?us-ascii?Q?YEJqlvGjepHLACV0HQMyYtr0lmLNv4/7fT2U0K7Q+J4xEL4/BpGesruYOc4/?=
- =?us-ascii?Q?iFxb4m7Z2JlFzWs1UvALU3iiL64gulB4lJsd1fqnXMeIyLdiEo9EKoetUKi2?=
- =?us-ascii?Q?nTqXlzEpTTeAqBvn7jgSZ4ghbKRuikSA8h+eSPy2BCES6WXX47+I1whfMZxa?=
- =?us-ascii?Q?bN97nOKm8M0ShcNmbRvBPlmv5QwwdElSPQLVkaAlEZid1XX8znl7esccojIw?=
- =?us-ascii?Q?hbGQCn2WQ+qRw64Oolc0VL9BQrHPIFTwGhPEnestl8e5L345z/eim4SWAYFF?=
- =?us-ascii?Q?BSXOuImN5EZ18I5h4SgAs5pRahLGP8GjVlwSJTXpvna2XHlEtJ/rf5CT/o9g?=
- =?us-ascii?Q?NFWF5eGeAYI+ObclvxNCBtgri4Syvj3a8PrIE5NQ7LD+IgjkMsier4o3QbXn?=
- =?us-ascii?Q?J8g1bQkn/p2gqgM+FvQR2pcyTQuja6kXtQ2EqIRmLl9Cy2lUTGBTJj0c1pyo?=
- =?us-ascii?Q?IANb/RG2jQ94kUDX087/vjLKcvtzNyxfn/utsyRq2gWn0bQuoE6Y6/z7ovMy?=
- =?us-ascii?Q?D9gd4blcAblNWJsgffc2DZyCs7CWddKKEkK5UutigG8FT528RnStugGE9hCg?=
- =?us-ascii?Q?kp7K38rEZR+SCNJY+56STabl2hicqmR8xssmgyAjPhOJA0KN0WrMYseRzX40?=
- =?us-ascii?Q?lD3vwEjI141OO4oEPfjfcbxGqFWkWX5EiBRK1s6lJ2Bo1O1bHDeLq+CPXEHs?=
- =?us-ascii?Q?01X+PCoLDQQm3rST7uXnk8Mr2iT+tB42YnIOEIp8vWHWxrjEhgLy07ygRE/m?=
- =?us-ascii?Q?uVvuVOdonAPYa1EPydr4GcJsGtLVRRNn6RKTLaxw7dGR/kRNV3t2fNg2GpPG?=
- =?us-ascii?Q?yA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	ER116bAt4qJk/2kBu5yjx4/+c+6WEaEKzgj7HHGYJ163J2R9tJIcnFmL5jqEEg5LpdJS7W6JRWqXsKE5XN8qjkzmc/VoOgZ1OaW1ek7ZrQwChZ1gHnfeZzQeWXJhDdk/cx/u4XcjUsoqHXCi7ylTCPW2pkb4UZLKPm03iQ93cjTma2Cj5pEe2YaK3+dnBYdIo1ZFiPKofN+pygHAeDmIR4BAENyYBZPOsncn9mVAecikhX5FLSX4+xztiUkkopCB1lXwgrSWy405pzPQ8vKu47FH2Y3TI2XAbwSl+QCf2+e0dlC7ZddVO7bUCvBjNTzO6dk8MbrlzNFUZ5SJT195+HpIJE2nsDIqzwIxqsq62tUK2ESVqTHYzFOY5M1CXuYVM84HpjXANiFyyiXwYW4I3ZrbFt+Jf9Jt+qT6lhtmcM/FSQzFu8CiQzHwN26Dn8YCsxuf0sbwSqbm4+6BC5AWVIVJz617ViFLKrphi7GaJ1BIHrfhN2D6/rdLZ23qTrAJDNlK0rRKZn36KjXyIkhYvf7cNGc61JVHbXhIPEDnlIMzy/P3eqveXCO0GB/UYLzAvtecVueTXYOjc7hXpRlcGnzYf/bWvzs814m5zUOEzU4=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0505ac8b-8571-4bc6-da68-08dd97063e1a
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2025 18:52:02.5915
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HWmWByXrePzlWqx7w2EQpGA4C6gg8yIJ/yVUtFO1YtNrz5DZ8hQsAqOft4xwVjvGqLu9StCaUCJ1XDfImaSIIFyVy7rY7093FZbExQdcw1g=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR10MB4573
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-19_07,2025-05-16_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 malwarescore=0
- mlxscore=0 adultscore=0 spamscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505070000 definitions=main-2505190175
-X-Authority-Analysis: v=2.4 cv=ec09f6EH c=1 sm=1 tr=0 ts=682b7dd6 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=EdfpRc32WRINEomMGnYA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13186
-X-Proofpoint-GUID: 3xVT0_nwaLW-Frbp0oAlWNw-Uadgsw38
-X-Proofpoint-ORIG-GUID: 3xVT0_nwaLW-Frbp0oAlWNw-Uadgsw38
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTE5MDE3NiBTYWx0ZWRfXx2aknhnl3+yw dLzlkNzxJwzxkPV8n0KdbmwftzkaOoEcON09JCpxEtsuc8QW99ku+lbRRsZVzvWPgGHHVNMWcr2 fW044pZi8rFRz1KCb/Tp7YB1DthqxNfGCTih6fXbUMsIlty7OA8NIAwaofjf9B8R/FdNAqcZueb
- Dos6+8OcqhBUcXlHTfDQ1SvPeXiTa5nbEUCfTxVN5MgTshU1T/FRFDf+0G/f/CFRXmKFBFYtC1U POMW7hbVO725LdAOqqUf/jGr/LYT/Rul8+ms/cqkf155z3DV30inFCZdjHrZuJDjcmzeG6gLfk0 mN6+SieELYfB4G73CV8ePcM9f/NT+gPv2zG5v9vAUJcwUSL06svtkLTCphAWNUnDgOFiCv0dIoF
- 1XaSyqc5s0hihWMBJhckt21lcMnzikrTL1i1Lre3WnapRkYhyhnah1ehZ7Ye2f9fg+JmxlU2
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] mm: prevent KSM from completely breaking VMA merging
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, Xu Xin <xu.xin16@zte.com.cn>,
+ Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <cover.1747431920.git.lorenzo.stoakes@oracle.com>
+ <418d3edbec3a718a7023f1beed5478f5952fc3df.1747431920.git.lorenzo.stoakes@oracle.com>
+ <e5d0b98f-6d9c-4409-82cd-7d23dc7c3bda@redhat.com>
+ <2be98bcf-abf5-4819-86d4-74d57cac1fcd@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <2be98bcf-abf5-4819-86d4-74d57cac1fcd@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, May 19, 2025 at 08:00:29PM +0200, David Hildenbrand wrote:
-> On 19.05.25 10:51, Lorenzo Stoakes wrote:
-> > If a user wishes to enable KSM mergeability for an entire process and all
-> > fork/exec'd processes that come after it, they use the prctl()
-> > PR_SET_MEMORY_MERGE operation.
-> >
-> > This defaults all newly mapped VMAs to have the VM_MERGEABLE VMA flag set
-> > (in order to indicate they are KSM mergeable), as well as setting this flag
-> > for all existing VMAs.
-> >
-> > However it also entirely and completely breaks VMA merging for the process
-> > and all forked (and fork/exec'd) processes.
-> >
-> > This is because when a new mapping is proposed, the flags specified will
-> > never have VM_MERGEABLE set. However all adjacent VMAs will already have
-> > VM_MERGEABLE set, rendering VMAs unmergeable by default.
-> >
-> > To work around this, we try to set the VM_MERGEABLE flag prior to
-> > attempting a merge. In the case of brk() this can always be done.
-> >
-> > However on mmap() things are more complicated - while KSM is not supported
-> > for file-backed mappings, it is supported for MAP_PRIVATE file-backed
-> > mappings.
-> >
-> > And these mappings may have deprecated .mmap() callbacks specified which
-> > could, in theory, adjust flags and thus KSM merge eligiblity.
-> >
-> > So we check to determine whether this at all possible. If not, we set
-> > VM_MERGEABLE prior to the merge attempt on mmap(), otherwise we retain the
-> > previous behaviour.
-> >
-> > When .mmap_prepare() is more widely used, we can remove this precaution.
-> >
-> > While this doesn't quite cover all cases, it covers a great many (all
-> > anonymous memory, for instance), meaning we should already see a
-> > significant improvement in VMA mergeability.
->
-> We should add a Fixes: tag.
->
-> CCing stable is likely not a good idea at this point (and might be rather
-> hairy).
+>>
+>> I am not 100% sure why we bail out on special mappings: all we have to do is
+>> reliably identify anon pages, and we should be able to do that.
+> 
+> But they map e.g. kernel memory (at least for VM_PFNMAP, purely and by
+> implication really VM_IO), it wouldn't make sense for KSM to be asked to
+> try to merge these right?
+> 
+> And of course no underlying struct page to pin, no reference counting
+> either, so I think you'd end up in trouble potentially here wouldn't you?
+> And how would the CoW work?
 
-We should probably underline to Andrew not to add one :>) but sure can add.
+KSM only operates on anonymous pages. It cannot de-duplicate anything 
+else. (therefore, only MAP_PRIVATE applies)
 
-A backport would be a total pain yes.
+Anything else (no struct page, not a CoW anon folio in such a mapping) 
+is skipped.
 
->
-> [...]
->
-> >   /**
-> > - * ksm_add_vma - Mark vma as mergeable if compatible
-> > + * ksm_vma_flags - Update VMA flags to mark as mergeable if compatible
-> >    *
-> > - * @vma:  Pointer to vma
-> > + * @mm:       Proposed VMA's mm_struct
-> > + * @file:     Proposed VMA's file-backed mapping, if any.
-> > + * @vm_flags: Proposed VMA"s flags.
-> > + *
-> > + * Returns: @vm_flags possibly updated to mark mergeable.
-> >    */
-> > -void ksm_add_vma(struct vm_area_struct *vma)
-> > +vm_flags_t ksm_vma_flags(const struct mm_struct *mm, const struct file *file,
-> > +			 vm_flags_t vm_flags)
-> >   {
-> > -	struct mm_struct *mm = vma->vm_mm;
-> > +	vm_flags_t ret = vm_flags;
-> > -	if (test_bit(MMF_VM_MERGE_ANY, &mm->flags))
-> > -		__ksm_add_vma(vma);
-> > +	if (test_bit(MMF_VM_MERGE_ANY, &mm->flags) &&
-> > +	    __ksm_should_add_vma(file, vm_flags))
-> > +		ret |= VM_MERGEABLE;
-> > +
-> > +	return ret;
-> >   }
->
->
-> No need for ret without harming readability.
->
-> if ()
-> 	vm_flags |= VM_MERGEABLE
-> return vm_flags;
+Take a look at scan_get_next_rmap_item() where we do
 
-Ack this was just me following the 'don't mutate arguments' rule-of-thumb
-that obviously we violate constantly int he kernel anyway and probably
-never really matters... :>)
+folio = folio_walk_start(&fw, vma, ksm_scan.address, 0);
+if (folio) {
+	if (!folio_is_zone_device(folio) &&
+	    folio_test_anon(folio)) {
+		folio_get(folio);
+		tmp_page = fw.page;
+	}
+	folio_walk_end(&fw, vma)
+}
 
-But yeah ret is kind of gross here, will change.
 
->
-> [...]
->
-> > +/*
-> > + * Are we guaranteed no driver can change state such as to preclude KSM merging?
-> > + * If so, let's set the KSM mergeable flag early so we don't break VMA merging.
-> > + *
-> > + * This is applicable when PR_SET_MEMORY_MERGE has been set on the mm_struct via
-> > + * prctl() causing newly mapped VMAs to have the KSM mergeable VMA flag set.
-> > + *
-> > + * If this is not the case, then we set the flag after considering mergeability,
-> > + * which will prevent mergeability as, when PR_SET_MEMORY_MERGE is set, a new
-> > + * VMA will not have the KSM mergeability VMA flag set, but all other VMAs will,
-> > + * preventing any merge.
->
-> Hmmm, so an ordinary MAP_PRIVATE of any file (executable etc.) will get
-> VM_MERGEABLE set but not be able to merge?
->
-> Probably these are not often expected to be merged ...
->
-> Preventing merging should really only happen because of VMA flags that are
-> getting set: VM_PFNMAP, VM_MIXEDMAP, VM_DONTEXPAND, VM_IO.
->
->
-> I am not 100% sure why we bail out on special mappings: all we have to do is
-> reliably identify anon pages, and we should be able to do that.
+Before I changed that code, we were using GUP. And GUP just always 
+refuses VM_IO|VM_PFNMAP because it cannot handle it properly.
 
-But they map e.g. kernel memory (at least for VM_PFNMAP, purely and by
-implication really VM_IO), it wouldn't make sense for KSM to be asked to
-try to merge these right?
+>>
+>> So, assuming we could remove the VM_PFNMAP | VM_IO | VM_DONTEXPAND |
+>> VM_MIXEDMAP constraint from vma_ksm_compatible(), could we simplify?
+> 
+> Well I question removing this constraint for above reasons.
+> 
+> At any rate, even if we _could_ this feels like a bigger change that we	
+> should come later.
 
-And of course no underlying struct page to pin, no reference counting
-either, so I think you'd end up in trouble potentially here wouldn't you?
-And how would the CoW work?
+"bigger" -- it might just be removing these 4 flags from the check ;)
 
->
-> GUP does currently refuses any VM_PFNMAP | VM_IO, and KSM uses GUP, which
-> might need a tweak then (maybe the solution could be to ... not use GUP but
-> a folio_walk).
+I'll dig a bit more.
 
-How could GUP work when there's no struct page to grab?
+-- 
+Cheers,
 
->
-> So, assuming we could remove the VM_PFNMAP | VM_IO | VM_DONTEXPAND |
-> VM_MIXEDMAP constraint from vma_ksm_compatible(), could we simplify?
+David / dhildenb
 
-Well I question removing this constraint for above reasons.
-
-At any rate, even if we _could_ this feels like a bigger change that we
-should come later.
-
-But hmm this has made me think :)
-
-So if something is backed by struct file *filp, and the driver says 'make
-this PFN mapped' then of course it won't erroneously merge anyway.
-
-If adjacent VMAs are not file-backed, then the merge will fail anyway.
-
-So actually we're probably perfectly safe from a _merging_ point of view.
-
-Buuut we are not safe from a setting VM_MERGEABLE point of view :)
-
-So I think things have to stay the way they are, sensibly.
-
-Fact that .mmap_prepare() will fix this in future makes it more reasonable
-I think.
-
->
-> That is: the other ones must not really be updated during mmap(), right?
-> (in particular: VM_SHARED  | VM_MAYSHARE | VM_HUGETLB | VM_DROPPABLE)
->
-> Have to double-check VM_SAO and VM_SPARC_ADI.
-
-_Probably_ :)
-
-It really is mostly VM_SPECIAL.
-
->
-> > + */
-> > +static bool can_set_ksm_flags_early(struct mmap_state *map)
-> > +{
-> > +	struct file *file = map->file;
-> > +
-> > +	/* Anonymous mappings have no driver which can change them. */
-> > +	if (!file)
-> > +		return true;
-> > +
-> > +	/* shmem is safe. */
-> > +	if (shmem_file(file))
-> > +		return true;
-> > +
-> > +	/*
-> > +	 * If .mmap_prepare() is specified, then the driver will have already
-> > +	 * manipulated state prior to updating KSM flags.
-> > +	 */
-> > +	if (file->f_op->mmap_prepare)
-> > +		return true;
-> > +
-> > +	return false;
-> > +}
->
-> So, long-term (mmap_prepare) this function will essentially go away?
-
-Yes, .mmap_prepare() solves this totally. Again it's super useful to have
-the ability to get the driver to tell us 'we want flags X, Y, Z' ahead of
-time. .mmap() must die :)
-
->
-> Nothing jumped at me, this definitely improves the situation.
-
-Thanks!
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
 
