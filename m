@@ -1,478 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-49433-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F23CCABC417
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 18:15:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4235AABC48B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 18:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 886053A8DD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 16:15:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B63E1189EF63
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 16:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6B5289804;
-	Mon, 19 May 2025 16:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CED287516;
+	Mon, 19 May 2025 16:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QQEbWKXh"
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="mYs16ml+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013042.outbound.protection.outlook.com [52.101.127.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD4128980D
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 16:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747671119; cv=none; b=by+aKxoofWWYtAm7+9X/5s1iEzLgzxmKE76mmIZhZMpbnDUAM0sFXhgijdrUFf2Sq+mlJRivRKnwtVeRjVkOI332Rc8TqoXKw/URj6Tatwpggs2CgtZb5+sMvXEylyss4892dewjuGx7EAvAoBNas2PFg/QZ/zw4CXADCKFimP8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747671119; c=relaxed/simple;
-	bh=qdUEjr0o3Loh5jJb54EHdWN7nxxaG+JTaVGIjKDdt6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uR7R1CYVsSyYtwcA1DkI8wKWxL8PayQtkQElzLFaQY8UOyl6PjHu0mz7sYQhUBkbInNw0in4fJmDQH8G6DnvbcOvJL9EH9hSQG1yjWPwGYUbue/Xx+Ez/PcRvdgfbf4PENg5DkPIYArZI4LL2TqY8LE/XPXfM453RSbLeciH8QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QQEbWKXh; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1747671115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UKCLX6wUxa17ZeR6w14OcNdKezZe2LB8Wh0QVRX/Q1o=;
-	b=QQEbWKXhmIImuwyg/FECF4DfP85T3hAo+M/vpqbPHmOlJ2DqDv5qhBO73ajLiaykvtREnj
-	+NDsT+CWB0NtqiBOWMVByKLhtjhPD0V9z6jTiLAX6iJUGUhOcllx5u8FZv5DnFm0fA045X
-	b1MXZ4BpVP3IMEF0OfaTLEYYe55FQqo=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-661-dAhIxSivP-2MC3fpxUnfHA-1; Mon,
- 19 May 2025 12:11:51 -0400
-X-MC-Unique: dAhIxSivP-2MC3fpxUnfHA-1
-X-Mimecast-MFC-AGG-ID: dAhIxSivP-2MC3fpxUnfHA_1747671108
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E5841800360;
-	Mon, 19 May 2025 16:11:47 +0000 (UTC)
-Received: from warthog.procyon.org.com (unknown [10.42.28.188])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 36B0B1956095;
-	Mon, 19 May 2025 16:11:43 +0000 (UTC)
-From: David Howells <dhowells@redhat.com>
-To: Christian Brauner <christian@brauner.io>
-Cc: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	linux-afs@lists.infradead.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Etienne Champetier <champetier.etienne@gmail.com>,
-	Jeffrey Altman <jaltman@auristor.com>,
-	Chet Ramey <chet.ramey@case.edu>,
-	Cheyenne Wills <cwills@sinenomine.net>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Steve French <sfrench@samba.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	openafs-devel@openafs.org,
-	linux-cifs@vger.kernel.org,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH 2/2] vfs: Fix inode ownership checks with regard to foreign ownership
-Date: Mon, 19 May 2025 17:11:23 +0100
-Message-ID: <20250519161125.2981681-3-dhowells@redhat.com>
-In-Reply-To: <20250519161125.2981681-1-dhowells@redhat.com>
-References: <20250519161125.2981681-1-dhowells@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEF5286D49;
+	Mon, 19 May 2025 16:32:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747672323; cv=fail; b=ankAzF7/Aj1cZxI61hRTD7SyR+TrW92yKFBC9Wk38lgskOxjL00Tbyjzxpo5wYwbB3Gcc3M3Zgn4SYrNBOh0hYci5Y1WlBKA55lFTpp1g/XYhN44sFdt5H0Pi49yTVlCFmvwfNKrdqOjxmL5kzFlzUQeI0ycTZAEBOk8cEMFeAs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747672323; c=relaxed/simple;
+	bh=Dcy0qV28QZEqcFbQvhM82XlsukOU+D2uXqTidTCT1i0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=szlvbNC7UXpo8K4dXNe6ezRHL6YDPnKhmfBZyPaqfrjMlLneiUoaBK61BVlr/Y8nW2Uo8HT9uXp11dkRQBZL9K7FzBbP6YVdGu1mHp1oOrQcWsiNKRgmatEPB1HRUqkr1kFlKlfXEoVVdrsUQXdOIzCTVX73wFbAofZJ9Cua5u0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=mYs16ml+; arc=fail smtp.client-ip=52.101.127.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=zQ7dm3DCmw/IHyDRnQjYClJtK5fVa0iOjCJjAEQsHSOU/AZmW25UYsjUATCK1CTUoq80JUp5fBU3rwTj8IrJ/RfF8EFlsnyWqXD6+MXoXVK8KmbAbVyv0jU7DSpmDLqTh8QMF6IAbTkgU1KfE8FadyX74Ff6H5Sqp0uS1CemazK1fmV/IroDaBXosMHE+1YSclEFyXrMQ0dCI0FTXtEdUYEBbF4xfL0HWgzXWE2xoV/QqwZbv/1m2VEacohnli6+uipTkmA3vMohewuZzx7tyTqBH+1hrv5J9kIakyVMKG6AxHxBIUaLpZqCl+zuK1RYRQqPH13wS7D8oEcaPMWnLA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uEC/kv7196r3w8cXpLgqlQ9TjsfHw0mjuV+aiXLIryk=;
+ b=gJ3Whm4AmnRAom+7aG0AxA9Rodq4EdhIUB/hq6yjJryIB1UFVifdvcFRpTU8xbXbzWBJzt5pF1MZoB9albtMQX9LiTRZHBo4wsoiRmQEjDtOhA0qQK9DY6aDRmoaUEmGhSnTrdh/j1mlqwAdRMBCS6mVQyTD3pE31UT9HaULA9i99usFPtweDmvsCGDE84y0m3QE9pJvIkIe3BUMs9dDY1NwQ/QNphVJu6FcJfU/f52oBRPfDAPLFktVJDMf34x7LgOJ25yat2AYUrXQoX2xZ3NNRhK2dN0BlEw7YlGILVFsgygs/pzs41TjIe2aDM20KAzzzoR5cNmOC01jiMOTDA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uEC/kv7196r3w8cXpLgqlQ9TjsfHw0mjuV+aiXLIryk=;
+ b=mYs16ml+puCq5cYRe8hA3oMYk3GPGJhxHyfOXSjyEoB5t1NHU9vreZk0biw+dO6S/iPY2c9qfZF1GJJPKSorKIDpO82fuyoss/hTmOCbwY3pclOYFPY2+JYZ3UEKG0EXSRvUYIvIaWTWQTu5kSeIEe2CchLt3VCFX7YBdm39xYboYZf3CfRIpQ8fERn7Bxw6eFuUbGX72bybcrGNKMYM5JxKqSYqP8pkozjBqcC30b3bIOXh0AYA6zyNUrF6KEXtI6yripf76c+1q/oGyPWxX8Yzz27etnJTbZeXUCQoGtbIGY7bi+Vbq4SZk54TuGSyguJhU1WRDJUUwfcsWytQkg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
+ by JH0PR06MB7029.apcprd06.prod.outlook.com (2603:1096:990:71::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Mon, 19 May
+ 2025 16:31:54 +0000
+Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
+ ([fe80::8c74:6703:81f7:9535%5]) with mapi id 15.20.8722.027; Mon, 19 May 2025
+ 16:31:54 +0000
+From: Yangtao Li <frank.li@vivo.com>
+To: slava@dubeyko.com,
+	glaubitz@physik.fu-berlin.de,
+	Yangtao Li <frank.li@vivo.com>
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/3] hfsplus: fix to update ctime after rename
+Date: Mon, 19 May 2025 10:52:11 -0600
+Message-Id: <20250519165214.1181931-1-frank.li@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0221.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c5::7) To SEZPR06MB5269.apcprd06.prod.outlook.com
+ (2603:1096:101:78::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB5269:EE_|JH0PR06MB7029:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e6cc52c-9585-4ffd-9fbe-08dd96f2aa4a
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|1800799024|376014|366016|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?qzXsI/erZMl3TYPwRPC0SpNTR7vQCr9QQmxwtsAaX/hnIe1s7fHFGUK3EiZa?=
+ =?us-ascii?Q?33Q9faQhKXRbUf23RKjz6He90N89u+VxJuwDwe6K/xcdEBCeVe9Fr3McX0/s?=
+ =?us-ascii?Q?1CCLolFq+VGSEXsb/J/F4UerCwhXyDYh3U0YqYCgnrWD7y+f5iBBdBeXyzTl?=
+ =?us-ascii?Q?zWrijjQAWjyYC0vIXOvlFdHT7FU6iembLTH+adoYxU0PReuaoTG9dZNErQGV?=
+ =?us-ascii?Q?uWHsh48BUBQNSYro0uEsQXnFCkAoHBeBt5oPmBj7oZW4k3A6sXW0RWWo6oGo?=
+ =?us-ascii?Q?X60jYwreD3mrvFg/WO7ZfSV21p0s80qtlnkMKKm0/eHorcOPRUQn5hDC6MVU?=
+ =?us-ascii?Q?zMo8eq6/n637xe3qN5BRutxCGgLa+g7VZm55vCPcdFEckHDGu59131zbRnGq?=
+ =?us-ascii?Q?iwh8qo2m4R9dKMPNRciBtioyAkQVDiFHwo6QGdqcyxVlF64wfykReYiO6/5S?=
+ =?us-ascii?Q?digrcKoLFXPaHpOhzOOX3BjK/JKeOF7dFFmQfWyfphoxXfL3SFf9+fcz/VuG?=
+ =?us-ascii?Q?++s+JKpbrypLNHMCEnqusa2D74fEeYgUaMl8YC6pimiEi0vl644coVrjOt6r?=
+ =?us-ascii?Q?SLzliILYdZOaaMWrqt61T8MAdbi6K4yroOdHM1BgK7BfwH1MQaDwJ0RXIudl?=
+ =?us-ascii?Q?fwcEO4Ojctpgp9P2W/WLfEVXAEo8K+8lAHOgXCB97TQvInP2dUeTVrwzwQZ5?=
+ =?us-ascii?Q?BDXbAdyM1B4Btve0P6tFRJQ1UqgZ1O/F7QM/bptnRwhQSyUk+Ozbb6K+aWfS?=
+ =?us-ascii?Q?Zx0BaZSrAKnnbhaLfFHPl7J56JvZcwCPeqnuxID5pbZl9JWkyr7ka9WWYrod?=
+ =?us-ascii?Q?M6WLpoBrm2jO4OqeRqYAcn9KSBqKuCKWmoR2EyAvVQX+yqIX83vkIxuT8e7p?=
+ =?us-ascii?Q?Lr/lWgPgsZ287e0i3ANqdbK3bCvU+Ilrvyt8Vj6o/DPH2UqsSk5HcFeH5RoL?=
+ =?us-ascii?Q?wxn9xiOWMfoHYBowq9kpQXR0kOY/0ToWMPRZs3PQEj8MiJW6Siqqivd/oP5D?=
+ =?us-ascii?Q?02YQW+VwLd4v3tGuiJlLbmR7F/8iVWlDyZ7AMeEdyUSEM4SCBeprJsU9KwIn?=
+ =?us-ascii?Q?bMoWOMekM6qG5DbK1jmfpwe6aBeQEG7Jk4bPFceVG/A2vH8u5AjC5TAvO/uF?=
+ =?us-ascii?Q?im/1Vcym/XoiRgk1BgNkMHdJXwilfpJsdPd0dXlvvc7CbQPVfRsawbdvtgDX?=
+ =?us-ascii?Q?Tef0ZSH9oERSgSJCA+dAX7fPKOE+FJErIuMrv4u0nOm0s3LBM9Dd+WnPRqB+?=
+ =?us-ascii?Q?Ust2uGaUQ7mWBruTyN5fsscucEqUDTzvptl/viBq7ia5jzqlUdeH7AN/gUSO?=
+ =?us-ascii?Q?F78XOIZ2iN8JMYdLoJlMOYQ23szgOssNz6dId+y2CUnktnk1dlcR648CHbAh?=
+ =?us-ascii?Q?ZeeXxbRqOMqqWD9Wd8hHtabgtYGMS8vHYEJ5HSFX5k8wshOcb2R4Fzfg7kQN?=
+ =?us-ascii?Q?aNYobodaOies8B2BwrSZJNlM8FpgJuZWUkyoS1/4jr8ty2YRPqO2PQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(1800799024)(376014)(366016)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?AUrQ2AVBGqLV1d8ePFPk8WcAwUhDqSVm2n4z08NX3i2D+zh+aiQoddLNeE3A?=
+ =?us-ascii?Q?N7j0PnlvzWOlF41M5m42HnsFCQzizJaH8w+tpRJ6O6HPzpRranOBGPFxjoW1?=
+ =?us-ascii?Q?CA0C9lLi/CuC28CmV/lS0W8d71VnG616iXgicR8don/aY5bc+cI3MBDvO2VZ?=
+ =?us-ascii?Q?OxpFB2MWCnrpJ0b8goWpbnrdBLOcCWgPa1RDs5DzvCONA2jQiTQ5I4TSq6J4?=
+ =?us-ascii?Q?eUxW3yggHI/v6gjUtdYG8u/PBQnm5hOMQq2RQnKLYRL+hpmsJNdqAIfs57Ei?=
+ =?us-ascii?Q?dG/WjNBz6dxHCgnETywkz7FV5RE3AT+y8YOrOjR9utXtsGJnHDwXv4FK7Eys?=
+ =?us-ascii?Q?vSIVaSle6FBmMsrIkSmLyuQwpXLqQ1RIqkagvRqTby148cpZTzue4kxFT+Yo?=
+ =?us-ascii?Q?ZXtWUBSRnwT3EeDGB63b50L5FYwtoOGgYhMPom2/dgCV4vUfVbQCwDQ0dYfU?=
+ =?us-ascii?Q?KlH6nmeDGwRVA1HDjieqE/i2x+p+ROayFP8zVozhiugEAMKEZTW1UuRCo+3D?=
+ =?us-ascii?Q?NTI65qKvpicUkGXws8T/4kmmso7y+l5Mzk69H7hTJSX1KmzBeeDUGllJwKLK?=
+ =?us-ascii?Q?XAWEUpFwEbhNXx4hOKj7Y8dQlH6pG9xbBI4sfyubEdxforyruxoo2Ur0h6Sb?=
+ =?us-ascii?Q?R1nR8nJ7ZcUCTLTeHoZEEF0hFEIUYLjbnIeqm6ELXlZq8omI8W7rH3Tu1Lls?=
+ =?us-ascii?Q?yfOe2NItsUqeVNSM7+cTUkbfPshd6nLiSVmXT+jeEjvEbqYMSB4EGnzzqBfG?=
+ =?us-ascii?Q?LDJh6dyBz5c35Lhlk3sEADnRM+df1rdyhw/VsQZxdWThOpYwA3wBEcRe1i5Q?=
+ =?us-ascii?Q?hUiorHCBZk9rkYwABMe+4HvvavObzcL5/zh15OlFZyPChoH6/J0JtcDeLefK?=
+ =?us-ascii?Q?DhiQW3dn6HRBlCzK/1raswzhBVUwDsxz/Wl3Lsh7C4G0ZRhn5Hvo8tjUUzZ/?=
+ =?us-ascii?Q?TrVzh+RWJGIP2hTNKDNPX2rf6JYyLSCI/KjePzCz1CAms8OPWCMBHr1myWB4?=
+ =?us-ascii?Q?IRCAl396lukozPRLdMErbQ/FBkvPzMjGW59nM1F1Ms2xbIRDKomxUp2P+Z6V?=
+ =?us-ascii?Q?9W9w6/YlYzaZso+t7vzx2XUiAb6swWx5bg1D6hAfhJH8aFoNj8YrX9qiAIHI?=
+ =?us-ascii?Q?omfQPt9MlLSijyWc4CGbVWVN68NRy81XIHPzEawINeFx+Z8FB4MwTOETKDDO?=
+ =?us-ascii?Q?w1Flcpmgxfk0zDQbupu5Glq+veCK0b9ZoLCOhRYPQG9dP9vBFr1tTsBFAKVU?=
+ =?us-ascii?Q?a/92L7pk7R7AAhEzMtEoT3GaDSbgUl63VdC7RKIzuKCqhZsj0eUtItXKENXd?=
+ =?us-ascii?Q?GVNkgb2orc+Te2/LbQCZiKw8XUN10avNkxObUtm62TAWCWo5zRUN23v2Lgsq?=
+ =?us-ascii?Q?7fAjv5aLU7eYGmdM1Sbj3s0WIW1Bq2REJtmVju4hbo4N8z7wWjR3VvymIU8E?=
+ =?us-ascii?Q?s0OSLQujmOsB5XIqEOKTyl4HkfRO8qI3ypn9C0Bxy7G9U4Wtbpq8UGXWBUoA?=
+ =?us-ascii?Q?1KvHEWdLEKS405GNtnR7GqwCUb2wHNL5f8VStSuHN1x9bUS2iy5zbZ2DBZ63?=
+ =?us-ascii?Q?IyefYO5bEZRZDfFnP+i4SeXDesmWdZDz8DnnAsMU?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e6cc52c-9585-4ffd-9fbe-08dd96f2aa4a
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2025 16:31:54.3742
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IAAdz5HZMsmLoYurInLCn3GwR3Kp6VwvrEk3uJ4e8BreH7OQVEqLFQkyGJJSxzHzii0HNvaglQmzkLpT3mqOfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7029
 
-Fix a number of ownership checks made by the VFS that assume that
-inode->i_uid is meaningful with respect to the UID space of the system
-performing the check.  Network filesystems, however, may violate this
-assumption - and, indeed, a network filesystem may not even have an actual
-concept of a UNIX integer UID (cifs, for example).
+[BUG]
+$ sudo ./check generic/003
+FSTYP         -- hfsplus
+PLATFORM      -- Linux/x86_64 graphic 6.8.0-58-generic #60~22.04.1-Ubuntu
+MKFS_OPTIONS  -- /dev/loop29
+MOUNT_OPTIONS -- /dev/loop29 /mnt/scratch
 
-There are a number of places within the VFS where UID checks are made and
-some of these should be deferring the interpretation to the filesystem by
-way of the previously added vfs_inode_is_owned_by_me() and
-vfs_inodes_have_same_owner():
+generic/003       - output mismatch
+    --- tests/generic/003.out   2025-04-27 08:49:39.876945323 -0600
+    +++ /home/graphic/fs/xfstests-dev/results//generic/003.out.bad
 
- (*) chown_ok()
- (*) chgrp_ok()
+     QA output created by 003
+    +ERROR: change time has not been updated after changing file1
+     Silence is golden
+    ...
 
-     These should call vfs_inode_is_owned_by_me().  Possibly these need to
-     defer all their checks to the network filesystem as the interpretation
-     of the new UID/GID depends on the netfs too, but the ->setattr()
-     method gets a chance to deal with that.
+Ran: generic/003
+Failures: generic/003
+Failed 1 of 1 tests
 
- (*) do_coredump()
+[CAUSE]
+change time has not been updated after changing file1
 
-     Should probably call vfs_is_owned_by_me() to check that the file
-     created is owned by the caller - but the check that's there might be
-     sufficient.
+[FIX]
+Update file ctime after rename in hfsplus_rename().
 
- (*) inode_owner_or_capable()
-
-     Should call vfs_is_owned_by_me().  I'm not sure whether the namespace
-     mapping makes sense in such a case, but it probably could be used.
-
- (*) vfs_setlease()
-
-     Should call vfs_is_owned_by_me().  Actually, it should query if
-     leasing is permitted.
-
-     Also, setting locks could perhaps do with a permission call to the
-     filesystem driver as AFS, for example, has a lock permission bit in
-     the ACL, but since the AFS server checks that when the RPC call is
-     made, it's probably unnecessary.
-
- (*) acl_permission_check()
- (*) posix_acl_permission()
-
-     These functions are only used by generic_permission() which is
-     overridden if ->permission() is supplied, and when evaluating a POSIX
-     ACL, it should arguably be checking the UID anyway.
-
-     AFS, for example, implements its own ACLs and evaluates them in
-     ->permission() and on the server.
-
- (*) may_follow_link()
-
-     Should call vfs_is_owned_by_me() and also vfs_have_same_owner() on the
-     the link and its parent dir.  The latter only applies on
-     world-writable sticky dirs.
-
- (*) may_create_in_sticky()
-
-     The initial subject of this patch.  Should call vfs_is_owned_by_me()
-     and also vfs_have_same_owner() both.
-
- (*) __check_sticky()
-
-     Should call vfs_is_owned_by_me() on both the dir and the inode.
-
- (*) may_dedupe_file()
-
-     Should call vfs_is_owned_by_me().
-
- (*) IMA policy ops.
-
-     I'm not sure what the best way to deal with this is - if, indeed, it
-     needs any changes.
-
-Note that wrapping stuff up into vfs_inode_is_owned_by_me() isn't
-necessarily the most efficient as it means we may end up doing the uid
-idmapping an extra time - though mostly this is in places where I'm not
-sure it matters so much.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Etienne Champetier <champetier.etienne@gmail.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: Jeffrey Altman <jaltman@auristor.com>
-cc: Chet Ramey <chet.ramey@case.edu>
-cc: Cheyenne Wills <cwills@sinenomine.net>
-cc: Alexander Viro <viro@zeniv.linux.org.uk>
-cc: Christian Brauner <brauner@kernel.org>
-cc: Steve French <sfrench@samba.org>
-cc: Mimi Zohar <zohar@linux.ibm.com>
-cc: linux-afs@lists.infradead.org
-cc: openafs-devel@openafs.org
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-integrity@vger.kernel.org
-Link: https://groups.google.com/g/gnu.bash.bug/c/6PPTfOgFdL4/m/2AQU-S1N76UJ
-Link: https://git.savannah.gnu.org/cgit/bash.git/tree/redir.c?h=bash-5.3-rc1#n733
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Tested-by: Viacheslav Dubeyko <slava@dubeyko.com>
+Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
 ---
- fs/attr.c        | 58 +++++++++++++++++++++++++++++-------------------
- fs/coredump.c    |  3 +--
- fs/inode.c       |  8 +++++--
- fs/locks.c       |  7 ++++--
- fs/namei.c       | 30 +++++++++++++------------
- fs/remap_range.c | 20 +++++++++--------
- 6 files changed, 74 insertions(+), 52 deletions(-)
+ fs/hfsplus/dir.c | 11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/fs/attr.c b/fs/attr.c
-index 9caf63d20d03..fefd92af56a2 100644
---- a/fs/attr.c
-+++ b/fs/attr.c
-@@ -16,6 +16,7 @@
- #include <linux/fcntl.h>
- #include <linux/filelock.h>
- #include <linux/security.h>
-+#include "internal.h"
- 
- /**
-  * setattr_should_drop_sgid - determine whether the setgid bit needs to be
-@@ -91,19 +92,21 @@ EXPORT_SYMBOL(setattr_should_drop_suidgid);
-  * permissions. On non-idmapped mounts or if permission checking is to be
-  * performed on the raw inode simply pass @nop_mnt_idmap.
-  */
--static bool chown_ok(struct mnt_idmap *idmap,
--		     const struct inode *inode, vfsuid_t ia_vfsuid)
-+static int chown_ok(struct mnt_idmap *idmap,
-+		    const struct inode *inode, vfsuid_t ia_vfsuid)
+diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+index 876bbb80fb4d..e77942440240 100644
+--- a/fs/hfsplus/dir.c
++++ b/fs/hfsplus/dir.c
+@@ -534,6 +534,7 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+ 			  struct inode *new_dir, struct dentry *new_dentry,
+ 			  unsigned int flags)
  {
- 	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
--	if (vfsuid_eq_kuid(vfsuid, current_fsuid()) &&
--	    vfsuid_eq(ia_vfsuid, vfsuid))
--		return true;
-+	int ret;
++	struct inode *inode = d_inode(old_dentry);
+ 	int res;
+ 
+ 	if (flags & ~RENAME_NOREPLACE)
+@@ -552,9 +553,13 @@ static int hfsplus_rename(struct mnt_idmap *idmap,
+ 	res = hfsplus_rename_cat((u32)(unsigned long)old_dentry->d_fsdata,
+ 				 old_dir, &old_dentry->d_name,
+ 				 new_dir, &new_dentry->d_name);
+-	if (!res)
+-		new_dentry->d_fsdata = old_dentry->d_fsdata;
+-	return res;
++	if (res)
++		return res;
 +
-+	ret = vfs_inode_is_owned_by_me(idmap, inode);
-+	if (ret <= 0)
-+		return ret;
- 	if (capable_wrt_inode_uidgid(idmap, inode, CAP_CHOWN))
--		return true;
-+		return 0;
- 	if (!vfsuid_valid(vfsuid) &&
- 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
--		return true;
--	return false;
-+		return 0;
-+	return -EPERM;
++	new_dentry->d_fsdata = old_dentry->d_fsdata;
++	inode_set_ctime_current(inode);
++	mark_inode_dirty(inode);
++	return 0;
  }
  
- /**
-@@ -118,23 +121,27 @@ static bool chown_ok(struct mnt_idmap *idmap,
-  * permissions. On non-idmapped mounts or if permission checking is to be
-  * performed on the raw inode simply pass @nop_mnt_idmap.
-  */
--static bool chgrp_ok(struct mnt_idmap *idmap,
--		     const struct inode *inode, vfsgid_t ia_vfsgid)
-+static int chgrp_ok(struct mnt_idmap *idmap,
-+		    const struct inode *inode, vfsgid_t ia_vfsgid)
- {
- 	vfsgid_t vfsgid = i_gid_into_vfsgid(idmap, inode);
--	vfsuid_t vfsuid = i_uid_into_vfsuid(idmap, inode);
--	if (vfsuid_eq_kuid(vfsuid, current_fsuid())) {
-+	int ret;
-+
-+	ret = vfs_inode_is_owned_by_me(idmap, inode);
-+	if (ret < 0)
-+		return ret;
-+	if (ret == 0) {
- 		if (vfsgid_eq(ia_vfsgid, vfsgid))
--			return true;
-+			return 0;
- 		if (vfsgid_in_group_p(ia_vfsgid))
--			return true;
-+			return 0;
- 	}
- 	if (capable_wrt_inode_uidgid(idmap, inode, CAP_CHOWN))
--		return true;
-+		return 0;
- 	if (!vfsgid_valid(vfsgid) &&
- 	    ns_capable(inode->i_sb->s_user_ns, CAP_CHOWN))
--		return true;
--	return false;
-+		return 0;
-+	return -EPERM;
- }
- 
- /**
-@@ -163,6 +170,7 @@ int setattr_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
- {
- 	struct inode *inode = d_inode(dentry);
- 	unsigned int ia_valid = attr->ia_valid;
-+	int ret;
- 
- 	/*
- 	 * First check size constraints.  These can't be overriden using
-@@ -179,14 +187,18 @@ int setattr_prepare(struct mnt_idmap *idmap, struct dentry *dentry,
- 		goto kill_priv;
- 
- 	/* Make sure a caller can chown. */
--	if ((ia_valid & ATTR_UID) &&
--	    !chown_ok(idmap, inode, attr->ia_vfsuid))
--		return -EPERM;
-+	if (ia_valid & ATTR_UID) {
-+		ret = chown_ok(idmap, inode, attr->ia_vfsuid);
-+		if (ret < 0)
-+			return ret;
-+	}
- 
- 	/* Make sure caller can chgrp. */
--	if ((ia_valid & ATTR_GID) &&
--	    !chgrp_ok(idmap, inode, attr->ia_vfsgid))
--		return -EPERM;
-+	if (ia_valid & ATTR_GID) {
-+		ret = chgrp_ok(idmap, inode, attr->ia_vfsgid);
-+		if (ret < 0)
-+			return ret;
-+	}
- 
- 	/* Make sure a caller can chmod. */
- 	if (ia_valid & ATTR_MODE) {
-diff --git a/fs/coredump.c b/fs/coredump.c
-index c33c177a701b..ded3936b2067 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -720,8 +720,7 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		 * filesystem.
- 		 */
- 		idmap = file_mnt_idmap(cprm.file);
--		if (!vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode),
--				    current_fsuid())) {
-+		if (vfs_inode_is_owned_by_me(idmap, inode) != 0) {
- 			coredump_report_failure("Core dump to %s aborted: "
- 				"cannot preserve file owner", cn.corename);
- 			goto close_fail;
-diff --git a/fs/inode.c b/fs/inode.c
-index 99318b157a9a..7e91b6f87757 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2586,11 +2586,15 @@ bool inode_owner_or_capable(struct mnt_idmap *idmap,
- {
- 	vfsuid_t vfsuid;
- 	struct user_namespace *ns;
-+	int ret;
- 
--	vfsuid = i_uid_into_vfsuid(idmap, inode);
--	if (vfsuid_eq_kuid(vfsuid, current_fsuid()))
-+	ret = vfs_inode_is_owned_by_me(idmap, inode);
-+	if (ret == 0)
- 		return true;
-+	if (ret < 0)
-+		return false;
- 
-+	vfsuid = i_uid_into_vfsuid(idmap, inode);
- 	ns = current_user_ns();
- 	if (vfsuid_has_mapping(ns, vfsuid) && ns_capable(ns, CAP_FOWNER))
- 		return true;
-diff --git a/fs/locks.c b/fs/locks.c
-index 1619cddfa7a4..b7a2a3ab7529 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -68,6 +68,7 @@
- #include <trace/events/filelock.h>
- 
- #include <linux/uaccess.h>
-+#include "internal.h"
- 
- static struct file_lock *file_lock(struct file_lock_core *flc)
- {
-@@ -2013,10 +2014,12 @@ int
- vfs_setlease(struct file *filp, int arg, struct file_lease **lease, void **priv)
- {
- 	struct inode *inode = file_inode(filp);
--	vfsuid_t vfsuid = i_uid_into_vfsuid(file_mnt_idmap(filp), inode);
- 	int error;
- 
--	if ((!vfsuid_eq_kuid(vfsuid, current_fsuid())) && !capable(CAP_LEASE))
-+	error = vfs_inode_is_owned_by_me(file_mnt_idmap(filp), inode);
-+	if (error < 0)
-+		return error;
-+	if (error != 0 && !capable(CAP_LEASE))
- 		return -EACCES;
- 	if (!S_ISREG(inode->i_mode))
- 		return -EINVAL;
-diff --git a/fs/namei.c b/fs/namei.c
-index 9f42dc46322f..6ede952d424a 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1195,26 +1195,26 @@ static int vfs_inodes_have_same_owner(struct mnt_idmap *idmap, struct inode *ino
-  *
-  * Returns 0 if following the symlink is allowed, -ve on error.
-  */
--static inline int may_follow_link(struct nameidata *nd, const struct inode *inode)
-+static inline int may_follow_link(struct nameidata *nd, struct inode *inode)
- {
- 	struct mnt_idmap *idmap;
--	vfsuid_t vfsuid;
-+	int ret;
- 
- 	if (!sysctl_protected_symlinks)
- 		return 0;
- 
--	idmap = mnt_idmap(nd->path.mnt);
--	vfsuid = i_uid_into_vfsuid(idmap, inode);
--	/* Allowed if owner and follower match. */
--	if (vfsuid_eq_kuid(vfsuid, current_fsuid()))
--		return 0;
--
- 	/* Allowed if parent directory not sticky and world-writable. */
- 	if ((nd->dir_mode & (S_ISVTX|S_IWOTH)) != (S_ISVTX|S_IWOTH))
- 		return 0;
- 
-+	idmap = mnt_idmap(nd->path.mnt);
-+	/* Allowed if owner and follower match. */
-+	ret = vfs_inode_is_owned_by_me(idmap, inode);
-+	if (ret <= 0)
-+		return ret;
-+
- 	/* Allowed if parent directory and link owner match. */
--	if (vfsuid_valid(nd->dir_vfsuid) && vfsuid_eq(nd->dir_vfsuid, vfsuid))
-+	if (vfs_inodes_have_same_owner(idmap, inode, nd))
- 		return 0;
- 
- 	if (nd->flags & LOOKUP_RCU)
-@@ -3157,12 +3157,14 @@ EXPORT_SYMBOL(user_path_at);
- int __check_sticky(struct mnt_idmap *idmap, struct inode *dir,
- 		   struct inode *inode)
- {
--	kuid_t fsuid = current_fsuid();
-+	int ret;
- 
--	if (vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), fsuid))
--		return 0;
--	if (vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, dir), fsuid))
--		return 0;
-+	ret = vfs_inode_is_owned_by_me(idmap, inode);
-+	if (ret <= 0)
-+		return ret;
-+	ret = vfs_inode_is_owned_by_me(idmap, dir);
-+	if (ret <= 0)
-+		return ret;
- 	return !capable_wrt_inode_uidgid(idmap, inode, CAP_FOWNER);
- }
- EXPORT_SYMBOL(__check_sticky);
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index 26afbbbfb10c..9eee93c27001 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -413,20 +413,22 @@ loff_t vfs_clone_file_range(struct file *file_in, loff_t pos_in,
- EXPORT_SYMBOL(vfs_clone_file_range);
- 
- /* Check whether we are allowed to dedupe the destination file */
--static bool may_dedupe_file(struct file *file)
-+static int may_dedupe_file(struct file *file)
- {
- 	struct mnt_idmap *idmap = file_mnt_idmap(file);
- 	struct inode *inode = file_inode(file);
-+	int ret;
- 
- 	if (capable(CAP_SYS_ADMIN))
--		return true;
-+		return 0;
- 	if (file->f_mode & FMODE_WRITE)
--		return true;
--	if (vfsuid_eq_kuid(i_uid_into_vfsuid(idmap, inode), current_fsuid()))
--		return true;
-+		return 0;
-+	ret = vfs_inode_is_owned_by_me(idmap, inode);
-+	if (ret <= 0)
-+		return ret;
- 	if (!inode_permission(idmap, inode, MAY_WRITE))
--		return true;
--	return false;
-+		return 0;
-+	return -EPERM;
- }
- 
- loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
-@@ -459,8 +461,8 @@ loff_t vfs_dedupe_file_range_one(struct file *src_file, loff_t src_pos,
- 	if (ret)
- 		return ret;
- 
--	ret = -EPERM;
--	if (!may_dedupe_file(dst_file))
-+	ret = may_dedupe_file(dst_file);
-+	if (ret < 0)
- 		goto out_drop_write;
- 
- 	ret = -EXDEV;
+ const struct inode_operations hfsplus_dir_inode_operations = {
+-- 
+2.48.1
 
 
