@@ -1,78 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-49430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A19ABC2D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 17:48:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A68F5ABC411
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 18:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A940A189EC21
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 15:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B9753A6299
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 16:14:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D22286401;
-	Mon, 19 May 2025 15:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14163289352;
+	Mon, 19 May 2025 16:11:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KMqHaZGd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F0528136F
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 15:48:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA16B289350
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 16:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747669726; cv=none; b=hYzQg5WQS4CHU8qY2JUL7gDvzgD1VBFiMh6YzPwVDqOE6cNpvgwbK+Cm1PTWQNHYDlfrNX33xjUEvhzxomjBKXg+4YecSZOROCFNBWbwvM3SPUxPPd+XuoyrL0qsqBJ3wAfctsERZ4YzeFZg/3lmhyuIlho7qxxcPMME+/+rMV8=
+	t=1747671101; cv=none; b=Y3WxrRnwDbm4QCSqSRZl8BM5LpLNbPPiiYZPgD36/FTK7uX+z35qhJsusM2U+y23f1Xleml2v56n3+BWqxrc/z/jo1kQQX4bzTjWj4LtDXGdQEtD5pDosMCVeHWC8RBSZdH5d4UXBm2f+Iakl7MeuKg3oDQZWM44GYKRBleBos8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747669726; c=relaxed/simple;
-	bh=klVvXbaIjmuGu8aphGrhSlG+ZCqPc08r4LqnxM9k4xI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lHWD9td8lj7tGxFbsP/Cm5vLfBsJnSx2YxdpaFRVzdkISleycN7XtuFhsSHUzqCWHUBHH18Gah0NqmkIn5XZSHrPYN3xM3Oyuv2CjmiO4UMakX324EW9gl6fKRov7g6v4lU+slJ4I09hnnQwcYPVjNcIpPyRdEaGRGoMOs2BeuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-111-173.bstnma.fios.verizon.net [173.48.111.173])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 54JFm0AH016863
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 19 May 2025 11:48:00 -0400
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 328302E00DD; Mon, 19 May 2025 11:48:00 -0400 (EDT)
-Date: Mon, 19 May 2025 11:48:00 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, willy@infradead.org,
-        adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
-        libaokun1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH v2 5/8] ext4: correct the journal credits calculations of
- allocating blocks
-Message-ID: <20250519154800.GD38098@mit.edu>
-References: <20250512063319.3539411-1-yi.zhang@huaweicloud.com>
- <20250512063319.3539411-6-yi.zhang@huaweicloud.com>
- <2e127ed8-20a2-4610-8fd8-e2095bde0577@huaweicloud.com>
+	s=arc-20240116; t=1747671101; c=relaxed/simple;
+	bh=fQqhwRct2zYiKUV2MxExt+YwBxnmcowniZIdiq9mLVU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d74WdXhY9CH52dNRgEUW50uSBebsTX1Lntb01Ks6r071uBleTGmDqmIk5eihpvYws2c28eoL5mt28L/WREPR+IyUpGTQnqeN1fxyFT46cOyb23S1o0iuwNFYNiK0vkPVdlP8GdsRSI0s4xCp0GddxoSOwcR63gSPQ20lrtoQKeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KMqHaZGd; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1747671098;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=FCUDQGeA3DvixcZApWgoXlHly+SHL0ArXKwLqnATz8k=;
+	b=KMqHaZGde8Ejta0JeXZsB7rjewn+AvVTpgQeNhCls7RfYjA5HFBRzn56k1t8R0LGAS1gk0
+	in4mkOu8TCXNjP0hNttLpXbXNjZrOcp1jD3ODn0dzEJSAsBvvN5kS6744/Gihli4i5VIMN
+	qURZvYRajpsCYvuqUjP4XJvyATfm1FI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-261-_vgrlQGDMO2TtSQZQBDesg-1; Mon,
+ 19 May 2025 12:11:37 -0400
+X-MC-Unique: _vgrlQGDMO2TtSQZQBDesg-1
+X-Mimecast-MFC-AGG-ID: _vgrlQGDMO2TtSQZQBDesg_1747671096
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BFB171801A17;
+	Mon, 19 May 2025 16:11:35 +0000 (UTC)
+Received: from warthog.procyon.org.com (unknown [10.42.28.188])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C18F019560AA;
+	Mon, 19 May 2025 16:11:33 +0000 (UTC)
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>
+Cc: David Howells <dhowells@redhat.com>,
+	Marc Dionne <marc.dionne@auristor.com>,
+	linux-afs@lists.infradead.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] vfs, afs, bash: Fix miscomparison of foreign user IDs in the VFS
+Date: Mon, 19 May 2025 17:11:21 +0100
+Message-ID: <20250519161125.2981681-1-dhowells@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e127ed8-20a2-4610-8fd8-e2095bde0577@huaweicloud.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-On Mon, May 19, 2025 at 10:48:28AM +0800, Zhang Yi wrote:
-> 
-> This patch conflicts with Jan's patch e18d4f11d240 ("ext4: fix
-> calculation of credits for extent tree modification") in
-> ext4_ext_index_trans_blocks(), the conflict should be resolved when
-> merging this patch. However, I checked the merged commit of this patch
-> in your dev branch[1], and the changes in ext4_ext_index_trans_blocks()
-> seem to be incorrect, which could result in insufficient credit
-> reservations on 1K block size filesystems.
+Hi Christian,
 
-Thanks so much for noticing the mis-merge!  I've fixed it in my tree,
-and will be pushing it out shortly.  If you could take a look and make
-sure that it's correct, that would be great.
+Here's a pair of fixes that deal with some places the VFS mishandles
+foreign user ID checks.  By "foreign" I mean that the user IDs from the
+filesystem do not belong in the same number space as the system's user IDs.
+Network filesystems are prime examples of this, but it may also impact
+things like USB drives or cdroms.
 
-						- Ted
+Take AFS as example: Whilst each file does have a numeric user ID, the file
+may be accessed from a world-accessible public-facing server from some
+other organisation with its own idea of what that user ID refers to.  IDs
+from AFS may also collide with the system's own set of IDs and may also be
+unrepresentable as a 32-bit UID (in the case of AuriStor servers).
+
+Further, kAFS uses a key containing an authentication token to specify the
+subject doing an RPC operation to the server - and, as such, this needs to
+be used instead of current_fsuid() in determining whether the current user
+has ownership rights over a file.
+
+Additionally, filesystems (CIFS being a notable example) may also have user
+identifiers that aren't simple integers.
+
+Now the problem in the VFS is that there are a number of places where it
+assumes it can directly compare i_uid (possibly id-mapped) to either than
+on another inode or a UID drawn from elsewhere (e.g. current_uid()) - but
+this doesn't work right.
+
+This causes the write-to-sticky check to work incorrectly for AFS (though
+this is currently masked by a workaround in bash that is slated to be
+removed) whereby open(O_CREAT) of such a file will fail when it shouldn't.
+
+Two patches are provided: The first specifically fixes the bash workaround
+issue, delegating the check as to whether two inodes have the same owner
+and the check as to whether the current user owns an inode to the
+filesystem.
+
+AFS then uses the result of a status-fetch with a suitable key to determine
+file ownership and just compares the 64-bit owner IDs to determine if two
+inodes have the same ownership.
+
+The second patch expands the use of the VFS helper functions added by the
+first to other VFS UID checks.
+
+The patches can be found here:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=afs-fixes
+
+Thanks,
+David
+
+David Howells (2):
+  afs, bash: Fix open(O_CREAT) on an extant AFS file in a sticky dir
+  vfs: Fix inode ownership checks with regard to foreign ownership
+
+ fs/afs/dir.c       |  2 ++
+ fs/afs/file.c      |  2 ++
+ fs/afs/internal.h  |  3 ++
+ fs/afs/security.c  | 52 ++++++++++++++++++++++++++++++
+ fs/attr.c          | 58 ++++++++++++++++++++-------------
+ fs/coredump.c      |  3 +-
+ fs/inode.c         |  8 +++--
+ fs/internal.h      |  1 +
+ fs/locks.c         |  7 ++--
+ fs/namei.c         | 80 ++++++++++++++++++++++++++++++++--------------
+ fs/remap_range.c   | 20 ++++++------
+ include/linux/fs.h |  3 ++
+ 12 files changed, 177 insertions(+), 62 deletions(-)
+
 
