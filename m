@@ -1,32 +1,32 @@
-Return-Path: <linux-fsdevel+bounces-49353-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49352-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A50F6ABB8EB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:23:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86876ABB8EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 11:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28B31189AF7E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44C05177C09
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 09:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF89E277009;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6CF9276022;
 	Mon, 19 May 2025 09:18:55 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A8126FA7D;
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8EA826F45D;
 	Mon, 19 May 2025 09:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747646335; cv=none; b=KvjR3a92K6mh6b+Mb+y+CY9bPvc9KkscPV1VUaAwUjDZ3WcTFVCEqa7S3kvb6jlkhO/5ukbJgbb5aD2k7LfXe1H1snaJRNeOzUOr1rHPXnxBJhU11779RUv9fANwSALWwHzNbecybUGUf6i7HzxfqYRsh2L8ewjC4yiI1lsUpEk=
+	t=1747646334; cv=none; b=DjlMj1gjnEI3AWsTmaSndmg/KaWUQsivo5e6FGvA0/zaZGjZJ2FJ1lrPeWk0oGPy4ATB6v6g7dcnqzdVVyS40V4Z+Br8QcmKxRiZuUxBJCjtjwDEdLcPT9CkhhOmRu+dYXsA/uPzHYFgirLib+8bacFNSFHACgSEvieCegsg0Eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747646335; c=relaxed/simple;
-	bh=7Twj65zRSkQ/WMNSTWEyxzgXy8V9jjNnIrH+Kg2KsWY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=ON9JHjC83PvtNb1OT/ohoMfAaOikwDo82AehnN/xYE4PyL8+ErXFIimZZmvpunHJaJCdABpIuy1zrA/E8sT0ak7Gty0UkmRmuLZWslZk1EiShDiz2Pl2f0u1m80o/vq9QjwA5fYhq5VsMfLwHYQtfOPVyBB41ttyqEAJOqTWb/4=
+	s=arc-20240116; t=1747646334; c=relaxed/simple;
+	bh=ezEJxJ4N1Vjrb6q0DqS69gfOLERcwARBMwf+UHXwu2M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=Am52ys0HAUUeLVuCBkgySE2fFhYzU0vIChs/5kWok3pHfB7aBxBVtcamF6QNAKjFdJirvcdu2pb5QH35QpfatRM/WP1dW9rfMhpzbYg/PDBq8W6fGzpK4moem6AjDAR42UZ5HIJCfeIl+VHWbfDUssgIqM3v7aFXFBsavRQV8uk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-71-682af76ded55
+X-AuditID: a67dfc5b-669ff7000002311f-72-682af76db36f
 From: Byungchul Park <byungchul@sk.com>
 To: linux-kernel@vger.kernel.org
 Cc: kernel_team@skhynix.com,
@@ -90,44 +90,44 @@ Cc: kernel_team@skhynix.com,
 	netdev@vger.kernel.org,
 	matthew.brost@intel.com,
 	her0gyugyu@gmail.com
-Subject: [PATCH v16 06/42] dept: add proc knobs to show stats and dependency graph
-Date: Mon, 19 May 2025 18:17:50 +0900
-Message-Id: <20250519091826.19752-7-byungchul@sk.com>
+Subject: [PATCH v16 07/42] dept: distinguish each kernel context from another
+Date: Mon, 19 May 2025 18:17:51 +0900
+Message-Id: <20250519091826.19752-8-byungchul@sk.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250519091826.19752-1-byungchul@sk.com>
 References: <20250519091826.19752-1-byungchul@sk.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0wTaRSG/b6ZzgzFmkk1OoJR0mhQjJcaNeeHom7MOjGaGI0mYsxuXWZt
-	tRTSIorJJtxEF4QoWlBALNVUaKvUTrNhd63ctIoXREXuoFSDS7gZpKVcdLfg+ufkSc77PufP
-	YQj5Y0kYo9ElCnqdSqugpKR0cLZ5lW4sSr3W2rAUfKPnSCiusFPQeMeGwO5KxdD3cAe0+AcQ
-	TD5/QUCBsRFBaU8XAS5PNwJ3WRoFrz/MgSbfMAX1xmwK0m9UUPCyfwpDZ34eBptzN7y19JLw
-	9IIZQ0EfBUUF6Tg4/sEwbrHSYElZBt6yQhqmepRQ390sAXf7Srha0knBPXc9CZ5KL4bXfxVT
-	0G3/VwJPPY9J8OeGQ+PFHAncHjJT0O+3EGDxDdPwqtqEwWOaD46MoDDz81cJPMqpxpB58y6G
-	pra/Edw/9w6D095MQZ1vAIPoNBIwceshAm/uIA1nzo/TUJSaiyD7TD4JGZ0bYDIQvHxtVAmp
-	1x0k3P7SjLZu5u0ldsTXDQwTfIZ4kp/wvaF4t99E8k/MHP9nYRfNZ9xvp3mT8wQvlkXxN+71
-	Yb50xCfhndbfKd45kkfzWYNNmB9qaKD3LIqRbooVtJokQb8m+mepuuvyJZzQvfnU25xRMgWJ
-	yiwUwnDses5vnpB857PvrNQ0U2wk19o6TkzzPDaCE3N6gxkpQ7DNoVzLtTY0vZjL7uXKJwMz
-	BZJdxtnbxBmWsRs4e7WR/CZdwtkc1TOiEHYj155dN9OVBzNNthJyWsqxl0K4qkLx/8JCrqas
-	lbyAZCY0y4rkGl1SnEqjXb9anazTnFr9S3ycEwX/y/Lb1KFKNNK4rxaxDFLMljncK9RyiSrJ
-	kBxXiziGUMyTWcXlarksVpV8WtDH/6Q/oRUMtSicIRULZOv8J2Pl7FFVonBcEBIE/fctZkLC
-	UlDms72r0hxFLluoJX6b3J2gjc4/XjN2ZQdV6X0fqPgq7t9VU/zj6DEcf7gva8Lj+mNx4Mum
-	58bYu/lVYWurajs2WiIi03e2TOUt+PWDN/HKwZiIB4aDWxb90PLIEdfzhDYmhXUc6CjoVaZ1
-	3XF9DHhXLE0bOvKprZw5cHXPx+2RR8YcCtKgVimjCL1B9R/1BxbOWwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAAzWSa0hTcRiH+5/rXC1Py+pglDGKytASsl4qLYj0FBaRH4S+5KhDG7opm7Ps
-	IppmpmnXKVna1Ji2HWvuCGk5WQ41i9LSLGVaWUSWFyi38tJlGn15eeD3/p73yyvB5RYyUKLW
-	pvA6rTJRQUkJ6b6tWSGaH8GqDUXWheAZzyXg5j2Bgs67VgRCXSYGQy3R8No7jGDqWQcOxcZO
-	BOXv+3Goax1A4Kg+Q0HXx/nQ7RmjoN2YT0FW5T0KXnydxsBddAUDq30vvDV/IuDppQoMioco
-	uFGchfnGZwwmzBYazBmrYLC6hIbp92HQPtBDgqu0nQRH3zq4XuamoNHRTkBr/SAGXQ9uUjAg
-	/CHhaetjAryFS6HzcgEJNaMVFHz1mnEwe8ZoeOk0YdBqWgy2bJ815/tvEtoKnBjk3K7FoLv3
-	IYKm3HcY2IUeClyeYQxEuxGHyaoWBIOFIzScvTBBw43MQgT5Z4sIyHaHw9RP3+XS8TDIvGUj
-	oOZXD9oRyQllAuJcw2M4ly0e4yY9ryjO4TUR3JMKlmso6ae57KY+mjPZDZxYHcxVNg5hXPk3
-	D8nZLecpzv7tCs3ljXRj3Ojz5/T+ZQel247wiepUXrc+Ml6q6r92FUseiDj+tmCcyEBiWB7y
-	k7DMRvbcOws1wxSzmn3zZgKf4QBmBSsWfCLzkFSCMz1z2delvWgmWMgcYO9M/ZwtEMwqVugV
-	Z1nGhLOC00j8kwaxVptzVuTHbGL78l2zXblvp9taRlxCUhOaY0EBam2qRqlODA/VJ6jStOrj
-	oYeTNHbk+yDz6enL9Wi8K7oZMRKkmCezOdaq5KQyVZ+maUasBFcEyCziGpVcdkSZdoLXJR3S
-	GRJ5fTNaKiEUS2R74vh4OXNUmcIn8Hwyr/ufYhK/wAykW8nb0h2VCXG3gpIexU7lXFjv5k+X
-	HFywPKYxPajsTLh3ZLXx86iqTjRHzTVs2HY9F0/piHCbNevu676EvEyIE3ee2r65CtL9vbW7
-	IopWNvjHxBoqnPVaoU09SG8JlI1sDBrdHWk6OY3HaauzPkT1t100nCunJ6uOxSs1NYtcCkKv
-	UoYF4zq98i+FbAMvPQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSe0hTcRTH+917d+91ubosqZsW1SgsI82oOEQvev7CjKCgKKhGXttqLplT
+	M4p8rJemmWaWpU6LtdystfWwx8QcLe1ptaaJWg2JLM2wtjLtsRn9c/hwzvl+zj+HJaVOUSir
+	VGsFjVquktFiStwTXDFD/T1CMfPNk8ng/XaEgnNXzDQ0XTYhMF/LIKDr/kpo9nUjGHjyjITi
+	oiYEFe/aSbjm7EBgN2bS8LJzBLi8vTQ0FuXQkHX+Cg3PPw0S0HaqgACTNRbeGN5T8Ci/koDi
+	LhrOFmcR/vKBgH5DFQOG9CngMZYwMPguGho73CKwt06HM2VtNNy1N1LgrPEQ8PL2ORo6zH9E
+	8MjZQIEvLwyaTuSKoPpzJQ2ffAYSDN5eBl7U6Qlw6keDRecXHvr6WwQPcusIOHThKgGu13cQ
+	1B55S4DV7KbB4e0mwGYtIuHnxfsIPHk9DBw81s/A2Yw8BDkHT1Gga5sDAz/8l0u/RUNGuYWC
+	6l9utHgBNpeZEXZ095JYZ0vFP72vaGz36Sn8sJLHt0raGayrbWWw3pqMbcYIfP5uF4Er+rwi
+	bK06SmNrXwGDs3tcBP789Cmzdtwm8fw4QaVMETRRC7eJFQ0nG1CiZ8Oex+0NVDoyLM9GLMtz
+	s/kL7nnZKGgIB/JviAJMc+F8S0s/GeAQbiJvy33v74tZknMP55tLX6PAYBQXy7sKTzMBprgp
+	vLncgQJOCTeHf2YO/+ecwJssdUOeIG4u35rjGIpK/SsuUxkVcPJcYRDvzCxm/gXG8veMLVQ+
+	kujRsCokVapTEuRK1exIRZpauSdy++4EK/J/l2H/4OYa1Ne0rh5xLJIFSyz2aQqpSJ6SlJZQ
+	j3iWlIVIqmxTFVJJnDxtr6DZvVWTrBKS6lEYS8nGSGb5UuOk3A65VtglCImC5v+UYINC01Hq
+	ogk2n1a9M/56WX/nhkSNdlRJNbk+9nnCmGFR5Z59Mc13jodmhU4q7DNmZ4aJTVgTUj1pTVTP
+	wqX8sr01x1eJU0K6Hmg35UQfKKiN/xIvhC/5fmNycGvn6OX5y3QbD9SZ1LVrPl7fH+n48Wvd
+	pW0jtTGWm/terTYd/q0av2JL6erkcBmVpJBHR5CaJPlfuEKuxlkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAAzWSV0xTcRTG/d9NteZaidyARlNDVIxiI5gTJYTEdWOC8cGR+EKLXm1DqaZV
+	FFcYtaIMEUUUBcpIZVwEb4lx1RAqCC7QVpaAiiMSGQZpFcFRNL6c/PJ953zfy2FwRQUZyOgM
+	BwSjQaNXUjJCtnlN6rL4byHaFa11c8EzlkbA1RqRgrbrVQjEumQMBho3Qod3EMHE01Yc8nLb
+	EBS/7cWhrqkPgaM8hQLX+5ng9oxQ0JKbTkFqaQ0Fzz9PYtBzMQeDKikaXts+EvA4uwSDvAEK
+	ruSlYr7xCYNxWyUNtqRg6C/Pp2HyrQpa+tpJcBa0kODoXgqXC3souOdoIaDpVj8GrjtXKegT
+	f5PwuKmZAG9WELSdyySheriEgs9eGw42zwgNL+qtGDRZ50Ct2Zdq+fqLhIeZ9RhYym5g4O66
+	i+B+2hsMJLGdAqdnEAO7lIvDj2uNCPqzhmg4mTFOw5XkLATpJy8SYO4Jh4nvvuaCMRUkF9US
+	UP2zHUVF8mKhiHjn4AjOm+2H+B+elxTv8FoJ/lEJx9/O76V58/1umrdKB3l7eQhfem8A44tH
+	PSQvVZ6meGk0h+bPDLkxfvjZM3rLvJ2yiN2CXpcgGEMj1TJt84VmtL9/x+Envc1EErKtP4P8
+	GI4N4yayb5JTTLGLuM7OcXyK/dkFnD3zo0+XMTjbPp3rKOhCU8ZsNppzn79ETzHBBnNikdOn
+	M4ycDedaxUX/MudzVbX1f3P82FVcd7rz76nCt+KuKiSykcyKplUif50hIV6j04cvN8VpEw26
+	w8t37YuXkO+BbMcnz91CY66NDYhlkHKGvNaxRKsgNQmmxPgGxDG40l9eaV+sVch3axKPCMZ9
+	McaDesHUgIIYQhkg37RDUCvYvZoDQpwg7BeM/12M8QtMQnvUaTEe85wnsWmSxSy3lE7m39i+
+	LeOX9WxdhevEl3dhxyLI7HVBLpPo7iRnFOsbr63Ni1GOV8x6LwVPW/vgza7qC9HDq83qDu9Y
+	oX9qVGi5mKFQLDVsPhWzdWWKOor5UOQOWxcaVLYh67pS9QoC1jwoUB2NK4u1dOVEBlhbF0Yo
+	CZNWowrBjSbNH8v9LsA8AwAA
 X-CFilter-Loop: Reflected
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -135,306 +135,374 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 
-It'd be useful to show dept internal stats and dependency graph on
-runtime via proc for better information.  Introduce the knobs.
+Each unique kernel context, in dept's point of view, should be
+identified on every entrance to kernel mode e.g. system call or user
+oriented fault.  Otherwise, dept may track meaningless dependencies
+across different kernel context.
+
+Plus, in order to update kernel context id at the very beginning of each
+entrance, arch code support is required, that could be configured by
+CONFIG_ARCH_HAS_DEPT_SUPPORT.
 
 Signed-off-by: Byungchul Park <byungchul@sk.com>
 ---
- kernel/dependency/Makefile        |  1 +
- kernel/dependency/dept.c          | 50 +++-------------
- kernel/dependency/dept_internal.h | 54 +++++++++++++++++
- kernel/dependency/dept_proc.c     | 96 +++++++++++++++++++++++++++++++
- 4 files changed, 160 insertions(+), 41 deletions(-)
- create mode 100644 kernel/dependency/dept_internal.h
- create mode 100644 kernel/dependency/dept_proc.c
+ include/linux/dept.h     | 29 ++++++++++-------
+ include/linux/sched.h    | 10 +++---
+ kernel/dependency/dept.c | 67 ++++++++++++++++++++--------------------
+ lib/Kconfig.debug        |  5 ++-
+ 4 files changed, 61 insertions(+), 50 deletions(-)
 
-diff --git a/kernel/dependency/Makefile b/kernel/dependency/Makefile
-index b5cfb8a03c0c..92f165400187 100644
---- a/kernel/dependency/Makefile
-+++ b/kernel/dependency/Makefile
-@@ -1,3 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/include/linux/dept.h b/include/linux/dept.h
+index 5f0d2d8c8cbe..cb1b1beea077 100644
+--- a/include/linux/dept.h
++++ b/include/linux/dept.h
+@@ -26,11 +26,16 @@ struct task_struct;
+ #define DEPT_MAX_SUBCLASSES_USR		(DEPT_MAX_SUBCLASSES / DEPT_MAX_SUBCLASSES_EVT)
+ #define DEPT_MAX_SUBCLASSES_CACHE	2
  
- obj-$(CONFIG_DEPT) += dept.o
-+obj-$(CONFIG_DEPT) += dept_proc.o
-diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
-index 6cdda00411bc..9650d6d0c4d0 100644
---- a/kernel/dependency/dept.c
-+++ b/kernel/dependency/dept.c
-@@ -75,6 +75,7 @@
- #include <linux/dept.h>
- #include <linux/utsname.h>
- #include <linux/kernel.h>
-+#include "dept_internal.h"
+-#define DEPT_SIRQ			0
+-#define DEPT_HIRQ			1
+-#define DEPT_IRQS_NR			2
+-#define DEPT_SIRQF			(1UL << DEPT_SIRQ)
+-#define DEPT_HIRQF			(1UL << DEPT_HIRQ)
++enum {
++	DEPT_CXT_SIRQ = 0,
++	DEPT_CXT_HIRQ,
++	DEPT_CXT_IRQS_NR,
++	DEPT_CXT_PROCESS = DEPT_CXT_IRQS_NR,
++	DEPT_CXTS_NR
++};
++
++#define DEPT_SIRQF			(1UL << DEPT_CXT_SIRQ)
++#define DEPT_HIRQF			(1UL << DEPT_CXT_HIRQ)
  
- static int dept_stop;
- static int dept_per_cpu_ready;
-@@ -265,46 +266,13 @@ static bool valid_key(struct dept_key *k)
-  *       have been freed will be placed.
-  */
+ struct dept_ecxt;
+ struct dept_iecxt {
+@@ -95,8 +100,8 @@ struct dept_class {
+ 			/*
+ 			 * for tracking IRQ dependencies
+ 			 */
+-			struct dept_iecxt iecxt[DEPT_IRQS_NR];
+-			struct dept_iwait iwait[DEPT_IRQS_NR];
++			struct dept_iecxt iecxt[DEPT_CXT_IRQS_NR];
++			struct dept_iwait iwait[DEPT_CXT_IRQS_NR];
  
--enum object_t {
--#define OBJECT(id, nr) OBJECT_##id,
--	#include "dept_object.h"
--#undef OBJECT
--	OBJECT_NR,
--};
--
- #define OBJECT(id, nr)							\
- static struct dept_##id spool_##id[nr];					\
- static DEFINE_PER_CPU(struct llist_head, lpool_##id);
- 	#include "dept_object.h"
- #undef OBJECT
+ 			/*
+ 			 * classified by a map embedded in task_struct,
+@@ -208,8 +213,8 @@ struct dept_ecxt {
+ 			/*
+ 			 * where the IRQ-enabled happened
+ 			 */
+-			unsigned long	enirq_ip[DEPT_IRQS_NR];
+-			struct dept_stack *enirq_stack[DEPT_IRQS_NR];
++			unsigned long	enirq_ip[DEPT_CXT_IRQS_NR];
++			struct dept_stack *enirq_stack[DEPT_CXT_IRQS_NR];
  
--struct dept_pool {
--	const char			*name;
--
--	/*
--	 * object size
--	 */
--	size_t				obj_sz;
--
--	/*
--	 * the number of the static array
--	 */
--	atomic_t			obj_nr;
--
--	/*
--	 * offset of ->pool_node
--	 */
--	size_t				node_off;
--
--	/*
--	 * pointer to the pool
--	 */
--	void				*spool;
--	struct llist_head		boot_pool;
--	struct llist_head __percpu	*lpool;
--};
--
--static struct dept_pool pool[OBJECT_NR] = {
-+struct dept_pool dept_pool[OBJECT_NR] = {
- #define OBJECT(id, nr) {						\
- 	.name = #id,							\
- 	.obj_sz = sizeof(struct dept_##id),				\
-@@ -334,7 +302,7 @@ static void *from_pool(enum object_t t)
- 	if (DEPT_WARN_ON(!irqs_disabled()))
- 		return NULL;
+ 			/*
+ 			 * where the event context started
+@@ -253,8 +258,8 @@ struct dept_wait {
+ 			/*
+ 			 * where the IRQ wait happened
+ 			 */
+-			unsigned long	irq_ip[DEPT_IRQS_NR];
+-			struct dept_stack *irq_stack[DEPT_IRQS_NR];
++			unsigned long	irq_ip[DEPT_CXT_IRQS_NR];
++			struct dept_stack *irq_stack[DEPT_CXT_IRQS_NR];
  
--	p = &pool[t];
-+	p = &dept_pool[t];
+ 			/*
+ 			 * where the wait happened
+@@ -384,6 +389,7 @@ extern void dept_event(struct dept_map *m, unsigned long e_f, unsigned long ip,
+ extern void dept_ecxt_exit(struct dept_map *m, unsigned long e_f, unsigned long ip);
+ extern void dept_sched_enter(void);
+ extern void dept_sched_exit(void);
++extern void dept_update_cxt(void);
+ 
+ static inline void dept_ecxt_enter_nokeep(struct dept_map *m)
+ {
+@@ -431,6 +437,7 @@ struct dept_map { };
+ #define dept_ecxt_exit(m, e_f, ip)			do { } while (0)
+ #define dept_sched_enter()				do { } while (0)
+ #define dept_sched_exit()				do { } while (0)
++#define dept_update_cxt()				do { } while (0)
+ #define dept_ecxt_enter_nokeep(m)			do { } while (0)
+ #define dept_key_init(k)				do { (void)(k); } while (0)
+ #define dept_key_destroy(k)				do { (void)(k); } while (0)
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index a1924b40feb5..802fca4d99b3 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -827,19 +827,19 @@ struct dept_task {
+ 	int				wait_hist_pos;
  
  	/*
- 	 * Try local pool first.
-@@ -369,7 +337,7 @@ static void *from_pool(enum object_t t)
+-	 * sequential id to identify each IRQ context
++	 * sequential id to identify each context
+ 	 */
+-	unsigned int			irq_id[DEPT_IRQS_NR];
++	unsigned int			cxt_id[DEPT_CXTS_NR];
  
- static void to_pool(void *o, enum object_t t)
+ 	/*
+ 	 * for tracking IRQ-enabled points with cross-event
+ 	 */
+-	unsigned int			wgen_enirq[DEPT_IRQS_NR];
++	unsigned int			wgen_enirq[DEPT_CXT_IRQS_NR];
+ 
+ 	/*
+ 	 * for keeping up-to-date IRQ-enabled points
+ 	 */
+-	unsigned long			enirq_ip[DEPT_IRQS_NR];
++	unsigned long			enirq_ip[DEPT_CXT_IRQS_NR];
+ 
+ 	/*
+ 	 * for reserving a current stack instance at each operation
+@@ -893,7 +893,7 @@ struct dept_task {
+ 	.wait_hist = { { .wait = NULL, } },			\
+ 	.ecxt_held_pos = 0,					\
+ 	.wait_hist_pos = 0,					\
+-	.irq_id = { 0U },					\
++	.cxt_id = { 0U },					\
+ 	.wgen_enirq = { 0U },					\
+ 	.enirq_ip = { 0UL },					\
+ 	.stack = NULL,						\
+diff --git a/kernel/dependency/dept.c b/kernel/dependency/dept.c
+index 9650d6d0c4d0..b4a39c81bbc1 100644
+--- a/kernel/dependency/dept.c
++++ b/kernel/dependency/dept.c
+@@ -230,9 +230,9 @@ static struct dept_class *dep_tc(struct dept_dep *d)
+ 
+ static const char *irq_str(int irq)
  {
--	struct dept_pool *p = &pool[t];
-+	struct dept_pool *p = &dept_pool[t];
- 	struct llist_head *h;
- 
- 	preempt_disable();
-@@ -2108,7 +2076,7 @@ void dept_map_copy(struct dept_map *to, struct dept_map *from)
- 	clean_classes_cache(&to->map_key);
+-	if (irq == DEPT_SIRQ)
++	if (irq == DEPT_CXT_SIRQ)
+ 		return "softirq";
+-	if (irq == DEPT_HIRQ)
++	if (irq == DEPT_CXT_HIRQ)
+ 		return "hardirq";
+ 	return "(unknown)";
  }
- 
--static LIST_HEAD(classes);
-+LIST_HEAD(dept_classes);
- 
- static bool within(const void *addr, void *start, unsigned long size)
+@@ -410,7 +410,7 @@ static void initialize_class(struct dept_class *c)
  {
-@@ -2140,7 +2108,7 @@ void dept_free_range(void *start, unsigned int sz)
- 	while (unlikely(!dept_lock()))
- 		cpu_relax();
+ 	int i;
  
--	list_for_each_entry_safe(c, n, &classes, all_node) {
-+	list_for_each_entry_safe(c, n, &dept_classes, all_node) {
- 		if (!within((void *)c->key, start, sz) &&
- 		    !within(c->name, start, sz))
- 			continue;
-@@ -2216,7 +2184,7 @@ static struct dept_class *check_new_class(struct dept_key *local,
- 	c->sub_id = sub_id;
- 	c->key = (unsigned long)(k->base + sub_id);
- 	hash_add_class(c);
--	list_add(&c->all_node, &classes);
-+	list_add(&c->all_node, &dept_classes);
- unlock:
- 	dept_unlock();
- caching:
-@@ -2950,8 +2918,8 @@ static void migrate_per_cpu_pool(void)
- 		struct llist_head *from;
- 		struct llist_head *to;
+-	for (i = 0; i < DEPT_IRQS_NR; i++) {
++	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
+ 		struct dept_iecxt *ie = &c->iecxt[i];
+ 		struct dept_iwait *iw = &c->iwait[i];
  
--		from = &pool[i].boot_pool;
--		to = per_cpu_ptr(pool[i].lpool, boot_cpu);
-+		from = &dept_pool[i].boot_pool;
-+		to = per_cpu_ptr(dept_pool[i].lpool, boot_cpu);
- 		move_llist(to, from);
+@@ -436,7 +436,7 @@ static void initialize_ecxt(struct dept_ecxt *e)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < DEPT_IRQS_NR; i++) {
++	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
+ 		e->enirq_stack[i] = NULL;
+ 		e->enirq_ip[i] = 0UL;
  	}
+@@ -452,7 +452,7 @@ static void initialize_wait(struct dept_wait *w)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < DEPT_IRQS_NR; i++) {
++	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
+ 		w->irq_stack[i] = NULL;
+ 		w->irq_ip[i] = 0UL;
+ 	}
+@@ -491,7 +491,7 @@ static void destroy_ecxt(struct dept_ecxt *e)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < DEPT_IRQS_NR; i++)
++	for (i = 0; i < DEPT_CXT_IRQS_NR; i++)
+ 		if (e->enirq_stack[i])
+ 			put_stack(e->enirq_stack[i]);
+ 	if (e->class)
+@@ -507,7 +507,7 @@ static void destroy_wait(struct dept_wait *w)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < DEPT_IRQS_NR; i++)
++	for (i = 0; i < DEPT_CXT_IRQS_NR; i++)
+ 		if (w->irq_stack[i])
+ 			put_stack(w->irq_stack[i]);
+ 	if (w->class)
+@@ -665,7 +665,7 @@ static void print_diagram(struct dept_dep *d)
+ 	const char *tc_n = tc->sched_map ? "<sched>" : (tc->name ?: "(unknown)");
+ 
+ 	irqf = e->enirqf & w->irqf;
+-	for_each_set_bit(irq, &irqf, DEPT_IRQS_NR) {
++	for_each_set_bit(irq, &irqf, DEPT_CXT_IRQS_NR) {
+ 		if (!firstline)
+ 			pr_warn("\nor\n\n");
+ 		firstline = false;
+@@ -698,7 +698,7 @@ static void print_dep(struct dept_dep *d)
+ 	const char *tc_n = tc->sched_map ? "<sched>" : (tc->name ?: "(unknown)");
+ 
+ 	irqf = e->enirqf & w->irqf;
+-	for_each_set_bit(irq, &irqf, DEPT_IRQS_NR) {
++	for_each_set_bit(irq, &irqf, DEPT_CXT_IRQS_NR) {
+ 		pr_warn("%s has been enabled:\n", irq_str(irq));
+ 		print_ip_stack(e->enirq_ip[irq], e->enirq_stack[irq]);
+ 		pr_warn("\n");
+@@ -866,7 +866,7 @@ static void bfs(void *root, struct bfs_ops *ops, void *in, void **out)
+  */
+ 
+ static unsigned long cur_enirqf(void);
+-static int cur_irq(void);
++static int cur_cxt(void);
+ static unsigned int cur_ctxt_id(void);
+ 
+ static struct dept_iecxt *iecxt(struct dept_class *c, int irq)
+@@ -1443,7 +1443,7 @@ static void add_dep(struct dept_ecxt *e, struct dept_wait *w)
+ 	if (d) {
+ 		check_dl_bfs(d);
+ 
+-		for (i = 0; i < DEPT_IRQS_NR; i++) {
++		for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
+ 			struct dept_iwait *fiw = iwait(fc, i);
+ 			struct dept_iecxt *found_ie;
+ 			struct dept_iwait *found_iw;
+@@ -1487,7 +1487,7 @@ static void add_wait(struct dept_class *c, unsigned long ip,
+ 	struct dept_task *dt = dept_task();
+ 	struct dept_wait *w;
+ 	unsigned int wg;
+-	int irq;
++	int cxt;
+ 	int i;
+ 
+ 	if (DEPT_WARN_ON(!valid_class(c)))
+@@ -1503,9 +1503,9 @@ static void add_wait(struct dept_class *c, unsigned long ip,
+ 	w->wait_stack = get_current_stack();
+ 	w->sched_sleep = sched_sleep;
+ 
+-	irq = cur_irq();
+-	if (irq < DEPT_IRQS_NR)
+-		add_iwait(c, irq, w);
++	cxt = cur_cxt();
++	if (cxt == DEPT_CXT_HIRQ || cxt == DEPT_CXT_SIRQ)
++		add_iwait(c, cxt, w);
+ 
+ 	/*
+ 	 * Avoid adding dependency between user aware nested ecxt and
+@@ -1579,7 +1579,7 @@ static struct dept_ecxt_held *add_ecxt(struct dept_map *m,
+ 	eh->sub_l = sub_l;
+ 
+ 	irqf = cur_enirqf();
+-	for_each_set_bit(irq, &irqf, DEPT_IRQS_NR)
++	for_each_set_bit(irq, &irqf, DEPT_CXT_IRQS_NR)
+ 		add_iecxt(c, irq, e, false);
+ 
+ 	del_ecxt(e);
+@@ -1728,7 +1728,7 @@ static void do_event(struct dept_map *m, struct dept_map *real_m,
+ 			add_dep(eh->ecxt, wh->wait);
+ 	}
+ 
+-	for (i = 0; i < DEPT_IRQS_NR; i++) {
++	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
+ 		struct dept_ecxt *e;
+ 
+ 		if (before(dt->wgen_enirq[i], wg))
+@@ -1775,7 +1775,7 @@ static void disconnect_class(struct dept_class *c)
+ 		call_rcu(&d->rh, del_dep_rcu);
+ 	}
+ 
+-	for (i = 0; i < DEPT_IRQS_NR; i++) {
++	for (i = 0; i < DEPT_CXT_IRQS_NR; i++) {
+ 		stale_iecxt(iecxt(c, i));
+ 		stale_iwait(iwait(c, i));
+ 	}
+@@ -1800,27 +1800,21 @@ static unsigned long cur_enirqf(void)
+ 	return 0UL;
  }
-diff --git a/kernel/dependency/dept_internal.h b/kernel/dependency/dept_internal.h
-new file mode 100644
-index 000000000000..6b39e5a2a830
---- /dev/null
-+++ b/kernel/dependency/dept_internal.h
-@@ -0,0 +1,54 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Dept(DEPendency Tracker) - runtime dependency tracker internal header
-+ *
-+ * Started by Byungchul Park <max.byungchul.park@gmail.com>:
-+ *
-+ *  Copyright (c) 2020 LG Electronics, Inc., Byungchul Park
-+ *  Copyright (c) 2024 SK hynix, Inc., Byungchul Park
-+ */
-+
-+#ifndef __DEPT_INTERNAL_H
-+#define __DEPT_INTERNAL_H
-+
-+#ifdef CONFIG_DEPT
-+#include <linux/percpu.h>
-+
-+struct dept_pool {
-+	const char			*name;
-+
-+	/*
-+	 * object size
-+	 */
-+	size_t				obj_sz;
-+
-+	/*
-+	 * the number of the static array
-+	 */
-+	atomic_t			obj_nr;
-+
-+	/*
-+	 * offset of ->pool_node
-+	 */
-+	size_t				node_off;
-+
-+	/*
-+	 * pointer to the pool
-+	 */
-+	void				*spool;
-+	struct llist_head		boot_pool;
-+	struct llist_head __percpu	*lpool;
-+};
-+
-+enum object_t {
-+#define OBJECT(id, nr) OBJECT_##id,
-+	#include "dept_object.h"
-+#undef OBJECT
-+	OBJECT_NR,
-+};
-+
-+extern struct list_head dept_classes;
-+extern struct dept_pool dept_pool[];
-+
-+#endif
-+#endif /* __DEPT_INTERNAL_H */
-diff --git a/kernel/dependency/dept_proc.c b/kernel/dependency/dept_proc.c
-new file mode 100644
-index 000000000000..97beaf397715
---- /dev/null
-+++ b/kernel/dependency/dept_proc.c
-@@ -0,0 +1,96 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Procfs knobs for Dept(DEPendency Tracker)
-+ *
-+ * Started by Byungchul Park <max.byungchul.park@gmail.com>:
-+ *
-+ *  Copyright (C) 2021 LG Electronics, Inc. , Byungchul Park
-+ *  Copyright (C) 2024 SK hynix, Inc. , Byungchul Park
-+ */
-+#include <linux/proc_fs.h>
-+#include <linux/seq_file.h>
-+#include <linux/dept.h>
-+#include "dept_internal.h"
-+
-+static void *l_next(struct seq_file *m, void *v, loff_t *pos)
+ 
+-static int cur_irq(void)
++static int cur_cxt(void)
+ {
+ 	if (lockdep_softirq_context(current))
+-		return DEPT_SIRQ;
++		return DEPT_CXT_SIRQ;
+ 	if (lockdep_hardirq_context())
+-		return DEPT_HIRQ;
+-	return DEPT_IRQS_NR;
++		return DEPT_CXT_HIRQ;
++	return DEPT_CXT_PROCESS;
+ }
+ 
+ static unsigned int cur_ctxt_id(void)
+ {
+ 	struct dept_task *dt = dept_task();
+-	int irq = cur_irq();
++	int cxt = cur_cxt();
+ 
+-	/*
+-	 * Normal process context
+-	 */
+-	if (irq == DEPT_IRQS_NR)
+-		return 0U;
+-
+-	return dt->irq_id[irq] | (1UL << irq);
++	return dt->cxt_id[cxt] | (1UL << cxt);
+ }
+ 
+ static void enirq_transition(int irq)
+@@ -1877,7 +1871,7 @@ static void dept_enirq(unsigned long ip)
+ 
+ 	flags = dept_enter();
+ 
+-	for_each_set_bit(irq, &irqf, DEPT_IRQS_NR) {
++	for_each_set_bit(irq, &irqf, DEPT_CXT_IRQS_NR) {
+ 		dt->enirq_ip[irq] = ip;
+ 		enirq_transition(irq);
+ 	}
+@@ -1923,6 +1917,13 @@ void noinstr dept_hardirqs_off(void)
+ 	dept_task()->hardirqs_enabled = false;
+ }
+ 
++void noinstr dept_update_cxt(void)
 +{
-+	/*
-+	 * XXX: Serialize list traversal if needed. The following might
-+	 * give a wrong information on contention.
-+	 */
-+	return seq_list_next(v, &dept_classes, pos);
++	struct dept_task *dt = dept_task();
++
++	dt->cxt_id[DEPT_CXT_PROCESS] += 1UL << DEPT_CXTS_NR;
 +}
 +
-+static void *l_start(struct seq_file *m, loff_t *pos)
-+{
-+	/*
-+	 * XXX: Serialize list traversal if needed. The following might
-+	 * give a wrong information on contention.
-+	 */
-+	return seq_list_start_head(&dept_classes, *pos);
-+}
+ /*
+  * Ensure it's the outmost softirq context.
+  */
+@@ -1930,7 +1931,7 @@ void dept_softirq_enter(void)
+ {
+ 	struct dept_task *dt = dept_task();
+ 
+-	dt->irq_id[DEPT_SIRQ] += 1UL << DEPT_IRQS_NR;
++	dt->cxt_id[DEPT_CXT_SIRQ] += 1UL << DEPT_CXTS_NR;
+ }
+ 
+ /*
+@@ -1940,7 +1941,7 @@ void noinstr dept_hardirq_enter(void)
+ {
+ 	struct dept_task *dt = dept_task();
+ 
+-	dt->irq_id[DEPT_HIRQ] += 1UL << DEPT_IRQS_NR;
++	dt->cxt_id[DEPT_CXT_HIRQ] += 1UL << DEPT_CXTS_NR;
+ }
+ 
+ void dept_sched_enter(void)
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index 54b03db59a12..195c11b92bcf 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1365,9 +1365,12 @@ config DEBUG_PREEMPT
+ 
+ menu "Lock Debugging (spinlocks, mutexes, etc...)"
+ 
++config ARCH_HAS_DEPT_SUPPORT
++	bool
 +
-+static void l_stop(struct seq_file *m, void *v)
-+{
-+}
-+
-+static int l_show(struct seq_file *m, void *v)
-+{
-+	struct dept_class *fc = list_entry(v, struct dept_class, all_node);
-+	struct dept_dep *d;
-+	const char *prefix;
-+
-+	if (v == &dept_classes) {
-+		seq_puts(m, "All classes:\n\n");
-+		return 0;
-+	}
-+
-+	prefix = fc->sched_map ? "<sched> " : "";
-+	seq_printf(m, "[%p] %s%s\n", (void *)fc->key, prefix, fc->name);
-+
-+	/*
-+	 * XXX: Serialize list traversal if needed. The following might
-+	 * give a wrong information on contention.
-+	 */
-+	list_for_each_entry(d, &fc->dep_head, dep_node) {
-+		struct dept_class *tc = d->wait->class;
-+
-+		prefix = tc->sched_map ? "<sched> " : "";
-+		seq_printf(m, " -> [%p] %s%s\n", (void *)tc->key, prefix, tc->name);
-+	}
-+	seq_puts(m, "\n");
-+
-+	return 0;
-+}
-+
-+static const struct seq_operations dept_deps_ops = {
-+	.start	= l_start,
-+	.next	= l_next,
-+	.stop	= l_stop,
-+	.show	= l_show,
-+};
-+
-+static int dept_stats_show(struct seq_file *m, void *v)
-+{
-+	int r;
-+
-+	seq_puts(m, "Availability in the static pools:\n\n");
-+#define OBJECT(id, nr)							\
-+	r = atomic_read(&dept_pool[OBJECT_##id].obj_nr);		\
-+	if (r < 0)							\
-+		r = 0;							\
-+	seq_printf(m, "%s\t%d/%d(%d%%)\n", #id, r, nr, (r * 100) / (nr));
-+	#include "dept_object.h"
-+#undef  OBJECT
-+
-+	return 0;
-+}
-+
-+static int __init dept_proc_init(void)
-+{
-+	proc_create_seq("dept_deps", S_IRUSR, NULL, &dept_deps_ops);
-+	proc_create_single("dept_stats", S_IRUSR, NULL, dept_stats_show);
-+	return 0;
-+}
-+
-+__initcall(dept_proc_init);
+ config DEPT
+ 	bool "Dependency tracking (EXPERIMENTAL)"
+-	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT
++	depends on DEBUG_KERNEL && LOCK_DEBUGGING_SUPPORT && ARCH_HAS_DEPT_SUPPORT
+ 	select DEBUG_SPINLOCK
+ 	select DEBUG_MUTEXES if !PREEMPT_RT
+ 	select DEBUG_RT_MUTEXES if RT_MUTEXES
 -- 
 2.17.1
 
