@@ -1,99 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-49461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2CDABC8C0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 22:56:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECAA7ABCA14
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 23:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A96323A50F2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 20:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E0F33AB1C2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 21:39:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B2E219A94;
-	Mon, 19 May 2025 20:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C24E21E0AC;
+	Mon, 19 May 2025 21:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K/7hFFvN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2z/2Q5RW";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="K/7hFFvN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="2z/2Q5RW"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="GVewrvfp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0AD155335
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 20:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8210E21A94F
+	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 21:35:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747688203; cv=none; b=kxzZP89i8bShxiUEHVDytQTeBtjUmQFTgTV0blkNKMl1zj/0B/m+Cq9OfVjPtY0N3EnUuVAtfWal8i0V9gD0gfP0q274kKnybxyMVaTFDp14hfnR+nN0sJwyE5lth0Ru9zI/pdhefucBKKLcwUg3SJ/hnD0q1KiDVYsljwXutuI=
+	t=1747690513; cv=none; b=m58F0T8leqE8iuiHfCY1qn+UADmN7sjSO804m8Mh63NzatbH7Js6fkYVXwu8Ztrfwq/Sir4alxl4qEaZfWeGBdyl0jeYESihn/swD620wCMo7XVbG0IVczhVUgL/gGQdIyUKswcxnEVkMUgDyt+jmv2QOVMKJRqZ0WlSWUhRx6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747688203; c=relaxed/simple;
-	bh=BF+3Mo5YfHKKNXMY0GA+nyL4dIscLdkg5TVWFTxqbn4=;
+	s=arc-20240116; t=1747690513; c=relaxed/simple;
+	bh=UwTtLAdTmM3o5DWUqeAAm+dCZh5TRkRO14eBU6K39jU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bChwxVQutAPh8uU5jOQNraGuIggwwfOQMvtJ0BEELJwbVYJrLxljvQLr28HKxK/YonOZdLrixrEuyeRlVUIPz0Ak5k76RuFlysEWKYVxnfOvmknvLip5BOBQWGlwnMGCzQVToQ62W+0nBTYYJkgW9i+BObRmwlvvOSoiv9TNKo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K/7hFFvN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2z/2Q5RW; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=K/7hFFvN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=2z/2Q5RW; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 8B1AF204CE;
-	Mon, 19 May 2025 20:56:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747688199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U+1uc0ijv8y3V31YyOzvKznzazA+ZDurgM62mkgHSl4=;
-	b=K/7hFFvNxJjOLKE3YPIyilPSef+tGJgmlCu7zkf0NajNnxq6HhsZYU3FhMyDG1NdTigPFW
-	7hYy5nx2rX/f96bj7pnTnxag+joqM9/MxLcvH9HghieYdLERgWBn12TjxhXXJXd3RX6xf2
-	OJ/vDibduDleOi96sQbgwEVwgmYkltQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747688199;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U+1uc0ijv8y3V31YyOzvKznzazA+ZDurgM62mkgHSl4=;
-	b=2z/2Q5RWfMB9J5Q5v8x3KBmOzIDJPv5tWWkHJRnk8YmyUwsNs8uSAjQuLx1uiZliazBet4
-	Rl/JlTe6dylfp4BA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747688199; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U+1uc0ijv8y3V31YyOzvKznzazA+ZDurgM62mkgHSl4=;
-	b=K/7hFFvNxJjOLKE3YPIyilPSef+tGJgmlCu7zkf0NajNnxq6HhsZYU3FhMyDG1NdTigPFW
-	7hYy5nx2rX/f96bj7pnTnxag+joqM9/MxLcvH9HghieYdLERgWBn12TjxhXXJXd3RX6xf2
-	OJ/vDibduDleOi96sQbgwEVwgmYkltQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747688199;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U+1uc0ijv8y3V31YyOzvKznzazA+ZDurgM62mkgHSl4=;
-	b=2z/2Q5RWfMB9J5Q5v8x3KBmOzIDJPv5tWWkHJRnk8YmyUwsNs8uSAjQuLx1uiZliazBet4
-	Rl/JlTe6dylfp4BA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 821F613A30;
-	Mon, 19 May 2025 20:56:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id bY7AHwebK2glHwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 19 May 2025 20:56:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3EAD1A0A31; Mon, 19 May 2025 22:56:39 +0200 (CEST)
-Date: Mon, 19 May 2025 22:56:39 +0200
-From: Jan Kara <jack@suse.cz>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] User namespace aware fanotify
-Message-ID: <ul2i56zhumflgg3lyi3wizl2f3m2araht5lnglmit7qgugio2l@e73xjbax2ajm>
-References: <20250516192803.838659-1-amir73il@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qIBqf1uR4wpSoiVyjrOEEtM9EB+igNt+ZGprANTkz6TQCMczn8w1emxC7qRGFVBme4Sr04otVxYaB+pI31PNnIk2QUFhKkL/Ky3rmwuLfxj//T9hg/hpVghgFAzwcefpcVPD4F835kCDXz3bdnM/OVtcCqATVlfzxJ/aPTc1Etk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=GVewrvfp; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jOGEytbhcMBqWlDaglAMvrwLhgI7utfBDmM3alU+39Q=; b=GVewrvfp/JELgQAp/Wb37FHym7
+	qiWCSQCQLgEPrYjq79BQBM37MBZSnQCWPHjL/koWXFpShDOVjsVi21B+i/7IrWtB3BvzzKGkpIs0x
+	7iHcNKDOOTjntLFu0h+0F2fB6+qGxNKO86vv8vCVSFECmzX5U/Yo64zLHZg5aw8VMGnrqp4/Ho1Gy
+	waatXB+sXVoTItEWzj/9FtlYMylmm9PN3iwALgQWyhffVcZb/MJ35rfWP6dnpWqMsaM3Zqhj29qWW
+	C1Rf005MpvZAK5VOV7MEtj4hiL6SYorDPDXyJQzCmbDb+NSXe4wkjQp83AOE7G5UsZ0JJH/gUl2Wf
+	xrtfTZ9g==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uH88a-0000000C3U9-0YqS;
+	Mon, 19 May 2025 21:35:08 +0000
+Date: Mon, 19 May 2025 22:35:08 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	linux-fsdevel@vger.kernel.org,
+	Christian Brauner <brauner@kernel.org>
+Subject: Re: [RFC][CFT][PATCH] Rewrite of propagate_umount() (was Re: [BUG]
+ propagate_umount() breakage)
+Message-ID: <20250519213508.GA2023217@ZenIV>
+References: <20250511232732.GC2023217@ZenIV>
+ <87jz6m300v.fsf@email.froward.int.ebiederm.org>
+ <20250513035622.GE2023217@ZenIV>
+ <20250515114150.GA3221059@ZenIV>
+ <20250515114749.GB3221059@ZenIV>
+ <20250516052139.GA4080802@ZenIV>
+ <CAHk-=wi1r1QFu=mfr75VtsCpx3xw_uy5yMZaCz2Cyxg0fQh4hg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -102,99 +68,83 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250516192803.838659-1-amir73il@gmail.com>
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -0.80
-X-Spamd-Result: default: False [-0.80 / 50.00];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5]
+In-Reply-To: <CAHk-=wi1r1QFu=mfr75VtsCpx3xw_uy5yMZaCz2Cyxg0fQh4hg@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri 16-05-25 21:28:01, Amir Goldstein wrote:
-> Jan,
+On Mon, May 19, 2025 at 11:11:10AM -0700, Linus Torvalds wrote:
+> Another thing that is either purely syntactic, or shows that I
+> *really* don't understand your patch. Why do you do this odd thing:
 > 
-> Considering that the review discussion on v2 [1] did not yet converge
-> and considering that the merge window is very close, I realized
-> there is a way that we can simplify the controversial part.
+>         // reduce the set until it's non-shifting
+>         for (m = first_candidate(); m; m = trim_one(m))
+>                 ;
 > 
-> There are two main use cases to allow setting marks inside user ns:
+> which seems to just walk the candidates list in a very non-obvious
+> manner (this is one of those "I had to go back and forth to see what
+> first_candidate() did and what lists it used" cases).
 > 
-> 1. Christian added support for open_by_handle_at(2) to admin inside
->    userns, which makes watching FS_USERNS_MOUNT sb more useful.
-> 2. The mount events added by Miklos would be very useful also inside
->    userns.
+> It *seems* to be the same as
 > 
-> The rule for watching mntns inside user ns is pretty obvious and so
-> is the rule for watching an sb inside user ns.
+>         list_for_each_entry_safe(m, tmp, &candidates, mnt_umounting)
+>                 trim_one(m);
 > 
-> The complexity discussed in review of v2 revolved around the more
-> complicated rules for watching fs events on a specific mount inside
-> users ns.
-> 
-> My realization is that watching fs events on a mount inside user ns
-> is a less intersting use case and it is much easier to apply the same
-> obvious rules as for watching an sb inside user ns and discuss
-> relaxing them later if there is any interesting use case for that.
-> 
-> mntns watch inside user ns was tested with the mount-notify_test_ns
-> selftest [2]. sb/mount watches inside user ns were tested manually
-> with fsnotifywatch -S and -M with some changes to inotify-tools [3].
-> 
-> Thanks,
-> Amir.
+> because if I read that code right, 'trim_one()' will just always
+> return the next entry in that candidate list.
 
-Thanks! Patches look good to me and they seem obvious enough now that I've
-just picked them up.
+	list_for_each_entry_safe() is safe wrt removal of the _current_
+element.  Suppose the list is <A, B, C, D> and trim_one(A) wants to
+take out A, B and D.  What we want is to have it followed by trim_one(C),
+but how could *anything* outside of trim_one() get to C?
 
-								Honza
+	list_for_each_entry_safe() would pick B as the next entry
+to consider, which will end up with looping in B ever after.
 
-> 
-> Changes since v2:
-> - selftest merged to Christian's tree
-> - Change mount mark to require capable sb user ns
-> - Remove incorrect reference to FS_USERNS_MOUNT in comments (Miklos)
-> - Avoid unneeded type casting to mntns (Miklos)
-> 
-> Changes since v1:
-> - Split cleanup patch (Jan)
-> - Logic simplified a bit
-> - Add support for mntns marks inside userns
-> 
-> [1] https://lore.kernel.org/linux-fsdevel/20250419100657.2654744-1-amir73il@gmail.com/
-> [2] https://lore.kernel.org/linux-fsdevel/20250509133240.529330-1-amir73il@gmail.com/
-> [3] https://github.com/amir73il/inotify-tools/commits/fanotify_userns/
-> 
-> Amir Goldstein (2):
->   fanotify: remove redundant permission checks
->   fanotify: support watching filesystems and mounts inside userns
-> 
->  fs/notify/fanotify/fanotify.c      |  1 +
->  fs/notify/fanotify/fanotify_user.c | 50 +++++++++++++++++-------------
->  include/linux/fanotify.h           |  5 ++-
->  include/linux/fsnotify_backend.h   |  1 +
->  4 files changed, 33 insertions(+), 24 deletions(-)
-> 
-> -- 
-> 2.34.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	What trim_one(A) does instead is
+* note that A itself needs to be removed
+* remove B and D
+* remember who currently follows A (the list is down to <A, C>, so C it is)
+* remove A
+* return C.
+
+	We could have a separate list and have trim_one(m) move m to in
+case it still looks like a valid candidate.  Then the loop would turn
+into
+	while !empty(candidates)
+		trim_one(first candidate)
+	move the second list over to candidates (or just use it on the
+next stage instead of candidates)
+What's slightly confusing about that variant is that m might survive
+trim_one(m), only to be taken out by subsequent call of trim_one() for
+another mount.  So remove_candidate(p) would become "remove p from
+candidates or from the set of seen candidates, whichever p currently
+belongs to"...
+
+	Another variant would be to steal one more bit from mnt_flags,
+set it for all candidates when collecting them, have is_candidate() check
+that instead of list_empty(&m->mnt_umounting) and clean it where this
+variant removes from the list; trim_one() would immediately return if
+bit is not set.  Then we could really do list_for_each_entry_safe(),
+with another loop doing list removals afterwards.  Extra work that way,
+though, and I still think it's more confusing...
+	OTOH, "steal one more bit" would allow to get rid of
+->mnt_umounting - we could use ->mnt_list for all these sets.  IIRC,
+the reason for ->mnt_umounting was that we used to maintain ->mnt_list
+for everything in a namespace, and having to restore it if we decide
+that candidate has to stay alive would be painful.  These days we
+use rbtree for iterators, so ->mnt_list on those suckers is fair
+game...
+
+	Re globals - the other bunch is part of propagate_mnt(), not
+propagate_umount()...  IIRC, at some point I got fed up by arseloads
+of arguments passed from propagate_umount() down to the helpers and
+went "fuck it, we have a hard dependency on global serialization anyway,
+might as well make all those arguments global" (and I remember trying
+to go with per-namespace locks; stuff of nightmares, that)...
+
+	I'll look into gathering that stuff into a single structure
+passed by the callers, but the whole thing (especially on the umount
+side) really depends upon not running into another instance working
+at the same time.  Trying to cope with duelling umount propagations
+from two threads... the data structures would be the least of headache
+sources there.
 
