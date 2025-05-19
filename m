@@ -1,222 +1,270 @@
-Return-Path: <linux-fsdevel+bounces-49427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECEB5ABC19D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 17:05:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C20ABC22B
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 17:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7F1C7AC851
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 15:03:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29630188A6D0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 May 2025 15:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57883284B27;
-	Mon, 19 May 2025 15:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63302857C9;
+	Mon, 19 May 2025 15:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infinera.com header.i=@infinera.com header.b="XjGOjs0N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pg+W/TWK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E761D5AD4
-	for <linux-fsdevel@vger.kernel.org>; Mon, 19 May 2025 15:04:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747667098; cv=fail; b=VSogQ8cahO2d//pDvropclkL63KddLQGaFGDGrbIcPmssLsk4zVHgke87eAytlwxsUcBwFC5qtO+tYHgxDSY+Vm/2kCHGtQNw5TjgpyVPnoagxmchl84c+aXr0dsuBUswNUH/trmAazMj4nMr0N5+T4hyRlPdkGEAPpu2uKoXeo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747667098; c=relaxed/simple;
-	bh=TSuaMdYNtvBcrvn+nVgslSkxjR7Ps3aU4o+BWlXTVUo=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZHDGCTTh/srjaMxzLh1TaakD+P6KuR1HvCREdSfOonK6erF4GS6a6X8bkQvqoHa/+XW6LsmGhSP+50+Y5vESI6t1czxs1N3MG0Wos/oR0QHoYgeYoO1W86WN53rvoPGmJ7szJz+JJjISLpyqcBedE7lOPWQ58H3F68DnM92UUBc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinera.com; spf=pass smtp.mailfrom=infinera.com; dkim=pass (2048-bit key) header.d=infinera.com header.i=@infinera.com header.b=XjGOjs0N; arc=fail smtp.client-ip=40.107.220.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinera.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infinera.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W7X/3WXd9N5GjV5DVqGsYLMnFIYcZG6f7vkDYbzY+k+lhPOUVp82NLSnhazdnnLnNfT6k8jzlXtPBe9tyjSMgrCGi3tTFEVBd79hCHPzEzpFI17OZKokx4CtSQpp7FXsN1TyAIS6/J6/C08ivheibjIYi0rQxv/eSndNOpHAxgGvB1jI8UDXauonT9MaR5Uo1ckLLfgY2duuIOiU82HurH5OmMmMQW5ZQgw1Oir25Qot/8Feo6EiFRFnp20xtIAJgA6s50BLn5nubRpvB+0mdHC6yB47po8siz5JiNOY1kT2UBJQP+F/x/vHbZoeIWTRb4ZaRyhcPh1Y4G/CNrTkBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7XHAaRx3KfmzNJ/QZMbPv9ufxcnBuXDuWqXnbxFtSEU=;
- b=vxnAruPLLi2Hyzx0XTAgLvtubwduUtp9Tl4FeY2i2HGYcSIlad+upb06+JCU+qZkkol+6LSqnD3HJ+ybvjTRgYzj+Wd2JfMtCeiLZuss91P7PmSfzX5nBjzJLF6E/9Kr77MDAPGHH7QvLxBwQGu1McWiSXouzyTTZJCJ7HUY9ehwNuWRFq6z/OpPRzeZ+MRmS1jNMjzvsdBBoAAorJqZ677NWBcdvBvvTy184fkjqRBOrQQ6tu+W8PzS7PM3VygEYg2hazb5Jqh79dMXxyBFxBB1CJCDlCa8C0AdBUQuo6JpjQ3YJ5BwUrg7rt5mxI5UeMWEbDEEButQWyHDrboC9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 8.4.225.30) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=infinera.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=infinera.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infinera.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7XHAaRx3KfmzNJ/QZMbPv9ufxcnBuXDuWqXnbxFtSEU=;
- b=XjGOjs0NfVhrjrwo0QUWV4KZqwmQKKaCLrYkSBp8iqMjx5malnGBdrr41OYiZkY7VRoPI06TDoantAJZ71eapBaNJLrkYjMrX7tRj02poWKvBfArjFU+VM9GKr/B8F18Kpm5yp3FgdGswL/9xxSO8+zlxzMRmmMm3TVwlvmZyAXlYMHpNwx29fQfUqq/bMHrEUb5hmchU3byzm+w8LbFe4pL60TZuiq4ZDfOHPqCeJ++eV7hnX0pshKimKOtBDCafl2RdonFQqTUAgE3p8Q8+VXTV2MLzrfvxuZfBE5luYgUM/ixXtVI2D0edwo/i5aWSV4uXN9yDv9O0k5QNGF5/g==
-Received: from CH5P220CA0002.NAMP220.PROD.OUTLOOK.COM (2603:10b6:610:1ef::10)
- by SA6PR10MB8063.namprd10.prod.outlook.com (2603:10b6:806:436::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.33; Mon, 19 May
- 2025 15:04:54 +0000
-Received: from CH2PEPF00000146.namprd02.prod.outlook.com
- (2603:10b6:610:1ef:cafe::d5) by CH5P220CA0002.outlook.office365.com
- (2603:10b6:610:1ef::10) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.31 via Frontend Transport; Mon,
- 19 May 2025 15:04:54 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.4.225.30)
- smtp.mailfrom=infinera.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=infinera.com;
-Received-SPF: Pass (protection.outlook.com: domain of infinera.com designates
- 8.4.225.30 as permitted sender) receiver=protection.outlook.com;
- client-ip=8.4.225.30; helo=owa.infinera.com; pr=C
-Received: from owa.infinera.com (8.4.225.30) by
- CH2PEPF00000146.mail.protection.outlook.com (10.167.244.103) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8769.18 via Frontend Transport; Mon, 19 May 2025 15:04:54 +0000
-Received: from sv-ex16-prd.infinera.com (10.100.96.229) by
- sv-ex16-prd.infinera.com (10.100.96.229) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 19 May 2025 08:04:52 -0700
-Received: from sv-smtp-pd1.infinera.com (10.100.98.81) by
- sv-ex16-prd.infinera.com (10.100.96.229) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Mon, 19 May 2025 08:04:52 -0700
-Received: from se-metroit-prd1.infinera.com ([10.210.32.58]) by sv-smtp-pd1.infinera.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Mon, 19 May 2025 08:04:52 -0700
-Received: from se-jocke-lx.infinera.com (se-jocke-lx.infinera.com [10.210.73.25])
-	by se-metroit-prd1.infinera.com (Postfix) with ESMTP id 862C7F40257;
-	Mon, 19 May 2025 17:04:51 +0200 (CEST)
-Received: by se-jocke-lx.infinera.com (Postfix, from userid 1001)
-	id 72DE46006581; Mon, 19 May 2025 17:04:51 +0200 (CEST)
-From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
-To: <linux-fsdevel@vger.kernel.org>, <Johannes.Thumshirn@wdc.com>
-CC: Joakim Tjernlund <joakim.tjernlund@infinera.com>
-Subject: [PATCH v4] block: support mtd:<name> syntax for block devices
-Date: Mon, 19 May 2025 17:03:50 +0200
-Message-ID: <20250519150449.283536-1-joakim.tjernlund@infinera.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <6e90a2be-a1a9-46fe-a3f3-bd702c547464@wdc.com>
-References: <6e90a2be-a1a9-46fe-a3f3-bd702c547464@wdc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C8B2746A;
+	Mon, 19 May 2025 15:20:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747668036; cv=none; b=ZOoGtwz4OiQr11Vthr1y18ZxRHGR0Lpj4QGFW5f0dLavDo3Hp6SLYNrOePXvE9CRfiwf9y+4WuH6yQJdndz8R5EwXg1J13B2f9o+Ya8bUacMKSAM8jmGkM/v0cgrU2645yaS7e6uCD05SW4lSApXJdWalZ5mfHUGQE0nU6tePDY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747668036; c=relaxed/simple;
+	bh=hCsytdVeeJL9k59PuEkSeSt24V1PhRpfKVXpzj7jUtw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TmuY1pafp96XZnbeYS8sjGpmWiuaUkSysChoircafBfcFGvWGnzLE7OOlFFL3zIVN4PlNYNIc3eF9/EntNUE4nBeGEkLVXv0E2atWMLJ6v3Dj4lTQmZAh0h6WfhSEBBEBs2SvlqoPdtfVt4KaAJVmhAYKcG2VP3v3Da6ycANMkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pg+W/TWK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31192C4CEE4;
+	Mon, 19 May 2025 15:20:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747668035;
+	bh=hCsytdVeeJL9k59PuEkSeSt24V1PhRpfKVXpzj7jUtw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pg+W/TWKKyjgF5xP20j0uAdD0cIn+UCdcUHoBD8pvqnECQMtWaatkCm3ynMk1tcKQ
+	 BnFX9YSkQqtUIqBJw8xMqDfNAU80qfQ5jKuhqN8lSxQ1uBnPX+xsF7kROYIXaoGtbi
+	 p41LAZ79T2BhxM69kZciPyVjVh+p1iGy9hvmiFowCNVhK4wPPalkEdnOUGWnvX3Ph2
+	 N2wvZe/D7j8ui6YHApTHqAm0hdwMIhqIYwg76JLjDrJAoUCh2T4wWySPbqF8c8KZPf
+	 XfUUm4HHS5mTc9BxQFVQ59h5CSgXnfwnOolD5CF6/Y97/QLWj/M15r9u+xhM86jyb7
+	 M5DYrZNKbxFoQ==
+Date: Mon, 19 May 2025 17:20:30 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Frederic Weisbecker <frederic@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Joel Fernandes <joel@joelfernandes.org>, 
+	Josh Triplett <josh@joshtriplett.org>, Uladzislau Rezki <urezki@gmail.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Helge Deller <deller@gmx.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, rcu@vger.kernel.org, linux-mm@kvack.org, 
+	linux-parisc@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH 01/12] module: Move modprobe_path and modules_disabled
+ ctl_tables into the module subsys
+Message-ID: <l7dgle5lhsvfrikd4rqvzuwrqwrseucf5ijgnbi6fxook6dnhj@sc7givb3qimb>
+References: <20250509-jag-mv_ctltables_iter2-v1-0-d0ad83f5f4c3@kernel.org>
+ <20250509-jag-mv_ctltables_iter2-v1-1-d0ad83f5f4c3@kernel.org>
+ <e2ebf88d-46a2-4f38-a0c8-940c3d3bee49@suse.com>
+ <g3e3ygz4jb73b3zhxexpwacwui3imlwauujzeq2nlopp2i2fjp@lzj33hcwztc2>
+ <f6058414-e04d-4b7f-b4e6-3ac3613edbc1@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 19 May 2025 15:04:52.0541 (UTC) FILETIME=[5F9C0ED0:01DBC8CF]
-Content-Type: text/plain
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH2PEPF00000146:EE_|SA6PR10MB8063:EE_
-X-MS-Office365-Filtering-Correlation-Id: 80887327-241e-4ba8-dc1e-08dd96e6830f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|376014|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3edAGdYnO7uoZKpy2N2LpSuMpzx2CMmTkiZXRpPy4ptELJm6IGww1kEruvFb?=
- =?us-ascii?Q?kAHiaeInD6sYUyI1NCiFdtPkU8mfHlm8XdYzF4eBJAkRoMUqFUzLm3kO8UNL?=
- =?us-ascii?Q?5x6xQs3aXYZTO+1opxijvE7At3Yf1y+9xqitp4V5XABji2lnZ8wZ0l+w6AhC?=
- =?us-ascii?Q?A17woFXlgoQDRL3qxPKdponpQoI5ZsEQTXu0HnVO8pnQE49IpY9OIk6lCOuB?=
- =?us-ascii?Q?FBzJXQp0+ly3zfhRAW7U3Yhx+PqQKYBjeVwAikQWyOPXlrFHAVhrSMlNLe+O?=
- =?us-ascii?Q?1A0pq4kd/KexYkiL7Z2XYq/OZ4BJCUZr/TAzlpgqefjKK0MKGJP+nOinJK2y?=
- =?us-ascii?Q?ET2otZ7y1BOUYN8yQKLO0CdL6Z9M/HAXlZmU1wpUmZDpi2Uwz1bWPXgVgc+j?=
- =?us-ascii?Q?6JRNBUUo9f5EZY1PMg530YMYGC0IN1XggQG2MdWPC19/gWiBBmm4nbFTfcOM?=
- =?us-ascii?Q?2py68OC/k1i9ZBuD6vKK0IyABIED9loZb/Ej5jCaUeVZ3ZIz7azW2sjtm65w?=
- =?us-ascii?Q?Rg3bOnTGSr+zCeBmTUAAHV/XtfSbRYkeetfuGcnmtz+BupsFSvEuMzaYmjz0?=
- =?us-ascii?Q?ka2NmVAKhv09Gk/awx2lC2kc2zJVoJyztliWaP6mOtc2jH6/8ZDS/vY6QYVA?=
- =?us-ascii?Q?vnkv8KrlhSSkPofCjx4PZ8gNNTd7uz3YNFzRfnSSMGmbsgGG00TY88za5aXw?=
- =?us-ascii?Q?oeHUvOkwwDON+lc2Hqs45Es+jBsm+VrowOMAedDU5n5l3ETxREPnjVdx19d+?=
- =?us-ascii?Q?oUTxvl6q1AvWAQsOnclH55oAxi394NDPvd57IJ0Omaj1MNh/4M7XmTf4RFPn?=
- =?us-ascii?Q?LP9z3lqskURfxWgRI4JR6Py64vumbWI7zi7/kskVQN5Bmhk9KHHmGRJoArLV?=
- =?us-ascii?Q?ZEHIf054k1i/xzscPa0d3io4vm/x0yRrlEKg/2zEQc5Dkvl+XBjGO8h9kImY?=
- =?us-ascii?Q?6bitZG+tvU3vpPjHvAb3NYnKXIUsTH82A21eOullO7pdldu4d5A7/3+ca5N+?=
- =?us-ascii?Q?PTMZi+KrB832i1+ZQ/ENwXD46obUbrgWf8cspGT1Hs6HeHTRDjWHniZaHiD3?=
- =?us-ascii?Q?zFIIph/yf5SfNiKtrfXwUnkmjdEgMXemD7memxsnuPQoWadhbkse2eDPkIuD?=
- =?us-ascii?Q?plUQRAIlEQX6hJ10hhB8NCg5xalhYqZqoGfI4bGF8i8EPrxxx5iGS39cUzZ9?=
- =?us-ascii?Q?w4R9bcBMHaBWwcSxcUR1xFaCr40iTn7p8SI+rprIbdyM95/r1S3/peBHCRQo?=
- =?us-ascii?Q?6YNvHj0VbNiHjmLGHzyFYA4lQpZy6Ab7VJeeaU9AFBQERLQklEdtDadkDyZN?=
- =?us-ascii?Q?DR8QrcJqdAg15quWpoezcYyj5hVOfpC+AT4/GLbVPOWY9h6VRzrs6IhmO2x5?=
- =?us-ascii?Q?4ElSwPMZJc9mwefyk6bmh0dv+TKsj7w2/Hx7ipGmtLfuO3RQQmfffq2b0z32?=
- =?us-ascii?Q?/jngwidfqtM/ZUjPN0vvJSI2cHzhZ2c0T2yDkGZQb6cLyiC+fVi1Zqa27MGE?=
- =?us-ascii?Q?rZSXyzuQhKJEUlDO7nk4UgpuR6t9t44Mc5PC?=
-X-Forefront-Antispam-Report:
-	CIP:8.4.225.30;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:owa.infinera.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(376014)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: infinera.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 May 2025 15:04:54.0899
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 80887327-241e-4ba8-dc1e-08dd96e6830f
-X-MS-Exchange-CrossTenant-Id: 285643de-5f5b-4b03-a153-0ae2dc8aaf77
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=285643de-5f5b-4b03-a153-0ae2dc8aaf77;Ip=[8.4.225.30];Helo=[owa.infinera.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH2PEPF00000146.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR10MB8063
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="otw3l52sr4y45r5c"
+Content-Disposition: inline
+In-Reply-To: <f6058414-e04d-4b7f-b4e6-3ac3613edbc1@suse.com>
 
-This enables mounting, like JFFS2, MTD devices by "label":
-   mount -t squashfs mtd:appfs /tmp
-where mtd:appfs comes from:
- # >  cat /proc/mtd
-dev:    size   erasesize  name
-...
-mtd22: 00750000 00010000 "appfs"
 
-Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
----
- fs/super.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+--otw3l52sr4y45r5c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/fs/super.c b/fs/super.c
-index 97a17f9d9023..df7a6cfa34d3 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -37,6 +37,7 @@
- #include <linux/user_namespace.h>
- #include <linux/fs_context.h>
- #include <uapi/linux/mount.h>
-+#include <linux/mtd/mtd.h>
- #include "internal.h"
- 
- static int thaw_super_locked(struct super_block *sb, enum freeze_holder who);
-@@ -1595,6 +1596,32 @@ int setup_bdev_super(struct super_block *sb, int sb_flags,
- }
- EXPORT_SYMBOL_GPL(setup_bdev_super);
- 
-+static int translate_mtd_name(struct fs_context *fc)
-+{
-+#ifdef CONFIG_MTD_BLOCK
-+	if (!strncmp(fc->source, "mtd:", 4)) {
-+		struct mtd_info *mtd;
-+		char *blk_source;
-+
-+		/* mount by MTD device name */
-+		pr_debug("Block SB: name \"%s\"\n", fc->source);
-+
-+		mtd = get_mtd_device_nm(fc->source + 4);
-+		if (IS_ERR(mtd))
-+			return -EINVAL;
-+		blk_source = kmalloc(20, GFP_KERNEL);
-+		if (!blk_source)
-+			return -ENOMEM;
-+		sprintf(blk_source, "/dev/mtdblock%d", mtd->index);
-+		kfree(fc->source);
-+		fc->source = blk_source;
-+		pr_debug("MTD device:%s found\n", fc->source);
-+		return 0;
-+	}
-+#endif
-+	return 0;
-+}
-+
- /**
-  * get_tree_bdev_flags - Get a superblock based on a single block device
-  * @fc: The filesystem context holding the parameters
-@@ -1612,6 +1639,9 @@ int get_tree_bdev_flags(struct fs_context *fc,
- 	if (!fc->source)
- 		return invalf(fc, "No source specified");
- 
-+	error = translate_mtd_name(fc);
-+	if (error)
-+		return error;
- 	error = lookup_bdev(fc->source, &dev);
- 	if (error) {
- 		if (!(flags & GET_TREE_BDEV_QUIET_LOOKUP))
--- 
-2.49.0
+On Thu, May 15, 2025 at 02:45:22PM +0200, Petr Pavlu wrote:
+> On 5/15/25 12:04, Joel Granados wrote:
+> > On Thu, May 15, 2025 at 10:04:53AM +0200, Petr Pavlu wrote:
+> >> On 5/9/25 14:54, Joel Granados wrote:
+> >>> Move module sysctl (modprobe_path and modules_disabled) out of sysctl=
+=2Ec
+> >>> and into the modules subsystem. Make the modprobe_path variable static
+> >>> as it no longer needs to be exported. Remove module.h from the includ=
+es
+> >>> in sysctl as it no longer uses any module exported variables.
+=2E..
+> > Like this?:
+> > [...]
+>=20
+> Let's also move the KMOD_PATH_LEN definition and the modprobe_path
+> declaration from include/linux/kmod.h to kernel/module/internal.h, as
+> they are now fully internal to the module loader, and use "module"
+> instead of "kmod" in the sysctl registration to avoid confusion with the
+> modprobe logic.
+>=20
+> The adjusted patch is below.
+>=20
+> Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
+Thx for review and patch. Have applied it to my current V2 branch [1]
 
+Best
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/joel.granados/linux.git=
+/log/?h=3Djag/mv_ctltables_iter2
+
+>=20
+> --=20
+> Thanks,
+> Petr
+>=20
+>=20
+> diff --git a/include/linux/kmod.h b/include/linux/kmod.h
+> index 68f69362d427..9a07c3215389 100644
+> --- a/include/linux/kmod.h
+> +++ b/include/linux/kmod.h
+> @@ -14,10 +14,7 @@
+>  #include <linux/workqueue.h>
+>  #include <linux/sysctl.h>
+> =20
+> -#define KMOD_PATH_LEN 256
+> -
+>  #ifdef CONFIG_MODULES
+> -extern char modprobe_path[]; /* for sysctl */
+>  /* modprobe exit status on success, -ve on error.  Return value
+>   * usually useless though. */
+>  extern __printf(2, 3)
+> diff --git a/include/linux/module.h b/include/linux/module.h
+> index 8050f77c3b64..f4ab8d90c475 100644
+> --- a/include/linux/module.h
+> +++ b/include/linux/module.h
+> @@ -304,7 +304,6 @@ struct notifier_block;
+> =20
+>  #ifdef CONFIG_MODULES
+> =20
+> -extern int modules_disabled; /* for sysctl */
+>  /* Get/put a kernel symbol (calls must be symmetric) */
+>  void *__symbol_get(const char *symbol);
+>  void *__symbol_get_gpl(const char *symbol);
+> diff --git a/kernel/module/internal.h b/kernel/module/internal.h
+> index 626cf8668a7e..0954c8de00c2 100644
+> --- a/kernel/module/internal.h
+> +++ b/kernel/module/internal.h
+> @@ -58,6 +58,9 @@ extern const struct kernel_symbol __stop___ksymtab_gpl[=
+];
+>  extern const u32 __start___kcrctab[];
+>  extern const u32 __start___kcrctab_gpl[];
+> =20
+> +#define KMOD_PATH_LEN 256
+> +extern char modprobe_path[];
+> +
+>  struct load_info {
+>  	const char *name;
+>  	/* pointer to module in temporary copy, freed at end of load_module() */
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index a2859dc3eea6..a336b7b3fb23 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -126,9 +126,37 @@ static void mod_update_bounds(struct module *mod)
+>  }
+> =20
+>  /* Block module loading/unloading? */
+> -int modules_disabled;
+> +static int modules_disabled;
+>  core_param(nomodule, modules_disabled, bint, 0);
+> =20
+> +static const struct ctl_table module_sysctl_table[] =3D {
+> +	{
+> +		.procname	=3D "modprobe",
+> +		.data		=3D &modprobe_path,
+> +		.maxlen		=3D KMOD_PATH_LEN,
+> +		.mode		=3D 0644,
+> +		.proc_handler	=3D proc_dostring,
+> +	},
+> +	{
+> +		.procname	=3D "modules_disabled",
+> +		.data		=3D &modules_disabled,
+> +		.maxlen		=3D sizeof(int),
+> +		.mode		=3D 0644,
+> +		/* only handle a transition from default "0" to "1" */
+> +		.proc_handler	=3D proc_dointvec_minmax,
+> +		.extra1		=3D SYSCTL_ONE,
+> +		.extra2		=3D SYSCTL_ONE,
+> +	},
+> +};
+> +
+> +static int __init init_module_sysctl(void)
+> +{
+> +	register_sysctl_init("kernel", module_sysctl_table);
+> +	return 0;
+> +}
+> +
+> +subsys_initcall(init_module_sysctl);
+> +
+>  /* Waiting for a module to finish initializing? */
+>  static DECLARE_WAIT_QUEUE_HEAD(module_wq);
+> =20
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 9b4f0cff76ea..473133d9651e 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -19,7 +19,6 @@
+>   *  Removed it and replaced it with older style, 03/23/00, Bill Wendling
+>   */
+> =20
+> -#include <linux/module.h>
+>  #include <linux/sysctl.h>
+>  #include <linux/bitmap.h>
+>  #include <linux/printk.h>
+> @@ -1616,25 +1615,6 @@ static const struct ctl_table kern_table[] =3D {
+>  		.proc_handler	=3D proc_dointvec,
+>  	},
+>  #endif
+> -#ifdef CONFIG_MODULES
+> -	{
+> -		.procname	=3D "modprobe",
+> -		.data		=3D &modprobe_path,
+> -		.maxlen		=3D KMOD_PATH_LEN,
+> -		.mode		=3D 0644,
+> -		.proc_handler	=3D proc_dostring,
+> -	},
+> -	{
+> -		.procname	=3D "modules_disabled",
+> -		.data		=3D &modules_disabled,
+> -		.maxlen		=3D sizeof(int),
+> -		.mode		=3D 0644,
+> -		/* only handle a transition from default "0" to "1" */
+> -		.proc_handler	=3D proc_dointvec_minmax,
+> -		.extra1		=3D SYSCTL_ONE,
+> -		.extra2		=3D SYSCTL_ONE,
+> -	},
+> -#endif
+>  #ifdef CONFIG_UEVENT_HELPER
+>  	{
+>  		.procname	=3D "hotplug",
+>=20
+
+--=20
+
+Joel Granados
+
+--otw3l52sr4y45r5c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmgrTDAACgkQupfNUreW
+QU/twAv8DxA6gxRLdNSDZrJxSdnvcFu76bvp0iwD1X6Ms0Yq16tmcaIqSS8XtA7r
+Qe9aRNluUy/XUZj84T/WmyEBTVMLERBJAxp0moXvGXSHJ7hkKDJ2uM74VfH3xvcR
+RhM9Hlc6MkUqywUumSFsCUeqvsftJY/e/3Yg72ANzknwRuNC97dh+EZihUxDnufa
+JrBHT/f2y3qUHeJfpHS8aOa7LuZtL93rHeoju8Sacw6PQcmI2+hZWFr3nC3UK3FW
+jiEn6n2oZgzpdgpgnoguceNDRjqCJMVojeM24vEPT7XRxl8ez9cbu4w/vWqtuts4
+0fekBOrig2pDSWAA2u/Qkyk4uWpLxveSsYb8XCXjYqMWcZSJJ+Z+o/bv5z5niPZP
+DP7eTwecC+yS6lwU2aN0CLFu13QL9XAVp28YO2xzRLN0g5HqqViItD8bl4F3kZCr
+m9bb0y2TKAwncoFOEPGa5tEIZ39w2C7RWlXM8XIRYWR0vp4it6KAi92eO7Cb0374
+3lh/X1hk
+=Ofdx
+-----END PGP SIGNATURE-----
+
+--otw3l52sr4y45r5c--
 
