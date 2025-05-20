@@ -1,169 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-49485-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49486-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C66B7ABD16B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 10:06:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EF2ABD1BF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 10:23:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00382179C8F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 08:05:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD204A27A7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 08:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5CD125DD1E;
-	Tue, 20 May 2025 08:05:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AC52641C6;
+	Tue, 20 May 2025 08:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="deabvDB2"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="jUr8jGEJ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 738CF212FB8;
-	Tue, 20 May 2025 08:05:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4604025F994;
+	Tue, 20 May 2025 08:23:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747728330; cv=none; b=KN+POlaI4I5OBk8IqyHbZC8LPSRsIHQG3WyUZKehEH/kmgDIe0ilHXrrN1PH/OMEo3LMssLEhOFJknfHABAzmKU3PpsEch6fVaNTqfHsg3kiH33g/1lO7Vf+Tpn8Z8uYOoawraMfazeitCAKyeyes7uJ89uiVCnTp81+FR5iyPE=
+	t=1747729384; cv=none; b=Tmid1apHxWZ7/23KSvvN8sTDkspRzT//R/hm0Uc3tcGvSHEef0iedGIwsd02zIcPuTRkOe6+rS9NiVPyfZ7+0Va1ZNJWc8xFSLCx3YPxkRdjtJE0Q/uq48hnJXT/SyLtponEK4DhZjxFRVoC04yjEeoiUlb7ggIPBE7Fq/QufGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747728330; c=relaxed/simple;
-	bh=JR57pZ1HByRrhf92K1jrgg2JNrFtpgD4QQI5ZYZgONk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IDATCfLkvJgyE/rFukl/y2tc1S0fIMGYysiAqM7tPLb7fPcWPHVnggrtsBjtSx844ZnaavTftZ+Oe2Z1mY7cfOwEnADsscINF5DuIOD0T8YvcOeMzOHRnll32uv1fRZnkZ0hLe1szWci1ABroMdr+uMVanDjnIByZJeZk5lVc54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=deabvDB2; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-6021d01298cso67914a12.3;
-        Tue, 20 May 2025 01:05:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747728327; x=1748333127; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A9I7rP4M4yCmXtCFSSopzacSCExCy5zEsmTeQ8DMKvQ=;
-        b=deabvDB2zwj6fFO/mVfZdbNTA9Lq1tK47ouwzFD8Q1d2lDjTX1Lx0X87u52yHFsY3q
-         owEErFr4qU6+BRFt4+LP9I2xlyLCrqsgwWJGbhqPPgF/sjosYl5MmZuv+GRTl3NsZ0yD
-         8eappmIAXS19QM/WFkvIBxTfmskHY3VvcxYT2MDtRWePR8ESQgtfV39riEufwQ78aQWy
-         M+ZNyeHU0ymhwhM+Pj9lAdNmS8G473r/3yC0qvuvFttFvrFNf0DMzEJgQvirGvdk4BRK
-         UtubT+NgTk7wGKkAvMrQlY9kxNMvXEZ1meEeqWbkF5hiP4LeBU8X0PujQWxTsD6eaNt1
-         MN7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747728327; x=1748333127;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A9I7rP4M4yCmXtCFSSopzacSCExCy5zEsmTeQ8DMKvQ=;
-        b=amiU6q5usvamAe73/MDnsHFx56UvZ6/j4gi8izfqj0pOBMOWzU0ZA3RxNNkn420ppI
-         Xl/QOpwlCQ2NVoOd1q2q2yBoPTMLp1wlOfdjzgq+rmINPWHgBb2ujrzJFm5HzM/JnPK0
-         uBbCn95XwIVpdvASOPUuGhl7ffb+Z8OBIAVKsXhYGWx9hFNUQukYm+xEJu6Y7395LOVJ
-         riRu5WAL6tPUkOUHmUapRetGUyUhQcLbNqZl63baXlObXntcnl2xggfI9Z4l0cn7ruro
-         Fhr4xBf3oVOXbIE+skeE0+w7zAX3FvrVkwr6EzEeUaYL54c7+K0I1lU+eNU87PIfCxZ4
-         UEMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQVikStRwhXUNEU3Mle4EqbDv2IM55Id+Q9ufSpzPgj4/Jy3AIRS2aLh37/EfAc850IaFcJJNes9F0nzPF/A==@vger.kernel.org, AJvYcCXTIvctBzIwtX2Rqrr1ix5ocaDamay/FCQWDl3Qm7FErJ1oXCfP/M6y2X6HwTupr0w9L2UvErhPCPqN2DOW@vger.kernel.org, AJvYcCXgNT4+cgB+JZoFhA0Lk5jYYAd3OXz9dIhSQum7KJrrxx/LgHWd7ThIh9RX/KqZ2L8jjwB6vMyH6dT7cEPnsw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhYC8+uqtVMzTccb3leXzJQCznlnfT1EXQkBA9HYbgnJJ62GLx
-	YLns8aN3nBPxEhds3d1zc6T/d3WBtgJxiQiCjTEyBwiwYYcPI3buFkybxvjhH0Gbi533De+8L8V
-	tF7uondBdrCsvabaT/tHYC9MPCUQuIj8=
-X-Gm-Gg: ASbGncu6zQ/vGLEnDHXY1/KW/cK7R8FAvs2f86LN2XWYfralrAr7ZvW6ah6ZIocdtVZ
-	hGfnXqfW5HtwBLwMW9oEzIuW7rmu9PffhHhSl+ICpMlxvoq7GIrnYIQREAMfUIT/nptvA7mSRNR
-	NMXkYMBJ8/tCVKJNppYpu7xlvsfnS1HI47
-X-Google-Smtp-Source: AGHT+IFY1jN0nUINWAznHYhlgE6xZL8U6IPHM8alhc3DwvleXkkArjDV4AZFltkqlyZckqPQ5oIx2qZoC2UmUisZ2ow=
-X-Received: by 2002:a17:907:268a:b0:ad5:eff:db32 with SMTP id
- a640c23a62f3a-ad536de9517mr1261607666b.48.1747728326074; Tue, 20 May 2025
- 01:05:26 -0700 (PDT)
+	s=arc-20240116; t=1747729384; c=relaxed/simple;
+	bh=CbpYojFOx9hi6fdWZji6aYnRHJDIhGVyI2NkMIQwV6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=j/7oiNib0+bRyBipmNu2kvZ5I9Nus3VB+4RR157uR1w9vvDWas16RkcREQCllbUpG+VfvCDWizjRBRISxoWfxaEnG0ALQBn7OwbKLWlCiGuzP9vlycZNi4Q/C5gC4x487lPon74Wfd/dT1a6PHe2Nh9xr5eBHBjON6GJEvKHeKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=jUr8jGEJ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=BwzWdX9UlxauyFitnj8K7HxgnGbZaQA6IrXxNXDLqjA=; b=jUr8jGEJ/jjaGU4sdJ49zJc1my
+	9YDku1GJGK1m+i+kdpEoy2TKpaM6cry7J8cWiCJq6/hRYq9V+VaJ3Ak7d0SR0Y8dKCPvx3pHvhYsb
+	yIAkI30B0XVGhcLEY830vHZ2K+rntaGKoFHM2IcyOCMMeQFyaUC2ymlDnKp7qKx1Ch7MoL0hp4quU
+	MIo0esmeu37Hl6Vk8/JQMBvR+1feNt2Whnbs25l8W5yRJyXOka8JxNrTaLEBeCYCVikaDNZICXLQq
+	uQvRh+svheAUforKZiL/OmwZZDr5LhRsrZrEZGsFAFFgOI8e5JpGm8jK3iCl3ojpl3m/WntnBUjZR
+	Y4VyYKpw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uHIFW-0000000GDin-0OIq;
+	Tue, 20 May 2025 08:22:58 +0000
+Date: Tue, 20 May 2025 09:22:58 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Tiezhu Yang <yangtiezhu@loongson.cn>
+Cc: Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dcache: Define DNAME_INLINE_LEN as a number directly
+Message-ID: <20250520082258.GC2023217@ZenIV>
+References: <20250520064707.31135-1-yangtiezhu@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
-In-Reply-To: <20250520051600.1903319-1-kent.overstreet@linux.dev>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 20 May 2025 10:05:14 +0200
-X-Gm-Features: AX0GCFuFQrDONvSfR8Y_Mf2EsqWLcTxhUjONRoK8I3nNLmrI5PDpEqDCnwJHZpI
-Message-ID: <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] overlayfs + casefolding
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250520064707.31135-1-yangtiezhu@loongson.cn>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, May 20, 2025 at 7:16=E2=80=AFAM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
->
-> This series allows overlayfs and casefolding to safely be used on the
-> same filesystem by providing exclusion to ensure that overlayfs never
-> has to deal with casefolded directories.
->
-> Currently, overlayfs can't be used _at all_ if a filesystem even
-> supports casefolding, which is really nasty for users.
->
-> Components:
->
-> - filesystem has to track, for each directory, "does any _descendent_
->   have casefolding enabled"
->
-> - new inode flag to pass this to VFS layer
->
-> - new dcache methods for providing refs for overlayfs, and filesystem
->   methods for safely clearing this flag
->
-> - new superblock flag for indicating to overlayfs & dcache "filesystem
->   supports casefolding, it's safe to use provided new dcache methods are
->   used"
->
+On Tue, May 20, 2025 at 02:47:07PM +0800, Tiezhu Yang wrote:
+> When executing the bcc script, there exists the following error
+> on LoongArch and x86_64:
 
-I don't think that this is really needed.
+NOTABUG.  You can't require array sizes to contain no arithmetics,
+including sizeof().  Well, you can, but don't expect your requests
+to be satisfied.
 
-Too bad you did not ask before going through the trouble of this implementa=
-tion.
+> How to reproduce:
+> 
+> git clone https://github.com/iovisor/bcc.git
+> mkdir bcc/build; cd bcc/build
+> cmake ..
+> make
+> sudo make install
+> sudo /usr/share/bcc/tools/filetop
 
-I think it is enough for overlayfs to know the THIS directory has no
-casefolding.
+So fix the script.  Or report it to whoever wrote it, if it's
+not yours.
 
-in ovl_lookup() that returns a merged directory, ovl_dentry_weird() would
-result in -EIO if any of the real directories have casefolding and we can a=
-dd
-another sanotify in ovl_lookup_single() that the 'base' dentry is not weird=
-()
-to cover the case of casefolder changed on an underlying reference director=
-y.
+I'm sorry, but we are NOT going to accomodate random parsers
+poking inside the kernel-internal headers and failing to
+actually parse the language they are written in.
 
-Obviously, if any of the overlayfs layer root dirs have casefolding enabled=
- the
-mount would fail.
+If you want to exfiltrate a constant, do what e.g. asm-offsets is
+doing.  Take a look at e.g.  arch/loongarch/kernel/asm-offsets.c
+and check what ends up in include/generated/asm-offsets.h - the
+latter is entirely produced out of the former.
 
-w.r.t enabling casefolding underneath overlayfs, overlayfs documentation sa=
-ys:
+The trick is to have inline asm that would spew a recognizable
+line when compiled into assembler, with the value(s) you want
+substituted into it.  See include/linux/kbuild.h for the macros.
 
-"Changes to underlying filesystems
----------------------------------
-
-Changes to the underlying filesystems while part of a mounted overlay
-filesystem are not allowed.  If the underlying filesystem is changed,
-the behavior of the overlay is undefined, though it will not result in
-a crash or deadlock."
-
-So why is enabling casefolding on underlying layers so special that we
-should have specific protection for that?
-
-From what I remember in ext4, enabling casefolding is only allowed
-on empty directories.
-
-Is this also the case for bcachefs?
-
-If that is the case, then the situation is even simpler -
-If filesystem can singal to vfs/ovl that directory is empty (i.e. S_EMPTYDI=
-R)
-then overlayfs can ignore this dir altogether when composing
-the merged directory.
-
-But again, I don't think there is a good reason to treat this case
-of changing the underlying layer specially.
-
-Please explain if I missed anything.
-
-Thanks,
-Amir.
+Then you pick these lines out of generated your_file.s - no need
+to use python, sed(1) will do just fine.  See filechk_offsets in
+scripts/Makefile.lib for that part.
 
