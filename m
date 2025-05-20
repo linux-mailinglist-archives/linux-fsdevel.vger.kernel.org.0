@@ -1,106 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-49496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE3AABD6EE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 13:34:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D28EABD827
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 14:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B672F4A036A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 11:34:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F65E1B60A95
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 12:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E23127B50C;
-	Tue, 20 May 2025 11:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216A3219E8;
+	Tue, 20 May 2025 12:25:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aaTkhuZS"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fa2znJKV"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13C01CAA6E;
-	Tue, 20 May 2025 11:34:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21F5A1172A;
+	Tue, 20 May 2025 12:25:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747740865; cv=none; b=eGiYyY54LQAE2yUixQIamJF2KnlUmoZyeVw/DRbaEmsFcQa8sV3eKU+tztiePti0QBbauGeeYbqf9dJ66mwojFJ/uNiocl67q/TWkDTzOKIkfmjcUR5a3Ra2KwNJAVGKQV+N8hxcZ9kTR8Hi7RwCkW5Zk3xogUbQlk+Fq70fe2w=
+	t=1747743946; cv=none; b=r/5poBi3zj6S06GEB7JKrxhE4u2+EMF3Bekq1iqozRcWxVoScr0NCOyfmDcJuY1MA2n5N3LI0IdtpAaTN3RBdLC4/3f4qReyUyBZF4SPKDkK9EwPyFTWbxXZ2nzdQ9ykC3DtK3Chp6nk65uVB9ON+ynXJIswUwKf5e5P83XKd3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747740865; c=relaxed/simple;
-	bh=inUwVojIjuaaR/waOD+9jgxuZtOW6VGmFPF1U3mZQho=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yjo8c4qq87a+KmKfENySHho8N+Q5bMikvPhIWTxq1JabH0IHEND2uXybKXTAQ6GFWPYanHvB28LDLkgNSqoJTT2s2UEKPFwtD3ICmlYg36967FsDOdIARrNIH94S3GjEhylxHMKZmw01+NQiTr4Nm3AkqtQdDdmo47S8vl9yfuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aaTkhuZS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 997E2C4CEEB;
-	Tue, 20 May 2025 11:34:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747740865;
-	bh=inUwVojIjuaaR/waOD+9jgxuZtOW6VGmFPF1U3mZQho=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aaTkhuZSB/VGl0THmklOnEs/u31dbRa8IL0K3B8GYNVYUIbcJ6ZseKNMQ/9Zb/53p
-	 1iGH/Y4SNy4C72N2ckVrQ+qXLPDYirKLGGX7lWeZJIGwsci46j7AJlFfeAgV6fPq3q
-	 7ljb9q0BqPzD6UG1fWgRRrObefiE4RR0NUwpwoSygNWB3sIFEl5lV/ghjUgtsL1PTE
-	 mPkI5Nm3Va/6rmsjBUdqIdx4ZNesigxFxZrHvPHmg2n3fl5KlsdwZ8Kfw/dO12OqId
-	 H2vmjr//R8gNYRZyEXyzhiQ9t5s2zrjcowrZq+f97uxAliMJioMAo76D4miD5rHCMc
-	 xNRwkJmoT2rsA==
-From: Christian Brauner <brauner@kernel.org>
-To: Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>
-Cc: Paulo Alcantara <pc@manguebit.com>,
-	netfs@lists.linux.dev,
-	linux-afs@lists.infradead.org,
-	linux-cifs@vger.kernel.org,
-	linux-nfs@vger.kernel.org,
-	ceph-devel@vger.kernel.org,
-	v9fs@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] netfs: Miscellaneous fixes
-Date: Tue, 20 May 2025 13:34:14 +0200
-Message-ID: <20250520-aufnimmt-abgemacht-9b1ddff0e6af@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250519090707.2848510-1-dhowells@redhat.com>
-References: <20250519090707.2848510-1-dhowells@redhat.com>
+	s=arc-20240116; t=1747743946; c=relaxed/simple;
+	bh=10VOOs9OpZbgOc/7CEG+2dPlzikjuwLA+ThlPNmj5HU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jm8th2Q17p/dZxBN/xUMhRmSN02WqV8p0FLG0G5UCcY6a25VlCfi4uaKTSrwgqYRmX77Z6a/xtdChwPs7ek7lvY762QzKAcRgyJVhuxr4+HSTRKUTZtMb3tfCbN2KKZNH8d43j7B+ztwOVagmX4no10cvqU5ZzIeW1PZhetHqCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fa2znJKV; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 20 May 2025 08:25:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747743940;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3tTe7AZhcsLl1SFjFBWYt00FQokJCv6k4IfTZPHi9Gk=;
+	b=fa2znJKViX8E2/nzL1p8DdYezYUsoHEk15n4AO9kEi+ClPGyobWI1DoqF7IwPkVmCQJLIc
+	4A9gBcw3ziEUJlji3q1jSY1U+VDsqhfgiaKS7QVbp/cNLkqUI3iTdckj3aYF2K7v1P3199
+	Y2nRlVc5VbJF4GRUtjzfmsmOxhj3aT0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 0/6] overlayfs + casefolding
+Message-ID: <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
+References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
+ <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1470; i=brauner@kernel.org; h=from:subject:message-id; bh=inUwVojIjuaaR/waOD+9jgxuZtOW6VGmFPF1U3mZQho=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWToZOyqfCYUVsH8OenSk2WP2NI2s+jltz9Im/CCYdvfV d5mcS+iO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACYSxMrIcOa3rs5nf6PDhXpb c3fFhMn/8pD7yl44+/T0f+/9tx5blsTIcJLbwrDd2maBxbwvSSpGKy0cvzyed+h15ptXx/Zb209 czQQA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 19 May 2025 10:07:00 +0100, David Howells wrote:
-> Here are some miscellaneous fixes and changes for netfslib, if you could
-> pull them:
+On Tue, May 20, 2025 at 10:05:14AM +0200, Amir Goldstein wrote:
+> On Tue, May 20, 2025 at 7:16 AM Kent Overstreet
+> <kent.overstreet@linux.dev> wrote:
+> >
+> > This series allows overlayfs and casefolding to safely be used on the
+> > same filesystem by providing exclusion to ensure that overlayfs never
+> > has to deal with casefolded directories.
+> >
+> > Currently, overlayfs can't be used _at all_ if a filesystem even
+> > supports casefolding, which is really nasty for users.
+> >
+> > Components:
+> >
+> > - filesystem has to track, for each directory, "does any _descendent_
+> >   have casefolding enabled"
+> >
+> > - new inode flag to pass this to VFS layer
+> >
+> > - new dcache methods for providing refs for overlayfs, and filesystem
+> >   methods for safely clearing this flag
+> >
+> > - new superblock flag for indicating to overlayfs & dcache "filesystem
+> >   supports casefolding, it's safe to use provided new dcache methods are
+> >   used"
+> >
 > 
->  (1) Fix an oops in write-retry due to mis-resetting the I/O iterator.
+> I don't think that this is really needed.
 > 
->  (2) Fix the recording of transferred bytes for short DIO reads.
+> Too bad you did not ask before going through the trouble of this implementation.
 > 
-> [...]
+> I think it is enough for overlayfs to know the THIS directory has no
+> casefolding.
 
-Applied to the vfs-6.16.netfs branch of the vfs/vfs.git tree.
-Patches in the vfs-6.16.netfs branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.16.netfs
-
-[1/4] netfs: Fix oops in write-retry from mis-resetting the subreq iterator
-      https://git.kernel.org/vfs/vfs/c/cd084c7184ce
-[2/4] netfs: Fix setting of transferred bytes with short DIO reads
-      https://git.kernel.org/vfs/vfs/c/2973904c9b79
-[3/4] netfs: Fix the request's work item to not require a ref
-      https://git.kernel.org/vfs/vfs/c/537b296114cc
-[4/4] netfs: Fix wait/wake to be consistent about the waitqueue used
-      https://git.kernel.org/vfs/vfs/c/2a6d0284a4a3
+overlayfs works on trees, not directories...
 
