@@ -1,140 +1,220 @@
-Return-Path: <linux-fsdevel+bounces-49536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00C4ABE17B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 19:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E43ABE1B1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 19:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314021BA75D9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 17:05:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 596FA4C189D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 17:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1CE27AC48;
-	Tue, 20 May 2025 17:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9250C27FB04;
+	Tue, 20 May 2025 17:17:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dgMzRogV"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ipDHD+9o"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8639A1DB356;
-	Tue, 20 May 2025 17:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3B5263F44
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 May 2025 17:17:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747760705; cv=none; b=pBbvhr8g/P3Ttkk1C5KALVhOukfJkq6dLYvPyb9FsiE4fYHSmRU2w1DFKA/v5XloK/xj+e1Zt5cbIx1d3YoX9ioaZbB9wXBd8zDkyPr86mFk4csPRuktuHFJKqOk2Tyy8TQeOLnhYlf9oKuSYLKxytNWdnt0lrhydpVpyn+eRnY=
+	t=1747761456; cv=none; b=dbIkyk1lKK0ydVDEpzDlgl4zlvZ+HGNk+ciwyKcNYTHAQpWnbVpQVKUY0hr4lJ2IvpnFsOqiuCcGgbmCEv5UAHHqLpYo5y8qFuwNCBKT97WHypS9g4KOTVaQtapD/g/KvHIfn6g9gBmFwUmJB8dyqqremRH8rp0zt6QCeMUyJMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747760705; c=relaxed/simple;
-	bh=vFLiIsSNJ+9LKlajAAEpNZdNi9SUrHki3vkFk8ViS1Q=;
+	s=arc-20240116; t=1747761456; c=relaxed/simple;
+	bh=sbBPrcKlpzkqf+EvXrK5q9JFazNaHCusAXL+IFPG8/A=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FS+fnhxLfcrl6WpJeFJJ9fGsOP2e6KN9JWfOmEIZGemwAQ0a50ceHqJYFyteT+9YqLl5WPJeapmn0e4VBJnwSdzV3gG3Pwlj8rPpsfpJcvE4s2C6ys35EgNbUATB9D8icJaqYA5ERYZa/DKKgummCIyumCagF/u+jrE0vJ8JEkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dgMzRogV; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3a363d15c64so2614289f8f.3;
-        Tue, 20 May 2025 10:05:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=uGL3IxKV5DeFfNZN3jEnESjKSbChc0u9YZv9pPPfzQurNg1HH1GrrhgScmDtT/3dV4iuy8s1MB2Bj5on15gxWqZ71j5xHgErehBsI/nuilqDd7K13y84dx70a5S0nNbUvhBYCHGoLiSiYiB9UN/Fwnp1+riXATezTMY8lgJ6FEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ipDHD+9o; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-b1a1930a922so4118093a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 May 2025 10:17:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747760702; x=1748365502; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747761450; x=1748366250; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aqfARpqDXwP7K8PtF8oJFF7SVaV8Ol18I4Q0qiBvla0=;
-        b=dgMzRogVkdSqrzUfFVhaKOjpnjUn03S+p3KU9ktSLH2gr9j3WvwH8AlHxj8fkWkTJP
-         /yASvEFQaXtVqWe5GmdtZlPKK596Z5u3zUIc1ZrWLP69PHPEBOemecMYsr8Myjx5KZ9F
-         QLO0R3GVxpRSkh8IgaZO7cjdDvOp0y1Qf0uWYDkznzyhhDnh7QAS9ozs56trYMBf3jJ6
-         gDhaplQ4hHEBQ87zP59EDo6GUyBtiiBt1LGZznu5/9jcuB+5ZcBtY3Xd8PGCVME0mwD5
-         DItjiAjLF6cJlY0ZesqgCQXLhPxPJEK4FcIKnBG1hkG/5Ws4rFNOnOTEeTarHFhAaWB7
-         vS2w==
+        bh=m5sVT6y4YSnGlKGqP6gXqGwI3RzkKYcVE2Jf3DOuL9k=;
+        b=ipDHD+9oZkAe/fs9yTZcjn7prXbkHXQRwtRuf1WgXh9r7lBsfCXkNx29YEN3N5ImE+
+         X47n4qyXxBqBoxtJFW3bnB6GjQ6MTOxiV1MjXPSOYejDdSRMClIT2u+fTQtQ7tMfUJLD
+         Fp5TpXvrfLp7zrfkzggWkqYzEf61X2n/QPPVl9RD3bfQVCirb2CoUVlrKb5S4gKiRN96
+         7SPskvnvK2Z6lSGabrj+5pdrR7kpAdvgU/Y0hV3gQKEar8HFcSNEPQVXGyARIreZdMU6
+         xQPfa4AMGXYy5c7p9yhu1DFI4N/Rlp8tsZYt/GtfmvRodgSDi+2/woA0DQF0Kh8O/5ao
+         nBOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747760702; x=1748365502;
+        d=1e100.net; s=20230601; t=1747761450; x=1748366250;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aqfARpqDXwP7K8PtF8oJFF7SVaV8Ol18I4Q0qiBvla0=;
-        b=ptFnBCBCFe1qOtOzg6U8zPE6Xxrxmo1sneXThX9cZk3586c65CODgXXzNh4LjZa3G1
-         y1TWp+yUXsjBo1tmv0uH39nam74G9sK3eBfQE8cxalIwXZ6rVFJoGJE8i7tcgJnhLTHk
-         IzH/EYKid8dYL9TTnaMPdfWrwOuPfCYjASOT8smZ+1wLNit8nLK0T+TB8YG0v0XprhmJ
-         D2XuFiUqDfo3u7fVSNuPbkWyiwi9JSwHYwsyD0Usq3o+a0DtSGS1Gi8P1KgqyEpaUDAZ
-         Z+GquQp1jk++Ft+KNcwcKbcm0EGoJRbEFTEsv7HXTMv/dNQNk/RA/t5KE5M1eyoKbjJu
-         HJvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUS4gycfSkMqkvs/SxO/atcrYrGWCDF18hp+gA3ISf/nCyC9jWGRiHc0DlWNKoS/med6hBUG2AUC2DF6Y5B@vger.kernel.org, AJvYcCVcrBID5cIeYYsfUit3PD2y7vQ8lV3A0EQYUA0XzOBgou2/6RsA/v5KUZVBaXBUr+moPryurWkAACwSddqqsg==@vger.kernel.org, AJvYcCVphUN+T+Pn5S49LFyniN+mFgDwsErUzRF3Qz9YYzpZPn8gHbIAIdeQzFWMzTf2yrWQU5s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzkhO5UYqM18z/bGg42xVm67HalToIGlqwjZ78V2AByA8IyJNS
-	iOgGVcyo6aiE2RiQ/CvoRRpudcF7V3UqwNypK/WdOVGYj0K8k8xFaTTcAunAzfLuCg5GwlbnJX5
-	webrUdcJ/5ND+bElG8Pdy1zL022g88SE=
-X-Gm-Gg: ASbGncsBB8Rur02Gdzd6vGiGiJKWPsExJZil8Js2U/YJ1dQxuF05TkTxH3+cSEo0ilp
-	W7nKBthKeh+f/YSf4Ovfdgjf8neIQjbVHSg1JUtizxhly+bY6MpZIh3X0Z0TTfXukCsOKawVjTL
-	WUJAtpgF0qYFRnlCaoBdPgwahgZ8Mw6g7dQR+LMEk7QGEC960H
-X-Google-Smtp-Source: AGHT+IGoHLX8QBms8mFGB0R5FHXi2uOVwvd1emWDAK8vRyQoBWvaR0hqtnNxbsErK6XMC7RZZfSN4YoOe9vSv2a/T88=
-X-Received: by 2002:a5d:5f8d:0:b0:3a3:5b90:5f38 with SMTP id
- ffacd0b85a97d-3a35c7dd76emr15608680f8f.0.1747760701511; Tue, 20 May 2025
- 10:05:01 -0700 (PDT)
+        bh=m5sVT6y4YSnGlKGqP6gXqGwI3RzkKYcVE2Jf3DOuL9k=;
+        b=sUL3OQBvtYWXLOYMs2UBAxUAr/VzrTkp7LzpOrmBcff43oWLdQSueZiesZigten5jN
+         4jw1AHe0xmUoI1c+X/ODjwktGObLY8F3Nnx9xxZA7hfPiB52Bmp6HrjMZ08nUkuSOe2D
+         LuKnmt2Ry70nCxefgk+jLHyI7X1jQ9MwsuLn90zAePx28GH8tRivQkgn8iFTovc5Mc/B
+         knNQmIzik3IRiong9+MzaSvM/FyyCVM7+H0tIfhsD2sjSUaHnmzdz3tSUMdOjQ3jWily
+         a/fD1sD+VKOnhPBZ+r28RL1BC+Jj4I6cYbBwrunBNERy41uTDNmev0Tq/1AjHZX68vLJ
+         czIA==
+X-Forwarded-Encrypted: i=1; AJvYcCVii6dHKjn6PbsqCUTs8116OU7ozYv2SUqdKR+bAQfVSQcQrXHF0DiB2ckFkMeRotXyOmiajlcGrTDYEUj/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOZDTKm9+alx0SMP8DFsesqMB0GEW2x5g1RWOqPuANltGG70Rf
+	wWpbemMpZx0ZRuyRwi2JnBWrPSWIe9gE85zz7nF76edw4KlK3TGq25F+oFnJ5kqKqfGjRIV8FnA
+	4A5wnu7Dz8A3BJ8CEvsSpHSQmJcyl8Y6MdiZ1CuAf
+X-Gm-Gg: ASbGncsRfx1uIYX0OOt3VCNS7iM4ZNsokkW4GfJTpEuZzPorS1qKedjMxGRGkb26NMl
+	kNkSQxQF3zNc+PdJ0FidKqnfLWES5DR8RCVk8im0LPS8Y6G03lep/JTz6mShxzlpX2Cfp+rsOQJ
+	0CYTYRLJdDAtzPJqK8TfXWn67gbbkWCC1TGqXT4IP8TdxxNBMZry7L4YMShp4NuS9EMkZffWM0z
+	urpVF3a3mlFC70=
+X-Google-Smtp-Source: AGHT+IHsHx+xZBgbaLrxW+q7w4hfzF7ci4/OH6M0XOp3DOGWGM+CCsEa6HV3QBQDepNNYYuHQ+OUh/rEI7VYOmFwA/E=
+X-Received: by 2002:a17:902:e885:b0:22e:421b:49b1 with SMTP id
+ d9443c01a7336-231d45bfc34mr279967565ad.48.1747761450362; Tue, 20 May 2025
+ 10:17:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520064707.31135-1-yangtiezhu@loongson.cn> <20250520082258.GC2023217@ZenIV>
-In-Reply-To: <20250520082258.GC2023217@ZenIV>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 20 May 2025 10:04:49 -0700
-X-Gm-Features: AX0GCFv2NKgzITaEikgjd3zpHj5FtmD5LjKgXj0aULr_MuBKSBnhhz5OfeXNA34
-Message-ID: <CAADnVQJW+qyq9wPD6RdoaZ8nLYX8N2+4Bhxyd19h6pdqNRMc3A@mail.gmail.com>
-Subject: Re: [PATCH] dcache: Define DNAME_INLINE_LEN as a number directly
+References: <680809f3.050a0220.36a438.0003.GAE@google.com> <tencent_55ACA45C1762977206C3B376C36BA96B8305@qq.com>
+ <20250516193122.GS2023217@ZenIV> <20250516232046.GT2023217@ZenIV>
+In-Reply-To: <20250516232046.GT2023217@ZenIV>
+From: Aleksandr Nogikh <nogikh@google.com>
+Date: Tue, 20 May 2025 19:17:17 +0200
+X-Gm-Features: AX0GCFt0jmQ7RJlWUHtJOlQZuoQ26GKGxmJ1lhYT3ZEgehcfVvrGpSVJNfVcSOQ
+Message-ID: <CANp29Y55bJ_3qg+y4jgwuUu7nwvtrfhFEvStzFuoWzS=Xm=3uw@mail.gmail.com>
+Subject: Re: [pox on syzbot - again][exfat] exfat_mkdir() breakage on
+ corrupted image
 To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	loongarch@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Cc: Edward Adam Davis <eadavis@qq.com>, syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com, 
+	brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	syzkaller <syzkaller@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 1:23=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
+Hi Al,
+
+I've only just seen this email as it landed in my Spam folder for some reas=
+on.
+
+On Sat, May 17, 2025 at 1:20=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> w=
 rote:
 >
-> On Tue, May 20, 2025 at 02:47:07PM +0800, Tiezhu Yang wrote:
-> > When executing the bcc script, there exists the following error
-> > on LoongArch and x86_64:
->
-> NOTABUG.  You can't require array sizes to contain no arithmetics,
-> including sizeof().  Well, you can, but don't expect your requests
-> to be satisfied.
->
-> > How to reproduce:
+> On Fri, May 16, 2025 at 08:31:22PM +0100, Al Viro wrote:
+> > On Wed, May 14, 2025 at 06:39:40AM +0800, Edward Adam Davis wrote:
+> > > In the reproducer, when calling renameat2(), olddirfd and newdirfd pa=
+ssed
+> > > are the same value r0, see [1]. This situation should be avoided.
+> > >
+> > > [1]
+> > > renameat2(r0, &(0x7f0000000240)=3D'./bus/file0\x00', r0, &(0x7f000000=
+01c0)=3D'./file0\x00', 0x0)
+> > >
+> > > Reported-by: syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=3D321477fad98ea6dd35b=
+7
+> > > Tested-by: syzbot+321477fad98ea6dd35b7@syzkaller.appspotmail.com
+> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > > ---
+> > >  fs/namei.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/fs/namei.c b/fs/namei.c
+> > > index 84a0e0b0111c..ff843007ca94 100644
+> > > --- a/fs/namei.c
+> > > +++ b/fs/namei.c
+> > > @@ -5013,7 +5013,7 @@ int vfs_rename(struct renamedata *rd)
+> > >     struct name_snapshot old_name;
+> > >     bool lock_old_subdir, lock_new_subdir;
+> > >
+> > > -   if (source =3D=3D target)
+> > > +   if (source =3D=3D target || old_dir =3D=3D target)
+> > >             return 0;
 > >
-> > git clone https://github.com/iovisor/bcc.git
-> > mkdir bcc/build; cd bcc/build
-> > cmake ..
-> > make
-> > sudo make install
-> > sudo /usr/share/bcc/tools/filetop
+> > What the hell?
+> >
+> > 1) olddirfd and newdirfd have nothing to do with vfs_rename() - they ar=
+e
+> > bloody well gone by the time we get there.
+> >
+> > 2) there's nothing wrong with having the same value passed in both -
+> > and it's certainly not a "quietly do nothing".
+> >
+> > 3) the check added in this patch is... odd.  You are checking essentica=
+lly
+> > for rename("foo/bar", "foo").  It should fail (-ENOTEMPTY or -EINVAL, d=
+epending
+> > upon RENAME_EXCHANGE in flags) without having reached vfs_rename().
 >
-> So fix the script.  Or report it to whoever wrote it, if it's
-> not yours.
-
-+1
-
-> I'm sorry, but we are NOT going to accomodate random parsers
-> poking inside the kernel-internal headers and failing to
-> actually parse the language they are written in.
+> 4) it's definitely an exfat bug, since we are getting
+>         old_dentry->d_parent !=3D target
+>         old_dentry->d_parent->d_inode =3D=3D target->d_inode
+>         S_ISDIR(target->d_inode->i_mode)
+> All objects involved are on the same super_block, which has "exfat" for
+> ->s_type->name, so it's exfat ending up with multiple dentries for
+> the same directory inode, and once that kind of thing has happened,
+> the system is FUBAR.
 >
-> If you want to exfiltrate a constant, do what e.g. asm-offsets is
-> doing.  Take a look at e.g.  arch/loongarch/kernel/asm-offsets.c
-> and check what ends up in include/generated/asm-offsets.h - the
-> latter is entirely produced out of the former.
+> As for the root cause, almost certainly their ->mkdir() is deciding
+> that it has just created a new inode - and ending up with existing one,
+> already in icache and already with a dentry attached to it.
 >
-> The trick is to have inline asm that would spew a recognizable
-> line when compiled into assembler, with the value(s) you want
-> substituted into it.  See include/linux/kbuild.h for the macros.
+> <adds BUG_ON(!hlist_empty(&inode->i_dentry)) into exfat_mkdir()>
 >
-> Then you pick these lines out of generated your_file.s - no need
-> to use python, sed(1) will do just fine.  See filechk_offsets in
-> scripts/Makefile.lib for that part.
+>    [   84.780875] exFAT-fs (loop0): Volume was not properly unmounted. So=
+me data may be corrupt. Please run fsck.
+>    [   84.781411] exFAT-fs (loop0): Medium has reported failures. Some da=
+ta may be lost.
+>    [   84.782209] exFAT-fs (loop0): failed to load upcase table (idx : 0x=
+00010000, chksum : 0xe62de5da, utbl_chksum : 0xe619d30d)
+>    [   84.783272] ------------[ cut here ]------------
+>    [   84.783546] kernel BUG at fs/exfat/namei.c:881!
+>
+> ... and there we go.  exfat_mkdir() getting an existing in-core inode
+> and attaching an alias to it, with expected fun results.
+>
+> For crying out loud, how many times do syzbot folks need to be told that
+> getting report to attention of relevant filesystem folks is important?
+>
+> Subject: [syzbot] [fs?] INFO: task hung in vfs_rename (2)
+>
+> mentionings of anything exfat-related: 0.
+>
+> Cc: brauner@kernel.org, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+>          linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+>                  viro@zeniv.linux.org.uk
+>
+> mentionings of anything exfat-related: 0.
+>
+> In message body:
+>   fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=3D=
+12655204580000)
+>
+> Why, that does sound like some filesystem bug might be involved
+> and presumably the damn thing knows which type had it been.
+> <start browser, cut'n'paste the sodding link>
+> ... and the very first line is
+> fsck.exfat -n exited with status code 4
+>
+> Result: 3 weeks later it *STILL* hasn't reached the relevant fs
+> maintainers.  Could that be a sufficient evidence to convince the
+> fine fellows working on syzbot that "you just need to click a few
+> links" DOES NOT WORK?
+>
+> We'd been there several times already.  For relatively polite example,
+> see https://lore.kernel.org/all/Y5ZDjuSNuSLJd8Mn@ZenIV/ - I can't be arse=
+d
+> to explain that again and again, and you don't seem to mind following
+> links in email, so...
+>
 
-None of it is necessary.
+I've checked the code, and there was indeed a bug in our
+classification rules, specifically concerning the recognition of the
+`syz_mount_image$exfat` call as an indicator for the "exfat"
+subsystem. The fix will reach syzbot soon.
 
-Tiezhu,
+Sorry for the inconvenience it has caused.
 
-bcc's tools/filetop.py is really old and obsolete.
-It's not worth fixing. I'd delete it.
-Use bcc's libbpf-tools/filetop instead.
+--=20
+Aleksandr
 
