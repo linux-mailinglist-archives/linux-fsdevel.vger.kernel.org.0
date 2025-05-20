@@ -1,218 +1,361 @@
-Return-Path: <linux-fsdevel+bounces-49515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D357ABDD50
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 16:38:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76E41ABDD2B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 16:34:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05E4F3BBFFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 14:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6EE1897837
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 14:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A6C24501D;
-	Tue, 20 May 2025 14:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F30A6247287;
+	Tue, 20 May 2025 14:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QR/8TPl/"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Hl/BooP/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA53024290D;
-	Tue, 20 May 2025 14:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767801DFD84
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 May 2025 14:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747751610; cv=none; b=hkNr5jkwovdIyyEwvgBMUxYHF95/urVi87vjl7xlrBNQrpDO9vbDDOcvCA5ZPYvWom3fKH25BJMxt5ZowkST9rogd4kevshGIwgFjSCRm8EGsDg9RihNELRZA5+dmj+s1TbBgyuCM0FrjW6aVbr/e2ssZt/POokAtJibgchyysY=
+	t=1747751669; cv=none; b=logdLU2kGgzdOJOb7hy+xCOLLH4JRXZ3pEf7yi5FQrt3ABPFS4nEcVRlhpsRLoXxCyk/Tt1gRUOxLLVRip1sJOiZnIAi2hzr5vyGzYh0ERbPc23vJdVrwiGPB4IPDuv7qfuG0WSOPBSWNo0tIT4B5Z5M9K0bD7IVr/J4uGzQ8/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747751610; c=relaxed/simple;
-	bh=8iI1J3ZgarD0harWDKfKAmvjN5IOTKu+McZtK6H2ccM=;
+	s=arc-20240116; t=1747751669; c=relaxed/simple;
+	bh=mNFyed1F6DrHqM8zOgSCAdvd/yLPgRuXpu7QQKLIDd0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WvVUZxZpvyxldReWpTKKxtEcXEh9KYtAtEh/J/bKbMnWchbRbFgMEzbuA3938rFvLBnpee2S7EvnARyE36lPCEEk8sKkDpLl2HC+5LaAudJBT/QJofFkMlyjzBU/TXrWn1AieFTc/5N7Zay4q3PvYPOt+Q3AePFhQ8W8Eegt1RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QR/8TPl/; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ad5297704aaso886680066b.2;
-        Tue, 20 May 2025 07:33:27 -0700 (PDT)
+	 To:Cc:Content-Type; b=c8R1KS/CI4YogvG7sE8TBrNs+l18/VesIW+bDMz9izAw6Bf705wLLCQ9yGEkKUN2I1sgcIIMRgMao71JZXcRlO4Rn9mgKYZ6K9mEcI3PM4X2VjoeDlGBDi9//C6IrExw1RBz/Ci0SDKPaKjAebacqeYx568MXgdjYSlbOey6iyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Hl/BooP/; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-48b7747f881so1042621cf.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 May 2025 07:34:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747751606; x=1748356406; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1747751666; x=1748356466; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=skqxCutqMBERu++ynJRArdD2cHdMY8od/873evDrCUA=;
-        b=QR/8TPl/nfxC2q7gLMJQVzNIU/3b/KYDxfwntZQNNKnxAQ/t+wOExkEjTAy9ab0b9c
-         NaBJFD6tnGaZQ+1XRmOK+LHuFROBU5PgkUZn5XsGNYdw84SpMea7VIjRPRK9GUbROlPf
-         6yTZZBVL7HjhiM5IoaNBDg3ytd6onkOisiumOo31zalTgZeUU5a4m6JaeY+gwenxgq1p
-         UuSruRfI099JqbZtNC1KbxGfc3Ni9OQXVQ6Wo6D836y2YJoAyumNXTBNPzN2llF8ngTQ
-         7+xsbSbgjT/0rR6jTn74DNiIpMtGfNcJdP9dtvyXuHPfgdQ59cqXDQ5K2k1D31QzMK3V
-         kY3w==
+        bh=y0P2IqjvcCUOqznaXOXK895YsSeeP/H/xxEi3DHBfCY=;
+        b=Hl/BooP/XqE40sQ83evDyG+lzouhUdaaUFaPFWp5SlwtWrtyExKwE1mgPAFXHy+PaT
+         YkgDiBw+fhHIJSzIJyRWLpQMYXLvULzNcwdZwqJ+m1empL2DAugdGRQAEBbEySdMibVE
+         uHtDY+xpYcY2YoBU9siICqtJnHYLOvVe5K9eztoSxIdErawREqoqAk8bZyCWYGmA8u+6
+         LKcnAUKhrI3+f3nvPnqHJNHmjpL3atOo04KWa8LGRCHPu0yhbI2Mc59GQe8Jn9lgj2IX
+         wzm3kKNWXbDk5qphIwBu1IgsIK5NaNajKOyT8TuCBSm+iglBnRYQAeTFTaixTqtoeeLL
+         Sq/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747751606; x=1748356406;
+        d=1e100.net; s=20230601; t=1747751666; x=1748356466;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=skqxCutqMBERu++ynJRArdD2cHdMY8od/873evDrCUA=;
-        b=JPzStZtxsiOIjVHEVrx8XwzDbAYTPmS0G4TiL6XhQsy8NvyfMWVwkjISHRUxVn3Tmx
-         0Q0pxx1Osr0GMJCpwT59hm/wUB7IpptqbTLYHTaKJhvX6rWbnq7I8XlkUBMwSpDM1aYG
-         ghrVk1iJ9QCB0ssVf9uRw+SvkDc98tMOJPDswtPjLT9ZlN7YFYXsKTFntgOWmXstEcN+
-         LaNEQeR77IATe8BqnXJaRe0pHPfTHNuHUL+8o7PKjBAih64R1+u49yRBaQEu8W9f9whi
-         CnHSxBwH7o7x6A4yep3v+tOD1y2YTRn/+ILPQG38Spxi4kfVNt5rs58UVdAiMWuSNH4F
-         3TtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ8tc+99EVDc71A6LuPq8FCN/kVzJ2GaREHhJk27VHSH5D3Rf1fjrIan1l069H+c3nUVKBO+IWT3+Fn1WNGw==@vger.kernel.org, AJvYcCWhd5Ynws32flV5K405aMJE1BLytUGModhVVSoR5XGcq+v8a8lUTU58IrQ9iEWZcAvb0/C08432YY/St+z8@vger.kernel.org, AJvYcCXZTSF3M2rbCchKNX3OFXWCdJgH1NGDnpl/70OpcDGyeA8s18CF537e2NlkLPqxY/q2pz6TkUM7OHXlA6R+cg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzE9F/L1N/d1STSHlUvJ6YBQtDB4df8NmFMyqTbk39ntIRKnyq8
-	BuTxhiFiYh3babhFXm3ACw+Bc6CCe18HlCGWHYw2uu9Yf7xliSlSxb4ltGUdXm78TQ4aRwu4E4w
-	Tdr8OFqAb09WbNLUMKn1e1jdPWLnQ1zs=
-X-Gm-Gg: ASbGncuCkjclF+rHnj3Ro2m52nTwe9hmPkYoYvZMO2FxJ1UXqyhk1atVEcoTWwzFsnH
-	qoK7y1YfvgRHSekxP0av08odhoJ/7uhfspxB/qazSJGC16g/A4e5Tf+Hra32a6nTyprUKQMMdQv
-	2oJZhUMZa3F7iA6CtWGMjaV2UMkPTJQ9mk
-X-Google-Smtp-Source: AGHT+IHVFDQUfDhzVWuHavHmyfFDUVSBk1mCtqjdNFD8Tbgzcf7WpV5Da2Wh680mw44GTQ30JSks6nR4ZUQKlhECUVg=
-X-Received: by 2002:a17:906:3acf:b0:ad5:3055:a025 with SMTP id
- a640c23a62f3a-ad53055f958mr1159631066b.6.1747751605751; Tue, 20 May 2025
- 07:33:25 -0700 (PDT)
+        bh=y0P2IqjvcCUOqznaXOXK895YsSeeP/H/xxEi3DHBfCY=;
+        b=hrMEILTskVWZt19H5Tt00/9NChW31iinL5G70hyHWRyZd4pOk6G2f1Y6bP7w5L5Gjk
+         X5wF1gVj0ggZxu0Mr8ynnLQ/rB5v0xhThHeRgU77Y2UPkM3JM77mvfFpvbJMjlFCPt62
+         Ft+PTeHn9R8CJ45Z42XiXBjAACTzS12eqmUfcMxaBmvwIWDaDtCan3peRt2RlHCntrzx
+         pMxC1yxabsp4DfeyocdWYPRWCqu2kqXRwW6+0QAJQM4Un+SWrm6nEXhtPORWzA0CWbeI
+         J4bXR6B5lnVz4O5mqPbgMpQn121hRLqjBJC814y34MTz8aiukGYMBanxBWqZ97HSJ4eB
+         1v4g==
+X-Forwarded-Encrypted: i=1; AJvYcCU+kxAZ3eHRhXijo8mDPKD2MOzF9LVMXVoX4UNi5H98V8N66WX9IkYr6pQWcIWvzcDf1DILEtZPUgFf3gYW@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwlFJ9pgnniT55+rnAJXTRfc1UC/ggFq8rTrXx4LhFJV5qHtod
+	hrk43QaNP2CHIaR0X92tX+aAd2I1Joq/fXZIA2x25AWIBNRRPgKmEYoVpQf/S/ixfPywEBL0d14
+	PkXSvnlqW6Ekxcstzm24eaELgs+KtU3SKLb5Xhjim
+X-Gm-Gg: ASbGnctAaZ3H7rLUY/c+z91XBa3rQVWxUbWmhG/ya66muy6RpCv2QonXXRFONKFyIvo
+	j2LBhjDw2iGDEYRqn0lhz765VV2XufjpERcMZpHePZciYfGGav5miKZOHmzk7HFWyR9EUu6kWjA
+	wfDjeXGwpbatHYaoATbu0QA/fmhNBdSYaSo10u/QXTU7EnI4nbJlKYzoc9Mw2wOyYVDIYV+Uyu
+X-Google-Smtp-Source: AGHT+IFq6QHuKVGpcJOYykEJd+54LhE6lJ5aZDCK7UqOGv7vWK/rlbhRvqzoyV3nEFreQqOalTu7rjwWEpWUr0hZeLw=
+X-Received: by 2002:ac8:5a08:0:b0:47d:4e8a:97f0 with SMTP id
+ d75a77b69052e-4960136a0a5mr10783031cf.29.1747751665479; Tue, 20 May 2025
+ 07:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
- <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
- <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
- <CAOQ4uxjUC=1MinjDCOfY5t89N3ga6msLmpVXL1p23qdQax6fSg@mail.gmail.com>
- <gdvg6zswvq4zjzo6vntggoacrgxxh33zmejo72yusp7aqkqzic@kaibexik7lvh>
- <CAOQ4uxg9sKC_8PLARkN6aB3E_U62_S3kfnBuRbAvho9BNzGAsQ@mail.gmail.com> <rkbkjp7xvefmtutkwtltyd6xch2pbw47x5czx6ctldemus2bvj@2ukfdmtfjjbw>
-In-Reply-To: <rkbkjp7xvefmtutkwtltyd6xch2pbw47x5czx6ctldemus2bvj@2ukfdmtfjjbw>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Tue, 20 May 2025 16:33:14 +0200
-X-Gm-Features: AX0GCFs3uIGlKS2e_SbTljkNn7JB3BFRnIpoJrABp_l8XO6h5grs8_mb9jdwHio
-Message-ID: <CAOQ4uxgOM83u1SOd4zxpDmWFsGvrgqErKRwea=85_drpF6WESA@mail.gmail.com>
-Subject: Re: [PATCH 0/6] overlayfs + casefolding
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+References: <cover.1747264138.git.ackerleytng@google.com> <d3832fd95a03aad562705872cbda5b3d248ca321.1747264138.git.ackerleytng@google.com>
+ <CA+EHjTxtHOgichL=UvAzczoqS1608RSUNn5HbmBw2NceO941ng@mail.gmail.com>
+ <CAGtprH8eR_S50xDnnMLHNCuXrN2Lv_0mBRzA_pcTtNbnVvdv2A@mail.gmail.com>
+ <CA+EHjTwjKVkw2_AK0Y0-eth1dVW7ZW2Sk=73LL9NeQYAPpxPiw@mail.gmail.com> <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
+In-Reply-To: <CAGtprH_Evyc7tLhDB0t0fN+BUx5qeqWq8A2yZ5-ijbJ5UJ5f-g@mail.gmail.com>
+From: Fuad Tabba <tabba@google.com>
+Date: Tue, 20 May 2025 15:33:49 +0100
+X-Gm-Features: AX0GCFt089q6agCPPB7UyDi-PWzBYyB89JwxkyNf6w9tWUw1XGRX3RdPGBlte3M
+Message-ID: <CA+EHjTy7iBNBb9DRdtgq8oYmvgykhSNvZL3FrRV4XF90t3XgBg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
+ KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
+To: Vishal Annapurve <vannapurve@google.com>
+Cc: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
+	aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
+	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
+	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
+	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
+	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
+	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
+	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
+	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
+	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
+	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
+	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
+	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
+	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com, 
+	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 20, 2025 at 4:12=E2=80=AFPM Kent Overstreet
-<kent.overstreet@linux.dev> wrote:
+Hi Vishal,
+
+On Tue, 20 May 2025 at 15:11, Vishal Annapurve <vannapurve@google.com> wrot=
+e:
 >
-> On Tue, May 20, 2025 at 04:03:27PM +0200, Amir Goldstein wrote:
-> > On Tue, May 20, 2025 at 2:43=E2=80=AFPM Kent Overstreet
-> > <kent.overstreet@linux.dev> wrote:
+> On Tue, May 20, 2025 at 6:44=E2=80=AFAM Fuad Tabba <tabba@google.com> wro=
+te:
+> >
+> > Hi Vishal,
+> >
+> > On Tue, 20 May 2025 at 14:02, Vishal Annapurve <vannapurve@google.com> =
+wrote:
 > > >
-> > > On Tue, May 20, 2025 at 02:40:07PM +0200, Amir Goldstein wrote:
-> > > > On Tue, May 20, 2025 at 2:25=E2=80=AFPM Kent Overstreet
-> > > > <kent.overstreet@linux.dev> wrote:
-> > > > >
-> > > > > On Tue, May 20, 2025 at 10:05:14AM +0200, Amir Goldstein wrote:
-> > > > > > On Tue, May 20, 2025 at 7:16=E2=80=AFAM Kent Overstreet
-> > > > > > <kent.overstreet@linux.dev> wrote:
-> > > > > > >
-> > > > > > > This series allows overlayfs and casefolding to safely be use=
-d on the
-> > > > > > > same filesystem by providing exclusion to ensure that overlay=
-fs never
-> > > > > > > has to deal with casefolded directories.
-> > > > > > >
-> > > > > > > Currently, overlayfs can't be used _at all_ if a filesystem e=
-ven
-> > > > > > > supports casefolding, which is really nasty for users.
-> > > > > > >
-> > > > > > > Components:
-> > > > > > >
-> > > > > > > - filesystem has to track, for each directory, "does any _des=
-cendent_
-> > > > > > >   have casefolding enabled"
-> > > > > > >
-> > > > > > > - new inode flag to pass this to VFS layer
-> > > > > > >
-> > > > > > > - new dcache methods for providing refs for overlayfs, and fi=
-lesystem
-> > > > > > >   methods for safely clearing this flag
-> > > > > > >
-> > > > > > > - new superblock flag for indicating to overlayfs & dcache "f=
-ilesystem
-> > > > > > >   supports casefolding, it's safe to use provided new dcache =
-methods are
-> > > > > > >   used"
-> > > > > > >
-> > > > > >
-> > > > > > I don't think that this is really needed.
-> > > > > >
-> > > > > > Too bad you did not ask before going through the trouble of thi=
-s implementation.
-> > > > > >
-> > > > > > I think it is enough for overlayfs to know the THIS directory h=
-as no
-> > > > > > casefolding.
-> > > > >
-> > > > > overlayfs works on trees, not directories...
+> > > On Tue, May 20, 2025 at 2:23=E2=80=AFAM Fuad Tabba <tabba@google.com>=
+ wrote:
 > > > >
-> > > > I know how overlayfs works...
+> > > > Hi Ackerley,
 > > > >
-> > > > I've explained why I don't think that sanitizing the entire tree is=
- needed
-> > > > for creating overlayfs over a filesystem that may enable casefoldin=
-g
-> > > > on some of its directories.
+> > > > On Thu, 15 May 2025 at 00:43, Ackerley Tng <ackerleytng@google.com>=
+ wrote:
+> > > > >
+> > > > > The two new guest_memfd ioctls KVM_GMEM_CONVERT_SHARED and
+> > > > > KVM_GMEM_CONVERT_PRIVATE convert the requested memory ranges to s=
+hared
+> > > > > and private respectively.
+> > > >
+> > > > I have a high level question about this particular patch and this
+> > > > approach for conversion: why do we need IOCTLs to manage conversion
+> > > > between private and shared?
+> > > >
+> > > > In the presentations I gave at LPC [1, 2], and in my latest patch
+> > > > series that performs in-place conversion [3] and the associated (by
+> > > > now outdated) state diagram [4], I didn't see the need to have a
+> > > > userspace-facing interface to manage that. KVM has all the informat=
+ion
+> > > > it needs to handle conversions, which are triggered by the guest. T=
+o
+> > > > me this seems like it adds additional complexity, as well as a user
+> > > > facing interface that we would need to maintain.
+> > > >
+> > > > There are various ways we could handle conversion without explicit
+> > > > interference from userspace. What I had in mind is the following (a=
+s
+> > > > an example, details can vary according to VM type). I will use use =
+the
+> > > > case of conversion from shared to private because that is the more
+> > > > complicated (interesting) case:
+> > > >
+> > > > - Guest issues a hypercall to request that a shared folio become pr=
+ivate.
+> > > >
+> > > > - The hypervisor receives the call, and passes it to KVM.
+> > > >
+> > > > - KVM unmaps the folio from the guest stage-2 (EPT I think in x86
+> > > > parlance), and unmaps it from the host. The host however, could sti=
+ll
+> > > > have references (e.g., GUP).
+> > > >
+> > > > - KVM exits to the host (hypervisor call exit), with the informatio=
+n
+> > > > that the folio has been unshared from it.
+> > > >
+> > > > - A well behaving host would now get rid of all of its references
+> > > > (e.g., release GUPs), perform a VCPU run, and the guest continues
+> > > > running as normal. I expect this to be the common case.
+> > > >
+> > > > But to handle the more interesting situation, let's say that the ho=
+st
+> > > > doesn't do it immediately, and for some reason it holds on to some
+> > > > references to that folio.
+> > > >
+> > > > - Even if that's the case, the guest can still run *. If the guest
+> > > > tries to access the folio, KVM detects that access when it tries to
+> > > > fault it into the guest, sees that the host still has references to
+> > > > that folio, and exits back to the host with a memory fault exit. At
+> > > > this point, the VCPU that has tried to fault in that particular fol=
+io
+> > > > cannot continue running as long as it cannot fault in that folio.
 > > >
-> > > So, you want to move error checking from mount time, where we _just_
-> > > did a massive API rework so that we can return errors in a way that
-> > > users will actually see them - to open/lookup, where all we have are =
-a
-> > > small fixed set of error codes?
+> > > Are you talking about the following scheme?
+> > > 1) guest_memfd checks shareability on each get pfn and if there is a
+> > > mismatch exit to the host.
 > >
-> > That's one way of putting it.
+> > I think we are not really on the same page here (no pun intended :) ).
+> > I'll try to answer your questions anyway...
 > >
-> > Please explain the use case.
+> > Which get_pfn? Are you referring to get_pfn when faulting the page
+> > into the guest or into the host?
+>
+> I am referring to guest fault handling in KVM.
+>
 > >
-> > When is overlayfs created over a subtree that is only partially case fo=
-lded?
-> > Is that really so common that a mount time error justifies all the vfs
-> > infrastructure involved?
+> > > 2) host user space has to guess whether it's a pending refcount or
+> > > whether it's an actual mismatch.
+> >
+> > No need to guess. VCPU run will let it know exactly why it's exiting.
+> >
+> > > 3) guest_memfd will maintain a third state
+> > > "pending_private_conversion" or equivalent which will transition to
+> > > private upon the last refcount drop of each page.
+> > >
+> > > If conversion is triggered by userspace (in case of pKVM, it will be
+> > > triggered from within the KVM (?)):
+> >
+> > Why would conversion be triggered by userspace? As far as I know, it's
+> > the guest that triggers the conversion.
+> >
+> > > * Conversion will just fail if there are extra refcounts and userspac=
+e
+> > > can try to get rid of extra refcounts on the range while it has enoug=
+h
+> > > context without hitting any ambiguity with memory fault exit.
+> > > * guest_memfd will not have to deal with this extra state from 3 abov=
+e
+> > > and overall guest_memfd conversion handling becomes relatively
+> > > simpler.
+> >
+> > That's not really related. The extra state isn't necessary any more
+> > once we agreed in the previous discussion that we will retry instead.
 >
-> Amir, you've got two widely used filesystem features that conflict and
-> can't be used on the same filesystem.
+> Who is *we* here? Which entity will retry conversion?
+
+Userspace will re-attempt the VCPU run.
+
+> >
+> > > Note that for x86 CoCo cases, memory conversion is already triggered
+> > > by userspace using KVM ioctl, this series is proposing to use
+> > > guest_memfd ioctl to do the same.
+> >
+> > The reason why for x86 CoCo cases conversion is already triggered by
+> > userspace using KVM ioctl is that it has to, since shared memory and
+> > private memory are two separate pages, and userspace needs to manage
+> > that. Sharing memory in place removes the need for that.
 >
-> That's _broken_.
+> Userspace still needs to clean up memory usage before conversion is
+> successful. e.g. remove IOMMU mappings for shared to private
+> conversion. I would think that memory conversion should not succeed
+> before all existing users let go of the guest_memfd pages for the
+> range being converted.
 
-Correct.
+Yes. Userspace will know that it needs to do that on the VCPU exit,
+which informs it of the guest's hypervisor request to unshare (convert
+from shared to private) the page.
 
-I am saying that IMO a smaller impact (and less user friendly) fix is more
-appropriate way to deal with this problem.
+> In x86 CoCo usecases, userspace can also decide to not allow
+> conversion for scenarios where ranges are still under active use by
+> the host and guest is erroneously trying to take away memory. Both
+> SNP/TDX spec allow failure of conversion due to in use memory.
 
+How can the guest erroneously try to take away memory? If the guest
+sends a hypervisor request asking for a conversion of memory that
+doesn't belong to it, then I would expect the hypervisor to prevent
+that.
+
+I don't see how having an IOCTL to trigger the conversion is needed to
+allow conversion failure. How is that different from userspace
+ignoring or delaying releasing all references it has for the
+conversion request?
+
+> >
+> > This series isn't using the same ioctl, it's introducing new ones to
+> > perform a task that as far as I can tell so far, KVM can handle by
+> > itself.
 >
-> Users hate partitioning just for separate /boot and /home, having to
-> partition for different applications is horrible. And since overlay fs
-> is used under the hood by docker, and casefolding is used under the hood
-> for running Windows applications, this isn't something people can
-> predict in advance.
+> I would like to understand this better. How will KVM handle the
+> conversion process for guest_memfd pages? Can you help walk an example
+> sequence for shared to private conversion specifically around
+> guest_memfd offset states?
 
-Right, I am not expecting users to partition by application,
-but my question was this:
+To make sure that we are discussing the same scenario: can you do the
+same as well please --- walk me through an example sequence for shared
+to private conversion specifically around guest_memfd offset states
+With the IOCTLs involved?
 
-When is overlayfs created over a subtree that is only partially case-folded=
-?
+Here is an example that I have implemented and tested with pKVM. Note
+that there are alternatives, the flow below is architecture or even
+vm-type dependent. None of this code is code KVM code and the
+behaviour could vary.
 
-Obviously, docker would create overlayfs on parts of the fs
-and smbd/cygwin could create a case folder subtree on another
-part of the fs.
-I just don't see a common use case when these sections overlap.
 
-Perhaps I am wrong (please present real world use cases),
-but my claim is that this case is not common enough and therefore,
-a suboptimal EIO error from lookup is good enough to prevert crossing
-over into the case folded zone by mistake, just as EIO on lookup is
-enough to deal with the unsupported use case of modifying
-overlayfs underlying layers with overlay is mounted.
+Assuming the folio is shared with the host:
 
-BTW, it is not enough to claim that there is no case folding for the
-entire subtree to allow the mount.
-For overlayfs to allow d_hash()/d_compare() fs must claim that
-these implementations are the default implementation in all subtree
-or at least that all layers share the same implementation.
+Guest sends unshare hypercall to the hypervisor
+Hypervisor forwards request to KVM (gmem) (having done due diligence)
+KVM (gmem) performs an unmap_folio(), exits to userspace with
+KVM_EXIT_UNSHARE and all the information about the folio being
+unshared
+
+Case 1:
+Userspace removes any remaining references (GUPs, IOMMU Mappings etc...)
+Userspace calls vcpu_run(): KVM (gmem) sees that there aren't any
+references, sets state to PRIVATE
+
+Case 2 (alternative 1):
+Userspace doesn't release its references
+Userspace calls vcpu_run(): KVM (gmem) sees that there are still
+references, exits back to userspace with KVM_EXIT_UNSHARE
+
+Case 2 (alternative 2):
+Userspace doesn't release its references
+Userspace calls vcpu_run(): KVM (gmem) sees that there are still
+references, unmaps folio from guest, but allows it to run (until it
+tries to fault in the folio)
+Guest tries to fault in folio that still has reference, KVM does not
+allow that (it sees that the folio is shared, and it doesn't fault in
+shared folios to confidential guests)
+KVM exits back to userspace with KVM_EXIT_UNSHARE
+
+As I mentioned, the alternatives above are _not_ set in core KVM code.
+They can vary by architecture of VM type, depending on the policy,
+support, etc..
+
+Now for your example please on how this would work with IOCTLs :)
 
 Thanks,
-Amir.
+/fuad
+
+> >
+> > >  - Allows not having to keep track of separate shared/private range
+> > > information in KVM.
+> >
+> > This patch series is already tracking shared/private range information =
+in KVM.
+> >
+> > >  - Simpler handling of the conversion process done per guest_memfd
+> > > rather than for full range.
+> > >      - Userspace can handle the rollback as needed, simplifying error
+> > > handling in guest_memfd.
+> > >  - guest_memfd is single source of truth and notifies the users of
+> > > shareability change.
+> > >      - e.g. IOMMU, userspace, KVM MMU all can be registered for
+> > > getting notifications from guest_memfd directly and will get notified
+> > > for invalidation upon shareability attribute updates.
+> >
+> > All of these can still be done without introducing a new ioctl.
+> >
+> > Cheers,
+> > /fuad
 
