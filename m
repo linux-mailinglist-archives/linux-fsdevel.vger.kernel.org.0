@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-49511-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49510-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A30CEABDAC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 16:01:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A1FABDA61
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 15:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56BD61BA52DF
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 14:01:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7587B3AC4AE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 13:56:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A584824503E;
-	Tue, 20 May 2025 14:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B45C2459F5;
+	Tue, 20 May 2025 13:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="I+JxI97e"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="IzQaXQ3O"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 099F2242D79;
-	Tue, 20 May 2025 14:00:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DA22459C4;
+	Tue, 20 May 2025 13:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747749654; cv=none; b=erGnmMKiXPaFGOAzqbVUblZwUtIC4s8G1gscRpjG8JxRAb68Ne0NBQ8CXkqVSVzLRoVSaiDnsXHX9Gp3tOGMZWu32VNSAc6b7uoBMPVKQL0G8B4C2crxo8M50aA5Vbh8yhisf1md9QigmSPg/3azRDpWJL6pKeMjUCCHPEYYxUE=
+	t=1747749381; cv=none; b=I5+U+Qo3ZFuudmqIirizUdSuVScWKACmCB+VvVPibzg14hjSpq1a4dHMAGZohWRb/P5w4HY9wQy4j23ikMcKRVLn2B0I3hH86SaMsVHeDPWhXmj/2AU5ZLhS/yxe49o3jNx+PKHtv3eMuYPVvY7LdwscC58xxTqH2GiG0ofzmWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747749654; c=relaxed/simple;
-	bh=ZiZU33Lo7kS1EPPVmImpLNvwguFnyj8P5M+5s/OJ5FI=;
+	s=arc-20240116; t=1747749381; c=relaxed/simple;
+	bh=4ubUthK49Sp3mkO7AL+/eHYpZMlPHY4R02bVOtJrYCA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UdIY2gZn2yRZF0Z4+FbH7LKr3PQr0AQy4GtUNOZhPreTnYN01KJUEJ3UEEJZZzulqiHfJb9QAEVk5tVxetWShf+WvhAcSK9Yfmn2ehGgJUdh6AHVdx6Ut+BQKCjpCrQdkvduNvJze4honr1kZVJ0vsd5MZHFZG7H5mvUlv9DAB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=I+JxI97e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C16C4CEE9;
-	Tue, 20 May 2025 14:00:52 +0000 (UTC)
+	 MIME-Version; b=nRRupivHq5IBrogbeZnN3toH90UMxtt7pzWM6cWpqXmR40+qBvgBNPiBE+3HNzJNqKg1lBiaS71BUDNB7vDANE8OXIh7YTnxof8x5f24dyDhq/1b5yS4WZ3AscQ6o0iA44twgYsn+kGhlwbyPeAlK0DOVTonj8t5fTGEw9IwvTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=IzQaXQ3O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B043C4CEEB;
+	Tue, 20 May 2025 13:56:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1747749653;
-	bh=ZiZU33Lo7kS1EPPVmImpLNvwguFnyj8P5M+5s/OJ5FI=;
+	s=korg; t=1747749381;
+	bh=4ubUthK49Sp3mkO7AL+/eHYpZMlPHY4R02bVOtJrYCA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=I+JxI97e69B40SgUGvsYJPp7AcOG8DLl8bQLtF+mnSmwR7OWmqw6CCg3WHszftch7
-	 pSmtv8rCiaSajwyvexFftOLoezYglJfzv2oPEaE0qsDdESALRV1JVmMgqztgClONZP
-	 vU6Xg3bb3Ubzjldao8/N9FTnKu61ap6J5LJg8Nvs=
+	b=IzQaXQ3O2KGu3o7/TBPDSZfF6JA/Z32HCSdXYlYpv7dsEpLVV0rvFwNnoTYq7w/2P
+	 /Jl1BIkLn7470rZsOKTOVTC/kQRBfzdJLOEaU5l9PGDIogavNfkn2WYtYsgDnLYrgj
+	 csDibiWF269PSXqigdv0m4wTTQutC8Hf7BVZDeFA=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -51,12 +51,12 @@ Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Sebastian Ott <sebott@redhat.com>,
 	Kees Cook <keescook@chromium.org>,
 	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.6 003/117] binfmt_elf: elf_bss no longer used by load_elf_binary()
+Subject: [PATCH 6.1 03/97] binfmt_elf: elf_bss no longer used by load_elf_binary()
 Date: Tue, 20 May 2025 15:49:28 +0200
-Message-ID: <20250520125804.128281403@linuxfoundation.org>
+Message-ID: <20250520125800.798369981@linuxfoundation.org>
 X-Mailer: git-send-email 2.49.0
-In-Reply-To: <20250520125803.981048184@linuxfoundation.org>
-References: <20250520125803.981048184@linuxfoundation.org>
+In-Reply-To: <20250520125800.653047540@linuxfoundation.org>
+References: <20250520125800.653047540@linuxfoundation.org>
 User-Agent: quilt/0.68
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -68,7 +68,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-6.6-stable review patch.  If anyone has any objections, please let me know.
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
@@ -97,10 +97,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 5 deletions(-)
 
 diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index d59bca23c4bd9..02258b28e370e 100644
+index ea2968d343bb6..2672b9dca1af0 100644
 --- a/fs/binfmt_elf.c
 +++ b/fs/binfmt_elf.c
-@@ -854,7 +854,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+@@ -855,7 +855,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
  	unsigned long error;
  	struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata = NULL;
  	struct elf_phdr *elf_property_phdata = NULL;
@@ -109,7 +109,7 @@ index d59bca23c4bd9..02258b28e370e 100644
  	int retval, i;
  	unsigned long elf_entry;
  	unsigned long e_entry;
-@@ -1046,7 +1046,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+@@ -1047,7 +1047,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
  	if (retval < 0)
  		goto out_free_dentry;
  
@@ -117,7 +117,7 @@ index d59bca23c4bd9..02258b28e370e 100644
  	elf_brk = 0;
  
  	start_code = ~0UL;
-@@ -1209,8 +1208,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+@@ -1210,8 +1209,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
  
  		k = elf_ppnt->p_vaddr + elf_ppnt->p_filesz;
  
@@ -126,7 +126,7 @@ index d59bca23c4bd9..02258b28e370e 100644
  		if ((elf_ppnt->p_flags & PF_X) && end_code < k)
  			end_code = k;
  		if (end_data < k)
-@@ -1222,7 +1219,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
+@@ -1223,7 +1220,6 @@ static int load_elf_binary(struct linux_binprm *bprm)
  
  	e_entry = elf_ex->e_entry + load_bias;
  	phdr_addr += load_bias;
