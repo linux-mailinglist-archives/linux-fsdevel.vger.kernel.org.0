@@ -1,79 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-49539-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49540-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88215ABE281
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 20:21:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D71DABE29C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 20:26:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3293A7075
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 18:21:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B001F4C2871
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 May 2025 18:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C67AA21FF3D;
-	Tue, 20 May 2025 18:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EA227E1AB;
+	Tue, 20 May 2025 18:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ESvUvkKx"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qFA8lg0I"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31316280004
-	for <linux-fsdevel@vger.kernel.org>; Tue, 20 May 2025 18:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BF3A262D29
+	for <linux-fsdevel@vger.kernel.org>; Tue, 20 May 2025 18:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747765211; cv=none; b=hL+ynwZmDgqyIU+KqltW4CW/vW+Res8zBAXRaZybekFqeujZNqVDY4rRM3WP3zJB9dvqA+Ukt6HMIrPuZHxwjVpyEgi/9UnhbK9F80fVEk3veY+GKPplLXFuW7TYf5MxpdSVrs3sgCw5U1mwSmRXrt+5fOS96+Rw2ElB8zO5+Yw=
+	t=1747765590; cv=none; b=M655CudKOvdXSGpAtRHQlvPUEb8WSHbF+DphBapRLv/aba+uDDGJKye08a/77ii+dTUvJB21EEWU8Mn0q5Fk+c32APkGqClA8/FL3PsThzRe5QSa8An3+jTwvOM9+xBtbjDxuE4Tvi70nmkf8sdk3eGvcCZZjFVGgGEP2AIwymw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747765211; c=relaxed/simple;
-	bh=Rhu3+hQfdxjtoPomX5UqD851pJJL4CgSO87P2e5qmzA=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ivkHbsNYZojYLx5Ch3RX2u0LruJPywkGZ/4CPzb1BYmbVTmQbLm9D8nO49VpPjiMfoAzCSCioPIp6aEADFPXLaHJG33eQlmoX+q0GvuAYJXes6VEtbjiUWwMGVarb2QwJiRTjzZyqViGcyBUpW5jOqGKjJmmlT/HBY/97gJnh5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ESvUvkKx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94E39C4CEE9;
-	Tue, 20 May 2025 18:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747765209;
-	bh=Rhu3+hQfdxjtoPomX5UqD851pJJL4CgSO87P2e5qmzA=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=ESvUvkKxCwPiH4yyWqC755cwzcEzY+Yw2M6jj/6IVKl636C7gwCYDBG1yuAyRzfGG
-	 ousxzzDWRKZpWDvpWb/A+sqPYq9nQd/9J4kAhVoFverevhkS22yhUQ95NR2GtvEDOS
-	 nCbZa9WInJwhSJ+yrPh12Cqr4DqahosE83N9CYPNsW+OhoZxdr8XNaWv+2wwOwuFEe
-	 j3t12trDKb21KNETU+lGrSkSwy5w8wLK8fxJiUexyHeyBPBn4807qfdNciAml4leXc
-	 FroJEo/GeI5aCQhdT9+o+u/X+bR1wAcT98RxJDKpWF3+sq4pn3CnkZ8kWffz4i0zAf
-	 qh8wwp7PIx6GA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE103380AA70;
-	Tue, 20 May 2025 18:20:46 +0000 (UTC)
-Subject: Re: [GIT PULL] fix for orangefs counting code
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <CAOg9mSTe1vJLaw=ftzB7LsSEVqWj-5HEznERtWUh=CuBN7yKMg@mail.gmail.com>
-References: <CAOg9mSTe1vJLaw=ftzB7LsSEVqWj-5HEznERtWUh=CuBN7yKMg@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAOg9mSTe1vJLaw=ftzB7LsSEVqWj-5HEznERtWUh=CuBN7yKMg@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git tags/for-linus-6.15-ofs2
-X-PR-Tracked-Commit-Id: 219bf6edd7efcea9eca53c44c8dc3d1c6437f8b8
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: b36ddb9210e6812eb1c86ad46b66cc46aa193487
-Message-Id: <174776524528.1417935.16608630170386598692.pr-tracker-bot@kernel.org>
-Date: Tue, 20 May 2025 18:20:45 +0000
-To: Mike Marshall <hubcap@omnibond.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel <linux-fsdevel@vger.kernel.org>, Mike Marshall <hubcap@omnibond.com>, devel@lists.orangefs.org
+	s=arc-20240116; t=1747765590; c=relaxed/simple;
+	bh=bXCaQrTI2i+zn9W34y3m9O2P4sfdV4wreHAf43KPX7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZHAD3Dmutbap7UdLdeSIP6+XhL25g44Grkb0GTcRzOuXI8OXIMTC1KUgcATF6ZjibuWIJvC0kYQKzUsc5p+m2mOehDHiMtelHphuudc/jygAuF/8SjTyGNnol+UkJ2bacTWizWzrWhx3EnydrWwruZdDlU8M+GQpFXU880epWbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qFA8lg0I; arc=none smtp.client-ip=91.218.175.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b932c4b8-a45d-4da3-8ef9-f45055830609@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747765577;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SSGVVvj/o1r+R0aA03QBvXfE7OdysBvf0GHLfuZbsiY=;
+	b=qFA8lg0Is+yWtccFjqKbLszDszKgr/oTFUFbImylAMRe3MzsB8Z5i+3c3xpAKQ9uVU+rMk
+	Y8jfhVnqm0l87zJGVccerDPG8R0rY0CsVjJFZWtDUZA0O3sWLTDzfcg4A82hiMms4kcwdZ
+	1zllIkgzmz/36zOlPYu2KSJUmdAzEDU=
+Date: Tue, 20 May 2025 11:26:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Subject: Re: [PATCH] dcache: Define DNAME_INLINE_LEN as a number directly
+Content-Language: en-GB
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Al Viro <viro@zeniv.linux.org.uk>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+ loongarch@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+References: <20250520064707.31135-1-yangtiezhu@loongson.cn>
+ <20250520082258.GC2023217@ZenIV>
+ <CAADnVQJW+qyq9wPD6RdoaZ8nLYX8N2+4Bhxyd19h6pdqNRMc3A@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <CAADnVQJW+qyq9wPD6RdoaZ8nLYX8N2+4Bhxyd19h6pdqNRMc3A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-The pull request you sent on Tue, 20 May 2025 11:52:55 -0400:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git tags/for-linus-6.15-ofs2
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/b36ddb9210e6812eb1c86ad46b66cc46aa193487
+On 5/20/25 1:04 AM, Alexei Starovoitov wrote:
+> On Tue, May 20, 2025 at 1:23 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>> On Tue, May 20, 2025 at 02:47:07PM +0800, Tiezhu Yang wrote:
+>>> When executing the bcc script, there exists the following error
+>>> on LoongArch and x86_64:
+>> NOTABUG.  You can't require array sizes to contain no arithmetics,
+>> including sizeof().  Well, you can, but don't expect your requests
+>> to be satisfied.
+>>
+>>> How to reproduce:
+>>>
+>>> git clone https://github.com/iovisor/bcc.git
+>>> mkdir bcc/build; cd bcc/build
+>>> cmake ..
+>>> make
+>>> sudo make install
+>>> sudo /usr/share/bcc/tools/filetop
+>> So fix the script.  Or report it to whoever wrote it, if it's
+>> not yours.
+> +1
+>
+>> I'm sorry, but we are NOT going to accomodate random parsers
+>> poking inside the kernel-internal headers and failing to
+>> actually parse the language they are written in.
+>>
+>> If you want to exfiltrate a constant, do what e.g. asm-offsets is
+>> doing.  Take a look at e.g.  arch/loongarch/kernel/asm-offsets.c
+>> and check what ends up in include/generated/asm-offsets.h - the
+>> latter is entirely produced out of the former.
+>>
+>> The trick is to have inline asm that would spew a recognizable
+>> line when compiled into assembler, with the value(s) you want
+>> substituted into it.  See include/linux/kbuild.h for the macros.
+>>
+>> Then you pick these lines out of generated your_file.s - no need
+>> to use python, sed(1) will do just fine.  See filechk_offsets in
+>> scripts/Makefile.lib for that part.
+> None of it is necessary.
+>
+> Tiezhu,
+>
+> bcc's tools/filetop.py is really old and obsolete.
+> It's not worth fixing. I'd delete it.
+> Use bcc's libbpf-tools/filetop instead.
 
-Thank you!
+Tiezhu, please check whether libbpf-tools/filetop satisfied your need or 
+not. Thanks!
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
 
