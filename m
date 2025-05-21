@@ -1,222 +1,172 @@
-Return-Path: <linux-fsdevel+bounces-49589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49590-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF340ABFC45
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 19:29:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C64BBABFC9D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 20:05:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE913A94D4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 17:28:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E0B4E7FC8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 18:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C159289E15;
-	Wed, 21 May 2025 17:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 071D028981B;
+	Wed, 21 May 2025 18:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NAiz5sXK"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mTZOwT1q"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B560289824;
-	Wed, 21 May 2025 17:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09984231839
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 May 2025 18:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747848528; cv=none; b=fsvQ+7arIli5+lliw1voKeIKh7LvU/fIkDiWFbNxmJbVE4LOVtAQGK9vIzXhqmHqdaaOJ6lMVDKdwqxr6UP2tiUjlYRKLSu4U46YNK5rDjkTN3TAnlfkVP04OIX+py7JSqInsDqvz4KJsMG0KY2MuhApzNqpjzBBc7ttN3ekR+4=
+	t=1747850748; cv=none; b=LotnUOvH53zn9DiBNaWLcf4WSBz7mgroqX7/3Ob7Q//+vZ9nHwyyNsrwRl0FLJ5eAVNpaf4N9kRlhbGcXs6RoiRl88hkKlugTxwWXB4wXzA9jt6z8s6ywyfAn0XB3HtIXKxFhybOrz44v+JgZtVHKC3aOhwu17X15bzOqh8bMFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747848528; c=relaxed/simple;
-	bh=HK/f2OC27kw7E2aDKCk4nq2rlgz3dZYbc65P0dIeI8g=;
+	s=arc-20240116; t=1747850748; c=relaxed/simple;
+	bh=/kBCkQlxjXnin3hiwXC845Y7K1IJf3aW28/KCZJ7/Bk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B0uGs4oaPvXKBvFFihdeWCrT2EgMfapiJCxhISjNQVd88dY/AyeanugOXBx97BVHTZzsk/+qJ3r6LqAVWCPMT3akVv0QCOofp7UsbGAuYqudSzhqPxdz+Qs2IHvKZT3n5wl8rRTwYSQCVJ23OaoJpv7hskvaqvA+DAMP1OS2d7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NAiz5sXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3218C4CEED;
-	Wed, 21 May 2025 17:28:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747848527;
-	bh=HK/f2OC27kw7E2aDKCk4nq2rlgz3dZYbc65P0dIeI8g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NAiz5sXKNgZ+c0/iaEixDGFzVzruxX16Qc+eAi4IvjNCcp7qOQFYB4aH8AUxjy2UA
-	 XE2gR0hG307xua48iHqYps6FT4DmrMAUPMYqvQb6e8QlZ4wS3SmrQlEwFjURyxtncg
-	 H0/sm2zccIoh1qkUXXO0XgpgNeW67ZtKf2t+V87czNZ1PTpL4+8AZZHQ3dxjCe/jUX
-	 y/N0yL0xUAXNrSBNLZjor6d284iKVof+HfghtSagl7NIC9/XTQV7paBl/DALLrBfKA
-	 gHzuZI1ehMUevP/u0ZjK/JGIaRH6ymFHw/SLHpZMe7ftn4rSfRJPuDEzixL5X2TC1m
-	 AAjk67Ub9s3Rw==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54b09cb06b0so8354808e87.1;
-        Wed, 21 May 2025 10:28:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAg+5duOt9wRM6+bJLinTbn7OnLba1ODZY0yoYlKgoUCYtXphOlACfRf/2QdHPCJhTQx7qncEv7GkzZtM6@vger.kernel.org, AJvYcCVwqzaEtzylXF43O6gi2gvZqqMqPQhFNTzSh6MMAHWm1gF5TguqSy3jbRn3jgT4feWGpY4HSkULeiw=@vger.kernel.org, AJvYcCXPvEVGZxoR3poGo1T5okptscEkhfx5r7YW0kLl9OMf0Hs1PUXX8iPZ4B3SmjxKaBrKylsfqtd5bEeMYcCf/g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/rfMk2jbJgwZlMMwohzO4UqvCIiABEv7Nqx/Iu04BC/QY/Kur
-	ci7JyHPHx8QJsxg/WXg6uiOnKa7fI495ujsTjb1VXWYyqZQiu8fQbdi49gnEshjSlB3Lt5BMVik
-	S2QU6ij1mU/qRq3A8+wPZgi1HiAGNDJE=
-X-Google-Smtp-Source: AGHT+IED7hvEqvRCCLir6jjUlL9xucAtYBb9f1l0NIqbApbevbcHb1vS7VmHxi6m3+G9Dil82JpRAU6w7+u6lw79G9c=
-X-Received: by 2002:ac2:4e07:0:b0:54f:c6b0:4c71 with SMTP id
- 2adb3069b0e04-550e71983e4mr7313533e87.10.1747848526113; Wed, 21 May 2025
- 10:28:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=j37S8QTbDvIgQPpA3Jj5M9BdwDmCzxhwS7IT1Z/PxD2wd8bx0Y9ItmBPeXZCl8FIpjmdJmabdtkI0zI7a9DXRNbI4bZ+dVxXuD82OPZdyP+HjjbtJ+yOqgMQ5hc1R3656BFpeqbFFJNKHnPDe2FC7VGWtvmdMcG1sAwnYNgbE9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mTZOwT1q; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-231f61dc510so1110665ad.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 21 May 2025 11:05:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1747850746; x=1748455546; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ubZduvx/cYHhuXsc0YXgIW6eAhMzKqsU08W4pEGJ/Pc=;
+        b=mTZOwT1qMPpFi469dgS9oR82Aj2A+a1WAI2JMt9OUhtT32dbbz2jocD2GmJx72uKjB
+         eB/ztFfnWDMZpXyYBoJbskw5htRJKUYP9YzgjlJ4Kira6exmWiHocqb2bKUZMFiCdBFJ
+         UNgGYO8pD+CQ6nSC0jwdQSD1zN+ZDxJJVXu/CIv9Z7ZixX2kpzfxYTH6en2j4GMe/B4V
+         T56CZ84nRCjhxQnr/qGxuteDNqpy2+oqjcYV9ql/WnWmVPDmf45UXSLvsYSsKbjoktGm
+         LI2MvTW/zccZP2ZiPaOxlgmbjTA6igzbdrQYy8fI+S69nBDthOasTBH6nCusp/ffSwi8
+         PS8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747850746; x=1748455546;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ubZduvx/cYHhuXsc0YXgIW6eAhMzKqsU08W4pEGJ/Pc=;
+        b=BIeCI2AADf1YDJEIHRTe3JqPpQEP4KXzw1/sDkylHGDHSK3b7PVKegpktVmluZLYOe
+         /1n+17UqGNCClZMZ5gwaE34vM3Raw81RkJK/xyRbPVTsHvDxJEXkdGinHgETuLDE0V0B
+         BvURT/pyZ5lQ6X1psAd+I+OLYRr2KE9uZtsO5TYAJgJ5O7SxUQjqMzsGsvok0TJiOPHm
+         WkKbypPhHr8SPhFOfvwiJWcNfrfnw0lTmxk2DEoSYQCbvXrxZP3VRlN/JAlTsTQSQuwi
+         NJqD8v3RnaFIL1qJg3UCv+5DnIWxn06IUiW2KZ+yjxJ5lfVGtpzwkO5E7FkEAP7RXya/
+         sRrw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6yuWW++9LDj81KLnN6l1fHy9YW19y6Qf4eKylsJ9BmVL6PjpvULfD1+2BAWwTpkhObclxD9LyrRLR2fms@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXxcOwzfd2lZD0oUn89fuAJLv2JwJCKi18hTkQUEqkCc7Cm3UT
+	QfAa5lhwdM78nX1IdUI38DyP52dA4H7mfqSduqXtWSWH4W2dpgwfNCSRt7I66rtcQtF90DHyDtX
+	2rc03vnuvuxZS5iUEKyt4TJHzONmvpUd8YbFmP47A
+X-Gm-Gg: ASbGncvZTW0kcloV4RrHcVF5xWtauOBIKycJR5NV0Qf052PJOr911IwjPR/I9aIN9xq
+	dYuzsN+xuT04q//NkMrsY0oFpiqqVwS4RNCkN6VKGXVN9dF12FBq/t3F7phI+g77PaYRKrCPsUt
+	FL+AIJHjNfeV1lNJ88YKVrinWJLyKbMFgfTsU1iV7qzK4h0c3BNNN2yELZFWgDpED59QyPGJ+Rr
+	Q==
+X-Google-Smtp-Source: AGHT+IHmVPisOoELNyl8TlIo/1z2Gy2JQdvRF1i2iTDr537dKpeYFIvLF3liBXDQzvSnoGIzUR4n3Bcy350EhBXDWOw=
+X-Received: by 2002:a17:902:f545:b0:231:e0d0:bf65 with SMTP id
+ d9443c01a7336-23204143657mr12533785ad.7.1747850745624; Wed, 21 May 2025
+ 11:05:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <6820e1f6.050a0220.f2294.003c.GAE@google.com>
-In-Reply-To: <6820e1f6.050a0220.f2294.003c.GAE@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 21 May 2025 19:28:34 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXEg88Q5GCV+YW13UT4eDEzMpnKW8ReJNDjLqX7xeXaw=w@mail.gmail.com>
-X-Gm-Features: AX0GCFsyajLOL0aLII2QTgKTT2Po4pG1OJqA5lR8WKR5gk16iSvrfBCxXYID3RQ
-Message-ID: <CAMj1kXEg88Q5GCV+YW13UT4eDEzMpnKW8ReJNDjLqX7xeXaw=w@mail.gmail.com>
-Subject: Re: [syzbot] [fs?] [efi?] BUG: unable to handle kernel paging request
- in alloc_fs_context
-To: syzbot <syzbot+52cd651546d11d2af06b@syzkaller.appspotmail.com>, 
-	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>
-Cc: jk@ozlabs.org, linux-efi@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <cover.1747264138.git.ackerleytng@google.com> <e9aaf20d31281d00861b1805404dbed40024f824.1747264138.git.ackerleytng@google.com>
+In-Reply-To: <e9aaf20d31281d00861b1805404dbed40024f824.1747264138.git.ackerleytng@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Wed, 21 May 2025 11:05:32 -0700
+X-Gm-Features: AX0GCFvVdSODjor7OXlVRx2yQTS_EDakZDYyd8FkQ0_ENzjc8DIITkJ6cFhT2Qk
+Message-ID: <CAGtprH-G6hA6dfFrRtFh+gazmr+27mvpoV-MNphbvKzm3WS4Rg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 33/51] KVM: guest_memfd: Allocate and truncate from
+ custom allocator
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vbabka@suse.cz, 
+	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
+	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com, 
+	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
+	zhiquan1.li@intel.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-(cc James, Al, Christian)
+On Wed, May 14, 2025 at 4:43=E2=80=AFPM Ackerley Tng <ackerleytng@google.co=
+m> wrote:
+> ...
+> +/**
+> + * kvm_gmem_zero_range() - Zeroes all sub-pages in range [@start, @end).
+> + *
+> + * @mapping: the filemap to remove this range from.
+> + * @start: index in filemap for start of range (inclusive).
+> + * @end: index in filemap for end of range (exclusive).
+> + *
+> + * The pages in range may be split. truncate_inode_pages_range() isn't t=
+he right
+> + * function because it removes pages from the page cache; this function =
+only
+> + * zeroes the pages.
+> + */
+> +static void kvm_gmem_zero_range(struct address_space *mapping,
+> +                               pgoff_t start, pgoff_t end)
+> +{
+> +       struct folio_batch fbatch;
+> +
+> +       folio_batch_init(&fbatch);
+> +       while (filemap_get_folios(mapping, &start, end - 1, &fbatch)) {
+> +               unsigned int i;
+> +
+> +               for (i =3D 0; i < folio_batch_count(&fbatch); ++i) {
+> +                       struct folio *f;
+> +                       size_t nr_bytes;
+> +
+> +                       f =3D fbatch.folios[i];
+> +                       nr_bytes =3D offset_in_folio(f, end << PAGE_SHIFT=
+);
+> +                       if (nr_bytes =3D=3D 0)
+> +                               nr_bytes =3D folio_size(f);
+> +
+> +                       folio_zero_segment(f, 0, nr_bytes);
 
-Please see the splat below.
+folio_zero_segment takes byte offset and number of bytes within the
+folio. This invocation needs to operate on the folio range that is
+overlapping with [Start, end) and instead it's always starting from 0
+and ending at an unaligned offset within the folio. This will result
+in zeroing more than requested or lesser than requested or both
+depending on the request and folio size.
 
-The NULL dereference is due to get_cred() in alloc_fs_context()
-attempting to increment current->cred->usage while current->cred ==
-NULL, and this is a result of the fact that PM notifier call chain is
-called while the task is exiting.
-
-IIRC, the intent was for commit
-
-  11092db5b573 efivarfs: fix NULL dereference on resume
-
-to be replaced at some point with something more robust; might that
-address this issue as well?
-
-Thanks,
-Ard.
-
-
-
-
-On Sun, 11 May 2025 at 19:44, syzbot
-<syzbot+52cd651546d11d2af06b@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot found the following issue on:
->
-> HEAD commit:    c32f8dc5aaf9 Merge branch 'for-next/core' into for-kernelci
-> git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-> console output: https://syzkaller.appspot.com/x/log.txt?x=1762d670580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=ea4635ffd6ad5b4a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=52cd651546d11d2af06b
-> compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
-> userspace arch: arm64
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165c0cd4580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16f49cf4580000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/b921498959d4/disk-c32f8dc5.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/04e6ad946c4b/vmlinux-c32f8dc5.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/d4f0d8db50ee/Image-c32f8dc5.gz.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+52cd651546d11d2af06b@syzkaller.appspotmail.com
->
-> efivarfs: resyncing variable state
-> Unable to handle kernel paging request at virtual address dfff800000000005
-> KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-> Mem abort info:
->   ESR = 0x0000000096000005
->   EC = 0x25: DABT (current EL), IL = 32 bits
->   SET = 0, FnV = 0
->   EA = 0, S1PTW = 0
->   FSC = 0x05: level 1 translation fault
-> Data abort info:
->   ISV = 0, ISS = 0x00000005, ISS2 = 0x00000000
->   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> [dfff800000000005] address between user and kernel address ranges
-> Internal error: Oops: 0000000096000005 [#1]  SMP
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 6487 Comm: syz-executor120 Not tainted 6.15.0-rc5-syzkaller-gc32f8dc5aaf9 #0 PREEMPT
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-> pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> pc : alloc_fs_context+0x1b4/0x76c fs/fs_context.c:294
-> lr : __lse_atomic64_add arch/arm64/include/asm/atomic_lse.h:134 [inline]
-> lr : arch_atomic64_add arch/arm64/include/asm/atomic.h:67 [inline]
-> lr : raw_atomic64_add include/linux/atomic/atomic-arch-fallback.h:2672 [inline]
-> lr : raw_atomic_long_add include/linux/atomic/atomic-long.h:121 [inline]
-> lr : atomic_long_add include/linux/atomic/atomic-instrumented.h:3261 [inline]
-> lr : get_cred_many include/linux/cred.h:203 [inline]
-> lr : get_cred include/linux/cred.h:218 [inline]
-> lr : alloc_fs_context+0x150/0x76c fs/fs_context.c:293
-> sp : ffff8000a31b7760
-> x29: ffff8000a31b7790 x28: dfff800000000000 x27: ffff0000c8ef88d8
-> x26: 0000000000000028 x25: ffff0000c7e6f4c8 x24: ffff80008fb953e0
-> x23: 0000000000000000 x22: ffff0000c7e6f498 x21: ffff0000c8ef8000
-> x20: 0000000000000000 x19: ffff0000c7e6f400 x18: 00000000ffffffff
-> x17: ffff800092f27000 x16: ffff80008adb31c0 x15: 0000000000000001
-> x14: 1fffe0001a05b0e0 x13: 0000000000000000 x12: 0000000000000000
-> x11: ffff60001a05b0e1 x10: 0000000000ff0100 x9 : 0000000000000000
-> x8 : 0000000000000005 x7 : ffff80008022b2b8 x6 : ffff80008022b4b4
-> x5 : ffff0000dabc9c90 x4 : ffff8000a31b7520 x3 : ffff800080dfa950
-> x2 : 0000000000000001 x1 : 0000000000000008 x0 : 0000000000000001
-> Call trace:
->  alloc_fs_context+0x1b4/0x76c fs/fs_context.c:294 (P)
->  fs_context_for_mount+0x34/0x44 fs/fs_context.c:332
->  vfs_kern_mount+0x38/0x178 fs/namespace.c:1313
->  efivarfs_pm_notify+0x1c4/0x4b4 fs/efivarfs/super.c:529
->  notifier_call_chain+0x1b8/0x4e4 kernel/notifier.c:85
->  blocking_notifier_call_chain+0x70/0xa0 kernel/notifier.c:380
->  pm_notifier_call_chain+0x2c/0x3c kernel/power/main.c:109
->  snapshot_release+0x104/0x1c4 kernel/power/user.c:125
->  __fput+0x340/0x75c fs/file_table.c:465
->  ____fput+0x20/0x58 fs/file_table.c:493
->  task_work_run+0x1dc/0x260 kernel/task_work.c:227
->  exit_task_work include/linux/task_work.h:40 [inline]
->  do_exit+0x4e8/0x1998 kernel/exit.c:953
->  do_group_exit+0x194/0x22c kernel/exit.c:1102
->  __do_sys_exit_group kernel/exit.c:1113 [inline]
->  __se_sys_exit_group kernel/exit.c:1111 [inline]
->  pid_child_should_wake+0x0/0x1dc kernel/exit.c:1111
->  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->  invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
->  el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
->  do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
->  el0_svc+0x58/0x17c arch/arm64/kernel/entry-common.c:767
->  el0t_64_sync_handler+0x78/0x108 arch/arm64/kernel/entry-common.c:786
->  el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-> Code: 97f8a879 f9400368 9100a11a d343ff48 (387c6908)
-> ---[ end trace 0000000000000000 ]---
-> ----------------
-> Code disassembly (best guess):
->    0:   97f8a879        bl      0xffffffffffe2a1e4
->    4:   f9400368        ldr     x8, [x27]
->    8:   9100a11a        add     x26, x8, #0x28
->    c:   d343ff48        lsr     x8, x26, #3
-> * 10:   387c6908        ldrb    w8, [x8, x28] <-- trapping instruction
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
+> +               }
+> +
+> +               folio_batch_release(&fbatch);
+> +               cond_resched();
+> +       }
+> +}
+> +
 
