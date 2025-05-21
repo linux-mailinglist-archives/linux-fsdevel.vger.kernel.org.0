@@ -1,132 +1,181 @@
-Return-Path: <linux-fsdevel+bounces-49556-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB84BABE98F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 04:11:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB49ABEBE8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 08:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44DFF3BC2F7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 02:10:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CCDF1B67494
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 06:24:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B05E22AE68;
-	Wed, 21 May 2025 02:11:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B21F233D88;
+	Wed, 21 May 2025 06:24:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="GqjMJ+Zg"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="fq2evgm+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8F9E2563
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 May 2025 02:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF631E9B19;
+	Wed, 21 May 2025 06:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747793466; cv=none; b=ZvXWnJWJIgPCw1uZ5MmWPXOwYuhaDc14Q4UhOpIRXPk/vCzbZexFXanUStaQBMgdZVgfbUDpiitM72bBpxKpGAalRdUC//LRSs55OBWTvNyXeIsZICqUdAkF8Ed5Fc0rLg8Wp7mn3CIgjQPkQvkuuigob0bUpHi5GmmLFyIFpvA=
+	t=1747808643; cv=none; b=WrrV55J9M0Mb1gXoGC3DH/jber0qkk3jG510eOT7vMrbObDTcVOXSiCPCrQ+WlJb5yzCpfLQnEVaagLgfUwv8FGMJT97L4N2F7Bw1ShdTGAy9Pqzk3BZPdDmDEN5f7JNdtXhK2BlMMzzsGvvDsah1iW1eZ4ir/H9w/JgQqt0M30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747793466; c=relaxed/simple;
-	bh=QJFbL2JtB1WetxZgb8FMiznGSRQafDgyTRjsNe5eRx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQAwk51egDPDHNvzYvUiqn8E6RGAnAvx9Z2BTAK8Ciyf6i+pyPqDqX9b8RRoKYLltYpJ157oFoN/UQUYUhsYHQL4oF2cYqXj0NreJCUb9294gwoMNYx4baZ+AzeSBXM3saqupr2HRqLePb0s0l+6ZVE5vwlJP0gonTD+30rFEF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=GqjMJ+Zg; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=FLk7odUN26jY5B1OlKE63rQoJFYeA+7biQgyU8Zxuek=; b=GqjMJ+ZgcK5DsmupT3IxrP5w4d
-	dVugdhe57uCsvMZedysiBdSkJ1jzHlk0Xn6khdZazkbhzhy0xWhwrtRbCAR8wvLGUKy3+AteMJNx8
-	TX8+XUNue0zcAjg8kkyAuj+vUQ2+XHyFF7JMJq/VS2g5oWy87v6n92S6YY4UVy5K2rKKQ27HppImE
-	UWPDDrIrOdKmdbDiP6oekKGnRAZJQZH2blivGv2L2tF9igTGd2G8t1pEX/Fz5r8EZw7qtQU/JAra7
-	1P4GMVxiALwulY2eqPC4n45RsrAYvGYJKv8BqJ8UK+al8djGP3PCMl9iU4ly0xa54xBv6mZGIeeKK
-	XCzBzLWg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uHYv7-00000005UWb-1cMH;
-	Wed, 21 May 2025 02:11:01 +0000
-Date: Wed, 21 May 2025 03:11:01 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
+	s=arc-20240116; t=1747808643; c=relaxed/simple;
+	bh=0Vq9at/OYdOLMKZalD7R5Zkb+jm93cyO2v94IEXBflM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B45kGMFdNLH3nk8uXjhhoRIi44/0ywx5+Br7rkLUz8McB2UR1x6lcIfkSsC/NQGTToncHEzj1t7RfqsdRrBsF20HkFo2B4/BBWDkp/4tSxoRr+/FdPItuvLVeUEz/8lAtR7UCEyPvmOwen2FEZlerIem80FqiwgeLHm1e07GQ9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=fq2evgm+; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+	Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=1n/3IFWy+0LWJpNhuy9Hz5x+4AMFxJjBU/fPUdAjQPI=; b=fq2evgm+8aHHlVo2DpQEvrySSt
+	GO2vp2fKXtO2g0nV9hEiG9hYdjkigt7zTWE3O0j0gJBjVRLaydX4+pFf4K5zpdF2PfjTprkErWDUi
+	qDS50gNVmRRsXRFILzfFbW55oKZhR8+kLnt5Lg/C0unLciOTzqECfQuNkvaSGjvuvKs3VfIkjugkr
+	B70hJKa59NDjmQVnsBtL0OslaH6honTZblyqsH3I22LDdxQIYv+ZW/DSLurlonMtrQm5rc09l4BaV
+	0CS1mdNszFf0ahjBioD2m71swBrp44r1AHBYXq/tVmQv2aW/nPO+eQtLuRydoe3JL7XZSh0tRXS9X
+	miwX7g1g==;
+Received: from [223.233.70.209] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uHcrm-00B3oN-8q; Wed, 21 May 2025 08:23:50 +0200
+From: Bhupesh <bhupesh@igalia.com>
+To: akpm@linux-foundation.org
+Cc: bhupesh@igalia.com,
+	kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [RFC][CFT][PATCH] Rewrite of propagate_umount() (was Re: [BUG]
- propagate_umount() breakage)
-Message-ID: <20250521021101.GG2023217@ZenIV>
-References: <20250511232732.GC2023217@ZenIV>
- <87jz6m300v.fsf@email.froward.int.ebiederm.org>
- <20250513035622.GE2023217@ZenIV>
- <20250515114150.GA3221059@ZenIV>
- <20250515114749.GB3221059@ZenIV>
- <20250516052139.GA4080802@ZenIV>
- <20250520-umtriebe-goldkette-9d2801958e93@brauner>
+	linux-mm@kvack.org,
+	oliver.sang@intel.com,
+	lkp@intel.com,
+	laoar.shao@gmail.com,
+	pmladek@suse.com,
+	rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com,
+	arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com,
+	andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl,
+	peterz@infradead.org,
+	willy@infradead.org,
+	david@redhat.com,
+	viro@zeniv.linux.org.uk,
+	keescook@chromium.org,
+	ebiederm@xmission.com,
+	brauner@kernel.org,
+	jack@suse.cz,
+	mingo@redhat.com,
+	juri.lelli@redhat.com,
+	bsegall@google.com,
+	mgorman@suse.de,
+	vschneid@redhat.com,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v4 0/3] Add support for long task name
+Date: Wed, 21 May 2025 11:53:34 +0530
+Message-Id: <20250521062337.53262-1-bhupesh@igalia.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250520-umtriebe-goldkette-9d2801958e93@brauner>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 20, 2025 at 01:10:24PM +0200, Christian Brauner wrote:
-> > +It is convenient to define several properties of sets of mounts:
-> > +
-> > +1) A set S of mounts is non-shifting if for any mount X belonging
-> > +to S all subtrees mounted strictly inside of X (i.e. not overmounting
-> > +the root of X) contain only elements of S.
-> 
-> I think "shifting" is misleading. I would suggest either "isolated" or
-> "contained" or ideally "closed" which would mean...
+Changes since v3:
+================
+- v3 can be seen here: https://lore.kernel.org/lkml/20250507110444.963779-1-bhupesh@igalia.com/
+- As suggested by Petr and Steven, used 'comm_ext' name instead of
+  'real_comm'. Correspondingly the macro name is changed to 'TASK_COMM_EXT_LEN'
+  for the 64-byte extended comm.
+- Rebased this patchset on linux-next/master, which contain the following patch from
+  Steven now:
+       155fd6c3e2f0 ("tracing/sched: Use __string() instead of fixed lengths for task->comm")
+- Accordingly, v4 drops the changes done for 'trace/sched' events in v3,
+  but retains the 'safe' memcpy' changes for other kernel trace users.
 
-Umm...  I'm not sure.  "Shifting" in a sense that pulling that set out
-and reparenting everything that remains to the nearest surviving ancestor
-won't change the pathnames.  "Contained" or "isolated"... what would
-that be about?
+Changes since v2:
+================
+- v2 can be seen here: https://lore.kernel.org/lkml/20250331121820.455916-1-bhupesh@igalia.com/
+- As suggested by Yafang and Kees, picked Linus' suggested approach for
+  this version (see: <https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/>).
+- Dropped kthreads patch from this version. It would be sent out
+  separately, if we have a consensus on this approach.
 
-> > +of that set, but only on top of stacks of root-overmounting elements
-> > +of set.  They can be reparented to the place where the bottom of
-> > +stack is attached to a mount that will survive.  NOTE: doing that
-> > +will violate a constraint on having no more than one mount with
-> > +the same parent/mountpoint pair; however, the caller (umount_tree())
-> 
-> I would prefer if this would insert the term "shadow mounts" since
-> that's what we've traditionally used for that.
+Changes since v1:
+================
+- v1 can be seen here: https://lore.kernel.org/lkml/20250314052715.610377-1-bhupesh@igalia.com/
+- As suggested by Kees, added [PATCH 3/3] to have a consistent
+  'full_name' entry inside 'task_struct' which both tasks and
+  kthreads can use.
+- Fixed the commit message to indicate that the existing ABI
+  '/proc/$pid/task/$tid/comm' remains untouched and a parallel
+  '/proc/$pid/task/$tid/full_name' ABI for new (interested) users.
 
-There's a bit of ambiguity - if we have done
+While working with user-space debugging tools which work especially
+on linux gaming platforms, I found that the task name is truncated due
+to the limitation of TASK_COMM_LEN.
 
-mount -t tmpfs none /tmp/foo
-touch /tmp/foo/A
-mount -t tmpfs none /tmp/foo
-touch /tmp/foo/B
+Now, during debug tracing, seeing truncated names is not very useful,
+especially on gaming platforms where the number of tasks running can
+be very high.
 
-we have two mounts, one overmounting the root of another.  Does "shadow"
-apply to the lower (with A on it) or the upper (with B on it)?
+This patchset does not touch 'TASK_COMM_LEN' at all, i.e.
+'TASK_COMM_LEN' and the 16-byte design remains untouched.
 
-> > +{
-> > +	while (1) {
-> > +		struct mount *master = m->mnt_master;
-> > +
-> > +		if (master == origin->mnt_master) {
-> > +			struct mount *next = next_peer(m);
-> > +			return (next == origin) ? NULL : next;
-> > +		} else if (m->mnt_slave.next != &master->mnt_slave_list)
-> > +			return next_slave(m);
-> 
-> Please add a comment to that helper that explains how it walks the
-> propagation tree. I remember having to fix bugs in that code and the
-> lack of comments was noticable.
+Via this patchset, as Linus suggested, we can add the
+following union inside 'task_struct':
+       union {
+               char    comm[TASK_COMM_LEN];
+               char    comm_ext[TASK_COMM_EXT_LEN];
+       };
 
-Ugh...  Let's separate that - it's not specific to propagate_umount()
-and the helper is the "we hadn't gone into ->mnt_slave_list" half of
-propagation_next(), verbatim.
+and then modify '__set_task_comm()' to pass 'tsk->comm_ext'
+to the existing users.
 
-I agree that comments there would be a good thing, but it (and next_group())
-belong to different layer - how do we walk the propagation graph.
+So, eventually:
+- users who want the existing 'TASK_COMM_LEN' behavior will get it
+  (existing ABIs would continue to work),
+- users who just print out 'tsk->comm' as a string will get the longer
+  new "extended comm",
+- users who do 'sizeof(->comm)' will continue to get the old value
+  because of the union.
 
-FWIW, the current variant of that thing (which seems to survive the tests
-so far) already has a plenty in it; let's try to keep at least some parts
-in separate commits...
+After this change, gdb is able to show full name of the task, using a
+simple app which generates threads with long names [see 1]:
+  # gdb ./threadnames -ex "run info thread" -ex "detach" -ex "quit" > log
+  # cat log
+
+  NameThatIsTooLongForComm[4662]
+
+[1]. https://github.com/lostgoat/tasknames
+
+Bhupesh (3):
+  exec: Remove obsolete comments
+  treewide: Switch memcpy() users of 'task->comm' to a more safer
+    implementation
+  exec: Add support for 64 byte 'tsk->comm_ext'
+
+ fs/exec.c                      |  6 +++---
+ include/linux/coredump.h       |  3 ++-
+ include/linux/sched.h          | 14 ++++++++------
+ include/trace/events/block.h   |  5 +++++
+ include/trace/events/oom.h     |  1 +
+ include/trace/events/osnoise.h |  1 +
+ include/trace/events/signal.h  |  1 +
+ include/trace/events/task.h    |  2 ++
+ 8 files changed, 23 insertions(+), 10 deletions(-)
+
+-- 
+2.38.1
+
 
