@@ -1,34 +1,34 @@
-Return-Path: <linux-fsdevel+bounces-49557-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49559-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86D51ABEBE5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 08:24:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26E1FABEBED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 08:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D03F91B6716D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 06:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCCDD1B67D06
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 06:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865A3233155;
-	Wed, 21 May 2025 06:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACDB4235079;
+	Wed, 21 May 2025 06:24:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lPzMBE1P"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="JNO5+HGL"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB16F230BC5;
-	Wed, 21 May 2025 06:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3238235049;
+	Wed, 21 May 2025 06:24:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747808642; cv=none; b=Qz7xCdPqtn1fajz2VmP1QyXdEKE012n5Hm6luwgmw7qHaDqrFl6oBsLSlSdsy3QQxTdNnjQunYiInltanyBWX/K1TblFOs9A5aKxb8tK9zzc/Wkl4dUAridQvULLG3EPT2iNF2y/+LlJ+0xi7Ko1FaDXlnC9yKSGzFtF5+DxV0A=
+	t=1747808648; cv=none; b=FTL77p91KSdNpMrNNyUOR00hAG3DWJcXUcKyR0G0tjZpPDMCYuFrlkJDysLs9MXQTqp/8yqOXkCJwf9IyfBIMCg9toYnGdB5Nj77VQDtxBnv/3TYnLWwqKUgUb6Wzi2SU1iSUZlH0eyBj7TWoJ1e7pQiXs8G/1vdemK12RfiMzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747808642; c=relaxed/simple;
-	bh=I8faleen+YlYRwQJOEFwvKHjEj3VGyqU4/5IQ3Xn7Zg=;
+	s=arc-20240116; t=1747808648; c=relaxed/simple;
+	bh=DtIhSG+eMDrB9z0amxyQUxZAA8kvUIc6nU10K2gv5oM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A0uGrIcyid0aPITaXf0krC3OfcoubTJvO8psb4d/jLDxmSTJszUu4Z9VgOBqKr2BZS245jbvi1DJn4CXa69di3lEHqjuuDTy86qg51Uk3JyTxWLsT0byNpIT2Rv76zRsw6KfPVCybYwQOmspJj8pVfB1Z+rgIirioys/cVBN3zY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lPzMBE1P; arc=none smtp.client-ip=213.97.179.56
+	 MIME-Version; b=A+kxD3OmgWjsFV+VoQuPMliy9m39MngWSdwlUO0TatTl0RL22FjCVTzu7THdnX3Ggr5Cl9ZY0Qi1vmVD9dwYNERXfBqN+TFUdTFJswBGgUfVS8wdPhhQ9Ggfg/f4Ll4TdNts+/jAcJMnKmeDW8Tdy6gSbFz8hI1gE/1kc6BQ4qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=JNO5+HGL; arc=none smtp.client-ip=213.97.179.56
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
@@ -37,16 +37,16 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
 	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
 	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
 	List-Post:List-Owner:List-Archive;
-	bh=Mj1L8UT5keBFToIFmCVn4vf03lSCBcagktZ7oeGryzY=; b=lPzMBE1PrVethON7w5jSglZ0xH
-	doMttCtEHa3eE5f+fCV168lQsBT2/z+SSX6WM6u1qcTFFAQZbVT4KEKYq3P/aZcfSvHFoFAGM2tE7
-	luHTWLJ1z3bG/Q0B4+YnNDNufb24FcogBUnxL1gTq6DggcJOuoQZT35uA61x8TkmUrU1i42nIC43N
-	eLDbKGfDDQQIVEhr4Dnk3EtISFTwWezSPLTCZ59CvgIzNp9b6cQny6eTNcsQ82ixKM9jeguTVvcBg
-	TmIaHE19jBMUvyhf6ezdOBl8N1czNhiqPIDMErkVMbNDquDobWCOfzAb2TfR7cMJMX4qzES5jePmV
-	STdRxYgw==;
+	bh=pU6bSpYB8CPj1DDuT5mIS//XBcxXY2wc6q2aPeo4HGQ=; b=JNO5+HGL1Dc1zYmWHmB1rUUSLj
+	piJFD554YV1qAOBwm3wP6JD+5CfsNkMhT+XL82pn9BmIorkyu77UykXUJcZ2bHjnswyiiAqn9FIBV
+	84XLl24D6Z0Z13jPHWgTXdEQU4oJoQ5Oo5CjE/RSEmSqaK2pKhZUMWfOgZqPlocycfS0+U0B1OzS7
+	ovvNEES1S0qW+oYB10H6pXwyF+4hehZZpsQEupxgUUrKaR/sZ8D9vOGY/YXvYhhLiMl/CRYT/T3K/
+	dtRbhaqm+v6wcuH9m6mh1Wj6iqBggjjGMPrbE26GoBA0XXBqqVkoMzvZl/M3uzAoJ6kdaAJJ4NT2/
+	KMNoufIw==;
 Received: from [223.233.70.209] (helo=localhost.localdomain)
 	by fanzine2.igalia.com with esmtpsa 
 	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uHcrs-00B3oN-DJ; Wed, 21 May 2025 08:23:56 +0200
+	id 1uHcry-00B3oN-Ij; Wed, 21 May 2025 08:24:02 +0200
 From: Bhupesh <bhupesh@igalia.com>
 To: akpm@linux-foundation.org
 Cc: bhupesh@igalia.com,
@@ -80,9 +80,9 @@ Cc: bhupesh@igalia.com,
 	mgorman@suse.de,
 	vschneid@redhat.com,
 	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH v4 1/3] exec: Remove obsolete comments
-Date: Wed, 21 May 2025 11:53:35 +0530
-Message-Id: <20250521062337.53262-2-bhupesh@igalia.com>
+Subject: [PATCH v4 2/3] treewide: Switch memcpy() users of 'task->comm' to a more safer implementation
+Date: Wed, 21 May 2025 11:53:36 +0530
+Message-Id: <20250521062337.53262-3-bhupesh@igalia.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20250521062337.53262-1-bhupesh@igalia.com>
 References: <20250521062337.53262-1-bhupesh@igalia.com>
@@ -94,48 +94,155 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Patch 3a3f61ce5e0b ("exec: Make sure task->comm is always NUL-terminated"),
-replaced 'strscpy_pad()' with 'memcpy()' implementations inside
-'__set_task_comm()'.
+As Linus mentioned in [1], currently we have several memcpy() use-cases
+which use 'current->comm' to copy the task name over to local copies.
+For an example:
 
-However a few left-over comments are still there, which mention
-the usage of 'strscpy_pad()' inside '__set_task_comm()'.
+ ...
+ char comm[TASK_COMM_LEN];
+ memcpy(comm, current->comm, TASK_COMM_LEN);
+ ...
 
-Remove those obsolete comments.
+These should be modified so that we can later implement approaches
+to handle the task->comm's 16-byte length limitation (TASK_COMM_LEN)
+is a more modular way (follow-up patches do the same):
 
-While at it, also remove an obsolete comment regarding 'task_lock()'
-usage while handing 'task->comm'.
+ ...
+ char comm[TASK_COMM_LEN];
+ memcpy(comm, current->comm, TASK_COMM_LEN);
+ comm[TASK_COMM_LEN - 1] = '\0';
+ ...
+
+The relevant 'memcpy()' users were identified using the following search
+pattern:
+ $ git grep 'memcpy.*->comm\>'
+
+[1]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/
 
 Signed-off-by: Bhupesh <bhupesh@igalia.com>
 ---
- include/linux/sched.h | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ include/linux/coredump.h       | 3 ++-
+ include/trace/events/block.h   | 5 +++++
+ include/trace/events/oom.h     | 1 +
+ include/trace/events/osnoise.h | 1 +
+ include/trace/events/signal.h  | 1 +
+ include/trace/events/task.h    | 2 ++
+ 6 files changed, 12 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 8c60a42f9d00..704222114dcc 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -1162,10 +1162,8 @@ struct task_struct {
- 	 *
- 	 * - normally initialized begin_new_exec()
- 	 * - set it with set_task_comm()
--	 *   - strscpy_pad() to ensure it is always NUL-terminated and
-+	 *   - logic inside set_task_comm() will ensure it is always NUL-terminated and
- 	 *     zero-padded
--	 *   - task_lock() to ensure the operation is atomic and the name is
--	 *     fully updated.
- 	 */
- 	char				comm[TASK_COMM_LEN];
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index 76e41805b92d..468abc308c24 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -54,7 +54,8 @@ extern void do_coredump(const kernel_siginfo_t *siginfo);
+ 	do {	\
+ 		char comm[TASK_COMM_LEN];	\
+ 		/* This will always be NUL terminated. */ \
+-		memcpy(comm, current->comm, sizeof(comm)); \
++		memcpy(comm, current->comm, TASK_COMM_LEN); \
++		comm[TASK_COMM_LEN] = '\0'; \
+ 		printk_ratelimited(Level "coredump: %d(%*pE): " Format "\n",	\
+ 			task_tgid_vnr(current), (int)strlen(comm), comm, ##__VA_ARGS__);	\
+ 	} while (0)	\
+diff --git a/include/trace/events/block.h b/include/trace/events/block.h
+index ad36e73b8579..11aa0b58176d 100644
+--- a/include/trace/events/block.h
++++ b/include/trace/events/block.h
+@@ -214,6 +214,7 @@ DECLARE_EVENT_CLASS(block_rq,
+ 		blk_fill_rwbs(__entry->rwbs, rq->cmd_flags);
+ 		__get_str(cmd)[0] = '\0';
+ 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 	),
  
-@@ -1997,7 +1995,7 @@ extern void __set_task_comm(struct task_struct *tsk, const char *from, bool exec
-  *   User space can randomly change their names anyway, so locking for readers
-  *   doesn't make sense. For writers, locking is probably necessary, as a race
-  *   condition could lead to long-term mixed results.
-- *   The strscpy_pad() in __set_task_comm() can ensure that the task comm is
-+ *   The logic inside __set_task_comm() should ensure that the task comm is
-  *   always NUL-terminated and zero-padded. Therefore the race condition between
-  *   reader and writer is not an issue.
-  *
+ 	TP_printk("%d,%d %s %u (%s) %llu + %u %s,%u,%u [%s]",
+@@ -352,6 +353,7 @@ DECLARE_EVENT_CLASS(block_bio,
+ 		__entry->nr_sector	= bio_sectors(bio);
+ 		blk_fill_rwbs(__entry->rwbs, bio->bi_opf);
+ 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 	),
+ 
+ 	TP_printk("%d,%d %s %llu + %u [%s]",
+@@ -424,6 +426,7 @@ TRACE_EVENT(block_plug,
+ 
+ 	TP_fast_assign(
+ 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 	),
+ 
+ 	TP_printk("[%s]", __entry->comm)
+@@ -443,6 +446,7 @@ DECLARE_EVENT_CLASS(block_unplug,
+ 	TP_fast_assign(
+ 		__entry->nr_rq = depth;
+ 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 	),
+ 
+ 	TP_printk("[%s] %d", __entry->comm, __entry->nr_rq)
+@@ -494,6 +498,7 @@ TRACE_EVENT(block_split,
+ 		__entry->new_sector	= new_sector;
+ 		blk_fill_rwbs(__entry->rwbs, bio->bi_opf);
+ 		memcpy(__entry->comm, current->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 	),
+ 
+ 	TP_printk("%d,%d %s %llu / %llu [%s]",
+diff --git a/include/trace/events/oom.h b/include/trace/events/oom.h
+index 9f0a5d1482c4..a5641ed4285f 100644
+--- a/include/trace/events/oom.h
++++ b/include/trace/events/oom.h
+@@ -24,6 +24,7 @@ TRACE_EVENT(oom_score_adj_update,
+ 	TP_fast_assign(
+ 		__entry->pid = task->pid;
+ 		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 		__entry->oom_score_adj = task->signal->oom_score_adj;
+ 	),
+ 
+diff --git a/include/trace/events/osnoise.h b/include/trace/events/osnoise.h
+index 3f4273623801..0321b3f8d532 100644
+--- a/include/trace/events/osnoise.h
++++ b/include/trace/events/osnoise.h
+@@ -117,6 +117,7 @@ TRACE_EVENT(thread_noise,
+ 
+ 	TP_fast_assign(
+ 		memcpy(__entry->comm, t->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 		__entry->pid = t->pid;
+ 		__entry->start = start;
+ 		__entry->duration = duration;
+diff --git a/include/trace/events/signal.h b/include/trace/events/signal.h
+index 1db7e4b07c01..7f490e553db5 100644
+--- a/include/trace/events/signal.h
++++ b/include/trace/events/signal.h
+@@ -68,6 +68,7 @@ TRACE_EVENT(signal_generate,
+ 		__entry->sig	= sig;
+ 		TP_STORE_SIGINFO(__entry, info);
+ 		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 		__entry->pid	= task->pid;
+ 		__entry->group	= group;
+ 		__entry->result	= result;
+diff --git a/include/trace/events/task.h b/include/trace/events/task.h
+index af535b053033..4ddf21b69372 100644
+--- a/include/trace/events/task.h
++++ b/include/trace/events/task.h
+@@ -22,6 +22,7 @@ TRACE_EVENT(task_newtask,
+ 	TP_fast_assign(
+ 		__entry->pid = task->pid;
+ 		memcpy(__entry->comm, task->comm, TASK_COMM_LEN);
++		__entry->comm[TASK_COMM_LEN - 1] = '\0';
+ 		__entry->clone_flags = clone_flags;
+ 		__entry->oom_score_adj = task->signal->oom_score_adj;
+ 	),
+@@ -45,6 +46,7 @@ TRACE_EVENT(task_rename,
+ 
+ 	TP_fast_assign(
+ 		memcpy(entry->oldcomm, task->comm, TASK_COMM_LEN);
++		entry->oldcomm[TASK_COMM_LEN - 1] = '\0';
+ 		strscpy(entry->newcomm, comm, TASK_COMM_LEN);
+ 		__entry->oom_score_adj = task->signal->oom_score_adj;
+ 	),
 -- 
 2.38.1
 
