@@ -1,100 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-49571-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49572-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF676ABF153
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 12:18:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7826ABF1A8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 12:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DFD217EB33
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 10:18:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E238B3A43DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 10:31:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402E425B67E;
-	Wed, 21 May 2025 10:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6012625F7A5;
+	Wed, 21 May 2025 10:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ChPHYc9R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6OUEUHnu";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ChPHYc9R";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6OUEUHnu"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UZUp6Q1B";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="88UvvMY6";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UZUp6Q1B";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="88UvvMY6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376EB23BCEE
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 May 2025 10:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC7E253F06
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 May 2025 10:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747822689; cv=none; b=jJs5hE0AI15Qdw3c4lrKnL24HuA0sCsh+qtgWNm06GjCje1wVTJyAOZ2IBl9Sj50QqHuDfwuabIATDeZmO1uDSMEP8zBY5lyJECDeOKNisH0qaHh5bqH9+MPtSz8HQbdGSqG/KByyLcSr/7VIVqDyrhfH8C+XAIDxmJR0R93Tb0=
+	t=1747823488; cv=none; b=iV7851Z3UDZH9OUI5S3XX5M81IBZzyi+q7yEO+6XYVPTi+UaulmDZXEN0y4RLZBx46GDo2LMK0p7t5QCDDMOulGg/ZC0XUchR+i2MPht2Ii7kGRH+IEh1rljr/RKj/ihdb7t2DZwJK4bOP+3+yuBj3gOO/x5xHri1xghljsd5V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747822689; c=relaxed/simple;
-	bh=gyP7T2gYNDzUnBvgtchq1IV0P0eLd31su3RI2zfImUI=;
+	s=arc-20240116; t=1747823488; c=relaxed/simple;
+	bh=Y7wXlYBKilElGrxPOEAxIoQfkr3dVOykIBsfU9jq/wg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f90/7T/YEBX6mtMpC4QZqp4AAvkFJNRf0amylg/0WulkXU9IoeSTHBRvs9nIFgxszXRcpyHVWqY/LihvEL4ob/At5CbfsWhODJRI29MI8vbY8serFEBfKPIMUBxxFfU2SjzPZgwkVBdLoF+s7K9gD9TkTOlzXxdYCwCsELznowY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ChPHYc9R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6OUEUHnu; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ChPHYc9R; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6OUEUHnu; arc=none smtp.client-ip=195.135.223.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=vC2rs4gN7uJ1l5gA9mQVBdjATkdQORzxtk6QP0Icl8/37pEnKFLLioyXiq1ju6tp7Xz9D+aAIo0PkzrDqOeunCrfjhDL+5s6thr0IAJ2ZTjISgb0nf+Zxp9omgsQI+D2EpCK821oyiJYBuftpRTGixLaTv3/ESs2Si5Idx1vQ8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UZUp6Q1B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=88UvvMY6; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UZUp6Q1B; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=88UvvMY6; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 92DCE2091D;
-	Wed, 21 May 2025 10:18:06 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4172D227B7;
+	Wed, 21 May 2025 10:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747822686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1747823485; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6zb+gy3OnOeAJiXOJUGuELVv/ERPmXTwFKGQaPp2GxE=;
-	b=ChPHYc9RCAMiBpEJw5PHulyviwNxqbn9Evc8tws245w2c9c1lLq8PDyEKxLS8HUBv76HO9
-	H2IFqiUVhwUawwKsBfYiqSj7vQ3bNOrX65A4j5SYPm6i3ai/jyG5uowJVXrFso+56wNdi4
-	uq1x8dv1+2vKPJ5i385m/68PrgpXfH8=
+	bh=srn8jSg9ullgOYE/RnvBqPHnTl5WzflJDekRT3jm408=;
+	b=UZUp6Q1BQLkNUzill/lJmwow6+3+1BiWPkXK71uOYYfRhcbR+LdEEdk9QHoeCQoJ6DiABB
+	YAjJeWJ82z5HZxJrHc8lCHliFIxBlcKv2onaCShh3E4uARF3t/npb24Cl8n0tSpzW9Gsys
+	icDH7BE8AcEyC8TDU2iku3m8WNRxhCI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747822686;
+	s=susede2_ed25519; t=1747823485;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6zb+gy3OnOeAJiXOJUGuELVv/ERPmXTwFKGQaPp2GxE=;
-	b=6OUEUHnuKx8dQIySzKT/WbfyrzBiWOz4Fo/KJXQF+3zEwqpTadZ79Do4AahbffNQchb6so
-	+uY2xxWW4jvdigDw==
-Authentication-Results: smtp-out2.suse.de;
-	none
+	bh=srn8jSg9ullgOYE/RnvBqPHnTl5WzflJDekRT3jm408=;
+	b=88UvvMY68Zj3/4E4p2tt96dqM7UF13R1CY+bxb4X+e/l1dz8YUFcitpJHsD0cU2dOKXd86
+	2A/QVBE500xW27Bg==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=UZUp6Q1B;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=88UvvMY6
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1747822686; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1747823485; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6zb+gy3OnOeAJiXOJUGuELVv/ERPmXTwFKGQaPp2GxE=;
-	b=ChPHYc9RCAMiBpEJw5PHulyviwNxqbn9Evc8tws245w2c9c1lLq8PDyEKxLS8HUBv76HO9
-	H2IFqiUVhwUawwKsBfYiqSj7vQ3bNOrX65A4j5SYPm6i3ai/jyG5uowJVXrFso+56wNdi4
-	uq1x8dv1+2vKPJ5i385m/68PrgpXfH8=
+	bh=srn8jSg9ullgOYE/RnvBqPHnTl5WzflJDekRT3jm408=;
+	b=UZUp6Q1BQLkNUzill/lJmwow6+3+1BiWPkXK71uOYYfRhcbR+LdEEdk9QHoeCQoJ6DiABB
+	YAjJeWJ82z5HZxJrHc8lCHliFIxBlcKv2onaCShh3E4uARF3t/npb24Cl8n0tSpzW9Gsys
+	icDH7BE8AcEyC8TDU2iku3m8WNRxhCI=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1747822686;
+	s=susede2_ed25519; t=1747823485;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=6zb+gy3OnOeAJiXOJUGuELVv/ERPmXTwFKGQaPp2GxE=;
-	b=6OUEUHnuKx8dQIySzKT/WbfyrzBiWOz4Fo/KJXQF+3zEwqpTadZ79Do4AahbffNQchb6so
-	+uY2xxWW4jvdigDw==
+	bh=srn8jSg9ullgOYE/RnvBqPHnTl5WzflJDekRT3jm408=;
+	b=88UvvMY68Zj3/4E4p2tt96dqM7UF13R1CY+bxb4X+e/l1dz8YUFcitpJHsD0cU2dOKXd86
+	2A/QVBE500xW27Bg==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8994013AA0;
-	Wed, 21 May 2025 10:18:06 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2FF1313AA0;
+	Wed, 21 May 2025 10:31:25 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VgmMIV6oLWilTQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 21 May 2025 10:18:06 +0000
+	id 0zBtC32rLWiVUQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Wed, 21 May 2025 10:31:25 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3FB5BA09DE; Wed, 21 May 2025 12:18:06 +0200 (CEST)
-Date: Wed, 21 May 2025 12:18:06 +0200
+	id C16DDA0870; Wed, 21 May 2025 12:31:16 +0200 (CEST)
+Date: Wed, 21 May 2025 12:31:16 +0200
 From: Jan Kara <jack@suse.cz>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fanotify: wake-up all waiters on release
-Message-ID: <bsji6w5ytunjt5vlgj6t53rrksqc7lp5fukwi2sbettzuzvnmg@fna73sxftrak>
-References: <3p5hvygkgdhrpbhphtjm55vnvprrgguk46gic547jlwdhjonw3@nz54h4fjnjkm>
- <20250520123544.4087208-1-senozhatsky@chromium.org>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, willy@infradead.org, tytso@mit.edu, 
+	adilger.kernel@dilger.ca, yi.zhang@huawei.com, libaokun1@huawei.com, yukuai3@huawei.com, 
+	yangerkun@huawei.com
+Subject: Re: [PATCH v2 4/8] ext4/jbd2: convert jbd2_journal_blocks_per_page()
+ to support large folio
+Message-ID: <l2sm2sxycp2u2mqve6vx3rdwitsth55z657iw5qlsz2ko2eskr@7nko44yniymo>
+References: <20250512063319.3539411-1-yi.zhang@huaweicloud.com>
+ <20250512063319.3539411-5-yi.zhang@huaweicloud.com>
+ <ht54j6bvjmiqt62xmcveqlo7bmrunqs4ji7wikfteftdjijzek@7tz5gpejaoen>
+ <924cfe2c-318c-493f-89a5-10849bfc7a00@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -103,69 +109,86 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250520123544.4087208-1-senozhatsky@chromium.org>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
+In-Reply-To: <924cfe2c-318c-493f-89a5-10849bfc7a00@huaweicloud.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
 	NEURAL_HAM_LONG(-1.00)[-1.000];
 	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
 	NEURAL_HAM_SHORT(-0.20)[-1.000];
 	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
+	MX_GOOD(-0.01)[];
 	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
 	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
 	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,google.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
 	RCVD_TLS_LAST(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.01
+X-Rspamd-Queue-Id: 4172D227B7
 X-Spam-Level: 
+X-Spam-Flag: NO
 
-On Tue 20-05-25 21:35:12, Sergey Senozhatsky wrote:
-> Once reply response is set for all outstanding requests
-> wake_up_all() of the ->access_waitq waiters so that they
-> can finish user-wait.  Otherwise fsnotify_destroy_group()
-> can wait forever for ->user_waits to reach 0 (which it
-> never will.)
+On Tue 20-05-25 20:46:51, Zhang Yi wrote:
+> On 2025/5/20 4:16, Jan Kara wrote:
+> > On Mon 12-05-25 14:33:15, Zhang Yi wrote:
+> >> From: Zhang Yi <yi.zhang@huawei.com>
+> >>
+> >> jbd2_journal_blocks_per_page() returns the number of blocks in a single
+> >> page. Rename it to jbd2_journal_blocks_per_folio() and make it returns
+> >> the number of blocks in the largest folio, preparing for the calculation
+> >> of journal credits blocks when allocating blocks within a large folio in
+> >> the writeback path.
+> >>
+> >> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> > ...
+> >> @@ -2657,9 +2657,10 @@ void jbd2_journal_ack_err(journal_t *journal)
+> >>  	write_unlock(&journal->j_state_lock);
+> >>  }
+> >>  
+> >> -int jbd2_journal_blocks_per_page(struct inode *inode)
+> >> +int jbd2_journal_blocks_per_folio(struct inode *inode)
+> >>  {
+> >> -	return 1 << (PAGE_SHIFT - inode->i_sb->s_blocksize_bits);
+> >> +	return 1 << (PAGE_SHIFT + mapping_max_folio_order(inode->i_mapping) -
+> >> +		     inode->i_sb->s_blocksize_bits);
+> >>  }
+> > 
+> > FWIW this will result in us reserving some 10k transaction credits for 1k
+> > blocksize with maximum 2M folio size. That is going to create serious
+> > pressure on the journalling machinery. For now I guess we are fine
 > 
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Oooh, indeed, you are right, thanks a lot for pointing this out. As you
+> mentioned in patch 5, the credits calculation I proposed was incorrect,
+> I thought it wouldn't require too many credits.
+> 
+> I believe it is risky to mount a filesystem with a small journal space
+> and a large number of block groups. For example, if we build an image
+> with a 1K block size and a 1MB journal on a 20GB disk (which contains
+> 2,540 groups), it will require 2,263 credits, exceeding the available
+> journal space.
+> 
+> For now, I'm going to disable large folio support on the filesystem with
+> limited journal space. i.e., when the return value of
+> ext4_writepage_trans_blocks() is greater than
+> jbd2_max_user_trans_buffers(journal) / 2, ext4_should_enable_large_folio()
+> return false, thoughts?
 
-We don't use exclusive waits with access_waitq so wake_up() and
-wake_up_all() should do the same thing?
+Yep, looks like a good stopgap solution for now.
 
 								Honza
-
-> ---
->  fs/notify/fanotify/fanotify_user.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-> index 87f861e9004f..95a3b843cbbf 100644
-> --- a/fs/notify/fanotify/fanotify_user.c
-> +++ b/fs/notify/fanotify/fanotify_user.c
-> @@ -1046,8 +1046,8 @@ static int fanotify_release(struct inode *ignored, struct file *file)
->  	}
->  	spin_unlock(&group->notification_lock);
->  
-> -	/* Response for all permission events it set, wakeup waiters */
-> -	wake_up(&group->fanotify_data.access_waitq);
-> +	/* Response for all permission events is set, wakeup waiters */
-> +	wake_up_all(&group->fanotify_data.access_waitq);
->  
->  	/* matches the fanotify_init->fsnotify_alloc_group */
->  	fsnotify_destroy_group(group);
-> -- 
-> 2.49.0.1101.gccaa498523-goog
-> 
 -- 
 Jan Kara <jack@suse.com>
 SUSE Labs, CR
