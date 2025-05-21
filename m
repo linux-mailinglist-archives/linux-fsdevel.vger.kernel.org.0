@@ -1,195 +1,208 @@
-Return-Path: <linux-fsdevel+bounces-49554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB49ABE8C2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 02:55:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E33ABE94B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 03:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E008A20AC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 00:55:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B17B1BA6BE5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 May 2025 01:50:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25EC3A1DB;
-	Wed, 21 May 2025 00:55:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8BAE1BE251;
+	Wed, 21 May 2025 01:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t6iYY0S8"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Ymwkwlm0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1362AD2D
-	for <linux-fsdevel@vger.kernel.org>; Wed, 21 May 2025 00:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9486D1AC43A
+	for <linux-fsdevel@vger.kernel.org>; Wed, 21 May 2025 01:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747788938; cv=none; b=p3Zce93oX5QyPKSpdfrQt6mb3H1nmKgTOL5KMZz+UIqsRGJXq6gxAhkoIMH7Ihn7h8VhwgEx4ilzHRSQPsgCdvK8RB+pIZpHeob1y2K7JWeZHJU3W2Ze1zwAqHqm3ri8bUrWt7xIjiUXrd9qQWpwIgBNhlOcTI9LQevJmwvKd+Y=
+	t=1747792189; cv=none; b=b82RFcnP2uXpeCU8YdYHtar+62X8eeRVoLmpRI+39/bgXxdu+05zAJtmloAsRPDJZWw4p7IJm2QwczCGrbVbJ28Rae1GF7tLW7uJ2JpjbPGeuwQh7PPoPthzliHsogSdVVSR616ygE8uPJcm2qC9cCnBeTXiwjMMFGmMJwhpp9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747788938; c=relaxed/simple;
-	bh=3Y0eI2D8cnedVznYRle7TnjGhJ3X2g6z0d4K3WJthKc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pvxJRT0rFZOnfPuKgAGoeg7syJx/7KsMxZZrnFtxvn8VujPiDxcJjLPAK8LsHIKua2CWnmmDfjXl6XPZzHyK4mwBu4D3KJK+OHe7R7v4MxGQ1VM1fp50DEOedvQF3N3P7kmUrecDHmLAdhK+i+jXcedY6BQQt/l7BTo7o6RKKmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t6iYY0S8; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-601a67c6e61so26765a12.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 May 2025 17:55:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747788935; x=1748393735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ncdPurYh5hOloTnF5wYlf3UcK9wRpi+Q0GSN2FGpFac=;
-        b=t6iYY0S8F9uuz9aTdTGzVi/0cVIoOe4P+CoySV6Esk6I3hSqPnSlxEmZhR2u8jyazn
-         laZVf6RcIc8ELzwaMXmGfjzYQ8SAbIjv4IFXfTyBXM/E2W9nI/tqpf0c0HJx+zg9X3sz
-         MrOKJYrk8wCe3/BhQA8zA8uJZgW8q7sbB3N8j9nihnoyI+ojilBL6Z254QfkP518+Apm
-         RInyo800CxqXW7BcYy9iFqfufCYmQIQopHLq7I/jexZVzzUpOgT/QeaOq4HuXYfFUAj/
-         onx4WCI5hOEMWO5M/hYPiQC7vlPQlLNsr6vNaGwalY60y67tv0cTfeeC46JBlAtkvmy/
-         q+hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747788935; x=1748393735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ncdPurYh5hOloTnF5wYlf3UcK9wRpi+Q0GSN2FGpFac=;
-        b=kChSKWnsJ/WYbEQlzXvNGgOj98dnwMHqAHQpHUo7N/0FOKwN+UCPct/XzWSxtttD/x
-         DlvHcJAO3dJHaX1w0agK5mBgLKRxPXu8IbZMhEFJSAx7Qp+baN0iK4bzWvKsO+YgT9Hc
-         zKowdu64SsfhNdLGkxlPhjE+6ILymK2H+UErq4mrv1SPInL8+24a0xP76KnsBxLYJAVK
-         K4gQXpvuS6XZa+KtGyDZwd7dUhtjuk1faFr7f7vNoWq+eIgWEbRzQ2AYebwKxxrf4mnE
-         NVzu3BNxkqFJ6pkU14ACd90Iy/PQyZHasVOtxf4k0bYlesIV9bJ0dGzIhTQdWbMC25AQ
-         zHYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFgmbGUuRfnHVvWp78kBrc38iM+k36xeEYK4oA4Rtl4Lkx2JTiykft3H7ROwRl7BwZseZ0XNrVKjgRLdjH@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+JIhjyPTW/y/S4zrKHCTe9vuc43xWz6ugGvkcbNqH1yHa1b/S
-	/CS/T8Pm/uHQ+yYgyDA35YG6eHbVjMBz12paGYwndUnKNGBpOoS+AxokwRr99u+jx/lKhFBrj03
-	ZEAY926jK5ODr2+7lSxz3FMQh0xnti/zdwBdz77Wj
-X-Gm-Gg: ASbGncvEf97DPFL6M+lCG1UqaPwER3JQbFLg5zmzR1QKjGTBu9l610L2tKYQdM16ngP
-	tpIH9uK1mvn2DQCdyQu6++3kdE6huj+vBUbG7l1CqQCY0RzPacsSld4vP7ytbfm6jXpB3T2E80I
-	2rzVLyK+Is1+STJp+LTpeSOaAE14arDRjxO7HEPrOzOrugsZOeIKhOJvhbI5qUzG9RBuVDbgfA
-X-Google-Smtp-Source: AGHT+IG1IjnHi54Q+N8idfo93JIC1frTSBUwH3gzuDMjjhBz9G/MzDcANwRogNTzPUUfNYSoKlZHrVja9CDjA4RXL78=
-X-Received: by 2002:a05:6402:14d5:b0:601:233a:4f4d with SMTP id
- 4fb4d7f45d1cf-6019bf2f776mr370366a12.2.1747788934322; Tue, 20 May 2025
- 17:55:34 -0700 (PDT)
+	s=arc-20240116; t=1747792189; c=relaxed/simple;
+	bh=r6660o7TrV9mIX0QiqN4LlypHPU9HIyb4tcU13soERs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hGTTncqUv7pNGN9pGsQBfN7ZYQxGCVM0CWx/nRtOzWD8mudSQrFHlMC8Gg2CA0WVWwy4DrqK+8yMGjzpiyjmmOJvpkiaHM6lzoxNRi2A7sURXIgqLLZDcXYuXIGgn6Kr8AzyCNvOiy1Wai07jRz1WrVjlOTC7g8/W8nTsplU32k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Ymwkwlm0; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 20 May 2025 21:49:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747792174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=l1O+r1kz2S9v4rWK4s64ptW8HHdeRPASy0UUAjHkGbs=;
+	b=Ymwkwlm0QpBL0rQI5k+gMMRe7sS8GUH+8Afwpa4tQvB3TXtItxTmNdgboUuCcijzvJ2ocb
+	QSKvnWCWjc6MFS+F/LN0N9rgd+Ae20myvLl1jn/IT8CuiWYRrA6mhDlmXPRYLNNJ4Jwiou
+	SexVldyCrl+iycUOCwZJcXxyrSERzDY=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: John Stoffel <john@stoffel.org>
+Cc: Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
+	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH 0/6] overlayfs + casefolding
+Message-ID: <7b272tdagnkvzt5eo4g4wy47rjwf67nqk26aq27uetc57kzza5@7p5cmikl2fw6>
+References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
+ <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
+ <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
+ <CAOQ4uxjUC=1MinjDCOfY5t89N3ga6msLmpVXL1p23qdQax6fSg@mail.gmail.com>
+ <gdvg6zswvq4zjzo6vntggoacrgxxh33zmejo72yusp7aqkqzic@kaibexik7lvh>
+ <CAOQ4uxg9sKC_8PLARkN6aB3E_U62_S3kfnBuRbAvho9BNzGAsQ@mail.gmail.com>
+ <rkbkjp7xvefmtutkwtltyd6xch2pbw47x5czx6ctldemus2bvj@2ukfdmtfjjbw>
+ <26668.52908.574606.416955@quad.stoffel.home>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250520122838.29131f04@hermes.local> <20250521004207.10514-1-kuniyu@amazon.com>
-In-Reply-To: <20250521004207.10514-1-kuniyu@amazon.com>
-From: Jann Horn <jannh@google.com>
-Date: Wed, 21 May 2025 02:54:58 +0200
-X-Gm-Features: AX0GCFtQXlIu9odOXoeE-q7wbNaaPaAzIzGo4QIICbt2W9dOwceP8yBMza1qmTI
-Message-ID: <CAG48ez0r4A7iMXzBBdPiHWycYSAGSm7VFWULCqKQPXoBKFWpEw@mail.gmail.com>
-Subject: Re: [PATCH v8 0/9] coredump: add coredump socket
-To: Kuniyuki Iwashima <kuniyu@amazon.com>
-Cc: stephen@networkplumber.org, alexander@mihalicyn.com, brauner@kernel.org, 
-	daan.j.demeyer@gmail.com, daniel@iogearbox.net, davem@davemloft.net, 
-	david@readahead.eu, edumazet@google.com, horms@kernel.org, jack@suse.cz, 
-	kuba@kernel.org, lennart@poettering.net, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	luca.boccassi@gmail.com, me@yhndnzj.com, netdev@vger.kernel.org, 
-	oleg@redhat.com, pabeni@redhat.com, serge@hallyn.com, viro@zeniv.linux.org.uk, 
-	zbyszek@in.waw.pl
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <26668.52908.574606.416955@quad.stoffel.home>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 21, 2025 at 2:42=E2=80=AFAM Kuniyuki Iwashima <kuniyu@amazon.co=
-m> wrote:
-> From: Stephen Hemminger <stephen@networkplumber.org>
-> Date: Tue, 20 May 2025 12:28:38 -0700
-> > On Fri, 16 May 2025 13:25:27 +0200
-> > Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > > Coredumping currently supports two modes:
-> > >
-> > > (1) Dumping directly into a file somewhere on the filesystem.
-> > > (2) Dumping into a pipe connected to a usermode helper process
-> > >     spawned as a child of the system_unbound_wq or kthreadd.
-> > >
-> > > For simplicity I'm mostly ignoring (1). There's probably still some
-> > > users of (1) out there but processing coredumps in this way can be
-> > > considered adventurous especially in the face of set*id binaries.
-> > >
-> > > The most common option should be (2) by now. It works by allowing
-> > > userspace to put a string into /proc/sys/kernel/core_pattern like:
-> > >
-> > >         |/usr/lib/systemd/systemd-coredump %P %u %g %s %t %c %h
-> > >
-> > > The "|" at the beginning indicates to the kernel that a pipe must be
-> > > used. The path following the pipe indicator is a path to a binary tha=
-t
-> > > will be spawned as a usermode helper process. Any additional paramete=
-rs
-> > > pass information about the task that is generating the coredump to th=
-e
-> > > binary that processes the coredump.
-> > >
-> > > In the example core_pattern shown above systemd-coredump is spawned a=
-s a
-> > > usermode helper. There's various conceptual consequences of this
-> > > (non-exhaustive list):
-> > >
-> > > - systemd-coredump is spawned with file descriptor number 0 (stdin)
-> > >   connected to the read-end of the pipe. All other file descriptors a=
-re
-> > >   closed. That specifically includes 1 (stdout) and 2 (stderr). This =
-has
-> > >   already caused bugs because userspace assumed that this cannot happ=
-en
-> > >   (Whether or not this is a sane assumption is irrelevant.).
-> > >
-> > > - systemd-coredump will be spawned as a child of system_unbound_wq. S=
-o
-> > >   it is not a child of any userspace process and specifically not a
-> > >   child of PID 1. It cannot be waited upon and is in a weird hybrid
-> > >   upcall which are difficult for userspace to control correctly.
-> > >
-> > > - systemd-coredump is spawned with full kernel privileges. This
-> > >   necessitates all kinds of weird privilege dropping excercises in
-> > >   userspace to make this safe.
-> > >
-> > > - A new usermode helper has to be spawned for each crashing process.
-> > >
-> > > This series adds a new mode:
-> > >
-> > > (3) Dumping into an AF_UNIX socket.
-> > >
-> > > Userspace can set /proc/sys/kernel/core_pattern to:
-> > >
-> > >         @/path/to/coredump.socket
-> > >
-> > > The "@" at the beginning indicates to the kernel that an AF_UNIX
-> > > coredump socket will be used to process coredumps.
-> > >
-> > > The coredump socket must be located in the initial mount namespace.
-> > > When a task coredumps it opens a client socket in the initial network
-> > > namespace and connects to the coredump socket.
-> >
-> >
-> > There is a problem with using @ as naming convention.
-> > The starting character of @ is already used to indicate abstract
-> > unix domain sockets in some programs like ss.
-> > And will the new coredump socekt allow use of abstrace unix
-> > domain sockets?
->
-> The coredump only works with the pathname socket, so ideally
-> the prefix should be '/', but it's same with the direct-file
-> coredump.  We can distinguish the socket by S_ISSOCK() though.
+On Tue, May 20, 2025 at 02:49:16PM -0400, John Stoffel wrote:
+> >>>>> "Kent" == Kent Overstreet <kent.overstreet@linux.dev> writes:
+> 
+> > On Tue, May 20, 2025 at 04:03:27PM +0200, Amir Goldstein wrote:
+> >> On Tue, May 20, 2025 at 2:43 PM Kent Overstreet
+> >> <kent.overstreet@linux.dev> wrote:
+> >> >
+> >> > On Tue, May 20, 2025 at 02:40:07PM +0200, Amir Goldstein wrote:
+> >> > > On Tue, May 20, 2025 at 2:25 PM Kent Overstreet
+> >> > > <kent.overstreet@linux.dev> wrote:
+> >> > > >
+> >> > > > On Tue, May 20, 2025 at 10:05:14AM +0200, Amir Goldstein wrote:
+> >> > > > > On Tue, May 20, 2025 at 7:16 AM Kent Overstreet
+> >> > > > > <kent.overstreet@linux.dev> wrote:
+> >> > > > > >
+> >> > > > > > This series allows overlayfs and casefolding to safely be used on the
+> >> > > > > > same filesystem by providing exclusion to ensure that overlayfs never
+> >> > > > > > has to deal with casefolded directories.
+> >> > > > > >
+> >> > > > > > Currently, overlayfs can't be used _at all_ if a filesystem even
+> >> > > > > > supports casefolding, which is really nasty for users.
+> >> > > > > >
+> >> > > > > > Components:
+> >> > > > > >
+> >> > > > > > - filesystem has to track, for each directory, "does any _descendent_
+> >> > > > > >   have casefolding enabled"
+> >> > > > > >
+> >> > > > > > - new inode flag to pass this to VFS layer
+> >> > > > > >
+> >> > > > > > - new dcache methods for providing refs for overlayfs, and filesystem
+> >> > > > > >   methods for safely clearing this flag
+> >> > > > > >
+> >> > > > > > - new superblock flag for indicating to overlayfs & dcache "filesystem
+> >> > > > > >   supports casefolding, it's safe to use provided new dcache methods are
+> >> > > > > >   used"
+> >> > > > > >
+> >> > > > >
+> >> > > > > I don't think that this is really needed.
+> >> > > > >
+> >> > > > > Too bad you did not ask before going through the trouble of this implementation.
+> >> > > > >
+> >> > > > > I think it is enough for overlayfs to know the THIS directory has no
+> >> > > > > casefolding.
+> >> > > >
+> >> > > > overlayfs works on trees, not directories...
+> >> > >
+> >> > > I know how overlayfs works...
+> >> > >
+> >> > > I've explained why I don't think that sanitizing the entire tree is needed
+> >> > > for creating overlayfs over a filesystem that may enable casefolding
+> >> > > on some of its directories.
+> >> >
+> >> > So, you want to move error checking from mount time, where we _just_
+> >> > did a massive API rework so that we can return errors in a way that
+> >> > users will actually see them - to open/lookup, where all we have are a
+> >> > small fixed set of error codes?
+> >> 
+> >> That's one way of putting it.
+> >> 
+> >> Please explain the use case.
+> >> 
+> >> When is overlayfs created over a subtree that is only partially case folded?
+> >> Is that really so common that a mount time error justifies all the vfs
+> >> infrastructure involved?
+> 
+> > Amir, you've got two widely used filesystem features that conflict and
+> > can't be used on the same filesystem.
+> 
+> Wait, what?  How many people use casefolding, on a per-directory
+> basis?  It's stupid.  Unix/Linux has used case-sensitive filesystems
+> for years.  Yes, linux supports other OSes which did do casefolding,
+> but yikes... per-directory support is just insane.  It should be
+> per-filesystem only at BEST.  
 
-The path lookups work very differently between COREDUMP_SOCK and
-COREDUMP_FILE - they are interpreted relative to different namespaces,
-and they run with different privileges, and they do different format
-string interpretation. I think trying to determine dynamically whether
-the path refers to a socket or to a nonexistent location at which we
-should create a file (or a preexisting file we should clobber) would
-not be practical, partly for these reasons.
+Quite a lot.
 
-Also, fundamentally, if we have the choice between letting userspace
-be explicit about what it wants, or trying to guess userspace's intent
-from the kernel, I think we should always go for being explicit.
+You may not realize this, but Valve has, quietly, behind the scenes,
+been intelligently funding a ton of Linux work with an eye towards not
+just gaming, but improving Linus on the desktop. And they've been
+deploying it too, you can buy a Steam deck today.
 
-So I guess it could be reasonable to bikeshed the prefix letter and
-turn '@' into some other character that is not overloaded with another
-meaning in this context, like '>'; but I don't think we should be
-changing the overall approach because of this.
+And a significant fraction of desktop users like to play games - we're
+not just all work. Windows ports need casefolding - alternatives have
+been discussed and they're non viable.
+
+(I fondly remember the days when I had time for such things).
+
+Samba fileservers are a thing, too.
+
+And for all us desktop/workstation users, not being able to use the same
+filesystem for wine and docker is the kind of jankiness that makes
+people say "maybe Linux isn't ready for the desktop after all".
+
+Put aside your feelings on casefolding - this is about basic attention
+to detail.
+
+> > That's _broken_.
+> 
+> So?  what about my cross mounting of VMS filesystems with "foo.txt;3"
+> version control so I can go back to previous versions?  Why can't I do
+> that from my Linux systems that's mounting that VMS image?   
+> 
+> Just because it's done doesn't mean it's not dumb.  
+> 
+> > Users hate partitioning just for separate /boot and /home, having to
+> > partition for different applications is horrible. And since overlay
+> > fs is used under the hood by docker, and casefolding is used under
+> > the hood for running Windows applications, this isn't something
+> > people can predict in advance.
+> 
+> Sure I can, I don't run windows applications to screw casefolding.
+> :-)
+> 
+> And I personally LIKE having a seperate /boot and /home, because it
+> gives isolation.  The world is not just single user laptops with
+> everything all on one disk or spread across a couple of disks using
+> LVM or RAID or all of the above.  
+> 
+> I also don't see any updates for the XFS tests, or any other
+> filesystem tests, that actually checks and confirms this decidedly
+> obtuse and dumb to implement idea.  
+
+Well, you certainly are making your personal feelings known :)
+
+But for me, as the engineer designing and implementing this stuff, I
+don't let my personal feelings dictate.
+
+That's not my place.
+
+My job is to write code that works, works reliably, solves real
+problems, and lets users do the things they want with their machines.
+
+All this drama over casefolding has been pure distraction, and I would
+appreciate if you and everyone else could tone it down now.
 
