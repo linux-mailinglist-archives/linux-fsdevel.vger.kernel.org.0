@@ -1,145 +1,157 @@
-Return-Path: <linux-fsdevel+bounces-49675-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49676-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B07AC0C95
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 15:23:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54273AC0CDF
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 15:34:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D59FD16AD5B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 13:22:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C6F44A4F05
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 13:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67A1828C005;
-	Thu, 22 May 2025 13:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB8F28BABD;
+	Thu, 22 May 2025 13:34:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ASce5Xvn"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="HrGq0kn0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDAB28BA90
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 13:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035BB221D9E;
+	Thu, 22 May 2025 13:34:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747920159; cv=none; b=O+lyKZ41R0N2ATAHCbY7TvaY63LOHOwgkazitz/tagdZZfNVSSrNodv7+0wuEsN9Ww5Pv77AH2FT0ofokEn3Izw/fx2BZEETOqcHBPV5D0OHb4PWSTMsMKN3KXP0RdLtRDleAA1hQNXSvf1rYvmNLZnabq+x5PHvmBgVm1deZo8=
+	t=1747920875; cv=none; b=j1mr/GtcvzG4UOPTAaiyBY2grBpLjdMoqCCamHluM83bfv95hOdsX6Qdbt8J3HVqUlWOtPBtPLeRzI1YAmZMfU0naI5oYvYHzWoLLTyKpipBwNcP8LEcPrM6n2jUJLvpQcdSzCpBZJdHfyexOVwmR4At+UegOcCm9fJzThRNauc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747920159; c=relaxed/simple;
-	bh=9d/cL7spZ/Wpwt5q//l/yGfX4IJgepMQQJ1VLqzbCYI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=IeIPnYRL6tx2b4tuFa/HSWmxeY/ImWwqCGLsFu/WiquU3rF1eRc48amsw7kbLkq8AxSqbVe7GnZxTcHe7bADuBnwtj2S2OXTKWs+iFSwTVC+mSHo2xo1270mZeiSU3ssAVJ2dxTqYF+/WK/JQPSIre2b9yBVpTMLEGtOoWbQq7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ASce5Xvn; arc=none smtp.client-ip=209.85.166.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-86a55400875so244548139f.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 06:22:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1747920157; x=1748524957; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ZfTBhDhdrqletUuYxc3+baMCOgR/beos1y6YIz7hWx4=;
-        b=ASce5XvnwQFAdORXbdMI+p+f6mofxWdUFe4+WizcBMjMmZl/fa9slW30bZy5DYzWdA
-         NE9r2fWk7tmxtLwQWc/Ao0+bjop8/C9Q+KLKdx9QkH2838goiDWzHijfjXH8bFu06Lcz
-         zMOGQoYEidrCYQvhtHvWYunfzNO33J/ogXGpgYmhUqI5mVo/AOySskzcdMEkh1Sctup6
-         xKqRpVg22eL66c7DiwvvrQoBESKBGKI2qLnOwoOUVX55xwaspU9D1h/x6lpfhiOswB0o
-         JQYca3D8FcQcfR1fOOa7zKm3qJhtdWWEcoQacP1o6mCRJftKqnR00mhrm0+Et+nra8r1
-         UCfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747920157; x=1748524957;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZfTBhDhdrqletUuYxc3+baMCOgR/beos1y6YIz7hWx4=;
-        b=vrXWQmDVAZS1YEZ2DO9AHulOlmYLHO5HlZu4pif2PBNpQgoFYWeAhNoTxEWZ5IMoVG
-         hR/h9Buou1wMRbll5zNeT0f6gA6eWdMmsTzvGgEiF0Wg5VU6nfHCvwO49EqXHCz+sEMr
-         iqwvKFlyMkOfJEKA/b5hBmzAOqOfphp+4JvuTf4UKp0lnhHqqAfCM4whdf/PJQU+Q45Y
-         n+8MVCad4AJJsj+zyFwQHfd0o71N+bNoXa0ZGBJErZFFGI+UWYfIPocZd8UfTOqsjnK1
-         qInUsB5q2zSt4L0qWzWkEekYr7AV//pR6tN9if7mSzw9JFQS3OFQS8alx8jDUxInffxo
-         MVHQ==
-X-Gm-Message-State: AOJu0YwD6izKhEDRXthZ00+P2nnRuACeeoQVlpdEzu4FYvT54XQizl4s
-	sC01Cv1EQAeAWFR/VgVoVQvNMNiBSZ7l6Hp6OfP5trCjyt0p0v/G5u+UiHaXZuU0bMBNqvPxbye
-	j0xuqh7NmbU94UXQobS+KAbLqXUgeUvOq2l+YC09BsDV6KpzPbliU4Dc=
-X-Gm-Gg: ASbGncsC/3y2WizwV9ef1uasG8Q6ciTj3g04z/3CeVu481jZFh7Ls0Uy0l0lEQxQtqM
-	sUmKj4zr+E0Hv3E78T59jFp78tnGNtuLsjitzDB4C5LZpDMhLCGm1uV27c0PbLkGmCGDdJkf2km
-	K4V8U3P0jxte9bLsRNV7YaZSD9E2rZ7mDViJL/j9XKkptu0chT7LML+Jk3QQqPKO1QsQ==
-X-Google-Smtp-Source: AGHT+IH2x7M+ebP0fF6u65wtIJfC2HKWreUBC1mFxNZYez5c2LjS+RbEJT03nVtElBzCk2DLszkS0XUj8hnQ/3AfrTc=
-X-Received: by 2002:a05:6902:13c6:b0:e74:b106:ec71 with SMTP id
- 3f1490d57ef6-e7b6a317681mr31915653276.46.1747920145756; Thu, 22 May 2025
- 06:22:25 -0700 (PDT)
+	s=arc-20240116; t=1747920875; c=relaxed/simple;
+	bh=8GZdBTOYVGwbZLvXBpdpHobZi2bZ9UpNg9GvNcbl24g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUkAkZU8NEyBJMx1qylukteA18142FlKyAAnXoQyz+q0/boWM/aQLFHX56E9zIxJp81lGPl1UKHMdfX4EotbvzIwxFaPLpE44D8lXMFS4vgoAqSJ4zc8dfj7pjWpgq58pbTSfG1nEZnf7h0Li11eau4gWsWHfC7x3KVyomONLyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=HrGq0kn0; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [10.196.197.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4b38Qs0sDSz9sr6;
+	Thu, 22 May 2025 15:34:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1747920869;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HglpUfe4kmsfzDLqBmD4mwNcQaYbHQqEm+gYK0kZUv4=;
+	b=HrGq0kn0IswTMrElT71G4ZbK3lUndY7xUDOTKbv2J80oqPrjLnUqLn3Fi7gSIsFWizXlKH
+	lET7rBNAo32lcL2lchoPLdDYG+yTQcX9pqm55XyS7dPpHzVrlyZqtrDpaUuKLtT1qjJ/xH
+	BQbXyJbjAWLxsFsUCsyzxVRP/SqXyQ/KFyesfs/5enWVN0YbWPTYoZ0Nu4V+IiNx/vGBwJ
+	yKGuzIficxnnHqOVo1Sva0+r3cY2I9dM5TP/N9SXqnh6OX7LG57zDJsnErFsM5TldjywJC
+	q9PHiKQsrqg4H2Qgzwx+X0ivgfrDH7WwWNm15hdk33MI9vgZ6a0Yb0Jq7m0sIQ==
+Date: Thu, 22 May 2025 15:34:17 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Mike Rapoport <rppt@kernel.org>, Pankaj Raghav <p.raghav@samsung.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Michal Hocko <mhocko@suse.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Zi Yan <ziy@nvidia.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	"Darrick J . Wong" <djwong@kernel.org>, gost.dev@samsung.com, hch@lst.de, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, willy@infradead.org, x86@kernel.org, mcgrof@kernel.org
+Subject: Re: [RFC v2 0/2] add THP_HUGE_ZERO_PAGE_ALWAYS config option
+Message-ID: <b3ceg4gdg5exbugyarudabfuaowvqfqgrzo62hoexxhvvfwjs7@4dbrig7wm7ds>
+References: <20250522090243.758943-1-p.raghav@samsung.com>
+ <aC8LGDwJXvlDl866@kernel.org>
+ <6lhepdol4nlnht7elb7jx7ot5hhckiegyyl6zeap2hmltdwb5t@ywsaklwnakuh>
+ <6894a8b1-a1a7-4a35-8193-68df3340f0ad@redhat.com>
+ <625s5hffr3iz35uv4hts4sxpprwwuxxpbsmbvasy24cthlsj6x@tg2zqm6v2wqm>
+ <eab4b461-9717-47df-8d56-c303c3f6012d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 22 May 2025 18:52:13 +0530
-X-Gm-Features: AX0GCFs4fMOBdKUjtk4Ii_YEa3Zj0uO_GBWF7untQbLfXNpr8KzqJEF5L9aKhfg
-Message-ID: <CA+G9fYsZPSJ55FQ9Le9rLQMVHaHyE5kU66xqiPnz6mmfhvPfbQ@mail.gmail.com>
-Subject: mips gcc-12 malta_defconfig 'SOCK_COREDUMP' undeclared (first use in
- this function); did you mean 'SOCK_RDM'?
-To: linux-fsdevel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Anders Roxell <anders.roxell@linaro.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Dan Carpenter <dan.carpenter@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eab4b461-9717-47df-8d56-c303c3f6012d@redhat.com>
 
-Regressions on mips malta_defconfig build failed with gcc-12 on the Linux next
-tag next-20250521 and next-20250522.
+On Thu, May 22, 2025 at 02:50:20PM +0200, David Hildenbrand wrote:
+> On 22.05.25 14:34, Pankaj Raghav (Samsung) wrote:
+> > Hi David,
+> > 
+> > > >    config ARCH_WANTS_THP_SWAP
+> > > >           def_bool n
+> > > > -config ARCH_WANTS_THP_ZERO_PAGE_ALWAYS
+> > > > +config ARCH_WANTS_HUGE_ZERO_PAGE_ALWAYS
+> > > >           def_bool n
+> > > > +config HUGE_ZERO_PAGE_ALWAYS
+> > > 
+> > > Likely something like
+> > > 
+> > > PMD_ZERO_PAGE
+> > > 
+> > > Will be a lot clearer.
+> > 
+> > Sounds much better :)
+> 
+> And maybe something like
+> 
+> "STATIC_PMD_ZERO_PAGE"
+> 
+> would be even clearer.
+> 
+> The other one would be the dynamic one.
 
-First seen on the next-20250521
- Good: next-20250516
- Bad:  next-20250521
+Got it.
+So if I understand correctly, we are going to have two huge zero pages,
+- one that is always allocated statically.
+- the existing dynamic will still be there for the existing users.
 
-Regressions found on mips:
- - build/gcc-12-malta_defconfig
+> 
+> > 
+> > > 
+> > > > +       def_bool y> +       depends on HUGETLB_PAGE &&
+> > > ARCH_WANTS_HUGE_ZERO_PAGE_ALWAYS
+> > > 
+> > > I suspect it should then also be independent of HUGETLB_PAGE?
+> > 
+> > You are right. So we don't depend on any of these features.
+> > 
+> > > 
+> > > > +       help
+> > > > +         Typically huge_zero_folio, which is a huge page of zeroes, is allocated
+> > > > +         on demand and deallocated when not in use. This option will always
+> > > > +         allocate huge_zero_folio for zeroing and it is never deallocated.
+> > > > +         Not suitable for memory constrained systems.
+> > > 
+> > > I assume that code then has to live in mm/memory.c ?
+> > 
+> > Hmm, then huge_zero_folio should have always been in mm/memory.c to
+> > begin with?
+> > 
+> 
+> It's complicated. Only do_huge_pmd_anonymous_page() (and fsdax) really uses
+> it, and it may only get mapped into a process under certain conditions
+> (related to THP / PMD handling).
+> 
+Got it.
+> > 
+> > So IIUC your comment, we should move the huge_zero_page_init() in the
+> > first patch to mm/memory.c and the existing shrinker code can be a part
+> > where they already are?
+> 
+> Good question. At least the "static" part can easily be moved over. Maybe
+> the dynamic part as well.
+> 
+> Worth trying it out and seeing how it looks :)
 
-Regression Analysis:
- - New regression? Yes
- - Reproducible? Yes
-
-Build regression: mips gcc-12 malta_defconfig 'SOCK_COREDUMP'
-undeclared (first use in this function); did you mean 'SOCK_RDM'?
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build log
-net/unix/af_unix.c: In function 'unix_find_bsd':
-net/unix/af_unix.c:1152:21: error: 'SOCK_COREDUMP' undeclared (first
-use in this function); did you mean 'SOCK_RDM'?
- 1152 |         if (flags & SOCK_COREDUMP) {
-      |                     ^~~~~~~~~~~~~
-      |                     SOCK_RDM
-
-fs/coredump.c: In function 'do_coredump':
-fs/coredump.c:899:64: error: 'SOCK_COREDUMP' undeclared (first use in
-this function); did you mean 'SOCK_RDM'?
-  899 |                                         addr_len, O_NONBLOCK |
-SOCK_COREDUMP);
-      |
-^~~~~~~~~~~~~
-      |                                                                SOCK_RDM
-fs/coredump.c:899:64: note: each undeclared identifier is reported
-only once for each function it appears in
-make[4]: *** [scripts/Makefile.build:203: fs/coredump.o] Error 1
-
-
-## Source
-* Kernel version: 6.15.0-rc7
-* Git tree: https://kernel.googlesource.com/pub/scm/linux/kernel/git/next/linux-next.git
-* Git sha: 460178e842c7a1e48a06df684c66eb5fd630bcf7
-* Git describe: next-20250522
-
-## Build
-* Build log: https://qa-reports.linaro.org/api/testruns/28516701/log_file/
-* Build history:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250522/testrun/28516701/suite/build/test/gcc-12-malta_defconfig/history/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2xRo9ld0H5IJGyGHQxUSopFLZrU/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2xRo9ld0H5IJGyGHQxUSopFLZrU/config
-
+Challenge accepted ;) Thanks for the comments David.
 
 --
-Linaro LKFT
-https://lkft.linaro.org
+Pankaj
 
