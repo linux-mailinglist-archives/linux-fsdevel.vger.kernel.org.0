@@ -1,54 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-49603-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49604-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ABD0AC00DC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 02:01:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60D3BAC00DE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 02:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43741BC023F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 00:01:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21C184E5F50
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 00:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CE92FB6;
-	Thu, 22 May 2025 00:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BE5EC5;
+	Thu, 22 May 2025 00:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xtr5zPE5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D2HQifvi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48883A50;
-	Thu, 22 May 2025 00:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C180367
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 00:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747872083; cv=none; b=royFH7AWyObN3ccFZkWHg6m9JL/2gQ/W3J9j8TRMFMGN6r8Zdz5aBOtLITtMEYE4R1zjq17L5PR6advnS8NE3MT3eb8SZsVhg//uZoipVKfTDuTdpRLjdjHDhTxhmTzFqW+uNevO6vVr4LGiwK5j4sINryBQ0auX5Iu9wR+YOl4=
+	t=1747872099; cv=none; b=o+66Ot2N893xiEVx3pybjEtUzT+6j5uECBHX/MxCR3lHhc8h/1U9ok6gx+SPozNK5yZvPWkRxePh6zfhsXO0TITD+Ri6aeq9ccdW0CABIH3ln6tro3+128tUURrcY1vPKi3ZDy7bSG/WZkQV9F2oI4Ob58HrdP1t8ZdvdYM59Ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747872083; c=relaxed/simple;
-	bh=BC1RwMbo3i81GtugrWB3Rg6/+U8RMVvGtiGqNYTu7jE=;
+	s=arc-20240116; t=1747872099; c=relaxed/simple;
+	bh=Fw0vD3uRLud7Qljy10YgVqNuSSrsb2cd0hMerZRZhqM=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ov9mFkqw7WXGB375tLh7u3x+MMPs8KaNxia75WtqoseOOwy7Vy41KgWjBoddk3OtI4X7v6/AncUW5CbavFGrlfH+kvL2tSM2KLE8dUo7gFQEMoybYbFCwlc+d7j6VRc4JK7G4M3tF/fAQrX6X52YA8sz4RlghlUynycWZwF3JDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xtr5zPE5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCECBC4CEE4;
-	Thu, 22 May 2025 00:01:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aNMSQVyftYvWF7LtlwQGsalZR3zZAKMcPy9FAK0gX1X03L6WM9HU0RR7+k76OtfXwBm+mLIhtkqjN2tgm/XPZ5/y1o9lC0LXpYjY03zYZVSzvSGo/ueDiCeiORwy0zj6y1DZpxWBEz8UGLCxd8ASsLqkECigTLWv+5dQfdtk1sY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D2HQifvi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E640C4CEE4;
+	Thu, 22 May 2025 00:01:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747872082;
-	bh=BC1RwMbo3i81GtugrWB3Rg6/+U8RMVvGtiGqNYTu7jE=;
+	s=k20201202; t=1747872098;
+	bh=Fw0vD3uRLud7Qljy10YgVqNuSSrsb2cd0hMerZRZhqM=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Xtr5zPE5otjKrwvCG79wYzjEdtpcybZnY7aIhjSjCPHd0nNMe28hfGjPSHdX65jm9
-	 Yme9yGL3na9VZTekwX/JxZY1rPzSWe1P+0FZVqYz/UkwejpMlSIKJYnrq2iFSpPdXU
-	 JoWHWSiYFIXSdoxs1X6Y+kyzyNYUPrU1efM6TFDBGRWfIyA4oRqa0/eM3TiNhzaYBJ
-	 7AaE7Y6V2niy0YnCARlVEDtQiJDmGBPFgfR7yzK6bQzx+Dxj/ZKYNDecDjtFpceeBC
-	 OCm+FPaQmPJ3lJdmy+tqIYg9OKwrGTiLlqBVdu3TbmtYAM349wqnA9wipDUFPcAq+2
-	 aMJrGovteY0aA==
-Date: Wed, 21 May 2025 17:01:22 -0700
-Subject: [PATCHSET RFC[RAP]] fuse: allow servers to use iomap for better file
- IO performance
+	b=D2HQifviayF9rztQC6Fno6yFCz7KMv1woR7Ll8bYMm+v5rYYgrbUhFd5BhWe2PxYG
+	 fgZSJIHMcGIWYvsBq1rcTZAA3w5G/S0yhGreE4O1WCrzVyhCUdF//WmiVFKRrU3QMI
+	 xxK66l4YXX2x85uiTX8NNfJyrmN+vdHBC446P0xeWI3eD85jiTt7M8MFWgDCSqO2li
+	 YvK1wu2zWyT56aqsJxjLjK22D1X7fWc3yv1r8wqi3YsGADNdlep93JwWDUpJXh3a2z
+	 oQFqJo6/IAo1dAjyeu0QlIlvpPWEND9YXKM9lU4HqvvZPheFurMNQh3mEOq3/sr4DW
+	 Lx8dV8NfbsaSQ==
+Date: Wed, 21 May 2025 17:01:37 -0700
+Subject: [PATCHSET RFC[RAP]] libfuse: allow servers to use iomap for better
+ file IO performance
 From: "Darrick J. Wong" <djwong@kernel.org>
-To: djwong@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com,
- linux-xfs@vger.kernel.org, bernd@bsbernd.com, John@groves.net
-Message-ID: <174787195502.1483178.17485675069927796174.stgit@frogsfrogsfrogs>
+To: bschubert@ddn.com, djwong@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, bernd@bsbernd.com, John@groves.net,
+ joannelkoong@gmail.com, miklos@szeredi.hu
+Message-ID: <174787196326.1483718.13513023339006584229.stgit@frogsfrogsfrogs>
 In-Reply-To: <20250521235837.GB9688@frogsfrogsfrogs>
 References: <20250521235837.GB9688@frogsfrogsfrogs>
 Precedence: bulk
@@ -62,7 +62,7 @@ Content-Transfer-Encoding: 7bit
 
 Hi all,
 
-This series connects fuse (the userspace filesystem layer) to fs-iomap to get
+This series connects libfuse to the iomap-enabled fuse driver in Linux to get
 fuse servers out of the business of handling file I/O themselves.  By keeping
 the IO path mostly within the kernel, we can dramatically improve the speed of
 disk-based filesystems.  This enables us to move all the filesystem metadata
@@ -72,7 +72,7 @@ containerize them for security without losing a lot of performance.
 If you're going to start using this code, I strongly recommend pulling
 from my git trees, which are linked below.
 
-This has been running on the djcloud for months with no problems.  Enjoy!
+With a bit of luck, this should all go splendidly.
 Comments and questions are, as always, welcome.
 
 --D
@@ -81,30 +81,23 @@ kernel git tree:
 https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=fuse-iomap
 ---
 Commits in this patchset:
- * fuse: fix livelock in synchronous file put from fuseblk workers
- * iomap: exit early when iomap_iter is called with zero length
- * fuse: implement the basic iomap mechanisms
- * fuse: add a notification to add new iomap devices
- * fuse: send FUSE_DESTROY to userspace when tearing down an iomap connection
- * fuse: implement basic iomap reporting such as FIEMAP and SEEK_{DATA,HOLE}
- * fuse: implement direct IO with iomap
- * fuse: implement buffered IO with iomap
- * fuse: implement large folios for iomap pagecache files
- * fuse: use an unrestricted backing device with iomap pagecache io
- * fuse: advertise support for iomap
+ * libfuse: add kernel gates for FUSE_IOMAP and bump libfuse api version
+ * libfuse: add fuse commands for iomap_begin and end
+ * libfuse: add upper level iomap commands
+ * libfuse: add a notification to add a new device to iomap
+ * libfuse: add iomap ioend low level handler
+ * libfuse: add upper level iomap ioend commands
+ * libfuse: add FUSE_IOMAP_PAGECACHE
+ * libfuse: allow discovery of the kernel's iomap capabilities
 ---
- fs/fuse/fuse_i.h          |  135 ++++
- fs/fuse/fuse_trace.h      |  845 ++++++++++++++++++++++++++
- include/uapi/linux/fuse.h |  138 ++++
- fs/fuse/Kconfig           |   23 +
- fs/fuse/Makefile          |    1 
- fs/fuse/dev.c             |   26 +
- fs/fuse/dir.c             |   14 
- fs/fuse/file.c            |   85 ++-
- fs/fuse/file_iomap.c      | 1445 +++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/inode.c           |   23 +
- fs/iomap/iter.c           |    5 
- 11 files changed, 2730 insertions(+), 10 deletions(-)
- create mode 100644 fs/fuse/file_iomap.c
+ include/fuse.h          |   20 ++++++
+ include/fuse_common.h   |   80 ++++++++++++++++++++++
+ include/fuse_kernel.h   |   89 ++++++++++++++++++++++++-
+ include/fuse_lowlevel.h |   95 ++++++++++++++++++++++++++
+ lib/fuse.c              |  142 +++++++++++++++++++++++++++++++++++++++
+ lib/fuse_lowlevel.c     |  170 +++++++++++++++++++++++++++++++++++++++++++++++
+ lib/fuse_versionscript  |    2 +
+ lib/meson.build         |    2 -
+ 8 files changed, 597 insertions(+), 3 deletions(-)
 
 
