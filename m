@@ -1,80 +1,80 @@
-Return-Path: <linux-fsdevel+bounces-49696-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D9AAC16B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 00:26:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15793AC16C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 00:26:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B341A2805B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 22:26:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 935A17AF947
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 22:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F342741CC;
-	Thu, 22 May 2025 22:26:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DD72798E4;
+	Thu, 22 May 2025 22:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="PE8bp2bC"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ToVMF8Pc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2B9270EA8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 22:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60842741B8
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 22:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747952771; cv=none; b=Pf/dSDi2n1iA16Ut38JXYtaBIRERswaxng3YpATNCw8XhdDbW3r+qCQPUXiS5vQ4zujTxBgNUXQ3oydniISn+RJ+HTkyL7EYvZ5AoNM8ZVqKCRhtFD4S1ec0k/wlsGJfB4p/CB6f/416Nafbplu7xyvnUBnY5+8w5J7IrGDZc+o=
+	t=1747952773; cv=none; b=YQjymywYGMAxfcZltGCRntUYpKoi+GFCYUdptCz20rtjDUZfqmAwTZXRvvbIjP9Gy9wUFXyRDrFJ5DlE09yAHjXtsvA6QSoukQIuNiTWwNvUbeg398EMpvNsV1M6Q+drB/1g/Bh04TfrqvCH8eitO6+TBx3dHL6EkBcXyb0OoHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747952771; c=relaxed/simple;
-	bh=yXfmq+fsOH2ydhYAaJ/O8G8cyrnfKS0KGUVUMAH0MGk=;
+	s=arc-20240116; t=1747952773; c=relaxed/simple;
+	bh=ERIIFgKxrnPwjSVA6jXYtUfeYroUqJBM9v+L48OiIjw=;
 	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=fnKWeAaFLq80DpzOku++YFW3CvvlOyj8PURboDOpGuxRv88gbqsFhS2SrHcTinGSmU4oSwQ0uryyaKbQle4WlEFwCQSKvoWcRvBGbWvSCJZ6fw6nVrB2ZQHAs26a1gl+B81JjmyibQf2//4b818ywHg6BjrDaJqePsLT/OvtS3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=PE8bp2bC; arc=none smtp.client-ip=209.85.219.42
+	 References:In-Reply-To; b=n/TYlbqhtAhHnNNN7y4e5fEz+enBoJliVs4c2u/6Df4ZqnrECK9/uZK2iYEwka++6WmswR48HzdRQDYr4KaFLfEK/2+d7CiMkcRVQoJ2ldyF2yRnFn09+P36PvlY6aPqvoJ+V1HdtEuUdwCJJ4AqpK4rFPcm9JGWiQLZtDFhw+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ToVMF8Pc; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f8cad66696so57449326d6.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 15:26:07 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c55500d08cso932394885a.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 15:26:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747952767; x=1748557567; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1747952768; x=1748557568; darn=vger.kernel.org;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Jmptf5RMBQqSn8lkxlWoyMCjmS+Mv7H8iKTTl/Kwouo=;
-        b=PE8bp2bC2u+7hVMWFXDxIhgHhKxulbXWcGxnUpIhrgzangQno0wz8wTj2SBpQlx+RH
-         HWbPzJONY/k5V5KhKxFzRg0mqcSuevNUob7nbBRkNe4zNv5ta0ZZRbKuMkupvRu1j4H/
-         L5g61hkwn3G2TrJtCWpQppB/pCl9f/CPqdvv0wvc5m0YvonN/44WK2eHjcRrBNO9b+Bz
-         rMI5Soc4po1JoBDybn3lJlA6EaENodtYQjDPfzlCn/d0jltsqZogc7KaymbExTqk6b2E
-         5S0ojIzkilaxs5NcdiEorb9gq51ZYUhzmmerYI6Csq70Rwqskc1RTDHHPC4a/b2ToWTE
-         +pXQ==
+        bh=yW4BwrWRPMGZw+m/ri6EFRKCjP4k+SeXSk6ZWrWvJiA=;
+        b=ToVMF8PcVy37DRcyydOqAzRtU8MIfxnsQYcyTujtaPP+6rNuh10GiSxHl8BpEOL7Vl
+         xP549yj/DsBJfMi3qCROE0CjVVteyRyHylhdLw04oGcxRiQntTqkGaj0qxDt91en7Yaf
+         k+SmxoaFBB+G/5sErCk+bkQleUrTH6XQJe2p+LIipbvb4fbPmu1wnSD2q+VMoi0xxJsW
+         gaMrvrcaiHSnHiky9rJUvXODz2114Xg3/bkQmKiZIEtphocJflv5aC1cQ1XzMR2q+5M1
+         e5C3pB8Uc+2bJywG7HLAABdlrHUZ45rP3ykqZkmL5ezlodK/YayNjCLBFI5pn3kcMbPH
+         Giow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747952767; x=1748557567;
+        d=1e100.net; s=20230601; t=1747952768; x=1748557568;
         h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
          :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Jmptf5RMBQqSn8lkxlWoyMCjmS+Mv7H8iKTTl/Kwouo=;
-        b=ZN0Frk2aS9wug7uTYQVLfbDw8qflSBAnqi8lBPIIoI+YALiLvFyAvM73IGOrChocpK
-         GAV5Mf1sx4OKWNkheJowOo0tLUTI3mahLNVp5zUIg6wOKUZUI8TW1esvXQ+qMTikkSvJ
-         7+Q9QjphF/JXnORmrRwO+3+1g+DniDyEQGhMhuKv6itJ56VlyoTj9bgeTQRBRSsNJqIJ
-         wae2Eo8HudIr6ulClpFHYqn+XzYiFyNxWfIMDkA4dHEtKG4ZVGHgZu+jXAdSUF0BdFte
-         5/Uptm26etReF47wM8jynIfiKbYmSrSgaWE6jzDO5eY++LlTSb2RXmgCdWKorC3wASDe
-         2ocw==
-X-Forwarded-Encrypted: i=1; AJvYcCW+kDxCoc/JE+Uhjy6yTgNC0Ic7TJqyFsPE943lbi+Up2KJ23naxyVIN1I5NinA+v9OAewaFnrJm95HHGz3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaIyO4I/VTzzkzaitydUs4NjT1lFK48lXTquu25qJs0Y4NlfO1
-	qtEDCvazGGfTvx4AdZm6uLpkJ4GaBQGPNRzxMO6PGb3mcbqOprSFoVQCxrA7F+k0zw==
-X-Gm-Gg: ASbGncuivHpabkGUlsb5nTLVkRX63CVPVng6Vb5riFWJ65kULJOCyhO/iIO61Ry1UI7
-	4iF7yjoO5iq9aeCsQkUJtcrkU67gxB6PaAt58G/RBB9CtRKfEeAFrftWrLd7zAnd8OZpF057hr3
-	AnzjdAmZklLIQK2JGvfRnHNDSvg0UviE8eVESgD2JTKQvYEWCmbci3T9sIYc2f4XfkPhixpaLu0
-	KBUKtflmrE7WGWWjY3Xpm19IEprKsHjSgljejefXJV6ECbG9o31awLy70L80SsjgoXn6X8lbGhT
-	JVynyGIhRgFOeJICyInjlQgvI8u5zMz/7M1F9Moq/N0op/rlNMrIOF7oNvB18CHNShw+j/192mQ
-	GUZbjgKzoMnXvhrnY7aSD
-X-Google-Smtp-Source: AGHT+IE2zN7SH+0SaGrs2tzepSFkLMKNXBgIbbn8M9DQcRbDJBs1dDzlx85ZuSxbIPErdUE31K4qXg==
-X-Received: by 2002:a05:6214:1947:b0:6f2:b094:430e with SMTP id 6a1803df08f44-6f8b0829131mr503375636d6.25.1747952766984;
-        Thu, 22 May 2025 15:26:06 -0700 (PDT)
+        bh=yW4BwrWRPMGZw+m/ri6EFRKCjP4k+SeXSk6ZWrWvJiA=;
+        b=YiB7AyYYgn4SNG9crWuJoLOetJb8Qd3aJ6xLEccslp+W+qpVZw8Oi1MfSB6oZRZi1l
+         LzWFmWOLZaevi0m47W+dgxm2uaPolP3fpI2KFOaGHFrSTq1ISG5zRgca4uPkmgzYMVE5
+         LqYebgXH9xqojhgya1t9clfiN4RdtJLID2WxJhxWjwUHhJ1TEXVWCBuoJoTPOc0Pp9+p
+         JGScOBAixTpeUEemEoFUzJI28FJCgNs1JKdB0TQW1Y0qQKmO8MU7Vm7QcgTRsf7jVeEN
+         usXxasF3GJzSk7rC9EMIex9LetBri+IdvKFODxptm2f3un1v9RKUACQmD5Sebw1y2F2p
+         Y6ig==
+X-Forwarded-Encrypted: i=1; AJvYcCWMw6lFmAD17I/e4mrUJ01du6NbcHq+8LMibd/5QPUzpq8rjLtA0S/rQdVA2LMiJL9onygwacCcUWuX8ndS@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6Zmu8T6UKdB/N3Cfwg+zKxH+kuAqWIVoJQnHl0elRXPLxAQTn
+	y/UNbgHAm2myHFAujrI/9bG+izL/kt2VxmlpA4Qeu+Gr7NstwqOvbyGNs8UebTGVOw==
+X-Gm-Gg: ASbGncsBeWolXKeWij+/y7Dn4EDuiBpMR+z93Jllf3yyKMxP+5yxO8aRTb9J3ztOrRT
+	qRLhJZYkL90dvNggZfxtR+X4oAz6CzUEc991MjDTiqZ4vgKQ2ebgwdhKEUVIvx7ctXHw8lvCJC5
+	vlwRjvBhWI0qz+dsplOtO2VbNDD86FflJ+FBbbGND/6dS+1Gwi1bjXQOXrPqE7IPaMQqvtvnEkJ
+	dgYPB8TfIp5GVRsDgit2wG2LkKpuI0m8zxeyIBt3Nilq9pjKT9Nr3bBgB5T/QW8xvzmMIlP8F2V
+	pnS9LM4uqgXpyhXFJSjL9l2cRSdeZLY0pTZHvEG4u5A7bSemEu8g+DXVVDsjkKI/zE3UjHzODEQ
+	UJFWVVO6tVgyxW5gPhMIw
+X-Google-Smtp-Source: AGHT+IHmIlyqjG6e3vdHM+wi0UqPbDaDdVTY/IdBlClNAbyXhci/B2Ul0PB2ozu0sL7+1EWeTaPM2w==
+X-Received: by 2002:a05:620a:408e:b0:7ce:d352:668f with SMTP id af79cd13be357-7ced352670emr1334278485a.47.1747952768087;
+        Thu, 22 May 2025 15:26:08 -0700 (PDT)
 Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6f8b0987259sm105076766d6.120.2025.05.22.15.26.06
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cd468b69dfsm1089029585a.79.2025.05.22.15.26.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 15:26:06 -0700 (PDT)
-Date: Thu, 22 May 2025 18:26:05 -0400
-Message-ID: <0bb73a49ccbc93e90ea87c0dbb4097ae@paul-moore.com>
+        Thu, 22 May 2025 15:26:07 -0700 (PDT)
+Date: Thu, 22 May 2025 18:26:07 -0400
+Message-ID: <8bf36078ef8f3e884a1d3d8415834680@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -110,30 +110,21 @@ To: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henders
 	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>, 
 	Amir Goldstein <amir73il@gmail.com>
 Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, selinux@vger.kernel.org, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v5 2/7] lsm: introduce new hooks for setting/getting inode  fsxattr
-References: <20250513-xattrat-syscall-v5-2-22bb9c6c767f@kernel.org>
-In-Reply-To: <20250513-xattrat-syscall-v5-2-22bb9c6c767f@kernel.org>
+Subject: Re: [PATCH v5 3/7] selinux: implement inode_file_[g|s]etattr hooks
+References: <20250513-xattrat-syscall-v5-3-22bb9c6c767f@kernel.org>
+In-Reply-To: <20250513-xattrat-syscall-v5-3-22bb9c6c767f@kernel.org>
 
 On May 13, 2025 Andrey Albershteyn <aalbersh@redhat.com> wrote:
 > 
-> Introduce new hooks for setting and getting filesystem extended
-> attributes on inode (FS_IOC_FSGETXATTR).
+> These hooks are called on inode extended attribute retrieval/change.
 > 
 > Cc: selinux@vger.kernel.org
 > Cc: Paul Moore <paul@paul-moore.com>
 > 
 > Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
 > ---
->  fs/file_attr.c                | 19 ++++++++++++++++---
->  include/linux/lsm_hook_defs.h |  2 ++
->  include/linux/security.h      | 16 ++++++++++++++++
->  security/security.c           | 30 ++++++++++++++++++++++++++++++
->  4 files changed, 64 insertions(+), 3 deletions(-)
-
-The only thing that gives me a slight pause is that on a set operation
-we are going to hit both the get and set LSM hooks, but since the code
-does call into the getter on a set operation this is arguably the right
-thing.
+>  security/selinux/hooks.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
 
 Acked-by: Paul Moore <paul@paul-moore.com>
 
