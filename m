@@ -1,53 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-49624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49625-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2B0AAC0102
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 02:07:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5740FAC0103
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 02:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 177E89E4F87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 00:06:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14A1E172468
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 00:07:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50B6A50;
-	Thu, 22 May 2025 00:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 216E42F4A;
+	Thu, 22 May 2025 00:07:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bd3hyAgA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SnjVBhH6"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BF5380
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 00:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839F928F1
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 00:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747872430; cv=none; b=QF3UCYT7dyxU+IwZjxjTwul0UXXarQZca0uOuhbZDVonMzbG4MtbKqW/cZ6Q0xmtRrRvzia2cthlzw7V+nXOCBMALcSJTRogYZItWV8HiqaIVFT1LaW4waf412o2Rh9+TVm8EjSOo7LZAHEqkPK85nkc9oeqxcnSWBqZ4MvytUY=
+	t=1747872445; cv=none; b=R3r8AqC438hdUKf3Csqn+4xZjl7THOMBSRGnsCCh9bJwv+w5K7/P+mHpcCk3mxb94Qq9d1SYJ4RKc+sgEdW1uZ1SOSLaoXvodQtMIH/MdARDzKh+Lqw/N0kn39NA1uIroJ2BEUAUHZ1cNRKhTiOptzveztlUOZYsM5hxR9hMyfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747872430; c=relaxed/simple;
-	bh=59+DQkUcP7WJHjDa2/dJIuzQ+gnPbRCFncnAqmzK838=;
+	s=arc-20240116; t=1747872445; c=relaxed/simple;
+	bh=e3+ThxZwdd609T7reldIwjYYIhldUBdC3O2awkME/vQ=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C6hd0407vJu6/G5pp1gWicCnCxZiaFF1/7VPuTOkQQLhxRHM5SbLJD9EMobEVYu1FQ5NFqwYqckUXn+QoiPpLVhJIv1KNRTmg6iidErlDJa341K13AUROpu7s4xuI0b8VImpXdI2Brsv1oHAFlQhSeHdxs+rZOCO24VelslNbgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bd3hyAgA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98F18C4CEE4;
-	Thu, 22 May 2025 00:07:09 +0000 (UTC)
+	 MIME-Version:Content-Type; b=l6wA+lMinYwlDBvz8dPCoOllCnvZ8caVb8isFa9DkRRSZywg76C7Fn1Lzm8iTw8WgV54aOGb990JoBcpPagAvE0b1fx6tWd0a/8rTN7ljR3GPVNjVJGdYSGOFAmFDcbjZBMQW184ZuNYMvEdLRhSHWODOXY2VbLirk4FLPIIyXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SnjVBhH6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4919CC4CEE4;
+	Thu, 22 May 2025 00:07:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747872429;
-	bh=59+DQkUcP7WJHjDa2/dJIuzQ+gnPbRCFncnAqmzK838=;
+	s=k20201202; t=1747872445;
+	bh=e3+ThxZwdd609T7reldIwjYYIhldUBdC3O2awkME/vQ=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=Bd3hyAgA1iyJZ3Vtl509Obgsv9kpKARG8dJIsLvkIFukYGdYBsj4lsKhsOBW3gzfe
-	 v9Kex2BPtzGGgMaaBmoPAy95XrrM+4kbLKgjPhom8sipB7/sStp1/fp1py4/Brg9+W
-	 N20pr46IwHcf7Iph/M9N97Aqe/e3G01AcXeDxcGhFXoNFrYzIpkraUyVeIHdGNpDDg
-	 XdWO7AKpzVicxFaqKLNUeo1HdUjKcWhr5qrs331mcsd466RR8WFWlx+IvDCjzTP+vy
-	 0th3quFc74v/JPiPrj3KJwyKhWb2cOZSkr4/djYpyuqMKobf+UP3leRFfWD7iRoetE
-	 7t8doeY4bm4ZA==
-Date: Wed, 21 May 2025 17:07:09 -0700
-Subject: [PATCH 7/8] libfuse: add FUSE_IOMAP_PAGECACHE
+	b=SnjVBhH6prUhcvMvxfBfp7vBIkgmFJOLFripJ+u3nHfBcZaa/d4gWbWxPH4D77o9f
+	 6ODiphd9bsjf5g/J2OkRmRYex8dGNCrZ8e/bandvurQB4bBIw+sarOeGRzIP1i1XpJ
+	 /j+Iw2Uo//9s8FhBCrXrZYYhwkuckwbxWGmtabcjvTCyhXGHDIJvbOuNjf5EeXuLHS
+	 D7TtTq583WX52zNAB3mW7jq+EoGEFX5Y3OZu9wb6jq1aVJIxgcYOT7/EakalVJY5rI
+	 p4uXQD/UE7pE3sFzmfvtrobQMVGpBDqhw40SN889eV11ckZAZ7kPgEb7A/GfxswSAZ
+	 6iNKpeYqxkClw==
+Date: Wed, 21 May 2025 17:07:24 -0700
+Subject: [PATCH 8/8] libfuse: allow discovery of the kernel's iomap
+ capabilities
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: bschubert@ddn.com, djwong@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, bernd@bsbernd.com, John@groves.net,
  joannelkoong@gmail.com, miklos@szeredi.hu
-Message-ID: <174787196484.1483718.1589463471865066104.stgit@frogsfrogsfrogs>
+Message-ID: <174787196501.1483718.7405211872615895098.stgit@frogsfrogsfrogs>
 In-Reply-To: <174787196326.1483718.13513023339006584229.stgit@frogsfrogsfrogs>
 References: <174787196326.1483718.13513023339006584229.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,100 +62,111 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Make it so that fuse servers can ask the kernel fuse driver to use iomap
-to support buffered IO.
+Create a library function so that we can discover the kernel's iomap
+capabilities ahead of time.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- include/fuse_common.h |    5 +++++
- include/fuse_kernel.h |    3 +++
- lib/fuse_lowlevel.c   |    8 +++++++-
- 3 files changed, 15 insertions(+), 1 deletion(-)
+ include/fuse_kernel.h   |   13 +++++++++++++
+ include/fuse_lowlevel.h |    5 +++++
+ lib/fuse_lowlevel.c     |   28 ++++++++++++++++++++++++++++
+ lib/fuse_versionscript  |    1 +
+ 4 files changed, 47 insertions(+)
 
 
-diff --git a/include/fuse_common.h b/include/fuse_common.h
-index f7bc03427d12e4..a102e450944f4a 100644
---- a/include/fuse_common.h
-+++ b/include/fuse_common.h
-@@ -530,6 +530,11 @@ struct fuse_loop_config_v1 {
-  */
- #define FUSE_CAP_IOMAP_DIRECTIO (1ULL << 33)
- 
-+/*
-+ * Client supports using iomap for pagecache I/O file operations
-+ */
-+#define FUSE_CAP_IOMAP_PAGECACHE (1ULL << 34)
-+
- /**
-  * Ioctl flags
-  *
 diff --git a/include/fuse_kernel.h b/include/fuse_kernel.h
-index a2c044b5957169..93ecb98a0bc20f 100644
+index 93ecb98a0bc20f..71077eb9f49fef 100644
 --- a/include/fuse_kernel.h
 +++ b/include/fuse_kernel.h
-@@ -235,6 +235,7 @@
-  *    SEEK_{DATA,HOLE} support
-  *  - add FUSE_NOTIFY_ADD_IOMAP_DEVICE for multi-device filesystems
-  *  - add FUSE_IOMAP_DIRECTIO for direct I/O support
-+ *  - add FUSE_IOMAP_PAGECACHE for pagecache I/O support
-  */
+@@ -1129,12 +1129,25 @@ struct fuse_backing_map {
+ 	uint64_t	padding;
+ };
  
- #ifndef _LINUX_FUSE_H
-@@ -444,6 +445,7 @@ struct fuse_file_lock {
-  * FUSE_IOMAP: Client supports iomap for FIEMAP and SEEK_{DATA,HOLE} file
-  *	       operations.
-  * FUSE_IOMAP_DIRECTIO: Client supports iomap for direct I/O operations.
-+ * FUSE_IOMAP_PAGECACHE: Client supports iomap for pagecache I/O operations.
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -493,6 +495,7 @@ struct fuse_file_lock {
- #define FUSE_OVER_IO_URING	(1ULL << 41)
- #define FUSE_IOMAP		(1ULL << 43)
- #define FUSE_IOMAP_DIRECTIO	(1ULL << 44)
-+#define FUSE_IOMAP_PAGECACHE	(1ULL << 45)
++/* basic reporting functionality */
++#define FUSE_IOMAP_SUPPORT_BASICS	(1ULL << 0)
++/* fuse driver can do direct io */
++#define FUSE_IOMAP_SUPPORT_DIRECTIO	(1ULL << 1)
++/* fuse driver can do buffered io */
++#define FUSE_IOMAP_SUPPORT_PAGECACHE	(1ULL << 2)
++struct fuse_iomap_support {
++	uint64_t	flags;
++	uint64_t	padding;
++};
++
+ /* Device ioctls: */
+ #define FUSE_DEV_IOC_MAGIC		229
+ #define FUSE_DEV_IOC_CLONE		_IOR(FUSE_DEV_IOC_MAGIC, 0, uint32_t)
+ #define FUSE_DEV_IOC_BACKING_OPEN	_IOW(FUSE_DEV_IOC_MAGIC, 1, \
+ 					     struct fuse_backing_map)
+ #define FUSE_DEV_IOC_BACKING_CLOSE	_IOW(FUSE_DEV_IOC_MAGIC, 2, uint32_t)
++#define FUSE_DEV_IOC_IOMAP_SUPPORT	_IOR(FUSE_DEV_IOC_MAGIC, 3, \
++					     struct fuse_iomap_support)
  
- /**
-  * CUSE INIT request/reply flags
+ struct fuse_lseek_in {
+ 	uint64_t	fh;
+diff --git a/include/fuse_lowlevel.h b/include/fuse_lowlevel.h
+index eb457007a72cbc..a74d287f9012e9 100644
+--- a/include/fuse_lowlevel.h
++++ b/include/fuse_lowlevel.h
+@@ -2410,6 +2410,11 @@ int fuse_session_receive_buf(struct fuse_session *se, struct fuse_buf *buf);
+  */
+ bool fuse_req_is_uring(fuse_req_t req);
+ 
++/**
++ * Discover the kernel's iomap capabilities.  Returns FUSE_CAP_IOMAP_* flags.
++ */
++uint64_t fuse_discover_iomap(void);
++
+ #ifdef __cplusplus
+ }
+ #endif
 diff --git a/lib/fuse_lowlevel.c b/lib/fuse_lowlevel.c
-index 9d07743fe522c6..fd12daf509cebf 100644
+index fd12daf509cebf..9779e6ea7cc8ac 100644
 --- a/lib/fuse_lowlevel.c
 +++ b/lib/fuse_lowlevel.c
-@@ -2639,7 +2639,8 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
- 			se->conn.capable_ext |= FUSE_CAP_IOMAP;
- 		if (inargflags & FUSE_IOMAP_DIRECTIO)
- 			se->conn.capable_ext |= FUSE_CAP_IOMAP_DIRECTIO;
--
-+		if (inargflags & FUSE_IOMAP_PAGECACHE)
-+			se->conn.capable_ext |= FUSE_CAP_IOMAP_PAGECACHE;
- 	} else {
- 		se->conn.max_readahead = 0;
- 	}
-@@ -2688,6 +2689,7 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
- 	/* servers need to opt-in to iomap explicitly */
- 	LL_SET_DEFAULT(0, FUSE_CAP_IOMAP);
- 	LL_SET_DEFAULT(0, FUSE_CAP_IOMAP_DIRECTIO);
-+	LL_SET_DEFAULT(0, FUSE_CAP_IOMAP_PAGECACHE);
+@@ -4341,3 +4341,31 @@ int fuse_session_exited(struct fuse_session *se)
+ {
+ 	return se->exited;
+ }
++
++uint64_t fuse_discover_iomap(void)
++{
++	struct fuse_iomap_support ios;
++	uint64_t ret = 0;
++	int fd;
++
++	fd = open("/dev/fuse", O_RDONLY | O_CLOEXEC);
++	if (fd < 0)
++		return 0;
++
++	ret = ioctl(fd, FUSE_DEV_IOC_IOMAP_SUPPORT, &ios);
++	if (ret) {
++		ret = 0;
++		goto out_close;
++	}
++
++	if (ios.flags & FUSE_IOMAP_SUPPORT_BASICS)
++		ret |= FUSE_CAP_IOMAP;
++	if (ios.flags & FUSE_IOMAP_SUPPORT_DIRECTIO)
++		ret |= FUSE_CAP_IOMAP_DIRECTIO;
++	if (ios.flags & FUSE_IOMAP_SUPPORT_PAGECACHE)
++		ret |= FUSE_CAP_IOMAP_PAGECACHE;
++
++out_close:
++	close(fd);
++	return ret;
++}
+diff --git a/lib/fuse_versionscript b/lib/fuse_versionscript
+index 5c04e204adba33..210527ce9dd283 100644
+--- a/lib/fuse_versionscript
++++ b/lib/fuse_versionscript
+@@ -206,6 +206,7 @@ FUSE_3.18 {
+ 	global:
+ 		fuse_req_is_uring;
+ 		fuse_lowlevel_notify_iomap_add_device;
++		fuse_discover_iomap;
+ } FUSE_3.17;
  
- 	/* This could safely become default, but libfuse needs an API extension
- 	 * to support it
-@@ -2816,6 +2818,8 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
- 		outargflags |= FUSE_IOMAP;
- 	if (se->conn.want_ext & FUSE_CAP_IOMAP_DIRECTIO)
- 		outargflags |= FUSE_IOMAP_DIRECTIO;
-+	if (se->conn.want_ext & FUSE_CAP_IOMAP_PAGECACHE)
-+		outargflags |= FUSE_IOMAP_PAGECACHE;
- 
- 	if (inargflags & FUSE_INIT_EXT) {
- 		outargflags |= FUSE_INIT_EXT;
-@@ -2861,6 +2865,8 @@ _do_init(fuse_req_t req, const fuse_ino_t nodeid, const void *op_in,
- 			fuse_log(FUSE_LOG_DEBUG, "   iomap=1\n");
- 		if (se->conn.want_ext & FUSE_CAP_IOMAP_DIRECTIO)
- 			fuse_log(FUSE_LOG_DEBUG, "   iomap_directio=1\n");
-+		if (se->conn.want_ext & FUSE_CAP_IOMAP_PAGECACHE)
-+			fuse_log(FUSE_LOG_DEBUG, "   iomap_pagecache=1\n");
- 	}
- 	if (arg->minor < 5)
- 		outargsize = FUSE_COMPAT_INIT_OUT_SIZE;
+ # Local Variables:
 
 
