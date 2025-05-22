@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-49637-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49638-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF82AC0122
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 02:11:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B97FAC0124
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 02:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1F741BC4501
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 00:11:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75349E5F56
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 00:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5394F20EB;
-	Thu, 22 May 2025 00:11:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 623E81FC3;
+	Thu, 22 May 2025 00:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZe7CtCf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q4TUVJuv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF9C7645;
-	Thu, 22 May 2025 00:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF764195;
+	Thu, 22 May 2025 00:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747872682; cv=none; b=mU2ld6/4Llwq1B//h1rMH3ZUzC9GpypCnkuGBJ5RZGN8F5AzxZjCRJku+pzOqTmm3omkOSIz0dftDhbvHjOXVMFfzK+CcNAQMEW/Th+kQdiMfwMnMx5tz/WxtvRiKXMRYfdcCZfvRyxTHGNpiDsH0znr21QF54NxgKxRH9IrMPo=
+	t=1747872698; cv=none; b=c3OSXXVuFVkI8zSnt+GL3eT0nv7M8vQ/DIIOkh4v+ejecoEYgxMYpLUxrLBmtEuq9ZgEL/PGReUENvqd5dc8I9ZbfV+JKuFU1YtDeFvUm102A2NBQ0fItGwwX+XRuzHeoQMuwG/yyrqGamTLFWbDEq+4JIg4iGKvRoqRz3JcAwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747872682; c=relaxed/simple;
-	bh=Q9xfaabmNivQn0ShM+iA2MVuTaQl/v/MPjHePUA0XDE=;
+	s=arc-20240116; t=1747872698; c=relaxed/simple;
+	bh=+X64KxwxqyK1KxIOxSIfevNUyJhYmX2zelSnJ3GwwgI=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AqJ98kFrE8EcIUfvpcF4kb5QeRDZi9D6KjV5+EQOJvvSH2TaD8o0GwIj2nHD6XGHgcHzicB2/HamsJSrorPl8A/CuISCuwxmffPgMf9Q8/P14ysDazIkiwUn6fJ4PEPrc4GAg07j6yCTOmRqu4RPtBDPtS/uSMdkTL9n/ufBhAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LZe7CtCf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A5DC4CEE4;
-	Thu, 22 May 2025 00:11:22 +0000 (UTC)
+	 MIME-Version:Content-Type; b=dMVITQpYM2jAkAiABu6nK1yD/pksz6SKEal1E4051n0jyHrdNealo+H5ANXLohETRaKW1EOuy3xlPxHpfc4u/QUN2zMG3PAmARwxyziTJjNwcMSHOMslWPoRFIpFPJ3mlvN5hcRfB1umpEszH7o7EFmAnOaa70aBXOD9sVm2vbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q4TUVJuv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 387A0C4CEE4;
+	Thu, 22 May 2025 00:11:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747872682;
-	bh=Q9xfaabmNivQn0ShM+iA2MVuTaQl/v/MPjHePUA0XDE=;
+	s=k20201202; t=1747872698;
+	bh=+X64KxwxqyK1KxIOxSIfevNUyJhYmX2zelSnJ3GwwgI=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=LZe7CtCf0tbmFYofc21LrcswtdeKLDD7LXWENEGeK5M4qkQkRbHR2CBNMiT4dKbYi
-	 vhrOZghEnCiw2rXBmWC4a2pe7HJQL5dDI9exkI9HOFI0QiSWd3bXtql7Ntt5F483OU
-	 DSUyt6bKv/z4nl5ZBRlqPA0g6n6IcSe/eu8qEZ6Ict55tVIj27ozt/fZ8jzaqnQP1U
-	 2TX8zuW98q9A0ItmyJeoNGbWRvjBV+SjXx1ta6KEFV3jDH/ygZ8oAJkNewhyh4hk5h
-	 UtN26J9UjNKVnp/Yr5W3DXuEtOLHsWKHOn9o+0JMRe7dWpEFDetjTGpzdd26zekXZ5
-	 O2fgRsQifC8Mw==
-Date: Wed, 21 May 2025 17:11:22 -0700
-Subject: [PATCH 02/16] fuse2fs: register block devices for use with iomap
+	b=Q4TUVJuvDpaWVGOG0SYQLYxAUuSWDoT5JABfiBYWBKx/kPDRx7kBa1n4r9cuNPd0U
+	 sUmVQEbTB7tChbt1fb9MrPP+SUgzBAzzlenMUxAt3auYI4liHJhgA3bbTQM+mxM6+D
+	 zP4oun8ETfZg0GpPNQqvKqwLgwIHhEB8Kp67SFYtZSmsapmOrJcXrzCtql0nmVDicE
+	 xFm8RpzAmkfNUVUvV5CoyZ9zqi51vF6tw26uDjNFi2aJAUNeol54VtyQTeeG8ze8nX
+	 X1U9d7VGU3eL6W6NXyn+lPcypT2wu5YB9mnSDh7nuLtyrV//p6X1RYulZpWJTPFTNl
+	 AL5EssyLucQBA==
+Date: Wed, 21 May 2025 17:11:37 -0700
+Subject: [PATCH 03/16] fuse2fs: always use directio disk reads with fuse2fs
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: tytso@mit.edu
 Cc: John@groves.net, linux-ext4@vger.kernel.org, miklos@szeredi.hu,
  joannelkoong@gmail.com, bernd@bsbernd.com, linux-fsdevel@vger.kernel.org
-Message-ID: <174787198469.1484996.12724065306079911174.stgit@frogsfrogsfrogs>
+Message-ID: <174787198487.1484996.12546102480862938973.stgit@frogsfrogsfrogs>
 In-Reply-To: <174787198370.1484996.3340565971108603226.stgit@frogsfrogsfrogs>
 References: <174787198370.1484996.3340565971108603226.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,130 +61,77 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Register the ext4 block device with the kernel for use with iomap.  For
-now this is redundant with using fuseblk mode because the kernel
-automatically registers any fuseblk devices, but eventually we'll go
-back to regular fuse mode and we'll have to pin the bdev ourselves.
-In theory this interface supports strange beasts where the metadata can
-exist somewhere else entirely (or be made up by AI) while the file data
-persists to real disks.
+In iomap mode, the kernel writes file data directly to the block device
+and does not flush the bdev page cache.  We must open the filesystem in
+directio mode to avoid cache coherency issues when reading file data
+blocks.  If we can't open the bdev in directio mode, we must not use
+iomap.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- misc/fuse2fs.c |   44 ++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 40 insertions(+), 4 deletions(-)
+ misc/fuse2fs.c |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
 
 diff --git a/misc/fuse2fs.c b/misc/fuse2fs.c
-index f9eed078d91152..92a80753f4f1e8 100644
+index 92a80753f4f1e8..91c0da096bef9c 100644
 --- a/misc/fuse2fs.c
 +++ b/misc/fuse2fs.c
-@@ -36,6 +36,7 @@
- # define _FILE_OFFSET_BITS 64
- #endif /* _FILE_OFFSET_BITS */
- #include <fuse.h>
-+#include <fuse_lowlevel.h>
- #ifdef __SET_FOB_FOR_FUSE
- # undef _FILE_OFFSET_BITS
- #endif /* __SET_FOB_FOR_FUSE */
-@@ -179,6 +180,7 @@ struct fuse2fs {
- 	int blocklog;
- #ifdef HAVE_FUSE_IOMAP
- 	enum fuse2fs_iomap_state iomap_state;
-+	uint32_t iomap_dev;
- #endif
- 	unsigned int blockmask;
- 	int retcode;
-@@ -4638,7 +4640,7 @@ static int op_fallocate(const char *path EXT2FS_ATTR((unused)), int mode,
- static void handle_iomap_hole(struct fuse2fs *ff, struct fuse_iomap *iomap,
- 			      off_t pos, uint64_t count)
- {
--	iomap->dev = FUSE_IOMAP_DEV_FUSEBLK;
-+	iomap->dev = ff->iomap_dev;
- 	iomap->addr = FUSE_IOMAP_NULL_ADDR;
- 	iomap->offset = pos;
- 	iomap->length = count;
-@@ -4815,7 +4817,7 @@ static errcode_t extent_iomap_begin(struct fuse2fs *ff, uint64_t ino,
- 	}
+@@ -988,8 +988,14 @@ static errcode_t confirm_iomap(struct fuse_conn_info *conn, struct fuse2fs *ff)
  
- 	/* Mapping overlaps startoff, report this. */
--	iomap->dev = FUSE_IOMAP_DEV_FUSEBLK;
-+	iomap->dev = ff->iomap_dev;
- 	iomap->addr = FUSE2FS_FSB_TO_B(ff, extent.e_pblk);
- 	iomap->offset = FUSE2FS_FSB_TO_B(ff, extent.e_lblk);
- 	iomap->length = FUSE2FS_FSB_TO_B(ff, extent.e_len);
-@@ -4846,7 +4848,7 @@ static int indirect_iomap_begin(struct fuse2fs *ff, uint64_t ino,
- 	if (err)
- 		return translate_error(fs, ino, err);
- 
--	iomap->dev = FUSE_IOMAP_DEV_FUSEBLK;
-+	iomap->dev = ff->iomap_dev;
- 	iomap->offset = pos;
- 	iomap->flags |= FUSE_IOMAP_F_MERGED;
- 	if (startblock) {
-@@ -4884,7 +4886,7 @@ static int indirect_iomap_begin(struct fuse2fs *ff, uint64_t ino,
- static int inline_iomap_begin(struct fuse2fs *ff, off_t pos, uint64_t count,
- 			      struct fuse_iomap *iomap)
- {
--	iomap->dev = FUSE_IOMAP_DEV_FUSEBLK;
-+	iomap->dev = ff->iomap_dev;
- 	iomap->addr = FUSE_IOMAP_NULL_ADDR;
- 	iomap->offset = pos;
- 	iomap->length = count;
-@@ -4925,6 +4927,31 @@ static int fuse_iomap_begin_write(struct fuse2fs *ff, ext2_ino_t ino,
- 	return -ENOSYS;
+ 	return 0;
  }
- 
-+static errcode_t config_iomap_devices(struct fuse_context *ctxt,
-+				      struct fuse2fs *ff)
++
++static int iomap_enabled(const struct fuse2fs *ff)
 +{
-+	struct fuse_session *se = fuse_get_session(ctxt->fuse);
-+	errcode_t err;
-+	int fd;
-+	int ret;
-+
-+	err = io_channel_fd(ff->fs->io, &fd);
-+	if (err)
-+		return err;
-+
-+	ret = fuse_lowlevel_notify_iomap_add_device(se, fd, &ff->iomap_dev);
-+
-+	dbg_printf(ff, "%s: registering iomap dev fd=%d ret=%d iomap_dev=%u\n",
-+		   __func__, fd, ret, ff->iomap_dev);
-+
-+	if (ret)
-+		return ret;
-+	if (ff->iomap_dev == FUSE_IOMAP_DEV_NULL)
-+		return -EIO;
-+
-+	return 0;
++	return ff->iomap_state == IOMAP_ENABLED;
 +}
-+
- static int op_iomap_begin(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 			  off_t pos, uint64_t count, uint32_t opflags,
- 			  struct fuse_iomap *read_iomap,
-@@ -4951,6 +4978,14 @@ static int op_iomap_begin(const char *path, uint64_t nodeid, uint64_t attr_ino,
- 		   (unsigned long long)count,
- 		   opflags);
- 
-+	if (ff->iomap_dev == FUSE_IOMAP_DEV_NULL) {
-+		err = config_iomap_devices(ctxt, ff);
-+		if (err) {
-+			ret = translate_error(fs, attr_ino, err);
-+			goto out_unlock;
-+		}
-+	}
-+
- 	err = fuse2fs_read_inode(fs, attr_ino, &inode);
- 	if (err) {
- 		ret = translate_error(fs, attr_ino, err);
-@@ -5285,6 +5320,7 @@ int main(int argc, char *argv[])
- 		.magic = FUSE2FS_MAGIC,
- #ifdef HAVE_FUSE_IOMAP
- 		.iomap_state = IOMAP_UNKNOWN,
-+		.iomap_dev = FUSE_IOMAP_DEV_NULL,
+ #else
+ # define confirm_iomap(...)	(0)
++# define iomap_enabled(...)	(0)
  #endif
- 	};
+ 
+ static void *op_init(struct fuse_conn_info *conn
+@@ -1001,6 +1007,9 @@ static void *op_init(struct fuse_conn_info *conn
+ 	struct fuse_context *ctxt = fuse_get_context();
+ 	struct fuse2fs *ff = (struct fuse2fs *)ctxt->private_data;
+ 	ext2_filsys fs = ff->fs;
++#ifdef HAVE_FUSE_IOMAP
++	int was_directio = ff->directio;
++#endif
  	errcode_t err;
+ 	int ret;
+ 
+@@ -1023,6 +1032,15 @@ static void *op_init(struct fuse_conn_info *conn
+ 	if (ff->iomap_state != IOMAP_DISABLED &&
+ 	    fuse_set_feature_flag(conn, FUSE_CAP_IOMAP))
+ 		ff->iomap_state = IOMAP_ENABLED;
++	/*
++	 * In iomap mode, the kernel writes file data directly to the block
++	 * device and does not flush the bdev page cache.  We must open the
++	 * filesystem in directio mode to avoid cache coherency issues when
++	 * reading file data.  If we can't open the bdev in directio mode, we
++	 * must not use iomap.
++	 */
++	if (iomap_enabled(ff))
++		ff->directio = 1;
+ #endif
+ 
+ #if FUSE_VERSION >= FUSE_MAKE_VERSION(3, 0)
+@@ -1038,6 +1056,14 @@ static void *op_init(struct fuse_conn_info *conn
+ 	 */
+ 	if (!fs) {
+ 		err = open_fs(ff, 0);
++#ifdef HAVE_FUSE_IOMAP
++		if (err && iomap_enabled(ff) && !was_directio) {
++			fuse_unset_feature_flag(conn, FUSE_CAP_IOMAP);
++			ff->iomap_state = IOMAP_DISABLED;
++			ff->directio = 0;
++			err = open_fs(ff, 0);
++		}
++#endif
+ 		if (err)
+ 			goto mount_fail;
+ 		fs = ff->fs;
 
 
