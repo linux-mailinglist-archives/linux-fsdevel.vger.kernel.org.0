@@ -1,200 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-49684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49685-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48663AC0FDE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 17:23:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F2CAC1038
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 17:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 41E277A6FB9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 15:21:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597111BC51F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 15:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0DD29826F;
-	Thu, 22 May 2025 15:23:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1FE299A8A;
+	Thu, 22 May 2025 15:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="Nkpd+fdF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nR4I8zlA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2152E28FABE;
-	Thu, 22 May 2025 15:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22592F41;
+	Thu, 22 May 2025 15:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747927383; cv=none; b=O6wj/ESOmN2aV1rWFUsKs47W9LbcEfQ0e6JMTqT95WaVjIQ7kJO7wl2MMPoYDC0Y6xsHPKc6bEPEkI+4tf1WhATWijAlqdLTIzbePRx2ta0Bvd7EDNXWzlNv+/KpPcBaRB0V3Ydy6X3SK1wEk7gyQo9q7HKJn0SaIrRoz5OkQ/U=
+	t=1747928770; cv=none; b=h1s/d4cMo10h4ZxGZC5egXPR5T/f6SnrG8DLm1WJc1CwTwgI6iIgtDnRe+U2maM07lUJn7lx7Dg4+tVD+cka2uUCDb54T4bscpT8wSQGdSwx42g1T2kfryt4vACW0E1BW7fbIumFvolYjE+XTEdwwnnm9gI+FI1GTPGm+7twUik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747927383; c=relaxed/simple;
-	bh=Z39mFiHe4FSHROfQltUU2PWVvOvcQNlcHdKF6TnEg6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uW3uG7U46PSNBz+7vZEpBG1VmHTYWl4FlLcTCbXzFt2z/KsxB5iSVevIIvXMOCkondSPY5/YugTLKiy3lk31pW8jU8cUmIW9dTa9YZRtWe2iJ4vW2MNEZWD+ILXO0JL40vt+fmmiFjXq/WOsxO4lNOCm0tRa9fZ6lypNrlYyzNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=Nkpd+fdF; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=cy7weZmQcSspeMGvA0ENQABRH5GVirqaafkBbEHcF9c=; b=Nkpd+fdFke95SPQFZa+TRQp9p1
-	Lqf84nzLXv5bjDiKpiAnHPt3UMWS9Rf3r0DZ705NLivO3FzjcNp0oqfjWaaqH5jv8PqfJchCAfGtj
-	NJ63aumgjV0a1UbfmXfPzgqpe1Qnz7xKYSV+sTA0skJKQizxH43OfhneYQC4eRokeuhiMx+pMRWAG
-	iLUWM2ETM5UoTVQN2K9ohyz9E+KITpZ+Fz/LheMPSPeyPWdt089rttq1IPtcTHC5wsyGe5G62AvpO
-	8kFmDneiJBX/0sAnQDexbMvLbnh53Z4eREgrPTyMYspj+xGGGumgSIYbeWvHhzA2NL1M8gV9dLOOR
-	j+AtWpCw==;
-Received: from [191.204.192.64] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uI7kv-00Bm7a-Ei; Thu, 22 May 2025 17:22:49 +0200
-Message-ID: <c555a382-fd74-4d9b-ab3e-995049d2947f@igalia.com>
-Date: Thu, 22 May 2025 12:22:44 -0300
+	s=arc-20240116; t=1747928770; c=relaxed/simple;
+	bh=HHFfb8zt1W7b7687wsmntPJNHJRczR0BfGUhfr1rO0I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u5l5rjrabkk8z5yXrJTKr7AG1p70YI9S+Rexp2jb5GH7E66lIWy0S5cPloAEnzRcVjo10+9yCEY4LAhYFr6W6Dp/Xj5dX/EXJ2N9hWKZ5hhiH3CEIGVF+HaGe+aLMGMWIEvgs/+XnGjnxe1k0ToHXITRch2q8MQjmG1cCyxuLyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nR4I8zlA; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-601dfef6a8dso8242936a12.1;
+        Thu, 22 May 2025 08:46:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747928766; x=1748533566; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fgiMoj0zBLI77kFJsTbxWoQIzqomQqgDgEkdUW1inN8=;
+        b=nR4I8zlATON7G7djPMbVEPEP2Tv+1guLLF3GoEjemHndALHVllUFNzwA9TPCBZ/8O4
+         Zlv5dgs1fTb3L0kRtpHvtZaaAbNX7ZQBnltDHCKoZsg89Dc64GgKkbUlyz7s0sBdfwJe
+         I/dP4b2Nh0I05f8FBVvToCkkmD5/YuwyXJBes4MNqTd74QHzVVhhllOy+VVrAUdOENEG
+         nCEd10Q+AEuBBv2jH+k2ZWC83L4aAFXR/rTlM1vp6gK2PU3AEHik2tP9mKXhOupLjarH
+         TmLIv1OCkX/ngurevIf0OqSBA9lU5XvEXSWzoPOcSLCewnDFaNdqc7v4I+31iJRxvW1B
+         oCpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747928766; x=1748533566;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fgiMoj0zBLI77kFJsTbxWoQIzqomQqgDgEkdUW1inN8=;
+        b=qQYEAoV/OLnV1Q29URM8MBT11F2OGzDXXuHEok8ygI3Jx9CBCcPoZlcs+F3ghrXCBh
+         +pBgMjgXZiSCpbnhM+1t4utiDfWuQINiEjmqMRMlvH09nomQhc1tCvUgE3qbBwiZ9ik7
+         GKV1Hg8jkwr14kYSEfmLotJj0RSV6jNlomz0bGywgj68PefnkReXjaxQtg1bKgTMwKmi
+         X4Rm4mcJx9RAGgtNfL6uNUa3xVcY6mQ+5fikh50ggqX5ToUXWc2C2KxM7jVmqJlKZiJO
+         O7laah7/yBj7e57qn05efe5l/PNUW7emIUY7sgEBGvtbAgAdJfZZo9lMZnc4t97nfGKN
+         oSmw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuvMxQdPZ6jFhUT85Gy2TPzt3K970u7AlFsj94/bxX/ja7qM7CtbtKKJPVO4xZYYUgvFChxLCfPxSr0hivyA==@vger.kernel.org, AJvYcCV5F6JgKpuL0u30nsqcKXfMs6VQGmLGvIRDw8DnL5MTH+T25GiNXZOePPs3LF3GC7/HFekcPk/t5ctWUVpR@vger.kernel.org, AJvYcCWN3UVwRTNsFbRjyZQnoxnTggGuKsNUlBccIvTVFG0nocglS5Ke5EnEBfykeQKZnSvbG+5pSo5qb44=@vger.kernel.org, AJvYcCWpwV0t6VRY162+EkI9JKBW5PiaZcb4wpMp6Ia0dOPjitjOxJbZIMMAMtHOuofW9hKBjltawU4cw6+o@vger.kernel.org
+X-Gm-Message-State: AOJu0YyI3clqHUj/H/GkaUYDKuJuWkyoVhIIx9KWMY7/rEdQNHxLWSlx
+	RmDs4s2VheXr87AMd2fJEIxoViJDnN4z65mUgAIWvrSUy+9r0lqnB0y+TLuG8Q/tbTcb4XPrlLU
+	jWzHR2pdRmjlDI/3+jgBepUFGEPKDDb8=
+X-Gm-Gg: ASbGncux20VyprPbNovNl6lRnS1wqx3SNP/yWluISrr0KcfIvL7LlOyNDPX1aferlO1
+	P+x6tp6f6vFTykay5N13AXaG+cDNGa2cl4Z+r+TY+zIs4yAe7TnltgSLghS0vWoSuQnmTjg1cna
+	zyBY+gDHv/1pf/gxfZvuht/DuBFR1mP33RcFaUUhYOKVo=
+X-Google-Smtp-Source: AGHT+IFCqHZ4nii59QrK+Jhw+rDrywqjWTrMjDZMLq2ull6eKrj9OenDertsGsb8tK4eBZqLTUn9pP38DriMvIz7YVc=
+X-Received: by 2002:a17:906:6a19:b0:ace:9d35:6987 with SMTP id
+ a640c23a62f3a-ad52d441f89mr2374003266b.3.1747928765733; Thu, 22 May 2025
+ 08:46:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ovl: Allow mount options to be parsed on remount
-To: Amir Goldstein <amir73il@gmail.com>, Karel Zak <kzak@redhat.com>
-Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi
- <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- linux-fsdevel@vger.kernel.org
-References: <20250521-ovl_ro-v1-1-2350b1493d94@igalia.com>
- <CAOQ4uxgXP8WrgLvtR6ar+OncP6Fh0JLVO0+K+NtDX1tGa2TVxA@mail.gmail.com>
- <20250521-blusen-bequem-4857e2ce9155@brauner>
- <32f30f6d-e995-4f00-a8ec-31100a634a38@igalia.com>
- <CAOQ4uxg6RCJf6OBzKgaWbOKn3JhtgWhD6t=yOfufHuJ7jwxKmw@mail.gmail.com>
- <35eded72-c2a0-4bec-9b7f-a4e39f20030a@igalia.com>
- <CAOQ4uxihs3ORNu7aVijO0_GUKbacA65Y6btcrhdL_A-rH0TkAA@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <CAOQ4uxihs3ORNu7aVijO0_GUKbacA65Y6btcrhdL_A-rH0TkAA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250421013346.32530-1-john@groves.net> <20250421013346.32530-13-john@groves.net>
+ <CAJnrk1ZRSoMN+jan5D9d3UYWnTVxc_5KVaBtP7JV2b+0skrBfg@mail.gmail.com> <xhekfz652u3dla26aj4ge45zr4tk76b2jgkcb22jfo46gvf6ry@zze73cprkx6g>
+In-Reply-To: <xhekfz652u3dla26aj4ge45zr4tk76b2jgkcb22jfo46gvf6ry@zze73cprkx6g>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 22 May 2025 17:45:54 +0200
+X-Gm-Features: AX0GCFtyU3N_Zhefral0ZnR18iMPx5aO1xlmLEfo3wUu9EslWmr6-Y8DzN_FaFM
+Message-ID: <CAOQ4uxj73Z8Hee1U7LxABYKoHbowA4ARBFDv434yDq+qn5iMZw@mail.gmail.com>
+Subject: Re: [RFC PATCH 12/19] famfs_fuse: Plumb the GET_FMAP message/response
+To: John Groves <John@groves.net>
+Cc: Joanne Koong <joannelkoong@gmail.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Miklos Szeredi <miklos@szeredi.hu>, Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	"Darrick J . Wong" <djwong@kernel.org>, Luis Henriques <luis@igalia.com>, 
+	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
+	Kent Overstreet <kent.overstreet@linux.dev>, Petr Vorel <pvorel@suse.cz>, 
+	Brian Foster <bfoster@redhat.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
+	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
+	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
+	Ajay Joshi <ajayjoshi@micron.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Em 22/05/2025 12:13, Amir Goldstein escreveu:
-> cc libfuse maintainer
-> 
-> On Thu, May 22, 2025 at 4:30 PM André Almeida <andrealmeid@igalia.com> wrote:
->>
->> Em 22/05/2025 06:52, Amir Goldstein escreveu:
->>> On Thu, May 22, 2025 at 8:20 AM André Almeida <andrealmeid@igalia.com> wrote:
->>>>
->>>> Hi Christian, Amir,
->>>>
->>>> Thanks for the feedback :)
->>>>
->>>> Em 21/05/2025 08:20, Christian Brauner escreveu:
->>>>> On Wed, May 21, 2025 at 12:35:57PM +0200, Amir Goldstein wrote:
->>>>>> On Wed, May 21, 2025 at 8:45 AM André Almeida <andrealmeid@igalia.com> wrote:
->>>>>>>
->>>>
->>>> [...]
->>>>
->>>>>>
->>>>>> I see the test generic/623 failure - this test needs to be fixed for overlay
->>>>>> or not run on overlayfs.
->>>>>>
->>>>>> I do not see those other 5 failures although before running the test I did:
->>>>>> export LIBMOUNT_FORCE_MOUNT2=always
->>>>>>
->>>>>> Not sure what I am doing differently.
->>>>>>
->>>>
->>>> I have created a smaller reproducer for this, have a look:
->>>>
->>>>     mkdir -p ovl/lower ovl/upper ovl/merge ovl/work ovl/mnt
->>>>     sudo mount -t overlay overlay -o lowerdir=ovl/lower,upperdir=ovl/
->>>> upper,workdir=ovl/work ovl/mnt
->>>>     sudo mount ovl/mnt -o remount,ro
->>>>
->>>
->>> Why would you use this command?
->>> Why would you want to re-specify the lower/upperdir when remounting ro?
->>> And more specifically, fstests does not use this command in the tests
->>> that you mention that they fail, so what am I missing?
->>>
->>
->> I've added "set -x" to tests/generic/294 to see exactly which mount
->> parameters were being used and I got this from the output:
->>
->> + _try_scratch_mount -o remount,ro
->> + local mount_ret
->> + '[' overlay == overlay ']'
->> + _overlay_scratch_mount -o remount,ro
->> + echo '-o remount,ro'
->> + grep -q remount
->> + /usr/bin/mount /tmp/dir2/ovl-mnt -o remount,ro
->> mount: /tmp/dir2/ovl-mnt: fsconfig() failed: ...
->>
->> So, from what I can see, fstests is using this command. Not sure if I
->> did something wrong when setting up fstests.
->>
-> 
-> No you are right, I misread your reproducer.
-> The problem is that my test machine has older libmount 2.38.1
-> without the new mount API.
-> 
-> 
->>>> And this returns:
->>>>
->>>>     mount: /tmp/ovl/mnt: fsconfig() failed: overlay: No changes allowed in
->>>>     reconfigure.
->>>>           dmesg(1) may have more information after failed mount system call.
->>>>
->>>> However, when I use mount like this:
->>>>
->>>>     sudo mount -t overlay overlay -o remount,ro ovl/mnt
->>>>
->>>> mount succeeds. Having a look at strace, I found out that the first
->>>> mount command tries to set lowerdir to "ovl/lower" again, which will to
->>>> return -EINVAL from ovl_parse_param():
->>>>
->>>>       fspick(3, "", FSPICK_NO_AUTOMOUNT|FSPICK_EMPTY_PATH) = 4
->>>>       fsconfig(4, FSCONFIG_SET_STRING, "lowerdir", "/tmp/ovl/lower", 0) =
->>>> -1 EINVAL (Invalid argument)
->>>>
->>>> Now, the second mount command sets just the "ro" flag, which will return
->>>> after vfs_parse_sb_flag(), before getting to ovl_parse_param():
->>>>
->>>>       fspick(3, "", FSPICK_NO_AUTOMOUNT|FSPICK_EMPTY_PATH) = 4
->>>>       fsconfig(4, FSCONFIG_SET_FLAG, "ro", NULL, 0) = 0
->>>>
->>>> After applying my patch and running the first mount command again, we
->>>> can set that this flag is set only after setting all the strings:
->>>>
->>>>       fsconfig(4, FSCONFIG_SET_STRING, "lowerdir", "/tmp/ovl/lower", 0) = 0
->>>>       fsconfig(4, FSCONFIG_SET_STRING, "upperdir", "/tmp/ovl/upper", 0) = 0
->>>>       fsconfig(4, FSCONFIG_SET_STRING, "workdir", "/tmp/ovl/work", 0) = 0
->>>>       fsconfig(4, FSCONFIG_SET_STRING, "uuid", "on", 0) = 0
->>>>       fsconfig(4, FSCONFIG_SET_FLAG, "ro", NULL, 0) = 0
->>>>
->>>> I understood that the patch that I proposed is wrong, and now I wonder
->>>> if the kernel needs to be fixed at all, or if the bug is how mount is
->>>> using fsconfig() in the first mount command?
->>>
-> 
-> If you ask me, when a user does:
-> /usr/bin/mount /tmp/dir2/ovl-mnt -o remount,ro
-> 
-> The library only needs to do the FSCONFIG_SET_FLAG command and has no
-> business re-sending the other config commands, but that's just me.
-> 
+On Mon, May 12, 2025 at 6:28=E2=80=AFPM John Groves <John@groves.net> wrote=
+:
+>
+> On 25/05/01 10:48PM, Joanne Koong wrote:
+> > On Sun, Apr 20, 2025 at 6:34=E2=80=AFPM John Groves <John@groves.net> w=
+rote:
+> > >
+> > > Upon completion of a LOOKUP, if we're in famfs-mode we do a GET_FMAP =
+to
+> > > retrieve and cache up the file-to-dax map in the kernel. If this
+> > > succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
+> > >
+> > > Signed-off-by: John Groves <john@groves.net>
+> > > ---
+...
+> > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> > > index 7f4b73e739cb..848c8818e6f7 100644
+> > > --- a/fs/fuse/inode.c
+> > > +++ b/fs/fuse/inode.c
+> > > @@ -117,6 +117,9 @@ static struct inode *fuse_alloc_inode(struct supe=
+r_block *sb)
+> > >         if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
+> > >                 fuse_inode_backing_set(fi, NULL);
+> > >
+> > > +       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
+> > > +               famfs_meta_set(fi, NULL);
+> >
+> > "fi->famfs_meta =3D NULL;" looks simpler here
+>
+> I toootally agree here, but I was following the passthrough pattern
+> just above.  @miklos or @Amir, got a preference here?
+>
 
-Yes, this makes sense to me as well.
+It's not about preference, this fails build.
+Even though compiler (or pre-processor whatever) should be able to skip
+"fi->famfs_meta =3D NULL;" if CONFIG_FUSE_FAMFS_DAX is not defined
+IIRC it does not. Feel free to try. Maybe I do not remember correctly.
 
-> BTW, which version of libmount (mount --version) are you using?
-> I think there were a few problematic versions when the new mount api
-> was first introduced.
-> 
-
-mount from util-linux 2.41 (libmount 2.41.0: btrfs, verity, namespaces, 
-idmapping, fd-based-mount, statmount, assert, debug)
-
-> Thanks,
-> Amir.
-
+Thanks,
+Amir.
 
