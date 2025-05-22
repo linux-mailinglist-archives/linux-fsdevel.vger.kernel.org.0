@@ -1,133 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-49697-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49698-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15793AC16C2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 00:26:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2AA5AC16FE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 00:49:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 935A17AF947
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 22:25:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3211C036D6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 22:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DD72798E4;
-	Thu, 22 May 2025 22:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DE729A9C7;
+	Thu, 22 May 2025 22:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="ToVMF8Pc"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PX9kju42"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60842741B8
-	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 22:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E8529A32B
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 22:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747952773; cv=none; b=YQjymywYGMAxfcZltGCRntUYpKoi+GFCYUdptCz20rtjDUZfqmAwTZXRvvbIjP9Gy9wUFXyRDrFJ5DlE09yAHjXtsvA6QSoukQIuNiTWwNvUbeg398EMpvNsV1M6Q+drB/1g/Bh04TfrqvCH8eitO6+TBx3dHL6EkBcXyb0OoHk=
+	t=1747954187; cv=none; b=ifPitFud1C7SjF/qWxC4SWMrPNMeDRMEusrhuvfr4gZaxLoj2tuYjCUP/5C9WF/iRqhLL9B6HPlE9YmGG3fTLZAV7ZsolCpguW2VLcpwsYC1SZFR6q3b7B+IRbSqNOJt8PU74TkLI4iEwVBGtU+R6hioassD3XU5C5n6OJ2Z0Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747952773; c=relaxed/simple;
-	bh=ERIIFgKxrnPwjSVA6jXYtUfeYroUqJBM9v+L48OiIjw=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=n/TYlbqhtAhHnNNN7y4e5fEz+enBoJliVs4c2u/6Df4ZqnrECK9/uZK2iYEwka++6WmswR48HzdRQDYr4KaFLfEK/2+d7CiMkcRVQoJ2ldyF2yRnFn09+P36PvlY6aPqvoJ+V1HdtEuUdwCJJ4AqpK4rFPcm9JGWiQLZtDFhw+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=ToVMF8Pc; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c55500d08cso932394885a.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 15:26:09 -0700 (PDT)
+	s=arc-20240116; t=1747954187; c=relaxed/simple;
+	bh=MpOiOzRLBDqHqB2k9gzP+UZBhD0AxK51yQUlhLwvf8k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j4YRJSP4Vk6FeEMgFEry3j1XtPyyE1623Su/VFg5thB7EHtjb7Fn0FhTmSwWD5/2tXgLQVpf1mKHpsj2bMvqhqaPdQS8Aadi4ISNhEDEt0Nhv95kH+0q56KWBWP2ZT/xikj57fZpXBAjfVYX5JmuTUamYAaJ89x+Nbio25IyoNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PX9kju42; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3dc6945e109so43324005ab.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 15:49:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1747952768; x=1748557568; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yW4BwrWRPMGZw+m/ri6EFRKCjP4k+SeXSk6ZWrWvJiA=;
-        b=ToVMF8PcVy37DRcyydOqAzRtU8MIfxnsQYcyTujtaPP+6rNuh10GiSxHl8BpEOL7Vl
-         xP549yj/DsBJfMi3qCROE0CjVVteyRyHylhdLw04oGcxRiQntTqkGaj0qxDt91en7Yaf
-         k+SmxoaFBB+G/5sErCk+bkQleUrTH6XQJe2p+LIipbvb4fbPmu1wnSD2q+VMoi0xxJsW
-         gaMrvrcaiHSnHiky9rJUvXODz2114Xg3/bkQmKiZIEtphocJflv5aC1cQ1XzMR2q+5M1
-         e5C3pB8Uc+2bJywG7HLAABdlrHUZ45rP3ykqZkmL5ezlodK/YayNjCLBFI5pn3kcMbPH
-         Giow==
+        d=linuxfoundation.org; s=google; t=1747954184; x=1748558984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4s3zSEh4snp0xBeK01CCVtJfz7Wl6wxDOdDf1VotpRM=;
+        b=PX9kju42Se4jcYByT3jUj7Ppby8Ei8CjFJ9oexJxCKCTsRLDidqC/VI8/LotcVF/zW
+         VMjoZbJ1vFlc8afW3s7Gk52e0B0shET2dDZjz2ebu0tY76H7F4eLY+gkrQN35Fn5BqjR
+         ctB+2v24C0uj+rnxDUZ6M+ssCv+/GYsYcWhy4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747952768; x=1748557568;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yW4BwrWRPMGZw+m/ri6EFRKCjP4k+SeXSk6ZWrWvJiA=;
-        b=YiB7AyYYgn4SNG9crWuJoLOetJb8Qd3aJ6xLEccslp+W+qpVZw8Oi1MfSB6oZRZi1l
-         LzWFmWOLZaevi0m47W+dgxm2uaPolP3fpI2KFOaGHFrSTq1ISG5zRgca4uPkmgzYMVE5
-         LqYebgXH9xqojhgya1t9clfiN4RdtJLID2WxJhxWjwUHhJ1TEXVWCBuoJoTPOc0Pp9+p
-         JGScOBAixTpeUEemEoFUzJI28FJCgNs1JKdB0TQW1Y0qQKmO8MU7Vm7QcgTRsf7jVeEN
-         usXxasF3GJzSk7rC9EMIex9LetBri+IdvKFODxptm2f3un1v9RKUACQmD5Sebw1y2F2p
-         Y6ig==
-X-Forwarded-Encrypted: i=1; AJvYcCWMw6lFmAD17I/e4mrUJ01du6NbcHq+8LMibd/5QPUzpq8rjLtA0S/rQdVA2LMiJL9onygwacCcUWuX8ndS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6Zmu8T6UKdB/N3Cfwg+zKxH+kuAqWIVoJQnHl0elRXPLxAQTn
-	y/UNbgHAm2myHFAujrI/9bG+izL/kt2VxmlpA4Qeu+Gr7NstwqOvbyGNs8UebTGVOw==
-X-Gm-Gg: ASbGncsBeWolXKeWij+/y7Dn4EDuiBpMR+z93Jllf3yyKMxP+5yxO8aRTb9J3ztOrRT
-	qRLhJZYkL90dvNggZfxtR+X4oAz6CzUEc991MjDTiqZ4vgKQ2ebgwdhKEUVIvx7ctXHw8lvCJC5
-	vlwRjvBhWI0qz+dsplOtO2VbNDD86FflJ+FBbbGND/6dS+1Gwi1bjXQOXrPqE7IPaMQqvtvnEkJ
-	dgYPB8TfIp5GVRsDgit2wG2LkKpuI0m8zxeyIBt3Nilq9pjKT9Nr3bBgB5T/QW8xvzmMIlP8F2V
-	pnS9LM4uqgXpyhXFJSjL9l2cRSdeZLY0pTZHvEG4u5A7bSemEu8g+DXVVDsjkKI/zE3UjHzODEQ
-	UJFWVVO6tVgyxW5gPhMIw
-X-Google-Smtp-Source: AGHT+IHmIlyqjG6e3vdHM+wi0UqPbDaDdVTY/IdBlClNAbyXhci/B2Ul0PB2ozu0sL7+1EWeTaPM2w==
-X-Received: by 2002:a05:620a:408e:b0:7ce:d352:668f with SMTP id af79cd13be357-7ced352670emr1334278485a.47.1747952768087;
-        Thu, 22 May 2025 15:26:08 -0700 (PDT)
-Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7cd468b69dfsm1089029585a.79.2025.05.22.15.26.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 15:26:07 -0700 (PDT)
-Date: Thu, 22 May 2025 18:26:07 -0400
-Message-ID: <8bf36078ef8f3e884a1d3d8415834680@paul-moore.com>
+        d=1e100.net; s=20230601; t=1747954184; x=1748558984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4s3zSEh4snp0xBeK01CCVtJfz7Wl6wxDOdDf1VotpRM=;
+        b=Mxru54lHCfYXN4IgybmkOO9aBafbfkQYUgGVhJNtx2j9oxIFePcFfbcr7nAYjQ22yx
+         cmmn7RmYlmPjEKX1XMPfMsxbU37mEnm9mNMnjJVIkqP8gZC955cYGDiK6Le7Z6zzU+AJ
+         jfFbnKweNbIBCURVEP+j2SsTSGM7oTTVLy/go8nSyzbcGERuqRUyfxayJzC2HlbuQtUb
+         /NQrJOQZpqku7Mj3fysKsAmmtz+JoAdUh99mQ7INQUMx9Fr4r21ZxtPc8SWe3Y0EXGDq
+         Thg8+CKm3x8hVk3eBf4CWBYHGjOfQc56uJMnmxWTLDI2DyGevjgo1WEDQoUy94i9KtzI
+         BkEg==
+X-Forwarded-Encrypted: i=1; AJvYcCXvyLUwEwiTOkXpUMVES1FsgeAV2ag1tcxL/N0UbkPphB90WaN8j9SdTllFRWAivCN16aKpMi57OVEkcVVw@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5kN/ONgVVl4WUGC9q/t30NjYmsU+ernCyDhGpviQnpgIe9As
+	ZPe19+hiqFFWHycespcuYXGHaVsRYtQjkLcBnuoxWZXAJ1qMjF75/rcOj8Zt+LuAYIk=
+X-Gm-Gg: ASbGncu0qNbV8oNWJ+jT42KAiSU7HmuG3ThW4eovh564RyMzDOJvc1JhLW+ajQ2GSza
+	SB/vlVPn3wk96pirZ+vpqn2JP1rgZZFPXA6ggg5uNRVUNR+XbsH+cRx6lab8Z3XYJxwNu4OyqjW
+	pIC7K9C/ACiSL/KDg7BksO5Miqqc2yEbikhP5Jr6WyC1FiadcMKXUrc4RQRCA4FiZA1U5BSqkBs
+	K4GdqfDdRiskGC4x0mnJZjuaFJhDvb4RE/zLjtKcmjxjuPLNTKRO4FS0xBaJ4jIUWw4EXM2j6dR
+	vg/GL/YIn0Qfz3Sp5HekMi4WGWqFHID+RLZBCwOffCRqtAJ1YDfDtZwvKzk+Mg==
+X-Google-Smtp-Source: AGHT+IHQS+ZDp8ppQECt+VzLm3Py7wm28k4VQfjNDxyLCiw94PysHUBvarpgdnsCuhzk1t38nuqn2Q==
+X-Received: by 2002:a05:6e02:19cf:b0:3d4:244b:db1d with SMTP id e9e14a558f8ab-3dc932664c2mr10876065ab.6.1747954183964;
+        Thu, 22 May 2025 15:49:43 -0700 (PDT)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc84ceeccesm11041375ab.45.2025.05.22.15.49.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 May 2025 15:49:43 -0700 (PDT)
+Message-ID: <57f3f9ec-41bf-4a7b-b4b2-a4dd78ad7801@linuxfoundation.org>
+Date: Thu, 22 May 2025 16:49:42 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork:20250522_1740/pstg-lib:20250522_1730/pstg-pwork:20250522_1740
-From: Paul Moore <paul@paul-moore.com>
-To: Andrey Albershteyn <aalbersh@redhat.com>, Richard Henderson <richard.henderson@linaro.org>, 
-	Matt Turner <mattst88@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, Michal Simek <monstr@monstr.eu>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>, Helge Deller <deller@gmx.de>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	Arnd Bergmann <arnd@arndb.de>, =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	Tyler Hicks <code@tyhicks.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Amir Goldstein <amir73il@gmail.com>
-Cc: linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, linux-s390@vger.kernel.org, linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, linux-api@vger.kernel.org, linux-arch@vger.kernel.org, selinux@vger.kernel.org, ecryptfs@vger.kernel.org, linux-unionfs@vger.kernel.org, linux-xfs@vger.kernel.org, Andrey Albershteyn <aalbersh@kernel.org>
-Subject: Re: [PATCH v5 3/7] selinux: implement inode_file_[g|s]etattr hooks
-References: <20250513-xattrat-syscall-v5-3-22bb9c6c767f@kernel.org>
-In-Reply-To: <20250513-xattrat-syscall-v5-3-22bb9c6c767f@kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] selftests: Add functional test for the abort file in
+ fusectl
+To: Chen Linxuan <chenlinxuan@uniontech.com>, Shuah Khan <shuah@kernel.org>,
+ Miklos Szeredi <miklos@szeredi.hu>
+Cc: zhanjun@uniontech.com, niecheng1@uniontech.com, wentao@uniontech.com,
+ Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250517012350.10317-2-chenlinxuan@uniontech.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20250517012350.10317-2-chenlinxuan@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On May 13, 2025 Andrey Albershteyn <aalbersh@redhat.com> wrote:
+On 5/16/25 19:23, Chen Linxuan wrote:
+> This patch add a simple functional test for the "abort" file
+> in fusectlfs (/sys/fs/fuse/connections/ID/about).
 > 
-> These hooks are called on inode extended attribute retrieval/change.
+> A simple fuse daemon is added for testing.
 > 
-> Cc: selinux@vger.kernel.org
-> Cc: Paul Moore <paul@paul-moore.com>
+> Related discussion can be found in the link below.
 > 
-> Signed-off-by: Andrey Albershteyn <aalbersh@kernel.org>
+> Link: https://lore.kernel.org/all/CAOQ4uxjKFXOKQxPpxtS6G_nR0tpw95w0GiO68UcWg_OBhmSY=Q@mail.gmail.com/
+> Cc: Amir Goldstein <amir73il@gmail.com>
+> Signed-off-by: Chen Linxuan <chenlinxuan@uniontech.com>
 > ---
->  security/selinux/hooks.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
+> Changes in v2:
+> - Apply changes suggested by Amir Goldstein
+>    - Check errno
+> - Link to v1: https://lore.kernel.org/all/20250515073449.346774-2-chenlinxuan@uniontech.com/
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+Short summary should include the test name:
 
---
-paul-moore.com
+selftests: filesystems: Add functional test for the abort file in fusectl
+
+Also if this test requires root previlege, add check for it. The rest
+looks good to me.
+
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+
+thanks,
+-- Shuah
 
