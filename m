@@ -1,53 +1,53 @@
-Return-Path: <linux-fsdevel+bounces-49609-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49610-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0CFAC00EA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 02:03:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1577AAC00EC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 02:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE66D9E4942
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 00:03:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB97F1697CC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 00:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0115EC5;
-	Thu, 22 May 2025 00:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BDC3D76;
+	Thu, 22 May 2025 00:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IczmYm9A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujVFhTG3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2655218D;
-	Thu, 22 May 2025 00:03:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591D528FD;
+	Thu, 22 May 2025 00:03:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747872194; cv=none; b=mi3NNkieuSp+aiTXkHROKn7yw7WuUnF3RsdnfSwH4KlvPy2Fdso4XeygB/eWDK4OuOTIjlLyto4hGUqH5DSmUISRuUXy8ID8FhWdPWhPZ2MXrFvXnJlS3srGT1Cir907fAzYzJiVhb99I8gNJi/7EUx2iqV+3lM7KR7Opp9ZpE0=
+	t=1747872209; cv=none; b=uAeyxVpIwjto1vA0H5kbeNOapjsJ3XAxd2cYyNJpzu66pkjx+AXxjlBleQ0aiY+vXKdcHhlYQV9rKaEV0WuPN7bFMgPYfYG9KGILKKv+uO2INEVy4lYLy0q/tNmzu4YG8Actqf0M7MZVv6huRuL6uD9TktNw/Pfb2QoYaCvRgEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747872194; c=relaxed/simple;
-	bh=ep2vFu2zcC0sXZn+l8qPEWlV4RlcGBI9Y+x8rmEk1yE=;
+	s=arc-20240116; t=1747872209; c=relaxed/simple;
+	bh=DgfAFD0+/MxrP7Lbf8w9e0fVa3jVZ9vzC5dK6BHhUPA=;
 	h=Date:Subject:From:To:Cc:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LjjuhpOy3VSLHLUWTbZkXQ1G3KYkoIwQV2I93bMnHazb/h4N9gJmh9CixBcUXyxyxxyzAR4CH3auWmoYFaqjh2eYpMr9dhtQHndgodISxU4QalUfXXCHjlinOdATtknjD3Fkm69jb232CdMfn5QKLEABmu5Us2yenxUymRKEBrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IczmYm9A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83717C4CEE4;
-	Thu, 22 May 2025 00:03:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=ahpp4Pih98Vh7a7l/avIW5yL7abQFgkZKJwXgDA/mZimJHymkN/mwKL//IbXwM7cCxmdW8Uall/TkMXPUz1QUMRM13dhAlucqf6pnEY3mwqI3hT/0lE2YQ2WHKFamEeWJXnUSZU+Al9j+rtzx9CQA/748jOTo5AKqMoXruz5CKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujVFhTG3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F6A1C4CEE4;
+	Thu, 22 May 2025 00:03:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747872193;
-	bh=ep2vFu2zcC0sXZn+l8qPEWlV4RlcGBI9Y+x8rmEk1yE=;
+	s=k20201202; t=1747872209;
+	bh=DgfAFD0+/MxrP7Lbf8w9e0fVa3jVZ9vzC5dK6BHhUPA=;
 	h=Date:Subject:From:To:Cc:In-Reply-To:References:From;
-	b=IczmYm9AWCD4vkVnft82gXbbE4kVnnOdARs/HOETnmmfHB1oc++ozUf87oqV4+U+1
-	 rilmYmuC1ZUoA4ae1iemyCyWS9SEBC9vst/1WblOdoW+xjpG4wNrI8eiFut2JEdZXE
-	 Xx8l53zOE01zv88Br15zG0+tJ1wPaX5wtzclu7FgHj9W7OrbWHNu3WosyiFhfHLdua
-	 6hRwvwyRhPmEKAyjFiO3NqyMiEaOMQAnJUqT2a6wTPR3oSWGHynoboJNstC/fOn9ms
-	 KFBpmfp7SJGy3Qu+LsVgp7fK/Xy058MgDbTUPUAsSXRi726GBMKiE6M2XlXx2d3z5Y
-	 t0GixRWmc6eEg==
-Date: Wed, 21 May 2025 17:03:13 -0700
-Subject: [PATCH 03/11] fuse: implement the basic iomap mechanisms
+	b=ujVFhTG3HFx1MZiUYqhfE1Fpk5TqvGggGretLuYTvBdZ4QwpEnTsOcicoOXklPFs7
+	 sYeMnVQMRuW1FK2J81fpmzkGUw/A3CD9un2MGZndxnpmin4P8SrLJgmKCiwFIgDDka
+	 XrOLAz9UYDXT5RPReIYv+JNJ9jEEuuBn3caZuFfbIZ/qLbe1UEx7R0d7jYrzXebb2n
+	 U87DTjAjBvZ6UHjZwQ91PpA0cxSbSk4iUaMej0v7hzLme8k7/Zh48GEEDZy7XBLvid
+	 yu4lfFCW7ODpVQPyc3Jd0SF/ncV6elL9Eomi1zOXMXAdvh+5yJIY3lBIYFg1EpA8R4
+	 fPo/eqpuEgE9A==
+Date: Wed, 21 May 2025 17:03:28 -0700
+Subject: [PATCH 04/11] fuse: add a notification to add new iomap devices
 From: "Darrick J. Wong" <djwong@kernel.org>
 To: djwong@kernel.org
 Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, joannelkoong@gmail.com,
  linux-xfs@vger.kernel.org, bernd@bsbernd.com, John@groves.net
-Message-ID: <174787195629.1483178.7917092102987513364.stgit@frogsfrogsfrogs>
+Message-ID: <174787195651.1483178.3420885441625089259.stgit@frogsfrogsfrogs>
 In-Reply-To: <174787195502.1483178.17485675069927796174.stgit@frogsfrogsfrogs>
 References: <174787195502.1483178.17485675069927796174.stgit@frogsfrogsfrogs>
 Precedence: bulk
@@ -61,860 +61,389 @@ Content-Transfer-Encoding: 7bit
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Implement functions to enable upcalling of iomap_begin and iomap_end to
-userspace fuse servers.
+Add a new notification so that fuse servers can add extra block devices
+to use with iomap.
 
 Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
 ---
- fs/fuse/fuse_i.h          |   38 ++++++
- fs/fuse/fuse_trace.h      |  258 +++++++++++++++++++++++++++++++++++++++++
- include/uapi/linux/fuse.h |   87 ++++++++++++++
- fs/fuse/Kconfig           |   23 ++++
- fs/fuse/Makefile          |    1 
- fs/fuse/file_iomap.c      |  280 +++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/inode.c           |    5 +
- 7 files changed, 691 insertions(+), 1 deletion(-)
- create mode 100644 fs/fuse/file_iomap.c
+ fs/fuse/fuse_i.h          |   19 +++++++
+ fs/fuse/fuse_trace.h      |   36 ++++++++++++++
+ include/uapi/linux/fuse.h |    8 +++
+ fs/fuse/dev.c             |   23 +++++++++
+ fs/fuse/file_iomap.c      |  119 ++++++++++++++++++++++++++++++++++++++++++++-
+ fs/fuse/inode.c           |    9 +++
+ 6 files changed, 211 insertions(+), 3 deletions(-)
 
 
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index d56d4fd956db99..aa51f25856697d 100644
+index aa51f25856697d..4eb75ed90db300 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -895,6 +895,9 @@ struct fuse_conn {
- 	/* Is link not implemented by fs? */
- 	unsigned int no_link:1;
+@@ -619,6 +619,12 @@ struct fuse_sync_bucket {
+ 	struct rcu_head rcu;
+ };
  
-+	/* Use fs/iomap for FIEMAP and SEEK_{DATA,HOLE} file operations */
-+	unsigned int iomap:1;
++struct fuse_iomap {
++	/* array of file objects that reference block devices for iomap */
++	struct file **files;
++	unsigned int nr_files;
++};
 +
- 	/* Use io_uring for communication */
- 	unsigned int io_uring;
+ /**
+  * A Fuse connection.
+  *
+@@ -970,6 +976,10 @@ struct fuse_conn {
+ 	struct fuse_ring *ring;
+ #endif
  
-@@ -1017,6 +1020,11 @@ static inline struct fuse_mount *get_fuse_mount_super(struct super_block *sb)
- 	return sb->s_fs_info;
- }
- 
-+static inline const struct fuse_mount *get_fuse_mount_super_c(const struct super_block *sb)
-+{
-+	return sb->s_fs_info;
-+}
-+
- static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
- {
- 	return get_fuse_mount_super(sb)->fc;
-@@ -1027,16 +1035,31 @@ static inline struct fuse_mount *get_fuse_mount(struct inode *inode)
- 	return get_fuse_mount_super(inode->i_sb);
- }
- 
-+static inline const struct fuse_mount *get_fuse_mount_c(const struct inode *inode)
-+{
-+	return get_fuse_mount_super_c(inode->i_sb);
-+}
-+
- static inline struct fuse_conn *get_fuse_conn(struct inode *inode)
- {
- 	return get_fuse_mount_super(inode->i_sb)->fc;
- }
- 
-+static inline const struct fuse_conn *get_fuse_conn_c(const struct inode *inode)
-+{
-+	return get_fuse_mount_super_c(inode->i_sb)->fc;
-+}
-+
- static inline struct fuse_inode *get_fuse_inode(struct inode *inode)
- {
- 	return container_of(inode, struct fuse_inode, inode);
- }
- 
-+static inline const struct fuse_inode *get_fuse_inode_c(const struct inode *inode)
-+{
-+	return container_of(inode, struct fuse_inode, inode);
-+}
-+
- static inline u64 get_node_id(struct inode *inode)
- {
- 	return get_fuse_inode(inode)->nodeid;
-@@ -1577,4 +1600,19 @@ extern void fuse_sysctl_unregister(void);
- #define fuse_sysctl_unregister()	do { } while (0)
- #endif /* CONFIG_SYSCTL */
- 
-+#if IS_ENABLED(CONFIG_FUSE_IOMAP)
-+# include <linux/fiemap.h>
-+# include <linux/iomap.h>
-+
-+bool fuse_iomap_enabled(void);
-+
-+static inline bool fuse_has_iomap(const struct inode *inode)
-+{
-+	return get_fuse_conn_c(inode)->iomap;
-+}
-+#else
-+# define fuse_iomap_enabled(...)		(false)
-+# define fuse_has_iomap(...)			(false)
++#ifdef CONFIG_FUSE_IOMAP
++	struct fuse_iomap iomap_conn;
 +#endif
 +
+ 	/** Only used if the connection opts into request timeouts */
+ 	struct {
+ 		/* Worker for checking if any requests have timed out */
+@@ -1610,9 +1620,18 @@ static inline bool fuse_has_iomap(const struct inode *inode)
+ {
+ 	return get_fuse_conn_c(inode)->iomap;
+ }
++
++void fuse_iomap_init_reply(struct fuse_mount *fm);
++void fuse_iomap_conn_put(struct fuse_conn *fc);
++
++int fuse_iomap_add_device(struct fuse_conn *fc,
++			  const struct fuse_iomap_add_device_out *outarg);
+ #else
+ # define fuse_iomap_enabled(...)		(false)
+ # define fuse_has_iomap(...)			(false)
++# define fuse_iomap_init_reply(...)		((void)0)
++# define fuse_iomap_conn_put(...)		((void)0)
++# define fuse_iomap_add_device(...)		(-ENOSYS)
+ #endif
+ 
  #endif /* _FS_FUSE_I_H */
 diff --git a/fs/fuse/fuse_trace.h b/fs/fuse/fuse_trace.h
-index bbe9ddd8c71696..f9a316c9788e06 100644
+index f9a316c9788e06..e1a2e491d2581a 100644
 --- a/fs/fuse/fuse_trace.h
 +++ b/fs/fuse/fuse_trace.h
-@@ -58,6 +58,8 @@
- 	EM( FUSE_SYNCFS,		"FUSE_SYNCFS")		\
- 	EM( FUSE_TMPFILE,		"FUSE_TMPFILE")		\
- 	EM( FUSE_STATX,			"FUSE_STATX")		\
-+	EM( FUSE_IOMAP_BEGIN,		"FUSE_IOMAP_BEGIN")	\
-+	EM( FUSE_IOMAP_END,		"FUSE_IOMAP_END")	\
- 	EMe(CUSE_INIT,			"CUSE_INIT")
- 
- /*
-@@ -124,6 +126,262 @@ TRACE_EVENT(fuse_request_end,
- 		  __entry->unique, __entry->len, __entry->error)
+@@ -380,6 +380,42 @@ TRACE_EVENT(fuse_iomap_end_error,
+ 		  __entry->pos, __entry->count, __entry->written,
+ 		  __entry->error)
  );
++
++TRACE_EVENT(fuse_iomap_dev_class,
++	TP_PROTO(const struct fuse_conn *fc, unsigned int idx,
++		 const struct file *file),
++
++	TP_ARGS(fc, idx, file),
++
++	TP_STRUCT__entry(
++		__field(dev_t,		connection)
++		__field(unsigned int,	idx)
++		__field(dev_t,		bdev)
++	),
++
++	TP_fast_assign(
++		struct inode *inode = file_inode(file);
++
++		__entry->connection	=	fc->dev;
++		__entry->idx		=	idx;
++		if (S_ISBLK(inode->i_mode)) {
++			__entry->bdev	=	inode->i_rdev;
++		} else
++			__entry->bdev	=	0;
++	),
++
++	TP_printk("connection %u idx %u dev %u:%u",
++		  __entry->connection,
++		  __entry->idx,
++		  MAJOR(__entry->bdev), MINOR(__entry->bdev))
++);
++#define DEFINE_FUSE_IOMAP_DEV_EVENT(name)		\
++DEFINE_EVENT(fuse_iomap_dev_class, name,		\
++	TP_PROTO(const struct fuse_conn *fc, unsigned int idx, \
++		 const struct file *file), \
++	TP_ARGS(fc, idx, file))
++DEFINE_FUSE_IOMAP_DEV_EVENT(fuse_iomap_add_dev);
++DEFINE_FUSE_IOMAP_DEV_EVENT(fuse_iomap_remove_dev);
+ #endif /* CONFIG_FUSE_IOMAP */
  
-+#if IS_ENABLED(CONFIG_FUSE_IOMAP)
-+
-+#define FUSE_IOMAP_F_STRINGS \
-+	{ FUSE_IOMAP_F_NEW,			"new" }, \
-+	{ FUSE_IOMAP_F_DIRTY,			"dirty" }, \
-+	{ FUSE_IOMAP_F_SHARED,			"shared" }, \
-+	{ FUSE_IOMAP_F_MERGED,			"merged" }, \
-+	{ FUSE_IOMAP_F_XATTR,			"xattr" }, \
-+	{ FUSE_IOMAP_F_BOUNDARY,		"boundary" }, \
-+	{ FUSE_IOMAP_F_ANON_WRITE,		"anon_write" }, \
-+	{ FUSE_IOMAP_F_ATOMIC_BIO,		"atomic" }, \
-+	{ FUSE_IOMAP_F_WANT_IOMAP_END,		"iomap_end" }, \
-+	{ FUSE_IOMAP_F_SIZE_CHANGED,		"append" }, \
-+	{ FUSE_IOMAP_F_STALE,			"stale" }
-+
-+#define FUSE_IOMAP_OP_STRINGS \
-+	{ FUSE_IOMAP_OP_WRITE,			"write" }, \
-+	{ FUSE_IOMAP_OP_ZERO,			"zero" }, \
-+	{ FUSE_IOMAP_OP_REPORT,			"report" }, \
-+	{ FUSE_IOMAP_OP_FAULT,			"fault" }, \
-+	{ FUSE_IOMAP_OP_DIRECT,			"direct" }, \
-+	{ FUSE_IOMAP_OP_NOWAIT,			"nowait" }, \
-+	{ FUSE_IOMAP_OP_OVERWRITE_ONLY,		"overwrite" }, \
-+	{ FUSE_IOMAP_OP_UNSHARE,		"unshare" }, \
-+	{ FUSE_IOMAP_OP_ATOMIC,			"atomic" }, \
-+	{ FUSE_IOMAP_OP_DONTCACHE,		"dontcache" }
-+
-+#define FUSE_IOMAP_TYPE_STRINGS \
-+	{ FUSE_IOMAP_TYPE_PURE_OVERWRITE,	"overwrite" }, \
-+	{ FUSE_IOMAP_TYPE_HOLE,			"hole" }, \
-+	{ FUSE_IOMAP_TYPE_DELALLOC,		"delalloc" }, \
-+	{ FUSE_IOMAP_TYPE_MAPPED,		"mapped" }, \
-+	{ FUSE_IOMAP_TYPE_UNWRITTEN,		"unwritten" }, \
-+	{ FUSE_IOMAP_TYPE_INLINE,		"inline" }
-+
-+TRACE_EVENT(fuse_iomap_begin,
-+	TP_PROTO(const struct inode *inode, loff_t pos, loff_t count,
-+		 unsigned opflags),
-+
-+	TP_ARGS(inode, pos, count, opflags),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		connection)
-+		__field(uint64_t,	ino)
-+		__field(loff_t,		pos)
-+		__field(loff_t,		count)
-+		__field(unsigned,	opflags)
-+	),
-+
-+	TP_fast_assign(
-+		const struct fuse_inode *fi = get_fuse_inode_c(inode);
-+		const struct fuse_mount *fm = get_fuse_mount_c(inode);
-+
-+		__entry->connection	=	fm->fc->dev;
-+		__entry->ino		=	fi->orig_ino;
-+		__entry->pos		=	pos;
-+		__entry->count		=	count;
-+		__entry->opflags	=	opflags;
-+	),
-+
-+	TP_printk("connection %u ino %llu opflags (%s) pos 0x%llx count 0x%llx",
-+		  __entry->connection, __entry->ino,
-+		  __print_flags(__entry->opflags, "|", FUSE_IOMAP_OP_STRINGS),
-+		  __entry->pos, __entry->count)
-+);
-+
-+TRACE_EVENT(fuse_iomap_begin_error,
-+	TP_PROTO(const struct inode *inode, loff_t pos, loff_t count,
-+		 unsigned opflags, int error),
-+
-+	TP_ARGS(inode, pos, count, opflags, error),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		connection)
-+		__field(uint64_t,	ino)
-+		__field(loff_t,		pos)
-+		__field(loff_t,		count)
-+		__field(unsigned,	opflags)
-+		__field(int,		error)
-+	),
-+
-+	TP_fast_assign(
-+		const struct fuse_inode *fi = get_fuse_inode_c(inode);
-+		const struct fuse_mount *fm = get_fuse_mount_c(inode);
-+
-+		__entry->connection	=	fm->fc->dev;
-+		__entry->ino		=	fi->orig_ino;
-+		__entry->pos		=	pos;
-+		__entry->count		=	count;
-+		__entry->opflags	=	opflags;
-+		__entry->error		=	error;
-+	),
-+
-+	TP_printk("connection %u ino %llu opflags (%s) pos 0x%llx count 0x%llx err %d",
-+		  __entry->connection, __entry->ino,
-+		  __print_flags(__entry->opflags, "|", FUSE_IOMAP_OP_STRINGS),
-+		  __entry->pos, __entry->count, __entry->error)
-+);
-+
-+TRACE_EVENT(fuse_iomap_read_map,
-+	TP_PROTO(const struct inode *inode,
-+		 const struct fuse_iomap_begin_out *outarg),
-+
-+	TP_ARGS(inode, outarg),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		connection)
-+		__field(uint64_t,	ino)
-+		__field(loff_t,		offset)
-+		__field(loff_t,		length)
-+		__field(uint32_t,	dev)
-+		__field(uint64_t,	addr)
-+		__field(uint16_t,	type)
-+		__field(uint16_t,	mapflags)
-+	),
-+
-+	TP_fast_assign(
-+		const struct fuse_inode *fi = get_fuse_inode_c(inode);
-+		const struct fuse_mount *fm = get_fuse_mount_c(inode);
-+
-+		__entry->connection	=	fm->fc->dev;
-+		__entry->ino		=	fi->orig_ino;
-+		__entry->offset		=	outarg->offset;
-+		__entry->length		=	outarg->length;
-+		__entry->dev		=	outarg->read_dev;
-+		__entry->addr		=	outarg->read_addr;
-+		__entry->type		=	outarg->read_type;
-+		__entry->mapflags	=	outarg->read_flags;
-+	),
-+
-+	TP_printk("connection %u ino %llu read offset 0x%llx count 0x%llx dev %u addr 0x%llu type %s mapflags (%s)",
-+		  __entry->connection, __entry->ino, __entry->offset,
-+		  __entry->length, __entry->dev, __entry->addr,
-+		  __print_symbolic(__entry->type, FUSE_IOMAP_TYPE_STRINGS),
-+		  __print_flags(__entry->mapflags, "|", FUSE_IOMAP_F_STRINGS))
-+);
-+
-+TRACE_EVENT(fuse_iomap_write_map,
-+	TP_PROTO(const struct inode *inode,
-+		 const struct fuse_iomap_begin_out *outarg),
-+
-+	TP_ARGS(inode, outarg),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		connection)
-+		__field(uint64_t,	ino)
-+		__field(loff_t,		offset)
-+		__field(loff_t,		length)
-+		__field(uint32_t,	dev)
-+		__field(uint64_t,	addr)
-+		__field(uint16_t,	type)
-+		__field(uint16_t,	mapflags)
-+	),
-+
-+	TP_fast_assign(
-+		const struct fuse_inode *fi = get_fuse_inode_c(inode);
-+		const struct fuse_mount *fm = get_fuse_mount_c(inode);
-+
-+		__entry->connection	=	fm->fc->dev;
-+		__entry->ino		=	fi->orig_ino;
-+		__entry->offset		=	outarg->offset;
-+		__entry->length		=	outarg->length;
-+		__entry->dev		=	outarg->write_dev;
-+		__entry->addr		=	outarg->write_addr;
-+		__entry->type		=	outarg->write_type;
-+		__entry->mapflags	=	outarg->write_flags;
-+	),
-+
-+	TP_printk("connection %u ino %llu write offset 0x%llx count 0x%llx dev %u addr 0x%llu type %s mapflags (%s)",
-+		  __entry->connection, __entry->ino, __entry->offset,
-+		  __entry->length, __entry->dev, __entry->addr,
-+		  __print_symbolic(__entry->type, FUSE_IOMAP_TYPE_STRINGS),
-+		  __print_flags(__entry->mapflags, "|", FUSE_IOMAP_F_STRINGS))
-+);
-+
-+TRACE_EVENT(fuse_iomap_end,
-+	TP_PROTO(const struct inode *inode,
-+		 const struct fuse_iomap_end_in *inarg),
-+
-+	TP_ARGS(inode, inarg),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		connection)
-+		__field(uint64_t,	ino)
-+		__field(loff_t,		pos)
-+		__field(loff_t,		count)
-+		__field(unsigned,	opflags)
-+		__field(size_t,		written)
-+
-+		__field(uint32_t,	dev)
-+		__field(uint64_t,	addr)
-+		__field(uint16_t,	type)
-+		__field(uint16_t,	mapflags)
-+	),
-+
-+	TP_fast_assign(
-+		const struct fuse_inode *fi = get_fuse_inode_c(inode);
-+		const struct fuse_mount *fm = get_fuse_mount_c(inode);
-+
-+		__entry->connection	=	fm->fc->dev;
-+		__entry->ino		=	fi->orig_ino;
-+		__entry->pos		=	inarg->pos;
-+		__entry->count		=	inarg->count;
-+		__entry->opflags	=	inarg->opflags;
-+		__entry->written	=	inarg->written;
-+		__entry->dev		=	inarg->map_dev;
-+		__entry->addr		=	inarg->map_addr;
-+		__entry->type		=	inarg->map_type;
-+		__entry->mapflags	=	inarg->map_flags;
-+	),
-+
-+	TP_printk("connection %u ino %llu opflags (%s) pos 0x%llx count 0x%llx written %zd dev %u addr 0x%llx type 0x%x mapflags (%s)",
-+		  __entry->connection, __entry->ino,
-+		  __print_flags(__entry->opflags, "|", FUSE_IOMAP_OP_STRINGS),
-+		  __entry->pos, __entry->count, __entry->written, __entry->dev,
-+		  __entry->addr, __entry->type,
-+		  __print_flags(__entry->mapflags, "|", FUSE_IOMAP_F_STRINGS))
-+);
-+
-+TRACE_EVENT(fuse_iomap_end_error,
-+	TP_PROTO(const struct inode *inode,
-+		 const struct fuse_iomap_end_in *inarg, int error),
-+
-+	TP_ARGS(inode, inarg, error),
-+
-+	TP_STRUCT__entry(
-+		__field(dev_t,		connection)
-+		__field(uint64_t,	ino)
-+		__field(loff_t,		pos)
-+		__field(loff_t,		count)
-+		__field(unsigned,	opflags)
-+		__field(size_t,		written)
-+		__field(int,		error)
-+	),
-+
-+	TP_fast_assign(
-+		const struct fuse_inode *fi = get_fuse_inode_c(inode);
-+		const struct fuse_mount *fm = get_fuse_mount_c(inode);
-+
-+		__entry->connection	=	fm->fc->dev;
-+		__entry->ino		=	fi->orig_ino;
-+		__entry->pos		=	inarg->pos;
-+		__entry->count		=	inarg->count;
-+		__entry->opflags	=	inarg->opflags;
-+		__entry->written	=	inarg->written;
-+		__entry->error		=	error;
-+	),
-+
-+	TP_printk("connection %u ino %llu opflags (%s) pos 0x%llx count 0x%llx written %zd error %d",
-+		  __entry->connection, __entry->ino,
-+		  __print_flags(__entry->opflags, "|", FUSE_IOMAP_OP_STRINGS),
-+		  __entry->pos, __entry->count, __entry->written,
-+		  __entry->error)
-+);
-+#endif /* CONFIG_FUSE_IOMAP */
-+
  #endif /* _TRACE_FUSE_H */
- 
- #undef TRACE_INCLUDE_PATH
 diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index 5ec43ecbceb783..ce6c9960f2418f 100644
+index ce6c9960f2418f..ea8992e980a015 100644
 --- a/include/uapi/linux/fuse.h
 +++ b/include/uapi/linux/fuse.h
-@@ -232,6 +232,10 @@
-  *
-  *  7.43
-  *  - add FUSE_REQUEST_TIMEOUT
-+ *
-+ *  7.44
-+ *  - add FUSE_IOMAP and iomap_{begin,end,ioend} handlers for FIEMAP and
-+ *    SEEK_{DATA,HOLE} support
+@@ -236,6 +236,7 @@
+  *  7.44
+  *  - add FUSE_IOMAP and iomap_{begin,end,ioend} handlers for FIEMAP and
+  *    SEEK_{DATA,HOLE} support
++ *  - add FUSE_NOTIFY_ADD_IOMAP_DEVICE for multi-device filesystems
   */
  
  #ifndef _LINUX_FUSE_H
-@@ -267,7 +271,7 @@
- #define FUSE_KERNEL_VERSION 7
- 
- /** Minor version number of this interface */
--#define FUSE_KERNEL_MINOR_VERSION 43
-+#define FUSE_KERNEL_MINOR_VERSION 44
- 
- /** The node ID of the root inode */
- #define FUSE_ROOT_ID 1
-@@ -440,6 +444,8 @@ struct fuse_file_lock {
-  * FUSE_OVER_IO_URING: Indicate that client supports io-uring
-  * FUSE_REQUEST_TIMEOUT: kernel supports timing out requests.
-  *			 init_out.request_timeout contains the timeout (in secs)
-+ * FUSE_IOMAP: Client supports iomap for FIEMAP and SEEK_{DATA,HOLE} file
-+ *	       operations.
-  */
- #define FUSE_ASYNC_READ		(1 << 0)
- #define FUSE_POSIX_LOCKS	(1 << 1)
-@@ -487,6 +493,7 @@ struct fuse_file_lock {
- #define FUSE_ALLOW_IDMAP	(1ULL << 40)
- #define FUSE_OVER_IO_URING	(1ULL << 41)
- #define FUSE_REQUEST_TIMEOUT	(1ULL << 42)
-+#define FUSE_IOMAP		(1ULL << 43)
- 
- /**
-  * CUSE INIT request/reply flags
-@@ -655,6 +662,9 @@ enum fuse_opcode {
- 	FUSE_TMPFILE		= 51,
- 	FUSE_STATX		= 52,
- 
-+	FUSE_IOMAP_BEGIN	= 4094,
-+	FUSE_IOMAP_END		= 4095,
-+
- 	/* CUSE specific operations */
- 	CUSE_INIT		= 4096,
- 
-@@ -1286,4 +1296,79 @@ struct fuse_uring_cmd_req {
- 	uint8_t padding[6];
+@@ -681,6 +682,7 @@ enum fuse_notify_code {
+ 	FUSE_NOTIFY_RETRIEVE = 5,
+ 	FUSE_NOTIFY_DELETE = 6,
+ 	FUSE_NOTIFY_RESEND = 7,
++	FUSE_NOTIFY_ADD_IOMAP_DEVICE = 8,
+ 	FUSE_NOTIFY_CODE_MAX,
  };
  
-+#define FUSE_IOMAP_TYPE_PURE_OVERWRITE	(0xFFFF) /* use read mapping data */
-+#define FUSE_IOMAP_TYPE_HOLE		0	/* no blocks allocated, need allocation */
-+#define FUSE_IOMAP_TYPE_DELALLOC	1	/* delayed allocation blocks */
-+#define FUSE_IOMAP_TYPE_MAPPED		2	/* blocks allocated at @addr */
-+#define FUSE_IOMAP_TYPE_UNWRITTEN	3	/* blocks allocated at @addr in unwritten state */
-+#define FUSE_IOMAP_TYPE_INLINE		4	/* data inline in the inode */
-+
-+#define FUSE_IOMAP_DEV_FUSEBLK		(0U)	/* fuseblk sb_dev device cookie */
-+#define FUSE_IOMAP_DEV_NULL		(~0U)	/* null device cookie */
-+
-+#define FUSE_IOMAP_F_NEW		(1U << 0)
-+#define FUSE_IOMAP_F_DIRTY		(1U << 1)
-+#define FUSE_IOMAP_F_SHARED		(1U << 2)
-+#define FUSE_IOMAP_F_MERGED		(1U << 3)
-+#define FUSE_IOMAP_F_XATTR		(1U << 5)
-+#define FUSE_IOMAP_F_BOUNDARY		(1U << 6)
-+#define FUSE_IOMAP_F_ANON_WRITE		(1U << 7)
-+#define FUSE_IOMAP_F_ATOMIC_BIO		(1U << 8)
-+#define FUSE_IOMAP_F_WANT_IOMAP_END	(1U << 12) /* want ->iomap_end call */
-+
-+/* only for iomap_end */
-+#define FUSE_IOMAP_F_SIZE_CHANGED	(1U << 14)
-+#define FUSE_IOMAP_F_STALE		(1U << 15)
-+
-+#define FUSE_IOMAP_OP_WRITE		(1 << 0) /* writing, must allocate blocks */
-+#define FUSE_IOMAP_OP_ZERO		(1 << 1) /* zeroing operation, may skip holes */
-+#define FUSE_IOMAP_OP_REPORT		(1 << 2) /* report extent status, e.g. FIEMAP */
-+#define FUSE_IOMAP_OP_FAULT		(1 << 3) /* mapping for page fault */
-+#define FUSE_IOMAP_OP_DIRECT		(1 << 4) /* direct I/O */
-+#define FUSE_IOMAP_OP_NOWAIT		(1 << 5) /* do not block */
-+#define FUSE_IOMAP_OP_OVERWRITE_ONLY	(1 << 6) /* only pure overwrites allowed */
-+#define FUSE_IOMAP_OP_UNSHARE		(1 << 7) /* unshare_file_range */
-+#define FUSE_IOMAP_OP_ATOMIC		(1 << 9) /* torn-write protection */
-+#define FUSE_IOMAP_OP_DONTCACHE		(1 << 10) /* dont retain pagecache */
-+
-+#define FUSE_IOMAP_NULL_ADDR		(-1ULL)	/* addr is not valid */
-+
-+struct fuse_iomap_begin_in {
-+	uint32_t opflags;	/* FUSE_IOMAP_OP_* */
-+	uint32_t reserved;	/* zero */
-+	uint64_t attr_ino;	/* matches fuse_attr:ino */
-+	uint64_t pos;		/* file position, in bytes */
-+	uint64_t count;		/* operation length, in bytes */
-+};
-+
-+struct fuse_iomap_begin_out {
-+	uint64_t offset;	/* file offset of mapping, bytes */
-+	uint64_t length;	/* length of both mappings, bytes */
-+
-+	uint64_t read_addr;	/* disk offset of mapping, bytes */
-+	uint16_t read_type;	/* FUSE_IOMAP_TYPE_* */
-+	uint16_t read_flags;	/* FUSE_IOMAP_F_* */
-+	uint32_t read_dev;	/* device cookie */
-+
-+	uint64_t write_addr;	/* disk offset of mapping, bytes */
-+	uint16_t write_type;	/* FUSE_IOMAP_TYPE_* */
-+	uint16_t write_flags;	/* FUSE_IOMAP_F_* */
-+	uint32_t write_dev;	/* device cookie * */
-+};
-+
-+struct fuse_iomap_end_in {
-+	uint32_t opflags;	/* FUSE_IOMAP_OP_* */
-+	uint32_t reserved;	/* zero */
-+	uint64_t attr_ino;	/* matches fuse_attr:ino */
-+	uint64_t pos;		/* file position, in bytes */
-+	uint64_t count;		/* operation length, in bytes */
-+	int64_t written;	/* bytes processed */
-+
-+	uint64_t map_length;	/* length of mapping, bytes */
-+	uint64_t map_addr;	/* disk offset of mapping, bytes */
-+	uint16_t map_type;	/* FUSE_IOMAP_TYPE_* */
-+	uint16_t map_flags;	/* FUSE_IOMAP_F_* */
-+	uint32_t map_dev;	/* device cookie * */
+@@ -1371,4 +1373,10 @@ struct fuse_iomap_end_in {
+ 	uint32_t map_dev;	/* device cookie * */
+ };
+ 
++struct fuse_iomap_add_device_out {
++	int32_t fd;		/* fd of the open device to add */
++	uint32_t reserved;	/* must be zero */
++	uint32_t *map_dev;	/* location to receive device cookie */
 +};
 +
  #endif /* _LINUX_FUSE_H */
-diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-index ca215a3cba3e31..fc7c5bf1cef52d 100644
---- a/fs/fuse/Kconfig
-+++ b/fs/fuse/Kconfig
-@@ -64,6 +64,29 @@ config FUSE_PASSTHROUGH
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index 6dcbaa218b7a16..9d7064ec170cf6 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -1824,6 +1824,26 @@ static int fuse_notify_store(struct fuse_conn *fc, unsigned int size,
+ 	return err;
+ }
  
- 	  If you want to allow passthrough operations, answer Y.
- 
-+config FUSE_IOMAP
-+	bool "FUSE file IO over iomap"
-+	default y
-+	depends on FUSE_FS
-+	select FS_IOMAP
-+	help
-+	  For supported fuseblk servers, this allows the file IO path to run
-+	  through the kernel.
-+
-+config FUSE_IOMAP_BY_DEFAULT
-+	bool "FUSE file I/O over iomap by default"
-+	default n
-+	depends on FUSE_IOMAP
-+	help
-+	  Enable sending FUSE file I/O over iomap by default.
-+
-+config FUSE_IOMAP_DEBUG
-+	bool "Debug FUSE file IO over iomap"
-+	default n
-+	depends on FUSE_IOMAP
-+	help
-+	  Enable debugging assertions for the fuse iomap code paths.
-+
- config FUSE_IO_URING
- 	bool "FUSE communication over io-uring"
- 	default y
-diff --git a/fs/fuse/Makefile b/fs/fuse/Makefile
-index 3f0f312a31c1cc..63a41ef9336aaa 100644
---- a/fs/fuse/Makefile
-+++ b/fs/fuse/Makefile
-@@ -16,5 +16,6 @@ fuse-$(CONFIG_FUSE_DAX) += dax.o
- fuse-$(CONFIG_FUSE_PASSTHROUGH) += passthrough.o
- fuse-$(CONFIG_SYSCTL) += sysctl.o
- fuse-$(CONFIG_FUSE_IO_URING) += dev_uring.o
-+fuse-$(CONFIG_FUSE_IOMAP) += file_iomap.o
- 
- virtiofs-y := virtio_fs.o
-diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
-new file mode 100644
-index 00000000000000..dfa0c309803113
---- /dev/null
-+++ b/fs/fuse/file_iomap.c
-@@ -0,0 +1,280 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (C) 2025 Oracle.  All Rights Reserved.
-+ * Author: Darrick J. Wong <djwong@kernel.org.
-+ */
-+#include "fuse_i.h"
-+#include "fuse_trace.h"
-+#include <linux/iomap.h>
-+
-+static bool __read_mostly enable_iomap =
-+#if IS_ENABLED(CONFIG_FUSE_IOMAP_BY_DEFAULT)
-+	true;
-+#else
-+	false;
-+#endif
-+module_param(enable_iomap, bool, 0644);
-+MODULE_PARM_DESC(enable_iomap, "Enable file I/O through iomap");
-+
-+#if IS_ENABLED(CONFIG_FUSE_IOMAP_DEBUG)
-+# define ASSERT(a)	do { WARN_ON(!(a)); } while (0)
-+#else
-+# define ASSERT(a)
-+#endif
-+
-+bool fuse_iomap_enabled(void)
++static int fuse_notify_add_iomap_device(struct fuse_conn *fc, unsigned int size,
++					struct fuse_copy_state *cs)
 +{
-+	return enable_iomap;
-+}
++	struct fuse_iomap_add_device_out outarg;
++	int err = -EINVAL;
 +
-+static inline bool fuse_iomap_check_type(uint16_t type)
-+{
-+	BUILD_BUG_ON(FUSE_IOMAP_TYPE_HOLE	!= IOMAP_HOLE);
-+	BUILD_BUG_ON(FUSE_IOMAP_TYPE_DELALLOC	!= IOMAP_DELALLOC);
-+	BUILD_BUG_ON(FUSE_IOMAP_TYPE_MAPPED	!= IOMAP_MAPPED);
-+	BUILD_BUG_ON(FUSE_IOMAP_TYPE_UNWRITTEN	!= IOMAP_UNWRITTEN);
-+	BUILD_BUG_ON(FUSE_IOMAP_TYPE_INLINE	!= IOMAP_INLINE);
++	if (size != sizeof(outarg))
++		goto err;
 +
-+	switch (type) {
-+	case FUSE_IOMAP_TYPE_PURE_OVERWRITE:
-+	case FUSE_IOMAP_TYPE_HOLE:
-+	case FUSE_IOMAP_TYPE_DELALLOC:
-+	case FUSE_IOMAP_TYPE_MAPPED:
-+	case FUSE_IOMAP_TYPE_UNWRITTEN:
-+	case FUSE_IOMAP_TYPE_INLINE:
-+		return true;
-+	}
-+
-+	return false;
-+}
-+
-+#define FUSE_IOMAP_F_ALL (FUSE_IOMAP_F_NEW | \
-+			  FUSE_IOMAP_F_DIRTY | \
-+			  FUSE_IOMAP_F_SHARED | \
-+			  FUSE_IOMAP_F_MERGED | \
-+			  FUSE_IOMAP_F_XATTR | \
-+			  FUSE_IOMAP_F_BOUNDARY | \
-+			  FUSE_IOMAP_F_ANON_WRITE | \
-+			  FUSE_IOMAP_F_ATOMIC_BIO | \
-+			  FUSE_IOMAP_F_WANT_IOMAP_END)
-+
-+static inline bool fuse_iomap_check_flags(uint16_t flags)
-+{
-+	BUILD_BUG_ON(FUSE_IOMAP_F_NEW		!= IOMAP_F_NEW);
-+	BUILD_BUG_ON(FUSE_IOMAP_F_DIRTY		!= IOMAP_F_DIRTY);
-+	BUILD_BUG_ON(FUSE_IOMAP_F_SHARED	!= IOMAP_F_SHARED);
-+	BUILD_BUG_ON(FUSE_IOMAP_F_MERGED	!= IOMAP_F_MERGED);
-+	BUILD_BUG_ON(FUSE_IOMAP_F_XATTR		!= IOMAP_F_XATTR);
-+	BUILD_BUG_ON(FUSE_IOMAP_F_BOUNDARY	!= IOMAP_F_BOUNDARY);
-+	BUILD_BUG_ON(FUSE_IOMAP_F_ANON_WRITE	!= IOMAP_F_ANON_WRITE);
-+	BUILD_BUG_ON(FUSE_IOMAP_F_ATOMIC_BIO	!= IOMAP_F_ATOMIC_BIO);
-+	BUILD_BUG_ON(FUSE_IOMAP_F_WANT_IOMAP_END != IOMAP_F_PRIVATE);
-+
-+	return (flags & ~FUSE_IOMAP_F_ALL) == 0;
-+}
-+
-+/* Check the incoming mappings to make sure they're not nonsense */
-+static inline int fuse_iomap_validate(const struct fuse_iomap_begin_out *outarg,
-+				      unsigned opflags, loff_t pos)
-+{
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_WRITE	!= IOMAP_WRITE);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_ZERO		!= IOMAP_ZERO);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_REPORT	!= IOMAP_REPORT);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_FAULT	!= IOMAP_FAULT);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_DIRECT	!= IOMAP_DIRECT);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_NOWAIT	!= IOMAP_NOWAIT);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_OVERWRITE_ONLY != IOMAP_OVERWRITE_ONLY);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_UNSHARE	!= IOMAP_UNSHARE);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_ATOMIC	!= IOMAP_ATOMIC);
-+	BUILD_BUG_ON(FUSE_IOMAP_OP_DONTCACHE	!= IOMAP_DONTCACHE);
-+
-+	if (outarg->read_dev == FUSE_IOMAP_DEV_NULL) {
-+		ASSERT(outarg->read_dev != FUSE_IOMAP_DEV_NULL);
-+		return -EIO;
-+	}
-+	if (outarg->write_dev == FUSE_IOMAP_DEV_NULL) {
-+		ASSERT(outarg->write_dev != FUSE_IOMAP_DEV_NULL);
-+		return -EIO;
-+	}
-+	if (outarg->offset > pos) {
-+		ASSERT(outarg->offset <= pos);
-+		return -EIO;
-+	}
-+	if (outarg->length == 0) {
-+		ASSERT(outarg->length != 0);
-+		return -EIO;
-+	}
-+	if (outarg->offset + outarg->length <= pos) {
-+		ASSERT(outarg->offset + outarg->length > pos);
-+		return -EIO;
-+	}
-+	if (!fuse_iomap_check_type(outarg->write_type)) {
-+		ASSERT(fuse_iomap_check_type(outarg->write_type));
-+		return -EIO;
-+	}
-+	if (!fuse_iomap_check_flags(outarg->write_flags)) {
-+		ASSERT(fuse_iomap_check_flags(outarg->write_flags));
-+		return -EIO;
-+	}
-+	if (!fuse_iomap_check_type(outarg->read_type)) {
-+		ASSERT(fuse_iomap_check_type(outarg->read_type));
-+		return -EIO;
-+	}
-+	if (!fuse_iomap_check_flags(outarg->read_flags)) {
-+		ASSERT(fuse_iomap_check_flags(outarg->read_flags));
-+		return -EIO;
-+	}
-+
-+	if (!(opflags & FUSE_IOMAP_OP_REPORT)) {
-+		/*
-+		 * XXX inline data reads and writes are not supported, how do
-+		 * we do this?
-+		 */
-+		ASSERT(outarg->read_type != FUSE_IOMAP_TYPE_INLINE);
-+		ASSERT(outarg->write_type != FUSE_IOMAP_TYPE_INLINE);
-+
-+		if (outarg->read_type == FUSE_IOMAP_TYPE_INLINE)
-+			return -EIO;
-+		if (outarg->write_type == FUSE_IOMAP_TYPE_INLINE)
-+			return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t count,
-+			    unsigned opflags, struct iomap *iomap,
-+			    struct iomap *srcmap)
-+{
-+	struct fuse_inode *fi = get_fuse_inode(inode);
-+	struct fuse_iomap_begin_in inarg = {
-+		.attr_ino = fi->orig_ino,
-+		.opflags = opflags,
-+		.pos = pos,
-+		.count = count,
-+	};
-+	struct fuse_iomap_begin_out outarg = { };
-+	struct fuse_mount *fm = get_fuse_mount(inode);
-+	FUSE_ARGS(args);
-+	int err;
-+
-+	trace_fuse_iomap_begin(inode, pos, count, opflags);
-+
-+	args.opcode = FUSE_IOMAP_BEGIN;
-+	args.nodeid = get_node_id(inode);
-+	args.in_numargs = 1;
-+	args.in_args[0].size = sizeof(inarg);
-+	args.in_args[0].value = &inarg;
-+	args.out_numargs = 1;
-+	args.out_args[0].size = sizeof(outarg);
-+	args.out_args[0].value = &outarg;
-+	err = fuse_simple_request(fm, &args);
-+	if (err) {
-+		trace_fuse_iomap_begin_error(inode, pos, count, opflags, err);
-+		return err;
-+	}
-+
-+	trace_fuse_iomap_read_map(inode, &outarg);
-+	trace_fuse_iomap_write_map(inode, &outarg);
-+
-+	err = fuse_iomap_validate(&outarg, opflags, pos);
++	err = fuse_copy_one(cs, &outarg, sizeof(outarg));
 +	if (err)
-+		return err;
++		goto err;
++	fuse_copy_finish(cs);
 +
-+	if ((opflags & IOMAP_WRITE) &&
-+	    outarg.write_type != FUSE_IOMAP_TYPE_PURE_OVERWRITE) {
-+		/*
-+		 * For an out of place write, we must supply the write mapping
-+		 * via @iomap, and the read mapping via @srcmap.
-+		 */
-+		iomap->addr = outarg.write_addr;
-+		iomap->offset = outarg.offset;
-+		iomap->length = outarg.length;
-+		iomap->type = outarg.write_type;
-+		iomap->flags = outarg.write_flags;
-+		iomap->bdev = inode->i_sb->s_bdev;
-+
-+		srcmap->addr = outarg.read_addr;
-+		srcmap->offset = outarg.offset;
-+		srcmap->length = outarg.length;
-+		srcmap->type = outarg.read_type;
-+		srcmap->flags = outarg.read_flags;
-+		srcmap->bdev = inode->i_sb->s_bdev;
-+	} else {
-+		/*
-+		 * For everything else (reads, reporting, and pure overwrites),
-+		 * we can return the sole mapping through @iomap and leave
-+		 * @srcmap unchanged from its default (HOLE).
-+		 */
-+		iomap->addr = outarg.read_addr;
-+		iomap->offset = outarg.offset;
-+		iomap->length = outarg.length;
-+		iomap->type = outarg.read_type;
-+		iomap->flags = outarg.read_flags;
-+		iomap->bdev = inode->i_sb->s_bdev;
-+	}
-+
-+	return 0;
-+}
-+
-+static bool fuse_want_iomap_end(const struct iomap *iomap, unsigned int opflags,
-+				loff_t count, ssize_t written)
-+{
-+	/* Caller demanded an iomap_end call. */
-+	if (iomap->flags & FUSE_IOMAP_F_WANT_IOMAP_END)
-+		return true;
-+
-+	/* Reads and reporting should never affect the filesystem metadata */
-+	if (!(opflags & (IOMAP_WRITE | IOMAP_ZERO)))
-+		return false;
-+
-+	/* Appending writes get an iomap_end call */
-+	if (iomap->flags & IOMAP_F_SIZE_CHANGED)
-+		return true;
-+
-+	/* Short writes get an iomap_end call to clean up delalloc */
-+	return written < count;
-+}
-+
-+static int fuse_iomap_end(struct inode *inode, loff_t pos, loff_t count,
-+			  ssize_t written, unsigned opflags,
-+			  struct iomap *iomap)
-+{
-+	struct fuse_inode *fi = get_fuse_inode(inode);
-+	struct fuse_iomap_end_in inarg = {
-+		.opflags = opflags,
-+		.attr_ino = fi->orig_ino,
-+		.pos = pos,
-+		.count = count,
-+		.written = written,
-+
-+		.map_addr = iomap->addr,
-+		.map_length = iomap->length,
-+		.map_type = iomap->type,
-+		.map_flags = iomap->flags,
-+	};
-+	struct fuse_mount *fm = get_fuse_mount(inode);
-+	FUSE_ARGS(args);
-+	int err;
-+
-+	if (!fuse_want_iomap_end(iomap, opflags, count, written))
-+		return 0;
-+
-+	trace_fuse_iomap_end(inode, &inarg);
-+
-+	args.opcode = FUSE_IOMAP_END;
-+	args.nodeid = get_node_id(inode);
-+	args.in_numargs = 1;
-+	args.in_args[0].size = sizeof(inarg);
-+	args.in_args[0].value = &inarg;
-+	err = fuse_simple_request(fm, &args);
-+
-+	trace_fuse_iomap_end_error(inode, &inarg, err);
-+
++	return fuse_iomap_add_device(fc, &outarg);
++err:
++	fuse_copy_finish(cs);
 +	return err;
 +}
 +
-+const struct iomap_ops fuse_iomap_ops = {
-+	.iomap_begin		= fuse_iomap_begin,
-+	.iomap_end		= fuse_iomap_end,
-+};
+ struct fuse_retrieve_args {
+ 	struct fuse_args_pages ap;
+ 	struct fuse_notify_retrieve_in inarg;
+@@ -2049,6 +2069,9 @@ static int fuse_notify(struct fuse_conn *fc, enum fuse_notify_code code,
+ 	case FUSE_NOTIFY_RESEND:
+ 		return fuse_notify_resend(fc);
+ 
++	case FUSE_NOTIFY_ADD_IOMAP_DEVICE:
++		return fuse_notify_add_iomap_device(fc, size, cs);
++
+ 	default:
+ 		fuse_copy_finish(cs);
+ 		return -EINVAL;
+diff --git a/fs/fuse/file_iomap.c b/fs/fuse/file_iomap.c
+index dfa0c309803113..faefd29a273bf3 100644
+--- a/fs/fuse/file_iomap.c
++++ b/fs/fuse/file_iomap.c
+@@ -142,6 +142,26 @@ static inline int fuse_iomap_validate(const struct fuse_iomap_begin_out *outarg,
+ 	return 0;
+ }
+ 
++static inline struct block_device *fuse_iomap_bdev(struct fuse_mount *fm,
++						   unsigned int idx)
++{
++	struct fuse_conn *fc = fm->fc;
++	struct file *file = NULL;
++
++	spin_lock(&fc->lock);
++	if (idx < fc->iomap_conn.nr_files)
++		file = fc->iomap_conn.files[idx];
++	spin_unlock(&fc->lock);
++
++	if (!file)
++		return NULL;
++
++	if (!S_ISBLK(file_inode(file)->i_mode))
++		return NULL;
++
++	return I_BDEV(file->f_mapping->host);
++}
++
+ static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t count,
+ 			    unsigned opflags, struct iomap *iomap,
+ 			    struct iomap *srcmap)
+@@ -155,6 +175,7 @@ static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t count,
+ 	};
+ 	struct fuse_iomap_begin_out outarg = { };
+ 	struct fuse_mount *fm = get_fuse_mount(inode);
++	struct block_device *read_bdev;
+ 	FUSE_ARGS(args);
+ 	int err;
+ 
+@@ -181,8 +202,18 @@ static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t count,
+ 	if (err)
+ 		return err;
+ 
++	read_bdev = fuse_iomap_bdev(fm, outarg.read_dev);
++	if (!read_bdev)
++		return -ENODEV;
++
+ 	if ((opflags & IOMAP_WRITE) &&
+ 	    outarg.write_type != FUSE_IOMAP_TYPE_PURE_OVERWRITE) {
++		struct block_device *write_bdev =
++			fuse_iomap_bdev(fm, outarg.write_dev);
++
++		if (!write_bdev)
++			return -ENODEV;
++
+ 		/*
+ 		 * For an out of place write, we must supply the write mapping
+ 		 * via @iomap, and the read mapping via @srcmap.
+@@ -192,14 +223,14 @@ static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t count,
+ 		iomap->length = outarg.length;
+ 		iomap->type = outarg.write_type;
+ 		iomap->flags = outarg.write_flags;
+-		iomap->bdev = inode->i_sb->s_bdev;
++		iomap->bdev = write_bdev;
+ 
+ 		srcmap->addr = outarg.read_addr;
+ 		srcmap->offset = outarg.offset;
+ 		srcmap->length = outarg.length;
+ 		srcmap->type = outarg.read_type;
+ 		srcmap->flags = outarg.read_flags;
+-		srcmap->bdev = inode->i_sb->s_bdev;
++		srcmap->bdev = read_bdev;
+ 	} else {
+ 		/*
+ 		 * For everything else (reads, reporting, and pure overwrites),
+@@ -211,7 +242,7 @@ static int fuse_iomap_begin(struct inode *inode, loff_t pos, loff_t count,
+ 		iomap->length = outarg.length;
+ 		iomap->type = outarg.read_type;
+ 		iomap->flags = outarg.read_flags;
+-		iomap->bdev = inode->i_sb->s_bdev;
++		iomap->bdev = read_bdev;
+ 	}
+ 
+ 	return 0;
+@@ -278,3 +309,85 @@ const struct iomap_ops fuse_iomap_ops = {
+ 	.iomap_begin		= fuse_iomap_begin,
+ 	.iomap_end		= fuse_iomap_end,
+ };
++
++void fuse_iomap_conn_put(struct fuse_conn *fc)
++{
++	unsigned int i;
++
++	for (i = 0; i < fc->iomap_conn.nr_files; i++) {
++		struct file *file = fc->iomap_conn.files[i];
++
++		trace_fuse_iomap_remove_dev(fc, i, file);
++
++		fc->iomap_conn.files[i] = NULL;
++		fput(file);
++	}
++
++	kfree(fc->iomap_conn.files);
++	fc->iomap_conn.nr_files = 0;
++}
++
++/* Add a bdev to the fuse connection, returns the index or a negative errno */
++static int __fuse_iomap_add_device(struct fuse_conn *fc, struct file *file)
++{
++	struct file **new_files;
++	int ret;
++
++	if (fc->iomap_conn.nr_files >= PAGE_SIZE / sizeof(unsigned int))
++		return -EMFILE;
++
++	new_files = krealloc_array(fc->iomap_conn.files,
++				   fc->iomap_conn.nr_files + 1,
++				   sizeof(struct file *),
++				   GFP_KERNEL | __GFP_ZERO);
++	if (!new_files)
++		return -ENOMEM;
++
++	spin_lock(&fc->lock);
++	fc->iomap_conn.files = new_files;
++	fc->iomap_conn.files[fc->iomap_conn.nr_files] = get_file(file);
++	ret = fc->iomap_conn.nr_files++;
++	spin_unlock(&fc->lock);
++
++	trace_fuse_iomap_add_dev(fc, ret, file);
++
++	return ret;
++}
++
++void fuse_iomap_init_reply(struct fuse_mount *fm)
++{
++	struct fuse_conn *fc = fm->fc;
++	struct super_block *sb = fm->sb;
++
++	if (sb->s_bdev)
++		__fuse_iomap_add_device(fc, sb->s_bdev_file);
++}
++
++int fuse_iomap_add_device(struct fuse_conn *fc,
++			  const struct fuse_iomap_add_device_out *outarg)
++{
++	struct file *file;
++	int ret;
++
++	if (!fc->iomap)
++		return -EINVAL;
++
++	if (outarg->reserved)
++		return -EINVAL;
++
++	CLASS(fd, somefd)(outarg->fd);
++	if (fd_empty(somefd))
++		return -EBADF;
++	file = fd_file(somefd);
++
++	if (!S_ISBLK(file_inode(file)->i_mode))
++		return -ENODEV;
++
++	down_read(&fc->killsb);
++	ret = __fuse_iomap_add_device(fc, file);
++	up_read(&fc->killsb);
++	if (ret < 0)
++		return ret;
++
++	return put_user(ret, outarg->map_dev);
++}
 diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-index fd48e8d37f2edc..88730d26c9b5e2 100644
+index 88730d26c9b5e2..84b7cd5ffe843b 100644
 --- a/fs/fuse/inode.c
 +++ b/fs/fuse/inode.c
-@@ -1438,6 +1438,9 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+@@ -1010,6 +1010,8 @@ void fuse_conn_put(struct fuse_conn *fc)
+ 		struct fuse_iqueue *fiq = &fc->iq;
+ 		struct fuse_sync_bucket *bucket;
  
- 			if (flags & FUSE_REQUEST_TIMEOUT)
- 				timeout = arg->request_timeout;
++		if (fc->iomap)
++			fuse_iomap_conn_put(fc);
+ 		if (IS_ENABLED(CONFIG_FUSE_DAX))
+ 			fuse_dax_conn_free(fc);
+ 		if (fc->timeout.req_timeout)
+@@ -1449,6 +1451,9 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 
+ 		init_server_timeout(fc, timeout);
+ 
++		if (fc->iomap)
++			fuse_iomap_init_reply(fm);
 +
-+			if ((flags & FUSE_IOMAP) && fuse_iomap_enabled())
-+				fc->iomap = 1;
- 		} else {
- 			ra_pages = fc->max_read / PAGE_SIZE;
- 			fc->no_lock = 1;
-@@ -1506,6 +1509,8 @@ void fuse_send_init(struct fuse_mount *fm)
- 	 */
- 	if (fuse_uring_enabled())
- 		flags |= FUSE_OVER_IO_URING;
-+	if (fuse_iomap_enabled())
-+		flags |= FUSE_IOMAP;
- 
- 	ia->in.flags = flags;
- 	ia->in.flags2 = flags >> 32;
+ 		fm->sb->s_bdi->ra_pages =
+ 				min(fm->sb->s_bdi->ra_pages, ra_pages);
+ 		fc->minor = arg->minor;
+@@ -1886,6 +1891,10 @@ int fuse_fill_super_common(struct super_block *sb, struct fuse_fs_context *ctx)
+  err_free_dax:
+ 	if (IS_ENABLED(CONFIG_FUSE_DAX))
+ 		fuse_dax_conn_free(fc);
++	/*
++	 * No need to call fuse_iomap_conn_put here because we don't add
++	 * devices until the init reply.
++	 */
+  err:
+ 	return err;
+ }
 
 
