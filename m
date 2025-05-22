@@ -1,178 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-49679-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49680-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF95AC0D7D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 16:02:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 799ABAC0E1F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 16:31:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBFA63A3502
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 14:02:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3174E16DC1A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 14:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94C917A30A;
-	Thu, 22 May 2025 14:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940C984D34;
+	Thu, 22 May 2025 14:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="GbDFzeqM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SHVXjK92"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="ntw5I5/f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b4-smtp.messagingengine.com (fout-b4-smtp.messagingengine.com [202.12.124.147])
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDBC12E7E;
-	Thu, 22 May 2025 14:02:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5426418D;
+	Thu, 22 May 2025 14:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747922550; cv=none; b=k8/z/Xik3Xqy+BHxB8PI2OQ0fHCARBn1eAjEjvHn9TSvWpJ1FS6qsLs+chhBKKP0K5mu6PsrJAYx6zGdt2f7/wEYTJjuJgtIZqRSLuvV0Zhq//t5waukM4HOnYyewaeXPiOTWFeVdecFslwGm8TKSLr1+C/S8WljymOwkbm9v4Y=
+	t=1747924262; cv=none; b=Nj+hlpJrgrU6WUVe6bIAnZFDSsaJM6twsd9khOQLe2DAPgoI14ca7vZAXoy3ZJfWHZB8pD/BDd0e9Sm+g83HVUAxro/g74yZIdMJW2CIxuChH0r5GtyZtcMuTmANnANylJ7nP5BDwGuK9spZJ7MAQwW3gqa5FVIJHjQc8wvkCY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747922550; c=relaxed/simple;
-	bh=VKDEPzwby3mBDQ3BsLrh1Y11pUMU7WCO46ezVRwnuYI=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=cIdtZniLsYsESY662xzX0QDzpGPKQrOgztYQ63TvGXt1gOd3CSysvNIt7YX/Af8Jx+ImlugOY5CTXlCcvSQ4bDM5BVdeXoDAdwoP31wt/iRev3qwuRBgT2xCWoeTp7ab0MJGHtWHkxm/8m8HNxcipG3qcdOQ/mjdbXvjnKtmUeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=GbDFzeqM; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SHVXjK92; arc=none smtp.client-ip=202.12.124.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 90C9A1140161;
-	Thu, 22 May 2025 10:02:26 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-05.internal (MEProxy); Thu, 22 May 2025 10:02:26 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1747922546;
-	 x=1748008946; bh=LfW+1ywcWa9OhtIkbg/ys95rDhhPMEoOa3R2KQwbOuA=; b=
-	GbDFzeqM+YW0vnFa5HSFfMWEoD4LZrTUjeEP2fQ1+8y3h+UcDI2vPDWvl8/Gm2/A
-	5FONauhwL/y71YlOvo9rqMB120rZRH1NlXy3lrRoQuw3nvI+/2zCRy4i4KSzmG9G
-	W2HZ/pRk1FBKzUVdPxwLBpAS4rxeHGJInO+AHITHPswqnQNOJXux0cLYylH4lZpp
-	TnH6vODOWe+8enZ3cQvphei6pverOgeZBuFz2JOh7+6q7htWUirh3e8VtoitF/Rf
-	OO0i8O6sGzrptB7QeenvRU2z1yEIGPFK4NwKz/a7PhrQkHhkafTE3789S4YOaX/M
-	kj+aEAFyck6M47uCxRvx+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1747922546; x=
-	1748008946; bh=LfW+1ywcWa9OhtIkbg/ys95rDhhPMEoOa3R2KQwbOuA=; b=S
-	HVXjK92PV+H7079UBzPU1fnix++TF+Dzl4KDq9YJ99FU7yMClNDsIFI+y+6DYDt4
-	zxkujlFmTa6TG0/iEL2GWf83cnOcQFkLaBqTeV4e4gJGjnyhJ+oxeXjEMAUMdiMG
-	tPVnp17lZ5Gym4y1EUhazMwwni3YRfWmhB0OaLsEZU+ivbvQRdW5LxzLr7GF4lr5
-	IVsZo3EEFeG0JtnMxvI7feFsjayTc1Dh4Nkj1r4DfyQopWTNyMcreS0rwJwx4iV+
-	+SSlKLVebiFzAFiG3QPns+nQA/bLP3TKf4SPi8CiRisCX7afOer97qXLeDxUrK3u
-	OATPyaKI8b3olkyBW2H3g==
-X-ME-Sender: <xms:cS4vaBVOYY3rEskCqDVh2akO2Ij8iYYyoFE0A71xPvRRUiXGh0TWpA>
-    <xme:cS4vaBk55xcyMDRK6wietN7pGJTQmBXis2-OkX8bjF1ndMmhqicjvcXf_llmel4JC
-    FQ_wPSD8rWTKWs-sPI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdeiudehucdltddurdegfedvrddttd
-    dmucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgf
-    nhhsuhgsshgtrhhisggvpdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttd
-    enucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgj
-    fhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuc
-    eorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedu
-    keetgefggffhjeeggeetfefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuih
-    iivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdp
-    nhgspghrtghpthhtohepuddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehtsh
-    gsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtohepsghrrghu
-    nhgvrheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnuggvrhhsrdhrohigvghllh
-    eslhhinhgrrhhordhorhhgpdhrtghpthhtohepuggrnhdrtggrrhhpvghnthgvrheslhhi
-    nhgrrhhordhorhhgpdhrtghpthhtohepnhgrrhgvshhhrdhkrghmsghojhhusehlihhnrg
-    hrohdrohhrghdprhgtphhtthhopehlkhhfthdqthhrihgrghgvsehlihhsthhsrdhlihhn
-    rghrohdrohhrghdprhgtphhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrdhlih
-    hnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrd
-    hkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:cS4vaNYdLDNra9fF1YVk2NtYD8SJ1t6bgUBTzEjtGVlNr56zMdRcTQ>
-    <xmx:cS4vaEVkwsZ8t8yX62g5nHG1WwBacxmRtaLacRIRxnKHw1Of5GhZYg>
-    <xmx:cS4vaLlzusj6YyeYGNDdDh9g2HLATjq8lUFZ9NUl6bydAGrGXHYaQg>
-    <xmx:cS4vaBcYzphX9IFTuy-UhheITIf5WIuJwYcMXppifPRl5mg-hidQ9g>
-    <xmx:ci4vaOMUgefLcA-xlUGszgK2RG30yfnFE5yyjnaKI8CkkIi_9E4VTbRh>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 2B50D1060063; Thu, 22 May 2025 10:02:25 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1747924262; c=relaxed/simple;
+	bh=C9mANWO2tdGkGj480hOqWKG9tNJZfDQRa/cIhE8aKJ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dTvQCL8nuoqQZdfuiYQPfosCSp8poA6DCj8lO+jZqycvzusOXgkeG1FmVehg2XF0+579oBjIF8UhCLPbEK8n2/LD/EL3LFAEgC4drpVftNwQiEqs9B1cWDaZDNwkJo5X7IQIjXHlNPEoP/inABPUe4vJoFsmIOss513t8q/jDuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=ntw5I5/f; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=+3Mw7r352YWmBhSYbtfbfaCHLhpUHTjWUILN3KGvHyk=; b=ntw5I5/fikOH+2IgfTv5T8QO6+
+	Jr0K/oqnbFt74A5UZD5v39dZcTgk74FrA6c7+WmFkGtrvBBGWExTvyuMTN8mCbyixGHdHcEjGB68L
+	MAhvUPs9pBckRFI98UKsXiBvKZGy7UliSC5O+MXtFerJHXalmnl4WCFHNn9WBvremOddtxujtRQXg
+	Nt2xo/hCrFPnIoR6WRaaxf+6flqJjGqgEu0sEfkPntDKZu88+abnqpklIQBkn0WacrBf7BzeNNXco
+	Bg0sobQjjbWMEOPVcoHXvr6gQSr3QE9+O9/02Nm4MIq5e3+35L8yYaFrWc448Wb4w8OGDYtMEbVKA
+	Cgt/FBuA==;
+Received: from [191.204.192.64] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uI6wf-00Bkgt-4D; Thu, 22 May 2025 16:30:53 +0200
+Message-ID: <35eded72-c2a0-4bec-9b7f-a4e39f20030a@igalia.com>
+Date: Thu, 22 May 2025 11:30:48 -0300
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tc6af0bd36d39ecf6
-Date: Thu, 22 May 2025 16:01:53 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- linux-fsdevel@vger.kernel.org, linux-mips@vger.kernel.org,
- "open list" <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org,
- "Linux Regressions" <regressions@lists.linux.dev>
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>
-Message-Id: <70d46cd3-80f4-4f5e-b0fc-fa2a6f284404@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYsZPSJ55FQ9Le9rLQMVHaHyE5kU66xqiPnz6mmfhvPfbQ@mail.gmail.com>
-References: 
- <CA+G9fYsZPSJ55FQ9Le9rLQMVHaHyE5kU66xqiPnz6mmfhvPfbQ@mail.gmail.com>
-Subject: Re: mips gcc-12 malta_defconfig 'SOCK_COREDUMP' undeclared (first use in this
- function); did you mean 'SOCK_RDM'?
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ovl: Allow mount options to be parsed on remount
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christian Brauner <brauner@kernel.org>, Miklos Szeredi
+ <miklos@szeredi.hu>, linux-unionfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+ linux-fsdevel@vger.kernel.org
+References: <20250521-ovl_ro-v1-1-2350b1493d94@igalia.com>
+ <CAOQ4uxgXP8WrgLvtR6ar+OncP6Fh0JLVO0+K+NtDX1tGa2TVxA@mail.gmail.com>
+ <20250521-blusen-bequem-4857e2ce9155@brauner>
+ <32f30f6d-e995-4f00-a8ec-31100a634a38@igalia.com>
+ <CAOQ4uxg6RCJf6OBzKgaWbOKn3JhtgWhD6t=yOfufHuJ7jwxKmw@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+In-Reply-To: <CAOQ4uxg6RCJf6OBzKgaWbOKn3JhtgWhD6t=yOfufHuJ7jwxKmw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, May 22, 2025, at 15:22, Naresh Kamboju wrote:
+Em 22/05/2025 06:52, Amir Goldstein escreveu:
+> On Thu, May 22, 2025 at 8:20 AM André Almeida <andrealmeid@igalia.com> wrote:
+>>
+>> Hi Christian, Amir,
+>>
+>> Thanks for the feedback :)
+>>
+>> Em 21/05/2025 08:20, Christian Brauner escreveu:
+>>> On Wed, May 21, 2025 at 12:35:57PM +0200, Amir Goldstein wrote:
+>>>> On Wed, May 21, 2025 at 8:45 AM André Almeida <andrealmeid@igalia.com> wrote:
+>>>>>
+>>
+>> [...]
+>>
+>>>>
+>>>> I see the test generic/623 failure - this test needs to be fixed for overlay
+>>>> or not run on overlayfs.
+>>>>
+>>>> I do not see those other 5 failures although before running the test I did:
+>>>> export LIBMOUNT_FORCE_MOUNT2=always
+>>>>
+>>>> Not sure what I am doing differently.
+>>>>
+>>
+>> I have created a smaller reproducer for this, have a look:
+>>
+>>    mkdir -p ovl/lower ovl/upper ovl/merge ovl/work ovl/mnt
+>>    sudo mount -t overlay overlay -o lowerdir=ovl/lower,upperdir=ovl/
+>> upper,workdir=ovl/work ovl/mnt
+>>    sudo mount ovl/mnt -o remount,ro
+>>
+> 
+> Why would you use this command?
+> Why would you want to re-specify the lower/upperdir when remounting ro?
+> And more specifically, fstests does not use this command in the tests
+> that you mention that they fail, so what am I missing?
+> 
 
-> ## Build log
-> net/unix/af_unix.c: In function 'unix_find_bsd':
-> net/unix/af_unix.c:1152:21: error: 'SOCK_COREDUMP' undeclared (first
-> use in this function); did you mean 'SOCK_RDM'?
->  1152 |         if (flags & SOCK_COREDUMP) {
+I've added "set -x" to tests/generic/294 to see exactly which mount 
+parameters were being used and I got this from the output:
 
-SOCK_COREDUMP should be defined outside of ARCH_HAS_SOCKET_TYPES.
-How about reducing the scope of that check like this?
++ _try_scratch_mount -o remount,ro
++ local mount_ret
++ '[' overlay == overlay ']'
++ _overlay_scratch_mount -o remount,ro
++ echo '-o remount,ro'
++ grep -q remount
++ /usr/bin/mount /tmp/dir2/ovl-mnt -o remount,ro
+mount: /tmp/dir2/ovl-mnt: fsconfig() failed: ...
 
-      Arnd
+So, from what I can see, fstests is using this command. Not sure if I 
+did something wrong when setting up fstests.
 
-diff --git a/arch/mips/include/asm/socket.h b/arch/mips/include/asm/socket.h
-index 4724a563c5bf..43a09f0dd3ff 100644
---- a/arch/mips/include/asm/socket.h
-+++ b/arch/mips/include/asm/socket.h
-@@ -36,15 +36,6 @@ enum sock_type {
- 	SOCK_PACKET	= 10,
- };
- 
--#define SOCK_MAX (SOCK_PACKET + 1)
--/* Mask which covers at least up to SOCK_MASK-1.  The
-- *  * remaining bits are used as flags. */
--#define SOCK_TYPE_MASK 0xf
--
--/* Flags for socket, socketpair, paccept */
--#define SOCK_CLOEXEC	O_CLOEXEC
--#define SOCK_NONBLOCK	O_NONBLOCK
--
- #define ARCH_HAS_SOCKET_TYPES 1
- 
- #endif /* _ASM_SOCKET_H */
-diff --git a/include/linux/net.h b/include/linux/net.h
-index 139c85d0f2ea..f60fff91e1df 100644
---- a/include/linux/net.h
-+++ b/include/linux/net.h
-@@ -70,6 +70,7 @@ enum sock_type {
- 	SOCK_DCCP	= 6,
- 	SOCK_PACKET	= 10,
- };
-+#endif /* ARCH_HAS_SOCKET_TYPES */
- 
- #define SOCK_MAX (SOCK_PACKET + 1)
- /* Mask which covers at least up to SOCK_MASK-1.  The
-@@ -83,8 +84,6 @@ enum sock_type {
- #endif
- #define SOCK_COREDUMP	O_NOCTTY
- 
--#endif /* ARCH_HAS_SOCKET_TYPES */
--
- /**
-  * enum sock_shutdown_cmd - Shutdown types
-  * @SHUT_RD: shutdown receptions
-
+>> And this returns:
+>>
+>>    mount: /tmp/ovl/mnt: fsconfig() failed: overlay: No changes allowed in
+>>    reconfigure.
+>>          dmesg(1) may have more information after failed mount system call.
+>>
+>> However, when I use mount like this:
+>>
+>>    sudo mount -t overlay overlay -o remount,ro ovl/mnt
+>>
+>> mount succeeds. Having a look at strace, I found out that the first
+>> mount command tries to set lowerdir to "ovl/lower" again, which will to
+>> return -EINVAL from ovl_parse_param():
+>>
+>>      fspick(3, "", FSPICK_NO_AUTOMOUNT|FSPICK_EMPTY_PATH) = 4
+>>      fsconfig(4, FSCONFIG_SET_STRING, "lowerdir", "/tmp/ovl/lower", 0) =
+>> -1 EINVAL (Invalid argument)
+>>
+>> Now, the second mount command sets just the "ro" flag, which will return
+>> after vfs_parse_sb_flag(), before getting to ovl_parse_param():
+>>
+>>      fspick(3, "", FSPICK_NO_AUTOMOUNT|FSPICK_EMPTY_PATH) = 4
+>>      fsconfig(4, FSCONFIG_SET_FLAG, "ro", NULL, 0) = 0
+>>
+>> After applying my patch and running the first mount command again, we
+>> can set that this flag is set only after setting all the strings:
+>>
+>>      fsconfig(4, FSCONFIG_SET_STRING, "lowerdir", "/tmp/ovl/lower", 0) = 0
+>>      fsconfig(4, FSCONFIG_SET_STRING, "upperdir", "/tmp/ovl/upper", 0) = 0
+>>      fsconfig(4, FSCONFIG_SET_STRING, "workdir", "/tmp/ovl/work", 0) = 0
+>>      fsconfig(4, FSCONFIG_SET_STRING, "uuid", "on", 0) = 0
+>>      fsconfig(4, FSCONFIG_SET_FLAG, "ro", NULL, 0) = 0
+>>
+>> I understood that the patch that I proposed is wrong, and now I wonder
+>> if the kernel needs to be fixed at all, or if the bug is how mount is
+>> using fsconfig() in the first mount command?
+> 
+> Maybe I am not reading your report correctly, but as this commands works:
+> 
+> mount -t overlay overlay -o remount,ro ovl/mnt
+> 
+> and the fstests that call _scratch_remount() work
+> I don't think there is anything to fix and I do not understand
+> what is the complaint.
+> 
+> Thanks,
+> Amir.
 
 
