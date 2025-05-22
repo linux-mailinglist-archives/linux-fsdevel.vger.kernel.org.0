@@ -1,140 +1,146 @@
-Return-Path: <linux-fsdevel+bounces-49654-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49655-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC0E3AC03F1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 07:19:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6828DAC0470
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 08:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03FBA9E0DA1
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 05:19:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5345C1BC070D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 06:16:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA2B178CC8;
-	Thu, 22 May 2025 05:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61915221D87;
+	Thu, 22 May 2025 06:15:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEJUPsxJ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3WuAeqQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BD5C2E0;
-	Thu, 22 May 2025 05:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47788221728;
+	Thu, 22 May 2025 06:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747891191; cv=none; b=tYIrB58Ubw+F5ZaBZMMJ9iY88SUD7uvag+63rmLW0LJXbHJC3emMogVUIIMkvqLepK9VCEax9F4Ho4mywmt/j3CIIjN6vPe2ZgZwAMM82Ygj4a1XTEoREURLiFTHmMdK3OzIFSrhTHYt5R+t1g0NtqzdzDFn/WEX7TmHtnjCeXc=
+	t=1747894552; cv=none; b=Ss1kwyXw1K3cHMmRrOVhFQMOOpMNvq9z5Ot5fBVZwjAVwE9pUJg6ves2e1ekFbzs6Pw6F8Vsi6dWqia2MJRIz/eaLChzPMCKnqyNlgSyZFCBTOgpcJ6H6csDWmCP24YrQvtZO0z8slCEVo0lOB9lhso2aDx/nzd51R2NkrwZvc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747891191; c=relaxed/simple;
-	bh=VijUeTiGpFtN9iggaj1a+yPdew7hU8P0ucSP9iPy/iQ=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=NGOom9EeWyZ2z/79f77Ol6GWQtnDmp4Xi4GYP26NR/tHJeCXKRUiv0CekkN5GiFFNT34ZXz2oOQoAKANE9DAZTcrapVk2nOSP6XPYVNWEUcKcanwRaaX2JnNNCkHJV7CEGrdGRtfulHnDWWodvz9MMD0EddsIEIsiRpc2BmtRpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WEJUPsxJ; arc=none smtp.client-ip=209.85.215.181
+	s=arc-20240116; t=1747894552; c=relaxed/simple;
+	bh=iqpb1rYrNkcWfeBryIxnBxG6EOtFDvLTGg/V1cSIVgg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QP9iYMPEvvQ+ngOoHPhWZW90wFgA2lVcb3lxVxB2264U2FAx3oSCB/9nfGyAGLku+nFcxRUvYK1L0dxQB/f/0JFQhh+aMqXb+KD8Xkh721iRe/2i2J10p1PEbel1aYsLqMaEWrnk7g0vERHkMreH55U3TgsvLYhER6dhZ1NYVkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3WuAeqQ; arc=none smtp.client-ip=209.85.219.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-b26f5eb16a5so4953797a12.0;
-        Wed, 21 May 2025 22:19:49 -0700 (PDT)
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6f8b27c2d7bso79490536d6.1;
+        Wed, 21 May 2025 23:15:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747891189; x=1748495989; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1igg20bqpstphWp0rLMP60quR69S5C8ddpAzpUJgpds=;
-        b=WEJUPsxJjO4+kmV/SUQl45x/OqkvhnlrXftlr2+Pz4vRAkqD+KYVefmcifjenRAv5E
-         zNq4j4/mgQUHaA1PzFfKIo2hH3EKTbx15CvuxNWUcAoDuoS0z/ti3KmlhMEIbXMDrUcq
-         hB6Uk4tqL9BCIbKNAhh7ZJLAI/4UtNE/23MZWsV0jjeilpoMYcc6bOFSJwKPEdWXjxej
-         xGJqPkq7ak30hK9F4r11jECUASYG96zNJzEs2Qo0jdF6W47NvP1tOKhLJvLXTLf/tFLn
-         LhIYdAitJCHpXr5elKtVblHZ2iGIP2vH3B9IkUZ+kH+CrzfBB62iEEha9YqJYco2+Rz2
-         v4Xg==
+        d=gmail.com; s=20230601; t=1747894550; x=1748499350; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZXdrQudC82M+RXWv3KT75ifthrQS/0PqWGPX1TzmJn0=;
+        b=G3WuAeqQZ90FGfft9iSpmrwzie6mT8mrU2ygiVXrXmld+nA1LK8B0tGz1rF5sv/oG8
+         14hxrN/OGbUlMsNLMBoReTATFn/093/hunUT1CWpCOS9fPTCp2jcr32xUcI0SoC5gqWh
+         effvsmpkfW+Eo+EVpMiiuNJVNnXfYnYrDYACQs3D6hUMkAJ+8t6dMhuqxe4MqPDsIC1Z
+         aEXMrWrkf02ysfMwMJ+9T5uAJ7HzRa0rwzhnfejWfSZBrEzUIVu/n+rG8HyXyEe+ehav
+         0LmlHu6bhm7XMlFqBEih1pprPmixIwXYxWkltDhrxB3JjLV7SUBUBeTLNW7ewzyNqoqA
+         DjWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747891189; x=1748495989;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1igg20bqpstphWp0rLMP60quR69S5C8ddpAzpUJgpds=;
-        b=SGzASdZ3pSviXVOwGDrB/Zzx+o9lZAXD1xwyfyJMBUThFEx1denxnMQEOeWiQsuH4w
-         nioF+LWkonbZYhhVxacF0RTXNYdH5lrfco5Bvee5WqtfI4/dizy+r6CTd0Gq2X6VKNa6
-         QF0EM4ZJjr2aZpX1QCYmIQ0SWYL9eoW67pY4zl1uR6nuRn1ysn7yQs9ddiPfCJ6jRFeH
-         k1kQRabrJ2kzS/l3/D4A5MPD57GGgEeWD0lXMUXB0NF6NNi2Mpa0JR2jmfxq3bjgxH12
-         llfc9LPyOqWTUn6hcWxP785/Cg1ozB1PMWdv1nZQDylWhDAw514jlX4u9kraniHzZlvW
-         79sA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxkElpl4IH819ExDoKn4EyCPocsLeWlnvdeP1hhAe67s4NpP0eMd748vpVQjGKbaWyHAQovybpQEuwgKIm@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOzOgR+WK2A8gFa+nZ31RXjQrNbV+SbTy4hAPXByJ7XtiVwMn4
-	W8OL5vSakHkNFbHg9tdRkZN+KVMo26zt0i8e4jiuxkbu6PIgUv7HHn1nd5WN7g==
-X-Gm-Gg: ASbGncu4SoomL0dqtLfKnmLGx6r5gEZ4p4oK2K9tz0VNBbj1/Ydc4th0aOeFQSI1ZwI
-	k/1iu6mi8AVDZ4QV4A7up9SK8hwJghu8K07k9eVEiRCstGuzxM0uWT3KCTDUQ9S5fELfPBUs2JZ
-	ezq7cClJBjNUYtBEJrtLbqwOXvoi+ij8iDjxeSaWeO8aCczycYXcHabUSr4B5b96KkTnZEhl3SD
-	3foG+vBbo/1/HKbwF/BwJ7rA28MX9UeoM3D+bUSMlGTQXbNecK8rvrRapvOqcU4GqrgM2ZByC9x
-	W3DWPTeBIOWw2+d8/C2CztvWsG3dXa4NPjsL0ORKZp5V
-X-Google-Smtp-Source: AGHT+IFsBrGa+8wtjYy9K1UTBiQKVe24KYcBi8CjpsVMEJzw62zi9rtNd8dgAj4Jozseqk0Raf3oEA==
-X-Received: by 2002:a17:902:f707:b0:232:11dc:d95f with SMTP id d9443c01a7336-23211dce734mr239418595ad.4.1747891188905;
-        Wed, 21 May 2025 22:19:48 -0700 (PDT)
-Received: from dw-tp ([171.76.84.129])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-231d4af1b75sm101425105ad.85.2025.05.21.22.19.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 May 2025 22:19:48 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: linux-block@vger.kernel.org
-Cc: Jens Axboe <axboe@kernel.dk>, djwong@kernel.org, ojaswin@linux.ibm.com, linux-fsdevel@vger.kernel.org, John Garry <john.g.garry@oracle.com>
-Subject: Re: [RFC] traceevent/block: Add REQ_ATOMIC flag to block trace events
-In-Reply-To: <87tt752jgd.fsf@gmail.com>
-Date: Thu, 22 May 2025 10:45:26 +0530
-Message-ID: <87msb52pld.fsf@gmail.com>
-References: <1cbcee1a6a39abb41768a6b1c69ec8751ed0215a.1743656654.git.ritesh.list@gmail.com> <cad0a39d-32d2-4e66-b12b-2969026ece37@oracle.com> <87tt752jgd.fsf@gmail.com>
+        d=1e100.net; s=20230601; t=1747894550; x=1748499350;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZXdrQudC82M+RXWv3KT75ifthrQS/0PqWGPX1TzmJn0=;
+        b=D/rHNAxO3iTFXzZG1LKFtCionYh6/kqbefSWdfE82CtPAFszs1rIV6rAXKquYNO5lb
+         WWHjDlUwd3qasYBIbqlQk/7wjLXeA8hMX/vYd2oGg6he6MBZ+L0swWKKg+xl/KaauNOw
+         dlncJ4bUuZ67ijnT+RO0AyzK3UhyZodc+KMitXFQ4by9AnLK5P0AH1YTk9jIy+T8ocJo
+         lT7jL6Dj0CXUm5aR2W7+FijLtBU8f+jUgSZC+A7VKP8AeNIkjJJqqCYWDvwwCjX4/P4K
+         jeEH5n/RxbgGabzwTZhBoc8JjBb7N7a0F+Rk3T7rvyOrZYRQK/4+9hVi+mqIQk2DwAEQ
+         px8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPL/wr5QJ7v4oF0S4LlKhZTxeXV9eeOyoWOG8sC5oYNJMRLGmRetAfxHoy9Y86fv1sjjhHiUS8op6Cx9uu78MK/96l@vger.kernel.org, AJvYcCUU8QqIVq78Aa2GFA57KgSOoEjLN9mLENRQjcwUycOuCareeLB6fK60rKo3FbUGgFSa+ALkjKDHMipjvnNYfxP5hA==@vger.kernel.org, AJvYcCXRcMozYEy4eOMs+MfAS+4jBAT3kXVgRDUOf1owkYOpAkshMDYjGbeKNiOJxWHn0CIC4B0=@vger.kernel.org, AJvYcCXY5Utz4t455yh3ZQz3oWmJUB6TUxCpF6yM50YNZ/DxfQ9ixz2KEC5zp8zHJvlX84wQxinO16g8WfO0qgOe@vger.kernel.org, AJvYcCXfyNGZpSMmx1ko7MS2QHtgYXy1X/21qq4o9bpjyzfPX1F3KydDfQETaL87cTm2x3zmb6VLF94IPy3otxIzsg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZxhYQLbNO9kazkUPNCgJymDV5hJWxDN8CQsh8V8BgmmeoyVJd
+	HuDIprf44bsPJqfnVvc+4W2Ta+edH4L7RINxby9vGzZLF+efoJAYR+AXsSNe/M0ZLogacszSfeE
+	Wz2m2UX7i212MnKnJw8PV3w+zJkVbha4=
+X-Gm-Gg: ASbGncs1gb4wm1gLCpoSYLLRxa/pyHSoBBXxFSbWt96+NdrSYdWGz1TqTnIGTr1XZJT
+	UENHH1s4t5uGjdJa9MDvf7CpoJJWQEeLm3Yorf8jbMYWJfxAAK6l9C5WfTIpUsffWx7ZoNR8MCa
+	j7DxQJIHt0RKzMWZVCOy+bYcnMKiSmqQNT8g==
+X-Google-Smtp-Source: AGHT+IFKOC9mEYSOYCwZB+hNIAN37e7Pn0LuF6NZH6cBUxj4agI/PryyRfq8gu07V1D2LotWOWiLP5xa0GVKeJ6VviA=
+X-Received: by 2002:ad4:5ec8:0:b0:6f5:4f18:81d9 with SMTP id
+ 6a1803df08f44-6f8b2d41e47mr406849736d6.23.1747894550006; Wed, 21 May 2025
+ 23:15:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20250521062337.53262-1-bhupesh@igalia.com> <20250521062337.53262-3-bhupesh@igalia.com>
+In-Reply-To: <20250521062337.53262-3-bhupesh@igalia.com>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Thu, 22 May 2025 14:15:13 +0800
+X-Gm-Features: AX0GCFvAMu94jah4jA_vOqZJoCDzlxV3FYoqVXzO2soNYAKD2LF9n-3UXNqK9FI
+Message-ID: <CALOAHbCm_ggnxAtHMx07MUgnW01RiymD6MpR7coJOiokR4v52A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/3] treewide: Switch memcpy() users of 'task->comm' to
+ a more safer implementation
+To: Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com, pmladek@suse.com, 
+	rostedt@goodmis.org, mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com, 
+	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com, 
+	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org, 
+	david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org, 
+	ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com, 
+	juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de, 
+	vschneid@redhat.com, linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ritesh Harjani (IBM) <ritesh.list@gmail.com> writes:
+On Wed, May 21, 2025 at 2:24=E2=80=AFPM Bhupesh <bhupesh@igalia.com> wrote:
+>
+> As Linus mentioned in [1], currently we have several memcpy() use-cases
+> which use 'current->comm' to copy the task name over to local copies.
+> For an example:
+>
+>  ...
+>  char comm[TASK_COMM_LEN];
+>  memcpy(comm, current->comm, TASK_COMM_LEN);
+>  ...
+>
+> These should be modified so that we can later implement approaches
+> to handle the task->comm's 16-byte length limitation (TASK_COMM_LEN)
+> is a more modular way (follow-up patches do the same):
+>
+>  ...
+>  char comm[TASK_COMM_LEN];
+>  memcpy(comm, current->comm, TASK_COMM_LEN);
+>  comm[TASK_COMM_LEN - 1] =3D '\0';
+>  ...
+>
+> The relevant 'memcpy()' users were identified using the following search
+> pattern:
+>  $ git grep 'memcpy.*->comm\>'
 
-> John Garry <john.g.garry@oracle.com> writes:
->
->> On 03/04/2025 06:28, Ritesh Harjani (IBM) wrote:
->>> Filesystems like XFS can implement atomic write I/O using either REQ_ATOMIC
->>> flag set in the bio or via CoW operation. It will be useful if we have a
->>> flag in trace events to distinguish between the two. 
->>
->> I suppose that this could be useful. So far I test with block driver 
->> traces, i.e. NVMe or SCSI internal traces, just to ensure that we see 
->> the requests sent as expected
->>
->
-> Right.
->
->> This patch adds
->>> char 'a' to rwbs field of the trace events if REQ_ATOMIC flag is set in
->>> the bio.
->>
->> All others use uppercase characters, so I suggest that you continue to 
->> use that.
->
-> It will be good to know on whether only uppercase characters are allowed
-> or we are good with smallcase characters too? 
->
->> Since 'A' is already used, how about 'U' for untorn? Or 'T' 
->> for aTOMic :)
->>
->
-> If 'a' is not allowed, then we can change it to 'T' maybe.
->
+Hello Bhupesh,
 
-Gentle ping on this.. Any comments/feedback?
+Several BPF programs currently read task->comm directly, as seen in:
 
-It will be good to have these trace events with an identifier to
-differentiate between reqs/bios submitted with REQ_ATOMIC flag.
+// tools/testing/selftests/bpf/progs/test_skb_helpers.c [0]
+bpf_probe_read_kernel_str(&comm, sizeof(comm), &task->comm);
 
--ritesh
+This approach may cause issues after the follow-up patch.
+I believe we should replace it with the safer bpf_get_current_comm()
+or explicitly null-terminate it with "comm[sizeof(comm) - 1] =3D '\0'".
+Out-of-tree BPF programs like BCC[1] or bpftrace[2] relying on direct
+task->comm access may also break and require updates.
 
-> -ritesh
->
->
->>> 
->>> <W/ REQ_ATOMIC>
->>> =================
->>> xfs_io-1107    [002] .....   406.206441: block_rq_issue: 8,48 WSa 16384 () 768 + 32 none,0,0 [xfs_io]
->>> <idle>-0       [002] ..s1.   406.209918: block_rq_complete: 8,48 WSa () 768 + 32 none,0,0 [0]
->>> 
->>> <W/O REQ_ATOMIC>
->>> ===============
->>> xfs_io-1108    [002] .....   411.212317: block_rq_issue: 8,48 WS 16384 () 1024 + 32 none,0,0 [xfs_io]
->>> <idle>-0       [002] ..s1.   411.215842: block_rq_complete: 8,48 WS () 1024 + 32 none,0,0 [0]
->>> 
+[0]. https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/=
+tools/testing/selftests/bpf/progs/test_skb_helpers.c#n26
+[1]. https://github.com/iovisor/bcc
+[2]. https://github.com/bpftrace/bpftrace
+
+--=20
+Regards
+Yafang
 
