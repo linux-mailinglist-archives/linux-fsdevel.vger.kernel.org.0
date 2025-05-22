@@ -1,145 +1,113 @@
-Return-Path: <linux-fsdevel+bounces-49690-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA05BAC11E8
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 19:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A2D7AC13B6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 20:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C34B3B669C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 17:11:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468C23AB123
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 18:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAEEB187876;
-	Thu, 22 May 2025 17:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761B71DF728;
+	Thu, 22 May 2025 18:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MgA+57qz"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StS0NVZc"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B081754B;
-	Thu, 22 May 2025 17:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5831DE8B3;
+	Thu, 22 May 2025 18:53:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747933918; cv=none; b=X55WKXRbkEdoOrfZg1SDpNW4/b0/pbLHgSqH/0qG69s21q6EEB5O1ATO4zflJkOFZ/X3aIhmnl4mMreW+7CDvRwEi/np44KeQijYYlZ7AcTnwE/YSsOGvbCD0wLvD/AWn4MCZBE3ZURKkrOEoJXwYVLEtn7LFI2MOJIbt1zc6VU=
+	t=1747940000; cv=none; b=jhJVhxAU9hPAicCw9EVHYQmTT7/NDCDr6/8ud+R8/MfJaiiW8iXUZFbg6wDRvRvZCqKo3/7R2NzoF3ebRNzVZHLBxKUYYvSo92c07lipGLMhn4IL3UquwDmMr5MB34VOonfIeGT+ReGhuEp8xhO8tM0b14pjXPFDHM2FcV3VOjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747933918; c=relaxed/simple;
-	bh=jGYIfNVGbFzKODRChUtAuUMDzI3h+YZn1w7YkGo2W14=;
+	s=arc-20240116; t=1747940000; c=relaxed/simple;
+	bh=KJbnwLO9PnKS+o/OspihaxX0IQGxbr3s73qXik1soWQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OEWMxhijRPFWQHHR/cyKPaxo3sQw6pPkknJ+drUGSxQ18y5MAVbOTR/r0swCVCpKKQHW0ZYqnzMFSUi8rhlQteSTWMi+r/0t/+Mw97uBE3DIVoa8hxthiscE6MVBleLkEWOdim3BtYWVnTXSP8GMo/y7JWnhRm7ef9czF6nbAlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MgA+57qz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC78C4CEE4;
-	Thu, 22 May 2025 17:11:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747933917;
-	bh=jGYIfNVGbFzKODRChUtAuUMDzI3h+YZn1w7YkGo2W14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MgA+57qz5NxaIMgCStA55rr0GxsGIcCNy/6s2uJJ64FvOxp3Ob6SOd58/DuDZnzcA
-	 gLwsxTJSlsy/0tE19LFxtmmGfXXL0sls3KV4ZOQWopzpRdfECe9Eax50AotWJdlhiE
-	 MGy6k4cYZBm3DsgZgv4FTo2HXhN1Y7yYjo7ftulgcb5X+N9i1PoqNP0SK99UJHRgqM
-	 7cgA0cq09YxfWZ1NhvXVjaWVqFaXBsEF8vZd1RwMl8+ur3U9VBRI7mCPmIxbn52HnP
-	 B6VrF+ZmnjNjVhCikdmYd49vkETxgcy9ZJfQfc8diAB2chpodU7OSEeYXO7VLHqujg
-	 eisXyTjv7I1Ww==
-Date: Thu, 22 May 2025 10:11:56 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
-	joannelkoong@gmail.com, linux-xfs@vger.kernel.org,
-	bernd@bsbernd.com, John@groves.net
-Subject: Re: [PATCH 04/11] fuse: add a notification to add new iomap devices
-Message-ID: <20250522171156.GI9730@frogsfrogsfrogs>
-References: <174787195502.1483178.17485675069927796174.stgit@frogsfrogsfrogs>
- <174787195651.1483178.3420885441625089259.stgit@frogsfrogsfrogs>
- <CAOQ4uxiZTTEOs4HYD0vGi3XtihyDiQbDFXBCuGKoJyFPQv_+Lw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JkSPgIdOL+SGF7As6xRmSmLPzcJJA60CND5KSzH8sXGplerw2CqnoxSie3PYg7fTcZ9qW2MIfyC1dMBnzRiklvz244U9pl+xGL+DfNSVYz9AR0KhMkaAhE4l9XKw7fuXheTQRQCT0bf72cCpph+gdfdecTd63ZO5FZFzgazULns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StS0NVZc; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso7183536b3a.2;
+        Thu, 22 May 2025 11:53:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1747939997; x=1748544797; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XBANE17upGJtSfo2ziwlQRYaEyGo/7aP/0TWDN69oCo=;
+        b=StS0NVZcoeRM6d84IDFgACUGwgZYMH8jwI7DM352jnDvLLFNbV9Xr0/9G1CZ3QpRGt
+         ixBSuET1mZklQGVsxVHXkW8eRmdOxsNOG/MciYmALkKwb66cQAbvER9jt82Q3fRzj0po
+         /GIK5lBQ5ErU8bRXT2cOhiE040kRHp2+Fb2qMKtMsSFEpBTmFAt4AS3pxQbzNEcP6mNo
+         XMOZvqLGn4c/n+TwXkwDOtYr14T4OsUUXt/4pmVk34qJxfH1wiZmDEYaYLBt8AIq1UFA
+         RmT2uh1ixo8+JUtrXv8zNfxDIBGRFEXjJAODeD3hqIL1IiGhWe3tfLPSR0KzvsAf6FHd
+         ItMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747939997; x=1748544797;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XBANE17upGJtSfo2ziwlQRYaEyGo/7aP/0TWDN69oCo=;
+        b=QO/jQdTPjyoJESeG2FKIvrDYoT/FD9DSYm9x0LU959HXIetUdE0TMk/77hwX/kVIbR
+         i6bWMS95VyIjkXEoQ40+mriYpVvIUMYVt7KDwPPI3u7Zy1PB4HDkRCFXJNetZR7dcjVn
+         6/0F1NAvs/UAibwpe7NmFyke7rmY3xDlx550zUtgc3xPCVXjBXPgKqMqnryAsRaO7r1T
+         paGHZy3+Vym28dWGUBVkKTSKoI0HPGcAlNAt8/1JxNEriWTHPNDfsFxr6j12TGtRbHYs
+         C2fQfwZyzHVfzQHoX/ElORr32e8Hy/B4HUoo59Ju2bFY8jWcKhx8+6drUVRe/Oaz71HN
+         Y+TQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLkQpzDudcYPBZvR/HX7KoaPi6KWmVlgKef8xIa4PVv59V/J8cnQagJPlh5RlmLgY0Of21JsmnINbv95KQ@vger.kernel.org, AJvYcCX5rRaznROk5kLpt3dwT1lTRWIuoFJ6sxyWJDX6jzDM5wdWGeDlT01A46vkNP2LRfTge4fNfSwKq/7wlBgv@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSofdaK1cfA23vh889iEkjC6FroS/oJWTfZTd/6bKWUBrVWSUB
+	/UmOhahNH+5iF+pBx6R/VNqdXT5p6es2sv31BpMAyrSYuTh9SinVvaxz
+X-Gm-Gg: ASbGncto2h3gBg2Woa0P0uBgM2dv8WI70yEOuI656tQNvpdjEjhej9sC48ZlkrxMrFo
+	lPDCrzdpX/2OSizJkwvP7MUEf4MfY1FkUISQtVf8Ot6L4hsFbV00+8jWiQn1dNCDcJu8sBhX5c1
+	3PGaaHnzRNDKIiXS0xx5vgodBOAA15mgDY4ksPCi+ttG5Cz6AlFzo1/y74FOxr7UvsCSxdER1NA
+	zUv06o9fkaV1jbv4OyzQxuCSylBrR1w/zeSFx/AZqWWKOh9l71Pwa4RVBzU3K+T4kjEqBoUaVEb
+	7UGzI21OffK8AcoxJlj+vJMlr6bKLrjGbuF3UeGNvX4ubTBwO4iPfZFt1mURVETS
+X-Google-Smtp-Source: AGHT+IH4FHr6TKK37LSw/N7pyVC03rjqy4ufLuDp4wUmG7w6e/+v49oWOzOCGRwFlYTZKsMryyJI9w==
+X-Received: by 2002:a05:6a00:3985:b0:742:a334:466a with SMTP id d2e1a72fcca58-742a97eb677mr36355117b3a.12.1747939997420;
+        Thu, 22 May 2025 11:53:17 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6e609sm11622477a12.19.2025.05.22.11.53.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 11:53:16 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 22 May 2025 11:53:15 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Kees Cook <kees@kernel.org>
+Cc: Joel Granados <joel.granados@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, Wen Yang <wen.yang@linux.dev>
+Subject: Re: [PATCH] kernel/sysctl-test: Unregister sysctl table after test
+ completion
+Message-ID: <ce50a353-e501-4a22-9742-188edfa2a7b2@roeck-us.net>
+References: <20250522013211.3341273-1-linux@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxiZTTEOs4HYD0vGi3XtihyDiQbDFXBCuGKoJyFPQv_+Lw@mail.gmail.com>
+In-Reply-To: <20250522013211.3341273-1-linux@roeck-us.net>
 
-On Thu, May 22, 2025 at 06:46:14PM +0200, Amir Goldstein wrote:
-> On Thu, May 22, 2025 at 2:03 AM Darrick J. Wong <djwong@kernel.org> wrote:
-> >
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >
-> > Add a new notification so that fuse servers can add extra block devices
-> > to use with iomap.
-> >
-> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-
-<snip>
-
-> > +int fuse_iomap_add_device(struct fuse_conn *fc,
-> > +                         const struct fuse_iomap_add_device_out *outarg)
-> > +{
-> > +       struct file *file;
-> > +       int ret;
-> > +
-> > +       if (!fc->iomap)
-> > +               return -EINVAL;
-> > +
-> > +       if (outarg->reserved)
-> > +               return -EINVAL;
-> > +
-> > +       CLASS(fd, somefd)(outarg->fd);
-> > +       if (fd_empty(somefd))
-> > +               return -EBADF;
-> > +       file = fd_file(somefd);
-> > +
-> > +       if (!S_ISBLK(file_inode(file)->i_mode))
-> > +               return -ENODEV;
-> > +
-> > +       down_read(&fc->killsb);
-> > +       ret = __fuse_iomap_add_device(fc, file);
-> > +       up_read(&fc->killsb);
-> > +       if (ret < 0)
-> > +               return ret;
-> > +
-> > +       return put_user(ret, outarg->map_dev);
-> > +}
+On Wed, May 21, 2025 at 06:32:11PM -0700, Guenter Roeck wrote:
+> One of the sysctl tests registers a valid sysctl table. This operation
+> is expected to succeed. However, it does not unregister the table after
+> executing the test. If the code is built as module and the module is
+> unloaded after the test, the next operation trying to access the table
+> (such as 'sysctl -a') will trigger a crash.
 > 
-> This very much reminds of FUSE_DEV_IOC_BACKING_OPEN
-> that gives kernel an fd to remember for later file operations.
+> Unregister the registered table after test completiion to solve the
+> problem.
 > 
-> FUSE_DEV_IOC_BACKING_OPEN was implemented as an ioctl
-> because of security concerns of passing an fd to the kernel via write().
-> 
-> Speaking of security concerns, we need to consider if this requires some
-> privileges to allow setting up direct access to blockdev.
 
-Yeah, I was assuming that if the fuse server can open the bdev, then
-that's enough.  But I suppose I at least need to check that it's opened
-in write mode too.
+Never mind, I just learned that a very similar patch has been submitted
+last December or so but was rejected, and that the acceptable (?) fix seems
+to be stalled.
 
-> But also, apart from the fact that those are block device fds,
-> what does iomap_conn.files[] differ from fc->backing_files_map?
+Sorry for the noise.
 
-Oh, so that's what that does!  Yes, I'd rather pile on to that than
-introduce more ABI. :)
-
-> Miklos had envisioned this (backing blockdev) use case as one of the
-> private cases of fuse passthrough.
-> 
-> Instead of identity mapping to backing file created at open time
-> it's extent mapping to backing blockdev created at data access time.
-> 
-> I am not saying that you need to reuse anything from fuse passthrough
-> code, because the use cases probably do not overlap, but hopefully,
-> you can avoid falling into the same pits that we have already managed to avoid.
-
-<nod> The one downside is that fsiomap requires the file to point at
-either a block device or (in theory) a dax device, so we'd have to check
-that on every access.  But aside from that I think I could reuse this
-piece.  Thanks for bringing that to my attention! :)
-
---D
-
-> Thanks,
-> Amir.
+Guenter
 
