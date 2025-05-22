@@ -1,113 +1,139 @@
-Return-Path: <linux-fsdevel+bounces-49691-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49692-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2D7AC13B6
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 20:53:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB1FAC14F1
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 21:45:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 468C23AB123
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 18:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E25D8A25541
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 19:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 761B71DF728;
-	Thu, 22 May 2025 18:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946602BF3C9;
+	Thu, 22 May 2025 19:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StS0NVZc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="rPeK2Anl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5831DE8B3;
-	Thu, 22 May 2025 18:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067FD1519B8;
+	Thu, 22 May 2025 19:45:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747940000; cv=none; b=jhJVhxAU9hPAicCw9EVHYQmTT7/NDCDr6/8ud+R8/MfJaiiW8iXUZFbg6wDRvRvZCqKo3/7R2NzoF3ebRNzVZHLBxKUYYvSo92c07lipGLMhn4IL3UquwDmMr5MB34VOonfIeGT+ReGhuEp8xhO8tM0b14pjXPFDHM2FcV3VOjs=
+	t=1747943112; cv=none; b=T0XWX8Rns7pcgopxj0rdkrIIwjhWZm26yoWK2MRVFZVDFbTkZcVt0KafABJgU4tJ2Ze23F7tL1Wlhg6wf2oHffX8hYSd7tBaQRT8EXgjJzmT+ub+ftyCZV8Ug56dBw64dDVQSAX2TsUWz9D5q40ueGyyniOXIHGAsFD9XCghSh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747940000; c=relaxed/simple;
-	bh=KJbnwLO9PnKS+o/OspihaxX0IQGxbr3s73qXik1soWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JkSPgIdOL+SGF7As6xRmSmLPzcJJA60CND5KSzH8sXGplerw2CqnoxSie3PYg7fTcZ9qW2MIfyC1dMBnzRiklvz244U9pl+xGL+DfNSVYz9AR0KhMkaAhE4l9XKw7fuXheTQRQCT0bf72cCpph+gdfdecTd63ZO5FZFzgazULns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StS0NVZc; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7390d21bb1cso7183536b3a.2;
-        Thu, 22 May 2025 11:53:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747939997; x=1748544797; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XBANE17upGJtSfo2ziwlQRYaEyGo/7aP/0TWDN69oCo=;
-        b=StS0NVZcoeRM6d84IDFgACUGwgZYMH8jwI7DM352jnDvLLFNbV9Xr0/9G1CZ3QpRGt
-         ixBSuET1mZklQGVsxVHXkW8eRmdOxsNOG/MciYmALkKwb66cQAbvER9jt82Q3fRzj0po
-         /GIK5lBQ5ErU8bRXT2cOhiE040kRHp2+Fb2qMKtMsSFEpBTmFAt4AS3pxQbzNEcP6mNo
-         XMOZvqLGn4c/n+TwXkwDOtYr14T4OsUUXt/4pmVk34qJxfH1wiZmDEYaYLBt8AIq1UFA
-         RmT2uh1ixo8+JUtrXv8zNfxDIBGRFEXjJAODeD3hqIL1IiGhWe3tfLPSR0KzvsAf6FHd
-         ItMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747939997; x=1748544797;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XBANE17upGJtSfo2ziwlQRYaEyGo/7aP/0TWDN69oCo=;
-        b=QO/jQdTPjyoJESeG2FKIvrDYoT/FD9DSYm9x0LU959HXIetUdE0TMk/77hwX/kVIbR
-         i6bWMS95VyIjkXEoQ40+mriYpVvIUMYVt7KDwPPI3u7Zy1PB4HDkRCFXJNetZR7dcjVn
-         6/0F1NAvs/UAibwpe7NmFyke7rmY3xDlx550zUtgc3xPCVXjBXPgKqMqnryAsRaO7r1T
-         paGHZy3+Vym28dWGUBVkKTSKoI0HPGcAlNAt8/1JxNEriWTHPNDfsFxr6j12TGtRbHYs
-         C2fQfwZyzHVfzQHoX/ElORr32e8Hy/B4HUoo59Ju2bFY8jWcKhx8+6drUVRe/Oaz71HN
-         Y+TQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLkQpzDudcYPBZvR/HX7KoaPi6KWmVlgKef8xIa4PVv59V/J8cnQagJPlh5RlmLgY0Of21JsmnINbv95KQ@vger.kernel.org, AJvYcCX5rRaznROk5kLpt3dwT1lTRWIuoFJ6sxyWJDX6jzDM5wdWGeDlT01A46vkNP2LRfTge4fNfSwKq/7wlBgv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSofdaK1cfA23vh889iEkjC6FroS/oJWTfZTd/6bKWUBrVWSUB
-	/UmOhahNH+5iF+pBx6R/VNqdXT5p6es2sv31BpMAyrSYuTh9SinVvaxz
-X-Gm-Gg: ASbGncto2h3gBg2Woa0P0uBgM2dv8WI70yEOuI656tQNvpdjEjhej9sC48ZlkrxMrFo
-	lPDCrzdpX/2OSizJkwvP7MUEf4MfY1FkUISQtVf8Ot6L4hsFbV00+8jWiQn1dNCDcJu8sBhX5c1
-	3PGaaHnzRNDKIiXS0xx5vgodBOAA15mgDY4ksPCi+ttG5Cz6AlFzo1/y74FOxr7UvsCSxdER1NA
-	zUv06o9fkaV1jbv4OyzQxuCSylBrR1w/zeSFx/AZqWWKOh9l71Pwa4RVBzU3K+T4kjEqBoUaVEb
-	7UGzI21OffK8AcoxJlj+vJMlr6bKLrjGbuF3UeGNvX4ubTBwO4iPfZFt1mURVETS
-X-Google-Smtp-Source: AGHT+IH4FHr6TKK37LSw/N7pyVC03rjqy4ufLuDp4wUmG7w6e/+v49oWOzOCGRwFlYTZKsMryyJI9w==
-X-Received: by 2002:a05:6a00:3985:b0:742:a334:466a with SMTP id d2e1a72fcca58-742a97eb677mr36355117b3a.12.1747939997420;
-        Thu, 22 May 2025 11:53:17 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b26eaf6e609sm11622477a12.19.2025.05.22.11.53.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 11:53:16 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Thu, 22 May 2025 11:53:15 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Kees Cook <kees@kernel.org>
-Cc: Joel Granados <joel.granados@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Wen Yang <wen.yang@linux.dev>
-Subject: Re: [PATCH] kernel/sysctl-test: Unregister sysctl table after test
- completion
-Message-ID: <ce50a353-e501-4a22-9742-188edfa2a7b2@roeck-us.net>
-References: <20250522013211.3341273-1-linux@roeck-us.net>
+	s=arc-20240116; t=1747943112; c=relaxed/simple;
+	bh=yh0R90YapmvdDEQUM4WgEM8LTT2tIlKucgQTnOOO3dA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bnILHXA4e/CFQWs08uEZ16Ltv5weaSnhWVpMcQPUIwaV7vUONnXSXRzI8KPBokRybSYLALZyu+VPo05WO+SZ25eqQ8zn8qOX//dT+ke5urdu5+w3rGN4hStMGfrweOesAWKaEnHV30JX0rU2xI1V5akYfYHa6uEOiw5n9D7bXi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=rPeK2Anl; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=b4Gq7lrRnu32phU15nLFZ+zTgkQ+RFVbw49dZ/Yes3Q=; b=rPeK2Anl5+yLqAmwH2j1YJTwdu
+	nE8CLl7xTplJk3RKL83afh7JUR2UnPhCPEwBk1Zj94FguLMhsl9Y/SagBXghVU+3Tfjgi+SKbliA1
+	LEA+6MiA9tJBO64lX+oBgP+c8JUwOewP6vKC2XkL075S8Eg2GTFo0+FAmH3cw5cIn6NGWeUAXOdEC
+	lVB8TsvW4eYKOJ7QAp5CMzWUZSdZYawijkZM4h22RumI/l81Jm7Re+DX+9m5iuMmlk0Hr4ambP4z9
+	2ObLFSaO6pdJQj7lNsFWBK20GWtcDZksYHtDExpllRuEPohRfJIa8TITV2/VPsmbeTTfFH3pMy5k6
+	r4P8hH5A==;
+Received: from [223.233.76.245] (helo=[192.168.1.12])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1uIBqe-00BrwM-2I; Thu, 22 May 2025 21:45:00 +0200
+Message-ID: <1ff57d4d-6e57-20f1-c3e3-b0f7dfeccaaf@igalia.com>
+Date: Fri, 23 May 2025 01:14:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250522013211.3341273-1-linux@roeck-us.net>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v4 2/3] treewide: Switch memcpy() users of 'task->comm' to
+ a more safer implementation
+Content-Language: en-US
+To: Yafang Shao <laoar.shao@gmail.com>, Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+ linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com, pmladek@suse.com,
+ rostedt@goodmis.org, mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+ alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+ mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+ david@redhat.com, viro@zeniv.linux.org.uk, keescook@chromium.org,
+ ebiederm@xmission.com, brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+ juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+ vschneid@redhat.com, linux-trace-kernel@vger.kernel.org
+References: <20250521062337.53262-1-bhupesh@igalia.com>
+ <20250521062337.53262-3-bhupesh@igalia.com>
+ <CALOAHbCm_ggnxAtHMx07MUgnW01RiymD6MpR7coJOiokR4v52A@mail.gmail.com>
+ <CALOAHbDNBQN6m9SzK6MegwapUQ9vm4NgcZgyp=aepG8RA8J7UA@mail.gmail.com>
+From: Bhupesh Sharma <bhsharma@igalia.com>
+In-Reply-To: <CALOAHbDNBQN6m9SzK6MegwapUQ9vm4NgcZgyp=aepG8RA8J7UA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 21, 2025 at 06:32:11PM -0700, Guenter Roeck wrote:
-> One of the sysctl tests registers a valid sysctl table. This operation
-> is expected to succeed. However, it does not unregister the table after
-> executing the test. If the code is built as module and the module is
-> unloaded after the test, the next operation trying to access the table
-> (such as 'sysctl -a') will trigger a crash.
-> 
-> Unregister the registered table after test completiion to solve the
-> problem.
-> 
+Hi Yafang,
 
-Never mind, I just learned that a very similar patch has been submitted
-last December or so but was rejected, and that the acceptable (?) fix seems
-to be stalled.
+Many thanks for the review.
 
-Sorry for the noise.
+On 5/22/25 11:57 AM, Yafang Shao wrote:
+> On Thu, May 22, 2025 at 2:15 PM Yafang Shao <laoar.shao@gmail.com> wrote:
+>> On Wed, May 21, 2025 at 2:24 PM Bhupesh <bhupesh@igalia.com> wrote:
+>>> As Linus mentioned in [1], currently we have several memcpy() use-cases
+>>> which use 'current->comm' to copy the task name over to local copies.
+>>> For an example:
+>>>
+>>>   ...
+>>>   char comm[TASK_COMM_LEN];
+>>>   memcpy(comm, current->comm, TASK_COMM_LEN);
+>>>   ...
+>>>
+>>> These should be modified so that we can later implement approaches
+>>> to handle the task->comm's 16-byte length limitation (TASK_COMM_LEN)
+>>> is a more modular way (follow-up patches do the same):
+>>>
+>>>   ...
+>>>   char comm[TASK_COMM_LEN];
+>>>   memcpy(comm, current->comm, TASK_COMM_LEN);
+>>>   comm[TASK_COMM_LEN - 1] = '\0';
+>>>   ...
+>>>
+>>> The relevant 'memcpy()' users were identified using the following search
+>>> pattern:
+>>>   $ git grep 'memcpy.*->comm\>'
+>> Hello Bhupesh,
+>>
+>> Several BPF programs currently read task->comm directly, as seen in:
+>>
+>> // tools/testing/selftests/bpf/progs/test_skb_helpers.c [0]
+>> bpf_probe_read_kernel_str(&comm, sizeof(comm), &task->comm);
+>>
+>> This approach may cause issues after the follow-up patch.
+>> I believe we should replace it with the safer bpf_get_current_comm()
+>> or explicitly null-terminate it with "comm[sizeof(comm) - 1] = '\0'".
+>> Out-of-tree BPF programs like BCC[1] or bpftrace[2] relying on direct
+>> task->comm access may also break and require updates.
+>>
+>> [0]. https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/tree/tools/testing/selftests/bpf/progs/test_skb_helpers.c#n26
+>> [1]. https://github.com/iovisor/bcc
+>> [2]. https://github.com/bpftrace/bpftrace
+> Hmm, upon checking, I confirmed that bpf_probe_read_kernel_str()
+> already ensures the destination string is null-terminated. Therefore,
+> this change is unnecessary. Please disregard my previous comment.
+>
 
-Guenter
+Sure. Yes, bpf_probe_read_kernel_str() handles these cases.
+
+Thanks,
+Bhupesh
+
 
