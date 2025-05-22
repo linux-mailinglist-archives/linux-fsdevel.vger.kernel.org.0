@@ -1,140 +1,132 @@
-Return-Path: <linux-fsdevel+bounces-49661-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49662-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9993AC0679
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 10:03:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD16BAC06E5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 10:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 582324A69EC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 08:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6376B4E3314
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 May 2025 08:20:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB4B261398;
-	Thu, 22 May 2025 08:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021CA268C55;
+	Thu, 22 May 2025 08:20:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="UahKmO22"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E544A25E476;
-	Thu, 22 May 2025 08:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA13426868C
+	for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 08:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747900968; cv=none; b=I0++evu3pwfh6lJADnMdzhKCNA5C4/j9hz++jc5XAfyNjTmuNvcQpxSjEKQIthzBdrJml4rADRdG0fs97WBQmGnJ6dYcAfjP/IAKqav6NmqtG3wWFHyRs2U6BPAf2gghA9SD9inpWbGAFiUJd0E22LnEf6mzlKLFGdMlQYLXACM=
+	t=1747902027; cv=none; b=UsLADypLP5pY6IxVz5NrqtGbrkqmhHqTiUfOeYI7FtZIYMCFt1DmKJ6wdYlmCRzU7sTKLWr50Io6R3Ra35jEh/BXzjDQKieyDSSz38Vww4QRwDjBEVwMX6UknGPpt5qmTPtE4HV4tccWp0gRst9Ths5g61ApNaOyIvO1BI69y6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747900968; c=relaxed/simple;
-	bh=oA0vm5pDkCgw+4gBq+C//APdjwOF+bXuymjsHbQI/Rs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oCiTj1KsT5KAv5GQ8r5rppHd2weYbaz3dIDUx6NdZWbH2bNE+7Xkdy83wWlcrO4AambKw8cZRxnP+W+AtkpUoslKGxjMy0Hcaz14l3id+XR6Vz3Bz1SwSsOfMe2U1678zlXCeuthsjLdsL7qlkXTL+ED3NM6M1KqggHmpLFvo3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b313W4FN8z4f3lCf;
-	Thu, 22 May 2025 16:02:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 2AF2A1A17CB;
-	Thu, 22 May 2025 16:02:42 +0800 (CST)
-Received: from [10.174.176.88] (unknown [10.174.176.88])
-	by APP1 (Coremail) with SMTP id cCh0CgCH7Hwg2i5o5m3JMw--.13902S3;
-	Thu, 22 May 2025 16:02:42 +0800 (CST)
-Message-ID: <8822d84d-eedc-4b3b-a6c0-4ccef4c0cecc@huaweicloud.com>
-Date: Thu, 22 May 2025 16:02:39 +0800
+	s=arc-20240116; t=1747902027; c=relaxed/simple;
+	bh=xjzrahvBpcKxk7wXYhglfUlsunK5xKhmahzvGBnygz0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tp5Me2FY+bHsSVREBMdL5OzjK0pVW+YZoXfbLfFy8WjAFk7CvUeow7MaXyJucdOERBiKMsLy29nk3WwD1XvK8yKkcbnAN+WTCiRKSYZvh1K/bj0JamokJXdjS8Ucm91+SYU/dRbEyRn/ozco8QvshdzfucN9FjciLc0g74YgvpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=UahKmO22; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad5740dd20eso702229966b.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 01:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1747902023; x=1748506823; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=I43E9Used7ZzOVDhq/ufhep8eOi1ZE1QL/P9g55nGak=;
+        b=UahKmO22fIkO51UyyFN4jUtjGuxLUeEidDkJD9VWqKHoPjwO7Q+/UhpZT8UzTU14We
+         xbX8doSz2GP1AcMtgfa9kTT/34OpMv+owKUjvY3YnPvRUS2Wybn12XjC0VArJCbpKPQT
+         9Co/zXLZAmbC9nV1xYVsaPRKl6upUlw3SP4ck50p4bEbQ3svchivVFi7XPwnRtwwH0nt
+         le98YAfBd54zh4PnMNUyDJryt+uQeQbiac095VjFzpZUQKYWzqIUqUWPeHOl1Lp2PS9O
+         qK5ZxIanMAcT3nTWsfbH9xbfQ+4WX6tfAga82FIXSct67rBdgLhozdlRtBUQ5+29EsTd
+         5kCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747902023; x=1748506823;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=I43E9Used7ZzOVDhq/ufhep8eOi1ZE1QL/P9g55nGak=;
+        b=hk1WZyIhrIatr4inA6g+bEBQ2Hv0XjHmXSZ8E4MEk6+EnmNpk7FGFBF8S3lM+ivdzv
+         VDD4vFsbZVvaZUViCYDMMr7fZsfx+Dz5+Dbb+mKzXzSa2bNlnrQRldTUQLhx6xF2M0K8
+         8RzFLtnVacblwLOcU+t1nNlQTFjBYof/mtW1D2idwuk3CjI8ETAGX5rwTJu3fgP5Rxrn
+         YITvBFttR+W1FCwh3GVdgxGbIkx4vvoXy+mNf5GrZNhdgW4Lk5i1vJQkSEry9KSEIamW
+         2s61Kf7nPu0gUqZay8/xy/M9w4sgak5pYW/uY11PY11YRvgFzxsY9j2JIhindo+KTZwC
+         TD2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXtRMLlVODU3caClYyca/m83h7WC5NW41YEhy6XFiMpf3i32MooUG1XgceATZzqudHOJDuAQlSGKHluw06X@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzbsvc+doqpIYLJxNG+0YMxpHfgWVBJdi/BnYKcxa9Z7chiAjsU
+	UNt6EaDXD2322zlqlbsEgwROO5Vj6hbE6e/sQ70EDqKheYJTKB2vKcah9TfalBdf8k8=
+X-Gm-Gg: ASbGncuMg3mI3NGmeZ2WsX04v+WY0f57kl+M+S4LjhPHC5QlfX97Y0iUVaWDppdgjmN
+	YLIsHq1YHSsCnZrfQ5eR7W25lZjX1cpCa/iSsrEwH7CNC1IXmDNXVvkLOM52po82I8Ex3hRSpZn
+	ctI8VipCPgXl8KGuiNV39l1r2E1lAjWdPLu3T9+w3jp7X1pQLxL8v8QevFpvO5aW+foUa+n3ylZ
+	1tr2gh+oby2o+NyzOeLDIq41pt1SG+bNhR30waQa8fuMx0vwf7XZ4P83gtL6A/kzxVgdLwdCByz
+	KnyBjLmUugH0x1JA8jbSN3KwQeAzqi1OaTFuVObBZKYXI1TsjKi30OhTg6EOwqgJho4CWfLCuYd
+	suHOW0CltsZQVxPb6dPGW5C1a
+X-Google-Smtp-Source: AGHT+IHd/c+RlpU9wZSwKb6MHnIxte3dN22uhcNe9UW8PMtyUqFZZ0KzS+tArvGbttCUDJzPrSUFTg==
+X-Received: by 2002:a17:907:3f08:b0:ad5:68b7:b0df with SMTP id a640c23a62f3a-ad568b7b232mr1504511566b.46.1747902022820;
+        Thu, 22 May 2025 01:20:22 -0700 (PDT)
+Received: from somecomputer (ip-046-005-029-055.um12.pools.vodafone-ip.de. [46.5.29.55])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad53603a399sm998546366b.40.2025.05.22.01.20.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 May 2025 01:20:22 -0700 (PDT)
+From: Richard Weinberger <richard@sigma-star.at>
+To: linux-block@vger.kernel.org, linux-nvme@lists.infradead.org,
+ linux-scsi@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: [ANNOUNCE] Alpine Linux Persistence and Storage Summit 2025
+Date: Thu, 22 May 2025 10:20:20 +0200
+Message-ID: <1826170.yIU609i1g2@pliers>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: Rename the parameter of mnt_get_write_access()
-To: Amir Goldstein <amir73il@gmail.com>, Zizhi Wo <wozizhi@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- yangerkun@huawei.com
-References: <20250516032147.3350598-1-wozizhi@huaweicloud.com>
- <f6a9c6ef-1fd8-41d2-8f6a-396b6b191f97@huaweicloud.com>
- <CAOQ4uxiT=v9JKS39ii-em0XFNkWyskW_Ed3kxS5PE5Q2Rs+NMQ@mail.gmail.com>
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-In-Reply-To: <CAOQ4uxiT=v9JKS39ii-em0XFNkWyskW_Ed3kxS5PE5Q2Rs+NMQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgCH7Hwg2i5o5m3JMw--.13902S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF4DKrykJF1fAryxGrWkXrb_yoW8Cw1rpF
-	WFk3ZYkw4rJa1fAr1Iva12qFyYyryrXrW7JF15Gw1rAr98CryfKw10gF4Ygr18Wrs7uw4I
-	vF42qryDC3Z8Z3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkm14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_JF0_
-	Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxV
-	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
-	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
-	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
-	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUYCJmUUUUU
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
+We proudly announce the 8th Alpine Linux Persistence and Storage Summit
+(ALPSS), which will be held September 29th to October 2nd at the
+Lizumerhuette (https://www.lizumer-huette.at/) in Austria.
 
+The goal of this conference is to discuss the hot topics in Linux storage
+and file systems, such as persistent memory, NVMe, zoned storage, and I/O
+scheduling in a cool and relaxed setting with spectacular views in the
+Austrian alps.
 
-在 2025/5/22 15:41, Amir Goldstein 写道:
-> On Thu, May 22, 2025 at 3:02 AM Zizhi Wo <wozizhi@huaweicloud.com> wrote:
->>
->> Hello!
->>
->> There are currently two possible approaches to this patch.
->> The first is to directly change the declaration, which would be
->> straightforward and involve minimal modifications.
->>
->> However, per Al Viro's suggestion — that "mnt for vfsmount, m for mount"
->> is an informal convention. This is in line with what the current
->> patch does, although I understand Jan Kara might feel that the scope of
->> the changes is a bit large.
->>
->> I would appreciate any suggestions or guidance on how to proceed. So
->> friendly ping...
-> 
-> Hi Zizhi,
-> 
-> I guess you are not familiar with kernel lingo so I will translate:
-> "...so I'd say go for it if there had been any change in the function
-> in question.  Same as with coding style, really...
-> 
-> It means that your change is correct, but maintainers are
-> not interested in taking "style only" changes because it
-> creates undesired git history noise called "churn".
+We plan to have a small selection of short and to the point talks with
+lots of room for discussion in small groups, as well as ample downtime
+to enjoy the surroundings
 
-Thank you for your patient explanation! I'm indeed a newcomer to the
-Linux kernel. Now I understand what everyone means.
+Attendance is free except for the accommodation and food at the lodge
+but the number of seats is strictly limited.  Cost for accommodation and
+half board is between 55 and 84 EUR depending on the room category,
+with additional discounts for members of an alpine society.
 
-> 
-> Should anyone be going to make logic changes in
-> mnt_get_write_access() in the future, the style change
-> can be applied along in the same patch.
-> 
-> One observation I have is -
-> If this was the only case that deviates from the standard
-> the change might have been justified.
->>From a quick grep, I see that the reality in the code is very far
-> from this standard.
+If you are interested in attending please reserve a seat by mailing your
+favorite topic(s) to:
 
-Yes, I noticed that as well. However, for consistency with the later use
-of mnt_put_write_access(), I chose to go with the modification in this
-patch...
+        alpss-pc@penguingang.at
 
-Thanks,
-Zizhi Wo
+If you are interested in giving a short and crisp talk please also send
+an abstract to the same address.
 
-> 
-> FWIW, wholeheartedly I agree that the ambiguity of the type of
-> an 'mnt' arg is annoying, but IMO 'm' is not making that very clear.
-> To me, 'mount' arg is very clear when it appears in the code
+The Lizumerhuette is an Alpine Society lodge in a high alpine environment.
+A hike of approximately 2 hours is required to the lodge, and no other
+accommodations are available within walking distance.
 
-> 
-> Thanks,
-> Amir.
-> 
+Please note: reservations for the lodge are not handled through the
+reservation system, but as part of the ALPSS registration.
+
+Check our website at https://www.alpss.at/ for more details.
+
+Thank you on behalf of the program committee:
+
+    Christoph Hellwig
+    Johannes Thumshirn
+    Richard Weinberger
+
 
 
