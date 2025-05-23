@@ -1,65 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-49797-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49798-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58CCBAC2B3E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 23:10:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C087AC2B5C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 23:30:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92BAF7A8A70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 21:09:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E322E3B5253
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 21:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DCC1202F93;
-	Fri, 23 May 2025 21:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C73F202F79;
+	Fri, 23 May 2025 21:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="xqf5x82b"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="QHTcvnGI"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D3C202C48
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 21:10:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DE7202C52
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 21:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748034619; cv=none; b=HZylY36g2rYtz5kDPO9sVl0n8QwvqResvDCu4aTasf0tGr50IdU0q1VmEFb0MMRAaKYT0KipXBPndVwczvCqgOXbnkxQ9cjvy7q9qBxnh1bXRQVpmC4oGVq+DsL1ngyLsBgy4xrZmzrNOn/xdu+/ubocLhhgDQyxc8BZh44ewyY=
+	t=1748035804; cv=none; b=Gap0UPfzG3KW6auWRpmuilvo+2NS3NPqxLbb/wm6ynB1UVFlurGriKlbbKxvLVV6bB+NW6ooM6QX0r9EM0naaFUT5iDxpStYNTP9MiPkykoQ6Z7hXEcVZQXzcF3HU24X5IiUfuGe3JwGoHhneGTTLMmmkb5lfgqBDQK9mCfIPDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748034619; c=relaxed/simple;
-	bh=EZX+iloKE1202xeqiX3o/fp74KwDa+hl9tuC6RdD61A=;
+	s=arc-20240116; t=1748035804; c=relaxed/simple;
+	bh=GzWaa32ueHI30c0Y2w5L31cZWOoRZq5gYw4tDabgfsI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g0bWFWOuKBbQja/fvcPNfx0+p9T5kHs7idX6D2PJM4v/5pfGhOzQhI3vuDuTg71CEpvy+XAe65rSiR2ho4F/+4aPakFt/8GGPbBEzBrK/+yWD2m+O+BH2uMA4pR/Fl+VoKvIrdM9M067c2tJ/MFIyJzZaiB5/KxFwA8fLTteGh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=xqf5x82b; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 23 May 2025 17:09:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748034605;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EZX+iloKE1202xeqiX3o/fp74KwDa+hl9tuC6RdD61A=;
-	b=xqf5x82bYXC9hs9HwTlrsdIgorVip1Qv26Q+6zUDn5V/PjT6HSL4uY45RPITPpgXTqkOPb
-	spIwk0SdoX+Ez80bXv/JXy56xTLYmv8bMewW3qcW4J46HUmd+jrvaXGoxcMGkJ/s+vtG0c
-	Q3nyfUBDejpwXSRSfeu+VcjR4BnpW8k=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 0/6] overlayfs + casefolding
-Message-ID: <ltzdzvmycohkgvmr3bd6f2ve4a4faxuvkav3d7wt2zoo5gkote@47o5yfse2mzn>
-References: <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
- <CAOQ4uxjUC=1MinjDCOfY5t89N3ga6msLmpVXL1p23qdQax6fSg@mail.gmail.com>
- <gdvg6zswvq4zjzo6vntggoacrgxxh33zmejo72yusp7aqkqzic@kaibexik7lvh>
- <CAOQ4uxg9sKC_8PLARkN6aB3E_U62_S3kfnBuRbAvho9BNzGAsQ@mail.gmail.com>
- <rkbkjp7xvefmtutkwtltyd6xch2pbw47x5czx6ctldemus2bvj@2ukfdmtfjjbw>
- <CAOQ4uxgOM83u1SOd4zxpDmWFsGvrgqErKRwea=85_drpF6WESA@mail.gmail.com>
- <q6o6jrgwpdt67xsztsqjmewt66kjv6btyayazk7zlk4zjoww4n@2zzowgibx5ka>
- <CAOQ4uxisCFNuHtSJoP19525BDdfeN2ukehj_-7PxepSTDOte9w@mail.gmail.com>
- <CAOQ4uxhnOMPTBd+k4UVPvAWYLhJWOdV4FbyKa_+a=cqK9Chr2A@mail.gmail.com>
- <CAOQ4uxhnOMPTBd+k4UVPvAWYLhJWOdV4FbyKa_+a=cqK9Chr2A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mQ3v1C1sNKcn6fM3Kv+wTN4Nl9neUbI6+5SQmWnT/lwFzHxZMf5IJMHqZMGsJN2nzBKyyBj/2IAe0AlZJ0Jaht4q/G202T9FdJMXPdi4kj7DmlQMXQMnUqgv19tozxoyn0gb2FvLq+Hg8I7auZQPeUJXFmnZvjbDoDkGwXOoIzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=QHTcvnGI; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6Ho9hIQLAmiWB1yf2Xt5/tUfqiMONGzWMvE4dwrbO3I=; b=QHTcvnGIfopDlyaAEAPB9loEj3
+	HB+nGYF6gbR/NXeg3O82soJdsrViW5SYuNH7oVCCiF9qEAR7xAfO6q+dhErAjXCnnViWhayyw/ZQL
+	VcwBA0qx1GjljlOiA1c1nJYFBE6/Xw4asMBPvwsetJSKFU5g82sfYqY3VzcpFgAtWc4s77zCVtdNI
+	4hXohlgpkM+b9KOOXO/uag4rj8o+FXQ61faG6ArwTfOkbw1HEjwjszb1yc/BJQ9ppDWU+m1X85dok
+	Mdr61ZKMHnZwzoxDRzBP4wZ/s8mk7kP61JrXm3qwzrB+KQb5ye4V5HiC2oNCj6FTKQCa6DnVbvZiY
+	X6g13hRQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uIZxm-0000000FIoW-3BAw;
+	Fri, 23 May 2025 21:29:58 +0000
+Date: Fri, 23 May 2025 22:29:58 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Allison Karlitskaya <lis@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: Apparent mount behaviour change in 6.15
+Message-ID: <20250523212958.GJ2023217@ZenIV>
+References: <CAOYeF9WQhFDe+BGW=Dp5fK8oRy5AgZ6zokVyTj1Wp4EUiYgt4w@mail.gmail.com>
+ <20250515-abhauen-geflecht-c7eb5df70b78@brauner>
+ <20250523063238.GI2023217@ZenIV>
+ <20250523-aufweichen-dreizehn-c69ee4529b8b@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,14 +62,52 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhnOMPTBd+k4UVPvAWYLhJWOdV4FbyKa_+a=cqK9Chr2A@mail.gmail.com>
- <CAOQ4uxhnOMPTBd+k4UVPvAWYLhJWOdV4FbyKa_+a=cqK9Chr2A@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250523-aufweichen-dreizehn-c69ee4529b8b@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, May 23, 2025 at 10:30:16PM +0200, Amir Goldstein wrote:
+On Fri, May 23, 2025 at 10:41:14AM +0200, Christian Brauner wrote:
+> On Fri, May 23, 2025 at 07:32:38AM +0100, Al Viro wrote:
+> > On Thu, May 15, 2025 at 01:25:27PM +0200, Christian Brauner wrote:
+> > 
+> > > Al, I want to kill this again and restore the pre v6.15 behavior.
+> > > Allowing mount propagation for detached trees was a crazy
+> > > idea on my part. It's a pain and it regresses userspace. If composefs is
+> > > broken by this then systemd will absolutely get broken by my change as
+> > > well.
+> > > 
+> > > Something like this will allow to restore the status-quo:
+> > 
+> > > -#define IS_MNT_NEW(m) (!(m)->mnt_ns)
+> > > +#define IS_MNT_NEW(m) (!(m)->mnt_ns || is_anon_ns((m)->mnt_ns))
+> > 
+> > FWIW, I'm not sure that ever had been quite correct, no matter how you
+> > call the macro.  I'm not up to building a counterexample right now,
+> > will do in the morning...
+> 
+> The point is that we can't do mount propagation with detached trees
+> without regressing userspace. And we didn't do it before. I don't
+> specifically care how we block this but it needs to go out again.
+> Otherwise we release a kernel with the new semantics that regress
+> userspace.
 
-That makes fstests generic/631 pass.
+The problem is not in propagation *into* detached trees.  All you need
+is
+	A -> B -> C
+(all in your normal namespace, nothing detached, etc.) followed by make-private
+on B.
 
-We really should be logging something in dmesg on error due to
-casefolded directory, though.
+C should (and does) keep getting events from A.  Now, have open_tree() create
+a detached clone of B.  Shouldn't affect anything between A, B and C, right?
+
+With your patch doing open_tree before make-private B ends up with
+no propagation from A to C... until the detached tree is closed.
+
+See the problem?  You have nodes on detached trees still in propagation graph.
+And your variant _stops_ propagation at nodes in anon namespaces, not just
+skips such nodes themselves.
+
+This is bogus, IMO.  I'm perfectly fine with propagate_one() returning 0
+on anon_ns(m->mnt); that would refuse to propagate into *any* anon ns,
+but won't screw the propagation between the mounts that are in normal, non-anon
+namespaces.
 
