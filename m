@@ -1,119 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-49702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49703-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA86EAC191C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 03:03:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44C2AC19B2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 03:32:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D456A24BEE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 01:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0220A2011E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 01:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F0B221F3F;
-	Fri, 23 May 2025 01:00:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC9318FDD8;
+	Fri, 23 May 2025 01:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EuBPmj2f"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bUnf6NJN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50CF21FF35;
-	Fri, 23 May 2025 01:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B9A2DCBE0
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 01:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747962025; cv=none; b=ramHjCl0DZ938SBtE/NHauKkNLR/EcpWwY7aSFoinnb9p1HsZxapm988C+avBQn6NXemwXgcdW/Xhben1cNTk4QmPJZjzzsLWBTwiMUNDFm9L14rVYJOEx8x35pdGJKhIO3nl4T6WXJc9P92KVrKhUu+XEa07u5Gv/OEZt4C9nI=
+	t=1747963942; cv=none; b=V8uM2jWr4Yg/d/W95BHBSDADKq5NCvJgHWK1VktXMk+E09R0y8DU/gqPu3L2Yu9Fu+tPfLZ3tLl7I5ZBicPnNcTvpKZzekUaQSE+AO4kJjktTnJlyGmPWeDdqja/p1Jt091TL4AcTEzQxMeYRDIjrWJyWoDur6ACqArrw9L7xGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747962025; c=relaxed/simple;
-	bh=mBllmWspxUb6WMZ6UgK2YeCavB2WwSWS5l+56LBR2Sg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dgbASe+6WQdWwbPa84SnMHriMvnd71Pbv4r0dQfTtYp+NS7slHvIwtWEH90/6gXBv44wiTT7kGXfaXM4iNAzN/eeGAVzQNQMV0xPsL/m+sSlNm2L44EbYEePJ5SiR0VlalrY04s13HhzLLQd48hkTbBuwfRj1thsmDZDWzP4tZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EuBPmj2f; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=JQsG2xym9H00ve0pF5UnE9P2+sIgGX1YRykP3ytbG4A=; b=EuBPmj2f/169O1QWRM8OH0oEg4
-	ErDjjMvJ0JkGLK6eWwWcNtvIPebe0phapWl7re5RBSxmdWOKf3TGAmlNmuQs9LUMADckZl+k652Bh
-	YPYj5y5LNPWRl+3NCPBg6o/2s9YcHFgEd9ZuvDYZzUxBT+eIE8xMdEq8ok2TNp1BtLl0P/cfwMLAE
-	bfcjummeMYWjGrmfWZoqBObaxXjj3bSJDC4hEPhsxqttWnYK97QmHCR0DLi2n+KpKFF+f9oceR3+e
-	1xi4vRgPxHPRfwo/e7/g8FxEQL/n57G15bVpMqv1jm7Yr9WYvJDmOrc6EMxb/oAmu640LaRb764LZ
-	TbwDeW+A==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
-	id 1uIGlE-000000016zC-1qFs;
-	Fri, 23 May 2025 01:00:15 +0000
-Message-ID: <5e9ccdad-a9f4-4c8f-85b0-430edd910590@infradead.org>
-Date: Thu, 22 May 2025 17:59:39 -0700
+	s=arc-20240116; t=1747963942; c=relaxed/simple;
+	bh=43GG+nK/VP9J/MxR3VCZtwb69ooU0HThuyCeYdCYyJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Dx4kiXvWD3ZQBbv7GbsEJAD4BK2MEu8owvP6um4C4Pbo56+rdlVqLWacJiazaZjzORFk2sTMVU3jAmqBtWjj6ge/06DPY61bWzf9GQiQUQDcQRzzzoSN1at1EapDCSH7yD3RKkot0zyrEcu4XhqxQHG9uQja4lZSv7QzUTZhJGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bUnf6NJN; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 22 May 2025 21:31:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1747963927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=tmBs0a0pY9TPVe9tBCids2CPMpLMPxoSQO7RwsamZdU=;
+	b=bUnf6NJN+el8tZkTwfZD92KGAqUXxujzzxWeXCIOSUhR1fDlSXQCKDuD00s9l40t07RK1c
+	fwMoGY0sSYTG93DkLtgaEpszrpAen8N1Lf2C8smWabB52Vf4HgPvYOvwvM9ac6iKyQnLBy
+	Hk0TFPOLiKnSO4RsRaSW39dRIDLaZ8o=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.15
+Message-ID: <t4kz463dyrlych7ags2fczrgeyafkkjdppe2zmk7zxdmvdywmb@cs2b2txhexje>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/9] coredump: add coredump socket
-To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- Jann Horn <jannh@google.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org
-Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>,
- "David S. Miller" <davem@davemloft.net>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Daan De Meyer <daan.j.demeyer@gmail.com>,
- David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>,
- Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>,
- Luca Boccassi <luca.boccassi@gmail.com>, Mike Yuan <me@yhndnzj.com>,
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
- =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-security-module@vger.kernel.org,
- Alexander Mikhalitsyn <alexander@mihalicyn.com>
-References: <20250516-work-coredump-socket-v8-0-664f3caf2516@kernel.org>
- <20250516-work-coredump-socket-v8-4-664f3caf2516@kernel.org>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250516-work-coredump-socket-v8-4-664f3caf2516@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
-Hi,
+The following changes since commit 9c09e59cc55cdf7feb29971fd792fc1947010b79:
 
-On 5/16/25 4:25 AM, Christian Brauner wrote:
-> Coredumping currently supports two modes:
-> 
+  bcachefs: fix wrong arg to fsck_err() (2025-05-14 18:59:15 -0400)
 
-> ---
->  fs/coredump.c       | 118 ++++++++++++++++++++++++++++++++++++++++++++++++++--
->  include/linux/net.h |   1 +
->  net/unix/af_unix.c  |  54 ++++++++++++++++++------
->  3 files changed, 156 insertions(+), 17 deletions(-)
-> 
+are available in the Git repository at:
 
-[snip]
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-22
 
-git a/include/linux/net.h b/include/linux/net.h> index 0ff950eecc6b..139c85d0f2ea 100644
-> --- a/include/linux/net.h
-> +++ b/include/linux/net.h
-> @@ -81,6 +81,7 @@ enum sock_type {
->  #ifndef SOCK_NONBLOCK
->  #define SOCK_NONBLOCK	O_NONBLOCK
->  #endif
-> +#define SOCK_COREDUMP	O_NOCTTY
->  
->  #endif /* ARCH_HAS_SOCKET_TYPES */
+for you to fetch changes up to 010c89468134d1991b87122379f86feae23d512f:
 
-MIPS sets ARCH_HAS_SOCKET_TYPES so the new define above is not used,
-causing:
+  bcachefs: Check for casefolded dirents in non casefolded dirs (2025-05-21 20:13:14 -0400)
 
+----------------------------------------------------------------
+bcachefs fixes for 6.15
 
-net/unix/af_unix.c:1152:21: error: 'SOCK_COREDUMP' undeclared (f
-irst use in this function); did you mean 'SOCK_RDM'?
+Small stuff, main ones users will be interested in:
 
+- Couple more casefolding fixes; we can now detect and repair casefolded
+  dirents in non-casefolded dir and vice versa
+- Fix for massive write inflation with mmapped io, which hit certain
+  databases
 
--- 
-~Randy
+----------------------------------------------------------------
+Kent Overstreet (6):
+      bcachefs: Fix bch2_btree_path_traverse_cached() when paths realloced
+      bcachefs: fix extent_has_stripe_ptr()
+      bcachefs: mkwrite() now only dirties one page
+      bcachefs: Fix casefold opt via xattr interface
+      bcachefs: Fix bch2_dirent_create_snapshot() for casefolding
+      bcachefs: Check for casefolded dirents in non casefolded dirs
 
+ fs/bcachefs/btree_iter.c       |  2 +-
+ fs/bcachefs/btree_key_cache.c  | 25 +++++++++++++++++--------
+ fs/bcachefs/btree_key_cache.h  |  3 +--
+ fs/bcachefs/dirent.c           | 33 +++++++++++++++------------------
+ fs/bcachefs/dirent.h           |  2 +-
+ fs/bcachefs/ec.c               | 20 +++++++-------------
+ fs/bcachefs/extents.h          |  7 -------
+ fs/bcachefs/fs-io-pagecache.c  | 18 +++++++++++-------
+ fs/bcachefs/fs.c               | 26 +-------------------------
+ fs/bcachefs/fsck.c             | 37 +++++++++++++++++++++++++++++++++++++
+ fs/bcachefs/inode.c            | 36 ++++++++++++++++++++++++++++++++++++
+ fs/bcachefs/inode.h            |  4 +++-
+ fs/bcachefs/namei.c            |  2 --
+ fs/bcachefs/sb-errors_format.h |  8 +++++++-
+ fs/bcachefs/xattr.c            |  6 ++++++
+ 15 files changed, 143 insertions(+), 86 deletions(-)
 
