@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-49799-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE7AAC2B6E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 23:37:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C22AC2C1E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 May 2025 01:23:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E95CE189750A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 21:37:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77580178FA0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 23:22:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CC0C1FDA94;
-	Fri, 23 May 2025 21:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200E52139C8;
+	Fri, 23 May 2025 23:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="CsCzSyo2"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="D4Xkl6Z/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC182DCBE6
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 21:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5221F09B2
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 23:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748036259; cv=none; b=PbzCHQZDA7IcpkcBF3I1oIz4IRvnP4Qkuskeytr3IO5Rq4oRk8VvBosx4pEattqxmqv8udiI1IICf+TrYt8mpfilAjufUOL7yP/ZpsX/QrHSb4cPOkNt0/z/JTAzD8jgT5QRJ+LyVIZP8MSO8y0E2KNutjWaSA6vuB0/eEMnxUc=
+	t=1748042542; cv=none; b=A8rpN3LspmDAdeX6s4V8UgJP13y4euxoJc82/uLpjZqhSIalFSWlMYh8SMtxj746cwuUVgEJXCCEmTfa0rdRzDLUKETnao4loI7bYBcnFs8Oht1HrsaqO5i6q3kNMCqRyAalpZiVyFbSBMHzhpZfgc3rZb9WBxSQNOxheWBMeIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748036259; c=relaxed/simple;
-	bh=9mfVthuhOZyQgFwstQRbk5lkQ3Wxk2ZNUjgj1jgC7T4=;
+	s=arc-20240116; t=1748042542; c=relaxed/simple;
+	bh=3yyUP3vvIlf3USYMWc9uVF94gwsqSAT2k4p6zJP5TTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OZtyPLskY5r0YIZAh+P8PbI1PZWlEOL9kDnJBj57SjKtGEOt4pZsJ+X+gBUFwdEinOP/PSyrJYloGRNfjD5nMZo95jSAP/fIFqdCwXwjekLFEShOKrjWvbSWvxzB35CXsVTlq7Nu69a/SQl8AntNY87gMbw/K1IktdEdSAQbN8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=CsCzSyo2; arc=none smtp.client-ip=62.89.141.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=k/am1qUm3L2kQIiz4U1+2A6QmrEI1Kq1e3y459DcmtcEMDM204sVzk2wMtuICDwTec+8Q+PGbJc2YfFfPqpZgLeE+wawjIEhiPzMSH0NC/57qUHurimbab/4MFZEDJrSP2ogJKKJ5XdleqJA61DGKW+BxRAYMaM7LK2SIl+dkh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=D4Xkl6Z/; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
 	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=8mDsncBT1Ss/MbqeStStX9hKJS9UrgTd6OZFjhwTkZI=; b=CsCzSyo2AMVYZ8vhyqjhC+jIzi
-	a77dvYolQ/MSLEG9OZTeXAj/Kfsug1jeOaTxt6+0i8EfB3aOalswmCHuWU9sKGWvK5+0u+80zjVwE
-	qtKQPPmCmmLU3TKNk684xIT/LJSC3N9aV8EvTVBUvoigbvdXI/c+p/A+l1g0ao+Uq1M2YqSb5ybev
-	AT0Sj7Q9Nj6LsSo75Yf+wxMmrZUZwVbproDWo2yt7sDwK4yYk2+O9bZlbrga2rqxtM+uB2rLdHNcO
-	i7GsVgztGElQQGew45YzOZVo7F5y40PqZYDhfVPF/aQ0HlT1nFH171hO0KGIxEIH4/abcSMvewZH5
-	WRb9VwQw==;
+	bh=KhDA1Sh4z5XTN04CX2pTBtpn8sX4fYy4Ya0fR8uMe4w=; b=D4Xkl6Z/U5d1evIW4TcE/f9Doq
+	vp5oluaBWmyWPH/n2TZS2XAZn2P2mGg4nKr1ccBoFE5/IoBtE2DkP91uccyX7x494y0X6d+big9SM
+	2DiMtxGlXtNkwV5LSrIpPPcEj33nbtLVZB8CIBtYZq79n9nymzdY+SXhw7ukLdGFN7CI+ILubcLG+
+	7HYsxSNWpN1osool11OvplLIXIB2EgnBrfEeWzLD06xeFTXDBjkgHCuD9w5g0AkdS40TKumQ9+Y8X
+	kXqO21H0tTzmFr/YwtJc+GynM9dAwzeKCJg8wuc+WQrIjl0iVUL33Lp4wmllnTVlrCoLFZKFDCSUb
+	2MSgXn1g==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uIa59-0000000FMQo-3kUj;
-	Fri, 23 May 2025 21:37:35 +0000
-Date: Fri, 23 May 2025 22:37:35 +0100
+	id 1uIbiP-0000000G7ZL-0F85;
+	Fri, 23 May 2025 23:22:13 +0000
+Date: Sat, 24 May 2025 00:22:13 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: Christian Brauner <brauner@kernel.org>
 Cc: Allison Karlitskaya <lis@redhat.com>, linux-fsdevel@vger.kernel.org
 Subject: Re: Apparent mount behaviour change in 6.15
-Message-ID: <20250523213735.GK2023217@ZenIV>
+Message-ID: <20250523232213.GL2023217@ZenIV>
 References: <CAOYeF9WQhFDe+BGW=Dp5fK8oRy5AgZ6zokVyTj1Wp4EUiYgt4w@mail.gmail.com>
  <20250515-abhauen-geflecht-c7eb5df70b78@brauner>
  <20250523063238.GI2023217@ZenIV>
  <20250523-aufweichen-dreizehn-c69ee4529b8b@brauner>
  <20250523212958.GJ2023217@ZenIV>
+ <20250523213735.GK2023217@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,20 +64,44 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250523212958.GJ2023217@ZenIV>
+In-Reply-To: <20250523213735.GK2023217@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, May 23, 2025 at 10:29:58PM +0100, Al Viro wrote:
+On Fri, May 23, 2025 at 10:37:35PM +0100, Al Viro wrote:
+> On Fri, May 23, 2025 at 10:29:58PM +0100, Al Viro wrote:
+> 
+> > This is bogus, IMO.  I'm perfectly fine with propagate_one() returning 0
+> > on anon_ns(m->mnt); that would refuse to propagate into *any* anon ns,
+> > but won't screw the propagation between the mounts that are in normal, non-anon
+> > namespaces.
+> 
+> IOW, I mean this variant - the only difference from what you've posted is
+> the location of is_anon_ns() test; you do it in IS_MNT_NEW(), this variant
+> has it in propagate_one().  Does the variant below fix regression?
 
-> This is bogus, IMO.  I'm perfectly fine with propagate_one() returning 0
-> on anon_ns(m->mnt); that would refuse to propagate into *any* anon ns,
-> but won't screw the propagation between the mounts that are in normal, non-anon
-> namespaces.
+AFAICS, it does suffice to revert the behaviour change on the reproducer
+upthread.
 
-IOW, I mean this variant - the only difference from what you've posted is
-the location of is_anon_ns() test; you do it in IS_MNT_NEW(), this variant
-has it in propagate_one().  Does the variant below fix regression?
+I've replaced the top of viro/vfs.git#fixes with that; commit message there
+is tentative - if nothing else, that's a patch from Christian with slight
+modifications from me.  It also needs reported-by, etc.
 
+Said that, could somebody (original reporter) confirm that the variant
+in git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git #fixes (head at
+63e90fcc1807) is OK with them?
+
+And yes, it will need a proper commit message.  Christian?
+
+commit 63e90fcc18072638a62196caae93de66fc6cbc37
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Fri May 23 19:20:36 2025 -0400
+
+    Don't propagate mounts into detached trees
+    
+    That reverts to behaviour of 6.14 and earlier, with
+    fix from "fix IS_MNT_PROPAGATING uses" preserved.
+    
+    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
 diff --git a/fs/mount.h b/fs/mount.h
 index 7aecf2a60472..ad7173037924 100644
