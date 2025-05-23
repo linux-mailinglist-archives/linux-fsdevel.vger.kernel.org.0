@@ -1,153 +1,119 @@
-Return-Path: <linux-fsdevel+bounces-49701-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49702-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 897B1AC18FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 02:30:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA86EAC191C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 03:03:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1BA04A5612
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 00:30:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D456A24BEE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 01:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C661C84DC;
-	Fri, 23 May 2025 00:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F0B221F3F;
+	Fri, 23 May 2025 01:00:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hk5UMMcT"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EuBPmj2f"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D8561F30BB;
-	Fri, 23 May 2025 00:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50CF21FF35;
+	Fri, 23 May 2025 01:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747960209; cv=none; b=uevJdUyYcNz1ijY3hKu1YglEdTfui2lMHWNCYYqOM2mvw399GgIpfDTiFa+ZhKVjcepTLAzxd37aJ0NPYhVk4bQ2pN7GQDAR4T8eT2opuq6xdcLovDnRtHetwaXnWrHvHdQ4boTcsmEpdwNYtq/uVgskKjKu/xqUysLjOfsdDeo=
+	t=1747962025; cv=none; b=ramHjCl0DZ938SBtE/NHauKkNLR/EcpWwY7aSFoinnb9p1HsZxapm988C+avBQn6NXemwXgcdW/Xhben1cNTk4QmPJZjzzsLWBTwiMUNDFm9L14rVYJOEx8x35pdGJKhIO3nl4T6WXJc9P92KVrKhUu+XEa07u5Gv/OEZt4C9nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747960209; c=relaxed/simple;
-	bh=Wl5YfiDuVTh4ATPHm/VPfxVkWv4VXMTmqAwd1VupLRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r95zDFMZMQFuVZKSsl7Es4OVxSnlcStm6NBGBzkY98DUdLCljvB4QNkCpKMToJrbm2zIaFYSK8zUwOXL58hSI/ovGAlC25xnCmqcfylWGoBon26VUq8LBBpMnLAoKkAKWiPQEF9paF9bTUpOVfaqZbn88sYEv5/fxZFYPENangk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hk5UMMcT; arc=none smtp.client-ip=209.85.160.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2cc57330163so4495697fac.2;
-        Thu, 22 May 2025 17:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1747960206; x=1748565006; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l3DeqVyXhMjUkCDgLsB9zplddhMp4wWfdmMvRjbrEdM=;
-        b=Hk5UMMcT3QcuLWSD68waWnej7XsddP2NPC3XzhhXXEbsXeDD1TP6dbNKcBie+GdxUA
-         LeVVMNrvnWBf9sLy0fwWZ+XasEaCMaaqEmjIpvkmVMmodbNrbQ6U0k4ywZ6Pm0Inn9hQ
-         qZNBQwoBiDLd6S8NR9raZIJS/gJBpjt/SX6bOD9skVTlsC6UY/QU19niUfp50wXyXFbg
-         gJVLABwqYHeC0pUkB3T1jTTwXFPZyFrQDw3iE5wcKnn0WEfh0t4QDCIAPTdyXOsHSxoy
-         BskkiL4OghMp6ug272301xtJxpTPqV1ROJYf8t3tJLE1JTb2zAc3X+jI/o/9NeJCLvPJ
-         li/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747960206; x=1748565006;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=l3DeqVyXhMjUkCDgLsB9zplddhMp4wWfdmMvRjbrEdM=;
-        b=BhC/ohJuyanQpZGVLG0MUN5AgLH+VcyN7BFg3vMOmvj8VVUGtIpardCfnCAXR6OIs8
-         8hIeIG1xPAkyL+/OQqVyF59Lr2+yYguqm/Enr34/eKcoJy/t9wCQbRaggdmxGJlfHLo3
-         qJND3HVttliohAaw2Sdu6jvhZmj49vRGrZJqNaQCBMk+vmdYxmroaHL/6hqhAkZhSZlS
-         Ygn95HfCrZeRSLl6Lehi4ImmXvLndD4KJ7G0E+zK3JMZ3zrwvjttdr/ba/21BSlDQO4h
-         hCWz0N6TY22ib5UHobD3HGXJO6tUmZo6PDkj0nGEUhKnUg7BGvXfe0jsQCFy63IVZUMl
-         S+Ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUNZmefnP2f6AvnHSTEXQ01YI+V7Cyl9BFHidqjCkR/mCp3hSI1yGXpb071vMuYTaa6umuD2YHtyeo=@vger.kernel.org, AJvYcCW3fNqULggXlUqk6nh+O7lFaqVWFaPDs7cjIideq0bhfzRNf6tyinbWLd8d9trqD8c6Dr0JXsJ1uYZ8zzJq@vger.kernel.org, AJvYcCWTFmInN6y8RM0pGUDkEq1U56IXbtV72rAP2ev2nmaY4S3+kBBX1awsDsif9Y/0bZz6y+AEZIzcl8ig@vger.kernel.org, AJvYcCXdtv0fCMDCLRHLGXMnFZvjHb1nU5uuFuEJNX3jYDmSA0tVMvMifcGo90yKW94SnITlN7AmKOT8d4FAwhiRGw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcqxDAmOwjIlQCkR8BoNhxw54QnP4/p6aa2W6gnR5RCDcwYmao
-	4hbbV8J618D6+wPdJayvnWPbgRNW5jEh6Y++77g+/miEJrHpV+fGQmfD
-X-Gm-Gg: ASbGncsL1GNrJZFi0ukl01ghY430l6x00nDW/P9uPMoHcr15yEOlQDobYlHLrF7tRbf
-	XW5W+AkV0/OyioTsy+QCWxaaN74lqZ0mdY/EORk/+tFAX7Hwoh34rOd/AnLypDqGkugMUU6hnOP
-	nYrksEvVgc389GmqkI19Xyv38H8Ig9u26hCWkv2VTwGLYlzm6SrfKMqtnOTGUMUp6ewhtk7NY5V
-	/wZ2GaNn+zx3BGHlQ3FgfIo1mvBxrnj2W97bMp4oHs0g+coK3qp9IYfILaOLImnRrFb+Gm995do
-	rc6Xrq46XZoG7oCKYGkr9BW98ClNGxtrSCtRHM6rKNbQLUi8JBfoANfBLZRySlrEGg==
-X-Google-Smtp-Source: AGHT+IGzkPKh4ltsHgJ3DC9EjVHlO8KxAU5N7rqWDv9531QCEztz3JUTMJs31ibfrfp+x7mffoOdEw==
-X-Received: by 2002:a05:6871:aa14:b0:29d:c85f:bc8c with SMTP id 586e51a60fabf-2e3c1f50b50mr17123684fac.36.1747960206336;
-        Thu, 22 May 2025 17:30:06 -0700 (PDT)
-Received: from groves.net ([2603:8080:1500:3d89:5d18:dfdf:ed52:cd5d])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2e3c0a9e02dsm3339566fac.35.2025.05.22.17.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 May 2025 17:30:04 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Thu, 22 May 2025 19:30:02 -0500
-From: John Groves <John@groves.net>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Joanne Koong <joannelkoong@gmail.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Bernd Schubert <bschubert@ddn.com>, John Groves <jgroves@micron.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
-	"Darrick J . Wong" <djwong@kernel.org>, Luis Henriques <luis@igalia.com>, 
-	Randy Dunlap <rdunlap@infradead.org>, Jeff Layton <jlayton@kernel.org>, 
-	Kent Overstreet <kent.overstreet@linux.dev>, Petr Vorel <pvorel@suse.cz>, Brian Foster <bfoster@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev, 
-	linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Stefan Hajnoczi <shajnocz@redhat.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Aravind Ramesh <arramesh@micron.com>, 
-	Ajay Joshi <ajayjoshi@micron.com>
-Subject: Re: [RFC PATCH 12/19] famfs_fuse: Plumb the GET_FMAP message/response
-Message-ID: <dgt4gpgpc4f3455rxdhztvnbmewdo3yw44b7mbs4tj2bt2x56n@dr5txuwm2c37>
-References: <20250421013346.32530-1-john@groves.net>
- <20250421013346.32530-13-john@groves.net>
- <CAJnrk1ZRSoMN+jan5D9d3UYWnTVxc_5KVaBtP7JV2b+0skrBfg@mail.gmail.com>
- <xhekfz652u3dla26aj4ge45zr4tk76b2jgkcb22jfo46gvf6ry@zze73cprkx6g>
- <CAOQ4uxj73Z8Hee1U7LxABYKoHbowA4ARBFDv434yDq+qn5iMZw@mail.gmail.com>
+	s=arc-20240116; t=1747962025; c=relaxed/simple;
+	bh=mBllmWspxUb6WMZ6UgK2YeCavB2WwSWS5l+56LBR2Sg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dgbASe+6WQdWwbPa84SnMHriMvnd71Pbv4r0dQfTtYp+NS7slHvIwtWEH90/6gXBv44wiTT7kGXfaXM4iNAzN/eeGAVzQNQMV0xPsL/m+sSlNm2L44EbYEePJ5SiR0VlalrY04s13HhzLLQd48hkTbBuwfRj1thsmDZDWzP4tZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EuBPmj2f; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=JQsG2xym9H00ve0pF5UnE9P2+sIgGX1YRykP3ytbG4A=; b=EuBPmj2f/169O1QWRM8OH0oEg4
+	ErDjjMvJ0JkGLK6eWwWcNtvIPebe0phapWl7re5RBSxmdWOKf3TGAmlNmuQs9LUMADckZl+k652Bh
+	YPYj5y5LNPWRl+3NCPBg6o/2s9YcHFgEd9ZuvDYZzUxBT+eIE8xMdEq8ok2TNp1BtLl0P/cfwMLAE
+	bfcjummeMYWjGrmfWZoqBObaxXjj3bSJDC4hEPhsxqttWnYK97QmHCR0DLi2n+KpKFF+f9oceR3+e
+	1xi4vRgPxHPRfwo/e7/g8FxEQL/n57G15bVpMqv1jm7Yr9WYvJDmOrc6EMxb/oAmu640LaRb764LZ
+	TbwDeW+A==;
+Received: from [50.53.25.54] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98.1 #2 (Red Hat Linux))
+	id 1uIGlE-000000016zC-1qFs;
+	Fri, 23 May 2025 01:00:15 +0000
+Message-ID: <5e9ccdad-a9f4-4c8f-85b0-430edd910590@infradead.org>
+Date: Thu, 22 May 2025 17:59:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxj73Z8Hee1U7LxABYKoHbowA4ARBFDv434yDq+qn5iMZw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 4/9] coredump: add coredump socket
+To: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Jann Horn <jannh@google.com>, Daniel Borkmann <daniel@iogearbox.net>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org
+Cc: Eric Dumazet <edumazet@google.com>, Oleg Nesterov <oleg@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Daan De Meyer <daan.j.demeyer@gmail.com>,
+ David Rheinsberg <david@readahead.eu>, Jakub Kicinski <kuba@kernel.org>,
+ Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>,
+ Luca Boccassi <luca.boccassi@gmail.com>, Mike Yuan <me@yhndnzj.com>,
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>,
+ =?UTF-8?Q?Zbigniew_J=C4=99drzejewski-Szmek?= <zbyszek@in.waw.pl>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-security-module@vger.kernel.org,
+ Alexander Mikhalitsyn <alexander@mihalicyn.com>
+References: <20250516-work-coredump-socket-v8-0-664f3caf2516@kernel.org>
+ <20250516-work-coredump-socket-v8-4-664f3caf2516@kernel.org>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20250516-work-coredump-socket-v8-4-664f3caf2516@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 25/05/22 05:45PM, Amir Goldstein wrote:
-> On Mon, May 12, 2025 at 6:28 PM John Groves <John@groves.net> wrote:
-> >
-> > On 25/05/01 10:48PM, Joanne Koong wrote:
-> > > On Sun, Apr 20, 2025 at 6:34 PM John Groves <John@groves.net> wrote:
-> > > >
-> > > > Upon completion of a LOOKUP, if we're in famfs-mode we do a GET_FMAP to
-> > > > retrieve and cache up the file-to-dax map in the kernel. If this
-> > > > succeeds, read/write/mmap are resolved direct-to-dax with no upcalls.
-> > > >
-> > > > Signed-off-by: John Groves <john@groves.net>
-> > > > ---
-> ...
-> > > > diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
-> > > > index 7f4b73e739cb..848c8818e6f7 100644
-> > > > --- a/fs/fuse/inode.c
-> > > > +++ b/fs/fuse/inode.c
-> > > > @@ -117,6 +117,9 @@ static struct inode *fuse_alloc_inode(struct super_block *sb)
-> > > >         if (IS_ENABLED(CONFIG_FUSE_PASSTHROUGH))
-> > > >                 fuse_inode_backing_set(fi, NULL);
-> > > >
-> > > > +       if (IS_ENABLED(CONFIG_FUSE_FAMFS_DAX))
-> > > > +               famfs_meta_set(fi, NULL);
-> > >
-> > > "fi->famfs_meta = NULL;" looks simpler here
-> >
-> > I toootally agree here, but I was following the passthrough pattern
-> > just above.  @miklos or @Amir, got a preference here?
-> >
+Hi,
+
+On 5/16/25 4:25 AM, Christian Brauner wrote:
+> Coredumping currently supports two modes:
 > 
-> It's not about preference, this fails build.
-> Even though compiler (or pre-processor whatever) should be able to skip
-> "fi->famfs_meta = NULL;" if CONFIG_FUSE_FAMFS_DAX is not defined
-> IIRC it does not. Feel free to try. Maybe I do not remember correctly.
+
+> ---
+>  fs/coredump.c       | 118 ++++++++++++++++++++++++++++++++++++++++++++++++++--
+>  include/linux/net.h |   1 +
+>  net/unix/af_unix.c  |  54 ++++++++++++++++++------
+>  3 files changed, 156 insertions(+), 17 deletions(-)
 > 
-> Thanks,
-> Amir.
 
-Thanks Amir. Will fiddle with this when cleaning up V2.
+[snip]
 
-John
+git a/include/linux/net.h b/include/linux/net.h> index 0ff950eecc6b..139c85d0f2ea 100644
+> --- a/include/linux/net.h
+> +++ b/include/linux/net.h
+> @@ -81,6 +81,7 @@ enum sock_type {
+>  #ifndef SOCK_NONBLOCK
+>  #define SOCK_NONBLOCK	O_NONBLOCK
+>  #endif
+> +#define SOCK_COREDUMP	O_NOCTTY
+>  
+>  #endif /* ARCH_HAS_SOCKET_TYPES */
+
+MIPS sets ARCH_HAS_SOCKET_TYPES so the new define above is not used,
+causing:
+
+
+net/unix/af_unix.c:1152:21: error: 'SOCK_COREDUMP' undeclared (f
+irst use in this function); did you mean 'SOCK_RDM'?
+
+
+-- 
+~Randy
 
 
