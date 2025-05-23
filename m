@@ -1,157 +1,102 @@
-Return-Path: <linux-fsdevel+bounces-49750-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49751-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AC38AC1F35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 11:03:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0487AC1F90
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 11:15:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C70F3A7E76
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 09:03:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB6F33B3824
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 09:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5E12248BB;
-	Fri, 23 May 2025 09:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CC2F226865;
+	Fri, 23 May 2025 09:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBBddXGL"
+	dkim=pass (2048-bit key) header.d=ai-sast.com header.i=@ai-sast.com header.b="23wcnIM2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from outbound.pv.icloud.com (p-west1-cluster5-host11-snip4-5.eps.apple.com [57.103.66.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F2F2236EB;
-	Fri, 23 May 2025 09:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F2DF1E521A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 09:15:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.216
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747990994; cv=none; b=TIutPAXPNJgpJqVEUUD9BmvxkMTYbWoRPkVOeyMKsS9vH+FIPWzzUHFJBvIgjCG1vcjmUvhCiZYKbCoRNmgj0a2QOoKMdYrPCxrPTddehuDrn+40k6ET2JrdyrX8Q8VJRRyWywt5EUs4k4H073FYoDua/dYr/AnNJiHjeCEsUAk=
+	t=1747991726; cv=none; b=CfyOpTQFgcowJxiqtAeiU5OxZKmnABkAdHqJR6jjdl7IucNbG74IgbDAxCnfaktHrCG7oE/FnJCwU/Ig50HU69fMwmgwW0rpKhRmlED/FSQdJo7dNg3KQOc4Kv4sgrsuJQcrQlHpOk6Pl5v6BmvUf78lpfyMcWEdi5EoVcuoagY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747990994; c=relaxed/simple;
-	bh=fgNdYJ6Icfxm1rufblmWWRmhDfarblHEjveCv2W+a0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JNwcLI2HgF70lJc+5+6fXKea7fzEm76QBR70B/dvyngMu4P9ZEDJoUdOzVDYcUl18TS/GA++NHuLiqSymYCQiF+CvHiFgpi7bZlpjvZ4ue8fGU7zegYoKRd7++U7eqRcrzwSq9rhlmhdyZNAsvMyDQxeb36M0ehK17kP7DaoYik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBBddXGL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9612CC4CEE9;
-	Fri, 23 May 2025 09:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1747990994;
-	bh=fgNdYJ6Icfxm1rufblmWWRmhDfarblHEjveCv2W+a0E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GBBddXGLSkGmKOnmELz/5WhFuBXe0qFz98yo/sL3VR/jY3YKPUjJLiPs4J60cICJS
-	 15W+zbxLlX5Xt7IcrIDVw8DwIDDA1S8Q+Sx8bHTjMjyDxBZFEuIJrm0WuOUXJAjEsF
-	 TKloFbxJANvIEF/VpNrVLyi1kxeAkz9y3eMV9ShtcRejhK8aMDdRXWQNFBfttDizjK
-	 +PX3HGhgczz9V18sAFnaKjhxAArqDTEo0K+1i/Lo74i8Ibv85mGJHLqx9XC/VPbX+E
-	 HDcD6ltsNrpYqSoE3Cgf1484Q5Zl4vvIu6WIF+8g/8BTcuUwQ/2RBXLMKGa0LxqZzf
-	 taReSpOAAriBg==
-Date: Fri, 23 May 2025 11:03:08 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, 
-	linux-fsdevel@vger.kernel.org, linux-mips@vger.kernel.org, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	Anders Roxell <anders.roxell@linaro.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: Re: mips gcc-12 malta_defconfig 'SOCK_COREDUMP' undeclared (first
- use in this function); did you mean 'SOCK_RDM'?
-Message-ID: <20250523-genannt-anwalt-7c1f3c6bc4e1@brauner>
-References: <CA+G9fYsZPSJ55FQ9Le9rLQMVHaHyE5kU66xqiPnz6mmfhvPfbQ@mail.gmail.com>
- <70d46cd3-80f4-4f5e-b0fc-fa2a6f284404@app.fastmail.com>
+	s=arc-20240116; t=1747991726; c=relaxed/simple;
+	bh=RnYD+Ni15zMNK1TCEl1muSbfKEbGPsYAXEH5yp9H8kU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ItiSop3p8ngmHhYn19BuE3+GDMcKTsvVDz6Ylinj8+i/dalrPQDzu7IHlYT/Q7d1SOhUhnZM8SbAwyFd2ffeiQne369HFy6UmmRQmk9OCf96/shSe6QVwxW/qvpNCEPoRd9WD9Zbd2sIRbueoYxaN0dVDbA/tBHY/neDo1XHFPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ai-sast.com; spf=pass smtp.mailfrom=ai-sast.com; dkim=pass (2048-bit key) header.d=ai-sast.com header.i=@ai-sast.com header.b=23wcnIM2; arc=none smtp.client-ip=57.103.66.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ai-sast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ai-sast.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ai-sast.com; s=sig1;
+	bh=YyKS243VV7SsoTdftLin95+GlAHrUt5ZaL5mE+UwCYI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:x-icloud-hme;
+	b=23wcnIM2CdyIu0okcrwv2i7gqi/u9yY6NWAsNBMyVi53j5Z/EZwYVuN6S8MQ795gJ
+	 f48FPfqKNHvO+C8M2Mp08nUvQyqcjcVQFDo+697Hk4slfG5KQ9FPPQ73MM7aRjJ/v2
+	 a3HU7khqxTurXRIFqsG+ebZgSOppVsGG/ThzEUBDP0ybWBKwZndkAauf5ZoaOe7ZF7
+	 ma/Oycp4Eh1q7ipVKO4qaLkX3gMl8w9KN5VZzUX8DhfFzuChaN+ZOla7EvprcYLHZo
+	 lmZqPio8vk2HFbCAPpQW9O2iE7s6LAX1XF63MfkDx8Kinip8A17wp2I5buwiSvoolI
+	 Kcb+VKMLbnSCA==
+Received: from outbound.pv.icloud.com (localhost [127.0.0.1])
+	by outbound.pv.icloud.com (Postfix) with ESMTPS id 4694718028F3;
+	Fri, 23 May 2025 09:15:21 +0000 (UTC)
+Received: from localhost.localdomain (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
+	by outbound.pv.icloud.com (Postfix) with ESMTPSA id 7432318029CA;
+	Fri, 23 May 2025 09:15:00 +0000 (UTC)
+From: Ye Chey <yechey@ai-sast.com>
+To: brauner@kernel.org,
+	djwong@kernel.org
+Cc: linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ye Chey <yechey@ai-sast.com>
+Subject: [PATCH] iomap: fix potential NULL pointer dereference in iomap_alloc_ioend
+Date: Fri, 23 May 2025 17:14:17 +0800
+Message-ID: <20250523091417.2825-1-yechey@ai-sast.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="zlqp6i2j7vfr5zzm"
-Content-Disposition: inline
-In-Reply-To: <70d46cd3-80f4-4f5e-b0fc-fa2a6f284404@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: N5XNWfC75tO48dMvU92rl6sLZ-EDykol
+X-Proofpoint-GUID: N5XNWfC75tO48dMvU92rl6sLZ-EDykol
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_02,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0
+ phishscore=0 mlxscore=0 spamscore=0 malwarescore=0 bulkscore=0 clxscore=1030
+ mlxlogscore=857 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.22.0-2503310001 definitions=main-2505230081
 
+Under memory pressure, bio_alloc_bioset() may fail and return NULL. Add
+a check to prevent NULL pointer dereference in iomap_alloc_ioend().
+This could happen when the system is under memory pressure and the
+allocation of the bio structure fails.
 
---zlqp6i2j7vfr5zzm
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-On Thu, May 22, 2025 at 04:01:53PM +0200, Arnd Bergmann wrote:
-> On Thu, May 22, 2025, at 15:22, Naresh Kamboju wrote:
-> 
-> > ## Build log
-> > net/unix/af_unix.c: In function 'unix_find_bsd':
-> > net/unix/af_unix.c:1152:21: error: 'SOCK_COREDUMP' undeclared (first
-> > use in this function); did you mean 'SOCK_RDM'?
-> >  1152 |         if (flags & SOCK_COREDUMP) {
-> 
-> SOCK_COREDUMP should be defined outside of ARCH_HAS_SOCKET_TYPES.
-> How about reducing the scope of that check like this?
-> 
->       Arnd
-
-I applied the appended patch.
-
---zlqp6i2j7vfr5zzm
-Content-Type: text/x-diff; charset=utf-8
-Content-Disposition: attachment;
-	filename="0001-mips-net-ensure-that-SOCK_COREDUMP-is-defined.patch"
-
-From 4e83ae6ec87dddac070ba349d3b839589b1bb957 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Fri, 23 May 2025 10:47:06 +0200
-Subject: [PATCH] mips, net: ensure that SOCK_COREDUMP is defined
-
-For historical reasons mips has to override the socket enum values but
-the defines are all the same. So simply move the ARCH_HAS_SOCKET_TYPES
-scope.
-
-Fixes: a9194f88782a ("coredump: add coredump socket")
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Ye Chey <yechey@ai-sast.com>
 ---
- arch/mips/include/asm/socket.h | 9 ---------
- include/linux/net.h            | 3 +--
- 2 files changed, 1 insertion(+), 11 deletions(-)
+ fs/iomap/buffered-io.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/include/asm/socket.h b/arch/mips/include/asm/socket.h
-index 4724a563c5bf..43a09f0dd3ff 100644
---- a/arch/mips/include/asm/socket.h
-+++ b/arch/mips/include/asm/socket.h
-@@ -36,15 +36,6 @@ enum sock_type {
- 	SOCK_PACKET	= 10,
- };
- 
--#define SOCK_MAX (SOCK_PACKET + 1)
--/* Mask which covers at least up to SOCK_MASK-1.  The
-- *  * remaining bits are used as flags. */
--#define SOCK_TYPE_MASK 0xf
--
--/* Flags for socket, socketpair, paccept */
--#define SOCK_CLOEXEC	O_CLOEXEC
--#define SOCK_NONBLOCK	O_NONBLOCK
--
- #define ARCH_HAS_SOCKET_TYPES 1
- 
- #endif /* _ASM_SOCKET_H */
-diff --git a/include/linux/net.h b/include/linux/net.h
-index 139c85d0f2ea..f60fff91e1df 100644
---- a/include/linux/net.h
-+++ b/include/linux/net.h
-@@ -70,6 +70,7 @@ enum sock_type {
- 	SOCK_DCCP	= 6,
- 	SOCK_PACKET	= 10,
- };
-+#endif /* ARCH_HAS_SOCKET_TYPES */
- 
- #define SOCK_MAX (SOCK_PACKET + 1)
- /* Mask which covers at least up to SOCK_MASK-1.  The
-@@ -83,8 +84,6 @@ enum sock_type {
- #endif
- #define SOCK_COREDUMP	O_NOCTTY
- 
--#endif /* ARCH_HAS_SOCKET_TYPES */
--
- /**
-  * enum sock_shutdown_cmd - Shutdown types
-  * @SHUT_RD: shutdown receptions
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 5b08bd417..d243b191e 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -1618,6 +1618,8 @@ static struct iomap_ioend *iomap_alloc_ioend(struct iomap_writepage_ctx *wpc,
+ 	bio = bio_alloc_bioset(wpc->iomap.bdev, BIO_MAX_VECS,
+ 			       REQ_OP_WRITE | wbc_to_write_flags(wbc),
+ 			       GFP_NOFS, &iomap_ioend_bioset);
++	if (!bio)
++		return NULL;
+ 	bio->bi_iter.bi_sector = iomap_sector(&wpc->iomap, pos);
+ 	bio->bi_end_io = iomap_writepage_end_bio;
+ 	bio->bi_write_hint = inode->i_write_hint;
 -- 
-2.47.2
+2.44.0
 
-
---zlqp6i2j7vfr5zzm--
 
