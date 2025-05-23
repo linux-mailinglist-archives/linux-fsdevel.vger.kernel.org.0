@@ -1,289 +1,244 @@
-Return-Path: <linux-fsdevel+bounces-49707-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49708-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7090AAC1AFB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 06:38:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 829BDAC1B93
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 06:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A78EA1BA65DD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 04:38:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF7821B63E4D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 04:46:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AD2223DC1;
-	Fri, 23 May 2025 04:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jBF0VUAW"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B44822371C;
+	Fri, 23 May 2025 04:46:37 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2074.outbound.protection.outlook.com [40.107.220.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC5C1547F2;
-	Fri, 23 May 2025 04:38:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747975083; cv=fail; b=SaV1fPG0a/CQqR/pHgEzvaGrYT0uz0JYhSpBYF1v9nY3CJOiRVRXWhiA8Omf0WhOk7xg/uGQLLLBlPbfYYnpf4IuVtFeEupjQP23XiPj/X9I2vjDA7Ti0ZjSSG1ZI2tAfBEPe7dw8oyR8o5o/SNoY/t0OV9v8jklba/wDil4LGo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747975083; c=relaxed/simple;
-	bh=A48WyAFyvzcfHO8cSMUslTDN6t5unfNGnHjzHTOfSOI=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=G3i/eUrmpZDVpcVKOJt1f4P601KsG/tVh70+qIdOwWfzCg9BYEnQ0S7Sn5TjLguODMqKmabvB6h8Clf6zHc83hvCXeO1gisNwgm0yfNcPkkn1e+5R6/73n7okw8F85Kn7RZxpXuSmT4xX2oJME/qd2QrbKX28Fa4LT2bvAQ9408=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jBF0VUAW; arc=fail smtp.client-ip=40.107.220.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RB01KowsHBdqZkvVhvjpNsFL4JlPEaPWyIsY9dHNKnkzfAqdh9ZLE6CvNjMGYHiUaFifMNng33ltuLm1Ld1Ux6fl/iJTslzv3TSBwHYt5CHk+NpctGWk4qByndpLhbrTOWme2LfXVD1LHi8eMHBjL8JkievKffGpXBMN40Kf4mAxxi4NXl1WjS4JVR/XGQeBFWmvxdmNtRMnzppJIL+GvL0FGSDoSunfBxsyYMWpixBNK7Tiw/SGjChW0qsqxw9Qc9XFOr+qyA5lsQRn3N6mtlFbYocmwZH3LlCsJrH9GclLwPwG2bKJMzIEtuV/LesBK57DfsBalDXZMlqxozgJRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ykzWj1HtPID7sAS+Q06t5etL2eFn66b8jPbJ0SlzW4Q=;
- b=BqRvGu8/Qi7WPKuxD1TjzBlirgCWPo7oOirKoU/a6QgLAnSWaW15Ls8Kp+I5qItesHFPZ3S9DkXJ7w7JBOCf9K8iwdT40Mqqg99yrF4IIqriyRHnSB5o+F0dQCL4tpgD2W46o2HjIeGHUxhICOL/GBuW70jpMT+tniih4Gg8WcARjbGNc+ert4pVkJFG+0hPpcUgh+jG5qRLjCPW5Fz02Sebns3xVbwsLNiYTfq8CazBrJmawchWaRDJJgVy7cNDzkDgTnQsSCAUuq8VMEqvbq+Iomzx+RZEOlL19VXtzcxPWZhty2jbU8y8qjzgnt3VFZ88spdJJqKuBzBqwZ0hww==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ykzWj1HtPID7sAS+Q06t5etL2eFn66b8jPbJ0SlzW4Q=;
- b=jBF0VUAW3RToDousDEvrFUp5ppjVC18ZZOHj9Dg3JlAivvV9cd/ZyCIOvUV4zyxW8QZrG9OfLeCJMCiKnnTexgeyAb/amgOBZhTp5xfYUa/SsRE3AD2pWtsoi6a5slnM98ocG7ODf4XBVqlwCbsS2a0YYioz1mNaKG6HW4mv9fNaak3UabD0IMTkxXp1YBSK9b9DPepO+cT2ozUpV92wfZV2kyhVwK99z9bcepeAaBzV788MxoEyG8iFrD+yK2rSYIR3a92YNUM5dqO2lqcZQnI5qEwLk5O4cPwsb/jM5+2nK0rv1JDxXfR13lCmY0tOVh34J9tnxYS8rx7AT1k1Jg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- MW6PR12MB8913.namprd12.prod.outlook.com (2603:10b6:303:247::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.30; Fri, 23 May
- 2025 04:37:57 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8746.030; Fri, 23 May 2025
- 04:37:57 +0000
-From: Alistair Popple <apopple@nvidia.com>
-To: akpm@linux-foundation.org,
-	linux-fsdevel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	dan.j.williams@intel.com,
-	willy@infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	Alistair Popple <apopple@nvidia.com>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Balbir Singh <balbirs@nvidia.com>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Dave Chinner <david@fromorbit.com>,
-	David Hildenbrand <david@redhat.com>,
-	Jan Kara <jack@suse.cz>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Ted Ts'o <tytso@mit.edu>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>
-Subject: [PATCH] fs/dax: Fix "don't skip locked entries when scanning entries"
-Date: Fri, 23 May 2025 14:37:49 +1000
-Message-ID: <20250523043749.1460780-1-apopple@nvidia.com>
-X-Mailer: git-send-email 2.47.2
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SY4P282CA0003.AUSP282.PROD.OUTLOOK.COM
- (2603:10c6:10:a0::13) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D59019DF4A
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 04:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1747975597; cv=none; b=AQpmwDlM5LzY+vEAGUqieRbrbDKfcLQ9j5i8nbgoLOKqJhA9pomy/4qJHZAU+IXrE2DmQHg+E13/TOK4AEnO1HR+bKggzZliBpusYF9xI1yWB3EijRplptoSSGdhc3oPXu4s9W9EdjqDq5pios6mAIwX6XCviQDnshLLaqYEROM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1747975597; c=relaxed/simple;
+	bh=XAqPNcQTWX91zcH2mVA5CqsMow38DbgaVvBjBUe0TDo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Cc3Sc28/HIDtyEPyLM6SWzh1NfNVM6Oqw3y12YPIEQNqFt69QO0WzIM3AfQsvXVou2eq6gtOkrkf5vgcOuxAbUsMpo5LdM86i0XHNHJxiDc6hOTbSfG/atK5iRJrHXiA19S4LcgYSxD7tujP6b/oPIHGvyyjTWx6wbpj0+cd2jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3dc78d55321so49883165ab.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 May 2025 21:46:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1747975594; x=1748580394;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xbWOPZAgkoPSb2bLTKcY8Iaj/okxhf05Cpg7L2qKMFs=;
+        b=suAQAagjpaTzulzTpzfCoWq6LG74paOniHCtoV+HGdqB6i04E6oP6/mauR8bDLG5Al
+         NdbYfbJd5LsOHZT4m6JdFTIqsGydHVL7Yff+eOiy/JU47HD40JDA6MDamA7NbnvihCSL
+         EPEPtu8WI/s43z6LRSdJQEAEwkJWSDERDXe5H3PUe4iK6IXaq40ypk7oks/5BaUD6X8d
+         tbTI8lv2NGyNBB016BEq/d/kXDxXBocET6HFwQACHKzHXwXO5tHIdNhWJWH3GbKn1BhV
+         /60hkGI0HdmdORT+neWshfhR+8HFWm6jNHi0J/wZgqySU+Uce6zTDiCkE64Tkvg3aWUm
+         5SIA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7GpCMUEq9gdqF0b6wbnSXD5hkFt4Mbjnzh9fpIuv574z5szPyLLcA7kk8J2lu8aINSxtXZvR+LqL6XyL0@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBk95QpoJ5r2TTFK0wwNMJI+HXBcKDE9n5D4XyLAV+kZ7m0XKR
+	NsV2Seb5rQmEI8DA7Joi0HOFlw/3K09snz8VNoDZsjBr4vpSWAWLe1kVheUPcMm1sHln/ALx8iX
+	BuZVcwqpV8JIQhYAhaEigTBo3fbpMDYP4qP87xUBlheQbRU6jbSuPmMzeEmw=
+X-Google-Smtp-Source: AGHT+IGnYULwd6+EAnWNTWM0zxMUrJYcKL/b/3KprQheG4Ilx0uvk8CYbzsaxTdqbvfzzzJnXsbooSyMhwtja4j4AVeD293W+Nb3
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|MW6PR12MB8913:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6599840d-d4c3-45ec-26ab-08dd99b39747
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?a2pZfMp+f6uMEgX1R21teJ3Ompl8CpB2end/7Gyp4ggM6oTkivH1VGD7tyjr?=
- =?us-ascii?Q?20tvUL+uargperZ09doJ3UyOBDrzNVpL3XBR8ySJfobRC3d+gXpRO3/noJfG?=
- =?us-ascii?Q?tTjMl+SfjXa7aZsG6E6ZWbrvWBppNpcnWWdtBbrU9lp3qrg0A4fK6zT7dJeK?=
- =?us-ascii?Q?fF5Yq22E60RC1Rk5UKWuyuTzcKJiXj7DRmt+0iJIf+3HKjSEUklLgQgN10lv?=
- =?us-ascii?Q?qEkZDGUonTvpcscpYjJb5HB4R1H7ZxbFsgQ5ul2SqVPZbVI6iq084ZKBak3a?=
- =?us-ascii?Q?6JAb+zjVztlucqSDNUYbcD96amuPas1MAbq7QVgNn+jTOaLkDL45ItSAFqf6?=
- =?us-ascii?Q?OFvNN9RHe71rLOraayo48RwBUfeu0241wezBgqS5aOITHhSZkBP+9MGI8QRq?=
- =?us-ascii?Q?1jQqMVLvKUnBmgB1ASsiOGtBGnFMlV7wPcassgAQUTeNw47+AWM/nmDpI+BW?=
- =?us-ascii?Q?YrBtdVAvefTu0wuDnjgMA439wSkxD0i+j/eumYM3K4k6iO7AOm/hrFBy97ca?=
- =?us-ascii?Q?/CsTuHXYg+ocvZizQYU1v2CeKUbdk99rVokAkr0Akc6PpQVZXeQMZGitgLWe?=
- =?us-ascii?Q?iKpqfpmBfdtjbtklbYhdTQgy/19jaQ0iWde6IUnHI4TdMLrpN37FIbzgJgYB?=
- =?us-ascii?Q?PR+t+OSQFkjpmBXNin7i4d0ZQF2FZMw3VZd4zzwTOqlTPXDNkP+HKXo6745b?=
- =?us-ascii?Q?sm12LJmoSF9XpZ6FqBzu7IagTYf9qlEqqOQbt5XEgRkCUdzBwqTwpWKLK3P9?=
- =?us-ascii?Q?213JsTz2oVTEN1NWU6ObBloR+48Yb+OEfZheVfU4E0oaKDOuN3Ug+1447IZF?=
- =?us-ascii?Q?Rl2XFblrbfviQXzU9+H6CcmnuctkYw30iM4ul3/EOe5h/yGxF++Fo7UnLGvS?=
- =?us-ascii?Q?t2VjkCxR5jgal6H681ZjuDt8XeGtnkIJ1SKCx2qlohky62tir10drt7NQAsS?=
- =?us-ascii?Q?i1Du5phwNfEBcGgPAwPBuMyWkqHsrHWCsZcrbddJF1eSs3i+VQDdNxM99v7M?=
- =?us-ascii?Q?nImCct9FpgrxuJukb+H06E0aJzgYzLyFIjWGOdhmJrd6FGkfyf26m1H/uJq2?=
- =?us-ascii?Q?0hQwXIrwZZ4cV4R308sj3A3Okqru4Okl+A+P9Ly1tOjtzKw+u68sMOaipZoq?=
- =?us-ascii?Q?sVVvlrqseOk6Smf34DvJAEwa0u3akZcdt1V76+UeGGbhgsyWnVoRe1VIXy64?=
- =?us-ascii?Q?2znNxfySfHP9TB0726hZYtwq+A1MLT6em44WdqWf/W4wa/LZNMgRwQ8Wm5aR?=
- =?us-ascii?Q?XSKUPjmFhNmD3vLHfHvk12LuiRWQqkGrj9kzBR4hi9N8SrIN0Pz7Eh7wmPU/?=
- =?us-ascii?Q?A8f36M+7YX8bY/MkHeVTa11IBA4/4NsL+cdclSRaAO0U87C8oo+Nht3vzyH9?=
- =?us-ascii?Q?DayGAbIO3hhwCM/YQ7ePqwFHBTkTVRKtmnBErj4sTOKkaNgQTt2cEwoLU0ep?=
- =?us-ascii?Q?2jGAi6w6cfQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?x6AmqcFoVRtoA3bqXR05oZh0MtGJkv5cXOYoQkhadSVl0gHXkoIuHKx89Vos?=
- =?us-ascii?Q?uB44QQy3bxkQ2jj/BP1NvzpM8kYY8crALDjqCqGrF77tZcP9jFGd4x/dSG2m?=
- =?us-ascii?Q?SZzr6s+nEpaj5JBM+8oC0cLq+vlevs2r0lr/CAelJ4e+1FdKvGWtL5KcTS5j?=
- =?us-ascii?Q?M9I9gXtFUn/DcTlphHXFsmqytg+C03+HtifKKGGXUfjFWJ8YiOKGEIrHL8c6?=
- =?us-ascii?Q?hI5JCD2/W0ZtFB98F5CDFuvMNHSlBShICbbESGoDJJ3e2hnUrTNVWEbettsO?=
- =?us-ascii?Q?q1LBqG+KtYCSnpqj5ifFD6ftBlq1/97ZXbmG4li5Y1+OFS/adUySu09R62eO?=
- =?us-ascii?Q?ObNPYR8SMXqW6ps9YD6meXrrehKkJPbc59sizYikT9+ap0IkGuO+C3v+QdOq?=
- =?us-ascii?Q?e0EysG/wXCkLUGnp/QToK7rd5Jeoh7aLGFQXwPf4aINyItMoXT2NQj2pVccy?=
- =?us-ascii?Q?frvm651q+XHCDhLF5UchcC7QUtlaHE3+MCBAqJSA4AsWuHcQv/IhacCYRlLv?=
- =?us-ascii?Q?iXgN/wTOFOWybYDut0Gn1nVf6rsnujGyTIcSLwIoWrXV6e2ERgdgHYuMCoJ/?=
- =?us-ascii?Q?MNT6FTH2ljgYSeSRvZnFH6elL+pks0BaOdIvZ70YnoJcuTWoAe7z33ZRl+9q?=
- =?us-ascii?Q?PtpcwO4/QnUCh6bLPaIIRzR0B06i9NefkBzDDqEku0PIwVVGyC3I9kFpnses?=
- =?us-ascii?Q?V1UIefY8YQfSEipy1N31bBJLwDxIiUA2XznbfI7MfglUoyWiBhF5fQsX8Y0/?=
- =?us-ascii?Q?/sE9UiDpvv9C3IQJZMvMUZNMjtGaPkIq/cj3K+n4vSY3FWcFHfOCsH7Z3mJl?=
- =?us-ascii?Q?5wYHTjLv9C2fFiAepIFaE6aAhVtCdS1vOoLvOVp7YB4enXDgAH+r8+bY5jbS?=
- =?us-ascii?Q?wGJwbwBp2snHxw/tkGi7afeGvDRt2dPXQGhkFdhGTflX6NeweNXpBfL7Ct0b?=
- =?us-ascii?Q?7lEv6fNxpF3qRF22YQ837/ZrwtPMPCMSSoxR7+g9r0IRZqvQcF3gcQcrYN/a?=
- =?us-ascii?Q?HxtugyMdNiWtLTpxYHUYzKuEfWQIPaq4trclqusmduxth7lRTlnOVDfaatqo?=
- =?us-ascii?Q?04l6BiUEuXcfABNPeRLV7R4889t9NqZCQn3Q8Sv9zBbEd47DYxYELe+114Cx?=
- =?us-ascii?Q?GmgqtrcNYSNrlJqgy4Lah1Bmr8d9N7CQq/8hYpsR/CGPCElABaUDz4y3bGBh?=
- =?us-ascii?Q?ABIfgyV3tlv2215RjgELSiPzL3uCMOHoTj4y8nU2MC1DSVGPObxmGWyzVbdd?=
- =?us-ascii?Q?rmTt5hS47Y8ii7RPeAtaxBw8lFByW79DlJEvsoAc6WzoNziFTqhSz6e4V+WP?=
- =?us-ascii?Q?sTbSwVqpN9B7fskx/QwEhU86SYEoeLJ53PAgTQvrWysCNzGmO61MMQuKzEDJ?=
- =?us-ascii?Q?FvQa58YAts9ExooXWUrTvl9SF70kSbG1VDJBJFW0qxXIwNL/0/TA2yHn7cSA?=
- =?us-ascii?Q?1tVNLgWaqLFfzSQKv4AVxMvcvpiKnDfNGHfqgOlzHjdDLLf7unnmWnP7LYyv?=
- =?us-ascii?Q?uLfQHG03pn7DZhnz6JbdV6MCoC3ySDHAuOR9s1o3KZbVe9A8aY5HdM+84Iye?=
- =?us-ascii?Q?zTQeCkjPDk0vjQ46BN2qfakVCioPoO3J0GIa4nuZ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6599840d-d4c3-45ec-26ab-08dd99b39747
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 May 2025 04:37:57.5947
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XGdW4RJhFYe4wRwlnY2zPcidt48q1xHog1GsMS296yxn81rx5mQmeCOUakvz04TjRmZqS2Doj1GUw8CdGRiQUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8913
+X-Received: by 2002:a05:6e02:174b:b0:3dc:7f3b:aca9 with SMTP id
+ e9e14a558f8ab-3dc7f3bae28mr124342205ab.14.1747975594321; Thu, 22 May 2025
+ 21:46:34 -0700 (PDT)
+Date: Thu, 22 May 2025 21:46:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <682ffdaa.a70a0220.253bc2.0061.GAE@google.com>
+Subject: [syzbot] [jfs?] [xfs?] [bcachefs?] INFO: task hung in sb_start_write (2)
+From: syzbot <syzbot+b3fba2e269970207b61d@syzkaller.appspotmail.com>
+To: brauner@kernel.org, cem@kernel.org, jack@suse.cz, 
+	jfs-discussion@lists.sourceforge.net, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, shaggy@kernel.org, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-Commit 6be3e21d25ca ("fs/dax: don't skip locked entries when scanning
-entries") introduced a new function, wait_entry_unlocked_exclusive(),
-which waits for the current entry to become unlocked without advancing
-the XArray iterator state.
+Hello,
 
-Waiting for the entry to become unlocked requires dropping the XArray
-lock. This requires calling xas_pause() prior to dropping the lock
-which leaves the xas in a suitable state for the next iteration. However
-this has the side-effect of advancing the xas state to the next index.
-Normally this isn't an issue because xas_for_each() contains code to
-detect this state and thus avoid advancing the index a second time on
-the next loop iteration.
+syzbot found the following issue on:
 
-However both callers of and wait_entry_unlocked_exclusive() itself
-subsequently use the xas state to reload the entry. As xas_pause()
-updated the state to the next index this will cause the current entry
-which is being waited on to be skipped. This caused the following
-warning to fire intermittently when running xftest generic/068 on an XFS
-filesystem with FS DAX enabled:
+HEAD commit:    a5806cd506af Linux 6.15-rc7
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11923f68580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3340af1a8845dd35
+dashboard link: https://syzkaller.appspot.com/bug?extid=b3fba2e269970207b61d
+compiler:       Debian clang version 20.1.2 (++20250402124445+58df0ef89dd6-1~exp1~20250402004600.97), Debian LLD 20.1.2
 
-[   35.067397] ------------[ cut here ]------------
-[   35.068229] WARNING: CPU: 21 PID: 1640 at mm/truncate.c:89 truncate_folio_batch_exceptionals+0xd8/0x1e0
-[   35.069717] Modules linked in: nd_pmem dax_pmem nd_btt nd_e820 libnvdimm
-[   35.071006] CPU: 21 UID: 0 PID: 1640 Comm: fstest Not tainted 6.15.0-rc7+ #77 PREEMPT(voluntary)
-[   35.072613] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/204
-[   35.074845] RIP: 0010:truncate_folio_batch_exceptionals+0xd8/0x1e0
-[   35.075962] Code: a1 00 00 00 f6 47 0d 20 0f 84 97 00 00 00 4c 63 e8 41 39 c4 7f 0b eb 61 49 83 c5 01 45 39 ec 7e 58 42 f68
-[   35.079522] RSP: 0018:ffffb04e426c7850 EFLAGS: 00010202
-[   35.080359] RAX: 0000000000000000 RBX: ffff9d21e3481908 RCX: ffffb04e426c77f4
-[   35.081477] RDX: ffffb04e426c79e8 RSI: ffffb04e426c79e0 RDI: ffff9d21e34816e8
-[   35.082590] RBP: ffffb04e426c79e0 R08: 0000000000000001 R09: 0000000000000003
-[   35.083733] R10: 0000000000000000 R11: 822b53c0f7a49868 R12: 000000000000001f
-[   35.084850] R13: 0000000000000000 R14: ffffb04e426c78e8 R15: fffffffffffffffe
-[   35.085953] FS:  00007f9134c87740(0000) GS:ffff9d22abba0000(0000) knlGS:0000000000000000
-[   35.087346] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   35.088244] CR2: 00007f9134c86000 CR3: 000000040afff000 CR4: 00000000000006f0
-[   35.089354] Call Trace:
-[   35.089749]  <TASK>
-[   35.090168]  truncate_inode_pages_range+0xfc/0x4d0
-[   35.091078]  truncate_pagecache+0x47/0x60
-[   35.091735]  xfs_setattr_size+0xc7/0x3e0
-[   35.092648]  xfs_vn_setattr+0x1ea/0x270
-[   35.093437]  notify_change+0x1f4/0x510
-[   35.094219]  ? do_truncate+0x97/0xe0
-[   35.094879]  do_truncate+0x97/0xe0
-[   35.095640]  path_openat+0xabd/0xca0
-[   35.096278]  do_filp_open+0xd7/0x190
-[   35.096860]  do_sys_openat2+0x8a/0xe0
-[   35.097459]  __x64_sys_openat+0x6d/0xa0
-[   35.098076]  do_syscall_64+0xbb/0x1d0
-[   35.098647]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   35.099444] RIP: 0033:0x7f9134d81fc1
-[   35.100033] Code: 75 57 89 f0 25 00 00 41 00 3d 00 00 41 00 74 49 80 3d 2a 26 0e 00 00 74 6d 89 da 48 89 ee bf 9c ff ff ff5
-[   35.102993] RSP: 002b:00007ffcd41e0d10 EFLAGS: 00000202 ORIG_RAX: 0000000000000101
-[   35.104263] RAX: ffffffffffffffda RBX: 0000000000000242 RCX: 00007f9134d81fc1
-[   35.105452] RDX: 0000000000000242 RSI: 00007ffcd41e1200 RDI: 00000000ffffff9c
-[   35.106663] RBP: 00007ffcd41e1200 R08: 0000000000000000 R09: 0000000000000064
-[   35.107923] R10: 00000000000001a4 R11: 0000000000000202 R12: 0000000000000066
-[   35.109112] R13: 0000000000100000 R14: 0000000000100000 R15: 0000000000000400
-[   35.110357]  </TASK>
-[   35.110769] irq event stamp: 8415587
-[   35.111486] hardirqs last  enabled at (8415599): [<ffffffff8d74b562>] __up_console_sem+0x52/0x60
-[   35.113067] hardirqs last disabled at (8415610): [<ffffffff8d74b547>] __up_console_sem+0x37/0x60
-[   35.114575] softirqs last  enabled at (8415300): [<ffffffff8d6ac625>] handle_softirqs+0x315/0x3f0
-[   35.115933] softirqs last disabled at (8415291): [<ffffffff8d6ac811>] __irq_exit_rcu+0xa1/0xc0
-[   35.117316] ---[ end trace 0000000000000000 ]---
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Fix this by using xas_reset() instead, which is equivalent in
-implementation to xas_pause() but does not advance the XArray state.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/652000eacd92/disk-a5806cd5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2b445a74e31e/vmlinux-a5806cd5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0a4ef01f165f/bzImage-a5806cd5.xz
 
-Fixes: 6be3e21d25ca ("fs/dax: don't skip locked entries when scanning entries")
-Signed-off-by: Alistair Popple <apopple@nvidia.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Alison Schofield <alison.schofield@intel.com>
-Cc: Matthew Wilcow (Oracle) <willy@infradead.org>
-Cc: Balbir Singh <balbirs@nvidia.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Dave Chinner <david@fromorbit.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Ted Ts'o <tytso@mit.edu>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Christian Brauner <brauner@kernel.org>
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+b3fba2e269970207b61d@syzkaller.appspotmail.com
+
+INFO: task syz.9.533:10335 blocked for more than 143 seconds.
+      Not tainted 6.15.0-rc7-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.9.533       state:D stack:24344 pid:10335 tgid:10334 ppid:7718   task_flags:0x400140 flags:0x00000004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5382 [inline]
+ __schedule+0x168f/0x4c70 kernel/sched/core.c:6767
+ __schedule_loop kernel/sched/core.c:6845 [inline]
+ schedule+0x165/0x360 kernel/sched/core.c:6860
+ percpu_rwsem_wait+0x2ab/0x300 kernel/locking/percpu-rwsem.c:162
+ __percpu_down_read+0xe3/0x120 kernel/locking/percpu-rwsem.c:177
+ percpu_down_read include/linux/percpu-rwsem.h:66 [inline]
+ __sb_start_write include/linux/fs.h:1783 [inline]
+ sb_start_write+0x185/0x1c0 include/linux/fs.h:1919
+ mnt_want_write+0x41/0x90 fs/namespace.c:556
+ open_last_lookups fs/namei.c:3789 [inline]
+ path_openat+0x85d/0x3830 fs/namei.c:4036
+ do_filp_open+0x1fa/0x410 fs/namei.c:4066
+ do_sys_openat2+0x121/0x1c0 fs/open.c:1429
+ do_sys_open fs/open.c:1444 [inline]
+ __do_sys_openat fs/open.c:1460 [inline]
+ __se_sys_openat fs/open.c:1455 [inline]
+ __x64_sys_openat+0x138/0x170 fs/open.c:1455
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8e2a18e969
+RSP: 002b:00007f8e2b0be038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007f8e2a3b5fa0 RCX: 00007f8e2a18e969
+RDX: 000000000000275a RSI: 0000200000000100 RDI: ffffffffffffff9c
+RBP: 00007f8e2a210ab1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f8e2a3b5fa0 R15: 00007fffe529a348
+ </TASK>
+
+Showing all locks held in the system:
+1 lock held by khungtaskd/31:
+ #0: ffffffff8df3dee0 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #0: ffffffff8df3dee0 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #0: ffffffff8df3dee0 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6764
+5 locks held by kworker/u8:2/36:
+2 locks held by kworker/u8:6/1089:
+2 locks held by getty/5583:
+ #0: ffff88803055e0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
+ #1: ffffc90002ffe2f0 (&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
+1 lock held by udevd/9862:
+2 locks held by udevd/10189:
+ #0: ffff888022a2e3a0 (&sb->s_type->i_mutex_key#7){++++}-{4:4}, at: inode_lock_shared include/linux/fs.h:877 [inline]
+ #0: ffff888022a2e3a0 (&sb->s_type->i_mutex_key#7){++++}-{4:4}, at: blkdev_read_iter+0x2f8/0x440 block/fops.c:808
+ #1: ffff8880b88399d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:605
+1 lock held by syz.9.533/10335:
+ #0: ffff88802f0e0420 (sb_writers#25){++++}-{0:0}, at: mnt_want_write+0x41/0x90 fs/namespace.c:556
+3 locks held by syz-executor/12892:
+ #0: ffff8880b89399d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:605
+ #1: ffff8880b8923b08 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x39e/0x6d0 kernel/sched/psi.c:987
+ #2: ffff88807a093758 (&sb->s_type->i_lock_key#9){+.+.}-{3:3}, at: spin_trylock include/linux/spinlock.h:361 [inline]
+ #2: ffff88807a093758 (&sb->s_type->i_lock_key#9){+.+.}-{3:3}, at: lock_for_kill+0x84/0x210 fs/dcache.c:705
+2 locks held by syz.2.1023/13285:
+2 locks held by dhcpcd-run-hook/13307:
+ #0: ffff8880b89399d8 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:605
+ #1: ffff8880b8923b08 (&per_cpu_ptr(group->pcpu, cpu)->seq){-.-.}-{0:0}, at: psi_task_switch+0x39e/0x6d0 kernel/sched/psi.c:987
+
+=============================================
+
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.15.0-rc7-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:158 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:274 [inline]
+ watchdog+0xfee/0x1030 kernel/hung_task.c:437
+ kthread+0x711/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:153
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+Sending NMI from CPU 0 to CPUs 1:
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 13310 Comm: rm Not tainted 6.15.0-rc7-syzkaller #0 PREEMPT(full) 
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 05/07/2025
+RIP: 0010:file_ref_inc include/linux/file_ref.h:121 [inline]
+RIP: 0010:get_file include/linux/fs.h:1133 [inline]
+RIP: 0010:__mmap_new_file_vma mm/vma.c:2352 [inline]
+RIP: 0010:__mmap_new_vma mm/vma.c:2417 [inline]
+RIP: 0010:__mmap_region mm/vma.c:2519 [inline]
+RIP: 0010:mmap_region+0xf23/0x1e50 mm/vma.c:2597
+Code: 24 18 01 00 00 48 89 44 24 50 49 8d be 60 01 00 00 be 08 00 00 00 e8 1c 3f 0e 00 41 bf 01 00 00 00 f0 4d 0f c1 be 60 01 00 00 <31> ff 4c 89 fe e8 83 6c ae ff 4d 85 ff 78 74 e8 99 67 ae ff 4c 8b
+RSP: 0018:ffffc9000418f2c0 EFLAGS: 00000202
+RAX: ffffc9000418f301 RBX: ffff88806733f2a0 RCX: ffffffff82118924
+RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffff88807e407820
+RBP: ffffc9000418f730 R08: ffff88807e407827 R09: 1ffff1100fc80f04
+R10: dffffc0000000000 R11: ffffed100fc80f05 R12: ffff88806733f280
+R13: ffffc9000418f3d0 R14: ffff88807e4076c0 R15: 0000000000000000
+FS:  0000000000000000(0000) GS:ffff8881261f6000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055aa8d186008 CR3: 000000007f374000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ do_mmap+0xc68/0x1100 mm/mmap.c:561
+ vm_mmap_pgoff+0x31b/0x4c0 mm/util.c:579
+ elf_map fs/binfmt_elf.c:387 [inline]
+ elf_load+0x140/0x6c0 fs/binfmt_elf.c:414
+ load_elf_interp+0x469/0xaf0 fs/binfmt_elf.c:681
+ load_elf_binary+0x19d2/0x27a0 fs/binfmt_elf.c:1246
+ search_binary_handler fs/exec.c:1778 [inline]
+ exec_binprm fs/exec.c:1810 [inline]
+ bprm_execve+0x999/0x1440 fs/exec.c:1862
+ do_execveat_common+0x510/0x6a0 fs/exec.c:1968
+ do_execve fs/exec.c:2042 [inline]
+ __do_sys_execve fs/exec.c:2118 [inline]
+ __se_sys_execve fs/exec.c:2113 [inline]
+ __x64_sys_execve+0x94/0xb0 fs/exec.c:2113
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xf6/0x210 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6e5ef70107
+Code: Unable to access opcode bytes at 0x7f6e5ef700dd.
+RSP: 002b:00007fff92965db8 EFLAGS: 00000246 ORIG_RAX: 000000000000003b
+RAX: ffffffffffffffda RBX: 00005577b8e42fe0 RCX: 00007f6e5ef70107
+RDX: 00005577b8e43000 RSI: 00005577b8e42fe0 RDI: 00005577b8e43088
+RBP: 00005577b8e43088 R08: 00007fff92968e28 R09: 0000000000000000
+R10: 0000000000000008 R11: 0000000000000246 R12: 00005577b8e43000
+R13: 00007f6e5f135e8b R14: 00005577b8e43000 R15: 0000000000000000
+ </TASK>
+
 
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Hi Andrew,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-Apologies for finding this so late in the cycle. This is a very
-intermittent issue for me, and it seems it was only exposed by a recent
-upgrade to my test machine/setup. The user visible impact is the same
-as for the original commit this fixes. That is possible file data
-corruption if a device has a FS DAX page pinned for DMA.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-So in other words it means my original fix was not 100% effective.
-The issue that commit fixed has existed for a long time without being
-reported, so not sure if this is worth trying to get into v6.15 or not.
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Either way I figured it would be best to send this ASAP, which means I
-am still waiting for a complete xfstest run to complete (although the
-failing test does now pass cleanly).
----
- fs/dax.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-diff --git a/fs/dax.c b/fs/dax.c
-index 676303419e9e..f8d8b1afd232 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -257,7 +257,7 @@ static void *wait_entry_unlocked_exclusive(struct xa_state *xas, void *entry)
- 		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
- 		prepare_to_wait_exclusive(wq, &ewait.wait,
- 					TASK_UNINTERRUPTIBLE);
--		xas_pause(xas);
-+		xas_reset(xas);
- 		xas_unlock_irq(xas);
- 		schedule();
- 		finish_wait(wq, &ewait.wait);
--- 
-2.47.2
-
+If you want to undo deduplication, reply with:
+#syz undup
 
