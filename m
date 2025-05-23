@@ -1,152 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-49705-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49706-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E6AAC1A5A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 05:16:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6F2DAC1AC2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 05:49:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72C234A6A86
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 03:16:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1471C1B65B87
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 03:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5291122126D;
-	Fri, 23 May 2025 03:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FAD221FB6;
+	Fri, 23 May 2025 03:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="um2upLww"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lj/rQ3Gi"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A072DCBE7;
-	Fri, 23 May 2025 03:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 280F82DCBE7;
+	Fri, 23 May 2025 03:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747970189; cv=none; b=dM8tfpbTVcKVT5W1nocPcy+hivmily1iGeld536e4sPIy0D79PllvDjQYP9BrpDSSf03K2w1L8l/KpoQInT5e166AmsIPzTQfHJf4OODf+yq9gvcdmOE4oGGYQ/V05EiWXnQkTeaZkbmJgf1RZl8ahIUwtjk44w6FxaEuTklp1k=
+	t=1747972128; cv=none; b=V/GJYdjkgJ1URUx13vfsZbxu0EW8Sr5jm7Ti5iu4TTuiqv2G3ryukSNzbfN4YG8g2azA8owWVeGxg4RFOmCOSyigk6ATscVbTErzH+yQHBNbdqE+sKL735hSPR5AG7+grdh7SpEMs9mIfLA36IkY6hUTS/GKOuatfV2TfXyusz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747970189; c=relaxed/simple;
-	bh=4ILR+KNCVjzNUNFwBTMlAvwJnCMmVeT55gitSiQ3iZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CScwlO+jDebVUuKABwVI+kTePXMuXmzCmacjwnlJsmwARR1Wy/UgvHtVtMNsaA4bbjlyaCHZPVOqkliiCbcDKtlOPOFrWmknDtWQ3icjsEufl0nGWXUydijAa7CUFGLvcyfpbXQPVudIe0GqT8vipB+mu7oVooSBgqJaiezX5iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=um2upLww; arc=none smtp.client-ip=115.124.30.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1747970184; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=WFP3g7I4K8WGl+2djGsOu7kO5N2vxrcXlNXYY/Iekm8=;
-	b=um2upLwwfnBcL2SA5WVhauQ/3MqArXJmr6jFHbWnjYgx3naUFQvjh7LQ17A0UB3iT0JCrOsqXa18XHSmqgQrzoiq378wIys1wHzk2c6QAOvRG+M0qYks/8w+hvproj3iUGCWH+taxoB6Oq6P3ZxB9n8XASNjgHooKiwwzle1j4w=
-Received: from localhost(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WbYd28j_1747970183 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 23 May 2025 11:16:23 +0800
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-To: akpm@linux-foundation.org,
-	david@redhat.com,
-	shakeelb@google.com
-Cc: lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	vbabka@suse.cz,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	baolin.wang@linux.alibaba.com,
-	linux-mm@kvack.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] mm: fix the inaccurate memory statistics issue for users
-Date: Fri, 23 May 2025 11:16:13 +0800
-Message-ID: <3dd21f662925c108cfe706c8954e8c201a327550.1747969935.git.baolin.wang@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1747972128; c=relaxed/simple;
+	bh=hU4E11daZQRWPop+eXf7dItbrTLSr07eegr9d9rLyLc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/Ih2cb3aAAm/oUm+8JcqiLAK6YAKsQIDSndyLFlzvZgQcUEJgyApO6XvZy44UmzVFcZFygQoOHUk0g2Igt0p4uiY7R+3g98y4HL1w+o3VmQHbuDLlDK1x1Uecmr8IOVd+Xr4mYLuu1j/+nTCN4BxtyaajUed3DPzKnUxOsjobM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lj/rQ3Gi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AC07C4CEE9;
+	Fri, 23 May 2025 03:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1747972127;
+	bh=hU4E11daZQRWPop+eXf7dItbrTLSr07eegr9d9rLyLc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lj/rQ3GiGLdiau+P57zmneGhBgAfMwOjMvBLctFhT75R1EPvZ5B+giVnFwI5eHxa9
+	 RiMiquG8Ahu7fzGgL53Px/BnaD5MqSe+XkulE8WW3VtGLO3jgYvTq7mHJmnXO8HT0k
+	 IVlm+pa2SWgRZfx0S+157FDTqcymr66Laaajra42Cmav0gUZ5rF4VwxfkSUBOljdMj
+	 Zu+1bGtmcY67IjZpTYe/CyKwnE1FIQawVg8S5ZD4PBl0KY2UIPvReTE3pKq0rTvPqd
+	 l4BA/NIs6ebHPA4YP0vqH8f8LYR9cjI9h0XPmOzzN1clAgzBOWk0XqocxYh+JpDqIl
+	 CK9+q1olWtQ9g==
+Date: Thu, 22 May 2025 20:48:44 -0700
+From: Kees Cook <kees@kernel.org>
+To: Bhupesh <bhupesh@igalia.com>
+Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
+	laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
+	mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
+	alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
+	mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
+	david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
+	brauner@kernel.org, jack@suse.cz, mingo@redhat.com,
+	juri.lelli@redhat.com, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] exec: Add support for 64 byte 'tsk->comm_ext'
+Message-ID: <202505222041.B639D482FB@keescook>
+References: <20250521062337.53262-1-bhupesh@igalia.com>
+ <20250521062337.53262-4-bhupesh@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250521062337.53262-4-bhupesh@igalia.com>
 
-On some large machines with a high number of CPUs running a 64K kernel,
-we found that the 'RES' field is always 0 displayed by the top command
-for some processes, which will cause a lot of confusion for users.
+On Wed, May 21, 2025 at 11:53:37AM +0530, Bhupesh wrote:
+> Historically due to the 16-byte length of TASK_COMM_LEN, the
+> users of 'tsk->comm' are restricted to use a fixed-size target
+> buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
+> 
+> To fix the same, Linus suggested in [1] that we can add the
+> following union inside 'task_struct':
+>        union {
+>                char    comm[TASK_COMM_LEN];
+>                char    comm_ext[TASK_COMM_EXT_LEN];
+>        };
 
-    PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
- 875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
-      1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
+I remain unconvinced that this is at all safe. With the existing
+memcpy() and so many places using %s and task->comm, this feels very
+very risky to me.
 
-The main reason is that the batch size of the percpu counter is quite large
-on these machines, caching a significant percpu value, since converting mm's
-rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
-stats into percpu_counter"). Intuitively, the batch number should be optimized,
-but on some paths, performance may take precedence over statistical accuracy.
-Therefore, introducing a new interface to add the percpu statistical count
-and display it to users, which can remove the confusion. In addition, this
-change is not expected to be on a performance-critical path, so the modification
-should be acceptable.
+Can we just make it separate, instead of a union? Then we don't have to
+touch comm at all.
 
-Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
----
- fs/proc/task_mmu.c | 14 +++++++-------
- include/linux/mm.h |  5 +++++
- 2 files changed, 12 insertions(+), 7 deletions(-)
+> and then modify '__set_task_comm()' to pass 'tsk->comm_ext'
+> to the existing users.
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index b9e4fbbdf6e6..f629e6526935 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -36,9 +36,9 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
- 	unsigned long text, lib, swap, anon, file, shmem;
- 	unsigned long hiwater_vm, total_vm, hiwater_rss, total_rss;
- 
--	anon = get_mm_counter(mm, MM_ANONPAGES);
--	file = get_mm_counter(mm, MM_FILEPAGES);
--	shmem = get_mm_counter(mm, MM_SHMEMPAGES);
-+	anon = get_mm_counter_sum(mm, MM_ANONPAGES);
-+	file = get_mm_counter_sum(mm, MM_FILEPAGES);
-+	shmem = get_mm_counter_sum(mm, MM_SHMEMPAGES);
- 
- 	/*
- 	 * Note: to minimize their overhead, mm maintains hiwater_vm and
-@@ -59,7 +59,7 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
- 	text = min(text, mm->exec_vm << PAGE_SHIFT);
- 	lib = (mm->exec_vm << PAGE_SHIFT) - text;
- 
--	swap = get_mm_counter(mm, MM_SWAPENTS);
-+	swap = get_mm_counter_sum(mm, MM_SWAPENTS);
- 	SEQ_PUT_DEC("VmPeak:\t", hiwater_vm);
- 	SEQ_PUT_DEC(" kB\nVmSize:\t", total_vm);
- 	SEQ_PUT_DEC(" kB\nVmLck:\t", mm->locked_vm);
-@@ -92,12 +92,12 @@ unsigned long task_statm(struct mm_struct *mm,
- 			 unsigned long *shared, unsigned long *text,
- 			 unsigned long *data, unsigned long *resident)
- {
--	*shared = get_mm_counter(mm, MM_FILEPAGES) +
--			get_mm_counter(mm, MM_SHMEMPAGES);
-+	*shared = get_mm_counter_sum(mm, MM_FILEPAGES) +
-+			get_mm_counter_sum(mm, MM_SHMEMPAGES);
- 	*text = (PAGE_ALIGN(mm->end_code) - (mm->start_code & PAGE_MASK))
- 								>> PAGE_SHIFT;
- 	*data = mm->data_vm + mm->stack_vm;
--	*resident = *shared + get_mm_counter(mm, MM_ANONPAGES);
-+	*resident = *shared + get_mm_counter_sum(mm, MM_ANONPAGES);
- 	return mm->total_vm;
- }
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 185424858f23..15ec5cfe9515 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -2568,6 +2568,11 @@ static inline unsigned long get_mm_counter(struct mm_struct *mm, int member)
- 	return percpu_counter_read_positive(&mm->rss_stat[member]);
- }
- 
-+static inline unsigned long get_mm_counter_sum(struct mm_struct *mm, int member)
-+{
-+	return percpu_counter_sum_positive(&mm->rss_stat[member]);
-+}
-+
- void mm_trace_rss_stat(struct mm_struct *mm, int member);
- 
- static inline void add_mm_counter(struct mm_struct *mm, int member, long value)
+We can use set_task_comm() to set both still...
+
 -- 
-2.43.5
-
+Kees Cook
 
