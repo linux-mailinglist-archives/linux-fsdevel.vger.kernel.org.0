@@ -1,63 +1,56 @@
-Return-Path: <linux-fsdevel+bounces-49774-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49775-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DA1AC24B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 16:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1AFAC24C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 16:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73F0F9E31F7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 14:10:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A660543511
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 14:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A077A2951D9;
-	Fri, 23 May 2025 14:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4104F295517;
+	Fri, 23 May 2025 14:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JA8jO2eS"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="gEuVSLBC"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C460231850
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 14:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050F52DCBE3
+	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 14:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748009420; cv=none; b=ZyELFTOucW/KG/vzEp9TO9wPczNCMZqsYHh1Ua95Nni/TMHbUQmB4XdHNzPsFhjWfqgfAlx3+NFGSFJzgSRBEC3wQyy5uQTtN+BW0lLmMzKdpJd1OTOs3wGJSMAiwABIc+v7jm7NxqQv9YOpNmC6PgD/wcIp/0ra9xBP37Z8mas=
+	t=1748009507; cv=none; b=lxV9KO0ltykokIiH8ZLjsXR5p99PaWcEe3bEJGM/5F5mDakIl2JJOD/iS1ubP0U5glH/FV5XK8uog1gPOdkz8k4JxloFzU+wdjv1tSpVas1BS5ZBqQzUwDCRLJmZ+4wnLjlxp7cfD71dgHWURyuiPm8i941IJQ94pTU8kXx/PbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748009420; c=relaxed/simple;
-	bh=MC5cJ6gzTSxje8ybChPiUYQm4pE8gDTIEqv2bUqD/Ck=;
+	s=arc-20240116; t=1748009507; c=relaxed/simple;
+	bh=SSTtUNhFkPDZyNf4DwYT+gkdZj3odlnPp9bpfK7im0M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6hAN/uWGwBiThG7Sjzvl9I2Y7E9DV1DIFd67PT4xRP/eMTCXHskWFIX5o8h2S9zTfdSitk2UROPvpITnyJED/sm+t2WNdAgJTekZfIfXfTntSIlLqalLfAKbHg3tg27O2TttTYGHFXx9tKF608goZX+HaOCvskY/fQdNUt0h6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JA8jO2eS; arc=none smtp.client-ip=91.218.175.189
+	 Content-Type:Content-Disposition:In-Reply-To; b=CR2v/at6wFstHx/X+Ws2t5D0FxC4nCpHgyl43YxYJFMt8y/od9uHdI8SG9GUSZhr/f2V4ApncqgOfrN5WwMaXTQl82EUoTIXsc/cfzoCaHrSu1LyGlW/ta2f0RAjtFuOU/0fifGf4Z2kNRwB6tVn/QyrdXEy2/F4X/RZFDHrN54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=gEuVSLBC; arc=none smtp.client-ip=91.218.175.184
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 23 May 2025 10:10:02 -0400
+Date: Fri, 23 May 2025 07:11:37 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1748009406;
+	t=1748009502;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MC5cJ6gzTSxje8ybChPiUYQm4pE8gDTIEqv2bUqD/Ck=;
-	b=JA8jO2eS7bkjr8ReNKpESjqCNs2ZCWyc0MH5gYJXdHeYA0beQXelaybCNKBExC7uPqE5hl
-	HRw94HgHdI8CfPYiTHc6QK7vgHrp+gmXZDfq7gglA3nbilUwtKQOu8EO4GGQ2jT4GD6xOE
-	/y0NJ6GIh5FRhfOtKXIbsMYZUBQLIzY=
+	bh=Iyyet1GA+O6fAfZqBulBiVthKT8i/nPLXStWszD73KU=;
+	b=gEuVSLBCr5UjNnMYC8OeQ3Sthe8ILLXGKsTiqBZPNnh4RyR8kxUPoWpHiZYLAfwebC2QyI
+	BItrPCu4pTBo0vIFVnSanAmYCAnDvTGGe4eVyuO8V8zdnITDmnb+eS3sIJBPODSnrk/0gM
+	jLMF+g84BE546fueju13H+8zJ2fs3GY=
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-unionfs@vger.kernel.org, 
-	Miklos Szeredi <miklos@szeredi.hu>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 0/6] overlayfs + casefolding
-Message-ID: <q6o6jrgwpdt67xsztsqjmewt66kjv6btyayazk7zlk4zjoww4n@2zzowgibx5ka>
-References: <20250520051600.1903319-1-kent.overstreet@linux.dev>
- <CAOQ4uxg8p2Kg0BKrU4NSUzLVVLWcW=vLaw4kJkVR1Q-LyRbRXA@mail.gmail.com>
- <osbsqlzkc4zttz4gxa25exm5bhqog3tpyirsezcbcdesaucd7g@4sltqny4ybnz>
- <CAOQ4uxjUC=1MinjDCOfY5t89N3ga6msLmpVXL1p23qdQax6fSg@mail.gmail.com>
- <gdvg6zswvq4zjzo6vntggoacrgxxh33zmejo72yusp7aqkqzic@kaibexik7lvh>
- <CAOQ4uxg9sKC_8PLARkN6aB3E_U62_S3kfnBuRbAvho9BNzGAsQ@mail.gmail.com>
- <rkbkjp7xvefmtutkwtltyd6xch2pbw47x5czx6ctldemus2bvj@2ukfdmtfjjbw>
- <CAOQ4uxgOM83u1SOd4zxpDmWFsGvrgqErKRwea=85_drpF6WESA@mail.gmail.com>
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, Liam.Howlett@oracle.com, 
+	vbabka@suse.cz, rppt@kernel.org, surenb@google.com, mhocko@suse.com, 
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: fix the inaccurate memory statistics issue for
+ users
+Message-ID: <67n3snrowiyxjw6grddyer7np5rpnpg4x5f6bsyonmgcc5k5eq@s5v4ux27i4fw>
+References: <3dd21f662925c108cfe706c8954e8c201a327550.1747969935.git.baolin.wang@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -66,15 +59,35 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgOM83u1SOd4zxpDmWFsGvrgqErKRwea=85_drpF6WESA@mail.gmail.com>
+In-Reply-To: <3dd21f662925c108cfe706c8954e8c201a327550.1747969935.git.baolin.wang@linux.alibaba.com>
 X-Migadu-Flow: FLOW_OUT
 
-On Tue, May 20, 2025 at 04:33:14PM +0200, Amir Goldstein wrote:
-> I am saying that IMO a smaller impact (and less user friendly) fix is more
-> appropriate way to deal with this problem.
+CC Mathieu
 
-What do you think about doing your approach as a stopgap?
+On Fri, May 23, 2025 at 11:16:13AM +0800, Baolin Wang wrote:
+> On some large machines with a high number of CPUs running a 64K kernel,
+> we found that the 'RES' field is always 0 displayed by the top command
+> for some processes, which will cause a lot of confusion for users.
+> 
+>     PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>  875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
+>       1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
+> 
+> The main reason is that the batch size of the percpu counter is quite large
+> on these machines, caching a significant percpu value, since converting mm's
+> rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
+> stats into percpu_counter"). Intuitively, the batch number should be optimized,
+> but on some paths, performance may take precedence over statistical accuracy.
+> Therefore, introducing a new interface to add the percpu statistical count
+> and display it to users, which can remove the confusion. In addition, this
+> change is not expected to be on a performance-critical path, so the modification
+> should be acceptable.
+> 
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-It seems this is hitting a lot of people, something we can backport to
-6.15 would be good to have.
+Hi Baolin, this seems reasonale. For long term Mathieu is planning to
+fix this with newer hierarchical percpu counter until then this looks
+good.
+
+Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
 
