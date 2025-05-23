@@ -1,281 +1,266 @@
-Return-Path: <linux-fsdevel+bounces-49753-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49754-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9034AC20AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 12:12:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED81BAC20B8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 12:15:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA91F18962EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 10:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8096D4E2F37
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 10:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A174B227B88;
-	Fri, 23 May 2025 10:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49FEB227EB2;
+	Fri, 23 May 2025 10:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w3EMGKi+"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OtfpTxR/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47230226520
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 10:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D96226CF8;
+	Fri, 23 May 2025 10:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1747995164; cv=none; b=jyE0eADgk/TfN6Yo9JxDpeeA2L1I3XxIvvFVYMheWR+mkz35xUXA3BD1PEw7tU5uMBY1Gqz1RcB55rirw6mlmpgH0mLhGVgCPI/IzjDZlsX1W6se/CMcFChExs/1pCYqsGx9o3CrJudrkDATJ8aJaVZrdBEasElvhMh3wSOvijo=
+	t=1747995303; cv=none; b=BgoXp8zsy1g1DIkV3wQCFW+TfsDTGdpEfyv78JYbDTfD0RY25WbcNhRmgSy01nb7h+Zh33pBufqWAmgDRnenLaGvTTBF99/AQD56s1lcB48j02tXdiVKD7dXlTbeTU9hIYqjljm0Muaaf9l4QBCJfKawQ694djCxaMAeFJ6h7Dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1747995164; c=relaxed/simple;
-	bh=Pji3pOrxIsdrF6N7TOopnNprznlfL8393By8J52sO2Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L0tYxabcDdlB58Zu9OeBs+7Ze4T9/c5/rgn6iLsnWmf9BQdUKz0gcdaBJc90cd6f4ERJU+/v0edd99xPUM3CGgsXuLN+raT/3irtxDMQM42sVhdPM1JiyeFf/rHtXXTX0e4Ju828krQlaEQsnyKWByfFkJxizshr25mnA18opC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w3EMGKi+; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-48b7747f881so208441cf.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 03:12:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1747995161; x=1748599961; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tb9MyJc2bCS8IIcbG5oS2rW0sKmwPpiIghmBwRh5La8=;
-        b=w3EMGKi+cPpivPfkOuNZpDjyCE4PYW/26YgPlZJ9U49NwUHRnLT4p7EH3AB691RTB6
-         Hui6Fjk8JOQCGT+3wAC+ee7MPe3lsEY2mzjUJ/W8nUiNfeRU5gxgQ8byLqnLtIDl8/Xu
-         lEE3BogGlx8bO6MVuqXdSTl0Sd/koXACB01BKPLFYFaw+U981kPu7YDSVU/LJXBAPLfH
-         Y987L5MwGido5hQzcinE3kYxVAKRToIakGaClJDe7sCi78hwQZFnQO+910jfUdusplkh
-         kYImnw9yq/95UfvHbguON+AZmXfoygNlbZ6PBuG9ASF4b2HMRQR5tlMwGdu8/Z7pWYIq
-         YjYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1747995161; x=1748599961;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tb9MyJc2bCS8IIcbG5oS2rW0sKmwPpiIghmBwRh5La8=;
-        b=DrMMYt2sQQ/56H/108tD/wL1BYipumcaC8YeRUxF8nqsA2aQttVXsS2CoM0L4NCxg2
-         s7cK42lubJRH50oJhwhYe96DT4vD0fFRKv1cZkl/Gc8YxnBbMsr5E+iaSASfAtZ2P9XT
-         L8B1IDs7qCs4CXnju+ZEG8J/AZBJuVSr1EsYaZ9qqomB30zI1JSJx7RqtNBcw7R/oEBL
-         M5FP5UXs/bgoe43u9Xm3JVnTpeNLXoORLJuNE7Eht3Nec2/AVsCgsUzk1cytsOX24ZWE
-         hkjDEGXEhfC95Gjvy0fpj4g78VFZckxjHHeyLf8ekNdI7TP5zp+EA/E1V4/UKY6O579s
-         QUJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVN5MC2PvyMgUQ00F4Qoopo/gOS3P29MfUIVMuyfqOmycrP+FANCCVPBaZUoVUOD51uPZpo5O4ashLFbfw/@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDC9U599rHjIL4mHXUDBJPd55bzQ1+BSn+huq64PHa8Nj/wsVl
-	MaWbwrnXqZvuF3TdhYhg8hJzjFX0rZQjtnHG/YrIU4S8I3dCOKk574RBHXaqfISC7wgiZgKJ1/5
-	2WKTlL0Nrb5z/tJw+4aE9gyhqJdeHVrgddsuNQjlk
-X-Gm-Gg: ASbGncsAw30NaKM9SpcBbn5l37Gf2WY+sVQ1g3WvC0r8Pny1HI6TRdluoh7uUjpQNyA
-	pLCWSX0+O2IQ0ioKR23ojQvnR9pu2kcvuJr8rfeI8NXLN2Y2B/jcSG9XM6HVUlC63WJU3WeXpTp
-	9fHrsvsD/iFQMuwZG85mkiMUv5VrJ8ulYTpesjjyTtfOE=
-X-Google-Smtp-Source: AGHT+IEkIIS4aNjnOZldCQ1+78h6aJmwPwAW5h7vR8N5+0fx6Rl0x1SYbJYgMD0+JUZ/omAoMfiFpgjWvd8MxNA8Oqo=
-X-Received: by 2002:a05:622a:5cf:b0:47d:4e8a:97f0 with SMTP id
- d75a77b69052e-49e35da50e0mr2300641cf.29.1747995160362; Fri, 23 May 2025
- 03:12:40 -0700 (PDT)
+	s=arc-20240116; t=1747995303; c=relaxed/simple;
+	bh=Mtt71jTZm+HlLNOkIpKqUpZ3L6JoS2woYWY7Cdl2HYQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=INWRpM5Im30QVZZTKiRvpp15aNKU1bfgw9YZniCwXO2LmjKh5Tfgg+SLWoSDfDnE4DwwctwBszv/v/nyX/9HT5ZpBjrQcO2QE268+HudPQWmQHQZvQFCeHMRLTFoJsMGr5BzUw6nin1eo9sx1I79AiVnJV8nqNG7sUgh+WhD780=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OtfpTxR/; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54MNWGtk004906;
+	Fri, 23 May 2025 10:14:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=zXHL2C
+	q+aRXrEcEy64Su9IC7piz2/y4DTVPnU1CRfrc=; b=OtfpTxR/+M1m9QoMFOZaKH
+	RActYnItKiQYOsfii4Gmmev9OQOU12QikegR5liYjMFtB9Ukq/QGoxH1S/HDh0R0
+	dThbBxCDkZdbdwStKTPDpBLzOB9tZSjUhsXSmxqnxJ+McD3P4LWOHQxMR/k0dc7T
+	2Wxsfuv1isWJdIWGUBkUv4SYZZvKAzo1pBRcc/hHVBI0cUtKUbXE7vVadxiKAhLy
+	Fc+MRJH1Ef9ALUSPKCSULvmSSkh4VTqgpzYXRE84MDgtRz9tmP8GIbwjti/Q3M/y
+	+hFc5B1nNEc40zCRalAFiD/q/ArUaOc1NvBHdS/UMCboF2uVxI+iW+TuzEyYOiDA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t14jp7v4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 10:14:46 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54NAEidc010386;
+	Fri, 23 May 2025 10:14:44 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46t14jp7v3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 10:14:44 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 54N6MpD2024698;
+	Fri, 23 May 2025 10:14:43 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 46rwkre2nj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 23 May 2025 10:14:43 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 54NAEdqR6488688
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 23 May 2025 10:14:39 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B6D75804E;
+	Fri, 23 May 2025 10:14:43 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E686E5803F;
+	Fri, 23 May 2025 10:14:38 +0000 (GMT)
+Received: from li-c18b6acc-24ee-11b2-a85c-81492619bda1.ibm.com (unknown [9.109.215.55])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 23 May 2025 10:14:38 +0000 (GMT)
+Message-ID: <ea0963e4b497efb46c2c8e62a30463747cd25bf9.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH] mm: fix the inaccurate memory statistics issue for
+ users
+From: Aboorva Devarajan <aboorvad@linux.ibm.com>
+To: Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+        david@redhat.com, shakeelb@google.com
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+        rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, aboorvad@linux.ibm.com
+Date: Fri, 23 May 2025 15:44:37 +0530
+In-Reply-To: <3dd21f662925c108cfe706c8954e8c201a327550.1747969935.git.baolin.wang@linux.alibaba.com>
+References: 
+	<3dd21f662925c108cfe706c8954e8c201a327550.1747969935.git.baolin.wang@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (3.56.1-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAGtprH_7jSpwF77j1GW8rjSrbtZZ2OW2iGck5=Wk67+VnF9vjQ@mail.gmail.com>
- <CA+EHjTzMhKCoftfJUuL0WUZW4DdqOHgVDcn0Cmf-0r--8rBdbg@mail.gmail.com>
- <diqzecwjnk95.fsf@ackerleytng-ctop.c.googlers.com> <CA+EHjTyY5C1QgkoAqvJ0kHM4nUvKc1e1nQ0Uq+BANtVEnZH90w@mail.gmail.com>
- <CAGtprH-fE=G923ctBAcq5zFna+2WULhmHDSbXUsZKUrin29b4g@mail.gmail.com>
- <CA+EHjTxvufYVA8LQWRKEX7zA0gWLQUHVO2LvwKc5JXVu-XAEEA@mail.gmail.com>
- <CAGtprH_TfKT3oRPCLbh-ojLGXSfOQ2XA39pVhr47gb3ikPtUkw@mail.gmail.com>
- <CA+EHjTxJZ_pb7+chRoZxvkxuib2YjbiHg=_+f4bpRt2xDFNCzQ@mail.gmail.com>
- <aC86OsU2HSFZkJP6@google.com> <CA+EHjTxjt-mb_WbtVymaBvCb1EdJAVMV_uGb4xDs_ewg4k0C4g@mail.gmail.com>
- <aC9QPoEUw_nLHhV4@google.com>
-In-Reply-To: <aC9QPoEUw_nLHhV4@google.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Fri, 23 May 2025 11:12:03 +0100
-X-Gm-Features: AX0GCFsTSgoQuYeHe63NUWNK_TXQp_3mL71CbShDN1o-eae1QjvK7sqPLnnLNQo
-Message-ID: <CA+EHjTzMYSHKuxMJbpMx594RsL64aph1dWj06zx_01=ZuQU+Bg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 04/51] KVM: guest_memfd: Introduce
- KVM_GMEM_CONVERT_SHARED/PRIVATE ioctls
-To: Sean Christopherson <seanjc@google.com>
-Cc: Vishal Annapurve <vannapurve@google.com>, Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	linux-fsdevel@vger.kernel.org, aik@amd.com, ajones@ventanamicro.com, 
-	akpm@linux-foundation.org, amoorthy@google.com, anthony.yznaga@oracle.com, 
-	anup@brainfault.org, aou@eecs.berkeley.edu, bfoster@redhat.com, 
-	binbin.wu@linux.intel.com, brauner@kernel.org, catalin.marinas@arm.com, 
-	chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com, 
-	david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk, 
-	erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com, 
-	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, vbabka@suse.cz, viro@zeniv.linux.org.uk, 
-	vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org, 
-	willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com, 
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: kQ5NL5TDjSwS59MUQidPvcGmYplsemXy
+X-Authority-Analysis: v=2.4 cv=XOkwSRhE c=1 sm=1 tr=0 ts=68304a96 cx=c_pps a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17 a=IkcTkHD0fZMA:10 a=dt9VzEwgFbYA:10 a=SRrdq9N9AAAA:8 a=VnNF1IyMAAAA:8 a=bJgjvqlET6HPnKk_xIcA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTIzMDA4OCBTYWx0ZWRfX16m2iHnkczm5 iqWKf4LT5TGBLToXASQndjXxXQ6Ro8K0/reUukgZmcsqRcJ2JOYsY6DeKhUvitqSaOCdVG1wr63 xTbjzwAIYAOBKz71jcB/0sz1S88oOnf+Ma66i3jizUy+1b76dWDczWmuncNtB5i3dcvmmUWUI7x
+ D6yBn44cUmW/90yBWRMj1THYJvMN21LqhoxTZ7YJzbVUL9HtOFglWi4HfgKvwwV6/JwUG6h8qWg XYImosgUg1Rvo0KtL782xVgOZAkWAAvszLepySJGdYM1lasj3juNJOnq8jc2jQrnqE/fLu6ExLq Zok0jJCiHEE7t6TgsOjyQNPiFcZo+9MvIY/okR6Gr9DXQZBFsNXVTisrfft75WiuCZQIOd/Mkwi
+ kDugl0gozqeuAfRi5AC5oSfHOGmACe+hdxpripq5VTENh31GJBtjbtTeaPdNJrHaeqODwqo5
+X-Proofpoint-GUID: AR63o-4QBzzE29T2gvaQpZWgN0ph5qqw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-23_03,2025-05-22_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ mlxlogscore=999 bulkscore=0 mlxscore=0 lowpriorityscore=0 adultscore=0
+ impostorscore=0 suspectscore=0 priorityscore=1501 spamscore=0 phishscore=0
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2505160000
+ definitions=main-2505230088
 
-Hi Sean,
+On Fri, 2025-05-23 at 11:16 +0800, Baolin Wang wrote:
+> On some large machines with a high number of CPUs running a 64K kernel,
+> we found that the 'RES' field is always 0 displayed by the top command
+> for some processes, which will cause a lot of confusion for users.
+>=20
+> =C2=A0=C2=A0=C2=A0 PID USER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 PR=C2=A0 NI=C2=
+=A0=C2=A0=C2=A0 VIRT=C2=A0=C2=A0=C2=A0 RES=C2=A0=C2=A0=C2=A0 SHR S=C2=A0 %C=
+PU=C2=A0 %MEM=C2=A0=C2=A0=C2=A0=C2=A0 TIME+ COMMAND
+> =C2=A0875525 root=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 20=C2=A0=C2=A0 0=C2=A0=C2=
+=A0 12480=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0 R=
+=C2=A0=C2=A0 0.3=C2=A0=C2=A0 0.0=C2=A0=C2=A0 0:00.08 top
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 1 root=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 20=C2=
+=A0=C2=A0 0=C2=A0 172800=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 0 S=C2=A0=C2=A0 0.0=C2=A0=C2=A0 0.0=C2=A0=C2=A0 0:04.52 system=
+d
+>=20
+> The main reason is that the batch size of the percpu counter is quite lar=
+ge
+> on these machines, caching a significant percpu value, since converting m=
+m's
+> rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's r=
+ss
+> stats into percpu_counter"). Intuitively, the batch number should be opti=
+mized,
+> but on some paths, performance may take precedence over statistical accur=
+acy.
+> Therefore, introducing a new interface to add the percpu statistical coun=
+t
+> and display it to users, which can remove the confusion. In addition, thi=
+s
+> change is not expected to be on a performance-critical path, so the modif=
+ication
+> should be acceptable.
+>=20
+> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+> ---
+> =C2=A0fs/proc/task_mmu.c | 14 +++++++-------
+> =C2=A0include/linux/mm.h |=C2=A0 5 +++++
+> =C2=A02 files changed, 12 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+> index b9e4fbbdf6e6..f629e6526935 100644
+> --- a/fs/proc/task_mmu.c
+> +++ b/fs/proc/task_mmu.c
+> @@ -36,9 +36,9 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+> =C2=A0	unsigned long text, lib, swap, anon, file, shmem;
+> =C2=A0	unsigned long hiwater_vm, total_vm, hiwater_rss, total_rss;
+> =C2=A0
+> -	anon =3D get_mm_counter(mm, MM_ANONPAGES);
+> -	file =3D get_mm_counter(mm, MM_FILEPAGES);
+> -	shmem =3D get_mm_counter(mm, MM_SHMEMPAGES);
+> +	anon =3D get_mm_counter_sum(mm, MM_ANONPAGES);
+> +	file =3D get_mm_counter_sum(mm, MM_FILEPAGES);
+> +	shmem =3D get_mm_counter_sum(mm, MM_SHMEMPAGES);
+> =C2=A0
+> =C2=A0	/*
+> =C2=A0	 * Note: to minimize their overhead, mm maintains hiwater_vm and
+> @@ -59,7 +59,7 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+> =C2=A0	text =3D min(text, mm->exec_vm << PAGE_SHIFT);
+> =C2=A0	lib =3D (mm->exec_vm << PAGE_SHIFT) - text;
+> =C2=A0
+> -	swap =3D get_mm_counter(mm, MM_SWAPENTS);
+> +	swap =3D get_mm_counter_sum(mm, MM_SWAPENTS);
+> =C2=A0	SEQ_PUT_DEC("VmPeak:\t", hiwater_vm);
+> =C2=A0	SEQ_PUT_DEC(" kB\nVmSize:\t", total_vm);
+> =C2=A0	SEQ_PUT_DEC(" kB\nVmLck:\t", mm->locked_vm);
+> @@ -92,12 +92,12 @@ unsigned long task_statm(struct mm_struct *mm,
+> =C2=A0			 unsigned long *shared, unsigned long *text,
+> =C2=A0			 unsigned long *data, unsigned long *resident)
+> =C2=A0{
+> -	*shared =3D get_mm_counter(mm, MM_FILEPAGES) +
+> -			get_mm_counter(mm, MM_SHMEMPAGES);
+> +	*shared =3D get_mm_counter_sum(mm, MM_FILEPAGES) +
+> +			get_mm_counter_sum(mm, MM_SHMEMPAGES);
+> =C2=A0	*text =3D (PAGE_ALIGN(mm->end_code) - (mm->start_code & PAGE_MASK)=
+)
+> =C2=A0								>> PAGE_SHIFT;
+> =C2=A0	*data =3D mm->data_vm + mm->stack_vm;
+> -	*resident =3D *shared + get_mm_counter(mm, MM_ANONPAGES);
+> +	*resident =3D *shared + get_mm_counter_sum(mm, MM_ANONPAGES);
+> =C2=A0	return mm->total_vm;
+> =C2=A0}
+> =C2=A0
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 185424858f23..15ec5cfe9515 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -2568,6 +2568,11 @@ static inline unsigned long get_mm_counter(struct =
+mm_struct *mm, int member)
+> =C2=A0	return percpu_counter_read_positive(&mm->rss_stat[member]);
+> =C2=A0}
+> =C2=A0
+> +static inline unsigned long get_mm_counter_sum(struct mm_struct *mm, int=
+ member)
+> +{
+> +	return percpu_counter_sum_positive(&mm->rss_stat[member]);
+> +}
+> +
+> =C2=A0void mm_trace_rss_stat(struct mm_struct *mm, int member);
+> =C2=A0
+> =C2=A0static inline void add_mm_counter(struct mm_struct *mm, int member,=
+ long value)
+
+Hi Baolin,
+
+This patch looks good to me. We observed a similar issue where the
+generic mm selftest split_huge_page_test failed due to outdated RssAnon
+values reported in /proc/[pid]/status.
+
+...
+
+Without Patch:
+
+# ./split_huge_page_test=20
+TAP version 13
+1..34
+Bail out! No RssAnon is allocated before split
+# Planned tests !=3D run tests (34 !=3D 0)
+# Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
+
+...
+
+With Patch:
+
+# ./split_huge_page_test
+# ./split_huge_page_test=20
+TAP version 13
+1..34
+...
+# Totals: pass:11 fail:0 xfail:0 xpass:0 skip:23 error:0
+
+...
+
+While this change may introduce some lock contention, it only affects
+the task_mem function which is invoked only when reading
+/proc/[pid]/status. Since this is not on a performance critical path,
+it will be good to have this change in order to get accurate memory
+stats.
+
+This fix resolves the issue we've seen with split_huge_page_test.
+
+Thanks!
 
 
-On Thu, 22 May 2025 at 17:26, Sean Christopherson <seanjc@google.com> wrote:
->
-> On Thu, May 22, 2025, Fuad Tabba wrote:
-> > On Thu, 22 May 2025 at 15:52, Sean Christopherson <seanjc@google.com> wrote:
-> > > On Wed, May 21, 2025, Fuad Tabba wrote:
-> > > > How does the host userspace find that out? If the host userspace is capable
-> > > > of finding that out, then surely KVM is also capable of finding out the same.
-> > >
-> > > Nope, not on x86.  Well, not without userspace invoking a new ioctl, which would
-> > > defeat the purpose of adding these ioctls.
-> > >
-> > > KVM is only responsible for emulating/virtualizing the "CPU".  The chipset, e.g.
-> > > the PCI config space, is fully owned by userspace.  KVM doesn't even know whether
-> > > or not PCI exists for the VM.  And reboot may be emulated by simply creating a
-> > > new KVM instance, i.e. even if KVM was somehow aware of the reboot request, the
-> > > change in state would happen in an entirely new struct kvm.
-> > >
-> > > That said, Vishal and Ackerley, this patch is a bit lacking on the documentation
-> > > front.  The changelog asserts that:
-> > >
-> > >   A guest_memfd ioctl is used because shareability is a property of the memory,
-> > >   and this property should be modifiable independently of the attached struct kvm
-> > >
-> > > but then follows with a very weak and IMO largely irrelevant justification of:
-> > >
-> > >   This allows shareability to be modified even if the memory is not yet bound
-> > >   using memslots.
-> > >
-> > > Allowing userspace to change shareability without memslots is one relatively minor
-> > > flow in one very specific use case.
-> > >
-> > > The real justification for these ioctls is that fundamentally, shareability for
-> > > in-place conversions is a property of a guest_memfd instance and not a struct kvm
-> > > instance, and so needs to owned by guest_memfd.
-> >
-> > Thanks for the clarification Sean. I have a couple of followup
-> > questions/comments that you might be able to help with:
-> >
-> > From a conceptual point of view, I understand that the in-place conversion is
-> > a property of guest_memfd. But that doesn't necessarily mean that the
-> > interface between kvm <-> guest_memfd is a userspace IOCTL.
->
-> kvm and guest_memfd aren't the communication endpoints for in-place conversions,
-> and more importantly, kvm isn't part of the control plane.  kvm's primary role
-> (for guest_memfd with in-place conversions) is to manage the page tables to map
-> memory into the guest.
->
-> kvm *may* also explicitly provide a communication channel between the guest and
-> host, e.g. when conversions are initiated via hypercalls, but in some cases the
-> communication channel may be created through pre-existing mechanisms, e.g. a
-> shared memory buffer or emulated I/O (such as the PCI reset case).
->
->   guest => kvm (dumb pipe) => userspace => guest_memfd => kvm (invalidate)
->
-> And in other cases, kvm might not be in that part of the picture at all, e.g. if
-> the userspace VMM provides an interface to the VM owner (which could also be the
-> user running the VM) to reset the VM, then the flow would look like:
->
->   userspace => guest_memfd => kvm (invalidate)
->
-> A decent comparison is vCPUs.  KVM _could_ route all ioctls through the VM, but
-> that's unpleasant for all parties, as it'd be cumbersome for userspace, and
-> unnecessarily complex and messy for KVM.  Similarly, routing guest_memfd state
-> changes through KVM_SET_MEMORY_ATTRIBUTES is awkward from both design and mechanical
-> perspectives.
->
-> Even if we disagree on how ugly/pretty routing conversions through kvm would be,
-> which I'll allow is subjective, the bigger problem is that bouncing through
-> KVM_SET_MEMORY_ATTRIBUTES would create an unholy mess of an ABI.
->
-> Today, KVM_SET_MEMORY_ATTRIBUTES is handled entirely within kvm, and any changes
-> take effect irrespective of any memslot bindings.  And that didn't happen by
-> chance; preserving and enforcing attribute changes independently of memslots was
-> a key design requirement, precisely because memslots are ephemeral to a certain
-> extent.
->
-> Adding support for in-place guest_memfd conversion will require new ABI, and so
-> will be a "breaking" change for KVM_SET_MEMORY_ATTRIBUTES no matter what.  E.g.
-> KVM will need to reject KVM_MEMORY_ATTRIBUTE_PRIVATE for VMs that elect to use
-> in-place guest_memfd conversions.  But very critically, KVM can cripsly enumerate
-> the lack of KVM_MEMORY_ATTRIBUTE_PRIVATE via KVM_CAP_MEMORY_ATTRIBUTES, the
-> behavior will be very straightforward to document (e.g. CAP X is mutually excusive
-> with KVM_MEMORY_ATTRIBUTE_PRIVATE), and it will be opt-in, i.e. won't truly be a
-> breaking change.
->
-> If/when we move shareability to guest_memfd, routing state changes through
-> KVM_SET_MEMORY_ATTRIBUTES will gain a subtle dependency on userspace having to
-> create memslots in order for state changes to take effect.  That wrinkle would be
-> weird and annoying to document, e.g. "if CAP X is enabled, the ioctl ordering is
-> A => B => C, otherwise the ordering doesn't matter", and would create many more
-> conundrums:
->
->   - If a memslot needs to exist in order for KVM_SET_MEMORY_ATTRIBUTES to take effect,
->     what should happen if that memslot is deleted?
->   - If a memslot isn't found, should KVM_SET_MEMORY_ATTRIBUTES fail and report
->     an error, or silently do nothing?
->   - If KVM_SET_MEMORY_ATTRIBUTES affects multiple memslots that are bound to
->     multiple guest_memfd, how does KVM guarantee atomicity?  What happens if one
->     guest_memfd conversion succeeds, but a later fails?
->
-> > We already communicate directly between the two. Other, even less related
-> > subsystems within the kernel also interact without going through userspace.
-> > Why can't we do the same here? I'm not suggesting it not be owned by
-> > guest_memfd, but that we communicate directly.
->
-> I'm not concerned about kvm communicating with guest_memfd, as you note it's all
-> KVM.  As above, my concerns are all about KVM's ABI and who owns/controls what.
->
-> > From a performance point of view, I would expect the common case to be that
-> > when KVM gets an unshare request from the guest, it would be able to unmap
-> > those pages from the (cooperative) host userspace, and return back to the
-> > guest. In this scenario, the host userspace wouldn't even need to be
-> > involved.
->
-> Hard NAK, at least from an x86 perspective.  Userspace is the sole decision maker
-> with respect to what memory is state of shared vs. private, full stop.  The guest
-> can make *requests* to convert memory, but ultimately it's host userspace that
-> decides whether or not to honor the request.
->
-> We've litigated this exact issue multiple times.  All state changes must be
-> controlled by userspace, because userspace is the only entity that can gracefully
-> handle exceptions and edge cases, and is the only entity with (almost) full
-> knowledge of the system.  We can discuss this again if necessary, but I'd much
-> prefer to not rehash all of those conversations.
->
-> > Having a userspace IOCTL as part of this makes that trip unnecessarily longer
-> > for the common case.
->
-> I'm very skeptical that an exit to userspace is going to even be measurable in
-> terms of the cost to convert memory.  Conversion is going to require multiple
-> locks, modifications to multiple sets of page tables with all the associated TLB
-> maintenance, possibly cache maintenance, and probably a few other things I'm
-> forgetting.  The cost of a few user<=>kernel transitions is likely going to be a
-> drop in the bucket.
->
-> If I'm wrong, and there are flows where the user<=>kernel transitions are the
-> long pole, then we could certainly exploring adding a way for userspace to opt
-> into a "fast path" conversion.  But it would need to be exactly that, an optional
-> fast path that can fall back to the "slow" userspace-driven conversion as needed.
+Reviewed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
 
-Thanks for this very thorough explanation. I know that we have
-litigated this issue, but not this _exact_ issue. My understanding was
-that the main reason for using IOCTLs for memory attributes is that
-userspace needs to manage private and shared memory seperately,
-including allocation and punching holes where necessary.
 
-That said, no need to discuss this again. If it turns out that
-user<->kernel transitions are a bottleneck we could look into an
-opt-in fast path as you said.
-
-Cheers,
-/fuad
 
