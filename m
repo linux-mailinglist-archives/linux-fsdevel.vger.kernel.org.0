@@ -1,147 +1,192 @@
-Return-Path: <linux-fsdevel+bounces-49762-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49763-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72119AC22AC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 14:32:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B58DAC22B7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 14:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 852C03B9FC7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 12:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADEFA24FE2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 12:38:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC9D17583;
-	Fri, 23 May 2025 12:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D218EAE7;
+	Fri, 23 May 2025 12:38:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="dtTyykSV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cl+C82wS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FADAE552;
-	Fri, 23 May 2025 12:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5525E56A;
+	Fri, 23 May 2025 12:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748003523; cv=none; b=GRJfuANkoH5tdyrqlNxq59cEwFlqwBf3Gns7SloyEHrpxwCjc/d6K3HPF3LTpscQS+H3feU0M5zij0C/7CAPJQwmLFLil+ASgbCep6PPaWSH0Hcreb2+kXjnnHfarXzCJITrw+9d3teUASRqFExO4nQB8JzIe9RVBeHnCoRBMgg=
+	t=1748003926; cv=none; b=qPUM/tDfa4qVEpstuffLiBcheMK5rFeRr+p95I/JdOOpB4kJeLqB+E9qb7N+xmVZKChZd1zyd228Sal/Y49/BSxRRhNqrltLc7LuPFPFGvmVV1GgWVA0CmMot4iutsYloe1CmniCHs83n2XuLRgsW89uaAoBxoZZzqGNfL3HgDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748003523; c=relaxed/simple;
-	bh=j0CL94Rb8NLPTthjduF/9Bmuzez0jW0NPtqEk9wPUBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pswo0odFB2QdP2BogO4d0RRAitpMVEeEQ9mGGSG24iYGvndxNJbXgzo3smTP2v8TphyPF0Lj9QOwI7Ysz/OqA4CFwCERcGXUm3Li/9RurBQgW48Vp4DuqhZ4Vmtkk5/QIM1G+Kt5+Xd3Hk3axvHmdhz8MmBs5yqVzwL6YRHD6Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=dtTyykSV; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=yO0EwDZrf4fd992J3B8iCK71Ip2ga1Ayg9UxqoNl3Zw=; b=dtTyykSVssYRpd4G7j3B1bGx7I
-	XaQ18MuK8E645S1dcEUB3aD0MCqSWaQrM8s5x4zd7EMH21QPKvZLczSBuupJvoATKwLzkNDz0oKzu
-	zRbXx08nyKMkS4pymGSq4SQkGRV4apCr3ONB78Zr+sphNCIq0b5ob9xUJVBTi4ubC2cBJjSY073Yg
-	TlVq/YRLU9Q8wN57CZXZ59s6qDswZVnBXNVx9kQo/74OSSCd0nasd+9qRZOek6hwqtuzv+2YP6iek
-	fyTrBrCqR79iZ46ueTEXEhkuBrtjifNRI9A58IN0M1VTKXjMtLMZi/CidjNG0DgWI0g/DPPgrACDo
-	Fy4F4v/A==;
-Received: from [223.233.76.245] (helo=[192.168.1.12])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1uIRZ1-00CB4g-9x; Fri, 23 May 2025 14:31:51 +0200
-Message-ID: <a7c323fe-6d11-4a21-a203-bd60acbfd831@igalia.com>
-Date: Fri, 23 May 2025 18:01:41 +0530
+	s=arc-20240116; t=1748003926; c=relaxed/simple;
+	bh=XVNu4dyr7CqFaBgq6wnAd0uXqRpquMHskcdqzRjbx/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XvUWtXSALiPVJtKM962XBI74iOo57ujhc93xpmTqh9ejr8dappTIF+wqNNZaR+RPWuCxyRdQL469Q8ejn5V6ZfyHQR1isfG2C1GmMTSnwZtMrKfV2sN4yQeC0fdJJmYVcYdsudMw0eV/0NdwLbIvB2blwv778z3qXLleMX3t8p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cl+C82wS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BBE0C4CEE9;
+	Fri, 23 May 2025 12:38:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748003926;
+	bh=XVNu4dyr7CqFaBgq6wnAd0uXqRpquMHskcdqzRjbx/8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cl+C82wSVNDCCauR/Lx25+SmpL0ciHLslMQ1kM003EsdeoEe4J94bHq5CUZn/at0L
+	 G0Gjrs1+xsI2ghuaL08HBpaknNo8nvYnXgOvv6D1PTCEOL3jUk1YG+VLUsu5zDVJCO
+	 GWEXNUXPGgg0ozOIlkqPPTu1G8ip06IgAfaUc6HSvt9IYNfvuzx0maDE5ZV++zKtMQ
+	 mNA54lLfSK0qrfjdiI0wceDIhtSVxIhBnGQZeRWioDMZ+ZkY0EiCJunfre0ORwkev2
+	 /VenpbGLb6arqKj0AeqEQaWrq+w5VEmr9RSfToc/mLWQSLJHXlSsCMZJ40L4KYvxNQ
+	 +Eo7BMrUHuvgw==
+From: Christian Brauner <brauner@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL for v6.16] vfs lookup_{noperm,one}() cleanup
+Date: Fri, 23 May 2025 14:36:59 +0200
+Message-ID: <20250523-vfs-cleanups-f29f2bd1fce7@brauner>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v4 3/3] exec: Add support for 64 byte 'tsk->comm_ext'
-Content-Language: en-US
-To: Kees Cook <kees@kernel.org>, Bhupesh <bhupesh@igalia.com>
-Cc: akpm@linux-foundation.org, kernel-dev@igalia.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, oliver.sang@intel.com, lkp@intel.com,
- laoar.shao@gmail.com, pmladek@suse.com, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, arnaldo.melo@gmail.com,
- alexei.starovoitov@gmail.com, andrii.nakryiko@gmail.com,
- mirq-linux@rere.qmqm.pl, peterz@infradead.org, willy@infradead.org,
- david@redhat.com, viro@zeniv.linux.org.uk, ebiederm@xmission.com,
- brauner@kernel.org, jack@suse.cz, mingo@redhat.com, juri.lelli@redhat.com,
- bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
- linux-trace-kernel@vger.kernel.org
-References: <20250521062337.53262-1-bhupesh@igalia.com>
- <20250521062337.53262-4-bhupesh@igalia.com>
- <202505222041.B639D482FB@keescook>
-From: Bhupesh Sharma <bhsharma@igalia.com>
-In-Reply-To: <202505222041.B639D482FB@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5304; i=brauner@kernel.org; h=from:subject:message-id; bh=XVNu4dyr7CqFaBgq6wnAd0uXqRpquMHskcdqzRjbx/8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWQYZH/WfzFpa9MEvUlP7tVn9EhNUlonJNJ1zKLw6Ryd9 6XKK/XcO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZSYM/I0KFzVijwjK2Id9qP 72vmCyzW9DpXbTZ7moT+/5211kvaqhkZXke2bz4s8aXtjLraYYtWb0mJxU83lNharr/SJyi2NEO eAwA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Hi Kees,
+Hey Linus,
 
-Thanks for the review.
+/* Summary */
 
-On 5/23/25 9:18 AM, Kees Cook wrote:
-> On Wed, May 21, 2025 at 11:53:37AM +0530, Bhupesh wrote:
->> Historically due to the 16-byte length of TASK_COMM_LEN, the
->> users of 'tsk->comm' are restricted to use a fixed-size target
->> buffer also of TASK_COMM_LEN for 'memcpy()' like use-cases.
->>
->> To fix the same, Linus suggested in [1] that we can add the
->> following union inside 'task_struct':
->>         union {
->>                 char    comm[TASK_COMM_LEN];
->>                 char    comm_ext[TASK_COMM_EXT_LEN];
->>         };
-> I remain unconvinced that this is at all safe. With the existing
-> memcpy() and so many places using %s and task->comm, this feels very
-> very risky to me.
->
-> Can we just make it separate, instead of a union? Then we don't have to
-> touch comm at all.
+This contains cleanups for the lookup_one*() family of helpers.
 
-I understand your apprehensions, but I think we have covered _almost_ 
-all the existing use-cases as of now:
+We expose a set of functions with names containing "lookup_one_len" and
+others without the "_len".  This difference has nothing to do with
+"len". It's rater a historical accident that can be confusing.
 
-1. memcpy() users: Handled by [PATCH 2/3] of this series, where we 
-identify existing users using the following search
-     pattern:
-        $ git grep 'memcpy.*->comm\>'
+The functions without "_len" take a "mnt_idmap" pointer. This is found
+in the "vfsmount" and that is an important question when choosing which
+to use: do you have a vfsmount, or are you "inside" the filesystem. A
+related question is "is permission checking relevant here?".
 
-2. %s usage: I checked this at multiple places and can confirm that %s 
-usage to print out 'tsk->comm' (as a string), get the longer
-     new "extended comm".
+nfsd and cachefiles *do* have a vfsmount but *don't* use the non-_len
+functions. They pass nop_mnt_idmap and refuse to work on filesystems
+which have any other idmap.
 
-3. users who do 'sizeof(->comm)' will continue to get the old value 
-because of the union.
+This work changes nfsd and cachefile to use the lookup_one family of
+functions and to explictily pass &nop_mnt_idmap which is consistent with
+all other vfs interfaces used where &nop_mnt_idmap is explicitly passed.
 
-The problem with having two separate comms: tsk->comm and tsk->ext_comm, 
-instead of a union is two fold:
-(a). If we keep two separate statically allocated comms: tsk->comm and 
-tsk->ext_comm in struct task_struct, we need to basically keep 
-supporting backward compatibility / ABI via tsk->comm and ask new 
-user-land users to move to tsk->ext_comm.
+The remaining uses of the "_one" functions do not require permission
+checks so these are renamed to be "_noperm" and the permission checking
+is removed.
 
-(b). If we keep one statically allocated comm: tsk->comm and one dynamically allocated tsk->ext_comm in struct task_struct, then we have the problem of allocating the tsk->ext_comm which _may_ be in the exec()  hot path.
+This series also changes these lookup function to take a qstr instead of
+separate name and len. In many cases this simplifies the call.
 
-I think the discussion between Linus and Yafang (see [1]), was more towards avoiding the approach in 3(a).
+/* Testing */
 
-Also we discussed the 3(b) approach, during the review of v2 of this series, where there was a apprehensions around: adding another field to store the task name and allocating tsk->ext_comm dynamically in the exec() hot path (see [2]).
+gcc (Debian 14.2.0-19) 14.2.0
+Debian clang version 19.1.7 (3)
 
-[1]. https://lore.kernel.org/all/CAHk-=wjAmmHUg6vho1KjzQi2=psR30+CogFd4aXrThr2gsiS4g@mail.gmail.com/
-[2]. https://lore.kernel.org/lkml/CALOAHbB51b-reG6+ypr43sBJ-QpQhF39r5WPjuEp5rgabgRmoA@mail.gmail.com/
+No build failures or warnings were observed.
 
-Please let me know your views.
+/* Conflicts */
 
-Thanks,
-Bhupesh
+Merge conflicts with mainline
+=============================
 
->> and then modify '__set_task_comm()' to pass 'tsk->comm_ext'
->> to the existing users.
-> We can use set_task_comm() to set both still...
->
+No known conflicts.
 
+Merge conflicts with other trees
+================================
+
+No known conflicts.
+
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
+
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.16-rc1.async.dir
+
+for you to fetch changes up to 4e5c53e03806359e68dde5e951e50cd1f4908405:
+
+  Merge patch series "VFS: improve interface for lookup_one functions" (2025-04-08 11:24:42 +0200)
+
+Please consider pulling these changes from the signed vfs-6.16-rc1.async.dir tag.
+
+Thanks!
+Christian
+
+----------------------------------------------------------------
+vfs-6.16-rc1.async.dir
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      Merge patch series "VFS: improve interface for lookup_one functions"
+
+NeilBrown (6):
+      VFS: improve interface for lookup_one functions
+      nfsd: Use lookup_one() rather than lookup_one_len()
+      cachefiles: Use lookup_one() rather than lookup_one_len()
+      VFS: rename lookup_one_len family to lookup_noperm and remove permission check
+      Use try_lookup_noperm() instead of d_hash_and_lookup() outside of VFS
+      VFS: change lookup_one_common and lookup_noperm_common to take a qstr
+
+ Documentation/filesystems/porting.rst |  40 +++++++++
+ arch/s390/hypfs/inode.c               |   2 +-
+ drivers/android/binderfs.c            |   4 +-
+ drivers/infiniband/hw/qib/qib_fs.c    |   4 +-
+ fs/afs/dir.c                          |   2 +-
+ fs/afs/dir_silly.c                    |   6 +-
+ fs/autofs/dev-ioctl.c                 |   3 +-
+ fs/binfmt_misc.c                      |   2 +-
+ fs/btrfs/ioctl.c                      |   9 +-
+ fs/cachefiles/internal.h              |   1 -
+ fs/cachefiles/key.c                   |   1 -
+ fs/cachefiles/namei.c                 |  14 +--
+ fs/dcache.c                           |   1 -
+ fs/debugfs/inode.c                    |   6 +-
+ fs/ecryptfs/inode.c                   |  16 ++--
+ fs/efivarfs/super.c                   |  15 ++--
+ fs/exportfs/expfs.c                   |   5 +-
+ fs/internal.h                         |   1 +
+ fs/kernfs/mount.c                     |   2 +-
+ fs/namei.c                            | 156 +++++++++++++++++-----------------
+ fs/nfs/unlink.c                       |  11 ++-
+ fs/nfsd/nfs3proc.c                    |   4 +-
+ fs/nfsd/nfs3xdr.c                     |   4 +-
+ fs/nfsd/nfs4proc.c                    |   4 +-
+ fs/nfsd/nfs4recover.c                 |  13 +--
+ fs/nfsd/nfs4xdr.c                     |   4 +-
+ fs/nfsd/nfsproc.c                     |   5 +-
+ fs/nfsd/vfs.c                         |  17 ++--
+ fs/overlayfs/export.c                 |   6 +-
+ fs/overlayfs/namei.c                  |  14 +--
+ fs/overlayfs/overlayfs.h              |   2 +-
+ fs/overlayfs/readdir.c                |   9 +-
+ fs/proc/base.c                        |   2 +-
+ fs/quota/dquot.c                      |   2 +-
+ fs/smb/client/cached_dir.c            |   5 +-
+ fs/smb/client/cifsfs.c                |   3 +-
+ fs/smb/client/readdir.c               |   3 +-
+ fs/smb/server/smb2pdu.c               |   7 +-
+ fs/tracefs/inode.c                    |   2 +-
+ fs/xfs/scrub/orphanage.c              |   7 +-
+ include/linux/dcache.h                |   4 +-
+ include/linux/namei.h                 |  17 ++--
+ ipc/mqueue.c                          |   5 +-
+ kernel/bpf/inode.c                    |   2 +-
+ net/sunrpc/rpc_pipe.c                 |  12 +--
+ security/apparmor/apparmorfs.c        |   4 +-
+ security/inode.c                      |   2 +-
+ security/selinux/selinuxfs.c          |   4 +-
+ 48 files changed, 254 insertions(+), 210 deletions(-)
 
