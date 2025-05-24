@@ -1,184 +1,201 @@
-Return-Path: <linux-fsdevel+bounces-49800-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49801-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C22AC2C1E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 May 2025 01:23:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F78AC2CE3
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 May 2025 03:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77580178FA0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 May 2025 23:22:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEA027ABA22
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 May 2025 01:23:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200E52139C8;
-	Fri, 23 May 2025 23:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E78601DFD86;
+	Sat, 24 May 2025 01:24:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="D4Xkl6Z/"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PoQq9TbW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5221F09B2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 23 May 2025 23:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4BC127E18;
+	Sat, 24 May 2025 01:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748042542; cv=none; b=A8rpN3LspmDAdeX6s4V8UgJP13y4euxoJc82/uLpjZqhSIalFSWlMYh8SMtxj746cwuUVgEJXCCEmTfa0rdRzDLUKETnao4loI7bYBcnFs8Oht1HrsaqO5i6q3kNMCqRyAalpZiVyFbSBMHzhpZfgc3rZb9WBxSQNOxheWBMeIk=
+	t=1748049895; cv=none; b=Hhrj9gcWaMoxYqwWo8wdwrLOHoQwUxLElIvdqDonSMGk5Hvmtp1bH1D9I0lxIJjpsKnHuPTwoEUbzwsWvGq8u2CLpIoM7JcLu/fs1KX96Kg7KxGDKweo4/3Wh/T4u5WGPnyy68iPLldczILmayWTXOzto5x6SI4VOX+yshOoSOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748042542; c=relaxed/simple;
-	bh=3yyUP3vvIlf3USYMWc9uVF94gwsqSAT2k4p6zJP5TTA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/am1qUm3L2kQIiz4U1+2A6QmrEI1Kq1e3y459DcmtcEMDM204sVzk2wMtuICDwTec+8Q+PGbJc2YfFfPqpZgLeE+wawjIEhiPzMSH0NC/57qUHurimbab/4MFZEDJrSP2ogJKKJ5XdleqJA61DGKW+BxRAYMaM7LK2SIl+dkh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=D4Xkl6Z/; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=KhDA1Sh4z5XTN04CX2pTBtpn8sX4fYy4Ya0fR8uMe4w=; b=D4Xkl6Z/U5d1evIW4TcE/f9Doq
-	vp5oluaBWmyWPH/n2TZS2XAZn2P2mGg4nKr1ccBoFE5/IoBtE2DkP91uccyX7x494y0X6d+big9SM
-	2DiMtxGlXtNkwV5LSrIpPPcEj33nbtLVZB8CIBtYZq79n9nymzdY+SXhw7ukLdGFN7CI+ILubcLG+
-	7HYsxSNWpN1osool11OvplLIXIB2EgnBrfEeWzLD06xeFTXDBjkgHCuD9w5g0AkdS40TKumQ9+Y8X
-	kXqO21H0tTzmFr/YwtJc+GynM9dAwzeKCJg8wuc+WQrIjl0iVUL33Lp4wmllnTVlrCoLFZKFDCSUb
-	2MSgXn1g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uIbiP-0000000G7ZL-0F85;
-	Fri, 23 May 2025 23:22:13 +0000
-Date: Sat, 24 May 2025 00:22:13 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Allison Karlitskaya <lis@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: Apparent mount behaviour change in 6.15
-Message-ID: <20250523232213.GL2023217@ZenIV>
-References: <CAOYeF9WQhFDe+BGW=Dp5fK8oRy5AgZ6zokVyTj1Wp4EUiYgt4w@mail.gmail.com>
- <20250515-abhauen-geflecht-c7eb5df70b78@brauner>
- <20250523063238.GI2023217@ZenIV>
- <20250523-aufweichen-dreizehn-c69ee4529b8b@brauner>
- <20250523212958.GJ2023217@ZenIV>
- <20250523213735.GK2023217@ZenIV>
+	s=arc-20240116; t=1748049895; c=relaxed/simple;
+	bh=h4rD/7gqAjKhxjE14JthcVzwphPAyrPyYn/PgY8UTrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pa72+IufflTlRpziubdPKKRRjVIuTeU6EsDsMoX7bx+HpXeOJkAoOeYdnIm3aA6G1it6aaWGkDA0u/pkbIoyzWw24xGx7iu6ohM2K7kW524xepLBSQg1zyWspt7oY5UUtJCPCiUE8DMMmH5MuaJrnKxXh5RFnrC4kP0eVRkTbE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PoQq9TbW; arc=none smtp.client-ip=115.124.30.118
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1748049882; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=kURdILkIqYXjN86J/Vi1nRzrLORAbMvg48iqJVcrqJs=;
+	b=PoQq9TbWUgsL72um0UPytedpqWhURksEdD/SOl889JUo4ZZORFbLjZMlBmR2ipdK9rwy9jccp2GatGCb4W2GcFTOncn1N9GsBPg2byZarg3L/kGmecy3LU+uaK/hzfSPm/UKaDyNMTLBVtTNUNEi+7HPLhxoowtYv/cLa3Trv50=
+Received: from 30.171.233.170(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WbcABvS_1748049880 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Sat, 24 May 2025 09:24:41 +0800
+Message-ID: <6d6dcad5-169f-4bfc-91be-c620fef811e4@linux.alibaba.com>
+Date: Sat, 24 May 2025 09:24:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250523213735.GK2023217@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] mm: fix the inaccurate memory statistics issue for
+ users
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>, akpm@linux-foundation.org,
+ david@redhat.com, shakeel.butt@linux.dev
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <3dd21f662925c108cfe706c8954e8c201a327550.1747969935.git.baolin.wang@linux.alibaba.com>
+ <ea0963e4b497efb46c2c8e62a30463747cd25bf9.camel@linux.ibm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <ea0963e4b497efb46c2c8e62a30463747cd25bf9.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, May 23, 2025 at 10:37:35PM +0100, Al Viro wrote:
-> On Fri, May 23, 2025 at 10:29:58PM +0100, Al Viro wrote:
+
+
+On 2025/5/23 18:14, Aboorva Devarajan wrote:
+> On Fri, 2025-05-23 at 11:16 +0800, Baolin Wang wrote:
+>> On some large machines with a high number of CPUs running a 64K kernel,
+>> we found that the 'RES' field is always 0 displayed by the top command
+>> for some processes, which will cause a lot of confusion for users.
+>>
+>>      PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>>   875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
+>>        1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
+>>
+>> The main reason is that the batch size of the percpu counter is quite large
+>> on these machines, caching a significant percpu value, since converting mm's
+>> rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
+>> stats into percpu_counter"). Intuitively, the batch number should be optimized,
+>> but on some paths, performance may take precedence over statistical accuracy.
+>> Therefore, introducing a new interface to add the percpu statistical count
+>> and display it to users, which can remove the confusion. In addition, this
+>> change is not expected to be on a performance-critical path, so the modification
+>> should be acceptable.
+>>
+>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> ---
+>>   fs/proc/task_mmu.c | 14 +++++++-------
+>>   include/linux/mm.h |  5 +++++
+>>   2 files changed, 12 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index b9e4fbbdf6e6..f629e6526935 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -36,9 +36,9 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+>>   	unsigned long text, lib, swap, anon, file, shmem;
+>>   	unsigned long hiwater_vm, total_vm, hiwater_rss, total_rss;
+>>   
+>> -	anon = get_mm_counter(mm, MM_ANONPAGES);
+>> -	file = get_mm_counter(mm, MM_FILEPAGES);
+>> -	shmem = get_mm_counter(mm, MM_SHMEMPAGES);
+>> +	anon = get_mm_counter_sum(mm, MM_ANONPAGES);
+>> +	file = get_mm_counter_sum(mm, MM_FILEPAGES);
+>> +	shmem = get_mm_counter_sum(mm, MM_SHMEMPAGES);
+>>   
+>>   	/*
+>>   	 * Note: to minimize their overhead, mm maintains hiwater_vm and
+>> @@ -59,7 +59,7 @@ void task_mem(struct seq_file *m, struct mm_struct *mm)
+>>   	text = min(text, mm->exec_vm << PAGE_SHIFT);
+>>   	lib = (mm->exec_vm << PAGE_SHIFT) - text;
+>>   
+>> -	swap = get_mm_counter(mm, MM_SWAPENTS);
+>> +	swap = get_mm_counter_sum(mm, MM_SWAPENTS);
+>>   	SEQ_PUT_DEC("VmPeak:\t", hiwater_vm);
+>>   	SEQ_PUT_DEC(" kB\nVmSize:\t", total_vm);
+>>   	SEQ_PUT_DEC(" kB\nVmLck:\t", mm->locked_vm);
+>> @@ -92,12 +92,12 @@ unsigned long task_statm(struct mm_struct *mm,
+>>   			 unsigned long *shared, unsigned long *text,
+>>   			 unsigned long *data, unsigned long *resident)
+>>   {
+>> -	*shared = get_mm_counter(mm, MM_FILEPAGES) +
+>> -			get_mm_counter(mm, MM_SHMEMPAGES);
+>> +	*shared = get_mm_counter_sum(mm, MM_FILEPAGES) +
+>> +			get_mm_counter_sum(mm, MM_SHMEMPAGES);
+>>   	*text = (PAGE_ALIGN(mm->end_code) - (mm->start_code & PAGE_MASK))
+>>   								>> PAGE_SHIFT;
+>>   	*data = mm->data_vm + mm->stack_vm;
+>> -	*resident = *shared + get_mm_counter(mm, MM_ANONPAGES);
+>> +	*resident = *shared + get_mm_counter_sum(mm, MM_ANONPAGES);
+>>   	return mm->total_vm;
+>>   }
+>>   
+>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+>> index 185424858f23..15ec5cfe9515 100644
+>> --- a/include/linux/mm.h
+>> +++ b/include/linux/mm.h
+>> @@ -2568,6 +2568,11 @@ static inline unsigned long get_mm_counter(struct mm_struct *mm, int member)
+>>   	return percpu_counter_read_positive(&mm->rss_stat[member]);
+>>   }
+>>   
+>> +static inline unsigned long get_mm_counter_sum(struct mm_struct *mm, int member)
+>> +{
+>> +	return percpu_counter_sum_positive(&mm->rss_stat[member]);
+>> +}
+>> +
+>>   void mm_trace_rss_stat(struct mm_struct *mm, int member);
+>>   
+>>   static inline void add_mm_counter(struct mm_struct *mm, int member, long value)
 > 
-> > This is bogus, IMO.  I'm perfectly fine with propagate_one() returning 0
-> > on anon_ns(m->mnt); that would refuse to propagate into *any* anon ns,
-> > but won't screw the propagation between the mounts that are in normal, non-anon
-> > namespaces.
+> Hi Baolin,
 > 
-> IOW, I mean this variant - the only difference from what you've posted is
-> the location of is_anon_ns() test; you do it in IS_MNT_NEW(), this variant
-> has it in propagate_one().  Does the variant below fix regression?
+> This patch looks good to me. We observed a similar issue where the
+> generic mm selftest split_huge_page_test failed due to outdated RssAnon
+> values reported in /proc/[pid]/status.
+> 
+> ...
+> 
+> Without Patch:
+> 
+> # ./split_huge_page_test
+> TAP version 13
+> 1..34
+> Bail out! No RssAnon is allocated before split
+> # Planned tests != run tests (34 != 0)
+> # Totals: pass:0 fail:0 xfail:0 xpass:0 skip:0 error:0
+> 
+> ...
+> 
+> With Patch:
+> 
+> # ./split_huge_page_test
+> # ./split_huge_page_test
+> TAP version 13
+> 1..34
+> ...
+> # Totals: pass:11 fail:0 xfail:0 xpass:0 skip:23 error:0
+> 
+> ...
+> 
+> While this change may introduce some lock contention, it only affects
+> the task_mem function which is invoked only when reading
+> /proc/[pid]/status. Since this is not on a performance critical path,
+> it will be good to have this change in order to get accurate memory
+> stats.
 
-AFAICS, it does suffice to revert the behaviour change on the reproducer
-upthread.
+Agree.
 
-I've replaced the top of viro/vfs.git#fixes with that; commit message there
-is tentative - if nothing else, that's a patch from Christian with slight
-modifications from me.  It also needs reported-by, etc.
+> 
+> This fix resolves the issue we've seen with split_huge_page_test.
+> 
+> Thanks!
+> 
+> 
+> Reviewed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+> 
 
-Said that, could somebody (original reporter) confirm that the variant
-in git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git #fixes (head at
-63e90fcc1807) is OK with them?
-
-And yes, it will need a proper commit message.  Christian?
-
-commit 63e90fcc18072638a62196caae93de66fc6cbc37
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Fri May 23 19:20:36 2025 -0400
-
-    Don't propagate mounts into detached trees
-    
-    That reverts to behaviour of 6.14 and earlier, with
-    fix from "fix IS_MNT_PROPAGATING uses" preserved.
-    
-    Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-diff --git a/fs/mount.h b/fs/mount.h
-index 7aecf2a60472..ad7173037924 100644
---- a/fs/mount.h
-+++ b/fs/mount.h
-@@ -7,10 +7,6 @@
- 
- extern struct list_head notify_list;
- 
--typedef __u32 __bitwise mntns_flags_t;
--
--#define MNTNS_PROPAGATING	((__force mntns_flags_t)(1 << 0))
--
- struct mnt_namespace {
- 	struct ns_common	ns;
- 	struct mount *	root;
-@@ -37,7 +33,6 @@ struct mnt_namespace {
- 	struct rb_node		mnt_ns_tree_node; /* node in the mnt_ns_tree */
- 	struct list_head	mnt_ns_list; /* entry in the sequential list of mounts namespace */
- 	refcount_t		passive; /* number references not pinning @mounts */
--	mntns_flags_t		mntns_flags;
- } __randomize_layout;
- 
- struct mnt_pcp {
-diff --git a/fs/namespace.c b/fs/namespace.c
-index 1b466c54a357..623cd110076d 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3648,7 +3648,7 @@ static int do_move_mount(struct path *old_path,
- 	if (!(attached ? check_mnt(old) : is_anon_ns(ns)))
- 		goto out;
- 
--	if (is_anon_ns(ns)) {
-+	if (is_anon_ns(ns) && ns == p->mnt_ns) {
- 		/*
- 		 * Ending up with two files referring to the root of the
- 		 * same anonymous mount namespace would cause an error
-@@ -3656,16 +3656,7 @@ static int do_move_mount(struct path *old_path,
- 		 * twice into the mount tree which would be rejected
- 		 * later. But be explicit about it right here.
- 		 */
--		if ((is_anon_ns(p->mnt_ns) && ns == p->mnt_ns))
--			goto out;
--
--		/*
--		 * If this is an anonymous mount tree ensure that mount
--		 * propagation can detect mounts that were just
--		 * propagated to the target mount tree so we don't
--		 * propagate onto them.
--		 */
--		ns->mntns_flags |= MNTNS_PROPAGATING;
-+		goto out;
- 	} else if (is_anon_ns(p->mnt_ns)) {
- 		/*
- 		 * Don't allow moving an attached mount tree to an
-@@ -3722,8 +3713,6 @@ static int do_move_mount(struct path *old_path,
- 	if (attached)
- 		put_mountpoint(old_mp);
- out:
--	if (is_anon_ns(ns))
--		ns->mntns_flags &= ~MNTNS_PROPAGATING;
- 	unlock_mount(mp);
- 	if (!err) {
- 		if (attached) {
-diff --git a/fs/pnode.c b/fs/pnode.c
-index fb77427df39e..ffd429b760d5 100644
---- a/fs/pnode.c
-+++ b/fs/pnode.c
-@@ -231,8 +231,8 @@ static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
- 	/* skip if mountpoint isn't visible in m */
- 	if (!is_subdir(dest_mp->m_dentry, m->mnt.mnt_root))
- 		return 0;
--	/* skip if m is in the anon_ns we are emptying */
--	if (m->mnt_ns->mntns_flags & MNTNS_PROPAGATING)
-+	/* skip if m is in the anon_ns */
-+	if (is_anon_ns(m->mnt_ns))
- 		return 0;
- 
- 	if (peers(m, last_dest)) {
+Thanks for reviewing and testing.
 
