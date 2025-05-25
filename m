@@ -1,122 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-49828-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49827-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEBEEAC36E2
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 May 2025 23:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C221CAC36D3
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 May 2025 22:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F911893946
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 May 2025 21:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25D051894268
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 May 2025 20:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5672D1A23A9;
-	Sun, 25 May 2025 21:04:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDA71C2437;
+	Sun, 25 May 2025 20:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Ng/K8Epa"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="S6MNoHjq"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E091A275
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 May 2025 21:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1261B4153
+	for <linux-fsdevel@vger.kernel.org>; Sun, 25 May 2025 20:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748207092; cv=none; b=qQGSfxypprWeINaqPc5eyv+jYRqMZ4/uoXkdE5g3igJ90OQMcyL786HDxNBbt8l3qYPtOA/P1J1bLj8B2gg0awERRkcAT/f7sBy1KMmKn9+Twl2B6fBtv+5SC8gHq2oJvLhro0nJgKAqlZVh9DKltxuRwzqtyQReqH0nrMOGxGg=
+	t=1748206497; cv=none; b=j6ClNREF5NpzFeLMZ6S7jkCEkehmI4P+H5SWhcdr6by1LjvwTtEgaFG1A0cEoT5dhEy2CpF810Dq9eso7S5FpKTWC/T+8HfPk6A3TjZgyadlk7yuwlzKNohFjI07mjvW6dK6v7juBv5IJIaAZyQ3KTcZmTwEgNmgURq5ZPLCw9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748207092; c=relaxed/simple;
-	bh=zmQ3WCjpTsWrsPxh4xNRvQUrAO34Wx+6nQsD5BF4z58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hx7qT6tkwFHu3HoRSTV21cEKkDhLyyUdiZY+pPRrWImeiEbZT0fLnJ4i1QEj3Ep189V+SBYFkzLLcv98EV5DAPufCH1umVJxZW0PQ1+eZ7MaXqYeffQurr2/pf8inX2bCMPRmSGcaeN2ZsPHhddxh7VhRhPiH2FNP6QsmGpnIeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Ng/K8Epa; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=P1fuEwoxkkM7SCcIlBX1c+jTmdrHnGY4pQmlLxU0N2c=; b=Ng/K8EpaU4CnT9lXUNszS9qI3V
-	IP+JV9MVE+VM1E9dpcqSvHn1/cfKlnMUXN0sdnbi4QPxcvpe9eBXanvrSd87LlVpQSn1w2JWg5VBv
-	ARFGEislZyf0mV5kjThcPt7VESffJYeBGScHiImuwp0wrkAs1rGYuL9pSf9HB8mrdGr6xXDsSB/3K
-	aniePNrWv3zbKrdSW+abmMnHTrAXHl67UnKem4UiHnWdl/O1xhaKxHAWKHkXE7ijsproHswRPx/Ue
-	uwwFDP/BekOBY9FvxR/yGk87L/Az3LZbabFClG2E5fIlYhOONXCSF4foRi8j0TgNt8XRXzA+Xx4Z7
-	g76r1dbQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uJIGz-0000000AclD-11v2;
-	Sun, 25 May 2025 20:48:45 +0000
-Date: Sun, 25 May 2025 21:48:45 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-	Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-	Christoph Hellwig <hch@lst.de>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [BUG] regression from 974c5e6139db "xfs: flag as supporting
- FOP_DONTCACHE" (double free on page?)
-Message-ID: <aDOCLQTaYqYIvtxb@casper.infradead.org>
-References: <20250525083209.GS2023217@ZenIV>
- <20250525180632.GU2023217@ZenIV>
- <40eeba97-a298-4ae1-9691-b5911ad00095@suse.cz>
- <CAHk-=wjh0XVmJWEF-F8tjyz6ebdy=9COnp6sDBCXtQNAaJ0TQA@mail.gmail.com>
+	s=arc-20240116; t=1748206497; c=relaxed/simple;
+	bh=84E68MsXaFkr74J3EcYu6/829NuQf8Ks2NJLDHpaS2s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hMRcAgTdckuhigvJa6uksLGyZyoOB3FnxpQQwCQic3jrw71X+fsVaJHIoi4HMfTwgXPGAKLaOa6cJQ+LCR5+oD43qCHY9XShRCZxSD83y30Xx0UnEEBb7Sx+O38cK4UnqYvKKCllRWoIkE5vuJXBTEFURNBCbe6cFbL+wmNKMiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=S6MNoHjq; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-acbb85ce788so332406866b.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 May 2025 13:54:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1748206492; x=1748811292; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CdRdAZXSSh1/jEt6dZFpuG7gJX5yYWKD/wEyCLUi620=;
+        b=S6MNoHjqFKY50NRjR389B5A1qxokynca6gtXR/E+o8xcZSLR0r0MuhazHDF+MyuvrI
+         IQ2IcvZnU0hNkkZ5WxQuqEeJU6Dm058T506x8PYA1zxj3CtslT3fzntOSnCrDmgMi2K9
+         LDaV25ncA8GuiKYI7vJGlSIlP4jZx0RHFhoxM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748206492; x=1748811292;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CdRdAZXSSh1/jEt6dZFpuG7gJX5yYWKD/wEyCLUi620=;
+        b=noya6SPyMpSSu7CmzkXJfzCcszHEK8a4DvMzrvB0AnM7St3JbxawhOHv2ht4zRoTxK
+         Ol6CToT9v1PskbkD6xe627OeEDzydxYQyPFNdHawN7/hTLjeIfBmxxS+7MD4dMvA7G+3
+         BYHm45R1Cx6hW9whnbQcr8YOyHfPqLXUrlFQlcZ4NAqutMmxyUeuc5TBepqcZj6hFoOa
+         l4BArAPAjwAA4F8GG795ZyjHd6AKpnRnGMesTT/iMtX99D74nfAWnTh289t/h3IEqhJQ
+         oZ7X/ZsmVQU/Q45lj/lfSrAEK1V8kPB5vN155deGoCnC4vdf3Cs/f8sqpIrnhaGVlGcR
+         C8NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULWotKBwyowsip4vcOSTHXQ1wENbSVL/mbu/KPhcP3+YrQoK+GrDuoyCtFJoAcl3FCcZocUwA9xxzfipGB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6+8Vtro7u0AQFQYi4NWGk36zTWgOnlD/SrI0LVRgVgf2V8JkE
+	xQaRQWj05n3380MjW6fpTWDWeR0iEBuLynUkIKxVYyF++vlrmIKvFELq1+MKw0Ve56YmIOL9SHl
+	ySeOV3ck=
+X-Gm-Gg: ASbGncsV9t5XuZPQO8yEKxVVlwjTGl2CA9vbmm6kqPEd+r2yUa8abQY75KcTyjBmeus
+	sEOPwY6z5ZBnxmOjQXMqttvcVHA8hSquAHLT08I3X4AgS7wgkFcPDPxvWRgM1zvGQPlQXts3DtC
+	VZ1fiLthHkFMEuNHaMOzZpaFGSiWG71DlfMCMbnGGQ4S4/W46fKGEVsdjTmEtinaOm21ieYrbX0
+	OK+ukwpYTjnf0a8vZdTj5f0qYJVHX035MkuZh1LUezYgeAlSkOzA20048PATfnmcnFQaK/UM341
+	EPAl4WgzhheIHVYF6QS/+sYaylfCSSHKXeZC9+iOfzvdIEHJU9qnmh5DFfWZ2u23GQUcmJjQiKx
+	9OGLjDefjTHYfZwmqNVST5yZbHQ==
+X-Google-Smtp-Source: AGHT+IEqfqPjDLCwvP9kYHZgKzuhqzzYSu3tYwPv7UpgNRZsbkC+4VTCzMaSRmqykWrcoTsIRWN3KA==
+X-Received: by 2002:a17:907:d19:b0:ad2:50ef:492e with SMTP id a640c23a62f3a-ad85b185b6amr606565866b.32.1748206491692;
+        Sun, 25 May 2025 13:54:51 -0700 (PDT)
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com. [209.85.208.42])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad52d4cbe90sm1565220666b.165.2025.05.25.13.54.50
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 25 May 2025 13:54:50 -0700 (PDT)
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-604bde84d0fso48041a12.3
+        for <linux-fsdevel@vger.kernel.org>; Sun, 25 May 2025 13:54:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUHF3hmzY/6aED4ADS75aJp9W6iKKoInrkIXL8qGpDiYKNumYmQhVUHp9vcYoKmLvuXVv8cG3Uq57ioDv0R@vger.kernel.org
+X-Received: by 2002:aa7:c316:0:b0:601:9531:68b8 with SMTP id
+ 4fb4d7f45d1cf-602da3014e8mr4212379a12.18.1748206490237; Sun, 25 May 2025
+ 13:54:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjh0XVmJWEF-F8tjyz6ebdy=9COnp6sDBCXtQNAaJ0TQA@mail.gmail.com>
+References: <20250525083209.GS2023217@ZenIV> <20250525180632.GU2023217@ZenIV>
+ <40eeba97-a298-4ae1-9691-b5911ad00095@suse.cz> <CAHk-=wjh0XVmJWEF-F8tjyz6ebdy=9COnp6sDBCXtQNAaJ0TQA@mail.gmail.com>
+ <aDOCLQTaYqYIvtxb@casper.infradead.org>
+In-Reply-To: <aDOCLQTaYqYIvtxb@casper.infradead.org>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sun, 25 May 2025 13:54:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg7B_Kf3b5cBKWmNDz7MrP6bj34adQyJRckOaWDdhB9Qg@mail.gmail.com>
+X-Gm-Features: AX0GCFtxS47hLbav5g1bF-L0f2bd455QNqcHh_7xl43sQbSzBNMtDCDN0bfTol4
+Message-ID: <CAHk-=wg7B_Kf3b5cBKWmNDz7MrP6bj34adQyJRckOaWDdhB9Qg@mail.gmail.com>
+Subject: Re: [BUG] regression from 974c5e6139db "xfs: flag as supporting
+ FOP_DONTCACHE" (double free on page?)
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>, 
+	Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, May 25, 2025 at 01:32:33PM -0700, Linus Torvalds wrote:
-> But yeah, maybe the drop-behind case never triggers in practice, and I
-> should just revert commit 974c5e6139db ("xfs: flag as supporting
-> FOP_DONTCACHE") for now.
-> 
-> That's kind of sad too, but at least that's new to 6.15 and we
-> wouldn't have a kernel release that triggers this issue.
-> 
-> I realize that Vlastimil had a suggested possible fix, but doing
-> _that_ kind of surgery at this point in the release isn't an option,
-> I'm afraid. And delaying 6.15 for this also seems a bit excessive - if
-> it turns out to be easy to fix, we can always just backport the fix
-> and undo the revert.
-> 
-> Sounds like a plan?
-> 
-> I'm somewhat surprised that this was only noticed now if it triggers
-> so easily for Al with xfstests on xfs. But better late than never, I
-> guess..
+On Sun, 25 May 2025 at 13:48, Matthew Wilcox <willy@infradead.org> wrote:
+>
+> I wonder if we shouldn't do ...
+>
+> +++ b/include/linux/fs.h
+> @@ -3725,6 +3725,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
+>                         return -EOPNOTSUPP;
+>         }
+>         if (flags & RWF_DONTCACHE) {
+> +               /* Houston, we have a problem */
+> +               return -EOPNOTSUPP;
 
-I wonder if we shouldn't do ...
+Hmm. Your point about other filesystems is well taken.
 
-+++ b/include/linux/fs.h
-@@ -3725,6 +3725,8 @@ static inline int kiocb_set_rw_flags(struct kiocb *ki, rwf_t flags,
-                        return -EOPNOTSUPP;
-        }
-        if (flags & RWF_DONTCACHE) {
-+               /* Houston, we have a problem */
-+               return -EOPNOTSUPP;
-                /* file system must support it */
-                if (!(ki->ki_filp->f_op->fop_flags & FOP_DONTCACHE))
-                        return -EOPNOTSUPP;
+I'd have preferred a revert as a "don't do anything new at this
+point", but I guess disabling it at this point is probably the safer
+option considering that this isn't a xfs issue.
 
-in case some other filesystem adds support for it?  I don't see anything
-in -next right now, but I see Darrick playing with it here for FUSE:
-https://lore.kernel.org/all/174787195629.1483178.7917092102987513364.stgit@frogsfrogsfrogs/
-Jeff playing with it for nfsd here:
-https://lore.kernel.org/all/370dd4ae06d44f852342b7ee2b969fc544bd1213.camel@kernel.org/
-Trond implementing it for NFS client here:
-https://lore.kernel.org/all/cover.1745381692.git.trond.myklebust@hammerspace.com/
+> Oh, and we're only just seeing it, I think, because you need to recompile
+> xfstests to test this functionality ...
 
-I thought I saw someone implement it for ext4, but perhaps I'm confused
-with something else.  Anyway, some kind of not-xfs-specific patch is
-appropriate here, I think?
+Ahh, good. Well, not "good" exactly, but it certainly at least
+explains the unlucky timing.
 
-Oh, and we're only just seeing it, I think, because you need to recompile
-xfstests to test this functionality ... and I certainly don't re-pull
-and re-compile xfstests on a regular basis; I just use the one I pulled
-and compiled, um, months ago.
+Thanks,
+
+             Linus
 
