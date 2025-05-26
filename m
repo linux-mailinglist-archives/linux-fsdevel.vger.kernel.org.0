@@ -1,118 +1,104 @@
-Return-Path: <linux-fsdevel+bounces-49830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49831-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CB04AC3746
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 00:06:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3277CAC3791
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 03:12:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 213643B64B0
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 25 May 2025 22:06:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 697101720B3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 01:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC37319ABAC;
-	Sun, 25 May 2025 22:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0A67263D;
+	Mon, 26 May 2025 01:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fo99h9Sv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBqZdmJ/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C00FD163
-	for <linux-fsdevel@vger.kernel.org>; Sun, 25 May 2025 22:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FEC35972;
+	Mon, 26 May 2025 01:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748210776; cv=none; b=Wd7e1kkHZl9/putYREL2B3Roh7tJidb4W2JccsFFOiZ/oZqyIQFbwUeMil7CD+gPdu8X8kv7dzQ4vqPxrNOmuLSq4tx08sukQa2BpKoGCgeL1X1S7KEBAePExPKR1fRQ9Ho0anZ8yFZnXohNlVtb6HB/5XTU4b8f1m+pKh5D46E=
+	t=1748221934; cv=none; b=LzF0/5HTmVLArdk8t1vlzn+KAvhlAEcRjtU4CLUGRZWzSEHD6flCSR24qmxGiPjsRADVCzC9EQN4uA0rA36HQx9ynNCtrFZvpdQFS0aUCVcXgHFQKNFjf64sMSaXFi7g0ZeitVkgQvGhPIRHBPQxvtU8CF6TkPOt0qe2T/wkT30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748210776; c=relaxed/simple;
-	bh=drBYIXao4n2OLz31nca1PGmY9vMhdKA/yxFzkIzjevs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E9KNM8ZTrAlBb30DG9aGk3nuiCdiDQ5PxI1zU6Vm7UjnuimzeW4t2RHQURddlZwpuSM+DTZ4ZvfDui/lycJrbhuelUsK86pRe/HxeJlFUM5FqhrTnSJ5k0llEwbgjfOUpB3QIDaLEH1wGvCwfko27MU+ApqmJdmJeQXxUDnBFdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fo99h9Sv; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-604630fcd3aso908523a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 May 2025 15:06:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1748210771; x=1748815571; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pfiz8+dxBBRT2DE5cNKPsKLH1ZvHcClUeQZGYjiTl60=;
-        b=fo99h9SvoZ+QCU0+Sxh4QA6forfB7aTS+m4RKWUjYBb8Z1rfvm3iXdE8zLvV7zuFKn
-         bklY17jX2H12YY+qGZlM3O4oemZIAjyLIiXR6EzJ6OTdAkEAXE05BwzuipyrpGE5bTCI
-         D3yTnz7ve8oG2b+1Wy6alXeXWa18i8Ed53yFc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748210771; x=1748815571;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pfiz8+dxBBRT2DE5cNKPsKLH1ZvHcClUeQZGYjiTl60=;
-        b=QORQvyCRqN+AQUHnAUm143smvYisJNMUmLlaNkzfGARb9ZPZCcv4WuMTFhN8Q8TQ6A
-         sGLl6XDKJ8kZYrrMAz/Ic1+pG53JpMUpUTD52jj9kZh9hHCQW4ju4qvcXwuz+iSMhhtJ
-         yHRMzz9yEilDqESKDVfhN5QxX6oAJOYB4k9b2QioqNKCUXMgofaerqrjlJdAlODYeoLF
-         mf3jv0jNUciIy78wGNqSIT38X7HFNNIJiMp74obnArBeJQ44TUNvD7znGfv53P2e/UQx
-         4be1ZnevJ4ON8V/q5LrgmB6WwyQBHnZDMj54oegWrEe6+TzLwUGXEXbylXYnj4b22vDH
-         ySdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJWDkhsdMD4YBfv0MQ11K2SGRIy+ELW4vtd247fU+CMQeikgV86sVouoLHiLoZT6+G6agASIjKiWIFksYo@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/u+wLXL5d40+WVvY2jg393NPTzFDqb1Pupg5tSfw8xkSG6ZgK
-	Y2ZQF1rcMgpJEJPcBF6XzVo0JoFUzPOh4ymA85NjIBl7x4fLUhfNsAQtSsIsKhOrQXJ6e0DMaRo
-	cOFEU7As=
-X-Gm-Gg: ASbGncvgXl9OGLE9YqP9Z7mpuTlz0XnsPj7E67vKlBOMQHGIK88mMbeAvTfbuUnM9FE
-	kcwCi/h9/rPBtrx3rFiJD2hV7Am4sT4Edu7e/YRVhWDys2cfquxd+MjnlhlFWi3T55Xq4uepiey
-	OZIs9uNbN2KkT74qZXbChCQ7F4eUuxXuVEWN+E2XJPKVdkgNbPLiBtZWgV88xKfs0hT/OPMhVTU
-	oj/2E25Pv4Oh6rV6wainBh8DloKS5e505KyJFkKxJCn/ybamqNEA4Uu/IYA+MbCteXRd9mV5cl4
-	Q764LTbPngUwG6WR0Uj5kz3bqwqAy6VBOQKkE/lAHexy7nkLlzLVdtNlaW2V1By2jPCOdKKOz2i
-	xS3bL7RoHzsR5QL+DSwY6/UR0GQ==
-X-Google-Smtp-Source: AGHT+IHSkS+9Jjyh0FieViDOlT57e2E3MyfmOksKqo+4S80Ntig+yzChu+HDJiTU196x/m4GAoCbNQ==
-X-Received: by 2002:a17:907:2688:b0:ad5:a29c:efed with SMTP id a640c23a62f3a-ad85b1de649mr570657866b.33.1748210771582;
-        Sun, 25 May 2025 15:06:11 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ad5b192cb0asm802961166b.170.2025.05.25.15.06.10
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 25 May 2025 15:06:10 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-604630fcd3aso908509a12.1
-        for <linux-fsdevel@vger.kernel.org>; Sun, 25 May 2025 15:06:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUWOV9D37FYcMmwsVGhaTVw7NiaCgo0oqN5sjfsCS4Rksg6AZBUfzvrn+zr/NOPk2LoGdmUX6fTuyGXdUu1@vger.kernel.org
-X-Received: by 2002:a05:6402:847:b0:5fd:ef5d:cfc4 with SMTP id
- 4fb4d7f45d1cf-602da5f8453mr5260550a12.32.1748210770332; Sun, 25 May 2025
- 15:06:10 -0700 (PDT)
+	s=arc-20240116; t=1748221934; c=relaxed/simple;
+	bh=Hdf+EjjTXZohy7wvzsrbiXVv91he59uK5ObP7uvDCFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=oTrvDnOmYXt7FXJGdM+xwBGRTtMTMcyjOLobjJ4eGMctQ5IRtzTGudsjbeh5WaRZPwdaKJosedAFynqjmVuAH6VMKEkMhmnnHQqxcy62m+cNNdQ9IKL7Q5E9+LtW8T75BRvR+tTp1UMLqB+lnqYLDBazvniRpf2+LO5aH2gmc3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SBqZdmJ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CAE8C4CEEA;
+	Mon, 26 May 2025 01:12:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748221933;
+	bh=Hdf+EjjTXZohy7wvzsrbiXVv91he59uK5ObP7uvDCFk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=SBqZdmJ/v5YNWL0MNAgOodpQ2MPdxMHNJh21PffomPOdBJBGshC4LaqDUttDtg+Nc
+	 rqmN8p4KcWg7TelM/WUzeRiJ2LunogRlcyMsBf/cZabuk5QS4SdL/H6YhaMb4CbNqp
+	 sHo9Gs16plVIVnKnzJIuk/51Ik81S7c+uX52VWLkYkSYS0YRB76AwZRcQFXlJj01Rq
+	 EvhH8DTaDknnbQ/AYw8pUJg9txdtqkljBXDzxcalfkriV3T43aeOn//DPCo0H9y0Ub
+	 m+A1TFazvRqku8RhSKOp/Wt8wiYOpmzouI6lt/mqNWqYwDbta28a6Xs8ybB+BFXR/6
+	 0/sFt6PAX/s7w==
+Date: Sun, 25 May 2025 18:11:59 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Jaegeuk Kim <jaegeuk@kernel.org>, Theodore Ts'o <tytso@mit.edu>
+Subject: [GIT PULL] fscrypt update for 6.16
+Message-ID: <20250526011159.GA23241@sol>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250525083209.GS2023217@ZenIV> <20250525180632.GU2023217@ZenIV>
- <40eeba97-a298-4ae1-9691-b5911ad00095@suse.cz> <CAHk-=wjh0XVmJWEF-F8tjyz6ebdy=9COnp6sDBCXtQNAaJ0TQA@mail.gmail.com>
- <aDOCLQTaYqYIvtxb@casper.infradead.org> <20250525214939.GW2023217@ZenIV>
-In-Reply-To: <20250525214939.GW2023217@ZenIV>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 25 May 2025 15:05:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wj6gy_EXWfaNF4ee1XTGfhFFTfNkvMbJUmab+Xs8kNAfw@mail.gmail.com>
-X-Gm-Features: AX0GCFukz7S2mvxAbYp9oUzmI_wPzhrn8Q9ZrgMizdYhBa2rr8QE_I1ab_1NEtU
-Message-ID: <CAHk-=wj6gy_EXWfaNF4ee1XTGfhFFTfNkvMbJUmab+Xs8kNAfw@mail.gmail.com>
-Subject: Re: [BUG] regression from 974c5e6139db "xfs: flag as supporting
- FOP_DONTCACHE" (double free on page?)
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, Jens Axboe <axboe@kernel.dk>, 
-	Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Sun, 25 May 2025 at 14:49, Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Perhaps
->
-> -#define FOP_DONTCACHE           ((__force fop_flags_t)(1 << 7)) when shit gets fixed
-> +#define FOP_DONTCACHE           0 // ((__force fop_flags_t)(1 << 7)) when shit gets fixed
->
-> instead?
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-Yeah, I think that ends up being prettier than an extra error return
-in the middle of code.
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
 
-Will do. Thanks for noticing this, even if the timing is awkward.
+are available in the Git repository at:
 
-              Linus
+  https://git.kernel.org/pub/scm/fs/fscrypt/linux.git tags/fscrypt-for-linus
+
+for you to fetch changes up to c07d3aede2b26830ee63f64d8326f6a87dee3a6d:
+
+  fscrypt: add support for hardware-wrapped keys (2025-04-08 19:32:11 -0700)
+
+----------------------------------------------------------------
+
+Add support for "hardware-wrapped inline encryption keys" to fscrypt.
+When enabled on supported platforms, this feature protects file contents
+keys from certain attacks, such as cold boot attacks.
+
+This feature uses the block layer support for wrapped keys which was
+merged in 6.15.  Wrapped key support has existed out-of-tree in Android
+for a long time, and it's finally ready for upstream now that there is a
+platform on which it works end-to-end with upstream.  Specifically,
+it works on the Qualcomm SM8650 HDK, using the Qualcomm ICE (Inline
+Crypto Engine) and HWKM (Hardware Key Manager).  The corresponding
+driver support is included in the SCSI tree for 6.16.  Validation for
+this feature includes two new tests that were already merged into
+xfstests (generic/368 and generic/369).
+
+----------------------------------------------------------------
+Eric Biggers (1):
+      fscrypt: add support for hardware-wrapped keys
+
+ Documentation/filesystems/fscrypt.rst | 187 +++++++++++++++++++++++++++-------
+ fs/crypto/fscrypt_private.h           |  75 ++++++++++++--
+ fs/crypto/hkdf.c                      |   4 +-
+ fs/crypto/inline_crypt.c              |  44 ++++++--
+ fs/crypto/keyring.c                   | 132 +++++++++++++++++-------
+ fs/crypto/keysetup.c                  |  63 ++++++++++--
+ fs/crypto/keysetup_v1.c               |   4 +-
+ include/uapi/linux/fscrypt.h          |   6 +-
+ 8 files changed, 410 insertions(+), 105 deletions(-)
 
