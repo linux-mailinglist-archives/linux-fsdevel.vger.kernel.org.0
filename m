@@ -1,95 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-49856-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB883AC424A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 17:31:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D00AC42B7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 17:58:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A9C1179303
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 15:31:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF84F3B26C1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 15:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C97A1F4CA0;
-	Mon, 26 May 2025 15:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 033452139CE;
+	Mon, 26 May 2025 15:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bKM+FTH1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uwnqUofC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bKM+FTH1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="uwnqUofC"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="K7elq6un"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264076D17
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 15:31:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4E82566
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 15:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748273503; cv=none; b=VEezPQBsd1aBO+EO++CYET4Q+tWx6ZjAa3AbzxG6ZgUWFrS0rQ9iqq9fEu2LlBFJCoHP5jNmiC5QHTdf3fVYMZvVEbp0Kj7Zm3zT6c6lFRhPFzo6Hv0wmhnD3AmHJEfrNWYTEpZSRDIjV0d6I/40gHnr3JQpcEd+zzj/jPYbSSU=
+	t=1748275089; cv=none; b=Eo/GcR4tScmJA2IraUzNgU/rPelEMCDjtvq3jNVy0P1QZL5xDFFf6eKL0QUteRCCZvMXUbhHzdUu1sheHtIMngohgpHhnKNR7Rarkw+yUTF/6ZppGoNMiLG1LulM1U1SB3U5PrF3zfZ5lmlSpbPXhFDQacEx8itZdCrj3EJygYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748273503; c=relaxed/simple;
-	bh=0/GYr5kZAj/ScjGxy9Vgc657q4VCLH1runHFCBaLOZA=;
+	s=arc-20240116; t=1748275089; c=relaxed/simple;
+	bh=JwoRkGOwOBjt4U22YRQH7wxZkmkUEKhs6C/eTV2xQmc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G88yp/O9li8biucbyB98obEecXmX0kqM/0RGhsRu+FVYtPv2IntL10z//OGEJFlqSzSmL46RZQq/n0hpk9GwyBLgIA1GEK1Tcy08vnp3yiyF3qGk2JxGZX1aRkJAnYsULvbx0j5niiLuT4ThKog04C+/S977uC2gmyMhg6y7ZVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bKM+FTH1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uwnqUofC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bKM+FTH1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=uwnqUofC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3AA1D1F893;
-	Mon, 26 May 2025 15:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748273500; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=f+BlwX1tbY9X7T3F52swkx+IEJs/iwkeJStk5kU1Ijw=;
-	b=bKM+FTH1K37nuguscQiPKiXGzlsX597uYnxUy+WK556pH/sW+0sW8TJOSwDXoInMxrnG9a
-	pf6vd8IQ5MQ+z5ygfILlsTLtqW1SvuFi+2qE2hkhBESBEqbIO42RwHXCxv+R1kUCQA8eJm
-	O7UFisH8LgtT9/dCNIH2mYzoVlbJ/58=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748273500;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=f+BlwX1tbY9X7T3F52swkx+IEJs/iwkeJStk5kU1Ijw=;
-	b=uwnqUofCJr4p7d91tYPBJUbP2N6BSZUHJu/n59tyeT+PctuPKJ7lSKMUBHJ57N8SNXte6y
-	EcINOt/7ZPZCdJBA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748273500; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=f+BlwX1tbY9X7T3F52swkx+IEJs/iwkeJStk5kU1Ijw=;
-	b=bKM+FTH1K37nuguscQiPKiXGzlsX597uYnxUy+WK556pH/sW+0sW8TJOSwDXoInMxrnG9a
-	pf6vd8IQ5MQ+z5ygfILlsTLtqW1SvuFi+2qE2hkhBESBEqbIO42RwHXCxv+R1kUCQA8eJm
-	O7UFisH8LgtT9/dCNIH2mYzoVlbJ/58=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748273500;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=f+BlwX1tbY9X7T3F52swkx+IEJs/iwkeJStk5kU1Ijw=;
-	b=uwnqUofCJr4p7d91tYPBJUbP2N6BSZUHJu/n59tyeT+PctuPKJ7lSKMUBHJ57N8SNXte6y
-	EcINOt/7ZPZCdJBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 22E4F1397F;
-	Mon, 26 May 2025 15:31:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hYInCFyJNGg1YwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 26 May 2025 15:31:40 +0000
-Message-ID: <9f0786e3-f8df-4c62-b5c0-10db0acb2b02@suse.cz>
-Date: Mon, 26 May 2025 17:31:39 +0200
+	 In-Reply-To:Content-Type; b=PqT0UMYRpM2mAm2bpHfrEwzpmOW69j/fz1P1erLYJ2NB+ayVEFzWSY4AEJWFBT3JALgrKQbOAvKTBWona2h/ZQLCQtsj7cYvtCflVlxWMwBtcb3EjTMfNfV10cljp67rx4tbXVfdg6j0lLRIWc70eV9JcejjnyWXeVop5x9C7ZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=K7elq6un; arc=none smtp.client-ip=209.85.166.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-861b1f04b99so66262739f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 08:58:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748275086; x=1748879886; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7CFfOdbeNiTdGmOpgebK5hzq1A+U47oLBFKifR2CHA=;
+        b=K7elq6unwY+eCjstnVF1KgcRCfnc+51v4uNf8G2aq/h0KkccsNelGFFUbRPbgK956f
+         MfdwzBLQ97FSMllAAvSxyR8iX7Quct4Vhm/x3u/u3i7xAxj5aD/UONnKTdyOX0QDtUDi
+         M1wZqoh8iNJNhgWJqdakrK+2DIeWuTIbaYF+/q1NT6uT2i/Gzbr8jUe1K/6QNtJLQEc9
+         iVpZUDzxciykGQgSkO4DuNVdsXvfkCp9Oq9S1uWDi6MlJDT/NLWxoC+n2N2EY9cuOYVd
+         EnMTu7y9ZLpQec8EdvT7878zRNb4KCVIhbMUCRVH0+fzUHjk+FjvZQHfZ23AHWch1mri
+         29Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748275086; x=1748879886;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y7CFfOdbeNiTdGmOpgebK5hzq1A+U47oLBFKifR2CHA=;
+        b=aCqr+iKY2jqCH8EskrF/GuGPctgb+6nKv2htg0tcbR9z7VUDcxkhGO4Ua8rgYpebZy
+         4BiuYJql04y/vRKQPMA/vN0wk4MZPzTCcteFsYZphes6ymtSiAb413j7KQ0EgRoR1du/
+         spXurSfxdJBrwsudlLU9I5zVcSG7mrw2tzmgApSQ8Nko/6SlpQB3ClNQ9gDgYmqZQ6Tb
+         xfrwogqvV9mCXtZr56NnKWH5U5GecgWM1Ij79t8hmVXdjNOAzAFcvT13ylOCuzg37Fbm
+         4gYk4s/ZmS4xwcucz/CxE2goCEzGajXIb5jvkPbrZnh3R1NObdW0laVAThxqwoOHLwdJ
+         RPyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPwcKkJ2KTtZXjPX7KuKNeILDhX0rDZepLZroBEqHKqtv+YSul213dPBEXIrH733IVJu7wLAk7ouT4wl3S@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgIFT26r9wf8wIJ0/PF3WENRl/Rtw1/e6kRFy2e35O9bk0YFJj
+	4Xua+Cd70h5JAnphsGE1lJ3VTXumBFRKcbZc+f+kMUx1yelqiAtGPNmggPLtSz27LW4=
+X-Gm-Gg: ASbGncszwNE4MB7Z/L+MuFZCzDPbpusRh54AXKM3qYeXOrNvR6ixeP51kChkJuhIW0V
+	lGek8MK4fTFTdF5UlAoBKlygY522qS22tucp5M5wWNGQkXDiLHwkkSkJxPeQqsSlRCmALTcPuN/
+	Elei0OYvNUi5hDYzUNkOl/f+R/1GDOSxeq/kj2R9xD65cLtqz7n74WDZCjNJolDjd630nls511K
+	fYUIZ3/HbAqHo7QbxYWZX+F3TamdfYoGvuRzbQKLwcgay2e/5WYYYK9BWgYn1QEcgoMYCUVJQSj
+	V6tJEuEAFVlsagpOHpEXVZCDQyXyMwd3FglQQuBGA0y3bdzP
+X-Google-Smtp-Source: AGHT+IEQIyh0Kkl2s8g5qzs6pl0cfoxrmVXzZamKFvMFxMBljYowI0rvs8s0G5Id070csHA0F9c+LA==
+X-Received: by 2002:a05:6e02:160c:b0:3d9:65b6:d4db with SMTP id e9e14a558f8ab-3dc9b696c46mr90048105ab.12.1748275085766;
+        Mon, 26 May 2025 08:58:05 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dca0409ce3sm14416065ab.58.2025.05.26.08.58.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 May 2025 08:58:05 -0700 (PDT)
+Message-ID: <432302ad-aa95-44f4-8728-77e61cc1f20c@kernel.dk>
+Date: Mon, 26 May 2025 09:58:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -99,8 +83,7 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [BUG] regression from 974c5e6139db "xfs: flag as supporting
  FOP_DONTCACHE" (double free on page?)
-Content-Language: en-US
-To: Jens Axboe <axboe@kernel.dk>, Al Viro <viro@zeniv.linux.org.uk>,
+To: Vlastimil Babka <vbabka@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
  Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
 Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
  Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
@@ -109,105 +92,142 @@ References: <20250525083209.GS2023217@ZenIV> <20250525180632.GU2023217@ZenIV>
  <40eeba97-a298-4ae1-9691-b5911ad00095@suse.cz>
  <431cb497-b1ad-40a0-86b1-228b0b7490b9@kernel.dk>
  <6741c978-98b1-4d6f-af14-017b66d32574@kernel.dk>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <6741c978-98b1-4d6f-af14-017b66d32574@kernel.dk>
+ <9f0786e3-f8df-4c62-b5c0-10db0acb2b02@suse.cz>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <9f0786e3-f8df-4c62-b5c0-10db0acb2b02@suse.cz>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	SUBJECT_HAS_QUESTION(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.30
-X-Spam-Level: 
 
-On 5/26/25 17:06, Jens Axboe wrote:
-> On 5/26/25 7:05 AM, Jens Axboe wrote:
->> On 5/25/25 1:12 PM, Vlastimil Babka wrote:
->> 
->> Thanks for taking a look at this! I tried to reproduce this this morning
->> and failed miserably. I then injected a delay for the above case, and it
->> does indeed then trigger for me. So far, so good.
->> 
->> I agree with your analysis, we should only be doing the dropbehind for a
->> non-zero return from __folio_end_writeback(), and that includes the
->> test_and_clear to avoid dropping the drop-behind state. But we also need
->> to check/clear this state pre __folio_end_writeback(), which then puts
->> us in a spot where it needs to potentially be re-set. Which fails pretty
->> racy...
->> 
->> I'll ponder this a bit. Good thing fsx got RWF_DONTCACHE support, or I
->> suspect this would've taken a while to run into.
+On 5/26/25 9:31 AM, Vlastimil Babka wrote:
+> On 5/26/25 17:06, Jens Axboe wrote:
+>> On 5/26/25 7:05 AM, Jens Axboe wrote:
+>>> On 5/25/25 1:12 PM, Vlastimil Babka wrote:
+>>>
+>>> Thanks for taking a look at this! I tried to reproduce this this morning
+>>> and failed miserably. I then injected a delay for the above case, and it
+>>> does indeed then trigger for me. So far, so good.
+>>>
+>>> I agree with your analysis, we should only be doing the dropbehind for a
+>>> non-zero return from __folio_end_writeback(), and that includes the
+>>> test_and_clear to avoid dropping the drop-behind state. But we also need
+>>> to check/clear this state pre __folio_end_writeback(), which then puts
+>>> us in a spot where it needs to potentially be re-set. Which fails pretty
+>>> racy...
+>>>
+>>> I'll ponder this a bit. Good thing fsx got RWF_DONTCACHE support, or I
+>>> suspect this would've taken a while to run into.
+>>
+>> Took a closer look... I may be smoking something good here, but I don't
+>> see what the __folio_end_writeback()() return value has to do with this
+>> at all. Regardless of what it returns, it should've cleared
+>> PG_writeback, and in fact the only thing it returns is whether or not we
+>> had anyone waiting on it. Which should have _zero_ bearing on whether or
+>> not we can clear/invalidate the range.
 > 
-> Took a closer look... I may be smoking something good here, but I don't
-> see what the __folio_end_writeback()() return value has to do with this
-> at all. Regardless of what it returns, it should've cleared
-> PG_writeback, and in fact the only thing it returns is whether or not we
-> had anyone waiting on it. Which should have _zero_ bearing on whether or
-> not we can clear/invalidate the range.
+> Yeah it's very much possible that I was wrong, folio_xor_flags_has_waiters()
+> looked a bit impenetrable to me, and it seemed like an simple explanation to
+> the splats. But as you had to add delays, this indeed smells as a race.
 
-Yeah it's very much possible that I was wrong, folio_xor_flags_has_waiters()
-looked a bit impenetrable to me, and it seemed like an simple explanation to
-the splats. But as you had to add delays, this indeed smells as a race.
+Here's my delay trace fwiw, which is a bit different:
 
-> To me, this smells more like a race of some sort, between dirty and
-> invalidation. fsx does a lot of sub-page sized operations.
-> 
-> I'll poke a bit more...
-> 
+BUG: Bad page state in process fsx  pfn:4866b
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x25 pfn:0x4866b
+flags: 0x3ffe0000000000a(uptodate|writeback|node=0|zone=0|lastcpupid=0x1fff)
+raw: 03ffe0000000000a dead000000000100 dead000000000122 0000000000000000
+raw: 0000000000000025 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
+Modules linked in:
+CPU: 6 UID: 0 PID: 1853 Comm: fsx Not tainted 6.15.0-rc7-00144-gb1427432d3b6-dirty #1053 NONE 
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+ show_stack+0x1c/0x30 (C)
+ dump_stack_lvl+0x58/0x78
+ dump_stack+0x18/0x20
+ bad_page+0x1a4/0x228
+ free_unref_folios+0xc2c/0x1920
+ folios_put_refs+0x354/0x5f0
+ __folio_batch_release+0x98/0xd0
+ writeback_iter+0x8f8/0xd00
+ iomap_writepages+0x16e4/0x2090
+ xfs_vm_writepages+0x200/0x2c0
+ do_writepages+0x148/0x7c0
+ filemap_fdatawrite_wbc+0xe0/0x138
+ __filemap_fdatawrite_range+0xb0/0x100
+ filemap_write_and_wait_range+0x68/0x100
+ __generic_remap_file_range_prep+0x418/0x1090
+ generic_remap_file_range_prep+0x18/0x80
+ xfs_reflink_remap_prep+0x160/0x7d8
+ xfs_file_remap_range+0x164/0xa90
+ vfs_dedupe_file_range_one+0x398/0x4a0
+ vfs_dedupe_file_range+0x410/0x648
+ do_vfs_ioctl+0x13c4/0x1fc0
+ __arm64_sys_ioctl+0xd8/0x188
+ invoke_syscall.constprop.0+0x60/0x2a0
+ el0_svc_common.constprop.0+0x148/0x240
+ do_el0_svc+0x40/0x60
+ el0_svc+0x34/0x70
+ el0t_64_sync_handler+0x104/0x138
+ el0t_64_sync+0x170/0x178
+Disabling lock debugging due to kernel taint
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x25 pfn:0x4866b
+flags: 0x3ffe0000000000a(uptodate|writeback|node=0|zone=0|lastcpupid=0x1fff)
+raw: 03ffe0000000000a dead000000000100 dead000000000122 0000000000000000
+raw: 0000000000000025 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: VM_BUG_ON_FOLIO(((unsigned int) folio_ref_count(folio) + 127u <= 127u))
+------------[ cut here ]------------
+kernel BUG at ./include/linux/mm.h:1543!
+Internal error: Oops - BUG: 00000000f2000800 [#1]  SMP
+Modules linked in:
+CPU: 6 UID: 0 PID: 0 Comm: swapper/6 Tainted: G    B               6.15.0-rc7-00144-gb1427432d3b6-dirty #1053 NONE 
+Tainted: [B]=BAD_PAGE
+Hardware name: linux,dummy-virt (DT)
+pstate: 614000c5 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+pc : folio_end_writeback+0x470/0x560
+lr : folio_end_writeback+0x470/0x560
+sp : ffff8000859978f0
+x29: ffff8000859978f0 x28: dfff800000000000 x27: fffffdffc0219ac0
+x26: 0000000000000000 x25: ffff000005ed8138 x24: 0000000000000000
+x23: 1fffffbff804335e x22: 0000000000000004 x21: 0000000000000001
+x20: fffffdffc0219af4 x19: fffffdffc0219ac0 x18: 000000000000000f
+x17: 635f6665725f6f69 x16: 6c6f662029746e69 x15: 0720072007200720
+x14: 0720072007200720 x13: 0720072007200720 x12: ffff60001b67150b
+x11: 1fffe0001b67150a x10: ffff60001b67150a x9 : dfff800000000000
+x8 : 00009fffe498eaf6 x7 : ffff0000db38a853 x6 : 0000000000000001
+x5 : 0000000000000001 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000000 x1 : ffff0000c1f98000 x0 : 000000000000005c
+Call trace:
+ folio_end_writeback+0x470/0x560 (P)
+ iomap_finish_ioend_buffered+0x38c/0x9e0
+ iomap_writepage_end_bio+0x80/0xc0
+ bio_endio+0x4dc/0x678
+ blk_mq_end_request_batch+0x2b4/0x10c0
+ nvme_pci_complete_batch+0x338/0x518
+ nvme_irq+0xd8/0xf0
+ __handle_irq_event_percpu+0xdc/0x528
+ handle_irq_event+0x174/0x3d8
+ handle_fasteoi_irq+0x2cc/0xba0
+ handle_irq_desc+0xb8/0x120
+ generic_handle_domain_irq+0x20/0x30
+ gic_handle_irq+0x50/0x140
+ call_on_irq_stack+0x24/0x50
+ do_interrupt_handler+0xe0/0x148
+ el1_interrupt+0x30/0x50
+ el1h_64_irq_handler+0x14/0x20
+ el1h_64_irq+0x6c/0x70
+ do_idle+0x244/0x4c8 (P)
+ cpu_startup_entry+0x64/0x80
+ secondary_start_kernel+0x1e4/0x240
+ __secondary_switched+0x74/0x78
+Code: 91190021 91218021 aa1303e0 94039279 (d4210000) 
+---[ end trace 0000000000000000 ]---
+Kernel panic - not syncing: Oops - BUG: Fatal exception in interrupt
+SMP: stopping secondary CPUs
+Kernel Offset: disabled
+CPU features: 0x0000,000000e0,0109a650,834e7607
+Memory Limit: none
+---[ end Kernel panic - not syncing: Oops - BUG: Fatal exception in interrupt ]---
 
+-- 
+Jens Axboe
 
