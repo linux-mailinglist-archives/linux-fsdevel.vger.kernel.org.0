@@ -1,124 +1,149 @@
-Return-Path: <linux-fsdevel+bounces-49892-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49893-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B28AC479E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 07:28:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7321AC48EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 09:01:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36D9B1894FF7
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 05:29:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DB67189C258
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 07:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D4E1DF244;
-	Tue, 27 May 2025 05:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064442153F1;
+	Tue, 27 May 2025 06:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z5oE8IYb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sj7dHuPA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB9113AD3F
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 05:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4BC202969;
+	Tue, 27 May 2025 06:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748323726; cv=none; b=lR/Kb20YQvAYPD+WUxMjJbmv5GdPVQjDCJrwdij13Z1czVNjc0k4tqr0DLo9lReI0fN5CuyObW8Uequa/B8hR45j2ov4SYmdezPsXc6XcfC63aM+Vb8GkuLsJKgPgbF3opPt023ccnOoyA1zEKx585qK4HaHpKPOIDlWW5I689k=
+	t=1748329066; cv=none; b=usd20Tl4LM3wVOYYNk1W/uPYvPERHJbQb4z3tvsKJkA2dtWihzKtgbjfGyGy//ZQluk2GGFsmfJBGJpS/YbbyekRKWSadssBW30a5nNyTIPPyr1Z9AN0N3DKuJCfdajxuQxpU6HWnAewCST1RWpeQuAjSgoYLyyQpbGDJxTa89U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748323726; c=relaxed/simple;
-	bh=1Sib9gBMl8hnWPq2xz0C25YBREla2zAHNdN1LcPwDVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0L/I/QLqZxUeqtnQQyegXlURFFU5+3dKN0YE5t4m6bcYDI5xJYOg0TTV3MAujANbs4DTN0eK0FTFTKr1jTLnNs/eOIx0qf+3fdoGIA3IOSqi3vub9ZOWuLw6slyxDobdl1DoDlQaEvSZ/YSIq//pUW8afVqaJJKV4c/tOariKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Z5oE8IYb; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2347012f81fso16506175ad.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 22:28:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1748323723; x=1748928523; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aMPUq7D6PukAbWgN0eC3EH73KmEOPEeZrHNJC7dBZq8=;
-        b=Z5oE8IYbwTHYNBQWEXkZnSghcLm0bxUSAUl/Wdm3vzQmOtC98jMd06Hsqu3hAyzkVk
-         4h0qzi1jUwflICqVvllKisH5TaVS2G8rfpgsGKvBWTBc2bpDUAtcKbrOeYR72BLw5HpU
-         LcCb/Vzj/RpaY0M5vVtGPa1jnsAm7rF6LW3pA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748323723; x=1748928523;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aMPUq7D6PukAbWgN0eC3EH73KmEOPEeZrHNJC7dBZq8=;
-        b=AhPGFYhOMM20kmEv1+gbNwNPGoBCZScXoDGmLZDAUYZOdlfg32MlokCJcCohZU/RtJ
-         xqwWngTDovL1XTaGnIddrdAabyj6XjmSBWl8qOOCakvvbInJLJXeWfTIr9d5D3vlzZob
-         qdciuiU/06OjBBFNkyZAhPsT2mvP4w9xeoYHlW60iOC8o8waUF/Du3m5Nn95sejAIjQN
-         caIyk/yhwtWuOzkYc8bXqHrwYEKW1u7RtRwU+tU9ldn2+uBDN7Jy83hK9ontl3LeGqeG
-         vIwV8F3QWc+YfPF5u75xha0GGJeBtk4zQVBLvbOhIvSCG6Vds1Q9JklYds0d+aFchEC/
-         xuQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpgEnF7avW5Xq9ImocwXYn+vPKrhMDo+53HrvW1VWQHk+PHgs/7wpESXLYW18EqjvcVUGzg+eRz/gW6kro@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzO4qKFbdC6lxH1wqtvT3fXwt87VdV82x/Mus2phFSejq9tupj
-	RTTJ7El1KjvV6xu1NtkbeZyS4eIm60Q+ar+ddnkx/pecUV4zrwMXrPgaZH6yXGQjPQ==
-X-Gm-Gg: ASbGncvv113ELgJyIbImREphoVq8lhDVDc2SXf0ubXjOkP0Wn9HsPk7qkJx71fNDILM
-	0Yn1UBxxHcTYW66rSFdgB+H5BWNdC8WwDfLfgL0MPLeoYO0uWfipd5aYyXCvG8LIwnzTbaHh5tG
-	4JimMjKe/agV6jYBsfy+WSAxdcBAApib4/wr6rtJUrNxZhwqhAhjwhfo6bUq3cTulmi8e58NKI6
-	j5XW0lt1v1GK9f0xbUXUZKG7dx/yuQ5P0m2d1jS/gbMnue9Wn6T35Al/jlIgjPvyTrRWFf3e6sU
-	lr3JCHWGU52GhkjeDS1FNEzxUtsdWm1Hs7TY9Gr3EHtc1KupEoRpTmc=
-X-Google-Smtp-Source: AGHT+IEzAcpd5IAd/5qHpi0TBrWgDvqlGt9jD8mtQVODpolQ+2SSc4qm1HBo7vCFZixFRyqqMGV4pw==
-X-Received: by 2002:a17:903:4296:b0:234:a139:11fa with SMTP id d9443c01a7336-234a139147dmr5707465ad.3.1748323723167;
-        Mon, 26 May 2025 22:28:43 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:c29c:b6db:d3d9:3acf])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23444765fe7sm35561665ad.0.2025.05.26.22.28.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 May 2025 22:28:42 -0700 (PDT)
-Date: Tue, 27 May 2025 14:28:39 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Jan Kara <jack@suse.cz>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Matthew Bobrowski <repnop@google.com>, 
+	s=arc-20240116; t=1748329066; c=relaxed/simple;
+	bh=rwfo8SIdPFnNrt8tKiPaablBSYJZdJTbHs2zOmEbAUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YV92DCffsGmUTo7z2eGOrB3az0wIV6th0/wd3kpfhuqlfYzndTy88JWm4t+yAttrtIpwQvK7UniaXSim+8hlzPZcIBWLdhaRlzq/PN71mwcqzzM22e2lylwOCISKCG5s7cx60bNWS6X5cE/02kttwV47Poqbg7rRjRuthbP7FWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sj7dHuPA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26561C4CEF2;
+	Tue, 27 May 2025 06:57:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748329065;
+	bh=rwfo8SIdPFnNrt8tKiPaablBSYJZdJTbHs2zOmEbAUo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Sj7dHuPAN0ED0yLw1mDbkcnNFGQP70BcRvbu9SuoRMRHtuqOxki2+ECpow6I5QEkx
+	 jBFJ0zkU9AGJm4Oy7mSh3XACDhyh1wxTo90z1eB0a+TYxYQN8m4FWNJvPjL9mazgzy
+	 pKQqEQypffqfjW1md85W2ShFmna99CojMbfE0tEFlIihZFCkvIBAxU5W2Br7J9W+3T
+	 bRsKUw4rii6njouQWaucCGhSALi0A5tOhpW6hSK/AL+Jyxtjew67uWcUM7BJTZDIh1
+	 EoWHj7FHAYxDeKzYDYEf/VGakAAppz1XiHJVMIRJOXd88bq4zIiddekhtgirVRiyFp
+	 o8nIyZnnen6JQ==
+Date: Mon, 26 May 2025 08:35:51 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
 	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fanotify: wake-up all waiters on release
-Message-ID: <yo37kh4b27m2v5uddoorxmuhxif5n56hrc5h7ndl5btghiovdj@lsriah45m5ua>
-References: <3p5hvygkgdhrpbhphtjm55vnvprrgguk46gic547jlwdhjonw3@nz54h4fjnjkm>
- <20250520123544.4087208-1-senozhatsky@chromium.org>
- <bsji6w5ytunjt5vlgj6t53rrksqc7lp5fukwi2sbettzuzvnmg@fna73sxftrak>
- <ccdghhd5ldpqc3nps5dur5ceqa2dgbteux2y6qddvlfuq3ar4g@m42fp4q5ne7n>
- <xlbmnncnw6swdtf74nlbqkn57sxpt5f3bylpvhezdwgavx5h2r@boz7f5kg3x2q>
- <yo2mrodmg32xw3v3pezwreqtncamn2kvr5feae6jlzxajxzf6s@dclplmsehqct>
- <pehvvmy3vzimalic3isygd4d66j6tb6cnosoiu6xkgfjy3p3up@ikj4bhpmx4yt>
+Subject: [GIT PULL] sysctl changes for v6.16-rc1
+Message-ID: <itvalur2ynrnjc3grs5nk36fbfm52atybcad2nmxidaavkeqap@nlxzuqvygpta>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nxgspzmyeafrwyvk"
+Content-Disposition: inline
+
+
+--nxgspzmyeafrwyvk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <pehvvmy3vzimalic3isygd4d66j6tb6cnosoiu6xkgfjy3p3up@ikj4bhpmx4yt>
+Content-Transfer-Encoding: quoted-printable
 
-On (25/05/26 18:47), Jan Kara wrote:
-> > Another silly question: what decrements group->user_waits in case of
-> > that race-condition?
-> > 
-> > ---
-> > 
-> > diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> > index 9dac7f6e72d2b..38b977fe37a71 100644
-> > --- a/fs/notify/fanotify/fanotify.c
-> > +++ b/fs/notify/fanotify/fanotify.c
-> > @@ -945,8 +945,10 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
-> >         if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
-> >                 fsid = fanotify_get_fsid(iter_info);
-> >                 /* Racing with mark destruction or creation? */
-> > -               if (!fsid.val[0] && !fsid.val[1])
-> > -                       return 0;
-> > +               if (!fsid.val[0] && !fsid.val[1]) {
-> > +                       ret = 0;
-> > +                       goto finish;
-> > +               }
-> >         }
-> 
-> This code is not present in current upstream kernel. This seems to have
-> been inadvertedly fixed by commit 30ad1938326b ("fanotify: allow "weak" fsid
-> when watching a single filesystem") which you likely don't have in your
-> kernel.
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
-Oh, sweet.  Thanks for the pointers, Jan.
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sys=
+ctl-6.16-rc1
+
+for you to fetch changes up to 23b8bacf154759ed922d25527dda434fbf57436a:
+
+  sysctl: Close test ctl_headers with a for loop (2025-04-14 14:13:41 +0200)
+
+----------------------------------------------------------------
+Summary
+
+* Move kern_table members out of kernel/sysctl.c
+
+  Moved a subset (tracing, panic, signal, stack_tracer and sparc) out of the
+  kern_table array. The goal is for kern_table to only have sysctl elements=
+=2E All
+  this increases modularity by placing the ctl_tables closer to where they =
+are
+  used while reducing the chances of merge conflicts in kernel/sysctl.c.
+
+* Fixed sysctl unit test panic by relocating it to selftests
+
+* Testing
+
+  These have been in linux-next from rc2, so they have had more than a month
+  worth of testing.
+
+----------------------------------------------------------------
+Joel Granados (9):
+      panic: Move panic ctl tables into panic.c
+      signal: Move signal ctl tables into signal.c
+      tracing: Move trace sysctls into trace.c
+      stack_tracer: move sysctl registration to kernel/trace/trace_stack.c
+      sparc: mv sparc sysctls into their own file under arch/sparc/kernel
+      sysctl: move u8 register test to lib/test_sysctl.c
+      sysctl: Add 0012 to test the u8 range check
+      sysctl: call sysctl tests with a for loop
+      sysctl: Close test ctl_headers with a for loop
+
+ arch/sparc/kernel/Makefile               |   1 +
+ arch/sparc/kernel/setup.c                |  46 +++++++++++
+ include/linux/ftrace.h                   |   9 ---
+ kernel/panic.c                           |  30 +++++++
+ kernel/signal.c                          |  11 +++
+ kernel/sysctl-test.c                     |  49 ------------
+ kernel/sysctl.c                          | 108 -------------------------
+ kernel/trace/trace.c                     |  36 ++++++++-
+ kernel/trace/trace_stack.c               |  22 ++++-
+ lib/test_sysctl.c                        | 133 +++++++++++++++++++++------=
+----
+ tools/testing/selftests/sysctl/sysctl.sh |  30 +++++++
+ 11 files changed, 266 insertions(+), 209 deletions(-)
+ create mode 100644 arch/sparc/kernel/setup.c
+
+--=20
+
+Joel Granados
+
+--nxgspzmyeafrwyvk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmg0C7gACgkQupfNUreW
+QU/OOAv/XMiF/DqGJP9K1HXyqWAJgPIG0Kapfsw6EgNXfMTMjLVRgbsKpfcV2qAA
+JhePKLluuYoFbcKKVaGT+bHkLdMtYD4Yw46KYCg3/dsCFdZv3Y8khP2a+lNedleF
+Xskmwey2E3fmi+zKgXgvQSgAKizXx65/QCP6+PSf2hlLXLWxI991kiQ+xmJ9+79x
+/BJJ6osWpoNJFzxx5TCJmqNG2/yG79C1GTn9+pSlfBPiiOjMUVuQReecTuCEp3qd
+pfZzA9HJ1JN1DLf4u53AnywyUXbOsUYJctseIkegGoRlZ9Q64ckAsiAytjbHOroW
+ObkHJJxc4TzOTRdlVB6vbEB0b3yvIlzjJBh6ZaPuaotI4ST773lHebICXxIE64yN
+oV6qW8991ncE15MzBvJh37RS0JDCNEThT66Kqrjot09TOWca4CdrKGoucqWaz8RR
+1/jlAq2NQG4i6RtFlWIOgXC1KrrgeVxF7oOD6tWDCmMgxrI3g9+GKJDaULGlxwME
+D0JdXDZB
+=G2NI
+-----END PGP SIGNATURE-----
+
+--nxgspzmyeafrwyvk--
 
