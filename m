@@ -1,79 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-49874-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49875-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AD06AC44BE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 23:21:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81982AC44D7
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 23:32:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3AC33BD349
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 21:20:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99DAA189D860
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 21:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088B0246765;
-	Mon, 26 May 2025 21:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D8F242917;
+	Mon, 26 May 2025 21:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FUifzptY"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="PQS0uki/"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F852241131;
-	Mon, 26 May 2025 21:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29EE242901
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 21:32:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748294393; cv=none; b=kFbLCQ3lz5CTCoACU+JqsDEhd3SKOxTAn5hks55JDFwdaDrKa3ahcLMtDk5Y1plfcAc0IrVpYw4egeddNJWvPgOhf3hnI7HzQcyEMvunh0VRui3LopQNO1WNYWp1aXSllz4AvgifqH/6usX5DhqxpN0pZ/sK0N3mdTLhDjCE3bY=
+	t=1748295143; cv=none; b=M2vPUEaiz5JTf96MZk2vwOnmDMXNKSjyyh18mwvLi/rlTz6Ci3K502/9e8z98rJkhTJv5n2vTQOZxwOlX3uAD2QU4bAT35yhk9M7Snn10lM2i0wY2duNJAPw6ja5a8DouLKyEioArQeO9UDee4ynTLHVmVANw2parXmmqOsji3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748294393; c=relaxed/simple;
-	bh=xJtipRcnGuIKlGEyRWDYuPoBm6GbGc+LLoSwkLv65Dg=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=sVIlm0+gjNEOPHMpMg82A0+his/S+MDq5Lbmt0mfKy4VyBJhCu6WVR4naONa6uhG2C+LRIBrkqV4eoNwx0N+Povk+2wX4Fx+F7aHzzpKtlPkXOXcoErU0Dc8cWclmVm3RiZZbVhY0TipWZdpYpBiQHjYXfRn09ODgVHCxPmS5vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FUifzptY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44066C4CEEE;
-	Mon, 26 May 2025 21:19:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748294393;
-	bh=xJtipRcnGuIKlGEyRWDYuPoBm6GbGc+LLoSwkLv65Dg=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=FUifzptYE4yo1Rs1ujqePyBl/+8Ic0zYEooZW3z77X/4K5d4Yi7QeAVNO77pdC8Fd
-	 W1gy4UnZVfPQAWTXzvkjz8gjG+5zltST1wGMHCXVkXztnfIDllnFleJ0qfWuRhaNya
-	 o7LKKa/om14tWL1mHtzzi1PGKkfbj+Tp5dKNRcfQho9wgWwXrcV3kYfutuw3sv283S
-	 eQZirupXEMWswIk5RKvBw1BGNLKFiJqrDI9tYaO1cLwK9Ou44eiyCSC4KHhLFRBqLi
-	 c++A0Z9SHtDqv5P7VcgD9Z4dQxOkX8vuc6UCdDHT3ied0r/1+p1sKWfzSmKbv+omnz
-	 +kkTU3tZxS1sQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 055E1380AAE2;
-	Mon, 26 May 2025 21:20:29 +0000 (UTC)
-Subject: Re: [GIT PULL] bcachefs changes for 6.16
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <oxkibsokaa3jw2flrbbzb5brx5ere724f3b2nyr2t5nsqfjw4u@23q3ardus43h>
-References: <oxkibsokaa3jw2flrbbzb5brx5ere724f3b2nyr2t5nsqfjw4u@23q3ardus43h>
-X-PR-Tracked-List-Id: <linux-bcachefs.vger.kernel.org>
-X-PR-Tracked-Message-Id: <oxkibsokaa3jw2flrbbzb5brx5ere724f3b2nyr2t5nsqfjw4u@23q3ardus43h>
-X-PR-Tracked-Remote: git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-24
-X-PR-Tracked-Commit-Id: 9caea9208fc3fbdbd4a41a2de8c6a0c969b030f9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 522544fc71c27b4b432386c7919f71ecc79a3bfb
-Message-Id: <174829442786.1051981.12286991485013695418.pr-tracker-bot@kernel.org>
-Date: Mon, 26 May 2025 21:20:27 +0000
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1748295143; c=relaxed/simple;
+	bh=qo4emjMnuOH7w3ORfTgpaBl/lKlyWAKILERcAszOAQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=prSEwpxC+QGWPyluuryUg5P9EK9WDC6J/mMLKYduat1MmGhEJKFJMjU5dbCROcMbmb4vDWTdzFW9bOUvmpsaIORV1MzcuOn4mgwWdACnknl1pGx3mz43hxFyXXS3nzbwPqOfuQggGFPFukRHl9FBXUWW40B2vqeFeaphlqH9yq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=PQS0uki/; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=QIZ6JdAtJ9kPtcWQk0lS5uwDVp1SryVtH32h+fTsqC8=; b=PQS0uki/4v9Zh9N+xDIwX3ICOf
+	NxIioSVSb6Kzz5YZaUC4E5Fi3uO5wmU3lHM/FSg/y46YzJTlm3PNy0dOdhDUvO/F2fZfVGT+EUIUN
+	NXHUV+eUpq0BhME1RfTbS2le/oqpGtHMgIrucis78pNpGelR0FfKtHRrZjKZSj8/Sx72OAMgUjBzf
+	VYsRlOtyZArdDpI97LA9zGY0jzzxuVMFj8gCs7b9mKJV1kHuZzO2H8/iEOqbmrZ0FtzAeP0doE063
+	p/atqQEQc2D0z7P5jLHDhqc6AWHXqW+Hff7CNU+r2imtkNL8ULRMJSqCuGbouY0bjs0sQoFEtWcP5
+	OQgvMvRQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uJfQf-00000008TlK-3Jdj;
+	Mon, 26 May 2025 21:32:17 +0000
+Date: Mon, 26 May 2025 22:32:17 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Allison Karlitskaya <lis@redhat.com>, linux-fsdevel@vger.kernel.org
+Subject: Re: Apparent mount behaviour change in 6.15
+Message-ID: <20250526213217.GY2023217@ZenIV>
+References: <CAOYeF9WQhFDe+BGW=Dp5fK8oRy5AgZ6zokVyTj1Wp4EUiYgt4w@mail.gmail.com>
+ <20250515-abhauen-geflecht-c7eb5df70b78@brauner>
+ <20250523063238.GI2023217@ZenIV>
+ <20250523-aufweichen-dreizehn-c69ee4529b8b@brauner>
+ <20250523212958.GJ2023217@ZenIV>
+ <20250523213735.GK2023217@ZenIV>
+ <20250523232213.GL2023217@ZenIV>
+ <20250526-kondition-genehm-84f02ccedf54@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250526-kondition-genehm-84f02ccedf54@brauner>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-The pull request you sent on Sat, 24 May 2025 20:47:56 -0400:
+On Mon, May 26, 2025 at 06:47:25AM +0200, Christian Brauner wrote:
+> On Sat, May 24, 2025 at 12:22:13AM +0100, Al Viro wrote:
+> > On Fri, May 23, 2025 at 10:37:35PM +0100, Al Viro wrote:
+> > > On Fri, May 23, 2025 at 10:29:58PM +0100, Al Viro wrote:
+> > > 
+> > > > This is bogus, IMO.  I'm perfectly fine with propagate_one() returning 0
+> > > > on anon_ns(m->mnt); that would refuse to propagate into *any* anon ns,
+> > > > but won't screw the propagation between the mounts that are in normal, non-anon
+> > > > namespaces.
+> > > 
+> > > IOW, I mean this variant - the only difference from what you've posted is
+> > > the location of is_anon_ns() test; you do it in IS_MNT_NEW(), this variant
+> > > has it in propagate_one().  Does the variant below fix regression?
+> > 
+> > AFAICS, it does suffice to revert the behaviour change on the reproducer
+> > upthread.
+> > 
+> > I've replaced the top of viro/vfs.git#fixes with that; commit message there
+> > is tentative - if nothing else, that's a patch from Christian with slight
+> > modifications from me.  It also needs reported-by, etc.
+> > 
+> > Said that, could somebody (original reporter) confirm that the variant
+> > in git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git #fixes (head at
+> > 63e90fcc1807) is OK with them?
+> > 
+> > And yes, it will need a proper commit message.  Christian?
+> 
+> Yes, that looks good to me, thank you!
 
-> git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-05-24
+OK, I went with the following for commit message:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/522544fc71c27b4b432386c7919f71ecc79a3bfb
+-----
+Don't propagate mounts into detached trees
 
-Thank you!
+All versions up to 6.14 did not propagate mount events into detached
+tree.  Shortly after 6.14 a merge of vfs-6.15-rc1.mount.namespace
+(130e696aa68b) has changed that.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Unfortunately, that has caused userland regressions (reported in
+https://lore.kernel.org/all/CAOYeF9WQhFDe+BGW=Dp5fK8oRy5AgZ6zokVyTj1Wp4EUiYgt4w@mail.gmail.com/)
+
+Straight revert wouldn't be an option - in particular, the variant in 6.14
+had a bug that got fixed in d1ddc6f1d9f0 ("fix IS_MNT_PROPAGATING uses")
+and we don't want to bring the bug back.
+
+This is a modification of manual revert posted by Christian, with changes
+needed to avoid reintroducing the breakage in scenario described in
+d1ddc6f1d9f0.
+
+Cc: stable@vger.kernel.org
+Reported-by: Allison Karlitskaya <lis@redhat.com>
+Tested-by: Allison Karlitskaya <lis@redhat.com>
+Acked-by: Christian Brauner <brauner@kernel.org>
+Co-developed-by: Christian Brauner <brauner@kernel.org>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+-----
+
+It's in viro/vfs.git #fixes; if everyone's OK with the commit message, I'm
+sending a pull request tomorrow.
 
