@@ -1,59 +1,76 @@
-Return-Path: <linux-fsdevel+bounces-49834-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49835-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCBDCAC38CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 06:47:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EDBFAC3956
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 07:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 869CF7A90A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 04:46:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF8151893A95
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 05:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C6B1A8401;
-	Mon, 26 May 2025 04:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB21D1C6FF5;
+	Mon, 26 May 2025 05:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K12ZesCA"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PktyAzPG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="L5mklkIN"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8176642A87
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 04:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004AA136349;
+	Mon, 26 May 2025 05:39:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748234849; cv=none; b=J/h6QyAeH4Lhe+RFS4gPYXfWdki5oTHnK1TTHeSgxVUfxOfgioIr8mxFrHcvPAQ4bxpFcl+f0Pb1IHxQDMcOeGty9hYODDWgF+lgp+uWlFBujpMvfwRbeHFisZI//1qXSqbAt/GwIgPj0fe17Tg7JfjYgGGQYjhlf5LEX3wdNHA=
+	t=1748237951; cv=none; b=qvl9UpWIUSEDcSKcq71ckYPfmst8apk/+fawIDrvMA6+5cXmlgTd0hBv9V7Yr8PygTy3qQCY3X09CofvX2yoZ6Hj1Dp+3Ia6aq3JnNoPJ9cB/87nWg6hfMyfCSqxqH3TlUTsuaLw6j/6BQEoBTTXhlKscOgBugcWau12wje/3+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748234849; c=relaxed/simple;
-	bh=dmcd7gSmAy5p9Ox7myFnG4imeDc/5lWWQke69PxKIwg=;
+	s=arc-20240116; t=1748237951; c=relaxed/simple;
+	bh=bvi9/AnhH38DquhZv0IqLUVYPmYVpjwwJgZnzK0ONZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVODmgayfgFBP/KkHFzWeACau4jJlP/Tvww9xw1W4kSc/L4V+nqEguM1gzYyp061nqz0DveOdohUhkeqbkDv28q997o3lkYtUAiL0zbR9s2AC2EpZsxcEWmByStD0bQ4CA1Zm+3in75640lpLNIaH7mAUkLI5saWOVsYCy2sKKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K12ZesCA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17B77C4CEE7;
-	Mon, 26 May 2025 04:47:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748234849;
-	bh=dmcd7gSmAy5p9Ox7myFnG4imeDc/5lWWQke69PxKIwg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K12ZesCA4q7zaJQeXY0eec+s+ah8NxOmMAGCQWk/ApBw/1RqDyZra7CfFOqd+tfoN
-	 xx8oL1QsKcSc/J1xu/F4woVm2DNDwKAYeUBckALyG+cB5oPR+3WSr8iRGKgHUm6hAX
-	 J4KS5Dkg8RvQT7FikXqyolKYRf+PjDmEqadUWhBt/uwanYomDou7DgI2hViJ+KhGyO
-	 gAV2dIll0Fr7Tlhxd1NVn/9KdNFboy/DWjdALj5rjJeICrbkIwuCOFKxNQN6lrOt+j
-	 z95+MNGEcr8rQ086lJO8YN9BW/oVGvVa8ZSTGJVsg5dZCbpojdk26A0HoGNG5MlJEj
-	 IRgL+07HXdC3Q==
-Date: Mon, 26 May 2025 06:47:25 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Allison Karlitskaya <lis@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: Apparent mount behaviour change in 6.15
-Message-ID: <20250526-kondition-genehm-84f02ccedf54@brauner>
-References: <CAOYeF9WQhFDe+BGW=Dp5fK8oRy5AgZ6zokVyTj1Wp4EUiYgt4w@mail.gmail.com>
- <20250515-abhauen-geflecht-c7eb5df70b78@brauner>
- <20250523063238.GI2023217@ZenIV>
- <20250523-aufweichen-dreizehn-c69ee4529b8b@brauner>
- <20250523212958.GJ2023217@ZenIV>
- <20250523213735.GK2023217@ZenIV>
- <20250523232213.GL2023217@ZenIV>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfw0Xwb/YrZGqb1NDG//cUEw0k/Z/jcI7LzRgaiWeZUq6lRIwkMNrp3HWbKWSmrKF/iA+kgQ5V8Vumo8FQnOZj0aws/B2EgteZ0m5nESQDyGyC3OVCOWVcluzwt54Z2ylAWJpqKmh6Gzq3FRXkU+zKurP/+MZ8IJOD9gXTrinlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PktyAzPG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=L5mklkIN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 26 May 2025 07:39:00 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1748237945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XFwlwfcUWsrciv3uqI5GflyLPzZ54rN6yZqsSqBaoTY=;
+	b=PktyAzPGgeoAdDzdgI+++hZu7fMbjfr6H+099v4my+y4508n4MJtiQACCvEsFZ3xAct+gU
+	boRl35+QrYJPScjva4DLTwapEu9rpM9aBpbLIplcNApH5gkBmhOz1B2Uokyfv69V6uUsBx
+	TEQotNpT9xs+PXbjnouMYjcjNHqty81ZRuhCNWfrezU2GdSPqfZUbPpujlj+gBL8qcOZn1
+	PES5mgYalFB+A3xxG/pQNBJVn4VKiDlZ5yU425BnpA9itXXPxGOfubOiR9RKUGSNab3xsE
+	ts9jPCucocoCFAVeR9ccxiZje1e3VguAAbTdaz7RnnAj+xhRXAN/mL0du1KE4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1748237945;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XFwlwfcUWsrciv3uqI5GflyLPzZ54rN6yZqsSqBaoTY=;
+	b=L5mklkINJ3LFQ0YLlGpTfMRx3J90rM/lyphpIJf4TmO140xAbC8rlZUug/3iyyK6EV/Oa2
+	JWUZ6azxdyj8UqAw==
+From: Nam Cao <namcao@linutronix.de>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	John Ogness <john.ogness@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
+	linux-rt-users@vger.kernel.org, Joe Damato <jdamato@fastly.com>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Jens Axboe <axboe@kernel.dk>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH v2] eventpoll: Fix priority inversion problem
+Message-ID: <20250526053900.asTaMltl@linutronix.de>
+References: <20250523061104.3490066-1-namcao@linutronix.de>
+ <20250523122611.Q64SSO7S@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,124 +79,111 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250523232213.GL2023217@ZenIV>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250523122611.Q64SSO7S@linutronix.de>
 
-On Sat, May 24, 2025 at 12:22:13AM +0100, Al Viro wrote:
-> On Fri, May 23, 2025 at 10:37:35PM +0100, Al Viro wrote:
-> > On Fri, May 23, 2025 at 10:29:58PM +0100, Al Viro wrote:
-> > 
-> > > This is bogus, IMO.  I'm perfectly fine with propagate_one() returning 0
-> > > on anon_ns(m->mnt); that would refuse to propagate into *any* anon ns,
-> > > but won't screw the propagation between the mounts that are in normal, non-anon
-> > > namespaces.
-> > 
-> > IOW, I mean this variant - the only difference from what you've posted is
-> > the location of is_anon_ns() test; you do it in IS_MNT_NEW(), this variant
-> > has it in propagate_one().  Does the variant below fix regression?
+On Fri, May 23, 2025 at 02:26:11PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2025-05-23 08:11:04 [+0200], Nam Cao wrote:
+> On the AMD I tried
+> Unpatched:
+> | $ perf bench epoll all 2>&1 | grep -v "^\["
+> | # Running epoll/wait benchmark...
+> | Run summary [PID 3019]: 255 threads monitoring on 64 file-descriptors for 8 secs.
+> |
+> |
+> | Averaged 785 operations/sec (+- 0.05%), total secs = 8
+> |
+> | # Running epoll/ctl benchmark...
+> | Run summary [PID 3019]: 256 threads doing epoll_ctl ops 64 file-descriptors for 8 secs.
+> |
+> |
+> | Averaged 2652 ADD operations (+- 1.19%)
+> | Averaged 2652 MOD operations (+- 1.19%)
+> | Averaged 2652 DEL operations (+- 1.19%)
 > 
-> AFAICS, it does suffice to revert the behaviour change on the reproducer
-> upthread.
+> Patched:
+> | $ perf bench epoll all 2>&1 | grep -v "^\["
+> | # Running epoll/wait benchmark...
+> | Run summary [PID 3001]: 255 threads monitoring on 64 file-descriptors for 8 secs.
+> | 
+> | 
+> | Averaged 1386 operations/sec (+- 3.94%), total secs = 8
+> | 
+> | # Running epoll/ctl benchmark...
+> | Run summary [PID 3001]: 256 threads doing epoll_ctl ops 64 file-descriptors for 8 secs.
+> | 
+> | 
+> | Averaged 1495 ADD operations (+- 1.11%)
+> | Averaged 1495 MOD operations (+- 1.11%)
+> | Averaged 1495 DEL operations (+- 1.11%)
 > 
-> I've replaced the top of viro/vfs.git#fixes with that; commit message there
-> is tentative - if nothing else, that's a patch from Christian with slight
-> modifications from me.  It also needs reported-by, etc.
-> 
-> Said that, could somebody (original reporter) confirm that the variant
-> in git.kernel.org:/pub/scm/linux/kernel/git/viro/vfs.git #fixes (head at
-> 63e90fcc1807) is OK with them?
-> 
-> And yes, it will need a proper commit message.  Christian?
+> The epoll_waits improves again, epoll_ctls does not. I'm not sure how to
+> read the latter. My guess would be that ADD/ MOD are fine but DEL is a
+> bit bad because it has to del, iterate, …, add back.
 
-Yes, that looks good to me, thank you!
+Yeah EPOLL_CTL_DEL is clearly worse. But epoll_ctl() is not
+performance-critical, so I wouldn't worry about it.
 
+> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > index d4dbffdedd08e..483a5b217fad4 100644
+> > --- a/fs/eventpoll.c
+> > +++ b/fs/eventpoll.c
+> > @@ -136,14 +136,29 @@ struct epitem {
+> >  		struct rcu_head rcu;
+> >  	};
+> >  
+> > -	/* List header used to link this structure to the eventpoll ready list */
+> > -	struct list_head rdllink;
+> > +	/*
+> > +	 * Whether epitem.rdllink is currently used in a list. When used, it cannot be detached or
 > 
-> commit 63e90fcc18072638a62196caae93de66fc6cbc37
-> Author: Al Viro <viro@zeniv.linux.org.uk>
-> Date:   Fri May 23 19:20:36 2025 -0400
+> Notation wise I would either use plain "rdllink" or the C++ notation
+> "epitem::rdllink".
 > 
->     Don't propagate mounts into detached trees
->     
->     That reverts to behaviour of 6.14 and earlier, with
->     fix from "fix IS_MNT_PROPAGATING uses" preserved.
->     
->     Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> > +	 * inserted elsewhere.
 > 
-> diff --git a/fs/mount.h b/fs/mount.h
-> index 7aecf2a60472..ad7173037924 100644
-> --- a/fs/mount.h
-> +++ b/fs/mount.h
-> @@ -7,10 +7,6 @@
->  
->  extern struct list_head notify_list;
->  
-> -typedef __u32 __bitwise mntns_flags_t;
-> -
-> -#define MNTNS_PROPAGATING	((__force mntns_flags_t)(1 << 0))
-> -
->  struct mnt_namespace {
->  	struct ns_common	ns;
->  	struct mount *	root;
-> @@ -37,7 +33,6 @@ struct mnt_namespace {
->  	struct rb_node		mnt_ns_tree_node; /* node in the mnt_ns_tree */
->  	struct list_head	mnt_ns_list; /* entry in the sequential list of mounts namespace */
->  	refcount_t		passive; /* number references not pinning @mounts */
-> -	mntns_flags_t		mntns_flags;
->  } __randomize_layout;
->  
->  struct mnt_pcp {
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 1b466c54a357..623cd110076d 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -3648,7 +3648,7 @@ static int do_move_mount(struct path *old_path,
->  	if (!(attached ? check_mnt(old) : is_anon_ns(ns)))
->  		goto out;
->  
-> -	if (is_anon_ns(ns)) {
-> +	if (is_anon_ns(ns) && ns == p->mnt_ns) {
->  		/*
->  		 * Ending up with two files referring to the root of the
->  		 * same anonymous mount namespace would cause an error
-> @@ -3656,16 +3656,7 @@ static int do_move_mount(struct path *old_path,
->  		 * twice into the mount tree which would be rejected
->  		 * later. But be explicit about it right here.
->  		 */
-> -		if ((is_anon_ns(p->mnt_ns) && ns == p->mnt_ns))
-> -			goto out;
-> -
-> -		/*
-> -		 * If this is an anonymous mount tree ensure that mount
-> -		 * propagation can detect mounts that were just
-> -		 * propagated to the target mount tree so we don't
-> -		 * propagate onto them.
-> -		 */
-> -		ns->mntns_flags |= MNTNS_PROPAGATING;
-> +		goto out;
->  	} else if (is_anon_ns(p->mnt_ns)) {
->  		/*
->  		 * Don't allow moving an attached mount tree to an
-> @@ -3722,8 +3713,6 @@ static int do_move_mount(struct path *old_path,
->  	if (attached)
->  		put_mountpoint(old_mp);
->  out:
-> -	if (is_anon_ns(ns))
-> -		ns->mntns_flags &= ~MNTNS_PROPAGATING;
->  	unlock_mount(mp);
->  	if (!err) {
->  		if (attached) {
-> diff --git a/fs/pnode.c b/fs/pnode.c
-> index fb77427df39e..ffd429b760d5 100644
-> --- a/fs/pnode.c
-> +++ b/fs/pnode.c
-> @@ -231,8 +231,8 @@ static int propagate_one(struct mount *m, struct mountpoint *dest_mp)
->  	/* skip if mountpoint isn't visible in m */
->  	if (!is_subdir(dest_mp->m_dentry, m->mnt.mnt_root))
->  		return 0;
-> -	/* skip if m is in the anon_ns we are emptying */
-> -	if (m->mnt_ns->mntns_flags & MNTNS_PROPAGATING)
-> +	/* skip if m is in the anon_ns */
-> +	if (is_anon_ns(m->mnt_ns))
->  		return 0;
->  
->  	if (peers(m, last_dest)) {
+> When set, it is attached to eventpoll::rdllist and can not be attached
+> again.
+> This nothing to do with detaching.
+> 
+> > +	 * It may be in use for two reasons:
+> > +	 *
+> > +	 * 1. This item is on the eventpoll ready list.
+> > +	 * 2. This item is being consumed by a waiter and stashed on a temporary list. If inserting
+> > +	 *    is blocked due to this reason, the waiter will add this item to the list once
+> > +	 *    consuming is done.
+> > +	 */
+> > +	bool link_used;
+> >  
+> >  	/*
+> > -	 * Works together "struct eventpoll"->ovflist in keeping the
+> > -	 * single linked chain of items.
+> > +	 * Indicate whether this item is ready for consumption. All items on the ready list has this
+>                                                                                            have
+> > +	 * flag set. Item that should be on the ready list, but cannot be added because of
+> > +	 * link_used (in other words, a waiter is consuming the ready list), also has this flag
+> > +	 * set. When a waiter is done consuming, the waiter will add ready items to the ready list.
+> 
+> This sounds confusing. What about:
+> 
+> | Ready items should be on eventpoll::rdllist. This might be not the case
+> | if a waiter is consuming the list and removed temporary all items while
+> | doing so. Once done, the item will be added back to eventpoll::rdllist.
+> 
+> The reason is either an item is removed from the list and you have to
+> remove them all, look for the right one, remove it from the list, splice
+> what is left to the original list.
+> I did not find another reason for that.
+
+Thanks for the comments. However, while looking at them again, I think I
+complicate things with these flags.
+
+Instead of "link_used", I could take advantage of llist_node::next. Instead
+of "ready", I could do another ep_item_poll().
+
+Therefore I am removing them for v3, then there won't be any more confusion
+with these flags.
+
+Thanks for the review, I will resolve your other comments in v3.
+Nam
 
