@@ -1,207 +1,230 @@
-Return-Path: <linux-fsdevel+bounces-49860-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49861-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABF2EAC4325
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 18:47:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B89D5AC437D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 19:39:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A811892C71
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 16:48:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A8EC1799C0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 17:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3D8212B0C;
-	Mon, 26 May 2025 16:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A4723F405;
+	Mon, 26 May 2025 17:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CR2yFrwP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rA6csdm0";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="CR2yFrwP";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rA6csdm0"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="c9mbdEs2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFFF2187554
-	for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 16:47:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A561514830A
+	for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 17:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748278063; cv=none; b=iGCO8MbaXwgmUuhg9FoMuHlFMI+j1LyI/viM4Mvxnuf0xQn56k/eQIRtLt/jDhyOZj4z7GYMvKj1tMJ1REBtH/Y5gwcA1l0DBYB/ddC6e8YqHLkbhOveYmMiGWC1mhEFw4d5R75DzQmlRZNSTVxlgnh0XkJ6TPHes+wmyvFa23Q=
+	t=1748281137; cv=none; b=Da5P5+G2WYaW96WKoBCedckAttZBOQ9ejVjMLPEHaxy4QGhiUkTpLJRrcbaJYtwm856PxyGvECvXLMWCaI7/ifAnF1guD8vvutdp2NWgdMAn/c2/y+LNd82DxOu2weCUOey0x1dQWlTgPjvlVCQOMZvJiLKFpX30hePc5wAtlOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748278063; c=relaxed/simple;
-	bh=fy8oSnaOu8lhMsAWRJ22nE28YnXiQk7iIrtz7pBQmBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fGRBWzQrEatTcZASMeZguJC130z+LNxK8y8tFjorm37tO4OfpASJ67FGcjCO3ZWfrFVmJ15Ka145DvtAtO7iZqCUnKs/JPDlJh8Oy+neJUuyeQdsBwQH6tbtE+dWU7G18qW+3HY0WMZ3gKfvtyYxKnCT3qui8MPnfOIXbJjrZe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CR2yFrwP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rA6csdm0; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=CR2yFrwP; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rA6csdm0; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B6461FD5A;
-	Mon, 26 May 2025 16:47:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748278060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IVetfcgHxBZ3iNICgIiotNVqlXUl9NqH4jmcGaCtt50=;
-	b=CR2yFrwP0RQnkMR8r0/UBcrtpzjqfepizF2y/ir+GsHc4VhyYzeHSKlE69HDZbHBM2zqex
-	KP0fsDQ6rlleU6/oaYz5o8UA6xeJjVFw7TcTUMDxbbf8uxy1qfz539ZOsjgU/CFOaH6KiY
-	u/silOWyr80JRBIeq6HKyfHgfYFNXUY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748278060;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IVetfcgHxBZ3iNICgIiotNVqlXUl9NqH4jmcGaCtt50=;
-	b=rA6csdm0YikkO57xbnBImz4E90JP96jIkqY/UzQ99Z3YPOLYsXQ4nDDzjzO7hsO8jP4XDy
-	Pa79WEJ2qgC+csCg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748278060; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IVetfcgHxBZ3iNICgIiotNVqlXUl9NqH4jmcGaCtt50=;
-	b=CR2yFrwP0RQnkMR8r0/UBcrtpzjqfepizF2y/ir+GsHc4VhyYzeHSKlE69HDZbHBM2zqex
-	KP0fsDQ6rlleU6/oaYz5o8UA6xeJjVFw7TcTUMDxbbf8uxy1qfz539ZOsjgU/CFOaH6KiY
-	u/silOWyr80JRBIeq6HKyfHgfYFNXUY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748278060;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IVetfcgHxBZ3iNICgIiotNVqlXUl9NqH4jmcGaCtt50=;
-	b=rA6csdm0YikkO57xbnBImz4E90JP96jIkqY/UzQ99Z3YPOLYsXQ4nDDzjzO7hsO8jP4XDy
-	Pa79WEJ2qgC+csCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EEAF013964;
-	Mon, 26 May 2025 16:47:39 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /Xf/OSubNGggewAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 26 May 2025 16:47:39 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id B4961A09B7; Mon, 26 May 2025 18:47:38 +0200 (CEST)
-Date: Mon, 26 May 2025 18:47:38 +0200
-From: Jan Kara <jack@suse.cz>
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>, 
-	Matthew Bobrowski <repnop@google.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH] fanotify: wake-up all waiters on release
-Message-ID: <pehvvmy3vzimalic3isygd4d66j6tb6cnosoiu6xkgfjy3p3up@ikj4bhpmx4yt>
-References: <3p5hvygkgdhrpbhphtjm55vnvprrgguk46gic547jlwdhjonw3@nz54h4fjnjkm>
- <20250520123544.4087208-1-senozhatsky@chromium.org>
- <bsji6w5ytunjt5vlgj6t53rrksqc7lp5fukwi2sbettzuzvnmg@fna73sxftrak>
- <ccdghhd5ldpqc3nps5dur5ceqa2dgbteux2y6qddvlfuq3ar4g@m42fp4q5ne7n>
- <xlbmnncnw6swdtf74nlbqkn57sxpt5f3bylpvhezdwgavx5h2r@boz7f5kg3x2q>
- <yo2mrodmg32xw3v3pezwreqtncamn2kvr5feae6jlzxajxzf6s@dclplmsehqct>
+	s=arc-20240116; t=1748281137; c=relaxed/simple;
+	bh=LLTLKhA5EptdSI8qM5ESx1/OIokAzJ7Z6Ewl5oCqp1o=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=j0rB8+HRUU01OIrbRS3pHZ0UZItKMyILU5Pc84N9YQ5V59G98viEvUhtikcxlZAwO4RHc2ZKoqBOpQbxwYejb2NKB7cvw9vR2/7Xw6vjAgvlrMvNqQQHJvRx1VMuBX75jM72AX+l382ysLDr34kvgs+EDuTml2CgPC2yGsPZmDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=c9mbdEs2; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-86a55400875so215861739f.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 May 2025 10:38:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748281135; x=1748885935; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ff7nQRFxfb974x1cqZTE+6GOZ2tVuJK5IlmnvxCpS/Y=;
+        b=c9mbdEs26IqBSK5VnN0Zi8ahZn7KuI1frTF8zrrC+cmlTAIcy3V7llbIAXsMe9LkdM
+         4JmkIOSpSTLeiKEw7cXFIEHteI5vOBDMrekk3ZzaxZzcAVnnaX6FHvAKbOCg27SuhmR2
+         L1O1JU2gO7JelSli26ziNHgNaopuOEOgtOQr0/1kCKcOEZ8ZCqU2QUJadRUZ+O37BJtb
+         q1t7TG5wjE6Ct1k6kHzoJPwprYpSF4ZvwDUuswPuQ4Ej9VcnX+7QB9H23VXHz2D90Bvf
+         CVmDfT6/x7WGqUqZmuV5LzZ306tosonwWOFpeyc2J33GvKYxua0HtkCWKenBmAJP4C8V
+         6e/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748281135; x=1748885935;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ff7nQRFxfb974x1cqZTE+6GOZ2tVuJK5IlmnvxCpS/Y=;
+        b=f3gMaRk3/VBL0kFdL0OIfJy5K5xmxK/w6N7icuCyVg6480+vPIy6TY6jS/Qv+hWwIc
+         h5kQn5wAeasHkvPwxRMjODJCMahLPIzzoSK+iDeVPUDz7d3Zh9jkfpJ0MLoz1uhK9vUD
+         V6VYV8kPAoFbqLJVjl9byj6kSvF8+HKOJtyvDcjU5VkUFG7/tvh7kVr8Vn2z/z9UVs3T
+         Y7rPtPpU3BKYsntTKzc8aqSWGJy1dzV4TRzRjHma8DPqX5HqeX+rux/3cG3OR7eGjekE
+         uC4pMbuT3N+novkBdQROps5DS2zu6o9srzYcffpEfYFEvE4P/0CUTNnT0vHQm6sVRxJo
+         dIxw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/RIqQjCyN6h27xPw9zxYkQl5c8JA5GKmJ0Y1fS+zl3/dDXBYulkk2lOSDb5/ohQj68s7446Awd6PANGXp@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyWCiw5nFIbCOx2PxVhQGXcxLYNyiJSXg5407SdipawBceUxnM
+	snlGFTe15DNnPflfiFo9kX+h7LcjDpS+aShRcl5sX7AhLAcDErgYbpgiOEjTayhKrM8=
+X-Gm-Gg: ASbGncuED+4pQoaUZIITUBP3G/5GIkD9bPXq5spjX604stDBM74HyFeE8U2/wNd3kWo
+	xq48T0Mx9zxDOeFHxJnf6fDFBXtS1ArbFvddjwkhb+HACcw2XdCvMYBHNRjgNLYGnt8fbhEqXTh
+	P05cx8QU0tXbhkn85hYtI5vs61fBMcjmQ01oeLNd51KGxv9fHVw4Rfqqao99xI3tnrKZZOgmQsI
+	ILquBmaCZirqoX7O1WGsFBE8NjewP/an1OGlYk/zSRidPMUk2Nxm+R935OXY6Vc5N1XAMMxRr9A
+	f0VZFNPrmFkm9j22Uflfc2RsXVkWiRZ0ZknD1ETm/gzxdqNn
+X-Google-Smtp-Source: AGHT+IFmvFRmO29KPh+6/A42vWbuhUWcx0N2F5H25LY+qJByBaZaeku0EF5+B/UfZfQgLLGsqIArxA==
+X-Received: by 2002:a05:6602:728a:b0:85c:c7f9:9a1c with SMTP id ca18e2360f4ac-86cbb8bbdb6mr877426039f.13.1748281134626;
+        Mon, 26 May 2025 10:38:54 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-86a235e33c3sm482139739f.13.2025.05.26.10.38.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 May 2025 10:38:53 -0700 (PDT)
+Message-ID: <3d123216-c412-4779-8461-b6691d7cafc7@kernel.dk>
+Date: Mon, 26 May 2025 11:38:53 -0600
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <yo2mrodmg32xw3v3pezwreqtncamn2kvr5feae6jlzxajxzf6s@dclplmsehqct>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.cz,gmail.com,google.com,vger.kernel.org];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [BUG] regression from 974c5e6139db "xfs: flag as supporting
+ FOP_DONTCACHE" (double free on page?)
+From: Jens Axboe <axboe@kernel.dk>
+To: Vlastimil Babka <vbabka@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+ Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>
+Cc: Christoph Hellwig <hch@lst.de>, "Darrick J. Wong" <djwong@kernel.org>,
+ Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250525083209.GS2023217@ZenIV> <20250525180632.GU2023217@ZenIV>
+ <40eeba97-a298-4ae1-9691-b5911ad00095@suse.cz>
+ <431cb497-b1ad-40a0-86b1-228b0b7490b9@kernel.dk>
+ <6741c978-98b1-4d6f-af14-017b66d32574@kernel.dk>
+Content-Language: en-US
+In-Reply-To: <6741c978-98b1-4d6f-af14-017b66d32574@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon 26-05-25 23:12:20, Sergey Senozhatsky wrote:
-> On (25/05/26 14:52), Jan Kara wrote:
-> > > > We don't use exclusive waits with access_waitq so wake_up() and
-> > > > wake_up_all() should do the same thing?
-> > > 
-> > > Oh, non-exclusive waiters, I see.  I totally missed that, thanks.
-> > > 
-> > > So... the problem is somewhere else then.  I'm currently looking
-> > > at some crashes (across all LTS kernels) where group owner just
-> > > gets stuck and then hung-task watchdog kicks in and panics the
-> > > system.  Basically just a single backtrace in the kernel logs:
-> > > 
-> > >  schedule+0x534/0x2540
-> > >  fsnotify_destroy_group+0xa7/0x150
-> > >  fanotify_release+0x147/0x160
-> > >  ____fput+0xe4/0x2a0
-> > >  task_work_run+0x71/0xb0
-> > >  do_exit+0x1ea/0x800
-> > >  do_group_exit+0x81/0x90
-> > >  get_signal+0x32d/0x4e0
-> > > 
-> > > My assumption was that it's this wait:
-> > > 	wait_event(group->notification_waitq, !atomic_read(&group->user_waits));
-> > 
-> > Well, you're likely correct we are sleeping in this wait. But likely
-> > there's some process that's indeed waiting for response to fanotify event
-> > from userspace. Do you have a reproducer? Can you dump all blocked tasks
-> > when this happens?
+On 5/26/25 9:06 AM, Jens Axboe wrote:
+> On 5/26/25 7:05 AM, Jens Axboe wrote:
+>> On 5/25/25 1:12 PM, Vlastimil Babka wrote:
+>>> On 5/25/25 8:06 PM, Al Viro wrote:
+>>>> On Sun, May 25, 2025 at 09:32:09AM +0100, Al Viro wrote:
+>>>>
+>>>>> Breakage is still present in the current mainline ;-/
+>>>>
+>>>> With CONFIG_DEBUG_VM on top of pagealloc debugging:
+>>>>
+>>>> [ 1434.992817] run fstests generic/127 at 2025-05-25 11:46:11g
+>>>> [ 1448.956242] BUG: Bad page state in process kworker/2:1  pfn:112cb0g
+>>>> [ 1448.956846] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x3e pfn:0x112cb0g
+>>>> [ 1448.957453] flags: 0x800000000000000e(referenced|uptodate|writeback|zone=2)g
+>>>
+>>> It doesn't like the writeback flag.
+>>>
+>>>> [ 1448.957863] raw: 800000000000000e dead000000000100 dead000000000122 0000000000000000g
+>>>> [ 1448.958303] raw: 000000000000003e 0000000000000000 00000000ffffffff 0000000000000000g
+>>>> [ 1448.958833] page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) setg
+>>>> [ 1448.959320] Modules linked in: xfs autofs4 fuse nfsd auth_rpcgss nfs_acl nfs lockd grace sunrpc loop ecryptfs 9pnet_virtio 9pnet netfs evdev pcspkr sg button ext4 jbd2 btrfs blake2b_generic xor zlib_deflate raid6_pq zstd_compress sr_mod cdrom ata_generic ata_piix psmouse serio_raw i2c_piix4 i2c_smbus libata e1000g
+>>>> [ 1448.960874] CPU: 2 UID: 0 PID: 2614 Comm: kworker/2:1 Not tainted 6.14.0-rc1+ #78g
+>>>> [ 1448.960878] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014g
+>>>> [ 1448.960879] Workqueue: xfs-conv/sdb1 xfs_end_io [xfs]g
+>>>> [ 1448.960938] Call Trace:g
+>>>> [ 1448.960939]  <TASK>g
+>>>> [ 1448.960940]  dump_stack_lvl+0x4f/0x60g
+>>>> [ 1448.960953]  bad_page+0x6f/0x100g
+>>>> [ 1448.960957]  free_frozen_pages+0x471/0x640g
+>>>> [ 1448.960958]  iomap_finish_ioend+0x196/0x3c0g
+>>>> [ 1448.960963]  iomap_finish_ioends+0x83/0xc0g
+>>>> [ 1448.960964]  xfs_end_ioend+0x64/0x140 [xfs]g
+>>>> [ 1448.961003]  xfs_end_io+0x93/0xc0 [xfs]g
+>>>> [ 1448.961036]  process_one_work+0x153/0x390g
+>>>> [ 1448.961044]  worker_thread+0x2ab/0x3b0g
+>>>> [ 1448.961045]  ? rescuer_thread+0x470/0x470g
+>>>> [ 1448.961047]  kthread+0xf7/0x200g
+>>>> [ 1448.961048]  ? kthread_use_mm+0xa0/0xa0g
+>>>> [ 1448.961049]  ret_from_fork+0x2d/0x50g
+>>>> [ 1448.961053]  ? kthread_use_mm+0xa0/0xa0g
+>>>> [ 1448.961054]  ret_from_fork_asm+0x11/0x20g
+>>>> [ 1448.961058]  </TASK>g
+>>>> [ 1448.961155] Disabling lock debugging due to kernel taintg
+>>>> [ 1448.969569] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x3e pfn:0x112cb0g
+>>>
+>>> same pfn, same struct page
+>>>
+>>>> [ 1448.970023] flags: 0x800000000000000e(referenced|uptodate|writeback|zone=2)g
+>>>> [ 1448.970651] raw: 800000000000000e dead000000000100 dead000000000122 0000000000000000g
+>>>> [ 1448.971222] raw: 000000000000003e 0000000000000000 00000000ffffffff 0000000000000000g
+>>>> [ 1448.971812] page dumped because: VM_BUG_ON_FOLIO(((unsigned int) folio_ref_count(folio) + 127u <= 127u))g
+>>>> [ 1448.972490] ------------[ cut here ]------------g
+>>>> [ 1448.972841] kernel BUG at ./include/linux/mm.h:1455!g
+>>>
+>>> this is folio_get() noticing refcount is 0, so a use-after free, because
+>>> we already tried to free the page above.
+>>>
+>>> I'm not familiar with this code too much, but I suspect problem was
+>>> introduced by commit fb7d3bc414939 ("mm/filemap: drop streaming/uncached
+>>> pages when writeback completes") and only (more) exposed here.
+>>>
+>>> so in folio_end_writeback() we have
+>>>         if (__folio_end_writeback(folio))
+>>>                 folio_wake_bit(folio, PG_writeback);
+>>>
+>>> but calling the folio_end_dropbehind_write() doesn't depend on the
+>>> result of __folio_end_writeback()
+>>> this seems rather suspicious
+>>>
+>>> I think if __folio_end_writeback() was true then PG_writeback would be
+>>> cleared and thus we'd not see the PAGE_FLAGS_CHECK_AT_FREE failure.
+>>> Instead we do a premature folio_end_dropbehind_write() dropping a page
+>>> ref and then the final folio_put() in folio_end_writeback() frees the
+>>> page and splats on the PG_writeback. Then the folio is processed again
+>>> in the following iteration of iomap_finish_ioend() and splats on the
+>>> refcount-already-zero.
+>>>
+>>> So I think folio_end_dropbehind_write() should only be done when
+>>> __folio_end_writeback() was true. Most likely even the
+>>> folio_test_clear_dropbehind() should be tied to that, or we clear it too
+>>> early and then never act upon it later?
+>>
+>> Thanks for taking a look at this! I tried to reproduce this this morning
+>> and failed miserably. I then injected a delay for the above case, and it
+>> does indeed then trigger for me. So far, so good.
+>>
+>> I agree with your analysis, we should only be doing the dropbehind for a
+>> non-zero return from __folio_end_writeback(), and that includes the
+>> test_and_clear to avoid dropping the drop-behind state. But we also need
+>> to check/clear this state pre __folio_end_writeback(), which then puts
+>> us in a spot where it needs to potentially be re-set. Which fails pretty
+>> racy...
+>>
+>> I'll ponder this a bit. Good thing fsx got RWF_DONTCACHE support, or I
+>> suspect this would've taken a while to run into.
 > 
-> Unfortunately, no.  This happens on consumer devices, which are
-> not available for any sort of debugging, due to various privacy
-> protection reasons.  We only get anonymized kernel ramoops/dmesg
-> on crashes.
+> Took a closer look... I may be smoking something good here, but I don't
+> see what the __folio_end_writeback()() return value has to do with this
+> at all. Regardless of what it returns, it should've cleared
+> PG_writeback, and in fact the only thing it returns is whether or not we
+> had anyone waiting on it. Which should have _zero_ bearing on whether or
+> not we can clear/invalidate the range.
 > 
-> So my only option is to add something to the kernel, then roll-out
-> the patched kernel to the fleet and wait for new crash reports.  The
-> problem is, all that I can think of sort of fixes the crash as far as
-> the hung-task watchdog is concerned.  Let me think more about it.
+> To me, this smells more like a race of some sort, between dirty and
+> invalidation. fsx does a lot of sub-page sized operations.
 > 
-> Another silly question: what decrements group->user_waits in case of
-> that race-condition?
-> 
-> ---
-> 
-> diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-> index 9dac7f6e72d2b..38b977fe37a71 100644
-> --- a/fs/notify/fanotify/fanotify.c
-> +++ b/fs/notify/fanotify/fanotify.c
-> @@ -945,8 +945,10 @@ static int fanotify_handle_event(struct fsnotify_group *group, u32 mask,
->         if (FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS)) {
->                 fsid = fanotify_get_fsid(iter_info);
->                 /* Racing with mark destruction or creation? */
-> -               if (!fsid.val[0] && !fsid.val[1])
-> -                       return 0;
-> +               if (!fsid.val[0] && !fsid.val[1]) {
-> +                       ret = 0;
-> +                       goto finish;
-> +               }
->         }
+> I'll poke a bit more...
 
-This code is not present in current upstream kernel. This seems to have
-been inadvertedly fixed by commit 30ad1938326b ("fanotify: allow "weak" fsid
-when watching a single filesystem") which you likely don't have in your
-kernel.
+I _think_ we're racing with the same folio being marked for writeback
+again. Al, can you try the below?
 
-								Honza
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 7b90cbeb4a1a..e95b184a2459 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1604,7 +1604,7 @@ static void folio_end_dropbehind_write(struct folio *folio)
+ 	 * invalidation in that case.
+ 	 */
+ 	if (in_task() && folio_trylock(folio)) {
+-		if (folio->mapping)
++		if (folio->mapping && !folio_test_writeback(folio))
+ 			folio_unmap_invalidate(folio->mapping, folio, 0);
+ 		folio_unlock(folio);
+ 	}
+
 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jens Axboe
 
