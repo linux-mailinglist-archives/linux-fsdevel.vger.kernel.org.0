@@ -1,211 +1,324 @@
-Return-Path: <linux-fsdevel+bounces-49848-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49849-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10085AC411B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 16:14:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EA68AC4174
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 16:32:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2AAF3B6FEE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 14:13:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D2827AB164
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 May 2025 14:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378EC20FA98;
-	Mon, 26 May 2025 14:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D19C214A97;
+	Mon, 26 May 2025 14:31:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="XWhddLeV"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="kr7s0N2g";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="OsjPnPt3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EABC1FAC4B;
-	Mon, 26 May 2025 14:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748268832; cv=none; b=tmYHBA/AeOyzMByLp2+VLwKc3QH9qm9IYbu5o41FxR5blfCfiLhFTwdCF8nRSMZjwYopVfSxlsnhBaYubgS7X/TYBVG60hFblRDcwYxHRtnPrXxAATBKXhpT3e1kcI1M8cuWxjHFYeSmaUgtcZXU0X4lSV4Udjz+Q65CQoOcLfQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748268832; c=relaxed/simple;
-	bh=RPoy9Y4/ap1Yc+wT8sGxDqqYXQ0B0KtcmpIpyGXnRFg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pplgm2gM0/5jWvmBaAWwCnFpeddDJEgQ50dMzj/veEYBqHO72nUprxjVsmv1AzRowHLEes2rriQ+u6RvzaQDjrHcg8xPMuM+3M/WPSi+4Vzc7/ZjxBBwcyfhjRXp9iQHY19pWUY5uHqYq1+uRYzmiChkL5nUOQAT/IZ3rns5eK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=XWhddLeV; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Cc:To:Message-Id:Content-Transfer-Encoding:Content-Type:
-	MIME-Version:Subject:Date:From:Sender:Reply-To:Content-ID:Content-Description
-	:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=rjmaI4I+G6mZ+w0kjQErvouC/5ztSPf4S/mHzHL9c68=; b=XWhddLeVynno04d4RwDat2yaYn
-	0jXIRi7HqWO+x8lg+hRBE27KTOrjFXnrsAIX6DofI3DshflzLxq0zwoMtnSg5QqXscVU00CUvBGa/
-	2Ke4TW8TqaoLtosMqQJaKIFaiMksmoLtjK1tT0u9bDZQiYGbeZckvehYq/6XJmNLVVUf7SLEkw4pJ
-	bkGYYNsKpnvxl1SBNu60QSlKAvXlTK4NGi8f7VK0sJyBonBX0GhTZ+lgHGB0OXMNSTDKzGJig9Vgx
-	iq/fl6FnC+8IJf54agmQJ3LIG56u8SFXJY4qft+S1bkP41vH2i/31Zkx+BHNGRxGtD5wfOS8g+SS5
-	IDYKM1KQ==;
-Received: from 179-125-91-139-dinamico.pombonet.net.br ([179.125.91.139] helo=[127.0.0.1])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uJYaF-00DL1m-73; Mon, 26 May 2025 16:13:43 +0200
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Date: Mon, 26 May 2025 11:13:34 -0300
-Subject: [PATCH v2] ext4: inline: convert when mmap is called, not when
- page is written
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC3882101A0;
+	Mon, 26 May 2025 14:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748269899; cv=fail; b=Z2K5w9DmtvwQPYLiqBSXDTjD6kQmRVLBHAa0dddcLpn2W/BX3uOJ0yg6z969f2VrYZJi4GMIBXME5jOdmxkTJFRndrpagUtsedumY3Fgn3ipDKFpsK8aYatLVBDLZXxKLfcOmogHIvc7WPJKHlNS6zxEf0kOIUIKdBiu3Y2kbo8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748269899; c=relaxed/simple;
+	bh=Lyqqylk+yWTfukNhaXZymngZr5ZI7S7JGabkMD4Uj0s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GUT557I9ZoLu+aR7GxR7vk1KV3YDm5axM343vYQe3MuJEWiB++BGm8g1bXvccAphlcqNgW9djZS54j3GUM6sZ3FKOMPAPVzr3oOnsWW6+MOKY61ICn07u6Aa8dChqckX/XuC4m4EH+cUNiepUjMrkq+vOrDFkAirR1zIG9aGayk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=kr7s0N2g; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=OsjPnPt3; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54Q8tv35005527;
+	Mon, 26 May 2025 14:31:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=zjYoH7wmeRmJcAIoAD
+	BSxPoGuXjM1OG65tjYrSGDmkc=; b=kr7s0N2gmeL3xitB8dsxUsqdDs2i8CXe9L
+	jD3cPopegiAOHM+Shp3zaUMDxxTqPML0sHS6e4uJuBY+ucL8eA3whrvV5KtYP9F9
+	MJyqsC6Qeo3Ny0rOiePy7kNSLzl1o0arDsYFqTef18TDXCFvaSGPNloSyNbtv5ef
+	xEPvMOJTqxgV2lrT4LwZDaIP0w5u6KF1DlqFdkIHe0D+lb6JWRcyWgKvBdW5r3X0
+	cbresIV73MbrGpCNSbRWhuBoQOJpJZC8kYc7gx2YJ8tV2g3jbV7B1UaBy5rkB034
+	0TrY7iGhBAo1TXzfh3Xv2OtV0BDATMly63RzCFnZ9g1nxZS70fwg==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46v0ykskbh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 26 May 2025 14:31:18 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54QDOr0v021061;
+	Mon, 26 May 2025 14:31:17 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11on2065.outbound.protection.outlook.com [40.107.220.65])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jebsn0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 26 May 2025 14:31:16 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sNR0OeA6oWL8+myVxAmGUZ7ZgwyTKLpyYrMMkRNKhaEj/lwnVi7WSe/H/5QcTojFl0eKz+bNOulEiDScUPD4vTpmA7Fw2F82ZEERcVPCyDai8XKfenRKicKhlq2Ji1iNOCL1obaWNdZkyVxiNo3hJAIV5BZACbs0Xnv2PRbX6u13PZnTShGb9jE7FamWXOJ8Y06A083GDN7pQTNfPZgmjxDmLlO4a8jEZEqHPi+Yr91LlE7YKqMXeJikQv3/bodPk794dCZ8YwialV4osl/Y9FXCLvHXPMzR7d/5wBvF/LzJjbrqJoN6CnqZTSpFiXb4DjGiy6gQVynWocwlmVV9Mg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zjYoH7wmeRmJcAIoADBSxPoGuXjM1OG65tjYrSGDmkc=;
+ b=AsoNGdGebm4u7ce7Qmyr3MKwC4q2FV1jVKNRz3FlZ9xrTa2YuoM4Jnm/siZfhAG6mOanM1dZMYqmk3S1QZV78ccNi8SEVwL8zcytZ7OsPukdj0v+zj2A04ddEbA3HdXJsDJz7vS7rgyerfB6uNn31jz3hltEWPB+hKhxD+suvJ87NmImRPqpKkcQ+Pc5fK3p5s4CPHCIoVbF+v6028nUeS0m1wRoj9SzbW97AuON6RKv6yrbyY+pPlHi8rvDY4YE63QEM5ZPIIr23QTVj2ygb8ND/hSeSWfm9I+l6DJE9Cf8NW7CgLGOXcOgmYcI9ukx6qD591ZhhbOvV7y32uEIzQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zjYoH7wmeRmJcAIoADBSxPoGuXjM1OG65tjYrSGDmkc=;
+ b=OsjPnPt3cP/oF6fh2kLhXdnS9hZCaA8dp8dT56G2zyV+MczXZqBrXC7f6S9cottlsggJ4Wzo5uzOAF/BA0Sd3juFt/i7YWJXY7wbfzz0XeMyz/S+Ok91DYZEJ+o1McUFA2/Sf2luK+On2T4yIzfk04aS5ghK8d2Be7y58cXzqe4=
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com (2603:10b6:510:128::16)
+ by CH0PR10MB4985.namprd10.prod.outlook.com (2603:10b6:610:de::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.35; Mon, 26 May
+ 2025 14:31:14 +0000
+Received: from PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c]) by PH0PR10MB5777.namprd10.prod.outlook.com
+ ([fe80::75a8:21cc:f343:f68c%6]) with mapi id 15.20.8746.030; Mon, 26 May 2025
+ 14:31:14 +0000
+Date: Mon, 26 May 2025 10:31:10 -0400
+From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@redhat.com>,
+        Xu Xin <xu.xin16@zte.com.cn>,
+        Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Stefan Roesch <shr@devkernel.io>
+Subject: Re: [PATCH v2 1/4] mm: ksm: have KSM VMA checks not require a VMA
+ pointer
+Message-ID: <yr23sllpmca4hy6vsrtiwan2npl2bqkrpwhfdbfeaaf7rctsay@dpashpl5cw57>
+Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Pedro Falcato <pfalcato@suse.de>, 
+	David Hildenbrand <david@redhat.com>, Xu Xin <xu.xin16@zte.com.cn>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, Stefan Roesch <shr@devkernel.io>
+References: <cover.1747844463.git.lorenzo.stoakes@oracle.com>
+ <b7f41a3d8a8538d73610ace3e85f92bb20f8eb42.1747844463.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7f41a3d8a8538d73610ace3e85f92bb20f8eb42.1747844463.git.lorenzo.stoakes@oracle.com>
+User-Agent: NeoMutt/20240425
+X-ClientProxiedBy: YT4PR01CA0353.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:fc::7) To PH0PR10MB5777.namprd10.prod.outlook.com
+ (2603:10b6:510:128::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250526-ext4_inline_page_mkwrite-v2-1-aa96d9bc287d@igalia.com>
-X-B4-Tracking: v=1; b=H4sIAA53NGgC/42NQQqDMBBFryKzbkoyGKld9R4iksZRh2qURKxFc
- vemnqDL9+C/f0AgzxTgnh3gaePAs0uAlwzsYFxPgtvEgBK11KoUtK95w25kR81iemqm19vzSsL
- maI3qJGKpIc0XTx3vZ7qqEw8c1tl/zqdN/ewf0U0JJW6FbktT4FMrfHBvRjZXO09Qxxi/z+eCn
- sEAAAA=
-X-Change-ID: 20250519-ext4_inline_page_mkwrite-c42ca1f02295
-To: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>, 
- Tao Ma <boyu.mt@taobao.com>, Andreas Dilger <adilger.kernel@dilger.ca>, 
- Eric Biggers <ebiggers@google.com>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com, 
- syzbot+0c89d865531d053abb2d@syzkaller.appspotmail.com, 
- Thadeu Lima de Souza Cascardo <cascardo@igalia.com>, stable@vger.kernel.org
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5777:EE_|CH0PR10MB4985:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89ade1d4-3e48-4248-6c38-08dd9c61f7b3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?A87SfVuXt3/1kZRoe9XqpNsIHbSGqRNinzpY1FNmD9MUtBfssBR9FAMWWB7t?=
+ =?us-ascii?Q?+tJ36ToyMYOeEU8z/MIaLe3eORPQsMmRES8/otgNq6IOLextsJGmg67ldu9Y?=
+ =?us-ascii?Q?BCYOEf2xHKZO+wAkae1Opu72Ufm8YweSSjCShz5M0ePQOf3mc/PzxhwmYBqf?=
+ =?us-ascii?Q?sUkAI/70Ky8k/HpGQYaVf74Y3jgFt7pNEmbmRfRZnLn3eB1U3iBRdS+Jlljy?=
+ =?us-ascii?Q?HYcVfynxE5L2XCvMxvhFHW6Q3yRFzv8UHTnHjql9EbLAf3OcRvy9NwSWqSs2?=
+ =?us-ascii?Q?GnN+qR57kuLsVSj/u/Re0PLc1JkRU2eZSdNfl6D+LT8ckyd+PgBFIAvXwkRv?=
+ =?us-ascii?Q?nD1w0MkMUE0GzobsXU//+ueksoF5zMG0FIPcjEjh7vxKOhI7Wgw4FU7zHyjs?=
+ =?us-ascii?Q?JR/Kchk06khkhI4NbyPP1I7RlZ0l/JY+VeK77BtL9wXBnm+ForgArPVfzlvI?=
+ =?us-ascii?Q?a8KuKgNlhg5d5Jjxl4CmeK1YxBhuOdzXVkeBVxISk9Y5+rAGot21b3iSkzCv?=
+ =?us-ascii?Q?X6GYwbfeED+RK0Bv5FLRQPTCWZ5fcRXmkrJXnV6WM7MU4KdZyHKhj+iYTawj?=
+ =?us-ascii?Q?zFHCk5tjHO4nYc9CgMKTDMCULjUMz5BqoxtvGH+StVFo9K7AleYlhWlxXmGK?=
+ =?us-ascii?Q?wzM/0SffnJo3TQlWVmVQlkGlY+F5gZ3Kw9WfuR9wxU9LhEjbz5qXPzrkqP3p?=
+ =?us-ascii?Q?xKmQlDjl+EcBL9O8yvcoKMtsTLkapQn78ioerhDi3nMk3wWmm1h/E051CZxw?=
+ =?us-ascii?Q?mISrpVZZrDkNnt7nwT53ZZxIAsbrAwfMXzcYiqE9DDGVUF4UAtCGV5GVw6w+?=
+ =?us-ascii?Q?ngj943DhmSFBTbP/doyvZXFS++CU6goJiY+1KEVrfl2vR+D3gTwMSzhRbfVL?=
+ =?us-ascii?Q?OueZfbmN/tKIjsghgmk3gk9jpyyVUnykwxnhWdRu0TnRhYTpJqMA2yo323eJ?=
+ =?us-ascii?Q?yqYR+XG4N6diMBuy/AFELVKRuH9NnxUHTmFsQcw56BkTfujCsQzgJBqQr5P9?=
+ =?us-ascii?Q?O+4imG5DmWbF36vvoQCGXdS2w6MPfwNR1dlT5Vxzl9sUxAztXKwLAW1w7AdI?=
+ =?us-ascii?Q?bLfyfVR78dFoqEXvgV+zFo+yMK7K/EhaO3wv150PVkhO9tfTWnAERleqgmn6?=
+ =?us-ascii?Q?mYJBDnH/oxgspXQJmmhJB3W9naWmCQooRdXHJpnwOH+k9x/lqFSlzAB+sZL4?=
+ =?us-ascii?Q?fHhUHPXRAhMoKT22Pg8Ien6bAGeXlHg+PQTKP6U4g0MCgqNIFkZQfVHr1Kow?=
+ =?us-ascii?Q?oN/xQQq3OLelRIoFF67SHCxJlKWRO5oysJdsNh5L0cfvrIT0bVY71XRl23pj?=
+ =?us-ascii?Q?h1LdiMD83lwHmNBO64EpmBtKeW7ZWNhaG3xDjLzuIY9c7+uWEHXyESGpuhjt?=
+ =?us-ascii?Q?QU1J23FPfuSpYH+MCAjwq5kU49TUfBvdJEyU7DiDqumzI+6R0nVbDU8z3dGv?=
+ =?us-ascii?Q?mHjE4VgVzS4=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5777.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?JvEQbSrRR0cr2DEYZFUdytZBgrs8YhmV4C+bif4aQSa6sll4JzZixU7m9Gu+?=
+ =?us-ascii?Q?M/6540nTPeRa/fn0ddxiBzkb7s1sgpjFgBZALMxbQq19uO5xbb77XsLvKQ5h?=
+ =?us-ascii?Q?NEJCObqpxPmEIjHWhHIfwZaQd5Kl025Xg4uQLcSL/ey30/1mtuqbBi89DaRD?=
+ =?us-ascii?Q?SLhk6/CXNLiFABwo8QJ0gFXMmLtua9MFpAc4o+701K5y1RkjI78Ugvka+AHI?=
+ =?us-ascii?Q?4XFlZfoHXPnucYmzt2Hj1KbnYaJEHcJVOGNheBveFQ2TQufSO6kZ9qJRZYXt?=
+ =?us-ascii?Q?fFoDCHHtxG78Addc1cEyDlK2D/Kq0erE1S3/N8uL1yYajSLcUH+4b9OSyB5B?=
+ =?us-ascii?Q?rPBauK+2nI9+GBpLOnJ2fT2yNgp9zkN1OCEVnzlFvqcK3IkGMz7jqnsO8dsm?=
+ =?us-ascii?Q?rJTp8S6w8QKMLKWdTa3ym5ar7IO3XY9D7v9IPRcr0bFnMlHUHX9RVUGecf6k?=
+ =?us-ascii?Q?pZUW7jjREJQyjuEYk66cMLD7636HdtORObfmjAPFjSgvMjsA9LY4ANuIFQn0?=
+ =?us-ascii?Q?/aZmfkG/qmK7qQBP3lFgIWa40jHlGg6B+icZfMB0KgGQjs1KBHA7AUvO+jPk?=
+ =?us-ascii?Q?xDws6/Hi0FqtKQEFUk0eE02XG6qk28jx7l+lQhhB0yv6bxNhGZ+L95kO/Upw?=
+ =?us-ascii?Q?fq/5pSYChhYYXQRiK/7pBxBSGMQLn6WJQThZhYHeUT+pMvox8Url0NPyQkke?=
+ =?us-ascii?Q?3rsuG3RCdfuM7OGC3PPdzfBQ7bKBMud0EcoGtp/947hXARhY21kLRtpmmnG7?=
+ =?us-ascii?Q?QX0+WJ6hjumKfZeWulH8NVZrxyFteZp7rNTdwbsuLsqgPdy2uUW8jsEtx6j2?=
+ =?us-ascii?Q?wRkFv9PlviF+0+Z6J9AyMtd3uRBRfY0BhU6xESK2gutdUYKFSVOVhurE3xb5?=
+ =?us-ascii?Q?KuCgUqK7fthwZPL3Fvyh7MvcAyPGgtVp4Kb06gyQ5TJpK6LDulFWzVwoU+PQ?=
+ =?us-ascii?Q?UtXOYrhSfHxrt3R1zFMxKUPMOAvvpP1aE6VbinXSsfQJs0F/eXBzK7q0a+FI?=
+ =?us-ascii?Q?xK53Pg/tjtth5G6Mi2bl5sW/njObwiTkhXAD5GFHf1waqas7jdOBozhAlqLO?=
+ =?us-ascii?Q?wS35dmdupAWR8qq8+w3V0pbS5I83UXXebF7AfSMCLA2RFOwgym5bXGWv9c1y?=
+ =?us-ascii?Q?RHeqRHeTAJRJn+iab9iIHg6HdlXaCz7Oen1Vhq0PBimJWGX9Adgozl16Wcey?=
+ =?us-ascii?Q?4SqkOGw0N9hXxJzy6Hg/9dm7fnDRVYuEGEEHR1U1d51+pQCkSROl9cUfXl52?=
+ =?us-ascii?Q?zbNL3SyTH/2eSImmoG8UYpS2KuO1YuoDoDndnpAk1vObbNpTNn9vTsVbB+v4?=
+ =?us-ascii?Q?+T1cjlO1w7KIxRDDTZ6ghGJeLUfNMC8nchxmydBQZGc6J4+AMSUaEDnw/SZ/?=
+ =?us-ascii?Q?cYSaP5pBVEq4EwlsSeLBDKTF069oIRDjILGZyfClYKOouGPp5FG7LeRHkJ97?=
+ =?us-ascii?Q?FtM4Xmr6jqe9Fhg2fHTuD9UtInWqnUDUvyMvoFSxBa3p0JwAPF+cHcrfX3cn?=
+ =?us-ascii?Q?Iwbw9Gpo3hS3mljL4wJcDNRX67D6mWAhWm0dHum1ucPB9UZuvd6f5Rd6xycg?=
+ =?us-ascii?Q?t+OVYk37x+hrSGdTvOGdZS617hGt3UgqVfovb1YC?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	9rfEf1ak9JktphSZ6b3XtLtx4ZASUPbJumezTJDHdP41PZW0hGTu3pvljSFViE2h75AhQrD5ITmwzQfBOyikE5wUH6rpOYeb0ongHGIAf9eajKR9FBq3EnQt/fgw4/udXqD7Lz8kMOnn3L074ev/6t13yQD8pdgUBRS6N2Mr43q5HNsNyvd83IDsUemUnzfUaxbj6tqVz/mXNLF4ypwOxz3yvrdFr7hg6I82m4Aiu0W9RwHuQIUGNfRsYz647qskP5FTynRZpmpR+laU3y8sHf7SHv+aQKRGX89oHk4SOpGh8AJQdHUV24LR473g54FIYsFhSbdBRGtC4Rkyepy2ywLdu/bgjEeqKJHscnzi4JU2XavqXZ9I6ZB59TXo2zNlJ6z/TiVLTiGHCMEKY2vg40KJjvXWJfQZIHdxv8uA290yphWvKw0t+wh0Iyud9+x9jkImCgiKI2qXIHuM38tpSxSKGdLjuPLBoT82xwrzj0TkMVwGQRXuSnqymZvrJV1bsyhPksmf+zEn2T8ftbDLbX37GdWm1eYy5bRbwUcU4pasySWhW1Y3wGQEqJ+xnJ4T+sdOab3BWNvbfuGyiSu8hsB0uG7wV+6VnQobrqVaybY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89ade1d4-3e48-4248-6c38-08dd9c61f7b3
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5777.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 May 2025 14:31:13.9886
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3NQ7UeKblTiCICFVID/oD0GqhUiAJG63pHLrrM1WMPq4+3+UAUhKvoSjJBWVnLpyfqSQnkH2alU68usmA5eyGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB4985
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-05-26_07,2025-05-26_02,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2505260123
+X-Proofpoint-GUID: 8ML_WKF6Hu_NfFhCYGpBAq9FJxf9MHy7
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI2MDEyMyBTYWx0ZWRfX4v9zXla3k5Mi GYOemKa2o0I4EoiJ1Psxq4ULLr+1rF0KpqwOXZ5mu6GvE0kMcnVt+VLr/431OkYs9MERyX6g8xw /67LVBwn0OXGb9zg1RMe7q2od0ESA/WHOnrE1XZDj18T5UjuzzFE52O2xZByzW/RkLe3WRci6q3
+ /1ni+IDuiUEuJWCb36zZskcTfJ0utdQy6pzzf20STG+fWC9veOXZngBL7rrMnVGOyFI9RTHQB5A r7rlNs0fprOkrlc1iD0g3J0Yq7Mt3UInslZGWrgU5NmzvvsbsLVDDnfzzWlGA+YwwNlNnk3bS15 d0gr45gwwvzetozHsfHo7wlI9ky7no3wji2OwdrlcziDsn7vozyB0zPCnH6Enl9w4pyW+J3ddPx
+ mlAL2oShGdO0toQWK1GinxP6V8OWGXw8mO+OYR4YBlS/o8uiJ3XrgA43IYwxZZ6RAyJCPptd
+X-Proofpoint-ORIG-GUID: 8ML_WKF6Hu_NfFhCYGpBAq9FJxf9MHy7
+X-Authority-Analysis: v=2.4 cv=N7MpF39B c=1 sm=1 tr=0 ts=68347b36 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8 a=r8WlCrXwO7bBcKSW3SQA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:13207
 
-inline data handling has a race between writing and writing to a memory
-map.
+* Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [250521 14:20]:
+> In subsequent commits we are going to determine KSM eligibility prior to a
+> VMA being constructed, at which point we will of course not yet have access
+> to a VMA pointer.
+> 
+> It is trivial to boil down the check logic to be parameterised on
+> mm_struct, file and VMA flags, so do so.
+> 
+> As a part of this change, additionally expose and use file_is_dax() to
+> determine whether a file is being mapped under a DAX inode.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 
-When ext4_page_mkwrite is called, it calls ext4_convert_inline_data, which
-destroys the inline data, but if block allocation fails, restores the
-inline data. In that process, we could have:
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-CPU1					CPU2
-destroy_inline_data
-					write_begin (does not see inline data)
-restory_inline_data
-					write_end (sees inline data)
-
-This leads to bugs like the one below, as write_begin did not prepare for
-the case of inline data, which is expected by the write_end side of it.
-
-------------[ cut here ]------------
-kernel BUG at fs/ext4/inline.c:235!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 1 UID: 0 PID: 5838 Comm: syz-executor110 Not tainted 6.13.0-rc3-syzkaller-00209-g499551201b5f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:ext4_write_inline_data fs/ext4/inline.c:235 [inline]
-RIP: 0010:ext4_write_inline_data_end+0xdc7/0xdd0 fs/ext4/inline.c:774
-Code: 47 1d 8c e8 4b 3a 91 ff 90 0f 0b e8 63 7a 47 ff 48 8b 7c 24 10 48 c7 c6 e0 47 1d 8c e8 32 3a 91 ff 90 0f 0b e8 4a 7a 47 ff 90 <0f> 0b 0f 1f 80 00 00 00 00 90 90 90 90 90 90 90 90 90 90 90 90 90
-RSP: 0018:ffffc900031c7320 EFLAGS: 00010293
-RAX: ffffffff8257f9a6 RBX: 000000000000005a RCX: ffff888012968000
-RDX: 0000000000000000 RSI: 000000000000005a RDI: 000000000000005b
-RBP: ffffc900031c7448 R08: ffffffff8257ef87 R09: 1ffff11006806070
-R10: dffffc0000000000 R11: ffffed1006806071 R12: 000000000000005a
-R13: dffffc0000000000 R14: ffff888076b65bd8 R15: 000000000000005b
-FS:  00007f5c6bacf6c0(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000020000a00 CR3: 0000000073fb6000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- generic_perform_write+0x6f8/0x990 mm/filemap.c:4070
- ext4_buffered_write_iter+0xc5/0x350 fs/ext4/file.c:299
- ext4_file_write_iter+0x892/0x1c50
- iter_file_splice_write+0xbfc/0x1510 fs/splice.c:743
- do_splice_from fs/splice.c:941 [inline]
- direct_splice_actor+0x11d/0x220 fs/splice.c:1164
- splice_direct_to_actor+0x588/0xc80 fs/splice.c:1108
- do_splice_direct_actor fs/splice.c:1207 [inline]
- do_splice_direct+0x289/0x3e0 fs/splice.c:1233
- do_sendfile+0x564/0x8a0 fs/read_write.c:1363
- __do_sys_sendfile64 fs/read_write.c:1424 [inline]
- __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1410
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5c6bb18d09
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 b1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5c6bacf218 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
-RAX: ffffffffffffffda RBX: 00007f5c6bba0708 RCX: 00007f5c6bb18d09
-RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
-RBP: 00007f5c6bba0700 R08: 0000000000000000 R09: 0000000000000000
-R10: 000080001d00c0d0 R11: 0000000000000246 R12: 00007f5c6bb6d620
-R13: 00007f5c6bb6d0c0 R14: 0031656c69662f2e R15: 8088e3ad122bc192
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-
-This happens because ext4_page_mkwrite is not protected by the inode_lock.
-The xattr semaphore is not sufficient to protect inline data handling in a
-sane way, so we need to rely on the inode_lock. Adding the inode_lock to
-ext4_page_mkwrite is not an option, otherwise lock-ordering problems with
-mmap_lock may arise.
-
-The conversion inside ext4_page_mkwrite was introduced at commit
-7b4cc9787fe3 ("ext4: evict inline data when writing to memory map"). This
-fixes a documented bug in the commit message, which suggests some
-alternative fixes.
-
-Convert inline data when mmap is called, instead of doing it only when the
-mmapped page is written to. Using the inode_lock there does not lead to
-lock-ordering issues.
-
-The drawback is that inline conversion will happen when the file is
-mmapped, even though the page will not be written to.
-
-Fixes: 7b4cc9787fe3 ("ext4: evict inline data when writing to memory map")
-Reported-by: syzbot+0c89d865531d053abb2d@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=0c89d865531d053abb2d
-Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-Cc: stable@vger.kernel.org
----
-Changes in v2:
-- Convert inline data at mmap time, avoiding data loss.
-- Link to v1: https://lore.kernel.org/r/20250519-ext4_inline_page_mkwrite-v1-1-865d9a62b512@igalia.com
----
- fs/ext4/file.c  | 6 ++++++
- fs/ext4/inode.c | 4 ----
- 2 files changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index beb078ee4811d6092e362e37307e7d87e5276cbc..f2380471df5d99500e49fdc639fa3e56143c328f 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -819,6 +819,12 @@ static int ext4_file_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (!daxdev_mapping_supported(vma, dax_dev))
- 		return -EOPNOTSUPP;
- 
-+	inode_lock(inode);
-+	ret = ext4_convert_inline_data(inode);
-+	inode_unlock(inode);
-+	if (ret)
-+		return ret;
-+
- 	file_accessed(file);
- 	if (IS_DAX(file_inode(file))) {
- 		vma->vm_ops = &ext4_dax_vm_ops;
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 94c7d2d828a64e42ded09c82497ed7617071aa19..895ecda786194b29d32c9c49785d56a1a84e2096 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -6222,10 +6222,6 @@ vm_fault_t ext4_page_mkwrite(struct vm_fault *vmf)
- 
- 	filemap_invalidate_lock_shared(mapping);
- 
--	err = ext4_convert_inline_data(inode);
--	if (err)
--		goto out_ret;
--
- 	/*
- 	 * On data journalling we skip straight to the transaction handle:
- 	 * there's no delalloc; page truncated will be checked later; the
-
----
-base-commit: 4a95bc121ccdaee04c4d72f84dbfa6b880a514b6
-change-id: 20250519-ext4_inline_page_mkwrite-c42ca1f02295
-
-Best regards,
--- 
-Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-
+> ---
+>  include/linux/fs.h |  7 ++++++-
+>  mm/ksm.c           | 32 ++++++++++++++++++++------------
+>  2 files changed, 26 insertions(+), 13 deletions(-)
+> 
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index 09c8495dacdb..e1397e2b55ea 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -3691,9 +3691,14 @@ void setattr_copy(struct mnt_idmap *, struct inode *inode,
+>  
+>  extern int file_update_time(struct file *file);
+>  
+> +static inline bool file_is_dax(const struct file *file)
+> +{
+> +	return file && IS_DAX(file->f_mapping->host);
+> +}
+> +
+>  static inline bool vma_is_dax(const struct vm_area_struct *vma)
+>  {
+> -	return vma->vm_file && IS_DAX(vma->vm_file->f_mapping->host);
+> +	return file_is_dax(vma->vm_file);
+>  }
+>  
+>  static inline bool vma_is_fsdax(struct vm_area_struct *vma)
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 8583fb91ef13..08d486f188ff 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -677,28 +677,33 @@ static int break_ksm(struct vm_area_struct *vma, unsigned long addr, bool lock_v
+>  	return (ret & VM_FAULT_OOM) ? -ENOMEM : 0;
+>  }
+>  
+> -static bool vma_ksm_compatible(struct vm_area_struct *vma)
+> +static bool ksm_compatible(const struct file *file, vm_flags_t vm_flags)
+>  {
+> -	if (vma->vm_flags & (VM_SHARED  | VM_MAYSHARE   | VM_PFNMAP  |
+> -			     VM_IO      | VM_DONTEXPAND | VM_HUGETLB |
+> -			     VM_MIXEDMAP| VM_DROPPABLE))
+> +	if (vm_flags & (VM_SHARED   | VM_MAYSHARE   | VM_PFNMAP  |
+> +			VM_IO       | VM_DONTEXPAND | VM_HUGETLB |
+> +			VM_MIXEDMAP | VM_DROPPABLE))
+>  		return false;		/* just ignore the advice */
+>  
+> -	if (vma_is_dax(vma))
+> +	if (file_is_dax(file))
+>  		return false;
+>  
+>  #ifdef VM_SAO
+> -	if (vma->vm_flags & VM_SAO)
+> +	if (vm_flags & VM_SAO)
+>  		return false;
+>  #endif
+>  #ifdef VM_SPARC_ADI
+> -	if (vma->vm_flags & VM_SPARC_ADI)
+> +	if (vm_flags & VM_SPARC_ADI)
+>  		return false;
+>  #endif
+>  
+>  	return true;
+>  }
+>  
+> +static bool vma_ksm_compatible(struct vm_area_struct *vma)
+> +{
+> +	return ksm_compatible(vma->vm_file, vma->vm_flags);
+> +}
+> +
+>  static struct vm_area_struct *find_mergeable_vma(struct mm_struct *mm,
+>  		unsigned long addr)
+>  {
+> @@ -2696,14 +2701,17 @@ static int ksm_scan_thread(void *nothing)
+>  	return 0;
+>  }
+>  
+> -static void __ksm_add_vma(struct vm_area_struct *vma)
+> +static bool __ksm_should_add_vma(const struct file *file, vm_flags_t vm_flags)
+>  {
+> -	unsigned long vm_flags = vma->vm_flags;
+> -
+>  	if (vm_flags & VM_MERGEABLE)
+> -		return;
+> +		return false;
+> +
+> +	return ksm_compatible(file, vm_flags);
+> +}
+>  
+> -	if (vma_ksm_compatible(vma))
+> +static void __ksm_add_vma(struct vm_area_struct *vma)
+> +{
+> +	if (__ksm_should_add_vma(vma->vm_file, vma->vm_flags))
+>  		vm_flags_set(vma, VM_MERGEABLE);
+>  }
+>  
+> -- 
+> 2.49.0
+> 
 
