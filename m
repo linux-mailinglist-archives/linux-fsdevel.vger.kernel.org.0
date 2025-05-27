@@ -1,143 +1,213 @@
-Return-Path: <linux-fsdevel+bounces-49894-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49895-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C889CAC4908
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 09:09:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B6C5AC4A36
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 10:26:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98A32178C8E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 07:09:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28D533B9F02
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 08:25:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C812F1BD9D0;
-	Tue, 27 May 2025 07:09:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58AFF253358;
+	Tue, 27 May 2025 08:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYFeAfEC"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R+g+c6WW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF1472614;
-	Tue, 27 May 2025 07:09:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E106724DD1A;
+	Tue, 27 May 2025 08:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748329782; cv=none; b=dMCgiR/60C/TaZ6yFtUKrDczyOvn50SZJCCkl7CTu+SGH38ntwgEta32G5cJ8Dbe3BCqCYS5XR8VovVzbwhPsBbEf7Y1H4uknkpC2Ulsi6hjve139sxcNxL/cCwokQbf9cnQmxw+G5iq1toeyW+/OFl3RP3MPdOQ/5j3ic3hWkQ=
+	t=1748334327; cv=none; b=RJVKKDFkqg28glR2PEl9v3f4ihsffc463UUdwRmmmRVa6jU5b4MbFWqKWKKMmGXtt3UMkx/onP3itnz7HHiDr8Cur1mwzQLzU8RmtbC2KZ+nL0CTlwwD4mjg8qiKOGmsoKskZupHYEN7NoyA2TBHfNij1hvpJ2FxFLBhB0bQgAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748329782; c=relaxed/simple;
-	bh=2kl6mZ8cHvpAb73D3F/4DvVrjl1/RRlL4LaE/e1S4FA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYpas981bgCwfiAUARiO7J9kVXgaPEf8Ck9xFuFD9EfujJLCdz8oLlnb8UNMulOIlp3hlKzOJKd8FKRA/Jz2dog8Q/IOOX2zXCwXYR3ymdpX/1+rdB3RUyi1cj5BFnfyMwSczhbkAPImzS4EREorh0PY267pkphiT1eXBBGQI2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYFeAfEC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F637C4CEEA;
-	Tue, 27 May 2025 07:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748329781;
-	bh=2kl6mZ8cHvpAb73D3F/4DvVrjl1/RRlL4LaE/e1S4FA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TYFeAfECVkICnTDcOgCfhzMZ29ALQmjrjRTTsWrpq01JDFCyZVZ6pvptYGUwV8pS7
-	 9APSZljthBK39hGBNGK/FDWkMmeK8P7tMfzn9BjdOdiuBsHlilz6J9lDL4VtGiIH8W
-	 COY+wkKgZOs1oEj5ws2rqPhaWPgljkvKaA8lRgBxsW6bpZ/hE8oVHTbMZU65OQUO1o
-	 FgwtXV/ibURPygPZdzauMIjOoDUyBwWYv3WYPOp4l72XD8rCSpDRu5MIvrYrMGo7A6
-	 LE4S6WCOVxoVlvnpTLoeeapY/KZc0kFMBZlgAxpI60RQ319+Mxi2SsGCDvBT7sXzEr
-	 yMXJD0Y+U7vOQ==
-Date: Tue, 27 May 2025 09:09:02 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Wen Yang <wen.yang@linux.dev>
-Subject: Re: [PATCH] kernel/sysctl-test: Unregister sysctl table after test
- completion
-Message-ID: <b4jjhqsjnen4ifcccd4qu4tqq2wtqdglouslx26jbwhydgz7qn@lgeb7jltrt4d>
-References: <20250522013211.3341273-1-linux@roeck-us.net>
- <ce50a353-e501-4a22-9742-188edfa2a7b2@roeck-us.net>
- <yaadrvxr76up6j2cixi5hhrxrb4yd6rfus7n3pvh3fv42ahk32@vwiphrfdvj57>
- <d2c93db4-6406-47ec-9096-479aa7d7fd23@roeck-us.net>
+	s=arc-20240116; t=1748334327; c=relaxed/simple;
+	bh=7+tp4GAq7YcVLgb/nQO83VDp/Ph/4sBIBC7Fet0/G4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YtS8KMF/+4iKA8yMIPG0g1C8JPRrwp/eHheB3aQuV5v72jwrbFHgbyHONr8ts80i4KraWKuwwI54OCX1qs4SPiwEn7EFmLgRJmBFw5n5BA6EPHJAHlFF9tvMqIeRb2VPJlJaf0D8yVlfG4OGAoPfyO5jSvvP2gCHWFqTK1hyhEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R+g+c6WW; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748334326; x=1779870326;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=7+tp4GAq7YcVLgb/nQO83VDp/Ph/4sBIBC7Fet0/G4Y=;
+  b=R+g+c6WWeINMYvifGEjiogVsodnC3Cwj1lZjiqSgRPxCdd+iGtwFBMfl
+   vE8ktwM7PwdfFSeG7j0jR+zIjIumCjrGPo9oZcLR67TqjWygBsLhZrUdU
+   AArTtJ/ld429HbZv4xQKqNqLU+PAXS28/b/X/95vQgpGXpsUxaM32Nxwm
+   HhkvjKCpRX6K7/Or/HR0uYVxHa1LWdZz+e5MMjiuYjAaD/OXK2ex9QAfa
+   sg3nxKm+U/4+WATDTPUhkUBAy3Ao2vCIV2ElSPpFiKOMKpLBt6Z2NScq+
+   /F5JhyopuY1d/i8P4kcUptFxcsS08CVl2Ld/a/eOhVJyXt99wHVSJLtdU
+   A==;
+X-CSE-ConnectionGUID: FUyDjo0hRje9mdlb4z3vEA==
+X-CSE-MsgGUID: Agt1fEfcTgehgOR7bZ8gSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="37936934"
+X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
+   d="scan'208";a="37936934"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 01:25:25 -0700
+X-CSE-ConnectionGUID: mRqJkLNKQwGmhGK/5+3FxQ==
+X-CSE-MsgGUID: 7rh8kbY3Qla2LSYp38kAgg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
+   d="scan'208";a="179901149"
+Received: from unknown (HELO [10.238.11.3]) ([10.238.11.3])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 01:25:05 -0700
+Message-ID: <9483e9e3-9b29-49c6-adcc-04fe45ac28fd@linux.intel.com>
+Date: Tue, 27 May 2025 16:25:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="e3wot27uafm4acze"
-Content-Disposition: inline
-In-Reply-To: <d2c93db4-6406-47ec-9096-479aa7d7fd23@roeck-us.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
+ shareability to guard faulting
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+ ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com,
+ anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu,
+ bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com,
+ chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com,
+ david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk,
+ erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+ haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+ ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+ james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+ jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+ jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+ kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+ michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+ pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+ quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+ quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+ quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+ richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
+ tabba@google.com, thomas.lendacky@amd.com, usama.arif@bytedance.com,
+ vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+ vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+ willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+ yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---e3wot27uafm4acze
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 23, 2025 at 08:54:44AM -0700, Guenter Roeck wrote:
-> On 5/23/25 08:01, Joel Granados wrote:
-> > On Thu, May 22, 2025 at 11:53:15AM -0700, Guenter Roeck wrote:
-> > > On Wed, May 21, 2025 at 06:32:11PM -0700, Guenter Roeck wrote:
-> > > > One of the sysctl tests registers a valid sysctl table. This operat=
-ion
-> > > > is expected to succeed. However, it does not unregister the table a=
-fter
-> > > > executing the test. If the code is built as module and the module is
-> > > > unloaded after the test, the next operation trying to access the ta=
-ble
-> > > > (such as 'sysctl -a') will trigger a crash.
-> > > >=20
-> > > > Unregister the registered table after test completiion to solve the
-> > > > problem.
-> > > >=20
-> > >=20
-> > > Never mind, I just learned that a very similar patch has been submitt=
-ed
-> > > last December or so but was rejected, and that the acceptable (?) fix=
- seems
-> > > to be stalled.
-> > >=20
-> > > Sorry for the noise.
-> > >=20
-> > > Guenter
-> >=20
-> > Hey Guenter
-> >=20
-> > It is part of what is getting sent for 6.16 [1]
-> > That test will move out of kunit into self-test.
-> >=20
->=20
-> Yes, I was pointed to that. The version I have seen seems to assume that
-> the test is running as module, because the created sysctl entry is removed
-> in the module exit function. If built into the kernel, it would leave
-> the debug entry in place after the test is complete. Also, it moves
-> the affected set of tests out of the kunit infrastructure. Is that accura=
-te
-> or a misunderstanding on my side ?
-You have understood correctly. That is what the sysctl selftest does at lea=
-st.
-It all runs together with tools/testing/sefltests/sysctl/*. The idea is
-to use CONFIG_TEST_SYSCTL only for testing purposes.
+On 5/15/2025 7:41 AM, Ackerley Tng wrote:
+> Track guest_memfd memory's shareability status within the inode as
+> opposed to the file, since it is property of the guest_memfd's memory
+> contents.
+>
+> Shareability is a property of the memory and is indexed using the
+> page's index in the inode. Because shareability is the memory's
+> property, it is stored within guest_memfd instead of within KVM, like
+> in kvm->mem_attr_array.
+>
+> KVM_MEMORY_ATTRIBUTE_PRIVATE in kvm->mem_attr_array must still be
+> retained to allow VMs to only use guest_memfd for private memory and
+> some other memory for shared memory.
+>
+> Not all use cases require guest_memfd() to be shared with the host
+> when first created. Add a new flag, GUEST_MEMFD_FLAG_INIT_PRIVATE,
+> which when set on KVM_CREATE_GUEST_MEMFD, initializes the memory as
+> private to the guest, and therefore not mappable by the
+> host. Otherwise, memory is shared until explicitly converted to
+> private.
+>
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Co-developed-by: Vishal Annapurve <vannapurve@google.com>
+> Signed-off-by: Vishal Annapurve <vannapurve@google.com>
+> Co-developed-by: Fuad Tabba <tabba@google.com>
+> Signed-off-by: Fuad Tabba <tabba@google.com>
+> Change-Id: If03609cbab3ad1564685c85bdba6dcbb6b240c0f
+> ---
+>   Documentation/virt/kvm/api.rst |   5 ++
+>   include/uapi/linux/kvm.h       |   2 +
+>   virt/kvm/guest_memfd.c         | 124 ++++++++++++++++++++++++++++++++-
+>   3 files changed, 129 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index 86f74ce7f12a..f609337ae1c2 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -6408,6 +6408,11 @@ belonging to the slot via its userspace_addr.
+>   The use of GUEST_MEMFD_FLAG_SUPPORT_SHARED will not be allowed for CoCo VMs.
+>   This is validated when the guest_memfd instance is bound to the VM.
+>   
+> +If the capability KVM_CAP_GMEM_CONVERSIONS is supported, then the 'flags' field
+> +supports GUEST_MEMFD_FLAG_INIT_PRIVATE.
 
-Best
+It seems that the sentence is stale?
+Didn't find the definition of KVM_CAP_GMEM_CONVERSIONS.
 
---=20
+> Setting GUEST_MEMFD_FLAG_INIT_PRIVATE
+> +will initialize the memory for the guest_memfd as guest-only and not faultable
+> +by the host.
+> +
+[...]
+>   
+>   static int kvm_gmem_init_fs_context(struct fs_context *fc)
+> @@ -549,12 +645,26 @@ static const struct inode_operations kvm_gmem_iops = {
+>   static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+>   						      loff_t size, u64 flags)
+>   {
+> +	struct kvm_gmem_inode_private *private;
+>   	struct inode *inode;
+> +	int err;
+>   
+>   	inode = alloc_anon_secure_inode(kvm_gmem_mnt->mnt_sb, name);
+>   	if (IS_ERR(inode))
+>   		return inode;
+>   
+> +	err = -ENOMEM;
+> +	private = kzalloc(sizeof(*private), GFP_KERNEL);
+> +	if (!private)
+> +		goto out;
+> +
+> +	mt_init(&private->shareability);
 
-Joel Granados
+shareability is defined only when CONFIG_KVM_GMEM_SHARED_MEM enabled, should be done within CONFIG_KVM_GMEM_SHARED_MEM .
 
---e3wot27uafm4acze
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmg1ZQQACgkQupfNUreW
-QU+OAQv/V1ZJFq0pVYdYgiAa0W/hjXiIh9ws1bAGjfLJAlSJ40RWutdMZmyOEQ7K
-BKqU30gCRrHONClpGVDRi4CTCtz1cOHp4eiUNEih0DwIP12Zn9AF+l99prjoZT3J
-P6adglM/p5LwebgVHgBXqZtv494zpAfaqJH/0hbOCi2UydOSVq6r69HXtfyvJHuA
-5/i00EyPwaCuisH1EGF6Qo2B/nVtVsHMG2AMJn0xrgKsNsTFPVkk2DG1XnxVHooq
-y/agzjdtFenY1VPj4cHtLfqWsLbHEaoGED1885fj1SgLQGigJXRBiUDS0Cgaw+tl
-il+pfeahaKjYvDSMtlH8WDeuqcB2uYQDxmx/fi8ksCsWw/fdvC9oaGssPis7/oHp
-ma3yTjV4cGK7q9JE2jHyNbH+hZwPUstYhb/1SVUIv6m/Oe1vnKpTtMnhcJdSde36
-K/9I3RFQn9IijeU7UzkPzIj6KoN/p3kTPtrBMO1UOV/BMQ+fEWI9uO3PpHgRFT4O
-E50WrQYa
-=Wz1u
------END PGP SIGNATURE-----
-
---e3wot27uafm4acze--
+> +	inode->i_mapping->i_private_data = private;
+> +
+> +	err = kvm_gmem_shareability_setup(private, size, flags);
+> +	if (err)
+> +		goto out;
+> +
+>   	inode->i_private = (void *)(unsigned long)flags;
+>   	inode->i_op = &kvm_gmem_iops;
+>   	inode->i_mapping->a_ops = &kvm_gmem_aops;
+> @@ -566,6 +676,11 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
+>   	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
+>   
+>   	return inode;
+> +
+> +out:
+> +	iput(inode);
+> +
+> +	return ERR_PTR(err);
+>   }
+>   
+>
+[...]
 
