@@ -1,268 +1,363 @@
-Return-Path: <linux-fsdevel+bounces-49934-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49935-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54BAEAC5C62
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 23:47:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5978AC5C6F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 23:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002561BA4C30
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 21:47:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D3217BC07
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 21:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 581392139D8;
-	Tue, 27 May 2025 21:47:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4F92139D8;
+	Tue, 27 May 2025 21:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZZ8ZD5JX"
+	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="uo+1sIR7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B2A52566;
-	Tue, 27 May 2025 21:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748382425; cv=fail; b=nio1RFmh8xrDEHCNyvx3aqZAfEIDywUJ/gwxIV72KC4WN2JGCxy6sCqNCkKkOKXgE8LgzMuMXp++aDJNktbZ2ONSF755BQxjqrQsZqlzBYmt4Vldstob80EWn8aScqKGqYuvyjLqBkTeT+VjsIVOO5EOpkaKzL+OSsUBveYcb5M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748382425; c=relaxed/simple;
-	bh=I62+3L9RTir1/pe1c6QWZbvEIgCZZjrjHGLiajjVk1w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IasrYemmPa9hr9i8qrEJoZcAc1gerzvD1y5wIso4nnJuSBVheJwHo0jYtLAQtOYBMhSnB4VEErtsdwY6y2j1QEg0Q9YG4MHgqjvjNiAbNqpMrM/BiAXF2dtziBYGv084tOpH8zoT5j2q4RjgSv8Llcx3jl0F358C0VaRilEAxSM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZZ8ZD5JX; arc=fail smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748382424; x=1779918424;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=I62+3L9RTir1/pe1c6QWZbvEIgCZZjrjHGLiajjVk1w=;
-  b=ZZ8ZD5JXaRLHxJQl/jAgJDovKgX2GRTOdaufjyWpvT5JGp9L5Y8GTv01
-   tf48aBgndJg7pc2ZgOQiJCXteXYP+wsBRmjHIfcuLLX04U8Wjz92TBAxY
-   /FVgmXBJ2ruD3iKc8MqDIyx45xySF52Gxkizt7LvELyiOr+2XYvGGwSr3
-   tMSAiQBwzPx5hPeTSdc5FW6RYUFcR57Gd/VepyJleU+6ojvGI7jaViHgk
-   GQ0nFNJVtUCItDNpAcs3D1uVpyxPwCpPDsYc8LNWUMNYLSatR8n9ufMQg
-   nwP7qA8ovOelRJ50oyD32+Ul6QPRlOSoj9y4YYmEoWk1H1gOEBrEEgXYK
-   w==;
-X-CSE-ConnectionGUID: qoBrmhLgTkuQLthuIOeROw==
-X-CSE-MsgGUID: mN3XiAL5Q8a1TlDfIuOl1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="50091184"
-X-IronPort-AV: E=Sophos;i="6.15,319,1739865600"; 
-   d="scan'208";a="50091184"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 14:47:03 -0700
-X-CSE-ConnectionGUID: gdwElw54RiKKsW0lnqMfYQ==
-X-CSE-MsgGUID: 05SyGwHjSZSvbnX8yK+gLg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.15,319,1739865600"; 
-   d="scan'208";a="143447393"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 May 2025 14:47:02 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Tue, 27 May 2025 14:47:01 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Tue, 27 May 2025 14:47:01 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (40.107.244.67)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Tue, 27 May 2025 14:47:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vD38ktPQpTVzO7DxMh8W8NjUXWvT42ueU/9cMbsZf97fytoZlTIAms2bIArnUO2eNY/CfO8uLsd0vr1zCe+0ifLM8MrHFmcQVg1nMl5bekbXU25YbtY9oVEATt97NZVfBia2H2df8qma/FyaGxo11sADeTRJz3Jgsqd2YefCnP+dy3OlyiGHsO9BkzbeRDlO4Ogt7ZT2H5VmVdPeeXJq9obXv59PorSpnjNl6Yz2fEOZ8KRGkZXM52zkWjBgSvvyJcxnPYduaRp5SsoWk9K4ondRyC2pfFXpnqI+Erry47u41MG943zFtE4wntd6nLhXzfJeamUXGS/iV2gO81wTxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EtCfB3UVbt+Pa1lUi1anZ3P3R2n/GkQrDrQrf0t9kMI=;
- b=G6GTAPHz9cvp6yyZdaxT8MvAM1jURvJJovqrSoQvzjGDYofH+6b7ihEidRHu7bFNdX/hYEIBt8RLwe9rFe2sAiOdddMeEU2NWwtM8RlYTWv9npzQlEyq94C32AAoc8CNiIQyqLWoWnpy1ZqJEhprj+SUyD2VKbgUdMQwf+fF1p8FALAcKdX95h5aoVy4hVE1NXdUmxlga4lXsknM3T0wjMGO7B8GiMqYhdPo5S9nDCJshpriiZ/yk6hjiOJJ2PXlcNo9pOtQ2ul4hXV2dzE3ZqWdC/DuEwuwk0vhpR3idbANt30lecujCjRXWn1qcXLvIpvQf1g0Xaro4W5FLm/rRA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by DM4PR11MB6407.namprd11.prod.outlook.com (2603:10b6:8:b4::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.27; Tue, 27 May
- 2025 21:46:32 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%3]) with mapi id 15.20.8769.025; Tue, 27 May 2025
- 21:46:32 +0000
-Date: Tue, 27 May 2025 14:46:28 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Alistair Popple <apopple@nvidia.com>, <akpm@linux-foundation.org>,
-	<linux-fsdevel@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<dan.j.williams@intel.com>, <willy@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Alistair Popple <apopple@nvidia.com>,
-	Alison Schofield <alison.schofield@intel.com>, Balbir Singh
-	<balbirs@nvidia.com>, "Darrick J. Wong" <djwong@kernel.org>, Dave Chinner
-	<david@fromorbit.com>, David Hildenbrand <david@redhat.com>, Jan Kara
-	<jack@suse.cz>, John Hubbard <jhubbard@nvidia.com>, Ted Ts'o <tytso@mit.edu>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner
-	<brauner@kernel.org>
-Subject: Re: [PATCH] fs/dax: Fix "don't skip locked entries when scanning
- entries"
-Message-ID: <683632b425dc2_3e701009c@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20250523043749.1460780-1-apopple@nvidia.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250523043749.1460780-1-apopple@nvidia.com>
-X-ClientProxiedBy: BY3PR04CA0021.namprd04.prod.outlook.com
- (2603:10b6:a03:217::26) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 161FA1FB3
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 21:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748382575; cv=none; b=D0k7J4eDWDf5HdckAcEpUh+DEuSnu+TfQqgQjcVaKcFcJ7dbWtwe2gGc9HCy/LAF6whJOSSVQ3EwNoke90nA1UNBuits7338i5LN7bCVCftQ/LxxwjCgZFUSNx8gTI6X3od5ZkARQcuZh4qhaW5hey71pytrOkq8nJPSL6Q6Z9w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748382575; c=relaxed/simple;
+	bh=HfPftjVcgI42dalYCg1FEsml86xfHZjOH0et0lZpTfA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=JhfwyOlsGhxITR84fDmMnEFhdZNb+kJtMXhP8oZ4sCgRdfr+ZcwsYHKLTECsk9a1J1KGpaAxv5uTRBgKd2+K/JRRG92zMZBdTj+ATor0VdEeo7MiNlWgSybw/M7jahl2xMOwULgUbAKtgOMxDREHLuNE4z6p0PmZkUwfqH0u9kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=uo+1sIR7; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-231e8553248so29802735ad.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 14:49:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1748382572; x=1748987372; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HfPftjVcgI42dalYCg1FEsml86xfHZjOH0et0lZpTfA=;
+        b=uo+1sIR7rpy8JR/eYpfCJljCCAxjooygTjp2wPiY0lzPipWc+D1Rghrxb6FGqtvOqO
+         KVmgyAB60aHI47NXttFkF3+VPQpbNH3yO6NXoDIAnoBx197zfvGIcf8fjvn70GTHzMuy
+         v5PXjlp3QiK0Qd/MW6BZ9qXpybwZZVnroyHCsScWADH4D2xUOCdYUrW5A69+EIVSoSB7
+         77Bc6QKhnLsZfG10anFfyUtg1r7c92oZ3XIN3Pu3wLp9nmjNoQuzqpBy8NNJL/v4C4OP
+         WH35ep9akTDSNkQSn1OYkKYkXlvKaVl+bIOeU9YE8CuROQlZcZ4nX90zyV3dyXFGfrSA
+         qcIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748382572; x=1748987372;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HfPftjVcgI42dalYCg1FEsml86xfHZjOH0et0lZpTfA=;
+        b=XOVID9simMJn92rI2qhlaqZlc4WtSirbkz8iiT3vpGP+Bx5l0z6l/ioks5gCFBO7ls
+         nj68D2jnix9MCz+FtKMzaokRbfSYP7YfnMUboUlz+3bLpK309SF4BUNhoAkruBZdU2UJ
+         D35AEQ5bsgtFhSy5VhNBIZOtmigc8Y5HnqTRBrZVhZqX/b7V+SOHfHqkwqEBK0N4pJY/
+         LIt9O1T704EPn4IJEOmBMk2BpAVtFs0IQxaJsxh0yhw/1836jLxH7reFewyYbt+PWvOL
+         NxDNofAAmLFF6prYVisqgmD42IIFViDr5Zq4Rgrc/6cmOjBqgzrHVFDU6YQPxefkmNhb
+         ADJQ==
+X-Gm-Message-State: AOJu0YyyR0E95ZvgDMkMReQMXVfY3bmCaSwvbjzxA1mX2Fw7ZBh30TPJ
+	aLr4vq7bGmquH9udBo2/freWjn37kHeoqorf+fC4YsrvAWpK300ytUQGgYwceATgQGo=
+X-Gm-Gg: ASbGncu3YpTJ3lOrPn+68mIYcSOdDnuKLLvQl7nb4flcmrIrbjScdLBtzwyqGalmoDC
+	DmGfK3YANc8sL1f2+nrPtwLyYwvKB7YP43mUOkrzXQOuEJsMFFUiRlUkhom1/ERZMiuYRxMKbx5
+	UfSaT9q+i+JPRzxVInQPEKsRIfu9ayftw1szNL7UrmWYovSfc4SrCory8dEkbT0fn3Q/+qOWu7n
+	pKHM5AAqGt3DlyzEemP7e6w8PRkgfUynC3p7vYq3g0tRWeqCdV5YOgaUAQlvqIIOjDqXbUc6rPp
+	keRoknXsuurALK6JFj0AUWTyPRAVlYAiO77XbGQWyfNusPr3ZhbpCisA+UKH+3GKNGgeKktAsrd
+	tmp7gHvjYPgbQu2WBplW3ZT4=
+X-Google-Smtp-Source: AGHT+IEI57uhxgiCsGn/cvwidX55zKyJNXlN3YwwHOsfL874zvLVP+ews9urZpq8pgsnQu36X5v3nQ==
+X-Received: by 2002:a17:902:da8b:b0:234:c8f6:1b05 with SMTP id d9443c01a7336-234c8f61f13mr5853135ad.52.1748382572139;
+        Tue, 27 May 2025 14:49:32 -0700 (PDT)
+Received: from ?IPv6:2600:1700:6476:1430:dc04:52d5:a995:1c97? ([2600:1700:6476:1430:dc04:52d5:a995:1c97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-234cc24e8e6sm529285ad.217.2025.05.27.14.49.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 May 2025 14:49:31 -0700 (PDT)
+Message-ID: <13f85ee0265f7a41ef99f151c9a4185f9d9ab0a0.camel@dubeyko.com>
+Subject: Re: =?UTF-8?Q?=E5=9B=9E=E5=A4=8D=3A?= [PATCH] hfsplus: remove
+ mutex_lock check in hfsplus_free_extents
+From: Viacheslav Dubeyko <slava@dubeyko.com>
+To: =?UTF-8?Q?=E6=9D=8E=E6=89=AC=E9=9F=AC?= <frank.li@vivo.com>, 
+ "glaubitz@physik.fu-berlin.de"	 <glaubitz@physik.fu-berlin.de>, Andrew
+ Morton <akpm@linux-foundation.org>,  "Ernesto A."
+ =?ISO-8859-1?Q?Fern=E1ndez?=	 <ernesto.mnd.fernandez@gmail.com>
+Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+ "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, 
+ "syzbot+8c0bc9f818702ff75b76@syzkaller.appspotmail.com"
+	 <syzbot+8c0bc9f818702ff75b76@syzkaller.appspotmail.com>, 
+	Slava.Dubeyko@ibm.com
+Date: Tue, 27 May 2025 14:49:30 -0700
+In-Reply-To: <SEZPR06MB5269FA31FE21CD9799DA17ABE89AA@SEZPR06MB5269.apcprd06.prod.outlook.com>
+References: <20250511110856.543944-1-frank.li@vivo.com>
+	 <58e07322349210ea1c7bf0a23278087724e95dfd.camel@dubeyko.com>
+	 <SEZPR06MB5269FA31FE21CD9799DA17ABE89AA@SEZPR06MB5269.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.1 (by Flathub.org) 
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|DM4PR11MB6407:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b136ef7-cd17-4f0b-2cb2-08dd9d67f1b0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?uj2q5re0EkTEFTtTfeJyI6vT/WQTHca1GYe26jPrO3jl/TrezLRYs8Gi8FDN?=
- =?us-ascii?Q?Ks2OyYOARxNn9AtGHtFIRelHDoZlzxuvJ7wtEcBdP5Ib0TBtrr0lUxuWYyqF?=
- =?us-ascii?Q?4PoIxz5UPaGzgc5SEg5ohiBgJrFWejFt4v1EqIwjtiA77t1I6Uumkq+HTHqM?=
- =?us-ascii?Q?aRB0sHz8OAcIgvaR5tC4u9CRk41MFpXTErmWUz9W02R9oxtk3vmkonIBoZ9i?=
- =?us-ascii?Q?/Y4WN4/wyk8Jp2UnS5GSfviTAF74PAVFX1wzKQpHfCug6W4nffvXIPB2299C?=
- =?us-ascii?Q?ZVRwbmo4/65SY6E6HYpcuOFFZlVNKmEvc6obbHIIDM04fz8O0WRGc4Hh/BfG?=
- =?us-ascii?Q?R/vyBV/7/uJujVWF6eSgPNQ1Ur2n+f9xE/m1BZLptf2lgK4cU50biZM8OGzJ?=
- =?us-ascii?Q?9Dcc8gi+8B1YCfM1GP51GuzEH9A5IdG5vJV61MO6g3ufl3QUl2EKArGQB9fT?=
- =?us-ascii?Q?vnB6+MR2EteQC/wOtzJFCtAIZdrNAZHZSs4qXaz2eQFYGktG3a5LdUdQNTCo?=
- =?us-ascii?Q?aUjvBpmlUN16gx+iWsB7g/cNqfpvIR84ayWsX06GRCwNcE3Mkdotvc7aqP/S?=
- =?us-ascii?Q?gD+5O3zBIjo+gIPSPETWHZolSZGi5XrRGg0AiLoheLQ1icr/NSd6k4c4KWvd?=
- =?us-ascii?Q?J1PqO2Ejg5XqsfaKS4eYcnBVTIRvRgOpisV9h+sS+0tYR/qkrWo9RLMefQ7i?=
- =?us-ascii?Q?zTxN7T7iJGZWRNaraEqGGnt54gOy7Dcxq6dXiWZzXv8PcarBuuN1Ady+HIGg?=
- =?us-ascii?Q?bOe9iAJKmSqW6dazoV8JoRqn+MkzUXP6vJ23naOaVGZeGGlgzW53r12pp17A?=
- =?us-ascii?Q?gKnYLkSkWN+lajDSzXENhjRqf/jwEY454jE8F1Lr3OxGO9UutstoV3X5hqeQ?=
- =?us-ascii?Q?oAuUOAPj/JlMW9ks7q2nRD5dnKffSmAlwKHDGw1uruvrjpU1edSDMUH80yFf?=
- =?us-ascii?Q?SRuQYmKGAYaMctsaEmpYTaXpUE6JMc2AS0NtGia1gZl2+vrbJLFMAGJ9l8ex?=
- =?us-ascii?Q?5eLGmeXXeOJgVPN1HWyCeS0eX8yhdsfauKVZEb8DpmaT0IDhRGlyCWNRHtW0?=
- =?us-ascii?Q?MqVf5GGbyqjKtCFUqg4NvJxwpiQDGAyjb1lQsrjb5Fu9C+GKat3IRTG5zBR7?=
- =?us-ascii?Q?fAfVfm+bPo7yV9KHsDQLUFzks86XcaFwsUhOXkZR/vHSYtpmCN4b+Vw0c8ek?=
- =?us-ascii?Q?7eexOJTwN32h35HwYlhRuZktTz/jZ6cv1UBgmEbVhwLKPEPFYsDdr1NF0XBP?=
- =?us-ascii?Q?zQMSyVhHa8RzIGXi/+t48QFgWsl/WGyp+T8Z+hOmHpj8dNuiPs6Qcf5J6Vl4?=
- =?us-ascii?Q?IUX5g+h2rS1L1yqM2X/52QgrYjFgrKYjXy3WL+SXKYPQGnjgmhjYuPI8kQ/W?=
- =?us-ascii?Q?CkOmlgidwqquTR4+rzbCBHMWvzo1WYf1M7TKhYAO3U42THvrNV2NU7TXer23?=
- =?us-ascii?Q?vdx3SJ+TKiY=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?LuPFk/94p8n1o2Utr+lvguFl6q9MrF9fgMI4no/OtqCwmfg2Not9hLiQZz7T?=
- =?us-ascii?Q?SntnVDOghjaMxsEMZrILsHTOhVEC8y0YxEYngm0jMF5xtp0y6FXcdJIyVFa4?=
- =?us-ascii?Q?QzIHxcd40tP1nJEOfcam6gfG3haaFMeoKn28ArTJLNgCmbo2vxFHTA6Ay7bR?=
- =?us-ascii?Q?PmNP2z9vdcMlM2R3Hr/9Ii7PVHZDyWQOo0wnPsfofIn0oksLx409Z8M5xVYy?=
- =?us-ascii?Q?0gw2hnwaqnlf6Kreyd2UA/HqEh2ICmo/y56LRClP+pAislyY1/TrjwJYRdo4?=
- =?us-ascii?Q?ytVJeWsqU5danIX8KjomTw7wDOvpP9UzJlbavBNtt4Cr6a5K0IQ7XFuz1Yhb?=
- =?us-ascii?Q?Z7K76pdLESFTZURYUClVy7f2NWTwAMeelbhnHtKo+PelfhEZFf1WsEZFcf+G?=
- =?us-ascii?Q?vBdXSDCd8+qOTHKBTtqUYUMBw+JX41O+lryaNJjB76BPWZESlmS9LCzKsOLb?=
- =?us-ascii?Q?a5O3HwkMoRB0trU2qt+lNT7msDkRw0aDKCBvLupx7j8CxWKHj8AWAaL4X8vU?=
- =?us-ascii?Q?kTa2AXHKO7gH51emOAfBVqJlAHwSVRlMgm/M3xc6nqoPKJjMS9TkwWVhzoaR?=
- =?us-ascii?Q?Eb8J9+NkxnbO9NzPtv7kNpiCtjJmhMMg0A9bBaYDE56nMNDuGMXd2rw8iCed?=
- =?us-ascii?Q?SV1IgjtMEUnpPB9g5S5mPX6/rtcAeEIEXTK6ZXCS2/sB/R53ii+5SRJegeMT?=
- =?us-ascii?Q?TB/jSuxFsH2tPeB3z5tdwkUUd7OPFySvXOn17HBdSCX0v5TeBmCd56EOlSHr?=
- =?us-ascii?Q?AGI+kM+lL8sDXIOr1VaJheOTjCG9RXj6FdsZ8MET1Do/QOWF7pAIK3exPuGl?=
- =?us-ascii?Q?+3eBLzeMyUDGcY9KgltPWW4VKbC4ReUj9b+787WEPwJfcBOmMuIyj3t5GTQv?=
- =?us-ascii?Q?67pEjh2gWLFpdlIRtaP803JI0HPkEqQowiwwF5KKcX0YIuF7YJ+eR2fprLuG?=
- =?us-ascii?Q?WFC1Y+8X/FRq2XwYBtb/qa4/L3fAZoe5pUaVKzH00SeJvHe6IQ5Wonon9vpg?=
- =?us-ascii?Q?UvWfO99mn+5lOjmR7msaPS66jKuNEffFnwLEcvD04FR4yaHkY4IcsvkvOUka?=
- =?us-ascii?Q?9uwhe+bEkhxzjshZprq146a/jrJFi/Tbpqb0+3fNYHgczduhyF8mstzAgXe5?=
- =?us-ascii?Q?+C8UzWUlQOR+W1mt8Fmzkd8yVvu5V/GCS8uYMomgTlZUw5Nn0C6f27HdGRJf?=
- =?us-ascii?Q?M9PfQ3b9Xt/bFRCU4N2JcNK7Ewr0qZBdkiOzyPHplspHF9ZaQfDSEEDUcibO?=
- =?us-ascii?Q?kjctzK+0eGbvdoG8I4zUUvZSeSX8RAPa1ETbHjVctM5qUmMXIXwfWuaYyhUQ?=
- =?us-ascii?Q?ORrTo7eyPr9dLkntxF/U/gNBalp38Q5CYiajCGm4g5Nk849TZlerfQfyHOZs?=
- =?us-ascii?Q?Tp0hKFytlOjmjhQYQGjrMmV5czs5ib6+pueId6AuVNvo/yMuyqKVPi7vJ253?=
- =?us-ascii?Q?GFA67BvKjrNMLv/Y4sHLJT+dyJJx1rn56GLm3gPygrn8cR4TdyWC2pTgzAMb?=
- =?us-ascii?Q?//vHbnDlYDupT/RQ8pripaYCtg08+JJExYY27gIODy3Dfafb6x3cNW3eUpM6?=
- =?us-ascii?Q?Nm2GBjelyToVCHXyYZ/saqam7PA8lg9/fJLYD/q1ZWqkbOOa787icbBpFrvs?=
- =?us-ascii?Q?Pg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b136ef7-cd17-4f0b-2cb2-08dd9d67f1b0
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 21:46:32.1221
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: XK0Dhz+D05CZErCNJC2ZJiHQU6cuPtGnM6OTWJYfHQShs31LfJTHCDRPFf+Pv6iWr1WHkFIpy9JbGOoVHD4GsalNJsYvbpdOTv2x7pKcsX4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR11MB6407
-X-OriginatorOrg: intel.com
 
-Alistair Popple wrote:
-> Commit 6be3e21d25ca ("fs/dax: don't skip locked entries when scanning
-> entries") introduced a new function, wait_entry_unlocked_exclusive(),
-> which waits for the current entry to become unlocked without advancing
-> the XArray iterator state.
-> 
-> Waiting for the entry to become unlocked requires dropping the XArray
-> lock. This requires calling xas_pause() prior to dropping the lock
-> which leaves the xas in a suitable state for the next iteration. However
-> this has the side-effect of advancing the xas state to the next index.
-> Normally this isn't an issue because xas_for_each() contains code to
-> detect this state and thus avoid advancing the index a second time on
-> the next loop iteration.
-> 
-> However both callers of and wait_entry_unlocked_exclusive() itself
-> subsequently use the xas state to reload the entry. As xas_pause()
-> updated the state to the next index this will cause the current entry
-> which is being waited on to be skipped. This caused the following
-> warning to fire intermittently when running xftest generic/068 on an XFS
-> filesystem with FS DAX enabled:
-> 
-> [   35.067397] ------------[ cut here ]------------
-> [   35.068229] WARNING: CPU: 21 PID: 1640 at mm/truncate.c:89 truncate_folio_batch_exceptionals+0xd8/0x1e0
-[..]
-> 
-> Fix this by using xas_reset() instead, which is equivalent in
-> implementation to xas_pause() but does not advance the XArray state.
-> 
-> Fixes: 6be3e21d25ca ("fs/dax: don't skip locked entries when scanning entries")
-> Signed-off-by: Alistair Popple <apopple@nvidia.com>
-[..]
-> 
-> Hi Andrew,
-> 
-> Apologies for finding this so late in the cycle. This is a very
-> intermittent issue for me, and it seems it was only exposed by a recent
-> upgrade to my test machine/setup. The user visible impact is the same
-> as for the original commit this fixes. That is possible file data
-> corruption if a device has a FS DAX page pinned for DMA.
-> 
-> So in other words it means my original fix was not 100% effective.
-> The issue that commit fixed has existed for a long time without being
-> reported, so not sure if this is worth trying to get into v6.15 or not.
-> 
-> Either way I figured it would be best to send this ASAP, which means I
-> am still waiting for a complete xfstest run to complete (although the
-> failing test does now pass cleanly).
-> ---
->  fs/dax.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 676303419e9e..f8d8b1afd232 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -257,7 +257,7 @@ static void *wait_entry_unlocked_exclusive(struct xa_state *xas, void *entry)
->  		wq = dax_entry_waitqueue(xas, entry, &ewait.key);
->  		prepare_to_wait_exclusive(wq, &ewait.wait,
->  					TASK_UNINTERRUPTIBLE);
-> -		xas_pause(xas);
-> +		xas_reset(xas);
->  		xas_unlock_irq(xas);
->  		schedule();
->  		finish_wait(wq, &ewait.wait);
+On Sun, 2025-05-25 at 15:03 +0000, =E6=9D=8E=E6=89=AC=E9=9F=AC wrote:
+> Hi Slava,
+>=20
+> > Which particular xfstests' test-case(s) triggers the issue? Do we
+> > have the easy reproducing path of it? How can I check the fix,
+> > finally?
+>=20
+> generic/013 triggers the issue. Here is the reproducing path.
+>=20
 
-This looks super-subtle, but so did the original fix commit 6be3e21d25ca
-("fs/dax: don't skip locked entries when scanning entries"). The
-resolution is the same to make sure the xarray state does not mistakenly
-advance when the lock is dropped.
+Great! Could you please add generic/013 issues analysis in the patch
+comment? I mean the dmesg output here.=20
 
-You can add:
+> [Origin]
+>=20
+> We got fsck error, reason is the same as [1].
+>=20
+> [1]
+> https://lore.kernel.org/all/20250430001211.1912533-1-slava@dubeyko.com/
+>=20
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Mentioning [1] could be confusing because it was HFS related fix. But
+we are discussion HFS+ here.
+
+> root@ubuntu:/home/ubuntu/xfstests-dev# ./check generic/013
+> FSTYP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- hfsplus
+> PLATFORM=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- Linux/x86_64 ubuntu 6.15.0-rc4-=
+00055-g71bfd66b8583-
+> dirty #421 SMP PREEMPT_DYNAMIC Fri May 23 18:30:10 CST 2025
+> MKFS_OPTIONS=C2=A0 -- /dev/nvme1n1
+> MOUNT_OPTIONS -- /dev/nvme1n1 /mnt/scratch
+>=20
+> generic/013 35s ... [=C2=A0 380.286618] hfsplus: xattr exists yet
+> [=C2=A0 382.410297] hfsplus: xattr exists yet
+> [=C2=A0 383.872844] hfsplus: cannot replace xattr
+> [=C2=A0 385.802529] hfsplus: cannot replace xattr
+> [=C2=A0 393.125897] hfsplus: xattr exists yet
+> [=C2=A0 396.222921] hfsplus: cannot replace xattr
+> [=C2=A0 399.084012] hfsplus: cannot replace xattr
+> [=C2=A0 403.233816] hfsplus: cannot replace xattr
+> _check_generic_filesystem: filesystem on /dev/nvme0n1 is inconsistent
+> (see /home/ubuntu/xfstests-dev/results//generic/013.full for details)
+> _check_dmesg: something found in dmesg (see /home/ubuntu/xfstests-
+> dev/results//generic/013.dmesg)
+>=20
+> Ran: generic/013
+> Failures: generic/013
+> Failed 1 of 1 tests
+>=20
+> [w/ bnode patch]
+>=20
+> The fsck error is related to the node not being cleared, which may be
+> related to the implementation of the fsck tool.=20
+> We can continue to discuss this in the previous email. For this, we
+> can ignore it and continue the analysis based on the bnode patch.
+
+Let's discuss this issue in independent thread. I assume you would like
+to share the patch with the fix. Do you mean that
+hfs_bnode_need_zeroout() works not completely correct? Because, I had
+impression that HFS+ makes clearing of deleted nodes.
+
+>=20
+> diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+> index 079ea80534f7..f2424acd3636 100644
+> --- a/fs/hfsplus/bnode.c
+> +++ b/fs/hfsplus/bnode.c
+> @@ -633,7 +633,7 @@ void hfs_bnode_put(struct hfs_bnode *node)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 if (test_bit(HFS_BNODE_DELETED, &node->flags)) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hfs_bnod=
+e_unhash(node);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 spin_unl=
+ock(&tree->hash_lock);
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (hfs_bnode_=
+need_zeroout(tree))
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 //=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (hfs_bnode_need_zeroout(tr=
+ee))
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hfs_bnode_clear(node, 0, tree-
+> >node_size);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hfs_bmap=
+_free(node);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hfs_bnod=
+e_free(node);
+>=20
+> After apply bnode patch. We got error from dmesg, which warn at
+> fs/hfsplus/extents.c:346.
+>=20
+> root@ubuntu:/home/ubuntu/xfstests-dev# ./check generic/013
+> FSTYP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- hfsplus
+> PLATFORM=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- Linux/x86_64 ubuntu 6.15.0-rc4-=
+00055-g71bfd66b8583-
+> dirty #422 SMP PREEMPT_DYNAMIC Sun May 25 22:37:55 CST 2025
+> MKFS_OPTIONS=C2=A0 -- /dev/nvme1n1
+> MOUNT_OPTIONS -- /dev/nvme1n1 /mnt/scratch
+>=20
+> generic/013 35s ... [=C2=A0 236.356697] hfsplus: xattr exists yet
+> [=C2=A0 238.288269] hfsplus: xattr exists yet
+> [=C2=A0 240.673488] hfsplus: cannot replace xattr
+> [=C2=A0 242.133163] hfsplus: xattr exists yet
+> [=C2=A0 242.172538] hfsplus: xattr exists yet
+> [=C2=A0 243.702797] hfsplus: xattr exists yet
+> [=C2=A0 245.943067] hfsplus: xattr exists yet
+> [=C2=A0 249.502186] hfsplus: cannot replace xattr
+> [=C2=A0 252.544517] hfsplus: xattr exists yet
+> [=C2=A0 253.538462] hfsplus: cannot replace xattr
+> [=C2=A0 263.456784] hfsplus: cannot replace xattr
+> _check_dmesg: something found in dmesg (see /home/ubuntu/xfstests-
+> dev/results//generic/013.dmesg)
+>=20
+> Ran: generic/013
+> Failures: generic/013
+> Failed 1 of 1 tests
+>=20
+> # demsg
+> [=C2=A0 225.975852] run fstests generic/013 at 2025-05-25 14:42:11
+> [=C2=A0 231.718234] ------------[ cut here ]------------
+> [=C2=A0 231.718677] WARNING: CPU: 3 PID: 1091 at fs/hfsplus/extents.c:346
+> hfsplus_free_extents+0xfc/0x110
+> [=C2=A0 231.719117] Modules linked in:
+> [=C2=A0 231.719895] CPU: 3 UID: 0 PID: 1091 Comm: fsstress Not tainted
+> 6.15.0-rc4-00055-g71bfd66b8583-dirty #422 PREEMPT(voluntary)
+> [=C2=A0 231.719996] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996)=
+,
+> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> [=C2=A0 231.720170] RIP: 0010:hfsplus_free_extents+0xfc/0x110
+> [=C2=A0 231.720383] Code: 41 5c 41 5d 41 5e 41 5f c3 cc cc cc cc 48 c7 c7
+> 4d 62 46 b2 e8 b5 58 cf ff eb 95 48 c7 c7 4d 62 46 b2 e8 a7 58 cf ff
+> eb cd 90 <0f> 0b 90 e9 30 ff ff ff 66 66 2e 0f 1f 84 00 00 00 00 00
+> 90 90 90
+> [=C2=A0 231.720492] RSP: 0018:ffffaaa9813bbd28 EFLAGS: 00000202
+> [=C2=A0 231.720563] RAX: ffff995582666701 RBX: 00000000000000ed RCX:
+> 00000000000001b5
+> [=C2=A0 231.720592] RDX: 00000000000000ed RSI: ffff9955818e8ad8 RDI:
+> ffff995588c80048
+> [=C2=A0 231.720617] RBP: ffff9955818e8ad8 R08: 0000000000000002 R09:
+> ffffaaa9813bbcda
+> [=C2=A0 231.720641] R10: ffff995585cfdb90 R11: 0000000000000002 R12:
+> 0000000000000000
+> [=C2=A0 231.720672] R13: 00000000000001b5 R14: 00000000000000c8 R15:
+> ffff995587f40800
+> [=C2=A0 231.720778] FS:=C2=A0 00007f81e3bd8740(0000) GS:ffff99564ac46000(=
+0000)
+> knlGS:0000000000000000
+> [=C2=A0 231.720813] CS:=C2=A0 0010 DS: 0000 ES: 0000 CR0: 000000008005003=
+3
+> [=C2=A0 231.720838] CR2: 00005634430a6108 CR3: 00000000147d5000 CR4:
+> 00000000000006f0
+> [=C2=A0 231.720960] Call Trace:
+> [=C2=A0 231.721831]=C2=A0 <TASK>
+> [=C2=A0 231.722111]=C2=A0 hfsplus_file_truncate+0x2b6/0x3e0
+> [=C2=A0 231.722222]=C2=A0 hfsplus_delete_inode+0x54/0x70
+> [=C2=A0 231.722325]=C2=A0 hfsplus_unlink+0x17f/0x1c0
+> [=C2=A0 231.722384]=C2=A0 ? security_inode_permission+0x23/0x40
+> [=C2=A0 231.722415]=C2=A0 vfs_unlink+0x110/0x2b0
+> [=C2=A0 231.722442]=C2=A0 do_unlinkat+0x251/0x2c0
+> [=C2=A0 231.722471]=C2=A0 __x64_sys_unlink+0x1c/0x30
+> [=C2=A0 231.722491]=C2=A0 do_syscall_64+0x9e/0x190
+> [=C2=A0 231.722551]=C2=A0 entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> [=C2=A0 231.722726] RIP: 0033:0x7f81e3cf740b
+> [=C2=A0 231.723023] Code: 30 ff ff ff e9 74 fd ff ff e8 a1 ba 01 00 90 f3
+> 0f 1e fa b8 5f 00 00 00 0f 05 c3 0f 1f 40 00 f3 0f 1e fa b8 57 00 00
+> 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 8b 15 d9 69 0e
+> 00 f7 d8
+> [=C2=A0 231.723047] RSP: 002b:00007ffe97ed66b8 EFLAGS: 00000246 ORIG_RAX:
+> 0000000000000057
+> [=C2=A0 231.723089] RAX: ffffffffffffffda RBX: 0000000000000035 RCX:
+> 00007f81e3cf740b
+> [=C2=A0 231.723104] RDX: 0000000000000000 RSI: 00007ffe97ed6690 RDI:
+> 00005634430875c0
+> [=C2=A0 231.723116] RBP: 00007ffe97ed6830 R08: 000000000000ffff R09:
+> 0000000000000000
+> [=C2=A0 231.723128] R10: 0000000000000000 R11: 0000000000000246 R12:
+> 00007ffe97ed66d0
+> [=C2=A0 231.723141] R13: 8f5c28f5c28f5c29 R14: 00007ffe97ed68a0 R15:
+> 000056341fe3c7c0
+> [=C2=A0 231.723219]=C2=A0 </TASK>
+> [=C2=A0 231.723427] ---[ end trace 0000000000000000 ]---
+> [=C2=A0 233.296305] ------------[ cut here ]------------
+>=20
+> [w/ bnode &this patch]
+>=20
+> Test pass without any error.
+>=20
+> root@ubuntu:/home/ubuntu/xfstests-dev# ./check generic/013
+> FSTYP=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- hfsplus
+> PLATFORM=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -- Linux/x86_64 ubuntu 6.15.0-rc4-=
+00055-g71bfd66b8583-
+> dirty #423 SMP PREEMPT_DYNAMIC Sun May 25 22:54:51 CST 2025
+> MKFS_OPTIONS=C2=A0 -- /dev/nvme1n1
+> MOUNT_OPTIONS -- /dev/nvme1n1 /mnt/scratch
+>=20
+> generic/013 35s ... [=C2=A0 106.018643] hfsplus: xattr exists yet
+> [=C2=A0 110.155138] hfsplus: cannot replace xattr
+> [=C2=A0 112.061738] hfsplus: cannot replace xattr
+> [=C2=A0 113.215120] hfsplus: cannot replace xattr
+> [=C2=A0 118.308974] hfsplus: xattr exists yet
+> [=C2=A0 133.279630] hfsplus: cannot replace xattr
+> [=C2=A0 134.581764] hfsplus: cannot replace xattr
+> [=C2=A0 135.557120] hfsplus: xattr exists yet
+> =C2=A046s
+> Ran: generic/013
+> Passed all 1 tests
+>=20
+> > I don't think that I follow the point. The two mutexes are namely
+> > the basis for potential deadlocks. Currently, I am not sure that we
+> > are fixing the issue. Probably, we are trying to hide the symptoms
+> > of the real issue without the clear understanding what is going
+> > wrong. I would like to hear the explanation how the issue is
+> > happening and why the warning removal can help here.
+>=20
+> I don't know if the above description is clear enough. Actually, this
+> warning is not helpful at all.=20
+> The comment above this warning also describes one of the easy
+> triggering situations, which can easily trigger and cause
+> xfstest&syzbot to report errors.
+>=20
+
+I see your point. We need accurately explain here that several threads
+could try to lock the shared extents tree. And warning can be triggered
+in one thread when another thread has locked the tree. This is the
+wrong behavior of the code and we need to remove the warning.
+
+Could you please rework the patch comment by means of adding precise
+explanation of this? =20
+
+> > I am not sure that it's the good idea to remove any warning
+> > because, probably, we could not understand the real reason of the
+> > issue and we simply trying to hind the symptoms of something more
+> > serious.
+> >=20
+> > Current explanation doesn't sound reasonably well to me. I am not
+> > convinced yet that it is proper fix and we see the reason of the
+> > issue.
+> > I would like to hear more clear justification that we have to
+> > remove this check.
+>=20
+> If there is indeed an exception or you can point out the problem,
+> then we should fix it. Otherwise, in my opinion, this warning has no
+> purpose and should be removed.
+
+We have a lot of problems in the code and good warnings make sense. The
+intentions of this warning was to prevent wrong using of locks. But it
+was missed that multiple threads can try to lock the shared extents
+tree. So, yes, it makes sense to remove this particular warning but,
+potentially, we still could have issues in the code. However, we need
+to explain why this warning works in wrong way in really precise
+manner. :)
+
+Thanks,
+Slava.
+
 
