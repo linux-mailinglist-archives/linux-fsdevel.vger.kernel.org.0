@@ -1,107 +1,143 @@
-Return-Path: <linux-fsdevel+bounces-49927-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49928-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 106E5AC5A75
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 21:11:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F0FAC5AB1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 21:29:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B43491BC2262
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 19:11:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D134A276A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 19:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECF328032E;
-	Tue, 27 May 2025 19:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E8E28853C;
+	Tue, 27 May 2025 19:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSlTq6hk"
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="iaV7rq0c"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58556280CCF
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 19:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9422882B4;
+	Tue, 27 May 2025 19:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748373034; cv=none; b=g/iKjkppmMBuyqTozDDGyVVpGcQX7vEzaFkinkRvDdytmLRl1SMr2i6YtvbsE2chZjELgz/xpe+Rpcxjq76TesbkNrAZQQXW+a0AIErViV8OAcs1nys9Lu3DA762NO6IEAXVQbKFD1A7nKwpxtjS6ugWgHH5mFBxRpH4UZzaUWU=
+	t=1748374140; cv=none; b=GhPgg50UvgwRFfi5FM7Eh2ERmep5LR2DlO2RKumkx7wQHA8bVCerpToOZ3dvFeXDfbRGCF+ea+EOVguK+5sBOidDlYNBRXN6zw7u3i+mnfdcGL/y3Avwg/yrt7JJaTIgNs95lDVkC8uz1AdNt5vqRyqJga81XFWNQ1rlxNsKNpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748373034; c=relaxed/simple;
-	bh=dr7kbHvYdMhdGR1t3cShyX9fisGAvtjAjYTP501S0Fo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kBCoSjIq2RxdSiEZtcuAzjdj0bUA52oa5ME7ZN4ScrQzuK15kpN+ABl1UDtgLSb5iT8na4uJ2qUbBVrK8UdYNIZSNvZKdJV/QkDkVl1TGWaF8nwVDRCKrLy3HmVIjHtAJM4mbM+vIfnM+E7680vBFE0j3kryrnxu9I7gTyPjjB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSlTq6hk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13D39C4CEE9;
-	Tue, 27 May 2025 19:10:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748373033;
-	bh=dr7kbHvYdMhdGR1t3cShyX9fisGAvtjAjYTP501S0Fo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lSlTq6hkTSnqVFLB6SNTB/ibV/1Z3GrBt/F7baWwW4HJ6xEMyfbJ61QfwM0V9b3Dw
-	 Nk+dEaahQqkuis/o5VIf87JXrY2VDTphqz/lr9454byotA8X1B9FOlikOuWvb0xnd6
-	 2Mbfu1FP1xpQRn3pudVBS5WlUP0fXQES5d2u+qeIhshuIrgXJMBfgt3leasPapPgiJ
-	 VGeBHxWuYhDLhe5Pqvxdibfumy0pjLBUBsLWdKhInVeqTGjfFzIRBsR+S8xETtLV5I
-	 JMNAjD5afgGEN1s3Ja1JQWri5NBHqwOl8NbWLZRFX0DIJflYN5DKozrJmNOVMjuztl
-	 2G+N7elVjTVOw==
-From: Christian Brauner <brauner@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	Jens Axboe <axboe@kernel.dk>
-Cc: Christian Brauner <brauner@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	djwong@kernel.org,
-	torvalds@linux-foundation.org,
-	trondmy@hammerspace.com
-Subject: Re: [PATCHSET 0/5] dropbehind fixes and cleanups
-Date: Tue, 27 May 2025 21:10:19 +0200
-Message-ID: <20250527-feuilleton-neonlicht-df0becf90a84@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250527133255.452431-1-axboe@kernel.dk>
-References: <20250527133255.452431-1-axboe@kernel.dk>
+	s=arc-20240116; t=1748374140; c=relaxed/simple;
+	bh=MpHykqxWDAyFf40IcVv0Is/3+Mh+a8zNYGmx1jJOtpA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IGkh+oGgeg0iu5PAKtTR0PT0rRHLrRb630Fmkje0s2WKlowW9Wu/gXTwbmAgpTMqHTxcCKdMRVrZOMaxbmhETyV0CP7xcToi0P8UgclLzlN5iEd8Nbs4AwpQiyts3hNU8YFg76JeOXWd8GHy+x0TNuiJ+raMfVGySjCsLxpGPC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=iaV7rq0c; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4b6N3N3QXYz9vGt;
+	Tue, 27 May 2025 21:28:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1748374128;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mPtjj75LRfTYzMr7PmwGMbGTNi6uiMC9nL4Pt05dBys=;
+	b=iaV7rq0c9sPviNFq8k/l6+ZI7uEV8a+jxbHrGmGr3AAFY6ozHA49ZP8mqDQ0Wz6PruzSU7
+	EW/9I2wxBhoaskTqLXrx8ObKhDqKUZcokjtPvJCbe+ZvkJJWhxb7g+/3APHCERvUIQdr0P
+	jKpCD97ca7GHbFefbKnGzQBntKwW6JKPZqR3HoGYf7oC7yZ/9y29QApLKaGj2drvOpgy4m
+	fHzOSSFx7vRM+2/nEjXJQLeFRijj61SmP/TSTvxQTaag/q8S+IJ7yolna3lq01psb2dSfX
+	AJ4VcyVsBylnUm0dMVl9YiYeKTyLK9oTLL/w90cNBgs6suD4xClLwkIRf9Jrmw==
+Date: Tue, 27 May 2025 21:28:35 +0200
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Pankaj Raghav <p.raghav@samsung.com>, 
+	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
+	"H . Peter Anvin" <hpa@zytor.com>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>, 
+	David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-block@vger.kernel.org, willy@infradead.org, x86@kernel.org, 
+	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
+	gost.dev@samsung.com, hch@lst.de
+Subject: Re: [RFC 2/3] mm: add STATIC_PMD_ZERO_PAGE config option
+Message-ID: <jewtporls43r5y3eybqzm4bcku5sf3wzw6ewfjbyykeb3mxp27@ydjcrck6ldkd>
+References: <20250527050452.817674-1-p.raghav@samsung.com>
+ <20250527050452.817674-3-p.raghav@samsung.com>
+ <626be90e-fa54-4ae9-8cad-d3b7eb3e59f7@intel.com>
+ <5dv5hsfvbdwyjlkxaeo2g43v6n4xe6ut7pjf6igrv7b25y2m5a@blllpcht5euu>
+ <1c1f0ad7-8668-406b-9e4c-59ee52f816b3@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1731; i=brauner@kernel.org; h=from:subject:message-id; bh=dr7kbHvYdMhdGR1t3cShyX9fisGAvtjAjYTP501S0Fo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWSY8SkomUqwpuyY//D8g2tl4Wa7xB5rrhQ6eOpn0A6ec 0yeHUscOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACaS9pzhf0zF2ztr/+2XmSA+ 8azrWzben7f3JAq9ZmD5qHnLVlfsZzbDP00uR7sEhbDSEuNCb97gM+o1PVNm3Dvw32fBk/hVYb/ CGAE=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1c1f0ad7-8668-406b-9e4c-59ee52f816b3@intel.com>
+X-Rspamd-Queue-Id: 4b6N3N3QXYz9vGt
 
-On Tue, 27 May 2025 07:28:51 -0600, Jens Axboe wrote:
-> As per the thread here:
+> > You are right that if this config is disabled, the callers with NULL mm
+> > struct are guaranteed to fail, but we are not generating extra code
+> > because there are still users who want dynamic allocation.
 > 
-> https://lore.kernel.org/linux-fsdevel/20250525083209.GS2023217@ZenIV/
+> I'm pretty sure you're making the compiler generate unnecessary code.
+> Think of this:
 > 
-> there was an issue with the dropbehind support, and hence it got
-> reverted (effectively) for the 6.15 kernel release. The problem stems
-> from the fact that the folio can get redirtied and/or scheduled for
-> writeback after the initial dropbehind test, and before we have it
-> locked again for invalidation.
+> 	if (mm_get_huge_zero_folio(mm)
+> 		foo();
+> 	else
+> 		bar();
 > 
-> [...]
+> With the static zero page, foo() is always called. But bar() is dead
+> code. The compiler doesn't know that, so it will generate both sides of
+> the if().
+> 
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Ahh, yeah you are right. I was thinking about the callee and not the
+caller.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> If you can get the CONFIG_... option checks into the header, the
+> compiler can figure it out and not even generate the call to bar().
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+Got it. I will keep this in mind before sending the next version.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+> > Do you think it is better to have the code with inside an #ifdef instead
+> > of using the IS_ENABLED primitive?
+> It has nothing to do with an #ifdef versus IS_ENABLED(). It has to do
+> with the compiler having visibility into how mm_get_huge_zero_folio()
+> works enough to optimize its callers.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
+I think something like this should give some visibility to the compiler:
 
-[1/5] mm/filemap: gate dropbehind invalidate on folio !dirty && !writeback
-      https://git.kernel.org/vfs/vfs/c/095f627add86
-[2/5] mm/filemap: use filemap_end_dropbehind() for read invalidation
-      https://git.kernel.org/vfs/vfs/c/25b065a744ff
-[3/5] Revert "Disable FOP_DONTCACHE for now due to bugs"
-      https://git.kernel.org/vfs/vfs/c/7b2b67dbd449
-[4/5] mm/filemap: unify read/write dropbehind naming
-      https://git.kernel.org/vfs/vfs/c/1da7a06d9ce4
-[5/5] mm/filemap: unify dropbehind flag testing and clearing
-      https://git.kernel.org/vfs/vfs/c/a1d98e4ffb97
+struct folio *huge_zero_folio __read_mostly;
+
+...
+#if CONFIG_STATIC_PMD_ZERO_PAGE
+
+struct folio* mm_get_huge_zero_folio(...)
+{
+  return READ_ONCE(huge_zero_folio);
+}
+
+#else
+
+struct folio* mm_get_huge_zero_folio(...)
+{
+  <old-code>
+}
+
+#endif
+
+But I am not sure here if the compiler can assume here the static
+huge_zero_folio variable will be non-NULL. It will be interesting to
+check that in the output.
+
+--
+Pankaj
 
