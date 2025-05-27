@@ -1,86 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-49906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49907-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E81F2AC4FCE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 15:33:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43EF9AC4FCF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 15:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ECB216E3EC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 13:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B51A16E7CC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 13:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06233274659;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA7029A9;
 	Tue, 27 May 2025 13:33:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="V7XCdpZh"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="24PigdeB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467D229A9
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 13:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A15242D79
+	for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 13:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748352782; cv=none; b=t5nimtssd4jsCzn6s9Gf3LZ8OdnbkpGHZk8Mm90BzVCcVSL2VaYrGxFrzCkElxcZM+J2NxBWAj3rZJOXos0ukPr+16NXHytDSt0IHzL7DTqwIIEaiDy+XXyohcNbYHVy0bPXDqjznGVNE4aIVSbQHpxMR0bxskyj7CqKmvHpHxQ=
+	t=1748352782; cv=none; b=tjAlDGBuK2JZhTwygNW3wi3qo0NjJrT89Fdy/3QjqVnlagzl95oC7WOovOpZ6lDyxnqNw6IdkRBpY+1QRkawZBvmVrEAfp04pqbN0BXS21YPcyOLuPxalFss5BZ/2LVqIwKGk0m0TriDwCRHMBHbJSSRPvP4Y8UarL92e+IBI5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1748352782; c=relaxed/simple;
-	bh=YLUcP0maf66EdADdsz4jA4+C73NFgQ5wvL5ln2WbgFI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NvWb1TPgc8o9H+kuFhNUrn7eY8n/CXbZmrgf1ahHuoxpQJUmVknx7YIBROn+1RYgaNX7CisShrVicYwys3CwURqiZQenTqgB7tTFz+T9lnU2yT/OyAqPunGoczz4F5xqKFOopBfSVBylBXjRBNCuf4b4Cst4VTLEpoRuX1if7X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=V7XCdpZh; arc=none smtp.client-ip=209.85.166.178
+	bh=Ta0o493G8dZQ9exOXUgb0qjqzgnesEWUiLmRzB7kuto=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hSqxBy5cS+EhIj6unsQ9Mp2k/GVQ4n9A3NVsoh/kCZiVxJoLQqhUFk0AvK+E7X4tJztSYbQaL2uzqMenTKs8pYTd5VkH12WeFZjh9eVsEpAmEX2pZ/jT1svyfKluMtqbdBIyFxbwKNWkUg/lfL+kFvnTrr+pDmnLdcizyDnAJo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=24PigdeB; arc=none smtp.client-ip=209.85.166.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3dc8265b9b5so25888335ab.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 06:32:59 -0700 (PDT)
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3dc729471e3so10374025ab.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 06:33:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748352778; x=1748957578; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WG87KMRkQrRq2q8c460OVfDoM21mdAjMgk+63C+VnHU=;
-        b=V7XCdpZh+t7asmi161tzvvy0xBk0+pVvlkq4U6khvySUWAFDq+f7w5cLZWGyGQfbmL
-         CdRlPutpBlb9Z+ffGJ/nWmLC4GCyyA//xHNmFtXZzPnND3q/Ao0PAoOv/LW48Cl4nprU
-         /VA86Jp57xC3epKPO43Sbpc+o3CeSO/cWjfHXG2FC4IbNn2eQ+MfO1MmqGMosPd6E5Iv
-         G+ZhauhbOP8wE5OdIZVkKlYeGyU9XrL6dfjherjTJOQmHkh/gxThdo43kc1zhNbTg75g
-         nhBJGntGt1zKXpK3TMObGp/pS2t1/PizzrGWZmHZ7G9PfwKEuFmfFp7MCT0sa1CLv8w0
-         G1Wg==
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748352780; x=1748957580; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ebJZEHhwjhHTIP/mcxILxjWWkcG3pg6+COKM6quTvE=;
+        b=24PigdeB78/rqeekF24/pKyUXiXfsjz/BXK7Rrax5/XRQy7SBj+Y1TmILoLtrqXYYW
+         Miru/4xjzGEBZVcAC91OJjj6VdegYkE00RyXJVj8a1wmIIRklobiunSL0wfCZ8uHi5l5
+         fGbyqy/IRnXc1JZSJ/InLt6rD2pkwLwHHV0f1e3TmKHngHdcIZVVCd3ovLgWiyPsKRyq
+         f+d/ehwl+RkAZyx1jf11X+3gN0/DFnIqKl5LGVuZCMj9HuUtFfP4c6arkV+db+2HKgA6
+         1DFSV0X8js6zxlbyriXPGzAUp4vjFtO50+4lgs431oBI8xNqRsvNC050rgo7pB2mAMU/
+         B4bA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748352778; x=1748957578;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=WG87KMRkQrRq2q8c460OVfDoM21mdAjMgk+63C+VnHU=;
-        b=D6Qzk7I6Rd0WCDWZwvvb4nYcXkQu316P8KYH/iYNUleqOCJaQ+bzvKwiqGFO+a2njX
-         6JOQYZWyEZkIa84ye0LlNNVB2uZPuHsj0CPcCZtcsoyr+8Rv4XVn16Bre/RLE8B37nAK
-         mq7LWhVBIAUHBM7Kiby31+IUq7cH+Rd0TiuCjGetTfl779BkG5bOkggBLuXPUkxc+dGs
-         1HUbyN/jDFiEqbjPmM30f/flmXzg3LQuxEjnfYwsVuXGzqYSKvZsPtXKjWq8HqrlJL80
-         9cN+uoQIhOxyLl7Tv/sPLNgF8WkoW2gyzEnDwbNuu78YFRhraeFklrRQZaSGARSmsaKP
-         ds/Q==
-X-Gm-Message-State: AOJu0YxXriRmGUtebXBhgJ4KMwcC7zDQVWRpABgCcll82p5xObbt/OWm
-	N/pKUO0s0+gOV+/TCFDDoylO1p0TBR8UBNCWQTzwlS2PelurTo2ZvbQYhXJ3LtW9QDzoVPrjsB0
-	wfasK
-X-Gm-Gg: ASbGncvCR0uuXQ2VJ5vZz2ZLWOdKzmF5CKXieBzqFiu0QfT1KXWWcIERh2+UhvnoqWD
-	G8knhYMClMojnRrpVUg9Ehigjzr2c0LH/9YvHIYuH5ThS7GOt+EhGlzO6Zd1GVQzRU+RH/zWUpR
-	UOuZbYiHKIxvcLFYJcjEzWUvQg/ks2Gmwn19rjIQpnZCymIZz8r5p2R3ieuFIaZbu3lukRzdA53
-	f62Jmk/MX4uUiJQllYV0hyrQBhzgoBT3wwto9bMElHsXV7tLdgPOiXURcnvSLQuN20pIddSQtei
-	I2p52tK3d19rYsQH5WyEdcQZttxIMRjTEg3ceIVDZfVVe6e1CGOmQL93B55bDZDMGQ==
-X-Google-Smtp-Source: AGHT+IEFPWdMCtvRjM/GocbW96jhJDI2wXrZmg0uizPuKNSIAFRagtKlnuDwuKcDC/EPbDI+EwAwgw==
-X-Received: by 2002:a05:6e02:1847:b0:3dc:8b29:309d with SMTP id e9e14a558f8ab-3dc9b67fe52mr113934095ab.1.1748352778507;
-        Tue, 27 May 2025 06:32:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748352780; x=1748957580;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/ebJZEHhwjhHTIP/mcxILxjWWkcG3pg6+COKM6quTvE=;
+        b=oSVnQRddDd8UwJe8peFvyOot2OymbShPdk/RuED/QnkSgd81N/s5vMYpuGor/Ala7J
+         98Dbp3yWuGYaRyMyQhGoFu0PxOml+xaoW4cYExbWEA+dufhcgGYlQMGN0bS8njQpQwLK
+         /bOaLM97ONgC1B52zgv6xpwhIa2NYrA1tpZ9OC3Ihu2550rFuyzStExUeLDnfDxhOexI
+         knaXzlwVHeeBDsFV9UEdY/J917PuwRcawjdoYlC6SfFKCnx2ZzZk6LyrYeHnrfBqVidk
+         knJHUsKHw9AfokWFbcHQiJ9TAzcpSygmSya5H9x09Ov4QFlXMsgpn6KmgcJEc1Rz9u8T
+         rCew==
+X-Gm-Message-State: AOJu0YyEJGA0DV81K0DvXSz6896cKHOVcyNN0TDsdu9igsZaXiVcgo18
+	KOrIx+tc99a9YDcBRdomDrWdspuu1SDASw6PmQScM212Cfb8kqsi3onOPDI3688hfZXw6nsmmAk
+	42sGF
+X-Gm-Gg: ASbGncuLbjJ4BcsJoYLYsrcx28fUxaZ+gBcGUlc1kkcWz0pe/XJuKtYwi5Jxat/gxfu
+	/DOE4mllVsfegz3PTii5LSRMeN7p9IxFx4/XLuvvgp3cs+HnmGHEc+0LetSW+XuhsAFr9XH6RPG
+	203AqkaqnOFMUZVfpxCtuOOpyvMIR7tmjJ9hr7J9aeRCxyl+V6Jr1avVGQW1euJdMyOa+dTl2kW
+	oSgwZ4roWcZeQLbdh5woTahsvHua3Efg33CvAqlVbk/BfoiXtM4G+lMZojS6CUHczOKqrz1vRTF
+	5gJUb2iCt6HcMkvKG/ZDOhIp54HxZFVEtsl7ZBuoLPCpArUHu8dcEa0=
+X-Google-Smtp-Source: AGHT+IFp/X/5UUpH8g2DOmyJ2V3xTfVbLCQ8ySA0o44nnZboGRt19eNfMW7odE8piPyYyqztlkpc6Q==
+X-Received: by 2002:a05:6e02:164a:b0:3dc:8e8b:42a8 with SMTP id e9e14a558f8ab-3dc9b70f7e8mr90997545ab.16.1748352779941;
+        Tue, 27 May 2025 06:32:59 -0700 (PDT)
 Received: from localhost.localdomain ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc8298d8a2sm37404315ab.18.2025.05.27.06.32.57
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3dc8298d8a2sm37404315ab.18.2025.05.27.06.32.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 May 2025 06:32:57 -0700 (PDT)
+        Tue, 27 May 2025 06:32:58 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
 To: linux-fsdevel@vger.kernel.org
 Cc: viro@zeniv.linux.org.uk,
 	djwong@kernel.org,
 	brauner@kernel.org,
 	torvalds@linux-foundation.org,
-	trondmy@hammerspace.com
-Subject: [PATCHSET 0/5] dropbehind fixes and cleanups
-Date: Tue, 27 May 2025 07:28:51 -0600
-Message-ID: <20250527133255.452431-1-axboe@kernel.dk>
+	trondmy@hammerspace.com,
+	Jens Axboe <axboe@kernel.dk>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/5] mm/filemap: gate dropbehind invalidate on folio !dirty && !writeback
+Date: Tue, 27 May 2025 07:28:52 -0600
+Message-ID: <20250527133255.452431-2-axboe@kernel.dk>
 X-Mailer: git-send-email 2.49.0
+In-Reply-To: <20250527133255.452431-1-axboe@kernel.dk>
+References: <20250527133255.452431-1-axboe@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -89,32 +95,53 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+It's possible for the folio to either get marked for writeback or
+redirtied. Add a helper, filemap_end_dropbehind(), which guards the
+folio_unmap_invalidate() call behind check for the folio being both
+non-dirty and not under writeback AFTER the folio lock has been
+acquired. Use this helper folio_end_dropbehind_write().
 
-As per the thread here:
+Cc: stable@vger.kernel.org
+Reported-by: Al Viro <viro@zeniv.linux.org.uk>
+Fixes: fb7d3bc41493 ("mm/filemap: drop streaming/uncached pages when writeback completes")
+Link: https://lore.kernel.org/linux-fsdevel/20250525083209.GS2023217@ZenIV/
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ mm/filemap.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-https://lore.kernel.org/linux-fsdevel/20250525083209.GS2023217@ZenIV/
-
-there was an issue with the dropbehind support, and hence it got
-reverted (effectively) for the 6.15 kernel release. The problem stems
-from the fact that the folio can get redirtied and/or scheduled for
-writeback after the initial dropbehind test, and before we have it
-locked again for invalidation.
-
-Patches 1+2 add a generic helper that both the read and write side can
-use, and which checks for !dirty && !writeback before going ahead with
-the invalidation. Patch 3 reverts the FOP_DONTCACHE disable, and patches
-4 and 5 do a bit of cleanup work to further unify how the read and write
-side handling works.
-
-This can reasonably be considered a 2 part series, as 1-3 fix the issue
-and could go to stable, while 4-5 just cleanup the code.
-
- include/linux/fs.h |  2 +-
- mm/filemap.c       | 39 ++++++++++++++++++++++++---------------
- 2 files changed, 25 insertions(+), 16 deletions(-)
-
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 7b90cbeb4a1a..008a55290f34 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1589,6 +1589,16 @@ int folio_wait_private_2_killable(struct folio *folio)
+ }
+ EXPORT_SYMBOL(folio_wait_private_2_killable);
+ 
++static void filemap_end_dropbehind(struct folio *folio)
++{
++	struct address_space *mapping = folio->mapping;
++
++	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
++
++	if (mapping && !folio_test_writeback(folio) && !folio_test_dirty(folio))
++		folio_unmap_invalidate(mapping, folio, 0);
++}
++
+ /*
+  * If folio was marked as dropbehind, then pages should be dropped when writeback
+  * completes. Do that now. If we fail, it's likely because of a big folio -
+@@ -1604,8 +1614,7 @@ static void folio_end_dropbehind_write(struct folio *folio)
+ 	 * invalidation in that case.
+ 	 */
+ 	if (in_task() && folio_trylock(folio)) {
+-		if (folio->mapping)
+-			folio_unmap_invalidate(folio->mapping, folio, 0);
++		filemap_end_dropbehind(folio);
+ 		folio_unlock(folio);
+ 	}
+ }
 -- 
-Jens Axboe
+2.49.0
 
 
