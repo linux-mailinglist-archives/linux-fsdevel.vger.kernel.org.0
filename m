@@ -1,182 +1,130 @@
-Return-Path: <linux-fsdevel+bounces-49920-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49921-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CAD0AC5245
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 17:43:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D07DAC529C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 18:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8616A8A0106
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 15:43:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17DE3171367
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 16:03:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46CDF27BF76;
-	Tue, 27 May 2025 15:43:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBA027CCC8;
+	Tue, 27 May 2025 16:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="xzhTJu1C"
+	dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b="MSSiP6/0"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A7525DAE1
-	for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 15:43:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A5A13D8A3;
+	Tue, 27 May 2025 16:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.157.23.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748360628; cv=none; b=Z+F9zeOJjUe+xYcC6STsUdV2aMspTb2JPu5KNNqGP3v19AxJ7P8pzIkElalM6/Hg35Ma3wGxJJO0T0Dd1b4ZwSks+boKTr0XxEq3gM3zIGad522rATlDJhJbsKLltYc8o/xVGB5CxgJbDWk+Vg6DhmDSwLPEZN/lakcOcGOvDK4=
+	t=1748361787; cv=none; b=fEMgwzvK5vziYFAmwmzIvlCcGOLhgAORQunGUHvK5j2+3ulAu6Uu6B6fbvS/giPP4ES86XVUNnEoF6Qn9SqVoYuPgjmfvUcaeZgnzOTKdP1RYk1Rx3d2QtHMqaustMHG9/DbBSaf2/NlPxjPSFQsOZrE0e4/5fQ5Eig+tEOh/pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748360628; c=relaxed/simple;
-	bh=fvBOC7wo2sNRkj71TeIg1Rg3qmmpT5om/ZfFNlWdBnc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=LK5BL0xyajlO0cImqVdOVpv3lMJW3FsuIwB1SCVisMlgWGY5BbsC7xEXowlFQI+//NXGUqbTk3ptKVwktIyk83JlmcTIoHoB1yconEd0RSCthR2DG9Ivv7o/8V8BvayK/LsZJdccecWht9TCHgmEDRa6UBDuZDFP0Bw3GJeZCN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=xzhTJu1C; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3d6d6d82633so9878325ab.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 May 2025 08:43:44 -0700 (PDT)
+	s=arc-20240116; t=1748361787; c=relaxed/simple;
+	bh=RAAFafTxFaWgifvm1k7r2nbdZcKd8n1FQZLnD8uIB+I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=G3hF6Uyeu/bTR1aCp4v0H1y/JJlYtb39nWhtsefVSEJyYGUm1X8gUF7g9Rc7Jr9wzHPxEEjkNrIFRVW5fNsH7EYelwpyA1L5hmk0x665uX/i65NIhJ3AHVH3NKyQlRugTKP10NWHgBnwUG/7gXEf3fMVTEEWqPSUVXTfH7X9SP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com; spf=pass smtp.mailfrom=paragon-software.com; dkim=pass (1024-bit key) header.d=paragon-software.com header.i=@paragon-software.com header.b=MSSiP6/0; arc=none smtp.client-ip=35.157.23.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=paragon-software.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paragon-software.com
+Received: from relayfre-01.paragon-software.com (unknown [176.12.100.13])
+	by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 6E96A439;
+	Tue, 27 May 2025 16:02:37 +0000 (UTC)
+Authentication-Results: relayaws-01.paragon-software.com;
+	dkim=pass (1024-bit key; unprotected) header.d=paragon-software.com header.i=@paragon-software.com header.b=MSSiP6/0;
+	dkim-atps=neutral
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+	by relayfre-01.paragon-software.com (Postfix) with ESMTPS id CD9F92113;
+	Tue, 27 May 2025 16:02:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1748360624; x=1748965424; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uqeQdOhkH14ppIXNPXbtKnFvRT5SLIn7XArQrv8eW9k=;
-        b=xzhTJu1CC4gAikHEXXsTsq35rtX2Al6R6cPYsqKbvPP5u2ZsL6bH5N1fVrJOcBNDhy
-         pCrSafgKHzr2aIflpjYNnjYGC/yB0k3pbrA1yqQVKPz/g305ZqOSWghhKNQLxmeIUv60
-         A64rhwoRDmCfI2oHAu1JIZkq/mbcqoN3aqrKpPUiDWkBE1yH3Y7mFACvkh8ecZGw9Lua
-         H7pAvpK90M8vxEUcovM6YmTqb92bxNWX/9vys6GekR2nxHxvZbty+DSR75vlMYxhWMdw
-         9RpC1VpaHEMB5lAM5/MzNg/tneGf9+dApEWPTC4QSwxW4djB66QJB3/2ljJlIoUzcDcW
-         qOag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748360624; x=1748965424;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=uqeQdOhkH14ppIXNPXbtKnFvRT5SLIn7XArQrv8eW9k=;
-        b=b7IuJQG9kBCrIBgB3XmaBFLrimO13yNF7ymDjhFcHtYTqy10vCrpJat8Gpk+71L77d
-         fnPjn8VIstm0WBtvrKbCnOoI5zYw0CYlzkNR4Nl0Xqf1B1jLwPYGDG4tqNjJGiuQQ8hz
-         1N16MpYcfidP8TI2vCB7NviyIrSCAclBmMtX1sJpl7NKKpF1BEODFAMPHBcdTlfeQy19
-         RzbPuYlmpm+P13dk+gdle7HwtoGjxRQQK41C3+gEoN6L3XfKKLdFfZtqrf3a8N7toTQ4
-         Z048TaPo2lfdnheWRDccaddTFWghuu9JRdF9aWNXUX/zjxrhfJCPJ8GqyOYF4V1tUPUW
-         03GQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjzX6gisNDC/UCKrBZb0W2lZvE5AibGtsFTw3Rh3XWGEmn7D9aNj1shS29oekR2TIxde6m5jFO8iixtGi1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDePvqDVhmfqvIt2VOBev2zcUTHCOpAjSbCxgA42EOk6DbcMq5
-	avACeS8dgBtW4CLQfe8Z3AWg4e4zzhOXs/372E4qQrpk0mrWs7DjUyhwCsRrVUO+ACY=
-X-Gm-Gg: ASbGncv/BqC6764F7g9K2yvQDDQWRU+VnsQvQfQh6AwOXET8Yz1UlL2LSt+coLbLTKP
-	M1m1eBeCLNSD0Rn3MvlCu+CXl/zgriCEhDRsR+m3mqwK1Ml7kxaCfP6Xu9i9594vmwqJrNefJFp
-	INg2I5Zw82c54muzx7tcVDhJN6WPzeUBoqN2UJS6eYpuj7THS88WBzNT7k7eSDG7pwvrZTSri0u
-	8mSQsmpT7hczaTglHTnAvNakjEeRVs33pZFvDcl04jm95SeTk8/5UOt6ZIerb9WTMmdl1lxiDG+
-	9LzLEXwzP3Lc8qoTiKmKDXtvfdy2MTnbM2QDH1vrIqLlbuQ=
-X-Google-Smtp-Source: AGHT+IHe2IrTll2ZTLGHqAOutq0YESdy8gZfreCZKFWEEtFmStrNp/az6Vx+7kBl0sAdcFnJmLsm3A==
-X-Received: by 2002:a05:6e02:3183:b0:3dc:787f:2bc4 with SMTP id e9e14a558f8ab-3dc9b70fff5mr159011985ab.18.1748360624054;
-        Tue, 27 May 2025 08:43:44 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fbcc4af62dsm5208667173.109.2025.05.27.08.43.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 May 2025 08:43:43 -0700 (PDT)
-Message-ID: <a61432ad-fa05-4547-ab82-8d2f74d84038@kernel.dk>
-Date: Tue, 27 May 2025 09:43:42 -0600
+	d=paragon-software.com; s=mail; t=1748361777;
+	bh=ou71YzW4j0nqWyyVs7p+K5QW8WwlJdR4S0UwE0D+L18=;
+	h=From:To:CC:Subject:Date;
+	b=MSSiP6/0j7e3fh+0P/5pTZWh3PPXKuxNRdjSTB04iUjTIx9x1rzTbccnwvmI7MzSj
+	 ZbbUIs0GzE98VPL+g2SC74nvA/6JsAss9uOfC+J3AqlUqZ0DRKCwOjrcneZi0+wti0
+	 IHxbq++RZ/QhRn9fCGc6i3r08TFtZYQH6leRbvig=
+Received: from localhost.localdomain (172.30.20.214) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Tue, 27 May 2025 19:02:56 +0300
+From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+To: <torvalds@linux-foundation.org>
+CC: <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] ntfs3: bugfixes for 6.16
+Date: Tue, 27 May 2025 18:02:46 +0200
+Message-ID: <20250527160246.6905-1-almaz.alexandrovich@paragon-software.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Christian Brauner <brauner@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>
-Cc: "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH] iomap: don't lose folio dropbehind state for overwrites
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
 
-DONTCACHE I/O must have the completion punted to a workqueue, just like
-what is done for unwritten extents, as the completion needs task context
-to perform the invalidation of the folio(s). However, if writeback is
-started off filemap_fdatawrite_range() off generic_sync() and it's an
-overwrite, then the DONTCACHE marking gets lost as iomap_add_to_ioend()
-don't look at the folio being added and no further state is passed down
-to help it know that this is a dropbehind/DONTCACHE write.
+Please pull this branch containing ntfs3 code for 6.16.
 
-Check if the folio being added is marked as dropbehind, and set
-IOMAP_IOEND_DONTCACHE if that is the case. Then XFS can factor this into
-the decision making of completion context in xfs_submit_ioend().
-Additionally include this ioend flag in the NOMERGE flags, to avoid
-mixing it with unrelated IO.
+In commit "remove ability to change compression on mounted volume" many removals are present. This is because it's not safe and not maintainable to change compression on the fly. Detailed description can be found in this letter [1].
 
-This fixes extra page cache being instantiated when the write performed
-is an overwrite, rather than newly instantiated blocks.
+[1] https://lore.kernel.org/ntfs3/Z7Qlh9856tVuzrYK@dread.disaster.area/  
 
-Fixes: b2cd5ae693a3 ("iomap: make buffered writes work with RWF_DONTCACHE")
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-
----
-
-Found this one while testing the unrelated issue of invalidation being a
-bit broken before 6.15 release. We need this to ensure that overwrites
-also prune correctly, just like unwritten extents currently do.
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 233abf598f65..3729391a18f3 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -1691,6 +1691,8 @@ static int iomap_add_to_ioend(struct iomap_writepage_ctx *wpc,
- 		ioend_flags |= IOMAP_IOEND_UNWRITTEN;
- 	if (wpc->iomap.flags & IOMAP_F_SHARED)
- 		ioend_flags |= IOMAP_IOEND_SHARED;
-+	if (folio_test_dropbehind(folio))
-+		ioend_flags |= IOMAP_IOEND_DONTCACHE;
- 	if (pos == wpc->iomap.offset && (wpc->iomap.flags & IOMAP_F_BOUNDARY))
- 		ioend_flags |= IOMAP_IOEND_BOUNDARY;
+Regards,
+Konstantin
  
-diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
-index 26a04a783489..1b7a006402ea 100644
---- a/fs/xfs/xfs_aops.c
-+++ b/fs/xfs/xfs_aops.c
-@@ -436,6 +436,9 @@ xfs_map_blocks(
- 	return 0;
- }
- 
-+#define IOEND_WQ_FLAGS	(IOMAP_IOEND_UNWRITTEN | IOMAP_IOEND_SHARED | \
-+			 IOMAP_IOEND_DONTCACHE)
-+
- static int
- xfs_submit_ioend(
- 	struct iomap_writepage_ctx *wpc,
-@@ -460,8 +463,7 @@ xfs_submit_ioend(
- 	memalloc_nofs_restore(nofs_flag);
- 
- 	/* send ioends that might require a transaction to the completion wq */
--	if (xfs_ioend_is_append(ioend) ||
--	    (ioend->io_flags & (IOMAP_IOEND_UNWRITTEN | IOMAP_IOEND_SHARED)))
-+	if (xfs_ioend_is_append(ioend) || ioend->io_flags & IOEND_WQ_FLAGS)
- 		ioend->io_bio.bi_end_io = xfs_end_bio;
- 
- 	if (status)
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 68416b135151..522644d62f30 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -377,13 +377,16 @@ sector_t iomap_bmap(struct address_space *mapping, sector_t bno,
- #define IOMAP_IOEND_BOUNDARY		(1U << 2)
- /* is direct I/O */
- #define IOMAP_IOEND_DIRECT		(1U << 3)
-+/* is DONTCACHE I/O */
-+#define IOMAP_IOEND_DONTCACHE		(1U << 4)
- 
- /*
-  * Flags that if set on either ioend prevent the merge of two ioends.
-  * (IOMAP_IOEND_BOUNDARY also prevents merges, but only one-way)
-  */
- #define IOMAP_IOEND_NOMERGE_FLAGS \
--	(IOMAP_IOEND_SHARED | IOMAP_IOEND_UNWRITTEN | IOMAP_IOEND_DIRECT)
-+	(IOMAP_IOEND_SHARED | IOMAP_IOEND_UNWRITTEN | IOMAP_IOEND_DIRECT | \
-+	 IOMAP_IOEND_DONTCACHE)
- 
- /*
-  * Structure for writeback I/O completions.
+----------------------------------------------------------------
 
--- 
-Jens Axboe
+The following changes since commit 0af2f6be1b4281385b618cb86ad946eded089ac8:
 
+  Linux 6.15-rc1 (2025-04-06 13:11:33 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/Paragon-Software-Group/linux-ntfs3.git tags/ntfs3_for_6.16
+
+for you to fetch changes up to eeb0819318cc0c30161821d429ca022dfbedc6ac:
+
+  fs/ntfs3: remove ability to change compression on mounted volume (2025-05-19 11:17:33 +0200)
+
+----------------------------------------------------------------
+Changes for 6.16-rc1
+
+Added:
+    missing direct_IO in ntfs_aops_cmpr;
+    handling of hdr_first_de() return value.
+
+Fixed:
+    handling of InitializeFileRecordSegment operation.
+
+Removed:
+    ability to change compression on mounted volume;
+    redundant NULL check.
+
+----------------------------------------------------------------
+Andrey Vatoropin (2):
+      fs/ntfs3: Drop redundant NULL check
+      fs/ntfs3: handle hdr_first_de() return value
+
+Konstantin Komarov (2):
+      fs/ntfs3: Fix handling of InitializeFileRecordSegment
+      fs/ntfs3: remove ability to change compression on mounted volume
+
+Lizhi Xu (1):
+      fs/ntfs3: Add missing direct_IO in ntfs_aops_cmpr
+
+ fs/ntfs3/attrib.c  | 72 --------------------------------------------
+ fs/ntfs3/file.c    | 87 ------------------------------------------------------
+ fs/ntfs3/frecord.c | 74 ----------------------------------------------
+ fs/ntfs3/fslog.c   | 32 ++++++++++----------
+ fs/ntfs3/index.c   |  8 +++++
+ fs/ntfs3/inode.c   |  5 ++++
+ fs/ntfs3/namei.c   |  2 --
+ fs/ntfs3/ntfs_fs.h |  5 ----
+ 8 files changed, 28 insertions(+), 257 deletions(-)
 
