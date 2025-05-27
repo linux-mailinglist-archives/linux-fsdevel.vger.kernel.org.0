@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-49882-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49883-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C28AC46F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 05:57:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95229AC46F6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 05:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12011890B36
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 03:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C98F3B2AD9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 May 2025 03:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC64A1CAA6C;
-	Tue, 27 May 2025 03:57:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 064DB1CDFAC;
+	Tue, 27 May 2025 03:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sn1pDoEW"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G9UYmB9V"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF55010A1E;
-	Tue, 27 May 2025 03:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8C71AF0BB;
+	Tue, 27 May 2025 03:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748318251; cv=fail; b=nEh1+zF9spP2BCZwyNSkIBY1G/hvwN1gx8+IfKdIs3AD2MJgnjSfFkijK9jDSR0KQv2Eyxj6A/p5bJYI6h2IvibJ+JTyiIx82KZHr+zerMRxVGyMmIe4tp9Ze5CyozSr2xyrmtVEq1kBvU0LrHi6BJSpICxDJsDTJhV50Cms4YE=
+	t=1748318284; cv=fail; b=l5UGAbWj02LTex3pAi4GReA6i/oxko9L/I93ctRevHm5eW5GRVic3lMS34WnvTf8YqfhyIGCspdD9ULVdISQMgNVScf58NlSWB2bKnmya9i1vfXEdARrDyHmHJxEO3X6sI3pbGK27ei9PGRVZy6ucm0p13FWCYb31pmTN+7gpzU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748318251; c=relaxed/simple;
-	bh=wdAaj+T+GHddu1tichy8e8/mESEDZanGU+ZSwOh0aX0=;
+	s=arc-20240116; t=1748318284; c=relaxed/simple;
+	bh=SNgPd4XmTvrP603pena9eN9uXZRrMbYYGve25gLqV2k=;
 	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BMe92K4c5HL7/ppGxkdgfkhpJZxeZHgogFKprLDPFzpOBzp+AGlOsTmCXYVVkJavg+fbpHYjK+X+r6y119OKgjFZJPcYxenJlKu++iFCeHYR4QbjBnd7rZ57bXmSx0IIP7CtxaXhMyxdZOBOd4/NMLIlPnbLLThD6aAanvvj4Lg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sn1pDoEW; arc=fail smtp.client-ip=192.198.163.17
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RJy0Ry2jOAH2b3IiPjR1A5zfQtP/FsjlOXSiQ5n/hShep6jmq4s2WjvWUrSrk1MVyobZy0rhkUKzfPeL9oCwwA0DpzI4aQ+SC2oWFEAfIxgZ8arwCTMyxa4EsZjWyvcjLpbBSuRRxU3yGyBITS2afmrlI/3Vpg+5E2MPdmkx+CA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G9UYmB9V; arc=fail smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748318249; x=1779854249;
+  t=1748318282; x=1779854282;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    in-reply-to:mime-version;
-  bh=wdAaj+T+GHddu1tichy8e8/mESEDZanGU+ZSwOh0aX0=;
-  b=Sn1pDoEWbB6TqJtXvtsDcZPF1vPvf3/Yva9wEQh0OGWu4n6PaMyXHA2O
-   FhvVfovKcn61tCyqZwkKZ3jW2V5rnsiiAb5KNzta0BVeG4TlhRV5R4P12
-   2jP6S50xT115s0Fu73boJ6hGrV1OWRog1vvg8PMh/n9e91u7e/cXtxLsX
-   qskOyN26o9R47RaCdvt6xK1M+URRaorleYrfWA5i2ySnmMWLX8hxlw3kw
-   hGkQFhuNNMh8b4I/gfWkPV9zDOxIcIYFvNma3rJWSwNaqmVPdZP8gGC/C
-   FB3j6ia36cx2EB5CveWX0zzlX921Cyvr0C7E23Ilts/Jx+5m/4JKljpQ7
+  bh=SNgPd4XmTvrP603pena9eN9uXZRrMbYYGve25gLqV2k=;
+  b=G9UYmB9V//0nSlWYVaRN0PbNpQ9eNNVeZvCHz2BxdFrJItX5EWDNzA0i
+   epwqaoUOcxsxD9ZQmd8ysgqaA1VWFXbG46vcmulilsyOSgOxiHCGU0UsY
+   x2yiHD0sT5C1Bev/8kzQ+oP/nLmVv+EU2KNjYEYk7VB9nGmBRvVstCISL
+   jrz31k8iY8AJDP/tVgQw5sfLBbpFpBWmgZhVcQpBEhxuJGqzdrjb585Yz
+   K53NdXc79Rm+VoowftHmGdY7OZxFWZcpzd2uLBZMGho1H32OBs5jVVxou
+   XZP/hluHFZ9YynY7gQpyN5Ly9yIgLRHvzzsDPcOSZAm9SwW9RTKrcxsX9
    Q==;
-X-CSE-ConnectionGUID: NpsFJQjHQMC5W2Enr01oGw==
-X-CSE-MsgGUID: fh/gXO9RS5im0jspQpF/Qg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="50216890"
+X-CSE-ConnectionGUID: fgGbwl2lSniX1sa86NBbgg==
+X-CSE-MsgGUID: xNLyqXEfSWWqKj2OpmKP3g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11445"; a="52912160"
 X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
-   d="scan'208";a="50216890"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2025 20:57:27 -0700
-X-CSE-ConnectionGUID: sPzu0k7KS2y0N4B0K/ewZg==
-X-CSE-MsgGUID: FdM18qZjSXWjyVKTv0wk2g==
+   d="scan'208";a="52912160"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2025 20:58:01 -0700
+X-CSE-ConnectionGUID: DGqMyltyTXq3QbtKPJ2fKg==
+X-CSE-MsgGUID: wf4r03dTRXKFW9ArxUbX0w==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.15,317,1739865600"; 
-   d="scan'208";a="142545714"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2025 20:57:28 -0700
+   d="scan'208";a="173558118"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 May 2025 20:58:01 -0700
 Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Mon, 26 May 2025 20:57:26 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ 15.2.1544.25; Mon, 26 May 2025 20:58:00 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
  ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Mon, 26 May 2025 20:57:26 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.59)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ 15.2.1544.25 via Frontend Transport; Mon, 26 May 2025 20:58:00 -0700
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (40.107.237.72)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Mon, 26 May 2025 20:57:26 -0700
+ 15.1.2507.55; Mon, 26 May 2025 20:58:00 -0700
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WUZ6EicUGzesS9ZFopf6Vf+6BssQwlbOuhwklKnV1GGefiv9krJtm2bo3WNcEgY4clKjactlQrK/1eVm11UWLilg6fs63/bpNaNEDThvegV9HOckC1NL7koaQawtmI3yj0zsTJ5FLbL5+0ZJdVdqKjigL3z74TAiRb6QFnz4ODJhLBmRySBHqV/OkCtmm9UMAcT7XsXnEf9v+MygiLizUcyijM4r4b4rle9ZubX3EiVVTqrxir6nvq11eRAZIrcfUhlraVsegbbqNseN+8hW+39ZZxrFNtioe0A9Xze4d8NAohl3mwkzqiZCjsWhx6h1QCEfJUbK1iVvuto57JtRvw==
+ b=t2E16LyMsh2AqUYQ5xnIF/mWXo3HdflorldZgt49HVNEUPx5J4UM+iS+w5poXP+6sevA1a5BcjwYp9Ls46yjxnsg36R/fT7xBsQWgCSGqn6Ibhhw916DSnQJuNiAYsRMnZGifl35BYXvbmWqtZw2DCeH4zwLN04/xCeRxelsylIZlVSjcUh2jbpcUEGe6pQZPhWXne62Tg5dk1KkgpjC4MpjgIZQYfentwCE7hE9hH/8xixNFQYxqOeETNoBpiet72eTsGLLB5TvzrAD0ey5xSNF73epZqGIUkgvGI/fjez5GVyZih7jbfr+nOcEaTscShek6w8Vtv5Rg7zY+4UKcw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/EpB9XwrZj68UTjBfpaf7/PyCNCMp9gFcO6dM1RWNeI=;
- b=EhkGrVvLCZPyF2gpNs23hm7tEZigx6RA/M7V7ryvmLxa4oqX2XQlMgPGvwAgA6p3RIk/pJ0GDWMVUezh9xvsY+5uQqj8uiHL9z9MLzWL/ZW5NyTmT5Xbibr0a+v9rCIvjz5bM9Brc4YhP/vVV5FspxAGC55Dh8xsKOKxgvF3LnXfaEdYDGmL7wb2w9r9eaIhK+Z2/ySko+KYau3F3B3iRYI9EUMyooQ5YFfzGCgt/I2/P23hoHY3ZNT2k7W2pUnOgdJxif5dDGfa7IqVNSeDsbjbPZAqklS8AifaZ4Em/Ym0CTjnbMtDcz1tG0h1tP6zK+jevalpB7AqN0XrCGU6XA==
+ bh=recnqj/tKj8My/FsOSy5DA+CzOPHKuyVet84YN10YQI=;
+ b=cGUxbIch9RtRj0nOaw0x2QshF9lktOB69UwZMw2MBa4v0liJa+ffZYKm8c+cL8+9cK5TWpfSUL285A2LE6P2v3EV3HYA3ikpvAhumdwZj0t0CGTBnUuePDf2CamZAJQ5kJIi/zqM2Q2zHSt3u40NtYrc6Eh1TG5VNzZM6AXfbarq4MHVTMpLC4N1sxCw6ZlGFjsXuOAZPppmYAUVjgR8pOpNjSB0tLbo54RO/Wm0vrlmnA+rim9v2/Etzb1c5J5WEnwrigfmVLaa5Cimg8l9SKzps0/QfhRfiBJBhh17y+2Tc1VsiBVxVgHaGloPHpiH0juIEHM9v4582OBnIzKNGw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
@@ -86,12 +86,12 @@ Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
  IA0PR11MB8355.namprd11.prod.outlook.com (2603:10b6:208:480::14) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.25; Tue, 27 May
- 2025 03:57:09 +0000
+ 2025 03:57:52 +0000
 Received: from DS7PR11MB5966.namprd11.prod.outlook.com
  ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
  ([fe80::e971:d8f4:66c4:12ca%2]) with mapi id 15.20.8769.021; Tue, 27 May 2025
- 03:57:09 +0000
-Date: Tue, 27 May 2025 11:54:32 +0800
+ 03:57:51 +0000
+Date: Tue, 27 May 2025 11:55:16 +0800
 From: Yan Zhao <yan.y.zhao@intel.com>
 To: Ackerley Tng <ackerleytng@google.com>
 CC: <kvm@vger.kernel.org>, <linux-mm@kvack.org>,
@@ -129,17 +129,17 @@ CC: <kvm@vger.kernel.org>, <linux-mm@kvack.org>,
 	<viro@zeniv.linux.org.uk>, <vkuznets@redhat.com>, <wei.w.wang@intel.com>,
 	<will@kernel.org>, <willy@infradead.org>, <xiaoyao.li@intel.com>,
 	<yilun.xu@intel.com>, <yuzenghui@huawei.com>, <zhiquan1.li@intel.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-Message-ID: <aDU3eL7qQYrXkE3T@yzhao56-desk.sh.intel.com>
+Subject: Re: [RFC PATCH v2 06/51] KVM: Query guest_memfd for private/shared
+ status
+Message-ID: <aDU3pN/0FVbowmNH@yzhao56-desk.sh.intel.com>
 Reply-To: Yan Zhao <yan.y.zhao@intel.com>
 References: <cover.1747264138.git.ackerleytng@google.com>
- <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
+ <237590b163506821120734a0c8aad95d9c7ef299.1747264138.git.ackerleytng@google.com>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
-X-ClientProxiedBy: SI1PR02CA0024.apcprd02.prod.outlook.com
- (2603:1096:4:1f4::12) To DS7PR11MB5966.namprd11.prod.outlook.com
+In-Reply-To: <237590b163506821120734a0c8aad95d9c7ef299.1747264138.git.ackerleytng@google.com>
+X-ClientProxiedBy: SI1PR02CA0035.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::8) To DS7PR11MB5966.namprd11.prod.outlook.com
  (2603:10b6:8:71::6)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -149,369 +149,176 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|IA0PR11MB8355:EE_
-X-MS-Office365-Filtering-Correlation-Id: da58fc7a-e153-4dcf-e16a-08dd9cd28d6c
+X-MS-Office365-Filtering-Correlation-Id: a7a5be00-9e98-4b0b-eb9f-08dd9cd2a6f9
 X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?MVODEFq27qvYTVEqCqF36YlTJq4+1/xE97LmqCc8MYRXmXQhyabgs0FOuV2F?=
- =?us-ascii?Q?BYg6bdhOebfAeoIxqjYDWp8jGuKa41qjLc6x2o+oYF0VNYAsxSkNbmkGMEcm?=
- =?us-ascii?Q?T2l34GQk+PGjcQU5NRfTUBGaGcPPkl+zRPOtqGhMHfWd9qqwRZOzRKu0KULx?=
- =?us-ascii?Q?9cKP3NBbxvSnFxb70q5Q+X88zaEcctAekLEHtC/wBsPK8X7t75SIMNqL0ZG7?=
- =?us-ascii?Q?WnSGqnWsdDfU6PoHXnNl7+jc37vqKo1Jc8+jBczTr1mv7NKE9kuo73bJcrAj?=
- =?us-ascii?Q?AscRY6YiTpgQtnI+b5qXL3DQwEIE19FzVG9J0pJSE61a8fRxvPs+SME386wI?=
- =?us-ascii?Q?0yekR9cdfB6zpAqtj+cCJgoBwx0t1RtfkvJ4NBi7sdh6gLADwAEihJJvwq6U?=
- =?us-ascii?Q?eYHoVxEs0DA5FnAU7YZzo7IE7Z+1qxdUT6sxks7jG9F3hH9DYbZBa5xb5MmW?=
- =?us-ascii?Q?t5LM4xIIVDCym8iJfcs8pdrb4nVpnd1LZZLO9+vWOXnfihuYXvPT1Xcn2Jge?=
- =?us-ascii?Q?09KB++eRcnpA70XXXCqRhLZw77EYm8iT3Z+Pfq51vfCC4G2sfRHFbhI7XRT3?=
- =?us-ascii?Q?i6XKSS7E9zupqeLxnFv3xWGUqAZpPy+xB96A94ymgGQ+Nr8G9vBew6yY+SB9?=
- =?us-ascii?Q?c7WsJ0tkcIZroKMSeiIx4PS7F1nPYnyIQuw0JqbZ8bIyA64XI9RZKhylXW6g?=
- =?us-ascii?Q?FOOI7+lf5SK7z/c//F2PH9EFet6E4GWmJOnBJ9GrXomi5NnI+SqkfGtMDq45?=
- =?us-ascii?Q?0clx9Avvogxgw/p2k9oIGLfCH+kiKu8U9hOWF79iAcEYz0FT0Zka1m7SSQvM?=
- =?us-ascii?Q?MYHEfvMAHryU0Zd+CwYEjKpbB1YEjJFkaXU75tR+C+9mlQIjyR95NkNxxpfs?=
- =?us-ascii?Q?2dOLWydOpEGSsgj6y7Y4gx37jfZ0AYxHGbSIUNWSujaZorX00HV8bR+7npQE?=
- =?us-ascii?Q?Bv5rtXFEPp1HN9iCd7Cj/tjc+pVb7CNPhZ4sPGA6QyI32b/1PGZfisVZFTHW?=
- =?us-ascii?Q?fVf6ZCa4IEhuZ90gnmpha/uRYz5APeqTyry12k602Lpa/x4ZT/2y9qxlCEzz?=
- =?us-ascii?Q?CHQpqU7M6hIOAVB7RWmGMqXiJBLwplD/+iPUk24sqA/UwYC0ieyV1crH7M27?=
- =?us-ascii?Q?31+YDrGw3xyLb94+CHiwxbK6CpqiX24ZCKA+sEsQ5IRf9io8WcIyrAroEwN9?=
- =?us-ascii?Q?QTJU2n83XP8DEiirYD9CZFrT/ZjObe9ARy/OXxS/IMPW6YiXKBKXlaFQegqr?=
- =?us-ascii?Q?RNvqZt8ox1VXtp2B4GaJXAllTzdkLNBK8Q9rPrSsAhvRh7Dzpw8jrvjDfdrP?=
- =?us-ascii?Q?O81R6UfXAsXvRy9usnxNJqQJ1JzSg0u8oqRur9lIX1tmfKs/aKp8U/ZuXNu4?=
- =?us-ascii?Q?7k5C6AJ3UPnxGTyza6IhEOkR+L3N/Sa4+0S+e9nktJPasSZ258cs0gO+vasn?=
- =?us-ascii?Q?IBiwx+oKICA=3D?=
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?3GtH3QT91QYJqw2KKlapjWNyE+tspyx/jnyK5SxXHc/zmxcvxnYggBW7ko0V?=
+ =?us-ascii?Q?FIqJW35hcuo9pXrPBmef26PrKFwMpp/Toqyv15Ly6ncRin7b/h/4siCqAZJw?=
+ =?us-ascii?Q?wYjduh099UyoLCaRqTfrpXRr3N9y1dAgtURFIi2JakQie9SM0253V1WEq2sj?=
+ =?us-ascii?Q?Pcxh0SxNgNRcRDy/6gMYkbzOrEck2j12JDMbuHPCJhDtwi8OGv8S69jkUAQ/?=
+ =?us-ascii?Q?tLnAzn6obtJma/tdSW5CLgRsv9mto5f945MFoL45Qj+8Z7Jfe72RpMly1wNf?=
+ =?us-ascii?Q?CiPuqMqAmgSM9ja4Gz8YApq8bCFOieb/yQLgvL/iSmXE2wUzXQ7yjgD5Cf3g?=
+ =?us-ascii?Q?MmGup64NsDnPIvSDTrXNjjb2TREqGLw0F21upSKgp/YNZTAtEf0Yd3VC5sRY?=
+ =?us-ascii?Q?qInm9SRinxKXDnsjnkWdZ2+bHWJRsqcYN9kwIb3ta+lk7TUN/YQxPdWcEUVZ?=
+ =?us-ascii?Q?jvOYa+yB30Z3Yj9iCvLkbITBHEU/66ucKcGycllMKVqJJXAOuXRzh1bi9s2I?=
+ =?us-ascii?Q?fFLZH2XdiIUu4/fSpjDiyQyKOkmgmUUM/JiHy1IKpG6n2QU7idlUwbdD/0/4?=
+ =?us-ascii?Q?YKMIcm/UnBsBkS+hJDmW7wU/d9sjmRlCccSD1MbRG2xHoA43ZwdxRkb9AE+C?=
+ =?us-ascii?Q?eJkVDAbpXCHZ/mOkw8szgyTXAx4oTwB69DvY1/oscCGnD3UClnhZMEgToRzt?=
+ =?us-ascii?Q?gLD5WurL1xIWjeA6yxk7WBtdFC3bWNpNOX8rHluLOIgbi4eakIf1l1yWccos?=
+ =?us-ascii?Q?QFrC3drqWEY98ZSNb+oU/VUROS+2ePrkmRq/aIauLoEUpvVf3qztQ6vxpfR8?=
+ =?us-ascii?Q?XB3zaYZr9SLfxg/ya/Dk+EBGXaYPTtN2yUTUdncEdr4Y8u9MTiw2Pb2jqYoM?=
+ =?us-ascii?Q?PXgOrkFaTUtUHYi02vwq0Y0tDq5vWdbBuiUF2sMk1OAhprPi30JalpwDb1hT?=
+ =?us-ascii?Q?Q4y9FSt2DsblQ5YXBOMkonltYXYTdcF0dpDGMaOW6mkfDBKPpwoz1TSnrN9j?=
+ =?us-ascii?Q?AukrBQzU5FGSMo0aBu9gin9Kni/MM8K5KUjOdL+vhL/Td6S2ojvDskFaZeAv?=
+ =?us-ascii?Q?mcOJ2aa9Uqw/pyaVmHePHWFziWDPl8BXJIdrcYuOPLrJDxQ7UzF54PPrVc8I?=
+ =?us-ascii?Q?T6RRDfqlO6mwIQIexVrkHONgihUJE4xXgJe2ZSlHO0xJY0MGTSOA9V7y3q1k?=
+ =?us-ascii?Q?GilFuSzmzYuc+wW8hD367e1h1ghaJWNRndYx00o3H/FD27/cfGWftU+QN6vb?=
+ =?us-ascii?Q?+QlrcKYN9NSXyQrskt588B2x60N1uASWJLETZXKFti4MzDJCvNA6LKDLDaMg?=
+ =?us-ascii?Q?bC//s7t4Bo+mYdymjmbQd37iwqcDD6mLCnbFV+5xTbyEuqpTpTXa6CChqPS4?=
+ =?us-ascii?Q?dKI4CkwO+K5Z7S54lWbEW9Tw1jI8JBkHAbkOPZ1gh4VrZ1PciQbDKNOwqJr/?=
+ =?us-ascii?Q?KO5OB0Xod5g=3D?=
 X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?TmLbdE4UeIlF3RPHudm0mayuO3H+Wyw9PZIYE+Hd7EJL8NyUZAtZJ2YcbsI5?=
- =?us-ascii?Q?7DMxpKOZXEgOztqE9IyICbkjotbQNX+QYoQPQj+bGE2/xbUuDaI9kko/oNY2?=
- =?us-ascii?Q?x2vtYXkysZvK7FdwZ6IItx+Wwv9kBosCT/YaLSkPHqNzbKOz8ndag3kvYmkV?=
- =?us-ascii?Q?LqPoePFJYi40fNmY0ngafCM1zaHoelZSMaP6iI7it6KapNiYmxqAu99iJcy5?=
- =?us-ascii?Q?BThC7MbXmYBuuVkN+PX8ftboxAVA6w4nLIZ7Z+H1RkhZKucRV6zT8hzEt9SB?=
- =?us-ascii?Q?Rv/oLC8R2IOVdG/HzNRpJAUed5Pocz2hO/hB9tD1zeo3JHRT/rS5JyBG0XgM?=
- =?us-ascii?Q?DDgcUh+WUq7f+hY0gbuORPWBuwwe1WSaCeicCvqyYzIsUlL3E79QfAtVluau?=
- =?us-ascii?Q?eMeulF1dL83n9wo5QWu7AVoV6iEyooQfq2kMsYsWYW3Hv6cTnPEIcjVwjDE0?=
- =?us-ascii?Q?nswyPkC32/L0Tr8FqztURJAqZdL94dt/nDHOb6b5zx+0EW1FIe+jrBwDan+y?=
- =?us-ascii?Q?0woUUdq0iepN2u4fSjWnPXrnHZudKOXS6RCJlxAR/7IayX0Tr8mtTYHCn3l3?=
- =?us-ascii?Q?NKgkYQBnUySKkTeqMlK5oArOZZFin2N2HOLXA5YH4U2sbqAVBDOvuSulosRV?=
- =?us-ascii?Q?9BQfRuSWPnZY+Ex5MY7G+C+aWabjLoqcfZLFOfmB54uA89QPYs5bxfDIbpcR?=
- =?us-ascii?Q?XXS8fz6UzjoMXraJLO/ArtJSOmb0oJsRT7Be+DViHNmZLQ/hELypGgzgiB1c?=
- =?us-ascii?Q?R6TIayqHJknn3alOBk3Vp7JL5EWHu/qHtT7lUTkFOmHD90RIONFXcakl1vY5?=
- =?us-ascii?Q?d8rvykJZZ6t/FonlTMpErekZiRrEHwGX3q4cr+ms88/gTNS9cVHxnBs6WIRH?=
- =?us-ascii?Q?Fsm1+AOkJoaAcf1pEKwyRXuPNlnUUpBfIN77Ie531PI1xQ7m4O3cSLP6IAey?=
- =?us-ascii?Q?mjFqlHTiWVenyF1/g2Z4vTpeveCW8LZPk8iD2FtVB7BJYTzFr0ArtOOVtXmE?=
- =?us-ascii?Q?RewwJXGIxwTk3M7L5f5Q9FzPKgxX6MwNKko/1FY3eu9TKq7NZg2msFrTpZwc?=
- =?us-ascii?Q?RdBY+V05Br4KpwLo33r7WOVFMb/13PtHBQpYRzxpHd0jgLEbvZ1FPvHJBR7U?=
- =?us-ascii?Q?ze82rsZwuKSZqR/EtVhvrrhSHoBTLqj70ezCnoXYHU2tCVEyHeUAln6bZITT?=
- =?us-ascii?Q?0ro9/09rd9q/XHwdBAdRVYUqDZh2r5VBjJmopj8WWoH2OLH5/US/iEGnz6Eo?=
- =?us-ascii?Q?v6K+2M1++MdnvVm0oPg4BqSePT4WqKPdRFh4sE9P0Y4Fe1Tbz5KnR4YftZ/9?=
- =?us-ascii?Q?zTMoTl1Itc+z6jZhlXlNue8ATJs4WI32nPd+9mjG2mrZW7OAFpS23ABMRW/j?=
- =?us-ascii?Q?naQg+UkMl3Tk4Zsb7A1kuqHtIR32CITsS6uYJCvqwy6mb+jekFEUhMlvsyJe?=
- =?us-ascii?Q?nVE9gDz12hv9y1OIJ8m/3zY5Mioo8ffRcxxXVX4DjQcFfGSn9hh0osqCRAou?=
- =?us-ascii?Q?ODdS/bUT2OoyXUR9VJLOg6I1gBQnR3ko1TN8GIc9MJvoccjYumeeSkXbMY1M?=
- =?us-ascii?Q?p8R/rcJk+kvL2wqectBjiwmO0tr3bdr3HfSUAFQG?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: da58fc7a-e153-4dcf-e16a-08dd9cd28d6c
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?GboFjqp4d/v+eu6GeWnT/iD7L2ardeQ1YLSp0+Q4X/KUTl0UIO8tewe5CUM/?=
+ =?us-ascii?Q?hV1O2ScvkXdQO1KqSCDi//Zbgl7GTfSzH7lXwlL2E4UQ7jaVbTbkiYKJylwc?=
+ =?us-ascii?Q?QEVSz4NjOnsTl/s2KRZLzRBmL+rcFX7d0ClGK6BwKGG9tfqBbXku2HwWFAzO?=
+ =?us-ascii?Q?l8edtYTxHhUfp2NUBzouIjQTkSYSQBHOj3fQ6LVbI1yq67p0rS1lMHhLTv34?=
+ =?us-ascii?Q?d0+sw8tCUSh0fmJc/jt6cliEePtBzjusGG0DzyxoYugh6ZWkkNuPCOV1vDv6?=
+ =?us-ascii?Q?AmHvCFEV25Jc1SWBH8Lm5Dw5dvaHTHUhSovxl7HvV5H75gjf2PghU2TsZ7YD?=
+ =?us-ascii?Q?UXFjM6d2EQl5KNEm44fO9GREjkZljE2OIoU5c8CGiSMeQ63g5oCkWzIS0pkz?=
+ =?us-ascii?Q?SZcvwaVxwFaYo7NyTGm4+psL+Q4UlzF8M7HG+xF3DqM2MJt3d9dW9dpe2lIs?=
+ =?us-ascii?Q?7so4mnIRhwgYY1LyYfUiWIvMJuboWefnijSGBUxnqhUdImb/LqmpPY/3YaB4?=
+ =?us-ascii?Q?qGciAGDrvu11zRzpCof1GKNQngznNYG0pAtXKxqtIGxh8jaCWHPfX9eR7+Yb?=
+ =?us-ascii?Q?nSURwQoe1gnPqUvX5d6ah9zxNGPf5rPRLs7aZAl0xzysV6qQb/j4jg11aPJR?=
+ =?us-ascii?Q?oLjPAFGBuNdTZtzKF/XjtS19BG0/vsXwxSn3xGyXCbTEecc7Goi+hUjoFpYb?=
+ =?us-ascii?Q?XaNDxowKUf5HUETvdH+Yo17LANeHRvvgDPD1BYNWFvMEvh9ry5sLzrEH1QRo?=
+ =?us-ascii?Q?gmzOL4OO1It6HF275Bl0qNsaYWbetEXv9x/bvj9sa5BcDpqNJfRrocxBAvQd?=
+ =?us-ascii?Q?kYkqnfJtLkLCi7FmjfWAy0FvDrMC8fxQyLADR1xwKeD6js/sr5UB8uo5LRSP?=
+ =?us-ascii?Q?nlRlSXMtUNUOmj9PEu0G0Dum/oP9NySmzmHZMtOn9URLVwUBSHO71kZzPRG2?=
+ =?us-ascii?Q?a5cBO8yKrI6zbtpxH72AbnUj1CAqgkWYiG6PzrEuDNzbPsGWT2MLCJgJRShe?=
+ =?us-ascii?Q?yDeegfmqupqfGggrpCf9lhi8KaqmX1lQdDGY3rFF3rCGKH3a/5BbsXvfzCAz?=
+ =?us-ascii?Q?PhzqGxQ2cgIRGnUzVflmKMUWBf5yGOkGHQ7/l2lEPc70By43vGzS3SPCuGI6?=
+ =?us-ascii?Q?d7QNKY7Vb9s1qlcYrldBSY6Po5pBsOEBg2bg1xKmqymG8zebC2paWVEHMRCk?=
+ =?us-ascii?Q?D2wKkhTdFzxdyrtly5Fp+gPo1Mn8tmfLtq71dSWgNkHXztzWUHOMYVnzDk2N?=
+ =?us-ascii?Q?tqEXaKMrn8aj3tognjt4XDBdg06dRy7vo4GlcwCDNyRcl1Aqy/BHKoW0fCYa?=
+ =?us-ascii?Q?wkzEW80YxlCPY+mbFa/C8oqfRwpKMy/Uxc2cT1nue/jjldORAsuP5dIyVaji?=
+ =?us-ascii?Q?m2DTIItkNoaWVk7SAGgP4YJHGKCcZ5UWQVxnr6nYEJ5ipnSNcMU+bfG/BD5L?=
+ =?us-ascii?Q?cUb1I9glwZbrEe9l7DwSFg5JyFYxoJZuokLKydK+g4Xknn3l/WP6WHXsJ7mb?=
+ =?us-ascii?Q?AjiznZQHazxpvbokOuECwiV8VLkjr4QRuxBLFmKm4dKAroh4udXbb1qNnpPF?=
+ =?us-ascii?Q?QQUO+fZHHV6Oj+ab0CPXuqDSDz8FcAJOM+fMY1v9?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7a5be00-9e98-4b0b-eb9f-08dd9cd2a6f9
 X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 03:57:08.9159
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 May 2025 03:57:51.7210
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2ahWo7Xlw6EM00UthVkvG021dY10njt3+Gs4ro5LVsPnJlYV4koc3hKHmRoxwL2+4Off/JsLrIliicG3w/NgLA==
+X-MS-Exchange-CrossTenant-UserPrincipalName: hFA/tTinLpkOjjXaPaNaD5KIviXNiAk409fJ3nEh+V+ogcmOsaTWVR2pNzk9AKKjygXYpGaRTB4/Qgow7zJDow==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8355
 X-OriginatorOrg: intel.com
 
-On Wed, May 14, 2025 at 04:41:41PM -0700, Ackerley Tng wrote:
-> Track guest_memfd memory's shareability status within the inode as
-> opposed to the file, since it is property of the guest_memfd's memory
-> contents.
+On Wed, May 14, 2025 at 04:41:45PM -0700, Ackerley Tng wrote:
+> Query guest_memfd for private/shared status if those guest_memfds
+> track private/shared status.
 > 
-> Shareability is a property of the memory and is indexed using the
-> page's index in the inode. Because shareability is the memory's
-> property, it is stored within guest_memfd instead of within KVM, like
-> in kvm->mem_attr_array.
+> With this patch, Coco VMs can use guest_memfd for both shared and
+> private memory. If Coco VMs choose to use guest_memfd for both
+> shared and private memory, by creating guest_memfd with the
+> GUEST_MEMFD_FLAG_SUPPORT_SHARED flag, guest_memfd will be used to
+> provide the private/shared status of the memory, instead of
+> kvm->mem_attr_array.
 > 
-> KVM_MEMORY_ATTRIBUTE_PRIVATE in kvm->mem_attr_array must still be
-> retained to allow VMs to only use guest_memfd for private memory and
-> some other memory for shared memory.
-> 
-> Not all use cases require guest_memfd() to be shared with the host
-> when first created. Add a new flag, GUEST_MEMFD_FLAG_INIT_PRIVATE,
-> which when set on KVM_CREATE_GUEST_MEMFD, initializes the memory as
-> private to the guest, and therefore not mappable by the
-> host. Otherwise, memory is shared until explicitly converted to
-> private.
-> 
+> Change-Id: I8f23d7995c12242aa4e09ccf5ec19360e9c9ed83
 > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Co-developed-by: Vishal Annapurve <vannapurve@google.com>
-> Signed-off-by: Vishal Annapurve <vannapurve@google.com>
-> Co-developed-by: Fuad Tabba <tabba@google.com>
-> Signed-off-by: Fuad Tabba <tabba@google.com>
-> Change-Id: If03609cbab3ad1564685c85bdba6dcbb6b240c0f
 > ---
->  Documentation/virt/kvm/api.rst |   5 ++
->  include/uapi/linux/kvm.h       |   2 +
->  virt/kvm/guest_memfd.c         | 124 ++++++++++++++++++++++++++++++++-
->  3 files changed, 129 insertions(+), 2 deletions(-)
+>  include/linux/kvm_host.h | 19 ++++++++++++-------
+>  virt/kvm/guest_memfd.c   | 22 ++++++++++++++++++++++
+>  2 files changed, 34 insertions(+), 7 deletions(-)
 > 
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 86f74ce7f12a..f609337ae1c2 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -6408,6 +6408,11 @@ belonging to the slot via its userspace_addr.
->  The use of GUEST_MEMFD_FLAG_SUPPORT_SHARED will not be allowed for CoCo VMs.
->  This is validated when the guest_memfd instance is bound to the VM.
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index b317392453a5..91279e05e010 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -2508,12 +2508,22 @@ static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+>  }
 >  
-> +If the capability KVM_CAP_GMEM_CONVERSIONS is supported, then the 'flags' field
-> +supports GUEST_MEMFD_FLAG_INIT_PRIVATE.  Setting GUEST_MEMFD_FLAG_INIT_PRIVATE
-> +will initialize the memory for the guest_memfd as guest-only and not faultable
-> +by the host.
+>  #ifdef CONFIG_KVM_GMEM_SHARED_MEM
 > +
->  See KVM_SET_USER_MEMORY_REGION2 for additional details.
->  
->  4.143 KVM_PRE_FAULT_MEMORY
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 4cc824a3a7c9..d7df312479aa 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -1567,7 +1567,9 @@ struct kvm_memory_attributes {
->  #define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
->  
->  #define KVM_CREATE_GUEST_MEMFD	_IOWR(KVMIO,  0xd4, struct kvm_create_guest_memfd)
+>  bool kvm_gmem_memslot_supports_shared(const struct kvm_memory_slot *slot);
+> +bool kvm_gmem_is_private(struct kvm_memory_slot *slot, gfn_t gfn);
 > +
->  #define GUEST_MEMFD_FLAG_SUPPORT_SHARED	(1UL << 0)
-> +#define GUEST_MEMFD_FLAG_INIT_PRIVATE	(1UL << 1)
+>  #else
+> +
+>  static inline bool kvm_gmem_memslot_supports_shared(const struct kvm_memory_slot *slot)
+>  {
+>  	return false;
+>  }
+> +
+> +static inline bool kvm_gmem_is_private(struct kvm_memory_slot *slot, gfn_t gfn)
+> +{
+> +	return false;
+> +}
+> +
+>  #endif /* CONFIG_KVM_GMEM_SHARED_MEM */
 >  
->  struct kvm_create_guest_memfd {
->  	__u64 size;
+>  #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+> @@ -2544,13 +2554,8 @@ static inline bool kvm_mem_is_private(struct kvm *kvm, gfn_t gfn)
+>  		return false;
+>  
+>  	slot = gfn_to_memslot(kvm, gfn);
+> -	if (kvm_slot_has_gmem(slot) && kvm_gmem_memslot_supports_shared(slot)) {
+> -		/*
+> -		 * For now, memslots only support in-place shared memory if the
+> -		 * host is allowed to mmap memory (i.e., non-Coco VMs).
+> -		 */
+> -		return false;
+> -	}
+> +	if (kvm_slot_has_gmem(slot) && kvm_gmem_memslot_supports_shared(slot))
+> +		return kvm_gmem_is_private(slot, gfn);
+When userspace gets an exit reason KVM_EXIT_MEMORY_FAULT, looks it needs to
+update both KVM memory attribute and gmem shareability, via two separate ioctls?
+
+
+>  	return kvm_get_memory_attributes(kvm, gfn) & KVM_MEMORY_ATTRIBUTE_PRIVATE;
+
+>  }
 > diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index 239d0f13dcc1..590932499eba 100644
+> index 6f6c4d298f8f..853e989bdcb2 100644
 > --- a/virt/kvm/guest_memfd.c
 > +++ b/virt/kvm/guest_memfd.c
-> @@ -4,6 +4,7 @@
->  #include <linux/falloc.h>
->  #include <linux/fs.h>
->  #include <linux/kvm_host.h>
-> +#include <linux/maple_tree.h>
->  #include <linux/pseudo_fs.h>
->  #include <linux/pagemap.h>
->  
-> @@ -17,6 +18,24 @@ struct kvm_gmem {
->  	struct list_head entry;
->  };
->  
-> +struct kvm_gmem_inode_private {
-> +#ifdef CONFIG_KVM_GMEM_SHARED_MEM
-> +	struct maple_tree shareability;
-> +#endif
-> +};
-> +
-> +enum shareability {
-> +	SHAREABILITY_GUEST = 1,	/* Only the guest can map (fault) folios in this range. */
-> +	SHAREABILITY_ALL = 2,	/* Both guest and host can fault folios in this range. */
-> +};
-> +
-> +static struct folio *kvm_gmem_get_folio(struct inode *inode, pgoff_t index);
-> +
-> +static struct kvm_gmem_inode_private *kvm_gmem_private(struct inode *inode)
-> +{
-> +	return inode->i_mapping->i_private_data;
-> +}
-> +
->  /**
->   * folio_file_pfn - like folio_file_page, but return a pfn.
->   * @folio: The folio which contains this index.
-> @@ -29,6 +48,58 @@ static inline kvm_pfn_t folio_file_pfn(struct folio *folio, pgoff_t index)
->  	return folio_pfn(folio) + (index & (folio_nr_pages(folio) - 1));
+> @@ -865,6 +865,28 @@ bool kvm_gmem_memslot_supports_shared(const struct kvm_memory_slot *slot)
 >  }
+>  EXPORT_SYMBOL_GPL(kvm_gmem_memslot_supports_shared);
 >  
-> +#ifdef CONFIG_KVM_GMEM_SHARED_MEM
-> +
-> +static int kvm_gmem_shareability_setup(struct kvm_gmem_inode_private *private,
-> +				      loff_t size, u64 flags)
+> +bool kvm_gmem_is_private(struct kvm_memory_slot *slot, gfn_t gfn)
 > +{
-> +	enum shareability m;
-> +	pgoff_t last;
+> +	struct inode *inode;
+> +	struct file *file;
+> +	pgoff_t index;
+> +	bool ret;
 > +
-> +	last = (size >> PAGE_SHIFT) - 1;
-> +	m = flags & GUEST_MEMFD_FLAG_INIT_PRIVATE ? SHAREABILITY_GUEST :
-> +						    SHAREABILITY_ALL;
-> +	return mtree_store_range(&private->shareability, 0, last, xa_mk_value(m),
-> +				 GFP_KERNEL);
+> +	file = kvm_gmem_get_file(slot);
+> +	if (!file)
+> +		return false;
+> +
+> +	index = kvm_gmem_get_index(slot, gfn);
+> +	inode = file_inode(file);
+> +
+> +	filemap_invalidate_lock_shared(inode->i_mapping);
+> +	ret = kvm_gmem_shareability_get(inode, index) == SHAREABILITY_GUEST;
+> +	filemap_invalidate_unlock_shared(inode->i_mapping);
+> +
+> +	fput(file);
+> +	return ret;
 > +}
 > +
-> +static enum shareability kvm_gmem_shareability_get(struct inode *inode,
-> +						 pgoff_t index)
-> +{
-> +	struct maple_tree *mt;
-> +	void *entry;
-> +
-> +	mt = &kvm_gmem_private(inode)->shareability;
-> +	entry = mtree_load(mt, index);
-> +	WARN(!entry,
-> +	     "Shareability should always be defined for all indices in inode.");
-I noticed that in [1], the kvm_gmem_mmap() does not check the range.
-So, the WARN() here can be hit when userspace mmap() an area larger than the
-inode size and accesses the out of band HVA.
-
-Maybe limit the mmap() range?
-
-@@ -1609,6 +1620,10 @@ static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
-        if (!kvm_gmem_supports_shared(file_inode(file)))
-                return -ENODEV;
-
-+       if (vma->vm_end - vma->vm_start + (vma->vm_pgoff << PAGE_SHIFT) > i_size_read(file_inode(file)))
-+               return -EINVAL;
-+
-        if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) !=
-            (VM_SHARED | VM_MAYSHARE)) {
-                return -EINVAL;
-
-[1] https://lore.kernel.org/all/20250513163438.3942405-8-tabba@google.com/
-
-> +	return xa_to_value(entry);
-> +}
-> +
-> +static struct folio *kvm_gmem_get_shared_folio(struct inode *inode, pgoff_t index)
-> +{
-> +	if (kvm_gmem_shareability_get(inode, index) != SHAREABILITY_ALL)
-> +		return ERR_PTR(-EACCES);
-> +
-> +	return kvm_gmem_get_folio(inode, index);
-> +}
-> +
-> +#else
-> +
-> +static int kvm_gmem_shareability_setup(struct maple_tree *mt, loff_t size, u64 flags)
-> +{
-> +	return 0;
-> +}
-> +
-> +static inline struct folio *kvm_gmem_get_shared_folio(struct inode *inode, pgoff_t index)
-> +{
-> +	WARN_ONCE("Unexpected call to get shared folio.")
-> +	return NULL;
-> +}
-> +
-> +#endif /* CONFIG_KVM_GMEM_SHARED_MEM */
-> +
->  static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
->  				    pgoff_t index, struct folio *folio)
->  {
-> @@ -333,7 +404,7 @@ static vm_fault_t kvm_gmem_fault_shared(struct vm_fault *vmf)
->  
->  	filemap_invalidate_lock_shared(inode->i_mapping);
->  
-> -	folio = kvm_gmem_get_folio(inode, vmf->pgoff);
-> +	folio = kvm_gmem_get_shared_folio(inode, vmf->pgoff);
->  	if (IS_ERR(folio)) {
->  		int err = PTR_ERR(folio);
->  
-> @@ -420,8 +491,33 @@ static struct file_operations kvm_gmem_fops = {
->  	.fallocate	= kvm_gmem_fallocate,
->  };
->  
-> +static void kvm_gmem_free_inode(struct inode *inode)
-> +{
-> +	struct kvm_gmem_inode_private *private = kvm_gmem_private(inode);
-> +
-> +	kfree(private);
-> +
-> +	free_inode_nonrcu(inode);
-> +}
-> +
-> +static void kvm_gmem_destroy_inode(struct inode *inode)
-> +{
-> +	struct kvm_gmem_inode_private *private = kvm_gmem_private(inode);
-> +
-> +#ifdef CONFIG_KVM_GMEM_SHARED_MEM
-> +	/*
-> +	 * mtree_destroy() can't be used within rcu callback, hence can't be
-> +	 * done in ->free_inode().
-> +	 */
-> +	if (private)
-> +		mtree_destroy(&private->shareability);
-> +#endif
-> +}
-> +
->  static const struct super_operations kvm_gmem_super_operations = {
->  	.statfs		= simple_statfs,
-> +	.destroy_inode	= kvm_gmem_destroy_inode,
-> +	.free_inode	= kvm_gmem_free_inode,
->  };
->  
->  static int kvm_gmem_init_fs_context(struct fs_context *fc)
-> @@ -549,12 +645,26 @@ static const struct inode_operations kvm_gmem_iops = {
->  static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
->  						      loff_t size, u64 flags)
->  {
-> +	struct kvm_gmem_inode_private *private;
->  	struct inode *inode;
-> +	int err;
->  
->  	inode = alloc_anon_secure_inode(kvm_gmem_mnt->mnt_sb, name);
->  	if (IS_ERR(inode))
->  		return inode;
->  
-> +	err = -ENOMEM;
-> +	private = kzalloc(sizeof(*private), GFP_KERNEL);
-> +	if (!private)
-> +		goto out;
-> +
-> +	mt_init(&private->shareability);
-Wrap the mt_init() inside "#ifdef CONFIG_KVM_GMEM_SHARED_MEM" ?
-
-> +	inode->i_mapping->i_private_data = private;
-> +
-> +	err = kvm_gmem_shareability_setup(private, size, flags);
-> +	if (err)
-> +		goto out;
-> +
->  	inode->i_private = (void *)(unsigned long)flags;
->  	inode->i_op = &kvm_gmem_iops;
->  	inode->i_mapping->a_ops = &kvm_gmem_aops;
-> @@ -566,6 +676,11 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
->  	WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
->  
->  	return inode;
-> +
-> +out:
-> +	iput(inode);
-> +
-> +	return ERR_PTR(err);
->  }
->  
->  static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
-> @@ -654,6 +769,9 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
->  	if (kvm_arch_vm_supports_gmem_shared_mem(kvm))
->  		valid_flags |= GUEST_MEMFD_FLAG_SUPPORT_SHARED;
->  
-> +	if (flags & GUEST_MEMFD_FLAG_SUPPORT_SHARED)
-> +		valid_flags |= GUEST_MEMFD_FLAG_INIT_PRIVATE;
-> +
->  	if (flags & ~valid_flags)
->  		return -EINVAL;
->  
-> @@ -842,6 +960,8 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
->  	if (!file)
->  		return -EFAULT;
->  
-> +	filemap_invalidate_lock_shared(file_inode(file)->i_mapping);
-> +
->  	folio = __kvm_gmem_get_pfn(file, slot, index, pfn, &is_prepared, max_order);
->  	if (IS_ERR(folio)) {
->  		r = PTR_ERR(folio);
-> @@ -857,8 +977,8 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
->  		*page = folio_file_page(folio, index);
->  	else
->  		folio_put(folio);
-> -
->  out:
-> +	filemap_invalidate_unlock_shared(file_inode(file)->i_mapping);
->  	fput(file);
->  	return r;
->  }
+>  #else
+>  #define kvm_gmem_mmap NULL
+>  #endif /* CONFIG_KVM_GMEM_SHARED_MEM */
 > -- 
 > 2.49.0.1045.g170613ef41-goog
-> 
 > 
 
