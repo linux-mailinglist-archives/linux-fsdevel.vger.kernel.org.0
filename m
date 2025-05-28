@@ -1,88 +1,96 @@
-Return-Path: <linux-fsdevel+bounces-49974-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49975-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0F57AC6862
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 13:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20EFAAC6914
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 14:19:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D77903AEF73
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 11:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3AAC1BC73BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 12:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A53228368A;
-	Wed, 28 May 2025 11:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7382857CA;
+	Wed, 28 May 2025 12:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="V1xdKxUu"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D47036A33B;
-	Wed, 28 May 2025 11:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-43167.protonmail.ch (mail-43167.protonmail.ch [185.70.43.167])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB012857C6;
+	Wed, 28 May 2025 12:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.167
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748431920; cv=none; b=iYoEnsP1eQ3bB9VfPm1tyZsisnCuOoZiMG3RDihgJUMjdDjTrYYjiYE0j/OGKXxLFzCnLGI/K5u/ezkf3VytvBCaT4GNUos2a2KymqMIqhvTaQqfT3obbT+tLORD7Feh9yRL5ni39N5nkr25oW43V5KFmXfdQQADC9cIOrslaJQ=
+	t=1748434703; cv=none; b=Q4caT1fhwmLz7E38f4/6rkYfyilD8QoochvWUeNts462REEyQmZSZ0xZLEi70wZjwi8sRmkNY8oe4FdI3hQPlC4AZgdzy1hlFsGT6yRQe6sgKDsGUAVgPsEw99N9RpS09aDksV0NlUFwGJyzcu3H8qxe5gqhKnfSwrTViLBg5Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748431920; c=relaxed/simple;
-	bh=M28L9NabqiiiSMq+L/jI0962Wz2oEsat/29mEBFseHU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YuV7YiVqwa3J8q1/EBvRZa0gC8pCD0Qm1zWEzG9dmeh3LZOdPizlntYm+YMXg+xq+V9qNEJYSVZPFGrPDATmzaSAgGHeoSkyFpaaOwn7RKP/QtrKBPlbjpucE55S32f7tSg6qVGbrXbxYAOwCECds6g7HQA7yYdtDQW6NSf2Ftk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9F7621A25;
-	Wed, 28 May 2025 04:31:40 -0700 (PDT)
-Received: from MacBook-Pro.blr.arm.com (unknown [10.164.18.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8666B3F5A1;
-	Wed, 28 May 2025 04:31:54 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	willy@infradead.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	david@redhat.com,
-	anshuman.khandual@arm.com,
-	ryan.roberts@arm.com,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH] xarray: Add a BUG_ON() to ensure caller is not sibling
-Date: Wed, 28 May 2025 17:01:24 +0530
-Message-Id: <20250528113124.87084-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1748434703; c=relaxed/simple;
+	bh=uOnOxiGiRtFBPj6Dx2RM0uaCIdaV8RxF4Qr13HjkeOA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dbHWnEd0wKezJF7MOcpjUQCheGtq45+dGNRqcQxExg38fEvKYOHk3gWMpnvthbGoCUUEBgYEvUaPPtvkkUj9WHO5qH5RRHsNK6Dag+TW2ZKD+VlMPt/tuGaXfRD7HWieIYUsw+WVLW46NyOhoMyzO4flzgQDxBlVpy1qXxZmVpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=V1xdKxUu; arc=none smtp.client-ip=185.70.43.167
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1748434693; x=1748693893;
+	bh=uOnOxiGiRtFBPj6Dx2RM0uaCIdaV8RxF4Qr13HjkeOA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=V1xdKxUuzEhgw5ANtiZK8119K6kShVP7grRRaeaa1Y01FxhsEnCpNw7EvxdSW8jjz
+	 y81Jf78Q8Zp6pgkoBNess1Lq4qnvTM8rmh8cqQcU12KlC3BLzuCu2lygXp6TbHN2go
+	 ZYSFstqRksZPC8f93Vk5H1XnmY7tWLxLCAukSQ7gbbGx58LsjzrPquIdxxnYrISN5a
+	 iRgjxb0nbMAc4ZOhLSEZpSqDJ07DrPrBMdFlYr81bqwMIPYqoRVIzxUkwLFn0BKXz+
+	 DObzDLuzLzszveNBvwopkSSN/7klbhTMZ/KYCEA8q28Ic4IEE1Nrda2kxGZumjNft0
+	 CbfhDKzewhvtw==
+Date: Wed, 28 May 2025 12:18:11 +0000
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Pekka Ristola <pekkarr@protonmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Jan Kara <jack@suse.cz>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-fsdevel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] rust: file: mark `LocalFile` as `repr(transparent)`
+Message-ID: <a-h53UVYFV5_SzPX9oC8md8XoQLoabGTyT9utM2PavNqng5YUVxDRErEj5Eu19CZLmxQKc7rp1RiCmtaULw7mygUQ9cSUb5966WCLIQKwCQ=@protonmail.com>
+In-Reply-To: <CANiq72kgu+qKBFOUfcsF9fJkq78p+uBA6KAnpY1Uz5McT0y=SA@mail.gmail.com>
+References: <20250527204636.12573-1-pekkarr@protonmail.com> <CANiq72kgu+qKBFOUfcsF9fJkq78p+uBA6KAnpY1Uz5McT0y=SA@mail.gmail.com>
+Feedback-ID: 29854222:user:proton
+X-Pm-Message-ID: 34c9947c169696257b760e7dfd80b551cd248187
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Suppose xas is pointing somewhere near the end of the multi-entry batch.
-Then it may happen that the computed slot already falls beyond the batch,
-thus breaking the loop due to !xa_is_sibling(), and computing the wrong
-order. Thus ensure that the caller is aware of this by triggering a BUG
-when the entry is a sibling entry.
+On Wednesday, May 28th, 2025 at 13.52, Miguel Ojeda <miguel.ojeda.sandonis@=
+gmail.com> wrote:
 
-This patch is motivated by code inspection and not a real bug report.
+> On Tue, May 27, 2025 at 10:49=E2=80=AFPM Pekka Ristola <pekkarr@protonmai=
+l.com> wrote:
+>=20
+> > Unsafe code in `LocalFile`'s methods assumes that the type has the same
+> > layout as the inner `bindings::file`. This is not guaranteed by the def=
+ault
+> > struct representation in Rust, but requires specifying the `transparent=
+`
+> > representation.
+> >=20
+> > The `File` struct (which also wraps `bindings::file`) is already marked=
+ as
+> > `repr(transparent)`, so this change makes their layouts equivalent.
+> >=20
+> > Fixes: 851849824bb5 ("rust: file: add Rust abstraction for `struct file=
+`")
+> > Closes: https://github.com/Rust-for-Linux/linux/issues/1165
+> > Signed-off-by: Pekka Ristola pekkarr@protonmail.com
+>=20
+>=20
+> Thanks Pekka, both patches look good to me. I will close the issue
+> when Christian applies them (or if I should take them, that is good
+> too).
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
-The patch applies on 6.15 kernel.
+Thanks, I'm glad it went smoothly since this was my first patch to the
+mailing list.
 
- lib/xarray.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 9644b18af18d..0f699766c24f 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -1917,6 +1917,8 @@ int xas_get_order(struct xa_state *xas)
- 	if (!xas->xa_node)
- 		return 0;
- 
-+	XA_NODE_BUG_ON(xas->xa_node, xa_is_sibling(xa_entry(xas->xa,
-+		       xas->xa_node, xas->xa_offset)));
- 	for (;;) {
- 		unsigned int slot = xas->xa_offset + (1 << order);
- 
--- 
-2.30.2
-
+Pekka
 
