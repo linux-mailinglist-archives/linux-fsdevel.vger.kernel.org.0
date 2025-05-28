@@ -1,113 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-49954-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49952-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C271CAC6418
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 10:20:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76CCAC63B5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 10:09:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29C4F3ACE0A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 08:19:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9984A17052B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 08:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65459266B65;
-	Wed, 28 May 2025 08:13:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCB7246777;
+	Wed, 28 May 2025 08:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZK+yr0t"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDBAE246791;
-	Wed, 28 May 2025 08:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879D919005E;
+	Wed, 28 May 2025 08:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748419987; cv=none; b=U+oVqU4q9Tjp14vahInxNTGOvdtxE4SwkMxMWNP3fHDzy+m6SzvwlBEbqElU+T2sSmn9HAFtYN6F+SJR1rhe5W5bWpVSpQeEFHDHqlG5dGtRN1tVjQhn70w+X3ELOvlDBpjODRfceNBRV+e1v5xwTI1qu9tZFlJdPaEmBjvv2xA=
+	t=1748419743; cv=none; b=a/BumcTd78Z2UmwCFqDt7ZT4CQUpL2Guemz6g3PoNaAv3lX98VDahYwAvb5GRtHE5P/wZW5YwMgaCr5OZxlBcpOdNQvFvqJMtBiMZHunXKCzhJ3N902POABrT0fZ8GkAV/FgvO3qnMhuyk2Whf4vGk5JI7GvrAmBs77IcN/smDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748419987; c=relaxed/simple;
-	bh=Ojd7iMoppI0Vmr8htaS6S4vgrqwMyDhGX+qRFtVJFaI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Hk4/59gwX9iuuYktixdiXqRhrb7ZyHYYDmlMfE3G6+OE81yranK3VTh+lrDOT8I3xwHQZJi9onD1lqUKreLfayDzziVrtEf9J4F4x2rCZf0IO98ElynWqhQJvv88LR0lAcXInrH5ZNtI2AQWBd4te89mQIbpqormvaiL8YE5bLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4b6j0g40dHz4f3lVL;
-	Wed, 28 May 2025 16:12:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 5A7191A0359;
-	Wed, 28 May 2025 16:13:02 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAHa1+MxTZozegGNw--.47012S4;
-	Wed, 28 May 2025 16:13:02 +0800 (CST)
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-To: netfs@lists.linux.dev,
-	dhowells@redhat.com,
-	jlayton@kernel.org,
-	brauner@kernel.org
-Cc: hsiangkao@linux.alibaba.com,
-	jefflexu@linux.alibaba.com,
-	zhujia.zj@bytedance.com,
-	linux-erofs@lists.ozlabs.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wozizhi@huawei.com,
-	libaokun1@huawei.com,
-	yangerkun@huawei.com,
-	houtao1@huawei.com,
-	yukuai3@huawei.com
-Subject: [QUESTION] cachefiles: Recovery concerns with on-demand loading after unexpected power loss
-Date: Wed, 28 May 2025 16:07:59 +0800
-Message-Id: <20250528080759.105178-1-wozizhi@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1748419743; c=relaxed/simple;
+	bh=/3pRLiNTZ5mPQkB1yIvRzuKdK3DiRImq+aSu3O+yq7g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ONP1WgmDIJxYAp40k2DOoJzPuM7iljT9QtwJEIsn75vn0w3QTfLBkhUBq85oYs6kS68PFn81jiW5KGVGDB6+aoFICFd1Yihx1vHyZLpQaNTHuPW2joA6HQEucQmVtZnXOik0kya//0I3KMU9AUr5ddqJV6AEYFOgya17JEOohtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZK+yr0t; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748419742; x=1779955742;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/3pRLiNTZ5mPQkB1yIvRzuKdK3DiRImq+aSu3O+yq7g=;
+  b=fZK+yr0tu8k0JEWIzNUEKwiq9ELlY8eutMpLjIRTa4X7m6VEviXWyWvi
+   7m4Xc8wWX244VkhPVwQ+t+meysnUh/8EERGPDEiVcCEBFF2lUqYc0MXLX
+   abv9wZthQXEtJjMJT21y9Kel4a76EOarfUXPVWwqmzJKKwgpSnW8AiLG9
+   cPIV8G/mwmozbpbFHhN5HFWjH9rtvdkm7hgp9EqwJ5diqgTCLefRlMEDc
+   /VDyqeUDGm6rNSllZtZIA7LHYgK+bOjY+Y75M2F+tFgi31pMoCTp3w3f7
+   Jn08m6Rr9DUpjDfXzeGuy1yYTEkDJ/6JIxipn6Iea6cEH2deM8MPiBLft
+   g==;
+X-CSE-ConnectionGUID: ZMdipwDFRDmBArkM6EcIAg==
+X-CSE-MsgGUID: EQvzJ0MpRBypQ/VuvxxXxg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="61064888"
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="61064888"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 01:09:00 -0700
+X-CSE-ConnectionGUID: Lr8duTnoQ/2ffFFG/pO8DA==
+X-CSE-MsgGUID: tgUyM0yhThyjAoammQSSxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="144141076"
+Received: from unknown (HELO [10.238.3.95]) ([10.238.3.95])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 01:08:37 -0700
+Message-ID: <e38f0573-520a-4fe8-91fc-797086ab5866@linux.intel.com>
+Date: Wed, 28 May 2025 16:08:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHa1+MxTZozegGNw--.47012S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr47CF1DWr4fCw15XF13Arb_yoW8JFy5pF
-	ZI9w1UK34kXFZ7K3s7AF48uryfZ3s5AF4DXrWSqrWktrn0kF1Iqryaqr1UJFWUurZrG3y2
-	qw1jyr9rAwnFvrJanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26rWY6Fy7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IUnUDG7UUUUU==
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 06/51] KVM: Query guest_memfd for private/shared
+ status
+To: Yan Zhao <yan.y.zhao@intel.com>, Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+ ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com,
+ anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu,
+ bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com,
+ chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com,
+ david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk,
+ erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+ haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+ ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+ james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+ jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+ jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+ kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+ michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+ pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+ quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+ quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+ quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+ richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
+ tabba@google.com, thomas.lendacky@amd.com, usama.arif@bytedance.com,
+ vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+ vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+ willy@infradead.org, xiaoyao.li@intel.com, yilun.xu@intel.com,
+ yuzenghui@huawei.com, zhiquan1.li@intel.com
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <237590b163506821120734a0c8aad95d9c7ef299.1747264138.git.ackerleytng@google.com>
+ <aDU3pN/0FVbowmNH@yzhao56-desk.sh.intel.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <aDU3pN/0FVbowmNH@yzhao56-desk.sh.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Currently, in on-demand loading mode, cachefiles first calls
-cachefiles_create_tmpfile() to generate a tmpfile, and only during the exit
-process does it call cachefiles_commit_object->cachefiles_commit_tmpfile to
-create the actual dentry and making it visible to users.
 
-If the cache write is interrupted unexpectedly (e.g., by system crash or
-power loss), during the next startup process, cachefiles_look_up_object()
-will determine that no corresponding dentry has been generated and will
-recreate the tmpfile and pull the complete data again!
 
-The current implementation mechanism appears to provide per-file atomicity.
-For scenarios involving large image files (where significant amount of
-cache data needs to be written), this re-pulling process after an
-interruption seems considerable overhead?
+On 5/27/2025 11:55 AM, Yan Zhao wrote:
+> On Wed, May 14, 2025 at 04:41:45PM -0700, Ackerley Tng wrote:
+>> Query guest_memfd for private/shared status if those guest_memfds
+>> track private/shared status.
+>>
+>> With this patch, Coco VMs can use guest_memfd for both shared and
+>> private memory. If Coco VMs choose to use guest_memfd for both
+>> shared and private memory, by creating guest_memfd with the
+>> GUEST_MEMFD_FLAG_SUPPORT_SHARED flag, guest_memfd will be used to
+>> provide the private/shared status of the memory, instead of
+>> kvm->mem_attr_array.
+>>
+>> Change-Id: I8f23d7995c12242aa4e09ccf5ec19360e9c9ed83
+>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> ---
+>>   include/linux/kvm_host.h | 19 ++++++++++++-------
+>>   virt/kvm/guest_memfd.c   | 22 ++++++++++++++++++++++
+>>   2 files changed, 34 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+>> index b317392453a5..91279e05e010 100644
+>> --- a/include/linux/kvm_host.h
+>> +++ b/include/linux/kvm_host.h
+>> @@ -2508,12 +2508,22 @@ static inline void kvm_prepare_memory_fault_exit(struct kvm_vcpu *vcpu,
+>>   }
+>>   
+>>   #ifdef CONFIG_KVM_GMEM_SHARED_MEM
+>> +
+>>   bool kvm_gmem_memslot_supports_shared(const struct kvm_memory_slot *slot);
+>> +bool kvm_gmem_is_private(struct kvm_memory_slot *slot, gfn_t gfn);
+>> +
+>>   #else
+>> +
+>>   static inline bool kvm_gmem_memslot_supports_shared(const struct kvm_memory_slot *slot)
+>>   {
+>>   	return false;
+>>   }
+>> +
+>> +static inline bool kvm_gmem_is_private(struct kvm_memory_slot *slot, gfn_t gfn)
+>> +{
+>> +	return false;
+>> +}
+>> +
+>>   #endif /* CONFIG_KVM_GMEM_SHARED_MEM */
+>>   
+>>   #ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
+>> @@ -2544,13 +2554,8 @@ static inline bool kvm_mem_is_private(struct kvm *kvm, gfn_t gfn)
+>>   		return false;
+>>   
+>>   	slot = gfn_to_memslot(kvm, gfn);
+>> -	if (kvm_slot_has_gmem(slot) && kvm_gmem_memslot_supports_shared(slot)) {
+>> -		/*
+>> -		 * For now, memslots only support in-place shared memory if the
+>> -		 * host is allowed to mmap memory (i.e., non-Coco VMs).
+>> -		 */
+>> -		return false;
+>> -	}
+>> +	if (kvm_slot_has_gmem(slot) && kvm_gmem_memslot_supports_shared(slot))
+>> +		return kvm_gmem_is_private(slot, gfn);
+> When userspace gets an exit reason KVM_EXIT_MEMORY_FAULT, looks it needs to
+> update both KVM memory attribute and gmem shareability, via two separate ioctls?
+IIUC, when userspace sets flag GUEST_MEMFD_FLAG_SUPPORT_SHARED to create the
+guest_memfd, the check for memory attribute will go through the guest_memfd way,
+the information in kvm->mem_attr_array will not be used.
 
-In previous kernel versions, cache dentry were generated during the
-LOOK_UP_OBJECT process of the object state machine. Even if power was lost
-midway, the next startup process could continue pulling data based on the
-previously downloaded cache data on disk.
+So if userspace sets GUEST_MEMFD_FLAG_SUPPORT_SHARED, it uses
+KVM_GMEM_CONVERT_SHARED/PRIVATE to update gmem shareability.
+If userspace doesn't set GUEST_MEMFD_FLAG_SUPPORT_SHARED, it still uses
+KVM_SET_MEMORY_ATTRIBUTES to update KVM memory attribute tracking.
 
-What would be the recommended way to handle this situation? Or am I
-thinking about this incorrectly? Would appreciate any feedback and guidance
-from the community.
 
-Thanks,
-Zizhi Wo
+>
+>
+>>   	return kvm_get_memory_attributes(kvm, gfn) & KVM_MEMORY_ATTRIBUTE_PRIVATE;
+>>   }
+
 
 
