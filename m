@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-50005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50006-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D49AC737D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 00:05:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01EAAAC7387
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 00:06:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85C43A5360
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 22:04:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB38F1C037D5
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 22:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C527A239E96;
-	Wed, 28 May 2025 21:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1BB23D287;
+	Wed, 28 May 2025 21:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OW+GHL1Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LqDq4ud/"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1328F23959D;
-	Wed, 28 May 2025 21:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A27023C51C;
+	Wed, 28 May 2025 21:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748469405; cv=none; b=creRh4Ja2a7J5B6R9jPsd1E9DN2FCDdZtlQ+ZbLssv2P6A6PVDifgFsNrrzfEzIpCuI5j0pLyGQwU223i5h/aoK8UILCezpigp1s5F9U56K+DQF2bj1IWGrX1djaPVf3I53uoi+qC/y5fCHfw910kCPlpwt71xrNODPATL4XNls=
+	t=1748469410; cv=none; b=M2YbtpShh3B0VROK0hZNiARtu/DRxC8jXCe92D/5V3bujhoqUiYgJXs9Hhlr+il06UP8lzkGXSEl1O/AQkmlOlW0l0+rFEjt6Vope/XuleLp1K73d5Ri2AQyNfAtPidHd4SQQdddcCySu9P63c7HYqopAuPBbL0bP1PY+APmB6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748469405; c=relaxed/simple;
-	bh=s9GugJ8zjs7muL+GsfA4pWwyw31H/j8/hlP8OMTEOuY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GAmpmLymED5KsX3HRXRT98u+wN5Dlck/KeAFXmb88BVFyqFTtS8frL08PWRUDUMZih8UCESSwmNP9NHhlV+Tbf0+rNsclDpTIpVOeJT1akr/Uxcavp+6/wuk2juM5Sj3akhkYDeeGz5TPGBwoVT2VeUMjJdV4fOT6VbTOlWs24s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OW+GHL1Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DECC4CEE7;
-	Wed, 28 May 2025 21:56:43 +0000 (UTC)
+	s=arc-20240116; t=1748469410; c=relaxed/simple;
+	bh=g+d0rSssIKlukGLHpSLT8Ad2YGrcB9qGcYMbFd90H3s=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=sSnqjQ6OGPMAAMWlKJUsn0XugQPuzxfaMouP4RVDcZ1siclDGqJRt8UxsTOP55wsSdYVRVfSYp+074vGV+wcjiQxqYZWqMevx1wRev245iMvoGDnl3PJKMJqqUD79luXK2AkWQ502/QjTGL+Lcv5V+SQWiRu7oQphsxrzKVvHMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LqDq4ud/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B180EC4CEE3;
+	Wed, 28 May 2025 21:56:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748469404;
-	bh=s9GugJ8zjs7muL+GsfA4pWwyw31H/j8/hlP8OMTEOuY=;
+	s=k20201202; t=1748469409;
+	bh=g+d0rSssIKlukGLHpSLT8Ad2YGrcB9qGcYMbFd90H3s=;
 	h=From:To:Cc:Subject:Date:From;
-	b=OW+GHL1QwB+NrxISc7JBxUHC0OvJqPou7iDAL8zaCBX8nmw7FhBXK3sAmD1N+9sVk
-	 gbxezIw/NbJn+vofQpbgF2xMzS7wN0aGniKyE9QfQQpLxe5tcE7fMVImGQ9Y3i6KE+
-	 sPPV5lFJFQLDt4v8L3rbvfcnSKvCGkiOwJB4mgCe3dviKvGuKKvsl0FqyrC81A+hAa
-	 a1HPAlZuhXqKCO7OOcwYaKjDpLLu7xgugofIGu9v89g2qgls/s+FwX0XX3wDIFfsll
-	 zz1ZnvusSEzznow0y1Yp/RwuFaUTUZmThE76rGKVQwag5fjDEToFwZg/itRAa0EWT+
-	 r09wo0mSJPpmg==
+	b=LqDq4ud/9GU1v00CXYFI7eEThTVb9b2YnH3aVJz/5DYdZ+z2OxHDpV3FFKAeFbQ9M
+	 i0IsLod3WzO+1g1bOILSQMlgoqZC9FsZ3GBLiPonRsVU7+UgWfSvGPcfYyLjdOEXMc
+	 n7FuR5q+sOvuhoBizrlVQyjpkcwm1LEOK1uBdIWHhtChAfFGwOcnXfX97175hSNAwY
+	 wWU3YtT7ofBvhjyQ1UTGL7FKHeGtNEdebBG5KMtcuwkNxl0nXV7DcH5isDPkuYkZmE
+	 IyPCwrQSdFBBwajWPeT0BvjOmKPk1CPHkPRYrd7xfYI+CBVwfx2Ran0flzuBE4/enl
+	 UKxbvfl7HogIA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -49,9 +49,9 @@ Cc: Zijun Hu <quic_zijuhu@quicinc.com>,
 	viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 1/3] fs/filesystems: Fix potential unsigned integer underflow in fs_name()
-Date: Wed, 28 May 2025 17:56:40 -0400
-Message-Id: <20250528215642.1983928-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10] fs/filesystems: Fix potential unsigned integer underflow in fs_name()
+Date: Wed, 28 May 2025 17:56:47 -0400
+Message-Id: <20250528215647.1983992-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -61,7 +61,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.184
+X-stable-base: Linux 5.10.237
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
@@ -124,7 +124,7 @@ syscall.
  1 file changed, 9 insertions(+), 5 deletions(-)
 
 diff --git a/fs/filesystems.c b/fs/filesystems.c
-index 58b9067b2391c..95e5256821a53 100644
+index 90b8d879fbaf3..1ab8eb5edf28e 100644
 --- a/fs/filesystems.c
 +++ b/fs/filesystems.c
 @@ -156,15 +156,19 @@ static int fs_index(const char __user * __name)
