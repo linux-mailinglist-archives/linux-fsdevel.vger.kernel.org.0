@@ -1,45 +1,65 @@
-Return-Path: <linux-fsdevel+bounces-49961-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49962-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E362BAC64CC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 10:53:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91354AC64E3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 10:56:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89F174E1CF3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 08:53:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 281E217FE9E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 08:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B58902741D1;
-	Wed, 28 May 2025 08:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AA8C2749F3;
+	Wed, 28 May 2025 08:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Kb9z1b/B"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 458DE2741A1;
-	Wed, 28 May 2025 08:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003112459D9;
+	Wed, 28 May 2025 08:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748422402; cv=none; b=YLXiEXJswgvAAlFwr+vG6XIrWzGxMyBBkAeVWVOs16RS4gJJpNJFg2ONf/TKSWqyZ73C7MRCNow8wINw3uI0QpsN0PUy6gbNKrNmxTOn4v3aaB4RmkMxEURR4XgIPmmJB0lM1kwGFIBUJZUEb7TkhfHEDaj9sK76kCiBSfj0tt8=
+	t=1748422528; cv=none; b=ExnoOR+00L4zicL/K+Na8eElHW4+sam2dHpgIEN1XCY1mPLKeRWqjnReNe8s9m0SYJEChnjPTEAp853c3S6ZbNNh/w3aokZEAGUdEfoz+KBRt65FI/4osVqhfN1AEI0dZmfvl2NxSACAa9VlsjfuwKngcYonDMNp0EIXbXvYdjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748422402; c=relaxed/simple;
-	bh=yr+rQ5aWKC/egFb1TRG5obKOEortLDCSq545ScIw1ck=;
+	s=arc-20240116; t=1748422528; c=relaxed/simple;
+	bh=o/IBf/bL4uUQfqfko7CVRmw6Pl3VESZqBWXrtTbKLHg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MoZGaBpHig0fRqTEi/b5pBYgePEidtK5UjjWuX730H+WReWJ4IqQ5ltDgKT9g+tJz+HmYxgP7vKH0V2dn8F+wpWriAFieLJvI2Lx55bqINbDYxLw4gE9n95gZfhzYfuk0dXWlyeqV+yRMLPkmiiREMpG/lI9F38E3J4K1uNiJWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4b6jvV5KRDzKHMls;
-	Wed, 28 May 2025 16:53:10 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 2ED4B1A0359;
-	Wed, 28 May 2025 16:53:09 +0800 (CST)
-Received: from [10.174.176.88] (unknown [10.174.176.88])
-	by APP4 (Coremail) with SMTP id gCh0CgBXu1_yzjZoQc0JNw--.57278S3;
-	Wed, 28 May 2025 16:53:08 +0800 (CST)
-Message-ID: <f177a0e4-c2da-40b7-9d47-8968f3c2bc50@huaweicloud.com>
-Date: Wed, 28 May 2025 16:53:06 +0800
+	 In-Reply-To:Content-Type; b=f6bVmoaG2Zue6EhVB61zFqqS0E/GRoiUml8PprsByYg7twoFp890DFjNaHebvCPXaQ6kpzvh0ScgnklL1FHdpyhIecxga72PD03ACGF9tFiAVyirC35f6YAHNR/dHvk71h5fgiNc2hlaOY1GEV3d8SMJ3/LDLPGqLC9+x805Mi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Kb9z1b/B; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748422527; x=1779958527;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=o/IBf/bL4uUQfqfko7CVRmw6Pl3VESZqBWXrtTbKLHg=;
+  b=Kb9z1b/Be7vgBgT3nxMLgZpNH8w24y1kZKjH8ruWxRf9AM7HXq2Anijl
+   sVkd8YQY7m6eX7a4HKw7bmtdJd3gyIUSpBClWkOpvyNkJyApu1Mp6NVqt
+   C9dJU+NHnyH2n+LBY2OGveyuDtLF14bfLZU/34FmTY8p+Woi2f/ix8Xzg
+   LCUNaF8hLATTy3X1KYrW+vJPm6kTu6CsAt/JrigfPbrXBiDYZeL4yinOl
+   mmyy3GxTcgVS7uPwIR+YosvI5eutfl4NH10WHiKc5gWUuzQh3yJS2Y9r0
+   dkZqYmZgAI8ic8vGwSEAdmszwirTE6Ma7RARTCGF2adOTEmX+7Xk3xDfc
+   Q==;
+X-CSE-ConnectionGUID: TqxAGj1wSda+VGBajRT0aQ==
+X-CSE-MsgGUID: 5b9Wh10cQtOTLPyMz/GCyA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11446"; a="61098598"
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="61098598"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 01:55:26 -0700
+X-CSE-ConnectionGUID: 1yTLA9bhTNGc1WfrftagLg==
+X-CSE-MsgGUID: YJGTweprTPmbgT0LpLaE6Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.15,320,1739865600"; 
+   d="scan'208";a="166357521"
+Received: from unknown (HELO [10.238.3.95]) ([10.238.3.95])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 May 2025 01:55:08 -0700
+Message-ID: <ad77da83-0e6e-47a1-abe7-8cfdfce8b254@linux.intel.com>
+Date: Wed, 28 May 2025 16:55:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -47,103 +67,132 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [QUESTION] cachefiles: Recovery concerns with on-demand loading
- after unexpected power loss
-To: Gao Xiang <hsiangkao@linux.alibaba.com>,
- Zizhi Wo <wozizhi@huaweicloud.com>, netfs@lists.linux.dev,
- dhowells@redhat.com, jlayton@kernel.org, brauner@kernel.org
-Cc: jefflexu@linux.alibaba.com, zhujia.zj@bytedance.com,
- linux-erofs@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, libaokun1@huawei.com, yangerkun@huawei.com,
- houtao1@huawei.com, yukuai3@huawei.com
-References: <20250528080759.105178-1-wozizhi@huaweicloud.com>
- <d0e08cbf-c6e4-4ecd-bcaf-40c426279c4f@linux.alibaba.com>
-From: Zizhi Wo <wozizhi@huaweicloud.com>
-In-Reply-To: <d0e08cbf-c6e4-4ecd-bcaf-40c426279c4f@linux.alibaba.com>
+Subject: Re: [RFC PATCH v2 16/51] mm: hugetlb: Consolidate interpretation of
+ gbl_chg within alloc_hugetlb_folio()
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+ ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com,
+ anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu,
+ bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com,
+ chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com,
+ david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk,
+ erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+ haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+ ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+ james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+ jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+ jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+ kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+ michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+ pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+ quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+ quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+ quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+ richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
+ tabba@google.com, thomas.lendacky@amd.com, usama.arif@bytedance.com,
+ vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+ vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+ willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+ yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <8548af334e01401a776aae37a0e9f30f9ffbba8c.1747264138.git.ackerleytng@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <8548af334e01401a776aae37a0e9f30f9ffbba8c.1747264138.git.ackerleytng@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXu1_yzjZoQc0JNw--.57278S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw1UJFWUGw18JFWkCr43GFg_yoW8uw47pF
-	WrCw1UK3ykJ3Z7KrZ7ZF4xuFyrt3s3XF45Jw1YqrWktrs8CF1IgrWaqr15KFWDurn7W3y2
-	q34jv3srAwnxAFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvE14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7
-	v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF
-	1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIx
-	AIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI
-	42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWI
-	evJa73UjIFyTuYvjfUonmRUUUUU
-X-CM-SenderInfo: pzr2x6tkl6x35dzhxuhorxvhhfrp/
+Content-Transfer-Encoding: 7bit
 
 
 
-在 2025/5/28 16:35, Gao Xiang 写道:
-> Hi Zizhi,
-> 
-> On 2025/5/28 16:07, Zizhi Wo wrote:
->> Currently, in on-demand loading mode, cachefiles first calls
->> cachefiles_create_tmpfile() to generate a tmpfile, and only during the 
->> exit
->> process does it call 
->> cachefiles_commit_object->cachefiles_commit_tmpfile to
->> create the actual dentry and making it visible to users.
->>
->> If the cache write is interrupted unexpectedly (e.g., by system crash or
->> power loss), during the next startup process, cachefiles_look_up_object()
->> will determine that no corresponding dentry has been generated and will
->> recreate the tmpfile and pull the complete data again!
->>
->> The current implementation mechanism appears to provide per-file 
->> atomicity.
->> For scenarios involving large image files (where significant amount of
->> cache data needs to be written), this re-pulling process after an
->> interruption seems considerable overhead?
->>
->> In previous kernel versions, cache dentry were generated during the
->> LOOK_UP_OBJECT process of the object state machine. Even if power was 
->> lost
->> midway, the next startup process could continue pulling data based on the
->> previously downloaded cache data on disk.
->>
->> What would be the recommended way to handle this situation? Or am I
->> thinking about this incorrectly? Would appreciate any feedback and 
->> guidance
->> from the community.
-> 
-> As you can see, EROFS fscache feature was marked as deprecated
-> since per-content hooks already support the same use case.
-> 
-> the EROFS fscache support will be removed after I make
-> per-content hooks work in erofs-utils, which needs some time
-> because currently I don't have enough time to work on the
-> community stuff.
-> 
-> Thanks,
-> Gao Xiang
+On 5/15/2025 7:41 AM, Ackerley Tng wrote:
+> Previously, gbl_chg was passed from alloc_hugetlb_folio() into
+> dequeue_hugetlb_folio_vma(), leaking the concept of gbl_chg into
+> dequeue_hugetlb_folio_vma().
+>
+> This patch consolidates the interpretation of gbl_chg into
+> alloc_hugetlb_folio(), also renaming dequeue_hugetlb_folio_vma() to
+> dequeue_hugetlb_folio() so dequeue_hugetlb_folio() can just focus on
+> dequeuing a folio.
+>
+> Change-Id: I31bf48af2400b6e13b44d03c8be22ce1a9092a9c
+> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> ---
+>   mm/hugetlb.c | 28 +++++++++++-----------------
+>   1 file changed, 11 insertions(+), 17 deletions(-)
+>
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 6ea1be71aa42..b843e869496f 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -1364,9 +1364,9 @@ static unsigned long available_huge_pages(struct hstate *h)
+>   	return h->free_huge_pages - h->resv_huge_pages;
+>   }
+>   
+> -static struct folio *dequeue_hugetlb_folio_vma(struct hstate *h,
+> -				struct vm_area_struct *vma,
+> -				unsigned long address, long gbl_chg)
+> +static struct folio *dequeue_hugetlb_folio(struct hstate *h,
+> +					   struct vm_area_struct *vma,
+> +					   unsigned long address)
 
-Thanks for your reply.
+The rename seems not needed in this patch, since the function still takes vma
+and uses it. May be better to move the rename to a later patch.
 
-Indeed, the subsequent implementations have moved to using fanotify.
-Moreover, based on evaluation, this approach could indeed lead to
-performance improvements.
-
-However, in our current use case, we are still working with a kernel
-version that only supports the fscache-based approach, so this issue
-still exists for us. :(
-
-Thanks,
-Zizhi Wo
-
-> 
->>
->> Thanks,
->> Zizhi Wo
-> 
+>   {
+>   	struct folio *folio = NULL;
+>   	struct mempolicy *mpol;
+> @@ -1374,13 +1374,6 @@ static struct folio *dequeue_hugetlb_folio_vma(struct hstate *h,
+>   	nodemask_t *nodemask;
+>   	int nid;
+>   
+> -	/*
+> -	 * gbl_chg==1 means the allocation requires a new page that was not
+> -	 * reserved before.  Making sure there's at least one free page.
+> -	 */
+> -	if (gbl_chg && !available_huge_pages(h))
+> -		goto err;
+> -
+>   	gfp_mask = htlb_alloc_mask(h);
+>   	nid = huge_node(vma, address, gfp_mask, &mpol, &nodemask);
+>   
+> @@ -1398,9 +1391,6 @@ static struct folio *dequeue_hugetlb_folio_vma(struct hstate *h,
+>   
+>   	mpol_cond_put(mpol);
+>   	return folio;
+> -
+> -err:
+> -	return NULL;
+>   }
+>   
+>   /*
+> @@ -3074,12 +3064,16 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
+>   		goto out_uncharge_cgroup_reservation;
+>   
+>   	spin_lock_irq(&hugetlb_lock);
+> +
+>   	/*
+> -	 * glb_chg is passed to indicate whether or not a page must be taken
+> -	 * from the global free pool (global change).  gbl_chg == 0 indicates
+> -	 * a reservation exists for the allocation.
+> +	 * gbl_chg == 0 indicates a reservation exists for the allocation - so
+> +	 * try dequeuing a page. If there are available_huge_pages(), try using
+> +	 * them!
+>   	 */
+> -	folio = dequeue_hugetlb_folio_vma(h, vma, addr, gbl_chg);
+> +	folio = NULL;
+> +	if (!gbl_chg || available_huge_pages(h))
+> +		folio = dequeue_hugetlb_folio(h, vma, addr);
+> +
+>   	if (!folio) {
+>   		spin_unlock_irq(&hugetlb_lock);
+>   		folio = alloc_buddy_hugetlb_folio_with_mpol(h, vma, addr);
 
 
