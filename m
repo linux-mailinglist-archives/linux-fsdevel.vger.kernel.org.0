@@ -1,158 +1,161 @@
-Return-Path: <linux-fsdevel+bounces-50007-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50008-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF7CAC7389
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 00:06:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4817FAC73E4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 00:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9993AF65C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 22:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2038F1C03015
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 22:21:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C16A23E329;
-	Wed, 28 May 2025 21:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67534221721;
+	Wed, 28 May 2025 22:21:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vsqm8+T9"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ty8+naf1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kd4qRZnn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ty8+naf1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Kd4qRZnn"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA6E1220F3A;
-	Wed, 28 May 2025 21:56:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B4571D7E5C
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 May 2025 22:21:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748469412; cv=none; b=JIlPwkt1wqOVSeQfdU1yVSF9QbA1g5dC6iCXD82pKOveT0K40LCDWfPAIgr7n1Cjn3Zf6YJfYkBQl8e17scwrO2jYx24Bjr4c74xRYbTqK29Pf6paec5/DhuiFet0S0esrJkZVRCu82Hb3tmuDNjyReBmhFXhBN5EVRnQ3zc6FI=
+	t=1748470887; cv=none; b=NMHEcmqyuseUqKRReOiRnUydQhfLb9DPeEs6itjWcqhrqvHvrch7ZweoHFtmi1HmPArEWlgsscXwDO/FurcZY4wEMmP7zayrWVIwshGmPldv3sySJ7VRHUO4QX06YQbPKc9kOHWXrMoEtQml9kFJWJ02Xi6lg60/eQdWl8zcGjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748469412; c=relaxed/simple;
-	bh=6kk1UuDHJndLmu4iy7P8ROiftYzDAghfNTtHlwXcPF0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=OESaeRU+s93RB9AaE5JHVkkvS2Y0bYlBuV/ZZl2SpW/05ziFsWQQ5VfpF1KEVIxmM8dfoHIrXrK2D2Oaw+oHE7365lpcH9EHWDnSc6pr41nxXtrowcInZIRv4MuD+H/XUshJ+oX9/e69fStt1iDjEvHNgvwdRSZV5XG5SoAi1+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vsqm8+T9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04073C4CEE7;
-	Wed, 28 May 2025 21:56:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748469411;
-	bh=6kk1UuDHJndLmu4iy7P8ROiftYzDAghfNTtHlwXcPF0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Vsqm8+T9FzN3fDAsOKHhfP9053du97kFAngc3z5uW1+UByAkjDHfqUlcjII6YW49H
-	 l3HhcgPQA/KJ3XTs9t4cGsEaKpmeyxOtlfE7888fE84SXpv2yKLehQQfCRAOQxAjly
-	 s9EKr6aUgsa3kYOyhrNK2XaEpEpKGCV/tJN1+HevSQ7cQk0OeaYJoMAXRFE8rbGI/h
-	 rq6cfLCBUpxQZjslXqw1ZxTTR4xNU1hsjLXYEw24XwLu01P4JFU2CCkqB/bBcKll2X
-	 Uxkc/pgBgpuOE4gv7nUYDyZYG9JO8mffmEZsnhhnnMmkuIuvJz+gxGvpnCkc2+9d/H
-	 LlJAaK4iqZJnA==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Zijun Hu <quic_zijuhu@quicinc.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	viro@zeniv.linux.org.uk,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4] fs/filesystems: Fix potential unsigned integer underflow in fs_name()
-Date: Wed, 28 May 2025 17:56:49 -0400
-Message-Id: <20250528215649.1984033-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1748470887; c=relaxed/simple;
+	bh=FnR+4+b/l1nZeDzTpvOnJTe+qz9W/iK7frMcm2M2Rb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lip/RuLWLxuC3QOQO8elHiDMFb9Dfg3KIb5M9nPtkq84+tjTf+TLwoQTUCCI16WnfD59onyYdw2fR5ho8y/kNlg6mKendT4DhciETfpbWwI9Q6xEzVWOJh27JiAtq3fg1JgpTNlTxfh+vJZ74eMXORgDoI07o6g7t4x7gdpanY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ty8+naf1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kd4qRZnn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ty8+naf1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Kd4qRZnn; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3BDD21F79C;
+	Wed, 28 May 2025 22:21:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1748470884;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kcs6PeQ5LYK8Vz7ip+tNDGCLt/08EZqVgWOSZJmlnm4=;
+	b=Ty8+naf1waxXzboVdgyIaQT20cGyhy6jvPGdFrqc5BIIeeZjErFLbxTn+is+Ni/EA/AuJF
+	l9qI2Cr0W8pcQxUxxyEfnLQlx+oqNo3hRoPvBeTGR8AbbFnRtEmlp6Fbquk0VKtfuQqs3M
+	g4GWLSVv2/OqUyRT5BgaoyPz0bIqu3o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1748470884;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kcs6PeQ5LYK8Vz7ip+tNDGCLt/08EZqVgWOSZJmlnm4=;
+	b=Kd4qRZnnVFKEQzm3Fw5IEFy/nyoLoZlG3aPLOcUJx/3Nlejw2sKSBPu4Gfqeq5QoKbhpOz
+	aSEM4K0jRookwpAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1748470884;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kcs6PeQ5LYK8Vz7ip+tNDGCLt/08EZqVgWOSZJmlnm4=;
+	b=Ty8+naf1waxXzboVdgyIaQT20cGyhy6jvPGdFrqc5BIIeeZjErFLbxTn+is+Ni/EA/AuJF
+	l9qI2Cr0W8pcQxUxxyEfnLQlx+oqNo3hRoPvBeTGR8AbbFnRtEmlp6Fbquk0VKtfuQqs3M
+	g4GWLSVv2/OqUyRT5BgaoyPz0bIqu3o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1748470884;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Kcs6PeQ5LYK8Vz7ip+tNDGCLt/08EZqVgWOSZJmlnm4=;
+	b=Kd4qRZnnVFKEQzm3Fw5IEFy/nyoLoZlG3aPLOcUJx/3Nlejw2sKSBPu4Gfqeq5QoKbhpOz
+	aSEM4K0jRookwpAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1D31D136E3;
+	Wed, 28 May 2025 22:21:24 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cGGcBmSMN2hxTQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 28 May 2025 22:21:24 +0000
+Date: Thu, 29 May 2025 00:21:22 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Ming Lei <ming.lei@redhat.com>,
+	Btrfs BTRFS <linux-btrfs@vger.kernel.org>,
+	linux-fsdevel@vger.kernel.org, David Sterba <dsterba@suse.com>
+Subject: Re: [Bug] v6.15+: kernel panic when mount & umount btrfs
+Message-ID: <20250528222122.GH4037@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <CAFj5m9LWYk4OX8UijOutKFV-Hgga_w7KPT=MRLLyOscKBwCA-g@mail.gmail.com>
+ <5e7d42e4-7d77-4926-b2fd-593ea581477d@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.293
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <5e7d42e4-7d77-4926-b2fd-593ea581477d@suse.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spam-Score: -4.00
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, May 27, 2025 at 02:51:33PM +0930, Qu Wenruo wrote:
+> 
+> 
+> 在 2025/5/27 13:36, Ming Lei 写道:
+> > Hello,
+> > 
+> > Just try the latest linus tree by running `rublk` builtin test on
+> > Fedora, and found
+> > the following panic:
+> > 
+> > git clone https://github.com/ublk-org/rublk
+> > cd rublk
+> > cargo test
+> 
+> There is a bug in commit 5e121ae687b8 ("btrfs: use buffer xarray for 
+> extent buffer writeback operations"), and there is already a fix queued 
+> for the next pull request:
+> 
+> https://lore.kernel.org/linux-btrfs/b964b92f482453cbd122743995ff23aa7158b2cb.1747677774.git.josef@toxicpanda.com/
 
-[ Upstream commit 1363c134ade81e425873b410566e957fecebb261 ]
-
-fs_name() has @index as unsigned int, so there is underflow risk for
-operation '@index--'.
-
-Fix by breaking the for loop when '@index == 0' which is also more proper
-than '@index <= 0' for unsigned integer comparison.
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-Link: https://lore.kernel.org/20250410-fix_fs-v1-1-7c14ccc8ebaa@quicinc.com
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-**YES** This commit should be backported to stable kernel trees.
-**Detailed Analysis:** **The Bug:** The `fs_name()` function at
-`fs/filesystems.c:156-174` has a critical unsigned integer underflow
-vulnerability. When the function receives `index=0` as a parameter, the
-loop `for (tmp = file_systems; tmp; tmp = tmp->next, index--)`
-decrements `index` from 0 to `UINT_MAX` (4294967295 on 32-bit systems),
-causing the condition `if (index <= 0 && try_module_get(tmp->owner))` to
-evaluate incorrectly. **The Fix:** The commit changes the logic from: -
-Old: `if (index <= 0 && try_module_get(tmp->owner))` - New: `if (index
-== 0) { if (try_module_get(tmp->owner)) res = 0; break; }` This prevents
-the unsigned integer from wrapping around and provides proper bounds
-checking. **Impact and Severity:** 1. **User-accessible vulnerability**:
-The `fs_name()` function is called through the `sysfs` system call
-(syscall #139) with option 2, making it directly accessible to userspace
-applications. 2. **Potential for exploitation**: An attacker could call
-`sysfs(2, 0, buffer)` to trigger the underflow, potentially causing: -
-Infinite loops in the filesystem list traversal - Unintended module
-reference acquisition - System instability or denial of service 3.
-**Core filesystem subsystem**: This affects the fundamental filesystem
-registration mechanism in the kernel. **Comparison with Similar
-Commits:** This follows the same pattern as the **accepted backport
-examples**: - **Similar to Commit #1 (ntfs3)**: Both fix integer
-overflow/underflow issues that could cause system instability -
-**Similar to Commit #3 (f2fs)**: Both prevent integer arithmetic issues
-in filesystem code - **Similar to Commit #5 (f2fs)**: Both add bounds
-checking to prevent corruption **Stable Tree Criteria:** ✅ **Fixes
-important bug**: Prevents potential system instability and undefined
-behavior ✅ **Small and contained**: Minimal code change, only affects
-one function ✅ **Clear side effects**: No architectural changes, just
-safer bounds checking ✅ **Low regression risk**: The fix makes the
-function more robust without changing expected behavior ✅ **Critical
-subsystem**: Filesystem management is fundamental to kernel operation
-**Conclusion:** This is a textbook example of a commit suitable for
-stable backporting: it fixes a clear bug with security implications in
-core kernel infrastructure, uses a minimal and safe approach, and has no
-risk of introducing regressions. The unsigned integer underflow could
-lead to system instability when triggered through the accessible `sysfs`
-syscall.
-
- fs/filesystems.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
-
-diff --git a/fs/filesystems.c b/fs/filesystems.c
-index 5e1a190133738..148073e372acd 100644
---- a/fs/filesystems.c
-+++ b/fs/filesystems.c
-@@ -155,15 +155,19 @@ static int fs_index(const char __user * __name)
- static int fs_name(unsigned int index, char __user * buf)
- {
- 	struct file_system_type * tmp;
--	int len, res;
-+	int len, res = -EINVAL;
- 
- 	read_lock(&file_systems_lock);
--	for (tmp = file_systems; tmp; tmp = tmp->next, index--)
--		if (index <= 0 && try_module_get(tmp->owner))
-+	for (tmp = file_systems; tmp; tmp = tmp->next, index--) {
-+		if (index == 0) {
-+			if (try_module_get(tmp->owner))
-+				res = 0;
- 			break;
-+		}
-+	}
- 	read_unlock(&file_systems_lock);
--	if (!tmp)
--		return -EINVAL;
-+	if (res)
-+		return res;
- 
- 	/* OK, we got the reference, so we can safely block */
- 	len = strlen(tmp->name) + 1;
--- 
-2.39.5
-
+Now merged to master.
 
