@@ -1,45 +1,45 @@
-Return-Path: <linux-fsdevel+bounces-50004-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50005-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35610AC7380
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 00:05:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1D49AC737D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 00:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E55BB7AF5E9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 22:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E85C43A5360
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 22:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5DA2367D1;
-	Wed, 28 May 2025 21:56:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C527A239E96;
+	Wed, 28 May 2025 21:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIBpXoU/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OW+GHL1Q"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2188234977;
-	Wed, 28 May 2025 21:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1328F23959D;
+	Wed, 28 May 2025 21:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748469400; cv=none; b=TzKegLGDH6Qr3rvwB6UrrZ/aqrcEpXMDenJB947BUFem5PLWD4ITHgtqMd2En5x8DGiZQBye/V9Hq7+/LkWB4kECKyWY5bd+1eeVRhxckvQPLuSom2S/ICzwW+C8BN7ZcYTlDX4azSYiMk9aoJquLPlR2ebGmns1tSWH64tuVK0=
+	t=1748469405; cv=none; b=creRh4Ja2a7J5B6R9jPsd1E9DN2FCDdZtlQ+ZbLssv2P6A6PVDifgFsNrrzfEzIpCuI5j0pLyGQwU223i5h/aoK8UILCezpigp1s5F9U56K+DQF2bj1IWGrX1djaPVf3I53uoi+qC/y5fCHfw910kCPlpwt71xrNODPATL4XNls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748469400; c=relaxed/simple;
+	s=arc-20240116; t=1748469405; c=relaxed/simple;
 	bh=s9GugJ8zjs7muL+GsfA4pWwyw31H/j8/hlP8OMTEOuY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=NQ/TUXhMT1mo+pjEs/RdavCuX6ZvHRgHtLChXJJt1H5MApz6cUxYqWw07D7H2KI9G4knwbx6wnzdvuUt4OaF+g1OVl+RH8zj8hfHz/fPBZ+VpYv285LZYQxTt6HbAHcmEW/uGODhK3CP8UV16064K2O5VQZCGgiMz4FkZq7sNRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LIBpXoU/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96280C4CEE3;
-	Wed, 28 May 2025 21:56:38 +0000 (UTC)
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=GAmpmLymED5KsX3HRXRT98u+wN5Dlck/KeAFXmb88BVFyqFTtS8frL08PWRUDUMZih8UCESSwmNP9NHhlV+Tbf0+rNsclDpTIpVOeJT1akr/Uxcavp+6/wuk2juM5Sj3akhkYDeeGz5TPGBwoVT2VeUMjJdV4fOT6VbTOlWs24s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OW+GHL1Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6DECC4CEE7;
+	Wed, 28 May 2025 21:56:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748469399;
+	s=k20201202; t=1748469404;
 	bh=s9GugJ8zjs7muL+GsfA4pWwyw31H/j8/hlP8OMTEOuY=;
 	h=From:To:Cc:Subject:Date:From;
-	b=LIBpXoU/VFU7WgnLl9bJM0semPMlvpCd2AyWNJZrlffYUIBBFPomEEGh1SSXopqvB
-	 cRgRG2/K3BvGva4tiixXy0mh4PjtkIG5zOSN6MAxkyN8v+r/f4zrH68odgwRBDT0VW
-	 rLhue9UOiN7f9j+TJyaDoFWII3ECiYW+PQRBvnaXNQlJ+gpM7UNTnKfdlwI445bQlp
-	 xqWTe9RCtfDWPeNlDt4wjT/ozNEaBJnD0F2sPRV+gA4Xu6XOayNpDQgiXmdVNKyDMt
-	 rz/V7V1XhccmCNetWUuXZSvEHJ6GdTav1l55Pq2AQ6cPm32lHitzrr5+O7pvCkYmi6
-	 nHmpT00FoUC9A==
+	b=OW+GHL1QwB+NrxISc7JBxUHC0OvJqPou7iDAL8zaCBX8nmw7FhBXK3sAmD1N+9sVk
+	 gbxezIw/NbJn+vofQpbgF2xMzS7wN0aGniKyE9QfQQpLxe5tcE7fMVImGQ9Y3i6KE+
+	 sPPV5lFJFQLDt4v8L3rbvfcnSKvCGkiOwJB4mgCe3dviKvGuKKvsl0FqyrC81A+hAa
+	 a1HPAlZuhXqKCO7OOcwYaKjDpLLu7xgugofIGu9v89g2qgls/s+FwX0XX3wDIFfsll
+	 zz1ZnvusSEzznow0y1Yp/RwuFaUTUZmThE76rGKVQwag5fjDEToFwZg/itRAa0EWT+
+	 r09wo0mSJPpmg==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -49,9 +49,9 @@ Cc: Zijun Hu <quic_zijuhu@quicinc.com>,
 	viro@zeniv.linux.org.uk,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 1/3] fs/filesystems: Fix potential unsigned integer underflow in fs_name()
-Date: Wed, 28 May 2025 17:56:35 -0400
-Message-Id: <20250528215637.1983842-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 1/3] fs/filesystems: Fix potential unsigned integer underflow in fs_name()
+Date: Wed, 28 May 2025 17:56:40 -0400
+Message-Id: <20250528215642.1983928-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -61,7 +61,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.140
+X-stable-base: Linux 5.15.184
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
