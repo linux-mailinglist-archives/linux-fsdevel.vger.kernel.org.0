@@ -1,108 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-49943-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49944-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85EF0AC603D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 05:48:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4044FAC609C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 06:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D4619E6D67
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 03:48:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A2351BA0FCC
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 04:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6B51F1537;
-	Wed, 28 May 2025 03:48:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F191E9B3A;
+	Wed, 28 May 2025 04:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UnwklXt7"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB7B1EB1AF
-	for <linux-fsdevel@vger.kernel.org>; Wed, 28 May 2025 03:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2E2B35942;
+	Wed, 28 May 2025 04:18:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748404090; cv=none; b=llNfecJgmomxMVqD6Hvvg4uB4nxeTxyB9Ld9TKGEPsSoZSaPBEUAzedA7xAR5u/LzHjhDh5mQZHK9gc+8SQK1Z5BHr0ILzi/kXT+mBswAL6o+5Tj7RWkhulkoAB5MhB5Y2AFL05rqyV2bqCicRBU3m1h9qjWv682Gi+DvS2fGkM=
+	t=1748405892; cv=none; b=hXJobMTXdQaD2DiUWPoJs6KSDk6kxVYdKJJftdEm7uSUetdEpZ08JTkfRn/lMu+HEsajj8pFZnG8UzHzLNeHogU7HaFajvUrGaCLpaLV7I+agFZwxutRfWHNfn7Y015gIHToeE0fxo/Szb3GCKUFelCR6DpiJuMBfkF79r++Vc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748404090; c=relaxed/simple;
-	bh=4vZ/Q3yu/XrBigA6HkCbRgzcclWEsYKNV//bajsYs5k=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nIcnNKCDFF6Cq1lKC1JKwXsauB2LN8pQ2t1KC7fuQUZ0SR7O0Ssml/ftb/C3neqRq1ebSy/cyivCQu3LaEpgpCtQN92uiFkRpKAXpTkJ0zBLElwLnn4/78jVUz1bBWVDm9Qn9Krh4i1sCToWuMCGhQHzWu2Cs8RtaS2rUoV/IMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4b6b4p4tKVzYlCqc;
-	Wed, 28 May 2025 11:45:46 +0800 (CST)
-Received: from a011.hihonor.com (10.68.31.243) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 May
- 2025 11:47:59 +0800
-Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
- (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 28 May
- 2025 11:47:58 +0800
-From: wangzijie <wangzijie1@honor.com>
-To: <akpm@linux-foundation.org>, <rick.p.edgecombe@intel.com>,
-	<ast@kernel.org>, <adobriyan@gmail.com>, <kirill.shutemov@linux.intel.com>,
-	<linux-fsdevel@vger.kernel.org>
-CC: <yebin@huaweicloud.com>, <zuofenghua@honor.com>, <bintian.wang@honor.com>,
-	<tao.wangtao@honor.com>, wangzijie <wangzijie1@honor.com>
-Subject: [PATCH] proc: avoid use-after-free in proc_reg_open()
-Date: Wed, 28 May 2025 11:47:56 +0800
-Message-ID: <20250528034756.4069180-1-wangzijie1@honor.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1748405892; c=relaxed/simple;
+	bh=3oqDe+nZl49bWs1AAjbXlZTd7P0+aP5nhvYs2YK/iJE=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=upcmQ4yXz+1hpMuyZd7akOLGGfYRW2eI6Hw60RvcTUjRmWxrDflJSAvT4UL6JmBmrgE6Mt7zA0QRWivtYrsa6we00k2+OfbZGYoTwKdSj3GsTlrDJ4/6TnIllm/9VLQbrqbROqbgPdsUmD3sAmnbr3DFNWIbaDaaUcx36y0DBa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UnwklXt7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AEBEC4CEE7;
+	Wed, 28 May 2025 04:18:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748405892;
+	bh=3oqDe+nZl49bWs1AAjbXlZTd7P0+aP5nhvYs2YK/iJE=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=UnwklXt7PMZ0XckhLtY5qmdtf7jiHRKWoiseYm0QP5ECwl7f85DXpVYYQrQleZ4/f
+	 6JLpbgrYh3aDRvF500oilESuPa0QpQPzW5KOzTUwCZdEeydQ44XNxTRoG0+83NbsZo
+	 7Lb58Ua0zr8c0i+FakWfuyObkoBpZ+R/iPHzXQWbCeKOgb0QENzWVl/uvW8AwIr6wj
+	 5ZjUxaS2cXtcp1oGAOS0DcfxFQj13h7HFxEi6tCPQ/yP3bOvgAVlB41L+QzqXu4dF+
+	 S5NBzvv31vJzOXd1OnfnmLDKAA2F71CstYFF3CSPznelmLR7u8M8wR2Ne9EWyZ8Usz
+	 4TAYDRmPRR3Lg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ECB143822D1A;
+	Wed, 28 May 2025 04:18:47 +0000 (UTC)
+Subject: Re: [GIT PULL] sysctl changes for v6.16-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <itvalur2ynrnjc3grs5nk36fbfm52atybcad2nmxidaavkeqap@nlxzuqvygpta>
+References: <itvalur2ynrnjc3grs5nk36fbfm52atybcad2nmxidaavkeqap@nlxzuqvygpta>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <itvalur2ynrnjc3grs5nk36fbfm52atybcad2nmxidaavkeqap@nlxzuqvygpta>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.16-rc1
+X-PR-Tracked-Commit-Id: 23b8bacf154759ed922d25527dda434fbf57436a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: f1975e4765e5df2b91d400d4ac25c9243a25e92a
+Message-Id: <174840592662.1893196.11610385891138675926.pr-tracker-bot@kernel.org>
+Date: Wed, 28 May 2025 04:18:46 +0000
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: w010.hihonor.com (10.68.28.113) To a011.hihonor.com
- (10.68.31.243)
 
-Like the rmmod scenario mentioned by Ye Bin in proc: fix use-after-free in proc_get_inode()[1],
-we should get pde->proc_ops after use_pde for non-permanent pde to avoid UAF in proc_reg_open().
+The pull request you sent on Mon, 26 May 2025 08:35:51 +0200:
 
-[1] https://lore.kernel.org/all/20250301034024.277290-1-yebin@huaweicloud.com/
+> git://git.kernel.org/pub/scm/linux/kernel/git/sysctl/sysctl.git/ tags/sysctl-6.16-rc1
 
-Signed-off-by: wangzijie <wangzijie1@honor.com>
----
- fs/proc/inode.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/f1975e4765e5df2b91d400d4ac25c9243a25e92a
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index a3eb3b740..8de0af8c3 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -473,13 +473,13 @@ static int proc_reg_open(struct inode *inode, struct file *file)
- 	typeof_member(struct proc_ops, proc_open) open;
- 	struct pde_opener *pdeo;
- 
--	if (!pde->proc_ops->proc_lseek)
--		file->f_mode &= ~FMODE_LSEEK;
--
- 	if (pde_is_permanent(pde)) {
- 		open = pde->proc_ops->proc_open;
--		if (open)
-+		if (open) {
-+			if (!pde->proc_ops->proc_lseek)
-+				file->f_mode &= ~FMODE_LSEEK;
- 			rv = open(inode, file);
-+		}
- 		return rv;
- 	}
- 
-@@ -506,6 +506,9 @@ static int proc_reg_open(struct inode *inode, struct file *file)
- 		}
- 	}
- 
-+	if (!pde->proc_ops->proc_lseek)
-+		file->f_mode &= ~FMODE_LSEEK;
-+
- 	open = pde->proc_ops->proc_open;
- 	if (open)
- 		rv = open(inode, file);
+Thank you!
+
 -- 
-2.25.1
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
