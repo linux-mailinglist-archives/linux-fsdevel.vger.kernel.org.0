@@ -1,201 +1,348 @@
-Return-Path: <linux-fsdevel+bounces-49986-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49987-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC37EAC6E21
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 18:38:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB50BAC6E25
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 18:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E256F7B1C0D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 16:36:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6FE9166548
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 16:39:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B30328D8EE;
-	Wed, 28 May 2025 16:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507E028DB4A;
+	Wed, 28 May 2025 16:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Mt+XyesU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EaCfKUID"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from HK3PR03CU002.outbound.protection.outlook.com (mail-eastasiaazon11011054.outbound.protection.outlook.com [52.101.129.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F355528CF7F;
-	Wed, 28 May 2025 16:38:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.129.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748450288; cv=fail; b=MzKG9t/c0mc1jHX32RUCElbKNN58HJGyqgaMKTPco4M8zIsJPHzjACkbILGOibJH1NUFge1/GK6X4Wktsgmv5pqp8D3dA5RkxylwLFSZEZEepNOiY8JElidCH63SRhX9PdsMgmZT0L9evmpr7YLNVZMhpKjzB9VUvKKjm9hKmE8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748450288; c=relaxed/simple;
-	bh=Yqxkh0sworeC5UMhi11SqhrMb0Mj7pp7oRw/us1MEQc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=qak/9b2fTqC9eMs1GdEceNdlRzL4qd8/Lvig/25tGYjgUyj2NnrHtVB+TtNehg06NESRRfgDnONHknkI9ZauD8w4CytgYFU3n3IC1H8uDr9TNr97fofli1aG9/I1ydrB9Os8FQXgfTUdisscA5f1h2JnqvcRrYz5Pici2PTmgZk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Mt+XyesU; arc=fail smtp.client-ip=52.101.129.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kUkr5UN0T7R3EP7DlEWYb1qgcrXKdxePlDiwFejn3Dqe+stiT9UxQWs/QuF9P7WYkjyoSd0K9quvZSO5luR2m/E9KgF5Rk5QPxdwNpOmMAVX9WIziie3NJl+dlzEdC9cpr8hGKSxZqEGmD11mLrC54YnhOWzIbmmUOKYviHCmO2fvke7d+4FUpUQSD0yuyZEIo24ykPWTocA7zBX94v3rDSHRx0FO6r5KI3G3IsdLLhDDEMav+cxmB8EVpeMAg9g5/b/pVxbb7uzkO6/fYUP+a03e3cd4WSJPZDGGGd0lkK03vdJugOZTmb/Ta6fjydq7oWaZbxVxygtkyBiwEiHlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Yqxkh0sworeC5UMhi11SqhrMb0Mj7pp7oRw/us1MEQc=;
- b=Q5t7J+o3rDiDnw1Y/R1dh8zMk+SSmHbKtcBfscjxi76vRz29gSENVQy61hwUox66xCBrgF6Sx6RIW3spPAZuZPFMd8hCb7j3sQh4Fjj2XnPGESSn6hztx2sRlfT+Ak4kwQVLp0RbYskpcISLT73f+ZsUqj0nniTZIGJebY+lWqUWQTdNaAREp1Op1gJrk6ccdrF2GiFHlQ/LJmC49/Jk+7lv00NNeNS3g0UFp4XSpmDrza9KvLQ1bMVGA158cneDcFXmq/exm+bBgUWh9GZR/4/2l+gQadrPHxzG0Fm1ASFNi6hNNwap+23ALHCeTNdCDwQIhX+IzZEK2eFy0yVG0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Yqxkh0sworeC5UMhi11SqhrMb0Mj7pp7oRw/us1MEQc=;
- b=Mt+XyesUeKn7oFzLlcI0jM5BKmYwXEVOvfCQsjwbZVLTS7C3A+k/vovd/REhMRUiG49gUXFpsAzsdr8kacf52M9/UWZSiearet7acX0deb0Ek2QaaqODOBNmEdm0m+k2TEMn9K+YpINk4R0A2nLWPE7fQNj4YwRfAjIvie7ExSrDPXyoDKlrjXN9eFA5/M3O7O0z2x/z/XOuK+a+M1BxCqCHdihTLa0z17VlL7JvnSi9lq05csPTIMczU33kSKz+hXJPge9rJQJFkj24lwPeII73i4ZiIcWh15Mxxh3yxPSO9oqixebkW+faDIWmaJsiPmdk+OS3sCVYKkkJCNcfCg==
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com (2603:1096:101:78::6)
- by TYZPR06MB6190.apcprd06.prod.outlook.com (2603:1096:400:33f::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.27; Wed, 28 May
- 2025 16:37:58 +0000
-Received: from SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535]) by SEZPR06MB5269.apcprd06.prod.outlook.com
- ([fe80::8c74:6703:81f7:9535%5]) with mapi id 15.20.8769.022; Wed, 28 May 2025
- 16:37:57 +0000
-From: =?utf-8?B?5p2O5oms6Z+s?= <frank.li@vivo.com>
-To: Viacheslav Dubeyko <slava@dubeyko.com>, "glaubitz@physik.fu-berlin.de"
-	<glaubitz@physik.fu-berlin.de>
-CC: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Slava.Dubeyko@ibm.com" <Slava.Dubeyko@ibm.com>
-Subject:
- =?utf-8?B?5Zue5aSNOiBbUEFUQ0ggdjIgMi8zXSBoZnM6IGNvcnJlY3Qgc3VwZXJibG9j?=
- =?utf-8?Q?k_flags?=
-Thread-Topic: [PATCH v2 2/3] hfs: correct superblock flags
-Thread-Index: AQHbyNuJv/srDI0VbU2+b3+qqSvHfLPnHcmAgAEtSsA=
-Date: Wed, 28 May 2025 16:37:57 +0000
-Message-ID:
- <SEZPR06MB5269D12DE8D4F48AF96E7409E867A@SEZPR06MB5269.apcprd06.prod.outlook.com>
-References: <20250519165214.1181931-1-frank.li@vivo.com>
-	 <20250519165214.1181931-2-frank.li@vivo.com>
- <ca3b43ff02fd76ae4d2f2c2b422b550acadba614.camel@dubeyko.com>
-In-Reply-To: <ca3b43ff02fd76ae4d2f2c2b422b550acadba614.camel@dubeyko.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEZPR06MB5269:EE_|TYZPR06MB6190:EE_
-x-ms-office365-filtering-correlation-id: 105b1226-8f7f-449f-2d1f-08dd9e0600d4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?REJjWXdjclVCZk5TNDFodmRpdUhaTXRNdUFkS0dyTHpWRTBsakJrYmNwVFE0?=
- =?utf-8?B?eWgvL2Mwc2lXQlNBTE8weGZucXNJaDBBa21oQjBFWHp1NUk4QitVaGpSaXpM?=
- =?utf-8?B?RERwVGZlRE80dElmalBUcjJkbjhJekt3RmVCNWVPQmQvN0lzYkxENXFiSmhO?=
- =?utf-8?B?bjhqQmhMMlRmeCt1bll4dCtHL1E5ZVA4akZua1dPMEN3NDl0MFVORWYvTTBE?=
- =?utf-8?B?MkIwM0lKM1BYYXZjYmw1WVNFVjArTTA5czladFg5Zk13WFBCSzhLZnBlTXJa?=
- =?utf-8?B?dnVyaWc2Zk85Tk1jM2hxYS9qVkFsY3BzbDZJZVlXc2hWNzJDUzc0d2hRRldP?=
- =?utf-8?B?RUk3LzBmWE0rY3E5bk9iRnpmaThHejBxaTdpbG4zZ2hpRnlaS1NKVmRTNmZ5?=
- =?utf-8?B?b3cxQnB1Vlg2YmM4NmlmbDJ0RG1rOE1sYWF6YW1oL1JZbVZqK2pVT1ZPWGtN?=
- =?utf-8?B?Y3d3SWV3YUFKSVhnWXAwRS9DLzJsemVCNGZQRlBjN0thbmovSDFQbk1qc3Iw?=
- =?utf-8?B?YlJCVlpzUWQ0KzAzdWwvVEN4YndyUy8xTWN2WkhGMXpZNXNPQndhQ21DZ0Y4?=
- =?utf-8?B?aWR0Yy80RkMwdldpcFRWL0ZhVllvMTlXYmJYVmdEOHVzcEIwN01RdE9icUhK?=
- =?utf-8?B?VGkyaWZYcGhIMTJRZTk0ZkJSUzJsSWVHYjhjeUhKU01xVmRzVTN3ZnNHU29r?=
- =?utf-8?B?WTBVbDM5SDBJTnZ4eXpGOTc0L3NlTWovRlFScFY4RGhsUVNzKzNsS0tPNlJy?=
- =?utf-8?B?NG9rM2g4TkYxTUdZNytaa1VtVzBDNUNkOERReDdyTFNIdXBoei9sM3JwNjda?=
- =?utf-8?B?M1VhVG83bGQ2VXNhMDNjRmRPVVlvZFBwd1hZUXFXY0xFKys2V2hpQkZJcXd5?=
- =?utf-8?B?WitBdUxNeGNPVGl4S3pXR2NUTjdZR1EvK0JCejE0QmF2bzUrVjBYUVlpbGZi?=
- =?utf-8?B?YWFrVGY0bVAvUjNibnZ3eEw5TUlpcWJUdFVOLzlUWWV2Z3pWUi9qbmFEeTRN?=
- =?utf-8?B?aTRsSVN1SmhhNVliRktNNXZwN3RKb2pvRGxHK2oxanBuUWRtMHZNbVlhZExB?=
- =?utf-8?B?Ym03cFVockFENXd1bEtxcCtpVDl0blhlNzcwNS9sb3NXNUthandLOURQMkMw?=
- =?utf-8?B?NUtydklNaHliQmZGRFUycHM5TXFySDVmaG5GcEJ2U3N3ZXZESGFSK2puanJD?=
- =?utf-8?B?T0tMVWlldlpMbm9TY2dpVnNuZk9jK2FSWU1wZWxvYllUUHlRc0gwcllMQlJU?=
- =?utf-8?B?V0lSQ1dUR2U3OFAvU09tVVJ1L1AzWDVWTVk2RkhoUkNRZ1krVkNnYjNhUWxR?=
- =?utf-8?B?OFFndDlaUTZVbDBPbG1xQkdwT1hCQWRkWUgzSGxtMzJVOWVQOUVVVWZNaWZi?=
- =?utf-8?B?VGhUNEtiS2JvMzJCR1I0SzIzeTBoSGdCZkphZEl1MGNkMmJEZW5tS3lWTWs4?=
- =?utf-8?B?STJmQUFOeGpRT1NnMGtDVXBIbExFRmI0Y0JGWlRNL3ZDL0tQc1NoUDE2b3hM?=
- =?utf-8?B?MzkwSlJXN0tBR0JtM2lNZmtmWVZ1Z3poSy9vZnI2MmxXUXNQRytyN0FOdld6?=
- =?utf-8?B?Q21oa0tCUHQ0TE0rYnJPcUxOUXV6S2lYY3FLNFRobkpaQWV2R2Z4cVh5amJX?=
- =?utf-8?B?LzRlZ3pwSnYwVFpQbWtrQS80MVNyejBiVVJSdjh0OWJDQ1ZZMlZOZzFMbEg3?=
- =?utf-8?B?KzZzOWZQeVZGMDczdEhwcENTQ1pHZm9KclIybzhibUpCQmU0WG1BaXlvbzNw?=
- =?utf-8?B?bmhqT1pPdjdnZDdMYlk4d3VVMCtvVVB4MEJxa2IyTkIrZmFNTXFML25EZUg4?=
- =?utf-8?B?V2lwT1RhWUxHTkNxNE9yVXo5L1g1VzJqUXhSLzZHQVZyMDRJV0d2U0RUa2kz?=
- =?utf-8?B?bzBjaVFKR1BGZnkrK0dCczhid1RGY21adW0wc3luZnFTMlNRRXpheExZQnpy?=
- =?utf-8?B?eUR6aTFNcUFkVkxVRitYL1RBNWFaYUdGanlKYmtiT2hnSmdEQWVMNktxZUZS?=
- =?utf-8?Q?wBHcgFNDRG4LaWSK4EEg8CugFBQ5AM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB5269.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YjJsakxyazlZUk1zWHhHbEx4M1RoRVFqVlFHNEZDNFUwSE4xNkt4TlhGV2RR?=
- =?utf-8?B?bWdaNURJYmVFOFRnbXhPR3JKWmpuYWx5R1dyd3IvS09CTzFqMm9EQlVhd21j?=
- =?utf-8?B?TG51bkp5Z0xTUXkxT3VrS3RzT2U4aS82Y1dTQXVqK1ZDZGlMSUxFOWtqR3pQ?=
- =?utf-8?B?aFh0ZmEwVk9BUG9ZSGkvTWpkc09HL2kwNHkzejJjNEtwblVXWFNuSjh0bDVa?=
- =?utf-8?B?YU9lTkgvMWFqSnJsZlVHeUNmYTUxdEtvNFBtMUI4OVorNnJQZVlYUVI5MEc4?=
- =?utf-8?B?a0tiT2pFRVdOcGdFZGJCY0tjeWg3TjVTb3lqbnVMNmZ4QUJIVU5RZ2ZZZUtl?=
- =?utf-8?B?M1NJMnNLU1FLbUsybG5VMmE5cWtwVnA3VWpwQ0xuQ2NTbkw0emtlQmgvOGx4?=
- =?utf-8?B?NFJnVjFSckM1QXBVRGVCcnRXNDdqbTJKVnlmYmFmNXBNS0tBczRleTIzTGxW?=
- =?utf-8?B?eFk3eWpDQ2ZmNkk1TE9sUVZlRUZsekY4SVdVdVFibWxpTFMzYzRqOHhaaHpI?=
- =?utf-8?B?c29uQ2ROUjhLS2FnTGxNUGVHaUxMV1R0MGcxcEpqRVJQRy92QWk2RGVBaWpD?=
- =?utf-8?B?aHZJTW04TFJKdmlYbXhHWldCeEs1YVc1WVhFTlUzdnowNkh6YlVmOGpBbDgz?=
- =?utf-8?B?ZytYZ2VJNVRpcWJ1dDRZRFR4U0N6bGVlM2cxMTNrZ2dPLzJTWTF1MkR4bFF3?=
- =?utf-8?B?anNVR0xUdWRDV2VBS0RLakZYdTdvWEMvUGEvaXBXWnYwdE1YcVFwTU1pM0lK?=
- =?utf-8?B?dkgrQjBYeFA2ZFpGWE4rUG9BYmpHYWZHemxIZE0wREFlc2N2U2VpR0hzQ2JS?=
- =?utf-8?B?cHlib1dwQ1p2WlZ4MFNreEpFTTloaTZ3akdPcXdGdGdmbnpWWWltRFo4V1hD?=
- =?utf-8?B?VmJOMDhkRlk3bTE4TlIvdU9FMWNab0Y2dTA0MDA1NGwxbWdnMU1JTzdaNDEy?=
- =?utf-8?B?WjlNbkRBVUZOY2hXT1BxTkNRSVZ2MGhiTEFGQmxGc2o4SG1QZFhSOGMzMHZa?=
- =?utf-8?B?T3lGclQ1SnREdThWK25ZWXg0NHlRc1l3RTdabDZMQTZCVGJhTVR0R3o1aUJz?=
- =?utf-8?B?REdFV1d1Q2VKQTdEYWExcDJOTkl1dTZoVXRIblByZVE1WFgzdFJVTGl3ZGJr?=
- =?utf-8?B?emlCOUZRaU1QOVBjRUxFa3M0c1l0bVlGSVg0R3cyVWo4aXlLSzlHSnN1RHBu?=
- =?utf-8?B?bC9vOEhjeGVSTmxEZU9iaS9ndEtaMERPdlI5S1pxcHVQZkU0OExrTWEwNlVZ?=
- =?utf-8?B?WUdsSEZMa0J2UHhZb0JoT1RpZWZtbHlNanlhRUhJZXhreG1VeTZnb1FMK0Uw?=
- =?utf-8?B?cDFhYUh6SHB6RlVaRWp2cWM1UjZic0FWcGJvRVVvRCtLVEhjQ3BIT0ZreTdv?=
- =?utf-8?B?T2RlaEtqcDJIK2tKTjYvU1U3cm9XRGNWQW50VE1pQTdzaUphNTRsMzJyT25a?=
- =?utf-8?B?VkQ5ZU1TdTNFbWJvSzlEaUJnOWgrMEZCYTRPUDE0WUlmVnRCK3hPdFl5bG1O?=
- =?utf-8?B?M2xQblM4eGtjeFNpNUs1THNkQnl2cDJGYUdoM1prSjZnZUFvZUZnVHJVVEpz?=
- =?utf-8?B?bEhRR3grYzEwVk90K3cyNTJMOU12dlJJM3E1RVdiVmdrOHhJK25jMW9aekN0?=
- =?utf-8?B?aTJzSGEwN09oVWF3eGlSaUg5eXh4UXJaODRLOW5TbGxOL2RSNXZuYllYMnVZ?=
- =?utf-8?B?dEd4VnpzWUNyTXhJMHBxT0xienBPOVBVQWlpNGl3bHVPUktXdUF0Z3R2MGZj?=
- =?utf-8?B?SlpzZkthcGNrNTlLOGxKUTZoU3JEVXlKN1lZQ1Nrd2xManE2SERUaTlqbDMz?=
- =?utf-8?B?UlV6Q3ozam0ycVF1dGVqdThtYUtEY0dXbkxKalluL2FMNkVpYndsWExxRzhP?=
- =?utf-8?B?d2doWHFYeld1THlXdnlPQ0xuWEdzNnNzS3J3K0ZVRlY0dlJkOUJnTzRJRWUv?=
- =?utf-8?B?UjRWRklYT1VHRnovdWxnNVl0Nm1kR2pxdXkwM2RrYk1ZVjZraW9CVndMUjBB?=
- =?utf-8?B?L0laZjNCbjZMaDVlS1pBZmFoQ2RiTzJldlpwMXN3VDI1TThhRnJheXJFUG83?=
- =?utf-8?B?cmFCc1RlNzQzK1Q5T0MxMzNhUlpBNFdud0hxUk1WRlV0aHNqMHp0NUkwNWMr?=
- =?utf-8?Q?lYXY=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B899288C19
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 May 2025 16:39:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748450380; cv=none; b=kSa47884GKuGmB6KLcMTA7c+EfvAt4EY0UclZRg5BKV0z5JAZ0w3TOV6eytgznBCDDObk707C08PknQnVcq7GrOS8ZLMvMOG9jgCQGcyZm8FReEfbLTR1mtlJE7nOXTpMH0gBeOdR1cvdRGWSuy38Z50DexniSgSC5HaLldj0iw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748450380; c=relaxed/simple;
+	bh=9ZFIKNoaGAoZluGUowCky6Ngnpz41IO5N/0CSvVPfsU=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZSo4lvx440EblPFzuErfdZFu6/pRVqzRpYD99635KL0GY5r6fQimFymrQl+E757gBZbcw142rH7o79AkYtGJTLQlEY7zdygqHBroqi1E06VP5LwOWTSr2pYTWo8Yd4GzU2VA1bHB7PID73xlmPJZDtCZK+5a/1NYjTVH7nTkvmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EaCfKUID; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-b2371b50cabso54199a12.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 May 2025 09:39:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748450377; x=1749055177; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ug/rSTqNkaK2DiSNfaEAiTgoamlZ5in/WoXI2qFgjt4=;
+        b=EaCfKUIDMqq78MjqgxE6vs6E9C91Gx7CFpQCpGpiESrnK4wBxmJOVtUbyE1cTU1C8Z
+         nBKetPvfOsnUXH+LhEcbIUaSY/e9Fd7kkQ9XeRnU+q9x9GmirTjjLz4ja6hsf3iunBpW
+         uzhY1k27QVWNZnG0kyNMuI3tK8ZnnTAtgYKvih61T96IJKIGVoB/L3lqq/PNL8MekqvI
+         9+cf1eIGnBJKX0NCeSv7vBGDPwhy/w5N7N3GxIHRJSC9/enQKMP/9HHCcXY1RwthE2Gc
+         VdGUfEuvc0+rj/Uqhea/h1ytjdiJ6amJveLUzs5c5EURcHd0MQwHDyFLgAqURyn4Uc9U
+         x5mA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748450377; x=1749055177;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ug/rSTqNkaK2DiSNfaEAiTgoamlZ5in/WoXI2qFgjt4=;
+        b=CKz3W+sGlJBw6txK7oZVpE1c+MbZWle4QEBZ/yzFUIpK8OoL6OXGmZg7OvOspTvj+P
+         5rX14UKq7Xig/ibC0DienHt80yCO/puDAif6gVzgXatYXwwdhVz2aeTwXI9uSIT1/xBv
+         SSRLzz/TUpW16PcSh9213G63iEe8hW989DGWBiHLrrqEcM3EX8mGF9FUwBhBJQIpUMVV
+         zJ474i5/6SGbbRZHlWvF5HrT5h10ixU/bqqMuyif3XSVADuY/fYgW+8H/uttOKEeYgce
+         AVuCy+U2OGcUXy/6mtO06/SvqoDvPlt2PPcCcGeeRB6gbRQ0fPBRno1SYrJqhLBBOJM+
+         pXXw==
+X-Forwarded-Encrypted: i=1; AJvYcCXC2aJMqIibcT1PFgAd0Zg0Td8zfQr2bVS5lweODGx8g5VGenQPg5b45EDdyacJ4pfiI3CetIKHEhx2mOgP@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfrC6U8o6Mt9GHKsZ8qSDymAZDBfGc+MVuYGE+87Q0/JZ3uvZ2
+	HtlYbf9olbb7ZAQc6xo6dTyLZRi7QJm9iuXH32AcqMu15FpLZd7sHjnW/T8LpoRC8DFMQKG0JOW
+	l0kVfpA+81HZBuckwef4Dkfk5Mg==
+X-Google-Smtp-Source: AGHT+IFNpKZD9lN4cOQmrQeE/v6mJ+Aez5Zu8/h2NScD8jBwFV5IrxK/YzUb/E+mnOr3jMtt3fLdteDpb1Js1lKinQ==
+X-Received: from plhs4.prod.google.com ([2002:a17:903:3204:b0:223:5693:a4e9])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:1a67:b0:234:d7b2:2ac2 with SMTP id d9443c01a7336-234d7b22c20mr46594455ad.22.1748450376728;
+ Wed, 28 May 2025 09:39:36 -0700 (PDT)
+Date: Wed, 28 May 2025 09:39:35 -0700
+In-Reply-To: <aDbswJwGRe5a4Lzf@yzhao56-desk.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB5269.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 105b1226-8f7f-449f-2d1f-08dd9e0600d4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 May 2025 16:37:57.6609
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: V8+Jwp7RgJosSOsCbPOt3ClN5xr7somr5iBaFam+c/wWawczA3Fmd/wRCHd3NkP0TtqB1KxDFJJJ11HizIxF0A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6190
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <625bd9c98ad4fd49d7df678f0186129226f77d7d.1747264138.git.ackerleytng@google.com>
+ <aDbswJwGRe5a4Lzf@yzhao56-desk.sh.intel.com>
+Message-ID: <diqz34co8zaw.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v2 39/51] KVM: guest_memfd: Merge and truncate on fallocate(PUNCH_HOLE)
+From: Ackerley Tng <ackerleytng@google.com>
+To: Yan Zhao <yan.y.zhao@intel.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com, 
+	ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com, 
+	anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu, 
+	bfoster@redhat.com, binbin.wu@linux.intel.com, brauner@kernel.org, 
+	catalin.marinas@arm.com, chao.p.peng@intel.com, chenhuacai@kernel.org, 
+	dave.hansen@intel.com, david@redhat.com, dmatlack@google.com, 
+	dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, 
+	graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com, 
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz, 
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, 
+	jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com, 
+	jun.miao@intel.com, kai.huang@intel.com, keirf@google.com, 
+	kent.overstreet@linux.dev, kirill.shutemov@intel.com, liam.merwick@oracle.com, 
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
+	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
+	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
+	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
+	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
+	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
+	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
+	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
+	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
+	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com, 
+	thomas.lendacky@amd.com, usama.arif@bytedance.com, vannapurve@google.com, 
+	vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com, 
+	wei.w.wang@intel.com, will@kernel.org, willy@infradead.org, 
+	xiaoyao.li@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com, 
+	zhiquan1.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 
-SGkgU2xhdmEsDQoNCj4gSSBhbSBzbGlnaHRseSBjb25mdXNlZCBieSBjb21tZW50LiBEb2VzIGl0
-IG1lYW4gdGhhdCB0aGUgZml4IGludHJvZHVjZXMgbW9yZSBlcnJvcnM/IEl0IGxvb2tzIGxpa2Ug
-d2UgbmVlZCB0byBoYXZlIG1vcmUgY2xlYXIgZXhwbGFuYXRpb24gb2YgdGhlIGZpeCBoZXJlLg0K
-DQpJJ2xsIHVwZGF0ZSBjb21taXQgbXNnLg0KDQo+IHMtPnNfZmxhZ3MgfD0gU0JfTk9ESVJBVElN
-RSB8IFNCX05PQVRJTUU7DQoNCklJVUMsIFNCX05PQVRJTUUgPiBTQl9OT0RJUkFUSU1FLg0KDQpT
-byB3ZSBzaG91bGQgY29ycmVjdCBmbGFncyBpbiBzbWIsIGNlcGguDQoNCjIwOTEgYm9vbCBhdGlt
-ZV9uZWVkc191cGRhdGUoY29uc3Qgc3RydWN0IHBhdGggKnBhdGgsIHN0cnVjdCBpbm9kZSAqaW5v
-ZGUpDQoyMDkyIHsNCjIwOTMgICAgICAgICBzdHJ1Y3QgdmZzbW91bnQgKm1udCA9IHBhdGgtPm1u
-dDsNCjIwOTQgICAgICAgICBzdHJ1Y3QgdGltZXNwZWM2NCBub3csIGF0aW1lOw0KMjA5NQ0KMjA5
-NiAgICAgICAgIGlmIChpbm9kZS0+aV9mbGFncyAmIFNfTk9BVElNRSkNCjIwOTcgICAgICAgICAg
-ICAgICAgIHJldHVybiBmYWxzZTsNCjIwOTgNCjIwOTkgICAgICAgICAvKiBBdGltZSB1cGRhdGVz
-IHdpbGwgbGlrZWx5IGNhdXNlIGlfdWlkIGFuZCBpX2dpZCB0byBiZSB3cml0dGVuDQoyMTAwICAg
-ICAgICAgwqYqIGJhY2sgaW1wcm9wcmVseSBpZiB0aGVpciB0cnVlIHZhbHVlIGlzIHVua25vd24g
-dG8gdGhlIHZmcy4NCjIxMDEgICAgICAgICDCpiovDQoyMTAyICAgICAgICAgaWYgKEhBU19VTk1B
-UFBFRF9JRChtbnRfaWRtYXAobW50KSwgaW5vZGUpKQ0KMjEwMyAgICAgICAgICAgICAgICAgcmV0
-dXJuIGZhbHNlOw0KMjEwNA0KMjEwNSAgICAgICAgIGlmIChJU19OT0FUSU1FKGlub2RlKSkNCjIx
-MDYgICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCjIxMDcgICAgICAgICBpZiAoKGlub2Rl
-LT5pX3NiLT5zX2ZsYWdzICYgU0JfTk9ESVJBVElNRSkgJiYgU19JU0RJUihpbm9kZS0+aV9tb2Rl
-KSkNCjIxMDggICAgICAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCg0KVGh4LA0KWWFuZ3Rhbw0K
+Yan Zhao <yan.y.zhao@intel.com> writes:
+
+> On Wed, May 14, 2025 at 04:42:18PM -0700, Ackerley Tng wrote:
+>> Merge and truncate on fallocate(PUNCH_HOLE), but if the file is being
+>> closed, defer merging to folio_put() callback.
+>> 
+>> Change-Id: Iae26987756e70c83f3b121edbc0ed0bc105eec0d
+>> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+>> ---
+>>  virt/kvm/guest_memfd.c | 76 +++++++++++++++++++++++++++++++++++++-----
+>>  1 file changed, 68 insertions(+), 8 deletions(-)
+>> 
+>> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+>> index cb426c1dfef8..04b1513c2998 100644
+>> --- a/virt/kvm/guest_memfd.c
+>> +++ b/virt/kvm/guest_memfd.c
+>> @@ -859,6 +859,35 @@ static int kvm_gmem_restructure_folios_in_range(struct inode *inode,
+>>  	return ret;
+>>  }
+>>  
+>> +static long kvm_gmem_merge_truncate_indices(struct inode *inode, pgoff_t index,
+>> +					   size_t nr_pages)
+>> +{
+>> +	struct folio *f;
+>> +	pgoff_t unused;
+>> +	long num_freed;
+>> +
+>> +	unmap_mapping_pages(inode->i_mapping, index, nr_pages, false);
+>> +
+>> +	if (!kvm_gmem_has_safe_refcount(inode->i_mapping, index, nr_pages, &unused))
+
+Yan, thank you for your reviews!
+
+> Why is kvm_gmem_has_safe_refcount() checked here, but not in
+> kvm_gmem_zero_range() within kvm_gmem_truncate_inode_range() in patch 33?
+>
+
+The contract for guest_memfd with HugeTLB pages is that if holes are
+punched in any ranges less than a full huge page, no pages are removed
+from the filemap. Those ranges are only zeroed.
+
+In kvm_gmem_zero_range(), we never remove any folios, and so there is no
+need to merge. If there's no need to merge, then we don't need to check
+for a safe refcount, and can just proceed to zero.
+
+kvm_gmem_merge_truncate_indices() is only used during hole punching and
+not when the file is closed. Hole punch vs file closure is checked using
+mapping_exiting(inode->i_mapping).
+
+During a hole punch, we will only allow truncation if there are no
+unexpected refcounts on any subpages, hence this
+kvm_gmem_has_safe_refcount() check.
+
+>> +		return -EAGAIN;
+>> +
+>
+> Rather than merging the folios, could we simply call kvm_gmem_truncate_indices()
+> instead?
+>
+> num_freed = kvm_gmem_truncate_indices(inode->i_mapping, index, nr_pages);
+> return num_freed;
+>
+
+We could do this too, but then that would be deferring the huge page
+merging to the folio_put() callback and eventually the kernel worker
+thread.
+
+My goal here is to try to not to defer merging and freeing as much as
+possible so that most of the page/memory operations are
+synchronous, because synchronous operations are more predictable.
+
+As an example of improving predictability, in one of the selftests, I do
+a hole punch and then try to allocate again. Because the merging and
+freeing of the HugeTLB page sometimes takes too long, the allocation
+sometimes fails: the guest_memfd's subpool hadn't yet received the freed
+page back. With a synchronous truncation, the truncation may take
+longer, but the selftest predictably passes.
+
+>> +	f = filemap_get_folio(inode->i_mapping, index);
+>> +	if (IS_ERR(f))
+>> +		return 0;
+>> +
+>> +	/* Leave just filemap's refcounts on the folio. */
+>> +	folio_put(f);
+>> +
+>> +	WARN_ON(kvm_gmem_merge_folio_in_filemap(inode, f));
+>> +
+>> +	num_freed = folio_nr_pages(f);
+>> +	folio_lock(f);
+>> +	truncate_inode_folio(inode->i_mapping, f);
+>> +	folio_unlock(f);
+>> +
+>> +	return num_freed;
+>> +}
+>> +
+>>  #else
+>>  
+>>  static inline int kvm_gmem_try_split_folio_in_filemap(struct inode *inode,
+>> @@ -874,6 +903,12 @@ static int kvm_gmem_restructure_folios_in_range(struct inode *inode,
+>>  	return 0;
+>>  }
+>>  
+>> +static long kvm_gmem_merge_truncate_indices(struct inode *inode, pgoff_t index,
+>> +					   size_t nr_pages)
+>> +{
+>> +	return 0;
+>> +}
+>> +
+>>  #endif
+>>  
+>>  #else
+>> @@ -1182,8 +1217,10 @@ static long kvm_gmem_truncate_indices(struct address_space *mapping,
+>>   *
+>>   * Removes folios beginning @index for @nr_pages from filemap in @inode, updates
+>>   * inode metadata.
+>> + *
+>> + * Return: 0 on success and negative error otherwise.
+>>   */
+>> -static void kvm_gmem_truncate_inode_aligned_pages(struct inode *inode,
+>> +static long kvm_gmem_truncate_inode_aligned_pages(struct inode *inode,
+>>  						  pgoff_t index,
+>>  						  size_t nr_pages)
+>>  {
+>> @@ -1191,19 +1228,34 @@ static void kvm_gmem_truncate_inode_aligned_pages(struct inode *inode,
+>>  	long num_freed;
+>>  	pgoff_t idx;
+>>  	void *priv;
+>> +	long ret;
+>>  
+>>  	priv = kvm_gmem_allocator_private(inode);
+>>  	nr_per_huge_page = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(priv);
+>>  
+>> +	ret = 0;
+>>  	num_freed = 0;
+>>  	for (idx = index; idx < index + nr_pages; idx += nr_per_huge_page) {
+>> -		num_freed += kvm_gmem_truncate_indices(
+>> -			inode->i_mapping, idx, nr_per_huge_page);
+>> +		if (mapping_exiting(inode->i_mapping) ||
+>> +		    !kvm_gmem_has_some_shared(inode, idx, nr_per_huge_page)) {
+>> +			num_freed += kvm_gmem_truncate_indices(
+>> +				inode->i_mapping, idx, nr_per_huge_page);
+>> +		} else {
+>> +			ret = kvm_gmem_merge_truncate_indices(inode, idx,
+>> +							      nr_per_huge_page);
+>> +			if (ret < 0)
+>> +				break;
+>> +
+>> +			num_freed += ret;
+>> +			ret = 0;
+>> +		}
+>>  	}
+>>  
+>>  	spin_lock(&inode->i_lock);
+>>  	inode->i_blocks -= (num_freed << PAGE_SHIFT) / 512;
+>>  	spin_unlock(&inode->i_lock);
+>> +
+>> +	return ret;
+>>  }
+>>  
+>>  /**
+>> @@ -1252,8 +1304,10 @@ static void kvm_gmem_zero_range(struct address_space *mapping,
+>>   *
+>>   * Removes full (huge)pages from the filemap and zeroing incomplete
+>>   * (huge)pages. The pages in the range may be split.
+>> + *
+>> + * Return: 0 on success and negative error otherwise.
+>>   */
+>> -static void kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
+>> +static long kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
+>>  					  loff_t lend)
+>>  {
+>>  	pgoff_t full_hpage_start;
+>> @@ -1263,6 +1317,7 @@ static void kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
+>>  	pgoff_t start;
+>>  	pgoff_t end;
+>>  	void *priv;
+>> +	long ret;
+>>  
+>>  	priv = kvm_gmem_allocator_private(inode);
+>>  	nr_per_huge_page = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(priv);
+>> @@ -1279,10 +1334,11 @@ static void kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
+>>  		kvm_gmem_zero_range(inode->i_mapping, start, zero_end);
+>>  	}
+>>  
+>> +	ret = 0;
+>>  	if (full_hpage_end > full_hpage_start) {
+>>  		nr_pages = full_hpage_end - full_hpage_start;
+>> -		kvm_gmem_truncate_inode_aligned_pages(inode, full_hpage_start,
+>> -						      nr_pages);
+>> +		ret = kvm_gmem_truncate_inode_aligned_pages(
+>> +			inode, full_hpage_start, nr_pages);
+>>  	}
+>>  
+>>  	if (end > full_hpage_end && end > full_hpage_start) {
+>> @@ -1290,6 +1346,8 @@ static void kvm_gmem_truncate_inode_range(struct inode *inode, loff_t lstart,
+>>  
+>>  		kvm_gmem_zero_range(inode->i_mapping, zero_start, end);
+>>  	}
+>> +
+>> +	return ret;
+>>  }
+>>  
+>>  static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>> @@ -1298,6 +1356,7 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>>  	pgoff_t start = offset >> PAGE_SHIFT;
+>>  	pgoff_t end = (offset + len) >> PAGE_SHIFT;
+>>  	struct kvm_gmem *gmem;
+>> +	long ret;
+>>  
+>>  	/*
+>>  	 * Bindings must be stable across invalidation to ensure the start+end
+>> @@ -1308,8 +1367,9 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>>  	list_for_each_entry(gmem, gmem_list, entry)
+>>  		kvm_gmem_invalidate_begin_and_zap(gmem, start, end);
+>>  
+>> +	ret = 0;
+>>  	if (kvm_gmem_has_custom_allocator(inode)) {
+>> -		kvm_gmem_truncate_inode_range(inode, offset, offset + len);
+>> +		ret = kvm_gmem_truncate_inode_range(inode, offset, offset + len);
+>>  	} else {
+>>  		/* Page size is PAGE_SIZE, so use optimized truncation function. */
+>>  		truncate_inode_pages_range(inode->i_mapping, offset, offset + len - 1);
+>> @@ -1320,7 +1380,7 @@ static long kvm_gmem_punch_hole(struct inode *inode, loff_t offset, loff_t len)
+>>  
+>>  	filemap_invalidate_unlock(inode->i_mapping);
+>>  
+>> -	return 0;
+>> +	return ret;
+>>  }
+>>  
+>>  static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t len)
+>> -- 
+>> 2.49.0.1045.g170613ef41-goog
+>> 
 
