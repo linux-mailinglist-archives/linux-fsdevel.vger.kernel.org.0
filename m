@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-50010-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50011-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6E35AC7406
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 00:29:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CE7AC740A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 00:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8681D50169E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 22:29:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C3A50190E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 22:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F51822B8BC;
-	Wed, 28 May 2025 22:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155E522D4DA;
+	Wed, 28 May 2025 22:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6JBTGgO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y8jl892J"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B85D422A4EC;
-	Wed, 28 May 2025 22:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681C0221DAD;
+	Wed, 28 May 2025 22:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748471192; cv=none; b=MCUkqu+6ndYGGEVfs1QnaGiz44n5zLVsQwZTilK1wWiQTQtfDoSHgePK/s75Q5hPaPlBKvmoFI+OxOSgIPst2XAXxQID30FBzryIjjjtMJmdYXgdPAtZAiphH4xCBjsMGM8BAiR+T83rhQqgZNPsqlAxV3iaAHwwkCmFRLw4aEo=
+	t=1748471198; cv=none; b=IpeCR9ssmO53CCZa4eb0zoCFILDTXwJIgZ6fJveH85JAAVo/+6LTW7XsOWpLjwA7XbBjkRzfY/CixA768HbHPaFimxgul8MasM8N5SE+Zby4dfL6nI/iSvi/QO+4DG3vpBB1PZ/pbDTVRtcVbHFEOiIe4bqjbBu1G1HFhIOlcWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748471192; c=relaxed/simple;
-	bh=k5v9m831CLJ3N4Z7unFVudD+pbqb+Zm4eoJLzJx1inY=;
+	s=arc-20240116; t=1748471198; c=relaxed/simple;
+	bh=UgxT8rPg0mLYojJHE661GfEUhvEvpGi4Nx30b+sBsL8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=T9anvkTsSquQ98qJYIt4edo798I3vUsHGNtze+dWCS3YfMY5/ikd5RtgqlKD/GEILWA4hBxuFdpQ9aBGmHgKl8et3wjqR1t3MnuFgh/nTLzQ8ubHUL/v5e17EPcORjdrvv5S2px6Wt2c8m5e90yS9VT1Syp6jBf0Eo9oUeIOJeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s6JBTGgO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AAD5C4CEEE;
-	Wed, 28 May 2025 22:26:30 +0000 (UTC)
+	 MIME-Version; b=Px78XXWdx943btE68j3CVhR8PPggxHbhFyhDkNb/xPksKS5MKIhj29I7ATXmIJer8gYnYi9+vmFN9zLnAgRypExMETOn4yy82cjByYQ1WkbxYs4zjXMEMAQfjCT+82Qk4/bbv9M0Tv13bNocud6oL7vzjMfHxoZ0H7IxCyqrdUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y8jl892J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556E1C4CEE3;
+	Wed, 28 May 2025 22:26:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748471192;
-	bh=k5v9m831CLJ3N4Z7unFVudD+pbqb+Zm4eoJLzJx1inY=;
+	s=k20201202; t=1748471197;
+	bh=UgxT8rPg0mLYojJHE661GfEUhvEvpGi4Nx30b+sBsL8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=s6JBTGgOvKCWNyRKmjaz5DnBcuHTqofNvQQyAWKG3Xr6B3tPxyC7npaiaKkBOjGtp
-	 8eCQyYJIh/isx0KGLdg9/chMaYT7nA/Zub67igCkebTvxzySJxrmJw2nJ1oa1dd2uz
-	 GmT4jkieBiW1oCI3ZHl+qXmdBHZbuleEI2Ihwi98xNCUqXkblibqVdtcpd13bVj3vT
-	 QSUK9UPAkcDOIY2bw6lC46dC9GiazrL4qlsqpwILqS4rDn3KOiNCoMPg1hf1jQp7Dv
-	 h2MfOXYebKH4LZjdy8Po5YmwRzsVCofgYjYz8aw2dZGtqY1SFYcyrt67fgSA7k8j+r
-	 1Nsstkz7uquWQ==
+	b=Y8jl892JRxrP60c9PeJr4So/bgxSySclLbZBwH+NHxZ0jjV/9yaBI4MPE9S2pVlk6
+	 37+RPSBYUI6kf+haaP5AiFZE22jAEt6mjzuDroTx23xcdTogb597nXdlWZR8CweDan
+	 dG5NLrpdopz2EZrP6myi1vGzjWLkDf2W7D8WrFx3e4KKpdsR0JgV4t/Ewir5Jbb9RV
+	 YPohDSBY5/sAYT200HWPvvMAOKHyXEexmJBqQNpgfT5KnqH5yhoj7TLloQ2KK+rLeW
+	 +pywV8wrJ2E+L3hXe040OAcuvg8nB0iQusj7/UjKHn+M6RSs4LXex9GWWRQCH61Thi
+	 iquEO9e6D40Tg==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -64,9 +64,9 @@ Cc: kernel-team@meta.com,
 	mic@digikod.net,
 	gnoack@google.com,
 	Song Liu <song@kernel.org>
-Subject: [PATCH bpf-next 1/4] namei: Introduce new helper function path_parent()
-Date: Wed, 28 May 2025 15:26:20 -0700
-Message-ID: <20250528222623.1373000-2-song@kernel.org>
+Subject: [PATCH bpf-next 2/4] landlock: Use path_parent()
+Date: Wed, 28 May 2025 15:26:21 -0700
+Message-ID: <20250528222623.1373000-3-song@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250528222623.1373000-1-song@kernel.org>
 References: <20250528222623.1373000-1-song@kernel.org>
@@ -78,86 +78,78 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This helper walks an input path to its parent. Logic are added to handle
-walking across mount tree.
+Use path_parent() to walk a path up to its parent.
 
-This will be used by landlock, and BPF LSM.
+While path_parent() has an extra check with path_connected() than existing
+code, there is no functional changes intended for landlock.
 
 Signed-off-by: Song Liu <song@kernel.org>
 ---
- fs/namei.c            | 39 +++++++++++++++++++++++++++++++++++++++
- include/linux/namei.h |  8 ++++++++
- 2 files changed, 47 insertions(+)
+ security/landlock/fs.c | 34 +++++++++++++++++-----------------
+ 1 file changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 84a0e0b0111c..475f4188a0e6 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -1379,6 +1379,45 @@ int follow_up(struct path *path)
- }
- EXPORT_SYMBOL(follow_up);
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 6fee7c20f64d..32a24758ad6e 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -837,7 +837,6 @@ static bool is_access_to_paths_allowed(
+ 	 * restriction.
+ 	 */
+ 	while (true) {
+-		struct dentry *parent_dentry;
+ 		const struct landlock_rule *rule;
  
-+/**
-+ * path_parent - Find the parent of path
-+ * @path: input and output path.
-+ *
-+ * Given a path, find the parent path. Replace @path with the parent path.
-+ * If we were already at the real root or a disconnected root, @path is
-+ * not changed.
-+ *
-+ * Returns:
-+ *   PATH_PARENT_SAME_MOUNT         - if we walked up within the same mount;
-+ *   PATH_PARENT_CHANGED_MOUNT      - if we walked up a mount point;
-+ *   PATH_PARENT_REAL_ROOT          - if we were already at real root;
-+ *   PATH_PARENT_DISCONNECTED_ROOT  - if we were at the root of a disconnected
-+ *                                    filesystem.
-+ */
-+enum path_parent_status path_parent(struct path *path)
-+{
-+	struct dentry *parent;
-+
-+	if (path->dentry == path->mnt->mnt_root) {
-+		if (!follow_up(path))
-+			return PATH_PARENT_REAL_ROOT;
-+		return PATH_PARENT_CHANGED_MOUNT;
-+	}
-+	if (unlikely(IS_ROOT(path->dentry)))
-+		return PATH_PARENT_DISCONNECTED_ROOT;
-+
-+	parent = dget_parent(path->dentry);
-+	if (unlikely(!path_connected(path->mnt, parent))) {
-+		dput(parent);
-+		return PATH_PARENT_DISCONNECTED_ROOT;
-+	}
-+
-+	dput(path->dentry);
-+	path->dentry = parent;
-+	return PATH_PARENT_SAME_MOUNT;
-+}
-+EXPORT_SYMBOL_GPL(path_parent);
-+
- static bool choose_mountpoint_rcu(struct mount *m, const struct path *root,
- 				  struct path *path, unsigned *seqp)
- {
-diff --git a/include/linux/namei.h b/include/linux/namei.h
-index bbaf55fb3101..dc6e9096eb15 100644
---- a/include/linux/namei.h
-+++ b/include/linux/namei.h
-@@ -86,6 +86,14 @@ extern int follow_down_one(struct path *);
- extern int follow_down(struct path *path, unsigned int flags);
- extern int follow_up(struct path *);
+ 		/*
+@@ -896,19 +895,17 @@ static bool is_access_to_paths_allowed(
+ 		if (allowed_parent1 && allowed_parent2)
+ 			break;
+ jump_up:
+-		if (walker_path.dentry == walker_path.mnt->mnt_root) {
+-			if (follow_up(&walker_path)) {
+-				/* Ignores hidden mount points. */
+-				goto jump_up;
+-			} else {
+-				/*
+-				 * Stops at the real root.  Denies access
+-				 * because not all layers have granted access.
+-				 */
+-				break;
+-			}
+-		}
+-		if (unlikely(IS_ROOT(walker_path.dentry))) {
++		switch (path_parent(&walker_path)) {
++		case PATH_PARENT_CHANGED_MOUNT:
++			/* Ignores hidden mount points. */
++			goto jump_up;
++		case PATH_PARENT_REAL_ROOT:
++			/*
++			 * Stops at the real root.  Denies access
++			 * because not all layers have granted access.
++			 */
++			goto walk_done;
++		case PATH_PARENT_DISCONNECTED_ROOT:
+ 			/*
+ 			 * Stops at disconnected root directories.  Only allows
+ 			 * access to internal filesystems (e.g. nsfs, which is
+@@ -918,12 +915,15 @@ static bool is_access_to_paths_allowed(
+ 				allowed_parent1 = true;
+ 				allowed_parent2 = true;
+ 			}
++			goto walk_done;
++		case PATH_PARENT_SAME_MOUNT:
+ 			break;
++		default:
++			WARN_ON_ONCE(1);
++			goto walk_done;
+ 		}
+-		parent_dentry = dget_parent(walker_path.dentry);
+-		dput(walker_path.dentry);
+-		walker_path.dentry = parent_dentry;
+ 	}
++walk_done:
+ 	path_put(&walker_path);
  
-+enum path_parent_status {
-+	PATH_PARENT_SAME_MOUNT = 0,
-+	PATH_PARENT_CHANGED_MOUNT,
-+	PATH_PARENT_REAL_ROOT,
-+	PATH_PARENT_DISCONNECTED_ROOT,
-+};
-+enum path_parent_status path_parent(struct path *path);
-+
- extern struct dentry *lock_rename(struct dentry *, struct dentry *);
- extern struct dentry *lock_rename_child(struct dentry *, struct dentry *);
- extern void unlock_rename(struct dentry *, struct dentry *);
+ 	if (!allowed_parent1) {
 -- 
 2.47.1
 
