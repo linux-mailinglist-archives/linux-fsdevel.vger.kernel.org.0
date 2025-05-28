@@ -1,133 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-49968-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-49969-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF9AAAC6687
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 12:00:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A0BAC66DA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 12:19:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 912874E3D5F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 10:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C764C3B2918
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 May 2025 10:19:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD3810E3;
-	Wed, 28 May 2025 10:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06D22749DE;
+	Wed, 28 May 2025 10:19:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kode54.net header.i=@kode54.net header.b="UMj86KVn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nqqf7JzF"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ijYDzEZp"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD24E274FCE;
-	Wed, 28 May 2025 10:00:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803B920F07D
+	for <linux-fsdevel@vger.kernel.org>; Wed, 28 May 2025 10:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748426443; cv=none; b=scdeEb5Xp0iPssW4UopFSh8RLjaO2YjVE0xvjv6D55K0NFK9lpR1aSQYTQ+NCZOW5HMSa6E0b4nsZKs8azjW7utn24LhZCHShKqh59iwcamJ3fGZJgbq/MUYmUc7ufFG8ddG4i6DUvrfr02uXZK7MalzURtm0uBfdZLfD0VT94c=
+	t=1748427583; cv=none; b=lIwnQU74EeNOU0oL0j39DQEB1xC6BOyQX+kGpR5IK1vSGwsid5XVBaDku3WnWWaNdSzNIgg1sOwYyw2206ah1+ppqz2/xSENoYPHrOuf7VFRAH3PtNdzq8qufvOulUCh196cP9KOpwhk4nEO/0bGmOvdkmhZY5CUZ0SIwaKrUtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748426443; c=relaxed/simple;
-	bh=WQeTlHuVSBJoVN4kE4XxtFen/lxCvh0cIB1WExXu+rE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=hPj2m7QbYuIdKfwtnajgIa404hh5c1K+JyZm0s0bsk2+36qlWEoqp9XQ1MWvS7w0BirkF2a+os8T7dTqLvt8aMdKekfM9HDJdE0g5bdDQ6s30zu/E5Xbc4d67tBEgjH7opQ2pQhB2yhmW81HUqc6RlvN7mo2MyW5LnMfXGusC1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kode54.net; spf=pass smtp.mailfrom=kode54.net; dkim=pass (2048-bit key) header.d=kode54.net header.i=@kode54.net header.b=UMj86KVn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nqqf7JzF; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kode54.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kode54.net
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id D8B07138270D;
-	Wed, 28 May 2025 06:00:39 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 28 May 2025 06:00:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kode54.net; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1748426439;
-	 x=1748512839; bh=eV4x9DFHlcFo11zyF70Wii41wecmfGe1saKF1QyZteg=; b=
-	UMj86KVnVkk9x4kxSTJn398QXEufLltreS1u1o8VijElPbOqAIRxvZtD6hBnEnwI
-	JA7SLMM6R93+xe8hbheD/eP5I8wpNdttxSxMjebZUPC999tX3KUXHYldkMDORc8f
-	NC4ogrZsqFYqkizkS/4VNs2jVQMRF0cJB9gDqp2ILOnwCnYa2LGfBrdtVcI8oBVn
-	7jQ5vvWzh+CoYTR99GImMX1nyKYdxhLY2iymc2508FkWVC76YgisDzUK5hpiAHsa
-	8HWvy46ph6qcpBa6bjnXYwOEkSaYj9324St90GtHhnVQCbroj6izcZSDkzbH/dFd
-	saQjVMA5KgefmcxAH4soFg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748426439; x=
-	1748512839; bh=eV4x9DFHlcFo11zyF70Wii41wecmfGe1saKF1QyZteg=; b=n
-	qqf7JzFpU5LxnKowSZ4sr1iecrmSRZn04ZpK3yQH35os2zW0JmlYz/7xy6BCklJW
-	Lw19+PkmeCeFgLSOnD3ogUEL/iD5djEQgnNTh4SB7zPfD9+6txGG6+ySfuHJUhqJ
-	MYjvPt1e0qgcKxwUZ9zASdQ7rjq/iFhe55mFgZZMn9qITs5Us/gwoWKmFaIu6M1J
-	stL9EmXQ0QO7zakobDRRRyEqx6W+C1KYjwVqwI5gQYDVWR+aqOFfYARu11e6Q+fZ
-	zp9P2W9ouxXa7PeRgBrCTjQDAHzGcf7FEHFVJPvKcxbhf/lVsbWEEBNT/fgl75ia
-	cKU/bylVEmOYVs8WZAhEw==
-X-ME-Sender: <xms:x942aKc5FrRDD1sYuINC_LnkbU1_wJ3Z9wDZX3gP_k764qkjXaV80g>
-    <xme:x942aEOyLOU0EzqkXFH5ptTE-51UxugRK_4Oua2ApsfNHbzpa9mKHYWvTz85RcUEO
-    -Eun6ImqbVlwjqG_Uc>
-X-ME-Received: <xmr:x942aLhwVCO0FnsNg3m-JxaIXucFNlXQDGvoK9o-H_o7gSAz55m-uf0PlWM-SeeNK8Y3ecqnDouyguH-zPnf8upc_CwcL2iwqQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgddvvdeljeculddtuddrgeefvddrtd
-    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
-    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
-    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegggfgtfffkvfev
-    uffhofhfjgesthhqredtredtjeenucfhrhhomhepfdevhhhrihhsthhophhhvghrucfunh
-    hofihhihhllhdfuceotghhrhhisheskhhouggvheegrdhnvghtqeenucggtffrrghtthgv
-    rhhnpeeijeelkefhudekueekvdejtdeuueelteegvdeuveettdekjeekiedugeegteevud
-    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegthhhr
-    ihhssehkohguvgehgedrnhgvthdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtph
-    houhhtpdhrtghpthhtohepmhgrlhhtvgdrshgthhhrohgvuggvrhesthhngihiphdruggv
-    pdhrtghpthhtohepjhhohhhnsehsthhofhhfvghlrdhorhhgpdhrtghpthhtohepkhgvnh
-    htrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphhtthhopehtohhrvhgr
-    lhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinh
-    hugidqsggtrggthhgvfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtth
-    hopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:x942aH-6vKaUwCdpcQxktyla0Yut1_YwlSPY1nY9TTYTSnglESol7Q>
-    <xmx:x942aGtGQdk0348b9oihzzecNN8iIpcUb6cYqLgsUkrmdcubR7LdbA>
-    <xmx:x942aOG5mVvIcxicGbUuUPhZgKq39eYphjwoTCNYIu0cjKfiq1NBew>
-    <xmx:x942aFPcfQkWGI6VtKFgq13sbwz89_YzFpek22la9-zjI7t32ajY-Q>
-    <xmx:x942aPW5c4arKAfoY7TncaYrgRdrdS0iSqwaGsQfplAvs7EisPI-lZFx>
-Feedback-ID: i9ec6488d:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 28 May 2025 06:00:38 -0400 (EDT)
+	s=arc-20240116; t=1748427583; c=relaxed/simple;
+	bh=VI5XMEtYymvXEZUkdE+CqGy2x1qc/eA9MLFr5yEawCQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JYvU2Rpp5n1wdIADfAAbWG96vFvA4QsrdEIWqPGdFxsrBSoIW9+ugXqbNcNcDaB78LsHJ24hQlRXN7MfS/PtaaoPQDmTRM3hkfnGxUJ6dPUH05IazvOy64B9Thij2V7USBMD7hlNDOvcQjuprZEEs5VLf7WvBZQWAqolA/zeV2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ijYDzEZp; arc=none smtp.client-ip=209.85.221.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3a4e1c6c68bso1280335f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 May 2025 03:19:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1748427580; x=1749032380; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=35ch6qViYkOrTqxvbtV1QWyz6ls9oFvjHKTve0SAxuA=;
+        b=ijYDzEZpLM/ljFL27Zw4J5Z7ow4fX6iH2DOmxAhc8rtlmukRy1oryn6DfiJKBVOS+C
+         rtUiDdiem9ZxmIjJA/sNJokTA3zcF3FZgTzM74bldF6wbdU7JButYczPljqc/aMI7Ium
+         0nHfQEJA/YNBbqU9bzSVEDHNwZDpfk1GZnEC6MNeZNx23I9ydOk/eS6h0j0RANCUydLs
+         Tcowauwk8U23WzAhr1fb+CKriGFxhPOISlKs/VjS2fYTinHiyRkNnYlsaNelSM3qYG76
+         +DWldDSNS9XUiIYh6U0VytYy2FWrTlYoxAqJYV0ye49eKEbOtHLGn5nkcQHRB+H64J6Q
+         yt/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748427580; x=1749032380;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=35ch6qViYkOrTqxvbtV1QWyz6ls9oFvjHKTve0SAxuA=;
+        b=a3uMotb0oig/5hTcibSK2QhWTMy6kSIK6txkuxBnyETDLMLatPPKNO0apPlpn+oseo
+         TjSkHBMKTnQgzPODopjd/EIJLuf7O1y1GnvazWNzq4pFTb276ZW5/o2utN4b1CX2d6EW
+         HPQxl9Fm3fWOaUuoI7zpVYTu/idMw0Vu9TEIp3bkSj/tK17mIYRVg8NrcqwzBy0oz41v
+         uzB16Kbweyew1gcHhMIWOYqVGBmvUU5IaJTeMNmgqAqbCFjyEPl7ed4uhSDbFiviVfii
+         xaPBuz467IUBm6hDA1vtTKGhzar8Hed1D10zvG7MFE6w9GlwcRuulek/XkBXYwr8fYhx
+         FiWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXiIGr4sYZGlDeUksZGB1js56pLjLm9gd3jLHmEmSVOvZ9wVMI/Msfhn1n4HvTh1BrwppBRX0lFLXkPbdaT@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRQUgiiOZr58u5paJmLmjRJd0QfnnjURAFIBa/b2YlFbbPVs6j
+	gQz/XvWbMEupIGltH+3G4RF2+CXeal3dVGGshR8CJTGr94wK8CZgnqpKHWVUtTYePO+jYI4xEW9
+	JLeit6w7XYkqBTTOYiw==
+X-Google-Smtp-Source: AGHT+IEi18Sdr/w5PdnXm7hoCErFl0eH4ZUw2NhMf6AyANXqE0wnRIFEZpzrukKxGggH9pmtR5JC9r1qkIR6+VE=
+X-Received: from wrd12.prod.google.com ([2002:a05:6000:4a0c:b0:3a3:6d37:3db2])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:40dd:b0:3a4:e1d2:9a7a with SMTP id ffacd0b85a97d-3a4e1d29b1cmr5537906f8f.46.1748427579900;
+ Wed, 28 May 2025 03:19:39 -0700 (PDT)
+Date: Wed, 28 May 2025 10:19:38 +0000
+In-Reply-To: <20250527204636.12573-1-pekkarr@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 28 May 2025 03:00:38 -0700
-Message-Id: <DA7PG162QJME.2FUT6C3GBGDB3@kode54.net>
-To: =?utf-8?q?Malte_Schr=C3=B6der?= <malte.schroeder@tnxip.de>, "John
- Stoffel" <john@stoffel.org>, "Kent Overstreet" <kent.overstreet@linux.dev>
-Cc: "Linus Torvalds" <torvalds@linux-foundation.org>,
- <linux-bcachefs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] bcachefs changes for 6.16
-From: "Christopher Snowhill" <chris@kode54.net>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <oxkibsokaa3jw2flrbbzb5brx5ere724f3b2nyr2t5nsqfjw4u@23q3ardus43h> <dmfrgqor3rfvjfmx7bp4m7h7wis4dt5m3kc2d3ilgkg4fb4vem@wytvcdifbcav> <26678.2527.611113.400746@quad.stoffel.home> <DA7O5Z6M9D5H.2OX4U4K5YQ7C9@kode54.net> <c2001c69-e735-4976-ac8b-6269c825cb92@tnxip.de>
-In-Reply-To: <c2001c69-e735-4976-ac8b-6269c825cb92@tnxip.de>
+References: <20250527204636.12573-1-pekkarr@protonmail.com>
+Message-ID: <aDbjOpMZlhD6irj-@google.com>
+Subject: Re: [PATCH 1/2] rust: file: mark `LocalFile` as `repr(transparent)`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Pekka Ristola <pekkarr@protonmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Jan Kara <jack@suse.cz>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On Wed May 28, 2025 at 2:33 AM PDT, Malte Schr=C3=B6der wrote:
-> On 28/05/2025 11:00, Christopher Snowhill wrote:
->> On Tue May 27, 2025 at 11:52 AM PDT, John Stoffel wrote:
->>>>>>>> "Kent" =3D=3D Kent Overstreet <kent.overstreet@linux.dev> writes:
->>>> There was a feature request I forgot to mention - New option,
->>>> 'rebalance_on_ac_only'. Does exactly what the name suggests, quite
->>>> handy with background compression.
->>> LOL, only if you know what the _ac_ part stands for.  :-)
->> Would you have suggested perhaps _mains_ ? That may have rang better
->> with some folks. I suppose, at least.
->>
-> What about 'no_rebalance_on_battery'?=C2=A0
+On Tue, May 27, 2025 at 08:48:55PM +0000, Pekka Ristola wrote:
+> Unsafe code in `LocalFile`'s methods assumes that the type has the same
+> layout as the inner `bindings::file`. This is not guaranteed by the default
+> struct representation in Rust, but requires specifying the `transparent`
+> representation.
+> 
+> The `File` struct (which also wraps `bindings::file`) is already marked as
+> `repr(transparent)`, so this change makes their layouts equivalent.
+> 
+> Fixes: 851849824bb5 ("rust: file: add Rust abstraction for `struct file`")
+> Closes: https://github.com/Rust-for-Linux/linux/issues/1165
+> Signed-off-by: Pekka Ristola <pekkarr@protonmail.com>
 
-Oh, awesome suggestion. A little inversion of language, so battery is
-front and center, and we avoid having to think of a billion different
-terms for line power. What say anyone else?
-
->
-> /Malte
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
