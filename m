@@ -1,79 +1,115 @@
-Return-Path: <linux-fsdevel+bounces-50091-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50092-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7976FAC81D4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 19:48:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E882AC81EB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 19:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3DAA414C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 17:48:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2946C16DF75
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 17:59:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF122F173;
-	Thu, 29 May 2025 17:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B9F230273;
+	Thu, 29 May 2025 17:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A0xX8eS9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fca5W3M5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2473078F34
-	for <linux-fsdevel@vger.kernel.org>; Thu, 29 May 2025 17:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C59422D4F1;
+	Thu, 29 May 2025 17:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748540918; cv=none; b=aQ0rPLqHkpNeQcXF3SKInMX9CAb1enoCySZc4T773kWrsGA0BQFRyFEcwUBnhZUuxXoWbuF9Md2NznrvrUf/QBDz3qrB9PycMYM186i9WqNCzSS0mtEcxYE+d8yzbP8Dw8UBQsn8oZgLg88LWhgNk+lRYo1HeJDLi8rUmR/PQQU=
+	t=1748541577; cv=none; b=n9cBpvc5zJeNeTHAvSSfZshConC/JeSlupJTmOVb+HhefS3nIBJyQAqe29Exq97xFhu7xDMCd59bo7nDphB5FuWWPuOwf3Nf473TtvbLLw9mWUxc8YR5ixqyR3pm4ZdrcFFUuxAMhaf1HpuS80N4h6wjhz7o36GpT0ibk+baH9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748540918; c=relaxed/simple;
-	bh=yZ9pyRGOYPeQ81pkpCqMMCPgE2XDYrOAPPTk92GQ8pE=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=O32xT7pZBRaubMIMtDLG7TlOwhbzxncQTPG7Ll9XMdxmvIQn0URvvGtnq1WVNMAoCP3D+g1h7rzo3i/sR4NwGGT6L0KWqnZS2qf078AWEJeMhKHiXJ9vOW++r0A0EYaxjpb8gB4XDHVBHHe5QXzCGz4VGdeXLmM2QkNgMFHb/xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A0xX8eS9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07068C4CEE7;
-	Thu, 29 May 2025 17:48:38 +0000 (UTC)
+	s=arc-20240116; t=1748541577; c=relaxed/simple;
+	bh=ZW2tfBQelVZkdy5J7YvgyQhVUxy9mAiO4Cq3y2pflG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tnb2hrT2MxxnCzeb2l5Z0rDsppZzNUhFaeOpjR6wm78SMW/d8vr7gHaKErYdUfdqd61BiWSAptA5jg2hLiMfKSIYon7HnVe7rXCy14SNtZI/ZluuDj8j0meMygqCqW2XSZCxUDUriR6q304dWh3OUbgs5tloClP3ynBI8PbQtdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fca5W3M5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A043C4CEE7;
+	Thu, 29 May 2025 17:59:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748540918;
-	bh=yZ9pyRGOYPeQ81pkpCqMMCPgE2XDYrOAPPTk92GQ8pE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=A0xX8eS9gChtsXQkvgGY8/BP+62XShDCy3U8Jzww2Fi9d3va6MjMxJtWGir8SdIVo
-	 BkiDSLmpit/dh8Xinyap8uShPSuoDSo/JvpeAt1h1F2JgJDov3o7a71iMtjpaVX4uG
-	 ljxnXIjRyaHhAjAllI5Zh6w0SfaT0tTp4Rqk6wtSeyiGcQEP8/yG1MOVM9Shmj7u+q
-	 Pgi9luvu+rSWGphsMAlqmnnWFGtjcH7nBPLcnt/BdKHHGseaCgtW9lzFFnlp22e8FV
-	 kVzWxV6jPZDI1mULJqHTo+jrC7UKzRqwMqSZeuKnmrh9zjuzfBOmIzRiGNyKvWBalX
-	 CphEhL2/6UyAg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE9E380664F;
-	Thu, 29 May 2025 17:49:12 +0000 (UTC)
-Subject: Re: [GIT PULL] Fsnotify changes for v6.16-rc1
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <sfxqwp3nbyrg66yio3h3qco2ty4pwsbql6m7goid22ewkybuim@3jhjq5wfcoe3>
-References: <sfxqwp3nbyrg66yio3h3qco2ty4pwsbql6m7goid22ewkybuim@3jhjq5wfcoe3>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <sfxqwp3nbyrg66yio3h3qco2ty4pwsbql6m7goid22ewkybuim@3jhjq5wfcoe3>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.16-rc1
-X-PR-Tracked-Commit-Id: 58f5fbeb367ff6f30a2448b2cad70f70b2de4b06
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: db340159f19ae083afb33fce0aaadc77c6b0d547
-Message-Id: <174854095149.3342178.4273474472274915985.pr-tracker-bot@kernel.org>
-Date: Thu, 29 May 2025 17:49:11 +0000
-To: Jan Kara <jack@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org
+	s=k20201202; t=1748541576;
+	bh=ZW2tfBQelVZkdy5J7YvgyQhVUxy9mAiO4Cq3y2pflG0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fca5W3M5TIXGdK6VszjqbDgakEsx+wuFDKD+RcbaA7IsG2kB9uzAme9vusmJPrJQ9
+	 79fo+py5LxG4TWnNcZIeL9eDtAHMq/byaQ4dQmXLuI1sQdRrpCTGvJWOwWbom+XDaY
+	 Ku8AxdPoady8vHtGFocyYTPYHy4sYmmvswttwBurIzd6mU2Db4TKqoU20rUdx0eEXN
+	 sa3bceXmBcBLYM83HYuIagAyUjuUpZhWAFmuRVGPWQzEIU+BpJT8bWAict+JeZbUoJ
+	 CTOhfc5mDZBAkrXbAIQSaPvpgNYb/UUXuzSWapzEfaPT7+xkDj979FxCMKQv1sUEtk
+	 0aGxELR2rD8Gg==
+Date: Thu, 29 May 2025 17:59:34 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>
+Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, jack@suse.cz,
+	anuj1072538@gmail.com, axboe@kernel.dk, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, hch@infradead.org, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com
+Subject: Re: [RFC] fs: add ioctl to query protection info capabilities
+Message-ID: <20250529175934.GB3840196@google.com>
+References: <CGME20250527105950epcas5p1b53753ab614bf6bde4ffbf5165c7d263@epcas5p1.samsung.com>
+ <20250527104237.2928-1-anuj20.g@samsung.com>
+ <yq1jz60gmyv.fsf@ca-mkp.ca.oracle.com>
+ <fec86763-dd0e-4099-9347-e85aa4a22277@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fec86763-dd0e-4099-9347-e85aa4a22277@samsung.com>
 
-The pull request you sent on Thu, 29 May 2025 16:58:04 +0200:
+On Thu, May 29, 2025 at 12:42:45PM +0530, Anuj Gupta/Anuj Gupta wrote:
+> On 5/29/2025 8:32 AM, Martin K. Petersen wrote:
+> > 
+> > Hi Anuj!
+> > 
+> > Thanks for working on this!
+> > 
+> Hi Martin,
+> Thanks for the feedback!
+> 
+> >> 4. tuple_size: size (in bytes) of the protection information tuple.
+> >> 6. pi_offset: offset of protection info within the tuple.
+> > 
+> > I find this a little confusing. The T10 PI tuple is <guard, app, ref>.
+> > 
+> > I acknowledge things currently are a bit muddy in the block layer since
+> > tuple_size has been transmogrified to hold the NVMe metadata size.
+> > 
+> > But for a new user-visible interface I think we should make the
+> > terminology clear. The tuple is the PI and not the rest of the metadata.
+> > 
+> > So I think you'd want:
+> > 
+> > 4. metadata_size: size (in bytes) of the metadata associated with each interval.
+> > 6. pi_offset: offset of protection information tuple within the metadata.
+> > 
+> 
+> Yes, this representation looks better. Will make this change.
+> 
+> >> +#define	FILE_PI_CAP_INTEGRITY		(1 << 0)
+> >> +#define	FILE_PI_CAP_REFTAG		(1 << 1)
+> > 
+> > You'll also need to have corresponding uapi defines for:
+> > 
+> > enum blk_integrity_checksum {
+> >          BLK_INTEGRITY_CSUM_NONE         = 0,
+> >          BLK_INTEGRITY_CSUM_IP           = 1,
+> >          BLK_INTEGRITY_CSUM_CRC          = 2,
+> >          BLK_INTEGRITY_CSUM_CRC64        = 3,
+> > } __packed ;
+> >
+> 
+> Right, I'll add these definitions to the UAPI.
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify_for_v6.16-rc1
+Would it make sense to give the CRCs clearer names?  For example CRC16_T10DIF
+and CRC64_NVME.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/db340159f19ae083afb33fce0aaadc77c6b0d547
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+- Eric
 
