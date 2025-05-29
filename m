@@ -1,240 +1,401 @@
-Return-Path: <linux-fsdevel+bounces-50039-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50044-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26DFCAC7908
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 08:37:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E638BAC7A4F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 10:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C58CE1BA3090
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 06:37:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C0A4E1345
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 08:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2412F25F97D;
-	Thu, 29 May 2025 06:33:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9667F21ABAD;
+	Thu, 29 May 2025 08:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lfoa840S"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="boA9yeXG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2084.outbound.protection.outlook.com [40.107.243.84])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0433B25F7A3;
-	Thu, 29 May 2025 06:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748500403; cv=fail; b=sIgag9Z7xjcl/0TqoPyON9XchT544NiV2uugWvahzT0k5D6ewsFGdaO7DCW5RSPif3E8J5ST+PVCEmAIaGuTegR5+pypGQzdgkdWXVY64KlSwPDu/r5LNyEOpg81ZqlDRAXYb6SUzwGem/DH+5dMbtjN4n5hMbyUs+aabFSL06w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748500403; c=relaxed/simple;
-	bh=O+r3OHZFXjJbwRZHV2R1kJ+mw32wlRjbfraWd/JOUwM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Iwim9adImYtnS6hAc6gLVcmdqxdMIIpbYPaFHXc0t0ROODIYGTNYIBsunXJchwj++/GZbX2jNoKP1kM7mUCs4kvgu6b7Mq5zS5YOPXP/WVO32jNPueEQbgIgzmxuec6TRfawpWfY1Q2XZUKJeu7erYDlsB45jWUZcrJ/My1X2K4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lfoa840S; arc=fail smtp.client-ip=40.107.243.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=M2odla4OOziIskKrZ6HNei7xXQ5mm8p1bNLV1jeYrRsw2lx8U7v3O8cPc/AZohdOE7JZYbMI5Yz7NhbwdLTonV0gR+zaUsMqOCeKN19bHPu2NNpNXuSYjgGjSkAgcw4tOkHqpyv9+gRwMfT+NgFYTVOUyIjj+wPvEBNDl7VRipatLO4WG8Gp3gVJt8awZ/n5YfVg6uFnqROU2V3A/qbnrAoTONhg+erV2aekudF6pvJ6/71bvfEzIJ4HCoYHTLdAe/Mi90//wAgDSBMd/NgwzGQggMSlqdxOragVpHkCEHez+jPgpokDZka2136jSFnirrxtpmWvCn5f+SQzuL832A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=m80Z6unURWTByRtQL5+Wu6Jyg5cIN0pRXiD8t+Fu9wE=;
- b=j5wSJqPjectZ4PvR8AS+vV5D1hTPrSUrYyJDfcRYFEFGwP9DTFLW8t92fHQlJ9lW6fCiEWEsSDuOcL5oNVOLEAIEl/3HJS8Uei9L8AHVEqpmAGQte2vn4NC57SKq1w5foEtqiYtlPwKf1JYaG/ypPdq2PyRbz81/ywBhJXisU3iqZcN/gFgrdws7w7dazuSYBqSh5yK8FNi4D/MGiuJPj2H1XI/aCj0P8lR9JFG3lxTti+WNXUHpHpbLfnWYiyCkBiBAN6VdkOsF7HPHxdCUH08Zc/B14hgifTC7dY44KsjrB4GcpB1gkFykpzQiN5rZrrTyipbNyKWD4ffPVdTwwg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m80Z6unURWTByRtQL5+Wu6Jyg5cIN0pRXiD8t+Fu9wE=;
- b=lfoa840SPVrysLmOGHBKT5CxYQ+5AgJEj5HJBWWWEEJemI1iUSZjcxdp/u37gsn8B9saLg9A/pBt/V9/LksALxMJj9AU3sgwMJvUQghrKiX3Ij35mji2XSX7YrhKBV0T+f9ilspSmurDMUHItEwP9+prHaC80bvpxV9bXjpx6WRNqsiGdbMLEXzdSnJOlkhoF4bjQv+ogxw50d8OPozYUgpWzKOpmTPxJFwGQPP2nm9zR2NM8c3L4SKaxx5oVKBulF1XF/PDWFaYQfalYF3JdhMgcKzspUR+FgniVXoZvi478I7hZPtvt6WH+D6x+5lFTzN0DHNquuAZcnTviOLwZw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com (2603:10b6:930:84::9)
- by IA1PR12MB6092.namprd12.prod.outlook.com (2603:10b6:208:3ec::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.26; Thu, 29 May
- 2025 06:33:19 +0000
-Received: from CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6]) by CY8PR12MB7705.namprd12.prod.outlook.com
- ([fe80::4b06:5351:3db4:95f6%5]) with mapi id 15.20.8769.025; Thu, 29 May 2025
- 06:33:19 +0000
-From: Alistair Popple <apopple@nvidia.com>
-To: linux-mm@kvack.org
-Cc: Alistair Popple <apopple@nvidia.com>,
-	gerald.schaefer@linux.ibm.com,
-	dan.j.williams@intel.com,
-	jgg@ziepe.ca,
-	willy@infradead.org,
-	david@redhat.com,
-	linux-kernel@vger.kernel.org,
-	nvdimm@lists.linux.dev,
-	linux-fsdevel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	jhubbard@nvidia.com,
-	hch@lst.de,
-	zhang.lyra@gmail.com,
-	debug@rivosinc.com,
-	bjorn@kernel.org,
-	balbirs@nvidia.com,
-	lorenzo.stoakes@oracle.com,
-	linux-arm-kernel@lists.infradead.org,
-	loongarch@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-cxl@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	John@Groves.net
-Subject: [PATCH 12/12] mm/memremap: Remove unused devmap_managed_key
-Date: Thu, 29 May 2025 16:32:13 +1000
-Message-ID: <112f77932e2dc6927ee77017533bf8e0194c96da.1748500293.git-series.apopple@nvidia.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com>
-References: <cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SY5PR01CA0114.ausprd01.prod.outlook.com
- (2603:10c6:10:246::25) To CY8PR12MB7705.namprd12.prod.outlook.com
- (2603:10b6:930:84::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E9A6215F7D
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 May 2025 08:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748508100; cv=none; b=T+HhYpDIwcnJDD5d4KtB0as25/3InBLyIw+If5A1+bip5zNFsEcSyvi29DI17PiTOmBpwo1ybXRi1bb8CRQ/XvjBaZFNnQfi5DjArvj8MaU+8TqsDYZ2xbF8kS65RRg6tH1tLtpEYE4YIEbnqpOeAyqL58CCKpxQTdC20lxrNMg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748508100; c=relaxed/simple;
+	bh=lIWFPMocihGd4xhavo4DX7fFG6dIIspm4AR2T5QA6hc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Gc6bF83Tr6H60fimJpwAlnpLMC+zShag9sZm5X6tNXIrUYSIsB9+7tB4hNyKYpdfSq0iAQPWUGAoasXJ0to2YTV6yzADYlLINKW0Ci3fypw09dDvOv3ghzIS4RSGeWuRU1NPajgfnFxiYA8a1vDHzKyNnipo47b//oQFtL6wV7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=boA9yeXG; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250529084128epoutp0142a791288ed8339d1bd9b80f19fffa1d~D8tezhR-F3068530685epoutp01Y
+	for <linux-fsdevel@vger.kernel.org>; Thu, 29 May 2025 08:41:28 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250529084128epoutp0142a791288ed8339d1bd9b80f19fffa1d~D8tezhR-F3068530685epoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1748508088;
+	bh=AK7oIhVkRfsGvDosJq7DDO93hVCWuF6KoUrlr9zRMws=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=boA9yeXGKcQyAvxDTqkVl+x9n6QkmAcbYneXCDz87EVjUj2CRHJwgIMnoSqoOiqI4
+	 LPSvyWMeJymW1WXgIKOTxXCH4OGDceY3oD8iqfkI9Di/tIUzUroV7JppQDzo8foQlo
+	 sGGAtqxle3O1rq6gknxNkutLKjhDs8hWzPMmv9z4=
+Received: from epsnrtp03.localdomain (unknown [182.195.42.155]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPS id
+	20250529084127epcas5p4968340e02f42b25f9913037ee8c1e80b~D8teJwfJC2081020810epcas5p4w;
+	Thu, 29 May 2025 08:41:27 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp03.localdomain (Postfix) with ESMTP id 4b7KbV3xbrz3hhT4; Thu, 29 May
+	2025 08:41:26 +0000 (GMT)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250529071247epcas5p13155bcbe2cfa0e986d6f64dcb097375a~D7gDaBgw41496214962epcas5p1u;
+	Thu, 29 May 2025 07:12:47 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250529071247epsmtrp18925543e73783fb175b2bf96e69ca046~D7gDZMT3F2890028900epsmtrp1S;
+	Thu, 29 May 2025 07:12:47 +0000 (GMT)
+X-AuditID: b6c32a28-46cef70000001e8a-25-683808ef5deb
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	03.99.07818.FE808386; Thu, 29 May 2025 16:12:47 +0900 (KST)
+Received: from [107.122.10.194] (unknown [107.122.10.194]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250529071245epsmtip172d6ab4fbeba25a0c4451e4b679781fd~D7gBwKHsu3164431644epsmtip16;
+	Thu, 29 May 2025 07:12:45 +0000 (GMT)
+Message-ID: <fec86763-dd0e-4099-9347-e85aa4a22277@samsung.com>
+Date: Thu, 29 May 2025 12:42:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY8PR12MB7705:EE_|IA1PR12MB6092:EE_
-X-MS-Office365-Filtering-Correlation-Id: f151afc9-1835-4bb9-df91-08dd9e7ab375
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?I6NvIf+OZZLGEu4obn8VLV2NEwoaf5QTcR6XNSGSPx1vGUXeqWBWrhOq0803?=
- =?us-ascii?Q?4DGQWe9R/pXKJHs0gqazPBzDC2krm3XTPDeOhAXgs3hPWAo1R1bghdKfaLV0?=
- =?us-ascii?Q?ZU8JFMRWV7QxdQRYulKl9fg2huIlNdKdfdGGCOTLEzfWjamKvYEH3m1zR8l9?=
- =?us-ascii?Q?FaYOLkoBRYHHHlfWi2ovRl+dk7AHK6FnDjjh5iDByb+6yiiwXPxoakvmwGi+?=
- =?us-ascii?Q?MM641+QcpL+IDt2EYnmonsGciVLQ2AxoP69jMDxK7vo1VLvzR1E2Rm7nilnU?=
- =?us-ascii?Q?UpYgJjFvPcpJWmP71e2xhpHgzQ9fTgUs3FocXC+U6UBbkejqKiO4SsmrfizE?=
- =?us-ascii?Q?i5xG56BS0DwQTSmGmH14bmkaWy52bjNr/zpZ0F5DKFQ5hLwqAK40e4S2qBgI?=
- =?us-ascii?Q?ncKX6oCWNlMgpeVbVjPLqzbsq9pwFbUmilPu+ctkCWOUXZvOdXzGd1pfuN7A?=
- =?us-ascii?Q?TS6Vr8sd9UDqUCS4b9Vw8b3uzWsEJzj5B3qqu94nBBTv0CnZ1JqO6J0yWJg9?=
- =?us-ascii?Q?6YI+4Eva8Qfz0He1jzXPWrwhpndTKUXw6322okdwodGeoWkx3cW+zB8h3/7A?=
- =?us-ascii?Q?z+Kjk5uIF9gT6Kmb/BxhmLnKKHHcmPoZEp31t0t0s36YxHXrdSgi5Nqv0ZxF?=
- =?us-ascii?Q?Gezbtj8+hiYmE2Qg+5K8h3AWsAYciY2Ojs2xF4BWHcc7UML0Vxw2W3JlAmt9?=
- =?us-ascii?Q?2XP8nX4/C8boooDXtT9Nq87r7iy8JqvyKS+8gSPzmFMTZ5m+rl8usu6NEV/p?=
- =?us-ascii?Q?FKnNisQVJfdSPoG4Ettf9gm3jbgmkOEAL053vcoM0zWAqs3CqC2d1Mtx8DuJ?=
- =?us-ascii?Q?94LIdSwHUIG7XdlT2QUS6pH/LWTtlcmbcXitXQXL3n1lystgGLLmyhBE1K8Z?=
- =?us-ascii?Q?772+jgzw+Onl4x59+qkqG8MA1bxXVe0LwXw+axcD86++v0tJN4GOlp/tuKsu?=
- =?us-ascii?Q?Jsm5JTjV3yVwu/3HaPcKtVkEiN2SysvmorIBZrWCIClmjR5RtpKS8ZLvaJ2U?=
- =?us-ascii?Q?o8kCCBw/jCyv86hl0gzKJZOdWAVCV5XI7+m4Rk2cM/29YeY2a6OEoUzoT1Uf?=
- =?us-ascii?Q?kMV1ztgpzqofaCBuB2AqqZIlQ0QkcmojcoVw8K8x9ilWuEDIQwP1VANhPIRR?=
- =?us-ascii?Q?Zc9Mj6rcueP3wgUI6tTimJhhoFCn0DNOIt7HPKZO/nKHQKI7+zP4RFoz5652?=
- =?us-ascii?Q?cNdIDUR5Ho05z+kkdBxCZcIeLnx0JXAhZER0+gM8w17Dzc6G6br9RdXO9d0Q?=
- =?us-ascii?Q?k6gA39lxoK++i9rTOvzbqd5bTNwrgTJPGVRXrZfN2NoriPpwvSqIV7mhcSkZ?=
- =?us-ascii?Q?EQcd+lz8+kgzcaCj72cIFDVVRZdHXYpdoF7zIsMbuKP7HwyL72roDctHqa5q?=
- =?us-ascii?Q?5ugYLNsZWHmwh24GLFjzKGC0LJ3bpOJQ65dvSGTBgNfEvjeaZdFf7ZJ0YucD?=
- =?us-ascii?Q?12oa4hOJrMg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR12MB7705.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+fu2mPX/OHu3u8Bmkhh6r+3dGX4TLll9nWuSggh6adtrBBnyaNPGE1u71CMj?=
- =?us-ascii?Q?7GUk2b0AkJ0SHCjtGIVD/hBJfuqtme+qm7swV+YoOBF6tXqPVvrMaeNhKowK?=
- =?us-ascii?Q?lOaf9KI3x83G/XC2YcGHmsvaCRW6+xmz3kfjQoJ4ucj1JRE8ZEJYKnbEmgpG?=
- =?us-ascii?Q?hMVuewtHULI05a3BEpHw/jlYSpZlFdwkjNe34Kvul/hWdSYiKUBvVaQFK1le?=
- =?us-ascii?Q?+Ma8WPRfuvoUihebzaQEpqyJ/dDbmaEOhFw+g8BmdOev96TGlSoEp1fG7Gpk?=
- =?us-ascii?Q?xT67j+gHV8VmLIYt6A+kOC+GpHOWN7LlDx3GK5vqaqgNmT/NZNyRhMLFjK+L?=
- =?us-ascii?Q?vYxsK8HVNRi1ynmm9tBEdK58fijqpoqLL7czKrITP2/YTgZckpMZQkjIaxfh?=
- =?us-ascii?Q?ZpVNZKO3eGVOHZ6+JF04LCyyWviVJ0P6BDuCDiL9jmStSc9RiTqvZgQbYVK6?=
- =?us-ascii?Q?/APDdErcopFM3EHnYoAVDDir0gp0WmM6uTifl6Du7YJrnbyspkEviye4zwij?=
- =?us-ascii?Q?W0TN7ASuhKcTIUeqHAR3ZPCID4CpYMsIeUxEAwNCZC0XsH1gQ7ZTAW5LV8hI?=
- =?us-ascii?Q?OXbzKwsRqqqVzqeQo0zv5zyDbCp8Go2cDuKVucQ6gDjfqYl3e7U8AJxTj8il?=
- =?us-ascii?Q?TtdTv81AXNgBHhsofFdwi/aceJjFxoh5OIPekzEI2Z2wAFNGaSLAaH0ZYRxK?=
- =?us-ascii?Q?b5Z8VSZ/RT+ZwWrheFP1TtrZvPAbDCG/7ICh8BGzxcVyt4v3pwcNRNFew4nw?=
- =?us-ascii?Q?SxGWpZ2fMWjQYG6DRwe9oBkC6KUQDXvXUL8gyTnhmrCr6szo2+WPqLpTWAeL?=
- =?us-ascii?Q?TNJ1nkJ6WqyEDOPJwfD7SDRI2en8eZ4yQKKO9WVip/T5jddOuKv2CMMHQRhY?=
- =?us-ascii?Q?8R7525IGh3GlI/g72insVcLKWM3n6aRa56px7vtvl5hVBJcry7Gvx2zaljrX?=
- =?us-ascii?Q?ohj3wqayjl1S0CnhEN9FwS1z8/Z91xeLm20k4pIDOLmPEwUah+grfVFmu0a3?=
- =?us-ascii?Q?QZs9lC9X9Ohuk+S9to4HT+uBgw2IsexMEiSSWrdq0Gl45lXMScKNNX8RV6io?=
- =?us-ascii?Q?7mALp83ymgdHCLyZI2UdZ9VvC/gn9k81p9dmh1xoU0yovAAiAGtpS7k8vx8g?=
- =?us-ascii?Q?D/vRCy7ZBPn5y1TsMJbIsM5PZ27ySJhbsaj5jXuIr+XYajYJ0YcSZ0UihauC?=
- =?us-ascii?Q?f9e9USkPpc4zfug8L7x2V9cYor/amO0U59NDs3OjzUwjMKwVdhZvly0bYW3Q?=
- =?us-ascii?Q?rRM9H39Axl3phI4uY452eIF8OGztnGmUrTA9BUygy29yKqNHT8f0OxSbKNrY?=
- =?us-ascii?Q?LLGHkqUOmNfnmr4oNem7IO/qE/Gp+i34WfK5qU2y+N3cKlErfiMrJnDbbJPY?=
- =?us-ascii?Q?gzEHYMw+r01lcn9YG1vzjVAzHCrpssriGbeju0cF/EZiv5NMwMw4LoolqHVn?=
- =?us-ascii?Q?wlKWGudT2pxBUlkVItX8MRv1gtNxOipYHc/t24BpumNtilt+TsI/nkOpj6Po?=
- =?us-ascii?Q?bW0EatUDu0eped27GG3qbvNSIlVJKCbsj4sfDQkbi9h1op9aP4ytKQZIYAAt?=
- =?us-ascii?Q?GAQ6zsyTS7xBF/+Z3VYT3RowiFNhoSsJrdtdJq/I?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f151afc9-1835-4bb9-df91-08dd9e7ab375
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR12MB7705.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 06:33:19.3396
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ATiy/uq9Z9VCgPnErqOqXntnVw3+ZL1ntqqbhyndJAP8GYzyadcEh3F2zhBVnis9DurqZhC6exRXuv1ITpbBOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6092
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] fs: add ioctl to query protection info capabilities
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: jack@suse.cz, anuj1072538@gmail.com, axboe@kernel.dk,
+	viro@zeniv.linux.org.uk, brauner@kernel.org, hch@infradead.org,
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	joshi.k@samsung.com
+Content-Language: en-US
+From: Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>
+In-Reply-To: <yq1jz60gmyv.fsf@ca-mkp.ca.oracle.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOIsWRmVeSWpSXmKPExsWy7bCSnO57DosMgwcX1S0+fv3NYrH6bj+b
+	xevDnxgtTk9YxGQxe3ozk8XR/2/ZLPbe0rbYs/cki8Xy4/+YLM7/Pc7qwOWxc9Zddo/NK7Q8
+	Lp8t9di0qpPN4+PTWywefVtWMXqcWXCE3ePzJjmPTU/eMgVwRnHZpKTmZJalFunbJXBlLOv7
+	xl7wzaeie3o/awPjGdsuRk4OCQETiQ8Xl7GD2EICuxklzmwwhohLSJx6uYwRwhaWWPnvOVAN
+	F1DNW0aJh4/bmEASvAJ2EvcufmQGsVkEVCUaFn5ng4gLSpyc+YQFxBYVkJe4f2sG2AJhATeJ
+	/70NYL0iAqYSkz9tZQMZyixwnlFi8coJzBAbtjJKzJizGqybWUBc4taT+WAdbAJGEnceHAEq
+	4uDgFDCWuHpJHKLETKJraxcjhC0vsf3tHOYJjEKzkNwxC8mkWUhaZiFpWcDIsopRMrWgODc9
+	N9mwwDAvtVyvODG3uDQvXS85P3cTIzjutDR2ML771qR/iJGJg/EQowQHs5IIb5O9WYYQb0pi
+	ZVVqUX58UWlOavEhRmkOFiVx3pWGEelCAumJJanZqakFqUUwWSYOTqkGJt/7cfKCD6IYQ/RE
+	VJtDauYkb/7q+HZCWUEe93eRzn8z1preM1l/JfvZhHOZR4y0eIPjH5Wn/FOXuFca/VKPVfxG
+	2oM645Nui/qnLz5U8fHRquoEccl2n4fcbbbKE9is9jQx6mrVdESct/22jsNez8SwKqwg9Vn5
+	gw1nFI0LAjJeCGRfnCZuevWMYLeG6j+PyUkOH062bFc7WvmSK/Dt/wkqH5/P+SB/9wqzXh53
+	XZjMcqmI4z+/Fes/Db83686+9PfLxBPete3MljPak/Es5oP/z62ibXNPpi+JZuR9MKutiE2n
+	bfasx05poS9D3t5gO5Lsv8SnN9O2cf39pbeELuaHrVr5iPuDzqq2gthzSizFGYmGWsxFxYkA
+	TSs9hSoDAAA=
+X-CMS-MailID: 20250529071247epcas5p13155bcbe2cfa0e986d6f64dcb097375a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250527105950epcas5p1b53753ab614bf6bde4ffbf5165c7d263
+References: <CGME20250527105950epcas5p1b53753ab614bf6bde4ffbf5165c7d263@epcas5p1.samsung.com>
+	<20250527104237.2928-1-anuj20.g@samsung.com>
+	<yq1jz60gmyv.fsf@ca-mkp.ca.oracle.com>
 
-It's no longer used so remove it.
+On 5/29/2025 8:32 AM, Martin K. Petersen wrote:
+> 
+> Hi Anuj!
+> 
+> Thanks for working on this!
+> 
+Hi Martin,
+Thanks for the feedback!
 
-Signed-off-by: Alistair Popple <apopple@nvidia.com>
+>> 4. tuple_size: size (in bytes) of the protection information tuple.
+>> 6. pi_offset: offset of protection info within the tuple.
+> 
+> I find this a little confusing. The T10 PI tuple is <guard, app, ref>.
+> 
+> I acknowledge things currently are a bit muddy in the block layer since
+> tuple_size has been transmogrified to hold the NVMe metadata size.
+> 
+> But for a new user-visible interface I think we should make the
+> terminology clear. The tuple is the PI and not the rest of the metadata.
+> 
+> So I think you'd want:
+> 
+> 4. metadata_size: size (in bytes) of the metadata associated with each interval.
+> 6. pi_offset: offset of protection information tuple within the metadata.
+> 
+
+Yes, this representation looks better. Will make this change.
+
+>> +#define	FILE_PI_CAP_INTEGRITY		(1 << 0)
+>> +#define	FILE_PI_CAP_REFTAG		(1 << 1)
+> 
+> You'll also need to have corresponding uapi defines for:
+> 
+> enum blk_integrity_checksum {
+>          BLK_INTEGRITY_CSUM_NONE         = 0,
+>          BLK_INTEGRITY_CSUM_IP           = 1,
+>          BLK_INTEGRITY_CSUM_CRC          = 2,
+>          BLK_INTEGRITY_CSUM_CRC64        = 3,
+> } __packed ;
+>
+
+Right, I'll add these definitions to the UAPI.
+>> +
+>> +/*
+>> + * struct fs_pi_cap - protection information(PI) capability descriptor
+>> + * @flags:			Bitmask of capability flags
+>> + * @interval:		Number of bytes of data per PI tuple
+>> + * @csum_type:		Checksum type
+>> + * @tuple_size:		Size in bytes of the PI tuple
+>> + * @tag_size:		Size of the tag area within the tuple
+>> + * @pi_offset:		Offset in bytes of the PI metadata within the tuple
+>> + * @rsvd:			Reserved for future use
+> 
+> See above for distinction between metadata and PI tuple. The question is
+> whether we need to report the size of those two separately (both in
+> kernel and in this structure). Otherwise how do we know how big the PI
+> tuple is? Or do we infer that from the csum_type?
+> 
+
+The block layer currently infers this by looking at the csum_type (e.g.,
+in blk_integrity_generate). I assumed userspace could do the same, so I
+didn't expose a separate pi_tuple_size field. Do you see this
+differently?
+
+As you mentioned, the other option would be to report the PI tuple size
+explicitly in both the kernel and in the uapi struct.
+
+> Also, for the extended NVMe PI types we'd probably need to know the size
+> of the ref tag and the storage tag.
+>
+
+Makes sense, I will introduce ref_tag_size and storage_tag_size in the
+UAPI struct to account for this.
+I did a respin based on your feedback here [1]. If this looks good to
+you, I'll roll out a v2.
+
+Thanks,
+Anuj Gupta
+
+[1]
+
+[PATCH] fs: add ioctl to query protection info capabilities
+
+Add a new ioctl, FS_IOC_GETPICAP, to query protection info (PI)
+capabilities. This ioctl returns information about the files integrity
+profile. This is useful for userspace applications to understand a files
+end-to-end data protection support and configure the I/O accordingly.
+
+For now this interface is only supported by block devices. However the
+design and placement of this ioctl in generic FS ioctl space allows us
+to extend it to work over files as well. This maybe useful when
+filesystems start supporting  PI-aware layouts.
+
+A new structure struct fs_pi_cap is introduced, which contains the
+following fields:
+1. flags: bitmask of capability flags.
+2. interval: the data block interval (in bytes) for which the protection
+information is generated.
+3. csum type: type of checksum used.
+4. metadata_size: size (in bytes) of the metadata associated with each
+interval.
+5. tag_size: size (in bytes) of tag information.
+6. pi_offset: offset of protection information tuple within the
+metadata.
+7. ref_tag_size: size in bytes of the reference tag.
+8. storage_tag_size: size in bytes of the storage tag.
+9. rsvd: reserved for future use.
+
+The internal logic to fetch the capability is encapsulated in a helper
+function blk_get_pi_cap(), which uses the blk_integrity profile
+associated with the device. The ioctl returns -EOPNOTSUPP, if
+CONFIG_BLK_DEV_INTEGRITY is not enabled.
+
+Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
+Signed-off-by: Kanchan Joshi <joshi.k@samsung.com>
 ---
- mm/memremap.c | 27 ---------------------------
- 1 file changed, 27 deletions(-)
+  block/blk-integrity.c         | 38 +++++++++++++++++++++++++++++++++++
+  block/ioctl.c                 |  3 +++
+  include/linux/blk-integrity.h |  6 ++++++
+  include/uapi/linux/fs.h       | 36 +++++++++++++++++++++++++++++++++
+  4 files changed, 83 insertions(+)
 
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 2ea5322..5deb181 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -38,30 +38,6 @@ unsigned long memremap_compat_align(void)
- EXPORT_SYMBOL_GPL(memremap_compat_align);
- #endif
- 
--#ifdef CONFIG_FS_DAX
--DEFINE_STATIC_KEY_FALSE(devmap_managed_key);
--EXPORT_SYMBOL(devmap_managed_key);
--
--static void devmap_managed_enable_put(struct dev_pagemap *pgmap)
--{
--	if (pgmap->type == MEMORY_DEVICE_FS_DAX)
--		static_branch_dec(&devmap_managed_key);
--}
--
--static void devmap_managed_enable_get(struct dev_pagemap *pgmap)
--{
--	if (pgmap->type == MEMORY_DEVICE_FS_DAX)
--		static_branch_inc(&devmap_managed_key);
--}
--#else
--static void devmap_managed_enable_get(struct dev_pagemap *pgmap)
--{
--}
--static void devmap_managed_enable_put(struct dev_pagemap *pgmap)
--{
--}
--#endif /* CONFIG_FS_DAX */
--
- static void pgmap_array_delete(struct range *range)
- {
- 	xa_store_range(&pgmap_array, PHYS_PFN(range->start), PHYS_PFN(range->end),
-@@ -150,7 +126,6 @@ void memunmap_pages(struct dev_pagemap *pgmap)
- 	percpu_ref_exit(&pgmap->ref);
- 
- 	WARN_ONCE(pgmap->altmap.alloc, "failed to free all reserved pages\n");
--	devmap_managed_enable_put(pgmap);
- }
- EXPORT_SYMBOL_GPL(memunmap_pages);
- 
-@@ -353,8 +328,6 @@ void *memremap_pages(struct dev_pagemap *pgmap, int nid)
- 	if (error)
- 		return ERR_PTR(error);
- 
--	devmap_managed_enable_get(pgmap);
--
- 	/*
- 	 * Clear the pgmap nr_range as it will be incremented for each
- 	 * successfully processed range. This communicates how many
+diff --git a/block/blk-integrity.c b/block/blk-integrity.c
+index a1678f0a9f81..9bd2888a85ce 100644
+--- a/block/blk-integrity.c
++++ b/block/blk-integrity.c
+@@ -13,6 +13,7 @@
+  #include <linux/scatterlist.h>
+  #include <linux/export.h>
+  #include <linux/slab.h>
++#include <linux/t10-pi.h>
+
+  #include "blk.h"
+
+@@ -54,6 +55,43 @@ int blk_rq_count_integrity_sg(struct request_queue 
+*q, struct bio *bio)
+  	return segments;
+  }
+
++int blk_get_pi_cap(struct block_device *bdev, struct fs_pi_cap __user 
+*argp)
++{
++	struct blk_integrity *bi = blk_get_integrity(bdev->bd_disk);
++	struct fs_pi_cap pi_cap = {};
++
++	if (!bi)
++		goto out;
++
++	if (bi->flags & BLK_INTEGRITY_DEVICE_CAPABLE)
++		pi_cap.flags |= FILE_PI_CAP_INTEGRITY;
++	if (bi->flags & BLK_INTEGRITY_REF_TAG)
++		pi_cap.flags |= FILE_PI_CAP_REFTAG;
++	pi_cap.csum_type = bi->csum_type;
++	pi_cap.tuple_size = bi->tuple_size;
++	pi_cap.tag_size = bi->tag_size;
++	pi_cap.interval = 1 << bi->interval_exp;
++	pi_cap.pi_offset = bi->pi_offset;
++	switch (bi->csum_type) {
++		case BLK_INTEGRITY_CSUM_CRC64:
++			pi_cap.ref_tag_size = sizeof_field(struct crc64_pi_tuple
++							   , ref_tag);
++			break;
++		case BLK_INTEGRITY_CSUM_CRC:
++		case BLK_INTEGRITY_CSUM_IP:
++			pi_cap.ref_tag_size = sizeof_field(struct t10_pi_tuple,
++							   ref_tag);
++			break;
++		default:
++			break;
++	}
++
++out:
++	if (copy_to_user(argp, &pi_cap, sizeof(struct fs_pi_cap)))
++		return -EFAULT;
++	return 0;
++}
++
+  /**
+   * blk_rq_map_integrity_sg - Map integrity metadata into a scatterlist
+   * @rq:		request to map
+diff --git a/block/ioctl.c b/block/ioctl.c
+index e472cc1030c6..53b35bf3e6fa 100644
+--- a/block/ioctl.c
++++ b/block/ioctl.c
+@@ -13,6 +13,7 @@
+  #include <linux/uaccess.h>
+  #include <linux/pagemap.h>
+  #include <linux/io_uring/cmd.h>
++#include <linux/blk-integrity.h>
+  #include <uapi/linux/blkdev.h>
+  #include "blk.h"
+  #include "blk-crypto-internal.h"
+@@ -643,6 +644,8 @@ static int blkdev_common_ioctl(struct block_device 
+*bdev, blk_mode_t mode,
+  		return blkdev_pr_preempt(bdev, mode, argp, true);
+  	case IOC_PR_CLEAR:
+  		return blkdev_pr_clear(bdev, mode, argp);
++	case FS_IOC_GETPICAP:
++		return blk_get_pi_cap(bdev, argp);
+  	default:
+  		return -ENOIOCTLCMD;
+  	}
+diff --git a/include/linux/blk-integrity.h b/include/linux/blk-integrity.h
+index c7eae0bfb013..6118a0c28605 100644
+--- a/include/linux/blk-integrity.h
++++ b/include/linux/blk-integrity.h
+@@ -29,6 +29,7 @@ int blk_rq_map_integrity_sg(struct request *, struct 
+scatterlist *);
+  int blk_rq_count_integrity_sg(struct request_queue *, struct bio *);
+  int blk_rq_integrity_map_user(struct request *rq, void __user *ubuf,
+  			      ssize_t bytes);
++int blk_get_pi_cap(struct block_device *bdev, struct fs_pi_cap __user 
+*argp);
+
+  static inline bool
+  blk_integrity_queue_supports_integrity(struct request_queue *q)
+@@ -92,6 +93,11 @@ static inline struct bio_vec rq_integrity_vec(struct 
+request *rq)
+  				 rq->bio->bi_integrity->bip_iter);
+  }
+  #else /* CONFIG_BLK_DEV_INTEGRITY */
++static inline int blk_get_pi_cap(struct block_device *bdev,
++				 struct fs_pi_cap __user *argp)
++{
++	return -EOPNOTSUPP;
++}
+  static inline int blk_rq_count_integrity_sg(struct request_queue *q,
+  					    struct bio *b)
+  {
+diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
+index e762e1af650c..c70584b09bed 100644
+--- a/include/uapi/linux/fs.h
++++ b/include/uapi/linux/fs.h
+@@ -91,6 +91,40 @@ struct fs_sysfs_path {
+  	__u8			name[128];
+  };
+
++/* Protection info capability flags */
++#define	FILE_PI_CAP_INTEGRITY		(1 << 0)
++#define	FILE_PI_CAP_REFTAG		(1 << 1)
++
++/* Checksum types for Protection Information */
++#define FS_PI_CSUM_NONE			0
++#define FS_PI_CSUM_IP			1
++#define FS_PI_CSUM_CRC			2
++#define FS_PI_CSUM_CRC64		3
++
++/*
++ * struct fs_pi_cap - protection information(PI) capability descriptor
++ * @flags:			Bitmask of capability flags
++ * @interval:			Number of bytes of data per PI tuple
++ * @csum_type:			Checksum type
++ * @metadata_size:		Size in bytes of the metadata associated with each 
+interval
++ * @tag_size:			Size of the tag area within the tuple
++ * @pi_offset:			Offset of protection information tuple within the metadata
++ * @ref_tag_size:		Size in bytes of the reference tag
++ * @storage_tag_size:		Size in bytes of the storage tag
++ * @rsvd:			Reserved for future use
++ */
++struct fs_pi_cap {
++	__u32	flags;
++	__u16	interval;
++	__u8	csum_type;
++	__u8	tuple_size;
++	__u8	tag_size;
++	__u8	pi_offset;
++	__u8	ref_tag_size;
++	__u8	storage_tag_size;
++	__u8	rsvd[4];
++};
++
+  /* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl 
+definitions */
+  #define FILE_DEDUPE_RANGE_SAME		0
+  #define FILE_DEDUPE_RANGE_DIFFERS	1
+@@ -247,6 +281,8 @@ struct fsxattr {
+   * also /sys/kernel/debug/ for filesystems with debugfs exports
+   */
+  #define FS_IOC_GETFSSYSFSPATH		_IOR(0x15, 1, struct fs_sysfs_path)
++/* Get protection info capability details */
++#define FS_IOC_GETPICAP			_IOR('f', 3, struct fs_pi_cap)
+
+  /*
+   * Inode flags (FS_IOC_GETFLAGS / FS_IOC_SETFLAGS)
 -- 
-git-series 0.9.1
+2.25.1
 
