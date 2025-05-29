@@ -1,244 +1,253 @@
-Return-Path: <linux-fsdevel+bounces-50101-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50102-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4DFAC824C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 20:49:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8348AAC82D8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 21:41:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D46A71BA7763
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 18:49:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45011500BB6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 19:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072BD231A30;
-	Thu, 29 May 2025 18:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4A3233134;
+	Thu, 29 May 2025 19:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WPXdHRsS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TFL9gRGQ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01D2D22E3E2;
-	Thu, 29 May 2025 18:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.156.1
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748544531; cv=fail; b=sj/5vHqrrP9POducuRN7ZuA1dZ+e8z1m54U04kbIYkL9+Q72GzurTZ+UBdOA9SlCmPFjmiNJVAdDHlmVCA5/QWUtaJ0oZvi9pWkCss+Wgn1p+EpfXPxPpFMBwJpEoKPRoieOzaOnwETikhKtD4K3znNBF6AqTUS+ufSAgaBpg4s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748544531; c=relaxed/simple;
-	bh=k3xkp8dZczSdbbuZpQ0Edz3BrKDqblB1MNv6WN8HdO0=;
-	h=From:To:CC:Date:Message-ID:References:In-Reply-To:Content-Type:
-	 MIME-Version:Subject; b=pPlF8919z0fRp0ONizHnUY2Srxp958JF9jxh3r3jRfOD9IYiSaE+YZuPAmSfpB0zl8j1FDtJ4yIEOcg5258bq3eDQjpAl+FqcgRWELMMcixCZZAcqQvsmjDbi2retRQJZtn021GjrRu7hzvwGgZ6Q8rxXxejqGD+YrwmHubeG0c=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com; spf=pass smtp.mailfrom=ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WPXdHRsS; arc=fail smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54TDYtOY008352;
-	Thu, 29 May 2025 18:48:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-id:content-transfer-encoding:content-type:date:from
-	:in-reply-to:message-id:mime-version:references:subject:to; s=
-	pp1; bh=k3xkp8dZczSdbbuZpQ0Edz3BrKDqblB1MNv6WN8HdO0=; b=WPXdHRsS
-	O3g91XRnUkFyyxbNd1tU8ozN5PzjsppHjp/jxpcFGeVwDHMN6Ql88Y/ONjehy/+Z
-	MIp2kkVp3+EGPnClRA9d2rG2/l9h0+Scrsm067ZO7thg/fZ9kpsUEos5spzdEbKZ
-	m0QLh+f5nIuM+l3hLhwW3p7AzISoprUJcdyDc5QhgDjvUGD19T152qWw7RCBdSyk
-	2TTZ1VaJyR41cva1NxUngKAoP7troYwioqaiOG751/eIyURQtmC8RdP52Fxc3IwK
-	qlCVKtqiS3tcYuERziGh4DNWXDL4+skxidNItZGl71zTOVvdpULF6Eod6GpoisPL
-	DY/gqMlecer/uw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46x40kfcn9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 May 2025 18:48:42 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 54TIfPG2004537;
-	Thu, 29 May 2025 18:48:42 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02on2073.outbound.protection.outlook.com [40.107.95.73])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 46x40kfcn6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 29 May 2025 18:48:42 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pNFezzsAISwZUd2sMSgVUmXwR9MKCNJBbb6MJsdab5t5DGztKr9EhTjYP52nHSMs7a6cfX07AhUHeR9gYLgnpsXlzaC38eUwWy0+0H3rzi/lRQwZmaOciOWe337WVgfKs10LMoawlDeFBiOgEVu6J4McGuV6wf5Kt+Qy+tL1X68ntJe26YErZOJt7wRvTxvt7Ixqx4OWKZmCq9+SlvoEgs07/9HknBvcrz3WiTVEfFAssY60mo/POLKLS+o0GPU069ifz0YkvR0naP38TnK2OPJpPgomtet0id3wjfeuTUcE07pGJo1Jac+rtE1z9K8B2UJW7QlGXeLFS3RtfSC5+A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=k3xkp8dZczSdbbuZpQ0Edz3BrKDqblB1MNv6WN8HdO0=;
- b=A/1wHok8yBKFfMoeyZA6MdD+vl56slhLMkGo10OrsqlQOz+EaaX4CkTP7sli2qrbeB1Cfp+lBGGV7XC2vEnAbLMjUTfgHfcnYa5TJ9csYjjkWH9ORIom796fyW4AaXQFe1SU0AiPCXvTk9CFi2JJ/J7j31Jug7SK8v1g3vpiDUc2u9a2r5ug9leyGDNA9o+oocL2conBRc59Dq2VujSg8mBnlteIODbQVvvkKzul9faMWNFA4w49EzO+Hqbx8KESf7Ma7xbII4/QtkL+qxbTIBvPRyfL/G/pPweRc4wmz3a39ZWNByrMF4QLjD1DU/bLjGoJq1ye4k09zy2K0lA5Bg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=ibm.com; dmarc=pass action=none header.from=ibm.com; dkim=pass
- header.d=ibm.com; arc=none
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com (2603:10b6:806:338::8)
- by SJ0PR15MB5291.namprd15.prod.outlook.com (2603:10b6:a03:427::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8722.29; Thu, 29 May
- 2025 18:48:39 +0000
-Received: from SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b]) by SA1PR15MB5819.namprd15.prod.outlook.com
- ([fe80::6fd6:67be:7178:d89b%6]) with mapi id 15.20.8769.025; Thu, 29 May 2025
- 18:48:39 +0000
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-To: "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>
-CC: "frank.li@vivo.com" <frank.li@vivo.com>,
-        "akpm@linux-foundation.org"
-	<akpm@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "syzbot+8c0bc9f818702ff75b76@syzkaller.appspotmail.com"
-	<syzbot+8c0bc9f818702ff75b76@syzkaller.appspotmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "ernesto.mnd.fernandez@gmail.com" <ernesto.mnd.fernandez@gmail.com>,
-        "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>
-Thread-Topic: [EXTERNAL] Re: [PATCH v2] hfsplus: remove mutex_lock check in
- hfsplus_free_extents
-Thread-Index: AQHb0Mim8MXrcYXDMUyw280yC4yBYbPp8wIA
-Date: Thu, 29 May 2025 18:48:39 +0000
-Message-ID: <ce76e5f39c3c79add342e7302a2945e5c331cb42.camel@ibm.com>
-References: <20250529061807.2213498-1-frank.li@vivo.com>
-	 <2f17f8d98232dec938bc9e7085a73921444cdb33.camel@ibm.com>
-	 <20250529183643.GM2023217@ZenIV>
-In-Reply-To: <20250529183643.GM2023217@ZenIV>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR15MB5819:EE_|SJ0PR15MB5291:EE_
-x-ms-office365-filtering-correlation-id: 91d5f357-b782-463f-657e-08dd9ee16d4c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|10070799003|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?VGZkSW0vaU8xMGNxZ05zbS9VRUxvZlA1ZjdpM01vSU1OOWdrVE5DQzZpTW1H?=
- =?utf-8?B?UHQ3TUd1L2p3S2dteVlHekpsQmtQZjd0MGs5bjJvUWFHUnNjWExERC9VL1hX?=
- =?utf-8?B?ZmQzV2MrY3hsWU5MblM0MisrZ3VLeTZ4NW1EQ2R0UUlLa1RXS0Q4STQyNkVR?=
- =?utf-8?B?cktLSGpwMWw0Q000aWJrWTlmMTNQSWdjWjhWWmtZR2d6QlpwTDhsN09qT1R4?=
- =?utf-8?B?a3psdFAyY0gySzg2Zjk3RElGcXd5TW52bG9aTnc1TW5xV1ZaUFI0c0psdC9l?=
- =?utf-8?B?cmVtaHpOVnhBa05kWUFtOTdCRVBndXAyYTRRNFRockZLcjFWYWdPaDkrQnVH?=
- =?utf-8?B?T052NDBreTNKbmE2bi8yYkhHcEQ5L2Q5bWNrRGZnKzh4R2JMSkpwdGhJWTR4?=
- =?utf-8?B?OUdpTEY3N0hQWURkd3JDRkFnK2NCNmM5ZnpGd2h0M0RkMHBCVkNCVTdHRXYx?=
- =?utf-8?B?dXFydk5ZZHRNTTZDMFZadnByb2ZIMXdmNnMvb3NTZWcvNU8xVkFMakgxOHd4?=
- =?utf-8?B?MTA4U3c0UzdRaytEUlp0V1pMeDV4VjNJcXk5RDhhNzd5QTRQby9IWGt5NzFR?=
- =?utf-8?B?aGVWWkFlTHl0NVQ0NU9oOXNMOTcyVDNXVWZVVU1sbll3bkNTZmZIRWNhcG5R?=
- =?utf-8?B?S2NGLzR1YnE4YVZxT3VjLzJaYW9RWDJQN2RueExTNzlYbGRCQy9qbE15MlFI?=
- =?utf-8?B?akhHUm9oR0w5QWUrSlU0TjVaaHFnb1hWWWpsaFFaOVEzNmRYK0hyWWxEQjZH?=
- =?utf-8?B?bVVuanlNZU9hMGR2dWF1dTk1V292YnR0cldDWVpjY2FoUzRBckZIa1dXbjg5?=
- =?utf-8?B?Y0RTeVpBdlVFbTh2Q2JGQU83WkhiL0s2dnVLL2pjdTdRTER1clVYd00xbk12?=
- =?utf-8?B?bkdYSllYZHZEajhUNUNESm42dVg4S0hBbFRmQ2twNVVoWmt3TDIyTmxBdloy?=
- =?utf-8?B?UHlQY1JHdGl6OXpKZUFsK2p3QUo1NHd3ZldrUFNXMWV3THpBTE45UlAzdXpB?=
- =?utf-8?B?UXFKeEVzK25wVFpPemFoWkhaRldsZnZrTG1UM3BROWxWRGVGWlZBcjE3a281?=
- =?utf-8?B?N09rOWpGaTNRTWorZThFMFUzck5FMmxDYkJNZFM3R2FScWRkRlg1c3htNFlh?=
- =?utf-8?B?cHpONHNrS0lZS01aNEdaVjZSRUx4a2JwbUQ5Wm83N2gzL1FTZWJCY2RHc0Z5?=
- =?utf-8?B?NGZQZS9aTEQ0blBYV0U3RjMvc21hSUlBbkZTRUYvcmZSVmY1RklqbWpEdHhG?=
- =?utf-8?B?VlRSM2xQcTIwS3dzY3p2eHFlNEJxVUZqWlgrRTRGazVBeUR5MmZTSzlvRllF?=
- =?utf-8?B?d00wV3VlUDkxdDNpNmg0NzBsYmRSTnRuak5EVDRCdkJIRWRyNjFpcVlHN0xP?=
- =?utf-8?B?TEVYc3RhMXl4cHZQNEljZzhPRE9xd1VTOW9PNjlhSVU5VGROUUxpdkovVWtK?=
- =?utf-8?B?dXlwZURuaVVDMmpvaXhKeDRETXdTNnlOYUtsVGlwWHVJaHZkSTNOd1lvakR6?=
- =?utf-8?B?b1grdXphRnJkTjNSc1RBOVM1aXZ0MkVUbXZmZEdmUTJwMjhTTjZhTU5Zc2Qx?=
- =?utf-8?B?K0EreGZ6RzJMdUFtWWRqRldiSnR1b1VIMElIeGs4WGFIMVpLcW45TmplekZ6?=
- =?utf-8?B?bGJJWlNYbHgwRTZ6bVR0K3hRb3lmQkE4S1V6em4zNENRRVgrZWVYZ21MUkVQ?=
- =?utf-8?B?TkhIelB3MnhxT0F2aEZzWTBvOWF3a1p4TjRSMk04SWxhTzNmVDhlbEJKejFT?=
- =?utf-8?B?WTRtTnZuRDM4OWFZNGNndm1VNTE3T3BTaXZMdGY5TDYwMEpuM1E3OUNBRjJ6?=
- =?utf-8?B?RzZ4Rmd5d2pTK1hBanp1TkdEeXRIQ0tzL1g2QVozdFN3dmhzbUs1NkZWRldE?=
- =?utf-8?B?bFczdGNUZ2JpSVVMTThVRm1Lak83QU9WQUFGTlBNeGc1T0Z6eEduUWJyeW5T?=
- =?utf-8?B?amJYV055OHBzalNMeEVxcWN4OWhHM1JXNi9KeWFGdTI4MnFRTVNiN2hMb2xN?=
- =?utf-8?Q?p+9SeVf69UWeNfoiB1s11ZmkJUchT8=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR15MB5819.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(10070799003)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VDhHY2dhclJtMWVKN0g4UE9wSndlZG9pbmVYTFRmUTlTS0lNSVEycEc2RDJv?=
- =?utf-8?B?SGZhSlV4UkVabjk3Nk4wYXdxQXAwUGFLZldvMWNjWDhKNWZhTU85RWZwb3Nx?=
- =?utf-8?B?bUNNeXRWcEtXeTF3RHhIL3pOV3ZGMHhOdXRHMWF6TGJlSG5pK2lod1F1YUNv?=
- =?utf-8?B?dzNOTGpYSG9zOHhHSm9OVEhJUUk3YWc3UjdMd3ZnRmc5TlBqVXBBWDZkWkJp?=
- =?utf-8?B?NUJSeStsMVNHSVoxTTlRMml2TXh3ZElsS0orUlprQ1RNZkphZHI3bEhvQ05V?=
- =?utf-8?B?VndTM3dXcnFkazRZbTJyVmFmWk5CSWV4aFRkcXhnTGJMNFhESlIxRndTVEVM?=
- =?utf-8?B?TXhQQlVuTjVMR3AvMXd2ZU1udzJ3bHhTZ2t1SUhRVDBRdjZ3eHo3am1JMXRT?=
- =?utf-8?B?Vjl2Z0tETEFkU1dBTXB6ZGpHSkZScDBWUWVHaEV3bERyRUNlVTh5TXNOWmk1?=
- =?utf-8?B?dS9NRnFFWVpGbmgzR2ZwT3JibGhlZWhmeXZDY2FsYU9VbjA3elpiSUQ0aUF2?=
- =?utf-8?B?c0ttSllGVTRnamR1U2lMZ3RlZzlKR2FwdjBpTnZ5bFRDekxEUUdMQnF3ckpY?=
- =?utf-8?B?TENUODhyWUlLSjdqS2x0clk1c3k3NzdHL0dUS1RocVMxQU5SdUJCNTl4Qkhn?=
- =?utf-8?B?Tk43Rkw3WHdSZ2tWZHlXVGkyZVFSWjN4SVQ2MFQ2RnZyQStGR0l4K0h1WTZK?=
- =?utf-8?B?RVUzcVpvMmJwKzRjOS94MjBSNVBDbmNKVkxYVzRpSFZ3RC9qMVY0NzEyM1o5?=
- =?utf-8?B?OE9xZFROdnA2SnovdkJKdDAxdUl6dEx1YUtiQ0ZaSUlpTk42VVJQWHVtU0cx?=
- =?utf-8?B?SnJ4cUord0FDOTZQWmY2S25vazU0QXlDWTRKQUFpQnpENzRZbml5eTFLWU9h?=
- =?utf-8?B?ekVNZ2tlZlROY0l0UVhPRUZMMEJhcGlLN0tKWmgzMmpaNmxDeHlTMjZVeGVp?=
- =?utf-8?B?cFZDZGlqSm1QNWJwSXg1T3JpY0xZTlpEbnJXMVRsRWIyUzlDcCt6dVppS3l6?=
- =?utf-8?B?ejNWOUxOUVhjdTc3RUFpVWNOa0srNzRNT2p1SU9CMmFTU3JjRUk0c0tYSW1W?=
- =?utf-8?B?Z1hoajJ5SURmTCszRmZteG1qMGtUajRLY3d2ZVFyZ3RiZW5BZkxKMXR1V3dG?=
- =?utf-8?B?ME1oODVzOFFIT2J4cUJLQW1UdkdNQmEzNWhhOS9PRGpncXJxZlRsbGtlV0FZ?=
- =?utf-8?B?SWdOZ3EvNCtGTiszQVI4RzFhSFdaMk9jN3ZLaXFld0VtN3dWVklPOVNia3Uz?=
- =?utf-8?B?QW1wT0tQWG1HQWM5SWdSQ2JYMENBVHY0cU5rdUREeGorcVFGczhwSXJYNk1N?=
- =?utf-8?B?bjNnQlpBeUJHVzZtNGtYRTRNa1FTRWFuMVZTWmJLN1pCeHhrVWlia05vZWFj?=
- =?utf-8?B?bmtFNzFnVEtDYlVpVlR1SjBNbTB4MzZBYW0xck5KM1Q1UnY0SlBqZ3N3amdM?=
- =?utf-8?B?VW9pbndJUWwyRG5hZ0d0a1VSRlhHZ2ViMXFSeWxMTEE5RkQyRS9ORDlkN0FS?=
- =?utf-8?B?WFVkMnRDWi85bzNhc25sU1R3cnFQVG1lckFsSERYZ3Boc2ltNmNlVEdhcEdM?=
- =?utf-8?B?R3plcTZaVkNWUHVLQUQ3Tk9kMDZwNXpIVjg0Wlh2dURhWnZmMVNtNC9BV1c0?=
- =?utf-8?B?REZXSDlabjJEdHBwSU16Q1NxaHpWRE1jZ1FNdmRkeXNxOURiUktaWnhXcGVj?=
- =?utf-8?B?QkZUWHo4ZGN5N2FPeDE4ZnAydlhlRm0vV054Ump4bTFBWEhNV2pxRzEybmk0?=
- =?utf-8?B?UEJDNXBnb3BHRWgrK2dUdFR3MlkyL1NPK0hJS3RTSFllU1Rwa0p1KzdTanBa?=
- =?utf-8?B?VmN4TEI1c3FvaVc3c0VXZitJSk1VL2R5dXFycDFvSGdBZHg5Tk8xNzJ2dXBn?=
- =?utf-8?B?MUdOM3ZTZ2JycURTTVFUZTl1cWErRnYxdXloV3M0RU83amtma3V6YnFWQWlE?=
- =?utf-8?B?NDhPMHdUVkhvZWYzVENNQnVrVjRyd3hDMDVpbXFaM1RCYVRIVzZpZkVKYVRD?=
- =?utf-8?B?YjZCb1lDM3RhV0UrNE1QWUJyS3lUOHQ4b2g0ZEpZdXc3OER5elRsM0pYSlIv?=
- =?utf-8?B?OTFWcTN3S1dWTGFha28rbDNQaStHOEtLOW04UjcvOFNFSlFsSzVjb0lnTzJL?=
- =?utf-8?B?bHBZTXp5OW1HOHZnMDV0L1NYWTNha05XOTdiRFlMeEE3MDBkWk91WVFTSGVz?=
- =?utf-8?Q?7Kx7FrtRq4wkXDuCYvwnzmk=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <58FA95C71652CA4A9EE46070501A0376@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1712110;
+	Thu, 29 May 2025 19:41:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748547699; cv=none; b=jgmm/OFnvAZJVKXSwp0WudgwC6p1Mo2aTpBkIRDv/qNH+AcBXBXODrAQ4tTxpTHGgfml69fDP9bObu/74/5lkTgo5XW3AhN66SVE3HaNW2p4vz3YivNSp8jhKw7P5qB3uYWGrLEvK4qcJvGcrdkHv23LBgVrmpTBFMQS9pEOds0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748547699; c=relaxed/simple;
+	bh=faB//5zj8LjyOQl2vi3mwWJbWqGE4+2PLln03isVTls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eWQVAGZGR6DxQeNaqUqeU3csqnn1z8dN6FkDAkSDoimyMfmI5d2rWwWLFCFkwgbxv9OQ6c2PdNQwUFqNu/Ez7KQ0mNCVf1uwxQTEcjzaKIEw00EfFU57NVjTU9/OO68Qnp9Lc6i0wHDUcwvxZn6ymhJerOH937jcPC1LV6uBRVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TFL9gRGQ; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ad69e4f2100so198551766b.2;
+        Thu, 29 May 2025 12:41:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748547696; x=1749152496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gAzLvaxuWrHk/PDo4mDUPGEH9SlvCqy850dkZjMakCE=;
+        b=TFL9gRGQzekIowl04e9lQzdbG4E38sE030hnqjtZRcY/cK6IK5gKqNXgDXJPlUfjRZ
+         qfQ0h3NKyi+Kbhems2F7LXMVHMzJJqgTa9IaDORGaZj7AGOu/Sd8nkI2WXMaDDO4QWXq
+         Pl3nQJjEyqFpp3r+pJy8EX5/9ccq+MkyFaHKq8IJYK4WahCNdJ7V3p3ikl7uPbwKGlKZ
+         iNRshnsgW1JRoeHp6Gu6EoGwXdwI13zfmZECJiBtfX2QAM5VF/+oeNK6qv5b0ilIkg42
+         YFrwNJsAAu0yi1os+2Sx2rW8EuUgNGNi88O9nSM9qBP0pFwoZUeoQ3gTWw9Al3wcxevS
+         YhhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748547696; x=1749152496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gAzLvaxuWrHk/PDo4mDUPGEH9SlvCqy850dkZjMakCE=;
+        b=psCErXpLXjI3z75ktSKOo2B0jG3YwZAXgNF9KtaKVMRof53D173HPT9fbH+ow0IUpy
+         LqlOQiky07vGNg0LYBuPxIhcl7friMXgWk59fuvfSRIAzVHMo2oZnr9tfrlwLNB8ebuq
+         1i9QuYHdPUamNxSAOaJWHRHyL97Ze5rieBHni0XWjLJuApTaQZOfarEzwrebpcAUgjmx
+         d2obLPQptCKeUwgPO/U1pzgHepKeC/LI8+8raD2HAXTU6/5xJNfP34/VxHagAJZUFDIo
+         hujAkltMcp0bKk4nP8i4T7JkU47pQQGshhiG0lhMLsZ87GvIKjrCSwVl3ZGzcZaAqLfe
+         fRdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdJ+ye93r8o6aHqHtce8lHN6Wo1WBwDeqCPpTLLI8oxWZB8dUFGSYtVfXOfSWGGYdR/jHW/sn2kqXM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUr6Kbka+XSVvsVCn7OJo3iirMC8oNtMdqcy7n3pQrvUnpZz5s
+	ykh3ijbY45K2gpMW+PEUH1uFrg9FFF+m3HURWh/J0Lb3E/hlTJKvdLtm5rxKJeX/a9TpfEfuscy
+	mZAk9aoOhmrE2uX/QXk4VzInY9fVlvCo=
+X-Gm-Gg: ASbGncuXCB/CWgj839MIBWHG+JyRqyBnW9QMQxt7N4fI3pV7I2kVfVqER3yNljIWMhZ
+	7s30fW760AUA9DvKGVaF201qYRiwqrp679P3YH/WUZEVIV8EH2tgQgx1DMZY9UZbSFLeS3y8mZp
+	6eVPQtzgl9EtGo6AW6F6ODZifIDv2BQGiV
+X-Google-Smtp-Source: AGHT+IFWJk5coKplhacZN8PPVX3ku6qQ1gXcQ9LocP/OKLJ6cdH9OZ9eS+kNx6UhcmSXiQoMsQqlpK1ORO54Q3/wpkI=
+X-Received: by 2002:a17:907:72d2:b0:ad8:87a0:62aa with SMTP id
+ a640c23a62f3a-adb3225ad42mr72900866b.27.1748547695282; Thu, 29 May 2025
+ 12:41:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: ibm.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR15MB5819.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91d5f357-b782-463f-657e-08dd9ee16d4c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 May 2025 18:48:39.4863
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: fcf67057-50c9-4ad4-98f3-ffca64add9e9
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Dl94ttFrGG7S8tBAmnpMiQw3cBlauiaHoassGPM3nYAtv6xg/K/f4qfgQs5BH/VUA8U93+sLl6yON2MEZz7tQQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB5291
-X-Proofpoint-ORIG-GUID: 6vWahbm1PiwEkPQF3JUS26MK0oYZ6gcy
-X-Authority-Analysis: v=2.4 cv=fuPcZE4f c=1 sm=1 tr=0 ts=6838ac0a cx=c_pps a=23ZrAAxOjRKSzRVqk0KFSw==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=dt9VzEwgFbYA:10 a=8IEZzKuUEDbqVeZIwp8A:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: 4iLEywD-RBPCnK1xutehOv7P0qyIpPCj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDE4MCBTYWx0ZWRfX04UUvZeE/fkH TlrlHRpQCzRpZJiQNu2ugY8sdIt+39DwEALNJHR6QxXsZxlbQjnW0DU6FrNv/5cdMk6qdaOWzJg 4huxg0gHSR33R/OaW5wcD3T0mIrtnDtkUV+7L/dmnX6/CGkCz/xmV4EQ4s2ZVBb7ecKkw4i0v2C
- bHlrHPxyMO6O0mLtR9wFOTeGym5z+QzwfjjVmUljRzjedFQ1Mw22b9qFizxa9+75fd7KXjGWTzY zrhlYf7EZN7Hj6h9yVQ7i5zz63BzdhdnHtg4xKAWV93O8JLTu//939JP+mqMfJyGld2c72uz1EK cmYajWaMIvl5WveM4OOJ5a31cblCyaQyMi+nXBrUYyFUrxpEmO4KKu3NaX9WH3RRklMS+x9blvt
- R3aVsX0mQrdh+mO5zMssSrstiTJcXGjUEdgXxPFSbcNM8vBI0/+GgoTwFJwos/nGFIzF6nq+
-Subject: RE: [PATCH v2] hfsplus: remove mutex_lock check in hfsplus_free_extents
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
- definitions=2025-05-29_08,2025-05-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- mlxlogscore=950 priorityscore=1501 malwarescore=0 mlxscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 spamscore=0 adultscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2505160000
- definitions=main-2505290180
+References: <20250521235837.GB9688@frogsfrogsfrogs> <CAOQ4uxh3vW5z_Q35DtDhhTWqWtrkpFzK7QUsw3MGLPY4hqUxLw@mail.gmail.com>
+ <20250529164503.GB8282@frogsfrogsfrogs>
+In-Reply-To: <20250529164503.GB8282@frogsfrogsfrogs>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Thu, 29 May 2025 21:41:23 +0200
+X-Gm-Features: AX0GCFu7pqta6rdvwndbgDtclsxul4PEZgl-Lkv5eXmBpDtb8xV3bN3YZhOkjJc
+Message-ID: <CAOQ4uxgqKO+8LNTve_KgKnAu3vxX1q-4NaotZqeLi6QaNMHQiQ@mail.gmail.com>
+Subject: Re: [RFC[RAP]] fuse: use fs-iomap for better performance so we can
+ containerize ext4
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel <linux-fsdevel@vger.kernel.org>, John@groves.net, bernd@bsbernd.com, 
+	miklos@szeredi.hu, joannelkoong@gmail.com, Josef Bacik <josef@toxicpanda.com>, 
+	linux-ext4 <linux-ext4@vger.kernel.org>, "Theodore Ts'o" <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVGh1LCAyMDI1LTA1LTI5IGF0IDE5OjM2ICswMTAwLCBBbCBWaXJvIHdyb3RlOg0KPiBPbiBU
-aHUsIE1heSAyOSwgMjAyNSBhdCAwNjozNDo0M1BNICswMDAwLCBWaWFjaGVzbGF2IER1YmV5a28g
-d3JvdGU6DQo+ID4gPiBkaWZmIC0tZ2l0IGEvZnMvaGZzcGx1cy9leHRlbnRzLmMgYi9mcy9oZnNw
-bHVzL2V4dGVudHMuYw0KPiA+ID4gaW5kZXggYTZkNjE2ODVhZTc5Li5iMTY5OWIzYzI0NmEgMTAw
-NjQ0DQo+ID4gPiAtLS0gYS9mcy9oZnNwbHVzL2V4dGVudHMuYw0KPiA+ID4gKysrIGIvZnMvaGZz
-cGx1cy9leHRlbnRzLmMNCj4gPiA+IEBAIC0zNDIsOSArMzQyLDYgQEAgc3RhdGljIGludCBoZnNw
-bHVzX2ZyZWVfZXh0ZW50cyhzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLA0KPiA+ID4gIAlpbnQgaTsN
-Cj4gPiA+ICAJaW50IGVyciA9IDA7DQo+ID4gPiAgDQo+ID4gPiAtCS8qIE1hcHBpbmcgdGhlIGFs
-bG9jYXRpb24gZmlsZSBtYXkgbG9jayB0aGUgZXh0ZW50IHRyZWUgKi8NCj4gPiA+IC0JV0FSTl9P
-TihtdXRleF9pc19sb2NrZWQoJkhGU1BMVVNfU0Ioc2IpLT5leHRfdHJlZS0+dHJlZV9sb2NrKSk7
-DQo+ID4gPiAtDQo+ID4gDQo+ID4gTWFrZXMgc2Vuc2UgdG8gbWUuIExvb2tzIGdvb2QuDQo+ID4g
-DQo+ID4gQnV0IEkgcmVhbGx5IGxpa2UgeW91ciBtZW50aW9uaW5nIG9mIHJlcHJvZHVjaW5nIHRo
-ZSBpc3N1ZSBpbiBnZW5lcmljLzAxMyBhbmQNCj4gPiByZWFsbHkgbmljZSBhbmFseXNpcyBvZiB0
-aGUgaXNzdWUgdGhlcmUuIFNhZGx5LCB3ZSBoYXZlbid0IGl0IGluIHRoZSBjb21tZW50LiA6KQ0K
-PiANCj4gVW1tLi4uICAqSXMqIHRoYXQgdGhpbmcgc2FmZSB0byBjYWxsIHdpdGhvdXQgdGhhdCBs
-b2NrPw0KDQpBcyBmYXIgYXMgSSBjYW4gc2VlLCBoZnNwbHVzX2ZyZWVfZm9yaygpIHdvcmtzIHVu
-ZGVyIGV4dF90cmVlLT50cmVlX2xvY2sgbXV0ZXgNCmxvY2suDQpBbmQgaGZzcGx1c19mcmVlX2V4
-dGVudHMoKSBjYWxscyBoZnNwbHVzX2Jsb2NrX2ZyZWUoKS4gVGhpcyBndXkNCnVzZXMgc2JpLT5h
-bGxvY19tdXRleCB0byBwcm90ZWN0IGZyZWUgYmxvY2tzIG9wZXJhdGlvbi4gU28sIG9wZXJhdGlv
-bg0Kc2hvdWxkIGJlIG1vc3RseSBzYWZlLg0KDQpUaGFua3MsDQpTbGF2YS4NCg==
+ or
+
+On Thu, May 29, 2025 at 6:45=E2=80=AFPM Darrick J. Wong <djwong@kernel.org>=
+ wrote:
+>
+> On Thu, May 22, 2025 at 06:24:50PM +0200, Amir Goldstein wrote:
+> > On Thu, May 22, 2025 at 1:58=E2=80=AFAM Darrick J. Wong <djwong@kernel.=
+org> wrote:
+> > >
+> > > Hi everyone,
+> > >
+> > > DO NOT MERGE THIS.
+> > >
+> > > This is the very first request for comments of a prototype to connect
+> > > the Linux fuse driver to fs-iomap for regular file IO operations to a=
+nd
+> > > from files whose contents persist to locally attached storage devices=
+.
+> > >
+> > > Why would you want to do that?  Most filesystem drivers are seriously
+> > > vulnerable to metadata parsing attacks, as syzbot has shown repeatedl=
+y
+> > > over almost a decade of its existence.  Faulty code can lead to total
+> > > kernel compromise, and I think there's a very strong incentive to mov=
+e
+> > > all that parsing out to userspace where we can containerize the fuse
+> > > server process.
+> > >
+> > > willy's folios conversion project (and to a certain degree RH's new
+> > > mount API) have also demonstrated that treewide changes to the core
+> > > mm/pagecache/fs code are very very difficult to pull off and take yea=
+rs
+> > > because you have to understand every filesystem's bespoke use of that
+> > > core code.  Eeeugh.
+> > >
+> > > The fuse command plumbing is very simple -- the ->iomap_begin,
+> > > ->iomap_end, and iomap ioend calls within iomap are turned into upcal=
+ls
+> > > to the fuse server via a trio of new fuse commands.  This is suitable
+> > > for very simple filesystems that don't do tricky things with mappings
+> > > (e.g. FAT/HFS) during writeback.  This isn't quite adequate for ext4,
+> > > but solving that is for the next sprint.
+> > >
+> > > With this overly simplistic RFC, I am to show that it's possible to
+> > > build a fuse server for a real filesystem (ext4) that runs entirely i=
+n
+> > > userspace yet maintains most of its performance.  At this early stage=
+ I
+> > > get about 95% of the kernel ext4 driver's streaming directio performa=
+nce
+> > > on streaming IO, and 110% of its streaming buffered IO performance.
+> > > Random buffered IO suffers a 90% hit on writes due to unwritten exten=
+t
+> > > conversions.  Random direct IO is about 60% as fast as the kernel; se=
+e
+> > > the cover letter for the fuse2fs iomap changes for more details.
+> > >
+> >
+> > Very cool!
+> >
+> > > There are some major warts remaining:
+> > >
+> > > 1. The iomap cookie validation is not present, which can lead to subt=
+le
+> > > races between pagecache zeroing and writeback on filesystems that
+> > > support unwritten and delalloc mappings.
+> > >
+> > > 2. Mappings ought to be cached in the kernel for more speed.
+> > >
+> > > 3. iomap doesn't support things like fscrypt or fsverity, and I haven=
+'t
+> > > yet figured out how inline data is supposed to work.
+> > >
+> > > 4. I would like to be able to turn on fuse+iomap on a per-inode basis=
+,
+> > > which currently isn't possible because the kernel fuse driver will ig=
+et
+> > > inodes prior to calling FUSE_GETATTR to discover the properties of th=
+e
+> > > inode it just read.
+> >
+> > Can you make the decision about enabling iomap on lookup?
+> > The plan for passthrough for inode operations was to allow
+> > setting up passthough config of inode on lookup.
+>
+> The main requirement (especially for buffered IO) is that we've set the
+> address space operations structure either to the regular fuse one or to
+> the fuse+iomap ops before clearing INEW because the iomap/buffered-io.c
+> code assumes that cannot change on a live inode.
+>
+> So I /think/ we could ask the fuse server at inode instantiation time
+> (which, if I'm reading the code correctly, is when iget5_locked gives
+> fuse an INEW inode and calls fuse_init_inode) provided it's ok to upcall
+> to userspace at that time.  Alternately I guess we could extend struct
+> fuse_attr with another FUSE_ATTR_ flag, I think?
+>
+
+The latter. Either extend fuse_attr or struct fuse_entry_out,
+which is in the responses of FUSE_LOOKUP,
+FUSE_READDIRPLUS, FUSE_CREATE, FUSE_TMPFILE.
+which instantiate fuse inodes.
+
+There is a very hand wavy discussion about this at:
+https://lore.kernel.org/linux-fsdevel/CAOQ4uxi2w+S4yy3yiBvGpJYSqC6GOTAZQzzj=
+ygaH3TjH7Uc4+Q@mail.gmail.com/
+
+In a nutshell, we discussed adding a new FUSE_LOOKUP_HANDLE
+command that uses the variable length file handle instead of nodeid
+as a key for the inode.
+
+So we will have to extend fuse_entry_out anyway, but TBH I never got to
+look at the gritty details of how best to extend all the relevant commands,
+so I hope I am not sending you down the wrong path.
+
+
+> > > 5. ext4 doesn't support out of place writes so I don't know if that
+> > > actually works correctly.
+> > >
+> > > 6. iomap is an inode-based service, not a file-based service.  This
+> > > means that we /must/ push ext2's inode numbers into the kernel via
+> > > FUSE_GETATTR so that it can report those same numbers back out throug=
+h
+> > > the FUSE_IOMAP_* calls.  However, the fuse kernel uses a separate nod=
+eid
+> > > to index its incore inode, so we have to pass those too so that
+> > > notifications work properly.
+> > >
+> >
+> > Again, I might be missing something, but as long as the fuse filesystem
+> > is exposing a single backing filesystem, it should be possible to make
+> > sure (via opt-in) that fuse nodeid's are equivalent to the backing fs
+> > inode number.
+> > See sketch in this WIP branch:
+> > https://github.com/amir73il/linux/commit/210f7a29a51b085ead9f555978c85c=
+9a4a503575
+>
+> I think this would work in many places, except for filesystems with
+> 64-bit inumbers on 32-bit machines.  That might be a good argument for
+> continuing to pass along the nodeid and fuse_inode::orig_ino like it
+> does now.  Plus there are some filesystems that synthesize inode numbers
+> so tying the two together might not be feasible/desirable anyway.
+>
+> Though one nice feature of letting fuse have its own nodeids might be
+> that if the in-memory index switches to a tree structure, then it could
+> be more compact if the filesystem's inumbers are fairly sparse like xfs.
+> OTOH the current inode hashtable has been around for a very long time so
+> that might not be a big concern.  For fuse2fs it doesn't matter since
+> ext4 inumbers are u32.
+>
+
+I wanted to see if declaring one-to-one 64bit ino can simplify things
+for the first version of inode ops passthrough.
+If this is not the case, or if this is too much of a limitation for
+your use case
+then nevermind.
+But if it is a good enough shortcut for the demo and can be extended later,
+then why not.
+
+Thanks,
+Amir.
 
