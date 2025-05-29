@@ -1,145 +1,276 @@
-Return-Path: <linux-fsdevel+bounces-50113-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 808B7AC84D7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 01:10:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F2B0AC84F3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 01:16:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A85B179C9B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 23:10:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0454A37A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 23:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 706D3242928;
-	Thu, 29 May 2025 23:10:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A8F23278D;
+	Thu, 29 May 2025 23:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="DP7urY4K"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CD6kGZbm"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05260610B;
-	Thu, 29 May 2025 23:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547CE1AAE28;
+	Thu, 29 May 2025 23:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748560225; cv=none; b=tevuhXbFwepYPzL21zU5Z6zymNw4yKnAXJsZjj60i25yqX+J86TFe+diub1M0tpMvc4wxV+FwMKloQQukF2ADa/tL+B2NRT+L/JPWxPm3+zZnDeULkVb+bfZsPsBxPocM9FDlyeVnoZAtAui0Cz2LvckHDK/XqpFkQRjkPJmkqs=
+	t=1748560573; cv=none; b=B35ettONoShFArZtdX0JIt5Cn8ZX9YOCt1zwsJJTi1WnDUT+DM5V4aHVoOneG5dn58L3JNr5me+iu7YKOEwkJunZtJPzmSbjOdBSOHf9jGhtKH1lVFzCCHVXkB8Mch2ZX350gKo7j+GpA0K+P2ifSX6rVLhuBUQZsHZ+a9FMK9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748560225; c=relaxed/simple;
-	bh=uFjp7SU8YEP82YOaIJFGFLpBgle1lTi5iLyd36oc6mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V7rvmH5grvi9KcGqgE9vYwY34wdyZAjaChomu9Pw19V5OQLiwd1jnwrb8sU/GQV73rCHTmWgyuNOsJhWmo+IyPs4UXzZKqzi5WxY2JCWaeZWvL8XWW4KVwpof3M0cljFuDXXqVKeK/gEa3oxZkc5PI3H1JiYM1tBDL4TaU0zMmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=DP7urY4K; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=M2hE6XVOgu6lYN3x94mg3U8DaOZrftu1a2UwXyrz0Og=; b=DP7urY4K8Y5glUGrUOP+xuF0ls
-	IW5g9yEzsYP86aiY11HyMIhVY5yEpo9ZoCtyVC3YD554vHM5GcJkAazctaB9rk4F/VgO2cFPf6ale
-	09bdHWBRWxHWQWFtfzAFR+mjmjNehq2d+Fp//kVgyirE1mNGdcvdW4TbDNEPlux51ww2YXmcMqz0F
-	vO0YStNXrni6a8zD1XGkO0VzXz0r8+tGv/kv0UdFTKqHxaDUom6hyFkhk2AOD0hMvAjGgnZBXBwex
-	eCN5b+97ckPGxIIipHNWt2Bzd6g37v2eXBm3p57ZJzXE6vREgaZeAoV49XvgGVMbtUpA8l0TRtOLv
-	VSZaYefw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uKmOA-00000004ZQe-34xh;
-	Thu, 29 May 2025 23:10:18 +0000
-Date: Fri, 30 May 2025 00:10:18 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Song Liu <song@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, kernel-team@meta.com,
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
-	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org,
-	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com,
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com,
-	mic@digikod.net, gnoack@google.com
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-Message-ID: <20250529231018.GP2023217@ZenIV>
-References: <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <20250529173810.GJ2023217@ZenIV>
- <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250529183536.GL2023217@ZenIV>
- <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
- <20250529201551.GN2023217@ZenIV>
- <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
- <20250529214544.GO2023217@ZenIV>
- <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
+	s=arc-20240116; t=1748560573; c=relaxed/simple;
+	bh=uN2v3UTbEty8/RR+P2U4P987E1Lnoe4g4hD5/MHnefg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=u0tkliqX646ao2RZ68uttOd3c86mtyUjKD6vhVJ1Oi9wl3lRVwPmo+9V7ufqqHd8dvOeBw4nHTs85CeRIawNfoOjl7MybbZJg50CfOGmRioEXL5p/yPs/5hJUsqagH6cV85xB1FVKmBiFftd+SZ/24o91SUQqAysmgvBvsv9P1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CD6kGZbm; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-476a720e806so12740641cf.0;
+        Thu, 29 May 2025 16:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748560569; x=1749165369; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wS0nP8SmvkY9o+OxO2Dpp0pXbkQSsrL7lfI+o9vESoc=;
+        b=CD6kGZbm7+s1CiCGd5bb8pHj59I5m+NwLpc93NhdKlceex5uxMUUeZlqTimWSs/0+O
+         jyjVQpHySvL2Jhp7jDPWGtPNvv+6zBnMBI1Z26dp3mDjxVxyuor9Nv49b58W4IQV2eHF
+         bZdsVfQy3DlTDZuEdRBUBYkplfviHHyiEy8gLJu9USG/XNq3xwCz8i1yAqbY4jOlnP9C
+         Bypoxj5tJgwgLc36KbOdjGtxNg3F2gdLbeip9ssuT3GVkZNPZuDnBNIPXMIs7nnk+XOS
+         OvSOKj1Pba0xOvv3kokdXLqJZTNgGX7u3GyaLMQdKDIrZ2uA56Nd4MpQCl8/e6iK0eAH
+         WbgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748560569; x=1749165369;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wS0nP8SmvkY9o+OxO2Dpp0pXbkQSsrL7lfI+o9vESoc=;
+        b=BCh4JJ/c4HKJhYhzO7VV9G5yZJxr1B1HDR0lTclBfbcdCOuER9TZZTHi87QqdZonpS
+         dGqRYhZ19Jt3u6rqBRAXYjwXEoDDGoPXUYQTp8XN3DLoFOGDsyM3rbllmCrxc1ru9JlT
+         jJxgrl7n32TkrLmx1keMM8Hw8bW6nQxA7cxhwsV4wboW3a9rB92gZh/6XkA8+kPexroE
+         wgbF+rlYOcn52bIpvAYPF69+au7sX9AIMG2Nzq4IJK+kREs/Br9rMAHN61+eSFg72aRS
+         yWu0BbS90woJ3cYqlymkDsjxzONlbF7OeqGm5OD6/uJx1XIkgDIEwTR0mVuPSwutIixn
+         ISnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIeWbBwVXJtY1pisNBUUIIFMav0vcVjtb7uzIfkjmbIRxZU1kxqvaCgxF+a9cq0IFmkL6FhLDTS70=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww+w2c8id5dOEFxUx9AdneFrcKrckGHs2tsekbOTafVC1d88Dv
+	9v+gnr7bRDH27hq5Jkftuf26YeZo6bblnf/k7FAZFqmCe0/2tlkonnrFQvt4O2+DVOsGOayiPaC
+	XZTjfinCn5MLBL9ZIClyyUMR9jFzrloZ0ng==
+X-Gm-Gg: ASbGncvoWCvSXplieYkmeadrXH8w396xtNUCCESGYDYyiYtXhF8gjs3WR+rtdg16/QB
+	OrE6YmnqyldMtBcTGiXIW+S4RRIggcWsNlhi4Gu5u3i/YBO5TpCpNFM7/j0Rab+kBDXlFOydY4D
+	avWRedkKv8rdDITfHNthu8GiUIkLMOK2rEWiRumTC1ytMZeulzcX/AqZB2v9xg6KruM0LPVg==
+X-Google-Smtp-Source: AGHT+IEZeIUQLwv/7iZFp88gVmM5+jxb2YibShcifxR9NaP2bZvIslNAlAv/2LkK/Cs+lZG+M/f9g58a+zIEr3eh964=
+X-Received: by 2002:a05:622a:c87:b0:494:adff:7fe2 with SMTP id
+ d75a77b69052e-4a4400ada9dmr25506941cf.43.1748560568993; Thu, 29 May 2025
+ 16:16:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <174787195502.1483178.17485675069927796174.stgit@frogsfrogsfrogs>
+ <174787195629.1483178.7917092102987513364.stgit@frogsfrogsfrogs> <CAJnrk1ZEtXoMKXMjse-0RtSLjaK1zfadr3zR2tP4gh1WauOUWA@mail.gmail.com>
+In-Reply-To: <CAJnrk1ZEtXoMKXMjse-0RtSLjaK1zfadr3zR2tP4gh1WauOUWA@mail.gmail.com>
+From: Joanne Koong <joannelkoong@gmail.com>
+Date: Thu, 29 May 2025 16:15:57 -0700
+X-Gm-Features: AX0GCFuG9IkAkb_NwffqnSorzyDBmtvh_DfpUQi35Ja7cU3JgWRX5cTdsMeO78g
+Message-ID: <CAJnrk1YDxn0ZMk0BrTnNStkXErjY_LSGYHgdsRjiiZ2dTpftAA@mail.gmail.com>
+Subject: Re: [PATCH 03/11] fuse: implement the basic iomap mechanisms
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, 
+	linux-xfs@vger.kernel.org, bernd@bsbernd.com, John@groves.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 29, 2025 at 03:13:10PM -0700, Song Liu wrote:
-
-> Is it an issue if we only hold a reference to a MNT_LOCKED mount for
-> short period of time? "Short period" means it may get interrupted, page
-> faults, or wait for an IO (read xattr), but it won't hold a reference to the
-> mount and sleep indefinitely.
-
-MNT_LOCKED mount itself is not a problem.  What shouldn't be done is
-looking around in the mountpoint it covers.  It depends upon the things
-you are going to do with that, but it's very easy to get an infoleak
-that way.
-
-> > OTOH, there's a good cause for moving some of the flags, MNT_LOCKED
-> > included, out of ->mnt_flags and into a separate field in struct mount.
-> > However, that would conflict with any code using that to deal with
-> > your iterator safely.
+On Thu, May 29, 2025 at 3:15=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
+m> wrote:
+>
+> On Wed, May 21, 2025 at 5:03=E2=80=AFPM Darrick J. Wong <djwong@kernel.or=
+g> wrote:
 > >
-> > What's more, AFAICS in case of a stack of mounts each covering the root
-> > of parent mount, you stop in each of those.  The trouble is, umount(2)
-> > propagation logics assumes that intermediate mounts can be pulled out of
-> > such stack without causing trouble.  For pathname resolution that is
-> > true; it goes through the entire stack atomically wrt that stuff.
-> > For your API that's not the case; somebody who has no idea about an
-> > intermediate mount being there might get caught on it while it's getting
-> > pulled from the stack.
+> > From: Darrick J. Wong <djwong@kernel.org>
 > >
-> > What exactly do you need around the mountpoint crossing?
-> 
-> I thought about skipping intermediate mounts (that are hidden by
-> other mounts). AFAICT, not skipping them will not cause any issue.
+> > Implement functions to enable upcalling of iomap_begin and iomap_end to
+> > userspace fuse servers.
+> >
+> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > ---
+> >  fs/fuse/fuse_i.h          |   38 ++++++
+> >  fs/fuse/fuse_trace.h      |  258 +++++++++++++++++++++++++++++++++++++=
+++++
+> >  include/uapi/linux/fuse.h |   87 ++++++++++++++
+> >  fs/fuse/Kconfig           |   23 ++++
+> >  fs/fuse/Makefile          |    1
+> >  fs/fuse/file_iomap.c      |  280 +++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  fs/fuse/inode.c           |    5 +
+> >  7 files changed, 691 insertions(+), 1 deletion(-)
+> >  create mode 100644 fs/fuse/file_iomap.c
+> >
+> >
+> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > index d56d4fd956db99..aa51f25856697d 100644
+> > --- a/fs/fuse/fuse_i.h
+> > +++ b/fs/fuse/fuse_i.h
+> > @@ -895,6 +895,9 @@ struct fuse_conn {
+> >         /* Is link not implemented by fs? */
+> >         unsigned int no_link:1;
+> >
+> > +       /* Use fs/iomap for FIEMAP and SEEK_{DATA,HOLE} file operations=
+ */
+> > +       unsigned int iomap:1;
+> > +
+> >         /* Use io_uring for communication */
+> >         unsigned int io_uring;
+> >
+> > @@ -1017,6 +1020,11 @@ static inline struct fuse_mount *get_fuse_mount_=
+super(struct super_block *sb)
+> >         return sb->s_fs_info;
+> >  }
+> >
+> > +static inline const struct fuse_mount *get_fuse_mount_super_c(const st=
+ruct super_block *sb)
+> > +{
+> > +       return sb->s_fs_info;
+> > +}
+> > +
+>
+> Instead of adding this new helper (and the ones below), what about
+> modifying the existing (non-const) versions of these helpers to take
+> in const * input args,  eg
+>
+> -static inline struct fuse_mount *get_fuse_mount_super(struct super_block=
+ *sb)
+> +static inline struct fuse_mount *get_fuse_mount_super(const struct
+> super_block *sb)
+>  {
+>         return sb->s_fs_info;
+>  }
+>
+> Then, doing something like "const struct fuse_mount *mt =3D
+> get_fuse_mount(inode);" would enforce the same guarantees as "const
+> struct fuse_mount *mt =3D get_fuse_mount_c(inode);" and we wouldn't need
+> 2 sets of helpers that pretty much do the same thing.
+>
+> >  static inline struct fuse_conn *get_fuse_conn_super(struct super_block=
+ *sb)
+> >  {
+> >         return get_fuse_mount_super(sb)->fc;
+> > @@ -1027,16 +1035,31 @@ static inline struct fuse_mount *get_fuse_mount=
+(struct inode *inode)
+> >         return get_fuse_mount_super(inode->i_sb);
+> >  }
+> >
+> > +static inline const struct fuse_mount *get_fuse_mount_c(const struct i=
+node *inode)
+> > +{
+> > +       return get_fuse_mount_super_c(inode->i_sb);
+> > +}
+> > +
+> >  static inline struct fuse_conn *get_fuse_conn(struct inode *inode)
+> >  {
+> >         return get_fuse_mount_super(inode->i_sb)->fc;
+> >  }
+> >
+> > +static inline const struct fuse_conn *get_fuse_conn_c(const struct ino=
+de *inode)
+> > +{
+> > +       return get_fuse_mount_super_c(inode->i_sb)->fc;
+> > +}
+> > +
+> >  static inline struct fuse_inode *get_fuse_inode(struct inode *inode)
+> >  {
+> >         return container_of(inode, struct fuse_inode, inode);
+> >  }
+> >
+> > +static inline const struct fuse_inode *get_fuse_inode_c(const struct i=
+node *inode)
+> > +{
+> > +       return container_of(inode, struct fuse_inode, inode);
+> > +}
+> > +
+> >  static inline u64 get_node_id(struct inode *inode)
+> >  {
+> >         return get_fuse_inode(inode)->nodeid;
+> > @@ -1577,4 +1600,19 @@ extern void fuse_sysctl_unregister(void);
+> >  #define fuse_sysctl_unregister()       do { } while (0)
+> >  #endif /* CONFIG_SYSCTL */
+> >
+> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP)
+> > +# include <linux/fiemap.h>
+> > +# include <linux/iomap.h>
+> > +
+> > +bool fuse_iomap_enabled(void);
+> > +
+> > +static inline bool fuse_has_iomap(const struct inode *inode)
+> > +{
+> > +       return get_fuse_conn_c(inode)->iomap;
+> > +}
+> > +#else
+> > +# define fuse_iomap_enabled(...)               (false)
+> > +# define fuse_has_iomap(...)                   (false)
+> > +#endif
+> > +
+> >  #endif /* _FS_FUSE_I_H */
+> > diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+> > index ca215a3cba3e31..fc7c5bf1cef52d 100644
+> > --- a/fs/fuse/Kconfig
+> > +++ b/fs/fuse/Kconfig
+> > @@ -64,6 +64,29 @@ config FUSE_PASSTHROUGH
+> >
+> >           If you want to allow passthrough operations, answer Y.
+> >
+> > +config FUSE_IOMAP
+> > +       bool "FUSE file IO over iomap"
+> > +       default y
+> > +       depends on FUSE_FS
+> > +       select FS_IOMAP
+> > +       help
+> > +         For supported fuseblk servers, this allows the file IO path t=
+o run
+> > +         through the kernel.
+>
+> I have config FUSE_FS select FS_IOMAP in my patchset (not yet
+> submitted) that changes fuse buffered writes / writeback handling to
+> use iomap. Could we just have config FUSE_FS automatically opt into
+> FS_IOMAP here or do you see a reason that this needs to be a separate
+> config?
 
-It can.  Suppose e.g. that /mnt gets propagation from another namespace,
-but not the other way round and you mount something on /mnt.
+Thinking about it some more, the iomap stuff you're adding also
+requires a "depends on BLOCK", so this will need to be a separate
+config anyways regardless of whether the FUSE_FS will always "select
+FS_IOMAP"
 
-Later, in that another namespace, somebody mounts something on wherever
-your /mnt gets propagation to.  A copy will be propagated _between_
-your /mnt and whatever you've mounted on top of it; it will be entirely
-invisible until you umount your /mnt.  At that point the propagated
-copy will show up there, same as if it had appeared just after your
-umount.  Prior to that it's entirely invisible.  If its original
-counterpart in another namespace gets unmounted first, the copy will
-be quietly pulled out.
 
-Note that choose_mountpoint_rcu() callers (including choose_mountpoint())
-will have mount_lock seqcount sampled before the traversal _and_ recheck
-it after having reached the bottom of stack.  IOW, if you traverse ..
-on the way to root, you won't get caught on the sucker being pulled out.
+Thanks,
+Joanne
 
-Your iterator, OTOH, would stop in that intermediate mount - and get
-an unpleasant surprise when it comes back to do the next step (towards
-/mnt on root filesystem, that is) and finds that path->mnt points
-to something that is detached from everything - no way to get from
-it any further.  That - despite the fact that location you've started
-from is still mounted, still has the same pathname, etc. and nothing
-had been disrupted for it.
-
-And yes, landlock has a narrow race in the matching place.  Needs to
-be fixed.  At least it does ignore those as far as any decisions are
-concerned...
-
-Note, BTW, that it might be better off by doing that similar to
-d_path.c - without arseloads of dget_parent/dput et.al.; not sure
-how feasible it is, but if everything in it can be done under
-rcu_read_lock(), that's something to look into.
+>
+>
+> Thanks,
+> Joanne
+> > +
+> > +config FUSE_IOMAP_BY_DEFAULT
+> > +       bool "FUSE file I/O over iomap by default"
+> > +       default n
+> > +       depends on FUSE_IOMAP
+> > +       help
+> > +         Enable sending FUSE file I/O over iomap by default.
+> > +
+> > +config FUSE_IOMAP_DEBUG
+> > +       bool "Debug FUSE file IO over iomap"
+> > +       default n
+> > +       depends on FUSE_IOMAP
+> > +       help
+> > +         Enable debugging assertions for the fuse iomap code paths.
+> > +
+> >  config FUSE_IO_URING
+> >         bool "FUSE communication over io-uring"
+> >         default y
 
