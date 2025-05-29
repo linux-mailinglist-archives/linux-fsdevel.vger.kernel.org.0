@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-50087-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50088-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD70AC8192
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 19:17:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D83DAC8196
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 19:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 372DF4A5835
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 17:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB3241882397
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 17:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7909622E40F;
-	Thu, 29 May 2025 17:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB3B231836;
+	Thu, 29 May 2025 17:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="EfSyOgB+";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="xXnt+NxX"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cyOKBma3";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="Xw8pgmG+"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F310B23099C;
-	Thu, 29 May 2025 17:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4635D230BC6;
+	Thu, 29 May 2025 17:16:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748539000; cv=fail; b=l1/PkNbMnrM5iKQtcxvjfr6/ea+2XHCoektpT7G5uYgvOmCmu8IfYByV81dGTzS/rEyidmzqGaSJUAq612FegGq0tUNaAP8YgmEgTQHQNh90EEyPUmOTyIxzqptjvsOLigT2TO0jRZqu3T5xcBInENC6EGTzEFbBqcN7tKE5d4o=
+	t=1748539002; cv=fail; b=RW3SSJV5cWsBgVCIwNFdG47HcgtA7hGU6kzANbSP+FARsy49Yn/cfwwi/08y2CukD/bhkbJBNjeIYaOV1OrScfqmGr2ziuremtju0P9RgGRKJ6EmRjVhipqn5P2BcaXHYIc30eXYYg8x0f9wTBd6wYjb/elA7hZ5wJPNTDlzdW4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748539000; c=relaxed/simple;
-	bh=2OD1UtQ73wvRxYPiM1a7xn1FVfxBSxFFaFSVzphHTkE=;
+	s=arc-20240116; t=1748539002; c=relaxed/simple;
+	bh=r+h39V/M1VoTa8GJDlQVV9BJSVj+bEVIFWOF9JQfA0E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=soi6wCgjfEfNqh2javj158bb+aHF8QBZQox7TDvpI5SEwI9Ly/cIBBUAB87rsPsj48DFCmtoL4Sn4Mt2MajIiL481je7Ey/QmJIDkdvnkI5VzLoQ4t0K1/j8dC35AAhJNrO+0SaKDvrMEIhM9JBxmmDiI60eNtEcExnHsigPEmI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=EfSyOgB+; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=xXnt+NxX; arc=fail smtp.client-ip=205.220.177.32
+	 Content-Type:MIME-Version; b=bEMuFmKBvyONBhvP3v0tQtjFwg0vJtwX3oW8ESTtHI2vmqm0KcPnISMbDcmsA7vnWUBgp5l7M+Ztg19ZpvpqFUD1Ps4tx1Rw6Np1f2H5ghPHkU7AtTZIr0hsG8qxvnylAMcV0V8xGBCgz3AFdRx0O3Kcp3FCtDgMwIkXP4pKavw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cyOKBma3; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=Xw8pgmG+; arc=fail smtp.client-ip=205.220.177.32
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54TGfqxx014972;
-	Thu, 29 May 2025 17:16:09 GMT
+Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 54TGfwVx020992;
+	Thu, 29 May 2025 17:16:18 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
 	:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=q5mLcYX5F1FxHdw65KNsqfLJbpFl8wkfbNCp26qhXrg=; b=
-	EfSyOgB+ese3FMJuAWHheZPb2hvioLv1kgm4a/HlO4w2F+8vJAZwztCtON2nd5/L
-	Bpm+kQrjGAfK2KDJDuzCc8mYOFz/VryzeDDTOPl2PnBQs9t2jG9/65f9q/3qwvXp
-	Zcoy8HmmV+PAitwM/599urIDDFENpaNcF93yiHvwYtPjEPMR1Q46092qUrnzQhpY
-	2HtcRSu73cUfuQBoOw21rVpmi3Dgg4GnFcHhNI8/qDAxEI9WkQckXEyP8t4v53Vd
-	Krjn8VC+H/Ar9Llp2bBQcSxbra32Rx9uceIr4NTtxbJfqcA1Jruh8MaSwv7kkp9l
-	U0tfsZa5/c/Ov/nezxFhrg==
-Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46v21s8j93-1
+	corp-2025-04-25; bh=j1Zy6cAGSbC1TKi8DWFl0e6qULnOj5/MKyYsqMFr7wg=; b=
+	cyOKBma3luS+mSoNXFNQ0p/jfu16ArqfFrIj/sy5alIZQNnBryOlVBf2im1F62Jb
+	h2of/oLkU7hNlA+hqkmqqDDSa8apHPh259ojsOeoPtrjMRlg3iSuYHqvjmgHeRRS
+	DuBpYHUJ+rurNUMlescQMilut7rOXIUzJQ9AGlzbED5CvYaARHp+M6D6qgxSmf9d
+	/bTyZewVbMJTY8MinykUQ3DADf6vOJeeluwmSVPwmUopTTxYvTno5M3W1Hc2sBuc
+	igViCvLms5O0vMOWtpdE2rTjbeh4D8klOowsbiFZXaQboffFshi0mnfdeHGAChTa
+	IDu7gbcs/wYIi9khRUG+7w==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 46wjbcmnue-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 May 2025 17:16:08 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54TFr56T025467;
-	Thu, 29 May 2025 17:16:08 GMT
-Received: from bn1pr04cu002.outbound.protection.outlook.com (mail-eastus2azon11010021.outbound.protection.outlook.com [52.101.56.21])
-	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jjfrtc-4
+	Thu, 29 May 2025 17:16:18 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 54TFl4u1019193;
+	Thu, 29 May 2025 17:16:17 GMT
+Received: from sj2pr03cu002.outbound.protection.outlook.com (mail-westusazon11013041.outbound.protection.outlook.com [52.101.44.41])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 46u4jc7usf-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 29 May 2025 17:16:08 +0000
+	Thu, 29 May 2025 17:16:17 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=YX5wI2jratcO3CvjTeBkgX/0rkALAu4bEo/+AN/F+DDC2BZPudSSTjVVyiJq1MhPeK5/RSLXpb5sOx04re47dwC4kcWM1JAX9YD7Hlvnwq3+SBqHLwphbYfmBFAG8YGX4DeXKVarqldeuU541z+4Oacf46voekAln/GIprIuwwAGIUvu6R7AUwje5aoQzijCnehNuzC+DZI+iZhkjtK5/PLNBcZSSrOvDvdUK2QnHtvAsWGEuYbgo2yhl8BLrASg/pMWtyqwk2UmYkX66ZHrvj8JDKi90BU342Mj7lH1t9jpaSiiUUJEgTnhyzi2ONlAw153p7MAxr3jY28N2RQN7g==
+ b=NV+/c8Gd+3piwIzBOsKkAGp+xzw0BPiwl9GcX82ON6wyVa7C/GUZANMbvuXmUj0zUcoJ9tSf9QgDx6u+H0JRL4WXs6Sr8gvtpNDGwCHWOGNaLChtUtk/SfqEOFjOdjTb2dlLtXxQF9YURSo62eSo5Ta0C2L0xIumP4qG1uChX/SxlFF1e1faN13DqABZKqKN4UtBTwdOxTHuF3axeppIF7M62kknZyc0POIJX/NArKM72R189crADRIzQE8qyzbNnclrWTJTU1JB1MvCj4B375hjUYFSRcRDKeVfM5VG2DA19qKD4in3bNF1lu8149b7M4VsYNUyur77TcpeAR4SSA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=q5mLcYX5F1FxHdw65KNsqfLJbpFl8wkfbNCp26qhXrg=;
- b=Qux/jWJvKfSUF3Kqjfo3itIE3JJ/9yBFyQIPAxxTM11IMqfUILPM8eniv7ypvvYf3/DTWTBFtgI6hBJcgYirt5v24CSic9vxqHEJXSgrZj7bdp1BQbJTQwTPloUFiQRfiA/Pxdfh00upNO244BzghHmb8WuHpPL5QDAb4AC52rslp6ZXrtLAD9ajJuCI+CE6zv7np5sv9K3Lz2dhNMyOqoKnj2t62SSOfE+DRMee9WZlOqnlzwFubsY4QOFvfgJ9KOmR1cmkwJv3NP3U16eKB1kjnwDl7t7xOyLZJSzcAkQsqRPsQY5tmUSeaYpkxV4c+T2BJr3vWuRT2bOJdaemgg==
+ bh=j1Zy6cAGSbC1TKi8DWFl0e6qULnOj5/MKyYsqMFr7wg=;
+ b=qYtLk8VYtjoBeaDgwiYzJXXtf8DEoleZSLYQKnsD0VRMfNJR1A6SolhgrDi332xnlvPKE+8K1MfRvZmQuDJ3R8YQ+tfb3I0WfdYWQF8V//SVUeG9Oq4kOqQNWaYA1kPbpAuHRCFmMkZDR78xyyiqN0kfQHjQVnYRSnoCu2mLarU3K0NKslCu8LIQDqqdsjoOs7Nad0bHmQkcfR0XyJGfjsZAi33QASAccaFOR+g/F7beyUSdDu9baY5lmvP0T0GfxnITdf067JJVSnnLE5SK3LHHRaeCuiVA7v8+tZCcle+McFUoLxtIN/T0zoLTGFBpW43aDyIROdEdqLPOmuqzKw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
  dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=q5mLcYX5F1FxHdw65KNsqfLJbpFl8wkfbNCp26qhXrg=;
- b=xXnt+NxXZK7n0ZdxAEKiT2HrF3SXKGzIxOhkqL5eM4G2Lrq/FcqtxhYCYSLJDYavBPol2YuVKiiRv5QkHAOsjkzBQgm5cIYjFjlzmDUkm9P0pAAyunoWCGVOmOqill8UpTj8ZLUyB4+QszATxXMoBY5awlYs/EVXjXcegyl6R2k=
+ bh=j1Zy6cAGSbC1TKi8DWFl0e6qULnOj5/MKyYsqMFr7wg=;
+ b=Xw8pgmG+gcnPAEob47ElL9ej1Ass3ZXD8ytFQpe8G+0MkBMNHgIxPX9sG/WrgJLPxpv80V2mn2rDFmY/WbeQ6DWkp9Q8pQnuvxSD28l0pGzy35Nl8qAwahvaogNdW6D+DPzLnEv/VyHz7/epCEyKx5Jknba9bdJDdJM25rTqtKY=
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
  by LV8PR10MB7991.namprd10.prod.outlook.com (2603:10b6:408:1f8::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.35; Thu, 29 May
- 2025 17:16:04 +0000
+ 2025 17:16:08 +0000
 Received: from DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
  ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8746.030; Thu, 29 May 2025
- 17:16:04 +0000
+ 17:16:08 +0000
 From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -91,16 +91,16 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
         Chengming Zhou <chengming.zhou@linux.dev>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Stefan Roesch <shr@devkernel.io>
-Subject: [PATCH v3 3/4] mm: prevent KSM from breaking VMA merging for new VMAs
-Date: Thu, 29 May 2025 18:15:47 +0100
-Message-ID: <3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com>
+Subject: [PATCH v3 4/4] tools/testing/selftests: add VMA merge tests for KSM merge
+Date: Thu, 29 May 2025 18:15:48 +0100
+Message-ID: <6dec7aabf062c6b121cfac992c9c716cefdda00c.1748537921.git.lorenzo.stoakes@oracle.com>
 X-Mailer: git-send-email 2.49.0
 In-Reply-To: <cover.1748537921.git.lorenzo.stoakes@oracle.com>
 References: <cover.1748537921.git.lorenzo.stoakes@oracle.com>
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: LO2P265CA0223.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:b::19) To DM4PR10MB8218.namprd10.prod.outlook.com
+X-ClientProxiedBy: LO4P123CA0164.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:18a::7) To DM4PR10MB8218.namprd10.prod.outlook.com
  (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -110,326 +110,219 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|LV8PR10MB7991:EE_
-X-MS-Office365-Filtering-Correlation-Id: 793c5490-c53d-4496-5d5b-08dd9ed47e6c
+X-MS-Office365-Filtering-Correlation-Id: a9c72220-1580-415e-ad5b-08dd9ed480a4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PGX49/ON8WpEesXp+qAAHW1JoaJ3lbUbKzbGzfCaDXMqMm+/MepYK1TjYwR1?=
- =?us-ascii?Q?mMloVae1x6pebw4XQNh8qZ4gxl9DRYC0S/rZCc44GXgMmV01MMmIVvmibN7r?=
- =?us-ascii?Q?kadGSJ9tYO0RpHuRlK+eCe7UH+5ED5c1ek8K5QD+Mv6uxSXv49Vm8prbwToi?=
- =?us-ascii?Q?9kTF+25xDdNXwV6vUfCMbPVIKRZi1EXRhHQgZX6FAeK/ToRVhjzrd1Sco53p?=
- =?us-ascii?Q?ZIuoFCOn7I3Jc7L9/O6F9rVgiyI/gEamqIh0GFO4Rs9dWxKwFETBygz6GV11?=
- =?us-ascii?Q?eRwxiqEVetU2GbkvPEBlVJQgrZhtutYEeopcnbmqV4n70YS+5SaNX56PciEU?=
- =?us-ascii?Q?Sq33koZi4+fk9Vy4x4dhOVEsVCZDSV/EGCVUtnJ+cJCYeLaeed6JFcu1iVKw?=
- =?us-ascii?Q?5dC/KopZxVTzISXsUlTfqPhvpVwHjIYb4rfnmPAVln03UlAYXCm9SfCbGluJ?=
- =?us-ascii?Q?mLyWOIv2UJo/o3l350sCJmBkHhrJF/NO37MO99biaRLxNpU/+KvAUZakM67O?=
- =?us-ascii?Q?E5+xuqEOMwzZjZrZdR5v/UQ6nSMAvZdUbSbgnMvMfZJULW9uXJ0553zyEZiU?=
- =?us-ascii?Q?44AFdwUpojjsUy+XE5d2DaR7q51w2TsgnTKSsp1Eomoi7NGzRVQPNvQ2B2pg?=
- =?us-ascii?Q?fCSopjmzcvUpZ1Rx1RmKj8l4fgyXrG0B2yFOdLR9SZyExpc8UVwvOZq0ndAA?=
- =?us-ascii?Q?wX8vi90aafdlmtF7kGTtA4/Z8rjnuApmXHIJ2vPnY+iLJifVHM2vOCX4pewG?=
- =?us-ascii?Q?6xfo2iRu35kj62ZaaUSnOAD6narLWwU24kayHo0FO/e39Eft/eLMXgwwG86X?=
- =?us-ascii?Q?BJ3y7JqkdsbGen2yG+mLv3Ba59SP2WAGs+yKU0/KL/WfzrHNCbkdfD7VKXyp?=
- =?us-ascii?Q?gNl+KI9OUp/t0tYsdd5XpIN6rFmx2Xr4+nJHf7nmhebS91WJaps8NI2/SxU/?=
- =?us-ascii?Q?ZKm4i1UdUQB0mitENXX7cL3+8562zPc+11dqF2ERfq3BA8hKpZOLfQkCnL5g?=
- =?us-ascii?Q?tMhT8Aw1EK+lQhbLz4JE61pF0y1p/kHDvXHj1CYPLOxHSjyCNcLniAahrmQ5?=
- =?us-ascii?Q?uPVNsx3jvZrrlba7aqtMIHWKicde0Si55kQK/F/xM768CDR/SOgpge1epxMr?=
- =?us-ascii?Q?m9NyEWG8y0PYYCNsTo4cQNCiiql8jNxVbVxn2gLzQjB5ZWEYRA8B1aXaNc3F?=
- =?us-ascii?Q?tnrPy2Jn3H2p5w3zeWxxF9tNVmBhfyTzRidU8qC8vb7tkRHgDhSew+n/w13Q?=
- =?us-ascii?Q?77i6a79NlsRsaSyA/HEqVy5BWinrRiWVTANc0KsuNZfglPa1lmruJQbmI1H2?=
- =?us-ascii?Q?CQbX3cGPsYMJCUbRXhStW4jI8KpoS1jH6gqnBcN5/N0Ug2xac64apei6d6l9?=
- =?us-ascii?Q?PCQryy2jKTLvxthtK9h8WoPSTIs4h/Lq0ZDd2/M+3+DdzvYhtgMXPvNAX4JF?=
- =?us-ascii?Q?1jqErZeUO+g=3D?=
+	=?us-ascii?Q?CeeMRyG6v9bRLXTf1lPMNqEH5EKV36siOvUa5LFEHBh/XW/ZH63H2naNs+Pm?=
+ =?us-ascii?Q?ZMnoOk1E7bWI/a06NqC9qAYhkkfaWtGrK3Pc3A4vwVibBsCuPsRI2G8I6zcA?=
+ =?us-ascii?Q?WdNTQd7qGV98sFgLE6sniPfGjI1qGzyCHu+GncFdOyTdeFgg2nd7dGHIfwRh?=
+ =?us-ascii?Q?/rnL/49ExJTwtp65Nhl58WkdHuvnouqyg9GXx+R5rma/WURwGkkYgBa1t0/x?=
+ =?us-ascii?Q?EparIuh/OcZikQEne71Xb/FIVULP27axh/A1WPnwnwrzKYK2szzVfYwnEoPm?=
+ =?us-ascii?Q?92hKcSabVlEW3cBmGpH9y6c/GAEL5/b8TBlrbtUobJKudf/M3IbTNQiXxOsQ?=
+ =?us-ascii?Q?59+Lg4yRWcL/JCjcZRawGMGxPtAyC7engnGsOtOF4lDfnt8SRyG+iYgG9QZK?=
+ =?us-ascii?Q?jKxJkQI1d8TVqM/MEFjgneXjAJZ2BVSm6rubhmk+w9V9bpOokT0meacxDyCn?=
+ =?us-ascii?Q?D2IOuGoZ2Nu2emO3j4qYu7WITdp9JdzMuaV5e0Wggj2gWgyI1iLSBcHpSAr4?=
+ =?us-ascii?Q?ZNjh8/CNidw3/Xhp9XLez0hkn9te2mOyOE5S629ZUvzSbZo3+OOTFnxq70Jk?=
+ =?us-ascii?Q?3wcTP4NgGn6bEhPYFZR7rehi0TP6abhiTKZP+NcAKTQX5Uu+8fcnwBxjA3HO?=
+ =?us-ascii?Q?vVTUpkruLS3NW0N+FUTrHA2NDVO8eEEvayA79+F8fcwGskqGqwa2bhH4lsQj?=
+ =?us-ascii?Q?tDaA8hl9G/FDG0gyKQMRAX3W6ESBUlV/7jKGZB9rDmzskmS45qiedQHwilGN?=
+ =?us-ascii?Q?7uo+OCCKMZJ5CpTCpf3zN8XWIWLNIPGqKtdZFQxy5MJLlWi4VzHmFkoij848?=
+ =?us-ascii?Q?/tNCMKjL0wlIOaYlp+mbLvXm8VJpookAHiHHN1om1uiJuz/zaKCdXP/U/Ymq?=
+ =?us-ascii?Q?Rv/Z/N6NHiMl3EoxAg2SyibCEU8cVlge53P/E3bx1LHSA7iFetiFiGziLko9?=
+ =?us-ascii?Q?RbSIHdOlTvsnypO8D9EW2ZUejbQafaildvxTeCW97ku8jrefUYNiBvSbB9K0?=
+ =?us-ascii?Q?EFVhfTsv6w4h9vNR0W0KhGtgvwvY/kEnP/kbSx9Ot4brfz0u85kppMshzJrT?=
+ =?us-ascii?Q?V8nA9t3bhb4C0/b7TiWTE3JlobapcBED0KYm/GLxVDdUNsTeLBYPNWIsZU7r?=
+ =?us-ascii?Q?wIvSeVM0MDuSDZkwsKM9yaMKLXg52O46iGo8kmh6YXBWdnqdqGE4+7AgMWoj?=
+ =?us-ascii?Q?YgpqSy7lLadJMtljyO06cjvi/HrZUDjLzkWAZME+Pr1Kll70wGkFFavvJBRo?=
+ =?us-ascii?Q?m+KygRbAL8l0wV6pw9DujDOcdZS1wgGgj7lfz1N5HK+L1VlGuXDjBXBcmOZ3?=
+ =?us-ascii?Q?avPacJMlalrRzTxLZCSDvZ1TYtxqJs2FkcsOvfsA+OgpzfzzX/6FxhqctNLP?=
+ =?us-ascii?Q?C4F995JLHJYXwsBfMeOeKwnnEzp7RW8SoFe6jGytPjCyrL2z2sUHV4osggpo?=
+ =?us-ascii?Q?2HUpACzbpjA=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?mIfDvBcCdhcOU3iaSd4YyqiDfdIjMW0wDUkqxYJdmP+fRywQuU0BVSFboH3d?=
- =?us-ascii?Q?jpEWBIo6vuxHJXBeC4LZnWcfO+NkxNEwIOlrkD55NZsvmdtrJ76/R5nuqflo?=
- =?us-ascii?Q?3StQ1SPNlILC6wTMeBjVzkrqzHx8H2ULGS8PDjgFyCYzaOL/OsxK8ZOqQYZx?=
- =?us-ascii?Q?CMyYME5nQvzySJeVRollbbD2QC8iqdjrQQwTqaSwy7SHblh0A1y+Mgu8hYQJ?=
- =?us-ascii?Q?jnOATatEt5vECjnzeEZAJiRuUzwTDf07M9YgNRxiYC/lFI5RHq35PuuahkRA?=
- =?us-ascii?Q?PKxHU+4NBuvBkfUTsgSxQ7Ei1HF5pYUb9uu6paU32mS+OBETK/3Og2oQe30Q?=
- =?us-ascii?Q?ebnrfN9eS8FbEJbQADXmWnZpMhS04TPnVERj54X43LMqR54N+Sjd3dRnAgJc?=
- =?us-ascii?Q?ZEf0I3G0xWBFjLY+I0Tt73991T2GD5ckGgcOmQSwkOMyU428y0k4JITAGTaj?=
- =?us-ascii?Q?hqvafVtPyiP9HnXKUwar59EW/NxRXDbc9ipE7UTSdD3UzkK42lAxfoBVB9d4?=
- =?us-ascii?Q?rtd5vQ3wIP4JH/HQbMC8B+pMWm/b9xM/z8vOOoE6qlO/W4g9hGDcnLYHF1qQ?=
- =?us-ascii?Q?Xct55SprC+INXsytfIhEe7TTxrLkmhTwm334wzVtw9e1AQSJxSXBb0oPlJdY?=
- =?us-ascii?Q?JCRNK22eOIwuPTtw1ftMKRZzM1y1q4xGxLnuMPjkM2D8TaPhVGfHPy7EH62q?=
- =?us-ascii?Q?JtpuOuOSDgVhS2txKxehOVOXniWC/Rp7mX1aOF2FcsVlagCCx9AuWHkZMMnS?=
- =?us-ascii?Q?9mO18wknbh4sankCMw1Bpnv8RsAah2TK6e8Wew3nCeOkZZG94+/MdF+DumUJ?=
- =?us-ascii?Q?sF2N/k7PY9PjFqzInHMq4Z0Uoj7K/bRAjV1FVjbUjtGwNzQ1ujHbe9Bl10wa?=
- =?us-ascii?Q?ltTzNXX7xDP4zMdnqriVeYhIfWhnOfRDBTds2ZJ8lvSl74zVFH0OfDhPO0gl?=
- =?us-ascii?Q?4KQ6AyWJtUMxB5aa302Bu+iHJfEO4tiNSQE01wkjzjR5QKsbmpifLqpRrOzo?=
- =?us-ascii?Q?4HAtOWitSw9Yq/kSDujOofXRkus+Xr5lH6SO4KTLFs3Q8leLVHPXMS9PSktL?=
- =?us-ascii?Q?Z02LjN3k7q3TrgKciZfGN4FEu93M9jmOwolnjJpOV8iqXMCkKgmvBP/39efJ?=
- =?us-ascii?Q?0xt8JK1DG/5W9hFfe7tfxyhnjjiAsBVNvWA7Mm+6UyeFxa1Iz+pzIYJqmHKN?=
- =?us-ascii?Q?jXIEgdQc6E3vatNhRGR9W6eoC2wvDUsy6TbwGBUzIu68X8so1ekv0j/Se7mP?=
- =?us-ascii?Q?j9Oe4aHrOyXduIJUk79/x/Kfl/YGNvDSf0728FThjRVM4EoQ8QI+deFucbX5?=
- =?us-ascii?Q?yf/zLMC1W4MWbA6yCW8DZh2FLg6IXT1tORY3F3LevetkJPaScyMKBxPLhaOl?=
- =?us-ascii?Q?8U5VCVxWD06ABmx4eMSRBYXedJm67d4zzhSdW7HI0vZsf8xaCBd8dvquBMkg?=
- =?us-ascii?Q?+LcWI1GCjHRWa+u5UWMfN7qb3zj4uEncneg0r+GssMyfQm41oPwK94wqlo2h?=
- =?us-ascii?Q?0ehtULpvduph9fnKKQ60Jlp1LAS3XAU22wtZxPiqWk+ovVcxO7f6AzeVqnLe?=
- =?us-ascii?Q?j2BPt/YR+FQhustiMrDyE+nY0wIMPYxlL1Br02Bb6VRfxTSCT+4sgeHdk1HY?=
- =?us-ascii?Q?1Q=3D=3D?=
+	=?us-ascii?Q?MAMY8r9BKavXOquUDCYxmkHN+nx3vsIV6xP9ZFiqG3ciAPP2aWDLtG2YtGA8?=
+ =?us-ascii?Q?w00tmvqXeJkTh9U4jmdwQgzt8+tnXGHEEYkkgUtX8KxF5SH6V5yTWIrvB/+v?=
+ =?us-ascii?Q?S0YYU+HwFJiVQLXfgnylc0IZB9idskCiujKxidIUzMIpNueGXTUvxyKSyUyx?=
+ =?us-ascii?Q?PoaGc0xbZVUbUz5DTWClrX9ZxMZ7d9Pki9zrWhDHfvyAFTsTveHfTWyPAsMI?=
+ =?us-ascii?Q?pUdJ0ZQVMlwNA2Gi7nTdXHjCsgDuApMT9dmDxj3GsjLU2Us6tlPUaP8Qwowu?=
+ =?us-ascii?Q?0E40NwO/rEElsHc9HaPE55Imdd0B4kZOPT6d7bLOxQEzrlxYcxLhq3cTaWfX?=
+ =?us-ascii?Q?KvRs2ZMAMUo1ZFgFkYYyNsIP9TbGO1lqtwT5dFHsNnPH466FdFMItjeJJINT?=
+ =?us-ascii?Q?iIr/WEoHHfEKivkElLKWc6ueixYyEpOootyoR4lokl/dJ9/3yI73H5VF37Db?=
+ =?us-ascii?Q?oEnJAtvedE5BAfjt8+is1BTTbxZT61cfCc+kRhZDoFoP+lnnazzebjZ5a81Q?=
+ =?us-ascii?Q?8X44/JVN6U0Oa5MPGBfJwF2qBirWI0yQvmG9tLF5xEDboM39MrAwDeWqST0z?=
+ =?us-ascii?Q?xwjiIAHDhHLhveqWtS7fCwsLuHotNA1eDUofup9yJS3UTUo5tKiiv0ha7WcZ?=
+ =?us-ascii?Q?h+85tcX8Oj6RyEiYzzlTdkk9vTlNfO6L62N7Oebwl/3i7w6pvumaLiPsHyt1?=
+ =?us-ascii?Q?U7aHF2BuLMrMW7Sxf5Q08N/H0FQGGejDt3ErXDe6mtUAdI3NZcy/4GIFjgsg?=
+ =?us-ascii?Q?fnwzsFGpKs67EI6yBDKqfzdn/ZhP0s2q3R2N5yEx9mo3iAVChf+uW2sSQouP?=
+ =?us-ascii?Q?Xo5HqclH/q1tgLeqK8Pg4G76yUzaK9hImNztpqB/Clbr40WxCKnIN0MiF6rO?=
+ =?us-ascii?Q?KAW//+fcmRpZHZIDNqjc6l/LtVEQ37xTf8WZ73q78Qvlts5zpJEfh6Oedca7?=
+ =?us-ascii?Q?xe7BiUd/hH46cunjDuLkmuBRfOGrPoslEfjIFOAC9hAdg562bsYP69e3mfjl?=
+ =?us-ascii?Q?bqgaLeQVeQyHf5dqYto2gVz+0iIWY+nqXIz1Qa4zMaHS3SUTdosUdRibNxmj?=
+ =?us-ascii?Q?1eDS46uHuPcrEHW3fbZOgj6LYsvF3xnCXnp/Teupjg2JP0+js25ng5YE6+ru?=
+ =?us-ascii?Q?vpZ/tNGD7HmE5gm1bVVgJem5maNNKpNwGXCxgqSZWSnBW1hhLSIK7ljbWaC3?=
+ =?us-ascii?Q?KrG+K0UlQMgR5QKgYfDRMQswRr+xPf/5tsKqrqD2rboA1ETAAoZoiOjLVqkb?=
+ =?us-ascii?Q?k24kSTvlvFI573UibPyfy8Reg65T92+6oBAxI89Pr5753g5zzZwOSR9W6u0Z?=
+ =?us-ascii?Q?tW91LywXbwEWDSeRVSZcHw9v55BrSPXe5cQHJ3/O30XXqvvE3ph8FYPAj2/w?=
+ =?us-ascii?Q?C81c5tYp4nGMT2KLutIksRU6Whic+SwutctyTZZ1UjfDrv76wkpqhzJRaGPw?=
+ =?us-ascii?Q?2TJSw6nkiE1SoxOpdOy/7URPkDT3Yr+X+f3TCGz8FO/pFpFD8EFwz1HLaRMC?=
+ =?us-ascii?Q?4gq77lYbAsDV3eOqNRfYIN74qVw0GlWR0alhuTyrzX5ds3nN9Tok/ipp2/WF?=
+ =?us-ascii?Q?vSc5Y1Vpw7tNR/1S099KysP6Ta4scL/YgH8OPOC0gJwL81S+l5oY843Ypk9i?=
+ =?us-ascii?Q?+A=3D=3D?=
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	G3xlQ0jnbprPt4BPnLbhSfnzfxvyMVyWsX2gxeyXmfZbpuWK2BsYdt3niZ5n0uFHVW9gjYchsXJ4gYArGWElmypmlWTYkwdKfRgjymFbG8jangYjTsFMlzu6zlrtf1xToSECDYEFFYVNfnWPNXtEj2Y1NThsIOoUTkXvWRUjAqHuDMELJZ0KkzGcfHrTtpAq4WmCpWsGd///uD8WHlHvKJJrgWPGu1rNG+uqjRyPQYpYc8JshLEwC/zQLwyykolKYXym+iQVbNjwFeEc/MZphlfq9NgpzMBOlqfZTCTl2KeoRN6nw9i1PSdSyEiUINbuy6q9XIkZZax2cvTE9dYuNJR5z8CBo8HtoiGNv7pCl8yUIl3tqlLdmVkhpayvqLoj2gRi5RjL87GGfaEm4ZMKYsYnTXo8VfECUlvGMW1nMXhD99VAUgEEYCtmC9arQo8Pris8jBRJEbVuEtuHznhJpINq1URiMmCy6kkHRrbgGL2Tf6JWj0PibOKVXec5ku1aUS1BfcWD69F47Tgpa9O2FSUSfWhVKQiOWqSsrD+aaPwWvnFG4H14R+QEYYLYvGDVNoEgg3RQpCmZDdkpXaVaqvpevxM85ZlMOVOJUmnWp0k=
+	t/1fmczoaKHOJnljq880AExYSQsOtU9jqcH1tLD9jiDMGspgLEMgzqCE2j7n63hX5oWPn55jbLZ0qekM8BJmjnedY978bliGaAUOOfgxa2Byk1yByq8mQJVQltCOYObE9oeqgUJ5EvEIJer4GtPatAUtTG+VXa8WIoLBQXTPxX+krjSNwAFi4xky1wHayIZiq1yuMYFQzh6sguoG8EsocOxrpblVw6kv5FOfIW2XTJHlwcMETcq+Ak9Pta556ApjqT5jIt2gHyvemBH/XuGSI/hkQeK7fy4CLINn/s6ub8gHm6xiAVko5CTJOlWhv7hwSrEC8ExrTIsPfKItiKvpiOqHZmOQ3X0CVDPyNqb8q1nBqNJOnzqNo2MXlpeD44lG+aDnnofKdSURWvAbZXJUjJGmuVzIK1wKIOTo/WjMyvXuXWguJjn5bvS9XAiKpkEb24z6TzLHAjavsyyIVP/PR7VLvp3fhlgQzlkuMlQgHt44VTjhAIox7eF4eLjO8Nhh8OqbO1ZZ1MntVZaGcu6e1gw56nbOYIuOacJ4eGQrwtUpJwlZ2F8kZH+lYLUfTW1DFDX5jPXc/pta6Mwyv43dfSjfogOXpG/7BEwK5DkrIb4=
 X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 793c5490-c53d-4496-5d5b-08dd9ed47e6c
+X-MS-Exchange-CrossTenant-Network-Message-Id: a9c72220-1580-415e-ad5b-08dd9ed480a4
 X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 17:16:04.8546
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 May 2025 17:16:08.5681
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qDP/4bRGtfW6d8xzrY7n3+6atCauizYvSuhnR/aJs9ab9MZKzTyp4/DUL4I2Yolp+J3E8CuJJKVfFxuWpWdi4Cmhq38xbgPjRKEJ4VRLGCA=
+X-MS-Exchange-CrossTenant-UserPrincipalName: nKmb6TPcOqwJVHIi+KfrCgl66aZ1RyubUk+RWO5mU/KIqnQpJCIAL5rLSXUZRThjeu0ONpwB6nQMyeb8FrYUjywgw5Q5cO251di9EMBvBsU=
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7991
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-05-29_08,2025-05-29_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
- adultscore=0 suspectscore=0 malwarescore=0 mlxlogscore=999 bulkscore=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 adultscore=0 spamscore=0
+ suspectscore=0 bulkscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
  classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
  definitions=main-2505290167
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDE2NyBTYWx0ZWRfXyds+4ckxqtD9 VkMiWF8HTh1gv0YrQHlN4B6Mtf8HzV6Y49roH183w2jI7XldX9TiopIb5Xw9dDABVR7YKJGAeCv gyyKW36OVPdT8xJAZ2Rr8MtQ7gAAffL+6eJZ1biPL8H+vXc3+Mp0AB2qf+mMTAAe4xL3yKVW6D4
- GZD2X29wi+s9QtarV5Ov95hG412gQ8Fz5lQqDCndxvxAcHEwvdaSC/TLc6Nf2gqdrJQP47+R8zE GgtzWzVzYKIUxi4O8UQza33cJ6uXo51k/5FC/FMqjUihyg0IZVM5rymOB/tFqacrVaktnRHfLV9 q7LhJk+JMhz+ZZR27qJQoUsvpEsnS9KG+ppCO9Ghmz/Q3x7Y/V3zKmmq4cghEAVvs8EIfOZZ9b6
- W7RVL676B6OSaakW7QT/pn5BbGGuz6U943N7pLfME8hZSakgX6Ywa8UTL2jNDGnJCggI4nVc
-X-Proofpoint-GUID: ho67eIDdKqZQA2XUrwtOJTLYhCeOAVxR
-X-Authority-Analysis: v=2.4 cv=UvhjN/wB c=1 sm=1 tr=0 ts=68389658 b=1 cx=c_pps a=qoll8+KPOyaMroiJ2sR5sw==:117 a=qoll8+KPOyaMroiJ2sR5sw==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=20KFwNOVAAAA:8 a=voKXtF2y4SdawcW92igA:9 cc=ntf awl=host:13207
-X-Proofpoint-ORIG-GUID: ho67eIDdKqZQA2XUrwtOJTLYhCeOAVxR
+X-Proofpoint-GUID: rmJmrVVwDyp_tUSFnPhj5jeOtwrVSQ4d
+X-Proofpoint-ORIG-GUID: rmJmrVVwDyp_tUSFnPhj5jeOtwrVSQ4d
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNTI5MDE2NyBTYWx0ZWRfX76nQ3WMdYlVH dQMRwuwzGWYDByN0J6atDPKMW5ZCZsBqO5tE5ZXeTiw+f1vL0PcI6PqA3zjjRUGgVqpAKJYowit 1gFOcOa2ZElnMaNP4y6E0ZMnc3wj7+bZ7IVERY8zRYoAwUlAuZPJscxpiggYZHmMa4aNWxLwRhH
+ /EIfw5bwmSnG5f8k21dwBDHjKXTTILSu0QyD+2x2x/ajG617iuRjZTBLeo1YhErRGfHJsGMpccL XJJF7Au2Y+y2tNM98YnSfcW9RCWTOTYkIxQXuMIDTT7+HHUSCTiIM3/xJrYjY1yt4T7wgVDDlxb x/2HRMAvXQFfTFhefSg3ZGNn6FArY+08quDvhpmA4dKI5r6rWl7vLD4jTL11toQrJHZ0Hcc2XjO
+ aSnKF1V5FkQaUW0uYkCiry0sd6kCw/Uiq2vEEi0V9MnfRVtedpE2S6wOxOz5mDrktLkomXVi
+X-Authority-Analysis: v=2.4 cv=c8qrQQ9l c=1 sm=1 tr=0 ts=68389662 b=1 cx=c_pps a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=dt9VzEwgFbYA:10 a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=WX__GcUTe9ZGzPOcXVoA:9 cc=ntf awl=host:13206
 
-If a user wishes to enable KSM mergeability for an entire process and all
-fork/exec'd processes that come after it, they use the prctl()
-PR_SET_MEMORY_MERGE operation.
+Add test to assert that we have now allowed merging of VMAs when KSM
+merging-by-default has been set by prctl(PR_SET_MEMORY_MERGE, ...).
 
-This defaults all newly mapped VMAs to have the VM_MERGEABLE VMA flag set
-(in order to indicate they are KSM mergeable), as well as setting this flag
-for all existing VMAs and propagating this across fork/exec.
+We simply perform a trivial mapping of adjacent VMAs expecting a merge,
+however prior to recent changes implementing this mode earlier than before,
+these merges would not have succeeded.
 
-However it also breaks VMA merging for new VMAs, both in the process and
-all forked (and fork/exec'd) child processes.
-
-This is because when a new mapping is proposed, the flags specified will
-never have VM_MERGEABLE set. However all adjacent VMAs will already have
-VM_MERGEABLE set, rendering VMAs unmergeable by default.
-
-To work around this, we try to set the VM_MERGEABLE flag prior to
-attempting a merge. In the case of brk() this can always be done.
-
-However on mmap() things are more complicated - while KSM is not supported
-for MAP_SHARED file-backed mappings, it is supported for MAP_PRIVATE
-file-backed mappings.
-
-These mappings may have deprecated .mmap() callbacks specified which could,
-in theory, adjust flags and thus KSM eligibility.
-
-So we check to determine whether this is possible. If not, we set
-VM_MERGEABLE prior to the merge attempt on mmap(), otherwise we retain the
-previous behaviour.
-
-This fixes VMA merging for all new anonymous mappings, which covers the
-majority of real-world cases, so we should see a significant improvement in
-VMA mergeability.
-
-For MAP_PRIVATE file-backed mappings, those which implement the
-.mmap_prepare() hook and shmem are both known to be safe, so we allow
-these, disallowing all other cases.
-
-Also add stubs for newly introduced function invocations to VMA userland
-testing.
+Assert that we have fixed this!
 
 Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Fixes: d7597f59d1d3 ("mm: add new api to enable ksm per process") # please no backport!
 Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-Acked-by: David Hildenbrand <david@redhat.com>
+Tested-by: Chengming Zhou <chengming.zhou@linux.dev>
 Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 ---
- include/linux/ksm.h              |  8 +++---
- mm/ksm.c                         | 18 ++++++++-----
- mm/vma.c                         | 44 ++++++++++++++++++++++++++++++--
- tools/testing/vma/vma_internal.h | 11 ++++++++
- 4 files changed, 70 insertions(+), 11 deletions(-)
+ tools/testing/selftests/mm/merge.c | 78 ++++++++++++++++++++++++++++++
+ 1 file changed, 78 insertions(+)
 
-diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-index d73095b5cd96..51787f0b0208 100644
---- a/include/linux/ksm.h
-+++ b/include/linux/ksm.h
-@@ -17,8 +17,8 @@
- #ifdef CONFIG_KSM
- int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
- 		unsigned long end, int advice, unsigned long *vm_flags);
--
--void ksm_add_vma(struct vm_area_struct *vma);
-+vm_flags_t ksm_vma_flags(const struct mm_struct *mm, const struct file *file,
-+			 vm_flags_t vm_flags);
- int ksm_enable_merge_any(struct mm_struct *mm);
- int ksm_disable_merge_any(struct mm_struct *mm);
- int ksm_disable(struct mm_struct *mm);
-@@ -97,8 +97,10 @@ bool ksm_process_mergeable(struct mm_struct *mm);
+diff --git a/tools/testing/selftests/mm/merge.c b/tools/testing/selftests/mm/merge.c
+index c76646cdf6e6..2380a5a6a529 100644
+--- a/tools/testing/selftests/mm/merge.c
++++ b/tools/testing/selftests/mm/merge.c
+@@ -2,10 +2,12 @@
  
- #else  /* !CONFIG_KSM */
+ #define _GNU_SOURCE
+ #include "../kselftest_harness.h"
++#include <linux/prctl.h>
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+ #include <sys/mman.h>
++#include <sys/prctl.h>
+ #include <sys/wait.h>
+ #include "vm_util.h"
  
--static inline void ksm_add_vma(struct vm_area_struct *vma)
-+static inline vm_flags_t ksm_vma_flags(const struct mm_struct *mm,
-+		const struct file *file, vm_flags_t vm_flags)
+@@ -31,6 +33,11 @@ FIXTURE_TEARDOWN(merge)
  {
-+	return vm_flags;
+ 	ASSERT_EQ(munmap(self->carveout, 12 * self->page_size), 0);
+ 	ASSERT_EQ(close_procmap(&self->procmap), 0);
++	/*
++	 * Clear unconditionally, as some tests set this. It is no issue if this
++	 * fails (KSM may be disabled for instance).
++	 */
++	prctl(PR_SET_MEMORY_MERGE, 0, 0, 0, 0);
  }
  
- static inline int ksm_disable(struct mm_struct *mm)
-diff --git a/mm/ksm.c b/mm/ksm.c
-index d0c763abd499..18b3690bb69a 100644
---- a/mm/ksm.c
-+++ b/mm/ksm.c
-@@ -2731,16 +2731,22 @@ static int __ksm_del_vma(struct vm_area_struct *vma)
- 	return 0;
- }
- /**
-- * ksm_add_vma - Mark vma as mergeable if compatible
-+ * ksm_vma_flags - Update VMA flags to mark as mergeable if compatible
-  *
-- * @vma:  Pointer to vma
-+ * @mm:       Proposed VMA's mm_struct
-+ * @file:     Proposed VMA's file-backed mapping, if any.
-+ * @vm_flags: Proposed VMA"s flags.
-+ *
-+ * Returns: @vm_flags possibly updated to mark mergeable.
-  */
--void ksm_add_vma(struct vm_area_struct *vma)
-+vm_flags_t ksm_vma_flags(const struct mm_struct *mm, const struct file *file,
-+			 vm_flags_t vm_flags)
- {
--	struct mm_struct *mm = vma->vm_mm;
-+	if (test_bit(MMF_VM_MERGE_ANY, &mm->flags) &&
-+	    __ksm_should_add_vma(file, vm_flags))
-+		vm_flags |= VM_MERGEABLE;
- 
--	if (test_bit(MMF_VM_MERGE_ANY, &mm->flags))
--		__ksm_add_vma(vma);
-+	return vm_flags;
+ TEST_F(merge, mprotect_unfaulted_left)
+@@ -452,4 +459,75 @@ TEST_F(merge, forked_source_vma)
+ 	ASSERT_EQ(procmap->query.vma_end, (unsigned long)ptr2 + 5 * page_size);
  }
  
- static void ksm_add_vmas(struct mm_struct *mm)
-diff --git a/mm/vma.c b/mm/vma.c
-index 7ebc9eb608f4..3e351beb82ca 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -2490,7 +2490,6 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
- 	 */
- 	if (!vma_is_anonymous(vma))
- 		khugepaged_enter_vma(vma, map->flags);
--	ksm_add_vma(vma);
- 	*vmap = vma;
- 	return 0;
- 
-@@ -2593,6 +2592,40 @@ static void set_vma_user_defined_fields(struct vm_area_struct *vma,
- 	vma->vm_private_data = map->vm_private_data;
- }
- 
-+static void update_ksm_flags(struct mmap_state *map)
++TEST_F(merge, ksm_merge)
 +{
-+	map->flags = ksm_vma_flags(map->mm, map->file, map->flags);
-+}
-+
-+/*
-+ * Are we guaranteed no driver can change state such as to preclude KSM merging?
-+ * If so, let's set the KSM mergeable flag early so we don't break VMA merging.
-+ */
-+static bool can_set_ksm_flags_early(struct mmap_state *map)
-+{
-+	struct file *file = map->file;
-+
-+	/* Anonymous mappings have no driver which can change them. */
-+	if (!file)
-+		return true;
++	unsigned int page_size = self->page_size;
++	char *carveout = self->carveout;
++	struct procmap_fd *procmap = &self->procmap;
++	char *ptr, *ptr2;
++	int err;
 +
 +	/*
-+	 * If .mmap_prepare() is specified, then the driver will have already
-+	 * manipulated state prior to updating KSM flags. So no need to worry
-+	 * about mmap callbacks modifying VMA flags after the KSM flag has been
-+	 * updated here, which could otherwise affect KSM eligibility.
++	 * Map two R/W immediately adjacent to one another, they should
++	 * trivially merge:
++	 *
++	 * |-----------|-----------|
++	 * |    R/W    |    R/W    |
++	 * |-----------|-----------|
++	 *      ptr         ptr2
 +	 */
-+	if (file->f_op->mmap_prepare)
-+		return true;
 +
-+	/* shmem is safe. */
-+	if (shmem_file(file))
-+		return true;
++	ptr = mmap(&carveout[page_size], page_size, PROT_READ | PROT_WRITE,
++		   MAP_ANON | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ASSERT_NE(ptr, MAP_FAILED);
++	ptr2 = mmap(&carveout[2 * page_size], page_size,
++		    PROT_READ | PROT_WRITE,
++		    MAP_ANON | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ASSERT_NE(ptr2, MAP_FAILED);
++	ASSERT_TRUE(find_vma_procmap(procmap, ptr));
++	ASSERT_EQ(procmap->query.vma_start, (unsigned long)ptr);
++	ASSERT_EQ(procmap->query.vma_end, (unsigned long)ptr + 2 * page_size);
 +
-+	/* Any other .mmap callback is not safe. */
-+	return false;
++	/* Unmap the second half of this merged VMA. */
++	ASSERT_EQ(munmap(ptr2, page_size), 0);
++
++	/* OK, now enable global KSM merge. We clear this on test teardown. */
++	err = prctl(PR_SET_MEMORY_MERGE, 1, 0, 0, 0);
++	if (err == -1) {
++		int errnum = errno;
++
++		/* Only non-failure case... */
++		ASSERT_EQ(errnum, EINVAL);
++		/* ...but indicates we should skip. */
++		SKIP(return, "KSM memory merging not supported, skipping.");
++	}
++
++	/*
++	 * Now map a VMA adjacent to the existing that was just made
++	 * VM_MERGEABLE, this should merge as well.
++	 */
++	ptr2 = mmap(&carveout[2 * page_size], page_size,
++		    PROT_READ | PROT_WRITE,
++		    MAP_ANON | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ASSERT_NE(ptr2, MAP_FAILED);
++	ASSERT_TRUE(find_vma_procmap(procmap, ptr));
++	ASSERT_EQ(procmap->query.vma_start, (unsigned long)ptr);
++	ASSERT_EQ(procmap->query.vma_end, (unsigned long)ptr + 2 * page_size);
++
++	/* Now this VMA altogether. */
++	ASSERT_EQ(munmap(ptr, 2 * page_size), 0);
++
++	/* Try the same operation as before, asserting this also merges fine. */
++	ptr = mmap(&carveout[page_size], page_size, PROT_READ | PROT_WRITE,
++		   MAP_ANON | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ASSERT_NE(ptr, MAP_FAILED);
++	ptr2 = mmap(&carveout[2 * page_size], page_size,
++		    PROT_READ | PROT_WRITE,
++		    MAP_ANON | MAP_PRIVATE | MAP_FIXED, -1, 0);
++	ASSERT_NE(ptr2, MAP_FAILED);
++	ASSERT_TRUE(find_vma_procmap(procmap, ptr));
++	ASSERT_EQ(procmap->query.vma_start, (unsigned long)ptr);
++	ASSERT_EQ(procmap->query.vma_end, (unsigned long)ptr + 2 * page_size);
 +}
 +
- static unsigned long __mmap_region(struct file *file, unsigned long addr,
- 		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
- 		struct list_head *uf)
-@@ -2603,6 +2636,7 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
- 	bool have_mmap_prepare = file && file->f_op->mmap_prepare;
- 	VMA_ITERATOR(vmi, mm, addr);
- 	MMAP_STATE(map, mm, &vmi, addr, len, pgoff, vm_flags, file);
-+	bool check_ksm_early = can_set_ksm_flags_early(&map);
- 
- 	error = __mmap_prepare(&map, uf);
- 	if (!error && have_mmap_prepare)
-@@ -2610,6 +2644,9 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
- 	if (error)
- 		goto abort_munmap;
- 
-+	if (check_ksm_early)
-+		update_ksm_flags(&map);
-+
- 	/* Attempt to merge with adjacent VMAs... */
- 	if (map.prev || map.next) {
- 		VMG_MMAP_STATE(vmg, &map, /* vma = */ NULL);
-@@ -2619,6 +2656,9 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
- 
- 	/* ...but if we can't, allocate a new VMA. */
- 	if (!vma) {
-+		if (!check_ksm_early)
-+			update_ksm_flags(&map);
-+
- 		error = __mmap_new_vma(&map, &vma);
- 		if (error)
- 			goto unacct_error;
-@@ -2721,6 +2761,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 	 * Note: This happens *after* clearing old mappings in some code paths.
- 	 */
- 	flags |= VM_DATA_DEFAULT_FLAGS | VM_ACCOUNT | mm->def_flags;
-+	flags = ksm_vma_flags(mm, NULL, flags);
- 	if (!may_expand_vm(mm, flags, len >> PAGE_SHIFT))
- 		return -ENOMEM;
- 
-@@ -2764,7 +2805,6 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
- 
- 	mm->map_count++;
- 	validate_mm(mm);
--	ksm_add_vma(vma);
- out:
- 	perf_event_mmap(vma);
- 	mm->total_vm += len >> PAGE_SHIFT;
-diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-index 4505b1c31be1..77b2949d874a 100644
---- a/tools/testing/vma/vma_internal.h
-+++ b/tools/testing/vma/vma_internal.h
-@@ -1468,4 +1468,15 @@ static inline void fixup_hugetlb_reservations(struct vm_area_struct *vma)
- 	(void)vma;
- }
- 
-+static inline bool shmem_file(struct file *)
-+{
-+	return false;
-+}
-+
-+static inline vm_flags_t ksm_vma_flags(const struct mm_struct *, const struct file *,
-+			 vm_flags_t vm_flags)
-+{
-+	return vm_flags;
-+}
-+
- #endif	/* __MM_VMA_INTERNAL_H */
+ TEST_HARNESS_MAIN
 -- 
 2.49.0
 
