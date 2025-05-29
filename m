@@ -1,84 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-50089-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50090-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55BFEAC81C2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 19:38:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31754AC81D3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 19:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF521BC3981
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 17:38:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B1C41C01D5C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 17:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D81822FF42;
-	Thu, 29 May 2025 17:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A1A722F772;
+	Thu, 29 May 2025 17:48:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mNkCvsum"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ToTG1O+h"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8791F22D4EF;
-	Thu, 29 May 2025 17:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65E4422D4FA;
+	Thu, 29 May 2025 17:48:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748540296; cv=none; b=Oh2Bu9LD/B4IG2SVrmNZ4uLeLEzfglPa7kS5abIvBOPJ/a2KimkQVKCmkrOF8T1zx9ZWbNs7vRCMbxDbqStN/EqIE3ItMi4rjtasbRqc4zqPl4L0v30JosJrjuZtuUQC0XzJLLcRpgYhz3tSwW5DkctlEKUd6Ck3eYlo0JARxdc=
+	t=1748540909; cv=none; b=l5vZ30mWAX/5llkeTF/bUNqmgn+VzyBH1a/pgrgaTiMlRm/wDOMC3sxjDuz96hlARMaVn0wyGPyondRMWediAweHQ+cUldztUl4fHcmh6mBGenJz0qwB3y/oDbk7y3QqJM24o+F6A70tr7EuiKlJnTyWS6zBg5Vsau/iiuTfsOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748540296; c=relaxed/simple;
-	bh=u5W8+G4Kc80GVPR5lDWHQq/K4gBJuA+Me3jvmg/cMcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7n0TafSbUw94Xel5Sp3uvNvIWIcpV5JE2Im5alkYUDE2BgVn1rDIUrdU89xoHsznQ1djwqjdYPacGuEFQDD/m+B00c2CwDpi9KK9M0OZaMZN/6JMS8mFbez4lRFkY57eFiYUh7pPrXCmIoPyZdCobU6RwJ8Fhg9sFlc/cTRV5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mNkCvsum; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=u5W8+G4Kc80GVPR5lDWHQq/K4gBJuA+Me3jvmg/cMcE=; b=mNkCvsumMnTM1jruECZSDfplVQ
-	4ejHwx651aciRGIvYai0NFiojOgNy4zti3mTyKygL30Y6ROgUvkDnL8eIG8tZN4lUY/FwD1GEIh5n
-	ww09S4N/VphC5OQzfcW5j+QjjnAeIHJLnWYYFMYQbB8T5+V8KudA/osGtw7sZtxqhUuDzz/i0Pq9V
-	MvQVEMd+5/SlOL4Srh3tBRCa1UL0dd7wlYCRjPno1tN5j1gSXCXkueVRCZDXseWjCbMLTyX7D7diS
-	qHd5yKJRZ4N67NZGpSDlDEhSgTIxunkYGZD3xmrkrVrwY13US9yGkx2p4Gvwg8hwaJ/wA51pJJpC4
-	+eKm0uzA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uKhCk-00000001rPl-0bsy;
-	Thu, 29 May 2025 17:38:10 +0000
-Date: Thu, 29 May 2025 18:38:10 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Song Liu <song@kernel.org>
-Cc: Jan Kara <jack@suse.cz>, bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org, kernel-team@meta.com,
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
-	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org,
-	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com,
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com,
-	mic@digikod.net, gnoack@google.com
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-Message-ID: <20250529173810.GJ2023217@ZenIV>
-References: <20250528222623.1373000-1-song@kernel.org>
- <20250528222623.1373000-4-song@kernel.org>
- <20250528223724.GE2023217@ZenIV>
- <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
+	s=arc-20240116; t=1748540909; c=relaxed/simple;
+	bh=yA9lhWhllEaVtrNaAuj5oo4awRC+Uw++PEQyw1gQ/1c=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=YoJWRDdEvzDYX13p6qv6AP7+rtSLT0ymuY7F2aiVoCoglnCLJ25WR+7eVluZMQJJ2ETEA+AVv4OIVnXM4+rG6YEZAuUHTmQuJTdjvBXuemJtpHyE2ocs0M9Aw+XOd18YV8IdQQOYRApcSEaVJXRpuF7kAy0KR1xupz4rkaHNXf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ToTG1O+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46C4BC4CEE7;
+	Thu, 29 May 2025 17:48:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748540909;
+	bh=yA9lhWhllEaVtrNaAuj5oo4awRC+Uw++PEQyw1gQ/1c=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=ToTG1O+hOD7rGMtQ9jzYYIROsLdEiwOW1x2g9q5v0mppwdzQpSk0kKBbutHgK8tRq
+	 2D1rhmEm6w2x5ITUIG1ZgmR6n4Yr2yirkeONQsH1TCbaINu0lAwgmRYZxkDw6RxxXc
+	 X9frGahlRXxUxEZv/4jPEeLo9fvukFkoY0vQYKBigrqoP8eqUzIvX/sdORQqS/+0QY
+	 eSqoygdqnp0ha0PErhPdaFiq00BM8cK2NIm+5tBF0PHRReOGbOFNV6ZXKfB6rOG0Gf
+	 uuk1/634/ibp7wc5CqfIvvvo0wWlwqcTIIGMfCN//2KxSNbrN7+aHf8yusCd6G+Tme
+	 YFgiiriPZ4XoQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 34108380664F;
+	Thu, 29 May 2025 17:49:04 +0000 (UTC)
+Subject: Re: [GIT PULL] ext2 and isofs changes for 6.16-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <ovi7jizxdqmr35quwevkzwiltahrewq5mrpmhnfe65gllynqod@ji6zewdluxyx>
+References: <ovi7jizxdqmr35quwevkzwiltahrewq5mrpmhnfe65gllynqod@ji6zewdluxyx>
+X-PR-Tracked-List-Id: <linux-ext4.vger.kernel.org>
+X-PR-Tracked-Message-Id: <ovi7jizxdqmr35quwevkzwiltahrewq5mrpmhnfe65gllynqod@ji6zewdluxyx>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v6.16-rc1
+X-PR-Tracked-Commit-Id: d5a2693f93e497589637bb746ef19ac8aecb6fb5
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: e0797d3b91de75b6c95b4a0e0649ebd4aac1d9d1
+Message-Id: <174854094290.3342178.1126635289442493238.pr-tracker-bot@kernel.org>
+Date: Thu, 29 May 2025 17:49:02 +0000
+To: Jan Kara <jack@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Thu, May 29, 2025 at 09:53:21AM -0700, Song Liu wrote:
+The pull request you sent on Thu, 29 May 2025 17:01:08 +0200:
 
-> Current version of path iterator only supports walking towards the root,
-> with helper path_parent. But the path iterator API can be extended
-> to cover other use cases.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs_for_v6.16-rc1
 
-Clarify the last part, please - call me paranoid, but that sounds like
-a beginning of something that really should be discussed upfront.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/e0797d3b91de75b6c95b4a0e0649ebd4aac1d9d1
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
