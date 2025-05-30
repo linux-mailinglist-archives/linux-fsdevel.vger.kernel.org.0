@@ -1,81 +1,81 @@
-Return-Path: <linux-fsdevel+bounces-50122-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50123-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF07AC8621
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 04:04:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80EAFAC8633
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 04:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94DB5A24C5A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 02:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A61453B220D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 02:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C553417A305;
-	Fri, 30 May 2025 02:04:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C92816DEB3;
+	Fri, 30 May 2025 02:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Iv0Ppu95"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EPfOnQMW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2089.outbound.protection.outlook.com [40.107.92.89])
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AB98834;
-	Fri, 30 May 2025 02:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44552323E;
+	Fri, 30 May 2025 02:17:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748570679; cv=fail; b=Z1keIvX+NkQkOViPUtWSGyose5+I0r85EjxY49WBtR+ZHvKTN+/2879eG4paZ27tu0nIobJ2tw/FZ1/PJDuJguiMudbmiKDYSGgMRFHyCBymt1CuM2t12mbI6dacjUwM8dOflihC93hyoKS2rPX43PIlB6k6Xo5iR7zj4JFcmKo=
+	t=1748571443; cv=fail; b=Xk8vh6ALbYGOWYa2mlyrpk6kK7BXzFXo1W69T/Z/CjdD8wEf8YjXeBrUuGGlDyFa/Tg6zIEyaTagITvnWzkLgUoZf0pgz9MByUEjDGLyXCw+uwSM6sl+3aByt/LXJa6ev4wVfeHZLjnd+yZTGGPKCHdZTh+BW//4i87NqJlPRPE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748570679; c=relaxed/simple;
-	bh=mrTmIPO7E3+RQthN/VSElXK2eeoZK3yRsEmUaleYrec=;
+	s=arc-20240116; t=1748571443; c=relaxed/simple;
+	bh=7Vf9meRMaTQ9WOSkKaA+/uLYEwyrdjxmhy91g3zIHjs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=N82U3eKcifBb+AGS3J/+6BGa1QuldPUbEDlDdwIjjvVEA4xb6OnXkpTUWawDDFx/VmAmnWdAGKIJF4z3beGS0TKabkLOhFh51+5LhIDl+DRe6zFpuCCHnXIMUL9SuRICK8QfnHqvuAZQWwqPgLeqG42ntD4nPr3eX3KB76nRPyY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Iv0Ppu95; arc=fail smtp.client-ip=40.107.92.89
+	 Content-Type:MIME-Version; b=q/7C1TWV6bNGMTBdGZ9spGOmA8n1dENUV3lwDNTMhpHrLSQz438EoNF+aw3wbwEKwnezYnGlkv4ie5I5Ghr6Sc1GlcVc4ZkE/RDS5JZUQwJvtyY3LiSqyrbLQIFwAQQAdDWZa5+xKUFDExGOQIUdl9L56qycj5hiJFgmh5Sas3w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EPfOnQMW; arc=fail smtp.client-ip=40.107.92.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=j2kkbhwK0JYf3dfRlvdBhFw3V08UKSfXqB58/mt7GIeuoOEbDVfNr1lpIUI3/pCPs2wkdNFO9U6a20BsuKs3gtJ5/Fx4feIn5P0QoW/WmX1ja2IwzWtCZqI5utNdc7UJhr4IQ6bEGrcjIv9uhV5ZPRAcYg280DD7ly7xXOteXS1/6jYzpQW3XWTtvh6of4bmjlwIYv2B14ZDcl5uTIVTV8lMerBFN+71+UDz7fqmf7fPOEMGRvZmNTtopOX28PffSHAm+mkVAp+sH5WC0+zGGj2+cTNB1MfkWNxXD1vZjw1aYA4KmGAGL2+7rmjX+KKGNRk9wjNMy+Kd6CV0RiSg9Q==
+ b=dlJ4M4PMvc2cPnvBu3Pn7I4u0m8hBUOBz8+ir4fhULorkwJLo0iiqJNhSrUCSh9irqcW8dfW8X2cC+PrIiXKBeYdlvnHfU4JxMs8qUYH25F1HFkwkrxS+9SE47VYSlY6yCUZ763NawZ/3Lrr3O25SPVUBu0T7HiuD9Y6U/SbcRkpLH86J7lD1jvna1R0RJHMkdkgVW3TVzA6WT1PzkrsWvg0dXoKOloW1/L4dF6F9mfxjNXpmfzVzGHHDrCl2NjX145eScXuyIjIZY7xYF8SW65Emt6ZhFiei84KF29iSVkaomPetxLDma4XJ1e1zx5VmOVWUj1DwRwF4xjiuQC3cA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0/yvvgGCYs6fRr1PZBZdk857dEG0Mg39QIgzF9HHbVo=;
- b=ijO0ZLiQ5olQOOEJL1gn55TYgn9j7ZHuU2qDX8eHnwezqsQJ5tKg13ZXgXK0/tQK5MDXvKJjJiYSBYpr7/tKdtQGR/jL3oSznZB2ThYryR1fVFHc9Zrw5+iNZdso0H7RCEoiydsp/DmgMND6YSm0NnbFKdHd2U1UHngCBfzA7rtdiLZJrUGWRRm9OZglDIkmH4tP6kapNAApdKC01n5TF/vIGpNiS3uXtbLxds/j9WtEBAqp9xhjB3YA8DD+5DORGq3JjHVkvwgeYqiCfHz1uZfDRRD1pxRsQ+Zeea0kDMzANShSW4YD33tMmtWsPJHziSpgK4COQVZBMd7f74BryQ==
+ bh=Dj2LXdwQfJFOD+gRyN7Llk2/oLdX/vxGdQcaot8GZmk=;
+ b=gpxZcRuCUd7GMs8Z3IYUvAMmM6PmPnrAajOQEVPo0FPk6Rz2bT5qlHu4rdqrwlUGXVPHMr03Pl+B4mfSmVG+6uz+4m0rSII57KYhFunbPvePSc4ZP7HhIt6Ug6GCqODUU/uEm+17NKS2uj6V1uf7Q8jm99ohFjd13DL1ormUXYy2ipVaUl5TdfWLEA4nc2U6hTRuCKuDBK5RVG6wJV3r+6XjWuS5+YEgAmOqUbZd/PEx850mO4n25SNj7QWC1Eg9Y7n6d68ts8otUAxVJgEKK1Atf91B3lMIrYGwyl6iX2msCgyIECpgtkUv1xlUp285Kf42ibV159CibgQdb+33HQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
  dkim=pass header.d=nvidia.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
  s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0/yvvgGCYs6fRr1PZBZdk857dEG0Mg39QIgzF9HHbVo=;
- b=Iv0Ppu95czHKlL3Uixy4YoyFy++ZF95YXpkvlxzxedxmv67ilVFh0z84TH2P1qc9On+Z3HBbBnlnEtM53rDYDw1iAC9PYmpRVgL9JDDkQe8dtArhyyB8FRDm4CrViBNiciOUGv8mv7E7c3Wh5v4+fOmgsPLUTZV51CVmKZBDR7jwKilhnP99FVwCeekQ9niXUtuo0YOsF7Wsltx+jynclD6haA1KzK3Lg18gT3w4MtbsuAHBa/9ESJOcD16hUVsP44gWPz+pfxcVQugbAYsy4HkqYz2gE79KlNI8kpA2xA5Jf6elcf2iie+5dhGZRzKkZqT7S2rxp41wKT5Vz+Ilpg==
+ bh=Dj2LXdwQfJFOD+gRyN7Llk2/oLdX/vxGdQcaot8GZmk=;
+ b=EPfOnQMW0JMMTsjLn5A/42yAgudPhbQtLEoF3leJU8Wh0IWPynGBOu5RlMcDigqtad+S/HEn3pNV0wG6fe0P17rF8muUWiNuLx7qhII4toHgHvfmDHNDPZ2U3L8u/L4i5r2mTiCV571vrzkHMVeaIKlegMTh9dU3gOy71ux08PuQ4G81y37YnJdkquFeacn8V7FINfK5YRh1jX32aLbAjsSLYU0D9p4CcIcICeKA9wMt3QO3yBcxZ9nVWZuxs5StOHcIvyx2h5jLfB+LkYti7wSOO0uGGCIDT5ThJLmKh6LCauUhVvBqlvBjeV9+XOMEjU+/XSWvK8P+FkoJ3570Qw==
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nvidia.com;
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS0PR12MB8270.namprd12.prod.outlook.com (2603:10b6:8:fe::18) with Microsoft
+ MN0PR12MB6077.namprd12.prod.outlook.com (2603:10b6:208:3cb::9) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8769.29; Fri, 30 May 2025 02:04:33 +0000
+ 15.20.8769.29; Fri, 30 May 2025 02:17:17 +0000
 Received: from DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
  ([fe80::5189:ecec:d84a:133a%4]) with mapi id 15.20.8769.025; Fri, 30 May 2025
- 02:04:33 +0000
+ 02:17:17 +0000
 From: Zi Yan <ziy@nvidia.com>
 To: Baolin Wang <baolin.wang@linux.alibaba.com>
 Cc: akpm@linux-foundation.org, hughd@google.com, david@redhat.com,
  lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
  ryan.roberts@arm.com, dev.jain@arm.com, linux-mm@kvack.org,
  linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] mm: huge_memory: disallow hugepages if the
- system-wide THP sysfs settings are disabled
-Date: Thu, 29 May 2025 22:04:30 -0400
+Subject: Re: [PATCH 2/2] mm: shmem: disallow hugepages if the system-wide
+ shmem THP sysfs settings are disabled
+Date: Thu, 29 May 2025 22:17:15 -0400
 X-Mailer: MailMate (2.0r6255)
-Message-ID: <E330B371-C7DC-4E79-9043-56F4AA9BBE54@nvidia.com>
-In-Reply-To: <5acbfc5f-81b6-40e2-b87b-ac50423172f0@linux.alibaba.com>
+Message-ID: <D61B9FA2-4EAC-4F0E-AF56-236D37A766BE@nvidia.com>
+In-Reply-To: <bd89651e-0ee0-4819-87da-d3a5db04c5b3@linux.alibaba.com>
 References: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
- <d97a9e359ae914e788867b263bb9737afcd3d59d.1748506520.git.baolin.wang@linux.alibaba.com>
- <33577DDE-D88E-44F9-9B91-7AA46EACCCE8@nvidia.com>
- <5acbfc5f-81b6-40e2-b87b-ac50423172f0@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+ <c1a6fe55f668cfe87ad113faa49120f049ba9cb5.1748506520.git.baolin.wang@linux.alibaba.com>
+ <BB3BDA79-3185-4346-9260-BA5E1B9C9949@nvidia.com>
+ <bd89651e-0ee0-4819-87da-d3a5db04c5b3@linux.alibaba.com>
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: BL1PR13CA0376.namprd13.prod.outlook.com
- (2603:10b6:208:2c0::21) To DS7PR12MB9473.namprd12.prod.outlook.com
+X-ClientProxiedBy: BL0PR02CA0023.namprd02.prod.outlook.com
+ (2603:10b6:207:3c::36) To DS7PR12MB9473.namprd12.prod.outlook.com
  (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
@@ -84,194 +84,218 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB8270:EE_
-X-MS-Office365-Filtering-Correlation-Id: ec3a6f6b-7211-42c0-ea0c-08dd9f1e521c
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|MN0PR12MB6077:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3799ae4f-aa66-4ad5-060b-08dd9f2019c3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|7416014|366016|7053199007;
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?YXA1OGtHYXhtczk4MnRlVG1VOVhZalRHcWp5aUJsM1Vld3llaG1tNU5zcmxh?=
- =?utf-8?B?WHdtR2JqV014a1hmVGI1NGJ3S3hyZEVsRGh0akg1eDBLNzB3Z0hTSE5sQmpO?=
- =?utf-8?B?TjdZblkxcHQ2UVRPZTcxU01KcWdpNUpzYThLN3VLclUwbUNXbVY0czNiNXEz?=
- =?utf-8?B?TXR1UjZWU0dwck1lSXhaQjlrcndQSmRtdEZ6VVRITE4rUWM3UUFteFYrMUZP?=
- =?utf-8?B?cDJ4MkhiY1hUWWR3Uzd5eWJRNlJzbnE0TytDZjJEcEhHODAwRU9xSDhGdTZB?=
- =?utf-8?B?eW80UzRxTXVKMElEMmJjNElRK2JYeUR4dnlzTkV3RUJwL2JXSXVKMWZTYzcx?=
- =?utf-8?B?QlJnYWw5Q1BiaWlpVzlSR3lpZWpCS2JVLzZXbG1PYU1rWE03OWMvQjhjMkhm?=
- =?utf-8?B?SkNzRVorLzlIOEhvQlRxaWR2RUxHcEdnMVRMLzVWTlZiSkcySHdBT2RMR1ZM?=
- =?utf-8?B?UDEvQXRCa2xOSlBtblBydWVQV0xNWEFQTUNPSmFrWDRLL1ByY2JWV3VXRTlo?=
- =?utf-8?B?eFhoTTBwNFdCSlhiWWQrKzJteGFyUlBrYWJjRy9yWUJlNXlsdDgybW9GeXpC?=
- =?utf-8?B?d2tVNmpEditEMGoxejlnbjVQSFNvWm54MGt3OHJuUkhYaEQzL1VFSVpEWTlj?=
- =?utf-8?B?TmtFLzh6eFE0SjNUeXRTMnlUWmFDenEvVTFZYTFOODc2VWVQUlhVdGExQnZZ?=
- =?utf-8?B?ekhQWE5aYTlQMW1jMmhDdnM3Uy8za3NwaERPU3BJRTFHejl2bmpMaVdJMUlv?=
- =?utf-8?B?MDd3bWR0bjUvSWRPNFVHWDN5azJTME0wY2ViaE9XblN1bnJSdG1KajRwTnVo?=
- =?utf-8?B?cmVzNTRhODEwQmIyaGNmcDRBUGZRTGhCQkNHRE5PbXVGWXRLYkJPdkNwTUZ3?=
- =?utf-8?B?dFlONlN5ejgrS3VxMU5RcXFZY3d6aXRHS3dHUEUzSk9pUkVRbkczYW9CTFpq?=
- =?utf-8?B?WEUyYTA3S3hHRW5UWHRvUVlOT0pCYVd3YjVOS0taanJJbUh3aHJTSnJjbVJ5?=
- =?utf-8?B?SzVTTG5HRmozZVNuTWdhZUpMeHNLcnU1bCtPV1d6TjZnVjluR2trYmRhOHNr?=
- =?utf-8?B?YTVaY2NiU0IrSkE1aTZ3U3Y3b1NScGdQUWFGQzUwbnZTWENyTGh2a0htTXNZ?=
- =?utf-8?B?ZkliRjFwSGNFOFhhN3g2bUxzd0lKa2VoNGtqVWkrb0lrakpKQUdmcTF5MGFa?=
- =?utf-8?B?aVZNeXphRzVkNHloU3RjcG5YVGJRYzAwS2VTRUZFWFdsTUF5eVR1SEZoNHNl?=
- =?utf-8?B?bythNll1U0FmeEdRUzVtSnFWakUxZjFwREQ3clZyV1pDU01KaGZvNWNpcnhH?=
- =?utf-8?B?Ykc0dHMya3cwV1pNaHMzUXFjZ1FGd3Y0c0M3bFFhS3FXL0taMVFXc3o1VEVw?=
- =?utf-8?B?emFpaU1JU2NjVUZEeEFYVmpUTzM4WHhGanBzaFU2MUZLNWcxa0huS2RzWSs3?=
- =?utf-8?B?d1A1YXZLSmRKdWNuN0F5TXQveUJmcTVhdUNsOFpWc200NmtJT3dvS3VGeElh?=
- =?utf-8?B?YWpBYW1XM0ozcE90RUZheE8wWW0yaFh6cDlPK2RKRlpJdUI2VExJajlqeFFY?=
- =?utf-8?B?bnRyb28xNXBOOStzakx6d0puUHowTkNXZjJFZm91WVRkWUttcU50ZmM3UUtv?=
- =?utf-8?B?TXRqQitFY1YxbW1WVG1EQmJneXNJSllyaDhXc2ZwaEhtcnJsOGFERDNVL2RO?=
- =?utf-8?B?QWtLYnlld2M0bWphRXk0YzJtRithcldEdlUrWFNJVmNZQjVzUnZ1ZzF1RGFx?=
- =?utf-8?B?NE1EbC9tWmhuQkFCbXNoaWVxaDhCL2hQTGFDWnEvTEtuUHY4ZFpiMUtXY3FT?=
- =?utf-8?B?MmU4TTRpQ3ZqRlB2czkwWTk3MEtaeDlLVkYrYlZrUFBmb2NiUDBaSXlSeGNB?=
- =?utf-8?B?eE85RFhhMzlaUHNYRWliVWJQOXBYb2hENnVOSFJtWlpYOXh4VFhQeTMweHdV?=
- =?utf-8?Q?I+gotsxk2B0=3D?=
+	=?us-ascii?Q?fFXfd/rpsDqfzEqD427Jg8/VvnBgim89qHB+jU8495waquALx/N3EX8Wt65B?=
+ =?us-ascii?Q?I3xDaiAwx2H8wPxxruu8AFVdTueEwka10+SVSb+ZOPbf42I0TwxR1lB16CC8?=
+ =?us-ascii?Q?jiqoE6rVDzotWMjP6slSOl8Dj3MnV1mxPKviUdNxX3wAZP31p2aHZ9O4CsDw?=
+ =?us-ascii?Q?nmOL2DreCwIUK/8iRybXkd6fFX9KIVrEfMbCUJARXzFrKXkssy159YNYGERS?=
+ =?us-ascii?Q?EWTVvbGr8mOR11VdvLZ/1RtYS0dqyzroN6kaSlL+C/jTvAYmoSh1f7CIOP8C?=
+ =?us-ascii?Q?hdepxZWNzOcwipzm520Eyk+KSd/0HSwFECeAT80dQEQiJKXN9hPNFYZv4DKv?=
+ =?us-ascii?Q?c7tbiQqM8ZOx7yoVnN66fBawyf7egMgbgJwlHadwzJ7uEM1w0u1MXk6ZkmtL?=
+ =?us-ascii?Q?a5hLWXeOv06BN7so1hHJ+xdfUpFe85KyGQR6/y8bLtIyGLoxkJVcz4VcNZG7?=
+ =?us-ascii?Q?c4Ye6aRhtJei31/+ci1pHguF+jHr3+3/zrGVOhxDvlRanq2YeB6cLj8sUyVD?=
+ =?us-ascii?Q?0/D/LcFwIY3r1FoH40Q7FRNgAsI2eY2NQ4q1M4pYhZ9sEgXz9kH/kQxzv/rh?=
+ =?us-ascii?Q?hXCPDOOmDfcaF/nyVUXYJsOEuoeeu9vPMhIQT1okyAvxEYtGD72Qol54lHCQ?=
+ =?us-ascii?Q?cZWkxz1tksIBrz1WmYE23N2XNqzlmXs46BTDk78qntjIF4NMh5NpLctPMjUD?=
+ =?us-ascii?Q?DXZbZZi4sADaH69gl6S4no4AEQ+WqLzG7ywqq9TXM96AjQS6Qkw72hvKK8Jr?=
+ =?us-ascii?Q?z5sjJqTHkM9PS4sIVbyErluSSMKyS6960yFWdKM8RbfaNSA/cs+NB7R8yUZz?=
+ =?us-ascii?Q?/kgVQJnOOaTw2Q+J6jfIwoa9IIPMsAVAM5G0OhKrrYqWWctREVdqqBURJE63?=
+ =?us-ascii?Q?ZS+xCHyJTaLIF6vYvHASED8CL626WJsUQqOhtzDcZJFsPhIrNcxrUwjkcANx?=
+ =?us-ascii?Q?vbjx7qu4ZLICqwobfi8TuoEbsCTPP7qmDdXNDz36N/Nvj7KS69/CLEiYpaT4?=
+ =?us-ascii?Q?0mAgRz0utFZvxlKyX5hBmEfl6k8eiViTw0QULF3xCnzpQd3bvHFv3o1XmVtI?=
+ =?us-ascii?Q?3MvnOq/kLAYPDDfRY5iWHGycj2MA3Nkp7xOUpdlE3LAgZD/Djg5pDLuRQFXS?=
+ =?us-ascii?Q?iz5+goHoBWSdD4eRunZOyKDFPQLHYqcSFxDkjTVov6/av30R+3YihD9QTv2o?=
+ =?us-ascii?Q?h3fkTgF1UG8kRYUPIDeEuj3VSqBhtcxq3Fk883iOxpaprhrxU5YhZJU3YuWr?=
+ =?us-ascii?Q?SK1wINE2zfoC7KgReZeuUyeLjchOcfHGnjf/2TDNjjqyuOsO+aSAhhGeGzHz?=
+ =?us-ascii?Q?gLEvg6kF7sQGygrUsqmq9Q406vbm2vo+EIFwiEldvsQMxKUKV+9e5wkuOmGB?=
+ =?us-ascii?Q?dthAqiVaT3TcTBDIoKT88Mw86w9i4OhQU9pcV6kElM93FKaRK+lC/j/3xx6O?=
+ =?us-ascii?Q?5QQc8D0RYf0=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(7053199007);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NlNhSkdWdVErUkRXZ2tZSGM0V0ZOclhuOVNzSDVvejYzVlNaVGhLNWZReldZ?=
- =?utf-8?B?NFFUN0YwaXBCbEk5anU4by9RZmdGV3hJWVJRS09HTmY2eTYyZWFDelMxUmo1?=
- =?utf-8?B?bDNYVkM2cDRWS0xrcXRaTWFlNmFrY1FVSm5zeWVMTTd2YjVNMVZoQm15TlQy?=
- =?utf-8?B?Y2FZRlpzZEJndTRXUkE0UHFydXJxb3lQT3dUUm1sN2YvLytaWGptV1FHc0c0?=
- =?utf-8?B?azdSMitEMFRqNWNoUFBBcmUza0hzKzYyeUpmSTNlNjZnK2VXSUMwbkRRK1NF?=
- =?utf-8?B?QWM4aG0remFTancvdDU0Q3lDS0ZYRHZrWVZidjY1RHc0cmJId0VZSElHR21K?=
- =?utf-8?B?aUE1aDJ6RENZMDZkN0MxaTVZWTkzc1RLNVl1VUo5alVPMDlLQnJmQjlKdkp0?=
- =?utf-8?B?bUhZSk9rOE9TWVBUdHNhMUdZeE4xYlRRVzVKMVRXdFQ3dDloeVdPckxJMy8y?=
- =?utf-8?B?Sm02V3ViYm0yNUUybmFpRzlIVjlNMGRSU21YbS8zNlZkZGtVbFQxMUd6WmdX?=
- =?utf-8?B?WUR6V2ozODlaRXIyZlVPbldTeDBBemF5MFRIZDBCZFgwUDE5M0N0VDhBRWFh?=
- =?utf-8?B?K3hRTTlBSmRibkJTczhURllseEpOOHBWQXYvZDhBRzlXV1Q3dmd3QUcvd3Av?=
- =?utf-8?B?SjcxRStaNC96Mi90L1Z2TnhHWUtTTjBkamVYYW9sYkVvWXlvTXdjOXBORkE5?=
- =?utf-8?B?ZFNTT2RtS2FIR213MXZKcFdTY2N4Y2ViTVpOeUtWZ1hkVUFxVEFIM2c0OVFO?=
- =?utf-8?B?TjBibEZOWDRza01WU043d2w4bXdOVjNDV0ZnVUlVaXNpV01SYUtZSnBiRjln?=
- =?utf-8?B?SSttSVhwTXJlejFLYnlLZjFVQjRibkp2VU1Ma3ZGWU1MNTlRT3d2RmowdytH?=
- =?utf-8?B?NlBzbUN0QTVsTDQwaTR4R0phSE0yZHZrbmluQzRDTFBocGhab2ZQNnVHNTF1?=
- =?utf-8?B?S2V6b2tMbmNidytHcXUxeTFYRUxKQjNDbE1xNUFoRVkzN1FEVmdGcWVpWlZG?=
- =?utf-8?B?OHJqaXFsc3lzNkNsYWV4TkZBV05TcFBsSHRsUVFuamNVelhxQXhVeTY3cGc5?=
- =?utf-8?B?cEVYRGJlNjBMMkl1N2RLTWFvUGY4MVcrcXRRbmtJd3NiQWRmcDlZRGh6SXkx?=
- =?utf-8?B?aFFhQktXME1zZTBES0VvVS9SUmkwcW5nRXJsYjB0NnBaMjM1NGRpbEhrWDlX?=
- =?utf-8?B?aHFGK0huNGVIQUpFdWx3TUg0NGpzckR4SHk5TGpGYmxMRTBneWVnMHZsczJE?=
- =?utf-8?B?YjNTNENBZTQzSzhxMUF4VkhrUzgvUkgwUEpBYWh2Z3pLV2VQU3BVQUNjK2p3?=
- =?utf-8?B?MlZscXlKcFFodVNzOWI1cUJ2UzJMdHdHTWRmdzFlWk9VZHJuWVVpNm91RWxJ?=
- =?utf-8?B?dUFDbXNsTHVzSG5ZOWZPaE1UZ0JEcTd3OGhqTUh3TTY0eHc1UUp0S1VFY1Yr?=
- =?utf-8?B?VVczdXBPMTNUUCttOGJBMERxblpvTEFkRmdmSkZNYkFOcitrdkVqSHZEdWZn?=
- =?utf-8?B?Z3JoSFNnOGhWeXN3ek5PQUhUSjJ1WEhzMVBCZnppNUFvQ2Z6Wk43ZGN2Mkoy?=
- =?utf-8?B?MmVZUDV0dE9sdmVxL2F6R0pQNHZtL29ZbkQ2UitDVHhnSW9wRElkRDdtS21F?=
- =?utf-8?B?WEtMcXQxNU4wcytwU3FJeldmUE0vYVdlaFdYZFNmc0doZktERUV6aUh2dGlY?=
- =?utf-8?B?ekZEQjNSV1Q4QWg1MWxKWW1vRlFDYVphMlM0VDcwNy9NdmRRdFlvekFzeEJC?=
- =?utf-8?B?MXV5VGVWT0hVTUwvK2NGMUdWZCt5RmRBMHlia2JmQTBQUDZSR2xTNm1OKytB?=
- =?utf-8?B?YmZaYWZoUlJlMDM3cUVjVEdFbWlpMGFMNjZiVkN2UERuR21LRFBMVlEvM3Rm?=
- =?utf-8?B?cE5JelcrOCt1YmVad2U4VmpNTjJJMS9LM0x6ekZ3MVgxSCsybTU0RXdhdXhC?=
- =?utf-8?B?WUNPaUlnZTFYWUVCMStxODNOcFdBYjFwQUZvSHJFMWNRWThEaTdteEdvYjdm?=
- =?utf-8?B?dGVJZGNkQkJBS2txNHdYRHJFblNPSDhCZk9XZnBzcEFWZlp0S29NMDVTUFBK?=
- =?utf-8?B?ZTRvS3dsM1dUb3VQUndXQUtCZTZ6WElqTWhaSzVWYjlDai9Dbkk0WEpmRmgv?=
- =?utf-8?Q?XpBIL96YW+l4nFPuGu6P/YVGr?=
+	=?us-ascii?Q?HRItR7M9afd0o+ih1dhIVBCayhnSTkKbb4UXKXaHFwc4Km/FbiTU9gjwauX2?=
+ =?us-ascii?Q?k+RLRijfLRa07YXe8I9JNesOjk67xoEV5ycTRg+Yz/kTy7SO2QUworwAPw1M?=
+ =?us-ascii?Q?+lSmCeMcACeN2BAXE5ALLfNwqIpPIg5TVl7+U2mc3GN7SXoobV3LYnQF1duB?=
+ =?us-ascii?Q?bVjMH+8zTiPmEbgxRJ7OdB3HzMgSXhMlfl0ftkTLmkB3Ubw1AP6r7iZOhnU7?=
+ =?us-ascii?Q?oaoPeafER78YhRyaIOTtLva6IFADlIAzg9muxfdkRjPDq8BGAaCYMX9HixV2?=
+ =?us-ascii?Q?3ssQF71Jz8qScBk8oG+wkricVSb7sMHTtofTrKzsed6aviWvN7EY6IEZ+sFV?=
+ =?us-ascii?Q?lEYw+5Hvq/ffZwGzs4zhKArbWbORzD8YPG0frQd9fze88+qhanicCH4/lQaB?=
+ =?us-ascii?Q?g/dbtBTqOX9hIxJ9t8fJ/cdCoRzmwNidtpdxWyL8dj6bSm24t5dZvqCZHxXv?=
+ =?us-ascii?Q?8ZWxnJNPfi1fwxlb/SbkVdUWAeoZiYAjkaXd74eHOvWR07uhcCJemAwz6dSZ?=
+ =?us-ascii?Q?plASLa7GFTUVt6zHIWXJP5F7TXyoYCnRhst2x/MhX9XhfLs1LfK7Y2r0Yazm?=
+ =?us-ascii?Q?aZ8iyCTL1pubZ0qEFYwvdrxgJODshU1RprL5Ya8aJ67OvWqMdTB8otIV6al1?=
+ =?us-ascii?Q?zz7t+frhoDgC+mzNHV37AIZrHh/GKwYM7RhaZ2LswR+SpPFFFpdpaKYUaQfI?=
+ =?us-ascii?Q?36gYyh+JKSq+NbvuOCN66o/Zb7lYQpw7F5hryGqBGB+PZW7HZ9K7PxW1Q2Gz?=
+ =?us-ascii?Q?nxRUqePdfRrW9Jc7NIhsYBhX4V1dEqL5D0NhgxdVM4KcjjLPhA9yT3weWd5Z?=
+ =?us-ascii?Q?izzCFk3MIkP8N3fBbC7XOv9LS1c3//auc4cU2NLd1r2Md91gUQDPUXlnkFBd?=
+ =?us-ascii?Q?ENMAzKnTgMclthTPnUV85NXOSve76uVYVGA4PG/tbFghKPmbs1dIggznQ+N4?=
+ =?us-ascii?Q?RwW3r9Wk4xvnR01nFvee1fUaf1Y/8Raokt59RiejmX20+hRl+ejPZoA/eaO2?=
+ =?us-ascii?Q?ehqf9YG5TiduGc4dQmGmXwP/BcWvMDJ5aDfRZsgGDk+2wuFHUDr6ikulUPv/?=
+ =?us-ascii?Q?GALaqX208TU9bSr9g7WOJo7eBfJRUJy9m/o83HkTVY7olAAs53A6GY62Cb4o?=
+ =?us-ascii?Q?BBUvtC6JQEy30dUj+gKZBuJbye3zrFvhdu36qLCgbu3Jhf9b6leLpWcne1bi?=
+ =?us-ascii?Q?ieEbP0u+acwSoGkNauR7mtp2dEF16pPzDvoTd9AUgOhylkB4hunFr6s9UgPG?=
+ =?us-ascii?Q?idsYLxon4Zyq1PZkx8ufX92N9INWV3iRfLECbt0Xoecplu0Ke+7ipTifRghh?=
+ =?us-ascii?Q?/LCd6cUvMB/KxLVp9Dt7uQu2BaqOf4ChLZsTEhxFL69p1UHX7peOB+Fx7ha0?=
+ =?us-ascii?Q?Z5U8sNCO7pkLEzJ33mGcJow8uVZxYyT+Fnxh5nsF/a3lBtGf/KiZEugsv8iM?=
+ =?us-ascii?Q?dVRUEWP8FNgOT/ZnJLhaPgG7Hi9trM+RR9PceHqQzUjuESFyWrvlTCgetLgp?=
+ =?us-ascii?Q?+95O6uqn9DyEvq8kyvJrWljEMIWKZjw/EXnBGx9FmaJTYyaVnKzaAEa82AFS?=
+ =?us-ascii?Q?9cnworrXh+YHFkj9YOr7MSzVXAmoW2LegwpGY0Hv?=
 X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ec3a6f6b-7211-42c0-ea0c-08dd9f1e521c
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3799ae4f-aa66-4ad5-060b-08dd9f2019c3
 X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 02:04:33.3489
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 May 2025 02:17:17.7558
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 828baghO0fWUw14CKQerVE/1K5BHQArWg7Vp7vhVEyBY1fTh/e8jLYO/RHWeDavF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8270
+X-MS-Exchange-CrossTenant-UserPrincipalName: ut2tGhnCabRsIEyobfdDx0Y1eY4d83P8y7WdNrYmq+ISipGCAhO2jpRvOSnbm+8F
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6077
 
-On 29 May 2025, at 21:51, Baolin Wang wrote:
+On 29 May 2025, at 21:58, Baolin Wang wrote:
 
-> On 2025/5/29 23:10, Zi Yan wrote:
+> On 2025/5/29 23:21, Zi Yan wrote:
 >> On 29 May 2025, at 4:23, Baolin Wang wrote:
 >>
->>> The MADV_COLLAPSE will ignore the system-wide Anon THP sysfs settings, =
-which
->>> means that even though we have disabled the Anon THP configuration, MAD=
-V_COLLAPSE
->>> will still attempt to collapse into a Anon THP. This violates the rule =
-we have
+>>> The MADV_COLLAPSE will ignore the system-wide shmem THP sysfs setting=
+s, which
+>>> means that even though we have disabled the shmem THP configuration, =
+MADV_COLLAPSE
+>>> will still attempt to collapse into a shmem THP. This violates the ru=
+le we have
 >>> agreed upon: never means never.
 >>>
->>> To address this issue, should check whether the Anon THP configuration =
-is disabled
->>> in thp_vma_allowable_orders(), even when the TVA_ENFORCE_SYSFS flag is =
-set.
+>>> Then the current strategy is:
+>>> For shmem, if none of always, madvise, within_size, and inherit have =
+enabled
+>>> PMD-sized mTHP, then MADV_COLLAPSE will be prohibited from collapsing=
+ PMD-sized mTHP.
+>>>
+>>> For tmpfs, if the mount option is set with the 'huge=3Dnever' paramet=
+er, then
+>>> MADV_COLLAPSE will be prohibited from collapsing PMD-sized mTHP.
 >>>
 >>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 >>> ---
->>>   include/linux/huge_mm.h | 23 +++++++++++++++++++----
->>>   1 file changed, 19 insertions(+), 4 deletions(-)
+>>>   mm/huge_memory.c |  2 +-
+>>>   mm/shmem.c       | 12 ++++++------
+>>>   2 files changed, 7 insertions(+), 7 deletions(-)
 >>>
->>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->>> index 2f190c90192d..199ddc9f04a1 100644
->>> --- a/include/linux/huge_mm.h
->>> +++ b/include/linux/huge_mm.h
->>> @@ -287,20 +287,35 @@ unsigned long thp_vma_allowable_orders(struct vm_=
-area_struct *vma,
->>>   				       unsigned long orders)
+>>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>>> index d3e66136e41a..a8cfa37cae72 100644
+>>> --- a/mm/huge_memory.c
+>>> +++ b/mm/huge_memory.c
+>>> @@ -166,7 +166,7 @@ unsigned long __thp_vma_allowable_orders(struct v=
+m_area_struct *vma,
+>>>   	 * own flags.
+>>>   	 */
+>>>   	if (!in_pf && shmem_file(vma->vm_file))
+>>> -		return shmem_allowable_huge_orders(file_inode(vma->vm_file),
+>>> +		return orders & shmem_allowable_huge_orders(file_inode(vma->vm_fil=
+e),
+>>>   						   vma, vma->vm_pgoff, 0,
+>>>   						   !enforce_sysfs);
+>>
+>> OK, here orders is checked against allowed orders.
+>>
+>>>
+>>> diff --git a/mm/shmem.c b/mm/shmem.c
+>>> index 4b42419ce6b2..4dbb28d85cd9 100644
+>>> --- a/mm/shmem.c
+>>> +++ b/mm/shmem.c
+>>> @@ -613,7 +613,7 @@ static unsigned int shmem_get_orders_within_size(=
+struct inode *inode,
+>>>   }
+>>>
+>>>   static unsigned int shmem_huge_global_enabled(struct inode *inode, =
+pgoff_t index,
+>>> -					      loff_t write_end, bool shmem_huge_force,
+>>> +					      loff_t write_end,
+>>>   					      struct vm_area_struct *vma,
+>>>   					      unsigned long vm_flags)
 >>>   {
->>>   	/* Optimization to check if required orders are enabled early. */
->>> -	if ((tva_flags & TVA_ENFORCE_SYSFS) && vma_is_anonymous(vma)) {
->>> -		unsigned long mask =3D READ_ONCE(huge_anon_orders_always);
->>> +	if (vma_is_anonymous(vma)) {
->>> +		unsigned long always =3D READ_ONCE(huge_anon_orders_always);
->>> +		unsigned long madvise =3D READ_ONCE(huge_anon_orders_madvise);
->>> +		unsigned long inherit =3D READ_ONCE(huge_anon_orders_inherit);
->>> +		unsigned long mask =3D always | madvise;
->>> +
->>> +		/*
->>> +		 * If the system-wide THP/mTHP sysfs settings are disabled,
->>> +		 * then we should never allow hugepages.
->>> +		 */
->>> +		if (!(mask & orders) && !(hugepage_global_enabled() && (inherit & or=
-ders)))
+>>> @@ -625,7 +625,7 @@ static unsigned int shmem_huge_global_enabled(str=
+uct inode *inode, pgoff_t index
+>>>   		return 0;
+>>>   	if (shmem_huge =3D=3D SHMEM_HUGE_DENY)
+>>>   		return 0;
+>>> -	if (shmem_huge_force || shmem_huge =3D=3D SHMEM_HUGE_FORCE)
+>>> +	if (shmem_huge =3D=3D SHMEM_HUGE_FORCE)
+>>>   		return maybe_pmd_order;
 >>
->> Can you explain the logic here? Is it equivalent to:
->> 1. if THP is set to always, always_mask & orders =3D=3D 0, or
->> 2. if THP if set to madvise, madvise_mask & order =3D=3D 0, or
->> 3. if THP is set to inherit, inherit_mask & order =3D=3D 0?
+>> shmem_huge is set by sysfs?
+>
+> Yes, through the '/sys/kernel/mm/transparent_hugepage/shmem_enabled' in=
+terface.
+>
+>>>   	/*
+>>> @@ -860,7 +860,7 @@ static unsigned long shmem_unused_huge_shrink(str=
+uct shmem_sb_info *sbinfo,
+>>>   }
+>>>
+>>>   static unsigned int shmem_huge_global_enabled(struct inode *inode, =
+pgoff_t index,
+>>> -					      loff_t write_end, bool shmem_huge_force,
+>>> +					      loff_t write_end,
+>>>   					      struct vm_area_struct *vma,
+>>>   					      unsigned long vm_flags)
+>>>   {
+>>> @@ -1261,7 +1261,7 @@ static int shmem_getattr(struct mnt_idmap *idma=
+p,
+>>>   			STATX_ATTR_NODUMP);
+>>>   	generic_fillattr(idmap, request_mask, inode, stat);
+>>>
+>>> -	if (shmem_huge_global_enabled(inode, 0, 0, false, NULL, 0))
+>>> +	if (shmem_huge_global_enabled(inode, 0, 0, NULL, 0))
+>>>   		stat->blksize =3D HPAGE_PMD_SIZE;
+>>>
+>>>   	if (request_mask & STATX_BTIME) {
+>>> @@ -1768,7 +1768,7 @@ unsigned long shmem_allowable_huge_orders(struc=
+t inode *inode,
+>>>   		return 0;
+>>>
+>>>   	global_orders =3D shmem_huge_global_enabled(inode, index, write_en=
+d,
+>>> -						  shmem_huge_force, vma, vm_flags);
+>>> +						  vma, vm_flags);
+>>>   	/* Tmpfs huge pages allocation */
+>>>   	if (!vma || !vma_is_anon_shmem(vma))
+>>>   		return global_orders;
+>>> @@ -1790,7 +1790,7 @@ unsigned long shmem_allowable_huge_orders(struc=
+t inode *inode,
+>>>   	/* Allow mTHP that will be fully within i_size. */
+>>>   	mask |=3D shmem_get_orders_within_size(inode, within_size_orders, =
+index, 0);
+>>>
+>>> -	if (vm_flags & VM_HUGEPAGE)
+>>> +	if (shmem_huge_force || (vm_flags & VM_HUGEPAGE))
+>>>   		mask |=3D READ_ONCE(huge_shmem_orders_madvise);
+>>>
+>>>   	if (global_orders > 0)
+>>> -- =
+
+>>> 2.43.5
 >>
->> I cannot figure out why (always | madvise) & orders does not check
->> THP enablement case, but inherit & orders checks hugepage_global_enabled=
-().
+>> shmem_huge_force comes from !enforce_sysfs in __thp_vma_allowable_orde=
+rs().
+>> Do you know when sysfs is not enforced and why?
 >
-> Sorry for not being clear. Let me try again:
->
-> Now we can control per-sized mTHP through =E2=80=98huge_anon_orders_alway=
-s=E2=80=99, so always does not need to rely on the check of hugepage_global=
-_enabled().
->
-> For madvise, referring to David's suggestion: =E2=80=9Callowing for colla=
-psing in a VM without VM_HUGEPAGE in the "madvise" mode would be fine", so =
-we can just check 'huge_anon_orders_madvise' without relying on hugepage_gl=
-obal_enabled().
+> IIUC, shmem_huge_force will only be set during MADV_COLLAPSE. Originall=
+y, MADV_COLLAPSE was intended to ignore the system-wide THP sysfs setting=
+s. However, if all system-wide shmem THP settings are disabled, we should=
+ not allow MADV_COLLAPSE to collapse a THP. This is the issue this patchs=
+et aims to fix. Thanks for the review.
 
-Got it. Setting always or madvise knob in per-size mTHP means user wants to
-enable that size, so their orders are not limited by the global config.
-Setting inherit means user wants to follow the global config.
-Now it makes sense to me. I wonder if renaming inherit to inherit_global
-and huge_anon_orders_inherit to huge_anon_orders_inherit_global
-could make code more clear (We cannot change sysfs names, but changing
-kernel variable names should be fine?).
-
->
-> In the case where hugepage_global_enabled() is enabled, we need to check =
-whether the 'inherit' has enabled the corresponding orders.
->
-> In summary, the current strategy is:
->
-> 1. If always & orders =3D=3D 0, and madvise & orders =3D=3D 0, and hugepa=
-ge_global_enabled() =3D=3D false (global THP settings are not enabled), it =
-means mTHP of the orders are prohibited from being used, then madvise_colla=
-pse() is forbidden.
->
-> 2. If always & orders =3D=3D 0, and madvise & orders =3D=3D 0, and hugepa=
-ge_global_enabled() =3D=3D true (global THP settings are enabled), and inhe=
-rit & orders =3D=3D 0, it means mTHP of the orders are still prohibited fro=
-m being used, and thus madvise_collapse() is not allowed.
-
-Putting the summary in the comment might be very helpful. WDYT?
-
-Otherwise, the patch looks good to me. Thanks.
-
-Reviewed-by: Zi Yan <ziy@nvidia.com>
+Got it. If we want to enforce sysfs, why not just get rid of TVA_ENFORCE_=
+SYSFS
+and make everyone follow sysfs?
 
 Best Regards,
 Yan, Zi
