@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-50169-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50170-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8970AC8AD0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:31:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF1CDAC8AD1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D69761BA85B6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:31:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70EC44E404D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:31:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D928220686;
-	Fri, 30 May 2025 09:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16BB721E0BB;
+	Fri, 30 May 2025 09:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="i+8bKHHV"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="iLObVoMY"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 162FD21E08B
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD7221D5AF
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597369; cv=none; b=R9q104r3mAr7KNlO72M1CIY9TJuFJ21x2Sngccu7WCimPACesWNrpO5E2gYwdCgiPtf4L44zOIgmbiFh6bC+UJvDeti43dpy/6nMnhSctMIVZsUza6XJF/iMOXiHay3ZLmDbfBUnpZhR+0blr4j24I2CIUyL0PUIvSoQ4brVddk=
+	t=1748597386; cv=none; b=F9XfjR0jhPeaN0TW4Lie98vc4Kou0/rLynA0QRnFgm79nvr13SohRZ7NDDtmcb72//DenZ3VuV2BJ17Nx5/Bx5aFzeEFqm3FGhN6i31qJkalgdWhlU/S5ya96bXTqYLHH+172CM45k2qNeVU+7A33Df62tsEGiU7d53ErZJHd6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597369; c=relaxed/simple;
-	bh=HWUbzvJ0czQHj89YGQM3u0dk16ZJgWmPR8JTmwOLaAI=;
+	s=arc-20240116; t=1748597386; c=relaxed/simple;
+	bh=S20otgpxbfyI8rSmt5eNc2YoPuXrdf/0GSL9ciOvIuU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A1xp0eq8ChVBECTruxn57Jc8XEOjI/V7urJbkt1h3pBdEYn+Ybdun5yJWhzuRCcwoeZjHKXpqeHlhucpEVz5vTjf2SOJHP+FEL9X5/gOFsJrT6WwcnagKErOVatc5Yys7OSZx+sjpeMZEoYXy1kVNraUEcQY3cvlzz6gDAwKsjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=i+8bKHHV; arc=none smtp.client-ip=209.85.216.50
+	 MIME-Version; b=gM/aiuq/cxSti9omvATeUmY7zS0su8Lg6UdWaENj7jHTyJFTnP/rlxrrFYVSE+nSM57WgG7ASn9ZrwitNsszdeLdbWyFPufkUMsZv1eHB7JarN3UsWhOJREqMJrEpSe6nTu4CHZ2S0H2hqQgs41msxsELLOo1mw3EhaACq1z4KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=iLObVoMY; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-311d5fdf1f0so1699679a91.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:29:27 -0700 (PDT)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b1396171fb1so1099684a12.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:29:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748597367; x=1749202167; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1748597383; x=1749202183; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qlcCT7HpVRiKFCiWQ8GjTfMWomzbPQPS5hEo4l8oJpI=;
-        b=i+8bKHHVu0Iwh+zALug//jSVJrcArOw6+1Sb2X6JYatwx0UBHy5421qx7NXWu/ZxbF
-         ubtHM2AsBEMIoFzuk9lY5UfMjZU6imL1Z/wNa+88TU2vHdC/0qZw8IKsCrJ/z5l4UUIP
-         4tdt8H2iPqD+a4ll95djQDmPnJ8PO4U6359RE0QkHs/sbfIQAl4yzBhi/lVzBB4X2e/c
-         +dzZy19UlwSn6pBOKLY5LDSsfZbjblPBmDYvQh5MgywpsVLy5zFaCljULT4cwzRUWIUh
-         QUip7XlnryUZDvUSIQt8XnwlZW0/5WOOILHikCQUy1UNbvWQb08L7fnPDpJOiVNB8IXD
-         mN9g==
+        bh=fsVmARra3PYHgocOota+jP5MYor7RDP1xSKc/otYVfE=;
+        b=iLObVoMYwVTx9dhtWeCngYlgKCMrTA89+js5cJ0RTSqzOZ4UgePxNvcf8jYO6Y5tUF
+         yT6Cf/7ITvg0YCbz+hQnvej2YkXbHWclcB9TkFDxHJw3LvvBigI/TeocZ8YFUoiwAVD4
+         fOjac9/1X7ptj3WKAnchTLK2e7NoPagBOZwkI7Go4RbmNvkaynfvxYRWDqrl6gpkHwoU
+         T20DkUTDq2gcdh98euhWD4xZCLZjGfH3Se/xiCQxFmNzDLSq1NhA4/DflY0Dg5z84yJz
+         R12oC38E1BmVKU+fjwnStUPCB6XMzTlFwEQqFqV7NuTLfPTtNxGZvAcOxFW7YPGU5OQ0
+         zISA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597367; x=1749202167;
+        d=1e100.net; s=20230601; t=1748597383; x=1749202183;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qlcCT7HpVRiKFCiWQ8GjTfMWomzbPQPS5hEo4l8oJpI=;
-        b=tR1FVZHr0zffYOyIGB6odaDKoJCPmNhRrMN4kXldt02llEDMoAYEu9sn2l75tAjuxd
-         T90+5xMWbce2jSJZKdYeKhNTifsAsQZn859RlIgWy4mFlf0PXVdpGqB4E9BxwsPezcIS
-         OlHMxDz1QEDRuEyeL+SZZKXXchN2Bgdv6QENSKkIpPXfA3KgaA3oTa67IoFM6SgPhALr
-         +3T4P6uDzgEBs9bAKpEWzixz3nor9USQn5ZiP9iCeQV8/3L6Bjd25Mjbd2ul+Knj//mk
-         QnQ1JmDnPAVi3Y7S0nueFoFTyqqx2TOM6WYmmDSXFOk2//J2LF8rQm3C5iDeBBnhadXM
-         fOrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXL4kgeYORs/NQzjYcoK3yCEs2TaH2ny6nYHmkKt810HOHbbp8jjcxT+vDknInW+xlWsiU8t7GZ2RwOhYhs@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVfJ/UFAyi+wPuh3gvkz6dH8VOvzoLu2YqGCzN3kGpqnO/I4qa
-	lAQyxZ4wgZF4jaYBAodMIFYZ/0QMRguRbwJCjeTdE2khol+PdjLm4N2xB3k2/uD5FEM=
-X-Gm-Gg: ASbGncu3AASJnCDWE4cciYQCeXYoMfJPo7CovL3bhid3WaHi6T3SfoOdqUdng5knQlr
-	IH9QtS8yVi8Geaxqmwuoqev7IMLnQeUjqmRlw7U2hhythu/SP/serD1S5BbM42EwgBuDK8QHdHc
-	0qYGSD32ZKufc21IQJFRkaBRpEj0tiGJMCQxZi+5WIchgNR3DHBK9Ch3RAffHltSkerR4a5iy7t
-	yZmLEroFpdyMaOZ0pXnpIlTgGXWf0u96ecgW6eYdQT9ZqojNJg6MWRGwc92BQ6KB64/UN3+P9FG
-	ffpcbjtZskOXdsH7Kk/N6dPq6A6g9kPRuhxDqRnKiP4l0zzsqFRcyTZRu3pVKg+rjaKJnbZMDnT
-	gqwZhaRHxDA==
-X-Google-Smtp-Source: AGHT+IHhT+/kCKbFwXp40FdH2tTAUVIIkiKVWdZUIpWhrB1L0an0nzdMBrvxVW8z9SoZzZut7sVHuQ==
-X-Received: by 2002:a17:90b:5288:b0:312:ec:4128 with SMTP id 98e67ed59e1d1-31250476af1mr2024876a91.34.1748597367284;
-        Fri, 30 May 2025 02:29:27 -0700 (PDT)
+        bh=fsVmARra3PYHgocOota+jP5MYor7RDP1xSKc/otYVfE=;
+        b=IGdbVtsRjDAuggd5CQTqs0KxUnN95kU0sME6kRYJ+3fF0yiQ6QJ1rUo70Y6KcBVqH7
+         nPYtq4DT4vrkewUeRZuhPgK+ZXoH94wY5dRJRpzxJqXRZrqceVXjC45BleUNpnykOjPT
+         GqKt85eGSNgDbrREct969NBKafPvPnw/6ywFRaZEE8FQEeHQgxHnPEAguQWbKLZj/rYR
+         WUkK55spynJmW+FBGrbADUptBNdARcSpXox8CS1vMrvjRmRww1fnnvqDPIrOR8UALPGp
+         rLOB9ueqWLyYgc43MHxYD6xhflphlL9PhVqzf9MXjsZKqh7wKnnqBUkS8JcoIQt+/GLn
+         IbEg==
+X-Forwarded-Encrypted: i=1; AJvYcCVoX2VM3zPbEOI96uiNc1JWO5DVfsPIjqYEgdoy4jLF59AuRIAWfBoifUwDwvtTMBrcYFpklRWP6+ll3/uL@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4tH5HSyOh4H7+yB5KHb0FL6ouz8yBft7mJOe/BAWBuJNALPDX
+	5d/lOC6oRda0z/o1BJ5mjGQFLqdtVhj64BPzUz0Bzlcbj6cP1JJVUv7V1HqykqDdwmE=
+X-Gm-Gg: ASbGncsuaUXqzpBhkh3lq3XSF5z8vmgpRzfjZc9Fc6EhBbsdsELDjeHue0j3fODgRQ/
+	fnUlZwFdPsaLucZ/omd/xEC5Q2BGyKBfTHI4QYwk9JsQhKHKCAtz7qZoLssj0qGDofH88xN4eE8
+	lqt7opFQAvlnE3K6d51QpWgBWogELqkgjiiQcglXo1aQhaVTJCfLLQiX2P1TbuhZdS6nHluxsna
+	0upObQwKcrTZ3SuDPY1FIJZ/6QmhVMKMFveSaPPbW6InZOJR688U/hpiYWXCHMXTVLqKbDhSdKM
+	l4nGYwGVtcEHr0y1EH8NMdrebSvcFHeivTFs7fEelXQdDfGIrHh63ij1Bt5JauBIZrCoaUx1n6Q
+	nZw4P9Lk7wDOUG9w/TS9dZhX1zFZdY6A=
+X-Google-Smtp-Source: AGHT+IGDxz/qX0egNQr6P0EaiRBDIQcZ9ust5aoVSte6/Q83iWKLonGQ/1cLLq8vU8IelvR0XV1gQw==
+X-Received: by 2002:a17:90b:5344:b0:312:b4a:6342 with SMTP id 98e67ed59e1d1-31241e9c28fmr4334365a91.33.1748597382681;
+        Fri, 30 May 2025 02:29:42 -0700 (PDT)
 Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.29.12
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.29.27
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 02:29:26 -0700 (PDT)
+        Fri, 30 May 2025 02:29:42 -0700 (PDT)
 From: Bo Li <libo.gcs85@bytedance.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
@@ -127,9 +127,9 @@ Cc: dietmar.eggemann@arm.com,
 	chengguozhu@bytedance.com,
 	sunjiadong.lff@bytedance.com,
 	Bo Li <libo.gcs85@bytedance.com>
-Subject: [RFC v2 04/35] RPAL: add member to task_struct and mm_struct
-Date: Fri, 30 May 2025 17:27:32 +0800
-Message-Id: <aed20a6acacb2646fe45ed2ba5ada800095b5dbf.1748594840.git.libo.gcs85@bytedance.com>
+Subject: [RFC v2 05/35] RPAL: enable virtual address space partitions
+Date: Fri, 30 May 2025 17:27:33 +0800
+Message-Id: <a5737be8dc2fb2f5058f6536f081fed611bdd093.1748594840.git.libo.gcs85@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
 References: <cover.1748594840.git.libo.gcs85@bytedance.com>
@@ -141,376 +141,430 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In lazy switch and memory-related operations, there is a need to quickly
-locate the corresponding rpal_service structure. Therefore, rpal_service
-members are added to these two data structures.
+Each RPAL service occupies a contiguous 512GB virtual address space, with
+its base address determined by the id assigned during initialization. For
+userspace virtual address space beyond this 512GB range, we employ memory
+ballooning to occupy these regions, ensuring that processes do not utilize
+these virtual addresses.
 
-This patch adds an rpal_service member to both task_struct and mm_struct,
-and introduces initialization operations. Meanwhile, rpal_service is also
-augmented with references to the task_struct and mm_struct of the
-group_leader. For threads created via fork, the kernel acquires a reference
-to rpal_service and assigns it to the new task_struct. References to
-rpal_service are released when threads exit.
-
-Regarding the deallocation of rpal_struct, since rpal_put_service may be
-called in an atomic context (where mmdrop() cannot be invoked), this patch
-uses delayed work for deallocation. The work delay is set to 30 seconds,
-which ensures that IDs are not recycled and reused in the short term,
-preventing other processes from confusing the reallocated ID with the
-previous one due to race conditions.
+Since the address space layout is determined when the process is loaded,
+RPAL sets the unused fields in the header of the ELF binary to the "RPAL"
+characters to alter the loading method of RPAL processes, enabling the
+process to be located within the correct 512GB address space upon loading.
 
 Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
 ---
- arch/x86/rpal/service.c  | 77 +++++++++++++++++++++++++++++++++++++---
- fs/exec.c                | 11 ++++++
- include/linux/mm_types.h |  3 ++
- include/linux/rpal.h     | 29 +++++++++++++++
- include/linux/sched.h    |  5 +++
- init/init_task.c         |  3 ++
- kernel/exit.c            |  5 +++
- kernel/fork.c            | 16 +++++++++
- 8 files changed, 145 insertions(+), 4 deletions(-)
+ arch/x86/mm/mmap.c      | 10 +++++
+ arch/x86/rpal/Makefile  |  2 +-
+ arch/x86/rpal/mm.c      | 70 +++++++++++++++++++++++++++++
+ arch/x86/rpal/service.c |  8 ++++
+ fs/binfmt_elf.c         | 98 ++++++++++++++++++++++++++++++++++++++++-
+ include/linux/rpal.h    | 65 +++++++++++++++++++++++++++
+ 6 files changed, 251 insertions(+), 2 deletions(-)
+ create mode 100644 arch/x86/rpal/mm.c
 
-diff --git a/arch/x86/rpal/service.c b/arch/x86/rpal/service.c
-index 609c9550540d..55ecb7e0ef8c 100644
---- a/arch/x86/rpal/service.c
-+++ b/arch/x86/rpal/service.c
-@@ -26,9 +26,24 @@ static inline void rpal_free_service_id(int id)
+diff --git a/arch/x86/mm/mmap.c b/arch/x86/mm/mmap.c
+index 5ed2109211da..504f2b9a0e8e 100644
+--- a/arch/x86/mm/mmap.c
++++ b/arch/x86/mm/mmap.c
+@@ -19,6 +19,7 @@
+ #include <linux/sched/mm.h>
+ #include <linux/compat.h>
+ #include <linux/elf-randomize.h>
++#include <linux/rpal.h>
+ #include <asm/elf.h>
+ #include <asm/io.h>
  
- static void __rpal_put_service(struct rpal_service *rs)
- {
-+	pr_debug("rpal: free service %d, tgid: %d\n", rs->id,
-+		 rs->group_leader->pid);
-+
-+	rs->mm->rpal_rs = NULL;
-+	mmdrop(rs->mm);
-+	put_task_struct(rs->group_leader);
-+	rpal_free_service_id(rs->id);
- 	kmem_cache_free(service_cache, rs);
+@@ -119,6 +120,15 @@ static void arch_pick_mmap_base(unsigned long *base, unsigned long *legacy_base,
+ 		*base = mmap_base(random_factor, task_size, rlim_stack);
  }
  
-+static void rpal_put_service_async_fn(struct work_struct *work)
++#ifdef CONFIG_RPAL
++void rpal_pick_mmap_base(struct mm_struct *mm, struct rlimit *rlim_stack)
 +{
-+	struct rpal_service *rs =
-+		container_of(work, struct rpal_service, delayed_put_work.work);
++	arch_pick_mmap_base(&mm->mmap_base, &mm->mmap_legacy_base,
++			arch_rnd(RPAL_MAX_RAND_BITS), rpal_get_top(mm->rpal_rs),
++			rlim_stack);
++}
++#endif
 +
-+	__rpal_put_service(rs);
+ void arch_pick_mmap_layout(struct mm_struct *mm, struct rlimit *rlim_stack)
+ {
+ 	if (mmap_is_legacy())
+diff --git a/arch/x86/rpal/Makefile b/arch/x86/rpal/Makefile
+index ee3698b5a9b3..2c858a8d7b9e 100644
+--- a/arch/x86/rpal/Makefile
++++ b/arch/x86/rpal/Makefile
+@@ -2,4 +2,4 @@
+ 
+ obj-$(CONFIG_RPAL)		+= rpal.o
+ 
+-rpal-y := service.o core.o
++rpal-y := service.o core.o mm.o
+diff --git a/arch/x86/rpal/mm.c b/arch/x86/rpal/mm.c
+new file mode 100644
+index 000000000000..f469bcf57b66
+--- /dev/null
++++ b/arch/x86/rpal/mm.c
+@@ -0,0 +1,70 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * RPAL service level operations
++ * Copyright (c) 2025, ByteDance. All rights reserved.
++ *
++ *     Author: Jiadong Sun <sunjiadong.lff@bytedance.com>
++ */
++
++#include <linux/rpal.h>
++#include <linux/security.h>
++#include <linux/mman.h>
++#include <linux/mm.h>
++
++static inline int rpal_balloon_mapping(unsigned long base, unsigned long size)
++{
++	struct vm_area_struct *vma;
++	unsigned long addr, populate;
++	int is_fail = 0;
++
++	if (size == 0)
++		return 0;
++
++	addr = do_mmap(NULL, base, size, PROT_NONE,
++		       MAP_FIXED | MAP_ANONYMOUS | MAP_PRIVATE,
++		       VM_DONTEXPAND | VM_PFNMAP | VM_DONTDUMP, 0, &populate,
++		       NULL);
++
++	is_fail = base != addr;
++
++	if (is_fail) {
++		pr_info("rpal: Balloon mapping 0x%016lx - 0x%016lx, %s, addr: 0x%016lx\n",
++			base, base + size, is_fail ? "Fail" : "Success", addr);
++	}
++	vma = find_vma(current->mm, addr);
++	if (vma->vm_start != addr || vma->vm_end != addr + size) {
++		is_fail = 1;
++		rpal_err("rpal: find vma 0x%016lx - 0x%016lx fail\n", addr,
++			 addr + size);
++	}
++
++	return is_fail;
 +}
 +
- static int rpal_alloc_service_id(void)
- {
- 	int id;
-@@ -75,9 +90,16 @@ void rpal_put_service(struct rpal_service *rs)
- {
- 	if (!rs)
- 		return;
--
--	if (atomic_dec_and_test(&rs->refcnt))
--		__rpal_put_service(rs);
-+    /*
-+     * Since __rpal_put_service() calls mmdrop() (which
-+     * cannot be invoked in atomic context), we use
-+     * delayed work to release rpal_service.
-+     */
-+	if (atomic_dec_and_test(&rs->refcnt)) {
-+		INIT_DELAYED_WORK(&rs->delayed_put_work,
-+				  rpal_put_service_async_fn);
-+		schedule_delayed_work(&rs->delayed_put_work, HZ * 30);
-+	}
- }
- 
- static u32 get_hash_key(u64 key)
-@@ -128,6 +150,12 @@ struct rpal_service *rpal_register_service(void)
- 	if (!rpal_inited)
- 		return NULL;
- 
-+	if (!thread_group_leader(current)) {
-+		rpal_err("task %d is not group leader %d\n", current->pid,
-+			 current->tgid);
-+		goto alloc_fail;
++#define RPAL_USER_TOP TASK_SIZE
++
++int rpal_balloon_init(unsigned long base)
++{
++	unsigned long top;
++	struct mm_struct *mm = current->mm;
++	int ret;
++
++	top = base + RPAL_ADDR_SPACE_SIZE;
++
++	mmap_write_lock(mm);
++
++	if (base > mmap_min_addr) {
++		ret = rpal_balloon_mapping(mmap_min_addr, base - mmap_min_addr);
++		if (ret)
++			goto out;
 +	}
 +
- 	rs = kmem_cache_zalloc(service_cache, GFP_KERNEL);
- 	if (!rs)
- 		goto alloc_fail;
-@@ -140,10 +168,27 @@ struct rpal_service *rpal_register_service(void)
++	ret = rpal_balloon_mapping(top, RPAL_USER_TOP - top);
++	if (ret && base > mmap_min_addr)
++		do_munmap(mm, mmap_min_addr, base - mmap_min_addr, NULL);
++
++out:
++	mmap_write_unlock(mm);
++
++	return ret;
++}
+diff --git a/arch/x86/rpal/service.c b/arch/x86/rpal/service.c
+index 55ecb7e0ef8c..caa4afa5a2c6 100644
+--- a/arch/x86/rpal/service.c
++++ b/arch/x86/rpal/service.c
+@@ -143,6 +143,11 @@ static void delete_service(struct rpal_service *rs)
+ 	spin_unlock_irqrestore(&hash_table_lock, flags);
+ }
+ 
++static inline unsigned long calculate_base_address(int id)
++{
++	return RPAL_ADDRESS_SPACE_LOW + RPAL_ADDR_SPACE_SIZE * id;
++}
++
+ struct rpal_service *rpal_register_service(void)
+ {
+ 	struct rpal_service *rs;
+@@ -168,6 +173,9 @@ struct rpal_service *rpal_register_service(void)
  	if (unlikely(rs->key == RPAL_INVALID_KEY))
  		goto key_fail;
  
--	atomic_set(&rs->refcnt, 1);
-+	current->rpal_rs = rs;
++	rs->bad_service = false;
++	rs->base = calculate_base_address(rs->id);
 +
-+	rs->group_leader = get_task_struct(current);
-+	mmgrab(current->mm);
-+	current->mm->rpal_rs = rs;
-+	rs->mm = current->mm;
-+
-+	/*
-+	 * The reference comes from:
-+	 * 1. registered service always has one reference
-+	 * 2. leader_thread also has one reference
-+	 * 3. mm also hold one reference
-+	 */
-+	atomic_set(&rs->refcnt, 3);
+ 	current->rpal_rs = rs;
  
- 	insert_service(rs);
+ 	rs->group_leader = get_task_struct(current);
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index a43363d593e5..9d27d9922de4 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -47,6 +47,7 @@
+ #include <linux/dax.h>
+ #include <linux/uaccess.h>
+ #include <linux/rseq.h>
++#include <linux/rpal.h>
+ #include <asm/param.h>
+ #include <asm/page.h>
  
-+	pr_debug(
-+		"rpal: register service, key: %llx, id: %d, command: %s, tgid: %d\n",
-+		rs->key, rs->id, current->comm, current->tgid);
-+
- 	return rs;
- 
- key_fail:
-@@ -161,7 +206,31 @@ void rpal_unregister_service(struct rpal_service *rs)
- 
- 	delete_service(rs);
- 
-+	pr_debug("rpal: unregister service, id: %d, tgid: %d\n", rs->id,
-+		 rs->group_leader->tgid);
-+
-+	rpal_put_service(rs);
-+}
-+
-+void copy_rpal(struct task_struct *p)
-+{
-+	struct rpal_service *cur = rpal_current_service();
-+
-+	p->rpal_rs = rpal_get_service(cur);
-+}
-+
-+void exit_rpal(bool group_dead)
-+{
-+	struct rpal_service *rs = rpal_current_service();
-+
-+	if (!rs)
-+		return;
-+
-+	current->rpal_rs = NULL;
- 	rpal_put_service(rs);
-+
-+	if (group_dead)
-+		rpal_unregister_service(rs);
+@@ -814,6 +815,61 @@ static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
+ 	return ret == -ENOENT ? 0 : ret;
  }
  
- int __init rpal_service_init(void)
-diff --git a/fs/exec.c b/fs/exec.c
-index cfbb2b9ee3c9..922728aebebe 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -68,6 +68,7 @@
- #include <linux/user_events.h>
- #include <linux/rseq.h>
- #include <linux/ksm.h>
-+#include <linux/rpal.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -1076,6 +1077,16 @@ static int de_thread(struct task_struct *tsk)
- 	/* we have changed execution domain */
- 	tsk->exit_signal = SIGCHLD;
- 
 +#if IS_ENABLED(CONFIG_RPAL)
++static int rpal_create_service(char *e_ident, struct rpal_service **rs,
++			unsigned long *rpal_base, int *retval,
++			struct linux_binprm *bprm, int executable_stack)
++{
 +	/*
-+	 * The rpal process is going to load another binary, we
-+	 * need to unregister rpal since it is going to be another
-+	 * process. Other threads have already exited by the time
-+	 * we come here, we need to set group_dead as true.
++	 * The first 16 bytes of the elf binary is magic number, and the last
++	 * 7 bytes of that is reserved and ignored. We use the last 4 bytes
++	 * to indicate a rpal binary. If the last 4 bytes is "RPAL", then this
++	 * is a rpal binary and we need to do register routinue.
 +	 */
-+	exit_rpal(true);
++	if (memcmp(e_ident + RPAL_MAGIC_OFFSET, RPAL_MAGIC, RPAL_MAGIC_LEN) ==
++	    0) {
++		unsigned long rpal_stack_top = STACK_TOP;
++
++		*rs = rpal_register_service();
++		if (*rs != NULL) {
++			*rpal_base = rpal_get_base(*rs);
++			rpal_stack_top = *rpal_base + RPAL_ADDR_SPACE_SIZE;
++			/*
++			 * We need to recalculate the mmap_base, otherwise the address space
++			 * layout randomization will not make any difference.
++			 */
++			rpal_pick_mmap_base(current->mm, &bprm->rlim_stack);
++		}
++		/*
++		 * RPAL process only has a contiguous 512GB address space, Whose base
++		 * address is given by its struct rpal_service. We need to rearrange
++		 * the user stack in this 512GB address space.
++		 */
++		*retval = setup_arg_pages(bprm,
++					  randomize_stack_top(rpal_stack_top),
++					  executable_stack);
++		/*
++		 * We use memory ballon to avoid kernel allocating vma other than
++		 * the process's 512GB memory.
++		 */
++		if (unlikely(*rs != NULL && rpal_balloon_init(*rpal_base))) {
++			rpal_err("pid: %d, comm: %s: rpal balloon init fail\n",
++					 current->pid, current->comm);
++			rpal_unregister_service(*rs);
++			*rs = NULL;
++			*retval = -EINVAL;
++			goto out;
++		}
++	} else {
++		*retval = setup_arg_pages(bprm, randomize_stack_top(STACK_TOP),
++					  executable_stack);
++	}
++
++out:
++	return 0;
++}
 +#endif
 +
- 	BUG_ON(!thread_group_leader(tsk));
- 	return 0;
- 
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 32ba5126e221..b29adef082c6 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1172,6 +1172,9 @@ struct mm_struct {
- #ifdef CONFIG_MM_ID
- 		mm_id_t mm_id;
- #endif /* CONFIG_MM_ID */
+ static int load_elf_binary(struct linux_binprm *bprm)
+ {
+ 	struct file *interpreter = NULL; /* to shut gcc up */
+@@ -836,6 +892,10 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	struct arch_elf_state arch_state = INIT_ARCH_ELF_STATE;
+ 	struct mm_struct *mm;
+ 	struct pt_regs *regs;
 +#ifdef CONFIG_RPAL
-+		struct rpal_service *rpal_rs;
++	struct rpal_service *rs = NULL;
++	unsigned long rpal_base;
 +#endif
- 	} __randomize_layout;
  
- 	/*
+ 	retval = -ENOEXEC;
+ 	/* First of all, some simple consistency checks */
+@@ -1008,10 +1068,19 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 
+ 	setup_new_exec(bprm);
+ 
++#ifdef CONFIG_RPAL
++	/* call original function if fails */
++	if (rpal_create_service((char *)&elf_ex->e_ident, &rs, &rpal_base,
++				&retval, bprm, executable_stack))
++		retval = setup_arg_pages(bprm, randomize_stack_top(STACK_TOP),
++					 executable_stack);
++#else
+ 	/* Do this so that we can load the interpreter, if need be.  We will
+ 	   change some of these later */
+ 	retval = setup_arg_pages(bprm, randomize_stack_top(STACK_TOP),
+ 				 executable_stack);
++#endif
++
+ 	if (retval < 0)
+ 		goto out_free_dentry;
+ 
+@@ -1055,6 +1124,22 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 			 * is needed.
+ 			 */
+ 			elf_flags |= MAP_FIXED_NOREPLACE;
++#ifdef CONFIG_RPAL
++			/*
++			 * If We load MAP_FIXED binary, it will either fail when
++			 * doing mmap, as we have done the memory balloon before,
++			 * or work well, where we are so lucky to have fixed address
++			 * in it's RPAL address space. A MAP_FIXED binary should
++			 * by no means be a RPAL service. Here we only print
++			 * an error. Maybe we will handle it in the future.
++			 */
++			if (unlikely(rs != NULL)) {
++				rpal_err(
++					"pid: %d, common: %s, load a binary with MAP_FIXED segment\n",
++					current->pid, current->comm);
++				rs->bad_service = true;
++			}
++#endif
+ 		} else if (elf_ex->e_type == ET_DYN) {
+ 			/*
+ 			 * This logic is run once for the first LOAD Program
+@@ -1128,6 +1213,12 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 				/* Adjust alignment as requested. */
+ 				if (alignment)
+ 					load_bias &= ~(alignment - 1);
++#ifdef CONFIG_RPAL
++				if (rs != NULL) {
++					load_bias &= RPAL_RAND_ADDR_SPACE_MASK;
++					load_bias += rpal_base;
++				}
++#endif
+ 				elf_flags |= MAP_FIXED_NOREPLACE;
+ 			} else {
+ 				/*
+@@ -1306,7 +1397,12 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 	if (!IS_ENABLED(CONFIG_COMPAT_BRK) &&
+ 	    IS_ENABLED(CONFIG_ARCH_HAS_ELF_RANDOMIZE) &&
+ 	    elf_ex->e_type == ET_DYN && !interpreter) {
+-		elf_brk = ELF_ET_DYN_BASE;
++#ifdef CONFIG_RPAL
++		if (rs && !rs->bad_service)
++			elf_brk = rpal_base;
++		else
++#endif
++			elf_brk = ELF_ET_DYN_BASE;
+ 		/* This counts as moving the brk, so let brk(2) know. */
+ 		brk_moved = true;
+ 	}
 diff --git a/include/linux/rpal.h b/include/linux/rpal.h
-index 75c5acf33844..7b9d90b62b3f 100644
+index 7b9d90b62b3f..f7c0de747f55 100644
 --- a/include/linux/rpal.h
 +++ b/include/linux/rpal.h
-@@ -11,6 +11,8 @@
- 
- #include <linux/sched.h>
- #include <linux/types.h>
-+#include <linux/sched/mm.h>
-+#include <linux/workqueue.h>
+@@ -15,11 +15,17 @@
+ #include <linux/workqueue.h>
  #include <linux/hashtable.h>
  #include <linux/atomic.h>
++#include <linux/sizes.h>
  
-@@ -29,6 +31,9 @@
+ #define RPAL_ERROR_MSG "rpal error: "
+ #define rpal_err(x...) pr_err(RPAL_ERROR_MSG x)
+ #define rpal_err_ratelimited(x...) pr_err_ratelimited(RPAL_ERROR_MSG x)
+ 
++/* RPAL magic macros in binary elf header */
++#define RPAL_MAGIC "RPAL"
++#define RPAL_MAGIC_OFFSET 12
++#define RPAL_MAGIC_LEN 4
++
+ /*
+  * The first 512GB is reserved due to mmap_min_addr.
+  * The last 512GB is dropped since stack will be initially
+@@ -30,6 +36,47 @@
+ #define RPAL_FIRST_KEY _AC(1, UL)
  #define RPAL_INVALID_KEY _AC(0, UL)
  
- /*
-+ * Each RPAL process (a.k.a RPAL service) should have a pointer to
-+ * struct rpal_service in all its tasks' task_struct.
++/*
++ * Process Virtual Address Space Layout (For 4-level Paging)
++ *  |-------------|
++ *  |  No Mapping |
++ *  |-------------| <-- 64 KB (mmap_min_addr)
++ *  |     ...     |
++ *  |-------------| <-- 1 * 512GB
++ *  |  service 0  |
++ *  |-------------| <-- 2 * 512 GB
++ *  |  Service 1  |
++ *  |-------------| <-- 3 * 512 GB
++ *  |  Service 2  |
++ *  |-------------| <-- 4 * 512 GB
++ *  |     ...     |
++ *  |-------------| <-- 255 * 512 GB
++ *  | Service 254 |
++ *  |-------------| <-- 128 TB
++ *  |             |
++ *  |     ...     |
++ *  |-------------| <-- PAGE_OFFSET
++ *  |             |
++ *  |    Kernel   |
++ *  |_____________|
 + *
-  * Each RPAL service has a 64-bit key as its unique identifier, and
-  * the 64-bit length ensures that the key will never repeat before
-  * the kernel reboot.
-@@ -39,10 +44,23 @@
-  * is released, allowing newly started RPAL services to reuse the ID.
-  */
- struct rpal_service {
-+	/* The task_struct of thread group leader. */
-+	struct task_struct *group_leader;
-+	/* mm_struct of thread group */
-+	struct mm_struct *mm;
- 	/* Unique identifier for RPAL service */
++ */
++#define RPAL_ADDR_SPACE_SIZE (_AC(512, UL) * SZ_1G)
++/*
++ * Since RPAL restricts the virtual address space used by a single
++ * process to 512GB, the number of bits for address randomization
++ * must be correspondingly reduced; otherwise, issues such as overlaps
++ * in randomized addresses could occur. RPAL employs 20-bit (page number)
++ * address randomization to balance security and usability.
++ */
++#define RPAL_RAND_ADDR_SPACE_MASK _AC(0xfffffff0, UL)
++#define RPAL_MAX_RAND_BITS 20
++
++#define RPAL_NR_ADDR_SPACE 256
++
++#define RPAL_ADDRESS_SPACE_LOW  ((0UL) + RPAL_ADDR_SPACE_SIZE)
++#define RPAL_ADDRESS_SPACE_HIGH ((0UL) + RPAL_NR_ADDR_SPACE * RPAL_ADDR_SPACE_SIZE)
++
+ /*
+  * Each RPAL process (a.k.a RPAL service) should have a pointer to
+  * struct rpal_service in all its tasks' task_struct.
+@@ -52,6 +99,10 @@ struct rpal_service {
  	u64 key;
  	/* virtual address space id */
  	int id;
-+
-+    /*
-+     * Fields above should never change after initialization.
-+     * Fields below may change after initialization.
-+     */
-+
-+	/* delayed service put work */
-+	struct delayed_work delayed_put_work;
-+
- 	/* Hashtable list for this struct */
- 	struct hlist_node hlist;
- 	/* reference count of this struct */
-@@ -68,7 +86,18 @@ struct rpal_service *rpal_get_service(struct rpal_service *rs);
++	/* virtual address space base address of this service */
++	unsigned long base;
++	/* bad rpal binary */
++	bool bad_service;
+ 
+     /*
+      * Fields above should never change after initialization.
+@@ -86,6 +137,16 @@ struct rpal_service *rpal_get_service(struct rpal_service *rs);
   */
  void rpal_put_service(struct rpal_service *rs);
  
-+#ifdef CONFIG_RPAL
-+static inline struct rpal_service *rpal_current_service(void)
++static inline unsigned long rpal_get_base(struct rpal_service *rs)
 +{
-+	return current->rpal_rs;
++	return rs->base;
 +}
-+#else
-+static inline struct rpal_service *rpal_current_service(void) { return NULL; }
-+#endif
 +
- void rpal_unregister_service(struct rpal_service *rs);
- struct rpal_service *rpal_register_service(void);
++static inline unsigned long rpal_get_top(struct rpal_service *rs)
++{
++	return rs->base + RPAL_ADDR_SPACE_SIZE;
++}
++
+ #ifdef CONFIG_RPAL
+ static inline struct rpal_service *rpal_current_service(void)
+ {
+@@ -100,4 +161,8 @@ struct rpal_service *rpal_register_service(void);
  struct rpal_service *rpal_get_service_by_key(u64 key);
-+void copy_rpal(struct task_struct *p);
-+void exit_rpal(bool group_dead);
- #endif
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 45e5953b8f32..ad35b197543c 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -72,6 +72,7 @@ struct rcu_node;
- struct reclaim_state;
- struct robust_list_head;
- struct root_domain;
-+struct rpal_service;
- struct rq;
- struct sched_attr;
- struct sched_dl_entity;
-@@ -1645,6 +1646,10 @@ struct task_struct {
- 	struct user_event_mm		*user_event_mm;
- #endif
- 
-+#ifdef CONFIG_RPAL
-+	struct rpal_service			*rpal_rs;
-+#endif
+ void copy_rpal(struct task_struct *p);
+ void exit_rpal(bool group_dead);
++int rpal_balloon_init(unsigned long base);
 +
- 	/* CPU-specific state of this task: */
- 	struct thread_struct		thread;
- 
-diff --git a/init/init_task.c b/init/init_task.c
-index e557f622bd90..0c5b1927da41 100644
---- a/init/init_task.c
-+++ b/init/init_task.c
-@@ -220,6 +220,9 @@ struct task_struct init_task __aligned(L1_CACHE_BYTES) = {
- #ifdef CONFIG_SECCOMP_FILTER
- 	.seccomp	= { .filter_count = ATOMIC_INIT(0) },
++extern void rpal_pick_mmap_base(struct mm_struct *mm,
++	struct rlimit *rlim_stack);
  #endif
-+#ifdef CONFIG_RPAL
-+	.rpal_rs = NULL,
-+#endif
- };
- EXPORT_SYMBOL(init_task);
- 
-diff --git a/kernel/exit.c b/kernel/exit.c
-index 38645039dd8f..0c8387da59da 100644
---- a/kernel/exit.c
-+++ b/kernel/exit.c
-@@ -70,6 +70,7 @@
- #include <linux/user_events.h>
- #include <linux/uaccess.h>
- #include <linux/pidfs.h>
-+#include <linux/rpal.h>
- 
- #include <uapi/linux/wait.h>
- 
-@@ -944,6 +945,10 @@ void __noreturn do_exit(long code)
- 	taskstats_exit(tsk, group_dead);
- 	trace_sched_process_exit(tsk, group_dead);
- 
-+#if IS_ENABLED(CONFIG_RPAL)
-+	exit_rpal(group_dead);
-+#endif
-+
- 	exit_mm();
- 
- 	if (group_dead)
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 85afccfdf3b1..1d1c8484a8f2 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -105,6 +105,7 @@
- #include <uapi/linux/pidfd.h>
- #include <linux/pidfs.h>
- #include <linux/tick.h>
-+#include <linux/rpal.h>
- 
- #include <asm/pgalloc.h>
- #include <linux/uaccess.h>
-@@ -1216,6 +1217,10 @@ static struct task_struct *dup_task_struct(struct task_struct *orig, int node)
- 	tsk->mm_cid_active = 0;
- 	tsk->migrate_from_cpu = -1;
- #endif
-+
-+#ifdef CONFIG_RPAL
-+	tsk->rpal_rs = NULL;
-+#endif
- 	return tsk;
- 
- free_stack:
-@@ -1312,6 +1317,9 @@ static struct mm_struct *mm_init(struct mm_struct *mm, struct task_struct *p,
- #endif
- 	mm_init_uprobes_state(mm);
- 	hugetlb_count_init(mm);
-+#ifdef CONFIG_RPAL
-+	mm->rpal_rs = NULL;
-+#endif
- 
- 	if (current->mm) {
- 		mm->flags = mmf_init_flags(current->mm->flags);
-@@ -2651,6 +2659,14 @@ __latent_entropy struct task_struct *copy_process(
- 			current->signal->nr_threads++;
- 			current->signal->quick_threads++;
- 			atomic_inc(&current->signal->live);
-+#if IS_ENABLED(CONFIG_RPAL)
-+			/*
-+			 * For rpal process, the child thread needs to
-+			 * inherit p->rpal_rs. Therefore, we can get the
-+			 * struct rpal_service for any thread of rpal process.
-+			 */
-+			copy_rpal(p);
-+#endif
- 			refcount_inc(&current->signal->sigcnt);
- 			task_join_group_stop(p);
- 			list_add_tail_rcu(&p->thread_node,
 -- 
 2.20.1
 
