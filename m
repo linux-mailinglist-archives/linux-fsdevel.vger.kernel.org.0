@@ -1,589 +1,205 @@
-Return-Path: <linux-fsdevel+bounces-50205-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50206-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EBBFAC8B4A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:44:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44FF6AC8B50
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:45:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A06917D383
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:44:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE2443BA5C7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601B62236E1;
-	Fri, 30 May 2025 09:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF5FF226527;
+	Fri, 30 May 2025 09:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QQ35yy3D";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T+/sF2sH";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="QQ35yy3D";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="T+/sF2sH"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wk24DIbZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92FB21FF28
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFDA184540
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748598099; cv=none; b=evGz3SIjdJ2ZALedegRV9fzhwHzVxFkj3Szwj8TZXc0NBUGJF/uYWfyH1/oHRj5Z6mH60+rlvgOfE+ThL0aPMeAYDsRtRTLAP2pt6JxXk0oxtKNF5LRUhUIzn34MO8RO2VuywHAGQrrBmJFqJma5gZ4LySdOFCi3wV7ZUD9aCh8=
+	t=1748598178; cv=none; b=jHJ3BqynQqT1s/GmSTeMj50jIiVaxChdVV8UU/dRE+mS9vBZT5EZmx8Fq3qOrz7ck6dJCXEi0or4tF1FDGyHVQMU36/xdB5tooOilpKFkVmQS3dobrFHkuiqlakExFtxtAawSg1I1M3wZMKvIrCeeYo4AhlTthYG8KXjX/HcD84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748598099; c=relaxed/simple;
-	bh=p8bPfn+z3z+2ASSm8ilonYZ6I3XKs306Xt2PCMPzeIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=otSjFeZmJbo2XPN/hdSAtTRJBs/7PT5rcEgVLcpBP1b/1weFj0BNHOv3f3zLuZRigTz5bLkLOwmpsQmd+riu/RAeEEYfpaYMaiJmrl2HOM0FE3anP9ykJgNxaITkWVV0rYreW4C/3ebPUXBdI6UmIfQadCrhIOY954rqQSxkOUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QQ35yy3D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T+/sF2sH; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=QQ35yy3D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=T+/sF2sH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D6CEB2122E;
-	Fri, 30 May 2025 09:41:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1748598093; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1748598178; c=relaxed/simple;
+	bh=elpyLymxaqb7oa4Th6MKUlLdZPCM+CCtwiijx05Vekk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PvlrdmTRW1nNqXAvD435i84Hh6fZG35i4l5zT0Qd/k6SqGJvSGvbwD1XGkgPC5Mr55Vb/iCu+T85ugnSw5qhIscf4RfmEboiUG5R0IsDMWaXgdzrBqWCKYxanC4vDkssJo9zyoriaxDm1PM1GZJBIKLnUmWb9C013i0gUHbUEfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wk24DIbZ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1748598175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pS0O2ADLUauezUFF1y8I2YgDVhIi5NtA88euL27PlvI=;
-	b=QQ35yy3D14JKmdJBf+P1w1ZmF+yoUnDVNLavwiNgZ6UnZ1H1mebQN4+GsGl6Plm6Rmg00J
-	nrktGD1ZZ1tnqPd1ZbAA+jvBEOgQ1K4oZdA4YZb5A0eiumZbvrPOQiMNemElC/YUZTjFth
-	JOeX0aKwBjJvKtQInvPwq0/K+cGryHE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1748598093;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pS0O2ADLUauezUFF1y8I2YgDVhIi5NtA88euL27PlvI=;
-	b=T+/sF2sHKR5z37gD2Ul2PFeh99HsEcAVAVXJz3KUDvrxttRmnv6xGf7urNAOXw40iDruh3
-	/CKHRkKall2Qw8Dg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1748598093; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pS0O2ADLUauezUFF1y8I2YgDVhIi5NtA88euL27PlvI=;
-	b=QQ35yy3D14JKmdJBf+P1w1ZmF+yoUnDVNLavwiNgZ6UnZ1H1mebQN4+GsGl6Plm6Rmg00J
-	nrktGD1ZZ1tnqPd1ZbAA+jvBEOgQ1K4oZdA4YZb5A0eiumZbvrPOQiMNemElC/YUZTjFth
-	JOeX0aKwBjJvKtQInvPwq0/K+cGryHE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1748598093;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pS0O2ADLUauezUFF1y8I2YgDVhIi5NtA88euL27PlvI=;
-	b=T+/sF2sHKR5z37gD2Ul2PFeh99HsEcAVAVXJz3KUDvrxttRmnv6xGf7urNAOXw40iDruh3
-	/CKHRkKall2Qw8Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F1781132D8;
-	Fri, 30 May 2025 09:41:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vTMuN0p9OWgidQAAD6G6ig
-	(envelope-from <pfalcato@suse.de>); Fri, 30 May 2025 09:41:30 +0000
-Date: Fri, 30 May 2025 10:41:25 +0100
-From: Pedro Falcato <pfalcato@suse.de>
-To: Bo Li <libo.gcs85@bytedance.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, luto@kernel.org, kees@kernel.org, 
-	akpm@linux-foundation.org, david@redhat.com, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, peterz@infradead.org, dietmar.eggemann@arm.com, hpa@zytor.com, 
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, 
-	surenb@google.com, mhocko@suse.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, jannh@google.com, riel@surriel.com, 
-	harry.yoo@oracle.com, linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, duanxiongchun@bytedance.com, 
-	yinhongbo@bytedance.com, dengliang.1214@bytedance.com, xieyongji@bytedance.com, 
-	chaiwen.cc@bytedance.com, songmuchun@bytedance.com, yuanzhu@bytedance.com, 
-	chengguozhu@bytedance.com, sunjiadong.lff@bytedance.com
-Subject: Re: [RFC v2 00/35] optimize cost of inter-process communication
-Message-ID: <4fh5aagswxyecc5ffqngpyvd2ojs5rx3xihi3eat2foyh232da@5vz26lupjwwr>
-References: <cover.1748594840.git.libo.gcs85@bytedance.com>
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zWtS7BX4jv3Md6oma03aZLTPAuckL46QoolFrxWb6FY=;
+	b=Wk24DIbZVlV47aWW2EZJdRerdLBN+qlqN8yElEaCDRRNygo3kRaPYY+sCC17jB2i+v5UAB
+	qycxPNmHtzG2C8U0xVE7NbFFb5VxsWxH67j2hmoSG1XWBtrCcFqNvogkMrpVz2GxMlM/w3
+	wyxjkZRQq7UvCr9TbpjTRUxhGD/2F74=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-352-WbTPqxT4MmejTeveQ-WZrg-1; Fri, 30 May 2025 05:42:53 -0400
+X-MC-Unique: WbTPqxT4MmejTeveQ-WZrg-1
+X-Mimecast-MFC-AGG-ID: WbTPqxT4MmejTeveQ-WZrg_1748598172
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3a4f6ff23ccso576391f8f.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:42:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748598172; x=1749202972;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zWtS7BX4jv3Md6oma03aZLTPAuckL46QoolFrxWb6FY=;
+        b=l/+8T4lJhC5qgM+qSkUlg3WE2vkyhNryS1B/sYuwhx24cBeVq6TrF0bBTHUv4W6zLu
+         m7ytmGGMY+VvEkLvLnJpszhkX6Bxv1j3uBbn/rWwl7u8JfJQhyYs+CgxRzOblSU5dGB8
+         ewjGpFbL2HOdpwaDUs4y5ust1bbizGHvQ4CVwb+6FBO0q9nxnTo35+VobMpmfCD0Rgfg
+         DTtKcv8JvwNaxl2Y2uRK2nrberEoXrsQzAnlNtWNFzOT44pxcgKiNIpjGt/+KJgqomS6
+         mUrgRDqNAh/qhHbY7O/mb+GSUuQOgfBFiW/ICQU99yUNJVimjubxRTqL+KTIJEP9Zdmr
+         xDuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxMheucTrwgxyQzPiR0EhxK+xY9FJt+gw3ApiXwKMBxR4EDK379Mbq05ffN0hFlC+q5AsGPk9W9nTwcQUz@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhLnCJKu9aEBFTK9n1ALAykLUmhTeZonawFneT/rAV0E8mUA8E
+	U2DAHG6QjNOsreQloYvRRSfetW2cb8rOGbRmVokriv74vs92+QYjDo+jmoixGvQHdY+tGYuhtAr
+	NeLO4YL3U7LXsDdaItKgGqRPBhgznuGPcuXxTGKnQMtCi1G05n4Urrz/VHC1c80ICl1U=
+X-Gm-Gg: ASbGncsUHbTdG4a3eS98sYNv3xCMEHl9Ti6VxU4aojgrx76hYfJBe1b/8zkKC2hEz+z
+	kyOK1P4yBDAT0em5fc1gvdVGSpzCMPFzyhVuw/ViC5wYwZZvgAoy91GQeKJ0dS98SaDTDXLgwfR
+	Lc7+x/HuFVnCN9p7f2ZfdDqHE3IOuDMUigxrMh5jg/7RsIZlKzrmbglKtjM2qNXCkdxacZHNb6B
+	BIrkXplb7RbMzIGjvKNCxlanvxh2QnIfSU7wqMZoJFRt6zhstu4bnAfzg4iJt2odDcoaJVzHn/8
+	NOvnGgozwf6tdirkQ+bMDdq7JHYnYiYGJpS2dstfD56XRPPCgYJCZxh3w39nO9jbFXdau+rR0Bx
+	UTXOkhT+TqAEpt59qBk7/DG1YXgv6xSWnBF0Wqj8=
+X-Received: by 2002:a05:6000:1ac6:b0:39f:175b:a68d with SMTP id ffacd0b85a97d-3a4f7a3e745mr1997138f8f.11.1748598172264;
+        Fri, 30 May 2025 02:42:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEE2cC4rOgIu1Bk0E4HwZEgbfvuVj5Yx/rDkAqlZuc3fKNMuN3WR3Ck+7U4WmY934x7i63eYg==
+X-Received: by 2002:a05:6000:1ac6:b0:39f:175b:a68d with SMTP id ffacd0b85a97d-3a4f7a3e745mr1997108f8f.11.1748598171812;
+        Fri, 30 May 2025 02:42:51 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f03:5b00:f549:a879:b2d3:73ee? (p200300d82f035b00f549a879b2d373ee.dip0.t-ipconnect.de. [2003:d8:2f03:5b00:f549:a879:b2d3:73ee])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d7fc24d7sm13138915e9.36.2025.05.30.02.42.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 May 2025 02:42:51 -0700 (PDT)
+Message-ID: <473e974b-39a1-4ee1-b321-58f6a74c0155@redhat.com>
+Date: Fri, 30 May 2025 11:42:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RL3mhzhn45zpqpmgqn4z7synfm)];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_GT_50(0.00)[52];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/12] mm/pagewalk: Skip dax pages in pagewalk
+To: Alistair Popple <apopple@nvidia.com>, linux-mm@kvack.org
+Cc: gerald.schaefer@linux.ibm.com, dan.j.williams@intel.com, jgg@ziepe.ca,
+ willy@infradead.org, linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+ linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+ linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
+ zhang.lyra@gmail.com, debug@rivosinc.com, bjorn@kernel.org,
+ balbirs@nvidia.com, lorenzo.stoakes@oracle.com,
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org, John@Groves.net
+References: <cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com>
+ <1799c6772825e1401e7ccad81a10646118201953.1748500293.git-series.apopple@nvidia.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <1799c6772825e1401e7ccad81a10646118201953.1748500293.git-series.apopple@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 30, 2025 at 05:27:28PM +0800, Bo Li wrote:
-> Changelog:
-> 
-> v2:
-> - Port the RPAL functions to the latest v6.15 kernel.
-> - Add a supplementary introduction to the application scenarios and
->   security considerations of RPAL.
-> 
-> link to v1:
-> https://lore.kernel.org/lkml/CAP2HCOmAkRVTci0ObtyW=3v6GFOrt9zCn2NwLUbZ+Di49xkBiw@mail.gmail.com/
-> 
-> --------------------------------------------------------------------------
-> 
-> # Introduction
-> 
-> We mainly apply RPAL to the service mesh architecture widely adopted in
-> modern cloud-native data centers. Before the rise of the service mesh
-> architecture, network functions were usually integrated into monolithic
-> applications as libraries, and the main business programs invoked them
-> through function calls. However, to facilitate the independent development
-> and operation and maintenance of the main business programs and network
-> functions, the service mesh removed the network functions from the main
-> business programs and made them independent processes (called sidecars).
-> Inter-process communication (IPC) is used for interaction between the main
-> business program and the sidecar, and the introduced inter-process
-> communication has led to a sharp increase in resource consumption in
-> cloud-native data centers, and may even occupy more than 10% of the CPU of
-> the entire microservice cluster.
-> 
-> To achieve the efficient function call mechanism of the monolithic
-> architecture under the service mesh architecture, we introduced the RPAL
-> (Running Process As Library) architecture, which implements the sharing of
-> the virtual address space of processes and the switching threads in user
-> mode. Through the analysis of the service mesh architecture, we found that
-> the process memory isolation between the main business program and the
-> sidecar is not particularly important because they are split from one
-> application and were an integral part of the original monolithic
-> application. It is more important for the two processes to be independent
-> of each other because they need to be independently developed and
-> maintained to ensure the architectural advantages of the service mesh.
-> Therefore, RPAL breaks the isolation between processes while preserving the
-> independence between them.  We think that RPAL can also be applied to other
-> scenarios featuring sidecar-like architectures, such as distributed file
-> storage systems in LLM infra.
-> 
-> In RPAL architecture, multiple processes share a virtual address space, so
-> this architecture can be regarded as an advanced version of the Linux
-> shared memory mechanism:
-> 
-> 1. Traditional shared memory requires two processes to negotiate to ensure
-> the mapping of the same piece of memory. In RPAL architecture, two RPAL
-> processes still need to reach a consensus before they can successfully
-> invoke the relevant system calls of RPAL to share the virtual address
-> space.
-> 2. Traditional shared memory only shares part of the data. However, in RPAL
-> architecture, processes that have established an RPAL communication
-> relationship share a virtual address space, and all user memory (such as
-> data segments and code segments) of each RPAL process is shared among these
-> processes. However, a process cannot access the memory of other processes
-> at any time. We use the MPK mechanism to ensure that the memory of other
-> processes can only be accessed when special RPAL functions are called.
-> Otherwise, a page fault will be triggered.
-> 3. In RPAL architecture, to ensure the consistency of the execution context
-> of the shared code (such as the stack and thread local storage), we further
-> implement the thread context switching in user mode based on the ability to
-> share the virtual address space of different processes, enabling the
-> threads of different processes to directly perform fast switching in user
-> mode without falling into kernel mode for slow switching.
-> 
-> # Background
-> 
-> In traditional inter-process communication (IPC) scenarios, Unix domain
-> sockets are commonly used in conjunction with the epoll() family for event
-> multiplexing. IPC operations involve system calls on both the data and
-> control planes, thereby imposing a non-trivial overhead on the interacting
-> processes. Even when shared memory is employed to optimize the data plane,
-> two data copies still remain. Specifically, data is initially copied from
-> a process's private memory space into the shared memory area, and then it
-> is copied from the shared memory into the private memory of another
-> process.
-> 
-> This poses a question: Is it possible to reduce the overhead of IPC with
-> only minimal modifications at the application level? To address this, we
-> observed that the functionality of IPC, which encompasses data transfer
-> and invocation of the target thread, is similar to a function call, where
-> arguments are passed and the callee function is invoked to process them.
-> Inspired by this analogy, we introduce RPAL (Run Process As Library), a
-> framework designed to enable one process to invoke another as if making
-> a local function call, all without going through the kernel.
-> 
-> # Design
-> 
-> First, let’s formalize RPAL’s core objectives:
-> 
-> 1. Data-plane efficiency: Reduce the number of data copies from two (in the
->    shared memory solution) to one.
-> 2. Control-plane optimization: Eliminate the overhead of system calls and
->    kernel's thread switches.
-> 3. Application compatibility: Minimize the modifications to existing
->    applications that utilize Unix domain sockets and the epoll() family.
-> 
-> To attain the first objective, processes that use RPAL share the same
-> virtual address space. So one process can access another's data directly
-> via a data pointer. This means data can be transferred from one process to
-> another with just one copy operation. 
-> 
-> To meet the second goal, RPAL relies on the shared address space to do
-> lightweight context switching in user space, which we call an "RPAL call".
-> This allows one process to execute another process's code just like a
-> local function call.
-> 
-> To achieve the third target, RPAL stays compatible with the epoll family
-> of functions, like epoll_create(), epoll_wait(), and epoll_ctl(). If an
-> application uses epoll for IPC, developers can switch to RPAL with just a
-> few small changes. For instance, you can just replace epoll_wait() with
-> rpal_epoll_wait(). The basic epoll procedure, where a process waits for
-> another to write to a monitored descriptor using an epoll file descriptor,
-> still works fine with RPAL.
-> 
-> ## Address space sharing
-> 
-> For address space sharing, RPAL partitions the entire userspace virtual
-> address space and allocates non-overlapping memory ranges to each process.
-> On x86_64 architectures, RPAL uses a memory range size covered by a
-> single PUD (Page Upper Directory) entry, which is 512GB. This restricts
-> each process’s virtual address space to 512GB on x86_64, sufficient for
-> most applications in our scenario. The rationale is straightforward: 
-> address space sharing can be simply achieved by copying the PUD from one
-> process’s page table to another’s. So one process can directly use the
-> data pointer to access another's memory.
-> 
-> 
->  |------------| <- 0
->  |------------| <- 512 GB
->  |  Process A |
->  |------------| <- 2*512 GB
->  |------------| <- n*512 GB
->  |  Process B |
->  |------------| <- (n+1)*512 GB
->  |------------| <- STACK_TOP
->  |  Kernel    |
->  |------------|
-> 
-> ## RPAL call
-> 
-> We refer to the lightweight userspace context switching mechanism as RPAL
-> call. It enables the caller (or sender) thread of one process to directly
-> switch to the callee (or receiver) thread of another process. 
-> 
-> When Process A’s caller thread initiates an RPAL call to Process B’s
-> callee thread, the CPU saves the caller’s context and loads the callee’s
-> context. This enables direct userspace control flow transfer from the
-> caller to the callee. After the callee finishes data processing, the CPU
-> saves Process B’s callee context and switches back to Process A’s caller
-> context, completing a full IPC cycle.
-> 
-> 
->  |------------|                |---------------------|  
->  |  Process A |                |  Process B          |
->  | |-------|  |                | |-------|           |     
->  | | caller| --- RPAL call --> | | callee|    handle |
->  | | thread| <------------------ | thread| -> event  |
->  | |-------|  |                | |-------|           |
->  |------------|                |---------------------|
-> 
-> # Security and compatibility with kernel subsystems
-> 
-> ## Memory protection between processes
-> 
-> Since processes using RPAL share the address space, unintended
-> cross-process memory access may occur and corrupt the data of another
-> process. To mitigate this, we leverage Memory Protection Keys (MPK) on x86
-> architectures.
-> 
-> MPK assigns 4 bits in each page table entry to a "protection key", which
-> is paired with a userspace register (PKRU). The PKRU register defines
-> access permissions for memory regions protected by specific keys (for
-> detailed implementation, refer to the kernel documentation "Memory
-> Protection Keys"). With MPK, even though the address space is shared
-> among processes, cross-process access is restricted: a process can only
-> access the memory protected by a key if its PKRU register is configured
-> with the corresponding permission. This ensures that processes cannot
-> access each other’s memory unless an explicit PKRU configuration is set.
-> 
-> ## Page fault handling and TLB flushing
-> 
-> Due to the shared address space architecture, both page fault handling and
-> TLB flushing require careful consideration. For instance, when Process A
-> accesses Process B’s memory, a page fault may occur in Process A's
-> context, but the faulting address belongs to Process B. In this case, we
-> must pass Process B's mm_struct to the page fault handler.
-> 
-> TLB flushing is more complex. When a thread flushes the TLB, since the
-> address space is shared, not only other threads in the current process but
-> also other processes that share the address space may access the
-> corresponding memory (related to the TLB flush). Therefore, the cpuset used
-> for TLB flushing should be the union of the mm_cpumasks of all processes
-> that share the address space.
-> 
-> ## Lazy switch of kernel context
-> 
-> In RPAL, a mismatch may arise between the user context and the kernel
-> context. The RPAL call is designed solely to switch the user context,
-> leaving the kernel context unchanged. For instance, when a RPAL call takes
-> place, transitioning from caller thread to callee thread, and subsequently
-> a system call is initiated within callee thread, the kernel will
-> incorrectly utilize the caller's kernel context (such as the kernel stack)
-> to process the system call.
-> 
-> To resolve context mismatch issues, a kernel context switch is triggered at
-> the kernel entry point when the callee initiates a syscall or an
-> exception/interrupt occurs. This mechanism ensures context consistency
-> before processing system calls, interrupts, or exceptions. We refer to this
-> kernel context switch as a "lazy switch" because it defers the switching
-> operation from the traditional thread switch point to the next kernel entry
-> point.
-> 
-> Lazy switch should be minimized as much as possible, as it significantly
-> degrades performance. We currently utilize RPAL in an RPC framework, in
-> which the RPC sender thread relies on the RPAL call to invoke the RPC
-> receiver thread entirely in user space. In most cases, the receiver
-> thread is free of system calls and the code execution time is relatively
-> short. This characteristic effectively reduces the probability of a lazy
-> switch occurring.
-> 
-> ## Time slice correction
-> 
-> After an RPAL call, the callee's user mode code executes. However, the
-> kernel incorrectly attributes this CPU time to the caller due to the
-> unchanged kernel context.
-> 
-> To resolve this, we use the Time Stamp Counter (TSC) register to measure
-> CPU time consumed by the callee thread in user space. The kernel then uses
-> this user-reported timing data to adjust the CPU accounting for both the
-> caller and callee thread, similar to how CPU steal time is implemented.
-> 
-> ## Process recovery
-> 
-> Since processes can access each other’s memory, there is a risk that the
-> target process’s memory may become invalid at the access time (e.g., if
-> the target process has exited unexpectedly). The kernel must handle such
-> cases; otherwise, the accessing process could be terminated due to
-> failures originating from another process.
-> 
-> To address this issue, each thread of the process should pre-establish a
-> recovery point when accessing the memory of other processes. When such an
-> invalid access occurs, the thread traps into the kernel. Inside the page
-> fault handler, the kernel restores the user context of the thread to the
-> recovery point. This mechanism ensures that processes maintain mutual
-> independence, preventing cascading failures caused by cross-process memory
-> issues.
-> 
-> # Performance
-> 
-> To quantify the performance improvements driven by RPAL, we measured
-> latency both before and after its deployment. Experiments were conducted on
-> a server equipped with two Intel(R) Xeon(R) Platinum 8336C CPUs (2.30 GHz)
-> and 1 TB of memory. Latency was defined as the duration from when the
-> client thread initiates a message to when the server thread is invoked and
-> receives it.
-> 
-> During testing, the client transmitted 1 million 32-byte messages, and we
-> computed the per-message average latency. The results are as follows:
-> 
-> *****************
-> Without RPAL: Message length: 32 bytes, Total TSC cycles: 19616222534,
->  Message count: 1000000, Average latency: 19616 cycles
-> With RPAL: Message length: 32 bytes, Total TSC cycles: 1703459326,
->  Message count: 1000000, Average latency: 1703 cycles
-> *****************
-> 
-> These results confirm that RPAL delivers substantial latency improvements
-> over the current epoll implementation—achieving a 17,913-cycle reduction
-> (an ~91.3% improvement) for 32-byte messages.
-> 
-> We have applied RPAL to an RPC framework that is widely used in our data
-> center. With RPAL, we have successfully achieved up to 15.5% reduction in
-> the CPU utilization of processes in real-world microservice scenario. The
-> gains primarily stem from minimizing control plane overhead through the
-> utilization of userspace context switches. Additionally, by leveraging
-> address space sharing, the number of memory copies is significantly
-> reduced.
-> 
-> # Future Work
-> 
-> Currently, RPAL requires the MPK (Memory Protection Key) hardware feature,
-> which is supported by a range of Intel CPUs. For AMD architectures, MPK is
-> supported only on the latest processor, specifically, 3th Generation AMD
-> EPYC™ Processors and subsequent generations. Patch sets that extend RPAL
-> support to systems lacking MPK hardware will be provided later.
-> 
-> Accompanying test programs are also provided in the samples/rpal/
-> directory. And the user-mode RPAL library, which realizes user-space RPAL
-> call, is in the samples/rpal/librpal directory.
->             
-> We hope to get some community discussions and feedback on RPAL's
-> optimization approaches and architecture.
-> 
-> Look forward to your comments.
+On 29.05.25 08:32, Alistair Popple wrote:
+> Previously dax pages were skipped by the pagewalk code as pud_special() or
+> vm_normal_page{_pmd}() would be false for DAX pages. Now that dax pages are
+> refcounted normally that is no longer the case, so add explicit checks to
+> skip them.
 
-The first time you posted, you got two NACKs (from Dave Hansen and Lorenzo).
-You didn't reply and now you post this flood of patches? Please don't?
+Is this really what we want, though? If these are now just "normal" 
+pages, they shall be handled as being normal.
 
-From my end it's also a Big Ol' NACK.
+I would assume that we want to check that in the callers instead.
+
+E.g., in get_mergeable_page() we already have a folio_is_zone_device() 
+check.
 
 > 
-> Bo Li (35):
->   Kbuild: rpal support
->   RPAL: add struct rpal_service
->   RPAL: add service registration interface
->   RPAL: add member to task_struct and mm_struct
->   RPAL: enable virtual address space partitions
->   RPAL: add user interface
->   RPAL: enable shared page mmap
->   RPAL: enable sender/receiver registration
->   RPAL: enable address space sharing
->   RPAL: allow service enable/disable
->   RPAL: add service request/release
->   RPAL: enable service disable notification
->   RPAL: add tlb flushing support
->   RPAL: enable page fault handling
->   RPAL: add sender/receiver state
->   RPAL: add cpu lock interface
->   RPAL: add a mapping between fsbase and tasks
->   sched: pick a specified task
->   RPAL: add lazy switch main logic
->   RPAL: add rpal_ret_from_lazy_switch
->   RPAL: add kernel entry handling for lazy switch
->   RPAL: rebuild receiver state
->   RPAL: resume cpumask when fork
->   RPAL: critical section optimization
->   RPAL: add MPK initialization and interface
->   RPAL: enable MPK support
->   RPAL: add epoll support
->   RPAL: add rpal_uds_fdmap() support
->   RPAL: fix race condition in pkru update
->   RPAL: fix pkru setup when fork
->   RPAL: add receiver waker
->   RPAL: fix unknown nmi on AMD CPU
->   RPAL: enable time slice correction
->   RPAL: enable fast epoll wait
->   samples/rpal: add RPAL samples
+> Signed-off-by: Alistair Popple <apopple@nvidia.com>
+> ---
+>   include/linux/memremap.h | 11 +++++++++++
+>   mm/pagewalk.c            | 12 ++++++++++--
+>   2 files changed, 21 insertions(+), 2 deletions(-)
 > 
->  arch/x86/Kbuild                               |    2 +
->  arch/x86/Kconfig                              |    2 +
->  arch/x86/entry/entry_64.S                     |  160 ++
->  arch/x86/events/amd/core.c                    |   14 +
->  arch/x86/include/asm/pgtable.h                |   25 +
->  arch/x86/include/asm/pgtable_types.h          |   11 +
->  arch/x86/include/asm/tlbflush.h               |   10 +
->  arch/x86/kernel/asm-offsets.c                 |    3 +
->  arch/x86/kernel/cpu/common.c                  |    8 +-
->  arch/x86/kernel/fpu/core.c                    |    8 +-
->  arch/x86/kernel/nmi.c                         |   20 +
->  arch/x86/kernel/process.c                     |   25 +-
->  arch/x86/kernel/process_64.c                  |  118 +
->  arch/x86/mm/fault.c                           |  271 ++
->  arch/x86/mm/mmap.c                            |   10 +
->  arch/x86/mm/tlb.c                             |  172 ++
->  arch/x86/rpal/Kconfig                         |   21 +
->  arch/x86/rpal/Makefile                        |    6 +
->  arch/x86/rpal/core.c                          |  477 ++++
->  arch/x86/rpal/internal.h                      |   69 +
->  arch/x86/rpal/mm.c                            |  426 +++
->  arch/x86/rpal/pku.c                           |  196 ++
->  arch/x86/rpal/proc.c                          |  279 ++
->  arch/x86/rpal/service.c                       |  776 ++++++
->  arch/x86/rpal/thread.c                        |  313 +++
->  fs/binfmt_elf.c                               |   98 +-
->  fs/eventpoll.c                                |  320 +++
->  fs/exec.c                                     |   11 +
->  include/linux/mm_types.h                      |    3 +
->  include/linux/rpal.h                          |  633 +++++
->  include/linux/sched.h                         |   21 +
->  init/init_task.c                              |    6 +
->  kernel/exit.c                                 |    5 +
->  kernel/fork.c                                 |   32 +
->  kernel/sched/core.c                           |  676 +++++
->  kernel/sched/fair.c                           |  109 +
->  kernel/sched/sched.h                          |    8 +
->  mm/mmap.c                                     |   16 +
->  mm/mprotect.c                                 |  106 +
->  mm/rmap.c                                     |    4 +
->  mm/vma.c                                      |   18 +
->  samples/rpal/Makefile                         |   17 +
->  samples/rpal/asm_define.c                     |   14 +
->  samples/rpal/client.c                         |  178 ++
->  samples/rpal/librpal/asm_define.h             |    6 +
->  samples/rpal/librpal/asm_x86_64_rpal_call.S   |   57 +
->  samples/rpal/librpal/debug.h                  |   12 +
->  samples/rpal/librpal/fiber.c                  |  119 +
->  samples/rpal/librpal/fiber.h                  |   64 +
->  .../rpal/librpal/jump_x86_64_sysv_elf_gas.S   |   81 +
->  .../rpal/librpal/make_x86_64_sysv_elf_gas.S   |   82 +
->  .../rpal/librpal/ontop_x86_64_sysv_elf_gas.S  |   84 +
->  samples/rpal/librpal/private.h                |  341 +++
->  samples/rpal/librpal/rpal.c                   | 2351 +++++++++++++++++
->  samples/rpal/librpal/rpal.h                   |  149 ++
->  samples/rpal/librpal/rpal_pkru.h              |   78 +
->  samples/rpal/librpal/rpal_queue.c             |  239 ++
->  samples/rpal/librpal/rpal_queue.h             |   55 +
->  samples/rpal/librpal/rpal_x86_64_call_ret.S   |   45 +
->  samples/rpal/offset.sh                        |    5 +
->  samples/rpal/server.c                         |  249 ++
->  61 files changed, 9710 insertions(+), 4 deletions(-)
->  create mode 100644 arch/x86/rpal/Kconfig
->  create mode 100644 arch/x86/rpal/Makefile
->  create mode 100644 arch/x86/rpal/core.c
->  create mode 100644 arch/x86/rpal/internal.h
->  create mode 100644 arch/x86/rpal/mm.c
->  create mode 100644 arch/x86/rpal/pku.c
->  create mode 100644 arch/x86/rpal/proc.c
->  create mode 100644 arch/x86/rpal/service.c
->  create mode 100644 arch/x86/rpal/thread.c
->  create mode 100644 include/linux/rpal.h
->  create mode 100644 samples/rpal/Makefile
->  create mode 100644 samples/rpal/asm_define.c
->  create mode 100644 samples/rpal/client.c
->  create mode 100644 samples/rpal/librpal/asm_define.h
->  create mode 100644 samples/rpal/librpal/asm_x86_64_rpal_call.S
->  create mode 100644 samples/rpal/librpal/debug.h
->  create mode 100644 samples/rpal/librpal/fiber.c
->  create mode 100644 samples/rpal/librpal/fiber.h
->  create mode 100644 samples/rpal/librpal/jump_x86_64_sysv_elf_gas.S
->  create mode 100644 samples/rpal/librpal/make_x86_64_sysv_elf_gas.S
->  create mode 100644 samples/rpal/librpal/ontop_x86_64_sysv_elf_gas.S
->  create mode 100644 samples/rpal/librpal/private.h
->  create mode 100644 samples/rpal/librpal/rpal.c
->  create mode 100644 samples/rpal/librpal/rpal.h
->  create mode 100644 samples/rpal/librpal/rpal_pkru.h
->  create mode 100644 samples/rpal/librpal/rpal_queue.c
->  create mode 100644 samples/rpal/librpal/rpal_queue.h
->  create mode 100644 samples/rpal/librpal/rpal_x86_64_call_ret.S
->  create mode 100755 samples/rpal/offset.sh
->  create mode 100644 samples/rpal/server.c
+> diff --git a/include/linux/memremap.h b/include/linux/memremap.h
+> index 4aa1519..54e8b57 100644
+> --- a/include/linux/memremap.h
+> +++ b/include/linux/memremap.h
+> @@ -198,6 +198,17 @@ static inline bool folio_is_fsdax(const struct folio *folio)
+>   	return is_fsdax_page(&folio->page);
+>   }
+>   
+> +static inline bool is_devdax_page(const struct page *page)
+> +{
+> +	return is_zone_device_page(page) &&
+> +		page_pgmap(page)->type == MEMORY_DEVICE_GENERIC;
+> +}
+> +
+> +static inline bool folio_is_devdax(const struct folio *folio)
+> +{
+> +	return is_devdax_page(&folio->page);
+> +}
 
-Seriously, look at all the files you're touching. All the lines you're changing.
-All the maintainers you had to CC. All for a random new RPC method you developed.
-This is _not_ mergeable.
+Hm, nobody uses folio_is_devdax() in this patch :)
+
 
 -- 
-Pedro
+Cheers,
+
+David / dhildenb
+
 
