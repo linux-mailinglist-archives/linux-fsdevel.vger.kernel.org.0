@@ -1,39 +1,39 @@
-Return-Path: <linux-fsdevel+bounces-50211-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50214-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E599EAC8C45
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 12:41:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E15AC8C4B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 12:41:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6413A7AD92F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 10:39:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73A241BA63B0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 10:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0897224225;
-	Fri, 30 May 2025 10:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D02E22ACDA;
+	Fri, 30 May 2025 10:41:03 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
+Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD27D1DA5F;
-	Fri, 30 May 2025 10:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4A901DA5F;
+	Fri, 30 May 2025 10:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748601657; cv=none; b=C9HuAJbI+fEgbhTXaVJa+uqyYrFnHiEIkUalcKwQe4jDIUsOO1o6UPZt9I7CtiQt4YPD0NqhfETBh87I+CRmcTKQeS4BGIld6sqxbOAhey1rOGPOLzImiLtSYt8HYspQCkJ8TZbxPr4+q/hBOUsyPsuw4PVGICD09ITIEGdlgo0=
+	t=1748601662; cv=none; b=izmFJcEuhaz0dti9dFI3ji1InIE6Gy+B+djpp5xfZXEweBGjkF2/qsgF5bG3LlMwyeI2HIgVKd0l027QA95X+/gadQltfAqZGHon3Q2227sljfatRZQc5TSYc36Cvzgo4TnRwa9q2mFhTJd/5hOhaMx3GP972VW5WSH21LnJRUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748601657; c=relaxed/simple;
-	bh=0CrEa+93oV3lNWDABrVddBk4IQRMdXd+GbD0mQaKIgs=;
+	s=arc-20240116; t=1748601662; c=relaxed/simple;
+	bh=RzPnU0Bkpy/sjTHlR6rlb6bBzrtLK8bjYM4mKwg7rIY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RFyMYMhsnpqcJOPEd14YNlW3deBAqXUby2EYHTvyNB/nbVzmJ+fsI3JhmaYqmSmyRt9WwDgmpLJvNsG5buVnTf58i6Vg4RXa+yLT1fh3zlz08AAprQEZFJJIVkatWAYWYDo0EMHPfYfjT/nhCQ/T+G3trHf1Rl2E4U1uDweqj5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+	 MIME-Version:Content-Type; b=WBt49K9oK4qty9vbdI6+UUi7tsrE7WZUa+boatyusRBD3groi0zEqi0gvGBFR/ls4ZfvqxLY6rmBlRO13ES+BrS5nsYdAtSd06yx8IAfqgnDEHHuqjs+XfGmISQ4gHDv96UH923OPCBiKWcDEPuXz4aH1DkTa2GSmOSj+REnz48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w011.hihonor.com (unknown [10.68.20.122])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4b808Y0D6pzYl7rs;
-	Fri, 30 May 2025 18:38:53 +0800 (CST)
-Received: from a010.hihonor.com (10.68.16.52) by w011.hihonor.com
- (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+Received: from w013.hihonor.com (unknown [10.68.26.19])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4b808G4q3zzYl7DQ;
+	Fri, 30 May 2025 18:38:38 +0800 (CST)
+Received: from a010.hihonor.com (10.68.16.52) by w013.hihonor.com
+ (10.68.26.19) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 30 May
  2025 18:40:52 +0800
 Received: from localhost.localdomain (10.144.18.117) by a010.hihonor.com
@@ -52,9 +52,9 @@ CC: <benjamin.gaignard@collabora.com>, <Brian.Starkey@arm.com>,
 	<linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
 	<linux-mm@kvack.org>, <bintian.wang@honor.com>, <yipengxiang@honor.com>,
 	<liulu.liu@honor.com>, <feng.han@honor.com>, wangtao <tao.wangtao@honor.com>
-Subject: [PATCH v3 3/4] udmabuf: Implement udmabuf rw_file callback
-Date: Fri, 30 May 2025 18:39:40 +0800
-Message-ID: <20250530103941.11092-4-tao.wangtao@honor.com>
+Subject: [PATCH v3 4/4] dmabuf:system_heap Implement system_heap exporter's rw_file callback.
+Date: Fri, 30 May 2025 18:39:41 +0800
+Message-ID: <20250530103941.11092-5-tao.wangtao@honor.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250530103941.11092-1-tao.wangtao@honor.com>
 References: <20250530103941.11092-1-tao.wangtao@honor.com>
@@ -68,44 +68,66 @@ Content-Type: text/plain
 X-ClientProxiedBy: w011.hihonor.com (10.68.20.122) To a010.hihonor.com
  (10.68.16.52)
 
-Construct bio_vec from folios, then call the other file's
-r/w callbacks for IO operations.
-Test data shows direct I/O copy_file_range improves performance by
-over 50% vs direct I/O mmap&read (2557 vs 1534).
+First verify system_heap exporter has exclusive dmabuf access.
+Build bio_vec from sgtable, then invoke target file's r/w callbacks for IO.
+Outperforms buffer IO mmap/read by 250%, beats direct I/O udmabuf
+copy_file_range by over 30% with initialization time significantly lower
+than udmabuf.
 
 Test data:
 |    32x32MB Read 1024MB  |Creat-ms|Close-ms|  I/O-ms|I/O-MB/s| I/O%
 |-------------------------|--------|--------|--------|--------|-----
-| 1)Beg udmabuf buffer R/W|    580 |    323 |   1238 |    867 | 100%
-| 2)     dmabuf buffer R/W|     48 |      5 |   1149 |    934 | 107%
-| 3) udma+memfd buffer R/W|    597 |    340 |   2157 |    497 |  57%
-| 4) udma+memfd direct R/W|    573 |    340 |    700 |   1534 | 176%
-| 5) u+mfd buffer sendfile|    577 |    340 |   1204 |    891 | 102%
-| 6) u+mfd direct sendfile|    567 |    339 |   2272 |    472 |  54%
-| 7)   u+mfd buffer splice|    570 |    337 |   1114 |    964 | 111%
-| 8)   u+mfd direct splice|    564 |    335 |    793 |   1355 | 156%
-| 9)  udmabuf buffer c_f_r|    577 |    323 |   1059 |   1014 | 116%
-|10)  udmabuf direct c_f_r|    582 |    325 |    420 |   2557 | 294%
-|11)End udmabuf buffer R/W|    586 |    323 |   1188 |    903 | 104%
+| 1)Beg  dmabuf buffer R/W|     47 |      5 |   1125 |    954 | 100%
+| 2)    udmabuf buffer R/W|    576 |    323 |   1228 |    874 |  91%
+| 3) udma+memfd buffer R/W|    596 |    340 |   2166 |    495 |  51%
+| 4) udma+memfd direct R/W|    570 |    338 |    711 |   1510 | 158%
+| 5)  udmabuf buffer c_f_r|    578 |    329 |   1128 |    952 |  99%
+| 6)  udmabuf direct c_f_r|    570 |    324 |    405 |   2651 | 277%
+| 7)   dmabuf buffer c_f_r|     47 |      5 |   1035 |   1037 | 108%
+| 8)   dmabuf direct c_f_r|     51 |      5 |    309 |   3480 | 364%
+| 9)End  dmabuf buffer R/W|     48 |      5 |   1153 |    931 |  97%
+
+|    32x32MB Write 1024MB |Creat-ms|Close-ms|  I/O-ms|I/O-MB/s| I/O%
+|-------------------------|--------|--------|--------|--------|-----
+| 1)Beg  dmabuf buffer R/W|     50 |      5 |   1405 |    764 | 100%
+| 2)    udmabuf buffer R/W|    580 |    341 |   1337 |    803 | 105%
+| 3) udma+memfd buffer R/W|    588 |    331 |   1820 |    590 |  77%
+| 4) udma+memfd direct R/W|    585 |    333 |    662 |   1622 | 212%
+| 5)  udmabuf buffer c_f_r|    577 |    329 |   1326 |    810 | 106%
+| 6)  udmabuf direct c_f_r|    580 |    330 |    602 |   1784 | 233%
+| 7)   dmabuf buffer c_f_r|     49 |      5 |   1330 |    807 | 105%
+| 8)   dmabuf direct c_f_r|     49 |      5 |    344 |   3127 | 409%
+| 9)End  dmabuf buffer R/W|     50 |      5 |   1442 |    745 |  97%
 
 Signed-off-by: wangtao <tao.wangtao@honor.com>
 ---
- drivers/dma-buf/udmabuf.c | 59 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ drivers/dma-buf/heaps/system_heap.c | 79 +++++++++++++++++++++++++++++
+ 1 file changed, 79 insertions(+)
 
-diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-index e74e36a8ecda..573275a51674 100644
---- a/drivers/dma-buf/udmabuf.c
-+++ b/drivers/dma-buf/udmabuf.c
-@@ -284,6 +284,64 @@ static int end_cpu_udmabuf(struct dma_buf *buf,
- 	return 0;
+diff --git a/drivers/dma-buf/heaps/system_heap.c b/drivers/dma-buf/heaps/system_heap.c
+index 26d5dc89ea16..d3a1956ebad8 100644
+--- a/drivers/dma-buf/heaps/system_heap.c
++++ b/drivers/dma-buf/heaps/system_heap.c
+@@ -20,6 +20,9 @@
+ #include <linux/scatterlist.h>
+ #include <linux/slab.h>
+ #include <linux/vmalloc.h>
++#include <linux/bvec.h>
++#include <linux/bio.h>
++#include <linux/uio.h>
+ 
+ static struct dma_heap *sys_heap;
+ 
+@@ -281,6 +284,81 @@ static void system_heap_vunmap(struct dma_buf *dmabuf, struct iosys_map *map)
+ 	iosys_map_clear(map);
  }
  
-+static ssize_t udmabuf_rw_file(struct dma_buf *dmabuf, loff_t my_pos,
-+			struct file *other, loff_t pos,
++static ssize_t system_heap_buffer_rw_other(struct system_heap_buffer *buffer,
++			loff_t my_pos, struct file *other, loff_t pos,
 +			size_t count, bool is_write)
 +{
-+	struct udmabuf *ubuf = dmabuf->priv;
++	struct sg_table *sgt = &buffer->sg_table;
++	struct scatterlist *sg;
 +	loff_t my_end = my_pos + count, bv_beg, bv_end = 0;
 +	pgoff_t pg_idx = my_pos / PAGE_SIZE;
 +	pgoff_t pg_end = DIV_ROUND_UP(my_end, PAGE_SIZE);
@@ -115,7 +137,6 @@ index e74e36a8ecda..573275a51674 100644
 +	struct iov_iter iter;
 +	unsigned int direction = is_write ? ITER_SOURCE : ITER_DEST;
 +	ssize_t ret = 0, rw_total = 0;
-+	struct folio *folio;
 +
 +	bv_num = min_t(size_t, pg_end - pg_idx + 1, 1024);
 +	bvec = kvcalloc(bv_num, sizeof(*bvec), GFP_KERNEL);
@@ -125,18 +146,19 @@ index e74e36a8ecda..573275a51674 100644
 +	init_sync_kiocb(&kiocb, other);
 +	kiocb.ki_pos = pos;
 +
-+	for (i = 0; i < ubuf->nr_pinned && my_pos < my_end; i++) {
-+		folio = ubuf->pinned_folios[i];
++	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
++		if (my_pos >= my_end)
++			break;
 +		bv_beg = bv_end;
-+		bv_end += folio_size(folio);
++		bv_end += sg->length;
 +		if (bv_end <= my_pos)
 +			continue;
 +
 +		bv_len = min(bv_end, my_end) - my_pos;
-+		bv_off = my_pos - bv_beg;
++		bv_off = sg->offset + my_pos - bv_beg;
 +		my_pos += bv_len;
 +		bv_total += bv_len;
-+		bvec_set_page(&bvec[bv_idx], &folio->page, bv_len, bv_off);
++		bvec_set_page(&bvec[bv_idx], sg_page(sg), bv_len, bv_off);
 +		if (++bv_idx < bv_num && my_pos < my_end)
 +			continue;
 +
@@ -159,17 +181,33 @@ index e74e36a8ecda..573275a51674 100644
 +	return rw_total > 0 ? rw_total : ret;
 +}
 +
- static const struct dma_buf_ops udmabuf_ops = {
- 	.cache_sgt_mapping = true,
- 	.map_dma_buf	   = map_udmabuf,
-@@ -294,6 +352,7 @@ static const struct dma_buf_ops udmabuf_ops = {
- 	.vunmap		   = vunmap_udmabuf,
- 	.begin_cpu_access  = begin_cpu_udmabuf,
- 	.end_cpu_access    = end_cpu_udmabuf,
-+	.rw_file = udmabuf_rw_file,
++static ssize_t system_heap_dma_buf_rw_file(struct dma_buf *dmabuf,
++			loff_t my_pos, struct file *file, loff_t pos,
++			size_t count, bool is_write)
++{
++	struct system_heap_buffer *buffer = dmabuf->priv;
++	ssize_t ret = -EBUSY;
++
++	mutex_lock(&buffer->lock);
++	if (list_empty(&buffer->attachments) && !buffer->vmap_cnt)
++		ret = system_heap_buffer_rw_other(buffer, my_pos,
++			file, pos, count, is_write);
++	mutex_unlock(&buffer->lock);
++
++	return ret;
++}
++
+ static void system_heap_dma_buf_release(struct dma_buf *dmabuf)
+ {
+ 	struct system_heap_buffer *buffer = dmabuf->priv;
+@@ -308,6 +386,7 @@ static const struct dma_buf_ops system_heap_buf_ops = {
+ 	.mmap = system_heap_mmap,
+ 	.vmap = system_heap_vmap,
+ 	.vunmap = system_heap_vunmap,
++	.rw_file = system_heap_dma_buf_rw_file,
+ 	.release = system_heap_dma_buf_release,
  };
  
- #define SEALS_WANTED (F_SEAL_SHRINK)
 -- 
 2.17.1
 
