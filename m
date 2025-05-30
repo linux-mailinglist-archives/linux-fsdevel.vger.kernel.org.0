@@ -1,117 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-50245-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50246-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F38FBAC96CE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 22:56:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D484DAC97D2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 00:43:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A223ACCC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 20:56:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF8A57B758E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 22:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB74321ABAE;
-	Fri, 30 May 2025 20:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6A7928B514;
+	Fri, 30 May 2025 22:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OYl3Y3gX"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="cUql0G7M"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB9F1C8638
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 20:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F30FA2853E2;
+	Fri, 30 May 2025 22:42:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748638597; cv=none; b=t3TjEvno95F/cK1sPCw2qvjY6xQMZsefqeWyW7TLsL5TZgmaFzA24sRe4g9L3rnzQt53Vc+37C8Y9kVFg+mE4w6kYRfoiygrF8ml3DAD0HnppcSPjfBE12M6FZbjFE13F3L2ssMT587KBpdfMoo243uTt5ebJ6p1fgGWmQ8H7a8=
+	t=1748644973; cv=none; b=oTjQ0ztaae4g2zV9RsH2efAk26DJ6f0ClTr3BT2XU4dmHpvN6LuDoJlitPa2d38hf72Yb0nCcsP34at0z0Sc3OjnlUkfp68oQLq7GDU2V7wPqzteCLtZHRJx85NlvRxryP2sPAjFe+ehSVEdYn5EzcCe71mRssQWJFFvFSiUrz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748638597; c=relaxed/simple;
-	bh=aTMZOoEonO6Reh8/a9H2cF5EpK+6MF06CgxI9S7d5PU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=s9qCLG55rJRnG4E51rPthywFZHxPdXf2VYim+tGo/YyWqOwE8/RXEQdaVceM7bMH5z/jfvieBzKKCE1bsNOdFqxlcFA2fB6wEJWZp6hybr4SKSIfgF2K4OL+bO7/bZ+exrWmlcETpdpwVbhPG7MQh/I2ZFlW+xvJ2gx+uCcUwL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OYl3Y3gX; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=j+ZyF493nKzVKuPrM4d400cja4iHVOdXy45r/oWWXqs=; b=OYl3Y3gXyIkmn5fQnJ0v73q8LR
-	UXPQWorvoEv/oBpLHEpz2Pile3+C312+qJ4GyhKXkT1bZ7l4u0HJjteJbWfz6aXCiWu/t29xdG3F4
-	grGgbN9NFxIUprm40K0i8GyQwFtuOt9/8p71pWkycrWf2Zkc9VySiRczis7n5+bYRFn31Tj85IIFr
-	q95SW/furOS8tFDQWqGzhVRtsRbjSDE8wfcz4NeTkaAX6HypdWGf3nYQRl+MIaMtpIsEd7PhyMDGD
-	NKu3ZuTFNHmI1Wbd/TEZnRTIk6y3PHKQAAjU6vTZsCcZfSWQP74ICkCP4TXf9HTmiSQqgrscqSLaS
-	cQEdquXA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uL6mE-0000000G4qr-0nqx;
-	Fri, 30 May 2025 20:56:30 +0000
-Date: Fri, 30 May 2025 21:56:30 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	David Howells <dhowells@redhat.com>,
-	Jeff Layton <jlayton@kernel.org>,
-	Paulo Alcantara <pc@manguebit.com>
-Subject: [git pull] ->d_automount() pile
-Message-ID: <20250530205630.GC3574388@ZenIV>
+	s=arc-20240116; t=1748644973; c=relaxed/simple;
+	bh=B/iHNMvw8mF0JmcbV/Ww2Zu1GyyER0SInWNMF1ybJBs=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=pRDITXUwEAi14Z3Ysgz4szrHwX48xGpUGPC3MuHXC1vW3zyr+YrfnmMppt0nA0wV75uIQG31svdeVEisxMk1IUzMonOSvsKpS7X0xk2tkLacc8NzkqPj8dDQpH4dI740xxh8lf7ckrJb3CVFXW7Y91i59MQoEL+CWP67b9dK/o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=cUql0G7M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A865BC4CEE9;
+	Fri, 30 May 2025 22:42:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1748644972;
+	bh=B/iHNMvw8mF0JmcbV/Ww2Zu1GyyER0SInWNMF1ybJBs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cUql0G7MM2YqNN/UBvnnZgBT5VGYfWKe1XBDEBCJVTML/dklTuCOChratyStM1z3r
+	 NJGXoD/xMliKV8+qGZt/n12lWHmh43UX9/OjWVD4xk4/ASqHI1bHx3hR+6ehcrgJ/t
+	 CSb9wxzn0ZeI/U2uCsz/KkL5wFRvOwr+0ymJ1WYM=
+Date: Fri, 30 May 2025 15:42:50 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Bo Li <libo.gcs85@bytedance.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, x86@kernel.org, luto@kernel.org,
+ kees@kernel.org, david@redhat.com, juri.lelli@redhat.com,
+ vincent.guittot@linaro.org, peterz@infradead.org, dietmar.eggemann@arm.com,
+ hpa@zytor.com, acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
+ adrian.hunter@intel.com, kan.liang@linux.intel.com,
+ viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, rostedt@goodmis.org,
+ bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, jannh@google.com,
+ pfalcato@suse.de, riel@surriel.com, harry.yoo@oracle.com,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ duanxiongchun@bytedance.com, yinhongbo@bytedance.com,
+ dengliang.1214@bytedance.com, xieyongji@bytedance.com,
+ chaiwen.cc@bytedance.com, songmuchun@bytedance.com, yuanzhu@bytedance.com,
+ chengguozhu@bytedance.com, sunjiadong.lff@bytedance.com
+Subject: Re: [RFC v2 00/35] optimize cost of inter-process communication
+Message-Id: <20250530154250.15caab4e3991de779aabe02c@linux-foundation.org>
+In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
+References: <cover.1748594840.git.libo.gcs85@bytedance.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Trivial conflict in Documentation/filesystems/porting.rst - a chunk added
-at the end (as always), with other additions from already merged branches.
+On Fri, 30 May 2025 17:27:28 +0800 Bo Li <libo.gcs85@bytedance.com> wrote:
 
-A bunch of odd boilerplate gone from instances - the reason for those was
-the need to protect yet-to-be-attched mount from mark_mounts_for_expiry()
-deciding to take it out.  That's easy to detect and take care about in
-mark_mounts_for_expiry() itself; no need to have every instance similate
-mount being busy by grabbing an extra reference to it, with finish_automount()
-undoing that once it attaches that mount.  Should've done it that way from
-the very beginning...  It's a flagday change, thankfully there are very few
-instances.
+> During testing, the client transmitted 1 million 32-byte messages, and we
+> computed the per-message average latency. The results are as follows:
+> 
+> *****************
+> Without RPAL: Message length: 32 bytes, Total TSC cycles: 19616222534,
+>  Message count: 1000000, Average latency: 19616 cycles
+> With RPAL: Message length: 32 bytes, Total TSC cycles: 1703459326,
+>  Message count: 1000000, Average latency: 1703 cycles
+> *****************
+> 
+> These results confirm that RPAL delivers substantial latency improvements
+> over the current epoll implementation—achieving a 17,913-cycle reduction
+> (an ~91.3% improvement) for 32-byte messages.
 
-The following changes since commit 92a09c47464d040866cf2b4cd052bc60555185fb:
+Noted ;)
 
-  Linux 6.15-rc5 (2025-05-04 13:55:04 -0700)
+Quick question:
 
-are available in the Git repository at:
+>  arch/x86/Kbuild                               |    2 +
+>  arch/x86/Kconfig                              |    2 +
+>  arch/x86/entry/entry_64.S                     |  160 ++
+>  arch/x86/events/amd/core.c                    |   14 +
+>  arch/x86/include/asm/pgtable.h                |   25 +
+>  arch/x86/include/asm/pgtable_types.h          |   11 +
+>  arch/x86/include/asm/tlbflush.h               |   10 +
+>  arch/x86/kernel/asm-offsets.c                 |    3 +
+>  arch/x86/kernel/cpu/common.c                  |    8 +-
+>  arch/x86/kernel/fpu/core.c                    |    8 +-
+>  arch/x86/kernel/nmi.c                         |   20 +
+>  arch/x86/kernel/process.c                     |   25 +-
+>  arch/x86/kernel/process_64.c                  |  118 +
+>  arch/x86/mm/fault.c                           |  271 ++
+>  arch/x86/mm/mmap.c                            |   10 +
+>  arch/x86/mm/tlb.c                             |  172 ++
+>  arch/x86/rpal/Kconfig                         |   21 +
+>  arch/x86/rpal/Makefile                        |    6 +
+>  arch/x86/rpal/core.c                          |  477 ++++
+>  arch/x86/rpal/internal.h                      |   69 +
+>  arch/x86/rpal/mm.c                            |  426 +++
+>  arch/x86/rpal/pku.c                           |  196 ++
+>  arch/x86/rpal/proc.c                          |  279 ++
+>  arch/x86/rpal/service.c                       |  776 ++++++
+>  arch/x86/rpal/thread.c                        |  313 +++
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-automount
-
-for you to fetch changes up to 2dbf6e0df447d1542f8fd158b17a06d2e8ede15e:
-
-  kill vfs_submount() (2025-05-06 12:49:07 -0400)
-
-----------------------------------------------------------------
-automount wart removal
-
-Calling conventions of ->d_automount() made saner (flagday change)
-vfs_submount() is gone - its sole remaining user (trace_automount) had
-been switched to saner primitives.
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-----------------------------------------------------------------
-Al Viro (2):
-      saner calling conventions for ->d_automount()
-      kill vfs_submount()
-
- Documentation/filesystems/porting.rst |  7 +++++++
- Documentation/filesystems/vfs.rst     |  4 +---
- fs/afs/mntpt.c                        |  1 -
- fs/fuse/dir.c                         |  3 ---
- fs/namespace.c                        | 24 +++---------------------
- fs/nfs/namespace.c                    |  1 -
- fs/smb/client/namespace.c             |  1 -
- fs/super.c                            |  9 +--------
- include/linux/fs.h                    |  1 -
- include/linux/mount.h                 |  3 ---
- kernel/trace/trace.c                  | 19 +++++++++++++++----
- 11 files changed, 27 insertions(+), 46 deletions(-)
+The changes are very x86-heavy.  Is that a necessary thing?  Would
+another architecture need to implement a similar amount to enable RPAL?
+IOW, how much of the above could be made arch-neutral?
 
