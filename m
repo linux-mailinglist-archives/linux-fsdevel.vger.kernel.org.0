@@ -1,60 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-50139-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50140-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28D94AC87C9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 07:21:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 806EFAC87D6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 07:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD4BC3A929C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 05:21:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5071A4E0D8A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 05:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA331EB5FD;
-	Fri, 30 May 2025 05:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3441F5425;
+	Fri, 30 May 2025 05:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQSop8Gq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IzUL6wHk"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14EDB1E3DE8;
-	Fri, 30 May 2025 05:21:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F812209F46;
+	Fri, 30 May 2025 05:24:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748582504; cv=none; b=IcrDvmZc3hxhsF9g5H3DntqpClb2FQLPyHjDLvB5Cw0BdpxrHk2qMGfirMLPiMFnCXHyvirygGAXadOnceL0n38L9/qOZlqvj0t4KJpeTTvMwrcrPjzkGq3016wKFWEpagMvOkgnWoOnuOWfJwFCGrZ/W4NQdMh/gWcuk1PLqL4=
+	t=1748582687; cv=none; b=U2O4Bj/5eaxVhEarYfTQxbcDcE0n60fwb1kohbL+Akt+oh/LU7NYx/iRN55+ygeKUOcrcOcjePM87W0HR6C5gcH9kCLjZtdDufGbxiK7exGcRmN5omb4qH711j2xBLqRUlZjOoIL4LNYR+MBOV9TPD3F/N1dCdkKABgxaDLzbYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748582504; c=relaxed/simple;
-	bh=6GtyjWgTMcrJWZp97aOKpurW7V3N2yGrsSmdcIKOhK0=;
+	s=arc-20240116; t=1748582687; c=relaxed/simple;
+	bh=ec41PG49I/K0HIAeno/rpOnJa0VI0Ixro906bMEYKKw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZJXUitLTm6e9OYz/4qdO8M3za/T6R51t2kK/jrPOljuo7jw1u3a+sruLiBx3aE81kWyZaGJ68CfISq/dzUpbXOoy8WPeQ26SP+bG9lzlWllUZPfvNikGQgZagSrBxhVt3ERUyT3CQZYUrTs2G4M87dQ2BxLkOKtmWnikZ35GUp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQSop8Gq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7596BC4CEED;
-	Fri, 30 May 2025 05:21:42 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=eDTdqkJFsyC7gLWipR2WXe1BJ+BgGJ/P7cWbQ+xAJ6sqgU42q/zPaAC+XRN1BrbcM5sfNroNtn4Vy6qi8losq87yQFuZHpsk4e6QT14VlW9CWv+xD1//0GtLXqEJ7NjeHUgaoTBjeIun0SQlI3a4hm4P6/q8Wv8R09leUwkQX+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IzUL6wHk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 077FFC4CEED;
+	Fri, 30 May 2025 05:24:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748582503;
-	bh=6GtyjWgTMcrJWZp97aOKpurW7V3N2yGrsSmdcIKOhK0=;
+	s=k20201202; t=1748582686;
+	bh=ec41PG49I/K0HIAeno/rpOnJa0VI0Ixro906bMEYKKw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XQSop8GqsDAL4hWo/RY513CbLEFaNs486dz5ZrmHE2E++y0eYEknXCzduVAGt1/Gq
-	 gqCs4qtwUQ8T4IKvRhWEcaF2ICBGDpRY0O+LAAJYEDWLHRIO3WFQwXUn7+B9xpSISd
-	 Xg8o2vL2eQ3M9+xOhpWD2NbfICUBoN46BNjF7tSGKxaHQeJggG1XUV2hAeXdbSvDPw
-	 ne7fa4pNOsXtmm8Hf6qCjja981SO8tt3Py8N7D4PqPUNzuGz/Y0HaI0kV2rnCJ7p9K
-	 P2WLq7BRBdLuSppqSW62UXzEE1qM/OnfwVymmqqMaY9N+BVCpCBnrVVUBsj9Ba758h
-	 g24sz6aTeqdJg==
-Date: Fri, 30 May 2025 07:21:40 +0200
+	b=IzUL6wHkolrbfAyxfUMztknnXEm3WD4rqsV5GqZhEkGHtltzL3bjqh+CxOaBFGH2f
+	 eG/b/cvxAohke+eNF2GG/GjNJHiK4wTO8zQ/Ujeg3JZFqvj3LmDgsaqsFyAmLijGh/
+	 SWmAOSXXhD/OiDBQLQIZyflPiUbLtNiW2CvmgBSpfuF4nGiTOM6vu3Cp3fYjG4NDu2
+	 kU39Fs0NcHnCrvztoIRUqgKBiJUE9P01tQx6n7nIIWCO/5DjSQJP9SYkfxsKXGE6HY
+	 8Y1izxG/dHrx4+bX6/cuoTGIQoRac0S20HLmOfZU+9QYxQtAHRD44Xp1CPXkxtCPPZ
+	 woTnX1mQ8ZABQ==
+Date: Fri, 30 May 2025 07:24:41 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Yangtao Li <frank.li@vivo.com>
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, 
-	"glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>, "slava@dubeyko.com" <slava@dubeyko.com>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] hfs: correct superblock flags
-Message-ID: <20250530-gutmachen-pudding-d69332f92e08@brauner>
-References: <20250519165214.1181931-1-frank.li@vivo.com>
- <20250519165214.1181931-2-frank.li@vivo.com>
- <ca3b43ff02fd76ae4d2f2c2b422b550acadba614.camel@dubeyko.com>
- <SEZPR06MB5269D12DE8D4F48AF96E7409E867A@SEZPR06MB5269.apcprd06.prod.outlook.com>
- <e388505b98a96763ea8b5d8197a9a2a17ec08601.camel@ibm.com>
- <7deb63a4-1f5f-4d6c-9ff4-0239464bd691@vivo.com>
+To: Eric Biggers <ebiggers@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>
+Cc: Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, jack@suse.cz, anuj1072538@gmail.com, axboe@kernel.dk, 
+	viro@zeniv.linux.org.uk, hch@infradead.org, linux-block@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, joshi.k@samsung.com
+Subject: Re: [RFC] fs: add ioctl to query protection info capabilities
+Message-ID: <20250530-raumakustik-herren-962a628e1d21@brauner>
+References: <CGME20250527105950epcas5p1b53753ab614bf6bde4ffbf5165c7d263@epcas5p1.samsung.com>
+ <20250527104237.2928-1-anuj20.g@samsung.com>
+ <yq1jz60gmyv.fsf@ca-mkp.ca.oracle.com>
+ <fec86763-dd0e-4099-9347-e85aa4a22277@samsung.com>
+ <20250529175934.GB3840196@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -63,33 +64,57 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7deb63a4-1f5f-4d6c-9ff4-0239464bd691@vivo.com>
+In-Reply-To: <20250529175934.GB3840196@google.com>
 
-On Thu, May 29, 2025 at 10:25:02AM +0800, Yangtao Li wrote:
-> +cc Christian Brauner
-> 
-> 在 2025/5/29 05:26, Viacheslav Dubeyko 写道:
-> > On Wed, 2025-05-28 at 16:37 +0000, 李扬韬 wrote:
-> > > Hi Slava,
+On Thu, May 29, 2025 at 05:59:34PM +0000, Eric Biggers wrote:
+> On Thu, May 29, 2025 at 12:42:45PM +0530, Anuj Gupta/Anuj Gupta wrote:
+> > On 5/29/2025 8:32 AM, Martin K. Petersen wrote:
 > > > 
-> > > > I am slightly confused by comment. Does it mean that the fix introduces more errors? It looks like we need to have more clear explanation of the fix here.
+> > > Hi Anuj!
 > > > 
-> > > I'll update commit msg.
+> > > Thanks for working on this!
 > > > 
-> > > > s->s_flags |= SB_NODIRATIME | SB_NOATIME;
+> > Hi Martin,
+> > Thanks for the feedback!
+> > 
+> > >> 4. tuple_size: size (in bytes) of the protection information tuple.
+> > >> 6. pi_offset: offset of protection info within the tuple.
 > > > 
-> > > IIUC, SB_NOATIME > SB_NODIRATIME.
+> > > I find this a little confusing. The T10 PI tuple is <guard, app, ref>.
+> > > 
+> > > I acknowledge things currently are a bit muddy in the block layer since
+> > > tuple_size has been transmogrified to hold the NVMe metadata size.
+> > > 
+> > > But for a new user-visible interface I think we should make the
+> > > terminology clear. The tuple is the PI and not the rest of the metadata.
+> > > 
+> > > So I think you'd want:
+> > > 
+> > > 4. metadata_size: size (in bytes) of the metadata associated with each interval.
+> > > 6. pi_offset: offset of protection information tuple within the metadata.
 > > > 
 > > 
-> > Semantically, it's two different flags. One is responsible for files and another
-> > one is responsible for folders. So, this is why I believe it's more safe to have
-> > these both flags.
+> > Yes, this representation looks better. Will make this change.
+> > 
+> > >> +#define	FILE_PI_CAP_INTEGRITY		(1 << 0)
+> > >> +#define	FILE_PI_CAP_REFTAG		(1 << 1)
+> > > 
+> > > You'll also need to have corresponding uapi defines for:
+> > > 
+> > > enum blk_integrity_checksum {
+> > >          BLK_INTEGRITY_CSUM_NONE         = 0,
+> > >          BLK_INTEGRITY_CSUM_IP           = 1,
+> > >          BLK_INTEGRITY_CSUM_CRC          = 2,
+> > >          BLK_INTEGRITY_CSUM_CRC64        = 3,
+> > > } __packed ;
+> > >
+> > 
+> > Right, I'll add these definitions to the UAPI.
 > 
-> To be honest, from my point of view, SB_NOATIME is more like disabling atime
-> updates for all types of files, not just files. I would like to know what
-> vfs people think, whether we need to use both flags at the same time.
+> Would it make sense to give the CRCs clearer names?  For example CRC16_T10DIF
+> and CRC64_NVME.
 
-SB_NODIRATIME should be a subset of SB_NOATIME. So all you should need
-is SB_NOATIME to disable it for all files.
+Hm, I wonder whether we should just make all of this an extension of the
+new file_getattr() system call we're about to add instead of adding a
+separate ioctl for this.
 
