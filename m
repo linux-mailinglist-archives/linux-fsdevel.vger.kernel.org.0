@@ -1,276 +1,179 @@
-Return-Path: <linux-fsdevel+bounces-50114-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50115-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2B0AC84F3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 01:16:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89ECEAC8591
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 02:01:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D0454A37A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 May 2025 23:16:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4522E4A4D93
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 00:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A8F23278D;
-	Thu, 29 May 2025 23:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7D0BA36;
+	Fri, 30 May 2025 00:01:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CD6kGZbm"
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="dyi4uLR+"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547CE1AAE28;
-	Thu, 29 May 2025 23:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0562632
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 00:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748560573; cv=none; b=B35ettONoShFArZtdX0JIt5Cn8ZX9YOCt1zwsJJTi1WnDUT+DM5V4aHVoOneG5dn58L3JNr5me+iu7YKOEwkJunZtJPzmSbjOdBSOHf9jGhtKH1lVFzCCHVXkB8Mch2ZX350gKo7j+GpA0K+P2ifSX6rVLhuBUQZsHZ+a9FMK9w=
+	t=1748563300; cv=none; b=bV7xpW0BrYa3o10RcZC84VWa+WAumQux9509Wj9LWCeflM/GhBoYEgt/9t2deOVFwsvNqscPMbDgCB58r8xX/w0m1PTFhR9DFErqYAGcEVlVhrc6V3g8hK5+4Rxq79IbnbyBpH2Xx7zx0yJ5txEhf5S55ta8dMr/h6aAI9rPyII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748560573; c=relaxed/simple;
-	bh=uN2v3UTbEty8/RR+P2U4P987E1Lnoe4g4hD5/MHnefg=;
+	s=arc-20240116; t=1748563300; c=relaxed/simple;
+	bh=4KfLO9jtt3CCT0Cofo6vrnLfO0G69jIIrdzEkUUZOLM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u0tkliqX646ao2RZ68uttOd3c86mtyUjKD6vhVJ1Oi9wl3lRVwPmo+9V7ufqqHd8dvOeBw4nHTs85CeRIawNfoOjl7MybbZJg50CfOGmRioEXL5p/yPs/5hJUsqagH6cV85xB1FVKmBiFftd+SZ/24o91SUQqAysmgvBvsv9P1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CD6kGZbm; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-476a720e806so12740641cf.0;
-        Thu, 29 May 2025 16:16:10 -0700 (PDT)
+	 To:Cc:Content-Type; b=YRd+NJ7/eZ8xSxjUhltCVpgiNV2YxdwPTmUyF06bpywHN49OODyU9HhNvgTByFl5Pa9eg7eqDCEwUwFa1XRtRwV6CaCoLdNva40fMOI6SIQKULH5jNlHNBtCmeqd8buMIU2hirMLCIm+q/8oW6wRLGu7QmqtCIOQ5GY+KKDo5JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=dyi4uLR+; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-70e4bd65106so15282247b3.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 May 2025 17:01:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748560569; x=1749165369; darn=vger.kernel.org;
+        d=paul-moore.com; s=google; t=1748563296; x=1749168096; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wS0nP8SmvkY9o+OxO2Dpp0pXbkQSsrL7lfI+o9vESoc=;
-        b=CD6kGZbm7+s1CiCGd5bb8pHj59I5m+NwLpc93NhdKlceex5uxMUUeZlqTimWSs/0+O
-         jyjVQpHySvL2Jhp7jDPWGtPNvv+6zBnMBI1Z26dp3mDjxVxyuor9Nv49b58W4IQV2eHF
-         bZdsVfQy3DlTDZuEdRBUBYkplfviHHyiEy8gLJu9USG/XNq3xwCz8i1yAqbY4jOlnP9C
-         Bypoxj5tJgwgLc36KbOdjGtxNg3F2gdLbeip9ssuT3GVkZNPZuDnBNIPXMIs7nnk+XOS
-         OvSOKj1Pba0xOvv3kokdXLqJZTNgGX7u3GyaLMQdKDIrZ2uA56Nd4MpQCl8/e6iK0eAH
-         WbgA==
+        bh=5MIX3b1M4438lffSOGfLxCT9xEv4uwXG8CbDYBfSaRA=;
+        b=dyi4uLR+foo0voEBBcdPlsiMcllA1nw76lqSd1O3yvxQLIGcfdJXRLasHsmhzkHeBB
+         y/Mvo4bPlIm4amTRC35QA5ucjEZewN6YYn4/Wq4oFyeUyE1ipBmhIDqB9F9o+UiI7fFz
+         e0X094E8l1AVyk7fw/DUmPAt/8P7JwcIOSiya9Bn5cal3kNh3JcscvXQ7H6JKAHlPw5B
+         E7bNdd2udG8EBF6LF8qZWmNq7OPHPpuQLkaYnG3ebsmh0GhXn8aGWxAWH6lFAy0u2OJx
+         shzPZIIbOSaLzAwyzgVBbp3wL+h2EIxoHAW7YruQf0sG3hbiRYkEfxxlk7RzS4E4AMpF
+         ZXiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748560569; x=1749165369;
+        d=1e100.net; s=20230601; t=1748563296; x=1749168096;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wS0nP8SmvkY9o+OxO2Dpp0pXbkQSsrL7lfI+o9vESoc=;
-        b=BCh4JJ/c4HKJhYhzO7VV9G5yZJxr1B1HDR0lTclBfbcdCOuER9TZZTHi87QqdZonpS
-         dGqRYhZ19Jt3u6rqBRAXYjwXEoDDGoPXUYQTp8XN3DLoFOGDsyM3rbllmCrxc1ru9JlT
-         jJxgrl7n32TkrLmx1keMM8Hw8bW6nQxA7cxhwsV4wboW3a9rB92gZh/6XkA8+kPexroE
-         wgbF+rlYOcn52bIpvAYPF69+au7sX9AIMG2Nzq4IJK+kREs/Br9rMAHN61+eSFg72aRS
-         yWu0BbS90woJ3cYqlymkDsjxzONlbF7OeqGm5OD6/uJx1XIkgDIEwTR0mVuPSwutIixn
-         ISnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVIeWbBwVXJtY1pisNBUUIIFMav0vcVjtb7uzIfkjmbIRxZU1kxqvaCgxF+a9cq0IFmkL6FhLDTS70=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww+w2c8id5dOEFxUx9AdneFrcKrckGHs2tsekbOTafVC1d88Dv
-	9v+gnr7bRDH27hq5Jkftuf26YeZo6bblnf/k7FAZFqmCe0/2tlkonnrFQvt4O2+DVOsGOayiPaC
-	XZTjfinCn5MLBL9ZIClyyUMR9jFzrloZ0ng==
-X-Gm-Gg: ASbGncvoWCvSXplieYkmeadrXH8w396xtNUCCESGYDYyiYtXhF8gjs3WR+rtdg16/QB
-	OrE6YmnqyldMtBcTGiXIW+S4RRIggcWsNlhi4Gu5u3i/YBO5TpCpNFM7/j0Rab+kBDXlFOydY4D
-	avWRedkKv8rdDITfHNthu8GiUIkLMOK2rEWiRumTC1ytMZeulzcX/AqZB2v9xg6KruM0LPVg==
-X-Google-Smtp-Source: AGHT+IEZeIUQLwv/7iZFp88gVmM5+jxb2YibShcifxR9NaP2bZvIslNAlAv/2LkK/Cs+lZG+M/f9g58a+zIEr3eh964=
-X-Received: by 2002:a05:622a:c87:b0:494:adff:7fe2 with SMTP id
- d75a77b69052e-4a4400ada9dmr25506941cf.43.1748560568993; Thu, 29 May 2025
- 16:16:08 -0700 (PDT)
+        bh=5MIX3b1M4438lffSOGfLxCT9xEv4uwXG8CbDYBfSaRA=;
+        b=rWy9oIGn0mqv+QvdqgqulpMBmQI7eM01v4y8yOGGZfsMn9jNBxxExd08vzh9NQWFsm
+         ygc89RbPj84ykRXGPv1qJ/nQCSQj7CT0Nr+pNlW8Pjo6fTLLvK/hqG247Tt0vNcQEFpg
+         bZuvax0JpKI8HAoYi6pdl5ptB9MivCo0FhiNZ6hJL9O6u2ZcFEMvg2SOQc+dqwZCWVD2
+         rt45a5Wi+nwgsjGh8XYfXgl9nhPO0Fi7YCbua3jDmJToREcNGn/Q+L/bI8jHDoFlX4Hr
+         eqGubZ37okSXTXboiqobDn2+H2a31K54dejKzGMsMQvpYXdMwmIJubEhrdVusdwzEOJZ
+         Ko7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXCNoaQ2NmSSQxM9qLBxj9JSDcqeACS/jgS0i0Z/MckjT2yTVLtfJl+sN3RafCoEN9ZR0GgSXAFoHqqpgSZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRZki/HyuYiT0f9CbRRbxXO4iWag1kczTlvBL290DAh9LHJLVQ
+	Y/SjTXEPYvIeRm2Gjx11arqWqLf9IuHet0cv+iMJr4jdBbAAWu2H5dPt2gRlwlta6s9Ere5+a/r
+	bHnOO2sAehNPbKO9uZ6JZzu6/AYzq9bR92BWVKNVv
+X-Gm-Gg: ASbGncvuMYa0YBkddD6Jrs2rSjbu13tdJju8SOzL0F71/+VHu/Y2g7ba78EmsVjY6Nb
+	lChSEliGJJknmseI0PASk+Y8vi94sb1N8Mn42bFjrC6D+jX/mlOmmrPn2GkzmClZPzwfl9hSaBj
+	ooLsI4q1X+zz9hgu5a1goJAirRBTMoJkV4
+X-Google-Smtp-Source: AGHT+IGGGhQAa5S3GKFovKVI20G8rdzbsW9bl7o1JKIxwh7YiQMFUZDSf0TqE1szcGdV4kZYLl4fwoY5cOSMpz5XAHU=
+X-Received: by 2002:a05:690c:fc1:b0:70c:d322:8587 with SMTP id
+ 00721157ae682-71057bf5e77mr3658087b3.6.1748563296467; Thu, 29 May 2025
+ 17:01:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <174787195502.1483178.17485675069927796174.stgit@frogsfrogsfrogs>
- <174787195629.1483178.7917092102987513364.stgit@frogsfrogsfrogs> <CAJnrk1ZEtXoMKXMjse-0RtSLjaK1zfadr3zR2tP4gh1WauOUWA@mail.gmail.com>
-In-Reply-To: <CAJnrk1ZEtXoMKXMjse-0RtSLjaK1zfadr3zR2tP4gh1WauOUWA@mail.gmail.com>
-From: Joanne Koong <joannelkoong@gmail.com>
-Date: Thu, 29 May 2025 16:15:57 -0700
-X-Gm-Features: AX0GCFuG9IkAkb_NwffqnSorzyDBmtvh_DfpUQi35Ja7cU3JgWRX5cTdsMeO78g
-Message-ID: <CAJnrk1YDxn0ZMk0BrTnNStkXErjY_LSGYHgdsRjiiZ2dTpftAA@mail.gmail.com>
-Subject: Re: [PATCH 03/11] fuse: implement the basic iomap mechanisms
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu, 
-	linux-xfs@vger.kernel.org, bernd@bsbernd.com, John@groves.net
+References: <3c2679cb9df8a110e1e21b7f387b77ddfaacc289.1741210251.git.rgb@redhat.com>
+ <fb8db86ae7208a08277ddc0fb949419b@paul-moore.com> <aDW5mI2dE7xOMMni@madcap2.tricolour.ca>
+In-Reply-To: <aDW5mI2dE7xOMMni@madcap2.tricolour.ca>
+From: Paul Moore <paul@paul-moore.com>
+Date: Thu, 29 May 2025 20:01:24 -0400
+X-Gm-Features: AX0GCFsDgJPI3AA4g9bJCmVnYDRvl1eKBbP8-Y291QRoyfFXSEbMHlAYVV3Af9k
+Message-ID: <CAHC9VhTO-bdwzfSeDvJcV19PPfqXn_HM1PUfHe5Z6fPmmsypqA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] audit: record fanotify event regardless of
+ presence of rules
+To: Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Linux Kernel Audit Mailing List <audit@vger.kernel.org>, Eric Paris <eparis@parisplace.org>, 
+	Steve Grubb <sgrubb@redhat.com>, Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 29, 2025 at 3:15=E2=80=AFPM Joanne Koong <joannelkoong@gmail.co=
-m> wrote:
+On Tue, May 27, 2025 at 9:10=E2=80=AFAM Richard Guy Briggs <rgb@redhat.com>=
+ wrote:
+> On 2025-04-11 14:14, Paul Moore wrote:
+> > On Mar  5, 2025 Richard Guy Briggs <rgb@redhat.com> wrote:
+> > >
+> > > When no audit rules are in place, fanotify event results are
+> > > unconditionally dropped due to an explicit check for the existence of
+> > > any audit rules.  Given this is a report from another security
+> > > sub-system, allow it to be recorded regardless of the existence of an=
+y
+> > > audit rules.
+> > >
+> > > To test, install and run the fapolicyd daemon with default config.  T=
+hen
+> > > as an unprivileged user, create and run a very simple binary that sho=
+uld
+> > > be denied.  Then check for an event with
+> > >     ausearch -m FANOTIFY -ts recent
+> > >
+> > > Link: https://issues.redhat.com/browse/RHEL-1367
+> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > Acked-by: Jan Kara <jack@suse.cz>
+> > > ---
+> > >  include/linux/audit.h | 8 +-------
+> > >  kernel/auditsc.c      | 2 +-
+> > >  2 files changed, 2 insertions(+), 8 deletions(-)
+> > >
+> > > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > > index 0050ef288ab3..d0c6f23503a1 100644
+> > > --- a/include/linux/audit.h
+> > > +++ b/include/linux/audit.h
+> > > @@ -418,7 +418,7 @@ extern void __audit_log_capset(const struct cred =
+*new, const struct cred *old);
+> > >  extern void __audit_mmap_fd(int fd, int flags);
+> > >  extern void __audit_openat2_how(struct open_how *how);
+> > >  extern void __audit_log_kern_module(char *name);
+> > > -extern void __audit_fanotify(u32 response, struct fanotify_response_=
+info_audit_rule *friar);
+> > > +extern void audit_fanotify(u32 response, struct fanotify_response_in=
+fo_audit_rule *friar);
+> > >  extern void __audit_tk_injoffset(struct timespec64 offset);
+> > >  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
+> > >  extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int =
+nentries,
+> > > @@ -525,12 +525,6 @@ static inline void audit_log_kern_module(char *n=
+ame)
+> > >             __audit_log_kern_module(name);
+> > >  }
+> > >
+> > > -static inline void audit_fanotify(u32 response, struct fanotify_resp=
+onse_info_audit_rule *friar)
+> > > -{
+> > > -   if (!audit_dummy_context())
+> > > -           __audit_fanotify(response, friar);
+> > > -}
+> >
+> > It seems like we should at least have an audit_enabled() check, yes?
+> > We've had people complain about audit events being generated when audit
+> > is disabled, any while we don't currently have such a check in place
+> > here, I believe the dummy context check is doing that for us.
+> >
+> >   static inline void audit_fanotify(...)
+> >   {
+> >     if (!audit_enabled)
+> >       return;
+> >     __audit_fanotify(...);
+> >   }
 >
-> On Wed, May 21, 2025 at 5:03=E2=80=AFPM Darrick J. Wong <djwong@kernel.or=
-g> wrote:
-> >
-> > From: Darrick J. Wong <djwong@kernel.org>
-> >
-> > Implement functions to enable upcalling of iomap_begin and iomap_end to
-> > userspace fuse servers.
-> >
-> > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
-> > ---
-> >  fs/fuse/fuse_i.h          |   38 ++++++
-> >  fs/fuse/fuse_trace.h      |  258 +++++++++++++++++++++++++++++++++++++=
-++++
-> >  include/uapi/linux/fuse.h |   87 ++++++++++++++
-> >  fs/fuse/Kconfig           |   23 ++++
-> >  fs/fuse/Makefile          |    1
-> >  fs/fuse/file_iomap.c      |  280 +++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  fs/fuse/inode.c           |    5 +
-> >  7 files changed, 691 insertions(+), 1 deletion(-)
-> >  create mode 100644 fs/fuse/file_iomap.c
-> >
-> >
-> > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-> > index d56d4fd956db99..aa51f25856697d 100644
-> > --- a/fs/fuse/fuse_i.h
-> > +++ b/fs/fuse/fuse_i.h
-> > @@ -895,6 +895,9 @@ struct fuse_conn {
-> >         /* Is link not implemented by fs? */
-> >         unsigned int no_link:1;
-> >
-> > +       /* Use fs/iomap for FIEMAP and SEEK_{DATA,HOLE} file operations=
- */
-> > +       unsigned int iomap:1;
-> > +
-> >         /* Use io_uring for communication */
-> >         unsigned int io_uring;
-> >
-> > @@ -1017,6 +1020,11 @@ static inline struct fuse_mount *get_fuse_mount_=
-super(struct super_block *sb)
-> >         return sb->s_fs_info;
-> >  }
-> >
-> > +static inline const struct fuse_mount *get_fuse_mount_super_c(const st=
-ruct super_block *sb)
-> > +{
-> > +       return sb->s_fs_info;
-> > +}
-> > +
->
-> Instead of adding this new helper (and the ones below), what about
-> modifying the existing (non-const) versions of these helpers to take
-> in const * input args,  eg
->
-> -static inline struct fuse_mount *get_fuse_mount_super(struct super_block=
- *sb)
-> +static inline struct fuse_mount *get_fuse_mount_super(const struct
-> super_block *sb)
->  {
->         return sb->s_fs_info;
->  }
->
-> Then, doing something like "const struct fuse_mount *mt =3D
-> get_fuse_mount(inode);" would enforce the same guarantees as "const
-> struct fuse_mount *mt =3D get_fuse_mount_c(inode);" and we wouldn't need
-> 2 sets of helpers that pretty much do the same thing.
->
-> >  static inline struct fuse_conn *get_fuse_conn_super(struct super_block=
- *sb)
-> >  {
-> >         return get_fuse_mount_super(sb)->fc;
-> > @@ -1027,16 +1035,31 @@ static inline struct fuse_mount *get_fuse_mount=
-(struct inode *inode)
-> >         return get_fuse_mount_super(inode->i_sb);
-> >  }
-> >
-> > +static inline const struct fuse_mount *get_fuse_mount_c(const struct i=
-node *inode)
-> > +{
-> > +       return get_fuse_mount_super_c(inode->i_sb);
-> > +}
-> > +
-> >  static inline struct fuse_conn *get_fuse_conn(struct inode *inode)
-> >  {
-> >         return get_fuse_mount_super(inode->i_sb)->fc;
-> >  }
-> >
-> > +static inline const struct fuse_conn *get_fuse_conn_c(const struct ino=
-de *inode)
-> > +{
-> > +       return get_fuse_mount_super_c(inode->i_sb)->fc;
-> > +}
-> > +
-> >  static inline struct fuse_inode *get_fuse_inode(struct inode *inode)
-> >  {
-> >         return container_of(inode, struct fuse_inode, inode);
-> >  }
-> >
-> > +static inline const struct fuse_inode *get_fuse_inode_c(const struct i=
-node *inode)
-> > +{
-> > +       return container_of(inode, struct fuse_inode, inode);
-> > +}
-> > +
-> >  static inline u64 get_node_id(struct inode *inode)
-> >  {
-> >         return get_fuse_inode(inode)->nodeid;
-> > @@ -1577,4 +1600,19 @@ extern void fuse_sysctl_unregister(void);
-> >  #define fuse_sysctl_unregister()       do { } while (0)
-> >  #endif /* CONFIG_SYSCTL */
-> >
-> > +#if IS_ENABLED(CONFIG_FUSE_IOMAP)
-> > +# include <linux/fiemap.h>
-> > +# include <linux/iomap.h>
-> > +
-> > +bool fuse_iomap_enabled(void);
-> > +
-> > +static inline bool fuse_has_iomap(const struct inode *inode)
-> > +{
-> > +       return get_fuse_conn_c(inode)->iomap;
-> > +}
-> > +#else
-> > +# define fuse_iomap_enabled(...)               (false)
-> > +# define fuse_has_iomap(...)                   (false)
-> > +#endif
-> > +
-> >  #endif /* _FS_FUSE_I_H */
-> > diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-> > index ca215a3cba3e31..fc7c5bf1cef52d 100644
-> > --- a/fs/fuse/Kconfig
-> > +++ b/fs/fuse/Kconfig
-> > @@ -64,6 +64,29 @@ config FUSE_PASSTHROUGH
-> >
-> >           If you want to allow passthrough operations, answer Y.
-> >
-> > +config FUSE_IOMAP
-> > +       bool "FUSE file IO over iomap"
-> > +       default y
-> > +       depends on FUSE_FS
-> > +       select FS_IOMAP
-> > +       help
-> > +         For supported fuseblk servers, this allows the file IO path t=
-o run
-> > +         through the kernel.
->
-> I have config FUSE_FS select FS_IOMAP in my patchset (not yet
-> submitted) that changes fuse buffered writes / writeback handling to
-> use iomap. Could we just have config FUSE_FS automatically opt into
-> FS_IOMAP here or do you see a reason that this needs to be a separate
-> config?
+> That would be consistent with other security events messages.  I was
+> going through the selinux code to see what it does and I am missing it
+> if selinux checks with audit_enabled().  Are selinux messages somehow
+> exempt from audit_enabled()?
 
-Thinking about it some more, the iomap stuff you're adding also
-requires a "depends on BLOCK", so this will need to be a separate
-config anyways regardless of whether the FUSE_FS will always "select
-FS_IOMAP"
+There are likely a number of callers in the kernel that don't have
+audit_enabled() checks, some are probably bugs, others probably
+intentional; I wouldn't worry too much about what one subsystem does
+when deciding what to do for another.  In the case of fanotify, I
+suspect the right thing to do is add an audit_enabled() check since it
+is already doing an audit_dummy_context() check.  To be clear, there
+may be some cases where we do an audit_dummy_context() check and doing
+an audit_enabled() check would be wrong, but I don't believe that is
+the case with fanotify.
 
-
-Thanks,
-Joanne
-
->
->
-> Thanks,
-> Joanne
-> > +
-> > +config FUSE_IOMAP_BY_DEFAULT
-> > +       bool "FUSE file I/O over iomap by default"
-> > +       default n
-> > +       depends on FUSE_IOMAP
-> > +       help
-> > +         Enable sending FUSE file I/O over iomap by default.
-> > +
-> > +config FUSE_IOMAP_DEBUG
-> > +       bool "Debug FUSE file IO over iomap"
-> > +       default n
-> > +       depends on FUSE_IOMAP
-> > +       help
-> > +         Enable debugging assertions for the fuse iomap code paths.
-> > +
-> >  config FUSE_IO_URING
-> >         bool "FUSE communication over io-uring"
-> >         default y
+--=20
+paul-moore.com
 
