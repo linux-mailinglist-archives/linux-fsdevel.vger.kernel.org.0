@@ -1,93 +1,123 @@
-Return-Path: <linux-fsdevel+bounces-50142-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50147-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5983AC8800
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 07:32:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D82AC8852
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 08:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B883B13FB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 05:31:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BE1D7B2BE4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 06:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14F51DE881;
-	Fri, 30 May 2025 05:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fDJp1jkV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F3B21771F;
+	Fri, 30 May 2025 06:41:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016BB23A9;
-	Fri, 30 May 2025 05:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 418701F0E4F;
+	Fri, 30 May 2025 06:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748583115; cv=none; b=IRPnDB57f057m5X2Wj1nPXe1Pm0tsbkQZ5mKvm87fXdTDBE0G8jluoLedCHECucvKWj6uwfttnMi6R4Pkzf8jOQ/24tyo8toRRI4UWaLc9yGfL9iAE07N3Z/qGRreJFL6AwhBw3CUNcRKIy5o2Av4cOV0my1b6M56UNLWnX5CVo=
+	t=1748587295; cv=none; b=jTTW+t9xuu2CoPyKTN4dFj5axac8qvYi7kWTGqyz+pGnKv1/q9V39YJEh1oR2JBuWU3qP+vOP3HDzL75xi+RSLfm3ls6UQGePbx9x8rz53hnEDYc921IYX6EwxDzhSY7TbMxxpnDakITQl+CaUZz3/ELKHuzMLHleikymUQp7Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748583115; c=relaxed/simple;
-	bh=djAHV4ZcorKvepAx5cvLMQPKw2wbXB1abMOASLXT0P8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AknIjU2H70m8LcfDuBx0EkpD/Z9ZqFHXL3OV/d818u6KB1SpFD05toyLfseFXSWdkb5eSmjdxANecJeMN9KWgnklbcoYVrOUmI6nAYUKxlV4tTeMuxcfi1EHSwYCpNLf6DVIbIDaeES4quiIKZlvRUM7WXKrSLn82i7hZ/p9LHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fDJp1jkV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A4DC4CEE9;
-	Fri, 30 May 2025 05:31:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748583114;
-	bh=djAHV4ZcorKvepAx5cvLMQPKw2wbXB1abMOASLXT0P8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fDJp1jkVGR5On6urVTO15t6+aWD8cTaGrn9KYy2qX6PbUSbYsBqPf1bGH5uWOQ7aN
-	 SSikR6xaeyrPlmiWw8WAjqZbkqfXxUADl9iT6pTtdZI4quDX1SV4Au0y4wgS7egLji
-	 SVXkfncyCA45Ycn0Q9YGHkEiPXRjRR1bVnQLkQFo4XuJFSAsYrChUkOzGN3Kg5UI/h
-	 S53I0Zjx0kC1hLmv8ziIEqmy6Ilh7jAXrnW/e5e5lRrzdZZfxeU6oZRCi1m7bnI6zB
-	 oVqFwV8AdmaixRKmKcAXVSpQmaonh0FcAD5UgKax/YafhZyAt/1ETGT7jRna+Ggj7Y
-	 qd0gn2/WwFXYA==
-Date: Fri, 30 May 2025 07:31:50 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Zorro Lang <zlang@redhat.com>, linux-fsdevel@vger.kernel.org, 
-	fstests@vger.kernel.org, Yang Xu <xuyang2018.jy@fujitsu.com>, 
-	Anthony Iliopoulos <ailiop@suse.com>, David Disseldorp <ddiss@suse.de>
-Subject: Re: [PATCH] generic: remove incorrect _require_idmapped_mounts checks
-Message-ID: <20250530-deklamieren-ehrung-1895eefd99f1@brauner>
-References: <20250526175437.1528310-1-amir73il@gmail.com>
+	s=arc-20240116; t=1748587295; c=relaxed/simple;
+	bh=9sFOwelv5fYdviKsYOi6adhX1HjIA7FitQc+BiYdpsk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ctEpzZtUQGeedKmb3OI6YIQH70tSN8ByQhnEk4jwNEGsUvk7nBnmRLjBlQD8DOoOd18cr+wN1/05BEKpHoXyjk+7wMYy9xaANTXlF/GUknCGkLX5HyqWRWSsxObHXYQe5nWEmEmVPQKP6rBaI+rmH8D6j42AVdgOHsiOW4Sc+Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4b7ttg0JmVzKHLw5;
+	Fri, 30 May 2025 14:41:31 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 72BF51A190E;
+	Fri, 30 May 2025 14:41:29 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgD3Wl8PUzlo_wXRNw--.6893S4;
+	Fri, 30 May 2025 14:41:27 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	ojaswin@linux.ibm.com,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	libaokun1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 0/5] ext4: fix insufficient credits when writing back large folios
+Date: Fri, 30 May 2025 14:28:53 +0800
+Message-ID: <20250530062858.458039-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250526175437.1528310-1-amir73il@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD3Wl8PUzlo_wXRNw--.6893S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7CrWrGrWDuw4Dur4xZFyrWFg_yoW8AF4kpa
+	93CF95Gw15ua47ZF4fZa1xJF1rG3y8ur4UJFnrXr1DWa98uF1Ikrn3Ka15KFWUJr4xGFyY
+	qr1jkryDGFZ8ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Mon, May 26, 2025 at 07:54:37PM +0200, Amir Goldstein wrote:
-> commit f5661920 ("generic: add missed _require_idmapped_mounts check")
-> wrongly adds _require_idmapped_mounts to tests that do not require
-> idmapped mounts support.
-> 
-> The added _require_idmapped_mounts in test generic/633 goes against
-> commit d8dee122 ("idmapped-mounts: always run generic vfs tests")
-> that intentionally removed this requirement from the generic tests.
-> 
-> The added _require_idmapped_mounts in tests generic/69{6,7} causes
-> those tests not to run with overlayfs, which does not support idmapped
-> mounts. However, those tests are regression tests to kernel commit
-> 1639a49ccdce ("fs: move S_ISGID stripping into the vfs_*() helpers")
-> which is documented as also solving a correction issue with overlayfs,
-> so removing this test converage is very much undesired.
-> 
-> Remove the incorrectly added _require_idmapped_mounts checks.
-> Also fix the log in _require_idmapped_mounts to say that
-> "idmapped mounts not support by $FSTYP", which is what the helper
-> checks instead of "vfstests not support by $FSTYP" which is incorrect.
-> 
-> Cc: Yang Xu <xuyang2018.jy@fujitsu.com>
-> Cc: Anthony Iliopoulos <ailiop@suse.com>
-> Cc: David Disseldorp <ddiss@suse.de>
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
+From: Zhang Yi <yi.zhang@huawei.com>
 
-Seems correct to me:
+This series addresses the issue that Jan pointed out regarding large
+folios support for ext4[1]. The problem is that the credits calculation
+may insufficient in ext4_meta_trans_blocks() when allocating blocks
+during write back a sufficiently large and discontinuous folio, it
+doesn't involve the credits for updating bitmap and group descriptor
+block. However, if we fix this issue, it may lead to significant
+overestimation on the some filesystems with a lot of block groups.
 
-Reviewed-by: Christian Brauner <brauner@kernel.org>
+The solution involves first reserving credit for one page when writing
+back a sufficiently large and discontinuous folio, and then attempting
+to extend the current transaction's credits. If the credits reach the
+upper limit, the handler stops and initiates a new transaction. Again,
+fix the wrong credits calculation in ext4_meta_trans_blocks(). Finally,
+this solution only works in dioread_nolock mode, so disable large folios
+if dioread_nolock is disabled. Please see the following patches for
+details.
+
+[1] https://lore.kernel.org/linux-ext4/ht54j6bvjmiqt62xmcveqlo7bmrunqs4ji7wikfteftdjijzek@7tz5gpejaoen/
+
+Thanks,
+Yi.
+
+Zhang Yi (5):
+  ext4: restart handle if credits are insufficient during writepages
+  ext4: correct the reserved credits for extent conversion
+  ext4/jbd2: reintroduce jbd2_journal_blocks_per_page()
+  ext4: fix insufficient credits calculation in ext4_meta_trans_blocks()
+  ext4: disable large folios if dioread_nolock is not enabled
+
+ fs/ext4/ext4_jbd2.h  | 14 ++++++++++
+ fs/ext4/inode.c      | 64 +++++++++++++++++++++++++++++++++++---------
+ fs/jbd2/journal.c    |  6 +++++
+ include/linux/jbd2.h |  1 +
+ 4 files changed, 72 insertions(+), 13 deletions(-)
+
+-- 
+2.46.1
+
 
