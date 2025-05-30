@@ -1,110 +1,204 @@
-Return-Path: <linux-fsdevel+bounces-50228-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50229-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 486F2AC9160
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 16:21:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0EEAC917E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 16:26:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178621C05A1C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 14:21:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E1697B55B9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 14:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875EB23182E;
-	Fri, 30 May 2025 14:20:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0615A232392;
+	Fri, 30 May 2025 14:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="H6llCjH0"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LtQ3nWmW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42af.mail.infomaniak.ch (smtp-42af.mail.infomaniak.ch [84.16.66.175])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E544E228CBC;
-	Fri, 30 May 2025 14:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045AE230D0D;
+	Fri, 30 May 2025 14:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748614848; cv=none; b=N2U4EDV6WiCb8vZmFeC0UzSGpRXQMygI9QpMXaiYYxhmRnnhELKQmoDEDcBygMr1E8xQKvpW3nzOUUq45+hYzpLvSOzbrGy00QBT+7w3ZYwf49CN/OJ8Gy+7SO0TIXvQpQiJCfVOQJJMSvvAHu6SByBa7uebRiufFYgNPQNVhcE=
+	t=1748615133; cv=none; b=GEjitBf7U7oHu3rdA0smDelHWwbvR4Bktt7nFyhPSKs5rej4ZZarZWwWp5nyvKDZjYN1wmrUiYOMMN9pvspRkdSNGoK/+7q/OdNf81HUng5KKOnsSOyUGZ68lQIwAp8yf+X40yV/uuEgAl2D1q747IS135Hk6cgYCo3piWTyC5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748614848; c=relaxed/simple;
-	bh=wVfhNS5DZdeGUEmvBL1W3Fh416DAmXU8kLYPsve4Nm0=;
+	s=arc-20240116; t=1748615133; c=relaxed/simple;
+	bh=ebhvap3uGIXeOkgxbWkbzYk5e87c3HNY7AXyqp6Ao+U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LCCFrRmrmzD4pd2F9IJCdUGMW6VCCJGw+kiCKZ2mLx7upMLYQ1lu9y9wYhXgopgKuJCq05eTLqYBHRYPVI1BNzQB/m+mRm08AbhbvrfjCh/oYFCYJr6avpC4MPgmHSZCja6hqCuwc0zQsZWgVGlDrnEB4u2un1wqAk0O1N7Wytg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=H6llCjH0; arc=none smtp.client-ip=84.16.66.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0000.mail.infomaniak.ch (smtp-4-0000.mail.infomaniak.ch [10.7.10.107])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4b854T5N7Qz44B;
-	Fri, 30 May 2025 16:20:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1748614841;
-	bh=ZXHN7tFICGoD90DDmay+SaYrC/AhNESocYWzHIeiWic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H6llCjH06gKMuY55FMcGmNuqHn8ZSo7f8/B8ajYTkZXAKFNSpn3ZOFZauTMaJk2+m
-	 6wnbI0IE/P4PiaVM5vIdKwVpRSyeMX8WEpmrMO6VyZaj86pz2esfigkq0nIEkft1jG
-	 HJY5+dFI/gGj+d+3ctIFhf34+502lqMd3+AG3Oyg=
-Received: from unknown by smtp-4-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4b854S2J8fz8yh;
-	Fri, 30 May 2025 16:20:40 +0200 (CEST)
-Date: Fri, 30 May 2025 16:20:39 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Song Liu <song@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, 
-	Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>, 
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Christian Brauner <brauner@kernel.org>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, repnop@google.com, 
-	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-Message-ID: <20250530.oh5pahH9Nui9@digikod.net>
-References: <20250528222623.1373000-1-song@kernel.org>
- <20250528222623.1373000-4-song@kernel.org>
- <20250528223724.GE2023217@ZenIV>
- <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <CAADnVQ+UGsvfAM8-E8Ft3neFkz4+TjE=rPbP1sw1m5_4H9BPNg@mail.gmail.com>
- <CAPhsuW78L8WUkKz8iJ1whrZ2gLJR+7Kh59eFrSXvrxP0DwMGig@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBs4ukqps4LNKt0rjxmZtdxpz6mQcFFBsq2rrPrZLqPk+iDj30VXvgxPwuHed3gVghMQhRjaiegmFmv0vtJVAuXrWPERqPYwrpcR6gRzWu56XEMN2GC06nUTz2jsUhFhWK/nGugiiSwMwmt5fdfnM2FVtfZq23EOWGvDHtjP/FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LtQ3nWmW; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748615131; x=1780151131;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ebhvap3uGIXeOkgxbWkbzYk5e87c3HNY7AXyqp6Ao+U=;
+  b=LtQ3nWmWCSfkemP3ezydgtAzbfGH6wJjwZ4mYhWHfS2dCgMe6ZpTrM9l
+   XhvazVLOKNRtpbsYlSNaQ97Z1nE49+yAOZtoBTq+iJrm596nhtCUWB6fI
+   m0XYVorD44Iju6sIbyIvUnhPxen+9Ce3vYx8NGdJaHYHz9TJUfe3AaHVe
+   JuCMQGenyFWss7zp6qOMM+zRDA4Q7t52xKWjm09LsaYGBAoAmVGKKtTmE
+   mBy40PxwxFFRcqFHoPZ3x+Uz5Cnf/ZH4TZ1xcxKfoy0/y7Ga9mB1XctgI
+   j+hQBg3RxM1VM5UMBq9P9rxNOG210ksdBi8FYQxxmObS18/877uF7BbFN
+   A==;
+X-CSE-ConnectionGUID: u9/T5//HTR2dB3e6hTjr2w==
+X-CSE-MsgGUID: IqVYCbdESCu/97XP+/eF1A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11449"; a="61336573"
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
+   d="scan'208";a="61336573"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 May 2025 07:25:30 -0700
+X-CSE-ConnectionGUID: ZKP7FC/5Re2B7jgQnKVX5w==
+X-CSE-MsgGUID: Etq2N76sQ3mlvbSQ+wT7jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,196,1744095600"; 
+   d="scan'208";a="143855846"
+Received: from lkp-server01.sh.intel.com (HELO 1992f890471c) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 30 May 2025 07:25:24 -0700
+Received: from kbuild by 1992f890471c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uL0fh-000XhK-1e;
+	Fri, 30 May 2025 14:25:21 +0000
+Date: Fri, 30 May 2025 22:24:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: wangtao <tao.wangtao@honor.com>, sumit.semwal@linaro.org,
+	christian.koenig@amd.com, kraxel@redhat.com,
+	vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+	amir73il@gmail.com
+Cc: oe-kbuild-all@lists.linux.dev, benjamin.gaignard@collabora.com,
+	Brian.Starkey@arm.com, jstultz@google.com, tjmercier@google.com,
+	jack@suse.cz, baolin.wang@linux.alibaba.com,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	bintian.wang@honor.com, yipengxiang@honor.com, liulu.liu@honor.com,
+	feng.han@honor.com, wangtao <tao.wangtao@honor.com>
+Subject: Re: [PATCH v3 3/4] udmabuf: Implement udmabuf rw_file callback
+Message-ID: <202505302235.mDzENMSm-lkp@intel.com>
+References: <20250530103941.11092-4-tao.wangtao@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW78L8WUkKz8iJ1whrZ2gLJR+7Kh59eFrSXvrxP0DwMGig@mail.gmail.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20250530103941.11092-4-tao.wangtao@honor.com>
 
-On Thu, May 29, 2025 at 10:05:59AM -0700, Song Liu wrote:
-> On Thu, May 29, 2025 at 9:57 AM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> [...]
-> > >
-> > > How about we describe this as:
-> > >
-> > > Introduce a path iterator, which safely (no crash) walks a struct path.
-> > > Without malicious parallel modifications, the walk is guaranteed to
-> > > terminate. The sequence of dentries maybe surprising in presence
-> > > of parallel directory or mount tree modifications and the iteration may
-> > > not ever finish in face of parallel malicious directory tree manipulations.
-> >
-> > Hold on. If it's really the case then is the landlock susceptible
-> > to this type of attack already ?
-> > landlock may infinitely loop in the kernel ?
-> 
-> I think this only happens if the attacker can modify the mount or
-> directory tree as fast as the walk, which is probably impossible
-> in reality.
+Hi wangtao,
 
-Yes, so this is not an infinite loop but an infinite race between the
-kernel and a very fast malicious user space process with an infinite
-number of available nested writable directories, that would also require
-a filesystem (and a kernel) supporting infinite pathname length.
+kernel test robot noticed the following build errors:
 
-> 
-> Thanks,
-> Song
-> 
+[auto build test ERROR on brauner-vfs/vfs.all]
+[also build test ERROR on next-20250530]
+[cannot apply to linus/master v6.15]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/wangtao/fs-allow-cross-FS-copy_file_range-for-memory-backed-files/20250530-184146
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.all
+patch link:    https://lore.kernel.org/r/20250530103941.11092-4-tao.wangtao%40honor.com
+patch subject: [PATCH v3 3/4] udmabuf: Implement udmabuf rw_file callback
+config: sparc64-randconfig-002-20250530 (https://download.01.org/0day-ci/archive/20250530/202505302235.mDzENMSm-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 15.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250530/202505302235.mDzENMSm-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202505302235.mDzENMSm-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/dma-buf/udmabuf.c: In function 'udmabuf_rw_file':
+>> drivers/dma-buf/udmabuf.c:298:25: error: storage size of 'iter' isn't known
+     298 |         struct iov_iter iter;
+         |                         ^~~~
+>> drivers/dma-buf/udmabuf.c:299:45: error: 'ITER_SOURCE' undeclared (first use in this function)
+     299 |         unsigned int direction = is_write ? ITER_SOURCE : ITER_DEST;
+         |                                             ^~~~~~~~~~~
+   drivers/dma-buf/udmabuf.c:299:45: note: each undeclared identifier is reported only once for each function it appears in
+>> drivers/dma-buf/udmabuf.c:299:59: error: 'ITER_DEST' undeclared (first use in this function)
+     299 |         unsigned int direction = is_write ? ITER_SOURCE : ITER_DEST;
+         |                                                           ^~~~~~~~~
+>> drivers/dma-buf/udmabuf.c:327:17: error: implicit declaration of function 'iov_iter_bvec'; did you mean 'bvec_iter_bvec'? [-Wimplicit-function-declaration]
+     327 |                 iov_iter_bvec(&iter, direction, bvec, bv_idx, bv_total);
+         |                 ^~~~~~~~~~~~~
+         |                 bvec_iter_bvec
+>> drivers/dma-buf/udmabuf.c:298:25: warning: unused variable 'iter' [-Wunused-variable]
+     298 |         struct iov_iter iter;
+         |                         ^~~~
+
+
+vim +298 drivers/dma-buf/udmabuf.c
+
+   286	
+   287	static ssize_t udmabuf_rw_file(struct dma_buf *dmabuf, loff_t my_pos,
+   288				struct file *other, loff_t pos,
+   289				size_t count, bool is_write)
+   290	{
+   291		struct udmabuf *ubuf = dmabuf->priv;
+   292		loff_t my_end = my_pos + count, bv_beg, bv_end = 0;
+   293		pgoff_t pg_idx = my_pos / PAGE_SIZE;
+   294		pgoff_t pg_end = DIV_ROUND_UP(my_end, PAGE_SIZE);
+   295		size_t i, bv_off, bv_len, bv_num, bv_idx = 0, bv_total = 0;
+   296		struct bio_vec *bvec;
+   297		struct kiocb kiocb;
+ > 298		struct iov_iter iter;
+ > 299		unsigned int direction = is_write ? ITER_SOURCE : ITER_DEST;
+   300		ssize_t ret = 0, rw_total = 0;
+   301		struct folio *folio;
+   302	
+   303		bv_num = min_t(size_t, pg_end - pg_idx + 1, 1024);
+   304		bvec = kvcalloc(bv_num, sizeof(*bvec), GFP_KERNEL);
+   305		if (!bvec)
+   306			return -ENOMEM;
+   307	
+   308		init_sync_kiocb(&kiocb, other);
+   309		kiocb.ki_pos = pos;
+   310	
+   311		for (i = 0; i < ubuf->nr_pinned && my_pos < my_end; i++) {
+   312			folio = ubuf->pinned_folios[i];
+   313			bv_beg = bv_end;
+   314			bv_end += folio_size(folio);
+   315			if (bv_end <= my_pos)
+   316				continue;
+   317	
+   318			bv_len = min(bv_end, my_end) - my_pos;
+   319			bv_off = my_pos - bv_beg;
+   320			my_pos += bv_len;
+   321			bv_total += bv_len;
+   322			bvec_set_page(&bvec[bv_idx], &folio->page, bv_len, bv_off);
+   323			if (++bv_idx < bv_num && my_pos < my_end)
+   324				continue;
+   325	
+   326			/* start R/W if bvec is full or count reaches zero. */
+ > 327			iov_iter_bvec(&iter, direction, bvec, bv_idx, bv_total);
+   328			if (is_write)
+   329				ret = other->f_op->write_iter(&kiocb, &iter);
+   330			else
+   331				ret = other->f_op->read_iter(&kiocb, &iter);
+   332			if (ret <= 0)
+   333				break;
+   334			rw_total += ret;
+   335			if (ret < bv_total || fatal_signal_pending(current))
+   336				break;
+   337	
+   338			bv_idx = bv_total = 0;
+   339		}
+   340		kvfree(bvec);
+   341	
+   342		return rw_total > 0 ? rw_total : ret;
+   343	}
+   344	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
