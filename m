@@ -1,95 +1,95 @@
-Return-Path: <linux-fsdevel+bounces-50149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50150-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C577AC889D
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:16:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1716AC88A6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41121BA61A9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 07:16:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5D507B24DA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 07:16:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2A920E32F;
-	Fri, 30 May 2025 07:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB74207A27;
+	Fri, 30 May 2025 07:17:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oBbrXNvT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9OD/Zc0w";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oBbrXNvT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9OD/Zc0w"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="bLLE8B1k";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ra09o53V";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pXLHL2MQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ID/CDlcG"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB172199EAD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 07:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939F22010EE
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 07:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748589356; cv=none; b=W3QDeQb1T4Zz/MZ+MDdWKXZwcVXQAWfWlBEpndcOGTT7e0TZ/YZ+ElSHh5Wp4BYmCMVWZhXAM9g9ovZf7Pw1fgaxfmK8yj8EGgak7W2TMM2lPsysmkSMsvhQl/nIR4ec19QlmlxYFCBpt2oDIhgXdV2eM4554q/5WS2ByMkMoSo=
+	t=1748589462; cv=none; b=ER5YMrjLkxLQcluMxfG2x7mJtvqK5zIt1HeIxh8v2lVMsfEq9Tt6UR+f7sKIyHaK1vr+h9LPxByTwkAXVvFIsZbICLXKXDzPC2snoVuwFv2ZB2FqYdHfoQGCSR0iwjtgrlUIQQQvft8pyvc7A4LC6p6IexajChR9RrtvfkUiOhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748589356; c=relaxed/simple;
-	bh=i/sTP8kxv2bHjU6/5tEla5HY5Q+6eGeBtucd+gZOaCU=;
+	s=arc-20240116; t=1748589462; c=relaxed/simple;
+	bh=5sZwonSyi7C3m9a8qMo4Ox8TcWkSzdZA/StXDXbXI38=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mG+hCIoYj6UNoN05uBHRNVUBveWQDQ3HINDCaAeVk6RwKrJ60Byry8a/CSSutLVfeCpCwYBJ0Ad1NDZxI6aAC1Htww7QIDgsX/GjFhommaiH60vyShFBbRzmgejryAH+JwjqfEVn8hWOiEI3Fo/WqxdJoh4IezDF+V2LY4m79b8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oBbrXNvT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9OD/Zc0w; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oBbrXNvT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9OD/Zc0w; arc=none smtp.client-ip=195.135.223.131
+	 In-Reply-To:Content-Type; b=nfZnyJOdLcN16cdYuziW7hiisw8yRezWfil3y1cCgRb0UE02ToGG2lMOvLtlyFRtuSN3qfMRawlFPHXVA3tMSG0UfzuUyDAUmY1cexh0K+I/i+RAC5o08QA482nwhK18f6zNhHppnU6kUuLfhPmxRkgFDsna+U3if/poc/snYwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=bLLE8B1k; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ra09o53V; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pXLHL2MQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ID/CDlcG; arc=none smtp.client-ip=195.135.223.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
 Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A49AF1F7A1;
-	Fri, 30 May 2025 07:15:51 +0000 (UTC)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 716A0218E0;
+	Fri, 30 May 2025 07:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748589351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1748589458; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uzU19k1ECLHjrvkeXuOD+PC+beRlg03ZHwC8d7LjQWg=;
-	b=oBbrXNvT2xBNFjpKCbW13YHP4O66WtaiTyPNKlnuc5QcBuF4n+TcsqWcbcPb4nwo1a2jC6
-	1C1SrGTPcNCN7IH3f4mTqvPbTXqogrgCxf56lmABQO7PgEaqPgxP13QXHIM5J6U4W+fjYs
-	b4sx+5gytVsbJLWJUQecvMjY+JSgh1w=
+	bh=H8vYiI/lB98SVteHs9jQfydPaBWxD4ynPXxCsA6F5x0=;
+	b=bLLE8B1kEvgP4fus2Y7PKlGZFJY/VupgBfhLS4VrQ49X+NeughQcciVu1M7kCdNx3q85SO
+	uS6l4tRBYiS6W3JDqzRC+dM8aYmLAfkNCCni/4WkGyG3fH4blJyXw+uQ/1P3MXBvuk0mRh
+	HTqAi1GGc0Dr07aRmB0X/99dDWj98bE=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748589351;
+	s=susede2_ed25519; t=1748589458;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uzU19k1ECLHjrvkeXuOD+PC+beRlg03ZHwC8d7LjQWg=;
-	b=9OD/Zc0wTvD0qN2XodBjaOf/qYa0n0OKAYU0m6GtrS7ZK435G9v4pzPmvuueiYHx8fJI/A
-	7lXqe5U+gx0WHYDQ==
-Authentication-Results: smtp-out2.suse.de;
+	bh=H8vYiI/lB98SVteHs9jQfydPaBWxD4ynPXxCsA6F5x0=;
+	b=ra09o53Vv7SUl8quaO60r6mvr4LJ0rd49TKHsKxS/PY5jWcNX738pq+A/9IT3URvk80MSq
+	dgJX4+9uVJwV2jCA==
+Authentication-Results: smtp-out1.suse.de;
 	none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748589351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	t=1748589457; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uzU19k1ECLHjrvkeXuOD+PC+beRlg03ZHwC8d7LjQWg=;
-	b=oBbrXNvT2xBNFjpKCbW13YHP4O66WtaiTyPNKlnuc5QcBuF4n+TcsqWcbcPb4nwo1a2jC6
-	1C1SrGTPcNCN7IH3f4mTqvPbTXqogrgCxf56lmABQO7PgEaqPgxP13QXHIM5J6U4W+fjYs
-	b4sx+5gytVsbJLWJUQecvMjY+JSgh1w=
+	bh=H8vYiI/lB98SVteHs9jQfydPaBWxD4ynPXxCsA6F5x0=;
+	b=pXLHL2MQhx2vUpVoNVIO8JK01KqorlanGuGiVb7qOGQqWLYWbWOq7bnLjYH9qekyZS3oO/
+	LpoAr/qcqT1RqFcSeQXXiyZMRal4GhfNcZVyib16l8mAMGUijffNff17OJ681sFGgHWcbx
+	VloCG/MK91sEcd19kKHndfDrWacUs9U=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748589351;
+	s=susede2_ed25519; t=1748589457;
 	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
 	 mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=uzU19k1ECLHjrvkeXuOD+PC+beRlg03ZHwC8d7LjQWg=;
-	b=9OD/Zc0wTvD0qN2XodBjaOf/qYa0n0OKAYU0m6GtrS7ZK435G9v4pzPmvuueiYHx8fJI/A
-	7lXqe5U+gx0WHYDQ==
+	bh=H8vYiI/lB98SVteHs9jQfydPaBWxD4ynPXxCsA6F5x0=;
+	b=ID/CDlcGd3WQwH5XWqbtvHQvsz0u+X+n5pPFs9Smvt0XR6syQ1WUzNV3BIA1iENjfYz+gm
+	cfn5aoq6lWAzJRDA==
 Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84BD8132D8;
-	Fri, 30 May 2025 07:15:51 +0000 (UTC)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5753D132D8;
+	Fri, 30 May 2025 07:17:37 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
 	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id Lw3OHydbOWhcSwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 30 May 2025 07:15:51 +0000
-Message-ID: <ecc2b2c4-418f-44c1-b860-eb836cc5841d@suse.cz>
-Date: Fri, 30 May 2025 09:15:51 +0200
+	id /koFFZFbOWhaTAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 30 May 2025 07:17:37 +0000
+Message-ID: <51d7af3f-a5a1-4a93-967d-dc4866060a28@suse.cz>
+Date: Fri, 30 May 2025 09:17:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -97,8 +97,9 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/4] mm: prevent KSM from breaking VMA merging for new
- VMAs
+Subject: Re: [PATCH v3 4/4] tools/testing/selftests: add VMA merge tests for
+ KSM merge
+Content-Language: en-US
 To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
  Andrew Morton <akpm@linux-foundation.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
@@ -109,8 +110,7 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
  linux-mm@kvack.org, linux-kernel@vger.kernel.org,
  linux-fsdevel@vger.kernel.org, Stefan Roesch <shr@devkernel.io>
 References: <cover.1748537921.git.lorenzo.stoakes@oracle.com>
- <3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com>
-Content-Language: en-US
+ <6dec7aabf062c6b121cfac992c9c716cefdda00c.1748537921.git.lorenzo.stoakes@oracle.com>
 From: Vlastimil Babka <vbabka@suse.cz>
 Autocrypt: addr=vbabka@suse.cz; keydata=
  xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
@@ -151,7 +151,7 @@ Autocrypt: addr=vbabka@suse.cz; keydata=
  rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
  dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
  m6M14QORSWTLRg==
-In-Reply-To: <3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <6dec7aabf062c6b121cfac992c9c716cefdda00c.1748537921.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Flag: NO
@@ -174,58 +174,24 @@ X-Spamd-Result: default: False [-4.30 / 50.00];
 	FROM_EQ_ENVFROM(0.00)[];
 	TO_MATCH_ENVRCPT_ALL(0.00)[];
 	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email]
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,oracle.com:email,linux.dev:email,imap1.dmz-prg2.suse.org:helo]
 X-Spam-Level: 
 
 On 5/29/25 19:15, Lorenzo Stoakes wrote:
-> If a user wishes to enable KSM mergeability for an entire process and all
-> fork/exec'd processes that come after it, they use the prctl()
-> PR_SET_MEMORY_MERGE operation.
+> Add test to assert that we have now allowed merging of VMAs when KSM
+> merging-by-default has been set by prctl(PR_SET_MEMORY_MERGE, ...).
 > 
-> This defaults all newly mapped VMAs to have the VM_MERGEABLE VMA flag set
-> (in order to indicate they are KSM mergeable), as well as setting this flag
-> for all existing VMAs and propagating this across fork/exec.
+> We simply perform a trivial mapping of adjacent VMAs expecting a merge,
+> however prior to recent changes implementing this mode earlier than before,
+> these merges would not have succeeded.
 > 
-> However it also breaks VMA merging for new VMAs, both in the process and
-> all forked (and fork/exec'd) child processes.
-> 
-> This is because when a new mapping is proposed, the flags specified will
-> never have VM_MERGEABLE set. However all adjacent VMAs will already have
-> VM_MERGEABLE set, rendering VMAs unmergeable by default.
-> 
-> To work around this, we try to set the VM_MERGEABLE flag prior to
-> attempting a merge. In the case of brk() this can always be done.
-> 
-> However on mmap() things are more complicated - while KSM is not supported
-> for MAP_SHARED file-backed mappings, it is supported for MAP_PRIVATE
-> file-backed mappings.
-> 
-> These mappings may have deprecated .mmap() callbacks specified which could,
-> in theory, adjust flags and thus KSM eligibility.
-> 
-> So we check to determine whether this is possible. If not, we set
-> VM_MERGEABLE prior to the merge attempt on mmap(), otherwise we retain the
-> previous behaviour.
-> 
-> This fixes VMA merging for all new anonymous mappings, which covers the
-> majority of real-world cases, so we should see a significant improvement in
-> VMA mergeability.
-> 
-> For MAP_PRIVATE file-backed mappings, those which implement the
-> .mmap_prepare() hook and shmem are both known to be safe, so we allow
-> these, disallowing all other cases.
-> 
-> Also add stubs for newly introduced function invocations to VMA userland
-> testing.
+> Assert that we have fixed this!
 > 
 > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Fixes: d7597f59d1d3 ("mm: add new api to enable ksm per process") # please no backport!
 > Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-> Acked-by: David Hildenbrand <david@redhat.com>
+> Tested-by: Chengming Zhou <chengming.zhou@linux.dev>
 > Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-The commit log is much clearer to me now, thanks :)
-
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
 
 
