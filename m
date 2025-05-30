@@ -1,171 +1,145 @@
-Return-Path: <linux-fsdevel+bounces-50231-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50232-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF923AC92E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 18:00:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 48E1EAC9338
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 18:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7EBE1BA48EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 15:58:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C26281C06705
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 16:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4198235346;
-	Fri, 30 May 2025 15:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAFBD2356A9;
+	Fri, 30 May 2025 16:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="szCCOdrO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbV80vqH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD9C20AF98;
-	Fri, 30 May 2025 15:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 326C8235345;
+	Fri, 30 May 2025 16:14:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748620717; cv=none; b=hiGAcSvi67+XYqzeIGWn6ZR2VO+5tg+d37ukI0DBGMjvJOUyRzEIT8Em7REzFEvhtyqV+h+KY8OKVJjsZfCUSRH/0DdAi67tIDPLfeL7xGvt019R3bWPAhMfcPdokwsmfowgrN83iUf8QIrFeRtIFX/1mDvkcDDWfIld/gBf8GU=
+	t=1748621702; cv=none; b=ucZoS4kAF7RPVJ7rGs1OWK/wblOEIDBWvA2cysnQCzp+SK0EIetx2SzrYWsGVaUPjovRmjFXNZCAkDLtBwhcF6lMJ9zQ+2npiZg31GlYoX3zwoXpiDAxCP1RDjIt2mL0Ld1oo7sD8wvr2g1n+sgy22oGowPBFR66vVp93874bow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748620717; c=relaxed/simple;
-	bh=Dn7w63nJ6Y9rLY2iVz6c/z004HPXclXizStSNQ97Z2c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EHpWNXzVv5LCG6ddXulpx714pFp6JC6+vYpBqUXQcdj0rrf2NvuIe+n5KGD0EB1bhdsciVbpP25hHcJF9K9ZpD8qzqUyu9X8AVNBis/8T/QvPfS9/eyOPPAriscllTZPK9PFqzOI6HyILYRh/0ZZcNbYBZpFo7xycL0e/K4BDxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=szCCOdrO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48DB6C4CEE9;
-	Fri, 30 May 2025 15:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748620716;
-	bh=Dn7w63nJ6Y9rLY2iVz6c/z004HPXclXizStSNQ97Z2c=;
-	h=Date:Subject:To:Cc:References:From:Reply-To:In-Reply-To:From;
-	b=szCCOdrO39lhUTIxUZu+KZi2JhkULZdjLFlWBRBCvhvJLc0qRyafF6ayAXDbVsvxd
-	 hLm82UA3TGM2RrsHlsABUT5M3q7aPK835v3GvVNIHxUeUivWuK0IwhlmYa4WiLHJx7
-	 Ip5K4cx6g1lsNDk1b3p1Qr/ZdhwxAIwiGB6ulCUU3t+ROHxfTYTaCd8MNDO0/0j1I/
-	 hU8UWHu3fB3TWwcrRMEVdxu9HXrwUpZt6XftjV5S23f3ow3p6xsvrOBzsLx5AGV4QG
-	 bmvso8T85n7F1gKnoasLsSdcwla5Ls3NEnrj7YtfyRiGSUJhiw5nwk53GDl/Zmf7m+
-	 FC9hVX+65q0xg==
-Message-ID: <7df55910-13b4-4ac5-b13b-22a44366e193@kernel.org>
-Date: Fri, 30 May 2025 08:58:35 -0700
+	s=arc-20240116; t=1748621702; c=relaxed/simple;
+	bh=3ZvnrvTmAK5qowvGTfd5VbRglX0pdlRCpg3q/YgkHvY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MSdNXC43cDR7spwQ4H/CQBpnG9fwyoHvClgwAGs7da9fnw7TQgaXuXBFpjNCUWXdXul4Xdus8yLXlaDOYkMd3AFvtnJj20OTNFMXABXrhfJqzINcmi0Pj+8Mn0u9XPZYy3adzowUZYuqnHc9JAN8rx6G1pTeqYUUNhbQRDTdZps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbV80vqH; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30db1bd3bddso20249261fa.3;
+        Fri, 30 May 2025 09:14:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748621698; x=1749226498; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6UTq5HkLhV23M0xz/nleVLoMMJCEzvqCvQMrpj98LYs=;
+        b=JbV80vqHwel8CwcWdxj45VZ8VKN6Mu7Kus7OyUpXAoGS9EZvUFIWQZCSjBUyqgW4Yp
+         XZtg8XjUqZ75yJobNEH44YELYhKlP1tfyKkd9n1Un0c6Yp8mVfC8P/O2MiNOjq/fdYH7
+         WcfxOeSzJgoiQldJtn3rLocQDZoYfg74g2ieSrivQqg9x7O12F8FlZedg3tQnvouSYHC
+         hokM+VJI+ZnR3sDF2TDzFyxmfjW+cLlpCT0D65zJ/Ua+yjGXXM75xaQciqb6AwLOsT6u
+         4vUqnQhvtI+Lg0QB9cmNuC6RHXwmmv2cJ0Ijs5J+HTkFNRSOEGS8xcvu5C02jK6zQ6SN
+         dN5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748621698; x=1749226498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6UTq5HkLhV23M0xz/nleVLoMMJCEzvqCvQMrpj98LYs=;
+        b=HUUyCyBkOGop2XKjZmSgT8C+OZaCu1j2OboVMtrbRfz45nw4i0A9S8gHTmZuAmCih6
+         5VweDU60t1wrCe3BU8CREkvCvddnyxEec35z1O82C9cXbWBzPkB3khNdwRR0Q1uRORBf
+         47Um5isQOmj+2NOUUpEYqvw0zy/h8DxttwsMTCUnQmrSNnemujkmEUycN35tepfh3+lU
+         pl5FsdVGkNT6Kn0zEMeIxSFmycMA38LM9akp2u3GfgGTBjyQgyDZrbMLulnQKrvqoZDg
+         MdslS4IR5gAz9B35dAeQ5ppvOeGF9RSkoYoQuNfME64v/BrV68KFT68Wlaym/GF/549s
+         BRdw==
+X-Forwarded-Encrypted: i=1; AJvYcCVUI1TbwI2h1d3qU4AH2ZEWOaTnORLEcCuCRUdq3hZgsQfqHTnJYFq3Fixxvm/Xri5OZofLAWPJ6v/B@vger.kernel.org, AJvYcCVjL5U0Yzo2P0UrdV08AFpU/GlTAnQNzeJfjPz/fi3NN/TsbCp9rgvrp5s8Zy5X6ntVkppxNYcX4wnceyUAgA==@vger.kernel.org, AJvYcCWy0EYfDGwH34jLiJDxANydoLEG5F3L1pF3as7WgwqCdw0X+txJdNst0/k3+6ostQS0/7HO/kgIxQ8S6wPp@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbCzoQRuZ8WiYqSkR8BrLvhvnTBxf4rY3giX1+dD+ZKfm5OMQo
+	YOOujoCbHW8UUsOl7q79n8HbWQQLs+NDEmjyzrCzDWsBO2tByPh9rix+xdwBwwEb3Mow80KsGMr
+	pdmwyq6mergBSr0UNKtO1ot38DLIMmWE=
+X-Gm-Gg: ASbGncuSS5x1jgtLuGe9RpjU1qP10etZRkc+teB2hz/JUEE5qYNk0V5x1HYX4NcKbqI
+	e21dJk/9JztG/6ajsyD+MZanDSYzVyKAlH22vJd3y9+MRxZPU31/rvlf6PV0MTvLClPkHOdVWwx
+	VglsMs20F4NeV+chKOla1DHAeKWH3tJXJdHRb6XKCfOJ91y4HNR32dvVJ1zBsTCD2UZyU=
+X-Google-Smtp-Source: AGHT+IG/NJcvokzMVAfgAUULPo5AHEfz55/2Xhz/gGIFl6PSQ86+UbqO3pGexblTmnbk2F682gpMuOlFZAHMLwVuv8c=
+X-Received: by 2002:a05:651c:509:b0:32a:8062:69b1 with SMTP id
+ 38308e7fff4ca-32a9068a6f6mr12904441fa.8.1748621697994; Fri, 30 May 2025
+ 09:14:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: xarray regression: XArray: Add extra debugging check to xas_lock
- and friends
-To: Luis Chamberlain <mcgrof@kernel.org>, Matthew Wilcox <willy@infradead.org>
-Cc: Daniel Gomez <da.gomez@samsung.com>, Tamir Duberstein <tamird@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, kdevops@lists.linux.dev
-References: <aAG_Sz_a2j3ummY2@bombadil.infradead.org>
-Content-Language: en-US
-From: Daniel Gomez <da.gomez@kernel.org>
-Reply-To: da.gomez@kernel.org
-Organization: kernel.org
-In-Reply-To: <aAG_Sz_a2j3ummY2@bombadil.infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250530084614.2434467-1-frank.li@vivo.com>
+In-Reply-To: <20250530084614.2434467-1-frank.li@vivo.com>
+From: Steve French <smfrench@gmail.com>
+Date: Fri, 30 May 2025 11:14:45 -0500
+X-Gm-Features: AX0GCFtGHmv3izUG2w7WT1FVlkS5ZFbMOTfhnGBK58yTeSsKAU5O4zE_8tf3tkU
+Message-ID: <CAH2r5msAq6Kq4R0euj+y526imrsGWcXLa_LCJ9T+8G2-9PJx6A@mail.gmail.com>
+Subject: Re: [PATCH] cifs: correct superblock flags
+To: Yangtao Li <frank.li@vivo.com>
+Cc: pc@manguebit.com, ronniesahlberg@gmail.com, sprasad@microsoft.com, 
+	tom@talpey.com, bharathsm@microsoft.com, linux-cifs@vger.kernel.org, 
+	samba-technical@lists.samba.org, linux-kernel@vger.kernel.org, 
+	linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 17/04/2025 19.56, Luis Chamberlain wrote:
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: BUG at xa_alloc_index:57
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: CPU: 1 UID: 0 PID: 874 Comm: modprobe Tainted: G        W           6.15.0-rc2-next-20250417 #5 PREEMPT(full)
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: Tainted: [W]=WARN
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 2024.11-5 01/28/2025
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: Call Trace:
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel:  <TASK>
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: dump_stack_lvl (lib/dump_stack.c:122) 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: xa_alloc_index.constprop.0.cold (lib/test_xarray.c:602) test_xarray 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: check_xa_alloc_1 (lib/test_xarray.c:940) test_xarray 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: ? __pfx_xarray_checks (lib/test_xarray.c:2233) test_xarray 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: check_xa_alloc (lib/test_xarray.c:1106) test_xarray 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: xarray_checks (lib/test_xarray.c:2250) test_xarray 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: do_one_initcall (init/main.c:1271) 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: do_init_module (kernel/module/main.c:2930) 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: init_module_from_file (kernel/module/main.c:3587) 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: idempotent_init_module (./include/linux/spinlock.h:351 kernel/module/main.c:3528 kernel/module/main.c:3600) 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: __x64_sys_finit_module (./include/linux/file.h:62 (discriminator 1) ./include/linux/file.h:83 (discriminator 1) kernel/module/main.c:3622 (discriminator 1) kernel/module/main.c:3609 (discriminator 1) kernel/module/main.c:3609 (discriminator 1)) 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: do_syscall_64 (arch/x86/entry/syscall_64.c:63 (discriminator 1) arch/x86/entry/syscall_64.c:94 (discriminator 1)) 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: entry_SYSCALL_64_after_hwframe (arch/x86/entry/entry_64.S:130) 
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: RIP: 0033:0x7f0a99f18779
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: Code: ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 4f 86 0d 00 f7 d8 64 89 01 48
-> All code
-> ========
->    0:	ff c3                	inc    %ebx
->    2:	66 2e 0f 1f 84 00 00 	cs nopw 0x0(%rax,%rax,1)
->    9:	00 00 00 
->    c:	0f 1f 44 00 00       	nopl   0x0(%rax,%rax,1)
->   11:	48 89 f8             	mov    %rdi,%rax
->   14:	48 89 f7             	mov    %rsi,%rdi
->   17:	48 89 d6             	mov    %rdx,%rsi
->   1a:	48 89 ca             	mov    %rcx,%rdx
->   1d:	4d 89 c2             	mov    %r8,%r10
->   20:	4d 89 c8             	mov    %r9,%r8
->   23:	4c 8b 4c 24 08       	mov    0x8(%rsp),%r9
->   28:	0f 05                	syscall
->   2a:*	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax		<-- trapping instruction
->   30:	73 01                	jae    0x33
->   32:	c3                   	ret
->   33:	48 8b 0d 4f 86 0d 00 	mov    0xd864f(%rip),%rcx        # 0xd8689
->   3a:	f7 d8                	neg    %eax
->   3c:	64 89 01             	mov    %eax,%fs:(%rcx)
->   3f:	48                   	rex.W
-> 
-> Code starting with the faulting instruction
-> ===========================================
->    0:	48 3d 01 f0 ff ff    	cmp    $0xfffffffffffff001,%rax
->    6:	73 01                	jae    0x9
->    8:	c3                   	ret
->    9:	48 8b 0d 4f 86 0d 00 	mov    0xd864f(%rip),%rcx        # 0xd865f
->   10:	f7 d8                	neg    %eax
->   12:	64 89 01             	mov    %eax,%fs:(%rcx)
->   15:	48                   	rex.W
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: RSP: 002b:00007fffcb2588c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: RAX: ffffffffffffffda RBX: 000055e8f735a970 RCX: 00007f0a99f18779
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: RDX: 0000000000000000 RSI: 000055e8e9dd2328 RDI: 0000000000000003
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: RBP: 0000000000000000 R08: 0000000000000000 R09: 000055e8f735c410
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: R10: 0000000000000000 R11: 0000000000000246 R12: 000055e8e9dd2328
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel: R13: 0000000000040000 R14: 000055e8f735aa80 R15: 0000000000000000
-> Apr 18 02:30:42 e00aeb44aaa1-xarray kernel:  </TASK>
+> SB_NOATIME includes SB_NODIRATIME as a subset. Therefore, setting SB_NOAT=
+IME is sufficient
 
-I've been looking into this issue and noticed that setting the XArray operation
-state to a valid state was removed in patch [1]. Can you elaborate more why this
-was removed?
+Although technically the flag is not a subset, with current code in
+atime_needs_update() setting SB_NODIRATIME is not needed if SB_NOATIME
+is already set (see below), but it could be argued that the code is
+clearer (easier to understand) to set both flags (especially as it has
+no performance hit), and multiple other fs also do this. Any
+additional thoughts?
 
-[1] 6684aba0780da "XArray: Add extra debugging check to xas_lock and friends"
+        if (IS_NOATIME(inode))
+                return false;
+        if ((inode->i_sb->s_flags & SB_NODIRATIME) && S_ISDIR(inode->i_mode=
+))
+                return false;h
 
-Reverting behaviour makes it work again:
 
-diff --git a/lib/xarray.c b/lib/xarray.c
-index ee826f1a21fe..00b15287c292 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -2386,6 +2386,8 @@ void xa_destroy(struct xarray *xa)
-        xas_lock_irqsave(&xas, flags);
-        entry = xa_head_locked(xa);
-        RCU_INIT_POINTER(xa->xa_head, NULL);
-+       if (xas_top(xas.xa_node))
-+               xas.xa_node = NULL;
-        xas_init_marks(&xas);
-        if (xa_zero_busy(xa))
-                xa_mark_clear(xa, XA_FREE_MARK);
+On Fri, May 30, 2025 at 3:25=E2=80=AFAM Yangtao Li <frank.li@vivo.com> wrot=
+e:
+>
+> SB_NOATIME includes SB_NODIRATIME as a subset. Therefore,
+> setting SB_NOATIME is sufficient to disable atime updates
+> for all files and directories.
+>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> ---
+>  fs/smb/client/cifsfs.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/fs/smb/client/cifsfs.c b/fs/smb/client/cifsfs.c
+> index a08c42363ffc..b4bc15ea33bf 100644
+> --- a/fs/smb/client/cifsfs.c
+> +++ b/fs/smb/client/cifsfs.c
+> @@ -996,7 +996,7 @@ cifs_smb3_do_mount(struct file_system_type *fs_type,
+>         mnt_data.flags =3D flags;
+>
+>         /* BB should we make this contingent on mount parm? */
+> -       flags |=3D SB_NODIRATIME | SB_NOATIME;
+> +       flags |=3D SB_NOATIME;
+>
+>         sb =3D sget(fs_type, cifs_match_super, cifs_set_super, flags, &mn=
+t_data);
+>         if (IS_ERR(sb)) {
+> --
+> 2.48.1
+>
+>
 
-However, based on [2], this might not be the right fix.
 
-[2]
-https://lore.kernel.org/all/Z98oChgU7Z9wyTw1@casper.infradead.org/
+--
+Thanks,
 
-The problem shows up in a test from check_xa_alloc_1(). The xa_state
-is initialized during __xa_alloc() (via xa_alloc_index() → xa_alloc() →
-__xa_alloc()), but the internal xa_node stays in an invalid state. So when we
-try to allocate again at that same index after xa_destroy(), xas is still
-invalid, leading to the BUG above. This has nothing to do with the debug check
-added in commit [1].
-
-Also, since xas stays invalid, xa_destroy() skips setting XA_FREE_MARK (via
-xas_init_marks()), which I think is needed because we declared the array with
-XA_FLAGS_TRACK_FREE flag in DEFINE_XARRAY_ALLOC(xa0).
-
-Can you clarify why we cannot set the XArray state to valid and what would be
-the expected behaviour? As Luis reported, this is failing in kdevops CI which is
-now testing XArray tests among others in a daily basis.
-
+Steve
 
