@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-50194-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50195-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2823CAC8B22
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:40:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D614BAC8B23
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30F31898F83
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:40:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9838616EEF8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA1723236D;
-	Fri, 30 May 2025 09:35:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A51224B0C;
+	Fri, 30 May 2025 09:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="d4wJuq1F"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="f0RARZhZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE6222DA1F
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7722322B8BD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597709; cv=none; b=l4CWt1bWrcA959PFgBlbYefVawybQxIyGMISc9fQ20Q4pCD/QjkaUkiQGQY9eCoUPJKnqz8r93c91BZNKVB4Gekqpu8lHMGcD/+6gomumOOVAqRhZ4jqBVH05mrUVihp+qBAHWhyDnX1+E/S+P+v55TZ3/oGQtIB3ay+oJf1+aQ=
+	t=1748597724; cv=none; b=HI2cO4OXsgiWkGb1M2yd9lEL16GSC3k2UmkvnBcbslqCSlzH/psJR3nvEo8P+kGG0C+5Nf6dJOVas5VS8u172XxgzZPjTtafofpAy3U6F1/muwPMQEjI1dDWclutwZyDGxe768+/Qfa3zzLW6eH3zEjCpbX3VrEB8qUP8RoIDhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597709; c=relaxed/simple;
-	bh=CSBcJAAaPu1EwMn2t/TMYKgMYiCUawOQ8pC1PZaoOVQ=;
+	s=arc-20240116; t=1748597724; c=relaxed/simple;
+	bh=9CHW/F/J9wY0zWhmMIE46/gcJf++4JvdpcdoqukKOXQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GIEysaoR+BYfjezTy58Bg4Y043RKdt22FHBpBhAH/eBp8E9XPOMawhz/LyRdwg2IJbUXUiajP8WY1ORwNerq/jxqW2UJFIIJNSGUbBAXBZL7jwF2pSFmeqty58xKWB4JNAMc/dtiAWDCbuWbsJDuaR23o3/bCM4I5pUK7NS9jHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=d4wJuq1F; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=qfsCpBvWhh6/DfbeAGCvu29U4M2+DU13I4dLl2+zWEYvFGFUbs2Cy41tWhJiqp8OVS9vYqDTvcobr6ko4faaoXJl3SQXU8alqmxRHBsVTqjp+S9JB8sOUYIRpubFzemq28cL5Bq9oSuHoGXmAfLZFmbETQ0k0uMIyLns7QwXIsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=f0RARZhZ; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2349f096605so22014075ad.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:35:06 -0700 (PDT)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-310cf8f7301so1490210a91.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:35:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748597706; x=1749202506; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1748597722; x=1749202522; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=L5lpZBJN8KO9Wi2JkiZbNrbX1Mk+tAQNdIUoCRiUIVY=;
-        b=d4wJuq1FXHu4nTQhd567rVBNLwpQu/vPTHTSMzJELXe8r8QMRyWPKI6UHMdfwJXOvr
-         C1GoXVRbTVaRSYD0nmNXphDcvSH//5te5HB1lEE0EvlBtG1sssy6fSGhqZUTMLkzrpK+
-         LSGOGzc5RSFiXfbt4+oXm4yIvJYYWyoItXd/4IPDDMlPFoABm0JQji3CRu0pNwGLiMdg
-         G2+GO3t1l7vwd3WtPSIONakx6NnCy6LaQYQbPc1urPCtwWSXG1dSCAvdYQIXjoffdKoe
-         8eAsBL9+hETeapwiFw5ycojUfAKNjsZiLmf0P6KQfEKFnzs4Wp2+rE9ANwE6A9Gl0gLg
-         UGEA==
+        bh=VFn4X8pNflxKPFbQMCWiED+xW2QzJgp0gVRveKZQMVQ=;
+        b=f0RARZhZLjfW/aWmcoFtrJUt9YE2tMtU6hW+dQbnlucaiQQxvRKFiRnO3h/iMy/s2v
+         omUDtrkqOEt/ktuvHS7n8o/6kqJxThZBTjaanLdHcfE1r68tQrAeOHxsfRfLW3NJ1Hyd
+         nd/Aive6GBoywupUoDPQdMrRdo+l8n/7/P60qKSKROcXtd+U80e0W3nNU68j1qoyhmnr
+         mn1MiVkLYfoxSFIz6NDcTU0XKh6O44BoWmqcKTXh53e35VdFfXUyYkby9sBRdZExDvD8
+         3ou16CG9Vt4ycR+xYcIbyYYpe5bEbsuJZozsHxU4FYXZ5gsNlVcyG2FwKzZAZMjxVrhE
+         iPLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597706; x=1749202506;
+        d=1e100.net; s=20230601; t=1748597722; x=1749202522;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=L5lpZBJN8KO9Wi2JkiZbNrbX1Mk+tAQNdIUoCRiUIVY=;
-        b=H+O9EiCOAW3jfkJP7d5f/DEnmJNC0+YlRxoAUQ8v0cWEGoA0jwRJjLeRoW6vZdG0MD
-         vC0EWACYyCUCmtUMKbU2bc0+TH2QCh6BYxqRhY/MSgE3SKUfSngIQx4BgShaRvFMTRDW
-         2R27o2ztFBXZIBhhkJY2rDj162suse5rgjLZZDCey+/CmPgTkT7fVbX9muOk1/OBt559
-         fPf7wGZu35k5i/wW/BeT/ru2wzgOwG25q3kp150dnkF+dfLldXZkN2zm2zECZ0uRdojp
-         aYqY8fUu1K6OIbTO6v3Dhr2Fc2EoAt5QZW8H0OGJvFyIIFI1LapB9QY3ZhPeAXceaMkI
-         Z0kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPirIvHD7D2oBeeq+CY4p6U3X0finP3o3SpuhatnlkVUQfvKL+Jc5jNFOR9dADI8QrDMUlXzERruI1jVo2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuuOP/bKOl8mNUIEshGaHX+tMEzwA76fUqRoUIwzbO0Rkid/Rh
-	2ycPfH0sWwaTvwPh8HmclHip1Hm8FF1CCOjAKN60BHkrVLUIwF5RkhVQX5WuOY3vMXE=
-X-Gm-Gg: ASbGncsIhLM7dTp3uiU/VgMiadvoxI1/bzfb5xBv/6Ylk+eVk9DYOYpXCJlngM42DHP
-	V3L7+uJMQrWsj/zmXPE8kKMNchZ9uqg76COYm2GqXWXt8imF5B0F6JAe6GS0/VZxTsGP5gJNl9o
-	JSFqqLAarTuyZ27LCYr08MSuUBGhfwOE1yuaXx6XPVlwZbvF++fZM5ETTL9w0QRvrHLqlZHiPx8
-	82+bR16SXaXKR8gDyoeq3ObGTqJGAyqQCEnLaRlDfuyTNULfLzO/AYQlbU1NmIscqrF60nicqSo
-	9mwtKwXheZiSHXGLzfbzgKMDciXh7JFBk26QoMxYOdUqYxGLu9kpE8GCu8r97v4nBWunBTBNT0F
-	pGkBzS98guRJLg/XjA0CE
-X-Google-Smtp-Source: AGHT+IHAptJ8gzy+riOF1QxfTIK2HHrgqPaaAtuaRZ0rpmj0urvpGAIWcEQ578w6XYLBnp/Jp17aLw==
-X-Received: by 2002:a17:902:ccce:b0:234:bca7:2940 with SMTP id d9443c01a7336-23529a2c094mr43718025ad.38.1748597706235;
-        Fri, 30 May 2025 02:35:06 -0700 (PDT)
+        bh=VFn4X8pNflxKPFbQMCWiED+xW2QzJgp0gVRveKZQMVQ=;
+        b=mAqEvDpl3wyS5UxoFchEBwmTcAoNAUkQjoc/+6OwifKxY1dgGt+bbDgHixf4TcKxYD
+         e05r81zJpUwByE8pXLyrrJxmJv5VzvmkXGKgDlrWjA+Rt8xfI5C6td+fiSOiCOx+FlYs
+         a1osB4Xi15KFE+GOcGOZ6q43RoGx0DjYj8iFlxcGF6XZeT8tjzUrLFqPG10jER/dyik1
+         JnEhfkqc2H/pwdEYem03RLJKBSVo0hOTKVpKFMOoNRP/fmgSoTkuPfCmvpAatzfiFO1v
+         9IsZyh+bJHskrHsG2EW2ukUcFWxtUXFDiYKcMFqXGJwVhfV5OfqnagLwmeksZJ1QmIRZ
+         jMIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWfh0OwYRZc4rFOklbjXRCVQ+EfXHBZeeTHCu9ZdEYlS6nxPjjMnh3QWNrJOBzSQqxWogt6YoljJVAqdhBb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrQrRJ6gvdGbqDsGixIQ8K3bTfL6wyxJh2nej4vJrZj6HHlY5j
+	WEcI1Uurc0SBmOp8E1WJBJTGyHEca6R3TXkr6BjWqQeOwPiQW4KLf9rmyPV4e+i6/+g=
+X-Gm-Gg: ASbGncsgb8XrMderv2dRtDL0Yk/m97qlHlRbI6/S9cVCacAiKtVpLFar86LLhwG1qym
+	G0He4GYz5jfOISgEyg+oRiDOVdq4A32gShS0wIUxG55Gpw4EMTMq5aB+tRR2Evd3jpj+lDMRv/B
+	zLRLupvra3IcY9cXpLNfH5Yx/IQ8gay6hpBrCeGzKqeOSuGzh0MddZOUdr7GoBQ+pjbUMRh6vIG
+	eP6ngZwhNfVY0EWuEeEXrRWHHMt1pKgK537eqPIFlAFNd+OXME9XjWMvIrJQZumNkTrM9iMJAQZ
+	tuSvCgbeRRyKVvm5cXcOW1uz0fkhQJWi6kbDWcIGciW+Ot5FBZlwNwbMbP9aRuZ0+3X7uRzpUbQ
+	VYI/LokGPjf1TiODjeyrW
+X-Google-Smtp-Source: AGHT+IH46+bZCrX7K5xEEg6cSKu1TR1I7SkSliOWsHgcBqoA6CG8wyIvf12Zvpihk7VZmfu1IuwYXQ==
+X-Received: by 2002:a17:90b:164b:b0:310:8d4a:4a97 with SMTP id 98e67ed59e1d1-31214ee68f2mr10223135a91.15.1748597721380;
+        Fri, 30 May 2025 02:35:21 -0700 (PDT)
 Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.34.51
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.35.06
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 02:35:05 -0700 (PDT)
+        Fri, 30 May 2025 02:35:21 -0700 (PDT)
 From: Bo Li <libo.gcs85@bytedance.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
@@ -127,9 +127,9 @@ Cc: dietmar.eggemann@arm.com,
 	chengguozhu@bytedance.com,
 	sunjiadong.lff@bytedance.com,
 	Bo Li <libo.gcs85@bytedance.com>
-Subject: [RFC v2 26/35] RPAL: enable MPK support
-Date: Fri, 30 May 2025 17:27:54 +0800
-Message-Id: <a7da7fe131b0ce6582dbb77903745673d83a6195.1748594841.git.libo.gcs85@bytedance.com>
+Subject: [RFC v2 27/35] RPAL: add epoll support
+Date: Fri, 30 May 2025 17:27:55 +0800
+Message-Id: <7eb30a577e2c6a4f582515357aea25260105eb18.1748594841.git.libo.gcs85@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
 References: <cover.1748594840.git.libo.gcs85@bytedance.com>
@@ -139,552 +139,381 @@ List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-RPAL leverages Memory Protection Keys (MPK) to safeguard shared memory
-from illegal access and corruption by other processes. MPK-based memory
-protection involves two key mechanisms: First, for already allocated
-memory, when RPAL is enabled, the protection key fields in all page tables
-must be set to the process’s corresponding pkey value. Second, for newly
-allocated memory, when the kernel detects that the process is an RPAL
-service, it sets the corresponding pkey flag in the relevant memory data
-structures. Together, these measures ensure that all memory belonging to
-the current process is protected by its own pkey.
+To support the epoll family, RPAL needs to add new logic for RPAL services
+to the existing epoll logic, ensuring that user mode can execute RPAL
+service-related logic through identical interfaces.
 
-For MPK initialization, RPAL needs to set the pkeys of all allocated page
-table pages to the pkeys assigned by RPAL to the service. This is
-completed in three steps: First, enable permissions for all pkeys of the
-service, allowing it to access memory protected by any pkey. Then, update
-the pkeys in the page tables. Since permissions for all pkeys are already
-enabled at this stage, even if old and new pkeys coexist during the page
-table update, the service's memory access remains unaffected. Finally,
-after the page table update is complete, set the service's pkey permissions
-to the corresponding values, thereby achieving memory protection.
-
-Additionally, RPAL must manage the values of the PKRU register during
-lazy switch operations and signal handling. This ensures the process
-avoids coredumps causing by MPK.
+When the receiver thread calls epoll_wait(), it can set RPAL_EP_POLL_MAGIC
+to notify the kernel to invoke RPAL-related logic. The kernel then sets the
+receiver's state to RPAL_RECEIVER_STATE_READY and transitions it to
+RPAL_RECEIVER_STATE_WAIT when the receiver is actually removed from the
+runqueue, allowing the sender to perform RPAL calls on the receiver thread.
 
 Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
 ---
- arch/x86/kernel/cpu/common.c |   8 +-
- arch/x86/kernel/fpu/core.c   |   8 +-
- arch/x86/kernel/process.c    |   7 +-
- arch/x86/rpal/core.c         |  14 +++-
- arch/x86/rpal/internal.h     |   1 +
- arch/x86/rpal/pku.c          | 139 ++++++++++++++++++++++++++++++++++-
- arch/x86/rpal/service.c      |   1 +
- arch/x86/rpal/thread.c       |   5 ++
- include/linux/rpal.h         |   3 +
- kernel/sched/core.c          |   3 +
- mm/mmap.c                    |  12 +++
- mm/mprotect.c                |  96 ++++++++++++++++++++++++
- mm/vma.c                     |  18 +++++
- 13 files changed, 310 insertions(+), 5 deletions(-)
+ arch/x86/rpal/core.c |   4 +
+ fs/eventpoll.c       | 200 +++++++++++++++++++++++++++++++++++++++++++
+ include/linux/rpal.h |  21 +++++
+ kernel/sched/core.c  |  17 ++++
+ 4 files changed, 242 insertions(+)
 
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 8feb8fd2957a..2678453cdf76 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -26,6 +26,7 @@
- #include <linux/pgtable.h>
- #include <linux/stackprotector.h>
- #include <linux/utsname.h>
-+#include <linux/rpal.h>
- 
- #include <asm/alternative.h>
- #include <asm/cmdline.h>
-@@ -532,7 +533,12 @@ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
- 
- 	cr4_set_bits(X86_CR4_PKE);
- 	/* Load the default PKRU value */
--	pkru_write_default();
-+#ifdef CONFIG_RPAL_PKU
-+	if (rpal_current_service() && rpal_current_service()->pku_on)
-+		write_pkru(rpal_pkey_to_pkru(rpal_current_service()->pkey));
-+	else
-+#endif
-+		pkru_write_default();
- }
- 
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
-diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
-index ea138583dd92..251b1ddee726 100644
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -20,6 +20,7 @@
- #include <linux/hardirq.h>
- #include <linux/pkeys.h>
- #include <linux/vmalloc.h>
-+#include <linux/rpal.h>
- 
- #include "context.h"
- #include "internal.h"
-@@ -746,7 +747,12 @@ static inline void restore_fpregs_from_init_fpstate(u64 features_mask)
- 	else
- 		frstor(&init_fpstate.regs.fsave);
- 
--	pkru_write_default();
-+#ifdef CONFIG_RPAL_PKU
-+	if (rpal_current_service() && rpal_current_service()->pku_on)
-+		write_pkru(rpal_pkey_to_pkru(rpal_current_service()->pkey));
-+	else
-+#endif
-+		pkru_write_default();
- }
- 
- /*
-diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
-index be8845e2ca4d..b74de35218f9 100644
---- a/arch/x86/kernel/process.c
-+++ b/arch/x86/kernel/process.c
-@@ -285,7 +285,12 @@ static void pkru_flush_thread(void)
- 	 * If PKRU is enabled the default PKRU value has to be loaded into
- 	 * the hardware right here (similar to context switch).
- 	 */
--	pkru_write_default();
-+#ifdef CONFIG_RPAL_PKU
-+	if (rpal_current_service() && rpal_current_service()->pku_on)
-+		write_pkru(rpal_pkey_to_pkru(rpal_current_service()->pkey));
-+	else
-+#endif
-+		pkru_write_default();
- }
- 
- void flush_thread(void)
 diff --git a/arch/x86/rpal/core.c b/arch/x86/rpal/core.c
-index 41111d693994..47c9e551344e 100644
+index 47c9e551344e..6a22b9faa100 100644
 --- a/arch/x86/rpal/core.c
 +++ b/arch/x86/rpal/core.c
-@@ -275,6 +275,13 @@ rpal_skip_lazy_switch(struct task_struct *next, struct pt_regs *regs)
- 	tgt = next->rpal_rs;
- 	if (in_ret_section(tgt, regs->ip)) {
- 		wrfsbase(current->thread.fsbase);
-+#ifdef CONFIG_RPAL_PKU
-+		rpal_set_current_pkru(
-+			rpal_pkru_union(
-+				rpal_pkey_to_pkru(rpal_current_service()->pkey),
-+				rpal_pkey_to_pkru(next->rpal_rs->pkey)),
-+			RPAL_PKRU_SET);
-+#endif
+@@ -9,6 +9,7 @@
+ #include <linux/rpal.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/pkeys.h>
++#include <linux/file.h>
+ #include <asm/fsgsbase.h>
+ 
+ #include "internal.h"
+@@ -63,6 +64,7 @@ void rpal_kernel_ret(struct pt_regs *regs)
+ 
+ 	if (rpal_test_current_thread_flag(RPAL_RECEIVER_BIT)) {
+ 		rcc = current->rpal_rd->rcc;
++		regs->ax = rpal_try_send_events(current->rpal_rd->ep, rcc);
+ 		atomic_xchg(&rcc->receiver_state, RPAL_RECEIVER_STATE_KERNEL_RET);
+ 	} else {
+ 		tsk = current->rpal_sd->receiver;
+@@ -142,6 +144,7 @@ rpal_do_kernel_context_switch(struct task_struct *next, struct pt_regs *regs)
+ 	struct task_struct *prev = current;
+ 
+ 	if (rpal_test_task_thread_flag(next, RPAL_LAZY_SWITCHED_BIT)) {
++		rpal_resume_ep(next);
+ 		current->rpal_sd->receiver = next;
+ 		rpal_lock_cpu(current);
+ 		rpal_lock_cpu(next);
+@@ -154,6 +157,7 @@ rpal_do_kernel_context_switch(struct task_struct *next, struct pt_regs *regs)
+ 		 */
  		rebuild_sender_stack(current->rpal_sd, regs);
- 		rpal_clear_task_thread_flag(next, RPAL_LAZY_SWITCHED_BIT);
- 		next->rpal_rd->sender = NULL;
-@@ -292,8 +299,13 @@ static struct task_struct *rpal_fix_critical_section(struct task_struct *next,
- 	if (rpal_test_task_thread_flag(next, RPAL_LAZY_SWITCHED_BIT))
- 		next = rpal_skip_lazy_switch(next, regs);
- 	/* receiver->sender */
--	else if (rpal_is_correct_address(cur, regs->ip))
-+	else if (rpal_is_correct_address(cur, regs->ip)) {
- 		rpal_skip_receiver_code(next, regs);
-+#ifdef CONFIG_RPAL_PKU
-+		write_pkru(rpal_pkru_union(
-+			rpal_pkey_to_pkru(next->rpal_rs->pkey), rdpkru()));
-+#endif
-+	}
+ 		rpal_schedule(next);
++		fdput(next->rpal_rd->f);
+ 	} else {
+ 		update_dst_stack(next, regs);
+ 		/*
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index d4dbffdedd08..437cd5764c03 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -38,6 +38,7 @@
+ #include <linux/compat.h>
+ #include <linux/rculist.h>
+ #include <linux/capability.h>
++#include <linux/rpal.h>
+ #include <net/busy_poll.h>
  
- 	return next;
- }
-diff --git a/arch/x86/rpal/internal.h b/arch/x86/rpal/internal.h
-index 71afa8225450..e49febce8645 100644
---- a/arch/x86/rpal/internal.h
-+++ b/arch/x86/rpal/internal.h
-@@ -58,4 +58,5 @@ rpal_build_call_state(const struct rpal_sender_data *rsd)
- /* pkey.c */
- int rpal_alloc_pkey(struct rpal_service *rs, int pkey);
- int rpal_pkey_setup(struct rpal_service *rs, int pkey);
-+void rpal_set_current_pkru(u32 val, int mode);
- void rpal_service_pku_init(void);
-diff --git a/arch/x86/rpal/pku.c b/arch/x86/rpal/pku.c
-index 4c5151ca5b8b..26cef324f41f 100644
---- a/arch/x86/rpal/pku.c
-+++ b/arch/x86/rpal/pku.c
-@@ -25,12 +25,149 @@ void rpal_service_pku_init(void)
- 	mmap_write_unlock(mm);
+ /*
+@@ -2141,6 +2142,187 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 	}
  }
  
-+void rpal_set_pku_schedule_tail(struct task_struct *prev)
++#ifdef CONFIG_RPAL
++
++void rpal_resume_ep(struct task_struct *tsk)
 +{
-+	if (rpal_test_current_thread_flag(RPAL_RECEIVER_BIT)) {
-+		struct rpal_service *cur = rpal_current_service();
-+		u32 val = rpal_pkey_to_pkru(cur->pkey);
++	struct rpal_receiver_data *rrd = tsk->rpal_rd;
++	struct eventpoll *ep = (struct eventpoll *)rrd->ep;
++	struct rpal_receiver_call_context *rcc = rrd->rcc;
 +
-+		rpal_set_current_pkru(val, RPAL_PKRU_SET);
-+	} else {
-+		struct rpal_service *cur = rpal_current_service();
-+		u32 val = rpal_pkey_to_pkru(cur->pkey);
-+
-+		val = rpal_pkru_union(
-+			val,
-+			rpal_pkey_to_pkru(
-+				current->rpal_sd->receiver->rpal_rs->pkey));
-+		rpal_set_current_pkru(val, RPAL_PKRU_SET);
++	if (rcc->timeout > 0) {
++		hrtimer_cancel(&rrd->ep_sleeper.timer);
++		destroy_hrtimer_on_stack(&rrd->ep_sleeper.timer);
++	}
++	if (!list_empty_careful(&rrd->ep_wait.entry)) {
++		write_lock(&ep->lock);
++		__remove_wait_queue(&ep->wq, &rrd->ep_wait);
++		write_unlock(&ep->lock);
 +	}
 +}
 +
-+static inline u32 rpal_get_new_val(u32 old_val, u32 new_val, int mode)
++int rpal_try_send_events(void *ep, struct rpal_receiver_call_context *rcc)
 +{
-+	switch (mode) {
-+	case RPAL_PKRU_SET:
-+		return new_val;
-+	case RPAL_PKRU_UNION:
-+		return rpal_pkru_union(old_val, new_val);
-+	case RPAL_PKRU_INTERSECT:
-+		return rpal_pkru_intersect(old_val, new_val);
-+	default:
-+		rpal_err("%s: invalid mode: %d\n", __func__, mode);
-+		return old_val;
++	int eavail;
++	int res = 0;
++
++	res = ep_send_events(ep, rcc->events, rcc->maxevents);
++	if (res > 0)
++		ep_suspend_napi_irqs(ep);
++
++	eavail = ep_events_available(ep);
++	if (!eavail) {
++		atomic_and(~RPAL_KERNEL_PENDING, &rcc->ep_pending);
++		/* check again to avoid data race on RPAL_KERNEL_PENDING */
++		eavail = ep_events_available(ep);
++		if (eavail)
++			atomic_or(RPAL_KERNEL_PENDING, &rcc->ep_pending);
 +	}
++	return res;
 +}
 +
-+static int rpal_set_task_fpu_pkru(struct task_struct *task, u32 val, int mode)
++static int rpal_schedule_hrtimeout_range_clock(ktime_t *expires, u64 delta,
++					       const enum hrtimer_mode mode,
++					       clockid_t clock_id)
 +{
-+	struct thread_struct *t = &task->thread;
++	struct hrtimer_sleeper *t = &current->rpal_rd->ep_sleeper;
 +
-+	val = rpal_get_new_val(t->pkru, val, mode);
-+	t->pkru = val;
-+
-+	return 0;
-+}
-+
-+void rpal_set_current_pkru(u32 val, int mode)
-+{
-+	u32 new_val;
-+
-+	new_val = rpal_get_new_val(rdpkru(), val, mode);
-+	write_pkru(new_val);
-+}
-+
-+struct task_function_data {
-+	struct task_struct *task;
-+	u32 val;
-+	int mode;
-+	int ret;
-+};
-+
-+static void rpal_set_remote_pkru(void *data)
-+{
-+	struct task_function_data *tfd = data;
-+	struct task_struct *task = tfd->task;
-+
-+	if (task) {
-+		/* -EAGAIN */
-+		if (task_cpu(task) != smp_processor_id())
-+			return;
-+
-+		tfd->ret = -ESRCH;
-+		if (task == current) {
-+			rpal_set_current_pkru(tfd->val, tfd->mode);
-+			tfd->ret = 0;
-+		} else {
-+			tfd->ret = rpal_set_task_fpu_pkru(task, tfd->val,
-+							  tfd->mode);
-+		}
-+		return;
-+	}
-+}
-+
-+static int rpal_task_function_call(struct task_struct *task, u32 val, int mode)
-+{
-+	struct task_function_data data = {
-+		.task = task,
-+		.val = val,
-+		.mode = mode,
-+		.ret = -EAGAIN,
-+	};
-+	int ret;
-+
-+	for (;;) {
-+		smp_call_function_single(task_cpu(task), rpal_set_remote_pkru,
-+					 &data, 1);
-+		ret = data.ret;
-+
-+		if (ret != -EAGAIN)
-+			break;
-+
-+		cond_resched();
-+	}
-+
-+	return ret;
-+}
-+
-+static void rpal_set_task_pkru(struct task_struct *task, u32 val, int mode)
-+{
-+	if (task == current)
-+		rpal_set_current_pkru(val, mode);
-+	else
-+		rpal_task_function_call(task, val, mode);
-+}
-+
-+static void rpal_set_group_pkru(u32 val, int mode)
-+{
-+	struct task_struct *p;
-+
-+	for_each_thread(current, p) {
-+		rpal_set_task_pkru(p, val, mode);
-+	}
-+}
-+
- int rpal_pkey_setup(struct rpal_service *rs, int pkey)
- {
--	int val;
-+	int err, val;
- 
- 	val = rpal_pkey_to_pkru(pkey);
-+
-+	mmap_write_lock(current->mm);
-+	if (rs->pku_on) {
-+		mmap_write_unlock(current->mm);
++	/*
++	 * Optimize when a zero timeout value is given. It does not
++	 * matter whether this is an absolute or a relative time.
++	 */
++	if (expires && *expires == 0) {
++		__set_current_state(TASK_RUNNING);
 +		return 0;
 +	}
- 	rs->pkey = pkey;
-+	/* others must see rs->pkey before rs->pku_on */
-+	barrier();
-+	rs->pku_on = true;
-+	mmap_write_unlock(current->mm);
-+	rpal_set_group_pkru(val, RPAL_PKRU_UNION);
-+	err = do_rpal_mprotect_pkey(rs->base, RPAL_ADDR_SPACE_SIZE, pkey);
-+	if (unlikely(err))
-+		rpal_err("do_rpal_mprotect_key error: %d\n", err);
-+	rpal_set_group_pkru(val, RPAL_PKRU_SET);
- 	return 0;
++
++	/*
++	 * A NULL parameter means "infinite"
++	 */
++	if (!expires) {
++		schedule();
++		return -EINTR;
++	}
++
++	hrtimer_setup_sleeper_on_stack(t, clock_id, mode);
++	hrtimer_set_expires_range_ns(&t->timer, *expires, delta);
++	hrtimer_sleeper_start_expires(t, mode);
++
++	if (likely(t->task))
++		schedule();
++
++	hrtimer_cancel(&t->timer);
++	destroy_hrtimer_on_stack(&t->timer);
++
++	__set_current_state(TASK_RUNNING);
++
++	return !t->task ? 0 : -EINTR;
++}
++
++static int rpal_ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
++			int maxevents, struct timespec64 *timeout)
++{
++	int res = 0, eavail, timed_out = 0;
++	u64 slack = 0;
++	struct rpal_receiver_data *rrd = current->rpal_rd;
++	wait_queue_entry_t *wait = &rrd->ep_wait;
++	ktime_t expires, *to = NULL;
++
++	rrd->ep = ep;
++
++	lockdep_assert_irqs_enabled();
++
++	if (timeout && (timeout->tv_sec | timeout->tv_nsec)) {
++		slack = select_estimate_accuracy(timeout);
++		to = &expires;
++		*to = timespec64_to_ktime(*timeout);
++	} else if (timeout) {
++		timed_out = 1;
++	}
++
++	eavail = ep_events_available(ep);
++
++	while (1) {
++		if (eavail) {
++			res = rpal_try_send_events(ep, rrd->rcc);
++			if (res) {
++				atomic_xchg(&rrd->rcc->receiver_state,
++					    RPAL_RECEIVER_STATE_RUNNING);
++				return res;
++			}
++		}
++
++		if (timed_out) {
++			atomic_xchg(&rrd->rcc->receiver_state,
++				    RPAL_RECEIVER_STATE_RUNNING);
++			return 0;
++		}
++
++		eavail = ep_busy_loop(ep);
++		if (eavail)
++			continue;
++
++		if (signal_pending(current)) {
++			atomic_xchg(&rrd->rcc->receiver_state,
++				    RPAL_RECEIVER_STATE_RUNNING);
++			return -EINTR;
++		}
++
++		init_wait(wait);
++		wait->func = rpal_ep_autoremove_wake_function;
++		wait->private = rrd;
++		write_lock_irq(&ep->lock);
++
++		atomic_xchg(&rrd->rcc->receiver_state,
++			    RPAL_RECEIVER_STATE_READY);
++		__set_current_state(TASK_INTERRUPTIBLE);
++
++		eavail = ep_events_available(ep);
++		if (!eavail)
++			__add_wait_queue_exclusive(&ep->wq, wait);
++
++		write_unlock_irq(&ep->lock);
++
++		if (!eavail && ep_schedule_timeout(to)) {
++			if (RPAL_USER_PENDING & atomic_read(&rrd->rcc->ep_pending)) {
++				timed_out = 1;
++			} else {
++				timed_out =
++					!rpal_schedule_hrtimeout_range_clock(
++						to, slack, HRTIMER_MODE_ABS,
++						CLOCK_MONOTONIC);
++			}
++		}
++		atomic_cmpxchg(&rrd->rcc->receiver_state,
++			       RPAL_RECEIVER_STATE_READY,
++			       RPAL_RECEIVER_STATE_RUNNING);
++		__set_current_state(TASK_RUNNING);
++
++		/*
++		 * We were woken up, thus go and try to harvest some events.
++		 * If timed out and still on the wait queue, recheck eavail
++		 * carefully under lock, below.
++		 */
++		eavail = 1;
++
++		if (!list_empty_careful(&wait->entry)) {
++			write_lock_irq(&ep->lock);
++			/*
++			 * If the thread timed out and is not on the wait queue,
++			 * it means that the thread was woken up after its
++			 * timeout expired before it could reacquire the lock.
++			 * Thus, when wait.entry is empty, it needs to harvest
++			 * events.
++			 */
++			if (timed_out)
++				eavail = list_empty(&wait->entry);
++			__remove_wait_queue(&ep->wq, wait);
++			write_unlock_irq(&ep->lock);
++		}
++	}
++}
++#endif
++
+ /**
+  * ep_loop_check_proc - verify that adding an epoll file inside another
+  *                      epoll structure does not violate the constraints, in
+@@ -2529,7 +2711,25 @@ static int do_epoll_wait(int epfd, struct epoll_event __user *events,
+ 	ep = fd_file(f)->private_data;
+ 
+ 	/* Time to fish for events ... */
++#ifdef CONFIG_RPAL
++	/*
++	 * For RPAL task, if it is a receiver and it set MAGIC in shared memory,
++	 * We think it is prepared for rpal calls. Therefore, we need to handle
++	 * it differently.
++	 *
++	 * In other cases, RPAL task always plays like a normal task.
++	 */
++	if (rpal_current_service() &&
++	    rpal_test_current_thread_flag(RPAL_RECEIVER_BIT) &&
++	    current->rpal_rd->rcc->rpal_ep_poll_magic == RPAL_EP_POLL_MAGIC) {
++		current->rpal_rd->f = f;
++		return rpal_ep_poll(ep, events, maxevents, to);
++	} else {
++		return ep_poll(ep, events, maxevents, to);
++	}
++#else
+ 	return ep_poll(ep, events, maxevents, to);
++#endif
  }
  
-diff --git a/arch/x86/rpal/service.c b/arch/x86/rpal/service.c
-index ca795dacc90d..7a83e85cf096 100644
---- a/arch/x86/rpal/service.c
-+++ b/arch/x86/rpal/service.c
-@@ -210,6 +210,7 @@ struct rpal_service *rpal_register_service(void)
- 	init_waitqueue_head(&rs->rpd.rpal_waitqueue);
- #ifdef CONFIG_RPAL_PKU
- 	rs->pkey = -1;
-+	rs->pku_on = false;
- 	rpal_service_pku_init();
- #endif
- 
-diff --git a/arch/x86/rpal/thread.c b/arch/x86/rpal/thread.c
-index 02c1a9c22dd7..fcc592baaac0 100644
---- a/arch/x86/rpal/thread.c
-+++ b/arch/x86/rpal/thread.c
-@@ -281,6 +281,11 @@ int rpal_rebuild_sender_context_on_fault(struct pt_regs *regs,
- 			regs->sp = ersp;
- 			/* avoid rebuild again */
- 			scc->ec.magic = 0;
-+#ifdef CONFIG_RPAL_PKU
-+			rpal_set_current_pkru(
-+				rpal_pkey_to_pkru(rpal_current_service()->pkey),
-+				RPAL_PKRU_SET);
-+#endif
- 			return 0;
- 		}
- 	}
+ SYSCALL_DEFINE4(epoll_wait, int, epfd, struct epoll_event __user *, events,
 diff --git a/include/linux/rpal.h b/include/linux/rpal.h
-index 2f2982d281cc..f2474cb53abe 100644
+index f2474cb53abe..5912ffec6e28 100644
 --- a/include/linux/rpal.h
 +++ b/include/linux/rpal.h
-@@ -239,6 +239,7 @@ struct rpal_service {
+@@ -16,6 +16,8 @@
+ #include <linux/hashtable.h>
+ #include <linux/atomic.h>
+ #include <linux/sizes.h>
++#include <linux/file.h>
++#include <linux/hrtimer.h>
  
- #ifdef CONFIG_RPAL_PKU
- 	/* pkey */
-+	bool pku_on;
- 	int pkey;
- #endif
+ #define RPAL_ERROR_MSG "rpal error: "
+ #define rpal_err(x...) pr_err(RPAL_ERROR_MSG x)
+@@ -89,6 +91,7 @@ enum {
+ };
  
-@@ -571,4 +572,6 @@ void rpal_schedule(struct task_struct *next);
- asmlinkage struct task_struct *
- __rpal_switch_to(struct task_struct *prev_p, struct task_struct *next_p);
+ #define RPAL_ERROR_MAGIC 0x98CC98CC
++#define RPAL_EP_POLL_MAGIC 0xCC98CC98
+ 
+ #define RPAL_SID_SHIFT 24
+ #define RPAL_ID_SHIFT 8
+@@ -103,6 +106,9 @@ enum {
+ #define RPAL_PKRU_UNION 1
+ #define RPAL_PKRU_INTERSECT 2
+ 
++#define RPAL_KERNEL_PENDING 0x1
++#define RPAL_USER_PENDING 0x2
++
+ extern unsigned long rpal_cap;
+ 
+ enum rpal_task_flag_bits {
+@@ -282,6 +288,12 @@ struct rpal_receiver_call_context {
+ 	int receiver_id;
+ 	atomic_t receiver_state;
+ 	atomic_t sender_state;
++	atomic_t ep_pending;
++	int rpal_ep_poll_magic;
++	int epfd;
++	void __user *events;
++	int maxevents;
++	int timeout;
+ };
+ 
+ /* recovery point for sender */
+@@ -325,6 +337,10 @@ struct rpal_receiver_data {
+ 	struct rpal_shared_page *rsp;
+ 	struct rpal_receiver_call_context *rcc;
+ 	struct task_struct *sender;
++	void *ep;
++	struct fd f;
++	struct hrtimer_sleeper ep_sleeper;
++	wait_queue_entry_t ep_wait;
+ };
+ 
+ struct rpal_sender_data {
+@@ -574,4 +590,9 @@ __rpal_switch_to(struct task_struct *prev_p, struct task_struct *next_p);
  asmlinkage __visible void rpal_schedule_tail(struct task_struct *prev);
-+int do_rpal_mprotect_pkey(unsigned long start, size_t len, int pkey);
-+void rpal_set_pku_schedule_tail(struct task_struct *prev);
+ int do_rpal_mprotect_pkey(unsigned long start, size_t len, int pkey);
+ void rpal_set_pku_schedule_tail(struct task_struct *prev);
++int rpal_ep_autoremove_wake_function(wait_queue_entry_t *curr,
++	unsigned int mode, int wake_flags,
++	void *key);
++void rpal_resume_ep(struct task_struct *tsk);
++int rpal_try_send_events(void *ep, struct rpal_receiver_call_context *rcc);
  #endif
 diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 0f9343698198..eb5d5bd51597 100644
+index eb5d5bd51597..486d59bdd3fc 100644
 --- a/kernel/sched/core.c
 +++ b/kernel/sched/core.c
-@@ -11029,6 +11029,9 @@ asmlinkage __visible void rpal_schedule_tail(struct task_struct *prev)
+@@ -6794,6 +6794,23 @@ pick_next_task(struct rq *rq, struct task_struct *prev, struct rq_flags *rf)
+ #define SM_RTLOCK_WAIT		2
  
- 	finish_task_switch(prev);
- 	trace_sched_exit_tp(true, CALLER_ADDR0);
-+#ifdef CONFIG_RPAL_PKU
-+	rpal_set_pku_schedule_tail(prev);
-+#endif
- 	preempt_enable();
- 
- 	calculate_sigpending();
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 98bb33d2091e..d36ea4ea2bd0 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -396,6 +396,18 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 		if (pkey < 0)
- 			pkey = 0;
- 	}
-+#ifdef CONFIG_RPAL_PKU
-+	/*
-+	 * For RPAL process, if pku is enabled, we always use
-+	 * its service pkey for new vma.
-+	 */
-+	do {
-+		struct rpal_service *cur = rpal_current_service();
-+
-+		if (cur && cur->pku_on)
-+			pkey = cur->pkey;
-+	} while (0);
-+#endif
- 
- 	/* Do simple checking here so the lower-level routines won't have
- 	 * to. we assume access permissions have been handled by the open
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index 982f911ffaba..e9ae828e377d 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -713,6 +713,18 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- 	struct mmu_gather tlb;
- 	struct vma_iterator vmi;
- 
-+#ifdef CONFIG_RPAL_PKU
-+	if (pkey != -1) {
-+		struct rpal_service *cur = rpal_current_service();
-+
-+		if (unlikely(cur) && cur->pku_on) {
-+			rpal_err("%s, pid: %d, try to change pkey\n",
-+				 current->comm, current->pid);
-+			return -EINVAL;
-+		}
-+	}
-+#endif
-+
- 	start = untagged_addr(start);
- 
- 	prot &= ~(PROT_GROWSDOWN|PROT_GROWSUP);
-@@ -848,6 +860,90 @@ static int do_mprotect_pkey(unsigned long start, size_t len,
- 	return error;
- }
- 
-+#ifdef CONFIG_RPAL_PKU
-+int do_rpal_mprotect_pkey(unsigned long start, size_t len, int pkey)
+ #ifdef CONFIG_RPAL
++int rpal_ep_autoremove_wake_function(wait_queue_entry_t *curr,
++				     unsigned int mode, int wake_flags,
++				     void *key)
 +{
-+	unsigned long nstart, end, tmp;
-+	struct vm_area_struct *vma, *prev;
-+	struct rpal_service *cur = rpal_current_service();
-+	int error = -EINVAL;
-+	struct mmu_gather tlb;
-+	struct vma_iterator vmi;
++	struct rpal_receiver_data *rrd = curr->private;
++	struct task_struct *tsk = rrd->rcd.bp_task;
++	int ret;
 +
-+	start = untagged_addr(start);
++	ret = try_to_wake_up(tsk, mode, wake_flags);
 +
-+	if (start & ~PAGE_MASK)
-+		return -EINVAL;
-+	if (!len)
-+		return 0;
-+	len = PAGE_ALIGN(len);
-+	end = start + len;
-+	if (end <= start)
-+		return -ENOMEM;
++	list_del_init_careful(&curr->entry);
++	if (!ret)
++		atomic_or(RPAL_KERNEL_PENDING, &rrd->rcc->ep_pending);
 +
-+	if (mmap_write_lock_killable(current->mm))
-+		return -EINTR;
-+
-+	/*
-+	 * If userspace did not allocate the pkey, do not let
-+	 * them use it here.
-+	 */
-+	error = -EINVAL;
-+	if ((pkey != -1) && !mm_pkey_is_allocated(current->mm, pkey))
-+		goto out;
-+
-+	vma_iter_init(&vmi, current->mm, start);
-+	vma = vma_find(&vmi, end);
-+	error = -ENOMEM;
-+	if (!vma)
-+		goto out;
-+
-+	prev = vma_prev(&vmi);
-+	if (vma->vm_start > start)
-+		start = vma->vm_start;
-+
-+	if (start > vma->vm_start)
-+		prev = vma;
-+
-+	tlb_gather_mmu(&tlb, current->mm);
-+	nstart = start;
-+	tmp = vma->vm_start;
-+	for_each_vma_range(vmi, vma, end) {
-+		unsigned long vma_pkey_mask;
-+		unsigned long newflags;
-+
-+		tmp = vma->vm_start;
-+		nstart = tmp;
-+
-+		/* Here we know that vma->vm_start <= nstart < vma->vm_end. */
-+		vma_pkey_mask = VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2 |
-+				VM_PKEY_BIT3;
-+		newflags = vma->vm_flags;
-+		newflags &= ~vma_pkey_mask;
-+		newflags |= ((unsigned long)cur->pkey) << VM_PKEY_SHIFT;
-+
-+		tmp = vma->vm_end;
-+		if (tmp > end)
-+			tmp = end;
-+
-+		if (vma->vm_ops && vma->vm_ops->mprotect) {
-+			error = vma->vm_ops->mprotect(vma, nstart, tmp, newflags);
-+			if (error)
-+				break;
-+		}
-+
-+		error = mprotect_fixup(&vmi, &tlb, vma, &prev, nstart, tmp, newflags);
-+		if (error)
-+			break;
-+	}
-+	tlb_finish_mmu(&tlb);
-+
-+out:
-+	mmap_write_unlock(current->mm);
-+	return error;
++	return 1;
 +}
-+#endif
 +
- SYSCALL_DEFINE3(mprotect, unsigned long, start, size_t, len,
- 		unsigned long, prot)
+ static inline void rpal_check_ready_state(struct task_struct *tsk, int state)
  {
-diff --git a/mm/vma.c b/mm/vma.c
-index a468d4c29c0c..fa9d8f694e6e 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -4,6 +4,8 @@
-  * VMA-specific functions.
-  */
- 
-+#include <linux/rpal.h>
-+
- #include "vma_internal.h"
- #include "vma.h"
- 
-@@ -2622,6 +2624,22 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
- {
- 	struct mm_struct *mm = current->mm;
- 
-+#ifdef CONFIG_RPAL_PKU
-+	/*
-+	 * Any memory need to use RPAL service pkey
-+	 * once service is enabled.
-+	 */
-+	struct rpal_service *cur = rpal_current_service();
-+	unsigned long vma_pkey_mask;
-+
-+	if (cur && cur->pku_on) {
-+		vma_pkey_mask = VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2 |
-+				VM_PKEY_BIT3;
-+		flags &= ~vma_pkey_mask;
-+		flags |= ((unsigned long)cur->pkey) << VM_PKEY_SHIFT;
-+	}
-+#endif
-+
- 	/*
- 	 * Check against address space limits by the changed size
- 	 * Note: This happens *after* clearing old mappings in some code paths.
+ 	if (rpal_test_task_thread_flag(tsk, RPAL_RECEIVER_BIT)) {
 -- 
 2.20.1
 
