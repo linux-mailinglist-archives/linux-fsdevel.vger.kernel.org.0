@@ -1,137 +1,231 @@
-Return-Path: <linux-fsdevel+bounces-50148-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50149-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB07AC8857
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 08:43:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C577AC889D
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C674A25B88
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 06:42:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D41121BA61A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 07:16:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCA53219A72;
-	Fri, 30 May 2025 06:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B2A920E32F;
+	Fri, 30 May 2025 07:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oBbrXNvT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9OD/Zc0w";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oBbrXNvT";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="9OD/Zc0w"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34B1C201006;
-	Fri, 30 May 2025 06:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB172199EAD
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 07:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748587296; cv=none; b=orVoUUOfKG/NoJhEvqVpUN4bOVo3hKUvHhY+vocn04VpeeGo4Xmp4BnsGJW8TbctFlAXQOb6gajoWrAYCDmbo6kt2o03CI1LdWEUrkknG8r9Faw4mmr54Huvf1NGYIedE0RY9L6IYX0s70mUswfRTwVaTvDYBtjRmz4UGz89hlU=
+	t=1748589356; cv=none; b=W3QDeQb1T4Zz/MZ+MDdWKXZwcVXQAWfWlBEpndcOGTT7e0TZ/YZ+ElSHh5Wp4BYmCMVWZhXAM9g9ovZf7Pw1fgaxfmK8yj8EGgak7W2TMM2lPsysmkSMsvhQl/nIR4ec19QlmlxYFCBpt2oDIhgXdV2eM4554q/5WS2ByMkMoSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748587296; c=relaxed/simple;
-	bh=AHe9ZlzqSs1N0MqxT8r/mBag9PpTGvK3leRA+/aS4ZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=giP8EeyjYwF8U8IyWYHp9cG+y5Z+aIKWf//4q2zfLTtpDAg5+4tfDUJoXev9NKPs6YEIPV1lXJ/4A7L9YwPrX/P1alqR2GCFFh8CVI9z8AXsnxqM3vIznPjpOw5G2SB6LvNRVRoO6BwrpUR/CUIEjcOlw/Xf3ovZqGOg1oJuTUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4b7tth5wC7zYQv4K;
-	Fri, 30 May 2025 14:41:32 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id E2FCD1A1A1F;
-	Fri, 30 May 2025 14:41:31 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgD3Wl8PUzlo_wXRNw--.6893S9;
-	Fri, 30 May 2025 14:41:31 +0800 (CST)
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-To: linux-ext4@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	tytso@mit.edu,
-	adilger.kernel@dilger.ca,
-	jack@suse.cz,
-	ojaswin@linux.ibm.com,
-	yi.zhang@huawei.com,
-	yi.zhang@huaweicloud.com,
-	libaokun1@huawei.com,
-	yukuai3@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 5/5] ext4: disable large folios if dioread_nolock is not enabled
-Date: Fri, 30 May 2025 14:28:58 +0800
-Message-ID: <20250530062858.458039-6-yi.zhang@huaweicloud.com>
-X-Mailer: git-send-email 2.46.1
-In-Reply-To: <20250530062858.458039-1-yi.zhang@huaweicloud.com>
-References: <20250530062858.458039-1-yi.zhang@huaweicloud.com>
+	s=arc-20240116; t=1748589356; c=relaxed/simple;
+	bh=i/sTP8kxv2bHjU6/5tEla5HY5Q+6eGeBtucd+gZOaCU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mG+hCIoYj6UNoN05uBHRNVUBveWQDQ3HINDCaAeVk6RwKrJ60Byry8a/CSSutLVfeCpCwYBJ0Ad1NDZxI6aAC1Htww7QIDgsX/GjFhommaiH60vyShFBbRzmgejryAH+JwjqfEVn8hWOiEI3Fo/WqxdJoh4IezDF+V2LY4m79b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oBbrXNvT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9OD/Zc0w; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oBbrXNvT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=9OD/Zc0w; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A49AF1F7A1;
+	Fri, 30 May 2025 07:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1748589351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uzU19k1ECLHjrvkeXuOD+PC+beRlg03ZHwC8d7LjQWg=;
+	b=oBbrXNvT2xBNFjpKCbW13YHP4O66WtaiTyPNKlnuc5QcBuF4n+TcsqWcbcPb4nwo1a2jC6
+	1C1SrGTPcNCN7IH3f4mTqvPbTXqogrgCxf56lmABQO7PgEaqPgxP13QXHIM5J6U4W+fjYs
+	b4sx+5gytVsbJLWJUQecvMjY+JSgh1w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1748589351;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uzU19k1ECLHjrvkeXuOD+PC+beRlg03ZHwC8d7LjQWg=;
+	b=9OD/Zc0wTvD0qN2XodBjaOf/qYa0n0OKAYU0m6GtrS7ZK435G9v4pzPmvuueiYHx8fJI/A
+	7lXqe5U+gx0WHYDQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1748589351; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uzU19k1ECLHjrvkeXuOD+PC+beRlg03ZHwC8d7LjQWg=;
+	b=oBbrXNvT2xBNFjpKCbW13YHP4O66WtaiTyPNKlnuc5QcBuF4n+TcsqWcbcPb4nwo1a2jC6
+	1C1SrGTPcNCN7IH3f4mTqvPbTXqogrgCxf56lmABQO7PgEaqPgxP13QXHIM5J6U4W+fjYs
+	b4sx+5gytVsbJLWJUQecvMjY+JSgh1w=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1748589351;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=uzU19k1ECLHjrvkeXuOD+PC+beRlg03ZHwC8d7LjQWg=;
+	b=9OD/Zc0wTvD0qN2XodBjaOf/qYa0n0OKAYU0m6GtrS7ZK435G9v4pzPmvuueiYHx8fJI/A
+	7lXqe5U+gx0WHYDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 84BD8132D8;
+	Fri, 30 May 2025 07:15:51 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Lw3OHydbOWhcSwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 30 May 2025 07:15:51 +0000
+Message-ID: <ecc2b2c4-418f-44c1-b860-eb836cc5841d@suse.cz>
+Date: Fri, 30 May 2025 09:15:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3Wl8PUzlo_wXRNw--.6893S9
-X-Coremail-Antispam: 1UD129KBjvJXoWxJryDZr15CFWrKw1DJr1DKFg_yoW8WryDpF
-	9xGFW8Grs8uas7CFWxtr1UXr15tayxGa1UJFWSg3WUWFW7AryfKFsYyF1rC3W7JrWxXw4S
-	qF4UCrWDCw43AFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmI14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j6F
-	4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq
-	3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7
-	IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4U
-	M4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2
-	kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkE
-	bVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67
-	AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8JwCI
-	42IY6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCw
-	CI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnI
-	WIevJa73UjIFyTuYvjfUOyIUUUUUU
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] mm: prevent KSM from breaking VMA merging for new
+ VMAs
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@redhat.com>,
+ Xu Xin <xu.xin16@zte.com.cn>, Chengming Zhou <chengming.zhou@linux.dev>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Stefan Roesch <shr@devkernel.io>
+References: <cover.1748537921.git.lorenzo.stoakes@oracle.com>
+ <3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:email]
+X-Spam-Level: 
 
-From: Zhang Yi <yi.zhang@huawei.com>
+On 5/29/25 19:15, Lorenzo Stoakes wrote:
+> If a user wishes to enable KSM mergeability for an entire process and all
+> fork/exec'd processes that come after it, they use the prctl()
+> PR_SET_MEMORY_MERGE operation.
+> 
+> This defaults all newly mapped VMAs to have the VM_MERGEABLE VMA flag set
+> (in order to indicate they are KSM mergeable), as well as setting this flag
+> for all existing VMAs and propagating this across fork/exec.
+> 
+> However it also breaks VMA merging for new VMAs, both in the process and
+> all forked (and fork/exec'd) child processes.
+> 
+> This is because when a new mapping is proposed, the flags specified will
+> never have VM_MERGEABLE set. However all adjacent VMAs will already have
+> VM_MERGEABLE set, rendering VMAs unmergeable by default.
+> 
+> To work around this, we try to set the VM_MERGEABLE flag prior to
+> attempting a merge. In the case of brk() this can always be done.
+> 
+> However on mmap() things are more complicated - while KSM is not supported
+> for MAP_SHARED file-backed mappings, it is supported for MAP_PRIVATE
+> file-backed mappings.
+> 
+> These mappings may have deprecated .mmap() callbacks specified which could,
+> in theory, adjust flags and thus KSM eligibility.
+> 
+> So we check to determine whether this is possible. If not, we set
+> VM_MERGEABLE prior to the merge attempt on mmap(), otherwise we retain the
+> previous behaviour.
+> 
+> This fixes VMA merging for all new anonymous mappings, which covers the
+> majority of real-world cases, so we should see a significant improvement in
+> VMA mergeability.
+> 
+> For MAP_PRIVATE file-backed mappings, those which implement the
+> .mmap_prepare() hook and shmem are both known to be safe, so we allow
+> these, disallowing all other cases.
+> 
+> Also add stubs for newly introduced function invocations to VMA userland
+> testing.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Fixes: d7597f59d1d3 ("mm: add new api to enable ksm per process") # please no backport!
+> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-The write-back process cannot restart a journal transaction when
-submitting a sufficiently large and discontinuous folio if
-dioread_nolock is disabled. To address this, disable large folios when
-building an inode if dioread_nolock is disabled, and also ensure that
-dioread_nolock cannot be disabled on an active inode that has large
-folio enabled.
+The commit log is much clearer to me now, thanks :)
 
-Fixes: 7ac67301e82f ("ext4: enable large folio for regular file")
-Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
----
- fs/ext4/ext4_jbd2.h | 7 +++++++
- fs/ext4/inode.c     | 2 ++
- 2 files changed, 9 insertions(+)
-
-diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-index c0ee756cb34c..59292da272ef 100644
---- a/fs/ext4/ext4_jbd2.h
-+++ b/fs/ext4/ext4_jbd2.h
-@@ -422,6 +422,13 @@ static inline int ext4_free_data_revoke_credits(struct inode *inode, int blocks)
-  */
- static inline int ext4_should_dioread_nolock(struct inode *inode)
- {
-+	/*
-+	 * Cannot disable dioread_nolock on an active inode that has
-+	 * large folio enabled.
-+	 */
-+	if (mapping_large_folio_support(inode->i_mapping))
-+		return 1;
-+
- 	if (!test_opt(inode->i_sb, DIOREAD_NOLOCK))
- 		return 0;
- 	if (!S_ISREG(inode->i_mode))
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index e7de2fafc941..421c7bbc3ca9 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -5164,6 +5164,8 @@ bool ext4_should_enable_large_folio(struct inode *inode)
- 		return false;
- 	if (ext4_has_feature_encrypt(sb))
- 		return false;
-+	if (!ext4_should_dioread_nolock(inode))
-+		return false;
- 
- 	return true;
- }
--- 
-2.46.1
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 
