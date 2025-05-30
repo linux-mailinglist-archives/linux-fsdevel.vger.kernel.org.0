@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-50196-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50197-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8692AAC8B26
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:41:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3297BAC8B27
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:41:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C209188CDC2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:41:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C74B3BF6C2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0D8922DF91;
-	Fri, 30 May 2025 09:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE0A622CBFE;
+	Fri, 30 May 2025 09:35:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KC7PSjPx"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="NYaqh2v8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72CDF2253BD
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:35:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701A421CC52
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597739; cv=none; b=lbbeQ/UBximW9c2do7nIpuMo1motJYNstRF1duSO4Geq7Mlc4S8M60oTTN4bfUaobZsalBNKs1wrQIi+AaSnFHkWBGz/tV5H3O0JOCtBXyM9ng98VWG0uOo0Sg/A0INECMi/OgvSWrNnj2DNsrwgnAdks3qFRTksnAhf1txU12o=
+	t=1748597754; cv=none; b=VviM/yu1ScaN0HngdTIrx0s+s6MarEdT3s562/7uPfpleYvg9DC7lF/At5Sfp2zxhmUD2mdLhha7BelgBZrW4spfPXgOkrBSbtpdPDJwylqc/6wNDAuWhdcANrQyZR2StSz8SX3wBwHrIQjm/cC2RQHPQ7J0K3smqNrvallr24I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597739; c=relaxed/simple;
-	bh=Rt/SGj48eEmheWhl/pKyHYlndzSJCIR513AnD89nuEY=;
+	s=arc-20240116; t=1748597754; c=relaxed/simple;
+	bh=f9zzXMNbxFfZbGJyBMa0POHUK33Y39jv+mYtKpjEoMk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lsptukcw8ZoXvIz2hf+F1RS+GmT4T4N33EXajudSCQ3D76t7upAUctjCnUFohFRyrbxtFtLlce4rDLsn4XDPQz0SoWElm94YiS9htI93l38+Cjwgov1G4I8xLGpPE6QUDygUbx7eaOcPr4M3hGiavD1Y+t894QFWpqEAGntqTfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KC7PSjPx; arc=none smtp.client-ip=209.85.214.182
+	 MIME-Version; b=Bv/BmIzhN12arfeTvrI6wMpIq0oblK5O9cTEYjXElbVGnifBPn4qRpAFvDsaxfvugBPqRWvGwRWuh1+FPmdxr7AVkVbu8CYhRS3IeXWFzp4OBPuaG0Iwye+qIcYZG2y+mZ+JUuwkYlHCEHxCUVGGac9Pg6FlZ9TRZFulM7VLi0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=NYaqh2v8; arc=none smtp.client-ip=209.85.216.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-234d3261631so13358525ad.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:35:37 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3109f106867so2166604a91.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:35:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748597736; x=1749202536; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1748597751; x=1749202551; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NQYeXWECBZU61mIlblKiCexij9wbxTcb3SJTjEcJrDE=;
-        b=KC7PSjPx3y+5TbRZPN2v6pQ3ditZFyB/WcVnzDp3Ee3O22P/pUykeel1KcUWkUJiKT
-         nhTuK9kvMmGUQDggJbaQe6VKWFwuqrN3UEsKUZxUueNbSXse/TdWkeX3Z0Vt2Nxqzhe0
-         HqtvGc1AMocFIRLSXajgQ1k8PdrpFRhHZkI4cm/LWKhNr2oI2rLtAKjVQe89L756Kmmg
-         cncPxK4OWdHhqGNLXqNzRIaaT8BEdoAPSpp8PnVplsrGlsehAxG7kiGY5jb0O2MULmG9
-         RJoQS2VAgukjfRnHr82khH8CYVmj8yAHvb7AlO4XeARN+iAzEoZr+tcNN9pbJ1WuWv2S
-         4x2A==
+        bh=ruJXCVL33HlYZ/8pvuQkFgYyPjMywOaCJ6OilWvGVoA=;
+        b=NYaqh2v8WiwtvUtfIP8l6dheuVdr6/jF6arATD9keqVx+WpYUV6fkYXqodO9Y3hnNt
+         rp7zHfBulLlNbMg5TFKvqILTzBrh8S7gSK355JgXCx7jRGp8bVvbWVSBDLdDz2Xu6PBM
+         qoFsq2qQUrsZ1rxPQNKydFbrEtgoRQATlkiKjVrENN2/PbqNyD3poYKgHtajBX1ODIRg
+         5NdnvZqH0mhneUPWc25UHe+YHcC1UOw+SsV7Yl0dEyR0TgwurP7VFTDhJ+zsRWpo5O6T
+         4bX1uRVDdGXzxk+WixQYEpaeoXe+/QWQ9OzwB+NrpunIFQLx1IDnHcBWAheFU0OcGmSP
+         26bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597736; x=1749202536;
+        d=1e100.net; s=20230601; t=1748597751; x=1749202551;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NQYeXWECBZU61mIlblKiCexij9wbxTcb3SJTjEcJrDE=;
-        b=pcy2vttEMG1q4ZO0Y2PUk4n0/DW36P//L/5R82rkUUh2cv28GHo2lfoeXgCy19RlUf
-         pgucWCYhDijumbGsPJR+hPRC/WgK/+3T4NAOJfJBpiLuzAYCIlHG5TPccdRe4yjsSJnq
-         KwZ5mKIa3NG2W3/x40z5hMtabQnUgE/qMpdUOgOm1fxz/eieLILI8OcoGiXX2bacA/tQ
-         hkrg9MZReXBWsrfmW9zOvMJEsQWdQ8td6PJNTRgLQpuGu1hPpxSeuoUdCDjJJPKJ2HwO
-         szdZP+G9GjMZimqs/LMXJdoQPKqfiaZR5K1PtBd9VynPSNi646/zBteEPfMGYjwYMB99
-         kyqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9SiW8VRogwonwI2p/OtTLT8hEKeZtY2elpz0luxZ/YOp+r7iketLp2gbjqU/TWRGVJhFURHry+uswd3Ki@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIpH1uSmiHquM0Q40xJ4stU0k/WNwqhZ808dnq1waaUfqD7dWr
-	qCYVswAlTloSZ8LJJNtbPncnszKpy4rvSHFjWrxuM5Llr03EYypmg2qOMDzGoM41moA=
-X-Gm-Gg: ASbGncsO28c43xZf4pgM/mVcG15wDx5c1P7pfK7mntTRmxXbFzX6aAvAf40KtVan8oG
-	3YoMj4/PT7PojqPfG8Age3Y7RWiFT7rM5QJ43GHzqrOSJWcggfVnWTAOSB4n1VIs82F76rfOhXj
-	/tEpGL11wCV4If+BzerMaFypfwYgKlHl/4vK4YvBtjRX9bAbLX04zZ8oY7fwSdifADJyvWVc5QH
-	XokA/rW2PyMhUT0//PoDu7ijrS20kN5guLwXFwEPINHQAovUBuUI5ADhFa9CFnTy3vtb9wtCUOi
-	nuG9gbyHrRx9U/6UwVaroHjb8injUQczUz4bduBz8Sv3PVqL5z9lAQT9plS6ossUaARcvmSEERQ
-	cTvpjUCoQtQ==
-X-Google-Smtp-Source: AGHT+IG6nnxH2FVgtgvPODfS+5ObcESlWEhm+JqnaRiZqSXrOdJI4HZuM5tUxbidkIm+8B4kCWHa5w==
-X-Received: by 2002:a17:90b:3c49:b0:312:ec:4123 with SMTP id 98e67ed59e1d1-3125036bb61mr2199095a91.13.1748597736482;
-        Fri, 30 May 2025 02:35:36 -0700 (PDT)
+        bh=ruJXCVL33HlYZ/8pvuQkFgYyPjMywOaCJ6OilWvGVoA=;
+        b=E5LtE9kBhFu9Y2Mzt2u8fUkcqykU1SDW9OpNMkAk/0xdfKvelh5G1N1hTDsfOfckj/
+         80D6daxZQzThluVnevXYJGFdM5V5RkKe27AsyWlNubSkHfNhmN+g0ZNsdqghLL6PAa4b
+         yC2n4immGd7xOpB5ygpzN7KHDEkhWl0wqxZ1p7iJQmdQS+GNZk+wngBF9qVDvNrx8mmq
+         7LyK5P/R4QXab8w8VzzE970FWJhV8X1F+uAQ5RkTdEeVouMFtiVaJeGG8gKM53MiTqK5
+         ndL2FE+AtfIvfd3crANOc/9TiMEVe9jPiiA00DZgQJK7t9tnFRucN07N1Q7vVk4DfdmY
+         cKRw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLb8C3CvmwYrJuZOQXxWgHoJiVWpc9rfOqt26VErGcV6eQqKdp8u4Yb+OeJvfEGhDz0FMhDdZidYFUM3pO@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAtS9DV3psH0LgtLnGuAm51ZCrX4yfgLbiLEUNpYghBO52m3gV
+	lV6DlQ57MZbJ0f44vfyj/nxmz/7uKAQhOmDQKBmPmEO9fLkxKlF6LYMal5Mh5uuDvvs=
+X-Gm-Gg: ASbGncv6Jxoeac60JjrhgXSlBwyvZ/nok0cZhi/cu12RD1b+L5SMojdOzU4r6yMBxmL
+	k8uBEXPums1C5Ko+kwJ8GxOB1Qar3R+OsVAYq0XOB1B+p5p3ryYwDRWT62VHnK128QEpHZ13mN1
+	WNFjtDjxfVGsyjsRNygM3YA6ic2e8LvIUAd/6RzLtKvmnym7VKNMEpUQvpwCco46piKNnWYmdNU
+	VyDdfakZjxQNoxk5nmbdmq1ebRkhtMjOCI/+PEW8N3tKSmrJvduNAULYBnDZcx8ltA9CjJGn2b2
+	Vy+XEZU8Dkcgf20lS+d2ENtHyAd8g+/YMF47XZPqnDNEPe8oJT53ul6vJvvPvgwibm9HUGLFOSu
+	8entjaEhAkw==
+X-Google-Smtp-Source: AGHT+IEvXrgn/ooMRW35qDhy0ngiIGcMy7za8V80iv/SemfT2y7R5n/KmWGhxdI6JxqwxTCjuIZGRA==
+X-Received: by 2002:a17:90b:1dc4:b0:311:afaa:5e25 with SMTP id 98e67ed59e1d1-31241865ecdmr4397369a91.24.1748597751453;
+        Fri, 30 May 2025 02:35:51 -0700 (PDT)
 Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.35.21
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.35.36
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 02:35:36 -0700 (PDT)
+        Fri, 30 May 2025 02:35:51 -0700 (PDT)
 From: Bo Li <libo.gcs85@bytedance.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
@@ -127,9 +127,9 @@ Cc: dietmar.eggemann@arm.com,
 	chengguozhu@bytedance.com,
 	sunjiadong.lff@bytedance.com,
 	Bo Li <libo.gcs85@bytedance.com>
-Subject: [RFC v2 28/35] RPAL: add rpal_uds_fdmap() support
-Date: Fri, 30 May 2025 17:27:56 +0800
-Message-Id: <7d9d805dcfe80358c06f0a02fadd31a7288500b4.1748594841.git.libo.gcs85@bytedance.com>
+Subject: [RFC v2 29/35] RPAL: fix race condition in pkru update
+Date: Fri, 30 May 2025 17:27:57 +0800
+Message-Id: <7fbb84a57fc8046738c7196031a3fd97ea8334e2.1748594841.git.libo.gcs85@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
 References: <cover.1748594840.git.libo.gcs85@bytedance.com>
@@ -141,258 +141,205 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-For a UDS connection between a sender and a receiver, neither side knows
-which file descriptor (fd) the other uses to manage the connection. The
-sender cannot determine which user space fd's buffer in the receiver to
-write data to, necessitating a complex process for both sides to inform
-each other of fd mappings. This process incurs significant overhead when
-managing a large number of connections, which requires optimization.
+When setting up MPK, RPAL uses IPIs to notify tasks running on each core
+in the thread group to modify their PKRU values and update the PKEY fields
+in all VMA page tables. A race condition exists here: when updating PKRU,
+the page table updates may not yet be complete. In such cases, writing
+PKRU permissions at locations that require calling pkru_write_default()
+(e.g., during signal handling) must not be restricted to a single PKEY,
+as this would cause PKRU permissions to fail to accommodate both old and
+new page table PKEY settings.
 
-This patch introduces the RPAL_IOCTL_UDS_FDMAP interface, which simplifies
-the establishment of fd mappings between sender and receiver processes for
-files monitored by epoll. This avoids the need for a complex setup process
-each time a new connection is created.
+This patch introduces a pku_on state with values PKU_ON_FALSE, PKU_ON_INIT,
+and PKU_ON_FINISH, representing the states before, during, and after page
+table PKEY updates, respectively. For RPAL services, all calls to
+pkru_write_default() are replaced with rpal_pkru_write_default().
+
+- Before page table setup (PKU_ON_FALSE), rpal_pkru_write_default()
+  directly calls pkru_write_default().
+- During page table setup (PKU_ON_INIT), rpal_pkru_write_default() enables
+  permissions for all PKEYs, ensuring the task can access both old and new
+  page tables simultaneously.
+- After page table setup completes (PKU_ON_FINISH),
+  rpal_pkru_write_default() tightens permissions to match the updated page
+  tables.
+
+For newly allocated page tables, the new PKEY is only used when pku_on is
+PKU_ON_FINISH. The mmap lock is used to ensure no race conditions occur
+during this process.
 
 Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
 ---
- arch/x86/rpal/internal.h |   3 +
- arch/x86/rpal/proc.c     | 117 +++++++++++++++++++++++++++++++++++++++
- fs/eventpoll.c           |  19 +++++++
- include/linux/rpal.h     |  11 ++++
- 4 files changed, 150 insertions(+)
+ arch/x86/kernel/cpu/common.c |  4 ++--
+ arch/x86/kernel/fpu/core.c   |  4 ++--
+ arch/x86/kernel/process.c    |  4 ++--
+ arch/x86/rpal/pku.c          | 14 +++++++++++++-
+ arch/x86/rpal/service.c      |  2 +-
+ include/linux/rpal.h         |  9 ++++++++-
+ mm/mmap.c                    |  2 +-
+ mm/mprotect.c                |  1 +
+ mm/vma.c                     |  2 +-
+ 9 files changed, 31 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/rpal/internal.h b/arch/x86/rpal/internal.h
-index e49febce8645..e03f8a90619d 100644
---- a/arch/x86/rpal/internal.h
-+++ b/arch/x86/rpal/internal.h
-@@ -11,6 +11,7 @@
- 
- #include <linux/mm.h>
- #include <linux/file.h>
-+#include <net/af_unix.h>
- 
- extern bool rpal_inited;
- 
-@@ -60,3 +61,5 @@ int rpal_alloc_pkey(struct rpal_service *rs, int pkey);
- int rpal_pkey_setup(struct rpal_service *rs, int pkey);
- void rpal_set_current_pkru(u32 val, int mode);
- void rpal_service_pku_init(void);
-+
-+extern struct sock *unix_peer_get(struct sock *sk);
-diff --git a/arch/x86/rpal/proc.c b/arch/x86/rpal/proc.c
-index 2f9cceec4992..b60c099c4a92 100644
---- a/arch/x86/rpal/proc.c
-+++ b/arch/x86/rpal/proc.c
-@@ -9,6 +9,8 @@
- #include <linux/rpal.h>
- #include <linux/proc_fs.h>
- #include <linux/poll.h>
-+#include <net/sock.h>
-+#include <net/af_unix.h>
- 
- #include "internal.h"
- 
-@@ -34,6 +36,118 @@ static int rpal_get_api_version_and_cap(void __user *p)
- 	return 0;
- }
- 
-+static void *rpal_uds_peer_data(struct sock *psk, int *pfd)
-+{
-+	void *ep = NULL;
-+	unsigned long flags;
-+	struct socket_wq *wq;
-+	wait_queue_entry_t *entry;
-+	wait_queue_head_t *whead;
-+
-+	rcu_read_lock();
-+	wq = rcu_dereference(psk->sk_wq);
-+	if (!skwq_has_sleeper(wq))
-+		goto unlock_rcu;
-+
-+	whead = &wq->wait;
-+
-+	spin_lock_irqsave(&whead->lock, flags);
-+	if (list_empty(&whead->head)) {
-+		pr_debug("rpal debug: [%d] cannot find epitem entry\n",
-+			 current->pid);
-+		goto unlock_spin;
-+	}
-+	entry = list_first_entry(&whead->head, wait_queue_entry_t, entry);
-+	*pfd = rpal_get_epitemfd(entry);
-+	if (*pfd < 0) {
-+		pr_debug("rpal debug: [%d] cannot find epitem fd\n",
-+			 current->pid);
-+		goto unlock_spin;
-+	}
-+	ep = rpal_get_epitemep(entry);
-+
-+unlock_spin:
-+	spin_unlock_irqrestore(&whead->lock, flags);
-+unlock_rcu:
-+	rcu_read_unlock();
-+	return ep;
-+}
-+
-+static int rpal_find_receiver_rid(int id, void *ep)
-+{
-+	struct task_struct *tsk;
-+	struct rpal_service *cur, *tgt;
-+	int rid = -1;
-+
-+	cur = rpal_current_service();
-+
-+	tgt = rpal_get_mapped_service_by_id(cur, id);
-+	if (tgt == NULL)
-+		goto out;
-+
-+	for_each_thread(tgt->group_leader, tsk) {
-+		if (!rpal_test_task_thread_flag(tsk, RPAL_RECEIVER_BIT))
-+			continue;
-+		if (tsk->rpal_rd->ep == ep) {
-+			rid = tsk->rpal_rd->rcc->receiver_id;
-+			break;
-+		}
-+	}
-+
-+	rpal_put_service(tgt);
-+out:
-+	return rid;
-+}
-+
-+static long rpal_uds_fdmap(unsigned long uarg)
-+{
-+	struct rpal_uds_fdmap_arg arg;
-+	struct socket *sock;
-+	struct sock *peer_sk;
-+	void *ep;
-+	int sfd, rid;
-+	struct fd f;
-+	long res;
-+	int ret;
-+
-+	ret = copy_from_user(&arg, (void __user *)uarg, sizeof(arg));
-+	if (ret)
-+		return ret;
-+
-+	f = fdget(arg.cfd);
-+	if (!fd_file(f))
-+		goto fd_put;
-+
-+	sock = sock_from_file(fd_file(f));
-+	if (!sock)
-+		goto fd_put;
-+
-+	peer_sk = unix_peer_get(sock->sk);
-+	if (peer_sk == NULL)
-+		goto fd_put;
-+	ep = rpal_uds_peer_data(peer_sk, &sfd);
-+	if (ep == NULL) {
-+		pr_debug("rpal debug: [%d] cannot find epitem ep\n",
-+			 current->pid);
-+		goto peer_sock_put;
-+	}
-+	rid = rpal_find_receiver_rid(arg.service_id, ep);
-+	if (rid < 0) {
-+		pr_debug("rpal debug: [%d] rpal: cannot find epitem rid\n",
-+			 current->pid);
-+		goto peer_sock_put;
-+	}
-+	res = (long)rid << 32 | (long)sfd;
-+	ret = put_user(res, arg.res);
-+
-+peer_sock_put:
-+	sock_put(peer_sk);
-+fd_put:
-+	if (fd_file(f))
-+		fdput(f);
-+	return ret;
-+}
-+
- static long rpal_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- {
- 	struct rpal_service *cur = rpal_current_service();
-@@ -81,6 +195,9 @@ static long rpal_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 		ret = put_user(cur->pkey, (int __user *)arg);
- 		break;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index 2678453cdf76..d21f44873b86 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -534,8 +534,8 @@ static __always_inline void setup_pku(struct cpuinfo_x86 *c)
+ 	cr4_set_bits(X86_CR4_PKE);
+ 	/* Load the default PKRU value */
+ #ifdef CONFIG_RPAL_PKU
+-	if (rpal_current_service() && rpal_current_service()->pku_on)
+-		write_pkru(rpal_pkey_to_pkru(rpal_current_service()->pkey));
++	if (rpal_current_service())
++		rpal_pkru_write_default();
+ 	else
  #endif
-+	case RPAL_IOCTL_UDS_FDMAP:
-+		ret = rpal_uds_fdmap(arg);
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 437cd5764c03..791321639561 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2143,6 +2143,25 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
+ 		pkru_write_default();
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 251b1ddee726..4b413af0b179 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -748,8 +748,8 @@ static inline void restore_fpregs_from_init_fpstate(u64 features_mask)
+ 		frstor(&init_fpstate.regs.fsave);
+ 
+ #ifdef CONFIG_RPAL_PKU
+-	if (rpal_current_service() && rpal_current_service()->pku_on)
+-		write_pkru(rpal_pkey_to_pkru(rpal_current_service()->pkey));
++	if (rpal_current_service())
++		rpal_pkru_write_default();
+ 	else
+ #endif
+ 		pkru_write_default();
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index b74de35218f9..898a9e0b23e7 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -286,8 +286,8 @@ static void pkru_flush_thread(void)
+ 	 * the hardware right here (similar to context switch).
+ 	 */
+ #ifdef CONFIG_RPAL_PKU
+-	if (rpal_current_service() && rpal_current_service()->pku_on)
+-		write_pkru(rpal_pkey_to_pkru(rpal_current_service()->pkey));
++	if (rpal_current_service())
++		rpal_pkru_write_default();
+ 	else
+ #endif
+ 		pkru_write_default();
+diff --git a/arch/x86/rpal/pku.c b/arch/x86/rpal/pku.c
+index 26cef324f41f..8e530931fb23 100644
+--- a/arch/x86/rpal/pku.c
++++ b/arch/x86/rpal/pku.c
+@@ -161,7 +161,7 @@ int rpal_pkey_setup(struct rpal_service *rs, int pkey)
+ 	rs->pkey = pkey;
+ 	/* others must see rs->pkey before rs->pku_on */
+ 	barrier();
+-	rs->pku_on = true;
++	rs->pku_on = PKU_ON_INIT;
+ 	mmap_write_unlock(current->mm);
+ 	rpal_set_group_pkru(val, RPAL_PKRU_UNION);
+ 	err = do_rpal_mprotect_pkey(rs->base, RPAL_ADDR_SPACE_SIZE, pkey);
+@@ -182,3 +182,15 @@ int rpal_alloc_pkey(struct rpal_service *rs, int pkey)
+ 
+ 	return ret;
  }
- 
- #ifdef CONFIG_RPAL
-+void *rpal_get_epitemep(wait_queue_entry_t *wait)
++
++void rpal_pkru_write_default(void)
 +{
-+	struct epitem *epi = ep_item_from_wait(wait);
++	struct rpal_service *cur = rpal_current_service();
 +
-+	if (!epi)
-+		return NULL;
-+
-+	return epi->ep;
++	if (cur->pku_on == PKU_ON_INIT)
++		write_pkru(0);
++	else if (cur->pku_on == PKU_ON_FINISH)
++		write_pkru(rpal_pkey_to_pkru(rpal_current_service()->pkey));
++	else
++		pkru_write_default();
 +}
-+
-+int rpal_get_epitemfd(wait_queue_entry_t *wait)
-+{
-+	struct epitem *epi = ep_item_from_wait(wait);
-+
-+	if (!epi)
-+		return -1;
-+
-+	return epi->ffd.fd;
-+}
+diff --git a/arch/x86/rpal/service.c b/arch/x86/rpal/service.c
+index 7a83e85cf096..9fd568fa9a29 100644
+--- a/arch/x86/rpal/service.c
++++ b/arch/x86/rpal/service.c
+@@ -210,7 +210,7 @@ struct rpal_service *rpal_register_service(void)
+ 	init_waitqueue_head(&rs->rpd.rpal_waitqueue);
+ #ifdef CONFIG_RPAL_PKU
+ 	rs->pkey = -1;
+-	rs->pku_on = false;
++	rs->pku_on = PKU_ON_FALSE;
+ 	rpal_service_pku_init();
+ #endif
  
- void rpal_resume_ep(struct task_struct *tsk)
- {
 diff --git a/include/linux/rpal.h b/include/linux/rpal.h
-index 5912ffec6e28..7657e6c6393b 100644
+index 7657e6c6393b..16a3c80383f7 100644
 --- a/include/linux/rpal.h
 +++ b/include/linux/rpal.h
-@@ -350,6 +350,12 @@ struct rpal_sender_data {
- 	struct task_struct *receiver;
+@@ -138,6 +138,12 @@ enum rpal_capability {
+ 	RPAL_CAP_PKU
  };
  
-+struct rpal_uds_fdmap_arg {
-+	int service_id;
-+	int cfd;
-+	unsigned long *res;
++enum {
++	PKU_ON_FALSE,
++	PKU_ON_INIT,
++	PKU_ON_FINISH,
 +};
 +
- enum rpal_command_type {
- 	RPAL_CMD_GET_API_VERSION_AND_CAP,
- 	RPAL_CMD_GET_SERVICE_KEY,
-@@ -363,6 +369,7 @@ enum rpal_command_type {
- 	RPAL_CMD_REQUEST_SERVICE,
- 	RPAL_CMD_RELEASE_SERVICE,
- 	RPAL_CMD_GET_SERVICE_PKEY,
-+	RPAL_CMD_UDS_FDMAP,
- 	RPAL_NR_CMD,
- };
+ struct rpal_critical_section {
+ 	unsigned long ret_begin;
+ 	unsigned long ret_end;
+@@ -245,7 +251,7 @@ struct rpal_service {
  
-@@ -393,6 +400,8 @@ enum rpal_command_type {
- 	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_RELEASE_SERVICE, unsigned long)
- #define RPAL_IOCTL_GET_SERVICE_PKEY \
- 	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_GET_SERVICE_PKEY, int *)
-+#define RPAL_IOCTL_UDS_FDMAP \
-+	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_UDS_FDMAP, unsigned long)
+ #ifdef CONFIG_RPAL_PKU
+ 	/* pkey */
+-	bool pku_on;
++	int pku_on;
+ 	int pkey;
+ #endif
  
- #define rpal_for_each_requested_service(rs, idx)                             \
- 	for (idx = find_first_bit(rs->requested_service_bitmap, RPAL_NR_ID); \
-@@ -594,5 +603,7 @@ int rpal_ep_autoremove_wake_function(wait_queue_entry_t *curr,
+@@ -599,6 +605,7 @@ __rpal_switch_to(struct task_struct *prev_p, struct task_struct *next_p);
+ asmlinkage __visible void rpal_schedule_tail(struct task_struct *prev);
+ int do_rpal_mprotect_pkey(unsigned long start, size_t len, int pkey);
+ void rpal_set_pku_schedule_tail(struct task_struct *prev);
++void rpal_pkru_write_default(void);
+ int rpal_ep_autoremove_wake_function(wait_queue_entry_t *curr,
  	unsigned int mode, int wake_flags,
  	void *key);
- void rpal_resume_ep(struct task_struct *tsk);
-+void *rpal_get_epitemep(wait_queue_entry_t *wait);
-+int rpal_get_epitemfd(wait_queue_entry_t *wait);
- int rpal_try_send_events(void *ep, struct rpal_receiver_call_context *rcc);
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d36ea4ea2bd0..85a4a33491ab 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -404,7 +404,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+ 	do {
+ 		struct rpal_service *cur = rpal_current_service();
+ 
+-		if (cur && cur->pku_on)
++		if (cur && cur->pku_on == PKU_ON_FINISH)
+ 			pkey = cur->pkey;
+ 	} while (0);
  #endif
+diff --git a/mm/mprotect.c b/mm/mprotect.c
+index e9ae828e377d..ac162180553e 100644
+--- a/mm/mprotect.c
++++ b/mm/mprotect.c
+@@ -938,6 +938,7 @@ int do_rpal_mprotect_pkey(unsigned long start, size_t len, int pkey)
+ 	}
+ 	tlb_finish_mmu(&tlb);
+ 
++	rpal_current_service()->pku_on = PKU_ON_FINISH;
+ out:
+ 	mmap_write_unlock(current->mm);
+ 	return error;
+diff --git a/mm/vma.c b/mm/vma.c
+index fa9d8f694e6e..57ec99a5969d 100644
+--- a/mm/vma.c
++++ b/mm/vma.c
+@@ -2632,7 +2632,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+ 	struct rpal_service *cur = rpal_current_service();
+ 	unsigned long vma_pkey_mask;
+ 
+-	if (cur && cur->pku_on) {
++	if (cur && cur->pku_on == PKU_ON_FINISH) {
+ 		vma_pkey_mask = VM_PKEY_BIT0 | VM_PKEY_BIT1 | VM_PKEY_BIT2 |
+ 				VM_PKEY_BIT3;
+ 		flags &= ~vma_pkey_mask;
 -- 
 2.20.1
 
