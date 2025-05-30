@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-50171-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50172-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B184AC8AD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:31:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B6AAC8ADD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C04174E4193
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:31:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5337218857E0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06DA8223329;
-	Fri, 30 May 2025 09:30:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BA954652;
+	Fri, 30 May 2025 09:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="WB6z6OIw"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YmPlmkBx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B342222C2
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52266223DC4
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597400; cv=none; b=ANkiuRdXXUPEgMaBEnc+k/KQrzpXl/gqI1qiCmSWdUlpviNkpkkCGRLZbIW09Pi3Dht2pzc7Ndt4NniXHgEO6bvWLyad0VsrGPRAG80mp/s2/RWmEedjEohpRopWH22DYE1YhuncQ+egIFVUy6C5qH5LNminlYHGDmFKatip6Ow=
+	t=1748597416; cv=none; b=SW7vdWNaaD/Cz2eIZtHyHJTZXNu+FYMuNZshZvVBXARbTbu4YHhePW6xX2ZVTA/rfajBX4msZaWOsuB8xGCk8HoybKaJUrQzB67ZkmYlo949PbVlhv4GHLCKeYciO9jSAVM3guSVVhCh7KgDIpxMmcNN6Xk52Phydhn7EYkwuVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597400; c=relaxed/simple;
-	bh=VIZG5AiWC/s7En/XmKPIO2DjZgsCQ6G5W9Jx/My9WHo=;
+	s=arc-20240116; t=1748597416; c=relaxed/simple;
+	bh=422OX9nkZoEDUi615uXpiGE4CKGrzo9OxUzw3vP+lYs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fvpkuSnPGtfbg/BAhDejjUOM2QLUZMMUAWAwlgDG9HvjY3wtshiUP1dlk0gyF+r0X3FaZrONnIMmTp9sU1LDkj57SQQuUfhH691/kWXU+YqgBMz4J9ni1Q1uRDOj2WWf27v0ru2VgMCIDluEbQ26/M5FmZm21VNPOD+JXwW65cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=WB6z6OIw; arc=none smtp.client-ip=209.85.216.48
+	 MIME-Version; b=Ltk6sz9rq45cTXaWbk8xoB0+gc/+J0pdc2533eDIe9RbTqEnPqU4onp87RlB+mzP7TMD0WpQYh2v29bqprCCU1xYTLNnLNkw1tsZJol+A+TZgaJMHySxekalLcMqY/chnLb7XOEP+VOVK2yk2N0Tvk+nWxRDdQKiuOaONsfdfiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YmPlmkBx; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-311ef4fb549so1554391a91.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:29:58 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-3119822df05so1883144a91.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:30:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748597398; x=1749202198; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1748597413; x=1749202213; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rxNHqqJshuS1h1cgjJgJ0ZrC1Xqsxa5tk/BB5ji3hvs=;
-        b=WB6z6OIw5FMSobnxLBt+fPmPsX/NsOiTiisAYiUGKxuhRaLdy/ylTQVQVyf4Dg6kI/
-         Jx/wkwLFji+l2wZ7nS6xPiWQDqHH5Bv23q2M8bNC3MBIMq22NYwZcwzGKug2VkHWcFW5
-         Yhlmw5c+XWobbD+qMo7S/YQs4FZrJy3B/FQACXZ8HebyhjqZ8bH3u4Hlqs7/jglQejc4
-         rZiaNVK4g5bik6IOs5wiJQ13/WYUNFY3iiMIF1wvviEcKkIjVt8CnlhFQGEy0Vx3Bc6L
-         yTpm9aJ+BemoU+Pg6tleE3oHLwOY6LW4/wjv7hEosq+BxU+lCwMCi+6B0l+CcjM6f3Yh
-         GJgw==
+        bh=flixYT7qZa2BQQysi97LfHe75SLaTmZqxePIcANrNj8=;
+        b=YmPlmkBx4f/H8kQ0ZSI35VDZkWg/orrROUWKIlf7Aycmim9cqmVwVuIduIQTOwcP4f
+         TCSZbKbCGTlElnr3Q/Dm+6xt9JaMCPiYZA6C21WTQl2Dy2CKCzE/YbSd86UgSmHjeQal
+         1hmkOFVD0plnR4eqIjjgLoB66bknFnLXnLS6hnVrDb+sJH56gW7c8rBEwT9QPMkbfS2t
+         NPyolzsP/U82hAIXrgEwlYno8BQ4P0VrUpWjMoB9Ea2csF+sI6je3SSkxBtf/5UCTJcB
+         olpZZNTnwtpXc+laNjtJTjf3bh1vLLT8VzBzf6miP71a8RqHxVokecWnL4etjfNR1y0S
+         yb4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597398; x=1749202198;
+        d=1e100.net; s=20230601; t=1748597413; x=1749202213;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rxNHqqJshuS1h1cgjJgJ0ZrC1Xqsxa5tk/BB5ji3hvs=;
-        b=gQ0ZUoz02cHyfnmz0xycqAwnrpmV3idj3PzoPUivSbGDlZEQyoYZ/7CHiCeCcO4HOq
-         Orp5yIlai9CGkbGAYXnO/2V9tblw0cMWMS9WvDr5o+EJRMX7QLoubPZM4Xkox2UTuIwg
-         HkJk/QmcFJj/+2Gg1BSWpRF+0wLOSHRXTCfDb+4R9wG3AbJtl06ix4tFC6W+5UEGCYCu
-         CcNdYQjLFbzHUF1IWqVGLYzKHeE/RjJ1QQvN0aKvhZO+fgp3yraHsLg9DISB0+PV6bQ5
-         2wZEAvL+3vnX2wzcevP3JM+Ti4Hcnr/qsOaATrke44W/787BDxntx1H9JVLlo10FifDJ
-         xBtg==
-X-Forwarded-Encrypted: i=1; AJvYcCXL0HYXogABfmYS94ynDn1Hk5VLywybooZHPrk8QQOEmwKAyt7vtmbywa/iOy2j/PNPdEf6hUrMuCSZoaRC@vger.kernel.org
-X-Gm-Message-State: AOJu0YztD37tQBYEMBPoEoxQkKfyBsBVtAHLLwac5uCWZtfEZgqmWEcb
-	JUN7PQqmKfQutas6jgazR3vjkCS/ocyTYfCDQdbT8T7mSrPcDYj1h7C5R/bin/aJZfs=
-X-Gm-Gg: ASbGncs3MAKLjVph54oNsFyhy3OjctW7tB+djvnULjqa7F3IRHQiQDPPRwFmQh4mcFM
-	+1KAUaZNWjLm94aIBxUyyzhVp7R30oybIGnvWeD79BKx9zrBk2v/G9OPrRSY2DM6TRCcl/Ksalz
-	YBS86ILBTjQtO+KvClAeFaeyd7xPUbpPAoMlMtVfIeSBt5xolK0l+oVhfFujKjM4ugJ11wwQFaS
-	w/WCJ0BA3ncZ8IN4n3AeIsvhVE2avr8S4reGmHevVASOmD+5TH9WgCwTwOIyZV+p510Ht7nLM0F
-	uIv9liXdm6tFQzUl9/l2W5xjtUYGFgLXpMcaS5lN+HncRiYFbjex6UldXcFF2NP32j5mDA7N2Hg
-	4a6PY9aoXzw==
-X-Google-Smtp-Source: AGHT+IGBCG8Y5BoAzUhA//fCiLwTsxIymub8I3vmhNOr1M4fJfMNuuh617dJ5r3jIttsydinbIXPuQ==
-X-Received: by 2002:a17:90b:39c5:b0:311:b5ac:6f5d with SMTP id 98e67ed59e1d1-31241e975d6mr4419282a91.29.1748597398101;
-        Fri, 30 May 2025 02:29:58 -0700 (PDT)
+        bh=flixYT7qZa2BQQysi97LfHe75SLaTmZqxePIcANrNj8=;
+        b=D26pThHKJv6ghe+PGjRa0Xk2Wgw9dBOyYoUGgk7E0QK4fQSvo0rFkJoNhoDVyyHe1x
+         DDRttTVOSsbmPzXooXFiPYnTJvYdqr5nLl9pV5jukzBM4RITnaQdlbm0mw47tfUnVFlJ
+         F8LyPs1uiNojcrQVYsBrAyVFvlm+EpMC8Bdd5MaOjnfVLmghz2DQciSQnHbpSEoci+wM
+         esbY8oF+xf001Yy3hXl6qc87RV8W+2aha/isMrQQm7KCNveYG3ZJV5TsjpkAmH9kO/mk
+         n7LMR6RkPKJSb7hiiw0OUBeAihQwC1fSkh6BRthxCCzVm19JLM4FgLy7uPRXXO4wbLTW
+         7I5A==
+X-Forwarded-Encrypted: i=1; AJvYcCVAvM203SdBWoxyrj+xmFqCbLlQZvWd5zxOsTMEZ/NGQxLn2+CQvL/3gKfFTjUBcq/Lb5brcBCB14G0Sya9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiLCU0Dp0CDaJ+git5PmydItLOwHlViGocV/hFYHJW4/nqnUBk
+	rXdtjOcEgnXo0tzH0VPbpTUL0pLAWFyORVBhkUsUPu3ETxalOt1lHuggIvGKdJdSUXc=
+X-Gm-Gg: ASbGncvcMbjkZ2DUFmm0FvmFmJRPUJ8LqMIZLZBsKaCf8NS//voKXWI9sFEh293RDZH
+	iiCfKjCFY09XJyP6VZ3Cr1WFpR2dwRIWoPVxvoTdLdkWM0Y5RubuzyfCbOcBICqz7h132AVrQ/H
+	5dECQx0FpldRtJ5NJQzdxR4nZETH0Xy4PF0aCFBCksryDBKQri69hBsM8dmkR1EP/SfmwKds7rl
+	EszQrePAjHha2IfbxTSf84kg7u9THAmQy8H5JHsF8GNTUCDl12dX6ADDEC2mbgZGSPODIuKrq9O
+	/nAWrHFm3DkKxi1QN7LyqXZGOIOWlppN8+1aQm9eCHI9AG6hqQNcurdqe/wWsrMB960bii93ZTM
+	ivH5LkJrTVp8uaASKQliz
+X-Google-Smtp-Source: AGHT+IHA2yGD8wMUj4lSxB67R095/h8/6O6yJ7zAmlSwm5/Pic/viWYeW3kwOjE2By4p9s+RPQhz5w==
+X-Received: by 2002:a17:90b:1d50:b0:311:fde5:c4b6 with SMTP id 98e67ed59e1d1-31250344995mr2204788a91.6.1748597413513;
+        Fri, 30 May 2025 02:30:13 -0700 (PDT)
 Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.29.43
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.29.58
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 02:29:57 -0700 (PDT)
+        Fri, 30 May 2025 02:30:13 -0700 (PDT)
 From: Bo Li <libo.gcs85@bytedance.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
@@ -127,9 +127,9 @@ Cc: dietmar.eggemann@arm.com,
 	chengguozhu@bytedance.com,
 	sunjiadong.lff@bytedance.com,
 	Bo Li <libo.gcs85@bytedance.com>
-Subject: [RFC v2 06/35] RPAL: add user interface
-Date: Fri, 30 May 2025 17:27:34 +0800
-Message-Id: <de89b7dbd8277f809c61b1220cdca29875863fd6.1748594840.git.libo.gcs85@bytedance.com>
+Subject: [RFC v2 07/35] RPAL: enable shared page mmap
+Date: Fri, 30 May 2025 17:27:35 +0800
+Message-Id: <11d4a94318efc8af41f77235f5117aabb8795afe.1748594840.git.libo.gcs85@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
 References: <cover.1748594840.git.libo.gcs85@bytedance.com>
@@ -141,197 +141,310 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the userspace interface of RPAL. The interface makes use of /proc
-files. Compared with adding syscalls, /proc files provide more interfaces,
-such as mmap, poll, etc. These interfaces can facilitate RPAL to implement
-more complex kernel-space/user-space interaction functions in the future.
+RPAL needs to create shared memory between the kernel and user space for
+the transfer of states and data.
 
-This patch implements the ioctl interface, The interfaces initially
-implemented include obtaining the RPAL version, and retrieving the key and
-ID of the RPAL service.
+This patch implements the rpal_mmap() interface. User processes can create
+shared memory by calling mmap() on /proc/rpal. To prevent users from
+creating excessive memory, rpal_mmap() limits the total size of the shared
+memory that can be created. The shared memory is maintained through
+reference counting, and rpal_munmap() is implemented for the release of
+the shared memory.
 
 Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
 ---
- arch/x86/rpal/Makefile   |  2 +-
- arch/x86/rpal/core.c     |  3 ++
- arch/x86/rpal/internal.h |  3 ++
- arch/x86/rpal/proc.c     | 71 ++++++++++++++++++++++++++++++++++++++++
- include/linux/rpal.h     | 34 +++++++++++++++++++
- 5 files changed, 112 insertions(+), 1 deletion(-)
- create mode 100644 arch/x86/rpal/proc.c
+ arch/x86/rpal/internal.h |  20 ++++++
+ arch/x86/rpal/mm.c       | 147 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/rpal/proc.c     |   1 +
+ arch/x86/rpal/service.c  |   4 ++
+ include/linux/rpal.h     |  15 ++++
+ mm/mmap.c                |   4 ++
+ 6 files changed, 191 insertions(+)
 
-diff --git a/arch/x86/rpal/Makefile b/arch/x86/rpal/Makefile
-index 2c858a8d7b9e..a5926fc19334 100644
---- a/arch/x86/rpal/Makefile
-+++ b/arch/x86/rpal/Makefile
-@@ -2,4 +2,4 @@
- 
- obj-$(CONFIG_RPAL)		+= rpal.o
- 
--rpal-y := service.o core.o mm.o
-+rpal-y := service.o core.o mm.o proc.o
-diff --git a/arch/x86/rpal/core.c b/arch/x86/rpal/core.c
-index 495dbc1b1536..61f5d40b0157 100644
---- a/arch/x86/rpal/core.c
-+++ b/arch/x86/rpal/core.c
-@@ -13,11 +13,14 @@
- int __init rpal_init(void);
- 
- bool rpal_inited;
-+unsigned long rpal_cap;
- 
- int __init rpal_init(void)
- {
- 	int ret = 0;
- 
-+	rpal_cap = 0;
-+
- 	ret = rpal_service_init();
- 	if (ret)
- 		goto fail;
 diff --git a/arch/x86/rpal/internal.h b/arch/x86/rpal/internal.h
-index e44e6fc79677..c102a4c50515 100644
+index c102a4c50515..65fd14a26f0e 100644
 --- a/arch/x86/rpal/internal.h
 +++ b/arch/x86/rpal/internal.h
-@@ -6,6 +6,9 @@
-  *     Author: Jiadong Sun <sunjiadong.lff@bytedance.com>
-  */
+@@ -9,8 +9,28 @@
+ #define RPAL_COMPAT_VERSION 1
+ #define RPAL_API_VERSION 1
  
-+#define RPAL_COMPAT_VERSION 1
-+#define RPAL_API_VERSION 1
++#include <linux/mm.h>
++#include <linux/file.h>
 +
  extern bool rpal_inited;
  
  /* service.c */
-diff --git a/arch/x86/rpal/proc.c b/arch/x86/rpal/proc.c
-new file mode 100644
-index 000000000000..1ced30e25c15
---- /dev/null
-+++ b/arch/x86/rpal/proc.c
-@@ -0,0 +1,71 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * RPAL service level operations
-+ * Copyright (c) 2025, ByteDance. All rights reserved.
-+ *
-+ *     Author: Jiadong Sun <sunjiadong.lff@bytedance.com>
-+ */
+ int __init rpal_service_init(void);
+ void __init rpal_service_exit(void);
 +
-+#include <linux/rpal.h>
-+#include <linux/proc_fs.h>
++/* mm.c */
++static inline struct rpal_shared_page *
++rpal_get_shared_page(struct rpal_shared_page *rsp)
++{
++	atomic_inc(&rsp->refcnt);
++	return rsp;
++}
 +
++static inline void rpal_put_shared_page(struct rpal_shared_page *rsp)
++{
++	atomic_dec(&rsp->refcnt);
++}
++
++int rpal_mmap(struct file *filp, struct vm_area_struct *vma);
++struct rpal_shared_page *rpal_find_shared_page(struct rpal_service *rs,
++					       unsigned long addr);
+diff --git a/arch/x86/rpal/mm.c b/arch/x86/rpal/mm.c
+index f469bcf57b66..8a738c502d1d 100644
+--- a/arch/x86/rpal/mm.c
++++ b/arch/x86/rpal/mm.c
+@@ -11,6 +11,8 @@
+ #include <linux/mman.h>
+ #include <linux/mm.h>
+ 
 +#include "internal.h"
 +
-+static int rpal_open(struct inode *inode,
-+			     struct file *file)
+ static inline int rpal_balloon_mapping(unsigned long base, unsigned long size)
+ {
+ 	struct vm_area_struct *vma;
+@@ -68,3 +70,148 @@ int rpal_balloon_init(unsigned long base)
+ 
+ 	return ret;
+ }
++
++static void rpal_munmap(struct vm_area_struct *area)
 +{
-+	return 0;
++	struct mm_struct *mm = area->vm_mm;
++	struct rpal_service *rs = mm->rpal_rs;
++	struct rpal_shared_page *rsp = area->vm_private_data;
++
++	if (!rs) {
++		rpal_err(
++			"free shared page after exit_mmap or fork a child process\n");
++		return;
++	}
++
++	mutex_lock(&rs->mutex);
++	if (unlikely(!atomic_dec_and_test(&rsp->refcnt))) {
++		rpal_err("refcnt(%d) of shared page is not 0\n", atomic_read(&rsp->refcnt));
++		send_sig_info(SIGKILL, SEND_SIG_PRIV, rs->group_leader);
++	}
++
++	list_del(&rsp->list);
++	rs->nr_shared_pages -= rsp->npage;
++	__free_pages(virt_to_page(rsp->kernel_start), get_order(rsp->npage));
++	kfree(rsp);
++	mutex_unlock(&rs->mutex);
 +}
 +
-+static int rpal_get_api_version_and_cap(void __user *p)
-+{
-+	struct rpal_version_info rvi;
-+	int ret;
++const struct vm_operations_struct rpal_vm_ops = { .close = rpal_munmap };
 +
-+	rvi.compat_version = RPAL_COMPAT_VERSION;
-+	rvi.api_version = RPAL_API_VERSION;
-+	rvi.cap = rpal_cap;
++#define RPAL_MAX_SHARED_PAGES 8192
 +
-+	ret = copy_to_user(p, &rvi, sizeof(rvi));
-+	if (ret)
-+		return -EFAULT;
-+
-+	return 0;
-+}
-+
-+static long rpal_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
++int rpal_mmap(struct file *filp, struct vm_area_struct *vma)
 +{
 +	struct rpal_service *cur = rpal_current_service();
++	struct rpal_shared_page *rsp;
++	struct page *page = NULL;
++	unsigned long size = (unsigned long)(vma->vm_end - vma->vm_start);
++	int npage;
++	int order = -1;
 +	int ret = 0;
 +
-+	if (!cur)
-+		return -EINVAL;
-+
-+	switch (cmd) {
-+	case RPAL_IOCTL_GET_API_VERSION_AND_CAP:
-+		ret = rpal_get_api_version_and_cap((void __user *)arg);
-+		break;
-+	case RPAL_IOCTL_GET_SERVICE_KEY:
-+		ret = put_user(cur->key, (u64 __user *)arg);
-+		break;
-+	case RPAL_IOCTL_GET_SERVICE_ID:
-+		ret = put_user(cur->id, (int __user *)arg);
-+		break;
-+	default:
-+		return -EINVAL;
++	if (!cur) {
++		ret = -EINVAL;
++		goto out;
 +	}
++
++	/*
++	 * Check whether the vma is aligned and whether the page number
++	 * is power of 2. This makes shared pages easy to manage.
++	 */
++	if (!IS_ALIGNED(size, PAGE_SIZE) ||
++	    !IS_ALIGNED(vma->vm_start, PAGE_SIZE)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	npage = size >> PAGE_SHIFT;
++	if (!is_power_of_2(npage)) {
++		ret = -EINVAL;
++		goto out;
++	}
++
++	order = get_order(size);
++
++	mutex_lock(&cur->mutex);
++
++	/* make sure user does not alloc too much pages */
++	if (cur->nr_shared_pages + npage > RPAL_MAX_SHARED_PAGES) {
++		ret = -ENOMEM;
++		goto unlock;
++	}
++
++	rsp = kmalloc(sizeof(*rsp), GFP_KERNEL);
++	if (!rsp) {
++		ret = -EAGAIN;
++		goto unlock;
++	}
++
++	page = alloc_pages(GFP_KERNEL | __GFP_ZERO, order);
++	if (!page) {
++		ret = -ENOMEM;
++		goto free_rsp;
++	}
++
++	rsp->user_start = vma->vm_start;
++	rsp->kernel_start = (unsigned long)page_address(page);
++	rsp->npage = npage;
++	atomic_set(&rsp->refcnt, 1);
++	INIT_LIST_HEAD(&rsp->list);
++	list_add(&rsp->list, &cur->shared_pages);
++
++	vma->vm_ops = &rpal_vm_ops;
++	vma->vm_private_data = rsp;
++
++	/* map to shared pages userspace */
++	ret = remap_pfn_range(vma, vma->vm_start, page_to_pfn(page), size,
++			      vma->vm_page_prot);
++	if (ret)
++		goto free_page;
++
++	cur->nr_shared_pages += npage;
++	mutex_unlock(&cur->mutex);
++
++	return 0;
++
++free_page:
++	__free_pages(page, order);
++	list_del(&rsp->list);
++free_rsp:
++	kfree(rsp);
++unlock:
++	mutex_unlock(&cur->mutex);
++out:
++	return ret;
++}
++
++struct rpal_shared_page *rpal_find_shared_page(struct rpal_service *rs,
++					       unsigned long addr)
++{
++	struct rpal_service *cur = rpal_current_service();
++	struct rpal_shared_page *rsp, *ret = NULL;
++
++	mutex_lock(&cur->mutex);
++	list_for_each_entry(rsp, &rs->shared_pages, list) {
++		if (rsp->user_start <= addr &&
++		    addr < rsp->user_start + rsp->npage * PAGE_SIZE) {
++			ret = rpal_get_shared_page(rsp);
++			break;
++		}
++	}
++	mutex_unlock(&cur->mutex);
 +
 +	return ret;
 +}
 +
-+const struct proc_ops proc_rpal_operations = {
-+	.proc_open = rpal_open,
-+	.proc_ioctl = rpal_ioctl,
-+};
-+
-+static int __init proc_rpal_init(void)
++void rpal_exit_mmap(struct mm_struct *mm)
 +{
-+	proc_create("rpal", 0644, NULL, &proc_rpal_operations);
-+	return 0;
-+}
-+fs_initcall(proc_rpal_init);
-diff --git a/include/linux/rpal.h b/include/linux/rpal.h
-index f7c0de747f55..3bc2a2a44265 100644
---- a/include/linux/rpal.h
-+++ b/include/linux/rpal.h
-@@ -77,6 +77,8 @@
- #define RPAL_ADDRESS_SPACE_LOW  ((0UL) + RPAL_ADDR_SPACE_SIZE)
- #define RPAL_ADDRESS_SPACE_HIGH ((0UL) + RPAL_NR_ADDR_SPACE * RPAL_ADDR_SPACE_SIZE)
- 
-+extern unsigned long rpal_cap;
++	struct rpal_service *rs = mm->rpal_rs;
 +
- /*
-  * Each RPAL process (a.k.a RPAL service) should have a pointer to
-  * struct rpal_service in all its tasks' task_struct.
-@@ -118,6 +120,38 @@ struct rpal_service {
- 	atomic_t refcnt;
++	if (rs) {
++		mm->rpal_rs = NULL;
++		/* all shared pages should be freed at this time */
++		WARN_ON_ONCE(rs->nr_shared_pages != 0);
++		rpal_put_service(rs);
++	}
++}
+diff --git a/arch/x86/rpal/proc.c b/arch/x86/rpal/proc.c
+index 1ced30e25c15..86947dc233d0 100644
+--- a/arch/x86/rpal/proc.c
++++ b/arch/x86/rpal/proc.c
+@@ -61,6 +61,7 @@ static long rpal_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ const struct proc_ops proc_rpal_operations = {
+ 	.proc_open = rpal_open,
+ 	.proc_ioctl = rpal_ioctl,
++	.proc_mmap = rpal_mmap,
  };
  
-+/*
-+ * Following structures should have the same memory layout with user.
-+ * It seems nothing being different between kernel and user structure
-+ * padding by different C compilers on x86_64, so we need to do nothing
-+ * special here.
-+ */
-+/* Begin */
-+struct rpal_version_info {
-+	int compat_version;
-+	int api_version;
-+	unsigned long cap;
+ static int __init proc_rpal_init(void)
+diff --git a/arch/x86/rpal/service.c b/arch/x86/rpal/service.c
+index caa4afa5a2c6..f29a046fc22f 100644
+--- a/arch/x86/rpal/service.c
++++ b/arch/x86/rpal/service.c
+@@ -173,6 +173,10 @@ struct rpal_service *rpal_register_service(void)
+ 	if (unlikely(rs->key == RPAL_INVALID_KEY))
+ 		goto key_fail;
+ 
++	mutex_init(&rs->mutex);
++	rs->nr_shared_pages = 0;
++	INIT_LIST_HEAD(&rs->shared_pages);
++
+ 	rs->bad_service = false;
+ 	rs->base = calculate_base_address(rs->id);
+ 
+diff --git a/include/linux/rpal.h b/include/linux/rpal.h
+index 3bc2a2a44265..986dfbd16fc9 100644
+--- a/include/linux/rpal.h
++++ b/include/linux/rpal.h
+@@ -110,6 +110,12 @@ struct rpal_service {
+      * Fields above should never change after initialization.
+      * Fields below may change after initialization.
+      */
++	/* Mutex for time consuming operations */
++	struct mutex mutex;
++
++	/* pinned pages */
++	int nr_shared_pages;
++	struct list_head shared_pages;
+ 
+ 	/* delayed service put work */
+ 	struct delayed_work delayed_put_work;
+@@ -135,6 +141,14 @@ struct rpal_version_info {
+ 
+ /* End */
+ 
++struct rpal_shared_page {
++	unsigned long user_start;
++	unsigned long kernel_start;
++	int npage;
++	atomic_t refcnt;
++	struct list_head list;
 +};
 +
-+/* End */
-+
-+enum rpal_command_type {
-+	RPAL_CMD_GET_API_VERSION_AND_CAP,
-+	RPAL_CMD_GET_SERVICE_KEY,
-+	RPAL_CMD_GET_SERVICE_ID,
-+	RPAL_NR_CMD,
-+};
-+
-+/* RPAL ioctl macro */
-+#define RPAL_IOCTL_MAGIC 0x33
-+#define RPAL_IOCTL_GET_API_VERSION_AND_CAP                        \
-+	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_GET_API_VERSION_AND_CAP, \
-+	      struct rpal_version_info *)
-+#define RPAL_IOCTL_GET_SERVICE_KEY \
-+	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_GET_SERVICE_KEY, u64 *)
-+#define RPAL_IOCTL_GET_SERVICE_ID \
-+	_IOWR(RPAL_IOCTL_MAGIC, RPAL_CMD_GET_SERVICE_ID, int *)
-+
- /**
-  * @brief get new reference to a rpal service, a corresponding
-  *  rpal_put_service() should be called later by the caller.
+ enum rpal_command_type {
+ 	RPAL_CMD_GET_API_VERSION_AND_CAP,
+ 	RPAL_CMD_GET_SERVICE_KEY,
+@@ -196,6 +210,7 @@ struct rpal_service *rpal_get_service_by_key(u64 key);
+ void copy_rpal(struct task_struct *p);
+ void exit_rpal(bool group_dead);
+ int rpal_balloon_init(unsigned long base);
++void rpal_exit_mmap(struct mm_struct *mm);
+ 
+ extern void rpal_pick_mmap_base(struct mm_struct *mm,
+ 	struct rlimit *rlim_stack);
+diff --git a/mm/mmap.c b/mm/mmap.c
+index bd210aaf7ebd..98bb33d2091e 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -48,6 +48,7 @@
+ #include <linux/sched/mm.h>
+ #include <linux/ksm.h>
+ #include <linux/memfd.h>
++#include <linux/rpal.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/cacheflush.h>
+@@ -1319,6 +1320,9 @@ void exit_mmap(struct mm_struct *mm)
+ 	__mt_destroy(&mm->mm_mt);
+ 	mmap_write_unlock(mm);
+ 	vm_unacct_memory(nr_accounted);
++#if IS_ENABLED(CONFIG_RPAL)
++	rpal_exit_mmap(mm);
++#endif
+ }
+ 
+ /* Insert vm structure into process list sorted by address
 -- 
 2.20.1
 
