@@ -1,78 +1,78 @@
-Return-Path: <linux-fsdevel+bounces-50188-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50189-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621FEAC8B0E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:38:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D7BDAC8B0F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 11:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6DF9E6BFE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:37:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DA93A404A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 09:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9354522FDFF;
-	Fri, 30 May 2025 09:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDBE221DA7;
+	Fri, 30 May 2025 09:34:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="Tl4Miuqq"
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="MzMp1xwL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E5E8221287
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B69521FF28
+	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 09:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748597648; cv=none; b=WqyWS3M44EirPc52xDT6i6xLtITIKc7AVMT+8Vxg/Tl/0YuhIpbz+PI7sn5d0aZ544koBbYkemIOa8vu4GZt9VO0JbowsPRH/tOjidBHYzT2kzlRXkUFoHwlmxIbg8FAXH3r6jAjw+dT8NQtDYpeAKSXMjHWO5T+3RsT6fkXeiM=
+	t=1748597663; cv=none; b=P8QqNabCpJHycgFDlNhSWM145sYajNLxwkvKBQnculaM5oq6kytXNUfAuxdunTFb51wve7DMCwxsO/6fuHuHJ5msKQ/NWNsz6SU//067tb0gx2RsntdOJE6qz54QcGCRv+svKLXGotbpN8Y7NMD5q1dEMsj2qNryNZEkL8HoaKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748597648; c=relaxed/simple;
-	bh=UOL+ld6kJQ8MITB46M/S3E58D1n58tehOr68tDVTVCQ=;
+	s=arc-20240116; t=1748597663; c=relaxed/simple;
+	bh=OoRqkHVJJA6Fnn08xoi8Z+2+DiJAYYu6EEBieJEgtFs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g1gktpu+j7io379yQx+DOCO/znYOlG5EF1cbnWxyTcTbfNyEvSchv41sKZAFxoO1wgnp0oSSXG8xQp51VC9GTX/hVF9PgX4yl9i/rWsjS63R593vr74TYPYopt5KxpkCnkauFPJWUDsiounj7tvOolWhJ104pG+el17AqaGxQm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=Tl4Miuqq; arc=none smtp.client-ip=209.85.216.48
+	 MIME-Version; b=ujOPWKgFEUUMUXbzbl6FGjNvd+Lsm0kmssLH/x6/3FjibhwRB98OHVkNHlXSWZlMzye/7HkXAMIFtOaxjbxpB51qn55+ap1hjEEtCgHrMuXf14EP4TY2pBq97dHPXtVCuRSPnFtU+USTLjWsA6rU+620I5Jjqb+XDeZ/GmGwRyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=MzMp1xwL; arc=none smtp.client-ip=209.85.214.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-3081fe5987eso1483931a91.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:34:05 -0700 (PDT)
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-234b9dfb842so17473415ad.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 02:34:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1748597645; x=1749202445; darn=vger.kernel.org;
+        d=bytedance.com; s=google; t=1748597660; x=1749202460; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=JJCF21JaAHh50QQNMzAFoSnSXgccx/2injFNIwjbQFo=;
-        b=Tl4MiuqqrXmkBATq/jgK2TPawTNlYG/h9+Mlq3CjwrjDxBrPcQxTtygGQhLnjVkR9o
-         FJ5CFUvXkks9Y0N6XRX65o8H2hJj5Lnm9VpK6W3Qs3daNtEEl99YbLh++fGyyNRHfb2r
-         FVIhtgvR/hjYrMqYwujJd+Fj/71j7QLBylWBnJcX2AUOGNWNpdoDJiZ4vIjRJTy8VLRg
-         VIAa5VVs3rGdL6m8hzuKCzcs7w95d+QUje+kWxGzQ8fFBSLLUF2GCAXmmGngQlP+S2iK
-         gbYIKMWKgctZryn5cAeNWLNnx2WfhUDPYT/q0wC4VklpjUb8b0CCV8pmRXUcz7Nnp16O
-         C8Eg==
+        bh=J8WmlWSYokiEZq8ImcTa9QlYOraa+eQKx+5TbFt2hGQ=;
+        b=MzMp1xwLobGJ+PxhL9U31NFiYdW2e6Es6/fKGhgS9fdx/3RJIOx6Z7xgtAlekeM4OF
+         w2FHcZiGe/oaeAj4agy4q2T6ro7WHZAS1OUnyEjYeoN/KU3T2pJlXdCXQth147r09gg1
+         upJOCi/JaVg7pKSz9GEHtge688GgY5m+rOiNcbvLzR+b48C5+zHCu0ZzGAMHIY0AOGyC
+         ne70J2lkOTTmg/LXAciIlOeaD09k81C+JOCe78G+aFeCLKaqvXAoR5kvpqJHHEp/Nwhn
+         iauXi4dGeW6dZOMk+imu/OBgrpZdQKC1ZZcmC0ljhNIEhpfxQnUphQIRRg6qOjrfu/Kt
+         Dsvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748597645; x=1749202445;
+        d=1e100.net; s=20230601; t=1748597660; x=1749202460;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=JJCF21JaAHh50QQNMzAFoSnSXgccx/2injFNIwjbQFo=;
-        b=dwyDUsQKkQjBnZ9EPHnBGzB1xwXX+oEiL2EJfaxtOxxe2baJ2BBVVGIQJSNcjanwpz
-         HwX8mg98ClASB/Kt1DQ+fPz75YCtMEEHNA/tfvEseVYKWPwf04dTeqvNOOYKZHL/eMfk
-         /mfMciTCDFqYaTYw/EtZK69veGVcPGFHVRdOhjkdWhasdi+c8AIiwUMa+8MpUJLX0J+r
-         MW0HFg5Bthnt2yGsw79Nz93orsmBlniOb5k8AUFHW0OLeY1CMhe4XPkcAQK4avB3fLgk
-         OzaUOsKfdiZgEEAEoNgKN403jpcTMrpAhk6pU9ONCw7j2IUx3pgPsDUoVZUhr8wFhTmt
-         WW/g==
-X-Forwarded-Encrypted: i=1; AJvYcCXID2fdebxHxeljnXveNMAwNAA35XBpOJhvcFxO7CrRnHWnkBROhWlgW/Y7PVkTCYO8slqHMW9yreItqjSZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2Jxqy+/MVfNU2A3KN7SGOMR2NoOZjNtkILMCePbl6WBXzleu/
-	QbMKSIp9Tyxb7psDn2UtrBiVUMdD5+2LzO7GPDLzGeanyULDfNtCQmAmvsxK2hW1GvI=
-X-Gm-Gg: ASbGncvECdByZ1pBPzSx44aQ3cu2x/9q4olqY8Fs/O18HiRUZbuJRFx5kb37xA8zJRU
-	kPmjBVmeUSRV+SboEYc7qYEtXGCGQNmenuc/0Li+iNcd3tVuu5zrBzbQKEdqcrrWwzVpTRNGBPv
-	ygdPlYa067ujOtL0oDqoADT07TBnAT2oK0QUBbAWWp0tnHo0ES4ottZ+rOJ6uAp2VKclik2GsuI
-	1asW0HUx6/cPg9J7kC7HyPl3lk/RNyEc5HyS0YqaPfdv6pwL/ItuGb5uE7Xvf7cW87bqTmAjM/p
-	vblD/IPqu6mkc/FNRsqv+c0hO35dGJuf+9dohBZqNc/Z3vIcpwUFt0gAl0CNOx2x03xq35qGtpF
-	rhsQj+gEmgw==
-X-Google-Smtp-Source: AGHT+IHRhTQBcA7s5JBEKqc7+0a9k8cenFZsoQhX8jbpv2vo1Ygv4WOD6zUURQ2dI64sy1qmxMzdzQ==
-X-Received: by 2002:a17:90a:e7cb:b0:311:b3e7:fb2c with SMTP id 98e67ed59e1d1-312503643c0mr2125489a91.13.1748597644660;
-        Fri, 30 May 2025 02:34:04 -0700 (PDT)
+        bh=J8WmlWSYokiEZq8ImcTa9QlYOraa+eQKx+5TbFt2hGQ=;
+        b=kIkVgIogi9TxHM0cnDQ+AhUtw3VYbi1p5/hRUopogJxTlMs/sn+jV+bXFAQgV7YZo+
+         Mwbt0LYlPai7QJgrnQH8YtYm+ned3vnOnCxqOQggScjUeyINaywfh96HqIQKMNYHUjYj
+         022xkMfXmZ2LAAjIOep9wSPNEx0unKQHCvGg5PWqdIniZOSxnSzbL2H40RM9vVoeKFlx
+         sCwvL7z0KIybvSP8AqQzoIsCW6vpelLBPh4p0bwiD+cTUD4qLWafOa8/dIO7vp4VBCz4
+         UgMMi1X4GDCfCalunEoIPApZQp3zThvHzRQZ1ZdqZJQZCaJGESZbKuOOg5TApI1d8K54
+         /xhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUINl8PIU3b15QV4C1yiGQi1Ir71GgqFntYMzeAKy9C7IeLh+/T8SsdtFfHPdZ8BcKiC89GjEMoKsRxDMet@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXG4Bxv30aokYkS1MiS1g3By7clLDgSCLmld6yGJWaSLHvF34G
+	uR7mP+cFGdmXFkOTLsACRqHn3Qg/na1mSEVibr5hx7TQUJKgZgqRdBwd0/do5CjBLkk=
+X-Gm-Gg: ASbGncugRwXxmzM69mA6aylTfZdrnnpJSIY+R3BwG86M92lF/inBgSzLfQ7yB14WHlC
+	qTLOZ/Q2m7kiRqoa7YWLZ2y5u5kwILZnamT3dvpS+a/bX2OosqYAvc0ebBmrH0MMck4VlZ1dv2A
+	KcMeDWeUJlbV/e8+/WUnyw4Fk2NqB962QpFs+h3zMZob+TZgDbBHsW+6Stoj83RSu5V675TtW4B
+	V1BYawGKIA+cdcRCDHePs1w2mopyXbkbhgcE3cXcPnz89E99crodIdtX+14xKohrCdySE8iePdo
+	Yz7WjTnWJ0tKJvRr2tlnsChnFadGL1e9XY2jO9c+sRfZzsDCZrHZPghNXVBs2YlJUVj4e5ghO3b
+	rvnBrX87eMg==
+X-Google-Smtp-Source: AGHT+IF4zFLLKAk8uepZIGBZM+3fXRB/hltSj95jGD1vqbYt83ikw4yeQ1JJHBQBbftK0SQTg3CQlA==
+X-Received: by 2002:a17:90a:d2cf:b0:311:a314:c2c7 with SMTP id 98e67ed59e1d1-3124150e346mr4368890a91.2.1748597660011;
+        Fri, 30 May 2025 02:34:20 -0700 (PDT)
 Received: from FQ627FTG20.bytedance.net ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.33.49
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3124e29f7b8sm838724a91.2.2025.05.30.02.34.05
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Fri, 30 May 2025 02:34:04 -0700 (PDT)
+        Fri, 30 May 2025 02:34:19 -0700 (PDT)
 From: Bo Li <libo.gcs85@bytedance.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
@@ -127,9 +127,9 @@ Cc: dietmar.eggemann@arm.com,
 	chengguozhu@bytedance.com,
 	sunjiadong.lff@bytedance.com,
 	Bo Li <libo.gcs85@bytedance.com>
-Subject: [RFC v2 22/35] RPAL: rebuild receiver state
-Date: Fri, 30 May 2025 17:27:50 +0800
-Message-Id: <af2895170223142a8dc824c7096d986da57aeb96.1748594841.git.libo.gcs85@bytedance.com>
+Subject: [RFC v2 23/35] RPAL: resume cpumask when fork
+Date: Fri, 30 May 2025 17:27:51 +0800
+Message-Id: <45c1884aaf21256ed6fc66b4a4a716bffebb54e1.1748594841.git.libo.gcs85@bytedance.com>
 X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
 References: <cover.1748594840.git.libo.gcs85@bytedance.com>
@@ -141,102 +141,64 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When an RPAL call occurs, the sender modifies the receiver's state. If the
-sender exits abnormally after modifying the state or encounters an
-unhandled page fault and returns to a recovery point, the receiver's state
-will remain as modified by the sender (e.g., in the CALL state). Since the
-sender may have exited, the lazy switch will not occur, leaving the
-receiver unrecoverable (unable to be woken up via try_to_wake_up()).
-Therefore, the kernel must ensure the receiver's state remains valid in
-these cases.
+After a lazy switch occurs, RPAL locks the receiver to the current CPU by
+modifying its cpumask. If the receiver performs a fork operation at this
+point, the kernel will copy the modified cpumask to the new task, causing
+the new task to be permanently locked on the current CPU.
 
-This patch addresses this by rebuild receiver's state during unhandled page
-faults or sender exits. The kernel detect the fsbase value recorded by
-the sender and use the fsbase value to locate the corresponding receiver.
-Then kernel checking if the receiver is in the CALL state set by the
-sender (using sender_id and service_id carried in the CALL state). If true,
-transitioning the receiver from CALL to WAIT state and notifying the
-receiver via sender_state that the RPAL call has completed.
-
-This ensures that even if the sender fails, the receiver can recover and
-resume normal operation by resetting its state and avoiding permanent
-blocking.
+This patch addresses this issue by detecting whether the original task is
+locked to the current CPU by RPAL during fork. If locked, assigning the
+cpumask that existed before the lazy switch to the new task. This ensures
+the new task will not be locked to the current CPU.
 
 Signed-off-by: Bo Li <libo.gcs85@bytedance.com>
 ---
- arch/x86/rpal/thread.c | 44 +++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 43 insertions(+), 1 deletion(-)
+ arch/x86/kernel/process.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/arch/x86/rpal/thread.c b/arch/x86/rpal/thread.c
-index db3b13ff82be..02c1a9c22dd7 100644
---- a/arch/x86/rpal/thread.c
-+++ b/arch/x86/rpal/thread.c
-@@ -224,6 +224,45 @@ int rpal_unregister_receiver(void)
- 	return ret;
- }
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index c1d2dac72b9c..be8845e2ca4d 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -29,6 +29,7 @@
+ #include <trace/events/power.h>
+ #include <linux/hw_breakpoint.h>
+ #include <linux/entry-common.h>
++#include <linux/rpal.h>
+ #include <asm/cpu.h>
+ #include <asm/cpuid/api.h>
+ #include <asm/apic.h>
+@@ -88,6 +89,19 @@ EXPORT_PER_CPU_SYMBOL(cpu_tss_rw);
+ DEFINE_PER_CPU(bool, __tss_limit_invalid);
+ EXPORT_PER_CPU_SYMBOL_GPL(__tss_limit_invalid);
  
-+/* sender may corrupt receiver's state if unexpectedly exited, rebuild it */
-+static void rpal_rebuild_receiver_context_on_exit(void)
++#ifdef CONFIG_RPAL
++static void rpal_fix_task_dump(struct task_struct *dst,
++			      struct task_struct *src)
 +{
-+	struct task_struct *receiver = NULL;
-+	struct rpal_sender_data *rsd = current->rpal_sd;
-+	struct rpal_sender_call_context *scc = rsd->scc;
-+	struct rpal_receiver_data *rrd;
-+	struct rpal_receiver_call_context *rcc;
-+	unsigned long fsbase;
-+	int state = rpal_build_call_state(rsd);
++	unsigned long flags;
 +
-+	if (scc->ec.magic != RPAL_ERROR_MAGIC)
-+		goto out;
-+
-+	fsbase = scc->ec.fsbase;
-+	if (rpal_is_correct_address(rpal_current_service(), fsbase))
-+		goto out;
-+
-+	receiver = rpal_find_next_task(fsbase);
-+	if (!receiver)
-+		goto out;
-+
-+	rrd = receiver->rpal_rd;
-+	if (!rrd)
-+		goto out;
-+
-+	rcc = rrd->rcc;
-+
-+	if (atomic_read(&rcc->receiver_state) == state) {
-+		atomic_cmpxchg(&rcc->sender_state, RPAL_SENDER_STATE_CALL,
-+			       RPAL_SENDER_STATE_KERNEL_RET);
-+		atomic_cmpxchg(&rcc->receiver_state, state,
-+			       RPAL_RECEIVER_STATE_WAIT);
-+	}
-+
-+out:
-+	return;
++	raw_spin_lock_irqsave(&src->pi_lock, flags);
++	if (rpal_test_task_thread_flag(src, RPAL_CPU_LOCKED_BIT))
++		cpumask_copy(&dst->cpus_mask, &src->rpal_cd->old_mask);
++	raw_spin_unlock_irqrestore(&src->pi_lock, flags);
 +}
++#endif
 +
- int rpal_rebuild_sender_context_on_fault(struct pt_regs *regs,
- 					 unsigned long addr, int error_code)
- {
-@@ -232,6 +271,7 @@ int rpal_rebuild_sender_context_on_fault(struct pt_regs *regs,
- 		unsigned long erip, ersp;
- 		int magic;
+ /*
+  * this gets called so that we can store lazy state into memory and copy the
+  * current task into the new thread.
+@@ -100,6 +114,10 @@ int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src)
+ #ifdef CONFIG_VM86
+ 	dst->thread.vm86 = NULL;
+ #endif
++#ifdef CONFIG_RPAL
++	if (src->rpal_rs)
++		rpal_fix_task_dump(dst, src);
++#endif
  
-+		rpal_rebuild_receiver_context_on_exit();
- 		erip = scc->ec.erip;
- 		ersp = scc->ec.ersp;
- 		magic = scc->ec.magic;
-@@ -249,8 +289,10 @@ int rpal_rebuild_sender_context_on_fault(struct pt_regs *regs,
- 
- void exit_rpal_thread(void)
- {
--	if (rpal_test_current_thread_flag(RPAL_SENDER_BIT))
-+	if (rpal_test_current_thread_flag(RPAL_SENDER_BIT)) {
-+		rpal_rebuild_receiver_context_on_exit();
- 		rpal_unregister_sender();
-+	}
- 
- 	if (rpal_test_current_thread_flag(RPAL_RECEIVER_BIT))
- 		rpal_unregister_receiver();
+ 	return 0;
+ }
 -- 
 2.20.1
 
