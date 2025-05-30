@@ -1,301 +1,107 @@
-Return-Path: <linux-fsdevel+bounces-50159-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50160-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D0EDAC8A38
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 10:54:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96EC3AC8A40
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 10:59:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5211BA6840
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 08:54:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 759AC7A4A35
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 08:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF2821C9F2;
-	Fri, 30 May 2025 08:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ITvpNzTN"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC29521C9EE;
+	Fri, 30 May 2025 08:59:45 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9CB218ACA
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 08:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F9D11D9663;
+	Fri, 30 May 2025 08:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748595239; cv=none; b=QM47c8F83tdKmnplsWVMEYrsyKMiaJi3Tp+h6YZN0PU7dG75Qq5iz2Eqf96qTNIv32GwwVcfwiSEtUqv+uZSsp+7KidG4g4DVPIvArDzlgvAnQSo4zUGfp3CGC8tEDKJrCADgztWKgr2PL3S5fzREdyOLaFDoLXNeZPF3PeQZn4=
+	t=1748595585; cv=none; b=TnDEbHb2TC9OCw0ICxj3km0LldfPJ3lzYy9LgnHBVpp+zhucMiTCa9EiODiskSJ87kvlrsY83PUz05xgpuEWmv1s+BMnKN64m5tnn7zU1FHMdKjaHfRCUXxE4EBkvAE9zOye1ZKqczFMWGj0gh6H4HI8mT4aO+9QdgHQTv6KSy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748595239; c=relaxed/simple;
-	bh=trVd84a33ivYKAJg9TE37WT5ARtue713nOBQM6WgbLs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pq/Cmm6VVr6ueodcJvFD5MBQHD62Hm4QCDZ2O1cuhkYzdTQjDiTt4eNkPFiW3OrqH6KZ5ZGvJcByUdtjA7tl+ygW7spD9eNGXrnYcB+u7rIWk4o3F9zRA0JnkPZLFPbUQ6dcNL9jJWjifrXf9TaZJJVDfYfEuqY6CiYLLfKfZRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ITvpNzTN; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4774611d40bso197131cf.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 01:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1748595237; x=1749200037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z8u647ndNYzdA27OG8TNeuQiC3z4GVpVKrED4QXwYPU=;
-        b=ITvpNzTN8/Q4CtxRafoLinx+/KF6kS8u02MT2vw16dhtJpjjS1iQ39KS9+1TLfpul5
-         E/KbvmaDazMOkC68YhavXUDeK4m8LWKO5AH0NUQ5DDZ1kchh0k6wauZtImivv++jTsem
-         OYn7bGQAM0E4MN832r16WaIWdUtV8ubXNRJ97tjIKl4jzHBo91wF9E3Xf+TeGfunaWjI
-         ALGBP7OEoC3Hl8+0jMVX4+V1zMuRzBerablzATIcP4Te0piRx3Qe3WNbqIHWm1iOWoLE
-         n8x/w/0sM5XFe0xl3FAwC1+CPVrNO34jPaPz+urfaCxB+GJBrGJf+5ZHoSoQ6CWBD7uh
-         iolA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748595237; x=1749200037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z8u647ndNYzdA27OG8TNeuQiC3z4GVpVKrED4QXwYPU=;
-        b=eZRclXXAOcGO6FowdxwuXmXOw4y+n3E2PdX45pk+nMtKHmvStMOmc96jvAivYm7UCe
-         ydMId6QFsE1Mhsp62ofJYWIEZx6kCuzvRvc2pSQDytLwvxeHwRwHunMemNlch9WMrhZW
-         VwTCyxmgdwj/icGmvWT1SYfLgLMMtm4L/h/r7enfCJmC0tDHvrfyKpvZ0rKFUFDrpz1j
-         3Ug33f+zNAFxMti99zQyyKej6ivkFpoIW7Xh57XnbcEXeWAYh7Li4n97TOQV49qdH2GY
-         6eQpvyC7OD1aj/BMupSOkeox6Luj6okm0HP48lv3ceAN6DDL+x+jKecdaPQ5jaFoOHeb
-         AYYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXYaWtSlQ2PTlU1H58rhxL8ZXrk33IAPWUWnoZ/+zEAsQEGaqP/sZoCbMFwk/1tWLZ0Lnm7X4vW8YUxEovF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBptX5T6BXtsfZuuwqdXMbL5c608/olNDVWhykTSJD3vKr1IgN
-	htDlaBIiPpo9K5EeySvbktpSiDF1VAcf0X/k5mf8CP5or5C8Qz+3/+rcrJv39DFYY8rNY8pKe9Q
-	LjXAAkrizGCPsw98LCeYu6Su/sc02Xi3WQ/ombF65
-X-Gm-Gg: ASbGncuf7XKrwhp0ZSX7lT77pfdVxw00tLu/A0Z0RO3RIxr4RsDa3x+JJA4FKErxSh6
-	fMZMdB0ExoYaSzj/uYC7iqiVNjm+V4lqh/pxF5dVrKp2DytsoqFq+RL/pZAxBpQ2pCrG5qzjYOj
-	9P4IEqzJruA+xcungNmdGoio53xDvErGYHhid7HMpOIA0=
-X-Google-Smtp-Source: AGHT+IFLqefnLn1v8keLkqAr4fPJAQHT//B+kwFb1ekkisV3CdeatG99dSsPZYAGw8By1B8I2vAaTr2y3/hbj85CkGA=
-X-Received: by 2002:a05:622a:1a97:b0:494:b4dd:befd with SMTP id
- d75a77b69052e-4a441022360mr2905721cf.8.1748595236277; Fri, 30 May 2025
- 01:53:56 -0700 (PDT)
+	s=arc-20240116; t=1748595585; c=relaxed/simple;
+	bh=RaQLPUUg+ZvY1aIfMu6PF0lA/P8xLcjONkdn20WRZpw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FyFFOE6/a9/C3nLHM4GzDRhthkWLKkRsY068/2EQVbQ3P192Tlxy9pNjN3+CgpkKToiDQkOSih6uMA1aR/vjxELPcQ38OoAoh79ahQKy41KL0yNr+J1KTVlUJ6epSqKnZO4q9hNA1HJei75+yWjnDKIJvD7DBm5/oR+92Fz+IWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EBDC616F2;
+	Fri, 30 May 2025 01:59:26 -0700 (PDT)
+Received: from [10.57.95.14] (unknown [10.57.95.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8351C3F5A1;
+	Fri, 30 May 2025 01:59:41 -0700 (PDT)
+Message-ID: <9b1bac6c-fd9f-4dc1-8c94-c4da0cbb9e7f@arm.com>
+Date: Fri, 30 May 2025 09:59:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1747264138.git.ackerleytng@google.com> <b784326e9ccae6a08388f1bf39db70a2204bdc51.1747264138.git.ackerleytng@google.com>
- <aDU3eL7qQYrXkE3T@yzhao56-desk.sh.intel.com>
-In-Reply-To: <aDU3eL7qQYrXkE3T@yzhao56-desk.sh.intel.com>
-From: Fuad Tabba <tabba@google.com>
-Date: Fri, 30 May 2025 09:53:19 +0100
-X-Gm-Features: AX0GCFtqJXvp3p__kKdA5QDGvH461bYPNLmsSSbQFbO1K64Y28pB97ucjguB0DU
-Message-ID: <CA+EHjTxgO4LmdYY83a+uzBshvFf8EcJzY58Rovvz=pZgyO2yow@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 02/51] KVM: guest_memfd: Introduce and use
- shareability to guard faulting
-To: Yan Zhao <yan.y.zhao@intel.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
-	aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org, 
-	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org, 
-	aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com, 
-	brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com, 
-	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com, 
-	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com, 
-	fan.du@intel.com, fvdl@google.com, graf@amazon.com, haibo1.xu@intel.com, 
-	hch@infradead.org, hughd@google.com, ira.weiny@intel.com, 
-	isaku.yamahata@intel.com, jack@suse.cz, james.morse@arm.com, 
-	jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com, jhubbard@nvidia.com, 
-	jroedel@suse.de, jthoughton@google.com, jun.miao@intel.com, 
-	kai.huang@intel.com, keirf@google.com, kent.overstreet@linux.dev, 
-	kirill.shutemov@intel.com, liam.merwick@oracle.com, 
-	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name, maz@kernel.org, 
-	mic@digikod.net, michael.roth@amd.com, mpe@ellerman.id.au, 
-	muchun.song@linux.dev, nikunj@amd.com, nsaenz@amazon.es, 
-	oliver.upton@linux.dev, palmer@dabbelt.com, pankaj.gupta@amd.com, 
-	paul.walmsley@sifive.com, pbonzini@redhat.com, pdurrant@amazon.co.uk, 
-	peterx@redhat.com, pgonda@google.com, pvorel@suse.cz, qperret@google.com, 
-	quic_cvanscha@quicinc.com, quic_eberman@quicinc.com, 
-	quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com, quic_pheragu@quicinc.com, 
-	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com, richard.weiyang@gmail.com, 
-	rick.p.edgecombe@intel.com, rientjes@google.com, roypat@amazon.co.uk, 
-	rppt@kernel.org, seanjc@google.com, shuah@kernel.org, steven.price@arm.com, 
-	steven.sistare@oracle.com, suzuki.poulose@arm.com, thomas.lendacky@amd.com, 
-	usama.arif@bytedance.com, vannapurve@google.com, vbabka@suse.cz, 
-	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com, 
-	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com, 
-	yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] fix MADV_COLLAPSE issue if THP settings are disabled
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, akpm@linux-foundation.org,
+ hughd@google.com
+Cc: lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, npache@redhat.com,
+ dev.jain@arm.com, ziy@nvidia.com, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1748506520.git.baolin.wang@linux.alibaba.com>
+ <05d60e72-3113-41f0-b81f-225397f06c81@arm.com>
+ <f3dad5b5-143d-4896-b315-38e1d7bb1248@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <f3dad5b5-143d-4896-b315-38e1d7bb1248@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 30/05/2025 09:44, David Hildenbrand wrote:
+> On 30.05.25 10:04, Ryan Roberts wrote:
+>> On 29/05/2025 09:23, Baolin Wang wrote:
+>>> As we discussed in the previous thread [1], the MADV_COLLAPSE will ignore
+>>> the system-wide anon/shmem THP sysfs settings, which means that even though
+>>> we have disabled the anon/shmem THP configuration, MADV_COLLAPSE will still
+>>> attempt to collapse into a anon/shmem THP. This violates the rule we have
+>>> agreed upon: never means never. This patch set will address this issue.
+>>
+>> This is a drive-by comment from me without having the previous context, but...
+>>
+>> Surely MADV_COLLAPSE *should* ignore the THP sysfs settings? It's a deliberate
+>> user-initiated, synchonous request to use huge pages for a range of memory.
+>> There is nothing *transparent* about it, it just happens to be implemented using
+>> the same logic that THP uses.
+>>
+>> I always thought this was a deliberate design decision.
+> 
+> If the admin said "never", then why should a user be able to overwrite that?
 
-.. snip..
+Well my interpretation would be that the admin is saying never *transparently*
+give anyone any hugepages; on balance it does more harm than good for my
+workloads. The toggle is called transparent_hugepage/enabled, after all.
 
-> I noticed that in [1], the kvm_gmem_mmap() does not check the range.
-> So, the WARN() here can be hit when userspace mmap() an area larger than the
-> inode size and accesses the out of band HVA.
->
-> Maybe limit the mmap() range?
->
-> @@ -1609,6 +1620,10 @@ static int kvm_gmem_mmap(struct file *file, struct vm_area_struct *vma)
->         if (!kvm_gmem_supports_shared(file_inode(file)))
->                 return -ENODEV;
->
-> +       if (vma->vm_end - vma->vm_start + (vma->vm_pgoff << PAGE_SHIFT) > i_size_read(file_inode(file)))
-> +               return -EINVAL;
-> +
->         if ((vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) !=
->             (VM_SHARED | VM_MAYSHARE)) {
->                 return -EINVAL;
->
-> [1] https://lore.kernel.org/all/20250513163438.3942405-8-tabba@google.com/
+Whereas MADV_COLLAPSE is deliberately applied to a specific region at an
+opportune moment in time, presumably because the user knows that the region
+*will* benefit and because that point in the execution is not sensitive to latency.
 
-I don't think we want to do that for a couple of reasons. We catch
-such invalid accesses on faulting, and, by analogy, afaikt, neither
-secretmem nor memfd perform a similar check on mmap (nor do
-memory-mapped files in general).
+I see them as logically separate.
 
-There are also valid reasons why a user would want to deliberately
-mmap more memory than the backing store, knowing that it's only going
-to fault what it's going to use, e.g., alignment.
+> 
+> The design decision I recall is that if VM_NOHUGEPAGE is set, we'll ignore that.
+> Because that was set by the app itself (MADV_NOHUEPAGE).
 
-Cheers,
-/fuad
+Hmm, ok. My instinct would have been the opposite; MADV_NOHUGEPAGE means "I
+don't want the risk of latency spikes and memory bloat that THP can cause". Not
+"ignore my explicit requests to MADV_COLLAPSE".
 
+But if that descision was already taken and that's the current behavior then I
+agree we have an inconsistency with respect to the sysfs control.
 
-> > +     return xa_to_value(entry);
-> > +}
-> > +
-> > +static struct folio *kvm_gmem_get_shared_folio(struct inode *inode, pgoff_t index)
-> > +{
-> > +     if (kvm_gmem_shareability_get(inode, index) != SHAREABILITY_ALL)
-> > +             return ERR_PTR(-EACCES);
-> > +
-> > +     return kvm_gmem_get_folio(inode, index);
-> > +}
-> > +
-> > +#else
-> > +
-> > +static int kvm_gmem_shareability_setup(struct maple_tree *mt, loff_t size, u64 flags)
-> > +{
-> > +     return 0;
-> > +}
-> > +
-> > +static inline struct folio *kvm_gmem_get_shared_folio(struct inode *inode, pgoff_t index)
-> > +{
-> > +     WARN_ONCE("Unexpected call to get shared folio.")
-> > +     return NULL;
-> > +}
-> > +
-> > +#endif /* CONFIG_KVM_GMEM_SHARED_MEM */
-> > +
-> >  static int __kvm_gmem_prepare_folio(struct kvm *kvm, struct kvm_memory_slot *slot,
-> >                                   pgoff_t index, struct folio *folio)
-> >  {
-> > @@ -333,7 +404,7 @@ static vm_fault_t kvm_gmem_fault_shared(struct vm_fault *vmf)
-> >
-> >       filemap_invalidate_lock_shared(inode->i_mapping);
-> >
-> > -     folio = kvm_gmem_get_folio(inode, vmf->pgoff);
-> > +     folio = kvm_gmem_get_shared_folio(inode, vmf->pgoff);
-> >       if (IS_ERR(folio)) {
-> >               int err = PTR_ERR(folio);
-> >
-> > @@ -420,8 +491,33 @@ static struct file_operations kvm_gmem_fops = {
-> >       .fallocate      = kvm_gmem_fallocate,
-> >  };
-> >
-> > +static void kvm_gmem_free_inode(struct inode *inode)
-> > +{
-> > +     struct kvm_gmem_inode_private *private = kvm_gmem_private(inode);
-> > +
-> > +     kfree(private);
-> > +
-> > +     free_inode_nonrcu(inode);
-> > +}
-> > +
-> > +static void kvm_gmem_destroy_inode(struct inode *inode)
-> > +{
-> > +     struct kvm_gmem_inode_private *private = kvm_gmem_private(inode);
-> > +
-> > +#ifdef CONFIG_KVM_GMEM_SHARED_MEM
-> > +     /*
-> > +      * mtree_destroy() can't be used within rcu callback, hence can't be
-> > +      * done in ->free_inode().
-> > +      */
-> > +     if (private)
-> > +             mtree_destroy(&private->shareability);
-> > +#endif
-> > +}
-> > +
-> >  static const struct super_operations kvm_gmem_super_operations = {
-> >       .statfs         = simple_statfs,
-> > +     .destroy_inode  = kvm_gmem_destroy_inode,
-> > +     .free_inode     = kvm_gmem_free_inode,
-> >  };
-> >
-> >  static int kvm_gmem_init_fs_context(struct fs_context *fc)
-> > @@ -549,12 +645,26 @@ static const struct inode_operations kvm_gmem_iops = {
-> >  static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
-> >                                                     loff_t size, u64 flags)
-> >  {
-> > +     struct kvm_gmem_inode_private *private;
-> >       struct inode *inode;
-> > +     int err;
-> >
-> >       inode = alloc_anon_secure_inode(kvm_gmem_mnt->mnt_sb, name);
-> >       if (IS_ERR(inode))
-> >               return inode;
-> >
-> > +     err = -ENOMEM;
-> > +     private = kzalloc(sizeof(*private), GFP_KERNEL);
-> > +     if (!private)
-> > +             goto out;
-> > +
-> > +     mt_init(&private->shareability);
-> Wrap the mt_init() inside "#ifdef CONFIG_KVM_GMEM_SHARED_MEM" ?
->
-> > +     inode->i_mapping->i_private_data = private;
-> > +
-> > +     err = kvm_gmem_shareability_setup(private, size, flags);
-> > +     if (err)
-> > +             goto out;
-> > +
-> >       inode->i_private = (void *)(unsigned long)flags;
-> >       inode->i_op = &kvm_gmem_iops;
-> >       inode->i_mapping->a_ops = &kvm_gmem_aops;
-> > @@ -566,6 +676,11 @@ static struct inode *kvm_gmem_inode_make_secure_inode(const char *name,
-> >       WARN_ON_ONCE(!mapping_unevictable(inode->i_mapping));
-> >
-> >       return inode;
-> > +
-> > +out:
-> > +     iput(inode);
-> > +
-> > +     return ERR_PTR(err);
-> >  }
-> >
-> >  static struct file *kvm_gmem_inode_create_getfile(void *priv, loff_t size,
-> > @@ -654,6 +769,9 @@ int kvm_gmem_create(struct kvm *kvm, struct kvm_create_guest_memfd *args)
-> >       if (kvm_arch_vm_supports_gmem_shared_mem(kvm))
-> >               valid_flags |= GUEST_MEMFD_FLAG_SUPPORT_SHARED;
-> >
-> > +     if (flags & GUEST_MEMFD_FLAG_SUPPORT_SHARED)
-> > +             valid_flags |= GUEST_MEMFD_FLAG_INIT_PRIVATE;
-> > +
-> >       if (flags & ~valid_flags)
-> >               return -EINVAL;
-> >
-> > @@ -842,6 +960,8 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
-> >       if (!file)
-> >               return -EFAULT;
-> >
-> > +     filemap_invalidate_lock_shared(file_inode(file)->i_mapping);
-> > +
-> >       folio = __kvm_gmem_get_pfn(file, slot, index, pfn, &is_prepared, max_order);
-> >       if (IS_ERR(folio)) {
-> >               r = PTR_ERR(folio);
-> > @@ -857,8 +977,8 @@ int kvm_gmem_get_pfn(struct kvm *kvm, struct kvm_memory_slot *slot,
-> >               *page = folio_file_page(folio, index);
-> >       else
-> >               folio_put(folio);
-> > -
-> >  out:
-> > +     filemap_invalidate_unlock_shared(file_inode(file)->i_mapping);
-> >       fput(file);
-> >       return r;
-> >  }
-> > --
-> > 2.49.0.1045.g170613ef41-goog
-> >
-> >
+Perhaps we should be guided by real world usage - AIUI there is a cloud that
+disables THP at system level today (Google?). Is there any concern that there
+are workloads in such environments that are using MADV_COLLAPSE today that would
+then see a performance drop?
+
 
