@@ -1,229 +1,135 @@
-Return-Path: <linux-fsdevel+bounces-50257-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50258-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A25F2AC9B4C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 16:06:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452C6AC9CC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 22:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 065667B0102
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 14:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E40318933EF
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 20:57:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803EA23C51B;
-	Sat, 31 May 2025 14:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29551A5B99;
+	Sat, 31 May 2025 20:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="moVj1CYq";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="RTGBixEH"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="vph3jmPF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from flow-b3-smtp.messagingengine.com (flow-b3-smtp.messagingengine.com [202.12.124.138])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7EFD8F40;
-	Sat, 31 May 2025 14:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B73E718DB1D
+	for <linux-fsdevel@vger.kernel.org>; Sat, 31 May 2025 20:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748700355; cv=none; b=nIu/HV+dSCTXV6POskytd/ZdCSgdeIDPcVlK5c97BEPHCaw0NOWM5ljR5JmPngpsYKmpeRwkb6cg8ts3IFlbsL/Vod2lRuMbgUoOxfOXAy/2gbj8pDM4PLSEBXrJ4LDJhzxs4jvRu37EdcmzPSHK8skvLmo0AeqIuRKu4xziZvc=
+	t=1748725025; cv=none; b=f4lB+1pk/ctJvBSJ9sgCk7RYx9Ehss8B3a7M84WOkOMwjbGe+q2PWwD1odn7fsya8h1c+SVeSqtGtk2xSaAtwGewyBps53ndorJN9YBDs3Y8ywZ/CMiiE7mX+kblULckwzFyCWjMzH11RD0cHSmT/WODW8HPlGJGrBlskSGFRdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748700355; c=relaxed/simple;
-	bh=batWj7URm34wWw9sXlRBBBteLVUWZCIEeamnoUIO5tA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a1I+b2+vbY+CwK5oHbqb+MhdVOwadtay9By6jrGjoNwKQytrGxIA+oQek8/Djn7F5Du9eed6bql+1gc+OIPJLNmKPjFcVL0XuTUaklI5qc/WVPLUz+2jjib+UoaN6shwvZf7YxuhSHEHVhJAhfi0uRAlmzkwjJeOHi0wzp4cZLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=moVj1CYq; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=RTGBixEH; arc=none smtp.client-ip=202.12.124.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailflow.stl.internal (Postfix) with ESMTP id 321771D402D4;
-	Sat, 31 May 2025 10:05:52 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Sat, 31 May 2025 10:05:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1748700352;
-	 x=1748707552; bh=A+gTdLvLewZ3oziHVaenP3eeBdz5U2TDYfESpkgT7nQ=; b=
-	moVj1CYqwNmsbH3Gx2RV6/WscvhkB7/Is5dUl2plqq4kiNTa+Ey+45lJUAUmjkDj
-	2ToU533fS7eel48t/qS+NirklWOio9AOksNRzuyOd8oGGVT0bTxsIZxGjt8O5u2t
-	kj/Myt9RMLeLxDqVM2TWi5O3A7ySbFBGaaPBer9lq4ia7p72foiT59qSG+DG312V
-	I2pEz0pK7Z7HROV0QQDRd0zBP2OTlEegBKVwjWeQlgnKuWkxfdpqD6/sx4vAd5M+
-	6cKxOKcn0kUgkaOYyfJsVjzjhU5RKkQ/jEhju6fuUM/jhFWFoocM7YWYQufVXspJ
-	kaOJAG6zNQELiBopp1ogow==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748700352; x=
-	1748707552; bh=A+gTdLvLewZ3oziHVaenP3eeBdz5U2TDYfESpkgT7nQ=; b=R
-	TGBixEHEd1P+t1+wxUa5xSz+LLmZixAuDfgmUlDJL/jZcjMaCqUNjCc90VRG+PJr
-	/EiniRBC645fJ+GR+YdkSvPusr8fUiEP/JCmclIRkn40HUm4DDhdOfjelTYlkkOd
-	teGaZQgfO9DzGlVpmb2gUEQofgbOrkle3Hi0lPw3LWRmJq5wW4P1Bn+VVpitrGUX
-	eRmFxaj8nTJNYG3QpShi9P8x6BXgG4fyDhgNbN9F/YvU0jjrlaZP/k4sgy+P0SsT
-	LeYB5wJHPlnbmx6RcXWIyjh6NpiXbfBqcKTccxwfXUNPcoHQnJ+RjBd2Gbpo8vSM
-	K8f2ndIttdXbXOtMY5rkQ==
-X-ME-Sender: <xms:vgw7aOf2yFvZIQsubZLLT8lBkCFBM_P9W5T25AlVg4SmktGrymw6aw>
-    <xme:vgw7aIPGTtn1RVZJjBzSjFy9dRXzodTqvLjdyOXu_QHNm1G_Pp5vUXoFIDM4zdJu1
-    TvxG4USXMPRO9HGp_Q>
-X-ME-Received: <xmr:vgw7aPiPCN9YKYMLJCgt0KSQUyUUGfrgQhLwIJu8xUyGBibTdNs8S0iQHKlE4QtPYw4CgMshSpKC4gI3gVGiuOVn>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddtgdefvddutdculddtuddrgeefvddrtd
-    dtmdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggft
-    fghnshhusghstghrihgsvgdpuffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftd
-    dtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfev
-    fhfhjggtgfesthekredttddvjeenucfhrhhomhepvfhinhhgmhgrohcuhggrnhhguceomh
-    esmhgrohifthhmrdhorhhgqeenucggtffrrghtthgvrhhnpedukeevhfegvedvveeihedv
-    vdeghfeglefgudegfeetvdekiefgledtheeggefhgfenucevlhhushhtvghrufhiiigvpe
-    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmsehmrghofihtmhdrohhrghdpnhgspghr
-    tghpthhtohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehsohhngheskh
-    gvrhhnvghlrdhorhhgpdhrtghpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgt
-    phhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtoh
-    epjhgrtghksehsuhhsvgdrtgiipdhrtghpthhtohepsghpfhesvhhgvghrrdhkvghrnhgv
-    lhdrohhrghdprhgtphhtthhopehlihhnuhigqdhfshguvghvvghlsehvghgvrhdrkhgvrh
-    hnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqshgvtghurhhithihqdhmohguuh
-    hlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhdqthgv
-    rghmsehmvghtrgdrtghomh
-X-ME-Proxy: <xmx:vgw7aL-IgbW0ZGo43QjiyaZ4u0q9Kg-UnZu6EuDecNhtRVN5h1C5YQ>
-    <xmx:vgw7aKuXWpcqGrImvuZ3fcc0wZDB0g2MgKgfEvjgNSav_ZE8x4p-TQ>
-    <xmx:vgw7aCHSYHJGGpJODPOzaJEAX1bPMTj951ipWPFQi2xf79hSmQN_dQ>
-    <xmx:vgw7aJOvDHf1eEzAJuEbYDwLvLQyUyMCrMyqsbhOuW2c0j0Kg-JfaA>
-    <xmx:wAw7aO-8dn3ojXS0NCoV5anjiPuwX4nI_2yYrGvP4CI4w8DZHUX-KeNW>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 31 May 2025 10:05:48 -0400 (EDT)
-Message-ID: <c2d0bae8-691f-4bb6-9c0e-64ab7cdaebd6@maowtm.org>
-Date: Sat, 31 May 2025 15:05:46 +0100
+	s=arc-20240116; t=1748725025; c=relaxed/simple;
+	bh=LOePQK1nl/Aktxr1Tno+Zq9NrVH8xCBuLArwtsOPB74=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TNR669soNBYZaDzQfr/BVnF5fuk1PYiy9NfvFYIBv1x2FkwDOJR3F09XswS8ogdGoK0cIn7wCW4bwahX+LnVgwspUB3l+rfKvsUbHrTusotGwYvNrnJ2pgD8oDvC3Ig7J2MH8da9DPnqkj5/HdMrhb9lz9IT3PoVBZSo9FfFMug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=vph3jmPF; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=f4wpRwMf3+PpMqnzJ1YHj01W0oXwE3r5DJ3F+L4fFWQ=; b=vph3jmPFd9tGaTi/Sjp1mDhuMD
+	r5iWPzaZLIYsYK+fNpe7/RFdEPnWdDY5axIRRNhSpBfpAZAxpx/B20qXwEjxwuWBRcui+idsejEeH
+	AhRRaeX3wot3oF5V39mp/kEMhd9HU2SxY8NbXoLeNE+v9Ex3ZXJ+fJPpFwDbl/cXoNNdwLFJoBgCa
+	DJJi6R1tAbowTVvXzxWpGuQRCqaIqOnOVYmRje41ErGAhqfmYjxwYdkLlQBEtFAHKJlLA24GMrtYZ
+	VXVbJ+58+Ks1RO7uoAOmfmSyyXIjr9pf/5s3uWTSkUZFpQ2nNevG1QD4E+4RpDlxwYNedqMUO+S5D
+	K/aDOaTA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uLTGG-0000000BXpx-2uXD;
+	Sat, 31 May 2025 20:57:00 +0000
+Date: Sat, 31 May 2025 21:57:00 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org
+Subject: [BUG][RFC] broken use of __lookup_mnt() in path_overmounted()
+Message-ID: <20250531205700.GD3574388@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-To: Song Liu <song@kernel.org>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
- kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
- daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org,
- kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com,
- repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com,
- gnoack@google.com
-References: <20250529173810.GJ2023217@ZenIV>
- <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250529183536.GL2023217@ZenIV>
- <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
- <20250529201551.GN2023217@ZenIV>
- <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
- <20250529214544.GO2023217@ZenIV>
- <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
- <20250529231018.GP2023217@ZenIV>
- <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
- <20250530.euz5beesaSha@digikod.net>
- <CAPhsuW5U-nPk4MFdZSeBNds0qEHjQZrC=c5q+AGNpsKiveC2wA@mail.gmail.com>
-Content-Language: en-US
-From: Tingmao Wang <m@maowtm.org>
-In-Reply-To: <CAPhsuW5U-nPk4MFdZSeBNds0qEHjQZrC=c5q+AGNpsKiveC2wA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On 5/30/25 19:55, Song Liu wrote:
-> On Fri, May 30, 2025 at 5:20 AM Mickaël Salaün <mic@digikod.net> wrote:
-> [...]
->>>
->>> If we update path_parent in this patchset with choose_mountpoint(),
->>> and use it in Landlock, we will close this race condition, right?
->>
->> choose_mountpoint() is currently private, but if we add a new filesystem
->> helper, I think the right approach would be to expose follow_dotdot(),
->> updating its arguments with public types.  This way the intermediates
->> mount points will not be exposed, RCU optimization will be leveraged,
->> and usage of this new helper will be simplified.
-> 
-> I think it is easier to add a helper similar to follow_dotdot(), but not with
-> nameidata. follow_dotdot() touches so many things in nameidata, so it
-> is better to keep it as-is. I am having the following:
-> 
-> /**
->  * path_parent - Find the parent of path
->  * @path: input and output path.
->  * @root: root of the path walk, do not go beyond this root. If @root is
->  *        zero'ed, walk all the way to real root.
->  *
->  * Given a path, find the parent path. Replace @path with the parent path.
->  * If we were already at the real root or a disconnected root, @path is
->  * not changed.
->  *
->  * Returns:
->  *  true  - if @path is updated to its parent.
->  *  false - if @path is already the root (real root or @root).
->  */
-> bool path_parent(struct path *path, const struct path *root)
-> {
->         struct dentry *parent;
-> 
->         if (path_equal(path, root))
->                 return false;
-> 
->         if (unlikely(path->dentry == path->mnt->mnt_root)) {
->                 struct path p;
-> 
->                 if (!choose_mountpoint(real_mount(path->mnt), root, &p))
->                         return false;
->                 path_put(path);
->                 *path = p;
->                 return true;
->         }
-> 
->         if (unlikely(IS_ROOT(path->dentry)))
->                 return false;
-> 
->         parent = dget_parent(path->dentry);
->         if (unlikely(!path_connected(path->mnt, parent))) {
->                 dput(parent);
->                 return false;
->         }
->         dput(path->dentry);
->         path->dentry = parent;
->         return true;
-> }
-> EXPORT_SYMBOL_GPL(path_parent);
-> 
-> And for Landlock, it is simply:
-> 
->                 if (path_parent(&walker_path, &root))
->                         continue;
-> 
->                 if (unlikely(IS_ROOT(walker_path.dentry))) {
->                         /*
->                          * Stops at disconnected or real root directories.
->                          * Only allows access to internal filesystems
->                          * (e.g. nsfs, which is reachable through
->                          * /proc/<pid>/ns/<namespace>).
->                          */
->                         if (walker_path.mnt->mnt_flags & MNT_INTERNAL) {
->                                 allowed_parent1 = true;
->                                 allowed_parent2 = true;
->                         }
->                         break;
+	More audit fallout.
 
+Rules for using mount hash (will go into the docs I'm putting together):
+	* all insertions are under EXCL(namespace_sem) and write_seqlock(mount_lock)
+	* all removals are under write_seqlock(mount_lock)
+	* all removals are either under EXCL(namespace_sem) or have parent's
+refcount equal to zero.
+	* since all changes to hash chains are under write_seqlock(mount_lock),
+hash seatch is safe if you have at least read_seqlock_excl(mount_lock).  In
+that case the result is guaranteed to be accurate.
+	* removals are done with hlist_del_init_rcu(); freeing of the removed
+object is always RCU-delayed, so holding rcu_read_lock() over traversal is
+memory safe.  HOWEVER, it is entirely possible to step into an object being
+removed from hash chain at the time of search and get a false negative.
+If you are not holding at least read_seqlock_excl(mount_lock), you *must*
+sample mount_lock seqcount component before the search and check it afterwards.
+	* acquiring a reference to object found as the result of traversal needs
+to be done carefully - it is safe under mount_lock, but when used under rcu_read_lock()
+alone we do need __legitimize_mnt(); otherwise we are risking a race with
+final mntput() and/or busy mount checks in sync umount.
 
-Hi, maybe I'm missing the complete picture of this code, but since
-path_parent doesn't change walker_path if it returns false (e.g. if it's
-disconnected, or choose_mountpoint fails), I think this `break;` should be
-outside the
+Search is done by __lookup_mnt().
+Callers under write_seqlock(mount_lock):
+	*�all callers in fs/pnode.c and one in attach_recursive_mnt().
+Callers under rcu_read_lock():
+	* lookup_mnt() - seqcount component of mount_lock used to deal
+with races.  Check is done by legitimize_mnt().
+	* path_overmounted() - the callers are under EXCL(namespace_sem)
+and they are holding a reference to parent, so removal of the object we
+are searching for is excluded.  Reference to child is not acquired, so
+the questions about validity of that do not arise.  Unfortunately, removals
+of objects in the same hash chain are *not* excluded, so a false negative
+is possible there.
 
-    if (unlikely(IS_ROOT(walker_path.dentry)))
+Bug in path_overmounted() appears to have come from the corresponding
+chunk of finish_automount(), which had the same race (and got turned
+into a call of path_overmounted()).
 
-right? (Assuming this whole thing is under a `while (true)`) Otherwise we
-might get stuck at the current path and get infinite loop?
+One possibility is to wrap the use of __lookup_mnt() into a sample-and-recheck
+loop there; for the call of path_overmounted() in finish_automount() it'll
+give the right behaviour.
 
->                 }
-> 
-> Does this look right?
-> 
-> Thanks,
-> Song
+The other one, though...  The thing is, it's not really specific to
+"move beneath" case - the secondary copies always have to deal with the
+possibility of "slip under existing mount" situation.  And yes, it can
+lead to problems - for all attach_recursive_mnt() callers.
 
+Note that do_loopback() can race with mount(2) on top of the old_path
+- it might've happened between the pathname resolution for source and
+lock_mount() for mountpoint.  We *can't* hold namespace_sem over the
+pathname resolution - it'd be very easy to deadlock.
+
+One possibility would be to have all of them traverse the chain of
+overmounts on top of the thing we are going to copy/move, basically
+pretending that we'd lost the race to whatever had done the overmount.
+The problem with that is there might have been no race at all - it
+might've come from "." or a descriptor + empty path.  In this case
+we currently copy/move the entire thing and it just might be used
+deliberately.
+
+Another possibility is to teach attach_recursive_mnt() to cope with the
+possibility of overmounts in source - it's not that hard, all we need is
+to find the top of overmount chain there in the very beginning and in all
+"slip under existing mount" cases have the existing mount reparented to
+the top of that chain.
+
+I'm not sure which one gives better semantics, TBH.  I'd be more inclined
+towards the second option - on the theory that we can combine it with
+the first one in cases where that's applicable.
+
+Comments?
 
