@@ -1,79 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-50250-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50251-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E156AC980E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 01:16:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C92A4AC98BB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 03:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4F9C1BA7EF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 May 2025 23:17:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 699AE7A2836
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 01:07:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C89D928C86C;
-	Fri, 30 May 2025 23:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B26B1172A;
+	Sat, 31 May 2025 01:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PN1Dl0iz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gTCUr6Pg"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A0428CF4A
-	for <linux-fsdevel@vger.kernel.org>; Fri, 30 May 2025 23:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46F729A5;
+	Sat, 31 May 2025 01:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748646993; cv=none; b=sghjzLU83nKTn561Nod6TUYLXvDMrD4sDhyV1waq0owQ3locaMImtpTONzD7lvkLweaoXfaViIkzF3cIlsHa+i5L8CqePrIrgmhkHgCnP8uZzJ5TmfB6wEZ6/q3kMax8TPSscBnHkjEF55YXumKV8ldTlzDCtTY+hIfxFpwO6PU=
+	t=1748653725; cv=none; b=Erkz+Ua1T5Upz3hicGx75n4INVGhdpK289J3i1Qv3zY7oe1nJTrqhERp7hT9jKGIceCAyKnloUlaBwDmwZoITiOsWoQrXW8ps7BKWckaBjPMhHPMH+uuH6qvpokjCjsKb60vzDl647mJbE3GbpTNpD060dFo1idbBLzjH/SDwDc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748646993; c=relaxed/simple;
-	bh=lMgec3DNRUHu8Zz5kcQjUiQIlaJLnLzgGgr91v6BfPw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=ggp1RUCdx5o0exa7OKlAo9QRDXeI0wj5WWDMqrGIDhsuWmh46UfNZ98ci0/Pv0I+S2lp5B2jtOzszFtPmih8baQNv5bZ7Xx1Lm0P8953m/tbIcwP4oqfXdZ/98IWfi1Zyku/ajtIXc6K81juilcQNubeRfvtuFCyJvnVcEhphXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PN1Dl0iz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90EABC4CEE9;
-	Fri, 30 May 2025 23:16:31 +0000 (UTC)
+	s=arc-20240116; t=1748653725; c=relaxed/simple;
+	bh=Zss6ErNP613hE26q0r1vBm1FfRTxpSytRDUOM3OKQUc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSTipGgqZAabHVXSbQ/iHRVw5y77TCo8rwoqa8vjgVIKG0ifXUtI+2VRM+ink4+U+tVi0SVw4nSRbSxkL2CLseyA4Zido2dBgcB6bXJ+IU9CKchYm42CvVxQe1ywzuHTJf7LyVOQ67oeAgjso54wRsSlq4ZO9OQis2WV9MGIDXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gTCUr6Pg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 395F2C4CEEB;
+	Sat, 31 May 2025 01:08:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748646991;
-	bh=lMgec3DNRUHu8Zz5kcQjUiQIlaJLnLzgGgr91v6BfPw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=PN1Dl0izWXzGTGT4mBWP3EzfRjqU9FlO37feNMOE0mFeuRD/ZL26o/xleeRvea1TG
-	 pW01V6IAwHQ4EzatfVECRhIMEYA/ts2/YpSLf4d5dVF3/pvrR59F0NhnjkvmpNBACe
-	 gEKDdvBJ8abZHP7mpl8cGzxWx8DHDSyfrDOfIekY2eQWKFu/veiynE7k3gICZ5M5AD
-	 2QnCNvTp82Qu3ZUw+6H6vQSpHLw09JUl86NAjx/Sy9tRNx2HO/3i3WB04t0nGwl2FN
-	 7gdsmGM6slRN0jDQiTI/lCmdkJx6IfpxjK4xcE6dBR36hww7oQdfWOLw8ucLHk+WGm
-	 poztEtxc+j7xw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E4739F1DF2;
-	Fri, 30 May 2025 23:17:06 +0000 (UTC)
-Subject: Re: [git pull] ->d_automount() pile
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250530205630.GC3574388@ZenIV>
-References: <20250530205630.GC3574388@ZenIV>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250530205630.GC3574388@ZenIV>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-automount
-X-PR-Tracked-Commit-Id: 2dbf6e0df447d1542f8fd158b17a06d2e8ede15e
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0f70f5b08a47a3bc1a252e5f451a137cde7c98ce
-Message-Id: <174864702488.4165071.105129911764547494.pr-tracker-bot@kernel.org>
-Date: Fri, 30 May 2025 23:17:04 +0000
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-fsdevel@vger.kernel.org, Christian Brauner <brauner@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>, Paulo Alcantara <pc@manguebit.com>
+	s=k20201202; t=1748653725;
+	bh=Zss6ErNP613hE26q0r1vBm1FfRTxpSytRDUOM3OKQUc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gTCUr6Pg1/dKY6BhuBD/Pvd3uzIzx9ltYOKbAs3gqfu+ObdwIIfPaWNqDbkm5LLeN
+	 t21hyPtekks94ALaEtaL+ipjmp+lbF4z522/eJGJxt+BhuBnRmUbdsXPpsd8ynnkYE
+	 b17f8l1V6QubibW2BMtdxYZy4zlklWc+O0BlmCnl7LASXrS2+us78wgP/dMTDb4gbf
+	 Km4E+R17w8pmOMaCXBchGN0UM2V6h1JgF9SqsJgC34+v0jlpdut6rCmyKSPlD1+A3t
+	 NPdfJyfkLR5Rl+S8JoiOC73B0QJ4n2P8HiEOdh7OzIfXXzCAYgsjNoOcqAkohOUaGA
+	 4Ekn6iyikgKPw==
+Date: Fri, 30 May 2025 18:08:44 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Miklos Szeredi <miklos@szeredi.hu>
+Cc: linux-fsdevel@vger.kernel.org, joannelkoong@gmail.com,
+	linux-xfs@vger.kernel.org, bernd@bsbernd.com, John@groves.net
+Subject: Re: [PATCH 01/11] fuse: fix livelock in synchronous file put from
+ fuseblk workers
+Message-ID: <20250531010844.GF8328@frogsfrogsfrogs>
+References: <174787195502.1483178.17485675069927796174.stgit@frogsfrogsfrogs>
+ <174787195588.1483178.6811285839793085547.stgit@frogsfrogsfrogs>
+ <CAJfpegsn2eBjy27rncxYBQ1heoiA1tme8oExF-d_C9DoFq34ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAJfpegsn2eBjy27rncxYBQ1heoiA1tme8oExF-d_C9DoFq34ow@mail.gmail.com>
 
-The pull request you sent on Fri, 30 May 2025 21:56:30 +0100:
+On Thu, May 29, 2025 at 01:08:25PM +0200, Miklos Szeredi wrote:
+> On Thu, 22 May 2025 at 02:02, Darrick J. Wong <djwong@kernel.org> wrote:
+> 
+> > Fix this by only using synchronous fputs for fuseblk servers if the
+> > process doesn't have PF_LOCAL_THROTTLE.  Hopefully the fuseblk server
+> > had the good sense to call PR_SET_IO_FLUSHER to mark itself as a
+> > filesystem server.
+> 
+> The bug is valid.
+> 
+> I just wonder if we really need to check against the task flag instead
+> of always sending release async, which would simplify things.
+> 
+> The sync release originates from commit 5a18ec176c93 ("fuse: fix hang
+> of single threaded fuseblk filesystem"), but then commit baebccbe997d
+> ("fuse: hold inode instead of path after release") made that obsolete.
+> 
+> Anybody sees a reason why sync release for fuseblk is a good idea?
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-automount
+The best reason that I can think of is that normally the process that
+owns the fd (and hence is releasing it) should be made to wait for
+the release, because normally we want processes that generate file
+activity to pay those costs.  It's just this weird case where the fd
+already got closed but aio is still going in the background.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0f70f5b08a47a3bc1a252e5f451a137cde7c98ce
+(yeah, everyone hates aio ;))
 
-Thank you!
+Also: is it a bug that the kernel only sends FUSE_DESTROY on umount for
+fuseblk filesystems?  I'd have thought that you'd want to make umount
+block until the fuse server is totally done.  OTOH I guess I could see
+an argument for not waiting for potentially hung servers, etc.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+--D
+
+> Thanks,
+> Miklos
 
