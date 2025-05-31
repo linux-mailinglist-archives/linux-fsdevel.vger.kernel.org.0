@@ -1,119 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-50252-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50253-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4CEEAC98BD
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 03:10:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D843AAC99D0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 09:16:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C382F1BA5E7D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 01:11:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A66334A0238
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 May 2025 07:16:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99ED1096F;
-	Sat, 31 May 2025 01:10:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0BC235354;
+	Sat, 31 May 2025 07:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DadsoKWD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqnCQjCi"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2432F4A08
-	for <linux-fsdevel@vger.kernel.org>; Sat, 31 May 2025 01:10:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DB2EED7;
+	Sat, 31 May 2025 07:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748653852; cv=none; b=Ypm8UZ8N9GH+rC4MykIKNcHVQW0hoLkFvuFaJvfxiwrQb8/GVIUssdnIfFKVLcQzGx4IdQCTAa6Fm2exZRthAzN9+uUjtPOdIURHKMYY2wTZASBfkpHxs2rx/ffCHQWoilaDra2yh4tuWlYpMUcbFh17LTNyvze7ITYbpXxHS8k=
+	t=1748675810; cv=none; b=tGc7k4bwiFOxJvNqW0bvfEF0t4NW6OUHXh7TlLBYuTDjU50EmPpRDQ7Wgq+c/bunBphYXciyU+6vmo7sXGZHyFuj/wwri8LkKDarjrXd5o761POn0y+fbatKniMAGuyrYtihqkkN7lXvBeFdBQJlySRreErYya55ZGzTwxCKke4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748653852; c=relaxed/simple;
-	bh=p5YVcFHUA3wZmphtWOQ+7YAEScxdHCW4vnhJUnLSl1Y=;
+	s=arc-20240116; t=1748675810; c=relaxed/simple;
+	bh=zYe1+sXdqUMmr98YnXHwFBRq+aXOFiQG6wruVnbdSlU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u1oSiaa9jWnVW9k78gxKsy0he/JTMOJYQZa5aMd5aMG2PCxBF+LdZ2gFUbJYJr84iYEE05/xCOGyC336S2+XlU6TQCdYtAzzqS+10gnFZxIsp/D2S1RxuqahUnDZJf6fID1img7bBbjHCmTxool8qmtOt0XuOS4xIJw6WDBEB8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DadsoKWD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BB20C4CEEB;
-	Sat, 31 May 2025 01:10:51 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=sPS/tS4GqpWgRQY2y4u147ScQHBBt6NCg/IXkVpwsE+6VHhM0phBHKWNuwDFuAgyd/1nbkzaNGeIS3t0iLV82EuQXv3jv7hDV5XvcYXuIvhc0JSPOm8NGX0BGUJtXSrJlNl7hOT1OPDTHhsb77vryTQaQpSrhk7WpPLVRNoyPj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bqnCQjCi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95955C4CEE3;
+	Sat, 31 May 2025 07:16:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748653851;
-	bh=p5YVcFHUA3wZmphtWOQ+7YAEScxdHCW4vnhJUnLSl1Y=;
+	s=k20201202; t=1748675809;
+	bh=zYe1+sXdqUMmr98YnXHwFBRq+aXOFiQG6wruVnbdSlU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DadsoKWDwhBHWbqrINr33oWI4qFezXmABnCs6YJQbnl+hVYi49icPdPRxeqEzO3E5
-	 +AvejGG4uetIKVOCTXEpsrX8ovikRppz2gAsNlZXk3F3l7M5BJ3/eq+SVM2dukdPiC
-	 sK1otYq7LF5fW7965C9TGjmpAkC0NKlDzOzOJOMMULIoX06whs9JCFdcV3J+0DRAqn
-	 5nPVerh1pKSFdVcAIKDPsZzryfzVYfqB5LdqOKNwQJ55k+qaLWm6vf/A6uxcgYlfia
-	 zN8M1uQLQZrJUtjW9EWeF3hyY16E+jigl6WQJOQm5n/3HYpHUiZoi56INJgh9BQs9W
-	 WQpEKkSGUj/+g==
-Date: Fri, 30 May 2025 18:10:50 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [BUG] regression from 974c5e6139db "xfs: flag as supporting
- FOP_DONTCACHE" (double free on page?)
-Message-ID: <20250531011050.GB8286@frogsfrogsfrogs>
-References: <20250525083209.GS2023217@ZenIV>
- <20250529015637.GA8286@frogsfrogsfrogs>
+	b=bqnCQjCiCD2PbdPMeu84qfvj3Nx7yg7/rzrJ2htLvMM+rP8AmTcuFww7uFsPlBgb6
+	 5BxKRXheiIHLHM8HR27gVsdgqIhowEPm2lDDSt8sGqBtixIkypSI/iLBIu89/MuvXV
+	 Mkyc0eQhfUkyLpRFEWir3/XVPEGCuDKPWaC1/5kJIW7HIE3YyRWt6FWIlFT595E/DZ
+	 Od8df52QJx0jo/LUPW2H1bJELKIDCwk+WRLadZBn/p16U8yvyjsGvuQJH3ePnn6MAG
+	 5WZzuVvFtAjIgkW59InOd959UEMCxUuSC5FH/5MRtYIt9cyWd0L8SyxKHtlPekWcr+
+	 eFtvjLAdNQXAg==
+Date: Sat, 31 May 2025 09:16:35 +0200
+From: Ingo Molnar <mingo@kernel.org>
+To: Bo Li <libo.gcs85@bytedance.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, luto@kernel.org,
+	kees@kernel.org, akpm@linux-foundation.org, david@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	peterz@infradead.org, dietmar.eggemann@arm.com, hpa@zytor.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
+	surenb@google.com, mhocko@suse.com, rostedt@goodmis.org,
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com,
+	jannh@google.com, pfalcato@suse.de, riel@surriel.com,
+	harry.yoo@oracle.com, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, duanxiongchun@bytedance.com,
+	yinhongbo@bytedance.com, dengliang.1214@bytedance.com,
+	xieyongji@bytedance.com, chaiwen.cc@bytedance.com,
+	songmuchun@bytedance.com, yuanzhu@bytedance.com,
+	chengguozhu@bytedance.com, sunjiadong.lff@bytedance.com
+Subject: Re: [RFC v2 00/35] optimize cost of inter-process communication
+Message-ID: <aDqs0_c_vq96EWW6@gmail.com>
+References: <cover.1748594840.git.libo.gcs85@bytedance.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250529015637.GA8286@frogsfrogsfrogs>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1748594840.git.libo.gcs85@bytedance.com>
 
-On Wed, May 28, 2025 at 06:56:37PM -0700, Darrick J. Wong wrote:
-> On Sun, May 25, 2025 at 09:32:09AM +0100, Al Viro wrote:
-> > generic/127 with xfstests built on debian-testing (trixie) ends up with
-> > assorted memory corruption; trace below is with CONFIG_DEBUG_PAGEALLOC and
-> > CONFIG_DEBUG_PAGEALLOC_ENABLE_DEFAULT and it looks like a double free
-> > somewhere in iomap.  Unfortunately, commit in question is just making
-> > xfs use the infrastructure built in earlier series - not that useful
-> > for isolating the breakage.
-> > 
-> > [   22.001529] run fstests generic/127 at 2025-05-25 04:13:23
-> > [   35.498573] BUG: Bad page state in process kworker/2:1  pfn:112ce9
-> > [   35.499260] page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x3e 9
-> > [   35.499764] flags: 0x800000000000000e(referenced|uptodate|writeback|zone=2)
-> > [   35.500302] raw: 800000000000000e dead000000000100 dead000000000122 000000000
-> > [   35.500786] raw: 000000000000003e 0000000000000000 00000000ffffffff 000000000
-> > [   35.501248] page dumped because: PAGE_FLAGS_CHECK_AT_FREE flag(s) set
-> > [   35.501624] Modules linked in: xfs autofs4 fuse nfsd auth_rpcgss nfs_acl nfs0
-> > [   35.503209] CPU: 2 UID: 0 PID: 85 Comm: kworker/2:1 Not tainted 6.14.0-rc1+ 7
-> > [   35.503211] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.164
-> > [   35.503212] Workqueue: xfs-conv/sdb1 xfs_end_io [xfs]
-> > [   35.503279] Call Trace:
-> > [   35.503281]  <TASK>
-> > [   35.503282]  dump_stack_lvl+0x4f/0x60
-> > [   35.503296]  bad_page+0x6f/0x100
-> > [   35.503300]  free_frozen_pages+0x303/0x550
-> > [   35.503301]  iomap_finish_ioend+0xf6/0x380
-> > [   35.503304]  iomap_finish_ioends+0x83/0xc0
-> > [   35.503305]  xfs_end_ioend+0x64/0x140 [xfs]
-> > [   35.503342]  xfs_end_io+0x93/0xc0 [xfs]
-> > [   35.503378]  process_one_work+0x153/0x390
-> > [   35.503382]  worker_thread+0x2ab/0x3b0
-> > 
-> > It's 4:30am here, so I'm going to leave attempts to actually debug that
-> > thing until tomorrow; I do have a kvm where it's reliably reproduced
-> > within a few minutes, so if anyone comes up with patches, I'll be able
-> > to test them.
-> > 
-> > Breakage is still present in the current mainline ;-/
-> 
-> Hey Al,
-> 
-> Welll this certainly looks like the same report I made a month ago.
-> I'll go run 6.15 final (with the #define RWF_DONTCACHE 0) overnight to
-> confirm if that makes my problem go away.  If these are one and the same
-> bug, then thank you for finding a better reproducer! :)
-> 
-> https://lore.kernel.org/linux-fsdevel/20250416180837.GN25675@frogsfrogsfrogs/
 
-After a full QA run, 6.15 final passes fstests with flying colors.  So I
-guess we now know the culprit.  Will test the new RWF_DONTCACHE fixes
-whenever they appear in upstream.
+* Bo Li <libo.gcs85@bytedance.com> wrote:
 
---D
+> # Performance
+> 
+> To quantify the performance improvements driven by RPAL, we measured 
+> latency both before and after its deployment. Experiments were 
+> conducted on a server equipped with two Intel(R) Xeon(R) Platinum 
+> 8336C CPUs (2.30 GHz) and 1 TB of memory. Latency was defined as the 
+> duration from when the client thread initiates a message to when the 
+> server thread is invoked and receives it.
+> 
+> During testing, the client transmitted 1 million 32-byte messages, and we
+> computed the per-message average latency. The results are as follows:
+> 
+> *****************
+> Without RPAL: Message length: 32 bytes, Total TSC cycles: 19616222534,
+>  Message count: 1000000, Average latency: 19616 cycles
+> With RPAL: Message length: 32 bytes, Total TSC cycles: 1703459326,
+>  Message count: 1000000, Average latency: 1703 cycles
+> *****************
+> 
+> These results confirm that RPAL delivers substantial latency 
+> improvements over the current epoll implementation—achieving a 
+> 17,913-cycle reduction (an ~91.3% improvement) for 32-byte messages.
+
+No, these results do not necessarily confirm that.
+
+19,616 cycles per message on a vanilla kernel on a 2.3 GHz CPU suggests 
+a messaging performance of 117k messages/second or 8.5 usecs/message, 
+which is *way* beyond typical kernel interprocess communication 
+latencies on comparable CPUs:
+
+  root@localhost:~# taskset 1 perf bench sched pipe
+  # Running 'sched/pipe' benchmark:
+  # Executed 1000000 pipe operations between two processes
+
+       Total time: 2.790 [sec]
+
+       2.790614 usecs/op
+         358344 ops/sec
+
+And my 2.8 usecs result was from a kernel running inside a KVM sandbox 
+...
+
+( I used 'taskset' to bind the benchmark to a single CPU, to remove any 
+  inter-CPU migration noise from the measurement. )
+
+The scheduler parts of your series simply try to remove much of 
+scheduler and context switching functionality to create a special 
+fast-path with no FPU context switching and TLB flushing AFAICS, for 
+the purposes of message latency benchmarking in essence, and you then 
+compare it against the full scheduling and MM context switching costs 
+of full-blown Linux processes.
+
+I'm not convinced, at all, that this many changes are required to speed 
+up the usecase you are trying to optimize:
+
+  >  61 files changed, 9710 insertions(+), 4 deletions(-)
+
+Nor am I convinced that 9,700 lines of *new* code of a parallel 
+facility are needed, crudely wrapped in 1970s technology (#ifdefs), 
+instead of optimizing/improving facilities we already have...
+
+So NAK for the scheduler bits, until proven otherwise (and presented in 
+a clean fashion, which the current series is very far from).
+
+I'll be the first one to acknowledge that our process and MM context 
+switching overhead is too high and could be improved, and I have no 
+objections against the general goal of improving Linux inter-process 
+messaging performance either, I only NAK this particular 
+implementation/approach.
+
+Thanks,
+
+	Ingo
 
