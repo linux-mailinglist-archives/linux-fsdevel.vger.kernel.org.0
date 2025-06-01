@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-50276-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAA9AACA646
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 02:48:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82BF6ACA6FA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 03:03:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAF7D1737A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 00:48:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686073B0841
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 01:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D3F2741B9;
-	Sun,  1 Jun 2025 23:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E227A92E;
+	Sun,  1 Jun 2025 23:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFcHYn5c"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/kiID9f"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0332C272E54;
-	Sun,  1 Jun 2025 23:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83703272DC;
+	Sun,  1 Jun 2025 23:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748821230; cv=none; b=QWWkb9toekJjfImyvURVNGX46kkDNNjhWl1Ju7kf0fPOWhywVUJuaj6hFXn0tNIztsFXSlR5QEVFs6/0ehiMFaHnTp4NQfR97ue+ZSbuZJ7NNiYqLGfcUjtJd2EFdly7RblWd2CrPW7i0MTc1/IKNPI9yBxyPC62ON4HPM/aiL0=
+	t=1748821355; cv=none; b=mI14iJmgIHRj5NI+bmTnvQKxpr6d3O3WVLEDuj9RfMjDLoSScxGdAeptkPO0NPnD58R0oYwQVQcf6bZIuuv6sJ4km4MHeCE8svwWOz7hbvTALCMTIWfPuJ98yWThwnWe05s7Od0iBmCSgNOvD0Iwy9nTkXAZXdh3pxF5pY28InY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748821230; c=relaxed/simple;
-	bh=1nLAPJTQkEwASNq5o4+7jzC2fG13vPWHCf7TfkBjozw=;
+	s=arc-20240116; t=1748821355; c=relaxed/simple;
+	bh=tMidnKVaOTE7+RjEwHftZqIJFcRDvk2XlxyhrIPrzII=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WkGvqyPtuIU/v+qaJwLjEVMUgdqcQfKV6KQa/M3tRaISL5r6mJwYHUm0wB996fVYgSl/x+CPtlO4kIu6/WmxN5tJX7nL+GhSdVU2NNZGY+JRkSi66T7VTLVYfVLsINmQcG7LcCTxLLJavLkvAlI3UKnv5ig5505JEWcH3UTgeKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFcHYn5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFEF1C4CEF2;
-	Sun,  1 Jun 2025 23:40:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=o+dKtxC9yDGert02QrpgzsmBMWdgb9mbDnMw9Yzwl1IUxgLBSA3WU3OgMcmwLFXvhT3dBLu6uoTpjGjQEr7noPlSAgKtZ7iEgtv71wLS+yC130Sa1CUCO3nXHEc2KPNNY3moNr3S50FcR8ZFAkjMWKRHGF7ED9mIrdykWGfV+AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/kiID9f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EFCCC4CEF1;
+	Sun,  1 Jun 2025 23:42:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748821229;
-	bh=1nLAPJTQkEwASNq5o4+7jzC2fG13vPWHCf7TfkBjozw=;
+	s=k20201202; t=1748821354;
+	bh=tMidnKVaOTE7+RjEwHftZqIJFcRDvk2XlxyhrIPrzII=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UFcHYn5cUmlKIcFeCq7BiF9K3sqyCTd5r7x1bRRvQxAmWfV/bHqSQKHAnPJQiP2HU
-	 AKTgsdndlXFX7BRgifJZbVWPXxruyqO6CpOUz8f13vCAhIe3KrCTQX2ifKsDA6JkcE
-	 LkkwKkpxmNtiuxHkdMNOjY5wTGlfP7dhVcRRmtAdMgrToUlIDkAVRcszrTBGL/qOgW
-	 qs5bM7NEmwSVwle5z5Zf6ucsYZTmmJrDUETrkqGxrDNF/9JvHc0JN4wUpW6X/CM8i2
-	 5tq+3d9fd5WyYG4mbnG9nfLWzAUO396VA+IkiJiXUtoz6BW2fzVSlwypmKkG6ZXgWB
-	 nS4cauxu8k+MA==
+	b=t/kiID9fnoJWlbP1Dh1s6035OLXMY5gqeNa7w3Y56ym9rUc5eVWMTmal14FrGkAzv
+	 ho654aoZVgWxGqFkDoLX9vaHufgC0nYAWnFDGuMHvQIkKXjbve1nlXDICsWsQwkpY3
+	 zngiLVRmZe44oEc9U9SGe1KjNhCII6VVHJRNiXyxaxULVbhZXNa9XyXlul51mZKUOW
+	 qV2RaI4FcXSn0d4HApHmaNFphMbAkmOEb77OgSsMUI8ZTRXlYen2AtPk1vOlGvaqW0
+	 YM+XmNAZchkBq9XmJtGCUAS9/CRdkE4UXnZJdazeIy2Rtn6N7vfTJWe7fkNjoQWfyr
+	 x3vT6hRV7vZHQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Namjae Jeon <linkinjeon@kernel.org>,
 	sj1557.seo@samsung.com,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 06/58] exfat: fix double free in delayed_free
-Date: Sun,  1 Jun 2025 19:39:19 -0400
-Message-Id: <20250601234012.3516352-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 04/43] exfat: fix double free in delayed_free
+Date: Sun,  1 Jun 2025 19:41:44 -0400
+Message-Id: <20250601234224.3517599-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601234012.3516352-1-sashal@kernel.org>
-References: <20250601234012.3516352-1-sashal@kernel.org>
+In-Reply-To: <20250601234224.3517599-1-sashal@kernel.org>
+References: <20250601234224.3517599-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.140
+X-stable-base: Linux 5.15.184
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
@@ -139,7 +139,7 @@ kernel trees.
  1 file changed, 1 insertion(+)
 
 diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
-index 705710f93e2dd..0e05c6b5a2864 100644
+index 314d5407a1be5..a75d5fb2404c7 100644
 --- a/fs/exfat/nls.c
 +++ b/fs/exfat/nls.c
 @@ -804,4 +804,5 @@ int exfat_create_upcase_table(struct super_block *sb)
