@@ -1,365 +1,416 @@
-Return-Path: <linux-fsdevel+bounces-50265-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50266-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1336AC9D70
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Jun 2025 02:38:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47224AC9F5E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Jun 2025 18:23:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311F718966EA
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Jun 2025 00:38:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D183B43A4
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Jun 2025 16:23:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFE87485;
-	Sun,  1 Jun 2025 00:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E11E1C8606;
+	Sun,  1 Jun 2025 16:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="L3zNnUbS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VktuK5xl"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FB0137E;
-	Sun,  1 Jun 2025 00:38:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748738285; cv=fail; b=sKauq8V7FWR5/n8neLvxpcbtQQtYVa6Qqasz+EdnwbkVUdMXOLIGA88J6xKMwxv74NFGJeZNyYmuHRtZzffGh1ldGmrkSnN50Gj5u95pLL0CPlTRJgkO0GDkOfOn4uVvKWxB09U+smbZ1sB7lcspEtta/yhqsLcxB/T08o6P5cY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748738285; c=relaxed/simple;
-	bh=Op+PCINUiYWr0go2R8+fSCn3kqv+LynPCX1Yo2YYke4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aW7S33G3wpBD3EgtkF4PszaLdBHrVI6hhXulK/Ce9jLdofzbHLQkZxBWCe76l8/6e5QJUwjHQ1GRIBiqsg9p4CAeB2OjRX0WIQwjAEBory2LuQpajp/EV9+B5INmojdLsN65egm4DDp7d2MI3sAjLhIrhVpMwRm6lA8R8tJiRoI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=L3zNnUbS; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1748738283; x=1780274283;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=Op+PCINUiYWr0go2R8+fSCn3kqv+LynPCX1Yo2YYke4=;
-  b=L3zNnUbSQrnXKGWt2PDmHgPAnSBbJUnv3/zZSbwnWTHjKXPK5UXorKrF
-   +FeBX/XUwAZtIDBchwTsuFbSA1qDevO6e62vk2V1/0Hiei4hQjUA4UcXl
-   Q/Fmoj3tM2+V4xIzJichVqMmBAZOzurPHQqCSNxwbMzc6KQPi7mLgZntP
-   5A005VwM8M7o7xzElwb/tz2ga3e/08cJIrRf6LoE01mz7XVhNe4BLPuVl
-   Y8T0QW2EphtmwALfglUXJS59IxvGFZ3u0ceYZuu9sNsa10spCE3U88+oW
-   qT6ibPjrT3HQGpHo4n5U5Gm0Nf09ejplxkOc0Bs4WrTOsmeKwxhSl/Qny
-   g==;
-X-CSE-ConnectionGUID: khSpHDSfR8uwL6zkQrxiGQ==
-X-CSE-MsgGUID: rMFmg/llTzyfz3+65ir2aQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11450"; a="62142158"
-X-IronPort-AV: E=Sophos;i="6.16,200,1744095600"; 
-   d="scan'208";a="62142158"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2025 17:38:01 -0700
-X-CSE-ConnectionGUID: zpaIxgRqTcW4Cpn099WpYQ==
-X-CSE-MsgGUID: jO9aj1laRGSoBbIlyESvNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,200,1744095600"; 
-   d="scan'208";a="144532409"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 May 2025 17:37:59 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Sat, 31 May 2025 17:37:59 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25 via Frontend Transport; Sat, 31 May 2025 17:37:59 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.58)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.55; Sat, 31 May 2025 17:37:59 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tOPfrmcCpr+RgknlKK1osi38o5ZqqxHriUqufIciHbx45N7qq9Ph3AFx2BcoRw1sWv58f6cLwi+NE2Phi+TqS6C5SqUr0nJuJ8TRKSHvYY5OFA98T7Ls7oLQ0MGWnko9J1hMTF4Ae9phYJQfP23NXj4dHdva4ZFsOkPnM1LzGQAudFgns3nyhnGWIa7BPlNCt9JtJVyc8vvJb16n3UXjjC0iQwurjtuAuGj2iobzFwR4nb/MYXxeGDKdvSU3RMcdlmOICTngkPBkb3xE+G1T6uxuxX6pf4hJwixXCl+cUWU7oQRIUgNdih/38cQ3hC5ElSesbs1MaDIsjY+M07ZRsg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=otFFrhabfW9QxezSUL7NDo+N97ojwJYNKzu5v7ipvUE=;
- b=hS6wz50K1QUWdFnzxs4MPhitEfg7Eb0moX2gwbRNHa8dIfwR4d99NjLSfhB9zqknS40Zl9ml2XHEuEJbwYHfG99DEI0XfzdXlAZNgHU9vtt7eZQzNVkuvTDRxRoTn3fQx/m295CnNFxJFxS6tEwBBalDfZQz+blBX3xoLkYGssTMojt2cb51JnjampM/wmyNNjLa2SS70wfhK+BHx2uKA2KDz1hSRz+IUr4RcX4BC1TvuVgud3Kxlpmyq7PEgKOEzkdgt9piRoT6QucPZGIIuVQj5SJTWdjTcVBnlSYq7Se6gSZvkBKDMUUuAETsMcWhJaDGCkmROX9ter7t7L8jzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- (2603:10b6:518:1::d3c) by SJ0PR11MB5151.namprd11.prod.outlook.com
- (2603:10b6:a03:2ac::20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.31; Sun, 1 Jun
- 2025 00:37:42 +0000
-Received: from PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::d013:465c:f0c4:602]) by PH3PPF9E162731D.namprd11.prod.outlook.com
- ([fe80::d013:465c:f0c4:602%5]) with mapi id 15.20.8769.022; Sun, 1 Jun 2025
- 00:37:42 +0000
-Date: Sat, 31 May 2025 19:38:22 -0500
-From: Ira Weiny <ira.weiny@intel.com>
-To: Ackerley Tng <ackerleytng@google.com>, <kvm@vger.kernel.org>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
-	<linux-fsdevel@vger.kernel.org>
-CC: <ackerleytng@google.com>, <aik@amd.com>, <ajones@ventanamicro.com>,
-	<akpm@linux-foundation.org>, <amoorthy@google.com>,
-	<anthony.yznaga@oracle.com>, <anup@brainfault.org>, <aou@eecs.berkeley.edu>,
-	<bfoster@redhat.com>, <binbin.wu@linux.intel.com>, <brauner@kernel.org>,
-	<catalin.marinas@arm.com>, <chao.p.peng@intel.com>, <chenhuacai@kernel.org>,
-	<dave.hansen@intel.com>, <david@redhat.com>, <dmatlack@google.com>,
-	<dwmw@amazon.co.uk>, <erdemaktas@google.com>, <fan.du@intel.com>,
-	<fvdl@google.com>, <graf@amazon.com>, <haibo1.xu@intel.com>,
-	<hch@infradead.org>, <hughd@google.com>, <ira.weiny@intel.com>,
-	<isaku.yamahata@intel.com>, <jack@suse.cz>, <james.morse@arm.com>,
-	<jarkko@kernel.org>, <jgg@ziepe.ca>, <jgowans@amazon.com>,
-	<jhubbard@nvidia.com>, <jroedel@suse.de>, <jthoughton@google.com>,
-	<jun.miao@intel.com>, <kai.huang@intel.com>, <keirf@google.com>,
-	<kent.overstreet@linux.dev>, <kirill.shutemov@intel.com>,
-	<liam.merwick@oracle.com>, <maciej.wieczor-retman@intel.com>,
-	<mail@maciej.szmigiero.name>, <maz@kernel.org>, <mic@digikod.net>,
-	<michael.roth@amd.com>, <mpe@ellerman.id.au>, <muchun.song@linux.dev>,
-	<nikunj@amd.com>, <nsaenz@amazon.es>, <oliver.upton@linux.dev>,
-	<palmer@dabbelt.com>, <pankaj.gupta@amd.com>, <paul.walmsley@sifive.com>,
-	<pbonzini@redhat.com>, <pdurrant@amazon.co.uk>, <peterx@redhat.com>,
-	<pgonda@google.com>, <pvorel@suse.cz>, <qperret@google.com>,
-	<quic_cvanscha@quicinc.com>, <quic_eberman@quicinc.com>,
-	<quic_mnalajal@quicinc.com>, <quic_pderrin@quicinc.com>,
-	<quic_pheragu@quicinc.com>, <quic_svaddagi@quicinc.com>,
-	<quic_tsoni@quicinc.com>, <richard.weiyang@gmail.com>,
-	<rick.p.edgecombe@intel.com>, <rientjes@google.com>, <roypat@amazon.co.uk>,
-	<rppt@kernel.org>, <seanjc@google.com>, <shuah@kernel.org>,
-	<steven.price@arm.com>, <steven.sistare@oracle.com>,
-	<suzuki.poulose@arm.com>, <tabba@google.com>, <thomas.lendacky@amd.com>,
-	<usama.arif@bytedance.com>, <vannapurve@google.com>, <vbabka@suse.cz>,
-	<viro@zeniv.linux.org.uk>, <vkuznets@redhat.com>, <wei.w.wang@intel.com>,
-	<will@kernel.org>, <willy@infradead.org>, <xiaoyao.li@intel.com>,
-	<yan.y.zhao@intel.com>, <yilun.xu@intel.com>, <yuzenghui@huawei.com>,
-	<zhiquan1.li@intel.com>
-Subject: Re: [RFC PATCH v2 23/51] mm: hugetlb: Refactor out
- hugetlb_alloc_folio()
-Message-ID: <683ba0fe64dd5_13031529421@iweiny-mobl.notmuch>
-References: <cover.1747264138.git.ackerleytng@google.com>
- <bdd00f8a1919794da94ba366529756bd6b925ade.1747264138.git.ackerleytng@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <bdd00f8a1919794da94ba366529756bd6b925ade.1747264138.git.ackerleytng@google.com>
-X-ClientProxiedBy: MW4PR04CA0083.namprd04.prod.outlook.com
- (2603:10b6:303:6b::28) To MW4PR11MB6739.namprd11.prod.outlook.com
- (2603:10b6:303:20b::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8432A1CA;
+	Sun,  1 Jun 2025 16:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748795012; cv=none; b=j5Bc5oeYQgUxHcGci+FQauRjjkdU+a99OUdH1OziksQGWMmb+EBw1Jh9RnEXUSl9Ab0jblJmZJZpyP/H5WQU9nUyA2/zwY668q2K1UvshfEh+HMQBzfXEGuttTVlHqJaIL46nAhR4ICHBr2tmuILKj8g83nEQZiXt1W8oe5VciA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748795012; c=relaxed/simple;
+	bh=BX3D11AhhSVfcSpFBpfV7lzphuzxLzsrI9CNgfa+imM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qVz8Z51DurxjZT7g/R/pBWHEXlWrsoT6e8vAiHAnROfpedujHk4M/KWALMTM2scPdtIafe03X4+k1usdW99VRZS9kXdwqC1o775vjzg3r+qr9kUJikKk1mnjwp5HMNOG/6l9pWDOhDesrASNNBqTbAEqChFozTQfH1b0UeD/XPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VktuK5xl; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-73972a54919so3043273b3a.3;
+        Sun, 01 Jun 2025 09:23:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748795010; x=1749399810; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1mUBueZWKYQxQLXSSdRyNMAOxmsqg2PRoyFrKefoLMM=;
+        b=VktuK5xlIpQqtVBf2zkJQ9ZNjpWpDi7z1g44o3x14Hp1C7jJnPWDNxhUJ2FXyZn++1
+         gK9MJp7G4YzzitrI5mOfRxTZCIwXTW92tBX4zSLeAcksJWiKw+F1yOUCMC/fSNtwLvD9
+         NhzOwz3I7fmpW9w0iR1MXZP7FThGB1jhhRuEiH8wYf+ntehpumeltVwtlvJDeCsrxESj
+         dFuKxcRvqCWhJX7xtHa5u6hIVjpt6CvVQxVBYI+yrvng7tBo73JmoCDtw3Olj92CPC6G
+         GKoZGEqUu6AUnMzgWvLoke3sVNZ3ZvizlJg/Wxkd507gEc+tg/gK1gNlZxrrv9TexM9F
+         f/qA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748795010; x=1749399810;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1mUBueZWKYQxQLXSSdRyNMAOxmsqg2PRoyFrKefoLMM=;
+        b=PBvExSuRygqDa7nb2zLSCHVYEMYs5jZd8oRa5dKzjVYZtusz23fPt2fnqKOnyKcMKp
+         m50w4CTRQ5hKuPfl0tH83s+d5LycNPqyXi2uN7EIGgsU2vCOn9zFbm83KU4DFNc910Cs
+         EETygDlwoEeHX9hcv8MCyG5P+9yTusd2e1yi1LExku17H0klvYD7sYZv0YomONmLIi5X
+         fKZ3klkUlMc2dCZavEe2DeCdnMgtuiGUPQht9Nohhq5F+8vf+1d/SCz0vjoYdfByzaiz
+         RPHTcixs/LsPPEgmsEdS685wvdjPUMR2XhcY2khtmZ1Aqd93RbJos0CK8UFauVpPG46u
+         0zhg==
+X-Forwarded-Encrypted: i=1; AJvYcCU17JB084kNxOZ+mYwOxKE02EBmeD53+J5YyYSB+4ldEY/O/bR2Wvx4fd1A1xeaC6FYEo9wbwEcRKLsBtKj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwViH/5CDTiSYh90WSNjEQ94/b3zYO1zSFYPVomfjdNDiUsQaB/
+	K0HirBOmSOim5mWMROm/sLdPj44zXXIgSn75CdiO89xzJAiiBFdmHc1AxLji42x6ELSRSati4lK
+	QGUPBQPqdabG8Y7ZRJN/33vP60Xeuer8=
+X-Gm-Gg: ASbGnctVVRpy0mxDzAOjQEWDVHw9Vs4XY4XOz/Y6ZswGShi9RdxJtaLEOu2Kp7+U5IO
+	bl87CNRx12HJ8SfzIAGT93zeeWE3DFuv6IbNxQCy1mCnLfZoWBInR1RVpWKmbq9fGnNc6EUYYV3
+	lwyRLNkiPnM91/YIWsk1jDPPc/vO1acp3XmvOLzwanlNQ=
+X-Google-Smtp-Source: AGHT+IGVsl4Q9aD7SIAk5IZm7+RXND2ZCQB374vgg4b2WOs8lrsN9eMO2vZKgWO/zvayIRA1GytrXstpIZxkVykzWYU=
+X-Received: by 2002:a17:903:194b:b0:234:ed31:fc98 with SMTP id
+ d9443c01a7336-2355f7697d5mr77442255ad.37.1748795009765; Sun, 01 Jun 2025
+ 09:23:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH3PPF9E162731D:EE_|SJ0PR11MB5151:EE_
-X-MS-Office365-Filtering-Correlation-Id: 36a3867e-d009-4061-5f06-08dda0a48371
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?k/EGfBEnkiAUd2KS1kl7uYzfmNbC2qRUjtRZ++Ur6jGNTuucKTj9GUqP+mGc?=
- =?us-ascii?Q?3aStdr8Bncazf78vPKpI2m2qMOellYCcmOWKtznRhY4iKHG+V+II0JUSWFn8?=
- =?us-ascii?Q?+on6LzlxVxbnvaZ7cFnzF5QXp/qgQq8m0eJaIeJ7W3IgxzquX5vw+YSkwP2F?=
- =?us-ascii?Q?m4hUhIskExJx6cJCvECg4w0Rx6DnlPl4M5Y3+0r/QfG4SG9u5eM0kq5BnsfK?=
- =?us-ascii?Q?BhrrNJsnFGDHb7FmhHawT9J6O82z52cHtcRVrlGainduY9zoF3lzXf+Ze165?=
- =?us-ascii?Q?5orPH7w7U7c+NfX9oD9vbqcCWaIq4l0REYkurB3S0U5ywvYMuby8xYUkVX36?=
- =?us-ascii?Q?iJCxdePGk22uoYKcqqkmpHl756bjJV1Vng2RRmyWwlV5EAoTg4PXBt4lFBAy?=
- =?us-ascii?Q?LCBl2fmHQQz9oUVEE3McJNceJ9RXU4OI23cIoKw1haB6Cjnwce6DQMdlqkv4?=
- =?us-ascii?Q?utPlrlf5EaFuHVgqD+6yxT16MHfkWyhk8TntxJ/8e/DYZw/uqba/QpONxFAO?=
- =?us-ascii?Q?8Q/1eJMvW/YoJZ9ql54H60hv4VcdD44rnkxFWHRWew2iGZXo9Rdl9d7wgsuF?=
- =?us-ascii?Q?WBuqVXjemO0coDaZtHoE7tQvAHVR+B1xLrhXgcbAzC9MiJAFq0sCMJg7RB5f?=
- =?us-ascii?Q?3KZxwDUAgVCZz3SpZ8TtAYAUED6BrmPCymETPDHeBpWQ5329TE/op1THZ/CR?=
- =?us-ascii?Q?KkbD6uI7g354DyV+2l+hxEqmKTroNXckx+PDRRmmWxpPHvvFnpP7jbcMz4r5?=
- =?us-ascii?Q?NCwDHj3ld9IVlWDh0TDos+scmEbXTCkwGqOLdtju01Yg3AMUzTr53r8ZNw5R?=
- =?us-ascii?Q?opgYFyIebGd7TMp/k46dpSx60Jg0jx06oPBGoBZjysH6WQXbTtx3BQhiCyxs?=
- =?us-ascii?Q?Sipfl0K0G123svJ0iTxybjiPDNTyo9oOR40ZePbnzx8AvDcDPFEmvpz/wonC?=
- =?us-ascii?Q?V88j4L6J6HDzI1EXFfQCEngTbhM1kW9g4OpCfzxdR1ko/tldCAWAletyrbke?=
- =?us-ascii?Q?JdLOMu2MhBqumKe/WhTbjtX/gY/kLgVkP1LSsruW4itbVoD7+QzegTGLNzI4?=
- =?us-ascii?Q?NAlYrN0QgtXsBNiKeNk4oP7zPVArGquGmR3gp1jNQpxMVjprV/+w0YKVtvx4?=
- =?us-ascii?Q?n64NxU1YU2yfogi5ODnfl+eukqqj7UPD1u2Ekk7KH5z6FwPOqI+Sc8sNTrsV?=
- =?us-ascii?Q?/dHDdjto0gWkFchRGBo7gsCwe4eutfH2nj95EwI7Xzrq72NPbGlBM89diDof?=
- =?us-ascii?Q?MhnlYTXM7OKB/yHfW8ejSZvbIT1e1BHaxnE4oE7Bxgyf4nmZDDuJLO+bI8Lr?=
- =?us-ascii?Q?NqvdD6yWhXZtwI2URZzBrDWz0esQ5OcJT912BFcJBFKmIRcs/fPlmK83y7Pm?=
- =?us-ascii?Q?9HrRbUiyAM0ZIgUVMRIY67DxsfyzGzM8wNDQC7njzSU380zYUQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH3PPF9E162731D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?lXgYrU9xyW1Dz/XuARyVbKXs8DC/W9zyDK/S4sjvM3Yju7YfdxtKk7aFAgag?=
- =?us-ascii?Q?WjpjEGyZ97B2JGwLhVyOSbocSYodcj+zmvHgIHf9pdOqrmDF68vdihWEVVgy?=
- =?us-ascii?Q?Jj26vK2+b2Duw+nT8IHMSJug2nG1PRyz7uBowNWW8joqkPytPXoGbN+9hm2b?=
- =?us-ascii?Q?HUcQEhILgD4Sx5zNZ2tJcMu5ZBvKrpIJCo+prO/dwOIVYjGDMoHYRyK1gsVZ?=
- =?us-ascii?Q?bZaO0JTUd+GRt0yte010Kb1y6KlTGcThtGJVV/YJK1r9nw9BVPsOOnvbAER8?=
- =?us-ascii?Q?H9iueXV7Lm4yQeC81t3GXCGNXIaqaKW/OOtiw8nJQyX+2kVH5oYJbV2nb4J7?=
- =?us-ascii?Q?X2QXUgXIydpOhEGvtMQfXlQ3EX905XL2TVDT3/ExidRJzynZLJ0iK4FG0IAX?=
- =?us-ascii?Q?xy+i6aTSs0tV5s83DEwB8Mo6ErIAzpYkE+J5JCEFUlK4euhzibUQLMZkz/1W?=
- =?us-ascii?Q?srF3IpDG04U2iL62mehwJcLdMrIAD6qbHVjn2+4GbyLI23khZJ/RWHUWouN0?=
- =?us-ascii?Q?GSZ0koWlZmQozOA69qsiU7WE8acUxIS/esuyPkMojWWnEaUH4LpTXsMNy0vT?=
- =?us-ascii?Q?L7EPHaMC/XFm+MMZwdrv2XBQ/qXSdrp++l8lgcB2SNjoJZ86HsVFpxmBfFat?=
- =?us-ascii?Q?y2YGQjHGr1JHNnrGd1+hnF5l7tFbOjz22+CXCOdDBajz6kA0YcBTVomW2+zI?=
- =?us-ascii?Q?roiCw2UTqHYRcqTMtliWzJHaOyU+wAAs45lAkMzmDYRkmC+ZN4ereJBX1ABx?=
- =?us-ascii?Q?7Al8y7vQNm6JzJlHGuiQLsjDGRBJ9WGpqet307uYfiIvU/iS2/aax1Ef95md?=
- =?us-ascii?Q?wzoPdwe05X+utRCP3rMHFmjY96Q7K3D5gZX0Q/MKtP1ahEdhogjSAPw+AQUR?=
- =?us-ascii?Q?BYNe4hyDF5QQo2cls7bgs57eERkUtLwrHhxR98Eqo23LXKVjmJYUU7KWEdDg?=
- =?us-ascii?Q?DOuBOGD6UF45HT8vkY4lbJ1S5QiYSWGsczVbkH2vv0OGbzeuwUaE6ve2ru6y?=
- =?us-ascii?Q?jpszR1feDg+BxzLWggls4mOjpywcXgV4hKmygQO3m1V/y5Ce1LWfRkNujmx4?=
- =?us-ascii?Q?Xcli5SEqYhceqWBYIT8/R45rYrQk/Oj7eNsLY0cSPPuij4dfgpRWeIeUgX6G?=
- =?us-ascii?Q?vkAjA+0IJoB0Cg83HE3CtPzF+Te/d1IgPeYUuKVNPZ/oEbJ0rH7mR6BZfx8E?=
- =?us-ascii?Q?947EQmGzvir0IBARPC/mKzUul6u+UnokZTCGlYvOXxUicvLTnnxdEFwwd1lJ?=
- =?us-ascii?Q?Z0+xIxpogkvG9tgVHp3Z0qvdibobK/acAVIhYLPmxyO+Y4h5oOA+ekjLaHaV?=
- =?us-ascii?Q?ndKOUABksi/7zVl0JifamRaPZzuJleXBLB26Czj/8BvbTbgCb7xLISC+OPLn?=
- =?us-ascii?Q?9lYi1Z/CYMxH7mfSbr/QA1XEFu05Y14YucepvdXAYliXE449OsSFOuB9EOyc?=
- =?us-ascii?Q?DEFXfvPQkRf6VgmzHUu+ciDJip49zmgU5msKGOmTj7ejTry1wydIFDC5mDVW?=
- =?us-ascii?Q?xPGgWDRMVoF4DTowBHP8KEhzXnRyod21cS7l363BBZPrYCJx/A0afl6xpy22?=
- =?us-ascii?Q?yRWCFUE3hj47cUHM0mVajlQGrVzi7EfxqLDIwU7h?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 36a3867e-d009-4061-5f06-08dda0a48371
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR11MB6739.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Jun 2025 00:37:42.3187
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: SfG0ZEhR5HJufNrrkpWu4PywYkDn659hZl3mikH98Q6cfBDDmQ0mZQ0P+lY5mI6161cDHZFen1dYXMkd+7xsgw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5151
-X-OriginatorOrg: intel.com
+References: <20250117035044.23309-1-slava@dubeyko.com> <62668a6c0a9771878340793a48057f0b0d1b6626.camel@ibm.com>
+In-Reply-To: <62668a6c0a9771878340793a48057f0b0d1b6626.camel@ibm.com>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Sun, 1 Jun 2025 18:23:18 +0200
+X-Gm-Features: AX0GCFvM9zKbTJCzmlCl-9Lw7xCUgBDabA3Xzyta47z57U0gykP2vOdcI4z2OeU
+Message-ID: <CAOi1vP8=_=JyjYSpq0qDc_MCW-T7mrT0CWgwF_k9xN2cK_QDZQ@mail.gmail.com>
+Subject: Re: [PATCH v2] ceph: Fix kernel crash in generic/397 test
+To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Cc: "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, David Howells <dhowells@redhat.com>, 
+	Alex Markuze <amarkuze@redhat.com>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "slava@dubeyko.com" <slava@dubeyko.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ackerley Tng wrote:
-> Refactor out hugetlb_alloc_folio() from alloc_hugetlb_folio(), which
-> handles allocation of a folio and cgroup charging.
-> 
-> Other than flags to control charging in the allocation process,
-> hugetlb_alloc_folio() also has parameters for memory policy.
-> 
-> This refactoring as a whole decouples the hugetlb page allocation from
-> hugetlbfs, (1) where the subpool is stored at the fs mount, (2)
-> reservations are made during mmap and stored in the vma, and (3) mpol
-> must be stored at vma->vm_policy (4) a vma must be used for allocation
-> even if the pages are not meant to be used by host process.
-> 
-> This decoupling will allow hugetlb_alloc_folio() to be used by
-> guest_memfd in later patches. In guest_memfd, (1) a subpool is created
-> per-fd and is stored on the inode, (2) no vma-related reservations are
-> used (3) mpol may not be associated with a vma since (4) for private
-> pages, the pages will not be mappable to userspace and hence have to
-> associated vmas.
-> 
-> This could hopefully also open hugetlb up as a more generic source of
-> hugetlb pages that are not bound to hugetlbfs, with the complexities
-> of userspace/mmap/vma-related reservations contained just to
-> hugetlbfs.
-> 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Change-Id: I60528f246341268acbf0ed5de7752ae2cacbef93
-> ---
->  include/linux/hugetlb.h |  12 +++
->  mm/hugetlb.c            | 192 ++++++++++++++++++++++------------------
->  2 files changed, 118 insertions(+), 86 deletions(-)
-> 
+On Tue, Apr 15, 2025 at 7:59=E2=80=AFPM Viacheslav Dubeyko
+<Slava.Dubeyko@ibm.com> wrote:
+>
+> Hi David,
+>
+> What do you think about this patch, finally?
 
-[snip]
+Hi David,
 
->  
-> +/**
-> + * hugetlb_alloc_folio() - Allocates a hugetlb folio.
-> + *
-> + * @h: struct hstate to allocate from.
-> + * @mpol: struct mempolicy to apply for this folio allocation.
-> + * @ilx: Interleave index for interpretation of @mpol.
-> + * @charge_cgroup_rsvd: Set to true to charge cgroup reservation.
-> + * @use_existing_reservation: Set to true if this allocation should use an
-> + *                            existing hstate reservation.
-> + *
-> + * This function handles cgroup and global hstate reservations. VMA-related
-> + * reservations and subpool debiting must be handled by the caller if necessary.
-> + *
-> + * Return: folio on success or negated error otherwise.
-> + */
-> +struct folio *hugetlb_alloc_folio(struct hstate *h, struct mempolicy *mpol,
-> +				  pgoff_t ilx, bool charge_cgroup_rsvd,
-> +				  bool use_existing_reservation)
-> +{
-> +	unsigned int nr_pages = pages_per_huge_page(h);
-> +	struct hugetlb_cgroup *h_cg = NULL;
-> +	struct folio *folio = NULL;
-> +	nodemask_t *nodemask;
-> +	gfp_t gfp_mask;
-> +	int nid;
-> +	int idx;
-> +	int ret;
-> +
-> +	idx = hstate_index(h);
-> +
-> +	if (charge_cgroup_rsvd) {
-> +		if (hugetlb_cgroup_charge_cgroup_rsvd(idx, nr_pages, &h_cg))
-> +			goto out;
+I went ahead and applied this patch with minor tweaks to the commit
+message and the comment [1] because this thread has been pending for
+a long time and from the CephFS perspective it seems to be a reasonable
+workaround for a regression introduced in commit ee4cdf7ba857 ("netfs:
+Speed up buffered reading").  The hunch that is mentioned early in the
+thread is [2] (you were CCed on that message).  If you have a proper
+fix in mind/planned for netfslib, please let us know ;)
 
-Why not just return here?
-			return ERR_PTR(-ENOSPC);
+[1] https://github.com/ceph/ceph-client/commit/060909278cc0a91373a20726bd3d=
+8ce085f480a9
+[2] https://lore.kernel.org/all/CAOi1vP9jKOuBetRPZCDeUAdiOmQTYLKSSgX4YYQFt7=
+2H-t_j6A@mail.gmail.com/
 
-> +	}
-> +
-> +	if (hugetlb_cgroup_charge_cgroup(idx, nr_pages, &h_cg))
-> +		goto out_uncharge_cgroup_reservation;
-> +
-> +	gfp_mask = htlb_alloc_mask(h);
-> +	nid = policy_node_nodemask(mpol, gfp_mask, ilx, &nodemask);
-> +
-> +	spin_lock_irq(&hugetlb_lock);
-> +
-> +	if (use_existing_reservation || available_huge_pages(h))
-> +		folio = dequeue_hugetlb_folio(h, gfp_mask, mpol, nid, nodemask);
-> +
-> +	if (!folio) {
-> +		spin_unlock_irq(&hugetlb_lock);
-> +		folio = alloc_surplus_hugetlb_folio(h, gfp_mask, mpol, nid, nodemask);
-> +		if (!folio)
-> +			goto out_uncharge_cgroup;
-> +		spin_lock_irq(&hugetlb_lock);
-> +		list_add(&folio->lru, &h->hugepage_activelist);
-> +		folio_ref_unfreeze(folio, 1);
-> +		/* Fall through */
-> +	}
-> +
-> +	if (use_existing_reservation) {
-> +		folio_set_hugetlb_restore_reserve(folio);
-> +		h->resv_huge_pages--;
-> +	}
-> +
-> +	hugetlb_cgroup_commit_charge(idx, nr_pages, h_cg, folio);
-> +
-> +	if (charge_cgroup_rsvd)
-> +		hugetlb_cgroup_commit_charge_rsvd(idx, nr_pages, h_cg, folio);
-> +
-> +	spin_unlock_irq(&hugetlb_lock);
-> +
-> +	gfp_mask = htlb_alloc_mask(h) | __GFP_RETRY_MAYFAIL;
-> +	ret = mem_cgroup_charge_hugetlb(folio, gfp_mask);
-> +	/*
-> +	 * Unconditionally increment NR_HUGETLB here. If it turns out that
-> +	 * mem_cgroup_charge_hugetlb failed, then immediately free the page and
-> +	 * decrement NR_HUGETLB.
-> +	 */
-> +	lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
-> +
-> +	if (ret == -ENOMEM) {
-> +		free_huge_folio(folio);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	return folio;
-> +
-> +out_uncharge_cgroup:
-> +	hugetlb_cgroup_uncharge_cgroup(idx, nr_pages, h_cg);
-> +out_uncharge_cgroup_reservation:
-> +	if (charge_cgroup_rsvd)
-> +		hugetlb_cgroup_uncharge_cgroup_rsvd(idx, nr_pages, h_cg);
+Thanks,
 
-I find the direct copy of the unwind logic from alloc_hugetlb_folio()
-cumbersome and it seems like a good opportunity to clean it up.
+                Ilya
 
-> +out:
-> +	folio = ERR_PTR(-ENOSPC);
-> +	goto out;
-
-Endless loop?
-
-Ira
-
-[snip]
+>
+> Thanks,
+> Slava.
+>
+> On Thu, 2025-01-16 at 19:50 -0800, Viacheslav Dubeyko wrote:
+> > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> >
+> > The generic/397 test generate kernel crash for the case of
+> > encrypted inode with unaligned file size (for example, 33K
+> > or 1K):
+> >
+> > Jan 3 12:34:40 ceph-testing-0001 root: run xfstest generic/397
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.737811] run fstests gene=
+ric/397 at 2025-01-03 12:34:40
+> > Jan 3 12:34:40 ceph-testing-0001 systemd1: Started /usr/bin/bash c test=
+ -w /proc/self/oom_score_adj && echo 250 > /proc/self/oom_score_adj; exec .=
+/tests/generic/397.
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.875761] libceph: mon0 (2=
+)127.0.0.1:40674 session established
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.876130] libceph: client4=
+614 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.991965] libceph: mon0 (2=
+)127.0.0.1:40674 session established
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 877.992334] libceph: client4=
+617 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.017234] libceph: mon0 (2=
+)127.0.0.1:40674 session established
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.017594] libceph: client4=
+620 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.031394] xfs_io (pid 1898=
+8) is setting deprecated v1 encryption policy; recommend upgrading to v2.
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.054528] libceph: mon0 (2=
+)127.0.0.1:40674 session established
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.054892] libceph: client4=
+623 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.070287] libceph: mon0 (2=
+)127.0.0.1:40674 session established
+> > Jan 3 12:34:40 ceph-testing-0001 kernel: [ 878.070704] libceph: client4=
+626 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.264586] libceph: mon0 (2=
+)127.0.0.1:40674 session established
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.265258] libceph: client4=
+629 fsid 19b90bca-f1ae-47a6-93dd-0b03ee637949
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.374578] -----------[ cut=
+ here ]------------
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.374586] kernel BUG at ne=
+t/ceph/messenger.c:1070!
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.375150] Oops: invalid op=
+code: 0000 [#1] PREEMPT SMP NOPTI
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.378145] CPU: 2 UID: 0 PI=
+D: 4759 Comm: kworker/2:9 Not tainted 6.13.0-rc5+ #1
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.378969] Hardware name: Q=
+EMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-preb=
+uilt.qemu.org 04/01/2014
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.380167] Workqueue: ceph-=
+msgr ceph_con_workfn
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.381639] RIP: 0010:ceph_m=
+sg_data_cursor_init+0x42/0x50
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.382152] Code: 89 17 48 8=
+b 46 70 55 48 89 47 08 c7 47 18 00 00 00 00 48 89 e5 e8 de cc ff ff 5d 31 c=
+0 31 d2 31 f6 31 ff c3 cc cc cc cc 0f 0b <0f> 0b 0f 0b 66 2e 0f 1f 84 00 00=
+ 00 00 00 90 90 90 90 90 90 90 90
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.383928] RSP: 0018:ffffb4=
+ffc7cbbd28 EFLAGS: 00010287
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.384447] RAX: ffffffff82b=
+b9ac0 RBX: ffff981390c2f1f8 RCX: 0000000000000000
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.385129] RDX: 00000000000=
+09000 RSI: ffff981288232b58 RDI: ffff981390c2f378
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.385839] RBP: ffffb4ffc7c=
+bbe18 R08: 0000000000000000 R09: 0000000000000000
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.386539] R10: 00000000000=
+00000 R11: 0000000000000000 R12: ffff981390c2f030
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.387203] R13: ffff9812882=
+32b58 R14: 0000000000000029 R15: 0000000000000001
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.387877] FS: 000000000000=
+0000(0000) GS:ffff9814b7900000(0000) knlGS:0000000000000000
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.388663] CS: 0010 DS: 000=
+0 ES: 0000 CR0: 0000000080050033
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.389212] CR2: 00005e106a0=
+554e0 CR3: 0000000112bf0001 CR4: 0000000000772ef0
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.389921] DR0: 00000000000=
+00000 DR1: 0000000000000000 DR2: 0000000000000000
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.390620] DR3: 00000000000=
+00000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.391307] PKRU: 55555554
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.391567] Call Trace:
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.391807] <TASK>
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.392021] ? show_regs+0x71=
+/0x90
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.392391] ? die+0x38/0xa0
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.392667] ? do_trap+0xdb/0=
+x100
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.392981] ? do_error_trap+=
+0x75/0xb0
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.393372] ? ceph_msg_data_=
+cursor_init+0x42/0x50
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.393842] ? exc_invalid_op=
++0x53/0x80
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.394232] ? ceph_msg_data_=
+cursor_init+0x42/0x50
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.394694] ? asm_exc_invali=
+d_op+0x1b/0x20
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.395099] ? ceph_msg_data_=
+cursor_init+0x42/0x50
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.395583] ? ceph_con_v2_tr=
+y_read+0xd16/0x2220
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.396027] ? _raw_spin_unlo=
+ck+0xe/0x40
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.396428] ? raw_spin_rq_un=
+lock+0x10/0x40
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.396842] ? finish_task_sw=
+itch.isra.0+0x97/0x310
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.397338] ? __schedule+0x4=
+4b/0x16b0
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.397738] ceph_con_workfn+=
+0x326/0x750
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.398121] process_one_work=
++0x188/0x3d0
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.398522] ? __pfx_worker_t=
+hread+0x10/0x10
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.398929] worker_thread+0x=
+2b5/0x3c0
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.399310] ? __pfx_worker_t=
+hread+0x10/0x10
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.399727] kthread+0xe1/0x1=
+20
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.400031] ? __pfx_kthread+=
+0x10/0x10
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.400431] ret_from_fork+0x=
+43/0x70
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.400771] ? __pfx_kthread+=
+0x10/0x10
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.401127] ret_from_fork_as=
+m+0x1a/0x30
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.401543] </TASK>
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.401760] Modules linked i=
+n: hctr2 nhpoly1305_avx2 nhpoly1305_sse2 nhpoly1305 chacha_generic chacha_x=
+86_64 libchacha adiantum libpoly1305 essiv authenc mptcp_diag xsk_diag tcp_=
+diag udp_diag raw_diag inet_diag unix_diag af_packet_diag netlink_diag inte=
+l_rapl_msr intel_rapl_common intel_uncore_frequency_common skx_edac_common =
+nfit kvm_intel kvm crct10dif_pclmul crc32_pclmul polyval_clmulni polyval_ge=
+neric ghash_clmulni_intel sha256_ssse3 sha1_ssse3 aesni_intel joydev crypto=
+_simd cryptd rapl input_leds psmouse sch_fq_codel serio_raw bochs i2c_piix4=
+ floppy qemu_fw_cfg i2c_smbus mac_hid pata_acpi msr parport_pc ppdev lp par=
+port efi_pstore ip_tables x_tables
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.407319] ---[ end trace 0=
+000000000000000 ]---
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.407775] RIP: 0010:ceph_m=
+sg_data_cursor_init+0x42/0x50
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.408317] Code: 89 17 48 8=
+b 46 70 55 48 89 47 08 c7 47 18 00 00 00 00 48 89 e5 e8 de cc ff ff 5d 31 c=
+0 31 d2 31 f6 31 ff c3 cc cc cc cc 0f 0b <0f> 0b 0f 0b 66 2e 0f 1f 84 00 00=
+ 00 00 00 90 90 90 90 90 90 90 90
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.410087] RSP: 0018:ffffb4=
+ffc7cbbd28 EFLAGS: 00010287
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.410609] RAX: ffffffff82b=
+b9ac0 RBX: ffff981390c2f1f8 RCX: 0000000000000000
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.411318] RDX: 00000000000=
+09000 RSI: ffff981288232b58 RDI: ffff981390c2f378
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.412014] RBP: ffffb4ffc7c=
+bbe18 R08: 0000000000000000 R09: 0000000000000000
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.412735] R10: 00000000000=
+00000 R11: 0000000000000000 R12: ffff981390c2f030
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.413438] R13: ffff9812882=
+32b58 R14: 0000000000000029 R15: 0000000000000001
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.414121] FS: 000000000000=
+0000(0000) GS:ffff9814b7900000(0000) knlGS:0000000000000000
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.414935] CS: 0010 DS: 000=
+0 ES: 0000 CR0: 0000000080050033
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.415516] CR2: 00005e106a0=
+554e0 CR3: 0000000112bf0001 CR4: 0000000000772ef0
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.416211] DR0: 00000000000=
+00000 DR1: 0000000000000000 DR2: 0000000000000000
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.416907] DR3: 00000000000=
+00000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Jan 3 12:34:41 ceph-testing-0001 kernel: [ 878.417630] PKRU: 55555554
+> >
+> > BUG_ON(length > msg->data_length) triggers the issue:
+> >
+> > (gdb) l *ceph_msg_data_cursor_init+0x42
+> > 0xffffffff823b45a2 is in ceph_msg_data_cursor_init (net/ceph/messenger.=
+c:1070).
+> > 1065
+> > 1066 void ceph_msg_data_cursor_init(struct ceph_msg_data_cursor *cursor=
+,
+> > 1067 struct ceph_msg *msg, size_t length)
+> > 1068 {
+> > 1069 BUG_ON(!length);
+> > 1070 BUG_ON(length > msg->data_length);
+> > 1071 BUG_ON(!msg->num_data_items);
+> > 1072
+> > 1073 cursor->total_resid =3D length;
+> > 1074 cursor->data =3D msg->data;
+> >
+> > The issue takes place because of this:
+> > Jan 6 14:59:24 ceph-testing-0001 kernel: [ 202.628853] libceph: pid 144=
+:net/ceph/messenger_v2.c:2034 prepare_sparse_read_data(): msg->data_length =
+33792, msg->sparse_read_total 36864
+> > 1070 BUG_ON(length > msg->data_length);
+> > msg->sparse_read_total 36864 > msg->data_length 33792
+> >
+> > The generic/397 test (xfstests) executes such steps:
+> > (1) create encrypted files and directories;
+> > (2) access the created files and folders with encryption key;
+> > (3) access the created files and folders without encryption key.
+> >
+> > The issue takes place in this portion of code:
+> >
+> >     if (IS_ENCRYPTED(inode)) {
+> >             struct page **pages;
+> >             size_t page_off;
+> >
+> >             err =3D iov_iter_get_pages_alloc2(&subreq->io_iter, &pages,=
+ len,
+> >                                             &page_off);
+> >             if (err < 0) {
+> >                     doutc(cl, "%llx.%llx failed to allocate pages, %d\n=
+",
+> >                           ceph_vinop(inode), err);
+> >                     goto out;
+> >             }
+> >
+> >             /* should always give us a page-aligned read */
+> >             WARN_ON_ONCE(page_off);
+> >             len =3D err;
+> >             err =3D 0;
+> >
+> >             osd_req_op_extent_osd_data_pages(req, 0, pages, len, 0, fal=
+se,
+> >                                              false);
+> >
+> > The reason of the issue is that subreq->io_iter.count keeps
+> > unaligned value of length:
+> >
+> > Jan 16 12:46:56 ceph-testing-0001 kernel: [  347.751182] pid 8059:lib/i=
+ov_iter.c:1185 __iov_iter_get_pages_alloc(): maxsize 36864, maxpages 429496=
+7295, start 18446659367320516064
+> > Jan 16 12:46:56 ceph-testing-0001 kernel: [  347.752808] pid 8059:lib/i=
+ov_iter.c:1196 __iov_iter_get_pages_alloc(): maxsize 33792, maxpages 429496=
+7295, start 18446659367320516064
+> > Jan 16 12:46:56 ceph-testing-0001 kernel: [  347.754394] pid 8059:lib/i=
+ov_iter.c:1015 iter_folioq_get_pages(): maxsize 33792, maxpages 4294967295,=
+ extracted 0, _start_offset 18446659367320516064
+> >
+> > This patch simply assigns the aligned value to
+> > subreq->io_iter.count before calling iov_iter_get_pages_alloc2().
+> >
+> > ./check generic/397
+> > FSTYP         -- ceph
+> > PLATFORM      -- Linux/x86_64 ceph-testing-0001 6.13.0-rc7+ #58 SMP PRE=
+EMPT_DYNAMIC Wed Jan 15 00:07:06 UTC 2025
+> > MKFS_OPTIONS  -- 127.0.0.1:40629:/scratch
+> > MOUNT_OPTIONS -- -o name=3Dfs,secret=3D<hidden>,ms_mode=3Dcrc,nowsync,c=
+opyfrom 127.0.0.1:<port>:/scratch /mnt/scratch
+> >
+> > generic/397 1s ...  1s
+> > Ran: generic/397
+> > Passed all 1 tests
+> >
+> > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+> > ---
+> >  fs/ceph/addr.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> > index 85936f6d2bf7..5e6ba92219f3 100644
+> > --- a/fs/ceph/addr.c
+> > +++ b/fs/ceph/addr.c
+> > @@ -396,6 +396,15 @@ static void ceph_netfs_issue_read(struct netfs_io_=
+subrequest *subreq)
+> >               struct page **pages;
+> >               size_t page_off;
+> >
+> > +             /*
+> > +              * The io_iter.count needs to be corrected to aligned len=
+gth.
+> > +              * Otherwise, iov_iter_get_pages_alloc2() operates with
+> > +              * the initial unaligned length value. As a result,
+> > +              * ceph_msg_data_cursor_init() triggers BUG_ON() in the c=
+ase
+> > +              * if msg->sparse_read_total > msg->data_length.
+> > +              */
+> > +             subreq->io_iter.count =3D len;
+> > +
+> >               err =3D iov_iter_get_pages_alloc2(&subreq->io_iter, &page=
+s, len, &page_off);
+> >               if (err < 0) {
+> >                       doutc(cl, "%llx.%llx failed to allocate pages, %d=
+\n",
+> > @@ -405,6 +414,7 @@ static void ceph_netfs_issue_read(struct netfs_io_s=
+ubrequest *subreq)
+> >
+> >               /* should always give us a page-aligned read */
+> >               WARN_ON_ONCE(page_off);
+> > +
+> >               len =3D err;
+> >               err =3D 0;
+> >
+>
 
