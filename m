@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-50277-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50278-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BF6ACA6FA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 03:03:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F1AACA764
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 03:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686073B0841
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 01:00:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EB771882B11
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 01:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852E227A92E;
-	Sun,  1 Jun 2025 23:42:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F535331DD0;
+	Sun,  1 Jun 2025 23:44:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t/kiID9f"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JrqRv/qF"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83703272DC;
-	Sun,  1 Jun 2025 23:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1E5331DBE;
+	Sun,  1 Jun 2025 23:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748821355; cv=none; b=mI14iJmgIHRj5NI+bmTnvQKxpr6d3O3WVLEDuj9RfMjDLoSScxGdAeptkPO0NPnD58R0oYwQVQcf6bZIuuv6sJ4km4MHeCE8svwWOz7hbvTALCMTIWfPuJ98yWThwnWe05s7Od0iBmCSgNOvD0Iwy9nTkXAZXdh3pxF5pY28InY=
+	t=1748821449; cv=none; b=DW2UTjKWV+3XVrHv5IYR6nLuIHjc0EYY/8uOhEzoYVQfiK4ZHtgu05ZZBo0RgahDLtTba73UV/VjU9G4uogWaLZ3cLWLKNv178aRc3RmXIOLePhPDi4bI9PT/q50HHEvyQCvbzI6Bm0+DbRallOkCjrLCXA4zjB0RfxzPzbXcL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748821355; c=relaxed/simple;
+	s=arc-20240116; t=1748821449; c=relaxed/simple;
 	bh=tMidnKVaOTE7+RjEwHftZqIJFcRDvk2XlxyhrIPrzII=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o+dKtxC9yDGert02QrpgzsmBMWdgb9mbDnMw9Yzwl1IUxgLBSA3WU3OgMcmwLFXvhT3dBLu6uoTpjGjQEr7noPlSAgKtZ7iEgtv71wLS+yC130Sa1CUCO3nXHEc2KPNNY3moNr3S50FcR8ZFAkjMWKRHGF7ED9mIrdykWGfV+AY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t/kiID9f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EFCCC4CEF1;
-	Sun,  1 Jun 2025 23:42:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=u7uFFXN+t929gdPaRYZx75QkW9KckyOyG/UsKsiWKhLqzaUvlSzb66EUtD76Qo9jLhdJbuTloFjaeoHoP85RuQYmIZ490YMBAc2SENZeKBJoSUnU/4Wqqp8ggP0B5SzBvgQb5m3/fd4ApXjLRrTJzQ4YhOU4uU90JJAljUR0MXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JrqRv/qF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D07B8C4CEF1;
+	Sun,  1 Jun 2025 23:44:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748821354;
+	s=k20201202; t=1748821448;
 	bh=tMidnKVaOTE7+RjEwHftZqIJFcRDvk2XlxyhrIPrzII=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=t/kiID9fnoJWlbP1Dh1s6035OLXMY5gqeNa7w3Y56ym9rUc5eVWMTmal14FrGkAzv
-	 ho654aoZVgWxGqFkDoLX9vaHufgC0nYAWnFDGuMHvQIkKXjbve1nlXDICsWsQwkpY3
-	 zngiLVRmZe44oEc9U9SGe1KjNhCII6VVHJRNiXyxaxULVbhZXNa9XyXlul51mZKUOW
-	 qV2RaI4FcXSn0d4HApHmaNFphMbAkmOEb77OgSsMUI8ZTRXlYen2AtPk1vOlGvaqW0
-	 YM+XmNAZchkBq9XmJtGCUAS9/CRdkE4UXnZJdazeIy2Rtn6N7vfTJWe7fkNjoQWfyr
-	 x3vT6hRV7vZHQ==
+	b=JrqRv/qFd9I3o9KkzY1AV8Ac3W9mJmr2ENl952ahnAJpjYXiM9bL8x1bXc5G1cURJ
+	 Cd06EAQ9Nj72YVyGrtE7muwCq+asn2jVyxhybD6pn1xa3YHvqht4r1ysOgf1RSCaII
+	 ZBNJFn2bZpf/Utym9STyUrkaok2raF8KJ+pZnT40hSRS8UQreqA7LeHZJpZrEHuJGq
+	 gvvDM3JS0wqxtOyJpvMHpt5lBF0i5eX07ARjYcpU915IB843kdITpMWoGZfIrxxo07
+	 kFB1/ogEa8JUPRcpVXU/BZ37ytBaa5PTFVvXXx7SsGceC1mGgvmuSOZH+hZa+s4OVk
+	 p294o35DLNhtQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Namjae Jeon <linkinjeon@kernel.org>,
 	sj1557.seo@samsung.com,
 	linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 04/43] exfat: fix double free in delayed_free
-Date: Sun,  1 Jun 2025 19:41:44 -0400
-Message-Id: <20250601234224.3517599-4-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 04/34] exfat: fix double free in delayed_free
+Date: Sun,  1 Jun 2025 19:43:28 -0400
+Message-Id: <20250601234359.3518595-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250601234224.3517599-1-sashal@kernel.org>
-References: <20250601234224.3517599-1-sashal@kernel.org>
+In-Reply-To: <20250601234359.3518595-1-sashal@kernel.org>
+References: <20250601234359.3518595-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.15.184
+X-stable-base: Linux 5.10.237
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
