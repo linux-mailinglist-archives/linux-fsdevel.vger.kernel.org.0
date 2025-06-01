@@ -1,192 +1,154 @@
-Return-Path: <linux-fsdevel+bounces-50272-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50275-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD4BACA4B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 02:14:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4977FACA596
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 02:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F99C3A5230
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 00:10:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B419179A08
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 00:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3586A29B229;
-	Sun,  1 Jun 2025 23:34:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5CF30A66F;
+	Sun,  1 Jun 2025 23:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MabEE4Ge"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Au79rBe5"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F7325B1F6;
-	Sun,  1 Jun 2025 23:34:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B528726E142;
+	Sun,  1 Jun 2025 23:38:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748820846; cv=none; b=jt+2EUdcnKGo46Wbm2KWfwsFQXkIb03/LFpYXa/VxKdIrq40ky03Ahyw4dM72cBL/o8W4PIVyKbpcItQ8vsrwglchOfRDL+yy8+/n4pGfC9OppYOh42zyeryQEkq5yNv+SFi3Mpm7wT+lvP1bqqgpd61EVMsbkHI2Rp3qv02SrU=
+	t=1748821085; cv=none; b=iRrMU4yrg8/nyyYU66/VumwfVAYpXS0x6CHjfVPgPG1Jk5W7Eajl7cEviMRLZ3bcpR9ohu3GmtUpldWkbuMYKeWBzJ4ABTl0yvZ/960Wcb29egdE9hT0e6h1BGmZGmuuMbJ48klfTQdqOBmk9xU/jpJsCW7gKzMt3FK4Lt7VBtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748820846; c=relaxed/simple;
-	bh=rk0tabcEWUSi/dC9aSwcckp47FWChuCrYj4ecTRM91o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K6seyRqg5ysqXYdxQtUcMpbfQBhfJrDhLIVxN4fF/HKJzyg0tv9Xc3rNhfb9El+cZye6zMJZ9Gb4cNDm2+PZCCqq11IyvynTMpFZmb1bLbYB3avaUItYpYLG9y9RRNY2A+BBC9PAmSgunteSOAyG0HJx1r8fNgY85+ekgmckg78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MabEE4Ge; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69E59C4CEF4;
-	Sun,  1 Jun 2025 23:34:06 +0000 (UTC)
+	s=arc-20240116; t=1748821085; c=relaxed/simple;
+	bh=1nLAPJTQkEwASNq5o4+7jzC2fG13vPWHCf7TfkBjozw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Evx1VyIlgRL9zUNOf/P4z+31W6pJG/ajBHw/3Wh/oownRKpKG+7G3IX5IoKwM9q9CXV8iarZJSa2M7ue3TTfPvZ6CKy8ae7MnZriPkTGPiixpQdO112GCGWw0Vp5je+JrwVbZUNhl8MY87RCOKQrOJ+RtvkFKBQTOtIm85I3RMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Au79rBe5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6577C4CEF4;
+	Sun,  1 Jun 2025 23:38:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748820846;
-	bh=rk0tabcEWUSi/dC9aSwcckp47FWChuCrYj4ecTRM91o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=MabEE4GeCqRyYjuCSJaW2MyeZmOnZq7/KJkYHa3ShOkvedUnN/QbtopQvMUbkSFWX
-	 U9pNA2uwAddylgWXfHpxNECl2ajnIQ5/v7icrsi2MM37d9SHZpBFq82Jktd9Fc1h27
-	 UkIp1p1hQgjXkwVzri8xvSbhmiJVbLW30b1/6xQpDis81ZIzDg1NTeQs7Lmf98/OYn
-	 FLK37jCD9Mnk81LaaUQ727dlM6w35nz5D4gE8v3x5tRC9oN30+1IlVw8NGTf3ZnzJu
-	 mS0fzeGAYA+HROwhLZeptu85MRvVfftPE0QZBxg1Y/f3nplmnOYw4BS1zTTvdWXEu8
-	 aSepbpNk0zo8g==
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4a58b120bedso6582351cf.2;
-        Sun, 01 Jun 2025 16:34:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUuZygCQ5sWdoPCd9uDdnGuJnessFZcsy8RMALGVAY6pTfzTTjof63+ohaHnQ9NH6jCNYUBx9vEJc0z+593@vger.kernel.org, AJvYcCWg8fMxGCnFbCaeVMvEdO43J9/7bRhW57eDJNFjNOVEna5RwbUM3KLBpM4iwf43Ev+XRu83gqfIMpzlX+Ih0RrORTU1xN4M@vger.kernel.org, AJvYcCWu6B+8DyqsEmvp42Cev0ANdTyTWrELjljzi1HrPnTMAB6TSYLFPXrslnIYG3LgVkPIWr4=@vger.kernel.org, AJvYcCXpHofaKIiRqIg93oaA07lNJdCDx/NhefdPsZEwO8TPsXD8ebK7xraiATVNl4lbtVfRXrJu6eVfcxaNFIBpiw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM7IBHtDPyYcjHR7HinuZ/+8bGgC3gb1+1YSyzIbKxoYgoarXr
-	O/ff7qABy6VGZUAw4Yo82j+r0amtlEUsCoHH/pGaWFUSGXhOuPtzIVKeYc4fO+i6IhqIgWn1+L/
-	eIQS9K8ynLP0PK/oNybNbdju48AKxbSA=
-X-Google-Smtp-Source: AGHT+IHOvTvmxzCnGRB15ilIwIuBdUILgcIB1Uvm7hMB6a6v7w4pR7/ko4VNimzWKkM0RBFYUda6oz0YfDOzt8wtpMo=
-X-Received: by 2002:a05:622a:2289:b0:4a4:3d6e:57d4 with SMTP id
- d75a77b69052e-4a4aed5cd9emr102149661cf.46.1748820845563; Sun, 01 Jun 2025
- 16:34:05 -0700 (PDT)
+	s=k20201202; t=1748821085;
+	bh=1nLAPJTQkEwASNq5o4+7jzC2fG13vPWHCf7TfkBjozw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Au79rBe5UXSpqN3q5gprS65bbnK8GY0uUluKlzvbozf9/YQT77QIpIk5EKUX73dXj
+	 28qdIa9W1+dTC8qNOrs+qPwG7ELUvDxg4XtxT7MJw2TZv++mTGUXU3sHt3ChBXll9v
+	 jZPDznqDHtfq8wGLYHMpJTHiyt93PRvMYR2zCA8BmYJhkc+uYY9AOJeJeyDiJ4jtV1
+	 mgSBuwowp47hPmxPkWrwHlfj8LbIOQesWCTowR1YWVoxO4H/lNbL0TOH60KVz8ZNr5
+	 xxEm3Y+b4TYA/zVRhsvO98a2PNWf503ffndHvSeoZzfqnTW66pJTYEdQxaJ66BcPUA
+	 vcE1xONUA5qaQ==
+From: Sasha Levin <sashal@kernel.org>
+To: patches@lists.linux.dev,
+	stable@vger.kernel.org
+Cc: Namjae Jeon <linkinjeon@kernel.org>,
+	Jianzhou Zhao <xnxc22xnxc22@qq.com>,
+	Sasha Levin <sashal@kernel.org>,
+	sj1557.seo@samsung.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 08/66] exfat: fix double free in delayed_free
+Date: Sun,  1 Jun 2025 19:36:45 -0400
+Message-Id: <20250601233744.3514795-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250601233744.3514795-1-sashal@kernel.org>
+References: <20250601233744.3514795-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250529173810.GJ2023217@ZenIV> <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250529183536.GL2023217@ZenIV> <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
- <20250529201551.GN2023217@ZenIV> <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
- <20250529214544.GO2023217@ZenIV> <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
- <20250529231018.GP2023217@ZenIV> <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
- <20250530.euz5beesaSha@digikod.net> <CAPhsuW5U-nPk4MFdZSeBNds0qEHjQZrC=c5q+AGNpsKiveC2wA@mail.gmail.com>
- <c2d0bae8-691f-4bb6-9c0e-64ab7cdaebd6@maowtm.org>
-In-Reply-To: <c2d0bae8-691f-4bb6-9c0e-64ab7cdaebd6@maowtm.org>
-From: Song Liu <song@kernel.org>
-Date: Sun, 1 Jun 2025 16:33:54 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW47C+FqtdHEE5YYKhjkaYLn-JbAPfo_q0fXf2FzTfiAog@mail.gmail.com>
-X-Gm-Features: AX0GCFvwUwAeA88LUr4ia35HRc3kUaSu9RbQ8RV0pI3vVH27tH9vknp9Dfv46Bk
-Message-ID: <CAPhsuW47C+FqtdHEE5YYKhjkaYLn-JbAPfo_q0fXf2FzTfiAog@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, brauner@kernel.org, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.92
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Sat, May 31, 2025 at 7:05=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote:
->
-> On 5/30/25 19:55, Song Liu wrote:
-> > On Fri, May 30, 2025 at 5:20=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@d=
-igikod.net> wrote:
-> > [...]
-> >>>
-> >>> If we update path_parent in this patchset with choose_mountpoint(),
-> >>> and use it in Landlock, we will close this race condition, right?
-> >>
-> >> choose_mountpoint() is currently private, but if we add a new filesyst=
-em
-> >> helper, I think the right approach would be to expose follow_dotdot(),
-> >> updating its arguments with public types.  This way the intermediates
-> >> mount points will not be exposed, RCU optimization will be leveraged,
-> >> and usage of this new helper will be simplified.
-> >
-> > I think it is easier to add a helper similar to follow_dotdot(), but no=
-t with
-> > nameidata. follow_dotdot() touches so many things in nameidata, so it
-> > is better to keep it as-is. I am having the following:
-> >
-> > /**
-> >  * path_parent - Find the parent of path
-> >  * @path: input and output path.
-> >  * @root: root of the path walk, do not go beyond this root. If @root i=
-s
-> >  *        zero'ed, walk all the way to real root.
-> >  *
-> >  * Given a path, find the parent path. Replace @path with the parent pa=
-th.
-> >  * If we were already at the real root or a disconnected root, @path is
-> >  * not changed.
-> >  *
-> >  * Returns:
-> >  *  true  - if @path is updated to its parent.
-> >  *  false - if @path is already the root (real root or @root).
-> >  */
-> > bool path_parent(struct path *path, const struct path *root)
-> > {
-> >         struct dentry *parent;
-> >
-> >         if (path_equal(path, root))
-> >                 return false;
-> >
-> >         if (unlikely(path->dentry =3D=3D path->mnt->mnt_root)) {
-> >                 struct path p;
-> >
-> >                 if (!choose_mountpoint(real_mount(path->mnt), root, &p)=
-)
-> >                         return false;
-> >                 path_put(path);
-> >                 *path =3D p;
-> >                 return true;
-> >         }
-> >
-> >         if (unlikely(IS_ROOT(path->dentry)))
-> >                 return false;
-> >
-> >         parent =3D dget_parent(path->dentry);
-> >         if (unlikely(!path_connected(path->mnt, parent))) {
-> >                 dput(parent);
-> >                 return false;
-> >         }
-> >         dput(path->dentry);
-> >         path->dentry =3D parent;
-> >         return true;
-> > }
-> > EXPORT_SYMBOL_GPL(path_parent);
-> >
-> > And for Landlock, it is simply:
-> >
-> >                 if (path_parent(&walker_path, &root))
-> >                         continue;
-> >
-> >                 if (unlikely(IS_ROOT(walker_path.dentry))) {
-> >                         /*
-> >                          * Stops at disconnected or real root directori=
-es.
-> >                          * Only allows access to internal filesystems
-> >                          * (e.g. nsfs, which is reachable through
-> >                          * /proc/<pid>/ns/<namespace>).
-> >                          */
-> >                         if (walker_path.mnt->mnt_flags & MNT_INTERNAL) =
-{
-> >                                 allowed_parent1 =3D true;
-> >                                 allowed_parent2 =3D true;
-> >                         }
-> >                         break;
->
->
-> Hi, maybe I'm missing the complete picture of this code, but since
-> path_parent doesn't change walker_path if it returns false (e.g. if it's
-> disconnected, or choose_mountpoint fails), I think this `break;` should b=
-e
-> outside the
->
->     if (unlikely(IS_ROOT(walker_path.dentry)))
->
-> right? (Assuming this whole thing is under a `while (true)`) Otherwise we
-> might get stuck at the current path and get infinite loop?
+From: Namjae Jeon <linkinjeon@kernel.org>
 
-Right, we need "break" outside the if condition.
+[ Upstream commit 1f3d9724e16d62c7d42c67d6613b8512f2887c22 ]
 
-Thanks,
-Song
+The double free could happen in the following path.
+
+exfat_create_upcase_table()
+        exfat_create_upcase_table() : return error
+        exfat_free_upcase_table() : free ->vol_utbl
+        exfat_load_default_upcase_table : return error
+     exfat_kill_sb()
+           delayed_free()
+                  exfat_free_upcase_table() <--------- double free
+This patch set ->vol_util as NULL after freeing it.
+
+Reported-by: Jianzhou Zhao <xnxc22xnxc22@qq.com>
+Signed-off-by: Namjae Jeon <linkinjeon@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+
+Based on my thorough analysis of the commit and examination of the
+kernel tree, here is my assessment: **YES** This commit should be
+backported to stable kernel trees. Here's my extensive analysis: ## Code
+Analysis **The Problem:** The commit fixes a classic double-free
+vulnerability in the exfat filesystem. Looking at the current kernel
+code, the vulnerability exists in this execution path: 1.
+`exfat_create_upcase_table()` calls `exfat_load_upcase_table()` which
+may fail 2. On failure (`ret && ret != -EIO`), it calls
+`exfat_free_upcase_table(sbi)` 3. Then it goes to `load_default:` and
+calls `exfat_load_default_upcase_table()` which may also fail 4. When
+the filesystem unmounts, `exfat_kill_sb()` → `delayed_free()` →
+`exfat_free_upcase_table(sbi)` is called again **The Current Vulnerable
+Code:** ```c void exfat_free_upcase_table(struct exfat_sb_info *sbi) {
+kvfree(sbi->vol_utbl); // No NULL assignment - vulnerable to double free
+} ``` **The Fix:** The patch adds `sbi->vol_utbl = NULL;` after the
+`kvfree()`, which prevents the double-free because `kvfree(NULL)` is
+safe. ## Backport Criteria Assessment **1. Bug Severity: HIGH** - This
+is a memory corruption vulnerability (double-free) - Double-free bugs
+can lead to heap corruption, crashes, and potentially security exploits
+- The bug affects the reliability and security of the exfat filesystem
+**2. Fix Quality: EXCELLENT** - The fix is minimal (just one line:
+`sbi->vol_utbl = NULL;`) - Extremely low risk of introducing regressions
+- Follows standard defensive programming practices - The fix is
+contained within a single function **3. Backport Suitability: PERFECT**
+- Small, isolated change that doesn't affect any APIs - No architectural
+changes or new features - The fix addresses the root cause directly -
+Compatible with all kernel versions that have the vulnerable code **4.
+Historical Context:** Looking at the similar commits provided: -
+**Similar Commit #2** (Status: YES): Also a memory leak fix in exfat
+with `Cc: stable@vger.kernel.org` - **Similar Commit #4** (Status: YES):
+Another memory corruption prevention fix in exfat - Both demonstrate
+that small, targeted memory management fixes in exfat are appropriate
+for stable backporting **5. Impact Assessment:** - **User Impact:** High
+- prevents filesystem crashes and potential data corruption - **Risk:**
+Very low - the change only affects error paths and adds defensive
+programming - **Complexity:** Minimal - single line change with clear
+semantics **6. RCU Context:** The commit a13d1a4de3b0 introduced the
+`delayed_free()` mechanism that made this double-free possible, making
+this fix essential for kernels with that change. ## Conclusion This
+commit represents exactly the type of fix that stable kernels need: a
+small, surgical fix for a potentially serious memory corruption bug with
+minimal risk of regression. The double-free vulnerability could lead to
+system instability and the fix is trivial to apply and verify. Given the
+similarities with other exfat memory management fixes that were
+successfully backported, this should definitely be included in stable
+kernel trees.
+
+ fs/exfat/nls.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/exfat/nls.c b/fs/exfat/nls.c
+index 705710f93e2dd..0e05c6b5a2864 100644
+--- a/fs/exfat/nls.c
++++ b/fs/exfat/nls.c
+@@ -804,4 +804,5 @@ int exfat_create_upcase_table(struct super_block *sb)
+ void exfat_free_upcase_table(struct exfat_sb_info *sbi)
+ {
+ 	kvfree(sbi->vol_utbl);
++	sbi->vol_utbl = NULL;
+ }
+-- 
+2.39.5
+
 
