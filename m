@@ -1,114 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-50395-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50396-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08E71ACBD95
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 01:01:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EAB3ACBDAB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 01:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B79693A29DD
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 23:01:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2438F7A2419
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 23:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE37F46B8;
-	Mon,  2 Jun 2025 23:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2252C3251;
+	Mon,  2 Jun 2025 23:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="UpbcH3QQ"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="WNLyG6EL"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EC4C130A73
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 23:01:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ECC41482E7
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 23:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748905302; cv=none; b=aRM4GpnRHY6yYV6APlhu17yr1C7LW9AHbE2ipgPpBO3+OH24lk+K75Dr77qJ7u6t4ZeZ7vo9PtlpJo0j5Lno8cvoRli4BDUrGIrWZseys6GRZ1/l1TwNEHFonai40f+WB7pUHgt/0Jzj6FQNB0odORr7YsBb7z0Br7Sn0rWGciU=
+	t=1748906356; cv=none; b=SJqACXnfHOtzcHsP2mZcB1V/52M9W/g1vE4EC98TMchJtJp3rhIKdWyAdflUceqT2kRp78n3UhWpejuTUhe7o12I91TuxRzPn2XilA6oBH0Qj7Euyl2d/xHWdzCgTt1Fs879h/30sQn2tdLDrSZdNKdSVl09JyDB7jIwmtx0P2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748905302; c=relaxed/simple;
-	bh=59eUBlhzOV2ckFatOfYqfREuM/wpDHlCvgZc8i4N5WQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HPtC6flPUlco44aN0UhRNZbzJ9dvPiSNp8Sk0k0budG65NvKiDMqQk+WmlgUEmyGlbzEgdTF/QRQzIXKrL7JONBYLWKbwB5kUoAEfE1d8tREPi9FREhWTQaO1YZstH0sZIYkCjgN7EJ4RObBAxVzmGycrq/LbL/UG0uVV2ijErI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=UpbcH3QQ; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-86d01686196so103656039f.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Jun 2025 16:01:39 -0700 (PDT)
+	s=arc-20240116; t=1748906356; c=relaxed/simple;
+	bh=GMoP0FkBjlH8Avgc4RGDMn0OjMa+Ks5JgJ/N5Vif9dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ElFwbwj0kWZMEm4jn74R6I3f78RhpBKlg9LPMJ7yucHedAz26o+bmeMy54b2eEfoBVhxCxHqvl4KLOPzxuw0B44i4WXlzTyXgmtTs/8928UcISp8/ZYsenZ49GCu53L2yCSYYjDcrVK4DAgqxB+o5zX4rt2VneeGQ9CiErYKfNg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=WNLyG6EL; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-742af848148so3251714b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Jun 2025 16:19:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1748905298; x=1749510098; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+equ+3upmf1renBJmqziOzoGh1hJKKHZ35K0AIOI15U=;
-        b=UpbcH3QQBt7xSsPgdsjrTchk3QKjaL7yNRJ1Oe5c3GsFMO5EIGKwNB7uQKrflaKVHS
-         52gW/6xS+VbBx0LFHn6nz30qp7MXtt7rOQG8Myo+MqkhZJfWNP6v8cfHRB1haNgUf2ME
-         Kih4RLqqetkQH+U1YSNu7UjpGyNWycY9GyZPM=
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1748906354; x=1749511154; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=P60tv1Mhdn0cRxhg423psLABfS93iCsU5/zymXr2pXE=;
+        b=WNLyG6ELb9DqpxG46UWnZglZ5ZnM38pY6dDtKxGaAKj3/96O3bt84hzueE+bJejQV4
+         E3JZiy9wGmXRDlU2xSpRtoPFVrtMXvVlmmalvYLv/Zh4rLn/E4+qp7ugO9/Eg40J0yLg
+         Vg9kkOepTR4WDJ459ApQNGDAF2H4aYD1gQqiX3NieK5+4Vu1m+KUv0RcXr57ToQLqDKT
+         fNNpsF3WZDwYb9v+n3pXmmi9MU8iaUz6hnV5kvFg8U3UBhnU6Y1NhVJn6//fxY0fPPHC
+         j83s84LJOwB4hsHho3iduanoSpzhFQNZ/tMb2AJjwZfKbXyzGxl09G/yY1f9y1umWJzi
+         zcRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748905298; x=1749510098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+equ+3upmf1renBJmqziOzoGh1hJKKHZ35K0AIOI15U=;
-        b=TJF3KjUruKL9JZzlDd3EjD1eqHygAZ+N9zt3m7fuiaMRKagwId9SbDto+8qAKknnr/
-         2Oger53VrY4anxWWde/Tdcav1dpC4tD8FrmuVSRv+gkNy0f9Y5xpdkIuGhgCEuHOCTLb
-         Wlw/2TiaJ7nH+gnqJ0LfLzLeZv47GyH8b1Pqv5ogEjp5eeFVHvDMw1LOeZX2p/gVkl7o
-         B1mV3uRIvtphzenrO8/Vm5PqQBMYatd2PTfQS55vBD/feWv8WHJpwI7awe2CEZweCCH1
-         ujw91uF/V3VI8iI4w1o0icjS8TB7HfmKi9pOmXbElFYPIFrmHU5blcbjmu9r/kCSF1XD
-         riKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWi2+3AwJ1vE1PmmLqZYptC9eoHhZ04pl03KpYXGNsDkl5wxDL/29q6e/Dcp7h04xEewXIlHqPSrSy63cJ7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG4XFwh8ByPG3vc49jkPqiKDZYN8GTYdfmlUgd8v+QG0o93NWP
-	iYOgMhCLYDGIpQhESB1jW6ed6C45pZ0fwzdoj+Lg9OhH5oc1yHwefpgPvGSf7eKTwIE=
-X-Gm-Gg: ASbGncvcnjx2fKF/8TLouyDF++4L+dU/nt39KcEekHigZg1uCvtGU8ciPicm2zbm1sn
-	o8IbXrWEyvHGrVGlxphPh1/NEvHDl9M0sYcdNGQXemFm9IPViRf1e89OJnpyqKezQt3APIrR/p8
-	q00J+V86vxt3ldpqU5wFQUwyjFV3ebxb+U+bQ25rssdPI4OPcAZOOH5raxmY8/8aSuv64qmcmqs
-	EIvHsZtGe1LuPo9nNy8LPGNOeKQ+hbTmrgLmeJnkXiNdT2lu2++0ZQAJteVNBdXWM9tQudmXXxt
-	9gv1nVeSH5OQMUWUFJn360N0xbvi78koOwZuPeAkk5RSN09l/LFb3+DFFq6RRw==
-X-Google-Smtp-Source: AGHT+IFrjcDEGLtTKfElBpGXOAhF3tHEPfd2K9yevIZkFCo/MB2Kge7c24XSTv/Nb7Ij2aX1xnrXCw==
-X-Received: by 2002:a05:6602:6c12:b0:86f:4d9c:30a0 with SMTP id ca18e2360f4ac-86f4d9c3133mr1002247739f.5.1748905298567;
-        Mon, 02 Jun 2025 16:01:38 -0700 (PDT)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4fdd7e28daesm1972275173.44.2025.06.02.16.01.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 16:01:38 -0700 (PDT)
-Message-ID: <053cab6e-1898-4948-8f82-ac082d85a20d@linuxfoundation.org>
-Date: Mon, 2 Jun 2025 17:01:37 -0600
+        d=1e100.net; s=20230601; t=1748906354; x=1749511154;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=P60tv1Mhdn0cRxhg423psLABfS93iCsU5/zymXr2pXE=;
+        b=O7jjMZKMhqFXm6Sz5Ospbj6m50E+EyCZ13xCJzQUMPqrGPdjjaoycUQ85hFOBW5++E
+         L1a7OyZfxJMVwBEOlkMB1O4hqGzOEyQ859YAiQUUon5Fi9cShuCfmwSSWR+0Dvfyjbq4
+         /nFn2H3k5ETmjHku6Z1/ivRmUPRSThx5xy6A9epV2T0tQePtw17qdORWPGkYjMBndvsG
+         I7/Mjp7+wLAXCxdQW5TDlPjZBhX5bZpPDXTZBXwZZ+2Cfr9ZJb9UcVB04BrHGtNVNjSi
+         A/gcnRUCqUxGh7seoJBfyiuxClMACtRUha2Q/bagU4LOOTlp37Ddal4HxC+mkn54SrzT
+         wmMg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2f6DgCrEc30pqogiSfiEAOPdPRMrVpNwVTlo/jcELSchpmcKA7qIbVkpmX0t2PlNJPUsjVL261r+qWf2E@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKiUZqOxrqAcfq1U4qzDycsuE0qYUw/eVuDAoU6eFB2WgdnSmS
+	cVH1vNWPq8WNY0VxQj4bNBqmJGNZnHrDCow3rcNnmhOT/i8AqnknFFReWRuFmH/OFVk=
+X-Gm-Gg: ASbGncscST4qD+Oum77mz4aO9VfH7bUQF21q8GH3f931WiGdbEAuQnjF9c5FN5y/Vbj
+	O/2gNwqEbiqNyPcXfA+hmphBUxJlvssLGsF8H/VgcHByO54HaSyAFlKL91n/Xy8L7XNuWJkMMPf
+	MDCw/PEGRx6sMLbFtPrhVy7L/JsJlFq+FAISeg03EtTWMlrHRI92IOhdLDCvz1woo3TXrUNA4C7
+	02irI0tE7rmtVx5NapHK29ychsvoDF4Yn3aqtTCK+IDlWzlhjqAJCLlT5qj4sqQ+IWRlLUkJzFV
+	1WoYm/JSOBFfDsvusdzONpSI7DNU6r8+JwSlUjZ94RnS9f2m9VY9/Npfh82Km9LG7t67SvvP+tQ
+	uS5CAf9BAMI8k/Rik3VTSj/aP+MvvEtgttwFOxYmw4oLmm0dO
+X-Google-Smtp-Source: AGHT+IEPsj1aDtH+W+3C0GTQBgloNbEI/WG1fIIMbgSnmWG3+I0yRkIDwC5qhR5WE73QWSMS157YUw==
+X-Received: by 2002:a05:6a00:4b13:b0:73f:ff25:90b3 with SMTP id d2e1a72fcca58-747d1ae2c64mr15727604b3a.24.1748906354262;
+        Mon, 02 Jun 2025 16:19:14 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-747bd44eb1asm6896252b3a.61.2025.06.02.16.19.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Jun 2025 16:19:13 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1uMEQw-0000000BU94-3kKv;
+	Tue, 03 Jun 2025 09:19:10 +1000
+Date: Tue, 3 Jun 2025 09:19:10 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>,
+	Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
+	cem@kernel.org, linux-xfs@vger.kernel.org,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
+ data corruption
+Message-ID: <aD4xboH2mM1ONhB-@dread.disaster.area>
+References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
+ <aDfkTiTNH1UPKvC7@dread.disaster.area>
+ <aD04v9dczhgGxS3K@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests: Add functional test for the abort file in
- fusectl
-To: Chen Linxuan <chenlinxuan@uniontech.com>
-Cc: Shuah Khan <shuah@kernel.org>, Miklos Szeredi <miklos@szeredi.hu>,
- zhanjun@uniontech.com, niecheng1@uniontech.com, wentao@uniontech.com,
- Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250517012350.10317-2-chenlinxuan@uniontech.com>
- <57f3f9ec-41bf-4a7b-b4b2-a4dd78ad7801@linuxfoundation.org>
- <CAC1kPDOH+QZDjg46KRNmQQpH-_yLbQwMUGsiBk9gW1kqjyy9xw@mail.gmail.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CAC1kPDOH+QZDjg46KRNmQQpH-_yLbQwMUGsiBk9gW1kqjyy9xw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aD04v9dczhgGxS3K@infradead.org>
 
-On 5/25/25 19:41, Chen Linxuan wrote:
-> On Fri, May 23, 2025 at 6:50 AM Shuah Khan <skhan@linuxfoundation.org> wrote:
+On Sun, Jun 01, 2025 at 10:38:07PM -0700, Christoph Hellwig wrote:
+> On Thu, May 29, 2025 at 02:36:30PM +1000, Dave Chinner wrote:
+> > In these situations writeback could fail for several attempts before
+> > the storage timed out and came back online. Then the next write
+> > retry would succeed, and everything would be good. Linux never gave
+> > us a specific IO error for this case, so we just had to retry on EIO
+> > and hope that the storage came back eventually.
 > 
->> Also if this test requires root previlege, add check for it.
+> Linux has had differenciated I/O error codes for quite a while.  But
+> more importantly dm-multipath doesn't just return errors to the upper
+> layer during failover, but is instead expected to queue the I/O up
+> until it either has a working path or an internal timeout passed.
 > 
-> Currently, this test does not require root privileges.
-> 
-> Thanks,
-> Chen Linxuan
+> In other words, write errors in Linux are in general expected to be
+> persistent, modulo explicit failfast requests like REQ_NOWAIT.
 
-Thanks. Looks good to me.
+Say what? the blk_errors array defines multiple block layer errors
+that are transient in nature - stuff like ENOSPC, ETIMEDOUT, EILSEQ,
+ENOLINK, EBUSY - all indicate a transient, retryable error occurred
+somewhere in the block/storage layers.
 
-Acked-by: Shuah Khan <skhan@linuxfoundation.org>
+What is permanent about dm-thinp returning ENOSPC to a write
+request? Once the pool has been GC'd to free up space or expanded,
+the ENOSPC error goes away.
 
-thanks,
--- Shuah
+What is permanent about an IO failing with EILSEQ because a t10
+checksum failed due to a random bit error detected between the HBA
+and the storage device? Retry the IO, and it goes through just fine
+without any failures.
+
+These transient error types typically only need a write retry after
+some time period to resolve, and that's what XFS does by default.
+What makes these sorts of errors persistent in the linux block layer
+and hence requiring an immediate filesystem shutdown and complete
+denial of service to the storage?
+
+I ask this seriously, because you are effectively saying the linux
+storage stack now doesn't behave the same as the model we've been
+using for decades. What has changed, and when did it change?
+
+> Which also leaves me a bit puzzled what the XFS metadata retries are
+> actually trying to solve, especially without even having a corresponding
+> data I/O version.
+
+It's always been for preventing immediate filesystem shutdown when
+spurious transient IO errors occur below XFS. Data IO errors don't
+cause filesystem shutdowns - errors get propagated to the
+application - so there isn't a full system DOS potential for
+incorrect classification of data IO errors...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
