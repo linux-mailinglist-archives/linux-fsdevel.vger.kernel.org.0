@@ -1,311 +1,211 @@
-Return-Path: <linux-fsdevel+bounces-50288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50289-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FFFACA9A6
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:01:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C84ACAA1B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:52:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 639EB189C228
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 07:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3C4A3B0049
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 07:51:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474651A23BA;
-	Mon,  2 Jun 2025 07:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64C684FAD;
+	Mon,  2 Jun 2025 07:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infinera.com header.i=@infinera.com header.b="J49V94wM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2063.outbound.protection.outlook.com [40.107.244.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B0217A303;
-	Mon,  2 Jun 2025 07:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748847661; cv=none; b=ZKbtkjIKb+Mur8nwMIZOmUeAJU1w57vmPEbahW6LSbmemhz6/ZvfoQ18uoQP8VEvQSkSHTerfg8gONBUKOYbxVKbNMdRc9eAfL2457TTSF9NOTkIznNoDvjOeF7FLbFABlmL1O6v747xdUDNo4fyzHQASIRK2+tVHFBKk/ya5Vo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748847661; c=relaxed/simple;
-	bh=QBMJkLc0wQAnxEqTmKS7OyKfGHDBz/H4Ncq1Et+vsWg=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=RPPJEuz2UYfCUCgj79zGC3xdT9yFrSBQJyJfrIv9pRfYhMjzoo5tib4NseLXQXtU/PpqbcVMPhHP1DIx0dKOWIBPPGoEHR7+uffRTeGrris7FupnWi59Ve9kYpQ5XSCDU2GKrbw21Ryx1yLXjIfPFsIZvbQNG3LlGyGwqZkBAs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4b9l9P2lN3z4xVct;
-	Mon,  2 Jun 2025 15:00:41 +0800 (CST)
-Received: from xaxapp01.zte.com.cn ([10.88.99.176])
-	by mse-fl2.zte.com.cn with SMTP id 55270TBw046379;
-	Mon, 2 Jun 2025 15:00:29 +0800 (+08)
-	(envelope-from xu.xin16@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Mon, 2 Jun 2025 15:00:31 +0800 (CST)
-Date: Mon, 2 Jun 2025 15:00:31 +0800 (CST)
-X-Zmail-TransId: 2afa683d4c0fffffffff94d-4260e
-X-Mailer: Zmail v1.0
-Message-ID: <20250602150031233VUeNfq2WjnCflANKAZbcb@zte.com.cn>
-In-Reply-To: <3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com>
-References: cover.1748537921.git.lorenzo.stoakes@oracle.com,3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A1C5BAF0
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 07:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748850702; cv=fail; b=lWqSUrc7RdwpOC1ssRVLFOp/87O46tbyjmMZxEkdfZ159DkTYkjhQ++XwmIVUUIzqO9ZrzzTvZM9n4eGef0gm74lRZjBpjC2DAZAXbe2J4+rtMUXXLW2uwSImr2MU+y4ZaYsFcpoJ9/EWmBo4zox3XTBjq6VepNqvB5GCtlvL60=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748850702; c=relaxed/simple;
+	bh=dJQb1jkybaqLtl7Brtd1p9+ik/oqqyjqVn8lF4x0gxg=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GlC9O/CjJA8VfS4H2Rm0aXc/BArYKwos7bIVpAfTXokQy3/XWLD/eF92Z6baf7c9ZScSdvijzHfeCbRr/4Mo25WwrBkdLWFcQlWh5w8xMIsD+eEZB+94TlNvMacHSwqX2iuM97jxijBxAU3Uvqyv4V5tTO+ePhQlXphdVXMajwQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinera.com; spf=pass smtp.mailfrom=infinera.com; dkim=pass (2048-bit key) header.d=infinera.com header.i=@infinera.com header.b=J49V94wM; arc=fail smtp.client-ip=40.107.244.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinera.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infinera.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JKE3jn9qtiG/1VdrfVh1Gm0h2xxpCl5SCv8Od0cbCTpeReMB/KslrMQCdKjCxITDGxFLAEhwFfm2OpwKY2Mxv7BB3BlU3EhoVedHNsqu05JayTSY14EL1gG7o34DWuu8nSYBQmCdOEa8+ci8X+4faEjPRVA8OAB/Z1iazAhH5EEEnW3NxmwDKvEsaSmKYOLH2SX1bnGQkhGd7D8F1mREweTyEGIC/PpuqxYkIKCxOB4jV/HlARWO6wvJlU3G/fDoDm9xiAWOLLDu3KhWt4YEEpQHk2IcIkxEGPJ//o50WB/UYsp5b/0G8lDz+XEEHolGMGn8l3cL1Clh+6+VabB/kA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tMTis0W114PSQ3rg0hs1TXbp5r0KXYu2ZlBKpamkEp8=;
+ b=ZjHHUbUaLTMQOZDTt5B7T9YfYfz5PxP7oB9nON5XKuLS6V9D3JBYjWwf/KAOZLRvdWBUieuHMi2QvX32AH7g878+qn5Eia4icDJfLQYhPg+xeNLQkyWpPYWRWISPMq7viGzTkD4oBPmaWddq66xRQfCweum6T/GCU9aX6TsP7zCAZIJOhwVaoQHoK+9fLYCWWaVNdW7rfcr4z3qcb8nTIYK1ROC2EW2qNc6S4A198pYxnicoPCxhRjcCV6tx4ctN3HX62ZgpyRmMW1zJmmvd5Z2UOGTleST/63t54aLJ7Q4x0YfqfP1H1dzWvocUQ+IaSzjhZNj9uEuo0rDwXfZG/g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 8.4.225.30) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=infinera.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=infinera.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infinera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tMTis0W114PSQ3rg0hs1TXbp5r0KXYu2ZlBKpamkEp8=;
+ b=J49V94wMuZW4Vp/znOfXW8fGsGpgTRAB0vvdo1qHmJDiZN9bS8e9lscupM0AXjIOji7mxAA0txihE3gg7uuc4M6YHALzLv7WQhKa5+3lHgSg3c8wHF4MTSk/cck3WXzKiwifBcvyKo9EvxKT559cnEMl3kygwHsVfWzFnw/L//e6AvirpFc8nagh1utphW7/zz3xWSf8EsZo00uWTDv4rhrwXTnFiG/sH0TuB8+lNakY14DNsJMZJgfJAEiso536ZPgnrsi7RmDULsYYAp9AFMUuv/3y9kdJKPDSt7M4KfwEfm5tjom9Ej+893W8WgNSfm8xpGjy8xHQsSZv3bx7oA==
+Received: from MW4PR04CA0041.namprd04.prod.outlook.com (2603:10b6:303:6a::16)
+ by DS4PPF67D158296.namprd10.prod.outlook.com (2603:10b6:f:fc00::d23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8746.40; Mon, 2 Jun
+ 2025 07:51:38 +0000
+Received: from SJ1PEPF000023D5.namprd21.prod.outlook.com
+ (2603:10b6:303:6a:cafe::4e) by MW4PR04CA0041.outlook.office365.com
+ (2603:10b6:303:6a::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.31 via Frontend Transport; Mon,
+ 2 Jun 2025 07:51:38 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 8.4.225.30)
+ smtp.mailfrom=infinera.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=infinera.com;
+Received-SPF: Pass (protection.outlook.com: domain of infinera.com designates
+ 8.4.225.30 as permitted sender) receiver=protection.outlook.com;
+ client-ip=8.4.225.30; helo=owa.infinera.com; pr=C
+Received: from owa.infinera.com (8.4.225.30) by
+ SJ1PEPF000023D5.mail.protection.outlook.com (10.167.244.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8835.2 via Frontend Transport; Mon, 2 Jun 2025 07:51:38 +0000
+Received: from sv-ex16-prd.infinera.com (10.100.96.229) by
+ sv-ex16-prd.infinera.com (10.100.96.229) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 2 Jun 2025 00:51:37 -0700
+Received: from sv-smtp-pd1.infinera.com (10.100.98.81) by
+ sv-ex16-prd.infinera.com (10.100.96.229) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Mon, 2 Jun 2025 00:51:37 -0700
+Received: from se-metroit-prd1.infinera.com ([10.210.32.58]) by sv-smtp-pd1.infinera.com with Microsoft SMTPSVC(10.0.17763.1697);
+	 Mon, 2 Jun 2025 00:51:37 -0700
+Received: from se-jocke-lx.infinera.com (se-jocke-lx.infinera.com [10.210.73.25])
+	by se-metroit-prd1.infinera.com (Postfix) with ESMTP id A9F04F403D5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 09:51:36 +0200 (CEST)
+Received: by se-jocke-lx.infinera.com (Postfix, from userid 1001)
+	id A0475600B581; Mon, 02 Jun 2025 09:51:36 +0200 (CEST)
+From: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+To: <linux-fsdevel@vger.kernel.org>
+CC: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+Subject: [PATCH v6] block: support mtd:<name> syntax for block devices
+Date: Mon, 2 Jun 2025 09:50:40 +0200
+Message-ID: <20250602075131.3042760-1-joakim.tjernlund@infinera.com>
+X-Mailer: git-send-email 2.49.0
+In-Reply-To: <202505282035.6vfhJHYl-lkp@intel.com>
+References: <202505282035.6vfhJHYl-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <xu.xin16@zte.com.cn>
-To: <lorenzo.stoakes@oracle.com>
-Cc: <akpm@linux-foundation.org>, <viro@zeniv.linux.org.uk>,
-        <brauner@kernel.org>, <jack@suse.cz>, <Liam.Howlett@oracle.com>,
-        <vbabka@suse.cz>, <jannh@google.com>, <pfalcato@suse.de>,
-        <david@redhat.com>, <chengming.zhou@linux.dev>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <shr@devkernel.io>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MyAzLzRdIG1tOiBwcmV2ZW50IEtTTSBmcm9tIGJyZWFraW5nIFZNQSBtZXJnaW5nIGZvciBuZXcgVk1Bcw==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 55270TBw046379
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 683D4C19.000/4b9l9P2lN3z4xVct
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-OriginalArrivalTime: 02 Jun 2025 07:51:37.0674 (UTC) FILETIME=[2B3EA2A0:01DBD393]
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D5:EE_|DS4PPF67D158296:EE_
+X-MS-Office365-Filtering-Correlation-Id: 28575b37-109f-49ed-f1fb-08dda1aa4dee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zIeiGquVeOH2XdmyZVuOf3spDl4s9PjDFfJLTHQ5ts6yDMy+lx4bFIYqsvir?=
+ =?us-ascii?Q?SbpqlVPW/dJJJwwL6LcmrnqVSLDngu0p+bMmxPBNuYWb/irXPiBV4DZiSOIL?=
+ =?us-ascii?Q?6XswpSM3HTvtPl88n4D233dqlC/2x/ZWsxZ6BYEFV/MRniFQKVzijKQfcE4d?=
+ =?us-ascii?Q?Bj83TxyRYB+V76XdQA9Vdp97lGaTRX+k4Cc75eVTAWZM3snqvSbHKmh0/2mN?=
+ =?us-ascii?Q?0l+SmrORddJjqyMiXPK+YVq8T8UjOGM5vTiD1e3b1k8oTVqhh9ciC4nY7Y7J?=
+ =?us-ascii?Q?2s4h0sLoHgo8i5NmjkUcXeVZe0GwN6rreFSGp0J6FO7L+UciQLaMWAwBnRvR?=
+ =?us-ascii?Q?+Vmi5i6On1Pn/keWQcTt8RithHrViCfrwbh6vVUotSojcT9D68XCzYLLLLON?=
+ =?us-ascii?Q?oR0VZSqJJ0Rvt8Z7AhmxWQQFzswJuxbQUAel9DmUkVp8BB0uBLNBiYh41Sdg?=
+ =?us-ascii?Q?llm3K3Og+O4W32op22odhWKxbno+eWSSIQdDfaEDFZjyfKHcIB08Xok4g0of?=
+ =?us-ascii?Q?xn3P0h7rADbVPNDnows8MNU81hkk2inJ6/QjKuySmAnuLJQi2Yt335Oimnia?=
+ =?us-ascii?Q?4og7jfBsnvxLBeRJPgTfWdYWB+59lFnkik1t/hZHq+Naijl0omHe7zBjN/7x?=
+ =?us-ascii?Q?/X+EpPSldZzoiRxlDfmwN6IGRiM90k22ZyT2akL2gY+dfELS9Ng6L/td6zi7?=
+ =?us-ascii?Q?h6A4Crglxa42RGssxWQvLrHxafTsf+L1IqPtNrmlRz+zYpJj1CAWxvI14+zX?=
+ =?us-ascii?Q?cD5F76RTP2bjqUufx5uyAsR3YB9Ts3z4XVeWOpfdxSB9Ybm0olRZDde0KrVB?=
+ =?us-ascii?Q?m5otB8UXda8/SFme1aUZDgD9Ad0WogawD3oK8E6G8dRHHXZazwkiKQT09yyl?=
+ =?us-ascii?Q?hGZMrIADZjP+FhA6lR77QKR0xRG6I1Rb4sq6+zde01kB/ymCPHaPYKEjuoS8?=
+ =?us-ascii?Q?WpvB36qaECULALY9Utt5GFhNIuR2aFb62OLFrvyp7SyGoNW/5RB13aVRQCyw?=
+ =?us-ascii?Q?B0Ris8UehjqkJu6WrzpO0qLDrqZDKBZ8/fJqBnNdwcsXmFOkEd1zOBjiVQPI?=
+ =?us-ascii?Q?W4LVwiVlPJH+URbNIiRJ3lgOO0hX0Xwn1iQ1jEENMK70yztxqsVEeH4kxT62?=
+ =?us-ascii?Q?9LE7gEufOkB6fSuIXRTC7zkQKzBc+sBExSI5oB8zax8FMFe81IETEe7gUIqg?=
+ =?us-ascii?Q?tBd3WpHUAil7yGdRRDOURF/5R1r1ECBMrs0k454oEWQPCJ6v5eVJar7NRGLS?=
+ =?us-ascii?Q?rrTqWKRvpMohf0jmUeIBjWFD6WFAfLDSt3ue3b2z7UiWcW38GnITYc/eAYUA?=
+ =?us-ascii?Q?TmvW1PjE0llx7xKLKYb/Pj6M2JeY0yWM5azpyffpLmcG/hwjoxnvzhOIIQIC?=
+ =?us-ascii?Q?aao1nL6z0xb41+PjVTmOnuE1AwhgWHLaRS1kYSf26MfRSPOsYZiTqg09M/yH?=
+ =?us-ascii?Q?ob/W6DF+5guWaXhE1TT+N6lvY6xSm+F1D8wTBj+IhhnhkIeSKNmwwDT5s5lL?=
+ =?us-ascii?Q?B8rV5H0EKY/9Yt6tA94YWKjFRksF0/y2s9Ds?=
+X-Forefront-Antispam-Report:
+	CIP:8.4.225.30;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:owa.infinera.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: infinera.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Jun 2025 07:51:38.0320
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28575b37-109f-49ed-f1fb-08dda1aa4dee
+X-MS-Exchange-CrossTenant-Id: 285643de-5f5b-4b03-a153-0ae2dc8aaf77
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=285643de-5f5b-4b03-a153-0ae2dc8aaf77;Ip=[8.4.225.30];Helo=[owa.infinera.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023D5.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS4PPF67D158296
 
-> If a user wishes to enable KSM mergeability for an entire process and all
-> fork/exec'd processes that come after it, they use the prctl()
-> PR_SET_MEMORY_MERGE operation.
-> 
-> This defaults all newly mapped VMAs to have the VM_MERGEABLE VMA flag set
-> (in order to indicate they are KSM mergeable), as well as setting this flag
-> for all existing VMAs and propagating this across fork/exec.
-> 
-> However it also breaks VMA merging for new VMAs, both in the process and
-> all forked (and fork/exec'd) child processes.
-> 
-> This is because when a new mapping is proposed, the flags specified will
-> never have VM_MERGEABLE set. However all adjacent VMAs will already have
-> VM_MERGEABLE set, rendering VMAs unmergeable by default.
-> 
-> To work around this, we try to set the VM_MERGEABLE flag prior to
-> attempting a merge. In the case of brk() this can always be done.
-> 
-> However on mmap() things are more complicated - while KSM is not supported
-> for MAP_SHARED file-backed mappings, it is supported for MAP_PRIVATE
-> file-backed mappings.
-> 
-> These mappings may have deprecated .mmap() callbacks specified which could,
-> in theory, adjust flags and thus KSM eligibility.
-> 
-> So we check to determine whether this is possible. If not, we set
-> VM_MERGEABLE prior to the merge attempt on mmap(), otherwise we retain the
-> previous behaviour.
-> 
-> This fixes VMA merging for all new anonymous mappings, which covers the
-> majority of real-world cases, so we should see a significant improvement in
-> VMA mergeability.
-> 
-> For MAP_PRIVATE file-backed mappings, those which implement the
-> .mmap_prepare() hook and shmem are both known to be safe, so we allow
-> these, disallowing all other cases.
-> 
-> Also add stubs for newly introduced function invocations to VMA userland
-> testing.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> Fixes: d7597f59d1d3 ("mm: add new api to enable ksm per process") # please no backport!
-> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+This enables mounting, like JFFS2, MTD devices by "label":
+   mount -t squashfs mtd:appfs /tmp
+and cmdline argument:
+   root=mtd:rootfs
 
+where mtd:appfs comes from:
+ # >  cat /proc/mtd
+dev:    size   erasesize  name
+ ...
+mtd22: 00750000 00010000 "appfs"
 
-Thanks, everything looks clearer to me.
-Reviewed-by: Xu Xin <xu.xin16@zte.com.cn>
+Signed-off-by: Joakim Tjernlund <joakim.tjernlund@infinera.com>
+---
 
+ - kernel test bot found white space issues, fix these.
+ block/bdev.c | 21 ++++++++++++++++++---
+ 1 file changed, 18 insertions(+), 3 deletions(-)
 
+diff --git a/block/bdev.c b/block/bdev.c
+index 889ec6e002d7..0e53ce99481b 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -17,6 +17,7 @@
+ #include <linux/module.h>
+ #include <linux/blkpg.h>
+ #include <linux/magic.h>
++#include <linux/mtd/mtd.h>
+ #include <linux/buffer_head.h>
+ #include <linux/swap.h>
+ #include <linux/writeback.h>
+@@ -1075,9 +1076,23 @@ struct file *bdev_file_open_by_path(const char *path, blk_mode_t mode,
+ 	dev_t dev;
+ 	int error;
+ 
+-	error = lookup_bdev(path, &dev);
+-	if (error)
+-		return ERR_PTR(error);
++#ifdef CONFIG_MTD_BLOCK
++	if (!strncmp(path, "mtd:", 4)) {
++		struct mtd_info *mtd;
++
++		/* mount by MTD device name */
++		pr_debug("path name \"%s\"\n", path);
++		mtd = get_mtd_device_nm(path + 4);
++		if (IS_ERR(mtd))
++			return ERR_PTR(-EINVAL);
++		dev = MKDEV(MTD_BLOCK_MAJOR, mtd->index);
++	} else
++#endif
++	{
++		error = lookup_bdev(path, &dev);
++		if (error)
++			return ERR_PTR(error);
++	}
+ 
+ 	file = bdev_file_open_by_dev(dev, mode, holder, hops);
+ 	if (!IS_ERR(file) && (mode & BLK_OPEN_WRITE)) {
+-- 
+2.49.0
 
-
-
-> ---
->  include/linux/ksm.h              |  8 +++---
->  mm/ksm.c                         | 18 ++++++++-----
->  mm/vma.c                         | 44 ++++++++++++++++++++++++++++++--
->  tools/testing/vma/vma_internal.h | 11 ++++++++
->  4 files changed, 70 insertions(+), 11 deletions(-)
-> 
-> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
-> index d73095b5cd96..51787f0b0208 100644
-> --- a/include/linux/ksm.h
-> +++ b/include/linux/ksm.h
-> @@ -17,8 +17,8 @@
->  #ifdef CONFIG_KSM
->  int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
->  		unsigned long end, int advice, unsigned long *vm_flags);
-> -
-> -void ksm_add_vma(struct vm_area_struct *vma);
-> +vm_flags_t ksm_vma_flags(const struct mm_struct *mm, const struct file *file,
-> +			 vm_flags_t vm_flags);
->  int ksm_enable_merge_any(struct mm_struct *mm);
->  int ksm_disable_merge_any(struct mm_struct *mm);
->  int ksm_disable(struct mm_struct *mm);
-> @@ -97,8 +97,10 @@ bool ksm_process_mergeable(struct mm_struct *mm);
->  
->  #else  /* !CONFIG_KSM */
->  
-> -static inline void ksm_add_vma(struct vm_area_struct *vma)
-> +static inline vm_flags_t ksm_vma_flags(const struct mm_struct *mm,
-> +		const struct file *file, vm_flags_t vm_flags)
->  {
-> +	return vm_flags;
->  }
->  
->  static inline int ksm_disable(struct mm_struct *mm)
-> diff --git a/mm/ksm.c b/mm/ksm.c
-> index d0c763abd499..18b3690bb69a 100644
-> --- a/mm/ksm.c
-> +++ b/mm/ksm.c
-> @@ -2731,16 +2731,22 @@ static int __ksm_del_vma(struct vm_area_struct *vma)
->  	return 0;
->  }
->  /**
-> - * ksm_add_vma - Mark vma as mergeable if compatible
-> + * ksm_vma_flags - Update VMA flags to mark as mergeable if compatible
->   *
-> - * @vma:  Pointer to vma
-> + * @mm:       Proposed VMA's mm_struct
-> + * @file:     Proposed VMA's file-backed mapping, if any.
-> + * @vm_flags: Proposed VMA"s flags.
-> + *
-> + * Returns: @vm_flags possibly updated to mark mergeable.
->   */
-> -void ksm_add_vma(struct vm_area_struct *vma)
-> +vm_flags_t ksm_vma_flags(const struct mm_struct *mm, const struct file *file,
-> +			 vm_flags_t vm_flags)
->  {
-> -	struct mm_struct *mm = vma->vm_mm;
-> +	if (test_bit(MMF_VM_MERGE_ANY, &mm->flags) &&
-> +	    __ksm_should_add_vma(file, vm_flags))
-> +		vm_flags |= VM_MERGEABLE;
->  
-> -	if (test_bit(MMF_VM_MERGE_ANY, &mm->flags))
-> -		__ksm_add_vma(vma);
-> +	return vm_flags;
->  }
->  
->  static void ksm_add_vmas(struct mm_struct *mm)
-> diff --git a/mm/vma.c b/mm/vma.c
-> index 7ebc9eb608f4..3e351beb82ca 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -2490,7 +2490,6 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
->  	 */
->  	if (!vma_is_anonymous(vma))
->  		khugepaged_enter_vma(vma, map->flags);
-> -	ksm_add_vma(vma);
->  	*vmap = vma;
->  	return 0;
->  
-> @@ -2593,6 +2592,40 @@ static void set_vma_user_defined_fields(struct vm_area_struct *vma,
->  	vma->vm_private_data = map->vm_private_data;
->  }
->  
-> +static void update_ksm_flags(struct mmap_state *map)
-> +{
-> +	map->flags = ksm_vma_flags(map->mm, map->file, map->flags);
-> +}
-> +
-> +/*
-> + * Are we guaranteed no driver can change state such as to preclude KSM merging?
-> + * If so, let's set the KSM mergeable flag early so we don't break VMA merging.
-> + */
-> +static bool can_set_ksm_flags_early(struct mmap_state *map)
-> +{
-> +	struct file *file = map->file;
-> +
-> +	/* Anonymous mappings have no driver which can change them. */
-> +	if (!file)
-> +		return true;
-> +
-> +	/*
-> +	 * If .mmap_prepare() is specified, then the driver will have already
-> +	 * manipulated state prior to updating KSM flags. So no need to worry
-> +	 * about mmap callbacks modifying VMA flags after the KSM flag has been
-> +	 * updated here, which could otherwise affect KSM eligibility.
-> +	 */
-> +	if (file->f_op->mmap_prepare)
-> +		return true;
-> +
-> +	/* shmem is safe. */
-> +	if (shmem_file(file))
-> +		return true;
-> +
-> +	/* Any other .mmap callback is not safe. */
-> +	return false;
-> +}
-> +
->  static unsigned long __mmap_region(struct file *file, unsigned long addr,
->  		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
->  		struct list_head *uf)
-> @@ -2603,6 +2636,7 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
->  	bool have_mmap_prepare = file && file->f_op->mmap_prepare;
->  	VMA_ITERATOR(vmi, mm, addr);
->  	MMAP_STATE(map, mm, &vmi, addr, len, pgoff, vm_flags, file);
-> +	bool check_ksm_early = can_set_ksm_flags_early(&map);
->  
->  	error = __mmap_prepare(&map, uf);
->  	if (!error && have_mmap_prepare)
-> @@ -2610,6 +2644,9 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
->  	if (error)
->  		goto abort_munmap;
->  
-> +	if (check_ksm_early)
-> +		update_ksm_flags(&map);
-> +
->  	/* Attempt to merge with adjacent VMAs... */
->  	if (map.prev || map.next) {
->  		VMG_MMAP_STATE(vmg, &map, /* vma = */ NULL);
-> @@ -2619,6 +2656,9 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
->  
->  	/* ...but if we can't, allocate a new VMA. */
->  	if (!vma) {
-> +		if (!check_ksm_early)
-> +			update_ksm_flags(&map);
-> +
->  		error = __mmap_new_vma(&map, &vma);
->  		if (error)
->  			goto unacct_error;
-> @@ -2721,6 +2761,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  	 * Note: This happens *after* clearing old mappings in some code paths.
->  	 */
->  	flags |= VM_DATA_DEFAULT_FLAGS | VM_ACCOUNT | mm->def_flags;
-> +	flags = ksm_vma_flags(mm, NULL, flags);
->  	if (!may_expand_vm(mm, flags, len >> PAGE_SHIFT))
->  		return -ENOMEM;
->  
-> @@ -2764,7 +2805,6 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
->  
->  	mm->map_count++;
->  	validate_mm(mm);
-> -	ksm_add_vma(vma);
->  out:
->  	perf_event_mmap(vma);
->  	mm->total_vm += len >> PAGE_SHIFT;
-> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
-> index 4505b1c31be1..77b2949d874a 100644
-> --- a/tools/testing/vma/vma_internal.h
-> +++ b/tools/testing/vma/vma_internal.h
-> @@ -1468,4 +1468,15 @@ static inline void fixup_hugetlb_reservations(struct vm_area_struct *vma)
->  	(void)vma;
->  }
->  
-> +static inline bool shmem_file(struct file *)
-> +{
-> +	return false;
-> +}
-> +
-> +static inline vm_flags_t ksm_vma_flags(const struct mm_struct *, const struct file *,
-> +			 vm_flags_t vm_flags)
-> +{
-> +	return vm_flags;
-> +}
-> +
->  #endif	/* __MM_VMA_INTERNAL_H */
-> -- 
-> 2.49.0
 
