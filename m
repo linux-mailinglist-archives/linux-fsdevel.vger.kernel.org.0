@@ -1,97 +1,101 @@
-Return-Path: <linux-fsdevel+bounces-50305-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50306-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFA7ACAB6E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 11:32:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BD1AACAB6F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 11:33:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF3883B5E4B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D31883B85A4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D4E1E1C3F;
-	Mon,  2 Jun 2025 09:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666921DED78;
+	Mon,  2 Jun 2025 09:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/bQqgF/"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SnuDzSsX"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A64A2C3249;
-	Mon,  2 Jun 2025 09:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7B71CDFD5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 09:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748856758; cv=none; b=MVmiRnoiK7VNw7tW8XDZNVC2awvJF6x7oVf7wbX3v1Ej8BYv2Dfl0wxl1+IpqtdLjzeN/7Go8J/3xCBPcJk83s5RsT3cBJV3rtaGyvZaK0JR2D3iftM56YqC5Ned01KgiR1l+Dcvr6//J89k+4WYJB6IpoMQ1qwp++ydshKms50=
+	t=1748856767; cv=none; b=ZPJ8mgnySg3/jQKVzsVn+Z2JsZIayANv11Fc/GQVnqF/P82MS/iF0JcBnieAY0zTiHRJ1bv2UIjSq39ZpufTmMXBcVmLZx68Fis6HVz5X2sirVlScN5hKenLRSCnsGMDsl8Ky1MEogv2uHaWXDjEm6S9Ekyhl9djmEKIsoaSkig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748856758; c=relaxed/simple;
-	bh=nr4WqDvry9Cej4Mt316h/Dzw69D+4TInCxHLquLuXZM=;
+	s=arc-20240116; t=1748856767; c=relaxed/simple;
+	bh=1X4L7u/3s7ZJTyFnSRfmV19dbdOdnbPxBE8rxS+z6HY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Za9N0C7xWG0iESfskk+vr255t3GUWFJlU+CGLHBcqsHv9okAwNS+89ARHM1bAqd33VawLSxE2kD6pxewQNq6RyTCiuzKP7kxhaLGruSOZREIk0nnbMbqdUxrRMqaKvWKi1niB21wbixkDEjZGOoEpTU+z9dZEopRok0m3EppFZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/bQqgF/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7010C4CEEB;
-	Mon,  2 Jun 2025 09:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748856758;
-	bh=nr4WqDvry9Cej4Mt316h/Dzw69D+4TInCxHLquLuXZM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=uE04tmxHSlcEKS+zf6o5ojR+skUflYyFFwKVZN3A05e9y7UuVubQW5V8KmndklK/4og5H7MtQmBRlSucOyZUa7n45S7/LYDlIPI2nDp1VAhBmxiQ2jEiu0T2yS4STtK2fy/76idnpgdvQB3fKG/nz+PcBmffYkEbLZnpyp112N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SnuDzSsX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDFEFC4CEEB;
+	Mon,  2 Jun 2025 09:32:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1748856767;
+	bh=1X4L7u/3s7ZJTyFnSRfmV19dbdOdnbPxBE8rxS+z6HY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b/bQqgF/D2RMhGm2dsGYeYPHlX/2BpeQ+jCGtifH5sJXlzICBeiNAFBIKRuF2HRvL
-	 BmYTwVWy08M+Dg8ye38PD44v7aAfkEg7ctXRbjzRXEF/qdnObtlDr3ImqQfI87qaJ3
-	 cNqaIZ6zgs1NPnmPgdnqiVZfmwDKwA9ct77XcGzruvspCMdpbXUWF7D8ePweEiiYNx
-	 5pKzOUsbXd0LyRc5L9jkbtZX1gyQ7XzLbyQYpZS2E7RmvkDA24gHX2OcFqXbxEiK1p
-	 DknJP2rB9A1lm9w69qeB3cOaphrvnH7T1L3cYQFtfC9SHn5MdA7I3CO68KtVAB9zJ0
-	 ERHbtYy+4ubtw==
-Date: Mon, 2 Jun 2025 11:32:30 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>, 
-	Song Liu <song@kernel.org>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, 
-	ast@kernel.org, daniel@iogearbox.net, martin.lau@linux.dev, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, gnoack@google.com, Tingmao Wang <m@maowtm.org>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-Message-ID: <20250602-hagel-poliklinisch-922154e2202d@brauner>
-References: <20250529183536.GL2023217@ZenIV>
- <CAPhsuW7LFP0ddFg_oqkDyO9s7DZX89GFQBOnX=4n5mV=VCP5oA@mail.gmail.com>
- <20250529201551.GN2023217@ZenIV>
- <CAPhsuW5DP1x_wyzT1aYjpj3hxUs4uB8vdK9iEp=+i46QLotiOg@mail.gmail.com>
- <20250529214544.GO2023217@ZenIV>
- <CAPhsuW5oXZVEaMwNpSF74O7wZ_f2Qr_44pu9L4_=LBwdW5T9=w@mail.gmail.com>
- <20250529231018.GP2023217@ZenIV>
- <CAPhsuW6-J+NUe=jX51wGVP=nMFjETu+1LUTsWZiBa1ckwq7b+w@mail.gmail.com>
- <20250530.euz5beesaSha@digikod.net>
- <20250530184348.GQ2023217@ZenIV>
+	b=SnuDzSsXDF5lcPy7XXtUZhnS43moNRjo+Bi2x56NDJkDWHnGFLDdqg7ncrIywMhqP
+	 OeUdJ9rsT580IdYA0a/FlHNIv2Yt6GJtADQypLqH6r7o3KEfnVshz30K651FWbbYXS
+	 /exaRk+BvospWnmK6MbYwxKbY+cSYSBisKrHYiBo=
+Date: Mon, 2 Jun 2025 11:32:44 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Luca Boccassi <bluca@debian.org>, stable@kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: Please consider backporting coredump %F patch to stable kernels
+Message-ID: <2025060211-egotistic-overnight-9d10@gregkh>
+References: <CAMw=ZnT4KSk_+Z422mEZVzfAkTueKvzdw=r9ZB2JKg5-1t6BDw@mail.gmail.com>
+ <20250602-vulkan-wandbild-fb6a495c3fc3@brauner>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250530184348.GQ2023217@ZenIV>
+In-Reply-To: <20250602-vulkan-wandbild-fb6a495c3fc3@brauner>
 
-On Fri, May 30, 2025 at 07:43:48PM +0100, Al Viro wrote:
-> On Fri, May 30, 2025 at 02:20:39PM +0200, Mickaël Salaün wrote:
-> 
-> > Without access to mount_lock, what would be the best way to fix this
-> > Landlock issue while making it backportable?
+On Mon, Jun 02, 2025 at 11:09:05AM +0200, Christian Brauner wrote:
+> On Fri, May 30, 2025 at 10:44:16AM +0100, Luca Boccassi wrote:
+> > Dear stable maintainer(s),
 > > 
-> > > 
-> > > If we update path_parent in this patchset with choose_mountpoint(),
-> > > and use it in Landlock, we will close this race condition, right?
+> > The following series was merged for 6.16:
 > > 
-> > choose_mountpoint() is currently private, but if we add a new filesystem
-> > helper, I think the right approach would be to expose follow_dotdot(),
-> > updating its arguments with public types.  This way the intermediates
-> > mount points will not be exposed, RCU optimization will be leveraged,
-> > and usage of this new helper will be simplified.
+> > https://lore.kernel.org/all/20250414-work-coredump-v2-0-685bf231f828@kernel.org/
+> > 
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c57f07b235871c9e5bffaccd458dca2d9a62b164
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=95c5f43181fe9c1b5e5a4bd3281c857a5259991f
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b5325b2a270fcaf7b2a9a0f23d422ca8a5a8bdea
+> > 
+> > This allows the userspace coredump handler to get a PIDFD referencing
+> > the crashed process.
+> > 
+> > We have discovered that there are real world exploits that can be used
+> > to trick coredump handling userspace software to act on foreign
+> > processes due to PID reuse attacks:
+> > 
+> > https://security-tracker.debian.org/tracker/CVE-2025-4598
+> > 
+> > We have fixed the worst case scenario, but to really and
+> > comprehensively fix the whole problem we need this new %F option. We
+> > have backported the userspace side to the systemd stable branch. Would
+> > it be possible to backport the above 3 patches to at least the 6.12
+> > series, so that the next Debian stable can be fully covered? The first
+> > two are small bug fixes so it would be good to have them, and the
+> > third one is quite small and unless explicitly configured in the
+> > core_pattern, it will be inert, so risk should be low.
 > 
-> IMO anything that involves struct nameidata should remain inside
-> fs/namei.c - something public might share helpers with it, but that's
+> I agree that we should try and backport this if Greg agrees we can do
+> this. v6.15 will be easy to do. Further back might need some custom work
+> though. Let's see what Greg thinks.
 
-Strongly agree.
+Yes, seems like a good thing to backport to at least 6.12.y if possible.
+
+Is it just the above 3 commits?
+
+thanks,
+
+greg k-h
 
