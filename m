@@ -1,89 +1,168 @@
-Return-Path: <linux-fsdevel+bounces-50286-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7758DACA90D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 07:38:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81D7DACA9A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB3017A90F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 05:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D7E188DB1F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 07:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76B9188A0E;
-	Mon,  2 Jun 2025 05:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A1619F49E;
+	Mon,  2 Jun 2025 06:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oVCpeUjQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QN6rN5Ij"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D653F49620;
-	Mon,  2 Jun 2025 05:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A0828EC;
+	Mon,  2 Jun 2025 06:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748842689; cv=none; b=JqFVTFNWeK8++OzbZiH/UHI9qoAH6Y6KJnDwHwO8oiaHTVCQSLS4fk2dWxjgrWIe27Y9nenIrQgu0hnRWaYLThv6F9+bykluNG+trS0duRM+9SZI4NEfF/mbhPzyH8NLN3apNECqtKF46/Jv2W34MDDXTUiA9Oeu1EfPOFUz6HI=
+	t=1748847593; cv=none; b=VDzJjljm7Ji2PAFgy0hmDOQWON1Uob5T2wVw+W4Y9aH3sQ8sqNq0+nJpav9vp4oa4vjtcNcAfFaevDT7ULb9qcGSVIjTttbTJJ7DAjwZ9lG6PUGITzqIhzuAZ4nPlXTW3VzTwW8ccgLcjRxEetFmH9Uli/Zd/45dxxnWDG3K6qg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748842689; c=relaxed/simple;
-	bh=zeVbyjEAnVoVMDMpIp4YEgz9/e3C0hxnp+7Mi2Au7ik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DXaTBu+3B7vkCgFbiR8i/rFa+wb+PcC+3XXqgQ1KzYA5BiKdrril1cJ4DjjLbkqNwukmjNfZOZhxVolAASHZeimkr7JD+2WOvwu2VGhtWa4c/hXn7SnIWVfeVKWicCqxTvAzs0v4oigRXX5ZRpW+RAaxplAjEQv9M1aN92sZb+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oVCpeUjQ; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Z1Qs0EfJoik11zifvOVUAv4VJ4xFrYTwdWLAEsLF+Vg=; b=oVCpeUjQ70+FuTy639XuF2lvec
-	tJn00w+2y9n8twgu4Snu7/jUobdHYsflTqABJIwHvAHwxDecsx+AqzHpxRGV8rqnxV9Y4Iqf2WBJd
-	aGjg3Lzlw3ZneWn3Pq/kyAB3RryxxRdiWK35QRTxZgO7Kskd5KxzVhEeO23Gg5wA+KiNRD8Wvi9Lf
-	MJEKcMMNutiZFVthoIwkNccpLeEAIdmTQ6FDqhL2m45f3fzd5Lf4EPvWdeZQFHtg1ox1qSeivAfu5
-	cBtNo7Cc70vS/nYwViSPc/4Qp6fpLhxDQtJManb5ZBiwEwhf4XiaVOhIL9dwLFn/SlJxZx7+tTM6E
-	8gky2Z9Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uLxs7-00000006lXa-2525;
-	Mon, 02 Jun 2025 05:38:07 +0000
-Date: Sun, 1 Jun 2025 22:38:07 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Yafang Shao <laoar.shao@gmail.com>,
-	Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
-	cem@kernel.org, linux-xfs@vger.kernel.org,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
- data corruption
-Message-ID: <aD04v9dczhgGxS3K@infradead.org>
-References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
- <aDfkTiTNH1UPKvC7@dread.disaster.area>
+	s=arc-20240116; t=1748847593; c=relaxed/simple;
+	bh=jxLvdSQfjpjraAy1U7bB2SZvmoQH0xC1M0IxT0RSiqk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eoba0zXooE5n2gRyPd35n0IqfqddVNEVH5Nuf0uqC+7EBMwnUJRac4XTilpl+ezK+o6VXa480+54XGZioVbYXooIq3Vg2g7uO7lHyCkjVSx/bcHqHBFx3pXj9VDSg/r+xViF2/etzIqkznYdUFKfOPpfmlyC95jH4H13OIDGQbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QN6rN5Ij; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-312028c644bso3160700a91.0;
+        Sun, 01 Jun 2025 23:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748847591; x=1749452391; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u0V/AOR2l4gEGuJ+3dcsr5h2QAW63hL+ESB9rqV8Im8=;
+        b=QN6rN5IjT13Ml20Y4xp/djJclaysXztXRNOwfjfnlVnpz74ouIXUGjkZYwRcP3FJYP
+         TvXLjdSmnbK2WfDspXGFfCl1APU21h8crjQ4NARqqWlcZilQPqnUhHymkKZeaQ+djmrT
+         u2amAb8r1aYNTz70ac4WOT9/JkZQu/1uYL81dhh2jghH9nT7L+dmjSOKPchBj6iOl9do
+         nrFedwSlwZraWGhD5fFAs1/pWSHxc/LGfdy8ogbZ6gMNWuaPH3+ATq2RiyFtQ42E45wj
+         cK0BnQPOeCjgyxlNj7/qE176nsF/R03gIdH36Y9VQvAngQbtryhZ1lXQZDnnWCO98fhx
+         glag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748847591; x=1749452391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u0V/AOR2l4gEGuJ+3dcsr5h2QAW63hL+ESB9rqV8Im8=;
+        b=OKuUPYrY0kmtCllAUJtWGWj3USdMWqBithvsZoKOHbcS7NJJFdu56T168ykUB6yerx
+         55qcrpGMJYRjv65Sj0k/IrZHvlTTLkiG7I+s2yhppEx/dSSdEt2M1P/Q+JMlTScgLkkQ
+         BtQk5SPQYSv0FHaclPT2xzLLDwcCP2oLjIaScf7655bGYZzAATeu2Vyf9wg6/Mu7JVw8
+         62hoW8x/93twDUWGq6Z48C/Iw5Jgr4HBzFScYjg0V+Uyhq0KCE++DQInQy3NU14YipB+
+         354SQA37I8Ed3+H0gWZ7B6bLKvy3GY+TDH/D0yraaXDz1HPWCNQ3skoncdBgxYbNlQ6o
+         /fhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVYgY3ZZj+iel1x5eX82fQaaiDiyFIoQr4zGGNuTgRr9FNd+fGsVWvZAcmfKnTmimBb/FPKSUVQlZqhzDGbGQ==@vger.kernel.org, AJvYcCXCebsuPNjoJLkGqA87cBy/pHO0n0/CIjIBO0Q2LBnasSJLfFn8DxjJT6a0vVVfD5QjYDB/bnnZn9Id@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW0bUfGg48MsYop/7LEZXBzKBYd+1s057XP7YiDyFAx1MItF0S
+	z+41dujFRcFIH6SxkHN/eF4bvwWLRE7gUMn6i7tIqF6zO0cESk6bdfQvnfnPMZwELCQAEvIH7ON
+	lqP/egGEQIKOVEhdG3f59rgedVql1VCs=
+X-Gm-Gg: ASbGncsEhaLSRPeT8Iw7YluhMrKjepVrdRt8X0seaf4ZZNS8TECVn/xqcn4EGiX4O6y
+	2FUs2YNnw1zJ/r48w5h4nZxx3xcRvgQOPYddIGVsZaFOO0XbK0GOE4OY2TQvjPdSJQUHCE2cY+h
+	9ZauTpBMmTavQ98jXWxmzZqcZhu388X+jD
+X-Google-Smtp-Source: AGHT+IERk5GYGEpSNc9KP6Z9MT28yUqK4OvLAax/XRbjbPtwKS6nGhIe2/S80AeyBU1r0LTh3iFkj0gMnAa4rxc+nPo=
+X-Received: by 2002:a17:90b:2ecc:b0:311:ff02:3fcc with SMTP id
+ 98e67ed59e1d1-3127c6c6ad0mr13812170a91.14.1748847591317; Sun, 01 Jun 2025
+ 23:59:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aDfkTiTNH1UPKvC7@dread.disaster.area>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20250328183359.1101617-1-slava@dubeyko.com> <Z-bt2HBqyVPqA5b-@casper.infradead.org>
+ <202939a01321310a9491eb566af104f17df73c22.camel@ibm.com> <20250401-wohnraum-willen-de536533dd94@brauner>
+ <3eca2c6b9824e5bf9b2535850be0f581f709a3ba.camel@ibm.com> <20250403-quast-anpflanzen-efe6b672fc24@brauner>
+In-Reply-To: <20250403-quast-anpflanzen-efe6b672fc24@brauner>
+From: Ilya Dryomov <idryomov@gmail.com>
+Date: Mon, 2 Jun 2025 08:59:39 +0200
+X-Gm-Features: AX0GCFtDwrseqgbffGSO6a5YyztZ1jKErc5YwysYro0NIaFMkOUetJuzVYKyDHI
+Message-ID: <CAOi1vP957QhFQnvNeJpN+v9zTYEtXaNcHMsZMheeRNNnnYdSKw@mail.gmail.com>
+Subject: Re: [PATCH] ceph: fix variable dereferenced before check in ceph_umount_begin()
+To: Christian Brauner <brauner@kernel.org>
+Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, 
+	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>, "lkp@intel.com" <lkp@intel.com>, 
+	David Howells <dhowells@redhat.com>, Patrick Donnelly <pdonnell@redhat.com>, 
+	"slava@dubeyko.com" <slava@dubeyko.com>, 
+	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
+	"willy@infradead.org" <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 29, 2025 at 02:36:30PM +1000, Dave Chinner wrote:
-> In these situations writeback could fail for several attempts before
-> the storage timed out and came back online. Then the next write
-> retry would succeed, and everything would be good. Linux never gave
-> us a specific IO error for this case, so we just had to retry on EIO
-> and hope that the storage came back eventually.
+On Thu, Apr 3, 2025 at 10:29=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, Apr 01, 2025 at 06:29:06PM +0000, Viacheslav Dubeyko wrote:
+> > On Tue, 2025-04-01 at 12:38 +0200, Christian Brauner wrote:
+> > > On Fri, Mar 28, 2025 at 07:30:11PM +0000, Viacheslav Dubeyko wrote:
+> > > > On Fri, 2025-03-28 at 18:43 +0000, Matthew Wilcox wrote:
+> > > > > On Fri, Mar 28, 2025 at 11:33:59AM -0700, Viacheslav Dubeyko wrot=
+e:
+> > > > > > This patch moves pointer check before the first
+> > > > > > dereference of the pointer.
+> > > > > >
+> > > > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > > > > Closes: https://lore.kernel.org/r/202503280852.YDB3pxUY-lkp@int=
+el.com/
+> > > > >
+> > > > > Ooh, that's not good.  Need to figure out a way to defeat the pro=
+ofpoint
+> > > > > garbage.
+> > > > >
+> > > >
+> > > > Yeah, this is not good.
+> > > >
+> > > > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+> > > > > > index f3951253e393..6cbc33c56e0e 100644
+> > > > > > --- a/fs/ceph/super.c
+> > > > > > +++ b/fs/ceph/super.c
+> > > > > > @@ -1032,9 +1032,11 @@ void ceph_umount_begin(struct super_bloc=
+k *sb)
+> > > > > >  {
+> > > > > >       struct ceph_fs_client *fsc =3D ceph_sb_to_fs_client(sb);
+> > > > > >
+> > > > > > -     doutc(fsc->client, "starting forced umount\n");
+> > > > > >       if (!fsc)
+> > > > > >               return;
+> > > > > > +
+> > > > > > +     doutc(fsc->client, "starting forced umount\n");
+> > > > >
+> > > > > I don't think we should be checking fsc against NULL.  I don't se=
+e a way
+> > > > > that sb->s_fs_info can be set to NULL, do you?
+> > > >
+> > > > I assume because forced umount could happen anytime, potentially, w=
+e could have
+> > > > sb->s_fs_info not set. But, frankly speaking, I started to worry ab=
+out fsc-
+> > >
+> > > No, it must be set. The VFS guarantees that the superblock is still
+> > > alive when it calls into ceph via ->umount_begin().
+> >
+> > So, if we have the guarantee of fsc pointer validity, then we need to c=
+hange
+> > this checking of fsc->client pointer. Or, probably, completely remove t=
+his check
+> > here?
+>
+> If the fsc->client pointer can be NULLed before the mount is shut down
+> then yes. If it can't then the check can be removed completely.
 
-Linux has had differenciated I/O error codes for quite a while.  But
-more importantly dm-multipath doesn't just return errors to the upper
-layer during failover, but is instead expected to queue the I/O up
-until it either has a working path or an internal timeout passed.
+Hi Slava,
 
-In other words, write errors in Linux are in general expected to be
-persistent, modulo explicit failfast requests like REQ_NOWAIT.
+Have you had a chance to follow up on this?  Given the VFS guarantee
+confirmed by Christian we don't need to check fsc and I don't think
+fsc->client is ever NULLed -- the client is created right after fsc is
+allocated in create_fs_client() and destroyed right before fsc is freed
+in destroy_fs_client().  It seems like the check can just be removed.
 
-Which also leaves me a bit puzzled what the XFS metadata retries are
-actually trying to solve, especially without even having a corresponding
-data I/O version.
+Thanks,
 
+                Ilya
 
