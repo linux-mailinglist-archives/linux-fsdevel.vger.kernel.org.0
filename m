@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-50385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50386-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED349ACBC2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 22:13:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20A9EACBC4C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 22:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD2E0172704
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 20:13:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E56AA3A45F3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 20:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6833223316;
-	Mon,  2 Jun 2025 20:13:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05A5224AF3;
+	Mon,  2 Jun 2025 20:29:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AtfJMFb6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jn3Uvl6i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E865579E
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 20:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854281BEF8C
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 20:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748895202; cv=none; b=X+Bp3O3rawROn2kvsN2eFPL1o92yTAZCYBENsZ/gFRQXkOCkuXQE9IftrA02KEOoEfJz8TG9c+qtEWit4D2haSwsI5bGU9gQMHqzwk43tN6pru8czUzpAJHud0HovwLiWOHM+OFdozJYmk0lYKQ/WpmYlgoxnw2uO0sTDRCUijM=
+	t=1748896142; cv=none; b=keeZJ3W8soNlnWNSY1Sl4apm2ydsWkHyPvlB0qG9Trcb6pSpO7pG0KBRrcODHvYMBAxrLZWlNjd8iAK31Ro0wBKQ9HWcEBQJdhzKDvhFo/K7RaQQxN6EHtGBGdsLPW8le1IwDNA7jClTbmLsIFvdvmG2IzES0YhnR5qFjPphEFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748895202; c=relaxed/simple;
-	bh=dYgH6l3af5qbaadPI2dscgIuE+H0ARXJ2qgwrm+ADmI=;
+	s=arc-20240116; t=1748896142; c=relaxed/simple;
+	bh=NaSlojcZ0ifXJIZoD0hyUTGOTRKGEAzb/GTIaXrEKDY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EFKc17tT2rclOVDXGBzJ3UH/JKlwPvYj9G4CWOUIROFCO4VcyksoYWcNqeVqQF1F9e0/pIYvcxzKz596SB+4CXGT8FRVtT1Wh8v7RJ/+0TCA6wI75pOAiZUsvYuA+hvM/LqYvAxZT/3iOFiqjZaBY2KqCRcjjef3L+vjMNM6bvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AtfJMFb6; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=JgmAr55G9dy5Cgf9VK1ahTZO9W1dAI5oz6L+KnBhDOLIrtH3soSvm8YZashDW72FI8WEmOa5469VMqEtGDQ7Xf74XrvzDDKJD3tkq2Qt4kOus/TDM1nhGRlx5eebb/4LkT9EvWLe2KC1otLMl3aesvAduff2RCa0v+dfh2wzb3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jn3Uvl6i; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748895199;
+	s=mimecast20190719; t=1748896138;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=L2fRzpvIq9Ro64GdJ8k47s16Damg2UH127tvBjvm2hA=;
-	b=AtfJMFb6LidzKpE/FbZuS4BeKkojis/FvWI2YpHqj/AbzpgijDOQocpZzaII6EzgOouakb
-	hEdo/H8/FtWSJGZLpFhFsNs+ukon7RtyxzxLKI9DPAT/PhzFkUxiwPO2qGHTYI+q6qoj1e
-	PqpiRXNzuJD7riwIo0misfo5crvgIOI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=i+jLNp1+bBkMPcUNLnkWqh9V3VeeeCz8sfTBLH1Dubg=;
+	b=Jn3Uvl6iJ1w8vvyXHol2S9Sx+n1qazLfc5psTy6GRzs/2QUwAvnqbyckLYz55nKfnRDLlH
+	z/ENmbps+hmFLJ3t+kcTcnVFdqapk1QK4ZEhneST/PjxMStoXcAEm+GGgg7cd0EcTtKOFu
+	jV2tZWQNAggMsNwK8tgdrl5g9PRVrF0=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-682-hSjeA3TVOUCrR1m-cSubDw-1; Mon, 02 Jun 2025 16:13:18 -0400
-X-MC-Unique: hSjeA3TVOUCrR1m-cSubDw-1
-X-Mimecast-MFC-AGG-ID: hSjeA3TVOUCrR1m-cSubDw_1748895197
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451d5600a54so14648395e9.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Jun 2025 13:13:18 -0700 (PDT)
+ us-mta-597-FupivfOzOMipilQTfhAKmg-1; Mon, 02 Jun 2025 16:28:57 -0400
+X-MC-Unique: FupivfOzOMipilQTfhAKmg-1
+X-Mimecast-MFC-AGG-ID: FupivfOzOMipilQTfhAKmg_1748896136
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3a4e9252ba0so2972084f8f.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Jun 2025 13:28:57 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748895197; x=1749499997;
+        d=1e100.net; s=20230601; t=1748896136; x=1749500936;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=L2fRzpvIq9Ro64GdJ8k47s16Damg2UH127tvBjvm2hA=;
-        b=WsEomrtp5TyfSFRzpxFb4cLWdtJo2iX6EfFVhELXUS2LhF/yzfu1t3FUaPfp+OJQwf
-         ZGCQi+qe+fD+ObqLXAc97t1ASrL+N89ua2w0iFXwbR6cxcUlXWwkNucX9U+LW8XeS4Ln
-         gG+evxnBkp1GWot/Ar9Q0JXnUW2cr9T2NRnT6j/leu5o0SU/XuGAkE/lobkdGUg0Cb0j
-         DvoiCx0kFU7YpXlL+b4suvddIKKl4x/3N23u1pNqLVl1AZ7heEleS2+lyFGVGBMvS88w
-         vz0waVpJNedVRwcm1rtA7+Yn/nqDA/HjJH8ZJIZiEBYqVMIQK0uDupJ2ytqLbOU0gOxl
-         5NHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHyzrIbZNbOME9xvzD6VhL30zeHIpfNVDm/tnHHWNCcAVxKzFXyYm6HVWybqF90rRw42mDUZ5ll+UL3QXK@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwRvJGuseFnS7nkYTH/wymEfWKs8ulJfGHLFR2hB26AcCo5YQ/
-	uVczMSOejtasxD6CwIkP6hPh64ilQVxwY7V7tWjnCGJnbHxrj0av1AGJm9NHgu+eK4xj4YJGCMZ
-	iKS+RzyOLLW1fvtmKza+qj4Wpnh6sejuVpLnuZhAtLwphrXRGeyitFM8dEHiO7TYkfW4=
-X-Gm-Gg: ASbGncsYmhEOhF4U8eQiHkiEZsbC/pIzZeepez4PJhvaNBQlnbqTUo2NpKgEhklaEc+
-	bBd6MVuF5N8yFptcHpW1NxQIoW1gD0teCD48DRTldOAjqQ7sAk24TzUaYU6A5620LY4SGnS31g7
-	dB1FPJnOu94c0TGIMCIs6icPu+ODQpLh5Cr74EqT+MblFh0PwY5vbxvZrVapA3ZWVqUDD3jiDuu
-	ZLZ7v+sqdzN+joiDotJFrctQXo66JVjE3pE8UnWNzxt3iqQL2Pfo6bDU9hTnA1oS059Y8Be7qro
-	/thGtfdjMv9Fo3E5NRXVyKgPkCSJHUjw64fYN03eZ6xtssSjk2KPEmXE9zS0C5YOOngpEfHV9Go
-	kNQ376hQw4zsDU8FJQBe+VzPm7tnokN1nnv2LvnE=
-X-Received: by 2002:a05:600c:34cc:b0:441:a715:664a with SMTP id 5b1f17b1804b1-450d657fc48mr128062485e9.20.1748895197175;
-        Mon, 02 Jun 2025 13:13:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH11BXrDuMAIzEqX9WuHxTziGBMSqS8kYX6yOgI2wQ1XPSqok/pAnnVfe2f25ZB0Lml2ZGfRQ==
-X-Received: by 2002:a05:600c:34cc:b0:441:a715:664a with SMTP id 5b1f17b1804b1-450d657fc48mr128061835e9.20.1748895196755;
-        Mon, 02 Jun 2025 13:13:16 -0700 (PDT)
+        bh=i+jLNp1+bBkMPcUNLnkWqh9V3VeeeCz8sfTBLH1Dubg=;
+        b=NcrrNdNKQwnCd+WGZp5ba6babNzZ03LQZ99el/BTLkMbd8PzIdQXTMSTWw1AflukXG
+         16B3oXnCvBxcAGwV4O6vrSuTBolCX1DmWOZLBSw33F40r0L8vZHGUtAC0dxBtZ3SssaJ
+         7FkvPXggP7V6DmDYWW2jIlIa6bkUFlIqrxJcpt2AAw+d7/Wu/En6YXX5bcLGcAIkZnWR
+         IGx46Xdq3sK+A5dkGdMtil0oSUlWRsSZ1ey60dFLgvj2Ic8g/MSm14QTMctqpnP8ao8w
+         kYgNLd4YPlUvLDhAGQd5tNvwz0v14wakpC7RlFhTE1RiVJVnIiprW0irs2sFl8HJ1Q+/
+         HkBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVw2/ck5+om7R1JdXbSG/dPX8OJceMDfihM+rcs16Gtd4j8u4h3mcVxXnPCKBihwHBX9kxSsTeX4/QOm1N@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdYrs0j+l0J1M5IZb7dhCkZVdNIhXR93yfkCv9xQJ6J1yyMaNK
+	ab7BzU3fohi0BdXt0H1VPXOx2YuIbdH2H8ChP+X2QFGWGPuwMXSnarkAKjhFhT4MXshyECwXDFD
+	EhjfKoxI5syV2KId+K1sWDpYSbe4C9kLOZEXDxkqUNLYjQBIklsMVmPEAxs/MqR2m/0A=
+X-Gm-Gg: ASbGnctpwmzXWMwtsuEvnZ2xilcg5ZeDhmbM4x+HLovhZqeq/oHYNBkioHhW2MX6Olu
+	csxbgRGKwB+fWH09GHihMfNGcIcq4ulfHWEZdkqn2IH8TOiQA4mu1KDVglDHhSSw4LmvW/+6NK4
+	QSqzFFDxAZSjZVnNdErbja0+7qULuLDgeKhfmRxCfJW8g+Z3LoxC5Hk+xrckxt6L4XIn1RC6J7b
+	lH2GbXwzfTzneee7ilGulXBrPsoPd/peV0CCtOmGTphUR7YxWQSEsFVaRS9BFmY4d0YhkcL6qwZ
+	sSxxuc/k3TrAFCN11yTeU7WAUA+ICbiExVhtyfXZ2Rh79SCBZWQbtztTA53gtMQi260E2VOXEhV
+	Sp4CRpx+biYBhRmjBGccaFT9YpGzTEC6ZN1j4vLE=
+X-Received: by 2002:a05:6000:1aca:b0:3a0:9dfc:da4 with SMTP id ffacd0b85a97d-3a4f89da7a9mr10341270f8f.42.1748896136163;
+        Mon, 02 Jun 2025 13:28:56 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH/a10XT6j0KvqzZRmd5BI/F1rVt+h8hUFaigZcjYLo+RekVq1Wlju6PqEsxl9YDXkz6lgFsA==
+X-Received: by 2002:a05:6000:1aca:b0:3a0:9dfc:da4 with SMTP id ffacd0b85a97d-3a4f89da7a9mr10341247f8f.42.1748896135802;
+        Mon, 02 Jun 2025 13:28:55 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f34:a300:1c2c:f35e:e8e5:488e? (p200300d82f34a3001c2cf35ee8e5488e.dip0.t-ipconnect.de. [2003:d8:2f34:a300:1c2c:f35e:e8e5:488e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d8000d8csm134568095e9.24.2025.06.02.13.13.11
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00972c1sm16239336f8f.68.2025.06.02.13.28.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 13:13:15 -0700 (PDT)
-Message-ID: <42226b18-7cf5-41e4-8a0b-5b35ee50f119@redhat.com>
-Date: Mon, 2 Jun 2025 22:13:10 +0200
+        Mon, 02 Jun 2025 13:28:55 -0700 (PDT)
+Message-ID: <04a27029-df1e-43a7-8642-15f351121438@redhat.com>
+Date: Mon, 2 Jun 2025 22:28:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,43 +90,28 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] KVM: guest_memfd: Use guest mem inodes instead of
- anonymous inodes
-To: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
- linux-fsdevel@vger.kernel.org
-Cc: aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org,
- amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org,
- aou@eecs.berkeley.edu, bfoster@redhat.com, binbin.wu@linux.intel.com,
- brauner@kernel.org, catalin.marinas@arm.com, chao.p.peng@intel.com,
- chenhuacai@kernel.org, dave.hansen@intel.com, dmatlack@google.com,
- dwmw@amazon.co.uk, erdemaktas@google.com, fan.du@intel.com, fvdl@google.com,
- graf@amazon.com, haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
- ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
- james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
- jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
- jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
- kent.overstreet@linux.dev, kirill.shutemov@intel.com,
- liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
- mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
- michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
- nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
- palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
- pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
- pgonda@google.com, pvorel@suse.cz, qperret@google.com,
- quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
- quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
- quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
- richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
- roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
- steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
- tabba@google.com, thomas.lendacky@amd.com, vannapurve@google.com,
- vbabka@suse.cz, viro@zeniv.linux.org.uk, vkuznets@redhat.com,
- wei.w.wang@intel.com, will@kernel.org, willy@infradead.org,
- xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com,
- yuzenghui@huawei.com, zhiquan1.li@intel.com
-References: <cover.1748890962.git.ackerleytng@google.com>
- <425cd410403e8913b42552d892add6ca543ec869.1748890962.git.ackerleytng@google.com>
+Subject: Re: [RFC 2/3] mm: add STATIC_PMD_ZERO_PAGE config option
+To: Pankaj Raghav <kernel@pankajraghav.com>, Christoph Hellwig <hch@lst.de>,
+ Pankaj Raghav <p.raghav@samsung.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Vlastimil Babka <vbabka@suse.cz>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
+ Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org, linux-block@vger.kernel.org, willy@infradead.org,
+ x86@kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com
+References: <20250527050452.817674-1-p.raghav@samsung.com>
+ <20250527050452.817674-3-p.raghav@samsung.com>
+ <20250602050307.GC21716@lst.de>
+ <aa6fcbdd-5b1f-412c-a5db-f503f8a7af72@pankajraghav.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -174,118 +159,23 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <425cd410403e8913b42552d892add6ca543ec869.1748890962.git.ackerleytng@google.com>
+In-Reply-To: <aa6fcbdd-5b1f-412c-a5db-f503f8a7af72@pankajraghav.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 02.06.25 21:17, Ackerley Tng wrote:
-> guest_memfd's inode represents memory the guest_memfd is
-> providing. guest_memfd's file represents a struct kvm's view of that
-> memory.
-> 
-> Using a custom inode allows customization of the inode teardown
-> process via callbacks. For example, ->evict_inode() allows
-> customization of the truncation process on file close, and
-> ->destroy_inode() and ->free_inode() allow customization of the inode
-> freeing process.
-> 
-> Customizing the truncation process allows flexibility in management of
-> guest_memfd memory and customization of the inode freeing process
-> allows proper cleanup of memory metadata stored on the inode.
-> 
-> Memory metadata is more appropriately stored on the inode (as opposed
-> to the file), since the metadata is for the memory and is not unique
-> to a specific binding and struct kvm.
-> 
-> Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-> Signed-off-by: Fuad Tabba <tabba@google.com>
+On 02.06.25 16:49, Pankaj Raghav wrote:
+> On 6/2/25 07:03, Christoph Hellwig wrote:
+>> Should this say FOLIO instead of PAGE in the config option to match
+>> the symbol protected by it?
+>>
+> I am still discussing how the final implementation should be with David. But I will
+> change the _PAGE to _FOLIO as that is what we would like to expose at the end.
 
-The trailing SOB from Fuag is likely wrong. Probably you wnat
+It's a huge page, represented internally as a folio. No strong opinion, 
+as ...
 
-Co-developed-by: Fuad Tabba <tabba@google.com>
-Signed-off-by: Fuad Tabba <tabba@google.com>
-Signed-off-by: Ackerley Tng <ackerleytng@google.com>
-
-
-> ---
->   include/uapi/linux/magic.h |   1 +
->   virt/kvm/guest_memfd.c     | 134 +++++++++++++++++++++++++++++++------
->   virt/kvm/kvm_main.c        |   7 +-
->   virt/kvm/kvm_mm.h          |   9 ++-
->   4 files changed, 125 insertions(+), 26 deletions(-)
-> 
-> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> index bb575f3ab45e..638ca21b7a90 100644
-> --- a/include/uapi/linux/magic.h
-> +++ b/include/uapi/linux/magic.h
-> @@ -103,5 +103,6 @@
->   #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
->   #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
->   #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
-> +#define GUEST_MEMFD_MAGIC	0x474d454d	/* "GMEM" */
-> 
->   #endif /* __LINUX_MAGIC_H__ */
-> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
-> index b2aa6bf24d3a..1283b85aeb44 100644
-> --- a/virt/kvm/guest_memfd.c
-> +++ b/virt/kvm/guest_memfd.c
-> @@ -1,12 +1,16 @@
->   // SPDX-License-Identifier: GPL-2.0
-> +#include <linux/anon_inodes.h>
->   #include <linux/backing-dev.h>
->   #include <linux/falloc.h>
-> +#include <linux/fs.h>
->   #include <linux/kvm_host.h>
-> +#include <linux/pseudo_fs.h>
->   #include <linux/pagemap.h>
-> -#include <linux/anon_inodes.h>
-> 
->   #include "kvm_mm.h"
-> 
-> +static struct vfsmount *kvm_gmem_mnt;
-> +
->   struct kvm_gmem {
->   	struct kvm *kvm;
->   	struct xarray bindings;
-> @@ -318,9 +322,51 @@ static struct file_operations kvm_gmem_fops = {
->   	.fallocate	= kvm_gmem_fallocate,
->   };
-> 
-> -void kvm_gmem_init(struct module *module)
-> +static const struct super_operations kvm_gmem_super_operations = {
-> +	.statfs		= simple_statfs,
-> +};
-> +
-> +static int kvm_gmem_init_fs_context(struct fs_context *fc)
-> +{
-> +	struct pseudo_fs_context *ctx;
-> +
-> +	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
-> +		return -ENOMEM;
-> +
-> +	ctx = fc->fs_private;
-> +	ctx->ops = &kvm_gmem_super_operations;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct file_system_type kvm_gmem_fs = {
-> +	.name		 = "kvm_guest_memory",
-> +	.init_fs_context = kvm_gmem_init_fs_context,
-> +	.kill_sb	 = kill_anon_super,
-> +};
-> +
-> +static int kvm_gmem_init_mount(void)
-> +{
-> +	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
-> +
-> +	if (WARN_ON_ONCE(IS_ERR(kvm_gmem_mnt)))
-> +		return PTR_ERR(kvm_gmem_mnt);
-
-Hmm, is this WARN_ON_ONCE really warrented?
-
-
-Nothing else jumped at me. I hope some fs experts can take a look as well.
+MMF_HUGE_ZERO_PAGE vs. mm_get_huge_zero_folio vs. get_huge_zero_page vs 
+... :)
 
 -- 
 Cheers,
