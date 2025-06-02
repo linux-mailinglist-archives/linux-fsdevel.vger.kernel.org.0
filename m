@@ -1,49 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-50343-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50344-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 635D6ACB0EC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 16:13:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403DAACB0D3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 16:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB16A1BA7C27
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 14:07:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F291E163C1F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 14:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877D72222DA;
-	Mon,  2 Jun 2025 14:02:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4891231A37;
+	Mon,  2 Jun 2025 14:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sp3N8wjq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K9ffYvv3"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D53230BC3;
-	Mon,  2 Jun 2025 14:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF92231849;
+	Mon,  2 Jun 2025 14:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748872970; cv=none; b=gUZ2DLmnXGhEnxlSac2XluWB/EXXp5qTocMxFcI6cd8+ONAs3vcPKatVDytU1KSYoYqrLy/koSpULa76u4a64twVr6+PyX48VGs3mtZfQh8iwcZaBslr9FNo7yyoAJzrsV3y/MTe6yJWZW2JKUUuPHsFjD5O/wKhTIKog4jlE6k=
+	t=1748872972; cv=none; b=Ll/PDhLjj+b4TwWQfCNCEiJpW4vUrYmAKGKaOe+/RHdYLLca1uA0H+o2Z4A43dtul0rnWifzLJbvHH98DjV8z9XiY82kPUBnPzla/zWaEs9McVAH1UVzugUgLBFoirgYTQSq8hxnHls4ludUxTkgUgv+KGqcZ8JeYAOrMDkoPz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748872970; c=relaxed/simple;
-	bh=hYLRQ8v788ftgkpEhYsLTSyg0Nr10YJX5mZ5C9KFksk=;
+	s=arc-20240116; t=1748872972; c=relaxed/simple;
+	bh=mSZ+Tq+Scvh8C9wum7JJA/yZBWRfnRsmhQedhLJ+MMs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=LdgcSA/xAzdlICyOa3vrWy60OFnvz89w4hFF8aN5VWT2UQzJ0T2GMLPJA5sHVe6AvtI8SoxQ0GWmSAKFzdw8Omi00nMUNfqmF32/FSYDkAGOjnnUQK31816yPkWJCXO53bYp1Mhtp6DSWpte9IUcCwZYpHjZOFwhJt9DcbT7UB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sp3N8wjq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2677C4CEEB;
-	Mon,  2 Jun 2025 14:02:47 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=mW70TKdYASiaj0nlYk+RGGa21d6/insb3g7LL1qU4g5xuz4pVWS1JIIPw15xYsq0NsOjKP9aLzkudv19IprMIdk0aPCgUhQSbE5FwjoUAgi5pB/Bwh5M7mbX02QjdXHH+eICgqcVz7sJ8niJ/Mpq2swzCJf+oD6xQsXTso8lC+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K9ffYvv3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1ABAC4CEF2;
+	Mon,  2 Jun 2025 14:02:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748872969;
-	bh=hYLRQ8v788ftgkpEhYsLTSyg0Nr10YJX5mZ5C9KFksk=;
+	s=k20201202; t=1748872971;
+	bh=mSZ+Tq+Scvh8C9wum7JJA/yZBWRfnRsmhQedhLJ+MMs=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Sp3N8wjqCEIq5C0H+crBQt+k+PkUxUZFqd1uW2JxFp1ERegi2SQzAlIhO1qCWsj/K
-	 22eDdQp+0vJZy+s96O/8XGHoxz8zfHi6dhTkjNfhV+SpHqd9qPtddyZTyo1SCu2T0h
-	 Hsp/ldQ6CbmM05/UGYRXQM/ywIbizsyh+V76Ay5j0fs5IhBg+G85rEzRGGcvJJoaDP
-	 cQ9g4s5HRgrKJTszkABSjRwg3ubrNmMmXo/NZrvB6k8pxXx8fBT+ss6CpsuUjo+/u/
-	 sphvYtx3SMa/h0b5+bqfgCI69hMcaCEYLvFlOjh2JGagv699vWkNC7wXI2Wy+5R8Wy
-	 PZje7bOcuSDRg==
+	b=K9ffYvv3xQe4fdSRA0UFPMZm3dYPB26TXTOYHwDQ5GbGwrrEExeOgjrs8Fu4fEAlC
+	 Bu0ltIJkFtJgtZ70uLp3azfK4yHC+P/LGA5h9yv2S+UkEyaxMPMWt2oRDD8R3ithT6
+	 Lzi4EMA4CDadXlzn67OY2vxAowL4n9BhzNJN8u/meKBDlOn3FVmdzAIRZqGG2+gVs2
+	 ZL3L0x5zUB0QoDM8VV1tGqADiJTvvEq1qeBLyx/kKln3Df8LmOH81M7v+d36cFCVIr
+	 tfz01P5uURxRvzZPA3BlfKczhCfCOCBLkbTo5gMJmGB4VfNOd2UwrS7MUJIoxPNn1d
+	 PYsYexGrJOIcg==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Jun 2025 10:01:56 -0400
-Subject: [PATCH RFC v2 13/28] nfsd: wire up GET_DIR_DELEGATION handling
+Date: Mon, 02 Jun 2025 10:01:57 -0400
+Subject: [PATCH RFC v2 14/28] filelock: rework the __break_lease API to use
+ flags
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -52,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250602-dir-deleg-v2-13-a7919700de86@kernel.org>
+Message-Id: <20250602-dir-deleg-v2-14-a7919700de86@kernel.org>
 References: <20250602-dir-deleg-v2-0-a7919700de86@kernel.org>
 In-Reply-To: <20250602-dir-deleg-v2-0-a7919700de86@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -72,178 +73,215 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4963; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=hYLRQ8v788ftgkpEhYsLTSyg0Nr10YJX5mZ5C9KFksk=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoPa7n0atl1ii6zmc/TBC6kmriNVQJyCfmy9cb1
- Jh0yDKgX0CJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaD2u5wAKCRAADmhBGVaC
- FS++D/9YV6d68qV5iRsui3V1GgS2bRY/r7U+0uqV1XtoqVqTPCkAtgr0rLSt59YcTK3YNR3RBfP
- J0oHNjl0wqhckZFOi80pM2VcPoEaEZQ49gaHTphp5BGuvai8xKL97O01wWdeBjVAe+1JWPhCEik
- Lf9UxGXl80dZhg1GcSMJnLHpdFO52sqms+NzSfrVd8gcuSf/XcclZSOftofzeih/jxN9D6aUXbS
- aAVoopMibvfHPHePnlONTNF8vRLMR+ll52JOrx+kS9yp2EOtHioPcpQiPLupbjLrr7ZgaF503Vz
- tfZKbyxam5804r34nSHDNNMN4AHc4HyidmRKacK0o8YMkuse/7dq4vH75CXFcq0uSjUVHwLf5PF
- pdxogVzaXvQ3irlZYVdOWJ9s8r7613457l/9AOlqGFm5oXuprRKvlhlT3SlI2CXNojKpr3EX1bP
- Pec0iDDDRylTRG5zAlaKYsW2VZAmXgbtWzGhXiGX2rtKwKII1t01uDvBCwpNWalspZt3D6ZmXIE
- rbnI9Gv/KM7QmPbhQ8BczYE4KgGXiePgYvUOXokNu0Vsf3XKUHG8tKViSXyb0YJaPQOoNSvqt2H
- 4o7Ycx3Tbfj7z0ir8BrDbrekIOjD6DS6RMRV26wSLDxBbLDUWY3R/PZPOA4Yt3ejduNdnw0Oz6G
- WyiCJiPXteElMPw==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7075; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=mSZ+Tq+Scvh8C9wum7JJA/yZBWRfnRsmhQedhLJ+MMs=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoPa7ne7oHoBM+qhMZ3CaFsqLNTMCpC2dhUeaad
+ JMhCmVDb1mJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaD2u5wAKCRAADmhBGVaC
+ FetPEACOJPiOO1361MaUQCwy4nzClqOvT5QLoeMe/g1JBE5ZcO8uf6Fr9OZnsIEfDWR297Ef8Px
+ gu+5BBdWCIOoDvPi9XmiQCBGWdlIXjV1uVr8KGIzHJ6sikPM17ePimWx/eWNtyyY2Laer2piKMW
+ FjyoL3wNb+zxV8ZgvoXmiHT7DjlCHXeQQ3T6F4lEwYW8J2B/D2QMjIbz1IxccH/h4CljZ1FGwC+
+ pWsAEgdiDrc3lnj+QMIo+hVvZ5f97qCyplbN7U/WtqXvQ+sKUGZ87crY2cnsB+dVMYXS/iBoqyT
+ Q7rwbBXhMXb7cTbi/720XvzcTdnBcb24joHv4+ZMcW0xu02oawvo57OHqPgEAb3tXyKeU0qBqtc
+ UgSGsv41xZBKPhVIJ4DSgjSlrEYFSWOCRphNvxQBI+utalonG17PRF7BXDo2+OhteXhMrR8aYyn
+ rDCnJ8rlZMjbX8chaW2lSM7BLgv76VzUhSIYPMZZpXEMhMAd6F0U8mn3tXIx9vyDsP24JwrbD0r
+ tkqVBsmzke0zlX+Nqw6nYeaKmWgGrqiYj/EVthHLfwX4qnKiX4X9Jb6Ngz3/3YsD9ogK0JnUvAz
+ 5r1k/AyfhyrPqKGHyzBKAbVRgD+HLBqddQ9CwAs9+MG4w8bhgjVz0y389HHRWYNGDzZJjaWR0co
+ 8KvYn/51pVA04iA==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Add a new routine for acquiring a read delegation on a directory. Since
-the same CB_RECALL/DELEGRETURN infrastrure is used for regular and
-directory delegations, we can just use a normal nfs4_delegation to
-represent it.
+Declare a set of LEASE_BREAK_* flags that can be used to control how
+lease breaks work instead of requiring a type and an openmode.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4proc.c  | 21 +++++++++++++-
- fs/nfsd/nfs4state.c | 82 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/nfsd/state.h     |  5 ++++
- 3 files changed, 107 insertions(+), 1 deletion(-)
+ fs/locks.c               | 30 +++++++++++++++++-----------
+ include/linux/filelock.h | 52 +++++++++++++++++++++++++++++++++++-------------
+ 2 files changed, 56 insertions(+), 26 deletions(-)
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index f13abbb13b388d223165b1168dc2c07eafb259cb..fa6f2980bcacd798c41387c71d55a59fdbc8043c 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -2298,6 +2298,13 @@ nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
- 			 union nfsd4_op_u *u)
+diff --git a/fs/locks.c b/fs/locks.c
+index 82a1b528dc9dae8c1f3a81084072e649d481e8f1..6e46176d1e00962904f03c151500e593f410e4c6 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -1529,29 +1529,35 @@ any_leases_conflict(struct inode *inode, struct file_lease *breaker)
+ /**
+  *	__break_lease	-	revoke all outstanding leases on file
+  *	@inode: the inode of the file to return
+- *	@mode: O_RDONLY: break only write leases; O_WRONLY or O_RDWR:
+- *	    break all leases
+- *	@type: FL_LEASE: break leases and delegations; FL_DELEG: break
+- *	    only delegations
++ *	@flags: LEASE_BREAK_* flags
+  *
+  *	break_lease (inlined for speed) has checked there already is at least
+  *	some kind of lock (maybe a lease) on this file.  Leases are broken on
+- *	a call to open() or truncate().  This function can sleep unless you
+- *	specified %O_NONBLOCK to your open().
++ *	a call to open() or truncate().  This function can block waiting for the
++ *	lease break unless you specify LEASE_BREAK_NONBLOCK.
+  */
+-int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
++int __break_lease(struct inode *inode, unsigned int flags)
  {
- 	struct nfsd4_get_dir_delegation *gdd = &u->get_dir_delegation;
-+	struct nfs4_delegation *dd;
-+	struct nfsd_file *nf;
-+	__be32 status;
+-	int error = 0;
+-	struct file_lock_context *ctx;
+ 	struct file_lease *new_fl, *fl, *tmp;
++	struct file_lock_context *ctx;
+ 	unsigned long break_time;
+-	int want_write = (mode & O_ACCMODE) != O_RDONLY;
+ 	LIST_HEAD(dispose);
++	bool want_write = !(flags & LEASE_BREAK_OPEN_RDONLY);
++	int error = 0;
 +
-+	status = nfsd_file_acquire_dir(rqstp, &cstate->current_fh, &nf);
-+	if (status != nfs_ok)
-+		return status;
  
- 	/*
- 	 * RFC 8881, section 18.39.3 says:
-@@ -2311,7 +2318,19 @@ nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
- 	 * return NFS4_OK with a non-fatal status of GDD4_UNAVAIL in this
- 	 * situation.
- 	 */
--	gdd->gddrnf_status = GDD4_UNAVAIL;
-+	dd = nfsd_get_dir_deleg(cstate, gdd, nf);
-+	if (IS_ERR(dd)) {
-+		int err = PTR_ERR(dd);
+ 	new_fl = lease_alloc(NULL, want_write ? F_WRLCK : F_RDLCK);
+ 	if (IS_ERR(new_fl))
+ 		return PTR_ERR(new_fl);
+-	new_fl->c.flc_flags = type;
 +
-+		if (err != -EAGAIN)
-+			return nfserrno(err);
-+		gdd->gddrnf_status = GDD4_UNAVAIL;
-+		return nfs_ok;
-+	}
++	if (flags & LEASE_BREAK_LEASE)
++		new_fl->c.flc_flags = FL_LEASE;
++	else if (flags & LEASE_BREAK_DELEG)
++		new_fl->c.flc_flags = FL_DELEG;
++	else if (flags & LEASE_BREAK_LAYOUT)
++		new_fl->c.flc_flags = FL_LAYOUT;
++	else
++		return -EINVAL;
+ 
+ 	/* typically we will check that ctx is non-NULL before calling */
+ 	ctx = locks_inode_context(inode);
+@@ -1596,7 +1602,7 @@ int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
+ 	if (list_empty(&ctx->flc_lease))
+ 		goto out;
+ 
+-	if (mode & O_NONBLOCK) {
++	if (flags & LEASE_BREAK_NONBLOCK) {
+ 		trace_break_lease_noblock(inode, new_fl);
+ 		error = -EWOULDBLOCK;
+ 		goto out;
+diff --git a/include/linux/filelock.h b/include/linux/filelock.h
+index 60c76c8fb4dfdcaaa2cfa3f41f0f26ffcb3db29f..0fe368060781d0b22f735c2cfb8d8c1a6a238290 100644
+--- a/include/linux/filelock.h
++++ b/include/linux/filelock.h
+@@ -221,7 +221,14 @@ int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl);
+ void locks_init_lease(struct file_lease *);
+ void locks_free_lease(struct file_lease *fl);
+ struct file_lease *locks_alloc_lease(void);
+-int __break_lease(struct inode *inode, unsigned int flags, unsigned int type);
 +
-+	gdd->gddrnf_status = GDD4_OK;
-+	memcpy(&gdd->gddr_stateid, &dd->dl_stid.sc_stateid, sizeof(gdd->gddr_stateid));
-+	nfs4_put_stid(&dd->dl_stid);
- 	return nfs_ok;
++#define LEASE_BREAK_LEASE		BIT(0)	// break leases and delegations
++#define LEASE_BREAK_DELEG		BIT(1)	// break delegations only
++#define LEASE_BREAK_LAYOUT		BIT(2)	// break layouts only
++#define LEASE_BREAK_NONBLOCK		BIT(3)	// non-blocking break
++#define LEASE_BREAK_OPEN_RDONLY		BIT(4)	// readonly open event
++
++int __break_lease(struct inode *inode, unsigned int flags);
+ void lease_get_mtime(struct inode *, struct timespec64 *time);
+ int generic_setlease(struct file *, int, struct file_lease **, void **priv);
+ int kernel_setlease(struct file *, int, struct file_lease **, void **);
+@@ -376,7 +383,7 @@ static inline int locks_lock_inode_wait(struct inode *inode, struct file_lock *f
+ 	return -ENOLCK;
  }
  
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 12f20e3c9c54b68cdd4c62aa2904c22c9ccfae0a..ed5d6486d171ea0c886bd1f1ea1129bf4ccf429c 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -9307,3 +9307,85 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
- 	nfs4_put_stid(&dp->dl_stid);
- 	return status;
+-static inline int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
++static inline int __break_lease(struct inode *inode, unsigned int flags)
+ {
+ 	return 0;
  }
-+
-+/**
-+ * nfsd_get_dir_deleg - attempt to get a directory delegation
-+ * @cstate: compound state
-+ * @gdd: GET_DIR_DELEGATION arg/resp structure
-+ * @nf: nfsd_file opened on the directory
-+ *
-+ * Given a GET_DIR_DELEGATION request @gdd, attempt to acquire a delegation
-+ * on the directory to which @nf refers. Note that this does not set up any
-+ * sort of async notifications for the delegation.
-+ */
-+struct nfs4_delegation *
-+nfsd_get_dir_deleg(struct nfsd4_compound_state *cstate,
-+		   struct nfsd4_get_dir_delegation *gdd,
-+		   struct nfsd_file *nf)
+@@ -437,6 +444,17 @@ static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
+ }
+ 
+ #ifdef CONFIG_FILE_LOCKING
++static inline unsigned int openmode_to_lease_flags(unsigned int mode)
 +{
-+	struct nfs4_client *clp = cstate->clp;
-+	struct nfs4_delegation *dp;
-+	struct file_lease *fl;
-+	struct nfs4_file *fp;
-+	int status = 0;
++	unsigned int flags = 0;
 +
-+	fp = nfsd4_alloc_file();
-+	if (!fp)
-+		return ERR_PTR(-ENOMEM);
-+
-+	nfsd4_file_init(&cstate->current_fh, fp);
-+	fp->fi_deleg_file = nf;
-+	fp->fi_delegees = 1;
-+
-+	/* if this client already has one, return that it's unavailable */
-+	spin_lock(&state_lock);
-+	spin_lock(&fp->fi_lock);
-+	if (nfs4_delegation_exists(clp, fp))
-+		status = -EAGAIN;
-+	spin_unlock(&fp->fi_lock);
-+	spin_unlock(&state_lock);
-+
-+	if (status)
-+		goto out_delegees;
-+
-+	/* Try to set up the lease */
-+	status = -ENOMEM;
-+	dp = alloc_init_deleg(clp, fp, NULL, NFS4_OPEN_DELEGATE_READ);
-+	if (!dp)
-+		goto out_delegees;
-+
-+	fl = nfs4_alloc_init_lease(dp);
-+	if (!fl)
-+		goto out_put_stid;
-+
-+	status = kernel_setlease(nf->nf_file,
-+				 fl->c.flc_type, &fl, NULL);
-+	if (fl)
-+		locks_free_lease(fl);
-+	if (status)
-+		goto out_put_stid;
-+
-+	/*
-+	 * Now, try to hash it. This can fail if we race another nfsd task
-+	 * trying to set a delegation on the same file. If that happens,
-+	 * then just say UNAVAIL.
-+	 */
-+	spin_lock(&state_lock);
-+	spin_lock(&clp->cl_lock);
-+	spin_lock(&fp->fi_lock);
-+	status = hash_delegation_locked(dp, fp);
-+	spin_unlock(&fp->fi_lock);
-+	spin_unlock(&clp->cl_lock);
-+	spin_unlock(&state_lock);
-+
-+	if (!status)
-+		return dp;
-+
-+	/* Something failed. Drop the lease and clean up the stid */
-+	kernel_setlease(fp->fi_deleg_file->nf_file, F_UNLCK, NULL, (void **)&dp);
-+out_put_stid:
-+	nfs4_put_stid(&dp->dl_stid);
-+out_delegees:
-+	put_deleg_file(fp);
-+	return ERR_PTR(status);
++	if ((mode & O_ACCMODE) == O_RDONLY)
++		flags |= LEASE_BREAK_OPEN_RDONLY;
++	if (mode & O_NONBLOCK)
++		flags |= LEASE_BREAK_NONBLOCK;
++	return flags;
 +}
-diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
-index 8adc2550129e67a4e6646395fa2811e1c2acb98e..0eeecd824770c4df8e1cc29fc738e568d91d5e5f 100644
---- a/fs/nfsd/state.h
-+++ b/fs/nfsd/state.h
-@@ -855,4 +855,9 @@ static inline bool try_to_expire_client(struct nfs4_client *clp)
- 
- extern __be32 nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp,
- 		struct dentry *dentry, struct nfs4_delegation **pdp);
 +
-+struct nfsd4_get_dir_delegation;
-+struct nfs4_delegation *nfsd_get_dir_deleg(struct nfsd4_compound_state *cstate,
-+						struct nfsd4_get_dir_delegation *gdd,
-+						struct nfsd_file *nf);
- #endif   /* NFSD4_STATE_H */
+ static inline int break_lease(struct inode *inode, unsigned int mode)
+ {
+ 	struct file_lock_context *flctx;
+@@ -452,11 +470,11 @@ static inline int break_lease(struct inode *inode, unsigned int mode)
+ 		return 0;
+ 	smp_mb();
+ 	if (!list_empty_careful(&flctx->flc_lease))
+-		return __break_lease(inode, mode, FL_LEASE);
++		return __break_lease(inode, LEASE_BREAK_LEASE | openmode_to_lease_flags(mode));
+ 	return 0;
+ }
+ 
+-static inline int break_deleg(struct inode *inode, unsigned int mode)
++static inline int break_deleg(struct inode *inode, unsigned int flags)
+ {
+ 	struct file_lock_context *flctx;
+ 
+@@ -470,8 +488,10 @@ static inline int break_deleg(struct inode *inode, unsigned int mode)
+ 	if (!flctx)
+ 		return 0;
+ 	smp_mb();
+-	if (!list_empty_careful(&flctx->flc_lease))
+-		return __break_lease(inode, mode, FL_DELEG);
++	if (!list_empty_careful(&flctx->flc_lease)) {
++		flags |= LEASE_BREAK_DELEG;
++		return __break_lease(inode, flags);
++	}
+ 	return 0;
+ }
+ 
+@@ -479,7 +499,7 @@ static inline int try_break_deleg(struct inode *inode, struct inode **delegated_
+ {
+ 	int ret;
+ 
+-	ret = break_deleg(inode, O_WRONLY|O_NONBLOCK);
++	ret = break_deleg(inode, LEASE_BREAK_NONBLOCK);
+ 	if (ret == -EWOULDBLOCK && delegated_inode) {
+ 		*delegated_inode = inode;
+ 		ihold(inode);
+@@ -491,7 +511,7 @@ static inline int break_deleg_wait(struct inode **delegated_inode)
+ {
+ 	int ret;
+ 
+-	ret = break_deleg(*delegated_inode, O_WRONLY);
++	ret = break_deleg(*delegated_inode, 0);
+ 	iput(*delegated_inode);
+ 	*delegated_inode = NULL;
+ 	return ret;
+@@ -500,20 +520,24 @@ static inline int break_deleg_wait(struct inode **delegated_inode)
+ static inline int break_layout(struct inode *inode, bool wait)
+ {
+ 	smp_mb();
+-	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
+-		return __break_lease(inode,
+-				wait ? O_WRONLY : O_WRONLY | O_NONBLOCK,
+-				FL_LAYOUT);
++	if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease)) {
++		unsigned int flags = LEASE_BREAK_LAYOUT;
++
++		if (!wait)
++			flags |= LEASE_BREAK_NONBLOCK;
++
++		return __break_lease(inode, flags);
++	}
+ 	return 0;
+ }
+ 
+ #else /* !CONFIG_FILE_LOCKING */
+-static inline int break_lease(struct inode *inode, unsigned int mode)
++static inline int break_lease(struct inode *inode, bool wait)
+ {
+ 	return 0;
+ }
+ 
+-static inline int break_deleg(struct inode *inode, unsigned int mode)
++static inline int break_deleg(struct inode *inode, unsigned int flags)
+ {
+ 	return 0;
+ }
 
 -- 
 2.49.0
