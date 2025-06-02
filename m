@@ -1,129 +1,128 @@
-Return-Path: <linux-fsdevel+bounces-50327-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50328-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1623ACAEFC
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 15:27:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133C5ACAF21
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 15:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E89E1BA1753
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 13:28:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D102A1670EA
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 13:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11659220F51;
-	Mon,  2 Jun 2025 13:27:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20134221568;
+	Mon,  2 Jun 2025 13:36:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GTGsplkt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfP8Ij3p"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C72520C031;
-	Mon,  2 Jun 2025 13:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E55235968;
+	Mon,  2 Jun 2025 13:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748870864; cv=none; b=ofHvXsyFQ3+3ZCVbIxzGqd6GECxu+u0Z164R7qbTt8IHmjnvNGICyz3WTBfoZMQLOgZS5k0RFShtg69vlvZgjy+w53ejWuNcyHoY0RSCTQDoHNZUKWMgOtsfoT4DGYorNqIhBjzKf9goTisUTaBWR5IfHu1i1YgnlHVn81JeDk8=
+	t=1748871388; cv=none; b=ppw/zyA1MyzAXMLkRt9yorev2MNYRMguy28iPL8WcKVj7elwOY48HD7xYjbsGfBO2UKayq73ZrLv1xiSgardrBuNCbR06kwjo36kxARZHTXiforBkKhMkgwtZ0jCd0BJmZoFb0EudOSUo63e2eQatAjI1s39zY/juP5b9TREJ5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748870864; c=relaxed/simple;
-	bh=MWnaFm0fY7wNgxp6V57uPFFzewM6NZbpUyh6VIJyeIY=;
+	s=arc-20240116; t=1748871388; c=relaxed/simple;
+	bh=yYIZGQBuFhHt1sSpCGfcE/+38yjhI3Qd/vFnUS3n7ig=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dnd2oS/2+j8j8W4X+LxNUqJOk0yO2jWBTLLIC/lQTZM4svcVYiWfq7OyByh/tcFy9Mux/xgAlnBQ/cf3JK2DhtnCxhUHWMd1QXx8h8bFJi6rg8adRVca/ofJN2VYIE8EuJhQ06DYEr6nWKh6AbgFhcahpSwrfSArx49KYxP1dUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GTGsplkt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB26C4CEEB;
-	Mon,  2 Jun 2025 13:27:43 +0000 (UTC)
+	 To:Cc:Content-Type; b=DTnmFIpxM5b7szTOwGVGIFd6sXcjcCkRXj/94QtucGvZjicQ2lflPNb9gbUcNYzSohyGfO27VWy8nW2YGX6IzBRijpbIMaJPrK3Ne/rhO9yZUPewF1+z7ZQEbLUlCNXJJNjTr8m5tdoqMrYhudP/i+LLjiSB+94N/VRS5MDrrEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfP8Ij3p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5541C4CEF7;
+	Mon,  2 Jun 2025 13:36:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748870863;
-	bh=MWnaFm0fY7wNgxp6V57uPFFzewM6NZbpUyh6VIJyeIY=;
+	s=k20201202; t=1748871387;
+	bh=yYIZGQBuFhHt1sSpCGfcE/+38yjhI3Qd/vFnUS3n7ig=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GTGsplktGqg46KrRxSG9dRHAgPn6zYxPpeUk/lnsjx8RZcOyXvye7yWGkppzYvlWl
-	 oT1PFOlOWf7r6a3ztWBM4DpsbnnBuItwsqZg8lavXXkepa2LJUgHTDNRMU7dyz7MvG
-	 eMs7KOC6P08IjabJcxmbl1vi6NwqQWSLvk1zPlx79Ifdwfi0lCB2U2dsh0cAq7qMfQ
-	 M/E5XDZDvdjXT29mpzwLcLtgqrng/Y5Nr7+iGbx0ci+4Om91vvS6f5i62hnYUzZq2y
-	 7475Z40MJ9b3Xk5sPKvzbjaZHBlsq9g32g5Zt3k6s7lqf5rFG0pn8kE80sRbPt/Asr
-	 4Wi/HyUseJ4Tg==
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6fadb9a0325so17978466d6.2;
-        Mon, 02 Jun 2025 06:27:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4aGptmYO+BsdZxe6Vx23M4xzssngPnY+6Xd55TxA1k01m1XU/VndyVkOD2MmM3w6RG6pW1FwF70oOsXwLEmwn2wJyOMpf@vger.kernel.org, AJvYcCVQBqsWZMN6nm7PHysA5r2RLnk8sq4qgGL6HPu+43HT9znB8gBpNAfrPbhP8aj3n7nD8P9x7y96pfuN6SqIMw==@vger.kernel.org, AJvYcCWhYXcfELrfbaO6bgFvs3fIU+a86pV3AH2pqz3g6/+tMOqn7V7BATM8WPgmPYvQL3Nukk8=@vger.kernel.org, AJvYcCXCxnYZVMnCTeXqvlHHIkMfbirsQlx9zEERq5c6l7jp0bzb+vxOtVCRlcRhpv3zchk5lqr8+EqMJLK8q/dV@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNy0p/ElTiZn3iZIn5zvshK+KR1cprkldFOoGRoFhnw96Piz8Z
-	rIqMgAGw3UcqnMfNXH0d6sQTRPJDPW3lhQGLYiIvcdZzgKRoM7jGKU0MbxvdB1HFuJqeJBvQq8N
-	CmOxPIphMXNhzDdJGIPb5O/scn+i0HwM=
-X-Google-Smtp-Source: AGHT+IFhY1OAUdXnhV9TDyfD4od4kgsfWVZ9DSzY5wOUCfTeloAckm3mtPnaNhiF9n1KxtcPrqpA2C2xxaCGMsik8yQ=
-X-Received: by 2002:a05:6214:3115:b0:6fa:d976:197e with SMTP id
- 6a1803df08f44-6fad9761a27mr159411406d6.33.1748870862882; Mon, 02 Jun 2025
- 06:27:42 -0700 (PDT)
+	b=cfP8Ij3puq2LLuTwhq6fAcrxPYCv782dyBduEpFyi5roGbLqa/PeyOwc/K/QKWNhx
+	 2ckO5ro7iFqhprBUy0ggkZUZGkXaJWfMacNbr+omya4NSZEEgfDICRha7uVbJmd0d/
+	 HjfY9qLFypeniLgoIGfMlnxWLOIHb3GQtN/oApkTJMpGAyW7rZYH5fsL5JwO8f5R4G
+	 rXkCTD7+GKPXYZR/2AxmZ8ctzjDopgNgKXC9AG/TeoufwRs2tIZfiTSyExnm91E4K3
+	 oBQ4oo5eq3SHwJPYBRMCDVaDQHXnQ219iUnpRCuRlrDbLwLGIIOAnpGpwBY2K3W9Sv
+	 zQd4rCecRnxSA==
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a42cb03673so60268851cf.3;
+        Mon, 02 Jun 2025 06:36:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUG0fPNN2dqz5Yx4G4gwHcT5auVqliQ+Cvhs7U339+bOzmb4qlMksGE1fphlwfG0s86/uBBhuF9MNgQho+jXw==@vger.kernel.org, AJvYcCUgA/XLNMjh6kP9QKhzGQFSdqkHO0xJzcqHbvj6zE/ROuDItpdHEzaqDcm/x0eFvo7uaGA=@vger.kernel.org, AJvYcCWcJDf1NFlj6oIoJEu/WdtgddvVOnSf1hKo5stSIHM7/Ws9baH1sbbMOpqaY0RODAq6R0giFw+bR58PdeiPnW09oDasrAA8@vger.kernel.org, AJvYcCX+r1D6uFZFtfaAe6irmUkJM7WMPx+h7u+TpQo4GnwaLlq+FmW08hAdBTxb/8dwHykczXemKW1Qhqg7lDpq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpOmIqy32cUVxarxIiC++nACwcoFlJOoIdHHNdRs2tHwkq8RmF
+	hUiOBEkGmRGfaSm028AKZaRbmZWdXvC/LOf52D5e3HfNGHuPvoqGIdnSZl62TyGf6E5oFBuNJjT
+	mYeE8Q1V9G3Ig+7kbUSWvR8ExDxO6uVw=
+X-Google-Smtp-Source: AGHT+IFnaxclk8wKk+p4lZT7/tGTTg7GviThvM9sxwdY2MN6ZEoN7ZjrbV7y8+zsvm/2hTQZKpQH7c8+sorCksEdz9U=
+X-Received: by 2002:a05:6214:3003:b0:6fa:c99a:cdba with SMTP id
+ 6a1803df08f44-6facebb25fdmr215338396d6.14.1748871386997; Mon, 02 Jun 2025
+ 06:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528222623.1373000-1-song@kernel.org> <20250528222623.1373000-4-song@kernel.org>
- <20250528223724.GE2023217@ZenIV> <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
- <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
- <20250529173810.GJ2023217@ZenIV> <CAPhsuW5pAvH3E1dVa85Kx2QsUSheSLobEMg-b0mOdtyfm7s4ug@mail.gmail.com>
- <20250602-lustig-erkennbar-7ef28fa97e20@brauner>
-In-Reply-To: <20250602-lustig-erkennbar-7ef28fa97e20@brauner>
+References: <20250528222623.1373000-1-song@kernel.org> <20250528222623.1373000-3-song@kernel.org>
+ <027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org>
+In-Reply-To: <027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org>
 From: Song Liu <song@kernel.org>
-Date: Mon, 2 Jun 2025 06:27:31 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW7ogestn8Cc2jac2O0fnWcH_w=HuZQiSOx0umM4uT6Whg@mail.gmail.com>
-X-Gm-Features: AX0GCFv7exgfZHaSo_HrFli6RvFn8kD3E2x-G4ZgMt74ykULlK91j3RGb1-OW18
-Message-ID: <CAPhsuW7ogestn8Cc2jac2O0fnWcH_w=HuZQiSOx0umM4uT6Whg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
-To: Christian Brauner <brauner@kernel.org>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, bpf@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, kernel-team@meta.com, 
+Date: Mon, 2 Jun 2025 06:36:15 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW5BhAJ2md8EgVgKM4yiAgafnhxT9aj_a4HQkr=+=vug-g@mail.gmail.com>
+X-Gm-Features: AX0GCFtIYCGZ2rdbW1qxGntJdE5zDJM2U5n33aRf5NCou1sXG5anK88K_CBn9GE
+Message-ID: <CAPhsuW5BhAJ2md8EgVgKM4yiAgafnhxT9aj_a4HQkr=+=vug-g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 2/4] landlock: Use path_parent()
+To: Tingmao Wang <m@maowtm.org>
+Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
 	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, kpsingh@kernel.org, mattbobrowski@google.com, 
+	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
 	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, mic@digikod.net, gnoack@google.com
+	josef@toxicpanda.com, gnoack@google.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 2, 2025 at 2:27=E2=80=AFAM Christian Brauner <brauner@kernel.or=
-g> wrote:
->
-> On Thu, May 29, 2025 at 11:00:51AM -0700, Song Liu wrote:
-> > On Thu, May 29, 2025 at 10:38=E2=80=AFAM Al Viro <viro@zeniv.linux.org.=
-uk> wrote:
-> > >
-> > > On Thu, May 29, 2025 at 09:53:21AM -0700, Song Liu wrote:
-> > >
-> > > > Current version of path iterator only supports walking towards the =
-root,
-> > > > with helper path_parent. But the path iterator API can be extended
-> > > > to cover other use cases.
-> > >
-> > > Clarify the last part, please - call me paranoid, but that sounds lik=
-e
-> > > a beginning of something that really should be discussed upfront.
-> >
-> > We don't have any plan with future use cases yet. The only example
-> > I mentioned in the original version of the commit log is "walk the
-> > mount tree". IOW, it is similar to the current iterator, but skips non
-> > mount point iterations.
-> >
-> > Since we call it "path iterator", it might make sense to add ways to
-> > iterate the VFS tree in different patterns. For example, we may
->
-> No, we're not adding a swiss-army knife for consumption by out-of-tree
-> code. I'm not opposed to adding a sane iterator for targeted use-cases
-> with a clear scope and internal API behavior as I've said multiple times
-> already on-list and in-person.
->
-> I will not merge anything that will endup exploding into some fancy
-> "walk subtrees in any order you want".
+On Sat, May 31, 2025 at 6:51=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote:
+[...]
+> I'm not sure if the original behavior was intentional, but since this
+> technically counts as a functional changes, just pointing this out.
 
-We are not proposing (and AFAICT never proposed) to have a
-swiss-army knife that "walk subtrees in any order you want". Instead,
-we are proposing a sane iterator that serves exactly one use case
-now. I guess the concern is that it looks extensible. However, I made
-the API like this so that it can be extended, with thorough reviews, to
-cover another sane use case. If there is still concern with this. We
-sure can make current code not extensible. In case there is a
-different sane use case, we will introduce another iterator after
-thorough reviews.
+Thanks for pointing it out! I think it is possible to keep current
+behavior. Or we can change the behavior and state that clearly
+in the commit log. Micka=C3=ABl, WDYT?
+
+>
+> Also I'm slightly worried about the performance overhead of doing
+> path_connected for every hop in the iteration (but ultimately it's
+> Micka=C3=ABl's call).  At least for Landlock, I think if we want to block=
+ all
+
+Maybe we need a flag to path_parent (or path_walk_parent) so
+that we only check for path_connected when necessary.
 
 Thanks,
 Song
+
+> access to disconnected files, as long as we eventually realize we have
+> been disconnected (by doing the "if dentry =3D=3D path.mnt" check once wh=
+en we
+> reach root), and in that case deny access, we should be good.
+>
+>
+> > @@ -918,12 +915,15 @@ static bool is_access_to_paths_allowed(
+> >                               allowed_parent1 =3D true;
+> >                               allowed_parent2 =3D true;
+> >                       }
+> > +                     goto walk_done;
+> > +             case PATH_PARENT_SAME_MOUNT:
+> >                       break;
+> > +             default:
+> > +                     WARN_ON_ONCE(1);
+> > +                     goto walk_done;
+> >               }
+> > -             parent_dentry =3D dget_parent(walker_path.dentry);
+> > -             dput(walker_path.dentry);
+> > -             walker_path.dentry =3D parent_dentry;
+> >       }
+> > +walk_done:
+> >       path_put(&walker_path);
+> >
+> >       if (!allowed_parent1) {
+>
 
