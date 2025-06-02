@@ -1,168 +1,311 @@
-Return-Path: <linux-fsdevel+bounces-50287-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50288-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81D7DACA9A2
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:00:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FFFACA9A6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:01:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93D7E188DB1F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 07:00:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 639EB189C228
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 07:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A1619F49E;
-	Mon,  2 Jun 2025 06:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QN6rN5Ij"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 474651A23BA;
+	Mon,  2 Jun 2025 07:01:02 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A0828EC;
-	Mon,  2 Jun 2025 06:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23B0217A303;
+	Mon,  2 Jun 2025 07:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748847593; cv=none; b=VDzJjljm7Ji2PAFgy0hmDOQWON1Uob5T2wVw+W4Y9aH3sQ8sqNq0+nJpav9vp4oa4vjtcNcAfFaevDT7ULb9qcGSVIjTttbTJJ7DAjwZ9lG6PUGITzqIhzuAZ4nPlXTW3VzTwW8ccgLcjRxEetFmH9Uli/Zd/45dxxnWDG3K6qg=
+	t=1748847661; cv=none; b=ZKbtkjIKb+Mur8nwMIZOmUeAJU1w57vmPEbahW6LSbmemhz6/ZvfoQ18uoQP8VEvQSkSHTerfg8gONBUKOYbxVKbNMdRc9eAfL2457TTSF9NOTkIznNoDvjOeF7FLbFABlmL1O6v747xdUDNo4fyzHQASIRK2+tVHFBKk/ya5Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748847593; c=relaxed/simple;
-	bh=jxLvdSQfjpjraAy1U7bB2SZvmoQH0xC1M0IxT0RSiqk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eoba0zXooE5n2gRyPd35n0IqfqddVNEVH5Nuf0uqC+7EBMwnUJRac4XTilpl+ezK+o6VXa480+54XGZioVbYXooIq3Vg2g7uO7lHyCkjVSx/bcHqHBFx3pXj9VDSg/r+xViF2/etzIqkznYdUFKfOPpfmlyC95jH4H13OIDGQbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QN6rN5Ij; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-312028c644bso3160700a91.0;
-        Sun, 01 Jun 2025 23:59:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748847591; x=1749452391; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u0V/AOR2l4gEGuJ+3dcsr5h2QAW63hL+ESB9rqV8Im8=;
-        b=QN6rN5IjT13Ml20Y4xp/djJclaysXztXRNOwfjfnlVnpz74ouIXUGjkZYwRcP3FJYP
-         TvXLjdSmnbK2WfDspXGFfCl1APU21h8crjQ4NARqqWlcZilQPqnUhHymkKZeaQ+djmrT
-         u2amAb8r1aYNTz70ac4WOT9/JkZQu/1uYL81dhh2jghH9nT7L+dmjSOKPchBj6iOl9do
-         nrFedwSlwZraWGhD5fFAs1/pWSHxc/LGfdy8ogbZ6gMNWuaPH3+ATq2RiyFtQ42E45wj
-         cK0BnQPOeCjgyxlNj7/qE176nsF/R03gIdH36Y9VQvAngQbtryhZ1lXQZDnnWCO98fhx
-         glag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748847591; x=1749452391;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u0V/AOR2l4gEGuJ+3dcsr5h2QAW63hL+ESB9rqV8Im8=;
-        b=OKuUPYrY0kmtCllAUJtWGWj3USdMWqBithvsZoKOHbcS7NJJFdu56T168ykUB6yerx
-         55qcrpGMJYRjv65Sj0k/IrZHvlTTLkiG7I+s2yhppEx/dSSdEt2M1P/Q+JMlTScgLkkQ
-         BtQk5SPQYSv0FHaclPT2xzLLDwcCP2oLjIaScf7655bGYZzAATeu2Vyf9wg6/Mu7JVw8
-         62hoW8x/93twDUWGq6Z48C/Iw5Jgr4HBzFScYjg0V+Uyhq0KCE++DQInQy3NU14YipB+
-         354SQA37I8Ed3+H0gWZ7B6bLKvy3GY+TDH/D0yraaXDz1HPWCNQ3skoncdBgxYbNlQ6o
-         /fhA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYgY3ZZj+iel1x5eX82fQaaiDiyFIoQr4zGGNuTgRr9FNd+fGsVWvZAcmfKnTmimBb/FPKSUVQlZqhzDGbGQ==@vger.kernel.org, AJvYcCXCebsuPNjoJLkGqA87cBy/pHO0n0/CIjIBO0Q2LBnasSJLfFn8DxjJT6a0vVVfD5QjYDB/bnnZn9Id@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW0bUfGg48MsYop/7LEZXBzKBYd+1s057XP7YiDyFAx1MItF0S
-	z+41dujFRcFIH6SxkHN/eF4bvwWLRE7gUMn6i7tIqF6zO0cESk6bdfQvnfnPMZwELCQAEvIH7ON
-	lqP/egGEQIKOVEhdG3f59rgedVql1VCs=
-X-Gm-Gg: ASbGncsEhaLSRPeT8Iw7YluhMrKjepVrdRt8X0seaf4ZZNS8TECVn/xqcn4EGiX4O6y
-	2FUs2YNnw1zJ/r48w5h4nZxx3xcRvgQOPYddIGVsZaFOO0XbK0GOE4OY2TQvjPdSJQUHCE2cY+h
-	9ZauTpBMmTavQ98jXWxmzZqcZhu388X+jD
-X-Google-Smtp-Source: AGHT+IERk5GYGEpSNc9KP6Z9MT28yUqK4OvLAax/XRbjbPtwKS6nGhIe2/S80AeyBU1r0LTh3iFkj0gMnAa4rxc+nPo=
-X-Received: by 2002:a17:90b:2ecc:b0:311:ff02:3fcc with SMTP id
- 98e67ed59e1d1-3127c6c6ad0mr13812170a91.14.1748847591317; Sun, 01 Jun 2025
- 23:59:51 -0700 (PDT)
+	s=arc-20240116; t=1748847661; c=relaxed/simple;
+	bh=QBMJkLc0wQAnxEqTmKS7OyKfGHDBz/H4Ncq1Et+vsWg=;
+	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
+	 Subject:Content-Type; b=RPPJEuz2UYfCUCgj79zGC3xdT9yFrSBQJyJfrIv9pRfYhMjzoo5tib4NseLXQXtU/PpqbcVMPhHP1DIx0dKOWIBPPGoEHR7+uffRTeGrris7FupnWi59Ve9kYpQ5XSCDU2GKrbw21Ryx1yLXjIfPFsIZvbQNG3LlGyGwqZkBAs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxct.zte.com.cn (FangMail) with ESMTPS id 4b9l9P2lN3z4xVct;
+	Mon,  2 Jun 2025 15:00:41 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl2.zte.com.cn with SMTP id 55270TBw046379;
+	Mon, 2 Jun 2025 15:00:29 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 2 Jun 2025 15:00:31 +0800 (CST)
+Date: Mon, 2 Jun 2025 15:00:31 +0800 (CST)
+X-Zmail-TransId: 2afa683d4c0fffffffff94d-4260e
+X-Mailer: Zmail v1.0
+Message-ID: <20250602150031233VUeNfq2WjnCflANKAZbcb@zte.com.cn>
+In-Reply-To: <3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com>
+References: cover.1748537921.git.lorenzo.stoakes@oracle.com,3ba660af716d87a18ca5b4e635f2101edeb56340.1748537921.git.lorenzo.stoakes@oracle.com
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250328183359.1101617-1-slava@dubeyko.com> <Z-bt2HBqyVPqA5b-@casper.infradead.org>
- <202939a01321310a9491eb566af104f17df73c22.camel@ibm.com> <20250401-wohnraum-willen-de536533dd94@brauner>
- <3eca2c6b9824e5bf9b2535850be0f581f709a3ba.camel@ibm.com> <20250403-quast-anpflanzen-efe6b672fc24@brauner>
-In-Reply-To: <20250403-quast-anpflanzen-efe6b672fc24@brauner>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Mon, 2 Jun 2025 08:59:39 +0200
-X-Gm-Features: AX0GCFtDwrseqgbffGSO6a5YyztZ1jKErc5YwysYro0NIaFMkOUetJuzVYKyDHI
-Message-ID: <CAOi1vP957QhFQnvNeJpN+v9zTYEtXaNcHMsZMheeRNNnnYdSKw@mail.gmail.com>
-Subject: Re: [PATCH] ceph: fix variable dereferenced before check in ceph_umount_begin()
-To: Christian Brauner <brauner@kernel.org>
-Cc: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, 
-	"dan.carpenter@linaro.org" <dan.carpenter@linaro.org>, "lkp@intel.com" <lkp@intel.com>, 
-	David Howells <dhowells@redhat.com>, Patrick Donnelly <pdonnell@redhat.com>, 
-	"slava@dubeyko.com" <slava@dubeyko.com>, 
-	"ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, Alex Markuze <amarkuze@redhat.com>, 
-	"willy@infradead.org" <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <lorenzo.stoakes@oracle.com>
+Cc: <akpm@linux-foundation.org>, <viro@zeniv.linux.org.uk>,
+        <brauner@kernel.org>, <jack@suse.cz>, <Liam.Howlett@oracle.com>,
+        <vbabka@suse.cz>, <jannh@google.com>, <pfalcato@suse.de>,
+        <david@redhat.com>, <chengming.zhou@linux.dev>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <shr@devkernel.io>
+Subject: =?UTF-8?B?UmU6IFtQQVRDSCB2MyAzLzRdIG1tOiBwcmV2ZW50IEtTTSBmcm9tIGJyZWFraW5nIFZNQSBtZXJnaW5nIGZvciBuZXcgVk1Bcw==?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl2.zte.com.cn 55270TBw046379
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 683D4C19.000/4b9l9P2lN3z4xVct
 
-On Thu, Apr 3, 2025 at 10:29=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, Apr 01, 2025 at 06:29:06PM +0000, Viacheslav Dubeyko wrote:
-> > On Tue, 2025-04-01 at 12:38 +0200, Christian Brauner wrote:
-> > > On Fri, Mar 28, 2025 at 07:30:11PM +0000, Viacheslav Dubeyko wrote:
-> > > > On Fri, 2025-03-28 at 18:43 +0000, Matthew Wilcox wrote:
-> > > > > On Fri, Mar 28, 2025 at 11:33:59AM -0700, Viacheslav Dubeyko wrot=
-e:
-> > > > > > This patch moves pointer check before the first
-> > > > > > dereference of the pointer.
-> > > > > >
-> > > > > > Reported-by: kernel test robot <lkp@intel.com>
-> > > > > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > > > > Closes: https://lore.kernel.org/r/202503280852.YDB3pxUY-lkp@int=
-el.com/
-> > > > >
-> > > > > Ooh, that's not good.  Need to figure out a way to defeat the pro=
-ofpoint
-> > > > > garbage.
-> > > > >
-> > > >
-> > > > Yeah, this is not good.
-> > > >
-> > > > > > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > > > > > index f3951253e393..6cbc33c56e0e 100644
-> > > > > > --- a/fs/ceph/super.c
-> > > > > > +++ b/fs/ceph/super.c
-> > > > > > @@ -1032,9 +1032,11 @@ void ceph_umount_begin(struct super_bloc=
-k *sb)
-> > > > > >  {
-> > > > > >       struct ceph_fs_client *fsc =3D ceph_sb_to_fs_client(sb);
-> > > > > >
-> > > > > > -     doutc(fsc->client, "starting forced umount\n");
-> > > > > >       if (!fsc)
-> > > > > >               return;
-> > > > > > +
-> > > > > > +     doutc(fsc->client, "starting forced umount\n");
-> > > > >
-> > > > > I don't think we should be checking fsc against NULL.  I don't se=
-e a way
-> > > > > that sb->s_fs_info can be set to NULL, do you?
-> > > >
-> > > > I assume because forced umount could happen anytime, potentially, w=
-e could have
-> > > > sb->s_fs_info not set. But, frankly speaking, I started to worry ab=
-out fsc-
-> > >
-> > > No, it must be set. The VFS guarantees that the superblock is still
-> > > alive when it calls into ceph via ->umount_begin().
-> >
-> > So, if we have the guarantee of fsc pointer validity, then we need to c=
-hange
-> > this checking of fsc->client pointer. Or, probably, completely remove t=
-his check
-> > here?
->
-> If the fsc->client pointer can be NULLed before the mount is shut down
-> then yes. If it can't then the check can be removed completely.
+> If a user wishes to enable KSM mergeability for an entire process and all
+> fork/exec'd processes that come after it, they use the prctl()
+> PR_SET_MEMORY_MERGE operation.
+> 
+> This defaults all newly mapped VMAs to have the VM_MERGEABLE VMA flag set
+> (in order to indicate they are KSM mergeable), as well as setting this flag
+> for all existing VMAs and propagating this across fork/exec.
+> 
+> However it also breaks VMA merging for new VMAs, both in the process and
+> all forked (and fork/exec'd) child processes.
+> 
+> This is because when a new mapping is proposed, the flags specified will
+> never have VM_MERGEABLE set. However all adjacent VMAs will already have
+> VM_MERGEABLE set, rendering VMAs unmergeable by default.
+> 
+> To work around this, we try to set the VM_MERGEABLE flag prior to
+> attempting a merge. In the case of brk() this can always be done.
+> 
+> However on mmap() things are more complicated - while KSM is not supported
+> for MAP_SHARED file-backed mappings, it is supported for MAP_PRIVATE
+> file-backed mappings.
+> 
+> These mappings may have deprecated .mmap() callbacks specified which could,
+> in theory, adjust flags and thus KSM eligibility.
+> 
+> So we check to determine whether this is possible. If not, we set
+> VM_MERGEABLE prior to the merge attempt on mmap(), otherwise we retain the
+> previous behaviour.
+> 
+> This fixes VMA merging for all new anonymous mappings, which covers the
+> majority of real-world cases, so we should see a significant improvement in
+> VMA mergeability.
+> 
+> For MAP_PRIVATE file-backed mappings, those which implement the
+> .mmap_prepare() hook and shmem are both known to be safe, so we allow
+> these, disallowing all other cases.
+> 
+> Also add stubs for newly introduced function invocations to VMA userland
+> testing.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Fixes: d7597f59d1d3 ("mm: add new api to enable ksm per process") # please no backport!
+> Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 
-Hi Slava,
 
-Have you had a chance to follow up on this?  Given the VFS guarantee
-confirmed by Christian we don't need to check fsc and I don't think
-fsc->client is ever NULLed -- the client is created right after fsc is
-allocated in create_fs_client() and destroyed right before fsc is freed
-in destroy_fs_client().  It seems like the check can just be removed.
+Thanks, everything looks clearer to me.
+Reviewed-by: Xu Xin <xu.xin16@zte.com.cn>
 
-Thanks,
 
-                Ilya
+
+
+
+> ---
+>  include/linux/ksm.h              |  8 +++---
+>  mm/ksm.c                         | 18 ++++++++-----
+>  mm/vma.c                         | 44 ++++++++++++++++++++++++++++++--
+>  tools/testing/vma/vma_internal.h | 11 ++++++++
+>  4 files changed, 70 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/ksm.h b/include/linux/ksm.h
+> index d73095b5cd96..51787f0b0208 100644
+> --- a/include/linux/ksm.h
+> +++ b/include/linux/ksm.h
+> @@ -17,8 +17,8 @@
+>  #ifdef CONFIG_KSM
+>  int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
+>  		unsigned long end, int advice, unsigned long *vm_flags);
+> -
+> -void ksm_add_vma(struct vm_area_struct *vma);
+> +vm_flags_t ksm_vma_flags(const struct mm_struct *mm, const struct file *file,
+> +			 vm_flags_t vm_flags);
+>  int ksm_enable_merge_any(struct mm_struct *mm);
+>  int ksm_disable_merge_any(struct mm_struct *mm);
+>  int ksm_disable(struct mm_struct *mm);
+> @@ -97,8 +97,10 @@ bool ksm_process_mergeable(struct mm_struct *mm);
+>  
+>  #else  /* !CONFIG_KSM */
+>  
+> -static inline void ksm_add_vma(struct vm_area_struct *vma)
+> +static inline vm_flags_t ksm_vma_flags(const struct mm_struct *mm,
+> +		const struct file *file, vm_flags_t vm_flags)
+>  {
+> +	return vm_flags;
+>  }
+>  
+>  static inline int ksm_disable(struct mm_struct *mm)
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index d0c763abd499..18b3690bb69a 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -2731,16 +2731,22 @@ static int __ksm_del_vma(struct vm_area_struct *vma)
+>  	return 0;
+>  }
+>  /**
+> - * ksm_add_vma - Mark vma as mergeable if compatible
+> + * ksm_vma_flags - Update VMA flags to mark as mergeable if compatible
+>   *
+> - * @vma:  Pointer to vma
+> + * @mm:       Proposed VMA's mm_struct
+> + * @file:     Proposed VMA's file-backed mapping, if any.
+> + * @vm_flags: Proposed VMA"s flags.
+> + *
+> + * Returns: @vm_flags possibly updated to mark mergeable.
+>   */
+> -void ksm_add_vma(struct vm_area_struct *vma)
+> +vm_flags_t ksm_vma_flags(const struct mm_struct *mm, const struct file *file,
+> +			 vm_flags_t vm_flags)
+>  {
+> -	struct mm_struct *mm = vma->vm_mm;
+> +	if (test_bit(MMF_VM_MERGE_ANY, &mm->flags) &&
+> +	    __ksm_should_add_vma(file, vm_flags))
+> +		vm_flags |= VM_MERGEABLE;
+>  
+> -	if (test_bit(MMF_VM_MERGE_ANY, &mm->flags))
+> -		__ksm_add_vma(vma);
+> +	return vm_flags;
+>  }
+>  
+>  static void ksm_add_vmas(struct mm_struct *mm)
+> diff --git a/mm/vma.c b/mm/vma.c
+> index 7ebc9eb608f4..3e351beb82ca 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -2490,7 +2490,6 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
+>  	 */
+>  	if (!vma_is_anonymous(vma))
+>  		khugepaged_enter_vma(vma, map->flags);
+> -	ksm_add_vma(vma);
+>  	*vmap = vma;
+>  	return 0;
+>  
+> @@ -2593,6 +2592,40 @@ static void set_vma_user_defined_fields(struct vm_area_struct *vma,
+>  	vma->vm_private_data = map->vm_private_data;
+>  }
+>  
+> +static void update_ksm_flags(struct mmap_state *map)
+> +{
+> +	map->flags = ksm_vma_flags(map->mm, map->file, map->flags);
+> +}
+> +
+> +/*
+> + * Are we guaranteed no driver can change state such as to preclude KSM merging?
+> + * If so, let's set the KSM mergeable flag early so we don't break VMA merging.
+> + */
+> +static bool can_set_ksm_flags_early(struct mmap_state *map)
+> +{
+> +	struct file *file = map->file;
+> +
+> +	/* Anonymous mappings have no driver which can change them. */
+> +	if (!file)
+> +		return true;
+> +
+> +	/*
+> +	 * If .mmap_prepare() is specified, then the driver will have already
+> +	 * manipulated state prior to updating KSM flags. So no need to worry
+> +	 * about mmap callbacks modifying VMA flags after the KSM flag has been
+> +	 * updated here, which could otherwise affect KSM eligibility.
+> +	 */
+> +	if (file->f_op->mmap_prepare)
+> +		return true;
+> +
+> +	/* shmem is safe. */
+> +	if (shmem_file(file))
+> +		return true;
+> +
+> +	/* Any other .mmap callback is not safe. */
+> +	return false;
+> +}
+> +
+>  static unsigned long __mmap_region(struct file *file, unsigned long addr,
+>  		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
+>  		struct list_head *uf)
+> @@ -2603,6 +2636,7 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
+>  	bool have_mmap_prepare = file && file->f_op->mmap_prepare;
+>  	VMA_ITERATOR(vmi, mm, addr);
+>  	MMAP_STATE(map, mm, &vmi, addr, len, pgoff, vm_flags, file);
+> +	bool check_ksm_early = can_set_ksm_flags_early(&map);
+>  
+>  	error = __mmap_prepare(&map, uf);
+>  	if (!error && have_mmap_prepare)
+> @@ -2610,6 +2644,9 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
+>  	if (error)
+>  		goto abort_munmap;
+>  
+> +	if (check_ksm_early)
+> +		update_ksm_flags(&map);
+> +
+>  	/* Attempt to merge with adjacent VMAs... */
+>  	if (map.prev || map.next) {
+>  		VMG_MMAP_STATE(vmg, &map, /* vma = */ NULL);
+> @@ -2619,6 +2656,9 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
+>  
+>  	/* ...but if we can't, allocate a new VMA. */
+>  	if (!vma) {
+> +		if (!check_ksm_early)
+> +			update_ksm_flags(&map);
+> +
+>  		error = __mmap_new_vma(&map, &vma);
+>  		if (error)
+>  			goto unacct_error;
+> @@ -2721,6 +2761,7 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>  	 * Note: This happens *after* clearing old mappings in some code paths.
+>  	 */
+>  	flags |= VM_DATA_DEFAULT_FLAGS | VM_ACCOUNT | mm->def_flags;
+> +	flags = ksm_vma_flags(mm, NULL, flags);
+>  	if (!may_expand_vm(mm, flags, len >> PAGE_SHIFT))
+>  		return -ENOMEM;
+>  
+> @@ -2764,7 +2805,6 @@ int do_brk_flags(struct vma_iterator *vmi, struct vm_area_struct *vma,
+>  
+>  	mm->map_count++;
+>  	validate_mm(mm);
+> -	ksm_add_vma(vma);
+>  out:
+>  	perf_event_mmap(vma);
+>  	mm->total_vm += len >> PAGE_SHIFT;
+> diff --git a/tools/testing/vma/vma_internal.h b/tools/testing/vma/vma_internal.h
+> index 4505b1c31be1..77b2949d874a 100644
+> --- a/tools/testing/vma/vma_internal.h
+> +++ b/tools/testing/vma/vma_internal.h
+> @@ -1468,4 +1468,15 @@ static inline void fixup_hugetlb_reservations(struct vm_area_struct *vma)
+>  	(void)vma;
+>  }
+>  
+> +static inline bool shmem_file(struct file *)
+> +{
+> +	return false;
+> +}
+> +
+> +static inline vm_flags_t ksm_vma_flags(const struct mm_struct *, const struct file *,
+> +			 vm_flags_t vm_flags)
+> +{
+> +	return vm_flags;
+> +}
+> +
+>  #endif	/* __MM_VMA_INTERNAL_H */
+> -- 
+> 2.49.0
 
