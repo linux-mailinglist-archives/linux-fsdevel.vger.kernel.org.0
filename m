@@ -1,50 +1,50 @@
-Return-Path: <linux-fsdevel+bounces-50355-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50357-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D81FACB10D
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 16:15:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D71B4ACB148
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 16:18:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DADD16D90C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 14:12:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC6A11942AD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 14:12:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733F523D2AD;
-	Mon,  2 Jun 2025 14:03:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91A65223DC1;
+	Mon,  2 Jun 2025 14:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhT+uzN6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRL8vvk2"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCC42236FC;
-	Mon,  2 Jun 2025 14:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC3F23F271;
+	Mon,  2 Jun 2025 14:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748872997; cv=none; b=vBf7BKq1xr6WV70kE2NuXPdRkM67yoa9W88nFqIm+fpq5SLyFQsrfhTNTB0sNJY2rBzYeJciN/ULQe5Pj0kc6JlDur/IymBSQ2MIyQuX/uNYpA04h30TjGKzSr/5Vdk10n0UUXr562GWHYxnrnhtLZI6YJM25r9jrq+gSa9qbrc=
+	t=1748873000; cv=none; b=hm4LbCoHFdtbxEFxGYadZZRK+9BblLTeEUfOAZm1Wdy25XxrO/sGg08XlyTnwAxHXOpGvFnw9fN3qWLS+WXGYQaboC0gR2fDX3A3gIKS/51ZIzP8haQwY28Lw8O+/dJCnNcrVAzARaw04e/m0KuVQjUgVvzXyrW/rw41nGdnAj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748872997; c=relaxed/simple;
-	bh=H0xMoRMbO/wWa3vUx7i5LYdj5QyZv1EQ/6dovruf8N4=;
+	s=arc-20240116; t=1748873000; c=relaxed/simple;
+	bh=9e+P0L/QsD4juhtFT+7NMVrWkPdeOAQ/vSzBn2kNXLM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E/DrFRkpKOL+uQYuoU1SC94o4m2cnN+VzzjEdnMUhtG52sJqyeJsKnNAPYEH8jSR7h2U8JP12qkCrGFhArXD0ozvjrYmGgok7/49Hs/YmMtmAiYi7oOShXqK1Tc0azTzItzfEVVIixYTPF79KDpTSlxseCBSURrvsEsWq19ElJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhT+uzN6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C288C4CEEE;
-	Mon,  2 Jun 2025 14:03:13 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=CFC8HFwn6874wtUQ7ZVJGhcA9Zl0BeQwDy/TAahaia0W3LaAei5vmwW78LWH6VnfrkUIvkmNFd2S8J2KcFzSG5ke7lDQ/WOZB6d1y4AgMGH3aLG/PKg6wBAplVIx8ykHi+h3hnOXk5RBa+dWo0xykM8CT8k4EhaU5lKqpYM7lco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRL8vvk2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6946CC4CEF0;
+	Mon,  2 Jun 2025 14:03:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748872995;
-	bh=H0xMoRMbO/wWa3vUx7i5LYdj5QyZv1EQ/6dovruf8N4=;
+	s=k20201202; t=1748872997;
+	bh=9e+P0L/QsD4juhtFT+7NMVrWkPdeOAQ/vSzBn2kNXLM=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=IhT+uzN60w/TcRihzKBQtQLrmCisCge/93iB3Xx1+s/EgrcpNAFVVpb6aMKiLc6WW
-	 Mmp/II6Z/Dhvp9Mv6vZOP+wRgpjsyp9c9XueDh8k1pcgOKvv2CeYBWD3RoNRnRW1On
-	 zoHUCwFlBcZFZii68EOZGwkxYRHEqa4Ds0m+mOl67kMufocblSoSBVPWWS62Rt8fyG
-	 PLX6Hl50lXeEfTvDAWOPRYvpZPcfwQ2AFAStYw5OIU68L6q5++HYOV4UhmNY0BCel3
-	 k2BLiTEBQnD1WQpEAI5pjOHl361yWu3teGJqz45HIkcsD+nRB/P0JvvCEj1rJ6Nr9i
-	 HdWRSQk03koRw==
+	b=LRL8vvk2DQjer13Ucxib56Lne1A87J4uDDdrOMGl/0mZoqlGrxQL8JRi0AhloJKrU
+	 lrim3qTrlgdyPxvErVvl2k43i2TkC6BID+FEappT9SJyU7NFChl79yxJKb0xZfGpm1
+	 IyFmSMCjSMTMDb/SP5HXPNu8/bPbD0fSOKRZ6lh0xc2SwOaOCphi+VJFQf49m9z2IK
+	 TgsNTIPGk7Fe+tg6xSogGI8n+sgI93OV5Ti1F+mqm08nVLgjwjnzhQZyJ+vaeR9/Ej
+	 EQuzVGEep1XZ0TpdBvJWuFEvEv2tDm81SVXC3adJxfdXuWkAXTNv0ucETRhhFwRG+1
+	 YMTwQ5bwcdMYA==
 From: Jeff Layton <jlayton@kernel.org>
-Date: Mon, 02 Jun 2025 10:02:08 -0400
-Subject: [PATCH RFC v2 25/28] nfsd: allow nfsd to get a dir lease with an
- ignore mask
+Date: Mon, 02 Jun 2025 10:02:09 -0400
+Subject: [PATCH RFC v2 26/28] nfsd: add a tracepoint for
+ nfsd_file_fsnotify_handle_dir_event()
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -53,7 +53,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250602-dir-deleg-v2-25-a7919700de86@kernel.org>
+Message-Id: <20250602-dir-deleg-v2-26-a7919700de86@kernel.org>
 References: <20250602-dir-deleg-v2-0-a7919700de86@kernel.org>
 In-Reply-To: <20250602-dir-deleg-v2-0-a7919700de86@kernel.org>
 To: Alexander Viro <viro@zeniv.linux.org.uk>, 
@@ -73,121 +73,112 @@ Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
  samba-technical@lists.samba.org, linux-doc@vger.kernel.org, 
  Jeff Layton <jlayton@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3345; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=H0xMoRMbO/wWa3vUx7i5LYdj5QyZv1EQ/6dovruf8N4=;
- b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoPa7qLjDR+iYEt5LHIKN3FETfC8LjOi06SmIUb
- my5kUQQOuaJAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaD2u6gAKCRAADmhBGVaC
- Fa0ZEAC/ilcsSqLGWNmLU0y+pByHH5TpRYO/30ZWZ+qDc0DIUIJqksYup/D+5jJ1x37YYV3HPFQ
- oIrmcbg/NZSsyIzs9bPcG90KJfasq+/0WS85gKI6MXOlIdedi3Bxr2pkcoEeBfsxeCfHNJyn+qP
- zYNbkmYPacav2ixJi1RMLxnCznFvcWdbHvyPr+WibN5Sz815fCFRk+IDVtKJrhBYyCyWuSar0pB
- 2+wGeg4E6jONHtkF54K26mmxFQr3NiZ3qtUIKpORPMlflGDhK+/5kgx+SYDn4xZ/t1i3SVEPGVL
- NVlzPxgHd6veMD6jmdQpxlBEwFQPw5r7w++hUfTwvoqUxya2usD3DyKDE/njbKk+hXIuJPnl9P6
- zInERqZ/6dQyONZRJ9cHs97nJ1IHsF6mSi7aI1hB0N/SK9UI+gW9n4ckYg0NSsBK4qxVX30MWRn
- 8V5sWUiAkxIdX1lmA1dMQxPkfmgbnFGQjyGvhc17ZlRG33pLtyYKcopeLzEyCSHV/x9a72efSum
- vx1x8U6NPcdtYyKBeM0gKb7c7ieuwDPhlw8urmNnh/Iq8xDldzwF/GYZlYfphjD/zf0vsfFDEHM
- g8ePJnyVAGx7TR1WQz7b5zboyBucwi8+A/lnUQkS8kOEVTMflH0eR/C9U0knrkDNdAKMFMyR20N
- Xq+36HfUokGbCwQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3304; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=9e+P0L/QsD4juhtFT+7NMVrWkPdeOAQ/vSzBn2kNXLM=;
+ b=owEBbQKS/ZANAwAKAQAOaEEZVoIVAcsmYgBoPa7qGCN/tyFSnu4EEdOIYj4brEKvdCzRvMcHJ
+ /gm023Cew+JAjMEAAEKAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCaD2u6gAKCRAADmhBGVaC
+ FUt3D/4gPw1XPr/4jvmQgwN2G714b3xAZZh9r/Ysn8hIVq66LlW1U5l5tKa9lpUiIMscuC54Tn0
+ ctxBK9a15TQaJANvZ/fo6swDSRwj37PYN/2SByvWWWnD8Mj8zqIxW3gBnIQxOyt1P+Yvh7UpvAS
+ n5T2ARMVtzOJ+9PiAw1cPaeXsvUTDpfARqUt2iYcwxc2XCpO9c1/tWneLqLvHH01fJGhP8ObMGB
+ IN5MPejhq5qhrQc9L87/B2tO10mRC0AXozfcgXJkAI0Iljcpcwa9cxokSuSqgBkNleoW+fLr9P+
+ vanhIqH/0QRxp4ZRnA46V4uMyQbIiGaCYxDWr6DzefTvme2Cs60KEkCWUfZwzifyc/wDe9FGJ9k
+ RFnvVhB2WICiu3/7EAC0S2Uo1SpM0idc+zAG91lw9kRAdGoyYw5yVwpw04MjxrcR0QdmCgOmlNH
+ UUtXgu9yfoEtx//3bphe6ntaIlVl8ofmnsIl2w/5HJzYP8YdxWiXS3kM2/b7dOSoexq0bUJ09/O
+ dn73a+i1X2w6b7HxwsCBCL7v7kIVjp/2qEZgBSiH6lcbE5y3A89b3epF1/IewkbK+vz1Okvt1wI
+ xIDej8HsUsDDKuHIymkWQnQ7+XLhdF87M1uucjyaqiSaSMrpdpGriqb1f+/AICNYlFxFv4RYbSc
+ fuQsIoH0DJF2N0A==
 X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
  fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-When requesting a directory lease, enable the FL_IGN_DIR_* bits that
-correspond to the requested notification types.
+Repurpose the existing nfsd_file_fsnotify_handle_event tracepoint() as a
+class and call it from the dir notificaiton codepath. Add info about the
+dir to it.
 
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfsd/nfs4proc.c  |  3 +++
- fs/nfsd/nfs4state.c | 27 +++++++++++++++++++++------
- 2 files changed, 24 insertions(+), 6 deletions(-)
+ fs/nfsd/filecache.c |  2 +-
+ fs/nfsd/nfs4state.c |  3 +++
+ fs/nfsd/trace.h     | 25 ++++++++++++++++++-------
+ 3 files changed, 22 insertions(+), 8 deletions(-)
 
-diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
-index fa6f2980bcacd798c41387c71d55a59fdbc8043c..77b6d0363b9f4cfea96f3f1abd3e462fd2a77754 100644
---- a/fs/nfsd/nfs4proc.c
-+++ b/fs/nfsd/nfs4proc.c
-@@ -2292,6 +2292,8 @@ nfsd4_verify(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
- 	return status == nfserr_same ? nfs_ok : status;
- }
+diff --git a/fs/nfsd/filecache.c b/fs/nfsd/filecache.c
+index 6cd4cfa0b46bf33c4134987a12e42c8455fc4879..ba72470b870cd0e266ba7fac8174a1a249a840e8 100644
+--- a/fs/nfsd/filecache.c
++++ b/fs/nfsd/filecache.c
+@@ -743,7 +743,7 @@ nfsd_file_fsnotify_handle_event(struct fsnotify_mark *mark, u32 mask,
+ 	if (WARN_ON_ONCE(!inode))
+ 		return 0;
  
-+#define SUPPORTED_NOTIFY_MASK BIT(NOTIFY4_REMOVE_ENTRY)
-+
- static __be32
- nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
- 			 struct nfsd4_compound_state *cstate,
-@@ -2330,6 +2332,7 @@ nfsd4_get_dir_delegation(struct svc_rqst *rqstp,
+-	trace_nfsd_file_fsnotify_handle_event(inode, mask);
++	trace_nfsd_file_fsnotify_handle_event(inode, dir, mask);
  
- 	gdd->gddrnf_status = GDD4_OK;
- 	memcpy(&gdd->gddr_stateid, &dd->dl_stid.sc_stateid, sizeof(gdd->gddr_stateid));
-+	gdd->gddr_notification[0] = gdd->gdda_notification_types[0] & SUPPORTED_NOTIFY_MASK;
- 	nfs4_put_stid(&dd->dl_stid);
- 	return nfs_ok;
- }
+ 	/* Should be no marks on non-regular files */
+ 	if (!S_ISREG(inode->i_mode)) {
 diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 35b9e35f8b507cc9b3924fead3037433cd8f9371..a75179ffa6006868bae3931263830d7b7e1a8882 100644
+index a75179ffa6006868bae3931263830d7b7e1a8882..a610a90d119a771771cdb60ce3ee4ab3604cb8a3 100644
 --- a/fs/nfsd/nfs4state.c
 +++ b/fs/nfsd/nfs4state.c
-@@ -6075,14 +6075,14 @@ static bool nfsd4_cb_channel_good(struct nfs4_client *clp)
- 	return clp->cl_minorversion && clp->cl_cb_state == NFSD4_CB_UNKNOWN;
- }
- 
--static struct file_lease *nfs4_alloc_init_lease(struct nfs4_delegation *dp)
-+static struct file_lease *nfs4_alloc_init_lease(struct nfs4_delegation *dp, unsigned int ignore)
+@@ -9640,9 +9640,12 @@ int
+ nfsd_handle_dir_event(u32 mask, const struct inode *dir, const void *data,
+ 		      int data_type, const struct qstr *name)
  {
- 	struct file_lease *fl;
++	struct inode *inode = fsnotify_data_inode(data, data_type);
+ 	struct file_lock_context *ctx;
+ 	struct file_lock_core *flc;
  
- 	fl = locks_alloc_lease();
- 	if (!fl)
- 		return NULL;
--	fl->c.flc_flags = FL_DELEG;
-+	fl->c.flc_flags = FL_DELEG | ignore;
- 	fl->c.flc_type = deleg_is_read(dp->dl_type) ? F_RDLCK : F_WRLCK;
- 	fl->c.flc_owner = (fl_owner_t)dp;
- 	fl->c.flc_pid = current->tgid;
-@@ -6299,7 +6299,7 @@ nfs4_set_delegation(struct nfsd4_open *open, struct nfs4_ol_stateid *stp,
- 	if (!dp)
- 		goto out_delegees;
- 
--	fl = nfs4_alloc_init_lease(dp);
-+	fl = nfs4_alloc_init_lease(dp, 0);
- 	if (!fl)
- 		goto out_clnt_odstate;
- 
-@@ -9523,6 +9523,21 @@ nfsd4_deleg_getattr_conflict(struct svc_rqst *rqstp, struct dentry *dentry,
- 	return status;
- }
- 
-+static unsigned int
-+nfsd_notify_to_ignore_mask(u32 notify)
-+{
-+	unsigned int mask = 0;
++	trace_nfsd_file_fsnotify_handle_dir_event(inode, dir, mask);
 +
-+	if (notify & BIT(NOTIFY4_REMOVE_ENTRY))
-+		mask |= FL_IGN_DIR_DELETE;
-+	if (notify & BIT(NOTIFY4_ADD_ENTRY))
-+		mask |= FL_IGN_DIR_CREATE;
-+	if (notify & BIT(NOTIFY4_RENAME_ENTRY))
-+		mask |= FL_IGN_DIR_RENAME;
-+
-+	return mask;
-+}
-+
- /**
-  * nfsd_get_dir_deleg - attempt to get a directory delegation
-  * @cstate: compound state
-@@ -9569,12 +9584,12 @@ nfsd_get_dir_deleg(struct nfsd4_compound_state *cstate,
- 	if (!dp)
- 		goto out_delegees;
+ 	ctx = locks_inode_context(dir);
+ 	if (!ctx || list_empty(&ctx->flc_lease))
+ 		return 0;
+diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
+index 0c68df50eae248c7c9afe0437dfcf29837e09275..968e13a721942c051448f21af2f13849511b7c6a 100644
+--- a/fs/nfsd/trace.h
++++ b/fs/nfsd/trace.h
+@@ -1293,25 +1293,36 @@ TRACE_EVENT(nfsd_file_is_cached,
+ 	)
+ );
  
--	fl = nfs4_alloc_init_lease(dp);
-+	fl = nfs4_alloc_init_lease(dp,
-+			nfsd_notify_to_ignore_mask(gdd->gdda_notification_types[0]));
- 	if (!fl)
- 		goto out_put_stid;
+-TRACE_EVENT(nfsd_file_fsnotify_handle_event,
+-	TP_PROTO(struct inode *inode, u32 mask),
+-	TP_ARGS(inode, mask),
++DECLARE_EVENT_CLASS(nfsd_file_fsnotify_handle_event_class,
++	TP_PROTO(const struct inode *inode, const struct inode *dir, u32 mask),
++	TP_ARGS(inode, dir, mask),
+ 	TP_STRUCT__entry(
+-		__field(struct inode *, inode)
++		__field(ino_t, ino)
++		__field(ino_t, dir)
+ 		__field(unsigned int, nlink)
+ 		__field(umode_t, mode)
+ 		__field(u32, mask)
+ 	),
+ 	TP_fast_assign(
+-		__entry->inode = inode;
++		__entry->ino = inode->i_ino;
++		__entry->dir = dir ? dir->i_ino : 0;
+ 		__entry->nlink = inode->i_nlink;
+ 		__entry->mode = inode->i_mode;
+ 		__entry->mask = mask;
+ 	),
+-	TP_printk("inode=%p nlink=%u mode=0%ho mask=0x%x", __entry->inode,
+-			__entry->nlink, __entry->mode, __entry->mask)
++	TP_printk("dir=%lu inode=%lu nlink=%u mode=0%ho mask=0x%x",
++		  __entry->dir, __entry->ino, __entry->nlink,
++		  __entry->mode, __entry->mask)
+ );
  
--	status = kernel_setlease(nf->nf_file,
--				 fl->c.flc_type, &fl, NULL);
-+	status = kernel_setlease(nf->nf_file, fl->c.flc_type, &fl, NULL);
- 	if (fl)
- 		locks_free_lease(fl);
- 	if (status)
++#define DEFINE_NFSD_FSNOTIFY_HANDLE_EVENT(name)					\
++DEFINE_EVENT(nfsd_file_fsnotify_handle_event_class, name,			\
++	TP_PROTO(const struct inode *inode, const struct inode *dir, u32 mask),	\
++	TP_ARGS(inode, dir, mask))
++
++DEFINE_NFSD_FSNOTIFY_HANDLE_EVENT(nfsd_file_fsnotify_handle_event);
++DEFINE_NFSD_FSNOTIFY_HANDLE_EVENT(nfsd_file_fsnotify_handle_dir_event);
++
+ DECLARE_EVENT_CLASS(nfsd_file_gc_class,
+ 	TP_PROTO(
+ 		const struct nfsd_file *nf
 
 -- 
 2.49.0
