@@ -1,59 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-50299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50300-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7705FACAB1C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 11:04:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3E5ACAB31
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 11:09:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5BEB18955C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:04:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85D6E17909C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F011CEAA3;
-	Mon,  2 Jun 2025 09:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DFD41DF270;
+	Mon,  2 Jun 2025 09:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nca/dKql"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aO2E+1/i"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69A01AF4D5
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 09:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFDAC1DEFDB
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 09:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748855076; cv=none; b=YOUZ7viNCiMq22dl3++yq50CUtgq5Kmqg3gtGN8a5kIdhVFpUdHWhwZz3SRocSMk1XwhcmetfygWiVQ/lDT/uymaKme3m7aLTJqaNi9PB+UCPWeDOud04QTAUFZ8YUBH11wLJJdz6TiUlqVoSFyeL2w26kCayi6FZ1Sa32rmGk4=
+	t=1748855350; cv=none; b=DSxmZnW/NDKioTeYm2OkyAki4esGCgjOSzY6UWFcnWkrBB+e7Rl29Xa4C4RhxZTjig/E8ZhjxqyLpWVosexJDYZihPngLoSUbwnBKaB4QycXxhxz3uZvLymBeCFZP+tRmsCrQMyViAdlMLS3xN7AyJhDFqwPDQfTLq2qFgAANaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748855076; c=relaxed/simple;
-	bh=HVl4qNpIkApLYC+fQzXewrB1RMqnNuR5Oe/jbzrHuw4=;
+	s=arc-20240116; t=1748855350; c=relaxed/simple;
+	bh=eUcuZR2zqQuUq9Z/1+bg2Z9tcdcJqil0+4y8/bgIuRk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kf0pRkzMXqWP7gI/go2XDg+X7Lf74Yn76To0OsHQOV4yGUgUvKNyXUlI41LD951S3eEon1vuiF8vh2H0afztkRmBPrXXht4LgWPnS65AJDzBY//vEPqMOwwAKZs9hg4AqOwOEDik8l+Y7thqaJY8z5eprxlBHzfm9csfQPxiv8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nca/dKql; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B313BC4CEEB;
-	Mon,  2 Jun 2025 09:04:34 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=NdgXjz5aRMYCO5wXC1u2baU8HNufBLpo4pXgISgh9OFXG+zc2D0AwyXyDp6qQ4YLLOLrCWY9EiXCfsg0L9h2J9yU6wnlMg8NKQXMVp9QXBnCcbTaKCJZ0zQh2TjIO9zQMwuwcvD/K+TIbokfwVs0K8bcauzwMW5nH1S8QCiyEXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aO2E+1/i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CA55C4CEF1;
+	Mon,  2 Jun 2025 09:09:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748855076;
-	bh=HVl4qNpIkApLYC+fQzXewrB1RMqnNuR5Oe/jbzrHuw4=;
+	s=k20201202; t=1748855349;
+	bh=eUcuZR2zqQuUq9Z/1+bg2Z9tcdcJqil0+4y8/bgIuRk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nca/dKqlKu7BpweLWb61RzJI8Y5wYawoivp6usjLggBVT5DM4YpV+fX1XMG6SH3/3
-	 /fTiYn964Al9mAycRtbydmvfZboTKQfR9GHOrAy/nToNTPO3b3u+/647v5mRlrIjDi
-	 QipUDjE5KVtnbyHYMCnoX9Ko4S31OjTGIxMC38QJnPmVqjm2LSoTDd5mVwAyGXa+2r
-	 WgJL82SaBnk34F/lPtq1GW7PfGAtbUlAHK/kgRlD1X3A6O1yT4zWPzfSpeOICIF9Qq
-	 nauy6w0ssGDivEzHosQY/FJ81+oND9hXB0ZnUJheDqB3QxjUF4e+azt0wE4rfiUsdF
-	 BbA7N7TSYM4Hw==
-Date: Mon, 2 Jun 2025 11:04:31 +0200
+	b=aO2E+1/iYNVteq2kYczGqK4VG0bi0IR34z8QSfHoNJTbv8++rOipVhdLnl+romxfj
+	 QnBFgK+LiQ6/eVqv9fy7d3ORddpMgJmHKeBCpYA01Yvm6NRwY1Zk2ZYkM3wQBctXFr
+	 2QAdCY+wHtSOYFVEGDrtXXnxOVJdgv8pkLuYT/Kz9mZ5h0ZLx3hXN0zkZ8mgzpIOe9
+	 cBTZ7ABQOVr3KzBxJjuZwEIolTBfrV97IfIC4C9adezPbyPPGDKsLViq3ugJqIpvK+
+	 +pKgQuobFc4rO2AQY0nikUKD42929sz5fR5Mrz3TbPJ1M5WmfCR9bUSDRavlajnV1j
+	 himzcV3+lA5fA==
+Date: Mon, 2 Jun 2025 11:09:05 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, 
-	Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [BUG] regression from 974c5e6139db "xfs: flag as supporting
- FOP_DONTCACHE" (double free on page?)
-Message-ID: <20250602-ortsnamen-umwegen-2f2780a769c6@brauner>
-References: <20250525083209.GS2023217@ZenIV>
- <20250529015637.GA8286@frogsfrogsfrogs>
- <20250531011050.GB8286@frogsfrogsfrogs>
- <0315c56c-5fe1-460d-8b34-a356e42ccae5@kernel.dk>
+To: Luca Boccassi <bluca@debian.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: Please consider backporting coredump %F patch to stable kernels
+Message-ID: <20250602-vulkan-wandbild-fb6a495c3fc3@brauner>
+References: <CAMw=ZnT4KSk_+Z422mEZVzfAkTueKvzdw=r9ZB2JKg5-1t6BDw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -62,18 +57,38 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0315c56c-5fe1-460d-8b34-a356e42ccae5@kernel.dk>
+In-Reply-To: <CAMw=ZnT4KSk_+Z422mEZVzfAkTueKvzdw=r9ZB2JKg5-1t6BDw@mail.gmail.com>
 
-> >> https://lore.kernel.org/linux-fsdevel/20250416180837.GN25675@frogsfrogsfrogs/
-> > 
-> > After a full QA run, 6.15 final passes fstests with flying colors.  So I
-> > guess we now know the culprit.  Will test the new RWF_DONTCACHE fixes
-> > whenever they appear in upstream.
+On Fri, May 30, 2025 at 10:44:16AM +0100, Luca Boccassi wrote:
+> Dear stable maintainer(s),
 > 
-> Please do! Unfortunately I never saw your original report as I wasn't
-> CC'ed on it, which I can't really fault anyone for as there was no
-> reason to suspect it so far.
+> The following series was merged for 6.16:
+> 
+> https://lore.kernel.org/all/20250414-work-coredump-v2-0-685bf231f828@kernel.org/
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c57f07b235871c9e5bffaccd458dca2d9a62b164
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=95c5f43181fe9c1b5e5a4bd3281c857a5259991f
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b5325b2a270fcaf7b2a9a0f23d422ca8a5a8bdea
+> 
+> This allows the userspace coredump handler to get a PIDFD referencing
+> the crashed process.
+> 
+> We have discovered that there are real world exploits that can be used
+> to trick coredump handling userspace software to act on foreign
+> processes due to PID reuse attacks:
+> 
+> https://security-tracker.debian.org/tracker/CVE-2025-4598
+> 
+> We have fixed the worst case scenario, but to really and
+> comprehensively fix the whole problem we need this new %F option. We
+> have backported the userspace side to the systemd stable branch. Would
+> it be possible to backport the above 3 patches to at least the 6.12
+> series, so that the next Debian stable can be fully covered? The first
+> two are small bug fixes so it would be good to have them, and the
+> third one is quite small and unless explicitly configured in the
+> core_pattern, it will be inert, so risk should be low.
 
-I've just sent the pull request with the fixes a minute ago.
-Thanks for testing!
+I agree that we should try and backport this if Greg agrees we can do
+this. v6.15 will be easy to do. Further back might need some custom work
+though. Let's see what Greg thinks.
 
