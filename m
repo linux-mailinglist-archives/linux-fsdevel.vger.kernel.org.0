@@ -1,88 +1,88 @@
-Return-Path: <linux-fsdevel+bounces-50384-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50385-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F347ACBC16
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 22:02:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED349ACBC2B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 22:13:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22D073A319E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 20:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD2E0172704
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 20:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725731A7AF7;
-	Mon,  2 Jun 2025 20:02:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6833223316;
+	Mon,  2 Jun 2025 20:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FO6H4VbW"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AtfJMFb6"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527729478
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 20:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7E865579E
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 20:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748894532; cv=none; b=aoTYzcQ/e7lN2Q6D64V3eqqRNKXJMscXg2yIg12pHHXnqwb/DDaPGJVldRyGbVOidMw252TLBcnl/OtCi7Gc6sIi9+joPN6xmIGXvxR/nlI84ZtorDIRql4/DO28n0+vOWAWpSe9xvI00S2tqw1QytKQrM5K+zJGqDYr4IZIIV0=
+	t=1748895202; cv=none; b=X+Bp3O3rawROn2kvsN2eFPL1o92yTAZCYBENsZ/gFRQXkOCkuXQE9IftrA02KEOoEfJz8TG9c+qtEWit4D2haSwsI5bGU9gQMHqzwk43tN6pru8czUzpAJHud0HovwLiWOHM+OFdozJYmk0lYKQ/WpmYlgoxnw2uO0sTDRCUijM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748894532; c=relaxed/simple;
-	bh=/xOHjhw56CdE7pwo3f8+yn8eHn8TaevxVaRTPiHlxv4=;
+	s=arc-20240116; t=1748895202; c=relaxed/simple;
+	bh=dYgH6l3af5qbaadPI2dscgIuE+H0ARXJ2qgwrm+ADmI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tDb1c6Pg5om4tNMKTGXYHU3cED54ileZLfkwZGLohCBZy3tpRSRSlqoER015kaG6ul23Xm4Z/aLXNvJ2ZOgk58EXUOg0HYJ3vkHe/NawPzC5mdWy1X+VEoffaRof2NxpsWCczQcNnK6nbRMi7t2f+cm4viQPKPHRrez024Rc49E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FO6H4VbW; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=EFKc17tT2rclOVDXGBzJ3UH/JKlwPvYj9G4CWOUIROFCO4VcyksoYWcNqeVqQF1F9e0/pIYvcxzKz596SB+4CXGT8FRVtT1Wh8v7RJ/+0TCA6wI75pOAiZUsvYuA+hvM/LqYvAxZT/3iOFiqjZaBY2KqCRcjjef3L+vjMNM6bvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AtfJMFb6; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1748894530;
+	s=mimecast20190719; t=1748895199;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9xzihvSeycwCfHC3PxVJC/qLoV2NCc2qE9/A+8gZl7Q=;
-	b=FO6H4VbWCv4+e3iw+wYwAMZjBicuvvRgmlNqv20wCbphSdIweNiFOlBzE1yRzEaIZNmaZY
-	3vB2tUg2HBYRZ4QSmKsdluaL/umDUaUB12PQElzSMAY2dR1kQUBTvxsqDYgurPBCw8/KFz
-	Wo8tHGyd8CRr/xlwLZ6XMe1fr4qV90Y=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=L2fRzpvIq9Ro64GdJ8k47s16Damg2UH127tvBjvm2hA=;
+	b=AtfJMFb6LidzKpE/FbZuS4BeKkojis/FvWI2YpHqj/AbzpgijDOQocpZzaII6EzgOouakb
+	hEdo/H8/FtWSJGZLpFhFsNs+ukon7RtyxzxLKI9DPAT/PhzFkUxiwPO2qGHTYI+q6qoj1e
+	PqpiRXNzuJD7riwIo0misfo5crvgIOI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-29-mWxIdeirMCaJypLcFe-IRw-1; Mon, 02 Jun 2025 16:02:09 -0400
-X-MC-Unique: mWxIdeirMCaJypLcFe-IRw-1
-X-Mimecast-MFC-AGG-ID: mWxIdeirMCaJypLcFe-IRw_1748894528
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a50049f8eeso902398f8f.3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Jun 2025 13:02:08 -0700 (PDT)
+ us-mta-682-hSjeA3TVOUCrR1m-cSubDw-1; Mon, 02 Jun 2025 16:13:18 -0400
+X-MC-Unique: hSjeA3TVOUCrR1m-cSubDw-1
+X-Mimecast-MFC-AGG-ID: hSjeA3TVOUCrR1m-cSubDw_1748895197
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-451d5600a54so14648395e9.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Jun 2025 13:13:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748894528; x=1749499328;
+        d=1e100.net; s=20230601; t=1748895197; x=1749499997;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=9xzihvSeycwCfHC3PxVJC/qLoV2NCc2qE9/A+8gZl7Q=;
-        b=udydCznRI7Wh5ybbsLJgwIRIMjrqQce1KSQFIn6UwwfUrqjmkbqvNAeOtVZ/w2FcX5
-         zezB/H5HgQYbLHqtFzU6GU3ADV8XfXFdInBHt7/bYrN1QSzECNTP9lHgIvw7UeP3i2q6
-         iSYLwoF9fLg+Oip4cw+gyC70KS9WNwgGY56iXhkZRphyhaRRoo5ZPnAwUcVubSqh5ZVQ
-         zpZx0DBeHNe9fZ1sYSQi2za9L/peHbkVcJgwGMsxdj6L0i/g8Jy/zEwLEkiEhGYpWrsM
-         eYM1GRjO2zQ+D/Jb36D6Ko/9gOGHSjhe6KO22fJsZG2zZ6djUxaQs/4yb/7SHADmsiMt
-         I3/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVybhyfFSzOCQu3DHNqCBd/5uCp3RADXRL9YTVUhZW/5moUgHO4wDOW9Ak1q20yjaIxaGkBLaqhDXBW1Ke1@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDZNCMYb/1gaXbaEfBmEIDHjf8NvNp6T97Ji5vrgMpFD+25JRR
-	ihdwsaXoQ0+fzGoeEbPV4Em63vo5UVT5IgtmCStz4EPjyMJufDybv+GwY03krsnpGKZ/dQMvBXk
-	J3X7Gdcalyh2R6rkC9osPNYo6OyninkgsGoO4wyXH8ReHz4dvILuW62fVBl3NBHWZDPA=
-X-Gm-Gg: ASbGnctTD3IJR16lnoWVjdWy2iDYrQIfhmf9BYmsxDe7LvUrve1VlprUa52hhNHjVPO
-	B7IND8HR9iNdsOwrTpbN4XbTdpFBbvQoxOn1t4VtgqIAuJ2KeHE8pxc2PQvSN8hxVZEl2OFdXqi
-	l5onxtDPK0Xtj9CCVZc5Qjm9OOV4ZYGcSCGA8XQfYpAWZ6/oqLNAMZbsdhtNAbbUzu6yY9xQmKk
-	rs77fbI5nvdG12DtHkY5327Cbu+9aDa6JhOHSbGLx19MyOb52oMpf/GUfg16nSxR64fckuVng+x
-	KSRInyh1I1O6eIaT1brQfpq0wSvIB2IkDihTdRQKMut4Nb1W/7Mmug/q81iXy7Eu0kt7eNlRxof
-	CySz/4a2D9PBieVHZNqAHuzKCp+DrU9dph4Nu8yg=
-X-Received: by 2002:a05:6000:220b:b0:3a4:eec5:443d with SMTP id ffacd0b85a97d-3a4f89ddde0mr10414360f8f.29.1748894527885;
-        Mon, 02 Jun 2025 13:02:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGBUEUfgzZ55JxvWPbzPB5n+xzGAXY+W1aSHd2mFpVCFS79hDcYZsKiTQk7PvOWDfF0CXIE9Q==
-X-Received: by 2002:a05:6000:220b:b0:3a4:eec5:443d with SMTP id ffacd0b85a97d-3a4f89ddde0mr10414272f8f.29.1748894527305;
-        Mon, 02 Jun 2025 13:02:07 -0700 (PDT)
+        bh=L2fRzpvIq9Ro64GdJ8k47s16Damg2UH127tvBjvm2hA=;
+        b=WsEomrtp5TyfSFRzpxFb4cLWdtJo2iX6EfFVhELXUS2LhF/yzfu1t3FUaPfp+OJQwf
+         ZGCQi+qe+fD+ObqLXAc97t1ASrL+N89ua2w0iFXwbR6cxcUlXWwkNucX9U+LW8XeS4Ln
+         gG+evxnBkp1GWot/Ar9Q0JXnUW2cr9T2NRnT6j/leu5o0SU/XuGAkE/lobkdGUg0Cb0j
+         DvoiCx0kFU7YpXlL+b4suvddIKKl4x/3N23u1pNqLVl1AZ7heEleS2+lyFGVGBMvS88w
+         vz0waVpJNedVRwcm1rtA7+Yn/nqDA/HjJH8ZJIZiEBYqVMIQK0uDupJ2ytqLbOU0gOxl
+         5NHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHyzrIbZNbOME9xvzD6VhL30zeHIpfNVDm/tnHHWNCcAVxKzFXyYm6HVWybqF90rRw42mDUZ5ll+UL3QXK@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwRvJGuseFnS7nkYTH/wymEfWKs8ulJfGHLFR2hB26AcCo5YQ/
+	uVczMSOejtasxD6CwIkP6hPh64ilQVxwY7V7tWjnCGJnbHxrj0av1AGJm9NHgu+eK4xj4YJGCMZ
+	iKS+RzyOLLW1fvtmKza+qj4Wpnh6sejuVpLnuZhAtLwphrXRGeyitFM8dEHiO7TYkfW4=
+X-Gm-Gg: ASbGncsYmhEOhF4U8eQiHkiEZsbC/pIzZeepez4PJhvaNBQlnbqTUo2NpKgEhklaEc+
+	bBd6MVuF5N8yFptcHpW1NxQIoW1gD0teCD48DRTldOAjqQ7sAk24TzUaYU6A5620LY4SGnS31g7
+	dB1FPJnOu94c0TGIMCIs6icPu+ODQpLh5Cr74EqT+MblFh0PwY5vbxvZrVapA3ZWVqUDD3jiDuu
+	ZLZ7v+sqdzN+joiDotJFrctQXo66JVjE3pE8UnWNzxt3iqQL2Pfo6bDU9hTnA1oS059Y8Be7qro
+	/thGtfdjMv9Fo3E5NRXVyKgPkCSJHUjw64fYN03eZ6xtssSjk2KPEmXE9zS0C5YOOngpEfHV9Go
+	kNQ376hQw4zsDU8FJQBe+VzPm7tnokN1nnv2LvnE=
+X-Received: by 2002:a05:600c:34cc:b0:441:a715:664a with SMTP id 5b1f17b1804b1-450d657fc48mr128062485e9.20.1748895197175;
+        Mon, 02 Jun 2025 13:13:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH11BXrDuMAIzEqX9WuHxTziGBMSqS8kYX6yOgI2wQ1XPSqok/pAnnVfe2f25ZB0Lml2ZGfRQ==
+X-Received: by 2002:a05:600c:34cc:b0:441:a715:664a with SMTP id 5b1f17b1804b1-450d657fc48mr128061835e9.20.1748895196755;
+        Mon, 02 Jun 2025 13:13:16 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f34:a300:1c2c:f35e:e8e5:488e? (p200300d82f34a3001c2cf35ee8e5488e.dip0.t-ipconnect.de. [2003:d8:2f34:a300:1c2c:f35e:e8e5:488e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4efe6ca46sm16277263f8f.31.2025.06.02.13.02.03
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-450d8000d8csm134568095e9.24.2025.06.02.13.13.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jun 2025 13:02:06 -0700 (PDT)
-Message-ID: <e2ca2dab-9dfa-49e7-901d-f5999c1f8f6a@redhat.com>
-Date: Mon, 2 Jun 2025 22:02:02 +0200
+        Mon, 02 Jun 2025 13:13:15 -0700 (PDT)
+Message-ID: <42226b18-7cf5-41e4-8a0b-5b35ee50f119@redhat.com>
+Date: Mon, 2 Jun 2025 22:13:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -90,8 +90,8 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] fs: Provide function that allocates a secure
- anonymous inode
+Subject: Re: [PATCH 2/2] KVM: guest_memfd: Use guest mem inodes instead of
+ anonymous inodes
 To: Ackerley Tng <ackerleytng@google.com>, kvm@vger.kernel.org,
  linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org,
  linux-fsdevel@vger.kernel.org
@@ -126,7 +126,7 @@ Cc: aik@amd.com, ajones@ventanamicro.com, akpm@linux-foundation.org,
  xiaoyao.li@intel.com, yan.y.zhao@intel.com, yilun.xu@intel.com,
  yuzenghui@huawei.com, zhiquan1.li@intel.com
 References: <cover.1748890962.git.ackerleytng@google.com>
- <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
+ <425cd410403e8913b42552d892add6ca543ec869.1748890962.git.ackerleytng@google.com>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -174,27 +174,118 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
+In-Reply-To: <425cd410403e8913b42552d892add6ca543ec869.1748890962.git.ackerleytng@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 02.06.25 21:17, Ackerley Tng wrote:
-> The new function, alloc_anon_secure_inode(), returns an inode after
-> running checks in security_inode_init_security_anon().
+> guest_memfd's inode represents memory the guest_memfd is
+> providing. guest_memfd's file represents a struct kvm's view of that
+> memory.
 > 
-> Also refactor secretmem's file creation process to use the new
-> function.
+> Using a custom inode allows customization of the inode teardown
+> process via callbacks. For example, ->evict_inode() allows
+> customization of the truncation process on file close, and
+> ->destroy_inode() and ->free_inode() allow customization of the inode
+> freeing process.
 > 
-> Suggested-by: David Hildenbrand <david@redhat.com>
+> Customizing the truncation process allows flexibility in management of
+> guest_memfd memory and customization of the inode freeing process
+> allows proper cleanup of memory metadata stored on the inode.
+> 
+> Memory metadata is more appropriately stored on the inode (as opposed
+> to the file), since the metadata is for the memory and is not unique
+> to a specific binding and struct kvm.
+> 
 > Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+> Signed-off-by: Fuad Tabba <tabba@google.com>
+
+The trailing SOB from Fuag is likely wrong. Probably you wnat
+
+Co-developed-by: Fuad Tabba <tabba@google.com>
+Signed-off-by: Fuad Tabba <tabba@google.com>
+Signed-off-by: Ackerley Tng <ackerleytng@google.com>
+
+
 > ---
+>   include/uapi/linux/magic.h |   1 +
+>   virt/kvm/guest_memfd.c     | 134 +++++++++++++++++++++++++++++++------
+>   virt/kvm/kvm_main.c        |   7 +-
+>   virt/kvm/kvm_mm.h          |   9 ++-
+>   4 files changed, 125 insertions(+), 26 deletions(-)
+> 
+> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> index bb575f3ab45e..638ca21b7a90 100644
+> --- a/include/uapi/linux/magic.h
+> +++ b/include/uapi/linux/magic.h
+> @@ -103,5 +103,6 @@
+>   #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+>   #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+>   #define PID_FS_MAGIC		0x50494446	/* "PIDF" */
+> +#define GUEST_MEMFD_MAGIC	0x474d454d	/* "GMEM" */
+> 
+>   #endif /* __LINUX_MAGIC_H__ */
+> diff --git a/virt/kvm/guest_memfd.c b/virt/kvm/guest_memfd.c
+> index b2aa6bf24d3a..1283b85aeb44 100644
+> --- a/virt/kvm/guest_memfd.c
+> +++ b/virt/kvm/guest_memfd.c
+> @@ -1,12 +1,16 @@
+>   // SPDX-License-Identifier: GPL-2.0
+> +#include <linux/anon_inodes.h>
+>   #include <linux/backing-dev.h>
+>   #include <linux/falloc.h>
+> +#include <linux/fs.h>
+>   #include <linux/kvm_host.h>
+> +#include <linux/pseudo_fs.h>
+>   #include <linux/pagemap.h>
+> -#include <linux/anon_inodes.h>
+> 
+>   #include "kvm_mm.h"
+> 
+> +static struct vfsmount *kvm_gmem_mnt;
+> +
+>   struct kvm_gmem {
+>   	struct kvm *kvm;
+>   	struct xarray bindings;
+> @@ -318,9 +322,51 @@ static struct file_operations kvm_gmem_fops = {
+>   	.fallocate	= kvm_gmem_fallocate,
+>   };
+> 
+> -void kvm_gmem_init(struct module *module)
+> +static const struct super_operations kvm_gmem_super_operations = {
+> +	.statfs		= simple_statfs,
+> +};
+> +
+> +static int kvm_gmem_init_fs_context(struct fs_context *fc)
+> +{
+> +	struct pseudo_fs_context *ctx;
+> +
+> +	if (!init_pseudo(fc, GUEST_MEMFD_MAGIC))
+> +		return -ENOMEM;
+> +
+> +	ctx = fc->fs_private;
+> +	ctx->ops = &kvm_gmem_super_operations;
+> +
+> +	return 0;
+> +}
+> +
+> +static struct file_system_type kvm_gmem_fs = {
+> +	.name		 = "kvm_guest_memory",
+> +	.init_fs_context = kvm_gmem_init_fs_context,
+> +	.kill_sb	 = kill_anon_super,
+> +};
+> +
+> +static int kvm_gmem_init_mount(void)
+> +{
+> +	kvm_gmem_mnt = kern_mount(&kvm_gmem_fs);
+> +
+> +	if (WARN_ON_ONCE(IS_ERR(kvm_gmem_mnt)))
+> +		return PTR_ERR(kvm_gmem_mnt);
 
-Not sure about the subject, "secure anon inode" is misleading, it's an 
-anon inode where we gave security callbacks a chance to intervene, right?
+Hmm, is this WARN_ON_ONCE really warrented?
 
-maybe simply "fs: factor out anon inode creation + init security"
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Nothing else jumped at me. I hope some fs experts can take a look as well.
 
 -- 
 Cheers,
