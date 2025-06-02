@@ -1,128 +1,98 @@
-Return-Path: <linux-fsdevel+bounces-50319-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50320-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D77B1ACADD4
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 14:13:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6A5FACADD6
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 14:15:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A69188A487
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 12:14:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D07E19604B1
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 12:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D73213E69;
-	Mon,  2 Jun 2025 12:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92145215181;
+	Mon,  2 Jun 2025 12:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ztr545vb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AApXLK/y"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A7F210184
-	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 12:13:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA80210184;
+	Mon,  2 Jun 2025 12:14:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748866419; cv=none; b=r9a+qmZYcd8V5hPthh0tay/diUZg2c6qj5h04haRTblAKiOv0s6pmk4lhyo/24JxSP1Vl4TM4c6AtCg7CZQQiibOpSrJ2YbuGWGGywHP1BR3s2knC/viVz25Tepcx6IaPN+vpdnQfDbGEUw80DlFNQrJo2UkfgrJDxoQ3vNsKbY=
+	t=1748866496; cv=none; b=XEr5w8Vz1BWzh/J+qpKw87eTvKFlVCnQv1+KzORnYNcMDhu+p5xYaTLz5FVpDAv5vdtvUad0sISKkSPnIaS7sIFcfYEmSQ0GQx5jIYRWVbcb77DuD3j/c0tWbSCKbvVGbafoMCoNYc9z0lMZPHn5Lig6lM9LTBb89SaInvqeIrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748866419; c=relaxed/simple;
-	bh=6XaEfR1D9Pv6HTWjsoGQs/2zmfxEqCmn3lom3wG0MHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p3f2CWbrfcLVi/wr6PiK2aU3Bt+DAcCxxdK0OpYpVu7IrgXI/8AHhr0NqFrFuTh2ao6WQ7wgfgdwBS9QLjKerKzT/tlK5wDbQNDOFDPzWBpyZKcvzOmLASwqon49e4dIfTCc4gO/HJ7nQD1mXPg+UrhDpozBqDmzAzIEGpnWvj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ztr545vb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199F6C4CEEB;
-	Mon,  2 Jun 2025 12:13:37 +0000 (UTC)
+	s=arc-20240116; t=1748866496; c=relaxed/simple;
+	bh=4Ul8K3x8UQ2RkZ/IVbXwniJH9SavwdqncKIw/+W0l/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IUxow8ySLt4zGzpqAUvJ1f/Qyab1r/4Ufp964nPzINjLWVTTKhWE+P2stRJ2P0gio/vpaHJACPfJ2dpsSahSgxQjkDI/ta2rqSg+qrYs2XSOKvv/nnm4nxJVy4uTVBUXkFHocjD2HLHUNDPBAMxhNfVBBnEJdcjrY8QlWcNeYIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AApXLK/y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CCF1C4CEED;
+	Mon,  2 Jun 2025 12:14:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748866419;
-	bh=6XaEfR1D9Pv6HTWjsoGQs/2zmfxEqCmn3lom3wG0MHs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ztr545vb2wkxlZPz3xeGkhabBnDy8YKJBLaZp9iniAtwNI8vQ0Fiu3TDXP6nFRVEK
-	 XJ/MRSNmSf0uueIx731fS8GhEogpt6UZQq6scORzlXzYUc0M+H0auZdwb1Gjz7U9j4
-	 J0zU2lTbAe5cghNXkq9jw3BzDCuvHIm+UXEG58ZXA7i/fpN2Yew+Q+28whztaJ4VZA
-	 +g2bNTHhkvTsRVugN8Qv45TAFJ7jpCVskdvzerCCThU2R4TlBwUksgniahIHtT3601
-	 v/LKyAvNoPoyXFqPuVdhA7TFjW0GBxMD+fesC8xF2Q1C2sfBRoHS79xrQXN89Pgn3N
-	 k7WBKybnMxyww==
-Date: Mon, 2 Jun 2025 14:13:35 +0200
+	s=k20201202; t=1748866495;
+	bh=4Ul8K3x8UQ2RkZ/IVbXwniJH9SavwdqncKIw/+W0l/8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AApXLK/yjuQD9NOnNYZyFiU7JsMSnS00XWgULmm/6SFZlNW70nOV98PRCf5CHcWDH
+	 O4fWkGBlVFDvZuMsfcrgYw3IPMbuZTDRntrK1+V0Qz/zYNdfd3Rffgls6jvN/1dZ3r
+	 6bWfKLTf3pnPDmGm1vjduTucbORZAS48syrc3BBQ2FqWvSBW3DpMyzgdoRx7FePsf3
+	 b38PaYJBD0DvGRWU3xm0KTjQXJg1ilFKtd9wq1z8GphsZKbSeTVGWJs6/UwSYAWcEn
+	 BGLq6hoTL6mRClRgMV4f8joIdGrUODSxuSnAGRP+DCKQpo4e0exhHxC6yRWITtKZrV
+	 Cz9VM+JzWQM+Q==
 From: Christian Brauner <brauner@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Luca Boccassi <bluca@debian.org>, stable@kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Subject: Re: Please consider backporting coredump %F patch to stable kernels
-Message-ID: <20250602-substantiell-zoologie-02c4dfb4b35d@brauner>
-References: <CAMw=ZnT4KSk_+Z422mEZVzfAkTueKvzdw=r9ZB2JKg5-1t6BDw@mail.gmail.com>
- <20250602-vulkan-wandbild-fb6a495c3fc3@brauner>
- <2025060211-egotistic-overnight-9d10@gregkh>
- <20250602-eilte-experiment-4334f67dc5d8@brauner>
- <2025060256-talcum-repave-92be@gregkh>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>
+Subject: Re: [PATCH] filelock: add new locks_wake_up_waiter() helper
+Date: Mon,  2 Jun 2025 14:14:43 +0200
+Message-ID: <20250602-unstimmigkeiten-schimpansen-fe4ff1b32156@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250602-filelock-6-16-v1-1-7da5b2c930fd@kernel.org>
+References: <20250602-filelock-6-16-v1-1-7da5b2c930fd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2025060256-talcum-repave-92be@gregkh>
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1228; i=brauner@kernel.org; h=from:subject:message-id; bh=4Ul8K3x8UQ2RkZ/IVbXwniJH9SavwdqncKIw/+W0l/8=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTYTt0ls8c9Kq1Bx+y+SkJq49tJqbHtvxb9LWNctSsxX 3BW9q73HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABM5cJKR4W/xGrHT3UXa8067 fd7eWLlsdecXK+HKCRzlJg9fzsvUyGZk+G2gLL0r0+qdKddpq8CbEz+r9D7amzF7Z4BK277mXaw 6DAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 02, 2025 at 02:06:55PM +0200, Greg Kroah-Hartman wrote:
-> On Mon, Jun 02, 2025 at 01:45:02PM +0200, Christian Brauner wrote:
-> > On Mon, Jun 02, 2025 at 11:32:44AM +0200, Greg Kroah-Hartman wrote:
-> > > On Mon, Jun 02, 2025 at 11:09:05AM +0200, Christian Brauner wrote:
-> > > > On Fri, May 30, 2025 at 10:44:16AM +0100, Luca Boccassi wrote:
-> > > > > Dear stable maintainer(s),
-> > > > > 
-> > > > > The following series was merged for 6.16:
-> > > > > 
-> > > > > https://lore.kernel.org/all/20250414-work-coredump-v2-0-685bf231f828@kernel.org/
-> > > > > 
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=c57f07b235871c9e5bffaccd458dca2d9a62b164
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=95c5f43181fe9c1b5e5a4bd3281c857a5259991f
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=b5325b2a270fcaf7b2a9a0f23d422ca8a5a8bdea
-> > > > > 
-> > > > > This allows the userspace coredump handler to get a PIDFD referencing
-> > > > > the crashed process.
-> > > > > 
-> > > > > We have discovered that there are real world exploits that can be used
-> > > > > to trick coredump handling userspace software to act on foreign
-> > > > > processes due to PID reuse attacks:
-> > > > > 
-> > > > > https://security-tracker.debian.org/tracker/CVE-2025-4598
-> > > > > 
-> > > > > We have fixed the worst case scenario, but to really and
-> > > > > comprehensively fix the whole problem we need this new %F option. We
-> > > > > have backported the userspace side to the systemd stable branch. Would
-> > > > > it be possible to backport the above 3 patches to at least the 6.12
-> > > > > series, so that the next Debian stable can be fully covered? The first
-> > > > > two are small bug fixes so it would be good to have them, and the
-> > > > > third one is quite small and unless explicitly configured in the
-> > > > > core_pattern, it will be inert, so risk should be low.
-> > > > 
-> > > > I agree that we should try and backport this if Greg agrees we can do
-> > > > this. v6.15 will be easy to do. Further back might need some custom work
-> > > > though. Let's see what Greg thinks.
-> > > 
-> > > Yes, seems like a good thing to backport to at least 6.12.y if possible.
-> > > 
-> > > Is it just the above 3 commits?
-> > 
-> > Yes, just those three:
-> > 
-> > b5325b2a270f ("coredump: hand a pidfd to the usermode coredump helper")
-> > 95c5f43181fe ("coredump: fix error handling for replace_fd()")
-> > c57f07b23587 ("pidfs: move O_RDWR into pidfs_alloc_file()")
-> > 
-> > That should apply cleanly to v6.15 but for the others it requires custom
-> > backports. So here are a couple of trees all based on linux-*.*.y from
-> > the stable repo. You might need to adjust to your stable commit message
-> > format though:
-> > 
-> > v6.12:
-> > https://github.com/brauner/linux-stable/tree/vfs-6.12.coredump.pidfd
+On Mon, 02 Jun 2025 07:58:54 -0400, Jeff Layton wrote:
+> Currently the function that does this takes a struct file_lock, but
+> __locks_wake_up_blocks() deals with both locks and leases. Currently
+> this works because both file_lock and file_lease have the file_lock_core
+> at the beginning of the struct, but it's fragile to rely on that.
 > 
-> So that would be:
-> 	git pull https://github.com/brauner/linux-stable.git vfs-6.12.coredump.pidfd
-> ?
+> Add a new locks_wake_up_waiter() function and call that from
+> __locks_wake_up_blocks().
 > 
-> Can I get a signed tag so I know that I can trust a github.com account?
+> [...]
 
-Sure, give me a minute.
+Applied to the vfs-6.17.misc branch of the vfs/vfs.git tree.
+Patches in the vfs-6.17.misc branch should appear in linux-next soon.
+
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
+
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
+
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
+
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs-6.17.misc
+
+[1/1] filelock: add new locks_wake_up_waiter() helper
+      https://git.kernel.org/vfs/vfs/c/cc69995fd8e9
 
