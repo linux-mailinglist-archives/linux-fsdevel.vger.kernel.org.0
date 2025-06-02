@@ -1,155 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-50290-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50299-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88A00ACAB0A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 11:03:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7705FACAB1C
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 11:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A7D189D68F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:03:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5BEB18955C3
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jun 2025 09:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CA71C3C1F;
-	Mon,  2 Jun 2025 09:02:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F011CEAA3;
+	Mon,  2 Jun 2025 09:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qqpj2yf/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nca/dKql"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F8A8BE5;
-	Mon,  2 Jun 2025 09:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69A01AF4D5
+	for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jun 2025 09:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748854972; cv=none; b=JyrEvQQa/kG5ozFQcuLG1+hQEiF87wwzajTRbNR8ZJi0qyPkwGT1m3eAvE5ZOIPCLNIt84Tbvpp4CD3v7sktDhDzvEB6nhynVGrHS+uNVWT6y396KlXUlguAC6UcOA7ZqWAy3/Efb4dUp2v2XKSzjEBnJubSGu1m/5NrxHq/bnk=
+	t=1748855076; cv=none; b=YOUZ7viNCiMq22dl3++yq50CUtgq5Kmqg3gtGN8a5kIdhVFpUdHWhwZz3SRocSMk1XwhcmetfygWiVQ/lDT/uymaKme3m7aLTJqaNi9PB+UCPWeDOud04QTAUFZ8YUBH11wLJJdz6TiUlqVoSFyeL2w26kCayi6FZ1Sa32rmGk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748854972; c=relaxed/simple;
-	bh=iX3w6g2vZ1GkUU//uv+84WjdPgYNSYQQnfsJz8cXOX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vEojcAHwM5j7MctFtkzTGBTsowNH3+fVx0Dam4rEeLfaZt+u6L2w2Jb0SwKCHhOaAqFcIS2dNzoGjuge38Ob3Axp22Q0ctsbY9Bhl75AjhSS22WDy47eE+gekqay/jbH9Yjk/am39F2B49tSNl7o4qitFMG33S3bpTNAZoGUgEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qqpj2yf/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037C8C4CEEB;
-	Mon,  2 Jun 2025 09:02:50 +0000 (UTC)
+	s=arc-20240116; t=1748855076; c=relaxed/simple;
+	bh=HVl4qNpIkApLYC+fQzXewrB1RMqnNuR5Oe/jbzrHuw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kf0pRkzMXqWP7gI/go2XDg+X7Lf74Yn76To0OsHQOV4yGUgUvKNyXUlI41LD951S3eEon1vuiF8vh2H0afztkRmBPrXXht4LgWPnS65AJDzBY//vEPqMOwwAKZs9hg4AqOwOEDik8l+Y7thqaJY8z5eprxlBHzfm9csfQPxiv8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nca/dKql; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B313BC4CEEB;
+	Mon,  2 Jun 2025 09:04:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748854972;
-	bh=iX3w6g2vZ1GkUU//uv+84WjdPgYNSYQQnfsJz8cXOX0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Qqpj2yf/j4fxAW2ioly+hF0u7Kug3OvUQGCwBEriLRKKbLwBeJpPMDeovd1Ag327f
-	 GWqMkZCv03SoKCjH+fL8rRQVJReL3ZUekBNpzhL8iLCFduRb87e/pZdTgj9ZYrBmUl
-	 ulpKyXHNuXwCS/G0X1D8iNoXN5zSnaoYcE/NkkRrwrX0qhZs+U31sHH40FgSdm97sS
-	 g/XTYyRYRIS5rHyf0Z4uUhBes0i4FWxME75ywndZnP0G4n8Fo2M8+1WlyAhERIp/6A
-	 L7M9PajTWIwnnNFKRDErasCFAHJ8HZKJDXcl5m0PhB8o3kwJW7+A0PzTYxLajQac88
-	 xCJgX4TK8nqYA==
+	s=k20201202; t=1748855076;
+	bh=HVl4qNpIkApLYC+fQzXewrB1RMqnNuR5Oe/jbzrHuw4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nca/dKqlKu7BpweLWb61RzJI8Y5wYawoivp6usjLggBVT5DM4YpV+fX1XMG6SH3/3
+	 /fTiYn964Al9mAycRtbydmvfZboTKQfR9GHOrAy/nToNTPO3b3u+/647v5mRlrIjDi
+	 QipUDjE5KVtnbyHYMCnoX9Ko4S31OjTGIxMC38QJnPmVqjm2LSoTDd5mVwAyGXa+2r
+	 WgJL82SaBnk34F/lPtq1GW7PfGAtbUlAHK/kgRlD1X3A6O1yT4zWPzfSpeOICIF9Qq
+	 nauy6w0ssGDivEzHosQY/FJ81+oND9hXB0ZnUJheDqB3QxjUF4e+azt0wE4rfiUsdF
+	 BbA7N7TSYM4Hw==
+Date: Mon, 2 Jun 2025 11:04:31 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Mon,  2 Jun 2025 11:02:42 +0200
-Message-ID: <20250602-vfs-fixes-257460b833e1@brauner>
-X-Mailer: git-send-email 2.47.2
+To: Jens Axboe <axboe@kernel.dk>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>, linux-fsdevel@vger.kernel.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [BUG] regression from 974c5e6139db "xfs: flag as supporting
+ FOP_DONTCACHE" (double free on page?)
+Message-ID: <20250602-ortsnamen-umwegen-2f2780a769c6@brauner>
+References: <20250525083209.GS2023217@ZenIV>
+ <20250529015637.GA8286@frogsfrogsfrogs>
+ <20250531011050.GB8286@frogsfrogsfrogs>
+ <0315c56c-5fe1-460d-8b34-a356e42ccae5@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3132; i=brauner@kernel.org; h=from:subject:message-id; bh=iX3w6g2vZ1GkUU//uv+84WjdPgYNSYQQnfsJz8cXOX0=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWTYZmzefTu4a6afu01Ds3gMn/TDUwVlQveZ7oQ5t6tOf jP3eplYRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwESi1zEytN6/meugydb5Ymr4 mcoELusJq9xe/BTr3l177cyXKet8vRkZzur46EeF/LsTtP+ngabY02fz3+jKLZ9kv2X/fzbGMH9 NVgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0315c56c-5fe1-460d-8b34-a356e42ccae5@kernel.dk>
 
-Hey Linus,
+> >> https://lore.kernel.org/linux-fsdevel/20250416180837.GN25675@frogsfrogsfrogs/
+> > 
+> > After a full QA run, 6.15 final passes fstests with flying colors.  So I
+> > guess we now know the culprit.  Will test the new RWF_DONTCACHE fixes
+> > whenever they appear in upstream.
+> 
+> Please do! Unfortunately I never saw your original report as I wasn't
+> CC'ed on it, which I can't really fault anyone for as there was no
+> reason to suspect it so far.
 
-/* Summary */
-
-This contains a first round of fixes for this cycle:
-
-- Fix the AT_HANDLE_CONNECTABLE option so filesystems that don't know
-  how to decode a connected non-dir dentry fail the request.
-
-- Use repr(transparent) to ensure identical layout between the C and
-  Rust implementation of struct file.
-
-- Add a missing xas_pause() into the dax code employing
-  wait_entry_unlocked_exclusive().
-
-- Fix FOP_DONTCACHE which we disabled for v6.15. A folio could get
-  redirtied and/or scheduled for writeback after the initial dropbehind
-  test. Change the test accordingly to handle these cases so we can
-  re-enable FOP_DONTCACHE again.
-
-  This obviously will need backports to v6.15.
-
-/* Testing */
-
-gcc (Debian 14.2.0-19) 14.2.0
-Debian clang version 19.1.7 (3)
-
-No build failures or warnings were observed.
-
-/* Conflicts */
-
-Merge conflicts with mainline
-=============================
-
-No known conflicts.
-
-Merge conflicts with other trees
-================================
-
-No known conflicts.
-
-The following changes since commit 015a99fa76650e7d6efa3e36f20c0f5b346fe9ce:
-
-  Merge tag 'nolibc-20250526-for-6.16-1' of git://git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc (2025-05-27 11:27:09 -0700)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.16-rc2.fixes
-
-for you to fetch changes up to 5402c4d4d2000a9baa30c1157c97152ec6383733:
-
-  exportfs: require ->fh_to_parent() to encode connectable file handles (2025-05-30 07:30:47 +0200)
-
-Please consider pulling these changes from the signed vfs-6.16-rc2.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.16-rc2.fixes
-
-----------------------------------------------------------------
-Alistair Popple (1):
-      fs/dax: Fix "don't skip locked entries when scanning entries"
-
-Amir Goldstein (1):
-      exportfs: require ->fh_to_parent() to encode connectable file handles
-
-Christian Brauner (2):
-      Merge patch series "dropbehind fixes and cleanups"
-      Merge patch series "rust: file: mark `LocalFile` as `repr(transparent)`"
-
-Jens Axboe (6):
-      mm/filemap: gate dropbehind invalidate on folio !dirty && !writeback
-      mm/filemap: use filemap_end_dropbehind() for read invalidation
-      Revert "Disable FOP_DONTCACHE for now due to bugs"
-      mm/filemap: unify read/write dropbehind naming
-      mm/filemap: unify dropbehind flag testing and clearing
-      iomap: don't lose folio dropbehind state for overwrites
-
-Pekka Ristola (2):
-      rust: file: mark `LocalFile` as `repr(transparent)`
-      rust: file: improve safety comments
-
- fs/dax.c                 |  2 +-
- fs/iomap/buffered-io.c   |  2 ++
- fs/xfs/xfs_aops.c        | 22 ++++++++++++++++++++--
- include/linux/exportfs.h | 10 ++++++++++
- include/linux/fs.h       |  2 +-
- include/linux/iomap.h    |  5 ++++-
- mm/filemap.c             | 39 ++++++++++++++++++++++++---------------
- rust/kernel/fs/file.rs   | 10 ++++++----
- 8 files changed, 68 insertions(+), 24 deletions(-)
+I've just sent the pull request with the fixes a minute ago.
+Thanks for testing!
 
