@@ -1,175 +1,217 @@
-Return-Path: <linux-fsdevel+bounces-50504-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50505-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94166ACC9E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 17:13:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B56ACCAA7
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 17:55:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AE8D3A4CA1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8434B18882D8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:55:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C46723C4E9;
-	Tue,  3 Jun 2025 15:13:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC2DD23D286;
+	Tue,  3 Jun 2025 15:55:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Av3ICbmj"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BOgOnPjd"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2066.outbound.protection.outlook.com [40.107.101.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD85D223316;
-	Tue,  3 Jun 2025 15:13:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748963613; cv=none; b=OYLqpEIKifmpQBgeLGNZPlGF5N4wWSL0sYk508qOt0WvgFr4d9vKUJmMSTJsHCVPsH5uky1LHUYQmTsJa2vw2NtfFhkEtrEfy663VXPdYqM2a85hdq5d+2auq1nOGF/6rYJH+lCEX0LxJwhhOQHR3L8lKQBpY1aijKzyulgtwcE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748963613; c=relaxed/simple;
-	bh=VKaT1KQZbq1h+bpWVaNBkbsVejOICIzA68th4hZbQu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jXFG0uyb+mlzlExmkfjwI/LYNISVIszzJeWdkKkm6ZGo8Hm02OPYkfce2sl4/5LVuAC200uAqhw2JTl8OF4Pg2cFMBY1Sb7xGhp0YWx+90liUPswVWoLlm/UDQHdYAnhGvgIs97zZfGaxNXqBZ/hM0DfE0Rv+fJNUeAabb69RQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Av3ICbmj; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3a367ec7840so3999956f8f.2;
-        Tue, 03 Jun 2025 08:13:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748963610; x=1749568410; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DM7FqjbQ2HOQRdv25jJI92AI5FyCapZb+x0ggg0Oxqo=;
-        b=Av3ICbmjdzI2VZWbRT2l4CJ0KuX4tN6o4CzJ01Xv0uVqHxWggNyembzlZIrwSTNf9f
-         2unxipBJdx5A38UN7T1a5PlQLc9jpdIQ+pumRYYFb7JnSF+AlS/yoMYneyg50qIEspHQ
-         3r2QSOMS5B+nVJTeYPwvv9a+zo7l7b/oKmJ6rLMnveyRX5rYVH4Ssmn6ivikLi1oRUvM
-         q55QFer+5C31GWurcph6l67QMWUyxbi2y5Z0unbK9B/SW2NVYxANofR3eL+cMMNMXr59
-         PyXTzngFQgPOsEq6SUxHeyXsRiDeCcul8brZQxHmtdHkl14HBgcChNA761QOlBU+jP40
-         Hrdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748963610; x=1749568410;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DM7FqjbQ2HOQRdv25jJI92AI5FyCapZb+x0ggg0Oxqo=;
-        b=Bp5tiX0Ng9r5WK3aLPHPpCA8INdWl4LTYQPcTaBLH4XhrvcxN6Zy/XfjHjMAjAJN8x
-         zuloKPs2a7tLNsBn+lQYtDKG4EgBCGVyJU+L2t+So6zjQrRvCsaJbHzA03vGVgKcMZY1
-         HYFPULlk8/fR+lvhUtf+FkFf3UV+1VjyZWqhW0dLIStD+r6CElFGKnyOxifpQySM7zOi
-         2QMaz54InfXBOD1/0SEJxGOqsP5xVs0tjhfzMQvfuIOf6Wz2FwIRgKsUKIwgYL7RNdd3
-         XJ4giRyVweFhwcv4EoxwJSxmIUZe1nKJ51lIDmatdru8HjvptspnS4JzM/s7HuiSCLYK
-         FOIw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/RduDu5eN+9IVqFeqfjK6IiTSo4S8S5XgL4y1xkICd6lNr5qvi2cwbkdh7CAoU8gPJ4pUVvdfXqqgnwzY@vger.kernel.org, AJvYcCUADAd42QuHImByGRhhavyIE4gieEq/KlPuISxqUXZ40cATs3BFn52f0q8HHLIvdTH6uWeB1REevhJQOtwP@vger.kernel.org, AJvYcCXmL/QJ32ajnLftY4jcH6v0ZZCHyZ0FKpDGlzQx/Xa4f86NwaSNynpEdJjTs2x0kQ3C4B0RfBGUsKN4d3nbFEaOsbNY40x5@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfJksHT1Bof7ZTF4ahqfHUz+QhOYxUnoNqXSyEOIsESpYYMg2k
-	HPh7MX2i3fCgVWBITjNuYgv25dDTJ5d4s59toNm//hOYCZWnoeFQ6AV3uQanhxiZw2bwl/O+DHB
-	Fuu7ddqKiR2EuqE6M+WB5ZcV5kZ3N5qw=
-X-Gm-Gg: ASbGnctQ9jic0BZZ+mEI6ykG2KxZ8ZFD/UOUzl7pWOv7tvg1pdq/D6ympE/a7YHvok/
-	soB6dFTz+mZekex8HB1OdH8/fJtS6s02st1Zj0Yg3TNi92x1WXHlBPje7ZYQ8CK0weZ4ccFyQq4
-	2fYqhC1tSt2/1WeGT+PU85A+I6YA2R+fam7bax7UQ/sNnSiEdOAcPJU6Vc2Ao=
-X-Google-Smtp-Source: AGHT+IH59aVL70zjdlvFvrxqya3aA8HNcB8WHYJtYoL80K4X5T7xHH/6N7iBla+1X6FUqhCjz6qor/hWAe3HaZDHy+o=
-X-Received: by 2002:a05:6000:230b:b0:3a4:e318:1aa9 with SMTP id
- ffacd0b85a97d-3a4f89ead67mr12808911f8f.59.1748963609616; Tue, 03 Jun 2025
- 08:13:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10862C325E;
+	Tue,  3 Jun 2025 15:55:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748966132; cv=fail; b=XmJr3BJMCs1IkUgMRLqEAVu4khpUSOB6Mj0LJBQ4uj9wNo08yOb+Xlym2jghZkxYumxdqpbb/OUQEHd5CkPFOJvbkA8AdowFcOI/UJea5m54L3hoQ1HZEevos2a9nuckPqLhmnorZZRoGVWdJ/icKQnrBOC0DjJxQzGSEX+x2rg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748966132; c=relaxed/simple;
+	bh=VDxxOvzqiRZI4C7sO+ClFmRGC/euLva5tpQ1xWqDnrQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Vd75ynByHUpS2ACDbnelms5zqfoU4oYmuQDNgth2t3KZhQp3kntDZC9YphswpbY7A1y8pXCGaeDottWXQyNePLQGNojxvsSCDXwKn3n1hAM2dDJAEYStD40JqdITvNDJH3mevoAi3qhr1mLDB623z9OIvsGj4APelDvefgqwKXw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BOgOnPjd; arc=fail smtp.client-ip=40.107.101.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AFLd7ZpknsVQOYfl4tX+ognWG51EIh6WJ7KD2Adp3NIq2DaSj7z/giN3bU1DfuqPskOrxATRdtbgz7GwRheoTislh7KhQGQk/A8Y41JiUnNGwnhaPbgeu4kuCapq/UDpGVFbwJ0DX/Oe9eK89uQw8RqntHKcQBoR1/esf0vVUvYlYcx7oOiEkyxP3Ie8kmSYMSrW7sU5k2aBsVkmMw4601cl7GLhjMVkni+rbK172OZvaJsI3ZjSwzmp1TiL8SPStrXj2EW9x27oI1JnUUBcTvykOOmK1L3cua0BLbQBYbTQUkTKdFeQD6HktrlK9wSuXjHGRli89W9wjciORyfBmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NhN6OtR2DNkChZ4eUPzc0cWptaMdyaPqDpYFDNhkZY8=;
+ b=zN52+M/cWcw/LBYM/h46RxkHiA1z3W6wSkMm8HqqoW9AnfygEVhp8pF9EcEbAshISLObDxBcZUXCtJun+L98A8Jv8LKiozyLM94Fy0uXDWOqJpoHNdFd2Z4pylAn/BpIVPBHoLCSxmlAr+LNvQauFzZXLetH/SzdnHoiEvGXXY5BsosnqtSQtcqU6lRXPYZc6/uurMfRmQLq9Ds20gIxu8ppYEF/geOcLgez3vPP03JVBeWDTUjXR+Gr84wc97lo6UrVSsEEBHNHCfk3puT99NGv8yLOfIGv83FWWcT1UbtZVuH7w+2PPZtZVby/4WcwqCXXxmvHUWnOlYpKtmBupg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NhN6OtR2DNkChZ4eUPzc0cWptaMdyaPqDpYFDNhkZY8=;
+ b=BOgOnPjdUZbB5N/isifqnNUJqdKCH3ymyewceKt+fG8ycdfANF6UKOd6u8c0n7GFtjqKpbbjMVvD1a1Lr1qIf4KMXSsh7MobeXFO/caUnWtL1MRnVT0FpPqYxvj7eXldXLDUN2ZdbD9fvS9VTKlNpK1KuoxsrvTH//EkKUszrRk=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by MN2PR12MB4406.namprd12.prod.outlook.com (2603:10b6:208:268::23) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.33; Tue, 3 Jun
+ 2025 15:55:26 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%7]) with mapi id 15.20.8722.031; Tue, 3 Jun 2025
+ 15:55:26 +0000
+Message-ID: <d1937343-5fc3-4450-b31a-d45b6f5cfc16@amd.com>
+Date: Tue, 3 Jun 2025 17:55:18 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+To: Christoph Hellwig <hch@infradead.org>
+Cc: wangtao <tao.wangtao@honor.com>, sumit.semwal@linaro.org,
+ kraxel@redhat.com, vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+ amir73il@gmail.com, benjamin.gaignard@collabora.com, Brian.Starkey@arm.com,
+ jstultz@google.com, tjmercier@google.com, jack@suse.cz,
+ baolin.wang@linux.alibaba.com, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org, bintian.wang@honor.com, yipengxiang@honor.com,
+ liulu.liu@honor.com, feng.han@honor.com
+References: <20250603095245.17478-1-tao.wangtao@honor.com>
+ <aD7x_b0hVyvZDUsl@infradead.org>
+ <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+ <aD72alIxu718uri4@infradead.org>
+ <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
+ <aD8Gi9ShWDEYqWjB@infradead.org>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <aD8Gi9ShWDEYqWjB@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BL1P223CA0008.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:208:2c4::13) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-4-song@kernel.org>
-In-Reply-To: <20250603065920.3404510-4-song@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 3 Jun 2025 08:13:18 -0700
-X-Gm-Features: AX0GCFu98PiOKI1wBddjoNp1jUp6L4dsekQR23Qi4Bu9qcDk7dk8CUSl-Pywa9o
-Message-ID: <CAADnVQLjvJCFjTiWpsBmfbyH5i88oq7yxjvaf+Th7tQANouA_Q@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Introduce path iterator
-To: Song Liu <song@kernel.org>
-Cc: bpf <bpf@vger.kernel.org>, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, KP Singh <kpsingh@kernel.org>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, repnop@google.com, 
-	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	=?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, m@maowtm.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|MN2PR12MB4406:EE_
+X-MS-Office365-Filtering-Correlation-Id: b9f79322-bfe4-4a53-e8b6-08dda2b70e6e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aW9lUmpWMk9LQWVqZVdpK0QzSWFPQ1BXNGJVN0hERWo2NkRES3R5TUJFRnFs?=
+ =?utf-8?B?NXhJK2VHWHlOY1R3M0FkMStLVVgrZjJjU3E5bmJJZ3hmNnBhZ3N0ZGIxZWxN?=
+ =?utf-8?B?WGpqRnZTVDROaXBLUVphZFBEMkRQSUR3YTVKRWMzbWdKUW5oR3MvMDBHdktD?=
+ =?utf-8?B?M1ArcVBQUCtRSktFL05FdlFLbjhJZWdHSVZDa3dETFVjb3l3WkYyVFZrZ0JU?=
+ =?utf-8?B?dXpRWGhtYVBNdTJFMTZrYTQvWlpidGNEMTBGYXB2SmsrUGtyVm9TZUQwZ1Z0?=
+ =?utf-8?B?bUFiMmhLaklLUWh1YUg0MjdGM0R2azdDeld3bEtWcld4dWRFNGIwM292c0Mr?=
+ =?utf-8?B?WjFsZWxUdHMxZWhJZDZKekp3RHhJVVc3aUFpdTlWYjd6aHBJLzhNc2Z4Qzgr?=
+ =?utf-8?B?S1RtRzExRjFoak90K0hEN0FHNXJzbTEzRWhId29qNnVRU09nNFo0MGlETFYw?=
+ =?utf-8?B?R2NCM05CZHdIVnFvVEI1alFKdWZ0WDBPUkVKZEdrMm5mU3IzMmFLQTdVOGVI?=
+ =?utf-8?B?OU5XbXVRYjJrMFd1a3ZHeVBrMnBydys0cjRCNmd3ekhNdWJLQ2F6eW1GSHp0?=
+ =?utf-8?B?VTVHWXRjQ1AvMCtWUy9SWElDYmkrVE0wUW5FUzl5Ly9LenRoTG1WV0tRclo4?=
+ =?utf-8?B?VkY0MElxSHNjK0xha2ZsSmdUNGdyWHI2UDFHOFR2em5uMmxTL0E5dmVJR01U?=
+ =?utf-8?B?RVZZRTBybFZYZ0FSVG1ueWVLTDBOUGpLZ3BQQXNVOUI5WkY1akJPTVNnUncx?=
+ =?utf-8?B?WUdQRzIvSXdpaTlIdWNCM3o5S2N3ZFlUdGMxRjk3WTZReStWMTBveGR2aE11?=
+ =?utf-8?B?ZCswdTdBWFU3elZ2UERFVjlnOUtsR1FLVkNFa3F4dyswK0JjMDdGcWYzY0JT?=
+ =?utf-8?B?L0trdmtQNWdtYlg2V3c0VVRlMWpnRmJnbk0zY1hyL3BhUTd3K0pXY21JSDJJ?=
+ =?utf-8?B?MDhTS3RucHl1S2l1YW1UNFUxOHptd0o5YzlyVTZsSkJlWW9pbmtMcTl5QTRw?=
+ =?utf-8?B?b3RNYkgvTlhCdmlSRzVGS0tmMzZzWklDQTVyclF5Mjl4ZnJhaE4ybklveHRS?=
+ =?utf-8?B?cmhFeCtob213ZmhXcFFaaDFHN2ZrWFIvakNwRkVKcU1VLzl5T3g0dHBkNHJl?=
+ =?utf-8?B?aERFT0Y4VU1EODlRVlBjeEpMaEdhdzdjQml1WW9PckZwYjNYWUlWblc1MFhH?=
+ =?utf-8?B?dzBvaE50bkZPMnpXT2UyM0RUK0NXY055TEFnQzM1QzhVTXlHSjN4dFphOXNH?=
+ =?utf-8?B?b2s3bmxyRERmamV2TGsxVE1ITE9raXBUQmpvbCs4WjRMc2dQUUJqWUhUNnll?=
+ =?utf-8?B?aG5TOWtEYzBoTTNFeXYyUmRpUWlRbTQrVjFhQjFBZlRXNlhybHcybENSUXVL?=
+ =?utf-8?B?T2xuL1JDZmJqeW5zTjN2V0QxQnlmNkZjNUNnbnRwZk90b3RNWVBOR0J5Q3VB?=
+ =?utf-8?B?aG9NR084S1ByVU5rbEsvNDRXY0c4TzVKTkMyMHh1ZVhLUVZsdkpZREJXeVhY?=
+ =?utf-8?B?amM5N3F3a29xY2xhRzJ0UlIxL25MamVDTFJ1V1djNWIvaGl1Q0F5OU4yVjRw?=
+ =?utf-8?B?QzNqVDlONWhrRHJ1eS9GRGlqenRJbEJ6RnJ0SkJ3TWVCMkxHUkZjZkRadTk5?=
+ =?utf-8?B?NHMyNlpUQUNWL3ZQOFFhYmtYU3Qydk5xa3JkcWRIWDhxYXlzNStFekk4YXFs?=
+ =?utf-8?B?eU13SFNCaXZqZy9tZlJlSHk1RjNJaDFSM2ZwUWtHcWpWbDRpaVhCbi9VNUhm?=
+ =?utf-8?B?TjNYQlM5SStGcVhDNFlzWU9ROGorSGtNc0VaSGc4VVhxUGx1TExqUWhnMlpk?=
+ =?utf-8?B?TUhiRUJ3WEQ4K1V3V1Fya0RPcU13MmJHZGljRmVySGw4RXBCMVNxTEJUMUdj?=
+ =?utf-8?B?K0ZKRXBlbkpuSmU2eHo0cFoySTNjY2V3WGNMbkNxZENDUG5XZENndWh1ZE11?=
+ =?utf-8?Q?XE3tZgrUPL8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dnZjdzdCVmdwSTRYNkg4emVRTFJQYkM3SE03emJMVkdocElxSlZzTjVnU2lv?=
+ =?utf-8?B?Szh4dlFyRURMbGRvZnZHOTN2S1V3NVBZd29EcVFpYkRVWFRRNk5LampQTDM5?=
+ =?utf-8?B?WE5RaWxVS0NNM3NMWWRVRFFoU004aHl0VzdNdm9CKzlKNUh1VEwybWtmdU1q?=
+ =?utf-8?B?SlZ6L2tuZ2I0SGdqSTJUYVpYbGlEd0ZGSHlQMTJTanlsTWhVM1NpTHA5TGVa?=
+ =?utf-8?B?UWY2cXJyUHRzQkpJeWNrRU5RMzJIV1pBR0o4MXhGRHdvZXVyRmc2SHY1anFk?=
+ =?utf-8?B?SnRpOXpOclRueHUxTExndTNZNEN2c2FnRXFXVHcvWlBUeFhMR21XMnkzbk45?=
+ =?utf-8?B?VXhpU0d5YVI0NUFXd0YrMU9UTXlXVmhYUUxOQkRIeCs5WkUzVllyTUltMjQ2?=
+ =?utf-8?B?bVhxb2VpRUx2MUZNZTBjWEFkUmE3Z1o3d0J3cm9TeE5XUG9JNWZqTHV5MEtk?=
+ =?utf-8?B?MkpWSnBxRVJ6L1cxKzM5SzR1dHlPNWcyczZuM2VzdTFIWHR5UmpJS1U1Q0hL?=
+ =?utf-8?B?b08wMUMxZFRic083NnlPU0xkZHJrRy90cGtlcHBXQXBzcVUyRVl1MTRnNkdi?=
+ =?utf-8?B?VlRyYWwxMHJKVUV5bkdZV05EcE9xbUxKTlNUL3k3OHNNV3hGUDVrcGtMeDE5?=
+ =?utf-8?B?TWxVU2ZlWFVoc2YxSEpuWkZEZUx4U0MzQVRLTTRpckJ6cmdsUWV3RGJMNVZl?=
+ =?utf-8?B?UldQTVRXTGJzUDd5R1BybTducW1EMVU4SUxSL2kyK0Vqc0xnSmlSc3FEeklJ?=
+ =?utf-8?B?OENBalBySHF6Wk9NWUgrbENmZ3JEOTBPZFhZejBrLzFMWFFyUU8xOWxxMERv?=
+ =?utf-8?B?VVFHZ0RGYTlJMXhLdG9Jb2xra2ZWQWhKUHRvT0JtRUd4VzgvOXI0N01YZzBI?=
+ =?utf-8?B?aVQxSU04Mi9heEFyeE1sdTVQbVZ0d1lWVHJqWmZxUG1Dd0JmNVhRMlZ2eitx?=
+ =?utf-8?B?eUZ0b2ZJWGJOOFh2Y09rUHE3Mk9uWUttNW1qWDBTMzdZeEhyRzJydnE5WUFB?=
+ =?utf-8?B?TVNpRGFtalJXQkx1ZmR0TkM3TjhGcjN6d29ubmgyNzRPam55RFZlTjNYQnAy?=
+ =?utf-8?B?amlxajV6YTRvTDIwMG1vV25LUVRFOVBwTExkN0pQRHQ5Y3pKWmRhcEZ4VExp?=
+ =?utf-8?B?ekFqd3VoNmZTWVVOblZ6ZEVOVkNTcFFWazV3V05jSm5FVDhBVW9TRmkwSFNL?=
+ =?utf-8?B?bUt4aUUxNDlRWG9WNllNclBLNFBSNVl5RE1lWjBZSXl2Q3haT0tvTW5RWDls?=
+ =?utf-8?B?cHJ5c1gxamJEQk40THFYSC9JeGtYeTRyWkZRdlFscWJzUlk4UWFENUJWZEZx?=
+ =?utf-8?B?czZWQ3lZdm5RazFReThtL1g2OWlROGp2aFJyNnR1cnVSRm1qUkU3MzBBTmt0?=
+ =?utf-8?B?b1dEbUxUL21zSGxsN2ZtNnBNWGNwd2V4dXhlK1ArYTh5dEoxY29wdy8xcWpo?=
+ =?utf-8?B?T0dhZGxRUWJkUXE4WVhyakhNQS9OeE13VkNOa1A4Z0g3V0p1OGNEVG5TU084?=
+ =?utf-8?B?cFVMM0sxUTM1YWE1VnZCTVhBcDVmMklxZHpJZ1RnODhoYjM0VzBKdFBWb0x4?=
+ =?utf-8?B?ZjlRUEU5VEMzMWtIQ2VUUDltVXhmM1dDcExSR3NxaUFWWi9TWnk0eHpUeEZv?=
+ =?utf-8?B?b015aGhDRk8zdUZQbk5UVG5USVgzSDBLWlBtODcwYnowTHRPMmZKcEtBTGtp?=
+ =?utf-8?B?R2hxRmNwWVN5cjZ5QTA1eFFpTElMcVJZWlZkMTJGL3FwUmEzK1VPZWdwZ0xo?=
+ =?utf-8?B?c0d3Qm9jc3dxWTNmclZQRFZIV0xLb0ZxalNYL3BabURKcGpwVW9mUWV2SUwr?=
+ =?utf-8?B?bGZpaXc2dWlMY1FJNDJNejJOcnpBdEVpaVIwcFFQRUt1eGFwMjdaSUY3Ni9K?=
+ =?utf-8?B?SThUeFBBNjcrMUl5ZUR1REVZUDFvWHlnN2xEZmdEWDJXcVhBOXZsVEJiOFdV?=
+ =?utf-8?B?aXRmeCtpbm9YNFZpVjVqZjRTWkJ3dDRaWE9BVDQvR09rN0JJMm80VW5LNy9E?=
+ =?utf-8?B?TDAxUVNHdXQ0ZlQ3cWtvdk9YV2pQUDd5Y0VtVEphK0dWV3hyS1p4VjE5VDly?=
+ =?utf-8?B?V01zUENhd1UweU9uemxCTXA1bWdEQVdMbGQyUnhJVUZuREpYVmdmbmtrcFZ1?=
+ =?utf-8?Q?x7stdCFXvanN8Nj27UMyNFubU?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9f79322-bfe4-4a53-e8b6-08dda2b70e6e
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 15:55:26.2941
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 03/WtGQEDuoBjhlEc7sz18vTVCp82IvYY4QrdQrBjk657IEKpTT6ef2pcW5kstwp
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4406
 
-On Mon, Jun 2, 2025 at 11:59=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> Introduce a path iterator, which reliably walk a struct path toward
-> the root. This path iterator is based on path_walk_parent. A fixed
-> zero'ed root is passed to path_walk_parent(). Therefore, unless the
-> user terminates it earlier, the iterator will terminate at the real
-> root.
->
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
->  kernel/bpf/Makefile    |  1 +
->  kernel/bpf/helpers.c   |  3 +++
->  kernel/bpf/path_iter.c | 58 ++++++++++++++++++++++++++++++++++++++++++
->  kernel/bpf/verifier.c  |  5 ++++
->  4 files changed, 67 insertions(+)
->  create mode 100644 kernel/bpf/path_iter.c
->
-> diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
-> index 3a335c50e6e3..454a650d934e 100644
-> --- a/kernel/bpf/Makefile
-> +++ b/kernel/bpf/Makefile
-> @@ -56,6 +56,7 @@ obj-$(CONFIG_BPF_SYSCALL) +=3D kmem_cache_iter.o
->  ifeq ($(CONFIG_DMA_SHARED_BUFFER),y)
->  obj-$(CONFIG_BPF_SYSCALL) +=3D dmabuf_iter.o
->  endif
-> +obj-$(CONFIG_BPF_SYSCALL) +=3D path_iter.o
->
->  CFLAGS_REMOVE_percpu_freelist.o =3D $(CC_FLAGS_FTRACE)
->  CFLAGS_REMOVE_bpf_lru_list.o =3D $(CC_FLAGS_FTRACE)
-> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> index b71e428ad936..b190c78e40f6 100644
-> --- a/kernel/bpf/helpers.c
-> +++ b/kernel/bpf/helpers.c
-> @@ -3397,6 +3397,9 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_next, KF_ITER_NE=
-XT | KF_RET_NULL | KF_SLEEPAB
->  BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPAB=
-LE)
->  #endif
->  BTF_ID_FLAGS(func, __bpf_trap)
-> +BTF_ID_FLAGS(func, bpf_iter_path_new, KF_ITER_NEW | KF_SLEEPABLE)
-> +BTF_ID_FLAGS(func, bpf_iter_path_next, KF_ITER_NEXT | KF_RET_NULL | KF_S=
-LEEPABLE)
-> +BTF_ID_FLAGS(func, bpf_iter_path_destroy, KF_ITER_DESTROY | KF_SLEEPABLE=
-)
->  BTF_KFUNCS_END(common_btf_ids)
->
->  static const struct btf_kfunc_id_set common_kfunc_set =3D {
-> diff --git a/kernel/bpf/path_iter.c b/kernel/bpf/path_iter.c
-> new file mode 100644
-> index 000000000000..0d972ec84beb
-> --- /dev/null
-> +++ b/kernel/bpf/path_iter.c
+On 6/3/25 16:28, Christoph Hellwig wrote:
+> On Tue, Jun 03, 2025 at 04:18:22PM +0200, Christian König wrote:
+>>> Does it matter compared to the I/O in this case?
+>>
+>> It unfortunately does, see the numbers on patch 3 and 4.
+> 
+> That's kinda weird.  Why does the page table lookup tage so much
+> time compared to normal I/O?
 
-I think Christian's preference was to keep
-everything in fs/bpf_fs_kfuncs.c
+I have absolutely no idea. It's rather surprising for me as well.
 
-Don't add a new file. Just add this iter there.
+The user seems to have a rather slow CPU paired with fast I/O, but it still looks rather fishy to me.
 
-> @@ -0,0 +1,58 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-> +#include <linux/bpf.h>
-> +#include <linux/bpf_mem_alloc.h>
-> +#include <linux/namei.h>
-> +#include <linux/path.h>
-> +
-> +/* open-coded iterator */
-> +struct bpf_iter_path {
-> +       __u64 __opaque[3];
-> +} __aligned(8);
-> +
-> +struct bpf_iter_path_kern {
-> +       struct path path;
-> +       __u64 flags;
+Additional to that allocating memory through memfd_create() is *much* slower on that box than through dma-buf-heaps (which basically just uses GFP and an array).
 
-Why? flags is unused. Don't waste space for it.
+We have seen something similar with customers systems which we couldn't explain so far.
+
+>> My question is rather if it's ok to call f_op->write_iter() and 
+>> f_op->read_iter() with pages allocated by alloc_pages(), e.g.
+>> where drivers potentially ignore the page count and just re-use pages
+>> as they like?
+> 
+> read_iter and write_iter with ITER_BVEC just use the pages as source
+> and destination of the I/O.  They must not touch the refcounts or
+> do anything fancy with them.  Various places in the kernel rely on
+> that.
+
+Perfect, thanks for that info.
+
+Regards,
+Christian.
 
