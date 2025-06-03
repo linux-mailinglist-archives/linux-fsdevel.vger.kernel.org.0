@@ -1,102 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-50506-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50507-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E55CBACCAE7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 18:02:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CFFACCC30
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 19:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98EFF17687F
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 16:02:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF1EA3A201F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 17:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE6823D298;
-	Tue,  3 Jun 2025 16:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61041DF985;
+	Tue,  3 Jun 2025 17:30:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OluYoGGV"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mizm8038"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF67972605;
-	Tue,  3 Jun 2025 16:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3684156C69
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 17:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748966531; cv=none; b=i7FrN8rM9ESqiplNlWKC0ZqKlKomb3T+jnAA7OAM1zvwOWey9NfDgUH/Ty4wPwSLR5y1Q76LG+KnBIpktfBpjWyfBuQv3W/q0ObsisxTV8RJ9yAqQv9RRgHZWitdrNAYQxlhmUxYG1QeyJ62w/J6Fhn+QItabMb8hDk05zKjgM4=
+	t=1748971812; cv=none; b=js29JYmEaoN3cTzdTbDx3eW5Zu/bg3pmJrUS3mvvD9LYOqXOOq7x6ID/qnn5ObfDoylKgYVMlBbDsEMN35fYO8jClS3O9wZ6Lrcppj2cWgAf4qaoaKSq/9Kg9qPTAgT0PKYlEYHx9CWOGJZ9nQ4yFkT2749HfJCQdgRW2+MO+XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748966531; c=relaxed/simple;
-	bh=utGGHye6zuMyX2IqEOVmv3+Md9E7v87JO8RTvtptp4w=;
+	s=arc-20240116; t=1748971812; c=relaxed/simple;
+	bh=NeuRqPV7KSJq1wbC6P3hQE0NcFH3J7sZ3ufsGryjZoI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WiHDy98mmW+haaLt4hlR3krye0GUsmDuxIeYlyntyTdV69OZBMPPWu37M/z6KQT2ajzOSEWvz2Xhb0RCoKgqkmiY+PAniyZ5Abu5yd0bQibT/l0tbGrVMFPHMu/64UXAFedTSODj83WVIfXDTVunvbbkB5fiPLbcglCnwodC118=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OluYoGGV; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=lqpA2obXAEGYiV7llfEv48yhrGfp0onTICfwh/ANc24=; b=OluYoGGVKqLlm6rzxdjM4LhMQ1
-	eOPz3SupE+Bw9ysysO+kM/cAgvP06gWwIbzC4/e4gASjwVugANssBjc40YPUGAx+Pj/cmjG3+82q5
-	ArJv2MFY9l9APkjyj+Yoq3yRmcH4NTq6C8N7+2xDqz76XDB+kn3u2iRial5JhXnskyYxuwaozZLDK
-	86nULefboRLcSVdt6e0PZk4PZPJNI/v2PdtKLZ9GxYdJtdmt/bXzjlJ5pPNkX0MbOyih2PJE2o/JN
-	5iAGN7D8oW5lzjB+iOXUn0QOl0bteQbmcnNIdnGqC+cRk6GyHKpthYQeF10F4Y/qlSP7eOdt5Vl6m
-	oPf9mjfw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMU5P-0000000BMWf-1H2s;
-	Tue, 03 Jun 2025 16:01:59 +0000
-Date: Tue, 3 Jun 2025 09:01:59 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Christoph Hellwig <hch@infradead.org>, wangtao <tao.wangtao@honor.com>,
-	sumit.semwal@linaro.org, kraxel@redhat.com,
-	vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
-	amir73il@gmail.com, benjamin.gaignard@collabora.com,
-	Brian.Starkey@arm.com, jstultz@google.com, tjmercier@google.com,
-	jack@suse.cz, baolin.wang@linux.alibaba.com,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	bintian.wang@honor.com, yipengxiang@honor.com, liulu.liu@honor.com,
-	feng.han@honor.com
-Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
-Message-ID: <aD8cd137bWPALs4u@infradead.org>
-References: <20250603095245.17478-1-tao.wangtao@honor.com>
- <aD7x_b0hVyvZDUsl@infradead.org>
- <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
- <aD72alIxu718uri4@infradead.org>
- <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
- <aD8Gi9ShWDEYqWjB@infradead.org>
- <d1937343-5fc3-4450-b31a-d45b6f5cfc16@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fT6plkWfmVjf9Wy4MbDtDQ+O4QteM4amizSV1IGF8G/EdMTvAFPDMYakC2OoDYgwWvPO1xImrVcc2qMpv0N63zaU8kAx4isIgclQjCSk7G9es4Kvg2nYZ+TtMNVByCeAXfiHpNdM71+AuB8QmAAhJZnIiTAwsSIFWNObRSevRGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mizm8038; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Tue, 3 Jun 2025 10:29:47 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1748971794;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f/DQf1x6I31oeApBRZfoUsma0VTKN1+fkRmQ0qgmY0s=;
+	b=mizm8038bFZpD4Nm3NwtDzDJO6adEogcjWCclc6Ie//akw7hFwcQTx6/e9xz6sy15mosGe
+	KHREMWuZnwh4e4vkLUNii1HY1lO5XL8Cxnt9iOKQQsvawwr1Kb0z8UtAih63G6KZNcxyaL
+	Ebh6fDugT5WzOh+XLJgy4SxM5RLYC+Q=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Michal Hocko <mhocko@suse.com>
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, david@redhat.com, lorenzo.stoakes@oracle.com, 
+	Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com, 
+	donettom@linux.ibm.com, aboorvad@linux.ibm.com, sj@kernel.org, linux-mm@kvack.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: fix the inaccurate memory statistics issue for users
+Message-ID: <obfnlpvc4tmb6gbd4mw7h7jamp3kouyhnpl4cusetyctswznod@yr6dyrsbay6w>
+References: <4f0fd51eb4f48c1a34226456b7a8b4ebff11bf72.1748051851.git.baolin.wang@linux.alibaba.com>
+ <20250529205313.a1285b431bbec2c54d80266d@linux-foundation.org>
+ <aDm1GCV8yToFG1cq@tiehlicka>
+ <72f0dc8c-def3-447c-b54e-c390705f8c26@linux.alibaba.com>
+ <aD6vHzRhwyTxBqcl@tiehlicka>
+ <ef2c9e13-cb38-4447-b595-f461f3f25432@linux.alibaba.com>
+ <aD7OM5Mrg5jnEnBc@tiehlicka>
+ <7307bb7a-7c45-43f7-b073-acd9e1389000@linux.alibaba.com>
+ <aD8LKHfCca1wQ5pS@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d1937343-5fc3-4450-b31a-d45b6f5cfc16@amd.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <aD8LKHfCca1wQ5pS@tiehlicka>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jun 03, 2025 at 05:55:18PM +0200, Christian König wrote:
-> On 6/3/25 16:28, Christoph Hellwig wrote:
-> > On Tue, Jun 03, 2025 at 04:18:22PM +0200, Christian König wrote:
-> >>> Does it matter compared to the I/O in this case?
-> >>
-> >> It unfortunately does, see the numbers on patch 3 and 4.
+On Tue, Jun 03, 2025 at 04:48:08PM +0200, Michal Hocko wrote:
+> On Tue 03-06-25 22:22:46, Baolin Wang wrote:
+> > Let me try to clarify further.
 > > 
-> > That's kinda weird.  Why does the page table lookup tage so much
-> > time compared to normal I/O?
+> > The 'mm->rss_stat' is updated by using add_mm_counter(),
+> > dec/inc_mm_counter(), which are all wrappers around
+> > percpu_counter_add_batch(). In percpu_counter_add_batch(), there is percpu
+> > batch caching to avoid 'fbc->lock' contention. 
 > 
-> I have absolutely no idea. It's rather surprising for me as well.
+> OK, this is exactly the line of argument I was looking for. If _all_
+> updates done in the kernel are using batching and therefore the lock is
+> only held every N (percpu_counter_batch) updates then a risk of locking
+> contention would be decreased. This is worth having a note in the
+> changelog.
 > 
-> The user seems to have a rather slow CPU paired with fast I/O, but it still looks rather fishy to me.
+> > This patch changes task_mem()
+> > and task_statm() to get the accurate mm counters under the 'fbc->lock', but
+> > this will not exacerbate kernel 'mm->rss_stat' lock contention due to the
+> > the percpu batch caching of the mm counters.
+> > 
+> > You might argue that my test cases cannot demonstrate an actual lock
+> > contention, but they have already shown that there is no significant
+> > 'fbc->lock' contention when the kernel updates 'mm->rss_stat'.
 > 
-> Additional to that allocating memory through memfd_create() is *much* slower on that box than through dma-buf-heaps (which basically just uses GFP and an array).
+> I was arguing that `top -d 1' doesn't really represent a potential
+> adverse usage. These proc files are generally readable so I would be
+> expecting something like busy loop read while process tries to update
+> counters to see the worst case scenario. If that is barely visible then
+> we can conclude a normal use wouldn't even notice.
+> 
 
-Can someone try to reproduce these results on a normal system
-before we're building infrastructure based on these numbers?
-
+Baolin, please run stress-ng command that stresses minor anon page
+faults in multiple threads and then run multiple bash scripts which cat
+/proc/pidof(stress-ng)/status. That should be how much the stress-ng
+process is impacted by the parallel status readers versus without them.
 
