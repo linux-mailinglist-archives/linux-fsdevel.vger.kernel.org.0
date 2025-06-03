@@ -1,56 +1,59 @@
-Return-Path: <linux-fsdevel+bounces-50535-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50536-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF572ACD026
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 01:15:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2329EACD027
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 01:16:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F8DF3A5DFB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 23:14:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50B691896017
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 23:16:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D54D1B4240;
-	Tue,  3 Jun 2025 23:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A3D5221DAE;
+	Tue,  3 Jun 2025 23:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="OQaUkQ2A"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="VSaPvMAS"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BAB320D4F2
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 23:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBB926ACC
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 23:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748992505; cv=none; b=l9uDsDB84T6cI7F65B+t/nZ9sdRiFbMmyg84ZjBmQ/U7xO4Hm7snzJcC3PnB/JibOnB5oWVggd3MFzD1Jlo4461dyTQkHylxdXKHaKvvQyDzGA2RZir413D4B2ExVQoClsE+GuJCZo2FRLQoLaMKLckGigREf9sat3MQyU04tvk=
+	t=1748992597; cv=none; b=Bg5R2buL7rLZmOKvgbWZk8wnRryOMEyzJ2YWF3WbjFUSTJyzn9A0fWAdnzSAPigwgjr6KdQPa4FGexGM5NdwbieUxaUPsxAfYKt3rmA/fNqOQlG43oHBUHoqPbJN9qRht0ur0ZSzbMpQmV2l9Sn2jRBeWdCIg7jlcfp85n9JmVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748992505; c=relaxed/simple;
-	bh=v/qxAjnqtGPa+MIz50PL2tEj0U2KV6LoJ6F7E7lPNm4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NN+ByrRNY46F3QfTbWEOsJKObMF43enmhTLtaGV2wEBINOGZ9sTYxWMNj897CJt0qetnBIC0MA24rjWnQ3LWZld1txLNp0YwRqAee6T3tsZyVUt3v3eJjADCTaqEtkODzuyyDReyk3PzTx6BWABcuUtCdQX2ROWYV+9Y0iaC1DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=OQaUkQ2A; arc=none smtp.client-ip=62.89.141.173
+	s=arc-20240116; t=1748992597; c=relaxed/simple;
+	bh=ldRLPdF0cfrmyavaDeWTBchWPE0QI/IQDRHggdLXbOk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mNwOIPsm/3VGvkxU8mkdO4+wCXkvjWOHA2Uw9tKuyge0jf/Hzy8TFuYGn5P50S9awzuZEdTP92iJOyDOtvrpjifgzWeg1j+5luLqt+oJCovhwO1KzMARTaSs1q1QmHxvhFvfU4U7Qi4/0gE7L6bX2dldnUd1vNIfIN+sdzgVs4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=VSaPvMAS; arc=none smtp.client-ip=62.89.141.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=KJbx/tbRzqFFeMTr6myslDOICEwVnvLR7sGih+DU4jo=; b=OQaUkQ2AgLnE9NdPJtxHwnX7k8
-	ssYQhVkx1T8dvwlmxsRe7rX/qIIzpciZUL2vBIErKIakjar5eA745Tp2VXp3nkTY2Ch2OquMoWTS6
-	HcWezSnyNUHJwStiU+7ad/xkj4olk6yq3SROsefjrZCEbjwsCoaqSbaDn6ANt4oN7Ekf3cxYaa5a0
-	9UuKJaHcwLBmTmhadNsfMZQOABn+FhoHzu5iK1D36+sc7lq35pWGBO4j8W8N3gEeEoAdXk4auABgK
-	NtJ59SHGjCDUay6O9GDNrIfcHB07v1iPvmC+zTWIhUwA57GTsX7t5qcYlxsumoS1qh3KwnXgaXaW3
-	+GkXE6LA==;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=FoNuxN1aQzajEVQQ+MZ0kd41hAo1zsBZQhcbR8Jzj8w=; b=VSaPvMASs/eAr0vaxhQ8Fznm9A
+	ksmN0NHHG1IikZ1b1LE3Kui6tTpY1XLJrFGz9iRvpuKl0RdT1LpjA4Jt4Mh39m7vDlbkK8QkJ3i1O
+	TrWFvD3q43T8SucfVeGfRr5e+q41HHok7wxpgGBma0EitGi5P5lFq+xvUjKJ39eYaIbF5zV80ejw9
+	rzL70tkl4fUFx5gGP55Y9Giw9D4xo2uyK1vrPCLzr97Z3uoDOiNe3JmoIey30MvVD1TQZYFwliruW
+	qR6eh9EKHQDtWNY3QXMRM8qGJ1DDD2dF6WeelXMRCNITq9OXRbyKztl74gQteZwp6/zQux3ehT7N/
+	6OW7ywQg==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMaqS-00000000bmh-1NVn;
-	Tue, 03 Jun 2025 23:15:00 +0000
-Date: Wed, 4 Jun 2025 00:15:00 +0100
+	id 1uMarx-00000000cQ2-00iK;
+	Tue, 03 Jun 2025 23:16:33 +0000
+Date: Wed, 4 Jun 2025 00:16:32 +0100
 From: Al Viro <viro@zeniv.linux.org.uk>
 To: linux-fsdevel@vger.kernel.org
 Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: [PATCHES][CFR] vfs fixes
-Message-ID: <20250603231500.GC299672@ZenIV>
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH 1/5] fs/fhandle.c: fix a race in call of has_locked_children()
+Message-ID: <20250603231632.GA145532@ZenIV>
+References: <20250603231500.GC299672@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -59,37 +62,85 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250603231500.GC299672@ZenIV>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 
-	Fixes for assorted bugs caught by struct mount audit.
-This stuff sits in
-git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git #fixes
+may_decode_fh() is calling has_locked_children() while holding no locks.
+That's an oopsable race...
 
-Please, review; I'm going to push those to Linus in a few days.
+The rest of the callers are safe since they are holding namespace_sem and
+are guaranteed a positive refcount on the mount in question.
 
-Individual patches in followups.
+Rename the current has_locked_children() to __has_locked_children(), make
+it static and switch the fs/namespace.c users to it.
 
-1) fs/fhandle.c: fix a race in call of has_locked_children()
-	traversing the list of children without mount_lock; oopsable,
-present since v6.11.
-2) path_overmount(): avoid false negatives
-	namespace_sem is not enough to prevent false negatives from
-__lookup_mnt(); rcu_read_lock() makes it memory-safe, but mount_lock
-seqretry is needed for valid result.  Present since _way_ back -
-predates path_overmount(), actually.  Originally introduced in v5.7
-3) finish_automount(): don't leak MNT_LOCKED from parent to child
-	MNT_LOCKED is incompatible with MNT_SHRINKABLE and such
-combinations had been prevented from the very beginning; unfortunately,
-one case got missed - automount triggered within an MNT_LOCKED mount.
-Goes all the way back to v3.12...
-4) fix propagation graph breakage by MOVE_MOUNT_SET_GROUP move_mount(2)
-	In case when old mount both receives and transmits mount events,
-do_set_group() end up corrupting the data structures.  Introduced in
-v5.15
-5) fs: allow clone_private_mount() for a path on real rootfs
-	v6.15 introduced a way to use locations in detached
-trees as overlayfs layers; unfortunately, the way it had
-been done ended up breaking something that used to be allowed -
-using locations on initramfs as overlayfs layers.  Turns out
-that people really used such setups...
+Make has_locked_children() a wrapper for __has_locked_children(), calling
+the latter under read_seqlock_excl(&mount_lock).
+
+Fixes: 620c266f3949 ("fhandle: relax open_by_handle_at() permission checks")
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/namespace.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 7c0ebc4f4ef2..a33553bc12d0 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2425,7 +2425,7 @@ void drop_collected_mounts(struct vfsmount *mnt)
+ 	namespace_unlock();
+ }
+ 
+-bool has_locked_children(struct mount *mnt, struct dentry *dentry)
++static bool __has_locked_children(struct mount *mnt, struct dentry *dentry)
+ {
+ 	struct mount *child;
+ 
+@@ -2439,6 +2439,16 @@ bool has_locked_children(struct mount *mnt, struct dentry *dentry)
+ 	return false;
+ }
+ 
++bool has_locked_children(struct mount *mnt, struct dentry *dentry)
++{
++	bool res;
++
++	read_seqlock_excl(&mount_lock);
++	res = __has_locked_children(mnt, dentry);
++	read_sequnlock_excl(&mount_lock);
++	return res;
++}
++
+ /*
+  * Check that there aren't references to earlier/same mount namespaces in the
+  * specified subtree.  Such references can act as pins for mount namespaces
+@@ -2499,7 +2509,7 @@ struct vfsmount *clone_private_mount(const struct path *path)
+ 			return ERR_PTR(-EINVAL);
+ 	}
+ 
+-	if (has_locked_children(old_mnt, path->dentry))
++	if (__has_locked_children(old_mnt, path->dentry))
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	new_mnt = clone_mnt(old_mnt, path->dentry, CL_PRIVATE);
+@@ -3036,7 +3046,7 @@ static struct mount *__do_loopback(struct path *old_path, int recurse)
+ 	if (!may_copy_tree(old_path))
+ 		return mnt;
+ 
+-	if (!recurse && has_locked_children(old, old_path->dentry))
++	if (!recurse && __has_locked_children(old, old_path->dentry))
+ 		return mnt;
+ 
+ 	if (recurse)
+@@ -3429,7 +3439,7 @@ static int do_set_group(struct path *from_path, struct path *to_path)
+ 		goto out;
+ 
+ 	/* From mount should not have locked children in place of To's root */
+-	if (has_locked_children(from, to->mnt.mnt_root))
++	if (__has_locked_children(from, to->mnt.mnt_root))
+ 		goto out;
+ 
+ 	/* Setting sharing groups is only allowed on private mounts */
+-- 
+2.39.5
+
 
