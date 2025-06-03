@@ -1,97 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-50462-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50463-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D051ACC792
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:20:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 267BCACC7B4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:24:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E114318945DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:20:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 361A5174555
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEBDB22D9ED;
-	Tue,  3 Jun 2025 13:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Zx62paCd"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4D3231857;
+	Tue,  3 Jun 2025 13:24:49 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42A513C8E8;
-	Tue,  3 Jun 2025 13:19:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A018B1A08AF;
+	Tue,  3 Jun 2025 13:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748956787; cv=none; b=OzXII4s0dwiLfSMYhUhxKE0BzT4o5fXm0ASiDpQl37X1SMucw7LmFm2tUItG3H5g0oIqqj6qpKBw1tmy/HuVV7YDMTyTFDVAUjQYzH9MHuXLu/Rf5MeguQJ5pgnia44iw7QebZust6ytp13PfrL3f0wW1LwqJizy+xgNdknDMy4=
+	t=1748957088; cv=none; b=k8hFJ0JGvUemIZK4PbeOi5aB7PGSDxSvTlShb5FJ2vIvKuYRpc09vm9Ecc9sMwxKGVCtRrFdnRFyTuHAJLLTq5aRf/r3zELTegynZLX0d7WwMyXiAajMpX9GkekdVbLdKcku9r1t/X6WJVDwBehBJO8jCpNWtIC+g8L3Shb5QOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748956787; c=relaxed/simple;
-	bh=4zckt7TbeInVzta8xoxiyPesS/ueBZE4ZUAMclJmViY=;
+	s=arc-20240116; t=1748957088; c=relaxed/simple;
+	bh=YkplZoxchk+TFyPN/qguBcT2q6688KcYdcnl9pZWw3c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCHpKqV6WAfI2kYpsbfZaNpbIOmvrGuqWDmCoLd0ewu1WsgmEuvi+IWfNqbj5Rgqee8qy6SBCQGXRJVgKYpN0uRxm5Ef+1p3B4yYkgB+Pa0/VImDlXy9Y4oKZK8cyDFkYEnzzzoSmg5M9n6GPgbBFZYBkPXg0di+Cg0uFwbcofw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Zx62paCd; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=IMyZpNPWuRD8Yt0Bj66tbpS5jFHAY+R03rfqd24z1tA=; b=Zx62paCdRIfY0a9wF1dF/rAnNo
-	UiHTftfyE+VGyqJw2HuPeDULbIREjlmcy3gsX/PpD0vl91RQKOjPUf80vBJyOYXNYYOvQWp51X0az
-	28iNgL0C6G1PkGFGA/O/X50dvI586E5cM6uuXdEeMXCnDiGkmWwz+ybw5XaMPcnF04tWsNM2lhXPL
-	qQG+LPDKpcTmCnzRrFrZvTxc/Z2izJLAJvnUt7mQKGQRrzVCedZELM+5pxIeSGdU09pIPsEZQGote
-	dWu2tqnaHPFjDJdBXCVu3HNouwDQ3iB3IQj5QrXprdLj3shYEHJfcAcfjQwRnVrG5PyT3IByVNWjb
-	lOa4UeiA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMRYI-0000000B0wB-3pbC;
-	Tue, 03 Jun 2025 13:19:38 +0000
-Date: Tue, 3 Jun 2025 06:19:38 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Christoph Hellwig <hch@infradead.org>, wangtao <tao.wangtao@honor.com>,
-	sumit.semwal@linaro.org, kraxel@redhat.com,
-	vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
-	amir73il@gmail.com, benjamin.gaignard@collabora.com,
-	Brian.Starkey@arm.com, jstultz@google.com, tjmercier@google.com,
-	jack@suse.cz, baolin.wang@linux.alibaba.com,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	bintian.wang@honor.com, yipengxiang@honor.com, liulu.liu@honor.com,
-	feng.han@honor.com
-Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
-Message-ID: <aD72alIxu718uri4@infradead.org>
-References: <20250603095245.17478-1-tao.wangtao@honor.com>
- <aD7x_b0hVyvZDUsl@infradead.org>
- <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PI7CZkfn3RWv915Wv+FI8WlRGpuTEYGgVM1BMB73UojmkoajLMVeIVqCcWW5yBv0gi1P01yoNxJn7MNnwMgMDJ2ziGlPZ9L/ka1LL91VsN5xlqlGbA98G8+2eENCpqBsGDzCdrQquwGu64017RR0r9sCIjkv4dfsAiO5oR8SoLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id D45DF68D0F; Tue,  3 Jun 2025 15:24:34 +0200 (CEST)
+Date: Tue, 3 Jun 2025 15:24:34 +0200
+From: Christoph Hellwig <hch@lst.de>
+To: Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>
+Cc: Christoph Hellwig <hch@lst.de>, Kundan Kumar <kundan.kumar@samsung.com>,
+	jaegeuk@kernel.org, chao@kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, miklos@szeredi.hu,
+	agruenba@redhat.com, trondmy@kernel.org, anna@kernel.org,
+	akpm@linux-foundation.org, willy@infradead.org, mcgrof@kernel.org,
+	clm@meta.com, david@fromorbit.com, amir73il@gmail.com,
+	axboe@kernel.dk, ritesh.list@gmail.com, djwong@kernel.org,
+	dave@stgolabs.net, p.raghav@samsung.com, da.gomez@samsung.com,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-nfs@vger.kernel.org, linux-mm@kvack.org, gost.dev@samsung.com,
+	anuj1072538@gmail.com, kundanthebest@gmail.com
+Subject: Re: [PATCH 00/13] Parallelizing filesystem writeback
+Message-ID: <20250603132434.GA10865@lst.de>
+References: <CGME20250529113215epcas5p2edd67e7b129621f386be005fdba53378@epcas5p2.samsung.com> <20250529111504.89912-1-kundan.kumar@samsung.com> <20250602141904.GA21996@lst.de> <c029d791-20ca-4f2e-926d-91856ba9d515@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <c029d791-20ca-4f2e-926d-91856ba9d515@samsung.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Jun 03, 2025 at 03:14:20PM +0200, Christian König wrote:
-> On 6/3/25 15:00, Christoph Hellwig wrote:
-> > This is a really weird interface.  No one has yet to explain why dmabuf
-> > is so special that we can't support direct I/O to it when we can support
-> > it to otherwise exotic mappings like PCI P2P ones.
+On Tue, Jun 03, 2025 at 02:46:20PM +0530, Anuj Gupta/Anuj Gupta wrote:
+> On 6/2/2025 7:49 PM, Christoph Hellwig wrote:
+> > On Thu, May 29, 2025 at 04:44:51PM +0530, Kundan Kumar wrote:
+> > Well, the proper thing would be to figure out a good default and not
+> > just keep things as-is, no?
 > 
-> With udmabuf you can do direct I/O, it's just inefficient to walk the
-> page tables for it when you already have an array of all the folios.
+> We observed that some filesystems, such as Btrfs, don't benefit from
+> this infra due to their distinct writeback architecture. To preserve
+> current behavior and avoid unintended changes for such filesystems,
+> we have kept nr_wb_ctx=1 as the default. Filesystems that can take
+> advantage of parallel writeback (xfs, ext4) can opt-in via a mount
+> option. Also we wanted to reduce risk during initial integration and
+> hence kept it as opt-in.
 
-Does it matter compared to the I/O in this case?
+A mount option is about the worst possible interface for behavior
+that depends on file system implementation and possibly hardware
+chacteristics.  This needs to be set by the file systems, possibly
+using generic helpers using hardware information.
 
-Either way there has been talk (in case of networking implementations)
-that use a dmabuf as a first class container for lower level I/O.
-I'd much rather do that than adding odd side interfaces.  I.e. have
-a version of splice that doesn't bother with the pipe, but instead
-just uses in-kernel direct I/O on one side and dmabuf-provided folios
-on the other.
+> Used PMEM of 6G
 
+battery/capacitor backed DRAM, or optane?
+
+>
+> and NVMe SSD of 3.84 TB
+
+Consumer drive, enterprise drive?
+
+> For xfs used this command:
+> xfs_io -c "stat" /mnt/testfile
+> And for ext4 used this:
+> filefrag /mnt/testfile
+
+filefrag merges contiguous extents, and only counts up for discontiguous
+mappings, while fsxattr.nextents counts all extent even if they are
+contiguous.  So you probably want to use filefrag for both cases.
 
