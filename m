@@ -1,170 +1,250 @@
-Return-Path: <linux-fsdevel+bounces-50520-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95C02ACCF29
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 23:45:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51FD9ACCF94
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 00:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81DFE7A3F0B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 21:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756F31896F4E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 22:05:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72A7C23BCF0;
-	Tue,  3 Jun 2025 21:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34C92288EE;
+	Tue,  3 Jun 2025 22:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMTtnqrt"
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ani9RRjD"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2AB226CF8;
-	Tue,  3 Jun 2025 21:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610891A2643
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 22:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748987110; cv=none; b=W5RNssB5uH/9GxPqzG5wofsC98+SiIv8jidvLZZw+b9xc6n6JtaTEG81j4aP5pViJ7d6OAbAgtUvOoeV0KWyBaicrg62LUwvJoM7Sfv1rxY/Z8JKMOaGlaP24TohdVaTa6tGYhCpKMayH4oySsPYsFw7+2hwKW9JQsgnv+xjNYU=
+	t=1748988309; cv=none; b=nZLPXUnhYCDgdZichBHNssIa/0pvcjrxycqK1kmgsaAu+gnBw93U3riwF0ZaFlPMEt2S9PWuDdjh8b5IqOSryUQ6jNtvfkLZPmYkbHGNv6SEGhcK7EBfDt93YXEuCsZsqqpL7EpePvE6nV1E6NycvveLzIWk0MwIcFrYb+MwDmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748987110; c=relaxed/simple;
-	bh=RCs8/uMB+ezaarYU/ndq+IH9j+JTL8HLGA+9mgA2CWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qALWxcCs+blo60Q8OMiI293dKqbYg0gWWRQ8oGGDTKOBb52gJE4y85wy0Q2lHr2hHhwdLGFkN7lB3jvCSw0T3oHDhBH0S53IfoEeY8KIMS+L93UUGLh5Uv9Ehe1ygSegJzvsRtNwxnNiEonbelRXnGAhri5tJ1uoUSpiaa78fes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMTtnqrt; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7424ccbef4eso4978554b3a.2;
-        Tue, 03 Jun 2025 14:45:09 -0700 (PDT)
+	s=arc-20240116; t=1748988309; c=relaxed/simple;
+	bh=4Q6wpdubX03roYzxWuBd4mlmXNKXJQgIgTSoc1SwQqE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvT41X7rdydYU9pKv2WHcNfBKZCW9gIZVFompcphtaIgXfbYrNGKWUHAJk+SV35S9Q2RFaKRjOhW1eJ1BI84ojl9qznS6r5FrEGhypGvVqHMvAnSep7eVFiDTXCLQLmmDM75tnDOupca5l3XkTn0DnpGabZ6aOBv4aAAiKn9uI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ani9RRjD; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-234c5b57557so54007855ad.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jun 2025 15:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1748987108; x=1749591908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=819jl8ds/qzrOtBRq9UfsH7pGIYx+U6oQEMjUt1XFXA=;
-        b=OMTtnqrtM+9yLJl8QDHREgemGKdVFvgRI4bLOVmrEJTvptoEUkYGVpXZtfFwp2/572
-         wwnRUzw8siUcHOYdmpHwZnPbNVRqv8gA7m2LfpBEY6F77BNG6Q3ifmXhGPfmVQ5c2wTU
-         WLKQhyHBsJBiDBfx1ptabECoe+/onbPxqXfbLasWKhnhgKGc8vLPfjHZv6d8Pc5ViBog
-         Cxzc+EGVgh808ED3itcx2o83O/AsSlChA0e6xlPwU5vw/1wr7kqP59JLoFadRTL59d4p
-         Vyt2KHPbfaeoogbk7dLEUCAzHRgnTLkc/m5ciLsnYg4Cmko4dgOxjAvTON6ZvL9H/PrA
-         79Qw==
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1748988306; x=1749593106; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lju0Ryqqd15qALOnq6lO5mGiDU1YmqZiwkz30QskHzc=;
+        b=ani9RRjDaxhGeak8nlfuJA3wxU75NFrtPlZo9WiYTSiONxBHzrIKeu6gfLLkWgfpf/
+         XyRqG3ig+6UR3OhQ1I63KevmdwZPrKjq7zQD2eu1D69fVBwOfAiG+1SMZmf2VHkCtwnB
+         Dy0UNxXQA1GFHRmEfjlbdlpDa+gSSpEwgyYYXx8umV2XEBqfuuCF7i8v2oYB+txWZAvP
+         hDnerlEfDtW3KSmoadE9SUUwHf7SKALtu+n0x4yuXUNXNck8KSN2VhpckWY1/wiErd7e
+         FGxL8wP85DxqJRJyMZotIquBS4KDo3x7KfkccDThQWdCQdilXtuOIxyOTfkm85vyDtuJ
+         mIPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748987108; x=1749591908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=819jl8ds/qzrOtBRq9UfsH7pGIYx+U6oQEMjUt1XFXA=;
-        b=jcU9fxT6DeYhdfXcVaR+BHbtM1kYw6BdI9DiDIAfRRUiJ1y2NLiydE7Ub94yuVZn/C
-         ia/yvwUvAi9RxEUCCkfBSBrZi8u7WVe37wAbg0woUSfl2raJAszAwzZTM4C+tBPS/jim
-         FwuuKtLpil+Y+8B9aH2vyNc7go5BI9EJRyUQ/Dtr2qyQy2FcQw8xXOwSzmh249f+VVvp
-         je3HREI0sjoUp0KKragDYZjMCCHXR75mhNg0un76gd1kWXxT6WihMxG3R7T+ZHXlq/5C
-         PrZkgNm3cw3wzfHxWd6f6M20FKVCH6yH//5lDxP16zCO3LNxGOOGXsKC0C7jSBMJRIyN
-         m3kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJDK9ixVvMueH1kQKec9VZRoAA4nGvSpyLm83Ol93V+86KwlXM5zRiKq6clqkIjGKyqvM/3p9FZRzbcx4x9t3RFEnmnSr4@vger.kernel.org, AJvYcCXVizrmlODj4dLSE/Pe7NyxTnsd69fPz84n5EgnpabVkjNpMZFYYDQuJwXqCWSM9ylhb7dfNUj1wlcuEvFT@vger.kernel.org, AJvYcCXeUImCfac0SMcFYpZCZZQ8HwrL79Y0rk64bSGwcV4BNucT4YyZCZu4nMTHWlGeLkOGbMX3BAviIy4wuPvQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4+fRYVyZma0CUydSqZ099RuyG2nO2DU74XTMoPbePIh3YOeLS
-	jepmGK1M0iHsUjhq0WP0oymqLyneEfC3OqmL32EI6vEx+0Kk6caWA5GF3LaqIkW7aEdMdiTNLUu
-	/4P/5vzm/eKIzGGzjIUunhWBCEctfeIxxyg==
-X-Gm-Gg: ASbGnct45w2X1GSnOWGXh1k7SmqLVwFMEvSM3txyxrl86qusQzPEnh5LgTSyK4ggyFp
-	LgwQnPvdJfpNVRVfHdVACnHhylCHhmUXUcZRWwZPUzTiFMwUf/BnFT1Zew0UlvLAwb4/svFSxXQ
-	6OPhXUdebCvvlOzIyXF2gyQcH30xQRrRd9DYDQFMVGNbrDOPlS
-X-Google-Smtp-Source: AGHT+IF7MqQcSA/FsUXrpXDFQkq09C3I0U5aU6W0tB+ZTkwFNkLdxNttYUEiVQNLgyvtjX4iDkjJwYwdm7yVHveMMME=
-X-Received: by 2002:a05:6a20:729d:b0:215:edce:4e2c with SMTP id
- adf61e73a8af0-21d22d08e2cmr569327637.28.1748987108576; Tue, 03 Jun 2025
- 14:45:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1748988306; x=1749593106;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lju0Ryqqd15qALOnq6lO5mGiDU1YmqZiwkz30QskHzc=;
+        b=aq5zWzZuPHSrp78cpMGa1Grg6qjUIl5yqC5lWsYghAtghXzx1IU2mtq/yollcKctFI
+         eD2PgQZ53EAGllSYuKwOkFjqofwZyfXN6nLBWg8ocIKUS5W0OBvAv2mZN7Phzng952fT
+         8mo/2Sfm6NnixRNW1boBEA1y9hhSZylfVb48Oa4czB4Brpu1xVq2b2RP9RvJT2ue2dkt
+         mL2fbNOsYfRkc2AiPQSbBlWyl983IfHo2nSzxQhyrpBp91izy4OpCMuT5FN9frdDgoC8
+         bNxV5iQHzxLkwSilEWHGsA7TZz+GZx8CF3wy/8ZMq3A2pBeqpi37YIVhd4f65uGFVbUH
+         Dysw==
+X-Forwarded-Encrypted: i=1; AJvYcCXvPiEZNMbcalhlm9pg9r2iP7xFJBkj4mvTybjwKt4Tu6ibvI1V+AL0ywZUoTkPB2+ISRu2zozNqLNtAUdG@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxgU6FaJAE9xX5AAql+fYNEoKbwcBmLJaa7+MiFk01vQDjboCN
+	xrNn7qiAwN8kRLxFahaXm1B4NHq5XxbTo8pzCn4onfcYQYxR/kRzQO8n0oRRc5Q8mxU=
+X-Gm-Gg: ASbGncsPptj4+CL8vBEr939xA32U2eX+8rbEoCIO09CRObCXdrhpYd6Gh/IWrMb6df2
+	a4k/ogpl7owYbwqA7ZvOzqqUt6m9Qo7QT2DaQf2kv/hXQjtN5o+cXIqyjWwudytW3/98D+WSYzB
+	J3WGt1p5HdIKShaIp7zcPLLiWTb92HbNXN5HVr7GxxFrIRMaV3uoU3ucQNvQF20GEdK8P10F0I1
+	8i/aDeyUgOL/d26yxVd2oJAua+y4hR2iiP8/47c7egxS3nGcRVLa3XFL2va8wDR+aJhb5ZiUYpo
+	A84kxHWxkah1ap8nLBkj+5/g6goR9oZlljMoNOpC9sIi3MTrDI86wT6kPBILoCBpU20Lm5+zHD1
+	3aLyACwOu/9Gllhfk29sNa3ZGm+0=
+X-Google-Smtp-Source: AGHT+IFB7MFjtIScvIBdqXB2ckXxOy1R5cdJuSvkVoKok2QP9CnHqhUz+oglAxd/DdbXqyKh7BRlLw==
+X-Received: by 2002:a17:903:18f:b0:234:986c:66e0 with SMTP id d9443c01a7336-235e112bd6cmr4869035ad.4.1748988306543;
+        Tue, 03 Jun 2025 15:05:06 -0700 (PDT)
+Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d14c79sm92206565ad.230.2025.06.03.15.05.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Jun 2025 15:05:05 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.98.2)
+	(envelope-from <david@fromorbit.com>)
+	id 1uMZkl-0000000Bsxy-26gn;
+	Wed, 04 Jun 2025 08:05:03 +1000
+Date: Wed, 4 Jun 2025 08:05:03 +1000
+From: Dave Chinner <david@fromorbit.com>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>,
+	Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
+	cem@kernel.org, linux-xfs@vger.kernel.org,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
+ data corruption
+Message-ID: <aD9xj8cwfY9ZmQ2B@dread.disaster.area>
+References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
+ <aDfkTiTNH1UPKvC7@dread.disaster.area>
+ <aD04v9dczhgGxS3K@infradead.org>
+ <aD4xboH2mM1ONhB-@dread.disaster.area>
+ <aD5-_OOsKyX0rDDO@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-4-song@kernel.org>
- <CAEf4BzasOmqHDnuKd7LCT_FEBVMuJxmVNgvs52y5=qLd1bB=rg@mail.gmail.com> <CAPhsuW7mwut7SYubAUa5Ji7meDP1Bn8ZD9s+4sqjBDim7jGrWA@mail.gmail.com>
-In-Reply-To: <CAPhsuW7mwut7SYubAUa5Ji7meDP1Bn8ZD9s+4sqjBDim7jGrWA@mail.gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 3 Jun 2025 14:44:56 -0700
-X-Gm-Features: AX0GCFtNF4ppXnOnKhcp7EPaFV861gMLhwM4EEIUcYJLDXBOjd5THFRV5GW8gWM
-Message-ID: <CAEf4Bzbm=mnRM=PYBLDTogrb+bNk2TnTj-kGr3=oFNEyQm8hKw@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Introduce path iterator
-To: Song Liu <song@kernel.org>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com, 
-	m@maowtm.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aD5-_OOsKyX0rDDO@infradead.org>
 
-On Tue, Jun 3, 2025 at 2:09=E2=80=AFPM Song Liu <song@kernel.org> wrote:
->
-> On Tue, Jun 3, 2025 at 11:40=E2=80=AFAM Andrii Nakryiko
-> <andrii.nakryiko@gmail.com> wrote:
-> [...]
-> > > +__bpf_kfunc struct path *bpf_iter_path_next(struct bpf_iter_path *it=
-)
-> > > +{
-> > > +       struct bpf_iter_path_kern *kit =3D (void *)it;
-> > > +       struct path root =3D {};
-> > > +
-> > > +       if (!path_walk_parent(&kit->path, &root))
-> > > +               return NULL;
-> > > +       return &kit->path;
-> > > +}
-> > > +
-> > > +__bpf_kfunc void bpf_iter_path_destroy(struct bpf_iter_path *it)
-> > > +{
-> > > +       struct bpf_iter_path_kern *kit =3D (void *)it;
-> > > +
-> > > +       path_put(&kit->path);
-> >
-> > note, destroy() will be called even if construction of iterator fails
-> > or we exhausted iterator. So you need to make sure that you have
-> > bpf_iter_path state where you can detect that there is no path present
-> > and skip path_put().
->
-> In bpf_iter_path_next(), when path_walk_parent() returns false, we
-> still hold reference to kit->path, then _destroy() will release it. So we
-> should be fine, no?
+On Mon, Jun 02, 2025 at 09:50:04PM -0700, Christoph Hellwig wrote:
+> On Tue, Jun 03, 2025 at 09:19:10AM +1000, Dave Chinner wrote:
+> > > In other words, write errors in Linux are in general expected to be
+> > > persistent, modulo explicit failfast requests like REQ_NOWAIT.
+> > 
+> > Say what? the blk_errors array defines multiple block layer errors
+> > that are transient in nature - stuff like ENOSPC, ETIMEDOUT, EILSEQ,
+> > ENOLINK, EBUSY - all indicate a transient, retryable error occurred
+> > somewhere in the block/storage layers.
+> 
+> Let's use the block layer codes reported all the way up to the file
+> systems and their descriptions instead of the errnos they are
+> mapped to for compatibility.  The above would be in order:
+> 
+> [BLK_STS_NOSPC]         = { -ENOSPC,    "critical space allocation" },
+> [BLK_STS_TIMEOUT]       = { -ETIMEDOUT, "timeout" },
+> [BLK_STS_PROTECTION]    = { -EILSEQ,    "protection" },
+> [BLK_STS_TRANSPORT]     = { -ENOLINK,   "recoverable transport" },
+> [BLK_STS_DEV_RESOURCE]  = { -EBUSY,     "device resource" },
+> 
+> > What is permanent about dm-thinp returning ENOSPC to a write
+> > request? Once the pool has been GC'd to free up space or expanded,
+> > the ENOSPC error goes away.
+> 
+> Everything.  ENOSPC means there is no space.  There might be space in
+> the non-determinant future, but if the layer just needs to GC it must
+> not report the error.
 
-you still need to handle iterators that failed to be initialized,
-though? And one can argue that if path_walk_parent() returns false, we
-need to put that last path before returning NULL, no?
+GC of thin pools requires the filesystem to be mounted so fstrim can
+be run to tell the thinp device where all the free LBA regions it
+can reclaim are located. If we shut down the filesystem instantly
+when the pool goes ENOSPC on a metadata write, then *we can't run
+fstrim* to free up unused space and hence allow that metadata write
+to succeed in the future.
 
->
-> Thanks,
-> Song
->
-> >
-> > > +}
-> > > +
-> > > +__bpf_kfunc_end_defs();
-> > > diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-> > > index a7d6e0c5928b..45b45cdfb223 100644
-> > > --- a/kernel/bpf/verifier.c
-> > > +++ b/kernel/bpf/verifier.c
-> > > @@ -7036,6 +7036,10 @@ BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket) {
-> > >         struct sock *sk;
-> > >  };
-> > >
-> > > +BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct path) {
-> > > +       struct dentry *dentry;
-> > > +};
-> > > +
-> > >  static bool type_is_rcu(struct bpf_verifier_env *env,
-> > >                         struct bpf_reg_state *reg,
-> > >                         const char *field_name, u32 btf_id)
-> > > @@ -7076,6 +7080,7 @@ static bool type_is_trusted_or_null(struct bpf_=
-verifier_env *env,
-> > >                                     const char *field_name, u32 btf_i=
-d)
-> > >  {
-> > >         BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket));
-> > > +       BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct path));
-> > >
-> > >         return btf_nested_type_is_trusted(&env->log, reg, field_name,=
- btf_id,
-> > >                                           "__safe_trusted_or_null");
-> > > --
-> > > 2.47.1
-> > >
-> >
+It should be obvious at this point that a filesystem shutdown on an
+ENOSPC error from the block device on anything other than journal IO
+is exactly the wrong thing to be doing.
+
+> > What is permanent about an IO failing with EILSEQ because a t10
+> > checksum failed due to a random bit error detected between the HBA
+> > and the storage device? Retry the IO, and it goes through just fine
+> > without any failures.
+> 
+> Normally it means your checksum was wrong.  If you have bit errors
+> in the cable they will show up again, maybe not on the next I/O
+> but soon.
+
+But it's unlikely to be hit by another cosmic ray anytime soon, and
+so bit errors caused by completely random environmental events
+should -absolutely- be retried as the subsequent write retry will
+succeed.
+
+If there is a dodgy cable causing the problems, the error will
+re-occur on random IOs and we'll emit write errors to the log that
+monitoring software will pick up. If we are repeatedly isssuing write
+errors due to EILSEQ errors, then that's a sign the hardware needs
+replacing.
+
+There is no risk to filesystem integrity if write retries
+succeed, and that gives the admin time to schedule downtime to
+replace the dodgy hardware. That's much better behaviour than
+unexpected production system failure in the middle of the night...
+
+It is because we have robust and resilient error handling in the
+filesystem that the system is able to operate correctly in these
+marginal situations. Operating in marginal conditions or as hardware
+is beginning to fail is a necessary to keep production systems
+running until corrective action can be taken by the administrators.
+
+> > These transient error types typically only need a write retry after
+> > some time period to resolve, and that's what XFS does by default.
+> > What makes these sorts of errors persistent in the linux block layer
+> > and hence requiring an immediate filesystem shutdown and complete
+> > denial of service to the storage?
+> > 
+> > I ask this seriously, because you are effectively saying the linux
+> > storage stack now doesn't behave the same as the model we've been
+> > using for decades. What has changed, and when did it change?
+> 
+> Hey, you can retry.  You're unlikely to improve the situation though
+> but instead just keep deferring the inevitable shutdown.
+
+Absolutely. That's the whole point - random failures won't repeat,
+and hence when they do occur we avoid a shutdown by retrying them on
+failure. This is -exactly- how robust error handling should work.
+
+However, for IO errors that persist or where other IO errors start
+to creep in, all the default behaviour is trying to do is hold the
+system up in a working state until downtime can be scheduled and the
+broken hardware is replaced. If integrity ends up being compromised
+by a subsequent IO failure, then we will shut the filesystem down at
+that point.
+
+This is about resilience in the face of errors. Not every error is
+fatal, nor does every error re-occur. There are classes of errors
+known to be transient (ENOSPC), others that are permanent (ENODEV),
+and others that we just don't know (EIO). If we value resiliency
+and robustness, then the filesystem should be able to withstand
+transient and "maybe-transient" IO failures without compromising
+integrity.
+
+Failing to recognise that transient and "maybe-transient" errors can
+generally be handled cleanly and successfully with future write
+retries leads to brittle, fragile systems that fall over at the
+first sign of anything going wrong. Filesystems that are targetted
+at high value production systems and/or running mission critical
+applications needs to have resilient and robust error handling.
+
+> > > Which also leaves me a bit puzzled what the XFS metadata retries are
+> > > actually trying to solve, especially without even having a corresponding
+> > > data I/O version.
+> > 
+> > It's always been for preventing immediate filesystem shutdown when
+> > spurious transient IO errors occur below XFS. Data IO errors don't
+> > cause filesystem shutdowns - errors get propagated to the
+> > application - so there isn't a full system DOS potential for
+> > incorrect classification of data IO errors...
+> 
+> Except as we see in this thread for a fairly common use case (buffered
+> I/O without fsync) they don't.  And I agree with you that this is not
+> how you write applications that care about data integrity - but the
+> entire reset of the system and just about every common utility is
+> written that way.
+
+Yes, I know that. But there are still valid reasons for retrying
+failed async data writeback IO when it triggers a spurious or
+retriable IO error....
+
+> And even applications that fsync won't see you fancy error code.  The
+> only thing stored in the address_space for fsync to catch is EIO and
+> ENOSPC.
+
+The filesystem knows exactly what the IO error reported by the block
+layer is before we run folio completions, so we control exactly what
+we want to report as IO compeltion status.
+
+Hence the bogosities of error propagation to userspace via the
+mapping is completely irrelevant to this discussion/feature because
+it would be implemented below the layer that squashes the eventual
+IO errno into the address space...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
