@@ -1,163 +1,125 @@
-Return-Path: <linux-fsdevel+bounces-50430-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50431-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA88EACC193
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 09:59:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC63AACC1C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 10:09:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A72C16F9C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 07:59:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3861916587B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 08:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592FB27FD40;
-	Tue,  3 Jun 2025 07:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA232280312;
+	Tue,  3 Jun 2025 08:08:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjTSnPvS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PasKWW0Y";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="PjTSnPvS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PasKWW0Y"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="DY0SvXZW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148A327F72D
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 07:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C17C269AE0;
+	Tue,  3 Jun 2025 08:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748937551; cv=none; b=gkriWd67iZSpOGPMSnL6HBEkQNYITyADFC/s/92yK7wtQYpfIO2zCzjHoYJBHHd+VmNttZGk2qdoDo/hNu0ch96lVzt/gSv7BUu9tsKuS0UPcUE+TzT5mGAUKKUQH5PmWWqii/OPRnIj2CV36BF6irfIVpDW3YDk52fGODm8lXs=
+	t=1748938115; cv=none; b=d32gAWydgcOeQlMBgmwMKDYlQe22FiOKOHGHaGVXTuYrVJRuIYdJ+LwyleL/76+NAigr72SgJvz05MOvbDwVj+s+y8RjikoKWsB+k3qe2/oiUiuls3LWMH5vP1/DrMQlFPMENueZ9EbThxmqD6/Dsk8w+1PurLfhmYr7J0lfuv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748937551; c=relaxed/simple;
-	bh=RJypxZB7iCnpisYKx+MTn0PXvT3zYTATogDT3I1sJBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UJ6cvC+P3A5VaxTsjjxUohFx2SBGG1ozS79befMhtDnSkgHBTxrMBndP7zCJxL8gOmamUQgunTEslUsrlw98n3NSD6cnz1z4kyOPrcjHwwbwmcTD/Qmq3zhjIgVacJbRayXYSexH2riBTxiDjuMcWoHwwfUNenOv334dvhJ4/cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjTSnPvS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PasKWW0Y; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=PjTSnPvS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PasKWW0Y; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 131601F395;
-	Tue,  3 Jun 2025 07:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748937548;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PCJG5k3LJs9X8fzOBTrsMAyW8lELxLWpibzubjMPIn0=;
-	b=PjTSnPvS+KRw7LgGER+iWFrPBNubouUzM8Zo88QXmZcWa/89+sxcL2G5UOR3ph77CeHxPs
-	K1b7grsAo5gf5ehln520OPMCuPbkIrDVZQUYpt15FOrbNad+0xGepLWFh26ck/M0cpxKFI
-	7Z6tDJaC5jEH6mIfJzre7B3lIuGUM6Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748937548;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PCJG5k3LJs9X8fzOBTrsMAyW8lELxLWpibzubjMPIn0=;
-	b=PasKWW0YS+JcVA0YMKQaEi31VZWZH0qzT8GwwpVo0Njhvmg2BI3LTmdy1bUozlpcERqChp
-	qkA8vnOwOF1iCeBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1748937548;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PCJG5k3LJs9X8fzOBTrsMAyW8lELxLWpibzubjMPIn0=;
-	b=PjTSnPvS+KRw7LgGER+iWFrPBNubouUzM8Zo88QXmZcWa/89+sxcL2G5UOR3ph77CeHxPs
-	K1b7grsAo5gf5ehln520OPMCuPbkIrDVZQUYpt15FOrbNad+0xGepLWFh26ck/M0cpxKFI
-	7Z6tDJaC5jEH6mIfJzre7B3lIuGUM6Q=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1748937548;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PCJG5k3LJs9X8fzOBTrsMAyW8lELxLWpibzubjMPIn0=;
-	b=PasKWW0YS+JcVA0YMKQaEi31VZWZH0qzT8GwwpVo0Njhvmg2BI3LTmdy1bUozlpcERqChp
-	qkA8vnOwOF1iCeBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E871B13A92;
-	Tue,  3 Jun 2025 07:59:07 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id wFZHOEurPmjzGwAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Tue, 03 Jun 2025 07:59:07 +0000
-Date: Tue, 3 Jun 2025 09:59:02 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Qu Wenruo <wqu@suse.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, Klara Modin <klarasmodin@gmail.com>
-Subject: Re: [PATCH v3] btrfs_get_tree_subvol(): switch from fc_mount() to
- vfs_create_mount()
-Message-ID: <20250603075902.GJ4037@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250505030345.GD2023217@ZenIV>
- <20250506193405.GS2023217@ZenIV>
- <20250506195826.GU2023217@ZenIV>
- <9a49247a-91dd-4c13-914a-36a5bfc718ba@suse.com>
+	s=arc-20240116; t=1748938115; c=relaxed/simple;
+	bh=nUgrPD5FR6zEEOvfUGgTpt1Y+LgTw9lL9QNv+QYXSLc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ykke+YWWO5FZJuLEP8vLSVtxr2NzqadtaVVDuMYQFrZnK78xBa5rJqf/ktGTQPT55Hj2sQ7iD3TCVE1xDBWQ6bXRZKnfSSczedsH0w47ygb9rUTY7FpB0DevWKdP5rCk1Y4REtz1N58jFmVc5pW4zFoQRR1INprhgLw5FBaIv9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=DY0SvXZW; arc=none smtp.client-ip=115.124.30.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1748938103; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=94IxEkB+vGRX1OwSpnG6F+yDF6/i4bDG7xzgyZQ+YKk=;
+	b=DY0SvXZWNA/RpcI5IsCnc+HzGRFAqehL0jXhJ24J1x0SqSow5WkcJagz2iOzQtmJTh4pCdt+j+/85m8//2icRo4t2HGMg3LLucs3mwETohl2GGZ0t0lZnD7bBUypPNCwBrzE+6rML6OCL5qBPsXvvK5Yj4gReNAytaOOClU7D8M=
+Received: from 30.74.144.120(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WcnHjtm_1748938101 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Tue, 03 Jun 2025 16:08:21 +0800
+Message-ID: <72f0dc8c-def3-447c-b54e-c390705f8c26@linux.alibaba.com>
+Date: Tue, 3 Jun 2025 16:08:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9a49247a-91dd-4c13-914a-36a5bfc718ba@suse.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Flag: NO
-X-Spam-Score: -4.00
-X-Spamd-Result: default: False [-4.00 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,vger.kernel.org,gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email];
-	RCVD_COUNT_TWO(0.00)[2];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: fix the inaccurate memory statistics issue for users
+To: Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>
+Cc: david@redhat.com, shakeel.butt@linux.dev, lorenzo.stoakes@oracle.com,
+ Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org, surenb@google.com,
+ donettom@linux.ibm.com, aboorvad@linux.ibm.com, sj@kernel.org,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <4f0fd51eb4f48c1a34226456b7a8b4ebff11bf72.1748051851.git.baolin.wang@linux.alibaba.com>
+ <20250529205313.a1285b431bbec2c54d80266d@linux-foundation.org>
+ <aDm1GCV8yToFG1cq@tiehlicka>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <aDm1GCV8yToFG1cq@tiehlicka>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 08, 2025 at 06:59:04PM +0930, Qu Wenruo wrote:
-> 
-> 
-> 在 2025/5/7 05:28, Al Viro 写道:
-> > [Aaarghh...]
-> > it's simpler to do btrfs_reconfigure_for_mount() right after vfs_get_tree() -
-> > no need to mess with ->s_umount.
-> >      
-> > [fix for braino(s) folded in - kudos to Klara Modin <klarasmodin@gmail.com>]
-> > Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> 
-> Reviewed-by: Qu Wenruo <wqu@suse.com>
-> Test-by: Qu Wenruo <wqu@suse.com>
-> 
-> Although the commit message can be enhanced a little, I can handle it at 
-> merge time, no need to re-send.
 
-If you're going to add the patch to for-next, please fix the subject
-line and update the changelog. Thanks.
+
+On 2025/5/30 21:39, Michal Hocko wrote:
+> On Thu 29-05-25 20:53:13, Andrew Morton wrote:
+>> On Sat, 24 May 2025 09:59:53 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
+>>
+>>> On some large machines with a high number of CPUs running a 64K pagesize
+>>> kernel, we found that the 'RES' field is always 0 displayed by the top
+>>> command for some processes, which will cause a lot of confusion for users.
+>>>
+>>>      PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
+>>>   875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
+>>>        1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
+>>>
+>>> The main reason is that the batch size of the percpu counter is quite large
+>>> on these machines, caching a significant percpu value, since converting mm's
+>>> rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
+>>> stats into percpu_counter"). Intuitively, the batch number should be optimized,
+>>> but on some paths, performance may take precedence over statistical accuracy.
+>>> Therefore, introducing a new interface to add the percpu statistical count
+>>> and display it to users, which can remove the confusion. In addition, this
+>>> change is not expected to be on a performance-critical path, so the modification
+>>> should be acceptable.
+>>>
+>>> Fixes: f1a7941243c1 ("mm: convert mm's rss stats into percpu_counter")
+>>
+>> Three years ago.
+>>
+>>> Tested-by Donet Tom <donettom@linux.ibm.com>
+>>> Reviewed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>>> Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>>> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
+>>> Acked-by: SeongJae Park <sj@kernel.org>
+>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
+>>
+>> Thanks, I added cc:stable to this.
+> 
+> I have only noticed this new posting now. I do not think this is a
+> stable material. I am also not convinced that the impact of the pcp lock
+> exposure to the userspace has been properly analyzed and documented in
+> the changelog. I am not nacking the patch (yet) but I would like to see
+> a serious analyses that this has been properly thought through.
+
+Good point. I did a quick measurement on my 32 cores Arm machine. I ran 
+two workloads, one is the 'top' command: top -d 1 (updating every 
+second). Another workload is kernel building (time make -j32).
+
+ From the following data, I did not see any significant impact of the 
+patch changes on the execution of the kernel building workload.
+
+w/o patch:
+real	4m33.887s
+user	118m24.153s
+sys	9m51.402s
+
+w/ patch:
+real	4m34.495s
+user	118m21.739s
+sys	9m39.232s
 
