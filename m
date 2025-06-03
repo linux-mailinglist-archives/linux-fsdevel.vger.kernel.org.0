@@ -1,167 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-50495-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2BFCACC903
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 16:23:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 425BFACC91A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 16:28:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C89016A8E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:23:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E021918861EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A3BF23956E;
-	Tue,  3 Jun 2025 14:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15DF239E65;
+	Tue,  3 Jun 2025 14:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mdpV9532"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CafIKnhM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44DC71422DD;
-	Tue,  3 Jun 2025 14:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29043E47B;
+	Tue,  3 Jun 2025 14:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748960575; cv=none; b=PTgpc5bAUEPO8ZON26VNqe1OZaPBUnHi5i4bb4bxMG3V1URIiOyAaXGF8jaVRLpXP2rAOrqSYbwWXuXKZO3ekiis8/2yS7ewU9W8KO1XR+lDwcfSSSDcsyR3RxG9nqeq5ZkIuQqYUA4wughyAX8Jy260KULgzRJO0OraNw4LBWY=
+	t=1748960918; cv=none; b=U7gLhDwBQ0H+Dv0jnM8ko5tor1x2ObIkYoNA7WoEHE59EPfyLX1iHT0e78ZM82D1WtH8VA7eaRgikkL4hvqxudBoYXlfdJFJ/9zrhy2rGnDTTQjN9gQkMQAId9hU8UhrCvRSsconIX8P4xbXdZlP0DlOw/kPZzKZkTjirKuj2z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748960575; c=relaxed/simple;
-	bh=k5kiH4wTvEIM+F+KJEkPN+o3gWZR/XkDPUA8tjO2p6c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BCxHhgfnubuOD/9JfxNfH+kDxCxu5k5g2AnL56oe2sjQmYsE25vM/k2oxYWrR3qNtInPtfWsCF/nS74x4PBOUFL1nhtdTD4aRVRtr+jCM8GMqrNQtDVsyAZmJnU+GonNqJtw5TYWdHCTPS/cKV3ejxXDO8bASjRWt6EgZwwIi8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mdpV9532; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1748960569; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=z5whc9aSlFZxs7dFMWRsS/E387L/NZNDlo8XTMs/rWM=;
-	b=mdpV9532wz2KJgrLr7vIJgnoV8LxqIoU9hXNzJx4oSJM44HTGSUtB5Ctpwtp9BXltMXqo3YikDTpDMmcE02W+4v6ijw0Y/e3Ao2tKaxvWajcCmqWabsjEwK6ZqQf6IYTB/Sh0r65+KHdfpTl6pIWeUn4dHzQLzDb1BG+8t42KZw=
-Received: from 30.171.150.78(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WcvLrj1_1748960566 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 03 Jun 2025 22:22:47 +0800
-Message-ID: <7307bb7a-7c45-43f7-b073-acd9e1389000@linux.alibaba.com>
-Date: Tue, 3 Jun 2025 22:22:46 +0800
+	s=arc-20240116; t=1748960918; c=relaxed/simple;
+	bh=m5XIq5RIlUaWirh4C/5WCxMUv5LGKm0wzhHqzU3F/rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sYWM8XTLimuO3IbaQtzrsO4+1cF1+yX88Dwn4HQqpSdnDdTUAOxWnIhidJKn3ym1U73qYNDBjeUMEjORxa5Sd0hfbsmm13gCU6BtFoDOtYivbAnG4DzyFx84IzapxW9NKIEt0Rm5wzfCKzD0X/cpTlPSYlgu58eV0yjyU4SvDxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CafIKnhM; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=NWF/m+whQ9NAjVENjezimZjEsDuS6u9BY+WJdI7HJ7o=; b=CafIKnhMe1WPVgL4WKM41su/Ak
+	E7StKkX2E1DEcMgLjvKFH/jd78ALjQwMvnEcq2P20jUG97qs78yniKMQ/v65O78Dbtsj3E/JIbAwD
+	qBvI+1Xo5mol3tHN8hJPdDkjYQ+NcVqva+GiyMYfbsWSSdvQITjgXQ+NONKG9yyyDskWO1zV6WYaW
+	3CK8l67Bw+lyoryEGXw6MBrV6UHzwr5BYek6FMPiOMWUHY9velz2syJfrB59U3Sg8aSi45YYFtCit
+	8SMyRKwdhXhKYejhw9B7shM+qiUa65uktVt+/kqQ0+IPf426MgY99owDskiPpJKRu1CeRXvxodpuD
+	Sjytdo/Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMSct-0000000BAHP-1w1p;
+	Tue, 03 Jun 2025 14:28:27 +0000
+Date: Tue, 3 Jun 2025 07:28:27 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
+Cc: Christoph Hellwig <hch@infradead.org>, wangtao <tao.wangtao@honor.com>,
+	sumit.semwal@linaro.org, kraxel@redhat.com,
+	vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
+	amir73il@gmail.com, benjamin.gaignard@collabora.com,
+	Brian.Starkey@arm.com, jstultz@google.com, tjmercier@google.com,
+	jack@suse.cz, baolin.wang@linux.alibaba.com,
+	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	bintian.wang@honor.com, yipengxiang@honor.com, liulu.liu@honor.com,
+	feng.han@honor.com
+Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Message-ID: <aD8Gi9ShWDEYqWjB@infradead.org>
+References: <20250603095245.17478-1-tao.wangtao@honor.com>
+ <aD7x_b0hVyvZDUsl@infradead.org>
+ <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+ <aD72alIxu718uri4@infradead.org>
+ <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: fix the inaccurate memory statistics issue for users
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- shakeel.butt@linux.dev, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- vbabka@suse.cz, rppt@kernel.org, surenb@google.com, donettom@linux.ibm.com,
- aboorvad@linux.ibm.com, sj@kernel.org, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <4f0fd51eb4f48c1a34226456b7a8b4ebff11bf72.1748051851.git.baolin.wang@linux.alibaba.com>
- <20250529205313.a1285b431bbec2c54d80266d@linux-foundation.org>
- <aDm1GCV8yToFG1cq@tiehlicka>
- <72f0dc8c-def3-447c-b54e-c390705f8c26@linux.alibaba.com>
- <aD6vHzRhwyTxBqcl@tiehlicka>
- <ef2c9e13-cb38-4447-b595-f461f3f25432@linux.alibaba.com>
- <aD7OM5Mrg5jnEnBc@tiehlicka>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <aD7OM5Mrg5jnEnBc@tiehlicka>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-
-
-On 2025/6/3 18:28, Michal Hocko wrote:
-> On Tue 03-06-25 16:32:35, Baolin Wang wrote:
->>
->>
->> On 2025/6/3 16:15, Michal Hocko wrote:
->>> On Tue 03-06-25 16:08:21, Baolin Wang wrote:
->>>>
->>>>
->>>> On 2025/5/30 21:39, Michal Hocko wrote:
->>>>> On Thu 29-05-25 20:53:13, Andrew Morton wrote:
->>>>>> On Sat, 24 May 2025 09:59:53 +0800 Baolin Wang <baolin.wang@linux.alibaba.com> wrote:
->>>>>>
->>>>>>> On some large machines with a high number of CPUs running a 64K pagesize
->>>>>>> kernel, we found that the 'RES' field is always 0 displayed by the top
->>>>>>> command for some processes, which will cause a lot of confusion for users.
->>>>>>>
->>>>>>>        PID USER      PR  NI    VIRT    RES    SHR S  %CPU  %MEM     TIME+ COMMAND
->>>>>>>     875525 root      20   0   12480      0      0 R   0.3   0.0   0:00.08 top
->>>>>>>          1 root      20   0  172800      0      0 S   0.0   0.0   0:04.52 systemd
->>>>>>>
->>>>>>> The main reason is that the batch size of the percpu counter is quite large
->>>>>>> on these machines, caching a significant percpu value, since converting mm's
->>>>>>> rss stats into percpu_counter by commit f1a7941243c1 ("mm: convert mm's rss
->>>>>>> stats into percpu_counter"). Intuitively, the batch number should be optimized,
->>>>>>> but on some paths, performance may take precedence over statistical accuracy.
->>>>>>> Therefore, introducing a new interface to add the percpu statistical count
->>>>>>> and display it to users, which can remove the confusion. In addition, this
->>>>>>> change is not expected to be on a performance-critical path, so the modification
->>>>>>> should be acceptable.
->>>>>>>
->>>>>>> Fixes: f1a7941243c1 ("mm: convert mm's rss stats into percpu_counter")
->>>>>>
->>>>>> Three years ago.
->>>>>>
->>>>>>> Tested-by Donet Tom <donettom@linux.ibm.com>
->>>>>>> Reviewed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->>>>>>> Tested-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->>>>>>> Acked-by: Shakeel Butt <shakeel.butt@linux.dev>
->>>>>>> Acked-by: SeongJae Park <sj@kernel.org>
->>>>>>> Signed-off-by: Baolin Wang <baolin.wang@linux.alibaba.com>
->>>>>>
->>>>>> Thanks, I added cc:stable to this.
->>>>>
->>>>> I have only noticed this new posting now. I do not think this is a
->>>>> stable material. I am also not convinced that the impact of the pcp lock
->>>>> exposure to the userspace has been properly analyzed and documented in
->>>>> the changelog. I am not nacking the patch (yet) but I would like to see
->>>>> a serious analyses that this has been properly thought through.
->>>>
->>>> Good point. I did a quick measurement on my 32 cores Arm machine. I ran two
->>>> workloads, one is the 'top' command: top -d 1 (updating every second).
->>>> Another workload is kernel building (time make -j32).
->>>>
->>>>   From the following data, I did not see any significant impact of the patch
->>>> changes on the execution of the kernel building workload.
->>>
->>> I do not think this is really representative of an adverse workload. I
->>> believe you need to have a look which potentially sensitive kernel code
->>> paths run with the lock held how would a busy loop over affected proc
->>> files influence those in the worst case. Maybe there are none of such
->>> kernel code paths to really worry about. This should be a part of the
->>> changelog though.
->>
->> IMO, kernel code paths usually have batch caching to avoid lock contention,
->> so I think the impact on kernel code paths is not that obvious.
+On Tue, Jun 03, 2025 at 04:18:22PM +0200, Christian König wrote:
+> > Does it matter compared to the I/O in this case?
 > 
-> This is a very generic statement. Does this refer to the existing pcp
-> locking usage in the kernel? Have you evaluated existing users?
+> It unfortunately does, see the numbers on patch 3 and 4.
 
-Let me try to clarify further.
+That's kinda weird.  Why does the page table lookup tage so much
+time compared to normal I/O?
 
-The 'mm->rss_stat' is updated by using add_mm_counter(), 
-dec/inc_mm_counter(), which are all wrappers around 
-percpu_counter_add_batch(). In percpu_counter_add_batch(), there is 
-percpu batch caching to avoid 'fbc->lock' contention. This patch changes 
-task_mem() and task_statm() to get the accurate mm counters under the 
-'fbc->lock', but this will not exacerbate kernel 'mm->rss_stat' lock 
-contention due to the the percpu batch caching of the mm counters.
+> My question is rather if it's ok to call f_op->write_iter() and 
+> f_op->read_iter() with pages allocated by alloc_pages(), e.g.
+> where drivers potentially ignore the page count and just re-use pages
+> as they like?
 
-You might argue that my test cases cannot demonstrate an actual lock 
-contention, but they have already shown that there is no significant 
-'fbc->lock' contention when the kernel updates 'mm->rss_stat'.
+read_iter and write_iter with ITER_BVEC just use the pages as source
+and destination of the I/O.  They must not touch the refcounts or
+do anything fancy with them.  Various places in the kernel rely on
+that.
 
->> Therefore, I
->> also think it's hard to find an adverse workload.
->>
->> How about adding the following comments in the commit log?
->> "
->> I did a quick measurement on my 32 cores Arm machine. I ran two workloads,
->> one is the 'top' command: top -d 1 (updating every second). Another workload
->> is kernel building (time make -j32).
-> 
-> This test doesn't really do much to trigger an actual lock contention as
-> already mentioned.
-> 
 
