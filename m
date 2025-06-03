@@ -1,123 +1,111 @@
-Return-Path: <linux-fsdevel+bounces-50537-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50538-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19DBACD029
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 01:17:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48086ACD02A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 01:18:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EE683A6BA9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 23:16:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93FF51896308
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 23:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A4C21129D;
-	Tue,  3 Jun 2025 23:17:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4612422331C;
+	Tue,  3 Jun 2025 23:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="TvL2eG/L"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NbpzYLiA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784E926ACC
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 23:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A552066CF
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 23:17:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748992633; cv=none; b=Qp64Yz4gZ9bY/2nF4C7J2tX94Mm4wgoxsp8/5OLkGnr+cAyH9Y7vD34p6Yrzox7cnnf8ZWaWtyruYrApMSeMbGD9V3u5gqGwRucUHVpZQyK4PPNwg/GI/jTAqDX5CurT8NQmqFiN+BbySnD9G3v78fdKUEK29Y2gzdoCC/J/zmM=
+	t=1748992682; cv=none; b=FXauV3XHfIHweArn8oZO9EceuGQh52NeHRkfIvITWhj5X1Ai1aNiCotgn02IUc5188wGG9gkzpHC5jB5zPCltRo7e3BmnIm4UBQ6zM8Zeqs15TS3hIGBvyLtcbv4xjMO/1Bmv49lWw2Aakw0JDiypNLEsYW3GiuAJS6d4Ha04Z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748992633; c=relaxed/simple;
-	bh=nBAyzrSiOhpJMHsiuKfXM+3xgM53QFzhBaxrnpCjNuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U2dMANV8H0EP8PMI81WkJBkboXxGttYKbCz2TV5KWsGcF0jYlxTvVA00AWsywjvyLYqbFlFWEbU+QOYrvdWUZX6wVqMdpEcqr8j0IUI//lhtbtZkOBTY8DNwrsmdrlYCWY0ajgT6RNvBz/1jkvpEXE1NT+8i+q2Wm6mQuhFb4pg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=TvL2eG/L; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=40zKGwtytHYHqL4gOa96owCTUY5DAnKaFR749LzLcnM=; b=TvL2eG/L8JxPVHEWLbob8bM6oP
-	dZFMWrqYrxR8cK2e8BUq4kK+PSp1Gg9UlY/O7OYeXW/P7GD5OmaiWRZJn6f3PaHzsDd7qbRcglhrL
-	h4FS1Qkt1Ls/S59mm41bOSB1bvdFbDjzwd+fc44aPtuGrVyFA/gVJc6ai4gYr0pwGm5m6h5D2ynUi
-	VkwVeOH61MN0Hr+tgir+tnUK6i2Smcuu4JNnQGzXXolnUXJp59Y0UrUQpGbN6ZLKMdr3VV7gjHdn1
-	PyWPVcp6ydvfhK6RZ4n6wjeanPXaPlQn84be9PAVsDcdYWegjlsJXC2ft3nUgDIEDJXRXaXlw7Fum
-	dw1YS/ww==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMasX-00000000chE-3fXm;
-	Tue, 03 Jun 2025 23:17:09 +0000
-Date: Wed, 4 Jun 2025 00:17:09 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: [PATCH 2/5] path_overmount(): avoid false negatives
-Message-ID: <20250603231709.GB145532@ZenIV>
-References: <20250603231500.GC299672@ZenIV>
+	s=arc-20240116; t=1748992682; c=relaxed/simple;
+	bh=aKRTBTPzODxhjtmx1jxxWVRwUf2dDMPT+fN2VXGNFdc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JUjeA7zkJURNJI6FFtxeHQOqz/xu3K1z07UPoIDsLEJG2n+QqEuPFgtKW6S1bqIjhcxuUv/wjDenAQSJlICuQ26Sq7BQyG+JdZy9vbmdnnMaOIPZmM1WMzZdjUFC8H6rto1ckhWrVKcb9MKqndO48FRhGtIi97O7djNFPQ9ldC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NbpzYLiA; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so2250483a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jun 2025 16:17:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1748992678; x=1749597478; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9ls4Z/Di/ECZk+H5cxevQ4VaCWIK0e7YkQdAFUYBELU=;
+        b=NbpzYLiAPYsLJOG0pOPHBqGWQtdKo9lDKTGsoe4SD7DYxWELcLM8hRugIJwjj+rRr+
+         dZruSetFaLoJmjktdi9YTJ7RPgRrxu52o7VyAdtd5RrVbMoiYBdoH4i9uj5MDvzwbDAO
+         PC2ES3FqqQRUcvCW60Zvkq2ljjAl0McOidO+0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748992678; x=1749597478;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9ls4Z/Di/ECZk+H5cxevQ4VaCWIK0e7YkQdAFUYBELU=;
+        b=uS+R90fLxV3ud21wIMQN8PBRgJ1qpscxYB8OifJ/LUURmM8BWwFvuGJid1YWfLbwKF
+         I7NBGI9c8IyeXB/H7vtq5mpp7btRl5fxdB8n2xTVcpaVt5sOpRVgy0fvKa10bB0Ndsj+
+         bOMXtc1gYUyOaT++aHK31vM9wLSak5XTpgDIkH8xHcpnzm0RRptPbBqLVi4GFZe98hhq
+         f/iprYu2WkOonKtpiJpXktLjCtlwj3q6om46mOTN7+IJgCPOXvvlksfLh/4WsZ86dGpk
+         NnJkmATktwd2ZQODYi5xfSht0JjjsMNHy14R+aGXdCFfWctCLLufljo/8XYwuLOjVf9q
+         n/bw==
+X-Gm-Message-State: AOJu0YyRbJfTmxQLVozLrsHYBPpTe84Nzt4x/6lmoucuMsdFKQWE3Uc0
+	URyHy2MDRr8mRoo01kfhop94Q2n6lxgcF6EwxM6JrHvuDnVkRthQDEMEdjT4OC8boDhDc2nPZtO
+	SGlGm1ZfPzw==
+X-Gm-Gg: ASbGnctBEY08Yk4Mbcr2xHYf9HTkMYG/V+hzzs5w7ql5nl4EUmtD6KY9KWG1ZnW65gk
+	7j3JwMI/rGxAqQjJmNEpGpsIGXnVscwKRtWACELlLHnJHLGBlCvxuQWsw+xQDf/aGEGdDzhGSvV
+	kaxQ8KtrRSQYTRUn7H0egQKrm9mGtvPHIPrEUBQUngG5/ABCVgz/pHibBbinRIgc6nbj0VB/+yI
+	x0e4Meqe+0QpPHaTpvFGUBfF4gOYIiXmChMTL2KATfc74qqWlsszwc21LtHcEXPp8u5fL0AM1aC
+	/ifMHYAmk8JluJYdWuYWdXMWfYoEFFCOV8WOk+Axii3cQqTn2DvhWLpuU8m8q+r0y0o+ZljDxGb
+	QvS9tL7KkZ02oDYNOohpMrF6y2FP0qACOYWQP
+X-Google-Smtp-Source: AGHT+IF+JiTklaY/pKMn/5nDTu0RphW2OkUQjcH5FrgCSAlnlsHuC3pCV2UMMt16xM6kkQ3xNJm+6g==
+X-Received: by 2002:a05:6402:2789:b0:602:1b8b:2902 with SMTP id 4fb4d7f45d1cf-606e941b388mr860080a12.15.1748992678237;
+        Tue, 03 Jun 2025 16:17:58 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-606ec566bc4sm191450a12.7.2025.06.03.16.17.56
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 03 Jun 2025 16:17:57 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-606b58241c9so2250437a12.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jun 2025 16:17:56 -0700 (PDT)
+X-Received: by 2002:a05:6402:510b:b0:604:a869:67e9 with SMTP id
+ 4fb4d7f45d1cf-606e9694598mr873295a12.22.1748992675940; Tue, 03 Jun 2025
+ 16:17:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250603231500.GC299672@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+References: <20250603204704.GB299672@ZenIV>
+In-Reply-To: <20250603204704.GB299672@ZenIV>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 3 Jun 2025 16:17:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgwWWxsivo8ggn7mz6cfjNX-zevq+fxkbpeJq_=P5U0+w@mail.gmail.com>
+X-Gm-Features: AX0GCFuBxXhwnBslpm8XQiaQ0tPIETFEk5LG5lmeJOIEdEyhIdCCRgJOIC2MrrE
+Message-ID: <CAHk-=wgwWWxsivo8ggn7mz6cfjNX-zevq+fxkbpeJq_=P5U0+w@mail.gmail.com>
+Subject: Re: [RFC] separate the internal mount flags from the rest
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, "Eric W. Biederman" <ebiederm@xmission.com>, 
+	Christian Brauner <brauner@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Holding namespace_sem is enough to make sure that result remains valid.
-It is *not* enough to avoid false negatives from __lookup_mnt().  Mounts
-can be unhashed outside of namespace_sem (stuck children getting detached
-on final mntput() of lazy-umounted mount) and having an unrelated mount
-removed from the hash chain while we traverse it may end up with false
-negative from __lookup_mnt().  We need to sample and recheck the seqlock
-component of mount_lock...
+On Tue, 3 Jun 2025 at 13:47, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> Objections?  The thing I really want is clear locking rules for that
+> stuff.  Reduced contention on mount_lock and fewer increments of its
+> seqcount component wouldn't hurt either, but that's secondary...
 
-Bug predates the introduction of path_overmount() - it had come from
-the code in finish_automount() that got abstracted into that helper.
+No objection at all, as long as you also change the name of the flag.
+Which I assume you were planning on doing anyway.
 
-Fixes: 26df6034fdb2 ("fix automount/automount race properly")
-Fixes: 6ac392815628 ("fs: allow to mount beneath top mount")
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
----
- fs/namespace.c | 19 +++++++++++++------
- 1 file changed, 13 insertions(+), 6 deletions(-)
+We've occasionally had various flags that had the same "namespace"
+prefix but were split across multiple fields, and it's always painful
+and very confusing.
 
-diff --git a/fs/namespace.c b/fs/namespace.c
-index a33553bc12d0..1722deadfb88 100644
---- a/fs/namespace.c
-+++ b/fs/namespace.c
-@@ -3478,18 +3478,25 @@ static int do_set_group(struct path *from_path, struct path *to_path)
-  * Check if path is overmounted, i.e., if there's a mount on top of
-  * @path->mnt with @path->dentry as mountpoint.
-  *
-- * Context: This function expects namespace_lock() to be held.
-+ * Context: namespace_sem must be held at least shared.
-+ * MUST NOT be called under lock_mount_hash() (there one should just
-+ * call __lookup_mnt() and check if it returns NULL).
-  * Return: If path is overmounted true is returned, false if not.
-  */
- static inline bool path_overmounted(const struct path *path)
- {
-+	unsigned seq = read_seqbegin(&mount_lock);
-+	bool no_child;
-+
- 	rcu_read_lock();
--	if (unlikely(__lookup_mnt(path->mnt, path->dentry))) {
--		rcu_read_unlock();
--		return true;
--	}
-+	no_child = !__lookup_mnt(path->mnt, path->dentry);
- 	rcu_read_unlock();
--	return false;
-+	if (need_seqretry(&mount_lock, seq)) {
-+		read_seqlock_excl(&mount_lock);
-+		no_child = !__lookup_mnt(path->mnt, path->dentry);
-+		read_sequnlock_excl(&mount_lock);
-+	}
-+	return unlikely(!no_child);
- }
- 
- /**
--- 
-2.39.5
-
+            Linus
 
