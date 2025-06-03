@@ -1,64 +1,93 @@
-Return-Path: <linux-fsdevel+bounces-50412-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50413-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91240ACBF58
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 06:50:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E636CACBF63
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 06:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F543188B5C9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 04:50:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF910167812
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 04:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 917DC1F1524;
-	Tue,  3 Jun 2025 04:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6821B1F3B96;
+	Tue,  3 Jun 2025 04:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CR2ZpW4J"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B3P8Y2kD"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CBD82F2D;
-	Tue,  3 Jun 2025 04:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271DD139B;
+	Tue,  3 Jun 2025 04:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748926206; cv=none; b=aXRnUoPQPnr82JTM9OqsQKwbdj3o/TDJzP7vK8kkcBUCUHHV+2Qtz9zzS0B+rBwR1JnaPyJR7MCOiN7QLmUs1QIkpPIYe3pUYPyD97NEOYHMSjEGZYgrBzVIyeSx4XSCejS14HRO+Fd4+TeU9kmnivfVhPLSleejNAyL+npA+rQ=
+	t=1748926348; cv=none; b=qPsagJyIpqTBZtDPcqzqiQ6Veo5YWiAqPz7jXK4tv80rgW7poE8j3vMIfq1UJxraITJhs7azBBHmEKsW/w+87Vm6C7kpsMHqatUwLuz9X+YudlD6L2ejAetTxSF0EkRupLzuwYNbjdRwBoPbuXHtDbu98FMRSMr4r6hGkfWdzQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748926206; c=relaxed/simple;
-	bh=3aQP4cVOXn4BZRakpLih4t7hE3enQFEXZnnf1lO+fek=;
+	s=arc-20240116; t=1748926348; c=relaxed/simple;
+	bh=9JfipAlH31/Nfl/rtapCnYoip2jYXWlwbar7ZO14jI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XXg3JzxjXUtr/S2eZmxBmq6AestiJjhieL5eY664/qPq9DdCWYXhpbu/20C1oIFj84Fov8uJOKmiV42AgoHqvMq/riOBo9p8U4UyiHIJ8b2uqLtx+Q1dk9yk2vyVLWhminCLHNHLhVxCyLP1WPo0cVaNNP5KbEHdiypFVNDr5aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CR2ZpW4J; arc=none smtp.client-ip=198.137.202.133
+	 Content-Type:Content-Disposition:In-Reply-To; b=efoI0vzT3xjuqbWkTbKYsJUvnckfd1uwtD1570L62jzsh1yOAJU69dLiYgf0PsjyspZq3TXzKgBR9bIvdDa0ZALn8ZwfRXkC9YTDWIxbGEOhuWYM/EyNgTTfi18MbDAjFrAZ5XMLFHIuDBcizix8dAm/euwaxql7kZuUhCf4RHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B3P8Y2kD; arc=none smtp.client-ip=198.137.202.133
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
 	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
 	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=eARmH9Rn306+PBP02fqjqI67S938hpTq6nRX+WXqcD4=; b=CR2ZpW4JA0X6L3PCAryW7hZ8ZU
-	rWCHceDqHyr+q9KnIFftL3mrRP1nged2fbqewgkK65H64l03DglOHIDqYtdrB3hEblIavRoUu1wn6
-	5mXcdzaAVITfSdNvd0OwMOeyOyiA9T3ieA8nwMoCaveDQa6Az/jAXnlTp085P0EA9xmmTwjqP5PaD
-	7wKs6aoYmfK273/dG87ADJI9C45Y4jHhwzjjJmVUitdrqS8c9UxwOhYWLlJXYK11gHuLcOwRbXAQX
-	t+muMp4aaPB5BnC9maNWM6eyqWWOezqGNIPyoYLKUEkUgpYqwpgtg3kcQd2KJx71RlHJ5bY3WY5RI
-	tBQwR98g==;
+	bh=2HXdpwNFEIc5X8bhVnayNQJw7eGMBpc7Yo7s6dM4VOc=; b=B3P8Y2kDHXidjM2mVVCC4kBNNF
+	Qz89tdzXTMecebZG7XmRmDmZwVxd749GOy/SzyY/EpmsmfsqSNw/cnSgrpSTVCApUquqkhPfVkAc8
+	kieG2QRArS7d2eif4k5WqxYt4D0T0IvW8HLaOTbXkSr40XTEVz8CgyPpGf052cciIXiuAonVHjKp5
+	ca8tnKvTKMeAP4pWA1TQQgCniiO5gADuWYcy575ZsQpE9t3qic8U9fIg53T2QtSkg9Caxfp7AVxdf
+	qRln17kTFNcHJEKM2R61la51Q5Mz0A+L2g/j3ozbDXhSHyJ/Sl2JQG5pkhq4oDDJmJzkj4ZENkv79
+	jz/R5CFQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMJbA-00000009ias-0W2a;
-	Tue, 03 Jun 2025 04:50:04 +0000
-Date: Mon, 2 Jun 2025 21:50:04 -0700
+	id 1uMJdM-00000009izV-3hPv;
+	Tue, 03 Jun 2025 04:52:20 +0000
+Date: Mon, 2 Jun 2025 21:52:20 -0700
 From: Christoph Hellwig <hch@infradead.org>
-To: Dave Chinner <david@fromorbit.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Yafang Shao <laoar.shao@gmail.com>,
-	Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
-	cem@kernel.org, linux-xfs@vger.kernel.org,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
- data corruption
-Message-ID: <aD5-_OOsKyX0rDDO@infradead.org>
-References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
- <aDfkTiTNH1UPKvC7@dread.disaster.area>
- <aD04v9dczhgGxS3K@infradead.org>
- <aD4xboH2mM1ONhB-@dread.disaster.area>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+	ajones@ventanamicro.com, akpm@linux-foundation.org,
+	amoorthy@google.com, anthony.yznaga@oracle.com, anup@brainfault.org,
+	aou@eecs.berkeley.edu, bfoster@redhat.com,
+	binbin.wu@linux.intel.com, brauner@kernel.org,
+	catalin.marinas@arm.com, chao.p.peng@intel.com,
+	chenhuacai@kernel.org, dave.hansen@intel.com, david@redhat.com,
+	dmatlack@google.com, dwmw@amazon.co.uk, erdemaktas@google.com,
+	fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+	haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+	ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+	james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca,
+	jgowans@amazon.com, jhubbard@nvidia.com, jroedel@suse.de,
+	jthoughton@google.com, jun.miao@intel.com, kai.huang@intel.com,
+	keirf@google.com, kent.overstreet@linux.dev,
+	kirill.shutemov@intel.com, liam.merwick@oracle.com,
+	maciej.wieczor-retman@intel.com, mail@maciej.szmigiero.name,
+	maz@kernel.org, mic@digikod.net, michael.roth@amd.com,
+	mpe@ellerman.id.au, muchun.song@linux.dev, nikunj@amd.com,
+	nsaenz@amazon.es, oliver.upton@linux.dev, palmer@dabbelt.com,
+	pankaj.gupta@amd.com, paul.walmsley@sifive.com, pbonzini@redhat.com,
+	pdurrant@amazon.co.uk, peterx@redhat.com, pgonda@google.com,
+	pvorel@suse.cz, qperret@google.com, quic_cvanscha@quicinc.com,
+	quic_eberman@quicinc.com, quic_mnalajal@quicinc.com,
+	quic_pderrin@quicinc.com, quic_pheragu@quicinc.com,
+	quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+	richard.weiyang@gmail.com, rick.p.edgecombe@intel.com,
+	rientjes@google.com, roypat@amazon.co.uk, rppt@kernel.org,
+	seanjc@google.com, shuah@kernel.org, steven.price@arm.com,
+	steven.sistare@oracle.com, suzuki.poulose@arm.com, tabba@google.com,
+	thomas.lendacky@amd.com, vannapurve@google.com, vbabka@suse.cz,
+	viro@zeniv.linux.org.uk, vkuznets@redhat.com, wei.w.wang@intel.com,
+	will@kernel.org, willy@infradead.org, xiaoyao.li@intel.com,
+	yan.y.zhao@intel.com, yilun.xu@intel.com, yuzenghui@huawei.com,
+	zhiquan1.li@intel.com
+Subject: Re: [PATCH 1/2] fs: Provide function that allocates a secure
+ anonymous inode
+Message-ID: <aD5_hL-caOZjSk8x@infradead.org>
+References: <cover.1748890962.git.ackerleytng@google.com>
+ <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -67,77 +96,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aD4xboH2mM1ONhB-@dread.disaster.area>
+In-Reply-To: <c03fbe18c3ae90fb3fa7c71dc0ee164e6cc12103.1748890962.git.ackerleytng@google.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Jun 03, 2025 at 09:19:10AM +1000, Dave Chinner wrote:
-> > In other words, write errors in Linux are in general expected to be
-> > persistent, modulo explicit failfast requests like REQ_NOWAIT.
-> 
-> Say what? the blk_errors array defines multiple block layer errors
-> that are transient in nature - stuff like ENOSPC, ETIMEDOUT, EILSEQ,
-> ENOLINK, EBUSY - all indicate a transient, retryable error occurred
-> somewhere in the block/storage layers.
+On Mon, Jun 02, 2025 at 12:17:54PM -0700, Ackerley Tng wrote:
+> +struct inode *alloc_anon_secure_inode(struct super_block *s, const char *name)
+> +{
+> +	return anon_inode_make_secure_inode(s, name, NULL, true);
+> +}
+> +EXPORT_SYMBOL_GPL(alloc_anon_secure_inode);
 
-Let's use the block layer codes reported all the way up to the file
-systems and their descriptions instead of the errnos they are
-mapped to for compatibility.  The above would be in order:
+What is "secure" about this inode?
 
-[BLK_STS_NOSPC]         = { -ENOSPC,    "critical space allocation" },
-[BLK_STS_TIMEOUT]       = { -ETIMEDOUT, "timeout" },
-[BLK_STS_PROTECTION]    = { -EILSEQ,    "protection" },
-[BLK_STS_TRANSPORT]     = { -ENOLINK,   "recoverable transport" },
-[BLK_STS_DEV_RESOURCE]  = { -EBUSY,     "device resource" },
+A kerneldoc explaining that would probably help.
 
-> What is permanent about dm-thinp returning ENOSPC to a write
-> request? Once the pool has been GC'd to free up space or expanded,
-> the ENOSPC error goes away.
+> +extern struct inode *alloc_anon_secure_inode(struct super_block *, const char *);
 
-Everything.  ENOSPC means there is no space.  There might be space in
-the non-determinant future, but if the layer just needs to GC it must
-not report the error.
+No need for the extern here.  Spelling out the parameter names in
+protypes is nice, though. (and fix the long line while you're at it).
 
-u
-
-> What is permanent about an IO failing with EILSEQ because a t10
-> checksum failed due to a random bit error detected between the HBA
-> and the storage device? Retry the IO, and it goes through just fine
-> without any failures.
-
-Normally it means your checksum was wrong.  If you have bit errors
-in the cable they will show up again, maybe not on the next I/O
-but soon.
-
-> These transient error types typically only need a write retry after
-> some time period to resolve, and that's what XFS does by default.
-> What makes these sorts of errors persistent in the linux block layer
-> and hence requiring an immediate filesystem shutdown and complete
-> denial of service to the storage?
-> 
-> I ask this seriously, because you are effectively saying the linux
-> storage stack now doesn't behave the same as the model we've been
-> using for decades. What has changed, and when did it change?
-
-Hey, you can retry.  You're unlikely to improve the situation though
-but instead just keep deferring the inevitable shutdown.
-
-> > Which also leaves me a bit puzzled what the XFS metadata retries are
-> > actually trying to solve, especially without even having a corresponding
-> > data I/O version.
-> 
-> It's always been for preventing immediate filesystem shutdown when
-> spurious transient IO errors occur below XFS. Data IO errors don't
-> cause filesystem shutdowns - errors get propagated to the
-> application - so there isn't a full system DOS potential for
-> incorrect classification of data IO errors...
-
-Except as we see in this thread for a fairly common use case (buffered
-I/O without fsync) they don't.  And I agree with you that this is not
-how you write applications that care about data integrity - but the
-entire reset of the system and just about every common utility is
-written that way.
-
-And even applications that fsync won't see you fancy error code.  The
-only thing stored in the address_space for fsync to catch is EIO and
-ENOSPC.
 
