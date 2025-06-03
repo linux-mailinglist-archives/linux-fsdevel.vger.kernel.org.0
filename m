@@ -1,201 +1,283 @@
-Return-Path: <linux-fsdevel+bounces-50452-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50453-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0994FACC6C4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:38:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66D5BACC6E4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:43:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16C201883320
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 12:38:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27D3717284D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 12:43:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67A222FDEC;
-	Tue,  3 Jun 2025 12:38:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AB7231A55;
+	Tue,  3 Jun 2025 12:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k4+ur3P2"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142E21E50E;
-	Tue,  3 Jun 2025 12:38:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A129D22FF2D;
+	Tue,  3 Jun 2025 12:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748954314; cv=none; b=jWoermudQ2eiT/DwNrtx5zY0ixSMz6oiRkzPLT3BcPHy2sBZGsSYtJwkU2YDx1mS0rSEY68NrOb+PIQoCeac8bWZQ/PiOFcdWXFxKV6Hzxs6zzg9V9/rJw+4Wkgjbk9ruoj2ETaFXp5tx33PHBxzfSbnrby+wCIGaQKSpJKKBu0=
+	t=1748954601; cv=none; b=AtVZOBdzcv3TlVP//QMfXNvlSvoeS5uQa/MUeRrEWdozPPa21+ozBN01/6zpbaYKNEQbq1HSrfmMpOteJcW253ZeX//G4HyyMPOstCsaytBLuP94XiILYPxoZjmHK6F5XbTeyl/eymxYNdUwjsgrMR6/qzUCc5WwcC8fqkSdBkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748954314; c=relaxed/simple;
-	bh=xcNCGepNi0U/kqcREAk+KouqL4u0p0u2zVTK3EprN1Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=txoYsAE9JM9rW20L2XvUDIYIWoVrMc4R2gXmZuKGT1xHgFW5sXDr3k+vTc87onjLUuuH97ES3BREYFf82WFm/DqORIxjFG3P9gHiKAXcHisK5DxnUtbqKX88q79uPwchfYBxCGnNuf5xQYOlON/MNN7//g9PSrk0A+fNmMMwNd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w011.hihonor.com (unknown [10.68.20.122])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4bBVZJ0VJdzYkxZg;
-	Tue,  3 Jun 2025 20:36:24 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w011.hihonor.com
- (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
- 2025 20:38:26 +0800
-Received: from a010.hihonor.com (10.68.16.52) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
- 2025 20:38:26 +0800
-Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
- a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
- Tue, 3 Jun 2025 20:38:26 +0800
-From: wangtao <tao.wangtao@honor.com>
-To: Amir Goldstein <amir73il@gmail.com>
-CC: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, "kraxel@redhat.com"
-	<kraxel@redhat.com>, "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
-	<brauner@kernel.org>, "hughd@google.com" <hughd@google.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
-	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com"
-	<jstultz@google.com>, "tjmercier@google.com" <tjmercier@google.com>,
-	"jack@suse.cz" <jack@suse.cz>, "baolin.wang@linux.alibaba.com"
-	<baolin.wang@linux.alibaba.com>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
-	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
-	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang
-	<yipengxiang@honor.com>, liulu 00013167 <liulu.liu@honor.com>, "hanfeng
- 00012985" <feng.han@honor.com>
-Subject: RE: [PATCH v4 1/4] fs: allow cross-FS copy_file_range for memory file
- with direct I/O
-Thread-Topic: [PATCH v4 1/4] fs: allow cross-FS copy_file_range for memory
- file with direct I/O
-Thread-Index: AQHb1G1oEbLXPGV3DUSDSLvy2FONdrPwvWiAgACgIIA=
-Date: Tue, 3 Jun 2025 12:38:25 +0000
-Message-ID: <0cb2501aea054796906e2f6a23a86390@honor.com>
-References: <20250603095245.17478-1-tao.wangtao@honor.com>
- <20250603095245.17478-2-tao.wangtao@honor.com>
- <CAOQ4uxgYmSLY25WtQjHxvViG0eNSSsswF77djBJZsSJCq1OyLA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxgYmSLY25WtQjHxvViG0eNSSsswF77djBJZsSJCq1OyLA@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1748954601; c=relaxed/simple;
+	bh=HfxTCbwpuSHFH8GWpH/5AMQvU8Qg7uvowZzWyjaAOcc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GFrSdSz+KqgG64NfgOg5au66y0dw9PTNJoFifMlfTZAQsAxvrkTs8EsUQKZ6i1ckOcIS+13NklFShPfVluV/efr8JPcfovcVtZWM5WhEVKrR/XdlTRGPDHaqK8opbc1xiyanPF1V7l0CBqPu/Ws5lqBZ6YNZQszXLoFmj+ndrDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k4+ur3P2; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ad88d77314bso998841966b.1;
+        Tue, 03 Jun 2025 05:43:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748954595; x=1749559395; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6sJx8mcfGnFO4aX8W0GB5TfU4SPvOLM9fzBj8cbSzfg=;
+        b=k4+ur3P2QoeUdy7w58KiKJG5NrGvm0OYAcu+4dhvLBnOPgCbPWBBBfr/2Q7QrmRFba
+         EUrxlCEbnAuTPl7hrP1SOUNSQhwLJjCxgwHCWpt72URHHd3vfoI5gr1AduP6mkFJcSx7
+         Pm9fVXYXOnnPzjYVmEnk1IF1xclyyKLjHI166ugQOEALK5RNgPDxHuPHqPIDDFhmIF8r
+         zfWK4MwDy9iJ+ietqWJMD4PDS6RPtDosAeyKJhAITPXN6xpryk8MaUTCV0tHyPe2TNr6
+         oNCXORwZ9Bg+TW1zPXC2k5YIXtVC1QDgih1mlF3IwT3G0er1+iol+QdWOU5aryW7KdZs
+         yXCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748954595; x=1749559395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6sJx8mcfGnFO4aX8W0GB5TfU4SPvOLM9fzBj8cbSzfg=;
+        b=GqlXCiVey6Ra47qlNvH5rE7jo6vLow57O/kLMxIdatrLDpjCcxZsyIHrOx8Q2IrR4p
+         69IoDdhkAgRi+GVnjxjLVgXBqTZAsAiA732a6W3Gi4YXoqXwhU2BjqGNSc2QwstZ14aR
+         1xgeNpIHNtc7SX9rxWoitKIY2/hj4jRkA34egTBhk4Dwd6x7LDlx5wC6TI+H0z9eVqqP
+         aTkwt1BOCQhrVcQIm2QBLxZNwOPDgXpgR14eE1T0aRuZw5tzG8SqaxkM/XD9WzGNhKmJ
+         gV/Q6zNzGmOmx5lCvTRmCs+dKIwMaPpm3xOT8fw5HOfq/sud7O60hj6MTgNMEyY5iLrP
+         qr3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXPzV1bPZgBIIKO/DuEwOtV2dIDSK/3pgOoiBJVsmy/oAY4tQ1dSj0eWjrG/W8enddmfh/zGIyEUMxnDLe@vger.kernel.org, AJvYcCVB4WqJF4AcoCAN/Heaxg+Gq2+LwzmHNUtaGRQOpDH5jnfNxO0KX3IXhzgV8EsYumi4h+IGMwTiIW75XTpk@vger.kernel.org, AJvYcCVCRRa3nDVKrJvPq7F98ky9M29AYX6NL8Q5/Uqo5htzATd5tUMgNDErLtRUwOUQvggMnpxRjXJaSajfNVk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHJaXMTDVpi1CsKyhzOj6Ztg53eyshmag5qsad8r1DFdKC+lpK
+	cPeTF4y/XwO4jOhDQKbSqereM8CtW1QS8oSUS4M83CdF796GI/Ev4WwihocKaNTplYaRdMW7Alv
+	jwgfJpeFxaNpLUihlydIaVRIGQ8KSxa0=
+X-Gm-Gg: ASbGnctkN7HNeG65K1RW0GukoUUNYZ2ceBmwdQx4OHBkRiFgODiU5Ktakn5ZMriNEsT
+	SqwMwwS9mKZ8dYUaX93nYZyUoVVkrBEYQMijCV/whF3HwKxVoPjKoHD0xktpiqV/Z8WVIVnrqwL
+	Vi77CcY0DEvaicioh3av3KIWFHhWQYgEy/
+X-Google-Smtp-Source: AGHT+IF0Y8eVa/wSpXz4raSNLDvjA9m62FPSA+BLGsYc090YPQ60EU4GYYJzLpKbTnA9JxXmd1DxAASt8NsK3GIUg8M=
+X-Received: by 2002:a17:906:85a:b0:adb:413a:a981 with SMTP id
+ a640c23a62f3a-adb413aaac4mr1029791066b.14.1748954594439; Tue, 03 Jun 2025
+ 05:43:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250603095245.17478-1-tao.wangtao@honor.com> <20250603095245.17478-2-tao.wangtao@honor.com>
+ <CAOQ4uxgYmSLY25WtQjHxvViG0eNSSsswF77djBJZsSJCq1OyLA@mail.gmail.com> <0cb2501aea054796906e2f6a23a86390@honor.com>
+In-Reply-To: <0cb2501aea054796906e2f6a23a86390@honor.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 3 Jun 2025 14:43:02 +0200
+X-Gm-Features: AX0GCFuHzQzF8AX68GwDBFhePF7quh1p9www-VHHK49I3nQ44uIdAWZ_lLdxIa4
+Message-ID: <CAOQ4uxi5eyXocmFaDdT_1Jvo0ZiEf66bC9u5qn6B2Rdd_Fuqyw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] fs: allow cross-FS copy_file_range for memory file
+ with direct I/O
+To: wangtao <tao.wangtao@honor.com>
+Cc: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, 
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, "kraxel@redhat.com" <kraxel@redhat.com>, 
+	"vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"hughd@google.com" <hughd@google.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>, 
+	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com" <jstultz@google.com>, 
+	"tjmercier@google.com" <tjmercier@google.com>, "jack@suse.cz" <jack@suse.cz>, 
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>, 
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang <yipengxiang@honor.com>, 
+	liulu 00013167 <liulu.liu@honor.com>, hanfeng 00012985 <feng.han@honor.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW1pciBHb2xkc3RlaW4g
-PGFtaXI3M2lsQGdtYWlsLmNvbT4NCj4gU2VudDogVHVlc2RheSwgSnVuZSAzLCAyMDI1IDY6NTcg
-UE0NCj4gVG86IHdhbmd0YW8gPHRhby53YW5ndGFvQGhvbm9yLmNvbT4NCj4gQ2M6IHN1bWl0LnNl
-bXdhbEBsaW5hcm8ub3JnOyBjaHJpc3RpYW4ua29lbmlnQGFtZC5jb207DQo+IGtyYXhlbEByZWRo
-YXQuY29tOyB2aXZlay5rYXNpcmVkZHlAaW50ZWwuY29tOyB2aXJvQHplbml2LmxpbnV4Lm9yZy51
-azsNCj4gYnJhdW5lckBrZXJuZWwub3JnOyBodWdoZEBnb29nbGUuY29tOyBha3BtQGxpbnV4LWZv
-dW5kYXRpb24ub3JnOw0KPiBiZW5qYW1pbi5nYWlnbmFyZEBjb2xsYWJvcmEuY29tOyBCcmlhbi5T
-dGFya2V5QGFybS5jb207DQo+IGpzdHVsdHpAZ29vZ2xlLmNvbTsgdGptZXJjaWVyQGdvb2dsZS5j
-b207IGphY2tAc3VzZS5jejsNCj4gYmFvbGluLndhbmdAbGludXguYWxpYmFiYS5jb207IGxpbnV4
-LW1lZGlhQHZnZXIua2VybmVsLm9yZzsgZHJpLQ0KPiBkZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5v
-cmc7IGxpbmFyby1tbS1zaWdAbGlzdHMubGluYXJvLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2Vy
-Lmtlcm5lbC5vcmc7IGxpbnV4LWZzZGV2ZWxAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4gbW1A
-a3ZhY2sub3JnOyB3YW5nYmludGlhbihCaW50aWFuV2FuZykgPGJpbnRpYW4ud2FuZ0Bob25vci5j
-b20+Ow0KPiB5aXBlbmd4aWFuZyA8eWlwZW5neGlhbmdAaG9ub3IuY29tPjsgbGl1bHUgMDAwMTMx
-NjcNCj4gPGxpdWx1LmxpdUBob25vci5jb20+OyBoYW5mZW5nIDAwMDEyOTg1IDxmZW5nLmhhbkBo
-b25vci5jb20+DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjQgMS80XSBmczogYWxsb3cgY3Jvc3Mt
-RlMgY29weV9maWxlX3JhbmdlIGZvciBtZW1vcnkNCj4gZmlsZSB3aXRoIGRpcmVjdCBJL08NCj4g
-DQo+IE9uIFR1ZSwgSnVuIDMsIDIwMjUgYXQgMTE6NTPigK9BTSB3YW5ndGFvIDx0YW8ud2FuZ3Rh
-b0Bob25vci5jb20+IHdyb3RlOg0KPiA+DQo+ID4gTWVtb3J5IGZpbGVzIGNhbiBvcHRpbWl6ZSBj
-b3B5IHBlcmZvcm1hbmNlIHZpYSBjb3B5X2ZpbGVfcmFuZ2UgY2FsbGJhY2tzOg0KPiA+IC1Db21w
-YXJlZCB0byBtbWFwJnJlYWQ6IHJlZHVjZXMgR1VQIChnZXRfdXNlcl9wYWdlcykgb3ZlcmhlYWQN
-Cj4gPiAtQ29tcGFyZWQgdG8gc2VuZGZpbGUvc3BsaWNlOiBlbGltaW5hdGVzIG9uZSBtZW1vcnkg
-Y29weSAtU3VwcG9ydHMNCj4gPiBkbWEtYnVmIGRpcmVjdCBJL08gemVyby1jb3B5IGltcGxlbWVu
-dGF0aW9uDQo+ID4NCj4gPiBTdWdnZXN0ZWQgYnk6IENocmlzdGlhbiBLw7ZuaWcgPGNocmlzdGlh
-bi5rb2VuaWdAYW1kLmNvbT4gU3VnZ2VzdGVkIGJ5Og0KPiA+IEFtaXIgR29sZHN0ZWluIDxhbWly
-NzNpbEBnbWFpbC5jb20+DQo+ID4gU2lnbmVkLW9mZi1ieTogd2FuZ3RhbyA8dGFvLndhbmd0YW9A
-aG9ub3IuY29tPg0KPiA+IC0tLQ0KPiA+ICBmcy9yZWFkX3dyaXRlLmMgICAgfCA2NCArKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0NCj4gLS0tLQ0KPiA+ICBpbmNsdWRl
-L2xpbnV4L2ZzLmggfCAgMiArKw0KPiA+ICAyIGZpbGVzIGNoYW5nZWQsIDU0IGluc2VydGlvbnMo
-KyksIDEyIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2ZzL3JlYWRfd3JpdGUu
-YyBiL2ZzL3JlYWRfd3JpdGUuYyBpbmRleA0KPiA+IGJiMGVkMjZhMGIzYS4uZWNiNGY3NTNjNjMy
-IDEwMDY0NA0KPiA+IC0tLSBhL2ZzL3JlYWRfd3JpdGUuYw0KPiA+ICsrKyBiL2ZzL3JlYWRfd3Jp
-dGUuYw0KPiA+IEBAIC0xNDY5LDYgKzE0NjksMzEgQEAgQ09NUEFUX1NZU0NBTExfREVGSU5FNChz
-ZW5kZmlsZTY0LCBpbnQsDQo+IG91dF9mZCwNCj4gPiBpbnQsIGluX2ZkLCAgfSAgI2VuZGlmDQo+
-ID4NCj4gPiArc3RhdGljIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgKm1lbW9yeV9jb3B5
-X2ZpbGVfb3BzKA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHN0cnVjdCBmaWxlICpmaWxl
-X2luLCBzdHJ1Y3QgZmlsZSAqZmlsZV9vdXQpIHsNCj4gPiArICAgICAgIGlmICgoZmlsZV9pbi0+
-Zl9vcC0+Zm9wX2ZsYWdzICYgRk9QX01FTU9SWV9GSUxFKSAmJg0KPiA+ICsgICAgICAgICAgIChm
-aWxlX2luLT5mX21vZGUgJiBGTU9ERV9DQU5fT0RJUkVDVCkgJiYNCj4gPiArICAgICAgICAgICBm
-aWxlX2luLT5mX29wLT5jb3B5X2ZpbGVfcmFuZ2UgJiYgZmlsZV9vdXQtPmZfb3AtPndyaXRlX2l0
-ZXIpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBmaWxlX2luLT5mX29wOw0KPiA+ICsgICAg
-ICAgZWxzZSBpZiAoKGZpbGVfb3V0LT5mX29wLT5mb3BfZmxhZ3MgJiBGT1BfTUVNT1JZX0ZJTEUp
-ICYmDQo+ID4gKyAgICAgICAgICAgICAgICAoZmlsZV9vdXQtPmZfbW9kZSAmIEZNT0RFX0NBTl9P
-RElSRUNUKSAmJg0KPiA+ICsgICAgICAgICAgICAgICAgZmlsZV9pbi0+Zl9vcC0+cmVhZF9pdGVy
-ICYmIGZpbGVfb3V0LT5mX29wLT5jb3B5X2ZpbGVfcmFuZ2UpDQo+ID4gKyAgICAgICAgICAgICAg
-IHJldHVybiBmaWxlX291dC0+Zl9vcDsNCj4gPiArICAgICAgIGVsc2UNCj4gPiArICAgICAgICAg
-ICAgICAgcmV0dXJuIE5VTEw7DQo+ID4gK30NCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgZXNzZW50
-aWFsX2ZpbGVfcndfY2hlY2tzKHN0cnVjdCBmaWxlICpmaWxlX2luLCBzdHJ1Y3QgZmlsZQ0KPiA+
-ICsqZmlsZV9vdXQpIHsNCj4gPiArICAgICAgIGlmICghKGZpbGVfaW4tPmZfbW9kZSAmIEZNT0RF
-X1JFQUQpIHx8DQo+ID4gKyAgICAgICAgICAgIShmaWxlX291dC0+Zl9tb2RlICYgRk1PREVfV1JJ
-VEUpIHx8DQo+ID4gKyAgICAgICAgICAgKGZpbGVfb3V0LT5mX2ZsYWdzICYgT19BUFBFTkQpKQ0K
-PiA+ICsgICAgICAgICAgICAgICByZXR1cm4gLUVCQURGOw0KPiA+ICsNCj4gPiArICAgICAgIHJl
-dHVybiAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICAvKg0KPiA+ICAgKiBQZXJmb3JtcyBuZWNlc3Nh
-cnkgY2hlY2tzIGJlZm9yZSBkb2luZyBhIGZpbGUgY29weQ0KPiA+ICAgKg0KPiA+IEBAIC0xNDg0
-LDkgKzE1MDksMTYgQEAgc3RhdGljIGludCBnZW5lcmljX2NvcHlfZmlsZV9jaGVja3Moc3RydWN0
-IGZpbGUNCj4gKmZpbGVfaW4sIGxvZmZfdCBwb3NfaW4sDQo+ID4gICAgICAgICBzdHJ1Y3QgaW5v
-ZGUgKmlub2RlX291dCA9IGZpbGVfaW5vZGUoZmlsZV9vdXQpOw0KPiA+ICAgICAgICAgdWludDY0
-X3QgY291bnQgPSAqcmVxX2NvdW50Ow0KPiA+ICAgICAgICAgbG9mZl90IHNpemVfaW47DQo+ID4g
-KyAgICAgICBib29sIHNwbGljZSA9IGZsYWdzICYgQ09QWV9GSUxFX1NQTElDRTsNCj4gPiArICAg
-ICAgIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgKm1lbV9mb3BzOw0KPiA+ICAgICAgICAg
-aW50IHJldDsNCj4gPg0KPiA+IC0gICAgICAgcmV0ID0gZ2VuZXJpY19maWxlX3J3X2NoZWNrcyhm
-aWxlX2luLCBmaWxlX291dCk7DQo+ID4gKyAgICAgICAvKiBUaGUgZG1hLWJ1ZiBmaWxlIGlzIG5v
-dCBhIHJlZ3VsYXIgZmlsZS4gKi8NCj4gPiArICAgICAgIG1lbV9mb3BzID0gbWVtb3J5X2NvcHlf
-ZmlsZV9vcHMoZmlsZV9pbiwgZmlsZV9vdXQpOw0KPiA+ICsgICAgICAgaWYgKHNwbGljZSB8fCBt
-ZW1fZm9wcyA9PSBOVUxMKQ0KPiANCj4gbml0OiB1c2UgIW1lbV9mb3BzIHBsZWFzZQ0KPiANCj4g
-Q29uc2lkZXJpbmcgdGhhdCB0aGUgZmxhZyBDT1BZX0ZJTEVfU1BMSUNFIGlzIG5vdCBhbGxvd2Vk
-IGZyb20gdXNlcnNwYWNlDQo+IGFuZCBpcyBvbmx5IGNhbGxlZCBieSBuZnNkIGFuZCBrc21iZCBJ
-IHRoaW5rIHdlIHNob3VsZCBhc3NlcnQgYW5kIGRlbnkgdGhlDQo+IGNvbWJpbmF0aW9uIG9mIG1l
-bV9mb3BzICYmIHNwbGljZSBiZWNhdXNlIGl0IGlzIHZlcnkgbXVjaCB1bmV4cGVjdGVkLg0KPiAN
-Cj4gQWZ0ZXIgYXNzZXJ0aW5nIHRoaXMsIGl0IHdvdWxkIGJlIG5pY2VyIHRvIHdyaXRlIGFzOg0K
-PiAgICAgICAgIGlmIChtZW1fZm9wcykNCj4gICAgICAgICAgICAgICAgcmV0ID0gZXNzZW50aWFs
-X2ZpbGVfcndfY2hlY2tzKGZpbGVfaW4sIGZpbGVfb3V0KTsNCj4gICAgICAgICBlbHNlDQo+ICAg
-ICAgICAgICAgICAgIHJldCA9IGdlbmVyaWNfZmlsZV9yd19jaGVja3MoZmlsZV9pbiwgZmlsZV9v
-dXQpOw0KPiANCkdvdCBpdC4gVGhhbmtzLg0KPiA+ICsgICAgICAgZWxzZQ0KPiA+ICsgICAgICAg
-ICAgICAgICByZXQgPSBlc3NlbnRpYWxfZmlsZV9yd19jaGVja3MoZmlsZV9pbiwgZmlsZV9vdXQp
-Ow0KPiA+ICAgICAgICAgaWYgKHJldCkNCj4gPiAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsN
-Cj4gPg0KPiA+IEBAIC0xNTAwLDggKzE1MzIsMTAgQEAgc3RhdGljIGludCBnZW5lcmljX2NvcHlf
-ZmlsZV9jaGVja3Moc3RydWN0IGZpbGUNCj4gKmZpbGVfaW4sIGxvZmZfdCBwb3NfaW4sDQo+ID4g
-ICAgICAgICAgKiBhbmQgc2V2ZXJhbCBkaWZmZXJlbnQgc2V0cyBvZiBmaWxlX29wZXJhdGlvbnMs
-IGJ1dCB0aGV5IGFsbCBlbmQgdXANCj4gPiAgICAgICAgICAqIHVzaW5nIHRoZSBzYW1lIC0+Y29w
-eV9maWxlX3JhbmdlKCkgZnVuY3Rpb24gcG9pbnRlci4NCj4gPiAgICAgICAgICAqLw0KPiA+IC0g
-ICAgICAgaWYgKGZsYWdzICYgQ09QWV9GSUxFX1NQTElDRSkgew0KPiA+ICsgICAgICAgaWYgKHNw
-bGljZSkgew0KPiA+ICAgICAgICAgICAgICAgICAvKiBjcm9zcyBzYiBzcGxpY2UgaXMgYWxsb3dl
-ZCAqLw0KPiA+ICsgICAgICAgfSBlbHNlIGlmIChtZW1fZm9wcyAhPSBOVUxMKSB7DQo+IA0KPiBX
-aXRoIHRoZSBhc3NlcnRpb24gdGhhdCBzcGxpY2UgJiYgbWVtX2ZvcHMgaXMgbm90IGFsbG93ZWQg
-aWYgKHNwbGljZSB8fA0KPiBtZW1fZm9wcykgew0KPiANCj4gd291bGQgZ28gd2VsbCB0b2dldGhl
-ciBiZWNhdXNlIHRoZXkgYm90aCBhbGxvdyBjcm9zcy1mcyBjb3B5IG5vdCBvbmx5IGNyb3NzDQo+
-IHNiLg0KPiANCkdpdCBpdC4NCg0KPiA+ICsgICAgICAgICAgICAgICAvKiBjcm9zcy1mcyBjb3B5
-IGlzIGFsbG93ZWQgZm9yIG1lbW9yeSBmaWxlLiAqLw0KPiA+ICAgICAgICAgfSBlbHNlIGlmIChm
-aWxlX291dC0+Zl9vcC0+Y29weV9maWxlX3JhbmdlKSB7DQo+ID4gICAgICAgICAgICAgICAgIGlm
-IChmaWxlX2luLT5mX29wLT5jb3B5X2ZpbGVfcmFuZ2UgIT0NCj4gPiAgICAgICAgICAgICAgICAg
-ICAgIGZpbGVfb3V0LT5mX29wLT5jb3B5X2ZpbGVfcmFuZ2UpIEBAIC0xNTU0LDYNCj4gPiArMTU4
-OCw3IEBAIHNzaXplX3QgdmZzX2NvcHlfZmlsZV9yYW5nZShzdHJ1Y3QgZmlsZSAqZmlsZV9pbiwg
-bG9mZl90IHBvc19pbiwNCj4gPiAgICAgICAgIHNzaXplX3QgcmV0Ow0KPiA+ICAgICAgICAgYm9v
-bCBzcGxpY2UgPSBmbGFncyAmIENPUFlfRklMRV9TUExJQ0U7DQo+ID4gICAgICAgICBib29sIHNh
-bWVzYiA9IGZpbGVfaW5vZGUoZmlsZV9pbiktPmlfc2IgPT0NCj4gPiBmaWxlX2lub2RlKGZpbGVf
-b3V0KS0+aV9zYjsNCj4gPiArICAgICAgIGNvbnN0IHN0cnVjdCBmaWxlX29wZXJhdGlvbnMgKm1l
-bV9mb3BzOw0KPiA+DQo+ID4gICAgICAgICBpZiAoZmxhZ3MgJiB+Q09QWV9GSUxFX1NQTElDRSkN
-Cj4gPiAgICAgICAgICAgICAgICAgcmV0dXJuIC1FSU5WQUw7DQo+ID4gQEAgLTE1NzQsMTggKzE2
-MDksMjcgQEAgc3NpemVfdCB2ZnNfY29weV9maWxlX3JhbmdlKHN0cnVjdCBmaWxlICpmaWxlX2lu
-LA0KPiBsb2ZmX3QgcG9zX2luLA0KPiA+ICAgICAgICAgaWYgKGxlbiA9PSAwKQ0KPiA+ICAgICAg
-ICAgICAgICAgICByZXR1cm4gMDsNCj4gPg0KPiA+ICsgICAgICAgaWYgKHNwbGljZSkNCj4gPiAr
-ICAgICAgICAgICAgICAgZ290byBkb19zcGxpY2U7DQo+ID4gKw0KPiA+ICAgICAgICAgZmlsZV9z
-dGFydF93cml0ZShmaWxlX291dCk7DQo+ID4NCj4gDQo+IGdvdG8gZG9fc3BsaWNlIG5lZWRzIHRv
-IGJlIGFmdGVyIGZpbGVfc3RhcnRfd3JpdGUNCj4gDQo+IFBsZWFzZSB3YWl0IGZvciBmZWVkYmFj
-ayBmcm9tIHZmcyBtYWludGFpbmVycyBiZWZvcmUgcG9zdGluZyBhbm90aGVyDQo+IHZlcnNpb24g
-YWRkcmVzc2luZyBteSByZXZpZXcgY29tbWVudHMuDQo+IA0KQXJlIHlvdSBhc2tpbmcgd2hldGhl
-ciBib3RoIHRoZSBnb3RvIGRvX3NwbGljZSBhbmQgdGhlIGRvX3NwbGljZSBsYWJlbCBzaG91bGQN
-CmJlIGVuY2xvc2VkIGJldHdlZW4gZmlsZV9zdGFydF93cml0ZSBhbmQgZmlsZV9lbmRfd3JpdGU/
-DQoNClJlZ2FyZHMsDQpXYW5ndGFvLg0KPiBUaGFua3MsDQo+IEFtaXIuDQo=
+On Tue, Jun 3, 2025 at 2:38=E2=80=AFPM wangtao <tao.wangtao@honor.com> wrot=
+e:
+>
+>
+>
+> > -----Original Message-----
+> > From: Amir Goldstein <amir73il@gmail.com>
+> > Sent: Tuesday, June 3, 2025 6:57 PM
+> > To: wangtao <tao.wangtao@honor.com>
+> > Cc: sumit.semwal@linaro.org; christian.koenig@amd.com;
+> > kraxel@redhat.com; vivek.kasireddy@intel.com; viro@zeniv.linux.org.uk;
+> > brauner@kernel.org; hughd@google.com; akpm@linux-foundation.org;
+> > benjamin.gaignard@collabora.com; Brian.Starkey@arm.com;
+> > jstultz@google.com; tjmercier@google.com; jack@suse.cz;
+> > baolin.wang@linux.alibaba.com; linux-media@vger.kernel.org; dri-
+> > devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; linux-
+> > kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-
+> > mm@kvack.org; wangbintian(BintianWang) <bintian.wang@honor.com>;
+> > yipengxiang <yipengxiang@honor.com>; liulu 00013167
+> > <liulu.liu@honor.com>; hanfeng 00012985 <feng.han@honor.com>
+> > Subject: Re: [PATCH v4 1/4] fs: allow cross-FS copy_file_range for memo=
+ry
+> > file with direct I/O
+> >
+> > On Tue, Jun 3, 2025 at 11:53=E2=80=AFAM wangtao <tao.wangtao@honor.com>=
+ wrote:
+> > >
+> > > Memory files can optimize copy performance via copy_file_range callba=
+cks:
+> > > -Compared to mmap&read: reduces GUP (get_user_pages) overhead
+> > > -Compared to sendfile/splice: eliminates one memory copy -Supports
+> > > dma-buf direct I/O zero-copy implementation
+> > >
+> > > Suggested by: Christian K=C3=B6nig <christian.koenig@amd.com> Suggest=
+ed by:
+> > > Amir Goldstein <amir73il@gmail.com>
+> > > Signed-off-by: wangtao <tao.wangtao@honor.com>
+> > > ---
+> > >  fs/read_write.c    | 64 +++++++++++++++++++++++++++++++++++++-----
+> > ----
+> > >  include/linux/fs.h |  2 ++
+> > >  2 files changed, 54 insertions(+), 12 deletions(-)
+> > >
+> > > diff --git a/fs/read_write.c b/fs/read_write.c index
+> > > bb0ed26a0b3a..ecb4f753c632 100644
+> > > --- a/fs/read_write.c
+> > > +++ b/fs/read_write.c
+> > > @@ -1469,6 +1469,31 @@ COMPAT_SYSCALL_DEFINE4(sendfile64, int,
+> > out_fd,
+> > > int, in_fd,  }  #endif
+> > >
+> > > +static const struct file_operations *memory_copy_file_ops(
+> > > +                       struct file *file_in, struct file *file_out) =
+{
+> > > +       if ((file_in->f_op->fop_flags & FOP_MEMORY_FILE) &&
+> > > +           (file_in->f_mode & FMODE_CAN_ODIRECT) &&
+> > > +           file_in->f_op->copy_file_range && file_out->f_op->write_i=
+ter)
+> > > +               return file_in->f_op;
+> > > +       else if ((file_out->f_op->fop_flags & FOP_MEMORY_FILE) &&
+> > > +                (file_out->f_mode & FMODE_CAN_ODIRECT) &&
+> > > +                file_in->f_op->read_iter && file_out->f_op->copy_fil=
+e_range)
+> > > +               return file_out->f_op;
+> > > +       else
+> > > +               return NULL;
+> > > +}
+> > > +
+> > > +static int essential_file_rw_checks(struct file *file_in, struct fil=
+e
+> > > +*file_out) {
+> > > +       if (!(file_in->f_mode & FMODE_READ) ||
+> > > +           !(file_out->f_mode & FMODE_WRITE) ||
+> > > +           (file_out->f_flags & O_APPEND))
+> > > +               return -EBADF;
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > >  /*
+> > >   * Performs necessary checks before doing a file copy
+> > >   *
+> > > @@ -1484,9 +1509,16 @@ static int generic_copy_file_checks(struct fil=
+e
+> > *file_in, loff_t pos_in,
+> > >         struct inode *inode_out =3D file_inode(file_out);
+> > >         uint64_t count =3D *req_count;
+> > >         loff_t size_in;
+> > > +       bool splice =3D flags & COPY_FILE_SPLICE;
+> > > +       const struct file_operations *mem_fops;
+> > >         int ret;
+> > >
+> > > -       ret =3D generic_file_rw_checks(file_in, file_out);
+> > > +       /* The dma-buf file is not a regular file. */
+> > > +       mem_fops =3D memory_copy_file_ops(file_in, file_out);
+> > > +       if (splice || mem_fops =3D=3D NULL)
+> >
+> > nit: use !mem_fops please
+> >
+> > Considering that the flag COPY_FILE_SPLICE is not allowed from userspac=
+e
+> > and is only called by nfsd and ksmbd I think we should assert and deny =
+the
+> > combination of mem_fops && splice because it is very much unexpected.
+> >
+> > After asserting this, it would be nicer to write as:
+> >         if (mem_fops)
+> >                ret =3D essential_file_rw_checks(file_in, file_out);
+> >         else
+> >                ret =3D generic_file_rw_checks(file_in, file_out);
+> >
+> Got it. Thanks.
+> > > +       else
+> > > +               ret =3D essential_file_rw_checks(file_in, file_out);
+> > >         if (ret)
+> > >                 return ret;
+> > >
+> > > @@ -1500,8 +1532,10 @@ static int generic_copy_file_checks(struct fil=
+e
+> > *file_in, loff_t pos_in,
+> > >          * and several different sets of file_operations, but they al=
+l end up
+> > >          * using the same ->copy_file_range() function pointer.
+> > >          */
+> > > -       if (flags & COPY_FILE_SPLICE) {
+> > > +       if (splice) {
+> > >                 /* cross sb splice is allowed */
+> > > +       } else if (mem_fops !=3D NULL) {
+> >
+> > With the assertion that splice && mem_fops is not allowed if (splice ||
+> > mem_fops) {
+> >
+> > would go well together because they both allow cross-fs copy not only c=
+ross
+> > sb.
+> >
+> Git it.
+>
+> > > +               /* cross-fs copy is allowed for memory file. */
+> > >         } else if (file_out->f_op->copy_file_range) {
+> > >                 if (file_in->f_op->copy_file_range !=3D
+> > >                     file_out->f_op->copy_file_range) @@ -1554,6
+> > > +1588,7 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t p=
+os_in,
+> > >         ssize_t ret;
+> > >         bool splice =3D flags & COPY_FILE_SPLICE;
+> > >         bool samesb =3D file_inode(file_in)->i_sb =3D=3D
+> > > file_inode(file_out)->i_sb;
+> > > +       const struct file_operations *mem_fops;
+> > >
+> > >         if (flags & ~COPY_FILE_SPLICE)
+> > >                 return -EINVAL;
+> > > @@ -1574,18 +1609,27 @@ ssize_t vfs_copy_file_range(struct file *file=
+_in,
+> > loff_t pos_in,
+> > >         if (len =3D=3D 0)
+> > >                 return 0;
+> > >
+> > > +       if (splice)
+> > > +               goto do_splice;
+> > > +
+> > >         file_start_write(file_out);
+> > >
+> >
+> > goto do_splice needs to be after file_start_write
+> >
+> > Please wait for feedback from vfs maintainers before posting another
+> > version addressing my review comments.
+> >
+> Are you asking whether both the goto do_splice and the do_splice label sh=
+ould
+> be enclosed between file_start_write and file_end_write?
+
+No I was just wrong please ignore this comment.
+
+Thanks,
+Amir.
 
