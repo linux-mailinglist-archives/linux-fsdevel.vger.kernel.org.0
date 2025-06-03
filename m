@@ -1,61 +1,61 @@
-Return-Path: <linux-fsdevel+bounces-50528-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50530-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48F9CACCFCA
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 00:21:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095CCACCFD3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 00:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C27418974C0
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 22:21:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEEC07AA903
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 22:20:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FFD62571BA;
-	Tue,  3 Jun 2025 22:20:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD7D2594B4;
+	Tue,  3 Jun 2025 22:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BJnZ1P3w"
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Pz0SFe0s"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2048.outbound.protection.outlook.com [40.107.212.48])
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2087.outbound.protection.outlook.com [40.107.237.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E7A254858;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D344B254AF2;
 	Tue,  3 Jun 2025 22:20:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.48
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.87
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748989213; cv=fail; b=NnBJLTtMg0xn3dXBc6zfe8duz+Tp12pGIHW0H46V3RzCUc0z7+X5owcLkQCe1PcupSMAFObOsT2YwXxm6zax5hoJjUNAw5zj9Xz1OlCZ9d/jdNT3FL9Kg4AKXhpO7Qz6PAfK8EpuGuW3c+TAVT63bN56aAUwOoxNu5VXwLVGXBU=
+	t=1748989214; cv=fail; b=umq/DDFsB7RDhD6uWQScrjRqf552wEKpUQUpuQ8whyFQeOQKP62JJWjBY5ZEcAa/tvGjm2mByBAixWLmXnh0ZKPQAePQTqUQPHqlpQKQEpQqNpdpgrmqRPhh9FjxB1ewkbGJ/JWbyal5dhEPEf55P21yX1r8px6mxGOZSa1VAv8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748989213; c=relaxed/simple;
-	bh=z5lI6KtHmXEqtnqHp9AFcaGOmTYA2hm9+mWHS4NYsa8=;
+	s=arc-20240116; t=1748989214; c=relaxed/simple;
+	bh=rDHHnzjcg8QNC2DfMtIeARylqm5NU+anYI4Tk0iC1l4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fx1AKgkgsK3Xlf3lggQIqLHEwMq4ZC3ORRLDrEawMBOrd1Vd5QIzToG27gmqX+Ly6YuGLIGA30kLJtvdG2Dop1xrEb4U62f5YJ/e1luVylP4Yjhku3rqEqg6PIR4bCSDAiZH0tPuUoawz6+FLlkiH399CtEYxUl2eZXvd7gPhQk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BJnZ1P3w; arc=fail smtp.client-ip=40.107.212.48
+	 MIME-Version:Content-Type; b=Wb7gycc0fwa5wXaNwnbTGTXFkpkNHRQ5id6zWtMWpqnztxUR2AN8q+HBRN7FDrqpDxp9igGeAm0mj4iJSTF4t7dECakpmXi6h/8jzZYYwlSZav9Af2LKH5PG2r5w/NPhovP99jtoS5jYcdAo/0tigcnJq8TU5VsI3uLcVRkUHtY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Pz0SFe0s; arc=fail smtp.client-ip=40.107.237.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k1ydyi9yqCrXXn6c0GbFigOsIiNK0iSx7VXXBqvKMJ5Zl/mPwyRYdFRzRngbYCxwGb2BZgd47HwFrbuAfxqelg7txoe7v7i5VYP0ub9rdZnpHkbZdCJHrxVQwCLT/DhFqVM0wghTXyqX8MRynIf8zJh88VJQNTK9fHQwDKjS/2FHjnaDioh2ooLApSnHR28kO8KOGOxOhJhtAPVyf0K0KIa5GSebHt32TU8+RTNCR5gqdwwdJwD6x4kGwUNtNAXj9rBAn5xorRnoP1OjlzbuB7NDxeVqexOGQMJz/spljaqnm6d9yei8/xhgFtJzd+ehOxSVcK+VY8JKYRtXgWYFBQ==
+ b=TkBM6sQawKDW876S5cQEM3hqs2dyt4UtB/fQEyFMzbchgAWUS1BQAvzoZeyoAnspcZrAlqUPN7HBU9kwu3InI0c6LMR8wkcn7Nl3gpSKEsk42Vt3A1jfVFUyNyL+JNWIOpknB9uPszKvftaULoUpC6a6kdao5M8tjN9+P9Iwh4kUsUrZ59t54UAQzXPF4nlS5n39kAz9zeVnzFSUPG1kGBYq0UefnlHF7kDlr5eIdoVGSxmlYOm90Ztm+2FoYtaubDOLrOotE0Vz4u0q6aKVrRTLEk84a6kyMNS0t57AvqOIfaq5bNt3rcP8PK5xGtyQ8xRtNY6TuDRDL6Ax9CnzEA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jpmtWlP5aWKx/WTR6+1Ad5V8DHJJNmy2EHcoch3RNiI=;
- b=YrSBvd0rPzdvNbF6HE1FpGdid6XCJBsxEC8wShDTSwcOiRCUglxtNCLtCjaQGa1w7ARChHWyU2QuWgdxduqklFkLFAKbhaqRvnWDxfPxXVMDSWIIOKtL6O7Dpk8ydCxZaVY1eyavScQLphdkBfgym/X186tGJEuig8T5E5oRO2we7WkkZpubh5sY1sCC0bc12cj9V7JFwkxloOR7boYUTA7dExKK3ZkByt9auJAdCHoApzKTklYXyKl70P3dESxHXnc9o+bmZEf/4+/JzxdCaKQbVCQB0yMci/tXozCuyU0g3u1wPS1hh5RSWDvY+Ub497pK1rWybcyM/NVVH9hUwQ==
+ bh=0PcE2eebWNzxSfkC0etFQADkyHVQDFR3v3Y7GKlOBYs=;
+ b=LE4AwQA/3U8gEwkRx6C4uSKVmwtdj3QGeTu1evbnBjNBP8VaojjmpW/E6Lk9ya8m7SaOLLhzuZw3Kt5eHsGJ0CV+8BScLXa1gbPCAaGA3T7z6QonGpWPhFQKsMNka+QXLMkrk7WiFeG+4CzD0aKHPSVkObTmZ50GrYiyoxlOGB4GpY5rz3UDSOmd2LVg706Fqtrk01bklihf6DJcyWN1m8gNSb9xiKRcA3STTwcIGIQtPmKtu1DRHDFyUcAIPX6CbEXrM5z1Dgq7iUAAVP9NhTy5yBjLWxliQaLoqebdG1mbBaOTK4DLgS6MrgDd2N9VTQztXs8n795rpTwhtpsZIw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jpmtWlP5aWKx/WTR6+1Ad5V8DHJJNmy2EHcoch3RNiI=;
- b=BJnZ1P3wgAetpCvuTptqWVPbXY7jokOrNnie85mz2bpLFdqAmDG0sLHMqawj80L4EAtKQjr40d+xJw6EOQHTBkU/Um51K8cwUBbCRUK2ssIpQOlbImIvDiH13B3jz+hBSnl8JU+2MlxWVMaeDXHWpGBrVOksNGRcC/7UuPFmNDA=
-Received: from CY5PR04CA0023.namprd04.prod.outlook.com (2603:10b6:930:1e::30)
- by BL3PR12MB6377.namprd12.prod.outlook.com (2603:10b6:208:3b0::15) with
+ bh=0PcE2eebWNzxSfkC0etFQADkyHVQDFR3v3Y7GKlOBYs=;
+ b=Pz0SFe0saSfgv1XwEesRAsS9bZo3x54YKdRkv4tjwj827lAGvaKOMvT0xPi+EDL86zrthF65Y+BwpttB9TjZObH3c2JwH4+XhAFpO6qprx4kxy1smv5zXpKX4TzPF6EXNvfEH066/w1dEeJ7cA8sWp2luWCgQPPty1PTU9dVEc8=
+Received: from SJ0PR13CA0185.namprd13.prod.outlook.com (2603:10b6:a03:2c3::10)
+ by DS7PR12MB5719.namprd12.prod.outlook.com (2603:10b6:8:72::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8792.34; Tue, 3 Jun
- 2025 22:20:05 +0000
-Received: from CY4PEPF0000FCC0.namprd03.prod.outlook.com
- (2603:10b6:930:1e:cafe::db) by CY5PR04CA0023.outlook.office365.com
- (2603:10b6:930:1e::30) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.32 via Frontend Transport; Tue,
- 3 Jun 2025 22:20:05 +0000
+ 2025 22:20:07 +0000
+Received: from CY4PEPF0000FCBF.namprd03.prod.outlook.com
+ (2603:10b6:a03:2c3:cafe::91) by SJ0PR13CA0185.outlook.office365.com
+ (2603:10b6:a03:2c3::10) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8769.17 via Frontend Transport; Tue,
+ 3 Jun 2025 22:20:06 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -63,13 +63,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000FCC0.mail.protection.outlook.com (10.167.242.102) with Microsoft
+ CY4PEPF0000FCBF.mail.protection.outlook.com (10.167.242.101) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8792.29 via Frontend Transport; Tue, 3 Jun 2025 22:20:05 +0000
+ 15.20.8792.29 via Frontend Transport; Tue, 3 Jun 2025 22:20:06 +0000
 Received: from ethanolx50f7host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 3 Jun
- 2025 17:20:03 -0500
+ 2025 17:20:04 -0500
 From: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 To: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
@@ -89,9 +89,9 @@ CC: Davidlohr Bueso <dave@stgolabs.net>, Jonathan Cameron
 	<terry.bowman@amd.com>, Robert Richter <rrichter@amd.com>, Benjamin Cheatham
 	<benjamin.cheatham@amd.com>, PradeepVineshReddy Kodamati
 	<PradeepVineshReddy.Kodamati@amd.com>, Zhijian Li <lizhijian@fujitsu.com>
-Subject: [PATCH v4 4/7] cxl/acpi: Add background worker to wait for cxl_pci and cxl_mem probe
-Date: Tue, 3 Jun 2025 22:19:46 +0000
-Message-ID: <20250603221949.53272-5-Smita.KoralahalliChannabasappa@amd.com>
+Subject: [PATCH v4 5/7] cxl/region: Introduce SOFT RESERVED resource removal on region teardown
+Date: Tue, 3 Jun 2025 22:19:47 +0000
+Message-ID: <20250603221949.53272-6-Smita.KoralahalliChannabasappa@amd.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
 References: <20250603221949.53272-1-Smita.KoralahalliChannabasappa@amd.com>
@@ -106,187 +106,273 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCC0:EE_|BL3PR12MB6377:EE_
-X-MS-Office365-Filtering-Correlation-Id: a15b387e-5c3b-4f94-e870-08dda2eccab5
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000FCBF:EE_|DS7PR12MB5719:EE_
+X-MS-Office365-Filtering-Correlation-Id: fae3a523-9a3b-4c19-e9b3-08dda2eccb60
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014;
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jMix/kPf1IJfliNFqBNONt+oRW8yv2fbHvdBiuY9WrvlrdY+nKqV8Iy9e9F6?=
- =?us-ascii?Q?15stkrQ79ZL9v3jKdjnxnTvfm96+jPu2OBjqJDf3DASyIDsILppkwFY2ky4W?=
- =?us-ascii?Q?WBd6Z+xFA6PWfR2BUuEkfTjdYrP/WmA3aPDd1ErQYyhhh+LViUpqy39XM6R2?=
- =?us-ascii?Q?fk2LAnNun4XG4bNInCT8YjyrG9MHJ/WueccMhvDsudzs3zvPAiL62ewh+kDs?=
- =?us-ascii?Q?Ib+S5yG7DSLmMk8jjIkQsSXxKQTq3vTXhllB8MWm8SsiaSxoOwiF/Dfa1sey?=
- =?us-ascii?Q?txt18HPuU4TMjROJoLxolDUxb8JK4tvHDdK1h92Kk8hgcwRqyXfyBga3SL3h?=
- =?us-ascii?Q?qQhMOvH6u4KUruUVO/Hj4jYYhSUXgGBTMstsntNUTqydsdDk8WK3MPMGoOqn?=
- =?us-ascii?Q?kUsbc8+EIk3LJOkUHx2NoeE951JwPftAChyWxykcPCoVY8DtQMNlAnyE4kDn?=
- =?us-ascii?Q?gkGEMT54gTEspb6Oi3M6ucKSGxev6v7LqbDUuBCY5XgMvfgHtpo33VA0HeQl?=
- =?us-ascii?Q?LI14qeHIT3uwwaeco3i4uA0VaJaZ8GdS16wKgy8t+tFVev0fyVzn4fPRHKoB?=
- =?us-ascii?Q?weeAirnjp0dCK6SN+FeXEViPeDjHwz8I+bYUQ6wKxr2hlxq6Z5hkucLYQgdt?=
- =?us-ascii?Q?OzYFsHcOkmUjFX/2bYoLCZ0+nW5ZzRcKRsvwgwVDAW6rn5PrSVWXNTvlw5fk?=
- =?us-ascii?Q?nftFtURiRaZQqisvK713GwVA8w3HJApoDmT9s0luij2yMz0NvaoWcJOe8632?=
- =?us-ascii?Q?odl686erqtFFtz5U5mOKYErlkPhFtLX3i+84/X9YKDWqAQ3W7eNirR/uPtBD?=
- =?us-ascii?Q?HRJdzIkh2MmUZYnlOMA3BR5dNDY4o383Xpbxn3njyrHc22qlberkSuYM0NDq?=
- =?us-ascii?Q?MYtCazipCihE6MxGIbOkvt8NwT1kJMAx5Vtc8Za3uLlqSo6x29i9NoLr3OuZ?=
- =?us-ascii?Q?g/xOepyFaKENYBfBEeNsCgjtLCuHlwgv/Vwmhx97s1HYaJ+UoJUrf+A0f0l/?=
- =?us-ascii?Q?VadBRUKOQTX3h9GFVKcEJSasoOHjuNw1nYCZ85YQZNpj+EQFb79UWqnSpGbl?=
- =?us-ascii?Q?UrEpLt9szadiUzDarPv7BWZ9zabqaSbbCZxq1ehgndNgs3mq4MDa033aEj5F?=
- =?us-ascii?Q?6aQgzqchScBeFJztwF1m0y4DKku26RhZPGe4vUfnK7mvkviTxjreVs5rCmsS?=
- =?us-ascii?Q?JJv1HMG1jwV3MTpssw3BhrFxnmjPsnNfbZz+ydTEzTFGU0W1hzYrGJoOojjq?=
- =?us-ascii?Q?WedzvM7wFK1fiEvqigaglWw9u//slJwilNg9o/xeZrRAmJ8/KnS6yjFWgThh?=
- =?us-ascii?Q?BPSauv7HwOd3vNe4f4aNAbpPEdLK+GtyPd25GgvmkIr9yVq0RH9hT6MWr/W0?=
- =?us-ascii?Q?+Sz/Kjpmpx+Si90/6u4UR4YXkIgZuIkoZz46qcdP1Wdd9zbZsNKoQqeHePeX?=
- =?us-ascii?Q?RpfZTdNVcYRFx4ULfq2j+/kaNkQhur9hHcUiIcxJqbyAzgdEMCZ9G8DOOlLK?=
- =?us-ascii?Q?A4TXklqIthfC8CX7ZEIWaaZmvIRfIFzA9hMy?=
+	=?us-ascii?Q?+mBf6GItE1wfrjsLpPH1hlLcUC4Dfp9AYnKmTUsJYgVCKTixAKif3SB3rIK6?=
+ =?us-ascii?Q?VcaxCN3M5v3pNI6qHv43Fnrd7NmYuIM+1jR+OpRS6mzROgXywek40KhZmYI+?=
+ =?us-ascii?Q?V367FiWKa42VuT9brtrNm2UubW4Bo4JvRlb7UU5MRlDhGrKD5NdHBQgYQqrb?=
+ =?us-ascii?Q?bgTy4jNz1fWLM8/DTbjlEbt2RW7ii6J2fh/Zn8hnGRe4hweM51YDBXFCaAow?=
+ =?us-ascii?Q?JZjXah/oj66GSO+d/SWsAZLCgAwMXO6dUaCEutDk06QBxFXiaukib3Y9jf7e?=
+ =?us-ascii?Q?YYpec2Tx4JkA9CbWYHEpRzgoARCTmw8zjgryhedyyimZfAIXJKsFw/9yIO4h?=
+ =?us-ascii?Q?IqgK6wD28W8k1kdz70RFIiUohcEY5cz5R0ITVSqNYT3xmWw/u5SYTWWViHMA?=
+ =?us-ascii?Q?uE3pLdIltYbm/jNtWNQX8T4krCyECY4+PKXSEpzoKWiSnzwAfGz0y+5L79gQ?=
+ =?us-ascii?Q?tsnfeLDxN8RA96+7MvLOUI+0UwY8J0vSZIgp95PvRbohcu3vAckn9040j5WI?=
+ =?us-ascii?Q?I0QEt9REnQOJ0oxTAX9E35V6XNuYUiSFA//d8iKexbsRknhBtgp2XqMX54vN?=
+ =?us-ascii?Q?tGGGXIllKkXACF2mXsTu0q1BHwtvoM5SKCtzFoJXIuflb/UkQRIEb+F74awN?=
+ =?us-ascii?Q?0es6iLS6gDGHUWLAlInTrr7Vyrb6MjOUN/TbZ2qMVOx2vk1tID/gNLP4SVhR?=
+ =?us-ascii?Q?f+nSInrHDwSLKjLaWeUA6XmWOWOqwBU1432kJCc0T4vLSRrP/Khq+JoxNfpL?=
+ =?us-ascii?Q?6b+GKIoWoyBmscLKcYkRneYC/mmwpwLJpXx5yJRjqA4whJFkpZmyzpLQ3pAx?=
+ =?us-ascii?Q?OjRUSmvG2Z/4lUCpEdWxZLsRyjsnXQdlVRcIo/xH9SpMdQfKtS0ftyyK2oS3?=
+ =?us-ascii?Q?Q0Cs6hvdddO5d2kSElUe2KK8FitDxxrbPwdi52soeFc814t3G2w9B8i89Q/x?=
+ =?us-ascii?Q?C3BcRwOPxOUVujr5zNGHUthggc2DM6KwZRSE8NMozuKD1Z0EODiBidEAn6Zw?=
+ =?us-ascii?Q?jsMx/ZoY7XXiK+uLzJH0hBWcVF+h/xOsfJlQvtagaJZZIULj5o1ItUP66EV1?=
+ =?us-ascii?Q?BSS7pYF0bn05mPkzYgYXkyI5xBerZ+wg5eXIrZAjEBMFvg6UY5HYte9t8kmW?=
+ =?us-ascii?Q?g8zX4TWVLhMhAo5UkozEF6fbXshh8z+V8mwNlnFQNEiBf8HoCQB8J0zSwWwF?=
+ =?us-ascii?Q?jmf8QyrrUbMPMR+q5/DLZadT5Id4+qMdUvd5la/76fU8Zg0jxpgEywjGpVp0?=
+ =?us-ascii?Q?3ByLIhNnCGIvHiQAn25oFDKNPVHXgJnYICxZn99iXrf3txAoV24S65/E2k8w?=
+ =?us-ascii?Q?0LArkwhH1//Xe2DGBT/EHrNM6gFJN+5ZUutFHUkIfGOwwePQmPR4BH5x2MoM?=
+ =?us-ascii?Q?Q6tqtnx1xLqPf9DRqUD4aUoSwFcm8fXwII1YJzjeelpuOun996TU6qXs0ndh?=
+ =?us-ascii?Q?NS709V91gqkvHPOQitOK07/oOfpINHHZVRoI8wzVxssLGAFtNnvR74s0HD2o?=
+ =?us-ascii?Q?9bH1WfsK8pvg1KE=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 22:20:05.2369
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 22:20:06.3585
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a15b387e-5c3b-4f94-e870-08dda2eccab5
+X-MS-Exchange-CrossTenant-Network-Message-Id: fae3a523-9a3b-4c19-e9b3-08dda2eccb60
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000FCC0.namprd03.prod.outlook.com
+	CY4PEPF0000FCBF.namprd03.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6377
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5719
 
-Introduce a waitqueue mechanism to coordinate initialization between the
-cxl_pci and cxl_mem drivers.
+Reworked from a patch by Alison Schofield <alison.schofield@intel.com>
 
-Launch a background worker from cxl_acpi_probe() that waits for both
-drivers to complete initialization before invoking wait_for_device_probe().
-Without this, the probe completion wait could begin prematurely, before
-the drivers are present, leading to missed updates.
+Previously, when CXL regions were created through autodiscovery and their
+resources overlapped with SOFT RESERVED ranges, the soft reserved resource
+remained in place after region teardown. This left the HPA range
+unavailable for reuse even after the region was destroyed.
 
-Co-developed-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
-Signed-off-by: Nathan Fontenot <Nathan.Fontenot@amd.com>
+Enhance the logic to reliably remove SOFT RESERVED resources associated
+with a region, regardless of alignment or hierarchy in the iomem tree.
+
+Link: https://lore.kernel.org/linux-cxl/29312c0765224ae76862d59a17748c8188fb95f1.1692638817.git.alison.schofield@intel.com/
+Co-developed-by: Alison Schofield <alison.schofield@intel.com>
+Signed-off-by: Alison Schofield <alison.schofield@intel.com>
 Co-developed-by: Terry Bowman <terry.bowman@amd.com>
 Signed-off-by: Terry Bowman <terry.bowman@amd.com>
 Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
 ---
- drivers/cxl/acpi.c         | 23 +++++++++++++++++++++++
- drivers/cxl/core/suspend.c | 21 +++++++++++++++++++++
- drivers/cxl/cxl.h          |  2 ++
- 3 files changed, 46 insertions(+)
+ drivers/cxl/acpi.c        |   2 +
+ drivers/cxl/core/region.c | 151 ++++++++++++++++++++++++++++++++++++++
+ drivers/cxl/cxl.h         |   5 ++
+ 3 files changed, 158 insertions(+)
 
 diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-index cb14829bb9be..978f63b32b41 100644
+index 978f63b32b41..1b1388feb36d 100644
 --- a/drivers/cxl/acpi.c
 +++ b/drivers/cxl/acpi.c
-@@ -813,6 +813,24 @@ static int pair_cxl_resource(struct device *dev, void *data)
- 	return 0;
+@@ -823,6 +823,8 @@ static void cxl_softreserv_mem_work_fn(struct work_struct *work)
+ 	 * and cxl_mem drivers are loaded.
+ 	 */
+ 	wait_for_device_probe();
++
++	cxl_region_softreserv_update();
  }
+ static DECLARE_WORK(cxl_sr_work, cxl_softreserv_mem_work_fn);
  
-+static void cxl_softreserv_mem_work_fn(struct work_struct *work)
+diff --git a/drivers/cxl/core/region.c b/drivers/cxl/core/region.c
+index 109b8a98c4c7..3a5ca44d65f3 100644
+--- a/drivers/cxl/core/region.c
++++ b/drivers/cxl/core/region.c
+@@ -3443,6 +3443,157 @@ int cxl_add_to_region(struct cxl_port *root, struct cxl_endpoint_decoder *cxled)
+ }
+ EXPORT_SYMBOL_NS_GPL(cxl_add_to_region, "CXL");
+ 
++static int add_soft_reserved(resource_size_t start, resource_size_t len,
++			     unsigned long flags)
 +{
-+	/* Wait for cxl_pci and cxl_mem drivers to load */
-+	cxl_wait_for_pci_mem();
++	struct resource *res = kmalloc(sizeof(*res), GFP_KERNEL);
++	int rc;
++
++	if (!res)
++		return -ENOMEM;
++
++	*res = DEFINE_RES_MEM_NAMED(start, len, "Soft Reserved");
++
++	res->desc = IORES_DESC_SOFT_RESERVED;
++	res->flags = flags;
++	rc = insert_resource(&iomem_resource, res);
++	if (rc) {
++		kfree(res);
++		return rc;
++	}
++
++	return 0;
++}
++
++static void remove_soft_reserved(struct cxl_region *cxlr, struct resource *soft,
++				 resource_size_t start, resource_size_t end)
++{
++	struct cxl_root_decoder *cxlrd = to_cxl_root_decoder(cxlr->dev.parent);
++	resource_size_t new_start, new_end;
++	int rc;
++
++	/* Prevent new usage while removing or adjusting the resource */
++	guard(mutex)(&cxlrd->range_lock);
++
++	/* Aligns at both resource start and end */
++	if (soft->start == start && soft->end == end)
++		goto remove;
++
++	/* Aligns at either resource start or end */
++	if (soft->start == start || soft->end == end) {
++		if (soft->start == start) {
++			new_start = end + 1;
++			new_end = soft->end;
++		} else {
++			new_start = soft->start;
++			new_end = start - 1;
++		}
++
++		rc = add_soft_reserved(new_start, new_end - new_start + 1,
++				       soft->flags);
++		if (rc)
++			dev_warn(&cxlr->dev, "cannot add new soft reserved resource at %pa\n",
++				 &new_start);
++
++		/* Remove the original Soft Reserved resource */
++		goto remove;
++	}
 +
 +	/*
-+	 * Wait for the driver probe routines to complete after cxl_pci
-+	 * and cxl_mem drivers are loaded.
++	 * No alignment. Attempt a 3-way split that removes the part of
++	 * the resource the region occupied, and then creates new soft
++	 * reserved resources for the leading and trailing addr space.
 +	 */
-+	wait_for_device_probe();
-+}
-+static DECLARE_WORK(cxl_sr_work, cxl_softreserv_mem_work_fn);
++	new_start = soft->start;
++	new_end = soft->end;
 +
-+static void cxl_softreserv_mem_update(void)
++	rc = add_soft_reserved(new_start, start - new_start, soft->flags);
++	if (rc)
++		dev_warn(&cxlr->dev, "cannot add new soft reserved resource at %pa\n",
++			 &new_start);
++
++	rc = add_soft_reserved(end + 1, new_end - end, soft->flags);
++	if (rc)
++		dev_warn(&cxlr->dev, "cannot add new soft reserved resource at %pa + 1\n",
++			 &end);
++
++remove:
++	rc = remove_resource(soft);
++	if (rc)
++		dev_warn(&cxlr->dev, "cannot remove soft reserved resource %pr\n",
++			 soft);
++}
++
++/*
++ * normalize_resource
++ *
++ * The walk_iomem_res_desc() returns a copy of a resource, not a reference
++ * to the actual resource in the iomem_resource tree. As a result,
++ * __release_resource() which relies on pointer equality will fail.
++ *
++ * This helper walks the children of the resource's parent to find and
++ * return the original resource pointer that matches the given resource's
++ * start and end addresses.
++ *
++ * Return: Pointer to the matching original resource in iomem_resource, or
++ *         NULL if not found or invalid input.
++ */
++static struct resource *normalize_resource(struct resource *res)
 +{
-+	schedule_work(&cxl_sr_work);
++	if (!res || !res->parent)
++		return NULL;
++
++	for (struct resource *res_iter = res->parent->child;
++	     res_iter != NULL; res_iter = res_iter->sibling) {
++		if ((res_iter->start == res->start) &&
++		    (res_iter->end == res->end))
++			return res_iter;
++	}
++
++	return NULL;
 +}
 +
- static int cxl_acpi_probe(struct platform_device *pdev)
- {
- 	int rc;
-@@ -887,6 +905,10 @@ static int cxl_acpi_probe(struct platform_device *pdev)
- 
- 	/* In case PCI is scanned before ACPI re-trigger memdev attach */
- 	cxl_bus_rescan();
-+
-+	/* Update SOFT RESERVE resources that intersect with CXL regions */
-+	cxl_softreserv_mem_update();
-+
- 	return 0;
- }
- 
-@@ -918,6 +940,7 @@ static int __init cxl_acpi_init(void)
- 
- static void __exit cxl_acpi_exit(void)
- {
-+	cancel_work_sync(&cxl_sr_work);
- 	platform_driver_unregister(&cxl_acpi_driver);
- 	cxl_bus_drain();
- }
-diff --git a/drivers/cxl/core/suspend.c b/drivers/cxl/core/suspend.c
-index 72818a2c8ec8..c0d8f70aed56 100644
---- a/drivers/cxl/core/suspend.c
-+++ b/drivers/cxl/core/suspend.c
-@@ -2,12 +2,15 @@
- /* Copyright(c) 2022 Intel Corporation. All rights reserved. */
- #include <linux/atomic.h>
- #include <linux/export.h>
-+#include <linux/wait.h>
- #include "cxlmem.h"
- #include "cxlpci.h"
- 
- static atomic_t mem_active;
- static atomic_t pci_loaded;
- 
-+static DECLARE_WAIT_QUEUE_HEAD(cxl_wait_queue);
-+
- bool cxl_mem_active(void)
- {
- 	if (IS_ENABLED(CONFIG_CXL_MEM))
-@@ -19,6 +22,7 @@ bool cxl_mem_active(void)
- void cxl_mem_active_inc(void)
- {
- 	atomic_inc(&mem_active);
-+	wake_up(&cxl_wait_queue);
- }
- EXPORT_SYMBOL_NS_GPL(cxl_mem_active_inc, "CXL");
- 
-@@ -28,8 +32,25 @@ void cxl_mem_active_dec(void)
- }
- EXPORT_SYMBOL_NS_GPL(cxl_mem_active_dec, "CXL");
- 
-+static bool cxl_pci_loaded(void)
++static int __cxl_region_softreserv_update(struct resource *soft,
++					  void *_cxlr)
 +{
-+	if (IS_ENABLED(CONFIG_CXL_PCI))
-+		return atomic_read(&pci_loaded) != 0;
++	struct cxl_region *cxlr = _cxlr;
++	struct resource *res = cxlr->params.res;
 +
-+	return false;
++	/* Skip non-intersecting soft-reserved regions */
++	if (soft->end < res->start || soft->start > res->end)
++		return 0;
++
++	soft = normalize_resource(soft);
++	if (!soft)
++		return -EINVAL;
++
++	remove_soft_reserved(cxlr, soft, res->start, res->end);
++
++	return 0;
 +}
 +
- void mark_cxl_pci_loaded(void)
- {
- 	atomic_inc(&pci_loaded);
-+	wake_up(&cxl_wait_queue);
- }
- EXPORT_SYMBOL_NS_GPL(mark_cxl_pci_loaded, "CXL");
-+
-+void cxl_wait_for_pci_mem(void)
++int cxl_region_softreserv_update(void)
 +{
-+	if (!wait_event_timeout(cxl_wait_queue, cxl_pci_loaded() &&
-+				cxl_mem_active(), 30 * HZ))
-+		pr_debug("Timeout waiting for cxl_pci or cxl_mem probing\n");
++	struct device *dev = NULL;
++
++	while ((dev = bus_find_next_device(&cxl_bus_type, dev))) {
++		struct device *put_dev __free(put_device) = dev;
++		struct cxl_region *cxlr;
++
++		if (!is_cxl_region(dev))
++			continue;
++
++		cxlr = to_cxl_region(dev);
++
++		walk_iomem_res_desc(IORES_DESC_SOFT_RESERVED,
++				    IORESOURCE_MEM, 0, -1, cxlr,
++				    __cxl_region_softreserv_update);
++	}
++
++	return 0;
 +}
-+EXPORT_SYMBOL_NS_GPL(cxl_wait_for_pci_mem, "CXL");
++EXPORT_SYMBOL_NS_GPL(cxl_region_softreserv_update, "CXL");
++
+ u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa)
+ {
+ 	struct cxl_region_ref *iter;
 diff --git a/drivers/cxl/cxl.h b/drivers/cxl/cxl.h
-index a9ab46eb0610..1ba7d39c2991 100644
+index 1ba7d39c2991..fc39c4b24745 100644
 --- a/drivers/cxl/cxl.h
 +++ b/drivers/cxl/cxl.h
-@@ -902,6 +902,8 @@ void cxl_coordinates_combine(struct access_coordinate *out,
- 
- bool cxl_endpoint_decoder_reset_detected(struct cxl_port *port);
- 
-+void cxl_wait_for_pci_mem(void);
-+
- /*
-  * Unit test builds overrides this to __weak, find the 'strong' version
-  * of these symbols in tools/testing/cxl/.
+@@ -859,6 +859,7 @@ struct cxl_pmem_region *to_cxl_pmem_region(struct device *dev);
+ int cxl_add_to_region(struct cxl_port *root,
+ 		      struct cxl_endpoint_decoder *cxled);
+ struct cxl_dax_region *to_cxl_dax_region(struct device *dev);
++int cxl_region_softreserv_update(void);
+ u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint, u64 spa);
+ #else
+ static inline bool is_cxl_pmem_region(struct device *dev)
+@@ -878,6 +879,10 @@ static inline struct cxl_dax_region *to_cxl_dax_region(struct device *dev)
+ {
+ 	return NULL;
+ }
++static inline int cxl_region_softreserv_update(void)
++{
++	return 0;
++}
+ static inline u64 cxl_port_get_spa_cache_alias(struct cxl_port *endpoint,
+ 					       u64 spa)
+ {
 -- 
 2.17.1
 
