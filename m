@@ -1,271 +1,142 @@
-Return-Path: <linux-fsdevel+bounces-50427-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50428-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B184ACC0A9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 09:01:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCDCACC15C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 09:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B674171B39
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 07:01:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB96A7A3E1A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 07:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2F8126A0EB;
-	Tue,  3 Jun 2025 06:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12593271466;
+	Tue,  3 Jun 2025 07:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bw8+RBSM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mx2v9pM9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DBB268C7F;
-	Tue,  3 Jun 2025 06:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074512701CA;
+	Tue,  3 Jun 2025 07:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748933997; cv=none; b=sR7PLzaIcitWFDXlvJ3HGbqGYCZyZvfPSQMuQIxJ0Qj9bdVGD9BhnuWtA5ek8IT0xmcNrUPQdfY0dBeQz12u++yPsQmUMDYeqTKThY5icWVPqI3XHr8kOEeT/sEfkQmuyHqQRgCyhoUt8sdIsuoGXLdlEjPY9uyBmaKGmSRTjbY=
+	t=1748936663; cv=none; b=LEPSz0hZ0iIJ4wrrt9Htt569ZC4eIHAWdUHC7tufRFO6fYtONs6zAqB2dhTnLYNDOcDYmYiRYTpSTM/WQRvxdC4s0E2XUXOWP/S3D/WaqHKFpq6Z2PiduhwnItLWeYHQtiRi7WJTZoQ5MeQSAEuIAK+wNqEtjJWQGy55ynFuf5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748933997; c=relaxed/simple;
-	bh=ZvJ2xMZlhu1ON5brft5paCaAhefbbaXbiA98oslx0SQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S4mD6Gl2gkCq/S3LANIfqA5lmqYezFE8J69hnmInTU6QzPKsVoEkyNh6pmrUvWiFSkUrpVxr3hSJRFHX3zrTwSSxbyHYpHhPTLO1ELzVv/hGf8rRbeb/ANZNlg0Xo9FzLmHf+RAwxvwPnhkrjYBb9h26pmKXnh79Wu5TGwPx0yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bw8+RBSM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9BB6C4CEEF;
-	Tue,  3 Jun 2025 06:59:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748933995;
-	bh=ZvJ2xMZlhu1ON5brft5paCaAhefbbaXbiA98oslx0SQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bw8+RBSMp5aJNZtTJZiOiPUJRDoO1OJvdeC9NhCfdscjClFlOsNEAFp0eqCSIkTRN
-	 UID3+GDpxR773Jmht/MuJEbKPotLQu5d2LO8UHhKIJCpZ2myc1Vf66y6BfHcdT5Y8o
-	 K/upQoat2R3qkcM8QbngJXTfdhi3uUMPiA0VU11BqFN5ymLBFECrYyGAsqhCvCUf5+
-	 +EQKYAkStxRB9VgReGLLmaVViwx0WLAjj9oOnyvhSafsi49f4KQK0ZPgUATcQv1azy
-	 MWMqPLMtsPp93G/a7GJZ79tghTPhsfc6YFLk7DkFYcd/Z9M+2s9aX14cSJd36xf3L5
-	 QuzIc2WAmZRsQ==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	mic@digikod.net,
-	gnoack@google.com,
-	m@maowtm.org,
-	Song Liu <song@kernel.org>
-Subject: [PATCH v2 bpf-next 4/4] selftests/bpf: Add tests for bpf path iterator
-Date: Mon,  2 Jun 2025 23:59:20 -0700
-Message-ID: <20250603065920.3404510-5-song@kernel.org>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20250603065920.3404510-1-song@kernel.org>
-References: <20250603065920.3404510-1-song@kernel.org>
+	s=arc-20240116; t=1748936663; c=relaxed/simple;
+	bh=UpRslWg9pkIdLUbErUepkqcrN/Ri7GcT0ZXvqzK9Dbg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rGzFRo7GXxJ1HABCqwc5d47GF3pAeCMwGlGMo1LfWCJKMEZeybetKWffr+uRxRpwznnas8ecqBGtmSe93EDGhl7FARTlHGJOYeO2fmtL2vbjsu44/EHKYqwwXtQLtmfcfUaJ4iQczGQIGPaKAFbiu98otpHzWcZG3LTTT2D+J1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mx2v9pM9; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1748936663; x=1780472663;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=UpRslWg9pkIdLUbErUepkqcrN/Ri7GcT0ZXvqzK9Dbg=;
+  b=mx2v9pM9/bey/s6GzqJJoaMcVEsCAmszIgfQk9BRKPCZu1nFdVC5/wq8
+   AWfqr0zGOfDCPdo8I5OcLXE1KACB1KqzX/y/PPaSmFhASovSfKnYzjqM4
+   NkQ01rX/Kj9w7+iQWFXFUcE1WmGrbeuja1+u03O3yEb3/oyKBmEnfEvJ+
+   8VC1r61qicIG2AR8qTlb8MuW7C+lmwwYisPZeGoWx1BYWUuPTD2Uwz+R1
+   fMtGAHaS76oeGbu/w3ajrqWuOYOai9J5kggL+aHNeI5/1g066v9lUhUhz
+   1dS7MqtAWTKGXkdLcFcVxhVKbpFjwSS/i7m+J0WxE5Y1EQ+3WKF1+Bumb
+   A==;
+X-CSE-ConnectionGUID: aBo1HETgRLiENWCa4Wfgqg==
+X-CSE-MsgGUID: OP7KxDaCSNiS9Qo5/A5TOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11451"; a="50658915"
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
+   d="scan'208";a="50658915"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 00:44:21 -0700
+X-CSE-ConnectionGUID: CjIy0pOCTVaGKVXeABbVtA==
+X-CSE-MsgGUID: u2fHNmR1SmipYHN6PBBHdA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,205,1744095600"; 
+   d="scan'208";a="144670277"
+Received: from unknown (HELO [10.238.0.239]) ([10.238.0.239])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Jun 2025 00:43:59 -0700
+Message-ID: <d0b582cc-0cf7-4cdc-b148-d8f61dea7253@linux.intel.com>
+Date: Tue, 3 Jun 2025 15:43:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 33/51] KVM: guest_memfd: Allocate and truncate from
+ custom allocator
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: kvm@vger.kernel.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, linux-fsdevel@vger.kernel.org, aik@amd.com,
+ ajones@ventanamicro.com, akpm@linux-foundation.org, amoorthy@google.com,
+ anthony.yznaga@oracle.com, anup@brainfault.org, aou@eecs.berkeley.edu,
+ bfoster@redhat.com, brauner@kernel.org, catalin.marinas@arm.com,
+ chao.p.peng@intel.com, chenhuacai@kernel.org, dave.hansen@intel.com,
+ david@redhat.com, dmatlack@google.com, dwmw@amazon.co.uk,
+ erdemaktas@google.com, fan.du@intel.com, fvdl@google.com, graf@amazon.com,
+ haibo1.xu@intel.com, hch@infradead.org, hughd@google.com,
+ ira.weiny@intel.com, isaku.yamahata@intel.com, jack@suse.cz,
+ james.morse@arm.com, jarkko@kernel.org, jgg@ziepe.ca, jgowans@amazon.com,
+ jhubbard@nvidia.com, jroedel@suse.de, jthoughton@google.com,
+ jun.miao@intel.com, kai.huang@intel.com, keirf@google.com,
+ kent.overstreet@linux.dev, kirill.shutemov@intel.com,
+ liam.merwick@oracle.com, maciej.wieczor-retman@intel.com,
+ mail@maciej.szmigiero.name, maz@kernel.org, mic@digikod.net,
+ michael.roth@amd.com, mpe@ellerman.id.au, muchun.song@linux.dev,
+ nikunj@amd.com, nsaenz@amazon.es, oliver.upton@linux.dev,
+ palmer@dabbelt.com, pankaj.gupta@amd.com, paul.walmsley@sifive.com,
+ pbonzini@redhat.com, pdurrant@amazon.co.uk, peterx@redhat.com,
+ pgonda@google.com, pvorel@suse.cz, qperret@google.com,
+ quic_cvanscha@quicinc.com, quic_eberman@quicinc.com,
+ quic_mnalajal@quicinc.com, quic_pderrin@quicinc.com,
+ quic_pheragu@quicinc.com, quic_svaddagi@quicinc.com, quic_tsoni@quicinc.com,
+ richard.weiyang@gmail.com, rick.p.edgecombe@intel.com, rientjes@google.com,
+ roypat@amazon.co.uk, rppt@kernel.org, seanjc@google.com, shuah@kernel.org,
+ steven.price@arm.com, steven.sistare@oracle.com, suzuki.poulose@arm.com,
+ tabba@google.com, thomas.lendacky@amd.com, usama.arif@bytedance.com,
+ vannapurve@google.com, vbabka@suse.cz, viro@zeniv.linux.org.uk,
+ vkuznets@redhat.com, wei.w.wang@intel.com, will@kernel.org,
+ willy@infradead.org, xiaoyao.li@intel.com, yan.y.zhao@intel.com,
+ yilun.xu@intel.com, yuzenghui@huawei.com, zhiquan1.li@intel.com
+References: <cover.1747264138.git.ackerleytng@google.com>
+ <e9aaf20d31281d00861b1805404dbed40024f824.1747264138.git.ackerleytng@google.com>
+Content-Language: en-US
+From: Binbin Wu <binbin.wu@linux.intel.com>
+In-Reply-To: <e9aaf20d31281d00861b1805404dbed40024f824.1747264138.git.ackerleytng@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add tests for bpf path iterator, including test cases similar to real
-workload (call bpf_path_d_path and bpf_get_dentry_xattr), and test cases
-where the verifier rejects invalid use of the iterator.
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- .../testing/selftests/bpf/bpf_experimental.h  |   6 +
- .../selftests/bpf/prog_tests/path_iter.c      |  12 ++
- tools/testing/selftests/bpf/progs/path_iter.c | 134 ++++++++++++++++++
- 3 files changed, 152 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/path_iter.c
- create mode 100644 tools/testing/selftests/bpf/progs/path_iter.c
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index 5e512a1d09d1..cbb759b473df 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -596,4 +596,10 @@ extern int bpf_iter_dmabuf_new(struct bpf_iter_dmabuf *it) __weak __ksym;
- extern struct dma_buf *bpf_iter_dmabuf_next(struct bpf_iter_dmabuf *it) __weak __ksym;
- extern void bpf_iter_dmabuf_destroy(struct bpf_iter_dmabuf *it) __weak __ksym;
- 
-+struct bpf_iter_path;
-+extern int bpf_iter_path_new(struct bpf_iter_path *it, struct path *start,
-+			     __u64 flags) __weak __ksym;
-+extern struct path *bpf_iter_path_next(struct bpf_iter_path *it) __weak __ksym;
-+extern void bpf_iter_path_destroy(struct bpf_iter_path *it) __weak __ksym;
-+
- #endif
-diff --git a/tools/testing/selftests/bpf/prog_tests/path_iter.c b/tools/testing/selftests/bpf/prog_tests/path_iter.c
-new file mode 100644
-index 000000000000..3c99c24fbd96
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/path_iter.c
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include <test_progs.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/btf.h>
-+#include "path_iter.skel.h"
-+
-+void test_path_iter(void)
-+{
-+	RUN_TESTS(path_iter);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/path_iter.c b/tools/testing/selftests/bpf/progs/path_iter.c
-new file mode 100644
-index 000000000000..be804fb4302c
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/path_iter.c
-@@ -0,0 +1,134 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_tracing.h>
-+#include "bpf_misc.h"
-+#include "bpf_experimental.h"
-+
-+char _license[] SEC("license") = "GPL";
-+
-+char path_name[256];
-+char xattr_val[64];
-+
-+static __always_inline void access_path_dentry(struct path *p)
-+{
-+	struct bpf_dynptr ptr;
-+	struct dentry *dentry;
-+
-+	if (!p)
-+		return;
-+
-+	bpf_dynptr_from_mem(xattr_val, sizeof(xattr_val), 0, &ptr);
-+	bpf_path_d_path(p, path_name, sizeof(path_name));
-+
-+	dentry = p->dentry;
-+	if (dentry)
-+		bpf_get_dentry_xattr(dentry, "user.xattr", &ptr);
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(open_code, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+	struct path *p;
-+	int ret;
-+
-+	ret = bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	if (ret) {
-+		bpf_iter_path_destroy(&path_it);
-+		return 0;
-+	}
-+
-+	p = bpf_iter_path_next(&path_it);
-+	access_path_dentry(p);
-+	bpf_iter_path_destroy(&path_it);
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(for_each, struct file *f)
-+{
-+	struct path *p;
-+
-+	bpf_for_each(path, p, &f->f_path, 0)
-+		access_path_dentry(p);
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("Unreleased reference")
-+int BPF_PROG(missing_destroy, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("expected an initialized iter_path")
-+int BPF_PROG(missing_new, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("expected uninitialized iter_path")
-+int BPF_PROG(new_twice, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("expected an initialized iter_path")
-+int BPF_PROG(destroy_twice, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(reuse_path_iter, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("invalid read from stack off")
-+int BPF_PROG(invalid_read_path_iter, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+	struct bpf_iter_path path_it_2;
-+
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	path_it_2 = path_it;
-+	bpf_iter_path_destroy(&path_it_2);
-+	return 0;
-+}
--- 
-2.47.1
+On 5/15/2025 7:42 AM, Ackerley Tng wrote:
+[...]
+>   
+>   	list_for_each_entry(gmem, gmem_list, entry)
+>   		kvm_gmem_invalidate_end(gmem, start, end);
+> @@ -776,6 +879,16 @@ static long kvm_gmem_allocate(struct inode *inode, loff_t offset, loff_t len)
+>   
+>   	start = offset >> PAGE_SHIFT;
+>   	end = (offset + len) >> PAGE_SHIFT;
+> +	if (kvm_gmem_has_custom_allocator(inode)) {
+> +		size_t nr_pages;
+> +		void *p;
+> +
+> +		p = kvm_gmem_allocator_private(inode);
+> +		nr_pages = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(p);
+> +
+> +		start = round_down(start, nr_pages);
+> +		end = round_down(end, nr_pages);
+It's weird here.
+Should the end be round_up()?
 
+> +	}
+>   
+>   	r = 0;
+>   	for (index = start; index < end; ) {
+>
+[...]
 
