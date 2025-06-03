@@ -1,82 +1,82 @@
-Return-Path: <linux-fsdevel+bounces-50471-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50472-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAAAACC7E9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:34:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AC8ECACC7F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:35:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADFEC188CF39
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:35:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF221188CF92
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C5622327A3;
-	Tue,  3 Jun 2025 13:34:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49504233133;
+	Tue,  3 Jun 2025 13:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="lrAku4ce"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="L9faMCZo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF0BF22FDEA
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 13:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AA1230D1E
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 13:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748957675; cv=none; b=SCThurOPOeBw4Dy7CgYKY8wugCRYhn1u8S5PF8wXeWisGNEjAIeZHRlNowpe3Sk6UTIw2GB6fvu3ZvRrf9IuFekW6ZJOdnbcxJ5c5YOok3JUlpr4YMuzKWrG0DDNLOzbYMlNH6yzmqriTXTzY/iON8k804QTUU+584omZPkOtt4=
+	t=1748957714; cv=none; b=AdkkhrVCrbFKvzX0IlPbYTyZtCq7+sF33dQWhwHRWcAdJq4umuoux/cjfywf8GaOFQmnADDCeqKXvDn+ACom2qNOq5Hwfz1UI7g3zUF9ASx+jyfdrHj9nbf8YvedwOeDy298V9xtl3IXSeqYywNIkNdJYvGuHBerfKcDhNAFbLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748957675; c=relaxed/simple;
-	bh=Lw5cSrf9yXELvBT6bTYGu3OBlBOa4jK7fmgeC+bgcao=;
+	s=arc-20240116; t=1748957714; c=relaxed/simple;
+	bh=6aXyILyNFzvdfLvnjhe+7eEg65vKZaS3Xgt9s4P7IoA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IUaCmlpP5Cu0iiIZVXOLDhx0SFT0dkrhP/JEFtMFzC8su37UXfMKdIv4IGatm3KK+Ee3W9QvrvitExgIgg1iiJbVYiEC0jcYL3Kie/svS8emjy0FT7UndYwOqroAr8LHCvwelqF+NWtusDR17mAij5IyjBLwbhE0bX442B8HiGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=lrAku4ce; arc=none smtp.client-ip=209.85.219.45
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yi3YyJz+2WrF+UaWK66JzU4v83E0O2GShGDmnmM20uLs0kMGD3KamKnSTEYCrE5B9r7gdSFd/7DuaXdRLNdvBKyLKS8Y8cHoCZNmv1ITASZCFTSRd4p8JtcPqsVpmUi6puyTH5OSNtkfP5K4Db+L792Gm8nm3x2ad7/fVrJ45ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=L9faMCZo; arc=none smtp.client-ip=209.85.219.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6f0ad744811so41001206d6.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jun 2025 06:34:32 -0700 (PDT)
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6fac7b6fd32so29254346d6.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jun 2025 06:35:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1748957672; x=1749562472; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1748957710; x=1749562510; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=o9eD6fBv50JvJ7Gx4KUjwD3EkSFG+lO7duRzw9dtFZs=;
-        b=lrAku4ceWFfd92z3vNIRNznkctKgFgmmyMQzW81z4NHUxFQj/l3xSfa7PCLr00O6ew
-         UM6mT2kD6Ct/OECKUDQZG53FXfqFij9nZhl/zpvcIBTGZn0q3FfWJ3rmLOcj/MsP7Gsy
-         SVIVWQB/Z0dVQA9/oora/QY9tOLyr7TtDGd6V19zHnLrc/gLS2DpuqdvOgmR3z0NjizF
-         6j42V4uqsJf+D3RxJVZDuduTu2Id0UiwGsV0mqt2UAsFiOvCgjL9MRxPLV8RIvcsMdYA
-         frhFnACPi8wIvshwXOGxlFJ9wjx1nmtTgJh0ufocXr2a1Sf83OiQD3w05nQQJ5mc9Zww
-         TEHg==
+        bh=csMjX6EgdDvsoUroDDkC2t6M2H8xOJU7irccfVA/OHY=;
+        b=L9faMCZoU5k/eDkzQK021wVY5FNVNBtn7krLf6IoxlHpm1QF2vWzXGv0u7r8BdGjAm
+         1ZfBSaDxx3E9EAaIl/9pE9ng1Ii3grLFqUSNGGaK/HmxD9aPIBsW35Zgihs/nAsL0Pj0
+         DB8vqs9CFLwCTqERpAvT061kIhjcj3MYkTlunlPQb+nFkd+h4UHb1+UK5G6X5N4nFEQQ
+         sJPnqYrKWS9tONkmVjTCC/GacIFCzFqn+4L4+rl4h+tk40iZk7kbUbSsFPC4JZsFF0YK
+         YM+kJYa126BBD/AZ0Vw6T1+y8HPQFkyAjcpfoGYjT4hjB5l0PB43dSKVcIDuV8xRE9Cb
+         gDPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748957672; x=1749562472;
+        d=1e100.net; s=20230601; t=1748957710; x=1749562510;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=o9eD6fBv50JvJ7Gx4KUjwD3EkSFG+lO7duRzw9dtFZs=;
-        b=tjn4M5PqBtTLv9+YuFIcCAmFrj7tNEwTzGYXbpguDpiYhvl5fN9FvAq7Vnj+dg4o83
-         6Ye83UaKuRZJzZNLvWs/uYqZSpE6GVb+6vhVSDAq0BnBrzLyH+uz5Uxym+hon0gEjiL6
-         C6NrcbUgOMd0UspS4snnigJoEiA/E+clLA/kOcOodxUYB0uusRFPnOzIUeylH97oTJ+7
-         tSHMsiUVBi4MjM7oEyDA6Y/la8caHeQbce/ITGiqxW3h0WTcVA83NDSSLof5fXTAXVcs
-         VU+PUcdKT1G9AwQwS9rjiGGVhQ9fHHJMas5PmZSrnPFJLf/Pw5M8Bxblr1eRrFh89FXn
-         2k7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXZZX2qU54H1H993xgx1L4FhUHu33jv42WNcot8JUS+RCpj/xLxLFCTRPZ55uA2ZWszjtqXgJ/TUuSRiAXk@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIntfzF1b1BKzniB6kB1YZprXH8V6X6Ky9NxNex3KGk3867QpQ
-	WOw1/wBDBoWlE04gUJ7xXO6IFQ2R9WF4kEyKJaJeDEy7ylzv6KNVEn0EyIv51/8NWZs=
-X-Gm-Gg: ASbGncsLckTorBwqO+29i2j02drh9yH0eTmVqUvX7csFWhjc08pMF/JKS1X5m+f7W1b
-	BmqrGolJMGPFSyOgjoK2K8b7q88NWUvDkqbm1/9AAFzcalTF/XWQTk2YkUEegdePN24f4VvfxTV
-	6ph+PjDyoKltdO5+z87w4xa6RjgX9aPyYhhBvQUn8fG/OfxFbLDXsTKMM0EpLxLaanJguY1Jud+
-	JS8Y3CO1MT4G5v0vU+RmPAprHaT2ZS/nxpctZZgqLUPLjSmqp7TXRsARND76L/cQXhGUOTUXOS+
-	wVS8kefMVfpJo0biBjVe0IRkf4mnNjIMQMAot8JISmcRYJG/hCoaw2PqkK8I8HA2DnRB5E5oFx5
-	6sl4nrR8pY3frGgvZvt0MjC/vzNk=
-X-Google-Smtp-Source: AGHT+IH3/hKllTZ0eEK/dcuWTgO5QsHZ5LZ3JNRLIXTEioRhdRSPfL4GWfnU3eDieGqXq6aFnuzp+A==
-X-Received: by 2002:a05:6214:5096:b0:6ed:1651:e8c1 with SMTP id 6a1803df08f44-6fad90aa622mr189063246d6.13.1748957671754;
-        Tue, 03 Jun 2025 06:34:31 -0700 (PDT)
+        bh=csMjX6EgdDvsoUroDDkC2t6M2H8xOJU7irccfVA/OHY=;
+        b=mzlkHlbbQIqB4PJ+UgHMwUKvpGCuwgGJqGmiAOIKvtI8UZlgdZx1vXNMqeYvW7zVUw
+         6L3tpeG3cxWVTu6pAn4YVk9HAAYhVeT9ZHE9FJBBikDDyvtIHEYib+BJtnQCxFzNtRzq
+         Uduf/vJAt9wfPicZco8QhzoSacXXNWSfFCJ9UqS81vcG8akgiKq08khKEP8fOAFuuaya
+         AEv47FCcs3bhIk9mRQ+isIL1pUEcMC9GK2RGNn3qK2aIxDXjfaaEBq/gZWlKLUd8MV5Z
+         Fm31mw0FQXpiVoKIKX62ZyOFXLGBegrOwXrstpiiBs5Crjk25EUNo0l3XIBG2HPTVxgx
+         yqOw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4HxP9wMqq+aLCpyazcZo9wD/32UnowMvafqq01Rkk6eaOjqQg+0+Gj8dZFvOakyZ8of5hBjGXWoWFbWHm@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOlhnugxYC0kaygbR7+whd3jidAZWMA7dy0gObS3Wem+hHVoje
+	OC2kO/3fF+QMnZzJly2J6LvCSZpVyTfwFR/QCXOHx/mqpvrcnYh9cYKC914LsxN2V3s=
+X-Gm-Gg: ASbGnctN3CGJsvLN8Fb27UjAKP1X0Xa41IiJjVgO8Y3a3O3ACJ/5ClRONynVl5p+0H1
+	PnxSKPu3Z6h7LBDopFa1LzaxilSL9F7S4Pgjvv/fjnca9Il7RFSk9dghWToTMWL9Et9u+A4P5++
+	ZVykclFcYq8hK6I5ZnMbdjk3JmWgPJNcxisVcLJVsusByluvpxgH/8dIujXOFqMPnMkcy5cnLXm
+	hukWAYDCwkNURm0ShqTOgQka/dsB39+0URO8xdCvcH+mnr7LcAbqXobwatAcu2mBaAFUBXlYfZR
+	mSIywUl+33AYV150T7xc3fGntKcqDeXpi4X3e+HgWxVj78utN2nLw+qvy+YuCMhECskisGKtEUz
+	AHSOEIV03BC1G2p0TQcQxPhnbxohjSpBP/sz2Fg==
+X-Google-Smtp-Source: AGHT+IGTO1Uq6qWKkHjHjzXPtbeutCQLStskBTpgABiXf8IiWIF7+BRGzTPM/WsKdaJBbv1DscVTNw==
+X-Received: by 2002:a05:6214:d87:b0:6eb:1e80:19fa with SMTP id 6a1803df08f44-6fad9090760mr153489766d6.1.1748957710547;
+        Tue, 03 Jun 2025 06:35:10 -0700 (PDT)
 Received: from ziepe.ca (hlfxns017vw-142-167-56-70.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.167.56.70])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6e00b78sm80064216d6.75.2025.06.03.06.34.31
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6e2fc45sm80639296d6.122.2025.06.03.06.35.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 06:34:31 -0700 (PDT)
+        Tue, 03 Jun 2025 06:35:10 -0700 (PDT)
 Received: from jgg by wakko with local (Exim 4.97)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1uMRmg-00000001h3q-2scY;
-	Tue, 03 Jun 2025 10:34:30 -0300
-Date: Tue, 3 Jun 2025 10:34:30 -0300
+	id 1uMRnJ-00000001h4R-2OPU;
+	Tue, 03 Jun 2025 10:35:09 -0300
+Date: Tue, 3 Jun 2025 10:35:09 -0300
 From: Jason Gunthorpe <jgg@ziepe.ca>
 To: Alistair Popple <apopple@nvidia.com>
 Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
@@ -90,10 +90,10 @@ Cc: linux-mm@kvack.org, gerald.schaefer@linux.ibm.com,
 	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
 	linux-cxl@vger.kernel.org, dri-devel@lists.freedesktop.org,
 	John@groves.net
-Subject: Re: [PATCH 01/12] mm: Remove PFN_MAP, PFN_SG_CHAIN and PFN_SG_LAST
-Message-ID: <20250603133430.GB386142@ziepe.ca>
+Subject: Re: [PATCH 02/12] mm: Convert pXd_devmap checks to vma_is_dax
+Message-ID: <20250603133509.GC386142@ziepe.ca>
 References: <cover.541c2702181b7461b84f1a6967a3f0e823023fcc.1748500293.git-series.apopple@nvidia.com>
- <cb45fa705b2eefa1228e262778e784e9b3646827.1748500293.git-series.apopple@nvidia.com>
+ <224f0265027a9578534586fa1f6ed80270aa24d5.1748500293.git-series.apopple@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -102,20 +102,23 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cb45fa705b2eefa1228e262778e784e9b3646827.1748500293.git-series.apopple@nvidia.com>
+In-Reply-To: <224f0265027a9578534586fa1f6ed80270aa24d5.1748500293.git-series.apopple@nvidia.com>
 
-On Thu, May 29, 2025 at 04:32:02PM +1000, Alistair Popple wrote:
-> The PFN_MAP flag is no longer used for anything, so remove it. The
-> PFN_SG_CHAIN and PFN_SG_LAST flags never appear to have been used so
-> also remove them.
+On Thu, May 29, 2025 at 04:32:03PM +1000, Alistair Popple wrote:
+> Currently dax is the only user of pmd and pud mapped ZONE_DEVICE
+> pages. Therefore page walkers that want to exclude DAX pages can check
+> pmd_devmap or pud_devmap. However soon dax will no longer set PFN_DEV,
+> meaning dax pages are mapped as normal pages.
+> 
+> Ensure page walkers that currently use pXd_devmap to skip DAX pages
+> continue to do so by adding explicit checks of the VMA instead.
 > 
 > Signed-off-by: Alistair Popple <apopple@nvidia.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
 > ---
->  include/linux/pfn_t.h             | 31 +++----------------------------
->  mm/memory.c                       |  2 --
->  tools/testing/nvdimm/test/iomap.c |  4 ----
->  3 files changed, 3 insertions(+), 34 deletions(-)
+>  fs/userfaultfd.c | 2 +-
+>  mm/hmm.c         | 2 +-
+>  mm/userfaultfd.c | 2 +-
+>  3 files changed, 3 insertions(+), 3 deletions(-)
 
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
