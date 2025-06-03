@@ -1,1482 +1,271 @@
-Return-Path: <linux-fsdevel+bounces-50488-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50489-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8A0ACC882
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:54:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F24EACC889
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8B1B7A171A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:52:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EABC33A4612
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD29233701;
-	Tue,  3 Jun 2025 13:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F087B23875D;
+	Tue,  3 Jun 2025 13:57:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b="AYrTttel"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NRvQ4ROZ"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2078.outbound.protection.outlook.com [40.107.220.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6DC26290
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 13:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748958830; cv=none; b=V/fMjcv6/0wrbx5pmYvaHvl3W/Vp0+XBpFcZyORukgkoK6QTEHgJjZfDYhTvxEt4pat1hTedSYUQuZ7Yj3YduIhn3ZZjbEPv4EmQJqCdCNQcijB1U1VT+BphbvPNIwt4xy1hrr0MEs7T+u43IDzkuEYFtgLB2ETfsoDqUtvod6A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748958830; c=relaxed/simple;
-	bh=sz+4Ijtjmw3OPU2BAqK1+/QQYYRzFhTGmNiUTkfs14o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q2STW/dPExihv01O0iMITVxiF6bet2oB6lN8YfyxAfHLR60yH69S4638Jfh9vmJKqayS5X7lWM3sMUUPNCERgyvZhAAvQCSuPZmnsC0q8tLxzRAfCNpMiU5eanAzlkEe8wqFrfSbw2ykGG9Y8SAiI+I8DQJfcz9HQmgbxXp1w7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com; spf=pass smtp.mailfrom=mihalicyn.com; dkim=pass (1024-bit key) header.d=mihalicyn.com header.i=@mihalicyn.com header.b=AYrTttel; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mihalicyn.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mihalicyn.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5534edc6493so2333156e87.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jun 2025 06:53:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mihalicyn.com; s=mihalicyn; t=1748958825; x=1749563625; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jxsm4yckOCTSiu+cFFqh17OeLncVglVzVijigk9EvSk=;
-        b=AYrTttel9vooSFu3+Smrxkm4t+MlsrxQHaFQaNSkH4YTsU+AkEymscp1sbjcfPFOBl
-         Uws7nGryUXjbA8f5TwJJpZe4HczISW5pMXqTINVsiBGS3SPFsQ1MyaObOW2ueVXiKyq1
-         L763swfhGvhlUg9ZHdro1MKjxS9Ncyn34hrYk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748958825; x=1749563625;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jxsm4yckOCTSiu+cFFqh17OeLncVglVzVijigk9EvSk=;
-        b=njJGSzzgxHa4z8BctbJUgIngcc3qxt2gys6xGs5LffvC9C7w89r8SfPJxmOjwrKKBj
-         5s6e5W7TjDuojQP54H0eQrG3DjRCl+rR4wCEGkodM4quKAHOG/7+x79qKy8L4uQp/pmD
-         mnJ8wk5tyeyNU/kGXIueOngiXjtShKZHIvFEt/5kkyUD52BQd38wMiTOtfkeW7ifoFk1
-         LCStL3B77HqN0NZiANxoHyszRVkB6wrxMz9Kh8YZ/ZW72offdxXsd9Jd/DMFglb1sDO6
-         /KdD0yogS+SgYQaWc9L2QH2/9E4MVMqoI1NvBtZT3NhTlYmbPApxyHnNBoHrI+dGa45W
-         CZ7g==
-X-Gm-Message-State: AOJu0YyQw1ig4JGHw0plZJ89ygiJgwQfSJhz1wpzgeLy/KrMteJs5VHQ
-	UGmQ58Ghe87tkfzmSTPTcLOcCJxvmNwE8dd3MtWLYZLdTFMZS3Flt+ariIvENvIi5AoV/gFu+q0
-	CLm4+P333lJ5Yj23QaB3AFNxzZ+hMWztxx/dkp0yfEQ==
-X-Gm-Gg: ASbGncvu8tq3iJTaMpZMra/1MRx7g2+mIfD2dURMQdt/zL1+Vw+SOE+l8ADd9l2V/6w
-	4LFh2Jk+fOMKyej5TBm5JUUj6JVQCBKmBG4V9nvdQjp/M5ibL0SrYjVS3DEeMNYyLCEFrL4/tb9
-	N/ojMPokUqbZXSR/fVfLdoq9ZSL1rhzZrmWGFqQhdRHjq7
-X-Google-Smtp-Source: AGHT+IF0KHphg7Ys07CdVI/7DuNqMspBjk+poLmS7iqB5BccOpeDBD0/HjJt4fXZRgpiJaODzpLnmsn7nlhTfreKYME=
-X-Received: by 2002:a05:6512:1386:b0:553:2190:feee with SMTP id
- 2adb3069b0e04-5533d14f1a2mr5133808e87.5.1748958824693; Tue, 03 Jun 2025
- 06:53:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBDD3B19A;
+	Tue,  3 Jun 2025 13:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748959047; cv=fail; b=gGSjjWL2h+97dz1uLTmtHcosAYSuQtj7ej/Zo/Vv/cumZUbl3zbw3zj7gubdRK707qbqD2WVijvnmjYwltBABVP7JRT6EA2lE/s/SwMg9rdefJQU5JzHMIPJaSiuTqde7ESpq7QBXKvpdeobY7T87nf68fTEkSzQnv5exKMou7E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748959047; c=relaxed/simple;
+	bh=/Cc+hy0mACqAk2rTNhRiuUQufe/wxlTRwY/TG1iqX7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pCFVwdn4l4/Wth1Rja4OwACa745gmK9agStWS3Cd8NPTf4ptB148H9sfsN3oY9hIG4lU4+hzibH10DnPnIQiBWWa36i4oj55LITK/TFip2aMWRUKGlZrYKVbhkEBIrSua2DQWWPoSP7Wa/JTU7iPACdU1eRiFeeEJwVgivNAM/A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NRvQ4ROZ; arc=fail smtp.client-ip=40.107.220.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wfi5CtXCBN8zQgltWB4rkO6aR9w+OFMU0TGNnNyHU/W42pQD+ctZEBaeeBK79YVAdRbyJL17zJiJMFtZVEx4qQNDvOl0H8xzjhKmg5ezA7pB+gmVGqilO05uqTJNWuDQ9vNgiwwmUi0+pKtqYSS5GUcY6C785PFVquMCNSdQ8/g+IfALdkw244ZFM+ry8CtZGVmprf9iBY3aP7sz9r2+Wr1kl+pfPF3zN/HNL9jr+JKTH5H6UTB7KulvMrhwpGPvrNWI3zJSSSkLusr2LfxWA3Ud1SMjMoIApo+XqH37ajtdQFkxseFq9qIRIRAt41e9KUeGYR3VvTzrunw0xkouWQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/Cc+hy0mACqAk2rTNhRiuUQufe/wxlTRwY/TG1iqX7w=;
+ b=uaSndOPtEij6i/LPgJvLOqqz5FpbIyQ3vBTlMjnP+rpyrg1DdUPk7BEOvCT4bmAZ9NtRwAlBfolKxo0RycqUBUqGgdy1oGY+TZkfa+lQpy7iplR9BhsPVUMCinXLEXd4xGaoLa6ICwKv9zDC9Bd7QHtmoZRZFg/h0unJ57Tkq43a+I8hwKVFC8eJz0nyw65qQFZvLDzC5Z8mNLmFYBjjcIQar1Iu52Y8QUpfP4iMGYoBWPJqptNtp6xE1GFpi563+OIN9IcX/DIlAnTRujVZl98HSctAI6woAKJeQ3OJSDVn654EGDWcQqnILJbiqSX9KQyxfxex1g8s/0zPdWgx4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/Cc+hy0mACqAk2rTNhRiuUQufe/wxlTRwY/TG1iqX7w=;
+ b=NRvQ4ROZijKYy9P364dS3gFHT1KpY3NrXZrCLlzgY9QXS/i3hXwc0xvDOl80vKZVwM9J7sO+MBvj36O6qj4AFpvHAgsj2Fz1FffxbAWeBX4VgU/1uLpP1Li4C22uav5oyM0dq2F/SlTDiXhFX+LMrWwlT/d1IRv5jGi2jF2UB82SxfiKZXT+NyHkfMONEcPkOT6NNd8+WfFWQuVTJwaI/wCxVXOtekB2//19N4yjm5X3RTvuSPw+ltMY9GXrvp0ZCOzbGyyxXPIVHCUpAHUpusslvjLLQIUywvbsu9pQMYikT6GynmpAN1dJFqJdRLlzkUu83L7Xe2LtVjHMaweMbw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ CH3PR12MB9218.namprd12.prod.outlook.com (2603:10b6:610:19f::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.24; Tue, 3 Jun
+ 2025 13:57:21 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8792.034; Tue, 3 Jun 2025
+ 13:57:21 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Dev Jain <dev.jain@arm.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+ willy@infradead.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, anshuman.khandual@arm.com, ryan.roberts@arm.com
+Subject: Re: [PATCH] xarray: Add a BUG_ON() to ensure caller is not sibling
+Date: Tue, 03 Jun 2025 09:57:19 -0400
+X-Mailer: MailMate (2.0r6255)
+Message-ID: <49262EF1-2EB2-4136-A440-D3DEA8D1853A@nvidia.com>
+In-Reply-To: <9878157c-07aa-4654-943f-444f5a2952d3@arm.com>
+References: <20250528113124.87084-1-dev.jain@arm.com>
+ <30EECA35-4622-46B5-857D-484282E92AAF@nvidia.com>
+ <4fb15ee4-1049-4459-a10e-9f4544545a20@arm.com>
+ <B3C9C9EA-2B76-4AE5-8F1F-425FEB8560FD@nvidia.com>
+ <8fb366e2-cec2-42ba-97c4-2d927423a26e@arm.com>
+ <EF500105-614C-4D06-BE7A-AFB8C855BC78@nvidia.com>
+ <a3311974-30ae-42b6-9f26-45e769a67522@arm.com>
+ <053ae9ec-1113-4ed8-9625-adf382070bc5@redhat.com>
+ <D5EDD20A-03A2-4CEA-884F-D1E48875222B@nvidia.com>
+ <9878157c-07aa-4654-943f-444f5a2952d3@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MN2PR01CA0025.prod.exchangelabs.com (2603:10b6:208:10c::38)
+ To DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603-work-coredump-socket-protocol-v2-0-05a5f0c18ecc@kernel.org>
- <20250603-work-coredump-socket-protocol-v2-5-05a5f0c18ecc@kernel.org>
-In-Reply-To: <20250603-work-coredump-socket-protocol-v2-5-05a5f0c18ecc@kernel.org>
-From: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Date: Tue, 3 Jun 2025 15:53:31 +0200
-X-Gm-Features: AX0GCFtGo1civCBrPmSMhKoq5ORM6ItEPdcpdLrXZbC4QNR5rwifJSNH1b43MLc
-Message-ID: <CAJqdLrq+v3rmcTaQvRD_stmEtVDiGYiPLbyOyfTtiCSrDHyKWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] selftests/coredump: add coredump server selftests
-To: Christian Brauner <brauner@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, Jann Horn <jannh@google.com>, 
-	Josef Bacik <josef@toxicpanda.com>, Jeff Layton <jlayton@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Daan De Meyer <daan.j.demeyer@gmail.com>, 
-	Jan Kara <jack@suse.cz>, Lennart Poettering <lennart@poettering.net>, Mike Yuan <me@yhndnzj.com>, 
-	=?UTF-8?Q?Zbigniew_J=C4=99drzejewski=2DSzmek?= <zbyszek@in.waw.pl>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|CH3PR12MB9218:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe3a14e7-336d-4371-87c6-08dda2a68fb3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VXNLREFGcFRDS0JxYjBKZlB6TjN1YTBKNmVES2VlYktOT1lSSDlYc1F2QlJB?=
+ =?utf-8?B?WWtKTGhIR0dCSElRL1RoWkMybmdiTU01TGIwdW93OWRIMldHZDhDclBEajhF?=
+ =?utf-8?B?K1dMV1dxZC9WSi9TYzdjUURQa2Rob294ZnBkSnBOVXFOY3dmRFBPRjhRWEg3?=
+ =?utf-8?B?Yk44cG5TY2Mvc0ZtdzBqMGI3L0F5d0cyTmFnM2FyZGtoRmVDVEFTcU12RXpN?=
+ =?utf-8?B?SXdVRjgzTzZ3MVdzNURWRmxBMDU3MGtTMDhzMGQ1ODdJUERudVp3ZXRKRzAw?=
+ =?utf-8?B?RUlLajVvVGMwQ2NCOFVDMUNjUTJYT25uM3RZaDFiRHBZaS8yazZtdmpvZFdl?=
+ =?utf-8?B?dm0xUjhrcTBSUk1YaGcwTmZsVmRvTk5QWmVDOVhVQlJON2E2a2tMekVwbHl3?=
+ =?utf-8?B?SWpUSm1ialVSb1NDcG00S0VYSnZCSlA0WUVkRXdVUGN4aEMwTy9FL0t6YzdW?=
+ =?utf-8?B?NEhZK0NDU2dxQWNkYnJqTnA3cXRtYXg2eVk5RjFXejBzMkNwZ2dGbDlFUVJx?=
+ =?utf-8?B?cnZnZXp0UmNCNlVvc0tJYWtJeEpod0tOV3FkM1lORDNleGFJOHhlVHdFSnJH?=
+ =?utf-8?B?dVFxcXZnSTZWcmppYko3WlhMMXRTUmZCTkF6SXNycGlITDhDS0VOZ1pFSWls?=
+ =?utf-8?B?NGpMWmZnU04zTkxqMURaTGpjekRWeVhMb1lEZ3Y4UG0vQkhlcVoxU1dOckNS?=
+ =?utf-8?B?c3NaZDkzSG5rRlB0UFd2ZEFnRG0xc0RTWUFIOFVBY2tPRFpFSEo4WlpJS2lK?=
+ =?utf-8?B?TzB4c3ZnL0gxWElXSWNHWitCNHhwZEhkQ3IveVBtUThpY2RVaS82UWUxbGJx?=
+ =?utf-8?B?R0ErZ29Wb1hDOXFYZjIzeUFDdGRjLzBGeGNncVY5dFNrNkZFSmt1a1M1TjVD?=
+ =?utf-8?B?MmIxMzBYMTZjY3V5ZU1LckluZGZXVE8zSTJaV3Fvb0g2RS95MWQ5c2tmWVVx?=
+ =?utf-8?B?T3FMWlNFMHRkMlRmNEVqcXBVYTJ1SEFmbGNKeFpQaFdkOHhsdkVJOTdlaGV3?=
+ =?utf-8?B?cjY5Zmg5TXhkTXlMdFBPRnowR0pua3VaQnNCcDVQQmN1Tk9iSlFUTnNydXlQ?=
+ =?utf-8?B?RWdlTm42ZVlpK1N6VzNHZ0hlN0ZMUWk2aHdXUmlhdzBlL3ZjTkFJaTVoZHJ5?=
+ =?utf-8?B?ekxBTGUxLzBEYXYzdit1V05nb3JqMHdJaFlBY1lhZ1l1S2Q2eTk2MExOUzdS?=
+ =?utf-8?B?T1R5S2RuTStrdW5zNHBLaEtjMVJyTFp2SmNUb2FHTm9ad0JVYTZ5Z3l5YU14?=
+ =?utf-8?B?SWZGbTJmWTRGdzVLMjJVK3ZjWVZZOUg1WEorS1V1TkpxQ05lVGpHRjQ4d2pt?=
+ =?utf-8?B?NHlwQWt1aE9SaXd0eE1KTHYzM1pWVlNxUGttRWdVZCtocWhBc1FSei96ckZt?=
+ =?utf-8?B?c0xCSlJqV2JZZU9aQURYOGxUTUk1S3JyYlNWQXczaDl5SXI2MDEzdkluSC9L?=
+ =?utf-8?B?TVdvTWZrL2Y5SWRPQzIwNVNSYW9pUW5BeURyVUszU3o0aWdnd1lFMXhFOUk4?=
+ =?utf-8?B?dm5OR1FjRHRmSTJGWEtWSDlRMisrM05KWVFwZ2g2aWQ3Q0NPNm9QcXdwNVd5?=
+ =?utf-8?B?eGpUY3JmVUtXN2Qvb3FxK0NNWTFwSHJRRFRzek8xU2x4Y0FZbW5uQTJtOC9i?=
+ =?utf-8?B?YWJxZEkwRkpabjlvOHBiS3NBdEhlbEdxODQ3VFQ5d21sNTlNS29PNjlYWHRx?=
+ =?utf-8?B?c2tzK09zcHEvOEcwUzNqd1VjSGFicWNyKzQ3NUUxY0ZGaEVVb3ozOVd6NVFs?=
+ =?utf-8?B?UStoOS94bU5mRytVd0Z5aDI1WTE4OTVQT0ZWYUJhclY3N2Y2cEYyamN4MUdR?=
+ =?utf-8?B?eWdQRHZBNVFEMUdFcU50OEVpd0pvVk5jODFHZ2pGbFE0QVhCclY0Kzh2V2NS?=
+ =?utf-8?B?c0tTV21XdFpoZVZwMFM0dVgyU2t1Y3l3N2ZyeEFiMFVBSlFFWEdPeGYrckh4?=
+ =?utf-8?Q?x6a5z+uMauw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bW5EYlVFbXV4blZRV0YzRk5xWnVNZ1llNWJlN0EzRTJsZXBwQ1IrVVY4ckM2?=
+ =?utf-8?B?NUNwd0N5d3NLYnY4aE8yRzFEdGN1VzZDMjV4dnZRSERvWGdqcXYySEVra1Qr?=
+ =?utf-8?B?bE0xM1V6ZjNTcWNUdzNCSWpuQUxod21vc05XTHR2Q0EvV0ZEZC8yVUN3REY3?=
+ =?utf-8?B?SlZJUWE1aGJPWHFmaHQ3Uld5ZFdLanlLSGZwUGR4MmQ2cVNKVDhrMFZyb3cr?=
+ =?utf-8?B?L2NzV2N3YkpQM0tlNXhDRnpWR0V1N0RDZjBTYUhYUTVxYytjVFNoMWhaU3hw?=
+ =?utf-8?B?U00yd2x6K2ZJTk1mbFJkdnUweHMrdG5iZ0hBN2U1c2FtSDZzSFZmTm1BSFRl?=
+ =?utf-8?B?N0lTWElqS2hWMzFsVVRQdFJWZ2hiWm1mU3ZCR3hDUVBaOFN2QXJRbEtrNnVT?=
+ =?utf-8?B?RTArenhCSmVRY21ibDhBRjViZkhTSlVua2FHRnFzeTZ3dTVzNFpPNS9uenYx?=
+ =?utf-8?B?Qm0yWVgwNGh2M1FjMVRPNDIxMm5xT25zZTVMZW1aRnJxTVRGUDJCVVRuN05V?=
+ =?utf-8?B?NGFoK3JFQXFRTjRaaERpZHpFenJBQkhhMW9ITThBQzhCRWovU1RLWHVIY1R5?=
+ =?utf-8?B?VHRqSWhOTCsxWnY1b1FQK1o4dmVqT3NTK0JhY09KLzZGbGladk93WFR2UGhp?=
+ =?utf-8?B?MHFRSTVvbi85bzB2SG10ZjR3azV1K0RYbmE5SURUT0R3QWF2QzljSUdnZW8w?=
+ =?utf-8?B?WlpxcnlHOVIxSFRLOVdWNGgwRUFTWHI1czM2NjNROWU5YzkvMDJpVlZySUcw?=
+ =?utf-8?B?SWp2NVZtRGx5cDNNeUs1MFBWd2VKWXJENmYvNlp5Q1ZzKzArWHVJcWhsMjRy?=
+ =?utf-8?B?UkUzVWVITXlhMGg4L0lndFgwcm5yU1JjTHBFMUEvRU83L3VMUFpUWGlha2dr?=
+ =?utf-8?B?dmlMRUlFbDJ5YitNR3dTdm5lU0RGK3ZPN2grQXlkbHhjUTNWNDkyR051OC9n?=
+ =?utf-8?B?bWVaYzdUdk5uVjZiZ3dVRjZyQVNRSFE5cUVkamQ3ODdnUXpWUHZhU1dVL0NO?=
+ =?utf-8?B?NWRVTTd2VEFIdm9PeHR5ajRQQ3NCSUNpU0ZKMXBpV3pKb1NVRDc4Y2l1dHdD?=
+ =?utf-8?B?czEzcEl1TGI4WGRsZTR2c3lZeDcvazE0c3QxZ25uZUlkTW4veVFYWUllbTJL?=
+ =?utf-8?B?UzZNOHY4di93anY5OHFhZ1dGK1BrSi9WZjU2dFdUbGVyNDNPZTF1WFVKSmhD?=
+ =?utf-8?B?UmViSWlWRHArY3EzRUIyWGNIMjZxaUZRZVZjNjAvVjhoNWtaSGp4a3drdjRG?=
+ =?utf-8?B?RWtjUW41ZElJTGpNNnR6TU9yTktJUzAzUVFHV3ZsZzd4K2hmNWRra3VpdThI?=
+ =?utf-8?B?YytUaFZtdlRBVlIybVJBUGdoZUpBNG1qKy9QL01ZMkYzSWUySG90U2xpOXZM?=
+ =?utf-8?B?eko4cDNwd2ljMjFZU1B6T3hXR1haVjBiemVjTENHSmNoNU9hRHZOWjBmaU1N?=
+ =?utf-8?B?VnljMTlyOGtsNmZjV053TngrajFzT3A2MGErcUZKMVkxcmwrR2NjMW5wM3ZE?=
+ =?utf-8?B?UGlvU3NuT1NDNFgzbHdIMkdiWlZzTTVuVFlmU0hhRUdPZ1lxMURiN1NlaDZk?=
+ =?utf-8?B?dXNqMDJUVUVNcWhxK3BWZnpxQkJ4a2ErSml5MkJVbWk3aGhlaGhOTllWNFRN?=
+ =?utf-8?B?ckQxQ2lTZW90WHJyZ2o3UFIwWmE0QWhzTWtpWmpYY0wrYVRQK2R0eUtNWWh4?=
+ =?utf-8?B?Z0hEZ21mTVhKVWpYVHRHWDNPeUVhOXdrM01vMmdZSVBwSCt5UWJUMmFXSURj?=
+ =?utf-8?B?Qkk5SG85ZzZRVTRVQ3lEaGhQQjM3TGduUUhhc0prNzgrRnVRZE54NG1VSW9I?=
+ =?utf-8?B?UzM2cldPMDBWUWZwL0k0QmczQ3MzM1Q2YW04NGFHT0RXL0hFdEVra3A5bENE?=
+ =?utf-8?B?dU5DVUFkOHRTQk93dDJIeGpGaUlVTENmU3ZSL3JRUXNkN1c3SjJJcVY4dWQr?=
+ =?utf-8?B?TkdZcWlPSDZpa1IyUERUc2JmTkFpbmNnWThxd0V3OC9wR05KMXJ0TjlvSkc4?=
+ =?utf-8?B?QU11TVdMTVJKdllicDdrNnV5WlBray9CZ3hDWlNEbENzU1lQMFlEODVXUlFS?=
+ =?utf-8?B?Qkh0VlBQYk1TVXhZM2pUY1MyUmlTeVF3YzNoczNSRnBKVkJCbmlBNkFGQmJv?=
+ =?utf-8?Q?dApo43rVSfE9bXvKp9/O5r7QS?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe3a14e7-336d-4371-87c6-08dda2a68fb3
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 13:57:21.7582
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Ba05bmzF+W+qbU5dcys0oSr2cILyAbHkxFdfaOH6TKW28KlDSrLz9oSWMMVZGfWw
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9218
 
-Am Di., 3. Juni 2025 um 15:32 Uhr schrieb Christian Brauner
-<brauner@kernel.org>:
->
-> This adds extensive tests for the coredump server.
->
-> Signed-off-by: Christian Brauner <brauner@kernel.org>
+On 3 Jun 2025, at 8:59, Dev Jain wrote:
 
-Reviewed-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> On 03/06/25 5:47 pm, Zi Yan wrote:
+>> On 3 Jun 2025, at 3:58, David Hildenbrand wrote:
+>>
+>>> On 03.06.25 07:23, Dev Jain wrote:
+>>>> On 02/06/25 8:33 pm, Zi Yan wrote:
+>>>>> On 29 May 2025, at 23:44, Dev Jain wrote:
+>>>>>
+>>>>>> On 30/05/25 4:17 am, Zi Yan wrote:
+>>>>>>> On 28 May 2025, at 23:17, Dev Jain wrote:
+>>>>>>>
+>>>>>>>> On 28/05/25 10:42 pm, Zi Yan wrote:
+>>>>>>>>> On 28 May 2025, at 7:31, Dev Jain wrote:
+>>>>>>>>>
+>>>>>>>>>> Suppose xas is pointing somewhere near the end of the multi-entr=
+y batch.
+>>>>>>>>>> Then it may happen that the computed slot already falls beyond t=
+he batch,
+>>>>>>>>>> thus breaking the loop due to !xa_is_sibling(), and computing th=
+e wrong
+>>>>>>>>>> order. Thus ensure that the caller is aware of this by triggerin=
+g a BUG
+>>>>>>>>>> when the entry is a sibling entry.
+>>>>>>>>> Is it possible to add a test case in lib/test_xarray.c for this?
+>>>>>>>>> You can compile the tests with =E2=80=9Cmake -C tools/testing/rad=
+ix-tree=E2=80=9D
+>>>>>>>>> and run =E2=80=9C./tools/testing/radix-tree/xarray=E2=80=9D.
+>>>>>>>> Sorry forgot to Cc you.
+>>>>>>>> I can surely do that later, but does this patch look fine?
+>>>>>>> I am not sure the exact situation you are describing, so I asked yo=
+u
+>>>>>>> to write a test case to demonstrate the issue. :)
+>>>>>> Suppose we have a shift-6 node having an order-9 entry =3D> 8 - 1 =
+=3D 7 siblings,
+>>>>>> so assume the slots are at offset 0 till 7 in this node. If xas->xa_=
+offset is 6,
+>>>>>> then the code will compute order as 1 + xas->xa_node->shift =3D 7. S=
+o I mean to
+>>>>>> say that the order computation must start from the beginning of the =
+multi-slot
+>>>>>> entries, that is, the non-sibling entry.
+>>>>> Got it. Thanks for the explanation. It will be great to add this expl=
+anation
+>>>>> to the commit log.
+>>>>>
+>>>>> I also notice that in the comment of xas_get_order() it says
+>>>>> =E2=80=9CCalled after xas_load()=E2=80=9D and xas_load() returns NULL=
+ or an internal
+>>>>> entry for a sibling. So caller is responsible to make sure xas is not=
+ pointing
+>>>>> to a sibling entry. It is good to have a check here.
+>>>>>
+>>>>> In terms of the patch, we are moving away from BUG()/BUG_ON(), so I w=
+onder
+>>>>> if there is a less disruptive way of handling this. Something like re=
+turn
+>>>>> -EINVAL instead with modified function comments and adding a comment
+>>>>> at the return -EIVAL saying something like caller needs to pass
+>>>>> a non-sibling entry.
+>>>> What's the reason for moving away from BUG_ON()?
+>>> BUG_ON is in general a bad thing. See Documentation/process/coding-styl=
+e.rst and the history on the related changes for details.
+>>>
+>>> Here, it is less critical than it looks.
+>>>
+>>> XA_NODE_BUG_ON is only active with XA_DEBUG.
+>>>
+>>> And XA_DEBUG is only defined in
+>>>
+>>> tools/testing/shared/xarray-shared.h:#define XA_DEBUG
+>>>
+>>> So IIUC, it's only active in selftests, and completely inactive in any =
+kernel builds.
+>> Oh, I missed that. But that also means this patch becomes a nop in kerne=
+l
+>
+> Yes, but given other places are there with XA_NODE_BUG_ON(), I believe
+> this patch has some value :)
 
-> ---
->  tools/testing/selftests/coredump/Makefile         |    2 +-
->  tools/testing/selftests/coredump/config           |    4 +
->  tools/testing/selftests/coredump/stackdump_test.c | 1291 ++++++++++++++++++++-
->  3 files changed, 1295 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/coredump/Makefile b/tools/testing/selftests/coredump/Makefile
-> index bc287a85b825..77b3665c73c7 100644
-> --- a/tools/testing/selftests/coredump/Makefile
-> +++ b/tools/testing/selftests/coredump/Makefile
-> @@ -1,5 +1,5 @@
->  # SPDX-License-Identifier: GPL-2.0-only
-> -CFLAGS = -Wall -O0 $(KHDR_INCLUDES)
-> +CFLAGS += -Wall -O0 -g $(KHDR_INCLUDES) $(TOOLS_INCLUDES)
->
->  TEST_GEN_PROGS := stackdump_test
->  TEST_FILES := stackdump
-> diff --git a/tools/testing/selftests/coredump/config b/tools/testing/selftests/coredump/config
-> new file mode 100644
-> index 000000000000..6ce9610b06d0
-> --- /dev/null
-> +++ b/tools/testing/selftests/coredump/config
-> @@ -0,0 +1,4 @@
-> +CONFIG_AF_UNIX_OOB=y
-> +CONFIG_COREDUMP=y
-> +CONFIG_NET=y
-> +CONFIG_UNIX=y
-> diff --git a/tools/testing/selftests/coredump/stackdump_test.c b/tools/testing/selftests/coredump/stackdump_test.c
-> index 4d922e5f89fe..ad0d5f271db1 100644
-> --- a/tools/testing/selftests/coredump/stackdump_test.c
-> +++ b/tools/testing/selftests/coredump/stackdump_test.c
-> @@ -4,10 +4,15 @@
->  #include <fcntl.h>
->  #include <inttypes.h>
->  #include <libgen.h>
-> +#include <limits.h>
-> +#include <linux/coredump.h>
-> +#include <linux/fs.h>
->  #include <linux/limits.h>
->  #include <pthread.h>
->  #include <string.h>
->  #include <sys/mount.h>
-> +#include <poll.h>
-> +#include <sys/epoll.h>
->  #include <sys/resource.h>
->  #include <sys/stat.h>
->  #include <sys/socket.h>
-> @@ -15,6 +20,7 @@
->  #include <unistd.h>
->
->  #include "../kselftest_harness.h"
-> +#include "../filesystems/wrappers.h"
->  #include "../pidfd/pidfd.h"
->
->  #define STACKDUMP_FILE "stack_values"
-> @@ -49,14 +55,32 @@ FIXTURE(coredump)
->  {
->         char original_core_pattern[256];
->         pid_t pid_coredump_server;
-> +       int fd_tmpfs_detached;
->  };
->
-> +static int create_detached_tmpfs(void)
-> +{
-> +       int fd_context, fd_tmpfs;
-> +
-> +       fd_context = sys_fsopen("tmpfs", 0);
-> +       if (fd_context < 0)
-> +               return -1;
-> +
-> +       if (sys_fsconfig(fd_context, FSCONFIG_CMD_CREATE, NULL, NULL, 0) < 0)
-> +               return -1;
-> +
-> +       fd_tmpfs = sys_fsmount(fd_context, 0, 0);
-> +       close(fd_context);
-> +       return fd_tmpfs;
-> +}
-> +
->  FIXTURE_SETUP(coredump)
->  {
->         FILE *file;
->         int ret;
->
->         self->pid_coredump_server = -ESRCH;
-> +       self->fd_tmpfs_detached = -1;
->         file = fopen("/proc/sys/kernel/core_pattern", "r");
->         ASSERT_NE(NULL, file);
->
-> @@ -65,6 +89,8 @@ FIXTURE_SETUP(coredump)
->         ASSERT_LT(ret, sizeof(self->original_core_pattern));
->
->         self->original_core_pattern[ret] = '\0';
-> +       self->fd_tmpfs_detached = create_detached_tmpfs();
-> +       ASSERT_GE(self->fd_tmpfs_detached, 0);
->
->         ret = fclose(file);
->         ASSERT_EQ(0, ret);
-> @@ -103,6 +129,15 @@ FIXTURE_TEARDOWN(coredump)
->                 goto fail;
->         }
->
-> +       if (self->fd_tmpfs_detached >= 0) {
-> +               ret = close(self->fd_tmpfs_detached);
-> +               if (ret < 0) {
-> +                       reason = "Unable to close detached tmpfs";
-> +                       goto fail;
-> +               }
-> +               self->fd_tmpfs_detached = -1;
-> +       }
-> +
->         return;
->  fail:
->         /* This should never happen */
-> @@ -192,7 +227,7 @@ static int create_and_listen_unix_socket(const char *path)
->         if (ret < 0)
->                 goto out;
->
-> -       ret = listen(fd, 1);
-> +       ret = listen(fd, 128);
->         if (ret < 0)
->                 goto out;
->
-> @@ -551,4 +586,1258 @@ TEST_F(coredump, socket_no_listener)
->         wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
->  }
->
-> +int recv_oob_marker(int fd)
-> +{
-> +       uint8_t oob_marker;
-> +       ssize_t ret;
-> +
-> +       ret = recv(fd, &oob_marker, 1, MSG_OOB);
-> +       if (ret < 0)
-> +               return -1;
-> +       if (ret > 1 || ret == 0)
-> +               return -EINVAL;
-> +
-> +       switch (oob_marker) {
-> +       case COREDUMP_OOB_INVALIDSIZE:
-> +               fprintf(stderr, "Received OOB marker: InvalidSize\n");
-> +               return COREDUMP_OOB_INVALIDSIZE;
-> +       case COREDUMP_OOB_UNSUPPORTED:
-> +               fprintf(stderr, "Received OOB marker: Unsupported\n");
-> +               return COREDUMP_OOB_UNSUPPORTED;
-> +       case COREDUMP_OOB_CONFLICTING:
-> +               fprintf(stderr, "Received OOB marker: Conflicting\n");
-> +               return COREDUMP_OOB_CONFLICTING;
-> +       default:
-> +               fprintf(stderr, "Received unknown OOB marker: %u\n", oob_marker);
-> +               break;
-> +       }
-> +       return -1;
-> +}
-> +
-> +static bool is_msg_oob_supported(void)
-> +{
-> +       int sv[2];
-> +       char c = 'X';
-> +       int ret;
-> +       static int supported = -1;
-> +
-> +       if (supported >= 0)
-> +               return supported == 1;
-> +
-> +       if (socketpair(AF_UNIX, SOCK_STREAM, 0, sv) < 0)
-> +               return false;
-> +
-> +       ret = send(sv[0], &c, 1, MSG_OOB);
-> +       close(sv[0]);
-> +       close(sv[1]);
-> +
-> +       if (ret < 0) {
-> +               if (errno == EINVAL || errno == EOPNOTSUPP) {
-> +                       supported = 0;
-> +                       return false;
-> +               }
-> +
-> +               return false;
-> +       }
-> +       supported = 1;
-> +       return true;
-> +}
-> +
-> +static bool wait_for_oob_marker(int fd, enum coredump_oob oob_marker)
-> +{
-> +       ssize_t ret;
-> +       struct pollfd pfd = {
-> +               .fd = fd,
-> +               .events = POLLPRI,
-> +               .revents = 0,
-> +       };
-> +
-> +       if (!is_msg_oob_supported())
-> +               return true;
-> +
-> +       ret = poll(&pfd, 1, -1);
-> +       if (ret < 0)
-> +               return false;
-> +       if (!(pfd.revents & POLLPRI))
-> +               return false;
-> +       if (pfd.revents & POLLERR)
-> +               return false;
-> +       if (pfd.revents & POLLHUP)
-> +               return false;
-> +
-> +       ret = recv_oob_marker(fd);
-> +       if (ret < 0)
-> +               return false;
-> +       return ret == oob_marker;
-> +}
-> +
-> +static bool read_coredump_req(int fd, struct coredump_req *req)
-> +{
-> +       ssize_t ret;
-> +       size_t field_size, user_size, ack_size, kernel_size, remaining_size;
-> +
-> +       memset(req, 0, sizeof(*req));
-> +       field_size = sizeof(req->size);
-> +
-> +       /* Peek the size of the coredump request. */
-> +       ret = recv(fd, req, field_size, MSG_PEEK | MSG_WAITALL);
-> +       if (ret != field_size)
-> +               return false;
-> +       kernel_size = req->size;
-> +
-> +       if (kernel_size < COREDUMP_ACK_SIZE_VER0)
-> +               return false;
-> +       if (kernel_size >= PAGE_SIZE)
-> +               return false;
-> +
-> +       /* Use the minimum of user and kernel size to read the full request. */
-> +       user_size = sizeof(struct coredump_req);
-> +       ack_size = user_size < kernel_size ? user_size : kernel_size;
-> +       ret = recv(fd, req, ack_size, MSG_WAITALL);
-> +       if (ret != ack_size)
-> +               return false;
-> +
-> +       fprintf(stderr, "Read coredump request with size %u and mask 0x%llx\n",
-> +               req->size, (unsigned long long)req->mask);
-> +
-> +       if (user_size > kernel_size)
-> +               remaining_size = user_size - kernel_size;
-> +       else
-> +               remaining_size = kernel_size - user_size;
-> +
-> +       if (PAGE_SIZE <= remaining_size)
-> +               return false;
-> +
-> +       /*
-> +        * Discard any additional data if the kernel's request was larger than
-> +        * what we knew about or cared about.
-> +        */
-> +       if (remaining_size) {
-> +               char buffer[PAGE_SIZE];
-> +
-> +               ret = recv(fd, buffer, sizeof(buffer), MSG_WAITALL);
-> +               if (ret != remaining_size)
-> +                       return false;
-> +               fprintf(stderr, "Discarded %zu bytes of non-OOB data after coredump request\n", remaining_size);
-> +       }
-> +
-> +       return true;
-> +}
-> +
-> +static bool send_coredump_ack(int fd, const struct coredump_req *req,
-> +                             __u64 mask, size_t size_ack)
-> +{
-> +       ssize_t ret;
-> +       /*
-> +        * Wrap struct coredump_ack in a larger struct so we can
-> +        * simulate sending to much data to the kernel.
-> +        */
-> +       struct large_ack_for_size_testing {
-> +               struct coredump_ack ack;
-> +               char buffer[PAGE_SIZE];
-> +       } large_ack = {};
-> +
-> +       if (!size_ack)
-> +               size_ack = sizeof(struct coredump_ack) < req->size_ack ?
-> +                                  sizeof(struct coredump_ack) :
-> +                                  req->size_ack;
-> +       large_ack.ack.mask = mask;
-> +       large_ack.ack.size = size_ack;
-> +       ret = send(fd, &large_ack, size_ack, MSG_NOSIGNAL);
-> +       if (ret != size_ack)
-> +               return false;
-> +
-> +       fprintf(stderr, "Sent coredump ack with size %zu and mask 0x%llx\n",
-> +               size_ack, (unsigned long long)mask);
-> +       return true;
-> +}
-> +
-> +static bool check_coredump_req(const struct coredump_req *req, size_t min_size,
-> +                              __u64 required_mask)
-> +{
-> +       if (req->size < min_size)
-> +               return false;
-> +       if ((req->mask & required_mask) != required_mask)
-> +               return false;
-> +       if (req->mask & ~required_mask)
-> +               return false;
-> +       return true;
-> +}
-> +
-> +TEST_F(coredump, socket_request_kernel)
-> +{
-> +       int pidfd, ret, status;
-> +       pid_t pid, pid_coredump_server;
-> +       struct stat st;
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +
-> +       ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-> +       ASSERT_EQ(ret, 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               struct coredump_req req = {};
-> +               int fd_server = -1, fd_coredump = -1, fd_core_file = -1, fd_peer_pidfd = -1;
-> +               int exit_code = EXIT_FAILURE;
-> +
-> +               close(ipc_sockets[0]);
-> +
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0)
-> +                       goto out;
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-> +                       goto out;
-> +
-> +               close(ipc_sockets[1]);
-> +
-> +               fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +               if (fd_coredump < 0)
-> +                       goto out;
-> +
-> +               fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +               if (fd_peer_pidfd < 0)
-> +                       goto out;
-> +
-> +               if (!get_pidfd_info(fd_peer_pidfd, &info))
-> +                       goto out;
-> +
-> +               if (!(info.mask & PIDFD_INFO_COREDUMP))
-> +                       goto out;
-> +
-> +               if (!(info.coredump_mask & PIDFD_COREDUMPED))
-> +                       goto out;
-> +
-> +               fd_core_file = creat("/tmp/coredump.file", 0644);
-> +               if (fd_core_file < 0)
-> +                       goto out;
-> +
-> +               if (!read_coredump_req(fd_coredump, &req))
-> +                       goto out;
-> +
-> +               if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                       COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                       COREDUMP_REJECT | COREDUMP_WAIT))
-> +                       goto out;
-> +
-> +               if (!send_coredump_ack(fd_coredump, &req,
-> +                                      COREDUMP_KERNEL | COREDUMP_WAIT, 0))
-> +                       goto out;
-> +
-> +               for (;;) {
-> +                       char buffer[4096];
-> +                       ssize_t bytes_read, bytes_write;
-> +
-> +                       bytes_read = read(fd_coredump, buffer, sizeof(buffer));
-> +                       if (bytes_read < 0)
-> +                               goto out;
-> +
-> +                       if (bytes_read == 0)
-> +                               break;
-> +
-> +                       bytes_write = write(fd_core_file, buffer, bytes_read);
-> +                       if (bytes_read != bytes_write)
-> +                               goto out;
-> +               }
-> +
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_core_file >= 0)
-> +                       close(fd_core_file);
-> +               if (fd_peer_pidfd >= 0)
-> +                       close(fd_peer_pidfd);
-> +               if (fd_coredump >= 0)
-> +                       close(fd_coredump);
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +       if (pid == 0)
-> +               crashing_child();
-> +
-> +       pidfd = sys_pidfd_open(pid, 0);
-> +       ASSERT_GE(pidfd, 0);
-> +
-> +       waitpid(pid, &status, 0);
-> +       ASSERT_TRUE(WIFSIGNALED(status));
-> +       ASSERT_TRUE(WCOREDUMP(status));
-> +
-> +       ASSERT_TRUE(get_pidfd_info(pidfd, &info));
-> +       ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +       ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +
-> +       ASSERT_EQ(stat("/tmp/coredump.file", &st), 0);
-> +       ASSERT_GT(st.st_size, 0);
-> +       system("file /tmp/coredump.file");
-> +}
-> +
-> +TEST_F(coredump, socket_request_userspace)
-> +{
-> +       int pidfd, ret, status;
-> +       pid_t pid, pid_coredump_server;
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +
-> +       ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-> +       ASSERT_EQ(ret, 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               struct coredump_req req = {};
-> +               int fd_server = -1, fd_coredump = -1, fd_peer_pidfd = -1;
-> +               int exit_code = EXIT_FAILURE;
-> +
-> +               close(ipc_sockets[0]);
-> +
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0)
-> +                       goto out;
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-> +                       goto out;
-> +
-> +               close(ipc_sockets[1]);
-> +
-> +               fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +               if (fd_coredump < 0)
-> +                       goto out;
-> +
-> +               fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +               if (fd_peer_pidfd < 0)
-> +                       goto out;
-> +
-> +               if (!get_pidfd_info(fd_peer_pidfd, &info))
-> +                       goto out;
-> +
-> +               if (!(info.mask & PIDFD_INFO_COREDUMP))
-> +                       goto out;
-> +
-> +               if (!(info.coredump_mask & PIDFD_COREDUMPED))
-> +                       goto out;
-> +
-> +               if (!read_coredump_req(fd_coredump, &req))
-> +                       goto out;
-> +
-> +               if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                       COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                       COREDUMP_REJECT | COREDUMP_WAIT))
-> +                       goto out;
-> +
-> +               if (!send_coredump_ack(fd_coredump, &req,
-> +                                      COREDUMP_USERSPACE | COREDUMP_WAIT, 0))
-> +                       goto out;
-> +
-> +               for (;;) {
-> +                       char buffer[4096];
-> +                       ssize_t bytes_read;
-> +
-> +                       bytes_read = read(fd_coredump, buffer, sizeof(buffer));
-> +                       if (bytes_read > 0)
-> +                               goto out;
-> +
-> +                       if (bytes_read < 0)
-> +                               goto out;
-> +
-> +                       if (bytes_read == 0)
-> +                               break;
-> +               }
-> +
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_peer_pidfd >= 0)
-> +                       close(fd_peer_pidfd);
-> +               if (fd_coredump >= 0)
-> +                       close(fd_coredump);
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +       if (pid == 0)
-> +               crashing_child();
-> +
-> +       pidfd = sys_pidfd_open(pid, 0);
-> +       ASSERT_GE(pidfd, 0);
-> +
-> +       waitpid(pid, &status, 0);
-> +       ASSERT_TRUE(WIFSIGNALED(status));
-> +       ASSERT_TRUE(WCOREDUMP(status));
-> +
-> +       ASSERT_TRUE(get_pidfd_info(pidfd, &info));
-> +       ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +       ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +}
-> +
-> +TEST_F(coredump, socket_request_reject)
-> +{
-> +       int pidfd, ret, status;
-> +       pid_t pid, pid_coredump_server;
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +
-> +       ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-> +       ASSERT_EQ(ret, 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               struct coredump_req req = {};
-> +               int fd_server = -1, fd_coredump = -1, fd_peer_pidfd = -1;
-> +               int exit_code = EXIT_FAILURE;
-> +
-> +               close(ipc_sockets[0]);
-> +
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0)
-> +                       goto out;
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-> +                       goto out;
-> +
-> +               close(ipc_sockets[1]);
-> +
-> +               fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +               if (fd_coredump < 0)
-> +                       goto out;
-> +
-> +               fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +               if (fd_peer_pidfd < 0)
-> +                       goto out;
-> +
-> +               if (!get_pidfd_info(fd_peer_pidfd, &info))
-> +                       goto out;
-> +
-> +               if (!(info.mask & PIDFD_INFO_COREDUMP))
-> +                       goto out;
-> +
-> +               if (!(info.coredump_mask & PIDFD_COREDUMPED))
-> +                       goto out;
-> +
-> +               if (!read_coredump_req(fd_coredump, &req))
-> +                       goto out;
-> +
-> +               if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                       COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                       COREDUMP_REJECT | COREDUMP_WAIT))
-> +                       goto out;
-> +
-> +               if (!send_coredump_ack(fd_coredump, &req,
-> +                                      COREDUMP_REJECT | COREDUMP_WAIT, 0))
-> +                       goto out;
-> +
-> +               for (;;) {
-> +                       char buffer[4096];
-> +                       ssize_t bytes_read;
-> +
-> +                       bytes_read = read(fd_coredump, buffer, sizeof(buffer));
-> +                       if (bytes_read > 0)
-> +                               goto out;
-> +
-> +                       if (bytes_read < 0)
-> +                               goto out;
-> +
-> +                       if (bytes_read == 0)
-> +                               break;
-> +               }
-> +
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_peer_pidfd >= 0)
-> +                       close(fd_peer_pidfd);
-> +               if (fd_coredump >= 0)
-> +                       close(fd_coredump);
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +       if (pid == 0)
-> +               crashing_child();
-> +
-> +       pidfd = sys_pidfd_open(pid, 0);
-> +       ASSERT_GE(pidfd, 0);
-> +
-> +       waitpid(pid, &status, 0);
-> +       ASSERT_TRUE(WIFSIGNALED(status));
-> +       ASSERT_FALSE(WCOREDUMP(status));
-> +
-> +       ASSERT_TRUE(get_pidfd_info(pidfd, &info));
-> +       ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +       ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +}
-> +
-> +TEST_F(coredump, socket_request_invalid_flag_combination)
-> +{
-> +       int pidfd, ret, status;
-> +       pid_t pid, pid_coredump_server;
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +
-> +       ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-> +       ASSERT_EQ(ret, 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               struct coredump_req req = {};
-> +               int fd_server = -1, fd_coredump = -1, fd_peer_pidfd = -1;
-> +               int exit_code = EXIT_FAILURE;
-> +
-> +               close(ipc_sockets[0]);
-> +
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0)
-> +                       goto out;
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-> +                       goto out;
-> +
-> +               close(ipc_sockets[1]);
-> +
-> +               fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +               if (fd_coredump < 0)
-> +                       goto out;
-> +
-> +               fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +               if (fd_peer_pidfd < 0)
-> +                       goto out;
-> +
-> +               if (!get_pidfd_info(fd_peer_pidfd, &info))
-> +                       goto out;
-> +
-> +               if (!(info.mask & PIDFD_INFO_COREDUMP))
-> +                       goto out;
-> +
-> +               if (!(info.coredump_mask & PIDFD_COREDUMPED))
-> +                       goto out;
-> +
-> +               if (!read_coredump_req(fd_coredump, &req))
-> +                       goto out;
-> +
-> +               if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                       COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                       COREDUMP_REJECT | COREDUMP_WAIT))
-> +                       goto out;
-> +
-> +               if (!send_coredump_ack(fd_coredump, &req,
-> +                                      COREDUMP_KERNEL | COREDUMP_REJECT | COREDUMP_WAIT, 0))
-> +                       goto out;
-> +
-> +               if (!wait_for_oob_marker(fd_coredump, COREDUMP_OOB_CONFLICTING))
-> +                       goto out;
-> +
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_peer_pidfd >= 0)
-> +                       close(fd_peer_pidfd);
-> +               if (fd_coredump >= 0)
-> +                       close(fd_coredump);
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +       if (pid == 0)
-> +               crashing_child();
-> +
-> +       pidfd = sys_pidfd_open(pid, 0);
-> +       ASSERT_GE(pidfd, 0);
-> +
-> +       waitpid(pid, &status, 0);
-> +       ASSERT_TRUE(WIFSIGNALED(status));
-> +       ASSERT_FALSE(WCOREDUMP(status));
-> +
-> +       ASSERT_TRUE(get_pidfd_info(pidfd, &info));
-> +       ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +       ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +}
-> +
-> +TEST_F(coredump, socket_request_unknown_flag)
-> +{
-> +       int pidfd, ret, status;
-> +       pid_t pid, pid_coredump_server;
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +
-> +       ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-> +       ASSERT_EQ(ret, 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               struct coredump_req req = {};
-> +               int fd_server = -1, fd_coredump = -1, fd_peer_pidfd = -1;
-> +               int exit_code = EXIT_FAILURE;
-> +
-> +               close(ipc_sockets[0]);
-> +
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0)
-> +                       goto out;
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-> +                       goto out;
-> +
-> +               close(ipc_sockets[1]);
-> +
-> +               fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +               if (fd_coredump < 0)
-> +                       goto out;
-> +
-> +               fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +               if (fd_peer_pidfd < 0)
-> +                       goto out;
-> +
-> +               if (!get_pidfd_info(fd_peer_pidfd, &info))
-> +                       goto out;
-> +
-> +               if (!(info.mask & PIDFD_INFO_COREDUMP))
-> +                       goto out;
-> +
-> +               if (!(info.coredump_mask & PIDFD_COREDUMPED))
-> +                       goto out;
-> +
-> +               if (!read_coredump_req(fd_coredump, &req))
-> +                       goto out;
-> +
-> +               if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                       COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                       COREDUMP_REJECT | COREDUMP_WAIT))
-> +                       goto out;
-> +
-> +               if (!send_coredump_ack(fd_coredump, &req, (1ULL << 63), 0))
-> +                       goto out;
-> +
-> +               if (!wait_for_oob_marker(fd_coredump, COREDUMP_OOB_UNSUPPORTED))
-> +                       goto out;
-> +
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_peer_pidfd >= 0)
-> +                       close(fd_peer_pidfd);
-> +               if (fd_coredump >= 0)
-> +                       close(fd_coredump);
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +       if (pid == 0)
-> +               crashing_child();
-> +
-> +       pidfd = sys_pidfd_open(pid, 0);
-> +       ASSERT_GE(pidfd, 0);
-> +
-> +       waitpid(pid, &status, 0);
-> +       ASSERT_TRUE(WIFSIGNALED(status));
-> +       ASSERT_FALSE(WCOREDUMP(status));
-> +
-> +       ASSERT_TRUE(get_pidfd_info(pidfd, &info));
-> +       ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +       ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +}
-> +
-> +TEST_F(coredump, socket_request_invalid_size_small)
-> +{
-> +       int pidfd, ret, status;
-> +       pid_t pid, pid_coredump_server;
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +
-> +       ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-> +       ASSERT_EQ(ret, 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               struct coredump_req req = {};
-> +               int fd_server = -1, fd_coredump = -1, fd_peer_pidfd = -1;
-> +               int exit_code = EXIT_FAILURE;
-> +
-> +               close(ipc_sockets[0]);
-> +
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0)
-> +                       goto out;
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-> +                       goto out;
-> +
-> +               close(ipc_sockets[1]);
-> +
-> +               fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +               if (fd_coredump < 0)
-> +                       goto out;
-> +
-> +               fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +               if (fd_peer_pidfd < 0)
-> +                       goto out;
-> +
-> +               if (!get_pidfd_info(fd_peer_pidfd, &info))
-> +                       goto out;
-> +
-> +               if (!(info.mask & PIDFD_INFO_COREDUMP))
-> +                       goto out;
-> +
-> +               if (!(info.coredump_mask & PIDFD_COREDUMPED))
-> +                       goto out;
-> +
-> +               if (!read_coredump_req(fd_coredump, &req))
-> +                       goto out;
-> +
-> +               if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                       COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                       COREDUMP_REJECT | COREDUMP_WAIT))
-> +                       goto out;
-> +
-> +               if (!send_coredump_ack(fd_coredump, &req,
-> +                                      COREDUMP_REJECT | COREDUMP_WAIT,
-> +                                      COREDUMP_ACK_SIZE_VER0 / 2))
-> +                       goto out;
-> +
-> +               if (!wait_for_oob_marker(fd_coredump, COREDUMP_OOB_INVALIDSIZE))
-> +                       goto out;
-> +
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_peer_pidfd >= 0)
-> +                       close(fd_peer_pidfd);
-> +               if (fd_coredump >= 0)
-> +                       close(fd_coredump);
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +       if (pid == 0)
-> +               crashing_child();
-> +
-> +       pidfd = sys_pidfd_open(pid, 0);
-> +       ASSERT_GE(pidfd, 0);
-> +
-> +       waitpid(pid, &status, 0);
-> +       ASSERT_TRUE(WIFSIGNALED(status));
-> +       ASSERT_FALSE(WCOREDUMP(status));
-> +
-> +       ASSERT_TRUE(get_pidfd_info(pidfd, &info));
-> +       ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +       ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +}
-> +
-> +TEST_F(coredump, socket_request_invalid_size_large)
-> +{
-> +       int pidfd, ret, status;
-> +       pid_t pid, pid_coredump_server;
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +
-> +       ret = socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets);
-> +       ASSERT_EQ(ret, 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               struct coredump_req req = {};
-> +               int fd_server = -1, fd_coredump = -1, fd_peer_pidfd = -1;
-> +               int exit_code = EXIT_FAILURE;
-> +
-> +               close(ipc_sockets[0]);
-> +
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0)
-> +                       goto out;
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-> +                       goto out;
-> +
-> +               close(ipc_sockets[1]);
-> +
-> +               fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +               if (fd_coredump < 0)
-> +                       goto out;
-> +
-> +               fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +               if (fd_peer_pidfd < 0)
-> +                       goto out;
-> +
-> +               if (!get_pidfd_info(fd_peer_pidfd, &info))
-> +                       goto out;
-> +
-> +               if (!(info.mask & PIDFD_INFO_COREDUMP))
-> +                       goto out;
-> +
-> +               if (!(info.coredump_mask & PIDFD_COREDUMPED))
-> +                       goto out;
-> +
-> +               if (!read_coredump_req(fd_coredump, &req))
-> +                       goto out;
-> +
-> +               if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                       COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                       COREDUMP_REJECT | COREDUMP_WAIT))
-> +                       goto out;
-> +
-> +               if (!send_coredump_ack(fd_coredump, &req,
-> +                                      COREDUMP_REJECT | COREDUMP_WAIT,
-> +                                      COREDUMP_ACK_SIZE_VER0 + PAGE_SIZE))
-> +                       goto out;
-> +
-> +               if (!wait_for_oob_marker(fd_coredump, COREDUMP_OOB_INVALIDSIZE))
-> +                       goto out;
-> +
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_peer_pidfd >= 0)
-> +                       close(fd_peer_pidfd);
-> +               if (fd_coredump >= 0)
-> +                       close(fd_coredump);
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       pid = fork();
-> +       ASSERT_GE(pid, 0);
-> +       if (pid == 0)
-> +               crashing_child();
-> +
-> +       pidfd = sys_pidfd_open(pid, 0);
-> +       ASSERT_GE(pidfd, 0);
-> +
-> +       waitpid(pid, &status, 0);
-> +       ASSERT_TRUE(WIFSIGNALED(status));
-> +       ASSERT_FALSE(WCOREDUMP(status));
-> +
-> +       ASSERT_TRUE(get_pidfd_info(pidfd, &info));
-> +       ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +       ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +}
-> +
-> +
-> +static int open_coredump_tmpfile(int fd_tmpfs_detached)
-> +{
-> +       return openat(fd_tmpfs_detached, ".", O_TMPFILE | O_RDWR | O_EXCL, 0600);
-> +}
-> +
-> +#define NUM_CRASHING_COREDUMPS 5
-> +
-> +TEST_F_TIMEOUT(coredump, socket_multiple_crashing_coredumps, 500)
-> +{
-> +       int pidfd[NUM_CRASHING_COREDUMPS], status[NUM_CRASHING_COREDUMPS];
-> +       pid_t pid[NUM_CRASHING_COREDUMPS], pid_coredump_server;
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +
-> +       ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets), 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               int fd_server = -1, fd_coredump = -1, fd_peer_pidfd = -1, fd_core_file = -1;
-> +               int exit_code = EXIT_FAILURE;
-> +               struct coredump_req req = {};
-> +
-> +               close(ipc_sockets[0]);
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0) {
-> +                       fprintf(stderr, "Failed to create and listen on unix socket\n");
-> +                       goto out;
-> +               }
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0) {
-> +                       fprintf(stderr, "Failed to notify parent via ipc socket\n");
-> +                       goto out;
-> +               }
-> +               close(ipc_sockets[1]);
-> +
-> +               for (int i = 0; i < NUM_CRASHING_COREDUMPS; i++) {
-> +                       fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +                       if (fd_coredump < 0) {
-> +                               fprintf(stderr, "accept4 failed: %m\n");
-> +                               goto out;
-> +                       }
-> +
-> +                       fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +                       if (fd_peer_pidfd < 0) {
-> +                               fprintf(stderr, "get_peer_pidfd failed for fd %d: %m\n", fd_coredump);
-> +                               goto out;
-> +                       }
-> +
-> +                       if (!get_pidfd_info(fd_peer_pidfd, &info)) {
-> +                               fprintf(stderr, "get_pidfd_info failed for fd %d\n", fd_peer_pidfd);
-> +                               goto out;
-> +                       }
-> +
-> +                       if (!(info.mask & PIDFD_INFO_COREDUMP)) {
-> +                               fprintf(stderr, "pidfd info missing PIDFD_INFO_COREDUMP for fd %d\n", fd_peer_pidfd);
-> +                               goto out;
-> +                       }
-> +                       if (!(info.coredump_mask & PIDFD_COREDUMPED)) {
-> +                               fprintf(stderr, "pidfd info missing PIDFD_COREDUMPED for fd %d\n", fd_peer_pidfd);
-> +                               goto out;
-> +                       }
-> +
-> +                       if (!read_coredump_req(fd_coredump, &req)) {
-> +                               fprintf(stderr, "read_coredump_req failed for fd %d\n", fd_coredump);
-> +                               goto out;
-> +                       }
-> +
-> +                       if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                               COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                               COREDUMP_REJECT | COREDUMP_WAIT)) {
-> +                               fprintf(stderr, "check_coredump_req failed for fd %d\n", fd_coredump);
-> +                               goto out;
-> +                       }
-> +
-> +                       if (!send_coredump_ack(fd_coredump, &req,
-> +                                              COREDUMP_KERNEL | COREDUMP_WAIT, 0)) {
-> +                               fprintf(stderr, "send_coredump_ack failed for fd %d\n", fd_coredump);
-> +                               goto out;
-> +                       }
-> +
-> +                       fd_core_file = open_coredump_tmpfile(self->fd_tmpfs_detached);
-> +                       if (fd_core_file < 0) {
-> +                               fprintf(stderr, "%m - open_coredump_tmpfile failed for fd %d\n", fd_coredump);
-> +                               goto out;
-> +                       }
-> +
-> +                       for (;;) {
-> +                               char buffer[4096];
-> +                               ssize_t bytes_read, bytes_write;
-> +
-> +                               bytes_read = read(fd_coredump, buffer, sizeof(buffer));
-> +                               if (bytes_read < 0) {
-> +                                       fprintf(stderr, "read failed for fd %d: %m\n", fd_coredump);
-> +                                       goto out;
-> +                               }
-> +
-> +                               if (bytes_read == 0)
-> +                                       break;
-> +
-> +                               bytes_write = write(fd_core_file, buffer, bytes_read);
-> +                               if (bytes_read != bytes_write) {
-> +                                       fprintf(stderr, "write failed for fd %d: %m\n", fd_core_file);
-> +                                       goto out;
-> +                               }
-> +                       }
-> +
-> +                       close(fd_core_file);
-> +                       close(fd_peer_pidfd);
-> +                       close(fd_coredump);
-> +                       fd_peer_pidfd = -1;
-> +                       fd_coredump = -1;
-> +               }
-> +
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_core_file >= 0)
-> +                       close(fd_core_file);
-> +               if (fd_peer_pidfd >= 0)
-> +                       close(fd_peer_pidfd);
-> +               if (fd_coredump >= 0)
-> +                       close(fd_coredump);
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       for (int i = 0; i < NUM_CRASHING_COREDUMPS; i++) {
-> +               pid[i] = fork();
-> +               ASSERT_GE(pid[i], 0);
-> +               if (pid[i] == 0)
-> +                       crashing_child();
-> +               pidfd[i] = sys_pidfd_open(pid[i], 0);
-> +               ASSERT_GE(pidfd[i], 0);
-> +       }
-> +
-> +       for (int i = 0; i < NUM_CRASHING_COREDUMPS; i++) {
-> +               waitpid(pid[i], &status[i], 0);
-> +               ASSERT_TRUE(WIFSIGNALED(status[i]));
-> +               ASSERT_TRUE(WCOREDUMP(status[i]));
-> +       }
-> +
-> +       for (int i = 0; i < NUM_CRASHING_COREDUMPS; i++) {
-> +               info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP;
-> +               ASSERT_EQ(ioctl(pidfd[i], PIDFD_GET_INFO, &info), 0);
-> +               ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +               ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +       }
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +}
-> +
-> +#define MAX_EVENTS 128
-> +
-> +static void process_coredump_worker(int fd_coredump, int fd_peer_pidfd, int fd_core_file)
-> +{
-> +       int epfd = -1;
-> +       int exit_code = EXIT_FAILURE;
-> +
-> +       epfd = epoll_create1(0);
-> +       if (epfd < 0)
-> +               goto out;
-> +
-> +       struct epoll_event ev;
-> +       ev.events = EPOLLIN | EPOLLPRI | EPOLLRDHUP | EPOLLET;
-> +       ev.data.fd = fd_coredump;
-> +       if (epoll_ctl(epfd, EPOLL_CTL_ADD, fd_coredump, &ev) < 0)
-> +               goto out;
-> +
-> +       for (;;) {
-> +               struct epoll_event events[1];
-> +               int n = epoll_wait(epfd, events, 1, -1);
-> +               if (n < 0)
-> +                       break;
-> +
-> +               if (events[0].events & EPOLLPRI) {
-> +                       uint8_t oob;
-> +                       ssize_t oobret = recv(fd_coredump, &oob, 1, MSG_OOB);
-> +                       if (oobret == 1) {
-> +                               fprintf(stderr, "Worker: Received OOB marker %u on fd %d, aborting coredump\n", oob, fd_coredump);
-> +                               break;
-> +                       }
-> +               }
-> +               if (events[0].events & (EPOLLIN | EPOLLRDHUP)) {
-> +                       for (;;) {
-> +                               char buffer[4096];
-> +                               ssize_t bytes_read = read(fd_coredump, buffer, sizeof(buffer));
-> +                               if (bytes_read < 0) {
-> +                                       if (errno == EAGAIN || errno == EWOULDBLOCK)
-> +                                               break;
-> +                                       goto out;
-> +                               }
-> +                               if (bytes_read == 0)
-> +                                       goto done;
-> +                               ssize_t bytes_write = write(fd_core_file, buffer, bytes_read);
-> +                               if (bytes_write != bytes_read)
-> +                                       goto out;
-> +                       }
-> +               }
-> +       }
-> +
-> +done:
-> +       exit_code = EXIT_SUCCESS;
-> +out:
-> +       if (epfd >= 0)
-> +               close(epfd);
-> +       if (fd_core_file >= 0)
-> +               close(fd_core_file);
-> +       if (fd_peer_pidfd >= 0)
-> +               close(fd_peer_pidfd);
-> +       if (fd_coredump >= 0)
-> +               close(fd_coredump);
-> +       _exit(exit_code);
-> +}
-> +
-> +TEST_F_TIMEOUT(coredump, socket_multiple_crashing_coredumps_epoll_workers, 500)
-> +{
-> +       int pidfd[NUM_CRASHING_COREDUMPS], status[NUM_CRASHING_COREDUMPS];
-> +       pid_t pid[NUM_CRASHING_COREDUMPS], pid_coredump_server, worker_pids[NUM_CRASHING_COREDUMPS];
-> +       struct pidfd_info info = {};
-> +       int ipc_sockets[2];
-> +       char c;
-> +
-> +       ASSERT_TRUE(set_core_pattern("@@/tmp/coredump.socket"));
-> +       ASSERT_EQ(socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0, ipc_sockets), 0);
-> +
-> +       pid_coredump_server = fork();
-> +       ASSERT_GE(pid_coredump_server, 0);
-> +       if (pid_coredump_server == 0) {
-> +               int fd_server = -1, exit_code = EXIT_FAILURE, n_conns = 0;
-> +               fd_server = -1;
-> +               exit_code = EXIT_FAILURE;
-> +               n_conns = 0;
-> +               close(ipc_sockets[0]);
-> +               fd_server = create_and_listen_unix_socket("/tmp/coredump.socket");
-> +               if (fd_server < 0)
-> +                       goto out;
-> +
-> +               if (write_nointr(ipc_sockets[1], "1", 1) < 0)
-> +                       goto out;
-> +               close(ipc_sockets[1]);
-> +
-> +               while (n_conns < NUM_CRASHING_COREDUMPS) {
-> +                       int fd_coredump = -1, fd_peer_pidfd = -1, fd_core_file = -1;
-> +                       struct coredump_req req = {};
-> +                       fd_coredump = accept4(fd_server, NULL, NULL, SOCK_CLOEXEC);
-> +                       if (fd_coredump < 0) {
-> +                               if (errno == EAGAIN || errno == EWOULDBLOCK)
-> +                                       continue;
-> +                               goto out;
-> +                       }
-> +                       fd_peer_pidfd = get_peer_pidfd(fd_coredump);
-> +                       if (fd_peer_pidfd < 0)
-> +                               goto out;
-> +                       if (!get_pidfd_info(fd_peer_pidfd, &info))
-> +                               goto out;
-> +                       if (!(info.mask & PIDFD_INFO_COREDUMP) || !(info.coredump_mask & PIDFD_COREDUMPED))
-> +                               goto out;
-> +                       if (!read_coredump_req(fd_coredump, &req))
-> +                               goto out;
-> +                       if (!check_coredump_req(&req, COREDUMP_ACK_SIZE_VER0,
-> +                                               COREDUMP_KERNEL | COREDUMP_USERSPACE |
-> +                                               COREDUMP_REJECT | COREDUMP_WAIT))
-> +                               goto out;
-> +                       if (!send_coredump_ack(fd_coredump, &req, COREDUMP_KERNEL | COREDUMP_WAIT, 0))
-> +                               goto out;
-> +                       fd_core_file = open_coredump_tmpfile(self->fd_tmpfs_detached);
-> +                       if (fd_core_file < 0)
-> +                               goto out;
-> +                       pid_t worker = fork();
-> +                       if (worker == 0) {
-> +                               close(fd_server);
-> +                               process_coredump_worker(fd_coredump, fd_peer_pidfd, fd_core_file);
-> +                       }
-> +                       worker_pids[n_conns] = worker;
-> +                       if (fd_coredump >= 0)
-> +                               close(fd_coredump);
-> +                       if (fd_peer_pidfd >= 0)
-> +                               close(fd_peer_pidfd);
-> +                       if (fd_core_file >= 0)
-> +                               close(fd_core_file);
-> +                       n_conns++;
-> +               }
-> +               exit_code = EXIT_SUCCESS;
-> +out:
-> +               if (fd_server >= 0)
-> +                       close(fd_server);
-> +
-> +               // Reap all worker processes
-> +               for (int i = 0; i < n_conns; i++) {
-> +                       int wstatus;
-> +                       if (waitpid(worker_pids[i], &wstatus, 0) < 0) {
-> +                               fprintf(stderr, "Failed to wait for worker %d: %m\n", worker_pids[i]);
-> +                       } else if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != EXIT_SUCCESS) {
-> +                               fprintf(stderr, "Worker %d exited with error code %d\n", worker_pids[i], WEXITSTATUS(wstatus));
-> +                               exit_code = EXIT_FAILURE;
-> +                       }
-> +               }
-> +
-> +               _exit(exit_code);
-> +       }
-> +       self->pid_coredump_server = pid_coredump_server;
-> +
-> +       EXPECT_EQ(close(ipc_sockets[1]), 0);
-> +       ASSERT_EQ(read_nointr(ipc_sockets[0], &c, 1), 1);
-> +       EXPECT_EQ(close(ipc_sockets[0]), 0);
-> +
-> +       for (int i = 0; i < NUM_CRASHING_COREDUMPS; i++) {
-> +               pid[i] = fork();
-> +               ASSERT_GE(pid[i], 0);
-> +               if (pid[i] == 0)
-> +                       crashing_child();
-> +               pidfd[i] = sys_pidfd_open(pid[i], 0);
-> +               ASSERT_GE(pidfd[i], 0);
-> +       }
-> +
-> +       for (int i = 0; i < NUM_CRASHING_COREDUMPS; i++) {
-> +               ASSERT_GE(waitpid(pid[i], &status[i], 0), 0);
-> +               ASSERT_TRUE(WIFSIGNALED(status[i]));
-> +               ASSERT_TRUE(WCOREDUMP(status[i]));
-> +       }
-> +
-> +       for (int i = 0; i < NUM_CRASHING_COREDUMPS; i++) {
-> +               info.mask = PIDFD_INFO_EXIT | PIDFD_INFO_COREDUMP;
-> +               ASSERT_EQ(ioctl(pidfd[i], PIDFD_GET_INFO, &info), 0);
-> +               ASSERT_GT((info.mask & PIDFD_INFO_COREDUMP), 0);
-> +               ASSERT_GT((info.coredump_mask & PIDFD_COREDUMPED), 0);
-> +       }
-> +
-> +       wait_and_check_coredump_server(pid_coredump_server, _metadata, self);
-> +}
-> +
->  TEST_HARNESS_MAIN
->
-> --
-> 2.47.2
->
+Sure. Can you please also add something like below to the function comment?
+=E2=80=9CThe xas cannot be a sibling entry, otherwise the result will be wr=
+ong=E2=80=9D
+It saves other=E2=80=99s time to infer it from the added XA_NODE_BUG_ON().
+
+Thanks.
+
+Best Regards,
+Yan, Zi
 
