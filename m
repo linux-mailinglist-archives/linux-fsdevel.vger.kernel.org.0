@@ -1,130 +1,133 @@
-Return-Path: <linux-fsdevel+bounces-50542-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50541-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87326ACD034
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 01:20:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C2CAACD033
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 01:20:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34F5017715E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 23:20:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E0E3A7829
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 23:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71859253359;
-	Tue,  3 Jun 2025 23:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEC7824DCFB;
+	Tue,  3 Jun 2025 23:20:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbUmJx91"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="iQzBAypH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C636B2066CF;
-	Tue,  3 Jun 2025 23:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D0E22A4EB
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 23:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748992816; cv=none; b=YKYONHMzflehBS6Zzq7BIJAFqXeP+IrK210VxGgYsePKgQFStDCXNDkiKoFcqMjKhA2X53k01Vv+M6lmue81d55OZIKVuWRYN7RDTymlK2S4+ngvDxuZe2IMob9ARBGiO0SpiWfDwiQPVWOiDazzyjqoejVAa2y5WiB67FkXeAU=
+	t=1748992815; cv=none; b=nCh8aWUeJpqev1U1PbvpKyo3RTcCKATdgE+iB4jrpWyWYIx3z9xssMZJpnRjdbtDNCNtdsrxdTq2HQJL1gea2r+K5uJ7pkixO0K9Rvb21B35+xPxAONKt1eSTbod6BhImZxOHmUzQDqdMXXEn2T6GGCQs77FNtl1B3fvXYzJwNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748992816; c=relaxed/simple;
-	bh=G6HTrgY8s0ABn2090OgkfKLlCb3pzWh2OSW5n7m8PzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WgaLtKMk8UbYuTPPv0jQQfwU//4wwdzZBWasMPiNW8hSFjjyjHbI83h7KU4TbP7DHrFMkxE2TpNeWKZabjJQps+sY3kw4riS9t3stW8ZvrMRL3RszKK9irnzJGKr9bdOk3O2b12IY3Wv/IYdBRA5pkDsP6NUU0j9/E4skUwLlt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbUmJx91; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A68C8C4CEEF;
-	Tue,  3 Jun 2025 23:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748992816;
-	bh=G6HTrgY8s0ABn2090OgkfKLlCb3pzWh2OSW5n7m8PzU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NbUmJx91iy/w/IK5R0+Cdo5UJz/LFbcnT4kT26yxDO+HIDcIQWmscRvwBeN3eN52x
-	 4Z7rHysC5lPHkqfpR3w6mYy4n5UbBx2OZ249PdP9tT9pZ6vmjsELhLKNav7NIuP3h5
-	 bT+S3PVFceH1+FUaPMcooMXfp6MmN5gJRFsGGKDP9zmoBJ+tLXTq2VoXE5WyctIk4j
-	 3BQeKPVuiC7BL8V9CS8HS8LnU60DReTxo11SrPParwnSaXnjbQ1ePz02Vit5Gli3pY
-	 XqWQL5pPrLieasMjfmWU6lzHGsVlBLD0to4ZoWDUDx18xurRTVoCalCq/OdJHvPuyo
-	 vE6GZqk9OGYug==
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a44b3526e6so54923671cf.0;
-        Tue, 03 Jun 2025 16:20:16 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjswvYVf0Whm2YcUMbqVObWgLSFcDt4jFgU7nOcUYxhFqAiu3c2oDXGV8DyzRM9RFfGrhJHkTbfRCXWj0p@vger.kernel.org, AJvYcCUzjYGhbH6kwDG3fgH8DNWzm9YVang8tBqSbezlF7JGhBM3c3hwydvYPmIk+ExdlZJbx45B+r8iCfVhkIYU@vger.kernel.org, AJvYcCXETEJztUs11k7ewwVcZA4fFV/mAHVZObdp54YhILMIxzMNgCCAMvk6OmFa7P2lBru1VWAOjnY1p80EmRX+98BW8HDIFogv@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEbvK+XClsLMtZPFFo8HnH1x9dMc0NgqeCig8LlW7sq3JLimrO
-	ynkSWWydroiLrUctuLdeN76ogs8fUr1EqGk//YqwRrA7c3CVmpVo3/IwP3lofk6X0Utqyau+3Sm
-	fxbQyC4huQhVy7RfuivFDKidoPTsjZ78=
-X-Google-Smtp-Source: AGHT+IH4Kd1zp8ji2+OmIj64se2PS6DJY05aRquelehbqiinjRk4WB/znGty+R9MDWOshmgqyXVU24LS5KDCLoNBSEU=
-X-Received: by 2002:a05:622a:544b:b0:476:980c:10a9 with SMTP id
- d75a77b69052e-4a5a57fc70bmr13760421cf.21.1748992815883; Tue, 03 Jun 2025
- 16:20:15 -0700 (PDT)
+	s=arc-20240116; t=1748992815; c=relaxed/simple;
+	bh=RyUPhQ3akfp8bc46br4PtCJq74lAxPAytpwuvAq6ZHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/UcOXloQ+ufZ61AK0b5GZPpnd0u7lH4K0Y8UPrewa56AWEMsCBY0F2AI3R3tVJhYJESxQmAp+aI4TIYOnR6O7BPRWbXHfGylYapoMBYd2y3UZTfDDCW/OeO/ZBDlqO2kgEQSz19ojSumeddZWdWGKgjMKsBJyZrOd/7DEI0PsQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=iQzBAypH; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=39mZDOhwrVizuaRQCiolW2K0mYUA86LpPExzvFxeoPA=; b=iQzBAypHJAuziGCDuPjl5hh6ZN
+	/tMlOX/Fq2nznvKsbHoZEfRz6UnVUtQCd/+8mudIP4TSULEvPI6xZN/e6tmeuMURO/8beGdd5FeIB
+	djN68oEnwbdFauV4YAolmYYb1uitL2NKRa7AjLSAPU30F5i/ARYmula1DIAwzEymqnxsvKZYXknxC
+	0wBGUI1fDrHyLE9cuxLVdhPlhrlymT0Ij7diCID4+4whp98qQ5q0bhErJP9sh0NC30JrkzQdvTfEg
+	dxJgDLphylodMNsoJWmgyg2ZQOlCmSJewx01hG7psiof8RAzQ5JUVehfgGxMWgfU2eMECAQOO3rbX
+	8PmXTORA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMavT-00000000dW9-0QGT;
+	Tue, 03 Jun 2025 23:20:11 +0000
+Date: Wed, 4 Jun 2025 00:20:11 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: linux-fsdevel@vger.kernel.org
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Kazuma Kondo <kazuma-kondo@nec.com>
+Subject: [PATCH 5/5] fs: allow clone_private_mount() for a path on real rootfs
+Message-ID: <20250603232011.GE145532@ZenIV>
+References: <20250603231500.GC299672@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-4-song@kernel.org>
- <CAEf4BzasOmqHDnuKd7LCT_FEBVMuJxmVNgvs52y5=qLd1bB=rg@mail.gmail.com>
- <CAPhsuW7mwut7SYubAUa5Ji7meDP1Bn8ZD9s+4sqjBDim7jGrWA@mail.gmail.com> <CAEf4Bzbm=mnRM=PYBLDTogrb+bNk2TnTj-kGr3=oFNEyQm8hKw@mail.gmail.com>
-In-Reply-To: <CAEf4Bzbm=mnRM=PYBLDTogrb+bNk2TnTj-kGr3=oFNEyQm8hKw@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Tue, 3 Jun 2025 16:20:02 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6rdJpP4pqtgU2WC8-KOkNObeY5ELMy_ga_0YjJJj0NaA@mail.gmail.com>
-X-Gm-Features: AX0GCFv8ElnQFepo78HRXo57cLt23SB-SkBGmvc12qF61wcH0yiwIRcZkJdh_7E
-Message-ID: <CAPhsuW6rdJpP4pqtgU2WC8-KOkNObeY5ELMy_ga_0YjJJj0NaA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Introduce path iterator
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
-	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
-	jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, gnoack@google.com, 
-	m@maowtm.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250603231500.GC299672@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Tue, Jun 3, 2025 at 2:45=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Tue, Jun 3, 2025 at 2:09=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> >
-> > On Tue, Jun 3, 2025 at 11:40=E2=80=AFAM Andrii Nakryiko
-> > <andrii.nakryiko@gmail.com> wrote:
-> > [...]
-> > > > +__bpf_kfunc struct path *bpf_iter_path_next(struct bpf_iter_path *=
-it)
-> > > > +{
-> > > > +       struct bpf_iter_path_kern *kit =3D (void *)it;
-> > > > +       struct path root =3D {};
-> > > > +
-> > > > +       if (!path_walk_parent(&kit->path, &root))
-> > > > +               return NULL;
-> > > > +       return &kit->path;
-> > > > +}
-> > > > +
-> > > > +__bpf_kfunc void bpf_iter_path_destroy(struct bpf_iter_path *it)
-> > > > +{
-> > > > +       struct bpf_iter_path_kern *kit =3D (void *)it;
-> > > > +
-> > > > +       path_put(&kit->path);
-> > >
-> > > note, destroy() will be called even if construction of iterator fails
-> > > or we exhausted iterator. So you need to make sure that you have
-> > > bpf_iter_path state where you can detect that there is no path presen=
-t
-> > > and skip path_put().
-> >
-> > In bpf_iter_path_next(), when path_walk_parent() returns false, we
-> > still hold reference to kit->path, then _destroy() will release it. So =
-we
-> > should be fine, no?
->
-> you still need to handle iterators that failed to be initialized,
-> though? And one can argue that if path_walk_parent() returns false, we
-> need to put that last path before returning NULL, no?
+From: =?UTF-8?q?KONDO=20KAZUMA=28=E8=BF=91=E8=97=A4=E3=80=80=E5=92=8C?=
+ =?UTF-8?q?=E7=9C=9F=29?= <kazuma-kondo@nec.com>
 
-kit->path is zero'ed on initialization failures, so we can path_put() it
-safely. For _next() returns NULL case, we can either put kit->path
-in _destroy(), which is the logic now, or put kit->path in the last
-_next() call and make _destroy() a no-op in that case. I don't have
-a strong preference either way.
+Mounting overlayfs with a directory on real rootfs (initramfs)
+as upperdir has failed with following message since commit
+db04662e2f4f ("fs: allow detached mounts in clone_private_mount()").
 
-Thanks,
-Song
+  [    4.080134] overlayfs: failed to clone upperpath
+
+Overlayfs mount uses clone_private_mount() to create internal mount
+for the underlying layers.
+
+The commit made clone_private_mount() reject real rootfs because
+it does not have a parent mount and is in the initial mount namespace,
+that is not an anonymous mount namespace.
+
+This issue can be fixed by modifying the permission check
+of clone_private_mount() following [1].
+
+Fixes: db04662e2f4f ("fs: allow detached mounts in clone_private_mount()")
+Link: https://lore.kernel.org/all/20250514190252.GQ2023217@ZenIV/ [1]
+Link: https://lore.kernel.org/all/20250506194849.GT2023217@ZenIV/
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Kazuma Kondo <kazuma-kondo@nec.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+---
+ fs/namespace.c | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
+
+diff --git a/fs/namespace.c b/fs/namespace.c
+index 6c94ecbe2c2c..854099aafed5 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -2493,18 +2493,19 @@ struct vfsmount *clone_private_mount(const struct path *path)
+ 	if (IS_MNT_UNBINDABLE(old_mnt))
+ 		return ERR_PTR(-EINVAL);
+ 
+-	if (mnt_has_parent(old_mnt)) {
+-		if (!check_mnt(old_mnt))
+-			return ERR_PTR(-EINVAL);
+-	} else {
+-		if (!is_mounted(&old_mnt->mnt))
+-			return ERR_PTR(-EINVAL);
+-
+-		/* Make sure this isn't something purely kernel internal. */
+-		if (!is_anon_ns(old_mnt->mnt_ns))
++	/*
++	 * Make sure the source mount is acceptable.
++	 * Anything mounted in our mount namespace is allowed.
++	 * Otherwise, it must be the root of an anonymous mount
++	 * namespace, and we need to make sure no namespace
++	 * loops get created.
++	 */
++	if (!check_mnt(old_mnt)) {
++		if (!is_mounted(&old_mnt->mnt) ||
++			!is_anon_ns(old_mnt->mnt_ns) ||
++			mnt_has_parent(old_mnt))
+ 			return ERR_PTR(-EINVAL);
+ 
+-		/* Make sure we don't create mount namespace loops. */
+ 		if (!check_for_nsfs_mounts(old_mnt))
+ 			return ERR_PTR(-EINVAL);
+ 	}
+-- 
+2.39.5
+
 
