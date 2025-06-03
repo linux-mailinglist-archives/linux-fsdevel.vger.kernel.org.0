@@ -1,250 +1,180 @@
-Return-Path: <linux-fsdevel+bounces-50521-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50531-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51FD9ACCF94
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 00:05:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6523ACCFEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 00:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 756F31896F4E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 22:05:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21F69188F1E6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 22:35:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A34C92288EE;
-	Tue,  3 Jun 2025 22:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ani9RRjD"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F8E3253954;
+	Tue,  3 Jun 2025 22:35:15 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from sxb1plsmtpa01-03.prod.sxb1.secureserver.net (sxb1plsmtpa01-03.prod.sxb1.secureserver.net [188.121.53.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610891A2643
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 22:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13CCC24A07C
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 22:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748988309; cv=none; b=nZLPXUnhYCDgdZichBHNssIa/0pvcjrxycqK1kmgsaAu+gnBw93U3riwF0ZaFlPMEt2S9PWuDdjh8b5IqOSryUQ6jNtvfkLZPmYkbHGNv6SEGhcK7EBfDt93YXEuCsZsqqpL7EpePvE6nV1E6NycvveLzIWk0MwIcFrYb+MwDmE=
+	t=1748990115; cv=none; b=V6KrYuo1x9UOJkUToMWM5fS9wJSg0LmD+chmi4lqF68d/SPWW4Fhpxwm2HYeQc3VNTJ2cpaY/CgpjqPryX+X4Z+QfpeZTt2QNU+1lACcXppV2SF5i/Zwib3ghVW9BDC4pP4UfrT2HLBNtPIc0eVlYX9EUCg7kjuMzLOxfdLd90I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748988309; c=relaxed/simple;
-	bh=4Q6wpdubX03roYzxWuBd4mlmXNKXJQgIgTSoc1SwQqE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AvT41X7rdydYU9pKv2WHcNfBKZCW9gIZVFompcphtaIgXfbYrNGKWUHAJk+SV35S9Q2RFaKRjOhW1eJ1BI84ojl9qznS6r5FrEGhypGvVqHMvAnSep7eVFiDTXCLQLmmDM75tnDOupca5l3XkTn0DnpGabZ6aOBv4aAAiKn9uI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ani9RRjD; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-234c5b57557so54007855ad.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jun 2025 15:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1748988306; x=1749593106; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lju0Ryqqd15qALOnq6lO5mGiDU1YmqZiwkz30QskHzc=;
-        b=ani9RRjDaxhGeak8nlfuJA3wxU75NFrtPlZo9WiYTSiONxBHzrIKeu6gfLLkWgfpf/
-         XyRqG3ig+6UR3OhQ1I63KevmdwZPrKjq7zQD2eu1D69fVBwOfAiG+1SMZmf2VHkCtwnB
-         Dy0UNxXQA1GFHRmEfjlbdlpDa+gSSpEwgyYYXx8umV2XEBqfuuCF7i8v2oYB+txWZAvP
-         hDnerlEfDtW3KSmoadE9SUUwHf7SKALtu+n0x4yuXUNXNck8KSN2VhpckWY1/wiErd7e
-         FGxL8wP85DxqJRJyMZotIquBS4KDo3x7KfkccDThQWdCQdilXtuOIxyOTfkm85vyDtuJ
-         mIPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748988306; x=1749593106;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lju0Ryqqd15qALOnq6lO5mGiDU1YmqZiwkz30QskHzc=;
-        b=aq5zWzZuPHSrp78cpMGa1Grg6qjUIl5yqC5lWsYghAtghXzx1IU2mtq/yollcKctFI
-         eD2PgQZ53EAGllSYuKwOkFjqofwZyfXN6nLBWg8ocIKUS5W0OBvAv2mZN7Phzng952fT
-         8mo/2Sfm6NnixRNW1boBEA1y9hhSZylfVb48Oa4czB4Brpu1xVq2b2RP9RvJT2ue2dkt
-         mL2fbNOsYfRkc2AiPQSbBlWyl983IfHo2nSzxQhyrpBp91izy4OpCMuT5FN9frdDgoC8
-         bNxV5iQHzxLkwSilEWHGsA7TZz+GZx8CF3wy/8ZMq3A2pBeqpi37YIVhd4f65uGFVbUH
-         Dysw==
-X-Forwarded-Encrypted: i=1; AJvYcCXvPiEZNMbcalhlm9pg9r2iP7xFJBkj4mvTybjwKt4Tu6ibvI1V+AL0ywZUoTkPB2+ISRu2zozNqLNtAUdG@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxgU6FaJAE9xX5AAql+fYNEoKbwcBmLJaa7+MiFk01vQDjboCN
-	xrNn7qiAwN8kRLxFahaXm1B4NHq5XxbTo8pzCn4onfcYQYxR/kRzQO8n0oRRc5Q8mxU=
-X-Gm-Gg: ASbGncsPptj4+CL8vBEr939xA32U2eX+8rbEoCIO09CRObCXdrhpYd6Gh/IWrMb6df2
-	a4k/ogpl7owYbwqA7ZvOzqqUt6m9Qo7QT2DaQf2kv/hXQjtN5o+cXIqyjWwudytW3/98D+WSYzB
-	J3WGt1p5HdIKShaIp7zcPLLiWTb92HbNXN5HVr7GxxFrIRMaV3uoU3ucQNvQF20GEdK8P10F0I1
-	8i/aDeyUgOL/d26yxVd2oJAua+y4hR2iiP8/47c7egxS3nGcRVLa3XFL2va8wDR+aJhb5ZiUYpo
-	A84kxHWxkah1ap8nLBkj+5/g6goR9oZlljMoNOpC9sIi3MTrDI86wT6kPBILoCBpU20Lm5+zHD1
-	3aLyACwOu/9Gllhfk29sNa3ZGm+0=
-X-Google-Smtp-Source: AGHT+IFB7MFjtIScvIBdqXB2ckXxOy1R5cdJuSvkVoKok2QP9CnHqhUz+oglAxd/DdbXqyKh7BRlLw==
-X-Received: by 2002:a17:903:18f:b0:234:986c:66e0 with SMTP id d9443c01a7336-235e112bd6cmr4869035ad.4.1748988306543;
-        Tue, 03 Jun 2025 15:05:06 -0700 (PDT)
-Received: from dread.disaster.area (pa49-180-184-88.pa.nsw.optusnet.com.au. [49.180.184.88])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506d14c79sm92206565ad.230.2025.06.03.15.05.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jun 2025 15:05:05 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.98.2)
-	(envelope-from <david@fromorbit.com>)
-	id 1uMZkl-0000000Bsxy-26gn;
-	Wed, 04 Jun 2025 08:05:03 +1000
-Date: Wed, 4 Jun 2025 08:05:03 +1000
-From: Dave Chinner <david@fromorbit.com>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>,
-	Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
-	cem@kernel.org, linux-xfs@vger.kernel.org,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
- data corruption
-Message-ID: <aD9xj8cwfY9ZmQ2B@dread.disaster.area>
-References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
- <aDfkTiTNH1UPKvC7@dread.disaster.area>
- <aD04v9dczhgGxS3K@infradead.org>
- <aD4xboH2mM1ONhB-@dread.disaster.area>
- <aD5-_OOsKyX0rDDO@infradead.org>
+	s=arc-20240116; t=1748990115; c=relaxed/simple;
+	bh=7ngBQjX9Q91ssI5lebIYGFFeYZ2yHNUu6b3oaCH742s=;
+	h=Message-ID:Date:MIME-Version:From:To:Subject:Cc:Content-Type; b=rMVrka0nhXm0NmHWQHpuP9wpXLnMPDEkdhskWOQYA2sIHi4rfwSNZc8BZSYl9YXZKQU4VlMLvGeJvvmI0prDi0BLnrbVq1CSg1yE23kPR8pVi8iMamnwcc0AmeYX8Ra5DdbiIqtkSYlcpkpjlw9FnjtCOkjxy9nTkLuhpnCn6Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id MZvJuGVfW9ZMtMZvLuFZ3Y; Tue, 03 Jun 2025 15:16:00 -0700
+X-CMAE-Analysis: v=2.4 cv=b66y4sGx c=1 sm=1 tr=0 ts=683f7421
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=FP58Ms26AAAA:8 a=NEAV23lmAAAA:8 a=ib7_shvKizCky_gvI0gA:9
+ a=QEXdDO2ut3YA:10
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <2d23004d-862d-44c4-814b-3a7f453a4448@squashfs.org.uk>
+Date: Tue, 3 Jun 2025 23:14:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aD5-_OOsKyX0rDDO@infradead.org>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ news@phoronix.com
+Subject: [ANN] Squashfs-tools 4.7 released
+Cc: phillip.lougher@gmail.com
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfBanUkbAAABwj8+bRKvywtzLQ7zm35FWJ9r0768jwJuVQlMozUCnOdmXs10uDPhLFlYTSKHfC30RhNW32RcFMzGO2htduwZzg1uazGh3UqhvMZ6lFcPH
+ pBG4S96l/77wx45ZPZn9mWRNbPq/9nvq6ENKsT50d3rp2pIk238y1acqlxSlKfOSlSruKV3Qw2wlkxQsWG8p05vtWHY9XD+iH1NOXh76wtSjSSUzE/oTKojX
+ wIIPoxOcLJbAsD1qTepZsuuAo5u3bIJesE5+8vDu+2D1kYybToMHCuixJ+FzGjPl/Un/vIAY+Fhnxr1e54a1HA==
 
-On Mon, Jun 02, 2025 at 09:50:04PM -0700, Christoph Hellwig wrote:
-> On Tue, Jun 03, 2025 at 09:19:10AM +1000, Dave Chinner wrote:
-> > > In other words, write errors in Linux are in general expected to be
-> > > persistent, modulo explicit failfast requests like REQ_NOWAIT.
-> > 
-> > Say what? the blk_errors array defines multiple block layer errors
-> > that are transient in nature - stuff like ENOSPC, ETIMEDOUT, EILSEQ,
-> > ENOLINK, EBUSY - all indicate a transient, retryable error occurred
-> > somewhere in the block/storage layers.
-> 
-> Let's use the block layer codes reported all the way up to the file
-> systems and their descriptions instead of the errnos they are
-> mapped to for compatibility.  The above would be in order:
-> 
-> [BLK_STS_NOSPC]         = { -ENOSPC,    "critical space allocation" },
-> [BLK_STS_TIMEOUT]       = { -ETIMEDOUT, "timeout" },
-> [BLK_STS_PROTECTION]    = { -EILSEQ,    "protection" },
-> [BLK_STS_TRANSPORT]     = { -ENOLINK,   "recoverable transport" },
-> [BLK_STS_DEV_RESOURCE]  = { -EBUSY,     "device resource" },
-> 
-> > What is permanent about dm-thinp returning ENOSPC to a write
-> > request? Once the pool has been GC'd to free up space or expanded,
-> > the ENOSPC error goes away.
-> 
-> Everything.  ENOSPC means there is no space.  There might be space in
-> the non-determinant future, but if the layer just needs to GC it must
-> not report the error.
+Hi,
 
-GC of thin pools requires the filesystem to be mounted so fstrim can
-be run to tell the thinp device where all the free LBA regions it
-can reclaim are located. If we shut down the filesystem instantly
-when the pool goes ENOSPC on a metadata write, then *we can't run
-fstrim* to free up unused space and hence allow that metadata write
-to succeed in the future.
+I'm pleased to announce the release of Squashfs tools 4.7.
 
-It should be obvious at this point that a filesystem shutdown on an
-ENOSPC error from the block device on anything other than journal IO
-is exactly the wrong thing to be doing.
+The release can be downloaded either from Sourceforge, or GitHub.
 
-> > What is permanent about an IO failing with EILSEQ because a t10
-> > checksum failed due to a random bit error detected between the HBA
-> > and the storage device? Retry the IO, and it goes through just fine
-> > without any failures.
-> 
-> Normally it means your checksum was wrong.  If you have bit errors
-> in the cable they will show up again, maybe not on the next I/O
-> but soon.
+https://sourceforge.net/projects/squashfs/files/latest/download
 
-But it's unlikely to be hit by another cosmic ray anytime soon, and
-so bit errors caused by completely random environmental events
-should -absolutely- be retried as the subsequent write retry will
-succeed.
+https://github.com/plougher/squashfs-tools/archive/refs/tags/4.7.tar.gz
 
-If there is a dodgy cable causing the problems, the error will
-re-occur on random IOs and we'll emit write errors to the log that
-monitoring software will pick up. If we are repeatedly isssuing write
-errors due to EILSEQ errors, then that's a sign the hardware needs
-replacing.
+There are substantial improvements to the tools in this release, in
+particular Mksquashfs can now be 20% to more than ten times faster
+(dependant on source media and input files).  The help system has also
+been completely rewritten and improved for Mksquashfs/Unsquashfs/
+Sqfstar/Sqfscat.  There are also new options for building reproducible
+images, and a lot of other improvements.
 
-There is no risk to filesystem integrity if write retries
-succeed, and that gives the admin time to schedule downtime to
-replace the dodgy hardware. That's much better behaviour than
-unexpected production system failure in the middle of the night...
+A summary of the changes is below.  Please see the README file in
+the release tarball for more information.  The README can also be
+read here
 
-It is because we have robust and resilient error handling in the
-filesystem that the system is able to operate correctly in these
-marginal situations. Operating in marginal conditions or as hardware
-is beginning to fail is a necessary to keep production systems
-running until corrective action can be taken by the administrators.
+https://github.com/plougher/squashfs-tools/blob/master/Documentation/4.7/README
 
-> > These transient error types typically only need a write retry after
-> > some time period to resolve, and that's what XFS does by default.
-> > What makes these sorts of errors persistent in the linux block layer
-> > and hence requiring an immediate filesystem shutdown and complete
-> > denial of service to the storage?
-> > 
-> > I ask this seriously, because you are effectively saying the linux
-> > storage stack now doesn't behave the same as the model we've been
-> > using for decades. What has changed, and when did it change?
-> 
-> Hey, you can retry.  You're unlikely to improve the situation though
-> but instead just keep deferring the inevitable shutdown.
+Thanks
 
-Absolutely. That's the whole point - random failures won't repeat,
-and hence when they do occur we avoid a shutdown by retrying them on
-failure. This is -exactly- how robust error handling should work.
+Phillip
 
-However, for IO errors that persist or where other IO errors start
-to creep in, all the default behaviour is trying to do is hold the
-system up in a working state until downtime can be scheduled and the
-broken hardware is replaced. If integrity ends up being compromised
-by a subsequent IO failure, then we will shut the filesystem down at
-that point.
+Summary of changes
+------------------
 
-This is about resilience in the face of errors. Not every error is
-fatal, nor does every error re-occur. There are classes of errors
-known to be transient (ENOSPC), others that are permanent (ENODEV),
-and others that we just don't know (EIO). If we value resiliency
-and robustness, then the filesystem should be able to withstand
-transient and "maybe-transient" IO failures without compromising
-integrity.
+1. Mksquashfs now reads files in parallel from the input directories
 
-Failing to recognise that transient and "maybe-transient" errors can
-generally be handled cleanly and successfully with future write
-retries leads to brittle, fragile systems that fall over at the
-first sign of anything going wrong. Filesystems that are targetted
-at high value production systems and/or running mission critical
-applications needs to have resilient and robust error handling.
+    1.1. This can significantly increase I/O when reading lots of small files,
+         and/or the input media benefits from parallel reading e.g. modern SSD
+         drives, or network filesystems etc.
+    1.2  In cases where speed of I/O is the bottleneck in Mksquashfs, this can
+         make Mksquashfs run significantly faster, in some cases Mksquashfs can
+         be more than ten times faster.
+    1.3. New -small-readers option to specify number of parallel small file
+         reader threads (files less than a block size).  Default 4 threads.
+    1.4. New -block-readers option to specify number of parallel block reader
+         threads (files one block or larger).  Default 4 threads.
+    1.5. New -single-reader option to specify a single reader thread, similar to
+         previous Mksquashfs versions.
 
-> > > Which also leaves me a bit puzzled what the XFS metadata retries are
-> > > actually trying to solve, especially without even having a corresponding
-> > > data I/O version.
-> > 
-> > It's always been for preventing immediate filesystem shutdown when
-> > spurious transient IO errors occur below XFS. Data IO errors don't
-> > cause filesystem shutdowns - errors get propagated to the
-> > application - so there isn't a full system DOS potential for
-> > incorrect classification of data IO errors...
-> 
-> Except as we see in this thread for a fairly common use case (buffered
-> I/O without fsync) they don't.  And I agree with you that this is not
-> how you write applications that care about data integrity - but the
-> entire reset of the system and just about every common utility is
-> written that way.
+2. Rewritten and improved help system (Mksquashfs/Unsquashfs/Sqfstar/Sqfscat)
 
-Yes, I know that. But there are still valid reasons for retrying
-failed async data writeback IO when it triggers a spurious or
-retriable IO error....
+    2.1. Help text now uses the full width of the terminal (rather than being
+         pre-formatted to 80 columns).
+    2.2. The help text is now automatically paged (using pager, less or more).
+    2.3. The tools now print a summary on failure to parse the command line (or
+         encountering other errors that prevent the tool from running), rather
+         than displaying the help text.
+    2.4. The help text can be displayed in full, by section, or by option using
+         regex matching.
+    2.5. New -help-all option to display all help text
+    2.6. New -help-section option to display help for a particular section
+    2.7. New -help-option to display all options matching regex.
+    2.8. New -help-comp option to display compressor options for given
+         compressor.
 
-> And even applications that fsync won't see you fancy error code.  The
-> only thing stored in the address_space for fsync to catch is EIO and
-> ENOSPC.
+3. New options for building reproducible filesystems (Mksquash/Sqfstar)
 
-The filesystem knows exactly what the IO error reported by the block
-layer is before we run folio completions, so we control exactly what
-we want to report as IO compeltion status.
+   3.1 Low level timestamp setting options extended
+      -mkfs-time inode sets the fs creation time to the latest inode timestamp
+      -inode-time inode sets all inode timestamps to the latest inode timestamp
+      -root-time inode sets the root dir timestamp to the latest inode timestamp
 
-Hence the bogosities of error propagation to userspace via the
-mapping is completely irrelevant to this discussion/feature because
-it would be implemented below the layer that squashes the eventual
-IO errno into the address space...
+   3.2 New easier to remember shorthand options
+      -repro builds a reproducible fs image, it is shorthand for -mkfs-time inode
+      -repro-time <time> builds a reproducible fs image, it is shorthand for
+       specifying -mkfs-time <time> and -inode-time <time>.
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+4. Elimination of "fragment block stall" and -(not-)reproducible options
+
+   A technical issue called "the fragment block stall" has been eliminated in
+   this release in a way that generates a reproducible ordering of files in the
+   filesystem image.  This can increase performance by 20% or more, in addition
+   to the parallel reader performance improvements.
+
+   This "fragment block stall" was introduced in release 4.4 (2019) to produce
+   a reproducible ordering of files in the filesystem image, but which led to a
+   reduction in parallelisation and performance.  Due to this reduction, the
+   previous behaviour was retained and enabled using the -not-reproducible option.
+   As the "fragment block stall" has now been removed, the options
+   -not-reproducible and -reproducible now do nothing, but are still recognised
+   for backwards compatibility.
+
+5. Other improvements for Mksquashfs/Sqfstar
+
+    3.1. New -force-file-mode option, which sets all file (non-directory)
+         permissions to the given mode.
+    3.2. New -force-dir-mode option, which sets all directory permissions to
+         the given mode.
+    3.3. -root-mode and above new -force-file-mode/-force-dir-mode options
+         now take a symbolic mode in addition to an octal mode.
+    3.4. New -info-file option, which prints files written to the filesystem to
+         a file rather than stdout.  Allows -info-file to be used in conjunction
+         with the progress bar.
+    3.5. New -pseudo-dir (or -pd) option which supplies a default directory
+         if any directories in a pseudo file definition pathname doesn't exist.
+    3.6. New pseudo file 'h' definition which creates a hard link to a file,
+         and follows symbolic links.
+    3.7. Previously if a directory was missing (or not a directory) in a
+         Pseudo file definition pathname, the pseudo file definition would be
+         ignored.  This has been hardened to a fatal error.
+
+6. Other improvements for Unsquashfs/Sqfscat
+
+    4.1. New -mem option, which sets the amount of memory to be used,
+         K, M and G can be used to specify Kbytes, Mbytes and Gbytes.
+    4.2. New -mem-percent option, which sets the amount of memory to be
+         used as percentage of available physical memory.
+    4.3. Memory specified is limited to 75% of physical memory or less.
+
+7. New environment variable SQFS_CMDLINE (Mksquashfs/Unsquashfs/Sqfstar/Sqfscat)
+
+    If set, this is used as the directory to write the file sqfs_cmdline
+    which contains the command line arguments given to Mksquashfs etc.  Intended
+    to be used to debug scripts/discover what is being passed to Mksquashfs.
 
