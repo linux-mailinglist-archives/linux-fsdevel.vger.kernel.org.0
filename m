@@ -1,191 +1,225 @@
-Return-Path: <linux-fsdevel+bounces-50435-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50437-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE428ACC2F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 11:25:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7B9ACC334
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 11:35:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0DED1887DAC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 09:24:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72D2D1890C36
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 09:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D823281504;
-	Tue,  3 Jun 2025 09:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F30283127;
+	Tue,  3 Jun 2025 09:34:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="Nb5lGzB/"
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j6/+DDdh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jAeEM0pH";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="j6/+DDdh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="jAeEM0pH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78A956B81;
-	Tue,  3 Jun 2025 09:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3E41459F7
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 09:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748942638; cv=none; b=kGg2XvGsvbl/PWOhXB3g58s1yBdD8JvXS0X5Hmp63x1DbPRh27G2Ls5aRytz9d8EmWhZhfHjU/dHECbZ5Fva76LW658Fk2O9Q06Bi0D9anQI+/Paf51ID9HTQhunbykDAyjYJEXK6dXl4Yj/fDF0FY6LpoZqrCM1JYv8Xt3TPag=
+	t=1748943297; cv=none; b=e8XfLwS3nNh/aiUF3y2CP5ZFfxuy4woArkp69+4LxaVIUuHrcTpFsj0rb+pL0qDpLTT4sk5ZxvPOjSiFNTqwlmeSbVznS01sHW2hNMj1Qg+YrAZQ0JJ71sOkKu1ia0sSsG50XDwTcvKrA+kVudINjL96cJD8Et/9CIw7QPPxmBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748942638; c=relaxed/simple;
-	bh=opCIcvtwNLugJw15pDXvfOi1rP7qFvIVwcLbBnJGU+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SEIwEKyAIs00lhajRhhRSu8eyDlC7O7nN0pJtAngzLTc3u8+Sv7zO5pJVsvnArY2Los3cOz30M7oJkRoykL7WsSV0vplFGkPWSPsA5RcDi5xOyZHjaCiZtqDB5rPL+AUEvTePegE/gVFvar5+UvY3AisNA+tjBQPy2VilvkVghA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=Nb5lGzB/; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
-	s=s31663417; t=1748942633; x=1749547433; i=quwenruo.btrfs@gmx.com;
-	bh=Zgn3IPto+hy4/z+Y4Dg4Mn7KSxcYCG9Mrm77XBlS5Pc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Nb5lGzB/xZQpU60MyhqJBnBZExENj3FcGzjeZlOMrSQCOD6YTiHIOLndY6ZMZrb+
-	 LEKnUN32lid78aFRSJ/RcaZOhTLuttFw+XqdlsJSM65n1uxql8ee0tEteoDNceSVD
-	 nkO8/Ds1FGP3mgxopOIxlmzK3S9h0h3wvpQ35nsaMz0CDDxhfPpioQjvRGbazZO2z
-	 yES7iNMU5U/YYK9cNwQRMCOJGIuC19gIhQlIb8mSUujmaUZJL3vhr3UEWT0pD3UWj
-	 6xhWZ/x0T1J+Zz7eQ6y7W4Bp+DuQcKQsg/QC6PiLRkiQW8+z2R448Hx8V4PuO0Vvc
-	 sa0PFwknxnmMPBNksg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.0.229] ([159.196.52.54]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1Ma20q-1uPhGu1WfE-00U4C8; Tue, 03
- Jun 2025 11:23:52 +0200
-Message-ID: <74260737-f153-437f-bf98-1f3944f493d6@gmx.com>
-Date: Tue, 3 Jun 2025 18:53:47 +0930
+	s=arc-20240116; t=1748943297; c=relaxed/simple;
+	bh=FeP0ZWzStuSLB8QsesdqhkoXLvtg3uqqlfxrI9Vff18=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pgACrTlXSB9+psmS9LpC4GwCuTtJCnvWLGTFQkp5V5XX5t8eYNN2ZEUj7N+XRW4FiQQmgVMWQxiHS40RaAduKxHSi0vN+7vqZog4s1Q0Tn+uioSCNHqdVZcm1nKjGGv7mqct5mnhw9P9tHZTy5XMtmYM2peZTeyu947exldCr8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j6/+DDdh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jAeEM0pH; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=j6/+DDdh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=jAeEM0pH; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 048541F390;
+	Tue,  3 Jun 2025 09:34:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1748943294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mV59EQNSJSuuvo19qf9g7XM9cjRFW13O6WSjCs1ZUSE=;
+	b=j6/+DDdhhMpTpujgCA42ACOi5RBRYBeyowid/7l3xVDiYO5gqzJZkA8Xl1NodPgJeWMyY8
+	E09Sng0pbQAPXU1wuk7upnpq1Tmelsl/XsLJtXT5XGlW6DQpCpGifYGnSYlJC6xJUXqrBO
+	KlznBiCvrexpG4u5ndEMTT2E//05sgM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1748943294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mV59EQNSJSuuvo19qf9g7XM9cjRFW13O6WSjCs1ZUSE=;
+	b=jAeEM0pHhxaWXfLB00cqYVqEOXp1W0Vv26Z+WtiJXD3Bxx+qjIsjjy9qNlptLWpklSWqsp
+	MRc2vBUvxvbaBFBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="j6/+DDdh";
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=jAeEM0pH
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1748943294; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mV59EQNSJSuuvo19qf9g7XM9cjRFW13O6WSjCs1ZUSE=;
+	b=j6/+DDdhhMpTpujgCA42ACOi5RBRYBeyowid/7l3xVDiYO5gqzJZkA8Xl1NodPgJeWMyY8
+	E09Sng0pbQAPXU1wuk7upnpq1Tmelsl/XsLJtXT5XGlW6DQpCpGifYGnSYlJC6xJUXqrBO
+	KlznBiCvrexpG4u5ndEMTT2E//05sgM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1748943294;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mV59EQNSJSuuvo19qf9g7XM9cjRFW13O6WSjCs1ZUSE=;
+	b=jAeEM0pHhxaWXfLB00cqYVqEOXp1W0Vv26Z+WtiJXD3Bxx+qjIsjjy9qNlptLWpklSWqsp
+	MRc2vBUvxvbaBFBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E806513A92;
+	Tue,  3 Jun 2025 09:34:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id fZRdOL3BPmiyPgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 03 Jun 2025 09:34:53 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 7F0E7A08DD; Tue,  3 Jun 2025 11:34:53 +0200 (CEST)
+Date: Tue, 3 Jun 2025 11:34:53 +0200
+From: Jan Kara <jack@suse.cz>
+To: Luis Henriques <luis@igalia.com>
+Cc: Christian Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	Jeff Layton <jlayton@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Amir Goldstein <amir73il@gmail.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: Re: [PATCH] fs: don't needlessly acquire f_lock
+Message-ID: <obfuqy5ed5vspgn3skli6aksymrkxdrn4dc2gtohhyql5bcqs2@f5xdzffhxghi>
+References: <20250207-daten-mahlzeit-99d2079864fb@brauner>
+ <87msaqcw4z.fsf@igalia.com>
+ <87frgicf9l.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] btrfs_get_tree_subvol(): switch from fc_mount() to
- vfs_create_mount()
-To: dsterba@suse.cz, Qu Wenruo <wqu@suse.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
- linux-btrfs@vger.kernel.org, Klara Modin <klarasmodin@gmail.com>
-References: <20250505030345.GD2023217@ZenIV> <20250506193405.GS2023217@ZenIV>
- <20250506195826.GU2023217@ZenIV>
- <9a49247a-91dd-4c13-914a-36a5bfc718ba@suse.com>
- <20250603075902.GJ4037@twin.jikos.cz>
-Content-Language: en-US
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1YAUJEP5a
- sQAKCRDCPZHzoSX+qF+mB/9gXu9C3BV0omDZBDWevJHxpWpOwQ8DxZEbk9b9LcrQlWdhFhyn
- xi+l5lRziV9ZGyYXp7N35a9t7GQJndMCFUWYoEa+1NCuxDs6bslfrCaGEGG/+wd6oIPb85xo
- naxnQ+SQtYLUFbU77WkUPaaIU8hH2BAfn9ZSDX9lIxheQE8ZYGGmo4wYpnN7/hSXALD7+oun
- tZljjGNT1o+/B8WVZtw/YZuCuHgZeaFdhcV2jsz7+iGb+LsqzHuznrXqbyUQgQT9kn8ZYFNW
- 7tf+LNxXuwedzRag4fxtR+5GVvJ41Oh/eygp8VqiMAtnFYaSlb9sjia1Mh+m+OBFeuXjgGlG
- VvQFzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCZxF1gQUJEP5a0gAK
- CRDCPZHzoSX+qHGpB/kB8A7M7KGL5qzat+jBRoLwB0Y3Zax0QWuANVdZM3eJDlKJKJ4HKzjo
- B2Pcn4JXL2apSan2uJftaMbNQbwotvabLXkE7cPpnppnBq7iovmBw++/d8zQjLQLWInQ5kNq
- Vmi36kmq8o5c0f97QVjMryHlmSlEZ2Wwc1kURAe4lsRG2dNeAd4CAqmTw0cMIrR6R/Dpt3ma
- +8oGXJOmwWuDFKNV4G2XLKcghqrtcRf2zAGNogg3KulCykHHripG3kPKsb7fYVcSQtlt5R6v
- HZStaZBzw4PcDiaAF3pPDBd+0fIKS6BlpeNRSFG94RYrt84Qw77JWDOAZsyNfEIEE0J6LSR/
-In-Reply-To: <20250603075902.GJ4037@twin.jikos.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:iuLLtxx9P+qReRkYGtWq/xUBawLkhBQL2NEqiMdsYdo9BEV7xPC
- wsWQSUyOY5EmTTS0XKBGAdeR6mCKtJ+oHSSV0HSbttGERtqRSWcb6nk6UnZdAeByabFGU5+
- oHDu0TwUcwIhl3n1xJBtWoXFYHOsb5H4r5cKiIEmebtGDkb3rbReRRlM/vbu9J8ecz5jt6c
- 6DbBZluJ97XDDm/a9PV6A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87frgicf9l.fsf@igalia.com>
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	MISSING_XM_UA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[kernel.org,vger.kernel.org,suse.cz,zeniv.linux.org.uk,gmail.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Spam-Level: 
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:EKNTBDq63Ss=;2QKFbVNyNY/OzLJoO+JTzCj/dfB
- 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
- I9bPMdX7BmkJZyPl
+X-Rspamd-Queue-Id: 048541F390
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Score: -4.01
 
+On Mon 02-06-25 16:52:22, Luis Henriques wrote:
+> On Mon, Jun 02 2025, Luis Henriques wrote:
+> > Hi Christian,
+> >
+> > On Fri, Feb 07 2025, Christian Brauner wrote:
+> >
+> >> Before 2011 there was no meaningful synchronization between
+> >> read/readdir/write/seek. Only in commit
+> >> ef3d0fd27e90 ("vfs: do (nearly) lockless generic_file_llseek")
+> >> synchronization was added for SEEK_CUR by taking f_lock around
+> >> vfs_setpos().
+> >>
+> >> Then in 2014 full synchronization between read/readdir/write/seek was
+> >> added in commit 9c225f2655e3 ("vfs: atomic f_pos accesses as per POSIX")
+> >> by introducing f_pos_lock for regular files with FMODE_ATOMIC_POS and
+> >> for directories. At that point taking f_lock became unnecessary for such
+> >> files.
+> >>
+> >> So only acquire f_lock for SEEK_CUR if this isn't a file that would have
+> >> acquired f_pos_lock if necessary.
+> >
+> > I'm seeing the splat below with current master.  It's unlikely to be
+> > related with this patch, but with recent overlayfs changes.  I'm just
+> > dropping it here before looking, as maybe it has already been reported.
+> 
+> OK, just to confirm that it looks like this is indeed due to this patch.
+> I can reproduce it easily, and I'm not sure why I haven't seen it before.
 
+Thanks for report! Curious. This is:
 
-=E5=9C=A8 2025/6/3 17:29, David Sterba =E5=86=99=E9=81=93:
-> On Thu, May 08, 2025 at 06:59:04PM +0930, Qu Wenruo wrote:
->>
->>
->> =E5=9C=A8 2025/5/7 05:28, Al Viro =E5=86=99=E9=81=93:
->>> [Aaarghh...]
->>> it's simpler to do btrfs_reconfigure_for_mount() right after vfs_get_t=
-ree() -
->>> no need to mess with ->s_umount.
->>>      =20
->>> [fix for braino(s) folded in - kudos to Klara Modin <klarasmodin@gmail=
-.com>]
->>> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
->>
->> Reviewed-by: Qu Wenruo <wqu@suse.com>
->> Test-by: Qu Wenruo <wqu@suse.com>
->>
->> Although the commit message can be enhanced a little, I can handle it a=
-t
->> merge time, no need to re-send.
->=20
-> If you're going to add the patch to for-next, please fix the subject
-> line and update the changelog. Thanks.
->=20
+        VFS_WARN_ON_ONCE((file_count(file) > 1) &&
+                         !mutex_is_locked(&file->f_pos_lock));
 
-I have merged this one to for-next just minutes ago.
+Based on the fact this is ld(1) I expect this is a regular file.
+Christian, cannot it happen that we race with dup2() so file_count is
+increased after we've checked it in fdget_pos() and before we get to this
+assert?
 
-However the version I pushed doesn't only have its commit=20
-message/subject modified, but also modified its error handling, to align=
-=20
-with our error-first behavior.
-(Which is much easier to read compared to the one in the patch)
-
-So I have sent the updated version to the mail list just for reference.
-
-Thanks,
-Qu
+								Honza
+> > [  133.133745] ------------[ cut here ]------------
+> > [  133.133855] WARNING: CPU: 6 PID: 246 at fs/file.c:1201 file_seek_cur_needs_f_lock+0x4a/0x60
+> > [  133.133940] Modules linked in: virtiofs fuse
+> > [  133.134009] CPU: 6 UID: 1000 PID: 246 Comm: ld Not tainted 6.15.0+ #124 PREEMPT(full) 
+> > [  133.134110] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> > [  133.134235] RIP: 0010:file_seek_cur_needs_f_lock+0x4a/0x60
+> > [  133.134286] Code: 00 48 ba fe ff ff ff ff ff ff bf 48 83 e8 01 48 39 c2 73 06 b8 01 00 00 00 c3 48 81 c7 90 00 00 00 e8 da 0e db ff 84 c0 75 ea <0f> 0b b8 01 00 00 00 c3 31 c0 c3 66 66 2e 0f 1f 84 00 00 00 00 00
+> > [  133.134471] RSP: 0018:ffffc90000e67ea0 EFLAGS: 00010246
+> > [  133.134526] RAX: 0000000000000000 RBX: fffffffffffffc01 RCX: 7fffffffffffffff
+> > [  133.134683] RDX: bffffffffffffffe RSI: fffffffffffffc01 RDI: ffff888101bd1e90
+> > [  133.135430] RBP: ffff888101bd1e00 R08: 00000000002a3988 R09: 0000000000000000
+> > [  133.136172] R10: ffffc90000e67ed0 R11: 0000000000000000 R12: 7fffffffffffffff
+> > [  133.136351] R13: ffff888101bd1e00 R14: ffff888105d823c0 R15: 0000000000000001
+> > [  133.136433] FS:  00007fd7880d2b28(0000) GS:ffff8884ad411000(0000) knlGS:0000000000000000
+> > [  133.136516] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [  133.136586] CR2: 0000559b3af3a520 CR3: 0000000103cb1000 CR4: 0000000000750eb0
+> > [  133.136667] PKRU: 55555554
+> > [  133.136694] Call Trace:
+> > [  133.136720]  <TASK>
+> > [  133.136747]  generic_file_llseek_size+0x93/0x120
+> > [  133.136802]  ovl_llseek+0x86/0xf0
+> > [  133.136844]  ksys_lseek+0x39/0x90
+> > [  133.136884]  do_syscall_64+0x73/0x2c0
+> > [  133.136932]  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> > [  133.136994] RIP: 0033:0x7fd788098262
+> > [  133.137034] Code: 48 63 d2 48 63 ff 4d 63 c0 b8 09 01 00 00 0f 05 48 89 c7 e8 8a 80 fd ff 48 83 c4 08 c3 48 63 ff 48 63 d2 b8 08 00 00 00 0f 05 <48> 89 c7 e9 70 80 fd ff 8d 47 27 53 89 fb 83 f8 4e 76 27 b8 ec ff
+> > [  133.137223] RSP: 002b:00007fffffaf82c8 EFLAGS: 00000283 ORIG_RAX: 0000000000000008
+> > [  133.137302] RAX: ffffffffffffffda RBX: 00007fd787ba1010 RCX: 00007fd788098262
+> > [  133.137385] RDX: 0000000000000001 RSI: fffffffffffffc01 RDI: 000000000000000f
+> > [  133.137465] RBP: 0000000000000000 R08: 0000000000000064 R09: 00007fd787c3c6a0
+> > [  133.137545] R10: 000000000000000e R11: 0000000000000283 R12: 00007fffffafa694
+> > [  133.137625] R13: 0000000000000039 R14: 0000000000000038 R15: 00007fffffafaa79
+> > [  133.137708]  </TASK>
+> > [  133.137736] irq event stamp: 1034649
+> > [  133.137776] hardirqs last  enabled at (1034657): [<ffffffff8133c642>] __up_console_sem+0x52/0x60
+> > [  133.137872] hardirqs last disabled at (1034664): [<ffffffff8133c627>] __up_console_sem+0x37/0x60
+> > [  133.137966] softirqs last  enabled at (1012640): [<ffffffff812c4884>] irq_exit_rcu+0x74/0x110
+> > [  133.138064] softirqs last disabled at (1012633): [<ffffffff812c4884>] irq_exit_rcu+0x74/0x110
+> > [  133.138161] ---[ end trace 0000000000000000 ]---
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
