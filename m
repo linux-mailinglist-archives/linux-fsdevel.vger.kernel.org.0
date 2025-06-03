@@ -1,99 +1,86 @@
-Return-Path: <linux-fsdevel+bounces-50496-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50497-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425BFACC91A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 16:28:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 552C0ACC931
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 16:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E021918861EB
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:29:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F18DE3A550C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:35:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A15DF239E65;
-	Tue,  3 Jun 2025 14:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF467238C04;
+	Tue,  3 Jun 2025 14:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CafIKnhM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mR8/ZzYv"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29043E47B;
-	Tue,  3 Jun 2025 14:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37FFC1DB366;
+	Tue,  3 Jun 2025 14:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748960918; cv=none; b=U7gLhDwBQ0H+Dv0jnM8ko5tor1x2ObIkYoNA7WoEHE59EPfyLX1iHT0e78ZM82D1WtH8VA7eaRgikkL4hvqxudBoYXlfdJFJ/9zrhy2rGnDTTQjN9gQkMQAId9hU8UhrCvRSsconIX8P4xbXdZlP0DlOw/kPZzKZkTjirKuj2z0=
+	t=1748961324; cv=none; b=m+vquiKtwv+o8ve4L5mb6W/vdhSMlUuutrEyTDZonW/q1DGib4LQQYv9cSkCxMXSWOZq3Krp+UzXhN1maA0uxN5IDnJqopEK5GWtyV2ZAvYh2F+VvvmAWgUPUssgkfrEkOBX1Ai9oxIHVh/pL2WBLehFCpcEiGZeTfpXt4c4Ezg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748960918; c=relaxed/simple;
-	bh=m5XIq5RIlUaWirh4C/5WCxMUv5LGKm0wzhHqzU3F/rw=;
+	s=arc-20240116; t=1748961324; c=relaxed/simple;
+	bh=WvbV4MLj2hDHIwTfK5G9Z90cBJ9vXGQeg4nqcgvJL/k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sYWM8XTLimuO3IbaQtzrsO4+1cF1+yX88Dwn4HQqpSdnDdTUAOxWnIhidJKn3ym1U73qYNDBjeUMEjORxa5Sd0hfbsmm13gCU6BtFoDOtYivbAnG4DzyFx84IzapxW9NKIEt0Rm5wzfCKzD0X/cpTlPSYlgu58eV0yjyU4SvDxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CafIKnhM; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=NWF/m+whQ9NAjVENjezimZjEsDuS6u9BY+WJdI7HJ7o=; b=CafIKnhMe1WPVgL4WKM41su/Ak
-	E7StKkX2E1DEcMgLjvKFH/jd78ALjQwMvnEcq2P20jUG97qs78yniKMQ/v65O78Dbtsj3E/JIbAwD
-	qBvI+1Xo5mol3tHN8hJPdDkjYQ+NcVqva+GiyMYfbsWSSdvQITjgXQ+NONKG9yyyDskWO1zV6WYaW
-	3CK8l67Bw+lyoryEGXw6MBrV6UHzwr5BYek6FMPiOMWUHY9velz2syJfrB59U3Sg8aSi45YYFtCit
-	8SMyRKwdhXhKYejhw9B7shM+qiUa65uktVt+/kqQ0+IPf426MgY99owDskiPpJKRu1CeRXvxodpuD
-	Sjytdo/Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMSct-0000000BAHP-1w1p;
-	Tue, 03 Jun 2025 14:28:27 +0000
-Date: Tue, 3 Jun 2025 07:28:27 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>
-Cc: Christoph Hellwig <hch@infradead.org>, wangtao <tao.wangtao@honor.com>,
-	sumit.semwal@linaro.org, kraxel@redhat.com,
-	vivek.kasireddy@intel.com, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, hughd@google.com, akpm@linux-foundation.org,
-	amir73il@gmail.com, benjamin.gaignard@collabora.com,
-	Brian.Starkey@arm.com, jstultz@google.com, tjmercier@google.com,
-	jack@suse.cz, baolin.wang@linux.alibaba.com,
-	linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	bintian.wang@honor.com, yipengxiang@honor.com, liulu.liu@honor.com,
-	feng.han@honor.com
-Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
-Message-ID: <aD8Gi9ShWDEYqWjB@infradead.org>
-References: <20250603095245.17478-1-tao.wangtao@honor.com>
- <aD7x_b0hVyvZDUsl@infradead.org>
- <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
- <aD72alIxu718uri4@infradead.org>
- <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Li9I9xlXYWCQ9OQjJhZGxRMkXUBrTHboulNMvi5vpgFxDa7z85O0XsFbTzBfNkGVuklCa4xa2Ri0NstB/cez3wLR+kv/Yai0UJLlGjduMW7q87tQjB1fiNAxJno0sslxVvCpcx4ztIW4j4Fm4mP0Vce+h4fyRvk5vRVhBYYJ1EE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mR8/ZzYv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1FA1C4CEED;
+	Tue,  3 Jun 2025 14:35:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1748961323;
+	bh=WvbV4MLj2hDHIwTfK5G9Z90cBJ9vXGQeg4nqcgvJL/k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mR8/ZzYvRyec0atV+PrZd+TNHAHQ3rwW7Hq3OpV72rZLqCqqT5ydwbiNcEenBShn5
+	 SVVg9eZX7LZIounPtL39Sk3sCILZ2qLTBpdSwmGP4gPMuonaXOAy32A5kRKmxSIJrK
+	 10dX2wCrYTdKEBAz22g0VFGVOPfBV9VfCgNxELdeazJGlxNIxXthzEqFsQZPA6raoh
+	 m34SPRxiJasUrn4ooF+ynljOhNFlnXCzu+ofVjYj8zX0XJnwbFS5Hx734u+OgXQQsQ
+	 +uX6jSpWiwysxhTkknnjs1hd1jGNpUwWe/xB/BZbnjvnUaK8VxUChREzh8/iJzflYJ
+	 uUMBhEka9IR6g==
+Date: Tue, 3 Jun 2025 07:35:23 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Yafang Shao <laoar.shao@gmail.com>,
+	Christian Brauner <brauner@kernel.org>, cem@kernel.org,
+	linux-xfs@vger.kernel.org,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
+ data corruption
+Message-ID: <20250603143523.GF8303@frogsfrogsfrogs>
+References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
+ <20250529042550.GB8328@frogsfrogsfrogs>
+ <aD03ca6bpbbvUb5X@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <aD03ca6bpbbvUb5X@infradead.org>
 
-On Tue, Jun 03, 2025 at 04:18:22PM +0200, Christian König wrote:
-> > Does it matter compared to the I/O in this case?
+On Sun, Jun 01, 2025 at 10:32:33PM -0700, Christoph Hellwig wrote:
+> On Wed, May 28, 2025 at 09:25:50PM -0700, Darrick J. Wong wrote:
+> > Option C: report all those write errors (direct and buffered) to a
+> > daemon and let it figure out what it wants to do:
 > 
-> It unfortunately does, see the numbers on patch 3 and 4.
+> What value does the daemon add to the decision chain?
 
-That's kinda weird.  Why does the page table lookup tage so much
-time compared to normal I/O?
+The decision chain itself is unchanged -- the events are added to a
+queue (if kmalloc doesn't fail) for later distribution to userspace...
 
-> My question is rather if it's ok to call f_op->write_iter() and 
-> f_op->read_iter() with pages allocated by alloc_pages(), e.g.
-> where drivers potentially ignore the page count and just re-use pages
-> as they like?
+> Some form of out of band error reporting is good and extremely useful,
+> but having it in the critical error handling path is not.
 
-read_iter and write_iter with ITER_BVEC just use the pages as source
-and destination of the I/O.  They must not touch the refcounts or
-do anything fancy with them.  Various places in the kernel rely on
-that.
+...and the error handling path moves on without waiting to see what
+happens to the queued events.  Once the daemon picks up the event it
+can decide what to do with it, but that's totally asynchronous from the
+IO path.
 
+--D
 
