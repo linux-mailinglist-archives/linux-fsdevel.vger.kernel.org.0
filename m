@@ -1,65 +1,72 @@
-Return-Path: <linux-fsdevel+bounces-50454-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50455-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907A2ACC6F8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:48:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC8BACC700
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:49:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 049CC188DE88
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 12:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B72383A339A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 12:49:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C936231A32;
-	Tue,  3 Jun 2025 12:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF31722DA08;
+	Tue,  3 Jun 2025 12:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="L3Tby4ME"
+	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="GhiFs+Oa"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-42ab.mail.infomaniak.ch (smtp-42ab.mail.infomaniak.ch [84.16.66.171])
+Received: from smtp-190f.mail.infomaniak.ch (smtp-190f.mail.infomaniak.ch [185.125.25.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A2622F389
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 12:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C271572618
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 12:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.25.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748954870; cv=none; b=hjrDrZluGech62lDUYuVESMHJkO6TV3DdScGtdxnyH4TrspafEhdEbqauZDP01knbGF+7tcnrrxFh4xo/3/wOjm2GQoFdZopoJjFWIxHujZ1JWIRuVyOQzAevWsvd5TDRog1gNPBrdQmtfhBH2Tmr/SLHy+ld263lW4btVPkAOc=
+	t=1748954955; cv=none; b=Ci2O3O76uZrfWVCflvV+8JkH+lBZDuiIEx/iDg90Dqt9ZmyloRAxex3bLfvUhzUIOTfsiEitfNK+GSccDt9JDVaul991yXowKewrSp1eMdtnHQCv14eIYVBBrqSFqEUnhvLhWQ7RcTMpvH+GfU9Gh0olqbrFXbyTE6Cl7sSEThU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748954870; c=relaxed/simple;
-	bh=66SovfWGN9Zxx8wjldJ7efmNnw7GrmCwtfjfNwHmRMQ=;
+	s=arc-20240116; t=1748954955; c=relaxed/simple;
+	bh=YpSUlje0QFo8fAg0UbMHlFaUYLWtmOn9kosehVUWl2c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kGLjSNOcVcmr/PKHwbkJTbKoJlkE7B91I2Q4I09PVImRP0CdEsigkLfumn/cH/5DkvmlZh1BIxIAN88U2jmxVp41QFWtKGsSy8L4iX5RtXH79Y992gCP5zYjcqmW8AZ3vW/PqB4+7ydnOIdPSmiFV4Nn8YvPZdXFt1rOW/Rfkxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=L3Tby4ME; arc=none smtp.client-ip=84.16.66.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=iuzNScUuCFzjQrgoaKRC9Fdmde3gu4P5ZyS3eEoCira1CTNL7snsEAlKe3PY0wTpekkW69V5kYZVrTZsorBJiEq4F16tvmyRez2Q08qPWrzgvdsp7l10G9BzD38wgDYEoh6BK3j7FBt4oi8Q7Ot1vzOUMGCal5ZGTE8ORTE6Ydg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=GhiFs+Oa; arc=none smtp.client-ip=185.125.25.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
 Received: from smtp-4-0001.mail.infomaniak.ch (unknown [IPv6:2001:1600:7:10::a6c])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bBVqH4VDZz18W6;
-	Tue,  3 Jun 2025 14:47:39 +0200 (CEST)
+	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4bBVs24Wlqz19Nm;
+	Tue,  3 Jun 2025 14:49:10 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1748954859;
-	bh=6bFgdneUrLdUXI8k0T/OnlBfpWZz00dJVHS7SYqxRSc=;
+	s=20191114; t=1748954950;
+	bh=f3sEmdCXf265fZdW3agrYCmOKfWp1F1brT5D1vfWqXM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L3Tby4ME/IxgnXg/9Y5+/rVyeBpxij3Ym52HAHLkdrdpA4UF3pHH0xsvhE7RMkkch
-	 IcWWuxYqynt1kVcozhgbuO23z/axTe2VhkuQUsmTO2jLfIolvqcTj6gP8mIq8kNXwg
-	 GpGrxyCt/XXaw6oZGAKp7h5i4kTouPikCUyrA2n4=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bBVqG2vMPzVjy;
-	Tue,  3 Jun 2025 14:47:38 +0200 (CEST)
-Date: Tue, 3 Jun 2025 14:47:37 +0200
+	b=GhiFs+OagmKnjzrO37+j/bRCJRvL9X3nchSdSAL8QZU93u7utA+y7M8Amp3tayn7Y
+	 IO9csEQOJKBi0mYDUlEtitpv2pCrsfPbqVoQ3xYe9TAcL3iY//3waB8c/VPB78CrOt
+	 4joM5dCTU2faTdJvacgFSKLJK8cYRtNhLvtQiqA4=
+Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4bBVs15hNzzDkc;
+	Tue,  3 Jun 2025 14:49:09 +0200 (CEST)
+Date: Tue, 3 Jun 2025 14:49:09 +0200
 From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: Song Liu <song@kernel.org>
-Cc: Tingmao Wang <m@maowtm.org>, linux-fsdevel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, 
-	gnoack@google.com
-Subject: Re: [PATCH bpf-next 2/4] landlock: Use path_parent()
-Message-ID: <20250603.uavoo2aBucoh@digikod.net>
+To: Jan Kara <jack@suse.cz>
+Cc: Song Liu <song@kernel.org>, 
+	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, bpf <bpf@vger.kernel.org>, 
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	LSM List <linux-security-module@vger.kernel.org>, Kernel Team <kernel-team@meta.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Eduard <eddyz87@gmail.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Christian Brauner <brauner@kernel.org>, KP Singh <kpsingh@kernel.org>, 
+	Matt Bobrowski <mattbobrowski@google.com>, Amir Goldstein <amir73il@gmail.com>, repnop@google.com, 
+	Jeff Layton <jlayton@kernel.org>, Josef Bacik <josef@toxicpanda.com>, 
+	=?utf-8?Q?G=C3=BCnther?= Noack <gnoack@google.com>, Jann Horn <jannh@google.com>
+Subject: Re: [PATCH bpf-next 3/4] bpf: Introduce path iterator
+Message-ID: <20250603.be1ahteePh8z@digikod.net>
 References: <20250528222623.1373000-1-song@kernel.org>
- <20250528222623.1373000-3-song@kernel.org>
- <027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org>
- <CAPhsuW5BhAJ2md8EgVgKM4yiAgafnhxT9aj_a4HQkr=+=vug-g@mail.gmail.com>
- <CAPhsuW6W+HR8BOVTCbM+AVYCEzuoSR21RWUpaEE0xvOpv8Zbog@mail.gmail.com>
+ <20250528222623.1373000-4-song@kernel.org>
+ <20250528223724.GE2023217@ZenIV>
+ <yti2dilasy7b3tu6iin5pugkn6oevdswrwoy6gorudb7x2cqhh@nqb3gcyxg4by>
+ <CAPhsuW4tg+bXU41fhAaS0n74d_a_KCFGvy_vkQOj7v4VLie2wg@mail.gmail.com>
+ <CAADnVQ+UGsvfAM8-E8Ft3neFkz4+TjE=rPbP1sw1m5_4H9BPNg@mail.gmail.com>
+ <CAPhsuW78L8WUkKz8iJ1whrZ2gLJR+7Kh59eFrSXvrxP0DwMGig@mail.gmail.com>
+ <20250530.oh5pahH9Nui9@digikod.net>
+ <vumjuw5ha6jtxtadsr5vwjtuneeqfg3vpydciczsn75qdg2ekv@464a4dxtxx27>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -69,49 +76,78 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPhsuW6W+HR8BOVTCbM+AVYCEzuoSR21RWUpaEE0xvOpv8Zbog@mail.gmail.com>
+In-Reply-To: <vumjuw5ha6jtxtadsr5vwjtuneeqfg3vpydciczsn75qdg2ekv@464a4dxtxx27>
 X-Infomaniak-Routing: alpha
 
-On Mon, Jun 02, 2025 at 05:10:21PM -0700, Song Liu wrote:
-> On Mon, Jun 2, 2025 at 6:36 AM Song Liu <song@kernel.org> wrote:
-> >
-> > On Sat, May 31, 2025 at 6:51 AM Tingmao Wang <m@maowtm.org> wrote:
-> > [...]
-> > > I'm not sure if the original behavior was intentional, but since this
-> > > technically counts as a functional changes, just pointing this out.
-> >
-> > Thanks for pointing it out! I think it is possible to keep current
-> > behavior. Or we can change the behavior and state that clearly
-> > in the commit log. Mickaël, WDYT?
-> >
-> > >
-> > > Also I'm slightly worried about the performance overhead of doing
-> > > path_connected for every hop in the iteration (but ultimately it's
-> > > Mickaël's call).  At least for Landlock, I think if we want to block all
-> >
-> > Maybe we need a flag to path_parent (or path_walk_parent) so
-> > that we only check for path_connected when necessary.
+On Tue, Jun 03, 2025 at 11:46:22AM +0200, Jan Kara wrote:
+> On Fri 30-05-25 16:20:39, Mickaël Salaün wrote:
+> > On Thu, May 29, 2025 at 10:05:59AM -0700, Song Liu wrote:
+> > > On Thu, May 29, 2025 at 9:57 AM Alexei Starovoitov
+> > > <alexei.starovoitov@gmail.com> wrote:
+> > > [...]
+> > > > >
+> > > > > How about we describe this as:
+> > > > >
+> > > > > Introduce a path iterator, which safely (no crash) walks a struct path.
+> > > > > Without malicious parallel modifications, the walk is guaranteed to
+> > > > > terminate. The sequence of dentries maybe surprising in presence
+> > > > > of parallel directory or mount tree modifications and the iteration may
+> > > > > not ever finish in face of parallel malicious directory tree manipulations.
+> > > >
+> > > > Hold on. If it's really the case then is the landlock susceptible
+> > > > to this type of attack already ?
+> > > > landlock may infinitely loop in the kernel ?
+> > > 
+> > > I think this only happens if the attacker can modify the mount or
+> > > directory tree as fast as the walk, which is probably impossible
+> > > in reality.
+> > 
+> > Yes, so this is not an infinite loop but an infinite race between the
+> > kernel and a very fast malicious user space process with an infinite
+> > number of available nested writable directories, that would also require
+> > a filesystem (and a kernel) supporting infinite pathname length.
 > 
-> More thoughts on path_connected(). I think it makes sense for
-> path_parent (or path_walk_parent) to continue walking
-> with path_connected() == false. This is because for most security
-> use cases, it makes sense for umounted bind mount to fall back
-> to the permissions of the original mount OTOH, it also makes sense
-> for follow_dotdot to reject this access at path lookup time. If the
-> user of path_walk_parent decided to stop walking at disconnected
-> path, another check can be added at the caller side.
+> Well, you definitely don't need infinite pathname length. Example:
+> 
+> Have a dir hierarchy like:
+> 
+>   A
+>  / \
+> B   C
+> |
+> D
+> 
+> Start iterating from A/B/D, you climb up to A/B. In parallel atacker does:
+> 
+> mv A/B/ A/C/; mkdir A/B
+> 
+> Now by following parent you get to A/C. In parallel attaker does:
+> 
+> mv A/C/ A/B/; mkdir A/C
+> 
+> And now you are essentially where you've started so this can repeat
+> forever.
 
-I agree.
+Yes, this is the scenario I had in mind talking about "infinite race"
+(instead of infinite loop).  For this to work it will require the
+filesystem to support an infinite number of nested directories, but I'm
+not sure which FS could be eligible.
+
+Anyway, what would would be the threat model for this infinite race?
 
 > 
-> If there are no objections, I will remove the path_connected check
-> from path_walk_parent().
+> As others wrote this particular timing might be hard enough to hit for it
+> to not be a practical attack but I would not bet much on somebody not being
+> able to invent some variant that works, in particular with BPF iterator.
 
-Sounds good.  The documentation should explain this rationale and
-highlight the differences with follow_dotdot().
+There might exist corner cases that could be an issue but would the
+impact be different than with other kinds of path walk?
+
+What could we do to avoid or limit such issue?
 
 > 
-> Thanks,
-> Song
-> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
