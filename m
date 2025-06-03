@@ -1,160 +1,177 @@
-Return-Path: <linux-fsdevel+bounces-50449-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5399CACC4D7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:02:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387A0ACC78A
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:19:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDAAC3A53E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 11:02:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B6718944F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FDA22DA1B;
-	Tue,  3 Jun 2025 11:02:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFD722FE02;
+	Tue,  3 Jun 2025 13:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b="DZKV+ntn"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WBSQ6lK9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28C522CBFE
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 11:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBF220103A
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 13:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748948543; cv=none; b=gN4Mkjw/cRWbiZa2FxE0EueSC6WChMfHsZ5bzwT0RQ1/K5/xi+K4UOeTfPycrcc2ORUU6xXFk7NDZqgVdH/aDGoDezxO89A8yqejr2Udd15rfNQf7KNE2fJZZUjQ3amNBPfeMMTsLfZfKxq2b1TRQXvBrMQUBAYnC2E7XpAbIxU=
+	t=1748956745; cv=none; b=rxpFw0qsel1YJU/mqoEE8Fq8JOdKr3MaqkI3+zUhUHBrKOQeLvKHxAwHj/VNnRfcHrhI7vx/w+GG0/SYxxh2DTcrbz9ivha7zORjnYar/64HocgwJvXfgdW7n3KToc+8var/GUgrnyUrNo3fyR30/XOuLf7bZNQhW8SPbZqY2Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748948543; c=relaxed/simple;
-	bh=4OwhPU8PmZXLIES8OlaL1HaQcml5eEwod58uyNHAxfA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=hNjequ0Vpx2TgtIjU5OTqRYLh5mezRfNdFchDk6XibpI0CY3ZHyJ+BMQnOAxdgLwOQIvp/BuNraY0AK1oEKZF3Sb7sQ2otDAJ0snyFNjKr/kk3Y6fC9DS3n1/W3A+bqQOsN4g1m8clTRUcnDYJAZDJLo4BmLCG9tjLpteN3do84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com; spf=pass smtp.mailfrom=omnibond.com; dkim=pass (2048-bit key) header.d=omnibond-com.20230601.gappssmtp.com header.i=@omnibond-com.20230601.gappssmtp.com header.b=DZKV+ntn; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=omnibond.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=omnibond.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-23228b9d684so57500485ad.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jun 2025 04:02:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20230601.gappssmtp.com; s=20230601; t=1748948540; x=1749553340; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0AL/tnRY5FxE2mxqlmfauIyQ9pNc6F6OIql6rQ6Wujw=;
-        b=DZKV+ntnxpQhJKuXGv8Q0x12mgWe9SN6VJg+r3Kr+iknVPf8FDddtbVqvcAE4YWg57
-         yqeAKjxSpU5dfUJn4ZVU9MxYe41otOI0xNZ69s+FNL6JcQlqr9U2Ce7uA/XqTv9wbV+W
-         M62zbbZhkvjShrbFwqPUSoY5iZqqSK9yg14uhdvFiSruXg2qzcR6uTXn7EccpJrO3K9n
-         0rqHTEVGKx8XLYVy9houA9aD4fVybLTbqNohxvd3kEvgv4fDePSfUMRFBjtgF2wqcNGJ
-         kDVmIRr9TGBZP+g2/Ws0bRZivFQ/tEj7FhM1WEI5MKSuudVTbx87GE4Ujsy2XtqXa77N
-         GzWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1748948540; x=1749553340;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0AL/tnRY5FxE2mxqlmfauIyQ9pNc6F6OIql6rQ6Wujw=;
-        b=EKlS0pnmfG8Gum4bN4ZwcaE10tspsseIw4a8LSpEVQ0gpfiZpnSeAn8xK/jJhDUVln
-         6r+WQpQW2roMtnnIAo78JOjlwmPAZYEg7yUl95qZeG8C7eqjT351KktmSK7gVjBPE8hp
-         9HE0av40ics0WuEQfydhddYk+TXYDG07hemGPJT473zVo2E4SiVX/MSF53PPkY+GU3+U
-         xUAgX5sNVqmfowyjc8e+vwebiYP2FEfOqa8aA4VXpLHEGew1+ZnbNrgbgFNA4CxK/Xt4
-         CBtgNI16pOJLmgTL4IN9FCI+P4ff8zjLTZV3NAzjbu2F1kQsHJbk7xjh1pxFbs5aYHw7
-         I6eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVw6/XaGi7Q9YzYXsivbnl29ovow6EWIyxnoe1VtMItXTlua9CcTCkmYHECuAsguTcH/gx7MHWIBVaFERBf@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd4tZvXDssOvt0IucAPzn3bVzhz1YQZoZdipMXUKixc3AElXRH
-	wdCwk8wA4yrezE2VvTGxCVMCcpaOCcZNr2uK4bvjgfulKZ5JTJ0zokeBJNl7v7N8mCHo8DPRYNm
-	pLhqXyo1NfTRrkM/+P2jP33yqDXN6mU1QE0CIjKEC
-X-Gm-Gg: ASbGncvCNSO0VteJDEFACBHKbt0ciM+G2UDOYJOW5xf1RbBQlZP4ITKBPCBrm1BpCjU
-	fIbdheLZei1jOhXhxTsw0+YjPkPJ6Vixb876AQ/BrXLekGSr91kVRmtzYZzIon/E5khioV58hse
-	5njP8TkEbsxQnIy0K/giV1na3WyqsLVHmwwGBkjMGZDI+mrQOGlk6nbys=
-X-Google-Smtp-Source: AGHT+IFv48iQt+0TG0Ext/2NlUi37NuSKvD/R7pezp3NKQrIfp1KKJSFDaq52dBcBMpfcxxggrjCARk/0B5m0qST8Gk=
-X-Received: by 2002:a17:90b:1844:b0:311:a314:c2cf with SMTP id
- 98e67ed59e1d1-31250451032mr22158405a91.30.1748948540179; Tue, 03 Jun 2025
- 04:02:20 -0700 (PDT)
+	s=arc-20240116; t=1748956745; c=relaxed/simple;
+	bh=U6ppXNYUZiUNW8rzaToCHZVTK/Lsx7lg99NAwR5IA/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=NrMONsJ/kyJX1D3rzcG1/B27IzkTLoArUJaQYxHmZIqo+VG4AHYn1S8MTXDMejgP9SeVKPUgRA2Bv6meeidEcB6XXOHCt/e1/Zams4fGFcekUifonvyiOUD81u6zF0LOpzlmF6n4DaZ2Cw9QJMXqTVK3gnjTS1aVwjtK5qLjwV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WBSQ6lK9; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250603131900epoutp0248842353bb864b69144bbf453db973ca~FiuOvIj0O0121801218epoutp027
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 13:19:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250603131900epoutp0248842353bb864b69144bbf453db973ca~FiuOvIj0O0121801218epoutp027
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1748956740;
+	bh=lhg+yoxzmSUI95r9m4I7c09Wc8JZvBjC2Fu14XUQZiQ=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=WBSQ6lK9EWDgjnVk2UCtHoWdiBqZlqtb8XsrOvFf6dvZb1mPriE1FWBFdCTIU+Omt
+	 sfXwfjHouTr1qc88PlriEG7dT8fdI458jv1zxM7KNQWgvhbWmx/vMIisreunoFO5cx
+	 LXs0VIUkGSuE72lyDrDiyTlCYGseOg1a61E2t5IQ=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250603131859epcas5p3adb125b08bbc9f901dde4353e77a8e0a~FiuNydMNP1272412724epcas5p3Q;
+	Tue,  3 Jun 2025 13:18:59 +0000 (GMT)
+Received: from epcas5p3.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bBWWQ3Z6rz6B9m9; Tue,  3 Jun
+	2025 13:18:58 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250603091626epcas5p3c6680e3a112b654ee64a2a45ee05c29c~Ffab6u3oY3154931549epcas5p3V;
+	Tue,  3 Jun 2025 09:16:26 +0000 (GMT)
+Received: from [107.122.10.194] (unknown [107.122.10.194]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250603091621epsmtip1b17ae68149000f4e610433391a5ab9c2~FfaXdde6I1152711527epsmtip1N;
+	Tue,  3 Jun 2025 09:16:21 +0000 (GMT)
+Message-ID: <c029d791-20ca-4f2e-926d-91856ba9d515@samsung.com>
+Date: Tue, 3 Jun 2025 14:46:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOg9mSTuYsfCEi458Nt-X2==JOe9doLnzhoHEdqr9g_enSZLiQ@mail.gmail.com>
- <2025060303-handrail-prologue-3b3b@gregkh>
-In-Reply-To: <2025060303-handrail-prologue-3b3b@gregkh>
-From: Mike Marshall <hubcap@omnibond.com>
-Date: Tue, 3 Jun 2025 07:02:09 -0400
-X-Gm-Features: AX0GCFuY6CgHp3kmnmiC4OoErCj0B4g2qgzMpXyrLEtrmNUVyIDyn3oa-hBfL5I
-Message-ID: <CAOg9mSS3NAxisK8b7mTkpW88btaQgAvW2umh5y6vhjbh6kVawQ@mail.gmail.com>
-Subject: Re: important orangefs merge conflict request...
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mike Marshall <hubcap@omnibond.com>, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/13] Parallelizing filesystem writeback
+To: Christoph Hellwig <hch@lst.de>, Kundan Kumar <kundan.kumar@samsung.com>
+Cc: jaegeuk@kernel.org, chao@kernel.org, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, miklos@szeredi.hu, agruenba@redhat.com,
+	trondmy@kernel.org, anna@kernel.org, akpm@linux-foundation.org,
+	willy@infradead.org, mcgrof@kernel.org, clm@meta.com, david@fromorbit.com,
+	amir73il@gmail.com, axboe@kernel.dk, ritesh.list@gmail.com,
+	djwong@kernel.org, dave@stgolabs.net, p.raghav@samsung.com,
+	da.gomez@samsung.com, linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
+	linux-nfs@vger.kernel.org, linux-mm@kvack.org, gost.dev@samsung.com,
+	anuj1072538@gmail.com, kundanthebest@gmail.com
+Content-Language: en-US
+From: Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>
+In-Reply-To: <20250602141904.GA21996@lst.de>
+Content-Transfer-Encoding: 7bit
+X-CMS-MailID: 20250603091626epcas5p3c6680e3a112b654ee64a2a45ee05c29c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250529113215epcas5p2edd67e7b129621f386be005fdba53378
+References: <CGME20250529113215epcas5p2edd67e7b129621f386be005fdba53378@epcas5p2.samsung.com>
+	<20250529111504.89912-1-kundan.kumar@samsung.com>
+	<20250602141904.GA21996@lst.de>
 
-Hi Greg...
+On 6/2/2025 7:49 PM, Christoph Hellwig wrote:
+> On Thu, May 29, 2025 at 04:44:51PM +0530, Kundan Kumar wrote:
+> Well, the proper thing would be to figure out a good default and not
+> just keep things as-is, no?
 
->> Sure, what is the upstream git commit id of the patch?
+We observed that some filesystems, such as Btrfs, don't benefit from
+this infra due to their distinct writeback architecture. To preserve
+current behavior and avoid unintended changes for such filesystems,
+we have kept nr_wb_ctx=1 as the default. Filesystems that can take
+advantage of parallel writeback (xfs, ext4) can opt-in via a mount
+option. Also we wanted to reduce risk during initial integration and
+hence kept it as opt-in.
 
-b36ddb9210 is the commit where Linus pulled my fix into 6.15.
+> 
+>> IOPS and throughput
+>> ===================
+>> We see significant improvement in IOPS across several filesystem on both
+>> PMEM and NVMe devices.
+>>
+>> Performance gains:
+>>    - On PMEM:
+>> 	Base XFS		: 544 MiB/s
+>> 	Parallel Writeback XFS	: 1015 MiB/s  (+86%)
+>> 	Base EXT4		: 536 MiB/s
+>> 	Parallel Writeback EXT4	: 1047 MiB/s  (+95%)
+>>
+>>    - On NVMe:
+>> 	Base XFS		: 651 MiB/s
+>> 	Parallel Writeback XFS	: 808 MiB/s  (+24%)
+>> 	Base EXT4		: 494 MiB/s
+>> 	Parallel Writeback EXT4	: 797 MiB/s  (+61%)
+> 
+> What worksload was this?
 
-Some of Matthew Wilcox's folio work also landed in orangefs in 6.15,
-causing b36ddb9210 to have a merge conflict with 6.14.
+Number of CPUs = 12
+System RAM = 16G
+For XFS number of AGs = 4
+For EXT4 BG count = 28616
+Used PMEM of 6G and NVMe SSD of 3.84 TB
 
-I tested during 6.14-rc7 and Commit 665575cf was pulled into
-6.14-rc7 after I tested, causing orangefs to be broken in 6.14.
+fio command line :
+fio --directory=/mnt --name=test --bs=4k --iodepth=1024 --rw=randwrite 
+--ioengine=io_uring --time_based=1 -runtime=60 --numjobs=12 --size=450M 
+--direct=0  --eta-interval=1 --eta-newline=1 --group_reporting
 
-So... there is not an upstream commit id for my patch that works
-with 6.14.
+Will measure the write-amp and share.
 
-Pulling 665575cf so late into rc7, even though it was known to
-have caused deadlock problems with ext4 and (?) seems like
-an "unlinuxy" thing to have done. I was just hoping there was
-some way to get my un-committed 6.14 flavored patch
-backported to 6.14... I figured if it was possible, you'd
-know how...
+> 
+> How many CPU cores did the system have, how many AGs/BGs did the file
+> systems have?   What SSD/Pmem was this?  Did this change the write
+> amp as measure by the media writes on the NVMe SSD?
+> 
+> Also I'd be really curious to see numbers on hard drives.
+> 
+>> We also see that there is no increase in filesystem fragmentation
+>> # of extents:
+>>    - On XFS (on PMEM):
+>> 	Base XFS		: 1964
+>> 	Parallel Writeback XFS	: 1384
+>>
+>>    - On EXT4 (on PMEM):
+>> 	Base EXT4		: 21
+>> 	Parallel Writeback EXT4	: 11
+> 
+> How were the number of extents counts given that they look so wildly
+> different?
+> 
+> 
 
-Thanks...
+Issued random write of 1G using fio with fallocate=none and then
+measured the number of extents, after a delay of 30 secs :
+fio --filename=/mnt/testfile --name=test --bs=4k --iodepth=1024 
+--rw=randwrite --ioengine=io_uring  --fallocate=none --numjobs=1 
+--size=1G --direct=0 --eta-interval=1 --eta-newline=1 --group_reporting
 
--Mike
+For xfs used this command:
+xfs_io -c "stat" /mnt/testfile
 
-On Tue, Jun 3, 2025 at 12:38=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Jun 02, 2025 at 12:19:39PM -0400, Mike Marshall wrote:
-> > Hi Greg..
-> >
-> > Commit 665575cf "filemap: move prefaulting out of hot write path", whic=
-h was
-> > pulled in 6.14-rc7, broke orangefs. I got a fix applied to to 6.15.
-> > 6.15 saw more of Matthew Wilcox's folio work folded into orangefs,
-> > and my 6.15 patch has conflicts with 6.14. Fedora (and others?) is
-> > at 6.14 now.
-> >
-> > I have a tested 6.14 version of my patch, would it be possible to
-> > get that backported to 6.14?
->
-> Sure, what is the upstream git commit id of the patch?
->
-> >
-> > -Mike
->
-> > From 572e2027f6111728877f20085e79d07c5b2238de Mon Sep 17 00:00:00 2001
-> > From: Mike Marshall <hubcap@omnibond.com>
-> > Date: Tue, 13 May 2025 17:00:37 -0400
-> > Subject: [PATCH] orangefs: adjust counting code to recover from 665575c=
-f
-> >
-> > A late commit to 6.14-rc7! broke orangefs. 665575cf seems like a
-> > good change, but maybe should have been introduced during the merge
-> > window. This patch adjusts the counting code associated with
-> > writing out pages so that orangefs works in a 665575cf world.
-> > ---
-> >  fs/orangefs/inode.c | 9 +++++----
-> >  1 file changed, 5 insertions(+), 4 deletions(-)
->
-> <snip>
->
-> This isn't in a format I can take it :(
->
-> Also, it's not on a public mailing list for some reason...
->
-> thanks,
->
-> greg k-h
+And for ext4 used this:
+filefrag /mnt/testfile
 
