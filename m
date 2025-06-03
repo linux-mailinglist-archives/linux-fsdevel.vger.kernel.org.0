@@ -1,280 +1,583 @@
-Return-Path: <linux-fsdevel+bounces-50415-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50416-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABC1ACBF89
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 07:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB99ACBFF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 07:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7116C3A621A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 05:24:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5353A6118
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 05:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6BA21F2B8D;
-	Tue,  3 Jun 2025 05:24:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98AB1FBCB0;
+	Tue,  3 Jun 2025 05:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="QpGePR6M";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="QpGePR6M"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eraGGQj9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from MRWPR03CU001.outbound.protection.outlook.com (mail-francesouthazon11011017.outbound.protection.outlook.com [40.107.130.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F122C326F;
-	Tue,  3 Jun 2025 05:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.130.17
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748928261; cv=fail; b=hlIOwxIDJPdkfR0b0lieghCJBqgNt4wUCXjl0V5yCVu1mPKeTdtQX0xRDYlyR3J8eoy2ekiCyLe21WHphWULkfvS3rPBxyAY4VSgUSDF9bI5f4dInyYr/966/sgxDeX9IhhfeetwEWXuutqtaPtKXqYWerKd+bEddRQB4A+G7YA=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748928261; c=relaxed/simple;
-	bh=iRyDOIrEMbjDwjkNTZm9lh9GPkQ6vme9WdzNVWw5cGQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=MPoWH5cFPEICr8BMayyqgd0617SFBYIlNwxjKwVDGwRvwpb2Z1VCK3jrpMS5koMQ4SasQnKG59KaWsulcBmi8fzV1P8wXV7Ifw9jabgU9W4hO89MrKLNBsvO1B5tOGQgJBykUWhjTrd/raHMq5TpGqJDR8Ga2ecbjj0Cek+GudA=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=QpGePR6M; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=QpGePR6M; arc=fail smtp.client-ip=40.107.130.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=HUDFywUcBNzhHU0P1//NPytTOg8ejh6wMGjLp9iNzgPx7DFaBXR/nqV4EBnDjZaRUbgD93FOlhOHEXJkma4fzISmLv33Dbs49obYaz/YDwstEQoWTcJGiS8UURkdfJd7SF0GM/eiKuwyWbpLNdqTxKQVrbRqGm+AaJOXrvPb3zhefmaZu+sn6i1oECsQilB3hJBDrwlQc+BHDIeKCUMjAch4wmk/x4Exq6lHnbMCiSOeSdumGyDWRPU2BodAIXMHKjo2W3xshc3hXRqS1QE1rHwKsh8elahoVnZaleDiy9lWcRtJWLseQm5jK/WJuBRWnNvFMiRZzO+ycc6hVx1HZA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iRyDOIrEMbjDwjkNTZm9lh9GPkQ6vme9WdzNVWw5cGQ=;
- b=ZoCTcBEt22ovwkZNR/Fc/OkmQM52FYD2wH9WY8laTNIecqC6JHwSoVyqH8unECAaoSG49zZRRgt22vkScspG6ouAjUyl0Y1D71nG+ft9uBq4TJuuHbpxPoNQHVBSrNoEkaARtPGXGCDVNtaG9YpEuAH1+gz2b2PXwgHctOspEZYDUqrS9C5zRDkchlPiehlWXpTu/esjgHBwgMpo87f0WXnaW3PJU+PkXKZmE2xflpcMnHI/7ifQtWMq13oXecv3IBX34HWyXb1kAAYvbi22TulxMUWv/oNUMXTNKfIlSdY1ls/4YhacxrgUJTXPMwvInQHSm1hWOXqtNw2/5jW9aA==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 4.158.2.129) smtp.rcpttodomain=nvidia.com smtp.mailfrom=arm.com; dmarc=pass
- (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
- (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iRyDOIrEMbjDwjkNTZm9lh9GPkQ6vme9WdzNVWw5cGQ=;
- b=QpGePR6MDWJ9DOsXOKbrPLZzvhGdIaJHlVsMMI6vLT52Ir2FFma5Nhm4e8TxMxJKTxXSzAqglGCbj9X2u5BspPMnzEfB6Q5DVLbIqRhPmiJlmYyUxoIYxsF7hZAPp0eQXATZ2OQzWW2Hwk5WpmpAIxjDpuwSJ4RzdDcluAEMB9M=
-Received: from DU2PR04CA0274.eurprd04.prod.outlook.com (2603:10a6:10:28c::9)
- by DBBPR08MB10555.eurprd08.prod.outlook.com (2603:10a6:10:53b::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Tue, 3 Jun
- 2025 05:24:12 +0000
-Received: from DU6PEPF0000B61F.eurprd02.prod.outlook.com
- (2603:10a6:10:28c:cafe::67) by DU2PR04CA0274.outlook.office365.com
- (2603:10a6:10:28c::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8746.27 via Frontend Transport; Tue,
- 3 Jun 2025 05:24:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
- client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
-Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
- DU6PEPF0000B61F.mail.protection.outlook.com (10.167.8.134) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8792.29
- via Frontend Transport; Tue, 3 Jun 2025 05:24:10 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ii7+i35qQpnNsWjwou7drCIwBEipSMOR+xN0OReYzYBMfyB6bCT4E3bo8H8Rws72/vAOmctS8P3l+urmzyG9rz27oyBkqa09gR3mMjNGVhyjxlef/3dwKDdYZDXCef+IGwuLReaW65k3T9Q+pjxWYC0/bUPOG6gSl/b67kKzssX2rQdGnBB02lftRsVF6uM9rLNuB0PBOrV6NKtziVAtWD1//bhIL/hRXTkP/SELDBDEwP8WQWOs4GnHcpYAdfbILfI4l76ov0oqsaAngrwY5v199//f2gxPfZR8HSc6nY9r3OdHaH1gPJFlg2ALFbmkgdIkGEK7Eld0yktTXWM0fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iRyDOIrEMbjDwjkNTZm9lh9GPkQ6vme9WdzNVWw5cGQ=;
- b=esL66VXylu795CK6ZxhD9FSx2txZC2awXPHAyPZSmlwM+PUMoetOThDTp+wyJVJeUhnmAcZMkdKHKnw+iWup/GE7nyoxz23JZNTFIDolZjL4KkmhLhi+7JeBvbwRv5zMS0nEhj9DJrFvU2TAn/rJAdMH9JY9bv0oDmuWMKcdm7M0thfxYAy9IUxX2OYchR5VGN46wISpK5TcE39ksu3TXg24sYXe3ABnffm8RFK+t6VqLMa1QDon0p1G3MMXV+Jxra4ofjTCNhiLDSAuhPksMjcYUSRL/hFHWsu4BRchzUAViM7MESaAFFLUYS4rh4B4tKvTZd8afzce7bBvhKyTAA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iRyDOIrEMbjDwjkNTZm9lh9GPkQ6vme9WdzNVWw5cGQ=;
- b=QpGePR6MDWJ9DOsXOKbrPLZzvhGdIaJHlVsMMI6vLT52Ir2FFma5Nhm4e8TxMxJKTxXSzAqglGCbj9X2u5BspPMnzEfB6Q5DVLbIqRhPmiJlmYyUxoIYxsF7hZAPp0eQXATZ2OQzWW2Hwk5WpmpAIxjDpuwSJ4RzdDcluAEMB9M=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM9PR08MB7120.eurprd08.prod.outlook.com (2603:10a6:20b:3dc::22)
- by PAWPR08MB9445.eurprd08.prod.outlook.com (2603:10a6:102:2e0::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Tue, 3 Jun
- 2025 05:23:37 +0000
-Received: from AM9PR08MB7120.eurprd08.prod.outlook.com
- ([fe80::2933:29aa:2693:d12e]) by AM9PR08MB7120.eurprd08.prod.outlook.com
- ([fe80::2933:29aa:2693:d12e%2]) with mapi id 15.20.8792.033; Tue, 3 Jun 2025
- 05:23:36 +0000
-Message-ID: <a3311974-30ae-42b6-9f26-45e769a67522@arm.com>
-Date: Tue, 3 Jun 2025 10:53:31 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] xarray: Add a BUG_ON() to ensure caller is not sibling
-To: Zi Yan <ziy@nvidia.com>
-Cc: akpm@linux-foundation.org, willy@infradead.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, david@redhat.com, anshuman.khandual@arm.com,
- ryan.roberts@arm.com
-References: <20250528113124.87084-1-dev.jain@arm.com>
- <30EECA35-4622-46B5-857D-484282E92AAF@nvidia.com>
- <4fb15ee4-1049-4459-a10e-9f4544545a20@arm.com>
- <B3C9C9EA-2B76-4AE5-8F1F-425FEB8560FD@nvidia.com>
- <8fb366e2-cec2-42ba-97c4-2d927423a26e@arm.com>
- <EF500105-614C-4D06-BE7A-AFB8C855BC78@nvidia.com>
-Content-Language: en-US
-From: Dev Jain <dev.jain@arm.com>
-In-Reply-To: <EF500105-614C-4D06-BE7A-AFB8C855BC78@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MA0PR01CA0112.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:11d::15) To AM9PR08MB7120.eurprd08.prod.outlook.com
- (2603:10a6:20b:3dc::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2619125B9;
+	Tue,  3 Jun 2025 05:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748930082; cv=none; b=ieomd9MCBvO9m+v6UagyCzFgYPJUwW1NYaFT4eiAFkX5AW0tNdGvDxnTeVlNSJV65kkmweVJwoLFoNjY+zMuYqPi+ar1vTjTPMdRBUWlABsFJeXAicixGGvS0aNDlcE52sWK6s7ySgyCMIFumkYRuHYZg9iWM1XptsY4BT0xVeY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748930082; c=relaxed/simple;
+	bh=mh5hC8NR4I5UtbU6afhpXtkFyXMP7WzIjIfb+Zrkb0Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SGWYgEF27iaitCD8U317noQHREqz2eQ6/SI7WULcltVxzB2/eOpVJCecbdqp1xW4JHlv+uPEkg9xgrCOhA/s5gdM5yklxQ7A5cew72Vy7awXnyMYMAD5jIcw5fmAjXKSjKPR7XfVcxZhWuFyNiQwaXMmsB7FSxwkG8BkfZwk/II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eraGGQj9; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7d09d45366dso482857185a.2;
+        Mon, 02 Jun 2025 22:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1748930078; x=1749534878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EWj8RwJXi57KCIgTSqIWtQ1pNoTucbBICqmEsyLL3TI=;
+        b=eraGGQj9aoigkStnUYCbh7bfPhiOhE846VSwhWU0Z/55L1uESy9CNfGyBCfSWTfc0v
+         CxCTOCiWUJhSJ9WTdOqv1ax51CpOvwRd1EnQ6Mc7XxjX4Z9AsM7L3ygS8BIWgq6OUMJU
+         L9kftG5x41m+lFOpPW5C9VEWiGLT4uMWUpKftz1m7JLc+enIwPlX93aXkmmuT4xeu6d7
+         TA0NHbXbuSsIB3OWN4ibig2bJ4l9qVkqUmChRmd0E/OiTZq7FQxcDW+PCfYDZ32d0U3q
+         nWJpJhzFMhsFO0nwOTZ4sRxrZyubbIrbEyv2xr8xbLi+Ez/4sBRQvQsbBNBxYq/GaSQh
+         xutQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1748930078; x=1749534878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EWj8RwJXi57KCIgTSqIWtQ1pNoTucbBICqmEsyLL3TI=;
+        b=EeoEdU8koU2OIGB+yDOjI4fzu2k9/WXGGp6Dq4znXPctzqbRi4fwxMZ/azEwdyEkqo
+         9ECSiP/Emb0D8URfIf1MD/M2c3l2g6sOSmzzXvsZIfzzJiNQqpjzdIgOWagQJ3cbHCKl
+         HQFV6QI7TVxZKNMsZU+PWd/Y0A48SW+38+zj43dAwvNs/bfSS//6mBXP4RLdjcN0S1Nn
+         VWjZ/k5SX2QBPeJwHP6I14yXE5r1lLNHRCob9t4w4XOTzn4WfYMQV3Me416vvOH5ZZFP
+         DbfvgZdsZcAl41YqoWN486UkXmCm48+ijDeTKbKDXz9X5WNTtrgp9l4dZ0OJVpTR9AmY
+         CpGA==
+X-Forwarded-Encrypted: i=1; AJvYcCU/9Fbo5GYr9BFS5S9i4qMmwP5OTilZ4eo24wwEpTF6ACeNcyTvHrjQyH8g4CyuQTQVMnO7C8B7a0DN@vger.kernel.org, AJvYcCWRC1jz7QCfB45xGOMOspv9lmVyE8PqF7I3LBrzdDSIt4ySLkxY6iJEFs1TrGFHG+4mfcOOoZF8JLFllpZW@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcbI+9L+cNjDZVuzzAEhagkEiCreTzFixa8VoR4/2AXYmIRZWn
+	bkyl0i/wwaZktb5433sOIIaktw1rn6jccU7059hpenh3ZDhdeuVLs8d7nT9E9qGLdxgratthy8o
+	ppQZ4jP+y5cSokKuPQEXexJK/WHWoR0SIW3dms0ND/w==
+X-Gm-Gg: ASbGncs3patcmT+6UKfSPJPZN4jCakjyt4PWrpW0b8A8rDC+Q1kqfW9cDueGt/eb16s
+	YY2vscIf7gUhAoX9LhdALdKVbkESxO/KdWsOxp7S2UJQ7eTagDOPg5cluIBSjIGqU7UVuwdgds9
+	QYDCluMwHQjJ9C9zem8FZZP1V8L0c0tzcBVQ==
+X-Google-Smtp-Source: AGHT+IE+uponNmxDdU0K6JcPKNjUhwh39x3Oj9IzRbUXOrUm07l4/M1v+1VGETR7d+xAePYy9wVeN6RUmYEZEtYTB2c=
+X-Received: by 2002:a05:620a:261d:b0:7c5:99a6:a1ae with SMTP id
+ af79cd13be357-7d0a490398fmr2038297285a.0.1748930078381; Mon, 02 Jun 2025
+ 22:54:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM9PR08MB7120:EE_|PAWPR08MB9445:EE_|DU6PEPF0000B61F:EE_|DBBPR08MB10555:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6311143f-dd3b-4b44-9939-08dda25edf18
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info-Original:
- =?utf-8?B?d0wvUDJ2SUExbjBRTS9jRnVic3c5Qi9zUjl2TVNFdnc2OEYzVDlteWNySlhO?=
- =?utf-8?B?M1JWMHQ0bXg1OGptRkl0eTJCL2l3dHBZbGdnQTQzcHZ4WWN1LzNlSHhjei9O?=
- =?utf-8?B?SkNGSFY0ampGTFJUQjVoTFVDSm5zOXNPZS9ESUZrOWZuT0pqTjl1aXV2VTk1?=
- =?utf-8?B?czdRWmJPTlFQa1ZydHNLTStBLzRkKys0bkFYZSs5SzRBeVU2V1lqWDRmNGxn?=
- =?utf-8?B?Vy9ncGNNVmRLMm8ySS9IamlyVEx5T3FVOWw2Y21kTTNkU0dHdndoZU5BYk1T?=
- =?utf-8?B?eTBKbjhNUXlsUTRVdVU2WnBKdmk3dGRXOE5yWVROQlcvS0pYa2JqUHZ0bFli?=
- =?utf-8?B?OEZJNXRMM3U4UDlJTWxHeDNjR1BVdTNvZjVYYkl3QmgxRTdGckFRNmFvRlFj?=
- =?utf-8?B?TnNOcWZpNFlGMzA0NDd6dVVneFZnWER2OE5PbzR0amlsazVhWGtGMEF0dysr?=
- =?utf-8?B?TS96QklqZVRnS1hDNUhCWUlKUks4R1NObGQrbU9QY3NpV3pCU2ZLVTdZa2hE?=
- =?utf-8?B?TDNXdXlvT1BreUl5MjFkY1ZoRE1JcXVodXpYeU82OUxLUU5pR1NjQ2FkTG5x?=
- =?utf-8?B?UGtNYVkzNzU2VER6K2UyZ0ErTzNZMmVEeVd6aWF2blBHbEt1eHpIeGlJR2t5?=
- =?utf-8?B?enhnR0lYR0o0UkxkTzBoRW1xemFxT1hXMlFlazZrOXdhTFgvYy9DZkVXNFE3?=
- =?utf-8?B?UUJFcjl2cUo5alZGa09jaG5qeEl3dHpPbytiTC9COWUwbU5Bem1FejdEM3V1?=
- =?utf-8?B?d2tuR0Y2dEx6SnNnb1pvZFFwQVIySC8zNmVWVGpWcWJKUXhxNEh6eWtZYVpr?=
- =?utf-8?B?Z3IrR05zdlk3OFBEdy8xZHAzNCszRlY2MHFxdnQzZkdBR1dvZ21BUVhMbWdi?=
- =?utf-8?B?dm1iQjdsSDJBME9XTlVzOG9TWUhWU2FoMHB5dEJkbGprTFp2VWZmL0s5UmhM?=
- =?utf-8?B?ekprbTRkVUlYQjUxd1pVb0FReVY1VGY2Z2dyWXg4MjVJSldxV2YvT0djUFVX?=
- =?utf-8?B?eXV6akx4dkE3dG11RUtDaDVxekgxSXNkNW5iTVFXS3pkMTBFUTlva2NTWDFt?=
- =?utf-8?B?anFraXFZVlRUMUg4L3BxcGtjeXplWWNXM1ZucTVseTlNQ0hIeTNpNTdGYW8w?=
- =?utf-8?B?MjNVSzB6Y0VlR29RWTZiWC9WZTFPUXZQNGNkd0Vyb3ZhVHdnMWVzYkl3UllC?=
- =?utf-8?B?RHlIbjJycERxMkh3V0RTWHRtUXY5cFZwcTNKTjhxMzEvUmE2Um4yL2ZWTktW?=
- =?utf-8?B?eEU1T3BWRWRXUlFMb0ZOWWZJeDZoTGpNUEVMTDFOYXhEazJ0cjVWYkc2bmVT?=
- =?utf-8?B?bmV4cU9wOHpqQnlrNXJjKzNoTjBpbnY2WHVQYWF6ZjQvMFlLdTY0SEVLTCtC?=
- =?utf-8?B?SXpMeUhzaHNRQk42RXl2YU9iWHVObEFJLzFYQXl0QlM2cUoyam82VWxHc1Fs?=
- =?utf-8?B?eU1uZDl1MmhycTJRYXV1MmpHOWpmK05HUFdINlRlaGhSeFNFWHJMV1ppeStB?=
- =?utf-8?B?TlJ6TkhvZndCcnQrQlI4Unk4anV5WlBUNWRhRXFOOVV1YVg2QUtjTDg1aFlV?=
- =?utf-8?B?c3lycFhLNk9Gd1NMSjBvVFRDYlp4TTh4OW81QnVJNmJHOUo0UXZFYm9PM3pT?=
- =?utf-8?B?bXkvY3FtSDJqdXFyM2NjN3ZydWRtMkZOeFJ2ODg0Wkp1MDRNVnZFakxMNzF2?=
- =?utf-8?B?dzE2eXhUZFMwT3pxRm1MWS9DL3U5L0dUNzQ3U08wSm42RytSM2pvTDRMem9F?=
- =?utf-8?B?RmtBV003YW9kN0hiNmZTd1ZsczlaUEFQNFBNSWJYeW9ITjQvd3R6K2RoN3kv?=
- =?utf-8?B?Q2pnV3RjbzZEdkhwMk82emc5OTBqR3hyQzUxSFl0YTdEQTJqOFY4RVBxTDND?=
- =?utf-8?B?N3ZZSVBvVWJ2YlorWVl3ZFBHcm45UytYZGI4T3QrOTRCQ1Q5N2RFbVRhampa?=
- =?utf-8?Q?YFadMpCceVY=3D?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB7120.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR08MB9445
-X-EOPAttributedMessage: 0
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- DU6PEPF0000B61F.eurprd02.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	709e846f-bcb1-4452-ac63-08dda25eca84
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|14060799003|82310400026|1800799024|35042699022|36860700013|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OURhVjR5SHo5TjFOclJlWkRVUElOL3VZdEJ6c21BS1dkekVyQTkxYkdZSDhx?=
- =?utf-8?B?ZUx4R1ZzNFQrbDBqRVdmejY4VHVXK1RvdmhNSlNGWVh3UkZXa3FydmYvL0My?=
- =?utf-8?B?cXhxWmcwNW11VFhPODBqNjlZV0NDTHJHU205UjMvV3hnR0RjWjFBVSsxQjRW?=
- =?utf-8?B?dGNTbGIxQ2VjZ0NseWZ3VUxvdmFMTDdzbmNVR1RnYUUvbjFtSUFVeDZldFpG?=
- =?utf-8?B?MGErdUJYYWhkdk5FU2xEZEZXNzZmNzVWZGp4bnNzelNhMlRTeXBoQ2xLeVBX?=
- =?utf-8?B?VGR0MENQTWwwdXhyS3cvd1NmZE1xSE12RE5GOHJXa1FMa1VlcCtjbzdxRkRm?=
- =?utf-8?B?bHpQWTh5V0ZtM1pPVHJOblBBaHdub21QR1ViSGJ0emFFN2VEQldEcDk5L3ls?=
- =?utf-8?B?OHQvSDJaL0o2dkN0KytJdElyVUtDMm1XZEZubWNnNWlWSmUyWG9NM29JU21Q?=
- =?utf-8?B?R3J3TU1qNFBSclJZZ05QZHFEeE15WWZlVlNaYjRFdGJEYUJUU1lXL0JCQ3Vw?=
- =?utf-8?B?bkNnQVVxdHgxTjBsdmV6SzczVGNYNC85YnNKSHc0Tk9nUjIvR3BGV3krbUt4?=
- =?utf-8?B?UTNyMlNkUkZUR0xJZ3g1Q3dSTE9DK0R3YmhDSWpFNnhWRnFZOUtlN1gwZmVi?=
- =?utf-8?B?Zi90MFNabjdZSjNTWlhPQnN4N1lCa3kvVEwybmRKMnpMUGcvdXEzL0FrRDFs?=
- =?utf-8?B?YXlKSC94UGVUa2NnMDJUMzdNMHBKeUUxUzRWYVNXUHpMSGx6VHVwM3lWbUNv?=
- =?utf-8?B?Q0NYMzd6UjlNZDYySEtTdVlvR3JLNUh0cFFWTXEzZ05lQnl1YXZTY3J4aWRM?=
- =?utf-8?B?M3haSU1laGQ3dmxmMy8yNmMxbDRuZEN4Skh2dHRaWFFRWkRkY1BHL0xtSFE2?=
- =?utf-8?B?QW5uc0RBTU9KU0ZlN3krTi9DMWJyMG0xU0gyaEVjWlUrRGpqMzViZDcwMnVH?=
- =?utf-8?B?SnpOMEN0ck1wTjRXRVVLMFNVTzltcm1uVktIbVV5WUIwZVYvb1FpRk1Od0dK?=
- =?utf-8?B?YTFtTzJJT0oyYldGS1lMbkx3c25la2MybGJLSkdlamJTdE84elFyeVJ5aEZo?=
- =?utf-8?B?QkhOSTRQYnpBaGNYREdqamhZZVRrV0ttQk5hVTB2ZUlvRTlWY0h1YWNWdi92?=
- =?utf-8?B?ZmV3OGk5Vlo5SDJ1bkNUWi9RcTFFUFZ2emJKNUFCZVJDR1NwM2xlWERQQnA4?=
- =?utf-8?B?Z3QxTHZhNHBwVUVDeHBFcE85cEJWS1RENk1lNTNwdjhuZUZ2OU52NnZKcWlt?=
- =?utf-8?B?cm9iYjE5dVhZbjVWUThKeDB5a0EvQXlRZXNKc2V6dWJtRFZNdzlBSXBncnlE?=
- =?utf-8?B?aDhiZlFzTzdKVWlQZ3h6L1ZHUStwa2xKNWM3L2N2UzVaL1Z3TGhJdndUckdQ?=
- =?utf-8?B?VkVoWWZYbGlZSFV6Q3RCa1kzcHh6d1ZvR0VqTjAwZ2RtZnRWS1Qzd2o1ZU13?=
- =?utf-8?B?NHZkclZyYThDY3Z2bWp6YU9hbERaSVlGYWFoUkVqUGcrZ1BONmYrek40TW5D?=
- =?utf-8?B?WFM2c05VQnh1eXkreWtNaEVtZGRFelZWYWQ3emlpbndaTEc5QjRWZ3N4NCtp?=
- =?utf-8?B?T1ZmSHN3RzlKd1FSOFloL0dteEhrc1pOc1hlYis0cTFsbnpuU21Cb0VKU2Vh?=
- =?utf-8?B?cTM1QzhaMVBhZVBVZ1B5SmRxVWk2TkRKd3Y5VXBsTUVOTmdPUk9UdlZGdmVK?=
- =?utf-8?B?REpUL05NTklta0VUTmdZRVluU1UzalJjT0lmL0JhZkhITjJCeE1rSTdmRDE2?=
- =?utf-8?B?Y2ZxaXQxTmhqU1k4TU9vQm5MY0ZsRTgvZ0FZRVZ6aHNlQVVuT1dxN0svcWNO?=
- =?utf-8?B?ZXAyZjVycnJqQmxlemlzaWtlMjZmMzBDdjhsb2xQRXhCU2VaY2k5MURTbStI?=
- =?utf-8?B?aWNiUmNZTElKakViQXNqZ21vck9BU0t4dkxzc2RmUmRJSnEvR2NUTW5Sd3NN?=
- =?utf-8?B?N0tJL05sU0YvMmgzSTNZeVc5Z1ZETHNxRmNOb210aEFFeE50dXJvaUpFaW4r?=
- =?utf-8?B?TlV3NEJZYXA4aWFaTG56MlpoU0xoNEZGZTlxVlFjWFlTSHRoWnA4dGZtSUti?=
- =?utf-8?Q?DoZT1+?=
-X-Forefront-Antispam-Report:
-	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(14060799003)(82310400026)(1800799024)(35042699022)(36860700013)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 05:24:10.9044
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6311143f-dd3b-4b44-9939-08dda25edf18
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DU6PEPF0000B61F.eurprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB10555
+References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
+ <aD03HeZWLJihqikU@infradead.org> <CALOAHbDxgvY7Aozf8H9H2OBedcU1efYBQiEvxMg6pj1+arPETQ@mail.gmail.com>
+ <aD5obj2G58bRMFlB@casper.infradead.org> <CALOAHbCWra+DskmcWUWJOenTg9EJQfS23Hi-rB1GLYmcRUKf4A@mail.gmail.com>
+ <aD5ratf3NF_DUnL-@casper.infradead.org> <CALOAHbB_p=rxT2-7bWudKLUgbD7AvNoBsge90VDgQFpakfTbCQ@mail.gmail.com>
+ <aD58p4OpY0QhKl3i@infradead.org> <e2b4db3d-a282-4c96-b333-8d4698e5a705@kernel.org>
+In-Reply-To: <e2b4db3d-a282-4c96-b333-8d4698e5a705@kernel.org>
+From: Yafang Shao <laoar.shao@gmail.com>
+Date: Tue, 3 Jun 2025 13:54:02 +0800
+X-Gm-Features: AX0GCFuf29oXt11-cRAy-3Y4J5qBSkPEVuQpZ60-ssNTnVsZFYiu6JX7qC7DLK4
+Message-ID: <CALOAHbA_ttJmOejYJ+rrRdzKav_BPtwxuKwCSAf2dwLZJ1UyZQ@mail.gmail.com>
+Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
+ data corruption
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Christoph Hellwig <hch@infradead.org>, Matthew Wilcox <willy@infradead.org>, 
+	Christian Brauner <brauner@kernel.org>, djwong@kernel.org, cem@kernel.org, 
+	linux-xfs@vger.kernel.org, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>, 
+	Damien Le Moal <Damien.LeMoal@wdc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jun 3, 2025 at 1:17=E2=80=AFPM Damien Le Moal <dlemoal@kernel.org> =
+wrote:
+>
+> On 2025/06/03 13:40, Christoph Hellwig wrote:
+> > On Tue, Jun 03, 2025 at 11:50:58AM +0800, Yafang Shao wrote:
+> >>
+> >> The drive in question is a Western Digital HGST Ultrastar
+> >> HUH721212ALE600 12TB HDD.
+> >> The price information is unavailable to me;-)
+> >
+> > Unless you are doing something funky like setting a crazy CDL policy
+> > it should not randomly fail writes.  Can you post the dmesg including
+> > the sense data that the SCSI code should print in this case?
+
+Below is an error occurred today,
+
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] scsi_io_completion_action: 25 callbacks suppress=
+ed
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1669 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1669 CDB: Read(16)
+88 00 00 00 00 02 0c dc bc c0 00 00 00 58 00 00
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] blk_print_req_error: 25 callbacks suppressed
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] I/O error, dev sdd, sector 8805727424 op
+0x0:(READ) flags 0x80700 phys_seg 11 prio class 2
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1693 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1709 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1693 CDB: Read(16)
+88 00 00 00 00 01 02 1e 48 50 00 00 00 08 00 00
+[Tue Jun  3 10:02:44 2025] I/O error, dev sdd, sector 4330506320 op
+0x0:(READ) flags 0x80700 phys_seg 1 prio class 2
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1709 CDB: Read(16)
+88 00 00 00 00 01 80 01 8c 78 00 00 00 08 00 00
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1704 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] I/O error, dev sdd, sector 6442552440 op
+0x0:(READ) flags 0x81700 phys_seg 1 prio class 2
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1704 CDB: Read(16)
+88 00 00 00 00 04 80 18 43 f8 00 00 00 80 00 00
+[Tue Jun  3 10:02:44 2025] I/O error, dev sdd, sector 19328943096 op
+0x0:(READ) flags 0x80700 phys_seg 16 prio class 2
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1705 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1705 CDB: Read(16)
+88 00 00 00 00 04 80 18 85 c8 00 00 03 80 00 00
+[Tue Jun  3 10:02:44 2025] I/O error, dev sdd, sector 19328959944 op
+0x0:(READ) flags 0x80700 phys_seg 112 prio class 2
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1712 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1712 CDB: Read(16)
+88 00 00 00 00 01 cd 06 86 d8 00 00 03 30 00 00
+[Tue Jun  3 10:02:44 2025] I/O error, dev sdd, sector 7734724312 op
+0x0:(READ) flags 0x80700 phys_seg 102 prio class 2
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1720 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1720 CDB: Read(16)
+88 00 00 00 00 02 49 ed 20 c0 00 00 01 60 00 00
+[Tue Jun  3 10:02:44 2025] I/O error, dev sdd, sector 9830211776 op
+0x0:(READ) flags 0x80700 phys_seg 44 prio class 2
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1707 FAILED Result:
+hostbyte=3DDID_OK driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1707 Sense Key :
+Medium Error [current] [descriptor]
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1707 Add. Sense:
+Unrecovered read error
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1707 CDB: Read(16)
+88 00 00 00 00 05 6b 21 0b e8 00 00 00 08 00 00
+[Tue Jun  3 10:02:44 2025] critical medium error, dev sdd, sector
+23272164328 op 0x0:(READ) flags 0x0 phys_seg 1 prio class 2
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1688 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:44 2025] sd 14:0:4:0: [sdd] tag#1688 CDB: Read(16)
+88 00 00 00 00 01 02 0a a6 b8 00 00 00 28 00 00
+[Tue Jun  3 10:02:45 2025] I/O error, dev sdd, sector 4329219768 op
+0x0:(READ) flags 0x80700 phys_seg 5 prio class 2
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] sd 14:0:4:0: [sdd] tag#1669 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:02:47 2025] sd 14:0:4:0: [sdd] tag#1669 CDB: Read(16)
+88 00 00 00 00 01 80 01 7b b0 00 00 00 08 00 00
+[Tue Jun  3 10:02:47 2025] I/O error, dev sdd, sector 6442548144 op
+0x0:(READ) flags 0x80700 phys_seg 1 prio class 2
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:47 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:02:49 2025] sdd: writeback error on inode 10741741427,
+offset 54525952, sector 11086521712
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] scsi_io_completion_action: 16 callbacks suppress=
+ed
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1761 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D3s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1761 CDB: Read(16)
+88 00 00 00 00 02 49 ed 1b 80 00 00 00 88 00 00
+[Tue Jun  3 10:03:27 2025] blk_print_req_error: 16 callbacks suppressed
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 9830210432 op
+0x0:(READ) flags 0x80700 phys_seg 17 prio class 2
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1880 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D3s
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1880 CDB: Read(16)
+88 00 00 00 00 05 50 79 b5 58 00 00 04 00 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 22824990040 op
+0x0:(READ) flags 0x84700 phys_seg 128 prio class 2
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1891 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D3s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1891 CDB: Read(16)
+88 00 00 00 00 02 49 ed cb 08 00 00 01 58 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 9830255368 op
+0x0:(READ) flags 0x80700 phys_seg 43 prio class 2
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1894 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D3s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1894 CDB: Read(16)
+88 00 00 00 00 05 6b 21 19 98 00 00 03 f8 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 23272167832 op
+0x0:(READ) flags 0x80700 phys_seg 127 prio class 2
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1886 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D3s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1886 CDB: Read(16)
+88 00 00 00 00 02 49 ed 1c 08 00 00 00 d8 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 9830210568 op
+0x0:(READ) flags 0x80700 phys_seg 27 prio class 2
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1740 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D3s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1740 CDB: Read(16)
+88 00 00 00 00 03 39 3a 96 90 00 00 04 00 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 13845042832 op
+0x0:(READ) flags 0x80700 phys_seg 128 prio class 2
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1741 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D3s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1741 CDB: Read(16)
+88 00 00 00 00 03 39 3a 9a 90 00 00 04 08 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 13845043856 op
+0x0:(READ) flags 0x84700 phys_seg 128 prio class 2
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1873 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D0s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1873 CDB: Read(16)
+88 00 00 00 00 03 39 3a 9e 98 00 00 04 00 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 13845044888 op
+0x0:(READ) flags 0x80700 phys_seg 128 prio class 2
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1875 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D0s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1875 CDB: Read(16)
+88 00 00 00 00 03 39 3a a2 98 00 00 04 00 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 13845045912 op
+0x0:(READ) flags 0x84700 phys_seg 128 prio class 2
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1856 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D3s
+[Tue Jun  3 10:03:27 2025] sd 14:0:4:0: [sdd] tag#1856 CDB: Read(16)
+88 00 00 00 00 03 39 3a 92 88 00 00 04 08 00 00
+[Tue Jun  3 10:03:27 2025] I/O error, dev sdd, sector 13845041800 op
+0x0:(READ) flags 0x84700 phys_seg 128 prio class 2
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:27 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:31 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] scsi_io_completion_action: 48 callbacks suppress=
+ed
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1773 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1773 CDB: Read(16)
+88 00 00 00 00 01 b4 78 c3 c8 00 00 02 40 00 00
+[Tue Jun  3 10:03:35 2025] blk_print_req_error: 48 callbacks suppressed
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 7322780616 op
+0x0:(READ) flags 0x80700 phys_seg 72 prio class 2
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1734 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1734 CDB: Read(16)
+88 00 00 00 00 02 49 ee 2f 58 00 00 00 88 00 00
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 9830281048 op
+0x0:(READ) flags 0x80700 phys_seg 17 prio class 2
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1867 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1867 CDB: Read(16)
+88 00 00 00 00 02 49 ee 2f e0 00 00 00 d8 00 00
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 9830281184 op
+0x0:(READ) flags 0x80700 phys_seg 15 prio class 2
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1768 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D1s
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1768 CDB: Read(16)
+88 00 00 00 00 02 49 ec a6 a0 00 00 00 88 00 00
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1769 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D1s
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 9830180512 op
+0x0:(READ) flags 0x80700 phys_seg 3 prio class 2
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1769 CDB: Read(16)
+88 00 00 00 00 02 49 ec a7 28 00 00 00 c0 00 00
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1934 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D0s
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 9830180648 op
+0x0:(READ) flags 0x80700 phys_seg 24 prio class 2
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1934 CDB: Read(16)
+88 00 00 00 00 00 0a d5 b7 20 00 00 03 f8 00 00
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 181778208 op
+0x0:(READ) flags 0x80700 phys_seg 127 prio class 2
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1894 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D0s
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1913 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1907 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1757 FAILED Result:
+hostbyte=3DDID_SOFT_ERROR driverbyte=3DDRIVER_OK cmd_age=3D2s
+[Tue Jun  3 10:03:35 2025] mpt3sas_cm0: log_info(0x31080000):
+originator(PL), code(0x08), sub_code(0x0000)
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1907 CDB: Read(16)
+88 00 00 00 00 02 49 ec 6c 40 00 00 00 f0 00 00
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1757 CDB: Read(16)
+88 00 00 00 00 03 e8 cc 56 a0 00 00 02 d8 00 00
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1913 CDB: Read(16)
+88 00 00 00 00 03 e8 cc 56 38 00 00 00 68 00 00
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 9830165432 op
+0x0:(READ) flags 0x80700 phys_seg 17 prio class 2
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 21656330648 op
+0x0:(READ) flags 0x84700 phys_seg 128 prio class 2
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 16790607520 op
+0x0:(READ) flags 0x80700 phys_seg 91 prio class 2
+[Tue Jun  3 10:03:35 2025] I/O error, dev sdd, sector 9830165568 op
+0x0:(READ) flags 0x80700 phys_seg 16 prio class 2
+[Tue Jun  3 10:03:35 2025] sd 14:0:4:0: [sdd] tag#1894 CDB: Read(16)
+88 00 00 00 00 02 49 ec db 18 00 00 00 88 00 00
 
 
-On 02/06/25 8:33 pm, Zi Yan wrote:
-> On 29 May 2025, at 23:44, Dev Jain wrote:
 >
->> On 30/05/25 4:17 am, Zi Yan wrote:
->>> On 28 May 2025, at 23:17, Dev Jain wrote:
->>>
->>>> On 28/05/25 10:42 pm, Zi Yan wrote:
->>>>> On 28 May 2025, at 7:31, Dev Jain wrote:
->>>>>
->>>>>> Suppose xas is pointing somewhere near the end of the multi-entry batch.
->>>>>> Then it may happen that the computed slot already falls beyond the batch,
->>>>>> thus breaking the loop due to !xa_is_sibling(), and computing the wrong
->>>>>> order. Thus ensure that the caller is aware of this by triggering a BUG
->>>>>> when the entry is a sibling entry.
->>>>> Is it possible to add a test case in lib/test_xarray.c for this?
->>>>> You can compile the tests with “make -C tools/testing/radix-tree”
->>>>> and run “./tools/testing/radix-tree/xarray”.
->>>> Sorry forgot to Cc you.
->>>> I can surely do that later, but does this patch look fine?
->>> I am not sure the exact situation you are describing, so I asked you
->>> to write a test case to demonstrate the issue. :)
->>
->> Suppose we have a shift-6 node having an order-9 entry => 8 - 1 = 7 siblings,
->> so assume the slots are at offset 0 till 7 in this node. If xas->xa_offset is 6,
->> then the code will compute order as 1 + xas->xa_node->shift = 7. So I mean to
->> say that the order computation must start from the beginning of the multi-slot
->> entries, that is, the non-sibling entry.
-> Got it. Thanks for the explanation. It will be great to add this explanation
-> to the commit log.
+> This drive does not support CDL, so it is not that for sure.
 >
-> I also notice that in the comment of xas_get_order() it says
-> “Called after xas_load()” and xas_load() returns NULL or an internal
-> entry for a sibling. So caller is responsible to make sure xas is not pointing
-> to a sibling entry. It is good to have a check here.
->
-> In terms of the patch, we are moving away from BUG()/BUG_ON(), so I wonder
-> if there is a less disruptive way of handling this. Something like return
-> -EINVAL instead with modified function comments and adding a comment
-> at the return -EIVAL saying something like caller needs to pass
-> a non-sibling entry.
+> Please also describe the drive connection: AHCI SATA port ? SAS HBA ?
+> Enclosure/SAS expander ?
 
-What's the reason for moving away from BUG_ON()? I would think that it is
-better that we don't have any overhead without the relevant debug config.
-Also, returning any negative return value seems more disruptive :) we will
-have to change all the callers to handle that, and in turn, handle that
-for their callers, and so on.
+It is SAS HBA.
+It is worth noting that this disk has recorded 46560 power-on hours
+(approximately 5.3 years) of operational lifetime.
 
->
-> Best Regards,
-> Yan, Zi
+--=20
+Regards
+Yafang
 
