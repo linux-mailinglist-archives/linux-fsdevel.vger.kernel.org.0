@@ -1,56 +1,58 @@
-Return-Path: <linux-fsdevel+bounces-50402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50403-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 467D0ACBE26
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 03:29:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94985ACBE2D
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 03:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AD13A5949
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 01:28:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E475B3A5D32
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 01:32:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8139F1459F7;
-	Tue,  3 Jun 2025 01:28:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EFF386359;
+	Tue,  3 Jun 2025 01:32:46 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
+Received: from mta22.hihonor.com (mta22.honor.com [81.70.192.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE427EACE;
-	Tue,  3 Jun 2025 01:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CA02C3242;
+	Tue,  3 Jun 2025 01:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.192.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748914131; cv=none; b=j8RoyHP9z4ghABQIGf57vfPRawR5H0qgCCDor0QNhepnnqenA/XB/6nx6mvC/ig880JA/LLDh1rYcUYugoL+fMU7ogjvBoh7nXz7gLs+IaveAni/ASaSXNanmpOGoxFI0VTGQOrcJWo8JpVFoEnriJUKwSOvknx+ULkVIIjtWHY=
+	t=1748914366; cv=none; b=SQdtx8tahQPSt1Jgs/zFTTrBVslQKL/wj4Ev1tedr6jN7RC1mTc46HM1p7cTYWTu/vPiUHWqO7Ih6w/Zlc7q8xq2PE/vNUpSmCzmlkXFbLDImNWOHlXNm8ZXbdJVaMbH4hXerlr4nxL1EQpcnKUT5uo5vwmT/EoUCR60rsAxkLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748914131; c=relaxed/simple;
-	bh=b11HpLwHLKGoyRhC6omYm5l+VJ78T/SReelADlAQk9k=;
+	s=arc-20240116; t=1748914366; c=relaxed/simple;
+	bh=GY9z3Tmkg8mD3CaNNtVtPmjxBTdn20oVbOl24+EVSj4=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=a8b1Bhg7ZlwUBjuECICw2NKJE0K8VLkIksRp6IED9b8HnGh/OKgL1bhBBfx+zaB4lTzwDvpLl3YeMnUvSJ8m1iq/774dyc//NpbaNGAzqEN1iJANJHEdojKdKj6FF7ZjhXrsqCdhaNDAyECAMp7iMfHrRCaazLIFETC9tklnwms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+	 Content-Type:MIME-Version; b=ofyTXzk3AzK/15CnJuqJThRHNjGwNXLZyPV+RzMLFogC7c+NOfy6wq3qNJKVnvz27m8OwywXoEWRu/wRprto9JT1HWSQTq2cD9LVMUpJ+rGPFU9IJ4VHCiZmrrKzgn2TbPtaGbJ2TgmM5Z0x0qKgHC+ksOvht+sqruPiq8kHdYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.192.198
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w011.hihonor.com (unknown [10.68.20.122])
-	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4bBCjT3K7WzYlBHq;
-	Tue,  3 Jun 2025 09:26:37 +0800 (CST)
-Received: from a013.hihonor.com (10.68.22.170) by w011.hihonor.com
- (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta22.hihonor.com (SkyGuard) with ESMTPS id 4bBCp73SNVzYl04k;
+	Tue,  3 Jun 2025 09:30:39 +0800 (CST)
+Received: from a010.hihonor.com (10.68.16.52) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
- 2025 09:28:39 +0800
-Received: from a010.hihonor.com (10.68.16.52) by a013.hihonor.com
- (10.68.22.170) with Microsoft SMTP Server (version=TLS1_2,
+ 2025 09:32:35 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a010.hihonor.com
+ (10.68.16.52) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
- 2025 09:28:39 +0800
+ 2025 09:32:35 +0800
 Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
  a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
- Tue, 3 Jun 2025 09:28:39 +0800
+ Tue, 3 Jun 2025 09:32:34 +0800
 From: wangtao <tao.wangtao@honor.com>
-To: Amir Goldstein <amir73il@gmail.com>
-CC: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
-	"christian.koenig@amd.com" <christian.koenig@amd.com>, "kraxel@redhat.com"
-	<kraxel@redhat.com>, "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
+To: kernel test robot <lkp@intel.com>, "sumit.semwal@linaro.org"
+	<sumit.semwal@linaro.org>, "christian.koenig@amd.com"
+	<christian.koenig@amd.com>, "kraxel@redhat.com" <kraxel@redhat.com>,
+	"vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
 	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
 	<brauner@kernel.org>, "hughd@google.com" <hughd@google.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "amir73il@gmail.com"
+	<amir73il@gmail.com>
+CC: "oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
 	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
 	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com"
 	<jstultz@google.com>, "tjmercier@google.com" <tjmercier@google.com>,
@@ -64,23 +66,20 @@ CC: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
 	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang
 	<yipengxiang@honor.com>, liulu 00013167 <liulu.liu@honor.com>, "hanfeng
  00012985" <feng.han@honor.com>
-Subject: RE: [PATCH v3 1/4] fs: allow cross-FS copy_file_range for
- memory-backed files
-Thread-Topic: [PATCH v3 1/4] fs: allow cross-FS copy_file_range for
- memory-backed files
-Thread-Index: AQHb0U9QoCfM8mt6VkueWh2CiDJkn7PqqPyAgAX9ANA=
-Date: Tue, 3 Jun 2025 01:28:38 +0000
-Message-ID: <c33f01b0557f4b388853a46d7688f4dd@honor.com>
-References: <20250530103941.11092-1-tao.wangtao@honor.com>
- <20250530103941.11092-2-tao.wangtao@honor.com>
- <CAOQ4uxid9dn3akvN3gMBVOJXoazF5gm6xO+=eaRCzDaC62K5OA@mail.gmail.com>
-In-Reply-To: <CAOQ4uxid9dn3akvN3gMBVOJXoazF5gm6xO+=eaRCzDaC62K5OA@mail.gmail.com>
+Subject: RE: [PATCH v3 3/4] udmabuf: Implement udmabuf rw_file callback
+Thread-Topic: [PATCH v3 3/4] udmabuf: Implement udmabuf rw_file callback
+Thread-Index: AQHb0U9QXzR8zCVG/0iWOLZdee2y5bPqtG6AgAX2EFA=
+Date: Tue, 3 Jun 2025 01:32:34 +0000
+Message-ID: <dbd3b06611b64900a641a159c12ed37b@honor.com>
+References: <20250530103941.11092-4-tao.wangtao@honor.com>
+ <202505302235.mDzENMSm-lkp@intel.com>
+In-Reply-To: <202505302235.mDzENMSm-lkp@intel.com>
 Accept-Language: zh-CN, en-US
 Content-Language: zh-CN
 X-MS-Has-Attach:
 X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -88,172 +87,164 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW1pciBHb2xkc3RlaW4g
-PGFtaXI3M2lsQGdtYWlsLmNvbT4NCj4gU2VudDogRnJpZGF5LCBNYXkgMzAsIDIwMjUgOTo0NCBQ
-TQ0KPiBUbzogd2FuZ3RhbyA8dGFvLndhbmd0YW9AaG9ub3IuY29tPg0KPiBDYzogc3VtaXQuc2Vt
-d2FsQGxpbmFyby5vcmc7IGNocmlzdGlhbi5rb2VuaWdAYW1kLmNvbTsNCj4ga3JheGVsQHJlZGhh
-dC5jb207IHZpdmVrLmthc2lyZWRkeUBpbnRlbC5jb207IHZpcm9AemVuaXYubGludXgub3JnLnVr
-Ow0KPiBicmF1bmVyQGtlcm5lbC5vcmc7IGh1Z2hkQGdvb2dsZS5jb207IGFrcG1AbGludXgtZm91
-bmRhdGlvbi5vcmc7DQo+IGJlbmphbWluLmdhaWduYXJkQGNvbGxhYm9yYS5jb207IEJyaWFuLlN0
-YXJrZXlAYXJtLmNvbTsNCj4ganN0dWx0ekBnb29nbGUuY29tOyB0am1lcmNpZXJAZ29vZ2xlLmNv
-bTsgamFja0BzdXNlLmN6Ow0KPiBiYW9saW4ud2FuZ0BsaW51eC5hbGliYWJhLmNvbTsgbGludXgt
-bWVkaWFAdmdlci5rZXJuZWwub3JnOyBkcmktDQo+IGRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZzsgbGluYXJvLW1tLXNpZ0BsaXN0cy5saW5hcm8ub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIu
-a2VybmVsLm9yZzsgbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBtbUBr
-dmFjay5vcmc7IHdhbmdiaW50aWFuKEJpbnRpYW5XYW5nKSA8YmludGlhbi53YW5nQGhvbm9yLmNv
-bT47DQo+IHlpcGVuZ3hpYW5nIDx5aXBlbmd4aWFuZ0Bob25vci5jb20+OyBsaXVsdSAwMDAxMzE2
-Nw0KPiA8bGl1bHUubGl1QGhvbm9yLmNvbT47IGhhbmZlbmcgMDAwMTI5ODUgPGZlbmcuaGFuQGhv
-bm9yLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAxLzRdIGZzOiBhbGxvdyBjcm9zcy1G
-UyBjb3B5X2ZpbGVfcmFuZ2UgZm9yIG1lbW9yeS0NCj4gYmFja2VkIGZpbGVzDQo+IA0KPiBPbiBG
-cmksIE1heSAzMCwgMjAyNSBhdCAxMjo0MOKAr1BNIHdhbmd0YW8gPHRhby53YW5ndGFvQGhvbm9y
-LmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBNZW1vcnktYmFja2VkIGZpbGVzIGNhbiBvcHRpbWl6ZSBj
-b3B5IHBlcmZvcm1hbmNlIHZpYSBjb3B5X2ZpbGVfcmFuZ2UNCj4gPiBjYWxsYmFja3MuIENvbXBh
-cmVkIHRvIG1tYXAmcmVhZDogcmVkdWNlcyBHVVAgKGdldF91c2VyX3BhZ2VzKQ0KPiA+IG92ZXJo
-ZWFkOyB2cyBzZW5kZmlsZS9zcGxpY2U6IGVsaW1pbmF0ZXMgb25lIG1lbW9yeSBjb3B5OyBzdXBw
-b3J0cw0KPiA+IGRtYWJ1ZiB6ZXJvLWNvcHkgaW1wbGVtZW50YXRpb24uDQo+ID4NCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiB3YW5ndGFvIDx0YW8ud2FuZ3Rhb0Bob25vci5jb20+DQo+ID4gLS0tDQo+IA0K
-PiBIaSB3YW5ndGFvLA0KPiANCj4gTGV0IG1lIHJlcGhyYXNlIG15IHJlYWN0aW9uIGdlbnRseToN
-Cj4gUmVnYXJkbGVzcyBvZiB0aGUgcHJvcG9zZWQgQVBJIGV4dGVuc2lvbiwgYW5kIHJlZmVycmlu
-ZyB0byB0aGUNCj4gaW1wbGVtZW50YXRpb24gaXRzZWxmIC0gSSB3cm90ZSB0aGUgY3VycmVudCBj
-b2RlIGFuZCBJIGNhbiBiYXJlbHkgdW5kZXJzdGFuZA0KPiB0aGUgbG9naWMgZXZlcnkgdGltZSBJ
-IGNvbWUgYmFjayB0byByZWFkIGl0Lg0KPiANCj4gWW91ciBjaGFuZ2VzIG1ha2UgaXQgdG9vIG1l
-c3N5IHRvIGJlIHJldmlld2VkL21haW50YWluZWQuDQo+IEkgaGF2ZSBhIGZldyBzdWdnZXN0aW9u
-cyBmb3Igc2ltcGxpZmljYXRpb25zIChzZWUgYmVsb3cpLg0KPiANCj4gVGhlIGNvbXBsaWNhdGlv
-biBhcmlzZSBmcm9tIHRoZSBmYWN0IHRoYXQgbm9ybWFsbHkgdGhlIGRlc3RpbmF0aW9uIGZvcHMg
-YXJlDQo+IHVzZWQgdG8gY2FsbCB0aGUgY29weV9yYW5nZSgpIG1ldGhvZCBhbmQgdGhpcyBjYXNl
-IGlzIGEgZGV2aWF0aW9uIGZyb20gdGhpcw0KPiBzdGFuZGFyZCwgd2UgbmVlZCB0byBtYWtlIHRo
-ZSBjb3BlIHNpbXBsZXIgdXNpbmcgYSBoZWxwZXIgdG8gY2hvb3NlIHRoZQ0KPiBmb3BzIHRvIHVz
-ZS4NCj4gDQo+ID4gIGZzL3JlYWRfd3JpdGUuYyAgICB8IDcxICsrKysrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKy0tLS0tLS0tLS0tDQo+IC0tDQo+ID4gIGluY2x1ZGUvbGludXgvZnMuaCB8
-ICAyICsrDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgNTQgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRp
-b25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZnMvcmVhZF93cml0ZS5jIGIvZnMvcmVhZF93
-cml0ZS5jIGluZGV4DQo+ID4gYmIwZWQyNmEwYjNhLi41OTFjNmRiN2I3ODUgMTAwNjQ0DQo+ID4g
-LS0tIGEvZnMvcmVhZF93cml0ZS5jDQo+ID4gKysrIGIvZnMvcmVhZF93cml0ZS5jDQo+ID4gQEAg
-LTE0NjksNiArMTQ2OSwyMCBAQCBDT01QQVRfU1lTQ0FMTF9ERUZJTkU0KHNlbmRmaWxlNjQsIGlu
-dCwNCj4gb3V0X2ZkLA0KPiA+IGludCwgaW5fZmQsICB9ICAjZW5kaWYNCj4gPg0KPiA+ICtzdGF0
-aWMgaW5saW5lIGJvb2wgaXNfY29weV9tZW1vcnlfZmlsZV90b19maWxlKHN0cnVjdCBmaWxlICpm
-aWxlX2luLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGZpbGUg
-KmZpbGVfb3V0KSB7DQo+ID4gKyAgICAgICByZXR1cm4gKGZpbGVfaW4tPmZfb3AtPmZvcF9mbGFn
-cyAmIEZPUF9NRU1PUllfRklMRSkgJiYNCj4gPiArICAgICAgICAgICAgICAgZmlsZV9pbi0+Zl9v
-cC0+Y29weV9maWxlX3JhbmdlICYmDQo+ID4gK2ZpbGVfb3V0LT5mX29wLT53cml0ZV9pdGVyOyB9
-DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIGJvb2wgaXNfY29weV9maWxlX3RvX21lbW9yeV9m
-aWxlKHN0cnVjdCBmaWxlICpmaWxlX2luLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgc3RydWN0IGZpbGUgKmZpbGVfb3V0KSB7DQo+ID4gKyAgICAgICByZXR1cm4gKGZpbGVf
-b3V0LT5mX29wLT5mb3BfZmxhZ3MgJiBGT1BfTUVNT1JZX0ZJTEUpICYmDQo+ID4gKyAgICAgICAg
-ICAgICAgIGZpbGVfaW4tPmZfb3AtPnJlYWRfaXRlciAmJg0KPiA+ICtmaWxlX291dC0+Zl9vcC0+
-Y29weV9maWxlX3JhbmdlOyB9DQo+ID4gKw0KPiANCj4gUGxlYXNlIGNvbWJpbmUgdGhhdCB0byBh
-IGhlbHBlcjoNCj4gY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyAqbWVtb3J5X2NvcHlfZmls
-ZV9vcHMoc3RydWN0IGZpbGUgKmZpbGVfaW4sDQo+IHN0cnVjdCBmaWxlICpmaWxlX291dCkgd2hp
-Y2ggcmV0dXJucyBlaXRoZXIgZmlsZV9pbi0+Zl9vcCwgZmlsZV9vdXQtPmZfb3Agb3INCj4gTlVM
-TC4NCj4gDQpHcmVhdCBzdWdnZXN0aW9ucyEgSSdsbCB1cGRhdGUgdGhlbSBpbiB0aGUgbmV3IHBh
-dGNoIHZlcnNpb24gc29vbi4NCg0KPiANCj4gPiAgLyoNCj4gPiAgICogUGVyZm9ybXMgbmVjZXNz
-YXJ5IGNoZWNrcyBiZWZvcmUgZG9pbmcgYSBmaWxlIGNvcHkNCj4gPiAgICoNCj4gPiBAQCAtMTQ4
-NCwxMSArMTQ5OCwyMyBAQCBzdGF0aWMgaW50IGdlbmVyaWNfY29weV9maWxlX2NoZWNrcyhzdHJ1
-Y3QgZmlsZQ0KPiAqZmlsZV9pbiwgbG9mZl90IHBvc19pbiwNCj4gPiAgICAgICAgIHN0cnVjdCBp
-bm9kZSAqaW5vZGVfb3V0ID0gZmlsZV9pbm9kZShmaWxlX291dCk7DQo+ID4gICAgICAgICB1aW50
-NjRfdCBjb3VudCA9ICpyZXFfY291bnQ7DQo+ID4gICAgICAgICBsb2ZmX3Qgc2l6ZV9pbjsNCj4g
-PiArICAgICAgIGJvb2wgc3BsaWNlID0gZmxhZ3MgJiBDT1BZX0ZJTEVfU1BMSUNFOw0KPiA+ICsg
-ICAgICAgYm9vbCBoYXNfbWVtb3J5X2ZpbGU7DQo+ID4gICAgICAgICBpbnQgcmV0Ow0KPiA+DQo+
-ID4gLSAgICAgICByZXQgPSBnZW5lcmljX2ZpbGVfcndfY2hlY2tzKGZpbGVfaW4sIGZpbGVfb3V0
-KTsNCj4gPiAtICAgICAgIGlmIChyZXQpDQo+ID4gLSAgICAgICAgICAgICAgIHJldHVybiByZXQ7
-DQo+ID4gKyAgICAgICAvKiBTa2lwIGdlbmVyaWMgY2hlY2tzLCBhbGxvdyBjcm9zcy1zYiBjb3Bp
-ZXMgZm9yIGRtYS1idWYvdG1wZnMgKi8NCj4gPiArICAgICAgIGhhc19tZW1vcnlfZmlsZSA9IGlz
-X2NvcHlfbWVtb3J5X2ZpbGVfdG9fZmlsZShmaWxlX2luLCBmaWxlX291dCkgfHwNCj4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgIGlzX2NvcHlfZmlsZV90b19tZW1vcnlfZmlsZShmaWxlX2lu
-LCBmaWxlX291dCk7DQo+ID4gKyAgICAgICBpZiAoIXNwbGljZSAmJiBoYXNfbWVtb3J5X2ZpbGUp
-IHsNCj4gPiArICAgICAgICAgICAgICAgaWYgKCEoZmlsZV9pbi0+Zl9tb2RlICYgRk1PREVfUkVB
-RCkgfHwNCj4gPiArICAgICAgICAgICAgICAgICAgICEoZmlsZV9vdXQtPmZfbW9kZSAmIEZNT0RF
-X1dSSVRFKSB8fA0KPiA+ICsgICAgICAgICAgICAgICAgICAgKGZpbGVfb3V0LT5mX2ZsYWdzICYg
-T19BUFBFTkQpKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUJBREY7DQo+
-IA0KPiBJIGRvbid0IGxpa2UgdGhhdCB0aGlzIGJvdGggZHVwbGljYXRlcyBjb2RlIGFuZCBkb2Vz
-IG5vdCBjaGVjayBhbGwgdGhlIGNoZWNrcyBpbg0KPiBnZW5lcmljX2ZpbGVfcndfY2hlY2tzKCkg
-Zm9yIHRoZSBub24tbWVtb3J5IGZpbGUgc2lkZS4NCj4gSSBkbyBub3QgY3VycmVudGx5IGhhdmUg
-YSBzdWdnZXN0aW9uIGhvdyB0byBtYWtlIHRoaXMgbGVzcyBtZXNzeSwgbW9yZQ0KPiBodW1hbiBy
-ZWFkYWJsZSBhbmQgY29ycmVjdC4NClNpbmNlIGRtYWJ1ZiBmaWxlcyBhcmVuJ3QgcmVndWxhciBm
-aWxlcywgd2UnbGwgc2tpcCBnZW5lcmljX2ZpbGVfcndfY2hlY2tzLg0KQWRkaW5nIGFuIGVzc2Vu
-dGlhbF9maWxlX3J3X2NoZWNrcygpIGNvdWxkIHJlZHVjZSBjb2RlIGR1cGxpY2F0aW9uLg0KDQo+
-IA0KPiA+ICsgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gZ2VuZXJp
-Y19maWxlX3J3X2NoZWNrcyhmaWxlX2luLCBmaWxlX291dCk7DQo+ID4gKyAgICAgICAgICAgICAg
-IGlmIChyZXQpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiAr
-ICAgICAgIH0NCj4gPg0KPiA+ICAgICAgICAgLyoNCj4gPiAgICAgICAgICAqIFdlIGFsbG93IHNv
-bWUgZmlsZXN5c3RlbXMgdG8gaGFuZGxlIGNyb3NzIHNiIGNvcHksIGJ1dA0KPiA+IHBhc3Npbmcg
-QEAgLTE1MDAsNyArMTUyNiw3IEBAIHN0YXRpYyBpbnQgZ2VuZXJpY19jb3B5X2ZpbGVfY2hlY2tz
-KHN0cnVjdA0KPiBmaWxlICpmaWxlX2luLCBsb2ZmX3QgcG9zX2luLA0KPiA+ICAgICAgICAgICog
-YW5kIHNldmVyYWwgZGlmZmVyZW50IHNldHMgb2YgZmlsZV9vcGVyYXRpb25zLCBidXQgdGhleSBh
-bGwgZW5kIHVwDQo+ID4gICAgICAgICAgKiB1c2luZyB0aGUgc2FtZSAtPmNvcHlfZmlsZV9yYW5n
-ZSgpIGZ1bmN0aW9uIHBvaW50ZXIuDQo+ID4gICAgICAgICAgKi8NCj4gPiAtICAgICAgIGlmIChm
-bGFncyAmIENPUFlfRklMRV9TUExJQ0UpIHsNCj4gPiArICAgICAgIGlmIChzcGxpY2UgfHwgaGFz
-X21lbW9yeV9maWxlKSB7DQo+ID4gICAgICAgICAgICAgICAgIC8qIGNyb3NzIHNiIHNwbGljZSBp
-cyBhbGxvd2VkICovDQo+IA0KPiBUaGlzIGNvbW1lbnQgaXMgbm90IGFjY3VyYXRlIC0gaXQgc2hv
-dWxkIHNheSAiY3Jvc3MgZnMtdHlwZSIsIGJlY2F1c2UgaXQgc2tpcHMNCj4gdGhlIHRlc3QgdGhh
-dCBjb21wYXJlcyB0aGUgLT5jb3B5X2ZpbGVfcmFuZ2UgcG9pbnRlcnMsIG5vdCB0aGUgc2IuDQo+
-IElmIHlvdSBhcmUgbWFraW5nIGNoYW5nZXMgdG8gdGhpcyBmdW5jdGlvbiwgdGhpcyBzaG91bGQg
-YmUgY2xhcmlmaWVkLg0KPiANCldpbGwgZml4IHRoaXMgc2hvcnRseS4NCg0KPiA+ICAgICAgICAg
-fSBlbHNlIGlmIChmaWxlX291dC0+Zl9vcC0+Y29weV9maWxlX3JhbmdlKSB7DQo+ID4gICAgICAg
-ICAgICAgICAgIGlmIChmaWxlX2luLT5mX29wLT5jb3B5X2ZpbGVfcmFuZ2UgIT0gQEAgLTE1ODEs
-MjMNCj4gPiArMTYwNywzMCBAQCBzc2l6ZV90IHZmc19jb3B5X2ZpbGVfcmFuZ2Uoc3RydWN0IGZp
-bGUgKmZpbGVfaW4sIGxvZmZfdCBwb3NfaW4sDQo+ID4gICAgICAgICAgKiBzYW1lIHNiIHVzaW5n
-IGNsb25lLCBidXQgZm9yIGZpbGVzeXN0ZW1zIHdoZXJlIGJvdGggY2xvbmUgYW5kIGNvcHkNCj4g
-PiAgICAgICAgICAqIGFyZSBzdXBwb3J0ZWQgKGUuZy4gbmZzLGNpZnMpLCB3ZSBvbmx5IGNhbGwg
-dGhlIGNvcHkgbWV0aG9kLg0KPiA+ICAgICAgICAgICovDQo+ID4gLSAgICAgICBpZiAoIXNwbGlj
-ZSAmJiBmaWxlX291dC0+Zl9vcC0+Y29weV9maWxlX3JhbmdlKSB7DQo+ID4gLSAgICAgICAgICAg
-ICAgIHJldCA9IGZpbGVfb3V0LT5mX29wLT5jb3B5X2ZpbGVfcmFuZ2UoZmlsZV9pbiwgcG9zX2lu
-LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgIGZpbGVfb3V0LCBwb3Nfb3V0LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgIGxlbiwgZmxhZ3MpOw0KPiA+IC0gICAgICAgfSBlbHNl
-IGlmICghc3BsaWNlICYmIGZpbGVfaW4tPmZfb3AtPnJlbWFwX2ZpbGVfcmFuZ2UgJiYgc2FtZXNi
-KSB7DQo+ID4gLSAgICAgICAgICAgICAgIHJldCA9IGZpbGVfaW4tPmZfb3AtPnJlbWFwX2ZpbGVf
-cmFuZ2UoZmlsZV9pbiwgcG9zX2luLA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgZmlsZV9vdXQsIHBvc19vdXQsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBtaW5fdChsb2ZmX3QsIE1BWF9SV19DT1VOVCwgbGVuKSwNCj4gPiAtICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIFJFTUFQX0ZJTEVfQ0FOX1NIT1JURU4pOw0KPiA+IC0gICAgICAgICAg
-ICAgICAvKiBmYWxsYmFjayB0byBzcGxpY2UgKi8NCj4gPiAtICAgICAgICAgICAgICAgaWYgKHJl
-dCA8PSAwKQ0KPiA+ICsgICAgICAgaWYgKCFzcGxpY2UpIHsNCj4gPiArICAgICAgICAgICAgICAg
-aWYgKGlzX2NvcHlfbWVtb3J5X2ZpbGVfdG9fZmlsZShmaWxlX2luLCBmaWxlX291dCkpIHsNCj4g
-PiArICAgICAgICAgICAgICAgICAgICAgICByZXQgPSBmaWxlX2luLT5mX29wLT5jb3B5X2ZpbGVf
-cmFuZ2UoZmlsZV9pbiwgcG9zX2luLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICBmaWxlX291dCwgcG9zX291dCwgbGVuLCBmbGFncyk7DQo+ID4gKyAgICAgICAg
-ICAgICAgIH0gZWxzZSBpZiAoaXNfY29weV9maWxlX3RvX21lbW9yeV9maWxlKGZpbGVfaW4sIGZp
-bGVfb3V0KSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IGZpbGVfb3V0LT5m
-X29wLT5jb3B5X2ZpbGVfcmFuZ2UoZmlsZV9pbiwgcG9zX2luLA0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICBmaWxlX291dCwgcG9zX291dCwgbGVuLCBmbGFncyk7
-DQo+ID4gKyAgICAgICAgICAgICAgIH0gZWxzZSBpZiAoZmlsZV9vdXQtPmZfb3AtPmNvcHlfZmls
-ZV9yYW5nZSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IGZpbGVfb3V0LT5m
-X29wLT5jb3B5X2ZpbGVfcmFuZ2UoZmlsZV9pbiwgcG9zX2luLA0KPiA+ICsgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZmlsZV9vdXQsIHBvc19v
-dXQsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICBsZW4sIGZsYWdzKTsNCj4gPiArICAgICAgICAgICAgICAgfSBlbHNlIGlmIChmaWxl
-X2luLT5mX29wLT5yZW1hcF9maWxlX3JhbmdlICYmIHNhbWVzYikgew0KPiA+ICsgICAgICAgICAg
-ICAgICAgICAgICAgIHJldCA9IGZpbGVfaW4tPmZfb3AtPnJlbWFwX2ZpbGVfcmFuZ2UoZmlsZV9p
-biwgcG9zX2luLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBm
-aWxlX291dCwgcG9zX291dCwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgbWluX3QobG9mZl90LCBNQVhfUldfQ09VTlQsIGxlbiksDQo+ID4gKyAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFJFTUFQX0ZJTEVfQ0FOX1NIT1JURU4pOw0KPiA+
-ICsgICAgICAgICAgICAgICAgICAgICAgIC8qIGZhbGxiYWNrIHRvIHNwbGljZSAqLw0KPiA+ICsg
-ICAgICAgICAgICAgICAgICAgICAgIGlmIChyZXQgPD0gMCkNCj4gPiArICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIHNwbGljZSA9IHRydWU7DQo+ID4gKyAgICAgICAgICAgICAgIH0gZWxz
-ZSBpZiAoc2FtZXNiKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgLyogRmFsbGJhY2sg
-dG8gc3BsaWNlIGZvciBzYW1lIHNiIGNvcHkgZm9yDQo+ID4gKyBiYWNrd2FyZCBjb21wYXQgKi8N
-Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBzcGxpY2UgPSB0cnVlOw0KPiA+IC0gICAgICAg
-fSBlbHNlIGlmIChzYW1lc2IpIHsNCj4gPiAtICAgICAgICAgICAgICAgLyogRmFsbGJhY2sgdG8g
-c3BsaWNlIGZvciBzYW1lIHNiIGNvcHkgZm9yIGJhY2t3YXJkIGNvbXBhdCAqLw0KPiA+IC0gICAg
-ICAgICAgICAgICBzcGxpY2UgPSB0cnVlOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+IA0KPiBU
-aGlzIGlzIHRoZSB3YXktdG9vLXVnbHktdG8tbGl2ZSBwYXJ0Lg0KPiBXYXMgcHJldHR5IGJhZCBi
-ZWZvcmUgYW5kIG5vdyBpdCBpcyB1bmFjY2VwdGFibGUuDQo+IHdheSB0b28gbXVjaCB1bm5lZWRl
-ZCBuZXN0aW5nIGFuZCB0b28gaGFyZCB0byBmb2xsb3cuDQo+IA0KPiBGaXJzdCBvZiBhbGwsIHBs
-ZWFzZSB1c2Ugc3BsaWNlIGxhYmVsIGFuZCBjYWxsIGdvdG8gc3BsaWNlIChiZWZvcmUgdGhlIGNv
-bW1lbnQpDQo+IGluc3RlYWQgb2YgYWRkaW5nIGFub3RoZXIgbmVzdGluZyBsZXZlbC4NCj4gSSB3
-b3VsZCBkbyB0aGF0IGV2ZW4gaWYgbm90IGFkZGluZyBtZW1vcnkgZmQgY29weSBzdXBwb3J0Lg0K
-PiANCj4gU2Vjb25kLCBwbGVhc2Ugc3RvcmUgcmVzdWx0IG9mIG1lbV9mb3BzID0gbWVtb3J5X2Nv
-cHlfZmlsZV9vcHMoKSBhbmQNCj4gc3RhcnQgd2l0aDoNCj4gKyAgICBpZiAobWVtX2ZvcHMpIHsN
-Cj4gKyAgICAgICAgcmV0ID0gbWVtX2ZvcHMtPmNvcHlfZmlsZV9yYW5nZShmaWxlX2luLCBwb3Nf
-aW4sDQo+ICsNCj4gZmlsZV9vdXQsIHBvc19vdXQsDQo+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZW4sDQo+ICsgZmxhZ3Mp
-Ow0KPiAgKyAgIH0gZWxzZSBpZiAoZmlsZV9vdXQtPmZfb3AtPmNvcHlfZmlsZV9yYW5nZSkgeyAu
-Li4NCj4gDQo+IGFuZCB1cGRhdGUgdGhlIGNvbW1lbnQgYWJvdmUgdG8gc2F5IHRoYXQ6DQo+ICsg
-KiBGb3IgY29weSB0by9mcm9tIG1lbW9yeSBmZCwgd2UgYWx3YXkgY2FsbCB0aGUgY29weSBtZXRo
-b2Qgb2YgdGhlDQo+IG1lbW9yeSBmZC4NCj4gICAgKi8NCj4gDQo+IEkgdGhpbmsgdGhhdCBtYWtl
-cyB0aGUgY29kZSBub3QgbW9yZSB1Z2x5IHRoYW4gaXQgYWxyZWFkeSBpcy4NCj4gDQo+IFRoYW5r
-cywNCj4gQW1pci4NCkdvb2QgYWR2aWNlIC0gdGhhbmtzIGEgbG90IQ0KDQpSZWdhcmRzLA0KV2Fu
-Z3Rhby4NCg==
+
+
+> -----Original Message-----
+> From: kernel test robot <lkp@intel.com>
+> Sent: Friday, May 30, 2025 10:25 PM
+> To: wangtao <tao.wangtao@honor.com>; sumit.semwal@linaro.org;
+> christian.koenig@amd.com; kraxel@redhat.com; vivek.kasireddy@intel.com;
+> viro@zeniv.linux.org.uk; brauner@kernel.org; hughd@google.com;
+> akpm@linux-foundation.org; amir73il@gmail.com
+> Cc: oe-kbuild-all@lists.linux.dev; benjamin.gaignard@collabora.com;
+> Brian.Starkey@arm.com; jstultz@google.com; tjmercier@google.com;
+> jack@suse.cz; baolin.wang@linux.alibaba.com; linux-media@vger.kernel.org;
+> dri-devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; linux-
+> kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-
+> mm@kvack.org; wangbintian(BintianWang) <bintian.wang@honor.com>;
+> yipengxiang <yipengxiang@honor.com>; liulu 00013167
+> <liulu.liu@honor.com>; hanfeng 00012985 <feng.han@honor.com>; wangtao
+> <tao.wangtao@honor.com>
+> Subject: Re: [PATCH v3 3/4] udmabuf: Implement udmabuf rw_file callback
+>=20
+> Hi wangtao,
+>=20
+> kernel test robot noticed the following build errors:
+>=20
+> [auto build test ERROR on brauner-vfs/vfs.all] [also build test ERROR on =
+next-
+> 20250530] [cannot apply to linus/master v6.15] [If your patch is applied =
+to the
+> wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>=20
+> url:    https://github.com/intel-lab-lkp/linux/commits/wangtao/fs-allow-
+> cross-FS-copy_file_range-for-memory-backed-files/20250530-184146
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git vfs.a=
+ll
+> patch link:    https://lore.kernel.org/r/20250530103941.11092-4-
+> tao.wangtao%40honor.com
+> patch subject: [PATCH v3 3/4] udmabuf: Implement udmabuf rw_file callback
+> config: sparc64-randconfig-002-20250530 (https://download.01.org/0day-
+> ci/archive/20250530/202505302235.mDzENMSm-lkp@intel.com/config)
+> compiler: sparc64-linux-gcc (GCC) 15.1.0 reproduce (this is a W=3D1 build=
+):
+> (https://download.01.org/0day-
+> ci/archive/20250530/202505302235.mDzENMSm-lkp@intel.com/reproduce)
+>=20
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes:
+> | https://lore.kernel.org/oe-kbuild-all/202505302235.mDzENMSm-lkp@intel.
+> | com/
+>=20
+> All error/warnings (new ones prefixed by >>):
+>=20
+Quick note: I don't have local sparc64 compilation setup, so I'll
+explicitly add the header dependencies to ensure safety.
+
+Regards,
+Wangtao.
+>    drivers/dma-buf/udmabuf.c: In function 'udmabuf_rw_file':
+> >> drivers/dma-buf/udmabuf.c:298:25: error: storage size of 'iter' isn't
+> >> known
+>      298 |         struct iov_iter iter;
+>          |                         ^~~~
+> >> drivers/dma-buf/udmabuf.c:299:45: error: 'ITER_SOURCE' undeclared
+> >> (first use in this function)
+>      299 |         unsigned int direction =3D is_write ? ITER_SOURCE : IT=
+ER_DEST;
+>          |                                             ^~~~~~~~~~~
+>    drivers/dma-buf/udmabuf.c:299:45: note: each undeclared identifier is
+> reported only once for each function it appears in
+> >> drivers/dma-buf/udmabuf.c:299:59: error: 'ITER_DEST' undeclared
+> >> (first use in this function)
+>      299 |         unsigned int direction =3D is_write ? ITER_SOURCE : IT=
+ER_DEST;
+>          |                                                           ^~~~=
+~~~~~
+> >> drivers/dma-buf/udmabuf.c:327:17: error: implicit declaration of
+> >> function 'iov_iter_bvec'; did you mean 'bvec_iter_bvec'?
+> >> [-Wimplicit-function-declaration]
+>      327 |                 iov_iter_bvec(&iter, direction, bvec, bv_idx, =
+bv_total);
+>          |                 ^~~~~~~~~~~~~
+>          |                 bvec_iter_bvec
+> >> drivers/dma-buf/udmabuf.c:298:25: warning: unused variable 'iter'
+> >> [-Wunused-variable]
+>      298 |         struct iov_iter iter;
+>          |                         ^~~~
+>=20
+>=20
+> vim +298 drivers/dma-buf/udmabuf.c
+>=20
+>    286
+>    287	static ssize_t udmabuf_rw_file(struct dma_buf *dmabuf, loff_t
+> my_pos,
+>    288				struct file *other, loff_t pos,
+>    289				size_t count, bool is_write)
+>    290	{
+>    291		struct udmabuf *ubuf =3D dmabuf->priv;
+>    292		loff_t my_end =3D my_pos + count, bv_beg, bv_end =3D 0;
+>    293		pgoff_t pg_idx =3D my_pos / PAGE_SIZE;
+>    294		pgoff_t pg_end =3D DIV_ROUND_UP(my_end, PAGE_SIZE);
+>    295		size_t i, bv_off, bv_len, bv_num, bv_idx =3D 0, bv_total =3D 0;
+>    296		struct bio_vec *bvec;
+>    297		struct kiocb kiocb;
+>  > 298		struct iov_iter iter;
+>  > 299		unsigned int direction =3D is_write ? ITER_SOURCE : ITER_DEST;
+>    300		ssize_t ret =3D 0, rw_total =3D 0;
+>    301		struct folio *folio;
+>    302
+>    303		bv_num =3D min_t(size_t, pg_end - pg_idx + 1, 1024);
+>    304		bvec =3D kvcalloc(bv_num, sizeof(*bvec), GFP_KERNEL);
+>    305		if (!bvec)
+>    306			return -ENOMEM;
+>    307
+>    308		init_sync_kiocb(&kiocb, other);
+>    309		kiocb.ki_pos =3D pos;
+>    310
+>    311		for (i =3D 0; i < ubuf->nr_pinned && my_pos < my_end; i++) {
+>    312			folio =3D ubuf->pinned_folios[i];
+>    313			bv_beg =3D bv_end;
+>    314			bv_end +=3D folio_size(folio);
+>    315			if (bv_end <=3D my_pos)
+>    316				continue;
+>    317
+>    318			bv_len =3D min(bv_end, my_end) - my_pos;
+>    319			bv_off =3D my_pos - bv_beg;
+>    320			my_pos +=3D bv_len;
+>    321			bv_total +=3D bv_len;
+>    322			bvec_set_page(&bvec[bv_idx], &folio->page, bv_len,
+> bv_off);
+>    323			if (++bv_idx < bv_num && my_pos < my_end)
+>    324				continue;
+>    325
+>    326			/* start R/W if bvec is full or count reaches zero. */
+>  > 327			iov_iter_bvec(&iter, direction, bvec, bv_idx,
+> bv_total);
+>    328			if (is_write)
+>    329				ret =3D other->f_op->write_iter(&kiocb, &iter);
+>    330			else
+>    331				ret =3D other->f_op->read_iter(&kiocb, &iter);
+>    332			if (ret <=3D 0)
+>    333				break;
+>    334			rw_total +=3D ret;
+>    335			if (ret < bv_total || fatal_signal_pending(current))
+>    336				break;
+>    337
+>    338			bv_idx =3D bv_total =3D 0;
+>    339		}
+>    340		kvfree(bvec);
+>    341
+>    342		return rw_total > 0 ? rw_total : ret;
+>    343	}
+>    344
+>=20
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
