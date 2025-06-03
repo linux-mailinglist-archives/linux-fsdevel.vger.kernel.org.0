@@ -1,120 +1,218 @@
-Return-Path: <linux-fsdevel+bounces-50515-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50516-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E142ACCE56
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 22:47:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4691ACCE79
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 22:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81FB03A4AED
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 20:46:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14C4A3A5002
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 20:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8022192E1;
-	Tue,  3 Jun 2025 20:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C558A224B1E;
+	Tue,  3 Jun 2025 20:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="H0cNZqxV"
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KB2rPxdM"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCF019ABC3
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 20:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 015991474B8
+	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 20:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748983629; cv=none; b=klYRv0eIEP7IPginUoof5lr4yJxWTuHU2gc8BIdUmfek4+cf3t937lsYT+riOfbfn6xX8cWOJavr71Gbdz84Nt2zLgghHtLRZZFfca12KSiPBRLMT+zsdXGDOrDdIZpZ9hrEdrGskPLRGrH5ryYsIct7//kG3IUCyrtQ4eEXUK0=
+	t=1748983810; cv=none; b=JymFZlSIUNaIQFjyRqZgXwyvpUOdhZ5Mt6L+TpLhmVS64KSf0POY+mA4uMZ+gYs9W4LMMqw1QueXviPPfXDViy/UxicP1zfqiAByZXnZxJuXQPdnW54BeCt5MGNOy/0jwn6+o0N4xdaXLmYxEMI+M51Ew2aN2d/vITd5zXbM7rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748983629; c=relaxed/simple;
-	bh=ST7DBC8rOzBNPcx14cwjszn4apDL+ffkae7POoyxmRQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kfcL0w2GtCWJwiQS1RSaft8vmJxfuUzeZVT1fdJ0AL41jAkxoTqPApnF5UKIFGRlPBDY5eLgad/nqWq3cj7lUNb8vH+De7AbvO5DctqPOXpxfBDfmfJNAeh8/MqtVEjhPRTtgZLC/G3mq2lqfMBH343dxRMRK1d8C/T444wQr24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=H0cNZqxV; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-	Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=I3YSTQytHzqFUXhUmgskgPRjZokKGNKwpnEQ4lSzsaE=; b=H0cNZqxV8FyFw9Riv6hA85G5Ed
-	wkrj+VZG868FZW9o0yK84wUDZ+lKRdz20+nJHRPpJ/QKuIfDuqLSy0yWBjsdOQkoZMqiip8Ls7S+o
-	a0utdK+VQOGRZwGHa2j6PURKSkOvCLUDhzpqTGSA0n2bxZpiNTScJYZDV2sJ0LlTH5LJbovMgPBNH
-	PkLEn89tgBrCPqwz4kyrc/sD687w8i+adG6aHkrpJqcB33BKVDRU8NriDkpv94LW+hozaSfkf810w
-	OtxRq4ahVK5KxnRrs+aB1m9PWvNf049yJWe1eDAqXKLt1+DD1/4gIzYs+QEh3sMXrmIeNQ3vuGcKt
-	BPTL/dZA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMYXI-0000000H63q-2eK1;
-	Tue, 03 Jun 2025 20:47:04 +0000
-Date: Tue, 3 Jun 2025 21:47:04 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: linux-fsdevel@vger.kernel.org
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Christian Brauner <brauner@kernel.org>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC] separate the internal mount flags from the rest
-Message-ID: <20250603204704.GB299672@ZenIV>
+	s=arc-20240116; t=1748983810; c=relaxed/simple;
+	bh=j9OUWrhChf7ZQCsdoqnA29xM4WW996oqQ1Kht5NiaRI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JFj1BJXK/+aGeon1cvd/OQnW9AP/k94nlE1GSBRgccNIZQXJZgb9jK04qcMaeh2V2JcNpQMwZzZtlxsslIS4l3xLN7+CupBf1NpQwJEfu26875rvdWMaj0ds+Cy2ZRrsJGw9d2MRTHEiFZ/uRIzUEoC8hTP5Ln99GzFTtVSUf3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KB2rPxdM; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4c60e0e4-0bb8-4ae4-b7c3-f29af926f6a0@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1748983795;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AYDczDkAWGO7hhWYMWNKnea7MYkw9912XrfEX61Dh/U=;
+	b=KB2rPxdMXmrNDx+/PRWF+SZ0Dq9rGGghN/OMmDeHZb7kzLHmtNXE/N1xPsQ7BN82Nq5CVI
+	oRoiTZXpBOyHUrBLMPr7ZBLs2dUdMknaz/LQDr5fWYnqy4ysEd02nzyawtblVs5UchB8aG
+	fEPIKdVGWtijMCNEcSu6t2AyXcuPa9M=
+Date: Tue, 3 Jun 2025 13:49:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
-
-	Currently we use ->mnt_flags for all kinds of things, including
-the ones only fs/{namespace,pnode}.c care about.
-
-	That wouldn't be a problem if not for the locking.  ->mnt_flags is
-protected by mount_lock.  All writers MUST grab that.  Having lockless
-readers is unsurprising - after all, for something like noexec we want
-the current state of mount, whatever it happens to be.  If userland
-remounts something noexec and that races with execve(2), there's nothing
-to be done - it is a race, but not the kernel one.
-
-	However, for a bunch of flags we rely upon the fact that all
-changes in one of those are always done under namespace_sem (exclusive).
-It's not a lockless read - we do depend upon namespace_sem (shared) being
-sufficient to stabilize those particular bits.	MNT_SHARED is one such.
-Note that this flag is a part of propagation graph representation and
-namespace_sem is what protects the entire thing, so setting or clearing
-it under mount_lock alone would be a very bad idea.
-
-Since MNT_SHARED sits in ->mnt_flags, we have to take mount_lock to set or
-clear it, leading to places like this:
-        if (IS_MNT_SHARED(from)) {
-		to->mnt_group_id = from->mnt_group_id;
-		list_add(&to->mnt_share, &from->mnt_share);
-		lock_mount_hash();
-		set_mnt_shared(to);
-		unlock_mount_hash();
-	}
-Non-empty ->mnt_share on a mount without MNT_SHARED would be a hard bug;
-these changes belong together.  Incidentally, lock_mount_hash() is an
-overkill here - read_seqlock_excl(&mount_lock) would be better...
-
-The rules would be easier to follow if we took MNT_SHARED, MNT_UNBINDABLE,
-MNT_MARKED and possibly MNT_LOCKED and MNT_LOCK_* to separate field, protected
-by namespace_sem alone (MNT_LOCKED - depending upon how the path_parent() mess
-settles).
-
-Yes, it's 4 bytes added into struct mount.  However, this
-        int mnt_id;                     /* mount identifier, reused */
-	u64 mnt_id_unique;              /* mount ID unique until reboot */
-	int mnt_group_id;               /* peer group identifier */
-	int mnt_expiry_mark;            /* true if marked for expiry */
-is preceded and followed by a pointer, so we already have a gap there,
-_and_ there are other pending changes that kill ->mnt_umounting.  So the
-size of struct mount won't grow even on 32bit and would actually go down
-on 64bit.
-
-Objections?  The thing I really want is clear locking rules for that
-stuff.  Reduced contention on mount_lock and fewer increments of its
-seqcount component wouldn't hurt either, but that's secondary...
+Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Introduce path iterator
+Content-Language: en-GB
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org,
+ kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+ daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk,
+ brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org,
+ mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com,
+ jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net,
+ gnoack@google.com, m@maowtm.org
+References: <20250603065920.3404510-1-song@kernel.org>
+ <20250603065920.3404510-4-song@kernel.org>
+ <CAEf4BzasOmqHDnuKd7LCT_FEBVMuJxmVNgvs52y5=qLd1bB=rg@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <CAEf4BzasOmqHDnuKd7LCT_FEBVMuJxmVNgvs52y5=qLd1bB=rg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
-PS: despite being strictly namespace.c-internal, two flags must stay in
-->mnt_flags - MNT_DOOMED and MNT_SYNC_UMOUNT - __legitimize_mnt() needs
-them there.  Could be folded together with a bit of massage, though, but
-that's a separate story...
+
+On 6/3/25 11:40 AM, Andrii Nakryiko wrote:
+> On Mon, Jun 2, 2025 at 11:59 PM Song Liu <song@kernel.org> wrote:
+>> Introduce a path iterator, which reliably walk a struct path toward
+>> the root. This path iterator is based on path_walk_parent. A fixed
+>> zero'ed root is passed to path_walk_parent(). Therefore, unless the
+>> user terminates it earlier, the iterator will terminate at the real
+>> root.
+>>
+>> Signed-off-by: Song Liu <song@kernel.org>
+>> ---
+>>   kernel/bpf/Makefile    |  1 +
+>>   kernel/bpf/helpers.c   |  3 +++
+>>   kernel/bpf/path_iter.c | 58 ++++++++++++++++++++++++++++++++++++++++++
+>>   kernel/bpf/verifier.c  |  5 ++++
+>>   4 files changed, 67 insertions(+)
+>>   create mode 100644 kernel/bpf/path_iter.c
+>>
+>> diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
+>> index 3a335c50e6e3..454a650d934e 100644
+>> --- a/kernel/bpf/Makefile
+>> +++ b/kernel/bpf/Makefile
+>> @@ -56,6 +56,7 @@ obj-$(CONFIG_BPF_SYSCALL) += kmem_cache_iter.o
+>>   ifeq ($(CONFIG_DMA_SHARED_BUFFER),y)
+>>   obj-$(CONFIG_BPF_SYSCALL) += dmabuf_iter.o
+>>   endif
+>> +obj-$(CONFIG_BPF_SYSCALL) += path_iter.o
+>>
+>>   CFLAGS_REMOVE_percpu_freelist.o = $(CC_FLAGS_FTRACE)
+>>   CFLAGS_REMOVE_bpf_lru_list.o = $(CC_FLAGS_FTRACE)
+>> diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+>> index b71e428ad936..b190c78e40f6 100644
+>> --- a/kernel/bpf/helpers.c
+>> +++ b/kernel/bpf/helpers.c
+>> @@ -3397,6 +3397,9 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPAB
+>>   BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+>>   #endif
+>>   BTF_ID_FLAGS(func, __bpf_trap)
+>> +BTF_ID_FLAGS(func, bpf_iter_path_new, KF_ITER_NEW | KF_SLEEPABLE)
+>> +BTF_ID_FLAGS(func, bpf_iter_path_next, KF_ITER_NEXT | KF_RET_NULL | KF_SLEEPABLE)
+>> +BTF_ID_FLAGS(func, bpf_iter_path_destroy, KF_ITER_DESTROY | KF_SLEEPABLE)
+>>   BTF_KFUNCS_END(common_btf_ids)
+>>
+>>   static const struct btf_kfunc_id_set common_kfunc_set = {
+>> diff --git a/kernel/bpf/path_iter.c b/kernel/bpf/path_iter.c
+>> new file mode 100644
+>> index 000000000000..0d972ec84beb
+>> --- /dev/null
+>> +++ b/kernel/bpf/path_iter.c
+>> @@ -0,0 +1,58 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
+>> +#include <linux/bpf.h>
+>> +#include <linux/bpf_mem_alloc.h>
+>> +#include <linux/namei.h>
+>> +#include <linux/path.h>
+>> +
+>> +/* open-coded iterator */
+>> +struct bpf_iter_path {
+>> +       __u64 __opaque[3];
+>> +} __aligned(8);
+>> +
+>> +struct bpf_iter_path_kern {
+>> +       struct path path;
+>> +       __u64 flags;
+>> +} __aligned(8);
+>> +
+>> +__bpf_kfunc_start_defs();
+>> +
+>> +__bpf_kfunc int bpf_iter_path_new(struct bpf_iter_path *it,
+>> +                                 struct path *start,
+>> +                                 __u64 flags)
+>> +{
+>> +       struct bpf_iter_path_kern *kit = (void *)it;
+>> +
+>> +       BUILD_BUG_ON(sizeof(*kit) > sizeof(*it));
+>> +       BUILD_BUG_ON(__alignof__(*kit) != __alignof__(*it));
+>> +
+>> +       if (flags) {
+>> +               memset(&kit->path, 0, sizeof(struct path));
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       kit->path = *start;
+>> +       path_get(&kit->path);
+>> +       kit->flags = flags;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +__bpf_kfunc struct path *bpf_iter_path_next(struct bpf_iter_path *it)
+>> +{
+>> +       struct bpf_iter_path_kern *kit = (void *)it;
+>> +       struct path root = {};
+>> +
+>> +       if (!path_walk_parent(&kit->path, &root))
+>> +               return NULL;
+>> +       return &kit->path;
+>> +}
+>> +
+>> +__bpf_kfunc void bpf_iter_path_destroy(struct bpf_iter_path *it)
+>> +{
+>> +       struct bpf_iter_path_kern *kit = (void *)it;
+>> +
+>> +       path_put(&kit->path);
+> note, destroy() will be called even if construction of iterator fails
+> or we exhausted iterator. So you need to make sure that you have
+> bpf_iter_path state where you can detect that there is no path present
+> and skip path_put().
+
+In rare cases, it is possible &kit->path address could be destroyed
+and reused, right? Maybe we need more state in kit to detect the change?
+
+>
+>> +}
+>> +
+>> +__bpf_kfunc_end_defs();
+>> diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+>> index a7d6e0c5928b..45b45cdfb223 100644
+>> --- a/kernel/bpf/verifier.c
+>> +++ b/kernel/bpf/verifier.c
+>> @@ -7036,6 +7036,10 @@ BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket) {
+>>          struct sock *sk;
+>>   };
+>>
+>> +BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct path) {
+>> +       struct dentry *dentry;
+>> +};
+>> +
+>>   static bool type_is_rcu(struct bpf_verifier_env *env,
+>>                          struct bpf_reg_state *reg,
+>>                          const char *field_name, u32 btf_id)
+>> @@ -7076,6 +7080,7 @@ static bool type_is_trusted_or_null(struct bpf_verifier_env *env,
+>>                                      const char *field_name, u32 btf_id)
+>>   {
+>>          BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct socket));
+>> +       BTF_TYPE_EMIT(BTF_TYPE_SAFE_TRUSTED_OR_NULL(struct path));
+>>
+>>          return btf_nested_type_is_trusted(&env->log, reg, field_name, btf_id,
+>>                                            "__safe_trusted_or_null");
+>> --
+>> 2.47.1
+>>
+
 
