@@ -1,177 +1,261 @@
-Return-Path: <linux-fsdevel+bounces-50461-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50450-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387A0ACC78A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 15:19:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25A30ACC64F
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 14:18:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91B6718944F3
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 13:19:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0C7A3A2DEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 12:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CFD722FE02;
-	Tue,  3 Jun 2025 13:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE588146A66;
+	Tue,  3 Jun 2025 12:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="WBSQ6lK9"
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="eAHsPzbw"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2080.outbound.protection.outlook.com [40.107.223.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEBF220103A
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 13:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748956745; cv=none; b=rxpFw0qsel1YJU/mqoEE8Fq8JOdKr3MaqkI3+zUhUHBrKOQeLvKHxAwHj/VNnRfcHrhI7vx/w+GG0/SYxxh2DTcrbz9ivha7zORjnYar/64HocgwJvXfgdW7n3KToc+8var/GUgrnyUrNo3fyR30/XOuLf7bZNQhW8SPbZqY2Sw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748956745; c=relaxed/simple;
-	bh=U6ppXNYUZiUNW8rzaToCHZVTK/Lsx7lg99NAwR5IA/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=NrMONsJ/kyJX1D3rzcG1/B27IzkTLoArUJaQYxHmZIqo+VG4AHYn1S8MTXDMejgP9SeVKPUgRA2Bv6meeidEcB6XXOHCt/e1/Zams4fGFcekUifonvyiOUD81u6zF0LOpzlmF6n4DaZ2Cw9QJMXqTVK3gnjTS1aVwjtK5qLjwV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=WBSQ6lK9; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250603131900epoutp0248842353bb864b69144bbf453db973ca~FiuOvIj0O0121801218epoutp027
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 13:19:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250603131900epoutp0248842353bb864b69144bbf453db973ca~FiuOvIj0O0121801218epoutp027
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1748956740;
-	bh=lhg+yoxzmSUI95r9m4I7c09Wc8JZvBjC2Fu14XUQZiQ=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=WBSQ6lK9EWDgjnVk2UCtHoWdiBqZlqtb8XsrOvFf6dvZb1mPriE1FWBFdCTIU+Omt
-	 sfXwfjHouTr1qc88PlriEG7dT8fdI458jv1zxM7KNQWgvhbWmx/vMIisreunoFO5cx
-	 LXs0VIUkGSuE72lyDrDiyTlCYGseOg1a61E2t5IQ=
-Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
-	20250603131859epcas5p3adb125b08bbc9f901dde4353e77a8e0a~FiuNydMNP1272412724epcas5p3Q;
-	Tue,  3 Jun 2025 13:18:59 +0000 (GMT)
-Received: from epcas5p3.samsung.com (unknown [182.195.38.178]) by
-	epsnrtp01.localdomain (Postfix) with ESMTP id 4bBWWQ3Z6rz6B9m9; Tue,  3 Jun
-	2025 13:18:58 +0000 (GMT)
-Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20250603091626epcas5p3c6680e3a112b654ee64a2a45ee05c29c~Ffab6u3oY3154931549epcas5p3V;
-	Tue,  3 Jun 2025 09:16:26 +0000 (GMT)
-Received: from [107.122.10.194] (unknown [107.122.10.194]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250603091621epsmtip1b17ae68149000f4e610433391a5ab9c2~FfaXdde6I1152711527epsmtip1N;
-	Tue,  3 Jun 2025 09:16:21 +0000 (GMT)
-Message-ID: <c029d791-20ca-4f2e-926d-91856ba9d515@samsung.com>
-Date: Tue, 3 Jun 2025 14:46:20 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B903538B;
+	Tue,  3 Jun 2025 12:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1748953084; cv=fail; b=pFvtXs53CQdPKkcHd643FdvHNvgytU4jKYZKu/x32SLvtPabTCTMVuo9ZXwnLsbCUomFM64IcNUKdbiQFCe2Gh/xwL9VaEAcIuSt3NJ1YIX5CQTeeBO17DALgvCfbEu+ERuU2GkIZ938Vt3US7o2nNP3x/FL11eP78x+KqXN8uU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1748953084; c=relaxed/simple;
+	bh=QryNpCHcEVK5Pikrg+DjeQ1HlLMSpmf7Goql6QNSN/U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eKRpnwl6INWseUT1ylShwycl2OL84iqeRm1y1cPgzokG5X+0Dli/eyyaru1BUHr5rZNO8uk0GDPEIhhJsXeQLi0exHwt02YFG/BRjRyGqTbRwYiwHOz0Cf3WIL6P34BrR45UjGkPj5gHzO8H/HETF5GMMuNM3fpOvYF+tWffX5s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=eAHsPzbw; arc=fail smtp.client-ip=40.107.223.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=X0y+Wqv6ACvTBi84KYjFzDMgcl4ICV0Uj0ArZhXNM17OXfFD64azibjons+7DOv3wD4ncIjdsUuHQjULgCLfgLR484/w5PKFC7hWq2gVpM/y6UodkBEDxsKTr2U6WnZ5a5U2fU8vu/EK24OHB9McZkoTV9Gbz7nL1CGwEPwS3aoB8uFTu97sEurGF4LtcUyNR0DamLnQH/tinK6dRqIDDL/x6Ms2nLulHM2qbQDqkxm3M9/+lSxeqU8JFKz1MygR55p53uFxGzDkxVDGIb8mKluGMWgdN/xeqTgE/VEO2lfJnDN6RDbHgsQm3blA0dYXarZ1GiZC9PArbd/DG2XikQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QryNpCHcEVK5Pikrg+DjeQ1HlLMSpmf7Goql6QNSN/U=;
+ b=HZUKREbwTQoXIMjQFV+MmTpdHyrBmXYIwTG9CMIQaoTq7bmKeH20rg6T67mBj08PexjpqLRhgAAzIraDWsM2Q9iLIuEKsBcrwqUc3OXOceXy4weyhIu+KraUkgP7V16acZtiDTkr8Qg95QXtuZSEdtq2XJxh/xCXaFGO6yP+7zIvyWE9bjhaPPpsuB7p648OmDKbgp9Nf9KcCFX0QVwL2O63f5WId4AL72rtUCZZkZ1Ge+oUnUr1q6WYiY8ajP0LdpE9Qtzi6ShFPqWwZyH/iZfcooo8zK4w6wrhcsu5Y/n3EzL3sSvB7ip+PwsHq+eshUgqOzsn+wj5ZjiZen7TGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QryNpCHcEVK5Pikrg+DjeQ1HlLMSpmf7Goql6QNSN/U=;
+ b=eAHsPzbwdri/HTG8klnW8gNomSy8sBu0ZDmT8oZmecoU0u8IMq4Ra4Y29TKHIRnaAY0lRoAGm+5/1znLk7yqjXfVJQiJeqZdC95u2ICdPyOGrPaaBxpYchPvOSUjBqLWCfYoxsjW1abn9rJj8uzyfyXHzoWpXyGARXxS8ogvoktHzQO8phGtIWpx8t0uozWeb+m0bcer8H2+JL0ZNjka8yMi67iA9y99Us8NPVkl7YHDYjJoJuT5vaNX8o8HpKf6rmIq27BJlRY8+ao55s6mWWq/OMPrYQJV3m81dhgZJPWQUpjQDtw2/QqEvECoylQWldD0CvcnUY0XiS8Pk4NGmg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ PH8PR12MB7027.namprd12.prod.outlook.com (2603:10b6:510:1be::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8769.37; Tue, 3 Jun
+ 2025 12:17:59 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8792.034; Tue, 3 Jun 2025
+ 12:17:59 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Dev Jain <dev.jain@arm.com>, akpm@linux-foundation.org,
+ willy@infradead.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, anshuman.khandual@arm.com, ryan.roberts@arm.com
+Subject: Re: [PATCH] xarray: Add a BUG_ON() to ensure caller is not sibling
+Date: Tue, 03 Jun 2025 08:17:57 -0400
+X-Mailer: MailMate (2.0r6255)
+Message-ID: <D5EDD20A-03A2-4CEA-884F-D1E48875222B@nvidia.com>
+In-Reply-To: <053ae9ec-1113-4ed8-9625-adf382070bc5@redhat.com>
+References: <20250528113124.87084-1-dev.jain@arm.com>
+ <30EECA35-4622-46B5-857D-484282E92AAF@nvidia.com>
+ <4fb15ee4-1049-4459-a10e-9f4544545a20@arm.com>
+ <B3C9C9EA-2B76-4AE5-8F1F-425FEB8560FD@nvidia.com>
+ <8fb366e2-cec2-42ba-97c4-2d927423a26e@arm.com>
+ <EF500105-614C-4D06-BE7A-AFB8C855BC78@nvidia.com>
+ <a3311974-30ae-42b6-9f26-45e769a67522@arm.com>
+ <053ae9ec-1113-4ed8-9625-adf382070bc5@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BL0PR0102CA0042.prod.exchangelabs.com
+ (2603:10b6:208:25::19) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/13] Parallelizing filesystem writeback
-To: Christoph Hellwig <hch@lst.de>, Kundan Kumar <kundan.kumar@samsung.com>
-Cc: jaegeuk@kernel.org, chao@kernel.org, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, miklos@szeredi.hu, agruenba@redhat.com,
-	trondmy@kernel.org, anna@kernel.org, akpm@linux-foundation.org,
-	willy@infradead.org, mcgrof@kernel.org, clm@meta.com, david@fromorbit.com,
-	amir73il@gmail.com, axboe@kernel.dk, ritesh.list@gmail.com,
-	djwong@kernel.org, dave@stgolabs.net, p.raghav@samsung.com,
-	da.gomez@samsung.com, linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org, gfs2@lists.linux.dev,
-	linux-nfs@vger.kernel.org, linux-mm@kvack.org, gost.dev@samsung.com,
-	anuj1072538@gmail.com, kundanthebest@gmail.com
-Content-Language: en-US
-From: Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>
-In-Reply-To: <20250602141904.GA21996@lst.de>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250603091626epcas5p3c6680e3a112b654ee64a2a45ee05c29c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-542,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250529113215epcas5p2edd67e7b129621f386be005fdba53378
-References: <CGME20250529113215epcas5p2edd67e7b129621f386be005fdba53378@epcas5p2.samsung.com>
-	<20250529111504.89912-1-kundan.kumar@samsung.com>
-	<20250602141904.GA21996@lst.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|PH8PR12MB7027:EE_
+X-MS-Office365-Filtering-Correlation-Id: 272ef8b4-f74c-430f-fcac-08dda298ae21
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZGdJZkYxdmd1REVTdHdBOWNYdmlkVGpHNm5NWlRiWmlvV0swMXdPQWhwTE1T?=
+ =?utf-8?B?UmhqbytzbktkWHgrcm85MytRQXBJemZrMnEyc2R0NGVINzhHcUFYMkNKTlFi?=
+ =?utf-8?B?UnAxa3NjRno4OS9NVGF1cWV6eW5xWXlONVJZUU1jbmNBa0FpTU9JMlp5RHdw?=
+ =?utf-8?B?V0svelhSL2tqc3J4eFNKYXlSN3ozaVpvWGtWeW94ZldsVUNoZmdpS3VTZldP?=
+ =?utf-8?B?M1ZRZXl2ZFFTOWlZc250R1N4Q1VlTUpmZmw0S2cyWjNncVVhaCtPZXJuZkZ5?=
+ =?utf-8?B?OW1lYjAwMXVCNWp3eGRRdnFpZTQ5KzhkSm5OaURtR0hBempUNnJOV0pQWmR2?=
+ =?utf-8?B?cTRjVHJqYWJLYklia1ZHS3dMbWlBSHlUdDQ0bElhdFJYNFZkTkNnTFJKdWtx?=
+ =?utf-8?B?a0dMME9vZElGTWV2ZEZ6aCsvenVDQkNha25GR2JNSlV4Njd1TFpnMWExWVpK?=
+ =?utf-8?B?dzZXZE5wbHFFbWR4TU5MZ0hTZHlwaVVkdllIR2MwNVlwMWlwN3hWdFFOR3Jk?=
+ =?utf-8?B?eWNBTlgybmFGWjRLdmg0TWpYenJ4eDBPT1FDTUlBZmFXV01uRGw0dnE0ZG9C?=
+ =?utf-8?B?YXl3MVZnWlMzL0RVSXkweXVKNnBjU1FHaDlxL0l0S0lWQTlNRG5CUjE4NXZB?=
+ =?utf-8?B?ZmVtQlZyQTFrbXdyKzVzdVIzYnpkNzVNQ3FKWWZmb0NwWG5MaWN6RDNEemNS?=
+ =?utf-8?B?ZGU0Y3FCbTJhOGtMUkU5QXl2V2xGb2ZJYlB1YmppVHdQemRiNGFBWVI2V0Nn?=
+ =?utf-8?B?U3R3ZjZuSkQ1V3RCQndrWjA2NEg4TWo2bW9ZS3RlZXpyOHZKbThuNGEwdWpP?=
+ =?utf-8?B?VUpwd0ZmMEVhZERwd0V4cWVzYzdDTUVaSDJLNDVMQ3VsVXgrd1E3RnFiUGFx?=
+ =?utf-8?B?cEMxVGlHUkxpcVVpMThVVU1jcEtpSFNhNmNoUjMwZ2VpK2RoeXc3ZFBrRnJs?=
+ =?utf-8?B?N21KekZlcllUbENXRndjTklsZHRzWEtrNXRWWkg0NFBKMmg4cmNLcnVvUDkx?=
+ =?utf-8?B?ejVTRE1XRHhjME5JbWF5NE9jeEdiQXFuV0l0emRIUExmeW1hU0RlbytUTGJS?=
+ =?utf-8?B?blVaTFBOeGxHL0RoL0lnZWxEUjVSQ014MjFUaEtBTlRJL2ZGUndSSnI5U2I0?=
+ =?utf-8?B?VjdwbDQ1cG94Ykl5elhaMDJQWms0R1FjclFFNm1TbmRpelp6OFNjQlZwR2I2?=
+ =?utf-8?B?NEwxQUtOcXFZRzRjRUFiUEU4OFREWEI2RVIzV1JodTBtM3VFRHBlbXZMK3Y1?=
+ =?utf-8?B?a0NpRm5tajUvMkh2SjNQUE5tcDNNc0tCNm9vMEt3QnZCWmF2Wk1TN0RGUExY?=
+ =?utf-8?B?QWZzZk5PSGxDVnhHcnUxNlg4ZHBsWnJwSi8wVTlBZG5tOUYyd0RIWllLN1Bw?=
+ =?utf-8?B?TEtHVHd6Q3g1S0pQMVRKZkFLdVVwZ2x0YXNjSFUxM2FVMU0xRGpnT3FXc2NO?=
+ =?utf-8?B?cnNwcDI0QnI0VVlFZ05XdHI5Yk5ydU0wb2g0clhCcHZldDNqVjlCK1dmdFR0?=
+ =?utf-8?B?c2tleDgwNEswdXFHd1NrNTQ1UWRTNUlxNXFnanQ0RTlOaHAxQjJrSmYwTzF3?=
+ =?utf-8?B?TUZNRUpzQTVSK0JrUEVVY092dVdWRHA2bFRVajJsWXJ0ZFZiYXlsUlBRYWZ1?=
+ =?utf-8?B?eTFuNVBBWTRqa1NQci9HVHlSRmVhd3lIbnZGZzZkL2lPanA4UXArUFZTUFpj?=
+ =?utf-8?B?NDRHdlRWZjhrekZkN0tMM25LcmJzZTBFanRCTFMyNCtJUEI0bGF1Z1VvZkNr?=
+ =?utf-8?B?YjhXbWoxbjE3Ti9ldEV2SmNnOTF0OWhVSWF3byttQkhVK3ZET05SSkdWd1pP?=
+ =?utf-8?B?d2s2M29ZWVRIV0R0QldxVWJJdVcyeFdkYmN1aEdrVUZZWGlQOFJTOHpaQk8w?=
+ =?utf-8?B?VlVFYWRxNFM4RTNLSlIxVzNyU0t2VDI2KzFSSkE1Q0h1S21OYUlWUFBueWhD?=
+ =?utf-8?Q?3SkfMG9kwoE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QU43Vks4ODhQMHpVaVNpQWIwWnAyNVl6UFd3WEZnS3JsN2NaaHJUMWxEWlNx?=
+ =?utf-8?B?cE1relhDc3AxYWhpWlZkMEJDQVFlNXBIQlVMbVhmUHpVNHp6WGJ5bEtaWW1X?=
+ =?utf-8?B?OEZLMUNxVWNjUHB1NEc1NjJzQ2JURmZaTklvekVJVGZTdklaWkk4Vk1kRlBN?=
+ =?utf-8?B?dk1BNjUrcHBXZ0VZaTRXVjcra291Wld6Y1phVmlmR3c1TndKRUZyc0FGcFFl?=
+ =?utf-8?B?NmZJVUhrTjd4bDVVV1lISmVTbms4Wi9ENitWbE85bHRCNHNxK2UxSGlOTGpj?=
+ =?utf-8?B?Tmg3U2hMenh4KzNTQ0hOY2dIOE9BTndTT3BrblFNODQ2SUp5N3VzNnBSdVc1?=
+ =?utf-8?B?UHFnZ1N1b080L0lMMnRIR3Jib3F2Wkd2NU5mYlZJbTYzQzY2aG1uTTFlYndQ?=
+ =?utf-8?B?YmcxY2I4L0NiUVBqcGpEcThRMEZZWFNEYmMzTjl0STFxYnkrT0NqbVZQaC9n?=
+ =?utf-8?B?bFJFNUlaeXorL3hCWU8wS1Y3cGp3UzJTb2htMm9DTFpySkF1VUtIMlp1ZlFk?=
+ =?utf-8?B?WlBmTGQ1UW5oZzFSYUlGWUczSGw4aU41cVRhVE1kSUZ5cERab2hyZ3ljKzE4?=
+ =?utf-8?B?THd1US90RHMwVnp4blU0V0Y0YWhJYXBOSm9INko0dGZmRlgwVVpQZzZMMlhS?=
+ =?utf-8?B?dU9FZ0JXV1dQYTlmeTAzK0twSElMNWxPM0hDeFB6Mys3MW00UFh6MG5EV1J3?=
+ =?utf-8?B?YkNsZ2hxVnRWcWpXSkZzY1JQbDVEejFrRjBycnhqdkZOTHFBeFBsSlVxemJC?=
+ =?utf-8?B?OUNFR01sc2JBR1ZDZ3prQ1ZHc1EyV0lTMWNIRDFNbmFxZ3lvd0NZZEhkMEgr?=
+ =?utf-8?B?cHVlcERnS3gyTDVnYTQxWEVPVngzM3JuMnM3aGlVQVlEcWRlQWxPM0FNM1p2?=
+ =?utf-8?B?MllpZk42bENDaDFFejNacnc4a2svTllDTlRzRVhjcjQ2QzRrYTU3RVBqa0t4?=
+ =?utf-8?B?eUFjak9yK1ZhUTdnL2RwQ21jNC9nZVZkUGsyVlo5eGY5dHQ4RndWUVFYR2xW?=
+ =?utf-8?B?eE5zOVVwd2lFMVdVV3NHQnZzUHpiTlZFOU9PdHJpTVZlaWFydGl6NmZ0WHJ1?=
+ =?utf-8?B?UTNBc291Wms5NjFiRjBmUnBMSHNGL0dSZ1FYYjljaExJZ3ZlK3IwOC9TS056?=
+ =?utf-8?B?dUFCeHowZXdrMTVKZmk2MWdHdVdMOWE4ZU9sM1hEWHU2alBtK3dWSlFJNWFF?=
+ =?utf-8?B?YTJ1bVNEUWc2N0p2aWFOTTcxUFhES0NScmN1NFJtZHZpK2Q4bHJHZVJ4OTZL?=
+ =?utf-8?B?Q1BSL1BSM2Y1Rjh2Qit4cjZ0bFBWenFONGJlMjVERnVSOTVvU1BQNGQrQ2hu?=
+ =?utf-8?B?VGdXYmJyZWE0bmdXOVBtbGd4VmN4UWxmQmNqYVltdGlBNTI3L08rQzdsNEFZ?=
+ =?utf-8?B?andEdE5YMitvYTdFOW9uTi9MUzYzdzYvTlppTFVKcDFGanl1TjVrcFlwQUVL?=
+ =?utf-8?B?eXZrL1hjMmYzM01zeUFUanYrTXEwODJwQ0Z6c1ZXZ2EyMklCcHZrSDBXOGxx?=
+ =?utf-8?B?NUQ2ckZMTEtvc1M2QXBMWFdpdkp2WkRqTnRmTzg0akoyQkhGWFV2YVhZbVlj?=
+ =?utf-8?B?TUlVaFhBSFdqbW9OTmZZdW9vT1QvbEhmTmt4RTJWaWZYKzNmTjZtVUE0bnU4?=
+ =?utf-8?B?YXY5RlV2WkMxSG84SjZqWTNhZ0QwUWNuM2tCbEJXbHB5MDBVQkJTcDk4MHQ4?=
+ =?utf-8?B?RVMrQWZLbVlmRkEyOU02cXlmc3FobXZlLzdnYWNqa2U3U1dQT0dRMVZXMGtq?=
+ =?utf-8?B?QkFhd1RUc2dwQjlQRSttMWNnRjViZnhDcW5xT2dRZWNmTmN3cFZKWllHenhR?=
+ =?utf-8?B?Wjk0RHRSSEY4Y2trTDFnQnl2MGpTZ202a05mVEY0bEx4cVhFZWdWa09uSWRt?=
+ =?utf-8?B?Nks1TFJETTFyTzN2cjJTMTdDdktCd3RIMUljTTZ2enhDeGlqZVNQTEZISStl?=
+ =?utf-8?B?aCt2YjN6ZENVL2dvOGpnN0tjbVBaTUU1cjRVSXRDeVRNVU9aWWlrSnYzQ0dq?=
+ =?utf-8?B?b1pjdFFNQ0tlaS9VVmFoMEs5dEpyeWpEaDRrMCs0U3ZhVkVNeEZyTnk3Y0N4?=
+ =?utf-8?B?U25ZUk9aK2IyZG81QkNvdjFRSXFXSU9pWU16ZkVvRzdaYjI3QkpQWVlsQ1lv?=
+ =?utf-8?Q?GcVbV8paKDWpZ6S2nOG4RcSZs?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 272ef8b4-f74c-430f-fcac-08dda298ae21
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Jun 2025 12:17:59.7955
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 7nT/J4AIGHNXLlVcZwzcwVbbXWKPL91rqHdbcIfKndgtwhyWQaw51uoH0tHwSFkv
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7027
 
-On 6/2/2025 7:49 PM, Christoph Hellwig wrote:
-> On Thu, May 29, 2025 at 04:44:51PM +0530, Kundan Kumar wrote:
-> Well, the proper thing would be to figure out a good default and not
-> just keep things as-is, no?
+On 3 Jun 2025, at 3:58, David Hildenbrand wrote:
 
-We observed that some filesystems, such as Btrfs, don't benefit from
-this infra due to their distinct writeback architecture. To preserve
-current behavior and avoid unintended changes for such filesystems,
-we have kept nr_wb_ctx=1 as the default. Filesystems that can take
-advantage of parallel writeback (xfs, ext4) can opt-in via a mount
-option. Also we wanted to reduce risk during initial integration and
-hence kept it as opt-in.
-
-> 
->> IOPS and throughput
->> ===================
->> We see significant improvement in IOPS across several filesystem on both
->> PMEM and NVMe devices.
+> On 03.06.25 07:23, Dev Jain wrote:
 >>
->> Performance gains:
->>    - On PMEM:
->> 	Base XFS		: 544 MiB/s
->> 	Parallel Writeback XFS	: 1015 MiB/s  (+86%)
->> 	Base EXT4		: 536 MiB/s
->> 	Parallel Writeback EXT4	: 1047 MiB/s  (+95%)
+>> On 02/06/25 8:33 pm, Zi Yan wrote:
+>>> On 29 May 2025, at 23:44, Dev Jain wrote:
+>>>
+>>>> On 30/05/25 4:17 am, Zi Yan wrote:
+>>>>> On 28 May 2025, at 23:17, Dev Jain wrote:
+>>>>>
+>>>>>> On 28/05/25 10:42 pm, Zi Yan wrote:
+>>>>>>> On 28 May 2025, at 7:31, Dev Jain wrote:
+>>>>>>>
+>>>>>>>> Suppose xas is pointing somewhere near the end of the multi-entry =
+batch.
+>>>>>>>> Then it may happen that the computed slot already falls beyond the=
+ batch,
+>>>>>>>> thus breaking the loop due to !xa_is_sibling(), and computing the =
+wrong
+>>>>>>>> order. Thus ensure that the caller is aware of this by triggering =
+a BUG
+>>>>>>>> when the entry is a sibling entry.
+>>>>>>> Is it possible to add a test case in lib/test_xarray.c for this?
+>>>>>>> You can compile the tests with =E2=80=9Cmake -C tools/testing/radix=
+-tree=E2=80=9D
+>>>>>>> and run =E2=80=9C./tools/testing/radix-tree/xarray=E2=80=9D.
+>>>>>> Sorry forgot to Cc you.
+>>>>>> I can surely do that later, but does this patch look fine?
+>>>>> I am not sure the exact situation you are describing, so I asked you
+>>>>> to write a test case to demonstrate the issue. :)
+>>>>
+>>>> Suppose we have a shift-6 node having an order-9 entry =3D> 8 - 1 =3D =
+7 siblings,
+>>>> so assume the slots are at offset 0 till 7 in this node. If xas->xa_of=
+fset is 6,
+>>>> then the code will compute order as 1 + xas->xa_node->shift =3D 7. So =
+I mean to
+>>>> say that the order computation must start from the beginning of the mu=
+lti-slot
+>>>> entries, that is, the non-sibling entry.
+>>> Got it. Thanks for the explanation. It will be great to add this explan=
+ation
+>>> to the commit log.
+>>>
+>>> I also notice that in the comment of xas_get_order() it says
+>>> =E2=80=9CCalled after xas_load()=E2=80=9D and xas_load() returns NULL o=
+r an internal
+>>> entry for a sibling. So caller is responsible to make sure xas is not p=
+ointing
+>>> to a sibling entry. It is good to have a check here.
+>>>
+>>> In terms of the patch, we are moving away from BUG()/BUG_ON(), so I won=
+der
+>>> if there is a less disruptive way of handling this. Something like retu=
+rn
+>>> -EINVAL instead with modified function comments and adding a comment
+>>> at the return -EIVAL saying something like caller needs to pass
+>>> a non-sibling entry.
 >>
->>    - On NVMe:
->> 	Base XFS		: 651 MiB/s
->> 	Parallel Writeback XFS	: 808 MiB/s  (+24%)
->> 	Base EXT4		: 494 MiB/s
->> 	Parallel Writeback EXT4	: 797 MiB/s  (+61%)
-> 
-> What worksload was this?
+>> What's the reason for moving away from BUG_ON()?
+>
+> BUG_ON is in general a bad thing. See Documentation/process/coding-style.=
+rst and the history on the related changes for details.
+>
+> Here, it is less critical than it looks.
+>
+> XA_NODE_BUG_ON is only active with XA_DEBUG.
+>
+> And XA_DEBUG is only defined in
+>
+> tools/testing/shared/xarray-shared.h:#define XA_DEBUG
+>
+> So IIUC, it's only active in selftests, and completely inactive in any ke=
+rnel builds.
 
-Number of CPUs = 12
-System RAM = 16G
-For XFS number of AGs = 4
-For EXT4 BG count = 28616
-Used PMEM of 6G and NVMe SSD of 3.84 TB
+Oh, I missed that. But that also means this patch becomes a nop in kernel
+builds.
 
-fio command line :
-fio --directory=/mnt --name=test --bs=4k --iodepth=1024 --rw=randwrite 
---ioengine=io_uring --time_based=1 -runtime=60 --numjobs=12 --size=450M 
---direct=0  --eta-interval=1 --eta-newline=1 --group_reporting
-
-Will measure the write-amp and share.
-
-> 
-> How many CPU cores did the system have, how many AGs/BGs did the file
-> systems have?   What SSD/Pmem was this?  Did this change the write
-> amp as measure by the media writes on the NVMe SSD?
-> 
-> Also I'd be really curious to see numbers on hard drives.
-> 
->> We also see that there is no increase in filesystem fragmentation
->> # of extents:
->>    - On XFS (on PMEM):
->> 	Base XFS		: 1964
->> 	Parallel Writeback XFS	: 1384
->>
->>    - On EXT4 (on PMEM):
->> 	Base EXT4		: 21
->> 	Parallel Writeback EXT4	: 11
-> 
-> How were the number of extents counts given that they look so wildly
-> different?
-> 
-> 
-
-Issued random write of 1G using fio with fallocate=none and then
-measured the number of extents, after a delay of 30 secs :
-fio --filename=/mnt/testfile --name=test --bs=4k --iodepth=1024 
---rw=randwrite --ioengine=io_uring  --fallocate=none --numjobs=1 
---size=1G --direct=0 --eta-interval=1 --eta-newline=1 --group_reporting
-
-For xfs used this command:
-xfs_io -c "stat" /mnt/testfile
-
-And for ext4 used this:
-filefrag /mnt/testfile
+Best Regards,
+Yan, Zi
 
