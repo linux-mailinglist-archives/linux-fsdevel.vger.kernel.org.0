@@ -1,116 +1,243 @@
-Return-Path: <linux-fsdevel+bounces-50398-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50399-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75031ACBDE4
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 02:10:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC63BACBDE6
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 02:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC131891772
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 00:10:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D961889837
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 00:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8649779EA;
-	Tue,  3 Jun 2025 00:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B1A0539A;
+	Tue,  3 Jun 2025 00:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rDIBmkBm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnsrcUQh"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D584D819;
-	Tue,  3 Jun 2025 00:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D7210E5;
+	Tue,  3 Jun 2025 00:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748909434; cv=none; b=RB2lIu4DJ2DqQBg7lz3FNhq/c2HBrFz7m1dNAYY1La9wD7d9/xb10ksxPCUmv8LiuQApXlyQPKS0bLS3H8ji0xgsggftXWw+Qp+qUjCa/dAvg2lNmjFQ67ijTXN2ZHmW/ol2InQu+em7oIjz/FWDjFipYE1qzq0LhrdnfVZ3oeE=
+	t=1748909622; cv=none; b=Pg/FU4klcOkYD4XaRKSXnth7eKDCCXOJB+BQ54ZQMzTx05BX4wtoHy3GSCswqzm9Y+UycTcu/pMPrnVVzhxqpGBQFbIDClqvvB6E0IMiHHn/MPff6RQdJl/HLupQg/EnZkJilaJEPbLMBnJ4rZs/hd6MiQ/7qHqVR18K4csc0SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748909434; c=relaxed/simple;
-	bh=uGA87I1mzavJRknA7wPlXknnnkn0qXVAM2+9h4xZdC0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ApZan4pT7+HuVuf4WfvnMjGGM37TW4QyUlh8MbFcd/sqvyAXxiZFMad+VSpMlnWIHetbF7WP2fLYdJsBpGucRCLMhyYKbGghJX5VGI3qqOo/B+C5DFftHI2qKlmWZLRcDyNUEKKgRmRAGw4U4Hy6riO6YTsbkT7gD8eq2IBsQl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rDIBmkBm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37321C4CEF7;
-	Tue,  3 Jun 2025 00:10:33 +0000 (UTC)
+	s=arc-20240116; t=1748909622; c=relaxed/simple;
+	bh=sn+OqphyVnji4y6hz1/LMQWPIIpxbEwzosH1g2ZkrkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlX00cOiDiYj9uQ7YylqObv7Fmpz6QUL/qaRsKo7v27Zy2RyJyP+JQZDB9OU9ACH7cFuP7Y9y0JfpRqrXz7WNyRQ3bbds98ujPopp4RgMIC64qznCGHmksBDnQZL41h30lzw9Lb0vLJKnkQ2AQPf0Y0Ipl8ITFXzIEPSCuQdPsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnsrcUQh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98A0C4CEEB;
+	Tue,  3 Jun 2025 00:13:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748909433;
-	bh=uGA87I1mzavJRknA7wPlXknnnkn0qXVAM2+9h4xZdC0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rDIBmkBml9LGAH+EERUP1TXhNPosTbFb5/Ogdf0dzbwyEbxWZg6P3QLXmnhroca6n
-	 5RjhB6MdDh9kBhshdEgPSo03fpN2cXr55y+WGbQJ3fFCA0VBJBQrL/+CVDMEvR1HkF
-	 EWp3Jt00jtrnYxHMhCLh8X69DQPwDj872kwlDiDhGteRfR8nXm3BN6fBomXQN1uO+6
-	 GMyKu3loDHvU8xbEgzA7B+IEy3Vy6YOVHWUiOzgNQ0Gqq8pC9zdEGr3AFFRP7wWQTC
-	 xyvbcZKRzXamMCicJ/thyjN+AZWFtmnIctaVhmDzXOt9y/RjEquQ/GciVL80SUxOyl
-	 VtfqGAUBxvurw==
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4a44b0ed780so37297141cf.3;
-        Mon, 02 Jun 2025 17:10:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV/McKiFQGcXaqQ9ArVAnKiuvSRp+jYvg6SqFf759kgCbOa7qgH5fVsmKyKFDRCaNg2cO0JpSRFfgN8xeJP3w==@vger.kernel.org, AJvYcCVr1EofXWiejC9tpZTvNYSn4dWIhFV0Xv/tcgTRn1K8Lmd1I2tCtbOkh4tsav3eVOhLpGDq+R2hvAmx0NRWuZcJzHs8ilUK@vger.kernel.org, AJvYcCWhBo2s33WSEpHWDnjYUj1QmRaRYoMSwiI+9oiJkF8ldN/U8YDhw7pNqGBuSPabnji1c3U=@vger.kernel.org, AJvYcCXABFE48RtUf7un9KhiM1JA0G0W1Rkda0zgdnfIQQ3mwkL9H865JtLJNSPVHQ792f5B20PXc3MIjoIgytX2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRfqDxGR5hRFYIn0+KooqDL3Evy9xJHDkvCuBQ6F38QwuBjSId
-	16LvpKNOpFK8WuErdwE8mDuUdo7lb9hGAW7erpROvg5fF8Mula+sFC/qrNKjkJN+FMh2cA/ILZF
-	5PUd365yiqTr0ULTITbXaW+J3u5m56Bc=
-X-Google-Smtp-Source: AGHT+IGLoWOMZqwgUhv/sbLHWl18RR1cYj5R8+PiGfLfXkdenx2MxtCZSCErWxDOzCQYqDhrdQ8b5fX+Q0Un1ay+z+s=
-X-Received: by 2002:a05:622a:2618:b0:4a3:d015:38b4 with SMTP id
- d75a77b69052e-4a443fa39b3mr247970341cf.34.1748909432291; Mon, 02 Jun 2025
- 17:10:32 -0700 (PDT)
+	s=k20201202; t=1748909621;
+	bh=sn+OqphyVnji4y6hz1/LMQWPIIpxbEwzosH1g2ZkrkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gnsrcUQhGAhCEqKbzwpp5O1n2AsGhpL8HmUArAWwbkxqeLsXizThNCjLxoOpMaQrf
+	 NJz15+AbFtq/C5UVtzeC0W+ILrg5GrG/zQtlZKfRi8nsKsD9dPdsFP+C7lXGADeKvM
+	 xgjKKueH+8yhcnHKC2/mvzMzhlf46DQ4bP/7fU/g4WH0kCcV0KDLbbfNsEV4RizLmj
+	 BFexqy6VAzqewUa+GcufPptw7sea58K26z9MsLC36bShdm91DULtPKvFw0zVerQhpt
+	 lLKvREfSrJ0FEv9wiqvWnkgx6if+ScTWJ/fMYiZV20JI9TItP7deeatIUh/wxUaB/7
+	 8tIiu5IpHYRww==
+Date: Mon, 2 Jun 2025 17:13:41 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Joanne Koong <joannelkoong@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
+	linux-xfs@vger.kernel.org, bernd@bsbernd.com, John@groves.net
+Subject: Re: [PATCH 03/11] fuse: implement the basic iomap mechanisms
+Message-ID: <20250603001341.GN8328@frogsfrogsfrogs>
+References: <174787195502.1483178.17485675069927796174.stgit@frogsfrogsfrogs>
+ <174787195629.1483178.7917092102987513364.stgit@frogsfrogsfrogs>
+ <CAJnrk1ZEtXoMKXMjse-0RtSLjaK1zfadr3zR2tP4gh1WauOUWA@mail.gmail.com>
+ <CAJnrk1YDxn0ZMk0BrTnNStkXErjY_LSGYHgdsRjiiZ2dTpftAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528222623.1373000-1-song@kernel.org> <20250528222623.1373000-3-song@kernel.org>
- <027d5190-b37a-40a8-84e9-4ccbc352bcdf@maowtm.org> <CAPhsuW5BhAJ2md8EgVgKM4yiAgafnhxT9aj_a4HQkr=+=vug-g@mail.gmail.com>
-In-Reply-To: <CAPhsuW5BhAJ2md8EgVgKM4yiAgafnhxT9aj_a4HQkr=+=vug-g@mail.gmail.com>
-From: Song Liu <song@kernel.org>
-Date: Mon, 2 Jun 2025 17:10:21 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW6W+HR8BOVTCbM+AVYCEzuoSR21RWUpaEE0xvOpv8Zbog@mail.gmail.com>
-X-Gm-Features: AX0GCFuQUdKGxM2HVyeibXvrobPM4KaUyLZSwqxHa7AxJ_JG5qW3H7aNcTpNlR8
-Message-ID: <CAPhsuW6W+HR8BOVTCbM+AVYCEzuoSR21RWUpaEE0xvOpv8Zbog@mail.gmail.com>
-Subject: Re: [PATCH bpf-next 2/4] landlock: Use path_parent()
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	linux-fsdevel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com, 
-	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, daniel@iogearbox.net, 
-	martin.lau@linux.dev, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com, 
-	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org, 
-	josef@toxicpanda.com, gnoack@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJnrk1YDxn0ZMk0BrTnNStkXErjY_LSGYHgdsRjiiZ2dTpftAA@mail.gmail.com>
 
-On Mon, Jun 2, 2025 at 6:36=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> On Sat, May 31, 2025 at 6:51=E2=80=AFAM Tingmao Wang <m@maowtm.org> wrote=
-:
-> [...]
-> > I'm not sure if the original behavior was intentional, but since this
-> > technically counts as a functional changes, just pointing this out.
->
-> Thanks for pointing it out! I think it is possible to keep current
-> behavior. Or we can change the behavior and state that clearly
-> in the commit log. Micka=C3=ABl, WDYT?
->
+On Thu, May 29, 2025 at 04:15:57PM -0700, Joanne Koong wrote:
+> On Thu, May 29, 2025 at 3:15 PM Joanne Koong <joannelkoong@gmail.com> wrote:
 > >
-> > Also I'm slightly worried about the performance overhead of doing
-> > path_connected for every hop in the iteration (but ultimately it's
-> > Micka=C3=ABl's call).  At least for Landlock, I think if we want to blo=
-ck all
->
-> Maybe we need a flag to path_parent (or path_walk_parent) so
-> that we only check for path_connected when necessary.
+> > On Wed, May 21, 2025 at 5:03 PM Darrick J. Wong <djwong@kernel.org> wrote:
+> > >
+> > > From: Darrick J. Wong <djwong@kernel.org>
+> > >
+> > > Implement functions to enable upcalling of iomap_begin and iomap_end to
+> > > userspace fuse servers.
+> > >
+> > > Signed-off-by: "Darrick J. Wong" <djwong@kernel.org>
+> > > ---
+> > >  fs/fuse/fuse_i.h          |   38 ++++++
+> > >  fs/fuse/fuse_trace.h      |  258 +++++++++++++++++++++++++++++++++++++++++
+> > >  include/uapi/linux/fuse.h |   87 ++++++++++++++
+> > >  fs/fuse/Kconfig           |   23 ++++
+> > >  fs/fuse/Makefile          |    1
+> > >  fs/fuse/file_iomap.c      |  280 +++++++++++++++++++++++++++++++++++++++++++++
+> > >  fs/fuse/inode.c           |    5 +
+> > >  7 files changed, 691 insertions(+), 1 deletion(-)
+> > >  create mode 100644 fs/fuse/file_iomap.c
+> > >
+> > >
+> > > diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+> > > index d56d4fd956db99..aa51f25856697d 100644
+> > > --- a/fs/fuse/fuse_i.h
+> > > +++ b/fs/fuse/fuse_i.h
+> > > @@ -895,6 +895,9 @@ struct fuse_conn {
+> > >         /* Is link not implemented by fs? */
+> > >         unsigned int no_link:1;
+> > >
+> > > +       /* Use fs/iomap for FIEMAP and SEEK_{DATA,HOLE} file operations */
+> > > +       unsigned int iomap:1;
+> > > +
+> > >         /* Use io_uring for communication */
+> > >         unsigned int io_uring;
+> > >
+> > > @@ -1017,6 +1020,11 @@ static inline struct fuse_mount *get_fuse_mount_super(struct super_block *sb)
+> > >         return sb->s_fs_info;
+> > >  }
+> > >
+> > > +static inline const struct fuse_mount *get_fuse_mount_super_c(const struct super_block *sb)
+> > > +{
+> > > +       return sb->s_fs_info;
+> > > +}
+> > > +
+> >
+> > Instead of adding this new helper (and the ones below), what about
+> > modifying the existing (non-const) versions of these helpers to take
+> > in const * input args,  eg
+> >
+> > -static inline struct fuse_mount *get_fuse_mount_super(struct super_block *sb)
+> > +static inline struct fuse_mount *get_fuse_mount_super(const struct
+> > super_block *sb)
+> >  {
+> >         return sb->s_fs_info;
+> >  }
+> >
+> > Then, doing something like "const struct fuse_mount *mt =
+> > get_fuse_mount(inode);" would enforce the same guarantees as "const
+> > struct fuse_mount *mt = get_fuse_mount_c(inode);" and we wouldn't need
+> > 2 sets of helpers that pretty much do the same thing.
+> >
+> > >  static inline struct fuse_conn *get_fuse_conn_super(struct super_block *sb)
+> > >  {
+> > >         return get_fuse_mount_super(sb)->fc;
+> > > @@ -1027,16 +1035,31 @@ static inline struct fuse_mount *get_fuse_mount(struct inode *inode)
+> > >         return get_fuse_mount_super(inode->i_sb);
+> > >  }
+> > >
+> > > +static inline const struct fuse_mount *get_fuse_mount_c(const struct inode *inode)
+> > > +{
+> > > +       return get_fuse_mount_super_c(inode->i_sb);
+> > > +}
+> > > +
+> > >  static inline struct fuse_conn *get_fuse_conn(struct inode *inode)
+> > >  {
+> > >         return get_fuse_mount_super(inode->i_sb)->fc;
+> > >  }
+> > >
+> > > +static inline const struct fuse_conn *get_fuse_conn_c(const struct inode *inode)
+> > > +{
+> > > +       return get_fuse_mount_super_c(inode->i_sb)->fc;
+> > > +}
+> > > +
+> > >  static inline struct fuse_inode *get_fuse_inode(struct inode *inode)
+> > >  {
+> > >         return container_of(inode, struct fuse_inode, inode);
+> > >  }
+> > >
+> > > +static inline const struct fuse_inode *get_fuse_inode_c(const struct inode *inode)
+> > > +{
+> > > +       return container_of(inode, struct fuse_inode, inode);
+> > > +}
+> > > +
+> > >  static inline u64 get_node_id(struct inode *inode)
+> > >  {
+> > >         return get_fuse_inode(inode)->nodeid;
+> > > @@ -1577,4 +1600,19 @@ extern void fuse_sysctl_unregister(void);
+> > >  #define fuse_sysctl_unregister()       do { } while (0)
+> > >  #endif /* CONFIG_SYSCTL */
+> > >
+> > > +#if IS_ENABLED(CONFIG_FUSE_IOMAP)
+> > > +# include <linux/fiemap.h>
+> > > +# include <linux/iomap.h>
+> > > +
+> > > +bool fuse_iomap_enabled(void);
+> > > +
+> > > +static inline bool fuse_has_iomap(const struct inode *inode)
+> > > +{
+> > > +       return get_fuse_conn_c(inode)->iomap;
+> > > +}
+> > > +#else
+> > > +# define fuse_iomap_enabled(...)               (false)
+> > > +# define fuse_has_iomap(...)                   (false)
+> > > +#endif
+> > > +
+> > >  #endif /* _FS_FUSE_I_H */
+> > > diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
+> > > index ca215a3cba3e31..fc7c5bf1cef52d 100644
+> > > --- a/fs/fuse/Kconfig
+> > > +++ b/fs/fuse/Kconfig
+> > > @@ -64,6 +64,29 @@ config FUSE_PASSTHROUGH
+> > >
+> > >           If you want to allow passthrough operations, answer Y.
+> > >
+> > > +config FUSE_IOMAP
+> > > +       bool "FUSE file IO over iomap"
+> > > +       default y
+> > > +       depends on FUSE_FS
+> > > +       select FS_IOMAP
+> > > +       help
+> > > +         For supported fuseblk servers, this allows the file IO path to run
+> > > +         through the kernel.
+> >
+> > I have config FUSE_FS select FS_IOMAP in my patchset (not yet
+> > submitted) that changes fuse buffered writes / writeback handling to
+> > use iomap. Could we just have config FUSE_FS automatically opt into
+> > FS_IOMAP here or do you see a reason that this needs to be a separate
+> > config?
+> 
+> Thinking about it some more, the iomap stuff you're adding also
+> requires a "depends on BLOCK", so this will need to be a separate
+> config anyways regardless of whether the FUSE_FS will always "select
+> FS_IOMAP"
 
-More thoughts on path_connected(). I think it makes sense for
-path_parent (or path_walk_parent) to continue walking
-with path_connected() =3D=3D false. This is because for most security
-use cases, it makes sense for umounted bind mount to fall back
-to the permissions of the original mount OTOH, it also makes sense
-for follow_dotdot to reject this access at path lookup time. If the
-user of path_walk_parent decided to stop walking at disconnected
-path, another check can be added at the caller side.
+I'll add that, thanks.  I forgot that FS_IOMAP no longer selects BLOCK
+all the time. :)
 
-If there are no objections, I will remove the path_connected check
-from path_walk_parent().
+--D
 
-Thanks,
-Song
+> 
+> Thanks,
+> Joanne
+> 
+> >
+> >
+> > Thanks,
+> > Joanne
+> > > +
+> > > +config FUSE_IOMAP_BY_DEFAULT
+> > > +       bool "FUSE file I/O over iomap by default"
+> > > +       default n
+> > > +       depends on FUSE_IOMAP
+> > > +       help
+> > > +         Enable sending FUSE file I/O over iomap by default.
+> > > +
+> > > +config FUSE_IOMAP_DEBUG
+> > > +       bool "Debug FUSE file IO over iomap"
+> > > +       default n
+> > > +       depends on FUSE_IOMAP
+> > > +       help
+> > > +         Enable debugging assertions for the fuse iomap code paths.
+> > > +
+> > >  config FUSE_IO_URING
+> > >         bool "FUSE communication over io-uring"
+> > >         default y
 
