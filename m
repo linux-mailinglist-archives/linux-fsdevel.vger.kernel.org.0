@@ -1,160 +1,259 @@
-Return-Path: <linux-fsdevel+bounces-50401-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50402-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EEBACBE0D
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 03:09:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 467D0ACBE26
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 03:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE89B7A6A19
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 01:08:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8AD13A5949
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jun 2025 01:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAD4C54BC6;
-	Tue,  3 Jun 2025 01:09:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8139F1459F7;
+	Tue,  3 Jun 2025 01:28:51 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+Received: from mta21.hihonor.com (mta21.hihonor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFDBA937
-	for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jun 2025 01:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE427EACE;
+	Tue,  3 Jun 2025 01:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748912979; cv=none; b=isVgfIgf5Zj1TzHbKyxyHyTbOYPrz2Rh+0UYh25KOz/XLEqyyttHWolkNYGzr+kjD/a1HH39gqa1RJSmAZaB3AN1T+bs/6vpeu6qphVFrPjNFS6tbiMN06ignXG5Ba8k3v6xq0uDozBUe2kNt+ay/uGR6M/2HnlSt+gCsLe6mdQ=
+	t=1748914131; cv=none; b=j8RoyHP9z4ghABQIGf57vfPRawR5H0qgCCDor0QNhepnnqenA/XB/6nx6mvC/ig880JA/LLDh1rYcUYugoL+fMU7ogjvBoh7nXz7gLs+IaveAni/ASaSXNanmpOGoxFI0VTGQOrcJWo8JpVFoEnriJUKwSOvknx+ULkVIIjtWHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748912979; c=relaxed/simple;
-	bh=pSq4Bf/k0G5aUPZpviEVMQnEVr4yH/DTTWWxcqANMbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=WEQK12eIOm47VsGcBqj9EgoCpZRIwZNYMPwVhUh0aRDAVzXyuQdL+5TXozKHtwOIrR1DPld/+IufLXSgB44dBWr/MP5Fp1rkEkX2gh6tjaoTdweB2dAw8FX0HE4j5htG5J0AqATQw/bDcyc/oizk8Ln1dMPc9fVLTlqULcQGqpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4bBCLf31Swz27hcD;
-	Tue,  3 Jun 2025 09:10:18 +0800 (CST)
-Received: from kwepemo500009.china.huawei.com (unknown [7.202.194.199])
-	by mail.maildlp.com (Postfix) with ESMTPS id 63FD11A016C;
-	Tue,  3 Jun 2025 09:09:27 +0800 (CST)
-Received: from [10.67.111.104] (10.67.111.104) by
- kwepemo500009.china.huawei.com (7.202.194.199) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 3 Jun 2025 09:09:26 +0800
-Message-ID: <d23c6219-e2e1-4550-a2b3-8ce8f193c3f1@huawei.com>
-Date: Tue, 3 Jun 2025 09:09:26 +0800
+	s=arc-20240116; t=1748914131; c=relaxed/simple;
+	bh=b11HpLwHLKGoyRhC6omYm5l+VJ78T/SReelADlAQk9k=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=a8b1Bhg7ZlwUBjuECICw2NKJE0K8VLkIksRp6IED9b8HnGh/OKgL1bhBBfx+zaB4lTzwDvpLl3YeMnUvSJ8m1iq/774dyc//NpbaNGAzqEN1iJANJHEdojKdKj6FF7ZjhXrsqCdhaNDAyECAMp7iMfHrRCaazLIFETC9tklnwms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w011.hihonor.com (unknown [10.68.20.122])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4bBCjT3K7WzYlBHq;
+	Tue,  3 Jun 2025 09:26:37 +0800 (CST)
+Received: from a013.hihonor.com (10.68.22.170) by w011.hihonor.com
+ (10.68.20.122) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
+ 2025 09:28:39 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a013.hihonor.com
+ (10.68.22.170) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 3 Jun
+ 2025 09:28:39 +0800
+Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
+ a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
+ Tue, 3 Jun 2025 09:28:39 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: Amir Goldstein <amir73il@gmail.com>
+CC: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, "kraxel@redhat.com"
+	<kraxel@redhat.com>, "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
+	<brauner@kernel.org>, "hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"benjamin.gaignard@collabora.com" <benjamin.gaignard@collabora.com>,
+	"Brian.Starkey@arm.com" <Brian.Starkey@arm.com>, "jstultz@google.com"
+	<jstultz@google.com>, "tjmercier@google.com" <tjmercier@google.com>,
+	"jack@suse.cz" <jack@suse.cz>, "baolin.wang@linux.alibaba.com"
+	<baolin.wang@linux.alibaba.com>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-fsdevel@vger.kernel.org"
+	<linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"wangbintian(BintianWang)" <bintian.wang@honor.com>, yipengxiang
+	<yipengxiang@honor.com>, liulu 00013167 <liulu.liu@honor.com>, "hanfeng
+ 00012985" <feng.han@honor.com>
+Subject: RE: [PATCH v3 1/4] fs: allow cross-FS copy_file_range for
+ memory-backed files
+Thread-Topic: [PATCH v3 1/4] fs: allow cross-FS copy_file_range for
+ memory-backed files
+Thread-Index: AQHb0U9QoCfM8mt6VkueWh2CiDJkn7PqqPyAgAX9ANA=
+Date: Tue, 3 Jun 2025 01:28:38 +0000
+Message-ID: <c33f01b0557f4b388853a46d7688f4dd@honor.com>
+References: <20250530103941.11092-1-tao.wangtao@honor.com>
+ <20250530103941.11092-2-tao.wangtao@honor.com>
+ <CAOQ4uxid9dn3akvN3gMBVOJXoazF5gm6xO+=eaRCzDaC62K5OA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxid9dn3akvN3gMBVOJXoazF5gm6xO+=eaRCzDaC62K5OA@mail.gmail.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/7] f2fs: new mount API conversion
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-CC: <chao@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
-	<sandeen@redhat.com>, <linux-fsdevel@vger.kernel.org>
-References: <20250602090224.485077-1-lihongbo22@huawei.com>
- <aD3Lzsp-u6KuyGRt@google.com>
-Content-Language: en-US
-From: Hongbo Li <lihongbo22@huawei.com>
-In-Reply-To: <aD3Lzsp-u6KuyGRt@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemo500009.china.huawei.com (7.202.194.199)
 
-
-
-On 2025/6/3 0:05, Jaegeuk Kim wrote:
-> Thanks you, Hongbo.
-> 
-> I just applied this series to the dev-test branch as below, and will
-> keep testing with incoming patches together. Let's see. :)
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git/log/?h=dev-test
-> 
-Ok, I will keep following up on this work with Eric.
-
-Thanks,
-Hongbo
-
-> On 06/02, Hongbo Li wrote:
->> In this version, we have finished the issues pointed in v3.
->> First, I'd like to express my sincere thanks to Jaegeuk and Chao
->> for reviewing this patch series and providing corrections. I also
->> appreciate Eric for rebasing the patches onto the latest branch to
->> ensure forward compatibility.
->>
->> The latest patch series has addressed all the issues mentioned in
->> the previous set. For modified patches, I've re-added Signed-off-by
->> tags (SOB) and uniformly removed all Reviewed-by tags.
->>
->> v4:
->>    - Change is_remount as bool type in patch 2.
->>    - Remove the warning reported by Dan for patch 5.
->>    - Enhance sanity check and fix some coding style suggested by
->>      Jaegeuk in patch 5.
->>    - Change the log info when compression option conflicts in patch 5.
->>    - Fix the issues reported by code-reviewing in patch 5.
->>    - Context modified in patch 7.
->>
->> V3: https://lore.kernel.org/all/20250423170926.76007-1-sandeen@redhat.com/
->> - Rebase onto git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git
->>    dev branch
->> - Fix up some 0day robot warnings
->>
->> (Here is the origianl cover letter:)
->>
->> Since many filesystems have done the new mount API conversion,
->> we introduce the new mount API conversion in f2fs.
->>
->> The series can be applied on top of the current mainline tree
->> and the work is based on the patches from Lukas Czerner (has
->> done this in ext4[1]). His patch give me a lot of ideas.
->>
->> Here is a high level description of the patchset:
->>
->> 1. Prepare the f2fs mount parameters required by the new mount
->> API and use it for parsing, while still using the old API to
->> get mount options string. Split the parameter parsing and
->> validation of the parse_options helper into two separate
->> helpers.
->>
->>    f2fs: Add fs parameter specifications for mount options
->>    f2fs: move the option parser into handle_mount_opt
->>
->> 2. Remove the use of sb/sbi structure of f2fs from all the
->> parsing code, because with the new mount API the parsing is
->> going to be done before we even get the super block. In this
->> part, we introduce f2fs_fs_context to hold the temporary
->> options when parsing. For the simple options check, it has
->> to be done during parsing by using f2fs_fs_context structure.
->> For the check which needs sb/sbi, we do this during super
->> block filling.
->>
->>    f2fs: Allow sbi to be NULL in f2fs_printk
->>    f2fs: Add f2fs_fs_context to record the mount options
->>    f2fs: separate the options parsing and options checking
->>
->> 3. Switch the f2fs to use the new mount API for mount and
->> remount.
->>
->>    f2fs: introduce fs_context_operation structure
->>    f2fs: switch to the new mount api
->>
->> [1] https://lore.kernel.org/all/20211021114508.21407-1-lczerner@redhat.com/
->>
->> Hongbo Li (7):
->>    f2fs: Add fs parameter specifications for mount options
->>    f2fs: move the option parser into handle_mount_opt
->>    f2fs: Allow sbi to be NULL in f2fs_printk
->>    f2fs: Add f2fs_fs_context to record the mount options
->>    f2fs: separate the options parsing and options checking
->>    f2fs: introduce fs_context_operation structure
->>    f2fs: switch to the new mount api
->>
->>   fs/f2fs/super.c | 2108 +++++++++++++++++++++++++++--------------------
->>   1 file changed, 1197 insertions(+), 911 deletions(-)
->>
->> -- 
->> 2.33.0
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQW1pciBHb2xkc3RlaW4g
+PGFtaXI3M2lsQGdtYWlsLmNvbT4NCj4gU2VudDogRnJpZGF5LCBNYXkgMzAsIDIwMjUgOTo0NCBQ
+TQ0KPiBUbzogd2FuZ3RhbyA8dGFvLndhbmd0YW9AaG9ub3IuY29tPg0KPiBDYzogc3VtaXQuc2Vt
+d2FsQGxpbmFyby5vcmc7IGNocmlzdGlhbi5rb2VuaWdAYW1kLmNvbTsNCj4ga3JheGVsQHJlZGhh
+dC5jb207IHZpdmVrLmthc2lyZWRkeUBpbnRlbC5jb207IHZpcm9AemVuaXYubGludXgub3JnLnVr
+Ow0KPiBicmF1bmVyQGtlcm5lbC5vcmc7IGh1Z2hkQGdvb2dsZS5jb207IGFrcG1AbGludXgtZm91
+bmRhdGlvbi5vcmc7DQo+IGJlbmphbWluLmdhaWduYXJkQGNvbGxhYm9yYS5jb207IEJyaWFuLlN0
+YXJrZXlAYXJtLmNvbTsNCj4ganN0dWx0ekBnb29nbGUuY29tOyB0am1lcmNpZXJAZ29vZ2xlLmNv
+bTsgamFja0BzdXNlLmN6Ow0KPiBiYW9saW4ud2FuZ0BsaW51eC5hbGliYWJhLmNvbTsgbGludXgt
+bWVkaWFAdmdlci5rZXJuZWwub3JnOyBkcmktDQo+IGRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZzsgbGluYXJvLW1tLXNpZ0BsaXN0cy5saW5hcm8ub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIu
+a2VybmVsLm9yZzsgbGludXgtZnNkZXZlbEB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LQ0KPiBtbUBr
+dmFjay5vcmc7IHdhbmdiaW50aWFuKEJpbnRpYW5XYW5nKSA8YmludGlhbi53YW5nQGhvbm9yLmNv
+bT47DQo+IHlpcGVuZ3hpYW5nIDx5aXBlbmd4aWFuZ0Bob25vci5jb20+OyBsaXVsdSAwMDAxMzE2
+Nw0KPiA8bGl1bHUubGl1QGhvbm9yLmNvbT47IGhhbmZlbmcgMDAwMTI5ODUgPGZlbmcuaGFuQGhv
+bm9yLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MyAxLzRdIGZzOiBhbGxvdyBjcm9zcy1G
+UyBjb3B5X2ZpbGVfcmFuZ2UgZm9yIG1lbW9yeS0NCj4gYmFja2VkIGZpbGVzDQo+IA0KPiBPbiBG
+cmksIE1heSAzMCwgMjAyNSBhdCAxMjo0MOKAr1BNIHdhbmd0YW8gPHRhby53YW5ndGFvQGhvbm9y
+LmNvbT4gd3JvdGU6DQo+ID4NCj4gPiBNZW1vcnktYmFja2VkIGZpbGVzIGNhbiBvcHRpbWl6ZSBj
+b3B5IHBlcmZvcm1hbmNlIHZpYSBjb3B5X2ZpbGVfcmFuZ2UNCj4gPiBjYWxsYmFja3MuIENvbXBh
+cmVkIHRvIG1tYXAmcmVhZDogcmVkdWNlcyBHVVAgKGdldF91c2VyX3BhZ2VzKQ0KPiA+IG92ZXJo
+ZWFkOyB2cyBzZW5kZmlsZS9zcGxpY2U6IGVsaW1pbmF0ZXMgb25lIG1lbW9yeSBjb3B5OyBzdXBw
+b3J0cw0KPiA+IGRtYWJ1ZiB6ZXJvLWNvcHkgaW1wbGVtZW50YXRpb24uDQo+ID4NCj4gPiBTaWdu
+ZWQtb2ZmLWJ5OiB3YW5ndGFvIDx0YW8ud2FuZ3Rhb0Bob25vci5jb20+DQo+ID4gLS0tDQo+IA0K
+PiBIaSB3YW5ndGFvLA0KPiANCj4gTGV0IG1lIHJlcGhyYXNlIG15IHJlYWN0aW9uIGdlbnRseToN
+Cj4gUmVnYXJkbGVzcyBvZiB0aGUgcHJvcG9zZWQgQVBJIGV4dGVuc2lvbiwgYW5kIHJlZmVycmlu
+ZyB0byB0aGUNCj4gaW1wbGVtZW50YXRpb24gaXRzZWxmIC0gSSB3cm90ZSB0aGUgY3VycmVudCBj
+b2RlIGFuZCBJIGNhbiBiYXJlbHkgdW5kZXJzdGFuZA0KPiB0aGUgbG9naWMgZXZlcnkgdGltZSBJ
+IGNvbWUgYmFjayB0byByZWFkIGl0Lg0KPiANCj4gWW91ciBjaGFuZ2VzIG1ha2UgaXQgdG9vIG1l
+c3N5IHRvIGJlIHJldmlld2VkL21haW50YWluZWQuDQo+IEkgaGF2ZSBhIGZldyBzdWdnZXN0aW9u
+cyBmb3Igc2ltcGxpZmljYXRpb25zIChzZWUgYmVsb3cpLg0KPiANCj4gVGhlIGNvbXBsaWNhdGlv
+biBhcmlzZSBmcm9tIHRoZSBmYWN0IHRoYXQgbm9ybWFsbHkgdGhlIGRlc3RpbmF0aW9uIGZvcHMg
+YXJlDQo+IHVzZWQgdG8gY2FsbCB0aGUgY29weV9yYW5nZSgpIG1ldGhvZCBhbmQgdGhpcyBjYXNl
+IGlzIGEgZGV2aWF0aW9uIGZyb20gdGhpcw0KPiBzdGFuZGFyZCwgd2UgbmVlZCB0byBtYWtlIHRo
+ZSBjb3BlIHNpbXBsZXIgdXNpbmcgYSBoZWxwZXIgdG8gY2hvb3NlIHRoZQ0KPiBmb3BzIHRvIHVz
+ZS4NCj4gDQo+ID4gIGZzL3JlYWRfd3JpdGUuYyAgICB8IDcxICsrKysrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKy0tLS0tLS0tLS0tDQo+IC0tDQo+ID4gIGluY2x1ZGUvbGludXgvZnMuaCB8
+ICAyICsrDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgNTQgaW5zZXJ0aW9ucygrKSwgMTkgZGVsZXRp
+b25zKC0pDQo+ID4NCj4gPiBkaWZmIC0tZ2l0IGEvZnMvcmVhZF93cml0ZS5jIGIvZnMvcmVhZF93
+cml0ZS5jIGluZGV4DQo+ID4gYmIwZWQyNmEwYjNhLi41OTFjNmRiN2I3ODUgMTAwNjQ0DQo+ID4g
+LS0tIGEvZnMvcmVhZF93cml0ZS5jDQo+ID4gKysrIGIvZnMvcmVhZF93cml0ZS5jDQo+ID4gQEAg
+LTE0NjksNiArMTQ2OSwyMCBAQCBDT01QQVRfU1lTQ0FMTF9ERUZJTkU0KHNlbmRmaWxlNjQsIGlu
+dCwNCj4gb3V0X2ZkLA0KPiA+IGludCwgaW5fZmQsICB9ICAjZW5kaWYNCj4gPg0KPiA+ICtzdGF0
+aWMgaW5saW5lIGJvb2wgaXNfY29weV9tZW1vcnlfZmlsZV90b19maWxlKHN0cnVjdCBmaWxlICpm
+aWxlX2luLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGZpbGUg
+KmZpbGVfb3V0KSB7DQo+ID4gKyAgICAgICByZXR1cm4gKGZpbGVfaW4tPmZfb3AtPmZvcF9mbGFn
+cyAmIEZPUF9NRU1PUllfRklMRSkgJiYNCj4gPiArICAgICAgICAgICAgICAgZmlsZV9pbi0+Zl9v
+cC0+Y29weV9maWxlX3JhbmdlICYmDQo+ID4gK2ZpbGVfb3V0LT5mX29wLT53cml0ZV9pdGVyOyB9
+DQo+ID4gKw0KPiA+ICtzdGF0aWMgaW5saW5lIGJvb2wgaXNfY29weV9maWxlX3RvX21lbW9yeV9m
+aWxlKHN0cnVjdCBmaWxlICpmaWxlX2luLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgc3RydWN0IGZpbGUgKmZpbGVfb3V0KSB7DQo+ID4gKyAgICAgICByZXR1cm4gKGZpbGVf
+b3V0LT5mX29wLT5mb3BfZmxhZ3MgJiBGT1BfTUVNT1JZX0ZJTEUpICYmDQo+ID4gKyAgICAgICAg
+ICAgICAgIGZpbGVfaW4tPmZfb3AtPnJlYWRfaXRlciAmJg0KPiA+ICtmaWxlX291dC0+Zl9vcC0+
+Y29weV9maWxlX3JhbmdlOyB9DQo+ID4gKw0KPiANCj4gUGxlYXNlIGNvbWJpbmUgdGhhdCB0byBh
+IGhlbHBlcjoNCj4gY29uc3Qgc3RydWN0IGZpbGVfb3BlcmF0aW9ucyAqbWVtb3J5X2NvcHlfZmls
+ZV9vcHMoc3RydWN0IGZpbGUgKmZpbGVfaW4sDQo+IHN0cnVjdCBmaWxlICpmaWxlX291dCkgd2hp
+Y2ggcmV0dXJucyBlaXRoZXIgZmlsZV9pbi0+Zl9vcCwgZmlsZV9vdXQtPmZfb3Agb3INCj4gTlVM
+TC4NCj4gDQpHcmVhdCBzdWdnZXN0aW9ucyEgSSdsbCB1cGRhdGUgdGhlbSBpbiB0aGUgbmV3IHBh
+dGNoIHZlcnNpb24gc29vbi4NCg0KPiANCj4gPiAgLyoNCj4gPiAgICogUGVyZm9ybXMgbmVjZXNz
+YXJ5IGNoZWNrcyBiZWZvcmUgZG9pbmcgYSBmaWxlIGNvcHkNCj4gPiAgICoNCj4gPiBAQCAtMTQ4
+NCwxMSArMTQ5OCwyMyBAQCBzdGF0aWMgaW50IGdlbmVyaWNfY29weV9maWxlX2NoZWNrcyhzdHJ1
+Y3QgZmlsZQ0KPiAqZmlsZV9pbiwgbG9mZl90IHBvc19pbiwNCj4gPiAgICAgICAgIHN0cnVjdCBp
+bm9kZSAqaW5vZGVfb3V0ID0gZmlsZV9pbm9kZShmaWxlX291dCk7DQo+ID4gICAgICAgICB1aW50
+NjRfdCBjb3VudCA9ICpyZXFfY291bnQ7DQo+ID4gICAgICAgICBsb2ZmX3Qgc2l6ZV9pbjsNCj4g
+PiArICAgICAgIGJvb2wgc3BsaWNlID0gZmxhZ3MgJiBDT1BZX0ZJTEVfU1BMSUNFOw0KPiA+ICsg
+ICAgICAgYm9vbCBoYXNfbWVtb3J5X2ZpbGU7DQo+ID4gICAgICAgICBpbnQgcmV0Ow0KPiA+DQo+
+ID4gLSAgICAgICByZXQgPSBnZW5lcmljX2ZpbGVfcndfY2hlY2tzKGZpbGVfaW4sIGZpbGVfb3V0
+KTsNCj4gPiAtICAgICAgIGlmIChyZXQpDQo+ID4gLSAgICAgICAgICAgICAgIHJldHVybiByZXQ7
+DQo+ID4gKyAgICAgICAvKiBTa2lwIGdlbmVyaWMgY2hlY2tzLCBhbGxvdyBjcm9zcy1zYiBjb3Bp
+ZXMgZm9yIGRtYS1idWYvdG1wZnMgKi8NCj4gPiArICAgICAgIGhhc19tZW1vcnlfZmlsZSA9IGlz
+X2NvcHlfbWVtb3J5X2ZpbGVfdG9fZmlsZShmaWxlX2luLCBmaWxlX291dCkgfHwNCj4gPiArICAg
+ICAgICAgICAgICAgICAgICAgICAgIGlzX2NvcHlfZmlsZV90b19tZW1vcnlfZmlsZShmaWxlX2lu
+LCBmaWxlX291dCk7DQo+ID4gKyAgICAgICBpZiAoIXNwbGljZSAmJiBoYXNfbWVtb3J5X2ZpbGUp
+IHsNCj4gPiArICAgICAgICAgICAgICAgaWYgKCEoZmlsZV9pbi0+Zl9tb2RlICYgRk1PREVfUkVB
+RCkgfHwNCj4gPiArICAgICAgICAgICAgICAgICAgICEoZmlsZV9vdXQtPmZfbW9kZSAmIEZNT0RF
+X1dSSVRFKSB8fA0KPiA+ICsgICAgICAgICAgICAgICAgICAgKGZpbGVfb3V0LT5mX2ZsYWdzICYg
+T19BUFBFTkQpKQ0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUJBREY7DQo+
+IA0KPiBJIGRvbid0IGxpa2UgdGhhdCB0aGlzIGJvdGggZHVwbGljYXRlcyBjb2RlIGFuZCBkb2Vz
+IG5vdCBjaGVjayBhbGwgdGhlIGNoZWNrcyBpbg0KPiBnZW5lcmljX2ZpbGVfcndfY2hlY2tzKCkg
+Zm9yIHRoZSBub24tbWVtb3J5IGZpbGUgc2lkZS4NCj4gSSBkbyBub3QgY3VycmVudGx5IGhhdmUg
+YSBzdWdnZXN0aW9uIGhvdyB0byBtYWtlIHRoaXMgbGVzcyBtZXNzeSwgbW9yZQ0KPiBodW1hbiBy
+ZWFkYWJsZSBhbmQgY29ycmVjdC4NClNpbmNlIGRtYWJ1ZiBmaWxlcyBhcmVuJ3QgcmVndWxhciBm
+aWxlcywgd2UnbGwgc2tpcCBnZW5lcmljX2ZpbGVfcndfY2hlY2tzLg0KQWRkaW5nIGFuIGVzc2Vu
+dGlhbF9maWxlX3J3X2NoZWNrcygpIGNvdWxkIHJlZHVjZSBjb2RlIGR1cGxpY2F0aW9uLg0KDQo+
+IA0KPiA+ICsgICAgICAgfSBlbHNlIHsNCj4gPiArICAgICAgICAgICAgICAgcmV0ID0gZ2VuZXJp
+Y19maWxlX3J3X2NoZWNrcyhmaWxlX2luLCBmaWxlX291dCk7DQo+ID4gKyAgICAgICAgICAgICAg
+IGlmIChyZXQpDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgcmV0dXJuIHJldDsNCj4gPiAr
+ICAgICAgIH0NCj4gPg0KPiA+ICAgICAgICAgLyoNCj4gPiAgICAgICAgICAqIFdlIGFsbG93IHNv
+bWUgZmlsZXN5c3RlbXMgdG8gaGFuZGxlIGNyb3NzIHNiIGNvcHksIGJ1dA0KPiA+IHBhc3Npbmcg
+QEAgLTE1MDAsNyArMTUyNiw3IEBAIHN0YXRpYyBpbnQgZ2VuZXJpY19jb3B5X2ZpbGVfY2hlY2tz
+KHN0cnVjdA0KPiBmaWxlICpmaWxlX2luLCBsb2ZmX3QgcG9zX2luLA0KPiA+ICAgICAgICAgICog
+YW5kIHNldmVyYWwgZGlmZmVyZW50IHNldHMgb2YgZmlsZV9vcGVyYXRpb25zLCBidXQgdGhleSBh
+bGwgZW5kIHVwDQo+ID4gICAgICAgICAgKiB1c2luZyB0aGUgc2FtZSAtPmNvcHlfZmlsZV9yYW5n
+ZSgpIGZ1bmN0aW9uIHBvaW50ZXIuDQo+ID4gICAgICAgICAgKi8NCj4gPiAtICAgICAgIGlmIChm
+bGFncyAmIENPUFlfRklMRV9TUExJQ0UpIHsNCj4gPiArICAgICAgIGlmIChzcGxpY2UgfHwgaGFz
+X21lbW9yeV9maWxlKSB7DQo+ID4gICAgICAgICAgICAgICAgIC8qIGNyb3NzIHNiIHNwbGljZSBp
+cyBhbGxvd2VkICovDQo+IA0KPiBUaGlzIGNvbW1lbnQgaXMgbm90IGFjY3VyYXRlIC0gaXQgc2hv
+dWxkIHNheSAiY3Jvc3MgZnMtdHlwZSIsIGJlY2F1c2UgaXQgc2tpcHMNCj4gdGhlIHRlc3QgdGhh
+dCBjb21wYXJlcyB0aGUgLT5jb3B5X2ZpbGVfcmFuZ2UgcG9pbnRlcnMsIG5vdCB0aGUgc2IuDQo+
+IElmIHlvdSBhcmUgbWFraW5nIGNoYW5nZXMgdG8gdGhpcyBmdW5jdGlvbiwgdGhpcyBzaG91bGQg
+YmUgY2xhcmlmaWVkLg0KPiANCldpbGwgZml4IHRoaXMgc2hvcnRseS4NCg0KPiA+ICAgICAgICAg
+fSBlbHNlIGlmIChmaWxlX291dC0+Zl9vcC0+Y29weV9maWxlX3JhbmdlKSB7DQo+ID4gICAgICAg
+ICAgICAgICAgIGlmIChmaWxlX2luLT5mX29wLT5jb3B5X2ZpbGVfcmFuZ2UgIT0gQEAgLTE1ODEs
+MjMNCj4gPiArMTYwNywzMCBAQCBzc2l6ZV90IHZmc19jb3B5X2ZpbGVfcmFuZ2Uoc3RydWN0IGZp
+bGUgKmZpbGVfaW4sIGxvZmZfdCBwb3NfaW4sDQo+ID4gICAgICAgICAgKiBzYW1lIHNiIHVzaW5n
+IGNsb25lLCBidXQgZm9yIGZpbGVzeXN0ZW1zIHdoZXJlIGJvdGggY2xvbmUgYW5kIGNvcHkNCj4g
+PiAgICAgICAgICAqIGFyZSBzdXBwb3J0ZWQgKGUuZy4gbmZzLGNpZnMpLCB3ZSBvbmx5IGNhbGwg
+dGhlIGNvcHkgbWV0aG9kLg0KPiA+ICAgICAgICAgICovDQo+ID4gLSAgICAgICBpZiAoIXNwbGlj
+ZSAmJiBmaWxlX291dC0+Zl9vcC0+Y29weV9maWxlX3JhbmdlKSB7DQo+ID4gLSAgICAgICAgICAg
+ICAgIHJldCA9IGZpbGVfb3V0LT5mX29wLT5jb3B5X2ZpbGVfcmFuZ2UoZmlsZV9pbiwgcG9zX2lu
+LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIGZpbGVfb3V0LCBwb3Nfb3V0LA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgIGxlbiwgZmxhZ3MpOw0KPiA+IC0gICAgICAgfSBlbHNl
+IGlmICghc3BsaWNlICYmIGZpbGVfaW4tPmZfb3AtPnJlbWFwX2ZpbGVfcmFuZ2UgJiYgc2FtZXNi
+KSB7DQo+ID4gLSAgICAgICAgICAgICAgIHJldCA9IGZpbGVfaW4tPmZfb3AtPnJlbWFwX2ZpbGVf
+cmFuZ2UoZmlsZV9pbiwgcG9zX2luLA0KPiA+IC0gICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgZmlsZV9vdXQsIHBvc19vdXQsDQo+ID4gLSAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICBtaW5fdChsb2ZmX3QsIE1BWF9SV19DT1VOVCwgbGVuKSwNCj4gPiAtICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIFJFTUFQX0ZJTEVfQ0FOX1NIT1JURU4pOw0KPiA+IC0gICAgICAgICAg
+ICAgICAvKiBmYWxsYmFjayB0byBzcGxpY2UgKi8NCj4gPiAtICAgICAgICAgICAgICAgaWYgKHJl
+dCA8PSAwKQ0KPiA+ICsgICAgICAgaWYgKCFzcGxpY2UpIHsNCj4gPiArICAgICAgICAgICAgICAg
+aWYgKGlzX2NvcHlfbWVtb3J5X2ZpbGVfdG9fZmlsZShmaWxlX2luLCBmaWxlX291dCkpIHsNCj4g
+PiArICAgICAgICAgICAgICAgICAgICAgICByZXQgPSBmaWxlX2luLT5mX29wLT5jb3B5X2ZpbGVf
+cmFuZ2UoZmlsZV9pbiwgcG9zX2luLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICBmaWxlX291dCwgcG9zX291dCwgbGVuLCBmbGFncyk7DQo+ID4gKyAgICAgICAg
+ICAgICAgIH0gZWxzZSBpZiAoaXNfY29weV9maWxlX3RvX21lbW9yeV9maWxlKGZpbGVfaW4sIGZp
+bGVfb3V0KSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IGZpbGVfb3V0LT5m
+X29wLT5jb3B5X2ZpbGVfcmFuZ2UoZmlsZV9pbiwgcG9zX2luLA0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBmaWxlX291dCwgcG9zX291dCwgbGVuLCBmbGFncyk7
+DQo+ID4gKyAgICAgICAgICAgICAgIH0gZWxzZSBpZiAoZmlsZV9vdXQtPmZfb3AtPmNvcHlfZmls
+ZV9yYW5nZSkgew0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgIHJldCA9IGZpbGVfb3V0LT5m
+X29wLT5jb3B5X2ZpbGVfcmFuZ2UoZmlsZV9pbiwgcG9zX2luLA0KPiA+ICsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgZmlsZV9vdXQsIHBvc19v
+dXQsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICBsZW4sIGZsYWdzKTsNCj4gPiArICAgICAgICAgICAgICAgfSBlbHNlIGlmIChmaWxl
+X2luLT5mX29wLT5yZW1hcF9maWxlX3JhbmdlICYmIHNhbWVzYikgew0KPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICAgIHJldCA9IGZpbGVfaW4tPmZfb3AtPnJlbWFwX2ZpbGVfcmFuZ2UoZmlsZV9p
+biwgcG9zX2luLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBm
+aWxlX291dCwgcG9zX291dCwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgbWluX3QobG9mZl90LCBNQVhfUldfQ09VTlQsIGxlbiksDQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgIFJFTUFQX0ZJTEVfQ0FOX1NIT1JURU4pOw0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgICAgIC8qIGZhbGxiYWNrIHRvIHNwbGljZSAqLw0KPiA+ICsg
+ICAgICAgICAgICAgICAgICAgICAgIGlmIChyZXQgPD0gMCkNCj4gPiArICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIHNwbGljZSA9IHRydWU7DQo+ID4gKyAgICAgICAgICAgICAgIH0gZWxz
+ZSBpZiAoc2FtZXNiKSB7DQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgLyogRmFsbGJhY2sg
+dG8gc3BsaWNlIGZvciBzYW1lIHNiIGNvcHkgZm9yDQo+ID4gKyBiYWNrd2FyZCBjb21wYXQgKi8N
+Cj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBzcGxpY2UgPSB0cnVlOw0KPiA+IC0gICAgICAg
+fSBlbHNlIGlmIChzYW1lc2IpIHsNCj4gPiAtICAgICAgICAgICAgICAgLyogRmFsbGJhY2sgdG8g
+c3BsaWNlIGZvciBzYW1lIHNiIGNvcHkgZm9yIGJhY2t3YXJkIGNvbXBhdCAqLw0KPiA+IC0gICAg
+ICAgICAgICAgICBzcGxpY2UgPSB0cnVlOw0KPiA+ICsgICAgICAgICAgICAgICB9DQo+IA0KPiBU
+aGlzIGlzIHRoZSB3YXktdG9vLXVnbHktdG8tbGl2ZSBwYXJ0Lg0KPiBXYXMgcHJldHR5IGJhZCBi
+ZWZvcmUgYW5kIG5vdyBpdCBpcyB1bmFjY2VwdGFibGUuDQo+IHdheSB0b28gbXVjaCB1bm5lZWRl
+ZCBuZXN0aW5nIGFuZCB0b28gaGFyZCB0byBmb2xsb3cuDQo+IA0KPiBGaXJzdCBvZiBhbGwsIHBs
+ZWFzZSB1c2Ugc3BsaWNlIGxhYmVsIGFuZCBjYWxsIGdvdG8gc3BsaWNlIChiZWZvcmUgdGhlIGNv
+bW1lbnQpDQo+IGluc3RlYWQgb2YgYWRkaW5nIGFub3RoZXIgbmVzdGluZyBsZXZlbC4NCj4gSSB3
+b3VsZCBkbyB0aGF0IGV2ZW4gaWYgbm90IGFkZGluZyBtZW1vcnkgZmQgY29weSBzdXBwb3J0Lg0K
+PiANCj4gU2Vjb25kLCBwbGVhc2Ugc3RvcmUgcmVzdWx0IG9mIG1lbV9mb3BzID0gbWVtb3J5X2Nv
+cHlfZmlsZV9vcHMoKSBhbmQNCj4gc3RhcnQgd2l0aDoNCj4gKyAgICBpZiAobWVtX2ZvcHMpIHsN
+Cj4gKyAgICAgICAgcmV0ID0gbWVtX2ZvcHMtPmNvcHlfZmlsZV9yYW5nZShmaWxlX2luLCBwb3Nf
+aW4sDQo+ICsNCj4gZmlsZV9vdXQsIHBvc19vdXQsDQo+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBsZW4sDQo+ICsgZmxhZ3Mp
+Ow0KPiAgKyAgIH0gZWxzZSBpZiAoZmlsZV9vdXQtPmZfb3AtPmNvcHlfZmlsZV9yYW5nZSkgeyAu
+Li4NCj4gDQo+IGFuZCB1cGRhdGUgdGhlIGNvbW1lbnQgYWJvdmUgdG8gc2F5IHRoYXQ6DQo+ICsg
+KiBGb3IgY29weSB0by9mcm9tIG1lbW9yeSBmZCwgd2UgYWx3YXkgY2FsbCB0aGUgY29weSBtZXRo
+b2Qgb2YgdGhlDQo+IG1lbW9yeSBmZC4NCj4gICAgKi8NCj4gDQo+IEkgdGhpbmsgdGhhdCBtYWtl
+cyB0aGUgY29kZSBub3QgbW9yZSB1Z2x5IHRoYW4gaXQgYWxyZWFkeSBpcy4NCj4gDQo+IFRoYW5r
+cywNCj4gQW1pci4NCkdvb2QgYWR2aWNlIC0gdGhhbmtzIGEgbG90IQ0KDQpSZWdhcmRzLA0KV2Fu
+Z3Rhby4NCg==
 
