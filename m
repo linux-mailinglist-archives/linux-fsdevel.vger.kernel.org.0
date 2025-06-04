@@ -1,209 +1,194 @@
-Return-Path: <linux-fsdevel+bounces-50683-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50684-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4DF4ACE6C4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 00:41:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B41FBACE6FD
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 01:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BBF116B5D5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 22:41:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F277A3228
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 23:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB64A22FE11;
-	Wed,  4 Jun 2025 22:41:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CCBA26B2B3;
+	Wed,  4 Jun 2025 23:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="P3CfjMUn"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jUqqWFsH"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
+Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FEB22D9EB
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jun 2025 22:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68C726B0A5
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jun 2025 23:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749076885; cv=none; b=uT9sygi5quDDOYLfLzgpQ6SZois1M5di/qnLC/Q5CLlPpO7UQQgJLkKu4+cI6ixm82HXBdKAgxL/CaSIKA8vpXtlHPxA86kNSw4BHCviNaIJetcrXc0l2UyseyA+asrpmIRAFwoKK/HiCDZ9Rw4ScGgXKeVM5VmxWxXDCWkbDsw=
+	t=1749078717; cv=none; b=dcau/cQPBV88QZfoeOelHXPS9UjN3BhdV3YuNpKB5k0+rk+fl6akV1DHaQ4XV6Qfit8pshvFkgOEd3a5nyQpbU09DuZgSmMcwYa+Noo1wE4GlCplAkRLoO2G7qHaOLkgzYvl73+zWsGVMVmw7/vp+wD26/o92fVnLipNDjdMWX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749076885; c=relaxed/simple;
-	bh=CyCqgcP/8wYlhvYpUL+wYju404rWIxZOeVIW+huRTKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RmhVDmXdmFbPOPWGq2MoYj+Sh+zVNUmPQGFMk5ndCrV2IFY676qFCCGdIM4gztC0U9RBQmO6Q6WiB1HgOMOmOgBFO0sMQb7KHHWurliFGF7pDwyKBfDWIGcnljCAkGCyPV99KhaG9JgVHuliSxTQhla3eyky45qmzSAoG+e+tWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=P3CfjMUn; arc=none smtp.client-ip=209.85.161.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6021e3daeabso168956eaf.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Jun 2025 15:41:22 -0700 (PDT)
+	s=arc-20240116; t=1749078717; c=relaxed/simple;
+	bh=pGoib3ydjtZ/I78fQ6QPvniLoEWzR+5uyTMk2OKAQ9s=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sEcQ61gdSN7qZQKuuqNQy/SqQ6eHFBXeDZC2MAFhVhSuySFJJ4kucRMUtmSaUNU2417eRW+JdGZ1JLE/j7QQQr7ll4dhspFyKVuVAiYm7yFf/t+KRii6in4CYYF5ImafbGm1sVk6iKwjcRIvO3xC07Iu5llA3mg0URT4gv7U5AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jUqqWFsH; arc=none smtp.client-ip=209.85.210.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-73bfc657aefso246002b3a.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Jun 2025 16:11:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1749076882; x=1749681682; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yvufXqjnJ3qTN2sBGZHkQ2E9AKqOmVfPt2rFXs4VRnE=;
-        b=P3CfjMUn6+gpZPlnqSXgprksJ/VImUK12QdJ/PuW9qU40HcZkR3ODjKn38NaXEV03f
-         kBRS7FDIes2pqZnCrxZkJVfxvNRMumNqRJ2kjE0UNrScb4Hzy60Hvm59WF5KYcutbMr/
-         92CPPV1x0yJ+GbxDjnFzLuL3EHEYNUHiOY8xU7GgRszYZhmYuZ7Cf8qDo4IMxlO401iX
-         Xmup917SPLQ+eFbPioPpIzr5SXkA+VdiPvz9kjydRcbZF006ybpSl88KZgK3IKv1Br02
-         3qMGKDg490Qq6HN1ab28D6tRIUCUANpFQAS351uGBqFjpIy9nIEOg9WVm8/pMLZYmF3c
-         D03Q==
+        d=google.com; s=20230601; t=1749078715; x=1749683515; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=3npSTljTroS8UV+to+K7B0gejhUv63EMca56GSqeKhA=;
+        b=jUqqWFsHJeauJ0UdL6a3yAD//Y5nRdJb+lt+Wu0tijNSrPD6kvpliaA4bdlIyuZUnl
+         nufCdwEie7ELjDuQ+sKvQmW4TzsqezJErSbxWtWjOeah9rFLVO0tcERcpdPOEPsAXy4O
+         NG0x2enC2+02iwrZ0ligWErT/SmgpabylcgCGIChaP8/CA/4Pv9SvYkfEUt1FOviDp7h
+         ZWR4s2NkiRs5yfv0d2sbGSGmM1YAMAStfgmhUDChYiKBSf09E5jXvUWc4nC5g+J2rrrO
+         AY3Yj3bMV2VYlhaDvcgbk+l8mAhqqs005lYANeSmzlYZxlTct5hZ9pukUd1TuPetaEiw
+         VC6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749076882; x=1749681682;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yvufXqjnJ3qTN2sBGZHkQ2E9AKqOmVfPt2rFXs4VRnE=;
-        b=eUc7SVvx3XVvgOBaIakGJq0owu6O7HXOuHs2gRL2qI/6UhdZBHnwbqtZV1fLKvNfhI
-         9Rvt9q6ZgwDOyljdxz4NJZZTI0AN1iqJwlWqIfp2SC6JZ2AQ5eUAeF3g765Yqgrk/w+S
-         cCWOb6IYdtAGUtpz+EHNMOivtKCs0SacwUMvfXxt4NlUIvfattpACc8V1HEcEqFkTo7i
-         HCZOh/xY+OpU1CSgQ+HHeD/tVeF+3zmRvKEXde3xgg2j4z+Okz/ewHERswJSHoizAdpE
-         x6/FVo+VTsM+lDidPRR6Asj1jlM4qfLRZGgLRQ+a2+A6AV3ae2dOpqCNyAMq9QmUMgA2
-         iaQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUptGSMWF1YDdHtX6SESyTWCLkLIzx8qGaYc+DhFHxRliTH4ocJGCmbAA0SHF1NWCvrouJFEmhPRj4akHbE@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT9n9e7ATt2qmsDv7AL3MX3zMiwS2vwE6yY53PP2qCaZOAegMM
-	ut7AqahGv3+x/siTbPlcL0Qf+I3eppyN6mT/12hQFVfivy0Z+FFCuS/UK24kT4zudyI=
-X-Gm-Gg: ASbGncuobxJGKYtH+Bv+fFap3+19wnT9TMY/W0A/0rXMO/iYvED5ZXEe6IhgGQUdFI6
-	Gk2NehvIaomVmyQSeKLU4S45/xKhGBjh/hM6gZWSleXuNpxI4N6bvQ4EaEgHwSUdo1TfC513lB5
-	lxiLBVGqZJFIllfk4PRayFRgEC3T0G3zt5PTTGWqPUMWnU0MxVj8mnhOF6MWK5at8cYV9uc8EPW
-	P51Wbu56RT9KEbRJIKIedmMcivFRJbB0yKpwg1ZkuM6sJesXQwun0L+5HyhCHoIL8GPUfuT/hPV
-	cxPFqqPI58k7AnZElQH4V3Ocm9cfzki0yjAn8kYjxK51k/KLs5zwdfR2MrNB/Ef53KFjTg==
-X-Google-Smtp-Source: AGHT+IEgL3SSoqVtCvX5ax2jQoI4T2U4ltupU8SlVFrpe9DhuXyhI/70nvWEs2LXx4OCIXNohaVIWg==
-X-Received: by 2002:a05:6870:2b17:b0:2c1:5674:940e with SMTP id 586e51a60fabf-2e9bf4d1887mr3150201fac.21.1749076881888;
-        Wed, 04 Jun 2025 15:41:21 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:feaf:df32:3afb:acbb])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2e9067afeecsm2811751fac.13.2025.06.04.15.41.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 15:41:20 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [PATCH] ceph: fix overflowed value issue in ceph_submit_write()
-Date: Wed,  4 Jun 2025 15:41:06 -0700
-Message-ID: <20250604224106.396310-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1749078715; x=1749683515;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3npSTljTroS8UV+to+K7B0gejhUv63EMca56GSqeKhA=;
+        b=R3++iejh5mFZXDqHiXwIYP23CPlk7Sq0Oz45EAhjEMBchQYcsVxxNRYfY8QFoNY9CK
+         ihk65vRwhyhxzlrv01M6KhEeB3v/iCv6rCUfjY0YpQKAUU5Es4oAVq7IrGDsoUP/zNUk
+         17Ou6nDVRxJj8ZxeY7i5jEv/NUFaKyJoqMdRIejN15SvqVgsWe/axJHGhhnGJYrblets
+         UANMRU6aa8jUQFiDFyj5UpmcQuTeo20tXzRcMRmcPXDIGPC0zddnwYWdzlJ6ZOuybia8
+         esa7wVQE0mh+Oq9sOGDXwERB8P6MlhfeKVuHd2MaWF4tWrGfVlSgAYWdvLh8Q751wTYN
+         Cjfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVdDM4a/cA8SkY1vNeESVpmc9njOsARWWk4IJ7JdP8NQqPJgXp7rVB5qo965wQAobyq/sZpKmwerEvi/UOX@vger.kernel.org
+X-Gm-Message-State: AOJu0YylSVijB+pgkH4Fan+3J+Qy8945FqaydYLjrp/a5ZfbeTyCZr6W
+	XluxEsN051bxfAZuxaExdcfgdiJ4O3+DHyRn3nFwzZ4j6xHTAEyQgIqgTm+M4L4XDwzZjfKMH0x
+	7pdSTGQ==
+X-Google-Smtp-Source: AGHT+IE5vyjpR0b4JnX96tHDLjXZe/ay0gti7aWB7+1hKtbXecOEAJBb165hSe99jrOqgpdnI0DBhGLXyQk=
+X-Received: from pgac22.prod.google.com ([2002:a05:6a02:2956:b0:b2c:3dd5:8139])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a21:6b02:b0:216:1ea0:a516
+ with SMTP id adf61e73a8af0-21d22d4ce34mr7310828637.41.1749078715129; Wed, 04
+ Jun 2025 16:11:55 -0700 (PDT)
+Date: Wed,  4 Jun 2025 16:11:44 -0700
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.49.0.1266.g31b7d2e469-goog
+Message-ID: <20250604231151.799834-1-surenb@google.com>
+Subject: [PATCH v4 0/7] use per-vma locks for /proc/pid/maps reads and PROCMAP_QUERY
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
+	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
+	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
+	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
+	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
+	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
+	tjmercier@google.com, kaleshsingh@google.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org, surenb@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+Reading /proc/pid/maps requires read-locking mmap_lock which prevents any
+other task from concurrently modifying the address space. This guarantees
+coherent reporting of virtual address ranges, however it can block
+important updates from happening. Oftentimes /proc/pid/maps readers are
+low priority monitoring tasks and them blocking high priority tasks
+results in priority inversion.
 
-The Coverity Scan service has detected overflowed value
-issue in ceph_submit_write() [1]. The CID 1646339 defect
-contains explanation: "The overflowed value due to
-arithmetic on constants is too small or unexpectedly
-negative, causing incorrect computations.
-In ceph_submit_write: Integer overflow occurs in
-arithmetic on constant operands (CWE-190)".
+Locking the entire address space is required to present fully coherent
+picture of the address space, however even current implementation does not
+strictly guarantee that by outputting vmas in page-size chunks and
+dropping mmap_lock in between each chunk. Address space modifications are
+possible while mmap_lock is dropped and userspace reading the content is
+expected to deal with possible concurrent address space modifications.
+Considering these relaxed rules, holding mmap_lock is not strictly needed
+as long as we can guarantee that a concurrently modified vma is reported
+either in its original form or after it was modified.
 
-This patch adds a check ceph_wbc->locked_pages on
-equality to zero and it exits function if it has
-zero value. Also, it introduces a processed_pages
-variable with the goal of assigning the number of
-processed pages and checking this number on
-equality to zero. The check of processed_pages
-variable on equality to zero should protect from
-overflowed value of index that selects page in
-ceph_wbc->pages[index] array.
+This patchset switches from holding mmap_lock while reading /proc/pid/maps
+to taking per-vma locks as we walk the vma tree. This reduces the
+contention with tasks modifying the address space because they would have
+to contend for the same vma as opposed to the entire address space. Same
+is done for PROCMAP_QUERY ioctl which locks only the vma that fell into
+the requested range instead of the entire address space. Previous version
+of this patchset [1] tried to perform /proc/pid/maps reading under RCU,
+however its implementation is quite complex and the results are worse than
+the new version because it still relied on mmap_lock speculation which
+retries if any part of the address space gets modified. New implementaion
+is both simpler and results in less contention. Note that similar approach
+would not work for /proc/pid/smaps reading as it also walks the page table
+and that's not RCU-safe.
 
-[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1646339
+Paul McKenney's designed a test [2] to measure mmap/munmap latencies while
+concurrently reading /proc/pid/maps. The test has a pair of processes
+scanning /proc/PID/maps, and another process unmapping and remapping 4K
+pages from a 128MB range of anonymous memory.  At the end of each 10
+second run, the latency of each mmap() or munmap() operation is measured,
+and for each run the maximum and mean latency is printed. The map/unmap
+process is started first, its PID is passed to the scanners, and then the
+map/unmap process waits until both scanners are running before starting
+its timed test.  The scanners keep scanning until the specified
+/proc/PID/maps file disappears. This test registered close to 10x
+improvement in update latencies:
 
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- fs/ceph/addr.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+Before the change:
+./run-proc-vs-map.sh --nsamples 100 --rawdata -- --busyduration 2
+    0.011     0.008     0.455
+    0.011     0.008     0.472
+    0.011     0.008     0.535
+    0.011     0.009     0.545
+    ...
+    0.011     0.014     2.875
+    0.011     0.014     2.913
+    0.011     0.014     3.007
+    0.011     0.015     3.018
 
-diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
-index b95c4cb21c13..afbb7aba283e 100644
---- a/fs/ceph/addr.c
-+++ b/fs/ceph/addr.c
-@@ -1411,6 +1411,7 @@ int ceph_submit_write(struct address_space *mapping,
- 	bool caching = ceph_is_cache_enabled(inode);
- 	u64 offset;
- 	u64 len;
-+	unsigned processed_pages;
- 	unsigned i;
- 
- new_request:
-@@ -1438,6 +1439,9 @@ int ceph_submit_write(struct address_space *mapping,
- 		BUG_ON(IS_ERR(req));
- 	}
- 
-+	if (ceph_wbc->locked_pages == 0)
-+		return -EINVAL;
-+
- 	page = ceph_wbc->pages[ceph_wbc->locked_pages - 1];
- 	BUG_ON(len < ceph_fscrypt_page_offset(page) + thp_size(page) - offset);
- 
-@@ -1474,6 +1478,7 @@ int ceph_submit_write(struct address_space *mapping,
- 	len = 0;
- 	ceph_wbc->data_pages = ceph_wbc->pages;
- 	ceph_wbc->op_idx = 0;
-+	processed_pages = 0;
- 	for (i = 0; i < ceph_wbc->locked_pages; i++) {
- 		u64 cur_offset;
- 
-@@ -1517,19 +1522,22 @@ int ceph_submit_write(struct address_space *mapping,
- 			ceph_set_page_fscache(page);
- 
- 		len += thp_size(page);
-+		processed_pages++;
- 	}
- 
- 	ceph_fscache_write_to_cache(inode, offset, len, caching);
- 
- 	if (ceph_wbc->size_stable) {
- 		len = min(len, ceph_wbc->i_size - offset);
--	} else if (i == ceph_wbc->locked_pages) {
-+	} else if (processed_pages > 0 &&
-+		   processed_pages == ceph_wbc->locked_pages) {
- 		/* writepages_finish() clears writeback pages
- 		 * according to the data length, so make sure
- 		 * data length covers all locked pages */
- 		u64 min_len = len + 1 - thp_size(page);
-+		unsigned index = processed_pages - 1;
- 		len = get_writepages_data_length(inode,
--						 ceph_wbc->pages[i - 1],
-+						 ceph_wbc->pages[index],
- 						 offset);
- 		len = max(len, min_len);
- 	}
-@@ -1554,17 +1562,17 @@ int ceph_submit_write(struct address_space *mapping,
- 	BUG_ON(ceph_wbc->op_idx + 1 != req->r_num_ops);
- 
- 	ceph_wbc->from_pool = false;
--	if (i < ceph_wbc->locked_pages) {
-+	if (processed_pages < ceph_wbc->locked_pages) {
- 		BUG_ON(ceph_wbc->num_ops <= req->r_num_ops);
- 		ceph_wbc->num_ops -= req->r_num_ops;
--		ceph_wbc->locked_pages -= i;
-+		ceph_wbc->locked_pages -= processed_pages;
- 
- 		/* allocate new pages array for next request */
- 		ceph_wbc->data_pages = ceph_wbc->pages;
- 		__ceph_allocate_page_array(ceph_wbc, ceph_wbc->locked_pages);
--		memcpy(ceph_wbc->pages, ceph_wbc->data_pages + i,
-+		memcpy(ceph_wbc->pages, ceph_wbc->data_pages + processed_pages,
- 			ceph_wbc->locked_pages * sizeof(*ceph_wbc->pages));
--		memset(ceph_wbc->data_pages + i, 0,
-+		memset(ceph_wbc->data_pages + processed_pages, 0,
- 			ceph_wbc->locked_pages * sizeof(*ceph_wbc->pages));
- 	} else {
- 		BUG_ON(ceph_wbc->num_ops != req->r_num_ops);
-@@ -1576,7 +1584,7 @@ int ceph_submit_write(struct address_space *mapping,
- 	ceph_osdc_start_request(&fsc->client->osdc, req);
- 	req = NULL;
- 
--	wbc->nr_to_write -= i;
-+	wbc->nr_to_write -= processed_pages;
- 	if (ceph_wbc->pages)
- 		goto new_request;
- 
+After the change:
+./run-proc-vs-map.sh --nsamples 100 --rawdata -- --busyduration 2
+    0.006     0.005     0.036
+    0.006     0.005     0.039
+    0.006     0.005     0.039
+    0.006     0.005     0.039
+    ...
+    0.006     0.006     0.403
+    0.006     0.006     0.474
+    0.006     0.006     0.479
+    0.006     0.006     0.498
+
+The patchset also adds a number of tests to check for /proc/pid/maps data
+coherency. They are designed to detect any unexpected data tearing while
+performing some common address space modifications (vma split, resize and
+remap). Even before these changes, reading /proc/pid/maps might have
+inconsistent data because the file is read page-by-page with mmap_lock
+being dropped between the pages. An example of user-visible inconsistency
+can be that the same vma is printed twice: once before it was modified and
+then after the modifications. For example if vma was extended, it might be
+found and reported twice. What is not expected is to see a gap where there
+should have been a vma both before and after modification. This patchset
+increases the chances of such tearing, therefore it's event more important
+now to test for unexpected inconsistencies.
+
+[1] https://lore.kernel.org/all/20250418174959.1431962-1-surenb@google.com/
+[2] https://github.com/paulmckrcu/proc-mmap_sem-test
+
+Suren Baghdasaryan (7):
+  selftests/proc: add /proc/pid/maps tearing from vma split test
+  selftests/proc: extend /proc/pid/maps tearing test to include vma
+    resizing
+  selftests/proc: extend /proc/pid/maps tearing test to include vma
+    remapping
+  selftests/proc: test PROCMAP_QUERY ioctl while vma is concurrently
+    modified
+  selftests/proc: add verbose more for tests to facilitate debugging
+  mm/maps: read proc/pid/maps under per-vma lock
+  mm/maps: execute PROCMAP_QUERY ioctl under per-vma locks
+
+ fs/proc/internal.h                         |   6 +
+ fs/proc/task_mmu.c                         | 233 +++++-
+ tools/testing/selftests/proc/proc-pid-vm.c | 793 ++++++++++++++++++++-
+ 3 files changed, 1011 insertions(+), 21 deletions(-)
+
+
+base-commit: 2d0c297637e7d59771c1533847c666cdddc19884
 -- 
-2.49.0
+2.49.0.1266.g31b7d2e469-goog
 
 
