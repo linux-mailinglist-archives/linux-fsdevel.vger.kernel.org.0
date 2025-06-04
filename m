@@ -1,227 +1,156 @@
-Return-Path: <linux-fsdevel+bounces-50607-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50608-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08AC8ACDD4E
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 13:57:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 64864ACDE44
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 14:46:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A211884112
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 11:57:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C57ED1895A7C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 12:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99D5728D8C7;
-	Wed,  4 Jun 2025 11:57:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C05028EA69;
+	Wed,  4 Jun 2025 12:46:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kvxCcCLp"
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aP0TCoLo"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047B9252910
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jun 2025 11:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA5624DCF9;
+	Wed,  4 Jun 2025 12:46:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749038235; cv=none; b=WZbOJcRDVKxtST5XFZKGTFpQwLA6fmRuRqZH40WTvpEpmgdYeayqwnlChtE/D+G/0ARV9oLzpQL2f0a6WW3fLK56uYBErRvVy59k3PPWU7bQ6azjRpSpkU8zWk0u05kSUC/xUKLDbEg0uBQRWr3tcZu8LZprpYVIZ61JbHeMrgI=
+	t=1749041182; cv=none; b=q1Cf6aWsDm6XwxWtgduowmcGfsabd/eVyOuQzG37NjkvH++W2fsIvkJaMISJkexGSQHenLpZm6YLMaO2F2ySLH0UEQXlNzHnPED2YHmSGJ6lS5moXD/Jo9zMYVcHgkfTjSHbBxGtMhEd+vxJTyqck1TfuXVr/n5+N++w1eBgOME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749038235; c=relaxed/simple;
-	bh=TaU8NXrxQxAJmhut88PXxzpUUiiPrXmm64aa+eogRPM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gGHO6CK8H6sA79+fipRfnt3lagkX3T1cUYTfOC9WHDTaE9Ku1uKI3MxGqm0vc6Cs1XMqD0cnoM188ZaqcCPPk8m8VUoow6+GJQisVBqaqEEYySmoU1mZ7NtHkaE8GDkK2rbOwmgM1E20o3qygQMHr1slDQhnTWH0fHPNWeA+AX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kvxCcCLp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EED25C4CEE7;
-	Wed,  4 Jun 2025 11:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749038234;
-	bh=TaU8NXrxQxAJmhut88PXxzpUUiiPrXmm64aa+eogRPM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=kvxCcCLppvHSUw6iAlv9PRpQleuZUGGf1PnvcYckp2zB7vz9Gv6C91vPxZvZoLdNf
-	 8aUcxUOZqC5YZFPP+gBY/uGTuNHTfybrNRQl2uSCwf4guc+KcOMgi5SEGCEC3kzlI+
-	 pbNDMu1xjPzsCMAeUcV/dZDAB2XOemSp4petJCBthem0TONfO80EeXSBRVLQnCEaEz
-	 rGL6aKQARDp1k209wPolzo7KaC6xR6h0aeC1NS/67raXKF17YMsiGoTcsb5vGx6vKj
-	 49PJacX/8jrkEX7fCZq4mRBD6gQbfwo74jCIknUfh0AZfLEGI9pX4odPWLA4QLOi/C
-	 GsKZzoVtyTCYg==
-Message-ID: <ab1c3bc999c1b9bbd854af36bd46294a092d0cb9.camel@kernel.org>
-Subject: Re: [PATCH 1/5] fs/fhandle.c: fix a race in call of
- has_locked_children()
-From: Jeff Layton <jlayton@kernel.org>
-To: Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner	
- <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Amir Goldstein
- <amir73il@gmail.com>
-Date: Wed, 04 Jun 2025 07:57:13 -0400
-In-Reply-To: <20250603231632.GA145532@ZenIV>
-References: <20250603231500.GC299672@ZenIV> <20250603231632.GA145532@ZenIV>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1749041182; c=relaxed/simple;
+	bh=Jj5d5qdiuvNZV+1ZocrmbCC3IGMI4hi5uTm1a75PdYA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DwL/+vmV4ukHF9K92UCm0D3SLo9HRT1DOa1VuGVkUCylwwAn2ayGSIOmRRcMIU01FVCPsji+cYxBBRXJ+iiRC0WumLo79YQOZQPJy7nZ0hH+0LBfCFVEd/9XelBmyx3wEwQs7t2A+zlddg9/nTutf87PJoLqRVnMb9GD2DG0ED8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aP0TCoLo; arc=none smtp.client-ip=115.124.30.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1749041169; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=TPLFxmuO1Q5FsFGt4jj6PdsNEZVTzIdznxUKQp9Xs4o=;
+	b=aP0TCoLo+hrHR3m6LmEXykmRNzuv/qqlwIe5N2b5VaP8UvceZeIJbqYYVB9Uu4b+vuF4fJl/nwseLLtQ2/arykUp/7v5SQsGKSFKKp8y+LYXegJZP8hgEKCxZ6LleiYaTqMSjDjQBKnXOqT0wT2ZiKk4id1q2LaKmtjnysy90ng=
+Received: from 30.121.8.237(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0Wd4RjKR_1749041167 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 04 Jun 2025 20:46:07 +0800
+Message-ID: <250ec733-8b2d-4c56-858c-6aada9544a55@linux.alibaba.com>
+Date: Wed, 4 Jun 2025 20:46:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: fix the inaccurate memory statistics issue for users
+To: Shakeel Butt <shakeel.butt@linux.dev>, Michal Hocko <mhocko@suse.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, donettom@linux.ibm.com,
+ aboorvad@linux.ibm.com, sj@kernel.org, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <4f0fd51eb4f48c1a34226456b7a8b4ebff11bf72.1748051851.git.baolin.wang@linux.alibaba.com>
+ <20250529205313.a1285b431bbec2c54d80266d@linux-foundation.org>
+ <aDm1GCV8yToFG1cq@tiehlicka>
+ <72f0dc8c-def3-447c-b54e-c390705f8c26@linux.alibaba.com>
+ <aD6vHzRhwyTxBqcl@tiehlicka>
+ <ef2c9e13-cb38-4447-b595-f461f3f25432@linux.alibaba.com>
+ <aD7OM5Mrg5jnEnBc@tiehlicka>
+ <7307bb7a-7c45-43f7-b073-acd9e1389000@linux.alibaba.com>
+ <aD8LKHfCca1wQ5pS@tiehlicka>
+ <obfnlpvc4tmb6gbd4mw7h7jamp3kouyhnpl4cusetyctswznod@yr6dyrsbay6w>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <obfnlpvc4tmb6gbd4mw7h7jamp3kouyhnpl4cusetyctswznod@yr6dyrsbay6w>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-06-04 at 00:16 +0100, Al Viro wrote:
-> may_decode_fh() is calling has_locked_children() while holding no locks.
-> That's an oopsable race...
->=20
-> The rest of the callers are safe since they are holding namespace_sem and
-> are guaranteed a positive refcount on the mount in question.
->=20
-> Rename the current has_locked_children() to __has_locked_children(), make
-> it static and switch the fs/namespace.c users to it.
->=20
-> Make has_locked_children() a wrapper for __has_locked_children(), calling
-> the latter under read_seqlock_excl(&mount_lock).
->=20
-> Fixes: 620c266f3949 ("fhandle: relax open_by_handle_at() permission check=
-s")
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> ---
->  fs/namespace.c | 18 ++++++++++++++----
->  1 file changed, 14 insertions(+), 4 deletions(-)
->=20
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index 7c0ebc4f4ef2..a33553bc12d0 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -2425,7 +2425,7 @@ void drop_collected_mounts(struct vfsmount *mnt)
->  	namespace_unlock();
->  }
-> =20
-> -bool has_locked_children(struct mount *mnt, struct dentry *dentry)
-> +static bool __has_locked_children(struct mount *mnt, struct dentry *dent=
-ry)
->  {
->  	struct mount *child;
-> =20
-> @@ -2439,6 +2439,16 @@ bool has_locked_children(struct mount *mnt, struct=
- dentry *dentry)
->  	return false;
->  }
-> =20
-> +bool has_locked_children(struct mount *mnt, struct dentry *dentry)
-> +{
-> +	bool res;
-> +
-> +	read_seqlock_excl(&mount_lock);
-> +	res =3D __has_locked_children(mnt, dentry);
-> +	read_sequnlock_excl(&mount_lock);
-> +	return res;
-> +}
-> +
->  /*
->   * Check that there aren't references to earlier/same mount namespaces i=
-n the
->   * specified subtree.  Such references can act as pins for mount namespa=
-ces
-> @@ -2499,7 +2509,7 @@ struct vfsmount *clone_private_mount(const struct p=
-ath *path)
->  			return ERR_PTR(-EINVAL);
->  	}
-> =20
-> -	if (has_locked_children(old_mnt, path->dentry))
-> +	if (__has_locked_children(old_mnt, path->dentry))
->  		return ERR_PTR(-EINVAL);
-> =20
->  	new_mnt =3D clone_mnt(old_mnt, path->dentry, CL_PRIVATE);
-> @@ -3036,7 +3046,7 @@ static struct mount *__do_loopback(struct path *old=
-_path, int recurse)
->  	if (!may_copy_tree(old_path))
->  		return mnt;
-> =20
-> -	if (!recurse && has_locked_children(old, old_path->dentry))
-> +	if (!recurse && __has_locked_children(old, old_path->dentry))
->  		return mnt;
-> =20
->  	if (recurse)
-> @@ -3429,7 +3439,7 @@ static int do_set_group(struct path *from_path, str=
-uct path *to_path)
->  		goto out;
-> =20
->  	/* From mount should not have locked children in place of To's root */
-> -	if (has_locked_children(from, to->mnt.mnt_root))
-> +	if (__has_locked_children(from, to->mnt.mnt_root))
->  		goto out;
-> =20
->  	/* Setting sharing groups is only allowed on private mounts */
 
-Good catch!
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+On 2025/6/4 01:29, Shakeel Butt wrote:
+> On Tue, Jun 03, 2025 at 04:48:08PM +0200, Michal Hocko wrote:
+>> On Tue 03-06-25 22:22:46, Baolin Wang wrote:
+>>> Let me try to clarify further.
+>>>
+>>> The 'mm->rss_stat' is updated by using add_mm_counter(),
+>>> dec/inc_mm_counter(), which are all wrappers around
+>>> percpu_counter_add_batch(). In percpu_counter_add_batch(), there is percpu
+>>> batch caching to avoid 'fbc->lock' contention.
+>>
+>> OK, this is exactly the line of argument I was looking for. If _all_
+>> updates done in the kernel are using batching and therefore the lock is
+>> only held every N (percpu_counter_batch) updates then a risk of locking
+>> contention would be decreased. This is worth having a note in the
+>> changelog.
+
+OK.
+
+>>> This patch changes task_mem()
+>>> and task_statm() to get the accurate mm counters under the 'fbc->lock', but
+>>> this will not exacerbate kernel 'mm->rss_stat' lock contention due to the
+>>> the percpu batch caching of the mm counters.
+>>>
+>>> You might argue that my test cases cannot demonstrate an actual lock
+>>> contention, but they have already shown that there is no significant
+>>> 'fbc->lock' contention when the kernel updates 'mm->rss_stat'.
+>>
+>> I was arguing that `top -d 1' doesn't really represent a potential
+>> adverse usage. These proc files are generally readable so I would be
+>> expecting something like busy loop read while process tries to update
+>> counters to see the worst case scenario. If that is barely visible then
+>> we can conclude a normal use wouldn't even notice.
+
+OK.
+
+> Baolin, please run stress-ng command that stresses minor anon page
+> faults in multiple threads and then run multiple bash scripts which cat
+> /proc/pidof(stress-ng)/status. That should be how much the stress-ng
+> process is impacted by the parallel status readers versus without them.
+
+Sure. Thanks Shakeel. I run the stress-ng with the 'stress-ng --fault 32 
+--perf -t 1m' command, while simultaneously running the following 
+scripts to read the /proc/pidof(stress-ng)/status for each thread.
+
+ From the following data, I did not observe any obvious impact of this 
+patch on the stress-ng tests when repeatedly reading the 
+/proc/pidof(stress-ng)/status.
+
+w/o patch
+stress-ng: info:  [6891]          3,993,235,331,584 CPU Cycles 
+          59.767 B/sec
+stress-ng: info:  [6891]          1,472,101,565,760 Instructions 
+          22.033 B/sec (0.369 instr. per cycle)
+stress-ng: info:  [6891]                 36,287,456 Page Faults Total 
+           0.543 M/sec
+stress-ng: info:  [6891]                 36,287,456 Page Faults Minor 
+           0.543 M/sec
+
+w/ patch
+stress-ng: info:  [6872]          4,018,592,975,968 CPU Cycles 
+          60.177 B/sec
+stress-ng: info:  [6872]          1,484,856,150,976 Instructions 
+          22.235 B/sec (0.369 instr. per cycle)
+stress-ng: info:  [6872]                 36,547,456 Page Faults Total 
+           0.547 M/sec
+stress-ng: info:  [6872]                 36,547,456 Page Faults Minor 
+           0.547 M/sec
+
+=========================
+#!/bin/bash
+
+# Get the PIDs of stress-ng processes
+PIDS=$(pgrep stress-ng)
+
+# Loop through each PID and monitor /proc/[pid]/status
+for PID in $PIDS; do
+     while true; do
+         cat /proc/$PID/status
+	usleep 100000
+     done &
+done
 
