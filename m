@@ -1,85 +1,85 @@
-Return-Path: <linux-fsdevel+bounces-50629-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50630-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBF1ACE1F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 18:09:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FC73ACE1F2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 18:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA6EC3A8AF7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 16:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 092B7188BD0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 16:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BC01DB92E;
-	Wed,  4 Jun 2025 16:09:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 675DA1DDC0F;
+	Wed,  4 Jun 2025 16:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgQfxP7S"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j37/eaGx"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A6842065
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F451624D5
 	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jun 2025 16:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749053367; cv=none; b=bWNVhKwrumht65aH1HBMjlGEUXyrG4XUj7kb1FKGzWfT262lh52uYSsk7CBs1xnrFt5q1gy/p68bDhiA9H1YQClNb3sub45Iahde/z9w8cxRH3wHyXZTFeveqdaOJF+x04eHTNyA8RKPRY+XMYNfRwvXiBTeuT6DghI64MiFBjU=
+	t=1749053367; cv=none; b=BCGpJkHs5BKLCzKvka2kviEfMs9BtggTGEwT3mItSzoGzY7KD3WIzC8Y1HXZwHAcU4PlHRmtscyoR6XaH03yQJCl89YtLKiAsmmMee41kFZjdoQQu1RA7COhI4Mn/ncWxGBg0FUmW7S5vGxN/qLW9efIxTEGpvqyZmzdt0AJH/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1749053367; c=relaxed/simple;
-	bh=HFDHTSkTC960HCY5afFPJtlKNekMsP5VZQCE9+LVLrU=;
+	bh=f+yyF4bpSdpCsSyeUmXvoMRSHUd+GLY3egdeZi9jsOU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VZZ7zlJziN3ysAnljjXOOrs9c2TmXIXZzZVfnFOfdDMo2vp/41J/IKMLK1TC4zkGVKklLsoA6Xm4r4JkTceikMIdo6d4Xp9+dB10myX2edOZmUofWOgH/6/PMEm/+E2gaGW+C7AHp+fQR6VXqBFbO3Jc+MSUIjIby+7lXhXv19k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgQfxP7S; arc=none smtp.client-ip=209.85.128.52
+	 MIME-Version; b=FWf9V2ZT+sWamNbyPWHCzYnoDGR5dT+ZWTYkdu/GqgoYwpxed3yB2GXrrQLijVHo2oado5tiTYrbVSPeIKr8trxY9LT7XOwLwzzcnTtcW9nvpCN049FgD+Hqzu6OAQeHWMwjK2n3/zofM7mPe4RPxsV7qrDLFx3sjnqLiQA+2SU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j37/eaGx; arc=none smtp.client-ip=209.85.128.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43edecbfb94so78690215e9.1
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-451d6ade159so35680325e9.1
         for <linux-fsdevel@vger.kernel.org>; Wed, 04 Jun 2025 09:09:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20230601; t=1749053364; x=1749658164; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zz/484adBJRE4R4ZsQ9EipBvLnjZ/r+8TuCDGk3KO7s=;
-        b=jgQfxP7SFONvqxr4jk/kFYoYUPm2y+hApDH4yymvS+9mxEpdB8tyY7Dl8sG5vqe9AH
-         d0dM6jz/F/WEXA8c5Nm4sZ1U8Hs6f+aLbbNbW0uCaxDKsOByWanWemfhzaIRfLtqFTE1
-         ya/uyoUbXgUCpehk5FCHEzajknBmjraDLMAur5/Qz37Xn7J9nZwhZDYc/TqBz7QjsnsJ
-         nZ6hSPsSdhRHo26Lsde2tx26/92XtW1U7GlC7DUSQM6vfYVbikCHqG39kg1lQbBgUz1K
-         WGVaSSsoqgTzhRfRpNgcW91TxsyoZugtgdf5EWqE4fxi55LNAInGqolodzY8FBDwQ9Nl
-         Jx+Q==
+        bh=b6VOOGw3tvwhFzf2D8a/LUUWaF0Jcdxsxw3dkYcvyYg=;
+        b=j37/eaGxzXkZ007d+e75JkR5LBG90KZaHg9NrZhBUAMQH/f8rcolRh7Mnx60LBVyCc
+         8MF6MH62ah6LgqTEU8r/o6Tuen+JHKFfPRaiF6z8BvSzwe7VIdRNSUmuTPQj3L1kjx8M
+         AOz2vlJF/wN+66rsaBTcCafpfhp7ddz8JUl4Tf9pqvSiAGiHiiYtYD2FNBBiAyaOh/8V
+         EJACEqC9mUp739zXEtMNTXzwNipVg1V4621temvRGWs0vpEOYw3fQIHIXEofA82uMUhj
+         +MbOXxI9zxotpdJo3fh7+I0xU25CKZEzktADJnww/+HhfXs3RkWs2xbambNsBd/29jj/
+         X8yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1749053364; x=1749658164;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zz/484adBJRE4R4ZsQ9EipBvLnjZ/r+8TuCDGk3KO7s=;
-        b=mgzp+dJXNVX2jcBp4UspkIWZIWzDNWFj3APdGcQmP2mOf7XeOjqvg5hmqWLgFwnFDs
-         uupfKD8KYk0Q0vDYw7YmsoWeGtfLMs3VIQ+PEvtsnmJD/WnCWMjAoZ5SQjtSrGV1K5zu
-         ajrP6YaIVwOlqOHgw/oo4HIyhhDKmKZntci4aamRAv7bfdz1H+Wn45JXluI311vKs32D
-         ff6j7q4ftnyZZDmmg7bQbfGCuqN2HrpUtAy1Zd1PAQwQKYle4vW5lyN7o1g142lJWfQa
-         HLdYvoho516WRoCLKMHJXZRPiBQDo7A+5yaS/gBQTBOtFVWCfZ1cfDC8QdcwzlqOd5cR
-         BQ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCW55zmYgD9MCIVE7lxtO7q/3JISZEee8DtPy9w6IH6M0DLOs9GyWzxYzRsfZl+M0wLAxm9rrvXFV31UDCb9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3Dk64zNlrsQdFjzI8Lc1rzdVGWmwEB3TYgVQnHAWwypjd6g3l
-	/lolYp1WGt1UZVXDdUvJkSfnQBCDfILn2RTGL2/MTu2oJI2lEvGxx0aV
-X-Gm-Gg: ASbGncvZWkDxCyu50mfnEoxLO+JSvxJWCdSMgEbUppzu9YrCPIKvb1Gfqk9Ua+VP52v
-	bNkh/nfxc13+YxiAO+lMbaUGvWohfDbGtQ6z0Nrg6h6VQVcNGJPuzghwaMjJz7a218gLV62xDYk
-	PRIEBsQ49y/xo47PT4sSNuEmAmWEJGiaKcjQ1kbzSQK/PEUCa5k4nLWpwkd1exzu2cHZbn93TeL
-	xshB2GYfrGB8z6/0Kcjxm2VugAzLKZL3MPMY5ZWX+I6O7EFbnDX+UTkMqzeY8l/t66SNy4PmhJn
-	iywJzNLhcnuK21OGf4WrGTZpar0bq0txxP5ejcPXumrXWvfNufIc4gmE7EnpCuzNZojuLAvg5iW
-	4hs2y59K8e46vk/YHSDnSzTqfz6CECqKAGzXO6UGy8RPwTTYi
-X-Google-Smtp-Source: AGHT+IHvu1RfU9vN+XmGNbXjimd4bPhSb1LJ0ZWe23L4owYYJBemcHRv6N0bO7mO3z31EifmRAwV5w==
-X-Received: by 2002:a05:600c:6298:b0:43c:fe15:41cb with SMTP id 5b1f17b1804b1-451f0ac62ddmr32219215e9.15.1749053362979;
-        Wed, 04 Jun 2025 09:09:22 -0700 (PDT)
+        bh=b6VOOGw3tvwhFzf2D8a/LUUWaF0Jcdxsxw3dkYcvyYg=;
+        b=WYQuf/DnjPGiomMIqrx5M/+FwRsgarzwtRhB4UiurhcyMFYGUoUR9bH8F0s9VAKxYW
+         BfhtzG1iAHj+ytxuuMKZyc3Ny/wvKWB8q7ScuXRx2HCMunKPCuk+inuKA13vxUcGKlJ8
+         2OpdY0GApYnftyG1vEvBCFOrrk2HvHWTddBsfZ2r+B6nt+91gI6dU5lCt6MVzdNBut/d
+         j0WPo4ZS14gGvlJLp76YDuaRk81NEzXTEFrHkDfLKDQa79p4TtoFHyMVNsuB+No3xsYg
+         /gYDyg/3xmHPLKkHyCyLzEGZir3O+lxRbitDjGd0qjLHFV2HxECVPwmAo4SkDUAj52jJ
+         0BKA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIg69RYx666TxRx4K7XqDQpcQWCIOKEE9kdvLxTD6GsYr4b3bK8fd9tyY0cjJXn3zr1TGkXKC55fM/NJRu@vger.kernel.org
+X-Gm-Message-State: AOJu0YwymkK/Ljtz0g7qxb/neYTO6GtL4b8Nb9g2450Vejduob0wZfMc
+	OoP3NdihAfdcyeeu/yWSYVLIS9YhCy3JJJPvMVJ62csV6Oyz8G9zwvZO
+X-Gm-Gg: ASbGncsdz11Ass6zkzExwKomrpE6fvBWEoojVl9H5qRGLDtQ3ufeV/nkaR4DkCZvwyU
+	xeS7bwvjybMxraU7Y/xuzd8OkxAHe7DMEg2Hn/lejiY4ecTPU5JkziNiLzkdUfY5A+rQCVIquLa
+	NqIUZKRcV6wcceec2+vdcLSxkQFrS52IvGGFpb3wkg9DNiXZf5Tnt4OkVcux+fqWs/Vp86BoZES
+	kb1ZSF9tXITTFNZ6BUXzTLdW5mC94xHk3KvFVfIBwpRJPOur4wOE+nVnO3IEeSsAdylXwLFRMUP
+	wbTfHzXOrtezagnS0htREOG/15U/gyJ9OA98KZdznBsuMTyskjRAKbzdtBMsWQwGP1i5BIbJjKP
+	dlPGw7iv4BPuqgNLU6lBPhqiw911iHok9eI44pJNfHkW3RBW+
+X-Google-Smtp-Source: AGHT+IFdJAXkYyzBATfN4oS3WcnPrTcZyvJdaDrvzGkPgF4D7tElT5O+7qkK1kLVlm6ZXDAB/iJCEA==
+X-Received: by 2002:a05:600c:4e43:b0:450:d568:909b with SMTP id 5b1f17b1804b1-451f0a7309cmr35937925e9.14.1749053363937;
+        Wed, 04 Jun 2025 09:09:23 -0700 (PDT)
 Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a1678sm22304306f8f.99.2025.06.04.09.09.21
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a1678sm22304306f8f.99.2025.06.04.09.09.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jun 2025 09:09:22 -0700 (PDT)
+        Wed, 04 Jun 2025 09:09:23 -0700 (PDT)
 From: Amir Goldstein <amir73il@gmail.com>
 To: Jan Kara <jack@suse.cz>
 Cc: Christian Brauner <brauner@kernel.org>,
 	linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH v2 1/3] fanotify: allow creating FAN_PRE_ACCESS events on directories
-Date: Wed,  4 Jun 2025 18:09:16 +0200
-Message-Id: <20250604160918.2170961-2-amir73il@gmail.com>
+Subject: [RFC PATCH v2 2/3] fanotify: allow O_PATH flag in event_f_flags
+Date: Wed,  4 Jun 2025 18:09:17 +0200
+Message-Id: <20250604160918.2170961-3-amir73il@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250604160918.2170961-1-amir73il@gmail.com>
 References: <20250604160918.2170961-1-amir73il@gmail.com>
@@ -91,93 +91,92 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Jan Kara <jack@suse.cz>
+Many of the use cases for fanotify events only use the event->fd
+to resolve the path of the event target object.
 
-Like files, a FAN_PRE_ACCESS event will be generated before every
-read access to directory, that is on readdir(3).
+Using O_PATH for this purpose is more efficient and prevents
+exposing a readable fd of the object if that is not required.
 
-Unlike files, there will be no range info record following a
-FAN_PRE_ACCESS event, because the range of access on a directory
-is not well defined.
-
-FAN_PRE_ACCESS events on readdir are only generated when user opts-in
-with FAN_ONDIR request in event mask and the FAN_PRE_ACCESS events on
-readdir report the FAN_ONDIR flag, so user can differentiate them from
-event on read.
-
-An HSM service is expected to use those events to populate directories
-from slower tier on first readdir access. Having to range info means
-that the entire directory will need to be populated on the first
-readdir() call.
+To be able to distinguish a user opened O_PATH fd, from fanotify
+provided O_PATH event->fd, do not explicitly set FMODE_NONOTIFY
+on open of all O_PATH fds, do not override FMODE_NONOTIFY when setting
+FMODE_PATH in do_dentry_open() and check explicitly for FMODE_PATH in
+fsnotify_file() to suppress FAN_CLOSE events on close of O_PATH fds.
 
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Link: https://patch.msgid.link/20250402062707.1637811-1-amir73il@gmail.com
 ---
- fs/notify/fanotify/fanotify.c      | 8 +++++---
- fs/notify/fanotify/fanotify_user.c | 9 ---------
- 2 files changed, 5 insertions(+), 12 deletions(-)
+ fs/notify/fanotify/fanotify_user.c |  2 +-
+ fs/open.c                          |  4 ++--
+ include/linux/fs.h                 | 10 ++++++----
+ include/linux/fsnotify.h           |  2 +-
+ 4 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 3083643b864b..7c9a2614e715 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -303,8 +303,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 				     struct inode *dir)
- {
- 	__u32 marks_mask = 0, marks_ignore_mask = 0;
--	__u32 test_mask, user_mask = FANOTIFY_OUTGOING_EVENTS |
--				     FANOTIFY_EVENT_FLAGS;
-+	__u32 test_mask, user_mask = FANOTIFY_OUTGOING_EVENTS;
- 	const struct path *path = fsnotify_data_path(data, data_type);
- 	unsigned int fid_mode = FAN_GROUP_FLAG(group, FANOTIFY_FID_BITS);
- 	struct fsnotify_mark *mark;
-@@ -356,6 +355,9 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 	 * the child entry name information, we report FAN_ONDIR for mkdir/rmdir
- 	 * so user can differentiate them from creat/unlink.
- 	 *
-+	 * For pre-content events we report FAN_ONDIR for readdir, so user can
-+	 * differentiate them from read.
-+	 *
- 	 * For backward compatibility and consistency, do not report FAN_ONDIR
- 	 * to user in legacy fanotify mode (reporting fd) and report FAN_ONDIR
- 	 * to user in fid mode for all event types.
-@@ -364,7 +366,7 @@ static u32 fanotify_group_event_mask(struct fsnotify_group *group,
- 	 * fanotify_alloc_event() when group is reporting fid as indication
- 	 * that event happened on child.
- 	 */
--	if (fid_mode) {
-+	if (fid_mode || test_mask & FANOTIFY_PRE_CONTENT_EVENTS) {
- 		/* Do not report event flags without any event */
- 		if (!(test_mask & ~FANOTIFY_EVENT_FLAGS))
- 			return 0;
 diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
-index b192ee068a7a..9d7b3a610b4a 100644
+index 9d7b3a610b4a..fd2906a8a15e 100644
 --- a/fs/notify/fanotify/fanotify_user.c
 +++ b/fs/notify/fanotify/fanotify_user.c
-@@ -1411,11 +1411,6 @@ static int fanotify_may_update_existing_mark(struct fsnotify_mark *fsn_mark,
- 	    fsn_mark->flags & FSNOTIFY_MARK_FLAG_IGNORED_SURV_MODIFY)
- 		return -EEXIST;
+@@ -105,7 +105,7 @@ static void __init fanotify_sysctls_init(void)
+ #define	FANOTIFY_INIT_ALL_EVENT_F_BITS				( \
+ 		O_ACCMODE	| O_APPEND	| O_NONBLOCK	| \
+ 		__O_SYNC	| O_DSYNC	| O_CLOEXEC     | \
+-		O_LARGEFILE	| O_NOATIME	)
++		O_LARGEFILE	| O_NOATIME	| O_PATH)
  
--	/* For now pre-content events are not generated for directories */
--	mask |= fsn_mark->mask;
--	if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
--		return -EEXIST;
--
- 	return 0;
- }
+ extern const struct fsnotify_ops fanotify_fsnotify_ops;
  
-@@ -1951,10 +1946,6 @@ static int do_fanotify_mark(int fanotify_fd, unsigned int flags, __u64 mask,
- 	if (mask & FAN_RENAME && !(fid_mode & FAN_REPORT_NAME))
- 		return -EINVAL;
+diff --git a/fs/open.c b/fs/open.c
+index 7828234a7caa..4664240f4c5e 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -913,8 +913,8 @@ static int do_dentry_open(struct file *f,
+ 	f->f_sb_err = file_sample_sb_err(f);
  
--	/* Pre-content events are not currently generated for directories. */
--	if (mask & FANOTIFY_PRE_CONTENT_EVENTS && mask & FAN_ONDIR)
--		return -EINVAL;
--
- 	if (mark_cmd == FAN_MARK_FLUSH) {
- 		fsnotify_clear_marks_by_group(group, obj_type);
+ 	if (unlikely(f->f_flags & O_PATH)) {
+-		f->f_mode = FMODE_PATH | FMODE_OPENED;
+-		file_set_fsnotify_mode(f, FMODE_NONOTIFY);
++		f->f_mode = FMODE_PATH | FMODE_OPENED |
++			    FMODE_FSNOTIFY(f->f_mode);
+ 		f->f_op = &empty_fops;
  		return 0;
+ 	}
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index aad2fb940a45..098456235cb5 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -210,14 +210,16 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t offset,
+ #define FMODE_FSNOTIFY_MASK \
+ 	(FMODE_NONOTIFY | FMODE_NONOTIFY_PERM)
+ 
++#define FMODE_FSNOTIFY(mode) \
++	(mode & FMODE_FSNOTIFY_MASK)
+ #define FMODE_FSNOTIFY_NONE(mode) \
+-	((mode & FMODE_FSNOTIFY_MASK) == FMODE_NONOTIFY)
++	(FMODE_FSNOTIFY(mode) == FMODE_NONOTIFY)
+ #ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+ #define FMODE_FSNOTIFY_PERM(mode) \
+-	((mode & FMODE_FSNOTIFY_MASK) == 0 || \
+-	 (mode & FMODE_FSNOTIFY_MASK) == (FMODE_NONOTIFY | FMODE_NONOTIFY_PERM))
++	(FMODE_FSNOTIFY(mode) == 0 || \
++	 FMODE_FSNOTIFY(mode) == (FMODE_NONOTIFY | FMODE_NONOTIFY_PERM))
+ #define FMODE_FSNOTIFY_HSM(mode) \
+-	((mode & FMODE_FSNOTIFY_MASK) == 0)
++	(FMODE_FSNOTIFY(mode) == 0)
+ #else
+ #define FMODE_FSNOTIFY_PERM(mode)	0
+ #define FMODE_FSNOTIFY_HSM(mode)	0
+diff --git a/include/linux/fsnotify.h b/include/linux/fsnotify.h
+index 454d8e466958..175149167642 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -121,7 +121,7 @@ static inline int fsnotify_file(struct file *file, __u32 mask)
+ 	 * FMODE_PATH fds (involves open & close events) as they are just
+ 	 * handle creation / destruction events and not "real" file events.
+ 	 */
+-	if (FMODE_FSNOTIFY_NONE(file->f_mode))
++	if (FMODE_FSNOTIFY_NONE(file->f_mode) || (file->f_mode & FMODE_PATH))
+ 		return 0;
+ 
+ 	return fsnotify_path(&file->f_path, mask);
 -- 
 2.34.1
 
