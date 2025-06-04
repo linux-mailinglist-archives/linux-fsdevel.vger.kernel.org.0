@@ -1,123 +1,174 @@
-Return-Path: <linux-fsdevel+bounces-50583-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50584-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3245EACD776
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 07:18:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54EFAACD7DD
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 08:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA66A3A73FD
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 05:18:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D36953A4943
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 06:32:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DBBC1B414A;
-	Wed,  4 Jun 2025 05:18:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43EDC1DF258;
+	Wed,  4 Jun 2025 06:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWwEizVu"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gey8bPVk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C0F2C3251;
-	Wed,  4 Jun 2025 05:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D778D70838;
+	Wed,  4 Jun 2025 06:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749014320; cv=none; b=f2zvusOUWZD1Hdsx3e+GCqK7nXvQtSoTgCWOLZzrCZbsYUzyDsiYtfjc+E9tUk4LJ53JQYaqcMXu15lHQuYph5rew+QbFMKjwGRg50fnZzDr8O7Q87zPHVYBYYeTdZ7dSXGimhM15zuJA9Xih6Bn2lgWYDTgvGNM3NFCeT7YzbI=
+	t=1749018787; cv=none; b=bgHUS0H0337dzodAfbq3HyW4a1BxzgfO5XJajgt9Yt8t2ZWJSuUq/BDMIiNq5GXOBMzAid/l7UaPgG87YPaGD5rFQv5kRlOEWt5Op29SnplVPTz9+Xsxv0BITzINn9Qkfz8Rq5t7m99Lxl/ydY2jOC/fQoFz9V1cmDyZNCgSmxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749014320; c=relaxed/simple;
-	bh=5L0mXU+ZIU9WV031YNClVIoKTaXI+VboViityezOfns=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=cA3yDFxiqwUJ/rnlOM4X36x+bHS//ryqVJDOFBH/pS8iFy9oDjlezzWOCtSfEuY5oFoJJndat4aq0gJ7FsF/ptPwzrFlR6I+W18cymz+7K1UhQS1YQrz/LVXlbU7QckLuCuth7QZVfOaGDLYrPPS1M4ZI94vN73sQyQFMa9GGas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWwEizVu; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-32abd926858so20052551fa.2;
-        Tue, 03 Jun 2025 22:18:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749014317; x=1749619117; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dsOZYEdf+2IQJTpWqR5gWfV1hHHHdzER9cruL9o4LEs=;
-        b=gWwEizVuFxyxNQ1mxRYoFjFDiz6Fa3XKIfsDMnLduzIUP68nnOrMVXTQ2CtsFKvFr8
-         0M3ybOKBzeVqIRIJ5cYjjnFki/Zjei/WQ7w7wXcDtcxw3SzpAlheU8EJOkza6xofy94I
-         T8If6DRzVk1gAsDOwpJBpO+amO2sdhf4Scqt4hDSL6JKqvyWyKR/WBn5k6P5UA1MYifV
-         gKq7hHLKSoDaELFkUOdct11kzAl7Z8DXqjguXjyM+PAOYfSACpD4aFsM5emM0jQIocyA
-         KAfU+5KwHM/M/PluijFyYUiROycSEekU9KhS89auaA31MiLtcfIE9w11nOwFZVKyC2n2
-         P1Uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749014317; x=1749619117;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dsOZYEdf+2IQJTpWqR5gWfV1hHHHdzER9cruL9o4LEs=;
-        b=Hvh9ia/En3QF4kc3DO70Dc2QDkFyWPwWRGiD7qPuUxRgRWQJd+N692qIX+Usa8/RQ0
-         w/vxgJDO/9QjmtM78MA817c1+Ucp4ME5tXWUX36GLv6tveYG6JnS3OzPducomU7r7w+q
-         HqNe13cPecgcOpsYiSNE5wUN36A5PgDlwRzsO5bOejH4KJMr4glRyJlgf/wiFLfLQtrJ
-         0SjfaZzHVw5u4UdKFuvkw50rNe3HZKbPC6fVdozCaA5RFdiKcH7FqH94cTi82q8FmwOw
-         LGEZGmPpMmMzHsHN90s3esK/LDB6FXYm6ArkkduQLcqFd8QRS8GG/RouhsQjM8Xk+yk0
-         j8XQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0rLyvuT9w9HvsOH1JPQK1W09SFXk30btoEfu3J0/s6kafkqTrKqvZ/UUkGmunEZH1Rr3WBJaYvsaKwCwI@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8xxlvZpWqek16VY7VRm2qdjAY5MoOsn7e2cwYAmwx954qTAB3
-	HNTlAFrKNwvsKoprmcupETh+Oa2osVgh+UR4rp1delcIy11caL+EmD77wTnMe1ThK+/hMdrhj+G
-	FdidwGsMWCaqnYW32D0kNSx+ErwEzefz3vcFa
-X-Gm-Gg: ASbGnctdwrt6JPrDyPJku2EsM/mn4czJ1AI3UgJs+zGWd5qQiygqfOqtny/s0FzfWje
-	7DIcVI8JbCqr26tk7K+MDfWJ8LUGzQbYZ8kxB+d2vfzkpnsn0FhQnOvs0rP4gxDqm4l4EzhuOcf
-	uLplFgd11VnSBn8wH/Q40RzlvmMPLk0HE/VjgTeOezxp/B
-X-Google-Smtp-Source: AGHT+IFIz3Z8XZ89S0jOnioHJISoBvKH+tdt56Z9NhxdRmJnMHRRd7mY2jX4Sw91trh41v/ZjzzroL5ITJ4EAQ1332Y=
-X-Received: by 2002:a05:651c:1549:b0:32a:8147:59c6 with SMTP id
- 38308e7fff4ca-32ac79d2840mr2615881fa.27.1749014316547; Tue, 03 Jun 2025
- 22:18:36 -0700 (PDT)
+	s=arc-20240116; t=1749018787; c=relaxed/simple;
+	bh=TWkbaF+UZP8xXHeAtNtgjG41yHdBhuDPXGIN5tMi4Dw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OzK3l5UTWh5cWgwxB6iNjZjDCzcuVJ198gtbYMPHLuXBlhQJt3twiMi3s/Nys8MDbKEOdjmYw692Lm4zn1AHOf5EcZXetZmQLMH0rvijSvycdrn0+t0FdTDMwp4nzVt89fahDevj1qV5FoQK2tLDZTlQr6QsDmDEpTE2tCCbd2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gey8bPVk; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=naaTaUQW6+RoDaKAgp6lS22xeYxfdxsoFtZFGw1lY9Q=; b=gey8bPVkk7ZaRXYOWTcO3PL/wY
+	f73+B3Azk8XxJDn0xOYigGXY0T0sxkkwK9dkfvl8Bnn6YD/49QCy9miDn6EMYYxYM8DjlDAGSixFq
+	32eaeDG3pswVv71m/c1BCjWJaEc/41kxFunXUdcKoreLwY+3untYWzdm8r+54vRLpDxB6emo/0zP4
+	1QFq4hwZoAvVhmSy5YjAKk2m7ZE7dk/Z6DGqbdoOn0vAh+GtM2wzpCvgzGRV/zybKpDclC2dkxrrg
+	FEg+6I6Z0s934MOIsmTPwcBnl9+qsfzh6X6Vc3qW01501kWI6ICz7Iv7fCDDaGlVOi6uCu0eUvzL4
+	KUjSHOlw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMhgP-0000000CgKi-0mot;
+	Wed, 04 Jun 2025 06:33:05 +0000
+Date: Tue, 3 Jun 2025 23:33:05 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Dave Chinner <david@fromorbit.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Yafang Shao <laoar.shao@gmail.com>,
+	Christian Brauner <brauner@kernel.org>, djwong@kernel.org,
+	cem@kernel.org, linux-xfs@vger.kernel.org,
+	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
+ data corruption
+Message-ID: <aD_oobAbOs7m8PFN@infradead.org>
+References: <CALOAHbDm7-byF8DCg1JH5rb4Yi8FBtrsicojrPvYq8AND=e6hQ@mail.gmail.com>
+ <aDfkTiTNH1UPKvC7@dread.disaster.area>
+ <aD04v9dczhgGxS3K@infradead.org>
+ <aD4xboH2mM1ONhB-@dread.disaster.area>
+ <aD5-_OOsKyX0rDDO@infradead.org>
+ <aD9xj8cwfY9ZmQ2B@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Luka <luka.2016.cs@gmail.com>
-Date: Wed, 4 Jun 2025 13:18:23 +0800
-X-Gm-Features: AX0GCFsSBwXBKlijLdYhtyRldmGBYdfBX_Pc7pN2NzpKVFp0aWHXEuM6MsFvfYo
-Message-ID: <CALm_T+3funpAryWLgouRn5CNd34AvNxJUUitUXbKR3vT5DUwQA@mail.gmail.com>
-Subject: [Bug] WARNING in remove_proc_entry in Linux 6.6
-To: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aD9xj8cwfY9ZmQ2B@dread.disaster.area>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Dear Kernel Maintainers,
+On Wed, Jun 04, 2025 at 08:05:03AM +1000, Dave Chinner wrote:
+> > 
+> > Everything.  ENOSPC means there is no space.  There might be space in
+> > the non-determinant future, but if the layer just needs to GC it must
+> > not report the error.
+> 
+> GC of thin pools requires the filesystem to be mounted so fstrim can
+> be run to tell the thinp device where all the free LBA regions it
+> can reclaim are located. If we shut down the filesystem instantly
+> when the pool goes ENOSPC on a metadata write, then *we can't run
+> fstrim* to free up unused space and hence allow that metadata write
+> to succeed in the future.
+> 
+> It should be obvious at this point that a filesystem shutdown on an
+> ENOSPC error from the block device on anything other than journal IO
+> is exactly the wrong thing to be doing.
 
-I am writing to report a potential vulnerability identified in the
-upstream Linux Kernel version v6.6, corresponding to the following
-commit in the mainline repository:
+How high are the chances that you hit exactly the rate metadata
+writeback I/O and not journal or data I/O for this odd condition
+that requires user interaction?  Where is this weird model where a
+storage device returns an out of space error and manual user interaction
+using manual and not online trim is going to fix even documented?
 
-Git Commit: ffc253263a1375a65fa6c9f62a893e9767fbebfa (tag: v6.6)
+> > Normally it means your checksum was wrong.  If you have bit errors
+> > in the cable they will show up again, maybe not on the next I/O
+> > but soon.
+> 
+> But it's unlikely to be hit by another cosmic ray anytime soon, and
+> so bit errors caused by completely random environmental events
+> should -absolutely- be retried as the subsequent write retry will
+> succeed.
+>
+> If there is a dodgy cable causing the problems, the error will
+> re-occur on random IOs and we'll emit write errors to the log that
+> monitoring software will pick up. If we are repeatedly isssuing write
+> errors due to EILSEQ errors, then that's a sign the hardware needs
+> replacing.
 
-This issue was discovered during the testing of the Android 15 AOSP
-kernel, which is based on Linux kernel version 6.6, specifically from
-the AOSP kernel branch:
+Umm, all the storage protocols do have pretty good checksums.  A cosmic
+ray isn't going to fail them it is something more fundamental like
+broken hardware or connections.  In other words you are going to see
+this again and again pretty frequently.
 
-AOSP kernel branch: android15-6.6
-Manifest path: kernel/common.git
-Source URL:  https://android.googlesource.com/kernel/common/+/refs/heads/android15-6.6
+> There is no risk to filesystem integrity if write retries
+> succeed, and that gives the admin time to schedule downtime to
+> replace the dodgy hardware. That's much better behaviour than
+> unexpected production system failure in the middle of the night...
+> 
+> It is because we have robust and resilient error handling in the
+> filesystem that the system is able to operate correctly in these
+> marginal situations. Operating in marginal conditions or as hardware
+> is beginning to fail is a necessary to keep production systems
+> running until corrective action can be taken by the administrators.
 
-Although this kernel branch is used in Android 15 development, its
-base is aligned with the upstream Linux v6.6 release. I observed this
-issue while conducting stability and fuzzing tests on the Android 15
-platform and identified that the root cause lies in the upstream
-codebase.
+I'd really like to see a format writeup of your theory of robust error
+handling where that robustness is centered around the fairly rare
+case of metadata writeback and applications dealing with I/O errors,
+while journal write errors and read error lead to shutdown.  Maybe
+I'm missing something important, but the theory does not sound valid,
+and we don't have any testing framework that actually verifies it.
 
+> Failing to recognise that transient and "maybe-transient" errors can
+> generally be handled cleanly and successfully with future write
+> retries leads to brittle, fragile systems that fall over at the
+> first sign of anything going wrong. Filesystems that are targetted
+> at high value production systems and/or running mission critical
+> applications needs to have resilient and robust error handling.
 
-Bug Location: remove_proc_entry+0x194/0x334 fs/proc/generic.c:711
+What known transient errors do you think XFS (or any other file system)
+actually handles properly?  Where is the contract that these errors
+actually are transient.
 
-Bug Report: https://hastebin.com/share/sinejizobu.css
+> > And even applications that fsync won't see you fancy error code.  The
+> > only thing stored in the address_space for fsync to catch is EIO and
+> > ENOSPC.
+> 
+> The filesystem knows exactly what the IO error reported by the block
+> layer is before we run folio completions, so we control exactly what
+> we want to report as IO compeltion status.
 
-Entire Log: https://pastebin.com/J0p8J9W5
+Sure, you could invent a scheme to propagate the exaxct error.  For
+direct I/O we even return the exact error to userspace.  But that
+means we actually have a definition of what each error means, and how
+it could be handled.  None of that exists right now.  We could do
+all this, but that assumes you actually have:
 
+ a) a clear definition of a problem
+ b) a good way to fix that problem
+ c) good testing infrastructure to actually test it, because without
+    that all good intentions will probably cause more problems than
+    they solve
 
-Thank you very much for your time and attention. I sincerely apologize
-that I am currently unable to provide a reproducer for this issue.
-However, I am actively working on reproducing the problem, and I will
-make sure to share any findings or reproducing steps with you as soon
-as they are available.
+> Hence the bogosities of error propagation to userspace via the
+> mapping is completely irrelevant to this discussion/feature because
+> it would be implemented below the layer that squashes the eventual
+> IO errno into the address space...
 
-I greatly appreciate your efforts in maintaining the Linux kernel and
-your attention to this matter.
+How would implement and test all this?  And for what use case?
 
-Best regards,
-Luka
 
