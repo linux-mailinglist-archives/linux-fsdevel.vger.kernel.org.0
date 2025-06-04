@@ -1,210 +1,193 @@
-Return-Path: <linux-fsdevel+bounces-50624-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50623-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D547BACE10A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 17:14:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2C1ACE0F6
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 17:09:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96A6A17255D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 15:14:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF86318962ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 15:10:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7AC329188E;
-	Wed,  4 Jun 2025 15:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1423290DB9;
+	Wed,  4 Jun 2025 15:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b="qFFBj5JE"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mdw3uO9x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from m.syntacore.com (m.syntacore.com [178.249.69.228])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A6E290D80;
-	Wed,  4 Jun 2025 15:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.249.69.228
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5944AEE0
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jun 2025 15:09:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749050030; cv=none; b=poy5lmqdvwJyCEqpwYP8L3wkm3pUyzleWmNqJohrmY+H3+M/RUVINIliBVLEpboyQ5G81H9aggfRjtYCASmyjQXC92WaLbVNiMC3e5IclB1pxcn79IS61ruTgOY+N5jHt2rl4FAE56l1TLu4G4eHw4szUXRwybMmBVK1elUgjlc=
+	t=1749049781; cv=none; b=SSQcZ9SQgVhd6YfjHHj5K5qUi9+40IDQ6wkfT2ZVLOig2uy1fC6uiReVUC0Fy2nt0vdDmUiIqbhG1s1UdsCjUK7GqcsfkyOS3l+NrIfDQXCXz7vHdV6dYpBH5KdpJbrci+4IwtIdQh/3glMy/ks/BwjQEy1AkDseONAYuJnYuoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749050030; c=relaxed/simple;
-	bh=Bz52cWmM5E063diqhU/tvNAwMpsAg2SFm+DiQ9Dj94Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PCnX9oz5riIH1R9aeAsmkbYoCehd7Uh2Ih/ECs19I68IeS42h/H30wy/MD7z0zDR7tZ5KkiRYUF1pGsGw9jTdKvTOpV5n6ugReWebZXjXb18pNKfWh6uAVb6GmS5wmhQCTtsJppppBySPnuDkAveswjQLM0CTK9A/5VH8bFrGP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com; spf=pass smtp.mailfrom=syntacore.com; dkim=pass (2048-bit key) header.d=syntacore.com header.i=@syntacore.com header.b=qFFBj5JE; arc=none smtp.client-ip=178.249.69.228
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=syntacore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=syntacore.com
-Received: from MRN-SC-KSMG-01.corp.syntacore.com (localhost [127.0.0.1])
-	by m.syntacore.com (Postfix) with ESMTP id 386171A0004;
-	Wed,  4 Jun 2025 15:07:43 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 m.syntacore.com 386171A0004
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=syntacore.com; s=m;
-	t=1749049663; bh=cFvYaW2WkbtOra3S0g7FSljIzV4LxrpuqkAbvhUZRVI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=qFFBj5JEyV6NX3EeyzhabNsOKCgp9jJ9AFkzUYTr7lX9o+e4rwwXk5S81XGzUfEi1
-	 LNQDEBsNDZs6a6o1xuli/VYrLGk4xDpdU11Z8sRU9LiqoRrk/sjtVcJDUm3rMlPP6F
-	 6xFw521QT9wRVQVhk1boOFiMCUOHRs1gXCSxK+bMJyLcQ7sGz9hkWl42jKqdkBrIAv
-	 IVZpAhBMUcCFAVLRde+a/IgzLNAKMTuWC3JYRG9wJ9wDKHrROMXu95QlNFG6ZyDZ7l
-	 GpqCr/eSzO4xhWXg3rxXh6nlXf8urJZZKLfcFQceCqN1gNzeTvzzfyjeLHaKHVYOU5
-	 gAdYVUb0Ohnmg==
-Received: from S-SC-EXCH-01.corp.syntacore.com (exchange.syntacore.com [10.76.202.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by m.syntacore.com (Postfix) with ESMTPS;
-	Wed,  4 Jun 2025 15:07:41 +0000 (UTC)
-Received: from localhost (10.199.25.251) by S-SC-EXCH-01.corp.syntacore.com
- (10.76.202.20) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 4 Jun
- 2025 18:06:55 +0300
-From: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
-To: Kees Cook <kees@kernel.org>, <linux-mm@kvack.org>
-CC: Svetlana Parfenova <svetlana.parfenova@syntacore.com>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [RFC] binfmt_elf: preserve original ELF e_flags in core dumps
-Date: Wed, 4 Jun 2025 22:05:02 +0700
-Message-ID: <20250604150502.622178-1-svetlana.parfenova@syntacore.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1749049781; c=relaxed/simple;
+	bh=MStiwnmTKTIxDYoiFZ0DxSnXZqv5tV3Q2Nw8sIyap1A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYB8Wg8In6cEC7Z2xiFoLg7ugbeAAAciwOPh7OQzC4PElJVXhxGZ67myZr4cpEoA/k+YTXT6SW8InAkbqIEM/EvASy8nbQElI6h5CzROxHkwYMY3Z1lSUg5192c8ntTOrOjhGm57Y/R961c+ZlkzkhLJ7iEa79E7dDYGJGVck3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mdw3uO9x; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749049778;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K0Z14f5Dv0sEBCQzCT+N5xWNS5ySL+Tzir6TJSSZ+3Q=;
+	b=Mdw3uO9xi3vyz+UQ4sJ5DamGPadnDvdHQ/pk9FOe8Atf0Fkyt7uPxtuCYRDVUC7nkyJ158
+	0MbkXxMgVtWIpdmvcrZCCF2VmPXWjgVjoBRUHTwG73wGBVWXurlFRixfiAngf2mhSJNDEL
+	FKLD+Xo1XYgTqKV7UZekiRFo/8iVXsg=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-116-uY_ZWIlnPry4vu-w6l7lLg-1; Wed, 04 Jun 2025 11:09:37 -0400
+X-MC-Unique: uY_ZWIlnPry4vu-w6l7lLg-1
+X-Mimecast-MFC-AGG-ID: uY_ZWIlnPry4vu-w6l7lLg_1749049777
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6fabb9286f9so114476d6.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Jun 2025 08:09:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749049777; x=1749654577;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K0Z14f5Dv0sEBCQzCT+N5xWNS5ySL+Tzir6TJSSZ+3Q=;
+        b=fKR9zBMtPZKtxDq9d45dQCHQqgZl5k5Go3Zm8ZwzUYO/5HLrW83Q+OZzVCjKVtDmCs
+         Jzsp6ej106Ha+CoTt+fkib9sbR3G6ZGCobW+aRmaW7G4ZRbtJhgZQ2C7JdVNWfJ/WQo9
+         OxmeRVsmWQHuk0SFpa7m3oPV/y11aXz1vfBlmQ8l17uDEJttt6g9YCAakQmBe+OTT13n
+         sKqLBA3Q6cISWRsZEjRMOvJJLQTV38v8aJ/Pe6UGgro+briW5SUfn+i8xTJJ27t2olNh
+         P313QMIEY0UOTFBKD+jm0jb0Kh2Tk+TRQKDh9ax0y5NCJ7tleR/pyXnAShd59Xh4vOge
+         85ew==
+X-Forwarded-Encrypted: i=1; AJvYcCXfh3aEa2ULpd3V2tJzejZ00ae0jHD055U8vPoCtz9If8CGmz8MCHKWHRrifDsoFOz/79ONQMUYUtjM/zB4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwFLC4bVvdq4ykIU4PiPSiB9t7wPPW0v+ZLWuAJPLKJ8pii1C2
+	Ip/JEeXljGQ+ZdeOczZETMIsXZuD5VDYt2l2MnFb8/3JxKy0YhwWzUjHV/lcx7tb5Hxt9noS5oc
+	JTHTibX/aJY7fcgVL0HnIjh9htHhlQcWywtxCi5ZjgVYRGEG7e9VRVhDPkRjpES/Ex4k=
+X-Gm-Gg: ASbGncsn7JJY/lmFC+dW3GxFxWmF3IIU+cdEDhfDIPd7xW7eHxgI71bOQj+ZPa1tWdi
+	FNdvo1NnBJlSVUkFgX6ituKEUZiEosfj/A45Vk2wUzzMKNRKUk/m32tiy4SHOcKboWohpo/6qoB
+	uXzHQvhn6oOC64uFaBghSbSTgB8yZa/Dx6zQYpIslnL0k5g6T7YbXcv88wUwwyY8Yk423TVZlga
+	2t+e0v3pWv5n9JUl406AeUOMS45stqfhMZUgPtefnj5GKVeqmkAkCZrNdfY1CcyvSULa3SIP7m+
+	gHhHUKKxmB0RJg==
+X-Received: by 2002:a05:6214:5086:b0:6fa:ce1e:3a4a with SMTP id 6a1803df08f44-6faf6f9312emr40237056d6.6.1749049776210;
+        Wed, 04 Jun 2025 08:09:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFSDUs50177E/rrZpx+xC+0iIv+BIQc1aieeX4oFfx7XS0nPA0qJB8ecAAJUv8L53J89ePgrw==
+X-Received: by 2002:a05:6214:5086:b0:6fa:ce1e:3a4a with SMTP id 6a1803df08f44-6faf6f9312emr40235876d6.6.1749049774940;
+        Wed, 04 Jun 2025 08:09:34 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fac6e00d42sm99700586d6.85.2025.06.04.08.09.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 08:09:34 -0700 (PDT)
+Date: Wed, 4 Jun 2025 11:09:31 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Tal Zussman <tz2294@columbia.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Pavel Emelyanov <xemul@parallels.com>,
+	Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
+ different userfaultfd
+Message-ID: <aEBhqz1UgpP8d9hG@x1.local>
+References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
+ <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu>
+ <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: S-SC-EXCH-01.corp.syntacore.com (10.76.202.20) To
- S-SC-EXCH-01.corp.syntacore.com (10.76.202.20)
-X-KSMG-AntiPhishing: not scanned, disabled by settings
-X-KSMG-AntiSpam-Interceptor-Info: not scanned
-X-KSMG-AntiSpam-Status: not scanned, disabled by settings
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/06/04 12:53:00 #27536686
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 5
+In-Reply-To: <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
 
-Preserve the original ELF e_flags from the executable in the core dump
-header instead of relying on compile-time defaults (ELF_CORE_EFLAGS or
-value from the regset view). This ensures that ABI-specific flags in
-the dump file match the actual binary being executed.
+On Wed, Jun 04, 2025 at 03:23:38PM +0200, David Hildenbrand wrote:
+> On 04.06.25 00:14, Tal Zussman wrote:
+> > Currently, a VMA registered with a uffd can be unregistered through a
+> > different uffd asssociated with the same mm_struct.
+> > 
+> > Change this behavior to be stricter by requiring VMAs to be unregistered
+> > through the same uffd they were registered with.
+> > 
+> > While at it, correct the comment for the no userfaultfd case. This seems
+> > to be a copy-paste artifact from the analagous userfaultfd_register()
+> > check.
+> 
+> I consider it a BUG that should be fixed. Hoping Peter can share his
+> opinion.
 
-Save the e_flags field during ELF binary loading (in load_elf_binary())
-into the mm_struct, and later retrieve it during core dump generation
-(in fill_note_info()). Use this saved value to populate the e_flags in
-the core dump ELF header.
+Agree it smells like unintentional, it's just that the man page indeed
+didn't mention what would happen if the userfaultfd isn't the one got
+registered but only requesting them to be "compatible".
 
-Add a new Kconfig option, CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS, to guard
-this behavior. Although motivated by a RISC-V use case, the mechanism is
-generic and can be applied to all architectures.
+DESCRIPTION
+       Unregister a memory address range from userfaultfd.  The pages in
+       the range must be “compatible” (see UFFDIO_REGISTER(2const)).
 
-This change is needed to resolve a debugging issue encountered when
-analyzing core dumps with GDB for RISC-V systems. GDB inspects the
-e_flags field to determine whether optional register sets such as the
-floating-point unit are supported. Without correct flags, GDB may warn
-and ignore valid register data:
+So it sounds still possible if we have existing userapp creating multiple
+userfaultfds (for example, for scalability reasons on using multiple
+queues) to manage its own mm address space, one uffd in charge of a portion
+of VMAs, then it can randomly take one userfaultfd to do unregistrations.
+Such might break.
 
-    warning: Unexpected size of section '.reg2/213' in core file.
+> 
+> > 
+> > Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory externalization")
+> > Signed-off-by: Tal Zussman <tz2294@columbia.edu>
+> > ---
+> >   fs/userfaultfd.c | 15 +++++++++++++--
+> >   1 file changed, 13 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
+> > index 22f4bf956ba1..9289e30b24c4 100644
+> > --- a/fs/userfaultfd.c
+> > +++ b/fs/userfaultfd.c
+> > @@ -1477,6 +1477,16 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
+> >   		if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
+> >   			goto out_unlock;
+> > +		/*
+> > +		 * Check that this vma isn't already owned by a different
+> > +		 * userfaultfd. This provides for more strict behavior by
+> > +		 * preventing a VMA registered with a userfaultfd from being
+> > +		 * unregistered through a different userfaultfd.
+> > +		 */
+> > +		if (cur->vm_userfaultfd_ctx.ctx &&
+> > +		    cur->vm_userfaultfd_ctx.ctx != ctx)
+> > +			goto out_unlock;
+> 
+> So we allow !cur->vm_userfaultfd_ctx.ctx to allow unregistering when there
+> was nothing registered.
+> 
+> A bit weird to set "found = true" in that case. Maybe it's fine, just
+> raising it ...
 
-As a result, floating-point registers are not accessible in the debugger,
-even though they were dumped. Preserving the original e_flags enables
-GDB and other tools to properly interpret the dump contents.
+This part should be ok, as found is defined as:
 
-Signed-off-by: Svetlana Parfenova <svetlana.parfenova@syntacore.com>
----
- fs/Kconfig.binfmt        |  9 +++++++++
- fs/binfmt_elf.c          | 26 ++++++++++++++++++++------
- include/linux/mm_types.h |  5 +++++
- 3 files changed, 34 insertions(+), 6 deletions(-)
+	/*
+	 * Search for not compatible vmas.
+	 */
+	found = false;
 
-diff --git a/fs/Kconfig.binfmt b/fs/Kconfig.binfmt
-index bd2f530e5740..45bed2041542 100644
---- a/fs/Kconfig.binfmt
-+++ b/fs/Kconfig.binfmt
-@@ -184,4 +184,13 @@ config EXEC_KUNIT_TEST
- 	  This builds the exec KUnit tests, which tests boundary conditions
- 	  of various aspects of the exec internals.
- 
-+config CORE_DUMP_USE_PROCESS_EFLAGS
-+	bool "Preserve ELF e_flags from executable in core dumps"
-+	depends on BINFMT_ELF && ELF_CORE && RISCV
-+	default n
-+	help
-+	  Save the ELF e_flags from the process executable at load time
-+	  and use it in the core dump header. This ensures the dump reflects
-+	  the original binary ABI.
-+
- endmenu
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 4c1ea6b52a53..baf749e431a1 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1297,6 +1297,11 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 	mm->end_data = end_data;
- 	mm->start_stack = bprm->p;
- 
-+#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
-+	/* stash e_flags for use in core dumps */
-+	mm->saved_e_flags = elf_ex->e_flags;
-+#endif
-+
- 	/**
- 	 * DOC: "brk" handling
- 	 *
-@@ -1870,6 +1875,8 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
- 	struct elf_thread_core_info *t;
- 	struct elf_prpsinfo *psinfo;
- 	struct core_thread *ct;
-+	u16 machine;
-+	u32 flags;
- 
- 	psinfo = kmalloc(sizeof(*psinfo), GFP_KERNEL);
- 	if (!psinfo)
-@@ -1897,17 +1904,24 @@ static int fill_note_info(struct elfhdr *elf, int phdrs,
- 		return 0;
- 	}
- 
--	/*
--	 * Initialize the ELF file header.
--	 */
--	fill_elf_header(elf, phdrs,
--			view->e_machine, view->e_flags);
-+	machine = view->e_machine;
-+	flags = view->e_flags;
- #else
- 	view = NULL;
- 	info->thread_notes = 2;
--	fill_elf_header(elf, phdrs, ELF_ARCH, ELF_CORE_EFLAGS);
-+	machine = ELF_ARCH;
-+	flags = ELF_CORE_EFLAGS;
- #endif
- 
-+#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
-+	flags = dump_task->mm->saved_e_flags;
-+#endif
-+
-+	/*
-+	 * Initialize the ELF file header.
-+	 */
-+	fill_elf_header(elf, phdrs, machine, flags);
-+
- 	/*
- 	 * Allocate a structure for each thread.
- 	 */
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 56d07edd01f9..5487d6ba6fcb 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -1059,6 +1059,11 @@ struct mm_struct {
- 
- 		unsigned long saved_auxv[AT_VECTOR_SIZE]; /* for /proc/PID/auxv */
- 
-+#ifdef CONFIG_CORE_DUMP_USE_PROCESS_EFLAGS
-+		/* the ABI-related flags from the ELF header. Used for core dump */
-+		unsigned long saved_e_flags;
-+#endif
-+
- 		struct percpu_counter rss_stat[NR_MM_COUNTERS];
- 
- 		struct linux_binfmt *binfmt;
+So it's still compatible VMA even if not registered.
+
+It's just that I'm not yet sure how this change benefits the kernel
+(besides the API can look slightly cleaner).  There seems to still have a
+low risk of breaking userapps.  It could be a matter of whether there can
+be any real security concerns.
+
+If not, maybe we don't need to risk such a change for almost nothing (I
+almost never think "API cleaness" a goal when it's put together with
+compatilibities).
+
+Thanks,
+
 -- 
-2.39.5
+Peter Xu
 
 
