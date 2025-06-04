@@ -1,97 +1,124 @@
-Return-Path: <linux-fsdevel+bounces-50558-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50570-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB972ACD546
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 04:21:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B8BACD64D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 05:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05FE318994F0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 02:21:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 731E3188C10C
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 03:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A99368528E;
-	Wed,  4 Jun 2025 02:21:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 144E3214A6E;
+	Wed,  4 Jun 2025 03:06:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="V0Mzya7Z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yy/uGWz9"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A1983D6D;
-	Wed,  4 Jun 2025 02:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D39B417548;
+	Wed,  4 Jun 2025 03:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749003694; cv=none; b=tAXI9YW85rcd7Oq1bdfM6/2ZM58oVWCPi67rLRflTt2M3x1megXxzWbwHdl2XmdiRkX7q6lmraCfcQUfTNp/RWJe5Wa40eSmIX2pZT5bBb0Gb+oHFCJHWy/zRCqlijhFjGqKLWGsgcg5RxvDVqvZr9nX9bdB7747OvQt3lRdo+w=
+	t=1749006360; cv=none; b=a6AQYFtSiOrXzcxyw/M9dV71D2iSg1mDlCAC6iZtrtIeguvmSTIRAFD7G7WJTfue/UH6WztW0dh0D98ptNZIiVc/f+/XDSCzcJQSxnuiBaqaYKUvDbiAledI+g3t5W6UHVShdRkR2je/4F4Vqu1hc/6n3RTcX/Jt6WWFJm7aKUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749003694; c=relaxed/simple;
-	bh=5yrqUa0x0g+cdwxrzxtarbOEwNp/DCo2TgkxsjybKmY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oB0obid7saAx6FbCioSB/m8vYUPuXKODTn37LtQ+wwI6za06RSc9lnxwkTIopUbmLLw+FIVqWDKfD4xIzpPm++H9a9zAeK8csZCyV16wXB4wpqlIPfo2Drtrf6p+yDeIDsj+xcpRZ0c4jQYS/+Pje9I7ZVosdiWJVuUbd2r1ecA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=V0Mzya7Z; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=QXvujt7fwaqpLkKeJFFbFk6xgaXBzikXJO4XuseFYqs=; b=V0Mzya7ZsQHMPCJLTnwi2ZWYqN
-	dJfqEsTOhfUm6zx7U/UbriOlWBIxG5Y4oUOstfSOp2Fcz1HF1/lNYSTRu6kDcJ+oZlwiej7Lp0RXL
-	sh+sDX0PNlzfBGQJB0oRmwmkQIiTldNJtf9eyiNQ5eVmHa3/B0m3eVq4oTPjSw+Hxw1R1mFi+E7fG
-	N807HU+3anvk7+8GHtGB8nnBD+aoLe1FyKrY+THzdcKOsUe4PmvhavrZjQPMmfQynJzs7r/dzW6ps
-	m4aGbC6qxiMPktz0MExrkc6mi3sXU9L/lD3VYF9tqhmrEPOP98goZPCtXo8n/LtR+oVDtd80sR8bt
-	g9IczQ1A==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMdks-00000001yVI-1qyY;
-	Wed, 04 Jun 2025 02:21:26 +0000
-Date: Wed, 4 Jun 2025 03:21:26 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Tingmao Wang <m@maowtm.org>
-Cc: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	Song Liu <song@kernel.org>,
-	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
-	Jan Kara <jack@suse.cz>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-security-module@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 3/3] Restart pathwalk on rename seqcount change
-Message-ID: <20250604022126.GF299672@ZenIV>
-References: <cover.1748997840.git.m@maowtm.org>
- <7452abd023a695a7cb87d0a30536e9afecae0e9a.1748997840.git.m@maowtm.org>
- <20250604005546.GE299672@ZenIV>
- <9245d92c-9d23-4d10-9f2d-7383b1a1d9a9@maowtm.org>
+	s=arc-20240116; t=1749006360; c=relaxed/simple;
+	bh=E8PGooQfDmxgcXtp/cM4o7ws6CJEwjXIdL9VpFSfaYg=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=OpfwpN/XrSiu3ECkWuFoVKyK34JTy+gdsSlsfMgCHO9bAjMfdF9uS/K3ngv2VlEL7IsPlxM99A8+YxVzDj7MiV+wJm2MEerDcAL9+7V5a4alCVlFozTGUEju1o25bwVp/NgtPBozAbi4ZJc/fNnjCWM8+8qsgA30QXAh4sLaLAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yy/uGWz9; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-55324062ea8so8079587e87.3;
+        Tue, 03 Jun 2025 20:05:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749006357; x=1749611157; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XrRYADRBPiGm9a5915k0RbAutzjcH3WmEt2d36ObIAI=;
+        b=Yy/uGWz9a6TmdDzRtKEZCH7oTH6C/UuyCpWGmnZxZ4kF4+g4D0X+SOjeMrrwQuBrly
+         ZzUf3RuvqyY/HmrbxQiLpAN4Wa5RpLWWHzC3Ml3hQBn+uYvsHvbDFkARESB+TsOs3uI3
+         PjU8B1ysfZCoTaU38pet67i2cwurmVhoh25tWQOCAdIS3f34U2z71sgvV7wSfzsaz3BL
+         TB0yBdwwM3Z68O3HGNzn2iWQVzQ1lx7Pl2i4Zo8gKIU7tsLR7PS8eTN+DD9qt6u1dwSh
+         IJr99JB3OlqBh5R/VCHrkbBWDRMYvuYOM6zkFlvwwFuOfXJh00f4BQzKvn1F7sapOjs8
+         X+Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749006357; x=1749611157;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XrRYADRBPiGm9a5915k0RbAutzjcH3WmEt2d36ObIAI=;
+        b=Y0jBFdxKlP2ctoxQOQwOzbaS25cUHceo805qK07n7eIdW4yjMqOREqHVUX0JR4emZT
+         H5h3y6Tyf8Cr247aagQ7umjbFkpti9sZoGQFZr9S1D6G9nif0m8P+ifI60S/wHArFP/k
+         PEnQ5923nF2sNvJLeiiKB5eedPK3QetIVuTrcF8JZRcVHK5Ks3WXiofbsN/W8fOLNk0i
+         RvcmPSUyWqm48aE0+26Io4zrhmel9gbxj7IJ6WQRLJG+nOd12RBMTzUeL2r0zFKymlPU
+         2sswlHxJExPrgy3F5WCtlV09AyAPn0HHDxrWVKGc96LIrawKzZuSv9NmprKhYxC3LR7m
+         dZYA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqAOH/igba/XA93pYIT9HqIhSAMH81HmTp90GoYj57FJ9lAlfRZwwNAQdgtSZOUXRckI/Kby908Q1RXP1o@vger.kernel.org, AJvYcCXvcFww2Zeznm89KYSp0HyyxwAft4FJwUS9kIYxr52VJHXH1o0rs9pslY2CR5926xUmf/yJoJaXdFmaA3oM@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfQlOiUNT3Bu4zIYIPkOGwIZ3Fw544h7WCpJeflC6IxmvCso+z
+	MtszSkCYmE4szEIZ8o354XkNAchMov5SZHDOjCZ3o+leAZWwHj6mP0m01AfBVzxvSlgIofihFq2
+	gZxiYnWQ0PaPM6vtZVhe9HdY3D8rH6YE=
+X-Gm-Gg: ASbGnct+TH53IvHqZPQ+p0D5rHAKowS6daGowqgFZHQmhLEN6Td1TgBJQjIeLduMt5Z
+	UmZgm+DegLrUFf7120iwnfu9CI+z9zYmGlYuWStWVQcVUkpqHhVMc7GfEOr/VHnVaOzBUaxjeXm
+	0FPX8gjnl0Lzp7PrnijxfBojZM/TTUtj5q69s=
+X-Google-Smtp-Source: AGHT+IFrfuotPH2SAa7IurUQmCgV77jE8JA+qS89XFFpzYBWrutBPdYxpZm0boMJxiBXy52iyySokTu6owGB4A7wG7A=
+X-Received: by 2002:a05:651c:f09:b0:32a:6b16:3a26 with SMTP id
+ 38308e7fff4ca-32ac7278580mr2109891fa.34.1749006356455; Tue, 03 Jun 2025
+ 20:05:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9245d92c-9d23-4d10-9f2d-7383b1a1d9a9@maowtm.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+From: Luka <luka.2016.cs@gmail.com>
+Date: Wed, 4 Jun 2025 11:05:45 +0800
+X-Gm-Features: AX0GCFuLg4LwuXuD7vjPGf4vz4RhyaBTWp5jvmMTKwnKMjsZt7RAJiWsXENOmKE
+Message-ID: <CALm_T+11u3jn-OPi_TPogwsUYE_iRdgZY=pjG8-OzTa4uR3dkw@mail.gmail.com>
+Subject: [Bug] unable to handle kernel access to user memory in step_into in
+ Linux v6.12
+To: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Cc: Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 04, 2025 at 02:12:11AM +0100, Tingmao Wang wrote:
-> On 6/4/25 01:55, Al Viro wrote:
-> > On Wed, Jun 04, 2025 at 01:45:45AM +0100, Tingmao Wang wrote:
-> >> +		rename_seqcount = read_seqbegin(&rename_lock);
-> >> +		if (rename_seqcount % 2 == 1) {
-> > 
-> > Please, describe the condition when that can happen, preferably
-> > along with a reproducer.
-> 
-> My understanding is that when a rename is in progress the seqcount is odd,
-> is that correct?
-> 
-> If that's the case, then the fs_race_test in patch 2 should act as a
-> reproducer, since it's constantly moving the directory.
-> 
-> I can add a comment to explain this, thanks for pointing out.
+Dear Kernel Maintainers,
 
-Please, read through the header declaring those primitives and read the
-documentation it refers to - it's useful for background.
+I am writing to report a potential vulnerability identified in the
+upstream Linux Kernel version v6.12, corresponding to the following
+commit in the mainline repository:
 
-What's more, look at the area covered by rename_lock - I seriously suspect
-that you are greatly overestimating it.
+Git Commit:  adc218676eef25575469234709c2d87185ca223a (tag: v6.12)
+
+This issue was discovered during the testing of the Android 16 AOSP
+kernel, which is based on Linux kernel version 6.12, specifically from
+the AOSP kernel branch:
+
+AOSP kernel branch: android16-6.12
+Manifest path: kernel/common.git
+Source URL:  https://android.googlesource.com/kernel/common/+/refs/heads/android16-6.12
+
+Although this kernel branch is used in Android 16 development, its
+base is aligned with the upstream Linux v6.12 release. I observed this
+issue while conducting stability and fuzzing tests on the Android 16
+platform and identified that the root cause lies in the upstream
+codebase.
+
+Bug Location: step_into+0x60/0x54c fs/namei.c:1891
+
+Bug Report: https://hastebin.com/share/yatanasoxe.css
+
+Entire Log: https://hastebin.com/share/qaluketepi.perl
+
+Thank you very much for your time and attention. I sincerely apologize
+that I am currently unable to provide a reproducer for this issue.
+However, I am actively working on reproducing the problem, and I will
+make sure to share any findings or reproducing steps with you as soon
+as they are available.
+
+I greatly appreciate your efforts in maintaining the Linux kernel and
+your attention to this matter.
+
+Best regards,
+Luka
 
