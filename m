@@ -1,180 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-50670-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50671-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C27FACE4B6
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 21:18:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3498DACE518
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 21:39:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C33AF7A9AE0
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 19:16:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0A6617A217
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 19:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1005E1FFC5D;
-	Wed,  4 Jun 2025 19:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436B223372E;
+	Wed,  4 Jun 2025 19:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="I5NgN3KJ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="jNAOL7rb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jyaij+1R"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8885C1DFE12;
-	Wed,  4 Jun 2025 19:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70679227E94;
+	Wed,  4 Jun 2025 19:38:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749064669; cv=none; b=rIXTCq/Me6HiAzvXbcbGqKR8lGx2/G7CNn+RhP/SSwblk6EaNvTGlHfxo6FTBQUJEIzlEnr1m1iG5iUhGr6KPRvjZk1LdohHCXQYjcI64rBQHGwPs/mNKvuGeCD7ZBivx8PI7uDyXlaiCvma+4xDvRFW9q1LhYHzL7MYQENWisY=
+	t=1749065891; cv=none; b=IqZ7T416J94j7GFb/lZq9SWMFdaX/wTwGJfLUKQzmvgE1tu96BxDQFLxt13ZO7cbYu4Ip/0lsRg7hFPDPrd+Q1QGR16EFDHT7GbcLLi6cXVl38BCpFalQ4u8ZZfu28zIX124atK/utsO6evCHKRKlVN2rOroSKNtqWx8y9BWVGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749064669; c=relaxed/simple;
-	bh=O7kf9KtDBjP650huWHV1AbZ890hWnWAPSANpvMutrAk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KJWlxu+kRCjuaWzslQ2pSIt1yhPXvi4AjPkOJEhDTfinAq+vyQPRIlXKOa+chv7rVXAEqfqTxvlSh0Z9vVW4G0VNjwg4AMoWS/qIJIFHOlW58Lbfz5PdxE8tfA00XB4I5eUecFp54B7SZsM4xJQr+TR8nV6JKLYSZmfw8KCfTgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=I5NgN3KJ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=jNAOL7rb; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 78220114011D;
-	Wed,  4 Jun 2025 15:17:46 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Wed, 04 Jun 2025 15:17:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1749064666;
-	 x=1749151066; bh=/2HnectDLKaHvkonOGTZKsHCakyAJw7bu2Es49gyzxE=; b=
-	I5NgN3KJwBcGFnrB2s9hFMcXRZfxOo1UDZ/fepdARKrX1J68agBLhpnlcwqvmhiS
-	b7gwOd6EM2geddYhd/udbGU1i7Dd0FRnTDTtnHNUPUS74idhtrCz6s1Q3PJvQTn6
-	z97VLywDY5WpzYcCZgJ8nZ9wOiYP9Y+kcg4K1gtpOklrXtOpEeNxmLnCcMDyf+vz
-	0SHU/dsOzZwtWdOx4r0yerkdflcX1V5t9mNoDOB5HqT7x5sxxhbhYc2zYsCp2ozP
-	ShSVocXNJh5qiqwIHNeeQeb/yXMA2aXtuoFCJodiMUoaB8Nb2ZNk8m2LoevX6lgC
-	tgM6Q2NdcNXgl/tDVfXLKQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1749064666; x=
-	1749151066; bh=/2HnectDLKaHvkonOGTZKsHCakyAJw7bu2Es49gyzxE=; b=j
-	NAOL7rblk4nahR9DRacvlpENEaSmuGeMreUSlNgoUscmi3XlLOsHcge70ZAe245/
-	vODd4ZsA0FUc1FBiVczKffxJ//sXGd5KO1aLod616Knp/PZliKXmKUkY0HXyGOdl
-	e/QJzq2N9ImSw0j04xr/UOwXavYz0W7/NWSR57JZId+oSHaIeYSd2ueWJoXwLaW3
-	lQi2oOsTGmpmamj9nan1sUlpSgPvqehYxtBA7xmD1MKq/Wa2CP2/PUYllbC/USfJ
-	lHXfqNcbiqTXUKCfyH/WFaZCp1moLtonRvRKKeANZwynI84zOp8Z5ebR6ZKkEIG4
-	XRIBUpaj4J+g3w4GQdQCg==
-X-ME-Sender: <xms:2ZtAaLITTcc3Iaja8FLXpJq2z54dIRNMHDplhbdD8nnLihxSQQC-ZQ>
-    <xme:2ZtAaPJqkec27iM_QkCUyeVsf7JuQQOU-0DQvRQfBdGdQZO7XGtsOJXRpVdzDscTW
-    _mC3_0EIJwv1-Ff-lw>
-X-ME-Received: <xmr:2ZtAaDtNeKmJl3J7LKENwXRFX1d-WOxKpeXLaHZOejajAapJiHI1nw-D4SfCshvtXf-nN5M>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddvheeiucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepkfffgggfuffhvfevfhgjtgfgsehtjeertddtvdej
-    necuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqne
-    cuggftrfgrthhtvghrnhepheffleegkedtueefleduueehueevffduheejudduveevtdev
-    keelkedtudfhvdfgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohguvgep
-    shhmthhpohhuthdprhgtphhtthhopehvihhrohesiigvnhhivhdrlhhinhhugidrohhrgh
-    druhhkpdhrtghpthhtohepmhhitgesughighhikhhougdrnhgvthdprhgtphhtthhopehs
-    ohhngheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvg
-    drtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopegrlhgv
-    gigvihdrshhtrghrohhvohhithhovhesghhmrghilhdrtghomhdprhgtphhtthhopegsrh
-    gruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhr
-    ihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
-    hinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:2ZtAaEZQ496aHTcmGCeDtn90E1vn3iWx8aQPWP2f35wSdVkc9wPHTA>
-    <xmx:2ZtAaCbWsxFJfx3xqucegjoo7tV0AWLBhkJkXtbCtKZqCglkxP6gHQ>
-    <xmx:2ZtAaIDu5vvS6CiJYOmYv8JUii7ozUqdZA5E5Efh5o4nUTXOwRvkbg>
-    <xmx:2ZtAaAYeOAxPr4n7s6uOsozqFfM_CgSOKUP-mw5Cb9lgWr1oDN_b_Q>
-    <xmx:2ptAaLl1opBh4b1V83CTHCAWQqjrW3S73qkBVl0fbL5euFxkdD90K1yP>
-Feedback-ID: i580e4893:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 4 Jun 2025 15:17:44 -0400 (EDT)
-Message-ID: <0e98cfd7-a51b-4f39-970f-8ac9d5d60bec@maowtm.org>
-Date: Wed, 4 Jun 2025 20:17:43 +0100
+	s=arc-20240116; t=1749065891; c=relaxed/simple;
+	bh=/Fsr2JgrwCrO2YLARhwC0MuK0FfYy7hIxMp1Wh7CEko=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cIfkHr8WQXrDJBUUO/C/Dpyh3DjIzg4pY+jpo5oL6O+U1/SVMhBPN8kjo/NHd2D/lSgroaYNThtBdgVaZesAoLkoIcvFFmhIp7lAb6aNWahru6jNtye0cTPJ0vYJJtJppiMoFwgavA0V5ez8w4NrAoMRRFjBD8T5xA37dQmCGLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jyaij+1R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA582C4CEF1;
+	Wed,  4 Jun 2025 19:38:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749065890;
+	bh=/Fsr2JgrwCrO2YLARhwC0MuK0FfYy7hIxMp1Wh7CEko=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Jyaij+1RYNsrbeCJNkZY4AACcG5zbk/igKjumGQg8hWUaDWrgNmsm6VekfJVxE3Ir
+	 LNaqRas2vuQ18NuAv+qgasubKJC1mcOwkL+4DBqUK42EmDzHsL/MKC7tYz+AzWpA48
+	 ZT4Ccrx3cRWMgNH/Y71SMajjwioCfsmAyknEddjO7qE6z1C0hz3ZBZEqeDdnoIvYr9
+	 jBMFq9hso9lpNkS0qKZzeIVqQ22nA7p8JMkO0anVDiIiwvLM7keij7thP0kRReo+W6
+	 K7wVU73Qhpfz632RN17/HVTK5RR4E2Dybt9vo678hLdCatLK7mDAnuJxTqvNrCbJgG
+	 9earos8ypQX9g==
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4a4323fe8caso1107721cf.2;
+        Wed, 04 Jun 2025 12:38:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUvTe2rlkaa8sfAJ2PaDuu3Ueu7unQmCwc8g0ZrceUxpL5y3UuzJgYzmcXguvM3vlHqzSE8RoAF4auk6CY+@vger.kernel.org, AJvYcCWovNq9kRl4H4sk8WISUblcQ33pnEtobkQOmd9cVLyaNBVWySxqEnq0BPsex55xKBEKgVTY8pUyXnWQrAeP@vger.kernel.org, AJvYcCXYmGnxBV2ZXlMpCFUcqxo9ztLXO2hUGooGwDDsWRblBPmpyGzE58FVgOUd338RJ9GBvx/+YRIsnhxvJkK6O3bi0GR6yvcg@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKxCH0D1F/KRw+GyBX77PtedeHJU/U765b3hsQqukipLu9Yzp0
+	aJKbUXKN8OzorlE/zWS98Y7uJZ0chd7Wnstu82DJPn0I/yVYV+oGqs1RpzrJJqyxBrHwQ6nEYjL
+	GphnOTchWblzFsIgWnBOasxQWZ+4pqyQ=
+X-Google-Smtp-Source: AGHT+IHHR7SptpMPNEHrz/xa0ziqGgFVxhtqzkkl3ym1gi8z5oE6+wH/IsRr/B7okkvCHoRrEMUsjGgMNvwm/sLWuUY=
+X-Received: by 2002:a05:622a:4cc4:b0:4a4:3913:c1a5 with SMTP id
+ d75a77b69052e-4a5a5759b61mr71030331cf.16.1749065890044; Wed, 04 Jun 2025
+ 12:38:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 3/3] Restart pathwalk on rename seqcount change
-From: Tingmao Wang <m@maowtm.org>
-To: Al Viro <viro@zeniv.linux.org.uk>, =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?=
- <mic@digikod.net>
-Cc: Song Liu <song@kernel.org>, =?UTF-8?Q?G=C3=BCnther_Noack?=
- <gnoack@google.com>, Jan Kara <jack@suse.cz>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Christian Brauner <brauner@kernel.org>,
- linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <cover.1748997840.git.m@maowtm.org>
- <7452abd023a695a7cb87d0a30536e9afecae0e9a.1748997840.git.m@maowtm.org>
- <20250604005546.GE299672@ZenIV>
- <9245d92c-9d23-4d10-9f2d-7383b1a1d9a9@maowtm.org>
- <20250604022126.GF299672@ZenIV>
- <c4005b56-b341-4f37-b189-6681fcfe5bc6@maowtm.org>
-Content-Language: en-US
-In-Reply-To: <c4005b56-b341-4f37-b189-6681fcfe5bc6@maowtm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-3-song@kernel.org>
+ <20250603.Av6paek5saes@digikod.net>
+In-Reply-To: <20250603.Av6paek5saes@digikod.net>
+From: Song Liu <song@kernel.org>
+Date: Wed, 4 Jun 2025 12:37:55 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6J_hDtXZm4MH_OAz=GCpRW0NMM1EXMrJ=nqsTdpf8vcg@mail.gmail.com>
+X-Gm-Features: AX0GCFvGYg67wlJhC9iGRdUkRWP0aI7G3iTqfEbemzY0cj4E61U_duxvBA3fbBE
+Message-ID: <CAPhsuW6J_hDtXZm4MH_OAz=GCpRW0NMM1EXMrJ=nqsTdpf8vcg@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 2/4] landlock: Use path_walk_parent()
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, 
+	mattbobrowski@google.com, amir73il@gmail.com, repnop@google.com, 
+	jlayton@kernel.org, josef@toxicpanda.com, gnoack@google.com, m@maowtm.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/4/25 19:56, Tingmao Wang wrote:
-> On 6/4/25 03:21, Al Viro wrote:
->> On Wed, Jun 04, 2025 at 02:12:11AM +0100, Tingmao Wang wrote:
->>> On 6/4/25 01:55, Al Viro wrote:
->>>> On Wed, Jun 04, 2025 at 01:45:45AM +0100, Tingmao Wang wrote:
->>>>> +		rename_seqcount = read_seqbegin(&rename_lock);
->>>>> +		if (rename_seqcount % 2 == 1) {
->>>>
->>>> Please, describe the condition when that can happen, preferably
->>>> along with a reproducer.
->>>
->>> My understanding is that when a rename is in progress the seqcount is odd,
->>> is that correct?
->>>
->>> If that's the case, then the fs_race_test in patch 2 should act as a
->>> reproducer, since it's constantly moving the directory.
->>>
->>> I can add a comment to explain this, thanks for pointing out.
->>
->> Please, read through the header declaring those primitives and read the
->> documentation it refers to - it's useful for background.
-> 
-> Ok, so I didn't realize read_seqbegin actually waits for the seqcount to
-> turn even.  I did read the header earlier when following dget_parent but
-> probably misremembered and mixed raw_seqcount_begin with read_seqbegin.
+On Tue, Jun 3, 2025 at 6:46=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digiko=
+d.net> wrote:
+>
+> Landlock tests with hostfs fail:
+>
+> ok 126 layout3_fs.hostfs.tag_inode_file
+> #  RUN           layout3_fs.hostfs.release_inodes ...
+> # fs_test.c:5555:release_inodes:Expected EACCES (13) =3D=3D test_open(TMP=
+_DIR, O_RDONLY) (0)
+>
+> This specific test checks that an access to a (denied) mount point over
+> an allowed directory is indeed denied.
 
-Right, after more careful looking I think what I actually want here is
-raw_read_seqcount.  My apologies.
+I am having trouble understanding the test. It appears to me
+the newly mounted tmpfs on /tmp is allowed, but accesses to
+/ and thus mount point /tmp is denied? What would the walk in
+is_access_to_paths_allowed look like?
 
-> 
->>
->> What's more, look at the area covered by rename_lock - I seriously suspect
->> that you are greatly overestimating it.
-> 
-> Admittedly "when a rename is in progress" is a vague statement.  Looking
-> at what takes rename_lock in the code, it's only when we actually do
-> d_move where we take this lock (plus some other places), and the critical
-> section isn't very large, and does not contain any waits etc.
-> 
-> If we keep read_seqbegin, then that gives landlock more opportunity to do
-> a reference-less parent walk, but at the expense that a d_move anywhere,
-> even if it doesn't affect anything we're currently looking at, will
-> temporarily block this landlocked application (even if not for very long),
-> and multiple concurrent renames might cause us to wait for longer (but
-> probably won't starve us since we just need one "cycle" where rename
-> seqcount is even).
-> 
-> Since we can still safely do a parent walk, just needing to take dentry
-> references on our way, we could simply fallback to that in this situation.
-> i.e.  we can use raw_seqcount_begin and keep the seqcount & 1 check.
+> It's not clear to me the origin of the issue, but it seems to be related
+> to choose_mountpoint().
+>
+> You can run these tests with `check-linux.sh build kselftest` from
+> https://github.com/landlock-lsm/landlock-test-tools
 
-This will be raw_read_seqcount(&rename_lock.seqcount)
+How should I debug this test? printk doesn't seem to work.
 
-> 
-> Now, there is the argument that if d_move is very quick, then it might be
-> worth waiting for it to finish, and we will fallback to the original
-> parent walk if the seqcount changes again.  I'm not sure which is best,
-> but I'm inclining towards changing this to raw_seqcount_begin, as this is
-> purely an optimization, and we do not _need_ to avoid concurrent renames.
+Thanks,
+Song
 
