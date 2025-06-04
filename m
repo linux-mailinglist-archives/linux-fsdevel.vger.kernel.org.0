@@ -1,53 +1,62 @@
-Return-Path: <linux-fsdevel+bounces-50595-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50596-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38112ACD8C8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 09:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56DEACD8DB
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 09:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0799E164FF7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 07:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B2D43A5078
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 07:52:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D1422F765;
-	Wed,  4 Jun 2025 07:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2FDF231A57;
+	Wed,  4 Jun 2025 07:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ho0rxPkI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WInDx0va"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2D71D435F;
-	Wed,  4 Jun 2025 07:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3643422156D;
+	Wed,  4 Jun 2025 07:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749023128; cv=none; b=aY9uRFP86pVNSO3b6X6pyCCSgNQ8ENg4PvX64dPUgsG1G608ms5LIvLvTbHnxlOLLAEuDy+NYyy2yhxI53WRuegJ7xxws4/n9GQXAoLUvch6BhsZM8KoUYb42y6VqsL0AhMMX0BQHc2ocBkMyOG9IszAtap+vH/AjDVLkDo2hcI=
+	t=1749023596; cv=none; b=mE8S68I2Tua+ZGQKrQ14DxRF+ur3mSrx3mLK4gXkYMjoyAHDvUGREXZDnRwWaF2Lrpd10y+31SYzJYn/wZtpLgg4Yaqhonn2SK+p6CJ1CMKqZPt12xIrP8KfIoyOCVPHo689clvzYfRp+VXEX97ojxpMMtgGRrB3WQArpxWmF5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749023128; c=relaxed/simple;
-	bh=jmZaSvIHE6oNYDUB7dI4l1oC0WsSrtvbVjeVWoBGMlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=G+0vDDJB17nz8C236kSaLOwOe08yjOCjiCyi4+ncGNwtCJ8zskTneugsWYHD1TT57oNn8t/2bZf5KguMZKWVQhOuSnLnS4tVeFzTsYKqCtDmZL8NdTajgCB86cC+6zxYddLachdys9iETvXDfSLFQ9eUu/8DPjWxISEahbdRMJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ho0rxPkI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E01EC4CEE7;
-	Wed,  4 Jun 2025 07:45:25 +0000 (UTC)
+	s=arc-20240116; t=1749023596; c=relaxed/simple;
+	bh=PA9ira8hxUqCFddTCYMY9Tjyt3g1sldkLEl+jTQLv5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kak4vlzKMDzz9zE3pIiTai2omDoVfLRK3Xbhs4FYvYUqbFtnNP+/SOiEqGXM7gfZQ8VT/1Vo5Y6hIZ02qN+5uqz5uRad/CLGm3zOZvY6bn8FEhYxVROCNnYk2QzqvV6HORxuqtZQIbimUj1SGWqs5g4/On+WTBwiF/eYuLwBLgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WInDx0va; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4BB9C4CEE7;
+	Wed,  4 Jun 2025 07:53:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749023127;
-	bh=jmZaSvIHE6oNYDUB7dI4l1oC0WsSrtvbVjeVWoBGMlw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=ho0rxPkIEY1BB6Ps7bUo3NCmatG4/6qWFPtUuObLY4KLaOhYsxx9GneA78q+OHNRx
-	 QcnK71NvNtEPgU/DmDyM4hJbV3+dmsJ4nMBhXzKxGadDOXbOGorLqDHO2dt6oj48Hm
-	 49wz5eIlznt/jCm2/ZhYPBLhvK9tKD+On91ZxhJatZliKCZouojybvkeRwfDFyXjZo
-	 Xfnqq9bAUGlQg+GocwhNuFaOyEshpI01XQ0LU60rIQOMklUL3DkbxbR8PnGmutsdsz
-	 Bdn/duR7+TCFiew6IgeWifgMxRHign+wOqlIywscJ+9Oj8bu/5323cIaaV5YF/uzYU
-	 L6ZwZE9hgZr7g==
-Date: Wed, 4 Jun 2025 09:45:23 +0200
+	s=k20201202; t=1749023595;
+	bh=PA9ira8hxUqCFddTCYMY9Tjyt3g1sldkLEl+jTQLv5E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WInDx0vahZXXNL8INqdUd2DVHYwcHYNPO9H00hE10t+5LQFBb7UxLvoB6cXCQWDG1
+	 u4rnarlm+YR8zJzP7vpLRTlyaEV6AbjIVLQXT0I46KEMDKs3Z6nHvjqWcQn6ti6PnJ
+	 WBSyKJr00ge/o6EeEooYE3FkRhhRYLtFf+LKpD3e+O03FXpb1QWe0Vi8FPCNmX/Tsc
+	 SvBbWW3gBh17i+Xj4LoOcuJaJDSXBjpOcG34F4AxkVwZxUtk2pO8jukn5ZJzK2R4Sp
+	 vHpBHs+Et5gZOFyh4X9Dh23FHr0z1GXgHW/zCfzD6ComqnuyO7tzz3hLIu7BUJMAl9
+	 1PMzx/evjqyPg==
+Date: Wed, 4 Jun 2025 09:53:10 +0200
 From: Christian Brauner <brauner@kernel.org>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, Luka <luka.2016.cs@gmail.com>
-Subject: Re: [Bug] possible deadlock in vfs_rmdir in Linux kernel v6.12
-Message-ID: <20250604-quark-gastprofessor-9ac119a48aa1@brauner>
+To: Anuj gupta <anuj1072538@gmail.com>, hch@infradead.org
+Cc: Eric Biggers <ebiggers@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, jack@suse.cz, axboe@kernel.dk, viro@zeniv.linux.org.uk, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, joshi.k@samsung.com
+Subject: Re: [RFC] fs: add ioctl to query protection info capabilities
+Message-ID: <20250604-notgedrungen-korallen-5ffd76cb7329@brauner>
+References: <CGME20250527105950epcas5p1b53753ab614bf6bde4ffbf5165c7d263@epcas5p1.samsung.com>
+ <20250527104237.2928-1-anuj20.g@samsung.com>
+ <yq1jz60gmyv.fsf@ca-mkp.ca.oracle.com>
+ <fec86763-dd0e-4099-9347-e85aa4a22277@samsung.com>
+ <20250529175934.GB3840196@google.com>
+ <20250530-raumakustik-herren-962a628e1d21@brauner>
+ <CACzX3Av0uR5=zOXuTvcu2qovveYSmeVPnsDZA1ZByx2KLNJzEA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -56,139 +65,54 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CALm_T+2FtCDm4R5y-7mGyrY71Ex9G_9guaHCkELyggVfUbs1=w@mail.gmail.com>
- <CALm_T+0j2FUr-tY5nvBqB6nvt=Dc8GBVfwzwchtrqOCoKw3rkQ@mail.gmail.com>
- <CALm_T+3H5axrkgFdpAt23mkUyEbOaPyehAbdXbhgwutpyfMB7w@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACzX3Av0uR5=zOXuTvcu2qovveYSmeVPnsDZA1ZByx2KLNJzEA@mail.gmail.com>
 
-Konstantin, this looks actively malicious.
-Can we do something about this list-wise?
+On Wed, Jun 04, 2025 at 12:13:38AM +0530, Anuj gupta wrote:
+> > Hm, I wonder whether we should just make all of this an extension of the
+> > new file_getattr() system call we're about to add instead of adding a
+> > separate ioctl for this.
+> 
+> Hi Christian,
+> Thanks for the suggestion to explore file_getattr() for exposing PI
+> capabilities. I spent some time evaluating this path.
+> 
+> Block devices don’t implement inode_operations, including fileattr_get,
+> so invoking file_getattr() on something like /dev/nvme0n1 currently
+> returns -EOPNOTSUPP.  Supporting this would require introducing
+> inode_operations, and then wiring up fileattr_get in the block layer.
+> 
+> Given that, I think sticking with an ioctl may be the cleaner approach.
+> Do you see this differently?
 
-On Wed, Jun 04, 2025 at 12:38:36PM +0800, Luka wrote:
-> Dear Kernel Maintainers,
-> 
-> I am writing to report a potential vulnerability identified in the
-> upstream Linux Kernel version v6.12, corresponding to the following
-> commit in the mainline repository:
-> 
-> Git Commit:  adc218676eef25575469234709c2d87185ca223a (tag: v6.12)
-> 
-> This issue was discovered during the testing of the Android 16 AOSP
-> kernel, which is based on Linux kernel version 6.12, specifically from
-> the AOSP kernel branch:
-> 
-> AOSP kernel branch: android16-6.12
-> Manifest path: kernel/common.git
-> Source URL:  https://android.googlesource.com/kernel/common/+/refs/heads/android16-6.12
-> 
-> Although this kernel branch is used in Android 16 development, its
-> base is aligned with the upstream Linux v6.12 release. I observed this
-> issue while conducting stability and fuzzing tests on the Android 16
-> platform and identified that the root cause lies in the upstream
-> codebase.
-> 
-> 
-> Bug Location: vfs_rmdir+0x118/0x488 fs/namei.c:4329
-> 
-> Bug Report: https://hastebin.com/share/vobatolola.bash
-> 
-> Entire Log: https://hastebin.com/share/efajodumuh.perl
-> 
-> 
-> Thank you very much for your time and attention. I sincerely apologize
-> that I am currently unable to provide a reproducer for this issue.
-> However, I am actively working on reproducing the problem, and I will
-> make sure to share any findings or reproducing steps with you as soon
-> as they are available.
-> 
-> I greatly appreciate your efforts in maintaining the Linux kernel and
-> your attention to this matter.
-> 
-> Best regards,
-> Luka
+Would it be so bad to add custom inode operations?
+It's literally just something like:
 
-On Wed, Jun 04, 2025 at 12:21:40PM +0800, Luka wrote:
-> Dear Kernel Maintainers,
-> 
-> I am writing to report a potential vulnerability identified in the
-> upstream Linux Kernel version v6.12, corresponding to the following
-> commit in the mainline repository:
-> 
-> Git Commit:  adc218676eef25575469234709c2d87185ca223a (tag: v6.12)
-> 
-> This issue was discovered during the testing of the Android 16 AOSP
-> kernel, which is based on Linux kernel version 6.12, specifically from
-> the AOSP kernel branch:
-> 
-> AOSP kernel branch: android16-6.12
-> Manifest path: kernel/common.git
-> Source URL:  https://android.googlesource.com/kernel/common/+/refs/heads/android16-6.12
-> 
-> Although this kernel branch is used in Android 16 development, its
-> base is aligned with the upstream Linux v6.12 release. I observed this
-> issue while conducting stability and fuzzing tests on the Android 16
-> platform and identified that the root cause lies in the upstream
-> codebase.
-> 
-> 
-> Bug Location: may_delete+0x72c/0x730 fs/namei.c:3066
-> 
-> Bug Report: https://hastebin.com/share/amuhawituy.scss
-> 
-> Entire Log: https://hastebin.com/share/oponarusih.perl
-> 
-> 
-> Thank you very much for your time and attention. I sincerely apologize
-> that I am currently unable to provide a reproducer for this issue.
-> However, I am actively working on reproducing the problem, and I will
-> make sure to share any findings or reproducing steps with you as soon
-> as they are available.
-> 
-> I greatly appreciate your efforts in maintaining the Linux kernel and
-> your attention to this matter.
-> 
-> Best regards,
-> Luka
+diff --git a/block/bdev.c b/block/bdev.c
+index b77ddd12dc06..9b4f76e2afca 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -453,6 +453,11 @@ void __init bdev_cache_init(void)
+        blockdev_superblock = blockdev_mnt->mnt_sb;   /* For writeback */
+ }
 
-On Wed, Jun 04, 2025 at 12:12:26PM +0800, Luka wrote:
-> Dear Kernel Maintainers,
-> 
-> I am writing to report a potential vulnerability identified in the
-> upstream Linux Kernel version v6.12, corresponding to the following
-> commit in the mainline repository:
-> 
-> Git Commit:  adc218676eef25575469234709c2d87185ca223a (tag: v6.12)
-> 
-> This issue was discovered during the testing of the Android 16 AOSP
-> kernel, which is based on Linux kernel version 6.12, specifically from
-> the AOSP kernel branch:
-> 
-> AOSP kernel branch: android16-6.12
-> Manifest path: kernel/common.git
-> Source URL:  https://android.googlesource.com/kernel/common/+/refs/heads/android16-6.12
-> 
-> Although this kernel branch is used in Android 16 development, its
-> base is aligned with the upstream Linux v6.12 release. I observed this
-> issue while conducting stability and fuzzing tests on the Android 16
-> platform and identified that the root cause lies in the upstream
-> codebase.
-> 
-> 
-> Bug Location: fs_bdev_sync+0x2c/0x68 fs/super.c:1434
-> 
-> Bug Report: https://hastebin.com/share/pihohaniwi.bash
-> 
-> Entire Log: https://hastebin.com/share/orufevoquj.perl
-> 
-> 
-> Thank you very much for your time and attention. I sincerely apologize
-> that I am currently unable to provide a reproducer for this issue.
-> However, I am actively working on reproducing the problem, and I will
-> make sure to share any findings or reproducing steps with you as soon
-> as they are available.
-> 
-> I greatly appreciate your efforts in maintaining the Linux kernel and
-> your attention to this matter.
-> 
-> Best regards,
-> Luka
++static const struct inode_operations bdev_inode_operations = {
++       .fileattr_get   = bdev_file_attr_get,
++       .fileattr_set   = bdev_file_attr_set,
++}
++
+ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
+ {
+        struct block_device *bdev;
+@@ -462,6 +467,7 @@ struct block_device *bdev_alloc(struct gendisk *disk, u8 partno)
+        if (!inode)
+                return NULL;
+        inode->i_mode = S_IFBLK;
++       inode->i_op = &bdev_inode_operations;
+        inode->i_rdev = 0;
+        inode->i_data.a_ops = &def_blk_aops;
+        mapping_set_gfp_mask(&inode->i_data, GFP_USER);
+
+
+instead of using empty_iops.
 
