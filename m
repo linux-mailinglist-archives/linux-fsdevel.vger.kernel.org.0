@@ -1,175 +1,188 @@
-Return-Path: <linux-fsdevel+bounces-50627-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50628-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E015ACE1B5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 17:44:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F3BACE1F0
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 18:09:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15ACD3A8768
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 15:44:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354943A8CB2
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 16:09:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D8E1A2545;
-	Wed,  4 Jun 2025 15:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FB11AA1D5;
+	Wed,  4 Jun 2025 16:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Jq9sFDO+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FDqwOq0l";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="r74BRPCk";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="6plmO64f"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jf7l7YhS"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017741E522
-	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jun 2025 15:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6E24C7C
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jun 2025 16:09:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749051867; cv=none; b=paKk1hQD6b3VmvvWJkLq4vl9WyudptuT9vaYYLKjkPkm9nGqDXpC0Xh7TCFbbjnCxDc3DDRcqG3fgktnkp9S9o9nwZunSUslUOadpU2lR7UFXBTvkw//rvAO6RwHFjzn0/s4CAarXxYDqsuCMQfv2oGP94bwxXe1/CvcWHGqCrM=
+	t=1749053366; cv=none; b=hEmjEj9JF65MwhflMXYFB++yCtR7egh+z9hxCYBkHmd2VE2b3iJGFSLw7BOEI2Sz5PHYQ2NFUXoAIOCqtaiRGrPO3u5QTTj04RCiFYq4+kGnaSwrzr8xp0D/AWjkK15JwXmhEv+pREcIkXQMNgNvTawweHwt8Y/8nIBXgkCp5kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749051867; c=relaxed/simple;
-	bh=f7lRk+b2SIr/M1jbrfGzBguI5XqViR8QimvPyjso0UY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DwbRl1XvRRuvB6oEDvkCBScVKIz3UW41osLJURuMHS1jmm7UdgWlIIPv6fpW+bigwqSytzSr3+klhe4SoEfu0hQypy39ohhAuUuxMxvikTkrZwc1rCh0IYafzyCefQAnA6CSIpA5uj0pOTz8QtOCC6vE6sSSr3bbHT0y3/YJepk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Jq9sFDO+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FDqwOq0l; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=r74BRPCk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=6plmO64f; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id D7FBA1FEF2;
-	Wed,  4 Jun 2025 15:44:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749051864; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCC2WWItBuBB5emvqTSf3LdL7WM1Hvu7mLAtMLGblgE=;
-	b=Jq9sFDO+OXExv9H/ECrc3/kkj4FEJjvBUv/KUMLSokDTT/tDPCbBehkplqPUEzATPxyt2k
-	ZhWaZEB4Vk9YAMSMw1U3sgHguTHD6xy+6NLrX8TqDGW5XPABmnDnbx7kJtSfw3bmDXQMmS
-	JT4+rS97ATsiwIayfbWr3lv+n44wPCg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749051864;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCC2WWItBuBB5emvqTSf3LdL7WM1Hvu7mLAtMLGblgE=;
-	b=FDqwOq0lhb+b0Cel/nEtVwKCGhCq4IkCXU9OfHh+mlszveJzsP62aqjmNR5Kjchn7eCb/i
-	0kB4asU3ZXg3+MAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=r74BRPCk;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=6plmO64f
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749051863; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCC2WWItBuBB5emvqTSf3LdL7WM1Hvu7mLAtMLGblgE=;
-	b=r74BRPCktuxJVMtT86wnDKlCv9NvFGtd5toUKsd69F7Cl5Ql8P6yxv2f9S429HSCLHCWO0
-	yr6b8r6fGdw95ebKYO0Akeomnef1rhkwk8jWl3iu/h8wcQjBlHx2+rudYiyWv2jUSa17aA
-	sN7SwfP2Jm0x05b2L0xU9rLXg0v1vpo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749051863;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCC2WWItBuBB5emvqTSf3LdL7WM1Hvu7mLAtMLGblgE=;
-	b=6plmO64fjxDstv+2auLmT/Tkp0J4X35NypvAXEoohnGzTMJ0E64QMzJ7nZck2xsXqmcK5x
-	teWTEy9uyJLB8gAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C0C511369A;
-	Wed,  4 Jun 2025 15:44:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hskGL9dpQGgxFQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Wed, 04 Jun 2025 15:44:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E96B1A095C; Wed,  4 Jun 2025 17:44:22 +0200 (CEST)
-Date: Wed, 4 Jun 2025 17:44:22 +0200
-From: Jan Kara <jack@suse.cz>
-To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc: Christian Brauner <brauner@kernel.org>, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Luka <luka.2016.cs@gmail.com>
-Subject: Re: [Bug] possible deadlock in vfs_rmdir in Linux kernel v6.12
-Message-ID: <bfyuxaa7cantq2fvrgizsawyclaciifxub3lortq5oox44vlsd@rxwrvg2avew7>
-References: <CALm_T+2FtCDm4R5y-7mGyrY71Ex9G_9guaHCkELyggVfUbs1=w@mail.gmail.com>
- <CALm_T+0j2FUr-tY5nvBqB6nvt=Dc8GBVfwzwchtrqOCoKw3rkQ@mail.gmail.com>
- <CALm_T+3H5axrkgFdpAt23mkUyEbOaPyehAbdXbhgwutpyfMB7w@mail.gmail.com>
- <20250604-quark-gastprofessor-9ac119a48aa1@brauner>
- <20250604-alluring-resourceful-salamander-6561ff@lemur>
+	s=arc-20240116; t=1749053366; c=relaxed/simple;
+	bh=VGXhj0xXuS0J3esoCyopd2jP6DJH+1knU6lzjtUTl88=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OVNNbGfVLJWaURQX4cg/m42TWkApLGgt01whKIW8lLvz22ctsf79ZYDiNHsJGxmcgmGOJ1BrMTR1nngCnUCyYuPqyVKQTsLrOhFYb4O1t/TJCHkNuBjVgHBviI8qBiW+k42rG0ZCHVFl/vIo2IrlXdreMdBoA4328QYKFJEURMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jf7l7YhS; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-451e24dfe1aso24996215e9.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Jun 2025 09:09:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1749053362; x=1749658162; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zjQa+PXamKEYevWfOsK4PTinA5hjOR0JjBvI58LuRgk=;
+        b=Jf7l7YhSEAuycciGR4d5S53pzhe72X6JF4CUlzdvkN7KP0ABbGgfj1wtE4fIbCX4T2
+         2/UzHZ2t+BSZe4FoxfViZAlkZ3NaVRgjTce04EOHx/9b2r/0glLNe0lbaPjJfXmlPMF1
+         peIbooL4sg7yXpPrEcxkOBC7Q6Gw+/awkU53W/W2IzLm20IbladCZgrKJRtXASQNo6M+
+         KOd5NTm21UnbyfspcV+Zcn9Rpzaioro2YqFSQG1xplnSHaC/VQOO4xprc2c1Yg+2WVAU
+         VKCV/bm/gpj0MekqxOv+C+F+TfA0EfCm+bsffnJSMmloQwQIaEQppdnIsNMd/ESoootq
+         9jLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749053362; x=1749658162;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zjQa+PXamKEYevWfOsK4PTinA5hjOR0JjBvI58LuRgk=;
+        b=N6SSABbB09BrOCOf9BVPs3YTZ7hRAawAk+2Zq46XwCyfFro6zbNynIuu2S+pRna7Ly
+         LD82vz3hWLmDFvW1uHFDLY8z/Pu2HzqILMdIOgQewCBHwDZ+F0O+x9b8YHtct5KKVDpU
+         /lwINMyn2JFZ4q6srW8CA6F7M3LPt7HWvVR52QYUdb9VF5aksgBonVfKpEvdWKxOimGR
+         DQWEAvDPuilAW3FGa7CcrvVTXUa1pm1F28KW9a3bfS7zf+PZVSaznsVajk+REtr/dTZK
+         jYavVBh3XQtcDsEqt6BO9HmYxxFteddPurwNbRbel8GIYdCssuPe4IhiKIUiRiyOq3CC
+         Cq7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWIXcoXh25/kS1KHpffATVb6NdpNn6i612d9tUsEJuq8kRxeA+ZYx/4Atb84ZRWCYS2PJccE4f8BmyplX2z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw87dyWM22HOwwIOk+KxCL6ADgBnK2N86CUuXISTGvQycCM+WaE
+	AT/sa7Ev0FFmHn7qNSnwcoHLVmFrxCN6fqXyFMujp71UNt7GYBsQQHd8Cr+CHAx9
+X-Gm-Gg: ASbGnctkqxA2tHG7QUuuE+nNRcMV10OifvZugXvr+EAYH9p2/ilCDyO6ue8S16MGIVm
+	xrHxUXGcrE3qopu4cbBfhJb1sbqpad4oodnbDVz97k6sLCvDDkawiEbJZWGuD/wTergDlE6CnGn
+	b4ajNtWE1iVjZX2//IG1jXFE6X/ES+ZPvEJDcfXWx/XACDm8kq15B2ruaKewNDVuvkja6ekHqpQ
+	dvou+LGwHbCmXeX4SmC5PBfrTytQltkphpIfzd6XdTQkGm73moRg148UzBCvnZLmTNF1MMYWy/A
+	nhoVWEyoZJD4gNO5/2CoLdJceUOocwx7sU5mzb9UGypJDVsA5eypM+/bi0NTp0IAoWVTqqrwA8n
+	VoKcDxxUwd479Z/1jGClTad1WXy/XHjZnQsiv69udzme3+pLe
+X-Google-Smtp-Source: AGHT+IHaoUh05ZB00ouEBIVYR/gqywjNVnlH8ErKBed8fp3tIKJyb9macGUO/P/szaZwk23bakmv+w==
+X-Received: by 2002:a05:600c:828f:b0:43c:f1b8:16ad with SMTP id 5b1f17b1804b1-451f0faddd6mr38577575e9.30.1749053361865;
+        Wed, 04 Jun 2025 09:09:21 -0700 (PDT)
+Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3a4f00a1678sm22304306f8f.99.2025.06.04.09.09.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Jun 2025 09:09:21 -0700 (PDT)
+From: Amir Goldstein <amir73il@gmail.com>
+To: Jan Kara <jack@suse.cz>
+Cc: Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org
+Subject: [RFC PATCH v2 0/3] fanotify HSM events for directories
+Date: Wed,  4 Jun 2025 18:09:15 +0200
+Message-Id: <20250604160918.2170961-1-amir73il@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250604-alluring-resourceful-salamander-6561ff@lemur>
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: D7FBA1FEF2
-X-Rspamd-Action: no action
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_LAST(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	TAGGED_RCPT(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	FREEMAIL_CC(0.00)[kernel.org,zeniv.linux.org.uk,suse.cz,vger.kernel.org,gmail.com];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Score: -2.51
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Wed 04-06-25 10:45:49, Konstantin Ryabitsev wrote:
-> On Wed, Jun 04, 2025 at 09:45:23AM +0200, Christian Brauner wrote:
-> > Konstantin, this looks actively malicious.
-> > Can we do something about this list-wise?
-> 
-> Malicious in what sense? Is it just junk, or is it attempting to have
-> maintainers perform some potentially dangerous operation?
+Jan,
 
-Well, useless it is for certain but links like:
+In v1 there was only patch 1 [1] to allow FAN_PRE_ACCESS events
+on readdir (with FAN_ONDIR).
 
-Bug Report: https://hastebin.com/share/pihohaniwi.bash
+Following your feedback on v1, v2 adds support for FAN_PATH_ACCESS
+event so that a non-populated directory could be populted either on
+first readdir or on first lookup.
 
-Entire Log: https://hastebin.com/share/orufevoquj.perl
+I am still tagging this as RFC for two semi-related reasons:
 
-are rather suspicious and suggest there's more in there than just a lack of
-knowledge (but now that I've tried the suffixes seem to be automatically
-added by some filetype detection logic in the hastebin.com site itself so
-more likely this is not malicious after all). FWIW I've downloaded one of
-the files through wget and looked into it and it seems to have a reasonable
-content and does not seem malicious but it is difficult to be sure in the
-maze of HTML and JS...
+1) In my original draft of man-page for FAN_PATH_ACCESS [2],
+I had introduced a new class FAN_CLASS_PRE_PATH, which FAN_PATH_ACCESS
+requires and is defined as:
+"Unlike FAN_CLASS_PRE_CONTENT, this class can be used along with
+ FAN_REPORT_DFID_NAME to report the names of the looked up files along
+ with O_PATH file descriptos in the new path lookup events."
 
-								Honza
+I am not sure if we really need FAN_CLASS_PRE_PATH, so wanted to ask
+your opinion.
+
+The basic HSM (as implemented in my POC) does not need to get the lookup
+name in the event - it populates dir on first readdir or lookup access.
+So I think that support for (FAN_CLASS_PRE_CONTENT | FAN_REPORT_DFID_NAME)
+could be added later per demand.
+
+2) Current code does not generate FAN_PRE_ACCESS from vfs internal
+lookup helpers such as  lookup_one*() helpers from overalyfs and nfsd.
+This is related to the API of reporting an O_PATH event->fd for
+FAN_PATH_ACCESS event, which requires a mount.
+
+If we decide that we want to support FAN_PATH_ACCESS from all the
+path-less lookup_one*() helpers, then we need to support reporting
+FAN_PATH_ACCESS event with directory fid.
+
+If we allow FAN_PATH_ACCESS event from path-less vfs helpers, we still
+have to allow setting FAN_PATH_ACCESS in a mount mark/ignore mask, because
+we need to provide a way for HSM to opt-out of FAN_PATH_ACCESS events
+on its "work" mount - the path via which directories are populated.
+
+There may be a middle ground:
+- Pass optional path arg to __lookup_slow() (i.e. from walk_component())
+- Move fsnotify hook into __lookup_slow()
+- fsnotify_lookup_perm() passes optional path data to fsnotify()
+- fanotify_handle_event() returns -EPERM for FAN_PATH_ACCESS without
+  path data
+
+This way, if HSM is enabled on an sb and not ignored on specific dir
+after it was populated, path lookup from syscall will trigger
+FAN_PATH_ACCESS events and overalyfs/nfsd will fail to lookup inside
+non-populated directories.
+
+Supporting populate events from overalyfs/nfsd could be implemented
+later per demand by reporting directory fid instead of O_PATH fd.
+
+If you think that is worth checking, I can prepare a patch for the above
+so we can expose it to performance regression bots.
+
+Better yet, if you have no issues with the implementation in this
+patch set, maybe let it soak in for_next/for_testing as is to make
+sure that it does not already introduce any performance regressions.
+
+Thoughts?
+
+Amir.
+
+Changes since v1:
+- Jan's rewrite of patch 1
+- Add support for O_PATH event->fd
+- Add FAN_PATH_ACCESS event
+
+[1] https://lore.kernel.org/all/20250402062707.1637811-1-amir73il@gmail.com/
+[2] https://github.com/amir73il/man-pages/commits/fan_pre_path
+[3] https://github.com/amir73il/ltp/commits/fan_hsm/
+
+Amir Goldstein (2):
+  fanotify: allow O_PATH flag in event_f_flags
+  fanotify: introduce FAN_PATH_ACCESS event
+
+Jan Kara (1):
+  fanotify: allow creating FAN_PRE_ACCESS events on directories
+
+ fs/namei.c                         | 70 +++++++++++++++++++++++++++---
+ fs/notify/fanotify/fanotify.c      | 11 +++--
+ fs/notify/fanotify/fanotify_user.c | 11 +----
+ fs/notify/fsnotify.c               |  2 +-
+ fs/open.c                          |  4 +-
+ include/linux/fanotify.h           |  2 +-
+ include/linux/fs.h                 | 10 +++--
+ include/linux/fsnotify.h           | 28 +++++++++++-
+ include/linux/fsnotify_backend.h   |  4 +-
+ include/linux/namei.h              |  3 ++
+ include/uapi/linux/fanotify.h      |  2 +
+ 11 files changed, 116 insertions(+), 31 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.34.1
+
 
