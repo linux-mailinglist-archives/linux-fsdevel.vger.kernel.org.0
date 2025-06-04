@@ -1,396 +1,350 @@
-Return-Path: <linux-fsdevel+bounces-50554-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50555-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1253ACD34F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 03:17:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B748ACD502
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 03:37:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EFF2177E9D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 01:16:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9129189D5C3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 01:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C263427713;
-	Wed,  4 Jun 2025 01:01:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6CD146D6A;
+	Wed,  4 Jun 2025 01:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gemrs/CZ"
+	dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b="A8AFYfWY";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gINE5AWF"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29206111BF;
-	Wed,  4 Jun 2025 01:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39BC013BC3F;
+	Wed,  4 Jun 2025 01:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1748998898; cv=none; b=KiiISBy/mlD9s3Ofuqo8UOx5BybXyOBafGwLOSde8Fi2zvaiEkES6xYXdUFDRxvrcydP/xZxoFFRc1qZZPp95JzOstbX7VpD0yP1K1FziKBZ8Tt/9Xbpc4PXpEsgAkoflu4OTeihReNDdT0zwLq9CMjPPR9p+zY/egxuSFx/Nuw=
+	t=1748999405; cv=none; b=JwAa+P/TbIGSCXZ6owAI6Czfe16Uv5gkRWEqOzX/Y7Gi0TH7LL+POZ5B4Si7W13em6rDojHlpGrWzGcLAv4SJLai6EQVrnjgR0blkI5TT6eTnfKGodFvaXpxtn2X/osfjjcuM4eqMigl9O9h4wwFS3N+c+ZJ50qefnHBEbfkjNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1748998898; c=relaxed/simple;
-	bh=vZf+vipeHgMPlbxUVU30wJTKbpq12JCPeKCGvyo/gdo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UggUp+ozIM+l/L6Qp/79L9E4nDIa125JlitAAdL8p3SqTCYqLOeWJfmeqU/QBDlGHHBfd4lunU6ViScS2KiZ+EuiPF5C2hn2QLD3eHXA5hs+EUxboEtPCacGpZusi1j2rfeLm08AjiU2eV4oS05AYISP/UEjqw3lkDk/ytblXso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gemrs/CZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC970C4CEED;
-	Wed,  4 Jun 2025 01:01:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1748998897;
-	bh=vZf+vipeHgMPlbxUVU30wJTKbpq12JCPeKCGvyo/gdo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Gemrs/CZC6ZAAl92VQ5p11DNkhMSLPBuynfo2PTbYjQtv+2izXi4rgH89X72laiDP
-	 dJPHqu/m/Spq3FpPueoakj8+e23PJmT/bF4JpBhtTpwP+oVyw7DeVqqOpykICohLl2
-	 /iomFmm/1FyVIWBH4tKeh7+b9L8LQGFNPOLBitkg8EDWE7c3j9N0cl/zpzWnE8I0Lp
-	 7EF3Rl5xGoKtjCLN/YT8V8VZ2aW93jIiDO+YE57O9ac07T4v80txouTVrcKbWyAjSA
-	 r1w3fQStuZN9z3yvEa9FmT7LphUH2qZeo4KwiNh6o2zu8O1+jHcQkKXKB2GLdkEsWb
-	 A1Rdbx+/SoLjQ==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Jonas 'Sortie' Termansen <sortie@maxsi.org>,
-	Jan Kara <jack@suse.cz>,
-	Sasha Levin <sashal@kernel.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.12 75/93] isofs: fix Y2038 and Y2156 issues in Rock Ridge TF entry
-Date: Tue,  3 Jun 2025 20:59:01 -0400
-Message-Id: <20250604005919.4191884-75-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250604005919.4191884-1-sashal@kernel.org>
-References: <20250604005919.4191884-1-sashal@kernel.org>
+	s=arc-20240116; t=1748999405; c=relaxed/simple;
+	bh=Z9qpfh0pPo4BNHkZ5/TaFR4ap2xVr20tYHUyCc9D0c0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d40EQzUCUV/MIGJq+j1Fd55UT9ixKLdEt427GuOHEBHIl1hl/wNtEHDK5h09vwv+fvwCc8niEacL+o8E/cF2pEPxUpAmuG+5V7WG+EQsakMDasPrvjoiS1Kj44wVQjM44snm9hp2NWzxQ22IC8Zc310CQ7AI+c8WprGvtw8pDbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org; spf=pass smtp.mailfrom=maowtm.org; dkim=pass (2048-bit key) header.d=maowtm.org header.i=@maowtm.org header.b=A8AFYfWY; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gINE5AWF; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=maowtm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maowtm.org
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id ED609254017F;
+	Tue,  3 Jun 2025 21:10:01 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Tue, 03 Jun 2025 21:10:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maowtm.org; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1748999401;
+	 x=1749085801; bh=xUFb22FplTmZ613N3z4Gz55bVzhwDUP/BuAQmEDvrKo=; b=
+	A8AFYfWYprtG7yjZ+lmvt0Hu1vUvXb0dmzu8GqX1zMzcVLTEnPxBoCDEcaGQP+45
+	2UV4gepSLbRNA5Z9Z/OGWongvC2todiwe/0DqGfLDDxevWmRTpgXb1sz6HltzUM/
+	KcB8n8CJl1aYfur8OeqcnXLxCU+IimhQjRZmjyTHtioe2LOwSY+OuzKYu1UbShbE
+	UofRVwYazkQIAgAE98BJOaaGzQcYR32V/pbgXzTvQ9+xzML+vQH33r2hGT8CmzMI
+	Iu1LDNuC3rRbTpgcrU1D+LDQyo4Ux6ACtEx0Woq+/C+3d9/yfyhJXmBZXheJYGK/
+	BW50uNQX9+suH5Y68ZmWmg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1748999401; x=
+	1749085801; bh=xUFb22FplTmZ613N3z4Gz55bVzhwDUP/BuAQmEDvrKo=; b=g
+	INE5AWFP1cykDBoT00u2jrLibygX6GMCBOd/7GFzCb8ZAWvVDFqomto2snD0Du7F
+	70ggs5afZRezLWh09o/u8lIPvW1iYf1bVGMwzsRp4D+rlylZSrvAh+50HbmuwSYP
+	132i6XHzrVd3aCyEpmstffZemfdz9GUDXWO69DjII3XdRxNOdUZl4/p6AOFwe2U4
+	aZuN3OhxODL3B1G5mh6vSH+NxUXw+0VqxQnqHoH0ur9uf1KpseYoO+22TY5ZOW1O
+	mg54YfWOs46akLnMuYLLcQUFIBluDApu7J/KR1WlLjacppBUQNvwwXtLCEiXToEE
+	2rEtnWVjbphR2Iuj8d9FQ==
+X-ME-Sender: <xms:6Zw_aFZXK1QykEznGnVE-apjaJmZ28LF8hOEns01cm2xuotDa_sCmA>
+    <xme:6Zw_aMaPKSY3YiZxJkrxYn9zZQgG_w04ki-z5rxCJv7YLS8pkq_g2ddOpC0DenKFs
+    E0iM4q-dzh_9Fecv7k>
+X-ME-Received: <xmr:6Zw_aH9zxsxVJERECwGUB4r_UdFUv47UJqR5SeEoHGigqP2mOX3B9qXDVziTwctyGTnimJ0ChD1rcPU8qpugHfCJ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtddugddufeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtjeertddtvdej
+    necuhfhrohhmpefvihhnghhmrghoucghrghnghcuoehmsehmrghofihtmhdrohhrgheqne
+    cuggftrfgrthhtvghrnhepfedvheeluedthfelgfevvdfgkeelgfelkeegtddvhedvgfdt
+    feeilefhudetgfdunecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepmhesmhgrohifthhmrdhorhhgpdhnsggprhgtphhtthhopeelpdhmohguvgep
+    shhmthhpohhuthdprhgtphhtthhopehmihgtseguihhgihhkohgurdhnvghtpdhrtghpth
+    htohepshhonhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehvihhrohesiigvnhhi
+    vhdrlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepghhnohgrtghksehgohhoghhlvg
+    drtghomhdprhgtphhtthhopehjrggtkhesshhushgvrdgtiidprhgtphhtthhopegrlhgv
+    gigvihdrshhtrghrohhvohhithhovhesghhmrghilhdrtghomhdprhgtphhtthhopegsrh
+    gruhhnvghrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhsvggtuhhr
+    ihhthidqmhhoughulhgvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplh
+    hinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:6Zw_aDqzOlwF7cAnIYKlLwUYswqfMjr6MfJ28i8pNfZ9x8gSuo_eVw>
+    <xmx:6Zw_aAowwMOkXuz2s-t9O9XsQAJX_MUCp18iabSy7vObgOLISQaY2Q>
+    <xmx:6Zw_aJQMHHqr1VhnyrRoVMqyA0XVJAmDLDMQZ9emXREoF3O9mBrzug>
+    <xmx:6Zw_aIrkS5TqpQ8r4_nfdYHu4RvYuA5ebeYxrhdtD7ZctXT2xniKYg>
+    <xmx:6Zw_aAMRptDHFYZLzGT25y0fBNlLo2NIBZzVHyqlNrg2FsC3_Pnd9xBe>
+Feedback-ID: i580e4893:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 3 Jun 2025 21:09:59 -0400 (EDT)
+Message-ID: <22dcdbc4-7237-4693-8bd6-c1404918b648@maowtm.org>
+Date: Wed, 4 Jun 2025 02:09:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.12.31
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 3/3] Restart pathwalk on rename seqcount change
+To: =?UTF-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>,
+ Song Liu <song@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>
+Cc: =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>,
+ Jan Kara <jack@suse.cz>, Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Christian Brauner <brauner@kernel.org>,
+ linux-security-module@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <cover.1748997840.git.m@maowtm.org>
+ <7452abd023a695a7cb87d0a30536e9afecae0e9a.1748997840.git.m@maowtm.org>
+Content-Language: en-US
+From: Tingmao Wang <m@maowtm.org>
+In-Reply-To: <7452abd023a695a7cb87d0a30536e9afecae0e9a.1748997840.git.m@maowtm.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: Jonas 'Sortie' Termansen <sortie@maxsi.org>
+On 6/4/25 01:45, Tingmao Wang wrote:
+> This fixes the issue mentioned in the previous patch, by essentially
+> having two "modes" for the pathwalk code - in the pathwalk_ref == false
+> case we don't take references and just inspect `d_parent` (unless we have
+> to `follow_up`).  In the pathwalk_ref == true case, this is the same as
+> before.
+> 
+> When we detect any renames during a pathwalk_ref == false walk, we restart
+> with pathwalk_ref == true, re-initializing the layer masks.  I'm not sure
+> if this is completely correct in regards to is_dom_check - but seems to
+> work for now.  I can revisit this later.
+> 
+> Signed-off-by: Tingmao Wang <m@maowtm.org>
+> ---
+>  security/landlock/fs.c | 109 ++++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 98 insertions(+), 11 deletions(-)
+> 
+> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+> index 923737412cfa..6dff5fb6b181 100644
+> --- a/security/landlock/fs.c
+> +++ b/security/landlock/fs.c
+> @@ -771,6 +771,9 @@ static bool is_access_to_paths_allowed(
+>  		_layer_masks_child2[LANDLOCK_NUM_ACCESS_FS];
+>  	layer_mask_t(*layer_masks_child1)[LANDLOCK_NUM_ACCESS_FS] = NULL,
+>  	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
+> +	unsigned int rename_seqcount;
+> +	bool pathwalk_ref = false;
+> +	const struct landlock_rule *rule;
+>  
+>  	if (!access_request_parent1 && !access_request_parent2)
+>  		return true;
+> @@ -811,6 +814,7 @@ static bool is_access_to_paths_allowed(
+>  
+>  	rcu_read_lock();
+>  
+> +restart_pathwalk:
+>  	if (unlikely(dentry_child1)) {
+>  		landlock_unmask_layers(
+>  			find_rule_rcu(domain, dentry_child1),
+> @@ -833,13 +837,32 @@ static bool is_access_to_paths_allowed(
+>  	}
+>  
+>  	walker_path = *path;
+> +
+> +	/*
+> +	 * Attempt to do a pathwalk without taking dentry references first,
+> +	 * but if any rename happens while we are doing this, give up and do a
+> +	 * walk with dget_parent instead.  See comments in
+> +	 * collect_domain_accesses().
+> +	 */
+> +
+> +	if (!pathwalk_ref) {
+> +		rename_seqcount = read_seqbegin(&rename_lock);
+> +		if (rename_seqcount % 2 == 1) {
+> +			pathwalk_ref = true;
+> +			path_get(&walker_path);
+> +		}
+> +	} else {
+> +		path_get(&walker_path);
+> +	}
+> +
+> +	rule = find_rule_rcu(domain, walker_path.dentry);
+> +
+>  	/*
+>  	 * We need to walk through all the hierarchy to not miss any relevant
+>  	 * restriction.
+>  	 */
+>  	while (true) {
+>  		struct dentry *parent_dentry;
+> -		const struct landlock_rule *rule;
+>  
+>  		/*
+>  		 * If at least all accesses allowed on the destination are
+> @@ -881,7 +904,6 @@ static bool is_access_to_paths_allowed(
+>  				break;
+>  		}
+>  
+> -		rule = find_rule_rcu(domain, walker_path.dentry);
+>  		allowed_parent1 = allowed_parent1 ||
+>  				  landlock_unmask_layers(
+>  					  rule, access_masked_parent1,
+> @@ -899,13 +921,16 @@ static bool is_access_to_paths_allowed(
+>  jump_up:
+>  		if (walker_path.dentry == walker_path.mnt->mnt_root) {
+>  			/* follow_up gets the parent and puts the passed in path */
+> -			path_get(&walker_path);
+> +			if (!pathwalk_ref)
+> +				path_get(&walker_path);
+>  			if (follow_up(&walker_path)) {
+> -				path_put(&walker_path);
+> +				if (!pathwalk_ref)
+> +					path_put(&walker_path);
+>  				/* Ignores hidden mount points. */
+>  				goto jump_up;
+>  			} else {
+> -				path_put(&walker_path);
+> +				if (!pathwalk_ref)
+> +					path_put(&walker_path);
+>  				/*
+>  				 * Stops at the real root.  Denies access
+>  				 * because not all layers have granted access.
+> @@ -925,10 +950,27 @@ static bool is_access_to_paths_allowed(
+>  			}
+>  			break;
+>  		}
+> -		parent_dentry = walker_path.dentry->d_parent;
+> -		walker_path.dentry = parent_dentry;
+> +		if (!pathwalk_ref) {
+> +			parent_dentry = walker_path.dentry->d_parent;
+> +
+> +			rule = find_rule_rcu(domain, parent_dentry);
+> +			if (read_seqretry(&rename_lock, rename_seqcount)) {
+> +				pathwalk_ref = true;
+> +				goto restart_pathwalk;
+> +			} else {
+> +				walker_path.dentry = parent_dentry;
+> +			}
+> +		} else {
+> +			parent_dentry = dget_parent(walker_path.dentry);
+> +			dput(walker_path.dentry);
+> +			walker_path.dentry = parent_dentry;
+> +			rule = find_rule_rcu(domain, walker_path.dentry);
+> +		}
+>  	}
+>  
+> +	if (pathwalk_ref)
+> +		path_put(&walker_path);
+> +
+>  	rcu_read_unlock();
+>  
+>  	if (!allowed_parent1) {
+> @@ -1040,22 +1082,55 @@ static bool collect_domain_accesses(
+>  {
+>  	unsigned long access_dom;
+>  	bool ret = false;
+> +	bool pathwalk_ref = false;
+> +	unsigned int rename_seqcount;
+> +	const struct landlock_rule *rule;
+> +	struct dentry *parent_dentry;
+>  
+>  	if (WARN_ON_ONCE(!domain || !mnt_root || !dir || !layer_masks_dom))
+>  		return true;
+>  	if (is_nouser_or_private(dir))
+>  		return true;
+>  
+> +	rcu_read_lock();
+> +
+> +restart_pathwalk:
+>  	access_dom = landlock_init_layer_masks(domain, LANDLOCK_MASK_ACCESS_FS,
+>  					       layer_masks_dom,
+>  					       LANDLOCK_KEY_INODE);
+>  
+> -	rcu_read_lock();
+> +	/*
+> +	 * Attempt to do a pathwalk without taking dentry references first, but
+> +	 * if any rename happens while we are doing this, give up and do a walk
+> +	 * with dget_parent instead.  This prevents wrong denials in the
+> +	 * presence of a move followed by an immediate rmdir of the old parent,
+> +	 * where even when both the original and the new parent has allow
+> +	 * rules, we might still hit a negative dentry (the deleted old parent)
+> +	 * and being unable to find either rules.
+> +	 */
+> +
+> +	if (!pathwalk_ref) {
+> +		rename_seqcount = read_seqbegin(&rename_lock);
+> +		if (rename_seqcount % 2 == 1) {
+> +			pathwalk_ref = true;
+> +			dget(dir);
+> +		}
+> +	} else {
+> +		dget(dir);
+> +	}
+> +	rule = find_rule_rcu(domain, dir);
+> +	/*
+> +	 * We don't need to check rename_seqcount here because we haven't
+> +	 * followed any d_parent yet, and the d_inode of the path being
+> +	 * accessed can't change under us as we have ref on path.dentry.  But
+> +	 * once we start walking up the path, we need to check the seqcount to
+> +	 * make sure the rule we got isn't based on a wrong/changing/negative
+> +	 * dentry.
+> +	 */
+>  
+>  	while (true) {
+>  		/* Gets all layers allowing all domain accesses. */
+> -		if (landlock_unmask_layers(find_rule_rcu(domain, dir), access_dom,
+> -					   layer_masks_dom,
+> +		if (landlock_unmask_layers(rule, access_dom, layer_masks_dom,
+>  					   ARRAY_SIZE(*layer_masks_dom))) {
+>  			/*
+>  			 * Stops when all handled accesses are allowed by at
+> @@ -1069,9 +1144,21 @@ static bool collect_domain_accesses(
+>  		if (dir == mnt_root || WARN_ON_ONCE(IS_ROOT(dir)))
+>  			break;
+>  
+> -		dir = dir->d_parent;
+> +		if (!pathwalk_ref) {
+> +			parent_dentry = dir->d_parent;
+> +			rule = find_rule_rcu(domain, dir);
+> +			if (read_seqretry(&rename_lock, rename_seqcount)) {
+> +				pathwalk_ref = true;
+> +				goto restart_pathwalk;
+> +			} else {
+> +				dir = parent_dentry;
+> +			}
+> +		}
 
-[ Upstream commit 5ea45f54c8d6ca2a95b7bd450ee9eb253310bfd3 ]
+Forgot else branch here
 
-This change implements the Rock Ridge TF entry LONG_FORM bit, which uses
-the ISO 9660 17-byte date format (up to year 9999, with 10ms precision)
-instead of the 7-byte date format (up to year 2155, with 1s precision).
-
-Previously the LONG_FORM bit was ignored; and isofs would entirely
-misinterpret the date as the wrong format, resulting in garbage
-timestamps on the filesystem.
-
-The Y2038 issue in iso_date() is fixed by returning a struct timespec64
-instead of an int.
-
-parse_rock_ridge_inode_internal() is fixed so it does proper bounds
-checks of the TF entry timestamps.
-
-Signed-off-by: Jonas 'Sortie' Termansen <sortie@maxsi.org>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Link: https://patch.msgid.link/20250411145022.2292255-1-sortie@maxsi.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-**YES** This commit should be backported to stable kernel trees. Here's
-my detailed analysis: ## Analysis of the Commit ### 1. **Fixes Critical
-Date/Time Issues** The commit addresses **two major year rollover
-problems**: - **Y2038 Issue**: The old `iso_date()` function returned
-`int` (32-bit), limiting dates to January 19, 2038 - **Y2156 Issue**:
-Rock Ridge TF entries using 7-byte format are limited to year 2155 (255
-+ 1900) These are **fundamental correctness issues** that affect real
-users accessing CD/DVD filesystems. ### 2. **Concrete Bug Fixes**
-**Before the fix:** ```c int iso_date(u8 *p, int flag) // Returns 32-bit
-int - Y2038 problem ``` **After the fix:** ```c struct timespec64
-iso_date(u8 *p, int flags) // Returns 64-bit timespec - Y2038 safe ```
-**Key improvements:** - **LONG_FORM support**: Previously ignored
-`TF_LONG_FORM` bit, causing "garbage timestamps" - **Proper bounds
-checking**: Validates timestamp entry sizes before processing -
-**Extended date range**: 17-byte format supports years up to 9999 vs
-2155 ### 3. **Meets Stable Tree Criteria** **✓ Important Bug Fix**:
-Fixes user-visible timestamp corruption **✓ Small and Contained**:
-Changes limited to isofs timestamp handling **✓ Low Regression Risk**: -
-Doesn't change filesystem on-disk format - Only affects timestamp
-interpretation, not filesystem structure - Maintains backward
-compatibility **✓ No Architectural Changes**: Internal timestamp
-processing only ### 4. **Critical Code Analysis** **fs/isofs/rock.c
-changes** show proper bounds checking: ```c // NEW: Proper validation
-before accessing timestamp data if ((rr->u.TF.flags & TF_CREATE) && size
-<= slen) { inode_set_ctime_to_ts(inode, iso_date(rr->u.TF.data + size
-capability_test capability_test.c f2fs_folio_analysis.md
-ipv4_multipath_analysis.md ipv6_route_allocation_rcu_analysis.md
-ixgbe_e610_set_phys_id_analysis.md linux lpfc_timeout_analysis.md
-mac80211_mlo_mbssid_analysis.md pfcp_driver_historical_analysis.md
-rtl_bb_delay_analysis.md rtw89_mlo_analysis.md
-tcp_multipath_load_balance_analysis.md test_unaligned_diff
-test_unaligned_diff.c type_size_check type_size_check.c
-veth_driver_analysis.md wifi_mlo_mbssid_tx_link_id_analysis.md cnt++,
-flags)); slen -= size; } ``` **fs/isofs/util.c changes** add long-form
-timestamp support: ```c if (flags & ISO_DATE_LONG_FORM) { // 17-byte
-format: YYYY MM DD HH MM SS with nanosecond precision year = (p[0] -
-'0') capability_test capability_test.c f2fs_folio_analysis.md
-ipv4_multipath_analysis.md ipv6_route_allocation_rcu_analysis.md
-ixgbe_e610_set_phys_id_analysis.md linux lpfc_timeout_analysis.md
-mac80211_mlo_mbssid_analysis.md pfcp_driver_historical_analysis.md
-rtl_bb_delay_analysis.md rtw89_mlo_analysis.md
-tcp_multipath_load_balance_analysis.md test_unaligned_diff
-test_unaligned_diff.c type_size_check type_size_check.c
-veth_driver_analysis.md wifi_mlo_mbssid_tx_link_id_analysis.md 1000 +
-(p[1] - '0') capability_test capability_test.c f2fs_folio_analysis.md
-ipv4_multipath_analysis.md ipv6_route_allocation_rcu_analysis.md
-ixgbe_e610_set_phys_id_analysis.md linux lpfc_timeout_analysis.md
-mac80211_mlo_mbssid_analysis.md pfcp_driver_historical_analysis.md
-rtl_bb_delay_analysis.md rtw89_mlo_analysis.md
-tcp_multipath_load_balance_analysis.md test_unaligned_diff
-test_unaligned_diff.c type_size_check type_size_check.c
-veth_driver_analysis.md wifi_mlo_mbssid_tx_link_id_analysis.md 100 +
-(p[2] - '0') capability_test capability_test.c f2fs_folio_analysis.md
-ipv4_multipath_analysis.md ipv6_route_allocation_rcu_analysis.md
-ixgbe_e610_set_phys_id_analysis.md linux lpfc_timeout_analysis.md
-mac80211_mlo_mbssid_analysis.md pfcp_driver_historical_analysis.md
-rtl_bb_delay_analysis.md rtw89_mlo_analysis.md
-tcp_multipath_load_balance_analysis.md test_unaligned_diff
-test_unaligned_diff.c type_size_check type_size_check.c
-veth_driver_analysis.md wifi_mlo_mbssid_tx_link_id_analysis.md 10 +
-(p[3] - '0') - 1900; // ... full precision parsing ts.tv_nsec = ((p[14]
-- '0') capability_test capability_test.c f2fs_folio_analysis.md
-ipv4_multipath_analysis.md ipv6_route_allocation_rcu_analysis.md
-ixgbe_e610_set_phys_id_analysis.md linux lpfc_timeout_analysis.md
-mac80211_mlo_mbssid_analysis.md pfcp_driver_historical_analysis.md
-rtl_bb_delay_analysis.md rtw89_mlo_analysis.md
-tcp_multipath_load_balance_analysis.md test_unaligned_diff
-test_unaligned_diff.c type_size_check type_size_check.c
-veth_driver_analysis.md wifi_mlo_mbssid_tx_link_id_analysis.md 10 +
-(p[15] - '0')) capability_test capability_test.c f2fs_folio_analysis.md
-ipv4_multipath_analysis.md ipv6_route_allocation_rcu_analysis.md
-ixgbe_e610_set_phys_id_analysis.md linux lpfc_timeout_analysis.md
-mac80211_mlo_mbssid_analysis.md pfcp_driver_historical_analysis.md
-rtl_bb_delay_analysis.md rtw89_mlo_analysis.md
-tcp_multipath_load_balance_analysis.md test_unaligned_diff
-test_unaligned_diff.c type_size_check type_size_check.c
-veth_driver_analysis.md wifi_mlo_mbssid_tx_link_id_analysis.md 10000000;
-} ``` ### 5. **Comparison with Historical Examples** This commit closely
-matches **Similar Commit #1** (marked YES), which also: - Fixed isofs
-timestamp range issues - Used small, targeted changes - Included
-explicit stable tree mention - Changed data types for Y2038
-compatibility ### 6. **Real-World Impact** Users mounting CD/DVD images
-with: - Timestamps after 2038 (increasingly common) - Rock Ridge
-extensions using long-form timestamps - Files created after 2155 with
-7-byte timestamps Currently experience **corrupted or garbage
-timestamps**, which this commit fixes. ### 7. **Risk Assessment** **Very
-Low Risk:** - Changes internal timestamp parsing only - Maintains
-compatibility with existing CD/DVD images - Adds bounds checking
-(improves security) - No changes to filesystem mounting/unmounting logic
-- isofs is a mature, stable read-only filesystem **No API/ABI Changes**:
-All changes are internal to the isofs implementation. ### Conclusion
-This commit fixes user-visible bugs (garbage timestamps) in a mature
-filesystem subsystem with minimal risk. The Y2038/Y2156 fixes are
-exactly the type of important correctness issues that stable trees
-should address. The changes are well-contained, properly tested, and
-solve real problems that users will encounter.
-
- fs/isofs/inode.c |  7 +++++--
- fs/isofs/isofs.h |  4 +++-
- fs/isofs/rock.c  | 40 ++++++++++++++++++++++-----------------
- fs/isofs/rock.h  |  6 +-----
- fs/isofs/util.c  | 49 +++++++++++++++++++++++++++++++-----------------
- 5 files changed, 64 insertions(+), 42 deletions(-)
-
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index 47038e6608123..d5da9817df9b3 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -1275,6 +1275,7 @@ static int isofs_read_inode(struct inode *inode, int relocated)
- 	unsigned long offset;
- 	struct iso_inode_info *ei = ISOFS_I(inode);
- 	int ret = -EIO;
-+	struct timespec64 ts;
- 
- 	block = ei->i_iget5_block;
- 	bh = sb_bread(inode->i_sb, block);
-@@ -1387,8 +1388,10 @@ static int isofs_read_inode(struct inode *inode, int relocated)
- 			inode->i_ino, de->flags[-high_sierra]);
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 6dff5fb6b181..885121b1beef 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -1153,6 +1153,11 @@ static bool collect_domain_accesses(
+ 			} else {
+ 				dir = parent_dentry;
+ 			}
++		} else {
++			parent_dentry = dget_parent(dir);
++			dput(dir);
++			dir = parent_dentry;
++			rule = find_rule_rcu(domain, dir);
+ 		}
  	}
- #endif
--	inode_set_mtime_to_ts(inode,
--			      inode_set_atime_to_ts(inode, inode_set_ctime(inode, iso_date(de->date, high_sierra), 0)));
-+	ts = iso_date(de->date, high_sierra ? ISO_DATE_HIGH_SIERRA : 0);
-+	inode_set_ctime_to_ts(inode, ts);
-+	inode_set_atime_to_ts(inode, ts);
-+	inode_set_mtime_to_ts(inode, ts);
  
- 	ei->i_first_extent = (isonum_733(de->extent) +
- 			isonum_711(de->ext_attr_length));
-diff --git a/fs/isofs/isofs.h b/fs/isofs/isofs.h
-index 2d55207c9a990..5065558375333 100644
---- a/fs/isofs/isofs.h
-+++ b/fs/isofs/isofs.h
-@@ -106,7 +106,9 @@ static inline unsigned int isonum_733(u8 *p)
- 	/* Ignore bigendian datum due to broken mastering programs */
- 	return get_unaligned_le32(p);
- }
--extern int iso_date(u8 *, int);
-+#define ISO_DATE_HIGH_SIERRA (1 << 0)
-+#define ISO_DATE_LONG_FORM (1 << 1)
-+struct timespec64 iso_date(u8 *p, int flags);
- 
- struct inode;		/* To make gcc happy */
- 
-diff --git a/fs/isofs/rock.c b/fs/isofs/rock.c
-index dbf911126e610..576498245b9d7 100644
---- a/fs/isofs/rock.c
-+++ b/fs/isofs/rock.c
-@@ -412,7 +412,12 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
- 				}
- 			}
- 			break;
--		case SIG('T', 'F'):
-+		case SIG('T', 'F'): {
-+			int flags, size, slen;
-+
-+			flags = rr->u.TF.flags & TF_LONG_FORM ? ISO_DATE_LONG_FORM : 0;
-+			size = rr->u.TF.flags & TF_LONG_FORM ? 17 : 7;
-+			slen = rr->len - 5;
- 			/*
- 			 * Some RRIP writers incorrectly place ctime in the
- 			 * TF_CREATE field. Try to handle this correctly for
-@@ -420,27 +425,28 @@ parse_rock_ridge_inode_internal(struct iso_directory_record *de,
- 			 */
- 			/* Rock ridge never appears on a High Sierra disk */
- 			cnt = 0;
--			if (rr->u.TF.flags & TF_CREATE) {
--				inode_set_ctime(inode,
--						iso_date(rr->u.TF.times[cnt++].time, 0),
--						0);
-+			if ((rr->u.TF.flags & TF_CREATE) && size <= slen) {
-+				inode_set_ctime_to_ts(inode,
-+						iso_date(rr->u.TF.data + size * cnt++, flags));
-+				slen -= size;
- 			}
--			if (rr->u.TF.flags & TF_MODIFY) {
--				inode_set_mtime(inode,
--						iso_date(rr->u.TF.times[cnt++].time, 0),
--						0);
-+			if ((rr->u.TF.flags & TF_MODIFY) && size <= slen) {
-+				inode_set_mtime_to_ts(inode,
-+						iso_date(rr->u.TF.data + size * cnt++, flags));
-+				slen -= size;
- 			}
--			if (rr->u.TF.flags & TF_ACCESS) {
--				inode_set_atime(inode,
--						iso_date(rr->u.TF.times[cnt++].time, 0),
--						0);
-+			if ((rr->u.TF.flags & TF_ACCESS) && size <= slen) {
-+				inode_set_atime_to_ts(inode,
-+						iso_date(rr->u.TF.data + size * cnt++, flags));
-+				slen -= size;
- 			}
--			if (rr->u.TF.flags & TF_ATTRIBUTES) {
--				inode_set_ctime(inode,
--						iso_date(rr->u.TF.times[cnt++].time, 0),
--						0);
-+			if ((rr->u.TF.flags & TF_ATTRIBUTES) && size <= slen) {
-+				inode_set_ctime_to_ts(inode,
-+						iso_date(rr->u.TF.data + size * cnt++, flags));
-+				slen -= size;
- 			}
- 			break;
-+		}
- 		case SIG('S', 'L'):
- 			{
- 				int slen;
-diff --git a/fs/isofs/rock.h b/fs/isofs/rock.h
-index 7755e587f7785..c0856fa9bb6a4 100644
---- a/fs/isofs/rock.h
-+++ b/fs/isofs/rock.h
-@@ -65,13 +65,9 @@ struct RR_PL_s {
- 	__u8 location[8];
- };
- 
--struct stamp {
--	__u8 time[7];		/* actually 6 unsigned, 1 signed */
--} __attribute__ ((packed));
--
- struct RR_TF_s {
- 	__u8 flags;
--	struct stamp times[];	/* Variable number of these beasts */
-+	__u8 data[];
- } __attribute__ ((packed));
- 
- /* Linux-specific extension for transparent decompression */
-diff --git a/fs/isofs/util.c b/fs/isofs/util.c
-index e88dba7216618..42f479da0b282 100644
---- a/fs/isofs/util.c
-+++ b/fs/isofs/util.c
-@@ -16,29 +16,44 @@
-  * to GMT.  Thus  we should always be correct.
-  */
- 
--int iso_date(u8 *p, int flag)
-+struct timespec64 iso_date(u8 *p, int flags)
- {
- 	int year, month, day, hour, minute, second, tz;
--	int crtime;
-+	struct timespec64 ts;
-+
-+	if (flags & ISO_DATE_LONG_FORM) {
-+		year = (p[0] - '0') * 1000 +
-+		       (p[1] - '0') * 100 +
-+		       (p[2] - '0') * 10 +
-+		       (p[3] - '0') - 1900;
-+		month = ((p[4] - '0') * 10 + (p[5] - '0'));
-+		day = ((p[6] - '0') * 10 + (p[7] - '0'));
-+		hour = ((p[8] - '0') * 10 + (p[9] - '0'));
-+		minute = ((p[10] - '0') * 10 + (p[11] - '0'));
-+		second = ((p[12] - '0') * 10 + (p[13] - '0'));
-+		ts.tv_nsec = ((p[14] - '0') * 10 + (p[15] - '0')) * 10000000;
-+		tz = p[16];
-+	} else {
-+		year = p[0];
-+		month = p[1];
-+		day = p[2];
-+		hour = p[3];
-+		minute = p[4];
-+		second = p[5];
-+		ts.tv_nsec = 0;
-+		/* High sierra has no time zone */
-+		tz = flags & ISO_DATE_HIGH_SIERRA ? 0 : p[6];
-+	}
- 
--	year = p[0];
--	month = p[1];
--	day = p[2];
--	hour = p[3];
--	minute = p[4];
--	second = p[5];
--	if (flag == 0) tz = p[6]; /* High sierra has no time zone */
--	else tz = 0;
--	
- 	if (year < 0) {
--		crtime = 0;
-+		ts.tv_sec = 0;
- 	} else {
--		crtime = mktime64(year+1900, month, day, hour, minute, second);
-+		ts.tv_sec = mktime64(year+1900, month, day, hour, minute, second);
- 
- 		/* sign extend */
- 		if (tz & 0x80)
- 			tz |= (-1 << 8);
--		
-+
- 		/* 
- 		 * The timezone offset is unreliable on some disks,
- 		 * so we make a sanity check.  In no case is it ever
-@@ -65,7 +80,7 @@ int iso_date(u8 *p, int flag)
- 		 * for pointing out the sign error.
- 		 */
- 		if (-52 <= tz && tz <= 52)
--			crtime -= tz * 15 * 60;
-+			ts.tv_sec -= tz * 15 * 60;
- 	}
--	return crtime;
--}		
-+	return ts;
-+}
--- 
-2.39.5
+
+>  	}
+>  
+> +	if (pathwalk_ref)
+> +		dput(dir);
+> +
+>  	rcu_read_unlock();
+>  
+>  	return ret;
 
 
