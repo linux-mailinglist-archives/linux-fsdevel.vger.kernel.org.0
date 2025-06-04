@@ -1,65 +1,54 @@
-Return-Path: <linux-fsdevel+bounces-50587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50589-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A69EFACD897
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 09:30:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC148ACD8A1
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 09:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9CD3A48B3
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 07:30:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A95CD175010
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 07:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE34230BC9;
-	Wed,  4 Jun 2025 07:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 815671F237D;
+	Wed,  4 Jun 2025 07:36:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TL/eaE3Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSastmV3"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D9D2C327E;
-	Wed,  4 Jun 2025 07:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E358E433B3
+	for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jun 2025 07:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749022225; cv=none; b=fxqghrdj97sFIjkf4cNhtvfYFg1y+BjwyfVEUDYkH1QNJIUFM3xYIIRjRjpZEoDIu6CfbMFzXdQfc+LrCpuXQ1qILQpcNfywV3rgzasU02Kg/ocaKU0so7HF7BphmKUrnejr0YEMt1n20WFsMV7WjX/mHPeoo8wtAA4zWCGVvPM=
+	t=1749022596; cv=none; b=JUWT0P5cy508OnxXyZlnfvd21l5sh5KLxaUo4UktwzEh3q5SpCCJA4X9FWeaeGoDqQjk1/M87vSqS1NVR+RNe3+sbHVhkL8VqC71KaA9321eYtVhfy5AkgzFR41Dp34L4nHTRG+hCHRwYrILC/egWjvkK6BREfZGluA1JR1KDhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749022225; c=relaxed/simple;
-	bh=nYGlvotog1vBEZHxftoO41s8QgqQurYnOLoxy9lvaZA=;
+	s=arc-20240116; t=1749022596; c=relaxed/simple;
+	bh=EbkUH3R6rCHG/BS5wQimzTFeo0Ujd9YHoW9KrKFHATM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRaKlpBzehI/DziGQrGajVT225Y5FrdeTTh1llSfEPcx1LNQywdaCjdbF06qO9BuGICo3MMTKuK1DrIvNgxSv5f90kKOTpcmEEQAic5+UFpI7FAE1Ai48Lk8kmYLNiMM3bnaWuHVjZt0phLkQ+rPMKt2nKssnBLnueePoB6E4Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TL/eaE3Z; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
-	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=jhFqGA7Qdy4GBuqDKCOMHvMHX8BdS/uyheN/8znQjlg=; b=TL/eaE3ZcUcLPhOgO6Sv3GLqLm
-	OAGzgeKIlFm/MRwa3NddF0wG62CW5xcYvAROVzCOu5649e/gakMhkcBoGUNfPkq2C2BCUu9qR12wr
-	ztQ1Ld0+yJYSmcYLKowmJ3yb680cSFdx1eCSlVwKRjJ7ZoP5VwTXgDVx4j3NRxp/mncV1RnIONLsu
-	oZPk5yxnACReiuOrBt4V95rMS1NG8uVtAq04cLxK0ZihYlttXniWdQxAl1kK6juVaX2Mv66WqyfJu
-	dPgJ0efIH7IoNAfgZEv3Rq3ajnz7SYQHB9jQ6sGyQSHd7H3d+j5rFn4WRatwKGmrKfq2J/KzgnDCs
-	ihWQFZng==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uMiZn-0000000ClsW-0GJZ;
-	Wed, 04 Jun 2025 07:30:19 +0000
-Date: Wed, 4 Jun 2025 00:30:19 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Anuj gupta <anuj1072538@gmail.com>
-Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
-	martin.petersen@oracle.com, asml.silence@gmail.com,
-	brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
-	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
-	linux-block@vger.kernel.org, gost.dev@samsung.com,
-	linux-scsi@vger.kernel.org, vishak.g@samsung.com,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v11 00/10] Read/Write with meta/integrity
-Message-ID: <aD_2C9-KKnssYXri@infradead.org>
-References: <CGME20241128113036epcas5p397ba228852b72fff671fe695c322a3ef@epcas5p3.samsung.com>
- <20241128112240.8867-1-anuj20.g@samsung.com>
- <aD_qN7pDeYXz10NU@infradead.org>
- <CACzX3As_FH1tMgZHMoCJMPhnuB__oh7KBzd9Z_JLtg2CLFZ4rA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bi4uBPLwvXSPLyJcsnx4NkFCbblobuo5LFecSm+Q+PRvzkBS9T2i8XrZKfRWEtsetW8OXZrjZtnqyWhorlSLMh7NJFho/9wLt3Qp/rl7MipQdvlEIyQWK1/szlcsnODD0ITJ+64YVAKKoKLITTqubyZ1AuOZwvwXidhPSpE5T/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RSastmV3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E488C4CEE7;
+	Wed,  4 Jun 2025 07:36:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749022595;
+	bh=EbkUH3R6rCHG/BS5wQimzTFeo0Ujd9YHoW9KrKFHATM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RSastmV3x+hm4/svh7lrFH1X3Hpx8S9DRmNk+p2+3fdEn+2j3dKmRL76Bc4MiDzkt
+	 saHZ4xxWXcEZr4rHAM/JWr0EdE6T/8kZFxsCF5EanWAq4rbevw40W+5TQ3XQlM3AiK
+	 rCrv5MNQ4DGvmceXkM6YfqKFhe0KaFct4z8nkw+nQye+z6EjDMDUncrYruVhOe5kkC
+	 zp26LdIjMv8OyLtp+bdks6BdwZoOekvSNS6nhOu3mlHyr0EwepMf0793Wz38Uo0ndd
+	 Zww3xI1JC3oVqFuvQEKo6wtspowpjerp7z0YuTcPFxr1cqTcfA2n+kxXEcntn7aWnQ
+	 Fuc1p8mEneftw==
+Date: Wed, 4 Jun 2025 09:36:31 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org, 
+	"Eric W. Biederman" <ebiederm@xmission.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC] separate the internal mount flags from the rest
+Message-ID: <20250604-trott-sekunde-3faf975af789@brauner>
+References: <20250603204704.GB299672@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -68,25 +57,69 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACzX3As_FH1tMgZHMoCJMPhnuB__oh7KBzd9Z_JLtg2CLFZ4rA@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20250603204704.GB299672@ZenIV>
 
-On Wed, Jun 04, 2025 at 12:45:44PM +0530, Anuj gupta wrote:
-> The fio plumbing I had done for testing was pretty hacky (e.g., using
-> NVMe ioctls directly to query PI capabilities), so I didn’t send it
-> upstream. I plan to submit a liburing test. While working on it, I
-> realized that writing generic userspace tests is tricky without a way to
-> query the device’s integrity capabilities. The current sysfs interface
-> is limited — it doesn't expose key fields like pi_size or metadata_size,
-> which are necessary to correctly prepare protection information in
-> userspace.
+On Tue, Jun 03, 2025 at 09:47:04PM +0100, Al Viro wrote:
+> 	Currently we use ->mnt_flags for all kinds of things, including
+> the ones only fs/{namespace,pnode}.c care about.
 > 
-> That’s what motivated the ioctl RFC I sent earlier — to make it feasible
-> for userspace to construct metadata buffers correctly. Once it gets
-> settled, I can write some tests using it. Do you see this differently?
+> 	That wouldn't be a problem if not for the locking.  ->mnt_flags is
+> protected by mount_lock.  All writers MUST grab that.  Having lockless
+> readers is unsurprising - after all, for something like noexec we want
+> the current state of mount, whatever it happens to be.  If userland
+> remounts something noexec and that races with execve(2), there's nothing
+> to be done - it is a race, but not the kernel one.
+> 
+> 	However, for a bunch of flags we rely upon the fact that all
+> changes in one of those are always done under namespace_sem (exclusive).
+> It's not a lockless read - we do depend upon namespace_sem (shared) being
+> sufficient to stabilize those particular bits.	MNT_SHARED is one such.
+> Note that this flag is a part of propagation graph representation and
+> namespace_sem is what protects the entire thing, so setting or clearing
+> it under mount_lock alone would be a very bad idea.
+> 
+> Since MNT_SHARED sits in ->mnt_flags, we have to take mount_lock to set or
+> clear it, leading to places like this:
+>         if (IS_MNT_SHARED(from)) {
+> 		to->mnt_group_id = from->mnt_group_id;
+> 		list_add(&to->mnt_share, &from->mnt_share);
+> 		lock_mount_hash();
+> 		set_mnt_shared(to);
+> 		unlock_mount_hash();
+> 	}
+> Non-empty ->mnt_share on a mount without MNT_SHARED would be a hard bug;
+> these changes belong together.  Incidentally, lock_mount_hash() is an
+> overkill here - read_seqlock_excl(&mount_lock) would be better...
+> 
+> The rules would be easier to follow if we took MNT_SHARED, MNT_UNBINDABLE,
+> MNT_MARKED and possibly MNT_LOCKED and MNT_LOCK_* to separate field, protected
+> by namespace_sem alone (MNT_LOCKED - depending upon how the path_parent() mess
+> settles).
 
-Ok, I'll wait for it.  In the meantime I might go ahead with just
-converting the data path in nvme to the new DMA API and handle the
-metadata mapping later.
+Agreed.
+
+> 
+> Yes, it's 4 bytes added into struct mount.  However, this
+>         int mnt_id;                     /* mount identifier, reused */
+> 	u64 mnt_id_unique;              /* mount ID unique until reboot */
+> 	int mnt_group_id;               /* peer group identifier */
+> 	int mnt_expiry_mark;            /* true if marked for expiry */
+> is preceded and followed by a pointer, so we already have a gap there,
+> _and_ there are other pending changes that kill ->mnt_umounting.  So the
+> size of struct mount won't grow even on 32bit and would actually go down
+> on 64bit.
+
+I'm not at all worried about the size in this case.
+
+> 
+> Objections?  The thing I really want is clear locking rules for that
+> stuff.  Reduced contention on mount_lock and fewer increments of its
+> seqcount component wouldn't hurt either, but that's secondary...
+
+Seems good to me!
+
+> PS: despite being strictly namespace.c-internal, two flags must stay in
+> ->mnt_flags - MNT_DOOMED and MNT_SYNC_UMOUNT - __legitimize_mnt() needs
+
+Sure.
 
