@@ -1,43 +1,43 @@
-Return-Path: <linux-fsdevel+bounces-50568-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50569-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149ACACD590
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 04:26:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD4DFACD58D
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 04:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3C0B3A998F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 02:24:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 030AE17B242
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 02:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7B01F4161;
-	Wed,  4 Jun 2025 02:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E3F71F6679;
+	Wed,  4 Jun 2025 02:22:00 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDF914B086;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904401DE4E0;
 	Wed,  4 Jun 2025 02:21:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749003718; cv=none; b=CG/0T/UTc26oGBw0Q+EEQjb6l/dwcUZ2y4s6pm6uPtgT2ddkQ79t9h0HfLBI2HoJZjQACk8Ewl10cmKuz4KnN7N14wglmTVfCOZAbZNjGlboSHiDfwU2S5ukkAoytTjnzzEvFJmlOLrIT7EaXwKhFa19OuBokHsK8FYp1kDS2/4=
+	t=1749003719; cv=none; b=PQelFu9+p9qggfwRp6j1fcegsRV5JukrAGZ/qGmooFs7DXWAX9SVbs1cP2f33KArSGyYbCttTTLLSxV7f8zvWqOpFjTs6GzPZ1rnAwsot4UVaRn0xM3iAlxiu2/puoIp4agEgH7yaXfqEd9ymT3szgtDglXY9fXIDPm02Gb2UaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749003718; c=relaxed/simple;
-	bh=rDppLA/SF3vUxPVbEsb/16zPLRIl8jGmaswIiEIRTiM=;
+	s=arc-20240116; t=1749003719; c=relaxed/simple;
+	bh=ctqXTNBZgtcIpZpzjMEuvc2QTfu0aH4V1HJ8hp1WPaM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lyqtU0j7qwWBj/H7D0HFju3MG9cfE7kCLlKEf1CtNECIeLfKfhttHMSn2BGfyQaLh23lCsQsdUJS7YYb6GDPlyYx3sAE7C3ZzmXTRNFvN9qujun6B2Z8WEomyevz0W5W+ZGX7S2nbxtCX8cNbGlkQSDQt9Uo+K3k+OVs3FpQyxw=
+	 MIME-Version; b=nqw07vdJyc8QGzckto0Bn2P9TAyFuNh4mNFpSafOEzeQMm+IJQj56Zb3tN30dxNHMGPVp3x8j8JTCOBuZwqGWsZs8ZdeyQOK53vHcdpensC8is4yCREWptSZdRmqF0L4+jGtIJ3bTy0vTIxmiuKO/+Ux3//SFio3/ivj1kJzg/U=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bBrtk1sLMzYQvMH;
-	Wed,  4 Jun 2025 10:21:50 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bBrtl0Y7JzYQvQC;
+	Wed,  4 Jun 2025 10:21:51 +0800 (CST)
 Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 4D7361A19DD;
-	Wed,  4 Jun 2025 10:21:49 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTP id 1D7CA1A11BA;
+	Wed,  4 Jun 2025 10:21:50 +0800 (CST)
 Received: from huaweicloud.com (unknown [10.175.112.188])
-	by APP4 (Coremail) with SMTP id gCh0CgCnCl+nrT9oedfBOQ--.14997S12;
-	Wed, 04 Jun 2025 10:21:48 +0800 (CST)
+	by APP4 (Coremail) with SMTP id gCh0CgCnCl+nrT9oedfBOQ--.14997S13;
+	Wed, 04 Jun 2025 10:21:49 +0800 (CST)
 From: Zhang Yi <yi.zhang@huaweicloud.com>
 To: linux-fsdevel@vger.kernel.org,
 	linux-ext4@vger.kernel.org,
@@ -61,9 +61,9 @@ Cc: linux-xfs@vger.kernel.org,
 	chengzhihao1@huawei.com,
 	yukuai3@huawei.com,
 	yangerkun@huawei.com
-Subject: [PATCH 08/10] block: factor out common part in blkdev_fallocate()
-Date: Wed,  4 Jun 2025 10:08:48 +0800
-Message-ID: <20250604020850.1304633-9-yi.zhang@huaweicloud.com>
+Subject: [PATCH 09/10] block: add FALLOC_FL_WRITE_ZEROES support
+Date: Wed,  4 Jun 2025 10:08:49 +0800
+Message-ID: <20250604020850.1304633-10-yi.zhang@huaweicloud.com>
 X-Mailer: git-send-email 2.46.1
 In-Reply-To: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
 References: <20250604020850.1304633-1-yi.zhang@huaweicloud.com>
@@ -74,10 +74,10 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCnCl+nrT9oedfBOQ--.14997S12
-X-Coremail-Antispam: 1UD129KBjvJXoW7tF4fAr45Cw4fGFWxtw1fWFg_yoW8tFyDpr
-	W3W3Z8GFZYg34DWF1fWF4xu345ta1Utr45uay2qwn3u3yIyr97KrnFkr1rWrWUKFy8Aw45
-	WFWa9a429r17C3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+X-CM-TRANSID:gCh0CgCnCl+nrT9oedfBOQ--.14997S13
+X-Coremail-Antispam: 1UD129KBjvJXoW7Zry7Xw4DWw48CryrJFy3twb_yoW8Wr43pF
+	45JFyFgFWFg3s3GF1rCa1kWrn5Za1kJrWrC3yIkr1F9w47Jrn7Kr98WF98tFyDJFyUAw4k
+	X3ya9ryDuF17ArDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
 	9KBjDU0xBIdaVrnRJUUUmS14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
 	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
 	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
@@ -96,76 +96,51 @@ X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
 From: Zhang Yi <yi.zhang@huawei.com>
 
-Only the flags passed to blkdev_issue_zeroout() differ among the two
-zeroing branches in blkdev_fallocate(). Therefore, do cleanup by
-factoring them out.
+Add support for FALLOC_FL_WRITE_ZEROES, if the block device enables the
+unmap write zeroes operation, it will issue a write zeroes command.
 
 Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- block/fops.c | 32 ++++++++++++++------------------
- 1 file changed, 14 insertions(+), 18 deletions(-)
+ block/fops.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/block/fops.c b/block/fops.c
-index 1309861d4c2c..e1c921549d28 100644
+index e1c921549d28..050c16f5974a 100644
 --- a/block/fops.c
 +++ b/block/fops.c
-@@ -850,6 +850,7 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 	struct block_device *bdev = I_BDEV(inode);
- 	loff_t end = start + len - 1;
- 	loff_t isize;
-+	unsigned int flags;
- 	int error;
+@@ -841,7 +841,7 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
  
+ #define	BLKDEV_FALLOC_FL_SUPPORTED					\
+ 		(FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |		\
+-		 FALLOC_FL_ZERO_RANGE)
++		 FALLOC_FL_ZERO_RANGE | FALLOC_FL_WRITE_ZEROES)
+ 
+ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+ 			     loff_t len)
+@@ -856,6 +856,13 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
  	/* Fail if we don't recognize the flags. */
-@@ -877,34 +878,29 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
- 	inode_lock(inode);
- 	filemap_invalidate_lock(inode->i_mapping);
+ 	if (mode & ~BLKDEV_FALLOC_FL_SUPPORTED)
+ 		return -EOPNOTSUPP;
++	/*
++	 * Don't allow writing zeroes if the device does not enable the
++	 * unmap write zeroes operation.
++	 */
++	if (!bdev_write_zeroes_unmap(bdev) &&
++	    (mode & FALLOC_FL_WRITE_ZEROES))
++		return -EOPNOTSUPP;
  
--	/*
--	 * Invalidate the page cache, including dirty pages, for valid
--	 * de-allocate mode calls to fallocate().
--	 */
- 	switch (mode) {
- 	case FALLOC_FL_ZERO_RANGE:
- 	case FALLOC_FL_ZERO_RANGE | FALLOC_FL_KEEP_SIZE:
--		error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
--		if (error)
--			goto fail;
--
--		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
--					     len >> SECTOR_SHIFT, GFP_KERNEL,
--					     BLKDEV_ZERO_NOUNMAP);
-+		flags = BLKDEV_ZERO_NOUNMAP;
- 		break;
+ 	/* Don't go off the end of the device. */
+ 	isize = bdev_nr_bytes(bdev);
+@@ -886,6 +893,9 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
  	case FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE:
--		error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
--		if (error)
--			goto fail;
--
--		error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
--					     len >> SECTOR_SHIFT, GFP_KERNEL,
--					     BLKDEV_ZERO_NOFALLBACK);
-+		flags = BLKDEV_ZERO_NOFALLBACK;
+ 		flags = BLKDEV_ZERO_NOFALLBACK;
  		break;
++	case FALLOC_FL_WRITE_ZEROES:
++		flags = 0;
++		break;
  	default:
  		error = -EOPNOTSUPP;
-+		goto fail;
- 	}
- 
-+	/*
-+	 * Invalidate the page cache, including dirty pages, for valid
-+	 * de-allocate mode calls to fallocate().
-+	 */
-+	error = truncate_bdev_range(bdev, file_to_blk_mode(file), start, end);
-+	if (error)
-+		goto fail;
-+
-+	error = blkdev_issue_zeroout(bdev, start >> SECTOR_SHIFT,
-+				     len >> SECTOR_SHIFT, GFP_KERNEL, flags);
-  fail:
- 	filemap_invalidate_unlock(inode->i_mapping);
- 	inode_unlock(inode);
+ 		goto fail;
 -- 
 2.46.1
 
