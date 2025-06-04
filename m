@@ -1,122 +1,92 @@
-Return-Path: <linux-fsdevel+bounces-50588-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50587-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6938AACD89A
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 09:31:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69EFACD897
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 09:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F78A188DA86
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 07:31:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B9CD3A48B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jun 2025 07:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E74221F11;
-	Wed,  4 Jun 2025 07:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE34230BC9;
+	Wed,  4 Jun 2025 07:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vGb8k9Wq"
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TL/eaE3Z"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48AB013AD05;
-	Wed,  4 Jun 2025 07:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D9D2C327E;
+	Wed,  4 Jun 2025 07:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749022283; cv=none; b=rn//0a+SWzyxfXo30u+EwKZ72dzG6ChVQtmMRfR9kvTicBrrMln7kedpJ/2cbdD76zexFJgeKTyZxDqX9K71lBGvJYz0LbdJMLpY5vuUw+Nb7cK6LCXFJXpgPHBmvMkFQDSCzrUsUJGbaRavAgupX3FUcCJ1lvaPR+AD9vrw1aU=
+	t=1749022225; cv=none; b=fxqghrdj97sFIjkf4cNhtvfYFg1y+BjwyfVEUDYkH1QNJIUFM3xYIIRjRjpZEoDIu6CfbMFzXdQfc+LrCpuXQ1qILQpcNfywV3rgzasU02Kg/ocaKU0so7HF7BphmKUrnejr0YEMt1n20WFsMV7WjX/mHPeoo8wtAA4zWCGVvPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749022283; c=relaxed/simple;
-	bh=CoUYZg4cbHXIK3YnOrrX6RWNoH7Arv+dVw/7EPD8JQ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q5tGeD9I9xVDoQFn5r+LKLJgfaIgKlnACwWcjMMNThyl3Cxld4sH8TxkSK0TimynMtF7vWxcP5qqlwGh5xZXwXRfvR3FAff2VJMAj61tgD+qZL/OwoQiwHXPuOAQNXuYg9y2vhBTzpzrkvrUNusRH6DhBFKFMtOEQGIoQMi9Maw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vGb8k9Wq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E234EC4CEE7;
-	Wed,  4 Jun 2025 07:31:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749022281;
-	bh=CoUYZg4cbHXIK3YnOrrX6RWNoH7Arv+dVw/7EPD8JQ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vGb8k9Wq4mWOWYluRmLs+xHWkD9PVOjantV9mwXywJoURpAWY0Y2jRWlWj9+Yj6pt
-	 jN0N3CT2fTdBaU4zloJd56/5RV1UX9uPiG6SyOojZCyXYUjaXoUYgvM0m2CPlfCJFI
-	 0AWAk7f0Nt8XSoSLJ3USI9sykqV4eSKZB7hyXs5keplrgQmNuRxiq3chcW6WS6+m4J
-	 EeUnEGGZpP/7uKAs05J7TAuEQHkYWI3G2semklq0gv0I04/t3Sw3RwXG36b8Rilj+Q
-	 7nXZEpZbLIaRA40ba5JKBOFRJq2nOT2Auew+obXpw9ftwW9VFCuGv6JGTSMvKFJTiN
-	 HlZzKVCfKtkEQ==
-Message-ID: <ee8952a0-d0ee-47db-8012-abb2722ae7ef@kernel.org>
-Date: Wed, 4 Jun 2025 16:29:43 +0900
+	s=arc-20240116; t=1749022225; c=relaxed/simple;
+	bh=nYGlvotog1vBEZHxftoO41s8QgqQurYnOLoxy9lvaZA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRaKlpBzehI/DziGQrGajVT225Y5FrdeTTh1llSfEPcx1LNQywdaCjdbF06qO9BuGICo3MMTKuK1DrIvNgxSv5f90kKOTpcmEEQAic5+UFpI7FAE1Ai48Lk8kmYLNiMM3bnaWuHVjZt0phLkQ+rPMKt2nKssnBLnueePoB6E4Bg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TL/eaE3Z; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=jhFqGA7Qdy4GBuqDKCOMHvMHX8BdS/uyheN/8znQjlg=; b=TL/eaE3ZcUcLPhOgO6Sv3GLqLm
+	OAGzgeKIlFm/MRwa3NddF0wG62CW5xcYvAROVzCOu5649e/gakMhkcBoGUNfPkq2C2BCUu9qR12wr
+	ztQ1Ld0+yJYSmcYLKowmJ3yb680cSFdx1eCSlVwKRjJ7ZoP5VwTXgDVx4j3NRxp/mncV1RnIONLsu
+	oZPk5yxnACReiuOrBt4V95rMS1NG8uVtAq04cLxK0ZihYlttXniWdQxAl1kK6juVaX2Mv66WqyfJu
+	dPgJ0efIH7IoNAfgZEv3Rq3ajnz7SYQHB9jQ6sGyQSHd7H3d+j5rFn4WRatwKGmrKfq2J/KzgnDCs
+	ihWQFZng==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uMiZn-0000000ClsW-0GJZ;
+	Wed, 04 Jun 2025 07:30:19 +0000
+Date: Wed, 4 Jun 2025 00:30:19 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Anuj gupta <anuj1072538@gmail.com>
+Cc: Anuj Gupta <anuj20.g@samsung.com>, axboe@kernel.dk, kbusch@kernel.org,
+	martin.petersen@oracle.com, asml.silence@gmail.com,
+	brauner@kernel.org, jack@suse.cz, viro@zeniv.linux.org.uk,
+	io-uring@vger.kernel.org, linux-nvme@lists.infradead.org,
+	linux-block@vger.kernel.org, gost.dev@samsung.com,
+	linux-scsi@vger.kernel.org, vishak.g@samsung.com,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v11 00/10] Read/Write with meta/integrity
+Message-ID: <aD_2C9-KKnssYXri@infradead.org>
+References: <CGME20241128113036epcas5p397ba228852b72fff671fe695c322a3ef@epcas5p3.samsung.com>
+ <20241128112240.8867-1-anuj20.g@samsung.com>
+ <aD_qN7pDeYXz10NU@infradead.org>
+ <CACzX3As_FH1tMgZHMoCJMPhnuB__oh7KBzd9Z_JLtg2CLFZ4rA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [QUESTION] xfs, iomap: Handle writeback errors to prevent silent
- data corruption
-To: James Bottomley <James.Bottomley@HansenPartnership.com>,
- Christoph Hellwig <hch@infradead.org>
-Cc: Yafang Shao <laoar.shao@gmail.com>, Matthew Wilcox <willy@infradead.org>,
- Christian Brauner <brauner@kernel.org>, djwong@kernel.org, cem@kernel.org,
- linux-xfs@vger.kernel.org, Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
- Damien Le Moal <Damien.LeMoal@wdc.com>,
- Sathya Prakash <sathya.prakash@broadcom.com>,
- Sreekanth Reddy <sreekanth.reddy@broadcom.com>,
- Suganath Prabu Subramani <suganath-prabu.subramani@broadcom.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-References: <aD03HeZWLJihqikU@infradead.org>
- <CALOAHbDxgvY7Aozf8H9H2OBedcU1efYBQiEvxMg6pj1+arPETQ@mail.gmail.com>
- <aD5obj2G58bRMFlB@casper.infradead.org>
- <CALOAHbCWra+DskmcWUWJOenTg9EJQfS23Hi-rB1GLYmcRUKf4A@mail.gmail.com>
- <aD5ratf3NF_DUnL-@casper.infradead.org>
- <CALOAHbB_p=rxT2-7bWudKLUgbD7AvNoBsge90VDgQFpakfTbCQ@mail.gmail.com>
- <aD58p4OpY0QhKl3i@infradead.org>
- <e2b4db3d-a282-4c96-b333-8d4698e5a705@kernel.org>
- <CALOAHbA_ttJmOejYJ+rrRdzKav_BPtwxuKwCSAf2dwLZJ1UyZQ@mail.gmail.com>
- <26d6d164-5acd-4f85-a7ac-d01f44fb5a87@kernel.org>
- <aD8Jmmd4Aiy1HElV@infradead.org>
- <abe44d8f2bebe805dd0975be198994c89a100644.camel@HansenPartnership.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <abe44d8f2bebe805dd0975be198994c89a100644.camel@HansenPartnership.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACzX3As_FH1tMgZHMoCJMPhnuB__oh7KBzd9Z_JLtg2CLFZ4rA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 6/3/25 11:57 PM, James Bottomley wrote:
-> On Tue, 2025-06-03 at 07:41 -0700, Christoph Hellwig wrote:
->> [taking this private to discuss the mpt drivers]
->>
->>> Hmmm... DID_SOFT_ERROR... Normally, this is an immediate retry as
->>> this normally is used to indicate that a command is a collateral
->>> abort due to an NCQ error, and per ATA spec, that command should be
->>> retried. However, the *BAD* thing about Broadcom HBAs using this is
->>> that it increments the command retry counter, so if a command ends
->>> up being retried more than 5 times due to other commands failing,
->>> the command runs out of retries and is failed like this. The
->>> command retry counter should *not* be incremented for NCQ
->>> collateral aborts. I tried to fix this, but it is impossible as we
->>> actually do not know if this is a collateral abort or something
->>> else. The HBA events used to handle completion do not allow
->>> differentiation. Waiting on Broadcom to do something about this
->>> (the mpi3mr HBA driver has the same nasty issue).
->>
->> Maybe we should just change the mpt3 sas/mr drivers to use
->> DID_SOFT_ERROR less?  In fact there's not really a whole lot of
->> DID_SOFT_ERROR users otherwise, and there's probably better status
->> codes whatever they are doing can be translated to that do not
->> increment the retry counter.
+On Wed, Jun 04, 2025 at 12:45:44PM +0530, Anuj gupta wrote:
+> The fio plumbing I had done for testing was pretty hacky (e.g., using
+> NVMe ioctls directly to query PI capabilities), so I didn’t send it
+> upstream. I plan to submit a liburing test. While working on it, I
+> realized that writing generic userspace tests is tricky without a way to
+> query the device’s integrity capabilities. The current sysfs interface
+> is limited — it doesn't expose key fields like pi_size or metadata_size,
+> which are necessary to correctly prepare protection information in
+> userspace.
 > 
-> The status code that does that (retry without incrementing the counter)
-> is DID_IMM_RETRY.  The driver has to be a bit careful about using this
-> because we can get into infinite retry loops.
+> That’s what motivated the ioctl RFC I sent earlier — to make it feasible
+> for userspace to construct metadata buffers correctly. Once it gets
+> settled, I can write some tests using it. Do you see this differently?
 
-James,
-
-Thank you for the information. Will have a try again at changing the driver to
-use this.
-
-
--- 
-Damien Le Moal
-Western Digital Research
+Ok, I'll wait for it.  In the meantime I might go ahead with just
+converting the data path in nvme to the new DMA API and handle the
+metadata mapping later.
 
