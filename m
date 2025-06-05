@@ -1,190 +1,171 @@
-Return-Path: <linux-fsdevel+bounces-50786-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50787-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6727ACF92B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 23:14:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7C75ACF92F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 23:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2BAD165B44
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 21:14:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62F8216AAEC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 21:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B88427EC80;
-	Thu,  5 Jun 2025 21:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C48827EC73;
+	Thu,  5 Jun 2025 21:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZJarFV92"
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="nlIddnrB"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B0B920330;
-	Thu,  5 Jun 2025 21:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E65A1E7C03
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 21:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749158070; cv=none; b=AVFmAkfddadLp26bJdr0aBdth3LqX3hncPHTvBcLBIYK6IHJ1mhxUxikO5lXjgUGr9WHhp7dgSw9Z06GaCT8EOZ+5LmyxfEONGQ1+viMZYRXZ9fuY3lRr6od2ghdXvkdeWNUTHYhMkETc8GbjJy8kdvObu6isjowFiu4FN4WepY=
+	t=1749158163; cv=none; b=i4lmFWXo5wvF3szunWyidqP8VZO0O56oc6BLBIVhR7bxusV8ieoXFj0Y7YBDVPs701IrC7/Zc6TVcO6k25O4sIW5kJ/WwpAYnwQMzJXo4VcisivzwuMWl2uKeZLYHQ0zLkn+OnnvsnrrcYzQ78B2vyFOKFK30L+JLFi8ljB8NmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749158070; c=relaxed/simple;
-	bh=WOJbNMIIzp8UshuzXv5C+5t+iCkp7fkLH50ic3CZMa4=;
+	s=arc-20240116; t=1749158163; c=relaxed/simple;
+	bh=deJ8ujgYVXOLDRzPlJGjcrFyGqlX+2qP5XJVIPJC13c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fcl5NMyEjPFfskFbT3LhqF0j5+ECswluWGKYXE7Wp5bHd/YHquEpxMYYfNckkgjJPTWfHZQrlAqVTz0vIWNROcQPDdwUOn2cmbDZkCxsmlE5gk4BjRp/baxUXgy1ZJpW1Uvvw9NjvPP35xpDuK7beHRiT32v6BRserwDfKuRJXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZJarFV92; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE2A2C4CEF1;
-	Thu,  5 Jun 2025 21:14:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749158069;
-	bh=WOJbNMIIzp8UshuzXv5C+5t+iCkp7fkLH50ic3CZMa4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZJarFV92B75b2Xn1R4g5YTO8yPR1Q0duTLZzJdwYJcEDNjIJcbUpWOAbCTWT1c9ML
-	 vVj10rSxlxcIMzbeyrKjKojPiFtUYSw7Dlj/fvfb82w/Xtc0u9gTedrLJB86DLQrdC
-	 V0qixMtJpFxhCvT8ouBn1wU4P1A7FmLD88ZlQnNmV7oL2X/XfeHTjHHI5YXlfI7/Bz
-	 wJM1GIeWZNAychWSV4Qp0APRJGlMYVali7AXnL1lh9Wqh0Z+PtyZ5BNJRh6S7m0C1B
-	 hN0eqqRiby8cW9FfE9aqsIQ0TNfqzFqHpMs8YL/+zBI/N6sM/9hGslyl6Ge1MkoVty
-	 EqEHMP9dh+OMw==
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-48d71b77cc0so16938121cf.1;
-        Thu, 05 Jun 2025 14:14:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVeccKlg4CHustzXeJH8hkbfSXm7HVE9j9Ytf1soeL5olGsBHMyf5xe3oPse+S7u74H9xBAIJU2rXSSwSrbYQjRw+5bMNLd@vger.kernel.org, AJvYcCW+n4bB10MBPpdTLj33O9kh99oFLJCluN4IWigk3e9cL8JPLIP1fumMDUciL1DPaDlQB+WWw3Mb9q9L68X6@vger.kernel.org, AJvYcCWkQ+L2pIc9osMNPBH2eaUzcNBEbAxskjmXr8IjGgT3e3k4Lp87ftUd6DjfPlvM7Dws4umCBqf28eioIiLn@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz10QRK+9yx3eSOYVKeb4Gb3n4RFVtG1L/s7d3iCg9Eg63sva1i
-	chg7bfHQY33SxfMsF9Yu906HRsDdzwweANnnDlc+sOUQ0XewGzBr0nIbDhT1WYKLk/NFYfITVFY
-	z+MsenSjj2WOUNecejqZNz/Td47oTJt8=
-X-Google-Smtp-Source: AGHT+IGTLw/U5w416/3Eu9jpNdm9/30Kn8C7cz3OadHd3JEnr2/2eVp0goFHQwxJZAyKrVuUxH+5KKnk38pxNlKc5Ow=
-X-Received: by 2002:a05:622a:5c17:b0:4a4:30e7:77a with SMTP id
- d75a77b69052e-4a5b9e20149mr17600321cf.15.1749158069080; Thu, 05 Jun 2025
- 14:14:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=aac8sUZKp0FXfnGbg4XFULY2n1J/24t6m3NOnDrfbfFkHRT6B/CGSZaXV7D57MBEz+BBqZ8sYPDYx7LeqiuA3T2EWowINoeIgh73dp2xrBT6g7d/hClmRdBRrbbdHleX6ZEpzCgGV8fuwo5HE38e+8t8q+vGVMkFp6yriBM7GbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=nlIddnrB; arc=none smtp.client-ip=148.163.135.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
+Received: from pps.filterd (m0167068.ppops.net [127.0.0.1])
+	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555L4kNO027681
+	for <linux-fsdevel@vger.kernel.org>; Thu, 5 Jun 2025 17:16:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pps01;
+ bh=kYNh9HFT2uHBGBuTCKgX10WS8SJF8NGZEUcVRDSxRuQ=;
+ b=nlIddnrBHoiqBQUxB3TXUWD9X49XJOdQ8+6EFQ5EkkzQBJ3Ia4xkx6p3xxL6htuwx2k2
+ MilhN28kQAe1lMta4lgEf62GFMpuusvSIwB8OX959Du/kJ+7/9/udrZ+bsChklShmuvE
+ R6UQOtySiL0jiZJxeEY+djwK81qUIFPntG2IP2HS3Y+jmPWute/Mc4Kr+ppfCYyQ0ctV
+ fweOOaMHrYGDfqtcfq0Eh/KCeG4NoXFx7TLozSakYOPqBMRwehriUz0O/bdX9vPVsFig
+ UnJ2V+4rnw+qKv6oYuaVKhdQY/eaEHZbO5kt0JyKfAxzbgH7oyDkFEFwxTRogKMnbpcm 8A== 
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com [209.85.128.198])
+	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 46yv219yr7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 17:16:01 -0400
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-70e3acd6353so21783687b3.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 14:16:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749158160; x=1749762960;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kYNh9HFT2uHBGBuTCKgX10WS8SJF8NGZEUcVRDSxRuQ=;
+        b=LWHbyGfMMIU3lBQo+tIDCbhq+X308w2tfk1+V5OpmvyGELr24FO6AE+ZTfRdqrHaTm
+         leYq2j0egkh0z52RpDIGb6QbUsFoe877mUd/RxiZyJQ9Bc7c9MZKvZ4DIsT4LDlmu88/
+         fq8NqN16WTVC52LMKjal/zOa7fT0zK8wfHYoCUTyCv4PT21OttgsxnL/CXhmb/vgOS/c
+         HrlJ1l3DPq2uMPvabgUPd5KXhS9tlcV+uqfgQPx4mgyhDkbnzSBPq1fSNA47jrlCwL0I
+         8s0Z6aSZAnz+UFbBOMIPCmj4zUtJKK70TduHZud82tOTsNUjaiPJgA3NtccAKOaalpds
+         Q19w==
+X-Forwarded-Encrypted: i=1; AJvYcCXQcmjbQQg7JeGhMj3wXgUL62mAqVYZxesGSIMTHQSApaB9/Ns3ON5Nc6ZvQvJ/CFCQdeUbGaIKBVnOGx4f@vger.kernel.org
+X-Gm-Message-State: AOJu0YwiBlbG1UDJSK59QpnI509D5XtLp8KQLsNosBt4oVRnrsXBvNk0
+	gFZx46H/JoN7ZMfyKejWvv+by8MdNzJtCCj3+VfKyCxuJbIzzPeRsgOiocLXk3yFJ6W/WG38Sxx
+	+6bncuXvTNCpEcGStcYaUnP0eBh+gdEowGtV4Iq1JjKLFORHpiwiV6hWQKyxed1xyVtG8pPyX1R
+	NqE84rWSgn+r7DLULDFrJvxWSASqgheXRu1PN18A==
+X-Gm-Gg: ASbGnct/lInCjberbpZ5cNFguUwiXRX0bpP1xTjifrZWzEsJ4Yw8gVIFmoR9qpEm8A4
+	E+rRFXcP4Ramoc4DwqZmuCGHxYt7zQxUJOURr4heAl3k1wT1ZRpW24BCEPt2UvTNyVQoPIg==
+X-Received: by 2002:a05:6902:228d:b0:e81:9ebf:f5ed with SMTP id 3f1490d57ef6-e81a226a62dmr1945949276.1.1749158160144;
+        Thu, 05 Jun 2025 14:16:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHb2rG2d+9fop1XPRUg94ju87oBPhimyPjoI4Ye2fKsZq+dhB515YFqLZyXsjORvVHzCfDPRC8LU2/J90no5JA=
+X-Received: by 2002:a05:6902:228d:b0:e81:9ebf:f5ed with SMTP id
+ 3f1490d57ef6-e81a226a62dmr1945917276.1.1749158159774; Thu, 05 Jun 2025
+ 14:15:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-4-song@kernel.org>
- <aEHvkQ1C7Ne1dB4n@google.com>
-In-Reply-To: <aEHvkQ1C7Ne1dB4n@google.com>
-From: Song Liu <song@kernel.org>
-Date: Thu, 5 Jun 2025 14:14:17 -0700
-X-Gmail-Original-Message-ID: <CAPhsuW46grJgJrXovKuksGXM0HfYg-hmmfroUUkBJTsPL4bSxQ@mail.gmail.com>
-X-Gm-Features: AX0GCFubNgDo50rcw47zJs5bVbZAszS-OTfDxJ-hTGtP_5ndfdQs8RXPRlrMeqY
-Message-ID: <CAPhsuW46grJgJrXovKuksGXM0HfYg-hmmfroUUkBJTsPL4bSxQ@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 3/4] bpf: Introduce path iterator
-To: Matt Bobrowski <mattbobrowski@google.com>
-Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
-	daniel@iogearbox.net, martin.lau@linux.dev, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, kpsingh@kernel.org, amir73il@gmail.com, 
-	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
-	gnoack@google.com, m@maowtm.org
+References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
+ <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu> <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
+ <aEBhqz1UgpP8d9hG@x1.local> <0a1dab1c-80d2-436f-857f-734d95939aec@redhat.com>
+In-Reply-To: <0a1dab1c-80d2-436f-857f-734d95939aec@redhat.com>
+From: Tal Zussman <tz2294@columbia.edu>
+Date: Thu, 5 Jun 2025 17:15:49 -0400
+X-Gm-Features: AX0GCFsgrid_kqSVQH8gQAr68i4R2zJRlWIOJnyZmu8rrEwiMxn2I5F4znJwQ4U
+Message-ID: <CAKha_sovhM3ju9jV-d_2PgbWLhuCek5MgdVRVt24y7TQcmZvQg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
+ different userfaultfd
+To: David Hildenbrand <david@redhat.com>
+Cc: Peter Xu <peterx@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE5MSBTYWx0ZWRfX8HedyuhQegIv MjFWCW8D5HIBXS6D1TKD8vQevcSmD8zQA5d23L7y5PllJ+97G/4RF+oikydWXMDGHss1dw64gLO QB4XBuaxkdUKXIOxkprOFuu7fp9p2P6RlOaoTsdm0aAgAkKlbkQ+944xPsVpsyJydX/UYa4y/DT
+ gNW8FCrJHtd/DIjJRmCliXorPPPMaDezF3Kfwlm8QUhP294iZdnYn9g5DXj2AxgH+4oET4k6hY6 xQnxEl3OlOeZ2kc2QqbC445gXpNL6rPKd4Whj/GqiOgRQbfiKHQeCfLjgyMQIwCI+ljwFyZnXJk pQNMfzHXrZgs+SGz7ffYqef/qvf+VPXt3ID5zDbhL1cldFz0opGYcYOKL6fmpAlXbfRtqVkRt1L TdqRvzEO
+X-Proofpoint-GUID: ub-aJ2NlJSEjCIpXSlCNq3ZDhVQ9-cx2
+X-Proofpoint-ORIG-GUID: ub-aJ2NlJSEjCIpXSlCNq3ZDhVQ9-cx2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-05_06,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=844
+ impostorscore=0 clxscore=1015 adultscore=0 lowpriorityscore=10 spamscore=0
+ bulkscore=10 suspectscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506050191
 
-On Thu, Jun 5, 2025 at 12:27=E2=80=AFPM Matt Bobrowski <mattbobrowski@googl=
-e.com> wrote:
+On Thu, Jun 5, 2025 at 5:06=E2=80=AFPM David Hildenbrand <david@redhat.com>=
+ wrote:
 >
-> On Mon, Jun 02, 2025 at 11:59:19PM -0700, Song Liu wrote:
-> > Introduce a path iterator, which reliably walk a struct path toward
-> > the root. This path iterator is based on path_walk_parent. A fixed
-> > zero'ed root is passed to path_walk_parent(). Therefore, unless the
-> > user terminates it earlier, the iterator will terminate at the real
-> > root.
+> On 04.06.25 17:09, Peter Xu wrote:
+> > On Wed, Jun 04, 2025 at 03:23:38PM +0200, David Hildenbrand wrote:
+> >> On 04.06.25 00:14, Tal Zussman wrote:
+> >>> Currently, a VMA registered with a uffd can be unregistered through a
+> >>> different uffd asssociated with the same mm_struct.
+> >>>
+> >>> Change this behavior to be stricter by requiring VMAs to be unregiste=
+red
+> >>> through the same uffd they were registered with.
+> >>>
+> >>> While at it, correct the comment for the no userfaultfd case. This se=
+ems
+> >>> to be a copy-paste artifact from the analagous userfaultfd_register()
+> >>> check.
+> >>
+> >> I consider it a BUG that should be fixed. Hoping Peter can share his
+> >> opinion.
 > >
-> > Signed-off-by: Song Liu <song@kernel.org>
-> > ---
-> >  kernel/bpf/Makefile    |  1 +
-> >  kernel/bpf/helpers.c   |  3 +++
-> >  kernel/bpf/path_iter.c | 58 ++++++++++++++++++++++++++++++++++++++++++
-> >  kernel/bpf/verifier.c  |  5 ++++
-> >  4 files changed, 67 insertions(+)
-> >  create mode 100644 kernel/bpf/path_iter.c
+> > Agree it smells like unintentional, it's just that the man page indeed
+> > didn't mention what would happen if the userfaultfd isn't the one got
+> > registered but only requesting them to be "compatible".
 > >
-> > diff --git a/kernel/bpf/Makefile b/kernel/bpf/Makefile
-> > index 3a335c50e6e3..454a650d934e 100644
-> > --- a/kernel/bpf/Makefile
-> > +++ b/kernel/bpf/Makefile
-> > @@ -56,6 +56,7 @@ obj-$(CONFIG_BPF_SYSCALL) +=3D kmem_cache_iter.o
-> >  ifeq ($(CONFIG_DMA_SHARED_BUFFER),y)
-> >  obj-$(CONFIG_BPF_SYSCALL) +=3D dmabuf_iter.o
-> >  endif
-> > +obj-$(CONFIG_BPF_SYSCALL) +=3D path_iter.o
+> > DESCRIPTION
+> >         Unregister a memory address range from userfaultfd.  The pages =
+in
+> >         the range must be =E2=80=9Ccompatible=E2=80=9D (see UFFDIO_REGI=
+STER(2const)).
 > >
-> >  CFLAGS_REMOVE_percpu_freelist.o =3D $(CC_FLAGS_FTRACE)
-> >  CFLAGS_REMOVE_bpf_lru_list.o =3D $(CC_FLAGS_FTRACE)
-> > diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
-> > index b71e428ad936..b190c78e40f6 100644
-> > --- a/kernel/bpf/helpers.c
-> > +++ b/kernel/bpf/helpers.c
-> > @@ -3397,6 +3397,9 @@ BTF_ID_FLAGS(func, bpf_iter_dmabuf_next, KF_ITER_=
-NEXT | KF_RET_NULL | KF_SLEEPAB
-> >  BTF_ID_FLAGS(func, bpf_iter_dmabuf_destroy, KF_ITER_DESTROY | KF_SLEEP=
-ABLE)
-> >  #endif
-> >  BTF_ID_FLAGS(func, __bpf_trap)
-> > +BTF_ID_FLAGS(func, bpf_iter_path_new, KF_ITER_NEW | KF_SLEEPABLE)
+> > So it sounds still possible if we have existing userapp creating multip=
+le
+> > userfaultfds (for example, for scalability reasons on using multiple
+> > queues) to manage its own mm address space, one uffd in charge of a por=
+tion
+> > of VMAs, then it can randomly take one userfaultfd to do unregistration=
+s.
+> > Such might break.
 >
-> Hm, I'd expect KF_TRUSTED_ARGS to be enforced onto
-> bpf_iter_path_new(), no? Shouldn't this only be operating on a stable
-> struct path reference?
-
-Good catch! Added KF_TRUSTED_ARGS. also added a test with
-untrusted pointer.
-
+> Not sure if relevant, but consider the following:
 >
-> > +BTF_ID_FLAGS(func, bpf_iter_path_next, KF_ITER_NEXT | KF_RET_NULL | KF=
-_SLEEPABLE)
-> > +BTF_ID_FLAGS(func, bpf_iter_path_destroy, KF_ITER_DESTROY | KF_SLEEPAB=
-LE)
+> an app being controlled by another process using userfaultfd.
 >
-> At this point, the claim is that such are only to be used from the
-> context of the BPF LSM. If true, I'd expect these BPF kfuncs to be
-> part of bpf_fs_kfunc_set_ids once moved into fs/bpf_fs_kfuncs.c.
+> The app itself can "escape" uffd control of the other process by simply
+> creating a userfaultfd and unregistering VMAs.
 
-I moved this to fs/bpf_fs_kfuncs.c in the next version.
+Yes, this is exactly what I was thinking. Or (less likely) a child process
+that inherits a uffd from its parent can then mess with memory the parent
+registers with a different uffd after the fork.
 
+> --
+> Cheers,
 >
-> >  static const struct btf_kfunc_id_set common_kfunc_set =3D {
-> > diff --git a/kernel/bpf/path_iter.c b/kernel/bpf/path_iter.c
-> > new file mode 100644
-> > index 000000000000..0d972ec84beb
-> > --- /dev/null
-> > +++ b/kernel/bpf/path_iter.c
-> > @@ -0,0 +1,58 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
-> > +#include <linux/bpf.h>
-> > +#include <linux/bpf_mem_alloc.h>
-> > +#include <linux/namei.h>
-> > +#include <linux/path.h>
-> > +
-> > +/* open-coded iterator */
-> > +struct bpf_iter_path {
-> > +     __u64 __opaque[3];
-> > +} __aligned(8);
-> > +
-> > +struct bpf_iter_path_kern {
-> > +     struct path path;
-> > +     __u64 flags;
-> > +} __aligned(8);
-> > +
-> > +__bpf_kfunc_start_defs();
-> > +
-> > +__bpf_kfunc int bpf_iter_path_new(struct bpf_iter_path *it,
-> > +                               struct path *start,
-> > +                               __u64 flags)
-> > +{
-> > +     struct bpf_iter_path_kern *kit =3D (void *)it;
-> > +
-> > +     BUILD_BUG_ON(sizeof(*kit) > sizeof(*it));
-> > +     BUILD_BUG_ON(__alignof__(*kit) !=3D __alignof__(*it));
-> > +
-> > +     if (flags) {
-> > +             memset(&kit->path, 0, sizeof(struct path));
+> David / dhildenb
 >
-> This warrants a comment for sure. Also why not just zero it out
-> entirely?
-
-Added some comments in v3. Also "flags" is removed in v3.
-
-Thanks,
-Song
-
-[...]
 
