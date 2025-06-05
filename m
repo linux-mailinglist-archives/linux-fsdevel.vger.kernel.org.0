@@ -1,160 +1,140 @@
-Return-Path: <linux-fsdevel+bounces-50733-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA30ACF021
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 15:17:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B97EFACF256
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 16:51:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57F851788D7
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 13:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AAF4171191
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 14:51:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 054FA231854;
-	Thu,  5 Jun 2025 13:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB5E17FAC2;
+	Thu,  5 Jun 2025 14:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NBZTrUCA"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAFE21ADC5;
-	Thu,  5 Jun 2025 13:17:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270815746F
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 14:51:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749129423; cv=none; b=pMMrtITMWfGIIXuWucPMFELmLUin8WAx120VL6LeVXBNPlrHvl94CZmwSyExw1NZte+rph+9ZYr+X1jOf/NZh7W3Yh5YjUEwQTxjwpVa8Y+lNZjeh16OLgJVLEkNwRyGAUr/fmds010bD+5GKOW2zFGFwE+4P1ZGcr6/aqpswmg=
+	t=1749135100; cv=none; b=pnVaeTo8MT0lXN2TTfAFiiG8umZlJp7oQZ185vJxafqElhKncGngfSGnOS+RosXGsktAwZ5uDEdS7/xW46AnnUlZxIPMP6QSRPOQoQ+nbvE1q0pHtfXxpCb7KY49ojLKLklv3CzRMu+J43dFhFyQx2tMaHvv9W9Eu6F0fbjlB+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749129423; c=relaxed/simple;
-	bh=TcgClPKK1QHmvqc70ATZ3pT3crClJTqGkcaAyfXDC90=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WXKwPaY3QzYxGBhalrIpURQ1mVy7ZXT5M11Lb0PefcZTW1TmYNJuxtKHbWDhEWa6pK6aARGMi67qhq5PWiGKRgfGSJp4TUB2VgCtfh9Nd7QM19T90Qi7RDZDETL5qcS0zalUpLC1RxRPjpSjTXOqs9U/Y2241sFNRKSMxt6IUr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bClND5DY6zYQvhR;
-	Thu,  5 Jun 2025 21:17:00 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id BFF8C1A0BA9;
-	Thu,  5 Jun 2025 21:16:59 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.101.6])
-	by APP1 (Coremail) with SMTP id cCh0CgDnTH3HmEFobD9lOQ--.29489S9;
-	Thu, 05 Jun 2025 21:16:59 +0800 (CST)
-From: Kemeng Shi <shikemeng@huaweicloud.com>
-To: hughd@google.com,
-	baolin.wang@linux.alibaba.com,
-	willy@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 7/7] mm: shmem: eliminate unneeded page counting in shmem_unuse_swap_entries()
-Date: Fri,  6 Jun 2025 06:10:37 +0800
-Message-Id: <20250605221037.7872-8-shikemeng@huaweicloud.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20250605221037.7872-1-shikemeng@huaweicloud.com>
-References: <20250605221037.7872-1-shikemeng@huaweicloud.com>
+	s=arc-20240116; t=1749135100; c=relaxed/simple;
+	bh=8opYR/RLHE+c4NG9PfiIatcqdYIIGlAtUPp/Y7mK/SA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WfCQwpyyCK8qt27sIFKjsDCycu0sv03iKbwPYZbyOPBWwU6XnI3GVTsqL/HoYLp/3jEqnlqgi6Er7ga/iKMKbsmPEk81f8MtVV9+nzHb/cAhOpnn4Mq8efiMQgShdXqi4Sn//G8yBJpEXOaN+Y4VjKq7KkkOGP8w5nJQ8R2lcBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=NBZTrUCA; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3109f106867so1269242a91.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 07:51:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1749135096; x=1749739896; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=0qZIyhLNfUK8aRt0IjyGDdUz2kW/fFohhjPr9dq+tBQ=;
+        b=NBZTrUCAOFNHNKaNR1pMpY0OmZymhLr4tCFdRB2u0yaH7w1La81nyRMFckOIXB6vAY
+         fpmL/1pLqEeL2llYJbkMPfgIax/dy/GhGChv7uuhkCU7zV0Aeg+eHpQgU6qBRDUD+3kk
+         q60PwuBj6Hjtkhb6T5J3yTPqRrGMdUfUTNlG0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749135096; x=1749739896;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0qZIyhLNfUK8aRt0IjyGDdUz2kW/fFohhjPr9dq+tBQ=;
+        b=hSyqbXnDKU8YkyzRYQx5KmzQsH9pvSvr0glUA9osw2QKdZ9gnF4LAHOF+TymzaXOlG
+         6iCyS0pQjazfpUyKW4Z37c6vPlNm+I0HFg0VQ6tf3T4xZYVZhra4IK4H7Vb3lnO8WaN7
+         3yYap3MCy/qnBBpS0fl8F5DafosY0jIMpcPEi1Tc1Jw735BirY+ovjWJFi639uS8wnnZ
+         FaseQ/bpDAjqWfhiq0fbwE+N1GPISRvwDSvvZABWwEZ7/A2s36AfC5zvKrzl4YWg4gJz
+         yCeDLpxdUXtFHUtSfJwU7LVNrUI/m1bz6DYPiCVUpBNUrnwhkZ6MrkugrJ5QMmD60kGd
+         m9VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVquPpVWHxJ7zG4dZAHpvee+hyZ/VQpJQKy6lW/1s4SklHt1jL0gHqYFjlriTr7cs5M2EmJ9diWyWlJJJGs@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7wBdXFkELgTxktGXVwzO3dj+nQq53Hy/r23AX6970feaJJmnP
+	ZXrvoPcLyyMn8BjK5ASrjrs+oNA1/4lCIsdfEa1xkfbcFBZKR/bEArWDMZLVrtsFB8ozXO7zb8l
+	GB12AtmOxUGkdu42h7A0BapvQ0366yp+yCTBM8izJ5GjKX2tgGgGzhcFBtA==
+X-Gm-Gg: ASbGncvCU5MJa9zbi2uyUW0PzlIT+5/dDykfoUDcK4F0SmD2CIQOm1rFg4RXiYN/bwM
+	hc7qTjMnIbNPikXjA2kZhc1R+fRlnlykmkPDno6Lgf0W/XivR/SNxUvSh7CHV6kwbCsN194Z0y+
+	zaB1uTUGn2SKTvX1AIGcmkkV6LE2ufT+M=
+X-Google-Smtp-Source: AGHT+IHAbJn7akHP0pYrJh9k1QTBH4AMnJ3AUW68Wk+P5THmWTp3kCTbbGZ2EV9/S5oBNPTKOCVGI0vam2239o4+gmA=
+X-Received: by 2002:a05:622a:5a0f:b0:476:7e6b:d297 with SMTP id
+ d75a77b69052e-4a5a581c203mr125679031cf.41.1749135086307; Thu, 05 Jun 2025
+ 07:51:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:cCh0CgDnTH3HmEFobD9lOQ--.29489S9
-X-Coremail-Antispam: 1UD129KBjvJXoW7urWxCFW7tFWUKFWUKFW7urg_yoW8Aw48pF
-	W3W3srJr4kXFW8Cr97A34kZw1aq393KFWjqFy3Gwn3Z3WUJw12krySkryjqF15C348G34S
-	qw4UKry5ua1Utr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUPSb4IE77IF4wAFF20E14v26rWj6s0DM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M280x2IEY4vEnII2IxkI6r1a6r45M2
-	8IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2IY020Ec7CjxVAFwI0_Xr0E3s1l8cAv
-	FVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJw
-	A2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE
-	3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr2
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv
-	67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2
-	AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAq
-	x4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r
-	1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF
-	7I0E14v26F4j6r4UJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI
-	0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7I
-	U09YFtUUUUU==
-X-CM-SenderInfo: 5vklyvpphqwq5kxd4v5lfo033gof0z/
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Thu, 5 Jun 2025 16:51:15 +0200
+X-Gm-Features: AX0GCFsTY9gN9NDJLz1wYsjKjFbqBwGH61myZEfMvmbdvIDQuo4OYyMlmpHjQd8
+Message-ID: <CAJfpegvB3At5Mm54eDuNVspuNtkhoJwPH+HcOCWm7j-CSQ1jbw@mail.gmail.com>
+Subject: [GIT PULL] overlayfs update for 6.16
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Caller of shmem_unuse_swap_entries() will not use the count of pages
-swapped in, so eliminate unneeded page counting in
-shmem_unuse_swap_entries().
+Hi Linus,
 
-Signed-off-by: Kemeng Shi <shikemeng@huaweicloud.com>
+Please pull from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git
+tags/ovl-update-6.16
+
+- Fix a regression in getting the path of an open file (e.g.  in
+/proc/PID/maps) for a nested overlayfs setup  (Andr=C3=A9 Almeida)
+
+- The above fix contains a cast to non-const, which is not actually
+needed.  So add the necessary helpers postfixed with _c that allow the
+cast to be removed (touches vfs files but only in trivial ways)
+
+- Support data-only layers and verity in a user namespace
+(unprivileged composefs use case)
+
+- Fix a gcc warning (Kees)
+
+- Cleanups
+
+Thanks,
+Miklos
+
 ---
- mm/shmem.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+Andr=C3=A9 Almeida (1):
+      ovl: Fix nested backing file paths
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index c6ea45d542d2..c83baabc169d 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1480,14 +1480,13 @@ static unsigned int shmem_find_swap_entries(struct address_space *mapping,
- }
- 
- /*
-- * Move the swapped pages for an inode to page cache. Returns the count
-- * of pages swapped in, or the error in case of failure.
-+ * Move the swapped pages for an inode to page cache. Returns 0 if success,
-+ * or returns error in case of failure.
-  */
- static int shmem_unuse_swap_entries(struct inode *inode,
- 		struct folio_batch *fbatch, pgoff_t *indices)
- {
- 	int i = 0;
--	int ret = 0;
- 	int error = 0;
- 	struct address_space *mapping = inode->i_mapping;
- 
-@@ -1499,13 +1498,11 @@ static int shmem_unuse_swap_entries(struct inode *inode,
- 		if (error == 0) {
- 			folio_unlock(folio);
- 			folio_put(folio);
--			ret++;
- 		}
- 		if (error == -ENOMEM)
--			break;
--		error = 0;
-+			return error;
- 	}
--	return error ? error : ret;
-+	return 0;
- }
- 
- /*
-@@ -1517,24 +1514,20 @@ static int shmem_unuse_inode(struct inode *inode, unsigned int type)
- 	pgoff_t start = 0;
- 	struct folio_batch fbatch;
- 	pgoff_t indices[PAGEVEC_SIZE];
--	int ret = 0;
-+	int ret;
- 
- 	do {
- 		folio_batch_init(&fbatch);
- 		if (!shmem_find_swap_entries(mapping, start, &fbatch,
--					     indices, type)) {
--			ret = 0;
--			break;
--		}
-+					     indices, type))
-+			return 0;
- 
- 		ret = shmem_unuse_swap_entries(inode, &fbatch, indices);
- 		if (ret < 0)
--			break;
-+			return ret;
- 
- 		start = indices[folio_batch_count(&fbatch) - 1];
- 	} while (true);
--
--	return ret;
- }
- 
- /*
--- 
-2.30.0
+Kees Cook (1):
+      ovl: Check for NULL d_inode() in ovl_dentry_upper()
 
+Miklos Szeredi (4):
+      ovl: make redirect/metacopy rejection consistent
+      ovl: relax redirect/metacopy requirements for lower -> data redirect
+      ovl: don't require "metacopy=3Don" for "verity"
+      vfs: change 'struct file *' argument to 'const struct file *'
+where possible
+
+Thorsten Blum (4):
+      ovl: Use str_on_off() helper in ovl_show_options()
+      ovl: Replace offsetof() with struct_size() in ovl_cache_entry_new()
+      ovl: Replace offsetof() with struct_size() in ovl_stack_free()
+      ovl: Annotate struct ovl_entry with __counted_by()
+
+---
+ Documentation/filesystems/overlayfs.rst |  7 +++
+ fs/file_table.c                         | 10 ++--
+ fs/internal.h                           |  1 +
+ fs/overlayfs/file.c                     |  4 +-
+ fs/overlayfs/namei.c                    | 98 ++++++++++++++++++++---------=
+----
+ fs/overlayfs/ovl_entry.h                |  2 +-
+ fs/overlayfs/params.c                   | 40 ++------------
+ fs/overlayfs/readdir.c                  |  4 +-
+ fs/overlayfs/util.c                     |  9 ++-
+ include/linux/fs.h                      | 12 ++--
+ 10 files changed, 97 insertions(+), 90 deletions(-)
 
