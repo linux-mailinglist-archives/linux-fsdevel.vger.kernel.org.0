@@ -1,108 +1,103 @@
-Return-Path: <linux-fsdevel+bounces-50715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50716-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35BAACEBC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 10:24:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 645FFACECBC
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 11:23:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D04F17A27F4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 08:23:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA1AA3AB5B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 09:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834DA205AB2;
-	Thu,  5 Jun 2025 08:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CDEF20C005;
+	Thu,  5 Jun 2025 09:23:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKbtyPUW"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HFDtQNSX"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0752B9BC;
-	Thu,  5 Jun 2025 08:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805B7566A
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 09:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749111857; cv=none; b=ANXWBYyZ+a/A5PQJbfMrLTu8/Vf43l/fXhHGvbvcy+TfFwcHkl+gq2tIRIDlEHbe5OFKGcXVicQaA4bqfLnvjVF3mEszB81oAGM/Xr6L3Q925CDIltnBde6xlGbn8zEB0kq914ew1k2IQbFAzWjYfBIGuHFyTq1eB9dLffwUhng=
+	t=1749115400; cv=none; b=UHTNKchlmeUnjwop+IrKgqcBDCOQCfTcPIfRU5+ce9djIP5U+Mj3EyiMi6hdDDjH9ZVV3HUqvMwzCrMa5QnzXzrKJOYYXgV0xpB+ki0MUaSpHMdgCxe8f+xXl9Djd9I6z7CqSRBGfh+wnpQrnBjdlqiJTZcinB1haK21PJ5QJaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749111857; c=relaxed/simple;
-	bh=Oi2rlfzJJgvutjviF7CtviMQJJXkwwntx0F2Th4hIrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r5EamgEc1nZpUgLDL5eTAkwJXezpQiy8rhOoWHcxKNxbfSetMx1uniX64lpRB22R7QdlTr9kC74nm1PTEns4f1zQGOPUJh6MKuZ0MSQpLpIUDRdmXQRAEptr9SG2OVr1VCSTz/hgl7nIvAYfTnQ2dqU5oROKW0hoAYomo+BKs3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKbtyPUW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D56CC4CEE7;
-	Thu,  5 Jun 2025 08:24:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749111856;
-	bh=Oi2rlfzJJgvutjviF7CtviMQJJXkwwntx0F2Th4hIrY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XKbtyPUWg4ISAUfid5J3p4kDoNoSkv5YEYfwuJYUFU2epQyFbv8HDWaSFHnY8McHC
-	 i3/1p1WCEptUSoloGkYtkk9jwmhlGU32L0bqgR4UVsduddaVfEh5zLoN8nFMgg8301
-	 DAQ2hR9swlPjykrkj5OZ0MaWYRH68ZGvEDparVzZI2T6/zd1FpB+TiPz67jKyZCyC9
-	 rzEiEC8dQ6OlN1fkDWV9QjvnxubSPsODCFP8gxiB7qxWzZNAIkzYQHaJJqkfC44QLg
-	 ox92IRBVCXCQm0tFthr9RNdAAB1+TkgNuqjAYlI0KtChSygnw9ZTPD/xymThh+vefc
-	 vFQlrNr+jg6PA==
-Date: Thu, 5 Jun 2025 10:24:10 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Anuj gupta <anuj1072538@gmail.com>, Eric Biggers <ebiggers@kernel.org>, 
-	Amir Goldstein <amir73il@gmail.com>, Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>, 
-	"Martin K. Petersen" <martin.petersen@oracle.com>, jack@suse.cz, axboe@kernel.dk, viro@zeniv.linux.org.uk, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, joshi.k@samsung.com
-Subject: Re: [RFC] fs: add ioctl to query protection info capabilities
-Message-ID: <20250605-zersetzen-bareinlage-649c5f93ac43@brauner>
-References: <CGME20250527105950epcas5p1b53753ab614bf6bde4ffbf5165c7d263@epcas5p1.samsung.com>
- <20250527104237.2928-1-anuj20.g@samsung.com>
- <yq1jz60gmyv.fsf@ca-mkp.ca.oracle.com>
- <fec86763-dd0e-4099-9347-e85aa4a22277@samsung.com>
- <20250529175934.GB3840196@google.com>
- <20250530-raumakustik-herren-962a628e1d21@brauner>
- <CACzX3Av0uR5=zOXuTvcu2qovveYSmeVPnsDZA1ZByx2KLNJzEA@mail.gmail.com>
- <20250604-notgedrungen-korallen-5ffd76cb7329@brauner>
- <aD_8XsD7gDbURr-M@infradead.org>
+	s=arc-20240116; t=1749115400; c=relaxed/simple;
+	bh=LdksxAdZMV0O2bMPUPb50S3RXaDjNvXNL/6IF6EW5ZA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=JDFP0nawywknqqM9kHigrXHky6agEpL7xK7QQ0IBoszE8Tht+jmlrqCFqHAUCySM52Q1OFGPqPDWZ1M0EFxac1QiR02v7vgWuLHgyOW7bZviJOYlefZvhgZQ2eRZJgpWLvFYbSAoJ1q+QVtyRtn7Oz02kahmNS9s50Y6nMPur0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HFDtQNSX; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-313154270bbso874378a91.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 02:23:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1749115397; x=1749720197; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=LdksxAdZMV0O2bMPUPb50S3RXaDjNvXNL/6IF6EW5ZA=;
+        b=HFDtQNSXcFe1/G5B/4iz6vshHU2flbZFf6/jPmrMWJ00VfR/AHVaw/6xYmZwicB4v/
+         dtGzNCPU1ruEZGXt60oMq0YfyDXYldB7QryC4sTXhZxwNAHSjpS87q5BpBp8NT1Q0Py0
+         84jZ8tBUXM9XuxX+rO+bVBcofYmttcHwhJB5GY8ZyisE5n3tgZLwAmBznNtAcgF2GQS9
+         9d79sMk2NSwCUXJb1Vcfw88nCaRSYfeCq+5KviBYDC8xpwY2M30w4QX/XKvhfsOpZ4EG
+         S3oVoB/dcXAzYc9HedklolyU70FRgUGMgWj938ePUJRTXs9syr3R8lFOqEVZotMq+yWC
+         mefg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749115397; x=1749720197;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LdksxAdZMV0O2bMPUPb50S3RXaDjNvXNL/6IF6EW5ZA=;
+        b=llfZ4qzPowL25JzMCOMeTxYbejobVe1YPZhsfBxYl9bVJnU53vQ0bo2LwPhrIA8Hyj
+         vVdCbnKqnq0j1NpS4dFSaRixDgZDxo6aH+ZqcvL/Q/jddvH3VM07J5D4Ia/bhSeS0BkD
+         wL/ybn7gfuXEU599Z2zPssNGQzen2VDT2NGQ3YrBsQHwm47OsqIjgRCf1TSthAOd4bHf
+         2dzPEjdbsGlTjFqX2sOowshiIDhn11vIDHI4f6adyNBsxEljKM6LWMfVRpxYPbH4fhWC
+         jt7b0iNjFBw9Ob6tZFRh3S+A4uIn4qd6uRfWd7FsU3MrgqBmKLzrPFwWq44Es12ALuCe
+         i7kQ==
+X-Gm-Message-State: AOJu0YwPRjuZw+nE9bMFLwhJhHswuFjDb/kizVHaGAvGZPDa8ZSRdHSY
+	XzIv/xRxSeXxaGWr0HY0QwAoLErl8Wpk4xdq1UC9ilrNBzELQOLT6Y4j/6szRGp+PB3iqrIWepT
+	CIwWwXACXVCnA5FiUVrSwe/wwvwcLnXbLFUrzsOtNkAJlVDlPM1Mns7NT/w1fwg==
+X-Gm-Gg: ASbGncvj6pnu7+gSu7xpHyyVFMZrX9acXnj1S70lvahZ2t9fZlNFh9ip9T6wo95vyyi
+	kso7GROS3+kYyjmwtXveg+1bEoOGuqGFTPTba2p9kvpDzQjYvF3vSySGGcn8r+c3CP6aSu5W/uM
+	IFoKx/kXyFP7Dxb7F5XIw1JLaV8DUYBNl1MyLzJyxJeZixfl6yxhPEt7DGFXiKFcIVkMUfviY=
+X-Google-Smtp-Source: AGHT+IGVI0ATGNBPKqzzbUtxgAaCmg/+KvieS7j0nIOPKunQlg4vA7+YnldXGX1bdV5UYNsRTuzij1F4j9PlPaxW68A=
+X-Received: by 2002:a17:90b:268b:b0:311:ab20:159a with SMTP id
+ 98e67ed59e1d1-3130cd7e191mr8996384a91.29.1749115396864; Thu, 05 Jun 2025
+ 02:23:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aD_8XsD7gDbURr-M@infradead.org>
+From: Prince Kumar <princer@google.com>
+Date: Thu, 5 Jun 2025 14:53:05 +0530
+X-Gm-Features: AX0GCFuuTN1tVf64U9LvN3lBaOZzbo8kwOjxP-gxsPZG2fyhTvlMnY1kxLbPDEc
+Message-ID: <CAEW=TRpJ89GmQym_RHSxyQ=x97btBBaJBT7hOtbQFKyk4jkzDQ@mail.gmail.com>
+Subject: Getting Unexpected Lookup entries calls after Readdirplus
+To: linux-fsdevel@vger.kernel.org
+Cc: Aditi Mittal <aditime@google.com>, Ashmeen Kaur <ashmeen@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Jun 04, 2025 at 12:57:18AM -0700, Christoph Hellwig wrote:
-> On Wed, Jun 04, 2025 at 09:53:10AM +0200, Christian Brauner wrote:
-> > On Wed, Jun 04, 2025 at 12:13:38AM +0530, Anuj gupta wrote:
-> > > > Hm, I wonder whether we should just make all of this an extension of the
-> > > > new file_getattr() system call we're about to add instead of adding a
-> > > > separate ioctl for this.
-> > > 
-> > > Hi Christian,
-> > > Thanks for the suggestion to explore file_getattr() for exposing PI
-> > > capabilities. I spent some time evaluating this path.
-> > > 
-> > > Block devices don’t implement inode_operations, including fileattr_get,
-> > > so invoking file_getattr() on something like /dev/nvme0n1 currently
-> > > returns -EOPNOTSUPP.  Supporting this would require introducing
-> > > inode_operations, and then wiring up fileattr_get in the block layer.
-> > > 
-> > > Given that, I think sticking with an ioctl may be the cleaner approach.
-> > > Do you see this differently?
-> > 
-> > Would it be so bad to add custom inode operations?
-> > It's literally just something like:
-> 
-> That doesn't help as the inode operations for the underlying block device
-> inode won't ever be called.  The visible inode is the block device node
-> in the containing file system.
+Hello Team,
 
-Ah, it's the same thing as with sockets, I forgot about that. Thanks.
+I'm implementing Readdirplus support in GCSFuse
+(https://github.com/googlecloudplatform/gcsfuse) and have observed
+behavior that seems to contradict my understanding of its purpose.
 
-> Given fileattr get/set seems to be about the actual files in the file
-> system, using them for something that affects the I/O path for block
-> device nodes does not feel like a good fit.  And I think the reason they
-> are inode and not file operations is exactly to be able to cover
-> attributes always controlled by the containing file system.
+When Readdirplus returns ChildInodeEntry, I expect the kernel to use
+this information and avoid subsequent lookup calls for those entries.
+However, I'm seeing lookup calls persist for these entries unless an
+entry_timeout is explicitly set.
 
-Yes, that seems fine then.
+One similar open issue on the libfuse github repo:
+https://github.com/libfuse/libfuse/issues/235, which is closed but
+seems un-resolved.
+
+1. Could you confirm if this is the expected behavior, or a kernel side issue?
+2. Also, is there a way other than setting entry_timeout, to suppress
+these lookup entries calls after the Readdirplus call?
+
+Regards,
+Prince Kumar.
 
