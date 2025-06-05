@@ -1,188 +1,108 @@
-Return-Path: <linux-fsdevel+bounces-50714-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50715-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7453ACEBB8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 10:22:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B35BAACEBC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 10:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A29431753CF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 08:22:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D04F17A27F4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 08:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180E8205AB6;
-	Thu,  5 Jun 2025 08:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834DA205AB2;
+	Thu,  5 Jun 2025 08:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="BEWZJPWx";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="aEvM2aGh";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="yVNNQfCG";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="FhIH3GPO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKbtyPUW"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7FD20012C
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 08:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0752B9BC;
+	Thu,  5 Jun 2025 08:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749111751; cv=none; b=ZZ1Btkb4n/AQgsiELPqZI/6AuM8TdVEHRxPMG6XUdzdKHN+6fyCYtMqba78DPzH8RfxzZKBelFI6aUxEQhEUMe30oPs3FLGUGe1yhxVRzddomzmV2s1RuLSVf8hSsNLcrtiRL7K5JfkzC91aSQKp5+1MyiFkPqIkHnbEmXG3iGw=
+	t=1749111857; cv=none; b=ANXWBYyZ+a/A5PQJbfMrLTu8/Vf43l/fXhHGvbvcy+TfFwcHkl+gq2tIRIDlEHbe5OFKGcXVicQaA4bqfLnvjVF3mEszB81oAGM/Xr6L3Q925CDIltnBde6xlGbn8zEB0kq914ew1k2IQbFAzWjYfBIGuHFyTq1eB9dLffwUhng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749111751; c=relaxed/simple;
-	bh=BS5ErSQFZKq+7kg9upVNEdfD3Awdd/h9z4xDcxD/XfI=;
+	s=arc-20240116; t=1749111857; c=relaxed/simple;
+	bh=Oi2rlfzJJgvutjviF7CtviMQJJXkwwntx0F2Th4hIrY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sLp5WluxODEp/A0WXeG6AfJUhZh4dxBJXUyCnt92Bz8FD2g1H8rvVlvuqlAXWZsv+06RX0/dlJ8aq4x3iSHjW2PF3cgNHob4udrivE1iQpFU640Hu3+p1X6KaPKWfdZp7SVtordIH0YwtLm2xq+ROxUq+vFJjzwcaAY/3bcOtOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=BEWZJPWx; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=aEvM2aGh; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=yVNNQfCG; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=FhIH3GPO; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id ED4FE5BF44;
-	Thu,  5 Jun 2025 08:22:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749111748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mG4VCh9tlRxGqy5O4mxRiy9A5IFEM35DxvBHVeN1js4=;
-	b=BEWZJPWxFehhiwfcyh967XUrO5y9JmHZHR+l0vqVXUP/3PlPzEvXXlwD/Vwe5tLknpnNv0
-	fw1KAr/uiFR6HK+PWbjSpe7ng//GzkmJkwB4IqwKIXO/73iwVq/THBV4RLT0M7Z6uosTz3
-	i1LBW30eUfq5Be8lK3Ar4qFu+IZ1b4I=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749111748;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mG4VCh9tlRxGqy5O4mxRiy9A5IFEM35DxvBHVeN1js4=;
-	b=aEvM2aGhxDaJO4xwhCHRD59KhUq8kx3S89zh7LY7WjJTPGjDNQQZhEEj2zbrzMLlbsQA0L
-	cjXn/ECyMGRcVWDw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=yVNNQfCG;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=FhIH3GPO
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749111747; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mG4VCh9tlRxGqy5O4mxRiy9A5IFEM35DxvBHVeN1js4=;
-	b=yVNNQfCGuVN7Yt1fN4BbWOG2aui2spn406vLnVPtFRABhdOQ4Z6ujq0I9Gcs4F1ibaSqbR
-	Gv4aieEAJIwJOIuQa8VsJ471ZhW7Lb44NNtUksMwlhK297aFoTlpCrPvu91wppWqy2zBYe
-	kNFEhs6G9MxGrIMweDA7r3TF+E15FUw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749111747;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mG4VCh9tlRxGqy5O4mxRiy9A5IFEM35DxvBHVeN1js4=;
-	b=FhIH3GPOi8w7eWR8e/597X4ZXPYFG9QlazlnrGlWbe7Jz9ZJMJyXf7z5f+fL6mdeiXW6B1
-	zl8EHailOBGsDOCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E1D8B137FE;
-	Thu,  5 Jun 2025 08:22:27 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id foodN8NTQWj6QQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 05 Jun 2025 08:22:27 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 8A09BA0951; Thu,  5 Jun 2025 10:22:23 +0200 (CEST)
-Date: Thu, 5 Jun 2025 10:22:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: Chi Zhiling <chizhiling@163.com>
-Cc: willy@infradead.org, akpm@linux-foundation.org, josef@toxicpanda.com, 
-	jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Chi Zhiling <chizhiling@kylinos.cn>
-Subject: Re: [PATCH] readahead: fix return value of page_cache_next_miss()
- when no hole is found
-Message-ID: <qbuhdfdvbyida5y7g34o4rf5s5ntx462ffy3wso3pb5f3t4pev@3hqnswkp7of6>
-References: <20250605054935.2323451-1-chizhiling@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r5EamgEc1nZpUgLDL5eTAkwJXezpQiy8rhOoWHcxKNxbfSetMx1uniX64lpRB22R7QdlTr9kC74nm1PTEns4f1zQGOPUJh6MKuZ0MSQpLpIUDRdmXQRAEptr9SG2OVr1VCSTz/hgl7nIvAYfTnQ2dqU5oROKW0hoAYomo+BKs3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKbtyPUW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D56CC4CEE7;
+	Thu,  5 Jun 2025 08:24:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749111856;
+	bh=Oi2rlfzJJgvutjviF7CtviMQJJXkwwntx0F2Th4hIrY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XKbtyPUWg4ISAUfid5J3p4kDoNoSkv5YEYfwuJYUFU2epQyFbv8HDWaSFHnY8McHC
+	 i3/1p1WCEptUSoloGkYtkk9jwmhlGU32L0bqgR4UVsduddaVfEh5zLoN8nFMgg8301
+	 DAQ2hR9swlPjykrkj5OZ0MaWYRH68ZGvEDparVzZI2T6/zd1FpB+TiPz67jKyZCyC9
+	 rzEiEC8dQ6OlN1fkDWV9QjvnxubSPsODCFP8gxiB7qxWzZNAIkzYQHaJJqkfC44QLg
+	 ox92IRBVCXCQm0tFthr9RNdAAB1+TkgNuqjAYlI0KtChSygnw9ZTPD/xymThh+vefc
+	 vFQlrNr+jg6PA==
+Date: Thu, 5 Jun 2025 10:24:10 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Anuj gupta <anuj1072538@gmail.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Amir Goldstein <amir73il@gmail.com>, Anuj Gupta/Anuj Gupta <anuj20.g@samsung.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, jack@suse.cz, axboe@kernel.dk, viro@zeniv.linux.org.uk, 
+	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, joshi.k@samsung.com
+Subject: Re: [RFC] fs: add ioctl to query protection info capabilities
+Message-ID: <20250605-zersetzen-bareinlage-649c5f93ac43@brauner>
+References: <CGME20250527105950epcas5p1b53753ab614bf6bde4ffbf5165c7d263@epcas5p1.samsung.com>
+ <20250527104237.2928-1-anuj20.g@samsung.com>
+ <yq1jz60gmyv.fsf@ca-mkp.ca.oracle.com>
+ <fec86763-dd0e-4099-9347-e85aa4a22277@samsung.com>
+ <20250529175934.GB3840196@google.com>
+ <20250530-raumakustik-herren-962a628e1d21@brauner>
+ <CACzX3Av0uR5=zOXuTvcu2qovveYSmeVPnsDZA1ZByx2KLNJzEA@mail.gmail.com>
+ <20250604-notgedrungen-korallen-5ffd76cb7329@brauner>
+ <aD_8XsD7gDbURr-M@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250605054935.2323451-1-chizhiling@163.com>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[163.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[163.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: ED4FE5BF44
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Score: -4.01
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aD_8XsD7gDbURr-M@infradead.org>
 
-On Thu 05-06-25 13:49:35, Chi Zhiling wrote:
-> From: Chi Zhiling <chizhiling@kylinos.cn>
+On Wed, Jun 04, 2025 at 12:57:18AM -0700, Christoph Hellwig wrote:
+> On Wed, Jun 04, 2025 at 09:53:10AM +0200, Christian Brauner wrote:
+> > On Wed, Jun 04, 2025 at 12:13:38AM +0530, Anuj gupta wrote:
+> > > > Hm, I wonder whether we should just make all of this an extension of the
+> > > > new file_getattr() system call we're about to add instead of adding a
+> > > > separate ioctl for this.
+> > > 
+> > > Hi Christian,
+> > > Thanks for the suggestion to explore file_getattr() for exposing PI
+> > > capabilities. I spent some time evaluating this path.
+> > > 
+> > > Block devices don’t implement inode_operations, including fileattr_get,
+> > > so invoking file_getattr() on something like /dev/nvme0n1 currently
+> > > returns -EOPNOTSUPP.  Supporting this would require introducing
+> > > inode_operations, and then wiring up fileattr_get in the block layer.
+> > > 
+> > > Given that, I think sticking with an ioctl may be the cleaner approach.
+> > > Do you see this differently?
+> > 
+> > Would it be so bad to add custom inode operations?
+> > It's literally just something like:
 > 
-> max_scan in page_cache_next_miss always decreases to zero when no hole
-> is found, causing the return value to be index + 0.
-> 
-> Fix this by preserving the max_scan value throughout the loop.
-> 
-> Fixes: 901a269ff3d5 ("filemap: fix page_cache_next_miss() when no hole found")
-> Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+> That doesn't help as the inode operations for the underlying block device
+> inode won't ever be called.  The visible inode is the block device node
+> in the containing file system.
 
-Indeed. Thanks for catching this. Don't know how I missed that. Feel free
-to add:
+Ah, it's the same thing as with sockets, I forgot about that. Thanks.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+> Given fileattr get/set seems to be about the actual files in the file
+> system, using them for something that affects the I/O path for block
+> device nodes does not feel like a good fit.  And I think the reason they
+> are inode and not file operations is exactly to be able to cover
+> attributes always controlled by the containing file system.
 
-								Honza
-
-> ---
->  mm/filemap.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index b5e784f34d98..148be65be1cd 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -1767,8 +1767,9 @@ pgoff_t page_cache_next_miss(struct address_space *mapping,
->  			     pgoff_t index, unsigned long max_scan)
->  {
->  	XA_STATE(xas, &mapping->i_pages, index);
-> +	unsigned long nr = max_scan;
->  
-> -	while (max_scan--) {
-> +	while (nr--) {
->  		void *entry = xas_next(&xas);
->  		if (!entry || xa_is_value(entry))
->  			return xas.xa_index;
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Yes, that seems fine then.
 
