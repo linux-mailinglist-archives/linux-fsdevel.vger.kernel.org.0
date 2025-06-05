@@ -1,129 +1,195 @@
-Return-Path: <linux-fsdevel+bounces-50757-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50758-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63ECACF506
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 19:09:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B46E6ACF523
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 19:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E4EF1886BAE
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 17:09:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F70D16B2B5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 17:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED11276045;
-	Thu,  5 Jun 2025 17:09:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DBE27A133;
+	Thu,  5 Jun 2025 17:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRPf5dKz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3EKTus+i"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DD513D521
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 17:09:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E216279910
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 17:15:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749143354; cv=none; b=lMXk1fQgh/nAgLrcSU+dZdtAqDHiQYbNZ78CCduZ3GW1hXvo5xWIEhJthP7UJgedrjtAwApjVXdeatVeZMpgGalka6yasStpD+lDju9i1UfIWesbMTy90cVJoNm4vsVqUbYOqc11lggnfeStN2dQ19L1gG+u7QIfBdhQ8eu+E8s=
+	t=1749143756; cv=none; b=P3s/HufyPiOXl3+QE0r7Z72gw37QsIoA0X9Q2/AwsurUvwqLvXbtgYH8kZsgZPkHh5/r/X1qYma3Iei+0knvaqOtxxar5/g/JPwEseZJbdXeczvDQCwedVa518H4egKHtIgsARXoTKoXZ4Lxz3/AZaXfz4PqzxtrrXF4DV6nk9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749143354; c=relaxed/simple;
-	bh=J7AxQAZ0C6ZiWD2LwYZW0QFFdbFf8ZkmooxoSFzysO8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=nGWOZLydW/9V+mqvFOTpThm6IFTR2NGb+l/94jN4GOptt5256sJD76nttndbp6p0d4+T8qF8RZoE1woXfieUzsg3OgJQyKvMJuZ1fBVkkrfQHRRDMYngIJIrSZVSBYJNBn5dL2SMsBVq9CNn6OutbLFlc9U/MJYxwddzVKISESk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRPf5dKz; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-235f9e87f78so7367535ad.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 10:09:12 -0700 (PDT)
+	s=arc-20240116; t=1749143756; c=relaxed/simple;
+	bh=owWI8WAYAlFsjJvXIyvYSUNXCshP/5FGhM730a1ama8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=k1ztKct3FegC5HQ+hdUFZ2wVShjxejK6yHtKIs6EY7CL8tMBfvjWpIXF9WgLPXV2n076u6pUoZu/fzzkEAE37qbQn5yTxbdnRysyD2TzOah9itIHEGK4iv8V+eRleLRdQ6xL4C1Pfc/XHEUMqdTiBq6fUcqwbw0qcPrUTm0a8J4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3EKTus+i; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ackerleytng.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-235c897d378so11415415ad.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 10:15:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749143352; x=1749748152; darn=vger.kernel.org;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fXK+NIAKEQji4wcxO54nm5AT5lDPq0nwVxeAkWuOYog=;
-        b=MRPf5dKzDX4/59uCRE01UFToVIVLa5Jmz/kgqec9TQ/Soddxy39tEJ+dofpsPPipvD
-         shZRY0zC/CMvbESXDGczK0JDfhNcKd+P+9dsCmVdFhIo+MVBegKjaS+HoQ7tnbf53cLi
-         3vMPG/s0inDSPXfgmrHZTc3MGn7SVxqYT84Dc5e3sVq6ycuOEx+fUy+qS+7GnyjGptgk
-         5JfS/afef8cv4dVqj0WBfhESBiBbvB2bu78X8MUmc7PM5KXH2vaG4umHSCa1GGzRH2nq
-         /HIv/td746HOxieqJViPsGNZhbNfkldy3sgFVCMXVfrkRwbzee3VCIEnONLZ7pkti9DT
-         HuaA==
+        d=google.com; s=20230601; t=1749143754; x=1749748554; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1BvVogHbLCy3WniKJnzNXayCUjBrxVyVRH9sGv66360=;
+        b=3EKTus+i1JnDucVaMhuTSgXD7YTZOibnmejXlIOOreTNijnvHMFMpLZ+QXQaKgmOlb
+         Aa1iZLcPCb9NYfLfPBS5n1j1kWSoNJeZ+YNqT2aQPyLMQWTMtdKSdSAxFZ69ikGqGwfO
+         QWmYh2jfBFZ8XHJI3l/kGLIrkanWDsGj3lcQHgqbBX6pygK1DlD7M7k6cEZNI3EylxkJ
+         1y8N14mzr4i2tZZ3S5uIjesIE5o53ivwxnNX5dFuVo/L44iM5qiPEIvIYA2poMjsYr0r
+         D81tlq6B+xcUmFB497C5RFSw7cC8sBNlvDo2tCqCGAT+cLT/jSSF6yRAgA2QAltRvq8h
+         4E7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749143352; x=1749748152;
-        h=mime-version:user-agent:message-id:date:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fXK+NIAKEQji4wcxO54nm5AT5lDPq0nwVxeAkWuOYog=;
-        b=CkNJpZtcK3Q7ccgNymlPaJ52WII4y1uRA+0JkHYs/jmXhQdl+n0yjkHtoGByd+NhBk
-         xzpCYOVCsgKbZ5Uj5xMMldqwJp+M6VnK20tn/FT6pCkQkJdKk4gr23zIPwb7auZKX8jc
-         nP8ZY3j1q3hyU7xoVG+g8pjXm85d4oHz44u9iMrnoKp9KsRW2RKlEPU/YV6UbRrgMCyc
-         axxootMBbuACQ1rEmCacgH1DP3S5LZjDQVDeEQq/LfqAozloibLv5xKwWRBLKn35i/B7
-         Dg0CMvsqI+gNjEZRnDBuWyAkjw6Z1hn0WduuqvOZvOHilQVS9fdZECVLyhb6ifqrRxDO
-         tvAw==
-X-Gm-Message-State: AOJu0YwwB/roImJkIl8HLGiXWLolBKkpI8vgJXvlyxfACjqqU4wSVATo
-	5wAdDc2hAfKwdXgkv50ytxo8LzDBNX/F9FISuYNDCVtMUAffwcSRXxEJQ1vwsg==
-X-Gm-Gg: ASbGncs6ZZZtQCQvc8vGQXWOB0EYfmanxp/+oeNwQfd/KRbEtUB5dnYjMlmZvINU3GJ
-	3Wmf0gEH2U6FcBRvBupH5OYln1+qW6/1E1WTjSiZ1toKpFVy9QF/U6PCEVIhiuYSI1wxUDkSJOS
-	nPx1Z80QBcbK0Oo18ckaB0Evvlq98kVUhU3ANjGn5usFtp6cuKRHAoPu4R+Ty4n688vpz3X7Ffn
-	eCcxGWcVOHt8Rb3LAj6A+nOD6FilVce8p/NJHT/zrZvoJ5dPgR/YnqbUWOn+CzaTGZBx1q+aCz+
-	DU9h1opzDzZHuPmKs2hgW5+ixX3CD0uFvyij/iLOhy6Lkcgq6HypUXYwEv2kRRGFCwrl6rtzfq3
-	983O+VlpwdX6Y00EKfX81Hjm5NMYL
-X-Google-Smtp-Source: AGHT+IFiezxp4QGD/Fg2gWKD+LF68+byB/rbwh0AWOLL5A4IQ0SGT3v++fi5OXV9Scz2Uyp1OUMWgw==
-X-Received: by 2002:a17:902:e890:b0:235:e942:cb9c with SMTP id d9443c01a7336-23601ced1e1mr2318975ad.5.1749143352381;
-        Thu, 05 Jun 2025 10:09:12 -0700 (PDT)
-Received: from XTHCYRY1WD-Collin-Funk (redis-162.tisch.gvad.net. [207.135.66.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-23506bcd56fsm122165515ad.48.2025.06.05.10.09.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jun 2025 10:09:12 -0700 (PDT)
-From: Collin Funk <collin.funk1@gmail.com>
-To: Stephen Smalley <stephen.smalley.work@gmail.com>
-Cc: linux-fsdevel@vger.kernel.org,  Paul Eggert <eggert@cs.ucla.edu>
-Subject: Re: [PATCH] fs/xattr.c: fix simple_xattr_list()
-In-Reply-To: <20250605165116.2063-1-stephen.smalley.work@gmail.com> (Stephen
-	Smalley's message of "Thu, 5 Jun 2025 12:51:16 -0400")
-References: <20250605165116.2063-1-stephen.smalley.work@gmail.com>
-Date: Thu, 05 Jun 2025 10:09:11 -0700
-Message-ID: <m1wm9qund4.fsf@gmail.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+        d=1e100.net; s=20230601; t=1749143754; x=1749748554;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1BvVogHbLCy3WniKJnzNXayCUjBrxVyVRH9sGv66360=;
+        b=oqebsFiC31JV2MNf8jNUQtaECTVhUO/tAoJvdDza/6M5GQnMfufk2N2dFEitRqRQB4
+         k+ZVH3G4kP3q/hyL5V/i+C2Tc6jUq1lYIPXKPjKHq9C76sfUe+JE3xeIyfCvEGt0/CdR
+         /h/vjDiW9tgAP4QWewiDheV2H0hNDZqqFcVZQeBWcQYcPjFMW3k4XW7Q1BhdMzNPD5JN
+         7rZ5kK8f/0V5CaOVMw/G7xJtz4E2vGb+OnpqgnwALVNVP6eTQ5ttoPUw02iMT9DgUetW
+         kYlmG6MWI72rn+c14Xq8yHAQKrO3hOyD/zEWfH1+fx62Pwvze/S/Rz8/vYTBV20z+BZ4
+         njjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkNSF8O4VDPwKUNkxqLol8GDRYjUGR+ZOJWiC4BvofYNhxAwP43NlFmOl6EoHYg4Cml5SHXxlZaE8BKO7R@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLmiResFeaySZfSDqmLBKyTS24nlaPb1sW0gk/NuO9fkNl7AbQ
+	LfP7ibwX03iILm5Ustn1OZ+dY6NnqJSLk7uNNaNy7UIA3oT8EUn23SrW0dKFDSK7ltGrLRv5nWY
+	glRfGCFDdPpT7YCs4rtuVevQQfg==
+X-Google-Smtp-Source: AGHT+IEW234xG8sWokLR9Rty6k1AIBgtp49T5P85K9mc9H7ZjXy7xEQDhgc08MioADyUz2CbmUlZakt/hY882gqV/g==
+X-Received: from plsh2.prod.google.com ([2002:a17:902:b942:b0:234:f137:75cf])
+ (user=ackerleytng job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:902:dad0:b0:234:c5c1:9b73 with SMTP id d9443c01a7336-23601ec356fmr1418295ad.36.1749143754410;
+ Thu, 05 Jun 2025 10:15:54 -0700 (PDT)
+Date: Thu, 05 Jun 2025 10:15:53 -0700
+In-Reply-To: <85ae7dc691c86a1ae78d56d413a1b13b444b57cd.camel@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <cover.1747264138.git.ackerleytng@google.com> <7753dc66229663fecea2498cf442a768cb7191ba.1747264138.git.ackerleytng@google.com>
+ <85ae7dc691c86a1ae78d56d413a1b13b444b57cd.camel@intel.com>
+Message-ID: <diqz7c1qjeie.fsf@ackerleytng-ctop.c.googlers.com>
+Subject: Re: [RFC PATCH v2 38/51] KVM: guest_memfd: Split allocator pages for
+ guest_memfd use
+From: Ackerley Tng <ackerleytng@google.com>
+To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+Cc: "palmer@dabbelt.com" <palmer@dabbelt.com>, "pvorel@suse.cz" <pvorel@suse.cz>, 
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "Miao, Jun" <jun.miao@intel.com>, 
+	"Shutemov, Kirill" <kirill.shutemov@intel.com>, "pdurrant@amazon.co.uk" <pdurrant@amazon.co.uk>, 
+	"steven.price@arm.com" <steven.price@arm.com>, "peterx@redhat.com" <peterx@redhat.com>, 
+	"vbabka@suse.cz" <vbabka@suse.cz>, "jack@suse.cz" <jack@suse.cz>, 
+	"amoorthy@google.com" <amoorthy@google.com>, "maz@kernel.org" <maz@kernel.org>, 
+	"keirf@google.com" <keirf@google.com>, "vkuznets@redhat.com" <vkuznets@redhat.com>, 
+	"quic_eberman@quicinc.com" <quic_eberman@quicinc.com>, 
+	"mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>, "hughd@google.com" <hughd@google.com>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, "Wang, Wei W" <wei.w.wang@intel.com>, 
+	"Du, Fan" <fan.du@intel.com>, 
+	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>, 
+	"quic_svaddagi@quicinc.com" <quic_svaddagi@quicinc.com>, "Hansen, Dave" <dave.hansen@intel.com>, 
+	"ajones@ventanamicro.com" <ajones@ventanamicro.com>, 
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>, "nsaenz@amazon.es" <nsaenz@amazon.es>, "aik@amd.com" <aik@amd.com>, 
+	"usama.arif@bytedance.com" <usama.arif@bytedance.com>, 
+	"quic_mnalajal@quicinc.com" <quic_mnalajal@quicinc.com>, "fvdl@google.com" <fvdl@google.com>, 
+	"rppt@kernel.org" <rppt@kernel.org>, "quic_cvanscha@quicinc.com" <quic_cvanscha@quicinc.com>, 
+	"bfoster@redhat.com" <bfoster@redhat.com>, "willy@infradead.org" <willy@infradead.org>, 
+	"anup@brainfault.org" <anup@brainfault.org>, "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>, 
+	"tabba@google.com" <tabba@google.com>, "mic@digikod.net" <mic@digikod.net>, 
+	"oliver.upton@linux.dev" <oliver.upton@linux.dev>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "Zhao, Yan Y" <yan.y.zhao@intel.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>, "muchun.song@linux.dev" <muchun.song@linux.dev>, 
+	"Li, Zhiquan1" <zhiquan1.li@intel.com>, "rientjes@google.com" <rientjes@google.com>, 
+	"mpe@ellerman.id.au" <mpe@ellerman.id.au>, "Aktas, Erdem" <erdemaktas@google.com>, 
+	"david@redhat.com" <david@redhat.com>, "jgg@ziepe.ca" <jgg@ziepe.ca>, 
+	"Annapurve, Vishal" <vannapurve@google.com>, "Xu, Haibo1" <haibo1.xu@intel.com>, 
+	"jhubbard@nvidia.com" <jhubbard@nvidia.com>, "Yamahata, Isaku" <isaku.yamahata@intel.com>, 
+	"jthoughton@google.com" <jthoughton@google.com>, "will@kernel.org" <will@kernel.org>, 
+	"steven.sistare@oracle.com" <steven.sistare@oracle.com>, "jarkko@kernel.org" <jarkko@kernel.org>, 
+	"quic_pheragu@quicinc.com" <quic_pheragu@quicinc.com>, "chenhuacai@kernel.org" <chenhuacai@kernel.org>, 
+	"Huang, Kai" <kai.huang@intel.com>, "shuah@kernel.org" <shuah@kernel.org>, 
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>, "pankaj.gupta@amd.com" <pankaj.gupta@amd.com>, 
+	"Peng, Chao P" <chao.p.peng@intel.com>, "nikunj@amd.com" <nikunj@amd.com>, 
+	"Graf, Alexander" <graf@amazon.com>, "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, 
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "yuzenghui@huawei.com" <yuzenghui@huawei.com>, 
+	"jroedel@suse.de" <jroedel@suse.de>, "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, 
+	"jgowans@amazon.com" <jgowans@amazon.com>, "Xu, Yilun" <yilun.xu@intel.com>, 
+	"liam.merwick@oracle.com" <liam.merwick@oracle.com>, "michael.roth@amd.com" <michael.roth@amd.com>, 
+	"quic_tsoni@quicinc.com" <quic_tsoni@quicinc.com>, 
+	"richard.weiyang@gmail.com" <richard.weiyang@gmail.com>, "Weiny, Ira" <ira.weiny@intel.com>, 
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>, "Li, Xiaoyao" <xiaoyao.li@intel.com>, 
+	"qperret@google.com" <qperret@google.com>, 
+	"kent.overstreet@linux.dev" <kent.overstreet@linux.dev>, "dmatlack@google.com" <dmatlack@google.com>, 
+	"james.morse@arm.com" <james.morse@arm.com>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"pgonda@google.com" <pgonda@google.com>, "quic_pderrin@quicinc.com" <quic_pderrin@quicinc.com>, 
+	"hch@infradead.org" <hch@infradead.org>, "roypat@amazon.co.uk" <roypat@amazon.co.uk>, 
+	"seanjc@google.com" <seanjc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Stephen Smalley <stephen.smalley.work@gmail.com> writes:
+"Edgecombe, Rick P" <rick.p.edgecombe@intel.com> writes:
 
-> commit 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always
-> include security.* xattrs") failed to reset err after the call to
-> security_inode_listsecurity(), which returns the length of the
-> returned xattr name. This results in simple_xattr_list() incorrectly
-> returning this length even if a POSIX acl is also set on the inode.
+> On Wed, 2025-05-14 at 16:42 -0700, Ackerley Tng wrote:
+>> +
+>> +static pgoff_t kvm_gmem_compute_invalidate_bound(struct inode *inode,
+>> +						 pgoff_t bound, bool start)
+>> +{
+>> +	size_t nr_pages;
+>> +	void *priv;
+>> +
+>> +	if (!kvm_gmem_has_custom_allocator(inode))
 >
-> Reported-by: Collin Funk <collin.funk1@gmail.com>
-> Closes: https://lore.kernel.org/selinux/8734ceal7q.fsf@gmail.com/
-> Reported-by: Paul Eggert <eggert@cs.ucla.edu>
-> Closes: https://bugzilla.redhat.com/show_bug.cgi?id=2369561
-> Fixes: 8b0ba61df5a1 ("fs/xattr.c: fix simple_xattr_list to always include security.* xattrs")
+> General comment - It's a bit unfortunate how kvm_gmem_has_custom_allocator() is
+> checked all over the place across this series. There are only two allocators
+> after this, right? So one is implemented with callbacks presumably designed to
+> fit other allocators, and one has special case logic in guest_memfd.c.
 >
-> Signed-off-by: Stephen Smalley <stephen.smalley.work@gmail.com>
-> ---
->  fs/xattr.c | 1 +
->  1 file changed, 1 insertion(+)
+> Did you consider designing struct guestmem_allocator_operations so that it could
+> encapsulate the special logic for both the existing and new
+> allocators?
+
+I did, yes. I believe it is definitely possible to make standard 4K
+pages become another allocator too.
+
+I would love to clean this up. Not sure if that will be a new series
+after this one, or part of this one though.
+
+> If it
+> didn't work well, could we expect that a next allocator would actually fit
+> struct guestmem_allocator_operations?
 >
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 8ec5b0204bfd..600ae97969cf 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -1479,6 +1479,7 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
->  		buffer += err;
->  	}
->  	remaining_size -= err;
-> +	err = 0;
->  
->  	read_lock(&xattrs->lock);
->  	for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
 
-Thanks for looking into it and the quick patch.
+This was definitely designed to support allocators beyond
+guestmem_hugetlb, though I won't promise that it will be a perfect fit
+for future allocators. This is internal to the kernel and this interface
+can be updated for future allocators though.
 
-I'll see if I can test it later today.
-
-Collin
+>> +		return bound;
+>> +
+>> +	priv = kvm_gmem_allocator_private(inode);
+>> +	nr_pages = kvm_gmem_allocator_ops(inode)->nr_pages_in_folio(priv);
+>> +
+>> +	if (start)
+>> +		return round_down(bound, nr_pages);
+>> +	else
+>> +		return round_up(bound, nr_pages);
+>> +}
+>> +
+>> +static pgoff_t kvm_gmem_compute_invalidate_start(struct inode *inode,
+>> +						 pgoff_t bound)
+>> +{
+>> +	return kvm_gmem_compute_invalidate_bound(inode, bound, true);
+>> +}
+>> +
+>> +static pgoff_t kvm_gmem_compute_invalidate_end(struct inode *inode,
+>> +					       pgoff_t bound)
+>> +{
+>> +	return kvm_gmem_compute_invalidate_bound(inode, bound, false);
+>> +}
+>> +
 
