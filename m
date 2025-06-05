@@ -1,140 +1,122 @@
-Return-Path: <linux-fsdevel+bounces-50745-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50749-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97EFACF256
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 16:51:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D742ACF49D
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 18:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AAF4171191
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 14:51:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0538318947A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 16:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB5E17FAC2;
-	Thu,  5 Jun 2025 14:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE74A211299;
+	Thu,  5 Jun 2025 16:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NBZTrUCA"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="I6O94Fd8"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6270815746F
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 14:51:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CCEC274FF0
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 16:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749135100; cv=none; b=pnVaeTo8MT0lXN2TTfAFiiG8umZlJp7oQZ185vJxafqElhKncGngfSGnOS+RosXGsktAwZ5uDEdS7/xW46AnnUlZxIPMP6QSRPOQoQ+nbvE1q0pHtfXxpCb7KY49ojLKLklv3CzRMu+J43dFhFyQx2tMaHvv9W9Eu6F0fbjlB+s=
+	t=1749142051; cv=none; b=WlM+yVAO75ZzTkPf7sBh/KIj85k+c2hZfD1/YWGv5/jElF4cBJLQETTLmwRC0zJXlbBD5Yw5aOxEmclKliHFslC9P/Je/TWn6ain9t5VQbLyEM59b7VqdTSLfbO8bp6kbpGm3YZg2ZMRZjIlIa8Dn8YEJhlGt7krQuQ0wdAJ4eM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749135100; c=relaxed/simple;
-	bh=8opYR/RLHE+c4NG9PfiIatcqdYIIGlAtUPp/Y7mK/SA=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=WfCQwpyyCK8qt27sIFKjsDCycu0sv03iKbwPYZbyOPBWwU6XnI3GVTsqL/HoYLp/3jEqnlqgi6Er7ga/iKMKbsmPEk81f8MtVV9+nzHb/cAhOpnn4Mq8efiMQgShdXqi4Sn//G8yBJpEXOaN+Y4VjKq7KkkOGP8w5nJQ8R2lcBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=NBZTrUCA; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-3109f106867so1269242a91.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 07:51:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1749135096; x=1749739896; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=0qZIyhLNfUK8aRt0IjyGDdUz2kW/fFohhjPr9dq+tBQ=;
-        b=NBZTrUCAOFNHNKaNR1pMpY0OmZymhLr4tCFdRB2u0yaH7w1La81nyRMFckOIXB6vAY
-         fpmL/1pLqEeL2llYJbkMPfgIax/dy/GhGChv7uuhkCU7zV0Aeg+eHpQgU6qBRDUD+3kk
-         q60PwuBj6Hjtkhb6T5J3yTPqRrGMdUfUTNlG0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749135096; x=1749739896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0qZIyhLNfUK8aRt0IjyGDdUz2kW/fFohhjPr9dq+tBQ=;
-        b=hSyqbXnDKU8YkyzRYQx5KmzQsH9pvSvr0glUA9osw2QKdZ9gnF4LAHOF+TymzaXOlG
-         6iCyS0pQjazfpUyKW4Z37c6vPlNm+I0HFg0VQ6tf3T4xZYVZhra4IK4H7Vb3lnO8WaN7
-         3yYap3MCy/qnBBpS0fl8F5DafosY0jIMpcPEi1Tc1Jw735BirY+ovjWJFi639uS8wnnZ
-         FaseQ/bpDAjqWfhiq0fbwE+N1GPISRvwDSvvZABWwEZ7/A2s36AfC5zvKrzl4YWg4gJz
-         yCeDLpxdUXtFHUtSfJwU7LVNrUI/m1bz6DYPiCVUpBNUrnwhkZ6MrkugrJ5QMmD60kGd
-         m9VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVquPpVWHxJ7zG4dZAHpvee+hyZ/VQpJQKy6lW/1s4SklHt1jL0gHqYFjlriTr7cs5M2EmJ9diWyWlJJJGs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7wBdXFkELgTxktGXVwzO3dj+nQq53Hy/r23AX6970feaJJmnP
-	ZXrvoPcLyyMn8BjK5ASrjrs+oNA1/4lCIsdfEa1xkfbcFBZKR/bEArWDMZLVrtsFB8ozXO7zb8l
-	GB12AtmOxUGkdu42h7A0BapvQ0366yp+yCTBM8izJ5GjKX2tgGgGzhcFBtA==
-X-Gm-Gg: ASbGncvCU5MJa9zbi2uyUW0PzlIT+5/dDykfoUDcK4F0SmD2CIQOm1rFg4RXiYN/bwM
-	hc7qTjMnIbNPikXjA2kZhc1R+fRlnlykmkPDno6Lgf0W/XivR/SNxUvSh7CHV6kwbCsN194Z0y+
-	zaB1uTUGn2SKTvX1AIGcmkkV6LE2ufT+M=
-X-Google-Smtp-Source: AGHT+IHAbJn7akHP0pYrJh9k1QTBH4AMnJ3AUW68Wk+P5THmWTp3kCTbbGZ2EV9/S5oBNPTKOCVGI0vam2239o4+gmA=
-X-Received: by 2002:a05:622a:5a0f:b0:476:7e6b:d297 with SMTP id
- d75a77b69052e-4a5a581c203mr125679031cf.41.1749135086307; Thu, 05 Jun 2025
- 07:51:26 -0700 (PDT)
+	s=arc-20240116; t=1749142051; c=relaxed/simple;
+	bh=Bi0R0f5PD2dLe5rlr7+ocPQbwyo+oE9pViITFmEc+Z8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=i3SOpxHXpzEpWiNrrq8GWnH+ReNmhPloXmDXsHd7CwB36ebUsCe6WLtaNTU0Nnjwcb8709JbelZA/dBqm7Qtrr8CQVVcvBTaKmAEcNu+skCIsedLUm/LQYzD8crojwwb0tqsjW8taKXsOJfqbg5Hp6ytord9Mh6qPsaoiST+cxI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=I6O94Fd8; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250605164727epoutp04da31e729a3ebfab7fb0aeac9b83e85bc~GM2ysfaB41964319643epoutp04e
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 16:47:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250605164727epoutp04da31e729a3ebfab7fb0aeac9b83e85bc~GM2ysfaB41964319643epoutp04e
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1749142047;
+	bh=YR0PDLL8uMHjI8WNgud2b1l4O2VchN+C0PbvY2VuZUk=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=I6O94Fd85KKYWRClfAl5sJD/esQBZV6T6JDeOd6y+zJTc8pzX0hCVtQLyxufUXEkw
+	 v4xTCTYEfKClAtjLGy3g+ZYnQqXdzJbOybsyq7UIHyLFZYhtxLZzUNTk5fMcH2yfSI
+	 xFWaoq+kz/VNgbntDPf0xOW/4piwYWmu9SRPgBvs=
+Received: from epsnrtp01.localdomain (unknown [182.195.42.153]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPS id
+	20250605164726epcas5p3feefee1eeab0b33509d7c71d667a3032~GM2yJL2Uh0580405804epcas5p3v;
+	Thu,  5 Jun 2025 16:47:26 +0000 (GMT)
+Received: from epcas5p4.samsung.com (unknown [182.195.38.176]) by
+	epsnrtp01.localdomain (Postfix) with ESMTP id 4bCr304g5Cz6B9m4; Thu,  5 Jun
+	2025 16:47:24 +0000 (GMT)
+Received: from epsmtip1.samsung.com (unknown [182.195.34.30]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250605150741epcas5p4e5cd0b21137fa714006f44045ff272e2~GLfsW6BN41032710327epcas5p4J;
+	Thu,  5 Jun 2025 15:07:41 +0000 (GMT)
+Received: from localhost.localdomain (unknown [107.99.41.245]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250605150739epsmtip1e4c5b39091f5620308195b81190ec0b5~GLfqoonqV0294502945epsmtip1g;
+	Thu,  5 Jun 2025 15:07:39 +0000 (GMT)
+From: Anuj Gupta <anuj20.g@samsung.com>
+To: vincent.fu@samsung.com, jack@suse.cz, anuj1072538@gmail.com,
+	axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org,
+	hch@infradead.org, martin.petersen@oracle.com, ebiggers@kernel.org,
+	adilger@dilger.ca
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	joshi.k@samsung.com, Anuj Gupta <anuj20.g@samsung.com>
+Subject: [PATCH for-next v2 0/2] add ioctl to query protection info
+ capabilities
+Date: Thu,  5 Jun 2025 20:37:27 +0530
+Message-Id: <20250605150729.2730-1-anuj20.g@samsung.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Thu, 5 Jun 2025 16:51:15 +0200
-X-Gm-Features: AX0GCFsTY9gN9NDJLz1wYsjKjFbqBwGH61myZEfMvmbdvIDQuo4OYyMlmpHjQd8
-Message-ID: <CAJfpegvB3At5Mm54eDuNVspuNtkhoJwPH+HcOCWm7j-CSQ1jbw@mail.gmail.com>
-Subject: [GIT PULL] overlayfs update for 6.16
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250605150741epcas5p4e5cd0b21137fa714006f44045ff272e2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+cpgsPolicy: CPGSC10-542,Y
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250605150741epcas5p4e5cd0b21137fa714006f44045ff272e2
+References: <CGME20250605150741epcas5p4e5cd0b21137fa714006f44045ff272e2@epcas5p4.samsung.com>
 
-Hi Linus,
+Hi all,
 
-Please pull from:
+This patch series adds a new ioctl to query integrity capability.
+Patch 1 adds a pi_size field in blk_integrity struct which is later
+used to export this value to the user as well.
+Patch 2 introduces a new ioctl to query integrity capability.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git
-tags/ovl-update-6.16
+v1 -> v2
+introduce metadata_size, storage_tag_size and ref_tag_size field in the
+uapi struct (Martin)
+uapi struct fields comment improvements (Martin)
+add csum_type definitions to the uapi file (Martin)
+add fpc_* prefix to uapi struct fields (Andreas)
+bump the size of rsvd and hence the uapi struct to 32 bytes (Andreas)
+use correct value for ioctl (Andreas)
+use clearer names for CRC (Eric)
 
-- Fix a regression in getting the path of an open file (e.g.  in
-/proc/PID/maps) for a nested overlayfs setup  (Andr=C3=A9 Almeida)
+Anuj Gupta (2):
+  block: introduce pi_size field in blk_integrity
+  fs: add ioctl to query protection info capabilities
 
-- The above fix contains a cast to non-const, which is not actually
-needed.  So add the necessary helpers postfixed with _c that allow the
-cast to be removed (touches vfs files but only in trivial ways)
+ block/blk-integrity.c         | 41 +++++++++++++++++++++++++++++++++++
+ block/ioctl.c                 |  3 +++
+ drivers/nvme/host/core.c      |  1 +
+ drivers/scsi/sd_dif.c         |  1 +
+ include/linux/blk-integrity.h |  6 +++++
+ include/linux/blkdev.h        |  1 +
+ include/uapi/linux/fs.h       | 38 ++++++++++++++++++++++++++++++++
+ 7 files changed, 91 insertions(+)
 
-- Support data-only layers and verity in a user namespace
-(unprivileged composefs use case)
+-- 
+2.25.1
 
-- Fix a gcc warning (Kees)
-
-- Cleanups
-
-Thanks,
-Miklos
-
----
-Andr=C3=A9 Almeida (1):
-      ovl: Fix nested backing file paths
-
-Kees Cook (1):
-      ovl: Check for NULL d_inode() in ovl_dentry_upper()
-
-Miklos Szeredi (4):
-      ovl: make redirect/metacopy rejection consistent
-      ovl: relax redirect/metacopy requirements for lower -> data redirect
-      ovl: don't require "metacopy=3Don" for "verity"
-      vfs: change 'struct file *' argument to 'const struct file *'
-where possible
-
-Thorsten Blum (4):
-      ovl: Use str_on_off() helper in ovl_show_options()
-      ovl: Replace offsetof() with struct_size() in ovl_cache_entry_new()
-      ovl: Replace offsetof() with struct_size() in ovl_stack_free()
-      ovl: Annotate struct ovl_entry with __counted_by()
-
----
- Documentation/filesystems/overlayfs.rst |  7 +++
- fs/file_table.c                         | 10 ++--
- fs/internal.h                           |  1 +
- fs/overlayfs/file.c                     |  4 +-
- fs/overlayfs/namei.c                    | 98 ++++++++++++++++++++---------=
-----
- fs/overlayfs/ovl_entry.h                |  2 +-
- fs/overlayfs/params.c                   | 40 ++------------
- fs/overlayfs/readdir.c                  |  4 +-
- fs/overlayfs/util.c                     |  9 ++-
- include/linux/fs.h                      | 12 ++--
- 10 files changed, 97 insertions(+), 90 deletions(-)
 
