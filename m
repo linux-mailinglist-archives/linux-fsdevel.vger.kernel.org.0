@@ -1,79 +1,79 @@
-Return-Path: <linux-fsdevel+bounces-50782-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50784-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC77ACF8FA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 22:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4025EACF920
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 23:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 709473AE14D
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 20:56:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90C1D189D500
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jun 2025 21:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E538927EC97;
-	Thu,  5 Jun 2025 20:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5AEF27F73A;
+	Thu,  5 Jun 2025 21:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="OmVD0gad"
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="Yey3F62d"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF381223DF1
-	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 20:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4855A27F4E7
+	for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jun 2025 21:06:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749156981; cv=none; b=sRqGllBgoM8buPr9r9YldEFufmpFBnqbFMdSuXyGWWZZqTiydZ+p4FqtwSfEL7NHGi5zzMKnl8cLsHcahBkvaGWa28edRrxXXhOPQgiF+77VLlvz+FBwClW0w0x5DpizZtzyvtk5CJMpm7JoSvEfL8PmvIQG2qYjHw3ugYGtKUU=
+	t=1749157613; cv=none; b=bHsUTwov+ik2mLWcbqc8zmLH2HFRMxRYDfSGilrey2EG1OhArfPqkOhisRaoQ8bQhqRcGrTaxoxPO6lyFPE/FS6KaB7ivojCRXK966DK3pghlOUyvCnus3pwPDCb6WcdUP55ehpDyDjk+48uiHjCFbDSuiW3f59ZTosXfcFgZmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749156981; c=relaxed/simple;
-	bh=DSobZZnWgM17JBG0B1yyZn7k6c2byf3fBmEAKAS/DRc=;
+	s=arc-20240116; t=1749157613; c=relaxed/simple;
+	bh=opgv1wEXerdl0y8fo81eC9+VV0HRKdrhqP6Hc3Nrjv8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DT271Or7ZYrd+hCzX26chLMFbaeAdf4AdvIjlVHM3EW71s+X0UwBTb7DhqUoikuRYFP0HbNwlpYpjQYEetTEwSusV/k/+xomBe+kugoXbcr6K5YOm+/VqDtB0Rb3/WpM1/GSl+9KX+bcbQIOdEtr6Og2SSpj/6x7g9o6S0qV51k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=OmVD0gad; arc=none smtp.client-ip=148.163.135.74
+	 To:Cc:Content-Type; b=DWDf/MPuqqk0xTPJ7tAv3N1XAFj+yV7dz5YEh58PQBFSqYtM1FIAWVu5ej1EYU36DvPaqZHH0u20LjLcKah0Oqvxtot7bdysD8fbxeGcBXp4wNeYOh+WmpyOT4sm/VTdPvT6C0TaEdGWjM9jBOFb/W3wV/vlWL/S92oBYqRnFFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=Yey3F62d; arc=none smtp.client-ip=148.163.135.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167069.ppops.net [127.0.0.1])
-	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555KjItg020555
-	for <linux-fsdevel@vger.kernel.org>; Thu, 5 Jun 2025 16:56:12 -0400
+Received: from pps.filterd (m0167068.ppops.net [127.0.0.1])
+	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 555L4mCV028048
+	for <linux-fsdevel@vger.kernel.org>; Thu, 5 Jun 2025 17:06:50 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
  content-transfer-encoding : content-type : date : from : in-reply-to :
  message-id : mime-version : references : subject : to; s=pps01;
- bh=xm4+j5Ivo2wgP6zUM7+5vhC6Rb1oLpKBdxSCgVg/kKE=;
- b=OmVD0gadQQRw+VbVLnP6EB6eeYJlPT7XFCU5P1NJAsou1AWNcJWefDOQqQ9j+/j7VLGx
- UIheI0KY0kCbU4GwaXXJVpSiyl2g0qpOVMc7gFiW36l/GMj0AlegPdhqkTu2l1qNvZzQ
- JWbSOs4yo1wfr/IV09hJjdxuW8DSJc8cyhE25kCsemiEGpcFwCdVxu+0HXKBvpc/7pK7
- xiO2XqZF5WZ2hwhEaJYxnZqu/ay3xYFNwVZnZAenlL6tMrV4CVe7zRundMdWoXFMCGfO
- gJZqpRi1huHObQfRqARRQYhknGFvjFq+Od4I6Axey9rYfTU1ciwN//B1NnCskO7AtZop +A== 
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
-	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 471ethcu7h-1
+ bh=+4t+B2pD6+kpWYFt+7p6MEr09BsrqvjyD3ljU+axPAs=;
+ b=Yey3F62d/5thvpoAv6BWRhQU/VKUic/00d6QzVimrbhapPndDLIpzXHGS8nHmUtl0jXA
+ YhNEAKuRQ8Y6IaQPHTykjONtEc+sV/yqaO3WtY8xMnzTBHuTarUIln5qzsZDEZDPzAVz
+ I/hAJ6yAhWHvpgWGcx/70hpqxvpkyoSOPHr5hXmtTvlVgedIiaXJ+nU/p0RmCibi6+s2
+ WFoAOgKW7I4DoOCaU328I+w9pDL2imFr0ekT5FgBlD4KHTHXsSUTMLFTYr7SjRvdYOdD
+ dYpPEPv0goao46pP1kQhEohXeJl9plropxI8ZaiMsmYny6I3vmM06aSb1zuowzib7Sy8 Zw== 
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com [209.85.128.200])
+	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 46yv219vxe-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 16:56:12 -0400
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-70e4269de4fso22306357b3.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 13:56:12 -0700 (PDT)
+	for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 17:06:50 -0400
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-70b5013cd97so20455937b3.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 14:06:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749156971; x=1749761771;
+        d=1e100.net; s=20230601; t=1749157609; x=1749762409;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xm4+j5Ivo2wgP6zUM7+5vhC6Rb1oLpKBdxSCgVg/kKE=;
-        b=uVPSizzwRaPpP4kOazF/jsRiWUKPoXV7KQ0yumsG9oPNLqLipbKcf6kUXIGMYMPtBl
-         5yY8R7IIfbepn2XTpwnPOfGDO84ANJ6tfYLJZu0gDt6W/0tDtduMbllfFp4VcZTib9LC
-         v/V8ut7rMjKzJoC6QRcsPmM06o1LYnkjGrVo1yDBQ83SuJqUmgbgDIgKmb+1iQd2yhIz
-         /NmAv+P3l1OFIcZD3SSPexCPQjQ02E7fFiJY5/+02fZpnqjydFoTkiInuVXq2mDj7GT4
-         1lYhByKqoitkLJhPg4jMXOdUdhOGwvyocplYvHiTrVw+ha751C/TTBRlYYhhb85XZ5Xv
-         bU8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVUBbjMkJUMdvU4Z+6reeYiyOBkfzeeetgMCHMmqLwjj2RcIxlsGcPTFLG62RKUfRTiUXoHr83CRKvTprtd@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKM9P7TcGGJsMbqUli9bDRIAuzmiHoOpcKh1j7zHNolue6zEi5
-	52j5pIvyTWAZWvCN6q60Agb5dS1zewSprrKwsWS2YV25EyYB9gniqsUdjGSLfU4EHQ9SlTmMRec
-	McgY0SXIEsLYzbbB425X7/CQ0seKMWgLBG+2WVoTIu6pNdyIQq1uMvTTM9inYbednEO8EGgyD74
-	kxyZXbVV5Us8xgvS3U4B5Rg0xjUJoCbaDWxOPBpQ==
-X-Gm-Gg: ASbGncsMXue29bZbnjMUvMPaepd9lqPOjkMJFXNwK6VF2AYZZXHnwZM0QMJ4i4o+0Ep
-	e2388YzvCsKdb+lZjd2n7YnsAyaAsRWCzSA3z02DrywmaBxkVAWnQtNWZzH4AHvHEXccXKQ==
-X-Received: by 2002:a05:690c:6711:b0:710:ee42:5c37 with SMTP id 00721157ae682-710f76a075amr14815037b3.17.1749156971108;
-        Thu, 05 Jun 2025 13:56:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGeRm2n9CQ9cmSHniujfrPxJWEMnLDbBKF4rJQ6yoAy8eJprBTSY131Rr0KabDbauqak23pCjd3D9jhbArEmGk=
-X-Received: by 2002:a05:690c:6711:b0:710:ee42:5c37 with SMTP id
- 00721157ae682-710f76a075amr14814857b3.17.1749156970703; Thu, 05 Jun 2025
- 13:56:10 -0700 (PDT)
+        bh=+4t+B2pD6+kpWYFt+7p6MEr09BsrqvjyD3ljU+axPAs=;
+        b=IEw/JjE70iUHaUylyqTZYl85HL5mAWLgWW0e8oMlHB6VhD5mavXZEfPr9VA/ATHeXK
+         qQu+l8EcmWT5PicEqkFo4MDTFXzi6CzCkH8/ToELaMOoHpba2E8MSyg8ZhHdwylJGVVQ
+         iiTLLvJIFeGgGI7x5mYjcTygWGBLs80GzNupW01sr3FEpgGN5Rxw0UD1Bu9PhLPb7JDZ
+         zwIBtCbVjPHZDChzlee3SwLRzMGc3cPIIST/Eo1nlLgTzW/pSKnOZhTMwTYfKDZFYOSJ
+         BVqjp0t40A7w7/UKoHIo0OFg3JH5dcA66aCVwiKm9Rte7fkfk3Lr8VhaWOhYjiGd2OvW
+         Jr5w==
+X-Forwarded-Encrypted: i=1; AJvYcCU6kMhxl0arPbA2VcOIVuqq+QCokS7gHx8nHCNmj/+tlvuhhMp6Gf4dfNHiGTmJldGeiVmqVXZAcyYZpq7B@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/5iT1gLhE6kKHAq5mY0+sya1NFrBacGjhslQt3ZS1KKMeIP5l
+	47BEtJfNkr9cA5sVBUxd3RiWb9uiT6XQgz/x6iSqyBJNo3c761lg3p8o/FWTiNnF7B+tCfsALol
+	kSsy6lXFG6Pa9tX/tRezHoJ+CeQuFAXyl1qmKgfx+3E78iqmilsnx09Dk1tKORTJKa6n2ixeMOe
+	OEr1SMmtImXOlOi87cScOROdLLHWVi3dQC4bClyg==
+X-Gm-Gg: ASbGnctzo8E0HJg8cWXfrMHs9fIPvJ3njRIrfaUslONtnJUA/gisbLz/0HYbJ9MJadE
+	ZR/ib3biEsp15t4a3h5VWALnDykY0tCBq0qfiJpQG/dF0Lfuhl/UsFNXFKS9111xw5aYiQw==
+X-Received: by 2002:a05:690c:3685:b0:6f9:7a3c:1fe with SMTP id 00721157ae682-710f776cc31mr13836947b3.23.1749157608940;
+        Thu, 05 Jun 2025 14:06:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHFpswqCHFSqwALooH+sBikcUL5B8njFjFNXDocdSyUUxkugwfcle1F23KSlnDph3jsu+K0GvNMwj824P5EaQo=
+X-Received: by 2002:a05:690c:3685:b0:6f9:7a3c:1fe with SMTP id
+ 00721157ae682-710f776cc31mr13836337b3.23.1749157608327; Thu, 05 Jun 2025
+ 14:06:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -81,44 +81,40 @@ List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
- <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu> <CADrL8HWM9zmJY=paJjWYPZkw5gYXHMH7MmEMhzHoMpcETEJiUg@mail.gmail.com>
-In-Reply-To: <CADrL8HWM9zmJY=paJjWYPZkw5gYXHMH7MmEMhzHoMpcETEJiUg@mail.gmail.com>
+ <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu> <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
+In-Reply-To: <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
 From: Tal Zussman <tz2294@columbia.edu>
-Date: Thu, 5 Jun 2025 16:56:00 -0400
-X-Gm-Features: AX0GCFt9W11qCzc-mT2qybe1SfA1xJ_Jio9aAw4Ju_-YhONUSDy6b-R_EmrG9-I
-Message-ID: <CAKha_sr1srsvnYTYYQgbPXK4CGmMGfiN9vVPWvGgN+vifFnt9g@mail.gmail.com>
+Date: Thu, 5 Jun 2025 17:06:37 -0400
+X-Gm-Features: AX0GCFstPrjtQYpw6EfTjM-xcC75nUUqJYkys8M1u1GJ2SLteZ0JyCXfVm1EAzM
+Message-ID: <CAKha_sq7QQ5+GQ_4irNcfdNqPgHpNUqHUZe8D0g+-Y-_La4ohQ@mail.gmail.com>
 Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
  different userfaultfd
-To: James Houghton <jthoughton@google.com>
+To: David Hildenbrand <david@redhat.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>, Peter Xu <peterx@redhat.com>,
         "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        David Hildenbrand <david@redhat.com>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
         Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-        Pavel Emelyanov <xemul@parallels.com>,
         Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: Tg35y2dd6GczZSjgW_vLJ5IeDK0MUk9h
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE4OSBTYWx0ZWRfX63h+QiZ44T8w RSpVoM2PRm8E/K2y+YKlrdulOCAdsL686gnspwLmSVN/SLMguCIywfO/lbxRNPAvpevC/4xwouB BcbmgHJd0Z+oap73ulSi8YWiKQaUlO5gHGjSt//lY1fgTjinbd9+9DTyNzX1eV4BeqeGFH0uA86
- ufjfOcrUt0snbpWUjYMIiyby8Vs2nwIQiwiFcC9HX7YhxCN+kHONmsS27ssRBHmxUMg9qK73zVU Ao67RgvTL713OgAPZ6uJU8ojExCNkVBqRem56D8ZPnXwpemXNKN3xVBe2xpfcaXqc1QUyzLZF/d RkNKOmxrFjrRmK/KVyXbqWRzOOBOB7G89rF7ogL3wTAnFAfaDHZ7fgzL2yS4ndYoOJZ3fRbmtrv ZpnZQykK
-X-Proofpoint-ORIG-GUID: Tg35y2dd6GczZSjgW_vLJ5IeDK0MUk9h
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA1MDE5MSBTYWx0ZWRfX5UhRXXO1MSCQ ALQhSDUMese9r6DL7JTgG48YNCRnPKwUoKJwCnBf9xHJjn3+HtpxExoHoSgBjixkLYveoIIFvW6 PfRCHggEoDYfSSJmZwSZz2LwpHYLrEY5Q2PHLVtIPbLvQWgGurSPc3DR6bfbtbi27V2INufqHF5
+ jcq4c4jOZrh85BBHabPvODGTqREefMEeKqDJbTYojJ4QSndefnRlelXYTApEeGLzJ16Tzdb6Xrh gm4kvdmyvEPesrcI3v92R9o3IVyg0HUm1NRGpTkpAbgkZ6mP0oBamthluSIqzlLVtUmfMMcJvb0 xB4Dx6/8nzjZT9Cc8/4v5ktxY58yv7Svj+tXZ8Nt9c6V1oq6DtPJrN2nPaFfqPfbSoKuKK0TGY3 wIxUHMKJ
+X-Proofpoint-GUID: 8uSBBSmqTEp2qMR81bjiHyDjXC4Hohu5
+X-Proofpoint-ORIG-GUID: 8uSBBSmqTEp2qMR81bjiHyDjXC4Hohu5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
  definitions=2025-06-05_06,2025-06-05_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- impostorscore=0 suspectscore=0 lowpriorityscore=10 phishscore=0
- bulkscore=10 adultscore=0 priorityscore=1501 clxscore=1015 mlxscore=0
- mlxlogscore=773 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2505160000 definitions=main-2506050189
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=834
+ impostorscore=0 clxscore=1015 adultscore=0 lowpriorityscore=10 spamscore=0
+ bulkscore=10 suspectscore=0 priorityscore=1501 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506050191
 
-On Tue, Jun 3, 2025 at 8:52=E2=80=AFPM James Houghton <jthoughton@google.co=
-m> wrote:
+On Wed, Jun 4, 2025 at 9:23=E2=80=AFAM David Hildenbrand <david@redhat.com>=
+ wrote:
 >
-> On Tue, Jun 3, 2025 at 3:15=E2=80=AFPM Tal Zussman <tz2294@columbia.edu> =
-wrote:
-> >
+> On 04.06.25 00:14, Tal Zussman wrote:
 > > Currently, a VMA registered with a uffd can be unregistered through a
 > > different uffd asssociated with the same mm_struct.
 > >
@@ -130,17 +126,17 @@ d
 s
 > > to be a copy-paste artifact from the analagous userfaultfd_register()
 > > check.
+>
+> I consider it a BUG that should be fixed. Hoping Peter can share his
+> opinion.
+>
 > >
 > > Fixes: 86039bd3b4e6 ("userfaultfd: add new syscall to provide memory ex=
 ternalization")
 > > Signed-off-by: Tal Zussman <tz2294@columbia.edu>
->
-> Thanks, Tal! I like this patch, but I can't really meaningfully
-> comment on if it's worth it to change the UAPI.
->
 > > ---
-> >  fs/userfaultfd.c | 15 +++++++++++++--
-> >  1 file changed, 13 insertions(+), 2 deletions(-)
+> >   fs/userfaultfd.c | 15 +++++++++++++--
+> >   1 file changed, 13 insertions(+), 2 deletions(-)
 > >
 > > diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
 > > index 22f4bf956ba1..9289e30b24c4 100644
@@ -148,89 +144,65 @@ ternalization")
 > > +++ b/fs/userfaultfd.c
 > > @@ -1477,6 +1477,16 @@ static int userfaultfd_unregister(struct userfau=
 ltfd_ctx *ctx,
-> >                 if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
-> >                         goto out_unlock;
+> >   if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
+> >   goto out_unlock;
 > >
-> > +               /*
-> > +                * Check that this vma isn't already owned by a differe=
-nt
-> > +                * userfaultfd. This provides for more strict behavior =
-by
-> > +                * preventing a VMA registered with a userfaultfd from =
-being
-> > +                * unregistered through a different userfaultfd.
-> > +                */
-> > +               if (cur->vm_userfaultfd_ctx.ctx &&
-> > +                   cur->vm_userfaultfd_ctx.ctx !=3D ctx)
-> > +                       goto out_unlock;
+> > + /*
+> > + * Check that this vma isn't already owned by a different
+> > + * userfaultfd. This provides for more strict behavior by
+> > + * preventing a VMA registered with a userfaultfd from being
+> > + * unregistered through a different userfaultfd.
+> > + */
+> > + if (cur->vm_userfaultfd_ctx.ctx &&
+> > +    cur->vm_userfaultfd_ctx.ctx !=3D ctx)
+> > + goto out_unlock;
+>
+> So we allow !cur->vm_userfaultfd_ctx.ctx to allow unregistering when
+> there was nothing registered.
+>
+> A bit weird to set "found =3D true" in that case. Maybe it's fine, just
+> raising it ...
+>
 > > +
->
-> Very minor nitpick: I think this check should go above the
-> !vma_can_userfault() check above, as `wp_async` was derived from
-> `ctx`, not `cur->vm_userfaultfd_ctx.ctx`.
-
-Thanks, this is a good point! I'll change it for v2.
-
-This also seems to indicate that the current behavior is broken and may rej=
-ect
-unregistering some VMAs incorrectly. For example, a file-backed VMA registe=
-red
-with `wp_async` and UFFD_WP cannot be unregistered through a VMA that does =
-not
-have `wp_async` set.
-
-> >                 found =3D true;
-> >         } for_each_vma_range(vmi, cur, end);
->
-> I don't really like this for_each_vma_range() for loop, but I guess it
-> is meaningful to the user: invalid unregistration attempts will fail
-> quickly instead of potentially making some progress. So unfortunately,
-> without a good reason, I suppose we can't get rid of it. :(
->
-> >         BUG_ON(!found);
+> >   found =3D true;
+> >   } for_each_vma_range(vmi, cur, end);
+> >   BUG_ON(!found);
 > > @@ -1491,10 +1501,11 @@ static int userfaultfd_unregister(struct userfa=
 ultfd_ctx *ctx,
-> >                 cond_resched();
+> >   cond_resched();
 > >
-> >                 BUG_ON(!vma_can_userfault(vma, vma->vm_flags, wp_async)=
-);
-> > +               BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
-> > +                      vma->vm_userfaultfd_ctx.ctx !=3D ctx);
+> >   BUG_ON(!vma_can_userfault(vma, vma->vm_flags, wp_async));
+> > + BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
+> > +       vma->vm_userfaultfd_ctx.ctx !=3D ctx);
+> >
 >
-> IMO, this new BUG_ON should either be
-> (1) moved and should not be a BUG_ON. See the WARN_ON_ONCE() below,
-> OR
-> (2) removed.
->
-> Perhaps the older BUG_ON() should be removed/changed too.
+> No new BUG_ON please. VM_WARN_ON_ONCE() if we really care. After all, we
+> checked this above ...
 
-I added this mainly to maintain symmetry with the userfaulfd_register()
-implementation. I'm happy to leave it out, so  I'll either convert it, and
-the other one, to a VM_WARN_ON_ONCE(), as per David, or remove it.
+Yeah, I mainly added this to maintain symmetry with userfaultfd_register().
+I don't think it's really necessary to add this, so I'll remove it for v2.
 
+I'm happy to send another patch (preceding this one) converting all of the
+pre-existing userfaultfd BUG_ON()s to VM_WARN_ON_ONCE(). Although I do see
+that all uses of VM_WARN_ON_ONCE() are in arch/ or mm/ code, while this fil=
+e
+is under fs/. Is that fine? Alternatively, I can remove them, but I defer t=
+o
+you.
+
+> >   /*
+> > - * Nothing to do: this vma is already registered into this
+> > - * userfaultfd and with the right tracking mode too.
+> > + * Nothing to do: this vma is not registered with userfaultfd.
+> >   */
+> >   if (!vma->vm_userfaultfd_ctx.ctx)
+> >   goto skip;
 > >
-> >                 /*
-> > -                * Nothing to do: this vma is already registered into t=
-his
-> > -                * userfaultfd and with the right tracking mode too.
-> > +                * Nothing to do: this vma is not registered with userf=
-aultfd.
-> >                  */
-> >                 if (!vma->vm_userfaultfd_ctx.ctx)
-> >                         goto skip;
->
-> if (WARN_ON_ONCE(vmx->vm_userfaultfd_ctx.ctx !=3D ctx)) {
->     ret =3D -EINVAL;
->     break;
-> }
->
-> where the WARN_ON_ONCE() indicates that the VMA should have been
-> filtered out earlier. The WARN_ON_ONCE() isn't even really necessary.
 >
 >
-> >
-> > --
-> > 2.39.5
-> >
-> >
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
