@@ -1,252 +1,173 @@
-Return-Path: <linux-fsdevel+bounces-50843-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50844-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B81D3AD02FC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 15:16:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED212AD0322
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 15:25:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 737D217971F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 13:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DAD23B2CAC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 13:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9A5288CAE;
-	Fri,  6 Jun 2025 13:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2C328934B;
+	Fri,  6 Jun 2025 13:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0ejGqWVE";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="x+1F+91L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="kJqquk8x";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="MPC7hMwc"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bMeXzgKt"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18F78288518
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 13:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394BE288C36
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 13:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749215773; cv=none; b=KaqRVadfyQKXZZq/i6HYPpQg7oGYsd+Fjw0cbKiyLyLQOvRNMP+8T9tVCMqfA3iZHdNoE/KyESLgGLYgHx4As8inSv/4OquOEbRC6tipm4iA9DCyEixHxmVVxGDH2ddbEjAWYyxoF//t9lIvOeeA7xiV75jAv0KmHo7/h239hfY=
+	t=1749216298; cv=none; b=n9/vnpTR62CYuBw1bvRnoaf3NJnZ/3AAAokryiB9+ybTaHyrQqbVxPwEUy4HGd3r3ChHjX+cwHt3lSBL1boP2rnky6gpdFMB+IqX8IkQEdVqZ/B3ECu+7d8OIMZNoR5RpWch7MIpyK8TigjLwnW6XtMfhaz7qRA5o47z1HUx+b0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749215773; c=relaxed/simple;
-	bh=aNAeoahf41PqOn8gTd2tZQFikra1qq7P8aoAmbjBAmE=;
+	s=arc-20240116; t=1749216298; c=relaxed/simple;
+	bh=XaUFchsTlj47ki7jmwSOkGfvA6QoHDzYcRN06zVBsh0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aShPxVOokNiyIGfpaRQh3oMkG3TiXmsNcgfHUzxVWU0jhorLQgC7cpuEbJK87nQLND/GPq68H3tyDZto9DY+wIH9r+NrOTiIPCOaUrfXlMOk7FNsI4NCMwAEYt8rogwD81Zzk1fam8xrOSaUarlnDG/9fukdj9MFUG1Bf/ypc6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0ejGqWVE; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=x+1F+91L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=kJqquk8x; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=MPC7hMwc; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 3BB7B336B7;
-	Fri,  6 Jun 2025 13:16:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749215769; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0a3MMWd5T1XfKJjpdfmsHwU2aGKU40OIM3oOPfPEON2sXlGYt56R7g/+Jz44VG70kW+op72OiYp+8Mmwep4WiuPiXxCH+cVWwpIfRlso5uzKpd+Dc8dHEQsKTyy5UAf94bHKABZg0GpZ2LyTp2SlAvBeByBx7wArVJQN/KlHhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bMeXzgKt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749216295;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=li2hhM0PVmESxCRoYcjpQzsbFhjZduZXOZsG1l3eIuE=;
-	b=0ejGqWVEwf47lGKmWrHoTCdDFkx0TqT6z0IY1TQUC9yTVOhbqwaZaqAMqRcXI5EdA9lqiX
-	JFFxRocCNRDCYA5OLLDBCKvDScWhj9Fbwl19bxNe2GgPhjBRnpxEiUGri7tMGUBKXkD1F9
-	TFMGL9au1ZW02oGdnOtxBwYqBpo5W1k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749215769;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=li2hhM0PVmESxCRoYcjpQzsbFhjZduZXOZsG1l3eIuE=;
-	b=x+1F+91LL38DEWByOEObnXkKLtUfshj131gBU06Q49T4zKttG3GA8Qut8Wr7PVV8CzrHFg
-	Szx7d3JBzLfndbDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1749215768; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=li2hhM0PVmESxCRoYcjpQzsbFhjZduZXOZsG1l3eIuE=;
-	b=kJqquk8xS6TgM53steRf7SQcAJ65YwGmd3MRhq7UMkqrjBezr9TOCHjIkm6+dkvFkjCFPp
-	v8yrasRbdHYdzng9FmuLFtDB5s5aFl0hw3hv+gUKNdKPGhogJnik0O853d0o4lr6lFMeII
-	1jgJSkgnkGOgdhGUbDiiNYdMFU8iWHE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1749215768;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=li2hhM0PVmESxCRoYcjpQzsbFhjZduZXOZsG1l3eIuE=;
-	b=MPC7hMwc5B42bCwyMmJkRDkbKbqfJQ90TO+aC2bKpS8WCuZHcGvLHUrzaFSxbun+I2yEUM
-	itb0Sy3Oj/bfV7Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2EA7E1336F;
-	Fri,  6 Jun 2025 13:16:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id sQtfCxjqQmjFdgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 06 Jun 2025 13:16:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C95B4A0951; Fri,  6 Jun 2025 15:16:07 +0200 (CEST)
-Date: Fri, 6 Jun 2025 15:16:07 +0200
-From: Jan Kara <jack@suse.cz>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, tytso@mit.edu, 
-	adilger.kernel@dilger.ca, ojaswin@linux.ibm.com, yi.zhang@huawei.com, libaokun1@huawei.com, 
-	yukuai3@huawei.com, yangerkun@huawei.com
-Subject: Re: [PATCH 1/5] ext4: restart handle if credits are insufficient
- during writepages
-Message-ID: <uruplwi35qaajr3cqyozq7dpbwgqehuzstxpobx44retpek6cb@gplmkhlsaofk>
-References: <20250530062858.458039-1-yi.zhang@huaweicloud.com>
- <20250530062858.458039-2-yi.zhang@huaweicloud.com>
- <byiax3ykefdvmu47xrgrndguxabwvakescnkanbhwwqoec7yky@dvzzkic5uzf3>
- <3aafd643-3655-420e-93fa-25d0d0ff4f32@huaweicloud.com>
+	bh=Ky+WeROHZ4Ae+uVfELGBGltSg87Rkj3Uw9xYsa9j3qg=;
+	b=bMeXzgKtFZH5L+oZf1hFR+XQI6E8Tbd/sEYeWgE75j5Rs4jXghP8SAo4wlrfFI16vuJtk+
+	LVSjAOXGf2EaHjNJuxT8dlTk3E6Oj6qFWAg0XUnZztTdhFpWZxmFZp1brkqiUSsPTAIbav
+	PSrrx4kbcrTWiMhLzJVQChORU/XrmWQ=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-655-aA6b4nwxN-adQvsq48UqYA-1; Fri, 06 Jun 2025 09:24:54 -0400
+X-MC-Unique: aA6b4nwxN-adQvsq48UqYA-1
+X-Mimecast-MFC-AGG-ID: aA6b4nwxN-adQvsq48UqYA_1749216294
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c5d608e703so404787385a.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 06:24:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749216294; x=1749821094;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ky+WeROHZ4Ae+uVfELGBGltSg87Rkj3Uw9xYsa9j3qg=;
+        b=rCzuNQ1cLH8eS/MQvIVJsPM3A0hPc5Ag18JTmIK6wGl83iegDUgF7T5Oy0N9v6YXpe
+         2rQJ8tbA7L1iWi2nPJbTWh/rQR9jvrcP+J/DqitM/MkBCcOP5pfbqSOsNSo4MC0/hvdv
+         r8x3nVchZY+DiyuzXR45IeT4/FnvXhk+hjNapCrJm0SAWuaIVabniR6uKuNGrdx+5Bz3
+         S6EG9xrEBh7XUA8yTRN60Z/9af4w0kMk8Lm89Gpf1Kpmsue3HIDKg9XsoedF/D6YkHXe
+         EVFvaApck6QnQwCNV1IepeV0TQkqbIdpoOIZXYWGiPYEA+7pY+NLYPzgJzTLjRJyYOH6
+         ZcJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUjR6pUbs9ox+24AHn8DONTEmColYZTHp7tKb8uCmrseZOVNElTgv3EjoN3wKK8ZrKXcJ00mnPSRYEuJMgc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzx07HkIrNimpHSklfH6bWxv9GHmRoFRiu8w7ZcVNPYYlv/UBCS
+	xhtJ8ldEOm+EYKgSSQkshwnZR+ujIYvgU0fUk2XsbEE4Dr32BnhTOz2jA9raDvHu6N3V2ZxawSi
+	OqN2IsFHsFOY+yPkKmXXinHcicqQzkHGCu+Ovgo4e0sZrnCFJYjuytgxDy6rdAZQKH94=
+X-Gm-Gg: ASbGnctTDkK0MEWm39fXzzECx0pkUhmVo/kjW3BDW4RgP/BAnhcSxwhJdcub6FxA/VM
+	pYbGvpfGLIBteUeAHwstzLa7U8xmUkMdGveZ0KWHoK63BKgHCMPeek9z52h1hkfT6RhVWeCUIYJ
+	5QfHKminJav3dXg71lRvMvXdOZBeeWQ+qkYJ6BfieLUt5SGfnH7+yeyNtsBburgZ/jjJwWTSUXa
+	s9Eo77VfB0n8ScqTFuLAC+DMJnMenw8c1t63dnVVGclvq9uwAVO7JWAxBTWf26DNAysFZvGSd1i
+	1kQ=
+X-Received: by 2002:a05:620a:2608:b0:7d0:9688:b650 with SMTP id af79cd13be357-7d22990277cmr623270985a.54.1749216293751;
+        Fri, 06 Jun 2025 06:24:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyw7rhIbtMEbMw7aXS5kBcEv8c0niayT/VMXPsAHzS6JTC/rav5RqlYy0t+iQ6S4rhlqvdfA==
+X-Received: by 2002:a05:620a:2608:b0:7d0:9688:b650 with SMTP id af79cd13be357-7d22990277cmr623265985a.54.1749216293377;
+        Fri, 06 Jun 2025 06:24:53 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7d25a5948f8sm129289485a.49.2025.06.06.06.24.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 06:24:52 -0700 (PDT)
+Date: Fri, 6 Jun 2025 09:24:50 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Tal Zussman <tz2294@columbia.edu>
+Cc: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
+ different userfaultfd
+Message-ID: <aELsIq2uOT5d1Tng@x1.local>
+References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
+ <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu>
+ <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
+ <aEBhqz1UgpP8d9hG@x1.local>
+ <CAKha_sqFV_0TsM1NgwtYYY0=ouDjkO7OOZc2WsR0X5hK5AUOJA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3aafd643-3655-420e-93fa-25d0d0ff4f32@huaweicloud.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAKha_sqFV_0TsM1NgwtYYY0=ouDjkO7OOZc2WsR0X5hK5AUOJA@mail.gmail.com>
 
-On Fri 06-06-25 14:54:21, Zhang Yi wrote:
-> On 2025/6/5 22:04, Jan Kara wrote:
-> >> +		/*
-> >> +		 * The credits for the current handle and transaction have
-> >> +		 * reached their upper limit, stop the handle and initiate a
-> >> +		 * new transaction. Note that some blocks in this folio may
-> >> +		 * have been allocated, and these allocated extents are
-> >> +		 * submitted through the current transaction, but the folio
-> >> +		 * itself is not submitted. To prevent stale data and
-> >> +		 * potential deadlock in ordered mode, only the
-> >> +		 * dioread_nolock mode supports this.
-> >> +		 */
-> >> +		if (err > 0) {
-> >> +			WARN_ON_ONCE(!ext4_should_dioread_nolock(inode));
-> >> +			mpd->continue_map = 1;
-> >> +			err = 0;
-> >> +			goto update_disksize;
-> >> +		}
-> >>  	} while (map->m_len);
-> >>  
-> >>  update_disksize:
-> >> @@ -2467,6 +2501,9 @@ static int mpage_map_and_submit_extent(handle_t *handle,
-> >>  		if (!err)
-> >>  			err = err2;
-> >>  	}
-> >> +	if (!err && mpd->continue_map)
-> >> +		ext4_get_io_end(io_end);
-> >> +
-> > 
-> > IMHO it would be more logical to not call ext4_put_io_end[_deferred]() in
-> > ext4_do_writepages() if we see we need to continue doing mapping for the
-> > current io_end.
-> > 
-> > That way it would be also more obvious that you've just reintroduced
-> > deadlock fixed by 646caa9c8e196 ("ext4: fix deadlock during page
-> > writeback"). This is actually a fundamental thing because for
-> > ext4_journal_stop() to complete, we may need IO on the folio to finish
-> > which means we need io_end to be processed. Even if we avoided the awkward
-> > case with sync handle described in 646caa9c8e196, to be able to start a new
-> > handle we may need to complete a previous transaction commit to be able to
-> > make space in the journal.
+On Thu, Jun 05, 2025 at 05:11:53PM -0400, Tal Zussman wrote:
+> On Wed, Jun 4, 2025 at 11:10 AM Peter Xu <peterx@redhat.com> wrote:
+> >
+> > On Wed, Jun 04, 2025 at 03:23:38PM +0200, David Hildenbrand wrote:
+> > > On 04.06.25 00:14, Tal Zussman wrote:
+> > > > Currently, a VMA registered with a uffd can be unregistered through a
+> > > > different uffd asssociated with the same mm_struct.
+> > > >
+> > > > Change this behavior to be stricter by requiring VMAs to be unregistered
+> > > > through the same uffd they were registered with.
+> > > >
+> > > > While at it, correct the comment for the no userfaultfd case. This seems
+> > > > to be a copy-paste artifact from the analagous userfaultfd_register()
+> > > > check.
+> > >
+> > > I consider it a BUG that should be fixed. Hoping Peter can share his
+> > > opinion.
+> >
+> > Agree it smells like unintentional, it's just that the man page indeed
+> > didn't mention what would happen if the userfaultfd isn't the one got
+> > registered but only requesting them to be "compatible".
+> >
+> > DESCRIPTION
+> >        Unregister a memory address range from userfaultfd.  The pages in
+> >        the range must be “compatible” (see UFFDIO_REGISTER(2const)).
+> >
+> > So it sounds still possible if we have existing userapp creating multiple
+> > userfaultfds (for example, for scalability reasons on using multiple
+> > queues) to manage its own mm address space, one uffd in charge of a portion
+> > of VMAs, then it can randomly take one userfaultfd to do unregistrations.
+> > Such might break.
 > 
-> Yeah, you are right, I missed the full folios that were attached to the
-> same io_end in the previous rounds. If we continue to use this solution,
-> I think we should split the io_end and submit the previous one which
-> includes those full folios before the previous transaction is
-> committed.
-
-Yes, fully mapped folios definitely need to be submitted. But I think that
-should be handled by ext4_io_submit() call in ext4_do_writepages() loop?
-
-> > Thinking some more about this holding ioend for a folio with partially
-> > submitted IO is also deadlock prone because mpage_prepare_extent_to_map()
-> > can call folio_wait_writeback() which will effectively wait for the last
-> > reference to ioend to be dropped so that underlying extents can be
-> > converted and folio_writeback bit cleared.
+> As I mentioned in my response to James, it seems like the existing behavior
+> is broken as well, due to the following in in userfaultfd_unregister():
 > 
-> I don't understand this one. The mpage_prepare_extent_to_map() should
-> call folio_wait_writeback() for the current processing partial folio,
-> not the previous full folios that were attached to the io_end. This is
-> because mpd->first_page should be moved forward in mpage_folio_done()
-> once we complete the previous full folio. Besides, in my current
-> solution, the current partial folio will not be submitted, the
-> folio_writeback flag will not be set, so how does this deadlock happen?
-
-Sorry, this was me being confused. I went through the path again and indeed
-if we cannot map all buffers underlying the folio, we don't clear buffer
-(and folio) dirty bits and don't set folio writeback bit so there's no
-deadlock there.
-
-> > So what I think we need to do is that if we submit part of the folio and
-> > cannot submit it all, we just redirty the folio and bail out of the mapping
-> > loop (similarly as in ENOSPC case).
+>     if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
+>             goto out_unlock;
 > 
-> After looking at the ENOSPC case again, I found that the handling of
-> ENOSPC before we enabling large folio is also wrong, it may case stale
-> data on 1K block size. Suppose we are processing four bhs on a dirty
-> page. We map the first bh, and the corresponding io_vec is added to the
-> io_end, with the unwritten flag set. However, when we attempt to map
-> the second bh, we bail out of the loop due to ENOSPC. At this point,
-> ext4_do_writepages()->ext4_put_io_end() will convert the extent of the
-> first bh to written. However, since the folio has not been committed
-> (mpage_submit_folio() submit a full folio), it will trigger stale data
-> issue. Is that right? I suppose we also have to write partial folio out
-> in this case.
-
-Yes, this case will be problematic actually both with dioread_nolock but
-also without it (as in this case we create written extents from the start
-and we tell JBD2 to only wait for data IO to complete but not to submit
-it). We really need to make sure partially mapped folio is submitted for IO
-as well in this case.
-
-> > Then once IO completes
-> > mpage_prepare_extent_to_map() is able to start working on the folio again.
-> > Since we cleared dirty bits in the buffers we should not be repeating the
-> > work we already did...
-> > 
+> where wp_async is derived from ctx, not cur.
 > 
-> Hmm, it looks like this solution should work. We should introduce a
-> partial folio version of mpage_submit_folio(), call it and redirty
-> the folio once we need to bail out of the loop since insufficient
-> space or journal credits. But ext4_bio_write_folio() will handle the
-> the logic of fscrypt case, I'm not familiar with fscrypt, so I'm not
-> sure it could handle the partial page properly. I'll give it a try.
+> Pasting here:
+> 
+> This also seems to indicate that the current behavior is broken and may reject
+> unregistering some VMAs incorrectly. For example, a file-backed VMA registered
+> with `wp_async` and UFFD_WP cannot be unregistered through a VMA that does not
+> have `wp_async` set.
 
-As far as I can tell it should work fine. The logic in
-ext4_bio_write_folio() is already prepared for handling partial folio
-writeouts, redirtying of the page etc. (because it needs to handle writeout
-from transaction commit where we can writeout only parts of folios with
-underlying blocks allocated). We just need to teach mpage_submit_folio() to
-substract only written-out number of pages from nr_to_write.
+This is true.  Meanwhile it seems untrivial to fix the flag alone with the
+prior per-vma loop to check compatibility.  We could drop the prior check
+but then it slightly breaks the abi in another way..
 
-								Honza
+Then let's go with the change to see our luck.
+
+Could you mention more things when repost in the commit log?  (1) wp_async
+bug, (2) explicitly mention that this is a slight ABI change, and (3) not
+needed to backport to stable.
+
+Thanks,
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Peter Xu
+
 
