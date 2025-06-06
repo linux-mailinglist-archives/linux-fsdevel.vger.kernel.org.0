@@ -1,101 +1,109 @@
-Return-Path: <linux-fsdevel+bounces-50814-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50815-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFA6AACFCD3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 08:32:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCF6ACFCEB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 08:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEC35179381
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 06:32:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0783B164781
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 06:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66EAF266565;
-	Fri,  6 Jun 2025 06:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC9E2673BA;
+	Fri,  6 Jun 2025 06:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="UKAV0P9/"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="m5l66cIe"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0986C25DAE8
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 06:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80793258CF5
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 06:36:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749191490; cv=none; b=HOqSnIF+1paqcN2aNUzmbmGWqWX+PglWkOAxQJNMmhARWPihmDydwCgNVCSYvMsC3l84cM7V319V8Sl7u2CrqNKtr1L/k0ER52dBUKgV6M66iZwcsgfrPn17W/yvBXOSJX+WSPLcyy7mla3jyEu/miPMP+MxuNPODLWKugORGxg=
+	t=1749191795; cv=none; b=s8aco5HOaGxIVzdI9yImpUhNKt772XdNODmoXl9LCSV+jZzKbvRTRI6nF4EuxeksT0qvN9L4nCNMNu+FZxVUJeURqVNexTXix2Xeb+uI3yhLg9R+rAXYhMZMPsrhQBM6CvKemGYnfVi7OmIpkeIXTFNd9CAhxGuKXZktt5Te0ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749191490; c=relaxed/simple;
-	bh=5o4fhkrQDumsCHQGBueGJE5jUAmRfcS8M5WWpNu7+fg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jeUw0mPf82KHI2n447W5jhkAH7LmHJoHQF5lO5WNOlWlBA8dgDddZJiDkJStD/fnC2k5OscbP4msIY+uHFRlS+MsCg9BU9ch+GNeK36liAv+pbizkpn50CdFilKhj5Ue7bwBMzYHvdtULlitsyIbpu5HTvpoemZGTFRynksU0aA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=UKAV0P9/; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=6Sk/p6tehgdiEyE+xwfCZS/wGDj6phHAb4KFpdTHBvk=; t=1749191487; x=1749796287; 
-	b=UKAV0P9/1aqRhTjGmpKiJd5ZuDAEy7k8/lnxLl4/bEPBZSigPwXWKrJl72340SJOLGAc+LmSujl
-	bm0IuXSGjDIXGqHoVS8xUsWwVL+NERdTuiwRVt02Up2mxWa+irs5cAUdpsx3ZtPfqI7geoGhbJCZq
-	S16d6PmxexztUE5YYhU99WS1ofErGEDaYRGv13VDBs4cFcVODnAguZDSs8eLqFKw/4RbSkqyL7ye6
-	lD2RtD2mi1xsVxWKJheLjvQ+u7N+iHL0GFah1ebYVTj1q+Zl7y18+KdhOgf/JdcbXqUuQDR6DNfq1
-	dHN8wp0S+npARb2thSBrOz4GX+3GxWofSVdg==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.98)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1uNQbs-00000002JhI-30lx; Fri, 06 Jun 2025 08:31:24 +0200
-Received: from p5b13afe4.dip0.t-ipconnect.de ([91.19.175.228] helo=suse-laptop-4.fritz.box)
-          by inpost2.zedat.fu-berlin.de (Exim 4.98)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1uNQbs-00000003Lzd-2BVC; Fri, 06 Jun 2025 08:31:24 +0200
-Message-ID: <7d3c595141e8ce70e0dd4b0b6fe28bfc7649bd2b.camel@physik.fu-berlin.de>
-Subject: Re: [HFS] generic/740 failure details
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>, "frank.li@vivo.com"
-	 <frank.li@vivo.com>
-Cc: "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Date: Fri, 06 Jun 2025 08:31:24 +0200
-In-Reply-To: <ab5b979190e7e1019c010196a1990b278770b07f.camel@ibm.com>
-References: <ab5b979190e7e1019c010196a1990b278770b07f.camel@ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 
+	s=arc-20240116; t=1749191795; c=relaxed/simple;
+	bh=toV9IQaPqvqASnNJNFj5X1N4rgKmvC/sEVmE6pwDqZM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XUkNzHMknXO9/tDL2ZZ8zzrdaxEXac/HmrFz8nMc2jkWuE3xKl+CzpnqgR85Qvz/kNxR91KpeszKBS68Pkqt4vPdpgL087zIxsD9tpn2k43ii5lOKo8lATwy5etzHJKfTJuiUfv0Uybh6nfdK5KUgOITOrEypUQ5mZWH1uTWP+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=m5l66cIe; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4a58d95ea53so20551771cf.0
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jun 2025 23:36:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google; t=1749191791; x=1749796591; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=toV9IQaPqvqASnNJNFj5X1N4rgKmvC/sEVmE6pwDqZM=;
+        b=m5l66cIe9Ks66bsumCP3uFTyW71mGCI1gMLaSqBbgW/qPxRDwTCLnzvcfTHk81mzJm
+         lMIOxN2M6B6J5E39IJF2ui6dK8T8pxUdpTPQZ9gqjJZO7RPpwCWvmcKMpipdDp8gr+j3
+         9hokVjeTs4s+lXPh+fdHeXK0/qfL0c4fPjL1s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1749191791; x=1749796591;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=toV9IQaPqvqASnNJNFj5X1N4rgKmvC/sEVmE6pwDqZM=;
+        b=X1Nqod3ZEtjpZyB3ugqCP95YYd5U+9/1stC3D2pRQWbF9CV46+OPWO1NkyM5eBL/0F
+         7a05uB+ARj9dg3vJ6zsr3G8oWk9V6tdKZ5EMKeq2cJXO2AxTGjj5YuM9eIRgm2R0s44R
+         XG6EMxUhfMGSYQrBjhCw+C5N365mm2tetEWs1LrxiyZ0QVrHQVI9fOhAal9zlpN1qZJF
+         CaD2xtCOKz/fbipMDMLMaAAJ5V0NgXxNH78Egj2FlG9elpjEaGkseTJoAtwS5LOdFriW
+         iEZDLZkpNTraCoY1SH9HaBmXZIzuyRwwtkwEe6XAM9QPf986pCaJxZKcSigCSNC42JqA
+         WO9A==
+X-Forwarded-Encrypted: i=1; AJvYcCXkGp9BjdhNPaODpKciTJu0hgO562I88dBwDvUnV0E2FIQw7dEipWiqRKVbRx9pWc86TIZ1mA1PixCiD3lt@vger.kernel.org
+X-Gm-Message-State: AOJu0YywCD9o13fBiL2fPdXYEnc56U4rKg3LxdPqecrbez1Di+VmhKWj
+	+G2dL4q+dad+bFkL8K+d0hOVE1TltNO/2h+Deb70vsG6Owe3iTXylnt9LjglFe3GvyYoaxlfRVP
+	HL8j5DixKpz2XHzVqcaEcjRL7rb755FJuoDe8YGI8S5WM7x34NGlC
+X-Gm-Gg: ASbGncsZXcp6c+eNestuG+OLiiPOi6T4ssLy4ABI1+Eej6l6prcOeWp3oI+gEFgzCW5
+	FXdeokr9JANeJwCdoMYPGElkxBZFNraLj/9hb6Yiq9PWi1nEUDjWT79V4kilPsfadSrFIusalv7
+	kh68oMJpB9reuKER75n+Raz+9HgnjgnSw=
+X-Google-Smtp-Source: AGHT+IHZrb8oAUUqWQq5BNm3Ul6xtj6V0TOzDYLhpLP/ffaA9kQ6VFwAI96cX+m2oJJdGnfs/tFQhr6ii63ncKo6CfE=
+X-Received: by 2002:a05:622a:5148:b0:4a4:2d6d:80a0 with SMTP id
+ d75a77b69052e-4a64b6511admr22914341cf.10.1749191780124; Thu, 05 Jun 2025
+ 23:36:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+References: <CAJfpegvB3At5Mm54eDuNVspuNtkhoJwPH+HcOCWm7j-CSQ1jbw@mail.gmail.com>
+ <CAHk-=wgH174aR4HnpmV7yVYVjS7VmSRC31md5di7_Cr_v0Afqg@mail.gmail.com> <CAOQ4uxjXvcj8Vf3y81KJCbn6W5CSm9fFofV8P5ihtcZ=zYSREA@mail.gmail.com>
+In-Reply-To: <CAOQ4uxjXvcj8Vf3y81KJCbn6W5CSm9fFofV8P5ihtcZ=zYSREA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 6 Jun 2025 08:36:09 +0200
+X-Gm-Features: AX0GCFs7rakD2EWiToYlZOoJVn9Hy1NZM9uDDVwqBk67n4xvc5_i2D2NHsaiR_k
+Message-ID: <CAJfpegutprdJ8LPsKGG-yNi9neC65Phhf67nLuL+5a4xGhpkZA@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs update for 6.16
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Slava,
+On Fri, 6 Jun 2025 at 08:17, Amir Goldstein <amir73il@gmail.com> wrote:
 
-On Thu, 2025-06-05 at 22:41 +0000, Viacheslav Dubeyko wrote:
-> It looks like we need to modify the HFS/HFS+ mkfs tool to refuse the refo=
-rmat of
-> existing file system and to add the forcing option.
->=20
-> Adrian, How does it feasible such modification?
+> IMO, it would be nicer to use backing_file_set_user_path()
+> (patch attached).
 
-It would be certainly possible although we would deviate from what Apple
-does upstream with their hfs utilities. I'll add an issue in my repository
-for hfs for Linux [1].
+Looks nice, thanks.
 
-Adrian
+> Would you consider pulling ovl-update-6.16^
+> and applying the attached patch [*]?
+>
+> Thanks,
+> Amir.
+>
+> [*] I did not include the removal of non-const casting to keep this
+> patch independent of the ovl PR.
+> Feel free to add it to my patch or I can send the patch post merge
+> or cleanup of casting post merge.
 
-> [1] https://github.com/glaubitz/hfs/tree/linux
+I'll redo the PR with your patch.
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+Thanks,
+Miklos
 
