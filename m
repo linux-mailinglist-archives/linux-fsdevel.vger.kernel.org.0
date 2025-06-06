@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-50872-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50873-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5760AD0986
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 23:32:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87DA3AD098D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 23:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9540C3AE064
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 21:31:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADA23B55D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 21:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1DF23FC52;
-	Fri,  6 Jun 2025 21:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A191241672;
+	Fri,  6 Jun 2025 21:30:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNg4ExAe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EEzWkcOy"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21CEB23F404;
-	Fri,  6 Jun 2025 21:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B999B241136;
+	Fri,  6 Jun 2025 21:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749245447; cv=none; b=EmlwMMxTmBitZWpWjUhK0MDv+hHQA1bS5GlaBZOVyyC6FXPkgW7rXRky2O8ZLx+mXK3zjDcehpPBodi24B8fk7LehDUEYtoaWahEO6R7QB5GgW09BmRi+xTkyUI09YEtaMid4YnoyuwNyKulx0BdpldB3THDDY7SxUE504GtWZI=
+	t=1749245452; cv=none; b=d8PsHORPLQtBF3S3Nslqb9FVQIQVHzosfki11DPx2QRn813u/jF6UA0PjAfPaLvjj7C5l7EQ23wUsn4nBhcw6Jj3qlEQdBXMoxEOGeD5l2qKAYe+uRcPFtWZLBWpVtvdlZwY9f9T6BiBWe+9mVbcmqv2/nWQKe0k77aR0HxsHCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749245447; c=relaxed/simple;
-	bh=9F10qO9Msdgz89bnpZRuwO8YiDXQDw7GfTMJBW3OmZE=;
+	s=arc-20240116; t=1749245452; c=relaxed/simple;
+	bh=vl/pVqr2RXH2Xn1E+8wtiXLeu/mTXlC3sdSyiyVMmIA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tD48nbOrRgK1t1uZprrIUJJ+CNzDJSShmIIj0ToR6+M7VY0wy3kKHbvOdf8htzoleEvhV5LRvPYohxYlpLiL1/F+EoGc6Uk3RkwIHJzQFdly4veL/CWmqf209JqvHjLPcdnmhAnnUbr6oknNUZw3bvrmpb0S9IbhtjhY+g4rHA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNg4ExAe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCC53C4CEEB;
-	Fri,  6 Jun 2025 21:30:44 +0000 (UTC)
+	 MIME-Version; b=Lv/FXN5cUDTeYSj4sBgdUgv8rY4f1lBn++oBAWS+XdAgtJT1xtmmJwQdJayWie2XHw0MgsVnKkvzcMhDnZNlETQgNmC9O0CztTMR3fMTUXkdCZ3H9+uHd4QMG88JNJiauMFMk2liIpdCvg/akHpNDzQzWmW4xYWX1Rky7ck04VA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EEzWkcOy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70B3CC4CEEF;
+	Fri,  6 Jun 2025 21:30:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749245446;
-	bh=9F10qO9Msdgz89bnpZRuwO8YiDXQDw7GfTMJBW3OmZE=;
+	s=k20201202; t=1749245452;
+	bh=vl/pVqr2RXH2Xn1E+8wtiXLeu/mTXlC3sdSyiyVMmIA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YNg4ExAeCXGc+bn0OHnPisPTpjL2XzeFSHdHU4GlYFORVNucTzqCXTySyPvwnigzX
-	 U/XIhyISmy5HUUzN2pNqKuiQFC1dT+RIv7MFDCS1SnKyPMBCPP+Lj1FhxRBHJCwjZY
-	 QVRSDg9QGqdAf+lI4nt4BrNKzL7KTRn0XpiTS+ZZPH7gUilUTG0FfC6QkW6yg855hC
-	 OyxK09LkWQCreJDHgmvLZRlJc6ihXv7CPls1XvYLNhyTOxFFH1gRdp/IjPSfUYn5QJ
-	 VaZJI/qAuxQnQdp3pwF945oi8tLInH7EgKY1Jg5VGILiue5VxYUrNUNr7JO9s9knzV
-	 X1WIrsdeemmPQ==
+	b=EEzWkcOyrqoaWqtG1eRTxvfwoQcINpoRi36EuVXRcKvYvhxhbTytJeZmTjE7Pg2rd
+	 DjYGM45FK5kDqJeFQXxdxMjw/AfNsxhPHmtd3RDnODTMSn6YovlMmS1Z3HLfZ8kpQ3
+	 Cv4IxEdLaFgrQAg3vCkm2Uo0n3oCLRE32G/48XIQMP/a9VhEK5LNUfAWKmJoPzpYDN
+	 znpJOwgECxmY4qlSGPndywZOl8qzk73sAp+Ynu0/y9koJ9ddF7QRYCSNobzrLZE16o
+	 ftLkNL2gB6pWxkzNaNYSDc4olFCIvOIfBGzBDgAnwyJEmREBTRfh10rWtxsfEUvBwe
+	 FMgFRgRmdKwsg==
 From: Song Liu <song@kernel.org>
 To: bpf@vger.kernel.org,
 	linux-fsdevel@vger.kernel.org,
@@ -65,9 +65,9 @@ Cc: kernel-team@meta.com,
 	gnoack@google.com,
 	m@maowtm.org,
 	Song Liu <song@kernel.org>
-Subject: [PATCH v3 bpf-next 4/5] selftests/bpf: Add tests for bpf path iterator
-Date: Fri,  6 Jun 2025 14:30:14 -0700
-Message-ID: <20250606213015.255134-5-song@kernel.org>
+Subject: [PATCH v3 bpf-next 5/5] selftests/bpf: Path walk test
+Date: Fri,  6 Jun 2025 14:30:15 -0700
+Message-ID: <20250606213015.255134-6-song@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250606213015.255134-1-song@kernel.org>
 References: <20250606213015.255134-1-song@kernel.org>
@@ -79,201 +79,197 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add tests for bpf path iterator, including test cases similar to real
-workload (call bpf_path_d_path and bpf_get_dentry_xattr), and test cases
-where the verifier rejects invalid use of the iterator.
+Add an end-to-end test with path_iter on security hook file_open.
+
+A test file is created in folder /tmp/test_progs_path_iter/folder. On
+file_open, walk file->f_path up to its parent and grand parent, and test
+bpf_get_dentry_xattr and bpf_path_d_path on the folders.
 
 Signed-off-by: Song Liu <song@kernel.org>
 ---
- .../testing/selftests/bpf/bpf_experimental.h  |   6 +
- .../selftests/bpf/prog_tests/path_iter.c      |  12 ++
- tools/testing/selftests/bpf/progs/path_iter.c | 145 ++++++++++++++++++
- 3 files changed, 163 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/path_iter.c
- create mode 100644 tools/testing/selftests/bpf/progs/path_iter.c
+ .../selftests/bpf/prog_tests/path_iter.c      | 99 +++++++++++++++++++
+ tools/testing/selftests/bpf/progs/path_walk.c | 59 +++++++++++
+ 2 files changed, 158 insertions(+)
+ create mode 100644 tools/testing/selftests/bpf/progs/path_walk.c
 
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index 5e512a1d09d1..cbb759b473df 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -596,4 +596,10 @@ extern int bpf_iter_dmabuf_new(struct bpf_iter_dmabuf *it) __weak __ksym;
- extern struct dma_buf *bpf_iter_dmabuf_next(struct bpf_iter_dmabuf *it) __weak __ksym;
- extern void bpf_iter_dmabuf_destroy(struct bpf_iter_dmabuf *it) __weak __ksym;
- 
-+struct bpf_iter_path;
-+extern int bpf_iter_path_new(struct bpf_iter_path *it, struct path *start,
-+			     __u64 flags) __weak __ksym;
-+extern struct path *bpf_iter_path_next(struct bpf_iter_path *it) __weak __ksym;
-+extern void bpf_iter_path_destroy(struct bpf_iter_path *it) __weak __ksym;
-+
- #endif
 diff --git a/tools/testing/selftests/bpf/prog_tests/path_iter.c b/tools/testing/selftests/bpf/prog_tests/path_iter.c
-new file mode 100644
-index 000000000000..3c99c24fbd96
---- /dev/null
+index 3c99c24fbd96..b9772026fbf7 100644
+--- a/tools/testing/selftests/bpf/prog_tests/path_iter.c
 +++ b/tools/testing/selftests/bpf/prog_tests/path_iter.c
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
+@@ -2,11 +2,110 @@
+ /* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
+ 
+ #include <test_progs.h>
++#include <fcntl.h>
+ #include <bpf/libbpf.h>
+ #include <bpf/btf.h>
++#include <sys/stat.h>
++#include <sys/xattr.h>
 +
-+#include <test_progs.h>
-+#include <bpf/libbpf.h>
-+#include <bpf/btf.h>
-+#include "path_iter.skel.h"
+ #include "path_iter.skel.h"
++#include "path_walk.skel.h"
 +
-+void test_path_iter(void)
++static const char grand_parent_path[] = "/tmp/test_progs_path_iter";
++static const char parent_path[] = "/tmp/test_progs_path_iter/folder";
++static const char file_path[] = "/tmp/test_progs_path_iter/folder/file";
++static const char xattr_name[] = "user.bpf.selftests";
++static const char xattr_value[] = "selftest_path_iter";
++
++static void cleanup_files(void)
 +{
-+	RUN_TESTS(path_iter);
++	remove(file_path);
++	rmdir(parent_path);
++	rmdir(grand_parent_path);
 +}
-diff --git a/tools/testing/selftests/bpf/progs/path_iter.c b/tools/testing/selftests/bpf/progs/path_iter.c
++
++static int setup_files_and_xattrs(void)
++{
++	int ret = -1;
++
++	/* create test folders */
++	if (mkdir(grand_parent_path, 0755))
++		goto error;
++	if (mkdir(parent_path, 0755))
++		goto error;
++
++	/* setxattr for test folders */
++	ret = setxattr(grand_parent_path, xattr_name,
++		       xattr_value, sizeof(xattr_value), 0);
++	if (ret < 0) {
++		/* return errno, so that we can handle EOPNOTSUPP in the caller */
++		ret = errno;
++		goto error;
++	}
++	ret = setxattr(parent_path, xattr_name,
++		       xattr_value, sizeof(xattr_value), 0);
++	if (ret < 0) {
++		/* return errno, so that we can handle EOPNOTSUPP in the caller */
++		ret = errno;
++		goto error;
++	}
++
++	return 0;
++error:
++	cleanup_files();
++	return ret;
++}
++
++static void test_path_walk(void)
++{
++	struct path_walk *skel = NULL;
++	int file_fd;
++	int err;
++
++	err = setup_files_and_xattrs();
++	if (err == EOPNOTSUPP) {
++		printf("%s:SKIP:local fs doesn't support xattr (%d)\n"
++		       "To run this test, make sure /tmp filesystem supports xattr.\n",
++		       __func__, errno);
++		test__skip();
++		return;
++	}
++
++	if (!ASSERT_OK(err, "setup_file"))
++		return;
++
++	skel = path_walk__open_and_load();
++	if (!ASSERT_OK_PTR(skel, "path_walk__open_and_load"))
++		goto cleanup;
++
++	skel->bss->monitored_pid = getpid();
++	if (!ASSERT_OK(path_walk__attach(skel), "path_walk__attach"))
++		goto cleanup;
++
++	file_fd = open(file_path, O_CREAT);
++	if (!ASSERT_OK_FD(file_fd, "open_file"))
++		goto cleanup;
++	close(file_fd);
++
++	ASSERT_OK(strncmp(skel->bss->parent_xattr_buf, xattr_value, strlen(xattr_value)),
++		  "parent_xattr");
++	ASSERT_OK(strncmp(skel->bss->grand_parent_xattr_buf, xattr_value, strlen(xattr_value)),
++		  "grand_parent_xattr");
++
++	ASSERT_OK(strncmp(skel->bss->parent_path_buf, parent_path, strlen(parent_path)),
++		  "parent_d_path");
++	ASSERT_OK(strncmp(skel->bss->grand_parent_path_buf, grand_parent_path,
++			  strlen(grand_parent_path)),
++		  "grand_parent_d_path");
++
++cleanup:
++	path_walk__destroy(skel);
++	cleanup_files();
++}
+ 
+ void test_path_iter(void)
+ {
+ 	RUN_TESTS(path_iter);
++	if (test__start_subtest("path_walk_example"))
++		test_path_walk();
+ }
+diff --git a/tools/testing/selftests/bpf/progs/path_walk.c b/tools/testing/selftests/bpf/progs/path_walk.c
 new file mode 100644
-index 000000000000..74d0f4e19ffa
+index 000000000000..1e1ae82b47a2
 --- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/path_iter.c
-@@ -0,0 +1,145 @@
++++ b/tools/testing/selftests/bpf/progs/path_walk.c
+@@ -0,0 +1,59 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/* Copyright (c) 2025 Meta Platforms, Inc. and affiliates. */
 +
 +#include "vmlinux.h"
++#include <errno.h>
 +#include <bpf/bpf_helpers.h>
 +#include <bpf/bpf_tracing.h>
++#include <bpf/bpf_core_read.h>
++#include "bpf_kfuncs.h"
 +#include "bpf_misc.h"
-+#include "bpf_experimental.h"
 +
 +char _license[] SEC("license") = "GPL";
 +
-+char path_name[256];
-+char xattr_val[64];
++__u32 monitored_pid;
 +
-+static __always_inline void access_path_dentry(struct path *p)
++#define BUF_SIZE 1024
++char parent_path_buf[BUF_SIZE] = {};
++char parent_xattr_buf[BUF_SIZE] = {};
++char grand_parent_path_buf[BUF_SIZE] = {};
++char grand_parent_xattr_buf[BUF_SIZE] = {};
++
++static __always_inline void d_path_and_read_xattr(struct path *p, char *path, char *xattr)
 +{
 +	struct bpf_dynptr ptr;
 +	struct dentry *dentry;
 +
 +	if (!p)
 +		return;
-+
-+	bpf_dynptr_from_mem(xattr_val, sizeof(xattr_val), 0, &ptr);
-+	bpf_path_d_path(p, path_name, sizeof(path_name));
-+
++	bpf_path_d_path(p, path, BUF_SIZE);
++	bpf_dynptr_from_mem(xattr, BUF_SIZE, 0, &ptr);
 +	dentry = p->dentry;
 +	if (dentry)
-+		bpf_get_dentry_xattr(dentry, "user.xattr", &ptr);
++		bpf_get_dentry_xattr(dentry, "user.bpf.selftests", &ptr);
 +}
 +
 +SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(open_code, struct file *f)
++int BPF_PROG(test_file_open, struct file *f)
 +{
++	__u32 pid = bpf_get_current_pid_tgid() >> 32;
 +	struct bpf_iter_path path_it;
 +	struct path *p;
-+	int ret;
 +
-+	ret = bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	if (ret) {
-+		bpf_iter_path_destroy(&path_it);
++	if (pid != monitored_pid)
 +		return 0;
-+	}
 +
++	bpf_iter_path_new(&path_it, &f->f_path, 0);
++
++	/* Get d_path and xattr for the parent directory */
 +	p = bpf_iter_path_next(&path_it);
-+	access_path_dentry(p);
-+	bpf_iter_path_destroy(&path_it);
++	d_path_and_read_xattr(p, parent_path_buf, parent_xattr_buf);
 +
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(for_each, struct file *f)
-+{
-+	struct path *p;
-+
-+	bpf_for_each(path, p, &f->f_path, 0)
-+		access_path_dentry(p);
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("Unreleased reference")
-+int BPF_PROG(missing_destroy, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("expected an initialized iter_path")
-+int BPF_PROG(missing_new, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
++	/* Get d_path and xattr for the grand parent directory */
++	p = bpf_iter_path_next(&path_it);
++	d_path_and_read_xattr(p, grand_parent_path_buf, grand_parent_xattr_buf);
 +
 +	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
 +
-+SEC("lsm.s/file_open")
-+__failure __msg("expected uninitialized iter_path")
-+int BPF_PROG(new_twice, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("expected an initialized iter_path")
-+int BPF_PROG(destroy_twice, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__success
-+int BPF_PROG(reuse_path_iter, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
-+	return 0;
-+}
-+
-+SEC("lsm.s/file_open")
-+__failure __msg("invalid read from stack off")
-+int BPF_PROG(invalid_read_path_iter, struct file *f)
-+{
-+	struct bpf_iter_path path_it;
-+	struct bpf_iter_path path_it_2;
-+
-+
-+	bpf_iter_path_new(&path_it, &f->f_path, 0);
-+	path_it_2 = path_it;
-+	bpf_iter_path_destroy(&path_it_2);
-+	return 0;
-+}
-+
-+SEC("lsm.s/sb_alloc_security")
-+__failure __msg("must be referenced or trusted")
-+int BPF_PROG(untrusted_path, struct super_block *sb)
-+{
-+	struct bpf_iter_path path_it;
-+
-+	bpf_iter_path_new(&path_it, &sb->s_bdev_file->f_path, 0);
-+	bpf_iter_path_destroy(&path_it);
 +	return 0;
 +}
 -- 
