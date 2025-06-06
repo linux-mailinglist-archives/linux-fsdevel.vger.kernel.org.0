@@ -1,142 +1,158 @@
-Return-Path: <linux-fsdevel+bounces-50864-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50865-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD905AD0880
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 21:06:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5948AD0886
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 21:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 210C97A499E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 19:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32A4C3B3ED2
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 19:15:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7901F17E8;
-	Fri,  6 Jun 2025 19:05:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5E21EA7C4;
+	Fri,  6 Jun 2025 19:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b="I4pn4krY"
+	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="DkA7DbxK"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-oi1-f180.google.com (mail-oi1-f180.google.com [209.85.167.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-00364e01.pphosted.com (mx0a-00364e01.pphosted.com [148.163.135.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B051F2746A
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 19:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0556A8D2
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 19:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749236753; cv=none; b=Dz2ATEkDnjPEem3A/lOQ0pc4f7H24kGyoDnnh15+jOwvQmRIfJYq7YZ1fKlMdIsWfcxXZuVSq7jgvxkGqTse69Ji65kmREvZ7aIfrIL2OfHRDG7aAWxFLDBw2Py1iwirQ7s76rfvw5LKDRiryM1tk9kqYaAWoHvI4+LlFrKOwEI=
+	t=1749237332; cv=none; b=rJSlHEuEyEf8xIfKvzWctbOjM3ZLbtIyZnC97nwhsmIU2OOMSSbt7JMSwz+/rtGqNoY4cPvtu4EQWch6/B9NZxfZb1nZfPLSYIEXZKvMjk88BWqm2zbvROqlFxvr8kwpuXPkDSMl+PBdFN5ksUWPpRCg3ugd7KDXB7Phua10i+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749236753; c=relaxed/simple;
-	bh=fjA174NXcYra/qNR5ZeunrR6PJxgyVAijSUtlp0nPjM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uF9TFzpd4dmRWs4nIMVAkaFaHOwQTKK2BzBELC5UZR+WIiRhXFeh8ZP3V47N6pJT66Qftx/6ie+OzLX1Uf7jZc5QRRm8+MKPFQ/1hvpHHcNlbdv3N6SnIRdsrW1n9T4hQiXfG1X6WMgK7TJXJ4NC0fTDStPijTXBCrAAWXtTGAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com; spf=pass smtp.mailfrom=dubeyko.com; dkim=pass (2048-bit key) header.d=dubeyko-com.20230601.gappssmtp.com header.i=@dubeyko-com.20230601.gappssmtp.com header.b=I4pn4krY; arc=none smtp.client-ip=209.85.167.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dubeyko.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dubeyko.com
-Received: by mail-oi1-f180.google.com with SMTP id 5614622812f47-407a3913049so1426155b6e.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 12:05:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20230601.gappssmtp.com; s=20230601; t=1749236751; x=1749841551; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZB9ynOz6tzj5Zv03g68DqX1Y48gJ3m+cXZRrMsWB/Hk=;
-        b=I4pn4krYKMWDA34DHWI2AMNLzHlo4TA6sgKuIVEPQ2OdoYG5n7N9vbZPSjpHF7TFgF
-         TZw6ibZUgHM8qO2vTaM+iXFqMMtY/cORc8V9b8WqA73lnGJVD69A5s2JZePgVTINg9KX
-         MKSGAk0ku0/DpSQ6ZGQFQLbhjb/11tp9s7u3sqOwQX9CDeyyjU4eppfL3sAYaVsf7cbO
-         PssZ/JLi6KJ9ileNVqjr9snQBMoe8FqN+YnLQ0zg92CoHRONCa+QUNlqanN1dflXqtCU
-         1x/ufZL0RZHIJHTWSr2AdwkJIe4KkYckic0PsMi9ypLRTYKKjYvox7Oo1JibvWA2ccAo
-         iqoA==
+	s=arc-20240116; t=1749237332; c=relaxed/simple;
+	bh=GPyJpQ0MM3+sCyiRNE8U4gRHQyAm8DS7ZnG7aizdKZc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T5a7W59RmASul9ZDckQLVS3m+hIOwdNIew3nrg5PO0o8kYEdZeccgfyIzFTMnu78ESr1gRHj3jL7FaXpqo09EopYkreDYvJy3/O3ng4ak7h11Ax+ryROkx8WUHIOVnmZYCzXdIKqwUd7THnYMzGajqapwZ7w6TFj+zgWhiX8lO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=DkA7DbxK; arc=none smtp.client-ip=148.163.135.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
+Received: from pps.filterd (m0167070.ppops.net [127.0.0.1])
+	by mx0a-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 556JFPYg020032
+	for <linux-fsdevel@vger.kernel.org>; Fri, 6 Jun 2025 15:15:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=cc :
+ content-transfer-encoding : content-type : date : from : in-reply-to :
+ message-id : mime-version : references : subject : to; s=pps01;
+ bh=hxKpvIwDJev2AQJKrOOsefY7R3fXf+i39zjL9smzWlg=;
+ b=DkA7DbxKWkuSHI4iA1MT142Cpjb6/8TlBCIIakYVq0CquCP/OsqASktksi65uhVS3R0K
+ pYAf0AWDlurGLVY0A7dax6S2OkNvYHys/MxWBNvZt5WywemKs+i2cp9KKyyX57XalUIB
+ Z1wbzFseZeI904Snaxa0hDVP8qvYuw1r5I16/pG/SBkvCw0JxaURlW15Vmbafv8xFP9L
+ aowr3D/GGER2+HZChR4zQDlQ5/fF8cCKxYAxA7ziPaETHJyOJZx+ckqWd+YNunLjeg6g
+ LcvHQ8FAnOnAsP8auXLJCNtclMht8N8djMRGW4Ws17QR+WWlgUqS6xiy0vg9Tkz+yh9T oQ== 
+Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
+	by mx0a-00364e01.pphosted.com (PPS) with ESMTPS id 471fu8mga5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 15:15:29 -0400
+Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-70e735c7857so31559207b3.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 12:15:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749236751; x=1749841551;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZB9ynOz6tzj5Zv03g68DqX1Y48gJ3m+cXZRrMsWB/Hk=;
-        b=XWbaMlNCHBFIRk0lWyWoUTag9AqOmvVfg+UyDPhaQCkn+IJi+jaLTI6tT5H6VqUjVJ
-         vlVwmTcbU9MKizPNIheycaqnzN6WcdnxwT/kabrkj/ffBpKpD4LLVatlWVNFPW3hAZGl
-         45Evl+ILLhkkzJJawWV3x0IDaFW+OaRzRQjohjBKOZmGnVMWPjSCe31O25YvVaUYhpza
-         STVhOtUYx8u54ZLP9RF357iDdEmMsSzhrRMXHzeW+0PaCXX84ksqotwQ3UhAkXXVXhMW
-         O/XHvsLZS/9sh9HJ6C706cDKQrowda1u25g1h/ERsy1zB9ur42q69vCGczPkkk0l6CQ5
-         x5Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHnaP/pHoibzaN9+jszgqFCQX/JtfFCRdA/vNqTp/XGWI2z7qk7UrRKvP3QHSKSZRcg0o4JqqyZ80I8fun@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHVtv92DBDNUN+ybaxGv1rx02cS3vbauSSFajw/toHNiNZwM7y
-	bN2z8/G7ovHXOe8bHTgNoIX/oGVBlxvAQtSLrJqNu6xjbjbT7Hu17iEVKT/WoSvnQCA=
-X-Gm-Gg: ASbGncslm0v/qmkf4OWzAFCHd5tEUn2wIw/skfQy3tMfwL6J5jno3tCEmPPQsev2Mhj
-	W11tuJ0StPhBIJe1l7mAjkr+nEZlibcxsw7668hX7gKf0dyeXUAuP0sObP/JvdhtNI66RwsPwrT
-	Bd9stpWNLfgIvXjs1guWiJA8BmNtE0PBXq7KYjV3iR3vC7OgzfPn9cAK+DtMuOkEZRQfEWthnxF
-	MOoTh3Mob9oz0Snhs04Bz8RxO6yV8u3SsYvdlL3Sjt0gAiHP74H5yBO8lGjRVlJIXSlsk0AGR1S
-	4QTNFQxyjjRB3ToiOsRAa/VgoAlAwpRRuJqMK7IVdEwPN/lxwwc9e3zQoK6fOjuPp4sZGyLpkyn
-	QOKcd
-X-Google-Smtp-Source: AGHT+IEtfRFjm8MHKUaNn5CMUbZcMb5BICcItdOhd4cO9UvJEofKS92V4U0N7MVOIpb3NgYFd96s0Q==
-X-Received: by 2002:a05:6808:6f8d:b0:407:59ac:d73f with SMTP id 5614622812f47-409051f2c1fmr3218153b6e.21.1749236750747;
-        Fri, 06 Jun 2025 12:05:50 -0700 (PDT)
-Received: from system76-pc.attlocal.net ([2600:1700:6476:1430:fe8a:b218:375c:b2ed])
-        by smtp.gmail.com with ESMTPSA id 5614622812f47-409069638a7sm448598b6e.22.2025.06.06.12.05.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 12:05:49 -0700 (PDT)
-From: Viacheslav Dubeyko <slava@dubeyko.com>
-To: ceph-devel@vger.kernel.org
-Cc: idryomov@gmail.com,
-	linux-fsdevel@vger.kernel.org,
-	pdonnell@redhat.com,
-	amarkuze@redhat.com,
-	Slava.Dubeyko@ibm.com,
-	slava@dubeyko.com
-Subject: [PATCH] ceph: fix overflowed constant issue in ceph_do_objects_copy()
-Date: Fri,  6 Jun 2025 12:05:45 -0700
-Message-ID: <20250606190545.438240-1-slava@dubeyko.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1749237328; x=1749842128;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hxKpvIwDJev2AQJKrOOsefY7R3fXf+i39zjL9smzWlg=;
+        b=QroBKjNGtemyZcf1CON2gY8SnF21Ii5FQCIX9vfj+R/VYos2iMjJ3/rjm7Fc1E6079
+         m2SuYW2VfEdR9Wwu6Y3G4wXPrWFAKU7/T72FSwwSylYjSIf6uyr5c+SfMd1GFPs1JTnh
+         uOQrFGmuo8W55BpY9EICYMPgfwuhREWdamp4V+4uyAHL3lDcd6ZdQC4wtuS12WlAx50l
+         WZklChcWw5T3uHlsQDKfxQq8Lj/qz1J00sGtryXl9xDAgFkUDaZmFe1qwhy1FK05iLPY
+         6xAbrpgmJLhaWSgbCm6CK8fSKTDF0ixkRAPcbIYYFUL6s5JdsdVTXMK62YVF9pV+P/Dt
+         Y1LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWC6CIUsT26okRgtJnUf6uzN0HLHH/2zy9/nuoZv0V2n13lF6N5Xmlz/2Ivk73t0L4vw3XbZ6BV06gLbh/q@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiMZEJnKOiu01XeHmr0Sdseve+4qVIiHEDTA5340HD+v0o2imJ
+	ieD+lsvvOVM5xf/gI6pbn550zgOHij6in9Yv0mAF6we0vdS4GGRgrk3GfeaqAj3hH1419uVHepl
+	dmowL2sPMemagf1kp/DJblpzdDUXlfQvr+sO/3SByN7HolU06SOMSkUVzlsSIUGuYhuZPutD6/I
+	tfg2BBrh05ubg6Ic6inhq47zzGwhz1dfuQ09WdaA==
+X-Gm-Gg: ASbGncuDKU8PT9+fTUdyq+8FBzJrlEAwZKQwOMkItLFVpq+v12c7Lkd49iSP91n+j4Z
+	pI7x0IzMw200VjO6Kz7kEB+NO7B+v93u56+P90sUkIOwWxBN1WjIULjE5q0ukrEm8qjjC+A==
+X-Received: by 2002:a05:690c:360e:b0:70d:f3bb:a731 with SMTP id 00721157ae682-710f76949a7mr61381297b3.9.1749237328275;
+        Fri, 06 Jun 2025 12:15:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGmh5c+UyPtFHTyhFmv9SKnRfaGxEIhGfyJzFKAkpNJdzUL5OS8y0tgPWOcR4UTikcCpHWRgcH8NmKHKIpVeQg=
+X-Received: by 2002:a05:690c:360e:b0:70d:f3bb:a731 with SMTP id
+ 00721157ae682-710f76949a7mr61380767b3.9.1749237327889; Fri, 06 Jun 2025
+ 12:15:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
+ <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu> <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
+ <aEBhqz1UgpP8d9hG@x1.local> <CAKha_sqFV_0TsM1NgwtYYY0=ouDjkO7OOZc2WsR0X5hK5AUOJA@mail.gmail.com>
+ <aELsIq2uOT5d1Tng@x1.local>
+In-Reply-To: <aELsIq2uOT5d1Tng@x1.local>
+From: Tal Zussman <tz2294@columbia.edu>
+Date: Fri, 6 Jun 2025 15:15:17 -0400
+X-Gm-Features: AX0GCFv-LebVJckbZYYmiOxBhz5geAlpM1m_LD3eRjbOgJZYzDANJjo8J0v__W4
+Message-ID: <CAKha_sqRAW7AmZURC7f7hkja9XRxPkccMB17Gay5p8Qm+cojuQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
+ different userfaultfd
+To: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-GUID: V42HNfBgYHyOESq79symZefzCtKV0Uzu
+X-Proofpoint-ORIG-GUID: V42HNfBgYHyOESq79symZefzCtKV0Uzu
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNjA2MDE2NiBTYWx0ZWRfX+PzytgdjdQRb WCBhGQndrOgT1OqYlk6AsGbkt+cMrOgW/frYM807Z+ybEgZ4lpK7JQiDnps2YmEQi9I6zNk/Xh1 Bpd8C9mYk79o5+S8Sw9c4Vy6mF2iYlWXWdkerIREPJQ9oJkgQwTn3knIR7dS1BRwKemoAvjjDue
+ Lr5glRTMXhhumGf38LdIoqefXMC4ihXcB8MdfdK/ZTanfgDv7jmXSJqSG9HQDaHp5GdJcLgHVbG 3BlvNOZUh/tmr2HMglg8U7a9Wc+UMIy2WxrR+LxYYXjsfR0Un8mhV7dewzrOahzhdQLd2ddzQgb HOa6lY8OnuAUXVqv3r0vjvPgAy9IOETdFze8oA8gedpHHU3W+Sg7Zxm7YEar4G91a5oX4l68Tr8 SObmC2Nb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.0.736,FMLib:17.12.80.40
+ definitions=2025-06-06_07,2025-06-05_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=10
+ mlxscore=0 impostorscore=0 clxscore=1015 suspectscore=0 mlxlogscore=725
+ phishscore=0 lowpriorityscore=10 priorityscore=1501 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2505160000 definitions=main-2506060166
 
-From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
+On Fri, Jun 6, 2025 at 9:25=E2=80=AFAM Peter Xu <peterx@redhat.com> wrote:
+> On Thu, Jun 05, 2025 at 05:11:53PM -0400, Tal Zussman wrote:
+> >
+> > As I mentioned in my response to James, it seems like the existing beha=
+vior
+> > is broken as well, due to the following in in userfaultfd_unregister():
+> >
+> >     if (!vma_can_userfault(cur, cur->vm_flags, wp_async))
+> >             goto out_unlock;
+> >
+> > where wp_async is derived from ctx, not cur.
+> >
+> > Pasting here:
+> >
+> > This also seems to indicate that the current behavior is broken and may=
+ reject
+> > unregistering some VMAs incorrectly. For example, a file-backed VMA reg=
+istered
+> > with `wp_async` and UFFD_WP cannot be unregistered through a VMA that d=
+oes not
+> > have `wp_async` set.
+>
+> This is true.  Meanwhile it seems untrivial to fix the flag alone with th=
+e
+> prior per-vma loop to check compatibility.  We could drop the prior check
+> but then it slightly breaks the abi in another way..
+>
+> Then let's go with the change to see our luck.
+>
+> Could you mention more things when repost in the commit log?  (1) wp_asyn=
+c
+> bug, (2) explicitly mention that this is a slight ABI change, and (3) not
+> needed to backport to stable.
 
-The Coverity Scan service has detected overflowed constant
-issue in ceph_do_objects_copy() [1]. The CID 1624308
-defect contains explanation: "The overflowed value due to
-arithmetic on constants is too small or unexpectedly
-negative, causing incorrect computations. Expression bytes,
-which is equal to -95, where ret is known to be equal to -95,
-underflows the type that receives it, an unsigned integer
-64 bits wide. In ceph_do_objects_copy: Integer overflow occurs
-in arithmetic on constant operands (CWE-190)".
+Will do!
 
-The patch changes the type of bytes variable from size_t
-to ssize_t with the goal of to be capable to receive
-negative values.
-
-[1] https://scan5.scan.coverity.com/#/project-view/64304/10063?selectedIssue=1624308
-
-Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
----
- fs/ceph/file.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 851d70200c6b..e46ff9cb25c5 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2883,7 +2883,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
- 	struct ceph_object_id src_oid, dst_oid;
- 	struct ceph_osd_client *osdc;
- 	struct ceph_osd_request *req;
--	size_t bytes = 0;
-+	ssize_t bytes = 0;
- 	u64 src_objnum, src_objoff, dst_objnum, dst_objoff;
- 	u32 src_objlen, dst_objlen;
- 	u32 object_size = src_ci->i_layout.object_size;
-@@ -2933,7 +2933,7 @@ static ssize_t ceph_do_objects_copy(struct ceph_inode_info *src_ci, u64 *src_off
- 					"OSDs don't support copy-from2; disabling copy offload\n");
- 			}
- 			doutc(cl, "returned %d\n", ret);
--			if (!bytes)
-+			if (bytes <= 0)
- 				bytes = ret;
- 			goto out;
- 		}
--- 
-2.49.0
-
+> Thanks,
+>
+> --
+> Peter Xu
+>
 
