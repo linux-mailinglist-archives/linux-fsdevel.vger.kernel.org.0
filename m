@@ -1,362 +1,830 @@
-Return-Path: <linux-fsdevel+bounces-50829-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50830-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 512ABACFFDF
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 11:58:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BD7ACFFE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 11:59:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 679137A905A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 09:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FB4A3A8AAD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 09:59:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7CB286897;
-	Fri,  6 Jun 2025 09:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="AdKi0Snm"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7272868B2;
+	Fri,  6 Jun 2025 09:59:36 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11021076.outbound.protection.outlook.com [52.101.70.76])
+Received: from mta20.hihonor.com (mta20.honor.com [81.70.206.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40AB286413;
-	Fri,  6 Jun 2025 09:58:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749203899; cv=fail; b=tbdwuOXGZmzEcndDs6suOT0qEPNoqFnU78VQhVTFQirEwdXULFCLc5GBqezM7QbtidOFEVO5wY5m4rj2IkSx1n84Y0LxE7OjKtYMFzIK6RHISR2KEzOWsQb27HWKfsuiNT04tbzZtkfH6I61FLzFAyVdYnUCjPhZA3eQ2+vjT2I=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749203899; c=relaxed/simple;
-	bh=qDb2MGKSvSYXXLxiDkPGpRwC65+yg9scm4Y37SfROk4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=gsEuZ/fHVU26ejonRg7YdR4EF13HNyKLym7nuT5YJ2VMkDmR2xN/hU1gHmj1izdeHGCkSCq8Dm7eK62vPzx9BZYG1tch7Up1t36ElHb/Da1lzl196OHcweurM3zkMnidIKlKDriGv9s9/f/PvWSZ5vvkTkz7QcCe4LGGaFC/Zos=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com; spf=pass smtp.mailfrom=virtuozzo.com; dkim=pass (2048-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b=AdKi0Snm; arc=fail smtp.client-ip=52.101.70.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=virtuozzo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=virtuozzo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ltoTw8GgFmcacOcZos7HWbz9/CodP8HNDsRtCqYS0zJgF2fgh49iHJpKyQve+xTSZUFeYqnX0JtQfvQNDEg7/oFxKTHM3T0lwPAeiJjdjH6rwwOgCDhvmff6sOnDzE1GzHum9nEXCCsyGca3epS6G1se26DUevvvRrcLZI1H5/cN7Plhbi6W+bU7gilmV8QoZEznDovZxxUpX03eDWakBrOz6T6Tkoj/xtzOP3MGK54OykDWs+ZkNttvKiBfvgrzMKBkFhy59wRIlaW7DvCl22h1BDnILD02R0/Ni55msGFh6XUGhajJwwEua/HSNpQ8Pb+u1BwqDh25DTItRd6nDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Rle1vBZQPEBuU/UoIH8UpN6TYaXrieKpMFiH+Ow3nhU=;
- b=MmFoywnjevbn6CarYhbifkFPY0TTUodS8NRxDS4l/KYDXEvQ3wWqdZ2y0xjIAjqI4LD3V9uKdmCJSzLVcrDfQ8VtqR/Pde5XFsU71X1DoYJdZgJLBlLglB61tx99Q0890cm2/TzrQvxuAIen9m8qHUqKSla/iX5tGle3ZeBZaYiKZzv9C5Jvz4F9QgT1s0UJfosAlP+fOMLcq8qillcjQ8gs/yB7g2uG1l4NFE+k1zrZUCRm0UwRWQtn+XtW2VN0EsZYQdHnyjQE9+Cgj3jDq4HATc7/FxQgUBMP8nV9rumarQnnrC2QC2w9tRuLda5jVfykcXxdptCZVfEOEoCeug==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rle1vBZQPEBuU/UoIH8UpN6TYaXrieKpMFiH+Ow3nhU=;
- b=AdKi0SnmUs/VSBtJRZhOu/pGbOfWGGtf3La5V/9KL0akzvSaIXogcFtIGLJTKtcfUqt3rhW7ogegkzOSVCZTsE51T071EP539McVl36qzszVS3iHosyjpWT3Jmlko8JZkaRauheffDiB7pAv3gP902PRl1JS0SWsRcZpqCcdWVpRkugEtCtLHt+wNocInpl1BkBZ5bGvlvxLM7SS2jwJ61hrislHit6d/hmbMsCHMX/Eq0BQFp7PXhMipujFU1V8+fq7+eNMmdl9Seiyt8TcILAJlOKhK9+aZZlZ1M5syFT5chtcLPRWFr+bcV1lzgG3ynxGsE9+Xk8x/tYPsAr+KQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=virtuozzo.com;
-Received: from DU0PR08MB9003.eurprd08.prod.outlook.com (2603:10a6:10:471::13)
- by DB8PR08MB5369.eurprd08.prod.outlook.com (2603:10a6:10:11c::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8813.20; Fri, 6 Jun
- 2025 09:58:12 +0000
-Received: from DU0PR08MB9003.eurprd08.prod.outlook.com
- ([fe80::7261:fca8:8c2e:29ce]) by DU0PR08MB9003.eurprd08.prod.outlook.com
- ([fe80::7261:fca8:8c2e:29ce%5]) with mapi id 15.20.8792.034; Fri, 6 Jun 2025
- 09:58:12 +0000
-From: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Waiman Long <longman@redhat.com>,
-	Kees Cook <kees@kernel.org>,
-	Joel Granados <joel.granados@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Konstantin Khorenko <khorenko@virtuozzo.com>,
-	Denis Lunev <den@virtuozzo.com>,
-	Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	kernel@openvz.org
-Subject: [PATCH] locking: detect spin_lock_irq() call with disabled interrupts
-Date: Fri,  6 Jun 2025 17:57:23 +0800
-Message-ID: <20250606095741.46775-1-ptikhomirov@virtuozzo.com>
-X-Mailer: git-send-email 2.49.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: KU0P306CA0008.MYSP306.PROD.OUTLOOK.COM
- (2603:1096:d10:17::13) To DU0PR08MB9003.eurprd08.prod.outlook.com
- (2603:10a6:10:471::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5942857EF;
+	Fri,  6 Jun 2025 09:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1749203975; cv=none; b=okE9DE3jRTjLQ48XzuaH/Fz1jYoVMIYsDEtemKhi+AyV3LCh+C8yoFiPSDg66htI8oqSotUEay0L4FckCZ6KqjTVHA4qV/CYCqm5W0H1xARW2J/lWVwaTJ2jR5DSXfZB6jDwg5Vx2paSixGmeufDrXMXc66OQffdwj/nI66nzSE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1749203975; c=relaxed/simple;
+	bh=sTYLlWK7D9rHYnaH7Ko2SXSb+sPWa/ys/gbyd7C5Zz8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OC1ND8gPzFiF0EJ5oyMhH4ib4fgdi5ds3FvDMxehKmnOSz0O9brt8yV5zceQbsxNZ5EZdJkK5DCDt79FF+9ESvZsMasCYMbCSYFi4H5c3MK4aij9lmo4DRaJOgwqVMXax0QqYjnh9mzEO6RhUuGkfgXFapmx6N7xoASA2n1xC5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w001.hihonor.com (unknown [10.68.25.235])
+	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4bDGtg6WhnzYm3Kr;
+	Fri,  6 Jun 2025 17:56:43 +0800 (CST)
+Received: from a014.hihonor.com (10.68.16.227) by w001.hihonor.com
+ (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Jun
+ 2025 17:59:02 +0800
+Received: from a010.hihonor.com (10.68.16.52) by a014.hihonor.com
+ (10.68.16.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Jun
+ 2025 17:59:02 +0800
+Received: from a010.hihonor.com ([fe80::7127:3946:32c7:6e]) by
+ a010.hihonor.com ([fe80::7127:3946:32c7:6e%14]) with mapi id 15.02.1544.011;
+ Fri, 6 Jun 2025 17:59:02 +0800
+From: wangtao <tao.wangtao@honor.com>
+To: Christoph Hellwig <hch@infradead.org>, =?iso-8859-1?Q?Christian_K=F6nig?=
+	<christian.koenig@amd.com>
+CC: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>, "kraxel@redhat.com"
+	<kraxel@redhat.com>, "vivek.kasireddy@intel.com" <vivek.kasireddy@intel.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org"
+	<brauner@kernel.org>, "hughd@google.com" <hughd@google.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, "amir73il@gmail.com"
+	<amir73il@gmail.com>, "benjamin.gaignard@collabora.com"
+	<benjamin.gaignard@collabora.com>, "Brian.Starkey@arm.com"
+	<Brian.Starkey@arm.com>, "jstultz@google.com" <jstultz@google.com>,
+	"tjmercier@google.com" <tjmercier@google.com>, "jack@suse.cz" <jack@suse.cz>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "wangbintian(BintianWang)"
+	<bintian.wang@honor.com>, yipengxiang <yipengxiang@honor.com>, liulu 00013167
+	<liulu.liu@honor.com>, hanfeng 00012985 <feng.han@honor.com>
+Subject: RE: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Thread-Topic: [PATCH v4 0/4] Implement dmabuf direct I/O via copy_file_range
+Thread-Index: AQHb1G1ol+FT389RFkuW+lwB3adoKrPw4BKAgAADywCAAAF8AIAAEGgAgAAC0oCAABhEAIAAAd6AgATEk2A=
+Date: Fri, 6 Jun 2025 09:59:02 +0000
+Message-ID: <d5d3567d956440c39cb8d2851950f412@honor.com>
+References: <20250603095245.17478-1-tao.wangtao@honor.com>
+ <aD7x_b0hVyvZDUsl@infradead.org>
+ <09c8fb7c-a337-4813-9f44-3a538c4ee8b1@amd.com>
+ <aD72alIxu718uri4@infradead.org>
+ <924ac01f-b86b-4a03-b563-878fa7736712@amd.com>
+ <aD8Gi9ShWDEYqWjB@infradead.org>
+ <d1937343-5fc3-4450-b31a-d45b6f5cfc16@amd.com>
+ <aD8cd137bWPALs4u@infradead.org>
+In-Reply-To: <aD8cd137bWPALs4u@infradead.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR08MB9003:EE_|DB8PR08MB5369:EE_
-X-MS-Office365-Filtering-Correlation-Id: 73b698bf-c988-4fc6-b3c1-08dda4e0a5b3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|10070799003|376014|7416014|52116014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?N21KQR0y5I53ZvU0IhccFGLaGJXqK7sdwSAvkBZjZU9xTQFLOkqBqvc4Af9T?=
- =?us-ascii?Q?aIvJN2bwhXUqg3k3NvwV8jgJNyvpNmAkjWGYRdoKER0A7ahE7Qp6ns3QY+PJ?=
- =?us-ascii?Q?zbqDHFSy+1LlGa6SY788fR4PyS+e1ZG2h3D88NQnJ5zpRGxFZ2qT/xN+S6Ex?=
- =?us-ascii?Q?ak/n/mCJobZi1/XGGjQNkxaSag+SaB/CGuGf3En7drwZT5yVIDOmJxZGrhDQ?=
- =?us-ascii?Q?IcgQ1Y8pLmZUAt0rvlZNUsCIRHFdsJ88QMt2Xek0jHFy6Zr30yen+LhPR9du?=
- =?us-ascii?Q?Lorul5H+TDs3aVcgkqhSU06xtOBOebcFk+9/F/3Yw85uOHy8206Ay1Khkgyi?=
- =?us-ascii?Q?fWIeSFu+q+BMXbNDNP5kb73xT2U5o1ZsVoldLZm7MHzq2sprPnRYnJS7QxHP?=
- =?us-ascii?Q?jlK8uZOSzA+qFlGULORF2PqHfsNp7CRFVaQyKGUDkAHzvmBqC2vsRoRMaWzV?=
- =?us-ascii?Q?jE6LPlRmOyO7rJZiRrBMY1oLEAiRKM9/Hbvw89u+vCBWq/ASYFLf4YiCeH0y?=
- =?us-ascii?Q?E8nZizYQVjdH1lebP9ANkTW25Ggb2fF6ULw7SQ3/qZep1peL9LMOI+1baqn3?=
- =?us-ascii?Q?trNlDdePJoXYkmeFkBRYfGoWi+Y59O2oQB4qiGUOcxPNnqyzRWDck+d9rnWK?=
- =?us-ascii?Q?eT0eswioZbqdZvtxT4WJS1quc9+raJr6QrwoOBKUzQoRmEKzjHdU/wQwmDwI?=
- =?us-ascii?Q?0NwyTyAk89VpLfDrLsPLxMwQz8VohZ0grAbgj/TMeAr6jDgP0V+aIppQPV/e?=
- =?us-ascii?Q?t7SzdHRCHxVeaCV+oHQAqaXuoVr1f2utuwAR8rBZQ1TeMCrrzv0YhgV476SP?=
- =?us-ascii?Q?3GqjkrMOr0cwr4XFO6bIbqGwib7bkbNEafeGc9Exbc9GmgBBhCA51DuQTJIj?=
- =?us-ascii?Q?CYXTzZWzMjfjFgpkGBcBN073Q55k0BL1ExnJc3V8Zd9efEQkXvoj/u+ziBL/?=
- =?us-ascii?Q?/xHuF9bVkZCoG3k8XjLnIN5wXHdPX6IC9r2eTCSzW20wsHmfyUtTricvnA2P?=
- =?us-ascii?Q?PpZB2bLxXo/BFSFTNhwVTCSE+UxUASNIslKR+T0ib+Q/4JJ/i+JQu/t8YW6t?=
- =?us-ascii?Q?fjanZwBbSjIsRFdqUvJQeoZe9fZQxrCkpUes4mfCjmAlIe8fIPyUMmEq2Iom?=
- =?us-ascii?Q?qePQ1F01p3DQkV7dve9/nzzUI4EUoT83nzAzAkt4RgEHykwyh8IQfqXdhSN7?=
- =?us-ascii?Q?MYVBW37L5AXu0WOXspj4o4pb42b3tvJO9azrLKy+wjuuUXlN/OIhoj//XNBt?=
- =?us-ascii?Q?fAPXO+7ls1ZdvjZRxvgluaSOYS5arxfre6c2wsS/zmRR9o1Vg4pbiIU6v5ZI?=
- =?us-ascii?Q?I9A6VMRPXOUTOo5hI0v6i+fbUFccsV+x/LksPF253Hbd87iFiJts+pQ7DSAJ?=
- =?us-ascii?Q?XFbp/2U4DHJAJn2g0/lGvqI4G+xUsDXe14rSLXj7IGWmzmRUu1+VuA3Ay5eu?=
- =?us-ascii?Q?UneRLJfcAPE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB9003.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(376014)(7416014)(52116014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?89gTbvyS9ULCWwPoWcfd4NmkrkBQSoCbhybraKfuHRKHoQBScdWd/mqDLHGs?=
- =?us-ascii?Q?Xh5DsPTf6HpNurFgpApnv8phBzNl4I0gdIOR2wmFQYXKFKAIyAExm4lcmHxW?=
- =?us-ascii?Q?F4bKctlB5ZYRSQAkzcm3bghRA4/MT5JfTmQn4UhBrkaGVpraomXJSALgvvVn?=
- =?us-ascii?Q?spadU80DcBkn27ajadNwiK10vPhcVBg1auo/Hm4GQhBuPwatFuipYvlARrVL?=
- =?us-ascii?Q?a2zTNKonMRHLf99MdCRTwvHSB10UgD6JdbMC8MWUG/9O0jVeX17fiBtRpUPI?=
- =?us-ascii?Q?PjNiIMKLFUruw7ZE0+m+iQP7y8EM9GphsdgDN4PIrGWItRInNnGjuBaWqOmy?=
- =?us-ascii?Q?hBYpZow39iGDaaw1O/FGLNizXXMiLJpgu0ImuOZXxruepk27rnkY94wxsZmy?=
- =?us-ascii?Q?Akhgy7iBMuR1COR2gP3GoNksxKdknZ6zqF085pYUvz3gV+OATM9vPjjyJIJY?=
- =?us-ascii?Q?wmhenNS5pAUNhoHEhL13d8uWTiwr3NcaXsuDH/sGmwTmR6j598W+iFNJCQad?=
- =?us-ascii?Q?Q/dY6MukrAHUslfX4QJGLsC17GmZFa/y8rZ1+kVzPy1vsHuqFvYSeuHDr3KL?=
- =?us-ascii?Q?aJiOA2gPtaBmDC3YRRVKciMk0BmjaQJ2x61oNUYOWMYao6HTlwCI4HwspxHr?=
- =?us-ascii?Q?NYJGvWhEji/KoBDoi+6bZPjz8qR37Ubfp8DqL2haH48X8MzSxnRZOGLWjMmP?=
- =?us-ascii?Q?qdAXGacdpYLJeWs1ioWWfg+WBnYKSpmk8N+phBwQkB0/UfwoxH2eMGexHYOy?=
- =?us-ascii?Q?9asE6cnV/XeNRnzWzyYjOq06mH7iOnhrBrqKT4MqZBTfKNd2W1/o0blJ9ZDJ?=
- =?us-ascii?Q?bbAyHOObeyBlF4WGaH8DYHGIdV34nuTDp2mea8ir1WLGDqbNDoOyHDvMAGi+?=
- =?us-ascii?Q?9LahxvhUINm/fg1oFJd/FFhCpyOLqHevQJUiLQoN2LzcCnH9mWtJAfXCHS+R?=
- =?us-ascii?Q?jjXFJ4LEKOgqVIbha/91vgbhnnego3pDBcy2cKPiNqKOmGBZLjH/NfvemrPd?=
- =?us-ascii?Q?sQUo2SreEQ5Pd3vMebXqr8kvQgbwW+eYPBBgaY4fjalvHN9P7OGTMXZCxqBX?=
- =?us-ascii?Q?sYlaOVaLTEV2z5/xiQourOaUVH6iVIETQejhUgIPT9/choephWkWSRumk6TW?=
- =?us-ascii?Q?U6t5gLJ/nCiw6ZYR6qHLjSahprYKiYE3lvcSNsoyoxU1zHalI0qmzMgMKCzF?=
- =?us-ascii?Q?9+LFM7xMgU3cxw5YCX/JBECiX7/72mzL/LkXZRj1GSdkGAK4TSyU3ZYwZ8sD?=
- =?us-ascii?Q?vrFmdwtfGEYm+Istf8PVKwq7Jo/viIpSJkE7VKZG0NLpsoLUx1dUTKdBsngQ?=
- =?us-ascii?Q?ePLgm7ZEdXjcxayb8U7YATaspHB/eOYhsIXkCtZu/5QoGQCF5r8l5/rCd8jc?=
- =?us-ascii?Q?lXhctTuJGd66f0vHGvQp7/JeuA1zzpUHQmUWnsb3VQZE7Nr+evYwLH2na5wZ?=
- =?us-ascii?Q?+LSTk1Y+gNZIAiw/zv9abClAl6MREA2hyXk77775hprX9kJJNzfVDuBDb9S6?=
- =?us-ascii?Q?nzoRhKW4fYQxzQiuN9lbs7i+gFQlIh9L7nrEwVb+OMkFpa0Mobw1M4lPGkCf?=
- =?us-ascii?Q?kowiVvOA3vrNdIDO9rXaua3W2/EI8gMACvIxn4jZsWBBmTPIyht9A17W7nly?=
- =?us-ascii?Q?7ae7KKMJ6JidMrPbl+tJ2OklfPbJ250+L4Wh1jNniHfEcE7Fbc01s9MniBvE?=
- =?us-ascii?Q?3zU78g=3D=3D?=
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 73b698bf-c988-4fc6-b3c1-08dda4e0a5b3
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR08MB9003.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Jun 2025 09:58:11.9929
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hMrmOIuuwZCduQ/oR47hB9HGJT0aLX61mCEWwjeishCAtppG8IJS0zLRas3HeJ9384gHvi0/vqNdK/sA+mD3kLJHWMuVMxSi9zi/c7hVxxQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB5369
 
-This is intended to easily detect irq spinlock self-deadlocks like:
 
-  spin_lock_irq(A);
-  spin_lock_irq(B);
-  spin_unlock_irq(B);
-    IRQ {
-      spin_lock(A); <- deadlocks
-      spin_unlock(A);
-    }
-  spin_unlock_irq(A);
 
-Recently we saw this kind of deadlock on our partner's node:
+> -----Original Message-----
+> From: Christoph Hellwig <hch@infradead.org>
+> Sent: Wednesday, June 4, 2025 12:02 AM
+> To: Christian K=F6nig <christian.koenig@amd.com>
+> Cc: Christoph Hellwig <hch@infradead.org>; wangtao
+> <tao.wangtao@honor.com>; sumit.semwal@linaro.org; kraxel@redhat.com;
+> vivek.kasireddy@intel.com; viro@zeniv.linux.org.uk; brauner@kernel.org;
+> hughd@google.com; akpm@linux-foundation.org; amir73il@gmail.com;
+> benjamin.gaignard@collabora.com; Brian.Starkey@arm.com;
+> jstultz@google.com; tjmercier@google.com; jack@suse.cz;
+> baolin.wang@linux.alibaba.com; linux-media@vger.kernel.org; dri-
+> devel@lists.freedesktop.org; linaro-mm-sig@lists.linaro.org; linux-
+> kernel@vger.kernel.org; linux-fsdevel@vger.kernel.org; linux-
+> mm@kvack.org; wangbintian(BintianWang) <bintian.wang@honor.com>;
+> yipengxiang <yipengxiang@honor.com>; liulu 00013167
+> <liulu.liu@honor.com>; hanfeng 00012985 <feng.han@honor.com>
+> Subject: Re: [PATCH v4 0/4] Implement dmabuf direct I/O via
+> copy_file_range
+>=20
+> On Tue, Jun 03, 2025 at 05:55:18PM +0200, Christian K=F6nig wrote:
+> > On 6/3/25 16:28, Christoph Hellwig wrote:
+> > > On Tue, Jun 03, 2025 at 04:18:22PM +0200, Christian K=F6nig wrote:
+> > >>> Does it matter compared to the I/O in this case?
+> > >>
+> > >> It unfortunately does, see the numbers on patch 3 and 4.
+> > >
+> > > That's kinda weird.  Why does the page table lookup tage so much
+> > > time compared to normal I/O?
+> >
+> > I have absolutely no idea. It's rather surprising for me as well.
+> >
+> > The user seems to have a rather slow CPU paired with fast I/O, but it s=
+till
+> looks rather fishy to me.
+> >
+> > Additional to that allocating memory through memfd_create() is *much*
+> slower on that box than through dma-buf-heaps (which basically just uses
+> GFP and an array).
+>=20
+> Can someone try to reproduce these results on a normal system before
+> we're building infrastructure based on these numbers?
 
-PID: 408      TASK: ffff8eee0870ca00  CPU: 36   COMMAND: "kworker/36:1H"
- #0 [fffffe3861831e60] crash_nmi_callback at ffffffff97269e31
- #1 [fffffe3861831e68] nmi_handle at ffffffff972300bb
- #2 [fffffe3861831eb0] default_do_nmi at ffffffff97e9e000
- #3 [fffffe3861831ed0] exc_nmi at ffffffff97e9e211
- #4 [fffffe3861831ef0] end_repeat_nmi at ffffffff98001639
-    [exception RIP: native_queued_spin_lock_slowpath+638]
-    RIP: ffffffff97eb31ae  RSP: ffffb1c8cd2a4d40  RFLAGS: 00000046
-    RAX: 0000000000000000  RBX: ffff8f2dffb34780  RCX: 0000000000940000
-    RDX: 000000000000002a  RSI: 0000000000ac0000  RDI: ffff8eaed4eb81c0
-    RBP: ffff8eaed4eb81c0   R8: 0000000000000000   R9: ffff8f2dffaf3438
-    R10: 0000000000000000  R11: 0000000000000000  R12: 0000000000000000
-    R13: 0000000000000024  R14: 0000000000000000  R15: ffffd1c8bfb24b80
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
---- <NMI exception stack> ---
- #5 [ffffb1c8cd2a4d40] native_queued_spin_lock_slowpath at ffffffff97eb31ae
- #6 [ffffb1c8cd2a4d60] _raw_spin_lock_irqsave at ffffffff97eb2730
- #7 [ffffb1c8cd2a4d70] __wake_up at ffffffff9737c02d
- #8 [ffffb1c8cd2a4da0] sbitmap_queue_wake_up at ffffffff9786c74d
- #9 [ffffb1c8cd2a4dc8] sbitmap_queue_clear at ffffffff9786cc97
---- <IRQ stack> ---
-    [exception RIP: _raw_spin_unlock_irq+20]
-    RIP: ffffffff97eb2e84  RSP: ffffb1c8cd90fd18  RFLAGS: 00000283
-    RAX: 0000000000000001  RBX: ffff8eafb68efb40  RCX: 0000000000000001
-    RDX: 0000000000000008  RSI: 0000000000000061  RDI: ffff8eafb06c3c70
-    RBP: ffff8eee7af43000   R8: ffff8eaed4eb81c8   R9: ffff8eaed4eb81c8
-    R10: 0000000000000008  R11: 0000000000000008  R12: 0000000000000000
-    R13: ffff8eafb06c3bd0  R14: ffff8eafb06c3bc0  R15: ffff8eaed4eb81c0
-    ORIG_RAX: ffffffffffffffff  CS: 0010  SS: 0018
+Here's my test program. If anyone's interested,
+please help test it?
 
-Luckily it was already fixed in mainstream by:
-commit b313a8c83551 ("block: Fix lockdep warning in blk_mq_mark_tag_wait")
+Regards,
+Wangtao.
 
-Currently if we are unlucky we may miss such a deadlock on our testing
-system as it is racy and it depends on the specific interrupt handler
-appearing at the right place and at the right time. So this patch tries
-to detect the problem despite the absence of the interrupt.
+[PATCH] Add dmabuf direct I/O zero-copy test program
 
-If we see spin_lock_irq under interrupts already disabled we can assume
-that it has paired spin_unlock_irq which would reenable interrupts where
-they should not be reenabled. So we report a warning for it.
+Compare latency and throughput of file read/write for
+memfd, udmabuf+memfd, udmabuf, and dmabuf buffers.
+memfd supports buffer I/O and direct I/O via read/write,
+sendfile, and splice user APIs.
+udmabuf/dmabuf only support buffer I/O via read/write,
+lacking direct I/O, sendfile, and splice support.
+Previous patch added dmabuf's copy_file_range callback,
+enabling buffer/direct I/O file copies for udmabuf/dmabuf.
+u+memfd represents using memfd-created udmabuf with memfd's
+user APIs for file copying.
 
-Same thing on spin_unlock_irq even if we were lucky and there was no
-deadlock let's report if interrupts were enabled.
+usage: dmabuf-dio [file_path] [size_MB]
 
-Let's make this functionality catch one problem and then be disabled, to
-prevent from spamming kernel log with warnings. Also let's add sysctl
-kernel.debug_spin_lock_irq_with_disabled_interrupts to reenable it if
-needed. Also let's add a by default enabled configuration option
-DEBUG_SPINLOCK_IRQ_WITH_DISABLED_INTERRUPTS_BY_DEFAULT, in case we will
-need this on boot.
-
-Yes Lockdep can detect that, if it sees both the interrupt stack and the
-regular stack where we can get into interrupt with spinlock held. But
-with this approach we can detect the problem even without ever getting
-into interrupt stack. And also this functionality seems to be more
-lightweight then Lockdep as it does not need to maintain lock dependency
-graph.
-
-Signed-off-by: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>
-
---
-Tested with https://github.com/Snorch/spinlock-irq-test-module.
+Signed-off-by: wangtao <tao.wangtao@honor.com>
 ---
- include/linux/spinlock.h  | 21 +++++++++++++++++++++
- kernel/locking/spinlock.c |  6 ++++++
- kernel/sysctl.c           |  9 +++++++++
- lib/Kconfig.debug         | 12 ++++++++++++
- 4 files changed, 48 insertions(+)
+ tools/testing/selftests/dmabuf-heaps/Makefile |   1 +
+ .../selftests/dmabuf-heaps/dmabuf-dio.c       | 617 ++++++++++++++++++
+ 2 files changed, 618 insertions(+)
+ create mode 100644 tools/testing/selftests/dmabuf-heaps/dmabuf-dio.c
 
-diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
-index d3561c4a080e..b8ebccaa5062 100644
---- a/include/linux/spinlock.h
-+++ b/include/linux/spinlock.h
-@@ -371,8 +371,21 @@ do {									\
- 	raw_spin_lock_nest_lock(spinlock_check(lock), nest_lock);	\
- } while (0)
- 
-+#ifdef CONFIG_DEBUG_SPINLOCK
-+DECLARE_STATIC_KEY_MAYBE(CONFIG_DEBUG_SPINLOCK_IRQ_WITH_DISABLED_INTERRUPTS_BY_DEFAULT,
-+			 debug_spin_lock_irq_with_disabled_interrupts);
+diff --git a/tools/testing/selftests/dmabuf-heaps/Makefile b/tools/testing/=
+selftests/dmabuf-heaps/Makefile
+index 9e7e158d5fa3..beb6b3e55e17 100644
+--- a/tools/testing/selftests/dmabuf-heaps/Makefile
++++ b/tools/testing/selftests/dmabuf-heaps/Makefile
+@@ -2,5 +2,6 @@
+ CFLAGS +=3D -static -O3 -Wl,-no-as-needed -Wall $(KHDR_INCLUDES)
+=20
+ TEST_GEN_PROGS =3D dmabuf-heap
++TEST_GEN_PROGS +=3D dmabuf-dio
+=20
+ include ../lib.mk
+diff --git a/tools/testing/selftests/dmabuf-heaps/dmabuf-dio.c b/tools/test=
+ing/selftests/dmabuf-heaps/dmabuf-dio.c
+new file mode 100644
+index 000000000000..eae902a27f29
+--- /dev/null
++++ b/tools/testing/selftests/dmabuf-heaps/dmabuf-dio.c
+@@ -0,0 +1,617 @@
++#include <linux/dma-heap.h>
++#include <linux/dma-buf.h>
++#include <linux/udmabuf.h>
++#include <sys/mman.h>
++#include <sys/sendfile.h>
++#include <sys/ioctl.h>
++#include <stdbool.h>
++#include <stdlib.h>
++#include <string.h>
++#include <stdio.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <asm/unistd.h>
++#include <time.h>
++#include <errno.h>
++
++#ifndef TEMP_FAILURE_RETRY
++#define TEMP_FAILURE_RETRY(exp) ({         \
++    __typeof__(exp) _rc;                   \
++    do {                                   \
++        _rc =3D (exp);                       \
++    } while (_rc =3D=3D -1 && errno =3D=3D EINTR); \
++    _rc; })
 +#endif
 +
- static __always_inline void spin_lock_irq(spinlock_t *lock)
++#if 1
++int memfd_create(const char *name, unsigned flags)
++{
++    return syscall(__NR_memfd_create, name, flags);
++}
++
++ssize_t copy_file_range(int fd_in, off_t *off_in, int fd_out, off_t *off_o=
+ut,
++                size_t len, unsigned flags)
++{
++    return syscall(__NR_copy_file_range, fd_in, off_in, fd_out, off_out, l=
+en, flags);
++}
++#endif
++
++int alloc_memfd(size_t size)
++{
++    int memfd =3D memfd_create("ubuf", MFD_ALLOW_SEALING);
++    if (memfd < 0)
++        return -1;
++
++    int ret =3D fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK);
++    if (ret < 0)
++        return -1;
++    ret =3D TEMP_FAILURE_RETRY(ftruncate(memfd, size));
++    if (ret < 0)
++        return -1;
++    return memfd;
++}
++
++int alloc_udmabuf(size_t size, int memfd)
++{
++    static int udev_fd =3D -1;
++    if (udev_fd < 0) {
++        udev_fd =3D open("/dev/udmabuf", O_RDONLY);
++        if (udev_fd < 0)
++            return -1;
++    }
++
++    struct udmabuf_create uc =3D {0};
++    uc.memfd =3D memfd;
++    uc.offset =3D 0;
++    uc.size =3D size;
++    int buf_fd =3D TEMP_FAILURE_RETRY(ioctl(udev_fd, UDMABUF_CREATE, &uc))=
+;
++    if (buf_fd < 0)
++        return -1;
++
++    return buf_fd;
++}
++
++int alloc_dmabuf(size_t size)
++{
++    static int heap_fd =3D -1;
++
++    struct dma_heap_allocation_data heap_data =3D { 0 };
++    heap_data.len =3D size;  // length of data to be allocated in bytes
++    heap_data.fd_flags =3D O_RDWR | O_CLOEXEC;  // permissions for the mem=
+ory to be allocated
++
++    if (heap_fd < 0) {
++        heap_fd =3D open("/dev/dma_heap/system", O_RDONLY);
++        if (heap_fd < 0)
++            return -1;
++    }
++
++    int ret =3D TEMP_FAILURE_RETRY(ioctl(heap_fd, DMA_HEAP_IOCTL_ALLOC, &h=
+eap_data));
++    if (ret < 0) {
++        return -1;
++    }
++    if (heap_data.fd < 0)
++        return -1;
++
++    return heap_data.fd;
++}
++
++static inline long times_us_duration(struct timespec *ts_start, struct tim=
+espec *ts_end)
++{
++    long long start =3D ts_start->tv_sec * 1000000 + ts_start->tv_nsec / 1=
+000;
++    long long end =3D ts_end->tv_sec * 1000000 + ts_end->tv_nsec / 1000;
++    return end - start;
++}
++
++static inline long time_us2ms(long us)
++{
++        return (us + 1000 - 1) / 1000;
++}
++
++void drop_pagecaches(int file_fd, loff_t offset, size_t len)
++{
++    if (file_fd >=3D 0 && len > 0) {
++        posix_fadvise(file_fd, offset, len, POSIX_FADV_DONTNEED);
++        return;
++    }
++
++    int fd =3D open("/proc/sys/vm/drop_caches", O_WRONLY | O_CLOEXEC);
++    if (fd < 0) {
++        printf("open drop_caches failed %d\n", errno);
++        return;
++    }
++    write(fd, "3", 1);
++    close(fd);
++}
++
++const size_t SIZ_MB =3D 1024 * 1024;
++const size_t DMABUF_SIZE_MAX =3D SIZ_MB * 32;
++
++static inline unsigned char test_data_value(unsigned int val)
++{
++    return val % 253;
++}
++
++void test_fill_data(unsigned char* ptr, unsigned int val, size_t sz, bool =
+fast)
++{
++    if (sz > 0 && fast) {
++        ptr[0] =3D test_data_value(val);
++        ptr[sz / 2] =3D test_data_value(val + sz / 2);
++        ptr[sz - 1] =3D test_data_value(val + sz - 1);
++        return;
++    }
++    for (size_t i =3D 0; i < sz; i++) {
++        ptr[i] =3D test_data_value(val + i);
++    }
++}
++
++bool test_check_data(unsigned char* ptr, unsigned int val, size_t sz, bool=
+ fast)
++{
++    if (sz > 0 && fast) {
++        if (ptr[0] !=3D test_data_value(val))
++            return false;
++        if (ptr[sz / 2] !=3D test_data_value(val + sz / 2))
++            return false;
++        if (ptr[sz - 1] !=3D test_data_value(val + sz - 1))
++            return false;
++        return true;
++    }
++    for (size_t i =3D 0; i < sz; i++) {
++        if (ptr[i] !=3D test_data_value(val + i))
++            return false;
++    }
++    return true;
++}
++
++enum mem_buf_type {
++    BUF_MEMFD,
++    BUF_UDMA_MEMFD,
++    BUF_UDMABUF,
++    BUF_DMABUF,
++    BUF_TYPE_MAX,
++};
++
++enum copy_io_type {
++    IO_MAP_READ_WRITE,
++    IO_SENDFILE,
++    IO_SPLICE,
++    IO_COPY_FILE_RANGE,
++    IO_TYPE_MAX,
++};
++
++static const char *mem_buf_type_descs[BUF_TYPE_MAX] =3D {
++    "memfd", "u+memfd", "udmabuf", "dmabuf",
++};
++
++static const char *io_type_descs[IO_TYPE_MAX] =3D {
++    "R/W", "sendfile", "splice", "c_f_r",
++};
++
++struct mem_buf_st {
++    enum mem_buf_type buf_type_;
++    int io_fd_;
++    int mem_fd_;
++    int buf_fd_;
++    size_t buf_len_;
++    unsigned char *buf_ptr_;
++};
++
++struct mem_buf_tc {
++    enum mem_buf_type buf_type_;
++    enum copy_io_type io_type_;
++    int file_fd_;
++    bool direct_io_;
++    size_t io_len_;
++    long times_create_;
++    long times_data_;
++    long times_io_;
++    long times_close_;
++};
++
++void membuf_deinit(struct mem_buf_st *membuf)
++{
++    if (membuf->buf_ptr_ !=3D NULL && membuf->buf_ptr_ !=3D MAP_FAILED)
++        munmap(membuf->buf_ptr_, membuf->buf_len_);
++    membuf->buf_ptr_ =3D NULL;
++    if (membuf->mem_fd_ > 0)
++       close(membuf->mem_fd_);
++    if (membuf->buf_fd_ > 0)
++       close(membuf->buf_fd_);
++    membuf->mem_fd_ =3D -1;
++    membuf->buf_fd_ =3D -1;
++}
++
++bool membuf_init(struct mem_buf_st *membuf, size_t len, enum mem_buf_type =
+buf_type)
++{
++    int map_fd =3D -1;
++
++    membuf->mem_fd_ =3D -1;
++    membuf->buf_fd_ =3D -1;
++    membuf->buf_len_ =3D len;
++    membuf->buf_ptr_ =3D NULL;
++    if (buf_type <=3D BUF_UDMABUF) {
++        membuf->mem_fd_ =3D alloc_memfd(len);
++        if (membuf->mem_fd_ < 0) {
++            printf("alloc memfd %zd failed %d\n", len, errno);
++            return false;
++        }
++        map_fd =3D membuf->mem_fd_;
++        if (buf_type > BUF_MEMFD) {
++            membuf->buf_fd_ =3D alloc_udmabuf(len, membuf->mem_fd_);
++            if (membuf->buf_fd_ < 0) {
++                printf("alloc udmabuf %zd failed %d\n", len, errno);
++                return false;
++            }
++            if (buf_type =3D=3D BUF_UDMABUF)
++                map_fd =3D membuf->buf_fd_;
++        }
++    } else {
++        membuf->buf_fd_ =3D alloc_dmabuf(len);
++        if (membuf->buf_fd_ < 0) {
++            printf("alloc dmabuf %zd failed %d\n", len, errno);
++            return false;
++        }
++        map_fd =3D membuf->buf_fd_;
++    }
++    membuf->io_fd_ =3D map_fd;
++    membuf->buf_ptr_ =3D (unsigned char *)mmap(NULL, len,
++            PROT_READ | PROT_WRITE, MAP_SHARED, map_fd, 0);
++    if (membuf->buf_ptr_ =3D=3D MAP_FAILED) {
++        printf("fd %d map %zd failed %d\n", map_fd, len, errno);
++        membuf->buf_ptr_ =3D NULL;
++        return false;
++    }
++    return true;
++}
++
++ssize_t membuf_read_write(const struct mem_buf_st *membuf, int file_fd,
++                loff_t off, bool is_read)
++{
++    if (!membuf->buf_ptr_)
++        return -1;
++    lseek(file_fd, off, SEEK_SET);
++    if (is_read)
++        return read(file_fd, membuf->buf_ptr_, membuf->buf_len_);
++    else
++        return write(file_fd, membuf->buf_ptr_, membuf->buf_len_);
++}
++
++ssize_t membuf_sendfile(const struct mem_buf_st *membuf, int file_fd,
++                        loff_t off, bool is_read)
++{
++    int mem_fd =3D membuf->io_fd_;
++    size_t buf_len =3D membuf->buf_len_;
++
++    if (mem_fd < 0)
++        return -__LINE__;
++
++    lseek(mem_fd, 0, SEEK_SET);
++    lseek(file_fd, off, SEEK_SET);
++    if (is_read)
++        return sendfile(mem_fd, file_fd, NULL, buf_len);
++    else
++        return sendfile(file_fd, mem_fd, NULL, buf_len);
++}
++
++ssize_t membuf_splice(const struct mem_buf_st *membuf, int file_fd,
++                        loff_t off, bool is_read)
++{
++    size_t len =3D 0, out_len =3D 0, buf_len =3D membuf->buf_len_;
++    int mem_fd =3D membuf->io_fd_;
++    int fd_in =3D file_fd, fd_out =3D mem_fd;
++    ssize_t ret =3D 0;
++    static int s_pipe_fds[2] =3D { -1, -1};
++
++    if (mem_fd < 0)
++        return -__LINE__;
++
++    lseek(mem_fd, 0, SEEK_SET);
++    lseek(file_fd, off, SEEK_SET);
++    if (s_pipe_fds[0] < 0) {
++        const int pipe_size =3D SIZ_MB * 32;
++        int pipe_fds[2];
++        ret =3D pipe(pipe_fds);
++        if (ret < 0)
++            return -__LINE__;
++        ret =3D fcntl(pipe_fds[1], F_SETPIPE_SZ, pipe_size);
++        if (ret < 0)
++            return -__LINE__;
++        ret =3D fcntl(pipe_fds[0], F_GETPIPE_SZ, pipe_size);
++        if (ret !=3D pipe_size)
++            return -__LINE__;
++        s_pipe_fds[0] =3D pipe_fds[0];
++        s_pipe_fds[1] =3D pipe_fds[1];
++    }
++
++    if (!is_read) {
++        fd_in =3D mem_fd;
++        fd_out =3D file_fd;
++    }
++
++    while (buf_len > len) {
++        ret =3D splice(fd_in, NULL, s_pipe_fds[1], NULL, buf_len - len, SP=
+LICE_F_NONBLOCK);
++        if (ret <=3D 0)
++            break;
++        len +=3D ret;
++        do {
++            ret =3D splice(s_pipe_fds[0], NULL, fd_out, NULL, len - out_le=
+n, 0);
++            if (ret <=3D 0)
++                break;
++            out_len +=3D ret;
++        } while (out_len < len);
++    }
++    return out_len > 0 ? out_len : ret;
++}
++
++ssize_t membuf_cfr(const struct mem_buf_st *membuf, int file_fd, loff_t of=
+f,
++                        bool is_read)
++{
++    loff_t mem_pos =3D 0;
++    loff_t file_pos =3D off;
++    size_t out_len =3D 0, buf_len =3D membuf->buf_len_;
++    int mem_fd =3D membuf->io_fd_;
++    int fd_in =3D file_fd, fd_out =3D mem_fd;
++    loff_t pos_in =3D file_pos, pos_out =3D mem_pos;
++    ssize_t ret =3D 0;
++
++    if (mem_fd < 0)
++        return -__LINE__;
++
++    lseek(mem_fd, mem_pos, SEEK_SET);
++    lseek(file_fd, file_pos, SEEK_SET);
++
++    if (!is_read) {
++        fd_in =3D mem_fd;
++        fd_out =3D file_fd;
++        pos_in =3D mem_pos;
++        pos_out =3D file_pos;
++    }
++
++    while (buf_len > out_len) {
++        ret =3D copy_file_range(fd_in, &pos_in, fd_out, &pos_out, buf_len =
+- out_len, 0);
++        if (ret <=3D 0)
++            break;
++        out_len +=3D ret;
++    }
++    return out_len > 0 ? out_len : ret;
++}
++
++ssize_t membuf_io(const struct mem_buf_st *membuf, int file_fd, loff_t off=
+,
++                        bool is_read, enum copy_io_type io_type)
++{
++    ssize_t ret =3D 0;
++    if (io_type =3D=3D IO_MAP_READ_WRITE) {
++        ret =3D membuf_read_write(membuf, file_fd, off, is_read);
++    } else if (io_type =3D=3D IO_SENDFILE) {
++        ret =3D membuf_sendfile(membuf, file_fd, off, is_read);
++    } else if (io_type =3D=3D IO_SPLICE) {
++        ret =3D membuf_splice(membuf, file_fd, off, is_read);
++    } else if (io_type =3D=3D IO_COPY_FILE_RANGE) {
++        ret =3D membuf_cfr(membuf, file_fd, off, is_read);
++    } else
++        return -1;
++    if (ret < 0)
++        printf("membuf_io io failed %d\n", errno);
++    return ret;
++}
++
++const char *membuf_tc_desc(const struct mem_buf_tc *tc)
++{
++    static char buf[32];
++    snprintf(buf, sizeof(buf), "%s %s %s", mem_buf_type_descs[tc->buf_type=
+_],
++        tc->direct_io_ ? "direct" : "buffer", io_type_descs[tc->io_type_])=
+;
++    return buf;
++}
++
++bool test_membuf(struct mem_buf_tc *tc, loff_t pos, size_t file_len,
++                        size_t buf_siz, bool is_read, bool clean_pagecache=
+s)
++{
++    loff_t off =3D pos, file_end =3D pos + file_len;
++    int file_fd =3D tc->file_fd_;
++    int i =3D 0, buf_num;
++    struct mem_buf_st *membufs;
++    struct timespec ts_start, ts_end;
++    ssize_t ret;
++
++    if (buf_siz > file_len)
++        buf_siz =3D file_len;
++    buf_num =3D (file_len + buf_siz - 1) / buf_siz;
++    membufs =3D (struct mem_buf_st *)malloc(sizeof(*membufs) * buf_num);
++    if (!membufs)
++        return false;
++
++    memset(membufs, 0, sizeof(*membufs) * buf_num);
++    drop_pagecaches(-1, 0, 0);
++    for (i =3D 0; i < buf_num && off < file_end; i++, off +=3D buf_siz) {
++        if (buf_siz > file_end - off)
++            buf_siz =3D file_end - off;
++
++        if (clean_pagecaches)
++            drop_pagecaches(file_fd, off, buf_siz);
++
++        clock_gettime(CLOCK_MONOTONIC, &ts_start);
++        if (!membuf_init(&membufs[i], buf_siz, tc->buf_type_)) {
++             printf("alloc %s %d failed\n", membuf_tc_desc(tc), i);
++             break;
++        }
++        clock_gettime(CLOCK_MONOTONIC, &ts_end);
++        tc->times_create_ +=3D times_us_duration(&ts_start, &ts_end);
++
++        clock_gettime(CLOCK_MONOTONIC, &ts_start);
++        if (!membufs[i].buf_ptr_) {
++            printf("map %s %d failed\n", membuf_tc_desc(tc), i);
++            break;
++        }
++        if (!is_read)
++            test_fill_data(membufs[i].buf_ptr_, off + 1, buf_siz, true);
++        clock_gettime(CLOCK_MONOTONIC, &ts_end);
++        tc->times_data_ +=3D times_us_duration(&ts_start, &ts_end);
++
++        clock_gettime(CLOCK_MONOTONIC, &ts_start);
++        ret =3D membuf_io(&membufs[i], file_fd, off, is_read, tc->io_type_=
+);
++        if (ret < 0 || ret !=3D buf_siz) {
++            printf("membuf_io %s %d rw %zd ret %zd failed %d\n",
++                membuf_tc_desc(tc), i, buf_siz, ret, errno);
++            break;
++        }
++        clock_gettime(CLOCK_MONOTONIC, &ts_end);
++        tc->times_io_ +=3D times_us_duration(&ts_start, &ts_end);
++
++        clock_gettime(CLOCK_MONOTONIC, &ts_start);
++        if (!test_check_data(membufs[i].buf_ptr_, off + 1, buf_siz, true))=
  {
-+#ifdef CONFIG_DEBUG_SPINLOCK
-+	if (static_branch_unlikely(&debug_spin_lock_irq_with_disabled_interrupts)) {
-+		if (raw_irqs_disabled()) {
-+			static_branch_disable(&debug_spin_lock_irq_with_disabled_interrupts);
-+			WARN(1, "spin_lock_irq() called with irqs disabled!\n");
-+		}
-+	}
-+#endif
- 	raw_spin_lock_irq(&lock->rlock);
- }
- 
-@@ -398,6 +411,14 @@ static __always_inline void spin_unlock_bh(spinlock_t *lock)
- 
- static __always_inline void spin_unlock_irq(spinlock_t *lock)
- {
-+#ifdef CONFIG_DEBUG_SPINLOCK
-+	if (static_branch_unlikely(&debug_spin_lock_irq_with_disabled_interrupts)) {
-+		if (!raw_irqs_disabled()) {
-+			static_branch_disable(&debug_spin_lock_irq_with_disabled_interrupts);
-+			WARN(1, "spin_unlock_irq() called with irqs enabled!\n");
-+		}
-+	}
-+#endif
- 	raw_spin_unlock_irq(&lock->rlock);
- }
- 
-diff --git a/kernel/locking/spinlock.c b/kernel/locking/spinlock.c
-index 7685defd7c52..6ec4a788f53c 100644
---- a/kernel/locking/spinlock.c
-+++ b/kernel/locking/spinlock.c
-@@ -22,6 +22,12 @@
- #include <linux/debug_locks.h>
- #include <linux/export.h>
- 
-+#ifdef CONFIG_DEBUG_SPINLOCK
-+DEFINE_STATIC_KEY_MAYBE(CONFIG_DEBUG_SPINLOCK_IRQ_WITH_DISABLED_INTERRUPTS_BY_DEFAULT,
-+			debug_spin_lock_irq_with_disabled_interrupts);
-+EXPORT_SYMBOL(debug_spin_lock_irq_with_disabled_interrupts);
-+#endif
++            printf("check data %s %d failed\n", membuf_tc_desc(tc), i);
++            break;
++        }
++        clock_gettime(CLOCK_MONOTONIC, &ts_end);
++        tc->times_data_ +=3D times_us_duration(&ts_start, &ts_end);
 +
- #ifdef CONFIG_MMIOWB
- #ifndef arch_mmiowb_state
- DEFINE_PER_CPU(struct mmiowb_state, __mmiowb_state);
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 9b4f0cff76ea..1e3cca2e3c8f 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -50,6 +50,7 @@
- #include <linux/sched/sysctl.h>
- #include <linux/mount.h>
- #include <linux/pid.h>
-+#include <linux/spinlock.h>
- 
- #include "../lib/kstrtox.h"
- 
-@@ -1758,6 +1759,14 @@ static const struct ctl_table kern_table[] = {
- 		.extra2		= SYSCTL_INT_MAX,
- 	},
- #endif
-+#ifdef CONFIG_DEBUG_SPINLOCK
-+	{
-+		.procname	= "debug_spin_lock_irq_with_disabled_interrupts",
-+		.data		= &debug_spin_lock_irq_with_disabled_interrupts,
-+		.mode		= 0644,
-+		.proc_handler	= proc_do_static_key,
-+	},
-+#endif
- };
- 
- int __init sysctl_init_bases(void)
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index ebe33181b6e6..c4834f4c9d51 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1465,6 +1465,18 @@ config DEBUG_SPINLOCK
- 	  best used in conjunction with the NMI watchdog so that spinlock
- 	  deadlocks are also debuggable.
- 
-+config DEBUG_SPINLOCK_IRQ_WITH_DISABLED_INTERRUPTS_BY_DEFAULT
-+	bool "Detect spin_(un)lock_irq() call with disabled(enabled) interrupts"
-+	depends on DEBUG_SPINLOCK
-+	help
-+	  Say Y here to detect spin_lock_irq() and spin_unlock_irq() calls
-+	  with disabled (enabled) interrupts. This helps detecting bugs
-+	  where the code is not using the right locking primitives. E.g.
-+	  using spin_lock_irq() twice in a row (on different locks). And thus
-+	  code can reenable interrupts where they should be disabled and lead
-+	  to deadlock.
-+	  Say N if you are unsure.
++        if (clean_pagecaches)
++            drop_pagecaches(file_fd, off, buf_siz);
++    }
 +
- config DEBUG_MUTEXES
- 	bool "Mutex debugging: basic checks"
- 	depends on DEBUG_KERNEL && !PREEMPT_RT
--- 
-2.49.0
++    clock_gettime(CLOCK_MONOTONIC, &ts_start);
++    for (i =3D 0; i < buf_num; i++) {
++        membuf_deinit(&membufs[i]);
++    }
++    clock_gettime(CLOCK_MONOTONIC, &ts_end);
++    tc->times_close_ +=3D times_us_duration(&ts_start, &ts_end);
++    drop_pagecaches(-1, 0, 0);
++    tc->io_len_ =3D off - pos;
++    return off - pos >=3D file_end;
++}
++
++bool prepare_init_file(int file_fd, loff_t off, size_t file_len)
++{
++    struct mem_buf_st membuf =3D {};
++    ssize_t ret;
++
++    ftruncate(file_fd, off + file_len);
++
++    if (!membuf_init(&membuf, file_len, BUF_MEMFD))
++        return false;
++
++    test_fill_data(membuf.buf_ptr_, off + 1, file_len, false);
++    ret =3D membuf_io(&membuf, file_fd, off, false, IO_MAP_READ_WRITE);
++    membuf_deinit(&membuf);
++
++    return ret >=3D file_len;
++}
++
++bool prepare_file(const char *filepath, loff_t off, size_t file_len)
++{
++    ssize_t file_end;
++    bool suc =3D true;
++    int flags =3D O_RDWR | O_CLOEXEC | O_LARGEFILE | O_CREAT;
++    int file_fd =3D open(filepath, flags, 0660);
++    if (file_fd < 0) {
++        printf("open %s failed %d\n", filepath, errno);
++        return false;
++    }
++
++    file_end =3D (size_t)lseek(file_fd, 0, SEEK_END);
++    if (file_end < off + file_len)
++        suc =3D prepare_init_file(file_fd, off, file_len);
++
++    close(file_fd);
++    return suc;
++}
++
++void test_membuf_cases(struct mem_buf_tc *test_cases, int test_count,
++                loff_t off, size_t file_len, size_t buf_siz,
++                bool is_read, bool clean_pagecaches)
++{
++    char title[64];
++    long file_MB =3D (file_len + SIZ_MB - 1) / SIZ_MB;
++    long buf_MB =3D (buf_siz + SIZ_MB - 1) / SIZ_MB;
++    long base_io_time, io_times;
++    long base_io_speed, io_speed;
++    struct mem_buf_tc *tc;
++    int n;
++
++    for (n =3D 0; n < test_count; n++) {
++        test_membuf(&test_cases[n], off, file_len, buf_siz, is_read, clean=
+_pagecaches);
++    }
++
++    snprintf(title, sizeof(title), "%ldx%ldMB %s %4ldMB",
++             (file_MB + buf_MB - 1) / buf_MB, buf_MB,
++             is_read ? "Read" : "Write", file_MB);
++
++    base_io_time =3D test_cases[0].times_io_ ?: 1;
++    base_io_speed =3D test_cases[0].io_len_ / base_io_time ? : 1000;
++
++    printf("|    %-23s|%8s|%8s|%8s|%8s| I/O%%\n", title,
++           "Creat-ms", "Close-ms", "I/O-ms", "I/O-MB/s");
++    printf("|---------------------------|--------|--------|--------|------=
+--|-----\n");
++    for (n =3D 0; n < test_count; n++) {
++        tc =3D &test_cases[n];
++        io_times =3D tc->times_io_;
++        io_speed =3D io_times > 0 ? tc->io_len_ / io_times : 0;
++
++        printf("|%2d) %23s| %6ld | %6ld | %6ld | %6ld |%4ld%%\n", n + 1,
++               membuf_tc_desc(tc), time_us2ms(tc->times_create_),
++               time_us2ms(tc->times_close_), time_us2ms(io_times),
++               io_speed, io_speed * 100 / base_io_speed);
++    }
++    return;
++}
++
++void test_all_membufs(const char *filepath, loff_t off, size_t file_len, s=
+ize_t buf_siz,
++                        bool is_read, bool clean_pagecaches)
++{
++    int buffer_fd;
++    int direct_fd;
++
++    buffer_fd =3D open(filepath, O_RDWR | O_CLOEXEC | O_LARGEFILE);
++    direct_fd =3D open(filepath, O_RDWR | O_CLOEXEC | O_LARGEFILE | O_DIRE=
+CT);
++    if (buffer_fd < 0 || direct_fd < 0) {
++        printf("buffer_fd %d direct_fd %d\n", buffer_fd, direct_fd);
++        return;
++    }
++
++    struct mem_buf_tc test_cases[] =3D {
++        {BUF_MEMFD, IO_MAP_READ_WRITE, buffer_fd, false},
++        {BUF_MEMFD, IO_MAP_READ_WRITE, direct_fd, true},
++        {BUF_UDMA_MEMFD, IO_MAP_READ_WRITE, buffer_fd, false},
++        {BUF_UDMA_MEMFD, IO_MAP_READ_WRITE, direct_fd, true},
++        {BUF_UDMA_MEMFD, IO_SENDFILE, buffer_fd, false},
++        {BUF_UDMA_MEMFD, IO_SENDFILE, direct_fd, true},
++        {BUF_UDMA_MEMFD, IO_SPLICE, buffer_fd, false},
++        {BUF_UDMA_MEMFD, IO_SPLICE, direct_fd, true},
++        {BUF_UDMABUF, IO_MAP_READ_WRITE, buffer_fd, false},
++        {BUF_DMABUF, IO_MAP_READ_WRITE, buffer_fd, false},
++        {BUF_UDMABUF, IO_COPY_FILE_RANGE, buffer_fd, false},
++        {BUF_UDMABUF, IO_COPY_FILE_RANGE, direct_fd, true},
++        {BUF_DMABUF, IO_COPY_FILE_RANGE, buffer_fd, false},
++        {BUF_DMABUF, IO_COPY_FILE_RANGE, direct_fd, true},
++    };
++
++    test_membuf_cases(test_cases, sizeof(test_cases) / sizeof(test_cases[0=
+]),
++            off, file_len, buf_siz, is_read, clean_pagecaches);
++    close(buffer_fd);
++    close(direct_fd);
++}
++
++void usage(void)
++{
++    printf("usage: dmabuf-dio [file_path] [size_MB]\n");
++    return;
++}
++
++int main(int argc, char *argv[])
++{
++    const char *file_path =3D "/data/membuf.tmp";
++    size_t file_len =3D SIZ_MB * 1024;
++
++    if (argc > 1)
++        file_path =3D argv[1];
++    if (argc > 2)
++        file_len =3D atoi(argv[2]) * SIZ_MB;
++    if (file_len < 0)
++        file_len =3D SIZ_MB * 1024;
++    if (!prepare_file(file_path, 0, file_len)) {
++        usage();
++        return -1;
++    }
++
++    test_all_membufs(file_path, 0, file_len, SIZ_MB * 32, true, true);    =
+   =20
++    return 0;
++}
+--
 
 
