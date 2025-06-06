@@ -1,131 +1,129 @@
-Return-Path: <linux-fsdevel+bounces-50840-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50841-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C439AD0196
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 14:00:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943C8AD02BC
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 15:04:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8B90189D1CB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 12:00:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48B8F7A378A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 13:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C0E288531;
-	Fri,  6 Jun 2025 11:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A09771E3787;
+	Fri,  6 Jun 2025 13:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YO/YvlNg"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F0B41l3F"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C705288512;
-	Fri,  6 Jun 2025 11:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A13E3234
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 13:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749211182; cv=none; b=QvgZEcMN0dnWGttdsBXlwv49LiQ7+ZdgblAkF2gwslA60snHbJAR3ymMysGhk0710IhDvR/zxZ7ZhGYjdnpd/qmSBCgq/ljHLwBttN6oEOHmi7i6BGuyV++G4j3309gSYGGkhiKq79EmJ+38XYQRMf0VGZgf1/D8NuMmcZPjGY4=
+	t=1749215056; cv=none; b=sHOiPd8s6gg8damOsxZiyxT/pukAlejHzctRDPyXzQaZjyz0Vrbfc/iqWDFQr3LzPxy9VWPh/bEMNY/3L3hjPoLFq6827D4M6ZfCZLBM7udehS9PVoerY8vDNUEzAHeBWDueuz0lgBaOVdEJYrnMsdVCbeyx3tKXZw+8DwTOK1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749211182; c=relaxed/simple;
-	bh=NLvxgLiSwmCva350O7nzLbptINcNkO/BdNtdmPgqvHk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ESfQB6NbTPoye4cHtjPkL0gVN5p72+DCh3zWNBQjJm2mbfd0/38XYmLQn5Awi2UH4y2rUMz4h1TifnCaVrPYnkRfNrNwcJNfq/6mY3tpfcrCIt7GXi4162Q45I+3tl4j6VhdSJkIfA9f21qftim/Dba+r0aIzVI2UCH446Mau8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YO/YvlNg; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ade30256175so46055066b.1;
-        Fri, 06 Jun 2025 04:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749211179; x=1749815979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qmUWlsWrraVeinmVRofjXaqZbS/GW/OwgmarsrAe2FY=;
-        b=YO/YvlNgwNiLhuYVEHan+8n0QtsLD/8DzOKnI1HbvTFCWu+w3aKa7+udN4UaTef996
-         vC35GZpcz1HX5NOb+qaazGB5a1e07yF2xZH4CKV8u/zts0ystnEHTWKXiF2fPWK2dQj+
-         U+gp97an2oa+XV6KESBcpyN1o+4f4xoxNDhqMSodKQiDlvoRdFo3CBFGH2D0EC4AoCNB
-         XXJ6X3FNbA9RzXeycm8yujV0DWsJcthSpgrImDO3+Kb0XAGp+iGrrSHViaUIIGDF3Jva
-         6pOymSORvjbJ8gQfWfSdfjquvoDQNu4TUHoL8OYLft0POL95zC3uNr45FWYFIOdt/vFt
-         tY0g==
+	s=arc-20240116; t=1749215056; c=relaxed/simple;
+	bh=6jsVoGWo/dSumAGNOxr7UqFGaeO67eYLVmbBwUc5Zos=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DSkrvsIk7b3Wtcd0DhiUukGgUQAqtpHGQTbLrtwmhHhb9JaeRBgMDLBNOKl1Juc2uI48VBo52V5SScFJGHLnVVWETDaH+ffnOFGONH1eHIqoNKqKlHa0zcux3+n2GM6OWkroYdGh8XiQj6jTdrzQ8wLDbADmAiViwwueC5YRHD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F0B41l3F; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1749215053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HArWEAkGZW4SwR4M4QK2P5FGuqV07y/wP1+Sj+8Jiv8=;
+	b=F0B41l3Ft6fVAklvxtVFNgT63yyDf/elwWynnOkKHp2BlVc/K9FZ4MRYV2J0ZWrsxSIFZa
+	f36m8NSyUH5c+ecRgY6LWZ/K0/6EAy6CeYieqyRP3DkkowoOgguAbIWlWJU/ht1jfUUHfh
+	xtnM5j7NcdRglR3YJyFxO+DBzkr/aUg=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-280-pgDEg6g4MR6Au0Jb2rXNxQ-1; Fri, 06 Jun 2025 09:04:12 -0400
+X-MC-Unique: pgDEg6g4MR6Au0Jb2rXNxQ-1
+X-Mimecast-MFC-AGG-ID: pgDEg6g4MR6Au0Jb2rXNxQ_1749215052
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6face35aad6so19183286d6.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 06:04:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749211179; x=1749815979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qmUWlsWrraVeinmVRofjXaqZbS/GW/OwgmarsrAe2FY=;
-        b=txJc4m/ADmTTU99jdmOHRIYX/+5YpG10FG9uk0EJwU2GZcZWI249gAS8ogYE5UWeER
-         PwkNKLSC3/g0yTtnjoJmvxQ09dm4FDJRHklXI/UTU886CgSktURugpYeAV89LG+sKqu2
-         Eg6xGMUOsoAziIfNXbjZoJV9jf21WHd47JU6MnqcYjtbRQkZQlznW1o8jwJxwSPGfVch
-         UN5zJ8bvx5npqT+DTyB4JCcDT31WTznSfbpfrOoVyriXrR9jASlVoJel28w25Bc3wzUy
-         xkFFi/qok5Gcb892jv5HyA+2VxnB59ENlGFrdQqPyV+jQpZsFS3XwTqMqBJ1nPtgPJeL
-         3CtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9642T8h4sP6twZD3n9NS62+UgLz4vnOT5VFegjloxFq0HPzNmUEpkIJyoxj5dX+eTkh6x1sRxPYXl7NYWew==@vger.kernel.org, AJvYcCUnhN0VFrc7FniG9c0wiNPPATNQFMiwioVpCWfgaNc2qByeynwwSL1B/5e6FE7oFDbPInI96xnRkV+wzA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5/qGl6NfiO5pT2DzlTm9LkNc7vmESf/0VGb+7iiTB6BzpC9oQ
-	h6YZHGTUBnneNkQ9kfzGZ73an52oUr/uaIvuV2pGmQgSOUsyPwuN82dME0uPkMnyHRn7DKFtbbE
-	597Yvq+IGFaq/fxYoL1hlytlw+Q2PYQ==
-X-Gm-Gg: ASbGncvEyU2V8HP0j4KP6FlG5+Ta0hAVxsVKgnifcFeJTjPAxfKi34447C1vi2oXblK
-	F65/zjiFmFOaYMxN3W/+4mjlshbqqJ1QmByaqmsOlna3R6Y9X8qc7Ff/JIhwXD/D5YbmSv+HnWM
-	99uW/5oSzxOf/wZEKwXhSHKga2S9by9V1U7/bi+PpRq7EI72HRLaQsc7UygSMr3MbG4up/o/uF7
-	Q==
-X-Google-Smtp-Source: AGHT+IGuAVhDuKk4Tc5pEPCP/53Ju5rt6SIGT5m4MDH2vNfgJIraGRbQvbTKpI053fLTjcMfMcbkBpepZxUJeBvD3TI=
-X-Received: by 2002:a17:907:3f14:b0:ad8:8719:f6f3 with SMTP id
- a640c23a62f3a-ade1a932e69mr253948366b.22.1749211179058; Fri, 06 Jun 2025
- 04:59:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749215032; x=1749819832;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HArWEAkGZW4SwR4M4QK2P5FGuqV07y/wP1+Sj+8Jiv8=;
+        b=My3fU/m4ha/YuP6hOyTzaAT7+vI4NlUHmvd7a7As2YihwzGuhp9FeO/i0y5Wdr+ChQ
+         pV8Rtwvz0t5SeDdwOKAeDHxLrc5zA+Yyg6UXRlCCvaVgAHPBNSggtSQ+Slye5UCz4kdZ
+         bVcu5wda5Cu0JK/x23nWH1t7BJ32xswHnqSh42OYfRygmxyjSVX/2srqRmyK7vR5W8wf
+         VoSgq51Gjald2z1iSmp+EdOHORxhSKT92o9qoVgubFvFg7eOKQMAvKvPe/FQxrkvyS1z
+         LBp7+u7jNKULggi3M92TIJPYnbznYoST720HuiR70uWC6lyiIqB+arBKLpPFZxreAzpZ
+         Mkvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUutw/N99mtYsAeCGmv1GVSNmWhEq6+Eh7VHySPtbO+rzO6zGOEAKUBUptIf+8mzx2tGkEWOI6+6V8Nfswp@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoOsFx2/7/6+mh77WgeJ7TV0ZCjdwixIUEHfD7cz12MORASNSy
+	dxhhqX+WtwR1eNDhEiFM7BoGGUvvc9pSl7MpHvg+qZDfF2hgFS6h/IUjklkjstlD/GTGhSkcjOi
+	wQ++MTcRnYs1ehoIujSiAjrI7SndkcD6VWA2c7o+ryGZhTMLzDZs+B56hMsZ+60euyok=
+X-Gm-Gg: ASbGncurDFS/vKnL3Xo7wkDGSS+yPMfS/HDg2U3E+wN3YHHH5LwpY5dyCsy31CP1yoK
+	9hUHpCn2rdK2id/iCzW2beMda67uJJTMWdaM6g9655TElr1RDzh7fc2nq7bvuXYrY2dqGVfSnYu
+	x738tBat14Rx7x4HZXYRgSP5yAozT0FHGEzckMFs3gFtqz0hMBVxUXp9yCTC1QU7vU/W4iFyPgc
+	57OTkBKJnH0aUnyE0JpfwFv+iTl/Eemr81JKQ+bjlRArMToBbgzsfLXgRnpatVlNoZn4LNSpElU
+	BpKsQKZ57Xidiw==
+X-Received: by 2002:a05:6214:21ad:b0:6e4:2f7f:d0bb with SMTP id 6a1803df08f44-6fb08f4307amr50047526d6.4.1749215032367;
+        Fri, 06 Jun 2025 06:03:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH9BHHM9w2tx8ul52pjQVd+s0UKMZd6LqtfDIdl4wDxhdTCW98c/Y1W4GzTHfIwhEhwfgDeWw==
+X-Received: by 2002:a05:6214:21ad:b0:6e4:2f7f:d0bb with SMTP id 6a1803df08f44-6fb08f4307amr50046486d6.4.1749215031425;
+        Fri, 06 Jun 2025 06:03:51 -0700 (PDT)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6fb09ab8a19sm10972746d6.8.2025.06.06.06.03.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jun 2025 06:03:50 -0700 (PDT)
+Date: Fri, 6 Jun 2025 09:03:48 -0400
+From: Peter Xu <peterx@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Tal Zussman <tz2294@columbia.edu>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Pavel Emelyanov <xemul@parallels.com>,
+	Andrea Arcangeli <aarcange@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/3] userfaultfd: prevent unregistering VMAs through a
+ different userfaultfd
+Message-ID: <aELnNH5LTFHmtdfQ@x1.local>
+References: <20250603-uffd-fixes-v1-0-9c638c73f047@columbia.edu>
+ <20250603-uffd-fixes-v1-2-9c638c73f047@columbia.edu>
+ <84cf5418-42e9-4ec5-bd87-17ba91995c47@redhat.com>
+ <aEBhqz1UgpP8d9hG@x1.local>
+ <0a1dab1c-80d2-436f-857f-734d95939aec@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250605150729.2730-1-anuj20.g@samsung.com> <CGME20250605150746epcas5p1cf96907472d8a27b0d926b9e2f943e70@epcas5p1.samsung.com>
- <20250605150729.2730-3-anuj20.g@samsung.com> <yq1a56lbpsc.fsf@ca-mkp.ca.oracle.com>
-In-Reply-To: <yq1a56lbpsc.fsf@ca-mkp.ca.oracle.com>
-From: Anuj gupta <anuj1072538@gmail.com>
-Date: Fri, 6 Jun 2025 17:29:02 +0530
-X-Gm-Features: AX0GCFsp8juhknUXDp5sOulFNclYQn8fpeoPEV3LFMx8t21OLoGFonqOrOPc3Bo
-Message-ID: <CACzX3AujmHHvzBVta2fjrQvytscv5kS0NSgt4iUq-LtXP167BA@mail.gmail.com>
-Subject: Re: [PATCH for-next v2 2/2] fs: add ioctl to query protection info capabilities
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Anuj Gupta <anuj20.g@samsung.com>, vincent.fu@samsung.com, jack@suse.cz, 
-	axboe@kernel.dk, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	hch@infradead.org, ebiggers@kernel.org, adilger@dilger.ca, 
-	linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	joshi.k@samsung.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <0a1dab1c-80d2-436f-857f-734d95939aec@redhat.com>
 
-On Fri, Jun 6, 2025 at 7:37=E2=80=AFAM Martin K. Petersen
-<martin.petersen@oracle.com> wrote:
->
->
-> Hi Anuj!
->
-> > A new structure struct fs_pi_cap is introduced, which contains the
-> > following fields:
->
-> Maybe fs_metadata_cap and then fmd_ as prefix in the struct?
->
->
-> > +     case FS_IOC_GETPICAP:
-> > +             return blk_get_pi_cap(bdev, argp);
->
-> FS_IOC_METADATA_CAP?
->
+On Thu, Jun 05, 2025 at 11:06:38PM +0200, David Hildenbrand wrote:
+> Not sure if relevant, but consider the following:
+> 
+> an app being controlled by another process using userfaultfd.
+> 
+> The app itself can "escape" uffd control of the other process by simply
+> creating a userfaultfd and unregistering VMAs.
 
-Hi Martin,
-
-Thanks for the suggestion. I see your point =E2=80=94 especially from the N=
-VMe
-perspective, where integrity buffer can be larger than just the PI
-tuple.
-
-However, since this ioctl is also intended to work on regular files,
-where "metadata" usually refers to inode-level attributes, timestamps,
-permissions, etc., I worry that FS_IOC_METADATA_CAP and fs_metadata_cap
-might be confusing in the broader filesystem context.
-
-Using  FS_IOC_GETPI_CAP and struct fs_pi_cap seems more narrowly scoped
-and avoids that ambiguity. Do you see this differently? Or if you have a
-better alternative in mind, I=E2=80=99d be happy to consider it.
+IMHO it's okay if it's intentional by the child. E.g., even after this
+patch, the child, if intentional, can also mmap() a new VMA on top of the
+uffd tracked region to stop being trapped by the parent.  The parent might
+still get a UNMAP event if registered, but it'll not be able to track the
+new VMAs mapped.
 
 Thanks,
-Anuj Gupta
+
+-- 
+Peter Xu
+
 
