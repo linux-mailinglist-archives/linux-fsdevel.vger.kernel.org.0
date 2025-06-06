@@ -1,77 +1,77 @@
-Return-Path: <linux-fsdevel+bounces-50884-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50885-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3711AD0A68
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 01:43:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7BFAD0A6A
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 01:43:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B266D1897BD9
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 23:43:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 391143B3817
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 23:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8423F24167F;
-	Fri,  6 Jun 2025 23:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFBA823FC5F;
+	Fri,  6 Jun 2025 23:43:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1ywUGDc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCWCZJWz"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0C023F40E;
-	Fri,  6 Jun 2025 23:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B146123ED58;
+	Fri,  6 Jun 2025 23:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749253379; cv=none; b=fwTdZnTtakL3JZPf5VqkciKhMkhlz3WpA2/cXhPAf6vY6lhNM6XmGBFAGLii3nv9P92GFaZWeCOpzCSPTimGWHEU2l42ozbEK4FUhWoORoBIVnUoxh93tJHyS9Tbpa0MbkOwRzYm7PsIy8f4qNkGI6iP+p1WjaXcplSbXLl3VgQ=
+	t=1749253380; cv=none; b=IxZ2YCYFFIZ0yNZ7qxIWG6+iobIicbNyGnrl1skuHzno6H9g7zFZeFA2OXkxd5cNLgGfnXSYJinwip1WVNEIZ1GMYF1rTP7mJIq3g+H4gCgBoiGi+/Ou9qRehHloouQ0si5QxaBxv4qkKcD89Z6PIwF7AV7f94FeID1CTYmdwNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749253379; c=relaxed/simple;
-	bh=O1W0ulwM4LFY3XaJ4MM+D7afynstYG+yfDrDZYJ/8KU=;
+	s=arc-20240116; t=1749253380; c=relaxed/simple;
+	bh=y8Oiy0XJKhVuCLOoKbspz4JqEErfzpqHX0ob8vHVr5c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Lzkr3WmuslEIBGSTrYI7RJn+eOtsLOodnXjC/pwkIMV+bBxB4YxA4Fcdb5mEqLVt7O3epnZeysEwrbYU64JfFbVKIs64sannsJoqi/yv5kwY4iFYBvHNf1EbaXoiRbmKRQu+xYnTtLqSF4CZ0u2Ig3MowcAClZf8ZgmdKmPILqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1ywUGDc; arc=none smtp.client-ip=209.85.215.180
+	 MIME-Version; b=M8CQicwtHLEhyE8wcxc8o1z9M+Tmh3qOH7HTqHqw87KPzzBBvv+ZcgbBrpyWH4I61V4Z0iedl3PsPmybW/S44Ajn12byLoR6I8/5+APHWkE4OqcT/SSmDqxmEvOj2gzHYhSfwJ/XZBvP55DRig8BswtfBaDQnWFxI19EgKJ3xQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCWCZJWz; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-b2c41acd479so1582709a12.2;
-        Fri, 06 Jun 2025 16:42:57 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-231e8553248so27270195ad.1;
+        Fri, 06 Jun 2025 16:42:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749253376; x=1749858176; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1749253378; x=1749858178; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+qVy8htEdXKu34PnkgJIG77st3hVzlJLo74xh4inSgo=;
-        b=k1ywUGDc/1J32nIk8pmChuZqxtjGVYsAsG4N0G9HJQ7amdkDzKWsyepxN1/stTqapF
-         VP59iC3+nksPA5x29Wqjd8Z4ii7LKN9Ka3515litT20Lu6SvuQddcVM5ZOzjujeDN2J4
-         mwPUDKx91KDxqxm+RdXQkIJkZrSC/uImRxKo/tXLyInoTq6k3iq/57P2k81jDARr0vd/
-         AQ6BH2KNni7cUkiaqGU+FoPyuODFVVHELMp7ccT3QnQgHi2o/iORXCw+wJ85tKevqw+V
-         zFtpVKbj7R5CxYtuK4QZrKd58th7x2OTAUytOeOxHT+h1U/MB01jey44VV1alfN32liR
-         HfWQ==
+        bh=sPYXyzhTZFKi9rBDasaoQTI8acFeqekIys8TeZ7sPN4=;
+        b=hCWCZJWzZxRg1y7adKAqcCXUFvlJOcCnzARd/30W1KqD4q6QcPYXQtxRxOH0M4h2Ya
+         pG0f5x2fKspeOEuGeUrCm7Y/bG1QV7dn67tO1/UhPESlkb5FJvoiw0RWPw2JO436Z5i5
+         nn5fBp0MzsuVn6ummlbWze2dOPejdB6P6i+nav5w5QRxeLny1xgVe0pYxFYQ14U6IQgv
+         +gRh5JwITLq4khpnu4IPEgMH1lYfd4PwwbAD9uV45aWx5qLEGHBRCCf0Iz/aenB84pXN
+         XFCwnEyZnQuOF22r3P2aY+OdRrl6Zr2qCQBHcG2tB/NPgYFl3S4rIwR3UUsA/lWVbEl8
+         NDqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749253376; x=1749858176;
+        d=1e100.net; s=20230601; t=1749253378; x=1749858178;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+qVy8htEdXKu34PnkgJIG77st3hVzlJLo74xh4inSgo=;
-        b=U08lzFmAWmO4aj5xhxibptVnKCLID7rYcub9/esZxj7FY3hXQxqJtw0NAVd4DqcEJl
-         asdQqczR1o7txkg12SSb81gAIQNy7oMx40K7F8Vt2/S5rsj1ZVzfmbQakftPFNdOk8Eo
-         szJzDU3/wpCeEO2WtnHEIYKoKjCDvTkWAQyPKnM8jHiyoIWjXdfZrpbl9TzHQGepfMX0
-         2nnAJdh5KbYuVshYrtNQA6tIXkAKACgIVPhBSH0d5ikcO0BJTYd4qivrt120+GPWZ8AI
-         izKP/wGESqbrCu1up3PyH0TOZyvfWkvZLftNfB/Y9aF8RoTHWmuCFsdpOHmLNeZs7bX/
-         VwkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNaP3ZzRlf3WE0p3HWtWB8WvaIK1w2rGi4wG+4CDV8DScwqNFqv2y6ZChjk7XNiFiSuZxGhShK77B1dmHG@vger.kernel.org, AJvYcCX61/7sNbctH4+OTXwKoXXHDhc4mErTBnQy/QPA55EzrPXDT6UCreD4gVcsecEhSQsDedoTjaZby2Kg@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDCiIdABDAXMD5emR7kNNOLF2IO9OWu+4tOfL+uPE2XSPQTHbR
-	/XNL9Hd0Q90D3fOUIgRH+YS9FSMs9zXfRmacSBlykoLhnNl+ejUC9Hs2
-X-Gm-Gg: ASbGnctH++JJyCMgxj9FSw1DxazZxJWHsxJor0U2ABIILbvyM/8lroCfYShMzhkTU7i
-	IP7ivZIwHv4Nb8LPjuAegB1DzKn3UlZUhNbaFAzgZNM8LPC4qnV8xiVRIwvsHtG+iTg5ikGrmsK
-	Am/+sANmMR/IR2qx0i9f0I/CO3qjj0jYgh6SJ5CdsY1TFkgt+UxmB+FLJH3WArWlhluXCiNL131
-	dyBU4y2EmWl0eW54URzeZE+xjdJcJuJTPARyasapT4IkAv5rBO/RDbM2/2l2rzn7oJEv8/88TSX
-	VAwhLXx/7Q3kIihjSFttS/WV+fNagpLRLVxEURt4I0o5of3QI7O+RM7P
-X-Google-Smtp-Source: AGHT+IFX+pYhSmvKksmVXlIFcm6m1xk46ye/Q5tD9TAm2DlnE85Z8TCeyzPsdpDoUJ3S7IZ3oHV44g==
-X-Received: by 2002:a17:90b:2d8e:b0:311:e305:4e97 with SMTP id 98e67ed59e1d1-31347309819mr7261782a91.19.1749253376453;
-        Fri, 06 Jun 2025 16:42:56 -0700 (PDT)
-Received: from localhost ([2a03:2880:ff:5::])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236032fc6f8sm17666215ad.136.2025.06.06.16.42.56
+        bh=sPYXyzhTZFKi9rBDasaoQTI8acFeqekIys8TeZ7sPN4=;
+        b=hi9RJJJvH3wJ3gIKXRBLQwv7wqM9MTHxNiu61PbE6nikUIjZBSiwt+Y3HbXJwLiN+2
+         PK4Q74xoUXdUrdnRUT+ie5eNGlVq5UEMhAn8QLfCtK9jJgC1nbta9Q1YsN9Gc9W+hzMF
+         R4vy/57wOtt/BI5fQrtGaSKj6O1QaEMs1SarpBi2R2nBzwitTkZhMUsq4/XkBtTnA2a4
+         34nHaB9MrdxrJ8Il+fjAQT6pIpcOE8+NDDpBOQ0zXS/k2nhlfe1MXx5+UooG9vCkpmma
+         bKtwBS1vK2M64dzl4T93Demf+rWtIg5ocb11MldW45ztpQiR/SKyPY395fqpddMtzJSD
+         1ULA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdtmK9xrA6UFyo4aZ72dw4/sxV79k02sA2mMdBq7ergh3+x7Ebhd9ftQ5aw47Z7h2xLjT9zIB3/wdQ@vger.kernel.org, AJvYcCXkFBA9quCTYQX1NYsCdPP114yZn7691PmMN+w6Yt8rGr6hHaVvQrn7dD32fnqgOXgBXOLS1pQOWPRg0unI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7jCwaZIt0r7pDGCeojJIBHzoJYDtv/o6QvqxkbiJh6/vxPrgH
+	UJjsJHV52NYzRdxU9wiF8lzxxUmN62GUN3UrfgXWmVzysBQRtfPHHlmHHJV5HQ==
+X-Gm-Gg: ASbGncuYIBfGdO3ZOUS4b/RktOlZ6pWDBZC+XiP9q/08mKWmWMAZFohFWW4UutemwCi
+	ZeQhQ41LnNQPSpFokQHJLr/y13Q64aBNpkQ8xKl2ZlhgX26OCkggOunuiLyZ6H4fiTVj3bmC1Gx
+	Giv6W5F+eSImFEtUr//CcZ3Ws1p8QpuQzjEqe22rmI63dy15YczE0Rl9P9Tx3yXbB7YjHyyuOy+
+	Bqd9AWUirHlpzR92DSDrB+kTyKOMqjNHuY6Gx1C7sZNF+gha5AC7iMEAZMqBKkXNIOUfjYcGq8V
+	NVhmQiZceLJDfGCqRHCTEZLy5ujdm1aX2zmDLDbus+RRQabL2nLWKncG2hvyRT8vW8A=
+X-Google-Smtp-Source: AGHT+IGUGS4I9H6YvQ367gymUVK/EGv5OMqQjxalWdEBILPOfI/4+IT4/p3ehB+oyFHpwx7RuNfL0Q==
+X-Received: by 2002:a17:902:da88:b0:235:129e:f649 with SMTP id d9443c01a7336-23601d01ddamr81461735ad.12.1749253377897;
+        Fri, 06 Jun 2025 16:42:57 -0700 (PDT)
+Received: from localhost ([2a03:2880:ff:e::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-236032fc9ebsm17680165ad.106.2025.06.06.16.42.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jun 2025 16:42:56 -0700 (PDT)
+        Fri, 06 Jun 2025 16:42:57 -0700 (PDT)
 From: Joanne Koong <joannelkoong@gmail.com>
 To: miklos@szeredi.hu
 Cc: djwong@kernel.org,
@@ -80,9 +80,9 @@ Cc: djwong@kernel.org,
 	linux-xfs@vger.kernel.org,
 	bernd.schubert@fastmail.fm,
 	kernel-team@meta.com
-Subject: [PATCH v1 6/8] fuse: use iomap for buffered writes
-Date: Fri,  6 Jun 2025 16:38:01 -0700
-Message-ID: <20250606233803.1421259-7-joannelkoong@gmail.com>
+Subject: [PATCH v1 7/8] fuse: use iomap for writeback
+Date: Fri,  6 Jun 2025 16:38:02 -0700
+Message-ID: <20250606233803.1421259-8-joannelkoong@gmail.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20250606233803.1421259-1-joannelkoong@gmail.com>
 References: <20250606233803.1421259-1-joannelkoong@gmail.com>
@@ -94,255 +94,236 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Have buffered writes go through iomap so that large folios in fuse can
-have granular large folio dirty tracking. This has no effect on
-functionality until fuse's writepages callback also calls into iomap.
+Use iomap for dirty folio writeback in ->writepages().
+This allows for granular dirty writeback of large folios.
 
 Signed-off-by: Joanne Koong <joannelkoong@gmail.com>
 ---
- fs/fuse/Kconfig |   1 +
- fs/fuse/file.c  | 141 ++++++++++++++++++------------------------------
- 2 files changed, 53 insertions(+), 89 deletions(-)
+ fs/fuse/file.c | 114 ++++++++++++++++++++++++++++---------------------
+ 1 file changed, 66 insertions(+), 48 deletions(-)
 
-diff --git a/fs/fuse/Kconfig b/fs/fuse/Kconfig
-index ca215a3cba3e..a774166264de 100644
---- a/fs/fuse/Kconfig
-+++ b/fs/fuse/Kconfig
-@@ -2,6 +2,7 @@
- config FUSE_FS
- 	tristate "FUSE (Filesystem in Userspace) support"
- 	select FS_POSIX_ACL
-+	select FS_IOMAP
- 	help
- 	  With FUSE it is possible to implement a fully functional filesystem
- 	  in a userspace program.
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 3d0b33be3824..a0118b501880 100644
+index a0118b501880..31842ee1ce0e 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -21,6 +21,7 @@
- #include <linux/filelock.h>
- #include <linux/splice.h>
- #include <linux/task_io_accounting_ops.h>
-+#include <linux/iomap.h>
- 
- static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
- 			  unsigned int open_flags, int opcode,
-@@ -788,12 +789,16 @@ static void fuse_short_read(struct inode *inode, u64 attr_ver, size_t num_read,
+@@ -1835,7 +1835,7 @@ static void fuse_writepage_finish(struct fuse_writepage_args *wpa)
+ 		 * scope of the fi->lock alleviates xarray lock
+ 		 * contention and noticeably improves performance.
+ 		 */
+-		folio_end_writeback(ap->folios[i]);
++		iomap_finish_folio_write(inode, ap->folios[i], 1);
+ 		dec_wb_stat(&bdi->wb, WB_WRITEBACK);
+ 		wb_writeout_inc(&bdi->wb);
  	}
+@@ -2022,19 +2022,20 @@ static void fuse_writepage_add_to_bucket(struct fuse_conn *fc,
  }
  
--static int fuse_do_readfolio(struct file *file, struct folio *folio)
-+static int fuse_do_readfolio(struct file *file, struct folio *folio,
-+			     size_t off, size_t len)
+ static void fuse_writepage_args_page_fill(struct fuse_writepage_args *wpa, struct folio *folio,
+-					  uint32_t folio_index)
++					  uint32_t folio_index, loff_t offset, unsigned len)
  {
  	struct inode *inode = folio->mapping->host;
- 	struct fuse_mount *fm = get_fuse_mount(inode);
--	loff_t pos = folio_pos(folio);
--	struct fuse_folio_desc desc = { .length = folio_size(folio) };
-+	loff_t pos = folio_pos(folio) + off;
-+	struct fuse_folio_desc desc = {
-+		.offset = off,
-+		.length = len,
-+	};
- 	struct fuse_io_args ia = {
- 		.ap.args.page_zeroing = true,
- 		.ap.args.out_pages = true,
-@@ -820,8 +825,6 @@ static int fuse_do_readfolio(struct file *file, struct folio *folio)
- 	if (res < desc.length)
- 		fuse_short_read(inode, attr_ver, res, &ia.ap);
+ 	struct fuse_args_pages *ap = &wpa->ia.ap;
  
--	folio_mark_uptodate(folio);
--
- 	return 0;
+ 	ap->folios[folio_index] = folio;
+-	ap->descs[folio_index].offset = 0;
+-	ap->descs[folio_index].length = folio_size(folio);
++	ap->descs[folio_index].offset = offset;
++	ap->descs[folio_index].length = len;
+ 
+ 	inc_wb_stat(&inode_to_bdi(inode)->wb, WB_WRITEBACK);
  }
  
-@@ -834,13 +837,25 @@ static int fuse_read_folio(struct file *file, struct folio *folio)
- 	if (fuse_is_bad(inode))
- 		goto out;
- 
--	err = fuse_do_readfolio(file, folio);
-+	err = fuse_do_readfolio(file, folio, 0, folio_size(folio));
-+	if (!err)
-+		folio_mark_uptodate(folio);
-+
- 	fuse_invalidate_atime(inode);
-  out:
- 	folio_unlock(folio);
- 	return err;
- }
- 
-+static int fuse_iomap_read_folio_sync(loff_t block_start, struct folio *folio,
-+				       size_t off, size_t len, const struct iomap *iomap,
-+				       void *private)
-+{
-+	struct file *file = private;
-+
-+	return fuse_do_readfolio(file, folio, off, len);
-+}
-+
- static void fuse_readpages_end(struct fuse_mount *fm, struct fuse_args *args,
- 			       int err)
+ static struct fuse_writepage_args *fuse_writepage_args_setup(struct folio *folio,
++							     size_t offset,
+ 							     struct fuse_file *ff)
  {
-@@ -1375,6 +1390,25 @@ static void fuse_dio_unlock(struct kiocb *iocb, bool exclusive)
- 	}
+ 	struct inode *inode = folio->mapping->host;
+@@ -2047,7 +2048,7 @@ static struct fuse_writepage_args *fuse_writepage_args_setup(struct folio *folio
+ 		return NULL;
+ 
+ 	fuse_writepage_add_to_bucket(fc, wpa);
+-	fuse_write_args_fill(&wpa->ia, ff, folio_pos(folio), 0);
++	fuse_write_args_fill(&wpa->ia, ff, folio_pos(folio) + offset, 0);
+ 	wpa->ia.write.in.write_flags |= FUSE_WRITE_CACHE;
+ 	wpa->inode = inode;
+ 	wpa->ia.ff = ff;
+@@ -2103,7 +2104,7 @@ struct fuse_fill_wb_data {
+ 	struct fuse_file *ff;
+ 	struct inode *inode;
+ 	unsigned int max_folios;
+-	unsigned int nr_pages;
++	unsigned int nr_bytes;
+ };
+ 
+ static bool fuse_pages_realloc(struct fuse_fill_wb_data *data)
+@@ -2145,21 +2146,28 @@ static void fuse_writepages_send(struct fuse_fill_wb_data *data)
  }
  
-+static const struct iomap_folio_ops fuse_iomap_folio_ops = {
-+	.read_folio_sync = fuse_iomap_read_folio_sync,
-+};
+ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
++				     loff_t offset, unsigned len,
+ 				     struct fuse_args_pages *ap,
+ 				     struct fuse_fill_wb_data *data)
+ {
++	struct folio *prev_folio;
++	struct fuse_folio_desc prev_desc;
 +
-+static int fuse_write_iomap_begin(struct inode *inode, loff_t offset,
-+				  loff_t length, unsigned int flags,
-+				  struct iomap *iomap, struct iomap *srcmap)
-+{
-+	iomap->type = IOMAP_IN_MEM;
-+	iomap->folio_ops = &fuse_iomap_folio_ops;
-+	iomap->length = length;
-+	iomap->offset = offset;
+ 	WARN_ON(!ap->num_folios);
+ 
+ 	/* Reached max pages */
+-	if (data->nr_pages + folio_nr_pages(folio) > fc->max_pages)
++	if ((data->nr_bytes + len) / PAGE_SIZE > fc->max_pages)
+ 		return true;
+ 
+ 	/* Reached max write bytes */
+-	if ((data->nr_pages * PAGE_SIZE) + folio_size(folio) > fc->max_write)
++	if (data->nr_bytes + len > fc->max_write)
+ 		return true;
+ 
+ 	/* Discontinuity */
+-	if (folio_next_index(ap->folios[ap->num_folios - 1]) != folio_index(folio))
++	prev_folio = ap->folios[ap->num_folios - 1];
++	prev_desc = ap->descs[ap->num_folios - 1];
++	if ((folio_pos(prev_folio) + prev_desc.offset + prev_desc.length) !=
++	    folio_pos(folio) + offset)
+ 		return true;
+ 
+ 	/* Need to grow the pages array?  If so, did the expansion fail? */
+@@ -2169,85 +2177,95 @@ static bool fuse_writepage_need_send(struct fuse_conn *fc, struct folio *folio,
+ 	return false;
+ }
+ 
+-static int fuse_writepages_fill(struct folio *folio,
+-		struct writeback_control *wbc, void *_data)
++static int fuse_iomap_writeback_folio(struct iomap_writepage_ctx *wpc,
++				      struct folio *folio, struct inode *inode,
++				      loff_t offset, unsigned len)
+ {
+-	struct fuse_fill_wb_data *data = _data;
++	struct fuse_fill_wb_data *data = wpc->private;
+ 	struct fuse_writepage_args *wpa = data->wpa;
+ 	struct fuse_args_pages *ap = &wpa->ia.ap;
+-	struct inode *inode = data->inode;
+-	struct fuse_inode *fi = get_fuse_inode(inode);
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+-	int err;
++	struct fuse_inode *fi = get_fuse_inode(inode);
++
++	/* len will always be page aligned */
++	WARN_ON_ONCE(len & (PAGE_SIZE - 1));
+ 
+ 	if (!data->ff) {
+-		err = -EIO;
+ 		data->ff = fuse_write_file_get(fi);
+ 		if (!data->ff)
+-			goto out_unlock;
++			return -EIO;
+ 	}
+ 
+-	if (wpa && fuse_writepage_need_send(fc, folio, ap, data)) {
++	iomap_start_folio_write(inode, folio, 1);
++
++	if (wpa && fuse_writepage_need_send(fc, folio, offset, len, ap, data)) {
+ 		fuse_writepages_send(data);
+ 		data->wpa = NULL;
+-		data->nr_pages = 0;
++		data->nr_bytes = 0;
+ 	}
+ 
+ 	if (data->wpa == NULL) {
+-		err = -ENOMEM;
+-		wpa = fuse_writepage_args_setup(folio, data->ff);
++		wpa = fuse_writepage_args_setup(folio, offset, data->ff);
+ 		if (!wpa)
+-			goto out_unlock;
++			return -ENOMEM;
+ 		fuse_file_get(wpa->ia.ff);
+ 		data->max_folios = 1;
+ 		ap = &wpa->ia.ap;
+ 	}
+-	folio_start_writeback(folio);
+ 
+-	fuse_writepage_args_page_fill(wpa, folio, ap->num_folios);
+-	data->nr_pages += folio_nr_pages(folio);
++	fuse_writepage_args_page_fill(wpa, folio, ap->num_folios,
++				      offset, len);
++	data->nr_bytes += len;
+ 
+-	err = 0;
+ 	ap->num_folios++;
+ 	if (!data->wpa)
+ 		data->wpa = wpa;
+-out_unlock:
+-	folio_unlock(folio);
+ 
+-	return err;
 +	return 0;
 +}
 +
-+static const struct iomap_ops fuse_write_iomap_ops = {
-+	.iomap_begin	= fuse_write_iomap_begin,
-+};
++static int fuse_iomap_submit_ioend(struct iomap_writepage_ctx *wpc, int error)
++{
++	struct fuse_fill_wb_data *data = wpc->private;
++	WARN_ON_ONCE(!data);
 +
- static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct file *file = iocb->ki_filp;
-@@ -1384,6 +1418,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	struct inode *inode = mapping->host;
- 	ssize_t err, count;
- 	struct fuse_conn *fc = get_fuse_conn(inode);
-+	bool writeback = false;
- 
- 	if (fc->writeback_cache) {
- 		/* Update size (EOF optimization) and mode (SUID clearing) */
-@@ -1397,8 +1432,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 						file_inode(file))) {
- 			goto writethrough;
- 		}
--
--		return generic_file_write_iter(iocb, from);
-+		writeback = true;
- 	}
- 
- writethrough:
-@@ -1420,6 +1454,13 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 			goto out;
- 		written = direct_write_fallback(iocb, from, written,
- 				fuse_perform_write(iocb, from));
-+	} else if (writeback) {
-+		/*
-+		 * Use iomap so that we get granular dirty tracking for
-+		 * writing back large folios.
-+		 */
-+		written = iomap_file_buffered_write(iocb, from,
-+						    &fuse_write_iomap_ops, file);
- 	} else {
- 		written = fuse_perform_write(iocb, from);
- 	}
-@@ -2209,84 +2250,6 @@ static int fuse_writepages(struct address_space *mapping,
- 	return err;
++	if (data->wpa) {
++		WARN_ON(!data->wpa->ia.ap.num_folios);
++		fuse_writepages_send(data);
++	}
++
++	if (data->ff)
++		fuse_file_put(data->ff, false);
++
++	return error;
  }
  
--/*
-- * It's worthy to make sure that space is reserved on disk for the write,
-- * but how to implement it without killing performance need more thinking.
-- */
--static int fuse_write_begin(struct file *file, struct address_space *mapping,
--		loff_t pos, unsigned len, struct folio **foliop, void **fsdata)
--{
--	pgoff_t index = pos >> PAGE_SHIFT;
--	struct fuse_conn *fc = get_fuse_conn(file_inode(file));
--	struct folio *folio;
--	loff_t fsize;
--	int err = -ENOMEM;
--
--	WARN_ON(!fc->writeback_cache);
--
--	folio = __filemap_get_folio(mapping, index, FGP_WRITEBEGIN,
--			mapping_gfp_mask(mapping));
--	if (IS_ERR(folio))
--		goto error;
--
--	if (folio_test_uptodate(folio) || len >= folio_size(folio))
--		goto success;
--	/*
--	 * Check if the start of this folio comes after the end of file,
--	 * in which case the readpage can be optimized away.
--	 */
--	fsize = i_size_read(mapping->host);
--	if (fsize <= folio_pos(folio)) {
--		size_t off = offset_in_folio(folio, pos);
--		if (off)
--			folio_zero_segment(folio, 0, off);
--		goto success;
--	}
--	err = fuse_do_readfolio(file, folio);
--	if (err)
--		goto cleanup;
--success:
--	*foliop = folio;
--	return 0;
--
--cleanup:
--	folio_unlock(folio);
--	folio_put(folio);
--error:
--	return err;
--}
--
--static int fuse_write_end(struct file *file, struct address_space *mapping,
--		loff_t pos, unsigned len, unsigned copied,
--		struct folio *folio, void *fsdata)
--{
--	struct inode *inode = folio->mapping->host;
--
--	/* Haven't copied anything?  Skip zeroing, size extending, dirtying. */
--	if (!copied)
--		goto unlock;
--
--	pos += copied;
--	if (!folio_test_uptodate(folio)) {
--		/* Zero any unwritten bytes at the end of the page */
--		size_t endoff = pos & ~PAGE_MASK;
--		if (endoff)
--			folio_zero_segment(folio, endoff, PAGE_SIZE);
--		folio_mark_uptodate(folio);
--	}
--
--	if (pos > inode->i_size)
--		i_size_write(inode, pos);
--
--	folio_mark_dirty(folio);
--
--unlock:
--	folio_unlock(folio);
--	folio_put(folio);
--
--	return copied;
--}
--
- static int fuse_launder_folio(struct folio *folio)
++static const struct iomap_writeback_ops fuse_writeback_ops = {
++	.writeback_folio	= fuse_iomap_writeback_folio,
++	.submit_ioend		= fuse_iomap_submit_ioend,
++};
++
+ static int fuse_writepages(struct address_space *mapping,
+ 			   struct writeback_control *wbc)
  {
- 	int err = 0;
-@@ -3144,12 +3107,12 @@ static const struct address_space_operations fuse_file_aops  = {
- 	.readahead	= fuse_readahead,
- 	.writepages	= fuse_writepages,
- 	.launder_folio	= fuse_launder_folio,
--	.dirty_folio	= filemap_dirty_folio,
-+	.dirty_folio	= iomap_dirty_folio,
-+	.release_folio	= iomap_release_folio,
-+	.invalidate_folio = iomap_invalidate_folio,
- 	.migrate_folio	= filemap_migrate_folio,
- 	.bmap		= fuse_bmap,
- 	.direct_IO	= fuse_direct_IO,
--	.write_begin	= fuse_write_begin,
--	.write_end	= fuse_write_end,
- };
+ 	struct inode *inode = mapping->host;
+ 	struct fuse_conn *fc = get_fuse_conn(inode);
+-	struct fuse_fill_wb_data data;
+-	int err;
++	struct fuse_fill_wb_data data = {
++		.inode = inode,
++	};
++	struct iomap_writepage_ctx wpc = {
++		.iomap.type = IOMAP_IN_MEM,
++		.private = &data,
++	};
  
- void fuse_init_file_inode(struct inode *inode, unsigned int flags)
+-	err = -EIO;
+ 	if (fuse_is_bad(inode))
+-		goto out;
++		return -EIO;
+ 
+ 	if (wbc->sync_mode == WB_SYNC_NONE &&
+ 	    fc->num_background >= fc->congestion_threshold)
+ 		return 0;
+ 
+-	data.inode = inode;
+-	data.wpa = NULL;
+-	data.ff = NULL;
+-	data.nr_pages = 0;
+-
+-	err = write_cache_pages(mapping, wbc, fuse_writepages_fill, &data);
+-	if (data.wpa) {
+-		WARN_ON(!data.wpa->ia.ap.num_folios);
+-		fuse_writepages_send(&data);
+-	}
+-	if (data.ff)
+-		fuse_file_put(data.ff, false);
+-
+-out:
+-	return err;
++	return iomap_writepages(mapping, wbc, &wpc, &fuse_writeback_ops);
+ }
+ 
+ static int fuse_launder_folio(struct folio *folio)
 -- 
 2.47.1
 
