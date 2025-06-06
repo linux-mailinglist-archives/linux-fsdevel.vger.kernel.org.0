@@ -1,98 +1,106 @@
-Return-Path: <linux-fsdevel+bounces-50802-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50803-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C150ACFBB0
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 05:44:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B68D4ACFBC3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 05:57:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2950B1894FBB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 03:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F94C170CA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 03:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 178071AF0BB;
-	Fri,  6 Jun 2025 03:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0B91D5AC0;
+	Fri,  6 Jun 2025 03:57:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="s5/c576b"
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="Uxg0PR9x"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A144A0A
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 03:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E1242AF10
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 03:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749181484; cv=none; b=hnmXpWXlthIkK8XrU4z0DICf+j8lITPtsqHYvQawbMnlCGdvjfjzeI/pL5m/mUnsAqiAamOS7pWK/69kVmdNToVUgM1RcACOxAkY9v0Ih1c/iutg+Jump3AWQ0LRGAvHGMdZNFtOHK7MW664RXy7T2xZgAOaDEdUb1iGngzlpOQ=
+	t=1749182245; cv=none; b=iGrrOOpPxKnLe7wB1ydQH4iK5Am/TLPia/Ya04pFvuBCfCfA8FRupA0TE6Z8UWseQNY8bwzmIqbx+6wkTPWixWRRYXJ3PsSGIH4xntGf+VrF2qLTlfmiKj1WvfqKm5sakdl1ip/vod/2U8gUH+AkZ6WLMZcLLlPgg/j2duw9eOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749181484; c=relaxed/simple;
-	bh=7Gcyz4lcFxTKlo6zjl2FJukpdNtCdB1gv082wInIilc=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=kGh4uaAg6kQ8cX12UGdAgZDmZmnpshGIS0YlIcsBZEiJMebLVQLlghuO7LYvGMB9PhEY9/YFJThsEUpEPcuOZmnJp/FhqYFj7gtlIO/brao/JnGXXG1QFXPTzpmje5bsXnWoaToJJcMQv6PAl1HZhgiuFIBQvJCL4u9e3nIfOy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=s5/c576b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DCD5C4CEED;
-	Fri,  6 Jun 2025 03:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1749181483;
-	bh=7Gcyz4lcFxTKlo6zjl2FJukpdNtCdB1gv082wInIilc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=s5/c576bRJzYsDXXReflVW8+hvGEXNnWIqEtygmI6YIGk8U22b6RrfyxmreMkD1tQ
-	 L3sKuRj39GVNSU9FvgjcFCtp2aodrPxjtdkBK6azpxX2N1dIqNuFrCV5GznHiPHlBf
-	 KZENLzk32NIJY4s1tyyIZ+YLgOFvTpOLP/xa1m44=
-Date: Thu, 5 Jun 2025 20:44:42 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: wangzijie <wangzijie1@honor.com>, rick.p.edgecombe@intel.com,
- ast@kernel.org, adobriyan@gmail.com, kirill.shutemov@linux.intel.com,
- linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc: clear FMODE_LSEEK flag correctly for permanent
- pde
-Message-Id: <20250605204442.4a2e98b8feb6fc3603375b66@linux-foundation.org>
-In-Reply-To: <20250606015621.GO299672@ZenIV>
-References: <20250605065252.900317-1-wangzijie1@honor.com>
-	<20250605144415.943b53ed88a4e0ba01bc5a56@linux-foundation.org>
-	<20250606015621.GO299672@ZenIV>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1749182245; c=relaxed/simple;
+	bh=GtvmLocDDMq65xiq8APfbBmVrUNMu6H13gsM1LJioyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I1XkvSRH9oPC3Mr0JLHXuCu++VJPhbxKV6o9EmxrPlxmniTV6NyEJMIPTXNGx2EK9OKBPcMWSedWd8gX1t7WLBDdsI+yyGfOT1GvS7sdUi0lcOlJSaMBDiBOG8rpkypnHmSV/pvWOLXPD2LqMOfCyjeRHln41ruzZTDI824gNtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=Uxg0PR9x; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=k0ZpaKaEy4ZuW+8wZR9+ETsHoQ2q1hye0L/hk7wG7nc=; b=Uxg0PR9xl2VOiZF/bejfRCJq1R
+	Vc0UajE7ETfTzoQWndjX0V6G8WHNzQXp0Ez3/P8snZFH4OJ93+j8dKi5Rr8aZtAP09sRWWKlkCAIz
+	Hbl0/j5/6WuSOeSDp684twzhJhCMBsCz+14b7ci/jOLnSGcAtKEaZUCN1Yw8NzFJQ+x87+ONbef0i
+	bBVoeP7uI/b6SS/zIX2Roxn2/6sh8jUw0IV5byC5GzJd+6teUpQFKbcFzaiK/C31RloXMeguPJiid
+	QHa6/4ybD4F3OFfAplFNewHlcqWPCJhw/lrLBkRMPA5A/bb1D1xCepxkhl3TM8t7qH8kKk/lnAWAu
+	9WgU9uzw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uNOCg-0000000BR1q-3LmW;
+	Fri, 06 Jun 2025 03:57:14 +0000
+Date: Fri, 6 Jun 2025 04:57:14 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: wangzijie <wangzijie1@honor.com>
+Cc: adobriyan@gmail.com, akpm@linux-foundation.org, ast@kernel.org,
+	kirill.shutemov@linux.intel.com, linux-fsdevel@vger.kernel.org,
+	rick.p.edgecombe@intel.com
+Subject: Re: [PATCH] proc: clear FMODE_LSEEK flag correctly for permanent pde
+Message-ID: <20250606035714.GP299672@ZenIV>
+References: <20250606015621.GO299672@ZenIV>
+ <20250606023735.1009957-1-wangzijie1@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250606023735.1009957-1-wangzijie1@honor.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, 6 Jun 2025 02:56:21 +0100 Al Viro <viro@zeniv.linux.org.uk> wrote:
+On Fri, Jun 06, 2025 at 10:37:35AM +0800, wangzijie wrote:
 
-> On Thu, Jun 05, 2025 at 02:44:15PM -0700, Andrew Morton wrote:
-> > On Thu, 5 Jun 2025 14:52:52 +0800 wangzijie <wangzijie1@honor.com> wrote:
-> > 
-> > > Clearing FMODE_LSEEK flag should not rely on whether proc_open ops exists,
-> > 
-> > Why is this?
-> > 
-> > > fix it.
-> > 
-> > What are the consequences of the fix?  Is there presently some kernel
-> > misbehavior?
-> 
-> At a guess, that would be an oops due to this:
->         if (pde_is_permanent(pde)) {
-> 		return pde->proc_ops->proc_lseek(file, offset, whence);
-> 	} else if (use_pde(pde)) {
-> 		rv = pde->proc_ops->proc_lseek(file, offset, whence);
-> 		unuse_pde(pde);
-> 	}
-> in proc_reg_llseek().  No FMODE_LSEEK == "no seeks for that file, just
-> return -ESPIPE".  It is set by do_dentry_open() if you have NULL
-> ->llseek() in ->f_op; the reason why procfs needs to adjust that is
-> the it has uniform ->llseek, calling the underlying method for that 
-> proc_dir_entry.  So if it's NULL, we need ->open() (also uniform,
-> proc_reg_open() for all of those) to clear FMODE_LSEEK from ->f_mode.
-> 
-> The thing I don't understand is where the hell had proc_reg_open()
-> changed in that way - commit refered in the patch doesn't exist in
-> mainline, doesn't seem to be in -next or -stable either.
+> My bad for making this misbehavior, thank you for helping explain it.
+> commit 654b33ada4ab("proc: fix UAF in proc_get_inode()") is in -stable, 
+> I refered v1 just for showing race in rmmod scenario, it's my bad.
 
-It's a fix against the very recently merged
-https://lkml.kernel.org/r/20250528034756.4069180-1-wangzijie1@honor.com.
+I still don't understand what's going on.  654b33ada4ab is both in
+mainline and in stable, but proc_reg_open() is nowhere near the
+shape your patch would imply.
+
+The best reconstruction I can come up with is that an earlier patch
+in whatever tree you are talking about has moved
+
+        if (!pde->proc_ops->proc_lseek)
+		file->f_mode &= ~FMODE_LSEEK;
+
+down, separately into permanent and non-permanent cases, after use_pde()
+in the latter case.  And the author of that earlier patch has moved
+the check under if (open) in permanent case, which would warrant that
+kind of fixup.
+
+However,
+	* why is that earlier patch sitting someplace that is *NOT*
+in -next?
+	* why bother with those games at all?  Just nick another bit
+from pde->flags (let's call it PROC_ENTRY_proc_lseek for consistency
+sake), set it in same pde_set_flags() where other flags are dealt with
+and just turn that thing into
+        if (!pde_has_proc_lseek(pde))
+		file->f_mode &= ~FMODE_LSEEK;
+leaving it where it is.  Less intrusive and easier to follow...
+
+	Call it something like
+
+check proc_lseek needs the same treatment as ones for proc_read_iter et.al.
+
+and describe it as a gap in "proc: fix UAF in proc_get_inode()",
+fixed in exact same manner...
 
