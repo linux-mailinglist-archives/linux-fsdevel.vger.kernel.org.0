@@ -1,46 +1,46 @@
-Return-Path: <linux-fsdevel+bounces-50854-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50855-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31949AD05AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 17:45:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC234AD05BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 17:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF60118892B4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 15:44:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F2BF16D50D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 15:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3968289800;
-	Fri,  6 Jun 2025 15:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3028428B7EA;
+	Fri,  6 Jun 2025 15:43:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YJU4D+3G"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhxmssMv"
 X-Original-To: linux-fsdevel@vger.kernel.org
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515C8289801;
-	Fri,  6 Jun 2025 15:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E6DD289372;
+	Fri,  6 Jun 2025 15:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749224570; cv=none; b=Z+0g3ywne5nsW25w8XY4vVCnWDIr6sj1ZeQPfE9vhiNNOp31olr6kWweRgudCLhRoWaNFt+z0NMMgnOllk5NOYZWAzDBwoTZqEad09cal0zbyzA6srHu7KWk+4qTkwvHyrylkpvRa2KgzPI2ORSYnWBulottAvf4xVjt038ygDk=
+	t=1749224598; cv=none; b=W9kLIJMFXaPrDNsTqoxxazQT5rPbDyGObFuiY1ljAlsx38I37HGeqc6bn3qrBsCVFC0gSkMFildB6Ykq2duqaakjvJr2XsAtx0QjPa+HrZTNZTm6Xr7/x8GPqZ+nNiZe/cadsp4IWWz1UtFNx4lVYxbWmvQIODGUeLHNqzI2GGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749224570; c=relaxed/simple;
-	bh=6s/uLHbUl0a87lz+0uOU6qLfFpLzObXa00d/06+8Dtg=;
+	s=arc-20240116; t=1749224598; c=relaxed/simple;
+	bh=Du+OIFmDYpT0PLZ44mTQ6dci9Q3kfI+a8D+BUNxaBOI=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MV/XurUiM6VSnIrHmORnQE7W8AshdyEGrhGHeMaP/Vw4EeBb0m3SAm29hdPUku/bAAS0f8dzbzFKSW0sn8cPoERqL6RcDAh2r6C6v65LBxYtQw7E/fOIS7zpJbItiZ/ygDNYUs0XN/mwugF4GZdOHdkbS+x4wc9ePu2EiojQ0kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YJU4D+3G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 356BFC4CEEB;
-	Fri,  6 Jun 2025 15:42:49 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Q0B6VvzLp75nHjpKF+6L4+9kFCJLaN0UD/zilrAlF5Gfg0ocT8FI+TCW02HcnyzoiGng+agbg0j94mJ8d/otLekJLsVfwRdqmCFu8s2Qy83ZcKA1SFQhqr5UCMpsp+9CrkblU1vQa+kPuFONuSEJ6bVPKb0kOt027r800pPaweo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhxmssMv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74539C4CEF3;
+	Fri,  6 Jun 2025 15:43:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1749224570;
-	bh=6s/uLHbUl0a87lz+0uOU6qLfFpLzObXa00d/06+8Dtg=;
+	s=k20201202; t=1749224598;
+	bh=Du+OIFmDYpT0PLZ44mTQ6dci9Q3kfI+a8D+BUNxaBOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YJU4D+3Gs0jBHLj/chriDXGvRz+onADFdsV1Zq47oxHZOA54AVy37vKbG22z2Tlr2
-	 namN2X/9PnYpuEsEGoVcmZvPSPcWRQ4/A1rCRXyUJKP7DxlKtMcb4ur7TijgvtdC70
-	 eI2KlyOfjnSb6iSWarV4qyQ0IdJrmTu5FyNwjbZueJLfRBLtlJ/kDLpA3o1jd3KV23
-	 cOXbqF5lxPbzGSohhB/BCut4xWyuNTrndmYppYyVjARyYzras0wcQbfSxov1QX24MO
-	 kXA+ugtKJnMRKbboXmdHVpUuGgOtexPasjcE7HdVBrye9x0GCCHiQXqZzBi5bWfYtJ
-	 Pk6/+CFo0gcwg==
+	b=bhxmssMvMB5kdyFcRzDU8RaqQV7WeWKVxMuE0qLMImVZnLuK4gy1tyWkbdtjLsO/l
+	 XAPY0/ozJbRzxz9ODGW5sSIpkwhmB2M/PpW+Gg9exr+fOT254+Jjt5Qh50oKFRX4bs
+	 F5zJWoYZHywJvlv5/y3Z9kAzO1RNpBEdOt+dfTl3iuYq4PF49ci2CHAd0ScZnJyvXM
+	 GSB9yuA6qaazwVCFGPzKv3SCjyWDX2JMHzLSvSLf6+rufxoEk4XybG2/vAOXVH7XiY
+	 wbWxCwCs99/Ge0uZzFM1CaH3fM8ozGGVeesmLvRWAcF7Cx9bR6zdGPDgVnnMnsy7aR
+	 8frDq3HvjyJuA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
@@ -50,12 +50,12 @@ Cc: Guang Yuan Wu <gwu@ddn.com>,
 	Sasha Levin <sashal@kernel.org>,
 	miklos@szeredi.hu,
 	linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.14 16/19] fuse: fix race between concurrent setattrs from multiple nodes
-Date: Fri,  6 Jun 2025 11:42:22 -0400
-Message-Id: <20250606154225.546969-16-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 12/15] fuse: fix race between concurrent setattrs from multiple nodes
+Date: Fri,  6 Jun 2025 11:42:55 -0400
+Message-Id: <20250606154259.547394-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250606154225.546969-1-sashal@kernel.org>
-References: <20250606154225.546969-1-sashal@kernel.org>
+In-Reply-To: <20250606154259.547394-1-sashal@kernel.org>
+References: <20250606154259.547394-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
@@ -64,7 +64,7 @@ List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.14.10
+X-stable-base: Linux 6.12.32
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
@@ -213,10 +213,10 @@ and is conservative in approach.
  1 file changed, 11 insertions(+)
 
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 8f699c67561fa..2775e95c8e8c3 100644
+index ff543dc09130e..ce7324d0d9ed1 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -1925,6 +1925,7 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+@@ -1921,6 +1921,7 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
  	int err;
  	bool trust_local_cmtime = is_wb;
  	bool fault_blocked = false;
@@ -224,7 +224,7 @@ index 8f699c67561fa..2775e95c8e8c3 100644
  
  	if (!fc->default_permissions)
  		attr->ia_valid |= ATTR_FORCE;
-@@ -2009,6 +2010,8 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+@@ -2005,6 +2006,8 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
  		if (fc->handle_killpriv_v2 && !capable(CAP_FSETID))
  			inarg.valid |= FATTR_KILL_SUIDGID;
  	}
@@ -233,7 +233,7 @@ index 8f699c67561fa..2775e95c8e8c3 100644
  	fuse_setattr_fill(fc, &args, inode, &inarg, &outarg);
  	err = fuse_simple_request(fm, &args);
  	if (err) {
-@@ -2034,6 +2037,14 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
+@@ -2030,6 +2033,14 @@ int fuse_do_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
  		/* FIXME: clear I_DIRTY_SYNC? */
  	}
  
@@ -247,7 +247,7 @@ index 8f699c67561fa..2775e95c8e8c3 100644
 +
  	fuse_change_attributes_common(inode, &outarg.attr, NULL,
  				      ATTR_TIMEOUT(&outarg),
- 				      fuse_get_cache_mask(inode), 0);
+ 				      fuse_get_cache_mask(inode));
 -- 
 2.39.5
 
