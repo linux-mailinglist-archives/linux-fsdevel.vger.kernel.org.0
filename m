@@ -1,185 +1,99 @@
-Return-Path: <linux-fsdevel+bounces-50857-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50858-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10914AD0670
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 18:10:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E580AD0722
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 19:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE97516D819
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 16:10:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6130C3AAC36
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 17:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D622A289820;
-	Fri,  6 Jun 2025 16:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A750228A1CE;
+	Fri,  6 Jun 2025 17:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WUI86Mlg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gtsMTZx1"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C9D528540B;
-	Fri,  6 Jun 2025 16:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F311C78F32;
+	Fri,  6 Jun 2025 17:01:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749226209; cv=none; b=ACrP+aRZ5h/OuSMteK6a60Npxcz9XzSGPIl9Hjl3ranCRbN/YidZOfEyxGcl636Qoy6GNL7fRV0zdtrgTbIq3WnNTe+aPAxHIYzKpy56rkl8aGyiP+uSuj5+eDkc6ZWjtuU4w4AQaVZQCsO9jQ3DkZHKLuugw/aJaWxTC6+DpJ0=
+	t=1749229299; cv=none; b=Kr1XhJguiQ0BH3CGGw/sNrZnz63uG9dlD4YV7UErj7CQMBaG1/4pZhUn0gJFCjCOLnvhLshA55wY1jL4Ilabhy17XyxSOAZwlpeXbLBS/mk8KVhwpDRnw2SB6u7nmQzYMpkYoMyNqwHji8duihZ5k/aoNz++jXVpnNq9LQbMXAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749226209; c=relaxed/simple;
-	bh=+IX4WKBZZKukb5l31BrwLrifavSSKeTEFgSJhIO2aPo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ANII8rMjBhf3KN2OVKakR8LP7NLcl61efaffkGz5WskCj1G6e7hT7dMDMYCHYk5c9mAMrEC79aiQo9HP0lOM+EQ+2lqFor+1KEiMyofXxPsquLQny+AIjOT2uAl9l8Es1NfzRSvs+IsLXgMHtcniw9KLXkoh5C4nrStxO49dhjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WUI86Mlg; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1749226207; x=1780762207;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+IX4WKBZZKukb5l31BrwLrifavSSKeTEFgSJhIO2aPo=;
-  b=WUI86MlgIgMVk1BknhGdq//F+O+VPlhooHMZb6m7EJ6twl1ICg9rLP1H
-   +Jg0VG9zIe6p2Ft9QsJtIBbq6sK2Ws89+9/Ah1ZhWW0dQv06aOjgRth5S
-   k/Pwi+w4OosX1xdVBt8cpCDYCKgTkokik4SivGGN7kRTR2x2Wu1+aFje5
-   GM8Wa6/Z3S0zE6XmS++GcfbTRJWfkYfwC60EpYYWFELGbKI9nOUgUPWbD
-   yAM5+GcgSWwa9BzSnnZPggd/G2Gdc3Er0UCpW46+qmAGVxb8UN9mSs+SC
-   1uwIm9V33D8NZZHsW8jCZPvf3pSBoFlHWj6S4p3ieMyJ0+FbYlKLh7/Dt
-   w==;
-X-CSE-ConnectionGUID: 69Uz32lHSWW61d6+jnMi1w==
-X-CSE-MsgGUID: iAUI6EraQLGf/9rFrw2rQA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11456"; a="76777635"
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; 
-   d="scan'208";a="76777635"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jun 2025 09:10:07 -0700
-X-CSE-ConnectionGUID: nyWXBveVRTC3UmUgbte1Lg==
-X-CSE-MsgGUID: JZH4q7TNQBStGKrcbMx7Sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,215,1744095600"; 
-   d="scan'208";a="145798292"
-Received: from lkp-server01.sh.intel.com (HELO e8142ee1dce2) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 06 Jun 2025 09:10:02 -0700
-Received: from kbuild by e8142ee1dce2 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uNZdo-00056d-2U;
-	Fri, 06 Jun 2025 16:10:00 +0000
-Date: Sat, 7 Jun 2025 00:09:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>,
-	Kees Cook <kees@kernel.org>,
-	Joel Granados <joel.granados@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Konstantin Khorenko <khorenko@virtuozzo.com>,
-	Denis Lunev <den@virtuozzo.com>,
-	Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	kernel@openvz.org
-Subject: Re: [PATCH] locking: detect spin_lock_irq() call with disabled
- interrupts
-Message-ID: <202506062318.7g54PAh3-lkp@intel.com>
-References: <20250606095741.46775-1-ptikhomirov@virtuozzo.com>
+	s=arc-20240116; t=1749229299; c=relaxed/simple;
+	bh=zT4sKuFfw4xqA2QcApAwj6XA/t5bPgFmkMq4rQo7XSs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n5K1ow2rLtwKr4A7psDOO8i80ikNfGi+fdvUuE96FlQp4FMw1Rcc67qLwlRokELa6LY1noAlE/VZTTyU35yo+eXgaRCzm3bp4uPMyQcz2r+Uz7wlXVm3jZah3aLZUZFq6TOYy0efbA0804OV7aZ3et3GqJKtAPNvZ8Mxb4fW+xE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gtsMTZx1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73409C4CEF3;
+	Fri,  6 Jun 2025 17:01:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1749229298;
+	bh=zT4sKuFfw4xqA2QcApAwj6XA/t5bPgFmkMq4rQo7XSs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=gtsMTZx1yWC/tSkVqaOgwFKGuQ98lnIMb532AjF6hx/O739rjGGGwIw44DbqR8Std
+	 AjacvuXrKDIQqXRtuK6/t1lR1i76dLmSgUYS4SLBFMHbUxGN5DKfG6WVw3ENVPt4Pn
+	 PUNJb/Q5ytdz5Uizj2kw0aZVxDemf0NyUKxuH2potcyyHefSMwaQN7VD6QyeK80ubn
+	 hNfIfA0/x9S+vzp5s/gysWImrg5i4mK9J6eApn6tAhvOJodIAv33StZLETCvJNBfez
+	 vQReMHkym5yqbnS9zpRezAhcACxvY3saQhzj6Fn0KMUmcotgAIZQcPX0cFhUVpCD1J
+	 KpdhohDVcALzg==
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c5f720c717so376558385a.0;
+        Fri, 06 Jun 2025 10:01:38 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU1Zr7RvGKtegjnFt3FOBQFdEZJlD8Vet4j1rQDSze7w+wY++nms/twdD3zTGGBDw+/ai1T8lZ95SPnmpCKvyLpWdY9uuT8@vger.kernel.org, AJvYcCWx1hJaOOZxAyUFo7SEJ6z1arP9iG/sd1vEg0f+36ZRvfWVCwA0GM9Ftr7G/de/SeAWXnFCik5vx1TrEnNc@vger.kernel.org, AJvYcCX38rwhCz0+rHH0EYqecoHQ92YL3GOM1i5DaeeQLpDat0PQku4Nlm0rwrM4RTcy6+3rS6PT3gzV6ECH1MIv@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr+SMWLuzZDtujfZlPGA0NUXHry1iFuy+YtsG7MxNsZkTGL6Jd
+	jPTZXnlZG8/wgnVPdZtH+YM92M7vDECZlVvZBBhgTaFmKlC0p24870u2RoTZ1/cEVvrMHKjHsRJ
+	UVG3HWx4yp4ZTvLFaq7cvdeF6zMx7wzk=
+X-Google-Smtp-Source: AGHT+IGUP8KmwWsyJVkbFL3ChhSRLJM0hfwN3udKweQ31QmMpDI2+5lcOPPfybMB/iI0kyV9jSgunDkpQrwkzvMsC6c=
+X-Received: by 2002:a05:6214:1d07:b0:6fa:a4b7:c664 with SMTP id
+ 6a1803df08f44-6fb09c63bd2mr51564626d6.22.1749229297515; Fri, 06 Jun 2025
+ 10:01:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250606095741.46775-1-ptikhomirov@virtuozzo.com>
+References: <20250603065920.3404510-1-song@kernel.org> <20250603065920.3404510-2-song@kernel.org>
+ <20250606144058.GW299672@ZenIV>
+In-Reply-To: <20250606144058.GW299672@ZenIV>
+From: Song Liu <song@kernel.org>
+Date: Fri, 6 Jun 2025 10:01:26 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW7UeycwNjmm1mH9q1ZhjKLC4Shc0hbZ_o7a5zD2bRMzQQ@mail.gmail.com>
+X-Gm-Features: AX0GCFucxmg5JO3P3a3C0kxsaNoBTalGKKNBxoM4YNJ9bu19AeAlrfXDOWhXvvs
+Message-ID: <CAPhsuW7UeycwNjmm1mH9q1ZhjKLC4Shc0hbZ_o7a5zD2bRMzQQ@mail.gmail.com>
+Subject: Re: [PATCH v2 bpf-next 1/4] namei: Introduce new helper function path_walk_parent()
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org, jack@suse.cz, 
+	kpsingh@kernel.org, mattbobrowski@google.com, amir73il@gmail.com, 
+	repnop@google.com, jlayton@kernel.org, josef@toxicpanda.com, mic@digikod.net, 
+	gnoack@google.com, m@maowtm.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Pavel,
+On Fri, Jun 6, 2025 at 7:41=E2=80=AFAM Al Viro <viro@zeniv.linux.org.uk> wr=
+ote:
+>
+> On Mon, Jun 02, 2025 at 11:59:17PM -0700, Song Liu wrote:
+> > This helper walks an input path to its parent. Logic are added to handl=
+e
+> > walking across mount tree.
+> >
+> > This will be used by landlock, and BPF LSM.
+>
+> Unless I'm misreading that, it does *NOT* walk to parent - it treats
+> step into mountpoint as a separate step.  NAK in that form - it's
+> simply a wrong primitive.
 
-kernel test robot noticed the following build errors:
+I think this should be fixed by Micka=C3=ABl's comment. I will send v3 with
+it.
 
-[auto build test ERROR on tip/locking/core]
-[also build test ERROR on sysctl/sysctl-next akpm-mm/mm-nonmm-unstable tip/master linus/master v6.15 next-20250606]
-[cannot apply to mcgrof/sysctl-next tip/auto-latest]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Pavel-Tikhomirov/locking-detect-spin_lock_irq-call-with-disabled-interrupts/20250606-175911
-base:   tip/locking/core
-patch link:    https://lore.kernel.org/r/20250606095741.46775-1-ptikhomirov%40virtuozzo.com
-patch subject: [PATCH] locking: detect spin_lock_irq() call with disabled interrupts
-config: riscv-randconfig-002-20250606 (https://download.01.org/0day-ci/archive/20250606/202506062318.7g54PAh3-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 8.5.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250606/202506062318.7g54PAh3-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202506062318.7g54PAh3-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   In file included from include/linux/mmzone.h:8,
-                    from include/linux/gfp.h:7,
-                    from include/linux/mm.h:7,
-                    from arch/riscv/kernel/asm-offsets.c:8:
->> include/linux/spinlock.h:375:1: warning: data definition has no type or storage class
-    DECLARE_STATIC_KEY_MAYBE(CONFIG_DEBUG_SPINLOCK_IRQ_WITH_DISABLED_INTERRUPTS_BY_DEFAULT,
-    ^~~~~~~~~~~~~~~~~~~~~~~~
->> include/linux/spinlock.h:375:1: error: type defaults to 'int' in declaration of 'DECLARE_STATIC_KEY_MAYBE' [-Werror=implicit-int]
->> include/linux/spinlock.h:376:5: warning: parameter names (without types) in function declaration
-        debug_spin_lock_irq_with_disabled_interrupts);
-        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/spinlock.h: In function 'spin_lock_irq':
->> include/linux/spinlock.h:382:6: error: implicit declaration of function 'static_branch_unlikely' [-Werror=implicit-function-declaration]
-     if (static_branch_unlikely(&debug_spin_lock_irq_with_disabled_interrupts)) {
-         ^~~~~~~~~~~~~~~~~~~~~~
->> include/linux/spinlock.h:382:30: error: 'debug_spin_lock_irq_with_disabled_interrupts' undeclared (first use in this function)
-     if (static_branch_unlikely(&debug_spin_lock_irq_with_disabled_interrupts)) {
-                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/spinlock.h:382:30: note: each undeclared identifier is reported only once for each function it appears in
->> include/linux/spinlock.h:384:4: error: implicit declaration of function 'static_branch_disable'; did you mean 'stack_trace_save'? [-Werror=implicit-function-declaration]
-       static_branch_disable(&debug_spin_lock_irq_with_disabled_interrupts);
-       ^~~~~~~~~~~~~~~~~~~~~
-       stack_trace_save
-   include/linux/spinlock.h: In function 'spin_unlock_irq':
-   include/linux/spinlock.h:415:30: error: 'debug_spin_lock_irq_with_disabled_interrupts' undeclared (first use in this function)
-     if (static_branch_unlikely(&debug_spin_lock_irq_with_disabled_interrupts)) {
-                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   cc1: some warnings being treated as errors
-   make[3]: *** [scripts/Makefile.build:98: arch/riscv/kernel/asm-offsets.s] Error 1 shuffle=2202685202
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1275: prepare0] Error 2 shuffle=2202685202
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:248: __sub-make] Error 2 shuffle=2202685202
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:248: __sub-make] Error 2 shuffle=2202685202
-   make: Target 'prepare' not remade because of errors.
-
-
-vim +375 include/linux/spinlock.h
-
-   373	
-   374	#ifdef CONFIG_DEBUG_SPINLOCK
- > 375	DECLARE_STATIC_KEY_MAYBE(CONFIG_DEBUG_SPINLOCK_IRQ_WITH_DISABLED_INTERRUPTS_BY_DEFAULT,
- > 376				 debug_spin_lock_irq_with_disabled_interrupts);
-   377	#endif
-   378	
-   379	static __always_inline void spin_lock_irq(spinlock_t *lock)
-   380	{
-   381	#ifdef CONFIG_DEBUG_SPINLOCK
- > 382		if (static_branch_unlikely(&debug_spin_lock_irq_with_disabled_interrupts)) {
-   383			if (raw_irqs_disabled()) {
- > 384				static_branch_disable(&debug_spin_lock_irq_with_disabled_interrupts);
-   385				WARN(1, "spin_lock_irq() called with irqs disabled!\n");
-   386			}
-   387		}
-   388	#endif
-   389		raw_spin_lock_irq(&lock->rlock);
-   390	}
-   391	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Song
 
