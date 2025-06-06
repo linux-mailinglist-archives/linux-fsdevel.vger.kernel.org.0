@@ -1,166 +1,100 @@
-Return-Path: <linux-fsdevel+bounces-50821-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FDEACFF12
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 11:18:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9053AACFF5D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 11:34:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C72E16CEB8
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 09:19:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123051893E20
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 09:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3267E286427;
-	Fri,  6 Jun 2025 09:18:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE5B2857D5;
+	Fri,  6 Jun 2025 09:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MmRQaE09"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lvAG+tHk"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25DCE2853FD;
-	Fri,  6 Jun 2025 09:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F2327468
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 09:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749201527; cv=none; b=FtI3bcAToFFanwrjzaEdI/yGbhN6wVCRcIkDNFSEzuhjfY1hSOG+eXh6D2b5gbqHLtVwbadDV373tujCEhvOoK74Xg/wy62Iq4ZD71V2HDhlDitXGsWVPMwNm8HU6cXFxVNACHzeo1KtxNh5IPHzzgtXv+gKblAG8iqSHZMjRHU=
+	t=1749202436; cv=none; b=ULTgJ4bEIxArlHj6BLEW+H9fghKj1qovlD0KhkOMrVZSqtyNWme0GM17sOxEmr+u1Y8mz/CTmFl12zteL/njdFKuScd25xbxTFPdxakegmGbish6HcVsOaMSAtjDifIjKBfJpGfjdsy1TGYBT4YHJ7CTQRgX9GNCvkm2ueybW7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749201527; c=relaxed/simple;
-	bh=1HGk21Eiq3Ornoie3mRnUcMbuUSV/KVnZXIdTW4A3hE=;
+	s=arc-20240116; t=1749202436; c=relaxed/simple;
+	bh=NCD3FsHqX/tDsdqDrxlXUdzTVx+2sqRGtUtrxLK6jAc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VlXRz0Lbgsda5h8t7xnrJxTlzUd6KDrD/ytK3tKXODxJxqssLzMGbOPUOxnM0YWlYQg+AlBYXUfXvo69c7NTpMY/9AxsQqn3BrQSMmk9Y6NpxU3cREzAVqzfJcuNbfOmFuE5Da4yb+5m4Ffjc9iRpsUsZJe6fIEuKl2UdXp1L7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MmRQaE09; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-306bf444ba2so1729857a91.1;
-        Fri, 06 Jun 2025 02:18:45 -0700 (PDT)
+	 To:Cc:Content-Type; b=LTp85mLTHkqC6B/JtzMvMtiZZIpDqHE6qgeZNRCimS3nLfVFQ74IKIsR/jRRdsp86h5/J8nQ3c7eHqB3Oqab27wQrpbEFXr0wwf3+OPuhWcFvGxYFMwjbbQ/dKTFLsZFz+kl6gRdQT874iq9M6we3zAQ3lsFxcaoJUD/wL9X5FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lvAG+tHk; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a585dc5f4aso25007791cf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 02:33:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749201525; x=1749806325; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+IgJlEGMMW0E+kGR6e7y8QkMFTFJ1CqPMoRJ4HFJZyM=;
-        b=MmRQaE09y7PE+5Ku7VKWbdU/8SV/6UElJLi0D1vh7rXOmOjQ7hjWczCOp6UAuiejnS
-         u1rAsDimsUaOTpb3hB6AC2HXB/7TDnnayUUSK7hEitYpOXyfB/mcpxYTbsf9BuLAGmgS
-         XqGxywS9gj1ft5/b+WPzpBmcLDCGQfvSUvL5ERkKhnxdnN8sWea33oykHzXQOJ49rBbQ
-         3J5ptPVytvNKAzrzExt8cwQ8Z2n8Gq4MuMeewG3hs1PMYAzWSUrcEUE8uRYXGY1aFXlF
-         uEgCth0he/b7Z0TNyYFpIB0LOI1xh3OgBMgghBatjuc03zEcDdw0tyBBqnhsQI2NErBf
-         3AnQ==
+        d=szeredi.hu; s=google; t=1749202433; x=1749807233; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kjjJoIKAqPL4Fi3nMaT3Fad+/StO4aRC+TRTWdCbeTc=;
+        b=lvAG+tHkEIFwrw/yQXFUo0RH+vfERl2p/X23Pzswzv4TaPWDxbepHDZIr3RmqV7aCq
+         eaYotMiBY26iIMwt2AJx45me/PQfzUI+tHBfPK4n3fEhAmGz0+VHSoA3l8qW+pik3ND1
+         xvYFl1SOljGyKrq/Hwp/2q+u8k3l9uDXzQvJ8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749201525; x=1749806325;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+IgJlEGMMW0E+kGR6e7y8QkMFTFJ1CqPMoRJ4HFJZyM=;
-        b=sFGFKrYUHCpL9I4iDqr+gEpNZLTE6DJGvNnMu0iJfvySASNmoax/9C8Q+ium81i2zM
-         o/Lyf2xSbFuHbil+jaSC5mcn1288bV2fvx1kC8X+bUaMu1HHXkpp0XFR/yo4JF0QipQe
-         uhfFiKsWZ39MfkHFu33Jt6hhxwAKENhKCzfP7ndt8wH5kp/VjTjjAew/QSD9BopaKPVD
-         gPpfc4aUdCtnUj50n0/EMHmPxyCY9/wPJGCRWFRn1itgxSn9cXysMFhyawXYNSeCgehS
-         tb3Xhs3jOra+GeqcfL7VER5o2qSLlO0szr7vVw90vvdUYvCQiShNoADyEo4MplOnRlDM
-         2rRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUnQNcLkh7spBOeGBICVE4YQjcQEBp1QxPtRMq+iYvo6LZQPJO0gEvTTwL3OpqJoPde1uFqxh+xeYo0@vger.kernel.org, AJvYcCVs667DeskcJRd69PsHIULNsnOi6EV+Edt5cxzd33sD/H4TrKMwP7npMDCydZOWEx4WSA05UZBrd2A5jUEpkQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzyhn5g5AgJI3GiC6zQd3EQwyxh2UVANT9swAsCQgf1m1U7alAq
-	rSx8z7OtHieIYjDOOHhK/NGls7bBN40VlLpW1Gh3Txq7enbPAG2XU6Qpm6+gXWheVtvpIUgRRTR
-	mqxO5BmhLrB7MgbOFzAw9lD5BNegaxIk=
-X-Gm-Gg: ASbGncuL3xYiC7mRj4DkwRSF39GzgqyIRRdplyg9/fe3J20KIdT1JDfDyFrcW6hlUQX
-	eBBaoK0AEuOjANUWgM/812BdhApqEBG6fI8VzWQEg0Z3egeSFgpwz0nM2Q1NpvoTXw+bll9iVL2
-	KISBH5d92rH69FS7ubc+KgVuVUzutrh30t
-X-Google-Smtp-Source: AGHT+IFtHsXb/wEKlMdKDeBBsR6ve28PtDlk2x+acryGeG4OycoTx65wSY4OMXRPsKs09oPm/G9HBG24JbS2Wkgg+5s=
-X-Received: by 2002:a17:90b:540f:b0:311:a314:c2d1 with SMTP id
- 98e67ed59e1d1-313472d64a9mr4013077a91.6.1749201525151; Fri, 06 Jun 2025
- 02:18:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1749202433; x=1749807233;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kjjJoIKAqPL4Fi3nMaT3Fad+/StO4aRC+TRTWdCbeTc=;
+        b=iXAeWlM/feuIMCVK8dJ6z6Ggellh52UHetC36wGlOnGW7Wj0gHFba5ftlaO9Hc37qz
+         b3BbaLfYK5wKyGF2tJgC4aHDzidTr5xvKqGRWPOe/HNW5c+BxaXOdxwI/Ke9qIo0J1Nc
+         OZVny3mVc+cs6honCEEJ+6QzbolecXlcgsSb11IyX8gNN8o862EFcxHsY/of1YzW2o9+
+         3UMLDhnQV2n3AR4rOAAPqb3PzLbCpssBsps/1+eRuKTK8XlBMAmsMouY2mVMdPgNWoNf
+         rNE/7uB4N0lQ3SeTSLTvhn+wj5gxhT7vT/mV3C7aghwEhcd9o4e3CDMoxRMbRjHnZLOb
+         Ie6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWqWzOWxifXtegSNhj/8MYyBWqKGLZidkDwYXpAMDJa26s1316oG6n23wN0N2Vs8aKlaVnZ0KMBr6wov4kT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz0al509CmQ6K8a75CI8963cFjxaHIZU3NdfyDuTsNsMFazZvw
+	Gi7zTXXzMDlibVGzKbwOtHIMCjVweQ+j5duT+1hMcQj1f3G9zkH5qxNvGx95c3zn7vItWR1POp5
+	653/4QgGMJ4L1rahfntsZliJegdUDXez2DQqO7/McuQ==
+X-Gm-Gg: ASbGncveWlTLlfUfPBivo/fiHTxeLiVUP33Z7eb8NGe5Ozzc32ja5Q0ZMYlVpZGGJDg
+	2YTKjjNO30UyoN9LMXktr0hTjIqj38sR8W+1Y8UhQbl4tvA0WOkw8wXO3Gof0vWrGZxC28sOWvA
+	yRPfPzkGIQWfF+XhWzuAqZT7vrqP4CJCs=
+X-Google-Smtp-Source: AGHT+IEpD8A+u93yY7dMI4QI7COmSAbaXPHLO6KjHqBSEgUYxk/Jw0ZYl1TrJ9sLHanEFIt9Z9r1xEAOroted7uPQME=
+X-Received: by 2002:a05:622a:428c:b0:48e:1f6c:227b with SMTP id
+ d75a77b69052e-4a5b9a47e1amr44216851cf.26.1749202433527; Fri, 06 Jun 2025
+ 02:33:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250602184956.58865-1-slava@dubeyko.com> <CAO8a2SgsAQzOGCtejSka0JnvuzoespHDvwa0WNpg4A9L5QJcVA@mail.gmail.com>
-In-Reply-To: <CAO8a2SgsAQzOGCtejSka0JnvuzoespHDvwa0WNpg4A9L5QJcVA@mail.gmail.com>
-From: Ilya Dryomov <idryomov@gmail.com>
-Date: Fri, 6 Jun 2025 11:18:32 +0200
-X-Gm-Features: AX0GCFsj9mCnQ7HWKOPCGObzZhsx_cB1gxbgieJN1bK0Zjd3oAMXWBuNR-PnGbw
-Message-ID: <CAOi1vP_g8S_JZOqgoAViEnEAEHeLYF1th6zjpsQD3eXApc9A7Q@mail.gmail.com>
-Subject: Re: [PATCH v2] ceph: fix variable dereferenced before check in ceph_umount_begin()
-To: Alex Markuze <amarkuze@redhat.com>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>, ceph-devel@vger.kernel.org, dan.carpenter@linaro.org, 
-	lkp@intel.com, dhowells@redhat.com, brauner@kernel.org, willy@infradead.org, 
-	linux-fsdevel@vger.kernel.org, pdonnell@redhat.com, Slava.Dubeyko@ibm.com
+References: <CAJfpegvB3At5Mm54eDuNVspuNtkhoJwPH+HcOCWm7j-CSQ1jbw@mail.gmail.com>
+ <CAHk-=wgH174aR4HnpmV7yVYVjS7VmSRC31md5di7_Cr_v0Afqg@mail.gmail.com>
+ <CAOQ4uxjXvcj8Vf3y81KJCbn6W5CSm9fFofV8P5ihtcZ=zYSREA@mail.gmail.com> <CAJfpegutprdJ8LPsKGG-yNi9neC65Phhf67nLuL+5a4xGhpkZA@mail.gmail.com>
+In-Reply-To: <CAJfpegutprdJ8LPsKGG-yNi9neC65Phhf67nLuL+5a4xGhpkZA@mail.gmail.com>
+From: Miklos Szeredi <miklos@szeredi.hu>
+Date: Fri, 6 Jun 2025 11:33:42 +0200
+X-Gm-Features: AX0GCFvFo8VWZRAyQvoO_OwOv8y44RwyQfaZo7GsgVMP1nOljN6vif8ZNW5sSOg
+Message-ID: <CAJfpegu1BAVsW5duT-HoMGiSXNvj2VsLNfTuzvF1-RLyVLDdTA@mail.gmail.com>
+Subject: Re: [GIT PULL] overlayfs update for 6.16
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 3, 2025 at 12:25=E2=80=AFPM Alex Markuze <amarkuze@redhat.com> =
-wrote:
->
-> Reviewed by: Alex Markuze <amarkuze@redhat.com>
->
-> On Mon, Jun 2, 2025 at 9:50=E2=80=AFPM Viacheslav Dubeyko <slava@dubeyko.=
-com> wrote:
-> >
-> > From: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> >
-> > smatch warnings:
-> > fs/ceph/super.c:1042 ceph_umount_begin() warn: variable dereferenced be=
-fore check 'fsc' (see line 1041)
-> >
-> > vim +/fsc +1042 fs/ceph/super.c
-> >
-> > void ceph_umount_begin(struct super_block *sb)
-> > {
-> >         struct ceph_fs_client *fsc =3D ceph_sb_to_fs_client(sb);
-> >
-> >         doutc(fsc->client, "starting forced umount\n");
-> >               ^^^^^^^^^^^
-> > Dereferenced
-> >
-> >         if (!fsc)
-> >             ^^^^
-> > Checked too late.
-> >
-> >                 return;
-> >         fsc->mount_state =3D CEPH_MOUNT_SHUTDOWN;
-> >         __ceph_umount_begin(fsc);
-> > }
-> >
-> > The VFS guarantees that the superblock is still
-> > alive when it calls into ceph via ->umount_begin().
-> > Finally, we don't need to check the fsc and
-> > it should be valid. This patch simply removes
-> > the fsc check.
-> >
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > Closes: https://urldefense.proofpoint.com/v2/url?u=3Dhttps-3A__lore.ker=
-nel.org_r_202503280852.YDB3pxUY-2Dlkp-40intel.com_&d=3DDwIBAg&c=3DBSDicqBQB=
-DjDI9RkVyTcHQ&r=3Dq5bIm4AXMzc8NJu1_RGmnQ2fMWKq4Y4RAkElvUgSs00&m=3DUd7uNdqBY=
-_Z7LJ_oI4fwdhvxOYt_5Q58tpkMQgDWhV3199_TCnINFU28Esc0BaAH&s=3DQOKWZ9HKLyd6XCx=
-W-AUoKiFFg9roId6LOM01202zAk0&e=3D
-> > Signed-off-by: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>
-> > ---
-> >  fs/ceph/super.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> >
-> > diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> > index f3951253e393..68a6d434093f 100644
-> > --- a/fs/ceph/super.c
-> > +++ b/fs/ceph/super.c
-> > @@ -1033,8 +1033,7 @@ void ceph_umount_begin(struct super_block *sb)
-> >         struct ceph_fs_client *fsc =3D ceph_sb_to_fs_client(sb);
-> >
-> >         doutc(fsc->client, "starting forced umount\n");
-> > -       if (!fsc)
-> > -               return;
-> > +
-> >         fsc->mount_state =3D CEPH_MOUNT_SHUTDOWN;
-> >         __ceph_umount_begin(fsc);
-> >  }
-> > --
-> > 2.49.0
-> >
->
+On Fri, 6 Jun 2025 at 08:36, Miklos Szeredi <miklos@szeredi.hu> wrote:
 
-Applied with the Closes tag amended (Proofpoint URL).
+> I'll redo the PR with your patch.
+
+Pushed to #overlayfs-next.
+
+I'll drop this from the PR, since it's just a cleanup.  It still won't
+break anything (and that's what I meant by "trivial"), but it can wait
+a cycle or at least a few rc's.
 
 Thanks,
-
-                Ilya
+Miklos
 
