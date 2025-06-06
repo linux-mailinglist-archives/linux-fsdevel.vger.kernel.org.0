@@ -1,100 +1,131 @@
-Return-Path: <linux-fsdevel+bounces-50822-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50823-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9053AACFF5D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 11:34:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1F6DACFF73
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 11:39:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 123051893E20
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 09:34:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E06E189B55E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jun 2025 09:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE5B2857D5;
-	Fri,  6 Jun 2025 09:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F03A286437;
+	Fri,  6 Jun 2025 09:39:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="lvAG+tHk"
+	dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="czIXUc/X"
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F2327468
-	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 09:33:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B102853F9
+	for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jun 2025 09:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749202436; cv=none; b=ULTgJ4bEIxArlHj6BLEW+H9fghKj1qovlD0KhkOMrVZSqtyNWme0GM17sOxEmr+u1Y8mz/CTmFl12zteL/njdFKuScd25xbxTFPdxakegmGbish6HcVsOaMSAtjDifIjKBfJpGfjdsy1TGYBT4YHJ7CTQRgX9GNCvkm2ueybW7A=
+	t=1749202781; cv=none; b=uCbkVB0Lt31a4SgCYY5yXOpkZGVdw5BHo+G5tr42wtXqF5SosZKAE5eTdtTUcEWxoteUWBrgyra0GZMukA7PV8Xdls8Wbc61WN06Wj8wYs3olVwNPv3/l685amobbNsnyB0Mg50hdZrVTQm3UbJBWNwE+Tb4+RhBi0EKVzRtWnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749202436; c=relaxed/simple;
-	bh=NCD3FsHqX/tDsdqDrxlXUdzTVx+2sqRGtUtrxLK6jAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LTp85mLTHkqC6B/JtzMvMtiZZIpDqHE6qgeZNRCimS3nLfVFQ74IKIsR/jRRdsp86h5/J8nQ3c7eHqB3Oqab27wQrpbEFXr0wwf3+OPuhWcFvGxYFMwjbbQ/dKTFLsZFz+kl6gRdQT874iq9M6we3zAQ3lsFxcaoJUD/wL9X5FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=lvAG+tHk; arc=none smtp.client-ip=209.85.160.173
+	s=arc-20240116; t=1749202781; c=relaxed/simple;
+	bh=N9gt6zoeOojtVaBP1jlkmM2TL467uVikZEZwQ9GbU2k=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=RfSmBd39iMorRNVnc4shv78yKkUEgXXTwZzHuksSV8WfDqye9CbVSdcsRogXzSTKpYLtqxshH4c3hZ45dH4VgMC6Ycakz3HLg88yvQHJLq6Tx3+a4ZQrbi3dshbS96iPEDHpDBC/wSCWTseB1Lm+UJn9v/6X7HtOiXBt3g4kBwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu; spf=pass smtp.mailfrom=szeredi.hu; dkim=pass (1024-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b=czIXUc/X; arc=none smtp.client-ip=209.85.160.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=szeredi.hu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=szeredi.hu
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4a585dc5f4aso25007791cf.2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 02:33:54 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4a4bb155edeso24145161cf.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jun 2025 02:39:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google; t=1749202433; x=1749807233; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        d=szeredi.hu; s=google; t=1749202778; x=1749807578; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kjjJoIKAqPL4Fi3nMaT3Fad+/StO4aRC+TRTWdCbeTc=;
-        b=lvAG+tHkEIFwrw/yQXFUo0RH+vfERl2p/X23Pzswzv4TaPWDxbepHDZIr3RmqV7aCq
-         eaYotMiBY26iIMwt2AJx45me/PQfzUI+tHBfPK4n3fEhAmGz0+VHSoA3l8qW+pik3ND1
-         xvYFl1SOljGyKrq/Hwp/2q+u8k3l9uDXzQvJ8=
+        bh=tPFP4ZmRAhjJ4I3wEZwmt/w3eZJoSPjBDwx/NSazgHI=;
+        b=czIXUc/X6IcDpUOA3IeEWcwJMdXR87FSYsf5ixCCWiLNSx0kMQWKuXOOc+l8f17ERN
+         hQ41vSzEECLEU99+vsNVlAylbqd35o/yPNwcNy9N75OSqWTi69PL2nxbGPEcVp61PN+/
+         ChGwVsZBiKuG/G9s44uLpKp+eT2Re14ssbP9Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749202433; x=1749807233;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        d=1e100.net; s=20230601; t=1749202778; x=1749807578;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=kjjJoIKAqPL4Fi3nMaT3Fad+/StO4aRC+TRTWdCbeTc=;
-        b=iXAeWlM/feuIMCVK8dJ6z6Ggellh52UHetC36wGlOnGW7Wj0gHFba5ftlaO9Hc37qz
-         b3BbaLfYK5wKyGF2tJgC4aHDzidTr5xvKqGRWPOe/HNW5c+BxaXOdxwI/Ke9qIo0J1Nc
-         OZVny3mVc+cs6honCEEJ+6QzbolecXlcgsSb11IyX8gNN8o862EFcxHsY/of1YzW2o9+
-         3UMLDhnQV2n3AR4rOAAPqb3PzLbCpssBsps/1+eRuKTK8XlBMAmsMouY2mVMdPgNWoNf
-         rNE/7uB4N0lQ3SeTSLTvhn+wj5gxhT7vT/mV3C7aghwEhcd9o4e3CDMoxRMbRjHnZLOb
-         Ie6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWqWzOWxifXtegSNhj/8MYyBWqKGLZidkDwYXpAMDJa26s1316oG6n23wN0N2Vs8aKlaVnZ0KMBr6wov4kT@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz0al509CmQ6K8a75CI8963cFjxaHIZU3NdfyDuTsNsMFazZvw
-	Gi7zTXXzMDlibVGzKbwOtHIMCjVweQ+j5duT+1hMcQj1f3G9zkH5qxNvGx95c3zn7vItWR1POp5
-	653/4QgGMJ4L1rahfntsZliJegdUDXez2DQqO7/McuQ==
-X-Gm-Gg: ASbGncveWlTLlfUfPBivo/fiHTxeLiVUP33Z7eb8NGe5Ozzc32ja5Q0ZMYlVpZGGJDg
-	2YTKjjNO30UyoN9LMXktr0hTjIqj38sR8W+1Y8UhQbl4tvA0WOkw8wXO3Gof0vWrGZxC28sOWvA
-	yRPfPzkGIQWfF+XhWzuAqZT7vrqP4CJCs=
-X-Google-Smtp-Source: AGHT+IEpD8A+u93yY7dMI4QI7COmSAbaXPHLO6KjHqBSEgUYxk/Jw0ZYl1TrJ9sLHanEFIt9Z9r1xEAOroted7uPQME=
-X-Received: by 2002:a05:622a:428c:b0:48e:1f6c:227b with SMTP id
- d75a77b69052e-4a5b9a47e1amr44216851cf.26.1749202433527; Fri, 06 Jun 2025
- 02:33:53 -0700 (PDT)
+        bh=tPFP4ZmRAhjJ4I3wEZwmt/w3eZJoSPjBDwx/NSazgHI=;
+        b=ThrM4Wx2guHCNdlw4KsS/j2/wADTsA6LzJ5JNnGOgpRTtSlv0N/W3hPuBYOePfS+Tm
+         DUB9CbuV2rjBfmX/aMKQsV3mYTwYhUKmqe5N8xgo0jxAOom06UMe/eHFf4NyResQV7gi
+         Ev+6oBH86dAbLX4vPxA/ol40j5We2YIUOCKMrqaVdwTCHWm4ioMxrb6EbklLmim6aPyH
+         hSLEujNgfVxbiJmCQ+vLPq33A9TrdjYDaCN2KNZ6TpNzkRmiMvWS12jXdmorrMTtQcEG
+         2aJa7+lGCMcJDdoYdVpCueA61Bkc3FDl9FdQSRangNHvN6nfCPfrXGCe5VvGTh24KQCK
+         25vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQMMlaS+WWHzWkIQymB85Toh8xtf3vRtpif8XKyC8GL1GPkrB5Lv9rYpwwNUBUeY6/w03YRBmJ/VDFrGHT@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyi0TwUlLQb2RxwKWz6EJ+pxHV1MYjCcOK3k5uwUiUR7R0GcV2m
+	jzcY0Sn6tPKovBH2qm3s/zkOtfDddzC0bm9V5iRhTMyWtwuCZM2e5Fx4NiZ15pB3xw3fNh9sY/8
+	CuP9RoE3Mdg4GUuKno4Y33jtLGci3Mqs4wnmYcppe1A==
+X-Gm-Gg: ASbGncsLFHHpgFnCgjcarbApfOd/Od+HvDjtbDc7R6ORg05DHw5poAzwpmep+TdXCYU
+	OYH7T+uDRKHAlAqqngMSEtNmFtPBBko2Bq88SPncVVU7TEywaP5JC1exZKeFyay8BSnZEqf5B+1
+	bbRinWxDV//LbMuy0mOkbiJtB+/lCH3SiGTSYs1GFqH0ZVaTTFEQR4
+X-Google-Smtp-Source: AGHT+IHI9ky3s76fSv3Zu8lWTiZqJ/uarX5vedd0MSl6G+9c+iOb+o0VwnbkevaSB0b6iGykHy5yDFmDXJLp6vQ0kM0=
+X-Received: by 2002:a05:622a:4010:b0:494:a495:c257 with SMTP id
+ d75a77b69052e-4a5b9e21cd9mr45032831cf.17.1749202778321; Fri, 06 Jun 2025
+ 02:39:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJfpegvB3At5Mm54eDuNVspuNtkhoJwPH+HcOCWm7j-CSQ1jbw@mail.gmail.com>
- <CAHk-=wgH174aR4HnpmV7yVYVjS7VmSRC31md5di7_Cr_v0Afqg@mail.gmail.com>
- <CAOQ4uxjXvcj8Vf3y81KJCbn6W5CSm9fFofV8P5ihtcZ=zYSREA@mail.gmail.com> <CAJfpegutprdJ8LPsKGG-yNi9neC65Phhf67nLuL+5a4xGhpkZA@mail.gmail.com>
-In-Reply-To: <CAJfpegutprdJ8LPsKGG-yNi9neC65Phhf67nLuL+5a4xGhpkZA@mail.gmail.com>
 From: Miklos Szeredi <miklos@szeredi.hu>
-Date: Fri, 6 Jun 2025 11:33:42 +0200
-X-Gm-Features: AX0GCFvFo8VWZRAyQvoO_OwOv8y44RwyQfaZo7GsgVMP1nOljN6vif8ZNW5sSOg
-Message-ID: <CAJfpegu1BAVsW5duT-HoMGiSXNvj2VsLNfTuzvF1-RLyVLDdTA@mail.gmail.com>
-Subject: Re: [GIT PULL] overlayfs update for 6.16
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+Date: Fri, 6 Jun 2025 11:39:27 +0200
+X-Gm-Features: AX0GCFtZRITQRM4IxzsfgyjT1CJY8JlGN07qklEcnKGJyagr2TeGe-HdyBll-OI
+Message-ID: <CAJfpegssS_nOs1T+LTZBY9afFcmvpQH3gaSEph0NDx4neXNGRA@mail.gmail.com>
+Subject: [GIT PULL v2] overlayfs update for 6.16
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: overlayfs <linux-unionfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 6 Jun 2025 at 08:36, Miklos Szeredi <miklos@szeredi.hu> wrote:
+Please pull from:
 
-> I'll redo the PR with your patch.
+  git://git.kernel.org/pub/scm/linux/kernel/git/overlayfs/vfs.git
+tags/ovl-update-v2-6.16
 
-Pushed to #overlayfs-next.
+- Fix a regression in getting the path of an open file (e.g.  in
+/proc/PID/maps) for a nested overlayfs setup  (Andr=C3=A9 Almeida)
 
-I'll drop this from the PR, since it's just a cleanup.  It still won't
-break anything (and that's what I meant by "trivial"), but it can wait
-a cycle or at least a few rc's.
+- Support data-only layers and verity in a user namespace
+(unprivileged composefs use case)
+
+- Fix a gcc warning (Kees)
+
+- Cleanups
 
 Thanks,
 Miklos
+
+v2: dropped constification cleanup
+
+---
+Andr=C3=A9 Almeida (1):
+      ovl: Fix nested backing file paths
+
+Kees Cook (1):
+      ovl: Check for NULL d_inode() in ovl_dentry_upper()
+
+Miklos Szeredi (3):
+      ovl: make redirect/metacopy rejection consistent
+      ovl: relax redirect/metacopy requirements for lower -> data redirect
+      ovl: don't require "metacopy=3Don" for "verity"
+
+Thorsten Blum (4):
+      ovl: Use str_on_off() helper in ovl_show_options()
+      ovl: Replace offsetof() with struct_size() in ovl_cache_entry_new()
+      ovl: Replace offsetof() with struct_size() in ovl_stack_free()
+      ovl: Annotate struct ovl_entry with __counted_by()
+
+---
+ Documentation/filesystems/overlayfs.rst |  7 +++
+ fs/overlayfs/file.c                     |  4 +-
+ fs/overlayfs/namei.c                    | 98 ++++++++++++++++++++---------=
+----
+ fs/overlayfs/ovl_entry.h                |  2 +-
+ fs/overlayfs/params.c                   | 40 ++------------
+ fs/overlayfs/readdir.c                  |  4 +-
+ fs/overlayfs/util.c                     |  9 ++-
+ 7 files changed, 84 insertions(+), 80 deletions(-)
 
