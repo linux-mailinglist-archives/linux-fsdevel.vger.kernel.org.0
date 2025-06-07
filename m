@@ -1,120 +1,120 @@
-Return-Path: <linux-fsdevel+bounces-50905-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-fsdevel+bounces-50906-lists+linux-fsdevel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07E1AD0D39
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 13:53:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9C37AD0D63
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 14:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0F503B3079
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 11:53:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86231653FF
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jun 2025 12:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D009221DAD;
-	Sat,  7 Jun 2025 11:53:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RU8YvU4L"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D4F2206BF;
+	Sat,  7 Jun 2025 12:24:14 +0000 (UTC)
 X-Original-To: linux-fsdevel@vger.kernel.org
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FD41FDA97
-	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Jun 2025 11:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 308EA4C8F
+	for <linux-fsdevel@vger.kernel.org>; Sat,  7 Jun 2025 12:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1749297193; cv=none; b=dTI/AbdjbzZsP3QVOQudRYzLKRLcikIsdASmmW6HBidi7WhXfPoJKKUiFLWdF3jr+GbQU5QfD57v8rYkOic5rrMtl3TTBr2F3BW1fmmvsTmkhe43vMI+BzrFlF2I3DZOpsnCYyEzmw9hKNLxHxJ5OnNGZHgNTo9yJ5qatSkoZao=
+	t=1749299053; cv=none; b=huovXP0uNpQtoDE08Zp2rd70UJC3lk3qwl5L7qqCdjZSH4DfHMppBwnQnBIlabCF5nIAAE/URAsQAU4tHWC1HnJ+FQND/GVaxlSFs0rwu2I0fgJEKw6H9mBp+lTWhqfyn5kNQJ1dnr7Ye8BvVuSR3BsWh4njGvgr4q47oT5jyI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1749297193; c=relaxed/simple;
-	bh=k79nhHCR5QitpPzZHBnUkbzQJE5oeDsJxxVtLmNSAFc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cC5oADsSOyTtysyPdkI1Rl8YqkjiyCYfZ+Y6qk4fR+alqQYQrDAA3AxLGBVxZOo9usymzVSaFmX8o8YQ+rlFaisNc1vgfUgbD7IaXY7AFqzVS+c9X+MdzDwSV6JmRs6lgb5QJJ2PqGReWxkKWKNalLQ1vFFb92xiw9rMTX/Ruh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RU8YvU4L; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-60779962c00so1936948a12.0
-        for <linux-fsdevel@vger.kernel.org>; Sat, 07 Jun 2025 04:53:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1749297190; x=1749901990; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MPwqoJIEukf9Xeid6Z/wUxU+emhYk0B+36uVqwkPMlE=;
-        b=RU8YvU4LhPdmkOnX8lsSF4RjZzmbPjR7e2qaB77mzvbkk3N0WwyQhVvzlKahEhlfXS
-         6tkrQJZD6B5xlW/8uiYsCMjkUkEks+GAgNbRqo907Uafy2hK8a8sxTXnz0N5KmAIpOFH
-         G5Etj2sw+VLbPlpIWbEz8nY1mSC2JZZ/Mkhyn3ZGP8opD+YuYsIXJx0K7qA3sMCE88Pe
-         KI2osOHjn9anclkecTMGY2w+WbyTwQpA5kmMvDR2jjOhieLboUYfjlWvWP7MBEYnG63d
-         qYwumKR7+ny4GeOVAvOYs8jbQMgUNJkkCC7aHuxt+/K4BlumsReNrOhqIsVj/1qFn+gc
-         Cbhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1749297190; x=1749901990;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MPwqoJIEukf9Xeid6Z/wUxU+emhYk0B+36uVqwkPMlE=;
-        b=PmfWVhoe6MJHYjq9PnplvfkaBTV5MByuZkc4jL1PoTFRasyQvR2BFBn4858jBzposs
-         VBtsTtUiZA9eVNkDhPNgKY8dWDogfTsDwh5s/ioJYYgnN6v6dfhFqN0YjJ5dH6df1kRD
-         O33a26/30uEfeAxfjNmHMiLihT4Lmoei53w944HPgLU6rpcCQze/2pcMFuKBuQyaug9v
-         GpY+yXaOg1vaHgS9/29YpaXBaa7KWE7yO1ej6WYySCQFWqbrptgs+IOdP515MDhw4vrb
-         WbW/PVwrMb4E7x6Tmjg2ujOKu2BxbafBlD5JOkApeTIEGAXGrOa+VvBiC4aEiG5AAjGv
-         ortA==
-X-Forwarded-Encrypted: i=1; AJvYcCWWkrF+BDXzW53h+kiGJoRClPLQolWRrejb3GmNczVzzoGu7VkaNkpKa3+U76ZJqqCykljpPVyeJDWwsTS7@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/uvE8Wdz31rFVp+dz4ixZhxWUcUwYQIV4WWdxzomsW2v6mkIC
-	n5RZLawOLocBJFFwV8+TaEFBzG8PmnkD0rCLOvJ0aQb1jG+16H2K8jBP
-X-Gm-Gg: ASbGncvDptnwcGoVxgCXfVwEw8FG2jwbwKUIxwEJkDVK3CdNOqfRCQyDIy5CGgJIjxJ
-	3yMi1IaBk6SKl/BRKdMR/NepTm5wjBtRyAb/4pJkuy/tfBb5zC/o0YFHwWyNGH/SXmPWU68gkwh
-	IlAwixN+3d9AR1aHwRQaRr7ToqwctjR0NRPD3i3tp7G4310Z0mu277z2YkKVpVyqyvrk5Am1tHp
-	BtEwinyTRdTBbtNlxo7rgHmsybFbboYZGgWLuzGt/Do1MLexdy9vGM/81l3kJqvFxwEGyQWWnNk
-	0KL5PknN3BDn13LgXLMjkhh6AVS0R0bC8V3RXDs8E3cWk2zYDqU1kyqx7GvMMnP1sPO0TKHOkHU
-	uMqIGUZBriAcZD37nYlnYy1fH1XtFoPr/7K5MufBksSnOpbSZ
-X-Google-Smtp-Source: AGHT+IH+/TgLLr0RABTr5ibsFGW6uIIb4OFqQk1him7CqmnAqHp7hbO5MWLYuRcyRo4AqeDDYE6JKQ==
-X-Received: by 2002:a17:906:ef0e:b0:ad8:96d2:f3e with SMTP id a640c23a62f3a-ade1a93bc65mr578218366b.22.1749297190079;
-        Sat, 07 Jun 2025 04:53:10 -0700 (PDT)
-Received: from amir-ThinkPad-T480.arnhem.chello.nl (92-109-99-123.cable.dynamic.v4.ziggo.nl. [92.109.99.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ade1d7542b1sm264876766b.35.2025.06.07.04.53.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Jun 2025 04:53:09 -0700 (PDT)
-From: Amir Goldstein <amir73il@gmail.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] ovl: remove unneeded non-const conversion
-Date: Sat,  7 Jun 2025 13:53:04 +0200
-Message-Id: <20250607115304.2521155-3-amir73il@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250607115304.2521155-1-amir73il@gmail.com>
-References: <20250607115304.2521155-1-amir73il@gmail.com>
+	s=arc-20240116; t=1749299053; c=relaxed/simple;
+	bh=L1NDv3xK90mFPK4Vi0snPakJ26gqY3QeiQcsS5TwuM8=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=o6Kyg1gKcUoJ7CYEBJmpMGqCwqoFfNC9U551dbMzu4TbcPJULC5R8rlk8hg9uy3rywY8b8E3RidtZdqqup03aczcCKJsFFQ/o3YtG7VaLY8p4tPMNfg5u4+zPN5741EzDuMU0Kflrp3brbDlve0prS7gbEKQymQtOB45Bu7rvuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in01.mta.xmission.com ([166.70.13.51]:60314)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uNs2l-002sVa-GA; Sat, 07 Jun 2025 05:48:59 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:55290 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in01.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1uNs2k-00CCLE-IU; Sat, 07 Jun 2025 05:48:59 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-fsdevel@vger.kernel.org,  Christian Brauner <brauner@kernel.org>,
+  Linus Torvalds <torvalds@linux-foundation.org>
+References: <20250603204704.GB299672@ZenIV>
+Date: Sat, 07 Jun 2025 06:48:40 -0500
+In-Reply-To: <20250603204704.GB299672@ZenIV> (Al Viro's message of "Tue, 3 Jun
+	2025 21:47:04 +0100")
+Message-ID: <87sekbg4br.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 List-Id: <linux-fsdevel.vger.kernel.org>
 List-Subscribe: <mailto:linux-fsdevel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-fsdevel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1uNs2k-00CCLE-IU;;;mid=<87sekbg4br.fsf@email.froward.int.ebiederm.org>;;;hst=in01.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1+ZjzfZufeqtqA+jSlKbYYbFT76R9X7Ew8=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4698]
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa04 1397; Body=1 Fuz1=1 Fuz2=1]
+X-Spam-DCC: XMission; sa04 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;Al Viro <viro@zeniv.linux.org.uk>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 437 ms - load_scoreonly_sql: 0.04 (0.0%),
+	signal_user_changed: 11 (2.4%), b_tie_ro: 9 (2.1%), parse: 0.79 (0.2%),
+	 extract_message_metadata: 11 (2.5%), get_uri_detail_list: 0.97 (0.2%),
+	 tests_pri_-2000: 9 (2.0%), tests_pri_-1000: 2.3 (0.5%),
+	tests_pri_-950: 1.18 (0.3%), tests_pri_-900: 0.92 (0.2%),
+	tests_pri_-90: 54 (12.3%), check_bayes: 52 (12.0%), b_tokenize: 9
+	(2.0%), b_tok_get_all: 6 (1.4%), b_comp_prob: 2.1 (0.5%),
+	b_tok_touch_all: 33 (7.4%), b_finish: 0.74 (0.2%), tests_pri_0: 330
+	(75.5%), check_dkim_signature: 1.24 (0.3%), check_dkim_adsp: 4.0
+	(0.9%), poll_dns_idle: 0.45 (0.1%), tests_pri_10: 4.1 (0.9%),
+	tests_pri_500: 11 (2.4%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [RFC] separate the internal mount flags from the rest
+X-SA-Exim-Connect-IP: 166.70.13.51
+X-SA-Exim-Rcpt-To: torvalds@linux-foundation.org, brauner@kernel.org, linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-file_user_path() now takes a const file ptr.
+Al Viro <viro@zeniv.linux.org.uk> writes:
 
-Signed-off-by: Amir Goldstein <amir73il@gmail.com>
----
- fs/overlayfs/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 	Currently we use ->mnt_flags for all kinds of things, including
+> the ones only fs/{namespace,pnode}.c care about.
+>
+> 	That wouldn't be a problem if not for the locking.  ->mnt_flags is
+> protected by mount_lock.  All writers MUST grab that.  Having lockless
+> readers is unsurprising - after all, for something like noexec we want
+> the current state of mount, whatever it happens to be.  If userland
+> remounts something noexec and that races with execve(2), there's nothing
+> to be done - it is a race, but not the kernel one.
 
-diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index dfea7bd800cb..f5b8877d5fe2 100644
---- a/fs/overlayfs/file.c
-+++ b/fs/overlayfs/file.c
-@@ -48,7 +48,7 @@ static struct file *ovl_open_realfile(const struct file *file,
- 		if (!inode_owner_or_capable(real_idmap, realinode))
- 			flags &= ~O_NOATIME;
- 
--		realfile = backing_file_open(file_user_path((struct file *) file),
-+		realfile = backing_file_open(file_user_path(file),
- 					     flags, realpath, current_cred());
- 	}
- 	ovl_revert_creds(old_cred);
--- 
-2.34.1
 
+In general I don't have a problem.
+
+I see one possible complication I haven't seen mentioned.
+Which mnt_flags get exposed to userspace?
+
+I know it was the expectation that MNT_LOCKED would be visible to
+userspace, as it's effects are visible to userspace (it isn't just some
+accounting thing).
+
+I may just be objecting to the name of the macro MNT_INTERNAL_FLAGS,
+and the making of the decision about flags based on the
+internal/external state.
+
+Your patch to change make MNT_LOCKED an internal flag in combination
+with this proposed change make me wonder about our classification
+of flags as internal/external and how much that matters.
+
+Eric
 
